@@ -1,0 +1,11 @@
+<strong>Estimado(a),</strong>
+<br /><br />
+Se ha registrado una persona desde formualario de pre inscripcion con estos datos:
+<br /><br />
+Primer Nombre: [[primer_nombre]] <br />
+Primer Apellido: [[primer_apellido]] <br />
+Tipo de documento de identidad: [[dni]] <br />
+No. documento: [[numero_dni]] <br />
+Celular: [[celular]] <br />
+Correo Electrónico: [[mail]] <br />
+<br /><br /><br />

@@ -1,0 +1,8 @@
+<strong>Estimado(a) [[usuario]],</strong>
+<br /><br />
+Usted tiene un registro de usuario en el sistema. <br/><br/>
+Usuario: [[username]]<br />
+Identificación: [[dni]]<br/><br/>
+Para ingresar al sistema Asgard, accese con el usuario al siguiente enlace: <a href='[[link_asgard]]' target='_blank'>[[link_asgard]]</a> y solicite cambio de contraseña en el enlace "Olvidé mi contraseña".
+<br/><br/><br/>
+<strong>Atte. Soporte UTEG</strong>

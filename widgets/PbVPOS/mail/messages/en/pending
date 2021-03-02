@@ -1,0 +1,16 @@
+<strong>Dear [[user]],</strong>
+<br /><br />
+Your transaction for a value of <strong>[[currency]][[price]]</strong> is <strong>PENDING</strong>.
+<br /><br />
+The information of transaction was:<br />
+<strong>Order: </strong>[[order]].<br />
+<strong>Date: </strong>[[date]].<br />
+<strong>Subjet: </strong>[[subject]].<br />
+<strong>Price: </strong>[[currency]][[price]].<br />
+<strong>Status: </strong>PENDING.<br />
+<br /><br />
+<strong>Please the transaction is currently processing. Do not try again a new request payment.</strong>
+<br /><br />
+<strong><em>This email was generated automatically and does not require a response.</em></strong>
+<br /><br /><br />
+<strong>Atte. Support Uteg</strong>

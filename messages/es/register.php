@@ -1,0 +1,67 @@
+<?php
+
+/*
+ * The PenBlu framework is free software. It is released under the terms of
+ * the following BSD License.
+ *
+ * Copyright (C) 2015 by PenBlu Software (http://www.penblu.com)
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * - Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * - Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in
+ * the documentation and/or other materials provided with the
+ * distribution.
+ * - Neither the name of PenBlu Software nor the names of its
+ * contributors may be used to endorse or promote products derived
+ * from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+ * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ * COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+ * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ *
+ * PenBlu is based on code by
+ * Yii Software LLC (http://www.yiisoft.com) Copyright Â© 2008
+ * 
+ * Este Archivo contiene lenguajes para ser utilizados en Javascript por defecto
+ * @author Eduardo Cueva
+ * @email  ecueva@penblu.com edu19432@gmail.com
+ * @copyright Copyright &copy; Penblu 2012=>
+ * @license GPLv2 http://www.opensource.org/licenses/gpl-license.php 
+ * 
+ * Authors:
+ *
+ * Eduardo Cueva <edu19432@gmail.com>
+ * 
+ * Update:
+ * Diana Lopez <dianalopez784@gmail.com>
+ */
+
+return [
+    'Back' => 'Regresar',
+    'Clic over imagen to update' => 'Click sobre la imagen para actualizar',
+    'Existing Record' => 'Registro Existente',
+    'Send' => 'Enviar',
+    'Successful Registration' => 'Registro Exitoso',
+    'User Activation' => 'Activación de Usuario',
+    'User Register' => 'Registro de usuario',
+    '<h4>Error</h4>Email already exists. Please choose another.' => '<h4>Error</h4>Email ya esta en uso. Por favor ingrese otro.',
+    '<h4>Error</h4>Password and Password Confirm are different' => '<h4>Error</h4>Contraseña y Confirmar Contraseña son diferentes',
+    '<h4>Success</h4>To activate your account you must access your email and follow the instructions in the mail' => '<h4>Éxito</h4>Para activar su cuenta debe acceder a su correo electronico y seguir las instrucciones en el mail',
+    'Verification Code' => 'Código de Verificación',
+    'Write a text' => 'Escriba el texto',
+];

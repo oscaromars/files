@@ -1,0 +1,10 @@
+<strong>Hola [[user]],</strong>
+<br /><br />
+Se ha realizado la revisión del comprobante de pago que ha adjuntado, que corresponde a la factura [[factura]] de la cuota [[cuota]], el cual no ha sido aprobado por el siguiente motivo: <br />
+   <b>[[motivo]].</b><br /><br />
+Ingrese al sistema Asgard <a href='[[link]]' target='_blank'>[[link]]</a> y suba un pago válido. <br />
+Gracias por la atención prestada.<br />
+<br /><br /><br />
+<strong>Atentamente:</strong><br />
+<strong>Departamento de Colecturía</strong><br />
+<strong>Universidad Tecnológica Empresarial de Guayaquil</strong><br />

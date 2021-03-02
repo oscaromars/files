@@ -1,0 +1,11 @@
+<strong>Hola [[user]],</strong>
+<br /><br />
+The payment voucher that you have attached has been reviewed, which corresponds to the invoice [[factura]] of the fee [[cuota]], which has not been approved for the following reason: <br />
+ <b>[[motivo]].</b><br /><br />
+Login to the system Asgard <a href='[[link]]' target='_blank'>[[link]]</a> and upload a valid payment. <br />
+Thank you for your attention.<br />
+<br /><br /><br />
+<strong>Attentively:</strong><br />
+<strong>Ney Loor López</strong><br />
+<strong>Collection Department</strong><br />
+<strong>Universidad Tecnológica Empresarial de Guayaquil</strong><br />

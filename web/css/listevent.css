@@ -1,0 +1,2316 @@
+
+/* gg */
+.center_content { max-width: 1200PX; }
+
+.event-cuerpo { /* display: table;  */  display: table-cell; }
+.itemH{
+    height: 500px;
+}
+
+/* los tags de matri */
+.tags-matri {	border-collapse: separate;  	border-spacing: 6px; position: absolute;}
+.listing-events.list .tags-matri { display: table; right: 0px;    bottom: 1px; }
+.listing-events.gallery  .tags-matri { display: inline;    width: 90%; bottom: 3rem; }
+	@media screen and (max-width: 640px) { /*celu*/
+		.listing-events.gallery  .tags-matri {  bottom: 6rem; }
+		.listing-events.list .curso .clase-modalidad {	    display: block;    position: initial;    padding: 4px 5px;    margin: 5px 0px 5px 0px; }
+		.center_content { padding: 5px; }
+		.bootstrap-tagsinput {  min-width: 127px; }
+                
+	}
+        @media (max-width: 640px){
+            .itemH{
+                    height: 700px;
+                }
+        }
+        
+        @media (max-width: 635px){
+            .itemH{
+                    height: 500px;
+                    width: 100% !important;
+                }
+        }
+.tags-matri .items { padding: 3px 5px; }
+.listing-events.list .tags-matri .items {	display: table-cell; }
+.listing-events.gallery .tags-matri .items {    display: inline-flex; }
+
+.fecha_inicio {
+    font-size: .7rem;
+    border-radius: 4px;
+    color: #666;
+    background-color: rgba(192,192,192,.4);
+    border: 1px solid #eee;
+    color: #000;
+}
+
+.oferta_activa {
+    right: 0px;
+    width: auto;
+    color: #31A3DD;
+    font-size: 12px!important;
+    border: 1px solid #31A3DD;
+    border-radius: 4px;
+    float: right;
+}
+.listing-events.list .tags-matri .oferta_activa {float:right;}
+/* fin - los tags de matri */
+
+
+.form_inscripcion {
+	position: relative;
+    max-width: 50%;
+    margin-left: 25%;
+    min-width: 600px;
+    min-height: 400px;
+    margin-top: 10px;
+}
+	@media screen and (max-width: 1000px) {
+		.form_inscripcion { max-width: 80%;	margin-left: 5%; min-width: 600px; }
+	}
+	@media screen and (max-width: 600px) {
+		.form_inscripcion {	max-width: 90%;margin-left: 5%; min-width: initial; }
+	}
+#volver_atras {  float: right; }
+.hide {    display: none; }
+.c {    text-align: center; }
+
+.btn_alto { height:100px; margin:5px }
+.btn_alto div {
+    white-space: normal !important;
+    word-wrap: break-word;
+    line-height: 1.5em;
+}
+.btn.btn_sel  { border: 1px solid #33b560; }
+.MensajeOk { color:#009900; font-weight: 400; }
+.MensajeError { color:#aa0000; font-weight: 400; }
+
+/*  -------------------------------------- */
+/* tocando de la base q les gusto.         */
+/*  -------------------------------------- */
+.image-event {
+    /*no-repeat center center fixed;*/
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+.event-data-general {
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+}
+.image-event {
+    -webkit-transition: -webkit-transform .7s ease;
+    /*-moz-transition: 0 .7;*/
+    -o-transition: -o-transform .7s ease;
+    transition: transform .7s ease;
+}
+.course:hover > .image-event,
+.event-data-general:hover > .image-event,
+.image-event:hover > .image-event {
+    -webkit-transform: scale(1.05);
+    -moz-transform: scale(1.05);
+    -ms-transform: scale(1.05);
+    -o-transform: scale(1.05);
+    transform: scale(1.05);
+}
+#busqueda_cursos.course:hover > .image-event {
+    -webkit-transform: scale(1.05);
+    -moz-transform: scale(1.05);
+    -ms-transform: scale(1.05);
+    -o-transform: scale(1.05);
+    transform: scale(2.05);
+}
+/*gg cambios en buscar, se pone solo el input 24/10/2016 18:17:33 */
+
+.bootstrap-tagsinput .label {
+    font-size: 100%;
+    display: inline-block;
+    vertical-align: middle;
+}
+/* texto mas grande q default del buscador*/
+/* del ej. lista eventos */
+
+.title-page {
+    text-align: center;
+    margin-left: 2px;
+    color: #31A3DD;
+    font-size: 2em;
+    line-height: 36px;
+    transition: all ease-in-out .6s
+}
+@media screen and (max-width: 50em) {
+    .title-page.showDesktop {
+        opacity: 0;
+        max-height: 0;
+        overflow: hidden
+    }
+}
+.title-page.showMobile {
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden
+}
+@media screen and (max-width: 50em) {
+    .title-page.showMobile {
+        opacity: 1;
+        max-height: 80px;
+        overflow: auto
+    }
+}
+/*secondary-action-bar botonera*/
+
+#liveEvents-container {
+    /* gg - x botonera q movi para arriba, vuelvo cuando 660 */
+	min-height: 400px;
+    display: inline-block;
+    width: 100%;
+    margin-top: -54px;
+}
+.secondary-action-bar {
+    /* gg - para que quede a la derecha parelela a la otra*/
+
+    position: relative;
+    text-align: left;
+    margin: 10px 0;
+    font-size: 14px;
+    bottom: 58px;
+    width: 200px;
+    float: right;
+    height: 38px;
+}
+.secondary-action-bar:after {
+    content: "";
+    display: block;
+    clear: both;
+}
+/* gg - para que quede a la derecha parelela a la otra*/
+
+@media screen and (max-width: 660px) {
+    .secondary-action-bar {
+        position: static;
+        height: auto;
+        width: initial;
+    }
+    #liveEvents-container {
+        margin-top: initial;
+    }
+}
+@media(max-width:50em) {
+    .secondary-action-bar {
+        padding: 0 10px
+    }
+}
+.grid-container .secondary-action-bar {
+    margin: 5px 0 10px 0
+}
+.secondary-action-bar .title-page {
+    position: absolute;
+    bottom: 0
+}
+@media screen and (max-width: 960px) {
+    .secondary-action-bar .title-page {
+        position: static;
+        height: auto
+    }
+}
+@media screen and (max-width: 880px) {
+    .secondary-action-bar .title-page {
+        font-size: 1.4em;
+        top: 0;
+        bottom: auto
+    }
+}
+@media screen and (max-width: 40em) {
+    .secondary-action-bar .title-page {
+        line-height: 1.4em;
+        font-size: 1.2em;
+        margin-bottom: 10px
+    }
+}
+.secondary-action-bar .title-page a {
+    font-size: 16px
+}
+@media screen and (max-width: 40em) {
+    .secondary-action-bar .title-page a {
+        font-size: 14px
+    }
+}
+.secondary-action-bar .title-page span {
+    font-size: 16px;
+    margin-right: 5px;
+    padding-right: 10px;
+    border-right: 1px solid #ddd
+}
+.secondary-action-bar .pager-showing {
+    bottom: 0;
+    color: #8b8b8b;
+    line-height: 31px
+}
+.secondary-action-bar .pager-showing .bolder {
+    font-weight: 800;
+    color: #333
+}
+.secondary-action-bar .pager-showing .last-change {
+    padding-left: 7px;
+    margin-left: 7px;
+    border-left: 1px solid #ccc;
+    color: #8b8b8b
+}
+.secondary-action-bar .pager-showing#students-qty {
+    top: -6px;
+    bottom: initial
+}
+.secondary-action-bar .pager-showing#last-edit {
+    top: 10px;
+    bottom: initial
+}
+.secondary-action-bar .pager-showing#last-edit:before {
+    content: '|';
+    margin: 0 5px
+}
+@media screen and (max-width: 1023px) {
+    .secondary-action-bar .pager-showing#last-edit {
+        display: none
+    }
+}
+.secondary-action-bar .information-table-results {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    color: #8b8b8b
+}
+.secondary-action-bar .information-table-results .pager-settings {
+    display: inline-block;
+    vertical-align: bottom
+}
+.secondary-action-bar .information-table-results .pager-settings span:first-child {
+    display: inline-block;
+    vertical-align: middle
+}
+.secondary-action-bar .information-table-results .table-buttons-secondary {
+    display: inline-block;
+    padding-left: 20px
+}
+.secondary-action-bar .information-table-results .btn-border {
+    display: inline-block;
+    margin-left: 5px;
+    border: 1px solid #ddd;
+    vertical-align: bottom
+}
+.secondary-action-bar .information-table-results .btn-border .dropdown.toggle .hasMenu {
+    padding: 0
+}
+.secondary-action-bar .information-table-results .btn-border .dropdown .hasMenu:active .secondary-action-bar .information-table-results .btn-border .dropdown .hasMenu.pushed {
+    box-shadow: none
+}
+@media(max-width:50em) {
+    .secondary-action-bar .information-table-results .btn-border, .secondary-action-bar .information-table-results .btn-only-border {
+        float: right
+    }
+}
+@media screen and (max-width: 960px) {
+    .secondary-action-bar .information-table-results {
+        position: static;
+        height: auto;
+        margin-bottom: 10px
+    }
+    /*.tabMyCoursesTrainee .secondary-action-bar .information-table-results     #user-associated-courses-container .secondary-action-bar .information-table-results {
+        position: absolute;     top: 0;     height: 35px;     margin-bottom: 0
+    }*/
+}
+/*
+.secondary-action-bar.home-not-loggedIn {
+    border-bottom: 1px solid #ccc; margin: 10px; padding: 20px 0
+}
+
+@media screen and (max-width: 960px) {
+    .secondary-action-bar.home-not-loggedIn {
+        margin-top: 0;     padding-top: 0
+    }
+}
+
+@media screen and (max-width: 50em) {
+    .secondary-action-bar.home-not-loggedIn {
+        padding-bottom: 0
+    }
+}
+
+@media screen and (max-width: 375px) {
+    .secondary-action-bar.home-not-loggedIn {
+        padding: 10px 0
+    }
+}
+@media screen and (max-width: 960px) {
+    .secondary-action-bar.home-not-loggedIn.secondary-action-bar {
+        position: static;     height: auto
+    }
+}
+
+.secondary-action-bar.home-not-loggedIn.secondary-action-bar .information-table-results {
+    top: 0; bottom: auto
+}
+@media screen and (max-width: 880px) {
+    .secondary-action-bar.home-not-loggedIn.secondary-action-bar .information-table-results {
+        bottom: 10px;     top: auto;     left: 0
+    }
+}
+@media screen and (max-width: 960px) {
+    .secondary-action-bar.home-not-loggedIn.secondary-action-bar .information-table-results {
+        position: static;     height: auto;     margin-bottom: 10px
+    }
+}
+.secondary-action-bar.home-not-loggedIn.secondary-action-bar .information-table-results .pager-settings {
+    padding-right: 15px; margin-right: 5px; border-right: 1px solid #ccc
+}
+@media screen and (max-width: 50em) {
+    .secondary-action-bar.home-not-loggedIn.secondary-action-bar .information-table-results .pager-settings {
+        border: 0
+    }
+}
+*/
+/* fin secondary-action-bar*/
+
+.btn.primary {
+    color: #fff;
+    background-color: #31A3DD;
+    border-radius: 4px;
+    box-shadow: 1px solid #175028;
+    text-decoration: none;
+    display: inline-block;
+    cursor: pointer;
+    white-space: nowrap;
+    font-size: 16px;
+    padding: 8px 16px;
+    transition: all ease-in-out .6s
+}
+#wbuscar {
+    min-width: 200px
+}
+.general-search-bar {
+    text-align: left;
+    padding: 10px 0 10px 0;
+    font-size: 14px
+}
+@media screen and (min-width: 600px) {
+    .general-search-bar {
+        /*gg*/
+
+        display: inline-flex;
+        width: 100%;
+    }
+}
+information-table-results float: right;
+.general-search-bar .search-tag li {
+    display: inline-block;
+    cursor: pointer;
+    margin: 0 7px 7px 0
+}
+.general-search-bar .search-tag .dropdown.no-border {
+    vertical-align: top
+}
+.general-search-bar .search-tag .show-filter {
+    margin: 7px 10px;
+    padding: 0 10px;
+    border-left: 1px solid #ddd;
+    display: inline-block;
+    vertical-align: bottom
+}
+.general-search-bar .content-search-box {
+    display: table;
+    transition: all ease-in-out .6s;
+    -webkit-transition: all ease-in-out .6s
+}
+.general-search-bar .segmentation-search {
+    -webkit-transition: all ease-in-out .6s;
+    transition: all ease-in-out .6s;
+    height: 0;
+    overflow: hidden;
+    margin-right: 1px
+}
+.general-search-bar .segmentation-search .form-wrapper {
+    padding: 15px;
+    padding-bottom: 0;
+    overflow: hidden;
+    -webkit-transition: all ease-in-out .6s;
+    transition: all ease-in-out .6s
+}
+.general-search-bar .segmentation-search .form-wrapper .form-box {
+    padding: 0
+}
+.general-search-bar .segmentation-search .btn {
+    float: none;
+    display: inline-block;
+    vertical-align: top
+}
+.general-search-bar .search-box {
+    display: table-cell;
+    width: 100%;
+    position: relative;
+    padding-right: 10px;
+    vertical-align: top;
+    -webkit-transition: all ease-in-out .6s;
+    transition: all ease-in-out .6s
+}
+.general-search-bar .search-box .inside-search-box {
+    display: table;
+    width: 100%;
+    position: relative;
+    -webkit-transition: all ease-in-out .6s;
+    transition: all ease-in-out .6s
+}
+.general-search-bar .search-box .inside-search-box .input-search-box {
+    display: table-cell;
+    width: 100%;
+    vertical-align: top;
+    -webkit-transition: all ease-in-out .6s;
+    transition: all ease-in-out .6s
+}
+.general-search-bar .btn {
+    /* cuando se achica a 800 se va a la derecha y no me interesa */
+
+    display: table-cell;
+    vertical-align: middle;
+    /* float: right; padding: 8px 15px*/
+}
+.general-search-bar .btn .search {
+    content: "";
+    float: left;
+    display: block;
+    height: 24px;
+    width: 25px;
+    background-image: none;
+    background-repeat: no-repeat;
+    margin-right: 10px;
+    background-position: -621px -14px;
+    margin-right: 0
+}
+.general-search-bar.home-not-loggedIn {
+    border-bottom: 0;
+    margin: 0 auto 20px
+}
+@media screen and (max-width: 880px) {
+    .general-search-bar.home-not-loggedIn {
+        margin-bottom: 0;
+        padding: 20px
+    }
+}
+@media screen and (max-width: 375px) {
+    .general-search-bar.home-not-loggedIn {
+        padding: 20px 10px 0 10px
+    }
+}
+@media screen and (min-width: 50em) {
+    .general-search-bar.home-not-loggedIn {
+        width: 60%
+    }
+}
+@media screen and (min-width: 90em) {
+    .general-search-bar.home-not-loggedIn {
+        width: 50%
+    }
+}
+.general-search-bar.home-not-loggedIn .search-box {
+    display: table-cell;
+    width: 100%;
+    position: relative;
+    padding-right: 10px;
+    vertical-align: top
+}
+.general-search-bar.home-not-loggedIn .search-box .inside-search-box:after {
+    content: "";
+    float: left;
+    display: block;
+    height: 24px;
+    width: 25px;
+    background-image: none;
+    background-repeat: no-repeat;
+    margin-right: 10px;
+    background-position: -585px -14px;
+    position: absolute;
+    right: 0;
+    top: 10px;
+    opacity: .6
+}
+@media screen and (min-width: 50em) {
+    .general-search-bar.home-not-loggedIn .search-box .inside-search-box:after {
+        right: 5px;
+        top: 13px
+    }
+}
+.general-search-bar.home-not-loggedIn .search-box .inside-search-box .form-box-label input {
+    padding: 10px 15px;
+    width: 100%
+}
+@media screen and (min-width: 50em) {
+    .general-search-bar.home-not-loggedIn .search-box .inside-search-box .form-box-label input {
+        font-size: 1.6em
+    }
+}
+@media screen and (max-width: 40em) {
+    .general-search-bar.home-not-loggedIn .search-tag {
+        display: table-row
+    }
+}
+@media screen and (max-width: 420px) {
+    .general-search-bar.home-not-loggedIn .search-tag {
+        display: none
+    }
+}
+.general-search-bar.home-not-loggedIn .btn {
+    padding: 6px 25px
+}
+.general-search-bar.home-not-loggedIn .btn .search {
+    text-indent: -9999px
+}
+@media screen and (min-width: 50em) {
+    .general-search-bar.home-not-loggedIn .btn .search {
+        text-indent: 0;
+        width: auto;
+        background-image: none;
+        height: auto;
+        padding: 6px;
+        font-weight: 200;
+        text-transform: none;
+        font-size: 1.2em
+    }
+}
+.general-search-bar .dropdown.filter-search {
+    margin-left: 10px;
+    background: #fff;
+    transition: all ease-in-out .6s;
+    -webkit-transition: all ease-in-out .6s
+}
+.general-search-bar .dropdown.filter-search span {
+    transition: all ease-in-out .6s;
+    -webkit-transition: all ease-in-out .6s
+}
+.general-search-bar .dropdown.filter-search span:after {
+    float: none
+}
+.general-search-bar .dropdown.filter-search .hotspot {
+    white-space: nowrap
+}
+.general-search-bar .dropdown.filter-search .hotspot .hasMenu {
+    padding: 12px;
+    background-color: #fff
+}
+.general-search-bar .dropdown.filter-search .hotspot.selected .hasMenu {
+    box-shadow: inset 1px 1px 2px #ccc;
+    background: #f0f0f0
+}
+.general-search-bar .dropdown.filter-search .menu {
+    transition: all ease-in-out .6s;
+    -webkit-transition: all ease-in-out .6s;
+    position: absolute;
+    width: 98%;
+    right: 0;
+    left: 0;
+    margin: 0 auto;
+    max-height: none;
+    z-index: 99;
+    border-top: 0;
+    cursor: auto;
+    box-shadow: 0 1px 5px #ddd
+}
+.general-search-bar .dropdown.filter-search .menu .form-wrapper {
+    transition: all ease-in-out .4s;
+    padding: 10px
+}
+.general-search-bar .dropdown.filter-search .menu .form-wrapper .form-box {
+    padding: 10px
+}
+.general-search-bar .dropdown.filter-search .menu .form-wrapper input[type=text] .general-search-bar .dropdown.filter-search .menu .form-wrapper input[type=password] .general-search-bar .dropdown.filter-search .menu .form-wrapper textarea .general-search-bar .dropdown.filter-search .menu .form-wrapper .hotspot {
+    font-size: inherit
+}
+.general-search-bar .dropdown.filter-search .menu .form-wrapper .dotted-separator {
+    margin-bottom: 0;
+    padding-bottom: 0
+}
+.general-search-bar .dropdown.filter-search .menu .form-wrapper .dotted-separator div .general-search-bar .dropdown.filter-search .menu .form-wrapper .dotted-separator a {
+    display: inline-block;
+    cursor: pointer
+}
+.general-search-bar .dropdown.filter-search .menu .form-wrapper .menu {
+    margin-top: 3px
+}
+.general-search-bar .dropdown.filter-search .menu .form-wrapper .hotspot {
+    background-color: #fff;
+    border-radius: 4px
+}
+.general-search-bar .dropdown.filter-search .menu .form-wrapper .hotspot .hasMenu {
+    border-radius: 4px;
+    white-space: pre-line
+}
+.general-search-bar .dropdown.filter-search .menu .form-wrapper .hotspot .hasMenu:after {
+    display: inline-block
+}
+.general-search-bar .dropdown.filter-search .menu .form-wrapper .btn {
+    float: none
+}
+@media(max-width:64em) {
+    .general-search-bar .dropdown.filter-search .menu {
+        right: 0;
+        width: initial
+    }
+}
+.general-search-bar.activated .segmentation-search {
+    border-top: 1px solid #ddd;
+    background-color: #f0f0f0;
+    height: 55px
+}
+@media screen and (max-width: 960px) {
+    .general-search-bar.activated .segmentation-search {
+        height: auto
+    }
+}
+.general-search-bar.activated .segmentation-search .form-wrapper {
+    padding: 15px;
+    padding-bottom: 0;
+    min-height: 40px
+}
+.general-search-bar.activated .segmentation-search .form-box {
+    padding: 0
+}
+.general-search-bar.activated .segmentation-search .form-box .icon-input {
+    bottom: 6px;
+    margin-right: 0
+}
+@media screen and (max-width: 50em) {
+    .general-search-bar.activated .segmentation-search .form-box .icon-input {
+        bottom: 12px
+    }
+}
+@media screen and (max-width: 50em) {
+    .general-search-bar.activated .segmentation-search .form-box {
+        padding-bottom: 7px
+    }
+}
+.general-search-bar.activated .segmentation-search .contenedor_cursos .form-box {
+    padding: 0 2px 0 6px
+}
+@media screen and (max-width: 50em) {
+    .general-search-bar.activated .segmentation-search .contenedor_cursos .form-box {
+        padding: 0 0 7px 0
+    }
+}
+@media screen and (max-width: 800px) {
+    .general-search-bar.activated .segmentation-search .contenedor_cursos .btn {
+        margin-top: 10px
+    }
+}
+@media screen and (max-width: 960px) {
+    .general-search-bar.activated .segmentation-search .contenedor_cursos {
+        margin: 10px 0
+    }
+    .general-search-bar.activated .segmentation-search .contenedor_cursos .form-box {
+        padding: 0
+    }
+}
+.general-search-bar.activated .content-search-box {
+    background-color: #f0f0f0;
+    padding: 15px
+}
+.general-search-bar.activated .content-search-box .dropdown.filter-search .hotspot {
+    background-color: #f0f0f0
+}
+.general-search-bar.activated .content-search-box .dropdown.filter-search .hotspot .hasMenu {
+    background-color: #fff;
+    transition: all .6s
+}
+.general-search-bar.activated .content-search-box .dropdown.filter-search .hotspot:hover .hasMenu {
+    background-color: #f0f0f0
+}
+.general-search-bar.activated .content-search-box .dropdown.filter-search .hotspot.selected .hasMenu {
+    box-shadow: inset 1px 1px 2px #ccc;
+    background-color: #f0f0f0
+}
+.general-search-bar.activated.without-search-tag {
+    transition: none
+}
+.general-search-bar.activated.without-search-tag .segmentation-search {
+    border: 0;
+    background-color: transparent;
+    transition: none
+}
+.general-search-bar.activated.without-search-tag .segmentation-search .form-wrapper {
+    padding: 0;
+    transition: none
+}
+.general-search-bar.activated.without-search-tag .content-search-box {
+    background-color: transparent;
+    padding: 0;
+    transition: none
+}
+#searchBox {
+    background: #f0f0f0;
+    border: solid 1px #8b8b8b;
+    border-radius: 4px;
+    padding: 10px 7px;
+    width: 255px;
+    box-shadow: 0 2px 5px #8b8b8b;
+    position: absolute;
+    z-index: 10;
+    text-align: left;
+    right: 50px;
+    display: none
+}
+#searchBox .footer {
+    margin-top: 5px
+}
+#searchBox .footer .half {
+    width: 49%;
+    vertical-align: middle
+}
+#searchBox .footer .filters label {
+    display: block;
+    color: #666;
+    line-height: 16px
+}
+#searchBox .footer .filters label input[type="radio"] {
+    margin: 0 2px 5px 0
+}
+#searchBox .searchInput #forum-container .searchInput #popup-event-checkout .right .inputbox .box-price .inputbox .popup-password .inputbox {
+    vertical-align: top;
+    margin: 0 auto;
+    width: 100%
+}
+#forum-container .searchInput {
+    width: auto
+}
+#searchBox .searchInput:focus #forum-container .searchInput:focus .main-body-content .inputbox:focus #popup-event-checkout .left.login .inputbox:focus #popup-event-checkout .right.register .inputbox:focus {
+    border: solid 1px #31A3DD;
+    color: #31A3DD;
+    box-shadow: 0 0 0 #ccc inset
+}
+#searchBox .searchInput.error:focus {
+    border: solid 1px #f00
+}
+/**/
+
+.listing-events {
+    text-align: center;
+    font-size: 14px
+}
+@media screen and (max-width: 640px) {
+    .listing-events {
+        padding: 10px
+    }
+}
+@media screen and (max-width: 360px) {
+    .listing-events {
+        padding: 0px
+    }
+}
+.listing-events a:hover {
+    text-decoration: none
+}
+.listing-events .event {
+    width: 100%;
+    vertical-align: top;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: all .4s;
+    position: relative
+}
+.listing-events .event.new-item-dotted {
+    min-height: 377px
+}
+.listing-events .event.new-item-dotted:hover {
+    background-color: #f5f5f5
+}
+@media(max-width:1080px) {
+    .listing-events .event.new-item-dotted {
+        min-height: 265px
+    }
+}
+.listing-events .event.new-item-dotted span {
+    font-size: 45px
+}
+.listing-events .event.new-item-dotted.only {
+    min-height: 100%;
+    width: 100%
+}
+.listing-events .event.new-item-dotted.only .icon.btn-create-course {
+    margin-top: auto;
+    margin: 10px auto;
+    display: inline-block;
+    vertical-align: middle
+}
+.listing-events .event.new-item-dotted.only span {
+    vertical-align: middle;
+    margin-left: 10px
+}
+.listing-events .event .tags-event {
+    text-align: left;
+    /*position: absolute;*/
+    overflow: hidden;
+   /* bottom: 0;*/
+    left: 0;
+    right: 0;
+    height: 25px; /*45px gg*/
+    background-color: #fff;
+    padding-left: 15px;
+    padding-right: 15px
+}
+.listing-events.gallery .event .tags-event {
+	position: absolute;
+}
+.listing-events.list .event .tags-event {
+	position: initial;
+	vertical-align: top;
+}
+@media screen and (min-width: 50em) {
+    .listing-events .event .tags-event {
+        bottom: 0
+    }
+}
+@media screen and (min-width: 1040px) {
+    .listing-events .event .tags-event {
+        bottom: 5px
+    }
+}
+.listing-events .event .tags-event ul {
+    float: left;
+    height: 29px;
+    white-space: nowrap;
+    margin-bottom: 2px
+}
+.listing-events .event .tags-event ul:after {
+    content: "";
+    height: 29px;
+    display: block;
+    width: 20px;
+    float: none;
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 0;
+    opacity: 1;
+    transition: all .4s;
+   /* background: -moz-linear-gradient(right, #fff 0, rgba(255, 255, 255, 0) 100%);
+    background: -webkit-gradient(linear, right top, left top, color-stop(0%, #fff), color-stop(100%, rgba(255, 255, 255, 0)));
+    background: -webkit-linear-gradient(right, #fff 0, rgba(255, 255, 255, 0) 100%);
+    background: -o-linear-gradient(right, #fff 0, rgba(255, 255, 255, 0) 100%);
+    background: -ms-linear-gradient(right, #fff 0, rgba(255, 255, 255, 0) 100%);
+    background: linear-gradient(to left, #fff 0, rgba(255, 255, 255, 0) 100%);
+    filter: progid: DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#00ffffff', GradientType=1)
+    */
+}
+.listing-events .event .tags-event ul li {
+    display: inline-block;
+    width: auto;
+    padding: 2px;
+    color: #31A3DD;
+    font-size: 12px!important;
+    border: 1px solid #31A3DD;
+    border-radius: 4px;
+    margin-right: 2px;
+}
+.listing-events .event .tags-event ul li:first-child {
+    margin-left: 0;
+    font-size: 0
+}
+.listing-events .event .tags-event ul li:last-child {
+    margin-right: 0;
+    font-size: 0
+}
+.listing-events .event .tags-event .view-more-tags {
+    clear: both;
+    font-size: 10px;
+    margin-left: 2px
+}
+.listing-events .event .tags-event .view-more-tags a {
+    color: #31A3DD
+}
+.listing-events .event .type-event {
+    position: absolute;
+    right: 15px;
+    bottom: 0;
+    padding: 5px 7px;
+    border-radius: 4px;
+    background-color: #666;
+    color: #fff
+}
+@media screen and (max-width: 40em) {
+    .listing-events .event .type-event {
+        bottom: 10px
+    }
+}
+#career-events-container .listing-events .event .type-event {
+    display: none
+}
+.listing-events .event.course .tags-event ul li:first-child {
+	/* celeste, no se usa ahora*/
+    background-color: #31A3DD;
+    border: 1px solid #175028;
+    color: #fff;
+}
+
+.listing-events .event.course .type-event {
+    background-color: #31A3DD;
+    border: 1px solid #175028
+}
+.listing-events .event.career .tags-event ul li:first-child {
+    background-color: #31A3DD;
+    border: 1px solid #2da04f;
+    color: #fff
+}
+.listing-events .event.career .type-event {
+    background-color: #31A3DD;
+    border: 1px solid #2da04f
+}
+.listing-events .event.onetimeevent .tags-event ul li:first-child {
+    background-color: #0b2914;
+    border: 1px solid #06150a;
+    color: #fff
+}
+.listing-events .event.onetimeevent .type-event {
+    background-color: #0b2914;
+    border: 1px solid #06150a
+}
+.listing-events .event .documentList li.selected span.document-name {
+    color: #31A3DD;
+    font-weight: 800
+}
+.listing-events .event.new-item .courses {
+    border-color: #ddd;
+    background-color: rgba(255, 255, 208, 0.61)
+}
+@media screen and (min-width: 50em) {
+    .listing-events.store .tags-event {
+        bottom: 0
+    }
+}
+#store-container .listing-events {
+    padding: 0
+}
+.listing-events.gallery .event {
+    position: relative;
+    height: 440px;
+    width: 301px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    display: inline-block;
+    margin: 10px;
+    background-color: white
+}
+@media screen and (max-width: 1281px) {
+    .listing-events.gallery .event {
+        width: 301px;
+    }
+}
+@media screen and (max-width: 1280px) {
+    .listing-events.gallery .event {
+        height: 410px;
+        width: 31.33%
+    }
+}
+@media screen and (max-width: 1024px) {
+    .listing-events.gallery .event {
+        width: 301px;
+        height: 410px;
+    }
+}
+@media screen and (max-width: 414px) {
+    .listing-events.gallery .event {
+        margin: 10px auto
+    }
+}
+@media screen and (max-width: 375px) {
+    .listing-events.gallery .event {
+        width: 100%;
+        margin: 10px auto
+    }
+}
+@media screen and (max-width: 320px) {
+    .listing-events.gallery .event {
+        min-width: 300px
+    }
+}
+@media screen and (min-width: 360px) {
+    #store-results-container .listing-events.gallery .event {
+        width: 100%
+    }
+}
+@media screen and (min-width: 460px) {
+    #store-results-container .listing-events.gallery .event {
+        /*width: 301px; */
+    }
+}
+.listing-events.gallery .event:hover {
+    -webkit-box-shadow: 0 0 4px 1px #ccc;
+    -moz-box-shadow: 0 0 4px 1px #ccc;
+    box-shadow: 0 0 4px 1px #ccc;
+    border: 1px solid #31A3DD;
+    text-decoration: none
+}
+.listing-events.gallery .event.selected .listing-events.gallery .event:active .listing-events.gallery .event:focus {
+    background: rgba(57, 199, 99, 0.15)
+}
+.listing-events.gallery .event.selected:hover .listing-events.gallery .event:active:hover .listing-events.gallery .event:focus:hover {
+    border: 1px solid #31A3DD;
+    box-shadow: none
+}
+.listing-events.gallery .event input {
+    position: absolute;
+    top: 10px;
+    left: 10px
+}
+.listing-events.gallery .event .event-data-general .image-event {
+    width: 100%;
+    height: 230px;
+    border-radius: 4px 4px 0 0;
+    overflow: hidden;
+    background-color: #f0f0f0;
+    background-repeat: no-repeat
+}
+.listing-events.gallery .event .event-data-general .event-data {
+    text-align: left;
+    overflow: hidden;
+    margin: 10px 15px;
+    height: 123px;
+}
+
+.listing-events.gallery .event .event-data-general .event-data .event-title {
+    font-size: 2em;
+    color: #1c1c1c;
+    font-weight: 600
+}
+@media screen and (min-width: 50em) {
+    .listing-events.gallery .event .event-data-general .event-data .event-title {
+        font-size: 1.2em;
+        line-height: 1em
+    }
+}
+.listing-events.gallery .event .event-data-general .event-data .event-title span { /*label*/
+    color: #c90f0f;
+    font-size: .65em;
+    padding-left: 7px
+}
+.listing-events.gallery .event .event-data-general .event-data .event-short-description {
+    display: block;
+    font-size: 1em;
+    color: #8b8b8b;
+    overflow: hidden;
+    margin-top: 0px;
+    line-height: 15px
+    /*max-height: 4.2rem;*/
+}
+.listing-events.gallery .event .event-data-general .event-data .event-description {
+    display: block;
+    font-size: 1em;
+    color: #8b8b8b;
+    margin-top: 5px;
+    /*line-height: 17px*/
+}
+
+.listing-events.gallery .event .event-data-general .event-data .tags-event {
+    bottom: 43px;
+    /* height: 38px;  gg saco . no se usa*/
+    margin-right: 15px;
+    width: 100%; /* para mover oferta_activa*/
+}
+.listing-events.gallery .event .event-data-general .event-data .tags-event ul {
+    height: 23px;
+    margin-bottom: 0;
+    width: 100%;/* para mover oferta_activa*/
+}
+
+.listing-events.gallery .event .event-data-general .event-data .tags-event ul:after {
+    height: 24px
+}
+@media screen and (max-width: 640px) {
+
+
+    .listing-events.gallery .event .event-data-general .event-data {
+         height: auto; /*gg*/
+    }
+
+    .listing-events.gallery .event .event-data-general .event-data .tags-event {
+        left: 0;
+        padding: 0;
+        position: static;
+        background-color: transparent;
+        margin-right: 0;
+        margin-top: 10px
+    }
+    .listing-events.gallery .event .event-data-general .event-data .tags-event .type-event {
+        position: static;
+        float: left;
+        padding: 2px 5px
+    }
+    .listing-events.gallery .event .event-data-general .event-data .tags-event ul:after {
+        display: none
+    }
+}
+.listing-events.gallery .event .event-price {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    border-top: 1px solid #ddd
+}
+@media(min-width:480px) {
+    .listing-events.gallery .event .event-price {
+        padding: 4px 15px /*7 15 gg*/
+    }
+}
+.listing-events.gallery .event .event-price .show-price {
+    display: block;
+    color: #31A3DD;
+    font-size: 16px;
+    margin: 10px 0
+}
+@media(min-width:480px) {
+    .listing-events.gallery .event .event-price .show-price {
+        float: left;
+        font-size: 1.4em;
+        margin: 0;
+        margin-top: 5px
+    }
+}
+@media(min-width:641px) and (max-width:767px) (min-width:1025px) and (max-width:1200px) {
+    .listing-events.gallery .event .event-price .show-price .progress-bar {
+        width: 100px
+    }
+    .listing-events.gallery .event .event-price .show-price .progress-bar .bar span {
+        width: 100px
+    }
+}
+.listing-events.gallery .event .event-price .btn.primary {
+    padding: 7px 25px;
+    float: right;
+    width: auto;
+    margin-bottom: 0
+}
+@media(max-width:767px) {
+    .listing-events.gallery .event .event-price .btn.primary {
+        font-size: 14px;
+        padding: 7px
+    }
+}
+@media(max-width:800px) {
+    .listing-events.gallery .event .event-price .btn.primary {
+        padding: 7px 15px
+    }
+}
+@media(max-width:480px) {
+    .listing-events.gallery .event .event-price .btn.primary {
+        font-weight: 200;
+        text-transform: none;
+        width: 95%;
+        padding: 10px 0;
+        margin-bottom: 15px
+    }
+}
+.listing-events.gallery .event .event-footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    border-top: 1px solid #ddd;
+    padding: 10px;
+    display: table;
+    width: 100%;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: -ms-flex;
+    display: flex;
+    -webkit-justify-content: space-between;
+    -ms-justify-content: space-between;
+    justify-content: space-between;
+    -webkit-align-items: center;
+    -ms-align-items: center;
+    align-items: center;
+    -webkit-box-align: center;
+    -moz-box-align: center;
+    -ms-flex-align: center;
+    -webkit-flex-flow: row wrap;
+    -webkit-box-pack: justify;
+    -moz-box-pack: justify;
+    -ms-flex-pack: justify
+}
+@media(max-width:40em) {
+    .listing-events.gallery .event .event-footer {
+        padding: 10px
+    }
+}
+.listing-events.gallery .event .event-footer .info-content {
+    display: table-cell
+}
+.listing-events.gallery .event .event-footer .info-content #live-event-progress {
+    border: #ccc solid 1px;
+    border-radius: 4px;
+    padding: 2px
+}
+.listing-events.gallery .event .event-footer .info-content #live-event-progress .progress-bar {
+    width: 120px
+}
+.listing-events.gallery .event .event-footer .info-content #live-event-progress .progress-bar .bar span {
+    width: 120px
+}
+.listing-events.gallery .event .event-footer .btn-content .btn.primary {
+    margin: 0
+}
+@media(max-width:40em) {
+    .listing-events.gallery .event .event-footer .btn-content .btn.primary {
+        padding: 5px;
+        float: right;
+        width: auto
+    }
+}
+.listing-events.gallery .event.details {
+    overflow: hidden
+}
+.listing-events.gallery .event.details input[type="checkbox"] {
+    z-index: 1
+}
+.listing-events.gallery .event.details input[type="checkbox"].select-live-event {
+    -webkit-appearance: none;
+    background-color: #fff;
+    border: 1px solid #666;
+    padding: 7px;
+    border-radius: 2px
+}
+.listing-events.gallery .event.details input[type="checkbox"].select-live-event:active .listing-events.gallery .event.details input[type="checkbox"].select-live-event:checked:active {
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05), inset 0 1px 3px rgba(0, 0, 0, 0.1)
+}
+.listing-events.gallery .event.details input[type="checkbox"].select-live-event:checked {
+    color: #333
+}
+.listing-events.gallery .event.details input[type="checkbox"].select-live-event:checked:after {
+    -ms-filter: "alpha(opacity=0)";
+    filter: alpha(opacity=0);
+    opacity: 1;
+    content: '';
+    position: absolute;
+    width: 7.2px;
+    height: 4px;
+    background: 0;
+    top: 3px;
+    left: 2px;
+    border: 3px solid #31A3DD;
+    border-top: 0;
+    border-right: 0;
+    -webkit-transform: rotate(-45deg);
+    -moz-transform: rotate(-45deg);
+    -o-transform: rotate(-45deg);
+    -ms-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+    border-radius: 1px
+}
+.listing-events.gallery .event.details .event-data-general {
+    position: relative
+}
+.listing-events.gallery .event.details .event-data-general .event-data {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.8);
+    margin: 0;
+    padding: 10px 20px
+}
+.listing-events.gallery .event.details .event-data-general .event-data .title-event {
+    padding: 0;
+    color: white
+}
+.listing-events.gallery .event.details .event-data-general .event-data .event-title {
+    color: #fff
+}
+.listing-events.gallery .event.details .event-information {
+    margin: 0 20px;
+    text-align: left
+}
+@media screen and (max-width: 40em) {
+    .listing-events.gallery .event.details .event-information {
+        margin: 0
+    }
+}
+.listing-events.gallery .event.details .event-information .event-data {
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.8);
+    bottom: calc(100% - 200px);
+    left: 0;
+    right: 0;
+    color: white;
+    padding: 10px 20px
+}
+.listing-events.gallery .event.details .event-information .event-data .event-title {
+    font-size: 1.2em;
+    color: #fff;
+    text-shadow: 1px 2px #000;
+    padding: 0;
+    line-height: 1.2em
+}
+.listing-events.gallery .event.details .event-information .event-data .event-title:hover {
+    text-decoration: underline
+}
+@media screen and (max-width: 40em) {
+    .listing-events.gallery .event.details .event-information ul.event-student-data .listing-events.gallery .event.details .event-information ul.event-admin-data {
+        padding: 0 15px
+    }
+}
+.listing-events.gallery .event.details .event-information ul.event-student-data li .listing-events.gallery .event.details .event-information ul.event-admin-data li {
+    display: block;
+    line-height: 30px;
+    font-size: 16px;
+    color: #666;
+    margin: 2px 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap
+}
+.listing-events.gallery .event.details .event-information ul.event-student-data li:first-child .listing-events.gallery .event.details .event-information ul.event-admin-data li:first-child {
+    margin-top: 10px
+}
+.listing-events.gallery .event.details .event-information ul.event-student-data li.failed .listing-events.gallery .event.details .event-information ul.event-admin-data li.failed {
+    color: #c90f0f
+}
+.listing-events.gallery .event.details .event-information ul.event-student-data li a .listing-events.gallery .event.details .event-information ul.event-admin-data li a {
+    font-size: 16px;
+    padding-right: 10px
+}
+.listing-events.gallery .event.details .event-information ul.event-student-data li a:hover .listing-events.gallery .event.details .event-information ul.event-admin-data li a:hover {
+    text-decoration: underline
+}
+.listing-events.gallery .event.details .event-information ul.event-student-data li .exam:before .listing-events.gallery .event.details .event-information ul.event-admin-data li .exam:before {
+    content: "";
+    float: left;
+    display: block;
+    height: 30px;
+    width: 30px;
+    background-image: none;
+    background-repeat: no-repeat;
+    margin-right: 10px;
+    background-position: -760px -46px;
+    margin-right: 5px
+}
+.listing-events.gallery .event.details .event-information ul.event-student-data li span.event-date:before .listing-events.gallery .event.details .event-information ul.event-admin-data li span.event-date:before {
+    content: "";
+    float: left;
+    display: block;
+    height: 30px;
+    width: 30px;
+    background-image: none;
+    background-repeat: no-repeat;
+    margin-right: 10px;
+    background-position: -618px -48px;
+    margin-right: 5px
+}
+.listing-events.gallery .event.details .event-information ul.event-student-data li .user:before .listing-events.gallery .event.details .event-information ul.event-admin-data li .user:before {
+    content: "";
+    float: left;
+    display: block;
+    height: 30px;
+    width: 30px;
+    background-image: none;
+    background-repeat: no-repeat;
+    margin-right: 10px;
+    background-position: -367px -46px;
+    margin-right: 5px
+}
+.listing-events.gallery .event.details .event-information ul.event-student-data li .forum:before .listing-events.gallery .event.details .event-information ul.event-admin-data li .forum:before {
+    content: "";
+    float: left;
+    display: block;
+    height: 30px;
+    width: 30px;
+    background-image: none;
+    background-repeat: no-repeat;
+    margin-right: 10px;
+    background-position: -654px -46px;
+    margin-right: 5px
+}
+.listing-events.gallery .event.details .event-information ul.event-student-data li .assistance:before .listing-events.gallery .event.details .event-information ul.event-admin-data li .assistance:before {
+    content: "";
+    float: left;
+    display: block;
+    height: 30px;
+    width: 30px;
+    background-image: none;
+    background-repeat: no-repeat;
+    margin-right: 10px;
+    background-position: -1010px -120px;
+    margin-right: 5px
+}
+.listing-events.gallery .event.details .event-information ul.event-student-data li .course:before .listing-events.gallery .event.details .event-information ul.event-admin-data li .course:before {
+    content: "";
+    float: left;
+    display: block;
+    height: 30px;
+    width: 30px;
+    background-image: none;
+    background-repeat: no-repeat;
+    margin-right: 10px;
+    background-position: -81px -47px;
+    margin-right: 5px
+}
+.listing-events.gallery .event.details .event-information ul.event-student-data li .class-in-progress .listing-events.gallery .event.details .event-information ul.event-admin-data li .class-in-progress {
+    font-weight: bold
+}
+.listing-events.gallery .event.details .event-information ul.event-student-data li .class-in-progress a .listing-events.gallery .event.details .event-information ul.event-admin-data li .class-in-progress a {
+    font-weight: initial
+}
+.listing-events.gallery .event.details .event-information .visible-switch-container {
+    border-top: 1px solid #ccc;
+    padding-top: 10px;
+    position: absolute;
+    bottom: 10px;
+    width: 100%;
+    left: 0
+}
+.listing-events.gallery .event.details .event-information .visible-switch-container .switch-button-label {
+    width: auto
+}
+.listing-events.gallery .event.details .event-information .visible-switch-container .switch-button-background {
+    margin-left: 15px
+}
+@media screen and (max-width: 40em) {
+    .listing-events.gallery .event.details .event-information .visible-switch-container {
+        position: static;
+        margin: 10px 0
+    }
+}
+@media screen and (max-width: 50em) {
+    .listing-events.gallery .event {
+        width: 45%;
+        margin: 5px
+    }
+}
+@media screen and (max-width: 40em) {
+    .listing-events.gallery .event {
+        width: 100%;
+        margin: 5px 0;
+        height: auto
+    }
+    .listing-events.gallery .event .image-event {
+        background-size: cover;
+        background-position: center center
+    }
+    .listing-events.gallery .event .event-information .tags-event ul:after {
+        display: none
+    }
+    .listing-events.gallery .event .event-price {
+        position: static;
+        margin-top: 10px;
+        padding: 10px 15px;
+        display: table;
+        table-layout: fixed;
+        width: 100%
+    }
+    .listing-events.gallery .event .event-price .show-price {
+        margin: 0;
+        float: none;
+        text-align: left;
+        width: 50%;
+        display: table-cell;
+        vertical-align: middle
+    }
+    .listing-events.gallery .event .event-price>div {
+        float: none;
+        text-align: right;
+        width: 50%;
+        display: table-cell;
+        vertical-align: middle
+    }
+    .listing-events.gallery .event .event-price:after {
+        clear: both;
+        content: "";
+        display: table
+    }
+    .listing-events.gallery .event .event-price .btn.primary {
+        margin-bottom: 0;
+        text-align: center
+    }
+}
+@media screen and (max-width: 40em) {
+    .listing-events.gallery .event .event-price .show-price {
+        width: 100%;
+        display: block
+    }
+    .listing-events.gallery .event .event-price>div {
+        width: 100%;
+        display: block
+    }
+    .listing-events.gallery .event .event-price .btn.primary {
+        margin-top: 10px;
+        width: 100%
+    }
+}
+.listing-events.gallery .event.trainee:active .listing-events.gallery .event.trainee:focus {
+    background: white
+}
+.listing-events.gallery .event.trainee.details .event-information .tags-event {
+    bottom: 48px;
+    padding-left: 0;
+    padding-right: 0;
+    margin: 0 20px
+}
+.listing-events.gallery .event.trainee .event-price .progress-bar {
+    height: 20px;
+    margin-top: 2px
+}
+.listing-events.gallery .event.trainee .event-price .progress-bar .bar.positive {
+    border-radius: 0
+}
+.listing-events.gallery .event.trainee .event-price .progress-bar .bar.negative {
+    border-radius: 0;
+    background-color: #ccc
+}
+.listing-events.gallery .event.trainee .event-price .progress-bar .bar.ended {
+    border-radius: 0;
+    background-color: #ccc
+}
+.listing-events.gallery .event.trainee .event-price .progress-bar .bar span {
+    font-size: 12px;
+    line-height: 21px
+}
+@media screen and (max-width: 40em) {
+    .listing-events.gallery .event.trainee.details .event-information .tags-event {
+        position: static;
+        margin: 10px 15px
+    }
+}
+.contenedor_cursos .listing-events.gallery .event {
+    width: 30%;
+    max-width: 300px;
+    min-width: 320px
+}
+@media(max-width:1440px) {
+    .contenedor_cursos .listing-events.gallery .event {
+        width: 50%
+    }
+}
+@media(max-width:1280px) {
+    .contenedor_cursos .listing-events.gallery .event {
+        width: 31.33%;
+        max-width: 350px;
+        min-width: 320px;
+    }
+}
+@media(max-width:1080px) {
+    .contenedor_cursos .listing-events.gallery .event {
+        width: 31.33%;
+        max-width: 447px;
+        ;
+        min-width: 320px
+    }
+}
+@media(max-width:750px) {
+    .contenedor_cursos .listing-events.gallery .event {
+        width: 50%;
+        max-width: 447px;
+        ;
+        min-width: 320px
+    }
+}
+@media(max-width:480px) {
+    .contenedor_cursos .listing-events.gallery .event {
+        width: 100%;
+        min-width: auto
+    }
+}
+.listing-events.gallery.related-events {
+    padding: 20px 25px
+}
+@media screen and (max-width: 40em) {
+    .listing-events.gallery.related-events {
+        padding: 0;
+        margin-top: 10px;
+        padding-top: 10px;
+        border-top: 1px solid #ddd
+    }
+}
+.listing-events.gallery.related-events .event {
+    height: auto!important;
+    vertical-align: bottom;
+    transition: width ease-in-out .6s
+}
+.listing-events.gallery.related-events .event .image-event {
+    height: auto;
+    min-height: 200px
+}
+.listing-events.gallery.related-events .event .image-event img {
+    max-width: 100%
+}
+@media only screen and (max-width: 50em) {
+    .listing-events.gallery.related-events .event {
+        vertical-align: text-bottom;
+        text-align: left;
+        display: inline-block;
+        width: 47%;
+        margin: 7px
+    }
+}
+@media only screen and (max-width: 40em) {
+    .listing-events.gallery.related-events .event {
+        display: block;
+        width: auto
+    }
+}
+@media only screen and (max-width: 560px) {
+    .listing-events.gallery.related-events .event {
+        margin: 10px auto
+    }
+}
+.viewMobile .listing-events.gallery.related-events {
+    margin-top: 0;
+    border-top: 0
+}
+.viewMobile .listing-events.gallery.related-events .event .image-event {
+    height: 200px;
+    min-height: initial
+}
+@media screen and (max-width: 64em) {
+    .viewMobile .listing-events.gallery.related-events .event {
+        width: 30%;
+        display: inline-block
+    }
+}
+@media screen and (max-width: 50em) {
+    .viewMobile .listing-events.gallery.related-events .event {
+        width: 47%
+    }
+}
+@media screen and (max-width: 560px) {
+    .viewMobile .listing-events.gallery.related-events .event {
+        width: auto;
+        display: block
+    }
+}
+.listing-events.list .event {
+    height: 100px;
+    border-bottom: 1px solid #ccc;
+    display: table;
+    table-layout: fixed;
+    width: 100%;
+    padding: 10px 0;
+    margin-bottom: 0
+}
+@media screen and (min-width: 40em) {
+    .listing-events.list .event {
+        padding: 10px
+    }
+}
+.listing-events.list .event:hover {
+    background-color: #f0f0f0
+}
+
+.listing-events.list .event:hover .event-data-general .event-data .tags-event ul:after {
+    background-image: none;
+    opacity: 0;
+}
+.listing-events.list .event .event-data-general {
+    display: table-cell;
+    vertical-align: bottom;
+    width: 100%;
+    position: relative
+}
+.listing-events.list .event .event-data-general .image-event {
+    width: 80px;
+    height: 40px;
+    overflow: hidden;
+    background-color: #f0f0f0;
+    float: left;
+    background-size: cover;
+    background-repeat: no-repeat
+}
+@media screen and (min-width: 640px) {
+    .listing-events.list .event .event-data-general .image-event {
+        width: 100px
+    }
+}
+@media screen and (min-width: 50em) {
+    .listing-events.list .event .event-data-general .image-event {
+        width: 140px;
+        height: 70px
+    }
+}
+@media screen and (min-width: 64em) {
+    .listing-events.list .event .event-data-general .image-event {
+        width: 200px;
+        height: 100px
+    }
+}
+.listing-events.list .event .event-data-general .event-data {
+    overflow: hidden;
+   /* position: relative; saco */
+   /* height: 100px;  para que se estire segun texto */
+    text-align: left;
+    padding: 0 5px 0 10px
+}
+@media screen and (min-width: 64em) {
+    .listing-events.list .event .event-data-general .event-data {
+        padding: 0 0 0 15px
+    }
+}
+.listing-events.list .event .event-data-general .event-data .event-title {
+    font-size: 1.2em;
+    color: #1c1c1c;
+    font-weight: 600;
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    /*white-space: nowrap*/
+}
+@media screen and (min-width: 50em) {
+    .listing-events.list .event .event-data-general .event-data .event-title {
+        font-size: 1.2em;
+        line-height: 1.2em
+    }
+}
+@media screen and (min-width: 64em) {
+    .listing-events.list .event .event-data-general .event-data .event-title {
+        text-overflow: clip;
+        white-space: normal;
+        height: 30px
+    }
+}
+.listing-events.list .event .event-data-general .event-data .event-title span {  /*label*/
+    color: #c90f0f;
+    font-size: .65em;
+    padding-left: 7px
+}
+.listing-events.list .event .event-data-general .event-data .event-short-description {
+    display: none
+}
+.listing-events.list .event .event-data-general .event-data .tags-event {
+    bottom: 15px;
+    background-color: transparent;
+    display: table-cell;
+
+}
+@media screen and (max-width: 50em) {
+    .listing-events.list .event .event-data-general .event-data .tags-event {
+        /*height: 36px;     bottom: 12px*/
+
+        height: 45px;
+        bottom: 0px;
+        padding: 1px;
+        text-align: center;
+    }
+}
+@media screen and (min-width: 64em) {
+    .listing-events.list .event .event-data-general .event-data .tags-event {
+        bottom: 0
+    }
+}
+@media screen and (max-width: 50em) {
+    .listing-events.list .event .event-data-general .event-data .tags-event ul {
+        height: 22px
+    }
+}
+@media screen and (max-width: 40em) {
+    .listing-events.list .event .event-information {
+        padding-left: 0
+    }
+}
+.listing-events.list .event .event-price {
+    display: table-cell;
+    width: 100px;
+    vertical-align: middle;
+    text-align: right
+}
+.listing-events.list .event .event-price.inactive {
+    vertical-align: bottom
+}
+.listing-events.list .event .event-price .show-price {
+    display: block;
+    color: #31A3DD;
+    font-size: 1.4em;
+    margin: 10px 0
+}
+@media screen and (max-width: 40em) {
+    .listing-events.list .event .event-price .show-price {
+        font-size: 16px
+    }
+}
+@media screen and (max-width: 50em) {
+    .listing-events.list .event .event-price .show-price {
+        font-size: 1em
+    }
+}
+.listing-events.list .event .event-price .btn.primary {
+    text-transform: none;
+    padding: 10px;
+    margin-bottom: 0;
+    text-align: center
+}
+@media screen and (max-width: 40em) {} .listing-events.list .event.details {
+    background-color:#fff;
+    padding:10px 20px
+}
+.listing-events.list .event.details:hover {
+    cursor: default
+}
+.listing-events.list .event.details .event-data-general {
+    vertical-align: top
+}
+.listing-events.list .event.details .event-information {
+    margin: 0 20px;
+    padding: 0 10px;
+    display: table-cell;
+    text-align: left;
+    width: 100%
+}
+.listing-events.list .event.details .event-information .event-data {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 16px;
+    margin-bottom: 7px
+}
+.listing-events.list .event.details .event-information .event-data:after {
+    clear: both
+}
+@media screen and (max-width: 375px) {
+    .listing-events.list .event.details .event-information .event-data {
+        white-space: normal
+    }
+}
+.listing-events.list .event.details .event-information ul.event-student-data li .listing-events.list .event.details .event-information ul.event-admin-data li {
+    display: inline-block;
+    line-height: 30px;
+    font-size: 16px;
+    color: #666;
+    margin: 2px 0;
+    margin-right: 5px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap
+}
+.listing-events.list .event.details .event-information ul.event-student-data li.failed .listing-events.list .event.details .event-information ul.event-admin-data li.failed {
+    color: #c90f0f
+}
+.listing-events.list .event.details .event-information ul.event-student-data li a .listing-events.list .event.details .event-information ul.event-admin-data li a {
+    font-size: 16px;
+    padding-right: 10px
+}
+.listing-events.list .event.details .event-information ul.event-student-data li a:hover .listing-events.list .event.details .event-information ul.event-admin-data li a:hover {
+    text-decoration: underline
+}
+.listing-events.list .event.details .event-information ul.event-student-data li .user:before .listing-events.list .event.details .event-information ul.event-admin-data li .user:before {
+    content: "";
+    float: left;
+    display: block;
+    height: 30px;
+    width: 30px;
+    background-image: none;
+    background-repeat: no-repeat;
+    margin-right: 10px;
+    background-position: -367px -46px;
+    margin-right: 5px
+}
+.listing-events.list .event.details .event-information ul.event-student-data li .forum:before .listing-events.list .event.details .event-information ul.event-admin-data li .forum:before {
+    content: "";
+    float: left;
+    display: block;
+    height: 30px;
+    width: 30px;
+    background-image: none;
+    background-repeat: no-repeat;
+    margin-right: 10px;
+    background-position: -654px -46px;
+    margin-right: 5px
+}
+.listing-events.list .event.details .event-information ul.event-student-data li .exam:before .listing-events.list .event.details .event-information ul.event-admin-data li .exam:before {
+    content: "";
+    float: left;
+    display: block;
+    height: 30px;
+    width: 30px;
+    background-image: none;
+    background-repeat: no-repeat;
+    margin-right: 10px;
+    background-position: -760px -46px;
+    margin-right: 5px
+}
+.listing-events.list .event.details .event-information ul.event-student-data li span.event-date:before .listing-events.list .event.details .event-information ul.event-admin-data li span.event-date:before {
+    content: "";
+    float: left;
+    display: block;
+    height: 30px;
+    width: 30px;
+    background-image: none;
+    background-repeat: no-repeat;
+    margin-right: 10px;
+    background-position: -618px -48px;
+    margin-right: 5px
+}
+.listing-events.list .event.details .event-information ul.event-student-data li .assistance:before .listing-events.list .event.details .event-information ul.event-admin-data li .assistance:before {
+    content: "";
+    float: left;
+    display: block;
+    height: 30px;
+    width: 30px;
+    background-image: none;
+    background-repeat: no-repeat;
+    margin-right: 10px;
+    background-position: -1010px -120px;
+    margin-right: 5px
+}
+.listing-events.list .event.details .event-information ul.event-student-data li .course:before .listing-events.list .event.details .event-information ul.event-admin-data li .course:before {
+    content: "";
+    float: left;
+    display: block;
+    height: 30px;
+    width: 30px;
+    background-image: none;
+    background-repeat: no-repeat;
+    margin-right: 10px;
+    background-position: -81px -47px;
+    margin-right: 5px
+}
+@media(max-width:1080px) {
+    .listing-events.list .event.details .event-information ul.event-student-data li, .listing-events.list .event.details .event-information ul.event-admin-data li {
+        display: inline-block
+    }
+}
+@media(max-width:690px) {
+    .listing-events.list .event.details .event-information ul.event-student-data li, .listing-events.list .event.details .event-information ul.event-admin-data li {
+        display: block
+    }
+}
+@media screen and (max-width: 40em) {
+    .listing-events.list .event.details .event-information {
+        display: block;
+        width: 100%;
+        padding: 0;
+        margin: 0
+    }
+}
+.listing-events.list .event.details .event-price {
+    vertical-align: top
+}
+@media screen and (max-width: 40em) {
+    .listing-events.list .event.details .event-price {
+        display: table;
+        width: 100%;
+        padding: 0;
+        margin: 0;
+        text-align: center
+    }
+    .listing-events.list .event.details .event-price .show-price {
+        display: table-cell;
+        text-align: left
+    }
+    .listing-events.list .event.details .event-price>div {
+        display: table-cell;
+        text-align: right
+    }
+}
+@media screen and (max-width: 301px) {
+    .listing-events.list .event.details .event-price .show-price {
+        display: block;
+        text-align: center
+    }
+    .listing-events.list .event.details .event-price>div {
+        display: block;
+        text-align: center
+    }
+    .listing-events.list .event.details .event-price>div .btn.primary {
+        padding: 10px 15px!important;
+        font-size: 16px
+    }
+}
+.listing-events.list .event.details.trainee {
+    padding: 10px
+}
+@media screen and (max-width: 40em) {
+    .listing-events.list .event.details.trainee {
+        margin-bottom: 5px;
+        padding-bottom: 20px
+    }
+}
+.listing-events.list .event.details.trainee .event-data-general {
+    width: 270px;
+    height: 135px
+}
+.listing-events.list .event.details.trainee .event-data-general:after {
+    content: "";
+    display: table;
+    clear: both
+}
+.listing-events.list .event.details.trainee .event-data-general .image-event {
+    width: 270px;
+    height: 135px
+}
+@media screen and (max-width: 64em) {
+    .listing-events.list .event.details.trainee .event-data-general {
+        width: 160px
+    }
+    .listing-events.list .event.details.trainee .event-data-general .image-event {
+        width: 160px;
+        background-position: center
+    }
+}
+@media screen and (max-width: 960px) {
+    .listing-events.list .event.details.trainee .event-data-general {
+        display: none
+    }
+}
+.listing-events.list .event.details.trainee .event-information {
+    padding: 5px 15px;
+    position: relative
+}
+@media screen and (max-width: 64em) {
+    .listing-events.list .event.details.trainee .event-information {
+        padding: 5px 10px
+    }
+}
+@media screen and (max-width: 40em) {
+    .listing-events.list .event.details.trainee .event-information {
+        padding: 5px 0
+    }
+}
+.listing-events.list .event.details.trainee .event-information .event-data {
+    font-size: 1.4em;
+    margin-bottom: 0
+}
+.listing-events.list .event.details.trainee .event-information .event-data a {
+    color: #333
+}
+.listing-events.list .event.details.trainee .event-information .event-data a:hover {
+    text-decoration: underline
+}
+.listing-events.list .event.details.trainee .event-information ul.event-student-data {
+    padding: 5px 0;
+    font-size: 0
+}
+.listing-events.list .event.details.trainee .event-information ul.event-student-data li {
+    margin: 2px 20px 2px 0;
+    width: 35%
+}
+@media screen and (max-width: 80em) {
+    .listing-events.list .event.details.trainee .event-information ul.event-student-data li {
+        margin-right: 10px;
+        width: 45%
+    }
+}
+@media screen and (max-width: 840px) {
+    .listing-events.list .event.details.trainee .event-information ul.event-student-data li {
+        width: 100%
+    }
+}
+@media screen and (max-width: 40em) {
+    .listing-events.list .event.details.trainee .event-information ul.event-student-data li {
+        width: 45%
+    }
+}
+@media screen and (max-width: 440px) {
+    .listing-events.list .event.details.trainee .event-information ul.event-student-data li {
+        width: 100%
+    }
+}
+.listing-events.list .event.details.trainee .event-information ul.event-student-data li:nth-child(2) .listing-events.list .event.details.trainee .event-information ul.event-student-data li:nth-child(4) {
+    width: 60%
+}
+@media screen and (max-width: 1600px) {
+    .listing-events.list .event.details.trainee .event-information ul.event-student-data li:nth-child(2) .listing-events.list .event.details.trainee .event-information ul.event-student-data li:nth-child(4) {
+        width: 50%
+    }
+}
+@media screen and (max-width: 80em) {
+    .listing-events.list .event.details.trainee .event-information ul.event-student-data li:nth-child(2) .listing-events.list .event.details.trainee .event-information ul.event-student-data li:nth-child(4) {
+        width: 45%
+    }
+}
+@media screen and (max-width: 840px) {
+    .listing-events.list .event.details.trainee .event-information ul.event-student-data li:nth-child(2) .listing-events.list .event.details.trainee .event-information ul.event-student-data li:nth-child(4) {
+        width: 100%
+    }
+}
+@media screen and (max-width: 40em) {
+    .listing-events.list .event.details.trainee .event-information ul.event-student-data li:nth-child(2) .listing-events.list .event.details.trainee .event-information ul.event-student-data li:nth-child(4) {
+        width: 45%
+    }
+}
+@media screen and (max-width: 440px) {
+    .listing-events.list .event.details.trainee .event-information ul.event-student-data li:nth-child(2) .listing-events.list .event.details.trainee .event-information ul.event-student-data li:nth-child(4) {
+        width: 100%
+    }
+}
+@media screen and (max-width: 301px) {
+    .listing-events.list .event.details.trainee .event-information ul.event-student-data {
+        margin: 10px 0
+    }
+    .listing-events.list .event.details.trainee .event-information ul.event-student-data li {
+        margin: 5px 0
+    }
+}
+.listing-events.list .event.details.trainee .event-information .tags-event {
+    left: 20px;
+    padding: 0;
+    background-color: transparent;
+    height: 22px;
+    width: 95%;
+    position: static
+}
+@media screen and (max-width: 64em) {
+    .listing-events.list .event.details.trainee .event-information .tags-event {
+        position: static
+    }
+}
+@media screen and (max-width: 960px) {
+    .listing-events.list .event.details.trainee .event-information .tags-event {
+        height: auto
+    }
+}
+.listing-events.list .event.details.trainee .event-information .tags-event .type-event {
+    position: static;
+    float: left;
+    padding: 2px 5px
+}
+.listing-events.list .event.details.trainee .event-information .tags-event ul {
+    height: 22px;
+    margin-bottom: 0
+}
+.listing-events.list .event.details.trainee .event-information .tags-event ul:after {
+    display: none
+}
+@media screen and (max-width: 960px) {
+    .listing-events.list .event.details.trainee .event-information .tags-event ul {
+        height: auto;
+        white-space: normal
+    }
+    .listing-events.list .event.details.trainee .event-information .tags-event ul li {
+        margin-top: 4px
+    }
+}
+.listing-events.list .event.details.trainee .event-information .progress-circle {
+    width: 70px;
+    height: 70px;
+    position: absolute;
+    right: 0;
+    bottom: 0
+}
+.listing-events.list .event.details.trainee .event-information .progress-circle svg text {
+    font-size: 10px
+}
+#career-events-container .listing-events.list .event.details.trainee .event-information .progress-circle {
+    bottom: 5px
+}
+.listing-events.list .event.details.trainee .event-price {
+    width: 250px;
+    vertical-align: middle;
+    text-align: center;
+    border-left: 1px solid #f0f0f0
+}
+.listing-events.list .event.details.trainee .event-price .show-price {
+    font-size: 14px!important;
+    margin: 0
+}
+.listing-events.list .event.details.trainee .event-price .show-price #live-event-progress {
+    margin: 10px 0 20px
+}
+.listing-events.list .event.details.trainee .event-price .show-price #live-event-progress .progress-bar {
+    text-align: right;
+    display: inline-block
+}
+.listing-events.list .event.details.trainee .event-price .show-price #live-event-progress .progress-bar .bar {
+    border-radius: 0
+}
+.listing-events.list .event.details.trainee .event-price .show-price #live-event-progress .progress-bar .bar.negative {
+    background-color: #f0f0f0
+}
+.listing-events.list .event.details.trainee .event-price .btn .primary {
+    padding: 8px 16px
+}
+#career-events-container .listing-events.list .event.details.trainee .event-price .btn.primary {
+    padding: 5px
+}
+@media screen and (max-width: 64em) {
+    .listing-events.list .event.details.trainee .event-price {
+        width: 180px
+    }
+}
+@media screen and (max-width: 40em) {
+    .listing-events.list .event.details.trainee .event-price {
+        width: 100%;
+        margin-top: 10px;
+        padding-top: 10px;
+        border-top: 1px solid #f0f0f0;
+        border-left: 0
+    }
+}
+@media screen and (max-width: 441px) {
+    .listing-events.list .event {
+        height: auto
+    }
+    .listing-events.list .event .event-data-general {
+        display: block
+    }
+    @media screen and (max-width: 301px) { /* la imagen no la muestra si es muuuy chiquito */
+	    .listing-events.list .event .event-data-general .image-event {
+	        display: none
+	    }
+	}
+    .listing-events.list .event .event-data-general .event-data {
+        height: auto;
+        padding: 0 10px
+    }
+    .listing-events.list .event .event-data-general .event-data .event-title {
+        margin-top: 5px;
+        overflow: inherit;
+        text-overflow: unset;
+        white-space: normal;
+        font-size: 16px
+    }
+    .listing-events.list .event .event-data-general .event-data .tags-event {
+        position: static;
+        padding: 0;
+        margin: 7px 0
+    }
+    .listing-events.list .event .event-data-general .event-data .tags-event ul:after {
+        display: none
+    }
+    .listing-events.list .event .event-price {
+        display: table;
+        table-layout: fixed;
+        width: 100%;
+        padding: 0 10px
+    }
+    .listing-events.list .event .event-price .show-price {
+        display: table-cell;
+        text-align: left
+    }
+    .listing-events.list .event .event-price .btn {
+        padding: 5px 10px!important;
+        font-size: 14px
+    }
+    .listing-events.list .event .event-price .btn.primary {
+        margin-bottom: 0;
+
+
+    }
+}
+.contenedor_cursos .listing-events.list .event .event-data-general {
+    vertical-align: middle
+}
+.contenedor_cursos .listing-events.list .event .event-data-general .image-event {
+    width: 200px;
+    height: 100px;
+    overflow: hidden;
+    background-color: #f0f0f0;
+    float: left;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat
+}
+@media screen and (max-width: 50em) {
+    .contenedor_cursos .listing-events.list .event .event-data-general .image-event {
+        width: 80px;
+        height: 100px
+    }
+    .contenedor_cursos .listing-events.list .event .event-data-general .image-event img {
+        height: 100%;
+        width: auto
+    }
+}
+@media screen and (min-width: 64em) {
+    .contenedor_cursos .listing-events.list .event .event-data-general .event-data {
+        overflow: hidden
+    }
+}

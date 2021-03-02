@@ -1,0 +1,18 @@
+/*CSS*/
+
+img.logo_cards {
+    width: 70px;
+    height: 70px;
+}
+
+img.logo_pv {
+    max-height: 50px;
+}
+
+.rsp_hide {
+    display: none;
+}
+
+.rsp_show {
+    display: block;
+}

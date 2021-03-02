@@ -1,0 +1,9 @@
+Estimado(a):<br />  
+[[nombre]]<br /> 
+<br /><br />
+Su Transacción ha sido procesada con éxito: [[item]]<br /><br />
+Precio cancelado: USD [[monto]] <br />
+Número de Autorización: [[codautorizacion]] <br />
+Operacion: [[resultadoAuto]] <br />
+<br/><br/> Gracias por utilizar nuestro servicio. <br/>UTEG
+

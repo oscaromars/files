@@ -1,0 +1,8 @@
+<strong>Hola [[nombres]] [[apellidos]],</strong>
+<br /><br />
+Se ha creado una cuenta en www.uteg.edu.ec con el nombre de usuario <strong>[[correo]]</strong>, ahora es necesario definir una clave de acceso mediante el siguiente enlace:<br/>
+<a href='[[link_asgard]]' target='_blank'>[[link_asgard]]</a><br/>
+<br/>
+Si usted tiene alguna duda favor contáctese con el administrador por medio de <a href="mailto:[[webmail]]">[[webmail]]</a>
+<br /><br /><br />
+<strong>Atte. Soporte Uteg</strong>

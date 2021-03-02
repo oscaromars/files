@@ -1,0 +1,28 @@
+<strong>Estimado, </strong>
+<br /><br />
+Gracias por completar el formulario de pre-inscripción en nuestro sitio web con los siguientes datos:
+<br /><br />
+Primer Nombre: [[primer_nombre]] <br />
+Segundo Nombre: [[segundo_nombre]]  <br />
+Primer Apellido: [[primer_apellido]] <br />
+Segundo Apellido: [[segundo_apellido]] <br />
+Tipo de documento de identidad: [[dni]] <br />
+No. documento: [[numero_dni]] <br />
+País:  [[pais]] <br />
+Ciudad: [[ciudad]] <br />
+Número teléfono celular [[celular]] <br />
+Correo electrónico [[mail]] <br />
+Nivel de estudios [[nivel]] <br />
+Carrera de interés / Programa de interés / curso de interés [[carrera]] <br />
+Método de ingreso a la universidad [[metodo]] <br />
+¿Cómo nos conoció? [[conocio]] <br />
+<br /><br />
+Como archivo adjunto usted encontrará más información acerca del proceso <br />
+de admisión y nivelación. Acceda al siguiente enlace para continuar con el <br />
+proceso de inscripción al curso de nivelación o examen de admisión, según <br />
+usted haya escogido<br /><br /> 
+Usted se ha registrado en www.uteg.edu.ec con el nombre de usuario <strong>[[username]]</strong>. Para activar su cuenta, deberá utilizar el enlace proporcionado a continuación:
+<a href='[[link_verification]]' target='_blank'>[[link_verification]]</a>
+<br /><br /><br />
+Saludos cordiales,<br /><br />
+<strong>Decanato Online</strong>

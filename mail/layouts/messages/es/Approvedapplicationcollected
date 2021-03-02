@@ -1,0 +1,14 @@
+Señores Colecturía:
+<br/><br/>
+Se le notifica que se ha realizado una solicitud para el aspirante [[nombres_completos]] en [[unidad]] [[modalidad]].
+<br /> <br /> 
+Los datos de la factura son los siguientes:<br /> 
+Nombre: [[nombre]]<br /> 
+Apellidos: [[apellido]]<br /> 
+Tipo Dni: [[tipoDNI]]<br /> 
+Dni: [[identificacion]]<br /> 
+Dirección: [[direccion]]<br /> 
+Telefono: [[telefono]]<br /> 
+
+<br/><br/>
+Gracias.

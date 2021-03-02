@@ -1,0 +1,14 @@
+<strong>Dear [[user]],</strong>
+<br /><br />
+Your transaction for a value of <strong>[[currency]][[price]]</strong> has been <strong>APPROVED</strong>.
+<br /><br />
+The information of transaction was:<br />
+<strong>Order: </strong>[[order]].<br />
+<strong>Date: </strong>[[date]].<br />
+<strong>Subjet: </strong>[[subject]].<br />
+<strong>Price: </strong>[[currency]][[price]].<br />
+<strong>Status: </strong>APPROVED.<br />
+<br /><br />
+<strong><em>This email was generated automatically and does not require a response.</em></strong>
+<br /><br /><br />
+<strong>Atte. Support Uteg</strong>

@@ -1,0 +1,16 @@
+<strong>Estimado [[user]],</strong>
+<br /><br />
+Su transaccion por un valor de <strong>[[currency]][[price]]</strong> esta <strong>PENDIENTE</strong>.
+<br /><br />
+La informacion de la Transacción fue:<br />
+<strong>Orden: </strong>[[order]].<br />
+<strong>Fecha: </strong>[[date]].<br />
+<strong>Curso: </strong>[[subject]].<br />
+<strong>Monto: </strong>[[currency]][[price]].<br />
+<strong>Estado: </strong>RECHAZADO.<br />
+<br /><br />
+<strong>Por favor, la transacción se está procesando actualmente. No intente nuevamente una nueva solicitud de pago.</strong>
+<br /><br />
+<strong><em>Este correo fue generado de forma automática y no requiere respuesta.</em></strong>
+<br /><br /><br />
+<strong>Atte. Support Uteg</strong>

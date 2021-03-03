@@ -5,10 +5,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-/*
-  Created on : 23/04/2018
-  Author     : Diana Lopez
- */
 
 namespace app\widgets\PbSearchBox;
 
@@ -17,6 +13,7 @@ use yii\base\Widget;
 use yii\helpers\Html;
 use yii\jui\AutoComplete;
 use yii\web\JsExpression;
+use yii\web\View;
 
 class PbSearchBox extends Widget {
 
@@ -85,7 +82,7 @@ class PbSearchBox extends Widget {
                             }"),*/
                             'select' => new JsExpression(
                                 'function(event, ui) {
-                                    '.$this->callbackListSelected.'(ui.item.id, ui.item.value);
+                                    '.$this->callbackListSelected.'(ui.item.id, ui.item.value, ui.item);
                                 }'),
                             'focus' => new JsExpression('function() { return false; }'),
                             'minLength'=>'2',
@@ -103,7 +100,7 @@ class PbSearchBox extends Widget {
     public function registerClientScript() {
         $script = '';
         $view = $this->getView();
-        $view->registerJs($script, View::POS_HEAD, $id);
+        $view->registerJs($script, View::POS_HEAD, 'Pbsearchboxscr');
     }
 
     public function getParamSource($params, $type) {

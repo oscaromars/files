@@ -22,11 +22,7 @@ class QR
         $this->decompose();
     }
 
-<<<<<<< HEAD
     public function getHouseholdVectors(): Matrix
-=======
-    public function getHouseholdVectors()
->>>>>>> 3969f7788d58140d0538f44130a6184fdf989a37
     {
         $householdVectors = [];
         for ($row = 0; $row < $this->rows; ++$row) {
@@ -42,11 +38,7 @@ class QR
         return new Matrix($householdVectors);
     }
 
-<<<<<<< HEAD
     public function getQ(): Matrix
-=======
-    public function getQ()
->>>>>>> 3969f7788d58140d0538f44130a6184fdf989a37
     {
         $qGrid = [];
 
@@ -85,26 +77,16 @@ class QR
         return new Matrix($qGrid);
     }
 
-<<<<<<< HEAD
     public function getR(): Matrix
-=======
-    public function getR()
->>>>>>> 3969f7788d58140d0538f44130a6184fdf989a37
     {
         $rGrid = [];
 
         for ($row = 0; $row < $this->columns; ++$row) {
             for ($column = 0; $column < $this->columns; ++$column) {
                 if ($row < $column) {
-<<<<<<< HEAD
                     $rGrid[$row][$column] = $this->qrMatrix[$row][$column] ?? 0.0;
                 } elseif ($row === $column) {
                     $rGrid[$row][$column] = $this->rDiagonal[$row] ?? 0.0;
-=======
-                    $rGrid[$row][$column] = isset($this->qrMatrix[$row][$column]) ? $this->qrMatrix[$row][$column] : 0.0;
-                } elseif ($row === $column) {
-                    $rGrid[$row][$column] = isset($this->rDiagonal[$row]) ? $this->rDiagonal[$row] : 0.0;
->>>>>>> 3969f7788d58140d0538f44130a6184fdf989a37
                 } else {
                     $rGrid[$row][$column] = 0.0;
                 }
@@ -118,11 +100,7 @@ class QR
         return new Matrix($rGrid);
     }
 
-<<<<<<< HEAD
     private function hypo($a, $b): float
-=======
-    private function hypo($a, $b)
->>>>>>> 3969f7788d58140d0538f44130a6184fdf989a37
     {
         if (abs($a) > abs($b)) {
             $r = $b / $a;
@@ -140,11 +118,7 @@ class QR
     /**
      * QR Decomposition computed by Householder reflections.
      */
-<<<<<<< HEAD
     private function decompose(): void
-=======
-    private function decompose()
->>>>>>> 3969f7788d58140d0538f44130a6184fdf989a37
     {
         for ($k = 0; $k < $this->columns; ++$k) {
             // Compute 2-norm of k-th column without under/overflow.
@@ -177,14 +151,7 @@ class QR
         }
     }
 
-<<<<<<< HEAD
     public function isFullRank(): bool
-=======
-    /**
-     * @return bool
-     */
-    public function isFullRank()
->>>>>>> 3969f7788d58140d0538f44130a6184fdf989a37
     {
         for ($j = 0; $j < $this->columns; ++$j) {
             if ($this->rDiagonal[$j] == 0.0) {
@@ -204,11 +171,7 @@ class QR
      *
      * @return Matrix matrix that minimizes the two norm of Q*R*X-B
      */
-<<<<<<< HEAD
     public function solve(Matrix $B): Matrix
-=======
-    public function solve(Matrix $B)
->>>>>>> 3969f7788d58140d0538f44130a6184fdf989a37
     {
         if ($B->rows !== $this->rows) {
             throw new Exception('Matrix row dimensions are not equal');

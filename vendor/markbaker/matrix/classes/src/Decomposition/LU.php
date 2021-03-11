@@ -27,11 +27,7 @@ class LU
      *
      * @return Matrix Lower triangular factor
      */
-<<<<<<< HEAD
     public function getL(): Matrix
-=======
-    public function getL()
->>>>>>> 3969f7788d58140d0538f44130a6184fdf989a37
     {
         $lower = [];
 
@@ -56,11 +52,7 @@ class LU
      *
      * @return Matrix Upper triangular factor
      */
-<<<<<<< HEAD
     public function getU(): Matrix
-=======
-    public function getU()
->>>>>>> 3969f7788d58140d0538f44130a6184fdf989a37
     {
         $upper = [];
 
@@ -83,11 +75,7 @@ class LU
      *
      * @return Matrix Pivot matrix
      */
-<<<<<<< HEAD
     public function getP(): Matrix
-=======
-    public function getP()
->>>>>>> 3969f7788d58140d0538f44130a6184fdf989a37
     {
         $pMatrix = [];
 
@@ -106,11 +94,7 @@ class LU
      *
      * @return array Pivot vector
      */
-<<<<<<< HEAD
     public function getPivot(): array
-=======
-    public function getPivot()
->>>>>>> 3969f7788d58140d0538f44130a6184fdf989a37
     {
         return $this->pivot;
     }
@@ -120,11 +104,7 @@ class LU
      *
      * @return bool true if U, and hence A, is nonsingular
      */
-<<<<<<< HEAD
     public function isNonsingular(): bool
-=======
-    public function isNonsingular()
->>>>>>> 3969f7788d58140d0538f44130a6184fdf989a37
     {
         for ($diagonal = 0; $diagonal < $this->columns; ++$diagonal) {
             if ($this->luMatrix[$diagonal][$diagonal] === 0.0) {
@@ -135,11 +115,7 @@ class LU
         return true;
     }
 
-<<<<<<< HEAD
     private function buildPivot(): void
-=======
-    private function buildPivot()
->>>>>>> 3969f7788d58140d0538f44130a6184fdf989a37
     {
         for ($row = 0; $row < $this->rows; ++$row) {
             $this->pivot[$row] = $row;
@@ -161,11 +137,7 @@ class LU
         }
     }
 
-<<<<<<< HEAD
     private function localisedReferenceColumn($column): array
-=======
-    private function localisedReferenceColumn($column)
->>>>>>> 3969f7788d58140d0538f44130a6184fdf989a37
     {
         $luColumn = [];
 
@@ -176,11 +148,7 @@ class LU
         return $luColumn;
     }
 
-<<<<<<< HEAD
     private function applyTransformations($column, array $luColumn): void
-=======
-    private function applyTransformations($column, array $luColumn)
->>>>>>> 3969f7788d58140d0538f44130a6184fdf989a37
     {
         for ($row = 0; $row < $this->rows; ++$row) {
             $luRow = $this->luMatrix[$row];
@@ -194,11 +162,7 @@ class LU
         }
     }
 
-<<<<<<< HEAD
     private function findPivot($column, array $luColumn): int
-=======
-    private function findPivot($column, array $luColumn)
->>>>>>> 3969f7788d58140d0538f44130a6184fdf989a37
     {
         $pivot = $column;
         for ($row = $column + 1; $row < $this->rows; ++$row) {
@@ -210,11 +174,7 @@ class LU
         return $pivot;
     }
 
-<<<<<<< HEAD
     private function pivotExchange($pivot, $column): void
-=======
-    private function pivotExchange($pivot, $column)
->>>>>>> 3969f7788d58140d0538f44130a6184fdf989a37
     {
         for ($kValue = 0; $kValue < $this->columns; ++$kValue) {
             $tValue = $this->luMatrix[$pivot][$kValue];
@@ -227,11 +187,7 @@ class LU
         $this->pivot[$column] = $lValue;
     }
 
-<<<<<<< HEAD
     private function computeMultipliers($diagonal): void
-=======
-    private function computeMultipliers($diagonal)
->>>>>>> 3969f7788d58140d0538f44130a6184fdf989a37
     {
         if (($diagonal < $this->rows) && ($this->luMatrix[$diagonal][$diagonal] != 0.0)) {
             for ($row = $diagonal + 1; $row < $this->rows; ++$row) {
@@ -240,11 +196,7 @@ class LU
         }
     }
 
-<<<<<<< HEAD
     private function pivotB(Matrix $B): array
-=======
-    private function pivotB(Matrix $B)
->>>>>>> 3969f7788d58140d0538f44130a6184fdf989a37
     {
         $X = [];
         foreach ($this->pivot as $rowId) {
@@ -264,11 +216,7 @@ class LU
      *
      * @return Matrix X so that L*U*X = B(piv,:)
      */
-<<<<<<< HEAD
     public function solve(Matrix $B): Matrix
-=======
-    public function solve(Matrix $B)
->>>>>>> 3969f7788d58140d0538f44130a6184fdf989a37
     {
         if ($B->rows !== $this->rows) {
             throw new Exception('Matrix row dimensions are not equal');

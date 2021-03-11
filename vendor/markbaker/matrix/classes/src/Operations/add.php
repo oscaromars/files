@@ -19,11 +19,7 @@ use Matrix\Operators\Addition;
  * @return Matrix
  * @throws Exception
  */
-<<<<<<< HEAD
 function add(...$matrixValues): Matrix
-=======
-function add(...$matrixValues)
->>>>>>> 3969f7788d58140d0538f44130a6184fdf989a37
 {
     if (count($matrixValues) < 2) {
         throw new Exception('Addition operation requires at least 2 arguments');

@@ -17,11 +17,7 @@ namespace Matrix;
  * @return float Matrix determinant
  * @throws Exception If argument isn't a valid matrix or array.
  */
-<<<<<<< HEAD
 function determinant($matrix): float
-=======
-function determinant($matrix)
->>>>>>> 3969f7788d58140d0538f44130a6184fdf989a37
 {
     if (is_array($matrix)) {
         $matrix = new Matrix($matrix);

@@ -6,20 +6,12 @@ jobs:
     strategy:
       matrix:
         php-version:
-<<<<<<< HEAD
-=======
-          - '5.6'
-          - '7.0'
->>>>>>> 3969f7788d58140d0538f44130a6184fdf989a37
           - '7.1'
           - '7.2'
           - '7.3'
           - '7.4'
-<<<<<<< HEAD
           - '8.0'
           - '8.1'
-=======
->>>>>>> 3969f7788d58140d0538f44130a6184fdf989a37
 
     name: PHP ${{ matrix.php-version }}
 
@@ -45,15 +37,12 @@ jobs:
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: ${{ runner.os }}-composer-
 
-<<<<<<< HEAD
       - name: Set composer flags
         id: composer-lock
         if: ${{ matrix.php-version == '8.0' || matrix.php-version == '8.1' }}
         run: |
           echo "::set-output name=flags::--ignore-platform-reqs"
 
-=======
->>>>>>> 3969f7788d58140d0538f44130a6184fdf989a37
       - name: Install dependencies
         run: composer install --no-progress --prefer-dist --optimize-autoloader ${{ steps.composer-lock.outputs.flags }}
 

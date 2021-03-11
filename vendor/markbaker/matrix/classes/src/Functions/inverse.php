@@ -17,11 +17,7 @@ namespace Matrix;
  * @return Matrix The new matrix
  * @throws Exception If argument isn't a valid matrix or array.
  */
-<<<<<<< HEAD
 function inverse($matrix): Matrix
-=======
-function inverse($matrix)
->>>>>>> 3969f7788d58140d0538f44130a6184fdf989a37
 {
     if (is_array($matrix)) {
         $matrix = new Matrix($matrix);

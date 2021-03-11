@@ -743,3 +743,39 @@ create table db_facturacion.carga_cartera(
   `ccar_fecha_modificacion` timestamp null default null,
   `ccar_estado_logico` varchar(1) not null
   );
+
+
+-- -------------------------------------------------------------
+--
+-- Estructura de tabla para la tabla `bancos`
+-- -------------------------------------------------------------
+create table bancos(
+  `ban_id` bigint(20) not null auto_increment primary key,
+  `ban_nombre` varchar(200) not null,  
+  `ban_descripcion` varchar(200) not null,   
+  `ban_activo` varchar(1) not null,
+  `ban_usu_ingreso` bigint(20) not null,    
+  `ban_usu_modifica` bigint(20) null, 
+  `ban_estado` varchar(1) not null,
+  `ban_fecha_creacion` timestamp not null default current_timestamp,
+  `ban_fecha_modificacion` timestamp null default null,
+  `ban_estado_logico` varchar(1) not null
+  );
+
+-- -------------------------------------------------------------
+--
+-- Estructura de tabla para la tabla `referencia_bancos`
+-- -------------------------------------------------------------
+create table referencia_bancos(
+  `rban_id` bigint(20) not null auto_increment primary key,
+  `ban_id` bigint(20) not null,
+  `rban_referencia` varchar(100) not null,    
+  `rban_usu_ingreso` bigint(20) not null,    
+  `rban_usu_modifica` bigint(20) null, 
+  `rban_estado` varchar(1) not null,
+  `rban_fecha_creacion` timestamp not null default current_timestamp,
+  `rban_fecha_modificacion` timestamp null default null,
+  `rban_estado_logico` varchar(1) not null,
+   foreign key (ban_id) references `bancos`(ban_id)
+  );
+

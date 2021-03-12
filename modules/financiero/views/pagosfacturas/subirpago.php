@@ -172,7 +172,7 @@ $this->registerJs("
             <div class="form-group">
                 <label class="col-xs-12 col-sm-12 col-md-5 col-lg-5 control-label" for="txt_valor"> <?= Pagos::t("Pagos", "Value") ?><span class="text-danger"> * </span></label>
                 <div   class="col-xs-12 col-sm-12 col-md-7 col-lg-7">
-                    <input readonly type="text" class="form-control PBvalidation keyupmce" value="" id="txt_valor" data-type="dinero" placeholder="<?= Pagos::t("Pagos", "Value") ?>">
+                    <input type="text" class="form-control PBvalidation keyupmce" value="" id="txt_valor" data-type="dinero" placeholder="<?= Pagos::t("Pagos", "Value") ?>">
                 </div>
             </div>                                        
         </div>
@@ -399,10 +399,22 @@ $this->registerJs("
                     'value' => 'F_VEN_D',
                 ],
                 [
+                    'attribute' => 'Abono',
+                    'header' => Pagos::t("Pagos", "Abono"),
+                    'value' => 'abono',
+                ],
+                [
+                    'attribute' => 'Saldo',
+                    'header' => Pagos::t("Pagos", "Saldo"),
+                    'value' => 'saldo',
+                ],
+                /*
+                [
                     'attribute' => 'cantidad',
                     'header' => Pagos::t("Pagos", "Amount Fees"),
                     'value' => 'cantidad',
                 ],
+                */
                 [
                     'class' => 'yii\grid\ActionColumn',
                     'header' => Academico::t("matriculacion", "Select"),

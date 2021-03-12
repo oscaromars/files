@@ -5,36 +5,39 @@ use yii\data\ArrayDataProvider;
 use Yii;
 use app\models\Utilities;
 use app\modules\academico\models\Estudiante;
+
 /**
  * This is the model class for table "carga_cartera".
  *
  * @property int $ccar_id
- * @property string|null $ccar_punto
- * @property string|null $ccar_caja
+ * @property string $ccar_punto
+ * @property string $ccar_caja
  * @property int $est_id
  * @property string $ccar_tipo_documento
  * @property string $ccar_numero_documento
- * @property string|null $ccar_documento_identidad
+ * @property string $ccar_documento_identidad
  * @property string $ccar_forma_pago
  * @property string $ccar_num_cuota
- * @property string|null $ccar_fecha_factura
- * @property string|null $ccar_fecha_vencepago
- * @property int|null $ccar_dias_plazo
- * @property float|null $ccar_valor_factura
- * @property string|null $ccar_fecha_pago
- * @property float|null $ccar_retencion_fuente
- * @property float|null $ccar_retencion_iva
- * @property string|null $ccar_numero_retencion
- * @property string|null $ccar_valor_iva
+ * @property string $ccar_fecha_factura
+ * @property string $ccar_fecha_vencepago
+ * @property int $ccar_dias_plazo
+ * @property double $ccar_valor_cuota
+ * @property double $ccar_valor_factura
+ * @property string $ccar_fecha_pago
+ * @property double $ccar_retencion_fuente
+ * @property double $ccar_retencion_iva
+ * @property string $ccar_numero_retencion
+ * @property string $ccar_valor_iva
  * @property string $ccar_estado_cancela
- * @property int|null $ccar_codigo_cobrador
- * @property string|null $ccar_fecha_aprueba_rechaza
- * @property int|null $ccar_usu_aprueba_rechaza
+ * @property int $ccar_codigo_cobrador
+ * @property string $ccar_fecha_aprueba_rechaza
+ * @property int $ccar_usu_aprueba_rechaza
  * @property int $ccar_usu_ingreso
- * @property int|null $ccar_usu_modifica
+ * @property int $ccar_usu_modifica
  * @property string $ccar_estado
+ * @property double $ccar_abono
  * @property string $ccar_fecha_creacion
- * @property string|null $ccar_fecha_modificacion
+ * @property string $ccar_fecha_modificacion
  * @property string $ccar_estado_logico
  */
 class CargaCartera extends \yii\db\ActiveRecord
@@ -61,16 +64,17 @@ class CargaCartera extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['est_id', 'ccar_tipo_documento', 'ccar_numero_documento', 'ccar_forma_pago', 'ccar_num_cuota', 'ccar_estado_cancela', 'ccar_usu_ingreso', 'ccar_estado', 'ccar_estado_logico'], 'required'],
-            [['est_id', 'ccar_dias_plazo', 'ccar_codigo_cobrador', 'ccar_usu_aprueba_rechaza', 'ccar_usu_ingreso', 'ccar_usu_modifica'], 'integer'],
+            [['ccar_id', 'est_id', 'ccar_tipo_documento', 'ccar_numero_documento', 'ccar_forma_pago', 'ccar_num_cuota', 'ccar_estado_cancela', 'ccar_usu_ingreso', 'ccar_estado', 'ccar_estado_logico'], 'required'],
+            [['ccar_id', 'est_id', 'ccar_dias_plazo', 'ccar_codigo_cobrador', 'ccar_usu_aprueba_rechaza', 'ccar_usu_ingreso', 'ccar_usu_modifica'], 'integer'],
             [['ccar_fecha_factura', 'ccar_fecha_vencepago', 'ccar_fecha_pago', 'ccar_fecha_aprueba_rechaza', 'ccar_fecha_creacion', 'ccar_fecha_modificacion'], 'safe'],
-            [['ccar_valor_factura', 'ccar_retencion_fuente', 'ccar_retencion_iva'], 'number'],
+            [['ccar_valor_cuota', 'ccar_valor_factura', 'ccar_retencion_fuente', 'ccar_retencion_iva', 'ccar_abono'], 'number'],
             [['ccar_punto', 'ccar_caja'], 'string', 'max' => 5],
             [['ccar_tipo_documento', 'ccar_forma_pago', 'ccar_valor_iva', 'ccar_estado_cancela'], 'string', 'max' => 3],
             [['ccar_numero_documento'], 'string', 'max' => 30],
             [['ccar_documento_identidad', 'ccar_num_cuota'], 'string', 'max' => 10],
             [['ccar_numero_retencion'], 'string', 'max' => 100],
             [['ccar_estado', 'ccar_estado_logico'], 'string', 'max' => 1],
+            [['ccar_id'], 'unique'],
         ];
     }
 
@@ -92,6 +96,7 @@ class CargaCartera extends \yii\db\ActiveRecord
             'ccar_fecha_factura' => 'Ccar Fecha Factura',
             'ccar_fecha_vencepago' => 'Ccar Fecha Vencepago',
             'ccar_dias_plazo' => 'Ccar Dias Plazo',
+            'ccar_valor_cuota' => 'Ccar Valor Cuota',
             'ccar_valor_factura' => 'Ccar Valor Factura',
             'ccar_fecha_pago' => 'Ccar Fecha Pago',
             'ccar_retencion_fuente' => 'Ccar Retencion Fuente',
@@ -105,6 +110,7 @@ class CargaCartera extends \yii\db\ActiveRecord
             'ccar_usu_ingreso' => 'Ccar Usu Ingreso',
             'ccar_usu_modifica' => 'Ccar Usu Modifica',
             'ccar_estado' => 'Ccar Estado',
+            'ccar_abono' => 'Ccar Abono',
             'ccar_fecha_creacion' => 'Ccar Fecha Creacion',
             'ccar_fecha_modificacion' => 'Ccar Fecha Modificacion',
             'ccar_estado_logico' => 'Ccar Estado Logico',

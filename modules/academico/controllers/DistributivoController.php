@@ -190,7 +190,15 @@ class DistributivoController extends \app\components\CController {
             $arrSearch["unidad"] = $data['unidad'];
             $arrSearch["modalidad"] = $data['modalidad'];
             $arrSearch["periodo"] = $data['periodo'];
-            $arrSearch["estado"] = $data['estado'];
+            if($data['estado'] == '1')
+            {
+                $estadopago = 'C';
+            } 
+            if($data['estado'] == '0')
+            {
+                $estadopago = 'N';
+            }  
+            $arrSearch["estado"] = $estadopago;            
             $arrSearch["jornada"] = $data['jornada'];
             $model = $distributivo_model->consultarDistributivoxProfesor($arrSearch, $per_id, 1);
             return $this->render('listar_distributivo-grid', [
@@ -246,8 +254,16 @@ class DistributivoController extends \app\components\CController {
         $arrSearch["unidad"] = $data['unidad'];
         $arrSearch["modalidad"] = $data['modalidad'];
         $arrSearch["periodo"] = $data['periodo'];
-        $arrSearch["estado"] = $data['estado'];
-
+        //$arrSearch["estado"] = $data['estado'];
+        if($data['estado'] == '1')
+            {
+                $estadopago = 'C';
+            } 
+            if($data['estado'] == '0')
+            {
+                $estadopago = 'N';
+            }  
+            $arrSearch["estado"] = $estadopago;
         $arrData = array();
         if ($arrSearch["unidad"] == 0 and $arrSearch["modalidad"] == 0 and $arrSearch["periodo"] == 0 and $arrSearch["estado"] == 2 and ( empty($arrSearch["search"]))) {
             $arrData = $distributivo_model->consultarDistributivoxProfesor(array(), $per_id, 0);
@@ -278,8 +294,17 @@ class DistributivoController extends \app\components\CController {
         $arrSearch["unidad"] = $data['unidad'];
         $arrSearch["modalidad"] = $data['modalidad'];
         $arrSearch["periodo"] = $data['periodo'];
-        $arrSearch["estado"] = $data['estado'];
-
+        //$arrSearch["estado"] = $data['estado'];
+        if($data['estado'] == '1')
+            {
+                $estadopago = 'C';
+            } 
+            if($data['estado'] == '0')
+            {
+                $estadopago = 'N';
+            }  
+            $arrSearch["estado"] = $estadopago;
+            
         $arrData = array();
         if ($arrSearch["unidad"] == 0 and $arrSearch["modalidad"] == 0 and $arrSearch["periodo"] == 0 and $arrSearch["estado"] == 2 and ( empty($arrSearch["search"]))) {
             $arrData = $distributivo_model->consultarDistributivoxProfesor(array(), $per_id, 0);

@@ -62,7 +62,8 @@ PHPWord requires the following:
 
 - PHP 5.3.3+
 - [XML Parser extension](http://www.php.net/manual/en/xml.installation.php)
-- [Laminas Escaper component](https://docs.laminas.dev/laminas-escaper/intro/)
+- [Zend\Escaper component](http://framework.zend.com/manual/current/en/modules/zend.escaper.introduction.html)
+- [Zend\Stdlib component](http://framework.zend.com/manual/current/en/modules/zend.stdlib.hydrator.html)
 - [Zip extension](http://php.net/manual/en/book.zip.php) (optional, used to write OOXML and ODF)
 - [GD extension](http://php.net/manual/en/book.image.php) (optional, used to add images)
 - [XMLWriter extension](http://php.net/manual/en/book.xmlwriter.php) (optional, used to write OOXML and ODF)

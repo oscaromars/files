@@ -1,4 +1,5 @@
 
+ 
 $(document).ready(function () {
     $('#btn_buscarData').click(function () {
         actualizarGrid();
@@ -92,6 +93,17 @@ $(document).ready(function () {
             }
         }, true);
     });
+
+    //$('.dataTable').DataTable({ responsive: true, });
+});
+
+$(document).on('ready pjax:success', function() {
+    console.log("readypjaxsuccess");
+    $('#dataTable').dataTable( {
+            paging: false,
+            searching: false
+        } );
+    $(".dataTable").DataTable( { responsive: true, });
 });
 
 function setComboDataselect(arr_data, element_id, texto) {
@@ -143,6 +155,16 @@ function actualizarGrid() {
         $('#TbG_PERSONAS').PbGridView('applyFilterData', {'f_ini': f_ini, 'f_fin': f_fin, 'search': search, 'codigocan': codigocan, 'unidad': unidad, 'modalidad': modalidad, 'carrera': carrera, 'periodo': periodo});
         setTimeout(hideLoadingPopup, 2000);
     }
+
+    /* ini gap */ 
+    console.log("actualizarGrid");
+    $(".dataTable").dataTable().fnDestroy();
+    table = $('.dataTable').DataTable({ paging: false  });
+    table.destroy();
+    $(".dataTable").dataTable().fnDestroy();
+    $(".dataTable tbody").empty();
+    $(".dataTable").DataTable( { responsive: true, });
+    /* fin gap */ 
 }
 
 function actualizarGridmat() {

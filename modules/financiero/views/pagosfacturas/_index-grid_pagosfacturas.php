@@ -51,7 +51,7 @@ PbGridView::widget([
         [
             'attribute' => 'Fecha Pago',
             'header' => financiero::t("Pagos", "Payment Date"),
-            'format' => ['date', 'php:d-m-Y'],
+            //'format' => ['date', 'php:d-m-Y'],
             'value' => 'fecha_pago',
         ],     
         [

@@ -748,4 +748,35 @@ class Estudiante extends \yii\db\ActiveRecord {
         }
     }
 
+     /**
+     * Function Consultar estudiante existe creado en estudiante_carrera_programa.
+     * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>;
+     * @property       
+     * @return  
+     */
+    public function consultarEstidxdni($per_dni) {
+        $con = \Yii::$app->db_asgard;
+        $con1 = \Yii::$app->db_academico;
+        $estado = 1;
+
+        $sql = "SELECT 	
+                        est.est_id, 
+                        pers.per_id                       
+                        
+                FROM " . $con->dbname . ".persona pers
+                INNER JOIN " . $con1->dbname . ".estudiante est ON est.per_id = pers.per_id
+                WHERE (per_cedula = :per_dni 
+                OR per_pasaporte = :per_dni) AND
+                est.est_estado = :estado AND
+                est.est_estado_logico = :estado AND
+                pers.per_estado = :estado AND
+                pers.per_estado_logico = :estado ";
+
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $comando->bindParam(":per_dni", $per_dni, \PDO::PARAM_STR);
+        $resultData = $comando->queryOne();
+        return $resultData;
+    }
+
 }

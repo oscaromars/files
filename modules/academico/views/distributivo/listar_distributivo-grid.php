@@ -51,11 +51,25 @@ academico::registerTranslations();
                 'header' => Yii::t("formulario", "Complete Names"),
                 'value' => 'estudiante',
             ],     
-            [
+            /*[
                 'attribute' => 'Estado pago',
                 'header' => Yii::t("formulario", "Payment Status"),
                 'value' => 'pago',
-            ],                                        
+            ],*/    
+            [
+                'attribute' => 'Estado pago',
+                'header' => Yii::t("formulario", "Payment Status"),
+                'contentOptions' => ['class' => 'text-center'],
+                'headerOptions' => ['class' => 'text-center'],
+                'format' => 'html',
+                // 'value' => 'pago',
+                'value' => function ($model) {
+                    if ($model["pago"] == 'Autorizado')
+                        return '<small class="label label-success">' . $model["pago"] . '</small>';
+                    else
+                        return '<small class="label label-danger">' . $model["pago"] . '</small>';
+                },
+            ],                                     
         ],
     ])
     ?>

@@ -1,0 +1,11 @@
+<strong>Hola [[user]],</strong>
+<br /><br />
+Se ha reversado el pago por el valor de [[valor]], que corresponde a la factura [[factura]], por el siguiente motivo:
+<br /><br />
+[[observacion]]
+<br /><br /><br />
+Gracias por la atención prestada.<br />
+<br /><br /><br />
+<strong>Atentamente:</strong><br />
+<strong>Departamento de Colecturía</strong><br />
+<strong>Universidad Tecnológica Empresarial de Guayaquil</strong><br />

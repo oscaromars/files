@@ -111,15 +111,6 @@ return array (
       '@penblu/magnificpopup' => $vendorDir . '/penblu/magnificpopup',
     ),
   ),
-  'penblu/jcrop' => 
-  array (
-    'name' => 'penblu/jcrop',
-    'version' => '1.0.2.0',
-    'alias' => 
-    array (
-      '@penblu/jcrop' => $vendorDir . '/penblu/jcrop',
-    ),
-  ),
   'kartik-v/yii2-widget-fileinput' => 
   array (
     'name' => 'kartik-v/yii2-widget-fileinput',
@@ -157,15 +148,6 @@ return array (
       '@himiklab/yii2/recaptcha/tests' => $vendorDir . '/himiklab/yii2-recaptcha-widget/tests',
     ),
   ),
-  'kartik-v/yii2-widget-select2' => 
-  array (
-    'name' => 'kartik-v/yii2-widget-select2',
-    'version' => '9999999-dev',
-    'alias' => 
-    array (
-      '@kartik/select2' => $vendorDir . '/kartik-v/yii2-widget-select2/src',
-    ),
-  ),
   'yiisoft/yii2-debug' => 
   array (
     'name' => 'yiisoft/yii2-debug',
@@ -178,7 +160,7 @@ return array (
   'yiisoft/yii2-gii' => 
   array (
     'name' => 'yiisoft/yii2-gii',
-    'version' => '2.1.4.0',
+    'version' => '2.0.8.0',
     'alias' => 
     array (
       '@yii/gii' => $vendorDir . '/yiisoft/yii2-gii/src',

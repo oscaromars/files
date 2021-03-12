@@ -38,7 +38,7 @@ PbGridView::widget([
         ],
         [
             'attribute' => 'Unidad Academica',
-            'header' => academico::t("Academico", "Academic unit"),
+            'header' => Yii::t("formulario", "Aca. Uni."),
             'value' => 'unidad',
         ],
         [
@@ -72,20 +72,48 @@ PbGridView::widget([
             'format' => ['date', 'php:d-m-Y'],
             'value' => 'pfes_fecha_registro',
         ],
-        [
+        /*[
             'attribute' => 'Estado',
             'header' => Yii::t("formulario", "Review Status"),
             'value' => 'estado_pago',
-        ],
+        ],*/
         [
+            'attribute' => 'Estado',
+            'header' => Yii::t("formulario", "Review Status"),
+            'contentOptions' => ['class' => 'text-left'],
+            'headerOptions' => ['class' => 'text-left'],
+            'format' => 'html',           
+            'value' => function ($model) {
+                if ($model["estado_pago"] == 'Pendiente')
+                    return '<small class="label label-warning">' . $model["estado_pago"] . '</small>';
+                else if ($model["estado_pago"] == 'Aprobado')
+                    return '<small class="label label-success">' . $model["estado_pago"] . '</small>';
+                else
+                    return '<small class="label label-danger">' . $model["estado_pago"] . '</small>';
+            },
+        ],
+        /*[
             'attribute' => 'Financiero',
             'header' => financiero::t("Pagos", "Financial Status"),
             'value' => 'estado_financiero',
+        ],*/
+        [
+            'attribute' => 'Estado',
+            'header' => financiero::t("Pagos", "Financial Status"),
+            'contentOptions' => ['class' => 'text-left'],
+            'headerOptions' => ['class' => 'text-left'],
+            'format' => 'html',           
+            'value' => function ($model) {
+                if ($model["estado_financiero"] == 'Pendiente')
+                    return '<small class="label label-warning">' . $model["estado_financiero"] . '</small>';
+                else
+                    return '<small class="label label-success">' . $model["estado_financiero"] . '</small>';
+            },
         ],
         [
             'class' => 'yii\grid\ActionColumn',
             'header' => Yii::t("formulario", "Actions"),
-            'template' => '{revisar}{ver}',
+            'template' => '{revisar}{ver}{reversar}',
             'buttons' => [
                 'revisar' => function ($url, $model) {
                     if (($model['estado_pago'] == 'Pendiente') || ($model['estado_pago'] == 'Rechazado') && ($model['estado_financiero'] == 'Pendiente')) {
@@ -99,6 +127,13 @@ PbGridView::widget([
                         return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', Url::to(['/financiero/pagosfacturas/consultarevision', 'dpfa_id' => base64_encode($model['dpfa_id'])]), ["data-toggle" => "tooltip", "title" => "Ver revisión de pago", "data-pjax" => "0"]);
                     } else {
                         return '<span class="glyphicon glyphicon-check"></span>';
+                    }
+                },
+                'reversar' => function ($url, $model) {
+                    if (($model['estado_pago'] == 'Aprobado') && ($model['estado_financiero'] == 'Cancelado') && $model['forma_pago'] != 'Botón de Pagos') {
+                        return Html::a('<span class="glyphicon glyphicon-share"></span>', Url::to(['/financiero/pagosfacturas/reversar', 'dpfa_id' => base64_encode($model['dpfa_id'])]), ["data-toggle" => "tooltip", "title" => "Reversar Pago", "data-pjax" => "0"]);
+                    } else {
+                        return '<span class="glyphicon glyphicon-share"></span>';
                     }
                 },
             ],

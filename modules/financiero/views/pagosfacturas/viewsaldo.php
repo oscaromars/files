@@ -7,9 +7,10 @@ use app\components\CFileInputAjax;
 use app\widgets\PbGridView\PbGridView;
 use app\modules\academico\Module as Especies;
 use app\modules\financiero\Module as Pagos;
-
+//print_r($model);
 Especies::registerTranslations();
 Pagos::registerTranslations();
+
 ?>
 
 <?= Html::hiddenInput('txth_idest', $arr_persona['est_id'], ['id' => 'txth_idest']); ?>
@@ -118,7 +119,7 @@ Pagos::registerTranslations();
                     'header' => Pagos::t("Pagos", "Bill"),
                     'value' => 'NUM_NOF',
                 ],
-                [
+                /*[
                     'class' => 'yii\grid\ActionColumn',
                     'header' => Yii::t("formulario", "Subject"),
                     'template' => '{view}',
@@ -130,21 +131,26 @@ Pagos::registerTranslations();
                             return Html::a('<span>' . substr($model['MOTIVO'], 0, 20) . $texto . '</span>', "javascript:", ["data-toggle" => "tooltip", "title" => $model['MOTIVO']]);
                         },
                     ],
-                ],
+                ],*/
                 [
                     'attribute' => 'Fecha_factura',
                     'header' => Pagos::t("Pagos", "Date Bill"),
                     'value' => 'F_SUS_D',
                 ],
-                [
+                /*[
                     'attribute' => 'Saldo',
                     'header' => Pagos::t("Pagos", "Balance"),
                     'value' => 'SALDO',
-                ],
+                ],*/
                 [
                     'attribute' => 'Cuota_pendiente',
                     'header' => Pagos::t("Pagos", "Pending Fee"),
                     'value' => 'cuota',
+                ],
+                [
+                    'attribute' => 'valor_cuota',
+                    'header' => Pagos::t("Pagos", "Quota value"),
+                    'value' => 'ccar_valor_cuota',
                 ],
                 [
                     'attribute' => 'vencimiento',

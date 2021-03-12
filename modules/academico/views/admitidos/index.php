@@ -2,6 +2,13 @@
 
 use yii\helpers\Html;
 use app\modules\academico\Module as academico;
+
+$this->registerJsFile("https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js",['depends' => [\yii\web\YiiAsset::className()]]);
+$this->registerJsFile("https://cdn.datatables.net/responsive/2.2.7/js/dataTables.responsive.min.js",['depends' => [\yii\web\YiiAsset::className()]]);
+
+$this->registerCssFile("https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css");
+$this->registerCssFile("https://cdn.datatables.net/responsive/2.2.7/css/responsive.dataTables.min.css");
+
 ?>
 <?= Html::hiddenInput('txth_ids', '', ['id' => 'txth_ids']); ?>
 <div class="col-md-12">

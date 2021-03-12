@@ -17,7 +17,6 @@
 
 namespace PhpOffice\PhpWord\Style;
 
-use PhpOffice\PhpWord\Settings;
 use PhpOffice\PhpWord\SimpleType\VerticalJc;
 
 /**
@@ -201,11 +200,8 @@ class Section extends Border
      * @param string $value
      * @return self
      */
-    public function setPaperSize($value = '')
+    public function setPaperSize($value = 'A4')
     {
-        if (!$value) {
-            $value = Settings::getDefaultPaper();
-        }
         if ($this->paper === null) {
             $this->paper = new Paper();
         }

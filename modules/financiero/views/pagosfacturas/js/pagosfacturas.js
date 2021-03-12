@@ -62,7 +62,7 @@ $(document).ready(function () {
     $("#cmb_formapago").on('change', function(){   
         var opcion = $('#cmb_formapago').val();
 
-        if(opcion==6){
+        if(opcion==1){
             $('#txt_fechapago').removeClass('PBvalidation');
             $('#pago_documento').hide();           
             //txth_doc_pago
@@ -145,7 +145,7 @@ function guardarPagofactura() {
     }//if
 
     //Pregunto si es pago stripe
-    if($('#cmb_formapago').val() != 6 ){
+    if($('#cmb_formapago').val() != 1 ){
         //Si es por documentos cargo la fecha y el documento
         arrParams.fechapago = $('#txt_fechapago').val();
         arrParams.documento = $('#txth_doc_pago').val();

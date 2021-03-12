@@ -1,6 +1,0 @@
-.hideActions, .hideJsFn, .hideLk, .hideSubModulo{
-    display: none;
-}
-.unhideActions, .unhideJsFn, .unhideLk, .unhideSubModulo{
-    display: block;
-}

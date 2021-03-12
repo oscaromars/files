@@ -157,10 +157,22 @@ Pagos::registerTranslations();
                     'header' => Pagos::t("Pagos", "Expiration date"),
                     'value' => 'F_VEN_D',
                 ],
+                /*
                 [
                     'attribute' => 'cantidad',
                     'header' => Pagos::t("Pagos", "Amount Fees"),
                     'value' => 'cantidad',
+                ],
+                */
+                [
+                    'attribute' => 'Abono',
+                    'header' => Pagos::t("Pagos", "Abono"),
+                    'value' => 'abono',
+                ],
+                [
+                    'attribute' => 'Saldo',
+                    'header' => Pagos::t("Pagos", "Saldo"),
+                    'value' => 'saldo',
                 ],
             ],
         ])

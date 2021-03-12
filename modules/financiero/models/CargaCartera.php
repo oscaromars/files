@@ -364,8 +364,9 @@ class CargaCartera extends \yii\db\ActiveRecord
                     END  as SALDO, 
                     CASE 
                         WHEN ccar.ccar_num_cuota = ccar.ccar_numero_documento THEN '01'                    
-                        ELSE SUBSTRING(ccar.ccar_num_cuota,1,3)
+                        ELSE ccar.ccar_num_cuota
                     END  as cuota
+                    ,(ccar.ccar_valor_cuota - ccar.ccar_abono) as saldo
                     ,ccar_id                                     
                 FROM " . $con->dbname . ".carga_cartera ccar
                 WHERE ccar.ccar_documento_identidad= :cedula AND ccar.ccar_num_cuota= :cuota AND ccar.ccar_numero_documento =:factura";

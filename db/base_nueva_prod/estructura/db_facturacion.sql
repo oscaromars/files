@@ -739,6 +739,7 @@ create table db_facturacion.carga_cartera(
   `ccar_usu_ingreso` bigint(20) not null,    
   `ccar_usu_modifica` bigint(20) null, 
   `ccar_estado` varchar(1) not null,
+  `ccar_abono` double DEFAULT '0',
   `ccar_fecha_creacion` timestamp not null default current_timestamp,
   `ccar_fecha_modificacion` timestamp null default null,
   `ccar_estado_logico` varchar(1) not null

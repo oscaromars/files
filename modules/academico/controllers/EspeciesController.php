@@ -175,9 +175,9 @@ class EspeciesController extends \app\components\CController {
             $especiesADO = new Especies();
             $periodo_academico = $especiesADO->consultarPeriodoactivo();
             Utilities::putMessageLogFile('dasd' . $periodo_academico['paca_id']);
-            $pagodia = $especiesADO->consultarPagodia($periodo_academico['paca_id'], $data['DTS_CAB']['est_id']);
+            //$pagodia = $especiesADO->consultarPagodia($periodo_academico['paca_id'], $data['DTS_CAB']['est_id']);
             Utilities::putMessageLogFile('csdfsd' . $pagodia['eppa_estado_pago']);
-            if ($pagodia['eppa_estado_pago'] > "0") {
+            // if ($pagodia['eppa_estado_pago'] > "0") {
                 $dts_Cab = isset($data['DTS_CAB']) ? $data['DTS_CAB'] : array();
                 $dts_Det = isset($data['DTS_DET']) ? $data['DTS_DET'] : array();
                 $accion = isset($data['ACCION']) ? $data['ACCION'] : "";
@@ -197,10 +197,10 @@ class EspeciesController extends \app\components\CController {
                     echo Utilities::ajaxResponse('NO_OK', 'alert', Yii::t('jslang', 'Error'), 'false', $message);
                 }
                 return;
-            } else {
+            /*} else {
                 $message = ["info" => Yii::t('exception', 'No puede crear solicitud porque no esta al dia en los pagos.')];
                 echo Utilities::ajaxResponse('NO_OK', 'alert', Yii::t('jslang', 'Error'), 'false', $message);
-            }
+            }*/
             return;
         }
     }

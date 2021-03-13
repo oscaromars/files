@@ -84,3 +84,4 @@ academico::registerTranslations();
         </div>
     </div>       
 </form>
+

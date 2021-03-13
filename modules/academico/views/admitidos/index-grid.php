@@ -18,6 +18,14 @@ academico::registerTranslations();
         'fnExportEXCEL' => "exportExcel",
         'fnExportPDF' => "exportPdf",
         'dataProvider' => $model,
+
+        /* ini gap */
+        //'pagination' => ['pageSize' => 0],
+        //'summary' => '',
+         //'page' => 100,
+        'showFooter' => false,
+        /* fin gap */
+
         //'pajax' => false,
         'columns' =>
         [
@@ -94,6 +102,7 @@ academico::registerTranslations();
                     'homologa' => function ($url, $model) {
                         return Html::a('<span class="glyphicon glyphicon-check"></span>', Url::to(['/academico/matriculacion/newhomologacion', 'sids' => base64_encode($model['sins_id']), 'asp' => base64_encode($model['asp_id'])]), ["data-toggle" => "tooltip", "title" => "Matricular por Homologación", "data-pjax" => 0]);
                     },
+                    
                 ],
             ],
         ],

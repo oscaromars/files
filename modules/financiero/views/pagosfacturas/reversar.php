@@ -11,6 +11,7 @@ use app\modules\academico\Module as academico;
 Especies::registerTranslations();
 Financiero::registerTranslations();
 academico::registerTranslations();
+
 ?>
 <?= Html::hiddenInput('txth_dpfa_id', base64_decode($_GET["dpfa_id"]), ['id' => 'txth_dpfa_id']); ?>
 <form class="form-horizontal" enctype="multipart/form-data" id="formver"> 
@@ -22,6 +23,9 @@ academico::registerTranslations();
             <div class="form-group">
                 <h4><span id="lbl_general"><?= Financiero::t("Pagos", "Student Data") ?></span></h4> 
             </div>
+        </div>
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <p class="text-danger"> <?= Yii::t("formulario", "Fields with * are required") ?> </p>
         </div>
         <div class='col-md-12 col-sm-12 col-xs-12 col-lg-12'>
             <div class="col-md-6 col-sm-6 col-xs-6 col-lg-6">
@@ -132,19 +136,24 @@ academico::registerTranslations();
     <div class='col-md-12 col-sm-12 col-xs-12 col-lg-12'>
         <div class="col-md-6 col-sm-6 col-xs-6 col-lg-6" ">
             <div class="form-group">
-                <label for="cmb_estado" class="col-sm-5 col-md-5 col-xs-5 col-lg-5 control-label keyupmce"><?= Yii::t("formulario", "Result") ?></label>
+                <label for="cmb_estadorev" class="col-sm-5 col-md-5 col-xs-5 col-lg-5 control-label keyupmce"><?= Yii::t("formulario", "Result") ?><span class="text-danger"> *</span></label>
                 <div class="col-sm-7 col-md-7 col-xs-7 col-lg-7">
-                    <?= Html::dropDownList("cmb_estado", 0, $arrEstados, ["class" => "form-control", "id" => "cmb_estado"]) ?>
+                    <?= Html::dropDownList("cmb_estadorev", 0, $arrEstados, ["class" => "form-control", "id" => "cmb_estadorev"]) ?>
                 </div>
             </div>
         </div>      
-        <div class="col-md-6 col-sm-6 col-xs-6 col-lg-6" id="Divobservacionrev">
+        <div class="col-md-6 col-sm-6 col-xs-6 col-lg-6">
             <div class="form-group">
-                <label for="txt_observacion" class="col-sm-5 col-md-5 col-xs-5 col-lg-5 control-label keyupmce"><?= Yii::t("formulario", "Observation") ?></label>
+                <label for="txt_observacion" class="col-sm-5 col-md-5 col-xs-5 col-lg-5 control-label keyupmce"><?= Yii::t("formulario", "Observation") ?><span class="text-danger"> *</span></label>
                 <div class="col-sm-7 col-md-7 col-xs-7 col-lg-7">
-                <textarea  class="form-control keyupmce" id="txt_observacion" rows="3"></textarea>
+                <textarea  class="form-control PBvalidation keyupmce" data-type="alfanumerico" id="txt_observacion" rows="3"></textarea>
                 </div>
             </div>
-        </div>            
+             
     </div> 
+   <!-- <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" >
+            <div class="col-md-2">
+                <a id="btn_guardareverso" href="javascript:" class="btn btn-primary btn-block"> <?= Yii::t("formulario", "Save") ?> </a>
+            </div>
+        </div> -->
 </form>

@@ -305,7 +305,8 @@ class PagosFacturaEstudiante extends \yii\db\ActiveRecord {
                         d.dpfa_observacion_rechazo,
                         pfe.pfes_id as cabecera_id,
                         d.dpfa_estado_pago as estado,
-                        d.dpfa_observacion_rechazo as dpfa_observacion_rechazo
+                        d.dpfa_observacion_rechazo as dpfa_observacion_rechazo,
+                        d.dpfa_observacion_reverso
                 from " . $con2->dbname . ".pagos_factura_estudiante pfe inner join " . $con2->dbname . ".detalle_pagos_factura d on d.pfes_id = pfe.pfes_id
                     inner join " . $con->dbname . ".estudiante e on e.est_id = pfe.est_id
                     inner join " . $con1->dbname . ".persona p on p.per_id = e.per_id
@@ -342,13 +343,21 @@ class PagosFacturaEstudiante extends \yii\db\ActiveRecord {
         $estado = 1;
         $fecha_rechazo = date(Yii::$app->params["dateTimeByDefault"]);
         $usuario_rechazo = @Yii::$app->user->identity->usu_id;
+
+        if ($resultado==2) 
+            $dpfa_estado_financiero = 'C';
+        else
+            $dpfa_estado_financiero = 'N';
+
+
         $comando = $con->createCommand
                 ("UPDATE " . $con->dbname . ".detalle_pagos_factura
                 SET dpfa_observacion_rechazo = :observacion,
                     dpfa_fecha_aprueba_rechaza = :fecha_rechazo,                   
                     dpfa_estado_pago = :resultado,
                     dpfa_usu_aprueba_rechaza = :usuario_rechazo,
-                    dpfa_fecha_modificacion = :fecha_rechazo
+                    dpfa_fecha_modificacion = :fecha_rechazo,
+                    dpfa_estado_financiero = :dpfa_estado_financiero
                 WHERE dpfa_id = :dpfa_id AND 
                       dpfa_estado =:estado AND
                       dpfa_estado_logico = :estado");
@@ -360,6 +369,7 @@ class PagosFacturaEstudiante extends \yii\db\ActiveRecord {
         $comando->bindParam(":resultado", $resultado, \PDO::PARAM_INT);
         $comando->bindParam(":fecha_rechazo", $fecha_rechazo, \PDO::PARAM_STR);
         $comando->bindParam(":usuario_rechazo", $usuario_rechazo, \PDO::PARAM_INT);
+        $comando->bindParam(":dpfa_estado_financiero", $dpfa_estado_financiero, \PDO::PARAM_STR);
         $response = $comando->execute();
         return $response;
     }
@@ -455,7 +465,7 @@ class PagosFacturaEstudiante extends \yii\db\ActiveRecord {
         } catch (Exception $ex) {
             if ($trans !== null)
                 $trans->rollback();
-            return FALSE;
+            return $ex;
         }
     }
 
@@ -503,7 +513,7 @@ class PagosFacturaEstudiante extends \yii\db\ActiveRecord {
      * @param
      * @return dpfa_id
      */
-    public function insertarDetpagospendientes($pfes_id, $dpfa_tipo_factura, $dpfa_factura, $dpfa_descripcion_factura, $dpfa_valor_factura, $dpfa_fecha_factura, $dpfa_saldo_factura, $dpfa_num_cuota, $dpfa_valor_cuota, $dpfa_fecha_vence_cuota, $dpfa_usu_ingreso) {
+    public function insertarDetpagospendientes($pfes_id, $dpfa_tipo_factura, $dpfa_factura, $dpfa_descripcion_factura, $dpfa_valor_factura, $dpfa_fecha_factura, $dpfa_saldo_factura, $dpfa_num_cuota, $dpfa_valor_cuota, $dpfa_fecha_vence_cuota, $dpfa_estado_pago, $dpfa_estado_financiero, $dpfa_usu_ingreso) {
         $con = \Yii::$app->db_facturacion;
         $trans = $con->getTransaction(); // se obtiene la transacción actual
         if ($trans !== null) {
@@ -521,8 +531,10 @@ class PagosFacturaEstudiante extends \yii\db\ActiveRecord {
         $param_sql .= ", dpfa_fecha_registro";
         $bdet_sql .= ", :dpfa_fecha_registro";
 
+        /*
         $param_sql .= ", dpfa_estado_pago";
         $bdet_sql .= ", 1";
+        */
 
         if (isset($pfes_id)) {
             $param_sql .= ", pfes_id";
@@ -565,6 +577,14 @@ class PagosFacturaEstudiante extends \yii\db\ActiveRecord {
             $param_sql .= ", dpfa_fecha_vence_cuota";
             $bdet_sql .= ", :dpfa_fecha_vence_cuota";
         }
+        if (isset($dpfa_estado_pago)) {
+            $param_sql .= ", dpfa_estado_pago";
+            $bdet_sql .= ", :dpfa_estado_pago";
+        }
+        if (isset($dpfa_estado_pago)) {
+            $param_sql .= ", dpfa_estado_financiero";
+            $bdet_sql .= ", :dpfa_estado_financiero";
+        }
         if (isset($dpfa_usu_ingreso)) {
             $param_sql .= ", dpfa_usu_ingreso";
             $bdet_sql .= ", :dpfa_usu_ingreso";
@@ -601,6 +621,12 @@ class PagosFacturaEstudiante extends \yii\db\ActiveRecord {
             }
             if (!empty((isset($dpfa_fecha_vence_cuota)))) {
                 $comando->bindParam(':dpfa_fecha_vence_cuota', $dpfa_fecha_vence_cuota, \PDO::PARAM_STR);
+            }
+            if (!empty((isset($dpfa_usu_ingreso)))) {
+                $comando->bindParam(':dpfa_estado_pago', $dpfa_estado_pago, \PDO::PARAM_INT);
+            }
+            if (!empty((isset($dpfa_usu_ingreso)))) {
+                $comando->bindParam(':dpfa_estado_financiero', $dpfa_estado_financiero, \PDO::PARAM_STR);
             }
             if (!empty((isset($dpfa_usu_ingreso)))) {
                 $comando->bindParam(':dpfa_usu_ingreso', $dpfa_usu_ingreso, \PDO::PARAM_INT);
@@ -694,7 +720,8 @@ class PagosFacturaEstudiante extends \yii\db\ActiveRecord {
                         pfe.pfes_referencia as referencia,
                         pfe.pfes_valor_pago valor_pago,
                         pfe.pfes_fecha_registro fecha_registro,     
-                        pfe.pfes_fecha_pago fecha_pago
+                        -- pfe.pfes_fecha_pago as fecha_pago                        
+                       ifnull(DATE_FORMAT(pfe.pfes_fecha_pago, '%Y-%m-%d'), ' ') as fecha_pago                        
                 from " . $con2->dbname . ".pagos_factura_estudiante pfe
                     inner join " . $con->dbname . ".estudiante e on e.est_id = pfe.est_id
                     inner join " . $con1->dbname . ".persona p on p.per_id = e.per_id                
@@ -991,6 +1018,7 @@ class PagosFacturaEstudiante extends \yii\db\ActiveRecord {
                 SET dpfa_observacion_reverso = :observacion,
                     dpfa_fecha_modificacion = :fecha_reverso,                   
                     dpfa_estado_pago = :resultado,
+                    dpfa_estado_financiero = null,
                     dpfa_usu_modifica = :usuario_reverso
                     
                 WHERE dpfa_id = :dpfa_id AND 
@@ -1008,4 +1036,21 @@ class PagosFacturaEstudiante extends \yii\db\ActiveRecord {
         return $response;
     }
 
+    public function buscarIdCartera($dpfa_id) {
+        $con = \Yii::$app->db_facturacion;
+
+        $sql = "SELECT ccar_id, ccar_numero_documento,ccar_num_cuota 
+                  from db_facturacion.carga_cartera,
+                       (SELECT dpfa_factura,dpfa_num_cuota 
+                          FROM db_facturacion.detalle_pagos_factura 
+                         WHERE dpfa_id = :dpfa_id ) as dpf
+                 where ccar_numero_documento = dpf.dpfa_factura 
+                   and ccar_num_cuota like concat('%',dpf.dpfa_num_cuota,'%')";
+
+        $comando = $con->createCommand($sql); 
+        $comando->bindParam(":dpfa_id", $dpfa_id, \PDO::PARAM_STR);
+        $response   = $comando->execute();
+        $resultData = $comando->queryAll();
+        return $resultData;
+    }//function actualizarCartera
 }

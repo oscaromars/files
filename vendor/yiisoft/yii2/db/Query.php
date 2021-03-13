@@ -245,9 +245,7 @@ class Query extends Component implements QueryInterface, ExpressionInterface
         if ($this->emulateExecution) {
             return [];
         }
-
         $rows = $this->createCommand($db)->queryAll();
-
         return $this->populate($rows);
     }
 

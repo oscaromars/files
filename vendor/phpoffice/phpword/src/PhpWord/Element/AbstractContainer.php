@@ -109,7 +109,6 @@ abstract class AbstractContainer extends AbstractElement
             } else {
                 // All other elements
                 array_unshift($args, $element); // Prepend element name to the beginning of args array
-
                 return call_user_func_array(array($this, 'addElement'), $args);
             }
         }

@@ -435,6 +435,7 @@ class Distributivo extends \yii\db\ActiveRecord {
     public function consultarDistributivoxProfesor($arrFiltro = array(), $id_profesor, $reporte) {
         $con = \Yii::$app->db_academico;
         $con1 = \Yii::$app->db_asgard;
+        $con2 = \Yii::$app->db_facturacion;
         $estado = 1;
 
         if (isset($arrFiltro) && count($arrFiltro) > 0) {
@@ -453,19 +454,28 @@ class Distributivo extends \yii\db\ActiveRecord {
             if ($arrFiltro['periodo'] != "" && $arrFiltro['periodo'] > 0) {
                 $str_search .= "a.paca_id = :periodo AND ";
             }
-            if ($arrFiltro['estado'] == "0" or $arrFiltro['estado'] == "1") {
-                $str_search .= "ifnull(m.eppa_estado_pago,'0') = :estpago AND ";
+            if ($arrFiltro['estado'] == "C" or $arrFiltro['estado'] == "N") {
+                $str_search .= "ifnull(m.ccar_estado_cancela,'N') = :estpago AND ";
             }
             if ($arrFiltro['jornada'] != "" && $arrFiltro['jornada'] > 0) {
                 $str_search .= "a.daca_jornada = :jornada AND ";
             }
         }
-        $sql = "SELECT  d.uaca_nombre as unidad, e.mod_nombre as modalidad,
+        $sql = "SELECT  distinct d.uaca_nombre as unidad, e.mod_nombre as modalidad,
                         p.per_cedula as identificacion, 
                         concat(p.per_pri_apellido, ' ', ifnull(p.per_seg_apellido,''), ' ', p.per_pri_nombre) as estudiante,
                         concat(saca_nombre, '-', baca_nombre,'-',baca_anio) as periodo,
                         z.asi_nombre as asignatura,
-                        case when m.eppa_estado_pago = '1' then 'Autorizado' else 'No Autorizado' end as pago
+                        -- case when m.eppa_estado_pago = '1' then 'Autorizado' else 'No Autorizado' end as pago
+                        -- case when m.ccar_estado_cancela = 'C' then 'Autorizado' else 'No Autorizado' end as pago
+                        ifnull((SELECT 
+                                CASE WHEN mi.ccar_estado_cancela = 'C' 
+                                THEN 'Autorizado' 
+                                ELSE 'No Autorizado' END AS pago
+                                FROM db_facturacion.carga_cartera mi
+                                WHERE mi.est_id = g.est_id and mi.ccar_fecha_vencepago <= NOW()
+                                ORDER BY ccar_fecha_vencepago desc
+                                LIMIT 1),'No Autorizado') as pago
                 FROM " . $con->dbname . ".distributivo_academico a inner join " . $con->dbname . ".profesor b
                     on b.pro_id = a.pro_id 
                     inner join " . $con1->dbname . ".persona c on c.per_id = b.per_id
@@ -478,7 +488,8 @@ class Distributivo extends \yii\db\ActiveRecord {
                     inner join " . $con->dbname . ".semestre_academico s on s.saca_id = f.saca_id
                     inner join " . $con->dbname . ".bloque_academico t on t.baca_id = f.baca_id
                     inner join " . $con->dbname . ".asignatura z on a.asi_id = z.asi_id
-                    left join " . $con->dbname . ".estudiante_periodo_pago m on (m.est_id = g.est_id and m.paca_id = f.paca_id)
+                    -- left join " . $con->dbname . ".estudiante_periodo_pago m on (m.est_id = g.est_id and m.paca_id = f.paca_id)
+                    left join " . $con2->dbname . ".carga_cartera m on (m.est_id = g.est_id /* and m.paca_id = f.paca_id */)
                 WHERE $str_search c.per_id = :profesor
                     and f.paca_activo = 'A'
                     and a.daca_estado = :estado
@@ -506,7 +517,7 @@ class Distributivo extends \yii\db\ActiveRecord {
                 $search_per = $arrFiltro["periodo"];
                 $comando->bindParam(":periodo", $search_per, \PDO::PARAM_INT);
             }
-            if ($arrFiltro['estado'] == "0" or $arrFiltro['estado'] == "1") {
+            if ($arrFiltro['estado'] == "C" or $arrFiltro['estado'] == "N") {
                 $search_estado = $arrFiltro["estado"];
                 $comando->bindParam(":estpago", $search_estado, \PDO::PARAM_STR);
             }

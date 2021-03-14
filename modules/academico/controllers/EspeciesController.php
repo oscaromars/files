@@ -10,8 +10,10 @@ use yii\helpers\Url;
 use yii\base\Exception;
 use yii\helpers\ArrayHelper;
 use app\modules\financiero\models\FormaPago;
+use app\modules\financiero\models\CargaCartera;
 use app\modules\academico\models\ModuloEstudio;
 use app\modules\academico\models\Modalidad;
+use app\modules\academico\models\Estudiante;
 use app\modules\academico\models\UnidadAcademica;
 use app\modules\academico\Module as academico;
 use app\modules\academico\models\Especies;
@@ -173,11 +175,17 @@ class EspeciesController extends \app\components\CController {
             $data = Yii::$app->request->post();
             //Utilities::putMessageLogFile($data['DTS_CAB']['est_id']);
             $especiesADO = new Especies();
+            $mod_estudiante = new Estudiante(); //$estudiante["est_id"]
+            $mod_cartera = new CargaCartera(); //$estudiante["est_id"]
             $periodo_academico = $especiesADO->consultarPeriodoactivo();
-            Utilities::putMessageLogFile('dasd' . $periodo_academico['paca_id']);
+            //Utilities::putMessageLogFile('dasd' . $periodo_academico['paca_id']);
             //$pagodia = $especiesADO->consultarPagodia($periodo_academico['paca_id'], $data['DTS_CAB']['est_id']);
-            Utilities::putMessageLogFile('csdfsd' . $pagodia['eppa_estado_pago']);
-            // if ($pagodia['eppa_estado_pago'] > "0") {
+            $estudiante = $mod_estudiante->getEstudiantexperid($per_id);
+            $pagodia = $mod_cartera->consultarAutorizadofechamenor($estudiante["est_id"]);
+            //Utilities::putMessageLogFile('csdfsd' . $pagodia['eppa_estado_pago']);
+            if (empty($pagodia['estado'])) {
+                $paydia = $mod_cartera->consultarAutorizadofechamayor($estudiante["est_id"]);
+              if($paydia['estado'] == "Autorizado"){
                 $dts_Cab = isset($data['DTS_CAB']) ? $data['DTS_CAB'] : array();
                 $dts_Det = isset($data['DTS_DET']) ? $data['DTS_DET'] : array();
                 $accion = isset($data['ACCION']) ? $data['ACCION'] : "";
@@ -196,11 +204,15 @@ class EspeciesController extends \app\components\CController {
                     $message = ["info" => Yii::t('exception', 'Error al grabar.')];
                     echo Utilities::ajaxResponse('NO_OK', 'alert', Yii::t('jslang', 'Error'), 'false', $message);
                 }
-                return;
-            /*} else {
+                 return;
+                }else{
+                    $message = ["info" => Yii::t('exception', 'No puede crear solicitud porque no han actualizado su cartera de pagos.')];
+                    echo Utilities::ajaxResponse('NO_OK', 'alert', Yii::t('jslang', 'Error'), 'false', $message);
+                }
+            } elseif($pagodia['estado'] == "No Autorizado"){
                 $message = ["info" => Yii::t('exception', 'No puede crear solicitud porque no esta al dia en los pagos.')];
                 echo Utilities::ajaxResponse('NO_OK', 'alert', Yii::t('jslang', 'Error'), 'false', $message);
-            }*/
+            }
             return;
         }
     }

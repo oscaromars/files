@@ -428,4 +428,48 @@ class CargaCartera extends \yii\db\ActiveRecord
         return $resultData;
     }//function consultarPagospendientesPorFactura
 
+    /**
+     * Function consultarAutorizadofechamayor
+     * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
+     * @param   
+     * @return  
+     */
+    public function consultarAutorizadofechamayor($est_id) {
+        $con = \Yii::$app->db_facturacion;
+        $sql = "SELECT est_id, ccar_fecha_vencepago, 'Autorizado' as estado
+                FROM db_facturacion.carga_cartera 
+                WHERE est_id = :est_id AND 
+                      ccar_fecha_vencepago >= NOW() 
+                ORDER BY ccar_fecha_vencepago asc
+                LIMIT 1";
+
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":est_id", $est_id, \PDO::PARAM_INT);       
+        $resultData = $comando->queryOne();
+        return $resultData;
+    }
+
+    /**
+     * Function consultarAutorizadofechamenor
+     * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
+     * @param   
+     * @return  
+     */
+    public function consultarAutorizadofechamenor($est_id) {
+        $con = \Yii::$app->db_facturacion;
+        $sql = "SELECT est_id, ccar_fecha_vencepago,
+                CASE WHEN mi.ccar_estado_cancela = 'C' 
+                     THEN 'Autorizado' 
+                     ELSE 'No Autorizado' END AS estado
+                FROM db_facturacion.carga_cartera mi
+                WHERE mi.est_id = :est_id AND
+                      mi.ccar_fecha_vencepago <= NOW()
+                ORDER BY ccar_fecha_vencepago desc
+                LIMIT 1";
+
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":est_id", $est_id, \PDO::PARAM_INT);       
+        $resultData = $comando->queryOne();
+        return $resultData;
+    }
 }

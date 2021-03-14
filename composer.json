@@ -39,7 +39,8 @@
         "codeitnowin/barcode": "*",
         "himiklab/yii2-recaptcha-widget": "*",
         "svrnm/exceldatatables": "*",
-        "kartik-v/yii2-widget-select2": "@dev"
+        "kartik-v/yii2-widget-select2": "@dev",
+        "stripe/stripe-php": "^7.75"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.0.0",

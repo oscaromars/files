@@ -340,23 +340,26 @@ class PagosfacturasController extends \app\components\CController {
     }
 
     public function actionSavepagopendiente() {
-        //online que sube doc capturar asi el id de la persona   
+        //Obtenemo el id de la persona
         $per_idsession = @Yii::$app->session->get("PB_perid");
+        //Obtenemos la fecha de hoy y le damos formato
         $fecha = date(Yii::$app->params["dateTimeByDefault"]);
-        //$cartera = $mod_pagos->buscarIdCartera($dfac_id);
+        //Revisamos si la peticion fue por ajax
         if (Yii::$app->request->isAjax) {
+            //Obtenemo la data enviada
             $data           = Yii::$app->request->post();
-
             //Preguntamos por la forma de pago
-            if($data["formapago"]==6){
-                //Pago Online
+            if($data["formapago"]==1){
+                //Si la forma de Pago es 1 significa que es por Tarjeta de credito
                 $statusMsg = '';
 
+                //Este token es enviada por la libreria de javascript de stripe
                 if(!empty($data['token'])){
-                    // Retrieve stripe token, card and user info from the submitted form data 
+                    //Obtenemos el token y tambien el nombre de la persona que esta cancelando
                     $token  = $data['token']; 
                     $name   = $data['nombres']; 
 
+                    //Obtenemos su email ya que estos datos son solicitados por stripe
                     $mod_usuario = Persona::find()->select("per_correo")->where(["per_id" => $data['per_id']])->asArray()->all();
                     $email       = $mod_usuario[0]['per_correo'];   
 
@@ -378,9 +381,10 @@ class PagosfacturasController extends \app\components\CController {
                     );
                     */
 
-                   \Stripe\Stripe::setApiKey($stripe['secret_key']);
+                    //Se hace invocacion a libreria de stripe que se encuentra en el vendor
+                    \Stripe\Stripe::setApiKey($stripe['secret_key']);
                      
-                    // Add customer to stripe 
+                    //Se crea el usuario para stripe
                     try {  
                         $customer = \Stripe\Customer::create(array( 
                             'email'   => $email, 
@@ -391,15 +395,13 @@ class PagosfacturasController extends \app\components\CController {
                         return json_encode($api_error);
                     } 
                      
+                    //Si se creo el usuario y no hay error 
                     if(empty($api_error) && $customer){  
-                         
-                        // AQUI SE PARAMETRIZA EL VALOR DE LA INSCRIPCION
-                        // ESTE VALOR A FUTURO DEBERA SER LLAMADO DE LA BASE
-                        // Convert price to cents 
+                        //El valor se multiplica por 100 para convertirlo a centavos
                         $valor_inscripcion = $data['valor']; 
                         $itemPriceCents    = ($valor_inscripcion*100); 
                          
-                        // Charge a credit or a debit card 
+                        //Se crea el cobro
                         try {  
                             $charge = \Stripe\Charge::create(array( 
                                 'customer'    => $customer->id, 
@@ -412,16 +414,13 @@ class PagosfacturasController extends \app\components\CController {
                             return json_encode($api_error);
                         } 
                          
+                        //Si se creo el combo y no hubo error se devuelve el resultado de la transaccion
                         if(empty($api_error) && $charge){ 
-                            // Retrieve charge details 
+                            //Cargamos los datos
                             $chargeJson = $charge->jsonSerialize(); 
                          
                             // Check whether the charge is successful 
-                            if( $chargeJson['amount_refunded'] == 0 && 
-                                empty($chargeJson['failure_code']) && 
-                                $chargeJson['paid'] == 1 && 
-                                $chargeJson['captured'] == 1){ 
-                                
+                            if( $chargeJson['amount_refunded'] == 0 && empty($chargeJson['failure_code'])  && $chargeJson['paid'] == 1 && $chargeJson['captured'] == 1){                                
                                 // Transaction details  
                                 $transactionID  = $chargeJson['balance_transaction']; 
                                 $paidAmount     = $chargeJson['amount']; 
@@ -429,10 +428,12 @@ class PagosfacturasController extends \app\components\CController {
                                 $paidCurrency   = $chargeJson['currency']; 
                                 $payment_status = $chargeJson['status']; 
                                  
-                                // If the order is successful 
+                                // Si el pago fue correcto
                                 if($payment_status == 'succeeded'){ 
                                     $ordStatus = 'success'; 
-                                    //$statusMsg = 'Your Payment has been Successful!'; 
+
+                                    //Estas variables es para indicar que como fue con tarjeta de una vez 
+                                    //se actualize y ya no salgan como pendientes
                                     $dpfa_estado_pago = 2;
                                     $dpfa_estado_financiero = 'C';
                                 }else{ 
@@ -478,23 +479,25 @@ class PagosfacturasController extends \app\components\CController {
                         return;
                     }//else
                 }//if
-                $dpfa_estado_pago = 1;
+
+                //Como es un pago por deposito o transferencia sus estados son pendiente
+                $dpfa_estado_pago       = 1;
                 $dpfa_estado_financiero = 'N';
-            }//else
+            }//fin del else
 
-            $mod_pagos        = new PagosFacturaEstudiante();
-            $mod_estudiante   = new Especies();           
+            $mod_pagos      = new PagosFacturaEstudiante();
+            $mod_estudiante = new Especies();           
             
-            $arrIm            = explode(".", basename($data["documento"]));
-            $typeFile         = strtolower($arrIm[count($arrIm) - 1]);
-
-            if($data["formapago"]==6){
-                $imagen = "pago_online";
+            //En caso de ser pago por tarjeta entra por if o entra en else si es deposito o transferencia
+            if($data["formapago"]==1){
+                $imagen   = "pago_online";
+            }else{
+                $arrIm    = explode(".", basename($data["documento"]));
+                $typeFile = strtolower($arrIm[count($arrIm) - 1]);
+                $imagen   = $arrIm[0] . "." . $typeFile;
             }
-            else{
-                $imagen = $arrIm[0] . "." . $typeFile;
-            }
 
+            //Obtenemos la informacion enviada por javascript
             $pfes_referencia  = $data["referencia"];
             $fpag_id          = $data["formapago"];
             $pfes_valor_pago  = $data["valor"];
@@ -506,10 +509,17 @@ class PagosfacturasController extends \app\components\CController {
             $con              = \Yii::$app->db_facturacion;
             $transaction      = $con->beginTransaction();
 
+            //Variable creada para el bucle de abono de pago
+            $valor_pagado     = $data["valor"];
+
             try {
-                $usuario = @Yii::$app->user->identity->usu_id;   //Se obtiene el id del usuario.
-                //Utilities::putMessageLogFile('usuario:'. $usuario);
-                // consultar en detalle si ya no existe un registro con el mismo              
+                //Se obtiene el id del usuario.
+                $usuario = @Yii::$app->user->identity->usu_id;   
+
+                //gap
+                //Este codigo de revisar si existe la cuota lo dejo pendiente por el tema del ABONO
+                /*
+                // consultar en detalle si ya no existe un registro con el mismo
                 $pagadose = explode("*", $pagado); //PAGADOS
                 $y = 0;
                 foreach ($pagadose as $datose) {
@@ -519,12 +529,15 @@ class PagosfacturasController extends \app\components\CController {
                     $cuota_pagada .= $parametros[1] . ', ' ;
                     $y++;
                 }
-
-                if ($resp_consregistro['registro'] == '0') {
-
+                */
+                $mod_ccartera     = new CargaCartera();
+                //if ($resp_consregistro['registro'] == '0') {
+                if(true){
                     $resp_pagofactura = $mod_pagos->insertarPagospendientes($est_id, $pfes_referencia, $fpag_id, $pfes_valor_pago, $pfes_fecha_pago, $pfes_observacion, $imagen, $usuario);
                    //echo (print_r($resp_pagofactura,true)) ;die();
                     if ($resp_pagofactura) {
+
+
                         // se graba el detalle
                         $pagados = explode("*", $pagado); //PAGADOS
                         $x = 0;
@@ -536,21 +549,48 @@ class PagosfacturasController extends \app\components\CController {
                             //$resp_detpagofactura = $mod_pagos->insertarDetpagospendientes($resp_pagofactura, $resp_consfactura['tipofactura'], $resp_consfactura['factura'], $resp_consfactura['descripcion'], $parametro[2], $resp_consfactura['fecha'], $resp_consfactura['saldo'], $resp_consfactura['numcuota'], $resp_consfactura['valorcuota'], $resp_consfactura['fechavence'], $usuario);
 
                             //CODIGO TEMPORAL
-                            $mod_ccartera     = new CargaCartera();
+                            //$mod_ccartera     = new CargaCartera();
                             $resp_consfactura = $mod_ccartera->consultarPagospendientesp($personaData['per_cedula'], $parametro[0], $parametro[1]);
 
-                            //Solo si es stripe
-                            if($data["formapago"]==6){
-                                $cargo = CargaCartera::findOne($resp_consfactura['ccar_id']);
+
+                            //Inovcamos al modelo carga cartera para actualizar estado del pago
+                            $cargo = CargaCartera::findOne($resp_consfactura['ccar_id']);
+                                
+                            //Pregunto si el valor pagado es mayor a cero
+                            if ($valor_pagado > 0) {
+
+                                //echo(print_r($resp_consfactura,true));
+                                if ($valor_pagado > (float)$resp_consfactura['ccar_valor_cuota'] ) {
+                                    $cargo->ccar_abono = $resp_consfactura['ccar_valor_cuota'];
+                                    $valor_pagado      = $valor_pagado - (float)$resp_consfactura['ccar_valor_cuota'];
+
+                                    if($data["formapago"]==1){    
+                                        $cargo->ccar_estado_cancela     = 'C';
+                                        $cargo->ccar_fecha_modificacion = $fecha;
+                                        $cargo->ccar_usu_modifica       = $usuario;
+                                        
+                                    }
+                                }else{
+                                    $cargo->ccar_abono = $valor_pagado;
+                                }//else
+
+                                $cargo->save();
+                                // insertar el detalle    
+                                $descripciondet = 'Cuota '. $resp_consfactura['cuota'] . 'con el valor de ' .$resp_consfactura['ccar_valor_cuota'];
+                                $resp_detpagofactura = $mod_pagos->insertarDetpagospendientes($resp_pagofactura, $resp_consfactura['ccar_tipo_documento'], $resp_consfactura['NUM_NOF'], $descripciondet     , $parametro[2], $resp_consfactura['F_SUS_D'], is_null($resp_consfactura['SALDO'])?0:round($resp_consfactura['SALDO'], 2), $resp_consfactura['cuota'], $resp_consfactura['ccar_valor_cuota'], $resp_consfactura['F_VEN_D'], $dpfa_estado_pago, $dpfa_estado_financiero, $usuario);
+                            }//if
+
+                            
+                            /*
+
+                            if($data["formapago"]==6){    
                                 $cargo->ccar_estado_cancela = 'C';
                                 $cargo->ccar_fecha_modificacion = $fecha;
                                 $cargo->ccar_usu_modifica = $usuario;
                                 $cargo->save();
                             }
+                            */
 
-                            // insertar el detalle    
-                            $descripciondet = 'Cuota '. $resp_consfactura['cuota'] . 'con el valor de ' .$resp_consfactura['ccar_valor_cuota'];
-                            $resp_detpagofactura = $mod_pagos->insertarDetpagospendientes($resp_pagofactura, $resp_consfactura['ccar_tipo_documento'], $resp_consfactura['NUM_NOF'], $descripciondet     , $parametro[2], $resp_consfactura['F_SUS_D'], is_null($resp_consfactura['SALDO'])?0:round($resp_consfactura['SALDO'], 2), $resp_consfactura['cuota'], $resp_consfactura['ccar_valor_cuota'], $resp_consfactura['F_VEN_D'], $dpfa_estado_pago, $dpfa_estado_financiero, $usuario);
                             $x++;
                         }
                         

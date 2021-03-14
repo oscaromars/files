@@ -384,6 +384,48 @@ class CargaCartera extends \yii\db\ActiveRecord
         $comando->bindParam(":cuota", $cuota, \PDO::PARAM_STR);
         $resultData = $comando->queryOne();
         return $resultData;
-    }
+    }//function consultarPagospendientesp
+
+    public function consultarPagospendientesPorFactura($cedula, $factura) {
+        $con = \Yii::$app->db_facturacion;
+        $sql = "SELECT    
+                  (SELECT SUM(ccar.ccar_valor_cuota) FROM " . $con->dbname . ".carga_cartera ccar
+                    WHERE ccar.ccar_documento_identidad= :cedula AND ccar.ccar_estado_cancela='N' AND ccar.ccar_tipo_documento='FE')  as total_deuda,
+                    ccar.ccar_tipo_documento,
+                    ccar.ccar_numero_documento as NUM_NOF,
+                    ccar.ccar_documento_identidad,
+                    ccar.ccar_forma_pago,
+                    ccar.ccar_num_cuota as NUM_DOC, 
+                    -- SUBSTR(ccar.ccar_num_cuota,-3) as cantidad,
+                    CASE 
+                    WHEN ccar.ccar_num_cuota = ccar.ccar_numero_documento THEN '01'                    
+                    ELSE SUBSTRING(ccar.ccar_num_cuota,-3)
+                    END  as cantidad,
+                    DATE_FORMAT(ccar.ccar_fecha_factura,'%Y-%m-%d') as F_SUS_D,
+                    DATE_FORMAT(ccar.ccar_fecha_vencepago,'%Y-%m-%d') as F_VEN_D,                  
+                    ccar.ccar_valor_cuota,
+                    CASE 
+                    WHEN ccar.ccar_num_cuota = ccar.ccar_numero_documento THEN (ccar.ccar_valor_factura - ccar.ccar_valor_cuota)                    
+                    ELSE (ccar.ccar_valor_factura - (SUBSTRING(ccar.ccar_num_cuota,1,3)) * ccar.ccar_valor_cuota)
+                    END  as SALDO, 
+                    CASE 
+                        WHEN ccar.ccar_num_cuota = ccar.ccar_numero_documento THEN '01'                    
+                        ELSE SUBSTRING(ccar.ccar_num_cuota,1,3)
+                    END  as cuota
+                    ,ccar_id                                     
+                FROM " . $con->dbname . ".carga_cartera ccar
+                WHERE ccar.ccar_documento_identidad= :cedula 
+                  AND ccar.ccar_numero_documento =:factura
+                  AND ccar.ccar_num_cuota = :cuota 
+                  AND ccar.ccar_estado_cancela != C";
+
+
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":cedula", $cedula, \PDO::PARAM_STR);
+        $comando->bindParam(":factura", $factura, \PDO::PARAM_STR);
+        $comando->bindParam(":cuota", $cuota, \PDO::PARAM_STR);
+        $resultData = $comando->queryOne();
+        return $resultData;
+    }//function consultarPagospendientesPorFactura
 
 }

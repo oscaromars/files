@@ -112,6 +112,28 @@ academico::registerTranslations();
             </div>
         </div> 
     </div>
+    <?php if ($model['pago_id'] == 4 or $model['pago_id'] == 5) { ?>
+        <div class='col-md-12 col-sm-12 col-xs-12 col-lg-12'>   
+            <div class="col-md-6 col-sm-6 col-xs-6 col-lg-6">
+                <div class="form-group">
+                    <label for="txt_referencia" class="col-sm-5 col-md-5 col-xs-5 col-lg-5 control-label" id="lbl_referencia"><?= financiero::t("Pagos", "Reference") ?></label>
+                    <div class="col-sm-7 col-md-7 col-xs-7 col-lg-7">
+                        <input type="text" class="form-control keyupmce" value="<?php echo $model['referencia'] ?>" id="txt_referencia" disabled data-type="alfa" placeholder="<?= financiero::t("Pagos", "Reference") ?>">
+                    </div>
+                </div>
+            </div>    
+            <div class="col-md-6 col-sm-6 col-xs-6 col-lg-6">
+                <div class="form-group">
+                    <label for="txt_banco" class="col-sm-5 col-md-5 col-xs-5 col-lg-5 control-label keyupmce"><?= financiero::t("Pagos", "Bank") ?></label>
+                    <div class="col-sm-7 col-md-7 col-xs-7 col-lg-7 ">                
+                    <input type="text" class="form-control keyupmce" value="<?php echo $model['ban_nombre'] ?>" id="txt_banco" disabled data-type="alfa" placeholder="<?= financiero::t("Pagos", "Bank") ?>">
+                    </div>
+                </div>
+            </div> 
+        </div>
+    <?php } ?>
+
+
     <div class='col-md-12 col-sm-12 col-xs-12 col-lg-12'>           
         <div class="col-md-6 col-sm-6 col-xs-6 col-lg-6">
             <div class="form-group">

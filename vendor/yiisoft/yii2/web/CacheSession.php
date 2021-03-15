@@ -31,7 +31,7 @@ use yii\di\Instance;
  * ]
  * ```
  *
- * @property-read bool $useCustomStorage Whether to use custom storage. This property is read-only.
+ * @property bool $useCustomStorage Whether to use custom storage. This property is read-only.
  *
  * @author Qiang Xue <qiang.xue@gmail.com>
  * @since 2.0
@@ -70,26 +70,6 @@ class CacheSession extends Session
     }
 
     /**
-     * Session open handler.
-     * @internal Do not call this method directly.
-     * @param string $savePath session save path
-     * @param string $sessionName session name
-     * @return bool whether session is opened successfully
-     */
-    public function openSession($savePath, $sessionName)
-    {
-        if ($this->getUseStrictMode()) {
-            $id = $this->getId();
-            if (!$this->cache->exists($this->calculateKey($id))) {
-                //This session id does not exist, mark it for forced regeneration
-                $this->_forceRegenerateId = $id;
-            }
-        }
-
-        return parent::openSession($savePath, $sessionName);
-    }
-
-    /**
      * Session read handler.
      * @internal Do not call this method directly.
      * @param string $id session ID
@@ -111,11 +91,6 @@ class CacheSession extends Session
      */
     public function writeSession($id, $data)
     {
-        if ($this->getUseStrictMode() && $id === $this->_forceRegenerateId) {
-            //Ignore write when forceRegenerate is active for this id
-            return true;
-        }
-
         return $this->cache->set($this->calculateKey($id), $data, $this->getTimeout());
     }
 

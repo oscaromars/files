@@ -196,10 +196,6 @@ class BaseArrayHelper
             $key = $lastKey;
         }
 
-        if (is_object($array) && property_exists($array, $key)) {
-            return $array->$key;
-        }
-
         if (static::keyExists($key, $array)) {
             return $array[$key];
         }
@@ -524,7 +520,7 @@ class BaseArrayHelper
      * ```
      *
      * @param array $array
-     * @param int|string|array|\Closure $name
+     * @param int|string|\Closure $name
      * @param bool $keepKeys whether to maintain the array keys. If false, the resulting array
      * will be re-indexed with integers.
      * @return array the list of column values
@@ -948,17 +944,13 @@ class BaseArrayHelper
         $excludeFilters = [];
 
         foreach ($filters as $filter) {
-            if (!is_string($filter) && !is_int($filter)) {
-                continue;
-            }
-
-            if (is_string($filter) && strpos($filter, '!') === 0) {
+            if ($filter[0] === '!') {
                 $excludeFilters[] = substr($filter, 1);
                 continue;
             }
 
             $nodeValue = $array; //set $array as root node
-            $keys = explode('.', (string) $filter);
+            $keys = explode('.', $filter);
             foreach ($keys as $key) {
                 if (!array_key_exists($key, $nodeValue)) {
                     continue 2; //Jump to next filter
@@ -979,7 +971,7 @@ class BaseArrayHelper
 
         foreach ($excludeFilters as $filter) {
             $excludeNode = &$result;
-            $keys = explode('.', (string) $filter);
+            $keys = explode('.', $filter);
             $numNestedKeys = count($keys) - 1;
             foreach ($keys as $i => $key) {
                 if (!array_key_exists($key, $excludeNode)) {

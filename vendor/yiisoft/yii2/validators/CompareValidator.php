@@ -146,9 +146,6 @@ class CompareValidator extends Validator
             return;
         }
         if ($this->compareValue !== null) {
-            if ($this->compareValue instanceof \Closure) {
-                $this->compareValue = call_user_func($this->compareValue);
-            }
             $compareLabel = $compareValue = $compareValueOrAttribute = $this->compareValue;
         } else {
             $compareAttribute = $this->compareAttribute === null ? $attribute . '_repeat' : $this->compareAttribute;
@@ -172,9 +169,6 @@ class CompareValidator extends Validator
     {
         if ($this->compareValue === null) {
             throw new InvalidConfigException('CompareValidator::compareValue must be set.');
-        }
-        if ($this->compareValue instanceof \Closure) {
-            $this->compareValue = call_user_func($this->compareValue);
         }
         if (!$this->compareValues($this->operator, $this->type, $value, $this->compareValue)) {
             return [$this->message, [
@@ -231,10 +225,6 @@ class CompareValidator extends Validator
      */
     public function clientValidateAttribute($model, $attribute, $view)
     {
-        if ($this->compareValue != null && $this->compareValue instanceof \Closure) {
-            $this->compareValue = call_user_func($this->compareValue);
-        }
-
         ValidationAsset::register($view);
         $options = $this->getClientOptions($model, $attribute);
 

@@ -162,27 +162,27 @@ $this->registerJs("
     <div class='col-xs-12 col-sm-12 col-md-6 col-lg-6'>
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
             <div class="form-group">
-                <label class="col-xs-12 col-sm-12 col-md-5 col-lg-5 control-label" for="txt_referencia" ><?= Pagos::t("Pagos", "Reference") ?></label>
-                <div   class="col-xs-12 col-sm-12 col-md-7 col-lg-7">
-                    <input type="text" class="form-control keyupmce" value="" id="txt_referencia" data-type="number" placeholder="<?= Pagos::t("Pagos", "Reference") ?>">
-                </div>
-            </div>  
-        </div>
-        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-            <div class="form-group">
-                <label class="col-xs-12 col-sm-12 col-md-5 col-lg-5 control-label" for="cmb_banco"><?= crm::t("crm", "Payment Method") ?><span class="text-danger"> * </span></label>
-                <div   class="col-xs-12 col-sm-12 col-md-7 col-lg-7">
-                    <?= Html::dropDownList("cmb_banco", 0, ['0' => Yii::t('formulario', 'Select')] + $arr_bancos, ["class" => "form-control PBvalidation", "id" => "cmb_banco"]) ?>
-                </div>
-            </div>
-        </div>
-        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-            <div class="form-group">
                 <label class="col-xs-12 col-sm-12 col-md-5 col-lg-5 control-label" for="txt_valor"> <?= Pagos::t("Pagos", "Value") ?><span class="text-danger"> * </span></label>
                 <div   class="col-xs-12 col-sm-12 col-md-7 col-lg-7">
                     <input type="text" class="form-control PBvalidation keyupmce" value="" id="txt_valor" data-type="dinero" placeholder="<?= Pagos::t("Pagos", "Value") ?>">
                 </div>
             </div>                                        
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 pago_documento">
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-12 col-md-5 col-lg-5 control-label" for="txt_referencia" ><?= Pagos::t("Pagos", "Reference") ?><span class="text-danger"> * </span></label>
+                <div   class="col-xs-12 col-sm-12 col-md-7 col-lg-7">
+                    <input type="text" class="form-control keyupmce" value="" id="txt_referencia" data-type="number" placeholder="<?= Pagos::t("Pagos", "Reference") ?>">
+                </div>
+            </div>  
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 pago_documento">
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-12 col-md-5 col-lg-5 control-label" for="cmb_banco"><?= crm::t("crm", "Institucion Bancaria") ?><span class="text-danger"> * </span></label>
+                <div   class="col-xs-12 col-sm-12 col-md-7 col-lg-7">
+                    <?= Html::dropDownList("cmb_banco", 0, ['0' => Yii::t('formulario', 'Select')] + $arr_bancos, ["class" => "form-control PBvalidation", "id" => "cmb_banco"]) ?>
+                </div>
+            </div>
         </div>
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
             <div class="form-group">
@@ -297,6 +297,12 @@ $this->registerJs("
                     </div>
                 </div>
             </div>
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="form-check">
+                    <label class = "col-xs-10 col-sm-10 col-md-10 col-lg-10 control-label" for="txt_nombres_fac" id="lbl_nombre1" style="text-align: left"><?= Yii::t("formulario", "Acepta Condiciones Y Terminos. <br> Acepto que los documentos no han sido alterados o manipulados") ?><span class="text-danger">*</span></label>  
+                    <input class = "col-xs-2 col-sm-2 col-md-2 col-lg-2 form-check-input checkAcepta" type="checkbox" value="1" id="checkAcepta">
+                </div>
+            </div> 
         </div>
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" id="pago_stripe"  style="display:none; justify-content: center;background-color: antiquewhite;flex-direction:column;border-radius:6px;justify-content:space-between">
             <!------------------------------------------------------->

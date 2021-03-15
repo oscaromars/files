@@ -59,17 +59,21 @@ $(document).ready(function () {
         }, true);
     });
 
+    $('.pago_documento').hide(); 
+
     $("#cmb_formapago").on('change', function(){   
         var opcion = $('#cmb_formapago').val();
 
         if(opcion==1){
             $('#txt_fechapago').removeClass('PBvalidation');
-            $('#pago_documento').hide();           
-            //txth_doc_pago
+            $('#pago_documento').hide(); 
+            $('.pago_documento').hide();           
+
             $('#pago_stripe').show();
         }else{
             $('#txt_fechapago').addClass('PBvalidation');
             $('#pago_documento').show();
+            $('.pago_documento').show();
 
             $('#pago_stripe').hide();
         }
@@ -113,6 +117,7 @@ function guardarPagofactura() {
     arrParams.estid       = $('#txth_idest').val();
     arrParams.per_id      = $('#txth_per').val();
     arrParams.referencia  = $('#txt_referencia').val();
+    arrParams.banco       = $('#cmb_banco').val();
     arrParams.formapago   = $('#cmb_formapago').val();
     arrParams.valor       = $('#txt_valor').val();
     arrParams.observacion = $('#txt_observa').val();
@@ -122,6 +127,24 @@ function guardarPagofactura() {
         var mensaje = {wtmessage: "Método Pago : El campo no debe estar vacío.", title: "Error"};
         showAlert("NO_OK", "error", mensaje);
         return false;
+    }//if
+
+    if (arrParams.formapago != 1) {
+        if(arrParams.referencia == ''){
+            var mensaje = {wtmessage: "Referencia : El campo no debe estar vacío.", title: "Error"};
+            showAlert("NO_OK", "error", mensaje);
+            return false;
+        }
+        if(arrParams.banco == 0){
+            var mensaje = {wtmessage: "Institucion Bancaria : El campo no debe estar vacío.", title: "Error"};
+            showAlert("NO_OK", "error", mensaje);
+            return false;
+        }
+        if( !$('#checkAcepta').is(":checked") ){
+            var mensaje = {wtmessage: "Debe aceptar las condiciones y terminos", title: "Error"};
+            showAlert("NO_OK", "error", mensaje);
+            return false;
+        }
     }//if
 
     //Pregunto por el valor
@@ -159,11 +182,13 @@ function guardarPagofactura() {
          if (!validateForm()) {
             requestHttpAjax(link, arrParams, function (response) {
                 showAlert(response.status, response.label, response.message);
-
-                setTimeout(function () {
-                    parent.window.location.href = $('#txth_base').val() + "/financiero/pagosfacturas/viewsaldo";
-                }, 2000);
-
+                //console.log(response);
+                if(response.status == 'OK'){
+                    setTimeout(function () {
+                        parent.window.location.href = $('#txth_base').val() + "/financiero/pagosfacturas/viewsaldo";
+                    }, 2000);
+                }
+    
             }, true);
         }//if
     }else{
@@ -182,6 +207,7 @@ function guardarPagofactura() {
                     if (!validateForm()) {
                         requestHttpAjax(link, arrParams, function (response) {
                             showAlert(response.status, response.label, response.message);
+
                             setTimeout(function () {
                                 parent.window.location.href = $('#txth_base').val() + "/financiero/pagosfacturas/viewsaldo";
                             }, 2000);

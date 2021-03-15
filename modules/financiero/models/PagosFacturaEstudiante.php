@@ -306,7 +306,8 @@ class PagosFacturaEstudiante extends \yii\db\ActiveRecord {
                         pfe.pfes_id as cabecera_id,
                         d.dpfa_estado_pago as estado,
                         d.dpfa_observacion_rechazo as dpfa_observacion_rechazo,
-                        d.dpfa_observacion_reverso
+                        d.dpfa_observacion_reverso,
+                        b.ban_nombre 
                 from " . $con2->dbname . ".pagos_factura_estudiante pfe inner join " . $con2->dbname . ".detalle_pagos_factura d on d.pfes_id = pfe.pfes_id
                     inner join " . $con->dbname . ".estudiante e on e.est_id = pfe.est_id
                     inner join " . $con1->dbname . ".persona p on p.per_id = e.per_id
@@ -315,7 +316,8 @@ class PagosFacturaEstudiante extends \yii\db\ActiveRecord {
                     inner join " . $con->dbname . ".unidad_academica u on u.uaca_id = m.uaca_id
                     inner join " . $con->dbname . ".modalidad mo on mo.mod_id = m.mod_id
                     inner join " . $con->dbname . ".estudio_academico ea on ea.eaca_id = m.eaca_id
-                    inner join " . $con2->dbname . ".forma_pago f on f.fpag_id = pfe.fpag_id                        
+                    inner join " . $con2->dbname . ".forma_pago f on f.fpag_id = pfe.fpag_id   
+                    left join " . $con2->dbname . ".bancos b on b.ban_id = pfe.ban_id                        
                 where dpfa_id = :dpfa_id
                     and pfes_estado = :estado
                     and pfes_estado_logico = :estado

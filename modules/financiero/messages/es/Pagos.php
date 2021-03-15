@@ -13,6 +13,7 @@ namespace app\modules\financiero\messages;
      "Amount Paid" => "Valor Pagado",
      "Approval Payment" => "Aprobación de Pago",
      "Balance" => "Saldo",
+     "Bank" => "Banco",
      "Bill" => "Factura",
      "Billing Data" => "Datos de Facturación",
      "Boton Payment status" =>"Estado boton pago",

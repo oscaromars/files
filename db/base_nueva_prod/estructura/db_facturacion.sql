@@ -647,11 +647,29 @@ create table if not exists `factura_docente` (
 
 -- -------------------------------------------------------------
 --
+-- Estructura de tabla para la tabla `bancos`
+-- -------------------------------------------------------------
+create table bancos(
+  `ban_id` bigint(20) not null auto_increment primary key,
+  `ban_nombre` varchar(200) not null,  
+  `ban_descripcion` varchar(200) not null,   
+  `ban_activo` varchar(1) not null,
+  `ban_usu_ingreso` bigint(20) not null,    
+  `ban_usu_modifica` bigint(20) null, 
+  `ban_estado` varchar(1) not null,
+  `ban_fecha_creacion` timestamp not null default current_timestamp,
+  `ban_fecha_modificacion` timestamp null default null,
+  `ban_estado_logico` varchar(1) not null
+  );
+
+-- -------------------------------------------------------------
+--
 -- Estructura de tabla para la tabla `pagos_factura_estudiante`
 -- -------------------------------------------------------------
 create table if not exists `pagos_factura_estudiante` (
   `pfes_id` bigint(20) not null auto_increment  primary key,
   `est_id`  bigint(20) not null,
+  `ban_id` bigint(20) null,
   `pfes_referencia` varchar(50) null, 
   `fpag_id` bigint(20) not null,
   `pfes_valor_pago` double not null,
@@ -664,7 +682,8 @@ create table if not exists `pagos_factura_estudiante` (
   `pfes_fecha_creacion` timestamp not null default current_timestamp,
   `pfes_fecha_modificacion` timestamp null default null,
   `pfes_estado_logico` varchar(1) not null,
-   foreign key (fpag_id) references `forma_pago`(fpag_id)
+   foreign key (fpag_id) references `forma_pago`(fpag_id),
+   foreign key (ban_id) references `bancos`(ban_id)
 );
 
 -- -------------------------------------------------------------
@@ -743,24 +762,6 @@ create table db_facturacion.carga_cartera(
   `ccar_fecha_creacion` timestamp not null default current_timestamp,
   `ccar_fecha_modificacion` timestamp null default null,
   `ccar_estado_logico` varchar(1) not null
-  );
-
-
--- -------------------------------------------------------------
---
--- Estructura de tabla para la tabla `bancos`
--- -------------------------------------------------------------
-create table bancos(
-  `ban_id` bigint(20) not null auto_increment primary key,
-  `ban_nombre` varchar(200) not null,  
-  `ban_descripcion` varchar(200) not null,   
-  `ban_activo` varchar(1) not null,
-  `ban_usu_ingreso` bigint(20) not null,    
-  `ban_usu_modifica` bigint(20) null, 
-  `ban_estado` varchar(1) not null,
-  `ban_fecha_creacion` timestamp not null default current_timestamp,
-  `ban_fecha_modificacion` timestamp null default null,
-  `ban_estado_logico` varchar(1) not null
   );
 
 -- -------------------------------------------------------------

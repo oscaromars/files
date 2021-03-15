@@ -315,10 +315,10 @@ class CargaCartera extends \yii\db\ActiveRecord
                  -- (ccar.VALOR_D-ccar.VALOR_C-ccar.VAL_DEV) SALDO,
                   CASE 
                     WHEN ccar.ccar_num_cuota = ccar.ccar_numero_documento THEN '01'                    
-                    ELSE SUBSTRING(ccar.ccar_num_cuota,1,3)
+                    ELSE ccar.ccar_num_cuota
                   END  as cuota   
                   ,ccar_abono as abono
-                  ,(ccar.ccar_valor_cuota - ccar_abono) as saldo                                 
+                  ,ROUND((ccar.ccar_valor_cuota - ccar_abono),2) as saldo                                 
                 FROM " . $con->dbname . ".carga_cartera ccar
                 WHERE ccar.ccar_documento_identidad= :cedula AND ccar.ccar_estado_cancela='N' AND ccar.ccar_tipo_documento='FE'";
         $comando = $con->createCommand($sql);

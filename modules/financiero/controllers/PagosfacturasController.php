@@ -303,8 +303,11 @@ class PagosfacturasController extends \app\components\CController {
                             } else {
                                 //Utilities::putMessageLogFile('entro_envio vorreo');
                                 //Utilities::putMessageLogFile('correo..' . $correo_estudiante);
-                                $body = Utilities::getMailMessage("pago", array("[[user]]" => $user), Yii::$app->language, Yii::$app->basePath . "/modules/financiero");
-                                Utilities::sendEmail($tituloMensaje, Yii::$app->params["adminEmail"], [$correo_estudiante => $user], $asunto, $body);
+                                $body = Utilities::getMailMessage("pagoaprobado", array(
+                                            "[[user]]" => $user,   
+                                            "[[factura]]" => $datos['dpfa_factura'],
+                                                ), Yii::$app->language, Yii::$app->basePath . "/modules/financiero");
+                                                Utilities::sendEmail($tituloMensaje, Yii::$app->params["adminEmail"], [$correo_estudiante => $user], $asunto, $body);
                             }
                              //Utilities::putMessageLogFile('graba la transaccion');
                             $message = array(
@@ -348,6 +351,10 @@ class PagosfacturasController extends \app\components\CController {
             //Obtenemo la data enviada
             $data           = Yii::$app->request->post();
             //Preguntamos por la forma de pago
+            $name   = $data['nombres']; 
+            //Obtenemos su email ya que estos datos son solicitados por stripe
+            $mod_usuario = Persona::find()->select("per_correo")->where(["per_id" => $data['per_id']])->asArray()->all();
+            $email       = $mod_usuario[0]['per_correo'];   
             if($data["formapago"]==1){
                 //Si la forma de Pago es 1 significa que es por Tarjeta de credito
                 $statusMsg = '';
@@ -356,12 +363,6 @@ class PagosfacturasController extends \app\components\CController {
                 if(!empty($data['token'])){
                     //Obtenemos el token y tambien el nombre de la persona que esta cancelando
                     $token  = $data['token']; 
-                    $name   = $data['nombres']; 
-
-                    //Obtenemos su email ya que estos datos son solicitados por stripe
-                    $mod_usuario = Persona::find()->select("per_correo")->where(["per_id" => $data['per_id']])->asArray()->all();
-                    $email       = $mod_usuario[0]['per_correo'];   
-
                     /******************************************************************/
                     /********** PARA DESARROLLO  **************************************/
                     /******************************************************************/
@@ -466,7 +467,7 @@ class PagosfacturasController extends \app\components\CController {
                         "wtmessage" => Yii::t("notificaciones", "La refrencia ya existe para el banco seleccionado."),
                         "title" => Yii::t('jslang', 'Error'),
                     );
-                    echo Utilities::ajaxResponse('NO_OK', 'error', Yii::t("jslang", "Error"), false, $message);
+                    echo Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
                     return;
                 }
 
@@ -546,12 +547,17 @@ class PagosfacturasController extends \app\components\CController {
                 //if ($resp_consregistro['registro'] == '0') {
                 if(true){
                     $resp_pagofactura = $mod_pagos->insertarPagospendientes($est_id, $pfes_referencia, $pfes_banco, $fpag_id, $pfes_valor_pago, $pfes_fecha_pago, $pfes_observacion, $imagen, $usuario);
+                    $tituloMensaje = Yii::t("interesado", "Pago Recibido UTEG");
+                    $asunto = Yii::t("interesado", "Pago Recibido UTEG");
+                    
                     if($fpag_id == 1){
-                        $body = Utilities::getMailMessage("pagostripe", array("[[user]]" => $name ), Yii::$app->language);
-                        $tituloMensaje = Yii::t("interesado", "Pago Recibido UTEG");
-                        $asunto = Yii::t("interesado", "Pago Recibido UTEG");
+                        $body = Utilities::getMailMessage("pagostripe", array("[[user]]" => $name ), Yii::$app->language);    
+                        Utilities::sendEmail($tituloMensaje, Yii::$app->params["contactoEmail"], [$email => $name], $asunto, $body);
+                    }else{
+                        $body = Utilities::getMailMessage("pago", array("[[user]]" => $user), Yii::$app->language, Yii::$app->basePath . "/modules/financiero");
                         Utilities::sendEmail($tituloMensaje, Yii::$app->params["contactoEmail"], [$email => $name], $asunto, $body);
                     }
+
                     if ($resp_pagofactura) {
                         // se graba el detalle
                         $pagados = explode("*", $pagado); //PAGADOS
@@ -589,11 +595,12 @@ class PagosfacturasController extends \app\components\CController {
                                         $cargo->ccar_fecha_modificacion = $fecha;
                                         $cargo->ccar_usu_modifica       = $usuario;
                                     }//if
-                                }else{
+                                }else {
                                     $cargo->ccar_abono              = $cargo->ccar_abono + $valor_pagado;
                                     $cargo->ccar_estado_cancela     = 'N';
                                     $cargo->ccar_fecha_modificacion = $fecha;
                                     $cargo->ccar_usu_modifica       = $usuario;
+                                    $valor_pagado = $valor_pagado - $cargo->ccar_abono;
                                 }//else
                                 
                                 $cargo->save(); //1

@@ -210,13 +210,13 @@ function guardarPagofactura() {
             requestHttpAjax(link, arrParams, function (response) {
                 showAlert(response.status, response.label, response.message);
                 //console.log(response);
-                /*
+                
                 if(response.status == 'OK'){
                     setTimeout(function () {
                         parent.window.location.href = $('#txth_base').val() + "/financiero/pagosfacturas/viewsaldo";
                     }, 2000);
                 }
-                */
+                
             }, true);
         }//if
     }else{

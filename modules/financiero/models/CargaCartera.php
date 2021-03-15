@@ -61,6 +61,7 @@ class CargaCartera extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
+    /*
     public function rules()
     {
         return [
@@ -77,7 +78,7 @@ class CargaCartera extends \yii\db\ActiveRecord
             [['ccar_id'], 'unique'],
         ];
     }
-
+    */
     /**
      * {@inheritdoc}
      */
@@ -374,7 +375,8 @@ class CargaCartera extends \yii\db\ActiveRecord
                         WHEN ccar.ccar_num_cuota = ccar.ccar_numero_documento THEN '01'                    
                         ELSE SUBSTRING(ccar.ccar_num_cuota,1,3)
                     END  as cuota
-                    ,ccar_id                                     
+                    ,ccar_id        
+                    ,ccar_abono as abono                             
                 FROM " . $con->dbname . ".carga_cartera ccar
                 WHERE ccar.ccar_documento_identidad= :cedula AND ccar.ccar_num_cuota= :cuota AND ccar.ccar_numero_documento =:factura";
 

@@ -170,6 +170,14 @@ $this->registerJs("
         </div>
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
             <div class="form-group">
+                <label class="col-xs-12 col-sm-12 col-md-5 col-lg-5 control-label" for="cmb_banco"><?= crm::t("crm", "Payment Method") ?><span class="text-danger"> * </span></label>
+                <div   class="col-xs-12 col-sm-12 col-md-7 col-lg-7">
+                    <?= Html::dropDownList("cmb_banco", 0, ['0' => Yii::t('formulario', 'Select')] + $arr_bancos, ["class" => "form-control PBvalidation", "id" => "cmb_banco"]) ?>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <div class="form-group">
                 <label class="col-xs-12 col-sm-12 col-md-5 col-lg-5 control-label" for="txt_valor"> <?= Pagos::t("Pagos", "Value") ?><span class="text-danger"> * </span></label>
                 <div   class="col-xs-12 col-sm-12 col-md-7 col-lg-7">
                     <input type="text" class="form-control PBvalidation keyupmce" value="" id="txt_valor" data-type="dinero" placeholder="<?= Pagos::t("Pagos", "Value") ?>">

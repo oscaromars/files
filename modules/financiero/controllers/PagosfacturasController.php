@@ -536,8 +536,6 @@ class PagosfacturasController extends \app\components\CController {
                     $resp_pagofactura = $mod_pagos->insertarPagospendientes($est_id, $pfes_referencia, $fpag_id, $pfes_valor_pago, $pfes_fecha_pago, $pfes_observacion, $imagen, $usuario);
                    //echo (print_r($resp_pagofactura,true)) ;die();
                     if ($resp_pagofactura) {
-
-
                         // se graba el detalle
                         $pagados = explode("*", $pagado); //PAGADOS
                         $x = 0;
@@ -552,34 +550,51 @@ class PagosfacturasController extends \app\components\CController {
                             //$mod_ccartera     = new CargaCartera();
                             $resp_consfactura = $mod_ccartera->consultarPagospendientesp($personaData['per_cedula'], $parametro[0], $parametro[1]);
 
-
-                            //Inovcamos al modelo carga cartera para actualizar estado del pago
-                            $cargo = CargaCartera::findOne($resp_consfactura['ccar_id']);
-                                
                             //Pregunto si el valor pagado es mayor a cero
                             if ($valor_pagado > 0) {
+                                $cargo = CargaCartera::findOne($resp_consfactura['ccar_id']);
+                               
+                                $cuota = $resp_consfactura['ccar_valor_cuota']; //250,65
+                                $abono = $resp_consfactura['abono']; //$49,35
+                                $saldo = $cuota - $abono; //$201,3
 
-                                //echo(print_r($resp_consfactura,true));
-                                if ($valor_pagado > (float)$resp_consfactura['ccar_valor_cuota'] ) {
-                                    $cargo->ccar_abono = $resp_consfactura['ccar_valor_cuota'];
-                                    $valor_pagado      = $valor_pagado - (float)$resp_consfactura['ccar_valor_cuota'];
+                                /*
+                                echo("cuota:".$cuota);echo("***************************");
+                                echo("abono:".$abono);echo("***************************");
+                                echo("saldo:".$saldo);echo("***************************");
+                                echo("valor_apgado:".$valor_pagado);echo("***************************");
+                                */
+                                //$valor_apgado = 310
 
-                                    if($data["formapago"]==1){    
-                                        $cargo->ccar_estado_cancela     = 'C';
+                                if ($valor_pagado >= $saldo ) { //310 > 201,3
+
+                                    $cargo->ccar_abono = $saldo; //201,3
+                                    $valor_pagado      = $valor_pagado - $saldo; //310 - 201,3 = 108,7
+
+                                    if($fpag_id == 1){
+                                        $valor_cuota_cancelada = $cuota - ($saldo + $abono);
+                                        
+                                        if($valor_cuota_cancelada <= 0)
+                                            $cargo->ccar_estado_cancela     = 'C';
+
                                         $cargo->ccar_fecha_modificacion = $fecha;
                                         $cargo->ccar_usu_modifica       = $usuario;
-                                        
-                                    }
+                                    }//if
                                 }else{
-                                    $cargo->ccar_abono = $valor_pagado;
+                                    $cargo->ccar_abono              = $cargo->ccar_abono + $valor_pagado;
+                                    $cargo->ccar_estado_cancela     = 'N';
+                                    $cargo->ccar_fecha_modificacion = $fecha;
+                                    $cargo->ccar_usu_modifica       = $usuario;
                                 }//else
-
+                                
+                        
                                 $cargo->save();
+                                
                                 // insertar el detalle    
-                                $descripciondet = 'Cuota '. $resp_consfactura['cuota'] . 'con el valor de ' .$resp_consfactura['ccar_valor_cuota'];
+                                $descripciondet      = 'Cuota '. $resp_consfactura['cuota'] . 'con el valor de ' .$resp_consfactura['ccar_valor_cuota'];
                                 $resp_detpagofactura = $mod_pagos->insertarDetpagospendientes($resp_pagofactura, $resp_consfactura['ccar_tipo_documento'], $resp_consfactura['NUM_NOF'], $descripciondet     , $parametro[2], $resp_consfactura['F_SUS_D'], is_null($resp_consfactura['SALDO'])?0:round($resp_consfactura['SALDO'], 2), $resp_consfactura['cuota'], $resp_consfactura['ccar_valor_cuota'], $resp_consfactura['F_VEN_D'], $dpfa_estado_pago, $dpfa_estado_financiero, $usuario);
                             }//if
-
+                            
                             
                             /*
 

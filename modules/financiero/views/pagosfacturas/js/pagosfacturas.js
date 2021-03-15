@@ -81,7 +81,7 @@ $(document).ready(function () {
 
     $('#TbgPagopendiente input[type=checkbox]').click(function () {
         var valor = $("#txt_valor").val();
-        var td    = $(this).parent().parent().find('td')[3];
+        var td    = $(this).parent().parent().find('td')[6];
         if (this.checked) 
             valor     = parseFloat(valor)  + parseFloat($(td).html());
         else
@@ -91,8 +91,12 @@ $(document).ready(function () {
             valor = 0;
 
         $("#txt_valor").val(parseFloat(valor).toFixed(2));
+
+        $("#txt_valor_respaldo").val(parseFloat(valor).toFixed(2));
         //console.log($(td).html());
     });
+
+
 
 });
 
@@ -167,6 +171,29 @@ function guardarPagofactura() {
         return false;
     }//if
 
+    //galo
+    var valor_saldos = 0;
+    var valor_check  = 0;
+    var contador_cuotas = 0;
+    $('#TbgPagopendiente input[type=checkbox]').each(function(index, value) {
+        td = $(this).parent().parent().find('td')[6];
+        valor_saldos = valor_saldos + parseFloat($(td).html());
+
+        if (this.checked) 
+            valor_check = valor_check  + parseFloat($(td).html());
+
+        contador_cuotas++;
+    });
+    console.log("valor_saldos "+valor_saldos);
+    console.log("valor_check "+valor_check);
+    console.log("contador_cuotas "+contador_cuotas);
+
+    if(arrParams.valor >valor_check && contador_cuotas > 1){
+        var mensaje = {wtmessage: "El valor pagado supero el valor de las cuotas seleccionadas.", title: "Error"};
+        showAlert("NO_OK", "error", mensaje);
+        return false;
+    }
+
     //Pregunto si es pago stripe
     if($('#cmb_formapago').val() != 1 ){
         //Si es por documentos cargo la fecha y el documento
@@ -183,12 +210,13 @@ function guardarPagofactura() {
             requestHttpAjax(link, arrParams, function (response) {
                 showAlert(response.status, response.label, response.message);
                 //console.log(response);
+                /*
                 if(response.status == 'OK'){
                     setTimeout(function () {
                         parent.window.location.href = $('#txth_base').val() + "/financiero/pagosfacturas/viewsaldo";
                     }, 2000);
                 }
-    
+                */
             }, true);
         }//if
     }else{

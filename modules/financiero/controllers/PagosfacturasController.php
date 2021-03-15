@@ -554,9 +554,12 @@ class PagosfacturasController extends \app\components\CController {
                         $body = Utilities::getMailMessage("pagostripe", array("[[user]]" => $name ), Yii::$app->language);    
                         Utilities::sendEmail($tituloMensaje, Yii::$app->params["contactoEmail"], [$email => $name], $asunto, $body);
                     }else{
-                        $body = Utilities::getMailMessage("pago", array("[[user]]" => $user), Yii::$app->language, Yii::$app->basePath . "/modules/financiero");
+                        $body = Utilities::getMailMessage("pago", array("[[user]]" => $name), Yii::$app->language, Yii::$app->basePath . "/modules/financiero");
                         Utilities::sendEmail($tituloMensaje, Yii::$app->params["contactoEmail"], [$email => $name], $asunto, $body);
                     }
+                    $bodycolec = Utilities::getMailMessage("colecturia", array("[[user]]" => $name), Yii::$app->language);
+                    Utilities::sendEmail($tituloMensaje, Yii::$app->params["colecturia"], [$email => $name], $asunto, $bodycolec);
+                    Utilities::sendEmail($tituloMensaje, Yii::$app->params["supercolecturia"], [$email => $name], $asunto, $bodycolec);
 
                     if ($resp_pagofactura) {
                         // se graba el detalle
@@ -574,36 +577,47 @@ class PagosfacturasController extends \app\components\CController {
                             $resp_consfactura = $mod_ccartera->consultarPagospendientesp($personaData['per_cedula'], $parametro[0], $parametro[1]);
 
                             //Pregunto si el valor pagado es mayor a cero
-                            if ($valor_pagado > 0) {
+                            if ($valor_pagado > 0) { 
                                 $cargo = CargaCartera::findOne($resp_consfactura['ccar_id']);
                                
                                 $cuota = $resp_consfactura['ccar_valor_cuota']; 
                                 $abono = $resp_consfactura['abono']; 
                                 $saldo = $cuota - $abono; 
+                                
+                                /*
+                                echo("cuota: ".$cuota." ***");
+                                echo("abono: ".$abono." ***");
+                                echo("saldo: ".$saldo." ***");
+                                */
 
                                 if ($valor_pagado >= $saldo ) { 
-
-                                    $cargo->ccar_abono = $saldo; 
+                                    $cargo->ccar_abono = $cargo->ccar_abono + $saldo; 
                                     $valor_pagado      = $valor_pagado - $saldo; 
 
                                     if($fpag_id == 1){
                                         $valor_cuota_cancelada = $cuota - ($saldo + $abono);
                                         
                                         if($valor_cuota_cancelada <= 0)
-                                            $cargo->ccar_estado_cancela     = 'C';
-
-                                        $cargo->ccar_fecha_modificacion = $fecha;
-                                        $cargo->ccar_usu_modifica       = $usuario;
+                                            $cargo->ccar_estado_cancela = 'C';                                      
                                     }//if
+
+                                    $cargo->ccar_fecha_modificacion = $fecha;
+                                    $cargo->ccar_usu_modifica       = $usuario;
                                 }else {
-                                    $cargo->ccar_abono              = $cargo->ccar_abono + $valor_pagado;
+                                    //if($cuota != $abono){
+                                        $cargo->ccar_abono              = $cargo->ccar_abono + $valor_pagado;
+                                        $valor_pagado = $valor_pagado - $cargo->ccar_abono;
+                                
+                                    
                                     $cargo->ccar_estado_cancela     = 'N';
                                     $cargo->ccar_fecha_modificacion = $fecha;
                                     $cargo->ccar_usu_modifica       = $usuario;
-                                    $valor_pagado = $valor_pagado - $cargo->ccar_abono;
                                 }//else
                                 
-                                $cargo->save(); //1
+                                if($valor_pagado < 0)
+                                    $valor_pagado = 0;
+
+                                $cargo->save(); 
                                 
                                 // insertar el detalle
                                 $descripciondet      = 'Cuota '. $resp_consfactura['cuota'] . '- Abono con el valor de ' .$cargo->ccar_abono ;

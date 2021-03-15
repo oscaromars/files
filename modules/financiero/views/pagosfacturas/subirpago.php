@@ -165,6 +165,7 @@ $this->registerJs("
                 <label class="col-xs-12 col-sm-12 col-md-5 col-lg-5 control-label" for="txt_valor"> <?= Pagos::t("Pagos", "Value") ?><span class="text-danger"> * </span></label>
                 <div   class="col-xs-12 col-sm-12 col-md-7 col-lg-7">
                     <input type="text" class="form-control PBvalidation keyupmce" value="" id="txt_valor" data-type="dinero" placeholder="<?= Pagos::t("Pagos", "Value") ?>">
+                    <input type="hidden" value="0" id="txt_valor_respaldo"/>
                 </div>
             </div>                                        
         </div>
@@ -315,7 +316,7 @@ $this->registerJs("
 
             <div id="paymentResponse"></div>
             <div class="col-xs-12 col-sm-12 col-md-2 col-lg-2" style=" display: flex; justify-content: center;">
-                <img src="https://www.mbtu.us/wp-content/uploads/2021/01/MBTU-Logo-Flat.png" alt="MBTU" style="border-radius:4px;margin:10px;height:56px">
+                <img src="https://www.uteg.edu.ec/wp-content/themes/UTEG4/images/055693c79f5990e523846b9f43c6779d_logouteg.png" alt="MBTU" style="border-radius:4px;margin:10px;height:56px">
             </div>
             <div class="col-xs-12 col-sm-12 col-md-10 col-lg-10">
                 <!--div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding-bottom: 6px;" id="seccion_pago_online"></div--->
@@ -437,7 +438,9 @@ $this->registerJs("
                     'template' => '{select}',
                     'buttons' => [
                         'select' => function ($url, $model) {
-                            return Html::checkbox("", false, ["value" => $model['NUM_NOF'].';'.$model['NUM_DOC'].';'.$model['total_deuda']]);
+                            if($model['saldo'] > 0){
+                                return Html::checkbox("", false, ["value" => $model['NUM_NOF'].';'.$model['NUM_DOC'].';'.$model['total_deuda']]);
+                             }else return " ";
                         },
                     ],
                 ],

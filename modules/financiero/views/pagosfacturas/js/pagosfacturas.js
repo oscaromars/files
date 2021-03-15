@@ -257,6 +257,8 @@ function rechazarPago() {
     arrParams.dpfa_id = $('#txth_dpfa_id').val();
     arrParams.resultado = $('#cmb_estado').val();
     arrParams.observacion = $('#cmb_observacion').val();
+    arrParams.abono = $('#txt_valor_cuota').val();
+    
     if (!validateForm()) {
         requestHttpAjax(link, arrParams, function (response) {
             showAlert(response.status, response.label, response.message);

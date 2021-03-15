@@ -239,8 +239,8 @@ class PagosfacturasController extends \app\components\CController {
             $mod_pagos = new PagosFacturaEstudiante();
             $usuario = @Yii::$app->user->identity->usu_id;   //Se obtiene el id del usuario.
             $fecha = date(Yii::$app->params["dateTimeByDefault"]);
-            $id = $data['dpfa_id'];
-            $resultado = $data['resultado'];
+            $id          = $data['dpfa_id'];
+            $resultado   = $data['resultado'];
             $observacion = $data['observacion'];
             if (($resultado == "0") /* or ( $observacion == "0") */) {
                 //Utilities::putMessageLogFile('ingresa');
@@ -262,17 +262,8 @@ class PagosfacturasController extends \app\components\CController {
                         }
                         $respago = $mod_pagos->grabarRechazo($id, $resultado, $observacion);
 
-                        if($resultado == "2"){
-                            $cartera = $mod_pagos->buscarIdCartera($id);
-                            $id_cartera = $cartera[0]['ccar_id'];
-
-                            $cargo = CargaCartera::findOne($id_cartera);
-                            $cargo->ccar_estado_cancela = 'C';
-                            $cargo->ccar_fecha_modificacion = $fecha;
-                            $cargo->ccar_usu_modifica = $usuario;
-                            $cargo->save();
-                            //echo(print_r($cartera,true));
-                        }//if
+                        $cartera = $mod_pagos->buscarIdCartera($id);
+                        $id_cartera = $cartera[0]['ccar_id'];
 
                         if ($respago) {
                             $transaction->commit();
@@ -282,6 +273,14 @@ class PagosfacturasController extends \app\components\CController {
                             $tituloMensaje = 'Pagos en Línea';
                             $asunto = 'Pagos en Línea';
                             if ($resultado != "2") {
+
+                                $cargo = CargaCartera::findOne($id_cartera);
+                                $cargo->ccar_estado_cancela = 'N';
+                                $cargo->ccar_abono = $cargo->ccar_abono  - $data['abono'];
+                                $cargo->ccar_fecha_modificacion = $fecha;
+                                $cargo->ccar_usu_modifica = $usuario;
+                                $cargo->save();
+
                                 if (!empty($datos['dpfa_num_cuota'])) {
                                     //Utilities::putMessageLogFile('$cuota:' . $datos['dpfa_num_cuota']);
                                     $body = Utilities::getMailMessage("pagonegadocuota", array(
@@ -301,6 +300,11 @@ class PagosfacturasController extends \app\components\CController {
                                 }
                                 Utilities::sendEmail($tituloMensaje, Yii::$app->params["adminEmail"], [$correo_estudiante => $user], $asunto, $body);
                             } else {
+                                $cargo = CargaCartera::findOne($id_cartera);
+                                $cargo->ccar_estado_cancela = 'C';
+                                $cargo->ccar_fecha_modificacion = $fecha;
+                                $cargo->ccar_usu_modifica = $usuario;
+                                $cargo->save();
                                 //Utilities::putMessageLogFile('entro_envio vorreo');
                                 //Utilities::putMessageLogFile('correo..' . $correo_estudiante);
                                 $body = Utilities::getMailMessage("pagoaprobado", array(

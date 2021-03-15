@@ -57,6 +57,11 @@ PbGridView::widget([
             'value' => 'valor_pago',
         ],
         [
+            'attribute' => 'Abono',
+            'header' => financiero::t("Pagos", "Abono"),
+            'value' => 'abono',
+        ],
+        [
             'attribute' => 'Cuota',
             'header' => financiero::t("Pagos", "Monthly fee"),
             'value' => 'dpfa_num_cuota',

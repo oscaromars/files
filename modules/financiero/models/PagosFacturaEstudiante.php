@@ -126,8 +126,11 @@ class PagosFacturaEstudiante extends \yii\db\ActiveRecord {
                 } else {
                     $str_search .= "d.dpfa_estado_financiero = :estadofinanciero AND "; // son los pendientes no estan en la tabla
                 }
-            }
+            }           
         }
+        if ($onlyData == false) {
+            $fpag_id = "f.fpag_id, ";
+        } 
         $sql = "SELECT 
                         p.per_cedula as identificacion, 
                         concat(p.per_pri_nombre, ' ', p.per_pri_apellido, ' ', ifnull(p.per_seg_apellido,'')) as estudiante,
@@ -135,6 +138,7 @@ class PagosFacturaEstudiante extends \yii\db\ActiveRecord {
                         mo.mod_nombre as modalidad,
                         ea.eaca_nombre as carrera,
                         f.fpag_nombre as forma_pago,
+                        $fpag_id
                         d.dpfa_num_cuota,
                         d.dpfa_factura,
                         pfe.pfes_valor_pago valor_pago,

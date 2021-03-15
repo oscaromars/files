@@ -130,7 +130,7 @@ PbGridView::widget([
                     }
                 },
                 'reversar' => function ($url, $model) {
-                    if (($model['estado_pago'] == 'Aprobado') && ($model['estado_financiero'] == 'Cancelado') && $model['forma_pago'] != 'Tarjeta de Pagos') {
+                    if (($model['estado_pago'] == 'Aprobado') && ($model['estado_financiero'] == 'Cancelado') && $model['forma_pago'] != 'Tarjeta de Credito') {
                         return Html::a('<span class="glyphicon glyphicon-share"></span>', Url::to(['/financiero/pagosfacturas/reversar', 'dpfa_id' => base64_encode($model['dpfa_id'])]), ["data-toggle" => "tooltip", "title" => "Reversar Pago", "data-pjax" => "0"]);
                     } else {
                         return '<span class="glyphicon glyphicon-share"></span>';

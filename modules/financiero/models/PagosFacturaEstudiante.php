@@ -451,7 +451,7 @@ class PagosFacturaEstudiante extends \yii\db\ActiveRecord {
             if (isset($pfes_referencia)) {
                 $comando->bindParam(':pfes_referencia', $pfes_referencia, \PDO::PARAM_STR);
             }
-            if (isset($pfes_referencia)) {
+            if (isset($pfes_banco)) {
                 $comando->bindParam(':pfes_banco', $pfes_banco, \PDO::PARAM_STR);
             }
             if (!empty((isset($fpag_id)))) {

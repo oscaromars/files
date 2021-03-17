@@ -15,6 +15,7 @@ use yii\base\Exception;
 use app\models\Utilities;
 use app\models\Reporte;
 use app\models\Empresa;
+use app\modules\financiero\models\CargaCartera;
 use app\models\ExportFile;
 use app\modules\academico\Module as academico;
 academico::registerTranslations();
@@ -198,11 +199,8 @@ class ReportesController extends CController {
             }
         }
         return $valor;
-    }
+    }      
        
-            
-
-
     private function retornaMes($number){
         $valor = "";
         switch ($number){
@@ -250,5 +248,47 @@ class ReportesController extends CController {
         return $this->render('cartera',[
             'arrEstados' => $this->estados(),
         ]);
+    }
+
+    public function actionExpexcelreportcartera(){       
+        ini_set('memory_limit', '256M');
+        $content_type = Utilities::mimeContentType("xls");
+        $nombarch = "Report-" . date("YmdHis") . ".xls";
+        header("Content-Type: $content_type");
+        header("Content-Disposition: attachment;filename=" . $nombarch);
+        header('Cache-Control: max-age=0');
+        $colPosition = array("C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M");
+        $arrHeader = array(
+            admision::t("Solicitudes", "Request #"),
+            admision::t("Solicitudes", "Application date"), //ingles
+            Yii::t("formulario", "DNI 1"),
+            Yii::t("formulario", "First Names"),
+            Yii::t("formulario", "Last Names"),
+            academico::t("Academico", "Income Method"), //ingles
+            academico::t("Academico", "Career/Program"),
+            admision::t("Solicitudes", "Scholarship"),
+            admision::t("Solicitudes", "Scholarship").
+            admision::t("Solicitudes", "Scholarship")
+        );
+        $data = Yii::$app->request->get();
+        $arrSearch = array();
+        if (count($data) > 0) {
+            $arrSearch["search"] = $data['search'];
+            $arrSearch["f_inif"] = $data['fecha_inifac'];
+            $arrSearch["f_finf"] = $data['fecha_finfac'];
+            $arrSearch["f_iniv"] = $data['fecha_iniven'];
+            $arrSearch["f_finv"] = $data['fecha_finven'];
+            $arrSearch["estadopago"] = $data['estado'];            
+        }
+        $arrData = array();
+        $carga_model = new CargaCartera();
+        if (count($arrSearch) > 0) {
+            $arrData = $carga_model->consultarReportcartera($arrSearch, true);
+        } else {
+            $arrData = $carga_model->consultarReportcartera(array(), true);
+        }
+        $nameReport = academico::t("Pagos", "Cartera");
+        Utilities::generarReporteXLS($nombarch, $nameReport, $arrHeader, $arrData, $colPosition);
+        exit;
     }
 }

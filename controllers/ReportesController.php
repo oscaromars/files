@@ -18,7 +18,10 @@ use app\models\Empresa;
 use app\modules\financiero\models\CargaCartera;
 use app\models\ExportFile;
 use app\modules\academico\Module as academico;
+use app\modules\financiero\Module as financiero;
 academico::registerTranslations();
+financiero::registerTranslations();
+
 class ReportesController extends CController {
     
     private function estados() {
@@ -259,26 +262,26 @@ class ReportesController extends CController {
         header('Cache-Control: max-age=0');
         $colPosition = array("C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M");
         $arrHeader = array(
-            admision::t("Solicitudes", "Request #"),
-            admision::t("Solicitudes", "Application date"), //ingles
             Yii::t("formulario", "DNI 1"),
             Yii::t("formulario", "First Names"),
-            Yii::t("formulario", "Last Names"),
-            academico::t("Academico", "Income Method"), //ingles
-            academico::t("Academico", "Career/Program"),
-            admision::t("Solicitudes", "Scholarship"),
-            admision::t("Solicitudes", "Scholarship").
-            admision::t("Solicitudes", "Scholarship")
+            financiero::t("Pagos", "# Voucher"),
+            financiero::t("Pagos", "Amount Fees"),
+            financiero::t("Pagos", "Date Bill"),
+            financiero::t("Pagos", "Expiration date"),
+            financiero::t("Pagos", "Quota value"),
+            financiero::t("Pagos", "Quota value"),
+            Yii::t("formulario", "Payment Status"),
+            financiero::t("Pagos", "Balance")
         );
         $data = Yii::$app->request->get();
         $arrSearch = array();
         if (count($data) > 0) {
             $arrSearch["search"] = $data['search'];
-            $arrSearch["f_inif"] = $data['fecha_inifac'];
-            $arrSearch["f_finf"] = $data['fecha_finfac'];
-            $arrSearch["f_iniv"] = $data['fecha_iniven'];
-            $arrSearch["f_finv"] = $data['fecha_finven'];
-            $arrSearch["estadopago"] = $data['estado'];            
+            $arrSearch["f_inif"] = $data['f_inif'];
+            $arrSearch["f_finf"] = $data['f_finf'];
+            $arrSearch["f_iniv"] = $data['f_iniv'];
+            $arrSearch["f_finv"] = $data['f_finv'];
+            $arrSearch["estadopago"] = $data['estadopago'];            
         }
         $arrData = array();
         $carga_model = new CargaCartera();

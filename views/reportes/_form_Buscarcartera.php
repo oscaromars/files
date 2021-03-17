@@ -67,10 +67,10 @@ financiero::registerTranslations();
             <div class="col-sm-3 col-md-3 col-xs-3 col-lg-3">
                 <?=
                 DatePicker::widget([
-                    'name' => 'txt_fecha_inifact',
+                    'name' => 'txt_fecha_inifactve',
                     'value' => '',
                     'type' => DatePicker::TYPE_INPUT,
-                    'options' => ["class" => "form-control", "id" => "txt_fecha_inifact", "placeholder" => financiero::t("Pagos", "Expiration date") . ' ' . Yii::t("formulario", "Start")],
+                    'options' => ["class" => "form-control", "id" => "txt_fecha_inifactve", "placeholder" => financiero::t("Pagos", "Expiration date") . ' ' . Yii::t("formulario", "Start")],
                     'pluginOptions' => [
                         'autoclose' => true,
                         'format' => Yii::$app->params["dateByDatePicker"],
@@ -103,5 +103,11 @@ financiero::registerTranslations();
                 </div>
             </div>     
     </div>
+    <!-- <div class="col-md-12 col-xs-12 col-lg-12 col-sm-12">
+        <div class="col-sm-8 col-md-8 col-xs-8 col-lg-8 "></div>
+        <div class="col-sm-2 col-md-2 col-xs-4 col-lg-2">                
+            <a id="btn_buscarDatacartera" href="javascript:" class="btn btn-primary btn-block"> <?= Yii::t("formulario", "Search") ?></a>
+        </div>
+    </div>-->
 </div>
 

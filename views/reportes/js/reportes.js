@@ -8,7 +8,10 @@ $(document).ready(function () {
     $('#btn_buscarData').click(function () {
         buscarInscriptos();
     });
-    
+
+    $('#btn_buscarDatacartera').click(function () {
+        buscarDatacartera();
+    });    
     
 });
 
@@ -40,4 +43,15 @@ function buscarInscriptos() {
     //var f_estado = '';//$('#cmb_estado').val();
     //Buscar al menos una clase con el nombre para ejecutar
     window.location.href = $('#txth_base').val() + "/reportes/expexcelinscriptos?anio="+anio;
+}
+
+function buscarDatacartera() {
+    var search = $('#txt_buscarDatacartera').val();
+    var f_inif = $('#txt_fecha_inifact').val();
+    var f_finf = $('#txt_fecha_finfact').val();
+    var f_iniv = $('#txt_fecha_inifactve').val();
+    var f_finv = $('#txt_fecha_finfactve').val();   
+    var estadopago = $('#cmb_estadocartera').val();    
+
+    window.location.href = $('#txth_base').val() + "/reportes/expexcelreportcartera?search=" + search + "&f_inif=" + f_inif + "&f_finf=" + f_finf + '&f_iniv=' + f_iniv + "&f_finv=" + f_finv + "&estadopago=" + estadopago;
 }

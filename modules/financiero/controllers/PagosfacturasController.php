@@ -20,6 +20,7 @@ use app\modules\academico\models\UnidadAcademica;
 use app\modules\academico\models\ModuloEstudio;
 use app\modules\financiero\models\PagosFacturaEstudiante;
 use app\modules\financiero\models\CargaCartera;
+use app\modules\financiero\models\Cruce;
 use app\modules\financiero\Module as financiero;
 use app\modules\admision\Module as admision;
 use app\modules\academico\Module as academico;
@@ -551,9 +552,37 @@ class PagosfacturasController extends \app\components\CController {
                 //if ($resp_consregistro['registro'] == '0') {
                 if(true){
                     $resp_pagofactura = $mod_pagos->insertarPagospendientes($est_id, $pfes_referencia, $pfes_banco, $fpag_id, $pfes_valor_pago, $pfes_fecha_pago, $pfes_observacion, $imagen, $usuario);
+
+                    $pfes_id = $resp_pagofactura;
+
                     $tituloMensaje = Yii::t("interesado", "Pago Recibido UTEG");
                     $asunto = Yii::t("interesado", "Pago Recibido UTEG");
                     
+                    /*
+                    echo($data["valor"]);echo("********");
+                    echo($data["valor_check"]);echo("********");
+                    echo($data["contador_cuotas"]);echo("********");
+                    echo($data["cuotas_check"]);echo("********");
+                    */
+
+                    if($data["valor"] > $data["valor_check"]){
+                        if($data["contador_cuotas"] == 1 || $data["contador_cuotas"] == $data["cuotas_check"]){
+                            //if($fpag_id == 1){
+                                $mod_cruce = new Cruce();
+                                
+                                $resp_mod_cruce  = $mod_cruce->insertarCruce($est_id,  //si
+                                                                             $pfes_id, //si
+                                                                             "", // 
+                                                                             $pfes_fecha_pago, 
+                                                                             $data["valor"] - $data["valor_check"], 
+                                                                             $data["valor"] - $data["valor_check"], 
+                                                                             "A", 
+                                                                             $usuario);
+                                
+                            //}
+                        } 
+                    }
+
                     if($fpag_id == 1){
                         $body = Utilities::getMailMessage("pagostripe", array("[[user]]" => $name ), Yii::$app->language);    
                         Utilities::sendEmail($tituloMensaje, Yii::$app->params["contactoEmail"], [$email => $name], $asunto, $body);

@@ -171,27 +171,37 @@ function guardarPagofactura() {
         return false;
     }//if
 
-    //galo
     var valor_saldos = 0;
     var valor_check  = 0;
     var contador_cuotas = 0;
+    var cuotas_check = 0;
     $('#TbgPagopendiente input[type=checkbox]').each(function(index, value) {
         td = $(this).parent().parent().find('td')[6];
         valor_saldos = valor_saldos + parseFloat($(td).html());
 
-        if (this.checked) 
+        if (this.checked){
             valor_check = valor_check  + parseFloat($(td).html());
+            cuotas_check++;
+        } 
 
         contador_cuotas++;
     });
     console.log("valor_saldos "+valor_saldos);
     console.log("valor_check "+valor_check);
     console.log("contador_cuotas "+contador_cuotas);
+    console.log("cuotas_check "+cuotas_check);
 
-    if(arrParams.valor >valor_check && contador_cuotas > 1){
-        var mensaje = {wtmessage: "El valor pagado supero el valor de las cuotas seleccionadas.", title: "Error"};
-        showAlert("NO_OK", "error", mensaje);
-        return false;
+    arrParams.valor_saldos = valor_saldos;
+    arrParams.valor_check = valor_check;
+    arrParams.contador_cuotas = contador_cuotas;
+    arrParams.cuotas_check = cuotas_check;
+
+    if(arrParams.valor > valor_check){
+        if(contador_cuotas > 1 && contador_cuotas != cuotas_check){
+            var mensaje = {wtmessage: "El valor pagado supero el valor de las cuotas seleccionadas.", title: "Error"};
+            showAlert("NO_OK", "error", mensaje);
+            return false;
+        } 
     }
 
     //Pregunto si es pago stripe

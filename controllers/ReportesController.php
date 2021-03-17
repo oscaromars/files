@@ -19,6 +19,15 @@ use app\models\ExportFile;
 use app\modules\academico\Module as academico;
 academico::registerTranslations();
 class ReportesController extends CController {
+    
+    private function estados() {
+        return [
+            '0' => Yii::t("formulario", "All"),
+            'C' => Yii::t("formulario", "Cancelado"),
+            'N' => Yii::t("formulario", "Pendiente"),            
+        ];
+    }
+
     public function actionIndex() {    
         $empresa_mod = new Empresa();
         $empresa = $empresa_mod->getAllEmpresa();
@@ -236,5 +245,10 @@ class ReportesController extends CController {
             
         }
         return $valor;
+    }
+    public function actionCartera() {    
+        return $this->render('cartera',[
+            'arrEstados' => $this->estados(),
+        ]);
     }
 }

@@ -474,4 +474,101 @@ class CargaCartera extends \yii\db\ActiveRecord
         $resultData = $comando->queryOne();
         return $resultData;
     }
+
+       /**
+     * Function consultarReportcartera
+     * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>;
+     * @param
+     * @return 
+     */
+    public static function consultarReportcartera($arrFiltro = array(), $onlyData = false) {
+        $con = \Yii::$app->db_academico;
+        $con1 = \Yii::$app->db_asgard;
+        $con2 = \Yii::$app->db_facturacion;
+        
+        $estado = 1;
+        $str_search = "";
+        if (isset($arrFiltro) && count($arrFiltro) > 0) {
+            if ($arrFiltro['search'] != "") {
+                $str_search .= "(pers.per_pri_nombre like :estudiante OR ";
+                $str_search .= "pers.per_pri_apellido like :estudiante OR ";
+                $str_search .= "pers.per_cedula like :estudiante )  AND ";
+            }
+            if ($arrFiltro['f_inif'] != "" && $arrFiltro['f_finf'] != "") {
+                $str_search .= " ccar.ccar_fecha_factura BETWEEN :fec_inif AND :fec_finf AND ";
+            }
+            if ($arrFiltro['f_iniv'] != "" && $arrFiltro['f_finv'] != "") {
+                $str_search .= " ccar.ccar_fecha_vencepago BETWEEN :fec_iniv AND :fec_finv AND ";
+            }        
+            if ($arrFiltro['estadopago'] != '0') { 
+                $str_search .= "ccar.ccar_estado_cancela = :estadopago AND ";
+            }                   
+        }       
+        $sql = "SELECT 
+                        ccar.ccar_documento_identidad,
+                        concat(pers.per_pri_nombre , ' ', per_pri_apellido) as nombres, 
+                        ccar.ccar_numero_documento,
+                        ccar.ccar_num_cuota,
+                        date_format(ccar.ccar_fecha_factura, '%Y-%m-%d') as fecha_factura,
+                        date_format(ccar.ccar_fecha_vencepago, '%Y-%m-%d') as fecha_vencimiento,
+                        ccar.ccar_valor_cuota,
+                        ccar.ccar_valor_factura,
+                        case ccar.ccar_estado_cancela 
+                                            when 'C' then 'Cancelado'  
+                                            when 'N' then 'Pendiente' 
+                                        end as estado_cuota,
+                        CASE 
+                                    WHEN ccar.ccar_num_cuota = ccar.ccar_numero_documento AND ccar.ccar_estado_cancela = 'C' THEN (ccar.ccar_valor_factura - ccar.ccar_valor_cuota)
+                                    WHEN ccar.ccar_num_cuota = ccar.ccar_numero_documento AND ccar.ccar_estado_cancela = 'N' THEN ccar.ccar_valor_cuota
+                                    ELSE (ccar.ccar_valor_factura - (SUBSTRING(ccar.ccar_num_cuota,1,3)) * ccar.ccar_valor_cuota)
+                                    END  as saldo	
+                FROM " . $con2->dbname . ".carga_cartera ccar
+                INNER JOIN " . $con->dbname . ".estudiante est ON est.est_id = ccar.est_id
+                INNER JOIN " . $con1->dbname . ".persona pers ON pers.per_id = est.per_id
+                WHERE $str_search ccar.ccar_estado=:estado AND ccar.ccar_estado_logico=:estado  ORDER BY ccar.ccar_fecha_factura DESC ";
+
+        $comando = $con->createCommand($sql);          
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        if (isset($arrFiltro) && count($arrFiltro) > 0) {
+            $fecha_inif = $arrFiltro["f_inif"] . " 00:00:00";
+            $fecha_finf = $arrFiltro["f_finf"] . " 23:59:59";
+            $fecha_iniv = $arrFiltro["f_iniv"] . " 00:00:00";
+            $fecha_finv = $arrFiltro["f_finv"] . " 23:59:59";
+            $search_cond = "%" . $arrFiltro["search"] . "%";          
+            $estadopago = $arrFiltro['estadopago'];            
+            if ($arrFiltro['f_inif'] != "" && $arrFiltro['f_finf'] != "") {
+                $comando->bindParam(":fec_inif", $fecha_inif, \PDO::PARAM_STR);
+                $comando->bindParam(":fec_finf", $fecha_finf, \PDO::PARAM_STR);
+            }
+            if ($arrFiltro['f_iniv'] != "" && $arrFiltro['f_finv'] != "") {
+                $comando->bindParam(":fec_iniv", $fecha_iniv, \PDO::PARAM_STR);
+                $comando->bindParam(":fec_finv", $fecha_finv, \PDO::PARAM_STR);
+            }
+            if ($arrFiltro['search'] != "") {
+                $comando->bindParam(":estudiante", $search_cond, \PDO::PARAM_STR);
+            }   
+            if ($arrFiltro['estadopago'] != '0') {
+                $comando->bindParam(":estadopago", $estadopago, \PDO::PARAM_STR);
+            }           
+        }
+        $resultData = $comando->queryAll();
+        $dataProvider = new ArrayDataProvider([
+            'key' => 'id',
+            'allModels' => $resultData,
+            'pagination' => [
+                'pageSize' => Yii::$app->params["pageSize"],
+            ],
+            'sort' => [
+                'attributes' => [
+                    'ccar__id',
+                    'ccar_fecha_creacion',
+                ],
+            ],
+        ]);
+        if ($onlyData) {
+            return $resultData;
+        } else {
+            return $dataProvider;
+        }
+    }
 }

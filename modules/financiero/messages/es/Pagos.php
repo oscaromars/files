@@ -66,5 +66,6 @@ namespace app\modules\financiero\messages;
      "Upload Contract" => "Cargar Contrato",
      "Upload Payments" => "Cargar Pagos",
      "Value" => "Valor",
-     "Way to pay" => "Forma Pago",     
+     "Way to pay" => "Forma Pago",  
+     "# Voucher" => "# Comprobante",   
  ];

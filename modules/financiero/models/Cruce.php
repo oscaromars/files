@@ -352,4 +352,34 @@ class Cruce extends \yii\db\ActiveRecord
             return $dataProvider;
         }
     }//function consultarSaldos
+
+    /**
+     * Function Actualizardsaldofavorcruce (Actualiza saldo a favor en cruce de cartera)
+     * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
+     * @param   
+     * @return  
+     */
+    public function Actualizardsaldofavorcruce($cru_id, $cru_saldo_favor) {
+        $con = \Yii::$app->db_facturacion;
+        $estado = 1;
+        $fecha_modifica = date(Yii::$app->params["dateTimeByDefault"]);
+        $usuario_modifica = @Yii::$app->user->identity->usu_id;
+       
+        $comando = $con->createCommand
+                ("UPDATE " . $con->dbname . ".cruce
+                SET cru_saldo_favor = :cru_saldo_favor, 
+                    cru_usu_modifica = :cru_usu_modifica,                      
+                    cru_fecha_modificacion = :cru_fecha_modificacion
+                WHERE cru_id = :cru_id AND 
+                      cru_estado =:estado AND
+                      cru_estado_logico = :estado");
+
+        $comando->bindParam(":cru_saldo_favor", $cru_saldo_favor, \PDO::PARAM_STR);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $comando->bindParam(":cru_id", $cru_id, \PDO::PARAM_INT);       
+        $comando->bindParam(":cru_fecha_modificacion", $fecha_modifica, \PDO::PARAM_STR);
+        $comando->bindParam(":cru_usu_modifica", $usuario_modifica, \PDO::PARAM_INT);
+        $response = $comando->execute();
+        return $response;
+    }
 }

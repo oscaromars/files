@@ -378,7 +378,7 @@ class Cruce extends \yii\db\ActiveRecord
         }
         $sql = "SELECT *
                   FROM ". $con->dbname  .".detalle_cruce dcru
-                 WHERE dcru.dcru_id            = :dcru_id
+                 WHERE dcru.cru_id             = :dcru_id
                    AND dcru.dcru_estado        = :cru_estado
                    AND dcru.dcru_estado_logico = :cru_estado";
 
@@ -426,7 +426,7 @@ class Cruce extends \yii\db\ActiveRecord
         }
     }//function consultarSaldos
 
-     * Function Actualizardsaldofavorcruce (Actualiza saldo a favor en cruce de cartera)
+     /* Function Actualizardsaldofavorcruce (Actualiza saldo a favor en cruce de cartera)
      * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
      * @param   
      * @return  

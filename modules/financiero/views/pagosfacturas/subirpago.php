@@ -72,6 +72,7 @@ $this->registerJs("
         cardElement.mount('#card-element');
 
         /*
+        //Todo este codigo se comenta 
         cardElement = elements.create('cardNumber', {
             style: style
         });

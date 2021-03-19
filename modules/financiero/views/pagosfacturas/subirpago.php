@@ -18,6 +18,8 @@ crm::registerTranslations();
 academico::registerTranslations();
 
 $this->registerJsFile("https://js.stripe.com/v3/",['depends' => [\yii\web\YiiAsset::className()]]);
+$this->registerJsFile("https://polyfill.io/v3/polyfill.min.js?version=3.52.1&features=fetch",['depends' => [\yii\web\YiiAsset::className()]]);
+
 
 
 $this->registerJs("
@@ -53,6 +55,23 @@ $this->registerJs("
             }
         };
 
+        var style2 = {
+            base: {
+            color: '#32325d',
+            fontFamily: 'Arial, sans-serif',
+            fontSmoothing: 'antialiased',
+            fontSize: '16px',
+            '::placeholder': {
+              color: '#32325d'
+            }
+          },
+
+        };
+
+        cardElement = elements.create('card', { style: style2 , hidePostalCode: true});
+        cardElement.mount('#card-element');
+
+        /*
         cardElement = elements.create('cardNumber', {
             style: style
         });
@@ -68,6 +87,7 @@ $this->registerJs("
         });
         
         cvc.mount('#card_cvc');
+        */
 
         cardElement.addEventListener('change', function(event) {
             if (event.error) {
@@ -305,51 +325,60 @@ $this->registerJs("
                 </div>
             </div> 
         </div>
-        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" id="pago_stripe"  style="display:none; justify-content: center;background-color: lightblue;flex-direction:column;border-radius:6px;justify-content:space-between">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 " id="pago_stripe">
             <!------------------------------------------------------->
             <!----- INI PAGO STRIPE --------------------------------->                
             <!------------------------------------------------------->
             <style type="text/css">
-                .checkout-button{height:36px;background:#556cd6;border-radius:0 0 4px 4px;color:white;border:0;font-weight:600;cursor:pointer;transition:all 0.2s ease;box-shadow:0px 4px 5.5px 0px rgba(0,0,0,0.07)}
+                /*.checkout-button{height:36px;background:#556cd6;border-radius:0 0 4px 4px;color:white;border:0;font-weight:600;cursor:pointer;transition:all 0.2s ease;box-shadow:0px 4px 5.5px 0px rgba(0,0,0,0.07)}
                 .checkout-button:hover{opacity:0.8}
+                */
+                #pago_stripe{
+                    display:none; 
+                    background-color: lightblue;
+                    border-radius:6px;
+                    border: 1px gray solid;
+                    padding: 0 0 0 10px;
+                }
+
+                #card-element {
+                  border-radius: 4px 4px 0 0 ;
+                  padding: 12px;
+                  border: 1px solid rgba(50, 50, 93, 0.1);
+                  /*height: 44px;
+                  width: 100%;*/
+                  background: ghostwhite;
+                  margin-top: 10px;
+                  margin-bottom: 10px;
+                }
+
+                #card-element  input {
+                  border-radius: 6px;
+                  margin-bottom: 6px;
+                  padding: 8px;
+                  border: 1px solid rgba(50, 50, 93, 0.1);
+                  height: 44px;
+                  font-size: 16px;
+                  width: 100%;
+                  background: white;
+                  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+                  font-size: 16px;
+                }
             </style>
 
-            <div id="paymentResponse"></div>
+            
             <div class="col-xs-12 col-sm-12 col-md-2 col-lg-2" style=" display: flex; justify-content: center;">
-                <img src="https://www.uteg.edu.ec/wp-content/themes/UTEG4/images/055693c79f5990e523846b9f43c6779d_logouteg.png" alt="MBTU" style="border-radius:4px;margin:10px;height:56px">
+                <img src="https://www.uteg.edu.ec/wp-content/themes/UTEG4/images/055693c79f5990e523846b9f43c6779d_logouteg.png" alt="MBTU" style="border-radius:4px;height:40px;margin-top: 10px;margin-bottom: 10px;">
             </div>
             <div class="col-xs-12 col-sm-12 col-md-10 col-lg-10">
-                <!--div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding-bottom: 6px;" id="seccion_pago_online"></div--->
-                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                    <div class="form-group">
-                        <label class="col-xs-12 col-sm-12 col-md-4 col-lg-4 control-label">CARD NUMBER</label>
-                        <div   class="col-xs-12 col-sm-12 col-md-8 col-lg-8 form-control" id="card_number" class="field"></div>
-                    </div>
-                </div>
-                <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
-                    <div class="form-group">
-                        <label class="col-xs-12 col-sm-12 col-md-6 col-lg-6 control-label">EXPIRY DATE</label>
-                        <div   class="col-xs-12 col-sm-12 col-md-6 col-lg-6 form-control" id="card_expiry" class="field"></div>
-                    </div>
-                </div>
-                <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
-                    <div class="form-group">
-                        <label class="col-xs-12 col-sm-12 col-md-6 col-lg-6 control-label">CVC CODE</label>
-                        <div   class="col-xs-12 col-sm-12 col-md-6 col-lg-6 form-control" id="card_cvc" class="field"></div>
-                    </div>
-                </div>
+                <div id="card-element"><!--Stripe.js injects the Card Element--></div>
             </div>
-            <!--div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="display: grid;">
-                <button type="button" class="checkout-button" id="payBtn">Realizar Pago</button>
-            </div-->
-
             <div id="form_temp" style="display:none"></div>
             <!------------------------------------------------------->
             <!----- FIN PAGO STRIPE --------------------------------->                
             <!------------------------------------------------------->      
         </div>
     </div>
-
     <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12" id="div_detalle"></div>
     <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12">
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6"></div>

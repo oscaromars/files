@@ -331,9 +331,6 @@ $this->registerJs("
             <!----- INI PAGO STRIPE --------------------------------->                
             <!------------------------------------------------------->
             <style type="text/css">
-                /*.checkout-button{height:36px;background:#556cd6;border-radius:0 0 4px 4px;color:white;border:0;font-weight:600;cursor:pointer;transition:all 0.2s ease;box-shadow:0px 4px 5.5px 0px rgba(0,0,0,0.07)}
-                .checkout-button:hover{opacity:0.8}
-                */
                 #pago_stripe{
                     display:none; 
                     background-color: lightblue;
@@ -346,8 +343,6 @@ $this->registerJs("
                   border-radius: 4px 4px 0 0 ;
                   padding: 12px;
                   border: 1px solid rgba(50, 50, 93, 0.1);
-                  /*height: 44px;
-                  width: 100%;*/
                   background: ghostwhite;
                   margin-top: 10px;
                   margin-bottom: 10px;
@@ -374,7 +369,6 @@ $this->registerJs("
             <div class="col-xs-12 col-sm-12 col-md-10 col-lg-10">
                 <div id="card-element"><!--Stripe.js injects the Card Element--></div>
             </div>
-            <div id="form_temp" style="display:none"></div>
             <!------------------------------------------------------->
             <!----- FIN PAGO STRIPE --------------------------------->                
             <!------------------------------------------------------->      

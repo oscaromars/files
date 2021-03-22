@@ -519,8 +519,8 @@ class CargaCartera extends \yii\db\ActiveRecord
                                         end as estado_cuota,
                         CASE 
                                     WHEN ccar.ccar_forma_pago = 'EF' AND ccar.ccar_num_cuota = ccar.ccar_numero_documento AND ccar.ccar_estado_cancela = 'C' THEN (ccar.ccar_valor_factura - ccar.ccar_valor_cuota)
-                                    WHEN ccar.ccar_forma_pago = 'EF' AND ccar.ccar_num_cuota = ccar.ccar_numero_documento AND ccar.ccar_estado_cancela = 'N' THEN ccar.ccar_valor_cuota
-                                    WHEN ccar.ccar_forma_pago = 'CR' AND ccar.ccar_estado_cancela = 'N' THEN ccar.ccar_valor_cuota
+                                    WHEN ccar.ccar_forma_pago = 'EF' AND ccar.ccar_num_cuota = ccar.ccar_numero_documento AND ccar.ccar_estado_cancela = 'N' THEN ccar.ccar_valor_cuota - ccar.ccar_abono
+                                    WHEN ccar.ccar_forma_pago = 'CR' AND ccar.ccar_estado_cancela = 'N' THEN ccar.ccar_valor_cuota - ccar.ccar_abono
                                     WHEN ccar.ccar_forma_pago = 'CR' AND ccar.ccar_estado_cancela = 'C' THEN ROUND((ccar.ccar_valor_factura - (SUBSTRING(ccar.ccar_num_cuota,1,3)) * ccar.ccar_valor_cuota),2)
                                     -- ELSE (ccar.ccar_valor_factura - (SUBSTRING(ccar.ccar_num_cuota,1,3)) * ccar.ccar_valor_cuota)
                                     END  as saldo	

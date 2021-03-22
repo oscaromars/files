@@ -472,7 +472,7 @@ class Distributivo extends \yii\db\ActiveRecord {
                                 CASE WHEN mi.ccar_estado_cancela = 'C' 
                                 THEN 'Autorizado' 
                                 ELSE 'No Autorizado' END AS pago
-                                FROM db_facturacion.carga_cartera mi
+                                FROM " . $con2->dbname . ".carga_cartera mi
                                 WHERE mi.est_id = g.est_id and mi.ccar_fecha_vencepago <= NOW()
                                 ORDER BY ccar_fecha_vencepago desc
                                 LIMIT 1),'No Autorizado') as pago
@@ -553,6 +553,7 @@ class Distributivo extends \yii\db\ActiveRecord {
     public function consultarDistributivoxEstudiante($arrFiltro = array(), $reporte) {
         $con = \Yii::$app->db_academico;
         $con1 = \Yii::$app->db_asgard;
+        $con2 = \Yii::$app->db_facturacion;
         $estado = 1;
 
         if (isset($arrFiltro) && count($arrFiltro) > 0) {
@@ -580,30 +581,43 @@ class Distributivo extends \yii\db\ActiveRecord {
             if ($arrFiltro['asignatura'] != "" && $arrFiltro['asignatura'] > 0) {
                 $str_search .= "a.asi_id = :asignatura AND ";
             }
-            if ($arrFiltro['estado_pago'] != '-1') {
+            /*********** comentar y cambiar tomando el estado de tabla anterior */
+           /* if ($arrFiltro['estado_pago'] != '-1') {
                 if ($arrFiltro['estado_pago'] == '0') {
                     $str_search .= " (m.eppa_estado_pago = :estado_pago OR m.eppa_estado_pago IS NULL) AND ";
                 } else {
                     $str_search .= " m.eppa_estado_pago = :estado_pago AND ";
                 }
-            }
+            }*/
+            if ($arrFiltro['estado_pago'] == "0" or $arrFiltro['estado_pago'] == "1") {            
+                $str_search .= " m.ccar_estado_cancela = :estado_pago AND ";
+            }  
+            /**************************************************************  **/ 
             if ($arrFiltro['jornada'] != "" && $arrFiltro['jornada'] > 0) {
                 $str_search .= "a.daca_jornada = :jornada AND ";
             }
         }
-        $sql = "SELECT  h.est_id, 
+        $sql = "SELECT  distinct h.est_id, 
                         d.uaca_nombre as unidad, 
                         e.mod_nombre as modalidad,
                         p.per_cedula as identificacion, 
                         concat(p.per_pri_nombre, ' ', p.per_pri_apellido, ' ', ifnull(p.per_seg_apellido,'')) as estudiante,
                         concat(saca_nombre, '-', baca_nombre,'-',baca_anio) as periodo,
                         z.asi_nombre as asignatura,
-                        case 
-                             when m.eppa_estado_pago = '0' then 'No Autorizado' 
-                             when m.eppa_estado_pago = '1' then 'Autorizado'
-                             else 'No Autorizado'
-                             end as 'pago',                           
-                        ifnull(DATE_FORMAT(m.eppa_fecha_registro, '%Y-%m-%d'), ' ') as fecha_pago 
+                        -- case 
+                          --   when m.eppa_estado_pago = '0' then 'No Autorizado' 
+                          --   when m.eppa_estado_pago = '1' then 'Autorizado'
+                          --   else 'No Autorizado'
+                          --   end as 'pago',                           
+                          ifnull((SELECT 
+                                CASE WHEN mi.ccar_estado_cancela = 'C' 
+                                THEN 'Autorizado' 
+                                ELSE 'No Autorizado' END AS pago
+                                FROM " . $con2->dbname . ".carga_cartera mi
+                                WHERE mi.est_id = g.est_id and mi.ccar_fecha_vencepago <= NOW()
+                                ORDER BY mi.ccar_fecha_vencepago desc
+                                LIMIT 1),'No Autorizado') as pago  
+                        -- ifnull(DATE_FORMAT(m.eppa_fecha_registro, '%Y-%m-%d'), ' ') as fecha_pago 
                 FROM " . $con->dbname . ".distributivo_academico a inner join " . $con->dbname . ".profesor b
                     on b.pro_id = a.pro_id 
                     inner join " . $con1->dbname . ".persona c on c.per_id = b.per_id
@@ -617,8 +631,9 @@ class Distributivo extends \yii\db\ActiveRecord {
                     inner join " . $con->dbname . ".semestre_academico s on s.saca_id = f.saca_id
                     inner join " . $con->dbname . ".bloque_academico t on t.baca_id = f.baca_id
                     inner join " . $con->dbname . ".asignatura z on a.asi_id = z.asi_id
-                    left join " . $con->dbname . ".estudiante_periodo_pago m on (m.est_id = g.est_id and m.paca_id = f.paca_id)
-                WHERE $str_search /* f.paca_activo = 'A'
+                    -- left join " . $con->dbname . ".estudiante_periodo_pago m on (m.est_id = g.est_id and m.paca_id = f.paca_id)
+                    left join " . $con2->dbname . ".carga_cartera m on (m.est_id = g.est_id /* and m.paca_id = f.paca_id */)
+                    WHERE $str_search /* f.paca_activo = 'A'
                     and*/ a.daca_estado = :estado
                     and a.daca_estado_logico = :estado
                     and g.daes_estado = :estado
@@ -650,9 +665,20 @@ class Distributivo extends \yii\db\ActiveRecord {
                 $search_asi = $arrFiltro["asignatura"];
                 $comando->bindParam(":asignatura", $search_asi, \PDO::PARAM_INT);
             }
-            if ($arrFiltro['estado_pago'] != '-1') {
+            /*********** comentar y cambiar tomando el estado de tabla anterior */
+            /*if ($arrFiltro['estado_pago'] != '-1') {
                 $comando->bindParam(":estado_pago", $arrFiltro['estado_pago'], \PDO::PARAM_STR);
+            }*/
+            if ($arrFiltro['estado_pago'] != '-1') {
+                if ($arrFiltro['estado_pago'] == '0') {
+                    $filestado = 'N';
+                } else {
+                    $filestado = 'C';
+              } 
+                $comando->bindParam(":estado_pago", $filestado, \PDO::PARAM_STR);
             }
+            /***************************************************************** */
+
             if ($arrFiltro['jornada'] != "" && $arrFiltro['jornada'] > 0) {
                 $search_jor = $arrFiltro["jornada"];
                 $comando->bindParam(":jornada", $search_jor, \PDO::PARAM_INT);

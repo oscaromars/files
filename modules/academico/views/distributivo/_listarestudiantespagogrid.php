@@ -71,12 +71,12 @@ academico::registerTranslations();
                         return '<small class="label label-success">Autorizado</small>';
                 },
             ],
-            [
+            /*[
                 'attribute' => 'Fecha',
                 'header' => Yii::t("formulario", "Date"),
                 'value' => 'fecha_pago',
-            ],
-            [
+            ],*/
+            /*[
                 'class' => 'yii\grid\ActionColumn',
                 'header' => Academico::t("matriculacion", "Select"),
                 'contentOptions' => ['style' => 'text-align: center;'],
@@ -87,7 +87,7 @@ academico::registerTranslations();
                         return Html::checkbox("", false, ["value" => $model['est_id']]);
                     },
                 ],
-            ],
+            ],*/
         ],
     ])
     ?>

@@ -260,7 +260,7 @@ class ReportesController extends CController {
         header("Content-Type: $content_type");
         header("Content-Disposition: attachment;filename=" . $nombarch);
         header('Cache-Control: max-age=0');
-        $colPosition = array("C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M");
+        $colPosition = array("C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N");
         $arrHeader = array(
             Yii::t("formulario", "DNI 1"),
             Yii::t("formulario", "First Names"),
@@ -270,6 +270,7 @@ class ReportesController extends CController {
             financiero::t("Pagos", "Expiration date"),
             financiero::t("Pagos", "Quota value"),
             financiero::t("Pagos", "Value") . ' '. financiero::t("Pagos", "Bill"),
+            Yii::t("formulario", "Aono"),
             Yii::t("formulario", "Payment Status"),
             financiero::t("Pagos", "Balance")
         );

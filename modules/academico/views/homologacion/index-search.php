@@ -15,8 +15,6 @@ use app\modules\academico\Module as academico;
     console.log("usu_id: <?= $usu_id; ?>");
     console.log("rol: <?= $rol; ?>");
     console.log("cedula: <?= $cedula; ?>");
-
-    document.getElementById("input_cedula").value("<?= $cedula; ?>");
 </script>
 <style type="text/css">
 
@@ -27,7 +25,8 @@ use app\modules\academico\Module as academico;
         }
     }
 </style>
-<input type="hidden" value="<?= $cedula; ?>" id="cedula/>
+<input type="hidden" value="<?= $cedula; ?>" id="cedula"/>
+<input type="hidden" value="<?= $rol; ?>" id="rol"/>
 <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12">
     <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12">
         <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">

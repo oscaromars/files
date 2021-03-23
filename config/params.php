@@ -3,7 +3,7 @@
 return [
     'copyright' => 'Uteg',
     'alias' => 'UT',
-    'web' => 'http://www.uteg.edu.ec',
+    'web' => '/asgard',
     'version' => '1.0',
     'adminEmail' => 'analistadesarrollo01@uteg.edu.ec',//'web@uteg.edu.ec',
 

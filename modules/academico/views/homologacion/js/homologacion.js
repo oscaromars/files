@@ -4,7 +4,11 @@
  * and open the template in the editor.
  */
 $(document).ready(function(){
-   $("#input_cedula").val($("#cedula").val());
+    if($("#rol").val() == 37 ){
+        $("#input_cedula").val($("#cedula").val());
+        $("#input_cedula").attr("readonly","readonly");
+        $("#btn_cedula").click();
+    }
 });
 
 function traer_estudiante(){

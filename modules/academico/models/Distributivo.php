@@ -468,14 +468,25 @@ class Distributivo extends \yii\db\ActiveRecord {
                         z.asi_nombre as asignatura,
                         -- case when m.eppa_estado_pago = '1' then 'Autorizado' else 'No Autorizado' end as pago
                         -- case when m.ccar_estado_cancela = 'C' then 'Autorizado' else 'No Autorizado' end as pago
-                        ifnull((SELECT 
-                                CASE WHEN mi.ccar_estado_cancela = 'C' 
-                                THEN 'Autorizado' 
-                                ELSE 'No Autorizado' END AS pago
-                                FROM " . $con2->dbname . ".carga_cartera mi
-                                WHERE mi.est_id = g.est_id and mi.ccar_fecha_vencepago <= NOW()
-                                ORDER BY ccar_fecha_vencepago desc
-                                LIMIT 1),'No Autorizado') as pago
+                        case 
+                                when m.ccar_fecha_vencepago <= NOW() then  ifnull((SELECT
+                                            CASE WHEN mi.ccar_estado_cancela = 'C'
+                                            THEN 'Autorizado'
+                                            ELSE 'No Autorizado' END AS pago
+                                            FROM db_facturacion.carga_cartera mi
+                                            WHERE mi.est_id = g.est_id and mi.ccar_fecha_vencepago <= NOW()
+                                            ORDER BY mi.ccar_fecha_vencepago desc
+                                            LIMIT 1),'No Autorizado')
+                                when m.ccar_fecha_vencepago >= NOW() then ifnull((SELECT
+                                            CASE WHEN mi.ccar_estado_cancela = 'C'
+                                            THEN 'Autorizado'
+                                            ELSE 'No Autorizado' END AS pago
+                                            FROM db_facturacion.carga_cartera mi
+                                            WHERE mi.est_id = g.est_id and mi.ccar_fecha_vencepago >= NOW()
+                                            ORDER BY mi.ccar_fecha_vencepago asc
+                                            LIMIT 1),'No Autorizado')						 
+                                else 'No Autorizado'
+                                end as pago 
                 FROM " . $con->dbname . ".distributivo_academico a inner join " . $con->dbname . ".profesor b
                     on b.pro_id = a.pro_id 
                     inner join " . $con1->dbname . ".persona c on c.per_id = b.per_id
@@ -609,14 +620,25 @@ class Distributivo extends \yii\db\ActiveRecord {
                           --   when m.eppa_estado_pago = '1' then 'Autorizado'
                           --   else 'No Autorizado'
                           --   end as 'pago',                           
-                          ifnull((SELECT 
-                                CASE WHEN mi.ccar_estado_cancela = 'C' 
-                                THEN 'Autorizado' 
-                                ELSE 'No Autorizado' END AS pago
-                                FROM " . $con2->dbname . ".carga_cartera mi
-                                WHERE mi.est_id = g.est_id and mi.ccar_fecha_vencepago <= NOW()
-                                ORDER BY mi.ccar_fecha_vencepago desc
-                                LIMIT 1),'No Autorizado') as pago  
+                          case 
+                                when m.ccar_fecha_vencepago <= NOW() then  ifnull((SELECT
+                                            CASE WHEN mi.ccar_estado_cancela = 'C'
+                                            THEN 'Autorizado'
+                                            ELSE 'No Autorizado' END AS pago
+                                            FROM db_facturacion.carga_cartera mi
+                                            WHERE mi.est_id = g.est_id and mi.ccar_fecha_vencepago <= NOW()
+                                            ORDER BY mi.ccar_fecha_vencepago desc
+                                            LIMIT 1),'No Autorizado')
+                                when m.ccar_fecha_vencepago >= NOW() then ifnull((SELECT
+                                            CASE WHEN mi.ccar_estado_cancela = 'C'
+                                            THEN 'Autorizado'
+                                            ELSE 'No Autorizado' END AS pago
+                                            FROM db_facturacion.carga_cartera mi
+                                            WHERE mi.est_id = g.est_id and mi.ccar_fecha_vencepago >= NOW()
+                                            ORDER BY mi.ccar_fecha_vencepago asc
+                                            LIMIT 1),'No Autorizado')						 
+                                else 'No Autorizado'
+                                end as pago  
                         -- ifnull(DATE_FORMAT(m.eppa_fecha_registro, '%Y-%m-%d'), ' ') as fecha_pago 
                 FROM " . $con->dbname . ".distributivo_academico a inner join " . $con->dbname . ".profesor b
                     on b.pro_id = a.pro_id 

@@ -556,7 +556,7 @@ class PagosfacturasController extends \app\components\CController {
                     $pfes_id = $resp_pagofactura;
 
                     $tituloMensaje = Yii::t("interesado", "Pago Recibido UTEG");
-                    $asunto = Yii::t("interesado", "Pago Recibido UTEG");
+                    $asunto        = Yii::t("interesado", "Pago Recibido UTEG");
                     
                     /*
                     echo($data["valor"]);echo("********");
@@ -591,8 +591,9 @@ class PagosfacturasController extends \app\components\CController {
                         Utilities::sendEmail($tituloMensaje, Yii::$app->params["contactoEmail"], [$email => $name], $asunto, $body);
                     }
                     $bodycolec = Utilities::getMailMessage("colecturia", array("[[user]]" => $name), Yii::$app->language);
-                    Utilities::sendEmail($tituloMensaje, Yii::$app->params["colecturia"], [$email => $name], $asunto, $bodycolec);
-                    Utilities::sendEmail($tituloMensaje, Yii::$app->params["supercolecturia"], [$email => $name], $asunto, $bodycolec);
+                   
+                    Utilities::sendEmail($tituloMensaje, Yii::$app->params["colecturia"]     , [Yii::$app->params["supercolecturia"] => "Colecturia"], $asunto, $bodycolec);
+                    Utilities::sendEmail($tituloMensaje, Yii::$app->params["supercolecturia"], [Yii::$app->params["colecturia"]      => "Supervisor Colecturia"], $asunto, $bodycolec);
 
                     if ($resp_pagofactura) {
                         // se graba el detalle
@@ -609,6 +610,8 @@ class PagosfacturasController extends \app\components\CController {
                             //$mod_ccartera     = new CargaCartera();
                             $resp_consfactura = $mod_ccartera->consultarPagospendientesp($personaData['per_cedula'], $parametro[0], $parametro[1]);
 
+                            \app\models\Utilities::putMessageLogFile('resp_consfactura ...: ' . print_r($resp_consfactura,true));
+                            \app\models\Utilities::putMessageLogFile('valor_pagado ...: ' . print_r($valor_pagado,true));
                             //Pregunto si el valor pagado es mayor a cero
                             if ($valor_pagado > 0) { 
                                 $cargo = CargaCartera::findOne($resp_consfactura['ccar_id']);
@@ -617,19 +620,22 @@ class PagosfacturasController extends \app\components\CController {
                                 $abono = $resp_consfactura['abono']; 
                                 $saldo = $cuota - $abono; 
                                 
-                                /*
-                                echo("cuota: ".$cuota." ***");
-                                echo("abono: ".$abono." ***");
-                                echo("saldo: ".$saldo." ***");
-                                */
+                                \app\models\Utilities::putMessageLogFile('cuota ...: ' . print_r($cuota,true));
+                                \app\models\Utilities::putMessageLogFile('abono ...: ' . print_r($abono,true));
+                                \app\models\Utilities::putMessageLogFile('saldo ...: ' . print_r($saldo,true));
 
+                                //si el valor pagado es mayor al saldo
                                 if ($valor_pagado >= $saldo ) { 
+                                     \app\models\Utilities::putMessageLogFile('if ($valor_pagado >= $saldo )');
                                     $cargo->ccar_abono = $cargo->ccar_abono + $saldo; 
                                     $valor_pagado      = $valor_pagado - $saldo; 
-
+                                    \app\models\Utilities::putMessageLogFile('cargo->ccar_abono ...: ' . print_r($cargo->ccar_abono,true));
+                                    \app\models\Utilities::putMessageLogFile('valor_pagado ...: ' . print_r($valor_pagado,true));
                                     if($fpag_id == 1){
                                         $valor_cuota_cancelada = $cuota - ($saldo + $abono);
-                                        
+
+                                        \app\models\Utilities::putMessageLogFile('valor_cuota_cancelada ...: ' . print_r($valor_cuota_cancelada,true));
+                                   
                                         if($valor_cuota_cancelada <= 0)
                                             $cargo->ccar_estado_cancela = 'C';                                      
                                     }//if
@@ -637,14 +643,23 @@ class PagosfacturasController extends \app\components\CController {
                                     $cargo->ccar_fecha_modificacion = $fecha;
                                     $cargo->ccar_usu_modifica       = $usuario;
                                 }else {
+                                    \app\models\Utilities::putMessageLogFile('else');
+                                    \app\models\Utilities::putMessageLogFile('cargo->ccar_abono ...: ' . print_r($cargo->ccar_abono,true));
+                                    \app\models\Utilities::putMessageLogFile('valor_pagado...: ' . print_r($valor_pagado,true));
                                     //if($cuota != $abono){
-                                        $cargo->ccar_abono              = $cargo->ccar_abono + $valor_pagado;
-                                        $valor_pagado = $valor_pagado - $cargo->ccar_abono;
-                                
+                                    $cargo->ccar_abono = $cargo->ccar_abono + $valor_pagado;
+                                    $valor_pagado      = $valor_pagado - $cargo->ccar_abono;
                                     
-                                    $cargo->ccar_estado_cancela     = 'N';
+                                    if($fpag_id == 1){
+                                        if($cargo->ccar_abono == $cuota)
+                                            $cargo->ccar_estado_cancela  = 'C';
+                                    }else{
+                                        $cargo->ccar_estado_cancela     = 'N';
+                                        
+                                    }
                                     $cargo->ccar_fecha_modificacion = $fecha;
                                     $cargo->ccar_usu_modifica       = $usuario;
+                                    
                                 }//else
                                 
                                 if($valor_pagado < 0)
@@ -682,6 +697,8 @@ class PagosfacturasController extends \app\components\CController {
                             */
 
                             $x++;
+
+                             \app\models\Utilities::putMessageLogFile('****************************************');
                         }
                         
                         if ($resp_detpagofactura) {

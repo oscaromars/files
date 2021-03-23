@@ -33,6 +33,7 @@ namespace app\modules\financiero\messages;
      "Monthly fee" => "Cuota",
      "Outstanding balance" => "Saldo Pendiente",
      "Paid form" => "Forma Pago",
+     "Pass" => "Abono",
      "Payment" => "Pago", 
      "Payment Contract" => "Pago Contrato",
      "Payment approval" => "Fecha Aprobación Pago",

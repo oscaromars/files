@@ -270,7 +270,7 @@ class ReportesController extends CController {
             financiero::t("Pagos", "Expiration date"),
             financiero::t("Pagos", "Quota value"),
             financiero::t("Pagos", "Value") . ' '. financiero::t("Pagos", "Bill"),
-            Yii::t("formulario", "Abono"),
+            financiero::t("Pagos", "Pass"),
             Yii::t("formulario", "Payment Status"),
             financiero::t("Pagos", "Balance")
         );

@@ -386,6 +386,7 @@ class SiteController extends CController {
             if($modEper != 0){
                 $url = Url::base(true) . "/site/dash";
             }
+            $url = Url::base(true) ."";
             return $this->goBack($url);
         } else {
             if ($model->getErrorSession())

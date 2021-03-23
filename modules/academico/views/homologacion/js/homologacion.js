@@ -3,6 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+$(document).ready(function(){
+   $("#input_cedula").val($("#cedula").val());
+});
+
 function traer_estudiante(){
     var cedula   = $("#input_cedula").val();
 

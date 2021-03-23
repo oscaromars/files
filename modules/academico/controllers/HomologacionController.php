@@ -45,9 +45,8 @@ class HomologacionController extends \app\components\CController
     {
         $per_id = @Yii::$app->session->get("PB_perid");
         $usu_id = @Yii::$app->session->get("PB_iduser");
-        $rol    = UsuaGrolEper::find()->select("grol_id")->where(["eper_id" => $per_id,"usu_id" => $usu_id])->asArray()->all();
+        $rol    = UsuaGrolEper::find()->select("grol_id")->where(["eper_id" => $per_id])->asArray()->all();
         $cedula = Persona::find()->select("per_cedula")->where(["per_id" => $per_id])->asArray()->all();
-
 
         return $this->render('index', [
             'per_id' => $per_id,
@@ -55,7 +54,7 @@ class HomologacionController extends \app\components\CController
             'rol'    => $rol[0]['grol_id'],
             'cedula' => $cedula[0]['per_cedula'],
         ]);
-    }
+    }//function actionIndex
 
     public function actionExportexcel()
     {

@@ -11,10 +11,12 @@ use app\modules\academico\Module as academico;
  */
 ?>
 <script type="text/javascript">
-    console.log(<?= $per_id; ?>);
-    console.log(<?= $usu_id; ?>);
-    console.log(<?= $rol; ?>);
-    console.log(<?= $cedula; ?>);
+    console.log("per_id: <?= $per_id; ?>");
+    console.log("usu_id: <?= $usu_id; ?>");
+    console.log("rol: <?= $rol; ?>");
+    console.log("cedula: <?= $cedula; ?>");
+
+    document.getElementById("input_cedula").value("<?= $cedula; ?>");
 </script>
 <style type="text/css">
 
@@ -25,7 +27,7 @@ use app\modules\academico\Module as academico;
         }
     }
 </style>
-
+<input type="hidden" value="<?= $cedula; ?>" id="cedula/>
 <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12">
     <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12">
         <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
@@ -47,7 +49,7 @@ use app\modules\academico\Module as academico;
                         <i class="fa fa-search" aria-hidden="true"></i>&nbsp;<?= Yii::t("formulario", "Search") ?>
                     </a> 
                 </div>
-                <?php if($rol!=32){  ?>
+                <?php if($rol!=37){  ?>
                     <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
                         <a id="btn_iniciar" href="javascript:iniciarHomologacion()" class="btn btn-success" style="width: 100%">
                             <i class="fa fa-cogs" aria-hidden="true"></i>&nbsp;

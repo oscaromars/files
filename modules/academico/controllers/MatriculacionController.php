@@ -369,16 +369,16 @@ class MatriculacionController extends \app\components\CController {
                 }
             }
         }
-        else {          
-            $matriculacion_model = new Matriculacion();
-            $today = date("Y-m-d H:i:s");
-            $result_process = $matriculacion_model->checkToday($today, $per_id);
+        //else {          
+            //$matriculacion_model = new Matriculacion();
+            //$today = date("Y-m-d H:i:s");
+            //$result_process = $matriculacion_model->checkToday($today, $per_id);
 
-            if (count($result_process) > 0) {                
-                /*                 * Exist a register process */
-                $pla_id = $result_process[0]['pla_id'];
+            //if (count($result_process) > 0) {                
+                /* Exist a register process */
+                //$pla_id = $result_process[0]['pla_id'];
 
-                /*                 * Verificando si el estudiante ha pagado */
+                /* Verificando si el estudiante ha pagado */
                 //$data_planificacion_pago = Matriculacion::getPlanificacionPago($pla_id);
                 /* Se obtiene los datos de planificación del estudiante GVG */
                 $data_planificacion_pago = Matriculacion::getPlanificacionPago($per_id);              
@@ -387,13 +387,13 @@ class MatriculacionController extends \app\components\CController {
                             "pla_id" => $data_planificacion_pago['pla_id'],
                             "per_id" => $per_id,
                 ]);
-            } else {
+           // } else {
                 //Render index-out
-                return $this->render('index-out', [
-                            "message" => Academico::t("matriculacion", "No es tiempo de registro."),
-                ]);
-            }
-        }
+                //return $this->render('index-out', [
+                            //"message" => Academico::t("matriculacion", "No es tiempo de registro."),
+                //]);
+           // }
+        //}
     }
 
     public function actionList() {

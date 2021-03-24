@@ -323,9 +323,13 @@ class PagosfacturasController extends \app\components\CController {
                                     $rpm_estado_aprobacion = 2;
                                 } 
                                 $mod_pagosmat = new RegistroPagoMatricula();
-                                // AQUI VER COMO ENVIAR PER_ID Y PLA_ID
-                                // CONSULTAR SI ESTAN AQUI $datos = $mod_pagos->consultarPago($id);
-                                $regpagomatricula = $mod_pagosmat->Modificarregsitropagomatricula($per_id, $pla_id, $rpm_estado_aprobacion);
+                                // AQUI VER COMO ENVIAR PLA_ID   
+                                // para pla_id se debe hacer una consulta db_academico.planificacion 
+                                // ordenada de mayor a menor, solo traer un registro top 1, enviando 
+                                // como parametros el mod_id que sereia ($datos['mod_id'])
+                                //del estudiante, con eso se devuelve el pla_id 
+                                // y se envia a la funcoina Modificarregsitropagomatricula                             
+                                $regpagomatricula = $mod_pagosmat->Modificarregsitropagomatricula($datos['per_id'], $pla_id, $rpm_estado_aprobacion);
                             }
                              //Utilities::putMessageLogFile('graba la transaccion');
                             $message = array(

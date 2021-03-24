@@ -18,6 +18,7 @@ use app\modules\admision\models\Oportunidad;
 use app\modules\academico\models\Modalidad;
 use app\modules\academico\models\UnidadAcademica;
 use app\modules\academico\models\ModuloEstudio;
+use app\modules\academico\models\RegistroPagoMatricula;
 use app\modules\financiero\models\PagosFacturaEstudiante;
 use app\modules\financiero\models\CargaCartera;
 use app\modules\financiero\models\Cruce;
@@ -314,6 +315,18 @@ class PagosfacturasController extends \app\components\CController {
                                                 ), Yii::$app->language, Yii::$app->basePath . "/modules/financiero");
                                                 Utilities::sendEmail($tituloMensaje, Yii::$app->params["adminEmail"], [$correo_estudiante => $user], $asunto, $body);
                             }
+                              // actualizar estados y data en registro_pago_matricula
+                              if ($cargo) {
+                                if ($resultado == "2") {
+                                   $rpm_estado_aprobacion = 1;     
+                                }else{
+                                    $rpm_estado_aprobacion = 2;
+                                } 
+                                $mod_pagosmat = new RegistroPagoMatricula();
+                                // AQUI VER COMO ENVIAR PER_ID Y PLA_ID
+                                // CONSULTAR SI ESTAN AQUI $datos = $mod_pagos->consultarPago($id);
+                                $regpagomatricula = $mod_pagosmat->Modificarregsitropagomatricula($per_id, $pla_id, $rpm_estado_aprobacion);
+                            }
                              //Utilities::putMessageLogFile('graba la transaccion');
                             $message = array(
                                 "wtmessage" => Yii::t("notificaciones", "La infomación ha sido grabada"),
@@ -551,7 +564,7 @@ class PagosfacturasController extends \app\components\CController {
                 $mod_ccartera     = new CargaCartera();
                 //if ($resp_consregistro['registro'] == '0') {
                 if(true){
-                    $resp_pagofactura = $mod_pagos->insertarPagospendientes($est_id, $pfes_referencia, $pfes_banco, $fpag_id, $pfes_valor_pago, $pfes_fecha_pago, $pfes_observacion, $imagen, $usuario);
+                    $resp_pagofactura = $mod_pagos->insertarPagospendientes($est_id, 'ME', $pfes_referencia, $pfes_banco, $fpag_id, $pfes_valor_pago, $pfes_fecha_pago, $pfes_observacion, $imagen, $usuario);
 
                     $pfes_id = $resp_pagofactura;
 

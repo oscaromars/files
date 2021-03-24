@@ -410,7 +410,7 @@ class PagosFacturaEstudiante extends \yii\db\ActiveRecord
      * @param
      * @return pfes_id
      */
-    public function insertarPagospendientes($est_id, $pfes_referencia, $pfes_banco, $fpag_id, $pfes_valor_pago, $pfes_fecha_pago, $pfes_observacion, $pfes_archivo_pago, $pfes_usu_ingreso) {
+    public function insertarPagospendientes($est_id, $pfes_concepto, $pfes_referencia, $pfes_banco, $fpag_id, $pfes_valor_pago, $pfes_fecha_pago, $pfes_observacion, $pfes_archivo_pago, $pfes_usu_ingreso) {
         $con = \Yii::$app->db_facturacion;
         $trans = $con->getTransaction(); // se obtiene la transacción actual
         if ($trans !== null) {
@@ -431,6 +431,10 @@ class PagosFacturaEstudiante extends \yii\db\ActiveRecord
         if (isset($est_id)) {
             $param_sql .= ", est_id";
             $bdet_sql .= ", :est_id";
+        }
+        if (isset($pfes_concepto)) {
+            $param_sql .= ", pfes_concepto";
+            $bdet_sql .= ", :pfes_concepto";
         }
         if (isset($pfes_referencia)) {
             $param_sql .= ", pfes_referencia";
@@ -469,6 +473,9 @@ class PagosFacturaEstudiante extends \yii\db\ActiveRecord
             $comando = $con->createCommand($sql);
             if (isset($est_id)) {
                 $comando->bindParam(':est_id', $est_id, \PDO::PARAM_INT);
+            }
+            if (isset($pfes_pfes_conceptoreferencia)) {
+                $comando->bindParam(':pfes_concepto', $pfes_concepto, \PDO::PARAM_STR);
             }
             if (isset($pfes_referencia)) {
                 $comando->bindParam(':pfes_referencia', $pfes_referencia, \PDO::PARAM_STR);

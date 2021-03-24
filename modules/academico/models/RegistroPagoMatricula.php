@@ -257,4 +257,38 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
         $res = $comando->queryOne();
         return $res;
     }
+
+     /**
+     * Function grabarRechazo (Actualiza registro_pago_matricula)
+     * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
+     * @param   
+     * @return  
+     */
+    public function Modificarregsitropagomatricula($per_id, $pla_id, $rpm_estado_aprobacion) {
+        $con = \Yii::$app->db_facturacion;
+        $estado = 1;
+        $fecha_modifica = date(Yii::$app->params["dateTimeByDefault"]);
+        $usuario_modifica = @Yii::$app->user->identity->usu_id;
+
+        $comando = $con->createCommand
+                ("UPDATE " . $con->dbname . ".registro_pago_matricula
+                SET rpm_estado_aprobacion = :rpm_estado_aprobacion,
+                    rpm_usuario_apruebareprueba = :usuario_modifica,                   
+                    rpm_fecha_modificacion = :fecha_modifica,
+                    rpm_usuario_modifica = :usuario_modifica                    
+                WHERE per_id = :per_id AND 
+                      pla_id = :pla_id AND
+                      rpm_estado =:estado AND
+                      rpm_estado_logico = :estado");
+
+
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
+        $comando->bindParam(":pla_id", $pla_id, \PDO::PARAM_INT);
+        $comando->bindParam(":rpm_estado_aprobacion", $rpm_estado_aprobacion, \PDO::PARAM_STR);
+        $comando->bindParam(":usuario_modifica", $usuario_modifica, \PDO::PARAM_STR);
+        $comando->bindParam(":fecha_modifica", $fecha_modifica, \PDO::PARAM_STR);
+        $response = $comando->execute();
+        return $response;
+    }
 }

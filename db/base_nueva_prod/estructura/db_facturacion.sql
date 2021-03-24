@@ -669,7 +669,7 @@ create table bancos(
 create table if not exists `pagos_factura_estudiante` (
   `pfes_id` bigint(20) not null auto_increment  primary key,
   `est_id`  bigint(20) not null,
-  `pfes_concepto` varchar(3) not null, -- ME mensualidad, MA matricula
+  `pfes_concepto` varchar(3) not null, --  ME mensualidad, MA matricula
   `ban_id` bigint(20) null,
   `pfes_referencia` varchar(50) null, 
   `fpag_id` bigint(20) not null,

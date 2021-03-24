@@ -7,7 +7,7 @@ $(document).ready(function(){
     if($("#rol").val() == 37 ){
         $("#input_cedula").val($("#cedula").val());
         $("#input_cedula").attr("readonly","readonly");
-        $("#btn_cedula").click();
+        traer_estudiante();
     }
 });
 

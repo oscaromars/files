@@ -43,12 +43,13 @@ use app\modules\academico\Module as academico;
                   <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" name="flexCheckDefault">
                   <label class="form-check-label" for="flexCheckDefault">&nbsp;&nbsp; Estudiante Online</label>
                 </div>
-                <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
-                    <a id="btn_cedula" href="javascript:traer_estudiante()" class="btn btn-primary" style="width: 100%">
-                        <i class="fa fa-search" aria-hidden="true"></i>&nbsp;<?= Yii::t("formulario", "Search") ?>
-                    </a> 
-                </div>
                 <?php if($rol!=37){  ?>
+                    <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+                        <a id="btn_cedula" href="javascript:traer_estudiante()" class="btn btn-primary" style="width: 100%">
+                            <i class="fa fa-search" aria-hidden="true"></i>&nbsp;<?= Yii::t("formulario", "Search") ?>
+                        </a> 
+                    </div>
+                
                     <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
                         <a id="btn_iniciar" href="javascript:iniciarHomologacion()" class="btn btn-success" style="width: 100%">
                             <i class="fa fa-cogs" aria-hidden="true"></i>&nbsp;

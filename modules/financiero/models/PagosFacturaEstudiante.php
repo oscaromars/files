@@ -344,7 +344,8 @@ class PagosFacturaEstudiante extends \yii\db\ActiveRecord
                         d.dpfa_observacion_rechazo as dpfa_observacion_rechazo,
                         d.dpfa_observacion_reverso,
                         b.ban_nombre ,
-                        d.dpfa_valor_cuota as abono
+                        d.dpfa_valor_cuota as abono,
+                        pfe.pfes_concepto
                 from " . $con2->dbname . ".pagos_factura_estudiante pfe inner join " . $con2->dbname . ".detalle_pagos_factura d on d.pfes_id = pfe.pfes_id
                     inner join " . $con->dbname . ".estudiante e on e.est_id = pfe.est_id
                     inner join " . $con1->dbname . ".persona p on p.per_id = e.per_id

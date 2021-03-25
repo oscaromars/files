@@ -328,7 +328,7 @@ class PagosfacturasController extends \app\components\CController {
                             }
                               // actualizar estados y data en registro_pago_matricula
                               // OJO EN EL IF DEBE PREGUNTARSE UN && SI CONCEPTO = 'MA' (matricula))
-                              if ($cargo) {
+                              if ($cargo && $datos['pfes_concepto'] == "MA") {
                                 if ($resultado == "2") {
                                    $rpm_estado_aprobacion = 1;     
                                 }else{

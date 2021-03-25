@@ -37,6 +37,11 @@ PbGridView::widget([
             'value' => 'estudiante',
         ],
         [
+            'attribute' => 'Concepto',
+            'header' => financiero::t("Pagos", "Concept"),
+            'value' => 'pfes_concepto',
+        ],
+        [
             'attribute' => 'Unidad Academica',
             'header' => Yii::t("formulario", "Aca. Uni."),
             'value' => 'unidad',
@@ -58,7 +63,7 @@ PbGridView::widget([
         ],
         [
             'attribute' => 'Abono',
-            'header' => financiero::t("Pagos", "Abono"),
+            'header' => financiero::t("Pagos", "Pass"),
             'value' => 'abono',
         ],
         [
@@ -66,11 +71,11 @@ PbGridView::widget([
             'header' => financiero::t("Pagos", "Monthly fee"),
             'value' => 'dpfa_num_cuota',
         ],
-        [
+       /* [
             'attribute' => 'Factura',
             'header' => financiero::t("Pagos", "Bill"),
             'value' => 'dpfa_factura',
-        ],
+        ],*/
         [
             'attribute' => 'Fecha Registro',
             'header' => Yii::t("formulario", "Registration Date"),
@@ -135,7 +140,7 @@ PbGridView::widget([
                     }
                 },
                 'reversar' => function ($url, $model) {
-                    if (($model['estado_pago'] == 'Aprobado') && ($model['estado_financiero'] == 'Cancelado') && $model['fpag_id'] != '1') {
+                    if (($model['estado_pago'] == 'Aprobado') && ($model['estado_financiero'] == 'Cancelado') && $model['fpag_id'] != '1' && $model['pfes_concepto'] == 'ME') {
                         return Html::a('<span class="glyphicon glyphicon-share"></span>', Url::to(['/financiero/pagosfacturas/reversar', 'dpfa_id' => base64_encode($model['dpfa_id'])]), ["data-toggle" => "tooltip", "title" => "Reversar Pago", "data-pjax" => "0"]);
                     } else {
                         return '<span class="glyphicon glyphicon-share"></span>';

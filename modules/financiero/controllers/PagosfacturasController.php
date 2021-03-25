@@ -20,6 +20,7 @@ use app\modules\academico\models\UnidadAcademica;
 use app\modules\academico\models\ModuloEstudio;
 use app\modules\academico\models\RegistroPagoMatricula;
 use app\modules\financiero\models\PagosFacturaEstudiante;
+use app\modules\academico\models\Matriculacion;
 use app\modules\financiero\models\CargaCartera;
 use app\modules\financiero\models\Cruce;
 use app\modules\financiero\Module as financiero;
@@ -34,7 +35,7 @@ class PagosfacturasController extends \app\components\CController {
 
     private function estados() {
         return [
-            '0' => Yii::t("formulario", "Todos"),
+            '0' => Yii::t("formulario", "All"),
             '1' => Yii::t("formulario", "Pendiente"),
             '2' => Yii::t("formulario", "Aprobado"),
             '3' => Yii::t("formulario", "Rechazado"),
@@ -51,7 +52,7 @@ class PagosfacturasController extends \app\components\CController {
 
     private function estadoFinanciero() {
         return [
-            '0' => Yii::t("formulario", "Todos"),
+            '0' => Yii::t("formulario", "All"),
             'N' => Yii::t("formulario", "Pendiente"),
             'C' => Yii::t("formulario", "Cancelado"),
         ];
@@ -61,6 +62,14 @@ class PagosfacturasController extends \app\components\CController {
         return [
             '0' => Yii::t("formulario", "Seleccione"),
             '1' => Yii::t("formulario", "Pendiente"),            
+        ];
+    }
+
+    private function Concepto() {
+        return [
+            '0' => Yii::t("formulario", "All"),
+            'MA' => Yii::t("formulario", "Enrollment"),
+            'ME' => financiero::t("Pagos", "Monthly payment"),
         ];
     }
 
@@ -90,6 +99,7 @@ class PagosfacturasController extends \app\components\CController {
             $arrSearch["modalidad"] = $data['modalidad'];
             $arrSearch["estadopago"] = $data['estadopago'];
             $arrSearch["estadofinanciero"] = $data['estadofinanciero'];
+            $arrSearch["concepto"] = $data['concepto'];
             $resp_pago = $mod_pagos->getPagos($arrSearch, false);
             return $this->renderPartial('_index-grid_revisionpago', [
                         "model" => $resp_pago,
@@ -105,6 +115,7 @@ class PagosfacturasController extends \app\components\CController {
                     'arr_modalidad' => ArrayHelper::map($arr_modalidad, "id", "name"),
                     'arr_estado' => $this->estados(),
                     'arr_estado_financiero' => $this->estadoFinanciero(),
+                    'arr_concepto' => $this->Concepto(),
         ]);
     }
 
@@ -316,6 +327,7 @@ class PagosfacturasController extends \app\components\CController {
                                                 Utilities::sendEmail($tituloMensaje, Yii::$app->params["adminEmail"], [$correo_estudiante => $user], $asunto, $body);
                             }
                               // actualizar estados y data en registro_pago_matricula
+                              // OJO EN EL IF DEBE PREGUNTARSE UN && SI CONCEPTO = 'MA' (matricula))
                               if ($cargo) {
                                 if ($resultado == "2") {
                                    $rpm_estado_aprobacion = 1;     
@@ -328,8 +340,9 @@ class PagosfacturasController extends \app\components\CController {
                                 // ordenada de mayor a menor, solo traer un registro top 1, enviando 
                                 // como parametros el mod_id que sereia ($datos['mod_id'])
                                 //del estudiante, con eso se devuelve el pla_id 
-                                // y se envia a la funcoina Modificarregsitropagomatricula                             
-                                $regpagomatricula = $mod_pagosmat->Modificarregsitropagomatricula($datos['per_id'], $pla_id, $rpm_estado_aprobacion);
+                                // y se envia a la funcoina Modificarregsitropagomatricula 
+                                $data_planificacion_pago = Matriculacion::getPlanificacionPago($datos['per_id']);                            
+                                $regpagomatricula = $mod_pagosmat->Modificarregsitropagomatricula($datos['per_id'], $data_planificacion_pago['pla_id'], $rpm_estado_aprobacion);
                             }
                              //Utilities::putMessageLogFile('graba la transaccion');
                             $message = array(
@@ -762,7 +775,7 @@ class PagosfacturasController extends \app\components\CController {
         header("Content-Type: $content_type");
         header("Content-Disposition: attachment;filename=" . $nombarch);
         header('Cache-Control: max-age=0');
-        $colPosition = array("C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "L");
+        $colPosition = array("C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "L", "O", "P");
         $arrHeader = array(
             Yii::t("formulario", "DNI"),
             Yii::t("formulario", "Student"),
@@ -771,12 +784,14 @@ class PagosfacturasController extends \app\components\CController {
             academico::t("Academico", "Career/Program"),
             Yii::t("formulario", "Paid form"),
             financiero::t("Pagos", "Amount Paid"),
-            financiero::t("Pagos", "Monthly fee"),
             financiero::t("Pagos", "Bill"),
+            financiero::t("Pagos", "Monthly fee"),            
             Yii::t("formulario", "Registration Date"),
+            financiero::t("Pagos", "Pass"),
             Yii::t("formulario", "Review Status"),
             financiero::t("Pagos", "Financial Status"),
             financiero::t("Pagos", "Payment id"),
+            financiero::t("Pagos", "Concept"),
         );
         $mod_pagos = new PagosFacturaEstudiante();
         $data = Yii::$app->request->get();
@@ -787,6 +802,7 @@ class PagosfacturasController extends \app\components\CController {
         $arrSearch["modalidad"] = $data['modalidad'];
         $arrSearch["estadopago"] = $data['estadopago'];
         $arrSearch["estadofinanciero"] = $data['estadofinanciero'];
+        $arrSearch["concepto"] = $data['concepto'];
 
         $arrData = array();
         if (empty($arrSearch)) {
@@ -809,12 +825,14 @@ class PagosfacturasController extends \app\components\CController {
             academico::t("Academico", "Career/Program"),
             Yii::t("formulario", "Paid form"),
             financiero::t("Pagos", "Amount Paid"),
-            financiero::t("Pagos", "Monthly fee"),
             financiero::t("Pagos", "Bill"),
+            financiero::t("Pagos", "Monthly fee"),            
             Yii::t("formulario", "Registration Date"),
+            financiero::t("Pagos", "Pass"),
             Yii::t("formulario", "Review Status"),
             financiero::t("Pagos", "Financial Status"),
             financiero::t("Pagos", "Payment id"),
+            financiero::t("Pagos", "Concept"),
         );
         $mod_pagos = new PagosFacturaEstudiante();
         $data = Yii::$app->request->get();
@@ -825,6 +843,7 @@ class PagosfacturasController extends \app\components\CController {
         $arrSearch["modalidad"] = $data['modalidad'];
         $arrSearch["estadopago"] = $data['estadopago'];
         $arrSearch["estadofinanciero"] = $data['estadofinanciero'];
+        $arrSearch["concepto"] = $data['concepto'];
         $arrData = array();
         if (empty($arrSearch)) {
             $arrData = $mod_pagos->getPagos(array(), true);

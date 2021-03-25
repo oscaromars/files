@@ -148,7 +148,10 @@ class PagosFacturaEstudiante extends \yii\db\ActiveRecord
                 } else {
                     $str_search .= "d.dpfa_estado_financiero = :estadofinanciero AND "; // son los pendientes no estan en la tabla
                 }
-            }           
+            }  
+            if ($arrFiltro['concepto'] != '0') { 
+                $str_search .= "pfe.pfes_concepto = :concepto AND ";
+            }         
         }
         if ($onlyData == false) {
             $fpag_id = "f.fpag_id, ";
@@ -178,7 +181,8 @@ class PagosFacturaEstudiante extends \yii\db\ActiveRecord
                             when 'N' then 'Pendiente'                                                              
                             else 'Pendiente'
                         end as estado_financiero,
-                dpfa_id
+                dpfa_id,
+                pfe.pfes_concepto
                 from " . $con2->dbname . ".pagos_factura_estudiante pfe inner join " . $con2->dbname . ".detalle_pagos_factura d on d.pfes_id = pfe.pfes_id
                 inner join " . $con->dbname . ".estudiante e on e.est_id = pfe.est_id
                 inner join " . $con1->dbname . ".persona p on p.per_id = e.per_id
@@ -199,6 +203,7 @@ class PagosFacturaEstudiante extends \yii\db\ActiveRecord
             $unidad = $arrFiltro['unidad'];
             $modalidad = $arrFiltro['modalidad'];
             $estadopago = $arrFiltro['estadopago'];
+            $concepto = $arrFiltro['concepto'];
             $estadofinanciero = $arrFiltro['estadofinanciero'];
             if ($arrFiltro['f_ini'] != "" && $arrFiltro['f_fin'] != "") {
                 $comando->bindParam(":fec_ini", $fecha_ini, \PDO::PARAM_STR);
@@ -218,6 +223,9 @@ class PagosFacturaEstudiante extends \yii\db\ActiveRecord
             }
             if ($arrFiltro['estadofinanciero'] != '0') {
                 $comando->bindParam(":estadofinanciero", $estadofinanciero, \PDO::PARAM_STR);
+            }
+            if ($arrFiltro['concepto'] != '0') {
+                $comando->bindParam(":concepto", $concepto, \PDO::PARAM_STR);
             }
         }
         $resultData = $comando->queryAll();

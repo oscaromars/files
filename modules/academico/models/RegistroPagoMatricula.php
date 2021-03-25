@@ -259,7 +259,7 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
     }
 
      /**
-     * Function grabarRechazo (Actualiza registro_pago_matricula)
+     * Function Modificarregsitropagomatricula (Actualiza registro_pago_matricula)
      * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
      * @param   
      * @return  

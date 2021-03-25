@@ -265,10 +265,15 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
      * @return  
      */
     public function Modificarregsitropagomatricula($per_id, $pla_id, $rpm_estado_aprobacion) {
-        $con = \Yii::$app->db_facturacion;
+        $con = \Yii::$app->db_academico;
         $estado = 1;
         $fecha_modifica = date(Yii::$app->params["dateTimeByDefault"]);
         $usuario_modifica = @Yii::$app->user->identity->usu_id;
+       /* \app\models\Utilities::putMessageLogFile('per_id1: ' . $per_id);
+        \app\models\Utilities::putMessageLogFile('pla_id1: ' . $pla_id);
+        \app\models\Utilities::putMessageLogFile('rpm_estado_aprobacion1: ' . $rpm_estado_aprobacion);
+        \app\models\Utilities::putMessageLogFile('fecha_modifica: ' . $fecha_modifica);
+        \app\models\Utilities::putMessageLogFile('usuario_modifica: ' . $usuario_modifica);*/
 
         $comando = $con->createCommand
                 ("UPDATE " . $con->dbname . ".registro_pago_matricula
@@ -280,7 +285,6 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
                       pla_id = :pla_id AND
                       rpm_estado =:estado AND
                       rpm_estado_logico = :estado");
-
 
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
         $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);

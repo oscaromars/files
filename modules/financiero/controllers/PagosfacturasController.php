@@ -267,6 +267,8 @@ class PagosfacturasController extends \app\components\CController {
                 if (($resultado == "3" && $observacion != "0") or $resultado == "2") {
                     $con = \Yii::$app->db_facturacion;
                     $transaction = $con->beginTransaction();
+                    $con1 = \Yii::$app->db_academico;
+                    $transaction1 = $con1->beginTransaction();
                     try {
                         $datos = $mod_pagos->consultarPago($id);
                         //Utilities::putMessageLogFile('$cuota:' . $datos['dpfa_num_cuota']);
@@ -280,7 +282,7 @@ class PagosfacturasController extends \app\components\CController {
 
                         if ($respago) {
                             $transaction->commit();
-
+                            $transaction1->commit();
                             $correo_estudiante = $datos['per_correo'];
                             $user = $datos['estudiante'];
                             $tituloMensaje = 'Pagos en Línea';
@@ -327,22 +329,20 @@ class PagosfacturasController extends \app\components\CController {
                                                 Utilities::sendEmail($tituloMensaje, Yii::$app->params["adminEmail"], [$correo_estudiante => $user], $asunto, $body);
                             }
                               // actualizar estados y data en registro_pago_matricula
-                              // OJO EN EL IF DEBE PREGUNTARSE UN && SI CONCEPTO = 'MA' (matricula))
+                              $mod_pagosmat = new RegistroPagoMatricula();                          
+                              $data_planificacion_pago = Matriculacion::getPlanificacionPago($datos['per_id']);                            
+                              /*\app\models\Utilities::putMessageLogFile('pfes_concepto: ' . $datos['pfes_concepto']);
+                              \app\models\Utilities::putMessageLogFile('per_id: ' . $datos['per_id']);
+                              \app\models\Utilities::putMessageLogFile('pla_id: ' . $data_planificacion_pago['pla_id']);*/
                               if ($cargo && $datos['pfes_concepto'] == "MA") {
+                                
                                 if ($resultado == "2") {
                                    $rpm_estado_aprobacion = 1;     
                                 }else{
                                     $rpm_estado_aprobacion = 2;
                                 } 
-                                $mod_pagosmat = new RegistroPagoMatricula();
-                                // AQUI VER COMO ENVIAR PLA_ID   
-                                // para pla_id se debe hacer una consulta db_academico.planificacion 
-                                // ordenada de mayor a menor, solo traer un registro top 1, enviando 
-                                // como parametros el mod_id que sereia ($datos['mod_id'])
-                                //del estudiante, con eso se devuelve el pla_id 
-                                // y se envia a la funcoina Modificarregsitropagomatricula 
-                                $data_planificacion_pago = Matriculacion::getPlanificacionPago($datos['per_id']);                            
-                                $regpagomatricula = $mod_pagosmat->Modificarregsitropagomatricula($datos['per_id'], $data_planificacion_pago['pla_id'], $rpm_estado_aprobacion);
+                                \app\models\Utilities::putMessageLogFile('rpm_estado_aprobacion: ' . $rpm_estado_aprobacion);
+                                 $regpagomatricula = $mod_pagosmat->Modificarregsitropagomatricula($datos['per_id'], $data_planificacion_pago['pla_id'], $rpm_estado_aprobacion);
                             }
                              //Utilities::putMessageLogFile('graba la transaccion');
                             $message = array(
@@ -351,11 +351,12 @@ class PagosfacturasController extends \app\components\CController {
                             );
                             echo Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), false, $message);
                         } else {
-                            $message = ["info" => Yii::t('exception', 'Error al grabar 0.')];
+                            $message = ["info" => Yii::t('exception', 'Error al grabar.')];
                             echo Utilities::ajaxResponse('NO_OK', 'alert', Yii::t('jslang', 'Error'), 'false', $message);
                         }
                     } catch (Exception $ex) {
                         $transaction->rollback();
+                        $transaction1->rollback();
                         $message = array(
                             "wtmessage" => Yii::t("notificaciones", "Error al grabar."),
                             "title" => Yii::t('jslang', 'Success'),

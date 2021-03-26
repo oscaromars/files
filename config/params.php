@@ -3,13 +3,14 @@
 return [
     'copyright' => 'Uteg',
     'alias' => 'UT',
-    'web' => 'http://www.uteg.edu.ec',
+    'web' => '/asgard',
     'version' => '1.0',
     'adminEmail' => 'analistadesarrollo01@uteg.edu.ec',//'web@uteg.edu.ec',
 
     'soporteEmail' => /*'dlopez@uteg.edu.ec', */ 'analistadesarrollo01@uteg.edu.ec',
     'admisiones' => /*'admisionesonline@uteg.edu.ec',*/  'analistadesarrollo01@uteg.edu.ec',
     'colecturia' => /*'colecturia@uteg.edu.ec',*/     'analistadesarrollo01@uteg.edu.ec',
+    'supercolecturia' => /*'supervisorcolecturia@uteg.edu.ec',*/     'analistadesarrollo01@uteg.edu.ec',
     'jefetalento' => /*'directortalento@uteg.edu.ec',*/ 'analistadesarrollo01@uteg.edu.ec',
     'analistatalento' => /*'kmunoz@uteg.edu.ec',*/ 'analistadesarrollo01@uteg.edu.ec',
     'analistanomina' => /*'glamota@uteg.edu.ec',*/ 'analistadesarrollo01@uteg.edu.ec', 

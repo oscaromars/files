@@ -669,6 +669,7 @@ create table bancos(
 create table if not exists `pagos_factura_estudiante` (
   `pfes_id` bigint(20) not null auto_increment  primary key,
   `est_id`  bigint(20) not null,
+  `pfes_concepto` varchar(3) not null, --  ME mensualidad, MA matricula
   `ban_id` bigint(20) null,
   `pfes_referencia` varchar(50) null, 
   `fpag_id` bigint(20) not null,
@@ -781,6 +782,10 @@ create table referencia_bancos(
    foreign key (ban_id) references `bancos`(ban_id)
   );
 
+-- -------------------------------------------------------------
+--
+-- Estructura de tabla para la tabla `item_matricula_unidad`
+-- -------------------------------------------------------------
 create table item_matricula_unidad (
 `imun_id` bigint(20) not null primary key,  
 `ite_id`  bigint(20) not null,  
@@ -794,3 +799,44 @@ create table item_matricula_unidad (
 `imun_estado_logico` varchar(1) not null, 
 foreign key (ite_id) references `item`(ite_id)  
 );
+-- -------------------------------------------------------------
+--
+-- Estructura de tabla para la tabla `cruce`
+-- -------------------------------------------------------------
+create table db_facturacion.cruce(
+  `cru_id` bigint(20) not null auto_increment primary key,  
+  `est_id` bigint(20) not null,   
+  `pfes_id` bigint(20) not null,   
+  `cru_comprobante` varchar(30) not null, 
+  `cru_fecha_comprobante` timestamp null default null,
+  `cru_saldo_favor_inicial` double not null, 
+  `cru_saldo_favor` double not null, -- valor que se va a restar y actualizar
+  `cru_estado_cruce` varchar(3) not null, -- A afavor, S sin saldo  
+  `cru_usu_ingreso` bigint(20) not null, 
+  `cru_usu_modifica` bigint(20) null,   
+  `cru_estado` varchar(1) not null, 
+  `cru_fecha_creacion` timestamp not null default current_timestamp,
+  `cru_fecha_modificacion` timestamp null default null,
+  `cru_estado_logico` varchar(1) not null,
+   foreign key (pfes_id) references `pagos_factura_estudiante`(pfes_id)
+  );
+
+  -- -------------------------------------------------------------
+--
+-- Estructura de tabla para la tabla `detalle_cruce`
+-- -------------------------------------------------------------
+create table db_facturacion.detalle_cruce(
+  `dcru_id` bigint(20) not null auto_increment primary key,  
+  `cru_id` bigint(20) not null,    
+  `dcru_comprobante_cruce` varchar(30) not null, 
+  `dcru_fecha_comprobante_cruce` timestamp null default null,
+  `dcru_valor_cruce` double not null, 
+  `dcru_observacion` varchar(500) default null,   
+  `dcru_usu_ingreso` bigint(20) not null, 
+  `dcru_usu_modifica` bigint(20) null,   
+  `dcru_estado` varchar(1) not null, 
+  `dcru_fecha_creacion` timestamp not null default current_timestamp,
+  `dcru_fecha_modificacion` timestamp null default null,
+  `dcru_estado_logico` varchar(1) not null,
+   foreign key (cru_id) references `cruce`(cru_id)
+  );

@@ -22,8 +22,14 @@ use app\modules\financiero\models\Secuencias;
 use yii\data\ArrayDataProvider;
 use yii\base\Exception;
 use app\modules\academico\Module as Academico;
+use app\modules\financiero\Module as financiero;
+use app\modules\financiero\models\PagosFacturaEstudiante;
+use app\modules\academico\models\Especies;
+
+use app\modules\financiero\models\FormaPago;
 
 Academico::registerTranslations();
+financiero::registerTranslations();
 
 
 class MatriculacionController extends \app\components\CController {
@@ -276,9 +282,12 @@ class MatriculacionController extends \app\components\CController {
     }
 
     public function actionRegistropago() { // SUBE PAGA DE MATRICULA
-        $usu_id = Yii::$app->session->get("PB_iduser");
+        $usu_id      = Yii::$app->session->get("PB_iduser");
         $mod_usuario = Usuario::findIdentity($usu_id);
-        $per_id = Yii::$app->session->get("PB_perid");
+        $per_id      = Yii::$app->session->get("PB_perid");
+
+        $data = Yii::$app->request->post();
+
         if ($per_id < 1000) {
             $per_id = base64_decode(Yii::$app->request->get('per_id', 0));
             if($per_id != 0){
@@ -288,35 +297,333 @@ class MatriculacionController extends \app\components\CController {
                 $per_id = Yii::$app->session->get("PB_perid");
             }
         }
+
         if ($mod_usuario->usu_upreg == 0) {
             if (Yii::$app->session->get("PB_perid") < 1000) {
                 return $this->redirect(['perfil/index', 'per_id' => base64_encode($per_id)]);
             }
             return $this->redirect(['perfil/index']);
         }
-        if (Yii::$app->request->isAjax) {
-            $data = Yii::$app->request->post();
-            $per_id = $data['per_id'];
-            if ($data["upload_file"]) {
-                if (empty($_FILES)) {
-                    return json_encode(['error' => Yii::t("notificaciones", "Error to process File. Try again.")]);
-                }
-                //Recibe Parámetros
-                $files = $_FILES[key($_FILES)];
-                $arrIm = explode(".", basename($files['name']));
-                $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                $dirFileEnd = Yii::$app->params["documentFolder"] . "pagosmatricula/" . $data["name_file"] . "." . $typeFile;
-                $status = Utilities::moveUploadFile($files['tmp_name'], $dirFileEnd);
-                if ($status) {
-                    return true;
-                } else {
-                    return json_encode(['error' => Yii::t("notificaciones", "Error to process File " . basename($files['name']) . ". Try again.")]);
-                }
+        \app\models\Utilities::putMessageLogFile("ENTRO antes de data upload");
+        \app\models\Utilities::putMessageLogFile(print_r($data,true));
+        //Este codigo es para la carga del archivo
+        if ($data["upload_file"]) {
+            \app\models\Utilities::putMessageLogFile("ENTRO POR upload_file -- GAP ");
+            if (empty($_FILES)){
+                \app\models\Utilities::putMessageLogFile("ENTRO POR archivo vacio");
+                return json_encode(['error' => Yii::t("notificaciones", "Error to process File. Try again.")]);
             }
+            
+             \app\models\Utilities::putMessageLogFile("paso archivo");
+            //Recibe Parámetros
+            $files      = $_FILES[key($_FILES)];
+            $arrIm      = explode(".", basename($files['name']));
+            $typeFile   = strtolower($arrIm[count($arrIm) - 1]);
+            $dirFileEnd = Yii::$app->params["documentFolder"] . "pagosmatricula/" . $data["name_file"] . "." . $typeFile;
+            $status     = Utilities::moveUploadFile($files['tmp_name'], $dirFileEnd);
+            
+             \app\models\Utilities::putMessageLogFile("estatus: ".$status);
+            if ($status) 
+                return true;
+            else
+                return json_encode(['error' => Yii::t("notificaciones", "Error to process File " . basename($files['name']) . ". Try again.")]);
+        }//if
 
-            if ($data["procesar_file"]) {
+        if (Yii::$app->request->isAjax) {
+            try {
+
+            \app\models\Utilities::putMessageLogFile("ENTRO POR AQUI -- GAP ");
+           
+            $per_id = $data['per_id'];
+
+            \app\models\Utilities::putMessageLogFile(print_r($data,true));
+
+            $mod_persona = Persona::find()->select("per_correo")->where(["per_id" => $data['per_id']])->asArray()->all();
+            $email       = $mod_persona[0]['per_correo'];  
+            $nombres     = $mod_persona[0]['per_pri_nombre'] ." ". $mod_persona[0]['per_pri_apellido'] ." ". $mod_persona[0]['per_seg_apellido'];
+
+            if ($data["procesar_pago"]) {
+
+                $result_pago = RegistroPagoMatricula::checkPagoEstudiante($per_id, $data['pla_id']);
+                if (count($result_pago) > 0) {
+                    
+                    $message = array(
+                        "wtmessage" => Yii::t("notificaciones", "Usted ya registro el pago para este periodo."),
+                        "title" => Yii::t('jslang', 'Success'),
+                    );
+                    return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Success"), false, $message);
+                }//if
+
+                \app\models\Utilities::putMessageLogFile("ENTRO POR procesar_pago");
                 ini_set('memory_limit', '256M');
+
+                if($data["formapago"]==1){
+                    \app\models\Utilities::putMessageLogFile("ENTRO POR formapago = 1");
+            
+                    //Si la forma de Pago es 1 significa que es por Tarjeta de credito
+                    $statusMsg = '';
+
+                    //Este token es enviada por la libreria de javascript de stripe
+                    \app\models\Utilities::putMessageLogFile("token: ".$token);
+
+                    if(!empty($data['token'])){
+                        /******************************************************************/
+                        /********** PARA DESARROLLO  **************************************/
+                        /******************************************************************/
+                        $stripe = array(
+                            'secret_key'      => 'sk_test_51HrVkKC4VyMkdPFRrDhbuQLABtvVq3tfZ8c3E3fm55Q7kg5anz6fqO5qrlPBVu7fDc9XVWGTb55M6TiIq4hwHz8J00rVFgisaj',
+                            'publishable_key' => 'pk_test_51HrVkKC4VyMkdPFRZ5aImiv4UNRIm1N7qh2VWG5YMcXJMufmwqvCVYAKSZVxvsjpP6PbjW4sSrc8OKrgfNsrmswt00OezUqkuN',
+                        );
+                        
+                        /******************************************************************/
+                        /********** PARA PRODUCCION  **************************************/
+                        /******************************************************************/
+                        /*
+                        $stripe = array(
+                            'secret_key'      => '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',
+                            'publishable_key' => 'pk_live_51HrVkKC4VyMkdPFRjqnwytVZZb552sp7TNEmQanSA78wA1awVHIDp94YcNKfa66Qxs6z2E73UGJwUjWN2pcy9nWl008QHsVt3Q',
+                        );
+                        */
+
+                        //Se hace invocacion a libreria de stripe que se encuentra en el vendor
+                        \Stripe\Stripe::setApiKey($stripe['secret_key']);
+                        
+                        //Obtenemos el token y tambien el nombre de la persona que esta cancelando
+                        $token  = $data['token']; 
+
+                        \app\models\Utilities::putMessageLogFile("token: ".$token);
+                        \app\models\Utilities::putMessageLogFile("email: ".$email);
+
+                        //Se crea el usuario para stripe
+                        try {  
+                            $customer = \Stripe\Customer::create(array( 
+                                'email'   => $email, 
+                                'source'  => $token 
+                            )); 
+                        }catch(Exception $e) {  
+                            $api_error = $e->getMessage();  
+                            return json_encode($api_error);
+                        } 
+                         
+                        //Si se creo el usuario y no hay error 
+                        if(empty($api_error) && $customer){  
+                            //El valor se multiplica por 100 para convertirlo a centavos
+                            $valor_inscripcion = $data['valor']; 
+                            $itemPriceCents    = ($valor_inscripcion*100); 
+                             
+                            //Se crea el cobro
+                            try {  
+                                $charge = \Stripe\Charge::create(array( 
+                                    'customer'    => $customer->id, 
+                                    'amount'      => $itemPriceCents, 
+                                    'currency'    => "usd", 
+                                    'description' => "Pago de Matricula"
+                                )); 
+                            }catch(Exception $e) {  
+                                $api_error = $e->getMessage();  
+                                return json_encode($api_error);
+                            } 
+                             
+                            //Si se creo el combo y no hubo error se devuelve el resultado de la transaccion
+                            if(empty($api_error) && $charge){ 
+                                //Cargamos los datos
+                                $chargeJson = $charge->jsonSerialize(); 
+                             
+                                // Check whether the charge is successful 
+                                if( $chargeJson['amount_refunded'] == 0 && empty($chargeJson['failure_code'])  && $chargeJson['paid'] == 1 && $chargeJson['captured'] == 1){                                
+                                    // Transaction details  
+                                    $transactionID  = $chargeJson['balance_transaction']; 
+                                    $paidAmount     = $chargeJson['amount']; 
+                                    $paidAmount     = ($paidAmount/100); 
+                                    $paidCurrency   = $chargeJson['currency']; 
+                                    $payment_status = $chargeJson['status']; 
+                                     
+                                    // Si el pago fue correcto
+                                    if($payment_status == 'succeeded'){ 
+                                        $ordStatus = 'success'; 
+
+                                        //Estas variables es para indicar que como fue con tarjeta de una vez 
+                                        //se actualize y ya no salgan como pendientes
+                                        $dpfa_estado_pago = 2;
+                                        $dpfa_estado_financiero = 'C';
+                                    }else{ 
+                                        $statusMsg = "Your Payment has Failed!"; 
+                                    } 
+                                }else{ 
+                                    $statusMsg = "Transaction has been failed!"; 
+                                } 
+                            }else{ 
+                                $statusMsg = "Charge creation failed! $api_error";  
+                            } 
+                        }else{  
+                            $statusMsg = "Invalid card details! $api_error";  
+                        } 
+                    }else{ 
+                        $statusMsg = "Error on form submission."; 
+                    }
+                    if($statusMsg != ''){
+                        $message = array(
+                            "wtmessage" => Yii::t("notificaciones", "Error al pagar online: " . $statusMsg),
+                            "title" => Yii::t('jslang', 'Error'),
+                        );
+                        echo Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+                    }
+                }else{
+                    $mod_fpago     = new FormaPago();
+                    $arr_refBancos = $mod_fpago->consultarReferenciaBancos($data["referencia"],$data["banco"]);  
+
+                    if(!empty($arr_refBancos)) {
+                        $message = array(
+                            "wtmessage" => Yii::t("notificaciones", "La refrencia ya existe para el banco seleccionado."),
+                            "title" => Yii::t('jslang', 'Error'),
+                        );
+                        echo Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+                        return;
+                    }
+
+                    //Pago por Deposito o Tranferencia
+                    /*
+                    if ($data["upload_file"]) {
+                        if (empty($_FILES)) 
+                            return json_encode(['error' => Yii::t("notificaciones", "Error to process File. Try again.")]);
+                        
+                        //Recibe Parámetros
+                        $files      = $_FILES[key($_FILES)];
+                        $arrIm      = explode(".", basename($files['name']));
+                        $typeFile   = strtolower($arrIm[count($arrIm) - 1]);
+                        $dirFileEnd = Yii::$app->params["documentFolder"] . "pagosmatricula/" . $data["name_file"] . "." . $typeFile;
+                        $status     = Utilities::moveUploadFile($files['tmp_name'], $dirFileEnd);
+                        
+                        if ($status) 
+                            return true;
+                        else
+                            return json_encode(['error' => Yii::t("notificaciones", "Error to process File " . basename($files['name']) . ". Try again.")]);
+                    }//if
+                    */
+                    if ($data["upload_file"]) {
+                        if (empty($_FILES)) {
+                            echo json_encode(['error' => Yii::t("notificaciones", "Error to process File {file}. Try again.", ['{file}' => basename($files['name'])])]);
+                            return;
+                        }//if
+
+                        //Recibe Parametros
+                        $files      = $_FILES[key($_FILES)];
+                        $arrIm      = explode(".", basename($files['name']));
+                        $typeFile   = strtolower($arrIm[count($arrIm) - 1]);
+                        $dirFileEnd = Yii::$app->params["documentFolder"] . "pagosmatricula/" . $data["per_id"] . "/" . $data["name_file"] . "." . $typeFile;
+                        $status     = Utilities::moveUploadFile($files['tmp_name'], $dirFileEnd);
+                        if ($status) {
+                            return true;
+                        } else {
+                            echo json_encode(['error' => Yii::t("notificaciones", "Error to process File {file}. Try again.", ['{file}' => basename($files['name'])])]);
+                            return;
+                        }//else
+                    }//if
+
+                    //Como es un pago por deposito o transferencia sus estados son pendiente
+                    $dpfa_estado_pago       = 1;
+                    $dpfa_estado_financiero = 'N';
+                }//fin del else
+
+                $mod_pagos      = new PagosFacturaEstudiante();
+                $mod_estudiante = new Especies();       
+                $est_id         = $mod_estudiante->recuperarIdsEstudiente($per_id);    
+            
+                //En caso de ser pago por tarjeta entra por if o entra en else si es deposito o transferencia
+                if($data["formapago"]==1){
+                    $imagen   = "pago_online";
+                }else{
+                    $arrIm    = explode(".", basename($data["documento"]));
+                    $typeFile = strtolower($arrIm[count($arrIm) - 1]);
+                    $imagen   = $arrIm[0] . "." . $typeFile;
+                }
+
+                //Obtenemos la informacion enviada por javascript
+                $pfes_referencia  = $data["referencia"];
+                $pfes_banco       = $data["banco"];
+                $fpag_id          = $data["formapago"];
+                $pfes_valor_pago  = $data["valor"];
+                $pfes_fecha_pago  = $data["fechapago"]==''? date(Yii::$app->params['dateTimeByDefault']) :$data["fechapago"];
+                $pfes_observacion = $data["observacion"];
+                //$est_id           = $data["estid"];
+                //$pagado           = $data["pagado"];
+                $personaData      = $mod_estudiante->consultaDatosEstudiante($per_idsession); //$personaData['per_cedula']
+                $con              = \Yii::$app->db_facturacion;
+                $transaction      = $con->beginTransaction();
+
+                //Variable creada para el bucle de abono de pago
+                $valor_pagado     = $data["valor"];
+
+                $resp_pagofactura = $mod_pagos->insertarPagospendientes($est_id, 
+                                                                        $pfes_referencia, 
+                                                                        $pfes_banco, 
+                                                                        $fpag_id, 
+                                                                        $pfes_valor_pago, 
+                                                                        $pfes_fecha_pago, 
+                                                                        $pfes_observacion, 
+                                                                        $imagen, 
+                                                                        $usu_id);
+                $pfes_id = $resp_pagofactura;
+
+                if ($resp_pagofactura) {
+                    // insertar el detalle
+                    $descripciondet      = 'Pago de Matricula con el Valor de '. $valor_pagado;
+
+                    $resp_detpagofactura = $mod_pagos->insertarDetpagospendientes($pfes_id, 
+                                                                                  1,//$resp_consfactura['ccar_tipo_documento'], 
+                                                                                  1,//$resp_consfactura['NUM_NOF'], 
+                                                                                  $descripciondet, 
+                                                                                  $valor_pagado,//$parametro[2], 
+                                                                                  $pfes_fecha_pago,//$resp_consfactura['F_SUS_D'], 
+                                                                                  0, 
+                                                                                  1, 
+                                                                                  //$resp_consfactura['ccar_valor_cuota'], 
+                                                                                  $valor_pagado,//$cargo->ccar_abono,
+                                                                                  $pfes_fecha_pago,//$resp_consfactura['F_VEN_D'], 
+                                                                                  $dpfa_estado_pago, 
+                                                                                  $dpfa_estado_financiero, 
+                                                                                  $usu_id);
+                    $tituloMensaje = Yii::t("Matricula", "Pago Recibido UTEG");
+                    $asunto        = Yii::t("Matricula", "Pago Recibido UTEG");
+
+                    if($fpag_id == 1){
+                        $body = Utilities::getMailMessage("pagostripe", array("[[user]]" => $nombres ), Yii::$app->language);    
+                        Utilities::sendEmail($tituloMensaje, Yii::$app->params["contactoEmail"], [$email => $name], $asunto, $body);
+                    }else{
+                        $body = Utilities::getMailMessage("pago", array("[[user]]" => $nombres), Yii::$app->language, Yii::$app->basePath . "/modules/financiero");
+                        Utilities::sendEmail($tituloMensaje, Yii::$app->params["contactoEmail"], [$email => $name], $asunto, $body);
+                    }
+                    $bodycolec = Utilities::getMailMessage("colecturia", array("[[user]]" => $nombres), Yii::$app->language);
+                   
+                    Utilities::sendEmail($tituloMensaje, Yii::$app->params["colecturia"]     , [Yii::$app->params["supercolecturia"] => "Colecturia"], $asunto, $bodycolec);
+                    Utilities::sendEmail($tituloMensaje, Yii::$app->params["supercolecturia"], [Yii::$app->params["colecturia"]      => "Supervisor Colecturia"], $asunto, $bodycolec);
+                    
+                     \app\models\Utilities::putMessageLogFile(print_r($resp_detpagofactura,true));
+
+                    if ($resp_detpagofactura) {
+                        \app\models\Utilities::putMessageLogFile("Entro Aqui");
+                        /*
+                        $transaction->commit();
+                        
+                        $message = array(
+                            "wtmessage" => Yii::t("notificaciones", "Your information was successfully saved."),
+                            "title" => Yii::t('jslang', 'Success'),
+                        );
+                        return Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Success"), false, $message);
+                        */
+                    }else{
+                        $transaction->rollback();
+
+                        $message = array(
+                            "wtmessage" => Yii::t("notificaciones", "Error al grabar pago factura." . $mensaje),
+                            "title" => Yii::t('jslang', 'Error'),
+                        );
+                        return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), true, $message);
+                    }//else
+                }
+                
                 try {
+                    /*
                     $result_pago = RegistroPagoMatricula::checkPagoEstudiante($per_id, $data['pla_id']);
                     if (count($result_pago) > 0) {
                         $model_registro_pago_matricula = RegistroPagoMatricula::findOne(["rpm_id" => $result_pago[0]["rpm_id"]]);
@@ -336,15 +643,16 @@ class MatriculacionController extends \app\components\CController {
                             return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), true, $message);
                         }
                     } else {
+                        */
                         $model_registro_pago_matricula = new RegistroPagoMatricula();
                         $model_registro_pago_matricula->per_id = $per_id;
                         $model_registro_pago_matricula->pla_id = $data['pla_id'];
                         // $model_registro_pago_matricula->pes_id = $data['pes_id'];
                         $model_registro_pago_matricula->rpm_archivo = "pagosmatricula/" . $data["archivo"];
                         $model_registro_pago_matricula->rpm_estado_aprobacion = "0";
-                        $model_registro_pago_matricula->rpm_estado_generado = "0";
-                        $model_registro_pago_matricula->rpm_estado = "1";
-                        $model_registro_pago_matricula->rpm_estado_logico = "1";
+                        $model_registro_pago_matricula->rpm_estado_generado   = "0";
+                        $model_registro_pago_matricula->rpm_estado            = "1";
+                        $model_registro_pago_matricula->rpm_estado_logico     = "1";
 
                         if ($model_registro_pago_matricula->save()) {
                             $message = array(
@@ -359,7 +667,7 @@ class MatriculacionController extends \app\components\CController {
                             );
                             return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), true, $message);
                         }
-                    }
+                    //}
                 } catch (Exception $ex) {
                     $message = array(
                         "wtmessage" => Yii::t('notificaciones', 'Your information has not been saved. Please try again.'),
@@ -367,34 +675,53 @@ class MatriculacionController extends \app\components\CController {
                     );
                     return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), true, $message);
                 }
+                
             }
+        
+        }catch (Exception $ex) {
+            $transaction->rollback();
+            \app\models\Utilities::putMessageLogFile("Entro por catch");
+            \app\models\Utilities::putMessageLogFile(print_r($ex,true));
+            $message = array(
+                "wtmessage" => Yii::t("notificaciones", "Error al grabar pago factura." . $ex),
+                "title" => Yii::t('jslang', 'Error'),
+            );
+            echo Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
         }
-        else {          
-            $matriculacion_model = new Matriculacion();
-            $today = date("Y-m-d H:i:s");
-            $result_process = $matriculacion_model->checkToday($today, $per_id);
+        }
+        //else {          
+            //$matriculacion_model = new Matriculacion();
+            //$today = date("Y-m-d H:i:s");
+            //$result_process = $matriculacion_model->checkToday($today, $per_id);
 
-            if (count($result_process) > 0) {                
-                /*                 * Exist a register process */
-                $pla_id = $result_process[0]['pla_id'];
+            //if (count($result_process) > 0) {                
+                /* Exist a register process */
+                //$pla_id = $result_process[0]['pla_id'];
 
-                /*                 * Verificando si el estudiante ha pagado */
+                /* Verificando si el estudiante ha pagado */
                 //$data_planificacion_pago = Matriculacion::getPlanificacionPago($pla_id);
                 /* Se obtiene los datos de planificación del estudiante GVG */
-                $data_planificacion_pago = Matriculacion::getPlanificacionPago($per_id);              
-                return $this->render('carga-pago', [
-                            "data_planificacion_pago" => $data_planificacion_pago,
-                            "pla_id" => $data_planificacion_pago['pla_id'],
-                            "per_id" => $per_id,
-                ]);
-            } else {
+        $data_planificacion_pago = Matriculacion::getPlanificacionPago($per_id);      
+
+        $mod_fpago = new FormaPago();
+        $arr_forma_pago = $mod_fpago->consultarFormaPagosaldo();
+        $arr_bancos = $mod_fpago->consultarBancos();
+
+        return $this->render('carga-pago', [
+                    "data_planificacion_pago" => $data_planificacion_pago,
+                    "pla_id" => $data_planificacion_pago['pla_id'],
+                    "per_id" => $per_id,
+                    "arr_forma_pago" => ArrayHelper::map($arr_forma_pago, "id", "value"),
+                    "arr_bancos" => ArrayHelper::map($arr_bancos, "id", "value"),
+        ]);
+           // } else {
                 //Render index-out
-                return $this->render('index-out', [
-                            "message" => Academico::t("matriculacion", "No es tiempo de registro."),
-                ]);
-            }
-        }
-    }
+                //return $this->render('index-out', [
+                            //"message" => Academico::t("matriculacion", "No es tiempo de registro."),
+                //]);
+           // }
+        //}
+    }//function actionRegistropago
 
     public function actionList() {
         $model = new RegistroPagoMatricula();

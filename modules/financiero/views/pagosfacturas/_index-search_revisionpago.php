@@ -89,7 +89,14 @@ academico::registerTranslations();
                 <?= Html::dropDownList("cmb_estado_financiero", 0,  $arr_estado_financiero, ["class" => "form-control", "id" => "cmb_estado_financiero"]) ?>                                       
             </div>                
         </div>
-    </div>     
+    </div> 
+    <div class="col-md-12 col-xs-12 col-lg-12 col-sm-12">   
+        <div class="form-group">
+            <label for="lbl_concepto" class="col-sm-2 col-md-2 col-xs-2 col-lg-2 control-label" id="lbl_concepto"><?= financiero::t("Pagos", "Concept") ?></label>
+            <div class="col-sm-3 col-md-3 col-xs-3 col-lg-3">                                      
+                <?= Html::dropDownList("cmb_concepto", 0,  $arr_concepto, ["class" => "form-control", "id" => "cmb_concepto"]) ?>                                       
+            </div>  
+    </div>       
     <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12">
         <div class="col-sm-8 col-md-8 col-xs-8 col-lg-8"></div>
         <div class="col-sm-2 col-md-2 col-xs-4 col-lg-2">                

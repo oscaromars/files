@@ -116,6 +116,7 @@ class FormaPago extends \app\modules\financiero\components\CActiveRecord
         $resultData = $comando->queryall();
         return $resultData;
     }
+
     /**
      * Function formas de pago
      * @author Giovanni Vergara <analistadesarrollo01@uteg.edu.ec>
@@ -128,9 +129,52 @@ class FormaPago extends \app\modules\financiero\components\CActiveRecord
         $sql = "SELECT fp.fpag_id AS id, fp.fpag_nombre AS value  
                 FROM " . $con->dbname . ".forma_pago fp 
                 WHERE  fp.fpag_estado_logico = :estado AND
-                       fp.fpag_estado = :estado and (fp.fpag_id > 3 and fp.fpag_id < 7) ";                       
+                       fp.fpag_estado = :estado and fp.fpag_id in (4,5,1)";                       
         $comando = $con->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $resultData = $comando->queryall();
+        return $resultData;
+    }
+
+    /**
+     * Function formas de pago
+     * @author Giovanni Vergara <analistadesarrollo01@uteg.edu.ec>
+     * @param
+     * @return
+     */
+    public function consultarBancos() {
+        $con = \Yii::$app->db_facturacion;
+        $estado = 1;
+        $sql = "SELECT bc.ban_id AS id, bc.ban_nombre AS value  
+                FROM " . $con->dbname . ".bancos bc
+                WHERE  bc.ban_estado_logico = :estado AND
+                       bc.ban_estado = :estado";                       
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $resultData = $comando->queryall();
+        return $resultData;
+    }
+
+    /**
+     * Function formas de pago
+     * @author Giovanni Vergara <analistadesarrollo01@uteg.edu.ec>
+     * @param
+     * @return
+     */
+    public function consultarReferenciaBancos($rban_referencia,$ban_id) {
+        $con = \Yii::$app->db_facturacion;
+        $estado = 1;
+        $sql = "SELECT rb.ban_id AS id, 
+                       rb.rban_referencia AS value 
+                  FROM " . $con->dbname . ".referencia_bancos rb
+                 WHERE rb.rban_estado_logico = :estado
+                   AND rb.rban_estado = :estado
+                   AND rb.rban_referencia = :rban_referencia
+                   AND rb.ban_id = :ban_id";                       
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $comando->bindParam(":rban_referencia", $rban_referencia, \PDO::PARAM_STR);
+        $comando->bindParam(":ban_id", $ban_id, \PDO::PARAM_STR);
         $resultData = $comando->queryall();
         return $resultData;
     }

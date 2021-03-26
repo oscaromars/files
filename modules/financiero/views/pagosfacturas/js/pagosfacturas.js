@@ -59,17 +59,21 @@ $(document).ready(function () {
         }, true);
     });
 
+    $('.pago_documento').hide(); 
+
     $("#cmb_formapago").on('change', function(){   
         var opcion = $('#cmb_formapago').val();
 
-        if(opcion==6){
+        if(opcion==1){
             $('#txt_fechapago').removeClass('PBvalidation');
-            $('#pago_documento').hide();           
-            //txth_doc_pago
+            $('#pago_documento').hide(); 
+            $('.pago_documento').hide();           
+
             $('#pago_stripe').show();
         }else{
             $('#txt_fechapago').addClass('PBvalidation');
             $('#pago_documento').show();
+            $('.pago_documento').show();
 
             $('#pago_stripe').hide();
         }
@@ -77,7 +81,7 @@ $(document).ready(function () {
 
     $('#TbgPagopendiente input[type=checkbox]').click(function () {
         var valor = $("#txt_valor").val();
-        var td    = $(this).parent().parent().find('td')[3];
+        var td    = $(this).parent().parent().find('td')[6];
         if (this.checked) 
             valor     = parseFloat(valor)  + parseFloat($(td).html());
         else
@@ -87,8 +91,12 @@ $(document).ready(function () {
             valor = 0;
 
         $("#txt_valor").val(parseFloat(valor).toFixed(2));
+
+        $("#txt_valor_respaldo").val(parseFloat(valor).toFixed(2));
         //console.log($(td).html());
     });
+
+
 
 });
 
@@ -113,6 +121,7 @@ function guardarPagofactura() {
     arrParams.estid       = $('#txth_idest').val();
     arrParams.per_id      = $('#txth_per').val();
     arrParams.referencia  = $('#txt_referencia').val();
+    arrParams.banco       = $('#cmb_banco').val();
     arrParams.formapago   = $('#cmb_formapago').val();
     arrParams.valor       = $('#txt_valor').val();
     arrParams.observacion = $('#txt_observa').val();
@@ -122,6 +131,24 @@ function guardarPagofactura() {
         var mensaje = {wtmessage: "Método Pago : El campo no debe estar vacío.", title: "Error"};
         showAlert("NO_OK", "error", mensaje);
         return false;
+    }//if
+
+    if (arrParams.formapago != 1) {
+        if(arrParams.referencia == ''){
+            var mensaje = {wtmessage: "Referencia : El campo no debe estar vacío.", title: "Error"};
+            showAlert("NO_OK", "error", mensaje);
+            return false;
+        }
+        if(arrParams.banco == 0){
+            var mensaje = {wtmessage: "Institucion Bancaria : El campo no debe estar vacío.", title: "Error"};
+            showAlert("NO_OK", "error", mensaje);
+            return false;
+        }
+        if( !$('#checkAcepta').is(":checked") ){
+            var mensaje = {wtmessage: "Debe aceptar las condiciones y terminos", title: "Error"};
+            showAlert("NO_OK", "error", mensaje);
+            return false;
+        }
     }//if
 
     //Pregunto por el valor
@@ -144,8 +171,43 @@ function guardarPagofactura() {
         return false;
     }//if
 
+    var valor_saldos    = 0;
+    var valor_check     = 0;
+    var contador_cuotas = 0;
+    var cuotas_check    = 0;
+
+    $('#TbgPagopendiente input[type=checkbox]').each(function(index, value) {
+        td = $(this).parent().parent().find('td')[6];
+        valor_saldos = valor_saldos + parseFloat($(td).html());
+
+        if (this.checked){
+            valor_check = valor_check  + parseFloat($(td).html());
+            cuotas_check++;
+        } 
+
+        contador_cuotas++;
+    });
+    
+    console.log("valor_saldos "+valor_saldos);
+    console.log("valor_check "+valor_check);
+    console.log("contador_cuotas "+contador_cuotas);
+    console.log("cuotas_check "+cuotas_check);
+
+    arrParams.valor_saldos = valor_saldos;
+    arrParams.valor_check = valor_check;
+    arrParams.contador_cuotas = contador_cuotas;
+    arrParams.cuotas_check = cuotas_check;
+
+    if(arrParams.valor > valor_check){
+        if(contador_cuotas > 1 && contador_cuotas != cuotas_check){
+            var mensaje = {wtmessage: "El valor pagado supero el valor de las cuotas seleccionadas.", title: "Error"};
+            showAlert("NO_OK", "error", mensaje);
+            return false;
+        } 
+    }
+
     //Pregunto si es pago stripe
-    if($('#cmb_formapago').val() != 6 ){
+    if($('#cmb_formapago').val() != 1 ){
         //Si es por documentos cargo la fecha y el documento
         arrParams.fechapago = $('#txt_fechapago').val();
         arrParams.documento = $('#txth_doc_pago').val();
@@ -159,11 +221,14 @@ function guardarPagofactura() {
          if (!validateForm()) {
             requestHttpAjax(link, arrParams, function (response) {
                 showAlert(response.status, response.label, response.message);
-
-                setTimeout(function () {
-                    parent.window.location.href = $('#txth_base').val() + "/financiero/pagosfacturas/viewsaldo";
-                }, 2000);
-
+                //console.log(response);
+                
+                if(response.status == 'OK'){
+                    setTimeout(function () {
+                        parent.window.location.href = $('#txth_base').val() + "/financiero/pagosfacturas/viewsaldo";
+                    }, 2000);
+                }
+                
             }, true);
         }//if
     }else{
@@ -182,11 +247,10 @@ function guardarPagofactura() {
                     if (!validateForm()) {
                         requestHttpAjax(link, arrParams, function (response) {
                             showAlert(response.status, response.label, response.message);
-                            /*
+
                             setTimeout(function () {
                                 parent.window.location.href = $('#txth_base').val() + "/financiero/pagosfacturas/viewsaldo";
                             }, 2000);
-                            */
                         }, true);
                     }//if
                 }//else
@@ -205,6 +269,8 @@ function rechazarPago() {
     arrParams.dpfa_id = $('#txth_dpfa_id').val();
     arrParams.resultado = $('#cmb_estado').val();
     arrParams.observacion = $('#cmb_observacion').val();
+    arrParams.abono = $('#txt_valor_cuota').val();
+    
     if (!validateForm()) {
         requestHttpAjax(link, arrParams, function (response) {
             showAlert(response.status, response.label, response.message);
@@ -223,10 +289,11 @@ function actualizarGridRevisionPago() {
     var modalidad = $('#cmb_modalidad_revpago').val();
     var estadopago = $('#cmb_estado_revpago').val();
     var estadofinanciero = $('#cmb_estado_financiero').val();
+    var concepto = $('#cmb_concepto').val();
     //Buscar almenos una clase con el nombre para ejecutar
     if (!$(".blockUI").length) {
         showLoadingPopup();
-        $('#TbG_Revisionpago').PbGridView('applyFilterData', {'search': search, 'f_ini': f_ini, 'f_fin': f_fin, 'unidad': unidad, 'modalidad': modalidad, 'estadopago': estadopago, 'estadofinanciero': estadofinanciero});
+        $('#TbG_Revisionpago').PbGridView('applyFilterData', {'search': search, 'f_ini': f_ini, 'f_fin': f_fin, 'unidad': unidad, 'modalidad': modalidad, 'estadopago': estadopago, 'estadofinanciero': estadofinanciero, 'concepto': concepto});
         setTimeout(hideLoadingPopup, 2000);
     }
 }
@@ -239,8 +306,9 @@ function exportExcelrevpago() {
     var modalidad = $('#cmb_modalidad_revpago').val();
     var estadopago = $('#cmb_estado_revpago').val();
     var estadofinanciero = $('#cmb_estado_financiero').val();
+    var concepto = $('#cmb_concepto').val();
 
-    window.location.href = $('#txth_base').val() + "/financiero/pagosfacturas/expexcelfacpendiente?search=" + search + "&f_ini=" + f_ini + "&f_fin=" + f_fin + '&unidad=' + unidad + "&modalidad=" + modalidad + "&estadopago=" + estadopago + "&estadofinanciero=" + estadofinanciero;
+    window.location.href = $('#txth_base').val() + "/financiero/pagosfacturas/expexcelfacpendiente?search=" + search + "&f_ini=" + f_ini + "&f_fin=" + f_fin + '&unidad=' + unidad + "&modalidad=" + modalidad + "&estadopago=" + estadopago + "&estadofinanciero=" + estadofinanciero + "&concepto=" + concepto;
 }
 
 function exportPdfrevpago() {
@@ -251,8 +319,9 @@ function exportPdfrevpago() {
     var modalidad = $('#cmb_modalidad_revpago').val();
     var estadopago = $('#cmb_estado_revpago').val();
     var estadofinanciero = $('#cmb_estado_financiero').val();
+    var concepto = $('#cmb_concepto').val();
 
-    window.location.href = $('#txth_base').val() + "/financiero/pagosfacturas/exppdffacpendiente?pdf=1&search=" + search + "&f_ini=" + f_ini + "&f_fin=" + f_fin + '&unidad=' + unidad + "&modalidad=" + modalidad + "&estadopago=" + estadopago + "&estadofinanciero=" + estadofinanciero;
+    window.location.href = $('#txth_base').val() + "/financiero/pagosfacturas/exppdffacpendiente?pdf=1&search=" + search + "&f_ini=" + f_ini + "&f_fin=" + f_fin + '&unidad=' + unidad + "&modalidad=" + modalidad + "&estadopago=" + estadopago + "&estadofinanciero=" + estadofinanciero + "&concepto=" + concepto;
 }
 function modificarPagofactura() {
     var arrParams = new Object();

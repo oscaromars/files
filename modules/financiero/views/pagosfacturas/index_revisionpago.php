@@ -19,6 +19,7 @@ admision::registerTranslations();
             'arr_modalidad' => $arr_modalidad,   
             'arr_estado' => $arr_estado,
             'arr_estado_financiero' => $arr_estado_financiero,
+            'arr_concepto' => $arr_concepto,
             ]);
         ?>
     </form>

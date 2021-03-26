@@ -1060,15 +1060,19 @@ class Matriculacion extends \yii\db\ActiveRecord {
     {
         $con_academico = \Yii::$app->db_academico;
         $estado = 1;
-        $sql = "SELECT pla.pla_id, pla.pla_periodo_academico, moda.mod_nombre, pes.pes_id
-            FROM " . $con_academico->dbname . ".planificacion as pla 
-                    inner join " . $con_academico->dbname . ".planificacion_estudiante pes on pes.pla_id = pla.pla_id
-                    inner join " . $con_academico->dbname . ".modalidad as moda on moda.mod_id = pla.mod_id
-            WHERE pes.per_id = :per_id
-            AND pla.pla_estado =:estado
-            AND pla.pla_estado_logico =:estado 
-            and moda.mod_estado = :estado
-            and moda.mod_estado_logico = :estado";
+        $sql = "SELECT pla.pla_id, pla.pla_periodo_academico, moda.mod_nombre /*, pes.pes_id */
+                       ,imu.ite_id
+                       ,(select ip.ipre_precio from db_facturacion.item_precio ip where ip.ite_id = imu.ite_id) as valor
+                  FROM " . $con_academico->dbname . ".planificacion as pla 
+         /* inner join " . $con_academico->dbname . ".planificacion_estudiante pes on pes.pla_id = pla.pla_id*/
+            inner join " . $con_academico->dbname . ".modalidad as moda on moda.mod_id = pla.mod_id
+            inner join db_facturacion.item_matricula_unidad as imu on imu.mod_id = pla.mod_id
+                 WHERE /* pes.per_id = :per_id
+                   AND */ pla.pla_estado =:estado
+                   and pla.per_id = :per_id
+                   AND pla.pla_estado_logico =:estado 
+                   and moda.mod_estado = :estado
+                   and moda.mod_estado_logico = :estado";
                 
         $comando = $con_academico->createCommand($sql);
         $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);

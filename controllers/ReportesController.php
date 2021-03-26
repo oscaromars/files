@@ -15,10 +15,23 @@ use yii\base\Exception;
 use app\models\Utilities;
 use app\models\Reporte;
 use app\models\Empresa;
+use app\modules\financiero\models\CargaCartera;
 use app\models\ExportFile;
 use app\modules\academico\Module as academico;
+use app\modules\financiero\Module as financiero;
 academico::registerTranslations();
+financiero::registerTranslations();
+
 class ReportesController extends CController {
+    
+    private function estados() {
+        return [
+            '0' => Yii::t("formulario", "All"),
+            'C' => Yii::t("formulario", "Cancelado"),
+            'N' => Yii::t("formulario", "Pendiente"),            
+        ];
+    }
+
     public function actionIndex() {    
         $empresa_mod = new Empresa();
         $empresa = $empresa_mod->getAllEmpresa();
@@ -189,11 +202,8 @@ class ReportesController extends CController {
             }
         }
         return $valor;
-    }
+    }      
        
-            
-
-
     private function retornaMes($number){
         $valor = "";
         switch ($number){
@@ -236,5 +246,53 @@ class ReportesController extends CController {
             
         }
         return $valor;
+    }
+    public function actionCartera() {    
+        return $this->render('cartera',[
+            'arrEstados' => $this->estados(),
+        ]);
+    }
+
+    public function actionExpexcelreportcartera(){       
+        ini_set('memory_limit', '256M');
+        $content_type = Utilities::mimeContentType("xls");
+        $nombarch = "Report-" . date("YmdHis") . ".xls";
+        header("Content-Type: $content_type");
+        header("Content-Disposition: attachment;filename=" . $nombarch);
+        header('Cache-Control: max-age=0');
+        $colPosition = array("C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N");
+        $arrHeader = array(
+            Yii::t("formulario", "DNI 1"),
+            Yii::t("formulario", "First Names"),
+            financiero::t("Pagos", "# Voucher"),
+            financiero::t("Pagos", "Amount Fees"),
+            financiero::t("Pagos", "Date Bill"),
+            financiero::t("Pagos", "Expiration date"),
+            financiero::t("Pagos", "Quota value"),
+            financiero::t("Pagos", "Value") . ' '. financiero::t("Pagos", "Bill"),
+            financiero::t("Pagos", "Pass"),
+            Yii::t("formulario", "Payment Status"),
+            financiero::t("Pagos", "Balance")
+        );
+        $data = Yii::$app->request->get();
+        $arrSearch = array();
+        if (count($data) > 0) {
+            $arrSearch["search"] = $data['search'];
+            $arrSearch["f_inif"] = $data['f_inif'];
+            $arrSearch["f_finf"] = $data['f_finf'];
+            $arrSearch["f_iniv"] = $data['f_iniv'];
+            $arrSearch["f_finv"] = $data['f_finv'];
+            $arrSearch["estadopago"] = $data['estadopago'];            
+        }
+        $arrData = array();
+        $carga_model = new CargaCartera();
+        if (count($arrSearch) > 0) {
+            $arrData = $carga_model->consultarReportcartera($arrSearch, true);
+        } else {
+            $arrData = $carga_model->consultarReportcartera(array(), true);
+        }
+        $nameReport = academico::t("Pagos", "Cartera");
+        Utilities::generarReporteXLS($nombarch, $nameReport, $arrHeader, $arrData, $colPosition);
+        exit;
     }
 }

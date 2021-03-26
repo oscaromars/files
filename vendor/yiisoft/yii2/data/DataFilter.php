@@ -113,13 +113,12 @@ use yii\validators\Validator;
  * @see ActiveDataFilter
  *
  * @property array $errorMessages Error messages in format `[errorKey => message]`. Note that the type of this
- * property differs in getter and setter. See [[getErrorMessages()]]  and [[setErrorMessages()]] for details.
+ * property differs in getter and setter. See [[getErrorMessages()]] and [[setErrorMessages()]] for details.
  * @property mixed $filter Raw filter value.
  * @property array $searchAttributeTypes Search attribute type map. Note that the type of this property
- * differs in getter and setter. See [[getSearchAttributeTypes()]]  and [[setSearchAttributeTypes()]] for
- * details.
+ * differs in getter and setter. See [[getSearchAttributeTypes()]] and [[setSearchAttributeTypes()]] for details.
  * @property Model $searchModel Model instance. Note that the type of this property differs in getter and
- * setter. See [[getSearchModel()]]  and [[setSearchModel()]] for details.
+ * setter. See [[getSearchModel()]] and [[setSearchModel()]] for details.
  *
  * @author Paul Klimov <klimov.paul@gmail.com>
  * @since 2.0.13
@@ -240,11 +239,6 @@ class DataFilter extends Model
      * Attribute map will be applied to filter condition in [[normalize()]] method.
      */
     public $attributeMap = [];
-    /**
-     * @var string representation of `null` instead of literal `null` in case the latter cannot be used.
-     * @since 2.0.40
-     */
-    public $nullValue = 'NULL';
 
     /**
      * @var array|\Closure list of error messages responding to invalid filter structure, in format: `[errorKey => message]`.
@@ -365,24 +359,24 @@ class DataFilter extends Model
         if ($validator instanceof BooleanValidator) {
             return self::TYPE_BOOLEAN;
         }
-
+        
         if ($validator instanceof NumberValidator) {
             return $validator->integerOnly ? self::TYPE_INTEGER : self::TYPE_FLOAT;
         }
-
+        
         if ($validator instanceof StringValidator) {
             return self::TYPE_STRING;
         }
-
+        
         if ($validator instanceof EachValidator) {
             return self::TYPE_ARRAY;
         }
-
+        
         if ($validator instanceof DateValidator) {
             if ($validator->type == DateValidator::TYPE_DATETIME) {
                 return self::TYPE_DATETIME;
             }
-
+            
             if ($validator->type == DateValidator::TYPE_TIME) {
                 return self::TYPE_TIME;
             }
@@ -665,7 +659,7 @@ class DataFilter extends Model
             return;
         }
 
-        $model->{$attribute} = $value === $this->nullValue ? null : $value;
+        $model->{$attribute} = $value;
         if (!$model->validate([$attribute])) {
             $this->addError($this->filterAttributeName, $model->getFirstError($attribute));
             return;
@@ -759,8 +753,6 @@ class DataFilter extends Model
             }
             if (is_array($value)) {
                 $result[$key] = $this->normalizeComplexFilter($value);
-            } elseif ($value === $this->nullValue) {
-                $result[$key] = null;
             } else {
                 $result[$key] = $value;
             }

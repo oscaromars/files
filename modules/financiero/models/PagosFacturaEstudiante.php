@@ -148,7 +148,10 @@ class PagosFacturaEstudiante extends \yii\db\ActiveRecord
                 } else {
                     $str_search .= "d.dpfa_estado_financiero = :estadofinanciero AND "; // son los pendientes no estan en la tabla
                 }
-            }           
+            }  
+            if ($arrFiltro['concepto'] != '0') { 
+                $str_search .= "pfe.pfes_concepto = :concepto AND ";
+            }         
         }
         if ($onlyData == false) {
             $fpag_id = "f.fpag_id, ";
@@ -178,7 +181,8 @@ class PagosFacturaEstudiante extends \yii\db\ActiveRecord
                             when 'N' then 'Pendiente'                                                              
                             else 'Pendiente'
                         end as estado_financiero,
-                dpfa_id
+                dpfa_id,
+                pfe.pfes_concepto
                 from " . $con2->dbname . ".pagos_factura_estudiante pfe inner join " . $con2->dbname . ".detalle_pagos_factura d on d.pfes_id = pfe.pfes_id
                 inner join " . $con->dbname . ".estudiante e on e.est_id = pfe.est_id
                 inner join " . $con1->dbname . ".persona p on p.per_id = e.per_id
@@ -199,6 +203,7 @@ class PagosFacturaEstudiante extends \yii\db\ActiveRecord
             $unidad = $arrFiltro['unidad'];
             $modalidad = $arrFiltro['modalidad'];
             $estadopago = $arrFiltro['estadopago'];
+            $concepto = $arrFiltro['concepto'];
             $estadofinanciero = $arrFiltro['estadofinanciero'];
             if ($arrFiltro['f_ini'] != "" && $arrFiltro['f_fin'] != "") {
                 $comando->bindParam(":fec_ini", $fecha_ini, \PDO::PARAM_STR);
@@ -218,6 +223,9 @@ class PagosFacturaEstudiante extends \yii\db\ActiveRecord
             }
             if ($arrFiltro['estadofinanciero'] != '0') {
                 $comando->bindParam(":estadofinanciero", $estadofinanciero, \PDO::PARAM_STR);
+            }
+            if ($arrFiltro['concepto'] != '0') {
+                $comando->bindParam(":concepto", $concepto, \PDO::PARAM_STR);
             }
         }
         $resultData = $comando->queryAll();
@@ -305,7 +313,8 @@ class PagosFacturaEstudiante extends \yii\db\ActiveRecord
         $con1 = \Yii::$app->db_asgard;
         $con2 = \Yii::$app->db_facturacion;
         $estado = 1;
-        $sql = "SELECT 	p.per_cedula as identificacion, 
+        $sql = "SELECT 	p.per_id,
+                        p.per_cedula as identificacion, 
                         concat(p.per_pri_nombre, ' ', p.per_pri_apellido, ' ', ifnull(p.per_seg_apellido,'')) as estudiante,
                         p.per_correo,
                         u.uaca_id,
@@ -335,7 +344,8 @@ class PagosFacturaEstudiante extends \yii\db\ActiveRecord
                         d.dpfa_observacion_rechazo as dpfa_observacion_rechazo,
                         d.dpfa_observacion_reverso,
                         b.ban_nombre ,
-                        d.dpfa_valor_cuota as abono
+                        d.dpfa_valor_cuota as abono,
+                        pfe.pfes_concepto
                 from " . $con2->dbname . ".pagos_factura_estudiante pfe inner join " . $con2->dbname . ".detalle_pagos_factura d on d.pfes_id = pfe.pfes_id
                     inner join " . $con->dbname . ".estudiante e on e.est_id = pfe.est_id
                     inner join " . $con1->dbname . ".persona p on p.per_id = e.per_id
@@ -410,7 +420,7 @@ class PagosFacturaEstudiante extends \yii\db\ActiveRecord
      * @param
      * @return pfes_id
      */
-    public function insertarPagospendientes($est_id, $pfes_referencia, $pfes_banco, $fpag_id, $pfes_valor_pago, $pfes_fecha_pago, $pfes_observacion, $pfes_archivo_pago, $pfes_usu_ingreso) {
+    public function insertarPagospendientes($est_id, $pfes_concepto, $pfes_referencia, $pfes_banco, $fpag_id, $pfes_valor_pago, $pfes_fecha_pago, $pfes_observacion, $pfes_archivo_pago, $pfes_usu_ingreso) {
         $con = \Yii::$app->db_facturacion;
         $trans = $con->getTransaction(); // se obtiene la transacción actual
         if ($trans !== null) {
@@ -431,6 +441,10 @@ class PagosFacturaEstudiante extends \yii\db\ActiveRecord
         if (isset($est_id)) {
             $param_sql .= ", est_id";
             $bdet_sql .= ", :est_id";
+        }
+        if (isset($pfes_concepto)) {
+            $param_sql .= ", pfes_concepto";
+            $bdet_sql .= ", :pfes_concepto";
         }
         if (isset($pfes_referencia)) {
             $param_sql .= ", pfes_referencia";
@@ -469,6 +483,9 @@ class PagosFacturaEstudiante extends \yii\db\ActiveRecord
             $comando = $con->createCommand($sql);
             if (isset($est_id)) {
                 $comando->bindParam(':est_id', $est_id, \PDO::PARAM_INT);
+            }
+            if (isset($pfes_pfes_conceptoreferencia)) {
+                $comando->bindParam(':pfes_concepto', $pfes_concepto, \PDO::PARAM_STR);
             }
             if (isset($pfes_referencia)) {
                 $comando->bindParam(':pfes_referencia', $pfes_referencia, \PDO::PARAM_STR);
@@ -989,7 +1006,7 @@ class PagosFacturaEstudiante extends \yii\db\ActiveRecord
                 inner join " . $con->dbname . ".modalidad mo on mo.mod_id = m.mod_id
                 inner join " . $con->dbname . ".estudio_academico ea on ea.eaca_id = m.eaca_id
                 inner join " . $con2->dbname . ".forma_pago f on f.fpag_id = pfe.fpag_id 
-                WHERE $str_search pfe.pfes_estado=:estado AND pfe.pfes_estado_logico=:estado  ORDER BY pfe.pfes_fecha_registro DESC ";
+                WHERE $str_search pfe.pfes_concepto = 'ME' AND pfe.pfes_estado=:estado AND pfe.pfes_estado_logico=:estado  ORDER BY pfe.pfes_fecha_registro DESC ";
 
         $comando = $con->createCommand($sql);          
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);

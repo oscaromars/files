@@ -289,10 +289,11 @@ function actualizarGridRevisionPago() {
     var modalidad = $('#cmb_modalidad_revpago').val();
     var estadopago = $('#cmb_estado_revpago').val();
     var estadofinanciero = $('#cmb_estado_financiero').val();
+    var concepto = $('#cmb_concepto').val();
     //Buscar almenos una clase con el nombre para ejecutar
     if (!$(".blockUI").length) {
         showLoadingPopup();
-        $('#TbG_Revisionpago').PbGridView('applyFilterData', {'search': search, 'f_ini': f_ini, 'f_fin': f_fin, 'unidad': unidad, 'modalidad': modalidad, 'estadopago': estadopago, 'estadofinanciero': estadofinanciero});
+        $('#TbG_Revisionpago').PbGridView('applyFilterData', {'search': search, 'f_ini': f_ini, 'f_fin': f_fin, 'unidad': unidad, 'modalidad': modalidad, 'estadopago': estadopago, 'estadofinanciero': estadofinanciero, 'concepto': concepto});
         setTimeout(hideLoadingPopup, 2000);
     }
 }
@@ -305,8 +306,9 @@ function exportExcelrevpago() {
     var modalidad = $('#cmb_modalidad_revpago').val();
     var estadopago = $('#cmb_estado_revpago').val();
     var estadofinanciero = $('#cmb_estado_financiero').val();
+    var concepto = $('#cmb_concepto').val();
 
-    window.location.href = $('#txth_base').val() + "/financiero/pagosfacturas/expexcelfacpendiente?search=" + search + "&f_ini=" + f_ini + "&f_fin=" + f_fin + '&unidad=' + unidad + "&modalidad=" + modalidad + "&estadopago=" + estadopago + "&estadofinanciero=" + estadofinanciero;
+    window.location.href = $('#txth_base').val() + "/financiero/pagosfacturas/expexcelfacpendiente?search=" + search + "&f_ini=" + f_ini + "&f_fin=" + f_fin + '&unidad=' + unidad + "&modalidad=" + modalidad + "&estadopago=" + estadopago + "&estadofinanciero=" + estadofinanciero + "&concepto=" + concepto;
 }
 
 function exportPdfrevpago() {
@@ -317,8 +319,9 @@ function exportPdfrevpago() {
     var modalidad = $('#cmb_modalidad_revpago').val();
     var estadopago = $('#cmb_estado_revpago').val();
     var estadofinanciero = $('#cmb_estado_financiero').val();
+    var concepto = $('#cmb_concepto').val();
 
-    window.location.href = $('#txth_base').val() + "/financiero/pagosfacturas/exppdffacpendiente?pdf=1&search=" + search + "&f_ini=" + f_ini + "&f_fin=" + f_fin + '&unidad=' + unidad + "&modalidad=" + modalidad + "&estadopago=" + estadopago + "&estadofinanciero=" + estadofinanciero;
+    window.location.href = $('#txth_base').val() + "/financiero/pagosfacturas/exppdffacpendiente?pdf=1&search=" + search + "&f_ini=" + f_ini + "&f_fin=" + f_fin + '&unidad=' + unidad + "&modalidad=" + modalidad + "&estadopago=" + estadopago + "&estadofinanciero=" + estadofinanciero + "&concepto=" + concepto;
 }
 function modificarPagofactura() {
     var arrParams = new Object();

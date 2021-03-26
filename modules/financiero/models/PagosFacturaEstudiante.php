@@ -1006,7 +1006,7 @@ class PagosFacturaEstudiante extends \yii\db\ActiveRecord
                 inner join " . $con->dbname . ".modalidad mo on mo.mod_id = m.mod_id
                 inner join " . $con->dbname . ".estudio_academico ea on ea.eaca_id = m.eaca_id
                 inner join " . $con2->dbname . ".forma_pago f on f.fpag_id = pfe.fpag_id 
-                WHERE $str_search pfe.pfes_estado=:estado AND pfe.pfes_estado_logico=:estado  ORDER BY pfe.pfes_fecha_registro DESC ";
+                WHERE $str_search pfe.pfes_concepto = 'ME' AND pfe.pfes_estado=:estado AND pfe.pfes_estado_logico=:estado  ORDER BY pfe.pfes_fecha_registro DESC ";
 
         $comando = $con->createCommand($sql);          
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);

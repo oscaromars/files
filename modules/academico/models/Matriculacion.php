@@ -1056,7 +1056,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
         return $resultData;
     }
 
-    public static function getPlanificacionPago($per_id)
+    public static function getPlanificacionPago($mod_id)
     {
         $con_academico = \Yii::$app->db_academico;
         $estado = 1;
@@ -1069,13 +1069,13 @@ class Matriculacion extends \yii\db\ActiveRecord {
             inner join db_facturacion.item_matricula_unidad as imu on imu.mod_id = pla.mod_id
                  WHERE /* pes.per_id = :per_id
                    AND */ pla.pla_estado =:estado
-                   and pla.per_id = :per_id
+                   and pla.mod_id = :mod_id
                    AND pla.pla_estado_logico =:estado 
                    and moda.mod_estado = :estado
                    and moda.mod_estado_logico = :estado";
                 
         $comando = $con_academico->createCommand($sql);
-        $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
+        $comando->bindParam(":mod_id", $mod_id, \PDO::PARAM_INT);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
         $resultData = $comando->queryOne();
 

@@ -184,7 +184,7 @@ class MatriculacionController extends \app\components\CController {
             }
         }
 
-        $mod_est = new Estudiante();
+        $mod_est      = new Estudiante();
         $modModalidad = new Modalidad();
         
         $matriculacion_model = new Matriculacion();
@@ -526,8 +526,7 @@ class MatriculacionController extends \app\components\CController {
                 }//fin del else
 
                 $mod_pagos      = new PagosFacturaEstudiante();
-                $mod_estudiante = new Especies();       
-                $est_id         = $mod_estudiante->recuperarIdsEstudiente($per_id);    
+                  
             
                 //En caso de ser pago por tarjeta entra por if o entra en else si es deposito o transferencia
                 if($data["formapago"]==1){
@@ -700,8 +699,17 @@ class MatriculacionController extends \app\components\CController {
 
                 /* Verificando si el estudiante ha pagado */
                 //$data_planificacion_pago = Matriculacion::getPlanificacionPago($pla_id);
-                /* Se obtiene los datos de planificación del estudiante GVG */
-        $data_planificacion_pago = Matriculacion::getPlanificacionPago($per_id);      
+                /* Se obtiene los datos de planificación del estudiante GVG */ 
+
+        $mod_estudiante  = new Especies();       
+        $datosEstudiante = $mod_estudiante->consultaDatosEstudiante($per_id); 
+
+        $est_id = $datosEstudiante['est_id'];
+        $mod_id = $datosEstudiante['mod_id'];
+
+        \app\models\Utilities::putMessageLogFile("mod_id: ".$mod_id);
+
+        $data_planificacion_pago = Matriculacion::getPlanificacionPago($mod_id);  
 
         $mod_fpago = new FormaPago();
         $arr_forma_pago = $mod_fpago->consultarFormaPagosaldo();

@@ -171,10 +171,11 @@ function guardarPagofactura() {
         return false;
     }//if
 
-    var valor_saldos = 0;
-    var valor_check  = 0;
+    var valor_saldos    = 0;
+    var valor_check     = 0;
     var contador_cuotas = 0;
-    var cuotas_check = 0;
+    var cuotas_check    = 0;
+
     $('#TbgPagopendiente input[type=checkbox]').each(function(index, value) {
         td = $(this).parent().parent().find('td')[6];
         valor_saldos = valor_saldos + parseFloat($(td).html());
@@ -186,6 +187,7 @@ function guardarPagofactura() {
 
         contador_cuotas++;
     });
+    
     console.log("valor_saldos "+valor_saldos);
     console.log("valor_check "+valor_check);
     console.log("contador_cuotas "+contador_cuotas);

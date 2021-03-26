@@ -47,11 +47,11 @@ function traer_estudiante(){
         //data: {"parametro1" : "valor1", "parametro2" : "valor2"},
         type: "GET",
         dataType: "json",
-        cache      : false,
-        contentType: false,
-        processData: false,
-        async: false,
-        url: "https://acade.uteg.edu.ec/homologacion_rest_desa/post.php?accion=estudiante&cedula="+cedula+"&online="+vcheck,
+        contentType: "text/plain",
+        Accept: "text/html",
+        //processData: false,
+        //async: false,
+        url: "https://acade.uteg.edu.ec/homologacion_rest/post.php?accion=estudiante&cedula="+cedula+"&online="+vcheck,
         /*complete: function(results) {
             console.log(results);
         }*/
@@ -129,45 +129,6 @@ function traer_estudiante(){
                     }
                 },
                 responsive : true,
-                /*
-                responsive: {
-                    details: {
-                        display: $.fn.dataTable.Responsive.display.modal( {
-                            header: function ( row ) {
-                                var data = row.data();
-                                return 'Detalles';// for '+data[0]+' '+data[1];
-                            }
-                        } ),
-                        renderer: function(api, rowIdx, columns){
-                            var tabla = '<table class="table table-condensed table-striped" style="width:100%">';
-                            var data = $.map( columns, function ( col, i ) {
-                                if(i!=0){
-                                    tabla += '<tr data-dt-row="'+col.rowIndex+'" data-dt-column="'+col.columnIndex+'">'+
-                                                '<td style="padding-top: 6px;padding-bottom: 6px;"><b>'+col.title+':'+'</b></td> '+
-                                                '<td style="padding-top: 6px;padding-bottom: 6px;">'+col.data+'</td>'+
-                                             '</tr>';
-                                }
-                            });
-                            tabla += '</table>';
-                            return tabla;
-                        }
-                    }
-                },
-                */
-                /*
-                "columnDefs": [
-                    {
-                        "targets": [ 7 ],
-                        "visible": false,
-                        "searchable": false
-                    },
-                    {
-                        "targets": [ 9 ],
-                        "visible": false,
-                        "searchable": false
-                    },
-                ]
-                */
                 select: true
             } );//tabla
             /******************************************/
@@ -236,66 +197,4 @@ function iniciarHomologacion(){
      });
 }//function iniciar_homologacion
 
-function searchModules() {
-    var arrParams = new Object();
-    arrParams.PBgetFilter = true;
-    arrParams.search = $("#txt_buscarData").val();    
-    arrParams.periodo = $("#cmb_periodo").val();    
-    arrParams.estado = $("#cmb_estado").val();
-    $("#Tbg_Distributivo_Aca").PbGridView("applyFilterData", arrParams);
-}
 
-function exportExcel() {
-    var search = $('#txt_buscarData').val();    
-    var periodo = $('#cmb_periodo').val();    
-    var estado = $("#cmb_estado").val();
-    window.location.href = $('#txth_base').val() + "/academico/distributivocabecera/exportexcel?" +
-        "search=" + search +        
-        "&periodo=" + periodo + 
-        "&estado=" + estado;   
-}
-
-function exportPdf() {
-    var search = $('#txt_buscarData').val();    
-    var periodo = $('#cmb_periodo').val();    
-    var estado = $("#cmb_estado").val();
-    window.location.href = $('#txth_base').val() + "/academico/distributivocabecera/exportpdf?pdf=1" +
-        "&search=" + search +        
-        "&periodo=" + periodo +
-        "&estado=" + estado;   
-}
-
-function deleteItem(id) {
-    var link = $('#txth_base').val() + "/academico/distributivocabecera/deletecab";
-    var arrParams = new Object();
-    arrParams.id = id;
-    //alert('id:'+id);
-    requestHttpAjax(link, arrParams, function(response) {
-        showAlert(response.status, response.label, response.message);        
-        if (response.status == "OK") {              
-            setTimeout(function() {   
-                searchModules();
-            }, 1000);
-        }
-    }, true);
-}
-
-function saveReview() {
-    var link = $('#txth_base').val() + "/academico/distributivocabecera/savereview";
-    var arrParams = new Object();
-    arrParams.id = $('#txth_ids').val();
-    arrParams.resultado = $('#cmb_estado').val();
-    arrParams.observacion = $('#txt_detalle').val();
-    //alert('id:'+id);
-    
-    requestHttpAjax(link, arrParams, function(response) {
-        showAlert(response.status, response.label, response.message);
-        if (response.status == "OK") {
-            setTimeout(function() {
-                var link = $('#txth_base').val() + "/academico/distributivocabecera/index";
-                window.location = link;
-            }, 1000);
-        }
-    }, true);
-     
-}

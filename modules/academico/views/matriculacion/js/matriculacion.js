@@ -1,3 +1,6 @@
+ var stripe;
+ var cardElement;
+
 $(document).ready(function() {
     $('#btn_grabar_asignacion').click(function() {
         var arrParams = new Object();
@@ -79,6 +82,32 @@ $(document).ready(function() {
         total = subtotal + parseFloat(asoc) + parseFloat(gastos);
         $('#costTotal').text('$' + (total.toFixed(2)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
     });
+
+    $("#cmb_formapago").on('change', function(){   
+        var opcion = $('#cmb_formapago').val();
+
+        if(opcion==1){
+            $('#txt_fechapago').removeClass('PBvalidation');
+            $('#pago_documento').hide(); 
+            $('.pago_documento').hide();           
+
+            $('#pago_stripe').show();
+        }else if(opcion==4 || opcion==5){
+            $('#txt_fechapago').addClass('PBvalidation');
+            $('#pago_documento').show();
+            $('.pago_documento').show();
+
+            $('#pago_stripe').hide();
+        }else{
+            $('#txt_fechapago').removeClass('PBvalidation');
+            $('#pago_documento').hide(); 
+            $('.pago_documento').hide();           
+
+            $('#pago_stripe').hide();
+        }
+    });
+
+    $('.pago_documento').hide(); 
 });
 
 function savemethod() {
@@ -197,26 +226,104 @@ function sendEmail() {
 
 function cargarDocumento() {
     var arrParams = new Object();
-    var link = $('#txth_base').val() + "/academico/matriculacion/registropago";
-    arrParams.procesar_file = true;
-    arrParams.archivo = $('#txth_pago_documento2').val() + "." + $('#txth_pago_documento').val().split('.').pop();
-    arrParams.pla_id = $('#frm_pla_id').val();
-    arrParams.pes_id = $('#frm_pes_id').val();
-    arrParams.per_id = $('#frm_per_id').val();
-    /* console.log(arrParams); */
-    if (!validateForm()) {
-        requestHttpAjax(link, arrParams, function(response) {
-            /* console.log(response); */
+    var link      = $('#txth_base').val() + "/academico/matriculacion/registropago";
+    
+    arrParams.periodo       = $('#txt_periodo_academico').val();
+    arrParams.modalidad     = $('#txt_modalidad').val();
+    arrParams.per_id        = $('#txth_per').val();
+    arrParams.formapago     = $('#cmb_formapago').val();
+    arrParams.valor         = $('#txt_valor').val();
+    arrParams.observacion   = $('#txt_observa').val();
+    arrParams.procesar_pago = true;
+    arrParams.fechapago     = $('#txt_fechapago').val();
+    //arrParams.documento     = $('#txth_pago_documento').val();
+    arrParams.documento       = $('#txth_pago_documento2').val() + "." + $('#txth_pago_documento').val().split('.').pop();
+    arrParams.referencia    = $('#txt_referencia').val();
+    arrParams.banco         = $('#cmb_banco').val(); 
+
+    if (arrParams.formapago != 1) {
+        arrParams.procesar_file = true;
+
+        if(arrParams.fechapago == ''){
+            var mensaje = {wtmessage: "Fecha Pago : El campo no debe estar vacío.", title: "Error"};
+            showAlert("NO_OK", "error", mensaje);
+            return false;
+        }
+        if (arrParams.documento.length == 0) {
+            var mensaje = {wtmessage: "Adjuntar Documento  : El campo no debe estar vacío.", title: "Error"};
+            showAlert("NO_OK", "error", mensaje);
+            return false;
+        }
+        if(arrParams.referencia == ''){
+            var mensaje = {wtmessage: "Referencia : El campo no debe estar vacío.", title: "Error"};
+            showAlert("NO_OK", "error", mensaje);
+            return false;
+        }
+        if(arrParams.banco == 0){
+            var mensaje = {wtmessage: "Institucion Bancaria : El campo no debe estar vacío.", title: "Error"};
+            showAlert("NO_OK", "error", mensaje);
+            return false;
+        }
+        if( !$('#checkAcepta').is(":checked") ){
+            var mensaje = {wtmessage: "Debe aceptar las condiciones y terminos", title: "Error"};
+            showAlert("NO_OK", "error", mensaje);
+            return false;
+        }
+
+    }//if
+    
+    arrParams.pla_id  = $('#frm_pla_id').val();
+    arrParams.pes_id  = $('#frm_pes_id').val();
+    arrParams.per_id  = $('#frm_per_id').val();
+
+    if($('#cmb_formapago').val() != 1 ){
+        arrParams.token = 0;
+
+        requestHttpAjax(link, arrParams, function (response) {
             showAlert(response.status, response.label, response.message);
-            if (!response.error) {
-                setTimeout(function() {
-                    var params = (arrParams.per_id == 0) ? "" : "?per_id=" + base64_encode(arrParams.per_id)
-                    parent.window.location.href = $('#txth_base').val() + "/academico/matriculacion/index" + params;
-                }, 3000);
+
+            if(response.status == 'OK'){
+                setTimeout(function () {
+                     var params = (arrParams.per_id == 0) ? "" : "?per_id=" + base64_encode(arrParams.per_id)
+                     parent.window.location.href = $('#txth_base').val() + "/academico/matriculacion/index" + params;
+                }, 2000);
             }
         }, true);
-    }
-}
+    }else{
+        //Si es por STRIPE realizo las verificaciones del caso
+        try{
+
+            stripe.createToken(cardElement).then(function(result) {
+                if (result.error) {
+                    console.log(result);
+
+                    var mensaje = {wtmessage: '<p>'+result.error.message+'</p>', title: "Error"};
+                    showAlert("NO_OK", "error", mensaje);
+                    return false;
+                } else {
+                    arrParams.token = result.token.id;
+                    requestHttpAjax(link, arrParams, function (response) {
+                        showAlert(response.status, response.label, response.message);
+
+                        if(response.status == 'OK'){
+                            setTimeout(function () {
+                                 var params = (arrParams.per_id == 0) ? "" : "?per_id=" + base64_encode(arrParams.per_id)
+                                 parent.window.location.href = $('#txth_base').val() + "/academico/matriculacion/index" + params;
+                            }, 2000);
+                        }
+                    }, true);
+
+                }//else
+            });//stripe
+        }catch(err){
+            var mensaje = {wtmessage: err+" ///catch", title: "Error"};
+            showAlert("NO_OK", "error", mensaje);
+            return false;
+        }
+    }//else
+
+    
+}//function cargarDocumento
 
 function estadoPago(id, state) {
     var link = $('#txth_base').val() + "/academico/matriculacion/updateestadopago";

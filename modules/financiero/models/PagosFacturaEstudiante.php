@@ -484,7 +484,7 @@ class PagosFacturaEstudiante extends \yii\db\ActiveRecord
             if (isset($est_id)) {
                 $comando->bindParam(':est_id', $est_id, \PDO::PARAM_INT);
             }
-            if (isset($pfes_pfes_conceptoreferencia)) {
+            if (isset($pfes_concepto)) {
                 $comando->bindParam(':pfes_concepto', $pfes_concepto, \PDO::PARAM_STR);
             }
             if (isset($pfes_referencia)) {

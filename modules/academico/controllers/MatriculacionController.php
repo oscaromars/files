@@ -286,6 +286,12 @@ class MatriculacionController extends \app\components\CController {
         $mod_usuario = Usuario::findIdentity($usu_id);
         $per_id      = Yii::$app->session->get("PB_perid");
 
+        $mod_estudiante  = new Especies();   
+        $datosEstudiante = $mod_estudiante->consultaDatosEstudiante($per_id); 
+
+        $est_id = $datosEstudiante['est_id'];
+        $mod_id = $datosEstudiante['mod_id'];
+
         $data = Yii::$app->request->post();
 
         if ($per_id < 1000) {
@@ -536,7 +542,6 @@ class MatriculacionController extends \app\components\CController {
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
                     $imagen   = $arrIm[0] . "." . $typeFile;
                 }
-
                 //Obtenemos la informacion enviada por javascript
                 $pfes_referencia  = $data["referencia"];
                 $pfes_banco       = $data["banco"];
@@ -554,6 +559,7 @@ class MatriculacionController extends \app\components\CController {
                 $valor_pagado     = $data["valor"];
 
                 $resp_pagofactura = $mod_pagos->insertarPagospendientes($est_id, 
+                                                                        "MA", 
                                                                         $pfes_referencia, 
                                                                         $pfes_banco, 
                                                                         $fpag_id, 
@@ -701,11 +707,8 @@ class MatriculacionController extends \app\components\CController {
                 //$data_planificacion_pago = Matriculacion::getPlanificacionPago($pla_id);
                 /* Se obtiene los datos de planificación del estudiante GVG */ 
 
-        $mod_estudiante  = new Especies();       
-        $datosEstudiante = $mod_estudiante->consultaDatosEstudiante($per_id); 
-
-        $est_id = $datosEstudiante['est_id'];
-        $mod_id = $datosEstudiante['mod_id'];
+            
+        
 
         \app\models\Utilities::putMessageLogFile("mod_id: ".$mod_id);
 

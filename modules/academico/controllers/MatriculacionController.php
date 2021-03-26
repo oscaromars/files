@@ -351,7 +351,7 @@ class MatriculacionController extends \app\components\CController {
                         "wtmessage" => Yii::t("notificaciones", "Usted ya registro el pago para este periodo."),
                         "title" => Yii::t('jslang', 'Success'),
                     );
-                    return Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Success"), false, $message);
+                    return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Success"), false, $message);
                 }//if
 
                 \app\models\Utilities::putMessageLogFile("ENTRO POR procesar_pago");

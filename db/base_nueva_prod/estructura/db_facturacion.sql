@@ -781,3 +781,16 @@ create table referencia_bancos(
    foreign key (ban_id) references `bancos`(ban_id)
   );
 
+create table item_matricula_unidad (
+`imun_id` bigint(20) not null primary key,  
+`ite_id`  bigint(20) not null,  
+`uaca_id` bigint(20) null,
+`mod_id` bigint(20) null,
+`imun_usu_ingreso` bigint(20) not null,
+`imun_usu_modifica` bigint(20) null,
+`imun_estado` varchar(1) not null,
+`imun_fecha_creacion` timestamp not null default current_timestamp,
+`imun_fecha_modificacion` timestamp null default null,
+`imun_estado_logico` varchar(1) not null, 
+foreign key (ite_id) references `item`(ite_id)  
+);

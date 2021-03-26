@@ -277,8 +277,11 @@ class PagosfacturasController extends \app\components\CController {
                         }
                         $respago = $mod_pagos->grabarRechazo($id, $resultado, $observacion);
 
-                        $cartera = $mod_pagos->buscarIdCartera($id);
-                        $id_cartera = $cartera[0]['ccar_id'];
+                        if($respago['pfes_concepto'] == 'ME'){
+                            $cartera = $mod_pagos->buscarIdCartera($id);
+                            $id_cartera = $cartera[0]['ccar_id'];
+                        }
+                        
 
                         if ($respago) {
                             $transaction->commit();
@@ -289,12 +292,14 @@ class PagosfacturasController extends \app\components\CController {
                             $asunto = 'Pagos en Línea';
                             if ($resultado != "2") {
 
-                                $cargo = CargaCartera::findOne($id_cartera);
-                                $cargo->ccar_estado_cancela = 'N';
-                                $cargo->ccar_abono = $cargo->ccar_abono  - $data['abono'];
-                                $cargo->ccar_fecha_modificacion = $fecha;
-                                $cargo->ccar_usu_modifica = $usuario;
-                                $cargo->save();
+                                if($respago['pfes_concepto'] == 'ME'){
+                                    $cargo = CargaCartera::findOne($id_cartera);
+                                    $cargo->ccar_estado_cancela = 'N';
+                                    $cargo->ccar_abono = $cargo->ccar_abono  - $data['abono'];
+                                    $cargo->ccar_fecha_modificacion = $fecha;
+                                    $cargo->ccar_usu_modifica = $usuario;
+                                    $cargo->save();
+                                }
 
                                 if (!empty($datos['dpfa_num_cuota'])) {
                                     //Utilities::putMessageLogFile('$cuota:' . $datos['dpfa_num_cuota']);
@@ -315,11 +320,13 @@ class PagosfacturasController extends \app\components\CController {
                                 }
                                 Utilities::sendEmail($tituloMensaje, Yii::$app->params["adminEmail"], [$correo_estudiante => $user], $asunto, $body);
                             } else {
-                                $cargo = CargaCartera::findOne($id_cartera);
-                                $cargo->ccar_estado_cancela = 'C';
-                                $cargo->ccar_fecha_modificacion = $fecha;
-                                $cargo->ccar_usu_modifica = $usuario;
-                                $cargo->save();
+                                if($respago['pfes_concepto'] == 'ME'){
+                                    $cargo = CargaCartera::findOne($id_cartera);
+                                    $cargo->ccar_estado_cancela = 'C';
+                                    $cargo->ccar_fecha_modificacion = $fecha;
+                                    $cargo->ccar_usu_modifica = $usuario;
+                                    $cargo->save();
+                                }
                                 //Utilities::putMessageLogFile('entro_envio vorreo');
                                 //Utilities::putMessageLogFile('correo..' . $correo_estudiante);
                                 $body = Utilities::getMailMessage("pagoaprobado", array(

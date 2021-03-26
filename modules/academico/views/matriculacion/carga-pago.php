@@ -193,12 +193,12 @@ $this->registerJs("
                             'uploadUrl'  => Url::to(['matriculacion/registropago']),
                             //'maxFileSize' => Yii::$app->params["MaxFileSize"],
                             'uploadExtraData' => 'javascript:function (previewId,index) {
-                                return {"upload_file": true, "name_file": "pago-' . $per_id . '-' . time() . '"};
+                                return {"upload_file": true, "name_file": "pagoMatricula-' . $per_id . '-' . time() . '"};
                             }',
                         ],
                         'pluginEvents' => [
                             "filebatchselected" => "function (event) {
-                                $('#txth_pago_documento2').val('pago-" . $per_id . '-' . time() . "');
+                                $('#txth_pago_documento2').val('pagoMatricula-" . $per_id . '-' . time() . "');
                                 $('#txth_pago_documento').val($('#txt_pago_documento').val());
                                 $('#txt_pago_documento').fileinput('upload');
                             }",

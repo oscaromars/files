@@ -311,10 +311,9 @@ class MatriculacionController extends \app\components\CController {
             return $this->redirect(['perfil/index']);
         }
         \app\models\Utilities::putMessageLogFile("ENTRO antes de data upload");
-        \app\models\Utilities::putMessageLogFile(print_r($data,true));
         //Este codigo es para la carga del archivo
         if ($data["upload_file"]) {
-            \app\models\Utilities::putMessageLogFile("ENTRO POR upload_file -- GAP ");
+            \app\models\Utilities::putMessageLogFile("ENTRO POR upload_file ");
             if (empty($_FILES)){
                 \app\models\Utilities::putMessageLogFile("ENTRO POR archivo vacio");
                 return json_encode(['error' => Yii::t("notificaciones", "Error to process File. Try again.")]);
@@ -325,7 +324,7 @@ class MatriculacionController extends \app\components\CController {
             $files      = $_FILES[key($_FILES)];
             $arrIm      = explode(".", basename($files['name']));
             $typeFile   = strtolower($arrIm[count($arrIm) - 1]);
-            $dirFileEnd = Yii::$app->params["documentFolder"] . "pagosmatricula/" . $data["name_file"] . "." . $typeFile;
+            $dirFileEnd = Yii::$app->params["documentFolder"] . "pagosfinanciero/" . $data["name_file"] . "." . $typeFile;
             $status     = Utilities::moveUploadFile($files['tmp_name'], $dirFileEnd);
             
              \app\models\Utilities::putMessageLogFile("estatus: ".$status);
@@ -338,7 +337,7 @@ class MatriculacionController extends \app\components\CController {
         if (Yii::$app->request->isAjax) {
             try {
 
-            \app\models\Utilities::putMessageLogFile("ENTRO POR AQUI -- GAP ");
+            \app\models\Utilities::putMessageLogFile("ENTRO POR request->isAjax");
            
             $per_id = $data['per_id'];
 
@@ -516,7 +515,7 @@ class MatriculacionController extends \app\components\CController {
                         $files      = $_FILES[key($_FILES)];
                         $arrIm      = explode(".", basename($files['name']));
                         $typeFile   = strtolower($arrIm[count($arrIm) - 1]);
-                        $dirFileEnd = Yii::$app->params["documentFolder"] . "pagosmatricula/" . $data["per_id"] . "/" . $data["name_file"] . "." . $typeFile;
+                        $dirFileEnd = Yii::$app->params["documentFolder"] . "pagosfinanciero/" . $data["per_id"] . "/" . $data["name_file"] . "." . $typeFile;
                         $status     = Utilities::moveUploadFile($files['tmp_name'], $dirFileEnd);
                         if ($status) {
                             return true;
@@ -559,7 +558,7 @@ class MatriculacionController extends \app\components\CController {
                 $valor_pagado     = $data["valor"];
 
                 $resp_pagofactura = $mod_pagos->insertarPagospendientes($est_id, 
-                                                                        "MA", 
+                                                                        'MA', 
                                                                         $pfes_referencia, 
                                                                         $pfes_banco, 
                                                                         $fpag_id, 
@@ -588,34 +587,29 @@ class MatriculacionController extends \app\components\CController {
                                                                                   $dpfa_estado_pago, 
                                                                                   $dpfa_estado_financiero, 
                                                                                   $usu_id);
-                    $tituloMensaje = Yii::t("Matricula", "Pago Recibido UTEG");
-                    $asunto        = Yii::t("Matricula", "Pago Recibido UTEG");
-
-                    if($fpag_id == 1){
-                        $body = Utilities::getMailMessage("pagostripe", array("[[user]]" => $nombres ), Yii::$app->language);    
-                        Utilities::sendEmail($tituloMensaje, Yii::$app->params["contactoEmail"], [$email => $name], $asunto, $body);
-                    }else{
-                        $body = Utilities::getMailMessage("pago", array("[[user]]" => $nombres), Yii::$app->language, Yii::$app->basePath . "/modules/financiero");
-                        Utilities::sendEmail($tituloMensaje, Yii::$app->params["contactoEmail"], [$email => $name], $asunto, $body);
-                    }
-                    $bodycolec = Utilities::getMailMessage("colecturia", array("[[user]]" => $nombres), Yii::$app->language);
-                   
-                    Utilities::sendEmail($tituloMensaje, Yii::$app->params["colecturia"]     , [Yii::$app->params["supercolecturia"] => "Colecturia"], $asunto, $bodycolec);
-                    Utilities::sendEmail($tituloMensaje, Yii::$app->params["supercolecturia"], [Yii::$app->params["colecturia"]      => "Supervisor Colecturia"], $asunto, $bodycolec);
                     
-                     \app\models\Utilities::putMessageLogFile(print_r($resp_detpagofactura,true));
 
                     if ($resp_detpagofactura) {
-                        \app\models\Utilities::putMessageLogFile("Entro Aqui");
-                        /*
                         $transaction->commit();
                         
-                        $message = array(
-                            "wtmessage" => Yii::t("notificaciones", "Your information was successfully saved."),
-                            "title" => Yii::t('jslang', 'Success'),
-                        );
-                        return Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Success"), false, $message);
-                        */
+                        \app\models\Utilities::putMessageLogFile("resp_detpagofactura");
+
+                        $tituloMensaje = Yii::t("Matricula", "Pago Recibido UTEG");
+                        $asunto        = Yii::t("Matricula", "Pago Recibido UTEG");
+
+                        if($fpag_id == 1){
+                            $body = Utilities::getMailMessage("pagostripe", array("[[user]]" => $nombres ), Yii::$app->language);    
+                            Utilities::sendEmail($tituloMensaje, Yii::$app->params["contactoEmail"], [$email => $name], $asunto, $body);
+                        }else{
+                            $body = Utilities::getMailMessage("pago", array("[[user]]" => $nombres), Yii::$app->language, Yii::$app->basePath . "/modules/financiero");
+                            Utilities::sendEmail($tituloMensaje, Yii::$app->params["contactoEmail"], [$email => $name], $asunto, $body);
+                        }
+                        $bodycolec = Utilities::getMailMessage("colecturia", array("[[user]]" => $nombres), Yii::$app->language);
+                       
+                        Utilities::sendEmail($tituloMensaje, Yii::$app->params["colecturia"]     , [Yii::$app->params["supercolecturia"] => "Colecturia"], $asunto, $bodycolec);
+                        Utilities::sendEmail($tituloMensaje, Yii::$app->params["supercolecturia"], [Yii::$app->params["colecturia"]      => "Supervisor Colecturia"], $asunto, $bodycolec);
+                        
+                         \app\models\Utilities::putMessageLogFile(print_r($resp_detpagofactura,true));
                     }else{
                         $transaction->rollback();
 
@@ -625,6 +619,14 @@ class MatriculacionController extends \app\components\CController {
                         );
                         return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), true, $message);
                     }//else
+                }else{
+                    $transaction->rollback();
+
+                    $message = array(
+                        "wtmessage" => Yii::t('notificaciones', 'Error al registrar el pago'),
+                        "title" => Yii::t('jslang', 'Error'),
+                    );
+                    return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), true, $message);
                 }
                 
                 try {

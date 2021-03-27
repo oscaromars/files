@@ -33,15 +33,18 @@ return [
     'secretariagrado1' => /*'secretariadegrado01@uteg.edu.ec',*/ 'analistadesarrollo06@uteg.edu.ec',
     'secretariagrado2' => /*'secretariadegrado02@uteg.edu.ec',*/ 'analistadesarrollo06@uteg.edu.ec',
     'coordinadorgrado' => /*'coordinadorgrado@uteg.edu.ec',*/ 'analistadesarrollo06@uteg.edu.ec',
+    'tlfpresencial' => '0993817458',
 
     //SEMI PRESENCIAL / DISTANCIA
     'decanogradosemi' => /*'subdecanogrado@uteg.edu.ec',*/      'analistadesarrollo06@uteg.edu.ec',
     'secretariasemi'  => /*'secretariasemipresencial@uteg.edu.ec',*/ 'analistadesarrollo06@uteg.edu.ec',
+    'tlfdistancia' => '0989589757',
 
     //ONLINE
     'decanatoonline' => /*'decanato_online@uteg.edu.ec',*/ 'analistadesarrollo06@uteg.edu.ec',
     'secretariaonline1' => /*'secretariaonline@uteg.edu.ec',*/ 'analistadesarrollo06@uteg.edu.ec',
     'secretariaonline2' => /*'secretariaonline02@uteg.edu.ec',*/ 'analistadesarrollo06@uteg.edu.ec',
+    'tlfonline' => '0991534808 / 0989891239',
     
     'contactoEmail' => 'pruebacontacto@uteg.edu.ec',
     'culture' => 'es-ES',

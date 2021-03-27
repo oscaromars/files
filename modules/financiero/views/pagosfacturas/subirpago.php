@@ -110,7 +110,53 @@ $this->registerJs("
 
 <?= Html::hiddenInput('txth_idest', $arr_persona['est_id'], ['id' => 'txth_idest']); ?>
 <?= Html::hiddenInput('txth_per', @Yii::$app->session->get("PB_perid"), ['id' => 'txth_per']); ?>
-
+<style type="text/css">
+    [data-tip] {
+        position:relative;
+    }
+    [data-tip]:before {
+        content:'';
+        /* hides the tooltip when not hovered */
+        display:none;
+        content:'';
+        border-left: 5px solid transparent;
+        border-right: 5px solid transparent;
+        border-bottom: 5px solid #1a1a1a;   
+        position:absolute;
+        top:-3px;
+        left:35px;
+        z-index:8;
+        font-size:0;
+        line-height:0;
+        width:0;
+        height:0;
+        -ms-transform: rotate(180deg); /* IE 9 */
+        transform: rotate(180deg);
+    }
+    [data-tip]:after {
+        display:none;
+        content:attr(data-tip);
+        position:absolute;
+        top:-21px;
+        left:20px;
+        padding:5px 8px;
+        background:#1a1a1a;
+        color:#fff;
+        z-index:9;
+        font-size: 1em;
+        height:18px;
+        line-height:8px;
+        -webkit-border-radius: 3px;
+        -moz-border-radius: 3px;
+        border-radius: 3px;
+        white-space:nowrap;
+        word-wrap:normal;
+    }
+    [data-tip]:hover:before,
+    [data-tip]:hover:after {
+        display:block;
+    }
+</style>
 <form class="form-horizontal" enctype="multipart/form-data" id="formsolicitud">   
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <p class="text-danger"> <?= Yii::t("formulario", "Fields with * are required") ?> </p>
@@ -228,13 +274,13 @@ $this->registerJs("
             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                 <div class="form-group">
                     <label class="col-xs-12 col-sm-12 col-md-5 col-lg-5 control-label" for="txt_fechapago" class="col-sm-5 col-md-5 col-xs-5 col-lg-5 control-label"><?= Pagos::t("Pagos", "Payment Date") ?><span class="text-danger"> * </span></label>
-                    <div   class="col-xs-12 col-sm-12 col-md-7 col-lg-7">
+                    <div   class="col-xs-12 col-sm-12 col-md-7 col-lg-7" data-tip="Fecha en la que se realizó la transacción">
                         <?=
                         DatePicker::widget([
                             'name' => 'txt_fechapago',
                             'value' => '',
                             'type' => DatePicker::TYPE_INPUT,
-                            'options' => ["class" => "form-control PBvalidation keyupmce", "id" => "txt_fechapago", "placeholder" => Pagos::t("Pagos", "Payment Date")],
+                            'options' => ["class" => "form-control PBvalidation keyupmce", "id" => "txt_fechapago", "placeholder" => Pagos::t("Pagos", "Fecha en la que se realizó la transacción")],
                             'pluginOptions' => [
                                 'autoclose' => true,
                                 'format' => Yii::$app->params["dateByDatePicker"],
@@ -321,7 +367,7 @@ $this->registerJs("
             </div>
             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                 <div class="form-check">
-                    <label class = "col-xs-10 col-sm-10 col-md-10 col-lg-10 control-label" for="txt_nombres_fac" id="lbl_nombre1" style="text-align: left"><?= Yii::t("formulario", "Acepta Condiciones Y Terminos. <br> Acepto que los documentos no han sido alterados o manipulados") ?><span class="text-danger">*</span></label>  
+                    <label class = "col-xs-10 col-sm-10 col-md-10 col-lg-10 control-label " for="txt_nombres_fac" id="lbl_nombre1" style="text-align: left"><?= Yii::t("formulario", "Acepta Condiciones Y Terminos. <br> Acepto que los documentos no han sido alterados o manipulados") ?><span class="text-danger">*</span></label>  
                     <input class = "col-xs-2 col-sm-2 col-md-2 col-lg-2 form-check-input checkAcepta" type="checkbox" value="1" id="checkAcepta">
                 </div>
             </div> 

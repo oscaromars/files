@@ -348,7 +348,7 @@ class PagosfacturasController extends \app\components\CController {
                               if ($datos['pfes_concepto'] == "MA") {
                                 
                                 if ($resultado == "2") {
-                                   $rpm_estado_aprobacion = 1;     
+                                    $rpm_estado_aprobacion = 1;     
                                 }else{
                                     $rpm_estado_aprobacion = 2;
                                 } 

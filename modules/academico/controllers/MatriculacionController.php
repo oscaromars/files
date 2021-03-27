@@ -566,32 +566,38 @@ class MatriculacionController extends \app\components\CController {
                         $tituloMensaje = Yii::t("Matricula", "Pago Recibido UTEG");
                         $asunto        = Yii::t("Matricula", "Pago Recibido UTEG");
 
-                        if($fpag_id == 1){
-                            $body = Utilities::getMailMessage("pagostripe", array("[[user]]" => $nombres ), Yii::$app->language);    
-                            Utilities::sendEmail($tituloMensaje, Yii::$app->params["contactoEmail"], [$email => $nombres], $asunto, $body);
-                        }else{
-                            $body = Utilities::getMailMessage("pago", array("[[user]]" => $nombres), Yii::$app->language, Yii::$app->basePath . "/modules/financiero");
-                            Utilities::sendEmail($tituloMensaje, Yii::$app->params["contactoEmail"], [$email => $nombres], $asunto, $body);
-                        }
+                        
 
                         $bodypmatricula = Utilities::getMailMessage("pagoMatriculaDecano", array("[[user]]" => $nombres, "[[cedula]]" => $cedula ), Yii::$app->language);
 
                         if($mod_id == 1){ //online
-                            $bodypmatricula = Utilities::getMailMessage("pagoMatriculaDecano", array("[[user]]" => $nombres, "[[cedula]]" => $cedula, "[[telefono]]" => Yii::$app->params["tlfonline"] ), Yii::$app->language);
+                            $telefono = Yii::$app->params["tlfonline"];
+                            $bodypmatricula = Utilities::getMailMessage("pagoMatriculaDecano", array("[[user]]" => $nombres, "[[cedula]]" => $cedula, "[[telefono]]" => $telefono ), Yii::$app->language);
                             Utilities::sendEmail($tituloMensaje, Yii::$app->params["colecturia"], [Yii::$app->params["decanatoonline"] => "Decanato Online"], $asunto, $bodypmatricula);
                             Utilities::sendEmail($tituloMensaje, Yii::$app->params["colecturia"], [Yii::$app->params["secretariaonline1"] => "Secretaria Online"], $asunto, $bodypmatricula);
                             Utilities::sendEmail($tituloMensaje, Yii::$app->params["colecturia"], [Yii::$app->params["secretariaonline2"] => "Secretaria Online"], $asunto, $bodypmatricula);
                         }else if($mod_id == 2){//presencial
-                            $bodypmatricula = Utilities::getMailMessage("pagoMatriculaDecano", array("[[user]]" => $nombres, "[[cedula]]" => $cedula, "[[telefono]]" => Yii::$app->params["tlfpresencial"] ), Yii::$app->language);
+                            $telefono = Yii::$app->params["tlfpresencial"];
+                            $bodypmatricula = Utilities::getMailMessage("pagoMatriculaDecano", array("[[user]]" => $nombres, "[[cedula]]" => $cedula, "[[telefono]]" => $telefono ), Yii::$app->language);
                             Utilities::sendEmail($tituloMensaje, Yii::$app->params["colecturia"], [Yii::$app->params["decanogradopresencial"] => "Decanato Presencial"], $asunto, $bodypmatricula);
                             Utilities::sendEmail($tituloMensaje, Yii::$app->params["colecturia"], [Yii::$app->params["secretariagrado1"] => "Secretaria Presencial"], $asunto, $bodypmatricula);
                             Utilities::sendEmail($tituloMensaje, Yii::$app->params["colecturia"], [Yii::$app->params["secretariagrado2"] => "Secretaria Presencial"], $asunto, $bodypmatricula);
                             Utilities::sendEmail($tituloMensaje, Yii::$app->params["colecturia"], [Yii::$app->params["coordinadorgrado"] => "Coordinador Presencial"], $asunto, $bodypmatricula);
                         }else{
-                            $bodypmatricula = Utilities::getMailMessage("pagoMatriculaDecano", array("[[user]]" => $nombres, "[[cedula]]" => $cedula, "[[telefono]]" => Yii::$app->params["tlfdistancia"] ), Yii::$app->language);
+                            $telefono = Yii::$app->params["tlfdistancia"];
+                            $bodypmatricula = Utilities::getMailMessage("pagoMatriculaDecano", array("[[user]]" => $nombres, "[[cedula]]" => $cedula, "[[telefono]]" => $telefono ), Yii::$app->language);
                             Utilities::sendEmail($tituloMensaje, Yii::$app->params["colecturia"], [Yii::$app->params["decanogradosemi"] => "Decanato SemiPresencial"], $asunto, $bodypmatricula);
                             Utilities::sendEmail($tituloMensaje, Yii::$app->params["colecturia"], [Yii::$app->params["secretariasemi"]  => "Secretaria SemiPresencial"], $asunto, $bodypmatricula);
                         }
+
+                        if($fpag_id == 1){
+                            $body = Utilities::getMailMessage("pagostripe", array("[[user]]" => $nombres, "[[telefono]]" => $telefono  ), Yii::$app->language);    
+                            Utilities::sendEmail($tituloMensaje, Yii::$app->params["contactoEmail"], [$email => $nombres], $asunto, $body);
+                        }else{
+                            $body = Utilities::getMailMessage("pago", array("[[user]]" => $nombres, "[[telefono]]" => $telefono ), Yii::$app->language, Yii::$app->basePath . "/modules/financiero");
+                            Utilities::sendEmail($tituloMensaje, Yii::$app->params["contactoEmail"], [$email => $nombres], $asunto, $body);
+                        }
+
                         $bodycolec = Utilities::getMailMessage("pagoMatricula", array("[[user]]" => $nombres, "[[cedula]]" => $cedula ), Yii::$app->language);
                        
                         Utilities::sendEmail($tituloMensaje, Yii::$app->params["colecturia"]     , [Yii::$app->params["supercolecturia"] => "Colecturia"], $asunto, $bodycolec);

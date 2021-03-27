@@ -180,7 +180,7 @@ $this->registerJs("
             </div>
         </div>
         <div class="form-group pago_documento">
-            <label class="col-xs-12 col-sm-12 col-md-4 col-lg-4 control-label" for="cmb_banco"><?= crm::t("crm", "Institucion Bancaria") ?><span class="text-danger"> * </span></label>
+            <label class="col-xs-12 col-sm-12 col-md-4 col-lg-4 control-label" for="cmb_banco"><?= crm::t("crm", "Institución Bancaria") ?><span class="text-danger"> * </span></label>
             <div   class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
                 <?= Html::dropDownList("cmb_banco", 0, ['0' => Yii::t('formulario', 'Select')] + $arr_bancos, ["class" => "form-control PBvalidation", "id" => "cmb_banco"]) ?>
             </div>
@@ -278,7 +278,7 @@ $this->registerJs("
         </div>
         <div class="form-group pago_documento">
             <div class="form-check">
-                <label class = "col-xs-10 col-sm-10 col-md-10 col-lg-10 control-label" for="txt_nombres_fac" id="lbl_nombre1" style="text-align: left"><?= Yii::t("formulario", "Acepta Condiciones Y Terminos. <br> Expreso que la información declarada y el documento de pago es válido y legal") ?><span class="text-danger">*</span></label>  
+                <label class = "col-xs-10 col-sm-10 col-md-10 col-lg-10 control-label" for="txt_nombres_fac" id="lbl_nombre1" style="text-align: left"><?= Yii::t("formulario", "Acepta Condiciones Y Términos. <br> Expreso que la información declarada y el documento de pago es válido y legal") ?><span class="text-danger">*</span></label>  
                 <input class = "col-xs-2 col-sm-2 col-md-2 col-lg-2 form-check-input checkAcepta" type="checkbox" value="1" id="checkAcepta">
             </div>
         </div> 

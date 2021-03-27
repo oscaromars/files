@@ -118,7 +118,7 @@ return [
     'Approve' => 'Aprobar',
     'Are your sure to reject the payment?' => '¿Está seguro de rechazar el pago?',
     'Reject' => 'Rechazar',
-    'Upload payment' => 'Subir pago',
+    'Upload payment' => 'Registro pago',
     'Upload registration' => 'Subir Hoja Matricula',
     'Download registration' => 'Descargar Hoja Matricula',
     'Select' => 'Seleccionar',

@@ -271,6 +271,10 @@ class PagosfacturasController extends \app\components\CController {
                     $transaction1 = $con1->beginTransaction();
                     try {
                         $datos = $mod_pagos->consultarPago($id);
+
+                        $mod_id  = $datos['mod_id'];
+                        $nombres = $datos['estudiante'];
+                        $cedula  = $datos['identificacion'];
                         //Utilities::putMessageLogFile('$cuota:' . $datos['dpfa_num_cuota']);
                         if ($observacion == 0 && $resultado == "2") {
                             $observacion = null;
@@ -341,7 +345,7 @@ class PagosfacturasController extends \app\components\CController {
                               /*\app\models\Utilities::putMessageLogFile('pfes_concepto: ' . $datos['pfes_concepto']);
                               \app\models\Utilities::putMessageLogFile('per_id: ' . $datos['per_id']);
                               \app\models\Utilities::putMessageLogFile('pla_id: ' . $data_planificacion_pago['pla_id']);*/
-                              if ($cargo && $datos['pfes_concepto'] == "MA") {
+                              if ($datos['pfes_concepto'] == "MA") {
                                 
                                 if ($resultado == "2") {
                                    $rpm_estado_aprobacion = 1;     
@@ -349,7 +353,23 @@ class PagosfacturasController extends \app\components\CController {
                                     $rpm_estado_aprobacion = 2;
                                 } 
                                 \app\models\Utilities::putMessageLogFile('rpm_estado_aprobacion: ' . $rpm_estado_aprobacion);
-                                 $regpagomatricula = $mod_pagosmat->Modificarregsitropagomatricula($datos['per_id'], $data_planificacion_pago['pla_id'], $rpm_estado_aprobacion);
+                                $regpagomatricula = $mod_pagosmat->Modificarregsitropagomatricula($datos['per_id'], $data_planificacion_pago['pla_id'], $rpm_estado_aprobacion);
+
+                                $bodypmatricula = Utilities::getMailMessage("pagoMatriculaDecano", array("[[user]]" => $nombres, "[[cedula]]" => $cedula ), Yii::$app->language);
+
+                                if($mod_id == 1){ //online
+                                    Utilities::sendEmail($tituloMensaje, Yii::$app->params["colecturia"], [Yii::$app->params["decanatoonline"] => "Decanato Online"], $asunto, $bodypmatricula);
+                                    Utilities::sendEmail($tituloMensaje, Yii::$app->params["colecturia"], [Yii::$app->params["secretariaonline1"] => "Secretaria Online"], $asunto, $bodypmatricula);
+                                    Utilities::sendEmail($tituloMensaje, Yii::$app->params["colecturia"], [Yii::$app->params["secretariaonline2"] => "Secretaria Online"], $asunto, $bodypmatricula);
+                                }else if($mod_id == 2){//presencial
+                                    Utilities::sendEmail($tituloMensaje, Yii::$app->params["colecturia"], [Yii::$app->params["decanogradopresencial"] => "Decanato Presencial"], $asunto, $bodypmatricula);
+                                    Utilities::sendEmail($tituloMensaje, Yii::$app->params["colecturia"], [Yii::$app->params["secretariagrado1"] => "Secretaria Presencial"], $asunto, $bodypmatricula);
+                                    Utilities::sendEmail($tituloMensaje, Yii::$app->params["colecturia"], [Yii::$app->params["secretariagrado2"] => "Secretaria Presencial"], $asunto, $bodypmatricula);
+                                    Utilities::sendEmail($tituloMensaje, Yii::$app->params["colecturia"], [Yii::$app->params["coordinadorgrado"] => "Coordinador Presencial"], $asunto, $bodypmatricula);
+                                }else{
+                                    Utilities::sendEmail($tituloMensaje, Yii::$app->params["colecturia"], [Yii::$app->params["decanogradosemi"] => "Decanato SemiPresencial"], $asunto, $bodypmatricula);
+                                    Utilities::sendEmail($tituloMensaje, Yii::$app->params["colecturia"], [Yii::$app->params["secretariasemi"]  => "Secretaria SemiPresencial"], $asunto, $bodypmatricula);
+                                }
                             }
                              //Utilities::putMessageLogFile('graba la transaccion');
                             $message = array(

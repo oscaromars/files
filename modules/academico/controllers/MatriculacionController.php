@@ -292,7 +292,19 @@ class MatriculacionController extends \app\components\CController {
         $est_id = $datosEstudiante['est_id'];
         $mod_id = $datosEstudiante['mod_id'];
 
+
+
         $data = Yii::$app->request->post();
+
+        $mod_persona = Persona::findOne($per_id);//Persona::find()->select("per_correo")->where(["per_id" => $per_id])->asArray()->all();
+        \app\models\Utilities::putMessageLogFile(print_r($mod_persona,true));
+
+        $email       = $mod_persona->per_correo; //$mod_persona[0]['per_correo'];  
+        $nombres     = $mod_persona->per_pri_nombre." ". $mod_persona->per_pri_apellido ." ". $mod_persona->per_seg_apellido;
+        $cedula      = $mod_persona->per_cedula;
+        
+        \app\models\Utilities::putMessageLogFile("email: ".$email);
+        \app\models\Utilities::putMessageLogFile("nombres: ".$nombres);
 
         if ($per_id < 1000) {
             $per_id = base64_decode(Yii::$app->request->get('per_id', 0));
@@ -310,24 +322,19 @@ class MatriculacionController extends \app\components\CController {
             }
             return $this->redirect(['perfil/index']);
         }
-        \app\models\Utilities::putMessageLogFile("ENTRO antes de data upload");
         //Este codigo es para la carga del archivo
         if ($data["upload_file"]) {
-            \app\models\Utilities::putMessageLogFile("ENTRO POR upload_file ");
             if (empty($_FILES)){
-                \app\models\Utilities::putMessageLogFile("ENTRO POR archivo vacio");
                 return json_encode(['error' => Yii::t("notificaciones", "Error to process File. Try again.")]);
             }
             
-             \app\models\Utilities::putMessageLogFile("paso archivo");
             //Recibe Parámetros
             $files      = $_FILES[key($_FILES)];
             $arrIm      = explode(".", basename($files['name']));
             $typeFile   = strtolower($arrIm[count($arrIm) - 1]);
             $dirFileEnd = Yii::$app->params["documentFolder"] . "pagosfinanciero/" . $data["name_file"] . "." . $typeFile;
             $status     = Utilities::moveUploadFile($files['tmp_name'], $dirFileEnd);
-            
-             \app\models\Utilities::putMessageLogFile("estatus: ".$status);
+
             if ($status) 
                 return true;
             else
@@ -336,16 +343,7 @@ class MatriculacionController extends \app\components\CController {
 
         if (Yii::$app->request->isAjax) {
             try {
-
-            \app\models\Utilities::putMessageLogFile("ENTRO POR request->isAjax");
-           
             $per_id = $data['per_id'];
-
-            \app\models\Utilities::putMessageLogFile(print_r($data,true));
-
-            $mod_persona = Persona::find()->select("per_correo")->where(["per_id" => $data['per_id']])->asArray()->all();
-            $email       = $mod_persona[0]['per_correo'];  
-            $nombres     = $mod_persona[0]['per_pri_nombre'] ." ". $mod_persona[0]['per_pri_apellido'] ." ". $mod_persona[0]['per_seg_apellido'];
 
             if ($data["procesar_pago"]) {
 
@@ -359,18 +357,13 @@ class MatriculacionController extends \app\components\CController {
                     return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Success"), false, $message);
                 }//if
 
-                \app\models\Utilities::putMessageLogFile("ENTRO POR procesar_pago");
                 ini_set('memory_limit', '256M');
 
                 if($data["formapago"]==1){
-                    \app\models\Utilities::putMessageLogFile("ENTRO POR formapago = 1");
-            
                     //Si la forma de Pago es 1 significa que es por Tarjeta de credito
                     $statusMsg = '';
 
                     //Este token es enviada por la libreria de javascript de stripe
-                    \app\models\Utilities::putMessageLogFile("token: ".$token);
-
                     if(!empty($data['token'])){
                         /******************************************************************/
                         /********** PARA DESARROLLO  **************************************/
@@ -395,9 +388,6 @@ class MatriculacionController extends \app\components\CController {
                         
                         //Obtenemos el token y tambien el nombre de la persona que esta cancelando
                         $token  = $data['token']; 
-
-                        \app\models\Utilities::putMessageLogFile("token: ".$token);
-                        \app\models\Utilities::putMessageLogFile("email: ".$email);
 
                         //Se crea el usuario para stripe
                         try {  
@@ -486,25 +476,6 @@ class MatriculacionController extends \app\components\CController {
                         return;
                     }
 
-                    //Pago por Deposito o Tranferencia
-                    /*
-                    if ($data["upload_file"]) {
-                        if (empty($_FILES)) 
-                            return json_encode(['error' => Yii::t("notificaciones", "Error to process File. Try again.")]);
-                        
-                        //Recibe Parámetros
-                        $files      = $_FILES[key($_FILES)];
-                        $arrIm      = explode(".", basename($files['name']));
-                        $typeFile   = strtolower($arrIm[count($arrIm) - 1]);
-                        $dirFileEnd = Yii::$app->params["documentFolder"] . "pagosmatricula/" . $data["name_file"] . "." . $typeFile;
-                        $status     = Utilities::moveUploadFile($files['tmp_name'], $dirFileEnd);
-                        
-                        if ($status) 
-                            return true;
-                        else
-                            return json_encode(['error' => Yii::t("notificaciones", "Error to process File " . basename($files['name']) . ". Try again.")]);
-                    }//if
-                    */
                     if ($data["upload_file"]) {
                         if (empty($_FILES)) {
                             echo json_encode(['error' => Yii::t("notificaciones", "Error to process File {file}. Try again.", ['{file}' => basename($files['name'])])]);
@@ -591,25 +562,37 @@ class MatriculacionController extends \app\components\CController {
 
                     if ($resp_detpagofactura) {
                         $transaction->commit();
-                        
-                        \app\models\Utilities::putMessageLogFile("resp_detpagofactura");
 
                         $tituloMensaje = Yii::t("Matricula", "Pago Recibido UTEG");
                         $asunto        = Yii::t("Matricula", "Pago Recibido UTEG");
 
                         if($fpag_id == 1){
                             $body = Utilities::getMailMessage("pagostripe", array("[[user]]" => $nombres ), Yii::$app->language);    
-                            Utilities::sendEmail($tituloMensaje, Yii::$app->params["contactoEmail"], [$email => $name], $asunto, $body);
+                            Utilities::sendEmail($tituloMensaje, Yii::$app->params["contactoEmail"], [$email => $nombres], $asunto, $body);
+
+                            $bodypmatricula = Utilities::getMailMessage("pagoMatriculaDecano", array("[[user]]" => $nombres, "[[cedula]]" => $cedula ), Yii::$app->language);
+
+                            if($mod_id == 1){ //online
+                                Utilities::sendEmail($tituloMensaje, Yii::$app->params["colecturia"], [Yii::$app->params["decanatoonline"] => "Decanato Online"], $asunto, $bodypmatricula);
+                                Utilities::sendEmail($tituloMensaje, Yii::$app->params["colecturia"], [Yii::$app->params["secretariaonline1"] => "Secretaria Online"], $asunto, $bodypmatricula);
+                                Utilities::sendEmail($tituloMensaje, Yii::$app->params["colecturia"], [Yii::$app->params["secretariaonline2"] => "Secretaria Online"], $asunto, $bodypmatricula);
+                            }else if($mod_id == 2){//presencial
+                                Utilities::sendEmail($tituloMensaje, Yii::$app->params["colecturia"], [Yii::$app->params["decanogradopresencial"] => "Decanato Presencial"], $asunto, $bodypmatricula);
+                                Utilities::sendEmail($tituloMensaje, Yii::$app->params["colecturia"], [Yii::$app->params["secretariagrado1"] => "Secretaria Presencial"], $asunto, $bodypmatricula);
+                                Utilities::sendEmail($tituloMensaje, Yii::$app->params["colecturia"], [Yii::$app->params["secretariagrado2"] => "Secretaria Presencial"], $asunto, $bodypmatricula);
+                                Utilities::sendEmail($tituloMensaje, Yii::$app->params["colecturia"], [Yii::$app->params["coordinadorgrado"] => "Coordinador Presencial"], $asunto, $bodypmatricula);
+                            }else{
+                                Utilities::sendEmail($tituloMensaje, Yii::$app->params["colecturia"], [Yii::$app->params["decanogradosemi"] => "Decanato SemiPresencial"], $asunto, $bodypmatricula);
+                                Utilities::sendEmail($tituloMensaje, Yii::$app->params["colecturia"], [Yii::$app->params["secretariasemi"]  => "Secretaria SemiPresencial"], $asunto, $bodypmatricula);
+                            }
                         }else{
                             $body = Utilities::getMailMessage("pago", array("[[user]]" => $nombres), Yii::$app->language, Yii::$app->basePath . "/modules/financiero");
-                            Utilities::sendEmail($tituloMensaje, Yii::$app->params["contactoEmail"], [$email => $name], $asunto, $body);
+                            Utilities::sendEmail($tituloMensaje, Yii::$app->params["contactoEmail"], [$email => $nombres], $asunto, $body);
                         }
-                        $bodycolec = Utilities::getMailMessage("colecturia", array("[[user]]" => $nombres), Yii::$app->language);
+                        $bodycolec = Utilities::getMailMessage("pagoMatricula", array("[[user]]" => $nombres, "[[cedula]]" => $cedula ), Yii::$app->language);
                        
                         Utilities::sendEmail($tituloMensaje, Yii::$app->params["colecturia"]     , [Yii::$app->params["supercolecturia"] => "Colecturia"], $asunto, $bodycolec);
                         Utilities::sendEmail($tituloMensaje, Yii::$app->params["supercolecturia"], [Yii::$app->params["colecturia"]      => "Supervisor Colecturia"], $asunto, $bodycolec);
-                        
-                         \app\models\Utilities::putMessageLogFile(print_r($resp_detpagofactura,true));
                     }else{
                         $transaction->rollback();
 
@@ -687,8 +670,6 @@ class MatriculacionController extends \app\components\CController {
         
         }catch (Exception $ex) {
             $transaction->rollback();
-            \app\models\Utilities::putMessageLogFile("Entro por catch");
-            \app\models\Utilities::putMessageLogFile(print_r($ex,true));
             $message = array(
                 "wtmessage" => Yii::t("notificaciones", "Error al grabar pago factura." . $ex),
                 "title" => Yii::t('jslang', 'Error'),
@@ -709,11 +690,6 @@ class MatriculacionController extends \app\components\CController {
                 //$data_planificacion_pago = Matriculacion::getPlanificacionPago($pla_id);
                 /* Se obtiene los datos de planificación del estudiante GVG */ 
 
-            
-        
-
-        \app\models\Utilities::putMessageLogFile("mod_id: ".$mod_id);
-
         $data_planificacion_pago = Matriculacion::getPlanificacionPago($mod_id);  
 
         $mod_fpago = new FormaPago();
@@ -727,13 +703,6 @@ class MatriculacionController extends \app\components\CController {
                     "arr_forma_pago" => ArrayHelper::map($arr_forma_pago, "id", "value"),
                     "arr_bancos" => ArrayHelper::map($arr_bancos, "id", "value"),
         ]);
-           // } else {
-                //Render index-out
-                //return $this->render('index-out', [
-                            //"message" => Academico::t("matriculacion", "No es tiempo de registro."),
-                //]);
-           // }
-        //}
     }//function actionRegistropago
 
     public function actionList() {

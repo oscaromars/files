@@ -9,8 +9,8 @@ return [
 
     'soporteEmail' => /*'dlopez@uteg.edu.ec', */ 'analistadesarrollo01@uteg.edu.ec',
     'admisiones' => /*'admisionesonline@uteg.edu.ec',*/  'analistadesarrollo01@uteg.edu.ec',
-    'colecturia' => /*'colecturia@uteg.edu.ec',*/     'analistadesarrollo01@uteg.edu.ec',
-    'supercolecturia' => /*'supervisorcolecturia@uteg.edu.ec',*/     'analistadesarrollo01@uteg.edu.ec',
+    'colecturia' => /*'colecturia@uteg.edu.ec',*/     'analistadesarrollo06@uteg.edu.ec',
+    'supercolecturia' => /*'supervisorcolecturia@uteg.edu.ec',*/'analistadesarrollo06@uteg.edu.ec',
     'jefetalento' => /*'directortalento@uteg.edu.ec',*/ 'analistadesarrollo01@uteg.edu.ec',
     'analistatalento' => /*'kmunoz@uteg.edu.ec',*/ 'analistadesarrollo01@uteg.edu.ec',
     'analistanomina' => /*'glamota@uteg.edu.ec',*/ 'analistadesarrollo01@uteg.edu.ec', 
@@ -27,6 +27,21 @@ return [
     'ventasposgrado1' => /*'ventasposgrado01@uteg.edu.ec',*/ 'analistadesarrollo01@uteg.edu.ec',
     'ventasposgrado2' => /*'ventasposgrado03@uteg.edu.ec',*/ 'analistadesarrollo01@uteg.edu.ec',
     'ventasposgrado3' => /*'ventasposgrado03@uteg.edu.ec',*/ 'analistadesarrollo01@uteg.edu.ec',
+
+    //GRADO PRESENCIAL
+    'decanogradopresencial' => /*'decanogrado@uteg.edu.ec',*/ 'analistadesarrollo06@uteg.edu.ec',
+    'secretariagrado1' => /*'secretariadegrado01@uteg.edu.ec',*/ 'analistadesarrollo06@uteg.edu.ec',
+    'secretariagrado2' => /*'secretariadegrado02@uteg.edu.ec',*/ 'analistadesarrollo06@uteg.edu.ec',
+    'coordinadorgrado' => /*'coordinadorgrado@uteg.edu.ec',*/ 'analistadesarrollo06@uteg.edu.ec',
+
+    //SEMI PRESENCIAL / DISTANCIA
+    'decanogradosemi' => /*'subdecanogrado@uteg.edu.ec',*/      'analistadesarrollo06@uteg.edu.ec',
+    'secretariasemi'  => /*'secretariasemipresencial@uteg.edu.ec',*/ 'analistadesarrollo06@uteg.edu.ec',
+
+    //ONLINE
+    'decanatoonline' => /*'decanato_online@uteg.edu.ec',*/ 'analistadesarrollo06@uteg.edu.ec',
+    'secretariaonline1' => /*'secretariaonline@uteg.edu.ec',*/ 'analistadesarrollo06@uteg.edu.ec',
+    'secretariaonline2' => /*'secretariaonline02@uteg.edu.ec',*/ 'analistadesarrollo06@uteg.edu.ec',
     
     'contactoEmail' => 'pruebacontacto@uteg.edu.ec',
     'culture' => 'es-ES',

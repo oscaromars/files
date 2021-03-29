@@ -771,10 +771,10 @@ class PagosFacturaEstudiante extends \yii\db\ActiveRecord
         }
         $sql = "SELECT  pfe.pfes_id, pfe.est_id,
                         f.fpag_nombre as forma_pago,
-                        pfe.pfes_referencia as referencia,
+                        pfe.pfes_concepto as concepto,
+                        ifnull(pfe.pfes_referencia, '') as referencia,
                         pfe.pfes_valor_pago valor_pago,
-                        pfe.pfes_fecha_registro fecha_registro,     
-                        -- pfe.pfes_fecha_pago as fecha_pago                        
+                        pfe.pfes_fecha_registro fecha_registro,                                                   
                        ifnull(DATE_FORMAT(pfe.pfes_fecha_pago, '%Y-%m-%d'), ' ') as fecha_pago                        
                 from " . $con2->dbname . ".pagos_factura_estudiante pfe
                     inner join " . $con->dbname . ".estudiante e on e.est_id = pfe.est_id

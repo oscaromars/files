@@ -33,6 +33,16 @@ PbGridView::widget([
             'value' => 'forma_pago',
         ],
         [
+            'attribute' => 'Concepto',
+            'header' => financiero::t("Pagos", "Concept"),
+            'value' => function ($model) {
+                if ($model["concepto"] == 'MA')
+                    return 'Matrícula';
+                else
+                    return 'Mensualidad';
+            },
+        ],
+        [
             'attribute' => 'Valor pago',
             'header' => financiero::t("Pagos", "Amount Paid"),
             'value' => 'valor_pago',

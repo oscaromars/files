@@ -104,7 +104,16 @@ $config = [
             'currencyCode' => 'USD',
         ],
     ],
-    'params' => $params,
+   'params' => $params,
+        'modules'=>[
+       'dynagrid'=> [
+            'class'=>'\kartik\dynagrid\Module',
+            // other module settings
+        ],
+        'gridview'=> [
+            'class'=>'\kartik\grid\Module',
+            // other module settings
+        ]],
 ];
 /******************************************************************************/
 // se agregan multiples base de datos

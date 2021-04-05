@@ -2,7 +2,6 @@
 
 use yii\helpers\Html;
 use kartik\grid\GridView;
-use kartik\export\ExportMenu;
 use app\modules\academico\Module as academico;
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\RolSearch */

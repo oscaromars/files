@@ -36,10 +36,11 @@
         "kartik-v/yii2-widget-datepicker": "*",
         "kartik-v/yii2-widget-datetimepicker": "dev-master",
         "kartik-v/yii2-tabs-x": "dev-master",
+       
         "codeitnowin/barcode": "*",
         "himiklab/yii2-recaptcha-widget": "*",
         "svrnm/exceldatatables": "*",
-        "kartik-v/yii2-widget-select2": "@dev",
+        "kartik-v/yii-select2": "@dev",
         "stripe/stripe-php": "^7.75",
         "kartik-v/yii2-grid": "@dev",
         "kartik-v/yii2-widgets": "@dev",

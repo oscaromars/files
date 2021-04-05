@@ -528,16 +528,11 @@ function addAsignacion(opAccion) {
      if ((tasi_id == 7) ) {
         var uni_id = $("#cmb_unidad_dis").val();
         var mod_id = $("#cmb_modalidad").val();
-        if (uni_id == 1) {
-            var paca_id = $("#cmb_periodo").val();
-        } else {
-            var eaca_id = $("#cmb_programa").val();
-        }
-        var jor_id = $("#cmb_jornada").val();
+        //  var jor_id = $("#cmb_jornada").val();
         var asi_id = $("#cmb_materia").val();
         var hor_id = $("#cmb_horario").val();
-        var par_id = $("#cmb_paralelo").val();
-        var hor_onl = $("#txt_num_estudiantes").val();
+     //   var par_id = $("#cmb_paralelo").val();
+       // var hor_onl = $("#txt_num_estudiantes").val();
 
         //fechas inicio y fecha fin
         var fecha_inicio = $("#txt_fecha_ini").val();
@@ -600,6 +595,65 @@ function addAsignacion(opAccion) {
     console.log('session-add', sessionStorage.dts_asignacion_list);
 }
 
+function validar(tasi_id, asi_id, hor_id, par_id, idUnidadAcademica, idModalidad, idPeriodo, idJornada) {
+    var arr_Grid1 = new Array();
+    var estado = 0;
+
+    if (sessionStorage.dts_asignacion_list) {
+        arr_Grid1 = JSON.parse(sessionStorage.dts_asignacion_list);
+
+        var size_arr = arr_Grid1.length;
+        for (var i = 0; i <= size_arr; i++) {
+            if (i < size_arr) {
+                
+                switch (tasi_id){
+                    case "1": 
+                        if ((arr_Grid1[i]['tasi_id'] == tasi_id)
+                            && arr_Grid1[i]['uni_id'] == idUnidadAcademica
+                            && arr_Grid1[i]['mod_id'] == idModalidad
+                            && arr_Grid1[i]['paca_id'] == idPeriodo
+                            && arr_Grid1[i]['jor_id'] == idJornada
+                            && arr_Grid1[i]['asi_id'] == asi_id
+                            && arr_Grid1[i]['hor_id'] == hor_id
+                            && arr_Grid1[i]['par_id'] == par_id) {
+
+                        estado = 1;
+                    }
+                       
+                  case "2": 
+                    if ((arr_Grid1[i]['tasi_id'] == tasi_id)
+                                && arr_Grid1[i]['uni_id'] == idUnidadAcademica
+                                && arr_Grid1[i]['mod_id'] == idModalidad
+                                ) {
+
+                            estado = 1;
+                        }
+                     break;
+                     case "7": 
+                   if ((arr_Grid1[i]['tasi_id'] == tasi_id)
+                            && arr_Grid1[i]['uni_id'] == idUnidadAcademica
+                            && arr_Grid1[i]['mod_id'] == idModalidad
+                            && arr_Grid1[i]['asi_id'] == asi_id
+                            && arr_Grid1[i]['hor_id'] == hor_id
+                           ) {
+
+                        estado = 1;
+                    }
+                     break;
+                     
+                     default : 
+                     if (arr_Grid1[i]['tasi_id'] == tasi_id) { //otros tipos de asignaciones                        
+                            estado = 1;
+                            return estado;
+                        }
+                     break;
+                }
+              
+            }
+        }
+    }
+    return estado;
+}
 function objDistributivo(indice) {
     var rowGrid = new Object();
     rowGrid.indice = NewGuid();
@@ -770,65 +824,6 @@ function findAndRemove(array, property, value) {
     return array;
 }
 
-function validar(tasi_id, asi_id, hor_id, par_id, idUnidadAcademica, idModalidad, idPeriodo, idJornada) {
-    var arr_Grid1 = new Array();
-    var estado = 0;
-
-    if (sessionStorage.dts_asignacion_list) {
-        arr_Grid1 = JSON.parse(sessionStorage.dts_asignacion_list);
-
-        var size_arr = arr_Grid1.length;
-        for (var i = 0; i <= size_arr; i++) {
-            if (i < size_arr) {
-                
-                switch (tasi_id){
-                    case "1": 
-                        if ((arr_Grid1[i]['tasi_id'] == tasi_id)
-                            && arr_Grid1[i]['uni_id'] == idUnidadAcademica
-                            && arr_Grid1[i]['mod_id'] == idModalidad
-                            && arr_Grid1[i]['paca_id'] == idPeriodo
-                            && arr_Grid1[i]['jor_id'] == idJornada
-                            && arr_Grid1[i]['asi_id'] == asi_id
-                            && arr_Grid1[i]['hor_id'] == hor_id
-                            && arr_Grid1[i]['par_id'] == par_id) {
-
-                        estado = 1;
-                    }
-                       
-                  case "2": 
-                    if ((arr_Grid1[i]['tasi_id'] == tasi_id)
-                                && arr_Grid1[i]['uni_id'] == idUnidadAcademica
-                                && arr_Grid1[i]['mod_id'] == idModalidad
-                                ) {
-
-                            estado = 1;
-                        }
-                     break;
-                     case "7": 
-                   if ((arr_Grid1[i]['tasi_id'] == tasi_id)
-                            && arr_Grid1[i]['uni_id'] == idUnidadAcademica
-                            && arr_Grid1[i]['mod_id'] == idModalidad
-                            && arr_Grid1[i]['asi_id'] == asi_id
-                            && arr_Grid1[i]['hor_id'] == hor_id
-                            && arr_Grid1[i]['par_id'] == par_id) {
-
-                        estado = 1;
-                    }
-                     break;
-                     
-                     default : 
-                     if (arr_Grid1[i]['tasi_id'] == tasi_id) { //otros tipos de asignaciones                        
-                            estado = 1;
-                            return estado;
-                        }
-                     break;
-                }
-              
-            }
-        }
-    }
-    return estado;
-}
 
 function NewGuid() {
     var sGuid = "";

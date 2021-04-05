@@ -20,27 +20,42 @@ $gridColumns=['saca_nombre',
 
     <?php echo $this->render('_search', ['model' => $searchModel]); ?>
   
-<?php echo ExportMenu::widget([
-            'dataProvider' => $dataProvider,
-            'columns' => $gridColumns,
-            'columnSelectorOptions'=>[
-                'label' => 'Columnas'
-               
-            ],
-            'fontAwesome' => true,
-            'dropdownOptions' => [
-                'label' => 'Exportar Todo',
-                'class' => 'btn btn-outline-secondary'
-            ],
-            'exportConfig' => [
-        ExportMenu::FORMAT_HTML => false,
-        ExportMenu::FORMAT_TEXT => false,
-        ExportMenu::FORMAT_CSV => false,
-        ExportMenu::FORMAT_EXCEL => false,
-    ],
-        ])  . "<hr>\n".GridView::widget([
+<?php echo GridView::widget([
         'dataProvider' => $dataProvider,
       //  'filterModel' => $searchModel,
+    'pjax' => true,
+    'panel' => [
+        'type' => 'primary'
+        
+    ],
+    'export' => [
+        'showConfirmAlert' => false,
+        'target' => GridView::TARGET_BLANK,
+        
+    ],
+    'exportConfig' => [
+            //GridView::CSV => ['label' => 'Save as CSV'],
+            // GridView::HTML => [// html settings],
+           
+        GridView::EXCEL => [
+        'label' => Yii::t('kvgrid', 'Excel'),
+        //'icon' => $isFa ? 'file-excel-o' : 'floppy-remove',
+        'iconOptions' => ['class' => 'text-success'],
+        'showHeader' => true,
+        'showPageSummary' => false,
+        'showFooter' => true,
+        'showCaption' => true,
+        'filename' => Yii::t('kvgrid', 'grid-export'),
+        'alertMsg' => Yii::t('kvgrid', 'The EXCEL export file will be generated for download.'),
+        'options' => ['title' => Yii::t('kvgrid', 'Microsoft Excel 95+')],
+        'mime' => 'application/vnd.ms-excel',
+        'config' => [
+            'worksheet' => Yii::t('kvgrid', 'ExportWorksheet'),
+            'cssFile' => ''
+        ]
+    ],
+        ],
+
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
      
@@ -67,6 +82,7 @@ $gridColumns=['saca_nombre',
               
             ],
         ],
+                        
     ]); ?>
 
 

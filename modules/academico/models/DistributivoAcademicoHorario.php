@@ -150,6 +150,3 @@ class DistributivoAcademicoHorario extends \yii\db\ActiveRecord
         return $resultData;
     }
 }
-
-git config --global user.email "analistadesarrolo04@uteg.edu.ec"
-  git config --global user.name "vfernandez123"

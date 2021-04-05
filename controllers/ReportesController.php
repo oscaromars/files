@@ -1,7 +1,7 @@
 <?php
 
 namespace app\controllers;
-
+use app\modules\academico\models\DistributivoAcademicoSearch;
 use Yii;
 use app\components\CController;
 use app\models\Grupo;
@@ -295,4 +295,20 @@ class ReportesController extends CController {
         Utilities::generarReporteXLS($nombarch, $nameReport, $arrHeader, $arrData, $colPosition);
         exit;
     }
+    
+    
+    public function actionReportdistributivo() {
+        $searchModel = new DistributivoAcademicoSearch();
+        //$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $params = Yii::$app->request->queryParams;
+        $dataProvider = $searchModel->getListadoDistributivoBloqueDocente($params,false,1);
+        return $this->render('reportdistributivo', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+         
+    }
+    
+    
+    
 }

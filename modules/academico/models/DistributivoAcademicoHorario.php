@@ -1,7 +1,8 @@
 <?php
 
 namespace app\modules\academico\models;
-
+use yii\data\ActiveDataProvider;
+use yii\base\Model;
 use Yii;
 
 /**
@@ -67,21 +68,21 @@ class DistributivoAcademicoHorario extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'daho_id' => 'Daho ID',
-            'uaca_id' => 'Uaca ID',
-            'mod_id' => 'Mod ID',
-            'eaca_id' => 'Eaca ID',
-            'daho_jornada' => 'Daho Jornada',
-            'daho_descripcion' => 'Daho Descripcion',
-            'daho_horario' => 'Daho Horario',
-            'daho_total_horas' => 'Daho Total Horas',
-            'daho_estado' => 'Daho Estado',
-            'daho_fecha_creacion' => 'Daho Fecha Creacion',
-            'daho_fecha_modificacion' => 'Daho Fecha Modificacion',
-            'daho_estado_logico' => 'Daho Estado Logico',
+            'daho_id' => 'Id',
+            'uaca_id' => 'Unidad Academica',
+            'mod_id' => 'Modadilidad',
+            'eaca_id' => 'Estudio Academico',
+            'daho_jornada' => 'Jornada',
+            'daho_descripcion' => 'Descripción',
+            'daho_horario' => 'Horario',
+            'daho_total_horas' => 'Total Horas',
+            'daho_estado' => 'Estado',
+            'daho_fecha_creacion' => '',
+            'daho_fecha_modificacion' => '',
+            'daho_estado_logico' => '',
         ];
     }
-
+    
     /**
      * @return \yii\db\ActiveQuery
      */
@@ -104,6 +105,16 @@ class DistributivoAcademicoHorario extends \yii\db\ActiveRecord
     public function getEaca()
     {
         return $this->hasOne(EstudioAcademico::className(), ['eaca_id' => 'eaca_id']);
+    }
+    
+     /**
+     * Gets query for [[Usuarios]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getDhp()
+    {
+        return $this->hasMany(DistributivoHorarioParalelo::className(), ['daho_id' => 'daho_id']);
     }
     
     /**
@@ -150,6 +161,3 @@ class DistributivoAcademicoHorario extends \yii\db\ActiveRecord
         return $resultData;
     }
 }
-
-git config --global user.email "analistadesarrolo04@uteg.edu.ec"
-  git config --global user.name "vfernandez123"

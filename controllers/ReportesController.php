@@ -1,7 +1,7 @@
 <?php
 
 namespace app\controllers;
-
+use app\modules\academico\models\DistributivoAcademicoSearch;
 use Yii;
 use app\components\CController;
 use app\models\Grupo;
@@ -295,4 +295,62 @@ class ReportesController extends CController {
         Utilities::generarReporteXLS($nombarch, $nameReport, $arrHeader, $arrData, $colPosition);
         exit;
     }
+    
+    
+    public function actionReportdistributivo() {
+        $searchModel = new DistributivoAcademicoSearch();
+        //$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $params = Yii::$app->request->queryParams;
+        $dataProvider = $searchModel->getListadoDistributivoBloqueDocente($params,false,1);
+        return $this->render('reportdistributivo', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+         
+    }
+   
+    public function actionExportexcellistadodocente() {
+          
+        ini_set('memory_limit', '256M');
+        $content_type = Utilities::mimeContentType("xls");
+        $nombarch = "Distributivo -" . date("YmdHis") . ".xls";
+        header("Content-Type: $content_type");
+        header("Content-Disposition: attachment;filename=" . $nombarch);
+        header('Cache-Control: max-age=0');
+        $colPosition = array("A", "B", "C", "D", "E", "F", "G","H","I","J","K","L");
+        $arrHeader = array(           
+            "DOCENTE",
+            "NO. CÉDULA",
+            "TÍTULO TERCER NIVEL",
+            "TÍTULO CUARTO NIVEL",
+            "CORREO ELECTRÓNICO",
+            "TIEMPO DE DEDICACIÓN",
+            "DESEMPEÑO",
+            "MATERIA",
+            "NIVEL",
+            "CRÉDITOS",
+            "HORAS POR CRÉDITO",
+            "TOTAL HORAS A DICTAR",
+            
+        );
+        $params = Yii::$app->request->queryParams;
+      //  $model = new \app\modules\academico\models\DistributivoAcademico();
+       // $model->mod_id = $params["mod_id"];
+      //    \app\models\Utilities::putMessageLogFile($params["mod_id"]);
+        $searchModel = new DistributivoAcademicoSearch();
+        //$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+       // $params = Yii::$app->request->queryParams;
+        $arrData = $searchModel->getListadoDistributivoBloqueDocente($params,true,2);
+       // $distributivo_model = new \app\modules\academico\models\DistributivoAcademico();
+        // $arrData = $distributivo_model->getListadoDistributivoBloqueDocente(true);
+         foreach ($arrData as $key => $value) {
+            unset($arrData[$key]["Id"]);
+        }
+         $nameReport = "UNIVERSIDAD TECNOLÓGICA EMPRESARIAL DE GUAYAQUIL\n MODALIDAD ONLINE \n DOCENTES AUTORES OCTUBRE - FEBRERO 2021 \n PRIMER BLOQUE";
+        Utilities::generarReporteXLS($nombarch, $nameReport, $arrHeader, $arrData, $colPosition);
+        exit;
+        
+    } 
+    
+    
 }

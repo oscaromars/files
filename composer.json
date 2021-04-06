@@ -36,12 +36,17 @@
         "kartik-v/yii2-widget-datepicker": "*",
         "kartik-v/yii2-widget-datetimepicker": "dev-master",
         "kartik-v/yii2-tabs-x": "dev-master",
+       
         "codeitnowin/barcode": "*",
         "himiklab/yii2-recaptcha-widget": "*",
         "svrnm/exceldatatables": "*",
-        "kartik-v/yii2-widget-select2": "@dev",
-        "stripe/stripe-php": "^7.75"
-    },
+        "kartik-v/yii-select2": "@dev",
+        "stripe/stripe-php": "^7.75",
+        "kartik-v/yii2-grid": "@dev",
+        "kartik-v/yii2-widgets": "@dev",
+        "conquer/select2": "*",
+        "kartik-v/yii2-dynagrid": "@dev"
+          },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.0.0",
         "yiisoft/yii2-gii": "~2.1.0",

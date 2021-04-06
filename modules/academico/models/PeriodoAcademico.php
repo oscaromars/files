@@ -67,17 +67,17 @@ class PeriodoAcademico extends \yii\db\ActiveRecord
     {
         return [
             'paca_id' => 'Paca ID',
-            'saca_id' => 'Saca ID',
-            'baca_id' => 'Baca ID',
-            'paca_activo' => 'Paca Activo',
-            'paca_fecha_inicio' => 'Paca Fecha Inicio',
-            'paca_fecha_fin' => 'Paca Fecha Fin',
-            'paca_usuario_ingreso' => 'Paca Usuario Ingreso',
-            'paca_usuario_modifica' => 'Paca Usuario Modifica',
-            'paca_estado' => 'Paca Estado',
-            'paca_fecha_creacion' => 'Paca Fecha Creacion',
-            'paca_fecha_modificacion' => 'Paca Fecha Modificacion',
-            'paca_estado_logico' => 'Paca Estado Logico',
+            'saca_id' => 'Semestre Academico',
+            'baca_id' => 'Bloque Academico',
+            'paca_activo' => '',
+            'paca_fecha_inicio' => '',
+            'paca_fecha_fin' => '',
+            'paca_usuario_ingreso' => '',
+            'paca_usuario_modifica' => '',
+            'paca_estado' => 'Estado',
+            'paca_fecha_creacion' => '',
+            'paca_fecha_modificacion' => '',
+            'paca_estado_logico' => '',
         ];
     }
 
@@ -89,6 +89,11 @@ class PeriodoAcademico extends \yii\db\ActiveRecord
         return $this->hasMany(DistributivoAcademico::className(), ['paca_id' => 'paca_id']);
     }
 
+     public function getSem()
+    {
+        return $this->hasOne(SemestreAcademico::className(), ['saca_id' => 'saca_id']);
+    }
+    
     /**
      * @return \yii\db\ActiveQuery
      */

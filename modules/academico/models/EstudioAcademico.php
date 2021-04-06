@@ -46,7 +46,7 @@ class EstudioAcademico extends \app\modules\admision\components\CActiveRecord {
      */
     public function rules() {
         return [
-            [['teac_id', 'eaca_nombre', 'eaca_descripcion', 'eaca_alias', 'eaca_alias_resumen', 'eaca_usuario_ingreso', 'eaca_estado', 'eaca_estado_logico'], 'required'],
+            [['teac_id', 'eaca_nombre', 'eaca_descripcion', ], 'required'],
             [['teac_id', 'eaca_usuario_ingreso', 'eaca_usuario_modifica'], 'integer'],
             [['eaca_fecha_creacion', 'eaca_fecha_modificacion'], 'safe'],
             [['eaca_nombre', 'eaca_alias',], 'string', 'max' => 300],
@@ -63,17 +63,17 @@ class EstudioAcademico extends \app\modules\admision\components\CActiveRecord {
     public function attributeLabels() {
         return [
             'eaca_id' => 'Eaca ID',
-            'teac_id' => 'Teac ID',
-            'eaca_nombre' => 'Eaca Nombre',
-            'eaca_descripcion' => 'Eaca Descripcion',
-            'eaca_alias' => 'Eaca Alias',
-            'eaca_alias_resumen' => 'Alias Resumen',
-            'eaca_usuario_ingreso' => 'Eaca Usuario Ingreso',
-            'eaca_usuario_modifica' => 'Eaca Usuario Modifica',
-            'eaca_estado' => 'Eaca Estado',
-            'eaca_fecha_creacion' => 'Eaca Fecha Creacion',
-            'eaca_fecha_modificacion' => 'Eaca Fecha Modificacion',
-            'eaca_estado_logico' => 'Eaca Estado Logico',
+            'teac_id' => 'Tipo de Estudio Academico',
+            'eaca_nombre' => 'Nombre',
+            'eaca_descripcion' => 'Descripción',
+            'eaca_alias' => 'Alias',
+            'eaca_alias_resumen' => 'Resumen',
+            'eaca_usuario_ingreso' => '',
+            'eaca_usuario_modifica' => '',
+            'eaca_estado' => 'Estado',
+            'eaca_fecha_creacion' => '',
+            'eaca_fecha_modificacion' => '',
+            'eaca_estado_logico' => '',
         ];
     }
 

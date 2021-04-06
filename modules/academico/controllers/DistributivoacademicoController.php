@@ -192,6 +192,18 @@ class DistributivoacademicoController extends \app\components\CController {
         ]);
     }
 
+    public function actionTest() {
+        
+        $searchModel = new \app\modules\academico\models\DistributivoAcademicoSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('test', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+          
+    }
+    
   public function actionSave() {
         $usu_id = @Yii::$app->session->get("PB_iduser");
         $fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
@@ -403,6 +415,7 @@ class DistributivoacademicoController extends \app\components\CController {
         $mod_tipo_distributivo = new TipoDistributivo();
 
         $resCab = $distributivo_cab->obtenerDatosCabecera($id);
+       
         $arr_distributivo = $distributivo_model->getListarDistribProfesor($resCab["paca_id"], $resCab["pro_id"]);
 
         $arr_periodoActual = $mod_periodoActual->getPeriodoAcademicoActual();
@@ -643,6 +656,8 @@ class DistributivoacademicoController extends \app\components\CController {
         }
     }
 
+    
+    
     public function actionExportexcel() {
         $per_id = @Yii::$app->session->get("PB_perid");
         ini_set('memory_limit', '256M');

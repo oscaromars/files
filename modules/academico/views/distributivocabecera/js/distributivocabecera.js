@@ -28,6 +28,20 @@ function searchModules() {
     $("#Tbg_Distributivo_Aca").PbGridView("applyFilterData", arrParams);
 }
 
+
+
+function exportexcellistadodocente() {
+    var search = $('#txt_buscarData').val();    
+    var periodo = $('#cmb_periodo').val();    
+    var estado = $("#cmb_estado").val();
+    var asignacion = $("#cmb_tipo_asignacion").val(); 
+    window.location.href = $('#txth_base').val() + "/academico/distributivocabecera/exportexcellistadodocente?" +
+        "search=" + search +        
+        "&periodo=" + periodo + 
+        "&estado=" + estado + 
+        "&asignacion=" + asignacion; 
+}
+
 function exportExcel() {
     var search = $('#txt_buscarData').val();    
     var periodo = $('#cmb_periodo').val();    

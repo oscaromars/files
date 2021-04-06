@@ -48,7 +48,7 @@ class SemestreAcademico extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['saca_nombre', 'saca_descripcion', 'saca_anio', 'saca_usuario_ingreso', 'saca_estado', 'saca_estado_logico'], 'required'],
+            [['saca_nombre', 'saca_descripcion', 'saca_usuario_ingreso', 'saca_estado', 'saca_estado_logico'], 'required'],
             [['saca_anio', 'saca_usuario_ingreso', 'saca_usuario_modifica'], 'integer'],
             [['saca_fecha_registro', 'saca_fecha_creacion', 'saca_fecha_modificacion'], 'safe'],
             [['saca_nombre', 'saca_descripcion'], 'string', 'max' => 300],
@@ -63,16 +63,16 @@ class SemestreAcademico extends \yii\db\ActiveRecord
     {
         return [
             'saca_id' => 'Saca ID',
-            'saca_nombre' => 'Saca Nombre',
-            'saca_descripcion' => 'Saca Descripcion',
-            'saca_anio' => 'Saca Anio',
-            'saca_fecha_registro' => 'Saca Fecha Registro',
-            'saca_usuario_ingreso' => 'Saca Usuario Ingreso',
-            'saca_usuario_modifica' => 'Saca Usuario Modifica',
-            'saca_estado' => 'Saca Estado',
-            'saca_fecha_creacion' => 'Saca Fecha Creacion',
-            'saca_fecha_modificacion' => 'Saca Fecha Modificacion',
-            'saca_estado_logico' => 'Saca Estado Logico',
+            'saca_nombre' => 'Nombre Semestre',
+            'saca_descripcion' => 'Descripcion Semestre',
+            'saca_anio' => 'Año Semestre',
+            'saca_fecha_registro' => '',
+            'saca_usuario_ingreso' => '',
+            'saca_usuario_modifica' => '',
+            'saca_estado' => 'Estado',
+            'saca_fecha_creacion' => '',
+            'saca_fecha_modificacion' => '',
+            'saca_estado_logico' => '',
         ];
     }
 

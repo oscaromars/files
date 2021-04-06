@@ -426,23 +426,14 @@ class PagosfacturasController extends \app\components\CController {
                 if(!empty($data['token'])){
                     //Obtenemos el token y tambien el nombre de la persona que esta cancelando
                     $token  = $data['token']; 
+
                     /******************************************************************/
-                    /********** PARA DESARROLLO  **************************************/
+                    /********** Clave de Conexión de Stripe ***************************/
                     /******************************************************************/
                     $stripe = array(
-                        'secret_key'      => 'sk_test_51HrVkKC4VyMkdPFRrDhbuQLABtvVq3tfZ8c3E3fm55Q7kg5anz6fqO5qrlPBVu7fDc9XVWGTb55M6TiIq4hwHz8J00rVFgisaj',
-                        'publishable_key' => 'pk_test_51HrVkKC4VyMkdPFRZ5aImiv4UNRIm1N7qh2VWG5YMcXJMufmwqvCVYAKSZVxvsjpP6PbjW4sSrc8OKrgfNsrmswt00OezUqkuN',
+                        'secret_key'      => Yii::$app->params["secret_key"],
+                        'publishable_key' => Yii::$app->params["publishable_key"],
                     );
-                    
-                    /******************************************************************/
-                    /********** PARA PRODUCCION  **************************************/
-                    /******************************************************************/
-                    /*
-                    $stripe = array(
-                        'secret_key'      => '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',
-                        'publishable_key' => 'pk_live_51HrVkKC4VyMkdPFRjqnwytVZZb552sp7TNEmQanSA78wA1awVHIDp94YcNKfa66Qxs6z2E73UGJwUjWN2pcy9nWl008QHsVt3Q',
-                    );
-                    */
 
                     //Se hace invocacion a libreria de stripe que se encuentra en el vendor
                     \Stripe\Stripe::setApiKey($stripe['secret_key']);

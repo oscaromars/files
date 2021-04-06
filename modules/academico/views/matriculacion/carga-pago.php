@@ -12,96 +12,10 @@ use app\components\CFileInputAjax;
 use app\modules\Academico\Module as Academico;
 use app\modules\financiero\Module as Pagos;
 use app\modules\admision\Module as crm;
+use app\assets\StripeAsset;
+StripeAsset::register($this);
 
 Academico::registerTranslations();
-
-$tipodoc = "CED";
-
-$this->registerJsFile("https://js.stripe.com/v3/",['depends' => [\yii\web\YiiAsset::className()]]);
-$this->registerJsFile("https://polyfill.io/v3/polyfill.min.js?version=3.52.1&features=fetch",['depends' => [\yii\web\YiiAsset::className()]]);
-$this->registerJs("
-    $(document).ready(function () {
-    /************************************************************/
-    /***** INICIO STRIPE ****************************************/
-    /************************************************************/
-        // Create an instance of the Stripe object
-        // Set your publishable API key
-        
-        //CLAVE PRODUCCION
-        //var stripe = Stripe('pk_live_51HrVkKC4VyMkdPFRjqnwytVZZb552sp7TNEmQanSA78wA1awVHIDp94YcNKfa66Qxs6z2E73UGJwUjWN2pcy9nWl008QHsVt3Q');
-        //CLAVE DESARROLLO    
-        stripe = Stripe('pk_test_51HrVkKC4VyMkdPFRZ5aImiv4UNRIm1N7qh2VWG5YMcXJMufmwqvCVYAKSZVxvsjpP6PbjW4sSrc8OKrgfNsrmswt00OezUqkuN');
-        
-        // Create an instance of elements
-        var elements = stripe.elements();
-
-        var style = {
-            base: {
-                //fontWeight: 400,
-                fontFamily: 'Roboto, Open Sans, Segoe UI, sans-serif',
-                fontSize: '12px',
-                lineHeight: '1.4',
-                color: '#555',
-                backgroundColor: '#fff',
-                '::placeholder': {
-                    color: '#888',
-                },
-            },
-            invalid: {
-                color: '#eb1c26',
-            }
-        };
-
-        var style2 = {
-            base: {
-            color: '#32325d',
-            fontFamily: 'Arial, sans-serif',
-            fontSmoothing: 'antialiased',
-            fontSize: '16px',
-            '::placeholder': {
-              color: '#32325d'
-            }
-          },
-
-        };
-
-        cardElement = elements.create('card', { style: style2 , hidePostalCode: true});
-        cardElement.mount('#card-element');
-
-        /*
-        //Todo este codigo se comenta 
-        cardElement = elements.create('cardNumber', {
-            style: style
-        });
-        cardElement.mount('#card_number');
-
-        var exp = elements.create('cardExpiry', {
-            'style': style
-        });
-        exp.mount('#card_expiry');
-
-        var cvc = elements.create('cardCvc', {
-            'style': style
-        });
-        
-        cvc.mount('#card_cvc');
-        */
-
-        cardElement.addEventListener('change', function(event) {
-            if (event.error) {
-                //resultContainer.innerHTML = '<p>'+event.error.message+'</p>';
-                $('#paymentResponse').html('<p>'+event.error.message+'</p>');
-            } else {
-                //resultContainer.innerHTML = '';
-                $('#paymentResponse').html('');
-            }
-        });
-    /************************************************************/
-    /***** FIN STRIPE *******************************************/
-    /************************************************************/
-    })
-    "
-);
 
 ?>
 <style type="text/css">

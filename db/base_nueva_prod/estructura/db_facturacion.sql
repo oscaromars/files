@@ -769,7 +769,7 @@ create table db_facturacion.carga_cartera(
 --
 -- Estructura de tabla para la tabla `referencia_bancos`
 -- -------------------------------------------------------------
-create table referencia_bancos(
+create table db_facturacion.referencia_bancos(
   `rban_id` bigint(20) not null auto_increment primary key,
   `ban_id` bigint(20) not null,
   `rban_referencia` varchar(100) not null,    
@@ -786,7 +786,7 @@ create table referencia_bancos(
 --
 -- Estructura de tabla para la tabla `item_matricula_unidad`
 -- -------------------------------------------------------------
-create table item_matricula_unidad (
+create table db_facturacion.item_matricula_unidad (
 `imun_id` bigint(20) not null primary key,  
 `ite_id`  bigint(20) not null,  
 `uaca_id` bigint(20) null,

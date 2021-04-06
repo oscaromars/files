@@ -407,9 +407,12 @@ class DistributivocabeceraController extends \app\components\CController
 
         $DistADO = new DistributivoCabecera();
         $cabDist = $DistADO->consultarCabDistributivo($ids);
-
+        
+     
         $detDist = $DistADO->consultarDetDistributivo($cabDist[0]['paca_id'], $cabDist[0]['pro_id']);
-        //Recorre las horas para extraer sus dias y hora
+        
+         // Utilities::putMessageLogFile('total $detDist: ' . $detDist);
+//Recorre las horas para extraer sus dias y hora
         for ($fil = 0; $fil < sizeof($detDist); $fil++) {
             //Si tipo Distributivo =1 Tiene datos en la tabla distributivo horas
             if (($detDist[$fil]['tdis_id'] == 1) || ($detDist[$fil]['tdis_id'] == 7)) {
@@ -444,7 +447,7 @@ class DistributivocabeceraController extends \app\components\CController
                 //Total de preparacion docente
                 $detDistTotalPrepPosgrado +=  $DistADO->consultarDetDistributivoPreparacionPosgrado($detDistTipo[$fil]['daho_id']);
                 //Total de vinculacion e investigacion
-                $detDistTotalVincPosgrado +=  $DistADO->consultarDetDistributivoVinculacionPosgrado($detDistTipo[$fil]['daho_id']);
+                $detDistTotalVincPosgrado +=  $DistADO->consultarDetDistributivoVinculacionPosgrado($detDistTipo[$fil]['paca_id']);
                 Utilities::putMessageLogFile('total posgrado: ' . $detDistTotalposgrado);
             } else {
                 //Total de horas grado

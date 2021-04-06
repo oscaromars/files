@@ -516,7 +516,7 @@ class DistributivoCabecera extends \yii\db\ActiveRecord
         $comando = $con->createCommand($sql);
         $comando->bindParam(":paca_id", $PacaId, \PDO::PARAM_INT);
         $comando->bindParam(":pro_id", $ProId, \PDO::PARAM_INT);
-        $res = $comando->queryOne();
+      //  $res = $comando->queryOne();
         //\app\models\Utilities::putMessageLogFile( $res);
         //\app\models\Utilities::putMessageLogFile($ProId);
 
@@ -528,13 +528,15 @@ class DistributivoCabecera extends \yii\db\ActiveRecord
         $con = \Yii::$app->db_academico;
 
 
-        $sql = "SELECT A.*,D.tdis_nombre, 
+        $sql = "SELECT A.daca_id, D.tdis_nombre, m.mod_nombre,C.uaca_nombre,
             DATE_FORMAT(E.paca_fecha_inicio,'%d/%m/%Y') paca_fecha_inicio,DATE_FORMAT(E.paca_fecha_fin,'%d/%m/%Y') paca_fecha_fin
                 FROM " . $con->dbname . ".distributivo_academico A
                 INNER JOIN " . $con->dbname . ".tipo_distributivo D ON D.tdis_id=A.tdis_id
-                INNER JOIN  periodo_academico E ON E.paca_id=A.paca_id
+                INNER JOIN " . $con->dbname . ". periodo_academico E ON E.paca_id=A.paca_id
+                INNER JOIN " . $con->dbname . ".modalidad m ON m.mod_id=A.mod_id   
+                INNER JOIN " . $con->dbname . ".unidad_academica C ON C.uaca_id=A.uaca_id     
                WHERE A.paca_id = :paca_id AND A.pro_id = :pro_id 
-               and A.daca_estado=1 and A.daca_estado_logico=1 ";
+               and A.daca_estado=1 and A.daca_estado_logico=1 and D.tdis_id in (2,3,4)";
 
         $comando = $con->createCommand($sql);
         $comando->bindParam(":paca_id", $PacaId, \PDO::PARAM_INT);
@@ -550,7 +552,7 @@ class DistributivoCabecera extends \yii\db\ActiveRecord
 
 
         $sql = "SELECT A.*,T.tdis_id, T.tdis_nombre, B.asi_nombre,C.uaca_nombre,D.mod_nombre,
-            DATE_FORMAT(A.daca_fecha_inicio,'%d/%m/%Y') daca_fecha_inicio,DATE_FORMAT(A.daca_fecha_fin,'%d/%m/%Y') daca_fecha_fin
+            DATE_FORMAT(E.paca_fecha_inicio,'%d/%m/%Y') as paca_fecha_inicio,DATE_FORMAT(E.paca_fecha_fin,'%d/%m/%Y') as paca_fecha_fin
                 FROM " . $con->dbname . ".distributivo_academico A
                     INNER JOIN " . $con->dbname . ".tipo_distributivo T ON T.tdis_id=A.tdis_id
                     INNER JOIN " . $con->dbname . ".asignatura B ON A.asi_id=B.asi_id
@@ -597,10 +599,12 @@ class DistributivoCabecera extends \yii\db\ActiveRecord
     public function consultarDetDistributivoTotalgrado($Ids)
     {
         $con = \Yii::$app->db_academico;
-        $sql = "SELECT (h.daho_total_horas*D.paca_semanas_periodo) total_horas
-                    FROM " . $con->dbname . ".distributivo_academico_horario h
-                    INNER JOIN " . $con->dbname . ".periodo_academico D ON D.paca_activo='A'
-                WHERE daho_estado_logico=1 AND daho_id = :daho_id ;";
+        
+         $sql = "SELECT (h.daho_total_horas*D.paca_semanas_periodo) total_horas
+                    FROM  db_academico.distributivo_academico da 
+                    inner join  db_academico.distributivo_academico_horario h on h.daho_id = da.daho_id
+                    INNER JOIN db_academico.periodo_academico D ON  D.paca_id = da.paca_id and  D.paca_activo='A' 
+                    WHERE  da.daho_id = :daho_id ";
         $comando = $con->createCommand($sql);
         $comando->bindParam(":daho_id", $Ids, \PDO::PARAM_INT);
 
@@ -613,11 +617,11 @@ class DistributivoCabecera extends \yii\db\ActiveRecord
     {
         $con = \Yii::$app->db_academico;
         $sql = "SELECT (2*D.paca_semanas_posgrado) total_horas
-                FROM " . $con->dbname . ".distributivo_academico_horario h
-                INNER JOIN " . $con->dbname . ".periodo_academico D ON D.paca_activo='A'
-            WHERE daho_estado_logico=1 AND daho_id = :daho_id ;";
+                FROM " . $con->dbname . ".distributivo_academico h
+                INNER JOIN " . $con->dbname . ".periodo_academico D ON h.paca_id =D.paca_id and D.paca_activo='A'
+            WHERE h.daca_id = :paca_id ;";
         $comando = $con->createCommand($sql);
-        $comando->bindParam(":daho_id", $Ids, \PDO::PARAM_INT);
+        $comando->bindParam(":daca_id", $Ids, \PDO::PARAM_INT);
 
         
         $res = $comando->queryAll();

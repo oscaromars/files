@@ -156,20 +156,22 @@
             ?>
 
             <?php
+            if($detDistDocenteAutor!=null){
             for ($fil = 0; $fil < sizeof($detDistDocenteAutor); $fil++) {
-                if (($detDistDocenteAutor[$fil]['tdis_id'] == 7) && ($detDistDocenteAutor[$fil]['uaca_id'] == 2)) { ?>
+                if (($detDistDocenteAutor[$fil]['tdis_id'] == 7) && ($detDistDocenteAutor[$fil]['uaca_id'] == 2)) 
+                { ?>
                     <tr class="fila">
                         <td class="marcoCel normal"><?php echo $detDistDocenteAutor[$fil]['asi_nombre'] ?></td>
                         <td class="marcoCel normal"><?php echo 'N/A' ?></td>
                         <td class="marcoCel normal"><?php echo $detDistDocenteAutor[$fil]['uaca_nombre'] ?></td>
                         <td class="marcoCel normal"><?php echo $detDistDocenteAutor[$fil]['mod_nombre'] ?></td>
-                        <td class="marcoCel normal"><?php echo $detDistDocenteAutor[$fil]['daca_fecha_inicio'] ?></td>
-                        <td class="marcoCel normal"><?php echo $detDistDocenteAutor[$fil]['daca_fecha_fin'] ?></td>
+                        <td class="marcoCel normal"><?php echo $detDistDocenteAutor[$fil]['paca_fecha_inicio'] ?></td>
+                        <td class="marcoCel normal"><?php echo $detDistDocenteAutor[$fil]['paca_fecha_fin'] ?></td>
                     </tr>
             <?php
                 }
             }
-
+            }
             ?>
 
 
@@ -179,8 +181,8 @@
                     <tr class="fila">
                         <td class="marcoCel"><?php echo $detDistTipo[$fil]['tdis_nombre']  ?></td>
                         <td class="marcoCel"><?php echo 'N/A' ?></td>
-                        <td class="marcoCel"><?php echo 'N/A' ?></td>
-                        <td class="marcoCel"><?php echo $detDistTipo[$fil]['tdis_nombre'] ?></td>
+                        <td class="marcoCel"><?php echo $detDistTipo[$fil]['uaca_nombre'] ?></td>
+                        <td class="marcoCel"><?php echo $detDistTipo[$fil]['mod_nombre'] ?></td>
                         <td class="marcoCel"><?php echo $detDistTipo[$fil]['paca_fecha_inicio'] ?></td>
                         <td class="marcoCel"><?php echo $detDistTipo[$fil]['paca_fecha_fin'] ?></td>
                     </tr>

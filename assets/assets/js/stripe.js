@@ -3,8 +3,11 @@
 /************************************************************/
     // Create an instance of the Stripe object
     // Set your publishable API key
-    stripe = Stripe('". Yii::$app->params["stripeJsKey"] ."');
-    
+    //DESARROLLO
+    //stripe = Stripe("pk_test_51HrVkKC4VyMkdPFRZ5aImiv4UNRIm1N7qh2VWG5YMcXJMufmwqvCVYAKSZVxvsjpP6PbjW4sSrc8OKrgfNsrmswt00OezUqkuN");
+    //PRODUCCION
+    stripe = Stripe("pk_test_y0O1WHdyGNgjQDrnTcUvw9UT");
+
     // Create an instance of elements
     var elements = stripe.elements();
 

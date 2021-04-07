@@ -196,10 +196,10 @@ Academico::registerTranslations();
                 <input class = "col-xs-2 col-sm-2 col-md-2 col-lg-2 form-check-input checkAcepta" type="checkbox" value="1" id="checkAcepta">
             </div>
         </div> 
+        <!------------------------------------------------------->
+        <!----- INI PAGO STRIPE --------------------------------->                
+        <!------------------------------------------------------->
         <div class="form-group" id="pago_stripe">
-            <!------------------------------------------------------->
-            <!----- INI PAGO STRIPE --------------------------------->                
-            <!------------------------------------------------------->
             <style type="text/css">
                 #pago_stripe{
                     display:none; 
@@ -231,18 +231,17 @@ Academico::registerTranslations();
                   font-size: 16px;
                 }
             </style>
-
             
             <div class="col-xs-12 col-sm-12 col-md-2 col-lg-2" style=" display: flex; justify-content: center;">
                 <img src="https://www.uteg.edu.ec/wp-content/themes/UTEG4/images/055693c79f5990e523846b9f43c6779d_logouteg.png" alt="MBTU" style="border-radius:4px;height:40px;margin-top: 10px;margin-bottom: 10px;">
             </div>
             <div class="col-xs-12 col-sm-12 col-md-10 col-lg-10">
                 <div id="card-element"><!--Stripe.js injects the Card Element--></div>
-            </div>
-            <!------------------------------------------------------->
-            <!----- FIN PAGO STRIPE --------------------------------->                
-            <!------------------------------------------------------->      
+            </div> 
         </div>
+        <!------------------------------------------------------->
+        <!----- FIN PAGO STRIPE --------------------------------->                
+        <!------------------------------------------------------->  
     </div>
 </form>
 <input type="hidden" id="frm_pla_id" value="<?= $pla_id ?>">

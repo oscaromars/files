@@ -275,6 +275,7 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
     }
 
     public function processFile($fname, $pla_id) {
+        \app\models\Utilities::putMessageLogFile('entraaaa1: ');
         $file = Yii::$app->basePath . Yii::$app->params['documentFolder'] . "planificacion/" . $fname;
         $fila = 0;
         $chk_ext = explode(".", $file);
@@ -375,7 +376,7 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
     }
 
     public function saveDocumentoDB($val, $pla_id, $per_id_estudiante) {
-
+        \app\models\Utilities::putMessageLogFile('entraaaa2: ');
         $model_planificacion_estudiante = new PlanificacionEstudiante();
         $model_planificacion_estudiante->pla_id = $pla_id;
 

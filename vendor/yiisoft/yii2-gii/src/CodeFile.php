@@ -81,17 +81,13 @@ class CodeFile extends BaseObject
      */
     public function save()
     {
-        $module = isset(Yii::$app->controller) ? Yii::$app->controller->module : null;
+        $module = Yii::$app->controller->module;
         if ($this->operation === self::OP_CREATE) {
             $dir = dirname($this->path);
             if (!is_dir($dir)) {
-                if ($module instanceof \yii\gii\Module) {
-                    $mask = @umask(0);
-                    $result = @mkdir($dir, $module->newDirMode, true);
-                    @umask($mask);
-                } else {
-                    $result = @mkdir($dir, 0777, true);
-                }
+                $mask = @umask(0);
+                $result = @mkdir($dir, $module->newDirMode, true);
+                @umask($mask);
                 if (!$result) {
                     return "Unable to create the directory '$dir'.";
                 }
@@ -101,11 +97,9 @@ class CodeFile extends BaseObject
             return "Unable to write the file '{$this->path}'.";
         }
 
-        if ($module instanceof \yii\gii\Module) {
-            $mask = @umask(0);
-            @chmod($this->path, $module->newFileMode);
-            @umask($mask);
-        }
+        $mask = @umask(0);
+        @chmod($this->path, $module->newFileMode);
+        @umask($mask);
 
         return true;
     }

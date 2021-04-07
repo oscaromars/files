@@ -1,5 +1,5 @@
 <?php
-
+// 
 /*
  * This file is part of the Behat Gherkin.
  * (c) Konstantin Kudryashov <ever.zet@gmail.com>

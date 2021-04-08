@@ -33,25 +33,25 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
         <div class="form-group">
         <label for="lbl_plantilla" class="col-lg-2 col-md-2 col-sm-2 col-xs-2 control-label"><?= academico::t("planificacion", "Template"); ?></label>
             <div class="col-sm-5 col-md-5 col-xs-5 col-lg-5">
-            <?= Html::a(academico::t("matriculacion", "Download"), Url::to(['downloadplantilla', 'filename' => 'plantillaCargacartera.xlsx']));   ?>
+            <?= Html::a(academico::t("matriculacion", "Download"), Url::to(['downloadplantilla', 'filename' => 'plantillaEducativa.xlsx']));   ?>
             </div>                       
         </div> 
         </div>
         <div class="form-group">     
-            <label for="txth_doc_adj_cartera" class="col-lg-2 col-md-2 col-sm-2 col-xs-2 control-label keyupmce"><?= Yii::t("formulario", "Company") ?></label>
+            <label for="txth_doc_adj_educativa" class="col-lg-2 col-md-2 col-sm-2 col-xs-2 control-label keyupmce"><?= Yii::t("formulario", "Company") ?></label>
             <div class="col-sm-5 col-md-5 col-xs-5 col-lg-5">
                 <?= Html::dropDownList("cmb_empresa", 0, ArrayHelper::map(\app\models\Empresa::getAllEmpresa(), 'id', 'value'), ["class" => "form-control", "id" => "cmb_empresa", "disabled" => "true"]) ?>
             </div>
         </div>
         <div class="form-group">
-            <label for="txth_doc_adj_cartera" class="col-lg-2 col-md-2 col-sm-2 col-xs-2 control-label keyupmce"><?= Yii::t("formulario", "Attach document") ?></label>
+            <label for="txth_doc_adj_educativa" class="col-lg-2 col-md-2 col-sm-2 col-xs-2 control-label keyupmce"><?= Yii::t("formulario", "Attach document") ?></label>
             <div class="col-sm-5 col-md-5 col-xs-5 col-lg-5">
-                <?= Html::hiddenInput('txth_doc_adj_cartera', '', ['id' => 'txth_doc_adj_cartera']); ?>
-                <?= Html::hiddenInput('txth_doc_adj_cartera2', '', ['id' => 'txth_doc_adj_cartera2']); ?>
+                <?= Html::hiddenInput('txth_doc_adj_educativa', '', ['id' => 'txth_doc_adj_educativa']); ?>
+                <?= Html::hiddenInput('txth_doc_adj_educativa2', '', ['id' => 'txth_doc_adj_educativa2']); ?>
                 <?php
                 echo CFileInputAjax::widget([
-                    'id' => 'txt_doc_adj_cartera',
-                    'name' => 'txt_doc_adj_cartera',
+                    'id' => 'txt_doc_adj_educativa',
+                    'name' => 'txt_doc_adj_educativa',
                     'pluginLoading' => false,
                     'showMessage' => false,
                     'pluginOptions' => [
@@ -63,21 +63,21 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                         'browseClass' => 'btn btn-primary btn-block',
                         'browseIcon' => '<i class="fa fa-folder-open"></i> ',
                         'browseLabel' => "Subir Archivo",
-                        'uploadUrl' => Url::to(['pagosfacturas/cargarcartera']),
+                        'uploadUrl' => Url::to(['usuarioeducativa/cargarusuario']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"],
                         'uploadExtraData' => 'javascript:function (previewId,index) {
-            return {"upload_file": true, "name_file": "op_cartera-' . @Yii::$app->session->get("PB_iduser") . '-' . time() . '"};
+            return {"upload_file": true, "name_file": "op_educativa-' . @Yii::$app->session->get("PB_iduser") . '-' . time() . '"};
         }',
                     ],
                     'pluginEvents' => [
                         "filebatchselected" => "function (event) {
-        $('#txth_doc_adj_cartera2').val('op_cartera-" . @Yii::$app->session->get("PB_iduser") . '-' . time() . "');
-        $('#txth_doc_adj_cartera').val($('#txt_doc_adj_cartera').val());
-        $('#txt_doc_adj_cartera').fileinput('upload');
+        $('#txth_doc_adj_educativa2').val('op_educativa-" . @Yii::$app->session->get("PB_iduser") . '-' . time() . "');
+        $('#txth_doc_adj_educativa').val($('#txt_doc_adj_educativa').val());
+        $('#txt_doc_adj_educativa').fileinput('upload');
     }",
                         "fileuploaderror" => "function (event, data, msg) {
         $(this).parent().parent().children().first().addClass('hide');
-        $('#txth_doc_adj_cartera').val('');        
+        $('#txth_doc_adj_educativa').val('');        
     }",
                         "filebatchuploadcomplete" => "function (event, files, extra) { 
         $(this).parent().parent().children().first().addClass('hide');
@@ -97,11 +97,11 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                 ?>
             </div>     
         </div>   
-        <!--<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" >
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" >
             <div class="col-md-2">
-                <a id="btn_guardarcartera" href="javascript:" class="btn btn-primary btn-block"> <?= Yii::t("formulario", "Save") ?> </a>
+                <a id="btn_guardareducativa" href="javascript:" class="btn btn-primary btn-block"> <?= Yii::t("formulario", "Save") ?> </a>
             </div>
-        </div>-->         
+        </div>       
     </div>
     </div>
 </form>

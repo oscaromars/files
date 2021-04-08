@@ -39,10 +39,10 @@ class UsuarioeducativaController extends \app\components\CController {
             if ($data["procesar_file"]) {
                 try {
                 ini_set('memory_limit', '256M');
-                \app\models\Utilities::putMessageLogFile('Files ...: ' . $data["archivo"]);
+                //\app\models\Utilities::putMessageLogFile('Files controller ...: ' . $data["archivo"]);
                 $carga_archivo = $mod_educativa->CargarArchivoeducativa($data["archivo"]);
                 if ($carga_archivo['status']) {
-                    \app\models\Utilities::putMessageLogFile('no estudiante controller...: ' . $arroout['noalumno']);
+                    //\app\models\Utilities::putMessageLogFile('no estudiante controller...: ' . $arroout['noalumno']);
                     if (!empty($carga_archivo['noalumno'])){                        
                     $noalumno = ' Se encontró las cédulas '. $carga_archivo['noalumno'] . ' que no pertencen a estudiantes por ende no se cargaron. ';
                     }

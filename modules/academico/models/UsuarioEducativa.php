@@ -99,7 +99,7 @@ class UsuarioEducativa extends \yii\db\ActiveRecord
      * @return
      */
     public function CargarArchivoeducativa($fname) {
-        \app\models\Utilities::putMessageLogFile('Files ...: ' . $fname);
+        //\app\models\Utilities::putMessageLogFile('Files modelo ...: ' . $fname);
         $file = Yii::$app->basePath . Yii::$app->params['documentFolder'] . "educativa/" . $fname;
         $fila = 0;
         $chk_ext = explode(".", $file);
@@ -136,10 +136,12 @@ class UsuarioEducativa extends \yii\db\ActiveRecord
                 }
                 $fila = 0;
                 foreach ($dataArr as $val) {
-
+                    //\app\models\Utilities::putMessageLogFile('cedula ...: ' .$val[2]);
                     if (!is_null($val[2]) || $val[2]) {
                         $val[2] = strval($val[2]);
                         $est_id = $mod_estudiante->consultarEstidxdni($val[2]);
+                        //\app\models\Utilities::putMessageLogFile('est_id consulta ...: ' .$est_id['est_id']);
+                        //\app\models\Utilities::putMessageLogFile('per_id consulta ...: ' . $est_id['per_id']);
                         $fila++;         
                         if (!empty($est_id['est_id'])) {
                         $existe = $mod_educativa->consultarexisteusuario($val[2], $val[3], $val[4]);
@@ -209,8 +211,8 @@ class UsuarioEducativa extends \yii\db\ActiveRecord
                 ( uedu_cedula = :uedu_cedula OR
                 $matricula
                 uedu_correo = :uedu_correo ) AND
-                ccar_estado = :estado AND
-                ccar_estado_logico = :estado ";
+                uedu_estado = :estado AND
+                uedu_estado_logico = :estado ";
 
         $comando = $con->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
@@ -231,6 +233,10 @@ class UsuarioEducativa extends \yii\db\ActiveRecord
      */
 
     public function saveDocumentoDB($val, $idestudiante, $idpersona) {
+       // \app\models\Utilities::putMessageLogFile('entro guardar ...: ');
+       // \app\models\Utilities::putMessageLogFile('est_id guarda ...: ' .$est_id['est_id']);
+        //\app\models\Utilities::putMessageLogFile('per_id guarda ...: ' . $est_id['per_id']);
+                       
         $usu_id = Yii::$app->session->get('PB_iduser');
         $fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
         $mod_educativauser = new UsuarioEducativa();        
@@ -244,13 +250,13 @@ class UsuarioEducativa extends \yii\db\ActiveRecord
         $mod_educativauser->uedu_estado = "1";
         $mod_educativauser->uedu_fecha_creacion = $fecha_transaccion;
         $mod_educativauser->uedu_estado_logico = "1";
-        \app\models\Utilities::putMessageLogFile('est_id: ' .$idestudiante);
+       /* \app\models\Utilities::putMessageLogFile('est_id: ' .$idestudiante);
         \app\models\Utilities::putMessageLogFile('1: ' .$val[1]);
         \app\models\Utilities::putMessageLogFile('2: ' .$val[2]);
         \app\models\Utilities::putMessageLogFile('3: ' .$val[3]);
         \app\models\Utilities::putMessageLogFile('4: ' .$val[4]);       
         \app\models\Utilities::putMessageLogFile('fecha: ' .$fecha_transaccion);
-        \app\models\Utilities::putMessageLogFile('usu_id: ' .$usu_id);
+        \app\models\Utilities::putMessageLogFile('usu_id: ' .$usu_id);*/
         return $mod_educativauser->save();
     }
 

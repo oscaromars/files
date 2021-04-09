@@ -97,11 +97,11 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                 ?>
             </div>     
         </div>   
-        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" >
+        <!-- <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" >
             <div class="col-md-2">
                 <a id="btn_guardareducativa" href="javascript:" class="btn btn-primary btn-block"> <?= Yii::t("formulario", "Save") ?> </a>
             </div>
-        </div>       
+        </div> -->      
     </div>
     </div>
 </form>

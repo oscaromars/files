@@ -150,6 +150,7 @@ class PlanificacionController extends \app\components\CController {
                         $modelo_planificacion->pla_estado_logico = '1';
                         if ($modelo_planificacion->save() && $data['archivo'] != '.') {
                             $pla_id = $modelo_planificacion->getPrimaryKey();
+                            \app\models\Utilities::putMessageLogFile('entraaaa0: ');
                             $carga_archivo = $model_planificacionEstudiante->processFile($namefile, $pla_id);
                             if ($carga_archivo['status']) {
                                 $message = array(

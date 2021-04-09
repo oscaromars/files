@@ -177,6 +177,33 @@ class TipoArticulo extends \yii\db\ActiveRecord
         }
         return $result;
     }
+
+    /**
+     * Return columns to dataset of create a query to widget Search.
+     *
+     * @return mixed Return a Record Array
+     */
+    public static function getDataColumnsQueryWidget(){
+        $arr_data = [];
+        $arr_data['con'] = Yii::$app->db_gfinanciero;
+        $arr_data['table'] = "IG0002";
+        $arr_data['cols'] = [
+            'COD_TIP', 
+            'NOM_TIP',
+        ];
+        $arr_data['aliasCols'] = [
+            financiero::t('tipoarticulo', 'Code'), 
+            financiero::t('tipoarticulo', 'Type'),
+        ];
+        $arr_data['colVisible'] = [
+            financiero::t('tipoarticulo', 'Code'), 
+            financiero::t('tipoarticulo', 'Type'),
+        ];
+        $arr_data['where'] = "EST_LOG = 1 and EST_DEL = 1";
+        $arr_data['order'] = "NOM_TIP ASC";
+        $arr_data['limitPages'] = Yii::$app->params['pageSize'];
+        return $arr_data;
+    }
     
     /**
      * Get Last Id Item Record

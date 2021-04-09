@@ -64,19 +64,27 @@ class LineaArticulo extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'COD_LIN' => 'Cod Lin',
-            'NOM_LIN' => 'Nom Lin',
-            'FEC_LIN' => 'Fec Lin',
-            'REG_ASO' => 'Reg Aso',
-            'FEC_SIS' => 'Fec Sis',
-            'HOR_SIS' => 'Hor Sis',
-            'USUARIO' => 'Usuario',
-            'EQUIPO' => 'Equipo',
-            'EST_LOG' => 'Est Log',
+            'COD_LIN' => financiero::t('lineaarticulo', 'Code'),
+            'NOM_LIN' => financiero::t('lineaarticulo', 'Line Name'),
+            'FEC_LIN' => financiero::t('lineaarticulo', 'Creation Date'),
+            'REG_ASO' => financiero::t('gfinanciero', 'Associated Register'),
+            'FEC_SIS' => financiero::t('gfinanciero', 'System Date'),
+            'HOR_SIS' => financiero::t('gfinanciero', 'System Hour'),
+            'USUARIO' => financiero::t('gfinanciero', 'User'),
+            'EQUIPO'  => financiero::t('gfinanciero', 'Computer'),
+            'EST_LOG' => financiero::t('gfinanciero', 'Logic Status'),
             'EST_DEL' => 'Est Del',
         ];
     }
     
+    /**
+     * Get all items of Model by params to filter data.
+     *
+     * @param  string $search   Search Item Name
+     * @param  bool $dataProvider   Param to get a DataProvider or a Record Array
+     * @param  bool $export   Param to export data Report
+     * @return mixed Return a Record Array or DataProvider
+     */
     public function getAllItemsGrid($search, $dataProvider = false, $export = false){
         $search_cond = "%".$search."%";
         $str_search = "";
@@ -117,6 +125,33 @@ class LineaArticulo extends \yii\db\ActiveRecord
             return $dataProvider;
         }
         return $result;
+    }
+
+    /**
+     * Return columns to dataset of create a query to widget Search.
+     *
+     * @return mixed Return a Record Array
+     */
+    public static function getDataColumnsQueryWidget(){
+        $arr_data = [];
+        $arr_data['con'] = Yii::$app->db_gfinanciero;
+        $arr_data['table'] = "IG0001";
+        $arr_data['cols'] = [
+            'COD_LIN', 
+            'NOM_LIN',
+        ];
+        $arr_data['aliasCols'] = [
+            financiero::t('lineaarticulo', 'Code'), 
+            financiero::t('lineaarticulo', 'Item'),
+        ];
+        $arr_data['colVisible'] = [
+            financiero::t('lineaarticulo', 'Code'), 
+            financiero::t('lineaarticulo', 'Item'),
+        ];
+        $arr_data['where'] = "EST_LOG = 1 and EST_DEL = 1";
+        $arr_data['order'] = "NOM_LIN ASC";
+        $arr_data['limitPages'] = Yii::$app->params['pageSize'];
+        return $arr_data;
     }
     
     /**

@@ -10,12 +10,19 @@ financiero::registerTranslations();
 ?>
 
 <form class="form-horizontal">
-
     <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12">
         <div class="form-group">
             <label for="frm_name" class="col-xs-5 col-sm-4 col-md-3 col-lg-2 control-label"><?= financiero::t("tipoitem", "Type Item Name") ?></label>
             <div class="col-xs-7 col-sm-8 col-md-9 col-lg-10">
                 <input type="text" class="form-control PBvalidation" value="" id="frm_name" data-type="alfa" placeholder="<?= financiero::t("tipoitem", "Type Item Name") ?>">
+            </div>
+        </div>
+    </div>
+    <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12">
+        <div class="form-group">
+            <label for="frm_prefix" class="col-xs-5 col-sm-4 col-md-3 col-lg-2 control-label"><?= financiero::t("tipoitem", "Prefix") ?></label>
+            <div class="col-xs-7 col-sm-8 col-md-9 col-lg-10">
+                <input type="text" class="form-control PBvalidation" value="<?= $model->TITE_PREFIX ?>" id="frm_prefix" data-type="alfa" placeholder="<?= financiero::t("tipoitem", "Prefix") ?>">
             </div>
         </div>
     </div>

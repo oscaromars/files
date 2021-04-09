@@ -19,14 +19,14 @@ financiero::registerTranslations();
         'columns' => [
             ['class' => 'yii\grid\SerialColumn', 'options' => ['width' => '10']],
             [
-                'attribute' => 'Id',
-                'header' => financiero::t("tipoitem", "Type Item Code"),
-                'value' => 'Id',
-            ],
-            [
                 'attribute' => 'Nombre',
                 'header' => financiero::t("tipoitem", "Type Item Name"),
                 'value' => 'Nombre',
+            ],
+            [
+                'attribute' => 'Prefix',
+                'header' => financiero::t("tipoitem", "Prefix"),
+                'value' => 'Prefix',
             ],
             [
                 'class' => 'yii\grid\ActionColumn',

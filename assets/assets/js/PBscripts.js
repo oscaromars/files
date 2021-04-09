@@ -715,6 +715,23 @@ function showAlert(status, label, message) {
     $(idModal).modal();
 }
 
+function closeAlert(id) {
+    id = id || 'myModalPB';
+    $('#' + id).modal('toggle');
+}
+
+function setOnLoadingAlert(id) {
+    id = id || 'myModalPB';
+    $("#" + id + ">div>div>div.overlay").removeClass("hide");
+    $("#" + id + ">div>div>div.overlay").addClass("show");
+}
+
+function setOffLoadingAlert(id) {
+    id = id || 'myModalPB';
+    $("#" + id + ">div>div>div.overlay").removeClass("show");
+    $("#" + id + ">div>div>div.overlay").addClass("hide");
+}
+
 function setAlertMessage(status, label, message) {
     var idModal = "#myModalPB";
     var evalabel = label.toLowerCase();
@@ -743,23 +760,6 @@ function setAlertMessage(status, label, message) {
         }
     }
     $(idModal + ">div>div>div.modal-alert>div.alert>div#alert-text").html(message);
-}
-
-function closeAlert(id) {
-    id = id || 'myModalPB';
-    $('#' + id).modal('toggle');
-}
-
-function setOnLoadingAlert(id) {
-    id = id || 'myModalPB';
-    $("#" + id + ">div>div>div.overlay").removeClass("hide");
-    $("#" + id + ">div>div>div.overlay").addClass("show");
-}
-
-function setOffLoadingAlert(id) {
-    id = id || 'myModalPB';
-    $("#" + id + ">div>div>div.overlay").removeClass("show");
-    $("#" + id + ">div>div>div.overlay").addClass("hide");
 }
 
 function showClockTime() {

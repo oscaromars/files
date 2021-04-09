@@ -614,3 +614,40 @@ function hideIcons(e) {
         removeIco(e);
     });
 }
+
+/**
+ * Function to change Currency Format
+ *
+ * @param {number} num - Number to fix
+ * @param {number} decimals - Number to decimal
+ * @return {string} No return any value.
+ */
+function currencyFormat(num, decimals) {
+    decimals = decimals || 0;
+    let def = 0;
+    let regex = "(\\d)(?=(\\d{3})+(\\.\\d{" + decimals + "})(?!\\d))";
+    let re = new RegExp(regex, "g");
+    if (num && num != undefined) {
+        if (decimals == 0) {
+            regex = "(\\d)(?=(\\d{3})+(?!\\d))";
+            re = new RegExp(regex, "g");
+        }
+        return num.toFixed(decimals).replace(re, "$1,");
+    }
+    return def.toFixed(decimals);
+}
+
+/**
+ * Function to remover character ","
+ *
+ * @param {number} num - Number to remove character ","
+ * @param {number} decimals - Number to decimal
+ * @return {string} No return any value.
+ */
+function removeMilesFormat(num, decimals) {
+    decimals = decimals || 0;
+    let def = 0;
+    if (num && num != undefined)
+        return num.replace(/,/g, '');
+    return def.toFixed(decimals);
+}

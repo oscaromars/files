@@ -51,4 +51,5 @@ return [
     "-- All Items --" => "-- Todos los Items --",
     "-- Select an Item Name --" => "-- Seleccione un Item --",
     "Please select an Item." => "Por favor seleccion un Item.",
+    "Measure" => "Medida",
 ];

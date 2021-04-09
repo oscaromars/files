@@ -295,7 +295,7 @@ class UnidadmedidaController extends CController {
      * @return void
      */
     public function actionExpexcel() {
-        ini_set('memory_limit', '256M');
+        ini_set('memory_limit', Yii::$app->params['memorylimit']);
         $content_type = Utilities::mimeContentType("xls");
         $nombarch = "Report-" . date("YmdHis") . ".xls";
         header("Content-Type: $content_type");
@@ -330,6 +330,7 @@ class UnidadmedidaController extends CController {
      * @return void
      */
     public function actionExppdf() {
+        //ini_set('memory_limit', Yii::$app->params['memorylimit']);
         $report = new ExportFile();
         $this->view->title = financiero::t("unidadmedida", "Report Types Items");  // Titulo del reporte
         $arrHeader = array(

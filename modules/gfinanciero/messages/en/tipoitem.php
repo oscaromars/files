@@ -49,4 +49,7 @@ return [
     "-- All Type Items --" => "-- All Type Items --",
     "-- Select a Type Item Name --" => "-- Select a Type Item Name --",
     "Please select a Type Item Name." => "Please select a Type Item Name.",
+    "Prefix" => "Prefix",
+    "Product Type" => "Product Type",
+    "Please select a Product Type." => "Please select a Product Type.",
 ];

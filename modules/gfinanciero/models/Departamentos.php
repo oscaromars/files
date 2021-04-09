@@ -144,6 +144,12 @@ class Departamentos extends \yii\db\ActiveRecord
         return $newId;
     }
     
+    /**
+     * Get Next Id Item Record
+     *
+     * @return void
+     */
+    
     public static function getDepartamentos() {
         $con = \Yii::$app->db_gfinanciero;
         $sql = "SELECT dep_id Ids,dep_nombre Nombre 

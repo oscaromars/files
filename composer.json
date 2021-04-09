@@ -45,7 +45,8 @@
         "kartik-v/yii2-grid": "@dev",
         "kartik-v/yii2-widgets": "@dev",
         "conquer/select2": "*",
-        "kartik-v/yii2-dynagrid": "@dev"
+        "kartik-v/yii2-dynagrid": "@dev",
+	"penblu/searchautocomplete": "*"
           },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.0.0",

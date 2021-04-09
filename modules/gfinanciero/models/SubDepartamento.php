@@ -115,7 +115,7 @@ class SubDepartamento extends \yii\db\ActiveRecord
         if(isset($search)){
             $str_search .= "(sdep_nombre like :search) AND ";
         }
-         if(isset($departamento) && $departamento !== "0"){
+        if(isset($departamento) && $departamento !== "0"){
             $str_search .= " a.dep_id = :dep_id AND ";
         }
         $cols = "a.sdep_id Id,a.dep_id DepId,b.dep_nombre NombreDepart,a.sdep_nombre Nombre, a.sdep_fecha_creacion Fecha";

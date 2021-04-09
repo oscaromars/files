@@ -58,7 +58,7 @@ class ExportFile {
     public $fontdata = array(); // example $fontdata["gothambook"] = ['R' => 'GothamBook.ttf'];
 
     function __construct() {
-        ini_set("pcre.backtrack_limit", "5000000"); //aumento de memoria para generacion de reportes
+        ini_set("pcre.backtrack_limit", Yii::$app->params['backtracklimit']); //aumento de memoria para generacion de reportes
         if ($this->reportName == "")
             $this->reportName = 'Reporte_' . date("Ymdhis");
         if ($this->typeExport == "")

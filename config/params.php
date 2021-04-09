@@ -66,6 +66,9 @@ return [
     'timeRecursive' => '2', // segundos
     'numRecursive' => '3',
     'currency' => '$',
+    'numDecimals' => '4',
+    'memorylimit' => '512M',
+    'backtracklimit' => '536870912', // bytes -> MB
     'keywordEncription' => 'PBdoHUHYU909854874HNGFGKO',
     'tokenid' => 'HU787390kdnhyyejkKJHWFRDERD3573LOSNQ2JKTDCA67253',
     'numbersecret' => '29839813213464',

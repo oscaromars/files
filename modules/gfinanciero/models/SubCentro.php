@@ -6,8 +6,6 @@ use Yii;
 use yii\data\ArrayDataProvider;
 use app\modules\gfinanciero\Module as financiero;
 
-financiero::registerTranslations();
-
 /**
  * This is the model class for table "COSSUBCEN".
  *
@@ -20,6 +18,9 @@ financiero::registerTranslations();
  * @property string|null $EQUIPO
  * @property string $EST_LOG
  * @property string $EST_DEL
+ *
+ * @property COSCENTRO $cODCEN
+ * @property SubcentroEmpleado[] $subcentroEmpleados
  */
 class SubCentro extends \yii\db\ActiveRecord
 {
@@ -55,6 +56,8 @@ class SubCentro extends \yii\db\ActiveRecord
             [['COD_SCEN'], 'unique'],
             [['COD_CEN'], 'exist', 'skipOnError' => true, 'targetClass' => Centro::className(), 'targetAttribute' => ['COD_CEN' => 'COD_CEN']],
         ];
+        
+        
     }
 
     /**
@@ -62,6 +65,7 @@ class SubCentro extends \yii\db\ActiveRecord
      */
     public function attributeLabels()
     {
+            
         return [
             'COD_SCEN' => financiero::t('centro', 'Sub Center Code'),
             'COD_CEN' => financiero::t('centro', 'Center Code'),
@@ -74,16 +78,27 @@ class SubCentro extends \yii\db\ActiveRecord
             'EST_DEL' => 'Est Del',
         ];
     }
+
     /**
-     * Gets query for [[COSSUBCENs]].
+     * Gets query for [[CODCEN]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getCOSSUBCENs()
+    public function getCODCEN()
     {
-        return $this->hasMany(COSSUBCEN::className(), ['COD_SCEN' => 'COD_SCEN']);
+        return $this->hasOne(COSCENTRO::className(), ['COD_CEN' => 'COD_CEN']);
     }
 
+    /**
+     * Gets query for [[SubcentroEmpleados]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getSubcentroEmpleados()
+    {
+        return $this->hasMany(SubcentroEmpleado::className(), ['cod_scen' => 'COD_SCEN']);
+    }
+    
     /**
      * Get all items of Model by params to filter data.
      *
@@ -162,5 +177,7 @@ class SubCentro extends \yii\db\ActiveRecord
         $newId = 1 + $row['COD_SCEN'];
         $newId = str_pad($newId, 3, "0", STR_PAD_LEFT);
         return $newId;
-    }
-  }
+    }   
+    
+    
+}

@@ -30,6 +30,7 @@ function update() {
     var arrParams = new Object();
     arrParams.id = $("#frm_id").val();
     arrParams.nombre = $('#frm_name').val();
+    arrParams.prefix = $('#frm_prefix').val();
     if (!validateForm()) {
         requestHttpAjax(link, arrParams, function(response) {
             showAlert(response.status, response.label, response.message);
@@ -43,8 +44,8 @@ function update() {
 function save() {
     var link = $('#txth_base').val() + "/" + $('#txth_module').val() + "/tipoitem/save";
     var arrParams = new Object();
-    arrParams.id = $('#frm_id').val();
     arrParams.nombre = $('#frm_name').val();
+    arrParams.prefix = $('#frm_prefix').val();
     if (!validateForm()) {
         requestHttpAjax(link, arrParams, function(response) {
             showAlert(response.status, response.label, response.message);

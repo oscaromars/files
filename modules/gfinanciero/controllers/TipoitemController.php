@@ -136,11 +136,12 @@ class TipoitemController extends CController {
             $trans = Yii::$app->db_gfinanciero->beginTransaction();
             try {
                 //// body logic begin
-                $id = $data["id"];
                 $nombre = $data["nombre"];
+                $prefix = $data["prefix"];
                 $model = new TipoItem();
                 //$model->TITE_ID = $id;
                 $model->TITE_NOMBRE = $nombre;
+                $model->TITE_PREFIX = $prefix;
                 $model->TITE_FECHA_CREACION = date('Y-m-d H:i:s');
                 $model->TITE_USUARIO_INGRESO = $usu_id;//$username
                 $model->TITE_EQUIPO = Utilities::getClientRealIP();
@@ -190,9 +191,10 @@ class TipoitemController extends CController {
                 //// body logic begin
                 $id  = $data["id"];
                 $nombre = $data["nombre"];
-
+                $prefix = $data["prefix"];
                 $model = TipoItem::findOne(['TITE_ID' => $id,]);
                 $model->TITE_NOMBRE = $nombre;
+                $model->TITE_PREFIX = $prefix;
                 $model->TITE_FECHA_MODIFICACION = date('Y-m-d H:i:s');
                 $model->TITE_USUARIO_INGRESO = $usu_id;
                 $model->TITE_EQUIPO = Utilities::getClientRealIP();
@@ -281,7 +283,7 @@ class TipoitemController extends CController {
      * @return void
      */
     public function actionExpexcel() {
-        ini_set('memory_limit', '256M');
+        ini_set('memory_limit', Yii::$app->params['memorylimit']);
         $content_type = Utilities::mimeContentType("xls");
         $nombarch = "Report-" . date("YmdHis") . ".xls";
         header("Content-Type: $content_type");
@@ -291,6 +293,7 @@ class TipoitemController extends CController {
         $arrHeader = array(
             financiero::t("tipoitem", "Type Item Code"),
             financiero::t("tipoitem", "Type Item Name"),
+            financiero::t("tipoitem", "Prefix"),
         );
         $data = Yii::$app->request->get();
         $arrSearch = array();
@@ -315,11 +318,13 @@ class TipoitemController extends CController {
      * @return void
      */
     public function actionExppdf() {
+        //ini_set('memory_limit', Yii::$app->params['memorylimit']);
         $report = new ExportFile();
         $this->view->title = financiero::t("tipoitem", "Report Center Items");  // Titulo del reporte
         $arrHeader = array(
             financiero::t("tipoitem", "Type Item Code"),
             financiero::t("tipoitem", "Type Item Name"),
+            financiero::t("tipoitem", "Prefix"),
         );
         $data = Yii::$app->request->get();
         $arrSearch = array();

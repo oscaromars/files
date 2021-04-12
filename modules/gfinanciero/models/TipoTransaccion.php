@@ -160,6 +160,19 @@ class TipoTransaccion extends \yii\db\ActiveRecord
         }
         return $result;
     }
+
+    /**
+     * Get all types of Transactions Item.
+     *
+     * @return mixed Return an Array of types Transactions
+     */
+    public static function getTypesTransactions(){
+        $arr_tipo = [
+            'H' => financiero::t('tipotransaccion', 'Credit Balance'),
+            'D' => financiero::t('tipotransaccion', 'Debit Balance'),
+        ];
+        return $arr_tipo;
+    }
     
     /**
      * Get Last Id Item Record

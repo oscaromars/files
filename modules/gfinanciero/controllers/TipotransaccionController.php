@@ -24,11 +24,8 @@ class TipotransaccionController extends CController {
     public function actionIndex() {
         $model = new TipoTransaccion();
         $data = Yii::$app->request->get();
-        $arr_tipo = [
-            '0' => financiero::t('tipotransaccion', '-- All Transaction Types --'),
-            'H' => financiero::t('tipotransaccion', 'Credit Balance'),
-            'D' => financiero::t('tipotransaccion', 'Debit Balance'),
-        ];
+        $arr_tipo = TipoTransaccion::getTypesTransactions();
+        $arr_tipo = ['0' => financiero::t('tipotransaccion', '-- All Transaction Types --'),] + $arr_tipo;
         if (isset($data["PBgetFilter"])) {
             return $this->render('index', [
                 "model" => $model->getAllItemsGrid($data["search"], $data['type'], true),
@@ -53,10 +50,7 @@ class TipotransaccionController extends CController {
         if (isset($data['id'])) {
             $id = $data['id'];
             $model = TipoTransaccion::findOne(['C_TRA_E' => $id,]);
-            $arr_tipo = [
-                'H' => financiero::t('tipotransaccion', 'Credit Balance'),
-                'D' => financiero::t('tipotransaccion', 'Debit Balance'),
-            ];
+            $arr_tipo = TipoTransaccion::getTypesTransactions();
             return $this->render('view', [
                 'model' => $model,
                 'arr_tipo' => $arr_tipo,
@@ -75,10 +69,7 @@ class TipotransaccionController extends CController {
         if (isset($data['id'])) {
             $id = $data['id'];
             $model = TipoTransaccion::findOne(['C_TRA_E' => $id,]);
-            $arr_tipo = [
-                'H' => financiero::t('tipotransaccion', 'Credit Balance'),
-                'D' => financiero::t('tipotransaccion', 'Debit Balance'),
-            ];
+            $arr_tipo = TipoTransaccion::getTypesTransactions();
             return $this->render('edit', [
                 'model' => $model,
                 'arr_tipo' => $arr_tipo,
@@ -94,10 +85,7 @@ class TipotransaccionController extends CController {
      */
     public function actionNew() {
         //$new_id = TipoArticulo::getNextIdItemRecord();
-        $arr_tipo = [
-            'H' => financiero::t('tipotransaccion', 'Credit Balance'),
-            'D' => financiero::t('tipotransaccion', 'Debit Balance'),
-        ];
+        $arr_tipo = TipoTransaccion::getTypesTransactions();
         return $this->render('new', [
             //'new_id' => $new_id,
             'arr_tipo' => $arr_tipo,
@@ -278,7 +266,7 @@ class TipotransaccionController extends CController {
      * @return void
      */
     public function actionExpexcel() {
-        ini_set('memory_limit', '256M');
+        ini_set('memory_limit', Yii::$app->params['memorylimit']);
         $content_type = Utilities::mimeContentType("xls");
         $nombarch = "Report-" . date("YmdHis") . ".xls";
         header("Content-Type: $content_type");
@@ -314,6 +302,7 @@ class TipotransaccionController extends CController {
      * @return void
      */
     public function actionExppdf() {
+        //ini_set('memory_limit', Yii::$app->params['memorylimit']);
         $report = new ExportFile();
         $this->view->title = financiero::t("tipotransaccion", "Report Transaction Items");  // Titulo del reporte
         $arrHeader = array(

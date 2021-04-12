@@ -1,5 +1,5 @@
 /*!
- * bootstrap-fileinput v5.1.5
+ * bootstrap-fileinput v5.1.4
  * http://plugins.krajee.com/file-input
  *
  * Author: Kartik Visweswaran
@@ -76,8 +76,7 @@
             chunkQueueError: 'Could not push task to ajax pool for chunk index # {index}.',
             resumableMaxRetriesReached: 'Maximum resumable ajax retries ({n}) reached.',
             resumableRetryError: 'Could not retry the resumable request (try # {n})... aborting.',
-            resumableAborting: 'Aborting / cancelling the resumable request.',
-            resumableRequestError: 'Error processing resumable request. {msg}'
+            resumableAborting: 'Aborting / cancelling the resumable request.'
 
         },
         objUrl: window.URL || window.webkitURL,
@@ -478,10 +477,16 @@
             stash: function (htmlString) {
                 var self = this, outerDom = $.parseHTML('<div>' + htmlString + '</div>'), $el = $(outerDom);
                 $el.find('[style]').each(function (key, elem) {
-                    var $elem = $(elem), styleDeclaration = $elem[0].style, id = $h.uniqId(), styles = {};
-                    if (styleDeclaration && styleDeclaration.length) {
-                        $(styleDeclaration).each(function () {
-                            styles[this] = styleDeclaration[this];
+                    var $elem = $(elem), styleString = $elem.attr('style'), id = $h.uniqId(), styles = {};
+                    if (styleString && styleString.length) {
+                        if (styleString.indexOf(';') === -1) {
+                            styleString += ';';
+                        }
+                        styleString.slice(0, styleString.length - 1).split(';').map(function (str) {
+                            str = str.split(':');
+                            if (str[0]) {
+                                styles[str[0]] = str[1] ? str[1] : '';
+                            }
                         });
                         self.domElementsStyles[id] = styles;
                         $elem.removeAttr('style').attr(self.CSP_ATTRIB, id);
@@ -1313,8 +1318,7 @@
                 },
                 setProcessed: function (status) {
                     var id = rm.id, msg, $thumb = rm.$thumb, $prog = rm.$progress, hasThumb = $thumb && $thumb.length,
-                        params = {id: hasThumb ? $thumb.attr('id') : '', index: fm.getIndex(id), fileId: id}, tokens,
-                        skipErrorsAndProceed = self.resumableUploadOptions.skipErrorsAndProceed;
+                        params = {id: hasThumb ? $thumb.attr('id') : '', index: fm.getIndex(id), fileId: id};
                     rm.completed = true;
                     rm.lastProgress = 0;
                     if (hasThumb) {
@@ -1340,20 +1344,15 @@
                                 self._setPreviewError($thumb, true);
                                 self._setProgress(101, $prog, self.msgProgressError);
                                 self._setProgress(101, self.$progress, self.msgProgressError);
-                                self.cancelling = !skipErrorsAndProceed;
+                                self.cancelling = true;
                             }
                             if (!self.$errorContainer.find('li[data-file-id="' + params.fileId + '"]').length) {
-                                tokens = {file: rm.fileName, max: opts.maxRetries, error: rm.error};
-                                msg = self.msgResumableUploadRetriesExceeded.setTokens(tokens);
-                                $.extend(params, tokens);
-                                self._showFileError(msg, params, 'filemaxretries');
-                                if (skipErrorsAndProceed) {
-                                    fm.removeFile(id);
-                                    delete rm.chunksProcessed[id];
-                                    if (fm.isProcessed()) {
-                                        self._setProgress(101);
-                                    }
-                                }
+                                msg = self.msgResumableUploadRetriesExceeded.setTokens({
+                                    file: rm.fileName,
+                                    max: opts.maxRetries,
+                                    error: rm.error
+                                });
+                                self._showFileError(msg, params);
                             }
                         }
                     }
@@ -1537,7 +1536,7 @@
                             if (tokens) {
                                 msg = msg.setTokens(tokens);
                             }
-                            msg = msgs.resumableRequestError.setTokens({msg: msg});
+                            msg = 'Error processing resumable ajax request. ' + msg;
                             self._log(msg);
                             deferrer.reject(msg);
                         };
@@ -1596,10 +1595,9 @@
                                     chunk: index
                                 });
                             }
-                            self._raise('filechunkerror', params);
                             rm.pushAjax(index, retry + 1);
                             rm.error = data.error;
-                            logError(data.error);
+                            self._raise('filechunkerror', params);
                         } else {
                             rm.logs[data[chunkIndex]] = true;
                             if (!rm.chunksProcessed[id]) {
@@ -2262,8 +2260,8 @@
             $h.addCss(self.$captionContainer, 'is-invalid');
         },
         _resetErrors: function (fade) {
-            var self = this, $error = self.$errorContainer, history = self.resumableUploadOptions.retainErrorHistory;
-            if (self.isPersistentError || (self.enableResumableUpload && history)) {
+            var self = this, $error = self.$errorContainer;
+            if (self.isPersistentError) {
                 return;
             }
             self.isError = false;
@@ -4521,7 +4519,7 @@
             });
         },
         _validateImageOrientation: function ($img, file, previewId, fileId, caption, ftype, fsize, iData) {
-            var self = this, exifObj = null, value, autoOrientImage = self.autoOrientImage, selector;
+            var self = this, exifObj, value, autoOrientImage = self.autoOrientImage, selector;
             if (self.canOrientImage) {
                 $img.css('image-orientation', (autoOrientImage ? 'from-image' : 'none'));
                 self._validateImage(previewId, fileId, caption, ftype, fsize, iData, exifObj);
@@ -5234,7 +5232,7 @@
                 }
                 self.lock(true);
                 var file = files[i], id = self._getFileId(file), previewId = previewInitId + '-' + id, fSizeKB, j, msg,
-                    fnImage = settings.image, typ, chk, typ1, typ2,
+                    fnText = settings.text, fnImage = settings.image, fnHtml = settings.html, typ, chk, typ1, typ2,
                     caption = self._getFileName(file, ''), fileSize = (file && file.size || 0) / 1000,
                     fileExtExpr = '', previewData = $h.createObjectURL(file), fileCount = 0,
                     strTypes = '', fileId, canLoad, fileReaderAborted = false,
@@ -5693,7 +5691,7 @@
                 self._raise('filebatchpreupload', [outData]);
                 self.fileBatchCompleted = false;
                 self.uploadCache = [];
-                $.each(self.getFileStack(), function (id) {
+                $.each(self.getFileStack(), function (id, f) {
                     var previewId = self._getThumbId(id);
                     self.uploadCache.push({id: previewId, content: null, config: null, tags: null, append: true});
                 });
@@ -5704,7 +5702,7 @@
             self.hasInitData = false;
             if (self.uploadAsync) {
                 i = 0;
-                $.each(self.getFileStack(), function (id) {
+                $.each(self.getFileStack(), function (id, f) {
                     self._uploadSingle(i, id, true);
                     i++;
                 });
@@ -5933,9 +5931,7 @@
             chunkSize: 2 * 1024, // in KB
             maxThreads: 4,
             maxRetries: 3,
-            showErrorLog: true,
-            retainErrorHistory: true, // display complete error history always unless user explicitly resets upload
-            skipErrorsAndProceed: false // when set to true, files with errors will be skipped and upload will continue with other files
+            showErrorLog: true
         },
         uploadExtraData: {},
         zoomModalHeight: 480,

@@ -49,4 +49,5 @@ return [
     "-- All Items --" => "-- All Items --",
     "-- Select an Item Name --" => "-- Select an Item Name --",
     "Please select an Item Name." => "Please select an Item Name.",
+    "Measure" => "Measure",
 ];

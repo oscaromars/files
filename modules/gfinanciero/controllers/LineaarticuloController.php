@@ -292,7 +292,7 @@ class LineaarticuloController extends CController {
      * @return void
      */
     public function actionExpexcel() {
-        ini_set('memory_limit', '256M');
+        ini_set('memory_limit', Yii::$app->params['memorylimit']);
         $content_type = Utilities::mimeContentType("xls");
         $nombarch = "Report-" . date("YmdHis") . ".xls";
         header("Content-Type: $content_type");
@@ -327,6 +327,7 @@ class LineaarticuloController extends CController {
      * @return void
      */
     public function actionExppdf() {
+        //ini_set('memory_limit', Yii::$app->params['memorylimit']);
         $report = new ExportFile();
         $this->view->title = financiero::t("lineaarticulo", "Report Types Items");  // Titulo del reporte
         $arrHeader = array(
@@ -355,24 +356,6 @@ class LineaarticuloController extends CController {
         );
         $report->mpdf->Output('Reporte_' . date("Ymdhis") . ".pdf", ExportFile::OUTPUT_TO_DOWNLOAD);
     }
-
-	/**
-     * New Action. Allow show the form to create a new item or Object y Data Model.
-     *
-     * @return void
-     */
-    public function actionDescarga() {
-        return "hola mundo";
-        /*$pathFile = _DIR_.'/../rpt/Cherry.jrxml';
-        $jasper = new JasperPHP();
-        $output = $jasper->compile($pathFile)->execute();
-
-        // Process a Jasper file to PDF and RTF (you can use directly the .jrxml)
-        $jasper->process(
-            _DIR_ . '/../rpt/Cherry.jasper',
-            false,
-            array("pdf", "rtf")
-        )->execute();  */  
-     }
+    
 
 }

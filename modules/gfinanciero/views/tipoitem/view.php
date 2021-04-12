@@ -12,17 +12,17 @@ financiero::registerTranslations();
 <form class="form-horizontal">
     <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12">
         <div class="form-group">
-            <label for="frm_id" class="col-xs-5 col-sm-4 col-md-3 col-lg-2 control-label"><?= financiero::t("tipoitem", "Type Item Code") ?></label>
+            <label for="frm_name" class="col-xs-5 col-sm-4 col-md-3 col-lg-2 control-label"><?= financiero::t("tipoitem", "Type Item Name") ?></label>
             <div class="col-xs-7 col-sm-8 col-md-9 col-lg-10">
-                <input type="text" class="form-control PBvalidation" value="<?= $model->TITE_ID ?>" id="frm_id" data-type="all" disabled="disabled" placeholder="<?= financiero::t("tipoitem", "Type Item Code") ?>">
+                <input type="text" class="form-control PBvalidation" value="<?= $model->TITE_NOMBRE ?>" id="frm_name" data-type="alfa" disabled="disabled" placeholder="<?= financiero::t("tipoitem", "Type Item Name") ?>">
             </div>
         </div>
     </div>
     <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12">
         <div class="form-group">
-            <label for="frm_name" class="col-xs-5 col-sm-4 col-md-3 col-lg-2 control-label"><?= financiero::t("tipoitem", "Type Item Name") ?></label>
+            <label for="frm_prefix" class="col-xs-5 col-sm-4 col-md-3 col-lg-2 control-label"><?= financiero::t("tipoitem", "Prefix") ?></label>
             <div class="col-xs-7 col-sm-8 col-md-9 col-lg-10">
-                <input type="text" class="form-control PBvalidation" value="<?= $model->TITE_NOMBRE ?>" id="frm_name" data-type="alfa" disabled="disabled" placeholder="<?= financiero::t("tipoitem", "Type Item Name") ?>">
+                <input type="text" class="form-control PBvalidation" value="<?= $model->TITE_PREFIX ?>" id="frm_prefix" data-type="alfa" disabled="disabled" placeholder="<?= financiero::t("tipoitem", "Prefix") ?>">
             </div>
         </div>
     </div>

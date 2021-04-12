@@ -81,6 +81,14 @@ class MarcaArticulo extends \yii\db\ActiveRecord
         ];
     }
     
+    /**
+     * Get all items of Model by params to filter data.
+     *
+     * @param  string $search   Search Item Name
+     * @param  bool $dataProvider   Param to get a DataProvider or a Record Array
+     * @param  bool $export   Param to export data Report
+     * @return mixed Return a Record Array or DataProvider
+     */
     public function getAllItemsGrid($search, $dataProvider = false, $export = false){
         $search_cond = "%".$search."%";
         $str_search = "";
@@ -121,6 +129,33 @@ class MarcaArticulo extends \yii\db\ActiveRecord
             return $dataProvider;
         }
         return $result;
+    }
+
+    /**
+     * Return columns to dataset of create a query to widget Search.
+     *
+     * @return mixed Return a Record Array
+     */
+    public static function getDataColumnsQueryWidget(){
+        $arr_data = [];
+        $arr_data['con'] = Yii::$app->db_gfinanciero;
+        $arr_data['table'] = "IG0003";
+        $arr_data['cols'] = [
+            'COD_MAR', 
+            'NOM_MAR',
+        ];
+        $arr_data['aliasCols'] = [
+            financiero::t('marcaarticulo', 'Code'), 
+            financiero::t('marcaarticulo', 'Mark'),
+        ];
+        $arr_data['colVisible'] = [
+            financiero::t('marcaarticulo', 'Code'), 
+            financiero::t('marcaarticulo', 'Mark'),
+        ];
+        $arr_data['where'] = "EST_LOG = 1 and EST_DEL = 1";
+        $arr_data['order'] = "NOM_MAR ASC";
+        $arr_data['limitPages'] = Yii::$app->params['pageSize'];
+        return $arr_data;
     }
     
     /**

@@ -9,15 +9,16 @@ use app\modules\gfinanciero\Module as financiero;
 /**
  * This is the model class for table "TIPO_ITEM".
  *
- * @property int $tite_id
- * @property string|null $tite_nombre
- * @property int|null $tite_usuario_ingreso
- * @property int|null $tite_usuario_modifica
- * @property string|null $tite_estado
- * @property string|null $tite_equipo
- * @property string|null $tite_fecha_creacion
- * @property string|null $tite_fecha_modificacion
- * @property string|null $tite_estado_logico
+ * @property int $TITE_ID
+ * @property string|null $TITE_NOMBRE
+ * @property string $TITE_PREFIX
+ * @property int|null $TITE_USUARIO_INGRESO
+ * @property int|null $TITE_USUARIO_MODIFICA
+ * @property string|null $TITE_ESTADO
+ * @property string|null $TITE_EQUIPO
+ * @property string|null $TITE_FECHA_CREACION
+ * @property string|null $TITE_FECHA_MODIFICACION
+ * @property string|null $TITE_ESTADO_LOGICO
  */
 class TipoItem extends \yii\db\ActiveRecord
 {
@@ -43,11 +44,14 @@ class TipoItem extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
+            [['TITE_PREFIX'], 'required'],
             [['TITE_USUARIO_INGRESO', 'TITE_USUARIO_MODIFICA'], 'integer'],
             [['TITE_FECHA_CREACION', 'TITE_FECHA_MODIFICACION'], 'safe'],
+            [['TITE_PREFIX'], 'string', 'max' => 3],
             [['TITE_NOMBRE'], 'string', 'max' => 200],
             [['TITE_ESTADO', 'TITE_ESTADO_LOGICO'], 'string', 'max' => 1],
             [['TITE_EQUIPO'], 'string', 'max' => 15],
+            [['TITE_PREFIX'], 'unique'],
         ];
     }
 
@@ -55,10 +59,11 @@ class TipoItem extends \yii\db\ActiveRecord
      * {@inheritdoc}
      */
     public function attributeLabels()
-    {
+    {              
         return [
           'TITE_ID' => financiero::t('tipoitem', 'Type Item Code'),
           'TITE_NOMBRE' => financiero::t('tipoitem', 'Type Item Name'),
+          'TITE_PREFIX' => financiero::t('tipoitem', 'Prefix'),
           'TITE_USUARIO_INGRESO' => financiero::t('gfinanciero', 'User Creates'),
           'TITE_USUARIO_MODIFICA' => financiero::t('gfinanciero', 'User Modifies'),
           'TITE_ESTADO' => financiero::t('gfinanciero', 'Status'),
@@ -66,20 +71,9 @@ class TipoItem extends \yii\db\ActiveRecord
           'TITE_FECHA_CREACION' => financiero::t('gfinanciero', 'Creation Date'),
           'TITE_FECHA_MODIFICACION' => financiero::t('gfinanciero', 'Modification Date'),
           'TITE_ESTADO_LOGICO' => financiero::t('gfinanciero', 'Logic Status'),
-
         ];
     }
-
-    /**
-     * Gets query for [[COSSUBCENs]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getCOSSUBCENs()
-    {
-        return $this->hasMany(COSSUBCEN::className(), ['TITE_ID' => 'TITE_ID']);
-    }
-
+    
     /**
      * Get all items of Model by params to filter data.
      *
@@ -96,8 +90,8 @@ class TipoItem extends \yii\db\ActiveRecord
         if(isset($search)){
             $str_search .= "(TITE_NOMBRE like :search) AND ";
         }
-        $cols = "TITE_ID as Id, TITE_NOMBRE as Nombre";
-        if($export) $cols = "TITE_ID as Id, TITE_NOMBRE as Nombre";
+        $cols = "TITE_ID as Id, TITE_NOMBRE as Nombre, TITE_PREFIX as Prefix";
+        if($export) $cols = "TITE_ID as Id, TITE_NOMBRE as Nombre, TITE_PREFIX as Prefix";
         $sql = "SELECT
                     $cols
                 FROM

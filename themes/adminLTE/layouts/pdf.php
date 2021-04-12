@@ -1,4 +1,7 @@
 <?php
+
+use yii\helpers\Html;
+
 $session = Yii::$app->session;
 $isUser = FALSE;
 if ($session->isActive){
@@ -17,6 +20,7 @@ if ($popup == "content" && $isUser) {
     <html>
         <head>
             <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+            <title><?= Html::encode($this->title) ?></title>
                 <style>
                     html, body, div, span, applet, object, iframe,
                     h1, h2, h3, h4, h5, h6, p, blockquote, pre,
@@ -174,7 +178,10 @@ if ($popup == "content" && $isUser) {
                     }
                     .posright{
                         text-align: right;
-                    }			
+                    }
+                    div.rptbody{
+                        margin-top: 30px;
+                    }	
                 </style>
         </head>
         <?php $this->beginBody() ?>
@@ -182,7 +189,8 @@ if ($popup == "content" && $isUser) {
             <div id="main">
                 <div id="container">
                     <div id="logo">
-                        <img src="<?= Yii::$app->basePath; ?>/themes/<?= Yii::$app->view->theme->themeName; ?>/assets/img/logos/logo_<?= $session->get('PB_idempresa');; ?>.png">
+                        <!--<img src="<?= Yii::$app->basePath; ?>/themes/<?= Yii::$app->view->theme->themeName; ?>/assets/img/logos/logo_<?= $session->get('PB_idempresa'); ?>.png">-->
+                        <img src="data:image/png;base64,<?= base64_encode(file_get_contents(Yii::$app->basePath . "/themes/" . Yii::$app->view->theme->themeName . "/assets/img/logos/logo_" . $session->get('PB_idempresa') .".png")) ?>" />
                     </div>
                     <div id="infoCuenta">
                         <div id="title">

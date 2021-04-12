@@ -38,7 +38,6 @@ class PbGridView extends GridView {
     public $addButton_fn = null;
     public $addButton_link = null;
     public $addButton_popup = false;
-    public $selectableRows = false;
 
     public function init() {
         parent::init();
@@ -75,7 +74,6 @@ class PbGridView extends GridView {
             'addButton_fn' => $this->addButton_fn,
             'addButton_lk' => $this->addButton_link,
             'addButton_pp' => $this->addButton_popup,
-            'selectableRows' => $this->selectableRows,
             'totalCount' => $this->dataProvider->getCount(), //$this->dataProvider->totalCount,
             ]);
         echo Html::tag($tag, $content, $this->options);
@@ -212,6 +210,9 @@ class PbGridView extends GridView {
         $class = ArrayHelper::remove($pager, 'class', LinkPager::className());
         $pager['pagination'] = $pagination;
         $pager['view'] = $this->getView();
+
+        $pager['firstPageLabel'] = self::t('gridview', 'First');
+        $pager['lastPageLabel'] = self::t('gridview', 'Last');
 
         return $class::widget($pager);
     }

@@ -1,0 +1,34 @@
+/*#grid_list {
+    height: 500px;
+    overflow-y: scroll;
+}*/
+
+#grid_list {
+    overflow-y: auto;
+    height: 500px;
+}
+
+#grid_list thead th {
+    position: sticky;
+    top: -1px;
+}
+
+
+/* Just common table stuff. Really. */
+
+#grid_list>table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+
+/*
+#grid_list>table>thead>tr>th,
+#grid_list>table>thead>tr>td {
+    padding: 8px 16px;
+}
+*/
+
+#grid_list>table>thead>tr>th {
+    background: #F9F9F9;
+}

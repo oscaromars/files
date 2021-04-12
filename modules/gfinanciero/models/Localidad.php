@@ -49,8 +49,8 @@ class Localidad extends \yii\db\ActiveRecord
             [['C_I_OCG', 'COD_OCG'], 'required'],
             [['REG_ASO'], 'number'],
             [['FEC_SIS'], 'safe'],
-            [['C_I_OCG'], 'string', 'max' => 2],
-            [['COD_OCG'], 'string', 'max' => 3],
+            [['C_I_OCG'], 'string', 'max' => 5],
+            [['COD_OCG'], 'string', 'max' => 5],
             [['NOM_OCG'], 'string', 'max' => 200],
             [['HOR_SIS'], 'string', 'max' => 10],
             [['USUARIO'], 'string', 'max' => 250],
@@ -83,7 +83,9 @@ class Localidad extends \yii\db\ActiveRecord
      * Get all items of Model by params to filter data.
      *
      * @param  string $search   Search Item Name
+     * @param  string $tipo   Type of Locality
      * @param  bool $dataProvider   Param to get a DataProvider or a Record Array
+     * @param  bool $export   Param to export data Report
      * @return mixed Return a Record Array or DataProvider
      */
     public function getAllItemsGrid($search, $tipo = NULL, $dataProvider = false, $export = false){
@@ -131,6 +133,135 @@ class Localidad extends \yii\db\ActiveRecord
             ]);
             return $dataProvider;
         }
+        return $result;
+    }
+
+    /**
+     * Return columns to dataset of create a query to widget Search.
+     *
+     * @return mixed Return a Record Array
+     */
+    public static function getDataColumnsQueryWidget(){
+        $arr_data = [];
+        $arr_data['con'] = Yii::$app->db_gfinanciero;
+        $arr_data['table'] = "MG0014";
+        $arr_data['cols'] = [
+            'COD_OCG', 
+            'NOM_OCG',
+        ];
+        $arr_data['aliasCols'] = [
+            financiero::t('localidad', 'Code'), 
+            financiero::t('localidad', 'Location'),
+        ];
+        $arr_data['colVisible'] = [
+            financiero::t('localidad', 'Code'), 
+            financiero::t('localidad', 'Location'),
+        ];
+        $arr_data['where'] = "EST_LOG = 1 and EST_DEL = 1";
+        $arr_data['order'] = "NOM_MAR ASC";
+        $arr_data['limitPages'] = Yii::$app->params['pageSize'];
+        return $arr_data;
+    }
+
+    /**
+     * Get all States by Country Code.
+     *
+     * @param  string $country   Country Code
+     * @return mixed Return a Record Array
+     */
+    public static function getAllStatesByCountry($country){
+        $con = Yii::$app->db_gfinanciero;
+        $con2 = Yii::$app->db;
+        $sql = "SELECT 
+                    L.COD_OCG as id,
+                    L.NOM_OCG as name
+                FROM 
+                    ".$con->dbname.".MG0014 AS L
+                    INNER JOIN ".$con2->dbname.".provincia AS P ON L.COD_OCG = P.pro_id
+                WHERE 
+                    C_I_OCG = '02' AND P.pai_id = :country AND 
+                    EST_LOG = 1 AND EST_DEL = 1
+                ORDER BY C_I_OCG;";
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":country",$country, \PDO::PARAM_INT);
+        $result = $comando->queryAll();
+        return $result;
+    }
+
+    /**
+     * Get all Countries by State Code.
+     *
+     * @param  string $state   State Code
+     * @return mixed Return a Record Array
+     */
+    public static function getAllCountriesByState($state){
+        $con = Yii::$app->db_gfinanciero;
+        $con2 = Yii::$app->db;
+        $sql = "SELECT 
+                    L.COD_OCG as id,
+                    L.NOM_OCG as name
+                FROM 
+                    ".$con->dbname.".MG0014 AS L
+                    INNER JOIN ".$con2->dbname.".pais AS P ON L.COD_OCG = P.pai_id
+                    INNER JOIN ".$con2->dbname.".provincia AS C ON C.pai_id = P.pai_id
+                WHERE 
+                    C_I_OCG = '01' AND C.pro_id = :state AND 
+                    EST_LOG = 1 AND EST_DEL = 1
+                ORDER BY C_I_OCG;";
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":state",$state, \PDO::PARAM_INT);
+        $result = $comando->queryAll();
+        return $result;
+    }
+
+    /**
+     * Get all Cities by State Code.
+     *
+     * @param  string $state   State Code
+     * @return mixed Return a Record Array
+     */
+    public static function getAllCitiesByState($state){
+        $con = Yii::$app->db_gfinanciero;
+        $con2 = Yii::$app->db;
+        $sql = "SELECT 
+                    L.COD_OCG as id,
+                    L.NOM_OCG as name
+                FROM 
+                    ".$con->dbname.".MG0014 AS L
+                    INNER JOIN ".$con2->dbname.".canton AS C ON L.COD_OCG = C.can_id
+                WHERE 
+                    C_I_OCG = '03' AND C.pro_id = :state AND 
+                    EST_LOG = 1 AND EST_DEL = 1
+                ORDER BY C_I_OCG;";
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":state",$state, \PDO::PARAM_INT);
+        $result = $comando->queryAll();
+        return $result;
+    }
+
+    /**
+     * Get all States by City Code.
+     *
+     * @param  string $city   City Code
+     * @return mixed Return a Record Array
+     */
+    public static function getAllStatesByCity($city){
+        $con = Yii::$app->db_gfinanciero;
+        $con2 = Yii::$app->db;
+        $sql = "SELECT 
+                    L.COD_OCG as id,
+                    L.NOM_OCG as name
+                FROM 
+                    ".$con->dbname.".MG0014 AS L
+                    INNER JOIN ".$con2->dbname.".provincia AS P ON L.COD_OCG = P.pro_id
+                    INNER JOIN ".$con2->dbname.".canton AS C ON C.pro_id = P.pro_id
+                WHERE 
+                    C_I_OCG = '02' AND C.can_id = :city AND 
+                    EST_LOG = 1 AND EST_DEL = 1
+                ORDER BY C_I_OCG;";
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":city",$city, \PDO::PARAM_INT);
+        $result = $comando->queryAll();
         return $result;
     }
     

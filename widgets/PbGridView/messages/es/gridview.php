@@ -11,4 +11,6 @@ return [
     "Export" => "Exportar",
     "Export Page Data" => "Exportar Información",
     "PDF" => "PDF",
+    "First" => "Primero",
+    "Last" => "Ultimo",
 ];

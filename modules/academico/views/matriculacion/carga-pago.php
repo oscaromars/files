@@ -12,6 +12,7 @@ use app\components\CFileInputAjax;
 use app\modules\Academico\Module as Academico;
 use app\modules\financiero\Module as Pagos;
 use app\modules\admision\Module as crm;
+
 use app\assets\StripeAsset;
 StripeAsset::register($this);
 
@@ -90,7 +91,7 @@ Academico::registerTranslations();
         <div class="form-group pago_documento">
             <label class="col-xs-12 col-sm-12 col-md-4 col-lg-4 control-label" for="txt_referencia" ><?= Pagos::t("Pagos", "Reference") ?><span class="text-danger"> * </span></label>
             <div   class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
-                <input type="text" class="form-control keyupmce" value="" id="txt_referencia" data-type="number" placeholder="<?= Pagos::t("Pagos", "Reference") ?>">
+                <input type="number" class="form-control keyupmce" value="" id="txt_referencia" data-type="number" placeholder="<?= Pagos::t("Pagos", "Reference") ?>">
             </div>
         </div>
         <div class="form-group pago_documento">
@@ -233,7 +234,7 @@ Academico::registerTranslations();
             </style>
             
             <div class="col-xs-12 col-sm-12 col-md-2 col-lg-2" style=" display: flex; justify-content: center;">
-                <img src="https://www.uteg.edu.ec/wp-content/themes/UTEG4/images/055693c79f5990e523846b9f43c6779d_logouteg.png" alt="MBTU" style="border-radius:4px;height:40px;margin-top: 10px;margin-bottom: 10px;">
+                <img src="https://www.uteg.edu.ec/wp-content/themes/UTEG4/images/055693c79f5990e523846b9f43c6779d_logouteg.png" alt="UTEG" style="border-radius:4px;height:40px;margin-top: 10px;margin-bottom: 10px;">
             </div>
             <div class="col-xs-12 col-sm-12 col-md-10 col-lg-10">
                 <div id="card-element"><!--Stripe.js injects the Card Element--></div>

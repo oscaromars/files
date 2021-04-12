@@ -1,5 +1,3 @@
- var stripe;
- var cardElement;
 
 $(document).ready(function() {
     $('#btn_grabar_asignacion').click(function() {

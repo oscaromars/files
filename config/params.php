@@ -78,9 +78,8 @@ return [
     /************************************************************************/
     /***** Valores para Stripe (Pago con tarjeta de credito) ****************/
     /************************************************************************/
-    //Desarrollo
-    'stripeJsKey' => "pk_test_51HrVkKC4VyMkdPFRZ5aImiv4UNRIm1N7qh2VWG5YMcXJMufmwqvCVYAKSZVxvsjpP6PbjW4sSrc8OKrgfNsrmswt00OezUqkuN",
-    //'secret_key'  => "sk_test_51HrVkKC4VyMkdPFRrDhbuQLABtvVq3tfZ8c3E3fm55Q7kg5anz6fqO5qrlPBVu7fDc9XVWGTb55M6TiIq4hwHz8J00rVFgisaj",
+    //Desarrollo Cuenta UTEG
+    'stripeJsKey' => "pk_test_y0O1WHdyGNgjQDrnTcUvw9UT",
     'secret_key'  => "sk_test_eNDH9rGC6bhEcW8JhRXRA4xk",
     //Produccion Cuenta UTEG
     /*

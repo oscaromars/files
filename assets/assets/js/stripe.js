@@ -4,9 +4,13 @@
     // Create an instance of the Stripe object
     // Set your publishable API key
     //DESARROLLO
-    //stripe = Stripe("pk_test_51HrVkKC4VyMkdPFRZ5aImiv4UNRIm1N7qh2VWG5YMcXJMufmwqvCVYAKSZVxvsjpP6PbjW4sSrc8OKrgfNsrmswt00OezUqkuN");
-    //PRODUCCION
+    var stripe;
+    var cardElement;
+
     stripe = Stripe("pk_test_y0O1WHdyGNgjQDrnTcUvw9UT");
+    //PRODUCCION
+    //stripe = Stripe("pk_live_T1YxYu1Tszv8o3G24jmUxTDG");
+    
 
     // Create an instance of elements
     var elements = stripe.elements();

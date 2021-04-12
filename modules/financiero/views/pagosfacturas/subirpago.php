@@ -11,101 +11,13 @@ use app\modules\financiero\Module as Pagos;
 use app\modules\admision\Module as crm;
 use app\modules\academico\Module as academico;
 
+use app\assets\StripeAsset;
+StripeAsset::register($this);
 //print_r($model);
 Especies::registerTranslations();
 Pagos::registerTranslations();
 crm::registerTranslations();
 academico::registerTranslations();
-
-$this->registerJsFile("https://js.stripe.com/v3/",['depends' => [\yii\web\YiiAsset::className()]]);
-$this->registerJsFile("https://polyfill.io/v3/polyfill.min.js?version=3.52.1&features=fetch",['depends' => [\yii\web\YiiAsset::className()]]);
-
-
-
-$this->registerJs("
-    $(document).ready(function () {
-    /************************************************************/
-    /***** INICIO STRIPE ****************************************/
-    /************************************************************/
-        // Create an instance of the Stripe object
-        // Set your publishable API key
-        
-        //CLAVE PRODUCCION
-        //var stripe = Stripe('pk_live_51HrVkKC4VyMkdPFRjqnwytVZZb552sp7TNEmQanSA78wA1awVHIDp94YcNKfa66Qxs6z2E73UGJwUjWN2pcy9nWl008QHsVt3Q');
-        //CLAVE DESARROLLO    
-        stripe = Stripe('pk_test_51HrVkKC4VyMkdPFRZ5aImiv4UNRIm1N7qh2VWG5YMcXJMufmwqvCVYAKSZVxvsjpP6PbjW4sSrc8OKrgfNsrmswt00OezUqkuN');
-        
-        // Create an instance of elements
-        var elements = stripe.elements();
-
-        var style = {
-            base: {
-                //fontWeight: 400,
-                fontFamily: 'Roboto, Open Sans, Segoe UI, sans-serif',
-                fontSize: '12px',
-                lineHeight: '1.4',
-                color: '#555',
-                backgroundColor: '#fff',
-                '::placeholder': {
-                    color: '#888',
-                },
-            },
-            invalid: {
-                color: '#eb1c26',
-            }
-        };
-
-        var style2 = {
-            base: {
-            color: '#32325d',
-            fontFamily: 'Arial, sans-serif',
-            fontSmoothing: 'antialiased',
-            fontSize: '16px',
-            '::placeholder': {
-              color: '#32325d'
-            }
-          },
-
-        };
-
-        cardElement = elements.create('card', { style: style2 , hidePostalCode: true});
-        cardElement.mount('#card-element');
-
-        /*
-        //Todo este codigo se comenta 
-        cardElement = elements.create('cardNumber', {
-            style: style
-        });
-        cardElement.mount('#card_number');
-
-        var exp = elements.create('cardExpiry', {
-            'style': style
-        });
-        exp.mount('#card_expiry');
-
-        var cvc = elements.create('cardCvc', {
-            'style': style
-        });
-        
-        cvc.mount('#card_cvc');
-        */
-
-        cardElement.addEventListener('change', function(event) {
-            if (event.error) {
-                //resultContainer.innerHTML = '<p>'+event.error.message+'</p>';
-                $('#paymentResponse').html('<p>'+event.error.message+'</p>');
-            } else {
-                //resultContainer.innerHTML = '';
-                $('#paymentResponse').html('');
-            }
-        });
-    /************************************************************/
-    /***** FIN STRIPE *******************************************/
-    /************************************************************/
-    })
-    "
-);
-
 ?>
 
 <?= Html::hiddenInput('txth_idest', $arr_persona['est_id'], ['id' => 'txth_idest']); ?>
@@ -158,68 +70,58 @@ $this->registerJs("
     }
 </style>
 <form class="form-horizontal" enctype="multipart/form-data" id="formsolicitud">   
-    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
         <p class="text-danger"> <?= Yii::t("formulario", "Fields with * are required") ?> </p>
     </div>
-    <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12">
-        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-            <div class="form-group">
-                <h4><span id="lbl_general"><?= Pagos::t("Pagos", "Student Data") ?></span></h4> 
-            </div>
-        </div>
-        <div class='col-md-12 col-sm-12 col-xs-12 col-lg-12'>
-            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-                <div class="form-group">
-                    <label for="txt_nombres" class="col-xs-12 col-sm-12 col-md-5 col-lg-5 control-label" id="lbl_nombre1"><?= Yii::t("formulario", "Names") ?></label>
-                    <div class="col-xs-12 col-sm-12 col-md-7 col-lg-7">
-                        <input type="text" class="form-control keyupmce" value="<?php echo $arr_persona['per_pri_nombre'] . " " . $arr_persona['per_seg_nombre'] . " " . $arr_persona['per_pri_apellido'] . " " . $arr_persona['per_seg_apellido'] ?>" id="txt_nombres" disabled data-type="alfa" placeholder="<?= Yii::t("formulario", "First Name") ?>">
-                    </div>
-                </div>
-            </div>
-            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-                <div class="form-group">
-                    <label for="txt_cedula" class="col-sm-5 col-md-5 col-xs-5 col-lg-5 control-label" id="lbl_nombre1"><?= Pagos::t("Pagos", "Cell") ?></label>
-                    <div class="col-sm-7 col-md-7 col-xs-7 col-lg-7">
-                        <input type="text" class="form-control keyupmce" value="<?php echo $arr_persona['per_cedula'] ?>" id="txt_cedula" data-type="alfa" disabled placeholder="<?= Yii::t("formulario", "DNI Document") ?>">
-                    </div>
-                </div>
-            </div>
-        </div>    
-    </div>
     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-            <div class="form-group">
-                <h4><span id="lbl_general"><?= Pagos::t("Pagos", "Academic Data") ?></span></h4> 
+        <div class="form-group">
+            <h4><span id="lbl_general"><?= Pagos::t("Pagos", "Student Data") ?></span></h4> 
+        </div>
+    </div>
+    <div class='col-xs-12 col-sm-12 col-md-6 col-lg-6'>
+        <div class="form-group">
+            <label for="txt_nombres" class="col-xs-12 col-sm-12 col-md-5 col-lg-5 control-label" id="lbl_nombre1"><?= Yii::t("formulario", "Names") ?></label>
+            <div class="col-xs-12 col-sm-12 col-md-7 col-lg-7">
+                <input type="text" class="form-control keyupmce" value="<?php echo $arr_persona['per_pri_nombre'] . " " . $arr_persona['per_seg_nombre'] . " " . $arr_persona['per_pri_apellido'] . " " . $arr_persona['per_seg_apellido'] ?>" id="txt_nombres" disabled data-type="alfa" placeholder="<?= Yii::t("formulario", "First Name") ?>">
             </div>
         </div>
-        <div class='col-md-12 col-sm-12 col-xs-12 col-lg-12'>
-            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-                <div class="form-group">
-                    <label for="cmb_ninteres" class="col-xs-12 col-sm-12 col-md-5 col-lg-5 control-label"><?= Especies::t("Academico", "Academic unit") ?></label>
-                    <div class="col-xs-12 col-sm-12 col-md-7 col-lg-7">
-                        <?= Html::dropDownList("cmb_ninteres", $arr_persona['uaca_id'], array_merge([Yii::t("formulario", "Select")], $arr_unidad), ["class" => "form-control", "id" => "cmb_ninteres", "disabled" => "true"]) ?>
-                    </div>
-                </div>  
-            </div>
-            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6" id="divModalidad">
-                <div class="form-group">
-                    <label for="cmb_modalidad" class="col-xs-12 col-sm-12 col-md-5 col-lg-5 control-label"><?= Especies::t("Academico", "Modality") ?></label>
-                    <div class="col-xs-12 col-sm-12 col-md-7 col-lg-7">
-                        <?= Html::dropDownList("cmb_modalidad", $arr_persona['mod_id'], array_merge([Yii::t("formulario", "Select")], $arr_modalidad), ["class" => "form-control", "id" => "cmb_modalidad", "disabled" => "true"]) ?>
-                    </div>
-                </div>
-            </div>                             
-        </div>
-        <div class='col-md-12 col-sm-12 col-xs-12 col-lg-12'>
-            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-                <div class="form-group">
-                    <label for="cmb_carrera" class="col-sm-5 col-md-5 col-xs-5 col-lg-5 control-label"><?= Especies::t("Academico", "Career/Program") ?></label>
-                    <div class="col-sm-7 col-md-7 col-xs-7 col-lg-7">
-                        <?= Html::dropDownList("cmb_carrera", $arr_persona['eaca_id'], $arr_carrera, ["class" => "form-control", "id" => "cmb_carrera", "disabled" => "true"]) ?>
-                    </div>
-                </div>                                        
+    </div>
+    <div class='col-xs-12 col-sm-12 col-md-6 col-lg-6'>
+        <div class="form-group">
+            <label for="txt_cedula" class="col-xs-12 col-sm-12 col-md-5 col-lg-5 control-label" id="lbl_nombre1"><?= Pagos::t("Pagos", "Cell") ?></label>
+            <div class="col-xs-12 col-sm-12 col-md-7 col-lg-7">
+                <input type="text" class="form-control keyupmce" value="<?php echo $arr_persona['per_cedula'] ?>" id="txt_cedula" data-type="alfa" disabled placeholder="<?= Yii::t("formulario", "DNI Document") ?>">
             </div>
         </div>
+    </div>    
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="form-group">
+            <h4><span id="lbl_general"><?= Pagos::t("Pagos", "Academic Data") ?></span></h4> 
+        </div>
+    </div>
+    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+        <div class="form-group">
+            <label for="cmb_ninteres" class="col-xs-12 col-sm-12 col-md-5 col-lg-5 control-label"><?= Especies::t("Academico", "Academic unit") ?></label>
+            <div class="col-xs-12 col-sm-12 col-md-7 col-lg-7">
+                <?= Html::dropDownList("cmb_ninteres", $arr_persona['uaca_id'], array_merge([Yii::t("formulario", "Select")], $arr_unidad), ["class" => "form-control", "id" => "cmb_ninteres", "disabled" => "true"]) ?>
+            </div>
+        </div>  
+    </div>
+    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6" id="divModalidad">
+        <div class="form-group">
+            <label for="cmb_modalidad" class="col-xs-12 col-sm-12 col-md-5 col-lg-5 control-label"><?= Especies::t("Academico", "Modality") ?></label>
+            <div class="col-xs-12 col-sm-12 col-md-7 col-lg-7">
+                <?= Html::dropDownList("cmb_modalidad", $arr_persona['mod_id'], array_merge([Yii::t("formulario", "Select")], $arr_modalidad), ["class" => "form-control", "id" => "cmb_modalidad", "disabled" => "true"]) ?>
+            </div>
+        </div>
+    </div>                             
+    <div class='col-xs-12 col-sm-12 col-md-6 col-lg-6'>
+        <div class="form-group">
+            <label for="cmb_carrera" class="col-xs-12 col-sm-12 col-md-5 col-lg-5 control-label"><?= Especies::t("Academico", "Career/Program") ?></label>
+            <div class="col-xs-12 col-sm-12 col-md-7 col-lg-7">
+                <?= Html::dropDownList("cmb_carrera", $arr_persona['eaca_id'], $arr_carrera, ["class" => "form-control", "id" => "cmb_carrera", "disabled" => "true"]) ?>
+            </div>
+        </div>                                        
     </div>
     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
         <div class="form-group">
@@ -240,7 +142,7 @@ $this->registerJs("
             <div class="form-group">
                 <label class="col-xs-12 col-sm-12 col-md-5 col-lg-5 control-label" for="txt_referencia" ><?= Pagos::t("Pagos", "Reference") ?><span class="text-danger"> * </span></label>
                 <div   class="col-xs-12 col-sm-12 col-md-7 col-lg-7">
-                    <input type="text" class="form-control keyupmce" value="" id="txt_referencia" data-type="number" placeholder="<?= Pagos::t("Pagos", "Reference") ?>">
+                    <input type="number" class="form-control keyupmce" value="" id="txt_referencia" data-type="number" placeholder="<?= Pagos::t("Pagos", "Reference") ?>">
                 </div>
             </div>  
         </div>

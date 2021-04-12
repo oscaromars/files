@@ -59,7 +59,7 @@ namespace app\modules\financiero\messages;
      "Price with discount" => "Precio Descuento",
      "Quota value" => "Valor cuota",
      "Reason/Item/Service" => "Motivo/Item/Servicio",
-     "Reference" => "Referencia",
+     "Reference" => "Comprobante No.",
      "Registration Payments for Collections" => "Registro Pagos por Colecturía",  
      "Student Data" => "Datos Estudiante",
      "Tax" =>"Impuesto",

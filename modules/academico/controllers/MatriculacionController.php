@@ -292,8 +292,6 @@ class MatriculacionController extends \app\components\CController {
         $est_id = $datosEstudiante['est_id'];
         $mod_id = $datosEstudiante['mod_id'];
 
-
-
         $data = Yii::$app->request->post();
 
         $mod_persona = Persona::findOne($per_id);//Persona::find()->select("per_correo")->where(["per_id" => $per_id])->asArray()->all();

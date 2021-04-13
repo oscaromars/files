@@ -9,6 +9,10 @@ use yii\helpers\ArrayHelper;
 use app\models\Utilities;
 use yii\base\Exception;
 use app\modules\academico\models\UsuarioEducativa;
+use app\modules\academico\models\UnidadAcademica;
+use app\modules\academico\models\Modalidad;
+use app\modules\academico\models\PeriodoAcademicoMetIngreso;
+use app\modules\academico\models\Distributivo;
 
 class UsuarioeducativaController extends \app\components\CController {
 
@@ -91,4 +95,56 @@ class UsuarioeducativaController extends \app\components\CController {
                     }
                 }
     } 
+
+    public function actionListarestudianteregistro() {
+        $per_id = @Yii::$app->session->get("PB_perid");
+        $distributivo_model = new Distributivo();
+        $mod_modalidad = new Modalidad();
+        $mod_unidad = new UnidadAcademica();
+        $mod_periodo = new PeriodoAcademicoMetIngreso();
+        $data = Yii::$app->request->get();
+
+        if ($data['PBgetFilter']) {
+            $arrSearch["search"] = $data['search'];
+            $arrSearch["profesor"] = $data['profesor'];
+            $arrSearch["unidad"] = $data['unidad'];
+            $arrSearch["modalidad"] = $data['modalidad'];
+            $arrSearch["periodo"] = $data['periodo'];
+            $arrSearch["asignatura"] = $data['asignatura'];
+            $arrSearch["estado_pago"] = $data['estado'];
+            $arrSearch["jornada"] = $data['jornada'];
+            $model = $distributivo_model->consultarDistributivoxEstudiante($arrSearch, 1);
+            return $this->render('_listarestudiantespagogrid', [
+                        "model" => $model,
+            ]);
+        } else {
+            $model = $distributivo_model->consultarDistributivoxEstudiante(null, 1);
+        }
+        if (Yii::$app->request->isAjax) {
+            $data = Yii::$app->request->post();
+            if (isset($data["getmodalidad"])) {
+                $modalidad = $mod_modalidad->consultarModalidad($data["uaca_id"], 1);
+                $message = array("modalidad" => $modalidad);
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+            }
+            if (isset($data["getasignatura"])) {
+                $asignatura = $distributivo_model->consultarAsiganturaxuniymoda($data["uaca_id"], $data["moda_id"]);
+                $message = array("asignatura" => $asignatura);
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+            }
+        }
+        $arr_unidad = $mod_unidad->consultarUnidadAcademicasEmpresa(1);
+        $arr_modalidad = $mod_modalidad->consultarModalidad($arr_unidad[0]["id"], 1);
+        $arr_periodo = $mod_periodo->consultarPeriodoAcademicotodos();
+        $arr_asignatura = $distributivo_model->consultarAsiganturaxuniymoda(0, 0);
+        return $this->render('listarestudianteregistro', [
+                    'mod_unidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Grid")]], $arr_unidad), "id", "name"),
+                    'mod_modalidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Grid")]], $arr_modalidad), "id", "name"),
+                    "mod_periodo" => ArrayHelper::map($arr_periodo, "id", "name"),
+                    'mod_asignatura' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Grid")]], $arr_asignatura), "id", "name"),
+                    'model' => $model,
+                     'mod_estado' => array("-1" => "Todos", "0" => "No Autorizado", "1" => "Autorizado"),
+                    //'mod_jornada' => array("0" => "Todos", "1" => "(M) Matutino", "2" => "(N) Nocturno", "3" => "(S) Semipresencial", "4" => "(D) Distancia"),
+        ]);
+    }
 }  

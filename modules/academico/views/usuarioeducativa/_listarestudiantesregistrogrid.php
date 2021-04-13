@@ -14,9 +14,9 @@ academico::registerTranslations();
     <?=
     PbGridView::widget([
         'id' => 'Tbg_Registro_educativa',
-        //'showExport' => true,
-        //'fnExportEXCEL' => "exportExcelEduregistro",
-        //'fnExportPDF' => "exportPdfEduregistro",
+        'showExport' => true,
+        'fnExportEXCEL' => "exportExcelEduregistro",
+        'fnExportPDF' => "exportPdfEduregistro",
         'dataProvider' => $model,
         'columns' =>
         [

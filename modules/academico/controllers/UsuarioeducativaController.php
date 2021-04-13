@@ -112,9 +112,9 @@ class UsuarioeducativaController extends \app\components\CController {
             $arrSearch["periodo"] = $data['periodo'];
             $arrSearch["asignatura"] = $data['asignatura'];
             $arrSearch["estado_pago"] = $data['estado'];
-            $arrSearch["jornada"] = $data['jornada'];
+            //$arrSearch["jornada"] = $data['jornada'];
             $model = $distributivo_model->consultarDistributivoxEstudiante($arrSearch, 1);
-            return $this->render('_listarestudiantespagogrid', [
+            return $this->render('_listarestudiantesregistrogrid', [
                         "model" => $model,
             ]);
         } else {

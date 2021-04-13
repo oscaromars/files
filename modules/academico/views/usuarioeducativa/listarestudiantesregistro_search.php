@@ -66,7 +66,7 @@ use app\modules\academico\Module as academico;
     <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12">
         <div class="col-sm-8"></div>
         <div class="col-sm-2 col-md-2 col-xs-4 col-lg-2">                
-            <a id="btn_buscarData_distpago" href="javascript:" class="btn btn-primary btn-block"> <?= Yii::t("formulario", "Search") ?></a>
+            <a id="btn_buscarData_estregsitro" href="javascript:" class="btn btn-primary btn-block"> <?= Yii::t("formulario", "Search") ?></a>
         </div>
         <!--<div class="col-sm-2 col-md-2 col-xs-2 col-lg-2">                
             <a id="btnHabilitaula" href="javascript:" class="btn btn-primary btn-block"> <? Yii::t("formulario", "Save") ?></a>

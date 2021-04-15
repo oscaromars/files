@@ -601,8 +601,12 @@ class Distributivo extends \yii\db\ActiveRecord {
                 }
             }*/
             if ($arrFiltro['estado_pago'] == "0" or $arrFiltro['estado_pago'] == "1") {            
+                if ($arrFiltro['estado_pago'] == "0") {            
+                $str_search .= " (m.ccar_estado_cancela is null OR m.ccar_estado_cancela = :estado_pago) AND ";
+            }else{
                 $str_search .= " m.ccar_estado_cancela = :estado_pago AND ";
-            }  
+            } 
+        } 
             /**************************************************************  **/ 
             if ($arrFiltro['jornada'] != "" && $arrFiltro['jornada'] > 0) {
                 $str_search .= "a.daca_jornada = :jornada AND ";

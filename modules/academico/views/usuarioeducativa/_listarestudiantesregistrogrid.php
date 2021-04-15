@@ -20,10 +20,23 @@ academico::registerTranslations();
         'dataProvider' => $model,
         'columns' =>
         [
-            [
+            /*[
                 'attribute' => 'Periodo',
                 'header' => Yii::t("formulario", "Period"),
                 'value' => 'periodo',
+            ],*/
+            [
+                'class' => 'yii\grid\ActionColumn',
+                'header' => Yii::t("formulario", "Period"),
+                'template' => '{view}',
+                'buttons' => [
+                    'view' => function ($url, $model) {
+                        if (strlen($model['periodo']) > 10) {
+                            $texto = '...';
+                        }
+                        return Html::a('<span>' . substr($model['periodo'], 0, 10) . $texto . '</span>', "javascript:", ["data-toggle" => "tooltip", "title" => $model['periodo']]);
+                    },
+                ],
             ],
             [
                 'attribute' => 'unidad_academico',
@@ -84,7 +97,7 @@ academico::registerTranslations();
                         return '<small class="label label-success">Autorizado</small>';
                 },*/
             ], 
-            /*[
+            [   // SE DEBE ANALIZAR BIEN QUE VALUE SE CAPTURA EN EL CHECK PARA EL DESBLOQUEO
                 'class' => 'yii\grid\ActionColumn',
                 'header' => Academico::t("matriculacion", "Select"),
                 'contentOptions' => ['style' => 'text-align: center;'],
@@ -95,7 +108,7 @@ academico::registerTranslations();
                         return Html::checkbox("", false, ["value" => $model['est_id']]);
                     },
                 ],
-            ],*/
+            ],
         ],
     ])
     ?>

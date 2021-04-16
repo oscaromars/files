@@ -151,8 +151,8 @@ class CursoEducativa extends \yii\db\ActiveRecord
                         $asi_id = $model_asignatura->consultarAsindxalias($val[3]); // envio el alias me devuelve el asi_id
                         $fila++;
                         if(!empty($asi_id['asi_id'])){
-                            //$existe = $mod_educativa->consultarasignatura(($val[1], $val[2],$val[3]); // consultar si ya existe data igual no ingresar id_asignatura educativa y nombre
-                            //if($existe['existe_asignatura'] == 0){
+                            $existe = $mod_educativa->consultarcursoeducativaexi($val[1], $val[2]); // consultar si ya existe data igual no ingresar id_asignatura educativa y nombre
+                            if($existe['existe_curso'] == 0){
                                 // $asi_id['asi_id'] = 1; //Borrar luego de hacer la consulta
                                 $save_documento = $this->saveDocumentoDB($val, $paca_id, $asi_id['asi_id']);
                                 \app\models\Utilities::putMessageLogFile('save_documento');
@@ -165,9 +165,9 @@ class CursoEducativa extends \yii\db\ActiveRecord
                                     \app\models\Utilities::putMessageLogFile('error fila' . $fila);
                                     return $arroout;
                                 }
-                            /*} else {
+                            } else {
                                 $ingresadoant .= $val[1] . ", ";
-                            }*/
+                            }
                         }else {
                             $noasignatura .= $val[1] . ", ";
                         }
@@ -218,5 +218,33 @@ class CursoEducativa extends \yii\db\ActiveRecord
         \app\models\Utilities::putMessageLogFile('usu_id: ' .$usu_id);        
 
         return $mod_educativacurso->save();
+    }
+
+    /**
+     * Function Consultar si ya se ha cargado la informacion anteriormente en curso educativa.
+     * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>;
+     * @property       
+     * @return  
+     */
+    public function consultarcursoeducativaexi($cedu_asi_id, $cedu_asi_nombre) {
+        $con = \Yii::$app->db_academico;     
+        $estado = 1; 
+
+        $sql = "SELECT 	
+                        count(*) as existe_curso                       
+                        
+                FROM " . $con->dbname . ".curso_educativa                 
+                WHERE 
+                cedu_asi_id = :cedu_asi_id AND                
+                cedu_asi_nombre = :cedu_asi_nombre AND
+                cedu_estado = :estado AND
+                cedu_estado_logico = :estado ";
+
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $comando->bindParam(":cedu_asi_id", $cedu_asi_id, \PDO::PARAM_STR);
+        $comando->bindParam(":cedu_asi_nombre", $cedu_asi_nombre, \PDO::PARAM_STR);
+        $resultData = $comando->queryOne();
+        return $resultData;
     }
 }

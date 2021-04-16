@@ -316,6 +316,7 @@ class Asignatura extends \yii\db\ActiveRecord
                         
                 FROM " . $con->dbname . ".asignatura              
                 WHERE 
+                uaca_id = 1 AND
                 asi_alias = :asi_alias AND
                 asi_estado = :estado AND
                 asi_estado_logico = :estado";

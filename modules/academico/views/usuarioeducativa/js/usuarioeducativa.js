@@ -7,6 +7,13 @@ $(document).ready(function() {
         actualizarGridEstregistro();
     });
 
+    $(document).ready(function() {  
+        $('#btn_guardarcurso').click(function() {
+            cargarDocumento();
+        });
+    });
+    
+
     $('#cmb_unidad_dises').change(function () {
         var link = $('#txth_base').val() + "/academico/distributivo/listarestudiantespago";
         var arrParams = new Object();
@@ -60,6 +67,22 @@ function cargarUsuario() {
             setTimeout(function() {
                 window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/cargarusuario";
             }, 5000);
+        }, true);
+    }
+}
+
+function cargarDocumento() {
+    var arrParams = new Object();
+    var link = $('#txth_base').val() + "/academico/usuarioeducativa/upload";
+    arrParams.procesar_file = true;
+    arrParams.archivo = $('#txth_doc_adj_educativacu2').val() + "." + $('#txth_doc_adj_educativacu').val().split('.').pop();
+    arrParams.paca_id = $("#cmb_per_aca").val();    
+    if (!validateForm()) {
+        requestHttpAjax(link, arrParams, function(response) {      
+            showAlert(response.status, response.label, response.message);
+            setTimeout(function () {
+                    window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/upload";
+                }, 5000);  
         }, true);
     }
 }

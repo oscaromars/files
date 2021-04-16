@@ -9,10 +9,13 @@ use yii\helpers\ArrayHelper;
 use app\models\Utilities;
 use yii\base\Exception;
 use app\modules\academico\models\UsuarioEducativa;
+use app\modules\academico\models\CursoEducativa;
+use app\modules\academico\models\Asignatura;
 use app\modules\academico\models\UnidadAcademica;
 use app\modules\academico\models\Modalidad;
 use app\modules\academico\models\PeriodoAcademicoMetIngreso;
 use app\modules\academico\models\Distributivo;
+use app\modules\academico\models\PeriodoAcademico;
 use app\models\ExportFile;
 use app\modules\academico\Module as academico;
 use app\modules\admision\Module as admision;
@@ -233,5 +236,72 @@ class UsuarioeducativaController extends \app\components\CController {
                 ])
         );
         $report->mpdf->Output('Reporte_' . date("Ymdhis") . ".pdf", ExportFile::OUTPUT_TO_DOWNLOAD);
+    }
+
+    public function actionUpload() {
+        //$usu_id = Yii::$app->session->get("PB_iduser");   
+        $mod_periodo = new PeriodoAcademicoMetIngreso(); 
+        $mod_educativa = new CursoEducativa();
+        if (Yii::$app->request->isAjax) {
+            $data = Yii::$app->request->post();
+            if ($data["upload_file"]) {
+                if (empty($_FILES)) {
+                    return json_encode(['error' => Yii::t("notificaciones", "Error to process File {file}. Try again.", ['{file}' => basename($files['name'])])]);
+                }
+                //Recibe Parámetros
+                $files = $_FILES[key($_FILES)];
+                $arrIm = explode(".", basename($files['name']));
+                $typeFile = strtolower($arrIm[count($arrIm) - 1]);
+                if ($typeFile == 'xlsx' || $typeFile == 'csv' || $typeFile == 'xls') {
+                    $dirFileEnd = Yii::$app->params["documentFolder"] . "educativa/" . $data["name_file"] . "." . $typeFile;
+                    $status = Utilities::moveUploadFile($files['tmp_name'], $dirFileEnd);
+                    if ($status) {
+                        return true;
+                    } else {
+                        return json_encode(['error' => Yii::t("notificaciones", "Error to process File {file}. Try again.", ['{file}' => basename($files['name'])])]);
+                    }
+                }
+            }
+            if ($data["procesar_file"]) {
+                try {
+                ini_set('memory_limit', '256M');
+                \app\models\Utilities::putMessageLogFile('Files controller entro ...: ');
+                \app\models\Utilities::putMessageLogFile('paca_id controller ...: ' . $data["paca_id"]);
+                $carga_archivo = $mod_educativa->CargarArchivoeducativa($data["archivo"], $data["paca_id"]);
+                if ($carga_archivo['status']) {
+                    \app\models\Utilities::putMessageLogFile('status controller entro...: ' . $arroout['noalumno']);
+                    if (!empty($carga_archivo['noasignatura'])){                        
+                    $noasignatura = ' Se encontró las Asignaturas'. $carga_archivo['noasignatura'] . ' que no pertencen a las asignaturas por ende no se cargaron. ';
+                    }
+                    $message = array(
+                        "wtmessage" => Yii::t("notificaciones", "Archivo procesado correctamente." . $carga_archivo['data'] .  $noasignatura),
+                        "title" => Yii::t('jslang', 'Success'),
+                    );
+                    return Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Success"), false, $message);
+                } else {
+                    $message = array(
+                        "wtmessage" => Yii::t("notificaciones", "Error al procesar el archivo1. " . $carga_archivo['message']),
+                        "title" => Yii::t('jslang', 'Error'),
+                    );
+                    return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), true, $message);
+                }
+                return;
+            } catch (Exception $ex) {      
+                $message = array(
+                    'wtmessage' => Yii::t('notificaciones', 'Error al procesar el archivo2.'),
+                    'title' => Yii::t('jslang', 'Error'),
+                );
+                return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t('jslang', 'Error'), true, $message);
+            }
+           }
+         } 
+        else {
+            //$arr_asignatura = Asignatura::findAll(["asi_estado" => 1, "asi_estado_logico" => 1]);
+            $arr_periodoAcademico = $mod_periodo->consultarPeriodoAcademicotodos();
+            return $this->render('cursoeducativa',[
+                'arr_periodoAcademico' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $arr_periodoAcademico), "id", "name"),
+                //'arr_asignatura' => (empty(ArrayHelper::map($arr_asignatura, "asi_id", "asi_nombre"))) ? array(Yii::t("cursoeducativa", "-- Select asignatura --")) : (ArrayHelper::map($arr_asignatura, "asi_id", "asi_nombre"))
+            ]);
+        }        
     }
 }  

@@ -28,7 +28,14 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
         <?php echo $leyenda; ?>
     </div>    
     <div class='row'>
-        <div class='col-lg-12 col-md-12 col-sm-12 col-xs-12'> 
+        <div class='col-lg-12 col-md-12 col-sm-12 col-xs-12'>
+        <div class="form-group">
+        <label for="lbl_plantilla" class="col-lg-2 col-md-2 col-sm-2 col-xs-2 control-label"><?= academico::t("planificacion", "Template"); ?></label>
+            <div class="col-sm-5 col-md-5 col-xs-5 col-lg-5">
+            <?= Html::a(academico::t("matriculacion", "Download"), Url::to(['downloadplantillacurso', 'filename' => 'Plantilla_cargarcursoeducativa.xlsx']));   ?>
+            </div>                       
+        </div> 
+        </div> 
             <div class="form-group">
                 <label for="cmb_per_aca" class="col-sm-2 control-label"><?= academico::t("matriculacion", 'Academic Period') ?></label>
                 <div class="col-sm-5">

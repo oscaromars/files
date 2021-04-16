@@ -6,6 +6,7 @@ use app\models\Utilities;
 use Yii;
 use yii\data\ArrayDataProvider;
 use yii\data\ActiveDataProvider;
+use app\modules\academico\models\Asignatura;
 use yii\base\Exception;
 use yii\helpers\VarDumper;
 
@@ -115,6 +116,7 @@ class CursoEducativa extends \yii\db\ActiveRecord
         $chk_ext = explode(".", $file);
         $con = \Yii::$app->db_academico;
         $trans = $con->getTransaction(); //se obtiene la transaccion actual
+        $model_asignatura = new Asignatura();
         $mod_educativa = new CursoEducativa();
         if($trans !== null){
             $trans = null;
@@ -145,13 +147,13 @@ class CursoEducativa extends \yii\db\ActiveRecord
                 foreach ($dataArr as $val) {
                     if(!is_null($val[1]) || $val[1]){
                         \app\models\Utilities::putMessageLogFile('for archivo');
-                        //$val[1] = strval($val[1]);
-                        //$asi_id = $asi_id->consultarAsindxalias($val[3]); // envio el alias me devuelve el asi_id
+                        $val[1] = strval($val[1]);
+                        $asi_id = $model_asignatura->consultarAsindxalias($val[3]); // envio el alias me devuelve el asi_id
                         $fila++;
-                        //if(!empty($asi_id['asi_id'])){
-                            //$existe = $mod_educativa->consultarasignatura(($val[1], $val[2],$val[3]); //
+                        if(!empty($asi_id['asi_id'])){
+                            //$existe = $mod_educativa->consultarasignatura(($val[1], $val[2],$val[3]); // consultar si ya existe data igual no ingresar id_asignatura educativa y nombre
                             //if($existe['existe_asignatura'] == 0){
-                                $asi_id['asi_id'] = 1; //Borrar luego de hacer la consulta
+                                // $asi_id['asi_id'] = 1; //Borrar luego de hacer la consulta
                                 $save_documento = $this->saveDocumentoDB($val, $paca_id, $asi_id['asi_id']);
                                 \app\models\Utilities::putMessageLogFile('save_documento');
                                 if(!$save_documento){
@@ -166,9 +168,9 @@ class CursoEducativa extends \yii\db\ActiveRecord
                             /*} else {
                                 $ingresadoant .= $val[1] . ", ";
                             }*/
-                        /*}else {
+                        }else {
                             $noasignatura .= $val[1] . ", ";
-                        }*/
+                        }
                     }
                 }
                 if(!$trans !== null)

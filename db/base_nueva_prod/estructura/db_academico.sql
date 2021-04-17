@@ -1903,7 +1903,7 @@ create table if not exists `curso_educativa` (
  `paca_id` bigint(20) not null, 
  `asi_id` bigint(20) not null, 
  `cedu_asi_id` bigint(20) not null,
- `cedu_asi_nombre` varchar(1) not null, 
+ `cedu_asi_nombre` varchar(500) not null, 
  `cedu_usuario_ingreso` bigint(20) not null,
  `cedu_usuario_modifica` bigint(20) null,
  `cedu_estado` varchar(1) not null, 

@@ -267,11 +267,11 @@ class UsuarioeducativaController extends \app\components\CController {
                 ini_set('memory_limit', '256M');
                 \app\models\Utilities::putMessageLogFile('Files controller entro ...: ');
                 \app\models\Utilities::putMessageLogFile('paca_id controller ...: ' . $data["paca_id"]);
-                $carga_archivo = $mod_educativa->CargarArchivoeducativa($data["archivo"], $data["paca_id"]);
+                $carga_archivo = $mod_educativa->CargarArchivocursoeducativa($data["archivo"], $data["paca_id"]);
                 if ($carga_archivo['status']) {
                     \app\models\Utilities::putMessageLogFile('status controller entro...: ' . $arroout['noalumno']);
                     if (!empty($carga_archivo['noasignatura'])){                        
-                    $noasignatura = ' Se encontró las Asignaturas'. $carga_archivo['noasignatura'] . ' que no pertencen a las asignaturas por ende no se cargaron. ';
+                    $noasignatura = ' Se encontró las Asignaturas'. $carga_archivo['noasignatura'] . ' que no corresponde el alias. ';
                     }
                     $message = array(
                         "wtmessage" => Yii::t("notificaciones", "Archivo procesado correctamente." . $carga_archivo['data'] .  $noasignatura),

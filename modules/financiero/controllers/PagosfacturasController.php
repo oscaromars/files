@@ -281,7 +281,7 @@ class PagosfacturasController extends \app\components\CController {
                         }
                         $respago = $mod_pagos->grabarRechazo($id, $resultado, $observacion);
 
-                        if($respago['pfes_concepto'] == 'ME'){
+                        if($datos['pfes_concepto'] == 'ME'){
                             $cartera = $mod_pagos->buscarIdCartera($id);
                             $id_cartera = $cartera[0]['ccar_id'];
                         }
@@ -296,7 +296,7 @@ class PagosfacturasController extends \app\components\CController {
                             $asunto = 'Pagos en Línea';
                             if ($resultado != "2") {
 
-                                if($respago['pfes_concepto'] == 'ME'){
+                                if($datos['pfes_concepto'] == 'ME'){
                                     $cargo = CargaCartera::findOne($id_cartera);
                                     $cargo->ccar_estado_cancela = 'N';
                                     $cargo->ccar_abono = $cargo->ccar_abono  - $data['abono'];
@@ -324,7 +324,7 @@ class PagosfacturasController extends \app\components\CController {
                                 }
                                 Utilities::sendEmail($tituloMensaje, Yii::$app->params["adminEmail"], [$correo_estudiante => $user], $asunto, $body);
                             } else {
-                                if($respago['pfes_concepto'] == 'ME'){
+                                if($datos['pfes_concepto'] == 'ME'){
                                     $cargo = CargaCartera::findOne($id_cartera);
                                     $cargo->ccar_estado_cancela = 'C';
                                     $cargo->ccar_fecha_modificacion = $fecha;

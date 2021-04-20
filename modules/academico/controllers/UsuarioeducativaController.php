@@ -32,12 +32,12 @@ class UsuarioeducativaController extends \app\components\CController {
             $arrSearch["search"] = $data['search'];  
             $arrSearch["periodo"] = $data['periodo'];
             $arrSearch["asignatura"] = $data['asignatura'];                     
-            $model = $mod_educativa->consultarCursoEducativa($arrSearch, 1);
+            $model = $mod_educativa->consultarCursoEducativa($arrSearch, 1, 1);
             return $this->render('index-grid', [
                         "model" => $model,
             ]);
         } else {
-            $model = $mod_educativa->consultarCursoEducativa(null, 1);
+            $model = $mod_educativa->consultarCursoEducativa(null, 1, 1);
         }
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();            
@@ -354,5 +354,68 @@ class UsuarioeducativaController extends \app\components\CController {
                         readfile($url_file);
                     }
                 }
-    } 
+    }                           
+    public function actionExpexcelestcurso() {
+        //$per_id = @Yii::$app->session->get("PB_perid");
+
+        ini_set('memory_limit', '256M');
+        $content_type = Utilities::mimeContentType("xls");
+        $nombarch = "Report-" . date("YmdHis") . ".xls";
+        header("Content-Type: $content_type");
+        header("Content-Disposition: attachment;filename=" . $nombarch);
+        header('Cache-Control: max-age=0');
+        $colPosition = array("C", "D", "E", "F", "G");
+        $arrHeader = array(
+            Yii::t("formulario", "Period"),
+            Yii::t("formulario", "Subject"),
+            Yii::t("formulario", "Code"). ' Aula',
+            academico::t("Academico", "Course"),           
+        );
+        //\app\models\Utilities::putMessageLogFile('perid:' . $per_id);
+        $mod_educativa = new CursoEducativa();
+        $data = Yii::$app->request->get();
+        $arrSearch["search"] = $data['search'];
+        $arrSearch["periodo"] = $data['periodo'];
+        $arrSearch["asignatura"] = $data['asignatura'];  
+        $arrData = array();
+        if (empty($arrSearch)) {
+            $arrData = $mod_educativa->consultarCursoEducativa(array(), 0, 0);
+        } else {
+            $arrData = $mod_educativa->consultarCursoEducativa($arrSearch, 0, 0);
+        }
+        $nameReport = academico::t("Academico", "Listado de cursos educativa");
+        Utilities::generarReporteXLS($nombarch, $nameReport, $arrHeader, $arrData, $colPosition);
+        exit;
+    }
+
+    public function actionExppdfestcurso() {
+        //$per_id = @Yii::$app->session->get("PB_perid");
+        $report = new ExportFile();
+        $this->view->title = academico::t("Academico", "Listado de cursos educativa"); // Titulo del reporte
+        $arrHeader = array(
+            Yii::t("formulario", "Period"),
+            Yii::t("formulario", "Subject"),
+            Yii::t("formulario", "Code"). ' Aula',
+            academico::t("Academico", "Course"),
+        );
+        $mod_educativa = new CursoEducativa();
+        $data = Yii::$app->request->get();
+        $arrSearch["search"] = $data['search'];
+        $arrSearch["periodo"] = $data['periodo'];
+        $arrSearch["asignatura"] = $data['asignatura'];  
+        $arrData = array();
+        if (empty($arrSearch)) {
+            $arrData = $mod_educativa->consultarCursoEducativa(array(), 0, 0);
+        } else {
+            $arrData = $mod_educativa->consultarCursoEducativa($arrSearch, 0, 0);
+        }
+        $report->orientation = "L"; // tipo de orientacion L => Horizontal, P => Vertical                                
+        $report->createReportPdf(
+                $this->render('exportpdf', [
+                    'arr_head' => $arrHeader,
+                    'arr_body' => $arrData,
+                ])
+        );
+        $report->mpdf->Output('Reporte_' . date("Ymdhis") . ".pdf", ExportFile::OUTPUT_TO_DOWNLOAD);
+    }
 }  

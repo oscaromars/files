@@ -155,3 +155,17 @@ function actualizarGridCureducativa() {
         setTimeout(hideLoadingPopup, 2000);
     }
 }
+
+function exportExcelcurso() {
+    var search = $('#txt_buscarDataCurso').val();
+    var periodo =  $('#cmb_periodo option:selected').val();
+    var asignatura = $('#cmb_asignatura option:selected').val(); 
+    window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/expexcelestcurso?search=" + search + "&periodo=" + periodo + "&asignatura=" + asignatura;
+}
+
+function exportPdfcurso() {
+    var search = $('#txt_buscarDataCurso').val();
+    var periodo =  $('#cmb_periodo option:selected').val();
+    var asignatura = $('#cmb_asignatura option:selected').val(); 
+    window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/exppdfestcurso?pdf=1&search=" + search + "&periodo=" + periodo + "&asignatura=" + asignatura;
+}

@@ -257,10 +257,13 @@ class CursoEducativa extends \yii\db\ActiveRecord
      * @param
      * @return
      */
-    public function consultarCursoEducativa($arrFiltro = array(), $reporte) {
+    public function consultarCursoEducativa($arrFiltro = array(), $reporte, $ids) {
         $con = \Yii::$app->db_academico;        
         $estado = 1;
-
+        if ($ids == 1) {
+            $campos = "cur.paca_id, 
+            cur.asi_id, ";
+        }    
         if (isset($arrFiltro) && count($arrFiltro) > 0) {
             $str_search .= "(cur.cedu_asi_nombre like :search) AND ";
    
@@ -271,9 +274,8 @@ class CursoEducativa extends \yii\db\ActiveRecord
                 $str_search .= "cur.asi_id = :asi_id AND ";
             }            
         }
-        $sql = "SELECT  cur.paca_id, 
+        $sql = "SELECT  $campos 
                         ifnull(CONCAT(sem.saca_anio, ' (',blq.baca_nombre,'-',sem.saca_nombre, ')'),sem.saca_anio) as periodo,
-                        cur.asi_id, 
                         asi.asi_nombre,
                         cur.cedu_asi_id,
                         cur.cedu_asi_nombre

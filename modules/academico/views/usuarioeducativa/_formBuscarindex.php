@@ -13,7 +13,7 @@ academico::registerTranslations();
         <div class="form-group">
             <label for="txt_buscarDataCurso" class="col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= Yii::t("formulario", "Search") ?></label>
             <div class="col-sm-8 col-xs-8 col-md-8 col-lg-8">
-                <input type="text" class="form-control" value="" id="txt_buscarDataCurso" placeholder="<?= Yii::t("formulario", "Search by Names") . " o " . Yii::t("formulario", "Code") ?>">
+                <input type="text" class="form-control" value="" id="txt_buscarDataCurso" placeholder="<?= academico::t("Academico", "Search by Course or Code") ?>">
             </div>
         </div>
     </div>    

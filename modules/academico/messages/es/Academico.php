@@ -26,6 +26,7 @@ return [
     "Code" => "Código",
     "Cathedra control" => "Control Cátedra",
     "Contract" => "Contrato",
+    "Course" => "Curso",
     "Create period income method" => "Crear Período Método Ingreso",  
     "Create Promotion Program" => "Crear Promoción Programa",
     "Credits" => "Créditos",

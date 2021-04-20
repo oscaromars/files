@@ -274,6 +274,7 @@ class CursoEducativa extends \yii\db\ActiveRecord
         $sql = "SELECT  cur.paca_id, 
                         ifnull(CONCAT(sem.saca_anio, ' (',blq.baca_nombre,'-',sem.saca_nombre, ')'),sem.saca_anio) as periodo,
                         cur.asi_id, 
+                        asi.asi_nombre,
                         cur.cedu_asi_id,
                         cur.cedu_asi_nombre
                 FROM " . $con->dbname . ".curso_educativa cur 
@@ -293,12 +294,12 @@ class CursoEducativa extends \yii\db\ActiveRecord
             $comando->bindParam(":search", $search_cond, \PDO::PARAM_STR);
             
             if ($arrFiltro['periodo'] != "" && $arrFiltro['periodo'] > 0) {
-                $search_uni = $arrFiltro["periodo"];
-                $comando->bindParam(":periodo", $search_uni, \PDO::PARAM_INT);
+                $periodo = $arrFiltro["periodo"];
+                $comando->bindParam(":paca_id", $periodo, \PDO::PARAM_INT);
             }
             if ($arrFiltro['asignatura'] != "" && $arrFiltro['asignatura'] > 0) {
-                $search_mod = $arrFiltro["asignatura"];
-                $comando->bindParam(":asignatura", $search_mod, \PDO::PARAM_INT);
+                $asignatura = $arrFiltro["asignatura"];
+                $comando->bindParam(":asi_id", $asignatura, \PDO::PARAM_INT);
             }            
         }
         $resultData = $comando->queryAll();

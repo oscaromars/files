@@ -10,7 +10,6 @@ use app\modules\admision\Module as admision;
 
 admision::registerTranslations();
 academico::registerTranslations();
-//print_r($model);
 ?>
 <?= Html::hiddenInput('txth_ids', '', ['id' => 'txth_ids']); ?>
 <div>        

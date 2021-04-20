@@ -301,7 +301,7 @@ class Asignatura extends \yii\db\ActiveRecord
         return $resultData;
     } 
 
-      /**
+    /**
      * Function Consultar id de asignatura por el alias.
      * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>;
      * @property       
@@ -325,6 +325,33 @@ class Asignatura extends \yii\db\ActiveRecord
         $comando->bindParam(":asi_alias", $asi_alias, \PDO::PARAM_STR);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);        
         $resultData = $comando->queryOne();
+        return $resultData;
+    }
+
+    /**
+     * Function Consultar id de asignatura.
+     * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>;
+     * @property       
+     * @return  
+     */
+    public function consultarAsignaturasxuacaid($uaca_id) {
+        $con = \Yii::$app->db_academico;      
+        $estado = 1;
+
+        $sql = "SELECT 	
+                        asi_id as id,
+                        asi_nombre as name               
+                        
+                FROM " . $con->dbname . ".asignatura              
+                WHERE 
+                uaca_id = :uaca_id AND               
+                asi_estado = :estado AND
+                asi_estado_logico = :estado";
+
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":uaca_id", $uaca_id, \PDO::PARAM_INT);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);        
+        $resultData = $comando->queryAll();
         return $resultData;
     }
 }

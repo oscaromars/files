@@ -231,8 +231,8 @@ class CursoEducativa extends \yii\db\ActiveRecord
     public function consultarcursoeducativaexi($cedu_asi_id, $cedu_asi_nombre) {
         $con = \Yii::$app->db_academico;     
         $estado = 1; 
-        \app\models\Utilities::putMessageLogFile('entro: ' .$cedu_asi_id); 
-        \app\models\Utilities::putMessageLogFile('entro 2 : ' .$cedu_asi_nombre);  
+        //\app\models\Utilities::putMessageLogFile('entro: ' .$cedu_asi_id); 
+        //\app\models\Utilities::putMessageLogFile('entro 2 : ' .$cedu_asi_nombre);  
         $sql = "SELECT 	
                         count(*) as existe_curso                       
                         
@@ -249,5 +249,73 @@ class CursoEducativa extends \yii\db\ActiveRecord
         $comando->bindParam(":cedu_asi_nombre", $cedu_asi_nombre, \PDO::PARAM_STR);
         $resultData = $comando->queryOne();
         return $resultData;
+    }
+
+    /**
+     * Function Obtiene información de cursos en educatica.
+     * @author Giovanni Vergara <analistadesarrollo01@uteg.edu.ec>;
+     * @param
+     * @return
+     */
+    public function consultarCursoEducativa($arrFiltro = array(), $reporte) {
+        $con = \Yii::$app->db_academico;        
+        $estado = 1;
+
+        if (isset($arrFiltro) && count($arrFiltro) > 0) {
+            $str_search .= "(cur.cedu_asi_nombre like :search) AND ";
+   
+            if ($arrFiltro['periodo'] != "" && $arrFiltro['periodo'] > 0) {
+                $str_search .= "cur.paca_id = :paca_id AND ";
+            }
+            if ($arrFiltro['asignatura'] != "" && $arrFiltro['asignatura'] > 0) {
+                $str_search .= "cur.asi_id = :asi_id AND ";
+            }            
+        }
+        $sql = "SELECT  cur.paca_id, 
+                        ifnull(CONCAT(sem.saca_anio, ' (',blq.baca_nombre,'-',sem.saca_nombre, ')'),sem.saca_anio) as periodo,
+                        cur.asi_id, 
+                        cur.cedu_asi_id,
+                        cur.cedu_asi_nombre
+                FROM " . $con->dbname . ".curso_educativa cur 
+                INNER JOIN " . $con->dbname . ".asignatura asi on asi.asi_id = cur.asi_id
+                INNER JOIN " . $con->dbname . ".periodo_academico pera ON pera.paca_id = cur.paca_id
+                LEFT JOIN " . $con->dbname . ".semestre_academico sem  ON sem.saca_id = pera.saca_id
+                LEFT JOIN " . $con->dbname . ".bloque_academico blq ON blq.baca_id = pera.baca_id          
+                WHERE $str_search  cur.cedu_estado = :estado
+                AND cur.cedu_estado_logico = :estado
+                AND asi.asi_estado = :estado
+                AND asi.asi_estado_logico = :estado ";
+
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        if (isset($arrFiltro) && count($arrFiltro) > 0) {
+            $search_cond = "%" . $arrFiltro["search"] . "%";
+            $comando->bindParam(":search", $search_cond, \PDO::PARAM_STR);
+            
+            if ($arrFiltro['periodo'] != "" && $arrFiltro['periodo'] > 0) {
+                $search_uni = $arrFiltro["periodo"];
+                $comando->bindParam(":periodo", $search_uni, \PDO::PARAM_INT);
+            }
+            if ($arrFiltro['asignatura'] != "" && $arrFiltro['asignatura'] > 0) {
+                $search_mod = $arrFiltro["asignatura"];
+                $comando->bindParam(":asignatura", $search_mod, \PDO::PARAM_INT);
+            }            
+        }
+        $resultData = $comando->queryAll();
+        $dataProvider = new ArrayDataProvider([
+            'key' => 'id',
+            'allModels' => $resultData,
+            'pagination' => [
+                'pageSize' => Yii::$app->params["pageSize"],
+            ],
+            'sort' => [
+                'attributes' => [],
+            ],
+        ]);
+        if ($reporte == 1) {
+            return $dataProvider;
+        } else {
+            return $resultData;
+        }
     }
 }

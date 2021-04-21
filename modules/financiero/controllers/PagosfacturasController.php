@@ -247,6 +247,9 @@ class PagosfacturasController extends \app\components\CController {
     }
 
     public function actionSaverechazo() {
+
+        Utilities::putMessageLogFile("saverechazo");
+                           
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
             $mod_pagos = new PagosFacturaEstudiante();
@@ -281,12 +284,16 @@ class PagosfacturasController extends \app\components\CController {
                         }
                         $respago = $mod_pagos->grabarRechazo($id, $resultado, $observacion);
 
-                        if($respago['pfes_concepto'] == 'ME'){
+                        Utilities::putMessageLogFile(print_r($respago,true));
+
+                        if($datos['pfes_concepto'] == 'ME'){
                             $cartera = $mod_pagos->buscarIdCartera($id);
                             $id_cartera = $cartera[0]['ccar_id'];
+
+                            Utilities::putMessageLogFile("respago['pfes_concepto'] == 'ME'");
+                            Utilities::putMessageLogFile($id_cartera);
                         }
                         
-
                         if ($respago) {
                             $transaction->commit();
                             $transaction1->commit();
@@ -295,8 +302,8 @@ class PagosfacturasController extends \app\components\CController {
                             $tituloMensaje = 'Pagos en Línea';
                             $asunto = 'Pagos en Línea';
                             if ($resultado != "2") {
-
-                                if($respago['pfes_concepto'] == 'ME'){
+                                Utilities::putMessageLogFile("Entra por if");
+                                if($datos['pfes_concepto'] == 'ME'){
                                     $cargo = CargaCartera::findOne($id_cartera);
                                     $cargo->ccar_estado_cancela = 'N';
                                     $cargo->ccar_abono = $cargo->ccar_abono  - $data['abono'];
@@ -324,7 +331,10 @@ class PagosfacturasController extends \app\components\CController {
                                 }
                                 Utilities::sendEmail($tituloMensaje, Yii::$app->params["adminEmail"], [$correo_estudiante => $user], $asunto, $body);
                             } else {
-                                if($respago['pfes_concepto'] == 'ME'){
+                                if($datos['pfes_concepto'] == 'ME'){
+                                    Utilities::putMessageLogFile("if(respago['pfes_concepto'] == 'ME')");
+                                    Utilities::putMessageLogFile($id_cartera);
+
                                     $cargo = CargaCartera::findOne($id_cartera);
                                     $cargo->ccar_estado_cancela = 'C';
                                     $cargo->ccar_fecha_modificacion = $fecha;
@@ -339,13 +349,14 @@ class PagosfacturasController extends \app\components\CController {
                                                 ), Yii::$app->language, Yii::$app->basePath . "/modules/financiero");
                                                 Utilities::sendEmail($tituloMensaje, Yii::$app->params["adminEmail"], [$correo_estudiante => $user], $asunto, $body);
                             }
-                              // actualizar estados y data en registro_pago_matricula
-                              $mod_pagosmat = new RegistroPagoMatricula();                          
-                              $data_planificacion_pago = Matriculacion::getPlanificacionPago($datos['per_id']);                            
-                              /*\app\models\Utilities::putMessageLogFile('pfes_concepto: ' . $datos['pfes_concepto']);
-                              \app\models\Utilities::putMessageLogFile('per_id: ' . $datos['per_id']);
-                              \app\models\Utilities::putMessageLogFile('pla_id: ' . $data_planificacion_pago['pla_id']);*/
-                              if ($datos['pfes_concepto'] == "MA") {
+                            
+                            // actualizar estados y data en registro_pago_matricula
+                            $mod_pagosmat = new RegistroPagoMatricula();                          
+                            $data_planificacion_pago = Matriculacion::getPlanificacionPago($datos['per_id']);                            
+                            /*\app\models\Utilities::putMessageLogFile('pfes_concepto: ' . $datos['pfes_concepto']);
+                            \app\models\Utilities::putMessageLogFile('per_id: ' . $datos['per_id']);
+                            \app\models\Utilities::putMessageLogFile('pla_id: ' . $data_planificacion_pago['pla_id']);*/
+                            if ($datos['pfes_concepto'] == "MA") {
                                 
                                 if ($resultado == "2") {
                                     $rpm_estado_aprobacion = 1;     

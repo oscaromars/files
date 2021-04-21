@@ -343,7 +343,8 @@ class DistributivoController extends \app\components\CController {
                         "model" => $model,
             ]);
         } else {
-            $model = $distributivo_model->consultarDistributivoxEstudiante(null, 1);
+            $arrSearch["periodo"] = 8;
+            $model = $distributivo_model->consultarDistributivoxEstudiante($arrSearch, 1);
         }
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();

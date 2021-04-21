@@ -8,6 +8,10 @@ use app\modules\academico\Module as academico;
 financiero::registerTranslations();
 academico::registerTranslations();
 ?>
+<div class="col-md-12">    
+    <h3><span id="lbl_titulo"><?= academico::t("Academico", "Upload course") ?></span><br/>    
+</div>
+<br><br><br><br>
 <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
     <p class="text-danger"> <?= Yii::t("formulario", "Fields with * are required") ?> </p>
 </div>
@@ -28,11 +32,11 @@ academico::registerTranslations();
         <div class="form-group">
             <label for="txt_codigonew" class="col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label" id="lbl_codigonew"><?= academico::t("matriculacion", 'Código Aula') ?><span class="text-danger"> *</span></label>
             <div class="col-sm-3 col-md-3 col-xs-3 col-lg-3">
-            <input type="text" class="form-control PBvalidation keyupmce" value="" id="txt_codigonew" data-type="all" placeholder="<?= academico::t("matriculacion", 'Código Aula') ?>">                    
+            <input type="text" class="form-control PBvalidation keyupmce" value="" id="txt_codigonew" data-type="number" data-keydown="true" placeholder="<?= academico::t("matriculacion", 'Código Aula') ?>">                    
             </div>               
             <label for="txt_aulanew" class="col-sm-2 col-md-2 col-xs-2 col-lg-2 control-label" id="lbl_aulanew"><?= Yii::t("formulario", "Nombre Aula") ?><span class="text-danger"> *</span></label>
             <div class="col-sm-3 col-md-3 col-xs-3 col-lg-3">
-            <input type="text" class="form-control PBvalidation keyupmce" value="" id="txt_aulanew" data-type="all" placeholder="<?= academico::t("matriculacion", 'Nombre Aula') ?>"> 
+            <input type="text" class="form-control PBvalidation keyupmce" value="" id="txt_aulanew" data-type="all" data-keydown="true" placeholder="<?= academico::t("matriculacion", 'Nombre Aula') ?>"> 
          </div>
     </div>
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">  

@@ -323,4 +323,98 @@ class CursoEducativa extends \yii\db\ActiveRecord
             return $resultData;
         }
     }
+
+    /**
+     * Function guardar estudiante
+     * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
+     * @param   
+     * @return  $resultData (Retornar el código de estudiante).
+     */
+    public function insertarCursoeducativa($paca_id, $asi_id, $cedu_asi_id, $cedu_asi_nombre, $cedu_usuario_ingreso) {
+
+        $con = \Yii::$app->db_academico;
+        $trans = $con->getTransaction(); // se obtiene la transacción actual
+        if ($trans !== null) {
+            $trans = null; // si existe la transacción entonces no se crea una
+        } else {
+            $trans = $con->beginTransaction(); // si no existe la transacción entonces se crea una
+        }
+        $fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
+        
+        $param_sql .= ", cedu_fecha_creacion";
+        $bsol_sql .= ", 1";
+        
+        $param_sql = "cedu_estado_logico";
+        $bsol_sql = "1";
+
+        $param_sql .= ", cedu_estado";
+        $bsol_sql .= ", 1";
+        if (isset($paca_id)) {
+            $param_sql .= ", paca_id";
+            $bsol_sql .= ", :paca_id";
+        }
+
+        if (isset($asi_id)) {
+            $param_sql .= ", asi_id";
+            $bsol_sql .= ", :asi_id";
+        }
+
+        if (isset($cedu_asi_id)) {
+            $param_sql .= ", cedu_asi_id";
+            $bsol_sql .= ", :cedu_asi_id";
+        }
+
+        if (isset($cedu_asi_nombre)) {
+            $param_sql .= ", cedu_asi_nombre";
+            $bsol_sql .= ", :cedu_asi_nombre";
+        }
+
+        if (isset($cedu_usuario_ingreso)) {
+            $param_sql .= ", cedu_usuario_ingreso";
+            $bsol_sql .= ", :cedu_usuario_ingreso";
+        }
+
+        if (isset($fecha_transaccion)) {
+            $param_sql .= ",cedu_fecha_creacion";
+            $bsol_sql .= ", :cedu_fecha_creacion";
+        }   
+
+        try {
+            $sql = "INSERT INTO " . $con->dbname . ".curso_educativa ($param_sql) VALUES($bsol_sql)";
+            $comando = $con->createCommand($sql);
+
+            if (isset($paca_id)) {
+                $comando->bindParam(':paca_id', $paca_id, \PDO::PARAM_INT);
+            }
+
+            if (isset($asi_id)) {
+                $comando->bindParam(':asi_id', $asi_id, \PDO::PARAM_INT);
+            }
+
+            if (isset($cedu_asi_id)) {
+                $comando->bindParam(':cedu_asi_id', $cedu_asi_id, \PDO::PARAM_INT);
+            }
+
+            if (isset($cedu_asi_nombre)) {
+                $comando->bindParam(':cedu_asi_nombre', $cedu_asi_nombre, \PDO::PARAM_STR);
+            }
+
+            if (isset($cedu_usuario_ingreso)) {
+                $comando->bindParam(':cedu_usuario_ingreso', $cedu_usuario_ingreso, \PDO::PARAM_INT);
+            }
+
+            if (isset($fecha_transaccion)) {
+                $comando->bindParam(':cedu_fecha_creacion', $fecha_transaccion, \PDO::PARAM_STR);
+            }
+            
+            $result = $comando->execute();
+            if ($trans !== null)
+                $trans->commit();
+            return $con->getLastInsertID($con->dbname . '.curso_educativa');
+        } catch (Exception $ex) {
+            if ($trans !== null)
+                $trans->rollback();
+            return FALSE;
+        }
+    }
 }

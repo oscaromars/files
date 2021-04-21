@@ -442,30 +442,42 @@ class UsuarioeducativaController extends \app\components\CController {
             $periodo = $data["periodo"];
             $materia = $data["materia"];
             $codigoaula = $data["codigoaula"];
-            $nombreaula = $data["nombreaula"];
+            $nombreaula = ucwords(strtolower($data["nombreaula"]));
             $con = \Yii::$app->db_academico;
             $transaction = $con->beginTransaction();
             try {
-                //$mod_educativa = new CursoEducativa();
-                //$savecurso = $mod_educativa->insertarCursoeducativa($periodo, $materia, $codigoaula, $nombreaula,  $usuario);
-                //if ($savecurso) {
-                    $exito = 1;
-                //}
-                if ($exito) {
-                    $transaction->commit();
-                    $message = array(
-                        "wtmessage" => Yii::t("notificaciones", "Se ha guardado el curso."),
-                        "title" => Yii::t('jslang', 'Success'),
-                    );
-                    return Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), false, $message);
-                } else {
-                    $transaction->rollback();
-                    $message = array(
-                        "wtmessage" => Yii::t("notificaciones", "Error al grabar." . $mensaje),
-                        "title" => Yii::t('jslang', 'Error'),
-                    );
-                    return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
-                }
+                $mod_educativa = new CursoEducativa();
+                //  valida que no exista el registro    OJO REVISAR BIEN CON EL ASI_ID ES NECESARIO         
+                $existe = $mod_educativa->consultarcursoeducativaexi($periodo, $codigoaula,$nombreaula);
+                    if ($existe['existe_curso'] == 0) {
+                    $savecurso = $mod_educativa->insertarCursoeducativa($periodo, $materia, $codigoaula, $nombreaula, $usuario);
+                    if ($savecurso) {
+                        $exito = 1;
+                    }
+                    if ($exito) {
+                        $transaction->commit();
+                        $message = array(
+                            "wtmessage" => Yii::t("notificaciones", "Se ha guardado el curso."),
+                            "title" => Yii::t('jslang', 'Success'),
+                        );
+                        return Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), false, $message);
+                    } else {
+                        $transaction->rollback();
+                        $message = array(
+                            "wtmessage" => Yii::t("notificaciones", "Error al grabar." . $mensaje),
+                            "title" => Yii::t('jslang', 'Error'),
+                        );
+                        return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+                    }
+               }else {
+                $transaction->rollback();
+                $message = array(
+                    "wtmessage" => Yii::t("notificaciones", "Ya creó anteriormente el curso." . $mensaje),
+                    "title" => Yii::t('jslang', 'Error'),
+                );
+                return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+            }
+                
             } catch (Exception $ex) {
                 $transaction->rollback();
                 $message = array(

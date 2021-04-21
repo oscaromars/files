@@ -105,7 +105,7 @@ return [
     "Training" => "Formación",    
     "Unit Title" => "Título Unidad",
     "Update period income method" => "Actualizar Período Método Ingreso",
-    "Upload course" => "Cargar Cursos",
+    "Upload course" => "Subir Cursos",
     "Upload users" => "Cargar Usuarios",
     "Working day" => "Jornada",
     "Workload" => "Carga Horaria",

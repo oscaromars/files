@@ -84,6 +84,7 @@ function cargarDocumento() {
     arrParams.procesar_file = true;
     arrParams.archivo = $('#txth_doc_adj_educativacu2').val() + "." + $('#txth_doc_adj_educativacu').val().split('.').pop();
     arrParams.paca_id = $("#cmb_per_aca").val();    
+    if ($('#cmb_per_aca option:selected').val() != 0) {     
     if (!validateForm()) {
         requestHttpAjax(link, arrParams, function(response) {      
             showAlert(response.status, response.label, response.message);
@@ -92,6 +93,10 @@ function cargarDocumento() {
                 }, 5000);  
         }, true);
     }
+  } else {
+    showAlert('NO_OK', 'error', {"wtmessage": 'Periodo Académico: El campo no debe estar vacío.', "title": 'Error'});
+ } 
+
 }
 
 function setComboDataselect(arr_data, element_id, texto) {

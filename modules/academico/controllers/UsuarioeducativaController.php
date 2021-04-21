@@ -447,7 +447,7 @@ class UsuarioeducativaController extends \app\components\CController {
             $transaction = $con->beginTransaction();
             try {
                 $mod_educativa = new CursoEducativa();
-                //  valida que no exista el registro    OJO REVISAR BIEN CON EL ASI_ID ES NECESARIO         
+                //  valida que no exista el registro OJO REVISAR BIEN CON EL ASI_ID ES NECESARIO         
                 $existe = $mod_educativa->consultarcursoeducativaexi($periodo, $codigoaula,$nombreaula);
                     if ($existe['existe_curso'] == 0) {
                     $savecurso = $mod_educativa->insertarCursoeducativa($periodo, $materia, $codigoaula, $nombreaula, $usuario);

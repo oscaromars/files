@@ -284,14 +284,9 @@ class PagosfacturasController extends \app\components\CController {
                         }
                         $respago = $mod_pagos->grabarRechazo($id, $resultado, $observacion);
 
-                        Utilities::putMessageLogFile(print_r($respago,true));
-
                         if($datos['pfes_concepto'] == 'ME'){
                             $cartera = $mod_pagos->buscarIdCartera($id);
                             $id_cartera = $cartera[0]['ccar_id'];
-
-                            Utilities::putMessageLogFile("respago['pfes_concepto'] == 'ME'");
-                            Utilities::putMessageLogFile($id_cartera);
                         }
                         
                         if ($respago) {
@@ -302,7 +297,6 @@ class PagosfacturasController extends \app\components\CController {
                             $tituloMensaje = 'Pagos en Línea';
                             $asunto = 'Pagos en Línea';
                             if ($resultado != "2") {
-                                Utilities::putMessageLogFile("Entra por if");
                                 if($datos['pfes_concepto'] == 'ME'){
                                     $cargo = CargaCartera::findOne($id_cartera);
                                     $cargo->ccar_estado_cancela = 'N';
@@ -332,9 +326,6 @@ class PagosfacturasController extends \app\components\CController {
                                 Utilities::sendEmail($tituloMensaje, Yii::$app->params["adminEmail"], [$correo_estudiante => $user], $asunto, $body);
                             } else {
                                 if($datos['pfes_concepto'] == 'ME'){
-                                    Utilities::putMessageLogFile("if(respago['pfes_concepto'] == 'ME')");
-                                    Utilities::putMessageLogFile($id_cartera);
-
                                     $cargo = CargaCartera::findOne($id_cartera);
                                     $cargo->ccar_estado_cancela = 'C';
                                     $cargo->ccar_fecha_modificacion = $fecha;

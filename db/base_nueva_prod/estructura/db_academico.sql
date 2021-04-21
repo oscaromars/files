@@ -1895,3 +1895,38 @@ create table if not exists `usuario_educativa` (
   foreign key (est_id) references `estudiante`(est_id)
 
 );
+
+-- Estructura de tabla para la tabla `curso_educativa`
+-- --------------------------------------------------------
+create table if not exists `curso_educativa` (
+ `cedu_id` bigint(20) not null auto_increment primary key,
+ `paca_id` bigint(20) not null, 
+ `asi_id` bigint(20) not null, 
+ `cedu_asi_id` bigint(20) not null,
+ `cedu_asi_nombre` varchar(500) not null, 
+ `cedu_usuario_ingreso` bigint(20) not null,
+ `cedu_usuario_modifica` bigint(20) null,
+ `cedu_estado` varchar(1) not null, 
+ `cedu_fecha_creacion` timestamp not null default current_timestamp,
+ `cedu_fecha_modificacion` timestamp null default null,
+ `cedu_estado_logico` varchar(1) not null,
+ foreign key (paca_id) references `periodo_academico`(paca_id),
+ foreign key (asi_id) references `asignatura`(asi_id)
+);
+
+-- Estructura de tabla para la tabla `curso_educativa_estudiante`
+-- --------------------------------------------------------
+create table if not exists `curso_educativa_estudiante` (
+ `ceest_id` bigint(20) not null auto_increment primary key,
+ `cedu_id` bigint(20) not null, 
+ `est_id` bigint(20) not null, 
+ `ceest_estado_bloqueo` varchar(1) not null, -- B bloqueado, A aceptado
+ `ceest_usuario_ingreso` bigint(20) not null,
+ `ceest_usuario_modifica` bigint(20) null,
+ `ceest_estado` varchar(1) not null, 
+ `ceest_fecha_creacion` timestamp not null default current_timestamp,
+ `ceest_fecha_modificacion` timestamp null default null,
+ `ceest_estado_logico` varchar(1) not null,
+ foreign key (est_id) references `estudiante`(est_id),
+ foreign key (cedu_id) references `curso_educativa`(cedu_id)
+);

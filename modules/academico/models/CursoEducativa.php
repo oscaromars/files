@@ -151,7 +151,7 @@ class CursoEducativa extends \yii\db\ActiveRecord
                         \app\models\Utilities::putMessageLogFile('asi_id consulta ...: ' .$asi_id['asi_id']);
                         $fila++;         
                         if (!empty($asi_id['asi_id'])) {
-                        $existe = $mod_educativa->consultarcursoeducativaexi($val[1], $val[2]);
+                        $existe = $mod_educativa->consultarcursoeducativaexi($paca_id, $val[1], $val[2]);
                         \app\models\Utilities::putMessageLogFile('existe consulta ...: ' . $existe['existe_curso']);
                         if ($existe['existe_curso'] == 0) {
                         $save_documento = $this->saveDocumentoDB($val, $paca_id, $asi_id['asi_id']);
@@ -228,7 +228,7 @@ class CursoEducativa extends \yii\db\ActiveRecord
      * @property       
      * @return  
      */
-    public function consultarcursoeducativaexi($cedu_asi_id, $cedu_asi_nombre) {
+    public function consultarcursoeducativaexi($paca_id, $cedu_asi_id, $cedu_asi_nombre) {
         $con = \Yii::$app->db_academico;     
         $estado = 1; 
         //\app\models\Utilities::putMessageLogFile('entro: ' .$cedu_asi_id); 
@@ -238,6 +238,7 @@ class CursoEducativa extends \yii\db\ActiveRecord
                         
                 FROM " . $con->dbname . ".curso_educativa                 
                 WHERE 
+                paca_id = :paca_id AND
                 cedu_asi_id = :cedu_asi_id AND                
                 cedu_asi_nombre = :cedu_asi_nombre AND
                 cedu_estado = :estado AND
@@ -245,6 +246,7 @@ class CursoEducativa extends \yii\db\ActiveRecord
 
         $comando = $con->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $comando->bindParam(":paca_id", $paca_id, \PDO::PARAM_INT);
         $comando->bindParam(":cedu_asi_id", $cedu_asi_id, \PDO::PARAM_INT);
         $comando->bindParam(":cedu_asi_nombre", $cedu_asi_nombre, \PDO::PARAM_STR);
         $resultData = $comando->queryOne();

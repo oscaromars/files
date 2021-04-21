@@ -85,7 +85,7 @@ function cargarDocumento() {
         requestHttpAjax(link, arrParams, function(response) {      
             showAlert(response.status, response.label, response.message);
             setTimeout(function () {
-                    window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/upload";
+                    window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/index";
                 }, 5000);  
         }, true);
     }

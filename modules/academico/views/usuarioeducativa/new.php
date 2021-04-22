@@ -9,7 +9,7 @@ financiero::registerTranslations();
 academico::registerTranslations();
 ?>
 <div class="col-md-12">    
-    <h3><span id="lbl_titulo"><?= academico::t("Academico", "Upload course") ?></span><br/>    
+    <h3><span id="lbl_titulo"><?= academico::t("Academico", "Create course") ?></span><br/>    
 </div>
 <br><br><br><br>
 <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">

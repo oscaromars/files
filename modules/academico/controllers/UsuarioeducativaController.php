@@ -431,8 +431,7 @@ class UsuarioeducativaController extends \app\components\CController {
             return $this->render('new', [  
                 'arr_periodoAcademico' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $arr_periodoAcademico), "id", "name"),
                 'arr_asignatura' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $arr_asignatura), "id", "name"),
-                'model' => $model,
-            ]);       
+                ]);       
     }
     public function actionSavecurso() {
         $per_id = @Yii::$app->session->get("PB_perid");
@@ -488,5 +487,26 @@ class UsuarioeducativaController extends \app\components\CController {
             }
             return;
         }
+    }
+
+    public function actionView() { 
+        $cedu_id = base64_decode($_GET["cedu_id"]);
+        $mod_periodo = new PeriodoAcademicoMetIngreso();
+        $mod_asignatura = new Asignatura(); 
+        $mod_educativa = new CursoEducativa();
+        $data = Yii::$app->request->get();
+        if (Yii::$app->request->isAjax) {
+            $data = Yii::$app->request->post();            
+        }   
+            //$cedu_id = 1;
+            // consultar la infomracion del curso por cedu_id
+            $arr_curso = $mod_educativa->consultarCursoxid($cedu_id);        
+            $arr_asignatura = $mod_asignatura->consultarAsignaturasxuacaid(1);
+            $arr_periodoAcademico = $mod_periodo->consultarPeriodoAcademicotodos();
+            return $this->render('view', [  
+                'arr_periodoAcademico' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $arr_periodoAcademico), "id", "name"),
+                'arr_asignatura' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $arr_asignatura), "id", "name"),
+                'arr_curso' => $arr_curso,
+            ]);       
     }
 }  

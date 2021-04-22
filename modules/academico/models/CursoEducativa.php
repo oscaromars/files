@@ -263,7 +263,9 @@ class CursoEducativa extends \yii\db\ActiveRecord
         $con = \Yii::$app->db_academico;        
         $estado = 1;
         if ($ids == 1) {
-            $campos = "cur.paca_id, 
+            $campos = "
+            cur.cedu_id,
+            cur.paca_id, 
             cur.asi_id, ";
         }    
         if (isset($arrFiltro) && count($arrFiltro) > 0) {
@@ -416,5 +418,34 @@ class CursoEducativa extends \yii\db\ActiveRecord
                 $trans->rollback();
             return FALSE;
         }
+    }
+
+    /**
+     * Function Consultar datos x id en curso educativa.
+     * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>;
+     * @property       
+     * @return  
+     */
+    public function consultarCursoxid($cedu_id) {
+        $con = \Yii::$app->db_academico;     
+        $estado = 1; 
+        $sql = "SELECT 	
+                        cedu_id,
+                        paca_id,
+                        asi_id,
+                        cedu_asi_id,
+                        cedu_asi_nombre
+                        
+                FROM " . $con->dbname . ".curso_educativa                 
+                WHERE 
+                cedu_id = :cedu_id AND               
+                cedu_estado = :estado AND
+                cedu_estado_logico = :estado ";
+
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $comando->bindParam(":cedu_id", $cedu_id, \PDO::PARAM_INT);  
+        $resultData = $comando->queryOne();      
+        return $resultData;
     }
 }

@@ -145,6 +145,9 @@ class UsuarioEducativa extends \yii\db\ActiveRecord
                         $val[6] = strval($val[6]);
                         if (!empty($val[5])) {
                         $est_id = $mod_estudiante->consultarEstidxdni($val[5]);
+                        }else{
+                            $est_id['est_id'] = null;
+                            $est_id['per_id'] = null;
                         }
                         //\app\models\Utilities::putMessageLogFile('est_id consulta ...: ' .$est_id['est_id']);
                         //\app\models\Utilities::putMessageLogFile('per_id consulta ...: ' . $est_id['per_id']);

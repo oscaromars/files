@@ -151,7 +151,7 @@ class CursoEducativa extends \yii\db\ActiveRecord
                         \app\models\Utilities::putMessageLogFile('asi_id consulta ...: ' .$asi_id['asi_id']);
                         $fila++;         
                         if (!empty($asi_id['asi_id'])) {
-                        $existe = $mod_educativa->consultarcursoeducativaexi($val[1], $val[2]);
+                        $existe = $mod_educativa->consultarcursoeducativaexi($paca_id, $val[1], $val[2]);
                         \app\models\Utilities::putMessageLogFile('existe consulta ...: ' . $existe['existe_curso']);
                         if ($existe['existe_curso'] == 0) {
                         $save_documento = $this->saveDocumentoDB($val, $paca_id, $asi_id['asi_id']);
@@ -228,7 +228,7 @@ class CursoEducativa extends \yii\db\ActiveRecord
      * @property       
      * @return  
      */
-    public function consultarcursoeducativaexi($cedu_asi_id, $cedu_asi_nombre) {
+    public function consultarcursoeducativaexi($paca_id, $cedu_asi_id, $cedu_asi_nombre) {
         $con = \Yii::$app->db_academico;     
         $estado = 1; 
         //\app\models\Utilities::putMessageLogFile('entro: ' .$cedu_asi_id); 
@@ -238,6 +238,7 @@ class CursoEducativa extends \yii\db\ActiveRecord
                         
                 FROM " . $con->dbname . ".curso_educativa                 
                 WHERE 
+                paca_id = :paca_id AND
                 cedu_asi_id = :cedu_asi_id AND                
                 cedu_asi_nombre = :cedu_asi_nombre AND
                 cedu_estado = :estado AND
@@ -245,6 +246,7 @@ class CursoEducativa extends \yii\db\ActiveRecord
 
         $comando = $con->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $comando->bindParam(":paca_id", $paca_id, \PDO::PARAM_INT);
         $comando->bindParam(":cedu_asi_id", $cedu_asi_id, \PDO::PARAM_INT);
         $comando->bindParam(":cedu_asi_nombre", $cedu_asi_nombre, \PDO::PARAM_STR);
         $resultData = $comando->queryOne();
@@ -261,7 +263,9 @@ class CursoEducativa extends \yii\db\ActiveRecord
         $con = \Yii::$app->db_academico;        
         $estado = 1;
         if ($ids == 1) {
-            $campos = "cur.paca_id, 
+            $campos = "
+            cur.cedu_id,
+            cur.paca_id, 
             cur.asi_id, ";
         }    
         if (isset($arrFiltro) && count($arrFiltro) > 0) {
@@ -320,5 +324,128 @@ class CursoEducativa extends \yii\db\ActiveRecord
         } else {
             return $resultData;
         }
+    }
+
+    /**
+     * Function guardar estudiante
+     * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
+     * @param   
+     * @return  $resultData (Retornar el código de estudiante).
+     */
+    public function insertarCursoeducativa($paca_id, $asi_id, $cedu_asi_id, $cedu_asi_nombre, $cedu_usuario_ingreso) {
+
+        $con = \Yii::$app->db_academico;
+        $trans = $con->getTransaction(); // se obtiene la transacción actual
+        if ($trans !== null) {
+            $trans = null; // si existe la transacción entonces no se crea una
+        } else {
+            $trans = $con->beginTransaction(); // si no existe la transacción entonces se crea una
+        }
+        $fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
+        
+        $param_sql .= ", cedu_fecha_creacion";
+        $bsol_sql .= ", 1";
+        
+        $param_sql = "cedu_estado_logico";
+        $bsol_sql = "1";
+
+        $param_sql .= ", cedu_estado";
+        $bsol_sql .= ", 1";
+        if (isset($paca_id)) {
+            $param_sql .= ", paca_id";
+            $bsol_sql .= ", :paca_id";
+        }
+
+        if (isset($asi_id)) {
+            $param_sql .= ", asi_id";
+            $bsol_sql .= ", :asi_id";
+        }
+
+        if (isset($cedu_asi_id)) {
+            $param_sql .= ", cedu_asi_id";
+            $bsol_sql .= ", :cedu_asi_id";
+        }
+
+        if (isset($cedu_asi_nombre)) {
+            $param_sql .= ", cedu_asi_nombre";
+            $bsol_sql .= ", :cedu_asi_nombre";
+        }
+
+        if (isset($cedu_usuario_ingreso)) {
+            $param_sql .= ", cedu_usuario_ingreso";
+            $bsol_sql .= ", :cedu_usuario_ingreso";
+        }
+
+        if (isset($fecha_transaccion)) {
+            $param_sql .= ",cedu_fecha_creacion";
+            $bsol_sql .= ", :cedu_fecha_creacion";
+        }   
+
+        try {
+            $sql = "INSERT INTO " . $con->dbname . ".curso_educativa ($param_sql) VALUES($bsol_sql)";
+            $comando = $con->createCommand($sql);
+
+            if (isset($paca_id)) {
+                $comando->bindParam(':paca_id', $paca_id, \PDO::PARAM_INT);
+            }
+
+            if (isset($asi_id)) {
+                $comando->bindParam(':asi_id', $asi_id, \PDO::PARAM_INT);
+            }
+
+            if (isset($cedu_asi_id)) {
+                $comando->bindParam(':cedu_asi_id', $cedu_asi_id, \PDO::PARAM_INT);
+            }
+
+            if (isset($cedu_asi_nombre)) {
+                $comando->bindParam(':cedu_asi_nombre', $cedu_asi_nombre, \PDO::PARAM_STR);
+            }
+
+            if (isset($cedu_usuario_ingreso)) {
+                $comando->bindParam(':cedu_usuario_ingreso', $cedu_usuario_ingreso, \PDO::PARAM_INT);
+            }
+
+            if (isset($fecha_transaccion)) {
+                $comando->bindParam(':cedu_fecha_creacion', $fecha_transaccion, \PDO::PARAM_STR);
+            }
+            
+            $result = $comando->execute();
+            if ($trans !== null)
+                $trans->commit();
+            return $con->getLastInsertID($con->dbname . '.curso_educativa');
+        } catch (Exception $ex) {
+            if ($trans !== null)
+                $trans->rollback();
+            return FALSE;
+        }
+    }
+
+    /**
+     * Function Consultar datos x id en curso educativa.
+     * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>;
+     * @property       
+     * @return  
+     */
+    public function consultarCursoxid($cedu_id) {
+        $con = \Yii::$app->db_academico;     
+        $estado = 1; 
+        $sql = "SELECT 	
+                        cedu_id,
+                        paca_id,
+                        asi_id,
+                        cedu_asi_id,
+                        cedu_asi_nombre
+                        
+                FROM " . $con->dbname . ".curso_educativa                 
+                WHERE 
+                cedu_id = :cedu_id AND               
+                cedu_estado = :estado AND
+                cedu_estado_logico = :estado ";
+
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $comando->bindParam(":cedu_id", $cedu_id, \PDO::PARAM_INT);  
+        $resultData = $comando->queryOne();      
+        return $resultData;
     }
 }

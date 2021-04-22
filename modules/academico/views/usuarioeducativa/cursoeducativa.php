@@ -23,6 +23,9 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
 <div class="col-md-12">    
     <br/>    
 </div>
+<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
+    <p class="text-danger"> <?= Yii::t("formulario", "Fields with * are required") ?> </p>
+</div>
 <form class="form-horizontal" enctype="multipart/form-data" >
 <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
         <?php echo $leyenda; ?>
@@ -37,7 +40,7 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
         </div> 
         </div> 
             <div class="form-group">
-                <label for="cmb_per_aca" class="col-sm-2 control-label"><?= academico::t("matriculacion", 'Academic Period') ?></label>
+                <label for="cmb_per_aca" class="col-sm-2 control-label"><?= academico::t("matriculacion", 'Academic Period') ?><span class="text-danger"> *</span></label>
                 <div class="col-sm-5">
                     <?= Html::dropDownList("cmb_per_aca", 0, $arr_periodoAcademico, ["class" => "form-control", "id" => "cmb_per_aca"]) ?>
                 </div>
@@ -100,11 +103,9 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <div class="col-md-2">
                     <a id="btn_guardarcurso" href="javascript:" class="btn btn-primary btn-block"><?= Yii::t("formulario", "Save") ?> </a>
-                </div>
-                
+                </div>                
             </div>  
         </div>    
-    </div>
-               
+    </div>               
 </form>
 

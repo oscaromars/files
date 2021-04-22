@@ -643,7 +643,7 @@ class Distributivo extends \yii\db\ActiveRecord {
                                             ORDER BY mi.ccar_fecha_vencepago desc
                                             LIMIT 1),'No Autorizado')
                                 when m.ccar_fecha_vencepago >= NOW() then ifnull((SELECT
-                                            CASE WHEN mi.ccar_estado_cancela = 'N'
+                                            CASE WHEN mi.ccar_estado_cancela = 'N' or mi.ccar_estado_cancela = 'C'
                                             THEN 'Autorizado'
                                             ELSE 'No Autorizado' END AS pago
                                             FROM db_facturacion.carga_cartera mi
@@ -746,7 +746,7 @@ class Distributivo extends \yii\db\ActiveRecord {
 
         $dataProvider = new ArrayDataProvider([
             'key' => 'id',
-            'allModels' => $resultData,
+            'allModels' => $resultData2,
             'pagination' => [
                 'pageSize' => Yii::$app->params["pageSize"],
             ],
@@ -757,7 +757,7 @@ class Distributivo extends \yii\db\ActiveRecord {
         if ($reporte == 1) {
             return $dataProvider;
         } else {
-            return $resultData;
+            return $resultData2;
         }
     }
 

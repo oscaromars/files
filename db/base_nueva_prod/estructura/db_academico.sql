@@ -1879,20 +1879,20 @@ create table if not exists `reglamento` (
 -- 
 create table if not exists `usuario_educativa` (
   `uedu_id` bigint(20) not null auto_increment primary key,   
-  `per_id` bigint(20) not null,
-  `est_id` bigint(20) not null, 
-  `uedu_nombre` varchar(500) not null, 
-  `uedu_cedula` varchar(15) not null,  
-  `uedu_matricula`varchar(20) null,
+  `per_id` bigint(20) null,
+  `est_id` bigint(20) null, 
+  `uedu_usuario` varchar(100) not null, 
+  `uedu_nombres` varchar(100) default null, 
+  `uedu_apellidos` varchar(100) default null, 
+  `uedu_cedula` varchar(15) default null,  
+  `uedu_matricula`varchar(20) default null,
   `uedu_correo` varchar(250) default null,
   `uedu_usuario_ingreso` bigint(20) not null,
   `uedu_usuario_modifica` bigint(20)  null,   
   `uedu_estado` varchar(1) not null,
   `uedu_fecha_creacion` timestamp not null default current_timestamp,
   `uedu_fecha_modificacion` timestamp null default null,
-  `uedu_estado_logico` varchar(1) not null,
-
-  foreign key (est_id) references `estudiante`(est_id)
+  `uedu_estado_logico` varchar(1) not null
 
 );
 

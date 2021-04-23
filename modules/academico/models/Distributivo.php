@@ -455,8 +455,14 @@ class Distributivo extends \yii\db\ActiveRecord {
             if ($arrFiltro['periodo'] != "" && $arrFiltro['periodo'] > 0) {
                 $str_search .= "a.paca_id = :periodo AND ";
             }
-            if ($arrFiltro['estado'] == "C" or $arrFiltro['estado'] == "N") {
+            /*if ($arrFiltro['estado'] == "C" or $arrFiltro['estado'] == "N") {
                 $str_search .= "ifnull(m.ccar_estado_cancela,'N') = :estpago AND ";
+            }*/
+            if ($arrFiltro['estado_pago'] == "0" or $arrFiltro['estado_pago'] == "1") {            
+                if ($arrFiltro['estado_pago'] == "0") {            
+                $str_search .= " ((m.ccar_estado_cancela is null OR m.ccar_estado_cancela = :estado_pago) AND NOW() > m.ccar_fecha_vencepago ) AND ";
+            }else{
+                $str_search .= " m.ccar_estado_cancela = :estado_pago AND ";
             }
             if ($arrFiltro['jornada'] != "" && $arrFiltro['jornada'] > 0) {
                 $str_search .= "a.daca_jornada = :jornada AND ";
@@ -534,10 +540,20 @@ class Distributivo extends \yii\db\ActiveRecord {
                 $search_per = $arrFiltro["periodo"];
                 $comando->bindParam(":periodo", $search_per, \PDO::PARAM_INT);
             }
-            if ($arrFiltro['estado'] == "C" or $arrFiltro['estado'] == "N") {
+           /* if ($arrFiltro['estado'] == "C" or $arrFiltro['estado'] == "N") {
                 $search_estado = $arrFiltro["estado"];
                 $comando->bindParam(":estpago", $search_estado, \PDO::PARAM_STR);
+            } */
+
+            if ($arrFiltro['estado_pago'] != '2') {
+                if ($arrFiltro['estado_pago'] == '0') {
+                    $filestado = 'N';
+                } else {
+                    $filestado = 'C';
+              } 
+                $comando->bindParam(":estado_pago", $filestado, \PDO::PARAM_STR);
             }
+
             if ($arrFiltro['jornada'] != "" && $arrFiltro['jornada'] > 0) {
                 $search_jor = $arrFiltro["jornada"];
                 $comando->bindParam(":jornada", $search_jor, \PDO::PARAM_INT);
@@ -630,7 +646,7 @@ class Distributivo extends \yii\db\ActiveRecord {
             }*/
             if ($arrFiltro['estado_pago'] == "0" or $arrFiltro['estado_pago'] == "1") {            
                 if ($arrFiltro['estado_pago'] == "0") {            
-                $str_search .= " (m.ccar_estado_cancela is null OR m.ccar_estado_cancela = :estado_pago) AND ";
+                $str_search .= " ((m.ccar_estado_cancela is null OR m.ccar_estado_cancela = :estado_pago) AND NOW() > m.ccar_fecha_vencepago ) AND ";
             }else{
                 $str_search .= " m.ccar_estado_cancela = :estado_pago AND ";
             } 

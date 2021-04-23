@@ -463,7 +463,8 @@ class Distributivo extends \yii\db\ActiveRecord {
                 $str_search .= " ((m.ccar_estado_cancela is null OR m.ccar_estado_cancela = :estado_pago) AND NOW() > m.ccar_fecha_vencepago ) AND ";
             }else{
                 $str_search .= " m.ccar_estado_cancela = :estado_pago AND ";
-            }
+            } 
+        } 
             if ($arrFiltro['jornada'] != "" && $arrFiltro['jornada'] > 0) {
                 $str_search .= "a.daca_jornada = :jornada AND ";
             }

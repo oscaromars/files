@@ -439,7 +439,7 @@ class UsuarioeducativaController extends \app\components\CController {
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
             $periodo = $data["periodo"];
-            $materia = $data["materia"];
+            //$materia = $data["materia"];
             $codigoaula = $data["codigoaula"];
             $nombreaula = ucwords(strtolower($data["nombreaula"]));
             $con = \Yii::$app->db_academico;
@@ -448,8 +448,9 @@ class UsuarioeducativaController extends \app\components\CController {
                 $mod_educativa = new CursoEducativa();
                 //  valida que no exista el registro OJO REVISAR BIEN CON EL ASI_ID ES NECESARIO         
                 $existe = $mod_educativa->consultarcursoeducativaexi($periodo, $codigoaula,$nombreaula);
-                    if ($existe['existe_curso'] == 0) {
-                    $savecurso = $mod_educativa->insertarCursoeducativa($periodo, $materia, $codigoaula, $nombreaula, $usuario);
+                //\app\models\Utilities::putMessageLogFile('existe rcurso...: ' . $existe['existe_curso']);     
+                if ($existe['existe_curso'] == 0) {
+                    $savecurso = $mod_educativa->insertarCursoeducativa($periodo, /*$materia,*/ $codigoaula, $nombreaula, $usuario);
                     if ($savecurso) {
                         $exito = 1;
                     }

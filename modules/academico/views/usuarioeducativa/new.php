@@ -22,18 +22,18 @@ academico::registerTranslations();
             <div class="col-sm-3 col-md-3 col-xs-3 col-lg-3">
                 <?= Html::dropDownList("cmb_periodonew", 0, $arr_periodoAcademico, ["class" => "form-control pro_combo", "id" => "cmb_periodonew"]) ?>
             </div>
-            <label for="lbl_asignatura" class="col-sm-2 col-md-2 col-xs-2 col-lg-2 control-label"><?= Yii::t("formulario", "Subject") ?><span class="text-danger"> *</span></label>
+            <!-- <label for="lbl_asignatura" class="col-sm-2 col-md-2 col-xs-2 col-lg-2 control-label"><?= Yii::t("formulario", "Subject") ?><span class="text-danger"> *</span></label>
             <div class="col-sm-3 col-md-3 col-xs-3 col-lg-3">
-                 <?= Html::dropDownList("cmb_asignaturanew", 0, $arr_asignatura, ["class" => "form-control pro_combo", "id" => "cmb_asignaturanew"]) ?>
-            </div>
-        </div>
-    </div>   
-    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-        <div class="form-group">
+                 < Html::dropDownList("cmb_asignaturanew", 0, $arr_asignatura, ["class" => "form-control pro_combo", "id" => "cmb_asignaturanew"]) ?>
+            </div>-->
             <label for="txt_codigonew" class="col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label" id="lbl_codigonew"><?= academico::t("matriculacion", 'Código Aula') ?><span class="text-danger"> *</span></label>
             <div class="col-sm-3 col-md-3 col-xs-3 col-lg-3">
             <input type="text" class="form-control PBvalidation keyupmce" value="" id="txt_codigonew" data-type="number" data-keydown="true" placeholder="<?= academico::t("matriculacion", 'Código Aula') ?>">                    
-            </div>               
+            </div> 
+        </div>
+    </div>   
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="form-group">                          
             <label for="txt_aulanew" class="col-sm-2 col-md-2 col-xs-2 col-lg-2 control-label" id="lbl_aulanew"><?= Yii::t("formulario", "Nombre Aula") ?><span class="text-danger"> *</span></label>
             <div class="col-sm-3 col-md-3 col-xs-3 col-lg-3">
             <input type="text" class="form-control PBvalidation keyupmce" value="" id="txt_aulanew" data-type="all" data-keydown="true" placeholder="<?= academico::t("matriculacion", 'Nombre Aula') ?>"> 

@@ -182,11 +182,11 @@ function savecurso() {
     var link = $('#txth_base').val() + "/academico/usuarioeducativa/savecurso";
     var arrParams = new Object();
     arrParams.periodo = $('#cmb_periodonew option:selected').val();
-    arrParams.materia = $('#cmb_asignaturanew option:selected').val();
+    //arrParams.materia = $('#cmb_asignaturanew option:selected').val();
     arrParams.codigoaula = $('#txt_codigonew').val();
     arrParams.nombreaula = $('#txt_aulanew').val();
     if ($('#cmb_periodonew option:selected').val() != 0) {           
-     if ($('#cmb_asignaturanew option:selected').val() != 0) { 
+     // if ($('#cmb_asignaturanew option:selected').val() != 0) { 
         if (!validateForm()) {
             requestHttpAjax(link, arrParams, function(response) {
                 showAlert(response.status, response.label, response.message);
@@ -197,9 +197,9 @@ function savecurso() {
                 }
             }, true);
         }
-    } else {
-        showAlert('NO_OK', 'error', {"wtmessage": 'Nombre Aula: El campo no debe estar vacío.', "title": 'Error'});
-      } 
+    /*} else {
+        showAlert('NO_OK', 'error', {"wtmessage": 'Asignatura: El campo no debe estar vacío.', "title": 'Error'});
+      } */
     } else {
         showAlert('NO_OK', 'error', {"wtmessage": 'Código Aula: El campo no debe estar vacío.', "title": 'Error'});
      }  

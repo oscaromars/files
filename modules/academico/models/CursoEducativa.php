@@ -14,7 +14,6 @@ use yii\helpers\VarDumper;
  *
  * @property int $cedu_id
  * @property int $paca_id
- * @property int $asi_id
  * @property int $cedu_asi_id
  * @property string $cedu_asi_nombre
  * @property int $cedu_usuario_ingreso
@@ -25,8 +24,8 @@ use yii\helpers\VarDumper;
  * @property string $cedu_estado_logico
  *
  * @property PeriodoAcademico $paca
- * @property Asignatura $asi
  * @property CursoEducativaEstudiante[] $cursoEducativaEstudiantes
+ * @property CursoEducativaUnidad[] $cursoEducativaUnidads
  */
 class CursoEducativa extends \yii\db\ActiveRecord
 {
@@ -52,13 +51,12 @@ class CursoEducativa extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['paca_id', 'asi_id', 'cedu_asi_id', 'cedu_asi_nombre', 'cedu_usuario_ingreso', 'cedu_estado', 'cedu_estado_logico'], 'required'],
-            [['paca_id', 'asi_id', 'cedu_asi_id', 'cedu_usuario_ingreso', 'cedu_usuario_modifica'], 'integer'],
+            [['paca_id', 'cedu_asi_id', 'cedu_asi_nombre', 'cedu_usuario_ingreso', 'cedu_estado', 'cedu_estado_logico'], 'required'],
+            [['paca_id', 'cedu_asi_id', 'cedu_usuario_ingreso', 'cedu_usuario_modifica'], 'integer'],
             [['cedu_fecha_creacion', 'cedu_fecha_modificacion'], 'safe'],
             [['cedu_asi_nombre'], 'string', 'max' => 500],
             [['cedu_estado', 'cedu_estado_logico'], 'string', 'max' => 1],
             [['paca_id'], 'exist', 'skipOnError' => true, 'targetClass' => PeriodoAcademico::className(), 'targetAttribute' => ['paca_id' => 'paca_id']],
-            [['asi_id'], 'exist', 'skipOnError' => true, 'targetClass' => Asignatura::className(), 'targetAttribute' => ['asi_id' => 'asi_id']],
         ];
     }
 
@@ -70,7 +68,6 @@ class CursoEducativa extends \yii\db\ActiveRecord
         return [
             'cedu_id' => 'Cedu ID',
             'paca_id' => 'Paca ID',
-            'asi_id' => 'Asi ID',
             'cedu_asi_id' => 'Cedu Asi ID',
             'cedu_asi_nombre' => 'Cedu Asi Nombre',
             'cedu_usuario_ingreso' => 'Cedu Usuario Ingreso',
@@ -93,17 +90,17 @@ class CursoEducativa extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getAsi()
+    public function getCursoEducativaEstudiantes()
     {
-        return $this->hasOne(Asignatura::className(), ['asi_id' => 'asi_id']);
+        return $this->hasMany(CursoEducativaEstudiante::className(), ['cedu_id' => 'cedu_id']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getCursoEducativaEstudiantes()
+    public function getCursoEducativaUnidads()
     {
-        return $this->hasMany(CursoEducativaEstudiante::className(), ['cedu_id' => 'cedu_id']);
+        return $this->hasMany(CursoEducativaUnidad::className(), ['cedu_id' => 'cedu_id']);
     }
     public function CargarArchivocursoeducativa($fname, $paca_id) {
         \app\models\Utilities::putMessageLogFile('Files modelo ...: ' . $fname);
@@ -147,14 +144,18 @@ class CursoEducativa extends \yii\db\ActiveRecord
                     if (!is_null($val[1]) || $val[1]) {
                         $val[1] = strval($val[1]);
                         $val[3] = strval($val[3]);
-                        $asi_id = $model_asignatura->consultarAsindxalias($val[3]);
-                        \app\models\Utilities::putMessageLogFile('asi_id consulta ...: ' .$asi_id['asi_id']);
+                        // YA NO SE CONSULTA ALIAS, SE PONE UN VALOR POR DEECTO GUARDE HASTA ACTUALIZAR EL MODELO
+                        // YA QUE ASI_ID VA SER NULL
+                        //$asi_id = $model_asignatura->consultarAsindxalias($val[3]);
+                        //\app\models\Utilities::putMessageLogFile('asi_id consulta ...: ' .$asi_id['asi_id']);
                         $fila++;         
-                        if (!empty($asi_id['asi_id'])) {
+                        //if (!empty($asi_id['asi_id'])) {
                         $existe = $mod_educativa->consultarcursoeducativaexi($paca_id, $val[1], $val[2]);
                         \app\models\Utilities::putMessageLogFile('existe consulta ...: ' . $existe['existe_curso']);
                         if ($existe['existe_curso'] == 0) {
-                        $save_documento = $this->saveDocumentoDB($val, $paca_id, $asi_id['asi_id']);
+                        // ESTE BORRAR DESPUES YA QUE DEBE SER NULL
+                        //$asi_id['asi_id'] = 1;
+                        $save_documento = $this->saveDocumentoDB($val, $paca_id/*, $asi_id['asi_id']*/);
                         if (!$save_documento) {                   
                             $arroout["status"] = FALSE;
                             $arroout["error"] = null;
@@ -167,10 +168,10 @@ class CursoEducativa extends \yii\db\ActiveRecord
                       }else{
                         $ingresadoant .= $val[1] . ", ";
                     }
-                    }
+                   /* }
                     else{
                         $noasignaturas .= $val[1] . ", ";
-                    }
+                    }*/
                   }
                 }
                 //\app\models\Utilities::putMessageLogFile('anterio ...: ' . $ingresadoant);
@@ -198,12 +199,12 @@ class CursoEducativa extends \yii\db\ActiveRecord
         }
     }
 
-    public function saveDocumentoDB($val, $paca_id, $asi_id){
+    public function saveDocumentoDB($val, $paca_id/*, $asi_id*/){
         $usu_id = Yii::$app->session->get("PB_iduser"); ;
         $fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
         $mod_educativacurso = new CursoEducativa();
         $mod_educativacurso->paca_id = $paca_id;
-        $mod_educativacurso->asi_id = $asi_id;
+        // $mod_educativacurso->asi_id = $asi_id;
         $mod_educativacurso->cedu_asi_id = $val[1];
         $mod_educativacurso->cedu_asi_nombre = $val[2];
         $mod_educativacurso->cedu_usuario_ingreso = $usu_id;
@@ -248,7 +249,7 @@ class CursoEducativa extends \yii\db\ActiveRecord
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
         $comando->bindParam(":paca_id", $paca_id, \PDO::PARAM_INT);
         $comando->bindParam(":cedu_asi_id", $cedu_asi_id, \PDO::PARAM_INT);
-        $comando->bindParam(":cedu_asi_nombre", $cedu_asi_nombre, \PDO::PARAM_STR);
+        //$comando->bindParam(":cedu_asi_nombre", $cedu_asi_nombre, \PDO::PARAM_STR);
         $resultData = $comando->queryOne();
         return $resultData;
     }
@@ -266,7 +267,7 @@ class CursoEducativa extends \yii\db\ActiveRecord
             $campos = "
             cur.cedu_id,
             cur.paca_id, 
-            cur.asi_id, ";
+            /* cur.asi_id, */ ";
         }    
         if (isset($arrFiltro) && count($arrFiltro) > 0) {
             $str_search .= "(cur.cedu_asi_nombre like :search) AND ";
@@ -280,18 +281,18 @@ class CursoEducativa extends \yii\db\ActiveRecord
         }
         $sql = "SELECT  $campos 
                         ifnull(CONCAT(sem.saca_anio, ' (',blq.baca_nombre,'-',sem.saca_nombre, ')'),sem.saca_anio) as periodo,
-                        asi.asi_nombre,
+                        -- asi.asi_nombre,
                         cur.cedu_asi_id,
                         cur.cedu_asi_nombre
                 FROM " . $con->dbname . ".curso_educativa cur 
-                INNER JOIN " . $con->dbname . ".asignatura asi on asi.asi_id = cur.asi_id
+                -- INNER JOIN " . $con->dbname . ".asignatura asi on asi.asi_id = cur.asi_id
                 INNER JOIN " . $con->dbname . ".periodo_academico pera ON pera.paca_id = cur.paca_id
                 LEFT JOIN " . $con->dbname . ".semestre_academico sem  ON sem.saca_id = pera.saca_id
                 LEFT JOIN " . $con->dbname . ".bloque_academico blq ON blq.baca_id = pera.baca_id          
                 WHERE $str_search  cur.cedu_estado = :estado
                 AND cur.cedu_estado_logico = :estado
-                AND asi.asi_estado = :estado
-                AND asi.asi_estado_logico = :estado ";
+                /* AND asi.asi_estado = :estado
+                AND asi.asi_estado_logico = :estado */";
 
         $comando = $con->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);

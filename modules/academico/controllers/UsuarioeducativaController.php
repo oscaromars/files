@@ -366,7 +366,7 @@ class UsuarioeducativaController extends \app\components\CController {
         $colPosition = array("C", "D", "E", "F", "G");
         $arrHeader = array(
             Yii::t("formulario", "Period"),
-            Yii::t("formulario", "Subject"),
+            //Yii::t("formulario", "Subject"),
             Yii::t("formulario", "Code"). ' Aula',
             academico::t("Academico", "Course"),           
         );
@@ -393,7 +393,7 @@ class UsuarioeducativaController extends \app\components\CController {
         $this->view->title = academico::t("Academico", "Listado de cursos educativa"); // Titulo del reporte
         $arrHeader = array(
             Yii::t("formulario", "Period"),
-            Yii::t("formulario", "Subject"),
+            //Yii::t("formulario", "Subject"),
             Yii::t("formulario", "Code"). ' Aula',
             academico::t("Academico", "Course"),
         );

@@ -39,11 +39,11 @@ academico::registerTranslations();
                 'header' => Yii::t("formulario", "Period"),
                 'value' => 'periodo',
             ],
-            [
+            /*[
                 'attribute' => 'Asignatura',
                 'header' => Yii::t("formulario", "Subject"),
                 'value' => 'asi_nombre',
-            ],
+            ],*/
             [
                 'attribute' => 'codigo',
                 'header' => Yii::t("formulario", "Code"). ' Aula',

@@ -462,7 +462,7 @@ class Distributivo extends \yii\db\ActiveRecord {
                 if ($arrFiltro['estado_pago'] == "0") {            
                 $str_search .= " ((m.ccar_estado_cancela is null OR m.ccar_estado_cancela = :estado_pago) AND NOW() > m.ccar_fecha_vencepago ) AND ";
             }else{
-                $str_search .= " m.ccar_estado_cancela = :estado_pago AND ";
+                $str_search .= " (m.ccar_estado_cancela = :estado_pago OR NOW() < m.ccar_fecha_vencepago) ";
             } 
         } 
             if ($arrFiltro['jornada'] != "" && $arrFiltro['jornada'] > 0) {
@@ -649,7 +649,7 @@ class Distributivo extends \yii\db\ActiveRecord {
                 if ($arrFiltro['estado_pago'] == "0") {            
                 $str_search .= " ((m.ccar_estado_cancela is null OR m.ccar_estado_cancela = :estado_pago) AND NOW() > m.ccar_fecha_vencepago ) AND ";
             }else{
-                $str_search .= " m.ccar_estado_cancela = :estado_pago AND ";
+                $str_search .= " (m.ccar_estado_cancela = :estado_pago OR NOW() < m.ccar_fecha_vencepago) AND ";
             } 
         } 
             /**************************************************************  **/ 

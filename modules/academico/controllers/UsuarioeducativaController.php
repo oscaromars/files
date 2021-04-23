@@ -509,7 +509,7 @@ class UsuarioeducativaController extends \app\components\CController {
                 'arr_curso' => $arr_curso,
             ]);       
     }
-
+    // Se habilita por aun falta analizar bien los cambios en esta vista
     /*public function actionEdit() { 
         $cedu_id = base64_decode($_GET["cedu_id"]);
         $mod_periodo = new PeriodoAcademicoMetIngreso();

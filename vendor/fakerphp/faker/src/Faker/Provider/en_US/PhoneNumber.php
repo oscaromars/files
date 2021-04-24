@@ -25,9 +25,8 @@ class PhoneNumber extends \Faker\Provider\PhoneNumber
         '({{areaCode}}) {{exchangeCode}}-####',
         '1-{{areaCode}}-{{exchangeCode}}-####',
         '{{areaCode}}.{{exchangeCode}}.####',
-    ];
 
-    protected static $formatsWithExtension = [
+        // Extensions
         '{{areaCode}}-{{exchangeCode}}-#### x###',
         '({{areaCode}}) {{exchangeCode}}-#### x###',
         '1-{{areaCode}}-{{exchangeCode}}-#### x###',
@@ -68,15 +67,6 @@ class PhoneNumber extends \Faker\Provider\PhoneNumber
         $format = self::randomElement(static::$tollFreeFormats);
 
         return self::numerify($this->generator->parse($format));
-    }
-
-    /**
-     * @return string
-     * @example '555-123-546 x123'
-     */
-    public function phoneNumberWithExtension()
-    {
-        return static::numerify($this->generator->parse(static::randomElement(static::$formatsWithExtension)));
     }
 
     /**

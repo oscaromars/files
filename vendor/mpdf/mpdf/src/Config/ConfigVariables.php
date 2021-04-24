@@ -455,8 +455,6 @@ class ConfigVariables
 
 			'tempDir' => __DIR__ . '/../../tmp',
 
-			'cacheCleanupInterval' => 3600,
-
 			'allowAnnotationFiles' => false,
 
 			'hyphenationDictionaryFile' => __DIR__ . '/../../data/patterns/dictionary.txt',

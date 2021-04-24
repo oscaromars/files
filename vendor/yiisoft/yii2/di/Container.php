@@ -8,9 +8,6 @@
 namespace yii\di;
 
 use ReflectionClass;
-use ReflectionException;
-use ReflectionNamedType;
-use ReflectionParameter;
 use Yii;
 use yii\base\Component;
 use yii\base\InvalidConfigException;
@@ -94,10 +91,10 @@ use yii\helpers\ArrayHelper;
  *
  * For more details and usage information on Container, see the [guide article on di-containers](guide:concept-di-container).
  *
- * @property-read array $definitions The list of the object definitions or the loaded shared objects (type or
- * ID => definition or instance). This property is read-only.
- * @property-write bool $resolveArrays Whether to attempt to resolve elements in array dependencies. This
- * property is write-only.
+ * @property array $definitions The list of the object definitions or the loaded shared objects (type or ID =>
+ * definition or instance). This property is read-only.
+ * @property bool $resolveArrays Whether to attempt to resolve elements in array dependencies. This property
+ * is write-only.
  *
  * @author Qiang Xue <qiang.xue@gmail.com>
  * @since 2.0
@@ -146,14 +143,11 @@ class Container extends Component
      * In this case, the constructor parameters and object configurations will be used
      * only if the class is instantiated the first time.
      *
-     * @param string|Instance $class the class Instance, name or an alias name (e.g. `foo`) that was previously
-     * registered via [[set()]] or [[setSingleton()]].
-     * @param array $params a list of constructor parameter values. Use one of two definitions:
-     *  - Parameters as name-value pairs, for example: `['posts' => PostRepository::class]`.
-     *  - Parameters in the order they appear in the constructor declaration. If you want to skip some parameters,
-     *    you should index the remaining ones with the integers that represent their positions in the constructor
-     *    parameter list.
-     *    Dependencies indexed by name and by position in the same array are not allowed.
+     * @param string|Instance $class the class Instance, name or an alias name (e.g. `foo`) that was previously registered via [[set()]]
+     * or [[setSingleton()]].
+     * @param array $params a list of constructor parameter values. The parameters should be provided in the order
+     * they appear in the constructor declaration. If you want to skip some parameters, you should index the remaining
+     * ones with the integers that represent their positions in the constructor parameter list.
      * @param array $config a list of name-value pairs that will be used to initialize the object properties.
      * @return object an instance of the requested class.
      * @throws InvalidConfigException if the class cannot be recognized or correspond to an invalid definition
@@ -385,23 +379,15 @@ class Container extends Component
         /* @var $reflection ReflectionClass */
         list($reflection, $dependencies) = $this->getDependencies($class);
 
-        $addDependencies = [];
         if (isset($config['__construct()'])) {
-            $addDependencies = $config['__construct()'];
+            foreach ($config['__construct()'] as $index => $param) {
+                $dependencies[$index] = $param;
+            }
             unset($config['__construct()']);
         }
+
         foreach ($params as $index => $param) {
-            $addDependencies[$index] = $param;
-        }
-
-        $this->validateDependencies($addDependencies);
-
-        if ($addDependencies && is_int(key($addDependencies))) {
-            $dependencies = array_values($dependencies);
-            $dependencies = $this->mergeDependencies($dependencies, $addDependencies);
-        } else {
-            $dependencies = $this->mergeDependencies($dependencies, $addDependencies);
-            $dependencies = array_values($dependencies);
+            $dependencies[$index] = $param;
         }
 
         $dependencies = $this->resolveDependencies($dependencies, $reflection);
@@ -426,47 +412,6 @@ class Container extends Component
         }
 
         return $object;
-    }
-
-    /**
-     * @param array $a
-     * @param array $b
-     * @return array
-     */
-    private function mergeDependencies($a, $b)
-    {
-        foreach ($b as $index => $dependency) {
-            $a[$index] = $dependency;
-        }
-        return $a;
-    }
-
-    /**
-     * @param array $parameters
-     * @throws InvalidConfigException
-     */
-    private function validateDependencies($parameters)
-    {
-        $hasStringParameter = false;
-        $hasIntParameter = false;
-        foreach ($parameters as $index => $parameter) {
-            if (is_string($index)) {
-                $hasStringParameter = true;
-                if ($hasIntParameter) {
-                    break;
-                }
-            } else {
-                $hasIntParameter = true;
-                if ($hasStringParameter) {
-                    break;
-                }
-            }
-        }
-        if ($hasIntParameter && $hasStringParameter) {
-            throw new InvalidConfigException(
-                'Dependencies indexed by name and by position in the same array are not allowed.'
-            );
-        }
     }
 
     /**
@@ -495,7 +440,7 @@ class Container extends Component
      * Returns the dependencies of the specified class.
      * @param string $class class name, interface name or alias name
      * @return array the dependencies of the specified class.
-     * @throws NotInstantiableException if a dependency cannot be resolved or if a dependency cannot be fulfilled.
+     * @throws InvalidConfigException if a dependency cannot be resolved or if a dependency cannot be fulfilled.
      */
     protected function getDependencies($class)
     {
@@ -507,54 +452,23 @@ class Container extends Component
         try {
             $reflection = new ReflectionClass($class);
         } catch (\ReflectionException $e) {
-            throw new NotInstantiableException(
-                $class,
-                'Failed to instantiate component or class "' . $class . '".',
-                0,
-                $e
-            );
+            throw new InvalidConfigException('Failed to instantiate component or class "' . $class . '".', 0, $e);
         }
 
         $constructor = $reflection->getConstructor();
         if ($constructor !== null) {
             foreach ($constructor->getParameters() as $param) {
-                if (PHP_VERSION_ID >= 50600 && $param->isVariadic()) {
+                if (version_compare(PHP_VERSION, '5.6.0', '>=') && $param->isVariadic()) {
                     break;
-                }
-
-                if (PHP_VERSION_ID >= 80000) {
-                    $c = $param->getType();
-                    $isClass = $c !== null && !$param->getType()->isBuiltin();
+                } elseif ($param->isDefaultValueAvailable()) {
+                    $dependencies[] = $param->getDefaultValue();
                 } else {
-                    try {
+                    if (PHP_VERSION_ID >= 80000) {
+                        $c = $param->getType();
+                    } else {
                         $c = $param->getClass();
-                    } catch (ReflectionException $e) {
-                        if (!$this->isNulledParam($param)) {
-                            $notInstantiableClass = null;
-                            if (PHP_VERSION_ID >= 70000) {
-                                $type = $param->getType();
-                                if ($type instanceof ReflectionNamedType) {
-                                    $notInstantiableClass = $type->getName();
-                                }
-                            }
-                            throw new NotInstantiableException(
-                                $notInstantiableClass,
-                                $notInstantiableClass === null ? 'Can not instantiate unknown class.' : null
-                            );
-                        } else {
-                            $c = null;
-                        }
                     }
-                    $isClass = $c !== null;
-                }
-                $className = $isClass ? $c->getName() : null;
-
-                if ($className !== null) {
-                    $dependencies[$param->getName()] = Instance::of($className, $this->isNulledParam($param));
-                } else {
-                    $dependencies[$param->getName()] = $param->isDefaultValueAvailable()
-                        ? $param->getDefaultValue()
-                        : null;
+                    $dependencies[] = Instance::of($c === null ? null : $c->getName());
                 }
             }
         }
@@ -563,15 +477,6 @@ class Container extends Component
         $this->_dependencies[$class] = $dependencies;
 
         return [$reflection, $dependencies];
-    }
-
-    /**
-     * @param ReflectionParameter $param
-     * @return bool
-     */
-    private function isNulledParam($param)
-    {
-        return $param->isOptional() || (PHP_VERSION_ID >= 70100 && $param->getType()->allowsNull());
     }
 
     /**
@@ -586,7 +491,7 @@ class Container extends Component
         foreach ($dependencies as $index => $dependency) {
             if ($dependency instanceof Instance) {
                 if ($dependency->id !== null) {
-                    $dependencies[$index] = $dependency->get($this);
+                    $dependencies[$index] = $this->get($dependency->id);
                 } elseif ($reflection !== null) {
                     $name = $reflection->getConstructor()->getParameters()[$index]->getName();
                     $class = $reflection->getName();
@@ -660,23 +565,12 @@ class Container extends Component
 
         foreach ($reflection->getParameters() as $param) {
             $name = $param->getName();
-
-            if (PHP_VERSION_ID >= 80000) {
-                $class = $param->getType();
-                $isClass = $class !== null && !$param->getType()->isBuiltin();
-            } else {
-                $class = $param->getClass();
-                $isClass = $class !== null;
-            }
-
-            if ($isClass) {
+            if (($class = $param->getClass()) !== null) {
                 $className = $class->getName();
-                if (PHP_VERSION_ID >= 50600 && $param->isVariadic()) {
+                if (version_compare(PHP_VERSION, '5.6.0', '>=') && $param->isVariadic()) {
                     $args = array_merge($args, array_values($params));
                     break;
-                }
-
-                if ($associative && isset($params[$name]) && $params[$name] instanceof $className) {
+                } elseif ($associative && isset($params[$name]) && $params[$name] instanceof $className) {
                     $args[] = $params[$name];
                     unset($params[$name]);
                 } elseif (!$associative && isset($params[0]) && $params[0] instanceof $className) {

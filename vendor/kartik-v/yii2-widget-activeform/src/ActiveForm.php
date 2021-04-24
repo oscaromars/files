@@ -4,7 +4,7 @@
  * @copyright  Copyright &copy; Kartik Visweswaran, Krajee.com, 2015 - 2019
  * @package    yii2-widgets
  * @subpackage yii2-widget-activeform
- * @version    1.5.8
+ * @version    1.5.9
  */
 
 namespace kartik\form;
@@ -42,7 +42,7 @@ use yii\widgets\ActiveForm as YiiActiveForm;
  * ]);
  * ~~~
  *
- * @method ActiveField field(Model $model, \string $attribute, array $options = [])
+ * @method ActiveField field(Model $model, string $attribute, array $options = [])
  * @author Kartik Visweswaran <kartikv2@gmail.com>
  * @since  1.0
  */

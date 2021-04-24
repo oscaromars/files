@@ -1,6 +1,12 @@
 Change Log: `yii2-widget-activeform`
 ====================================
 
+## Version 1.5.9
+
+**Date**: _under development_
+
+- (enh #120): BS4 Custom Controls Enhancements: Switch and File.
+
 ## Version 1.5.8
 
 **Date**: 24-Feb-2019

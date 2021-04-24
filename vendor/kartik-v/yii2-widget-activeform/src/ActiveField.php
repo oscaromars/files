@@ -4,7 +4,7 @@
  * @copyright  Copyright &copy; Kartik Visweswaran, Krajee.com, 2015 - 2019
  * @package    yii2-widgets
  * @subpackage yii2-widget-activeform
- * @version    1.5.9
+ * @version    1.5.8
  */
 
 namespace kartik\form;
@@ -499,9 +499,7 @@ class ActiveField extends YiiActiveField
      * @param array $options the tag options in terms of name-value pairs. The following options are specially
      * handled:
      *
-     * - `custom`: _bool_, whether to render bootstrap 4.x custom checkbox styled control. Defaults to `false`.
-     *    This is applicable only for Bootstrap 4.x forms.
-     * - `switch`: _bool_, whether to render bootstrap 4.x custom switch styled control. Defaults to `false`.
+     * - `custom`: _bool_, whether to render bootstrap 4.x custom checkbox/radio styled control. Defaults to `false`.
      *    This is applicable only for Bootstrap 4.x forms.
      * @see https://getbootstrap.com/docs/4.1/components/forms/#checkboxes-and-radios-1
      * - `uncheck`: _string_, the value associated with the uncheck state of the checkbox. If not set, it will take
@@ -610,9 +608,6 @@ class ActiveField extends YiiActiveField
     public function fileInput($options = [])
     {
         if ($this->isCustomControl($options)) {
-            $view = $this->form->getView();
-            Bs4CustomFileInputAsset::register($view);
-            $view->registerJs('bsCustomFileInput.init();');
             Html::removeCssClass($options, 'form-control');
             Html::addCssClass($options, 'custom-file-input');
             Html::addCssClass($this->labelOptions, 'custom-file-label');
@@ -701,7 +696,7 @@ class ActiveField extends YiiActiveField
      * @param array $options the tag options in terms of name-value pairs. The following options are specially
      * handled:
      *
-     * - `custom`: _bool_, whether to render bootstrap 4.x custom radio styled control. Defaults to `false`.
+     * - `custom`: _bool_, whether to render bootstrap 4.x custom checkbox/radio styled control. Defaults to `false`.
      *    This is applicable only for Bootstrap 4.x forms.
      * @see https://getbootstrap.com/docs/4.1/components/forms/#checkboxes-and-radios-1
      * - `uncheck`: _string_, the value associated with the uncheck state of the radio button. If not set, it will take the
@@ -992,9 +987,8 @@ class ActiveField extends YiiActiveField
     protected function getToggleField($type = self::TYPE_CHECKBOX, $options = [], $enclosedByLabel = null)
     {
         $this->initDisability($options);
-        $isBs4 = $this->form->isBs4();
         $custom = $this->isCustomControl($options);
-        $switch = ArrayHelper::remove($options, 'switch', false) && $isBs4 && $type === self::TYPE_CHECKBOX;
+        $isBs4 = $this->form->isBs4();
         if ($enclosedByLabel === null) {
             $enclosedByLabel = !$isBs4 && !$custom;
         }
@@ -1012,7 +1006,7 @@ class ActiveField extends YiiActiveField
             Html::addCssClass($this->labelOptions, "{$prefix}-label");
             Html::addCssClass($options, "{$prefix}-input");
             if ($custom) {
-                Html::addCssClass($this->checkWrapperOptions, 'custom-' . ($switch ? 'switch' : $type));
+                Html::addCssClass($this->checkWrapperOptions, "custom-{$type}");
             }
         } elseif (!$enclosedByLabel) {
             Html::addCssClass($this->checkWrapperOptions, "not-enclosed");

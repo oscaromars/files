@@ -3,6 +3,7 @@
 namespace app\modules\academico\models;
 
 use yii\data\ArrayDataProvider;
+use app\modules\academico\models\PeriodoAcademico;
 use Yii;
 
 /**
@@ -454,13 +455,25 @@ class Distributivo extends \yii\db\ActiveRecord {
             if ($arrFiltro['periodo'] != "" && $arrFiltro['periodo'] > 0) {
                 $str_search .= "a.paca_id = :periodo AND ";
             }
-            if ($arrFiltro['estado'] == "C" or $arrFiltro['estado'] == "N") {
+            /*if ($arrFiltro['estado'] == "C" or $arrFiltro['estado'] == "N") {
                 $str_search .= "ifnull(m.ccar_estado_cancela,'N') = :estpago AND ";
-            }
+            }*/
+            if ($arrFiltro['estado_pago'] == "0" or $arrFiltro['estado_pago'] == "1") {            
+                if ($arrFiltro['estado_pago'] == "0") {            
+                $str_search .= " ((m.ccar_estado_cancela is null OR m.ccar_estado_cancela = :estado_pago) AND NOW() > m.ccar_fecha_vencepago ) AND ";
+            }else{
+                $str_search .= " (m.ccar_estado_cancela = :estado_pago OR NOW() < m.ccar_fecha_vencepago) ";
+            } 
+        } 
             if ($arrFiltro['jornada'] != "" && $arrFiltro['jornada'] > 0) {
                 $str_search .= "a.daca_jornada = :jornada AND ";
             }
+        }else{
+          $mod_paca        = new PeriodoAcademico(); 
+          $paca_actual_id  = $mod_paca->getPeriodoAcademicoActual();
+          $str_search      = "a.paca_id = ".$paca_actual_id['id']." AND ";
         }
+
         $sql = "SELECT  distinct d.uaca_nombre as unidad, e.mod_nombre as modalidad,
                         p.per_cedula as identificacion, 
                         concat(p.per_pri_apellido, ' ', ifnull(p.per_seg_apellido,''), ' ', p.per_pri_nombre) as estudiante,
@@ -478,7 +491,7 @@ class Distributivo extends \yii\db\ActiveRecord {
                                             ORDER BY mi.ccar_fecha_vencepago desc
                                             LIMIT 1),'No Autorizado')
                                 when m.ccar_fecha_vencepago >= NOW() then ifnull((SELECT
-                                            CASE WHEN mi.ccar_estado_cancela = 'C'
+                                            CASE WHEN mi.ccar_estado_cancela = 'C' or mi.ccar_estado_cancela = 'N'
                                             THEN 'Autorizado'
                                             ELSE 'No Autorizado' END AS pago
                                             FROM db_facturacion.carga_cartera mi
@@ -528,19 +541,51 @@ class Distributivo extends \yii\db\ActiveRecord {
                 $search_per = $arrFiltro["periodo"];
                 $comando->bindParam(":periodo", $search_per, \PDO::PARAM_INT);
             }
-            if ($arrFiltro['estado'] == "C" or $arrFiltro['estado'] == "N") {
+           /* if ($arrFiltro['estado'] == "C" or $arrFiltro['estado'] == "N") {
                 $search_estado = $arrFiltro["estado"];
                 $comando->bindParam(":estpago", $search_estado, \PDO::PARAM_STR);
+            } */
+
+            if ($arrFiltro['estado_pago'] != '2') {
+                if ($arrFiltro['estado_pago'] == '0') {
+                    $filestado = 'N';
+                } else {
+                    $filestado = 'C';
+              } 
+                $comando->bindParam(":estado_pago", $filestado, \PDO::PARAM_STR);
             }
+
             if ($arrFiltro['jornada'] != "" && $arrFiltro['jornada'] > 0) {
                 $search_jor = $arrFiltro["jornada"];
                 $comando->bindParam(":jornada", $search_jor, \PDO::PARAM_INT);
             }
         }
         $resultData = $comando->queryAll();
+
+        $resultData2 = array();
+
+        foreach ($resultData as $key => $value) {
+            $band = 1;
+
+            if(empty($resultData2))
+              $resultData2[] = $value;
+
+            foreach ($resultData2 as $key2 => $value2) {
+
+                if ($resultData2[$key2]['est_id'] == $value['est_id']) {
+                    if($resultData2[$key2]['asignatura'] == $value['asignatura']){
+                        $band = 0;
+                    }
+                }
+            }
+
+            if($band == 1)
+                $resultData2[] = $value;
+        }//foreach
+
         $dataProvider = new ArrayDataProvider([
             'key' => 'id',
-            'allModels' => $resultData,
+            'allModels' => $resultData2,
             'pagination' => [
                 'pageSize' => Yii::$app->params["pageSize"],
             ],
@@ -551,7 +596,7 @@ class Distributivo extends \yii\db\ActiveRecord {
         if ($reporte == 1) {
             return $dataProvider;
         } else {
-            return $resultData;
+            return $resultData2;
         }
     }
 
@@ -602,16 +647,24 @@ class Distributivo extends \yii\db\ActiveRecord {
             }*/
             if ($arrFiltro['estado_pago'] == "0" or $arrFiltro['estado_pago'] == "1") {            
                 if ($arrFiltro['estado_pago'] == "0") {            
-                $str_search .= " (m.ccar_estado_cancela is null OR m.ccar_estado_cancela = :estado_pago) AND ";
+                $str_search .= " ((m.ccar_estado_cancela is null OR m.ccar_estado_cancela = :estado_pago) AND NOW() > m.ccar_fecha_vencepago ) AND ";
             }else{
-                $str_search .= " m.ccar_estado_cancela = :estado_pago AND ";
+                $str_search .= " (m.ccar_estado_cancela = :estado_pago OR NOW() < m.ccar_fecha_vencepago) AND ";
             } 
         } 
             /**************************************************************  **/ 
             if ($arrFiltro['jornada'] != "" && $arrFiltro['jornada'] > 0) {
                 $str_search .= "a.daca_jornada = :jornada AND ";
             }
+        }else{
+          $mod_paca        = new PeriodoAcademico(); 
+          $paca_actual_id  = $mod_paca->getPeriodoAcademicoActual();
+          $str_search      = "a.paca_id = ".$paca_actual_id['id']." AND ";
         }
+
+
+        
+
         $sql = "SELECT  distinct h.est_id, 
                         d.uaca_nombre as unidad, 
                         e.mod_nombre as modalidad,
@@ -634,7 +687,7 @@ class Distributivo extends \yii\db\ActiveRecord {
                                             ORDER BY mi.ccar_fecha_vencepago desc
                                             LIMIT 1),'No Autorizado')
                                 when m.ccar_fecha_vencepago >= NOW() then ifnull((SELECT
-                                            CASE WHEN mi.ccar_estado_cancela = 'C'
+                                            CASE WHEN mi.ccar_estado_cancela = 'N' or mi.ccar_estado_cancela = 'C'
                                             THEN 'Autorizado'
                                             ELSE 'No Autorizado' END AS pago
                                             FROM db_facturacion.carga_cartera mi
@@ -711,9 +764,33 @@ class Distributivo extends \yii\db\ActiveRecord {
             }
         }
         $resultData = $comando->queryAll();
+
+        $resultData2 = array();
+
+        foreach ($resultData as $key => $value) {
+            $band = 1;
+
+            if(empty($resultData2))
+              $resultData2[] = $value;
+
+            foreach ($resultData2 as $key2 => $value2) {
+
+                if ($resultData2[$key2]['est_id'] == $value['est_id']) {
+                    if($resultData2[$key2]['asignatura'] == $value['asignatura']){
+                        $band = 0;
+                    }
+                }
+            }
+
+            if($band == 1)
+                $resultData2[] = $value;
+        }//foreach
+        //\app\models\Utilities::putMessageLogFile(print_r($resultData2,true));
+
+
         $dataProvider = new ArrayDataProvider([
             'key' => 'id',
-            'allModels' => $resultData,
+            'allModels' => $resultData2,
             'pagination' => [
                 'pageSize' => Yii::$app->params["pageSize"],
             ],
@@ -724,7 +801,7 @@ class Distributivo extends \yii\db\ActiveRecord {
         if ($reporte == 1) {
             return $dataProvider;
         } else {
-            return $resultData;
+            return $resultData2;
         }
     }
 

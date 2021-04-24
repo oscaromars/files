@@ -48,8 +48,7 @@ class UsuarioeducativaController extends \app\components\CController {
                 'arr_periodoAcademico' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $arr_periodoAcademico), "id", "name"),
                 'arr_asignatura' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $arr_asignatura), "id", "name"),
                 'model' => $model,
-            ]);
-        //}
+            ]);       
     }
 
     public function actionCargarusuario() {
@@ -367,7 +366,7 @@ class UsuarioeducativaController extends \app\components\CController {
         $colPosition = array("C", "D", "E", "F", "G");
         $arrHeader = array(
             Yii::t("formulario", "Period"),
-            Yii::t("formulario", "Subject"),
+            //Yii::t("formulario", "Subject"),
             Yii::t("formulario", "Code"). ' Aula',
             academico::t("Academico", "Course"),           
         );
@@ -394,7 +393,7 @@ class UsuarioeducativaController extends \app\components\CController {
         $this->view->title = academico::t("Academico", "Listado de cursos educativa"); // Titulo del reporte
         $arrHeader = array(
             Yii::t("formulario", "Period"),
-            Yii::t("formulario", "Subject"),
+            //Yii::t("formulario", "Subject"),
             Yii::t("formulario", "Code"). ' Aula',
             academico::t("Academico", "Course"),
         );
@@ -418,4 +417,118 @@ class UsuarioeducativaController extends \app\components\CController {
         );
         $report->mpdf->Output('Reporte_' . date("Ymdhis") . ".pdf", ExportFile::OUTPUT_TO_DOWNLOAD);
     }
+
+    public function actionNew() { 
+        $mod_periodo = new PeriodoAcademicoMetIngreso();
+        $mod_asignatura = new Asignatura(); 
+        $mod_educativa = new CursoEducativa();
+        $data = Yii::$app->request->get();
+        if (Yii::$app->request->isAjax) {
+            $data = Yii::$app->request->post();            
+        }   
+            $arr_asignatura = $mod_asignatura->consultarAsignaturasxuacaid(1);
+            $arr_periodoAcademico = $mod_periodo->consultarPeriodoAcademicotodos();
+            return $this->render('new', [  
+                'arr_periodoAcademico' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $arr_periodoAcademico), "id", "name"),
+                'arr_asignatura' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $arr_asignatura), "id", "name"),
+                ]);       
+    }
+    public function actionSavecurso() {
+        $per_id = @Yii::$app->session->get("PB_perid");
+        $usuario = @Yii::$app->user->identity->usu_id;
+        if (Yii::$app->request->isAjax) {
+            $data = Yii::$app->request->post();
+            $periodo = $data["periodo"];
+            //$materia = $data["materia"];
+            $codigoaula = $data["codigoaula"];
+            $nombreaula = ucwords(strtolower($data["nombreaula"]));
+            $con = \Yii::$app->db_academico;
+            $transaction = $con->beginTransaction();
+            try {
+                $mod_educativa = new CursoEducativa();
+                //  valida que no exista el registro OJO REVISAR BIEN CON EL ASI_ID ES NECESARIO         
+                $existe = $mod_educativa->consultarcursoeducativaexi($periodo, $codigoaula,$nombreaula);
+                //\app\models\Utilities::putMessageLogFile('existe rcurso...: ' . $existe['existe_curso']);     
+                if ($existe['existe_curso'] == 0) {
+                    $savecurso = $mod_educativa->insertarCursoeducativa($periodo, /*$materia,*/ $codigoaula, $nombreaula, $usuario);
+                    if ($savecurso) {
+                        $exito = 1;
+                    }
+                    if ($exito) {
+                        $transaction->commit();
+                        $message = array(
+                            "wtmessage" => Yii::t("notificaciones", "Se ha guardado el curso."),
+                            "title" => Yii::t('jslang', 'Success'),
+                        );
+                        return Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), false, $message);
+                    } else {
+                        $transaction->rollback();
+                        $message = array(
+                            "wtmessage" => Yii::t("notificaciones", "Error al grabar." . $mensaje),
+                            "title" => Yii::t('jslang', 'Error'),
+                        );
+                        return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+                    }
+               }else {
+                $transaction->rollback();
+                $message = array(
+                    "wtmessage" => Yii::t("notificaciones", "Ya creó anteriormente el curso." . $mensaje),
+                    "title" => Yii::t('jslang', 'Error'),
+                );
+                return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+            }
+                
+            } catch (Exception $ex) {
+                $transaction->rollback();
+                $message = array(
+                    "wtmessage" => Yii::t("notificaciones", "Error al grabar."),
+                    "title" => Yii::t('jslang', 'Error'),
+                );
+                return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+            }
+            return;
+        }
+    }
+
+    public function actionView() { 
+        $cedu_id = base64_decode($_GET["cedu_id"]);
+        $mod_periodo = new PeriodoAcademicoMetIngreso();
+        $mod_asignatura = new Asignatura(); 
+        $mod_educativa = new CursoEducativa();
+        $data = Yii::$app->request->get();
+        if (Yii::$app->request->isAjax) {
+            $data = Yii::$app->request->post();            
+        }   
+            //$cedu_id = 1;
+            // consultar la infomracion del curso por cedu_id
+            $arr_curso = $mod_educativa->consultarCursoxid($cedu_id);        
+            $arr_asignatura = $mod_asignatura->consultarAsignaturasxuacaid(1);
+            $arr_periodoAcademico = $mod_periodo->consultarPeriodoAcademicotodos();
+            return $this->render('view', [  
+                'arr_periodoAcademico' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $arr_periodoAcademico), "id", "name"),
+                'arr_asignatura' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $arr_asignatura), "id", "name"),
+                'arr_curso' => $arr_curso,
+            ]);       
+    }
+    // Se habilita por aun falta analizar bien los cambios en esta vista
+    /*public function actionEdit() { 
+        $cedu_id = base64_decode($_GET["cedu_id"]);
+        $mod_periodo = new PeriodoAcademicoMetIngreso();
+        $mod_asignatura = new Asignatura(); 
+        $mod_educativa = new CursoEducativa();
+        $data = Yii::$app->request->get();
+        if (Yii::$app->request->isAjax) {
+            $data = Yii::$app->request->post();            
+        }   
+            //$cedu_id = 1;
+            // consultar la infomracion del curso por cedu_id
+            $arr_curso = $mod_educativa->consultarCursoxid($cedu_id);        
+            $arr_asignatura = $mod_asignatura->consultarAsignaturasxuacaid(1);
+            $arr_periodoAcademico = $mod_periodo->consultarPeriodoAcademicotodos();
+            return $this->render('edit', [  
+                'arr_periodoAcademico' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $arr_periodoAcademico), "id", "name"),
+                'arr_asignatura' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $arr_asignatura), "id", "name"),
+                'arr_curso' => $arr_curso,
+            ]);       
+    }*/
 }  

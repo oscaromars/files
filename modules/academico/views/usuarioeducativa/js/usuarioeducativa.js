@@ -21,6 +21,10 @@ $(document).ready(function() {
         savecurso();
     });
 
+    $('#btn_editcurso').click(function () {
+        editcurso();
+    });
+
     $('#cmb_unidad_dises').change(function () {
         var link = $('#txth_base').val() + "/academico/distributivo/listarestudiantespago";
         var arrParams = new Object();
@@ -187,6 +191,34 @@ function savecurso() {
     arrParams.nombreaula = $('#txt_aulanew').val();
     if ($('#cmb_periodonew option:selected').val() != 0) {           
      // if ($('#cmb_asignaturanew option:selected').val() != 0) { 
+        if (!validateForm()) {
+            requestHttpAjax(link, arrParams, function(response) {
+                showAlert(response.status, response.label, response.message);
+                if (response.status == "OK") {
+                    setTimeout(function() {
+                        window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/index";
+                    }, 3000);
+                }
+            }, true);
+        }
+    /*} else {
+        showAlert('NO_OK', 'error', {"wtmessage": 'Asignatura: El campo no debe estar vacío.', "title": 'Error'});
+      } */
+    } else {
+        showAlert('NO_OK', 'error', {"wtmessage": 'Código Aula: El campo no debe estar vacío.', "title": 'Error'});
+     }  
+}
+
+function editcurso() {
+    var link = $('#txth_base').val() + "/academico/usuarioeducativa/editcurso";
+    var arrParams = new Object();
+    arrParams.ceduid = $('#txth_cursoid').val();
+    arrParams.periodo = $('#cmb_periodoedit option:selected').val();
+    //arrParams.materia = $('#cmb_asignaturaedit option:selected').val();
+    arrParams.codigoaula = $('#txt_codigoedit').val();
+    arrParams.nombreaula = $('#txt_aulaedit').val();
+    if ($('#cmb_periodoedit option:selected').val() != 0) {           
+     // if ($('#cmb_asignaturaedit option:selected').val() != 0) { 
         if (!validateForm()) {
             requestHttpAjax(link, arrParams, function(response) {
                 showAlert(response.status, response.label, response.message);

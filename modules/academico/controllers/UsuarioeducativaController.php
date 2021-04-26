@@ -447,7 +447,7 @@ class UsuarioeducativaController extends \app\components\CController {
             try {
                 $mod_educativa = new CursoEducativa();
                 //  valida que no exista el registro OJO REVISAR BIEN CON EL ASI_ID ES NECESARIO         
-                $existe = $mod_educativa->consultarcursoeducativaexi($periodo, $codigoaula,$nombreaula);
+                $existe = $mod_educativa->consultarcursoeducativaexi($periodo, $codigoaula, $nombreaula);
                 //\app\models\Utilities::putMessageLogFile('existe rcurso...: ' . $existe['existe_curso']);     
                 if ($existe['existe_curso'] == 0) {
                     $savecurso = $mod_educativa->insertarCursoeducativa($periodo, /*$materia,*/ $codigoaula, $nombreaula, $usuario);
@@ -511,7 +511,7 @@ class UsuarioeducativaController extends \app\components\CController {
             ]);       
     }
     // Se habilita por aun falta analizar bien los cambios en esta vista
-    /*public function actionEdit() { 
+    public function actionEdit() { 
         $cedu_id = base64_decode($_GET["cedu_id"]);
         $mod_periodo = new PeriodoAcademicoMetIngreso();
         $mod_asignatura = new Asignatura(); 
@@ -530,5 +530,52 @@ class UsuarioeducativaController extends \app\components\CController {
                 'arr_asignatura' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $arr_asignatura), "id", "name"),
                 'arr_curso' => $arr_curso,
             ]);       
-    }*/
+    }
+
+    public function actionEditcurso() {
+        $per_id = @Yii::$app->session->get("PB_perid");
+        $usuario = @Yii::$app->user->identity->usu_id;
+        if (Yii::$app->request->isAjax) {
+            $data = Yii::$app->request->post();
+            $cedu_id = $data["ceduid"];
+            $periodo = $data["periodo"];
+            //$materia = $data["materia"];
+            $codigoaula = $data["codigoaula"];
+            $nombreaula = ucwords(strtolower($data["nombreaula"]));
+            $con = \Yii::$app->db_academico;
+            $transaction = $con->beginTransaction();
+            try {
+                $mod_educativa = new CursoEducativa();
+                $editcurso = $mod_educativa->modificarCursoeducativa($cedu_id, $periodo, $codigoaula, $nombreaula, $usuario);
+                    if ($editcurso) {
+                        $exito = 1;
+                    }
+                    if ($exito) {
+                        $transaction->commit();
+                        $message = array(
+                            "wtmessage" => Yii::t("notificaciones", "Se ha modificado el curso."),
+                            "title" => Yii::t('jslang', 'Success'),
+                        );
+                        return Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), false, $message);
+                    } else {
+                        $transaction->rollback();
+                        $message = array(
+                            "wtmessage" => Yii::t("notificaciones", "Error al grabar1." . $mensaje),
+                            "title" => Yii::t('jslang', 'Error'),
+                        );
+                        return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+                    }             
+                
+            } catch (Exception $ex) {
+                $transaction->rollback();
+                $message = array(
+                    "wtmessage" => Yii::t("notificaciones", "Error al grabar2."),
+                    "title" => Yii::t('jslang', 'Error'),
+                );
+                return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+            }
+            return;
+        }
+    }
+
 }  

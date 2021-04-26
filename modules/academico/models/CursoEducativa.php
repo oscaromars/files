@@ -451,4 +451,49 @@ class CursoEducativa extends \yii\db\ActiveRecord
         $resultData = $comando->queryOne();      
         return $resultData;
     }
+
+    /**
+     * Function modificar cursos educativa.
+     * @author Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>;
+     * @param
+     * @return
+     */
+    public function modificarCursoeducativa($cedu_id, $paca_id, $cedu_asi_id, $cedu_asi_nombre, $cedu_usuario_modifica) {
+        $fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
+        $con = \Yii::$app->db_academico;
+        $estado = 1; 
+        if ($trans !== null) {
+            $trans = null; // si existe la transacción entonces no se crea una
+        } else {
+            $trans = $con->beginTransaction(); // si no existe la transacción entonces se crea una
+        }
+        try {
+            $comando = $con->createCommand
+                    ("UPDATE " . $con->dbname . ".curso_educativa		       
+                      SET paca_id = :paca_id,
+                          cedu_asi_id = :cedu_asi_id,
+                          cedu_asi_nombre = :cedu_asi_nombre,
+                          cedu_usuario_modifica = :cedu_usuario_modifica,
+                          cedu_fecha_modificacion = :cedu_fecha_modificacion                          
+                      WHERE 
+                      cedu_id = :cedu_id AND
+                      cedu_estado = :estado AND
+                      cedu_estado_logico = :estado");
+            $comando->bindParam(":cedu_id", $cedu_id, \PDO::PARAM_INT);  
+            $comando->bindParam(":paca_id", $paca_id, \PDO::PARAM_INT);  
+            $comando->bindParam(":cedu_asi_id", $cedu_asi_id, \PDO::PARAM_INT); 
+            $comando->bindParam(":cedu_asi_nombre", $cedu_asi_nombre, \PDO::PARAM_STR);                    
+            $comando->bindParam(":cedu_usuario_modifica", $cedu_usuario_modifica, \PDO::PARAM_INT);
+            $comando->bindParam(":cedu_fecha_modificacion", $fecha_transaccion, \PDO::PARAM_STR);
+            $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+            $response = $comando->execute();
+            if ($trans !== null)
+                $trans->commit();
+            return $response;
+        } catch (Exception $ex) {
+            if ($trans !== null)
+                $trans->rollback();
+            return FALSE;
+        }
+    }
 }

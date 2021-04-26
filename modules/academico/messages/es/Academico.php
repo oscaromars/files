@@ -36,6 +36,7 @@ return [
     "Dial type" => "Tipo marcación",
     "Distributive List" => "Listar Distributivo",
     "Distributive Type" => "Tipo Distributivo",
+    "Edit course" => "Editar Cursos",
     "End date effective" => "Fecha Final Vigencia",
     "End IP" => "IP Salida",
     "Entry" => "Entrada",

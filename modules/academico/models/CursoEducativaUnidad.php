@@ -343,4 +343,41 @@ class CursoEducativaUnidad extends \yii\db\ActiveRecord
         }
     }
 
+    /**
+     * Function eliminar el curso estados en 0.
+     * @author Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>;
+     * @param
+     * @return
+     */
+    public function eliminarUnidad($ceuni_id, $ceuni_usuario_modifica, $ceuni_fecha_modificacion) {
+        $estado = 0;
+        $con = \Yii::$app->db_academico;
+        
+        if ($trans !== null) {
+            $trans = null; // si existe la transacción entonces no se crea una
+        } else {
+            $trans = $con->beginTransaction(); // si no existe la transacción entonces se crea una
+        }
+        try {
+            $comando = $con->createCommand
+                    ("UPDATE " . $con->dbname . ".curso_educativa_unidad		       
+                      SET ceuni_estado = :ceuni_estado,
+                          ceuni_usuario_modifica = :ceuni_usuario_modifica,
+                          ceuni_fecha_modificacion = :ceuni_fecha_modificacion                          
+                      WHERE 
+                      ceuni_id = :ceuni_id ");
+            $comando->bindParam(":ceuni_id", $ceuni_id, \PDO::PARAM_INT);          
+            $comando->bindParam(":ceuni_usuario_modifica", $ceuni_usuario_modifica, \PDO::PARAM_INT);
+            $comando->bindParam(":ceuni_fecha_modificacion", $ceuni_fecha_modificacion, \PDO::PARAM_STR);
+            $comando->bindParam(":ceuni_estado", $estado, \PDO::PARAM_STR);
+            $response = $comando->execute();
+            if ($trans !== null)
+                $trans->commit();
+            return $response;
+        } catch (Exception $ex) {
+            if ($trans !== null)
+                $trans->rollback();
+            return FALSE;
+        }
+    }
 }

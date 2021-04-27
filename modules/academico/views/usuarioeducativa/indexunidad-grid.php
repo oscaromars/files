@@ -53,14 +53,14 @@ academico::registerTranslations();
             [
                 'class' => 'yii\grid\ActionColumn',
                 'header' => Yii::t("formulario", "Actions"), 
-                'template' => '{view} ', //{delete}
+                'template' => '{view} {delete}', 
                 'buttons' => [
                     'view' => function ($url, $model) {
                         return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', Url::to(['usuarioeducativa/viewunidad', 'ceuni_id' => base64_encode($model["ceuni_id"])]), ["data-toggle" => "tooltip", "title" => "Ver Unidad", "data-pjax" => 0]);
                     },
-                    /*'delete' => function ($url, $model) {
-                       return Html::a('<span class="glyphicon glyphicon-trash"></span>', "#", ['onclick' => "eliminarcurso(" . $model['ceuni_id'] . ");", "data-toggle" => "tooltip", "title" => "Eliminar Estudiante", "data-pjax" => 0]);
-                     }*/
+                    'delete' => function ($url, $model) {
+                       return Html::a('<span class="glyphicon glyphicon-trash"></span>', "#", ['onclick' => "eliminarunidad(" . $model['ceuni_id'] . ");", "data-toggle" => "tooltip", "title" => "Eliminar Unidad", "data-pjax" => 0]);
+                     }
                    
                 ],
             ],

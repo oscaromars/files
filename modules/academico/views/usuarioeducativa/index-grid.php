@@ -64,7 +64,7 @@ academico::registerTranslations();
                         return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', Url::to(['usuarioeducativa/view', 'cedu_id' => base64_encode($model["cedu_id"])]), ["data-toggle" => "tooltip", "title" => "Ver Curso", "data-pjax" => 0]);
                     },
                     'delete' => function ($url, $model) {
-                       return Html::a('<span class="glyphicon glyphicon-trash"></span>', "#", ['onclick' => "eliminarcurso(" . $model['cedu_id'] . ");", "data-toggle" => "tooltip", "title" => "Eliminar Estudiante", "data-pjax" => 0]);
+                       return Html::a('<span class="glyphicon glyphicon-trash"></span>', "#", ['onclick' => "eliminarcurso(" . $model['cedu_id'] . ");", "data-toggle" => "tooltip", "title" => "Eliminar Curso", "data-pjax" => 0]);
                      }
                    
                 ],

@@ -310,7 +310,7 @@ class UsuarioeducativaController extends \app\components\CController {
                     return Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Success"), false, $message);
                 } else {
                     $message = array(
-                        "wtmessage" => Yii::t("notificaciones", "Error al procesar el archivo1. " . $carga_archivo['message']),
+                        "wtmessage" => Yii::t("notificaciones", "Error al procesar el archivo. " . $carga_archivo['message']),
                         "title" => Yii::t('jslang', 'Error'),
                     );
                     return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), true, $message);
@@ -318,7 +318,7 @@ class UsuarioeducativaController extends \app\components\CController {
                 return;
             } catch (Exception $ex) {      
                 $message = array(
-                    'wtmessage' => Yii::t('notificaciones', 'Error al procesar el archivo2.'),
+                    'wtmessage' => Yii::t('notificaciones', 'Error al procesar el archivo.'),
                     'title' => Yii::t('jslang', 'Error'),
                 );
                 return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t('jslang', 'Error'), true, $message);
@@ -589,7 +589,7 @@ class UsuarioeducativaController extends \app\components\CController {
             $con = \Yii::$app->db_academico;
             $transaction = $con->beginTransaction();
             try {
-                \app\models\Utilities::putMessageLogFile('curso id..: ' . $cur_id);     
+                //\app\models\Utilities::putMessageLogFile('curso id..: ' . $cur_id);     
                 $resp_estado = $mod_educativa->eliminarCurso($cur_id, $usu_autenticado, $fecha);
                 if ($resp_estado) {
                     $exito = '1';
@@ -886,5 +886,110 @@ class UsuarioeducativaController extends \app\components\CController {
             }
             return;
         }
+    }
+
+    public function actionDeleteunidad() {
+        $mod_educativa = new CursoEducativaUnidad();
+        $usu_autenticado = @Yii::$app->session->get("PB_iduser");
+        if (Yii::$app->request->isAjax) {
+            $data = Yii::$app->request->post();
+            $ceuni_id = $data["ceuni_id"];           
+            $fecha = date(Yii::$app->params["dateTimeByDefault"]);
+            $con = \Yii::$app->db_academico;
+            $transaction = $con->beginTransaction();
+            try {
+                //\app\models\Utilities::putMessageLogFile('ceuni_id..: ' . $ceuni_id);     
+                $resp_estado = $mod_educativa->eliminarUnidad($ceuni_id, $usu_autenticado, $fecha);
+                if ($resp_estado) {
+                    $exito = '1';
+                }
+                if ($exito) {
+                    //Realizar accion                    
+                    $transaction->commit();
+                    $message = array(
+                        "wtmessage" => Yii::t("notificaciones", "Se ha eliminado la unidad."),
+                        "title" => Yii::t('jslang', 'Success'),
+                    );
+                    return Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), false, $message);
+                } else {
+                    $transaction->rollback();
+                    $message = array(
+                        "wtmessage" => Yii::t("notificaciones", "Error la unidad. "),
+                        "title" => Yii::t('jslang', 'Error'),
+                    );
+                    return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+                }
+            } catch (Exception $ex) {
+                $transaction->rollback();
+                $message = array(
+                    "wtmessage" => Yii::t("notificaciones", "Error al realizar la acción. "),
+                    "title" => Yii::t('jslang', 'Success'),
+                );
+                return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+            }
+        }
+    }
+
+    public function actionUploadunidad() {
+        //$usu_id = Yii::$app->session->get("PB_iduser");          
+        $mod_educativa = new CursoEducativaUnidad();
+        if (Yii::$app->request->isAjax) {
+            $data = Yii::$app->request->post();
+            if ($data["upload_file"]) {
+                if (empty($_FILES)) {
+                    return json_encode(['error' => Yii::t("notificaciones", "Error to process File {file}. Try again.", ['{file}' => basename($files['name'])])]);
+                }
+                //Recibe Parámetros
+                $files = $_FILES[key($_FILES)];
+                $arrIm = explode(".", basename($files['name']));
+                $typeFile = strtolower($arrIm[count($arrIm) - 1]);
+                if ($typeFile == 'xlsx' || $typeFile == 'csv' || $typeFile == 'xls') {
+                    $dirFileEnd = Yii::$app->params["documentFolder"] . "educativa/" . $data["name_file"] . "." . $typeFile;
+                    $status = Utilities::moveUploadFile($files['tmp_name'], $dirFileEnd);
+                    if ($status) {
+                        return true;
+                    } else {
+                        return json_encode(['error' => Yii::t("notificaciones", "Error to process File {file}. Try again.", ['{file}' => basename($files['name'])])]);
+                    }
+                }
+            }
+            if ($data["procesar_file"]) {
+                try {
+                ini_set('memory_limit', '256M');
+                //\app\models\Utilities::putMessageLogFile('Files controller entro ...: ');
+                //\app\models\Utilities::putMessageLogFile('paca_id controller ...: ' . $data["paca_id"]);
+                $carga_archivo = $mod_educativa->CargarArchivounidadeducativa($data["archivo"]);
+                if ($carga_archivo['status']) {
+                    \app\models\Utilities::putMessageLogFile('status controller entro...: ' . $arroout['noalumno']);
+                    if (!empty($carga_archivo['nounidad'])){                        
+                    $nounidad = ' Se encontró las Asignaturas'. $carga_archivo['nounidad'];
+                    }
+                    $message = array(
+                        "wtmessage" => Yii::t("notificaciones", "Archivo procesado correctamente." . $carga_archivo['data'] .  $nounidad),
+                        "title" => Yii::t('jslang', 'Success'),
+                    );
+                    return Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Success"), false, $message);
+                } else {
+                    $message = array(
+                        "wtmessage" => Yii::t("notificaciones", "Error al procesar el archivo. " . $carga_archivo['message']),
+                        "title" => Yii::t('jslang', 'Error'),
+                    );
+                    return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), true, $message);
+                }
+                return;
+            } catch (Exception $ex) {      
+                $message = array(
+                    'wtmessage' => Yii::t('notificaciones', 'Error al procesar el archivo.'),
+                    'title' => Yii::t('jslang', 'Error'),
+                );
+                return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t('jslang', 'Error'), true, $message);
+            }
+           }
+         } 
+        else {
+            return $this->render('unidadeducativa',[
+                
+            ]);
+        }        
     }
 }  

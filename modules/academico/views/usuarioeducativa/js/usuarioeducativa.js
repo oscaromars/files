@@ -394,3 +394,38 @@ function editunidad() {
         showAlert('NO_OK', 'error', {"wtmessage": 'Curso: El campo no debe estar vacío.', "title": 'Error'});
      }  
 }
+
+function eliminarunidad(id) {   
+    //alert ('id eliminar' + id);
+    var mensj = "¿Seguro desea eliminar la unidad?";
+    var messagePB = new Object();
+    messagePB.wtmessage = mensj;
+    messagePB.title = "Eliminar";
+    var objAccept = new Object();
+    objAccept.id = "btnid2del";
+    objAccept.class = "btn-primary";
+    objAccept.value = "Aceptar";
+    objAccept.callback = 'accioneli';
+    var params = new Array(id, 0);
+    objAccept.paramCallback = params;
+    messagePB.acciones = new Array();
+    messagePB.acciones[0] = objAccept;
+    showAlert("warning", "warning", messagePB);
+}
+
+function accioneli(id, tmp) {
+    //alert ('id accion' + id);
+    var link = $('#txth_base').val() + "/academico/usuarioeducativa/deleteunidad";
+    var arrParams = new Object();
+    arrParams.ceuni_id = id;    
+    if (!validateForm()) {
+        requestHttpAjax(link, arrParams, function (response) {
+            showAlert(response.status, response.label, response.message);
+            if (!response.error) {
+                setTimeout(function () {
+                    window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/indexunidad";
+                }, 3000);
+            }
+        }, true);
+    }
+}

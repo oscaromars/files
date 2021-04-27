@@ -6,12 +6,10 @@ $(document).ready(function() {
     $('#btn_buscarData_estregsitro').click(function () {
         actualizarGridEstregistro();
     });
-
-    $(document).ready(function() {  
-        $('#btn_guardarcurso').click(function() {
-            cargarDocumento();
-        });
-    });
+   
+    $('#btn_guardarcurso').click(function() {
+        cargarDocumento();
+    });  
 
     $('#btn_buscarCurso').click(function () {
         actualizarGridCureducativa();
@@ -36,6 +34,10 @@ $(document).ready(function() {
     $('#btn_editunidad').click(function () {
         editunidad();
     });
+
+    $('#btn_guardarunidad').click(function() {
+        cargarUnidad();
+    });    
 
     $('#cmb_unidad_dises').change(function () {
         var link = $('#txth_base').val() + "/academico/distributivo/listarestudiantespago";
@@ -428,4 +430,20 @@ function accioneli(id, tmp) {
             }
         }, true);
     }
+}
+
+function cargarUnidad() {
+    var arrParams = new Object();
+    var link = $('#txth_base').val() + "/academico/usuarioeducativa/uploadunidad";
+    arrParams.procesar_file = true;
+    arrParams.archivo = $('#txth_doc_adj_educativaun2').val() + "." + $('#txth_doc_adj_educativaun').val().split('.').pop();
+    if (!validateForm()) {
+        requestHttpAjax(link, arrParams, function(response) {      
+            showAlert(response.status, response.label, response.message);
+            setTimeout(function () {
+                    window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/indexunidad";
+                }, 5000);  
+        }, true);
+    }  
+
 }

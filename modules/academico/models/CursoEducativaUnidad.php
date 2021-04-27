@@ -380,4 +380,145 @@ class CursoEducativaUnidad extends \yii\db\ActiveRecord
             return FALSE;
         }
     }
+
+    public function CargarArchivounidadeducativa($fname) {
+        \app\models\Utilities::putMessageLogFile('Files modelo unidad ...: ' . $fname);
+        $file = Yii::$app->basePath . Yii::$app->params['documentFolder'] . "educativa/" . $fname;
+        $fila = 0;
+        $chk_ext = explode(".", $file);
+        $con = \Yii::$app->db_academico;
+        $trans = $con->getTransaction(); // se obtiene la transacción actual
+        $mod_educativa = new CursoEducativaUnidad();
+        /* print("pasa cargar"); */
+        if ($trans !== null) {
+            $trans = null; // si existe la transacción entonces no se crea una
+        } else {
+            $trans = $con->beginTransaction(); // si no existe la transacción entonces se crea una
+        }   
+        if (strtolower(end($chk_ext)) == "xls" || strtolower(end($chk_ext)) == "xlsx") {
+            //Creacion de PHPExcel object
+            try {
+                $objPHPExcel = \PhpOffice\PhpSpreadsheet\IOFactory::load($file);
+                $dataArr = array();
+                $validacion = false;
+                $row_global = 0;
+
+                foreach ($objPHPExcel->getWorksheetIterator() as $worksheet) {
+                    $worksheetTitle = $worksheet->getTitle();
+                    $highestRow = $worksheet->getHighestRow(); // e.g. 10 
+                    $highestColumn = $worksheet->getHighestDataColumn(); // e.g 'F'                    
+                    $highestColumnIndex = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($highestColumn);
+                    for ($row = 2; $row <= $highestRow; ++$row) {
+                        $row_global = $row_global + 1;
+                        for ($col = 1; $col <= $highestColumnIndex; ++$col) {
+                            $cell = $worksheet->getCellByColumnAndRow($col, $row);
+                            $dataArr[$row_global][$col] = $cell->getValue();
+                        }
+                    }                   
+                }
+                $fila = 0;
+                foreach ($dataArr as $val) {
+                    //\app\models\Utilities::putMessageLogFile('cedula ...: ' .$val[2]);
+                    if (!is_null($val[1]) || $val[1]) {
+                        $val[1] = strval($val[1]);
+                        $val[3] = strval($val[3]);
+                        $fila++; 
+                        $existe = $mod_educativa->consultarunidadeducativaexi($val[1], $val[2], $val[3]);
+                        \app\models\Utilities::putMessageLogFile('existe consulta ...: ' . $existe['existe_unidad']);
+                        if ($existe['existe_unidad'] == 0) {
+                        $save_documento = $this->saveDocumentoDB($val);
+                        if (!$save_documento) {                   
+                            $arroout["status"] = FALSE;
+                            $arroout["error"] = null;
+                            $arroout["message"] = "Error al guardar el registro de la Fila => N°$fila Unidad => $val[3].";
+                            $arroout["data"] = null;
+                            $arroout["validate"] = $val;
+                            \app\models\Utilities::putMessageLogFile('error fila ' . $fila);
+                            return $arroout;
+                        }
+                      }else{
+                        $ingresadoant .= $val[1] . ", ";
+                    }                   
+                  }
+                }
+                //\app\models\Utilities::putMessageLogFile('anterio ...: ' . $ingresadoant);
+                //\app\models\Utilities::putMessageLogFile('no asignatura ...: ' . $noasignaturas);
+                if ($trans !== null)
+                    $trans->commit();
+                $arroout["status"] = TRUE;
+                $arroout["error"] = null;
+                $arroout["message"] = null;
+                $arroout["data"] = null;
+                $arroout["validate"] = $fila;
+                $arroout["repetido"] = substr($ingresadoant, 0, -2);
+                //$arroout["noasignatura"] = substr($noestudiantes, 0, -2);
+                //\app\models\Utilities::putMessageLogFile('no asignatura array...: ' . $arroout["noasignatura"]);
+                return $arroout;
+            } catch (\Exception $ex) {
+                if ($trans !== null)
+                    $trans->rollback();
+                $arroout["status"] = FALSE;
+                $arroout["error"] = null;
+                $arroout["message"] = null;
+                $arroout["data"] = null;
+                return $arroout;
+            }
+        }
+    }
+
+    /**
+     * Function Consultar si ya se ha cargado la informacion anteriormente en unidades educativa.
+     * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>;
+     * @property       
+     * @return  
+     */
+    public function consultarunidadeducativaexi($cedu_id, $ceuni_codigo_unidad, $ceuni_descripcion_unidad) {
+        $con = \Yii::$app->db_academico;     
+        $estado = 1;         
+       /*\app\models\Utilities::putMessageLogFile('entro 2 : ' .$cedu_id);  
+       \app\models\Utilities::putMessageLogFile('entro 3 : ' .$ceuni_codigo_unidad);  
+       \app\models\Utilities::putMessageLogFile('entro 4 : ' .$ceuni_descripcion_unidad);  */
+        $sql = "SELECT 	
+                        count(*) as existe_unidad                       
+                        
+                FROM " . $con->dbname . ".curso_educativa_unidad                 
+                WHERE 
+                cedu_id = :cedu_id AND
+                ceuni_codigo_unidad = :ceuni_codigo_unidad AND                
+                ceuni_descripcion_unidad = :ceuni_descripcion_unidad AND
+                ceuni_estado = :estado AND
+                ceuni_estado_logico = :estado ";
+        // \app\models\Utilities::putMessageLogFile('entro: ' .$sql); 
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $comando->bindParam(":cedu_id", $cedu_id, \PDO::PARAM_INT);
+        $comando->bindParam(":ceuni_codigo_unidad", $ceuni_codigo_unidad, \PDO::PARAM_INT);
+        $comando->bindParam(":ceuni_descripcion_unidad", $ceuni_descripcion_unidad, \PDO::PARAM_STR);
+        $resultData = $comando->queryOne();
+        return $resultData;
+    }
+
+    public function saveDocumentoDB($val){
+        $usu_id = Yii::$app->session->get("PB_iduser"); ;
+        $fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
+        $mod_educativaunidad = new CursoEducativaUnidad();
+    
+        $mod_educativaunidad->cedu_id = $val[1];
+        $mod_educativaunidad->ceuni_codigo_unidad = $val[2];
+        $mod_educativaunidad->ceuni_descripcion_unidad = $val[3];
+        $mod_educativaunidad->ceuni_usuario_ingreso = $usu_id;
+        $mod_educativaunidad->ceuni_estado = "1";
+        $mod_educativaunidad->ceuni_fecha_creacion = $fecha_transaccion;
+        $mod_educativaunidad->ceuni_estado_logico = "1";
+
+        \app\models\Utilities::putMessageLogFile('paca_id ' .$paca_id);
+        \app\models\Utilities::putMessageLogFile('asi_id '. $asi_id);
+        \app\models\Utilities::putMessageLogFile('1: ' .$val[1]);
+        \app\models\Utilities::putMessageLogFile('2: ' .$val[2]);
+        \app\models\Utilities::putMessageLogFile('3: ' .$val[3]);
+        \app\models\Utilities::putMessageLogFile('fecha: ' .$fecha_transaccion);
+        \app\models\Utilities::putMessageLogFile('usu_id: ' .$usu_id);        
+
+        return $mod_educativaunidad->save();
+    }
 }

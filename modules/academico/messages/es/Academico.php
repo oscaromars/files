@@ -111,6 +111,7 @@ return [
     "Unit Title" => "Título Unidad",
     "Update period income method" => "Actualizar Período Método Ingreso",
     "Upload course" => "Subir Cursos",
+    "Upload Unit" => "Cargar Unidad",
     "Upload users" => "Cargar Usuarios",
     "View course" => "Ver Cursos",
     "View Unit" => "Ver Unidad",

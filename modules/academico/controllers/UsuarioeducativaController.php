@@ -561,7 +561,7 @@ class UsuarioeducativaController extends \app\components\CController {
                     } else {
                         $transaction->rollback();
                         $message = array(
-                            "wtmessage" => Yii::t("notificaciones", "Error al grabar1." . $mensaje),
+                            "wtmessage" => Yii::t("notificaciones", "Error al modificar." . $mensaje),
                             "title" => Yii::t('jslang', 'Error'),
                         );
                         return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
@@ -570,7 +570,7 @@ class UsuarioeducativaController extends \app\components\CController {
             } catch (Exception $ex) {
                 $transaction->rollback();
                 $message = array(
-                    "wtmessage" => Yii::t("notificaciones", "Error al grabar2."),
+                    "wtmessage" => Yii::t("notificaciones", "Error al modificar."),
                     "title" => Yii::t('jslang', 'Error'),
                 );
                 return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
@@ -794,4 +794,97 @@ class UsuarioeducativaController extends \app\components\CController {
         }
     }
     
+    public function actionViewunidad() { 
+        // $cedu_id = base64_decode($_GET["cedu_id"]);
+        $ceuni_id = base64_decode($_GET["ceuni_id"]);
+        $mod_periodo = new PeriodoAcademicoMetIngreso();        
+        $mod_educativa = new CursoEducativa();
+        $mod_unidad = new CursoEducativaUnidad();
+        $data = Yii::$app->request->get();
+        if (Yii::$app->request->isAjax) {                       
+        }  
+            // consultar la informacion de la unidad por ceuni_id
+            $arr_unidad = $mod_unidad->consultarUnidadxid($ceuni_id); 
+            $arr_periodoAcademico = $mod_periodo->consultarPeriodoAcademicotodos();
+            // se debe pasar elparametro del id del curso de la consultarUnidadxid
+            $arr_curso = $mod_educativa->consultarCursosxpacaid($arr_unidad['paca_id']);
+            return $this->render('viewunidad', [  
+                'arr_periodoAcademico' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $arr_periodoAcademico), "id", "name"),
+                'arr_curso' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $arr_curso), "id", "name"),
+                'arr_unidad' => $arr_unidad,
+                ]);            
+    }
+
+    public function actionEditunidad() { 
+        // $cedu_id = base64_decode($_GET["cedu_id"]);
+        $ceuni_id = base64_decode($_GET["ceuni_id"]);
+        $mod_periodo = new PeriodoAcademicoMetIngreso();        
+        $mod_educativa = new CursoEducativa();
+        $mod_unidad = new CursoEducativaUnidad();
+        $data = Yii::$app->request->get();
+        if (Yii::$app->request->isAjax) {
+            $data = Yii::$app->request->post();  
+            $data = Yii::$app->request->post(); 
+            if (isset($data["getcursounidades"])) {
+                $periodounidades = $mod_educativa->consultarCursosxpacaid($data["codcursounidades"]);
+                $message = array("periodounidades" => $periodounidades);
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+            }           
+        }  
+            // consultar la informacion de la unidad por ceuni_id
+            $arr_unidad = $mod_unidad->consultarUnidadxid($ceuni_id); 
+            $arr_periodoAcademico = $mod_periodo->consultarPeriodoAcademicotodos();
+            // se debe pasar elparametro del id del curso de la consultarUnidadxid
+            $arr_curso = $mod_educativa->consultarCursosxpacaid($arr_unidad['paca_id']);
+            return $this->render('editunidad', [  
+                'arr_periodoAcademico' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $arr_periodoAcademico), "id", "name"),
+                'arr_curso' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $arr_curso), "id", "name"),
+                'arr_unidad' => $arr_unidad,
+                ]);            
+    }
+
+    public function actionUpdateunidad() {
+        $per_id = @Yii::$app->session->get("PB_perid");
+        $usuario = @Yii::$app->user->identity->usu_id;
+        if (Yii::$app->request->isAjax) {
+            $data = Yii::$app->request->post();
+            $ceuni_id = $data["ceuni_id"];
+            $cursodounidad = $data["cursodounidad"];
+            $codigounidad = $data["codigounidad"];
+            $nombreunidad = ucwords(strtolower($data["nombreunidad"]));
+            $con = \Yii::$app->db_academico;
+            $transaction = $con->beginTransaction();
+            try {
+                $mod_educativa = new CursoEducativaUnidad();
+                $editunidad = $mod_educativa->modificarUnidadeducativa($ceuni_id, $cursodounidad, $codigounidad, $nombreunidad, $usuario);
+                    if ($editunidad) {
+                        $exito = 1;
+                    }
+                    if ($exito) {
+                        $transaction->commit();
+                        $message = array(
+                            "wtmessage" => Yii::t("notificaciones", "Se ha modificado la unidad."),
+                            "title" => Yii::t('jslang', 'Success'),
+                        );
+                        return Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), false, $message);
+                    } else {
+                        $transaction->rollback();
+                        $message = array(
+                            "wtmessage" => Yii::t("notificaciones", "Error al modificar." . $mensaje),
+                            "title" => Yii::t('jslang', 'Error'),
+                        );
+                        return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+                    }             
+                
+            } catch (Exception $ex) {
+                $transaction->rollback();
+                $message = array(
+                    "wtmessage" => Yii::t("notificaciones", "Error al modificar."),
+                    "title" => Yii::t('jslang', 'Error'),
+                );
+                return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+            }
+            return;
+        }
+    }
 }  

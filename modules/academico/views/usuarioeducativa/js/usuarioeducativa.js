@@ -33,6 +33,10 @@ $(document).ready(function() {
         saveunidad();
     });
 
+    $('#btn_editunidad').click(function () {
+        editunidad();
+    });
+
     $('#cmb_unidad_dises').change(function () {
         var link = $('#txth_base').val() + "/academico/distributivo/listarestudiantespago";
         var arrParams = new Object();
@@ -94,6 +98,19 @@ $(document).ready(function() {
             if (response.status == "OK") {
                 data = response.message;
                 setComboDataselect(data.periodounidad, "cmb_cursounidad", "Seleccionar");
+            }
+        }, true);
+    });
+
+    $('#cmb_periodoeditunidad').change(function() {
+        var link = $('#txth_base').val() + "/academico/usuarioeducativa/editunidad";
+        var arrParams = new Object();
+        arrParams.codcursounidades = $(this).val();
+        arrParams.getcursounidades = true;
+        requestHttpAjax(link, arrParams, function(response) {
+            if (response.status == "OK") {
+                data = response.message;
+                setComboDataselect(data.periodounidades, "cmb_cursoeditunidad", "Seleccionar");
             }
         }, true);
     });
@@ -339,6 +356,30 @@ function saveunidad() {
     arrParams.codigounidad = $('#txt_codigonewunidad').val();
     arrParams.nombreunidad = $('#txt_descripcionnewunidad').val();
     if ($('#cmb_cursounidad option:selected').val() != 0) {           
+        if (!validateForm()) {
+            requestHttpAjax(link, arrParams, function(response) {
+                showAlert(response.status, response.label, response.message);
+                if (response.status == "OK") {
+                    setTimeout(function() {
+                        window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/indexunidad";
+                    }, 3000);
+                }
+            }, true);
+        }    
+    } else {
+        showAlert('NO_OK', 'error', {"wtmessage": 'Curso: El campo no debe estar vacío.', "title": 'Error'});
+     }  
+}
+
+function editunidad() {
+    var link = $('#txth_base').val() + "/academico/usuarioeducativa/updateunidad";
+    var arrParams = new Object();
+    arrParams.ceuni_id = $('#txth_unidadid').val();
+    arrParams.periodounidad = $('#cmb_periodoeditunidad option:selected').val();
+    arrParams.cursodounidad = $('#cmb_cursoeditunidad option:selected').val();
+    arrParams.codigounidad = $('#txt_codigoeditunidad').val();
+    arrParams.nombreunidad = $('#txt_descripcioneditunidad').val();
+    if ($('#cmb_cursoeditunidad option:selected').val() != 0) { 
         if (!validateForm()) {
             requestHttpAjax(link, arrParams, function(response) {
                 showAlert(response.status, response.label, response.message);

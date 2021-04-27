@@ -95,7 +95,8 @@ class CursoEducativaUnidad extends \yii\db\ActiveRecord
         $estado = 1;
         if ($ids == 1) {
             $campos = "
-            cure.cedu_id,  ";
+            cure.cedu_id,
+            cure.ceuni_id,  ";
         }    
         if (isset($arrFiltro) && count($arrFiltro) > 0) {
             $str_search .= "(cure.ceuni_descripcion_unidad like :search) AND ";
@@ -267,4 +268,79 @@ class CursoEducativaUnidad extends \yii\db\ActiveRecord
             return FALSE;
         }
     }
+
+    /**
+     * Function Consultar datos x id en curso educativa.
+     * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>;
+     * @property       
+     * @return  
+     */
+    public function consultarUnidadxid($ceuni_id) {
+        $con = \Yii::$app->db_academico;     
+        $estado = 1; 
+        $sql = "SELECT 	
+                        ceu.cedu_id,     
+                        ced.paca_id,                                     
+                        ceu.ceuni_codigo_unidad,
+                        ceu.ceuni_descripcion_unidad
+                        
+                FROM " . $con->dbname . ".curso_educativa_unidad ceu                 
+                INNER JOIN " . $con->dbname . ".curso_educativa ced ON ced.cedu_id = ceu.cedu_id
+                WHERE 
+                ceu.ceuni_id = :ceuni_id AND               
+                ceu.ceuni_estado = :estado AND
+                ceu.ceuni_estado_logico = :estado ";
+
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $comando->bindParam(":ceuni_id", $ceuni_id, \PDO::PARAM_INT);  
+        $resultData = $comando->queryOne();      
+        return $resultData;
+    }
+
+    /**
+     * Function modificar cursos educativa.
+     * @author Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>;
+     * @param
+     * @return
+     */
+    public function modificarUnidadeducativa($ceuni_id, $cedu_id, $ceuni_codigo_unidad, $ceuni_descripcion_unidad, $ceuni_usuario_modifica) {
+        $fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
+        $con = \Yii::$app->db_academico;
+        $estado = 1; 
+        if ($trans !== null) {
+            $trans = null; // si existe la transacción entonces no se crea una
+        } else {
+            $trans = $con->beginTransaction(); // si no existe la transacción entonces se crea una
+        }
+        try {
+            $comando = $con->createCommand
+                    ("UPDATE " . $con->dbname . ".curso_educativa_unidad		       
+                      SET cedu_id = :cedu_id,
+                          ceuni_codigo_unidad = :ceuni_codigo_unidad,
+                          ceuni_descripcion_unidad = :ceuni_descripcion_unidad,
+                          ceuni_usuario_modifica = :ceuni_usuario_modifica,
+                          ceuni_fecha_modificacion = :ceuni_fecha_modificacion                          
+                      WHERE 
+                      ceuni_id = :ceuni_id AND
+                      ceuni_estado = :estado AND
+                      ceuni_estado_logico = :estado");
+            $comando->bindParam(":ceuni_id", $ceuni_id, \PDO::PARAM_INT);  
+            $comando->bindParam(":cedu_id", $cedu_id, \PDO::PARAM_INT);  
+            $comando->bindParam(":ceuni_codigo_unidad", $ceuni_codigo_unidad, \PDO::PARAM_INT); 
+            $comando->bindParam(":ceuni_descripcion_unidad", $ceuni_descripcion_unidad, \PDO::PARAM_STR);                    
+            $comando->bindParam(":ceuni_usuario_modifica", $ceuni_usuario_modifica, \PDO::PARAM_INT);
+            $comando->bindParam(":ceuni_fecha_modificacion", $fecha_transaccion, \PDO::PARAM_STR);
+            $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+            $response = $comando->execute();
+            if ($trans !== null)
+                $trans->commit();
+            return $response;
+        } catch (Exception $ex) {
+            if ($trans !== null)
+                $trans->rollback();
+            return FALSE;
+        }
+    }
+
 }

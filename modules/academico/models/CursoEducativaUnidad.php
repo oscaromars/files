@@ -5,7 +5,7 @@ use app\models\Utilities;
 use Yii;
 use yii\data\ArrayDataProvider;
 use yii\data\ActiveDataProvider;
-use app\modules\academico\models\Asignatura;
+use app\modules\academico\models\CursoEducativa;
 use yii\base\Exception;
 use yii\helpers\VarDumper;
 /**
@@ -389,6 +389,7 @@ class CursoEducativaUnidad extends \yii\db\ActiveRecord
         $con = \Yii::$app->db_academico;
         $trans = $con->getTransaction(); // se obtiene la transacción actual
         $mod_educativa = new CursoEducativaUnidad();
+        $model_curso = new CursoEducativa();
         /* print("pasa cargar"); */
         if ($trans !== null) {
             $trans = null; // si existe la transacción entonces no se crea una
@@ -422,7 +423,9 @@ class CursoEducativaUnidad extends \yii\db\ActiveRecord
                     if (!is_null($val[1]) || $val[1]) {
                         $val[1] = strval($val[1]);
                         $val[3] = strval($val[3]);
+                        $cedu_id = $model_curso->consultarCursoexiste($val[1]);
                         $fila++; 
+                        if ($cedu_id['cedu_id'] > 0) {
                         $existe = $mod_educativa->consultarunidadeducativaexi($val[1], $val[2], $val[3]);
                         \app\models\Utilities::putMessageLogFile('existe consulta ...: ' . $existe['existe_unidad']);
                         if ($existe['existe_unidad'] == 0) {
@@ -438,11 +441,15 @@ class CursoEducativaUnidad extends \yii\db\ActiveRecord
                         }
                       }else{
                         $ingresadoant .= $val[1] . ", ";
-                    }                   
+                      } 
+                    }
+                    else{
+                        $nocurso .= $val[1] . ", ";
+                    }                  
                   }
                 }
                 //\app\models\Utilities::putMessageLogFile('anterio ...: ' . $ingresadoant);
-                //\app\models\Utilities::putMessageLogFile('no asignatura ...: ' . $noasignaturas);
+                //\app\models\Utilities::putMessageLogFile('no curso ...: ' . $nocurso);
                 if ($trans !== null)
                     $trans->commit();
                 $arroout["status"] = TRUE;
@@ -451,8 +458,8 @@ class CursoEducativaUnidad extends \yii\db\ActiveRecord
                 $arroout["data"] = null;
                 $arroout["validate"] = $fila;
                 $arroout["repetido"] = substr($ingresadoant, 0, -2);
-                //$arroout["noasignatura"] = substr($noestudiantes, 0, -2);
-                //\app\models\Utilities::putMessageLogFile('no asignatura array...: ' . $arroout["noasignatura"]);
+                $arroout["nocurso"] = substr($nocurso, 0, -2);
+                //\app\models\Utilities::putMessageLogFile('no curso array...: ' . $arroout["nocurso"]);
                 return $arroout;
             } catch (\Exception $ex) {
                 if ($trans !== null)

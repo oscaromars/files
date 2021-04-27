@@ -961,11 +961,11 @@ class UsuarioeducativaController extends \app\components\CController {
                 $carga_archivo = $mod_educativa->CargarArchivounidadeducativa($data["archivo"]);
                 if ($carga_archivo['status']) {
                     \app\models\Utilities::putMessageLogFile('status controller entro...: ' . $arroout['noalumno']);
-                    if (!empty($carga_archivo['nounidad'])){                        
-                    $nounidad = ' Se encontró las Asignaturas'. $carga_archivo['nounidad'];
+                    if (!empty($carga_archivo['nocurso'])){                        
+                    $nocurso = ' No se encontro los siguientes códigos de cursos '. $carga_archivo['nocurso'];
                     }
                     $message = array(
-                        "wtmessage" => Yii::t("notificaciones", "Archivo procesado correctamente." . $carga_archivo['data'] .  $nounidad),
+                        "wtmessage" => Yii::t("notificaciones", "Archivo procesado correctamente." . $carga_archivo['data'] .  $nocurso),
                         "title" => Yii::t('jslang', 'Success'),
                     );
                     return Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Success"), false, $message);

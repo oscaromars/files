@@ -329,10 +329,10 @@ class CursoEducativa extends \yii\db\ActiveRecord
     }
 
     /**
-     * Function guardar estudiante
+     * Function guardar curso 
      * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
      * @param   
-     * @return  $resultData (Retornar el código de estudiante).
+     * @return  $resultData (Retornar el código de curso).
      */
     public function insertarCursoeducativa($paca_id, /*$asi_id,*/ $cedu_asi_id, $cedu_asi_nombre, $cedu_usuario_ingreso) {
         //\app\models\Utilities::putMessageLogFile('entro insercurso...: ' ); 
@@ -345,8 +345,8 @@ class CursoEducativa extends \yii\db\ActiveRecord
         }
         $fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
         
-        $param_sql .= ", cedu_fecha_creacion";
-        $bsol_sql .= ", 1";
+        /*$param_sql .= ", cedu_fecha_creacion";
+        $bsol_sql .= ", 1";*/
         
         $param_sql = "cedu_estado_logico";
         $bsol_sql = "1";

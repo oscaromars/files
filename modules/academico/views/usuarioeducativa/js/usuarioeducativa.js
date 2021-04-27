@@ -29,6 +29,10 @@ $(document).ready(function() {
         actualizarGridUnidad();
     });
 
+    $('#btn_newunidad').click(function () {
+        saveunidad();
+    });
+
     $('#cmb_unidad_dises').change(function () {
         var link = $('#txth_base').val() + "/academico/distributivo/listarestudiantespago";
         var arrParams = new Object();
@@ -77,6 +81,19 @@ $(document).ready(function() {
             if (response.status == "OK") {
                 data = response.message;
                 setComboDataselect(data.periodo, "cmb_curso", "Todos");
+            }
+        }, true);
+    });
+
+    $('#cmb_periodonewunidad').change(function() {
+        var link = $('#txth_base').val() + "/academico/usuarioeducativa/newunidad";
+        var arrParams = new Object();
+        arrParams.codcursounidad = $(this).val();
+        arrParams.getcursounidad = true;
+        requestHttpAjax(link, arrParams, function(response) {
+            if (response.status == "OK") {
+                data = response.message;
+                setComboDataselect(data.periodounidad, "cmb_cursounidad", "Seleccionar");
             }
         }, true);
     });
@@ -299,4 +316,40 @@ function actualizarGridUnidad() {
     $('#Pbunidad').PbGridView('applyFilterData', {'search': search, 'periodo': periodo, 'curso': curso});
         setTimeout(hideLoadingPopup, 2000);
     }
+}
+
+function exportExcelunidad() {
+    var search = $('#txt_buscarDataunidad').val();
+    var periodo =  $('#cmb_periodounidad option:selected').val();
+    var curso = $('#cmb_curso option:selected').val(); 
+    window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/expexcelunidad?search=" + search + "&periodo=" + periodo + "&curso=" + curso;
+}
+
+function exportPdfunidad() {
+    var search = $('#txt_buscarDataunidad').val();
+    var periodo =  $('#cmb_periodounidad option:selected').val();
+    var curso = $('#cmb_curso option:selected').val(); 
+    window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/exppdfunidad?pdf=1&search=" + search + "&periodo=" + periodo + "&curso=" + curso;
+}
+
+function saveunidad() {
+    var link = $('#txth_base').val() + "/academico/usuarioeducativa/saveunidad";
+    var arrParams = new Object();
+    arrParams.curso = $('#cmb_cursounidad option:selected').val();
+    arrParams.codigounidad = $('#txt_codigonewunidad').val();
+    arrParams.nombreunidad = $('#txt_descripcionnewunidad').val();
+    if ($('#cmb_cursounidad option:selected').val() != 0) {           
+        if (!validateForm()) {
+            requestHttpAjax(link, arrParams, function(response) {
+                showAlert(response.status, response.label, response.message);
+                if (response.status == "OK") {
+                    setTimeout(function() {
+                        window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/indexunidad";
+                    }, 3000);
+                }
+            }, true);
+        }    
+    } else {
+        showAlert('NO_OK', 'error', {"wtmessage": 'Curso: El campo no debe estar vacío.', "title": 'Error'});
+     }  
 }

@@ -656,4 +656,142 @@ class UsuarioeducativaController extends \app\components\CController {
                 'arr_curso' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $arr_curso), "id", "name"),
             ]);       
     }
+
+    public function actionExpexcelunidad() {
+        //$per_id = @Yii::$app->session->get("PB_perid");
+
+        ini_set('memory_limit', '256M');
+        $content_type = Utilities::mimeContentType("xls");
+        $nombarch = "Report-" . date("YmdHis") . ".xls";
+        header("Content-Type: $content_type");
+        header("Content-Disposition: attachment;filename=" . $nombarch);
+        header('Cache-Control: max-age=0');
+        $colPosition = array("C", "D", "E", "F", "G");
+        $arrHeader = array(
+            academico::t("Academico", "Course"), 
+            Yii::t("formulario", "Code"). ' '. Yii::t("formulario", "Unit"),
+            Yii::t("formulario", "Description"),       
+                      
+        );
+      
+        $mod_educativa = new CursoEducativaUnidad();
+        $data = Yii::$app->request->get();
+        $arrSearch["search"] = $data['search'];
+        $arrSearch["periodo"] = $data['periodo'];
+        $arrSearch["curso"] = $data['curso'];  
+        $arrData = array();
+        if (empty($arrSearch)) {
+            $arrData = $mod_educativa->consultarUnidadEducativa(array(), 0, 0);
+        } else {
+            $arrData = $mod_educativa->consultarUnidadEducativa($arrSearch, 0, 0);
+        }
+        $nameReport = academico::t("Academico", "Listado de unidades");
+        Utilities::generarReporteXLS($nombarch, $nameReport, $arrHeader, $arrData, $colPosition);
+        exit;
+    }
+
+    public function actionExppdfunidad() {
+        //$per_id = @Yii::$app->session->get("PB_perid");
+        $report = new ExportFile();
+        $this->view->title = academico::t("Academico", "Listado de unidades"); // Titulo del reporte
+        $arrHeader = array(
+            academico::t("Academico", "Course"), 
+            Yii::t("formulario", "Code"). ' '. Yii::t("formulario", "Unit"),
+            Yii::t("formulario", "Description"),
+        );
+        $mod_educativa = new CursoEducativaUnidad();
+        $data = Yii::$app->request->get();
+        $arrSearch["search"] = $data['search'];
+        $arrSearch["periodo"] = $data['periodo'];
+        $arrSearch["curso"] = $data['curso'];  
+        $arrData = array();
+        if (empty($arrSearch)) {
+            $arrData = $mod_educativa->consultarUnidadEducativa(array(), 0, 0);
+        } else {
+            $arrData = $mod_educativa->consultarUnidadEducativa($arrSearch, 0, 0);
+        }
+        $report->orientation = "L"; // tipo de orientacion L => Horizontal, P => Vertical                                
+        $report->createReportPdf(
+                $this->render('exportpdf', [
+                    'arr_head' => $arrHeader,
+                    'arr_body' => $arrData,
+                ])
+        );
+        $report->mpdf->Output('Reporte_' . date("Ymdhis") . ".pdf", ExportFile::OUTPUT_TO_DOWNLOAD);
+    }
+    public function actionNewunidad() { 
+        $mod_periodo = new PeriodoAcademicoMetIngreso();       
+        $mod_educativa = new CursoEducativa();
+        $data = Yii::$app->request->get();
+        if (Yii::$app->request->isAjax) {
+            $data = Yii::$app->request->post();   
+            if (isset($data["getcursounidad"])) {
+                $periodounidad = $mod_educativa->consultarCursosxpacaid($data["codcursounidad"]);
+                $message = array("periodounidad" => $periodounidad);
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+            }          
+        }   
+            $arr_periodoAcademico = $mod_periodo->consultarPeriodoAcademicotodos();
+            $arr_curso = $mod_educativa->consultarCursosxpacaid(0);
+            return $this->render('newunidad', [  
+                'arr_periodoAcademico' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $arr_periodoAcademico), "id", "name"),
+                'arr_curso' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $arr_curso), "id", "name"),
+                ]);       
+    }
+
+    public function actionSaveunidad() {
+        $per_id = @Yii::$app->session->get("PB_perid");
+        $usuario = @Yii::$app->user->identity->usu_id;
+        if (Yii::$app->request->isAjax) {
+            $data = Yii::$app->request->post();
+            $curso = $data["curso"];            
+            $codigounidad = $data["codigounidad"];
+            $nombreunidad = ucwords(strtolower($data["nombreunidad"]));
+            $con = \Yii::$app->db_academico;
+            $transaction = $con->beginTransaction();
+            try {
+                $mod_educativa = new CursoEducativaUnidad();
+                $existe = $mod_educativa->consultarunidadexiste($curso, $codigounidad, $nombreunidad);
+                //\app\models\Utilities::putMessageLogFile('existe curso...: ' . $existe['existe_curso']);     
+                if ($existe['existe_curso'] == 0) {
+                    $savecurso = $mod_educativa->insertarUnidadeducativa($curso, $codigounidad, $nombreunidad, $usuario);
+                    if ($savecurso) {
+                        $exito = 1;
+                    }
+                    if ($exito) {
+                        $transaction->commit();
+                        $message = array(
+                            "wtmessage" => Yii::t("notificaciones", "Se ha guardado la unidad."),
+                            "title" => Yii::t('jslang', 'Success'),
+                        );
+                        return Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), false, $message);
+                    } else {
+                        $transaction->rollback();
+                        $message = array(
+                            "wtmessage" => Yii::t("notificaciones", "Error al grabar." . $mensaje),
+                            "title" => Yii::t('jslang', 'Error'),
+                        );
+                        return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+                    }
+               }else {
+                $transaction->rollback();
+                $message = array(
+                    "wtmessage" => Yii::t("notificaciones", "Ya creó anteriormente la unidad." . $mensaje),
+                    "title" => Yii::t('jslang', 'Error'),
+                );
+                return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+            }
+                
+            } catch (Exception $ex) {
+                $transaction->rollback();
+                $message = array(
+                    "wtmessage" => Yii::t("notificaciones", "Error al grabar."),
+                    "title" => Yii::t('jslang', 'Error'),
+                );
+                return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+            }
+            return;
+        }
+    }
+    
 }  

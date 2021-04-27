@@ -30,6 +30,7 @@ return [
     "Create course" => "Crear Cursos",
     "Create period income method" => "Crear Período Método Ingreso",  
     "Create Promotion Program" => "Crear Promoción Programa",
+    "Create Unit" => "Crear Unidad",
     "Credits" => "Créditos",
     "Data Promotion Program" => "Datos Promoción Programa",
     "Day" => "Día",

@@ -16,9 +16,9 @@ academico::registerTranslations();
     <?=
     PbGridView::widget([
         'id' => 'Pbunidad',
-        //'showExport' => true,
-        //'fnExportEXCEL' => "exportExcelunidad",
-        //'fnExportPDF' => "exportPdfunidad",
+        'showExport' => true,
+        'fnExportEXCEL' => "exportExcelunidad",
+        'fnExportPDF' => "exportPdfunidad",
         'tableOptions' => [
             'class' => 'table table-condensed',
         ],

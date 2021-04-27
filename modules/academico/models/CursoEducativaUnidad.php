@@ -152,4 +152,119 @@ class CursoEducativaUnidad extends \yii\db\ActiveRecord
             return $resultData;
         }
     }
+
+    /**
+     * Function Consultar si ya se ha cargado la informacion anteriormente en unidad educativa.
+     * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>;
+     * @property       
+     * @return  
+     */
+    public function consultarunidadexiste($cedu_id, $ceuni_codigo_unidad, $ceuni_descripcion_unidad) {
+        $con = \Yii::$app->db_academico;     
+        $estado = 1;         
+       /*\app\models\Utilities::putMessageLogFile('entro 2 : ' .$cedu_id);  
+       \app\models\Utilities::putMessageLogFile('entro 3 : ' .$ceuni_codigo_unidad);  
+       \app\models\Utilities::putMessageLogFile('entro 4 : ' .$ceuni_descripcion_unidad); */ 
+        $sql = "SELECT 	
+                        count(*) as existe_curso                       
+                        
+                FROM " . $con->dbname . ".curso_educativa_unidad                 
+                WHERE 
+                cedu_id = :cedu_id AND
+                ceuni_codigo_unidad = :ceuni_codigo_unidad AND                
+                ceuni_descripcion_unidad = :ceuni_descripcion_unidad AND
+                ceuni_estado = :estado AND
+                ceuni_estado_logico = :estado ";
+        \app\models\Utilities::putMessageLogFile('entro: ' .$sql); 
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $comando->bindParam(":cedu_id", $cedu_id, \PDO::PARAM_INT);
+        $comando->bindParam(":ceuni_codigo_unidad", $ceuni_codigo_unidad, \PDO::PARAM_INT);
+        $comando->bindParam(":ceuni_descripcion_unidad", $ceuni_descripcion_unidad, \PDO::PARAM_STR);
+        $resultData = $comando->queryOne();
+        return $resultData;
+    }
+
+    /**
+     * Function guardar unidad educativa
+     * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
+     * @param   
+     * @return  $resultData (Retornar el código de unidad).
+     */
+    public function insertarUnidadeducativa($cedu_id, $ceuni_codigo_unidad, $ceuni_descripcion_unidad, $ceuni_usuario_ingreso) {
+        //\app\models\Utilities::putMessageLogFile('entro insercurso...: ' ); 
+        $con = \Yii::$app->db_academico;
+        $trans = $con->getTransaction(); // se obtiene la transacción actual
+        if ($trans !== null) {
+            $trans = null; // si existe la transacción entonces no se crea una
+        } else {
+            $trans = $con->beginTransaction(); // si no existe la transacción entonces se crea una
+        }
+        $fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
+        
+        $param_sql = "ceuni_estado_logico";
+        $bsol_sql = "1";
+
+        $param_sql .= ", ceuni_estado";
+        $bsol_sql .= ", 1";
+        if (isset($cedu_id)) {
+            $param_sql .= ", cedu_id";
+            $bsol_sql .= ", :cedu_id";
+        }       
+
+        if (isset($ceuni_codigo_unidad)) {
+            $param_sql .= ", ceuni_codigo_unidad";
+            $bsol_sql .= ", :ceuni_codigo_unidad";
+        }
+
+        if (isset($ceuni_descripcion_unidad)) {
+            $param_sql .= ", ceuni_descripcion_unidad";
+            $bsol_sql .= ", :ceuni_descripcion_unidad";
+        }
+
+        if (isset($ceuni_usuario_ingreso)) {
+            $param_sql .= ", ceuni_usuario_ingreso";
+            $bsol_sql .= ", :ceuni_usuario_ingreso";
+        }
+
+        if (isset($fecha_transaccion)) {
+            $param_sql .= ",ceuni_fecha_creacion";
+            $bsol_sql .= ", :ceuni_fecha_creacion";
+        }   
+
+        try {
+            $sql = "INSERT INTO " . $con->dbname . ".curso_educativa_unidad ($param_sql) VALUES($bsol_sql)";
+            $comando = $con->createCommand($sql);
+
+            //\app\models\Utilities::putMessageLogFile('sql...: ' .$sql); 
+            if (isset($cedu_id)) {
+                $comando->bindParam(':cedu_id', $cedu_id, \PDO::PARAM_INT);
+            }            
+
+            if (isset($ceuni_codigo_unidad)) {
+                $comando->bindParam(':ceuni_codigo_unidad', $ceuni_codigo_unidad, \PDO::PARAM_INT);
+            }
+
+            if (isset($ceuni_descripcion_unidad)) {
+                $comando->bindParam(':ceuni_descripcion_unidad', $ceuni_descripcion_unidad, \PDO::PARAM_STR);
+            }
+
+            if (isset($ceuni_usuario_ingreso)) {
+                $comando->bindParam(':ceuni_usuario_ingreso', $ceuni_usuario_ingreso, \PDO::PARAM_INT);
+            }
+
+            if (isset($fecha_transaccion)) {
+                $comando->bindParam(':ceuni_fecha_creacion', $fecha_transaccion, \PDO::PARAM_STR);
+            }
+            
+            $result = $comando->execute();
+            if ($trans !== null)
+                $trans->commit();
+            return $con->getLastInsertID($con->dbname . '.curso_educativa_unidad');
+        } catch (Exception $ex) {
+            if ($trans !== null)
+                $trans->rollback();
+            return FALSE;
+        }
+    }
 }

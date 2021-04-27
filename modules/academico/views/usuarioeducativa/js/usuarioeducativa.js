@@ -25,6 +25,10 @@ $(document).ready(function() {
         editcurso();
     });
 
+    $('#btn_buscarUnidad').click(function () {
+        actualizarGridUnidad();
+    });
+
     $('#cmb_unidad_dises').change(function () {
         var link = $('#txth_base').val() + "/academico/distributivo/listarestudiantespago";
         var arrParams = new Object();
@@ -60,6 +64,19 @@ $(document).ready(function() {
             if (response.status == "OK") {
                 data = response.message;
                 setComboDataselect(data.asignatura, "cmb_asignaturaes", "Todos");
+            }
+        }, true);
+    });
+
+    $('#cmb_periodounidad').change(function() {
+        var link = $('#txth_base').val() + "/academico/usuarioeducativa/indexunidad";
+        var arrParams = new Object();
+        arrParams.codcurso = $(this).val();
+        arrParams.getcurso = true;
+        requestHttpAjax(link, arrParams, function(response) {
+            if (response.status == "OK") {
+                data = response.message;
+                setComboDataselect(data.periodo, "cmb_curso", "Todos");
             }
         }, true);
     });
@@ -269,5 +286,17 @@ function accion(id, tmp) {
                 }, 3000);
             }
         }, true);
+    }
+}
+
+function actualizarGridUnidad() {
+    var search = $('#txt_buscarDataunidad').val();
+    var periodo =  $('#cmb_periodounidad option:selected').val();
+    var curso =  $('#cmb_curso option:selected').val();    
+    //Buscar almenos una clase con el nombre para ejecutar
+    if (!$(".blockUI").length) {
+        showLoadingPopup();
+    $('#Pbunidad').PbGridView('applyFilterData', {'search': search, 'periodo': periodo, 'curso': curso});
+        setTimeout(hideLoadingPopup, 2000);
     }
 }

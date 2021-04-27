@@ -647,6 +647,7 @@ return [
     "Type publication" => "Tipo Publicación",
     "Type" => "Tipo",
     "Type Work Relationship" => "Tipo Relación Trabajo",
+    "Unit" => "Unidad",
     "University" => "Universidad",
     "University/Institution" => "Universidad/Institución",
     "Update" => "Actualizar",

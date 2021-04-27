@@ -87,6 +87,7 @@ return [
     "Search by Description" => "Buscar por Descripción",
     "Search by Matter" => "Buscar por Materia",
     "Search by Teacher Name" => "Buscar por Nombres Profesor",
+    "Search by Unit" => "Buscar por Unidad",
     "Securities to develop" => "Valores a desarrollar",
     "See Student Planning" => "Ver Planificación Estudiante",
     "Semester" => "Semestre",

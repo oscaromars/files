@@ -534,4 +534,31 @@ class CursoEducativa extends \yii\db\ActiveRecord
             return FALSE;
         }
     }
+
+    /**
+     * Function Consultar cursos por paca_id.
+     * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>;
+     * @property       
+     * @return  
+     */
+    public function consultarCursosxpacaid($paca_id) {
+        $con = \Yii::$app->db_academico;      
+        $estado = 1;
+
+        $sql = "SELECT 	Distinct
+                        cedu_id as id,
+                        cedu_asi_nombre as name               
+                        
+                FROM " . $con->dbname . ".curso_educativa              
+                WHERE 
+                paca_id = :paca_id AND               
+                cedu_estado = :estado AND
+                cedu_estado_logico = :estado";
+
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":paca_id", $paca_id, \PDO::PARAM_INT);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);        
+        $resultData = $comando->queryAll();
+        return $resultData;
+    }
 }

@@ -1012,5 +1012,57 @@ class UsuarioeducativaController extends \app\components\CController {
                         readfile($url_file);
                     }
                 }
-    } 
+    }
+    
+    public function actionAsignarestudiantecurso() {
+        $per_id = @Yii::$app->session->get("PB_perid");
+        $distributivo_model = new Distributivo();
+        $mod_modalidad = new Modalidad();
+        $mod_unidad = new UnidadAcademica();
+        $mod_periodo = new PeriodoAcademicoMetIngreso();
+        $data = Yii::$app->request->get();
+
+        if ($data['PBgetFilter']) {
+            $arrSearch["search"] = $data['search'];
+            $arrSearch["profesor"] = $data['profesor'];
+            $arrSearch["unidad"] = $data['unidad'];
+            $arrSearch["modalidad"] = $data['modalidad'];
+            $arrSearch["periodo"] = $data['periodo'];
+            $arrSearch["asignatura"] = $data['asignatura'];
+            $arrSearch["curso"] = $data['curso'];
+            // este query cambiar a uno igual pero con mas cosa para no dañar el origina
+            $model = $distributivo_model->consultarDistributivoxEstudiante($arrSearch, 1);
+            return $this->render('_asignarestudiantecursogrid', [
+                        "model" => $model,
+            ]);
+        } else {
+            // este query cambiar a uno igual pero con mas cosa para no dañar el origina
+            $model = $distributivo_model->consultarDistributivoxEstudiante(null, 1);
+        }
+        if (Yii::$app->request->isAjax) {
+            $data = Yii::$app->request->post();
+            if (isset($data["getmodalidadasi"])) {
+                $modalidadasi = $mod_modalidad->consultarModalidad($data["uaca_ids"], 1);
+                $message = array("modalidadasi" => $modalidadasi);
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+            }
+            if (isset($data["getasignaturasi"])) {
+                $asignaturasi = $distributivo_model->consultarAsiganturaxuniymoda($data["uaca_ids"], $data["moda_ids"]);
+                $message = array("asignaturasi" => $asignaturasi);
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+            }
+        }
+        $arr_unidad = $mod_unidad->consultarUnidadAcademicasEmpresa(1);
+        $arr_modalidad = $mod_modalidad->consultarModalidad($arr_unidad[0]["id"], 1);
+        $arr_periodo = $mod_periodo->consultarPeriodoAcademicotodos();
+        $arr_asignatura = $distributivo_model->consultarAsiganturaxuniymoda(0, 0);
+        return $this->render('asignarestudiantecurso', [
+                    'mod_unidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Grid")]], $arr_unidad), "id", "name"),
+                    'mod_modalidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Grid")]], $arr_modalidad), "id", "name"),
+                    "mod_periodo" => ArrayHelper::map($arr_periodo, "id", "name"),
+                    'mod_asignatura' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Grid")]], $arr_asignatura), "id", "name"),
+                    'model' => $model,
+                    //'mod_estado' => array("-1" => "Todos", "0" => "No Autorizado", "1" => "Autorizado"),                    
+        ]);
+    }
 }  

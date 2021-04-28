@@ -11,6 +11,7 @@ use yii\base\Exception;
 use app\modules\academico\models\UsuarioEducativa;
 use app\modules\academico\models\CursoEducativa;
 use app\modules\academico\models\CursoEducativaUnidad;
+use app\modules\academico\models\CursoEducativaEstudiante;
 use app\modules\academico\models\Asignatura;
 use app\modules\academico\models\UnidadAcademica;
 use app\modules\academico\models\Modalidad;
@@ -1021,24 +1022,25 @@ class UsuarioeducativaController extends \app\components\CController {
         $mod_unidad = new UnidadAcademica();
         $mod_periodo = new PeriodoAcademicoMetIngreso();
         $mod_educativa = new CursoEducativa();
+        $mod_asignar = new CursoEducativaEstudiante();
         $data = Yii::$app->request->get();
 
         if ($data['PBgetFilter']) {
-            $arrSearch["search"] = $data['search'];
+            //$arrSearch["search"] = $data['search'];
             $arrSearch["profesor"] = $data['profesor'];
             $arrSearch["unidad"] = $data['unidad'];
             $arrSearch["modalidad"] = $data['modalidad'];
             $arrSearch["periodo"] = $data['periodo'];
-            $arrSearch["asignatura"] = $data['asignatura'];
+            //$arrSearch["asignatura"] = $data['asignatura'];
             $arrSearch["curso"] = $data['curso'];
             // este query cambiar a uno igual pero con mas cosa para no dañar el origina
-            $model = $distributivo_model->consultarDistributivoxEstudiante($arrSearch, 1);
+            $model = $mod_asignar->consultarDistributivoasigest($arrSearch, 1);
             return $this->render('_asignarestudiantecursogrid', [
                         "model" => $model,
             ]);
         } else {
             // este query cambiar a uno igual pero con mas cosa para no dañar el origina
-            $model = $distributivo_model->consultarDistributivoxEstudiante(null, 1);
+            $model = $mod_asignar->consultarDistributivoasigest(null, 1);
         }
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();

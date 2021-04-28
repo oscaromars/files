@@ -37,7 +37,11 @@ $(document).ready(function() {
 
     $('#btn_guardarunidad').click(function() {
         cargarUnidad();
-    });    
+    }); 
+    
+    $('#btn_buscarData_estasignar').click(function () {
+        actualizarGridAsignaCurso();
+    });
 
     $('#cmb_unidad_dises').change(function () {
         var link = $('#txth_base').val() + "/academico/distributivo/listarestudiantespago";
@@ -459,4 +463,39 @@ function cargarUnidad() {
         }, true);
     }  
 
+}
+
+function actualizarGridAsignaCurso() {
+    var profesor = $('#txt_buscarprofesorasi').val();
+    var unidad =  $('#cmb_unidad_disesasi option:selected').val();
+    var modalidad =  $('#cmb_modalidadesasi option:selected').val();
+    var periodo =  $('#cmb_periodoesasi option:selected').val();
+    //var asignatura = $('#cmb_asignatura option:selected').val();  
+    var curso =  $('#cmb_cursoasi option:selected').val();
+    //Buscar almenos una clase con el nombre para ejecutar
+    if (!$(".blockUI").length) {
+        showLoadingPopup();
+    $('#Tbg_AsignarCurso').PbGridView('applyFilterData', {'profesor': profesor, 'unidad': unidad, 'modalidad': modalidad, 'periodo': periodo/*, 'asignatura': asignatura*/ , 'curso': curso});
+        setTimeout(hideLoadingPopup, 2000);
+    }
+}
+
+function exportExcelEduasignar() {
+    var profesor = $('#txt_buscarprofesorasi').val();
+    var unidad =  $('#cmb_unidad_disesasi option:selected').val();
+    var modalidad =  $('#cmb_modalidadesasi option:selected').val();
+    var periodo =  $('#cmb_periodoesasi option:selected').val();
+    //var asignatura = $('#cmb_asignatura option:selected').val();  
+    var curso =  $('#cmb_cursoasi option:selected').val(); 
+    window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/expexceleduasignar?profesor=" + profesor + "&unidad=" + unidad + "&modalidad=" + modalidad + "&periodo=" + periodo + "&curso=" + curso /* + "&asignatura=" + asignatura */;
+}
+
+function exportPdfEdurasignar() {
+    var profesor = $('#txt_buscarprofesorasi').val();
+    var unidad =  $('#cmb_unidad_disesasi option:selected').val();
+    var modalidad =  $('#cmb_modalidadesasi option:selected').val();
+    var periodo =  $('#cmb_periodoesasi option:selected').val();
+    //var asignatura = $('#cmb_asignatura option:selected').val();  
+    var curso =  $('#cmb_cursoasi option:selected').val();
+    window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/exppdfeduasignar?pdf=1&profesor=" + profesor + "&unidad=" + unidad + "&modalidad=" + modalidad + "&periodo=" + periodo + "&curso=" + curso /* + "&asignatura=" + asignatura */;
 }

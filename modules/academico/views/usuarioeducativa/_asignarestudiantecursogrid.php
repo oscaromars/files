@@ -14,9 +14,9 @@ academico::registerTranslations();
     <?=
     PbGridView::widget([
         'id' => 'Tbg_AsignarCurso',
-        //'showExport' => true,
-        //'fnExportEXCEL' => "exportExcelEduasignar",
-        //'fnExportPDF' => "exportPdfEdurasignar",
+        'showExport' => true,
+        'fnExportEXCEL' => "exportExcelEduasignar",
+        'fnExportPDF' => "exportPdfEdurasignar",
         'dataProvider' => $model,
         'columns' =>
         [

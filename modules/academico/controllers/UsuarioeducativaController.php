@@ -1020,6 +1020,7 @@ class UsuarioeducativaController extends \app\components\CController {
         $mod_modalidad = new Modalidad();
         $mod_unidad = new UnidadAcademica();
         $mod_periodo = new PeriodoAcademicoMetIngreso();
+        $mod_educativa = new CursoEducativa();
         $data = Yii::$app->request->get();
 
         if ($data['PBgetFilter']) {
@@ -1041,7 +1042,7 @@ class UsuarioeducativaController extends \app\components\CController {
         }
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
-            if (isset($data["getmodalidadasi"])) {
+            /*if (isset($data["getmodalidadasi"])) {
                 $modalidadasi = $mod_modalidad->consultarModalidad($data["uaca_ids"], 1);
                 $message = array("modalidadasi" => $modalidadasi);
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
@@ -1050,18 +1051,26 @@ class UsuarioeducativaController extends \app\components\CController {
                 $asignaturasi = $distributivo_model->consultarAsiganturaxuniymoda($data["uaca_ids"], $data["moda_ids"]);
                 $message = array("asignaturasi" => $asignaturasi);
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+            }*/
+            if (isset($data["getcursoasi"])) {
+                $periodoasi = $mod_educativa->consultarCursosxpacaid($data["codcursoasi"]);
+                $message = array("periodoasi" => $periodoasi);
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
             }
         }
         $arr_unidad = $mod_unidad->consultarUnidadAcademicasEmpresa(1);
         $arr_modalidad = $mod_modalidad->consultarModalidad($arr_unidad[0]["id"], 1);
         $arr_periodo = $mod_periodo->consultarPeriodoAcademicotodos();
         $arr_asignatura = $distributivo_model->consultarAsiganturaxuniymoda(0, 0);
+        $arr_curso = $mod_educativa->consultarCursosxpacaid(0); // parametro q envia es el paca_id
+
         return $this->render('asignarestudiantecurso', [
                     'mod_unidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Grid")]], $arr_unidad), "id", "name"),
                     'mod_modalidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Grid")]], $arr_modalidad), "id", "name"),
-                    "mod_periodo" => ArrayHelper::map($arr_periodo, "id", "name"),
+                    'mod_periodo' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $arr_periodo), "id", "name"),
                     'mod_asignatura' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Grid")]], $arr_asignatura), "id", "name"),
                     'model' => $model,
+                    'arr_curso' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $arr_curso), "id", "name"),
                     //'mod_estado' => array("-1" => "Todos", "0" => "No Autorizado", "1" => "Autorizado"),                    
         ]);
     }

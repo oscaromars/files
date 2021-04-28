@@ -145,7 +145,8 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
                         p.per_cedula as identificacion, 
                         concat(p.per_pri_nombre, ' ', p.per_pri_apellido, ' ', ifnull(p.per_seg_apellido,'')) as estudiante,
                         concat(saca_nombre, '-', baca_nombre,'-',baca_anio) as periodo,
-                        z.asi_nombre as asignatura
+                        -- z.asi_nombre as asignatura
+                        cur.cedu_asi_nombre as curso
                 FROM " . $con->dbname . ".distributivo_academico a inner join " . $con->dbname . ".profesor b
                     on b.pro_id = a.pro_id 
                     inner join " . $con1->dbname . ".persona c on c.per_id = b.per_id

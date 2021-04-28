@@ -68,7 +68,7 @@ academico::registerTranslations();
             ],
             [
                 'attribute' => 'Estudiante',
-                'header' => Yii::t("formulario", "Complete Names"),
+                'header' => Yii::t("formulario", "Student"),
                 'value' => 'estudiante',
             ], 
             [   // SE DEBE ANALIZAR BIEN QUE VALUE SE CAPTURA EN EL CHECK PARA EL DESBLOQUEO

@@ -1076,4 +1076,82 @@ class UsuarioeducativaController extends \app\components\CController {
                     //'mod_estado' => array("-1" => "Todos", "0" => "No Autorizado", "1" => "Autorizado"),                    
         ]);
     }
+
+    public function actionExpexceleduasignar() {
+        //$per_id = @Yii::$app->session->get("PB_perid");
+
+        ini_set('memory_limit', '256M');
+        $content_type = Utilities::mimeContentType("xls");
+        $nombarch = "Report-" . date("YmdHis") . ".xls";
+        header("Content-Type: $content_type");
+        header("Content-Disposition: attachment;filename=" . $nombarch);
+        header('Cache-Control: max-age=0');
+        $colPosition = array("C", "D", "E", "F", "G", "H", "I", "J");
+        $arrHeader = array(
+            Yii::t("formulario", "Code"). ' '. Yii::t("formulario", "Student"), 
+            Yii::t("formulario", "Academic unit"),
+            Yii::t("formulario", "Mode"),
+            Yii::t("formulario", "DNI"), 
+            Yii::t("formulario", "Student"),
+            Yii::t("formulario", "Period"),
+            academico::t("Academico", "Course")
+        );
+      
+        $mod_asignar = new CursoEducativaEstudiante();
+        $data = Yii::$app->request->get();
+        //$arrSearch["search"] = $data['search'];
+        $arrSearch["profesor"] = $data['profesor'];
+        $arrSearch["unidad"] = $data['unidad'];
+        $arrSearch["modalidad"] = $data['modalidad'];
+        $arrSearch["periodo"] = $data['periodo'];
+        //$arrSearch["asignatura"] = $data['asignatura'];
+        $arrSearch["curso"] = $data['curso'];
+        $arrData = array();
+        if (empty($arrSearch)) {
+            $arrData = $mod_asignar->consultarDistributivoasigest(array(), 0, 0);
+        } else {
+            $arrData = $mod_asignar->consultarDistributivoasigest($arrSearch, 0, 0);
+        }
+        $nameReport = academico::t("Academico", "Asignación de Cursos");
+        Utilities::generarReporteXLS($nombarch, $nameReport, $arrHeader, $arrData, $colPosition);
+        exit;
+    }
+
+    public function actionExppdfeduasignar() {
+        //$per_id = @Yii::$app->session->get("PB_perid");
+        $report = new ExportFile();
+        $this->view->title = academico::t("Academico", "Asignación de Cursos"); // Titulo del reporte
+        $arrHeader = array(
+            Yii::t("formulario", "Code"). ' '. Yii::t("formulario", "Student"), 
+            Yii::t("formulario", "Academic unit"),
+            Yii::t("formulario", "Mode"),
+            Yii::t("formulario", "DNI"), 
+            Yii::t("formulario", "Student"),
+            Yii::t("formulario", "Period"),
+            academico::t("Academico", "Course") 
+        );
+        $mod_asignar = new CursoEducativaEstudiante();
+        $data = Yii::$app->request->get();
+        //$arrSearch["search"] = $data['search'];
+        $arrSearch["profesor"] = $data['profesor'];
+        $arrSearch["unidad"] = $data['unidad'];
+        $arrSearch["modalidad"] = $data['modalidad'];
+        $arrSearch["periodo"] = $data['periodo'];
+        //$arrSearch["asignatura"] = $data['asignatura'];
+        $arrSearch["curso"] = $data['curso'];
+        $arrData = array();
+        if (empty($arrSearch)) {
+            $arrData = $mod_asignar->consultarDistributivoasigest(array(), 0, 0);
+        } else {
+            $arrData = $mod_asignar->consultarDistributivoasigest($arrSearch, 0, 0);
+        }
+        $report->orientation = "L"; // tipo de orientacion L => Horizontal, P => Vertical                                
+        $report->createReportPdf(
+                $this->render('exportpdf', [
+                    'arr_head' => $arrHeader,
+                    'arr_body' => $arrData,
+                ])
+        );
+        $report->mpdf->Output('Reporte_' . date("Ymdhis") . ".pdf", ExportFile::OUTPUT_TO_DOWNLOAD);
+    }
 }  

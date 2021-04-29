@@ -516,17 +516,24 @@ function asignarCurso() {
                selected += $(this).val() + ',';
            }else{
                unselected += $(this).val() + ',';
-           }
-               
+           }               
        });
            arrParams.asignado = selected.slice(0,-1);
            arrParams.noasignado = unselected.slice(0,-1);
-       if (!validateForm()) {
-           requestHttpAjax(link, arrParams, function (response) {
-               showAlert(response.status, response.label, response.message);
-               setTimeout(function () {
-                   window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/asignarestudiantecurso";
-               }, 3000);
-           }, true);
-       }
+       if ($('#cmb_cursoasi option:selected').val() != 0) {
+          if (selected != '') {
+            if (!validateForm()) {
+                requestHttpAjax(link, arrParams, function (response) {
+                    showAlert(response.status, response.label, response.message);
+                    setTimeout(function () {
+                        window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/asignarestudiantecurso";
+                    }, 3000);
+                }, true);
+            }
+         } else {
+            showAlert('NO_OK', 'error', {"wtmessage": 'Selecciona: Debe seleccionar al menos un estudiante a asignar.', "title": 'Error'});
+         } 
+    } else {
+        showAlert('NO_OK', 'error', {"wtmessage": 'Curso: El campo no debe estar vacío.', "title": 'Error'});
+     }  
 }

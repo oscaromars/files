@@ -242,9 +242,9 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
      * @return  $resultData (Retornar el código).
      */
     public function insertarEstudiantecurso($cedu_id, $est_id, $ceest_usuario_ingreso) {
-        \app\models\Utilities::putMessageLogFile('cedu_id...: ' . $cedu_id ); 
+       /* \app\models\Utilities::putMessageLogFile('cedu_id...: ' . $cedu_id ); 
         \app\models\Utilities::putMessageLogFile('est_id...: ' . $est_id ); 
-        \app\models\Utilities::putMessageLogFile('ceest_usuario_ingreso...: ' . $ceest_usuario_ingreso ); 
+        \app\models\Utilities::putMessageLogFile('ceest_usuario_ingreso...: ' . $ceest_usuario_ingreso ); */
         $con = \Yii::$app->db_academico;
         $ceest_estado_bloqueo = 'B';
         $trans = $con->getTransaction(); // se obtiene la transacción actual
@@ -287,7 +287,7 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
         try {
             $sql = "INSERT INTO " . $con->dbname . ".curso_educativa_estudiante ($param_sql) VALUES($bsol_sql)";
             $comando = $con->createCommand($sql);            
-             \app\models\Utilities::putMessageLogFile('sql...: ' .$sql); 
+            //\app\models\Utilities::putMessageLogFile('sql...: ' .$sql); 
 
             // $comando->bindParam(':ceest_estado_bloqueo', $ceest_estado_bloqueo, \PDO::PARAM_STR); 
 

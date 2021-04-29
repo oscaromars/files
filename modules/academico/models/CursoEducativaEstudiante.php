@@ -134,10 +134,7 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
           $mod_paca        = new PeriodoAcademico(); 
           $paca_actual_id  = $mod_paca->getPeriodoAcademicoActual();
           $str_search      = "a.paca_id = ".$paca_actual_id['id']." AND ";
-        }
-
-
-        
+        }        
 
         $sql = "SELECT  distinct h.est_id, 
                         d.uaca_nombre as unidad, 
@@ -235,6 +232,194 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
             return $dataProvider;
         } else {
             return $resultData2;
+        }
+    }
+
+   /**
+     * Function guarda asignacion de estudiantes a cursos en integracion educativa 
+     * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
+     * @param   
+     * @return  $resultData (Retornar el código).
+     */
+    public function insertarEstudiantecurso($cedu_id, $est_id, $ceest_usuario_ingreso) {
+        //\app\models\Utilities::putMessageLogFile('entro asignacion...: ' ); 
+        $con = \Yii::$app->db_academico;
+        $ceest_estado_bloqueo = 'B';
+        $trans = $con->getTransaction(); // se obtiene la transacción actual
+        if ($trans !== null) {
+            $trans = null; // si existe la transacción entonces no se crea una
+        } else {
+            $trans = $con->beginTransaction(); // si no existe la transacción entonces se crea una
+        }
+        $fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
+                       
+        $param_sql = "ceest_estado_logico";
+        $bsol_sql = "1";
+
+        $param_sql .= ", ceest_estado";
+        $bsol_sql .= ", 1";
+
+        $param_sql .= ", ceest_estado_bloqueo";
+        $bsol_sql .= ", :ceest_estado_bloqueo";
+
+        if (isset($cedu_id)) {
+            $param_sql .= ", cedu_id";
+            $bsol_sql .= ", :cedu_id";
+        }
+
+        if (isset($est_id)) {
+            $param_sql .= ", est_id";
+            $bsol_sql .= ", :est_id";
+        }
+        
+        if (isset($ceest_usuario_ingreso)) {
+            $param_sql .= ", ceest_usuario_ingreso";
+            $bsol_sql .= ", :ceest_usuario_ingreso";
+        }
+
+        if (isset($fecha_transaccion)) {
+            $param_sql .= ",ceest_fecha_creacion";
+            $bsol_sql .= ", :ceest_fecha_creacion";
+        }   
+
+        try {
+            $sql = "INSERT INTO " . $con->dbname . ".curso_educativa_estudiante; ($param_sql) VALUES($bsol_sql)";
+            $comando = $con->createCommand($sql);            
+             \app\models\Utilities::putMessageLogFile('sql...: ' .$sql); 
+
+             $comando->bindParam(':ceest_estado_bloqueo', $ceest_estado_bloqueo, \PDO::PARAM_STR); 
+
+            if (isset($cedu_id)) {
+                $comando->bindParam(':cedu_id', $cedu_id, \PDO::PARAM_INT);
+            }
+
+            if (isset($est_id)) {
+                $comando->bindParam(':est_id', $est_id, \PDO::PARAM_INT);
+            }            
+
+            if (isset($cedu_usuario_ingreso)) {
+                $comando->bindParam(':cedu_usuario_ingreso', $cedu_usuario_ingreso, \PDO::PARAM_INT);
+            }
+
+            if (isset($fecha_transaccion)) {
+                $comando->bindParam(':ceest_fecha_creacion', $fecha_transaccion, \PDO::PARAM_STR);
+            }
+            
+            $result = $comando->execute();
+            if ($trans !== null)
+                $trans->commit();
+            return $con->getLastInsertID($con->dbname . '.curso_educativa_estudiante;');
+        } catch (Exception $ex) {
+            if ($trans !== null)
+                $trans->rollback();
+            return FALSE;
+        }
+    } 
+
+    /**
+     * Function modificar curso_educativa_estudiante.
+     * @author Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>;
+     * @param
+     * @return
+     */
+    public function modificarEstudiantecurso($ceest_id, $cedu_id, $est_id, $cees_usuario_modifica) {
+        $fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
+        $con = \Yii::$app->db_academico;
+        $estado = 1; 
+        if ($trans !== null) {
+            $trans = null; // si existe la transacción entonces no se crea una
+        } else {
+            $trans = $con->beginTransaction(); // si no existe la transacción entonces se crea una
+        }
+        try {
+            $comando = $con->createCommand
+                    ("UPDATE " . $con->dbname . ".curso_educativa_estudiante		       
+                      SET cedu_id = :cedu_id,                        
+                          est_id = :est_id,
+                          cees_usuario_modifica = :cees_usuario_modifica,
+                          cees_fecha_modificacion = :cees_fecha_modificacion                          
+                      WHERE 
+                      ceest_id = :ceest_id AND
+                      ceest_estado = :estado AND
+                      ceest_estado_logico = :estado");
+            $comando->bindParam(":ceest_id", $ceest_id, \PDO::PARAM_INT);  
+            $comando->bindParam(":cedu_id", $cedu_id, \PDO::PARAM_INT); 
+            $comando->bindParam(":est_id", $est_id, \PDO::PARAM_INT);              
+            $comando->bindParam(":cees_usuario_modifica", $cees_usuario_modifica, \PDO::PARAM_INT);
+            $comando->bindParam(":cees_fecha_modificacion", $fecha_transaccion, \PDO::PARAM_STR);
+            $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+            $response = $comando->execute();
+            if ($trans !== null)
+                $trans->commit();
+            return $response;
+        } catch (Exception $ex) {
+            if ($trans !== null)
+                $trans->rollback();
+            return FALSE;
+        }
+    }
+
+    /**
+     * Function Consultar si existe asignacion curso.
+     * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>;
+     * @property       
+     * @return  
+     */
+    public function consultarAsignacionexiste($cedu_id, $est_id) {
+        $con = \Yii::$app->db_academico;     
+        $estado = 1;   
+        $sql = "SELECT 	
+                        count(*) as exiteasigna                       
+                        
+                FROM " . $con->dbname . ".curso_educativa_estudiante                 
+                WHERE 
+                cedu_id = :cedu_id AND
+                est_id = :est_id AND
+                ceest_estado = :estado AND
+                ceest_estado_logico = :estado ";        
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $comando->bindParam(":cedu_id", $cedu_id, \PDO::PARAM_INT); 
+        $comando->bindParam(":est_id", $est_id, \PDO::PARAM_INT);       
+        $resultData = $comando->queryOne();
+        return $resultData;
+    }
+
+    /**
+     * Function eliminar el asignacion curso estados en 0.
+     * @author Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>;
+     * @param
+     * @return
+     */
+    public function eliminarAsignacioncurso($ceest_id, $cees_usuario_modifica, $cees_fecha_modificacion) {
+        $estado = 0;
+        $con = \Yii::$app->db_academico;
+        
+        if ($trans !== null) {
+            $trans = null; // si existe la transacción entonces no se crea una
+        } else {
+            $trans = $con->beginTransaction(); // si no existe la transacción entonces se crea una
+        }
+        try {
+            $comando = $con->createCommand
+                    ("UPDATE " . $con->dbname . ".curso_educativa_estudiante		       
+                      SET cees_estado = :cees_estado,
+                          cees_usuario_modifica = :cees_usuario_modifica,
+                          cees_fecha_modificacion = :cees_fecha_modificacion                          
+                      WHERE 
+                      ceest_id = :ceest_id ");
+            $comando->bindParam(":ceest_id", $ceest_id, \PDO::PARAM_INT);          
+            $comando->bindParam(":cees_usuario_modifica", $cees_usuario_modifica, \PDO::PARAM_INT);
+            $comando->bindParam(":cees_fecha_modificacion", $cees_fecha_modificacion, \PDO::PARAM_STR);
+            $comando->bindParam(":cees_estado", $estado, \PDO::PARAM_STR);
+            $response = $comando->execute();
+            if ($trans !== null)
+                $trans->commit();
+            return $response;
+        } catch (Exception $ex) {
+            if ($trans !== null)
+                $trans->rollback();
+            return FALSE;
         }
     }
 }

@@ -242,7 +242,9 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
      * @return  $resultData (Retornar el código).
      */
     public function insertarEstudiantecurso($cedu_id, $est_id, $ceest_usuario_ingreso) {
-        //\app\models\Utilities::putMessageLogFile('entro asignacion...: ' ); 
+        \app\models\Utilities::putMessageLogFile('cedu_id...: ' . $cedu_id ); 
+        \app\models\Utilities::putMessageLogFile('est_id...: ' . $est_id ); 
+        \app\models\Utilities::putMessageLogFile('ceest_usuario_ingreso...: ' . $ceest_usuario_ingreso ); 
         $con = \Yii::$app->db_academico;
         $ceest_estado_bloqueo = 'B';
         $trans = $con->getTransaction(); // se obtiene la transacción actual
@@ -260,7 +262,7 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
         $bsol_sql .= ", 1";
 
         $param_sql .= ", ceest_estado_bloqueo";
-        $bsol_sql .= ", :ceest_estado_bloqueo";
+        $bsol_sql .= ", '" . $ceest_estado_bloqueo . "'";
 
         if (isset($cedu_id)) {
             $param_sql .= ", cedu_id";
@@ -283,11 +285,11 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
         }   
 
         try {
-            $sql = "INSERT INTO " . $con->dbname . ".curso_educativa_estudiante; ($param_sql) VALUES($bsol_sql)";
+            $sql = "INSERT INTO " . $con->dbname . ".curso_educativa_estudiante ($param_sql) VALUES($bsol_sql)";
             $comando = $con->createCommand($sql);            
              \app\models\Utilities::putMessageLogFile('sql...: ' .$sql); 
 
-             $comando->bindParam(':ceest_estado_bloqueo', $ceest_estado_bloqueo, \PDO::PARAM_STR); 
+            // $comando->bindParam(':ceest_estado_bloqueo', $ceest_estado_bloqueo, \PDO::PARAM_STR); 
 
             if (isset($cedu_id)) {
                 $comando->bindParam(':cedu_id', $cedu_id, \PDO::PARAM_INT);
@@ -297,8 +299,8 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
                 $comando->bindParam(':est_id', $est_id, \PDO::PARAM_INT);
             }            
 
-            if (isset($cedu_usuario_ingreso)) {
-                $comando->bindParam(':cedu_usuario_ingreso', $cedu_usuario_ingreso, \PDO::PARAM_INT);
+            if (isset($ceest_usuario_ingreso)) {
+                $comando->bindParam(':ceest_usuario_ingreso', $ceest_usuario_ingreso, \PDO::PARAM_INT);
             }
 
             if (isset($fecha_transaccion)) {

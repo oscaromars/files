@@ -43,6 +43,10 @@ $(document).ready(function() {
         actualizarGridAsignaCurso();
     });
 
+    $('#btnAsignacurso').click(function () {
+        asignarCurso();
+    });
+
     $('#cmb_unidad_dises').change(function () {
         var link = $('#txth_base').val() + "/academico/distributivo/listarestudiantespago";
         var arrParams = new Object();
@@ -498,4 +502,31 @@ function exportPdfEdurasignar() {
     //var asignatura = $('#cmb_asignatura option:selected').val();  
     var curso =  $('#cmb_cursoasi option:selected').val();
     window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/exppdfeduasignar?pdf=1&profesor=" + profesor + "&unidad=" + unidad + "&modalidad=" + modalidad + "&periodo=" + periodo + "&curso=" + curso /* + "&asignatura=" + asignatura */;
+}
+
+function asignarCurso() {        
+       var link = $('#txth_base').val() + "/academico/usuarioeducativa/savestudiantescurso";
+       var arrParams = new Object();
+       arrParams.periodo = $('#cmb_periodoesasi').val();
+       arrParams.curso = $('#cmb_cursoasi').val();
+       var selected = '';
+       var unselected = '';       
+       $('#Tbg_AsignarCurso input[type=checkbox]').each(function () {
+           if (this.checked) {
+               selected += $(this).val() + ',';
+           }else{
+               unselected += $(this).val() + ',';
+           }
+               
+       });
+           arrParams.asignado = selected.slice(0,-1);
+           arrParams.noasignado = unselected.slice(0,-1);
+       if (!validateForm()) {
+           requestHttpAjax(link, arrParams, function (response) {
+               showAlert(response.status, response.label, response.message);
+               setTimeout(function () {
+                   window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/asignarestudiantecurso";
+               }, 3000);
+           }, true);
+       }
 }

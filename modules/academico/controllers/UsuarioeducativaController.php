@@ -1154,4 +1154,81 @@ class UsuarioeducativaController extends \app\components\CController {
         );
         $report->mpdf->Output('Reporte_' . date("Ymdhis") . ".pdf", ExportFile::OUTPUT_TO_DOWNLOAD);
     }
+
+    public function actionSavestudiantescurso() {
+        $usu_id = @Yii::$app->session->get("PB_iduser");
+        if (Yii::$app->request->isAjax) {
+            $data = Yii::$app->request->post();
+            $paca_id = $data["periodo"];
+            $cedu_id = $data["curso"];
+            $asignado = $data["asignado"];
+            $noasignado = $data["noasignado"];
+
+            $con = \Yii::$app->db_academico;
+            $transaction = $con->beginTransaction();
+            try {
+                if (!empty($asignado)) {
+                    $asignados = explode(",", $asignado); //ASIGNADOS
+                    foreach ($asignados as $est_id) {  // empieza foreach para guardar los asignados
+                        //Verificar que no haya guardado el estudiante en el cedu_id y est_id para insert.
+                        // en un ciclo primero los pagados, luego los no pagado
+                        $mod_asignar = new CursoEducativaEstudiante();
+                        $resp_consAsignacion = $mod_asignar->consultarAsignacionexiste($cedu_id, $est_id);
+                        if ($resp_consAsignacion["exiteasigna"] == 0) {
+                            // update pagados   
+                            //$resp_modificarpago = $mod_asignar->modificarPagoestudiante($periodo, null, $est_id, 1, $usu_id);
+                            //$exito = 1;
+                        //} else {
+                            // es un insert pagados
+                            $resp_guardarpago = $mod_asignar->insertarEstudiantecurso($cedu_id, $est_id, $usu_id);
+                            $exito = 1;
+                        }
+                    } // cierra foreach 
+                }
+                /*if (!empty($nopagado)) {
+                    $nopagados = explode(",", $nopagado); //NO PAGADOS
+                    foreach ($nopagados as $est_id) {  // empieza foreach para guardar los no pagados
+                        //Verificar que no haya guardado el estudiante en el periodo y est_id para insert, si guardo es update NO PAGADOS.                    
+                        $mod_asignar = new CursoEducativaEstudiante();
+                        $resp_consPeriodonopago = $mod_asignar->consultarPeriodopago($periodo, null, $est_id);
+                        if (!empty($resp_consPeriodonopago["eppa_id"])) {
+                            // update NO pagados 
+                            $resp_guardanopago = $mod_asignar->modificarPagoestudiante($periodo, null, $est_id, 0, $usu_id);
+                            $exito = 1;
+                        } else {
+                            // es un insert NO pagados
+                            $resp_modificarnopago = $mod_asignar->insertarPagoestudiante($periodo, null, $est_id, 0, $usu_id);
+                            $exito = 1;
+                        }
+                    } // cierra foreach 
+                }*/
+                if ($exito) {
+                    $transaction->commit();
+                    $message = array(
+                        "wtmessage" => Yii::t("notificaciones", "La información ha sido grabada."),
+                        "title" => Yii::t('jslang', 'Success'),
+                    );
+                    return \app\models\Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), false, $message);
+                } else {
+                    $transaction->rollback();
+                    if (empty($message)) {
+                        $message = array
+                            (
+                            "wtmessage" => Yii::t("notificaciones", "Error al grabar1. " . $mensaje), "title" =>
+                            Yii::t('jslang', 'Success'),
+                        );
+                    }
+                    return \app\models\Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Sucess"), false, $message);
+                }
+            } catch (Exception $ex) {
+                $transaction->rollback();
+                $message = array(
+                    "wtmessage" => Yii::t("notificaciones", "Error al grabar2." . $mensaje),
+                    "title" => Yii::t('jslang', 'Success'),
+                );
+                return \app\models\Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Sucess"), false, $message);
+            }
+            return;
+        }
+    }
 }  

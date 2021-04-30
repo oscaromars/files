@@ -8,12 +8,14 @@ class ComposerStaticInitf285fe9957bad1e329ae97a6417e73ab
 {
     public static $files = array (
         '2cffec82183ee1cea088009cef9a6fc3' => __DIR__ . '/..' . '/ezyang/htmlpurifier/library/HTMLPurifier.composer.php',
-        '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
         '6124b4c8570aa390c21fafd04a26c69f' => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy/deep_copy.php',
+        '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
         '0d59ee240a4cd96ddbb4ff164fccea4d' => __DIR__ . '/..' . '/symfony/polyfill-php73/bootstrap.php',
         'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
+        '7e9bd612cc444b3eed788ebbe46263a0' => __DIR__ . '/..' . '/laminas/laminas-zendframework-bridge/src/autoload.php',
         '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
+        '6e3fae29631ef280660b3cdad06f25a8' => __DIR__ . '/..' . '/symfony/deprecation-contracts/function.php',
         'a0edc8309cc5e1d60e3047b5df6b7052' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/functions_include.php',
         'abede361264e2ae69ec1eee813a101af' => __DIR__ . '/..' . '/markbaker/complex/classes/src/functions/abs.php',
         '21a5860fbef5be28db5ddfbc3cca67c4' => __DIR__ . '/..' . '/markbaker/complex/classes/src/functions/acos.php',
@@ -97,7 +99,9 @@ class ComposerStaticInitf285fe9957bad1e329ae97a6417e73ab
         'p' => 
         array (
             'phpDocumentor\\Reflection\\' => 25,
+            'penblu\\searchautocomplete\\' => 26,
             'penblu\\magnificpopup\\' => 21,
+            'penblu\\jcrop\\' => 13,
             'penblu\\blockui\\' => 15,
             'penblu\\barcode\\' => 15,
         ),
@@ -107,21 +111,39 @@ class ComposerStaticInitf285fe9957bad1e329ae97a6417e73ab
         ),
         'k' => 
         array (
+            'kartik\\widgets\\' => 15,
+            'kartik\\typeahead\\' => 17,
+            'kartik\\touchspin\\' => 17,
+            'kartik\\time\\' => 12,
             'kartik\\tabs\\' => 12,
+            'kartik\\switchinput\\' => 19,
+            'kartik\\spinner\\' => 15,
+            'kartik\\sortable\\' => 16,
+            'kartik\\sidenav\\' => 15,
             'kartik\\select2\\' => 15,
+            'kartik\\rating\\' => 14,
+            'kartik\\range\\' => 13,
             'kartik\\popover\\' => 15,
             'kartik\\plugins\\tabs\\' => 20,
             'kartik\\plugins\\popover\\' => 23,
             'kartik\\plugins\\fileinput\\' => 25,
+            'kartik\\plugins\\depdrop\\' => 23,
+            'kartik\\mpdf\\' => 12,
+            'kartik\\growl\\' => 13,
             'kartik\\grid\\' => 12,
             'kartik\\form\\' => 12,
             'kartik\\file\\' => 12,
             'kartik\\editable\\' => 16,
+            'kartik\\dynagrid\\' => 16,
             'kartik\\dialog\\' => 14,
+            'kartik\\depdrop\\' => 15,
             'kartik\\datetime\\' => 16,
             'kartik\\date\\' => 12,
+            'kartik\\color\\' => 13,
             'kartik\\bs4dropdown\\' => 19,
             'kartik\\base\\' => 12,
+            'kartik\\alert\\' => 13,
+            'kartik\\affix\\' => 13,
         ),
         'h' => 
         array (
@@ -130,11 +152,17 @@ class ComposerStaticInitf285fe9957bad1e329ae97a6417e73ab
         ),
         'c' => 
         array (
+            'conquer\\select2\\' => 16,
+            'conquer\\helpers\\' => 16,
             'cebe\\markdown\\' => 14,
         ),
         'b' => 
         array (
             'branchonline\\lightbox\\' => 22,
+        ),
+        'Z' => 
+        array (
+            'ZipStream\\' => 10,
         ),
         'W' => 
         array (
@@ -155,20 +183,29 @@ class ComposerStaticInitf285fe9957bad1e329ae97a6417e73ab
             'Symfony\\Component\\CssSelector\\' => 30,
             'Symfony\\Component\\Console\\' => 26,
             'Symfony\\Component\\BrowserKit\\' => 29,
+            'Stripe\\' => 7,
         ),
         'P' => 
         array (
             'Psr\\SimpleCache\\' => 16,
             'Psr\\Log\\' => 8,
             'Psr\\Http\\Message\\' => 17,
+            'Psr\\Http\\Client\\' => 16,
             'Psr\\Container\\' => 14,
             'Prophecy\\' => 9,
+            'PhpOffice\\PhpWord\\' => 18,
             'PhpOffice\\PhpSpreadsheet\\' => 25,
         ),
         'M' => 
         array (
+            'MyCLabs\\Enum\\' => 13,
             'Mpdf\\' => 5,
             'Matrix\\' => 7,
+        ),
+        'L' => 
+        array (
+            'Laminas\\ZendFrameworkBridge\\' => 28,
+            'Laminas\\Escaper\\' => 16,
         ),
         'G' => 
         array (
@@ -176,6 +213,7 @@ class ComposerStaticInitf285fe9957bad1e329ae97a6417e73ab
         ),
         'F' => 
         array (
+            'Fxp\\Composer\\AssetPlugin\\' => 25,
             'Faker\\' => 6,
         ),
         'D' => 
@@ -189,6 +227,7 @@ class ComposerStaticInitf285fe9957bad1e329ae97a6417e73ab
             'Codeception\\PHPUnit\\' => 20,
             'Codeception\\Extension\\' => 22,
             'Codeception\\' => 12,
+            'CodeItNow\\' => 10,
         ),
     );
 
@@ -239,9 +278,17 @@ class ComposerStaticInitf285fe9957bad1e329ae97a6417e73ab
             1 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
             2 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
         ),
+        'penblu\\searchautocomplete\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/penblu/searchautocomplete',
+        ),
         'penblu\\magnificpopup\\' => 
         array (
             0 => __DIR__ . '/..' . '/penblu/magnificpopup',
+        ),
+        'penblu\\jcrop\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/penblu/jcrop',
         ),
         'penblu\\blockui\\' => 
         array (
@@ -255,13 +302,53 @@ class ComposerStaticInitf285fe9957bad1e329ae97a6417e73ab
         array (
             0 => __DIR__ . '/..' . '/odaialali/yii2-toastr',
         ),
+        'kartik\\widgets\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/kartik-v/yii2-widgets/src',
+        ),
+        'kartik\\typeahead\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/kartik-v/yii2-widget-typeahead/src',
+        ),
+        'kartik\\touchspin\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/kartik-v/yii2-widget-touchspin/src',
+        ),
+        'kartik\\time\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/kartik-v/yii2-widget-timepicker/src',
+        ),
         'kartik\\tabs\\' => 
         array (
             0 => __DIR__ . '/..' . '/kartik-v/yii2-tabs-x/src',
         ),
+        'kartik\\switchinput\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/kartik-v/yii2-widget-switchinput',
+        ),
+        'kartik\\spinner\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/kartik-v/yii2-widget-spinner/src',
+        ),
+        'kartik\\sortable\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/kartik-v/yii2-sortable/src',
+        ),
+        'kartik\\sidenav\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/kartik-v/yii2-widget-sidenav',
+        ),
         'kartik\\select2\\' => 
         array (
             0 => __DIR__ . '/..' . '/kartik-v/yii2-widget-select2/src',
+        ),
+        'kartik\\rating\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/kartik-v/yii2-widget-rating/src',
+        ),
+        'kartik\\range\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/kartik-v/yii2-widget-rangeinput/src',
         ),
         'kartik\\popover\\' => 
         array (
@@ -279,6 +366,18 @@ class ComposerStaticInitf285fe9957bad1e329ae97a6417e73ab
         array (
             0 => __DIR__ . '/..' . '/kartik-v/bootstrap-fileinput',
         ),
+        'kartik\\plugins\\depdrop\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/kartik-v/dependent-dropdown',
+        ),
+        'kartik\\mpdf\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/kartik-v/yii2-mpdf/src',
+        ),
+        'kartik\\growl\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/kartik-v/yii2-widget-growl',
+        ),
         'kartik\\grid\\' => 
         array (
             0 => __DIR__ . '/..' . '/kartik-v/yii2-grid/src',
@@ -295,9 +394,17 @@ class ComposerStaticInitf285fe9957bad1e329ae97a6417e73ab
         array (
             0 => __DIR__ . '/..' . '/kartik-v/yii2-editable/src',
         ),
+        'kartik\\dynagrid\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/kartik-v/yii2-dynagrid/src',
+        ),
         'kartik\\dialog\\' => 
         array (
             0 => __DIR__ . '/..' . '/kartik-v/yii2-dialog/src',
+        ),
+        'kartik\\depdrop\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/kartik-v/yii2-widget-depdrop/src',
         ),
         'kartik\\datetime\\' => 
         array (
@@ -307,6 +414,10 @@ class ComposerStaticInitf285fe9957bad1e329ae97a6417e73ab
         array (
             0 => __DIR__ . '/..' . '/kartik-v/yii2-widget-datepicker/src',
         ),
+        'kartik\\color\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/kartik-v/yii2-widget-colorinput/src',
+        ),
         'kartik\\bs4dropdown\\' => 
         array (
             0 => __DIR__ . '/..' . '/kartik-v/yii2-bootstrap4-dropdown/src',
@@ -314,6 +425,14 @@ class ComposerStaticInitf285fe9957bad1e329ae97a6417e73ab
         'kartik\\base\\' => 
         array (
             0 => __DIR__ . '/..' . '/kartik-v/yii2-krajee-base/src',
+        ),
+        'kartik\\alert\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/kartik-v/yii2-widget-alert',
+        ),
+        'kartik\\affix\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/kartik-v/yii2-widget-affix',
         ),
         'himiklab\\yii2\\recaptcha\\tests\\' => 
         array (
@@ -323,6 +442,14 @@ class ComposerStaticInitf285fe9957bad1e329ae97a6417e73ab
         array (
             0 => __DIR__ . '/..' . '/himiklab/yii2-recaptcha-widget/src',
         ),
+        'conquer\\select2\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/conquer/select2',
+        ),
+        'conquer\\helpers\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/conquer/helpers',
+        ),
         'cebe\\markdown\\' => 
         array (
             0 => __DIR__ . '/..' . '/cebe/markdown',
@@ -330,6 +457,10 @@ class ComposerStaticInitf285fe9957bad1e329ae97a6417e73ab
         'branchonline\\lightbox\\' => 
         array (
             0 => __DIR__ . '/..' . '/branchonline/yii2-lightbox/src',
+        ),
+        'ZipStream\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/maennchen/zipstream-php/src',
         ),
         'Webmozart\\Assert\\' => 
         array (
@@ -387,6 +518,10 @@ class ComposerStaticInitf285fe9957bad1e329ae97a6417e73ab
         array (
             0 => __DIR__ . '/..' . '/symfony/browser-kit',
         ),
+        'Stripe\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/stripe/stripe-php/lib',
+        ),
         'Psr\\SimpleCache\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/simple-cache/src',
@@ -397,7 +532,12 @@ class ComposerStaticInitf285fe9957bad1e329ae97a6417e73ab
         ),
         'Psr\\Http\\Message\\' => 
         array (
-            0 => __DIR__ . '/..' . '/psr/http-message/src',
+            0 => __DIR__ . '/..' . '/psr/http-factory/src',
+            1 => __DIR__ . '/..' . '/psr/http-message/src',
+        ),
+        'Psr\\Http\\Client\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/psr/http-client/src',
         ),
         'Psr\\Container\\' => 
         array (
@@ -407,9 +547,17 @@ class ComposerStaticInitf285fe9957bad1e329ae97a6417e73ab
         array (
             0 => __DIR__ . '/..' . '/phpspec/prophecy/src/Prophecy',
         ),
+        'PhpOffice\\PhpWord\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/phpoffice/phpword/src/PhpWord',
+        ),
         'PhpOffice\\PhpSpreadsheet\\' => 
         array (
             0 => __DIR__ . '/..' . '/phpoffice/phpspreadsheet/src/PhpSpreadsheet',
+        ),
+        'MyCLabs\\Enum\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/myclabs/php-enum/src',
         ),
         'Mpdf\\' => 
         array (
@@ -419,9 +567,21 @@ class ComposerStaticInitf285fe9957bad1e329ae97a6417e73ab
         array (
             0 => __DIR__ . '/..' . '/markbaker/matrix/classes/src',
         ),
+        'Laminas\\ZendFrameworkBridge\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/laminas/laminas-zendframework-bridge/src',
+        ),
+        'Laminas\\Escaper\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/laminas/laminas-escaper/src',
+        ),
         'GuzzleHttp\\Psr7\\' => 
         array (
             0 => __DIR__ . '/..' . '/guzzlehttp/psr7/src',
+        ),
+        'Fxp\\Composer\\AssetPlugin\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/fxp/composer-asset-plugin',
         ),
         'Faker\\' => 
         array (
@@ -451,6 +611,10 @@ class ComposerStaticInitf285fe9957bad1e329ae97a6417e73ab
         array (
             0 => __DIR__ . '/..' . '/codeception/base/src/Codeception',
             1 => __DIR__ . '/..' . '/codeception/stub/src',
+        ),
+        'CodeItNow\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/codeitnowin/barcode/CodeItNow',
         ),
     );
 

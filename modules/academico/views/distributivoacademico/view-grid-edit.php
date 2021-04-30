@@ -24,10 +24,17 @@ academico::registerTranslations();
             [
                 'attribute' => '',
                 'header' => '',
-                'value' => 'indice',
+                'value' => 'Id',
                 'contentOptions' => array('style' => 'display:none'),
                 'headerOptions'=>array('style' => 'display:none')
-            ],    
+            ],   
+            [
+                'attribute' => '',
+                'header' => '',
+                'value' => 'dcab_id',
+                'contentOptions' => array('style' => 'display:none'),
+                'headerOptions'=>array('style' => 'display:none')
+            ],
             [
                 'attribute' => 'Tipo Asignación',
                 'header' => academico::t("Academico", "Assignment Type"),
@@ -62,7 +69,22 @@ academico::registerTranslations();
                 'attribute' => 'Horario',
                 'header' => academico::t("Academico", "Schedule"),
                 'value' => 'horario',
-            ],                
+            ],   
+            [
+                'attribute' => 'fechaI',
+                'header' => academico::t("Academico", "Fecha Inicio"),
+                'value' => 'fechaI',
+            ],
+            [
+                'attribute' => 'fechaf',
+                'header' => academico::t("Academico", "Fecha  Fin"),
+                'value' => 'fechaf',
+            ],
+            [
+                'attribute' => 'nroHoras',
+                'header' => academico::t("Academico", "#Horas Actividades"),
+                'value' => 'nroHoras',
+            ],
             [
                 'class' => 'yii\grid\ActionColumn',
                 'header' => '',
@@ -70,7 +92,7 @@ academico::registerTranslations();
                 'contentOptions' => ['class' => 'text-center'],
                 'buttons' => [                   
                     'delete' => function ($url, $model) {                        
-                        return Html::a('<span class="glyphicon glyphicon-trash"></span>', null, ['href' => 'javascript:eliminarItems(\''. $model['indice'] .'\',\'TbG_Data\');', "data-toggle" => "tooltip", "title" => Yii::t("accion","Delete")]);
+                        return Html::a('<span class="glyphicon glyphicon-trash"></span>', null, ['href' => 'javascript:eliminarItems(\''. $model['Id'] .'\',\''. $model['dcab_id'] .'\',\'TbG_Data\');', "data-toggle" => "tooltip", "title" => Yii::t("accion","Delete")]);
                     }                    
                 ],               
             ],                  

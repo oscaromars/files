@@ -5,19 +5,19 @@ use yii\helpers\Html;
 use app\modules\academico\Module as academico;
 use app\modules\admision\Module as admision;
 use app\widgets\PbGridView\PbGridView;
-
+use kartik\date\DatePicker;
 admision::registerTranslations();
 academico::registerTranslations();
 ?>
 
-<?= Html::hiddenInput('txth_idperiodo', $arr_periodoActual['id'], ['id' => 'txth_idperiodo']); ?>
-<input type="hidden" name="txth_profid" id="txth_profid" value="<?=$arr_cabecera["pro_id"]?>">
-<input type="hidden" name="txth_cabid" id="txth_cabid" value="<?=$arr_cabecera["dcab_id"]?>">
+<?= Html::hiddenInput('txth_periodoid', $arr_cabecera["paca_id"], ['id' => 'txth_periodoid']); ?>
+<?= Html::hiddenInput('txth_cabid',     $arr_cabecera["dcab_id"], ['id' => 'txth_cabid']); ?>
+<?= Html::hiddenInput('txth_proid',     $arr_cabecera["pro_id"], ['id' => 'txth_proid']); ?>
 
 <h3>Período Académico: <span id="lbl_etiqueta"><?= $arr_periodoActual['nombre'] ?></span></h3>
 </br>
 <form class="form-horizontal">
-    <input type="hidden" name="cmb_profesor" id="cmb_profesor" />
+    <input type="hidden" name="cmb_profesor" id="cmb_profesor" value="<?= $arr_cabecera["pro_id"] ?>"  />
     <div class="row">
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <h3><label id="lbl_profesor"><?= Yii::t("formulario", "Data Teacher") ?></label></h3>
@@ -66,7 +66,7 @@ academico::registerTranslations();
 
     </div>
 
-    <div class="row">
+   
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <div class="form-group">
                 <label for="cmb_tipo_asignacion" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= academico::t("Academico", "Tipo Asignación") ?></label>
@@ -81,6 +81,16 @@ academico::registerTranslations();
                 </div>
             </div>
         </div>
+    
+     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div id="bloque_h_otros" style="display: none" class="form-group">
+                    <label for="txt_horas_otros" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= academico::t("distributivoacademico", "Número Horas") ?></label>
+                    <div class="col-sm-3 col-xs-3 col-md-3 col-lg-3">
+                        <input type="text" class="form-control keyupmce" value="" id="txt_horas_otros"  data-type="number" placeholder="<?= academico::t("distributivoacademico", "Número Horas") ?>">
+                    </div>   
+
+            </div>
+        </div> 
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <div class="form-group">
                 <div id="bloque2" style="display: none">
@@ -104,17 +114,20 @@ academico::registerTranslations();
             </div>
         </div>
 
-        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" id="bloque3" style="display: none">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" id="bloque3"  style="display: none" >
             <div class="form-group">
+                <div id="bloque_j" style="display: none">
                 <label for="cmb_jornada" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= academico::t("Academico", "Working day") ?></label>
                 <div class="col-sm-3 col-xs-3 col-md-3 col-lg-3">
                     <?= Html::dropDownList("cmb_jornada", 0, $arr_jornada, ["class" => "form-control", "id" => "cmb_jornada"]) ?>
                 </div>
+                </div>
+                  
                 <label for="cmb_materia" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= Yii::t("formulario", "Subject") ?></label>
                 <div class="col-sm-3 col-xs-3 col-md-3 col-lg-3">
                     <?= Html::dropDownList("cmb_materia", 0,  $arr_materias, ["class" => "form-control", "id" => "cmb_materia"]) ?>
                 </div>
-            </div>
+             
         </div>
         <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12" id="bloque4" style="display: none">
             <div class="form-group">
@@ -128,7 +141,7 @@ academico::registerTranslations();
                 </div>
             </div>
         </div>
-        <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12" id="bloque5" style="display: none">
+        <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12" id="bloque_n" style="display: none">
             <div class="form-group">
                 <label for="txt_num_estudiantes" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= academico::t("distributivoacademico", "Number of students") ?></label>
                 <div class="col-sm-3 col-xs-3 col-md-3 col-lg-3">
@@ -137,7 +150,41 @@ academico::registerTranslations();
 
             </div>
         </div>
-        <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12">
+         <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12"  id="bloque7" style="display: none">
+            <div class="form-group">
+                <label for="lbl_inicio" class="col-sm-2 col-md-2 col-xs-2 col-lg-2 control-label"><?= Yii::t("formulario", "Start date") ?></label>
+                <div class="col-sm-3 col-md-3 col-xs-3 col-lg-3">
+                    <?=
+                    DatePicker::widget([
+                        'name' => 'txt_fecha_ini',
+                        'value' => '',
+                        'type' => DatePicker::TYPE_INPUT,
+                        'options' => ["class" => "form-control", "id" => "txt_fecha_ini", "placeholder" => Yii::t("formulario", "Start date")],
+                        'pluginOptions' => [
+                            'autoclose' => true,
+                            'format' => Yii::$app->params["dateByDatePicker"],
+                        ]]
+                    );
+                    ?>
+                </div>
+                <label for="lbl_fin" class="col-sm-2 col-md-2 col-xs-2 col-lg-2 control-label"><?= Yii::t("formulario", "End date") ?></label>
+                <div class="col-sm-3 col-md-3 col-xs-3 col-lg-3">
+                    <?=
+                    DatePicker::widget([
+                        'name' => 'txt_fecha_fin',
+                        'value' => '',
+                        'type' => DatePicker::TYPE_INPUT,
+                        'options' => ["class" => "form-control", "id" => "txt_fecha_fin", "placeholder" => Yii::t("formulario", "End date")],
+                        'pluginOptions' => [
+                            'autoclose' => true,
+                            'format' => Yii::$app->params["dateByDatePicker"],
+                        ]]
+                    );
+                    ?>
+                </div>
+            </div>
+        </div> 
+         <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12">
             <div class="form-group">
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 text-center">
                     <button type="button" class="btn btn-primary" onclick="javascript:addAsignacion('new')"><?= Academico::t('profesor', 'Add') ?></button>
@@ -201,5 +248,5 @@ academico::registerTranslations();
 
     sessionStorage.dts_asignacion_list = JSON.stringify(detalleAsignacionConFormato);
 
-    console.log('session', sessionStorage.dts_asignacion_list);
+  //  console.log('session', sessionStorage.dts_asignacion_list);
 </script>

@@ -1,6 +1,6 @@
 <?php
 
-use Yii;
+
 use yii\helpers\Html;
 use app\modules\academico\Module as academico;
 use app\modules\admision\Module as admision;

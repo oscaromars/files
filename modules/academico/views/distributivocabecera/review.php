@@ -6,10 +6,13 @@ use app\modules\academico\Module as academico;
 
 ?>
 <div>
+    
     <form class="form-horizontal">
         <?=
-        $this->render('review-cab', [ 
-            'arr_cabecera' => $arr_cabecera,     
+        $this->render('review_search', [ 
+          'arr_profesor'=> $arr_profesor,
+           'arr_periodo' => $mod_periodo, 
+            'resCab' => $resCab, 
             'arr_estado' => $arr_estado,
           ]);
         ?>
@@ -19,6 +22,7 @@ use app\modules\academico\Module as academico;
     <?=
     $this->render('review-grid', [
         'arr_detalle' => $arr_detalle, 
+        'resCab' => $resCab, 
         ]);
     ?>
 </div>

@@ -63,6 +63,13 @@ academico::registerTranslations();
                     </div> 
                 </div>
             </div>
+          <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12">
+            <div class="form-group">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 text-center">
+                    <button type="button" class="btn btn-primary" onclick="javascript:saveReversar()"><?= Academico::t('profesor', 'Grabar') ?></button>
+                </div>
+            </div>
+        </div>
             <div class="col-md-6 col-sm-6 col-xs-6 col-lg-6" id="observacion" style="display: none" >
                 <div class="form-group">
                     <label for="txt_detalle" class="col-sm-5 col-md-5 col-xs-5 col-lg-5 control-label" id="lbl_detalle"><?= Yii::t("formulario", "Observation") ?></label>

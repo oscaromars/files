@@ -63,7 +63,7 @@ class Profesor extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['per_id', 'pro_usuario_ingreso', 'pro_estado', 'pro_estado_logico'], 'required'],
+            [['per_id', 'pro_usuario_ingreso', 'pro_estado', 'pro_estado_logico','ddoc_id'], 'required'],
             [['per_id', 'pro_usuario_ingreso', 'pro_usuario_modifica'], 'integer'],
             [['pro_fecha_contratacion', 'pro_fecha_terminacion', 'pro_fecha_creacion', 'pro_fecha_modificacion'], 'safe'],
             [['pro_cv'], 'string', 'max' => 255],
@@ -80,6 +80,7 @@ class Profesor extends \yii\db\ActiveRecord
             'pro_id' => 'Pro ID',
             'per_id' => 'Per ID',
             'pro_cv' => 'pro_cv',
+            'ddoc_id' => 'dedicacion_docente',
             'pro_fecha_contratacion' => 'Pro Fecha Contratacion',
             'pro_fecha_terminacion' => 'Pro Fecha Terminacion',
             'pro_usuario_ingreso' => 'Pro Usuario Ingreso',
@@ -88,9 +89,16 @@ class Profesor extends \yii\db\ActiveRecord
             'pro_fecha_creacion' => 'Pro Fecha Creacion',
             'pro_fecha_modificacion' => 'Pro Fecha Modificacion',
             'pro_estado_logico' => 'Pro Estado Logico',
+            'pro_num_contrato'=> 'Contraro',
         ];
     }
-
+/**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getPer()
+    {
+        return $this->hasOne(\app\models\Persona::className(), ['per_id' => 'per_id']);
+    }
     /**
      * @return \yii\db\ActiveQuery
      */
@@ -226,6 +234,13 @@ class Profesor extends \yii\db\ActiveRecord
     {
         return $this->hasMany(ResultadoEvaluacion::className(), ['pro_id' => 'pro_id']);
     }
+     /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getDedoc()
+    {
+        return $this->hasOne(DedicacionDocente::className(), ['ddoc_id' => 'ddoc_id']);
+    }
     
     function getAllProfesorGrid($search = NULL, $perfil){
         $con_asgard = \Yii::$app->db_asgard;
@@ -280,7 +295,8 @@ class Profesor extends \yii\db\ActiveRecord
 
         $sql = "SELECT
                     pro.pro_id AS Id,
-                    CONCAT(pe.per_pri_apellido, ' ', pe.per_pri_nombre) AS Nombres
+                    CONCAT(pe.per_pri_apellido, ' ', pe.per_pri_nombre) AS Nombres,
+                    ddoc_id as dedica
                 FROM 
                     " . $con_academico->dbname . ".profesor AS pro
                     INNER JOIN " . $con_asgard->dbname . ".persona AS pe ON pro.per_id = pe.per_id

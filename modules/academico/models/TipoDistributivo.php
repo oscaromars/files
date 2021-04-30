@@ -76,14 +76,28 @@ class TipoDistributivo extends \yii\db\ActiveRecord
      * @property       
      * @return  
      */
-    public function consultarTipoDistributivo() {
+    public function consultarTipoDistributivo($dedic=null) {
         $con = \Yii::$app->db_academico;
         $estado = 1;
+        
         $sql = "SELECT tdis_id id, tdis_nombre name 
                 FROM " . $con->dbname . ".tipo_distributivo 
                 WHERE tdis_estado = :estado 
                     and tdis_estado_logico = :estado                
-                ";            
+                ";  
+        if($dedic==1){
+            $sql = $sql."and tdis_id in (1,2,3,4,6,7) "; 
+        }
+        if($dedic==2){
+           $sql = $sql."and tdis_id in (1,7) "; 
+        }
+        if($dedic==3){
+           $sql = $sql."and tdis_id in (1,7) "; 
+        }
+        if($dedic==null){
+          // $sql = $sql."and tdis_id in (0) "; 
+        }
+          \app\models\Utilities::putMessageLogFile('consultarTipoDistributivo: '.$sql);
         $comando = $con->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
         $resultData = $comando->queryAll();

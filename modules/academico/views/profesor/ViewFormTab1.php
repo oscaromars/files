@@ -5,6 +5,7 @@ use yii\helpers\Html;
 use yii\helpers\ArrayHelper;
 use kartik\file\FileInput;
 use yii\helpers\Url;
+use kartik\widgets\Select2;
 use yii\widgets\ActiveForm;
 use app\components\CFileInputAjax;
 use app\models\Persona;
@@ -97,6 +98,15 @@ Academico::registerTranslations();
             <label for="frm_phone" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("perfil", "Phone") ?></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
                 <input type="text" class="form-control PBvalidation" id="frm_phone" value="<?= $persona_model->per_domicilio_telefono ?>" disabled="disabled" data-required="false" data-type="number"  placeholder="<?= Yii::t("perfil", "Phone")  ?>">
+            </div>
+        </div>
+    </div>
+    
+     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="form-group">
+            <label for="cmb_dedicacion" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Academico::t("profesor", "Dedicación") ?></label>
+            <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
+                <?= Html::dropDownList("cmb_dedicacion", $persona_model->profesor[0]->ddoc_id, $arr_dedic, ["class" => "form-control", "id" => "cmb_dedicacion" , "disabled" => "disabled"]) ?>
             </div>
         </div>
     </div>

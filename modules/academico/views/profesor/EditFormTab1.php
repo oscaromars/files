@@ -7,6 +7,7 @@ use kartik\file\FileInput;
 use kartik\date\DatePicker;
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
+use kartik\select2\Select2;
 use app\components\CFileInputAjax;
 use app\models\Persona;
 use app\modules\Academico\models\Profesor;
@@ -109,6 +110,14 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
             <label for="txt_phone" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("perfil", "Phone") ?></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
                 <input type="text" class="form-control PBvalidation" id="txt_phone" value="<?= $persona_model->per_domicilio_telefono ?>" data-required="false" data-type="number"  placeholder="<?= Yii::t("perfil", "Phone") ?>">
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="form-group">
+            <label for="cmb_dedicacion" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Academico::t("perfil", "Dedicación") ?></label>
+            <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
+                <?= Html::dropDownList("cmb_dedicacion", $persona_model->profesor[0]->ddoc_id, $arr_dedic, ["class" => "form-control", "id" => "cmb_dedicacion" ]) ?>
             </div>
         </div>
     </div>

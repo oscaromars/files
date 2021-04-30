@@ -31,23 +31,11 @@ $var = ArrayHelper::map(app\modules\academico\models\PeriodoAcademico::find()->w
                         'button' => 'col-sm-4'
                     ],
                 ],
-                'action' => ['reportdistributivo'],
+                'action' => ['reportdistributivoposgrado'],
                 'method' => 'get',
     ]);
     ?>
-     <?=
-    $form->field($model, 'paca_id')->label('Período:')->widget(Select2::classname(), [
-      //  'data' => ArrayHelper::map(app\modules\academico\models\PeriodoAcademico::find()->all(), 'paca_id', 'sem.saca_nombre'),
-         'data' => $var,
-        'size' => Select2::MEDIUM,
-        'options' => ['placeholder' => 'Seleccione Distributivo ...', 'multiple' => false],
-        'pluginOptions' => [
-            'allowClear' => true,
-            'width' => '295px',
-        ],
-    ]);
-    ?>
-    
+   
     <?=
     $form->field($model, 'tdis_id')->label('Tipo Asignación:')->widget(Select2::classname(), [
         'data' => ArrayHelper::map(app\modules\academico\models\TipoDistributivo::find()->where(['tdis_estado' => '1','tdis_estado_logico' => '1'])->all(), 'tdis_id', 'tdis_nombre'),
@@ -79,9 +67,8 @@ $var = ArrayHelper::map(app\modules\academico\models\PeriodoAcademico::find()->w
 
     <div class="form-group">
         <div class="col-sm-offset-4">
-               <?= Html::submitButton('Buscar', ['class' => 'btn btn-primary']) ?>
-               <?= Html::a('Exportar', ['exportpdflistadodocente','mod_id'=>$model->mod_id,'paca_id'=>$model->paca_id,'tdis_id'=>$model->tdis_id], ['class' => 'btn btn-success']) ?>
-        </div>   
+<?= Html::submitButton('Buscar', ['class' => 'btn btn-primary']) ?>
+               </div>   
     </div>
 
 <?php ActiveForm::end(); ?>

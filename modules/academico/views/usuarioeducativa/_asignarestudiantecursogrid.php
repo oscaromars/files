@@ -99,6 +99,21 @@ academico::registerTranslations();
                     },
                 ],
             ],
+            /*[   
+                'class' => 'yii\grid\ActionColumn',
+                'header' => Yii::t("formulario", "Delete"),
+                'contentOptions' => ['style' => 'text-align: center;'],
+                'headerOptions' => ['width' => '60'],
+                'template' => '{delete}',
+                'buttons' => [
+                    'delete' => function ($url, $model) {
+                        if (empty($model["estado_asignado"]))                                                  
+                        return Html::checkbox("", false, ["value" => $model['estado_asignado'], "disabled" => true]);
+                        else
+                        return Html::checkbox("", false, ["value" => $model['estado_asignado'], "disabled" => false]);
+                    },
+                ],
+            ],*/
         ],
     ])
     ?>

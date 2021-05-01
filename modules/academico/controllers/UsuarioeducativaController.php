@@ -1226,7 +1226,7 @@ class UsuarioeducativaController extends \app\components\CController {
                     if (empty($message)) {
                         $message = array
                             (
-                            "wtmessage" => Yii::t("notificaciones", "Error al grabar1. " . $mensaje), "title" =>
+                            "wtmessage" => Yii::t("notificaciones", "Error al grabar. " . $mensaje), "title" =>
                             Yii::t('jslang', 'Success'),
                         );
                     }
@@ -1235,7 +1235,7 @@ class UsuarioeducativaController extends \app\components\CController {
             } catch (Exception $ex) {
                 $transaction->rollback();
                 $message = array(
-                    "wtmessage" => Yii::t("notificaciones", "Error al grabar2." . $mensaje),
+                    "wtmessage" => Yii::t("notificaciones", "Error al grabar." . $mensaje),
                     "title" => Yii::t('jslang', 'Success'),
                 );
                 return \app\models\Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Sucess"), false, $message);

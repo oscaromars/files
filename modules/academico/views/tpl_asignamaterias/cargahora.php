@@ -139,7 +139,7 @@
 
             <?php
             for ($fil = 0; $fil < sizeof($detDist); $fil++) {
-                if (($detDist[$fil]['tdis_id'] == 1) ) { ?>
+                     ?>
                     <tr class="fila">
                         <td class="marcoCel normal"><?php echo $detDist[$fil]['asi_nombre'] ?></td>
                         <td class="marcoCel normal"><?php echo $detDist[$fil]['HORAS'] ?></td>
@@ -150,45 +150,12 @@
                         <td class="marcoCel normal"><?php echo $detDist[$fil]['paca_fecha_fin'] ?></td>
                     </tr>
             <?php
-                }
+               
             }
 
             ?>
 
-            <?php
-            if($detDistDocenteAutor!=null){
-            for ($fil = 0; $fil < sizeof($detDistDocenteAutor); $fil++) {
-                if (($detDistDocenteAutor[$fil]['tdis_id'] == 7) && ($detDistDocenteAutor[$fil]['uaca_id'] == 2)) 
-                { ?>
-                    <tr class="fila">
-                        <td class="marcoCel normal"><?php echo $detDistDocenteAutor[$fil]['asi_nombre'] ?></td>
-                        <td class="marcoCel normal"><?php echo 'N/A' ?></td>
-                        <td class="marcoCel normal"><?php echo $detDistDocenteAutor[$fil]['uaca_nombre'] ?></td>
-                        <td class="marcoCel normal"><?php echo $detDistDocenteAutor[$fil]['mod_nombre'] ?></td>
-                        <td class="marcoCel normal"><?php echo $detDistDocenteAutor[$fil]['paca_fecha_inicio'] ?></td>
-                        <td class="marcoCel normal"><?php echo $detDistDocenteAutor[$fil]['paca_fecha_fin'] ?></td>
-                    </tr>
-            <?php
-                }
-            }
-            }
-            ?>
-
-
-
-            <?php for ($fil = 0; $fil < sizeof($detDistTipo); $fil++) {
-                if (($detDistTipo[$fil]['tdis_id'] != 1) &&  ($detDistTipo[$fil]['tdis_id'] != 7)){ ?>
-                    <tr class="fila">
-                        <td class="marcoCel"><?php echo $detDistTipo[$fil]['tdis_nombre']  ?></td>
-                        <td class="marcoCel"><?php echo 'N/A' ?></td>
-                        <td class="marcoCel"><?php echo $detDistTipo[$fil]['uaca_nombre'] ?></td>
-                        <td class="marcoCel"><?php echo $detDistTipo[$fil]['mod_nombre'] ?></td>
-                        <td class="marcoCel"><?php echo $detDistTipo[$fil]['paca_fecha_inicio'] ?></td>
-                        <td class="marcoCel"><?php echo $detDistTipo[$fil]['paca_fecha_fin'] ?></td>
-                    </tr>
-            <?php
-                }
-            } ?>
+           
         </tbody>
     </table>
     <br><br>
@@ -218,30 +185,30 @@
              
                 <tr class="fila">
                     <td class="marcoCel"><?php echo 'HORAS CARGA DOCENTE BLOQUE' ?></td>
-                    <td class="marcoCel"><?php if (($detDistTotalgrado == null) && ($detDistTotalposgrado == null)) {
+                    <td class="marcoCel"><?php if (($sumaHoras[0]['total_docente'] == null)) {
                                                 echo 'N/A';
                                             } else {
-                                                echo $detDistTotalgrado+$detDistTotalposgrado;
+                                                echo $sumaHoras[0]['total_docente']+ $sumaHoras[0]['total_docente_author'];
                                             } ?></td>
                     <td class="marcoCel"><?php echo 'HORAS DE PREPARACION DOCENTE' ?></td>
-                    <td class="marcoCel"><?php if (($detDistTotalPrepGrado == null)  && ($detDistTotalPrepPosgrado == null)) {
+                    <td class="marcoCel"><?php if (($sumaHoras[0]['total_docente'] == null) ) {
                                                 echo 'N/A';
                                             } else {
-                                                echo  ($detDistTotalgrado+$detDistTotalposgrado)*0.30;
+                                                echo $sumaHoras[0]['total_docente']*0.30;
                                             } ?></td>
                 </tr>
                 <tr class="fila">
                     <td class="marcoCel"><?php echo 'HORAS INVESTIGACION Y VINCULACION ' ?></td>
-                    <td class="marcoCel"><?php if (($detDistTotalVincGrado == null)  && ($detDistTotalVincPosgrado == null))  {
+                    <td class="marcoCel"><?php if ($sumaHoras[0]['total_inve_vincu'] == null)  {
                                                 echo 'N/A';
                                             } else {
-                                                echo $detDistTotalVincGrado+$detDistTotalVincPosgrado;
+                                                echo $sumaHoras[0]['total_inve_vincu'];
                                             } ?></td>
                     <td class="marcoCel"><?php echo 'HORAS DE TUTORIAS' ?></td>
-                    <td class="marcoCel"><?php if (($detDistTotalVincPosgrado == null)   && ($detDistTotalVincGrado == null)) {
+                    <td class="marcoCel"><?php if ($sumaHoras[0]['total_tutorias'] == null) {
                                                 echo 'N/A';
                                             } else {
-                                                echo $detDistTotalVincPosgrado+$detDistTotalVincGrado;
+                                                echo $sumaHoras[0]['total_tutorias'];
                                             }  ?></td>
                 </tr>
             
@@ -249,7 +216,8 @@
     </table>
     <br><br>
     <div class="divCelda bold titleDetalle " style="text-align: center">
-        TOTAL, PROMEDIO HORAS SEMANALES <br><?php echo $cabDist[0]['baca_anio'] ?>.
+        
+        TOTAL, PROMEDIO HORAS SEMANALES: <h1><?php echo $promedio[0]['promedio'] ?></h1>
     </div>
     <br><br>
     <br><br>

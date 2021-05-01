@@ -14,7 +14,7 @@
     },
     "minimum-stability": "stable",
     "require": {
-        "php": ">=5.4.0",
+         "php": ">=5.4.0",
         "yiisoft/yii2": "~2.0.14",
         "yiisoft/yii2-jui": "*",
         "yiisoft/yii2-bootstrap": "~2.0.0",
@@ -36,11 +36,11 @@
         "kartik-v/yii2-widget-datepicker": "*",
         "kartik-v/yii2-widget-datetimepicker": "dev-master",
         "kartik-v/yii2-tabs-x": "dev-master",
-       
+         "kartik-v/yii2-mpdf": "dev-master",
         "codeitnowin/barcode": "*",
         "himiklab/yii2-recaptcha-widget": "*",
         "svrnm/exceldatatables": "*",
-        "kartik-v/yii-select2": "@dev",
+        "kartik-v/yii2-editable": "dev-master",
         "stripe/stripe-php": "^7.75",
         "kartik-v/yii2-grid": "@dev",
         "kartik-v/yii2-widgets": "@dev",

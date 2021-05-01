@@ -1033,6 +1033,7 @@ class UsuarioeducativaController extends \app\components\CController {
             $arrSearch["periodo"] = $data['periodo'];
             //$arrSearch["asignatura"] = $data['asignatura'];
             $arrSearch["curso"] = $data['curso'];
+            $arrSearch["estado"] = $data['estado'];
             // este query cambiar a uno igual pero con mas cosa para no dañar el origina
             $model = $mod_asignar->consultarDistributivoasigest($arrSearch, 1);
             return $this->render('_asignarestudiantecursogrid', [
@@ -1073,7 +1074,7 @@ class UsuarioeducativaController extends \app\components\CController {
                     'mod_asignatura' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Grid")]], $arr_asignatura), "id", "name"),
                     'model' => $model,
                     'arr_curso' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $arr_curso), "id", "name"),
-                    //'mod_estado' => array("-1" => "Todos", "0" => "No Autorizado", "1" => "Autorizado"),                    
+                    'mod_estado' => array("-1" => "Todos", "0" => "Asignado", "1" => "No asignado"),                    
         ]);
     }
 

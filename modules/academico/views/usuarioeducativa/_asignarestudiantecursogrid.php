@@ -71,15 +71,36 @@ academico::registerTranslations();
                 'header' => Yii::t("formulario", "Student"),
                 'value' => 'estudiante',
             ], 
+            /*[
+                'attribute' => 'Estado',
+                'header' => Yii::t("formulario", "Status"),
+                'value' => 'estado_asignado',
+            ],*/
+            [
+                'attribute' => 'Estado',
+                'header' => Yii::t("formulario", 'Status'),
+                'contentOptions' => ['class' => 'text-center'],
+                'headerOptions' => ['class' => 'text-center'],
+                'format' => 'html',
+                'value' => function ($model) {
+                    if (empty($model["estado_asignado"]))
+                        return '<small class="label label-danger">No Asignado</small>';                   
+                    else
+                        return '<small class="label label-success">Asignado</small>';
+                },
+            ],
             [   // SE DEBE ANALIZAR BIEN QUE VALUE SE CAPTURA EN EL CHECK PARA EL DESBLOQUEO
                 'class' => 'yii\grid\ActionColumn',
-                'header' => Academico::t("matriculacion", "Select"),
+                'header' => Yii::t("formulario", "Assign"),
                 'contentOptions' => ['style' => 'text-align: center;'],
                 'headerOptions' => ['width' => '60'],
                 'template' => '{select}',
                 'buttons' => [
                     'select' => function ($url, $model) {
-                        return Html::checkbox("", false, ["value" => $model['est_id']]);
+                        if (empty($model["estado_asignado"]))                                                  
+                        return Html::checkbox("", false, ["value" => $model['est_id'], "disabled" => false]);
+                        else
+                        return Html::checkbox("", false, ["value" => $model['est_id'], "disabled" => true]);
                     },
                 ],
             ],

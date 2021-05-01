@@ -1087,7 +1087,7 @@ class UsuarioeducativaController extends \app\components\CController {
         header("Content-Type: $content_type");
         header("Content-Disposition: attachment;filename=" . $nombarch);
         header('Cache-Control: max-age=0');
-        $colPosition = array("C", "D", "E", "F", "G", "H", "I", "J");
+        $colPosition = array("C", "D", "E", "F", "G", "H", "I", "J", "K");
         $arrHeader = array(
             Yii::t("formulario", "Code"). ' '. Yii::t("formulario", "Student"), 
             Yii::t("formulario", "Academic unit"),
@@ -1095,7 +1095,8 @@ class UsuarioeducativaController extends \app\components\CController {
             Yii::t("formulario", "DNI"), 
             Yii::t("formulario", "Student"),
             Yii::t("formulario", "Period"),
-            academico::t("Academico", "Course")
+            academico::t("Academico", "Course"),
+            // Yii::t("formulario", 'Status'),
         );
       
         $mod_asignar = new CursoEducativaEstudiante();
@@ -1107,13 +1108,21 @@ class UsuarioeducativaController extends \app\components\CController {
         $arrSearch["periodo"] = $data['periodo'];
         //$arrSearch["asignatura"] = $data['asignatura'];
         $arrSearch["curso"] = $data['curso'];
+        $arrSearch["estado"] = $data['estado'];
+        if ($arrSearch["estado"] == '0') {
+            $estadoasig = "Asignado" ;
+        }elseif ($arrSearch["estado"] == '1'){
+            $estadoasig = "No Asignado" ;
+        }else {
+            $estadoasig = " " ;
+        }
         $arrData = array();
         if (empty($arrSearch)) {
             $arrData = $mod_asignar->consultarDistributivoasigest(array(), 0, 0);
         } else {
             $arrData = $mod_asignar->consultarDistributivoasigest($arrSearch, 0, 0);
         }
-        $nameReport = academico::t("Academico", "Asignación de Cursos");
+        $nameReport = academico::t("Academico", "Listado de Estudiantes ") .$estadoasig;
         Utilities::generarReporteXLS($nombarch, $nameReport, $arrHeader, $arrData, $colPosition);
         exit;
     }
@@ -1121,7 +1130,7 @@ class UsuarioeducativaController extends \app\components\CController {
     public function actionExppdfeduasignar() {
         //$per_id = @Yii::$app->session->get("PB_perid");
         $report = new ExportFile();
-        $this->view->title = academico::t("Academico", "Asignación de Cursos"); // Titulo del reporte
+        $this->view->title = academico::t("Academico", "Listado de Estudiantes ").$estadoasig; // Titulo del reporte
         $arrHeader = array(
             Yii::t("formulario", "Code"). ' '. Yii::t("formulario", "Student"), 
             Yii::t("formulario", "Academic unit"),
@@ -1129,7 +1138,8 @@ class UsuarioeducativaController extends \app\components\CController {
             Yii::t("formulario", "DNI"), 
             Yii::t("formulario", "Student"),
             Yii::t("formulario", "Period"),
-            academico::t("Academico", "Course") 
+            academico::t("Academico", "Course"),
+            //Yii::t("formulario", 'Status'),
         );
         $mod_asignar = new CursoEducativaEstudiante();
         $data = Yii::$app->request->get();
@@ -1140,6 +1150,7 @@ class UsuarioeducativaController extends \app\components\CController {
         $arrSearch["periodo"] = $data['periodo'];
         //$arrSearch["asignatura"] = $data['asignatura'];
         $arrSearch["curso"] = $data['curso'];
+        $arrSearch["estado"] = $data['estado'];
         $arrData = array();
         if (empty($arrSearch)) {
             $arrData = $mod_asignar->consultarDistributivoasigest(array(), 0, 0);

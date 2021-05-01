@@ -149,21 +149,23 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
           $str_search      = "a.paca_id = ".$paca_actual_id['id']." AND ";
         }        
 
-        $sql = "SELECT  distinct h.est_id, 
+            $sql = "SELECT  distinct h.est_id, 
                         d.uaca_nombre as unidad, 
                         e.mod_nombre as modalidad,
                         p.per_cedula as identificacion, 
                         concat(p.per_pri_nombre, ' ', p.per_pri_apellido, ' ', ifnull(p.per_seg_apellido,'')) as estudiante,
                         concat(saca_nombre, '-', baca_nombre,'-',baca_anio) as periodo,
                         -- z.asi_nombre as asignatura
-                        cur.cedu_asi_nombre as curso,
-                        (select ifnull(cee.ceest_id,' ')
+                        cur.cedu_asi_nombre as curso "; 
+        if ($reporte == 1 ) {
+            $sql .=   " , (select ifnull(cee.ceest_id,' ')
                          from " . $con->dbname . ".curso_educativa_estudiante cee
                          where cee.cedu_id = cur.cedu_id and 
                                cee.est_id = h.est_id and                               
                                cee.ceest_estado = :estado and
-                               cee.ceest_estado_logico = :estado)  estado_asignado
-                FROM " . $con->dbname . ".distributivo_academico a inner join " . $con->dbname . ".profesor b
+                               cee.ceest_estado_logico = :estado)  estado_asignado ";
+                            }               
+            $sql .=   "   FROM " . $con->dbname . ".distributivo_academico a inner join " . $con->dbname . ".profesor b
                     on b.pro_id = a.pro_id 
                     inner join " . $con1->dbname . ".persona c on c.per_id = b.per_id
                     inner join " . $con1->dbname . ".persona pe on pe.per_id = b.per_id
@@ -183,7 +185,7 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
                     and a.daca_estado_logico = :estado
                     and g.daes_estado = :estado
                     and g.daes_estado_logico = :estado
-                    $noasigna";
+                    $noasigna ";
 
         $comando = $con->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);

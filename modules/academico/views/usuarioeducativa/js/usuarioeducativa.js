@@ -476,10 +476,11 @@ function actualizarGridAsignaCurso() {
     var periodo =  $('#cmb_periodoesasi option:selected').val();
     //var asignatura = $('#cmb_asignatura option:selected').val();  
     var curso =  $('#cmb_cursoasi option:selected').val();
+    var estado =  $('#cmb_estasi option:selected').val();
     //Buscar almenos una clase con el nombre para ejecutar
     if (!$(".blockUI").length) {
         showLoadingPopup();
-    $('#Tbg_AsignarCurso').PbGridView('applyFilterData', {'profesor': profesor, 'unidad': unidad, 'modalidad': modalidad, 'periodo': periodo/*, 'asignatura': asignatura*/ , 'curso': curso});
+    $('#Tbg_AsignarCurso').PbGridView('applyFilterData', {'profesor': profesor, 'unidad': unidad, 'modalidad': modalidad, 'periodo': periodo/*, 'asignatura': asignatura*/ , 'curso': curso, 'estado': estado});
         setTimeout(hideLoadingPopup, 2000);
     }
 }

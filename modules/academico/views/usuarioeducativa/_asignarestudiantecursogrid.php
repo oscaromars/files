@@ -70,12 +70,7 @@ academico::registerTranslations();
                 'attribute' => 'Estudiante',
                 'header' => Yii::t("formulario", "Student"),
                 'value' => 'estudiante',
-            ], 
-            /*[
-                'attribute' => 'Estado',
-                'header' => Yii::t("formulario", "Status"),
-                'value' => 'estado_asignado',
-            ],*/
+            ],            
             [
                 'attribute' => 'Estado',
                 'header' => Yii::t("formulario", 'Status'),
@@ -89,7 +84,7 @@ academico::registerTranslations();
                         return '<small class="label label-success">Asignado</small>';
                 },
             ],
-            [   // SE DEBE ANALIZAR BIEN QUE VALUE SE CAPTURA EN EL CHECK PARA EL DESBLOQUEO
+            [   
                 'class' => 'yii\grid\ActionColumn',
                 'header' => Yii::t("formulario", "Assign"),
                 'contentOptions' => ['style' => 'text-align: center;'],

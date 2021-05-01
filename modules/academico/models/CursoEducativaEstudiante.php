@@ -100,7 +100,7 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
         $con1 = \Yii::$app->db_asgard;
         $con2 = \Yii::$app->db_facturacion;
         $estado = 1;
-
+        
         if (isset($arrFiltro) && count($arrFiltro) > 0) {
             /* $str_search .= "(p.per_pri_nombre like :search OR ";
             $str_search .= "p.per_seg_nombre like :search OR ";
@@ -129,6 +129,19 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
             if ($arrFiltro['curso'] != "" && $arrFiltro['curso'] > 0) {
                 $str_search .= "cur.cedu_id = :curso AND ";
             }
+            if ($arrFiltro['estado'] != "-1" ) {
+                if ($arrFiltro['estado'] == "0" ) {
+                $asignado = "inner join db_academico.curso_educativa_estudiante cures on cures.est_id = h.est_id  and cures.cedu_id = cur.cedu_id" ; // asignados
+                $noasigna = "";
+                }else{
+                $asignado = " ";
+                $noasigna = " and
+                NOT EXISTS (SELECT NULL
+                                     FROM db_academico.curso_educativa_estudiante cures
+                                    WHERE cures.est_id = h.est_id 
+                                          and cures.cedu_id = cur.cedu_id) "; //no asignados
+                }         
+            }
    
         }else{
           $mod_paca        = new PeriodoAcademico(); 
@@ -144,11 +157,11 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
                         concat(saca_nombre, '-', baca_nombre,'-',baca_anio) as periodo,
                         -- z.asi_nombre as asignatura
                         cur.cedu_asi_nombre as curso,
-                        (select ifnull('Asignado',' ')
+                        (select ifnull(cee.ceest_id,' ')
                          from " . $con->dbname . ".curso_educativa_estudiante cee
-                         where cee.cedu_id = cur.cedu_id AND 
-                               cee.est_id = h.est_id AND                               
-                               cee.ceest_estado = :estado AND
+                         where cee.cedu_id = cur.cedu_id and 
+                               cee.est_id = h.est_id and                               
+                               cee.ceest_estado = :estado and
                                cee.ceest_estado_logico = :estado)  estado_asignado
                 FROM " . $con->dbname . ".distributivo_academico a inner join " . $con->dbname . ".profesor b
                     on b.pro_id = a.pro_id 
@@ -164,11 +177,13 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
                     inner join " . $con->dbname . ".bloque_academico t on t.baca_id = f.baca_id
                     inner join " . $con->dbname . ".asignatura z on a.asi_id = z.asi_id
                     inner join " . $con->dbname . ".curso_educativa cur on cur.paca_id = a.paca_id
+                    $asignado
                     WHERE $str_search 
                     a.daca_estado = :estado
                     and a.daca_estado_logico = :estado
                     and g.daes_estado = :estado
-                    and g.daes_estado_logico = :estado";
+                    and g.daes_estado_logico = :estado
+                    $noasigna";
 
         $comando = $con->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);

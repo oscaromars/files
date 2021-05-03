@@ -1087,7 +1087,7 @@ class UsuarioeducativaController extends \app\components\CController {
         header("Content-Type: $content_type");
         header("Content-Disposition: attachment;filename=" . $nombarch);
         header('Cache-Control: max-age=0');
-        $colPosition = array("C", "D", "E", "F", "G", "H", "I", "J", "K");
+        $colPosition = array("C", "D", "E", "F", "G", "H", "I", "J", "K", "L");
         $arrHeader = array(
             Yii::t("formulario", "Code"). ' '. Yii::t("formulario", "Student"), 
             Yii::t("formulario", "Academic unit"),
@@ -1095,6 +1095,7 @@ class UsuarioeducativaController extends \app\components\CController {
             Yii::t("formulario", "DNI"), 
             Yii::t("formulario", "Student"),
             Yii::t("formulario", "Period"),
+            Yii::t("formulario", "Subject"),
             academico::t("Academico", "Course"),
             // Yii::t("formulario", 'Status'),
         );
@@ -1106,7 +1107,7 @@ class UsuarioeducativaController extends \app\components\CController {
         $arrSearch["unidad"] = $data['unidad'];
         $arrSearch["modalidad"] = $data['modalidad'];
         $arrSearch["periodo"] = $data['periodo'];
-        //$arrSearch["asignatura"] = $data['asignatura'];
+        $arrSearch["asignatura"] = $data['asignatura'];
         $arrSearch["curso"] = $data['curso'];
         $arrSearch["estado"] = $data['estado'];
         if ($arrSearch["estado"] == '0') {
@@ -1138,6 +1139,7 @@ class UsuarioeducativaController extends \app\components\CController {
             Yii::t("formulario", "DNI"), 
             Yii::t("formulario", "Student"),
             Yii::t("formulario", "Period"),
+            Yii::t("formulario", "Subject"),
             academico::t("Academico", "Course"),
             //Yii::t("formulario", 'Status'),
         );

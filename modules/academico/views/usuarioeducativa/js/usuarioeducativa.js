@@ -504,10 +504,10 @@ function exportExcelEduasignar() {
     var unidad =  $('#cmb_unidad_disesasi option:selected').val();
     var modalidad =  $('#cmb_modalidadesasi option:selected').val();
     var periodo =  $('#cmb_periodoesasi option:selected').val();
-    //var asignatura = $('#cmb_asignatura option:selected').val();  
+    var asignatura = $('#cmb_asignaturaesasi option:selected').val();  
     var curso =  $('#cmb_cursoasi option:selected').val(); 
     var estado =  $('#cmb_estasi option:selected').val();
-    window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/expexceleduasignar?profesor=" + profesor + "&unidad=" + unidad + "&modalidad=" + modalidad + "&periodo=" + periodo + "&curso=" + curso /* + "&asignatura=" + asignatura */ + "&estado=" + estado;
+    window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/expexceleduasignar?profesor=" + profesor + "&unidad=" + unidad + "&modalidad=" + modalidad + "&periodo=" + periodo + "&curso=" + curso + "&asignatura=" + asignatura  + "&estado=" + estado;
 }
 
 function exportPdfEdurasignar() {
@@ -515,10 +515,10 @@ function exportPdfEdurasignar() {
     var unidad =  $('#cmb_unidad_disesasi option:selected').val();
     var modalidad =  $('#cmb_modalidadesasi option:selected').val();
     var periodo =  $('#cmb_periodoesasi option:selected').val();
-    //var asignatura = $('#cmb_asignatura option:selected').val();  
+    var asignatura = $('#cmb_asignaturaesasi option:selected').val();  
     var curso =  $('#cmb_cursoasi option:selected').val();
     var estado =  $('#cmb_estasi option:selected').val();
-    window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/exppdfeduasignar?pdf=1&profesor=" + profesor + "&unidad=" + unidad + "&modalidad=" + modalidad + "&periodo=" + periodo + "&curso=" + curso /* + "&asignatura=" + asignatura */ + "&estado=" + estado;
+    window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/exppdfeduasignar?pdf=1&profesor=" + profesor + "&unidad=" + unidad + "&modalidad=" + modalidad + "&periodo=" + periodo + "&curso=" + curso + "&asignatura=" + asignatura + "&estado=" + estado;
 }
 
 function asignarCurso() {        

@@ -138,6 +138,19 @@ $(document).ready(function() {
         }, true);
     });
 
+    $('#cmb_periodoes').change(function() {
+        var link = $('#txth_base').val() + "/academico/usuarioeducativa/listarestudianteregistro";
+        var arrParams = new Object();
+        arrParams.codcursoreg = $(this).val();
+        arrParams.getcursoreg = true;
+        requestHttpAjax(link, arrParams, function(response) {
+            if (response.status == "OK") {
+                data = response.message;
+                setComboDataselect(data.periodoreg, "cmb_cursoreg", "Todos");
+            }
+        }, true);
+    });
+
     $('#cmb_modalidadesasi').change(function () {
         var link = $('#txth_base').val() + "/academico/usuarioeducativa/asignarestudiantecurso";
         var arrParams = new Object();

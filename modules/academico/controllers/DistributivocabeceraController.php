@@ -245,7 +245,7 @@ class DistributivocabeceraController extends \app\components\CController {
         $distributivo_cab = new DistributivoCabecera();
         $mod_profesor = new Profesor();
         $model = new \app\modules\academico\models\DistributivoCabeceraSearch();
-        $arr_profesor = $mod_profesor->getProfesores();
+        $arr_profesor = $mod_profesor->getProfesoresDistributivo();
         $resCab = $distributivo_cab->obtenerDatoCabecera($pro_id, $paca_id);
         $arr_distributivo = $distributivo_model->getListarDistribProf($resCab['dcab_id']);
         return $this->render('review',

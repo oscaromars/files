@@ -311,4 +311,31 @@ class Profesor extends \yii\db\ActiveRecord
         $res = $comando->queryAll();
         return $res;
     }
+    
+    
+    public function getProfesoresDistributivo(){
+        $con_asgard = \Yii::$app->db_asgard;
+        $con_academico = \Yii::$app->db_academico;
+
+        $sql = "SELECT
+                    pro.pro_id AS Id,
+                    CONCAT(pe.per_pri_apellido, ' ', pe.per_pri_nombre) AS Nombres,
+                    ddoc_id as dedica
+                FROM 
+                    " . $con_academico->dbname . ".profesor AS pro
+                    INNER JOIN " . $con_asgard->dbname . ".persona AS pe ON pro.per_id = pe.per_id
+                    INNER JOIN " . $con_academico->dbname . ".distributivo_cabecera AS dc ON dc.pro_id = dc.pro_id
+                WHERE 
+                    dc.dcab_estado_revision not in (1,2) AND
+                    dc.dcab_estado = 1 AND
+                    pro.pro_estado = 1 AND 
+                    pro.pro_estado_logico = 1 AND 
+                    pe.per_estado = 1 AND
+                    pe.per_estado_logico = 1
+                ORDER BY 
+                    pe.per_pri_apellido ASC";
+        $comando = $con_academico->createCommand($sql);
+        $res = $comando->queryAll();
+        return $res;
+    }
 }

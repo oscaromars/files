@@ -1,16 +1,26 @@
 <?php
-
+use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
 use kartik\grid\GridView;
 use app\modules\academico\Module as academico;
 use kartik\mpdf\Pdf;
 use kartik\grid\EditableColumn;
+use kartik\select2\Select2;
+use yii\helpers\ArrayHelper;
 ?>
 
-    <?php echo $this->render('_search', ['model' => $searchModel]); ?>
+<?php echo $this->render('_search', ['model' => $searchModel]); ?>
+  <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12">
+            <div class="form-group">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 text-center">
+                    <button type="button" class="btn btn-primary" onclick="javascript:save()"><?= Academico::t('profesor', 'Add') ?></button>
+                </div>
+            </div>
+        </div>  
 <?=
 
 GridView::widget([
+    "id"=>'tbl_materias',
     'dataProvider' => $dataProvider,
     //'filterModel' => $searchModel,
     'pjax' => true,
@@ -43,31 +53,51 @@ GridView::widget([
             'attribute' => 'asi_id',
             'header' => academico::t("Academico", "Asignatura"),
             'value' => function ($model, $key, $index, $widget) {
-                    return $model->asig->asi_nombre;
-                },
+                return $model->asig->asi_nombre;
+            },
         // 'group' => true,
         ],
-        [
-            'class' => 'kartik\grid\EditableColumn',
+        /*[
+           'class' => 'kartik\grid\EditableColumn',
             'attribute' => 'mpp_num_paralelo',
-            'label' => '# Paralelo',
+            'editableOptions' => [
+                'header' => '#',
+                'inputType' => \kartik\editable\Editable::INPUT_SPIN,
+                'options' => [
+                    'pluginOptions' => ['min' => 1, 'max' => 5]
+                ]
+            ],
+            'hAlign' => 'right',
             'vAlign' => 'middle',
-          
-            'editableOptions' => function ($model, $key, $index) {
-                return [
-            'header' => '# paralelo',
-            'inputType' => 'dropDownList',
-            'data' => [0 => 0,1 => 1, 2 => 2, 3 => 3, 4 => 4, 5 => 5, 6 => 6],
-            'formOptions' => ['action' => ['materiaparaleloperiodo/editparalelo']], // point to the new action
-                ];
-            }
-        ],
-                [
+        ],*/
+         [
+          'class' => 'kartik\grid\EditableColumn',
+          'attribute' => 'mpp_num_paralelo',
+          'label' => '# Paralelo',
+          'vAlign' => 'middle',
+           
+          'editableOptions' => function ($model, $key, $index) {
+          $strValue    = $model->mpp_num_paralelo;
+          $arrValue    = explode(',', $model->mpp_num_paralelo);
+          $model->mpp_num_paralelo = explode(',', $model->mpp_num_paralelo);  // convert string into array (required for Select2 to display value as tags)
+          return [
+              'asPopover' => false,
+          'attribute' => 'mpp_num_paralelo',
+          'header' => '# paralelo',
+          'inputType' => 'dropDownList',
+          'displayValue' => $strValue,    // display field before editing
+          'data' => [0 => 0,1 => 1, 2 => 2, 3 => 3, 4 => 4, 5 => 5, 6 => 6],
+          'formOptions' => ['action' => ['materiaparaleloperiodo/editableupdate']], // point to the new action
+          ];
+          }
+          ],
+        [
             'attribute' => 'paca_id',
             'header' => academico::t("Academico", "Asignatura"),
             'value' => 'paca_id',
         // 'group' => true,
         ],
-                
     ],
 ]);
+  ?>
+

@@ -27,12 +27,23 @@ class MateriaParaleloPeriodo extends \app\modules\admision\components\CActiveRec
      */
     public function rules() {
         return [
-            [['asi_id', 'mod_id', 'paca_id','mpp_num_paralelo' ], 'required'],
+            [[ 'paca_id' ], 'required'],
+           [['asi_id', 'mod_id', 'paca_id','mpp_num_paralelo' ], 'integer'],
             [['paca_id'], 'exist', 'skipOnError' => true, 'targetClass' => PeriodoAcademico::className(), 'targetAttribute' => ['paca_id' => 'paca_id']],
              [['asi_id'], 'exist', 'skipOnError' => true, 'targetClass' => Asignatura::className(), 'targetAttribute' => ['asi_id' => 'asi_id']],
         ];
     }
 
+    
+public static function getNumparalelo(){
+    return [
+            0 => 0,
+            1 => 1,
+            2 => 2,
+            3 => 3,
+            4 => 4,
+        ];
+}
     
     /**
      * @return \yii\db\ActiveQuery

@@ -26,7 +26,7 @@ class MateriaParaleloPeriodoSearch extends MateriaParaleloPeriodo{
     
     public function search($params)
     {
-        $query = MateriaParaleloPeriodo::find();
+        //$query = MateriaParaleloPeriodo::find();
         $asignatura_model = new Asignatura ();
         $this->load($params);
         
@@ -41,6 +41,7 @@ class MateriaParaleloPeriodoSearch extends MateriaParaleloPeriodo{
         $data = array();
         for($i=0;$i<sizeof($resul);$i++){
         $model= new MateriaParaleloPeriodo();
+        $model->mpp_id=$i;
         $model->asi_id=$resul[$i]['id'];
         $model->paca_id=2;
         $model->mpp_num_paralelo=0;
@@ -53,7 +54,7 @@ class MateriaParaleloPeriodoSearch extends MateriaParaleloPeriodo{
             'pageSize' => 10,
         ],
         'sort' => [
-            'attributes' => ['asi_id', 'paca_id'],
+            'attributes' => ['asi_id', 'paca_id','mpp_num_paralelo'],
         ],
     ]);
         

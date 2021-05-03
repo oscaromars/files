@@ -36,20 +36,19 @@ use app\modules\academico\Module as academico;
             <label for="cmb_periodoesasi" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= Yii::t("formulario", "Period") ?></label>
             <div class="col-sm-3 col-xs-3 col-md-3 col-lg-3">
                 <?= Html::dropDownList("cmb_periodoesasi", 0, $arr_periodo, ["class" => "form-control", "id" => "cmb_periodoesasi"]) ?>
-            </div>            
-           <!-- <label for="cmb_asignaturaesasi" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= academico::t("Academico", "Subject") ?></label>
-            <div class="col-sm-3 col-xs-3 col-md-3 col-lg-3">
-                < Html::dropDownList("cmb_asignaturaesasi", 0, $arr_asignatura, ["class" => "form-control", "id" => "cmb_asignaturaesasi"]) ?>
-            </div> -->  
+            </div> 
             <label for="cmb_cursoasi" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= Yii::t("formulario", "Course") ?></label>
             <div class="col-sm-3 col-xs-3 col-md-3 col-lg-3">
-                <!-- < Html::dropDownList("cmb_estadoes", " ", $arr_estado, ["class" => "form-control", "id" => "cmb_estadoes"]) ?>-->
                 <?= Html::dropDownList("cmb_cursoasi", " ", $arr_curso, ["class" => "form-control", "id" => "cmb_cursoasi"]) ?>
             </div>                 
         </div>
     </div> 
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">            
+            <label for="cmb_asignaturaesasi" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= academico::t("Academico", "Subject") ?></label>
+            <div class="col-sm-3 col-xs-3 col-md-3 col-lg-3">
+                <?= Html::dropDownList("cmb_asignaturaesasi", 0, $arr_asignatura, ["class" => "form-control", "id" => "cmb_asignaturaesasi"]) ?>
+            </div>
             <label for="cmb_estasi" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= Yii::t("formulario", "Status") ?></label>
             <div class="col-sm-3 col-xs-3 col-md-3 col-lg-3">
                <?= Html::dropDownList("cmb_estasi", " ", $arr_estado, ["class" => "form-control", "id" => "cmb_estasi"]) ?>               

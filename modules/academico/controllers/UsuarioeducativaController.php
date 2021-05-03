@@ -1031,7 +1031,7 @@ class UsuarioeducativaController extends \app\components\CController {
             $arrSearch["unidad"] = $data['unidad'];
             $arrSearch["modalidad"] = $data['modalidad'];
             $arrSearch["periodo"] = $data['periodo'];
-            //$arrSearch["asignatura"] = $data['asignatura'];
+            $arrSearch["asignatura"] = $data['asignatura'];
             $arrSearch["curso"] = $data['curso'];
             $arrSearch["estado"] = $data['estado'];
             // este query cambiar a uno igual pero con mas cosa para no dañar el origina
@@ -1045,7 +1045,7 @@ class UsuarioeducativaController extends \app\components\CController {
         }
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
-            /*if (isset($data["getmodalidadasi"])) {
+            if (isset($data["getmodalidadasi"])) {
                 $modalidadasi = $mod_modalidad->consultarModalidad($data["uaca_ids"], 1);
                 $message = array("modalidadasi" => $modalidadasi);
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
@@ -1054,7 +1054,7 @@ class UsuarioeducativaController extends \app\components\CController {
                 $asignaturasi = $distributivo_model->consultarAsiganturaxuniymoda($data["uaca_ids"], $data["moda_ids"]);
                 $message = array("asignaturasi" => $asignaturasi);
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
-            }*/
+            }
             if (isset($data["getcursoasi"])) {
                 $periodoasi = $mod_educativa->consultarCursosxpacaid($data["codcursoasi"]);
                 $message = array("periodoasi" => $periodoasi);

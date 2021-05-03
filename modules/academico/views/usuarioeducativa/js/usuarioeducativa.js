@@ -137,6 +137,20 @@ $(document).ready(function() {
             }
         }, true);
     });
+
+    $('#cmb_modalidadesasi').change(function () {
+        var link = $('#txth_base').val() + "/academico/usuarioeducativa/asignarestudiantecurso";
+        var arrParams = new Object();
+        arrParams.uaca_ids = $('#cmb_unidad_disesasi').val();
+        arrParams.moda_ids = $(this).val();
+        arrParams.getasignaturasi = true;
+        requestHttpAjax(link, arrParams, function (response) {
+            if (response.status == "OK") {
+                data = response.message;
+                setComboDataselect(data.asignaturasi, "cmb_asignaturaesasi", "Todos");
+            }
+        }, true);
+    });
 });
 
 function cargarUsuario() {

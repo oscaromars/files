@@ -484,6 +484,7 @@ class Estudiante extends \yii\db\ActiveRecord {
 	           -- pers.per_id,
                       concat(pers.per_pri_nombre, ' ', pers.per_pri_apellido) as nombres,
                       pers.per_cedula as dni,
+                      pers.per_correo as correo,
                       IFNULL(estu.est_matricula, '') as matricula,
                       IFNULL(estu.est_categoria, '') as categoria,
                       IFNULL(DATE_FORMAT(estu.est_fecha_creacion,'%Y-%m-%d'), '') as fecha_creacion,

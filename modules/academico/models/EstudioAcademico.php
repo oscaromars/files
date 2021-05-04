@@ -372,9 +372,7 @@ class EstudioAcademico extends \app\modules\admision\components\CActiveRecord {
                         INNER JOIN " . $con->dbname . ".estudio_academico as eac on eac.eaca_id = mcn.eaca_id
                     WHERE 
                         mcn.uaca_id =:unidad AND
-                        mcn.mod_id =:modalidad AND          
-                        -- eac.eaca_estado_logico=:estado AND
-                        -- eac.eaca_estado=:estado AND
+                        mcn.mod_id =:modalidad AND                                  
                         mcn.meun_estado_logico = :estado AND
                         mcn.meun_estado = :estado
                         ORDER BY name asc";

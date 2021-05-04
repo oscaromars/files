@@ -57,7 +57,7 @@ class EstudianteController extends \app\components\CController {
         $mod_programa = new EstudioAcademico();
         $mod_modalidad = new Modalidad();
         $mod_unidad = new UnidadAcademica();
-        $$modcanal = new EstudioAcademico();
+        $modcanal = new Oportunidad();
         $data = Yii::$app->request->get();
         if ($data['PBgetFilter']) {
             $arrSearch["search"] = $data['search'];
@@ -82,14 +82,14 @@ class EstudianteController extends \app\components\CController {
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
             }
             if (isset($data["getcarrera"])) {
-                $carrera = $modcanal->consultarCarreraModalidad($data["unidada"], $data["moda_id"]);
+                $carrera = $mod_programa->consultarCarreraModalidad($data["unidada"], $data["moda_id"]);
                 $message = array("carrera" => $carrera);
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
             }
         }
         $arr_ninteres = $mod_unidad->consultarUnidadAcademicasEmpresa(1);
         $arr_modalidad = $mod_modalidad->consultarModalidad($arr_ninteres[0]["id"], 1);
-        $arr_carrerra1 = $modcanal->consultarCarreraModalidad($arr_ninteres[0]["id"], $arr_modalidad[0]["id"]);
+        $arr_carrerra1 = $mod_programa->consultarCarreraModalidad($arr_ninteres[0]["id"], $arr_modalidad[0]["id"]);
         return $this->render('index', [
                     'model' => $arr_estudiante,
                     'arr_ninteres' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Grid")]], $arr_ninteres), "id", "name"),

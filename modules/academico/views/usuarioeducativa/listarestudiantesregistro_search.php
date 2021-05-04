@@ -53,6 +53,10 @@ use app\modules\academico\Module as academico;
     </div> 
      <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">            
+        <label for="cmb_cursoreg" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= Yii::t("formulario", "Course") ?></label>
+            <div class="col-sm-3 col-xs-3 col-md-3 col-lg-3">
+                <?= Html::dropDownList("cmb_cursoreg", " ", $arr_curso, ["class" => "form-control", "id" => "cmb_cursoreg"]) ?>
+            </div>        
             <label for="cmb_estadoes" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= Yii::t("formulario", "Status") ?></label>
             <div class="col-sm-3 col-xs-3 col-md-3 col-lg-3">
                 <?= Html::dropDownList("cmb_estadoes", " ", $arr_estado, ["class" => "form-control", "id" => "cmb_estadoes"]) ?>

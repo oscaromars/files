@@ -137,6 +137,33 @@ $(document).ready(function() {
             }
         }, true);
     });
+
+    $('#cmb_periodoes').change(function() {
+        var link = $('#txth_base').val() + "/academico/usuarioeducativa/listarestudianteregistro";
+        var arrParams = new Object();
+        arrParams.codcursoreg = $(this).val();
+        arrParams.getcursoreg = true;
+        requestHttpAjax(link, arrParams, function(response) {
+            if (response.status == "OK") {
+                data = response.message;
+                setComboDataselect(data.periodoreg, "cmb_cursoreg", "Todos");
+            }
+        }, true);
+    });
+
+    $('#cmb_modalidadesasi').change(function () {
+        var link = $('#txth_base').val() + "/academico/usuarioeducativa/asignarestudiantecurso";
+        var arrParams = new Object();
+        arrParams.uaca_ids = $('#cmb_unidad_disesasi').val();
+        arrParams.moda_ids = $(this).val();
+        arrParams.getasignaturasi = true;
+        requestHttpAjax(link, arrParams, function (response) {
+            if (response.status == "OK") {
+                data = response.message;
+                setComboDataselect(data.asignaturasi, "cmb_asignaturaesasi", "Todos");
+            }
+        }, true);
+    });
 });
 
 function cargarUsuario() {
@@ -490,10 +517,10 @@ function exportExcelEduasignar() {
     var unidad =  $('#cmb_unidad_disesasi option:selected').val();
     var modalidad =  $('#cmb_modalidadesasi option:selected').val();
     var periodo =  $('#cmb_periodoesasi option:selected').val();
-    //var asignatura = $('#cmb_asignatura option:selected').val();  
+    var asignatura = $('#cmb_asignaturaesasi option:selected').val();  
     var curso =  $('#cmb_cursoasi option:selected').val(); 
     var estado =  $('#cmb_estasi option:selected').val();
-    window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/expexceleduasignar?profesor=" + profesor + "&unidad=" + unidad + "&modalidad=" + modalidad + "&periodo=" + periodo + "&curso=" + curso /* + "&asignatura=" + asignatura */ + "&estado=" + estado;
+    window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/expexceleduasignar?profesor=" + profesor + "&unidad=" + unidad + "&modalidad=" + modalidad + "&periodo=" + periodo + "&curso=" + curso + "&asignatura=" + asignatura  + "&estado=" + estado;
 }
 
 function exportPdfEdurasignar() {
@@ -501,10 +528,10 @@ function exportPdfEdurasignar() {
     var unidad =  $('#cmb_unidad_disesasi option:selected').val();
     var modalidad =  $('#cmb_modalidadesasi option:selected').val();
     var periodo =  $('#cmb_periodoesasi option:selected').val();
-    //var asignatura = $('#cmb_asignatura option:selected').val();  
+    var asignatura = $('#cmb_asignaturaesasi option:selected').val();  
     var curso =  $('#cmb_cursoasi option:selected').val();
     var estado =  $('#cmb_estasi option:selected').val();
-    window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/exppdfeduasignar?pdf=1&profesor=" + profesor + "&unidad=" + unidad + "&modalidad=" + modalidad + "&periodo=" + periodo + "&curso=" + curso /* + "&asignatura=" + asignatura */ + "&estado=" + estado;
+    window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/exppdfeduasignar?pdf=1&profesor=" + profesor + "&unidad=" + unidad + "&modalidad=" + modalidad + "&periodo=" + periodo + "&curso=" + curso + "&asignatura=" + asignatura + "&estado=" + estado;
 }
 
 function asignarCurso() {        

@@ -138,6 +138,7 @@ class UsuarioeducativaController extends \app\components\CController {
         $distributivo_model = new Distributivo();
         $mod_modalidad = new Modalidad();
         $mod_unidad = new UnidadAcademica();
+        $mod_educativa = new CursoEducativa();
         $mod_periodo = new PeriodoAcademicoMetIngreso();
         $data = Yii::$app->request->get();
 
@@ -169,18 +170,25 @@ class UsuarioeducativaController extends \app\components\CController {
                 $message = array("asignatura" => $asignatura);
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
             }
+            if (isset($data["getcursoreg"])) {
+                $periodoreg = $mod_educativa->consultarCursosxpacaid($data["codcursoreg"]);
+                $message = array("periodoreg" => $periodoreg);
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+            }
         }
         $arr_unidad = $mod_unidad->consultarUnidadAcademicasEmpresa(1);
         $arr_modalidad = $mod_modalidad->consultarModalidad($arr_unidad[0]["id"], 1);
         $arr_periodo = $mod_periodo->consultarPeriodoAcademicotodos();
         $arr_asignatura = $distributivo_model->consultarAsiganturaxuniymoda(0, 0);
+        $arr_curso = $mod_educativa->consultarCursosxpacaid(0); // parametro q envia es el paca_id
         return $this->render('listarestudianteregistro', [
                     'mod_unidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Grid")]], $arr_unidad), "id", "name"),
                     'mod_modalidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Grid")]], $arr_modalidad), "id", "name"),
                     "mod_periodo" => ArrayHelper::map($arr_periodo, "id", "name"),
                     'mod_asignatura' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Grid")]], $arr_asignatura), "id", "name"),
                     'model' => $model,
-                     'mod_estado' => array("-1" => "Todos", "0" => "No Autorizado", "1" => "Autorizado"),
+                    'mod_estado' => array("-1" => "Todos", "0" => "No Autorizado", "1" => "Autorizado"),
+                    'arr_curso' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $arr_curso), "id", "name"),
                     //'mod_jornada' => array("0" => "Todos", "1" => "(M) Matutino", "2" => "(N) Nocturno", "3" => "(S) Semipresencial", "4" => "(D) Distancia"),
         ]);
     }
@@ -1031,7 +1039,7 @@ class UsuarioeducativaController extends \app\components\CController {
             $arrSearch["unidad"] = $data['unidad'];
             $arrSearch["modalidad"] = $data['modalidad'];
             $arrSearch["periodo"] = $data['periodo'];
-            //$arrSearch["asignatura"] = $data['asignatura'];
+            $arrSearch["asignatura"] = $data['asignatura'];
             $arrSearch["curso"] = $data['curso'];
             $arrSearch["estado"] = $data['estado'];
             // este query cambiar a uno igual pero con mas cosa para no dañar el origina
@@ -1045,7 +1053,7 @@ class UsuarioeducativaController extends \app\components\CController {
         }
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
-            /*if (isset($data["getmodalidadasi"])) {
+            if (isset($data["getmodalidadasi"])) {
                 $modalidadasi = $mod_modalidad->consultarModalidad($data["uaca_ids"], 1);
                 $message = array("modalidadasi" => $modalidadasi);
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
@@ -1054,7 +1062,7 @@ class UsuarioeducativaController extends \app\components\CController {
                 $asignaturasi = $distributivo_model->consultarAsiganturaxuniymoda($data["uaca_ids"], $data["moda_ids"]);
                 $message = array("asignaturasi" => $asignaturasi);
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
-            }*/
+            }
             if (isset($data["getcursoasi"])) {
                 $periodoasi = $mod_educativa->consultarCursosxpacaid($data["codcursoasi"]);
                 $message = array("periodoasi" => $periodoasi);
@@ -1087,7 +1095,7 @@ class UsuarioeducativaController extends \app\components\CController {
         header("Content-Type: $content_type");
         header("Content-Disposition: attachment;filename=" . $nombarch);
         header('Cache-Control: max-age=0');
-        $colPosition = array("C", "D", "E", "F", "G", "H", "I", "J", "K");
+        $colPosition = array("C", "D", "E", "F", "G", "H", "I", "J", "K", "L");
         $arrHeader = array(
             Yii::t("formulario", "Code"). ' '. Yii::t("formulario", "Student"), 
             Yii::t("formulario", "Academic unit"),
@@ -1095,6 +1103,7 @@ class UsuarioeducativaController extends \app\components\CController {
             Yii::t("formulario", "DNI"), 
             Yii::t("formulario", "Student"),
             Yii::t("formulario", "Period"),
+            Yii::t("formulario", "Subject"),
             academico::t("Academico", "Course"),
             // Yii::t("formulario", 'Status'),
         );
@@ -1106,7 +1115,7 @@ class UsuarioeducativaController extends \app\components\CController {
         $arrSearch["unidad"] = $data['unidad'];
         $arrSearch["modalidad"] = $data['modalidad'];
         $arrSearch["periodo"] = $data['periodo'];
-        //$arrSearch["asignatura"] = $data['asignatura'];
+        $arrSearch["asignatura"] = $data['asignatura'];
         $arrSearch["curso"] = $data['curso'];
         $arrSearch["estado"] = $data['estado'];
         if ($arrSearch["estado"] == '0') {
@@ -1138,6 +1147,7 @@ class UsuarioeducativaController extends \app\components\CController {
             Yii::t("formulario", "DNI"), 
             Yii::t("formulario", "Student"),
             Yii::t("formulario", "Period"),
+            Yii::t("formulario", "Subject"),
             academico::t("Academico", "Course"),
             //Yii::t("formulario", 'Status'),
         );

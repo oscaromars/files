@@ -110,6 +110,7 @@ class EstudianteController extends \app\components\CController {
         $arrHeader = array(
             Yii::t("formulario", "First Names"),
             academico::t("diploma", "DNI"),
+            Yii::t("formulario", "Email"),
             academico::t("Academico", 'Enrollment Number'),
             Yii::t("formulario", "Category"),
             Yii::t("formulario", 'Date Create'),
@@ -163,6 +164,7 @@ class EstudianteController extends \app\components\CController {
         $arr_head = array(
             Yii::t("formulario", "First Names"),
             academico::t("diploma", "DNI"),
+            Yii::t("formulario", "Email"),
             academico::t("Academico", 'Enrollment Number'),
             Yii::t("formulario", "Category"),
             Yii::t("formulario", 'Date Create'),

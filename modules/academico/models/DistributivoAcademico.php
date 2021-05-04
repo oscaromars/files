@@ -2,40 +2,10 @@
 
 namespace app\modules\academico\models;
 
+use app\models\Utilities;
 use yii\data\ArrayDataProvider;
 use Yii;
 
-/**
- * This is the model class for table "distributivo_academico".
- *
- * @property int $daca_id
- * @property int $paca_id
- * @property int $tdis_id
- * @property int $asi_id
- * @property int $pro_id
- * @property int $uaca_id
- * @property int $mod_id
- * @property int $daho_id
- * @property int $dhpa_id
- * @property int $daca_num_estudiantes_online
- * @property string $daca_jornada
- * @property string $daca_horario
- * @property string $daca_fecha_registro
- * @property int $daca_usuario_ingreso
- * @property int $daca_usuario_modifica
- * @property string $daca_estado
- * @property string $daca_fecha_creacion
- * @property string $daca_fecha_modificacion
- * @property string $daca_estado_logico
- *
- * @property Profesor $pro
- * @property PeriodoAcademico $paca
- * @property Asignatura $asi
- * @property UnidadAcademica $uaca
- * @property Modalidad $mod
- * @property TipoDistributivo $tdis
- * @property DistributivoAcademicoEstudiante[] $distributivoAcademicoEstudiantes
- */
 class DistributivoAcademico extends \yii\db\ActiveRecord {
 
     /**
@@ -58,7 +28,7 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
     public function rules() {
         return [
             [['paca_id', 'tdis_id', 'asi_id', 'pro_id', 'uaca_id', 'mod_id', 'daho_id', 'dhpa_id', 'daca_num_estudiantes_online', 'daca_usuario_ingreso', 'daca_usuario_modifica'], 'integer'],
-            [['asi_id', 'pro_id', 'uaca_id', 'mod_id', 'daca_jornada', 'daca_horario', 'daca_usuario_ingreso', 'daca_estado', 'daca_estado_logico'], 'required'],
+            // [['asi_id', 'pro_id', 'uaca_id', 'mod_id', 'daca_jornada', 'daca_horario', 'daca_usuario_ingreso', 'daca_estado', 'daca_estado_logico'], 'required'],
             [['daca_fecha_registro', 'daca_fecha_creacion', 'daca_fecha_modificacion'], 'safe'],
             [['daca_jornada', 'daca_estado', 'daca_estado_logico'], 'string', 'max' => 1],
             [['daca_horario'], 'string', 'max' => 10],
@@ -68,7 +38,8 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
             [['uaca_id'], 'exist', 'skipOnError' => true, 'targetClass' => UnidadAcademica::className(), 'targetAttribute' => ['uaca_id' => 'uaca_id']],
             [['mod_id'], 'exist', 'skipOnError' => true, 'targetClass' => Modalidad::className(), 'targetAttribute' => ['mod_id' => 'mod_id']],
             [['tdis_id'], 'exist', 'skipOnError' => true, 'targetClass' => TipoDistributivo::className(), 'targetAttribute' => ['tdis_id' => 'tdis_id']],
-        ];
+            [['dcab_id'], 'exist', 'skipOnError' => true, 'targetClass' => DistributivoCabecera::className(), 'targetAttribute' => ['dcab_id' => 'dcab_id']],
+            ];
     }
 
     /**
@@ -77,6 +48,7 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
     public function attributeLabels() {
         return [
             'daca_id' => 'Daca ID',
+            'dcab_id'=>    'Dca ID',
             'paca_id' => 'Paca ID',
             'tdis_id' => 'Tdis ID',
             'asi_id' => 'Asi ID',
@@ -118,6 +90,13 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
     public function getAsi() {
         return $this->hasOne(Asignatura::className(), ['asi_id' => 'asi_id']);
     }
+    
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCab() {
+        return $this->hasOne(DistributivoCabecera::className(), ['dcab_id' => 'dcab_id']);
+    }
 
     /**
      * @return \yii\db\ActiveQuery
@@ -147,7 +126,7 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
         return $this->hasMany(DistributivoAcademicoEstudiante::className(), ['daca_id' => 'daca_id']);
     }
 
-    public function getListadoDistributivoBloqueDocente($onlyData=false) {
+    public function getListadoDistributivoBloqueDocente($onlyData = false) {
         $con_academico = \Yii::$app->db_academico;
         $con_db = \Yii::$app->db;
         $sql = "select (@row_number:=@row_number + 1) AS Id, UPPER(CONCAT(persona.per_pri_apellido,' ' ,persona.per_seg_apellido,' ' ,persona.per_pri_nombre,' ' ,persona.per_seg_nombre)) as docente,
@@ -167,9 +146,9 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
                 inner join " . $con_academico->dbname . ".profesor_instruccion pi3 on pi3.pro_id = profesor.per_id and pi3.nins_id =3 and pi3.pins_estado=1 and pi3.pins_estado_logico=1
                 inner join " . $con_academico->dbname . ".profesor_instruccion pi4 on pi4.pro_id = profesor.per_id and pi4.nins_id =4 and pi4.pins_estado=1 and pi4.pins_estado_logico=1
                 inner join " . $con_academico->dbname . ".dedicacion_docente dd on dd.ddoc_id = profesor.ddoc_id";
-         $comando = $con_academico->createCommand($sql);
-         
-          $res = $comando->queryAll();
+        $comando = $con_academico->createCommand($sql);
+
+        $res = $comando->queryAll();
         if ($onlyData)
             return $res;
         $dataProvider = new ArrayDataProvider([
@@ -179,7 +158,7 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
                 'pageSize' => Yii::$app->params["pageSize"],
             ],
             'sort' => [
-                'attributes' => ['no_cedula', "titulo_tercel_nivel", "titulo_cuarto_nivel", "correo", "tiempo_dedicacion","desempeno"],
+                'attributes' => ['no_cedula', "titulo_tercel_nivel", "titulo_cuarto_nivel", "correo", "tiempo_dedicacion", "desempeno"],
             ],
         ]);
 
@@ -196,7 +175,7 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
         $str_periodo = "";
         $str_modalidad = "";
         $str_jornada = "";
-        // array("0" => "Todos", "1" => "(M) Matutino", "2" => "(N) Nocturno", "3" => "(S) Semipresencial", "4" => "(D) Distancia")
+// array("0" => "Todos", "1" => "(M) Matutino", "2" => "(N) Nocturno", "3" => "(S) Semipresencial", "4" => "(D) Distancia")
 
         if (isset($search) && $search != "") {
             $str_search = "(pe.per_pri_nombre like :search OR ";
@@ -363,7 +342,7 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
                     daho_jornada
                 ORDER BY
                     daho_jornada DESC";
-        //\app\models\Utilities::putMessageLogFile($uaca_id.'**'.$mod_id); 
+//\app\models\Utilities::putMessageLogFile($uaca_id.'**'.$mod_id); 
         $comando = $con_academico->createCommand($sql);
         if (isset($uaca_id) && $uaca_id > 0)
             $comando->bindParam(":uaca_id", $uaca_id, \PDO::PARAM_INT);
@@ -503,100 +482,77 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
      * @param   
      * @return  $resultData (Retornar los datos).
      */
-    public function insertarDistributivoAcademico($i, $data, $pro_id, $paca_id) {
+    public function insertarDistributivoAcademico($i, $data, $pro_id, $paca_id, $id_cab) {
         $con = \Yii::$app->db_academico;
         $estado = '1';
         $usu_id = @Yii::$app->session->get("PB_iduser");
         $fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
-
-        if (($data[$i]->tasi_id == 1) || ($data[$i]->tasi_id == 7)) {
-            if ($data[$i]->uni_id == 1) {
-
-                if ($data[$i]->mod_id == 1) {
-                    $sql = "INSERT INTO " . $con->dbname . ".distributivo_academico
-                        (paca_id, tdis_id, asi_id, pro_id, uaca_id, mod_id, daho_id, dhpa_id,  daca_num_estudiantes_online,
-                         daca_fecha_registro, daca_usuario_ingreso, daca_estado, daca_estado_logico,daca_jornada,daca_horario) VALUES
-                        (:paca_id, :tdis_id, :asi_id, :pro_id, :uaca_id, :mod_id, :daho_id, :dhpa_id,
-                          :num_estudiantes, :fecha, :usuario, :estado, :estado,:jor_id,:hor_id)";
-                } else {
-                    $sql = "INSERT INTO " . $con->dbname . ".distributivo_academico
-                        (paca_id, tdis_id, asi_id, pro_id, uaca_id, mod_id, daho_id, dhpa_id, 
-                         daca_fecha_registro, daca_usuario_ingreso, daca_estado, daca_estado_logico,daca_jornada,daca_horario) VALUES
-                        (:paca_id, :tdis_id, :asi_id, :pro_id, :uaca_id, :mod_id, :daho_id, :dhpa_id,
-                         :fecha, :usuario, :estado, :estado,:jor_id,:hor_id)";
-                }
-            } else {
-                $sql = "INSERT INTO " . $con->dbname . ".distributivo_academico
-                        (paca_id, tdis_id, asi_id, pro_id, uaca_id, mod_id, daho_id, dhpa_id,
-                         daca_fecha_registro, daca_usuario_ingreso, daca_estado, daca_estado_logico,daca_jornada,daca_horario) VALUES
-                        (:paca_id, :tdis_id, :asi_id, :pro_id, :uaca_id, :mod_id, :daho_id, 
-                         :dhpa_id, :fecha, :usuario, :estado, :estado,:jor_id,:hor_id)";
-            }
-        } else {
-            if (($data[$i]->tasi_id == 2)) {
-                $sql = "INSERT INTO " . $con->dbname . ".distributivo_academico
-                        (paca_id,  uaca_id ,pro_id,  tdis_id,   mod_id, daca_fecha_registro, daca_usuario_ingreso, daca_estado, daca_estado_logico) VALUES
-                        (:paca_id,:uaca_id ,:pro_id, :tdis_id, :mod_id, :fecha, :usuario, :estado, :estado)";
-            }
+        $meun_id  ="null";
+        $asi_id = "null";
+        $uni_id = "null";
+        $mod_id = "null";
+        $hor_id = "null";
+        $par_id = "null";
+        $jor_id = "null";
+        $txt_horas_otros = "null";
+        $fecha_inicio = "null";
+        $fecha_fin = "null";
+        $num_estudiantes = "null";
+        
+        if ($data[$i]->programa ) {
+            $meun_id  = $data[$i]->programa;
         }
-        if (($data[$i]->tasi_id != 2)) {
-
-            if ($data[$i]->uni_id == 2) {
-
-                if ($data[$i]->mod_id == 1) {
-                    $sql = "INSERT INTO " . $con->dbname . ".distributivo_academico
-                    (paca_id, tdis_id, asi_id, pro_id, uaca_id, mod_id, daho_id, dhpa_id, 
-                     daca_fecha_registro, daca_usuario_ingreso, daca_estado, daca_estado_logico, daca_fecha_inicio, daca_fecha_fin,daca_jornada,daca_horario) VALUES
-                    (:paca_id, :tdis_id, :asi_id, :pro_id, :uaca_id, :mod_id, :daho_id, :dhpa_id,
-                       :fecha, :usuario, :estado, :estado, :fecha_inicio, :fecha_fin,:jor_id,:hor_id)";
-                }
-            }
+         if ($data[$i]->fecha_inicio && $data[$i]->fecha_inicio!='N/A') {
+            $fecha_inicio = "'".$data[$i]->fecha_inicio."'";
         }
+         if ($data[$i]->fecha_fin && $data[$i]->fecha_fin!='N/A') {
+            $fecha_fin = "'".$data[$i]->fecha_fin."'";
+        }
+        if ($data[$i]->asi_id) {
+            $asi_id = $data[$i]->asi_id;
+        }
+        if ($data[$i]->uni_id) {
+            $uni_id = $data[$i]->uni_id;
+        }
+
+        if ($data[$i]->mod_id) {
+            $mod_id = $data[$i]->mod_id;
+        }
+        if ($data[$i]->hor_id) {
+            $hor_id = $data[$i]->hor_id;
+        }
+        if ($data[$i]->par_id) {
+            $par_id = $data[$i]->par_id;
+        }
+        if ($data[$i]->jor_id) {
+            $jor_id = $data[$i]->jor_id;
+        }
+        if($data[$i]->num_estudiantes && $data[$i]->num_estudiantes==0){
+            $num_estudiantes=$data[$i]->num_estudiantes;
+        }
+         if($data[$i]->txt_horas_otros){
+            $txt_horas_otros=$data[$i]->txt_horas_otros;
+        }
+
+        $sql = "INSERT INTO " . $con->dbname . ".distributivo_academico
+                        (paca_id,        dcab_id,            tdis_id,             asi_id,          pro_id,       uaca_id,              mod_id,                daho_id,                dhpa_id,                   daca_num_estudiantes_online,                   daca_fecha_registro,       daca_usuario_ingreso, daca_estado, daca_estado_logico,daca_jornada,         daca_horario, daca_fecha_inicio_post,daca_fecha_fin_post,daca_horas_otras_actividades,meun_id) VALUES
+                        (" . $paca_id . "," . $id_cab . "," . $data[$i]->tasi_id . " , " . $asi_id . ", " . $pro_id . ", " . $uni_id . ", " . $mod_id . ", " . $hor_id . ", " . $par_id . ",    " . $data[$i]->num_estudiantes . ",                  '" . $fecha_transaccion . "', " . $usu_id . ",          " . $estado . ", " . $estado . ",       " . $jor_id . ",        " . $hor_id . ",".$fecha_inicio.       ",".$fecha_fin.",".$txt_horas_otros.",".$meun_id.")";
+
+        \app\models\Utilities::putMessageLogFile("Sql: " . $sql);
         $command = $con->createCommand($sql);
-        $command->bindParam(":paca_id", $paca_id, \PDO::PARAM_INT);
-        $command->bindParam(":tdis_id", $data[$i]->tasi_id, \PDO::PARAM_INT);
-        $command->bindParam(":pro_id", $pro_id, \PDO::PARAM_INT);
-        $command->bindParam("mod_id", $data[$i]->mod_id, \PDO::PARAM_INT);
-        $command->bindParam(":uaca_id", $data[$i]->uni_id, \PDO::PARAM_INT);
 
-        if (($data[$i]->tasi_id == 1) || ($data[$i]->tasi_id == 7)) {
-            if ($data[$i]->uni_id == 1) {
-                $command->bindParam(":dhpa_id", $data[$i]->par_id, \PDO::PARAM_INT);
-                if ($data[$i]->mod_id == 1) {
-                    $command->bindParam(":num_estudiantes", $data[$i]->num_estudiantes, \PDO::PARAM_INT);
-                }
-            } else {
-                $command->bindParam(":dhpa_id", $data[$i]->par_id, \PDO::PARAM_INT);
-            }
-            $command->bindParam(":jor_id", $data[$i]->jor_id, \PDO::PARAM_INT);
-            $command->bindParam(":hor_id", $data[$i]->hor_id, \PDO::PARAM_INT);
-            $command->bindParam(":asi_id", $data[$i]->asi_id, \PDO::PARAM_INT);
-
-            $command->bindParam(":mod_id", $data[$i]->mod_id, \PDO::PARAM_INT);
-            $command->bindParam(":daho_id", $data[$i]->hor_id, \PDO::PARAM_INT);
-        }
-        if ($data[$i]->uni_id == 2) {
-            $command->bindParam(":dhpa_id", $data[$i]->par_id, \PDO::PARAM_INT);
-            if ($data[$i]->mod_id == 1) {
-                $command->bindParam(":fecha_inicio", $data[$i]->fecha_inicio, \PDO::PARAM_STR);
-                $command->bindParam(":fecha_fin", $data[$i]->fecha_fin, \PDO::PARAM_STR);
-            }
-        } else {
-            $command->bindParam(":dhpa_id", $data[$i]->par_id, \PDO::PARAM_INT);
-        }
-        $command->bindParam(":fecha", $fecha_transaccion, \PDO::PARAM_STR);
-        $command->bindParam(":usuario", $usu_id, \PDO::PARAM_INT);
-        $command->bindParam(":estado", $estado, \PDO::PARAM_STR);
         $command->execute();
         $idtabla = $con->getLastInsertID($con->dbname . '.distributivo_academico');
         return $idtabla;
     }
 
-    public function getListarDistribProfesor($paca_id, $pro_id, $onlyData = false) {
+    public function getListarDistribProfesor($pro_id = null, $paca_id = null, $onlyData = false) {
         $con_academico = \Yii::$app->db_academico;
+        $con_db = \Yii::$app->db;
         $estado = "1";
 
         $sql = "SELECT 
+                    CONCAT(pe.per_pri_nombre, ' ', pe.per_pri_apellido) AS profesor,
                     da.daca_id AS Id,                     
                     ifnull(ua.uaca_nombre,'') AS UnidadAcademica,
                     ifnull(m.mod_nombre,'') AS Modalidad,
@@ -611,6 +567,7 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
                     ifnull(a.asi_id,0) idMateria,
                     ifnull(dh.daho_id,0)  idHorario,
                     ifnull(da.dhpa_id,0) idParalelo,
+                   case when da.tdis_id=7 then 30 else (pc.paca_semanas_periodo * case  when dh.daho_total_horas is null then tdis_num_semanas else dh.daho_total_horas end) end as total_horas,
                     CASE
                         WHEN daho_jornada = 1 THEN '(M) Matutino'
                         WHEN daho_jornada = 2 THEN '(N) Nocturno'
@@ -622,14 +579,17 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
                     replace(UUID(),'-','') indice
                 FROM 
                     " . $con_academico->dbname . ".distributivo_academico AS da 
+                    INNER JOIN " . $con_academico->dbname . ".periodo_academico pc on da.paca_id  = pc.paca_id and  pc.paca_activo='A'    
+                    INNER JOIN " . $con_academico->dbname . ".profesor AS p ON da.pro_id = p.pro_id 
+                    INNER JOIN " . $con_db->dbname . ".persona AS pe ON p.per_id = pe.per_id
                     LEFT JOIN " . $con_academico->dbname . ".distributivo_academico_horario AS dh ON da.daho_id = dh.daho_id                    
                     LEFT JOIN " . $con_academico->dbname . ".modalidad AS m ON da.mod_id = m.mod_id
                     LEFT JOIN " . $con_academico->dbname . ".unidad_academica AS ua ON da.uaca_id = ua.uaca_id
                     LEFT JOIN " . $con_academico->dbname . ".asignatura AS a ON da.asi_id = a.asi_id                    
                     INNER JOIN " . $con_academico->dbname . ".tipo_distributivo AS t ON da.tdis_id = t.tdis_id
                 WHERE       
-                    da.paca_id = :periodo AND
-                    da.pro_id = :profesor AND
+                    da.paca_id = :paca_id AND 
+                    da.pro_id = :pro_id AND
                     da.daca_estado_logico = :estado AND 
                     da.daca_estado = :estado AND                                        
                     t.tdis_estado = :estado AND 
@@ -637,9 +597,159 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
 
         $comando = $con_academico->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
-        $comando->bindParam(":periodo", $paca_id, \PDO::PARAM_INT);
-        $comando->bindParam(":profesor", $pro_id, \PDO::PARAM_INT);
+        $comando->bindParam(":pro_id", $pro_id, \PDO::PARAM_INT);
+        $comando->bindParam(":paca_id", $paca_id, \PDO::PARAM_INT);
+        Utilities::putMessageLogFile('sql:' . $sql);
+        $res = $comando->queryAll();
+        if ($onlyData)
+            return $res;
+        $dataProvider = new ArrayDataProvider([
+            'key' => 'Id',
+            'allModels' => $res,
+            'pagination' => [
+                'pageSize' => Yii::$app->params["pageSize"],
+            ],
+            'sort' => [
+                'attributes' => ['Nombres', "Cedula", "UnidadAcademica", "Modalidad", "Periodo"],
+            ],
+        ]);
 
+        return $dataProvider;
+    }
+    
+    
+    
+    public function getDestalleDistributivo($id , $onlyData = false) {
+        $con_academico = \Yii::$app->db_academico;
+        $con_db = \Yii::$app->db;
+        $estado = "1";
+
+        $sql = "SELECT 
+                    CONCAT(pe.per_pri_nombre, ' ', pe.per_pri_apellido) AS profesor,
+                    da.daca_id AS Id,  
+                     da.dcab_id ,
+                    ifnull(ua.uaca_nombre,'') AS UnidadAcademica,
+                    ifnull(m.mod_nombre,'') AS Modalidad,
+                    ifnull(a.asi_nombre,'') AS Asignatura,                     
+                    t.tdis_nombre AS tipo_asignacion,
+                    ifnull(dh.daho_descripcion,'') as horario,
+                    ifnull(t.tdis_id,0) idTipoAsignacion,
+                    ifnull(ua.uaca_id,0) idUnidadAcademica, 
+                    ifnull(m.mod_id,0) idModalidad,
+                    ifnull(da.paca_id,0) idPeriodo,
+                    ifnull(dh.daho_jornada,0) idJornada ,
+                    ifnull(a.asi_id,0) idMateria,
+                    ifnull(dh.daho_id,0)  idHorario,
+                    ifnull(da.dhpa_id,0) idParalelo,
+                   case when da.tdis_id=7 then tdis_num_semanas else (pc.paca_semanas_periodo * case  when dh.daho_total_horas is null then tdis_num_semanas else dh.daho_total_horas end) end as total_horas,
+                  case when da.tdis_id=7 then round(tdis_num_semanas/paca_semanas_periodo) else ( case  when dh.daho_total_horas is null then tdis_num_semanas else dh.daho_total_horas end) end as promedio,
+                    CASE
+                        WHEN daho_jornada = 1 THEN '(M) Matutino'
+                        WHEN daho_jornada = 2 THEN '(N) Nocturno'
+                        WHEN daho_jornada = 3 THEN '(S) Semipresencial'
+                        WHEN daho_jornada = 4 THEN '(D) Distancia'
+                        ELSE ''
+                    END AS jornada,
+                    ifnull(daca_num_estudiantes_online,0) nroEstudiantes,
+                    replace(UUID(),'-','') indice
+                FROM 
+                    " . $con_academico->dbname . ".distributivo_academico AS da 
+                    INNER JOIN " . $con_academico->dbname . ".periodo_academico pc on da.paca_id  = pc.paca_id and  pc.paca_activo='A'    
+                    INNER JOIN " . $con_academico->dbname . ".profesor AS p ON da.pro_id = p.pro_id 
+                    INNER JOIN " . $con_db->dbname . ".persona AS pe ON p.per_id = pe.per_id
+                    LEFT JOIN " . $con_academico->dbname . ".distributivo_academico_horario AS dh ON da.daho_id = dh.daho_id                    
+                    LEFT JOIN " . $con_academico->dbname . ".modalidad AS m ON da.mod_id = m.mod_id
+                    LEFT JOIN " . $con_academico->dbname . ".unidad_academica AS ua ON da.uaca_id = ua.uaca_id
+                    LEFT JOIN " . $con_academico->dbname . ".asignatura AS a ON da.asi_id = a.asi_id                    
+                    INNER JOIN " . $con_academico->dbname . ".tipo_distributivo AS t ON da.tdis_id = t.tdis_id
+                WHERE       
+                    da.dcab_id = :dcab_id AND 
+                   da.daca_estado_logico = :estado AND 
+                    da.daca_estado = :estado AND                                        
+                    t.tdis_estado = :estado AND 
+                    t.tdis_estado_logico = :estado
+                   and  da.tdis_id<>6";
+
+        $comando = $con_academico->createCommand($sql);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $comando->bindParam(":dcab_id", $id, \PDO::PARAM_INT);
+        Utilities::putMessageLogFile('sql:' . $sql);
+        $res = $comando->queryAll();
+        if ($onlyData)
+            return $res;
+        $dataProvider = new ArrayDataProvider([
+            'key' => 'Id',
+            'allModels' => $res,
+            'pagination' => [
+                'pageSize' => Yii::$app->params["pageSize"],
+            ],
+            'sort' => [
+                'attributes' => ['Nombres', "Cedula", "UnidadAcademica", "Modalidad", "Periodo"],
+            ],
+        ]);
+
+        return $dataProvider;
+    }
+    
+    
+    public function getListarDistribProf($id , $onlyData = false) {
+        $con_academico = \Yii::$app->db_academico;
+        $con_db = \Yii::$app->db;
+        $estado = "1";
+
+        $sql = "SELECT 
+                    CONCAT(pe.per_pri_nombre, ' ', pe.per_pri_apellido) AS profesor,
+                    da.daca_id AS Id,  
+                     da.dcab_id ,
+                    ifnull(ua.uaca_nombre,'') AS UnidadAcademica,
+                    ifnull(m.mod_nombre,'') AS Modalidad,
+                    ifnull(a.asi_nombre,'') AS Asignatura,                     
+                    t.tdis_nombre AS tipo_asignacion,
+                    ifnull(dh.daho_descripcion,'') as horario,
+                    ifnull(t.tdis_id,0) idTipoAsignacion,
+                    ifnull(ua.uaca_id,0) idUnidadAcademica, 
+                    ifnull(m.mod_id,0) idModalidad,
+                    ifnull(da.paca_id,0) idPeriodo,
+                    ifnull(dh.daho_jornada,0) idJornada ,
+                    ifnull(a.asi_id,0) idMateria,
+                    ifnull(dh.daho_id,0)  idHorario,
+                    ifnull(da.dhpa_id,0) idParalelo,
+                   case when da.tdis_id=7 then tdis_num_semanas else (pc.paca_semanas_periodo * case  when dh.daho_total_horas is null then tdis_num_semanas else dh.daho_total_horas end) end as total_horas,
+                  case when da.tdis_id=7 then round(tdis_num_semanas/paca_semanas_periodo) else ( case  when dh.daho_total_horas is null then tdis_num_semanas else dh.daho_total_horas end) end as promedio,
+                    CASE
+                        WHEN daho_jornada = 1 THEN '(M) Matutino'
+                        WHEN daho_jornada = 2 THEN '(N) Nocturno'
+                        WHEN daho_jornada = 3 THEN '(S) Semipresencial'
+                        WHEN daho_jornada = 4 THEN '(D) Distancia'
+                        ELSE ''
+                    END AS jornada,
+                    ifnull(daca_num_estudiantes_online,0) nroEstudiantes,
+                    ifnull(daca_fecha_inicio_post,'') as fechaI,
+                    ifnull(daca_fecha_fin_post,'') as fechaf,
+                    ifnull(daca_horas_otras_actividades,0) nroHoras,
+                    replace(UUID(),'-','') indice
+                FROM 
+                    " . $con_academico->dbname . ".distributivo_academico AS da 
+                    INNER JOIN " . $con_academico->dbname . ".periodo_academico pc on da.paca_id  = pc.paca_id and  pc.paca_activo='A'    
+                    INNER JOIN " . $con_academico->dbname . ".profesor AS p ON da.pro_id = p.pro_id 
+                    INNER JOIN " . $con_db->dbname . ".persona AS pe ON p.per_id = pe.per_id
+                    LEFT JOIN " . $con_academico->dbname . ".distributivo_academico_horario AS dh ON da.daho_id = dh.daho_id                    
+                    LEFT JOIN " . $con_academico->dbname . ".modalidad AS m ON da.mod_id = m.mod_id
+                    LEFT JOIN " . $con_academico->dbname . ".unidad_academica AS ua ON da.uaca_id = ua.uaca_id
+                    LEFT JOIN " . $con_academico->dbname . ".asignatura AS a ON da.asi_id = a.asi_id                    
+                    INNER JOIN " . $con_academico->dbname . ".tipo_distributivo AS t ON da.tdis_id = t.tdis_id
+                WHERE       
+                    da.dcab_id = :dcab_id AND 
+                   da.daca_estado_logico = :estado AND 
+                    da.daca_estado = :estado AND                                        
+                    t.tdis_estado = :estado AND 
+                    t.tdis_estado_logico = :estado
+                   and  da.tdis_id<>6";
+
+        $comando = $con_academico->createCommand($sql);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $comando->bindParam(":dcab_id", $id, \PDO::PARAM_INT);
+        Utilities::putMessageLogFile('sql:' . $sql);
         $res = $comando->queryAll();
         if ($onlyData)
             return $res;
@@ -703,18 +813,19 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
         $sql = "Select daca_id,
                        concat(p.per_pri_apellido, ' ', ifnull(p.per_seg_apellido,''), ' ', p.per_pri_nombre, ' ', ifnull(p.per_seg_nombre,'')) as profesor,
                        a.asi_nombre as asignatura
-                from db_academico.distributivo_academico d inner join db_academico.profesor pr on pr.pro_id = d.pro_id 
+                from db_academico.distributivo_academico d 
+                    inner  join db_academico.profesor pr on pr.pro_id = d.pro_id 
                      inner join db_asgard.persona p on p.per_id = pr.per_id
                      inner join db_academico.asignatura a on a.asi_id = d.asi_id
-                where d.paca_id = $paca_id and d.asi_id = $asi_id 
-                      and d.tdis_id = $tasi_id and d.daho_id = $horario 
-                      and pr.pro_estado = 1
+                  where d.paca_id = " . $paca_id . " and d.asi_id =" . $asi_id .
+                " and d.tdis_id =" . $tasi_id . " and d.daho_id =" . $horario .
+                "  and pr.pro_estado = 1
                       and pr.pro_estado_logico = 1  
                       and p.per_estado = 1 
                       and p.per_estado_logico = 1 
                       and d.daca_estado = 1 
                       and d.daca_estado_logico = 1  
-                      and d.dhpa_id = $paralelo "; //vane  
+                      and d.dhpa_id =" . $paralelo;
         if ($uaca_id == 1) {
 
             $sql .= " order by d.daca_id asc
@@ -749,17 +860,17 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
         $estado = "1";
 
         $sql = "SELECT a.meun_id id, b.eaca_nombre name
-                FROM db_academico.modalidad_estudio_unidad a inner join db_academico.estudio_academico b
-                     on b.eaca_id = a.eaca_id
-                WHERE a.uaca_id = $uaca_id -- :uaca_id 
-                      and a.mod_id = $mod_id -- :mod_id
+                FROM db_academico.modalidad_estudio_unidad a
+                inner join db_academico.estudio_academico b   on b.eaca_id = a.eaca_id
+                WHERE a.uaca_id = $uaca_id 
+                      and a.mod_id = $mod_id 
                       and a.meun_estado = 1
                       and a.meun_estado_logico = 1";
 
         $comando = $con_academico->createCommand($sql);
-        $comando->bindParam(":uaca_id", $uaca_id, \PDO::PARAM_INT);
-        $comando->bindParam(":mod_id", $mod_id, \PDO::PARAM_INT);
-        $comando->bindParam("estado", $estado, \PDO::PARAM_STR);
+     //   $comando->bindParam(":uaca_id", $uaca_id, \PDO::PARAM_INT);
+      //  $comando->bindParam(":mod_id", $mod_id, \PDO::PARAM_INT);
+    //    $comando->bindParam("estado", $estado, \PDO::PARAM_STR);
 
         $res = $comando->queryAll();
         return $res;

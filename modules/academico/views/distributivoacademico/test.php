@@ -27,6 +27,14 @@ $dynagrid = DynaGrid::begin([
         'floatHeader'=>true,
         'pjax'=>true,
         'responsiveWrap'=>false,
+         'exportConfig' => [
+        GridView::HTML => ['label' => 'HTML'],
+        // GridView::CSV => ['label' => 'CSV'],
+        // GridView::TEXT  => ['label' => 'Text'],
+        GridView::EXCEL => ['label' => 'Excel'],
+         GridView::PDF => ['label' => 'PDF'],
+        // GridView::JSON => ['label' => 'JSON'],
+    ],
         'panel'=>[
             'heading'=>'<h3 class="panel-title"><i class="fas fa-book"></i>  Distributivo</h3>',
             'before' =>  '<div style="padding-top: 7px;"><em>* The table header sticks to the top in this demo as you scroll</em></div>',
@@ -39,6 +47,7 @@ $dynagrid = DynaGrid::begin([
             ],
             ['content'=>'{dynagridFilter}{dynagridSort}{dynagrid}'],
             '{export}',
+            
         ]
     ],
     'options'=>['id'=>'daca_id'] // a unique identifier is important

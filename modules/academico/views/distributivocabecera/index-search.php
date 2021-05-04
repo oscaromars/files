@@ -38,7 +38,12 @@ use app\modules\academico\Module as academico;
             <label for="cmb_tipo_asignacion" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= Yii::t("formulario", "Tipo Asignación") ?></label>
             <div class="col-sm-3 col-xs-3 col-md-3 col-lg-3">
                 <?= Html::dropDownList("cmb_tipo_asignacion", 0,  $arr_tipo_distributivo , ["class" => "form-control", "id" => "cmb_tipo_asignacion"]) ?>
-            </div>                 
+            </div> 
+            <label for="cmb_profesor" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= academico::t("Academico", "Teacher") ?></label>
+                <div class="col-sm-3 col-xs-3 col-md-3 col-lg-3">
+                    <?= Html::dropDownList("cmb_profesor", 0, $arr_profesor, ["class" => "form-control", "id" => "cmb_profesor"]) ?>
+
+                </div>  
         </div>    
         </div>    
         
@@ -48,6 +53,7 @@ use app\modules\academico\Module as academico;
         <div class="col-sm-2 col-md-2 col-xs-4 col-lg-2">                
             <a id="btn_buscarData_dist" href="javascript:" class="btn btn-primary btn-block"> <?= Yii::t("formulario", "Search") ?></a>
         </div>
+       
     </div>
 </div>
 

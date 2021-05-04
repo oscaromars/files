@@ -10,6 +10,7 @@ use app\modules\academico\Module as academico;
             'arr_periodo' => $mod_periodo,      
             'arrEstados' => $arrEstados,
             'arr_tipo_distributivo' => $mod_tipo_distributivo,
+             'arr_profesor' => $arr_profesor,
             ]);
         ?>
     </form>

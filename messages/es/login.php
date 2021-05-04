@@ -53,7 +53,7 @@
 
 return [
     'Confirm Password' => 'Confirmar Contraseña',
-    'I forgot my password' => 'Olvide mi contraseña',
+    'I forgot my password' => 'Olvidé mi contraseña',
     '<h4>Error</h4>Invalid Account.' => '<h4>Error</h4>Cuenta Inválida.',
     '<h4>Error</h4>Invalid Account. Account can be disabled please please confirm the account with link activation in your email account or reset your password.' => '<h4>Error</h4>Cuenta Inválida. Por favor confirme la cuenta con el link de activación enviado a su email o de click en Olvide mi contraseña.',
     '<h4>Error</h4>Incorrect username or password.' => '<h4>Error</h4>Usuario o clave incorrecta.',

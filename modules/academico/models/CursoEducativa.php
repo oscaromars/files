@@ -329,10 +329,10 @@ class CursoEducativa extends \yii\db\ActiveRecord
     }
 
     /**
-     * Function guardar estudiante
+     * Function guardar curso 
      * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
      * @param   
-     * @return  $resultData (Retornar el código de estudiante).
+     * @return  $resultData (Retornar el código de curso).
      */
     public function insertarCursoeducativa($paca_id, /*$asi_id,*/ $cedu_asi_id, $cedu_asi_nombre, $cedu_usuario_ingreso) {
         //\app\models\Utilities::putMessageLogFile('entro insercurso...: ' ); 
@@ -345,8 +345,8 @@ class CursoEducativa extends \yii\db\ActiveRecord
         }
         $fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
         
-        $param_sql .= ", cedu_fecha_creacion";
-        $bsol_sql .= ", 1";
+        /*$param_sql .= ", cedu_fecha_creacion";
+        $bsol_sql .= ", 1";*/
         
         $param_sql = "cedu_estado_logico";
         $bsol_sql = "1";
@@ -449,6 +449,144 @@ class CursoEducativa extends \yii\db\ActiveRecord
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
         $comando->bindParam(":cedu_id", $cedu_id, \PDO::PARAM_INT);  
         $resultData = $comando->queryOne();      
+        return $resultData;
+    }
+
+    /**
+     * Function modificar cursos educativa.
+     * @author Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>;
+     * @param
+     * @return
+     */
+    public function modificarCursoeducativa($cedu_id, $paca_id, $cedu_asi_id, $cedu_asi_nombre, $cedu_usuario_modifica) {
+        $fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
+        $con = \Yii::$app->db_academico;
+        $estado = 1; 
+        if ($trans !== null) {
+            $trans = null; // si existe la transacción entonces no se crea una
+        } else {
+            $trans = $con->beginTransaction(); // si no existe la transacción entonces se crea una
+        }
+        try {
+            $comando = $con->createCommand
+                    ("UPDATE " . $con->dbname . ".curso_educativa		       
+                      SET paca_id = :paca_id,
+                          cedu_asi_id = :cedu_asi_id,
+                          cedu_asi_nombre = :cedu_asi_nombre,
+                          cedu_usuario_modifica = :cedu_usuario_modifica,
+                          cedu_fecha_modificacion = :cedu_fecha_modificacion                          
+                      WHERE 
+                      cedu_id = :cedu_id AND
+                      cedu_estado = :estado AND
+                      cedu_estado_logico = :estado");
+            $comando->bindParam(":cedu_id", $cedu_id, \PDO::PARAM_INT);  
+            $comando->bindParam(":paca_id", $paca_id, \PDO::PARAM_INT);  
+            $comando->bindParam(":cedu_asi_id", $cedu_asi_id, \PDO::PARAM_INT); 
+            $comando->bindParam(":cedu_asi_nombre", $cedu_asi_nombre, \PDO::PARAM_STR);                    
+            $comando->bindParam(":cedu_usuario_modifica", $cedu_usuario_modifica, \PDO::PARAM_INT);
+            $comando->bindParam(":cedu_fecha_modificacion", $fecha_transaccion, \PDO::PARAM_STR);
+            $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+            $response = $comando->execute();
+            if ($trans !== null)
+                $trans->commit();
+            return $response;
+        } catch (Exception $ex) {
+            if ($trans !== null)
+                $trans->rollback();
+            return FALSE;
+        }
+    }
+
+    /**
+     * Function eliminar el curso estados en 0.
+     * @author Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>;
+     * @param
+     * @return
+     */
+    public function eliminarCurso($cedu_id, $cedu_usuario_modifica, $cedu_fecha_modificacion) {
+        $estado = 0;
+        $con = \Yii::$app->db_academico;
+        
+        if ($trans !== null) {
+            $trans = null; // si existe la transacción entonces no se crea una
+        } else {
+            $trans = $con->beginTransaction(); // si no existe la transacción entonces se crea una
+        }
+        try {
+            $comando = $con->createCommand
+                    ("UPDATE " . $con->dbname . ".curso_educativa		       
+                      SET cedu_estado = :cedu_estado,
+                          cedu_usuario_modifica = :cedu_usuario_modifica,
+                          cedu_fecha_modificacion = :cedu_fecha_modificacion                          
+                      WHERE 
+                      cedu_id = :cedu_id ");
+            $comando->bindParam(":cedu_id", $cedu_id, \PDO::PARAM_INT);          
+            $comando->bindParam(":cedu_usuario_modifica", $cedu_usuario_modifica, \PDO::PARAM_INT);
+            $comando->bindParam(":cedu_fecha_modificacion", $cedu_fecha_modificacion, \PDO::PARAM_STR);
+            $comando->bindParam(":cedu_estado", $estado, \PDO::PARAM_STR);
+            $response = $comando->execute();
+            if ($trans !== null)
+                $trans->commit();
+            return $response;
+        } catch (Exception $ex) {
+            if ($trans !== null)
+                $trans->rollback();
+            return FALSE;
+        }
+    }
+
+    /**
+     * Function Consultar cursos por paca_id.
+     * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>;
+     * @property       
+     * @return  
+     */
+    public function consultarCursosxpacaid($paca_id) {
+        $con = \Yii::$app->db_academico;      
+        $estado = 1;
+
+        $sql = "SELECT 	Distinct
+                        cedu_id as id,
+                        cedu_asi_nombre as name               
+                        
+                FROM " . $con->dbname . ".curso_educativa              
+                WHERE 
+                paca_id = :paca_id AND               
+                cedu_estado = :estado AND
+                cedu_estado_logico = :estado";
+
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":paca_id", $paca_id, \PDO::PARAM_INT);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);        
+        $resultData = $comando->queryAll();
+        return $resultData;
+    }
+
+    /**
+     * Function Consultar si existe curso educativa.
+     * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>;
+     * @property       
+     * @return  
+     */
+    public function consultarCursoexiste($cedu_id) {
+        $con = \Yii::$app->db_academico;     
+        $estado = 1;         
+       /*\app\models\Utilities::putMessageLogFile('entro 2 : ' .$paca_id);  
+       \app\models\Utilities::putMessageLogFile('entro 3 : ' .$cedu_asi_id);  
+       \app\models\Utilities::putMessageLogFile('entro 4 : ' .$cedu_asi_nombre);  */
+        $sql = "SELECT 	
+                        count(*) as cedu_id                       
+                        
+                FROM " . $con->dbname . ".curso_educativa                 
+                WHERE 
+                cedu_id = :cedu_id AND
+                cedu_estado = :estado AND
+                cedu_estado_logico = :estado ";
+        // \app\models\Utilities::putMessageLogFile('entro: ' .$sql); 
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $comando->bindParam(":cedu_id", $cedu_id, \PDO::PARAM_INT);        
+        $resultData = $comando->queryOne();
         return $resultData;
     }
 }

@@ -32,6 +32,11 @@ PbGridView::widget([
             'value' => 'dni',
         ],
         [
+            'attribute' => 'Correo',
+            'header' => Yii::t("formulario", "Email"),
+            'value' => 'correo',
+        ],
+        [
             'attribute' => 'Carrera',
             'header' => academico::t("Academico", "Academic unit"),
             'value' => 'undidad',

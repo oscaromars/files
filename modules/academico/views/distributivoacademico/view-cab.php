@@ -78,4 +78,4 @@ academico::registerTranslations();
     </div>
 </form>
 
-<?= Html::hiddenInput('txth_ids', $daca_id, ['id' => 'txth_ids']); ?>
+<?= Html::hiddenInput('txth_ids',$arr_cabecera['dcab_id'], ['id' => 'txth_ids']); ?>

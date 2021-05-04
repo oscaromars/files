@@ -9,9 +9,13 @@ use app\modules\admision\Module as admision;
 
 admision::registerTranslations();
 academico::registerTranslations();
+
 ?>
+
 <div>
+
     <?=
+
     PbGridView::widget([
         'id' => 'Tbg_DistribAca_Profesor',
         //'showExport' => true,

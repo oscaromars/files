@@ -57,8 +57,8 @@ class SolicitudesController extends \app\components\CController {
             $arrSearch["modalidad"] = $data['modalidad'];
             $arrSearch["carrera"] = $data['carrera'];
             $respSolicitud = $modSolicitud->consultarSolicitudes($arrSearch);
-        } else {
-            $respSolicitud = $modSolicitud->consultarSolicitudes();
+        } else {                    
+            $respSolicitud = $modSolicitud->consultarSolicitudes(); 
         }
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();

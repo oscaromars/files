@@ -39,13 +39,7 @@ academico::registerTranslations();
             <div class="col-sm-3 col-md-3 col-xs-3 col-lg-3">
             <input type="text" class="form-control PBvalidation keyupmce" value="<?php echo $arr_unidad ["ceuni_descripcion_unidad"]?>" id="txt_descripcionviewunidad" data-type="all" disabled = "true" data-keydown="true" placeholder="<?= academico::t("matriculacion", 'Nombre Unidad') ?>"> 
          </div>
-    </div>
-        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">  
-        <div class="col-sm-8"></div>
-        <div class="col-sm-2">                
-            <a id="btn_viewunidad" href="javascript:" class="btn btn-primary btn-block"> <?= Yii::t("formulario", "Save") ?></a>
-        </div>
-    
+    </div> 
 </div>
 </br>
 </form>

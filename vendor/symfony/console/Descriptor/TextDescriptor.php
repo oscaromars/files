@@ -298,7 +298,7 @@ class TextDescriptor extends Descriptor
     }
 
     /**
-     * @param array<Command|string> $commands
+     * @param (Command|string)[] $commands
      */
     private function getColumnWidth(array $commands): int
     {

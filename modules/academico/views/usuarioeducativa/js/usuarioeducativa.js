@@ -567,3 +567,8 @@ function asignarCurso() {
         showAlert('NO_OK', 'error', {"wtmessage": 'Curso: El campo no debe estar vacío.', "title": 'Error'});
      }  
 }
+
+function editunidaded() {
+    var ceuni_id = $('#txth_unidadid').val();
+    window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/editunidad?ceuni_id=" + ceuni_id;
+}

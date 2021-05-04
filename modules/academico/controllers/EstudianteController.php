@@ -57,7 +57,7 @@ class EstudianteController extends \app\components\CController {
         $mod_programa = new EstudioAcademico();
         $mod_modalidad = new Modalidad();
         $mod_unidad = new UnidadAcademica();
-        $modcanal = new Oportunidad();
+        $$modcanal = new EstudioAcademico();
         $data = Yii::$app->request->get();
         if ($data['PBgetFilter']) {
             $arrSearch["search"] = $data['search'];
@@ -68,7 +68,7 @@ class EstudianteController extends \app\components\CController {
             $arrSearch["carrera"] = $data['carrera'];
             $arrSearch["estado"] = $data['estado'];
             $arr_estudiante = $mod_estudiante->consultarEstudiante($arrSearch);
-            return $this->renderPartial('index', [
+            return $this->renderPartial('index-grid', [
                         "model" => $arr_estudiante,
             ]);
         } else {

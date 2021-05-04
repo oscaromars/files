@@ -10,9 +10,9 @@ academico::registerTranslations();
 //print_r($arr_curso);
 ?>
 <?= Html::hiddenInput('txth_cursoid', base64_decode($_GET['cedu_id']), ['id' => 'txth_cursoid']); ?>
-<div class="col-md-12">    
+<!-- <div class="col-md-12">    
     <h3><span id="lbl_titulo"><?= academico::t("Academico", "Edit course") ?></span><br/>    
-</div>
+</div>-->
 <br><br><br><br>
 <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
     <p class="text-danger"> <?= Yii::t("formulario", "Fields with * are required") ?> </p>
@@ -41,11 +41,11 @@ academico::registerTranslations();
             <input type="text" class="form-control PBvalidation keyupmce" value="<?php echo $arr_curso['cedu_asi_nombre']; ?>" id="txt_aulaedit" data-type="all" data-keydown="true" placeholder="<?= academico::t("matriculacion", 'Nombre Aula') ?>"> 
          </div>
     </div>
-        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">  
+        <!-- <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">  
         <div class="col-sm-8"></div>
         <div class="col-sm-2">                
             <a id="btn_editcurso" href="javascript:" class="btn btn-primary btn-block"> <?= Yii::t("formulario", "Editar") ?></a>
-        </div>
+        </div>-->
     
 </div>
 </br>

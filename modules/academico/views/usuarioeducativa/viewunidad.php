@@ -9,10 +9,11 @@ financiero::registerTranslations();
 academico::registerTranslations();
 //print_r($arr_unidad);
 ?>
-<div class="col-md-12">    
+<?= Html::hiddenInput('txth_unidadid', $_GET['ceuni_id'], ['id' => 'txth_unidadid']); ?>
+<!-- <div class="col-md-12">    
     <h3><span id="lbl_titulo"><?= academico::t("Academico", "View Unit") ?></span><br/>    
 </div>
-<br><br><br><br>
+<br><br><br><br>-->
 <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
     <p class="text-danger"> <?= Yii::t("formulario", "Fields with * are required") ?> </p>
 </div>

@@ -10,10 +10,10 @@ academico::registerTranslations();
 //print_r($arr_unidad);
 ?>
 <?= Html::hiddenInput('txth_unidadid', base64_decode($_GET['ceuni_id']), ['id' => 'txth_unidadid']); ?>
-<div class="col-md-12">    
+<!-- <div class="col-md-12">    
     <h3><span id="lbl_titulo"><?= academico::t("Academico", "Edit Unit") ?></span><br/>    
 </div>
-<br><br><br><br>
+<br><br><br><br>-->
 <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
     <p class="text-danger"> <?= Yii::t("formulario", "Fields with * are required") ?> </p>
 </div>
@@ -41,12 +41,11 @@ academico::registerTranslations();
             <input type="text" class="form-control PBvalidation keyupmce" value="<?php echo $arr_unidad ["ceuni_descripcion_unidad"]?>" id="txt_descripcioneditunidad" data-type="all" data-keydown="true" placeholder="<?= academico::t("matriculacion", 'Nombre Unidad') ?>"> 
          </div>
     </div>
-        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">  
+        <!-- <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">  
         <div class="col-sm-8"></div>
         <div class="col-sm-2">                
             <a id="btn_editunidad" href="javascript:" class="btn btn-primary btn-block"> <?= Yii::t("formulario", "Update") ?></a>
-        </div>
-    
+        </div>-->    
 </div>
 </br>
 </form>

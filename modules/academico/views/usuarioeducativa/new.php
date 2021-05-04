@@ -8,9 +8,9 @@ use app\modules\academico\Module as academico;
 financiero::registerTranslations();
 academico::registerTranslations();
 ?>
-<div class="col-md-12">    
+<!-- <div class="col-md-12">    
     <h3><span id="lbl_titulo"><?= academico::t("Academico", "Create course") ?></span><br/>    
-</div>
+</div>-->
 <br><br><br><br>
 <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
     <p class="text-danger"> <?= Yii::t("formulario", "Fields with * are required") ?> </p>
@@ -39,11 +39,11 @@ academico::registerTranslations();
             <input type="text" class="form-control PBvalidation keyupmce" value="" id="txt_aulanew" data-type="all" data-keydown="true" placeholder="<?= academico::t("matriculacion", 'Nombre Aula') ?>"> 
          </div>
     </div>
-        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">  
+       <!-- <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">  
         <div class="col-sm-8"></div>
         <div class="col-sm-2">                
             <a id="btn_newcurso" href="javascript:" class="btn btn-primary btn-block"> <?= Yii::t("formulario", "Save") ?></a>
-        </div>
+        </div>-->
     
 </div>
 </br>

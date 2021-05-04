@@ -9,9 +9,10 @@ financiero::registerTranslations();
 academico::registerTranslations();
 //print_r($arr_curso);
 ?>
-<div class="col-md-12">    
+<?= Html::hiddenInput('txth_cursoid', $_GET['cedu_id'], ['id' => 'txth_cursoid']); ?>
+<!-- <div class="col-md-12">    
     <h3><span id="lbl_titulo"><?= academico::t("Academico", "View course") ?></span><br/>    
-</div>
+</div>-->
 <br><br><br><br>
 <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
     <p class="text-danger"> <?= Yii::t("formulario", "Fields with * are required") ?> </p>

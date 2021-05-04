@@ -572,3 +572,8 @@ function editunidaded() {
     var ceuni_id = $('#txth_unidadid').val();
     window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/editunidad?ceuni_id=" + ceuni_id;
 }
+
+function editcursoed() {
+    var cedu_id = $('#txth_cursoid').val();
+    window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/edit?cedu_id=" + cedu_id;
+}

@@ -53,6 +53,7 @@ $var = ArrayHelper::map(app\modules\academico\models\PeriodoAcademico::find()->w
         <div class="col-sm-9">
             <?=
             $form->field($model, 'mod_id')->widget(Select2::classname(), [
+                'id'=>'cmb_mod',
                 'data' => ArrayHelper::map(app\modules\academico\models\Modalidad::find()->all(), 'mod_id', 'mod_nombre'),
                 'size' => Select2::MEDIUM,
                 'options' => ['placeholder' => 'Seleccione Modalidad ...', 'multiple' => false],

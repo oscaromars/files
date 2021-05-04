@@ -51,6 +51,12 @@ GridView::widget([
         // [ 'class' => 'yii\grid\SerialColumn'],
         [
             'attribute' => 'asi_id',
+            'header' => academico::t("Academico", "Id"),
+            
+        // 'group' => true,
+        ],
+        [
+            'attribute' => 'asi_id',
             'header' => academico::t("Academico", "Asignatura"),
             'value' => function ($model, $key, $index, $widget) {
                 return $model->asig->asi_nombre;
@@ -86,17 +92,12 @@ GridView::widget([
           'header' => '# paralelo',
           'inputType' => 'dropDownList',
           'displayValue' => $strValue,    // display field before editing
-          'data' => [0 => 0,1 => 1, 2 => 2, 3 => 3, 4 => 4, 5 => 5, 6 => 6],
+          'data' => [1 => 1, 2 => 2, 3 => 3, 4 => 4, 5 => 5],
           'formOptions' => ['action' => ['materiaparaleloperiodo/editableupdate']], // point to the new action
           ];
           }
           ],
-        [
-            'attribute' => 'paca_id',
-            'header' => academico::t("Academico", "Asignatura"),
-            'value' => 'paca_id',
-        // 'group' => true,
-        ],
+        
     ],
 ]);
   ?>

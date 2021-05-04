@@ -324,9 +324,9 @@ class Profesor extends \yii\db\ActiveRecord
                 FROM 
                     " . $con_academico->dbname . ".profesor AS pro
                     INNER JOIN " . $con_asgard->dbname . ".persona AS pe ON pro.per_id = pe.per_id
-                    INNER JOIN " . $con_academico->dbname . ".distributivo_cabecera AS dc ON dc.pro_id = dc.pro_id
+                    INNER JOIN " . $con_academico->dbname . ".distributivo_cabecera AS dc ON dc.pro_id = pro.pro_id
                 WHERE 
-                    dc.dcab_estado_revision not in (1,2) AND
+                    dc.dcab_estado_revision = 0 AND
                     dc.dcab_estado = 1 AND
                     pro.pro_estado = 1 AND 
                     pro.pro_estado_logico = 1 AND 

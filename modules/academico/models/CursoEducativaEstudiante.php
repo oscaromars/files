@@ -123,9 +123,9 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
             if ($arrFiltro['periodo'] != "" && $arrFiltro['periodo'] > 0) {
                 $str_search .= "a.paca_id = :periodo AND ";
             }
-            /*if ($arrFiltro['asignatura'] != "" && $arrFiltro['asignatura'] > 0) {
+            if ($arrFiltro['asignatura'] != "" && $arrFiltro['asignatura'] > 0) {
                 $str_search .= "a.asi_id = :asignatura AND ";
-            }*/             
+            }             
             if ($arrFiltro['curso'] != "" && $arrFiltro['curso'] > 0) {
                 $str_search .= "cur.cedu_id = :curso AND ";
             }
@@ -155,7 +155,7 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
                         p.per_cedula as identificacion, 
                         concat(p.per_pri_nombre, ' ', p.per_pri_apellido, ' ', ifnull(p.per_seg_apellido,'')) as estudiante,
                         concat(saca_nombre, '-', baca_nombre,'-',baca_anio) as periodo,
-                        -- z.asi_nombre as asignatura
+                        z.asi_nombre as asignatura,
                         cur.cedu_asi_nombre as curso "; 
         if ($reporte == 1 ) {
             $sql .=   " , (select ifnull(cee.ceest_id,' ')
@@ -209,10 +209,10 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
                 $search_per = $arrFiltro["periodo"];
                 $comando->bindParam(":periodo", $search_per, \PDO::PARAM_INT);
             }
-            /*if ($arrFiltro['asignatura'] != "" && $arrFiltro['asignatura'] > 0) {
+            if ($arrFiltro['asignatura'] != "" && $arrFiltro['asignatura'] > 0) {
                 $search_asi = $arrFiltro["asignatura"];
                 $comando->bindParam(":asignatura", $search_asi, \PDO::PARAM_INT);
-            } */
+            }
             if ($arrFiltro['curso'] != "" && $arrFiltro['curso'] > 0) {
                 $search_cur = $arrFiltro["curso"];
                 $comando->bindParam(":curso", $search_cur, \PDO::PARAM_INT);

@@ -39,6 +39,7 @@ class EstudianteController extends \app\components\CController {
             '6' => Yii::t("formulario", "F"),
             '7' => Yii::t("formulario", "G"),
             '8' => Yii::t("formulario", "H"),
+            '9' => Yii::t("formulario", "R"),
         ];
     }
 
@@ -81,14 +82,14 @@ class EstudianteController extends \app\components\CController {
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
             }
             if (isset($data["getcarrera"])) {
-                $carrera = $modcanal->consultarCarreraModalidad($data["unidada"], $data["moda_id"]);
+                $carrera = $mod_programa->consultarCarreraModalidad($data["unidada"], $data["moda_id"]);
                 $message = array("carrera" => $carrera);
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
             }
         }
         $arr_ninteres = $mod_unidad->consultarUnidadAcademicasEmpresa(1);
         $arr_modalidad = $mod_modalidad->consultarModalidad($arr_ninteres[0]["id"], 1);
-        $arr_carrerra1 = $modcanal->consultarCarreraModalidad($arr_ninteres[0]["id"], $arr_modalidad[0]["id"]);
+        $arr_carrerra1 = $mod_programa->consultarCarreraModalidad($arr_ninteres[0]["id"], $arr_modalidad[0]["id"]);
         return $this->render('index', [
                     'model' => $arr_estudiante,
                     'arr_ninteres' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Grid")]], $arr_ninteres), "id", "name"),
@@ -196,7 +197,7 @@ class EstudianteController extends \app\components\CController {
         $persona_model = new Persona();
         $mod_modalidad = new Modalidad();
         $mod_unidad = new UnidadAcademica();
-        $modcanal = new Oportunidad();
+        $modcanal = new EstudioAcademico();
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
             if (isset($data["getmodalidad"])) {
@@ -249,7 +250,7 @@ class EstudianteController extends \app\components\CController {
                 $mod_emp_persona = new EmpresaPersona();
                 $usergrol = new UsuaGrolEper();
                 // consultar el per_id sino esta en estudiante si esta un else q diga ya existe estudiante getEstudiantexperid($per_id)
-                $resp_estudianteid = $mod_Estudiante->getEstudiantexperid($per_id);
+                $resp_estudianteid = $mod_Estudiante->getEstudiantexperid($per_id); 
                 if ($resp_estudianteid["est_id"] == "") {
                     // consultar datos de la person con per_id consultaPersonaId($per_id)
                     $resp_persona = $mod_persona->consultaPersonaId($per_id);
@@ -361,7 +362,7 @@ class EstudianteController extends \app\components\CController {
         $persona_model = new Persona();
         $mod_modalidad = new Modalidad();
         $mod_unidad = new UnidadAcademica();
-        $modcanal = new Oportunidad();
+        $modcanal = new EstudioAcademico();
         $mod_Estudiante = new Estudiante();
 
         $dataPersona = $persona_model->consultaPersonaId($per_id);
@@ -385,7 +386,7 @@ class EstudianteController extends \app\components\CController {
         $persona_model = new Persona();
         $mod_modalidad = new Modalidad();
         $mod_unidad = new UnidadAcademica();
-        $modcanal = new Oportunidad();
+        $modcanal = new EstudioAcademico();
         $mod_Estudiante = new Estudiante();
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();

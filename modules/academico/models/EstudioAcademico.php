@@ -354,4 +354,36 @@ class EstudioAcademico extends \app\modules\admision\components\CActiveRecord {
         return $resultData;
     }
 
+    /**
+     * Function obtener carreras segun unidad academica y modalidad
+     * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>;
+     * @property       
+     * @return  
+     */
+    public function consultarCarreraModalidad($unidad, $modalidad) {
+        $con = \Yii::$app->db_academico;
+        $estado = 1;
+        $sql = "
+                SELECT 
+                        eac.eaca_id as id,
+                        eac.eaca_nombre as name
+                    FROM
+                        " . $con->dbname . ".modalidad_estudio_unidad as mcn
+                        INNER JOIN " . $con->dbname . ".estudio_academico as eac on eac.eaca_id = mcn.eaca_id
+                    WHERE 
+                        mcn.uaca_id =:unidad AND
+                        mcn.mod_id =:modalidad AND                                  
+                        mcn.meun_estado_logico = :estado AND
+                        mcn.meun_estado = :estado
+                        ORDER BY name asc";
+
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $comando->bindParam(":unidad", $unidad, \PDO::PARAM_INT);
+        $comando->bindParam(":modalidad", $modalidad, \PDO::PARAM_INT);
+        $resultData = $comando->queryAll();
+        return $resultData;
+    }
+
+
 }

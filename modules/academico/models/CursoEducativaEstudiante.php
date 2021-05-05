@@ -509,7 +509,7 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
         
         
 
-        $sql = "SELECT  distinct 
+        $sql .= "SELECT  distinct 
                         $estuid 
                         d.uaca_nombre as unidad, 
                         e.mod_nombre as modalidad,
@@ -535,9 +535,17 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
                                             ORDER BY mi.ccar_fecha_vencepago asc
                                             LIMIT 1),'No Autorizado')						 
                                 else 'No Autorizado'
-                                end as pago  
-                        -- ifnull(DATE_FORMAT(m.eppa_fecha_registro, '%Y-%m-%d'), ' ') as fecha_pago 
-                FROM " . $con->dbname . ".distributivo_academico a inner join " . $con->dbname . ".profesor b
+                                end as pago " ;
+                                /*if ($reporte == 1 ) {
+                                $sql .=   " , (select ifnull(cee.ceest_id,' ')
+                                                from " . $con->dbname . ".curso_educativa_estudiante cee
+                                                where cee.cedu_id = cur.cedu_id and 
+                                                    cee.est_id = h.est_id and                               
+                                                    cee.ceest_estado = :estado and
+                                                    cee.ceest_estado_logico = :estado)  estado_asignado ";
+                                                    } */
+                    $sql .= "    -- ifnull(DATE_FORMAT(m.eppa_fecha_registro, '%Y-%m-%d'), ' ') as fecha_pago 
+                    FROM " . $con->dbname . ".distributivo_academico a inner join " . $con->dbname . ".profesor b
                     on b.pro_id = a.pro_id 
                     inner join " . $con1->dbname . ".persona c on c.per_id = b.per_id
                     inner join " . $con1->dbname . ".persona pe on pe.per_id = b.per_id

@@ -447,4 +447,197 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
             return FALSE;
         }
     }
+
+    /**
+     * Function Obtiene información de distributivo todos los estudiantes, cursos y estado de bloqueo.
+     * en integración educativa
+     * @author Giovanni Vergara <analistadesarrollo01@uteg.edu.ec>;
+     * @param
+     * @return
+     */
+    public function consultarDistributivoxEducativa($arrFiltro = array(), $reporte) {
+        $con = \Yii::$app->db_academico;
+        $con1 = \Yii::$app->db_asgard;
+        $con2 = \Yii::$app->db_facturacion;
+        $estado = 1;
+
+        if (isset($arrFiltro) && count($arrFiltro) > 0) {
+            $str_search .= "(p.per_pri_nombre like :search OR ";
+            $str_search .= "p.per_seg_nombre like :search OR ";
+            $str_search .= "p.per_pri_apellido like :search OR ";
+            $str_search .= "p.per_seg_apellido like :search OR ";
+            $str_search .= "p.per_cedula like :search) AND ";
+
+            if (!empty($arrFiltro['profesor'])) {
+                $str_search .= "(pe.per_pri_nombre like :profesor OR ";
+                $str_search .= "pe.per_seg_nombre like :profesor OR ";
+                $str_search .= "pe.per_pri_apellido like :profesor OR ";
+                $str_search .= "pe.per_seg_apellido like :profesor) AND ";
+            }
+            if ($arrFiltro['unidad'] != "" && $arrFiltro['unidad'] > 0) {
+                $str_search .= "a.uaca_id = :unidad AND ";
+            }
+            if ($arrFiltro['modalidad'] != "" && $arrFiltro['modalidad'] > 0) {
+                $str_search .= "a.mod_id = :modalidad AND ";
+            }
+            if ($arrFiltro['periodo'] != "" && $arrFiltro['periodo'] > 0) {
+                $str_search .= "a.paca_id = :periodo AND ";
+            }
+            if ($arrFiltro['asignatura'] != "" && $arrFiltro['asignatura'] > 0) {
+                $str_search .= "a.asi_id = :asignatura AND ";
+            }           
+            if ($arrFiltro['estado_pago'] == "0" or $arrFiltro['estado_pago'] == "1") {            
+                if ($arrFiltro['estado_pago'] == "0") {            
+                $str_search .= " ((m.ccar_estado_cancela is null OR m.ccar_estado_cancela = :estado_pago) AND NOW() > m.ccar_fecha_vencepago ) AND ";
+            }else{
+                $str_search .= " (m.ccar_estado_cancela = :estado_pago OR NOW() < m.ccar_fecha_vencepago) AND ";
+            } 
+        } 
+            /**************************************************************  **/ 
+            if ($arrFiltro['jornada'] != "" && $arrFiltro['jornada'] > 0) {
+                $str_search .= "a.daca_jornada = :jornada AND ";
+            }
+        }else{
+          $mod_paca        = new PeriodoAcademico(); 
+          $paca_actual_id  = $mod_paca->getPeriodoAcademicoActual();
+          $str_search      = "a.paca_id = ".$paca_actual_id['id']." AND ";
+        }
+
+        if ($reporte == 1 ) {
+          $estuid = " h.est_id, ";
+        }    
+        
+        
+
+        $sql = "SELECT  distinct 
+                        $estuid 
+                        d.uaca_nombre as unidad, 
+                        e.mod_nombre as modalidad,
+                        p.per_cedula as identificacion, 
+                        concat(p.per_pri_nombre, ' ', p.per_pri_apellido, ' ', ifnull(p.per_seg_apellido,'')) as estudiante,
+                        concat(saca_nombre, '-', baca_nombre,'-',baca_anio) as periodo,
+                        z.asi_nombre as asignatura,                                       
+                          case 
+                                when m.ccar_fecha_vencepago <= NOW() then  ifnull((SELECT
+                                            CASE WHEN mi.ccar_estado_cancela = 'C'
+                                            THEN 'Autorizado'
+                                            ELSE 'No Autorizado' END AS pago
+                                            FROM db_facturacion.carga_cartera mi
+                                            WHERE mi.est_id = g.est_id and mi.ccar_fecha_vencepago <= NOW()
+                                            ORDER BY mi.ccar_fecha_vencepago desc
+                                            LIMIT 1),'No Autorizado')
+                                when m.ccar_fecha_vencepago >= NOW() then ifnull((SELECT
+                                            CASE WHEN mi.ccar_estado_cancela = 'N' or mi.ccar_estado_cancela = 'C'
+                                            THEN 'Autorizado'
+                                            ELSE 'No Autorizado' END AS pago
+                                            FROM db_facturacion.carga_cartera mi
+                                            WHERE mi.est_id = g.est_id and mi.ccar_fecha_vencepago >= NOW()
+                                            ORDER BY mi.ccar_fecha_vencepago asc
+                                            LIMIT 1),'No Autorizado')						 
+                                else 'No Autorizado'
+                                end as pago  
+                        -- ifnull(DATE_FORMAT(m.eppa_fecha_registro, '%Y-%m-%d'), ' ') as fecha_pago 
+                FROM " . $con->dbname . ".distributivo_academico a inner join " . $con->dbname . ".profesor b
+                    on b.pro_id = a.pro_id 
+                    inner join " . $con1->dbname . ".persona c on c.per_id = b.per_id
+                    inner join " . $con1->dbname . ".persona pe on pe.per_id = b.per_id
+                    inner join " . $con->dbname . ".unidad_academica d on d.uaca_id = a.uaca_id
+                    inner join " . $con->dbname . ".modalidad e on e.mod_id = a.mod_id
+                    inner join " . $con->dbname . ".periodo_academico f on f.paca_id = a.paca_id
+                    inner join " . $con->dbname . ".distributivo_academico_estudiante g on g.daca_id = a.daca_id
+                    inner join " . $con->dbname . ".estudiante h on h.est_id = g.est_id
+                    inner join " . $con1->dbname . ".persona p on p.per_id = h.per_id
+                    inner join " . $con->dbname . ".semestre_academico s on s.saca_id = f.saca_id
+                    inner join " . $con->dbname . ".bloque_academico t on t.baca_id = f.baca_id
+                    inner join " . $con->dbname . ".asignatura z on a.asi_id = z.asi_id
+                    -- left join " . $con->dbname . ".estudiante_periodo_pago m on (m.est_id = g.est_id and m.paca_id = f.paca_id)
+                    left join " . $con2->dbname . ".carga_cartera m on (m.est_id = g.est_id /* and m.paca_id = f.paca_id */)
+                    WHERE $str_search /* f.paca_activo = 'A'
+                    and*/ a.daca_estado = :estado
+                    and a.daca_estado_logico = :estado
+                    and g.daes_estado = :estado
+                    and g.daes_estado_logico = :estado";
+
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        if (isset($arrFiltro) && count($arrFiltro) > 0) {
+            $search_cond = "%" . $arrFiltro["search"] . "%";
+            $comando->bindParam(":search", $search_cond, \PDO::PARAM_STR);
+
+            if (!empty($arrFiltro['profesor'])) {
+                $search_profe = "%" . $arrFiltro["profesor"] . "%";
+                $comando->bindParam(":profesor", $search_profe, \PDO::PARAM_STR);
+            }
+            if ($arrFiltro['unidad'] != "" && $arrFiltro['unidad'] > 0) {
+                $search_uni = $arrFiltro["unidad"];
+                $comando->bindParam(":unidad", $search_uni, \PDO::PARAM_INT);
+            }
+            if ($arrFiltro['modalidad'] != "" && $arrFiltro['modalidad'] > 0) {
+                $search_mod = $arrFiltro["modalidad"];
+                $comando->bindParam(":modalidad", $search_mod, \PDO::PARAM_INT);
+            }
+            if ($arrFiltro['periodo'] != "" && $arrFiltro['periodo'] > 0) {
+                $search_per = $arrFiltro["periodo"];
+                $comando->bindParam(":periodo", $search_per, \PDO::PARAM_INT);
+            }
+            if ($arrFiltro['asignatura'] != "" && $arrFiltro['asignatura'] > 0) {
+                $search_asi = $arrFiltro["asignatura"];
+                $comando->bindParam(":asignatura", $search_asi, \PDO::PARAM_INT);
+            }            
+            if ($arrFiltro['estado_pago'] != '-1') {
+                if ($arrFiltro['estado_pago'] == '0') {
+                    $filestado = 'N';
+                } else {
+                    $filestado = 'C';
+              } 
+                $comando->bindParam(":estado_pago", $filestado, \PDO::PARAM_STR);
+            }
+            /***************************************************************** */
+
+            if ($arrFiltro['jornada'] != "" && $arrFiltro['jornada'] > 0) {
+                $search_jor = $arrFiltro["jornada"];
+                $comando->bindParam(":jornada", $search_jor, \PDO::PARAM_INT);
+            }
+        }
+        $resultData = $comando->queryAll();
+
+        $resultData2 = array();
+
+        foreach ($resultData as $key => $value) {
+            $band = 1;
+
+            if(empty($resultData2))
+              $resultData2[] = $value;
+
+            foreach ($resultData2 as $key2 => $value2) {
+
+                if ($resultData2[$key2]['est_id'] == $value['est_id']) {
+                    if($resultData2[$key2]['asignatura'] == $value['asignatura']){
+                        $band = 0;
+                    }
+                }
+            }
+
+            if($band == 1)
+                $resultData2[] = $value;
+        }//foreach
+        //\app\models\Utilities::putMessageLogFile(print_r($resultData2,true));
+
+
+        $dataProvider = new ArrayDataProvider([
+            'key' => 'id',
+            'allModels' => $resultData2,
+            'pagination' => [
+                'pageSize' => Yii::$app->params["pageSize"],
+            ],
+            'sort' => [
+                'attributes' => [],
+            ],
+        ]);
+        if ($reporte == 1) {
+            return $dataProvider;
+        } else {
+            return $resultData2;
+        }
+    }
 }

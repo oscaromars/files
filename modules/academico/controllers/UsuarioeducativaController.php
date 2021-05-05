@@ -140,6 +140,7 @@ class UsuarioeducativaController extends \app\components\CController {
         $mod_unidad = new UnidadAcademica();
         $mod_educativa = new CursoEducativa();
         $mod_periodo = new PeriodoAcademicoMetIngreso();
+        $model_cursoest = new CursoEducativaEstudiante();
         $data = Yii::$app->request->get();
 
         if ($data['PBgetFilter']) {
@@ -151,12 +152,12 @@ class UsuarioeducativaController extends \app\components\CController {
             $arrSearch["asignatura"] = $data['asignatura'];
             $arrSearch["estado_pago"] = $data['estado'];
             //$arrSearch["jornada"] = $data['jornada'];
-            $model = $distributivo_model->consultarDistributivoxEstudiante($arrSearch, 1);
+            $model = $model_cursoest->consultarDistributivoxEducativa($arrSearch, 1);
             return $this->render('_listarestudiantesregistrogrid', [
                         "model" => $model,
             ]);
         } else {
-            $model = $distributivo_model->consultarDistributivoxEstudiante(null, 1);
+            $model = $model_cursoest->consultarDistributivoxEducativa(null, 1);
         }
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
@@ -204,7 +205,6 @@ class UsuarioeducativaController extends \app\components\CController {
         header('Cache-Control: max-age=0');
         $colPosition = array("C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N");
         $arrHeader = array(
-            Yii::t("formulario", " "),
             Yii::t("formulario", "Academic unit"),
             Yii::t("formulario", "Mode"),
             Yii::t("formulario", "DNI"),
@@ -212,10 +212,10 @@ class UsuarioeducativaController extends \app\components\CController {
             Yii::t("formulario", "Period"),
             Yii::t("formulario", "Subject"),
             Yii::t("formulario", "Payment Status"),
-            Yii::t("formulario", "Date"),
+            // Yii::t("formulario", "Date"),
         );
         //\app\models\Utilities::putMessageLogFile('perid:' . $per_id);
-        $distributivo_model = new Distributivo();
+        $distributivo_model = new CursoEducativaEstudiante();
         $data = Yii::$app->request->get();
         $arrSearch["search"] = $data['search'];
         $arrSearch["profesor"] = $data['profesor'];
@@ -227,9 +227,9 @@ class UsuarioeducativaController extends \app\components\CController {
         //$arrSearch["jornada"] = $data['jornada'];
         $arrData = array();
         if (empty($arrSearch)) {
-            $arrData = $distributivo_model->consultarDistributivoxEstudiante(array(), 0);
+            $arrData = $distributivo_model->consultarDistributivoxEducativa(array(), 0);
         } else {
-            $arrData = $distributivo_model->consultarDistributivoxEstudiante($arrSearch, 0);
+            $arrData = $distributivo_model->consultarDistributivoxEducativa($arrSearch, 0);
         }
         $nameReport = academico::t("Academico", "Listado de estudiantes registro");
         Utilities::generarReporteXLS($nombarch, $nameReport, $arrHeader, $arrData, $colPosition);
@@ -241,7 +241,6 @@ class UsuarioeducativaController extends \app\components\CController {
         $report = new ExportFile();
         $this->view->title = academico::t("Academico", "Listado de estudiantes registro"); // Titulo del reporte
         $arrHeader = array(
-            Yii::t("formulario", " "),
             Yii::t("formulario", "Academic unit"),
             Yii::t("formulario", "Mode"),
             Yii::t("formulario", "DNI"),
@@ -249,9 +248,9 @@ class UsuarioeducativaController extends \app\components\CController {
             Yii::t("formulario", "Period"),
             Yii::t("formulario", "Subject"),
             Yii::t("formulario", "Payment Status"),
-            Yii::t("formulario", "Date"),
+            // Yii::t("formulario", "Date"),
         );
-        $distributivo_model = new Distributivo();
+        $distributivo_model = new CursoEducativaEstudiante();
         $data = Yii::$app->request->get();
         $arrSearch["search"] = $data['search'];
         $arrSearch["profesor"] = $data['profesor'];
@@ -263,9 +262,9 @@ class UsuarioeducativaController extends \app\components\CController {
         //$arrSearch["jornada"] = $data['jornada'];
         $arrData = array();
         if (empty($arrSearch)) {
-            $arrData = $distributivo_model->consultarDistributivoxEstudiante(array(), 0);
+            $arrData = $distributivo_model->consultarDistributivoxEducativa(array(), 0);
         } else {
-            $arrData = $distributivo_model->consultarDistributivoxEstudiante($arrSearch, 0);
+            $arrData = $distributivo_model->consultarDistributivoxEducativa($arrSearch, 0);
         }
         $report->orientation = "L"; // tipo de orientacion L => Horizontal, P => Vertical                                
         $report->createReportPdf(

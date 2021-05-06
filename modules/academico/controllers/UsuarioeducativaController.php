@@ -1255,19 +1255,17 @@ class UsuarioeducativaController extends \app\components\CController {
     public function actionUsuarioindex() { 
         $mod_periodo = new PeriodoAcademicoMetIngreso();
         $mod_asignatura = new Asignatura(); 
-        $mod_educativa = new CursoEducativa();
+        $mod_educativa = new UsuarioEducativa();
         $data = Yii::$app->request->get();
 
         if ($data['PBgetFilter']) {
             $arrSearch["search"] = $data['search'];  
-            $arrSearch["periodo"] = $data['periodo'];
-            $arrSearch["asignatura"] = $data['asignatura'];                     
-            $model = $mod_educativa->consultarCursoEducativa($arrSearch, 1, 1);
+            $model = $mod_educativa->consultarUsuarioEducativa($arrSearch, 1, 1);
             return $this->render('usuarioindex-grid', [
                         "model" => $model,
             ]);
         } else {
-            $model = $mod_educativa->consultarCursoEducativa(null, 1, 1);
+            $model = $mod_educativa->consultarUsuarioEducativa(null, 1, 1);
         }
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();            
@@ -1275,8 +1273,6 @@ class UsuarioeducativaController extends \app\components\CController {
             $arr_asignatura = $mod_asignatura->consultarAsignaturasxuacaid(1);
             $arr_periodoAcademico = $mod_periodo->consultarPeriodoAcademicotodos();
             return $this->render('usuarioindex', [  
-                'arr_periodoAcademico' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $arr_periodoAcademico), "id", "name"),
-                'arr_asignatura' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $arr_asignatura), "id", "name"),
                 'model' => $model,
             ]);       
     }

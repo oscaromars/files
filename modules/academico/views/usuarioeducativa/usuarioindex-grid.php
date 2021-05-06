@@ -36,31 +36,40 @@ AQUI EL GRID CAMBIAR CONSULTA
                 },
             ],*/    
             [
-                'attribute' => 'Periodo',
-                'header' => Yii::t("formulario", "Period"),
-                'value' => 'periodo',
+                'attribute' => 'usuario',
+                'header' => Yii::t("formulario", "User"),
+                'value' => 'uedu_usuario',
             ],            
             [
-                'attribute' => 'codigo',
-                'header' => Yii::t("formulario", "Code"). ' Aula',
-                'value' => 'cedu_asi_id',
+                'attribute' => 'nombres',
+                'header' => Yii::t("formulario", "Names"),
+                'value' => 'nombres',
             ],
             [
-                'attribute' => 'Aula',
-                'header' => academico::t("Academico", "Course"),
-                'value' => 'cedu_asi_nombre',
-            ],          
-                                                  
+                'attribute' => 'cedula',
+                'header' => Yii::t("formulario", "DNI 1"),
+                'value' => 'uedu_cedula',
+            ],  
+            [
+                'attribute' => 'matricula',
+                'header' => Yii::t("formulario", "Enrollment"),
+                'value' => 'uedu_matricula',
+            ],  
+            [
+                'attribute' => 'correo',
+                'header' => Yii::t("formulario", "Email"),
+                'value' => 'uedu_correo',
+            ],                                    
             [
                 'class' => 'yii\grid\ActionColumn',
                 'header' => Yii::t("formulario", "Actions"), 
                 'template' => '{view} {delete}', 
                 'buttons' => [
                     'view' => function ($url, $model) {
-                        return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', Url::to(['usuarioeducativa/view', 'cedu_id' => base64_encode($model["cedu_id"])]), ["data-toggle" => "tooltip", "title" => "Ver Curso", "data-pjax" => 0]);
+                        return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', Url::to(['usuarioeducativa/viewusuario', 'uedu_usuario' => base64_encode($model["uedu_usuario"])]), ["data-toggle" => "tooltip", "title" => "Ver Usario", "data-pjax" => 0]);
                     },
                     'delete' => function ($url, $model) {
-                       return Html::a('<span class="glyphicon glyphicon-trash"></span>', "#", ['onclick' => "eliminarcurso(" . $model['cedu_id'] . ");", "data-toggle" => "tooltip", "title" => "Eliminar Curso", "data-pjax" => 0]);
+                       return Html::a('<span class="glyphicon glyphicon-trash"></span>', "#", ['onclick' => "eliminarusuario(" . $model['uedu_usuario'] . ");", "data-toggle" => "tooltip", "title" => "Eliminar Usuario", "data-pjax" => 0]);
                      }
                    
                 ],

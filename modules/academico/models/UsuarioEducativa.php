@@ -288,4 +288,56 @@ class UsuarioEducativa extends \yii\db\ActiveRecord
         \app\models\Utilities::putMessageLogFile('usu_id: ' .$usu_id);*/
         return $mod_educativauser->save();
     }
+
+    /**
+     * Function Obtiene información de usuarios en educatica.
+     * @author Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>;
+     * @param
+     * @return
+     */
+    public function consultarUsuarioEducativa($arrFiltro = array(), $reporte, $ids) {
+        $con = \Yii::$app->db_academico;        
+        $estado = 1;
+        if ($ids == 1) {
+            $campos = "
+            uedu_id, ";
+        }    
+        if (isset($arrFiltro) && count($arrFiltro) > 0) {
+            $str_search .= "(usue.uedu_usuario like :search) AND ";   
+                           
+        }
+        $sql = "SELECT  $campos 
+                        usue.uedu_usuario as uedu_usuario,
+                        CONCAT(usue.uedu_nombres, ' ', usue.uedu_apellidos) as nombres,
+                        usue.uedu_cedula as uedu_cedula,
+                        usue.uedu_matricula as uedu_matricula,
+                        usue.uedu_correo as uedu_correo
+                FROM " . $con->dbname . ".usuario_educativa usue 
+                WHERE $str_search  usue.uedu_estado = :estado
+                AND usue.uedu_estado_logico = :estado ";
+
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        if (isset($arrFiltro) && count($arrFiltro) > 0) {
+            $search_cond = "%" . $arrFiltro["search"] . "%";
+            $comando->bindParam(":search", $search_cond, \PDO::PARAM_STR);            
+                      
+        }
+        $resultData = $comando->queryAll();
+        $dataProvider = new ArrayDataProvider([
+            'key' => 'id',
+            'allModels' => $resultData,
+            'pagination' => [
+                'pageSize' => Yii::$app->params["pageSize"],
+            ],
+            'sort' => [
+                'attributes' => [],
+            ],
+        ]);
+        if ($reporte == 1) {
+            return $dataProvider;
+        } else {
+            return $resultData;
+        }
+    }
 }

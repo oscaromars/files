@@ -508,8 +508,7 @@ class UsuarioeducativaController extends \app\components\CController {
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();            
         }   
-            //$cedu_id = 1;
-            // consultar la infomracion del curso por cedu_id
+            // consultar la informacion del curso por cedu_id
             $arr_curso = $mod_educativa->consultarCursoxid($cedu_id);        
             $arr_asignatura = $mod_asignatura->consultarAsignaturasxuacaid(1);
             $arr_periodoAcademico = $mod_periodo->consultarPeriodoAcademicotodos();
@@ -1375,5 +1374,18 @@ class UsuarioeducativaController extends \app\components\CController {
                 return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
             }
         }
+    }
+    public function actionViewusuario() { 
+        $uedu_id = base64_decode($_GET["uedu_id"]);        
+        $mod_educativa = new UsuarioEducativa();
+        $data = Yii::$app->request->get();
+        if (Yii::$app->request->isAjax) {
+            $data = Yii::$app->request->post();            
+        }   
+            // consultar la informacion del usuario por id
+            //$arr_usuario = $mod_educativa->consultarUsuarioxid($uedu_id);        
+            return $this->render('viewusuario', [  
+                //'arr_usuario' => $arr_usuario,
+            ]);       
     }
 }  

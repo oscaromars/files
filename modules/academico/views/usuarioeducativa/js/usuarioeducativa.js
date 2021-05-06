@@ -602,3 +602,37 @@ function exportPdfusuarioedu() {
     var search = $('#txt_buscarDataUsuario').val();
     window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/exppdfusuarioedu?pdf=1&search=" + search;
 }
+
+function eliminarusuario(id) {   
+    var mensj = "¿Seguro desea eliminar el usuario?";
+    var messagePB = new Object();
+    messagePB.wtmessage = mensj;
+    messagePB.title = "Eliminar";
+    var objAccept = new Object();
+    objAccept.id = "btnid2del";
+    objAccept.class = "btn-primary";
+    objAccept.value = "Aceptar";
+    objAccept.callback = 'accionus';
+    var params = new Array(id, 0);
+    objAccept.paramCallback = params;
+    messagePB.acciones = new Array();
+    messagePB.acciones[0] = objAccept;
+    showAlert("warning", "warning", messagePB);
+}
+
+function accionus(id, tmp) {
+    //alert ('id accion' + id);
+    var link = $('#txth_base').val() + "/academico/usuarioeducativa/deleteusuario";
+    var arrParams = new Object();
+    arrParams.uedu_id = id;    
+    if (!validateForm()) {
+        requestHttpAjax(link, arrParams, function (response) {
+            showAlert(response.status, response.label, response.message);
+            if (!response.error) {
+                setTimeout(function () {
+                    window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/usuarioindex";
+                }, 3000);
+            }
+        }, true);
+    }
+}

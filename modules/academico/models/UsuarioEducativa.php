@@ -346,4 +346,42 @@ class UsuarioEducativa extends \yii\db\ActiveRecord
             return $resultData;
         }
     }
+
+    /**
+     * Function eliminar el usuario estados en 0.
+     * @author Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>;
+     * @param
+     * @return
+     */
+    public function eliminarUsuario($uedu_id, $uedu_usuario_modifica, $uedu_fecha_modificacion) {
+        $estado = 0;
+        $con = \Yii::$app->db_academico;
+        
+        if ($trans !== null) {
+            $trans = null; // si existe la transacción entonces no se crea una
+        } else {
+            $trans = $con->beginTransaction(); // si no existe la transacción entonces se crea una
+        }
+        try {
+            $comando = $con->createCommand
+                    ("UPDATE " . $con->dbname . ".usuario_educativa		       
+                      SET uedu_estado = :uedu_estado,
+                          uedu_usuario_modifica = :uedu_usuario_modifica,
+                          uedu_fecha_modificacion = :uedu_fecha_modificacion                          
+                      WHERE 
+                      uedu_id = :uedu_id ");
+            $comando->bindParam(":uedu_id", $uedu_id, \PDO::PARAM_INT);          
+            $comando->bindParam(":uedu_usuario_modifica", $uedu_usuario_modifica, \PDO::PARAM_INT);
+            $comando->bindParam(":uedu_fecha_modificacion", $uedu_fecha_modificacion, \PDO::PARAM_STR);
+            $comando->bindParam(":uedu_estado", $estado, \PDO::PARAM_STR);
+            $response = $comando->execute();
+            if ($trans !== null)
+                $trans->commit();
+            return $response;
+        } catch (Exception $ex) {
+            if ($trans !== null)
+                $trans->rollback();
+            return FALSE;
+        }
+    }
 }

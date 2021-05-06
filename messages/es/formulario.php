@@ -661,6 +661,7 @@ return [
     "Upload documents" => "Subir Documentos",
     "Url" => "Url",
     "User login" => "Usuario Ingreso",
+    "Users" => "Usuarios",
     "UTEG" => "UTEG",
     "UTEG - Online Purchase Result" => "UTEG - Resultado Compra en Línea",
     "Value" => "Valor",

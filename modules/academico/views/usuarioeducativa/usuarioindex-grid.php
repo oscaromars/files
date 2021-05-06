@@ -12,14 +12,13 @@ admision::registerTranslations();
 academico::registerTranslations();
 ?>
 <?= Html::hiddenInput('txth_ids', '', ['id' => 'txth_ids']); ?>
-AQUI EL GRID CAMBIAR CONSULTA
  <div>        
     <?=
     PbGridView::widget([
-        'id' => 'Pbcurso',
+        'id' => 'Pbusuarioedu',
         'showExport' => true,
-        'fnExportEXCEL' => "exportExcelcurso",
-        'fnExportPDF' => "exportPdfcurso",
+        'fnExportEXCEL' => "exportExcelusuarioedu",
+        'fnExportPDF' => "exportPdfusuarioedu",
         'tableOptions' => [
             'class' => 'table table-condensed',
         ],
@@ -37,7 +36,7 @@ AQUI EL GRID CAMBIAR CONSULTA
             ],*/    
             [
                 'attribute' => 'usuario',
-                'header' => Yii::t("formulario", "User"),
+                'header' => Yii::t("formulario", "Users"),
                 'value' => 'uedu_usuario',
             ],            
             [

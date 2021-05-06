@@ -303,7 +303,13 @@ class UsuarioEducativa extends \yii\db\ActiveRecord
             uedu_id, ";
         }    
         if (isset($arrFiltro) && count($arrFiltro) > 0) {
-            $str_search .= "(usue.uedu_usuario like :search) AND ";   
+            
+            $str_search  = "(usue.uedu_usuario like :search OR ";
+            $str_search .= "usue.uedu_cedula like :search OR ";
+            $str_search .= "usue.uedu_matricula like :search OR ";
+            $str_search .= "usue.uedu_correo like :search OR ";
+            $str_search .= "usue.uedu_nombres like :search OR ";            
+            $str_search .= "usue.uedu_apellidos like :search) AND ";
                            
         }
         $sql = "SELECT  $campos 

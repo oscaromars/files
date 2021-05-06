@@ -1276,4 +1276,62 @@ class UsuarioeducativaController extends \app\components\CController {
                 'model' => $model,
             ]);       
     }
+
+    public function actionExpexcelusuarioedu() {       
+        ini_set('memory_limit', '256M');
+        $content_type = Utilities::mimeContentType("xls");
+        $nombarch = "Report-" . date("YmdHis") . ".xls";
+        header("Content-Type: $content_type");
+        header("Content-Disposition: attachment;filename=" . $nombarch);
+        header('Cache-Control: max-age=0');
+        $colPosition = array("C", "D", "E", "F", "G");
+        $arrHeader = array(
+            Yii::t("formulario", "Users"),
+            Yii::t("formulario", "Names"),
+            Yii::t("formulario", "DNI 1"),
+            Yii::t("formulario", "Enrollment"), 
+            Yii::t("formulario", "Email"),         
+        );
+        $mod_educativa = new UsuarioEducativa();
+        $data = Yii::$app->request->get();
+        $arrSearch["search"] = $data['search'];        
+        $arrData = array();
+        if (empty($arrSearch)) {
+            $arrData = $mod_educativa->consultarUsuarioEducativa(array(), 0, 0);
+        } else {
+            $arrData = $mod_educativa->consultarUsuarioEducativa($arrSearch, 0, 0);
+        }
+        $nameReport = academico::t("Academico", "Listado de usuarios educativa");
+        Utilities::generarReporteXLS($nombarch, $nameReport, $arrHeader, $arrData, $colPosition);
+        exit;
+    }
+
+    public function actionExppdfusuarioedu() {
+        $report = new ExportFile();
+        $this->view->title = academico::t("Academico", "Listado de usuarios educativa"); // Titulo del reporte
+        $arrHeader = array(
+            Yii::t("formulario", "Users"),
+            Yii::t("formulario", "Names"),
+            Yii::t("formulario", "DNI 1"),
+            Yii::t("formulario", "Enrollment"), 
+            Yii::t("formulario", "Email"),
+        );
+        $mod_educativa = new UsuarioEducativa();
+        $data = Yii::$app->request->get();
+        $arrSearch["search"] = $data['search'];        
+        $arrData = array();
+        if (empty($arrSearch)) {
+            $arrData = $mod_educativa->consultarUsuarioEducativa(array(), 0, 0);
+        } else {
+            $arrData = $mod_educativa->consultarUsuarioEducativa($arrSearch, 0, 0);
+        }
+        $report->orientation = "L"; // tipo de orientacion L => Horizontal, P => Vertical                                
+        $report->createReportPdf(
+                $this->render('exportpdf', [
+                    'arr_head' => $arrHeader,
+                    'arr_body' => $arrData,
+                ])
+        );
+        $report->mpdf->Output('Reporte_' . date("Ymdhis") . ".pdf", ExportFile::OUTPUT_TO_DOWNLOAD);
+    }
 }  

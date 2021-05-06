@@ -592,3 +592,13 @@ function editcursoed() {
     var cedu_id = $('#txth_cursoid').val();
     window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/edit?cedu_id=" + cedu_id;
 }
+
+function exportExcelusuarioedu() {
+    var search = $('#txt_buscarDataUsuario').val();
+    window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/expexcelusuarioedu?search=" + search;
+}
+
+function exportPdfusuarioedu() {
+    var search = $('#txt_buscarDataUsuario').val();
+    window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/exppdfusuarioedu?pdf=1&search=" + search;
+}

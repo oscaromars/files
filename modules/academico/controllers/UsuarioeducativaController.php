@@ -1388,4 +1388,18 @@ class UsuarioeducativaController extends \app\components\CController {
                 'arr_usuario' => $arr_usuario,
             ]);       
     }
+
+    public function actionEditusuario() { 
+        $uedu_id = base64_decode($_GET["uedu_id"]);        
+        $mod_educativa = new UsuarioEducativa();
+        $data = Yii::$app->request->get();
+        if (Yii::$app->request->isAjax) {
+            $data = Yii::$app->request->post();            
+        }   
+            // consultar la informacion del usuario por id
+            $arr_usuario = $mod_educativa->consultarUsuarioxid($uedu_id);        
+            return $this->render('editusuario', [  
+                'arr_usuario' => $arr_usuario,
+            ]);       
+    }
 }  

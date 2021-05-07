@@ -636,3 +636,8 @@ function accionus(id, tmp) {
         }, true);
     }
 }
+
+function editusuarioed() {
+    var uedu_id = $('#txth_uedu_id').val();
+    window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/editarusuario?uedu_id=" + uedu_id;
+}

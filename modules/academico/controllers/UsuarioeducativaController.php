@@ -1467,4 +1467,62 @@ class UsuarioeducativaController extends \app\components\CController {
             return $this->render('newusuario', [  
                 ]);       
     }
+
+    public function actionSaveusuario() {
+        $per_id = @Yii::$app->session->get("PB_perid");
+        $usuariomod = @Yii::$app->user->identity->usu_id;
+        if (Yii::$app->request->isAjax) {
+            $data = Yii::$app->request->post();
+            $usuario = $data["usuario"];
+            $nombre = ucwords(strtolower($data["nombre"]));
+            $apellido = ucwords(strtolower($data["apellido"]));
+            $cedula = $data["cedula"];
+            $matricula = $data["matricula"];
+            $correo = strtolower($data["correo"]);
+            $con = \Yii::$app->db_academico;
+            $transaction = $con->beginTransaction();
+            try {
+                $mod_educativa = new UsuarioEducativa();
+                //$existe = $mod_educativa->consultarusuarioeducativaexi($periodo, $codigoaula, $nombreaula);
+                //\app\models\Utilities::putMessageLogFile('existe rcurso...: ' . $existe['existe_curso']);     
+                //if ($existe['existe_usuario'] == 0) {
+                    $saveusuario = $mod_educativa->insertarUsuarioeducativa($usuario, $nombre, $apellido, $cedula, $matricula, $correo, $usuariomod);
+                    if ($saveusuario) {
+                        $exito = 1;
+                    }
+                    if ($exito) {
+                        $transaction->commit();
+                        $message = array(
+                            "wtmessage" => Yii::t("notificaciones", "Se ha guardado el usuario."),
+                            "title" => Yii::t('jslang', 'Success'),
+                        );
+                        return Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), false, $message);
+                    } else {
+                        $transaction->rollback();
+                        $message = array(
+                            "wtmessage" => Yii::t("notificaciones", "Error al grabar1." . $mensaje),
+                            "title" => Yii::t('jslang', 'Error'),
+                        );
+                        return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+                    }
+              /* }else {
+                $transaction->rollback();
+                $message = array(
+                    "wtmessage" => Yii::t("notificaciones", "Ya creó anteriormente el usuario." . $mensaje),
+                    "title" => Yii::t('jslang', 'Error'),
+                );
+                return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+            }*/
+                
+            } catch (Exception $ex) {
+                $transaction->rollback();
+                $message = array(
+                    "wtmessage" => Yii::t("notificaciones", "Error al grabar2."),
+                    "title" => Yii::t('jslang', 'Error'),
+                );
+                return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+            }
+            return;
+        }
+    }
 }  

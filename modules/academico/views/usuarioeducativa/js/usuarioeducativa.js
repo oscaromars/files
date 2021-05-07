@@ -23,6 +23,10 @@ $(document).ready(function() {
         savecurso();
     });
 
+    $('#btn_newusuario').click(function () {
+        saveusuario();
+    });
+
     $('#btn_editcurso').click(function () {
         editcurso();
     });
@@ -667,4 +671,26 @@ function accionus(id, tmp) {
 function editusuarioed() {
     var uedu_id = $('#txth_uedu_id').val();
     window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/editusuario?uedu_id=" + uedu_id;
+}
+
+function saveusuario() {
+    var link = $('#txth_base').val() + "/academico/usuarioeducativa/saveusuario";
+    var arrParams = new Object();
+    arrParams.usuario = $('#txt_usuarionew').val();
+    arrParams.nombre = $('#txt_nombrenew').val();
+    arrParams.apellido = $('#txt_apellidonew').val();
+    arrParams.cedula = $('#txt_cedulanew').val();
+    arrParams.matricula = $('#txt_matriculanew').val();
+    arrParams.correo = $('#txt_correonew').val();
+
+        if (!validateForm()) {
+            requestHttpAjax(link, arrParams, function(response) {
+                showAlert(response.status, response.label, response.message);
+                if (response.status == "OK") {
+                    setTimeout(function() {
+                        window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/usuarioindex";
+                    }, 3000);
+                }
+            }, true);
+        }   
 }

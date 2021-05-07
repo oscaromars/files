@@ -467,4 +467,115 @@ class UsuarioEducativa extends \yii\db\ActiveRecord
             return FALSE;
         }
     }
+
+    /**
+     * Function guardar Usuario 
+     * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
+     * @param   
+     * @return  $resultData (Retornar el código de Usuario).
+     */
+    public function insertarUsuarioeducativa($uedu_usuario, $uedu_nombres, $uedu_apellidos, $uedu_cedula, $uedu_matricula, $uedu_correo, $uedu_usuario_ingreso) {
+        \app\models\Utilities::putMessageLogFile('entro inserUsuario...: ' ); 
+        $con = \Yii::$app->db_academico;
+        $trans = $con->getTransaction(); // se obtiene la transacción actual
+        if ($trans !== null) {
+            $trans = null; // si existe la transacción entonces no se crea una
+        } else {
+            $trans = $con->beginTransaction(); // si no existe la transacción entonces se crea una
+        }
+        $fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
+        
+        $param_sql = "uedu_estado_logico";
+        $bsol_sql = "1";
+
+        $param_sql .= ", uedu_estado";
+        $bsol_sql .= ", 1";
+
+        if (isset($uedu_usuario)) {
+            $param_sql .= ", uedu_usuario";
+            $bsol_sql .= ", :uedu_usuario";
+        }
+        
+        if (isset($uedu_nombres)) {
+            $param_sql .= ", uedu_nombres";
+            $bsol_sql .= ", :uedu_nombres";
+        }
+
+        if (isset($uedu_apellidos)) {
+            $param_sql .= ", uedu_apellidos";
+            $bsol_sql .= ", :uedu_apellidos";
+        }
+
+        if (isset($uedu_cedula)) {
+            $param_sql .= ", uedu_cedula";
+            $bsol_sql .= ", :uedu_cedula";
+        }
+
+        if (isset($uedu_matricula)) {
+            $param_sql .= ", uedu_matricula";
+            $bsol_sql .= ", :uedu_matricula";
+        }
+
+        if (isset($uedu_correo)) {
+            $param_sql .= ", uedu_correo";
+            $bsol_sql .= ", :uedu_correo";
+        }
+
+        if (isset($uedu_usuario_ingreso)) {
+            $param_sql .= ", uedu_usuario_ingreso";
+            $bsol_sql .= ", :uedu_usuario_ingreso";
+        }
+
+        if (isset($fecha_transaccion)) {
+            $param_sql .= ",uedu_fecha_creacion";
+            $bsol_sql .= ", :uedu_fecha_creacion";
+        }   
+
+        try {
+            $sql = "INSERT INTO " . $con->dbname . ".usuario_educativa ($param_sql) VALUES($bsol_sql)";
+            $comando = $con->createCommand($sql);
+
+            \app\models\Utilities::putMessageLogFile('sql insert usuario educativa...: ' .$sql); 
+            if (isset($uedu_usuario)) {
+                $comando->bindParam(':uedu_usuario', $uedu_usuario, \PDO::PARAM_STR);
+            }
+            
+            if (isset($uedu_nombres)) {
+                $comando->bindParam(':uedu_nombres', $uedu_nombres, \PDO::PARAM_STR);
+            }
+
+            if (isset($uedu_apellidos)) {
+                $comando->bindParam(':uedu_apellidos', $uedu_apellidos, \PDO::PARAM_STR);
+            }
+
+            if (isset($uedu_cedula)) {
+                $comando->bindParam(':uedu_cedula', $uedu_cedula, \PDO::PARAM_STR);
+            }
+
+            if (isset($uedu_matricula)) {
+                $comando->bindParam(':uedu_matricula', $uedu_matricula, \PDO::PARAM_STR);
+            }
+
+            if (isset($uedu_correo)) {
+                $comando->bindParam(':uedu_correo', $uedu_correo, \PDO::PARAM_STR);
+            }
+
+            if (isset($uedu_usuario_ingreso)) {
+                $comando->bindParam(':uedu_usuario_ingreso', $uedu_usuario_ingreso, \PDO::PARAM_INT);
+            }
+
+            if (isset($fecha_transaccion)) {
+                $comando->bindParam(':uedu_fecha_creacion', $fecha_transaccion, \PDO::PARAM_STR);
+            }
+            
+            $result = $comando->execute();
+            if ($trans !== null)
+                $trans->commit();
+            return $con->getLastInsertID($con->dbname . '.usuario_educativa');
+        } catch (Exception $ex) {
+            if ($trans !== null)
+                $trans->rollback();
+            return FALSE;
+        }
+    }
 }

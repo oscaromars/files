@@ -1457,4 +1457,14 @@ class UsuarioeducativaController extends \app\components\CController {
             return;
         }
     }
+
+    public function actionNewusuario() { 
+        
+        $data = Yii::$app->request->get();
+        if (Yii::$app->request->isAjax) {
+            $data = Yii::$app->request->post();            
+        }   
+            return $this->render('newusuario', [  
+                ]);       
+    }
 }  

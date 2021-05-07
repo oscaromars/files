@@ -44,7 +44,7 @@ academico::registerTranslations();
     </div>
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
-            <label for="lbl_matriculaview" class="col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label" id="lbl_matriculaview"><?= Yii::t("formulario", "Enrollment") ?></label>
+            <label for="txt_matriculaview" class="col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label" id="txt_matriculaview"><?= Yii::t("formulario", "Enrollment") ?></label>
             <div class="col-sm-3 col-md-3 col-xs-3 col-lg-3">
             <input type="text" class="form-control  keyupmce" value="<?php echo $arr_usuario['uedu_matricula']; ?>" id="txt_matriculaview" data-type="all" data-keydown="true" placeholder="<?= Yii::t("formulario", "Enrollment") ?>"> 
             </div>           
@@ -54,11 +54,11 @@ academico::registerTranslations();
             </div>  
         </div>
     </div>
-        <!-- <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">  
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">  
         <div class="col-sm-8"></div>
         <div class="col-sm-2">                
             <a id="btn_editusuario" href="javascript:" class="btn btn-primary btn-block"> <?= Yii::t("formulario", "Editar") ?></a>
-        </div>-->
+        </div>
     
 </div>
 </br>

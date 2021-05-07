@@ -1402,4 +1402,52 @@ class UsuarioeducativaController extends \app\components\CController {
                 'arr_usuario' => $arr_usuario,
             ]);       
     }
+
+    public function actionEditarusuario() {
+        $per_id = @Yii::$app->session->get("PB_perid");
+        $usuariomod = @Yii::$app->user->identity->usu_id;
+        if (Yii::$app->request->isAjax) {
+            $data = Yii::$app->request->post();
+            $uedu_id = $data["uedu_id"];
+            $usuario = $data["usuario"];
+            $nombre = ucwords(strtolower($data["nombre"]));
+            $apellido = ucwords(strtolower($data["apellido"]));
+            $cedula = $data["cedula"];
+            $matricula = $data["matricula"];
+            $correo = strtolower($data["correo"]);
+            $con = \Yii::$app->db_academico;
+            $transaction = $con->beginTransaction();
+            try {
+                $mod_educativa = new UsuarioEducativa();
+                $editcurso = $mod_educativa->modificarUsuarioeducativa($uedu_id, $usuario, $nombre, $apellido, $cedula, $matricula, $correo, $usuariomod);
+                    if ($editcurso) {
+                        $exito = 1;
+                    }
+                    if ($exito) {
+                        $transaction->commit();
+                        $message = array(
+                            "wtmessage" => Yii::t("notificaciones", "Se ha modificado el usuario."),
+                            "title" => Yii::t('jslang', 'Success'),
+                        );
+                        return Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), false, $message);
+                    } else {
+                        $transaction->rollback();
+                        $message = array(
+                            "wtmessage" => Yii::t("notificaciones", "Error al modificar." . $mensaje),
+                            "title" => Yii::t('jslang', 'Error'),
+                        );
+                        return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+                    }             
+                
+            } catch (Exception $ex) {
+                $transaction->rollback();
+                $message = array(
+                    "wtmessage" => Yii::t("notificaciones", "Error al modificar."),
+                    "title" => Yii::t('jslang', 'Error'),
+                );
+                return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+            }
+            return;
+        }
+    }
 }  

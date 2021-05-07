@@ -415,4 +415,52 @@ class UsuarioEducativa extends \yii\db\ActiveRecord
         $resultData = $comando->queryOne();
         return $resultData;
     }
+
+    /**
+     * Function modificar usuario educativa.
+     * @author Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>;
+     * @param
+     * @return
+     */
+    public function modificarUsuarioeducativa($uedu_id, $uedu_usuario, $uedu_nombres, $uedu_apellidos, $uedu_cedula, $uedu_matricula, $uedu_correo, $uedu_usuario_modifica) {
+        $fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
+        $con = \Yii::$app->db_academico;
+        $estado = 1; 
+        if ($trans !== null) {
+            $trans = null; // si existe la transacción entonces no se crea una
+        } else {
+            $trans = $con->beginTransaction(); // si no existe la transacción entonces se crea una
+        }
+        try {
+            $comando = $con->createCommand
+                    ("UPDATE " . $con->dbname . ".usuario_educativa		       
+                      SET uedu_usuario = :uedu_usuario,
+                          uedu_nombres = :uedu_nombres,
+                          uedu_apellidos = :uedu_apellidos,
+                          uedu_cedula = :uedu_cedula,
+                          uedu_matricula = :uedu_matricula,
+                          uedu_correo = :uedu_correo,
+                          uedu_usuario_modifica = :uedu_usuario_modifica,
+                          uedu_fecha_modificacion = :uedu_fecha_modificacion                          
+                      WHERE 
+                      uedu_id = :uedu_id AND
+                      cedu_estado = :estado AND
+                      cedu_estado_logico = :estado");
+            $comando->bindParam(":uedu_id", $uedu_id, \PDO::PARAM_INT);  
+            $comando->bindParam(":uedu_usuario", $uedu_usuario, \PDO::PARAM_STR);  
+            $comando->bindParam(":uedu_nombres", $uedu_nombres, \PDO::PARAM_STR); 
+            $comando->bindParam(":uedu_apellidos", $uedu_apellidos, \PDO::PARAM_STR);                    
+            $comando->bindParam(":uedu_usuario_modifica", $uedu_usuario_modifica, \PDO::PARAM_INT);
+            $comando->bindParam(":uedu_fecha_modificacion", $fecha_transaccion, \PDO::PARAM_STR);
+            $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+            $response = $comando->execute();
+            if ($trans !== null)
+                $trans->commit();
+            return $response;
+        } catch (Exception $ex) {
+            if ($trans !== null)
+                $trans->rollback();
+            return FALSE;
+        }
+    }
 }

@@ -27,6 +27,10 @@ $(document).ready(function() {
         editcurso();
     });
 
+    $('#btn_editusuario').click(function () {
+        editarusuario();
+    });
+
     $('#btn_buscarUnidad').click(function () {
         actualizarGridUnidad();
     });
@@ -323,6 +327,29 @@ function savecurso() {
     } else {
         showAlert('NO_OK', 'error', {"wtmessage": 'Código Aula: El campo no debe estar vacío.', "title": 'Error'});
      }  
+}
+
+function editarusuario() {
+    var link = $('#txth_base').val() + "/academico/usuarioeducativa/editarusuario";
+    var arrParams = new Object();
+    arrParams.uedu_id = $('#txth_uedu_id').val();
+    arrParams.usuario = $('#txt_usuarioview').val();
+    arrParams.nombre = $('#txt_nombreview').val();
+    arrParams.apellido = $('#txt_apellidoview').val();
+    arrParams.cedula = $('#txt_cedulaview').val();
+    arrParams.matricula = $('#txt_matriculaview').val();
+    arrParams.correo = $('#txt_correoview').val();  
+  
+        if (!validateForm()) {
+            requestHttpAjax(link, arrParams, function(response) {
+                showAlert(response.status, response.label, response.message);
+                if (response.status == "OK") {
+                    setTimeout(function() {
+                        window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/usuarioindex";
+                    }, 3000);
+                }
+            }, true);
+        }    
 }
 
 function editcurso() {
@@ -639,5 +666,5 @@ function accionus(id, tmp) {
 
 function editusuarioed() {
     var uedu_id = $('#txth_uedu_id').val();
-    window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/editarusuario?uedu_id=" + uedu_id;
+    window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/editusuario?uedu_id=" + uedu_id;
 }

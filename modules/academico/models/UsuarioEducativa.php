@@ -426,6 +426,7 @@ class UsuarioEducativa extends \yii\db\ActiveRecord
         $fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
         $con = \Yii::$app->db_academico;
         $estado = 1; 
+        \app\models\Utilities::putMessageLogFile('entro funcion mod usuerioss ..: ' . $uedu_id);
         if ($trans !== null) {
             $trans = null; // si existe la transacción entonces no se crea una
         } else {
@@ -444,12 +445,15 @@ class UsuarioEducativa extends \yii\db\ActiveRecord
                           uedu_fecha_modificacion = :uedu_fecha_modificacion                          
                       WHERE 
                       uedu_id = :uedu_id AND
-                      cedu_estado = :estado AND
-                      cedu_estado_logico = :estado");
+                      uedu_estado = :estado AND
+                      uedu_estado_logico = :estado");
             $comando->bindParam(":uedu_id", $uedu_id, \PDO::PARAM_INT);  
             $comando->bindParam(":uedu_usuario", $uedu_usuario, \PDO::PARAM_STR);  
             $comando->bindParam(":uedu_nombres", $uedu_nombres, \PDO::PARAM_STR); 
-            $comando->bindParam(":uedu_apellidos", $uedu_apellidos, \PDO::PARAM_STR);                    
+            $comando->bindParam(":uedu_apellidos", $uedu_apellidos, \PDO::PARAM_STR);            
+            $comando->bindParam(":uedu_cedula", $uedu_cedula, \PDO::PARAM_STR); 
+            $comando->bindParam(":uedu_matricula", $uedu_matricula, \PDO::PARAM_STR); 
+            $comando->bindParam(":uedu_correo", $uedu_correo, \PDO::PARAM_STR);                  
             $comando->bindParam(":uedu_usuario_modifica", $uedu_usuario_modifica, \PDO::PARAM_INT);
             $comando->bindParam(":uedu_fecha_modificacion", $fecha_transaccion, \PDO::PARAM_STR);
             $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);

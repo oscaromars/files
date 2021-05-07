@@ -1408,13 +1408,20 @@ class UsuarioeducativaController extends \app\components\CController {
         $usuariomod = @Yii::$app->user->identity->usu_id;
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
-            $uedu_id = $data["uedu_id"];
+            $uedu_id = base64_decode($data["uedu_id"]);
             $usuario = $data["usuario"];
             $nombre = ucwords(strtolower($data["nombre"]));
             $apellido = ucwords(strtolower($data["apellido"]));
             $cedula = $data["cedula"];
             $matricula = $data["matricula"];
             $correo = strtolower($data["correo"]);
+            \app\models\Utilities::putMessageLogFile('uedu_id ..: ' . $uedu_id);
+            \app\models\Utilities::putMessageLogFile('usuario ..: ' . $usuario);
+            \app\models\Utilities::putMessageLogFile('nombre ..: ' . $nombre);
+            \app\models\Utilities::putMessageLogFile('apellido ..: ' . $apellido);
+            \app\models\Utilities::putMessageLogFile('cedula ..: ' . $cedula);
+            \app\models\Utilities::putMessageLogFile('matricula ..: ' . $matricula);
+            \app\models\Utilities::putMessageLogFile('correo ..: ' . $correo);
             $con = \Yii::$app->db_academico;
             $transaction = $con->beginTransaction();
             try {

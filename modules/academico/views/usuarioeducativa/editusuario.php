@@ -20,11 +20,11 @@ academico::registerTranslations();
 <form class="form-horizontal" enctype="multipart/form-data" >  
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
-            <label for="txt_usuarioview" class="col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label" id="txt_usuarioview"><?= Yii::t("formulario", 'Users') ?><span class="text-danger"> *</span></label>
+            <label for="lbl_usuarioview" class="col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= Yii::t("formulario", 'Users') ?><span class="text-danger"> *</span></label>
             <div class="col-sm-3 col-md-3 col-xs-3 col-lg-3">
             <input type="text" class="form-control PBvalidation keyupmce" value="<?php echo $arr_usuario['uedu_usuario']; ?>" id="txt_usuarioview" data-type="all" data-keydown="true" placeholder="<?= Yii::t("formulario", 'Users') ?>"> 
             </div>           
-            <label for="txt_nombreview" class="col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label" id="txt_nombreview"><?=  Yii::t("formulario", 'Names') ?><span class="text-danger"> *</span></label>
+            <label for="lbl_nombreview" class="col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?=  Yii::t("formulario", 'Names') ?><span class="text-danger"> *</span></label>
             <div class="col-sm-3 col-md-3 col-xs-3 col-lg-3">
             <input type="text" class="form-control PBvalidation keyupmce" value="<?php echo $arr_usuario['uedu_nombres']; ?>" id="txt_nombreview" data-type="all" data-keydown="true" placeholder="<?= Yii::t("formulario", 'Names') ?>">                    
             </div>  
@@ -32,11 +32,11 @@ academico::registerTranslations();
     </div>   
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
-            <label for="txt_apellidoview" class="col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label" id="txt_apellidoview"><?= Yii::t("formulario", 'Last Names') ?><span class="text-danger"> *</span></label>
+            <label for="lbl_apellidoview" class="col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= Yii::t("formulario", 'Last Names') ?><span class="text-danger"> *</span></label>
             <div class="col-sm-3 col-md-3 col-xs-3 col-lg-3">
             <input type="text" class="form-control PBvalidation keyupmce" value="<?php echo $arr_usuario['uedu_apellidos']; ?>" id="txt_apellidoview" data-type="all" data-keydown="true" placeholder="<?= Yii::t("formulario", 'Last Names') ?>"> 
             </div>           
-            <label for="txt_cedulaview" class="col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label" id="txt_cedulaview"><?= Yii::t("formulario", "DNI 1") ?></label>
+            <label for="lbl_cedulaview" class="col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= Yii::t("formulario", "DNI 1") ?></label>
             <div class="col-sm-3 col-md-3 col-xs-3 col-lg-3">
             <input type="text" class="form-control keyupmce" value="<?php echo $arr_usuario['uedu_cedula']; ?>" id="txt_cedulaview" data-type="number" data-keydown="true" placeholder="<?= Yii::t("formulario", "DNI 1") ?>">                    
             </div>  
@@ -44,11 +44,11 @@ academico::registerTranslations();
     </div>
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
-            <label for="txt_matriculaview" class="col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label" id="txt_matriculaview"><?= Yii::t("formulario", "Enrollment") ?></label>
+            <label for="lbl_matriculaview" class="col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= Yii::t("formulario", "Enrollment") ?></label>
             <div class="col-sm-3 col-md-3 col-xs-3 col-lg-3">
             <input type="text" class="form-control  keyupmce" value="<?php echo $arr_usuario['uedu_matricula']; ?>" id="txt_matriculaview" data-type="all" data-keydown="true" placeholder="<?= Yii::t("formulario", "Enrollment") ?>"> 
             </div>           
-            <label for="txt_correoview" class="col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label" id="lbl_correoview"><?= Yii::t("formulario", "Email") ?></label>
+            <label for="lbl_correoview" class="col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= Yii::t("formulario", "Email") ?></label>
             <div class="col-sm-3 col-md-3 col-xs-3 col-lg-3">
             <input type="text" class="form-control keyupmce" value="<?php echo $arr_usuario['uedu_correo']; ?>" id="txt_correoview" data-type="email" data-keydown="true" placeholder="<?= Yii::t("formulario", "Email") ?>">                    
             </div>  

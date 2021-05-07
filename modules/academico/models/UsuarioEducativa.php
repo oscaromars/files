@@ -384,4 +384,35 @@ class UsuarioEducativa extends \yii\db\ActiveRecord
             return FALSE;
         }
     }
+
+    /**
+     * Function Consultar usuarios por paca_id.
+     * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>;
+     * @property       
+     * @return  
+     */
+    public function consultarUsuarioxid($uedu_id) {
+        $con = \Yii::$app->db_academico;      
+        $estado = 1;
+
+        $sql = "SELECT 	
+                        uedu_usuario,
+                        uedu_nombres,
+                        uedu_apellidos,
+                        uedu_cedula,
+                        uedu_matricula,
+                        uedu_correo
+                        
+                FROM " . $con->dbname . ".usuario_educativa              
+                WHERE 
+                uedu_id = :uedu_id AND               
+                uedu_estado = :estado AND
+                uedu_estado_logico = :estado";
+
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":uedu_id", $uedu_id, \PDO::PARAM_INT);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);        
+        $resultData = $comando->queryOne();
+        return $resultData;
+    }
 }

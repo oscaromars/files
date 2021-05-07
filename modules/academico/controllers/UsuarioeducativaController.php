@@ -1383,9 +1383,9 @@ class UsuarioeducativaController extends \app\components\CController {
             $data = Yii::$app->request->post();            
         }   
             // consultar la informacion del usuario por id
-            //$arr_usuario = $mod_educativa->consultarUsuarioxid($uedu_id);        
+            $arr_usuario = $mod_educativa->consultarUsuarioxid($uedu_id);        
             return $this->render('viewusuario', [  
-                //'arr_usuario' => $arr_usuario,
+                'arr_usuario' => $arr_usuario,
             ]);       
     }
 }  

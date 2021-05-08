@@ -862,3 +862,10 @@ function fillDataAlert() {
     };
     showResponse(type, status, label, messagew);
 }
+
+
+function generate() {
+    var periodo = $('#cmb_per_academico option:selected').val();
+    var modalidad = $('#cmb_modalidad option:selected').val();
+    window.location.href = $('#txth_base').val() + "/academico/planificacionnew/generator?periodo=" + periodo + '&modalidad=' + modalidad;
+}

@@ -102,6 +102,76 @@ class PlanificacionController extends \app\components\CController {
         //}
     }
 
+
+
+
+    public function actionGenerator($periodo,$modalidad) {
+    
+     
+    
+
+$mensaje = "periodo ".$periodo." modalidad ".$modalidad;
+mail('oscaromars@hotmail.com', 'Mi título', $mensaje);
+
+ $con = \Yii::$app->db_academico;
+ $sql = "
+                 select e.est_id, e.per_id, e.est_matricula, e.est_fecha_creacion, e.est_categoria, meu.uaca_id, meu.mod_id, meu.eaca_id, -- 
+u.uaca_id, u.uaca_nombre, ea.teac_id, ea.eaca_nombre, ea.eaca_codigo,
+per.per_cedula, 
+concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_apellido, ' ', ifnull(per.per_seg_apellido,'')) estudiante
+ from db_academico.estudiante e
+ inner join db_academico.estudiante_carrera_programa c on c.est_id = e.est_id
+  inner join db_academico.modalidad_estudio_unidad meu on meu.meun_id = c.meun_id   
+   inner join db_academico.unidad_academica u on u.uaca_id = meu.uaca_id
+   inner join db_academico.estudio_academico ea on ea.eaca_id = meu.eaca_id 
+   inner join db_asgard.persona per on per.per_id = e.per_id
+   where e.per_id not in (select e.per_id from db_academico.planificacion_estudiante b where b.pes_estado=0) -- get full estudent with 0
+                    and meu.mod_id = :modalidad
+                    and e.est_estado = 1
+                    and e.est_estado_logico = 1
+                    and c.ecpr_estado = 1
+                    and c.ecpr_estado_logico = 1
+                    and meu.meun_estado = 1
+                    and meu.meun_estado_logico = 1
+                    and u.uaca_estado = 1
+                    and u.uaca_estado_logico = 1
+                    and ea.eaca_estado = 1
+                    and ea.eaca_estado_logico = 1
+                    and per.per_estado = 1
+                    and per.per_estado_logico = 1
+
+                ";
+
+ $comando = $con->createCommand($sql);
+          $comando->bindParam(":modalidad", $modalidad, \PDO::PARAM_STR);
+               $resultData = $comando->queryAll();
+               
+               
+                    
+                            
+               $allstudents= count($resultData);
+                 if (count($resultData) > 0) {
+           // putMessageLogFile('Cantidad de registros:'.count($resultData));
+            for ($i = 0; $i < count($resultData); $i++) {                        
+                // consultar asignaturas_por_periodo programadas en abrirse.
+                   $malla = new MallaAcademica();
+                  $centralprocess = $malla->consultarAsignaturas($resultData[$i],$periodo);           
+            }
+        }else{
+           // putMessageLogFile("No hay registros por insertar.");
+        }   
+               
+        
+         //   return $resultData;
+         //  return $this->render('temporal', [
+           //         'resultData' => $centralprocess,
+             //          ]);
+
+         return $this->redirect(['index']);
+     }
+
+
+
     public function actionUpload() {
         $usu_id = Yii::$app->session->get('PB_iduser');
         if (Yii::$app->request->isAjax) {

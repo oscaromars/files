@@ -334,4 +334,186 @@ class MallaAcademica extends \yii\db\ActiveRecord
         $resultData = $comando->queryOne();
         return $resultData;
     }
+
+
+
+ 
+    function consultarAsignaturas($rows,$gest) {
+    $con = \Yii::$app->db_academico;
+    $activo="A";
+     $sql = "select  a.maca_id, a.asi_id, a.made_semestre, a.uest_id, a.nest_id, a.fmac_id, 
+a.made_codigo_asignatura, a.made_asi_requisito, a.made_credito, c.uaca_id,
+c.mod_id, c.eaca_id, d.asi_nombre, plac.paca_fecha_inicio, plac.paca_fecha_fin
+from db_academico.malla_academica_detalle a
+inner join db_academico.malla_unidad_modalidad b on b.maca_id = a.maca_id 
+inner join db_academico.modalidad_estudio_unidad c on c.meun_id = b.meun_id
+ inner join db_academico.asignatura d on d.asi_id = a.asi_id
+ inner join db_academico.periodo_academico plac on plac.paca_activo = :activo
+                       where c.eaca_id =  " . $rows["eaca_id"] . "   
+                      and   c.mod_id =  " . $rows["mod_id"] . "   
+                            and a.made_estado = 1
+                            and a.made_estado_logico = 1
+                            and b.mumo_estado = 1
+                            and b.mumo_estado_logico = 1
+                            and c.meun_estado = 1
+                            and c.meun_estado_logico = 1
+                            and d.asi_estado = 1
+                            and d.asi_estado_logico = 1
+                     ORDER BY a.made_semestre, a.made_asi_requisito ASC
+                     
+                     
+                        ";
+                        
+                        $comando = $con->createCommand($sql);
+          $comando->bindParam(":activo", $activo, \PDO::PARAM_STR);
+               $rows_in = $comando->queryAll();
+
+             $per_id =   $rows["per_id"];
+             $est_id =   $rows["est_id"];
+             $matricula =   $rows["matricula"];
+             $creacion =   $rows["est_fecha_creacion"];
+             $categoria =   $rows["est_categoria"];
+             $uaca_id =   $rows["uaca_id"];
+             $mod_id =   $rows["mod_id"];
+             $eaca_id =   $rows["eaca_id"];
+             $uaca_id =   $rows["uaca_id"];
+             $uaca_nombre =   $rows["uaca_nombre"];
+             $teac_id =   $rows["teac_id"];
+             $eaca_nombre =   $rows["eaca_nombre"];
+             $eaca_codigo =   $rows["eaca_codigo"];
+             $cedula =   $rows["per_cedula"];
+             $estudiante =   $rows["estudiante"];
+
+
+        if (count($rows_in) > 0) {   
+        
+        
+        // $fecha_inicio = $rows_in[0]["paca_fecha_inicio"];
+          //      $fecha_fin = $rows_in[0]["paca_fecha_fin"];
+                $estacion = $gest;
+        
+          for ($i = 0; $i < count($rows_in); $i++) {    
+          
+           $mod_id = $rows_in[$i]["mod_id"];
+                 $asignatura = $rows_in[$i]["asi_id"];
+                 $requisito = $rows_in[$i]["made_asi_requisito"]; 
+                 $fecha_inicio = $rows_in[$i]["paca_fecha_inicio"];
+                 $fecha_fin = $rows_in[$i]["paca_fecha_fin"];
+                 
+                 
+                  $sqlasignatura = "
+                 select  c.enac_estado
+ from db_academico.malla_academico_estudiante a
+ inner join db_academico.promedio_malla_academico b on a.maes_id = b.maes_id
+   inner join db_academico.estado_nota_academico c on c.enac_id = b.enac_id   
+   inner join db_academico.asignatura d on a.asi_id = d.asi_id
+   where a.per_id = " . $per_id . "
+   and a.asi_id = " . $asignatura . "
+   
+                       and a.maes_estado = 1
+                    and a.maes_estado_logico = 1
+                    and b.pmac_estado = 1
+                    and b.pmac_estado_logico = 1
+                    and c.enac_estado = 1
+                    and c.enac_estado_logico = 1
+                     
+
+                ";
+                
+                     $comando = $con->createCommand($sqlasignatura);
+                     $statusasi = $comando->queryOne();
+                   
+                   
+                 
+                 
+                 if ($requisito !=Null) {  
+                 $sqlrequisito = "
+                 select  c.enac_estado
+ from db_academico.malla_academico_estudiante a
+ inner join db_academico.promedio_malla_academico b on a.maes_id = b.maes_id
+   inner join db_academico.estado_nota_academico c on c.enac_id = b.enac_id   
+   inner join db_academico.asignatura d on a.asi_id = d.asi_id
+   where a.per_id = " . $per_id . "
+   and a.asi_id = " . $requisito . "
+   
+                       and a.maes_estado = 1
+                    and a.maes_estado_logico = 1
+                    and b.pmac_estado = 1
+                    and b.pmac_estado_logico = 1
+                    and c.enac_estado = 1
+                    and c.enac_estado_logico = 1
+                     
+
+                ";
+                
+                     $comando = $con->createCommand($sqlrequisito);
+                     $statuspre = $comando->queryOne();
+                   
+                     }
+                     
+                     
+                   // DATOS TEMPORALES
+                   //$statusasi=1;
+                   //$statuspre= 0;
+                
+                
+                  if ($statusasi=1 and $statuspre != 1)
+                  { 
+                if ($i == 0) 
+                    $asi1 = $rows_in[$i]["made_codigo_asignatura"];
+                elseif ($i == 1) 
+                    $asi2 = $rows_in[$i]["made_codigo_asignatura"];
+                elseif ($i == 2) 
+                    $asi3 = $rows_in[$i]["made_codigo_asignatura"];    
+                elseif ($i == 3) 
+                    $asi4 = $rows_in[$i]["made_codigo_asignatura"];   
+                elseif ($i == 4) 
+                    $asi5 = $rows_in[$i]["made_codigo_asignatura"];  
+                elseif ($i == 5) 
+                    $asi6 = $rows_in[$i]["made_codigo_asignatura"];  
+                      }  
+                      
+                     
+                      
+          }
+                      $sql = "select pla_id from db_academico.planificacion 
+                      where mod_id = " . $mod_id . " 
+                      and pla_estado = 1 and pla_estado_logico = 1;";  
+                
+                   $comando = $con->createCommand($sql);
+                     $rows_pla = $comando->queryOne();
+                     
+                     $estado=1;
+                     
+                                 if (count($rows_pla) == 0 ) {
+                
+                $sql = "INSERT INTO db_academico.planificacion (mod_id, per_id, pla_fecha_inicio, pla_fecha_fin, pla_periodo_academico, pla_estado, pla_estado_logico)
+                        VALUES (". $rows["mod_id"] .", 1, '" . $fecha_inicio . "', '" . $fecha_fin . "', '" . $estacion . "', '" . $estado . "', '" . $estado . "');";
+                 $comando = $con->createCommand($sql); 
+                     $rows_pla = $comando->execute();
+              
+                $sql = "select pla_id from db_academico.planificacion where mod_id = " . $mod_id . " and pla_estado = 1 and pla_estado_logico = 1;";
+                  $comando = $con->createCommand($sql);
+                   $rows_pla = $comando->queryOne();
+            } 
+            
+             $sql = "INSERT INTO db_academico.planificacion_estudiante
+                    (pla_id, per_id, pes_jornada, pes_carrera, pes_dni, pes_nombres, pes_mat_b1_h1_nombre, pes_mat_b1_h2_nombre, pes_mat_b1_h3_nombre, pes_mat_b1_h4_nombre, pes_mat_b1_h5_nombre,
+                     pes_mat_b1_h6_nombre, pes_estado, pes_estado_logico)
+                    values (" . $rows_pla["pla_id"] ."," . $rows["per_id"] . ", '" . $rows["uaca_id"] . "', '" . $rows["eaca_nombre"] . "', '" . $rows["per_cedula"] . "', '" . $rows["estudiante"] . "', '" . $asi1 . "', '" . $asi2 . "', '" . $asi3 . "', '" . $asi4 . "', '" . $asi5 . "', '" . $asi6 . "', '" . $estado . "', '" . $estado ."')"; 
+                     $comando = $con->createCommand($sql);
+                     $rows_pes = $comando->execute();
+                     
+                     
+                
+                  }
+         
+        
+        
+            }
+               
+                       
+
+
+
 }

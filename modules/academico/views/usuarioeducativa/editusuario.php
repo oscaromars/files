@@ -54,12 +54,11 @@ academico::registerTranslations();
             </div>  
         </div>
     </div>
-        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">  
+        <!-- <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">  
         <div class="col-sm-8"></div>
         <div class="col-sm-2">                
             <a id="btn_editusuario" href="javascript:" class="btn btn-primary btn-block"> <?= Yii::t("formulario", "Editar") ?></a>
-        </div>
-    
+        </div>-->    
 </div>
 </br>
 </form>

@@ -19,9 +19,9 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
           </div>
           </div>';
 ?>
-<div class="col-md-12">    
+<!-- <div class="col-md-12">    
     <h3><span id="lbl_titulo"><?= academico::t("Academico", "Upload users") ?></span><br/>    
-</div>
+</div>-->
 <div class="col-md-12">    
     <br/>    
 </div>

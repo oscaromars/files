@@ -189,7 +189,7 @@ function cargarUsuario() {
         requestHttpAjax(link, arrParams, function(response) {
             showAlert(response.status, response.label, response.message);
             setTimeout(function() {
-                window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/cargarusuario";
+                window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/usuarioindex";
             }, 5000);
         }, true);
     }

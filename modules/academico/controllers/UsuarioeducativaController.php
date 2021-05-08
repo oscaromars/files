@@ -1483,9 +1483,9 @@ class UsuarioeducativaController extends \app\components\CController {
             $transaction = $con->beginTransaction();
             try {
                 $mod_educativa = new UsuarioEducativa();
-                //$existe = $mod_educativa->consultarusuarioeducativaexi($periodo, $codigoaula, $nombreaula);
+                $existe = $mod_educativa->consultarexisteusuario($usuario, $correo, $cedula, $matricula);
                 //\app\models\Utilities::putMessageLogFile('existe rcurso...: ' . $existe['existe_curso']);     
-                //if ($existe['existe_usuario'] == 0) {
+                if ($existe['existe_usuario'] == 0) {
                     $saveusuario = $mod_educativa->insertarUsuarioeducativa($usuario, $nombre, $apellido, $cedula, $matricula, $correo, $usuariomod);
                     if ($saveusuario) {
                         $exito = 1;
@@ -1505,14 +1505,14 @@ class UsuarioeducativaController extends \app\components\CController {
                         );
                         return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
                     }
-              /* }else {
+               }else {
                 $transaction->rollback();
                 $message = array(
                     "wtmessage" => Yii::t("notificaciones", "Ya creó anteriormente el usuario." . $mensaje),
                     "title" => Yii::t('jslang', 'Error'),
                 );
                 return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
-            }*/
+            }
                 
             } catch (Exception $ex) {
                 $transaction->rollback();

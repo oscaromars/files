@@ -568,24 +568,24 @@ class CursoEducativa extends \yii\db\ActiveRecord
      * @property       
      * @return  
      */
-    public function consultarCursoexiste($cedu_id) {
+    public function consultarCursoexiste($cedu_asi_id) {
         $con = \Yii::$app->db_academico;     
         $estado = 1;         
        /*\app\models\Utilities::putMessageLogFile('entro 2 : ' .$paca_id);  
        \app\models\Utilities::putMessageLogFile('entro 3 : ' .$cedu_asi_id);  
        \app\models\Utilities::putMessageLogFile('entro 4 : ' .$cedu_asi_nombre);  */
         $sql = "SELECT 	
-                        count(*) as cedu_id                       
+                        cedu_id                       
                         
                 FROM " . $con->dbname . ".curso_educativa                 
                 WHERE 
-                cedu_id = :cedu_id AND
+                cedu_asi_id = :cedu_asi_id AND
                 cedu_estado = :estado AND
                 cedu_estado_logico = :estado ";
         // \app\models\Utilities::putMessageLogFile('entro: ' .$sql); 
         $comando = $con->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
-        $comando->bindParam(":cedu_id", $cedu_id, \PDO::PARAM_INT);        
+        $comando->bindParam(":cedu_asi_id", $cedu_asi_id, \PDO::PARAM_INT);        
         $resultData = $comando->queryOne();
         return $resultData;
     }

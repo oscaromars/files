@@ -425,11 +425,12 @@ class CursoEducativaUnidad extends \yii\db\ActiveRecord
                         $val[3] = strval($val[3]);
                         $cedu_id = $model_curso->consultarCursoexiste($val[1]);
                         $fila++; 
+                        \app\models\Utilities::putMessageLogFile('cedu_id *** ...: ' .$val[1]);
                         if ($cedu_id['cedu_id'] > 0) {
-                        $existe = $mod_educativa->consultarunidadeducativaexi($val[1], $val[2], $val[3]);
+                        $existe = $mod_educativa->consultarunidadeducativaexi($cedu_id['cedu_id'], $val[2], $val[3]);
                         \app\models\Utilities::putMessageLogFile('existe consulta ...: ' . $existe['existe_unidad']);
                         if ($existe['existe_unidad'] == 0) {
-                        $save_documento = $this->saveDocumentoDB($val);
+                        $save_documento = $this->saveDocumentoDB($val, $cedu_id['cedu_id']);
                         if (!$save_documento) {                   
                             $arroout["status"] = FALSE;
                             $arroout["error"] = null;
@@ -482,9 +483,9 @@ class CursoEducativaUnidad extends \yii\db\ActiveRecord
     public function consultarunidadeducativaexi($cedu_id, $ceuni_codigo_unidad, $ceuni_descripcion_unidad) {
         $con = \Yii::$app->db_academico;     
         $estado = 1;         
-       /*\app\models\Utilities::putMessageLogFile('entro 2 : ' .$cedu_id);  
+       \app\models\Utilities::putMessageLogFile('entro 2 : ' .$cedu_id);  
        \app\models\Utilities::putMessageLogFile('entro 3 : ' .$ceuni_codigo_unidad);  
-       \app\models\Utilities::putMessageLogFile('entro 4 : ' .$ceuni_descripcion_unidad);  */
+       \app\models\Utilities::putMessageLogFile('entro 4 : ' .$ceuni_descripcion_unidad);  
         $sql = "SELECT 	
                         count(*) as existe_unidad                       
                         
@@ -505,12 +506,12 @@ class CursoEducativaUnidad extends \yii\db\ActiveRecord
         return $resultData;
     }
 
-    public function saveDocumentoDB($val){
+    public function saveDocumentoDB($val, $cedu_id){
         $usu_id = Yii::$app->session->get("PB_iduser"); ;
         $fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
         $mod_educativaunidad = new CursoEducativaUnidad();
     
-        $mod_educativaunidad->cedu_id = $val[1];
+        $mod_educativaunidad->cedu_id = $cedu_id;
         $mod_educativaunidad->ceuni_codigo_unidad = $val[2];
         $mod_educativaunidad->ceuni_descripcion_unidad = $val[3];
         $mod_educativaunidad->ceuni_usuario_ingreso = $usu_id;

@@ -508,7 +508,8 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
         }
 
         if ($reporte == 1 ) {
-          $estuid = " h.est_id, ";
+          $estuid = " h.est_id, 
+                      cur.cedu_id, ";
         }          
 
         $sql .= "SELECT  distinct 
@@ -539,13 +540,6 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
                                 else 'No Autorizado'
                                 end as pago " ;                    
                     $sql .= "    
-                    /*, (select ifnull(cee.ceest_estado_bloqueo,'assa')
-                                                from " . $con->dbname . ".curso_educativa_estudiante cee
-                                                INNER JOIN " . $con->dbname . ".curso_educativa_estudiante cur
-                                                where cee.cedu_id = 5 and 
-                                                    cee.est_id = h.est_id and                               
-                                                    cee.ceest_estado = :estado and
-                                                    cee.ceest_estado_logico = :estado) as estado_bloqueo */
                     -- ifnull(DATE_FORMAT(m.eppa_fecha_registro, '%Y-%m-%d'), ' ') as fecha_pago 
                     , cur.ceest_estado_bloqueo as estado_bloqueo
                     FROM " . $con->dbname . ".distributivo_academico a inner join " . $con->dbname . ".profesor b
@@ -656,4 +650,46 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
             return $resultData2;
         }
     }
+   /**
+     * Function modificar curso_educativa_estudiante.
+     * @author Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>;
+     * @param
+     * @return
+     */
+    public function modificarEstadobloqueo($cedu_id, $est_id, $ceest_estado_bloqueo, $cees_usuario_modifica) {
+        $fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
+        $con = \Yii::$app->db_academico;
+        $estado = 1; 
+        if ($trans !== null) {
+            $trans = null; // si existe la transacción entonces no se crea una
+        } else {
+            $trans = $con->beginTransaction(); // si no existe la transacción entonces se crea una
+        }
+        try {
+            $comando = $con->createCommand
+                    ("UPDATE " . $con->dbname . ".curso_educativa_estudiante		       
+                      SET ceest_estado_bloqueo = :ceest_estado_bloqueo,  
+                          cees_usuario_modifica = :cees_usuario_modifica,
+                          cees_fecha_modificacion = :cees_fecha_modificacion                          
+                      WHERE 
+                      cedu_id = :cedu_id AND
+                      est_id = :est_id AND
+                      ceest_estado = :estado AND
+                      ceest_estado_logico = :estado");
+            $comando->bindParam(":cedu_id", $cedu_id, \PDO::PARAM_INT);  
+            $comando->bindParam(":est_id", $est_id, \PDO::PARAM_INT);              
+            $comando->bindParam(":ceest_estado_bloqueo", $ceest_estado_bloqueo, \PDO::PARAM_STR); 
+            $comando->bindParam(":cees_usuario_modifica", $cees_usuario_modifica, \PDO::PARAM_INT);
+            $comando->bindParam(":cees_fecha_modificacion", $fecha_transaccion, \PDO::PARAM_STR);
+            $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+            $response = $comando->execute();
+            if ($trans !== null)
+                $trans->commit();
+            return $response;
+        } catch (Exception $ex) {
+            if ($trans !== null)
+                $trans->rollback();
+            return FALSE;
+        }
+    } 
 }

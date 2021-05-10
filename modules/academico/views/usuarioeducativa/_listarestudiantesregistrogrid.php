@@ -10,6 +10,7 @@ admision::registerTranslations();
 academico::registerTranslations();
 ?>
 <?= Html::hiddenInput('txth_ids', '', ['id' => 'txth_ids']); ?>
+<div></br></div>
 <div>
     <?=
     PbGridView::widget([

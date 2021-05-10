@@ -1529,4 +1529,86 @@ class UsuarioeducativaController extends \app\components\CController {
             return;
         }
     }
+
+    public function actionSavestudiantesbloqueo() {
+        $usu_id = @Yii::$app->session->get("PB_iduser");
+        if (Yii::$app->request->isAjax) {
+            $data = Yii::$app->request->post();          
+            $cedu_id = $data["curso"];
+            $nobloqueado = $data["nobloqueado"];
+            $bloqueado = $data["bloqueado"];
+
+            $con = \Yii::$app->db_academico;
+            $transaction = $con->beginTransaction();
+            try {
+                if (!empty($nobloqueado)) {
+                    $nobloqueado = explode(",", $nobloqueado); //permitidos
+                    foreach ($nobloqueado as $est_id) {  // empieza foreach para guardar los asignados
+                        $mod_asignar = new CursoEducativaEstudiante();
+                        $resp_consAsignacion = $mod_asignar->consultarAsignacionexiste($cedu_id, $est_id);
+                        if ($resp_consAsignacion["exiteasigna"] == 0) {
+                            // update estado bloqueo   
+                            $resp_guardarbloqueo = $mod_asignar->modificarEstadobloqueo($cedu_id, 'A', $est_id, $usu_id);
+                            $exito = 1;
+                        }/* else {
+                            // no estan asignados, mostrar mensaje
+                            $transaction->rollback();
+                            $message = array(
+                                "wtmessage" => Yii::t("notificaciones", "Los Estudiantes que no se cambio estado es que no estan asignados a un curso "),
+                                "title" => Yii::t('jslang', 'Error'),
+                            );
+                            return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+                        }*/
+                    } // cierra foreach 
+                }
+                // SI AL ESTAR SIN SELECCIONAR SE CAMBIA A NO PERMITIDO
+                /*if (!empty($bloqueado)) {
+                    $bloqueado = explode(",", $bloqueado); //bloqueado
+                    foreach ($nobloqueado as $est_id) {  // empieza foreach para guardar los asignados
+                        $mod_asignar = new CursoEducativaEstudiante();
+                        $resp_consAsignacion = $mod_asignar->consultarAsignacionexiste($cedu_id, $est_id);
+                        if ($resp_consAsignacion["exiteasigna"] == 0) {
+                            // update estado bloqueo    
+                            $resp_guardarbloqueo = $mod_asignar->modificarEstadobloqueo($cedu_id, 'B', $est_id, $usu_id);
+                            $exito = 1;
+                        } /*else {
+                            // no estan asignados, mostrar mensaje
+                            $transaction->rollback();
+                            $message = array(
+                                "wtmessage" => Yii::t("notificaciones", "Los Estudiantes que no se cambio estado es que no estan asignados a un curso "),
+                                "title" => Yii::t('jslang', 'Error'),
+                            );
+                            return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+                        }
+                    } // cierra foreach 
+                }*/
+                if ($exito) {
+                    $transaction->commit();
+                    $message = array(
+                        "wtmessage" => Yii::t("notificaciones", "La información ha sido grabada. Los Estudiantes que no se cambio estado, es que no estan asignados a un curso"),
+                        "title" => Yii::t('jslang', 'Success'),
+                    );
+                    return \app\models\Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), false, $message);
+                } else {
+                    $transaction->rollback();
+                    if (empty($message)) {
+                        $message = array
+                            (
+                            "wtmessage" => Yii::t("notificaciones", "Error al grabar. " . $mensaje), "title" =>
+                            Yii::t('jslang', 'Success'),
+                        );
+                    }
+                    return \app\models\Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Sucess"), false, $message);
+                }
+            } catch (Exception $ex) {
+                $transaction->rollback();
+                $message = array(
+                    "wtmessage" => Yii::t("notificaciones", "Error al grabar." . $mensaje),
+                    "title" => Yii::t('jslang', 'Success'),
+                );
+                return \app\models\Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Sucess"), false, $message);
+            }
+            return;
+        }
+    }
 }  

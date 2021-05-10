@@ -59,6 +59,10 @@ $(document).ready(function() {
         asignarCurso();
     });
 
+    $('#btnHabilitacurso').click(function () {
+        asignarBloqueo();
+    });
+
     $('#cmb_unidad_dises').change(function () {
         var link = $('#txth_base').val() + "/academico/distributivo/listarestudiantespago";
         var arrParams = new Object();
@@ -696,4 +700,37 @@ function saveusuario() {
                 }
             }, true);
         }   
+}
+
+function asignarBloqueo() {        
+    var link = $('#txth_base').val() + "/academico/usuarioeducativa/savestudiantesbloqueo";
+    var arrParams = new Object();    
+    arrParams.curso = $('#cmb_cursoreg').val();
+    var selecteds = '';
+    var unselecteds = '';       
+    $('#Tbg_Registro_educativa input[type=checkbox]').each(function () {
+        if (this.checked) {
+            selecteds += $(this).val() + ',';
+        }else{
+            unselecteds += $(this).val() + ',';
+        }               
+    });
+        arrParams.nobloqueado = selecteds.slice(0,-1);
+        arrParams.bloqueado = unselecteds.slice(0,-1);
+    if ($('#cmb_cursoreg option:selected').val() != 0) {
+       if (selecteds != '') {
+         if (!validateForm()) {
+             requestHttpAjax(link, arrParams, function (response) {
+                 showAlert(response.status, response.label, response.message);
+                 setTimeout(function () {
+                     window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/listarestudianteregistro";
+                 }, 3000);
+             }, true);
+         }
+      } else {
+         showAlert('NO_OK', 'error', {"wtmessage": 'Selecciona: Debe seleccionar al menos un estudiante para permitir evaluaciones.', "title": 'Error'});
+      } 
+ } else {
+     showAlert('NO_OK', 'error', {"wtmessage": 'Curso: El campo no debe estar vacío.', "title": 'Error'});
+  }  
 }

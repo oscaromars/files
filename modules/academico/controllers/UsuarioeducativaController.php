@@ -204,7 +204,7 @@ class UsuarioeducativaController extends \app\components\CController {
         header("Content-Type: $content_type");
         header("Content-Disposition: attachment;filename=" . $nombarch);
         header('Cache-Control: max-age=0');
-        $colPosition = array("C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N");
+        $colPosition = array("C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O");
         $arrHeader = array(
             Yii::t("formulario", "Academic unit"),
             Yii::t("formulario", "Mode"),
@@ -213,7 +213,7 @@ class UsuarioeducativaController extends \app\components\CController {
             Yii::t("formulario", "Period"),
             Yii::t("formulario", "Subject"),
             Yii::t("formulario", "Payment Status"),
-            // Yii::t("formulario", "Date"),
+            Yii::t("formulario", "Status")." Educativa",
         );
         //\app\models\Utilities::putMessageLogFile('perid:' . $per_id);
         $distributivo_model = new CursoEducativaEstudiante();
@@ -225,6 +225,7 @@ class UsuarioeducativaController extends \app\components\CController {
         $arrSearch["periodo"] = $data['periodo'];
         $arrSearch["asignatura"] = $data['asignatura'];
         $arrSearch["estado_pago"] = $data['estado'];
+        $arrSearch["curso"] = $data['curso'];
         //$arrSearch["jornada"] = $data['jornada'];
         $arrData = array();
         if (empty($arrSearch)) {
@@ -249,7 +250,8 @@ class UsuarioeducativaController extends \app\components\CController {
             Yii::t("formulario", "Period"),
             Yii::t("formulario", "Subject"),
             Yii::t("formulario", "Payment Status"),
-            // Yii::t("formulario", "Date"),
+            Yii::t("formulario", "Status")." Educativa",
+
         );
         $distributivo_model = new CursoEducativaEstudiante();
         $data = Yii::$app->request->get();
@@ -260,6 +262,7 @@ class UsuarioeducativaController extends \app\components\CController {
         $arrSearch["periodo"] = $data['periodo'];
         $arrSearch["asignatura"] = $data['asignatura'];
         $arrSearch["estado_pago"] = $data['estado'];
+        $arrSearch["curso"] = $data['curso'];
         //$arrSearch["jornada"] = $data['jornada'];
         $arrData = array();
         if (empty($arrSearch)) {

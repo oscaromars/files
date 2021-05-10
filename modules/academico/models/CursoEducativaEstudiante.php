@@ -460,7 +460,7 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
         $con1 = \Yii::$app->db_asgard;
         $con2 = \Yii::$app->db_facturacion;
         $estado = 1;
-        $curso = 0;
+        // $curso = 0;
         if (isset($arrFiltro) && count($arrFiltro) > 0) {
             $str_search .= "(p.per_pri_nombre like :search OR ";
             $str_search .= "p.per_seg_nombre like :search OR ";
@@ -497,20 +497,19 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
             if ($arrFiltro['jornada'] != "" && $arrFiltro['jornada'] > 0) {
                 $str_search .= "a.daca_jornada = :jornada AND ";
             }
-            //if ($arrFiltro['curso'] != "" && $arrFiltro['curso'] > 0) {
+            if ($arrFiltro['curso'] != "" && $arrFiltro['curso'] > 0) {
                 $str_search .= "cur.cedu_id = :curso AND ";
-            //}
+            }
         }else{
           $mod_paca        = new PeriodoAcademico(); 
           $paca_actual_id  = $mod_paca->getPeriodoAcademicoActual();
-          $str_search      = "a.paca_id = ".$paca_actual_id['id']." AND ";
+          //$str_search      = "a.paca_id = ".$paca_actual_id['id']." AND ";
+          $str_search      = "a.paca_id = 0 AND ";
         }
 
         if ($reporte == 1 ) {
           $estuid = " h.est_id, ";
-        }    
-        
-        
+        }          
 
         $sql .= "SELECT  distinct 
                         $estuid 
@@ -538,15 +537,7 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
                                             ORDER BY mi.ccar_fecha_vencepago asc
                                             LIMIT 1),'No Autorizado')						 
                                 else 'No Autorizado'
-                                end as pago " ;
-                                /*if ($reporte == 1 ) {
-                                $sql .=   " , (select ifnull(cee.ceest_id,' ')
-                                                from " . $con->dbname . ".curso_educativa_estudiante cee
-                                                where cee.cedu_id = cur.cedu_id and 
-                                                    cee.est_id = h.est_id and                               
-                                                    cee.ceest_estado = :estado and
-                                                    cee.ceest_estado_logico = :estado)  estado_asignado ";
-                                                    } */
+                                end as pago " ;                    
                     $sql .= "    
                     /*, (select ifnull(cee.ceest_estado_bloqueo,'assa')
                                                 from " . $con->dbname . ".curso_educativa_estudiante cee
@@ -619,10 +610,10 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
                 $search_jor = $arrFiltro["jornada"];
                 $comando->bindParam(":jornada", $search_jor, \PDO::PARAM_INT);
             }
-            //if ($arrFiltro['curso'] != "" && $arrFiltro['curso'] > 0) {
+            if ($arrFiltro['curso'] != "" && $arrFiltro['curso'] > 0) {
                 $curso = $arrFiltro["curso"];
                 $comando->bindParam(":curso", $curso, \PDO::PARAM_INT);
-            //}
+            }
         }
         $resultData = $comando->queryAll();
 

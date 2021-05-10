@@ -19,12 +19,7 @@ academico::registerTranslations();
         'fnExportPDF' => "exportPdfEduregistro",
         'dataProvider' => $model,
         'columns' =>
-        [
-            /*[
-                'attribute' => 'Periodo',
-                'header' => Yii::t("formulario", "Period"),
-                'value' => 'periodo',
-            ],*/
+        [         
             [
                 'class' => 'yii\grid\ActionColumn',
                 'header' => Yii::t("formulario", "Period"),

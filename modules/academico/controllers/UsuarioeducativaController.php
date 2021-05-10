@@ -152,6 +152,7 @@ class UsuarioeducativaController extends \app\components\CController {
             $arrSearch["asignatura"] = $data['asignatura'];
             $arrSearch["estado_pago"] = $data['estado'];
             //$arrSearch["jornada"] = $data['jornada'];
+            $arrSearch["curso"] = $data['curso'];
             $model = $model_cursoest->consultarDistributivoxEducativa($arrSearch, 1);
             return $this->render('_listarestudiantesregistrogrid', [
                         "model" => $model,

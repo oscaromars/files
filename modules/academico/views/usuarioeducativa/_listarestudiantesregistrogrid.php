@@ -90,12 +90,12 @@ academico::registerTranslations();
                 'contentOptions' => ['class' => 'text-center'],
                 'headerOptions' => ['class' => 'text-center'],
                 'format' => 'html',
-                'value' => ' ' /*function ($model) {
-                    if ($model["pago"] == 'No Autorizado') // Cambiar al estado de bloqueo
-                        return '<small class="label label-danger">No Autorizado</small>';                   
+                'value' => function ($model) {
+                    if (empty($model["estado_bloqueo"]) || $model["estado_bloqueo"] == 'B') // Cambiar al estado de bloqueo
+                        return '<small class="label label-danger">Bloqueado</small>';                   
                     else
                         return '<small class="label label-success">Autorizado</small>';
-                },*/
+                },
             ], 
             [   // SE DEBE ANALIZAR BIEN QUE VALUE SE CAPTURA EN EL CHECK PARA EL DESBLOQUEO
                 'class' => 'yii\grid\ActionColumn',

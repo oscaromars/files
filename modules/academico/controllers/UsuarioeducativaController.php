@@ -1537,7 +1537,7 @@ class UsuarioeducativaController extends \app\components\CController {
             $cedu_id = $data["curso"];
             $nobloqueado = $data["nobloqueado"];
             $bloqueado = $data["bloqueado"];
-            \app\models\Utilities::putMessageLogFile('no bloqueo '. $nobloqueado);
+            //\app\models\Utilities::putMessageLogFile('no bloqueo '. $nobloqueado);
             $con = \Yii::$app->db_academico;
             $transaction = $con->beginTransaction();
             try {

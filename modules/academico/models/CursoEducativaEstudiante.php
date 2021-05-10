@@ -660,10 +660,10 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
         $fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
         $con = \Yii::$app->db_academico;
         $estado = 1; 
-        \app\models\Utilities::putMessageLogFile('cedu_id bloqueo '. $cedu_id);
+        /*\app\models\Utilities::putMessageLogFile('cedu_id bloqueo '. $cedu_id);
         \app\models\Utilities::putMessageLogFile('est_id bloqueo '. $est_id);
         \app\models\Utilities::putMessageLogFile('ceest_estado_bloqueo '. $ceest_estado_bloqueo);
-        \app\models\Utilities::putMessageLogFile('cees_usuario_modifica bloqueo '. $ceest_usuario_modifica);
+        \app\models\Utilities::putMessageLogFile('cees_usuario_modifica bloqueo '. $ceest_usuario_modifica);*/
  
         if ($trans !== null) {
             $trans = null; // si existe la transacción entonces no se crea una

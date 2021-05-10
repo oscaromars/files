@@ -656,10 +656,15 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
      * @param
      * @return
      */
-    public function modificarEstadobloqueo($cedu_id, $est_id, $ceest_estado_bloqueo, $cees_usuario_modifica) {
+    public function modificarEstadobloqueo($cedu_id, $est_id, $ceest_estado_bloqueo, $ceest_usuario_modifica) {
         $fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
         $con = \Yii::$app->db_academico;
         $estado = 1; 
+        \app\models\Utilities::putMessageLogFile('cedu_id bloqueo '. $cedu_id);
+        \app\models\Utilities::putMessageLogFile('est_id bloqueo '. $est_id);
+        \app\models\Utilities::putMessageLogFile('ceest_estado_bloqueo '. $ceest_estado_bloqueo);
+        \app\models\Utilities::putMessageLogFile('cees_usuario_modifica bloqueo '. $ceest_usuario_modifica);
+ 
         if ($trans !== null) {
             $trans = null; // si existe la transacción entonces no se crea una
         } else {
@@ -669,8 +674,8 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
             $comando = $con->createCommand
                     ("UPDATE " . $con->dbname . ".curso_educativa_estudiante		       
                       SET ceest_estado_bloqueo = :ceest_estado_bloqueo,  
-                          cees_usuario_modifica = :cees_usuario_modifica,
-                          cees_fecha_modificacion = :cees_fecha_modificacion                          
+                          ceest_usuario_modifica = :ceest_usuario_modifica,
+                          ceest_fecha_modificacion = :ceest_fecha_modificacion                          
                       WHERE 
                       cedu_id = :cedu_id AND
                       est_id = :est_id AND
@@ -679,8 +684,8 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
             $comando->bindParam(":cedu_id", $cedu_id, \PDO::PARAM_INT);  
             $comando->bindParam(":est_id", $est_id, \PDO::PARAM_INT);              
             $comando->bindParam(":ceest_estado_bloqueo", $ceest_estado_bloqueo, \PDO::PARAM_STR); 
-            $comando->bindParam(":cees_usuario_modifica", $cees_usuario_modifica, \PDO::PARAM_INT);
-            $comando->bindParam(":cees_fecha_modificacion", $fecha_transaccion, \PDO::PARAM_STR);
+            $comando->bindParam(":ceest_usuario_modifica", $cees_usuario_modifica, \PDO::PARAM_INT);
+            $comando->bindParam(":ceest_fecha_modificacion", $fecha_transaccion, \PDO::PARAM_STR);
             $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
             $response = $comando->execute();
             if ($trans !== null)

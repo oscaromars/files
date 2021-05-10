@@ -1537,7 +1537,7 @@ class UsuarioeducativaController extends \app\components\CController {
             $cedu_id = $data["curso"];
             $nobloqueado = $data["nobloqueado"];
             $bloqueado = $data["bloqueado"];
-
+            \app\models\Utilities::putMessageLogFile('no bloqueo '. $nobloqueado);
             $con = \Yii::$app->db_academico;
             $transaction = $con->beginTransaction();
             try {
@@ -1546,19 +1546,20 @@ class UsuarioeducativaController extends \app\components\CController {
                     foreach ($nobloqueado as $est_id) {  // empieza foreach para guardar los asignados
                         $mod_asignar = new CursoEducativaEstudiante();
                         $resp_consAsignacion = $mod_asignar->consultarAsignacionexiste($cedu_id, $est_id);
-                        if ($resp_consAsignacion["exiteasigna"] == 0) {
+                        if ($resp_consAsignacion["exiteasigna"] > 0) {
                             // update estado bloqueo   
-                            $resp_guardarbloqueo = $mod_asignar->modificarEstadobloqueo($cedu_id, 'A', $est_id, $usu_id);
+                            $resp_guardarbloqueo = $mod_asignar->modificarEstadobloqueo($cedu_id, $est_id, 'A', $usu_id);
                             $exito = 1;
-                        }/* else {
+                        } else {
                             // no estan asignados, mostrar mensaje
-                            $transaction->rollback();
+                            $exito = 1;
+                            /*$transaction->rollback();
                             $message = array(
                                 "wtmessage" => Yii::t("notificaciones", "Los Estudiantes que no se cambio estado es que no estan asignados a un curso "),
                                 "title" => Yii::t('jslang', 'Error'),
                             );
-                            return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
-                        }*/
+                            return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);*/
+                        }
                     } // cierra foreach 
                 }
                 // SI AL ESTAR SIN SELECCIONAR SE CAMBIA A NO PERMITIDO
@@ -1569,7 +1570,7 @@ class UsuarioeducativaController extends \app\components\CController {
                         $resp_consAsignacion = $mod_asignar->consultarAsignacionexiste($cedu_id, $est_id);
                         if ($resp_consAsignacion["exiteasigna"] == 0) {
                             // update estado bloqueo    
-                            $resp_guardarbloqueo = $mod_asignar->modificarEstadobloqueo($cedu_id, 'B', $est_id, $usu_id);
+                            $resp_guardarbloqueo = $mod_asignar->modificarEstadobloqueo($cedu_id, $est_id, 'B', $usu_id);
                             $exito = 1;
                         } /*else {
                             // no estan asignados, mostrar mensaje

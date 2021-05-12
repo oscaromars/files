@@ -6,6 +6,11 @@ use app\widgets\PbGridView\PbGridView;
 use app\models\Utilities;
 use app\modules\academico\Module as academico;
 use app\modules\admision\Module as admision;
+use kartik\grid\GridView;
+use kartik\grid\DataColumn;
+use kartik\grid\EditableColumn;
+use kartik\grid\Editable;
+use yii\helpers\ArrayHelper;
 
 admision::registerTranslations();
 academico::registerTranslations();
@@ -15,8 +20,8 @@ academico::registerTranslations();
     PbGridView::widget([
         'id' => 'Tbg_Asigdistributivo',
         'showExport' => true,
-        //'fnExportEXCEL' => "exportExcel",
-        //'fnExportPDF' => "exportPdf",
+        'fnExportEXCEL' => "exportExcelasigd",
+        'fnExportPDF' => "exportPdfasigd",
         'dataProvider' => $model,
         //'pajax' => false,
         'columns' =>
@@ -55,7 +60,19 @@ academico::registerTranslations();
                 'attribute' => 'Jornada',
                 'header' => academico::t("Academico", "Working day"),
                 'value' => 'Jornada',
-            ],            
+            ],   
+            /*[
+                'attribute' => 'cursos',
+                'header' => academico::t("Academico", "Aulas"),
+                'filterInputOptions' => [
+                    'class' => 'form-control',
+                    'prompt' => 'Select'
+                ],
+                'format' => 'raw',
+                'value'  => function ($model) {
+                    return Html::dropDownList('cursos', empty($model['cedu_id'])?0:$model['cedu_id'], ArrayHelper::map($model['cursos'] , "id", "name"), ["class" => "form-control", "id" => "curso_".$model['id'] ]);
+                }
+            ], */        
             /*[
                 'class' => 'yii\grid\ActionColumn',
                 'header' => '',

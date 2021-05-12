@@ -781,3 +781,23 @@ function actualizarGridAsignaDistributivo() {
         setTimeout(hideLoadingPopup, 2000);
     }
 }
+
+function exportExcelasigd() {
+    var search = $('#txt_buscarData').val();
+    var unidad =  $('#cmb_unidad_dise option:selected').val();
+    var modalidad =  $('#cmb_modalidad_dise option:selected').val();
+    var periodo =  $('#cmb_periodo_dise option:selected').val();
+    var materia = $('#cmb_materia_dise option:selected').val();  
+    var jornada = $('#cmb_jornada_dise option:selected').val();  
+    window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/expexcelasigd?search=" + search + "&unidad=" + unidad + "&modalidad=" + modalidad + "&periodo=" + periodo + "&materia=" + materia + "&jornada=" + jornada;
+}
+
+function exportPdfasigd() {
+    var search = $('#txt_buscarData').val();
+    var unidad =  $('#cmb_unidad_dise option:selected').val();
+    var modalidad =  $('#cmb_modalidad_dise option:selected').val();
+    var periodo =  $('#cmb_periodo_dise option:selected').val();
+    var materia = $('#cmb_materia_dise option:selected').val();  
+    var jornada = $('#cmb_jornada_dise option:selected').val();  
+    window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/exppdasigd?pdf=1&search=" + search + "&unidad=" + unidad + "&modalidad=" + modalidad + "&periodo=" + periodo + "&materia=" + materia + "&jornada=" + jornada;
+}

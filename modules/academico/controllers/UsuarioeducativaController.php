@@ -1659,8 +1659,8 @@ class UsuarioeducativaController extends \app\components\CController {
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
             }
             if (isset($data["getjornada"])) {
-                \app\models\Utilities::putMessageLogFile('jor unudad...: ' . $data["uaca_isd"]);     
-                \app\models\Utilities::putMessageLogFile('jor mod...: ' . $data["mod_isd"]);     
+                //\app\models\Utilities::putMessageLogFile('jor unudad...: ' . $data["uaca_isd"]);     
+                //\app\models\Utilities::putMessageLogFile('jor mod...: ' . $data["mod_isd"]);     
                 $jornada = $distributivo_model->getJornadasByUnidadAcad($data["uaca_isd"], $data["mod_isd"]);
                 $message = array("jornada" => $jornada);
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
@@ -1684,5 +1684,76 @@ class UsuarioeducativaController extends \app\components\CController {
                     'model' => $model,
                     'mod_jornada' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Grid")]], $arr_jornada), "id", "name"),
         ]);
+    }
+
+    public function actionExpexcelasigd() {
+        $per_id = @Yii::$app->session->get("PB_perid");
+        ini_set('memory_limit', '256M');
+        $content_type = Utilities::mimeContentType("xls");
+        $nombarch = "Report-" . date("YmdHis") . ".xls";
+        header("Content-Type: $content_type");
+        header("Content-Disposition: attachment;filename=" . $nombarch);
+        header('Cache-Control: max-age=0');
+        $colPosition = array("C", "D", "E", "F", "G", "H", "I", "J");
+        $arrHeader = array(
+            academico::t("Academico", "Id"),
+            academico::t("Academico", "Teacher"),
+            Yii::t("formulario", "DNI 1"),
+            Yii::t("formulario", "Academic unit"),
+            Yii::t("formulario", "Mode"),
+            Yii::t("formulario", "Period"),
+            Yii::t("formulario", "Subject"),
+            academico::t("Academico", "Working day"),
+        );
+        $distributivo_model = new DistributivoAcademico();
+        $data = Yii::$app->request->get();
+        $arrSearch["search"] = ($data['search'] != "") ? $data['search'] : NULL;
+        $arrSearch["unidad"] = ($data['unidad'] > 0) ? $data['unidad'] : NULL;
+        $arrSearch["modalidad"] = ($data['modalidad'] > 0) ? $data['modalidad'] : NULL;
+        $arrSearch["periodo"] = ($data['periodo'] > 0) ? $data['periodo'] : NULL;
+        $arrSearch["materia"] = ($data['materia'] > 0) ? $data['materia'] : NULL;
+        $arrSearch["jornada"] = ($data['jornada'] > 0) ? $data['jornada'] : NULL;
+
+        $arrData = $distributivo_model->getListadoDistributivo($arrSearch["search"], $arrSearch["modalidad"], $arrSearch["asignatura"], $arrSearch["jornada"], $arrSearch["unidad"], $arrSearch["periodo"], true);
+        foreach ($arrData as $key => $value) {
+            unset($arrData[$key]["Id"]);
+        }
+        $nameReport = academico::t("distributivoacademico", "Profesor Lists by Subject");
+        Utilities::generarReporteXLS($nombarch, $nameReport, $arrHeader, $arrData, $colPosition);
+        exit;
+    }
+
+    public function actionExppdasigd() {
+        $per_id = @Yii::$app->session->get("PB_perid");
+        $report = new ExportFile();
+        $this->view->title = academico::t("distributivoacademico", "Profesor Lists by Subject"); // Titulo del reporte
+        $arrHeader = array(
+            academico::t("Academico", "Id"),
+            academico::t("Academico", "Teacher"),
+            Yii::t("formulario", "DNI 1"),
+            Yii::t("formulario", "Academic unit"),
+            Yii::t("formulario", "Mode"),
+            Yii::t("formulario", "Period"),
+            Yii::t("formulario", "Subject"),
+            academico::t("Academico", "Working day"),
+        );
+        $distributivo_model = new DistributivoAcademico();
+        $data = Yii::$app->request->get();
+        $arrSearch["search"] = ($data['search'] != "") ? $data['search'] : NULL;
+        $arrSearch["unidad"] = ($data['unidad'] > 0) ? $data['unidad'] : NULL;
+        $arrSearch["modalidad"] = ($data['modalidad'] > 0) ? $data['modalidad'] : NULL;
+        $arrSearch["periodo"] = ($data['periodo'] > 0) ? $data['periodo'] : NULL;
+        $arrSearch["materia"] = ($data['materia'] > 0) ? $data['materia'] : NULL;
+        $arrSearch["jornada"] = ($data['jornada'] > 0) ? $data['jornada'] : NULL;
+
+        $arrData = $distributivo_model->getListadoDistributivo($arrSearch["search"], $arrSearch["modalidad"], $arrSearch["asignatura"], $arrSearch["jornada"], $arrSearch["unidad"], $arrSearch["periodo"], true);
+        $report->orientation = "P"; // tipo de orientacion L => Horizontal, P => Vertical                                
+        $report->createReportPdf(
+                $this->render('exportpdf', [
+                    'arr_head' => $arrHeader,
+                    'arr_body' => $arrData,
+                ])
+        );
+        $report->mpdf->Output('Reporte_' . date("Ymdhis") . ".pdf", ExportFile::OUTPUT_TO_DOWNLOAD);
     }
 }  

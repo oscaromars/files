@@ -69,6 +69,10 @@ class ExistenciabodegaController extends CController {
      * @return void
      */
     public function actionIndex() {
+        $_SESSION['JSLANG']['Inventory Print'] = financiero::t('tomafisica', "Inventory Print");
+        $_SESSION['JSLANG']['Existence_Cellar'] = financiero::t('bodega', "Existence Cellar");
+        $_SESSION['JSLANG']['PDF'] = financiero::t('listaprecio', "PDF");
+        $_SESSION['JSLANG']['EXCEL'] = financiero::t('listaprecio', "EXCEL");
         $model = new ExistenciaBodega();
         $data = Yii::$app->request->post();
         if($data['ls_query_id'] == "autocomplete-bodega"){
@@ -298,8 +302,6 @@ class ExistenciabodegaController extends CController {
                 //$fecha = $data["fecha"];
 
                 $model = ExistenciaBodega::findOne(['COD_BOD' => $cod_bod, 'COD_ART' => $cod_art]);
-                //model->COD_BOD = $cod_bod;
-                //$model->COD_ART = $cod_art;
                 $model->UBI_FIS = $ubi_fis;
                 $model->P_COSTO = $p_costo;       
                 $model->FEC_SIS = date('Y-m-d');
@@ -434,8 +436,6 @@ class ExistenciabodegaController extends CController {
      * @return void
      */
     public function actionExppdf() {
-        ini_set('memory_limit', Yii::$app->params['memorylimit']);
-        $report = new ExportFile();
         $this->view->title = financiero::t("bodega", "Report Cellar");  // Titulo del reporte
          $arrHeader = array(
             financiero::t("bodega", "Cellar"),
@@ -459,14 +459,10 @@ class ExistenciabodegaController extends CController {
         } else {
             $arrData = $model->getAllItemsGrid(NULL,NULL, false, true);
         }
-        $report->orientation = "L"; // tipo de orientacion L => Horizontal, P => Vertical                                
-        $report->createReportPdf(
-                $this->render('exportpdf', [
-                    'arr_head' => $arrHeader,
-                    'arr_body' => $arrData
-                ])
-        );
-        $report->mpdf->Output('Reporte_' . date("Ymdhis") . ".pdf", ExportFile::OUTPUT_TO_DOWNLOAD);
+        return $this->render('exportpdf', [
+            'arr_head' => $arrHeader,
+            'arr_body' => $arrData
+        ]);
     }
     
     
@@ -597,12 +593,7 @@ class ExistenciabodegaController extends CController {
             financiero::t("bodega", "Total Cost"),
         );
         $data = Yii::$app->request->get();
-        /*$arrSearch = array();
-        if (count($data) > 0) {
-            $arrSearch["search"] = $data['search'];
-            $arrSearch["bodega"] = $data['codBod'];
-            
-        }*/
+ 
         $CodBod=isset($data['bodega']) ? $data['bodega'] : "";
         $CodArt=isset($data['articulo']) ? $data['articulo'] : "";
         $CodLin=isset($data['linea']) ? $data['linea'] : "";
@@ -612,11 +603,7 @@ class ExistenciabodegaController extends CController {
         $arrData = array();
         $model = new ExistenciaBodega();
         $arrData=$model->getExistenciaCosto($CodBod, $CodArt, $CodLin, $CodTip, $CodMar, $TipPro);
-        /*if (count($arrSearch) > 0) {
-            $arrData = $model->getAllItemsGrid($arrSearch["search"],$arrSearch["bodega"], false, true);
-        } else {
-            $arrData = $model->getAllItemsGrid(NULL,NULL, false, true);
-        }*/
+  
         $report->orientation = "P"; // tipo de orientacion L => Horizontal, P => Vertical                                
         $report->createReportPdf(
                 $this->render('exicostpdf', [

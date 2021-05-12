@@ -65,56 +65,56 @@ class RubroController extends CController {
     public function actionIndex() {
         $model = new Rubro();
         $data = Yii::$app->request->post();
-        
-        if($data['ls_query_id'] == "autocomplete-cuentaprincipal"){
+
+        if ($data['ls_query_id'] == "autocomplete-cuentaprincipal") {
             $query = $data['ls_query'];
             $currentPage = $data['ls_current_page'];
             $perPage = $data['ls_items_per_page'];
             $arr_data = Catalogo::getDataColumnsQueryWidget();
-            return SearchAutocomplete::renderView($query, 
-                $arr_data['con'], 
-                $arr_data['cols'], 
-                $arr_data['aliasCols'],
-                $arr_data['colVisible'],
-                $arr_data['table'], 
-                $arr_data['where'], 
-                $arr_data['order'], 
-                $arr_data['limitPages'], 
-                $currentPage, 
-                $perPage);
-        } 
-        if($data['ls_query_id'] == "autocomplete-cuentaprovisional"){
+            return SearchAutocomplete::renderView($query,
+                            $arr_data['con'],
+                            $arr_data['cols'],
+                            $arr_data['aliasCols'],
+                            $arr_data['colVisible'],
+                            $arr_data['table'],
+                            $arr_data['where'],
+                            $arr_data['order'],
+                            $arr_data['limitPages'],
+                            $currentPage,
+                            $perPage);
+        }
+        if ($data['ls_query_id'] == "autocomplete-cuentaprovisional") {
             $query = $data['ls_query'];
             $currentPage = $data['ls_current_page'];
             $perPage = $data['ls_items_per_page'];
             $arr_data = Catalogo::getDataColumnsQueryWidget();
-            return SearchAutocomplete::renderView($query, 
-                $arr_data['con'], 
-                $arr_data['cols'], 
-                $arr_data['aliasCols'],
-                $arr_data['colVisible'],
-                $arr_data['table'], 
-                $arr_data['where'], 
-                $arr_data['order'], 
-                $arr_data['limitPages'], 
-                $currentPage, 
-                $perPage);
-        } 
-        
-        
+            return SearchAutocomplete::renderView($query,
+                            $arr_data['con'],
+                            $arr_data['cols'],
+                            $arr_data['aliasCols'],
+                            $arr_data['colVisible'],
+                            $arr_data['table'],
+                            $arr_data['where'],
+                            $arr_data['order'],
+                            $arr_data['limitPages'],
+                            $currentPage,
+                            $perPage);
+        }
+
+
         $data = Yii::$app->request->get();
         $arr_tipo = Rubro::getTypesRubros();
         $arr_tipo = ['0' => financiero::t('rubro', '-- All Types of Headings --'),] + $arr_tipo;
         if (isset($data["PBgetFilter"])) {
             return $this->render('index', [
-                "model" => $model->getAllItemsGrid($data["search"], $data['type'], true),
-                'arr_tipo' => $arr_tipo,
+                        "model" => $model->getAllItemsGrid($data["search"], $data['type'], true),
+                        'arr_tipo' => $arr_tipo,
             ]);
         }
-        /*if (Yii::$app->request->isAjax) { }*/
+        /* if (Yii::$app->request->isAjax) { } */
         return $this->render('index', [
-            'model' => $model->getAllItemsGrid(NULL, NULL, true),
-            'arr_tipo' => $arr_tipo,
+                    'model' => $model->getAllItemsGrid(NULL, NULL, true),
+                    'arr_tipo' => $arr_tipo,
         ]);
     }
 
@@ -128,16 +128,14 @@ class RubroController extends CController {
         if (isset($data['id'])) {
             $id = $data['id'];
             $model = Rubro::findOne(['rub_id' => $id,]);
-            
             $inventario_cprin = Catalogo::findOne(['COD_CTA' => $model->rub_cuenta_principal, 'EST_LOG' => '1', 'EST_DEL' => '1']);
             $inventario_cprov = Catalogo::findOne(['COD_CTA' => $model->rub_cuenta_provisional, 'EST_LOG' => '1', 'EST_DEL' => '1']);
-            
             $arr_tipo = Rubro::getTypesRubros();
             return $this->render('view', [
-                'cprincipal'=> $inventario_cprin->NOM_CTA,
-                'cprovisional'=> $inventario_cprov->NOM_CTA,
-                'model' => $model,
-                'arr_tipo' => $arr_tipo,
+                        'cprincipal' => $inventario_cprin->NOM_CTA,
+                        'cprovisional' => $inventario_cprov->NOM_CTA,
+                        'model' => $model,
+                        'arr_tipo' => $arr_tipo,
             ]);
         }
         return $this->redirect('index');
@@ -149,28 +147,25 @@ class RubroController extends CController {
      * @return void
      */
     public function actionEdit() {
-        
-        $_SESSION['JSLANG']['Please select only Movement Accounts.'] = financiero::t('catalogo',"Please select only Movement Accounts.");
-        
+
+        $_SESSION['JSLANG']['Please select only Movement Accounts.'] = financiero::t('catalogo', "Please select only Movement Accounts.");
+
         $data = Yii::$app->request->get();
-        
+
         if (isset($data['id'])) {
             $id = $data['id'];
             $model = Rubro::findOne(['rub_id' => $id,]);
-            
             $inventario_cprin = Catalogo::findOne(['COD_CTA' => $model->rub_cuenta_principal, 'EST_LOG' => '1', 'EST_DEL' => '1']);
             $inventario_cprov = Catalogo::findOne(['COD_CTA' => $model->rub_cuenta_provisional, 'EST_LOG' => '1', 'EST_DEL' => '1']);
-            
             $arr_tipo = Rubro::getTypesRubros();
             return $this->render('edit', [
-                
-                'cprincipal'=> $inventario_cprin->NOM_CTA,
-                'cprovisional'=> $inventario_cprov->NOM_CTA,
-                'model' => $model,
-                'arr_tipo' => $arr_tipo,
+                        'cprincipal' => $inventario_cprin->NOM_CTA,
+                        'cprovisional' => $inventario_cprov->NOM_CTA,
+                        'model' => $model,
+                        'arr_tipo' => $arr_tipo,
             ]);
         }
-        
+
         return $this->redirect('index');
     }
 
@@ -180,10 +175,10 @@ class RubroController extends CController {
      * @return void
      */
     public function actionNew() {
-        $_SESSION['JSLANG']['Please select only Movement Accounts.'] = financiero::t('catalogo',"Please select only Movement Accounts.");
+        $_SESSION['JSLANG']['Please select only Movement Accounts.'] = financiero::t('catalogo', "Please select only Movement Accounts.");
         $arr_tipo = Rubro::getTypesRubros();
         return $this->render('new', [
-           'arr_tipo' => $arr_tipo,
+                    'arr_tipo' => $arr_tipo,
         ]);
     }
 
@@ -204,20 +199,18 @@ class RubroController extends CController {
             try {
                 //// body logic begin
                 $nombre = $data["nombre"];
+
                 $type = $data['type'];
                 $cprincipal = $data["cprincipal"];
                 $cprovisional = $data["cprovisional"];
-                
-                  
+
                 $model = new Rubro();
-                
                 $model->rub_nombre = $nombre;
                 $model->rub_tipo = $type;
                 $model->rub_cuenta_principal = $cprincipal;
                 $model->rub_cuenta_provisional = $cprovisional;
                 $model->rub_fecha_creacion = date('Y-m-d H:i:s');
-                $model->rub_usuario_ingreso = $usu_id;//$username
-                
+                $model->rub_usuario_ingreso = $usu_id; //$username
                 $model->rub_estado_logico = "1";
                 $model->rub_estado = "1";
                 //// body logic End
@@ -235,7 +228,7 @@ class RubroController extends CController {
             } catch (\Exception $ex) {
                 $exMsg = new CMsgException($ex);
                 $trans->rollback();
-                $msg = (($exMsg->getMsgLang()) != '')?($exMsg->getMsgLang()):(Yii::t('notificaciones', 'Your information has not been saved. Please try again.'));
+                $msg = (($exMsg->getMsgLang()) != '') ? ($exMsg->getMsgLang()) : (Yii::t('notificaciones', 'Your information has not been saved. Please try again.'));
                 $message = array(
                     "wtmessage" => $msg,
                     "title" => Yii::t('jslang', 'Error'),
@@ -262,25 +255,22 @@ class RubroController extends CController {
             $trans = Yii::$app->db_gfinanciero->beginTransaction();
             try {
                 //// body logic begin
-                $id  = $data["id"];
+                $id = $data["id"];
                 $nombre = $data["nombre"];
                 $type = $data['type'];
                 $cprincipal = $data["cprincipal"];
                 $cprovisional = $data["cprovisional"];
-                
+
                 $model = Rubro::findOne(['rub_id' => $id,]);
-                
+
                 $model->rub_nombre = $nombre;
                 $model->rub_tipo = $type;
                 $model->rub_cuenta_principal = $cprincipal;
                 $model->rub_cuenta_provisional = $cprovisional;
-                
                 $model->rub_fecha_modificacion = date('Y-m-d H:i:s');
-                $model->rub_usuario_ingreso = $usu_id;
-               
+                $model->rub_usuario_modifica = $usu_id;
                 $model->rub_estado = "1";
                 $model->rub_estado_logico = "1";
-                
                 //// body logic End
 
                 $message = array(
@@ -297,7 +287,7 @@ class RubroController extends CController {
             } catch (\Exception $ex) {
                 $exMsg = new CMsgException($ex);
                 $trans->rollback();
-                $msg = (($exMsg->getMsgLang()) != '')?($exMsg->getMsgLang()):(Yii::t('notificaciones', 'Your information has not been saved. Please try again.'));
+                $msg = (($exMsg->getMsgLang()) != '') ? ($exMsg->getMsgLang()) : (Yii::t('notificaciones', 'Your information has not been saved. Please try again.'));
                 $message = array(
                     "wtmessage" => $msg,
                     "title" => Yii::t('jslang', 'Error'),
@@ -313,7 +303,7 @@ class RubroController extends CController {
      *
      * @return void
      */
-    public function actionDelete(){
+    public function actionDelete() {
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
             $per_id = Yii::$app->session->get("PB_perid");
@@ -328,7 +318,6 @@ class RubroController extends CController {
                 $model = Rubro::findOne(['rub_id' => $id,]);
                 $model->rub_fecha_modificacion = date('Y-m-d H:i:s');
                 $model->rub_usuario_modifica = $usu_id;
-              
                 $model->rub_estado_logico = '0';
                 $model->rub_estado = '0';
                 //// body logic begin
@@ -347,7 +336,7 @@ class RubroController extends CController {
             } catch (\Exception $ex) {
                 $exMsg = new CMsgException($ex);
                 $trans->rollback();
-                $msg = (($exMsg->getMsgLang()) != '')?($exMsg->getMsgLang()):(Yii::t('notificaciones', 'Your information has not been saved. Please try again.'));
+                $msg = (($exMsg->getMsgLang()) != '') ? ($exMsg->getMsgLang()) : (Yii::t('notificaciones', 'Your information has not been saved. Please try again.'));
                 $message = array(
                     "wtmessage" => $msg,
                     "title" => Yii::t('jslang', 'Error'),
@@ -375,7 +364,7 @@ class RubroController extends CController {
             financiero::t("rubro", "Heading Name"),
             financiero::t("rubro", "Type of  Heading"),
             financiero::t("rubro", "Main Account"),
-            financiero::t("rubro", "Provisional Account"), 
+            financiero::t("rubro", "Provisional Account"),
         );
         $data = Yii::$app->request->get();
         $arrSearch = array();
@@ -407,8 +396,7 @@ class RubroController extends CController {
             financiero::t("rubro", "Heading Name"),
             financiero::t("rubro", "Type of  Heading"),
             financiero::t("rubro", "Main Account"),
-            financiero::t("rubro", "Provisional Account"),                  
-            
+            financiero::t("rubro", "Provisional Account"),
         );
         $data = Yii::$app->request->get();
         $arrSearch = array();
@@ -432,6 +420,5 @@ class RubroController extends CController {
         );
         $report->mpdf->Output('Reporte_' . date("Ymdhis") . ".pdf", ExportFile::OUTPUT_TO_DOWNLOAD);
     }
-    
-    
+
 }

@@ -122,10 +122,58 @@ function exportExcel() {
 function exportPdf() {
     var search = $('#txt_search').val();
     var bodega = $('#cmb_bodega').val();
-    window.location.href = $('#txth_base').val() + "/" + $('#txth_module').val() + "/existenciabodega/exppdf?pdf=1&search=" + search + '&codBod=' + bodega;
-    
+    var link = $('#txth_base').val() + "/" + $('#txth_module').val() + "/existenciabodega/exppdf?pdf=1&search=" + search + '&codBod=' + bodega;
+    let status = "OK";
+    let label = "Success";
+    let message = new Object();
+    message.title = objLang.Existence_Cellar;
+    let acciones = new Array();
+    let btnPdf = new Object();
+    let btnXls = new Object();
+    //let params = new Array();
+    btnPdf.id = "btnInvPdf";
+    btnPdf.class = "clclass btn-primary";
+    btnPdf.value = objLang.PDF;
+    btnPdf.callback = "printIframe";
+
+    btnXls.id = "btnInvXls";
+    btnXls.class = "btn-success clclass";
+    btnXls.value = objLang.EXCEL;
+    btnXls.callback = 'exportExcel';
+
+    message.acciones = acciones;
+    message.htmloptions = new Object();
+    message.acciones[0] = btnXls;
+    message.acciones[1] = btnPdf;
+
+    // title box
+    message.wtmessage =
+        '<div class="box-header with-border">' +
+        '<h4 class="box-title">' + objLang.Inventory_Print + '</h4>' +
+        '</div>';
+    // begin form
+    message.wtmessage +=
+        '<form class="form-horizontal">' +
+        '<div class="box-body">';
+    // body form
+    message.wtmessage += '<iframe id="ifrpt" name="ifrpt" src="' + link + '" title="' + objLang.Report_Inventory_Review_List + '" width="100%" height="500"></iframe>';
+    // end form
+    message.wtmessage +=
+        '</div>' +
+        '</form>';
+
+    showAlert(status, label, message);
+    $('#btnInvPdf').attr("data-dismiss", 'none');
+    $('#btnInvXls').attr("data-dismiss", 'none');
  
 }
+
+function printIframe() {
+    window.frames["ifrpt"].focus();
+    window.frames["ifrpt"].print();
+}
+
+
 
 /**
  * Function to do an action by response callback 

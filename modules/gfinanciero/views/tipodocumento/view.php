@@ -41,7 +41,7 @@ financiero::registerTranslations();
             <div class="form-group">
                 <label for="frm_numdocumento" class="col-xs-3 col-sm-3 col-md-3 col-lg-3 control-label"><?= financiero::t("tipodocumento", "Document Number") ?> <span class="text-danger">*</span></label>
                 <div class="col-xs-9 col-sm-9 col-md-9 col-lg-9">
-                    <input type="text" class="form-control PBvalidation" disabled="disabled" value="<?= $model->NUM_NOF ?>" id="frm_numdocumento" data-type="all" disabled="disabled" placeholder="<?= financiero::t("tipodocumento", "Document Number") ?>">  
+                    <input type="text" class="form-control PBvalidation" disabled="disabled" value="<?= $model->NUM_NOF ?>" id="frm_numdocumento" data-type="all" disabled="disabled" placeholder="<?= financiero::t("tipodocumento", "Document Number") ?>"> 
                 </div>
             </div>
         </div>
@@ -53,7 +53,7 @@ financiero::registerTranslations();
             <div class="form-group">
                 <label for="frm_nombredocumento" class="col-xs-3 col-sm-3 col-md-3 col-lg-3 control-label"><?= financiero::t("tipodocumento", "Document Name") ?> <span class="text-danger">*</span></label>
                 <div class="col-xs-9 col-sm-9 col-md-9 col-lg-9">
-                    <input type="text" class="form-control PBvalidation" value="<?= $model->NOM_NOF ?>" disabled="disabled" id="frm_nombredocumento" data-type="all"  placeholder="<?= financiero::t("tipodocumento", "Document Name") ?>">
+                    <input type="text" class="form-control PBvalidation" value="<?= $model->NOM_NOF ?>" disabled="disabled" id="frm_nombredocumento" data-type="all" placeholder="<?= financiero::t("tipodocumento", "Document Name") ?>">
                 </div>
             </div>
         </div>
@@ -72,7 +72,7 @@ financiero::registerTranslations();
                             'format' => Yii::$app->params["dateByDatePicker"],
                         ]]
                     );
-                    ?>  
+                    ?> 
                 </div>
             </div>
         </div>
@@ -117,7 +117,7 @@ financiero::registerTranslations();
                 </div>
             </div>
         </div>
-        
+
     </div>
 
     <div class ="row">
@@ -125,17 +125,17 @@ financiero::registerTranslations();
             <div class="form-group">
                 <label for="cmb_tipo_edoc" class="col-xs-3 col-sm-3 col-md-3 col-lg-3 control-label"><?= financiero::t("tipodocumento", "Edoc. Tipo") ?> <span class="text-danger">*</span></label>
                 <div class="col-xs-9 col-sm-9 col-md-9 col-lg-9">
-                    <?= Html::dropDownList("cmb_tipo_edoc", ($modelTipEdoc->IdDirectorio != "")?($modelTipEdoc->IdDirectorio):"0", $arr_tipo_edoc, ["class" => "form-control", "disabled" => "disabled", "id" => "cmb_tipo_edoc",]) ?> 
+                    <?= Html::dropDownList("cmb_tipo_edoc", ($modelTipEdoc->IdDirectorio != "") ? ($modelTipEdoc->IdDirectorio) : "0", $arr_tipo_edoc, ["class" => "form-control", "disabled" => "disabled", "id" => "cmb_tipo_edoc",]) ?> 
                 </div>
             </div>
         </div>
         <div class="col-md-6">
-            <div class="form-group chkstatus <?=$modelTipEdoc->IdDirectorio ?>" <?= ($modelTipEdoc->IdDirectorio != "")?"":'style="display: none;"'; ?> >
+            <div class="form-group chkstatus <?= $modelTipEdoc->IdDirectorio ?>" <?= ($modelTipEdoc->IdDirectorio != "") ? "" : 'style="display: none;"'; ?> >
                 <label for="frm_status" class="col-xs-3 col-sm-3 col-md-3 col-lg-3 control-label"><?= financiero::t("tipodocumento", "Enable Edoc") ?></label>
                 <div class="col-sm-1">
                     <div class="input-group">
                         <input type="hidden" class="form-control PBvalidation" id="frm_status" value="<?= $model->EDOC_EST ?>" data-type="number" placeholder="<?= financiero::t("tipodocumento", "Enable Edoc") ?>">
-                        <span id="spanAccStatuss" class="input-group-addon input-group-addon-border-left input-group-addon-pointer"><i id="iconAccStatus" class="glyphicon glyphicon-<?= ($model->EDOC_EST == 1)?"check":"unchecked" ?>"></i></span>
+                        <span id="spanAccStatuss" class="input-group-addon input-group-addon-border-left input-group-addon-pointer"><i id="iconAccStatus" class="glyphicon glyphicon-<?= ($model->EDOC_EST == 1) ? "check" : "unchecked" ?>"></i></span>
                     </div>
                 </div>
             </div>
@@ -147,7 +147,7 @@ financiero::registerTranslations();
             <div class="form-group">
                 <label for="frm_cantitems" class="col-xs-3 col-sm-3 col-md-3 col-lg-3 control-label"><?= financiero::t("tipodocumento", "Quantity Items") ?> <span class="text-danger">*</span></label>
                 <div class="col-xs-9 col-sm-9 col-md-9 col-lg-9">
-                    <input type="text" class="form-control PBvalidation" value="<?= $model->C_ITEMS ?>" id="frm_cantitems" data-type="number" disabled="disabled" placeholder="<?= financiero::t("tipodocumento", "Quantity Items") ?>">  
+                    <input type="text" class="form-control PBvalidation" value="<?= $model->C_ITEMS ?>" id="frm_cantitems" data-type="number" disabled="disabled" placeholder="<?= financiero::t("tipodocumento", "Quantity Items") ?>"> 
                 </div>
             </div>
         </div>

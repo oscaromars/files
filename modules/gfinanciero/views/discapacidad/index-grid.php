@@ -23,10 +23,15 @@ financiero::registerTranslations();
                 'header' => financiero::t("discapacidad", "Disability Name"),
                 'value' => 'Nombre',
             ],
-            [
+            /*[
                 'attribute' => 'Porcentaje',
                 'header' => financiero::t("discapacidad", "Percentage"),
                 'value' => 'Porcentaje',
+            ],*/
+            [
+                'attribute' => 'Fcreacion',
+                'header' => financiero::t("discapacidad", "Creation Date"),
+                'value' => 'Fcreacion',
             ],
               
             [

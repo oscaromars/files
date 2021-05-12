@@ -97,15 +97,15 @@ class Rubro extends \yii\db\ActiveRecord
         $cols .= "R.rub_nombre as Nombre, ";
         $cols .= "R.rub_tipo as Tipo, ";
         $cols .= "IFNULL (CONCAT(C1.NOM_CTA,' - ',R.rub_cuenta_principal),'-') as Cprincipal, ";
-        $cols .= "IFNULL (CONCAT(C2.NOM_CTA,' - ',R.rub_cuenta_provisional),'-') as Cprovisional ";
-        
-        
+        $cols .= "IFNULL (CONCAT(C2.NOM_CTA,' - ',R.rub_cuenta_provisional),'-') as Cprovisional ";        
+
         if($export){ 
                 $cols   = "R.rub_nombre as Nombre,";
                 $cols  .= " R.rub_tipo as Tipo,";
                 $cols  .= " IFNULL (CONCAT(C1.NOM_CTA,' - ',R.rub_cuenta_principal),'-') as Cprincipal,";
                 $cols  .= " IFNULL (CONCAT(C2.NOM_CTA,' - ',R.rub_cuenta_provisional),'-') as Cprovisional ";
         }
+
         $sql = "SELECT
                     $cols
                 FROM

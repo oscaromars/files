@@ -227,6 +227,8 @@ class Usuario extends \yii\db\ActiveRecord implements IdentityInterface {
             $session->set('PB_iduser', $this->usu_id);
             $session->set('PB_yii_lang', Yii::$app->language);
             $session->set('PB_yii_theme', Yii::$app->view->theme->themeName);
+	    $session->set('PB_p_establecimiento', '');
+	    $session->set('PB_p_emision', '');
         } else {
             $session->destroy();
         }

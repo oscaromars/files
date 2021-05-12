@@ -42,12 +42,13 @@
 return [
     "Code" => "Código",
     "Currency" => "Divisa",
-    "Currency Name" => "Nombre Divisa",
+    "Name" => "Nombre",
     "Quotation" => "Cotización",   
     "Creation Date" => "Fecha de Creación",
-    "Report Currency Items" => "Reporte de Divisas",
+    "Report Currency" => "Reporte de Divisas",
     "Search by Currency" => "Buscar por Divisa",
     "-- All Currencies --" => "-- Todas las Divisas --",
     "-- Select a Currency Name --" => "-- Seleccione una Divisa --",
     "Please select a Currency." => "Por favor seleccione una Divisa.",
+    
 ];

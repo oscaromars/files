@@ -97,7 +97,7 @@ function edit() {
 function update() {
     var link = $('#txth_base').val() + "/" + $('#txth_module').val() + "/tipodocumento/update";
     var arrParams = new Object();
-    
+
     arrParams.codpunto = $('#frm_codpto').val();
     arrParams.codcaja = $('#frm_codcaj').val();
     arrParams.tipnof = $('#frm_tipnof').val();
@@ -113,8 +113,8 @@ function update() {
     arrParams.tipdoc = $('#cmb_tipo_trans').val();
     arrParams.sedoc = $('#frm_status').val();
     arrParams.doc = $('#frm_doc').val();
-   
-   
+
+
     if (arrParams.codpunto == 0) {
         var msg = objLang.Please_select_an_Establishment_;
         shortModal(msg, objLang.Error, "error");

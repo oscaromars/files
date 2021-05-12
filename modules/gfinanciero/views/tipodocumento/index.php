@@ -24,7 +24,7 @@ financiero::registerTranslations();
         </div>
         <div class="col-md-12 col-xs-12 col-lg-12 col-sm-12">
             <div class="form-group">
-                <label for="cmb_tipo_establecimiento" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= financiero::t("establecimiento", "Establishment") ?></label>
+                <label for="cmb_tipo_establecimiento" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= financiero::t("establecimiento", "Establishment Code") ?></label>
                 <div class="col-sm-3 col-xs-3 col-md-3 col-lg-3">
                     <?= Html::dropDownList("cmb_tipo_establecimiento", "0", $arr_establecimiento, ["class" => "form-control", "id" => "cmb_tipo_establecimiento"]) ?>                                
                 </div>

@@ -2,6 +2,7 @@
 
 namespace app\modules\gfinanciero\models;
 
+use app\models\Utilities;
 use Yii;
 
 use yii\data\ArrayDataProvider;

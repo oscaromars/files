@@ -42,12 +42,13 @@
 return [
     "Code" => "Code",
     "Currency" => "Currency",
-    "Currency Name" => "Currency Name",
+    "Name" => "Name",
     "Quotation" => "Quotation",   
     "Creation Date" => "Creation Date",
-    "Report Currency Items" => "Report Currency Items",
+    "Report Currency" => "Report Currency Items",
     "Search by Currency" => "Search by Currency",
     "-- All Currencies --" => "-- All Currencies --",
     "-- Select a Currency Name --" => "-- Select a Currency Name --",
     "Please select a Currency." => "Please select a Currency.",
+   
 ];

@@ -18,16 +18,13 @@ financiero::registerTranslations();
             </div>
         </div>
     </div>
-    
-     <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12">
+    <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12">
         <div class="form-group">
-            <label for="frm_porcentaje" class="col-xs-5 col-sm-4 col-md-3 col-lg-2 control-label"><?= financiero::t("discapacidad", "Percentage") ?></label>
+            <label for="frm_fdate" class="col-xs-5 col-sm-4 col-md-3 col-lg-2 control-label"><?= financiero::t("tipoliquidacion", "Creation Date") ?></label>
             <div class="col-xs-7 col-sm-8 col-md-9 col-lg-10">
-                <input type="text" class="form-control PBvalidation" value="<?= $model->dis_porcentaje ?>" id="frm_porcentaje" data-type="all" placeholder="<?= financiero::t("discapacidad", "Percentage") ?>">
+                <input type="text" class="form-control PBvalidation" value="<?= date('Y-m-d', strtotime($model->dis_fecha_creacion)) ?>" id="frm_fdate" disabled="disabled" data-type="all" placeholder="<?= financiero::t("tipoliquidacion", "Creation Date") ?>">
             </div>
         </div>
     </div>       
 </form>
 <input type="hidden" id="frm_id" value="<?= $model->dis_id ?>">
-
-

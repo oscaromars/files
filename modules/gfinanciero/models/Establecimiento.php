@@ -60,7 +60,7 @@ class Establecimiento extends \yii\db\ActiveRecord {
             [['FEC_SIS', 'FEC_PTO'], 'safe'],
             [['COD_PTO'], 'string', 'max' => 3],
             [['NOM_PTO', 'DIR_PTO', 'CORRE_E'], 'string', 'max' => 30],
-            [['COD_PAI', 'COD_EST', 'COD_CIU'], 'string', 'max' => 2],
+            [['COD_PAI', 'COD_EST', 'COD_CIU'], 'string', 'max' => 10],
             [['TEL_N01', 'TEL_N02', 'NUM_FAX', 'COD_RES', 'HOR_SIS'], 'string', 'max' => 10],
             [['CORRE_CT'], 'string', 'max' => 60],
             [['USUARIO'], 'string', 'max' => 250],
@@ -75,25 +75,25 @@ class Establecimiento extends \yii\db\ActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'COD_PTO' => 'Cod Pto',
-            'NOM_PTO' => 'Nom Pto',
-            'COD_PAI' => 'Cod Pai',
-            'COD_EST' => 'Cod Est',
-            'COD_CIU' => 'Cod Ciu',
-            'DIR_PTO' => 'Dir Pto',
-            'TEL_N01' => 'Tel N01',
-            'TEL_N02' => 'Tel N02',
-            'NUM_FAX' => 'Num Fax',
-            'CORRE_E' => 'Corre E',
-            'CORRE_CT' => 'Corre Ct',
+            'COD_PTO' => financiero::t('establecimiento', 'Code'),
+            'NOM_PTO' => financiero::t('establecimiento', 'Name'),
+            'COD_PAI' => financiero::t('establecimiento', 'Country'),
+            'COD_EST' => financiero::t('localidad', 'State'),
+            'COD_CIU' => financiero::t('localidad', 'Canton'),
+            'DIR_PTO' => financiero::t('localidad', 'Address'),
+            'TEL_N01' => financiero::t('establecimiento', 'Telephone 1'),
+            'TEL_N02' => financiero::t('establecimiento', 'Telephone 2'),
+            'NUM_FAX' => financiero::t('establecimiento', 'Telephone Fax'),
+            'CORRE_E' => 'Cod E',
+            'CORRE_CT' => financiero::t('establecimiento', 'Mail'),
             'COD_RES' => 'Cod Res',
             'REG_ASO' => 'Reg Aso',
-            'FEC_SIS' => 'Fec Sis',
-            'HOR_SIS' => 'Hor Sis',
-            'USUARIO' => 'Usuario',
-            'EQUIPO' => 'Equipo',
-            'FEC_PTO' => 'Fec Pto',
-            'EST_LOG' => 'Est Log',
+            'FEC_SIS' => financiero::t('gfinanciero', 'System Date'),
+            'HOR_SIS' => financiero::t('gfinanciero', 'System Hour'),
+            'USUARIO' => financiero::t('gfinanciero', 'User'),
+            'EQUIPO' => financiero::t('gfinanciero', 'Computer'),
+            'FEC_PTO' => financiero::t('gfinanciero', 'Date'),
+            'EST_LOG' => financiero::t('gfinanciero', 'Logic Status'),
             'EST_DEL' => 'Est Del',
         ];
     }
@@ -105,6 +105,81 @@ class Establecimiento extends \yii\db\ActiveRecord {
      */
     public function getMG0016s() {
         return $this->hasMany(MG0016::className(), ['COD_PTO' => 'COD_PTO']);
+    }
+
+    /**
+     * Get all items of Model by params to filter data.
+     *
+     * @param  string $search   Search Item Name
+     * @param  bool $dataProvider   Param to get a DataProvider or a Record Array
+     * @return mixed Return a Record Array or DataProvider
+     */
+    public function getAllItemsGrid($search, $dataProvider = false, $export = false) {
+        $search_cond = "%" . $search . "%";
+        $str_search = "";
+        $con = Yii::$app->db_gfinanciero;
+        $cols = "";
+        //// Code Begin
+        if (isset($search)) {
+            $str_search .= "(E.NOM_PTO like :search) AND ";
+        }
+        $cols = "E.COD_PTO as CodPto, ";
+        $cols .= "E.NOM_PTO as NomPto, ";
+        $cols .= "P.NOM_OCG as NomPai, ";
+        $cols .= "ES.NOM_OCG as NomEst, ";
+        $cols .= "P.NOM_OCG as NomCiu, ";
+        $cols .= "E.DIR_PTO as DirPto, ";
+        $cols .= "E.TEL_N01 as TelN01, ";
+        $cols .= "E.TEL_N02 as TelN02, ";
+        $cols .= "E.NUM_FAX as NumFax, ";
+        $cols .= "E.CORRE_E as Correo, ";
+        $cols .= "E.CORRE_CT as CorreoCt, ";
+        $cols .= "E.COD_RES as CodRes, ";
+        $cols .= "E.REG_ASO as RegAso ";
+
+        if ($export) {
+            $cols = "E.COD_PTO as CodPto, ";
+            $cols .= "E.NOM_PTO as NomPto, ";
+            $cols .= "P.NOM_OCG as NomPai, ";
+            $cols .= "ES.NOM_OCG as NomEst, ";
+            $cols .= "P.NOM_OCG as NomCiu, ";
+            $cols .= "E.DIR_PTO as DirPto ";
+        }
+        $sql = "SELECT
+                    $cols
+                FROM
+                    " . $con->dbname . ".MG0015 E
+                INNER JOIN   " . $con->dbname . ".MG0014 P on P.COD_OCG=E.COD_PAI AND P.EST_LOG=1 AND P.EST_DEL=1
+                INNER JOIN   " . $con->dbname . ".MG0014 ES on ES.COD_OCG=E.COD_EST AND ES.EST_LOG=1 AND ES.EST_DEL=1
+                INNER JOIN   " . $con->dbname . ".MG0014 C on C.COD_OCG=E.COD_CIU AND C.EST_LOG=1 AND C.EST_DEL=1
+                
+                WHERE
+                    $str_search
+                    E.EST_LOG = 1 AND E.EST_DEL = 1
+                ORDER BY E.COD_PTO;";
+        //// Code End
+
+        $comando = $con->createCommand($sql);
+        if (isset($search)) {
+            $comando->bindParam(":search", $search_cond, \PDO::PARAM_STR);
+        }
+
+
+        $result = $comando->queryAll();
+        if ($dataProvider) {
+            $dataProvider = new ArrayDataProvider([
+                'key' => 'CodPunto',
+                'allModels' => $result,
+                'pagination' => [
+                    'pageSize' => Yii::$app->params["pageSize"],
+                ],
+                'sort' => [
+                    'attributes' => ['Nombre'],
+                ],
+            ]);
+            return $dataProvider;
+        }
+        return $result;
     }
 
     /**

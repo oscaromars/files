@@ -102,7 +102,21 @@ return [
     "Existence" => "Existencía",
     "Existence Cost" => "Existencía de Costo",
     "Existence Cellar" => "Existencía de Bodega",
-    
-    
+   
+
+    //MOVIMIENTO DE ITEMS
+    "Date from"=>"Fecha Desde",
+    "Date Until" => "Fecha Hasta",
+    "DATE" => "FECHA",
+    "ENTRY" => "INGRESO",
+    "EGRESS" => "EGRESO",
+    "AMOUNT" => "CANTIDAD",
+    "BALANCE" => "SALDO",
+    "STATUS" => "ESTADO",
+    "REFERENCE" => "REFERENCIA",
+    "ITEMS BALANCE" => "Saldo de Movimiento",
+    "No data"=>"No existen datos",
+    "Select an Cellar" => "Seleccione Bodega",
+    "Movement of items" => "Movimiento de Items",
 
 ];

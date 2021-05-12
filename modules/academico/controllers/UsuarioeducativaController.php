@@ -12,6 +12,7 @@ use app\modules\academico\models\UsuarioEducativa;
 use app\modules\academico\models\CursoEducativa;
 use app\modules\academico\models\CursoEducativaUnidad;
 use app\modules\academico\models\CursoEducativaEstudiante;
+use app\modules\academico\models\CursoEducativaDistributivo;
 use app\modules\academico\models\Asignatura;
 use app\modules\academico\models\UnidadAcademica;
 use app\modules\academico\models\Modalidad;
@@ -1625,11 +1626,13 @@ class UsuarioeducativaController extends \app\components\CController {
         $per_id = @Yii::$app->session->get("PB_perid");
         $emp_id = @Yii::$app->session->get("PB_idempresa");
         $model = NULL;
-        $distributivo_model = new DistributivoAcademico();
+        $distributivo_model = new CursoEducativaDistributivo();
+        $modeljornada = new DistributivoAcademico();
         $modelo_dist = new Distributivo();
         $mod_modalidad = new Modalidad();
         $mod_unidad = new UnidadAcademica();
         $mod_periodo = new PeriodoAcademicoMetIngreso();
+        $mod_educativa = new CursoEducativa();
         $data = Yii::$app->request->get();
 
         if ($data['PBgetFilter']) {
@@ -1639,12 +1642,12 @@ class UsuarioeducativaController extends \app\components\CController {
             $periodo = (isset($data['periodo']) && $data['periodo'] > 0) ? $data['periodo'] : NULL;
             $materia = (isset($data['materia']) && $data['materia'] > 0) ? $data['materia'] : NULL;
             $jornada = (isset($data['jornada']) && $data['jornada'] > 0) ? $data['jornada'] : NULL;
-            $model = $distributivo_model->getListadoDistributivo($search, $modalidad, $materia, $jornada, $unidad, $periodo);
+            $model = $distributivo_model->getListadoDistributivoedu($search, $modalidad, $materia, $jornada, $unidad, $periodo);
             return $this->render('asignar-grid', [
                         "model" => $model,
             ]);
         } else {
-            $model = $distributivo_model->getListadoDistributivo();
+            $model = $distributivo_model->getListadoDistributivoedu();
         }
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
@@ -1661,7 +1664,7 @@ class UsuarioeducativaController extends \app\components\CController {
             if (isset($data["getjornada"])) {
                 //\app\models\Utilities::putMessageLogFile('jor unudad...: ' . $data["uaca_isd"]);     
                 //\app\models\Utilities::putMessageLogFile('jor mod...: ' . $data["mod_isd"]);     
-                $jornada = $distributivo_model->getJornadasByUnidadAcad($data["uaca_isd"], $data["mod_isd"]);
+                $jornada = $modeljornada->getJornadasByUnidadAcad($data["uaca_isd"], $data["mod_isd"]);
                 $message = array("jornada" => $jornada);
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
             }
@@ -1674,8 +1677,10 @@ class UsuarioeducativaController extends \app\components\CController {
         $mod_asignatura = Asignatura::findAll(['asi_estado' => 1, 'asi_estado_logico' => 1]);
         $arr_unidad = $mod_unidad->consultarUnidadAcademicasEmpresa($emp_id);
         $arr_modalidad = $mod_modalidad->consultarModalidad($arr_unidad[0]["id"], 1);
-        $arr_jornada = $distributivo_model->getJornadasByUnidadAcad(0,0/*$arr_unidad[0]["id"], $arr_modalidad[0]["id"]*/);
+        $arr_jornada = $modeljornada->getJornadasByUnidadAcad(0,0/*$arr_unidad[0]["id"], $arr_modalidad[0]["id"]*/);
         $arr_periodo = $mod_periodo->consultarPeriodoAcademico();
+        //$arr_curso = $mod_educativa->consultarCursosxpacaid(0); // parametro q envia es el paca_id
+        //$arr_curso = $mod_educativa->consultarCursostodos();
         return $this->render('asignardistributivo', [
                     'mod_unidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Grid")]], $arr_unidad), "id", "name"),
                     'mod_modalidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Grid")]], $arr_modalidad), "id", "name"),
@@ -1683,6 +1688,7 @@ class UsuarioeducativaController extends \app\components\CController {
                     'mod_materias' => ArrayHelper::map(array_merge([["asi_id" => "0", "asi_nombre" => Yii::t("formulario", "Grid")]], $mod_asignatura), "asi_id", "asi_nombre"),
                     'model' => $model,
                     'mod_jornada' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Grid")]], $arr_jornada), "id", "name"),
+                    //'arr_curso' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $arr_curso), "id", "name"),
         ]);
     }
 
@@ -1705,7 +1711,7 @@ class UsuarioeducativaController extends \app\components\CController {
             Yii::t("formulario", "Subject"),
             academico::t("Academico", "Working day"),
         );
-        $distributivo_model = new DistributivoAcademico();
+        $distributivo_model = new CursoEducativaDistributivo();
         $data = Yii::$app->request->get();
         $arrSearch["search"] = ($data['search'] != "") ? $data['search'] : NULL;
         $arrSearch["unidad"] = ($data['unidad'] > 0) ? $data['unidad'] : NULL;
@@ -1714,7 +1720,7 @@ class UsuarioeducativaController extends \app\components\CController {
         $arrSearch["materia"] = ($data['materia'] > 0) ? $data['materia'] : NULL;
         $arrSearch["jornada"] = ($data['jornada'] > 0) ? $data['jornada'] : NULL;
 
-        $arrData = $distributivo_model->getListadoDistributivo($arrSearch["search"], $arrSearch["modalidad"], $arrSearch["asignatura"], $arrSearch["jornada"], $arrSearch["unidad"], $arrSearch["periodo"], true);
+        $arrData = $distributivo_model->getListadoDistributivoedu($arrSearch["search"], $arrSearch["modalidad"], $arrSearch["asignatura"], $arrSearch["jornada"], $arrSearch["unidad"], $arrSearch["periodo"], true);
         foreach ($arrData as $key => $value) {
             unset($arrData[$key]["Id"]);
         }
@@ -1737,7 +1743,7 @@ class UsuarioeducativaController extends \app\components\CController {
             Yii::t("formulario", "Subject"),
             academico::t("Academico", "Working day"),
         );
-        $distributivo_model = new DistributivoAcademico();
+        $distributivo_model = new CursoEducativaDistributivo();
         $data = Yii::$app->request->get();
         $arrSearch["search"] = ($data['search'] != "") ? $data['search'] : NULL;
         $arrSearch["unidad"] = ($data['unidad'] > 0) ? $data['unidad'] : NULL;
@@ -1746,7 +1752,7 @@ class UsuarioeducativaController extends \app\components\CController {
         $arrSearch["materia"] = ($data['materia'] > 0) ? $data['materia'] : NULL;
         $arrSearch["jornada"] = ($data['jornada'] > 0) ? $data['jornada'] : NULL;
 
-        $arrData = $distributivo_model->getListadoDistributivo($arrSearch["search"], $arrSearch["modalidad"], $arrSearch["asignatura"], $arrSearch["jornada"], $arrSearch["unidad"], $arrSearch["periodo"], true);
+        $arrData = $distributivo_model->getListadoDistributivoedu($arrSearch["search"], $arrSearch["modalidad"], $arrSearch["asignatura"], $arrSearch["jornada"], $arrSearch["unidad"], $arrSearch["periodo"], true);
         $report->orientation = "P"; // tipo de orientacion L => Horizontal, P => Vertical                                
         $report->createReportPdf(
                 $this->render('exportpdf', [

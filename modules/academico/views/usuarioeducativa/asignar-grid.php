@@ -4,6 +4,7 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use app\widgets\PbGridView\PbGridView;
 use app\models\Utilities;
+use app\modules\academico\models\CursoEducativa;
 use app\modules\academico\Module as academico;
 use app\modules\admision\Module as admision;
 use kartik\grid\GridView;
@@ -11,7 +12,7 @@ use kartik\grid\DataColumn;
 use kartik\grid\EditableColumn;
 use kartik\grid\Editable;
 use yii\helpers\ArrayHelper;
-
+//print_r($model);
 admision::registerTranslations();
 academico::registerTranslations();
 ?>
@@ -61,7 +62,7 @@ academico::registerTranslations();
                 'header' => academico::t("Academico", "Working day"),
                 'value' => 'Jornada',
             ],   
-            /*[
+            [
                 'attribute' => 'cursos',
                 'header' => academico::t("Academico", "Aulas"),
                 'filterInputOptions' => [
@@ -70,9 +71,9 @@ academico::registerTranslations();
                 ],
                 'format' => 'raw',
                 'value'  => function ($model) {
-                    return Html::dropDownList('cursos', empty($model['cedu_id'])?0:$model['cedu_id'], ArrayHelper::map($model['cursos'] , "id", "name"), ["class" => "form-control", "id" => "curso_".$model['id'] ]);
+                    //return Html::dropDownList('cursos', empty($model['cedu_id'])?0:$model['cedu_id'], ArrayHelper::map($model['cursos'] , "id", "name"), ["class" => "form-control", "id" => "curso_".$model['id'] ]);                    
                 }
-            ], */        
+            ],       
             /*[
                 'class' => 'yii\grid\ActionColumn',
                 'header' => '',

@@ -13,6 +13,7 @@ use kartik\grid\EditableColumn;
 use kartik\grid\Editable;
 use yii\helpers\ArrayHelper;
 //print_r($model);
+//print_r($arr_curso);
 admision::registerTranslations();
 academico::registerTranslations();
 ?>
@@ -71,7 +72,8 @@ academico::registerTranslations();
                 ],
                 'format' => 'raw',
                 'value'  => function ($model) {
-                    //return Html::dropDownList('cursos', empty($model['cedu_id'])?0:$model['cedu_id'], ArrayHelper::map($model['cursos'] , "id", "name"), ["class" => "form-control", "id" => "curso_".$model['id'] ]);                    
+                    //return Html::dropDownList('cursos', empty($model['id'])?0:$model['id'], ArrayHelper::map($model['cursos'] , "id", "name"), ["class" => "form-control", "id" => "curso_".$model['id'] ]);                                        
+                    //return Html::dropDownList("cmb_cursos", 0, $arr_curso, ["class" => "form-control", "id" => "cmb_cursos"]);
                 }
             ],       
             /*[

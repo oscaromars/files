@@ -1680,7 +1680,7 @@ class UsuarioeducativaController extends \app\components\CController {
         $arr_jornada = $modeljornada->getJornadasByUnidadAcad(0,0/*$arr_unidad[0]["id"], $arr_modalidad[0]["id"]*/);
         $arr_periodo = $mod_periodo->consultarPeriodoAcademico();
         //$arr_curso = $mod_educativa->consultarCursosxpacaid(0); // parametro q envia es el paca_id
-        //$arr_curso = $mod_educativa->consultarCursostodos();
+        $arr_curso = $mod_educativa->consultarCursostodos();
         return $this->render('asignardistributivo', [
                     'mod_unidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Grid")]], $arr_unidad), "id", "name"),
                     'mod_modalidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Grid")]], $arr_modalidad), "id", "name"),
@@ -1688,7 +1688,7 @@ class UsuarioeducativaController extends \app\components\CController {
                     'mod_materias' => ArrayHelper::map(array_merge([["asi_id" => "0", "asi_nombre" => Yii::t("formulario", "Grid")]], $mod_asignatura), "asi_id", "asi_nombre"),
                     'model' => $model,
                     'mod_jornada' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Grid")]], $arr_jornada), "id", "name"),
-                    //'arr_curso' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $arr_curso), "id", "name"),
+                    'arr_curso' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $arr_curso), "id", "name"),
         ]);
     }
 

@@ -20,7 +20,7 @@ use app\modules\academico\Module as academico;
     <?=
     $this->render('asignar-grid', [
         'model' => $model,
-        //'arr_curso' => $arr_curso,
+        'arr_curso' => $arr_curso,
         ]);
     ?>
 </div>

@@ -43,6 +43,10 @@ $(document).ready(function() {
         saveunidad();
     });
 
+    $('#btn_buscarData_dise').click(function () {
+        actualizarGridAsignaDistributivo();
+    });
+
     $('#btn_editunidad').click(function () {
         editunidad();
     });
@@ -761,4 +765,19 @@ function asignarBloqueo() {
  } else {
      showAlert('NO_OK', 'error', {"wtmessage": 'Curso: El campo no debe estar vacío.', "title": 'Error'});
   }  
+}
+
+function actualizarGridAsignaDistributivo() {
+    var search = $('#txt_buscarData').val();
+    var unidad =  $('#cmb_unidad_dise option:selected').val();
+    var modalidad =  $('#cmb_modalidad_dise option:selected').val();
+    var periodo =  $('#cmb_periodo_dise option:selected').val();
+    var materia = $('#cmb_materia_dise option:selected').val();  
+    var jornada = $('#cmb_jornada_dise option:selected').val();      
+    //Buscar almenos una clase con el nombre para ejecutar
+    if (!$(".blockUI").length) {
+        showLoadingPopup();
+    $('#Tbg_Asigdistributivo').PbGridView('applyFilterData', {'search': search, 'unidad': unidad, 'modalidad': modalidad, 'periodo': periodo, 'materia': materia, 'jornada': jornada});
+        setTimeout(hideLoadingPopup, 2000);
+    }
 }

@@ -261,6 +261,10 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
             $comando->bindParam(":periodo", $periodoAcademico, \PDO::PARAM_INT);
         }
 
+        if (isset($jornada) && $jornada > 0) {
+            $comando->bindParam(":jornada", $jornada, \PDO::PARAM_INT);            
+        }
+
         $res = $comando->queryAll();
         if ($onlyData)
             return $res;

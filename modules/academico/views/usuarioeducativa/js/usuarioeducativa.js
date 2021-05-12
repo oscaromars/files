@@ -180,6 +180,34 @@ $(document).ready(function() {
             }
         }, true);
     });
+
+    $('#cmb_modalidad_dise').change(function () {
+        var link = $('#txth_base').val() + "/academico/usuarioeducativa/asignardistributivo";
+        var arrParams = new Object();
+        arrParams.uaca_ides = $('#cmb_unidad_dise').val();
+        arrParams.moda_ides = $(this).val();
+        arrParams.getasignaturasig = true;
+        requestHttpAjax(link, arrParams, function (response) {
+            if (response.status == "OK") {
+                data = response.message;
+                setComboDataselect(data.asignaturasig, "cmb_materia_dise", "Todos");
+            }
+        }, true);
+    });
+
+    $('#cmb_materia_dise').change(function () {
+        var link = $('#txth_base').val() + "/academico/usuarioeducativa/asignardistributivo";
+        var arrParams = new Object();
+        arrParams.uaca_isd = $('#cmb_unidad_dise').val();
+        arrParams.mod_isd = $('#cmb_modalidad_dise').val();
+        arrParams.getjornada = true;
+        requestHttpAjax(link, arrParams, function (response) {
+            if (response.status == "OK") {
+                data = response.message;
+                setComboDataselect(data.jornada, "cmb_jornada_dise", "Todos");
+            }
+        }, true);
+    });
 });
 
 function cargarUsuario() {

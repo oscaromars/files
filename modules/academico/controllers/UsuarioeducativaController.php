@@ -18,6 +18,14 @@ use app\modules\academico\models\Modalidad;
 use app\modules\academico\models\PeriodoAcademicoMetIngreso;
 use app\modules\academico\models\Distributivo;
 use app\modules\academico\models\PeriodoAcademico;
+use app\modules\academico\models\Profesor;
+use app\modules\academico\models\DistributivoAcademico;
+use app\modules\academico\models\DistributivoAcademicoHorario;
+use app\modules\academico\models\SemestreAcademico;
+use app\modules\academico\models\TipoDistributivo;
+use app\modules\academico\models\PromocionPrograma;
+use app\modules\academico\models\ParaleloPromocionPrograma;
+use app\modules\academico\models\Planificacion;
 use app\models\ExportFile;
 use app\modules\academico\Module as academico;
 use app\modules\admision\Module as admision;
@@ -1611,5 +1619,70 @@ class UsuarioeducativaController extends \app\components\CController {
             }
             return;
         }
+    }
+
+    public function actionAsignardistributivo() {
+        $per_id = @Yii::$app->session->get("PB_perid");
+        $emp_id = @Yii::$app->session->get("PB_idempresa");
+        $model = NULL;
+        $distributivo_model = new DistributivoAcademico();
+        $modelo_dist = new Distributivo();
+        $mod_modalidad = new Modalidad();
+        $mod_unidad = new UnidadAcademica();
+        $mod_periodo = new PeriodoAcademicoMetIngreso();
+        $data = Yii::$app->request->get();
+
+        if ($data['PBgetFilter']) {
+            $search = $data['search'];
+            $unidad = (isset($data['unidad']) && $data['unidad'] > 0) ? $data['unidad'] : NULL;
+            $modalidad = (isset($data['modalidad']) && $data['modalidad'] > 0) ? $data['modalidad'] : NULL;
+            $periodo = (isset($data['periodo']) && $data['periodo'] > 0) ? $data['periodo'] : NULL;
+            $materia = (isset($data['materia']) && $data['materia'] > 0) ? $data['materia'] : NULL;
+            $jornada = (isset($data['jornada']) && $data['jornada'] > 0) ? $data['jornada'] : NULL;
+            $model = $distributivo_model->getListadoDistributivo($search, $modalidad, $materia, $jornada, $unidad, $periodo);
+            return $this->render('asignar-grid', [
+                        "model" => $model,
+            ]);
+        } else {
+            $model = $distributivo_model->getListadoDistributivo();
+        }
+        if (Yii::$app->request->isAjax) {
+            $data = Yii::$app->request->post();
+            if (isset($data["getmodalidad"])) {
+                $modalidad = $mod_modalidad->consultarModalidad($data["uaca_id"], $emp_id);
+                $message = array("modalidad" => $modalidad);
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+            }
+            if (isset($data["getasignaturasig"])) {
+                $asignaturasig = $modelo_dist->consultarAsiganturaxuniymoda($data["uaca_ides"], $data["moda_ides"]);
+                $message = array("asignaturasig" => $asignaturasig);
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+            }
+            if (isset($data["getjornada"])) {
+                \app\models\Utilities::putMessageLogFile('jor unudad...: ' . $data["uaca_isd"]);     
+                \app\models\Utilities::putMessageLogFile('jor mod...: ' . $data["mod_isd"]);     
+                $jornada = $distributivo_model->getJornadasByUnidadAcad($data["uaca_isd"], $data["mod_isd"]);
+                $message = array("jornada" => $jornada);
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+            }
+            /*if (isset($data["gethorario"])) {
+                $horario = $distributivo_model->getHorariosByUnidadAcad($data["uaca_id"], $data["mod_id"], $data['jornada_id']);
+                $message = array("horario" => $horario);
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+            }*/
+        }
+        $mod_asignatura = Asignatura::findAll(['asi_estado' => 1, 'asi_estado_logico' => 1]);
+        $arr_unidad = $mod_unidad->consultarUnidadAcademicasEmpresa($emp_id);
+        $arr_modalidad = $mod_modalidad->consultarModalidad($arr_unidad[0]["id"], 1);
+        $arr_jornada = $distributivo_model->getJornadasByUnidadAcad(0,0/*$arr_unidad[0]["id"], $arr_modalidad[0]["id"]*/);
+        $arr_periodo = $mod_periodo->consultarPeriodoAcademico();
+        return $this->render('asignardistributivo', [
+                    'mod_unidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Grid")]], $arr_unidad), "id", "name"),
+                    'mod_modalidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Grid")]], $arr_modalidad), "id", "name"),
+                    'mod_periodo' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Grid")]], $arr_periodo), "id", "name"),
+                    'mod_materias' => ArrayHelper::map(array_merge([["asi_id" => "0", "asi_nombre" => Yii::t("formulario", "Grid")]], $mod_asignatura), "asi_id", "asi_nombre"),
+                    'model' => $model,
+                    'mod_jornada' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Grid")]], $arr_jornada), "id", "name"),
+        ]);
     }
 }  

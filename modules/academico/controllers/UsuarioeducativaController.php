@@ -85,7 +85,7 @@ class UsuarioeducativaController extends \app\components\CController {
                 if ($carga_archivo['status']) {
                     //\app\models\Utilities::putMessageLogFile('no estudiante controller...: ' . $arroout['noalumno']);
                     if (!empty($carga_archivo['noalumno'])){                        
-                    $noalumno = ' Se encontró las cédulas '. $carga_archivo['noalumno'] . ' que no pertencen a estudiantes por ende no se cargaron. ';
+                    $noalumno = ' No se encontró los usuarios '. $carga_archivo['noalumno'] . ' que no pertenecen a estudiantes en asgard. ';
                     }
                     $message = array(
                         "wtmessage" => Yii::t("notificaciones", "Archivo procesado correctamente." . $carga_archivo['data'] .  $noalumno),

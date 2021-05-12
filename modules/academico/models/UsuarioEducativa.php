@@ -146,13 +146,15 @@ class UsuarioEducativa extends \yii\db\ActiveRecord
                         if (!empty($val[5])) {
                         $est_id = $mod_estudiante->consultarEstidxdni($val[5]);
                         }else{
-                            $est_id['est_id'] = null;
-                            $est_id['per_id'] = null;
+                            
+                            $estudiante = $mod_educativa->consultarEstutudiantexusuario($val[1]);
+                            $est_id['est_id'] = $estudiante['est_id'];
+                            $est_id['per_id'] = $estudiante['per_id'];
                         }
                         //\app\models\Utilities::putMessageLogFile('est_id consulta ...: ' .$est_id['est_id']);
                         //\app\models\Utilities::putMessageLogFile('per_id consulta ...: ' . $est_id['per_id']);
                         $fila++;         
-                        //if (!empty($est_id['est_id'])) {
+                        if (!empty($est_id['est_id']) && !empty($est_id['per_id'])) {
                         $existe = $mod_educativa->consultarexisteusuario($val[1], $val[4], $val[5], $val[6]);
                             if ($existe['existe_usuario'] == 0) {
                         $save_documento = $this->saveDocumentoDB($val, $est_id['est_id'], $est_id['per_id']);
@@ -167,11 +169,11 @@ class UsuarioEducativa extends \yii\db\ActiveRecord
                         }
                       }else{
                         $ingresadoant .= $val[1] . ", ";
+                     }
                     }
-                     /*}
                     else{
                         $noestudiantes .= $val[1] . ", ";
-                    }*/
+                    }
                   }
                 }
                 //\app\models\Utilities::putMessageLogFile('anterio ...: ' . $ingresadoant);
@@ -578,4 +580,38 @@ class UsuarioEducativa extends \yii\db\ActiveRecord
             return FALSE;
         }
     }
+
+    /**
+     * Function Consultar per_id y est_id segun la columna usuario del archivo
+     * sea este correo, matricula o cedula.
+     * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>;
+     * @property       
+     * @return  
+     */
+    public function consultarEstutudiantexusuario($string) {
+        $con = \Yii::$app->db_academico; 
+        $con1 = \Yii::$app->db_asgard;     
+        $estado = 1;
+
+        $sql = "SELECT 
+                concat(pers.per_pri_nombre ,' ', pers.per_pri_apellido) as nombre,
+                pers.per_id as per_id,
+                est.est_id as est_id
+                FROM " . $con1->dbname . ".persona pers
+                INNER JOIN " . $con->dbname . ".estudiante est ON est.per_id = pers.per_id
+                WHERE (pers.per_cedula = :string OR
+                    pers.per_correo = :string OR
+                    est.est_matricula = :string ) AND
+                    pers.per_estado = :estado AND
+                    pers.per_estado_logico = :estado AND
+                    est.est_estado = :estado AND
+                    est.est_estado_logico = :estado";
+
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":string", $string, \PDO::PARAM_STR);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);        
+        $resultData = $comando->queryOne();
+        return $resultData;
+    }
+
 }

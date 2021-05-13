@@ -372,7 +372,8 @@ class CursoEducativaDistributivo extends \yii\db\ActiveRecord
      * @return
      */
     public function consultarDistEducativa($arrFiltro = array(), $reporte, $ids) {
-        $con = \Yii::$app->db_academico;        
+        $con = \Yii::$app->db_academico;  
+        $con1 = \Yii::$app->db_asgard;      
         $estado = 1;
         if ($ids == 1) {
             $campos = "
@@ -380,14 +381,15 @@ class CursoEducativaDistributivo extends \yii\db\ActiveRecord
             ced.daca_id,  ";
         }    
         if (isset($arrFiltro) && count($arrFiltro) > 0) {
-            //$str_search .= "(cure.ceuni_descripcion_unidad like :search) AND ";
-   
+            $str_search .= "(pers.per_pri_nombre like :search OR ";           
+            $str_search .= "pers.per_pri_apellido like :search) AND  ";  
+
             if ($arrFiltro['periodo'] != "" && $arrFiltro['periodo'] > 0) {
-                $str_search .= "cur.paca_id = :paca_id AND ";
+                $str_search .= "dia.paca_id = :paca_id AND ";
             }
 
             if ($arrFiltro['curso'] != "" && $arrFiltro['curso'] > 0) {
-                $str_search .= "cure.cedu_id = :cedu_id AND ";
+                $str_search .= "ced.cedu_id = :cedu_id AND ";
             }
                     
         }
@@ -396,21 +398,26 @@ class CursoEducativaDistributivo extends \yii\db\ActiveRecord
                     cue.cedu_asi_nombre,
                     uaca.uaca_nombre,
                     moda.mod_nombre,
-                    asig.asi_nombre
+                    asig.asi_nombre,
+                    concat(pers.per_pri_nombre, ' ', pers.per_pri_apellido) as profesor
                     FROM " . $con->dbname . ".curso_educativa_distributivo ced
                     INNER JOIN " . $con->dbname . ".curso_educativa cue ON cue.cedu_id = ced.cedu_id
                     INNER JOIN " . $con->dbname . ".distributivo_academico dia ON dia.daca_id = ced.daca_id
                     INNER JOIN " . $con->dbname . ".unidad_academica uaca ON uaca.uaca_id = dia.uaca_id
                     INNER JOIN " . $con->dbname . ".modalidad moda ON moda.mod_id = dia.mod_id
                     INNER JOIN " . $con->dbname . ".asignatura asig ON asig.asi_id = dia.asi_id
-                    WHERE ced.cedi_estado = :estado AND
+                    INNER JOIN " . $con->dbname . ".profesor pro ON pro.pro_id = dia.pro_id
+                    INNER JOIN " . $con1->dbname . ".persona pers ON pers.per_id = pro.per_id
+                    WHERE 
+                    $str_search 
+                    ced.cedi_estado = :estado AND
                     ced.cedi_estado_logico = :estado";
 
         $comando = $con->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
         if (isset($arrFiltro) && count($arrFiltro) > 0) {
-            /*$search_cond = "%" . $arrFiltro["search"] . "%";
-            $comando->bindParam(":search", $search_cond, \PDO::PARAM_STR);*/
+            $search_cond = "%" . $arrFiltro["search"] . "%";
+            $comando->bindParam(":search", $search_cond, \PDO::PARAM_STR);
             
             if ($arrFiltro['periodo'] != "" && $arrFiltro['periodo'] > 0) {
                 $periodo = $arrFiltro["periodo"];

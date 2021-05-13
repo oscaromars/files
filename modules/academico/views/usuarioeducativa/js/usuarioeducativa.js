@@ -18,6 +18,10 @@ $(document).ready(function() {
     $('#btn_buscarUsuario').click(function () {
         actualizarGridUsereducativa();
     });
+
+    $('#btn_buscarDistbedu').click(function () {
+        actualizarGridDisteducativa();
+    });
     
     $('#btn_newcurso').click(function () {
         savecurso();
@@ -324,7 +328,18 @@ function exportPdfEduregistro() {
     //var jornada = $('#cmb_jornadaes option:selected').val();
     window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/exppdfestregistro?pdf=1&search=" + search + "&profesor=" + profesor + "&unidad=" + unidad + "&modalidad=" + modalidad + "&periodo=" + periodo + "&asignatura=" + asignatura + "&estado=" + estado + "&curso=" + curso/*+ "&jornada=" + jornada*/;
 }
-// actualizarGridUsereducativa
+
+function actualizarGridDisteducativa() {
+    var search = $('#txt_buscarDatadisted').val();
+    var periodo =  $('#cmb_periododistb option:selected').val();
+    var curso = $('#cmb_cursodistb option:selected').val();  
+    //Buscar almenos una clase con el nombre para ejecutar
+    if (!$(".blockUI").length) {
+        showLoadingPopup();
+    $('#Pbudistriutivoedu').PbGridView('applyFilterData', {'search': search, 'periodo': periodo, 'curso': curso});
+        setTimeout(hideLoadingPopup, 2000);
+    }
+}
 
 function actualizarGridUsereducativa() {
     var search = $('#txt_buscarDataUsuario').val();   

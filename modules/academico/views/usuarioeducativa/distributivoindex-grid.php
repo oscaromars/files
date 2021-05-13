@@ -45,24 +45,29 @@ academico::registerTranslations();
                 'value' => 'daca_id',
             ],*/
             [
-                'attribute' => 'cedula',
-                'header' => Yii::t("formulario", "DNI 1"),
+                'attribute' => 'aula',
+                'header' => academico::t("Academico", "Course"),
                 'value' => 'cedu_asi_nombre',
             ],  
             [
-                'attribute' => 'matricula',
-                'header' => Yii::t("formulario", "Enrollment"),
+                'attribute' => 'unidad',
+                'header' => academico::t("Academico", "Aca. Uni."),
                 'value' => 'uaca_nombre',
             ],  
             [
-                'attribute' => 'correo',
-                'header' => Yii::t("formulario", "Email"),
+                'attribute' => 'modalidad',
+                'header' => academico::t("Academico", "Modality"),
                 'value' => 'mod_nombre',
             ],
             [
-                'attribute' => 'correo',
-                'header' => Yii::t("formulario", "Email"),
+                'attribute' => 'materia',
+                'header' => academico::t("Academico", "Subject"),
                 'value' => 'asi_nombre',
+            ],
+            [
+                'attribute' => 'profesor',
+                'header' => academico::t("Academico", "Teacher"),
+                'value' => 'profesor',
             ],
             /*[
                 'class' => 'yii\grid\ActionColumn',

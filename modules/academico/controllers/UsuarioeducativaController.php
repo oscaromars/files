@@ -1848,7 +1848,7 @@ class UsuarioeducativaController extends \app\components\CController {
         $data = Yii::$app->request->get();
 
         if ($data['PBgetFilter']) {
-            //$arrSearch["search"] = $data['search'];  
+            $arrSearch["search"] = $data['search'];  
             $arrSearch["periodo"] = $data['periodo'];  
             $arrSearch["curso"] = $data['curso'];                               
             $model = $mod_educativaunidad->consultarDistEducativa($arrSearch, 1, 1);

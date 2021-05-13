@@ -198,6 +198,7 @@ class CursoEducativaDistributivo extends \yii\db\ActiveRecord
         foreach ($res as $key => $value) {
             $value['cursos'] = $arr_curso;
             $res[$key] =  $value;
+        }    
         /*if ($onlyData)
             return $res;*/
         $dataProvider = new ArrayDataProvider([
@@ -217,7 +218,5 @@ class CursoEducativaDistributivo extends \yii\db\ActiveRecord
     } else {
         return $dataProvider;
     }
-    }
-
- }
+    } 
 }

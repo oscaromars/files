@@ -7,10 +7,10 @@ use app\models\Utilities;
 use app\modules\academico\models\CursoEducativa;
 use app\modules\academico\Module as academico;
 use app\modules\admision\Module as admision;
-use kartik\grid\GridView;
+/*use kartik\grid\GridView;
 use kartik\grid\DataColumn;
 use kartik\grid\EditableColumn;
-use kartik\grid\Editable;
+use kartik\grid\Editable;*/
 use yii\helpers\ArrayHelper;
 //print_r($model);
 //print_r($arr_curso);
@@ -72,7 +72,7 @@ academico::registerTranslations();
                 ],
                 'format' => 'raw',
                 'value'  => function ($model) {
-                    //return Html::dropDownList('cursos', empty($model['id'])?0:$model['id'], ArrayHelper::map($model['cursos'] , "id", "name"), ["class" => "form-control", "id" => "curso_".$model['id'] ]);                                        
+                    return Html::dropDownList('cursos', empty($model['id'])?0:$model['id'], ArrayHelper::map($model['cursos'] , "id", "name"), ["class" => "form-control", "id" => "curso_".$model['id'] ]);                                        
                     //return Html::dropDownList("cmb_cursos", 0, $arr_curso, ["class" => "form-control", "id" => "cmb_cursos"]);
                 }
             ],       

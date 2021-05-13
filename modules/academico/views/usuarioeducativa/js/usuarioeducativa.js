@@ -892,3 +892,17 @@ function savedistributivo() {
         showAlert('NO_OK', 'error', {"wtmessage": 'Debe seleccionar modalidad, periodo y asignatura.', "title": 'Información'});
     }
 }
+
+function exportExceldistedu() {
+    var search = $('#txt_buscarDatadisted').val();
+    var periodo =  $('#cmb_periododistb option:selected').val();
+    var curso = $('#cmb_cursodistb option:selected').val(); 
+    window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/expexceldistedu?search=" + search + "&periodo=" + periodo + "&curso=" + curso;
+}
+
+function exportPdfdistedu() {
+    var search = $('#txt_buscarDatadisted').val();
+    var periodo =  $('#cmb_periododistb option:selected').val();
+    var curso = $('#cmb_cursodistb option:selected').val(); 
+    window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/exppdfdistedu?pdf=1&search=" + search + "&periodo=" + periodo + "&curso=" + curso;
+}

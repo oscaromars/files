@@ -17,8 +17,8 @@ academico::registerTranslations();
     PbGridView::widget([
         'id' => 'Pbudistriutivoedu',
         'showExport' => true,
-        //'fnExportEXCEL' => "exportExceldistedu",
-        //'fnExportPDF' => "exportPdfdistedu",
+        'fnExportEXCEL' => "exportExceldistedu",
+        'fnExportPDF' => "exportPdfdistedu",
         'tableOptions' => [
             'class' => 'table table-condensed',
         ],
@@ -38,12 +38,12 @@ academico::registerTranslations();
                 'attribute' => 'usuario',
                 'header' => Yii::t("formulario", "Users"),
                 'value' => 'cedu_id',
-            ],            
+            ],           
             [
                 'attribute' => 'nombres',
                 'header' => Yii::t("formulario", "Names"),
                 'value' => 'daca_id',
-            ],*/
+            ],*/ 
             [
                 'attribute' => 'aula',
                 'header' => academico::t("Academico", "Course"),

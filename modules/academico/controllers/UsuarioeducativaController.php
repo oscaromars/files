@@ -1876,4 +1876,70 @@ class UsuarioeducativaController extends \app\components\CController {
                 'arr_curso' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $arr_curso), "id", "name"),
             ]);       
     }
+
+    public function actionExpexceldistedu() {
+        //$per_id = @Yii::$app->session->get("PB_perid");
+
+        ini_set('memory_limit', '256M');
+        $content_type = Utilities::mimeContentType("xls");
+        $nombarch = "Report-" . date("YmdHis") . ".xls";
+        header("Content-Type: $content_type");
+        header("Content-Disposition: attachment;filename=" . $nombarch);
+        header('Cache-Control: max-age=0');
+        $colPosition = array("C", "D", "E", "F", "G", "H", "I", "J");
+        $arrHeader = array(
+            academico::t("Academico", "Course"),
+            academico::t("Academico", "Aca. Uni."),
+            academico::t("Academico", "Modality"),
+            academico::t("Academico", "Subject"),
+            academico::t("Academico", "Teacher"),
+        );
+      
+        $mod_educativa = new CursoEducativaDistributivo();
+        $data = Yii::$app->request->get();
+        $arrSearch["search"] = $data['search'];
+        $arrSearch["periodo"] = $data['periodo'];
+        $arrSearch["curso"] = $data['curso'];  
+        $arrData = array();
+        if (empty($arrSearch)) {
+            $arrData = $mod_educativa->consultarDistEducativa(array(), 0, 0);
+        } else {
+            $arrData = $mod_educativa->consultarDistEducativa($arrSearch, 0, 0);
+        }
+        $nameReport = academico::t("Academico", "Listado de distributivo por profesor");
+        Utilities::generarReporteXLS($nombarch, $nameReport, $arrHeader, $arrData, $colPosition);
+        exit;
+    }
+
+    public function actionExppdfdistedu() {
+        //$per_id = @Yii::$app->session->get("PB_perid");
+        $report = new ExportFile();
+        $this->view->title = academico::t("Academico", "Listado de distributivo por profesor"); // Titulo del reporte
+        $arrHeader = array(
+            academico::t("Academico", "Course"),
+            academico::t("Academico", "Aca. Uni."),
+            academico::t("Academico", "Modality"),
+            academico::t("Academico", "Subject"),
+            academico::t("Academico", "Teacher"), 
+        );
+        $mod_educativa = new CursoEducativaDistributivo();
+        $data = Yii::$app->request->get();
+        $arrSearch["search"] = $data['search'];
+        $arrSearch["periodo"] = $data['periodo'];
+        $arrSearch["curso"] = $data['curso'];  
+        $arrData = array();
+        if (empty($arrSearch)) {
+            $arrData = $mod_educativa->consultarDistEducativa(array(), 0, 0);
+        } else {
+            $arrData = $mod_educativa->consultarDistEducativa($arrSearch, 0, 0);
+        }
+        $report->orientation = "L"; // tipo de orientacion L => Horizontal, P => Vertical                                
+        $report->createReportPdf(
+                $this->render('exportpdf', [
+                    'arr_head' => $arrHeader,
+                    'arr_body' => $arrData,
+                ])
+        );
+        $report->mpdf->Output('Reporte_' . date("Ymdhis") . ".pdf", ExportFile::OUTPUT_TO_DOWNLOAD);
+    }
 }  

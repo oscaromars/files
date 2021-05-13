@@ -377,6 +377,7 @@ class CursoEducativaDistributivo extends \yii\db\ActiveRecord
         $estado = 1;
         if ($ids == 1) {
             $campos = "
+            ced.cedi_id,
             ced.cedu_id,
             ced.daca_id,  ";
         }    
@@ -445,6 +446,44 @@ class CursoEducativaDistributivo extends \yii\db\ActiveRecord
             return $dataProvider;
         } else {
             return $resultData;
+        }
+    }
+
+    /**
+     * Function eliminar el distributivo estados en 0.
+     * @author Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>;
+     * @param
+     * @return
+     */
+    public function eliminarDistributivo($cedi_id, $cedi_usuario_modifica, $cedi_fecha_modificacion) {
+        $estado = 0;
+        $con = \Yii::$app->db_academico;
+        
+        if ($trans !== null) {
+            $trans = null; // si existe la transacción entonces no se crea una
+        } else {
+            $trans = $con->beginTransaction(); // si no existe la transacción entonces se crea una
+        }
+        try {
+            $comando = $con->createCommand
+                    ("UPDATE " . $con->dbname . ".curso_educativa_distributivo		       
+                      SET cedi_estado = :cedi_estado,
+                          cedi_usuario_modifica = :cedi_usuario_modifica,
+                          cedi_fecha_modificacion = :cedi_fecha_modificacion                          
+                      WHERE 
+                      cedi_id = :cedi_id ");
+            $comando->bindParam(":cedi_id", $cedi_id, \PDO::PARAM_INT);          
+            $comando->bindParam(":cedi_usuario_modifica", $cedi_usuario_modifica, \PDO::PARAM_INT);
+            $comando->bindParam(":cedi_fecha_modificacion", $cedi_fecha_modificacion, \PDO::PARAM_STR);
+            $comando->bindParam(":cedi_estado", $estado, \PDO::PARAM_STR);
+            $response = $comando->execute();
+            if ($trans !== null)
+                $trans->commit();
+            return $response;
+        } catch (Exception $ex) {
+            if ($trans !== null)
+                $trans->rollback();
+            return FALSE;
         }
     }
 }

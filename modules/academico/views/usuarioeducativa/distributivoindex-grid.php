@@ -69,20 +69,20 @@ academico::registerTranslations();
                 'header' => academico::t("Academico", "Teacher"),
                 'value' => 'profesor',
             ],
-            /*[
+            [
                 'class' => 'yii\grid\ActionColumn',
                 'header' => Yii::t("formulario", "Actions"), 
-                'template' => '{view} {delete}', 
+                'template' => '{delete}', // {view}
                 'buttons' => [
-                    'view' => function ($url, $model) {
-                        return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', Url::to(['usuarioeducativa/viewusuario', 'uedu_id' => base64_encode($model["uedu_id"])]), ["data-toggle" => "tooltip", "title" => "Ver Usario", "data-pjax" => 0]);
-                    },
+                   /* 'view' => function ($url, $model) {
+                        return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', Url::to(['usuarioeducativa/viewdistributivo', 'cedi_id' => base64_encode($model["cedi_id"])]), ["data-toggle" => "tooltip", "title" => "Ver Registro", "data-pjax" => 0]);
+                    },*/
                     'delete' => function ($url, $model) {
-                       return Html::a('<span class="glyphicon glyphicon-trash"></span>', "#", ['onclick' => "eliminarusuario(" . $model['uedu_id'] . ");", "data-toggle" => "tooltip", "title" => "Eliminar Usuario", "data-pjax" => 0]);
+                       return Html::a('<span class="glyphicon glyphicon-trash"></span>', "#", ['onclick' => "eliminardistributivo(" . $model['cedi_id'] . ");", "data-toggle" => "tooltip", "title" => "Eliminar Registro", "data-pjax" => 0]);
                      }
                    
                 ],
-            ],*/
+            ],
         ],
         //'responsiveWrap' => true,
     ])

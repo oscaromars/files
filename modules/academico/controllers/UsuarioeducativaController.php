@@ -1542,17 +1542,46 @@ class UsuarioeducativaController extends \app\components\CController {
     public function actionSavestudiantesbloqueo() {
         $usu_id = @Yii::$app->session->get("PB_iduser");
         if (Yii::$app->request->isAjax) {
-            $data = Yii::$app->request->post();          
+            $data = Yii::$app->request->post();  
             $cedu_id = $data["curso"];
             $nobloqueado = $data["nobloqueado"];
             $bloqueado = $data["bloqueado"];
             //\app\models\Utilities::putMessageLogFile('no bloqueo '. $nobloqueado);
+
+
+            /**********************************/
+            // AQUI VA EL WEB SERVICE
+            $client = new \SoapClient("https://mycampus.urlink.us/soap/?wsdl=true", array("login" => "webservice", "password" => "uUDacTYTPm", "trace" => 1, "exceptions" => 0));
+
+            $client->setCredentials("webservice", "uUDacTYTPm","basic");
+            
+            $method = 'Obtener_prg_items';     
+            $args = Array('id_grupo' =>  24,
+                          'id_tipo_item' => 'EV',
+                          'id_unidad' => '1',
+                         );  
+            $result = $client->__call( $method, Array( $args ) );
+
+            return $result;
+            /**********************************/
+
             $con = \Yii::$app->db_academico;
             $transaction = $con->beginTransaction();
             try {
                 if (!empty($nobloqueado)) {
                     $nobloqueado = explode(",", $nobloqueado); //permitidos
                     foreach ($nobloqueado as $est_id) {  // empieza foreach para guardar los asignados
+
+                        /**********************************/
+                        // AQUI VA EL WEB SERVICE
+                        $client = new \SoapClient("https://mycampus.urlink.us/soap/?wsdl=true", array("login" => "webservice", "password" => "uUDacTYTPm", "trace" => 1, "exceptions" => 0));
+
+                        $client->setCredentials("webservice", "uUDacTYTPm","basic");
+                        
+                        $method = 'consultar_categorias_datos_adicionales';     
+                        $args = Array('');  
+                        $result = $client->__call( $method, Array( $args ) );
+                        /**********************************/
                         $mod_asignar = new CursoEducativaEstudiante();
                         $resp_consAsignacion = $mod_asignar->consultarAsignacionexiste($cedu_id, $est_id);
                         if ($resp_consAsignacion["exiteasigna"] > 0) {

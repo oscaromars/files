@@ -463,7 +463,7 @@ class PagosfacturasController extends \app\components\CController {
                                 'customer'    => $customer->id, 
                                 'amount'      => $itemPriceCents, 
                                 'currency'    => "usd", 
-                                'description' => "Pago de Cuotas"
+                                'description' => "Pago de Cuotas desde el sistema Asgard/UTEG"
                             )); 
                         }catch(Exception $e) {  
                             $api_error = $e->getMessage();  

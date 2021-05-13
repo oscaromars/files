@@ -67,6 +67,11 @@ $(document).ready(function() {
         asignarBloqueo();
     });
 
+    // Activar asignación de estudiantes
+    $('#insert_btn').click(function() {
+        insertarEstudiantesConfirm();
+    });
+
     $('#cmb_unidad_dises').change(function () {
         var link = $('#txth_base').val() + "/academico/distributivo/listarestudiantespago";
         var arrParams = new Object();
@@ -800,4 +805,26 @@ function exportPdfasigd() {
     var materia = $('#cmb_materia_dise option:selected').val();  
     var jornada = $('#cmb_jornada_dise option:selected').val();  
     window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/exppdasigd?pdf=1&search=" + search + "&unidad=" + unidad + "&modalidad=" + modalidad + "&periodo=" + periodo + "&materia=" + materia + "&jornada=" + jornada;
+}
+
+// Este sólo abre el modal de asignación. Es para los botones de la barra superior
+function insertarEstudiantes(){
+    $('#confirmModal').modal('toggle');
+}
+
+function insertarEstudiantesConfirm(){
+    var link = $('#txth_base').val() + "/academico/usuarioeducativa/insertarestudiantes";
+
+    var arrParams = new Object();
+
+    if (!validateForm()) {
+        requestHttpAjax(link, arrParams, function(response) {
+            showAlert(response.status, response.label, response.message);
+            if (response.status == "OK") {
+                setTimeout(function() {
+                    window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/listarestudianteregistro";
+                }, 3000);
+            }
+        }, true);
+    }
 }

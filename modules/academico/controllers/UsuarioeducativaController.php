@@ -1692,6 +1692,49 @@ class UsuarioeducativaController extends \app\components\CController {
         ]);
     }
 
+    /**
+     * Función para insertar los estudiantes en curso_educativa_estudiante, desde la vista de asgard/academico/usuarioeducativa/listarestudianteregistro
+     * @author Jorge Paladines <analista.desarrollo@uteg.edu.ec>;
+     * @param
+     * @return
+     */
+    public function actionInsertarestudiantes(){
+        $usu_id = Yii::$app->session->get('PB_iduser');
+        $mod_cursoeduc = new CursoEducativaEstudiante();
+        $ids = $mod_cursoeduc->consultarCursoEducativaDistributivoPeriodoActual();
+
+        try{
+            foreach ($ids as $key => $value) {
+                $est_id = $value['est_id'];
+                $cedu_id = $value['cedu_id'];
+                // $daca_id = $value['daca_id'];
+
+                $insertID = $mod_cursoeduc->insertarEstudiantecurso($cedu_id, $est_id, $usu_id);
+            }
+            if($insertID){
+                $message = array(
+                    "wtmessage" => Yii::t("notificaciones", "Your information was successfully update."),
+                    "title" => Yii::t('jslang', 'Success'),
+                );
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), false, $message);
+            }
+            else{
+                $message = array(
+                    "wtmessage" => Yii::t("notificaciones", "Error"),
+                    "title" => Yii::t('jslang', 'Error'),
+                );
+                return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Sucess"), false, $message);
+            }
+        }
+        catch (Exception $ex) {
+            $message = array(
+                "wtmessage" => Yii::t("notificaciones", "Error".$ex),
+                "title" => Yii::t('jslang', 'Error'),
+            );
+            return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Sucess"), false, $message);
+        }
+    }
+
     public function actionExpexcelasigd() {
         $per_id = @Yii::$app->session->get("PB_perid");
         ini_set('memory_limit', '256M');

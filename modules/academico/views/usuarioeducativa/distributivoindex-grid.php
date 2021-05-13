@@ -7,18 +7,18 @@ use app\widgets\PbGridView\PbGridView;
 use app\modules\admision\Module;
 use app\modules\academico\Module as academico;
 use app\modules\admision\Module as admision;
-
+//print_r($model);
 admision::registerTranslations();
 academico::registerTranslations();
 ?>
 <?= Html::hiddenInput('txth_ids', '', ['id' => 'txth_ids']); ?>
- <!-- <div>        
-    <?
+<div>        
+    <?=
     PbGridView::widget([
-        'id' => 'Pbusuarioedu',
+        'id' => 'Pbudistriutivoedu',
         'showExport' => true,
-        'fnExportEXCEL' => "exportExcelusuarioedu",
-        'fnExportPDF' => "exportPdfusuarioedu",
+        //'fnExportEXCEL' => "exportExceldistedu",
+        //'fnExportPDF' => "exportPdfdistedu",
         'tableOptions' => [
             'class' => 'table table-condensed',
         ],
@@ -34,32 +34,37 @@ academico::registerTranslations();
                 return GridView::ROW_COLLAPSED;
                 },
             ],*/    
-            [
+            /*[
                 'attribute' => 'usuario',
                 'header' => Yii::t("formulario", "Users"),
-                'value' => 'uedu_usuario',
+                'value' => 'cedu_id',
             ],            
             [
                 'attribute' => 'nombres',
                 'header' => Yii::t("formulario", "Names"),
-                'value' => 'nombres',
-            ],
+                'value' => 'daca_id',
+            ],*/
             [
                 'attribute' => 'cedula',
                 'header' => Yii::t("formulario", "DNI 1"),
-                'value' => 'uedu_cedula',
+                'value' => 'cedu_asi_nombre',
             ],  
             [
                 'attribute' => 'matricula',
                 'header' => Yii::t("formulario", "Enrollment"),
-                'value' => 'uedu_matricula',
+                'value' => 'uaca_nombre',
             ],  
             [
                 'attribute' => 'correo',
                 'header' => Yii::t("formulario", "Email"),
-                'value' => 'uedu_correo',
-            ],                                    
+                'value' => 'mod_nombre',
+            ],
             [
+                'attribute' => 'correo',
+                'header' => Yii::t("formulario", "Email"),
+                'value' => 'asi_nombre',
+            ],
+            /*[
                 'class' => 'yii\grid\ActionColumn',
                 'header' => Yii::t("formulario", "Actions"), 
                 'template' => '{view} {delete}', 
@@ -72,9 +77,9 @@ academico::registerTranslations();
                      }
                    
                 ],
-            ],
+            ],*/
         ],
         //'responsiveWrap' => true,
     ])
     ?>
-</div>  -->
+</div> 

@@ -364,4 +364,80 @@ class CursoEducativaDistributivo extends \yii\db\ActiveRecord
                 
         return $resultData;
     }
+
+    /**
+     * Function Obtiene información de unidades en educatica.
+     * @author Giovanni Vergara <analistadesarrollo01@uteg.edu.ec>;
+     * @param
+     * @return
+     */
+    public function consultarDistEducativa($arrFiltro = array(), $reporte, $ids) {
+        $con = \Yii::$app->db_academico;        
+        $estado = 1;
+        if ($ids == 1) {
+            $campos = "
+            ced.cedu_id,
+            ced.daca_id,  ";
+        }    
+        if (isset($arrFiltro) && count($arrFiltro) > 0) {
+            //$str_search .= "(cure.ceuni_descripcion_unidad like :search) AND ";
+   
+            if ($arrFiltro['periodo'] != "" && $arrFiltro['periodo'] > 0) {
+                $str_search .= "cur.paca_id = :paca_id AND ";
+            }
+
+            if ($arrFiltro['curso'] != "" && $arrFiltro['curso'] > 0) {
+                $str_search .= "cure.cedu_id = :cedu_id AND ";
+            }
+                    
+        }
+        $sql = "SELECT 
+                    $campos
+                    cue.cedu_asi_nombre,
+                    uaca.uaca_nombre,
+                    moda.mod_nombre,
+                    asig.asi_nombre
+                    FROM " . $con->dbname . ".curso_educativa_distributivo ced
+                    INNER JOIN " . $con->dbname . ".curso_educativa cue ON cue.cedu_id = ced.cedu_id
+                    INNER JOIN " . $con->dbname . ".distributivo_academico dia ON dia.daca_id = ced.daca_id
+                    INNER JOIN " . $con->dbname . ".unidad_academica uaca ON uaca.uaca_id = dia.uaca_id
+                    INNER JOIN " . $con->dbname . ".modalidad moda ON moda.mod_id = dia.mod_id
+                    INNER JOIN " . $con->dbname . ".asignatura asig ON asig.asi_id = dia.asi_id
+                    WHERE ced.cedi_estado = :estado AND
+                    ced.cedi_estado_logico = :estado";
+
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        if (isset($arrFiltro) && count($arrFiltro) > 0) {
+            /*$search_cond = "%" . $arrFiltro["search"] . "%";
+            $comando->bindParam(":search", $search_cond, \PDO::PARAM_STR);*/
+            
+            if ($arrFiltro['periodo'] != "" && $arrFiltro['periodo'] > 0) {
+                $periodo = $arrFiltro["periodo"];
+                $comando->bindParam(":paca_id", $periodo, \PDO::PARAM_INT);
+            }
+            
+            if ($arrFiltro['curso'] != "" && $arrFiltro['curso'] > 0) {
+                $curso = $arrFiltro["curso"];
+                $comando->bindParam(":cedu_id", $curso, \PDO::PARAM_INT);
+            }
+                    
+        }
+        $resultData = $comando->queryAll();
+        $dataProvider = new ArrayDataProvider([
+            'key' => 'id',
+            'allModels' => $resultData,
+            'pagination' => [
+                'pageSize' => Yii::$app->params["pageSize"],
+            ],
+            'sort' => [
+                'attributes' => [],
+            ],
+        ]);
+        if ($reporte == 1) {
+            return $dataProvider;
+        } else {
+            return $resultData;
+        }
+    }
 }

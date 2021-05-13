@@ -8,7 +8,8 @@ use yii\helpers\Html;
     <form class="form-horizontal">
         <?=
         $this->render('_formBuscardistributivoindex', [
-          
+        'arr_periodoAcademico' => $arr_periodoAcademico,
+        'arr_curso' => $arr_curso,
         ]);
         ?>
     </form>

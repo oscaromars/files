@@ -123,6 +123,19 @@ $(document).ready(function() {
         }, true);
     });
 
+    $('#cmb_periododistb').change(function() {
+        var link = $('#txth_base').val() + "/academico/usuarioeducativa/distributivoindex";
+        var arrParams = new Object();
+        arrParams.codcursos = $(this).val();
+        arrParams.getcursos = true;
+        requestHttpAjax(link, arrParams, function(response) {
+            if (response.status == "OK") {
+                data = response.message;
+                setComboDataselect(data.periodos, "cmb_cursodistb", "Todos");
+            }
+        }, true);
+    });
+
     $('#cmb_periodonewunidad').change(function() {
         var link = $('#txth_base').val() + "/academico/usuarioeducativa/newunidad";
         var arrParams = new Object();

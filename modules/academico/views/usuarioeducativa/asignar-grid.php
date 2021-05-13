@@ -29,6 +29,12 @@ academico::registerTranslations();
         'columns' =>
         [
             [ 
+                'attribute' => '#',
+                'header' => academico::t("Academico", "#"),
+                'value' => 'pro_id',
+            ],
+
+            [ 
                 'attribute' => 'Nombres',
                 'header' => academico::t("Academico", "Teacher"),
                 'value' => 'Nombres',
@@ -73,29 +79,8 @@ academico::registerTranslations();
                 'format' => 'raw',
                 'value'  => function ($model) {
                     return Html::dropDownList('cursos', empty($model['id'])?0:$model['id'], ArrayHelper::map($model['cursos'] , "id", "name"), ["class" => "form-control", "id" => "curso_".$model['id'] ]);                                        
-                    //return Html::dropDownList("cmb_cursos", 0, $arr_curso, ["class" => "form-control", "id" => "cmb_cursos"]);
-                }
-            ],       
-            /*[
-                'class' => 'yii\grid\ActionColumn',
-                'header' => '',
-                'template' => '{view}{delete}{add}{edit}',
-                'contentOptions' => ['class' => 'text-center'],
-                'buttons' => [
-                    'view' => function ($url, $model) {
-                        return Html::a('<span class="'.Utilities::getIcon('view').'"></span>', Url::to(['distributivoacademico/view', 'id' => $model['Id']]), ["data-toggle" => "tooltip", "title" => Yii::t("accion","View")]);
-                    },
-                    'edit' => function ($url, $model) {
-                        return Html::a('<span class="'.Utilities::getIcon('edit').'"></span>', Url::to(['distributivoacademico/editcab', 'id' => $model['Id']]), ["data-toggle" => "tooltip", "title" => Yii::t("accion","Edit")]);
-                    },
-                    'delete' => function ($url, $model) {
-                        return Html::a('<span class="'.Utilities::getIcon('remove').'"></span>', null, ['href' => 'javascript:confirmDelete(\'deleteItem\',[\'' . $model['Id'] . '\']);', "data-toggle" => "tooltip", "title" => Yii::t("accion","Delete")]);
-                    },
-                    'add' => function ($url, $model){
-                        return Html::a('<span class="fa fa-user-plus"></span>', null, ['href' => 'javascript:showListStudents([\'' . $model['Id'] . '\']);',"data-toggle" => "tooltip", "title" => academico::t("distributivoacademico","Add Student")]);
                     }
-                                ],               
-            ],*/                               
+            ],      
         ],
     ])
     ?>

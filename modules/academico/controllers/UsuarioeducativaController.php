@@ -1428,13 +1428,13 @@ class UsuarioeducativaController extends \app\components\CController {
             $cedula = $data["cedula"];
             $matricula = $data["matricula"];
             $correo = strtolower($data["correo"]);
-            \app\models\Utilities::putMessageLogFile('uedu_id ..: ' . $uedu_id);
+            /*\app\models\Utilities::putMessageLogFile('uedu_id ..: ' . $uedu_id);
             \app\models\Utilities::putMessageLogFile('usuario ..: ' . $usuario);
             \app\models\Utilities::putMessageLogFile('nombre ..: ' . $nombre);
             \app\models\Utilities::putMessageLogFile('apellido ..: ' . $apellido);
             \app\models\Utilities::putMessageLogFile('cedula ..: ' . $cedula);
             \app\models\Utilities::putMessageLogFile('matricula ..: ' . $matricula);
-            \app\models\Utilities::putMessageLogFile('correo ..: ' . $correo);
+            \app\models\Utilities::putMessageLogFile('correo ..: ' . $correo);*/
             $con = \Yii::$app->db_academico;
             $transaction = $con->beginTransaction();
             try {
@@ -1790,5 +1790,227 @@ class UsuarioeducativaController extends \app\components\CController {
                 ])
         );
         $report->mpdf->Output('Reporte_' . date("Ymdhis") . ".pdf", ExportFile::OUTPUT_TO_DOWNLOAD);
+    }
+
+    public function actionSavedistributivo() {
+        $usu_id = @Yii::$app->session->get("PB_iduser");
+        $distributivo_model = new CursoEducativaDistributivo();    
+        //$fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
+        if (Yii::$app->request->isAjax) {
+            $data = Yii::$app->request->post();  
+            $uaca_id = $data["uaca_id"];
+            $mod_id = $data["mod_id"];
+            $paca_id = $data["paca_id"];
+            $asig_id = $data["asig_id"]; 
+            /*\app\models\Utilities::putMessageLogFile('Graba Curso $uaca_id '. $uaca_id); 
+            \app\models\Utilities::putMessageLogFile('Graba Curso $mod_id '. $mod_id); 
+            \app\models\Utilities::putMessageLogFile('Graba Curso $paca_id ' . $paca_id); 
+            \app\models\Utilities::putMessageLogFile('Graba Curso $asig_id ' . $asig_id);*/
+            $con = \Yii::$app->db_academico;
+            $transaction = $con->beginTransaction();
+            try{
+                    //\app\models\Utilities::putMessageLogFile('Graba Curso');                         
+                    for ($i = 0; $i < sizeof($data["nombre"]); $i++) {  
+                        $cedu_id =  $data["nombre"][$i]["codigo_curso"];
+                        $pro_id = $data["nombre"][$i]["profesor"]; //ESTE FALTA EN EL GRID OJO
+                        //\app\models\Utilities::putMessageLogFile('Graba profesor $pro_id ' . $pro_id);
+                        //obtengo daca_id
+                        $daca_id = $distributivo_model->consultarDistribuAca($paca_id, $asig_id, $pro_id, $uaca_id, $mod_id);
+                        if ($daca_id["daca_id"] > 0) {
+                        $respCurso = $distributivo_model->consultarEdudistributivoexiste($cedu_id, $daca_id["daca_id"]);
+                        if ($respCurso["exitedistributivo"] == 0) {
+                               $respdist = $distributivo_model->insertarEstudiantecurso($cedu_id, $daca_id["daca_id"], $usu_id);
+                               $exito = 1;
+                         } else {
+                            $transaction->rollback();
+                           $message = array(
+                           "wtmessage" => Yii::t('notificaciones', 'Error al grabar. Ya ha asignado un distriutivo educativa con estos datos'),
+                           "title" => Yii::t('jslang', 'Error'),
+                           );
+                           return Utilities::ajaxResponse('NOOK', 'alert', Yii::t('jslang', 'Error'), false, $message);
+                       }
+                        } else {
+                            $transaction->rollback();
+                           $message = array(
+                           "wtmessage" => Yii::t('notificaciones', 'Error al grabar. No existe un distributivo academico con esa información'),
+                           "title" => Yii::t('jslang', 'Error'),
+                           );
+                           return Utilities::ajaxResponse('NOOK', 'alert', Yii::t('jslang', 'Error'), false, $message);
+                       }
+                    }//fin for
+                    if ($exito) {
+                         $transaction->commit();
+                        $message = array(
+                        "wtmessage" => Yii::t("notificaciones", "La infomación ha sido grabada. "),
+                        "title" => Yii::t('jslang', 'Success'),
+                        );
+                        return Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), false, $message);
+                    } else {
+                         $transaction->rollback();
+                        $message = array(
+                        "wtmessage" => Yii::t('notificaciones', 'Su información no ha sido grabada. Por favor intente nuevamente o contacte al área de Desarrollo.'),
+                        "title" => Yii::t('jslang', 'Error'),
+                        );
+                        return Utilities::ajaxResponse('NOOK', 'alert', Yii::t('jslang', 'Error'), false, $message);
+                    }
+               
+                }
+            catch (Exception $ex) {
+                $transaction->rollback();
+                $message = array(
+                    "wtmessage" => Yii::t("notificaciones", "Errorcvb" . $mensaje),
+                    "title" => Yii::t('jslang', 'Success'),
+                );
+                return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), true, $message);
+            }
+            return;     
+        }    
+    }
+
+    // return $this->render('distributivoindex', [  
+                 
+    public function actionDistributivoindex() { 
+        $mod_periodo = new PeriodoAcademicoMetIngreso();
+        $mod_asignatura = new Asignatura(); 
+        $mod_educativa = new CursoEducativa();
+        $mod_educativaunidad = new CursoEducativaDistributivo();
+        $data = Yii::$app->request->get();
+
+        if ($data['PBgetFilter']) {
+            $arrSearch["search"] = $data['search'];  
+            $arrSearch["periodo"] = $data['periodo'];  
+            $arrSearch["curso"] = $data['curso'];                               
+            $model = $mod_educativaunidad->consultarDistEducativa($arrSearch, 1, 1);
+            return $this->render('distributivoindex-grid', [
+                        "model" => $model,
+            ]);
+        } else {
+            $model = $mod_educativaunidad->consultarDistEducativa(null, 1, 1);
+        }
+        if (Yii::$app->request->isAjax) {
+            $data = Yii::$app->request->post();  
+            if (isset($data["getcursos"])) {
+                $periodos= $mod_educativa->consultarCursosxpacaid($data["codcursos"]);
+                $message = array("periodos" => $periodos);
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+            }          
+        }   
+            $arr_asignatura = $mod_asignatura->consultarAsignaturasxuacaid(1);
+            $arr_curso = $mod_educativa->consultarCursosxpacaid(0);
+            $arr_periodoAcademico = $mod_periodo->consultarPeriodoAcademicotodos();
+            return $this->render('distributivoindex', [  
+                'arr_periodoAcademico' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $arr_periodoAcademico), "id", "name"),
+                'arr_asignatura' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $arr_asignatura), "id", "name"),
+                'model' => $model,
+                'arr_curso' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $arr_curso), "id", "name"),
+            ]);       
+    }
+
+    public function actionExpexceldistedu() {
+        //$per_id = @Yii::$app->session->get("PB_perid");
+
+        ini_set('memory_limit', '256M');
+        $content_type = Utilities::mimeContentType("xls");
+        $nombarch = "Report-" . date("YmdHis") . ".xls";
+        header("Content-Type: $content_type");
+        header("Content-Disposition: attachment;filename=" . $nombarch);
+        header('Cache-Control: max-age=0');
+        $colPosition = array("C", "D", "E", "F", "G", "H", "I", "J");
+        $arrHeader = array(
+            academico::t("Academico", "Course"),
+            academico::t("Academico", "Aca. Uni."),
+            academico::t("Academico", "Modality"),
+            academico::t("Academico", "Subject"),
+            academico::t("Academico", "Teacher"),
+        );
+      
+        $mod_educativa = new CursoEducativaDistributivo();
+        $data = Yii::$app->request->get();
+        $arrSearch["search"] = $data['search'];
+        $arrSearch["periodo"] = $data['periodo'];
+        $arrSearch["curso"] = $data['curso'];  
+        $arrData = array();
+        if (empty($arrSearch)) {
+            $arrData = $mod_educativa->consultarDistEducativa(array(), 0, 0);
+        } else {
+            $arrData = $mod_educativa->consultarDistEducativa($arrSearch, 0, 0);
+        }
+        $nameReport = academico::t("Academico", "Listado de distributivo por profesor");
+        Utilities::generarReporteXLS($nombarch, $nameReport, $arrHeader, $arrData, $colPosition);
+        exit;
+    }
+
+    public function actionExppdfdistedu() {
+        //$per_id = @Yii::$app->session->get("PB_perid");
+        $report = new ExportFile();
+        $this->view->title = academico::t("Academico", "Listado de distributivo por profesor"); // Titulo del reporte
+        $arrHeader = array(
+            academico::t("Academico", "Course"),
+            academico::t("Academico", "Aca. Uni."),
+            academico::t("Academico", "Modality"),
+            academico::t("Academico", "Subject"),
+            academico::t("Academico", "Teacher"), 
+        );
+        $mod_educativa = new CursoEducativaDistributivo();
+        $data = Yii::$app->request->get();
+        $arrSearch["search"] = $data['search'];
+        $arrSearch["periodo"] = $data['periodo'];
+        $arrSearch["curso"] = $data['curso'];  
+        $arrData = array();
+        if (empty($arrSearch)) {
+            $arrData = $mod_educativa->consultarDistEducativa(array(), 0, 0);
+        } else {
+            $arrData = $mod_educativa->consultarDistEducativa($arrSearch, 0, 0);
+        }
+        $report->orientation = "L"; // tipo de orientacion L => Horizontal, P => Vertical                                
+        $report->createReportPdf(
+                $this->render('exportpdf', [
+                    'arr_head' => $arrHeader,
+                    'arr_body' => $arrData,
+                ])
+        );
+        $report->mpdf->Output('Reporte_' . date("Ymdhis") . ".pdf", ExportFile::OUTPUT_TO_DOWNLOAD);
+    }
+
+    public function actionDeletedistributivo() {
+        $mod_educativa = new CursoEducativaDistributivo();
+        $usu_autenticado = @Yii::$app->session->get("PB_iduser");
+        if (Yii::$app->request->isAjax) {
+            $data = Yii::$app->request->post();
+            $cedi_id = $data["cedi_id"];           
+            $fecha = date(Yii::$app->params["dateTimeByDefault"]);
+            $con = \Yii::$app->db_academico;
+            $transaction = $con->beginTransaction();
+            try {
+                //\app\models\Utilities::putMessageLogFile('cedi_id ..: ' . $cedi_id);     
+                $resp_estado = $mod_educativa->eliminarDistributivo($cedi_id, $usu_autenticado, $fecha);
+                if ($resp_estado) {
+                    $exito = '1';
+                }
+                if ($exito) {
+                    //Realizar accion                    
+                    $transaction->commit();
+                    $message = array(
+                        "wtmessage" => Yii::t("notificaciones", "Se ha eliminado el registro."),
+                        "title" => Yii::t('jslang', 'Success'),
+                    );
+                    return Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), false, $message);
+                } else {
+                    $transaction->rollback();
+                    $message = array(
+                        "wtmessage" => Yii::t("notificaciones", "Error al eliminar. "),
+                        "title" => Yii::t('jslang', 'Error'),
+                    );
+                    return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+                }
+            } catch (Exception $ex) {
+                $transaction->rollback();
+                $message = array(
+                    "wtmessage" => Yii::t("notificaciones", "Error al realizar la acción. "),
+                    "title" => Yii::t('jslang', 'Success'),
+                );
+                return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+            }
+        }
     }
 }  

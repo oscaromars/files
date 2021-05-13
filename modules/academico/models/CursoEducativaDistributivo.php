@@ -122,7 +122,11 @@ class CursoEducativaDistributivo extends \yii\db\ActiveRecord
             $str_jornada = "dh.daho_jornada = :jornada AND ";
         }
 
+        if ($onlyData == false) {
+            $pro_id = "da.pro_id, ";
+        }
         $sql = "SELECT 
+                    $pro_id
                     da.daca_id AS Id, 
                     CONCAT(pe.per_pri_nombre, ' ', pe.per_pri_apellido) AS Nombres,
                     pe.per_cedula AS Cedula,
@@ -218,5 +222,146 @@ class CursoEducativaDistributivo extends \yii\db\ActiveRecord
     } else {
         return $dataProvider;
     }
+    }
+    
+     /**
+     * Function guarda asignacion de estudiantes a cursos en integracion educativa 
+     * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
+     * @param   
+     * @return  $resultData (Retornar el código).
+     */
+    public function insertarEstudiantecurso($cedu_id, $daca_id, $cedi_usuario_ingreso) {
+       /* \app\models\Utilities::putMessageLogFile('cedu_id...: ' . $cedu_id ); 
+        \app\models\Utilities::putMessageLogFile('daca_id...: ' . $daca_id ); 
+        \app\models\Utilities::putMessageLogFile('cedi_usuario_ingreso...: ' . $cedi_usuario_ingreso );*/
+        $con = \Yii::$app->db_academico;        
+        $trans = $con->getTransaction(); // se obtiene la transacción actual
+        if ($trans !== null) {
+            $trans = null; // si existe la transacción entonces no se crea una
+        } else {
+            $trans = $con->beginTransaction(); // si no existe la transacción entonces se crea una
+        }
+        $fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
+                       
+        $param_sql = "cedi_estado_logico";
+        $bsol_sql = "1";
+
+        $param_sql .= ", cedi_estado";
+        $bsol_sql .= ", 1";
+       
+        if (isset($cedu_id)) {
+            $param_sql .= ", cedu_id";
+            $bsol_sql .= ", :cedu_id";
+        }
+
+        if (isset($daca_id)) {
+            $param_sql .= ", daca_id";
+            $bsol_sql .= ", :daca_id";
+        }
+        
+        if (isset($cedi_usuario_ingreso)) {
+            $param_sql .= ", cedi_usuario_ingreso";
+            $bsol_sql .= ", :cedi_usuario_ingreso";
+        }
+
+        if (isset($fecha_transaccion)) {
+            $param_sql .= ",cedi_fecha_creacion";
+            $bsol_sql .= ", :cedi_fecha_creacion";
+        }   
+
+        try {
+            $sql = "INSERT INTO " . $con->dbname . ".curso_educativa_distributivo ($param_sql) VALUES($bsol_sql)";
+            $comando = $con->createCommand($sql);            
+            // \app\models\Utilities::putMessageLogFile('sql...: ' .$sql); 
+         
+            if (isset($cedu_id)) {
+                $comando->bindParam(':cedu_id', $cedu_id, \PDO::PARAM_INT);
+            }
+
+            if (isset($daca_id)) {
+                $comando->bindParam(':daca_id', $daca_id, \PDO::PARAM_INT);
+            }            
+
+            if (isset($cedi_usuario_ingreso)) {
+                $comando->bindParam(':cedi_usuario_ingreso', $cedi_usuario_ingreso, \PDO::PARAM_INT);
+            }
+
+            if (isset($fecha_transaccion)) {
+                $comando->bindParam(':cedi_fecha_creacion', $fecha_transaccion, \PDO::PARAM_STR);
+            }
+            
+            $result = $comando->execute();
+            if ($trans !== null)
+                $trans->commit();
+            return $con->getLastInsertID($con->dbname . '.curso_educativa_distributivo;');
+        } catch (Exception $ex) {
+            if ($trans !== null)
+                $trans->rollback();
+            return FALSE;
+        }
     } 
+
+    /**
+     * Function Consultar si existe educativa distributivo.
+     * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>;
+     * @property       
+     * @return  
+     */
+    public function consultarEdudistributivoexiste($cedu_id, $daca_id) {
+        $con = \Yii::$app->db_academico;     
+        $estado = 1;   
+        $sql = "SELECT 	
+                        count(*) as exitedistributivo                       
+                        
+                FROM " . $con->dbname . ".curso_educativa_distributivo                 
+                WHERE 
+                cedu_id = :cedu_id AND
+                daca_id = :daca_id AND
+                cedi_estado = :estado AND
+                cedi_estado_logico = :estado ";        
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $comando->bindParam(":cedu_id", $cedu_id, \PDO::PARAM_INT); 
+        $comando->bindParam(":daca_id", $daca_id, \PDO::PARAM_INT);       
+        $resultData = $comando->queryOne();
+        return $resultData;
+    }
+
+    /**
+     * Function Consultar daca_id segun paca_id, asi_id, pro_id, uaca_id, mod_id 
+     * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>;
+     * @property       
+     * @return  
+     */
+    public function consultarDistribuAca($paca_id, $asi_id, $pro_id, $uaca_id, $mod_id) {
+        $con = \Yii::$app->db_academico;        
+        $estado = 1;
+        /*\app\models\Utilities::putMessageLogFile('estoy en consulta paca_id' . $paca_id);
+        \app\models\Utilities::putMessageLogFile('estoy en consulta asi_id' . $asi_id);
+        \app\models\Utilities::putMessageLogFile('estoy en consulta pro_id' . $pro_id);
+        \app\models\Utilities::putMessageLogFile('estoy en consulta uaca_id' . $uaca_id);
+        \app\models\Utilities::putMessageLogFile('estoy en consulta mod_id' . $mod_id);
+        */$sql = "SELECT 
+                daca_id
+                FROM " . $con->dbname . ".distributivo_academico                 
+                WHERE 
+                    paca_id = :paca_id AND
+                    asi_id = :asi_id AND
+                    pro_id = :pro_id AND
+                    uaca_id = :uaca_id AND
+                    mod_id = :mod_id AND
+                    daca_estado = :estado AND
+                    daca_estado_logico = :estado";
+
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":paca_id", $paca_id, \PDO::PARAM_INT);
+        $comando->bindParam(":asi_id", $asi_id, \PDO::PARAM_INT);
+        $comando->bindParam(":pro_id", $pro_id, \PDO::PARAM_INT);
+        $comando->bindParam(":uaca_id", $uaca_id, \PDO::PARAM_INT); 
+        $comando->bindParam(":mod_id", $mod_id, \PDO::PARAM_STR); 
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);        
+        $resultData = $comando->queryOne();
+                
+        return $resultData;
+    }
 }

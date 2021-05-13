@@ -67,6 +67,10 @@ $(document).ready(function() {
         asignarBloqueo();
     });
 
+    $('#btnAsignadist').click(function () {
+        savedistributivo();
+    });
+
     $('#cmb_unidad_dises').change(function () {
         var link = $('#txth_base').val() + "/academico/distributivo/listarestudiantespago";
         var arrParams = new Object();
@@ -800,4 +804,63 @@ function exportPdfasigd() {
     var materia = $('#cmb_materia_dise option:selected').val();  
     var jornada = $('#cmb_jornada_dise option:selected').val();  
     window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/exppdasigd?pdf=1&search=" + search + "&unidad=" + unidad + "&modalidad=" + modalidad + "&periodo=" + periodo + "&materia=" + materia + "&jornada=" + jornada;
+}
+
+function savedistributivo() {
+    var link = $('#txth_base').val() + "/academico/usuarioeducativa/savedistributivo";
+    var arrParams = new Object();
+    arrParams.nombre = null;
+    arrParams.uaca_id = $('#cmb_unidad_dise').val(); 
+    arrParams.mod_id = $('#cmb_modalidad_dise').val(); 
+    arrParams.paca_id = $('#cmb_periodo_dise').val(); 
+    arrParams.asig_id = $('#cmb_materia_dise').val(); 
+    arrParams.jor_id = $('#cmb_jornada_dise').val();  
+    
+    var items = [];
+    //var c_vacio = 0;
+    $('tbody tr').each(function() {
+        var itemOrden ={};
+        var tds = $(this).find("td");
+        itemOrden.profesor = tds.filter(":eq(0)").text();
+        itemOrden.unidad = tds.filter(":eq(3)").text();
+        itemOrden.modalidad = tds.filter(":eq(4)").text();
+        itemOrden.periodo = tds.filter(":eq(5)").text();
+        itemOrden.asignatura = tds.filter(":eq(6)").text();
+        itemOrden.jornada = tds.filter(":eq(7)").text();       
+        itemOrden.codigo_curso = tds.filter(":eq(8)").find("select").val();
+        /*alert (itemOrden.profesor);
+        alert (itemOrden.unidad);
+        alert (itemOrden.modalidad);
+        alert (itemOrden.periodo);
+        alert (itemOrden.asignatura);
+        alert (itemOrden.jornada);
+        alert (itemOrden.codigo_curso);*/
+        if ( itemOrden.codigo_curso != "0"){
+            items.push(itemOrden);                    
+        }  
+         /*else {
+            c_vacio = c_vacio+1;
+        }*/ 
+    });
+    arrParams.nombre = items;
+    //alert ('asaa' + arrParams.nombre);
+    //console.log(arrParams.nombre);
+     if ( $('#cmb_modalidad_dise option:selected').val() != 0 && $('#cmb_periodo_dise option:selected').val() != 0 && $('#cmb_materia_dise option:selected').val() != 0/* && arrParams.nombre.length > 0*/) {
+            if (!validateForm()) {
+                requestHttpAjax(link, arrParams, function(response) {
+                    showAlert(response.status, response.label, response.message);
+                    if (response.status == "OK") {
+                        setTimeout(function() {
+                            //NO OLVIDAR CAMBIAR A EL INDEX DONDE SE LISTAN LA INFORMACION
+                            var link = $('#txth_base').val() + "/academico/usuarioeducativa/asignardistributivo";
+                            window.location = link;
+                        }, 3000);
+                    }
+                }, true);
+            }  
+        
+    }
+    else {
+        showAlert('NO_OK', 'error', {"wtmessage": 'Debe seleccionar modalidad, periodo y asignatura.', "title": 'Información'});
+    }
 }

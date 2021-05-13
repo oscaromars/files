@@ -1782,23 +1782,24 @@ class UsuarioeducativaController extends \app\components\CController {
             try{
                     //\app\models\Utilities::putMessageLogFile('Graba Curso');                         
                     for ($i = 0; $i < sizeof($data["nombre"]); $i++) {  
-                        //$daca_id = $data["daca_id"];
                         $cedu_id =  $data["nombre"][$i]["codigo_curso"];
                         $pro_id = $data["nombre"][$i]["profesor"]; //ESTE FALTA EN EL GRID OJO
-                        \app\models\Utilities::putMessageLogFile('Graba profesor $pro_id ' . $pro_id);
+                        //\app\models\Utilities::putMessageLogFile('Graba profesor $pro_id ' . $pro_id);
                         //obtengo daca_id
                         $daca_id = $distributivo_model->consultarDistribuAca($paca_id, $asig_id, $pro_id, $uaca_id, $mod_id);
-                        /*\app\models\Utilities::putMessageLogFile('cedu_id'. $cedu_id);  
-                        \app\models\Utilities::putMessageLogFile('daca_id 1 '. $daca_id);  
-                        \app\models\Utilities::putMessageLogFile('daca_id 2 '. $daca_id["daca_id"]);*/  
-                        //llamo funcion del modelo e inserto
-                        //$model_educativadist = new CursoEducativaDistributivo();
                         if ($daca_id["daca_id"] > 0) {
                         $respCurso = $distributivo_model->consultarEdudistributivoexiste($cedu_id, $daca_id["daca_id"]);
                         if ($respCurso["exitedistributivo"] == 0) {
                                $respdist = $distributivo_model->insertarEstudiantecurso($cedu_id, $daca_id["daca_id"], $usu_id);
                                $exito = 1;
-                         }
+                         } else {
+                            $transaction->rollback();
+                           $message = array(
+                           "wtmessage" => Yii::t('notificaciones', 'Error al grabar. Ya ha asignado un distriutivo educativa con estos datos'),
+                           "title" => Yii::t('jslang', 'Error'),
+                           );
+                           return Utilities::ajaxResponse('NOOK', 'alert', Yii::t('jslang', 'Error'), false, $message);
+                       }
                         } else {
                             $transaction->rollback();
                            $message = array(
@@ -1835,5 +1836,30 @@ class UsuarioeducativaController extends \app\components\CController {
             }
             return;     
         }    
+    }
+
+    public function actionDistributivoindex() { 
+        //$mod_periodo = new PeriodoAcademicoMetIngreso();
+        //$mod_asignatura = new Asignatura(); 
+        /*$mod_educativa = new CursoEducativaDistributivo();
+        $data = Yii::$app->request->get();
+
+        if ($data['PBgetFilter']) {
+            $arrSearch["search"] = $data['search'];  
+            $model = $mod_educativa->consultarDistributivoEducativa($arrSearch, 1, 1);
+            return $this->render('distributivoindex-grid', [
+                        "model" => $model,
+            ]);
+        } else {
+            $model = $mod_educativa->consultarDistributivoEducativa(null, 1, 1);
+        }
+        if (Yii::$app->request->isAjax) {
+            $data = Yii::$app->request->post();            
+        }   */
+            //$arr_asignatura = $mod_asignatura->consultarAsignaturasxuacaid(1);
+            //$arr_periodoAcademico = $mod_periodo->consultarPeriodoAcademicotodos();
+            return $this->render('distributivoindex', [  
+                //'model' => $model,
+            ]);       
     }
 }  

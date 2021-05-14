@@ -1500,12 +1500,12 @@ class UsuarioeducativaController extends \app\components\CController {
                 //\app\models\Utilities::putMessageLogFile('existe rcurso...: ' . $existe['existe_curso']);     
                 if ($existe['existe_usuario'] == 0) {
                     // valida q ese usuario exista como estudiante OJO FALTA
-                    /*$estudiante = $mod_educativa->consultarEstutudiantexusuario($usuario);
+                    $estudiante = $mod_educativa->consultarEstutudiantexusuario($usuario);
                     $est_id = $estudiante['est_id'];
-                    $per_id = $estudiante['per_id'];*/
-                    //if (!empty($est_id) && !empty($per_id)) {
+                    $per_id = $estudiante['per_id'];
+                    if (!empty($est_id) && !empty($per_id)) {
                     // enviar los est_id y per_id a la funcion de grabar
-                    $saveusuario = $mod_educativa->insertarUsuarioeducativa($usuario,/*$est_id, $per_id, */$nombre, $apellido, $cedula, $matricula, $correo, $usuariomod);
+                    $saveusuario = $mod_educativa->insertarUsuarioeducativa($usuario, $est_id, $per_id, $nombre, $apellido, $cedula, $matricula, $correo, $usuariomod);
                     if ($saveusuario) {
                         $exito = 1;
                     }
@@ -1525,14 +1525,14 @@ class UsuarioeducativaController extends \app\components\CController {
                         return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
                     }
                 //cierra if linea 1506
-            /*}else {
+            }else {
                 $transaction->rollback();
                 $message = array(
-                    "wtmessage" => Yii::t("notificaciones", "Usuario no se encuentra como estudiante en asgard." . $mensaje),
+                    "wtmessage" => Yii::t("notificaciones", "No se puede crear, porque usuario no se encuentra como estudiante en asgard." . $mensaje),
                     "title" => Yii::t('jslang', 'Error'),
                 );
                 return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
-            } */
+            } 
                }else {
                 $transaction->rollback();
                 $message = array(

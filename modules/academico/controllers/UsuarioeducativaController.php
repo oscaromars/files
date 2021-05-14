@@ -1702,6 +1702,7 @@ class UsuarioeducativaController extends \app\components\CController {
         $usu_id = Yii::$app->session->get('PB_iduser');
         $mod_cursoeduc = new CursoEducativaEstudiante();
         $ids = $mod_cursoeduc->consultarCursoEducativaDistributivoPeriodoActual();
+        $tam = count($ids);
 
         try{
             foreach ($ids as $key => $value) {
@@ -1709,7 +1710,13 @@ class UsuarioeducativaController extends \app\components\CController {
                 $cedu_id = $value['cedu_id'];
                 // $daca_id = $value['daca_id'];
 
-                $insertID = $mod_cursoeduc->insertarEstudiantecurso($cedu_id, $est_id, $usu_id);
+                $hasRegistro = CursoEducativaEstudiante::find()->where(['est_id' => $est_id, 'cedu_id' => $cedu_id])->asArray()->one();
+                if(isset($hasRegistro)){
+                    $tam -= 1;
+                }
+                else{
+                    $insertID = $mod_cursoeduc->insertarEstudiantecurso($cedu_id, $est_id, $usu_id);
+                }
             }
             if($insertID){
                 $message = array(
@@ -1717,6 +1724,13 @@ class UsuarioeducativaController extends \app\components\CController {
                     "title" => Yii::t('jslang', 'Success'),
                 );
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), false, $message);
+            }
+            elseif ($tam <= 0) {
+                $message = array(
+                    "wtmessage" => Yii::t("notificaciones", "Todos los estudiantes ya han sido agregados"),
+                    "title" => Yii::t('jslang', 'Error'),
+                );
+                return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Sucess"), false, $message);
             }
             else{
                 $message = array(

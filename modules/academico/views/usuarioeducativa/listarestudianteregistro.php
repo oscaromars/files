@@ -33,8 +33,8 @@ use app\modules\academico\Module as academico;
           <p> <?= academico::t("cursoeducativa", "Do you want to insert the students on Educative Course?") ?> </p>
       </div>
       <div class="modal-footer">
-        <a type="button" class="btn btn-primary" id="insert_btn" href="javascript:" data-dismiss="modal"> <?= Yii::t("formulario", "Accept") ?> </a>
-        <button type="button" class="btn btn-secondary" data-dismiss="modal"> <?= Yii::t("formulario", "Cancel") ?> </button>
+        <a type="button" class="btn btn-primary" id="insert_btn" href="javascript:" data-dismiss="modal">Aceptar</a>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
       </div>
     </div>
   </div>

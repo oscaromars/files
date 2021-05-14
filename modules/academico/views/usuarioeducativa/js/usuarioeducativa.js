@@ -884,8 +884,7 @@ function savedistributivo() {
                     showAlert(response.status, response.label, response.message);
                     if (response.status == "OK") {
                         setTimeout(function() {
-                            //NO OLVIDAR CAMBIAR A EL INDEX DONDE SE LISTAN LA INFORMACION
-                            var link = $('#txth_base').val() + "/academico/usuarioeducativa/asignardistributivo";
+                            var link = $('#txth_base').val() + "/academico/usuarioeducativa/distributivoindex";
                             window.location = link;
                         }, 3000);
                     }

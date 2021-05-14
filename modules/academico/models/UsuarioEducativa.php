@@ -476,8 +476,8 @@ class UsuarioEducativa extends \yii\db\ActiveRecord
      * @param   
      * @return  $resultData (Retornar el código de Usuario).
      */
-    public function insertarUsuarioeducativa($uedu_usuario, $uedu_nombres, $uedu_apellidos, $uedu_cedula, $uedu_matricula, $uedu_correo, $uedu_usuario_ingreso) {
-        \app\models\Utilities::putMessageLogFile('entro inserUsuario...: ' ); 
+    public function insertarUsuarioeducativa($uedu_usuario, $est_id, $per_id, $uedu_nombres, $uedu_apellidos, $uedu_cedula, $uedu_matricula, $uedu_correo, $uedu_usuario_ingreso) {
+        //\app\models\Utilities::putMessageLogFile('entro inserUsuario...: ' ); 
         $con = \Yii::$app->db_academico;
         $trans = $con->getTransaction(); // se obtiene la transacción actual
         if ($trans !== null) {
@@ -498,6 +498,16 @@ class UsuarioEducativa extends \yii\db\ActiveRecord
             $bsol_sql .= ", :uedu_usuario";
         }
         
+        if (isset($est_id)) {
+            $param_sql .= ", est_id";
+            $bsol_sql .= ", :est_id";
+        }
+        
+        if (isset($per_id)) {
+            $param_sql .= ", per_id";
+            $bsol_sql .= ", :per_id";
+        }
+      
         if (isset($uedu_nombres)) {
             $param_sql .= ", uedu_nombres";
             $bsol_sql .= ", :uedu_nombres";
@@ -537,9 +547,17 @@ class UsuarioEducativa extends \yii\db\ActiveRecord
             $sql = "INSERT INTO " . $con->dbname . ".usuario_educativa ($param_sql) VALUES($bsol_sql)";
             $comando = $con->createCommand($sql);
 
-            \app\models\Utilities::putMessageLogFile('sql insert usuario educativa...: ' .$sql); 
+            //\app\models\Utilities::putMessageLogFile('sql insert usuario educativa...: ' .$sql); 
             if (isset($uedu_usuario)) {
                 $comando->bindParam(':uedu_usuario', $uedu_usuario, \PDO::PARAM_STR);
+            }
+            
+            if (isset($est_id)) {
+                $comando->bindParam(':est_id', $est_id, \PDO::PARAM_INT);
+            }
+            
+            if (isset($per_id)) {
+                $comando->bindParam(':per_id', $per_id, \PDO::PARAM_INT);
             }
             
             if (isset($uedu_nombres)) {

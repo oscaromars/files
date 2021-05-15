@@ -45,7 +45,13 @@ if($resCab['estado']==1){
                 <?= Html::dropDownList("cmb_periodo", $resCab['paca_id'], $arr_periodo, ["class" => "form-control", "id" => "cmb_periodo"]) ?>
             </div>   
         </div>
-
+<div class="col-md-12 col-sm-12 col-xs-12 col-lg-12">
+            <div class="form-group">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 text-center">
+                    <button type="button" class="btn btn-primary" onclick="javascript:saveReversar()"><?= Academico::t('profesor', 'Add') ?></button>
+                </div>
+            </div>
+        </div>
 
         <div class="col-sm-offset-4">
             <?= Html::submitButton('Buscar', ['class' => 'btn btn-primary']) ?>

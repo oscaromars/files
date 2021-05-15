@@ -11,11 +11,8 @@ function save() {
     var link = $('#txth_base').val() + "/academico/materiaparaleloperiodo/save";
     var cmb_mod_id = $('#materiaparaleloperiodosearch-mod_id').val();
     var cmb_pac_id = $('#materiaparaleloperiodosearch-paca_id').val();
-
     var arrParams = new Object();
-
     var items = [];
-    var c_vacio = 0;
     $('tbody tr').each(function () {
         var itemOrden = {};
         var tds = $(this).find("td");
@@ -24,30 +21,41 @@ function save() {
         itemOrden.numero_paralelo = tds.filter(":eq(2)").find("select").val();
         itemOrden.mod_id = cmb_mod_id;
         itemOrden.paca_id = cmb_pac_id;
-//        itemOrden.nombre_paralelo = tds.filter(":eq(3)").text();
-//        itemOrden.numero_estudiante = tds.filter(":eq(4)").text();
-//        itemOrden.codigo_horario = tds.filter(":eq(5)").find("select").val();
-//        itemOrden.codigo_profesor = tds.filter(":eq(6)").find("select").val();
-
-
-        /*
-         itemOrden.id_materia = tds.filter(":eq(2)").text();
-         itemOrden.codigo_materia = tds.filter(":eq(3)").text();
-         itemOrden.nombre_paralelo = tds.filter(":eq(4)").text();
-         itemOrden.numero_estudiante = tds.filter(":eq(5)").text();
-         itemOrden.codigo_horario = tds.filter(":eq(6)").find("select").val();
-         itemOrden.codigo_profesor = tds.filter(":eq(7)").find("select").val();
-         itemOrden.mppd_id = tds.filter(":eq(8)").text();
-         */
         if (itemOrden.numero_paralelo != "0" || itemOrden.numero_paralelo != 0) {
             items.push(itemOrden);
         }
-
 
     });
     arrParams.data = items;
     requestHttpAjax(link, arrParams, function (response) {
         showAlert(response.status, response.label, response.message);
-    }, false);
+          if (response.status == "OK") {
+                         setTimeout(function () {
+                        window.location.href = $('#txth_base').val() + "/academico/materiaparaleloperiodo/index";
+                    }, 300);
+                
+          }
+    }, true);
 }
 
+function update() {
+    var link = $('#txth_base').val() + "/academico/materiaparaleloperiodo/actualizar";
+
+    var arrParams = new Object();
+     arrParams.num_paralelos = $("#cmb_num_paralelo :selected").text(); 
+     arrParams.asig_id = $("#asi_id").val() 
+     arrParams.mod_id = $("#mod_id").val() 
+     arrParams.paca_id = $("#paca_id").val()
+     arrParams.mpp_num_paralelo = $("#mpp_num_paralelo").val()
+   
+   requestHttpAjax(link, arrParams, function (response) {
+        showAlert(response.status, response.label, response.message);
+          if (response.status == "OK") {
+                         setTimeout(function () {
+                        window.location.href = $('#txth_base').val() + "/academico/materiaparaleloperiodo/index";
+                    }, 300);
+                
+          }
+    }, true);
+   
+}

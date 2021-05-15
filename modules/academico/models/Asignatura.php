@@ -279,7 +279,7 @@ class Asignatura extends \yii\db\ActiveRecord
      * @param   
      * @return  $resultData (Retornar las asignaturas por planificación y modalidad).
      */
-    public function getAsignaturaPara_asignar_paralelo($mod_id,$pla_id, $bloque) {
+    public function getAsignaturaPara_asignar_paralelo($mod_id, $bloque,$paca_id) {
         $con = \Yii::$app->db_academico;
         $estado = 1;
         if ($bloque=="B1") {
@@ -288,105 +288,126 @@ class Asignatura extends \yii\db\ActiveRecord
                         inner join  db_academico.planificacion p on p.pla_id = pe.pla_id
                         inner join db_academico.malla_academica_detalle md     on md.made_codigo_asignatura = pe.pes_mat_b1_h1_cod
                         inner join db_academico.asignatura a on a.asi_id = md.asi_id
-                     WHERE p.pla_id = :pla_id
-                      and p.mod_id =:mod_id
+                        left join  db_academico.materia_paralelo_periodo mpp on mpp.asi_id = a.asi_id and mpp.paca_id=:paca_id and mpp.mod_id=:mod_id
+                     WHERE   pla_estado='1' 
+                     and p.mod_id =:mod_id
                      and pes_estado = 1
                      and pes_estado_logico = 1
+                     and mpp.asi_id is null
+                    
                 UNION
                 SELECT distinct a.asi_id id, asi_nombre name
                 FROM db_academico.planificacion_estudiante pe 
                      inner join db_academico.planificacion p on p.pla_id = pe.pla_id
                      inner join db_academico.malla_academica_detalle md      on md.made_codigo_asignatura = pe.pes_mat_b1_h2_cod
                      inner join db_academico.asignatura a on a.asi_id = md.asi_id
-                WHERE p.pla_id = :pla_id
+                     left join  db_academico.materia_paralelo_periodo mpp on mpp.asi_id = a.asi_id and mpp.paca_id=:paca_id and mpp.mod_id=:mod_id
+                WHERE  pla_estado='1'
                     and p.mod_id =:mod_id
                     and pes_estado = 1
                     and pes_estado_logico = 1
+                    and mpp.asi_id is null
                 UNION
                 SELECT distinct a.asi_id id, asi_nombre name
                 FROM db_academico.planificacion_estudiante pe 
                     inner join  db_academico.planificacion p on p.pla_id = pe.pla_id
                     inner join db_academico.malla_academica_detalle md        on md.made_codigo_asignatura = pe.pes_mat_b1_h3_cod
                     inner join db_academico.asignatura a on a.asi_id = md.asi_id
-                WHERE p.pla_id = :pla_id
+                    left join  db_academico.materia_paralelo_periodo mpp on mpp.asi_id = a.asi_id and mpp.paca_id=:paca_id and mpp.mod_id=:mod_id
+                   WHERE  pla_estado='1'
                     and p.mod_id =:mod_id
                     and pes_estado = 1
                     and pes_estado_logico = 1
+                    and mpp.asi_id is null
                 UNION
                 SELECT distinct a.asi_id id, asi_nombre name
                 FROM db_academico.planificacion_estudiante pe 
                     inner join  db_academico.planificacion p on p.pla_id = pe.pla_id
                     inner join db_academico.malla_academica_detalle md          on md.made_codigo_asignatura = pe.pes_mat_b1_h4_cod
                     inner join db_academico.asignatura a on a.asi_id = md.asi_id
-                WHERE p.pla_id = :pla_id
+                    left join  db_academico.materia_paralelo_periodo mpp on mpp.asi_id = a.asi_id and mpp.paca_id=:paca_id and mpp.mod_id=:mod_id
+                    WHERE  pla_estado='1'
                     and p.mod_id =:mod_id
                     and pes_estado = 1
-                 and pes_estado_logico = 1
+                    and pes_estado_logico = 1
+                    and mpp.asi_id is null
                 UNION
                 SELECT distinct a.asi_id id, asi_nombre name
                 FROM db_academico.planificacion_estudiante pe 
                     inner join  db_academico.planificacion p on p.pla_id = pe.pla_id
                     inner join db_academico.malla_academica_detalle md   on md.made_codigo_asignatura = pe.pes_mat_b1_h5_cod
                     inner join db_academico.asignatura a on a.asi_id = md.asi_id
-                WHERE p.pla_id = :pla_id
+                    left join  db_academico.materia_paralelo_periodo mpp on mpp.asi_id = a.asi_id and mpp.paca_id=:paca_id and mpp.mod_id=:mod_id
+                    WHERE  pla_estado='1'
                     and p.mod_id =:mod_id
                     and pes_estado = 1
-                    and pes_estado_logico = 1";
+                    and pes_estado_logico = 1
+                    and mpp.asi_id is null";
         } else {
             $sql = "SELECT distinct a.asi_id id, asi_nombre name
                 FROM db_academico.planificacion_estudiante pe 
                 inner join  db_academico.planificacion p on p.pla_id = pe.pla_id
                 inner join db_academico.malla_academica_detalle md  on md.made_codigo_asignatura = pe.pes_mat_b2_h1_cod
                 inner join db_academico.asignatura a on a.asi_id = md.asi_id
-                WHERE p.pla_id = :pla_id
+                left join  db_academico.materia_paralelo_periodo mpp on mpp.asi_id = a.asi_id and mpp.paca_id=:paca_id and mpp.mod_id=:mod_id
+                    WHERE  pla_estado='1'
                      and p.mod_id =:mod_id
                      and pes_estado = 1
                      and pes_estado_logico = 1
+                     and mpp.asi_id is null
                 UNION
                 SELECT distinct a.asi_id id, asi_nombre name
                 FROM db_academico.planificacion_estudiante pe 
                     inner join  db_academico.planificacion p on p.pla_id = pe.pla_id
                     inner join db_academico.malla_academica_detalle md         on md.made_codigo_asignatura = pe.pes_mat_b2_h2_cod
                     inner join db_academico.asignatura a on a.asi_id = md.asi_id
-                WHERE p.pla_id = :pla_id
+                    left join  db_academico.materia_paralelo_periodo mpp on mpp.asi_id = a.asi_id and mpp.paca_id=:paca_id and mpp.mod_id=:mod_id
+                WHERE  pla_estado='1'
                     and p.mod_id =:mod_id
                     and pes_estado = 1
                     and pes_estado_logico = 1
+                    and mpp.asi_id is null
                 UNION
                 SELECT distinct a.asi_id id, asi_nombre name
                 FROM db_academico.planificacion_estudiante pe 
                      inner join  db_academico.planificacion p on p.pla_id = pe.pla_id
                     inner join db_academico.malla_academica_detalle md     on md.made_codigo_asignatura = pe.pes_mat_b2_h3_cod
                     inner join db_academico.asignatura a on a.asi_id = md.asi_id
-                WHERE p.pla_id = :pla_id
+                    left join  db_academico.materia_paralelo_periodo mpp on mpp.asi_id = a.asi_id and mpp.paca_id=:paca_id and mpp.mod_id=:mod_id   
+                WHERE  pla_estado='1'
                     and p.mod_id =:mod_id
                     and pes_estado = 1
                     and pes_estado_logico = 1
+                    and mpp.asi_id is null
                 UNION
                 SELECT distinct a.asi_id id, asi_nombre name
                 FROM db_academico.planificacion_estudiante pe 
                  inner join  db_academico.planificacion p on p.pla_id = pe.pla_id
                  inner join db_academico.malla_academica_detalle md    on md.made_codigo_asignatura = pe.pes_mat_b2_h4_cod
                  inner join db_academico.asignatura a on a.asi_id = md.asi_id
-                WHERE p.pla_id = :pla_id
+                left join  db_academico.materia_paralelo_periodo mpp on mpp.asi_id = a.asi_id and mpp.paca_id=:paca_id and mpp.mod_id=:mod_id
+                WHERE pla_estado='1'
                     and p.mod_id =:mod_id
                     and pes_estado = 1
                  and pes_estado_logico = 1
+                 and mpp.asi_id is null
                 UNION
                 SELECT distinct a.asi_id id, asi_nombre name
                 FROM db_academico.planificacion_estudiante pe 
                     inner join  db_academico.planificacion p on p.pla_id = pe.pla_id
                     inner join db_academico.malla_academica_detalle md     on md.made_codigo_asignatura = pe.pes_mat_b2_h5_cod
                     inner join db_academico.asignatura a on a.asi_id = md.asi_id
-                WHERE p.pla_id = :pla_id
+                    left join  db_academico.materia_paralelo_periodo mpp on mpp.asi_id = a.asi_id and mpp.paca_id=:paca_id and mpp.mod_id=:mod_id
+                    WHERE  pla_estado='1'
                     and p.mod_id =:mod_id
                     and pes_estado = 1
-                    and pes_estado_logico = 1";
+                    and pes_estado_logico = 1
+                    and mpp.asi_id is null";
         }        
         
         $comando = $con->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);  
-        $comando->bindParam(":pla_id", $pla_id, \PDO::PARAM_INT);  
+       $comando->bindParam(":paca_id", $paca_id, \PDO::PARAM_INT);  
         $comando->bindParam(":mod_id", $mod_id, \PDO::PARAM_STR);  
         $resultData = $comando->queryAll();
         return $resultData;
@@ -399,47 +420,56 @@ class Asignatura extends \yii\db\ActiveRecord
      * @param   
      * @return  $resultData (Retornar las asignaturas por planificación y modalidad).
      */
-    public function getAsignatura_x_bloque_x_planif($pla_id, $jornada_id, $bloque) {
+    public function getAsignatura_x_bloque_x_planif($paca_id, $mod_id) {
         $con = \Yii::$app->db_academico;
         $estado = 1;
-        if ($bloque=="B1") {
+        
+        $sql ="select mpp.asi_id id,(select asi_nombre from db_academico.asignatura a where a.asi_id=mpp.asi_id) name 
+                  from  db_academico.materia_paralelo_periodo mpp 
+                 left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da.mod_id=mpp.mod_id and da.asi_id=mpp.asi_id  and da.paca_id=mpp.paca_id
+                 where da.mpp_id is null 
+                 and mpp.mod_id=".$mod_id.
+                 " and mpp.paca_id=".$paca_id.
+                " group by id,name";
+                
+      /*  if ($bloque=="B1") {
             $sql = "SELECT * from ( 
                 SELECT distinct a.asi_id id, asi_nombre name
-                FROM db_academico.planificacion_estudiante pe inner join db_academico.malla_academica_detalle md
-                     on md.made_codigo_asignatura = pe.pes_mat_b1_h1_cod
-                     inner join db_academico.asignatura a on a.asi_id = md.asi_id
+                FROM db_academico.planificacion_estudiante pe 
+                inner join db_academico.malla_academica_detalle md  on md.made_codigo_asignatura = pe.pes_mat_b1_h1_cod
+                inner join db_academico.asignatura a on a.asi_id = md.asi_id
                 WHERE pla_id = :pla_id
                      and pes_estado = 1
                      and pes_estado_logico = 1
                 UNION
                 SELECT distinct a.asi_id id, asi_nombre name
-                FROM db_academico.planificacion_estudiante pe inner join db_academico.malla_academica_detalle md
-                    on md.made_codigo_asignatura = pe.pes_mat_b1_h2_cod
-                    inner join db_academico.asignatura a on a.asi_id = md.asi_id
+                FROM db_academico.planificacion_estudiante pe 
+                inner join db_academico.malla_academica_detalle md        on md.made_codigo_asignatura = pe.pes_mat_b1_h2_cod
+                 inner join db_academico.asignatura a on a.asi_id = md.asi_id
                 WHERE pla_id = :pla_id
                     and pes_estado = 1
                     and pes_estado_logico = 1
                 UNION
                 SELECT distinct a.asi_id id, asi_nombre name
-                FROM db_academico.planificacion_estudiante pe inner join db_academico.malla_academica_detalle md
-                    on md.made_codigo_asignatura = pe.pes_mat_b1_h3_cod
-                    inner join db_academico.asignatura a on a.asi_id = md.asi_id
+                FROM db_academico.planificacion_estudiante pe 
+                inner join db_academico.malla_academica_detalle md    on md.made_codigo_asignatura = pe.pes_mat_b1_h3_cod
+                inner join db_academico.asignatura a on a.asi_id = md.asi_id
                 WHERE pla_id = :pla_id
                     and pes_estado = 1
                     and pes_estado_logico = 1
                 UNION
                 SELECT distinct a.asi_id id, asi_nombre name
-                FROM db_academico.planificacion_estudiante pe inner join db_academico.malla_academica_detalle md
-                    on md.made_codigo_asignatura = pe.pes_mat_b1_h4_cod
-                    inner join db_academico.asignatura a on a.asi_id = md.asi_id
+                FROM db_academico.planificacion_estudiante pe 
+                inner join db_academico.malla_academica_detalle md   on md.made_codigo_asignatura = pe.pes_mat_b1_h4_cod
+                inner join db_academico.asignatura a on a.asi_id = md.asi_id
                 WHERE pla_id = :pla_id
                     and pes_estado = 1
                  and pes_estado_logico = 1
                 UNION
                 SELECT distinct a.asi_id id, asi_nombre name
-                FROM db_academico.planificacion_estudiante pe inner join db_academico.malla_academica_detalle md
-                    on md.made_codigo_asignatura = pe.pes_mat_b1_h5_cod
-                    inner join db_academico.asignatura a on a.asi_id = md.asi_id
+                FROM db_academico.planificacion_estudiante pe 
+                inner join db_academico.malla_academica_detalle md      on md.made_codigo_asignatura = pe.pes_mat_b1_h5_cod
+                inner join db_academico.asignatura a on a.asi_id = md.asi_id
                 WHERE pla_id = :pla_id
                     and pes_estado = 1
                     and pes_estado_logico = 1 ) b order by name";
@@ -453,42 +483,43 @@ class Asignatura extends \yii\db\ActiveRecord
                      and pes_estado_logico = 1
                 UNION
                 SELECT distinct a.asi_id id, asi_nombre name
-                FROM db_academico.planificacion_estudiante pe inner join db_academico.malla_academica_detalle md
-                    on md.made_codigo_asignatura = pe.pes_mat_b2_h2_cod
+                FROM db_academico.planificacion_estudiante pe 
+                    inner join db_academico.malla_academica_detalle md   on md.made_codigo_asignatura = pe.pes_mat_b2_h2_cod
                     inner join db_academico.asignatura a on a.asi_id = md.asi_id
                 WHERE pla_id = :pla_id
                     and pes_estado = 1
                     and pes_estado_logico = 1
                 UNION
                 SELECT distinct a.asi_id id, asi_nombre name
-                FROM db_academico.planificacion_estudiante pe inner join db_academico.malla_academica_detalle md
-                    on md.made_codigo_asignatura = pe.pes_mat_b2_h3_cod
-                    inner join db_academico.asignatura a on a.asi_id = md.asi_id
+                FROM db_academico.planificacion_estudiante pe 
+                inner join db_academico.malla_academica_detalle md on md.made_codigo_asignatura = pe.pes_mat_b2_h3_cod
+                inner join db_academico.asignatura a on a.asi_id = md.asi_id
                 WHERE pla_id = :pla_id
                     and pes_estado = 1
                     and pes_estado_logico = 1
                 UNION
                 SELECT distinct a.asi_id id, asi_nombre name
-                FROM db_academico.planificacion_estudiante pe inner join db_academico.malla_academica_detalle md
-                    on md.made_codigo_asignatura = pe.pes_mat_b2_h4_cod
-                    inner join db_academico.asignatura a on a.asi_id = md.asi_id
+                FROM db_academico.planificacion_estudiante pe 
+                inner join db_academico.malla_academica_detalle md       on md.made_codigo_asignatura = pe.pes_mat_b2_h4_cod
+                inner join db_academico.asignatura a on a.asi_id = md.asi_id
                 WHERE pla_id = :pla_id
                     and pes_estado = 1
                  and pes_estado_logico = 1
                 UNION
                 SELECT distinct a.asi_id id, asi_nombre name
-                FROM db_academico.planificacion_estudiante pe inner join db_academico.malla_academica_detalle md
-                    on md.made_codigo_asignatura = pe.pes_mat_b2_h5_cod
-                    inner join db_academico.asignatura a on a.asi_id = md.asi_id
+                FROM db_academico.planificacion_estudiante pe 
+                inner join db_academico.malla_academica_detalle md  on md.made_codigo_asignatura = pe.pes_mat_b2_h5_cod
+                inner join db_academico.asignatura a on a.asi_id = md.asi_id
                 WHERE pla_id = :pla_id
                     and pes_estado = 1
                     and pes_estado_logico = 1 ) b order by name";
-        }        
-        
+        } */      
+        \app\models\Utilities::putMessageLogFile($sql);   
         $comando = $con->createCommand($sql);
-        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);  
-        $comando->bindParam(":pla_id", $pla_id, \PDO::PARAM_INT);  
-       // $comando->bindParam(":jornada_id", $jornada_id, \PDO::PARAM_STR);  
+       // $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);  
+       // $comando->bindParam(":paca_id", $paca_id, \PDO::PARAM_INT);  
+       // $comando->bindParam(":mod_id", $mod_id, \PDO::PARAM_INT);  
+       
         $resultData = $comando->queryAll();
         return $resultData;
     }   

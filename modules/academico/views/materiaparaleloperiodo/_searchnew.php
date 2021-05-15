@@ -29,7 +29,7 @@ $var = ArrayHelper::map(app\modules\academico\models\PeriodoAcademico::find()->w
                         'button' => 'col-sm-4'
                     ],
                 ],
-                'action' => ['index'],
+                'action' => ['new'],
                 'method' => 'get',
     ]);
     ?>
@@ -41,7 +41,7 @@ $var = ArrayHelper::map(app\modules\academico\models\PeriodoAcademico::find()->w
       //  'data' => ArrayHelper::map(app\modules\academico\models\PeriodoAcademico::find()->all(), 'paca_id', 'sem.saca_nombre'),
          'data' => $var,
         'size' => Select2::MEDIUM,
-        'options' => ['placeholder' => 'Seleccione Distributivo ...', 'multiple' => false],
+        'options' => ['placeholder' => 'Seleccione Periodo ...', 'multiple' => false],
         'pluginOptions' => [
             'allowClear' => true,
             'width' => '295px',

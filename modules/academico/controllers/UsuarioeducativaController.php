@@ -1542,27 +1542,36 @@ class UsuarioeducativaController extends \app\components\CController {
     public function actionSavestudiantesbloqueo() {
         $usu_id = @Yii::$app->session->get("PB_iduser");
         if (Yii::$app->request->isAjax) {
-            $data = Yii::$app->request->post();  
-            $cedu_id = $data["curso"];
+            $data        = Yii::$app->request->post();  
+            $cedu_id     = $data["curso"];
             $nobloqueado = $data["nobloqueado"];
-            $bloqueado = $data["bloqueado"];
+            $bloqueado   = $data["bloqueado"];
             //\app\models\Utilities::putMessageLogFile('no bloqueo '. $nobloqueado);
-
-
+            //print_r($data);die();
             /**********************************/
             // AQUI VA EL WEB SERVICE
-            $client = new \SoapClient("https://mycampus.urlink.us/soap/?wsdl=true", array("login" => "webservice", "password" => "uUDacTYTPm", "trace" => 1, "exceptions" => 0));
-
-            $client->setCredentials("webservice", "uUDacTYTPm","basic");
             
-            $method = 'Obtener_prg_items';     
-            $args = Array('id_grupo' =>  24,
+            /*
+            $client = new \SoapClient("https://campusvirtual.uteg.edu.ec/soap/?wsdl=true", 
+                                      array("login"    => Yii::$app->params["wsLogin"], 
+                                            "password" => Yii::$app->params["wsPassword"],
+                                     "trace" => 1, "exceptions" => 0));
+
+            $client->setCredentials(Yii::$app->params["wsLogin"], Yii::$app->params["wsPassword"],"basic");
+            
+            $method = 'obtener_prg_items';
+            $args = Array('id_grupo' =>  '2918',
                           'id_tipo_item' => 'EV',
-                          'id_unidad' => '1',
+                          'id_unidad' => '' //52545
                          );  
+              
+            //$method = 'asignar_usuarios_alcance_prg_items';
+            //$args = Array('asignar_usuario_item' => Array('id_usuario' => '202100030', 'id_prg_item' => '95341'));
+            
             $result = $client->__call( $method, Array( $args ) );
 
-            return $result;
+            return \app\models\Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), false, $result);
+            */
             /**********************************/
 
             $con = \Yii::$app->db_academico;
@@ -1572,16 +1581,18 @@ class UsuarioeducativaController extends \app\components\CController {
                     $nobloqueado = explode(",", $nobloqueado); //permitidos
                     foreach ($nobloqueado as $est_id) {  // empieza foreach para guardar los asignados
 
-                        /**********************************/
-                        // AQUI VA EL WEB SERVICE
-                        $client = new \SoapClient("https://mycampus.urlink.us/soap/?wsdl=true", array("login" => "webservice", "password" => "uUDacTYTPm", "trace" => 1, "exceptions" => 0));
+                        $mod_ceducativa = new CursoEducativa();
 
-                        $client->setCredentials("webservice", "uUDacTYTPm","basic");
-                        
-                        $method = 'consultar_categorias_datos_adicionales';     
-                        $args = Array('');  
-                        $result = $client->__call( $method, Array( $args ) );
-                        /**********************************/
+                        $id_grupo_array = $mod_ceducativa->consultarCursoxid($cedu_id);
+
+                        $id_grupo = $id_grupo_array['cedu_asi_id'];
+
+                        $mod_educativaunidad = new CursoEducativaUnidad();
+
+                        $id_unidad_array = $mod_educativaunidad->consultarUnidadEducativaxCeduid($cedu_id);
+
+                        print_r($id_unidad_array);die();
+
                         $mod_asignar = new CursoEducativaEstudiante();
                         $resp_consAsignacion = $mod_asignar->consultarAsignacionexiste($cedu_id, $est_id);
                         if ($resp_consAsignacion["exiteasigna"] > 0) {

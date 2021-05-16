@@ -785,10 +785,14 @@ function asignarBloqueo() {
        if (selecteds != '') {
          if (!validateForm()) {
              requestHttpAjax(link, arrParams, function (response) {
-                 showAlert(response.status, response.label, response.message);
+                 //showAlert(response.status, response.label, response.message);
+                 alert("completado");
+                 console.log(response);
+                 /*
                  setTimeout(function () {
                      window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/listarestudianteregistro";
                  }, 3000);
+                 */
              }, true);
          }
       } else {

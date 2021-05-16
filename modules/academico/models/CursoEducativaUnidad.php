@@ -137,6 +137,55 @@ class CursoEducativaUnidad extends \yii\db\ActiveRecord
                     
         }
         $resultData = $comando->queryAll();
+
+        \app\models\Utilities::putMessageLogFile('consultarUnidadEducativa: '.$comando->getRawSql());
+        
+        $dataProvider = new ArrayDataProvider([
+            'key' => 'id',
+            'allModels' => $resultData,
+            'pagination' => [
+                'pageSize' => Yii::$app->params["pageSize"],
+            ],
+            'sort' => [
+                'attributes' => [],
+            ],
+        ]);
+        if ($reporte == 1) {
+            return $dataProvider;
+        } else {
+            return $resultData;
+        }
+    }
+
+    /**
+     * Function Obtiene información de unidades en educatica x CeduId
+     * @author Galo Aguirre <analistadesarrollo06@uteg.edu.ec>;
+     * @param
+     * @return
+     */
+    public function consultarUnidadEducativaxCeduid($cedu_id) {
+        $con = \Yii::$app->db_academico;        
+        $estado = 1;
+
+        $sql = " SELECT cure.cedu_id,
+                        cure.ceuni_id,
+                        cur.cedu_asi_nombre,                         
+                        cure.ceuni_codigo_unidad,
+                        cure.ceuni_descripcion_unidad
+                   FROM " . $con->dbname . ".curso_educativa_unidad cure 
+             INNER JOIN " . $con->dbname . ".curso_educativa cur ON cur.cedu_id = cure.cedu_id
+                  WHERE cure.cedu_id      = :cedu_id
+                    AND cure.ceuni_estado = :estado
+                    AND cure.ceuni_estado_logico = :estado";
+
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":estado",  $estado, \PDO::PARAM_STR);
+        $comando->bindParam(":cedu_id", $cedu_id, \PDO::PARAM_INT);
+
+        $resultData = $comando->queryAll();
+
+        \app\models\Utilities::putMessageLogFile('consultarUnidadEducativa: '.$comando->getRawSql());
+        
         $dataProvider = new ArrayDataProvider([
             'key' => 'id',
             'allModels' => $resultData,

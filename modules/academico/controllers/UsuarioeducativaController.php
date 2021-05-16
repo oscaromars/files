@@ -1499,7 +1499,13 @@ class UsuarioeducativaController extends \app\components\CController {
                 $existe = $mod_educativa->consultarexisteusuario($usuario, $correo, $cedula, $matricula);
                 //\app\models\Utilities::putMessageLogFile('existe rcurso...: ' . $existe['existe_curso']);     
                 if ($existe['existe_usuario'] == 0) {
-                    $saveusuario = $mod_educativa->insertarUsuarioeducativa($usuario, $nombre, $apellido, $cedula, $matricula, $correo, $usuariomod);
+                    // valida q ese usuario exista como estudiante OJO FALTA
+                    $estudiante = $mod_educativa->consultarEstutudiantexusuario($usuario);
+                    $est_id = $estudiante['est_id'];
+                    $per_id = $estudiante['per_id'];
+                    if (!empty($est_id) && !empty($per_id)) {
+                    // enviar los est_id y per_id a la funcion de grabar
+                    $saveusuario = $mod_educativa->insertarUsuarioeducativa($usuario, $est_id, $per_id, $nombre, $apellido, $cedula, $matricula, $correo, $usuariomod);
                     if ($saveusuario) {
                         $exito = 1;
                     }
@@ -1518,6 +1524,15 @@ class UsuarioeducativaController extends \app\components\CController {
                         );
                         return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
                     }
+                //cierra if linea 1506
+            }else {
+                $transaction->rollback();
+                $message = array(
+                    "wtmessage" => Yii::t("notificaciones", "No se puede crear, porque usuario no se encuentra como estudiante en asgard." . $mensaje),
+                    "title" => Yii::t('jslang', 'Error'),
+                );
+                return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+            } 
                }else {
                 $transaction->rollback();
                 $message = array(
@@ -1530,7 +1545,7 @@ class UsuarioeducativaController extends \app\components\CController {
             } catch (Exception $ex) {
                 $transaction->rollback();
                 $message = array(
-                    "wtmessage" => Yii::t("notificaciones", "Error al grabar2."),
+                    "wtmessage" => Yii::t("notificaciones", "Error al grabar."),
                     "title" => Yii::t('jslang', 'Error'),
                 );
                 return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
@@ -1720,7 +1735,7 @@ class UsuarioeducativaController extends \app\components\CController {
         $arr_jornada = $modeljornada->getJornadasByUnidadAcad(0,0/*$arr_unidad[0]["id"], $arr_modalidad[0]["id"]*/);
         $arr_periodo = $mod_periodo->consultarPeriodoAcademico();
         //$arr_curso = $mod_educativa->consultarCursosxpacaid(0); // parametro q envia es el paca_id
-        $arr_curso = $mod_educativa->consultarCursostodos();
+        //$arr_curso = $mod_educativa->consultarCursostodos();
         return $this->render('asignardistributivo', [
                     'mod_unidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Grid")]], $arr_unidad), "id", "name"),
                     'mod_modalidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Grid")]], $arr_modalidad), "id", "name"),
@@ -1728,8 +1743,65 @@ class UsuarioeducativaController extends \app\components\CController {
                     'mod_materias' => ArrayHelper::map(array_merge([["asi_id" => "0", "asi_nombre" => Yii::t("formulario", "Grid")]], $mod_asignatura), "asi_id", "asi_nombre"),
                     'model' => $model,
                     'mod_jornada' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Grid")]], $arr_jornada), "id", "name"),
-                    'arr_curso' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $arr_curso), "id", "name"),
+                    //'arr_curso' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $arr_curso), "id", "name"),
         ]);
+    }
+
+    /**
+     * Función para insertar los estudiantes en curso_educativa_estudiante, desde la vista de asgard/academico/usuarioeducativa/listarestudianteregistro
+     * @author Jorge Paladines <analista.desarrollo@uteg.edu.ec>;
+     * @param
+     * @return
+     */
+    public function actionInsertarestudiantes(){
+        $usu_id = Yii::$app->session->get('PB_iduser');
+        $mod_cursoeduc = new CursoEducativaEstudiante();
+        $ids = $mod_cursoeduc->consultarCursoEducativaDistributivoPeriodoActual();
+        $tam = count($ids);
+
+        try{
+            foreach ($ids as $key => $value) {
+                $est_id = $value['est_id'];
+                $cedu_id = $value['cedu_id'];
+                // $daca_id = $value['daca_id'];
+
+                $hasRegistro = CursoEducativaEstudiante::find()->where(['est_id' => $est_id, 'cedu_id' => $cedu_id])->asArray()->one();
+                if(isset($hasRegistro)){
+                    $tam -= 1;
+                }
+                else{
+                    $insertID = $mod_cursoeduc->insertarEstudiantecurso($cedu_id, $est_id, $usu_id);
+                }
+            }
+            if($insertID){
+                $message = array(
+                    "wtmessage" => Yii::t("notificaciones", "Your information was successfully update."),
+                    "title" => Yii::t('jslang', 'Success'),
+                );
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), false, $message);
+            }
+            elseif ($tam <= 0) {
+                $message = array(
+                    "wtmessage" => Yii::t("notificaciones", "Todos los estudiantes ya han sido agregados"),
+                    "title" => Yii::t('jslang', 'Error'),
+                );
+                return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Sucess"), false, $message);
+            }
+            else{
+                $message = array(
+                    "wtmessage" => Yii::t("notificaciones", "Error"),
+                    "title" => Yii::t('jslang', 'Error'),
+                );
+                return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Sucess"), false, $message);
+            }
+        }
+        catch (Exception $ex) {
+            $message = array(
+                "wtmessage" => Yii::t("notificaciones", "Error".$ex),
+                "title" => Yii::t('jslang', 'Error'),
+            );
+            return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Sucess"), false, $message);
+        }
     }
 
     public function actionExpexcelasigd() {

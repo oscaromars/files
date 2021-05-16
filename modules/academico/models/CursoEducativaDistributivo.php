@@ -195,7 +195,8 @@ class CursoEducativaDistributivo extends \yii\db\ActiveRecord
         $res = $comando->queryAll();
 
         $mod_educativa = new CursoEducativa();
-        $arr_curso = $mod_educativa->consultarCursostodos();  
+        //$arr_curso = $mod_educativa->consultarCursostodos();  
+        $arr_curso = $mod_educativa->consultarCursosxpacaid($periodoAcademico);
         $arr_curso = array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $arr_curso);
         
         //print_r($arr_curso);

@@ -75,6 +75,11 @@ $(document).ready(function() {
         savedistributivo();
     });
 
+    // Activar asignación de estudiantes
+    $('#insert_btn').click(function() {
+        insertarEstudiantesConfirm();
+    });
+
     $('#cmb_unidad_dises').change(function () {
         var link = $('#txth_base').val() + "/academico/distributivo/listarestudiantespago";
         var arrParams = new Object();
@@ -883,8 +888,7 @@ function savedistributivo() {
                     showAlert(response.status, response.label, response.message);
                     if (response.status == "OK") {
                         setTimeout(function() {
-                            //NO OLVIDAR CAMBIAR A EL INDEX DONDE SE LISTAN LA INFORMACION
-                            var link = $('#txth_base').val() + "/academico/usuarioeducativa/asignardistributivo";
+                            var link = $('#txth_base').val() + "/academico/usuarioeducativa/distributivoindex";
                             window.location = link;
                         }, 3000);
                     }
@@ -940,6 +944,28 @@ function accionreg(id, tmp) {
                 setTimeout(function () {
                     window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/distributivoindex";
                 }, 3000);
+            }
+        }, true);
+    }
+}
+
+// Este sólo abre el modal de asignación. Es para los botones de la barra superior
+function insertarEstudiantes(){
+    $('#confirmModal').modal('toggle');
+}
+
+function insertarEstudiantesConfirm(){
+    var link = $('#txth_base').val() + "/academico/usuarioeducativa/insertarestudiantes";
+
+    var arrParams = new Object();
+
+    if (!validateForm()) {
+        requestHttpAjax(link, arrParams, function(response) {
+            showAlert(response.status, response.label, response.message);
+            if (response.status == "OK") {
+                setTimeout(function() {
+                    window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/listarestudianteregistro";
+                    }, 3000);
             }
         }, true);
     }

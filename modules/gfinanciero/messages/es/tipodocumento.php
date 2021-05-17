@@ -74,5 +74,6 @@ return [
     "Type Group" => "Tipo Grupo",
     "DOC" => "DOC",
     "Enable Edoc" => "Habilitar Edoc",
-   
+    "Are you sure you want to update the documents." => "Está seguro que desea actualizar los documentos?",
+    "Select an item to process the request." => "Seleccione un documento para procesar la solicitud.",
 ];

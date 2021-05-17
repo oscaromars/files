@@ -18,6 +18,10 @@ $(document).ready(function() {
     $('#btn_buscarUsuario').click(function () {
         actualizarGridUsereducativa();
     });
+
+    $('#btn_buscarDistbedu').click(function () {
+        actualizarGridDisteducativa();
+    });
     
     $('#btn_newcurso').click(function () {
         savecurso();
@@ -43,6 +47,10 @@ $(document).ready(function() {
         saveunidad();
     });
 
+    $('#btn_buscarData_dise').click(function () {
+        actualizarGridAsignaDistributivo();
+    });
+
     $('#btn_editunidad').click(function () {
         editunidad();
     });
@@ -61,6 +69,15 @@ $(document).ready(function() {
 
     $('#btnHabilitacurso').click(function () {
         asignarBloqueo();
+    });
+
+    $('#btnAsignadist').click(function () {
+        savedistributivo();
+    });
+
+    // Activar asignación de estudiantes
+    $('#insert_btn').click(function() {
+        insertarEstudiantesConfirm();
     });
 
     $('#cmb_unidad_dises').change(function () {
@@ -111,6 +128,19 @@ $(document).ready(function() {
             if (response.status == "OK") {
                 data = response.message;
                 setComboDataselect(data.periodo, "cmb_curso", "Todos");
+            }
+        }, true);
+    });
+
+    $('#cmb_periododistb').change(function() {
+        var link = $('#txth_base').val() + "/academico/usuarioeducativa/distributivoindex";
+        var arrParams = new Object();
+        arrParams.codcursos = $(this).val();
+        arrParams.getcursos = true;
+        requestHttpAjax(link, arrParams, function(response) {
+            if (response.status == "OK") {
+                data = response.message;
+                setComboDataselect(data.periodos, "cmb_cursodistb", "Todos");
             }
         }, true);
     });
@@ -177,6 +207,34 @@ $(document).ready(function() {
             if (response.status == "OK") {
                 data = response.message;
                 setComboDataselect(data.asignaturasi, "cmb_asignaturaesasi", "Todos");
+            }
+        }, true);
+    });
+
+    $('#cmb_modalidad_dise').change(function () {
+        var link = $('#txth_base').val() + "/academico/usuarioeducativa/asignardistributivo";
+        var arrParams = new Object();
+        arrParams.uaca_ides = $('#cmb_unidad_dise').val();
+        arrParams.moda_ides = $(this).val();
+        arrParams.getasignaturasig = true;
+        requestHttpAjax(link, arrParams, function (response) {
+            if (response.status == "OK") {
+                data = response.message;
+                setComboDataselect(data.asignaturasig, "cmb_materia_dise", "Todos");
+            }
+        }, true);
+    });
+
+    $('#cmb_materia_dise').change(function () {
+        var link = $('#txth_base').val() + "/academico/usuarioeducativa/asignardistributivo";
+        var arrParams = new Object();
+        arrParams.uaca_isd = $('#cmb_unidad_dise').val();
+        arrParams.mod_isd = $('#cmb_modalidad_dise').val();
+        arrParams.getjornada = true;
+        requestHttpAjax(link, arrParams, function (response) {
+            if (response.status == "OK") {
+                data = response.message;
+                setComboDataselect(data.jornada, "cmb_jornada_dise", "Todos");
             }
         }, true);
     });
@@ -275,7 +333,18 @@ function exportPdfEduregistro() {
     //var jornada = $('#cmb_jornadaes option:selected').val();
     window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/exppdfestregistro?pdf=1&search=" + search + "&profesor=" + profesor + "&unidad=" + unidad + "&modalidad=" + modalidad + "&periodo=" + periodo + "&asignatura=" + asignatura + "&estado=" + estado + "&curso=" + curso/*+ "&jornada=" + jornada*/;
 }
-// actualizarGridUsereducativa
+
+function actualizarGridDisteducativa() {
+    var search = $('#txt_buscarDatadisted').val();
+    var periodo =  $('#cmb_periododistb option:selected').val();
+    var curso = $('#cmb_cursodistb option:selected').val();  
+    //Buscar almenos una clase con el nombre para ejecutar
+    if (!$(".blockUI").length) {
+        showLoadingPopup();
+    $('#Pbudistriutivoedu').PbGridView('applyFilterData', {'search': search, 'periodo': periodo, 'curso': curso});
+        setTimeout(hideLoadingPopup, 2000);
+    }
+}
 
 function actualizarGridUsereducativa() {
     var search = $('#txt_buscarDataUsuario').val();   
@@ -722,9 +791,13 @@ function asignarBloqueo() {
          if (!validateForm()) {
              requestHttpAjax(link, arrParams, function (response) {
                  showAlert(response.status, response.label, response.message);
+                 //alert("completado");
+                 console.log(response);
+                 /*
                  setTimeout(function () {
                      window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/listarestudianteregistro";
                  }, 3000);
+                 */
              }, true);
          }
       } else {
@@ -733,4 +806,167 @@ function asignarBloqueo() {
  } else {
      showAlert('NO_OK', 'error', {"wtmessage": 'Curso: El campo no debe estar vacío.', "title": 'Error'});
   }  
+}
+
+function actualizarGridAsignaDistributivo() {
+    var search = $('#txt_buscarData').val();
+    var unidad =  $('#cmb_unidad_dise option:selected').val();
+    var modalidad =  $('#cmb_modalidad_dise option:selected').val();
+    var periodo =  $('#cmb_periodo_dise option:selected').val();
+    var materia = $('#cmb_materia_dise option:selected').val();  
+    var jornada = $('#cmb_jornada_dise option:selected').val();      
+    //Buscar almenos una clase con el nombre para ejecutar
+    if (!$(".blockUI").length) {
+        showLoadingPopup();
+    $('#Tbg_Asigdistributivo').PbGridView('applyFilterData', {'search': search, 'unidad': unidad, 'modalidad': modalidad, 'periodo': periodo, 'materia': materia, 'jornada': jornada});
+        setTimeout(hideLoadingPopup, 2000);
+    }
+}
+
+function exportExcelasigd() {
+    var search = $('#txt_buscarData').val();
+    var unidad =  $('#cmb_unidad_dise option:selected').val();
+    var modalidad =  $('#cmb_modalidad_dise option:selected').val();
+    var periodo =  $('#cmb_periodo_dise option:selected').val();
+    var materia = $('#cmb_materia_dise option:selected').val();  
+    var jornada = $('#cmb_jornada_dise option:selected').val();  
+    window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/expexcelasigd?search=" + search + "&unidad=" + unidad + "&modalidad=" + modalidad + "&periodo=" + periodo + "&materia=" + materia + "&jornada=" + jornada;
+}
+
+function exportPdfasigd() {
+    var search = $('#txt_buscarData').val();
+    var unidad =  $('#cmb_unidad_dise option:selected').val();
+    var modalidad =  $('#cmb_modalidad_dise option:selected').val();
+    var periodo =  $('#cmb_periodo_dise option:selected').val();
+    var materia = $('#cmb_materia_dise option:selected').val();  
+    var jornada = $('#cmb_jornada_dise option:selected').val();  
+    window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/exppdasigd?pdf=1&search=" + search + "&unidad=" + unidad + "&modalidad=" + modalidad + "&periodo=" + periodo + "&materia=" + materia + "&jornada=" + jornada;
+}
+
+function savedistributivo() {
+    var link = $('#txth_base').val() + "/academico/usuarioeducativa/savedistributivo";
+    var arrParams = new Object();
+    arrParams.nombre = null;
+    arrParams.uaca_id = $('#cmb_unidad_dise').val(); 
+    arrParams.mod_id = $('#cmb_modalidad_dise').val(); 
+    arrParams.paca_id = $('#cmb_periodo_dise').val(); 
+    arrParams.asig_id = $('#cmb_materia_dise').val(); 
+    arrParams.jor_id = $('#cmb_jornada_dise').val();  
+    
+    var items = [];
+    //var c_vacio = 0;
+    $('tbody tr').each(function() {
+        var itemOrden ={};
+        var tds = $(this).find("td");
+        itemOrden.profesor = tds.filter(":eq(0)").text();
+        itemOrden.unidad = tds.filter(":eq(3)").text();
+        itemOrden.modalidad = tds.filter(":eq(4)").text();
+        itemOrden.periodo = tds.filter(":eq(5)").text();
+        itemOrden.asignatura = tds.filter(":eq(6)").text();
+        itemOrden.jornada = tds.filter(":eq(7)").text();       
+        itemOrden.codigo_curso = tds.filter(":eq(8)").find("select").val();
+        /*alert (itemOrden.profesor);
+        alert (itemOrden.unidad);
+        alert (itemOrden.modalidad);
+        alert (itemOrden.periodo);
+        alert (itemOrden.asignatura);
+        alert (itemOrden.jornada);
+        alert (itemOrden.codigo_curso);*/
+        if ( itemOrden.codigo_curso != "0"){
+            items.push(itemOrden);                    
+        }  
+         /*else {
+            c_vacio = c_vacio+1;
+        }*/ 
+    });
+    arrParams.nombre = items;
+    //alert ('asaa' + arrParams.nombre);
+    //console.log(arrParams.nombre);
+     if ( $('#cmb_modalidad_dise option:selected').val() != 0 && $('#cmb_periodo_dise option:selected').val() != 0 && $('#cmb_materia_dise option:selected').val() != 0/* && arrParams.nombre.length > 0*/) {
+            if (!validateForm()) {
+                requestHttpAjax(link, arrParams, function(response) {
+                    showAlert(response.status, response.label, response.message);
+                    if (response.status == "OK") {
+                        setTimeout(function() {
+                            var link = $('#txth_base').val() + "/academico/usuarioeducativa/distributivoindex";
+                            window.location = link;
+                        }, 3000);
+                    }
+                }, true);
+            }  
+        
+    }
+    else {
+        showAlert('NO_OK', 'error', {"wtmessage": 'Debe seleccionar modalidad, periodo y asignatura.', "title": 'Información'});
+    }
+}
+
+function exportExceldistedu() {
+    var search = $('#txt_buscarDatadisted').val();
+    var periodo =  $('#cmb_periododistb option:selected').val();
+    var curso = $('#cmb_cursodistb option:selected').val(); 
+    window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/expexceldistedu?search=" + search + "&periodo=" + periodo + "&curso=" + curso;
+}
+
+function exportPdfdistedu() {
+    var search = $('#txt_buscarDatadisted').val();
+    var periodo =  $('#cmb_periododistb option:selected').val();
+    var curso = $('#cmb_cursodistb option:selected').val(); 
+    window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/exppdfdistedu?pdf=1&search=" + search + "&periodo=" + periodo + "&curso=" + curso;
+}
+
+function eliminardistributivo(id) {   
+    var mensj = "¿Seguro desea eliminar el registro?";
+    var messagePB = new Object();
+    messagePB.wtmessage = mensj;
+    messagePB.title = "Eliminar";
+    var objAccept = new Object();
+    objAccept.id = "btnid2del";
+    objAccept.class = "btn-primary";
+    objAccept.value = "Aceptar";
+    objAccept.callback = 'accionreg';
+    var params = new Array(id, 0);
+    objAccept.paramCallback = params;
+    messagePB.acciones = new Array();
+    messagePB.acciones[0] = objAccept;
+    showAlert("warning", "warning", messagePB);
+}
+
+function accionreg(id, tmp) {
+    //alert ('id accion' + id);
+    var link = $('#txth_base').val() + "/academico/usuarioeducativa/deletedistributivo";
+    var arrParams = new Object();
+    arrParams.cedi_id = id;    
+    if (!validateForm()) {
+        requestHttpAjax(link, arrParams, function (response) {
+            showAlert(response.status, response.label, response.message);
+            if (!response.error) {
+                setTimeout(function () {
+                    window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/distributivoindex";
+                }, 3000);
+            }
+        }, true);
+    }
+}
+
+// Este sólo abre el modal de asignación. Es para los botones de la barra superior
+function insertarEstudiantes(){
+    $('#confirmModal').modal('toggle');
+}
+
+function insertarEstudiantesConfirm(){
+    var link = $('#txth_base').val() + "/academico/usuarioeducativa/insertarestudiantes";
+
+    var arrParams = new Object();
+
+    if (!validateForm()) {
+        requestHttpAjax(link, arrParams, function(response) {
+            showAlert(response.status, response.label, response.message);
+            if (response.status == "OK") {
+                setTimeout(function() {
+                    window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/listarestudianteregistro";
+                    }, 3000);
+            }
+        }, true);
+    }
 }

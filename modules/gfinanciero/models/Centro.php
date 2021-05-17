@@ -81,7 +81,7 @@ class Centro extends \yii\db\ActiveRecord
      */
     public function getCOSSUBCENs()
     {
-        return $this->hasMany(COSSUBCEN::className(), ['COD_CEN' => 'COD_CEN']);
+        return $this->hasMany(SubCentro::className(), ['COD_CEN' => 'COD_CEN']);
     }
 
     /**

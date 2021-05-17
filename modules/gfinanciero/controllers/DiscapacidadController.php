@@ -135,13 +135,13 @@ class DiscapacidadController extends CController {
             try {
                 //// body logic begin
                 $nombre = $data["nombre"];
-                $porcentaje = $data["porcentaje"];
+                //$porcentaje = $data["porcentaje"];
                                
                   
                 $model = new Discapacidad();
                 
                 $model->dis_nombre = $nombre;
-                $model->dis_porcentaje = $porcentaje;
+                $model->dis_porcentaje = NULL;
                 
                 $model->dis_fecha_creacion = date('Y-m-d H:i:s');
                 $model->dis_usuario_ingreso = $usu_id;//$username
@@ -192,13 +192,13 @@ class DiscapacidadController extends CController {
                 //// body logic begin
                 $id  = $data["id"];
                 $nombre = $data["nombre"];
-                $porcentaje = $data["porcentaje"];
+                //$porcentaje = $data["porcentaje"];
                 
                 
                 $model = Discapacidad::findOne(['dis_id' => $id,]);
                 
                 $model->dis_nombre = $nombre;
-                $model->dis_porcentaje = $porcentaje;
+                $model->dis_porcentaje = NULL;
                                 
                 $model->dis_fecha_modificacion = date('Y-m-d H:i:s');
                 $model->dis_usuario_ingreso = $usu_id;
@@ -298,7 +298,7 @@ class DiscapacidadController extends CController {
         $colPosition = array("C", "D", "E");
         $arrHeader = array(
             financiero::t("discapacidad", "Disability Name"),
-            financiero::t("discapacidad", "Percentage"),
+            financiero::t("discapacidad", "Creation Date"),
 
         );
         $data = Yii::$app->request->get();
@@ -328,7 +328,7 @@ class DiscapacidadController extends CController {
         $this->view->title = financiero::t("discapacidad", "Report Disabilities");  // Titulo del reporte
         $arrHeader = array(
             financiero::t("discapacidad", "Disability Name"),
-            financiero::t("discapacidad", "Percentage"),                         
+            financiero::t("discapacidad", "Creation Date"),                         
             
         );
         $data = Yii::$app->request->get();

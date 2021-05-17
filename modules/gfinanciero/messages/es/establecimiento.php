@@ -40,9 +40,21 @@
  */
 
 return [
-  "Establishments" => "Establecimientos",
-  "Establishment" => "Establecimiento",
-  "-- All of Establishments --" => "-- Todos los Establecimientos --",
-  "-- Select a Establishment --" =>  "-- Seleccionar un Establecimiento --",
-  "Please select an Establishment." => "Por favor seleccionar un Establecimiento.",
+    "Establishment" => "Establecimiento",
+    "Code" => "Código",
+    
+    
+     "Report Establishments" => "Reporte de Establecimientos",
+    "Search by Establishment" => "Buscar por Establecimiento",
+    "-- All of Establishments --" => "-- Todos los Establecimientos --",
+    "-- Select a Establishment --" => "-- Seleccionar un Establecimiento --",
+    "Please select an Establishment." => "Por favor seleccionar un Establecimiento.",
+    "Code" => "Código",
+    "Name" => "Nombre",
+    "Address" => "Dirección",
+    "Telephone 1" => "Teléfono 1",
+    "Telephone 2" => "Teléfono 2",
+    "Telephone Fax" => "Teléfono Fax",
+    "Mail" => "Correo",
+    "Date" => "Fecha",
 ];

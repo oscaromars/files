@@ -2,9 +2,11 @@
 
 namespace app\modules\gfinanciero\models;
 
+use app\models\Utilities;
 use Yii;
 use yii\data\ArrayDataProvider;
 use app\modules\gfinanciero\Module as financiero;
+use app\modules\gfinanciero\models\ExistenciaBodega;
 
 financiero::registerTranslations();
 
@@ -774,4 +776,139 @@ class Articulo extends \yii\db\ActiveRecord
         }
         return $result;
     }
+
+    /**
+     * Get all items of Model by params to filter data.
+     *
+     * @param  string $search   Search Item Name
+     * @param  bool $dataProvider   Param to get a DataProvider or a Record Array
+     * @return mixed Return a Record Array or DataProvider
+     */
+    
+    public function getMovimientotemsGrid($data, $dataProvider = false, $export = false,$infoBod = false){
+        $ExiBodItem=new ExistenciaBodega();
+
+        $CodBod=(isset($data['CodBod']))?$data['CodBod']:"01";
+        $CodArt=(isset($data['CodArt']))?$data['CodArt']:"";
+        $dataItem=$ExiBodItem->getExistenciaData($CodBod,$CodArt);
+        $FecDes=$dataItem['F_I_FIS'];//(isset($data['FecDes']))?$data['FecDes']:null;
+        $FecHas=(isset($data['FecHas']))?$data['FecHas']:date('Y-m-d');
+        $con = Yii::$app->db_gfinanciero;
+
+        //// Code Begin
+        //if(isset($search)){
+        //    $str_search .= "(NOM_BOD like :search) AND ";
+        //}
+        /*$cols  = "COD_BOD as Id, ";
+        $cols .= "NOM_BOD as Nombre, ";
+        $cols .= "DIR_BOD as Direccion, ";
+        $cols .= "COD_PTO as Punto ";
+       
+        if($export) $cols = "COD_BOD,NOM_BOD,DIR_BOD,TEL_N01,CORRE_E,NUM_ING,NUM_EGR ";
+        $sql = "SELECT 
+                    $cols
+                FROM 
+                    ".$con->dbname.".IG0021  
+                WHERE 
+                    $str_search
+                    EST_LOG = 1 AND EST_DEL = 1
+                ORDER BY COD_BOD;";*/
+       
+
+        $sql = "SELECT A.COD_BOD AS BODEGA,A.FEC_ING AS FECHA,A.TIP_ING AS TIPO,A.NUM_ING AS NUMERO,A.CAN_PED AS PEDIDO,CONCAT(B.COD_PRO,'-',B.NOM_PRO) AS REF,'1' AS ORD,A.IND_EST AS ESTADO
+                                FROM ".$con->dbname.".IG0026 A
+                                    INNER JOIN ".$con->dbname.".IG0025 B ON A.TIP_ING=B.TIP_ING AND A.NUM_ING=B.NUM_ING
+                                WHERE A.COD_BOD=:CodBod AND A.COD_ART=:CodArt  AND A.FEC_ING BETWEEN :FecDes AND :FecHas
+                        UNION ALL
+                        SELECT A.COD_BOD,A.FEC_EGR,A.TIP_EGR,A.NUM_EGR,A.CAN_PED,CONCAT(B.COD_CLI,'-',B.NOM_CLI) ,'2',IND_EST
+                                FROM ".$con->dbname.".IG0028 A
+                                    INNER JOIN ".$con->dbname.".IG0027 B ON A.NUM_EGR=B.NUM_EGR AND A.TIP_EGR=B.TIP_EGR
+                                WHERE A.COD_BOD=:CodBod AND A.COD_ART=:CodArt  AND A.FEC_EGR BETWEEN :FecDes AND :FecHas
+                        ORDER BY FECHA";
+        //// Code End
+
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":CodArt",$CodArt, \PDO::PARAM_STR);
+        $comando->bindParam(":CodBod",$CodBod, \PDO::PARAM_STR);
+        $comando->bindParam(":FecDes",$FecDes, \PDO::PARAM_STR);
+        $comando->bindParam(":FecHas",$FecHas, \PDO::PARAM_STR);
+        //if(isset($search)){
+            //$comando->bindParam(":search",$search_cond, \PDO::PARAM_STR);
+        //}
+        $result = $comando->queryAll();
+        $movimiento=[];
+        $Saldo=(isset($dataItem['I_I_UNI']))?$dataItem['I_I_UNI']:0;//$dataItem['I_I_UNI'];
+        $rowData[0]['FECHA']=$dataItem['F_I_FIS'];
+        $rowData[0]['INGRESO']="INICIAL";
+        $rowData[0]['EGRESO']="";
+        $rowData[0]['SALDO']= $Saldo;
+        $rowData[0]['CANTIDAD']="";
+        $rowData[0]['ESTADO']="";
+        $rowData[0]['REFERENCIA']="";
+        $c=1;
+        $totIng=$Saldo;
+        $totEgr=0;
+        
+        for ($i = 0; $i < sizeof($result); $i++) {//Construir el Array
+            //$rowData[$c]['BODEGA']=$result[$i]['BODEGA'];
+            $rowData[$c]['FECHA']=$result[$i]['FECHA'];
+            $rowData[$c]['INGRESO']='';
+            $rowData[$c]['EGRESO']='';
+            if($result[$i]['ORD']==1){//'ingreso por compras y devoluciones en ventas
+                $rowData[$c]['INGRESO']=$result[$i]['TIPO'].$result[$i]['NUMERO'];
+                if($result[$i]['ESTADO']<>'A'){//No suma los ANULADOS
+                    $Saldo=$Saldo+$result[$i]['PEDIDO'];
+                    $totIng+=$result[$i]['PEDIDO'];
+                }
+                
+            }elseif($result[$i]['ORD']==2){//egreso por ventas y devoluciones en compras
+                $rowData[$c]['EGRESO']=$result[$i]['TIPO'].$result[$i]['NUMERO'];
+                if($result[$i]['ESTADO']<>'A'){
+                    $Saldo=$Saldo-$result[$i]['PEDIDO'];
+                    $totEgr+=$result[$i]['PEDIDO'];
+                }
+            }
+            $rowData[$c]['CANTIDAD']=$result[$i]['PEDIDO'];
+            $rowData[$c]['SALDO']=$Saldo;
+            $rowData[$c]['ESTADO']=$result[$i]['ESTADO'];
+            $rowData[$c]['REFERENCIA']=$result[$i]['REF'];
+            $movimiento=$rowData;
+            $c++;
+        }
+        //valores de Saldos
+        $varRef['TOT_ING']=$totIng;
+        $varRef['TOT_EGR']=$totEgr;
+        if($infoBod){//Retrona solo valores de bodega
+            if(sizeof($result)>0){
+                $varRef['FEC_DES']=$FecDes;
+                $varRef['status']=true;
+                return $varRef;
+            }else{
+                $varRef['status']=false;
+                return $varRef;
+            }
+            
+        }
+        if($export){//Retrona Datos para Excel y PDF
+            return $movimiento;
+        }
+
+       
+
+        if($dataProvider){
+            $dataProvider = new ArrayDataProvider([
+                'key' => 'Id',
+                'allModels' => $movimiento,
+                'pagination' => [
+                    'pageSize' => Yii::$app->params["pageSize"],
+                ],
+                'sort' => [
+                    'attributes' => ['Nombre','Direccion','Punto'],
+                ],
+            ]);
+            return $dataProvider;
+        }
+        return $result;
+    }
+
 }

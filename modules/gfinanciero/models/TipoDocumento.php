@@ -2,6 +2,7 @@
 
 namespace app\modules\gfinanciero\models;
 
+use app\models\Utilities;
 use Yii;
 use yii\data\ArrayDataProvider;
 use app\modules\gfinanciero\Module as financiero;
@@ -129,10 +130,10 @@ class TipoDocumento extends \yii\db\ActiveRecord {
             $str_search .= "(N.NOM_NOF like :search) AND ";
         }
         if(isset($type_est) && $type_est !== "0"){
-            $str_search .= " N.COD_PTO = :type AND ";
+            $str_search .= " N.COD_PTO = :typeA AND ";
         }
         if(isset($type_emi) && $type_emi !== "0"){
-            $str_search .= " N.COD_CAJ = :type AND ";
+            $str_search .= " N.COD_CAJ = :typeB AND ";
         }
                    
         
@@ -194,10 +195,10 @@ class TipoDocumento extends \yii\db\ActiveRecord {
             $comando->bindParam(":search", $search_cond, \PDO::PARAM_STR);
         }
         if(isset($type_est) && $type_est !== "0"){
-            $comando->bindParam(":type",$type_est, \PDO::PARAM_STR);
+            $comando->bindParam(":typeA",$type_est, \PDO::PARAM_STR);
         }
         if(isset($type_emi) && $type_emi !== "0"){
-            $comando->bindParam(":type",$type_emi, \PDO::PARAM_STR);
+            $comando->bindParam(":typeB",$type_emi, \PDO::PARAM_STR);
         }
         
         $result = $comando->queryAll();
@@ -265,5 +266,90 @@ class TipoDocumento extends \yii\db\ActiveRecord {
         ];
         return $arr_tipo;
     }
+
+
+    /**
+     * Get all items of Model by params to filter data.
+     *
+     * @param  string $search   Search Item Name
+     * @param  bool $dataProvider   Param to get a DataProvider or a Record Array
+     * @return mixed Return a Record Array or DataProvider
+     */
+    public function getAllItemsGridFechas($search, $type_est = NULL, $type_emi = NULL, $dataProvider = false, $extenderfecha = false){
+        $search_cond = "%" . $search . "%";
+        $str_search = "";
+        $con = Yii::$app->db_gfinanciero;
+        $cols = "";
+        //// Code Begin
+        if (isset($search)) {
+            $str_search .= "(N.NOM_NOF like :search) AND ";
+        }
+        if(isset($type_est) && $type_est !== "0"){
+            $str_search .= " N.COD_PTO = :type_est AND ";
+        }
+        if(isset($type_emi) && $type_emi !== "0"){
+            $str_search .= " N.COD_CAJ = :type_emi AND ";
+        }
+                   
+        
+        $cols .= "ES.COD_PTO as IdPunto, ";
+        $cols .= "CONCAT(EM.COD_CAJ,'-',N.TIP_NOF) as IdCaja, ";
+        $cols .= "CONCAT(ES.COD_PTO,' - ',ES.NOM_PTO) as CodPunto, ";
+        $cols .= "CONCAT(EM.COD_CAJ,' - ',EM.NOM_CAJ) as CodCaja, ";
+        $cols .= "N.TIP_NOF as TipNof, ";
+        $cols .= "N.NUM_NOF as NumNof, ";
+        $cols .= "N.NOM_NOF as NomNof, ";           
+        $cols .= "N.FEC_NOF as FecNof, ";        
+        $cols .= "N.DOC_AUT as DocAut, ";
+        $cols .= "N.FEC_AUT as FecAut ";
+
+        if ($extenderfecha) {
+            $str_search .= " N.DOC_AUT = 1 AND ";//Muestra las Opciones para Extender Fechas
+        }
+
+     
+        $sql = "SELECT
+                    $cols
+                FROM
+                    " . $con->dbname . ".NOT_FAC N
+                INNER JOIN   " . $con->dbname . ".MG0015 ES on ES.COD_PTO=N.COD_PTO AND ES.EST_LOG=1 AND ES.EST_DEL=1
+                INNER JOIN   " . $con->dbname . ".MG0016 EM on EM.COD_CAJ=N.COD_CAJ AND EM.EST_LOG=1 AND EM.EST_DEL=1              
+                    
+                WHERE
+                    $str_search
+                    N.EST_LOG = 1 
+                ORDER BY N.COD_PTO;";
+        //// Code End
+
+        $comando = $con->createCommand($sql);
+        if (isset($search)) {
+            $comando->bindParam(":search", $search_cond, \PDO::PARAM_STR);
+        }
+        if(isset($type_est) && $type_est !== "0"){
+            $comando->bindParam(":type_est",$type_est, \PDO::PARAM_STR);
+        }
+        if(isset($type_emi) && $type_emi !== "0"){
+            $comando->bindParam(":type_emi",$type_emi, \PDO::PARAM_STR);
+        }
+        
+        $result = $comando->queryAll();
+        if ($dataProvider) {
+            $dataProvider = new ArrayDataProvider([
+                'key' => 'IdCaja',
+                'allModels' => $result,
+                'pagination' => [
+                    'pageSize' => 100,//Yii::$app->params["pageSize"],
+                ],
+                'sort' => [
+                    'attributes' => ['Nombre'],
+                ],
+            ]);
+            return $dataProvider;
+        }
+        return $result;
+    }
+    
+   
+
 
 }

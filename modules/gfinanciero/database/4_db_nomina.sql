@@ -8,10 +8,13 @@
 USE `db_gfinanciero` ;
 
 
+-- SET foreign_key_checks = 0;
+
 -- --------------------------------------------------------
 --
 -- Estructura de tabla para la tabla `tipo_contrato`
 --
+DROP TABLE IF EXISTS `tipo_contrato`;
 create table if not exists `tipo_contrato` (
   `tipc_id` bigint(20) not null auto_increment primary key,
   `tipc_nombre` varchar(200) null,
@@ -27,6 +30,7 @@ create table if not exists `tipo_contrato` (
 --
 -- Estructura de tabla para la tabla `tipo_empleado`
 --
+DROP TABLE IF EXISTS `tipo_empleado`;
 create table if not exists `tipo_empleado` (
   `tipe_id` bigint(20) not null auto_increment primary key,
   `tipe_nombre` varchar(200) null,
@@ -42,6 +46,7 @@ create table if not exists `tipo_empleado` (
 --
 -- Estructura de tabla para la tabla `discapacidad`
 --
+DROP TABLE IF EXISTS `discapacidad`;
 create table if not exists `discapacidad` (
   `dis_id` bigint(20) not null auto_increment primary key,
   `dis_nombre` varchar(200) null,
@@ -58,6 +63,7 @@ create table if not exists `discapacidad` (
 --
 -- Estructura de tabla para la tabla `departamentos`
 --
+DROP TABLE IF EXISTS `departamentos`;
 create table if not exists `departamentos` (
   `dep_id` bigint(20) not null auto_increment primary key,
   `dep_nombre` varchar(200) null,
@@ -73,6 +79,7 @@ create table if not exists `departamentos` (
 --
 -- Estructura de tabla para la tabla `sub_departamento`
 --
+DROP TABLE IF EXISTS `sub_departamento`;
 create table if not exists `sub_departamento` (
   `sdep_id` bigint(20) not null auto_increment primary key,
   `dep_id` bigint(20) not null,
@@ -90,10 +97,17 @@ create table if not exists `sub_departamento` (
 --
 -- Estructura de tabla para la tabla `empleado`
 --
+DROP TABLE IF EXISTS `empleado`;
 create table if not exists `empleado` (
   `empl_codigo` varchar(20) not null  primary key,
   `sdep_id` bigint(20) not null,
   `per_id` bigint(20) null,
+  `tcon_id` varchar(2) null, -- tipo contribuyente tabla financiero TIP_CON
+  `dis_id` bigint(20) null,
+  `tipe_id` bigint(20) not null, -- tipo empleado
+  `tipc_id` bigint(20) not null, -- tipo contrato
+  `empl_ids_ban` bigint(20) null, -- id del banco
+  `empl_cod_vendedor` varchar(3) null, -- codigo vendedor de la tabla TIP_CON
   `empl_cedula_ruc` varchar(20) null,
   `empl_nombre` varchar(200) null,
   `empl_apellido` varchar(200) null,
@@ -103,11 +117,10 @@ create table if not exists `empleado` (
   `empl_telefono_movil` varchar(20) null,
   `empl_carga_familiar` int(2) null,
   `empl_genero` varchar(1) null,
-  `dis_id` bigint(20) not null,
-  `tipe_id` bigint(20) not null,
-  `empl_ids_ban` bigint(20) null,
   `empl_metodo_pago` varchar(3) null,
-  `empl_cuenta_bacaria` varchar(45) null,
+  `empl_cuenta_bancaria` varchar(45) null,
+  `empl_cuenta_contable` varchar(15) null,
+  -- `empl_tipo_contribuyente` varchar(15) null,
   `empl_fecha_ingreso` date null,
   `empl_fecha_salida` date null,
   `empl_fecha_seguro_social` date null,
@@ -122,12 +135,13 @@ create table if not exists `empleado` (
   `empl_ruta_contrato` varchar(100) null,
   `empl_ruta_aviso_entrada` varchar(100) null,
   `empl_email_notificacion` varchar(100) null,
+  `empl_porcentaje_discapacidad` varchar(3) null,
   `empl_usuario_ingreso` bigint(20) null,
   `empl_usuario_modifica` bigint(20) null,
   `empl_estado` varchar(1) null,
   `empl_fecha_creacion` timestamp null default current_timestamp,
   `empl_fecha_modificacion` timestamp null,
-  `estado_logico` varchar(1) null,
+  `empl_estado_logico` varchar(1) null,
   foreign key (sdep_id) references `sub_departamento`(sdep_id)
 );
 
@@ -135,6 +149,7 @@ create table if not exists `empleado` (
 --
 -- Estructura de tabla para la tabla `cargos`
 --
+DROP TABLE IF EXISTS `cargos`;
 create table if not exists `cargos` (
   `carg_id` bigint(20) not null auto_increment primary key,
   `carg_nombre` varchar(200) null,
@@ -151,6 +166,7 @@ create table if not exists `cargos` (
 --
 -- Estructura de tabla para la tabla `empleado_cargo`
 --
+DROP TABLE IF EXISTS `empleado_cargo`;
 create table if not exists `empleado_cargo` (
   `ecarg_id` bigint(20) not null auto_increment primary key,
   `empl_codigo` varchar(10) not null,
@@ -174,6 +190,7 @@ create table if not exists `empleado_cargo` (
 --
 -- Estructura de tabla para la tabla `rubros`
 --
+DROP TABLE IF EXISTS `rubros`;
 create table if not exists `rubros` (
   `rub_id` bigint(20) not null auto_increment primary key,
   `rub_nombre` varchar(200) null,
@@ -192,6 +209,7 @@ create table if not exists `rubros` (
 --
 -- Estructura de tabla para la tabla `vacaciones`
 --
+DROP TABLE IF EXISTS `vacaciones`;
 create table if not exists `vacaciones` (
   `vac_id` bigint(20) not null auto_increment primary key,
   `empl_codigo` varchar(10) not null,
@@ -212,6 +230,7 @@ create table if not exists `vacaciones` (
 --
 -- Estructura de tabla para la tabla `horas_extras`
 --
+DROP TABLE IF EXISTS `horas_extras`;
 create table if not exists `horas_extras` (
   `hext_id` bigint(20) not null auto_increment primary key,
   `empl_codigo` varchar(10) not null,
@@ -233,6 +252,7 @@ create table if not exists `horas_extras` (
 --
 -- Estructura de tabla para la tabla `tipo_rol`
 --
+DROP TABLE IF EXISTS `tipo_rol`;
 create table if not exists `tipo_rol` (
   `trol_id` bigint(20) not null auto_increment primary key,
   `trol_nombre` varchar(60) null,
@@ -250,9 +270,10 @@ create table if not exists `tipo_rol` (
 --
 -- Estructura de tabla para la tabla `configuracion_rol`
 --
+DROP TABLE IF EXISTS `configuracion_rol`;
 create table if not exists `configuracion_rol` (
   `crol_id` bigint(20) not null auto_increment primary key,
-  `trol_id` bigint(20) not null,
+  -- `trol_id` bigint(20) not null,
   `crol_salario_minimo` decimal(12,2) null,
   `crol_porcentaje_aporte_patronal` decimal(5,2) null,
   `crol_aporte_mensual_quincena` varchar(1) null,
@@ -269,14 +290,15 @@ create table if not exists `configuracion_rol` (
   `crol_estado` varchar(1) null,
   `crol_fecha_creacion` timestamp null default current_timestamp,
   `crol_fecha_modificacion` timestamp null,
-  `crol_estado_logico` varchar(1) null,
-  foreign key (trol_id) references `tipo_rol`(trol_id)
+  `crol_estado_logico` varchar(1) null
+  -- foreign key (trol_id) references `tipo_rol`(trol_id)
 );
 
 -- --------------------------------------------------------
 --
 -- Estructura de tabla para la tabla `anticipos`
 --
+DROP TABLE IF EXISTS `anticipos`;
 create table if not exists `anticipos` (
   `ant_id` bigint(20) not null auto_increment primary key,
   `cod_pto` varchar(3) not null,
@@ -299,6 +321,7 @@ create table if not exists `anticipos` (
 --
 -- Estructura de tabla para la tabla `prestamos`
 --
+DROP TABLE IF EXISTS `prestamos`;
 create table if not exists `prestamos` (
   `pre_id` bigint(20) not null auto_increment primary key,
   `cod_pto` varchar(3) not null,
@@ -321,6 +344,7 @@ create table if not exists `prestamos` (
 --
 -- Estructura de tabla para la tabla `prestamos_cuotas`
 --
+DROP TABLE IF EXISTS `prestamos_cuotas`;
 create table if not exists `prestamos_cuotas` (
   `pcuo_id` bigint(20) not null auto_increment primary key,
   `pre_id` bigint(20) not null,
@@ -342,6 +366,7 @@ create table if not exists `prestamos_cuotas` (
 --
 -- Estructura de tabla para la tabla `rol_pagos`
 --
+DROP TABLE IF EXISTS `rol_pagos`;
 create table if not exists `rol_pagos` (
   `rpag_id` bigint(20) not null auto_increment primary key,
   `cod_pto` varchar(3) null,
@@ -391,6 +416,7 @@ create table if not exists `rol_pagos` (
 --
 -- Estructura de tabla para la tabla `tipo_liquidacion`
 --
+DROP TABLE IF EXISTS `tipo_liquidacion`;
 create table if not exists `tipo_liquidacion` (
   `tliq_id` bigint(20) not null auto_increment primary key,
   `tliq_nombre` varchar(200) null,
@@ -407,6 +433,7 @@ create table if not exists `tipo_liquidacion` (
 --
 -- Estructura de tabla para la tabla `liquidaciones`
 --
+DROP TABLE IF EXISTS `liquidaciones`;
 create table if not exists `liquidaciones` (
   `liq_id` bigint(20) not null auto_increment primary key,
   `empl_codigo` varchar(10) not null,
@@ -435,6 +462,7 @@ create table if not exists `liquidaciones` (
 --
 -- Estructura de tabla para la tabla `tipo_permiso`
 --
+DROP TABLE IF EXISTS `tipo_permiso`;
 create table if not exists `tipo_permiso` (
   `tper_id` bigint(20) not null auto_increment primary key,
   `tper_nombre` varchar(200) null,
@@ -450,6 +478,7 @@ create table if not exists `tipo_permiso` (
 --
 -- Estructura de tabla para la tabla `permisos_licencias`
 --
+DROP TABLE IF EXISTS `permisos_licencias`;
 create table if not exists `permisos_licencias` (
   `plic_id` bigint(20) not null auto_increment primary key,
   `empl_codigo` varchar(10) not null,
@@ -474,6 +503,7 @@ create table if not exists `permisos_licencias` (
 --
 -- Estructura de tabla para la tabla `novedades_multas`
 --
+DROP TABLE IF EXISTS `novedades_multas`;
 create table if not exists `novedades_multas` (
   `nmul_id` bigint(20) not null auto_increment primary key,
   `empl_codigo` varchar(20) not null,
@@ -494,6 +524,7 @@ create table if not exists `novedades_multas` (
 --
 -- Estructura de tabla para la tabla `rol_pagos_temp`
 --
+DROP TABLE IF EXISTS `rol_pagos_temp`;
 create table if not exists `rol_pagos_temp` (
   `rpag_id` bigint(20) not null auto_increment primary key,
   `cod_pto` varchar(3) null,
@@ -543,7 +574,7 @@ create table if not exists `rol_pagos_temp` (
 --
 -- Estructura de tabla para la tabla `subcentro_empleado`
 --
-
+DROP TABLE IF EXISTS `subcentro_empleado`;
 CREATE TABLE IF NOT EXISTS `subcentro_empleado` (
   `semp_id` BIGINT(20) not null auto_increment primary key,
   `empl_codigo` VARCHAR(20) NOT NULL,
@@ -561,6 +592,7 @@ CREATE TABLE IF NOT EXISTS `subcentro_empleado` (
 --
 -- Estructura de tabla para la tabla `registro_temp`
 --
+DROP TABLE IF EXISTS `registro_temp`;
 CREATE TABLE IF NOT EXISTS `registro_temp` (
   `NUM_REG` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `COD_TIP` varchar(2) DEFAULT NULL,
@@ -585,3 +617,5 @@ CREATE TABLE IF NOT EXISTS `registro_temp` (
   `EQUIPO` varchar(15) NOT NULL  
 );
 
+
+-- SET foreign_key_checks = 1;

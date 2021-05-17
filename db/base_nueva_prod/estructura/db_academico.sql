@@ -1950,3 +1950,21 @@ create table if not exists `curso_educativa_unidad` (
  `ceuni_estado_logico` varchar(1) not null,
  foreign key (cedu_id) references `curso_educativa`(cedu_id)
 );
+
+-- --------------------------------------------------------
+--
+-- Estructura de tabla para la tabla `curso_educativa_distributivo`
+-- --------------------------------------------------------
+create table if not exists `curso_educativa_distributivo` (
+ `cedi_id` bigint(20) not null auto_increment primary key,
+ `cedu_id` bigint(20) not null, 
+ `daca_id` bigint(20) not null, 
+ `cedi_usuario_ingreso` bigint(20) not null,
+ `cedi_usuario_modifica` bigint(20) null,
+ `cedi_estado` varchar(1) not null, 
+ `cedi_fecha_creacion` timestamp not null default current_timestamp,
+ `cedi_fecha_modificacion` timestamp null default null,
+ `cedi_estado_logico` varchar(1) not null,
+ foreign key (cedu_id) references `curso_educativa`(cedu_id),
+ foreign key (daca_id) references `distributivo_academico`(daca_id)
+);

@@ -88,9 +88,10 @@ class Discapacidad extends \yii\db\ActiveRecord
               
         $cols  = "dis_id as Id, ";
         $cols .= "dis_nombre as Nombre, ";
-        $cols .= "dis_porcentaje as Porcentaje ";
+        //$cols .= "dis_porcentaje as Porcentaje ";
+        $cols .= "dis_fecha_creacion as Fcreacion ";
         
-        if($export) $cols = "dis_nombre as Nombre, dis_porcentaje as Porcentaje";
+        if($export) $cols = "dis_nombre as Nombre, dis_fecha_creacion as Fcreacion ";
         $sql = "SELECT
                     $cols
                 FROM
@@ -106,6 +107,9 @@ class Discapacidad extends \yii\db\ActiveRecord
             $comando->bindParam(":search",$search_cond, \PDO::PARAM_STR);
         }
         $result = $comando->queryAll();
+        foreach($result as $key => $value){
+            $result[$key]['Fcreacion'] = date(Yii::$app->params['dateByDefault'], strtotime($value['Fcreacion']));
+        }
         if($dataProvider){
             $dataProvider = new ArrayDataProvider([
                 'key' => 'Id',
@@ -144,5 +148,3 @@ class Discapacidad extends \yii\db\ActiveRecord
         return $newId;
     }
 }
-
-

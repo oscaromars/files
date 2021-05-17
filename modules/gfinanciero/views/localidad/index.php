@@ -18,7 +18,7 @@ financiero::registerTranslations();
             <div class="form-group">
                 <label for="txt_search" class="col-sm-2 col-md-2 col-xs-2 col-lg-2 control-label"><?= Yii::t("accion", "Search") ?></label>
                 <div class="col-sm-8 col-md-8 col-xs-8 col-lg-8">
-                    <input type="text" class="form-control" value="" id="txt_search" placeholder="<?= financiero::t("localidad", "Search by Items") ?>">
+                    <input type="text" class="form-control" value="" id="txt_search" placeholder="<?= financiero::t("localidad", "Search by Locations") ?>">
                 </div>
             </div>
         </div>

@@ -2851,9 +2851,9 @@ DROP TABLE IF EXISTS `MG0015`;
 CREATE TABLE IF NOT EXISTS `MG0015` (
   `COD_PTO` varchar(3) NOT NULL DEFAULT '',
   `NOM_PTO` varchar(30) DEFAULT NULL,
-  `COD_PAI` varchar(2) DEFAULT NULL,
-  `COD_EST` varchar(2) DEFAULT NULL,
-  `COD_CIU` varchar(2) DEFAULT NULL,
+  `COD_PAI` varchar(10) DEFAULT NULL,
+  `COD_EST` varchar(10) DEFAULT NULL,
+  `COD_CIU` varchar(10) DEFAULT NULL,
   `DIR_PTO` varchar(30) DEFAULT NULL,
   `TEL_N01` varchar(10) DEFAULT NULL,
   `TEL_N02` varchar(10) DEFAULT NULL,
@@ -3196,8 +3196,8 @@ CREATE TABLE IF NOT EXISTS `MG0033` (
   `COD_VEN` varchar(10) DEFAULT NULL,
   `USU_ACC` varchar(10) DEFAULT NULL,
   `IDS_DEP` bigint DEFAULT NULL,
-  `COD_PAI` varchar(2) DEFAULT NULL,
-  `COD_CIU` varchar(2) DEFAULT NULL,
+  `COD_PAI` varchar(10) DEFAULT NULL,
+  `COD_CIU` varchar(10) DEFAULT NULL,
   `DIR_EMP` varchar(60) DEFAULT NULL,
   `TEL_N01` varchar(10) DEFAULT NULL,
   `TEL_N02` varchar(10) DEFAULT NULL,
@@ -3961,8 +3961,11 @@ CREATE TABLE IF NOT EXISTS `TIPOS` (
   `CONTADOR` varchar(10) DEFAULT NULL,
   `FEC_SIS` date NOT NULL,
   `HOR_SIS` varchar(10) NOT NULL,
+  `FEC_MOD` timestamp NULL DEFAULT NULL,
   `USUARIO` varchar(250) NOT NULL,
   `EQUIPO` varchar(15) NOT NULL,
+  `EST_LOG` VARCHAR(1) NOT NULL DEFAULT '1', -- estado 1 => activo / 0 => inactivo
+  `EST_DEL` VARCHAR(1) NOT NULL DEFAULT '1', -- estado 1 => operativo / 0 => eliminado
   PRIMARY KEY (`COD_TIP`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -3983,6 +3986,7 @@ CREATE TABLE IF NOT EXISTS `TIP_CON` (
   `REG_ASO` decimal(5,0) DEFAULT NULL,
   `FEC_SIS` date DEFAULT NULL,
   `HOR_SIS` varchar(10) DEFAULT NULL,
+  `FEC_MOD` timestamp NULL DEFAULT NULL,
   `USUARIO` varchar(250) DEFAULT NULL,
   `EQUIPO` varchar(15) DEFAULT NULL,
   `EST_LOG` VARCHAR(1) NOT NULL DEFAULT '1', -- estado 1 => activo / 0 => inactivo

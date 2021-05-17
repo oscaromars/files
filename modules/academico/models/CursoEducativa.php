@@ -589,4 +589,29 @@ class CursoEducativa extends \yii\db\ActiveRecord
         $resultData = $comando->queryOne();
         return $resultData;
     }
+
+    /**
+     * Function Consultar todos los cursos.
+     * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>;
+     * @property       
+     * @return  
+     */
+    public function consultarCursostodos() {
+        $con = \Yii::$app->db_academico;      
+        $estado = 1;
+
+        $sql = "SELECT 	Distinct
+                        cedu_id as id,
+                        cedu_asi_nombre as name               
+                        
+                FROM " . $con->dbname . ".curso_educativa              
+                WHERE                           
+                cedu_estado = :estado AND
+                cedu_estado_logico = :estado";
+
+        $comando = $con->createCommand($sql);       
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);        
+        $resultData = $comando->queryAll();
+        return $resultData;
+    }
 }

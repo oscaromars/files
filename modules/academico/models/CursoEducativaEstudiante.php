@@ -4,6 +4,7 @@ namespace app\modules\academico\models;
 use yii\data\ArrayDataProvider;
 use app\modules\academico\models\PeriodoAcademico;
 use Yii;
+use app\models\Utilities;
 
 /**
  * This is the model class for table "curso_educativa_estudiante".
@@ -265,9 +266,9 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
      * @return  $resultData (Retornar el código).
      */
     public function insertarEstudiantecurso($cedu_id, $est_id, $ceest_usuario_ingreso) {
-        \app\models\Utilities::putMessageLogFile('cedu_id...: ' . $cedu_id ); 
+        /*\app\models\Utilities::putMessageLogFile('cedu_id...: ' . $cedu_id ); 
         \app\models\Utilities::putMessageLogFile('est_id...: ' . $est_id ); 
-        \app\models\Utilities::putMessageLogFile('ceest_usuario_ingreso...: ' . $ceest_usuario_ingreso ); 
+        \app\models\Utilities::putMessageLogFile('ceest_usuario_ingreso...: ' . $ceest_usuario_ingreso ); */
         $con = \Yii::$app->db_academico;
         $ceest_estado_bloqueo = 'B';
         $trans = $con->getTransaction(); // se obtiene la transacción actual
@@ -331,9 +332,13 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
             }
             
             $result = $comando->execute();
+
+            $id = $con->getLastInsertID($con->dbname . '.curso_educativa_estudiante;');
+
             if ($trans !== null)
                 $trans->commit();
-            return $con->getLastInsertID($con->dbname . '.curso_educativa_estudiante;');
+            
+            return $id;
         } catch (Exception $ex) {
             if ($trans !== null)
                 $trans->rollback();
@@ -537,7 +542,7 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
                                             WHERE mi.est_id = g.est_id and mi.ccar_fecha_vencepago >= NOW()
                                             ORDER BY mi.ccar_fecha_vencepago asc
                                             LIMIT 1),'No Autorizado')						 
-                                else 'No Autorizado'
+                                else 'Autorizado'
                                 end as pago " ;                    
                     $sql .= "    
                     -- ifnull(DATE_FORMAT(m.eppa_fecha_registro, '%Y-%m-%d'), ' ') as fecha_pago 
@@ -697,4 +702,31 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
             return FALSE;
         }
     } 
+
+    /**
+     * Retorna los est_id, daca_id y cedu_id de la tabla curso_educativa que sean del período académico actual, que sean FK de la tabla curso_educativa_distributivo, y cuyo daca_id sea FK de la tabla distributivo_academico_estudiante
+     * @author Jorge Paladines <analista.desarrollo@uteg.edu.ec>;
+     * @param
+     * @return
+     */
+    public function consultarCursoEducativaDistributivoPeriodoActual(){
+        $con = Yii::$app->db_academico;
+
+        $sql = "SELECT DISTINCT daes.est_id, daca.daca_id, cedu.cedu_id
+                FROM " . $con->dbname . ".curso_educativa_distributivo AS cedi
+                INNER JOIN " . $con->dbname . ".curso_educativa AS cedu ON cedu.cedu_id = cedi.cedu_id
+                INNER JOIN " . $con->dbname . ".periodo_academico AS paca ON paca.paca_id = cedu.paca_id
+                INNER JOIN " . $con->dbname . ".distributivo_academico AS daca ON daca.daca_id = cedi.daca_id
+                INNER JOIN " . $con->dbname . ".distributivo_academico_estudiante AS daes ON daes.daca_id = daca.daca_id
+                WHERE ((now() between paca.paca_fecha_inicio and paca.paca_fecha_fin) OR (now() < paca.paca_fecha_fin)) AND paca.paca_activo = 'A'";
+
+        $comando = $con->createCommand($sql);
+
+        // Utilities::putMessageLogFile($comando->getRawSql());
+
+
+        $resultData = $comando->queryAll();
+
+        return $resultData;
+    }
 }

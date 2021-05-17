@@ -49,4 +49,5 @@ return [
   "-- Select a Disability --" => "-- Seleccione una Discapacidad --",
   "Please select a Disability." => "Por favor seleccionar una Discapacidad.",
   "Percentage" => "Porcentaje",
+  "Creation Date" => "Fecha de Creación",
  ];

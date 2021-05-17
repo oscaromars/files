@@ -637,13 +637,7 @@ function updateItemGrid() {
     //let bodega = $('#autocomplete-bodorig').val();
     var arrData = JSON.parse(sessionStorage.grid_imerca);
     var newItem = ["", cod_art];
-    /*if (existItemGridContent(arrData.data, newItem)) {//Item no se puede repetir
-        var message = objLang.Item_already_exists_;
-        var label = "Error";
-        var status = "NO_OK";
-        shortModal(message, label, status);
-        return;
-    }*/
+
     if (t_costo > 0) {
         if (validateAddItem(cant, p_costo)) {
             t_costo = currencyFormat(t_costo, 2);
@@ -664,8 +658,7 @@ function updateItemGrid() {
                     return false;
                 }
             });
-            //addItemStorage(cod_art, des_com, cant.toFixed(2), p_lista, p_costo, t_costo);
-            //clearAddItemArea();
+
         }
 
 
@@ -675,67 +668,6 @@ function updateItemGrid() {
         return;
     }
 
-
-
-
-    /*let cod_art = $('#autocomplete-articulo').val();
-    let p_lista = parseFloat($('#frm_p_lista').val());
-    let p_costo = parseFloat($('#frm_p_costo').val());
-    let cant = parseFloat($('#frm_itemcant').val());
-    let bodega = $('#autocomplete-bodorig').val();
-    if (p_costo > 0 && p_costo >= cant) {
-        var dataStr = getItemStorageByCode(cod_art);
-        
-        var link = $('#txth_base').val() + "/" + $('#txth_module').val() + "/ingresomercaderia/new";
-        var arrParams = new Object();
-        
-        arrParams.getReserveItem = 1;
-        arrParams.action = "update";
-        arrParams.code = id;
-        arrParams.bod = bodega;
-        arrParams.can = cant;
-        arrParams.oldCan = dataStr[3]; // cantidad
-        requestHttpAjax(link, arrParams, function(response) {
-            if (response.status == "OK") {
-                var data = response.message.item;
-                var cod = data.cod;
-                var name = data.name;
-                var pprov = parseFloat(data.pprovider);
-                var prefe = parseFloat(data.preference);
-                var exRes = (parseFloat(data.exireserved) - cant);
-                var exTot = parseFloat(data.exitotal);
-                var tCost = prefe * cant;
-                if (validateAddItem(cant, exRes, exTot)) {
-                    tCost = currencyFormat(tCost, 4);
-                    prefe = currencyFormat(prefe, 4);
-                    pprov = currencyFormat(pprov, 4);
-                    var ref = null;
-                    $('#grid_imerca > table.dataTable > tbody > tr').each(function() {
-                        let indice = $(this).find("td:nth-child(1)").text();
-                        let codeRef = $(this).find("td:nth-child(2)").text();
-                        let dataId = $(this).attr('data-key');
-                        let ref = $(this).find('a[id^=editN]');
-                        if (codeRef == cod) {
-                            editItemGridStorage(dataId, cod, name, cant.toFixed(2), exRes, exTot, tCost, prefe, pprov);
-                            calcularTotalStorage();
-                            clearAddItemArea();
-                            enabledSearchItem();
-                            hideUpdateBtn();
-                            return false;
-                        }
-                    });
-                }
-            } else {
-                setTimeout(function() {
-                    showAlert(response.status, response.label, response.message);
-                }, 1000);
-            }
-        }, true);
-    } else {
-        var msg = objLang.There_is_no_stock_available_by_the_number_items_to_add_;
-        shortModal(msg, objLang.Error, "error");
-        return;
-    }*/
 }
 
 /**

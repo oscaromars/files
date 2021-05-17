@@ -542,7 +542,7 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
                                             WHERE mi.est_id = g.est_id and mi.ccar_fecha_vencepago >= NOW()
                                             ORDER BY mi.ccar_fecha_vencepago asc
                                             LIMIT 1),'No Autorizado')						 
-                                else 'No Autorizado'
+                                else 'Autorizado'
                                 end as pago " ;                    
                     $sql .= "    
                     -- ifnull(DATE_FORMAT(m.eppa_fecha_registro, '%Y-%m-%d'), ' ') as fecha_pago 

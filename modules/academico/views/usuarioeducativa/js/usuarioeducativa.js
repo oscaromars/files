@@ -790,8 +790,8 @@ function asignarBloqueo() {
        if (selecteds != '') {
          if (!validateForm()) {
              requestHttpAjax(link, arrParams, function (response) {
-                 //showAlert(response.status, response.label, response.message);
-                 alert("completado");
+                 showAlert(response.status, response.label, response.message);
+                 //alert("completado");
                  console.log(response);
                  /*
                  setTimeout(function () {

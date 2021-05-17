@@ -145,20 +145,20 @@ class UsuarioeducativaController extends \app\components\CController {
     public function actionListarestudianteregistro() {
         $per_id = @Yii::$app->session->get("PB_perid");
         $distributivo_model = new Distributivo();
-        $mod_modalidad = new Modalidad();
-        $mod_unidad = new UnidadAcademica();
-        $mod_educativa = new CursoEducativa();
-        $mod_periodo = new PeriodoAcademicoMetIngreso();
-        $model_cursoest = new CursoEducativaEstudiante();
+        $mod_modalidad      = new Modalidad();
+        $mod_unidad         = new UnidadAcademica();
+        $mod_educativa      = new CursoEducativa();
+        $mod_periodo        = new PeriodoAcademicoMetIngreso();
+        $model_cursoest     = new CursoEducativaEstudiante();
         $data = Yii::$app->request->get();
 
         if ($data['PBgetFilter']) {
-            $arrSearch["search"] = $data['search'];
-            $arrSearch["profesor"] = $data['profesor'];
-            $arrSearch["unidad"] = $data['unidad'];
-            $arrSearch["modalidad"] = $data['modalidad'];
-            $arrSearch["periodo"] = $data['periodo'];
-            $arrSearch["asignatura"] = $data['asignatura'];
+            $arrSearch["search"]      = $data['search'];
+            $arrSearch["profesor"]    = $data['profesor'];
+            $arrSearch["unidad"]      = $data['unidad'];
+            $arrSearch["modalidad"]   = $data['modalidad'];
+            $arrSearch["periodo"]     = $data['periodo'];
+            $arrSearch["asignatura"]  = $data['asignatura'];
             $arrSearch["estado_pago"] = $data['estado'];
             //$arrSearch["jornada"] = $data['jornada'];
             $arrSearch["curso"] = $data['curso'];
@@ -1564,8 +1564,6 @@ class UsuarioeducativaController extends \app\components\CController {
             //\app\models\Utilities::putMessageLogFile('no bloqueo '. $nobloqueado);
             //print_r($data);die();
             /**********************************/
-            // AQUI VA EL WEB SERVICE
-            
             /*
             $client = new \SoapClient("https://campusvirtual.uteg.edu.ec/soap/?wsdl=true", 
                                       array("login"    => Yii::$app->params["wsLogin"], 
@@ -1589,31 +1587,71 @@ class UsuarioeducativaController extends \app\components\CController {
             */
             /**********************************/
 
+            $client = new \SoapClient("https://campusvirtual.uteg.edu.ec/soap/?wsdl=true", 
+                                                  array("login" => Yii::$app->params["wsLogin"], 
+                                                  "password"    => Yii::$app->params["wsPassword"],
+                                                  "trace"       => 1, "exceptions" => 0));
+
+            $client->setCredentials(Yii::$app->params["wsLogin"], Yii::$app->params["wsPassword"],"basic");
+
             $con = \Yii::$app->db_academico;
             $transaction = $con->beginTransaction();
+
+            $noactualizados = array();
             try {
                 if (!empty($nobloqueado)) {
                     $nobloqueado = explode(",", $nobloqueado); //permitidos
                     foreach ($nobloqueado as $est_id) {  // empieza foreach para guardar los asignados
 
-                        $mod_ceducativa = new CursoEducativa();
-
-                        $id_grupo_array = $mod_ceducativa->consultarCursoxid($cedu_id);
-
-                        $id_grupo = $id_grupo_array['cedu_asi_id'];
-
-                        $mod_educativaunidad = new CursoEducativaUnidad();
-
-                        $id_unidad_array = $mod_educativaunidad->consultarUnidadEducativaxCeduid($cedu_id);
-
-                        print_r($id_unidad_array);die();
-
+                        //Valida si el usuario tiene id de educativa
+                        $mod_usuaedu = new UsuarioEducativa();
+                        $result_usuaedu = $mod_usuaedu->consultarexisteusuarioxest($est_id);
+                        
+                        //Valida si esta asignado al curso virtual
                         $mod_asignar = new CursoEducativaEstudiante();
                         $resp_consAsignacion = $mod_asignar->consultarAsignacionexiste($cedu_id, $est_id);
+
+                        if($result_usuaedu['existe_usuario'] > 0 && $resp_consAsignacion["exiteasigna"] > 0){
+
+                            //Primero obtenemos el Id del Curso
+                            $mod_ceducativa = new CursoEducativa();
+                            $id_grupo_array = $mod_ceducativa->consultarCursoxid($cedu_id);
+                            $id_grupo       = $id_grupo_array['cedu_asi_id'];
+
+                            //Despues obtenemos los id de las unidades a bloquear
+                            $mod_educativaunidad = new CursoEducativaUnidad();
+                            $id_unidad_array     = $mod_educativaunidad->consultarUnidadEducativaxCeduid($cedu_id);
+
+                            foreach ($id_unidad_array as $key => $value) {
+                                $method = 'obtener_prg_items';
+                                $args = Array('id_grupo'     =>  $id_grupo,
+                                              'id_tipo_item' => 'EV',
+                                              'id_unidad'    => $value['ceuni_codigo_unidad']
+                                             );  
+                                $result = $client->__call( $method, Array( $args ) );
+
+                                
+                                print_r((array)$result);
+                                print_r("-------------------");
+                                die();
+                                
+
+                                $resp_guardarbloqueo = $mod_asignar->modificarEstadobloqueo($cedu_id, $est_id, 'A', $usu_id);
+                                
+                            }//foreach
+
+                            $exito = 1;
+                        }else{
+                            array_push($noactualizados,$est_id);
+                            $exito = 1;
+                        }
+
+
+                        /*
+
                         if ($resp_consAsignacion["exiteasigna"] > 0) {
                             // update estado bloqueo   
-                            $resp_guardarbloqueo = $mod_asignar->modificarEstadobloqueo($cedu_id, $est_id, 'A', $usu_id);
-                            $exito = 1;
+                            
                         } else {
                             // no estan asignados, mostrar mensaje
                             $exito = 1;
@@ -1623,7 +1661,8 @@ class UsuarioeducativaController extends \app\components\CController {
                                 "title" => Yii::t('jslang', 'Error'),
                             );
                             return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);*/
-                        }
+                        //}
+                        
                     } // cierra foreach 
                 }
                 // SI AL ESTAR SIN SELECCIONAR SE CAMBIA A NO PERMITIDO
@@ -1652,6 +1691,7 @@ class UsuarioeducativaController extends \app\components\CController {
                     $message = array(
                         "wtmessage" => Yii::t("notificaciones", "La información ha sido grabada. Los Estudiantes que no se cambio estado, es que no estan asignados a un curso"),
                         "title" => Yii::t('jslang', 'Success'),
+                        "noactualizados" => $noactualizados,
                     );
                     return \app\models\Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), false, $message);
                 } else {

@@ -84,7 +84,12 @@ GridView::widget([
             'value' => 'name',
           
         ],
-        
+        [
+            'attribute' => 'mpp_num_paralelo',
+            'header' => academico::t("Academico", "Paralelo"),
+            'value' => 'mpp_num_paralelo',
+          
+        ],
     ],
 ]);
 ?>

@@ -68,6 +68,7 @@ class Profesor extends \yii\db\ActiveRecord
             [['pro_fecha_contratacion', 'pro_fecha_terminacion', 'pro_fecha_creacion', 'pro_fecha_modificacion'], 'safe'],
             [['pro_cv'], 'string', 'max' => 255],
             [['pro_estado', 'pro_estado_logico'], 'string', 'max' => 1],
+            [['pro_num_contrato'], 'string', 'max' => 30],
         ];
     }
 

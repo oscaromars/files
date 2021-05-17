@@ -603,7 +603,7 @@ class DistributivoCabecera extends \yii\db\ActiveRecord {
         //   $con_db = \Yii::$app->db; //Conexin Asgard
         $con_asgard = \Yii::$app->db_asgard;
 
-        $sql = "SELECT A.*,CONCAT(C.per_pri_nombre,' ',C.per_pri_apellido) Nombres,UPPER(E.baca_descripcion) baca_descripcion
+        $sql = "SELECT A.*,CONCAT(C.per_pri_nombre,' ',C.per_pri_apellido) Nombres,UPPER(CONCAT(E.baca_descripcion,' ', E.baca_anio) ) baca_descripcion
                        FROM " . $con->dbname . ".distributivo_cabecera A
                       INNER JOIN (" . $con->dbname . ".profesor B
                       INNER JOIN " . $con_asgard->dbname . ".persona C ON B.per_id=C.per_id)  ON A.pro_id=B.pro_id

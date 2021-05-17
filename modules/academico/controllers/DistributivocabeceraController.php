@@ -247,7 +247,7 @@ class DistributivocabeceraController extends \app\components\CController {
         $model = new \app\modules\academico\models\DistributivoCabeceraSearch();
         $arr_profesor = $mod_profesor->getProfesoresDistributivo();
         $resCab = $distributivo_cab->obtenerDatoCabecera($pro_id, $paca_id);
-        $arr_distributivo = $distributivo_model->getListarDistribProf($resCab['dcab_id']);
+        $arr_distributivo = $distributivo_model->getListarReview($resCab['dcab_id']);
         return $this->render('review',
                         ['model' => $model, 
                          'arr_profesor' => ArrayHelper::map(array_merge([["Id" => "0", "Nombres" => Yii::t("formulario", "Select")]], $arr_profesor), "Id", "Nombres"),

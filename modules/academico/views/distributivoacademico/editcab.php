@@ -10,7 +10,7 @@ admision::registerTranslations();
 academico::registerTranslations();
 ?>
 
-<?= Html::hiddenInput('txth_periodoid', $arr_cabecera["paca_id"], ['id' => 'txth_periodoid']); ?>
+<?= Html::hiddenInput('txth_idperiodo', $arr_cabecera["paca_id"], ['id' => 'txth_idperiodo']); ?>
 <?= Html::hiddenInput('txth_cabid',     $arr_cabecera["dcab_id"], ['id' => 'txth_cabid']); ?>
 <?= Html::hiddenInput('txth_proid',     $arr_cabecera["pro_id"], ['id' => 'txth_proid']); ?>
 

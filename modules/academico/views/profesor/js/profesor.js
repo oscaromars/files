@@ -107,6 +107,8 @@ function update() {
     arrParams.nacionalidad = $('#txt_nacionalidad').val();
     arrParams.celular = $('#txt_cel').val();
     arrParams.phone = $('#txt_phone').val();
+    arrParams.dedicacion = $('#cmb_dedicacion').val();
+    arrParams.pro_num_contrato = $('#txt_contrato').val();
     arrParams.fecha_nacimiento = $('#txt_fecha_nacimiento').val();
 
     arrParams.usuario = $('#txt_usuario').val();
@@ -169,6 +171,8 @@ function save() {
     arrParams.nacionalidad = $('#txt_nacionalidad').val();
     arrParams.celular = $('#txt_cel').val();
     arrParams.phone = $('#txt_phone').val();
+    arrParams.pro_num_contrato = $('#txt_contrato').val();
+    arrParams.dedicacion = $('#txt_dedicacion').val();
     arrParams.fecha_nacimiento = $('#txt_fecha_nacimiento').val();
 
     arrParams.usuario = $('#txt_usuario').val();

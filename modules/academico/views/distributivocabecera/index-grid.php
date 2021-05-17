@@ -16,7 +16,7 @@ academico::registerTranslations();
 
 
     <?=
-    GridView::widget([
+    PbGridView::widget([
         'id' => 'Tbg_Distributivo_Aca',
       //  'showExport' => true,
       //  'fnExportEXCEL' => "exportExcel",
@@ -56,10 +56,10 @@ academico::registerTranslations();
             
             
             [
-                'class' => 'kartik\grid\ActionColumn',
-                'header' => '',
+                'class' => 'yii\grid\ActionColumn',
+                'header' => 'Acciones',
                 'template' => '{view}{delete}{Approbe}{Download}{Reversar}',
-                'contentOptions' => ['class' => 'text-center'],
+              //  'contentOptions' => ['class' => 'text-center'],
                 'buttons' => [
                     'view' => function ($url, $model) {
                         return Html::a('<span class="' . Utilities::getIcon('view') . '"></span>', Url::to(['distributivoacademico/view', 'id' => $model['Id']]), ["data-toggle" => "tooltip", "title" => Yii::t("accion", "View")]);

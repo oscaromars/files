@@ -40,9 +40,9 @@ $(document).ready(function () {
                 $('#bloque4').css('display', 'block');
                 $('#bloque_p').css('display', 'block');
                 $('#bloque_j').css('display', 'block');
-                if($('#cmb_modalidad').val()==1){
-                 $('#bloque_n').css('display', 'block');
-               }
+                if ($('#cmb_modalidad').val() == 1) {
+                    $('#bloque_n').css('display', 'block');
+                }
                 $('#bloque_h_otros').css('display', 'none');
                 break;
             case "2":
@@ -110,7 +110,11 @@ $(document).ready(function () {
                     $('#bloque2-1').css('display', 'block');
                     $('#bloque7').css('display', 'none');
                 }
-                //console.log('cmb_unidad_dis 1:');
+                if ($('#cmb_tipo_asignacion').val() == 7) {
+                    $('#bloque6').css('display', 'none');
+                    $('#bloque2-1').css('display', 'none');
+                    $('#bloque7').css('display', 'none');
+                }
                 break;
 
             case "2":
@@ -264,10 +268,12 @@ $(document).ready(function () {
     });
 
     $('#cmb_jornada').change(function () {
+        if($('#cmb_unidad_dis').val()==1){
         var link = $('#txth_base').val() + "/academico/distributivoacademico/new";
         var arrParams = new Object();
-        arrParams.periodo_id = $('#cmb_periodo').val();
-        arrParams.jornada_id = $(this).val();
+        arrParams.periodo_id = $('#txth_idperiodo').val();
+        arrParams.mod_id = $('#cmb_modalidad').val();
+        // arrParams.jornada_id = $(this).val();
         arrParams.getasignatura = true;
         requestHttpAjax(link, arrParams, function (response) {
             if (response.status == "OK") {
@@ -275,6 +281,7 @@ $(document).ready(function () {
                 setComboDataselect(data.asignatura, "cmb_materia", "Todos");
             }
         }, true);
+    }
     });
 
     //     var arrParams = new Object();
@@ -317,17 +324,36 @@ $(document).ready(function () {
 
 });
 
+$('#cmb_materia').change(function () {
+    if ($('#cmb_unidad_dis').val() == 1) {
+        var link = $('#txth_base').val() + "/academico/distributivoacademico/new";
+        var arrParams = new Object();
+        arrParams.asig_id = $('#cmb_materia').val();
+        arrParams.paca_id = $('#txth_idperiodo').val();
+        arrParams.mod_id = $('#cmb_modalidad').val();
+        arrParams.getparalelo = true;
+        requestHttpAjax(link, arrParams, function (response) {
+            if (response.status == "OK") {
+                data = response.message;
+                setComboDataselect(data.paralelo, "cmb_paralelo", "Todos");
+            }
+        });
+    }
+});
+
 $('#cmb_horario').change(function () {
-    var link = $('#txth_base').val() + "/academico/distributivoacademico/new";
-    var arrParams = new Object();
-    arrParams.daho_id = $('#cmb_horario').val();
-    arrParams.getparalelo = true;
-    requestHttpAjax(link, arrParams, function (response) {
-        if (response.status == "OK") {
-            data = response.message;
-            setComboDataselect(data.paralelo, "cmb_paralelo", "Todos");
-        }
-    });
+    if ($('#cmb_unidad_dis').val() == 2) {
+        var link = $('#txth_base').val() + "/academico/distributivoacademico/new";
+        var arrParams = new Object();
+        arrParams.hora_id = $('#cmb_horario').val()
+        arrParams.getparaleloposgrado = true;
+        requestHttpAjax(link, arrParams, function (response) {
+            if (response.status == "OK") {
+                data = response.message;
+                setComboDataselect(data.paralelo, "cmb_paralelo", "Todos");
+            }
+        });
+    }
 });
 
 // Recarga la Grid de Productos si Existe
@@ -513,7 +539,7 @@ function actualizar() {
     var link = $('#txth_base').val() + "/academico/distributivoacademico/actualizar";
     var arrParams = new Object();
     arrParams.profesor = $('#txth_proid').val();
-    arrParams.periodo = $('#txth_periodoid').val();
+    arrParams.periodo = $('#txth_idperiodo').val();
     arrParams.id = $('#txth_cabid').val();
     //console.log('profesor: ' + arrParams.profesor);
     //console.log('cabid: ' + arrParams.id);
@@ -625,7 +651,9 @@ function addAsignacion(opAccion) {
         var hor_id = $("#cmb_horario").val();
         var par_id = $("#cmb_paralelo").val();
         var hor_onl = $("#txt_num_estudiantes").val();
-
+        if (hor_onl == "") {
+            hor_onl = "0";
+        }
 
 
 
@@ -672,8 +700,10 @@ function addAsignacion(opAccion) {
         showAlert('NO_OK', 'error', {"wtmessage": "Ya existe esta asignación.", "title": 'Información'});
     } else if (res == 2) {
         showAlert('NO_OK', 'error', {"wtmessage": "Ya existe el registro en el mismo horario para el mismo docente.", "title": 'Información'});
-    } else if (uni_id == 1 && hor_onl == "") {
+    } else if ($("#cmb_modalidad").val() == 1 && hor_onl == "0") {
+
         showAlert('NO_OK', 'error', {"wtmessage": "Debe ingresar número de estudiantes.", "title": 'Información'});
+
     } else if ((tasi_id == 6 && (txt_horas_otros == ""))) {
         showAlert('NO_OK', 'error', {"wtmessage": "Debe ingresar número de horas.", "title": 'Información'});
     } else if (uni_id == 2 && (fecha_inicio == "" || fecha_fin == "")) {

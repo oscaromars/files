@@ -268,6 +268,7 @@ $(document).ready(function () {
     });
 
     $('#cmb_jornada').change(function () {
+        if($('#cmb_unidad_dis').val()==1){
         var link = $('#txth_base').val() + "/academico/distributivoacademico/new";
         var arrParams = new Object();
         arrParams.periodo_id = $('#txth_idperiodo').val();
@@ -280,6 +281,7 @@ $(document).ready(function () {
                 setComboDataselect(data.asignatura, "cmb_materia", "Todos");
             }
         }, true);
+    }
     });
 
     //     var arrParams = new Object();

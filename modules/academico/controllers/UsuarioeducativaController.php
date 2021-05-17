@@ -1606,6 +1606,7 @@ class UsuarioeducativaController extends \app\components\CController {
                         //Valida si el usuario tiene id de educativa
                         $mod_usuaedu = new UsuarioEducativa();
                         $result_usuaedu = $mod_usuaedu->consultarexisteusuarioxest($est_id);
+                        $uedu_usuario   = $mod_usuaedu->usuarioeducativa($est_id);
                         
                         //Valida si esta asignado al curso virtual
                         $mod_asignar = new CursoEducativaEstudiante();
@@ -1622,6 +1623,8 @@ class UsuarioeducativaController extends \app\components\CController {
                             $mod_educativaunidad = new CursoEducativaUnidad();
                             $id_unidad_array     = $mod_educativaunidad->consultarUnidadEducativaxCeduid($cedu_id);
 
+                            //print_r($id_unidad_array); die();
+
                             foreach ($id_unidad_array as $key => $value) {
                                 $method = 'obtener_prg_items';
                                 $args = Array('id_grupo'     =>  $id_grupo,
@@ -1630,13 +1633,32 @@ class UsuarioeducativaController extends \app\components\CController {
                                              );  
                                 $result = $client->__call( $method, Array( $args ) );
 
-                                
-                                print_r((array)$result);
-                                print_r("-------------------");
-                                die();
-                                
+                                $obtener_prg_items = $result;
 
-                                $resp_guardarbloqueo = $mod_asignar->modificarEstadobloqueo($cedu_id, $est_id, 'A', $usu_id);
+                                
+                                $prg_item = $result->prg_item;
+                                if(isset($prg_item->id_prg_item)){
+                                    $method = 'asignar_usuarios_alcance_prg_items';
+                                    $args = Array('asignar_usuario_item' => Array('id_usuario'  => $uedu_usuario, 
+                                                                                  'id_prg_item' => $prg_item->id_prg_item));
+            
+                                    $result = $client->__call( $method, Array( $args ) );
+
+                                    $resp_guardarbloqueo = $mod_asignar->modificarEstadobloqueo($cedu_id, $est_id, 'A', $usu_id);
+                                }   
+                                else{
+                                    if(count($prg_item) > 0){
+                                        foreach ($prg_item as $key => $value) {
+                                            $method = 'asignar_usuarios_alcance_prg_items';
+                                            $args = Array('asignar_usuario_item' => Array('id_usuario'  => $uedu_usuario, 
+                                                                                         'id_prg_item' => $value->id_prg_item));
+            
+                                            $result = $client->__call( $method, Array( $args ) );
+
+                                            $resp_guardarbloqueo = $mod_asignar->modificarEstadobloqueo($cedu_id, $est_id, 'A', $usu_id);
+                                        }//foreach
+                                    }//if
+                                }//else
                                 
                             }//foreach
 
@@ -1692,6 +1714,7 @@ class UsuarioeducativaController extends \app\components\CController {
                         "wtmessage" => Yii::t("notificaciones", "La información ha sido grabada. Los Estudiantes que no se cambio estado, es que no estan asignados a un curso"),
                         "title" => Yii::t('jslang', 'Success'),
                         "noactualizados" => $noactualizados,
+                        "obtener_prg_items" => $obtener_prg_items,
                     );
                     return \app\models\Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), false, $message);
                 } else {

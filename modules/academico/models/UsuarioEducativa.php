@@ -658,4 +658,30 @@ class UsuarioEducativa extends \yii\db\ActiveRecord
         return $resultData;
     }//function consultarexisteusuarioxest
 
+    /**
+     * Consultar usuario por el est_id para ver si tiene usuario educativa cargado.
+     * @author  Galo Aguirre <analistadesarrollo06@uteg.edu.ec>;
+     * @property       
+     * @return  
+     */
+    public function usuarioeducativa($est_id) {
+        $con = \Yii::$app->db_academico;     
+        $estado = 1;
+
+        $sql = "SELECT uedu_usuario                             
+                  FROM " . $con->dbname . ".usuario_educativa                 
+                 WHERE est_id = :est_id
+                   AND uedu_estado = :estado 
+                   AND uedu_estado_logico = :estado ";
+
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $comando->bindParam(":est_id", $est_id, \PDO::PARAM_STR);
+   
+        $resultData = $comando->queryOne();
+
+        Utilities::putMessageLogFile($comando->getRawSql());
+        return $resultData;
+    }//function consultarexisteusuarioxest
+
 }

@@ -1,0 +1,23 @@
+{
+    "name": "penblu/searchautocomplete",
+    "description": "Extension creada por PenBlu para el uso de la libreria search-autocomplete",
+    "type": "yii2-extension",
+    "keywords": ["yii2", "extension", "searchautocomplete"],
+    "minimum-stability": "stable",
+    "support": {
+        "source": "https://github.com/iranianpep/ajax-live-search"
+    },
+    "license": "GPL-2.0-or-later",
+    "authors": [{
+        "name": "Eduardo Cueva",
+        "email": "ecueva@penblu.com"
+    }],
+    "require": {
+        "yiisoft/yii2": "~2.0.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "penblu\\searchautocomplete\\": ""
+        }
+    }
+}

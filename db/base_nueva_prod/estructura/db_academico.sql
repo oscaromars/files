@@ -1968,3 +1968,221 @@ create table if not exists `curso_educativa_distributivo` (
  foreign key (cedu_id) references `curso_educativa`(cedu_id),
  foreign key (daca_id) references `distributivo_academico`(daca_id)
 );
+
+
+-- --------------------------------------------------------
+-- 
+-- Estructura de tabla para la tabla `actividad`
+-- --------------------------------------------------------
+create table if not exists `actividad` (
+  `act_id` bigint(20) NOT NULL AUTO_INCREMENT primary key,
+  `act_nombre` varchar(100) NOT NULL,
+  `act_descripcion` varchar(100) NOT NULL,    
+  `act_estado` varchar(1) NOT NULL,
+  `act_fecha_creacion` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `act_fecha_modificacion` timestamp NULL DEFAULT NULL,
+  `act_estado_logico` varchar(1) NOT NULL
+);
+
+-- --------------------------------------------------------
+-- 
+-- Estructura de tabla para la tabla `componente`
+-- --------------------------------------------------------
+create table if not exists `componente` (
+  `com_id` bigint(20) NOT NULL AUTO_INCREMENT primary key,
+  `com_nombre` varchar(100) NOT NULL,
+  `com_descripcion` varchar(100) NOT NULL,    
+  `com_estado` varchar(1) NOT NULL,
+  `com_fecha_creacion` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `com_fecha_modificacion` timestamp NULL DEFAULT NULL,
+  `com_estado_logico` varchar(1) NOT NULL
+);
+
+-- --------------------------------------------------------
+-- 
+-- Estructura de tabla para la tabla `componente_unidad`
+-- --------------------------------------------------------
+create table if not exists `componente_unidad` (
+  `cuni_id` bigint(20) NOT NULL AUTO_INCREMENT primary key,
+  `com_id` bigint(20) NOT NULL,
+  `uaca_id` bigint(20) NOT NULL,  
+  `cuni_calificacion` double NOT NULL,  
+  `cuni_estado` varchar(1) NOT NULL,
+  `cuni_fecha_creacion` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `cuni_fecha_modificacion` timestamp NULL DEFAULT NULL,
+  `cuni_estado_logico` varchar(1) NOT NULL,
+  foreign key (uaca_id) references `unidad_academica`(uaca_id),
+  foreign key (com_id) references `componente`(com_id)
+);
+
+-- --------------------------------------------------------
+-- 
+-- Estructura de tabla para la tabla `componente_unidad_actividad`
+-- --------------------------------------------------------
+create table if not exists `componente_unidad_actividad` (
+  `cuac_id` bigint(20) NOT NULL AUTO_INCREMENT primary key,
+  `cuni_id` bigint(20) NOT NULL,
+  `act_id` bigint(20) NOT NULL,  
+  `cuac_estado` varchar(1) NOT NULL,
+  `cuac_fecha_creacion` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `cuac_fecha_modificacion` timestamp NULL DEFAULT NULL,
+  `cuac_estado_logico` varchar(1) NOT NULL,
+  foreign key (cuni_id) references `componente_unidad`(cuni_id),
+  foreign key (act_id) references `actividad`(act_id)
+);
+
+-- --------------------------------------------------------
+-- 
+-- Estructura de tabla para la tabla `esquema_calificacion`
+-- --------------------------------------------------------
+create table if not exists `esquema_calificacion` (
+  `ecal_id` bigint(20) NOT NULL AUTO_INCREMENT primary key,
+  `ecal_nombre` varchar(100) NOT NULL, 
+  `ecal_descripcion` varchar(100) NOT NULL,   
+  `ecal_estado` varchar(1) NOT NULL,
+  `ecal_fecha_creacion` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `ecal_fecha_modificacion` timestamp NULL DEFAULT NULL,
+  `ecal_estado_logico` varchar(1) NOT NULL  
+);
+
+-- --------------------------------------------------------
+-- 
+-- Estructura de tabla para la tabla `esquema_calificacion_unidad`
+-- --------------------------------------------------------
+create table if not exists `esquema_calificacion_unidad` (
+  `ecun_id` bigint(20) NOT NULL AUTO_INCREMENT primary key,
+  `ecal_id` bigint(20) NOT NULL,
+  `uaca_id` bigint(20) NOT NULL, 
+  `ecun_estado` varchar(1) NOT NULL,
+  `ecun_fecha_creacion` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `ecun_fecha_modificacion` timestamp NULL DEFAULT NULL,
+  `ecun_estado_logico` varchar(1) NOT NULL,
+  foreign key (uaca_id) references `unidad_academica`(uaca_id)
+);
+
+-- --------------------------------------------------------
+-- 
+-- Estructura de tabla para la tabla `asistencia_esquema_unidad`
+-- --------------------------------------------------------
+create table if not exists `asistencia_esquema_unidad` (
+  `aeun_id` bigint(20) NOT NULL AUTO_INCREMENT primary key,
+  `ecun_id` bigint(20) NOT NULL,  
+  `aeun_cantidad` integer NOT NULL,  
+  `aeun_estado` varchar(1) NOT NULL,
+  `aeun_fecha_creacion` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `aeun_fecha_modificacion` timestamp NULL DEFAULT NULL,
+  `aeun_estado_logico` varchar(1) NOT NULL,
+  foreign key (ecun_id) references `esquema_calificacion_unidad`(ecun_id)
+);
+
+-- --------------------------------------------------------
+-- 
+-- Estructura de tabla para la tabla `cabecera_calificacion`
+-- --------------------------------------------------------
+create table if not exists `cabecera_calificacion` (
+  `ccal_id` bigint(20) NOT NULL AUTO_INCREMENT primary key,
+  `paca_id` bigint(20) NOT NULL,  
+  `est_id` bigint(20) NOT NULL,  
+  `pro_id` bigint(20) NOT NULL,  
+  `asi_id` bigint(20) NOT NULL,  
+  `ecun_id` bigint(20) NOT NULL,  
+  `ccal_calificacion` double NULL,  
+  `ccal_estado` varchar(1) NOT NULL,
+  `ccal_fecha_creacion` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `ccal_fecha_modificacion` timestamp NULL DEFAULT NULL,
+  `ccal_estado_logico` varchar(1) NOT NULL,
+  foreign key (paca_id) references `periodo_academico`(paca_id),
+  foreign key (est_id) references `estudiante`(est_id),
+  foreign key (pro_id) references `profesor`(pro_id),
+  foreign key (asi_id) references `asignatura`(asi_id),
+  foreign key (ecun_id) references `esquema_calificacion_unidad`(ecun_id)
+);
+
+-- --------------------------------------------------------
+-- 
+-- Estructura de tabla para la tabla `detalle_calificacion`
+-- --------------------------------------------------------
+create table if not exists `detalle_calificacion` (
+  `dcal_id` bigint(20) NOT NULL AUTO_INCREMENT primary key,
+  `ccal_id` bigint(20) NOT NULL,
+  `cuni_id` bigint(20) NOT NULL,    
+  `dcal_calificacion` double NULL,      
+  `dcal_usuario_creacion` bigint(20) NOT NULL,  
+  `dcal_usuario_modificacion` bigint(20) NULL,  
+  `dcal_estado` varchar(1) NOT NULL,
+  `dcal_fecha_creacion` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `dcal_fecha_modificacion` timestamp NULL DEFAULT NULL,
+  `dcal_estado_logico` varchar(1) NOT NULL,
+  foreign key (ccal_id) references `cabecera_calificacion`(ccal_id),
+  foreign key (cuni_id) references `componente_unidad`(cuni_id) 
+);
+
+-- --------------------------------------------------------
+-- 
+-- Estructura de tabla para la tabla `cabecera_asistencia`
+-- --------------------------------------------------------
+create table if not exists `cabecera_asistencia` (
+  `casi_id` bigint(20) NOT NULL AUTO_INCREMENT primary key,
+  `paca_id` bigint(20) NOT NULL,  
+  `est_id` bigint(20) NOT NULL,  
+  `pro_id` bigint(20) NOT NULL,  
+  `asi_id` bigint(20) NOT NULL,  
+  `aeun_id` bigint(20) NOT NULL,  
+  `casi_cant_total` integer NULL,  
+  `casi_porc_total` double NULL, 
+  `casi_estado` varchar(1) NOT NULL,
+  `casi_fecha_creacion` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `casi_fecha_modificacion` timestamp NULL DEFAULT NULL,
+  `casi_estado_logico` varchar(1) NOT NULL,
+  foreign key (paca_id) references `periodo_academico`(paca_id),
+  foreign key (est_id) references `estudiante`(est_id),
+  foreign key (pro_id) references `profesor`(pro_id),
+  foreign key (asi_id) references `asignatura`(asi_id),
+  foreign key (aeun_id) references `asistencia_esquema_unidad`(aeun_id)
+);
+
+-- --------------------------------------------------------
+-- 
+-- Estructura de tabla para la tabla `detalle_asistencia`
+-- --------------------------------------------------------
+create table if not exists `detalle_asistencia` (
+  `dasi_id` bigint(20) NOT NULL AUTO_INCREMENT primary key,
+  `casi_id` bigint(20) NOT NULL,
+  `ecal_id` bigint DEFAULT NULL,
+  `dasi_tipo` varchar(2) NOT NULL,  
+  `dasi_cantidad` integer NOT NULL,  
+  `dasi_usuario_creacion` bigint(20) NOT NULL,  
+  `dasi_usuario_modificacion` bigint(20) NULL,  
+  `dasi_estado` varchar(1) NOT NULL,
+  `dasi_fecha_creacion` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `dasi_fecha_modificacion` timestamp NULL DEFAULT NULL,
+  `dasi_estado_logico` varchar(1) NOT NULL,  
+  foreign key (casi_id) references `cabecera_asistencia`(casi_id)
+);
+
+-- --------------------------------------------------------
+-- 
+-- Estructura de tabla para la tabla `resumen_calificacion`
+-- --------------------------------------------------------
+create table if not exists `resumen_calificacion` (
+  `rcal_id` bigint(20) NOT NULL AUTO_INCREMENT primary key,
+  `paca_id` bigint(20) NOT NULL,  
+  `uaca_id` bigint(20) NOT NULL,  
+  `eaca_id` bigint(20) NOT NULL,  
+  `est_id` bigint(20) NOT NULL,  
+  `asi_id` bigint(20) NOT NULL,
+  `rcal_promedio` double NOT NULL,
+  `rcal_asistencia` double NOT NULL,
+  `rcal_aprobado` varchar(1) NOT NULL,  /** 0->No aprobado, 1->Aprobado */
+  `rcal_usuario_creacion` bigint(20) NOT NULL,  
+  `rcal_usuario_modificacion` bigint(20) NULL,  
+  `rcal_estado` varchar(1) NOT NULL,
+  `rcal_fecha_creacion` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `rcal_fecha_modificacion` timestamp NULL DEFAULT NULL,
+  `rcal_estado_logico` varchar(1) NOT NULL,  
+  foreign key (paca_id) references `periodo_academico`(paca_id),
+  foreign key (uaca_id) references `unidad_academica`(uaca_id),
+  foreign key (eaca_id) references `estudio_academico`(eaca_id),
+  foreign key (est_id) references `estudiante`(est_id),
+  foreign key (asi_id) references `asignatura`(asi_id)
+);

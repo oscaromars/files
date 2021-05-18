@@ -151,13 +151,68 @@ class PeriodoAcademico extends \yii\db\ActiveRecord
                      inner join " . $con->dbname . ".semestre_academico sem  ON sem.saca_id = pera.saca_id
                      inner join " . $con->dbname . ".bloque_academico blq ON blq.baca_id = pera.baca_id
                 WHERE pera.paca_activo = 'A' AND
-                      pera.paca_fecha_inicio = (select max(paca_fecha_inicio) from db_academico.periodo_academico p where paca_activo = 'A') AND
+                      ((now() between pera.paca_fecha_inicio and pera.paca_fecha_fin) OR (now() < pera.paca_fecha_inicio)) AND
                       pera.paca_estado = :estado AND
                       pera.paca_estado_logico = :estado";
 
         $comando = $con->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);        
         $resultData = $comando->queryOne();
+        return $resultData;
+    }
+
+    /**
+     * Consultar todos los períodos académicos, así no estén activos
+     * @author Jorge Paladies <analista.desarrollo@uteg.edu.ec>;
+     * @param
+     * @return
+     */
+    public function consultarTodosPeriodosAcademicos() {
+        $con = Yii::$app->db_academico;
+        $estado = 1;
+        
+        $sql = "SELECT paca.paca_id, ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca_anio),'') AS paca_nombre, baca.baca_nombre
+                FROM " . $con->dbname . ".semestre_academico AS saca
+                INNER JOIN " . $con->dbname . ".periodo_academico AS paca ON saca.saca_id = paca.saca_id
+                INNER JOIN " . $con->dbname . ".bloque_academico AS baca ON baca.baca_id = paca.baca_id
+                WHERE
+                paca.paca_estado = 1 AND
+                paca.paca_estado_logico = 1 AND
+                saca.saca_estado = 1 AND
+                saca.saca_estado_logico = 1 AND
+                baca.baca_estado = 1 AND
+                baca.baca_estado_logico = 1";
+
+        $comando = $con->createCommand($sql);      
+        $resultData = $comando->queryAll();
+        return $resultData;
+    }
+
+    /**
+     * Consultar todos los períodos académicos, sólo si están activos. Probablemente salga el actual nomás.
+     * @author Jorge Paladies <analista.desarrollo@uteg.edu.ec>;
+     * @param
+     * @return
+     */
+    public function consultarPeriodosActivos() {
+        $con = Yii::$app->db_academico;
+        $estado = 1;
+        
+        $sql = "SELECT paca.paca_id, ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca_anio),'') AS paca_nombre, baca.baca_nombre
+                FROM " . $con->dbname . ".semestre_academico AS saca
+                INNER JOIN " . $con->dbname . ".periodo_academico AS paca ON saca.saca_id = paca.saca_id
+                INNER JOIN " . $con->dbname . ".bloque_academico AS baca ON baca.baca_id = paca.baca_id
+                WHERE
+                paca.paca_activo = 'A' AND
+                paca.paca_estado = 1 AND
+                paca.paca_estado_logico = 1 AND
+                saca.saca_estado = 1 AND
+                saca.saca_estado_logico = 1 AND
+                baca.baca_estado = 1 AND
+                baca.baca_estado_logico = 1";
+
+        $comando = $con->createCommand($sql);    
+        $resultData = $comando->queryAll();
         return $resultData;
     }
 }

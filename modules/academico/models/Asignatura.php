@@ -607,7 +607,7 @@ class Asignatura extends \yii\db\ActiveRecord
         return $resultData;
     }
 
-    /**
+/**
      * Function consulta asiganturas ddel profesor, segun periodo, unidad, modalidad
      * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>;
      * @property       
@@ -648,7 +648,37 @@ class Asignatura extends \yii\db\ActiveRecord
         return $res;
     }
 
-    /**
+    public function getCourseProfesor($pro_id,$paca_id,$asi_id){
+        $con = \Yii::$app->db_academico;      
+        $estado = 1;
+
+        $sql = "SELECT
+                    paralelo.par_id id, 
+                    paralelo.par_nombre name 
+                FROM
+                        db_academico_mbtu.distributivo_academico daca 
+                    INNER JOIN db_academico_mbtu.materias_paralelos_periodo_detalle mppd ON mppd.mppd_id = daca.mppd_id
+                    INNER JOIN db_academico_mbtu.paralelo paralelo ON paralelo.par_id = mppd.par_id
+                WHERE daca.pro_id = :pro_id  AND daca.paca_id = :paca_id AND  asi_id = :asi_id
+                        AND daca.daca_estado = :estado  
+                        AND daca.daca_estado_logico = 1
+                        AND mppd.mppd_estado = 1 
+                        AND mppd.mppd_estado_logico = 1 
+                        AND paralelo.par_estado = 1 
+                        AND paralelo.par_estado_logico = 1";
+
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":pro_id", $pro_id, \PDO::PARAM_INT);
+        $comando->bindParam(":paca_id", $paca_id, \PDO::PARAM_INT); 
+         $comando->bindParam(":asi_id", $asi_id, \PDO::PARAM_INT); 
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);          
+        $resultData = $comando->queryAll();
+        //\app\models\Utilities::putMessageLogFile('ASIGNATURAS gap: ' .$comando->getRawSql());
+        return $resultData;
+    } 
+
+
+/**
      * Función para retornar todas las asignaturas, y filtrarlas por los IDs de profesor, unidad académica y período académico
      * @author  Jorge Paladines <analista.desarrollo@uteg.edu.ec>;
      * @property       
@@ -684,23 +714,16 @@ class Asignatura extends \yii\db\ActiveRecord
         // \app\models\Utilities::putMessageLogFile('ASIGNATURAS gap: ' .$comando->getRawSql());
         return $res;
     }
-
-    //Obtiene los paralelos asignados a un profesor segun la asignatura
-    public function getCourseProfesor($pro_id,$paca_id,$asi_id){
+    
+    public function consultarAsignatura($asi_id){
         $con = Yii::$app->db_academico;      
 
-        $sql = "SELECT *
-                FROM " . $con->dbname . ".distributivo_academico daca 
-                WHERE daca.pro_id = :pro_id  AND daca.paca_id = :paca_id AND daca.asi_id = :asi_id
-                AND daca.daca_estado = 1  
-                AND daca.daca_estado_logico = 1";
+        $sql = "SELECT * FROM db_academico_mbtu.asignatura AS asi
+                WHERE asi.asi_estado = 1 AND asi.asi_estado_logico = 1
+                AND asi.asi_id = $asi_id";
 
-        $comando = $con->createCommand($sql);
-        $comando->bindParam(":pro_id", $pro_id, \PDO::PARAM_INT);
-        $comando->bindParam(":paca_id", $paca_id, \PDO::PARAM_INT); 
-        $comando->bindParam(":asi_id", $asi_id, \PDO::PARAM_INT);          
+        $comando = $con->createCommand($sql);         
         $resultData = $comando->queryAll();
-        //\app\models\Utilities::putMessageLogFile('ASIGNATURAS gap: ' .$comando->getRawSql());
         return $resultData;
     }
 }

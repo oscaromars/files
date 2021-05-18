@@ -654,7 +654,7 @@ class UsuarioEducativa extends \yii\db\ActiveRecord
    
         $resultData = $comando->queryOne();
 
-        Utilities::putMessageLogFile($comando->getRawSql());
+        //Utilities::putMessageLogFile($comando->getRawSql());
         return $resultData;
     }//function consultarexisteusuarioxest
 
@@ -680,7 +680,7 @@ class UsuarioEducativa extends \yii\db\ActiveRecord
    
         $resultData = $comando->queryOne();
 
-        Utilities::putMessageLogFile($comando->getRawSql());
+        //Utilities::putMessageLogFile($comando->getRawSql());
         return $resultData;
     }//function consultarexisteusuarioxest
 

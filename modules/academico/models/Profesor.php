@@ -339,4 +339,38 @@ class Profesor extends \yii\db\ActiveRecord
         $res = $comando->queryAll();
         return $res;
     }
+
+ /**
+     * Consulta los profesores que estén dando alguna asignatura
+     * @author 
+     * @param
+     * @return Arreglo con per_id, pro_id, cedula y nombres de los profesores que tengan materias registradas para disctar y hayan sido aprobados
+     */
+     public function getProfesoresEnAsignaturasByPerId($per_id, $onlyData = true){
+        $con_asgard = Yii::$app->db_asgard;
+        $con_academico = Yii::$app->db_academico;
+
+        $sql = "SELECT DISTINCT per.per_id, pro.pro_id, per.per_cedula, per.per_correo, CONCAT(per.per_pri_nombre, ' ', per.per_pri_apellido) AS nombres
+                FROM " . $con_asgard->dbname . ".persona as per
+                INNER JOIN " . $con_academico->dbname . ".profesor AS pro ON pro.per_id = per.per_id
+                INNER JOIN " . $con_academico->dbname . ".distributivo_academico AS daca ON daca.pro_id = pro.pro_id
+                INNER JOIN " . $con_academico->dbname . ".distributivo_cabecera AS dcab ON dcab.pro_id = pro.pro_id
+                WHERE per.per_id = :per_id  AND  dcab.dcab_estado_revision = 2 AND daca.mpp_id IS NOT NULL
+                AND per.per_estado = 1 AND per.per_estado_logico = 1
+                AND pro.pro_estado = 1 AND pro.pro_estado_logico = 1
+                AND daca.daca_estado = 1 AND daca.daca_estado_logico = 1
+                AND dcab.dcab_estado = 1 AND dcab.dcab_estado_logico = 1
+                ORDER BY nombres DESC";
+
+        $comando = $con_academico->createCommand($sql);
+        $comando->bindParam(":per_id",$per_id, \PDO::PARAM_INT);
+        $resultData = $comando->queryAll();
+
+        /*if($onlyData){
+            return $resultData;
+        }*/
+
+        return $resultData;
+    }
+
 }

@@ -386,4 +386,30 @@ class EstudioAcademico extends \app\modules\admision\components\CActiveRecord {
     }
 
 
+     /**
+     * Function para consultar el estudio académico por el ID del estudiante
+     * @author   Jorge Paladines <analista.desarrollo@uteg.edu.ec>
+     * @property       
+     * @return  
+     */
+    public function consultarEstudioAcademicoPorEstudiante($est_id){
+        $con = Yii::$app->db_academico;
+
+        $sql = "SELECT eaca.eaca_descripcion as programa
+                FROM db_academico_mbtu.estudiante_carrera_programa AS ecpr
+                INNER JOIN db_academico_mbtu.modalidad_estudio_unidad AS meun ON meun.meun_id = ecpr.meun_id
+                INNER JOIN db_academico_mbtu.estudio_academico AS eaca ON eaca.eaca_id = meun.eaca_id
+                WHERE ecpr.ecpr_estado = 1 AND ecpr.ecpr_estado_logico = 1
+                AND meun.meun_estado = 1 AND meun.meun_estado_logico = 1
+                AND eaca.eaca_estado = 1 AND eaca.eaca_estado_logico = 1
+                AND ecpr.est_id = $est_id";
+
+        $comando = $con->createCommand($sql);
+        $resultData = $comando->queryOne();
+
+        return $resultData;
+    }
+    
+
+
 }

@@ -160,4 +160,88 @@ class PeriodoAcademico extends \yii\db\ActiveRecord
         $resultData = $comando->queryOne();
         return $resultData;
     }
+
+
+        /**
+     * Mostrará un solo período académico basado en el id, con el nombre del Grupo Estación
+     * @author Jorge Paladines
+     * @param
+     * @return
+     */
+    public function consultarPeriodo($per_id, $onlyData = false){
+        $con = \Yii::$app->db_academico;
+        $estado = 1;
+
+        $sql = $this->periodoConsultaSQL($con, $per_id);
+
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $resultData = $comando->queryAll();
+
+        if($onlyData) { return $resultData; }
+
+        $dataProvider = new ArrayDataProvider([
+            'key' => 'id',
+            'allModels' => $resultData,
+            'pagination' => [
+                'pageSize' => Yii::$app->params["pageSize"],
+            ],
+            'sort' => [
+                'attributes' => [
+                    'id',
+                    'estado',
+                    'nombre',
+                    'fecha_inicio',
+                    'fecha_fin',
+                    'numero_de_clases_grado',
+                    'numero_de_clases_posgrado'
+                ],
+            ],
+        ]);
+
+        return $dataProvider;
+    }
+
+
+     /**
+     * Función para modularizar las siguientes 2 funciones. Si se le da el parámetro $per_id, usa WHERE. Si no, no.
+     * @author Jorge Paladines
+     * @param
+     * @return
+     */
+    private function periodoConsultaSQL($con, $per_id = null){
+        if($per_id){
+            $sql = "SELECT  pera.paca_id as id,
+                            -- ge.gest_id as gest_id,
+                            pera.paca_activo as estado,
+                            -- ge.gest_descripcion as nombre,
+                            pera.paca_fecha_inicio as fecha_inicio,
+                            pera.paca_fecha_fin as fecha_fin -- ,
+                            -- pera.paca_clases_grado as numero_de_clases_grado,
+                            -- pera.paca_clases_posgrado as numero_de_clases_posgrado
+                FROM " . $con->dbname . ".periodo_academico as pera
+                    -- inner join " . $con->dbname . ".grupo_estacion ge  ON ge.gest_id = pera.gest_id
+                WHERE pera.paca_id = " . $per_id . " AND 
+                      pera.paca_estado = 1 AND
+                      pera.paca_estado_logico = 1
+                ORDER BY id";
+        }
+        else{
+            $sql = "SELECT  pera.paca_id as id,
+                        pera.paca_activo as estado,
+                        -- ge.gest_descripcion as nombre,
+                        pera.paca_fecha_inicio as fecha_inicio,
+                        pera.paca_fecha_fin as fecha_fin -- ,
+                        -- pera.paca_clases_grado as numero_de_clases_grado,
+                        -- pera.paca_clases_posgrado as numero_de_clases_posgrado
+                FROM " . $con->dbname . ".periodo_academico pera
+                    -- inner join " . $con->dbname . ".grupo_estacion ge ON ge.gest_id = pera.gest_id 
+                WHERE pera.paca_estado = 1 AND  
+                      pera.paca_estado_logico = 1  
+                ORDER BY id";
+        }
+
+        return $sql;
+    }
+
 }

@@ -182,8 +182,9 @@ class EspeciesController extends \app\components\CController {
             //$pagodia = $especiesADO->consultarPagodia($periodo_academico['paca_id'], $data['DTS_CAB']['est_id']);
             $estudiante = $mod_estudiante->getEstudiantexperid($per_id);
             $pagodia = $mod_cartera->consultarAutorizadofechamenor($estudiante["est_id"]);
-            //Utilities::putMessageLogFile('csdfsd' . $pagodia['eppa_estado_pago']);
-            if (empty($pagodia['estado'])) {
+            Utilities::putMessageLogFile('csdfsd' . $pagodia['estado']);
+            if (empty($pagodia['estado']) or $pagodia['estado'] == 'Autorizado') {
+                Utilities::putMessageLogFile('entro estado' . $pagodia['estado']);
                 $paydia = $mod_cartera->consultarAutorizadofechamayor($estudiante["est_id"]);
               if($paydia['estado'] == "Autorizado"){
                 $dts_Cab = isset($data['DTS_CAB']) ? $data['DTS_CAB'] : array();

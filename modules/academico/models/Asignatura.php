@@ -656,9 +656,9 @@ class Asignatura extends \yii\db\ActiveRecord
                     paralelo.par_id id, 
                     paralelo.par_nombre name 
                 FROM
-                        db_academico_mbtu.distributivo_academico daca 
-                    INNER JOIN db_academico_mbtu.materias_paralelos_periodo_detalle mppd ON mppd.mppd_id = daca.mppd_id
-                    INNER JOIN db_academico_mbtu.paralelo paralelo ON paralelo.par_id = mppd.par_id
+                        db_academico.distributivo_academico daca 
+                    INNER JOIN db_academico.materias_paralelos_periodo_detalle mppd ON mppd.mppd_id = daca.mppd_id
+                    INNER JOIN db_academico.paralelo paralelo ON paralelo.par_id = mppd.par_id
                 WHERE daca.pro_id = :pro_id  AND daca.paca_id = :paca_id AND  asi_id = :asi_id
                         AND daca.daca_estado = :estado  
                         AND daca.daca_estado_logico = 1
@@ -718,7 +718,7 @@ class Asignatura extends \yii\db\ActiveRecord
     public function consultarAsignatura($asi_id){
         $con = Yii::$app->db_academico;      
 
-        $sql = "SELECT * FROM db_academico_mbtu.asignatura AS asi
+        $sql = "SELECT * FROM db_academico.asignatura AS asi
                 WHERE asi.asi_estado = 1 AND asi.asi_estado_logico = 1
                 AND asi.asi_id = $asi_id";
 

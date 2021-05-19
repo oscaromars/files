@@ -8,7 +8,7 @@ use \yii\data\ArrayDataProvider;
 use app\models\Utilities;
 
 /**
- * This is the model class for table "db_academico_mbtu.cabecera_asistencia".
+ * This is the model class for table "db_academico.cabecera_asistencia".
  *
  * @property int $casi_id
  * @property int $paca_id
@@ -30,7 +30,7 @@ class CabeceraAsistencia extends \yii\db\ActiveRecord
      */
     public static function tableName()
     {
-        return 'db_academico_mbtu.cabecera_asistencia';
+        return 'db_academico.cabecera_asistencia';
     }
 
     /**
@@ -441,7 +441,7 @@ class CabeceraAsistencia extends \yii\db\ActiveRecord
         //PRIMERO PREGUNTAMOS SI TIENE CABECERA PARA U1 Y U2//
         //////////////////////////////////////////////////////
         $sql = "SELECT casi.casi_id, casi.aeun_id, ecun.ecal_id
-                  FROM db_academico_mbtu.cabecera_asistencia casi
+                  FROM db_academico.cabecera_asistencia casi
                        ,asistencia_esquema_unidad aeun
                        ,esquema_calificacion_unidad ecun
                  WHERE casi.aeun_id = aeun.aeun_id
@@ -460,7 +460,7 @@ class CabeceraAsistencia extends \yii\db\ActiveRecord
         //PREGUNTO SI EXISTE EL REGSITRO
         if(empty($res_casi['casi_id'])){
             //por if true quiere decir q no existo, aqui debo crear primero la cabecera
-            $sql = "INSERT INTO db_academico_mbtu.cabecera_asistencia
+            $sql = "INSERT INTO db_academico.cabecera_asistencia
                         (
                         `paca_id`,
                         `est_id`,
@@ -496,7 +496,7 @@ class CabeceraAsistencia extends \yii\db\ActiveRecord
         //YA CON LA CABECERA VAMOS A VERIFICAR QUE TENGA DETALLE PARA U1 //
         ///////////////////////////////////////////////////////////////////
         $sql = "SELECT dasi.dasi_id, dasi.casi_id
-                  FROM db_academico_mbtu.detalle_asistencia dasi
+                  FROM db_academico.detalle_asistencia dasi
                  WHERE dasi.casi_id   = $casi_id 
                    AND dasi.dasi_tipo = 'u1'";
 
@@ -510,7 +510,7 @@ class CabeceraAsistencia extends \yii\db\ActiveRecord
         //Pregunto si existe el detalle U1
         if(empty($res_u1)){
             $u1      = $data['u1'];
-            $sql = "INSERT INTO db_academico_mbtu.detalle_asistencia
+            $sql = "INSERT INTO db_academico.detalle_asistencia
                                 (`casi_id`,
                                 `dasi_cantidad`,
                                 `dasi_tipo`,
@@ -529,7 +529,7 @@ class CabeceraAsistencia extends \yii\db\ActiveRecord
         }else{
             $dasi_id = $res_u1['dasi_id'];
             $u1      = $data['u1'];
-            $sql = "UPDATE db_academico_mbtu.detalle_asistencia 
+            $sql = "UPDATE db_academico.detalle_asistencia 
                        set dasi_cantidad = $u1
                      WHERE dasi_id = $dasi_id";
         }
@@ -548,7 +548,7 @@ class CabeceraAsistencia extends \yii\db\ActiveRecord
         //YA CON LA CABECERA VAMOS A VERIFICAR QUE TENGA DETALLE PARA U2 //
         ///////////////////////////////////////////////////////////////////
         $sql = "SELECT dasi.dasi_id, dasi.casi_id
-                  FROM db_academico_mbtu.detalle_asistencia dasi
+                  FROM db_academico.detalle_asistencia dasi
                  WHERE dasi.casi_id   = $casi_id 
                    AND dasi.dasi_tipo = 'u2'";
 
@@ -558,7 +558,7 @@ class CabeceraAsistencia extends \yii\db\ActiveRecord
         //Pregunto si existe el detalle U1
         if(empty($res_u2)){
             $u2  = $data['u2'];
-            $sql = "INSERT INTO db_academico_mbtu.detalle_asistencia
+            $sql = "INSERT INTO db_academico.detalle_asistencia
                                 (
                                 `casi_id`,
                                 `dasi_cantidad`,
@@ -579,7 +579,7 @@ class CabeceraAsistencia extends \yii\db\ActiveRecord
         }else{
             $dasi_id = $res_u2['dasi_id'];
             $u2      = $data['u2'];
-            $sql = "UPDATE db_academico_mbtu.detalle_asistencia 
+            $sql = "UPDATE db_academico.detalle_asistencia 
                        set dasi_cantidad = $u2
                      WHERE dasi_id = $dasi_id";
         }
@@ -593,7 +593,7 @@ class CabeceraAsistencia extends \yii\db\ActiveRecord
         //PRIMERO PREGUNTAMOS SI TIENE CABECERA PARA U3 Y U4//
         //////////////////////////////////////////////////////
         $sql = "SELECT casi.casi_id, casi.aeun_id, ecun.ecal_id
-                  FROM db_academico_mbtu.cabecera_asistencia casi
+                  FROM db_academico.cabecera_asistencia casi
                        ,asistencia_esquema_unidad aeun
                        ,esquema_calificacion_unidad ecun
                  WHERE casi.aeun_id = aeun.aeun_id
@@ -610,7 +610,7 @@ class CabeceraAsistencia extends \yii\db\ActiveRecord
         //PREGUNTO SI EXISTE EL REGSITRO
         if(empty($res_casi)){
             //por if true quiere decir q no existo, aqui debo crear primero la cabecera
-            $sql = "INSERT INTO db_academico_mbtu.cabecera_asistencia
+            $sql = "INSERT INTO db_academico.cabecera_asistencia
                         (
                         `paca_id`,
                         `est_id`,
@@ -645,7 +645,7 @@ class CabeceraAsistencia extends \yii\db\ActiveRecord
         //YA CON LA CABECERA VAMOS A VERIFICAR QUE TENGA DETALLE PARA U1 //
         ///////////////////////////////////////////////////////////////////
         $sql = "SELECT dasi.dasi_id, dasi.casi_id
-                  FROM db_academico_mbtu.detalle_asistencia dasi
+                  FROM db_academico.detalle_asistencia dasi
                  WHERE dasi.casi_id   = $casi_id 
                    AND dasi.dasi_tipo = 'u3'";
 
@@ -655,7 +655,7 @@ class CabeceraAsistencia extends \yii\db\ActiveRecord
         //Pregunto si existe el detalle U1
         if(empty($res_u3)){
             $u3      = $data['u3'];
-            $sql = "INSERT INTO db_academico_mbtu.detalle_asistencia
+            $sql = "INSERT INTO db_academico.detalle_asistencia
                                 (`casi_id`,
                                 `dasi_cantidad`,
                                 `dasi_tipo`,
@@ -674,7 +674,7 @@ class CabeceraAsistencia extends \yii\db\ActiveRecord
         }else{
             $dasi_id = $res_u3['dasi_id'];
             $u3      = $data['u3'];
-            $sql = "UPDATE db_academico_mbtu.detalle_asistencia 
+            $sql = "UPDATE db_academico.detalle_asistencia 
                        set dasi_cantidad = $u3
                      WHERE dasi_id = $dasi_id";
         }
@@ -688,7 +688,7 @@ class CabeceraAsistencia extends \yii\db\ActiveRecord
         //YA CON LA CABECERA VAMOS A VERIFICAR QUE TENGA DETALLE PARA U2 //
         ///////////////////////////////////////////////////////////////////
         $sql = "SELECT dasi.dasi_id, dasi.casi_id
-                  FROM db_academico_mbtu.detalle_asistencia dasi
+                  FROM db_academico.detalle_asistencia dasi
                  WHERE dasi.casi_id   = $casi_id 
                    AND dasi.dasi_tipo = 'u4'";
 
@@ -698,7 +698,7 @@ class CabeceraAsistencia extends \yii\db\ActiveRecord
         //Pregunto si existe el detalle U1
         if(empty($res_u4)){
             $u4  = $data['u4'];
-            $sql = "INSERT INTO db_academico_mbtu.detalle_asistencia
+            $sql = "INSERT INTO db_academico.detalle_asistencia
                                 (
                                 `casi_id`,
                                 `dasi_cantidad`,
@@ -719,7 +719,7 @@ class CabeceraAsistencia extends \yii\db\ActiveRecord
         }else{
             $dasi_id = $res_u4['dasi_id'];
             $u4      = $data['u4'];
-            $sql = "UPDATE db_academico_mbtu.detalle_asistencia 
+            $sql = "UPDATE db_academico.detalle_asistencia 
                        set dasi_cantidad = $u4
                      WHERE dasi_id = $dasi_id";
         }
@@ -740,7 +740,7 @@ class CabeceraAsistencia extends \yii\db\ActiveRecord
     public function consultarCabeceraPorIDs($est_id, $asi_id, $pro_id, $paca_id){
         $con = Yii::$app->db_academico;
 
-        $sql = "SELECT * FROM db_academico_mbtu.cabecera_asistencia AS casi
+        $sql = "SELECT * FROM db_academico.cabecera_asistencia AS casi
                 WHERE casi.est_id = $est_id AND casi.asi_id = $asi_id AND casi.pro_id = $pro_id AND casi.paca_id = $paca_id
                 AND casi.casi_estado = 1 AND casi.casi_estado_logico = 1";
 

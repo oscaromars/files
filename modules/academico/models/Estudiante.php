@@ -784,8 +784,8 @@ class Estudiante extends \yii\db\ActiveRecord {
         $con = Yii::$app->db_academico;
 
         $sql = "SELECT est.est_id, per.per_id, est.est_activo, est.est_matricula AS matricula, per.per_cedula AS cedula, concat(per.per_pri_nombre, ' ', per.per_pri_apellido) AS nombres, per.per_correo AS correo 
-                FROM db_academico_mbtu.estudiante AS est
-                INNER JOIN db_asgard_mbtu.persona AS per ON per.per_id = est.per_id
+                FROM db_academico.estudiante AS est
+                INNER JOIN db_asgard.persona AS per ON per.per_id = est.per_id
                 WHERE est.est_estado = 1 AND est.est_estado_logico = 1
                 AND per.per_estado = 1 AND per.per_estado_logico = 1
                 AND est.est_id = $est_id";

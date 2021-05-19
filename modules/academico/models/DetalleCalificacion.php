@@ -104,7 +104,7 @@ class DetalleCalificacion extends \yii\db\ActiveRecord
         $con = Yii::$app->db_academico;
         $transaccion = $con->beginTransaction();
 
-        $sql = "SELECT * FROM db_academico_mbtu.detalle_calificacion as dcal
+        $sql = "SELECT * FROM db_academico.detalle_calificacion as dcal
                 WHERE dcal.ccal_id = $ccal_id
                 AND dcal.dcal_estado = 1 AND dcal.dcal_estado_logico = 1";
 
@@ -144,8 +144,8 @@ class DetalleCalificacion extends \yii\db\ActiveRecord
         $con = Yii::$app->db_academico;
 
         $sql = "SELECT ccal.ccal_id, ccal.paca_id, ccal.est_id, ccal.pro_id, ccal.asi_id, ccal.ecun_id, ccal.ccal_calificacion, dcal.cuni_id, dcal.dcal_calificacion
-                FROM db_academico_mbtu.cabecera_calificacion as ccal
-                INNER JOIN db_academico_mbtu.detalle_calificacion as dcal ON ccal.ccal_id = dcal.ccal_id
+                FROM db_academico.cabecera_calificacion as ccal
+                INNER JOIN db_academico.detalle_calificacion as dcal ON ccal.ccal_id = dcal.ccal_id
                 WHERE ccal.est_id = $est_id AND ccal.asi_id = $asi_id AND ccal.pro_id = $pro_id AND ccal.paca_id = $paca_id
                 AND dcal.dcal_estado = 1 AND dcal.dcal_estado_logico = 1
                 AND ccal.ccal_estado = 1 AND ccal.ccal_estado_logico = 1";

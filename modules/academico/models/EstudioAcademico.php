@@ -396,9 +396,9 @@ class EstudioAcademico extends \app\modules\admision\components\CActiveRecord {
         $con = Yii::$app->db_academico;
 
         $sql = "SELECT eaca.eaca_descripcion as programa
-                FROM db_academico_mbtu.estudiante_carrera_programa AS ecpr
-                INNER JOIN db_academico_mbtu.modalidad_estudio_unidad AS meun ON meun.meun_id = ecpr.meun_id
-                INNER JOIN db_academico_mbtu.estudio_academico AS eaca ON eaca.eaca_id = meun.eaca_id
+                FROM db_academico.estudiante_carrera_programa AS ecpr
+                INNER JOIN db_academico.modalidad_estudio_unidad AS meun ON meun.meun_id = ecpr.meun_id
+                INNER JOIN db_academico.estudio_academico AS eaca ON eaca.eaca_id = meun.eaca_id
                 WHERE ecpr.ecpr_estado = 1 AND ecpr.ecpr_estado_logico = 1
                 AND meun.meun_estado = 1 AND meun.meun_estado_logico = 1
                 AND eaca.eaca_estado = 1 AND eaca.eaca_estado_logico = 1

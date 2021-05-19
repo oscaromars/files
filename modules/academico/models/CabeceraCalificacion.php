@@ -1332,7 +1332,7 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord
                     FROM db_academico.estudiante estudiante
                     LEFT JOIN db_academico.cabecera_calificacion clfc ON estudiante.est_id =  clfc.est_id 
                     LEFT JOIN db_academico.esquema_calificacion_unidad ecun ON ecun.ecun_id = clfc.ecun_id
-                    INNER JOIN db_asgard_mbtu.persona persona ON persona.per_id = estudiante.per_id 
+                    INNER JOIN db_asgard.persona persona ON persona.per_id = estudiante.per_id 
                     LEFT JOIN db_academico.distributivo_academico_estudiante daca_est ON daca_est.est_id = estudiante.est_id
                     LEFT JOIN db_academico.materias_paralelos_periodo_detalle mppd ON mppd.mppd_id = daca_est.mppd_id
                     LEFT JOIN db_academico.paralelo paralelo ON paralelo.par_id = mppd.par_id
@@ -1585,7 +1585,7 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord
                     FROM db_academico.estudiante estudiante
                     LEFT JOIN db_academico.cabecera_calificacion clfc ON estudiante.est_id =  clfc.est_id 
                     LEFT JOIN db_academico.esquema_calificacion_unidad ecun ON ecun.ecun_id = clfc.ecun_id
-                    INNER JOIN db_asgard_mbtu.persona persona ON persona.per_id = estudiante.per_id 
+                    INNER JOIN db_asgard.persona persona ON persona.per_id = estudiante.per_id 
                     LEFT JOIN db_academico.distributivo_academico_estudiante daca_est ON daca_est.est_id = estudiante.est_id
                     LEFT JOIN db_academico.materias_paralelos_periodo_detalle mppd ON mppd.mppd_id = daca_est.mppd_id
                     LEFT JOIN db_academico.paralelo paralelo ON paralelo.par_id = mppd.par_id

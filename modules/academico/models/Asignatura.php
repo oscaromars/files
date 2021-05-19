@@ -607,6 +607,32 @@ class Asignatura extends \yii\db\ActiveRecord
         return $resultData;
     }
 
+    /**
+     * Busca la asigantura por asi_id y por uaca_id
+     * @author  Jorge Paladines <analista.desarrollo@uteg.edu.ec>;
+     * @property       
+     * @return  
+     */
+    public function consultarAsignaturaConUnidad($asi_id, $uaca_id){
+        $con = Yii::$app->db_academico;
+
+        $sql = "SELECT asi_id, asi_nombre
+                FROM " . $con->dbname . ".asignatura
+                WHERE
+                asi_id = :asi_id AND
+                uaca_id = :uaca_id AND
+                asi_estado = 1 AND
+                asi_estado_logico = 1";
+
+        $comando = $con->createCommand($sql);
+
+        $comando->bindParam(":asi_id", $asi_id, \PDO::PARAM_INT);
+        $comando->bindParam(":uaca_id", $uaca_id, \PDO::PARAM_INT);
+
+        $resultData = $comando->queryOne();
+        return $resultData;
+    }
+
 /**
      * Function consulta asiganturas ddel profesor, segun periodo, unidad, modalidad
      * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>;
@@ -723,6 +749,46 @@ class Asignatura extends \yii\db\ActiveRecord
                 AND asi.asi_id = $asi_id";
 
         $comando = $con->createCommand($sql);         
+        $resultData = $comando->queryAll();
+        return $resultData;
+    }
+
+    /**
+     * Function consulta asiganturas ddel profesor, segun periodo, unidad, modalidad para consulta  de calificaciones
+     * @author  Didimo Zamora <analistadesarrollo03@uteg.edu.ec>;
+     * @property       
+     * @return  
+     */
+    public function getAsignaturaByProfesorDistributivo($paca_id,$pro_id,$uaca_id,$mod_id){
+        $con = \Yii::$app->db_academico;
+        $con1 = \Yii::$app->db_asgard;
+        //inner join ". $con->dbname  .".unidad_academica uaca  on daca.uaca_id = uaca.uaca_id)
+        $sql = "SELECT distinct 
+                daca.asi_id id,
+                asig.asi_descripcion  name
+                FROM ". $con1->dbname  .".persona per inner join ".$con->dbname  .".profesor pro on per.per_id = pro.per_id
+                inner join ". $con->dbname  .".distributivo_academico daca on daca.pro_id = pro.pro_id
+                inner join ". $con->dbname  .".asignatura asig on asig.asi_id = daca.asi_id 
+                WHERE 
+                    per.per_estado = 1
+                    and per.per_estado_logico = 1
+                    
+                    and pro.pro_estado = 1
+                    and pro.pro_estado_logico = 1
+                    
+                    and daca.daca_estado = 1
+                    and daca_estado_logico = 1
+                    
+                    and asig.asi_estado = 1
+                    and asig.asi_estado_logico = 1
+
+                    and pro.pro_id = :pro_id  
+                    and daca.paca_id = :paca_id"; 
+       //echo "Sentencia: ".$sql;
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":paca_id", $paca_id, \PDO::PARAM_INT);
+        $comando->bindParam(":pro_id", $pro_id, \PDO::PARAM_INT);
+    
         $resultData = $comando->queryAll();
         return $resultData;
     }

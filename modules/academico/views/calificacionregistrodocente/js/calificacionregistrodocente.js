@@ -157,7 +157,7 @@ function cargarDocumento() {
     
     arrParams.procesar_file = true;
 
-    arrParams.asi = $('#cmb_asig option:selected').val();
+    arrParams.asi_id = $('#cmb_asig option:selected').val();
     arrParams.ecal_id = $('#cmb_parcial option:selected').val();
     arrParams.per_id = $('#cmb_profesor option:selected').val();
     arrParams.archivo = $('#txth_doc_adj_calificacion2').val() + "." + $('#txth_doc_adj_calificacion').val().split('.').pop();
@@ -267,7 +267,7 @@ function actualizarGridRegistro(dready = 0) {
         //$('#gridResumen').dataTable().fnClearTable();
         //$('#gridResumen').dataTable().fnAddData(response);
 
-        //Si la unidad academica es 3 significa que es Master
+        //Si la unidad academica es 3 significa que es Posgrado
         if($("#cmb_unidad").val() == 3){
             if ( $.fn.dataTable.isDataTable( '#gridResumen' ) ) {
                 $("#gridResumen").dataTable().fnDestroy();

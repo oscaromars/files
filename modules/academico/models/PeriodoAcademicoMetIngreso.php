@@ -652,7 +652,7 @@ class PeriodoAcademicoMetIngreso extends  \app\modules\academico\components\CAct
      * @param
      * @return
      */
-    public function consultarPeriodoAcademico($paca_id = null) {
+    /*public function consultarPeriodoAcademico($paca_id = null) {
         $con = \Yii::$app->db_academico;
         $estado = 1;
         $condition = "";
@@ -677,7 +677,7 @@ class PeriodoAcademicoMetIngreso extends  \app\modules\academico\components\CAct
         }
         $resultData = $comando->queryAll();
         return $resultData;
-    }
+    }*/
 
     /**
      * Function consulta los periodos academicos incluso con estado inactivo, para listarestudiantespago. 

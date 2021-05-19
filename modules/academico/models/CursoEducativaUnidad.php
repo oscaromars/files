@@ -184,7 +184,7 @@ class CursoEducativaUnidad extends \yii\db\ActiveRecord
 
         $resultData = $comando->queryAll();
 
-        \app\models\Utilities::putMessageLogFile('consultarUnidadEducativa: '.$comando->getRawSql());
+        //\app\models\Utilities::putMessageLogFile('consultarUnidadEducativa: '.$comando->getRawSql());
         
         $dataProvider = new ArrayDataProvider([
             'key' => 'id',

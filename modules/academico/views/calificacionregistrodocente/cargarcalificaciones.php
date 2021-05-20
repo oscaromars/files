@@ -54,8 +54,8 @@ else{
 
       </div>
       <div class="modal-footer">
-        <a type="button" class="btn btn-primary" id="aceptar_btn" href="javascript:" data-dismiss="modal"> <?= Yii::t("formulario", "Accept") ?> </a>
-        <button type="button" class="btn btn-secondary" id="cancelar_btn" data-dismiss="modal"> <?= Yii::t("formulario", "Cancel") ?> </button>
+        <a type="button" class="btn btn-primary" id="aceptar_btn" href="javascript:" data-dismiss="modal">Aceptar</a>
+        <button type="button" class="btn btn-secondary" id="cancelar_btn" data-dismiss="modal">Cancelar</button>
       </div>
     </div>
   </div>
@@ -77,9 +77,9 @@ else{
         <div class="form-group">
             <label for="lbl_plantilla" class="col-lg-2 col-md-2 col-sm-2 col-xs-2 control-label"><?= academico::t("Academico", "Template"); ?></label>
             <div class="col-sm-5 col-md-5 col-xs-5 col-lg-5">
-                <?= Html::a(academico::t("matriculacion", "Download") . " Associate/Bachelor", Url::to(['downloadplantillaassociatebachelor', 'filename' => 'plantilla_associate_bachelor.xlsx']));   ?>
+                <?= Html::a(academico::t("matriculacion", "Download") . " Grado", Url::to(['downloadplantillagrado', 'filename' => 'plantilla_grado.xlsx']));   ?>
                 <br>
-                <?= Html::a(academico::t("matriculacion", "Download") . " Masters", Url::to(['downloadplantillamasters', 'filename' => 'plantilla_masters.xlsx'])); ?>
+                <?= Html::a(academico::t("matriculacion", "Download") . " Posgrado", Url::to(['downloadplantillaposgrado', 'filename' => 'plantilla_posgrado.xlsx'])); ?>
             </div>                       
         </div> 
     </div>
@@ -179,11 +179,11 @@ else{
             <label for="txth_doc_adj_calificacion" style="color: red;" class="col-lg-6 col-md-6 col-sm-6 col-xs-6 control-label"><?= academico::t("profesor", "You are still not approved") ?></label>
         </div>
     <?php endif; ?>
-    <!--
+    
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="col-md-2">
             <a id="btn_guardarcalificacion" href="javascript:" class="btn btn-primary btn-block"> <?= Yii::t("formulario", "Save") ?> </a>
         </div>
     </div>
-    -->
+    
 </form>

@@ -1193,7 +1193,7 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord
      * @return  
      *  Consulta dal calificaciones de los estudiantes pot Docente y Priodo academico y  asignatura
      */
-    public function consultaCalificacionRegistroDocenteAllSearch($uaca_id,$paca_id,$asi_id,$pro_id,$par_id, $onlyData = false){
+    public function consultaCalificacionRegistroDocenteAllSearch($uaca_id,$paca_id,$asi_id,$pro_id,$onlyData = false){
         $con = \Yii::$app->db_academico;
         $con1 = \Yii::$app->db_asgard;;
         $estado = 1;
@@ -1214,10 +1214,7 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord
         if ($uaca_id != "" && $uaca_id > 0) {
             //$str_search .= " ecun.uaca_id =  :uaca_id AND ";
             $str_search .= " (ecun.uaca_id = :uaca_id OR ecun.uaca_id  IS NULL) AND";
-        }
-        if ($par_id != "" && $par_id > 0) {
-            $str_search .= " mppd.par_id =  :par_id AND ";
-        }   
+        }  
 
         $sql = "SELECT
                     CASE
@@ -1230,13 +1227,12 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord
                     resultado.* 
                 FROM (
                     SELECT 
-                        gest.gest_descripcion as paca_nombre,
+                        ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca_anio),'') AS paca_nombre,
                         paca.paca_id,
                         estudiante.est_id, 
                         estudiante.est_matricula,
                         concat(persona.per_pri_nombre,' ',persona.per_pri_apellido) as Nombres_completos,
                         persona.per_pri_apellido,
-                        paralelo.par_nombre,
                         clfc.pro_id,
                         ecun.uaca_id,
                         IFNULL((SELECT  clfc3.ccal_calificacion 
@@ -1327,55 +1323,44 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord
                             esquema_calificacion_asistencia.ecal_estado = 1 and 
                             esquema_calificacion_asistencia.ecal_estado_logico = 1
                          ) as asistencia_parcial_2,
-                        asignatura2.asi_descripcion as asi_nombre,
-                        asignatura2.asi_id as asi_id
+                        asignatura.asi_descripcion as asi_nombre,
+                        asignatura.asi_id as asi_id
                     FROM db_academico.estudiante estudiante
                     LEFT JOIN db_academico.cabecera_calificacion clfc ON estudiante.est_id =  clfc.est_id 
                     LEFT JOIN db_academico.esquema_calificacion_unidad ecun ON ecun.ecun_id = clfc.ecun_id
-                    INNER JOIN db_asgard_mbtu.persona persona ON persona.per_id = estudiante.per_id 
+                    INNER JOIN db_asgard.persona persona ON persona.per_id = estudiante.per_id 
                     LEFT JOIN db_academico.distributivo_academico_estudiante daca_est ON daca_est.est_id = estudiante.est_id
-                    LEFT JOIN db_academico.materias_paralelos_periodo_detalle mppd ON mppd.mppd_id = daca_est.mppd_id
-                    LEFT JOIN db_academico.paralelo paralelo ON paralelo.par_id = mppd.par_id
-                    LEFT JOIN db_academico.materias_paralelos_periodo materias_para_per ON materias_para_per.mppe_id = mppd.mppe_id
-                    LEFT JOIN db_academico.asignaturas_por_periodo asi_per ON asi_per.aspe_id = materias_para_per.aspe_id
-                    LEFT JOIN db_academico.asignatura asignatura2 ON asignatura2.asi_codigo = asi_per.aspe_codigo
+                    LEFT JOIN db_academico.distributivo_academico daca ON daca.daca_id = daca_est.daca_id
+                    LEFT JOIN db_academico.asignatura asignatura ON asignatura.asi_id = daca.asi_id
                     INNER JOIN db_academico.estudiante_carrera_programa AS ecpr ON ecpr.est_id = estudiante.est_id
                     INNER JOIN db_academico.modalidad_estudio_unidad AS meun ON meun.meun_id = ecpr.meun_id
-                    INNER JOIN db_academico.periodo_academico AS paca ON paca.paca_id = asi_per.paca_id
-                    INNER JOIN db_academico.grupo_estacion AS gest ON gest.gest_id = paca.gest_id
+                    INNER JOIN db_academico.periodo_academico AS paca ON paca.paca_id = daca.paca_id
+                    INNER JOIN db_academico.semestre_academico AS saca ON saca.saca_id = paca.saca_id
+                    INNER JOIN db_academico.bloque_academico AS baca ON baca.baca_id = paca.baca_id
                     WHERE 
                     $str_search 
                     $str_perfil_user
                     estudiante.est_activo = 1
-                    AND meun.uaca_id = asignatura2.uaca_id
+                    AND meun.uaca_id = asignatura.uaca_id
                     AND estudiante.est_estado = 1
                     AND estudiante.est_estado_logico = 1
                     AND persona.per_estado = 1
                     AND persona.per_estado_logico = 1 
                     AND daca_est.daes_estado = 1
                     AND daca_est.daes_estado_logico = 1
-                    AND mppd.mppd_estado= 1
-                    AND mppd.mppd_estado_logico = 1
-                    AND paralelo.par_estado = 1
-                    AND paralelo.par_estado_logico = 1 
-                    AND materias_para_per.mppe_estado = 1
-                    AND materias_para_per.mppe_estado_logico = 1
-                    AND asi_per.aspe_estado = 1
-                    AND asi_per.aspe_estado_logico = 1
-                    AND asignatura2.asi_estado = 1 
-                    AND asignatura2.asi_estado_logico = 1
+                    AND asignatura.asi_estado = 1 
+                    AND asignatura.asi_estado_logico = 1
                     AND paca.paca_estado = 1 AND paca.paca_estado_logico = 1
-                    AND gest.gest_estado = 1 AND gest.gest_estado_logico = 1
+                    AND saca.saca_estado = 1 AND saca.saca_estado_logico = 1
+                    AND baca.baca_estado = 1 AND baca.baca_estado_logico = 1
                     GROUP BY estudiante.est_id,
                           clfc.paca_id,
                           clfc.pro_id,
                           ecun.uaca_id,
                           clfc.asi_id,
                           clfc.paca_id,
-                          asignatura2.asi_descripcion,
-                          asignatura2.asi_id,
-                          paralelo.par_nombre,
-                          gest.gest_descripcion,paca.paca_id
+                          asignatura.asi_descripcion,
+                          asignatura.asi_id
                   ) AS resultado";
 
 
@@ -1383,34 +1368,27 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord
         $comando = $con->createCommand($sql);
            
  
-                if ( $paca_id != "" && $paca_id  > 0) {
-                    //$periodo = $arrFiltro["periodo"];
-                    $comando->bindParam(":paca_id", $paca_id , \PDO::PARAM_INT);
-                }
-          
-                if ($asi_id!= "" && $asi_id> 0) {
-                    //$materia = $arrFiltro["materia"];
-                    $comando->bindParam(":asi_id", $asi_id, \PDO::PARAM_INT);
-                }
-                
-                if ($pro_id != "" && $pro_id > 0) {
-                    //$profesor = $arrFiltro["profesor"];
-                    $comando->bindParam(":pro_id", $pro_id, \PDO::PARAM_INT);
-                }    
-                if ($uaca_id != "" && $uaca_id > 0) {
-                    //$profesor = $arrFiltro["profesor"];
-                    $comando->bindParam(":uaca_id", $uaca_id, \PDO::PARAM_INT);
-                } 
-                if ($par_id != "" && $par_id > 0) {
-                    //$profesor = $arrFiltro["profesor"];
-                    $comando->bindParam(":par_id", $par_id, \PDO::PARAM_INT);
-                }    
+        if ( $paca_id != "" && $paca_id  > 0) {
+            //$periodo = $arrFiltro["periodo"];
+            $comando->bindParam(":paca_id", $paca_id , \PDO::PARAM_INT);
+        }
+  
+        if ($asi_id!= "" && $asi_id> 0) {
+            //$materia = $arrFiltro["materia"];
+            $comando->bindParam(":asi_id", $asi_id, \PDO::PARAM_INT);
+        }
         
-       \app\models\Utilities::putMessageLogFile('consultaCalificacionRegistroDocenteAllSearch Sql: '.$sql);
-        $comando->bindParam(":estado", $estado, \PDO::PARAM_INT);
+        if ($pro_id != "" && $pro_id > 0) {
+            //$profesor = $arrFiltro["profesor"];
+            $comando->bindParam(":pro_id", $pro_id, \PDO::PARAM_INT);
+        }    
+        if ($uaca_id != "" && $uaca_id > 0) {
+            //$profesor = $arrFiltro["profesor"];
+            $comando->bindParam(":uaca_id", $uaca_id, \PDO::PARAM_INT);
+        }
 
         $resultData = $comando->queryAll();
-         \app\models\Utilities::putMessageLogFile('consultaCalificacionRegistroDocenteAllSearch: '.$comando->getRawSql());
+         // \app\models\Utilities::putMessageLogFile('consultaCalificacionRegistroDocenteAllSearch: '.$comando->getRawSql());
          $dataProvider = new ArrayDataProvider([
             'key' => 'id',
             'allModels' => $resultData,
@@ -1585,7 +1563,7 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord
                     FROM db_academico.estudiante estudiante
                     LEFT JOIN db_academico.cabecera_calificacion clfc ON estudiante.est_id =  clfc.est_id 
                     LEFT JOIN db_academico.esquema_calificacion_unidad ecun ON ecun.ecun_id = clfc.ecun_id
-                    INNER JOIN db_asgard_mbtu.persona persona ON persona.per_id = estudiante.per_id 
+                    INNER JOIN db_asgard.persona persona ON persona.per_id = estudiante.per_id 
                     LEFT JOIN db_academico.distributivo_academico_estudiante daca_est ON daca_est.est_id = estudiante.est_id
                     LEFT JOIN db_academico.materias_paralelos_periodo_detalle mppd ON mppd.mppd_id = daca_est.mppd_id
                     LEFT JOIN db_academico.paralelo paralelo ON paralelo.par_id = mppd.par_id

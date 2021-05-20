@@ -647,39 +647,6 @@ class PeriodoAcademicoMetIngreso extends  \app\modules\academico\components\CAct
     }
 
     /**
-     * Function consulta el peŕíodo académico actual
-     * @author Jorge Paladines <analista.desarrollo@uteg.edu.ec>;
-     * @param
-     * @return
-     */
-    public function consultarPeriodoAcademico($paca_id = null) {
-        $con = \Yii::$app->db_academico;
-        $estado = 1;
-        $condition = "";
-        if(isset($paca_id) && $paca_id > 0){
-            $condition .= "pera.paca_id = :id AND ";
-        }
-        $sql = "SELECT
-                   pera.paca_id as id,
-                   ifnull(CONCAT(blq.baca_anio,' (',blq.baca_nombre,'-',sem.saca_nombre,')'),sem.saca_anio) as name
-                FROM 
-                   " . $con->dbname . ".periodo_academico pera "
-                . "LEFT JOIN " . $con->dbname . ".semestre_academico sem  ON sem.saca_id = pera.saca_id "
-                . "LEFT JOIN " . $con->dbname . ".bloque_academico blq ON blq.baca_id = pera.baca_id";
-        $sql .= "  WHERE $condition pera.paca_activo = 'A' AND
-                   pera.paca_estado = :estado AND
-                   pera.paca_estado_logico = :estado";
-
-        $comando = $con->createCommand($sql);
-        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
-        if(isset($paca_id) && $paca_id > 0){
-            $comando->bindParam(":id", $paca_id, \PDO::PARAM_INT);
-        }
-        $resultData = $comando->queryAll();
-        return $resultData;
-    }
-
-    /**
      * Function consulta los periodos academicos incluso con estado inactivo, para listarestudiantespago. 
      * @author Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>;
      * @param

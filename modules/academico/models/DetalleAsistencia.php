@@ -5,7 +5,7 @@ namespace app\modules\academico\models;
 use Yii;
 
 /**
- * This is the model class for table "db_academico_mbtu.detalle_asistencia".
+ * This is the model class for table "db_academico.detalle_asistencia".
  *
  * @property int $dasi_id
  * @property int $casi_id
@@ -26,7 +26,7 @@ class DetalleAsistencia extends \yii\db\ActiveRecord
      */
     public static function tableName()
     {
-        return 'db_academico_mbtu.detalle_asistencia';
+        return 'db_academico.detalle_asistencia';
     }
 
     /**

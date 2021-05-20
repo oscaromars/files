@@ -45,12 +45,12 @@ PbGridView::widget([
         [
             'attribute' => 'Promedio Parcial I',
             'header' => academico::t("Academico", "Promedio Parcial I"),
-            'value' => 'Parcial_I',
+            'value' => 'parcial_1',
         ],
         [
             'attribute' => 'Promedio Parcial II',
             'header' => academico::t("Academico", "Promedio Parcial II"),
-            'value' => 'Parcial_II',
+            'value' => 'parcial_2',
         ],
         [
             'attribute' => 'Supletorio',

@@ -91,7 +91,7 @@ GridView::widget([
         ],
         [
             'attribute' => 'materia',
-            'header' => academico::t("Academico", "Materia"),
+            'header' => academico::t("Academico", "Asignatura"),
             'value' => 'materia',
           
         ],

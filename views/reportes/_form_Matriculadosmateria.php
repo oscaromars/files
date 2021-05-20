@@ -36,11 +36,11 @@ $var = ArrayHelper::map(app\modules\academico\models\PeriodoAcademico::find()->w
     ?>
   
     <?=
-    $form->field($model, 'paca_id')->label('Período:')->widget(Select2::classname(), [
+    $form->field($model, 'paca_id')->label('Periodo:')->widget(Select2::classname(), [
       //  'data' => ArrayHelper::map(app\modules\academico\models\PeriodoAcademico::find()->all(), 'paca_id', 'sem.saca_nombre'),
-         'data' => $var,
+        'data' => $var,
         'size' => Select2::MEDIUM,
-        'options' => ['placeholder' => 'Seleccione Distributivo ...', 'multiple' => false],
+        'options' => ['placeholder' => 'Seleccione Periodo ...', 'multiple' => false],
         'pluginOptions' => [
             'allowClear' => true,
             'width' => '295px',

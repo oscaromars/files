@@ -543,6 +543,7 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
         return $dataProvider;
     }
 
+
     public function getListadoMatriculadosporMateria($params = null, $onlyData = false, $tipo = 1) {
         $con_academico = \Yii::$app->db_academico;
         $con_db = \Yii::$app->db;

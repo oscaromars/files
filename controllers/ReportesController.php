@@ -17,6 +17,7 @@ use app\models\Reporte;
 use app\models\Empresa;
 use app\modules\academico\models\PeriodoAcademico;
 use app\modules\academico\models\PlanificacionSearch;
+use app\modules\academico\models\EstudioAcademico;
 use app\modules\financiero\models\CargaCartera;
 use app\models\ExportFile;
 use app\modules\academico\Module as academico;
@@ -404,10 +405,13 @@ class ReportesController extends CController {
 
     public function actionMatriculados() { 
         $searchModel = new PlanificacionSearch();
+        $mod_carrera = new EstudioAcademico();
+        $carrera = $mod_carrera->consultarCarrera();
         //$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $params = Yii::$app->request->queryParams;
         $dataProvider = $searchModel->getListadoMatriculados($params,false,1);
         return $this->render('matriculados', [
+            'arr_carrera' => ArrayHelper::map(array_merge([["id" => "0", "value" => "Seleccione la carrera "]], $carrera), "id", "value"),
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);       
@@ -423,7 +427,6 @@ class ReportesController extends CController {
             'dataProvider' => $dataProvider,
         ]);       
     }
-    
     
     
 }

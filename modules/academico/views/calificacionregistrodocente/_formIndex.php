@@ -50,11 +50,7 @@ Academico::registerTranslations();
                     <?= Html::dropDownList("cmb_unidad_bus", 1, $arr_ninteres,["class" => "form-control", "id" => "cmb_unidad_bus"]) ?>
             </div>
             
-            
-            <label for="cmb_paralelo_clfc" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= academico::t("Academico", "Paralelo") ?></label>
-            <div class="col-sm-3 col-xs-3 col-md-3 col-lg-3">
-                    <?= Html::dropDownList("cmb_paralelo_clfc", 0,$arr_paralelo_clcf, ["class" => "form-control", "id" => "cmb_paralelo_clfc"]) ?>
-            </div>
+        
 
         </div>
 

@@ -1969,6 +1969,19 @@ create table if not exists `curso_educativa_distributivo` (
  foreign key (daca_id) references `distributivo_academico`(daca_id)
 );
 
+-- --------------------------------------------------------
+-- 
+-- Estructura de tabla para la tabla `componente`
+-- --------------------------------------------------------
+create table if not exists `componente` (
+  `com_id` bigint(20) NOT NULL AUTO_INCREMENT primary key,
+  `com_nombre` varchar(100) NOT NULL,
+  `com_descripcion` varchar(100) NOT NULL,    
+  `com_estado` varchar(1) NOT NULL,
+  `com_fecha_creacion` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `com_fecha_modificacion` timestamp NULL DEFAULT NULL,
+  `com_estado_logico` varchar(1) NOT NULL
+);
 
 -- --------------------------------------------------------
 -- 
@@ -1982,20 +1995,6 @@ create table if not exists `actividad` (
   `act_fecha_creacion` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `act_fecha_modificacion` timestamp NULL DEFAULT NULL,
   `act_estado_logico` varchar(1) NOT NULL
-);
-
--- --------------------------------------------------------
--- 
--- Estructura de tabla para la tabla `componente`
--- --------------------------------------------------------
-create table if not exists `componente` (
-  `com_id` bigint(20) NOT NULL AUTO_INCREMENT primary key,
-  `com_nombre` varchar(100) NOT NULL,
-  `com_descripcion` varchar(100) NOT NULL,    
-  `com_estado` varchar(1) NOT NULL,
-  `com_fecha_creacion` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `com_fecha_modificacion` timestamp NULL DEFAULT NULL,
-  `com_estado_logico` varchar(1) NOT NULL
 );
 
 -- --------------------------------------------------------
@@ -2186,3 +2185,16 @@ create table if not exists `resumen_calificacion` (
   foreign key (est_id) references `estudiante`(est_id),
   foreign key (asi_id) references `asignatura`(asi_id)
 );
+
+create view componente_columna as ( 
+      select comp.com_id as id, coun.uaca_id as uaca_id,  
+             case when comp.com_id  = 1 then 0   end as 'Asíncrona', 
+             case when comp.com_id  = 2 then 0   end as 'Síncrona', 
+             case when comp.com_id  = 3 then 0   end as 'Autónoma',
+             case when comp.com_id  = 4 then 0   end as 'Evaluación', 
+             case when comp.com_id  = 5 then 0   end as 'Examen', 
+             case when comp.com_id  = 6 then 0   end as 'Trabajo_Final'
+             from db_academico.componente_unidad coun
+             INNER JOIN db_academico.componente comp ON comp.com_id = coun.com_id
+       -- WHERE coun.uaca_id = 3  
+  );

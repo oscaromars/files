@@ -449,11 +449,12 @@ class CalificacionregistrodocenteController extends \app\components\CController 
                     $per_id = $data['per_id'];
                     $ecal_id = $data['ecal_id'];
                     $asi_id = $data['asi_id'];
+                    $paca_id = $data['paca_id'];
 
                     // \app\models\Utilities::putMessageLogFile($asignatura);
                     // \app\models\Utilities::putMessageLogFile($per_id);
 
-                    $carga_archivo = $this->procesarArchivoCalificaciones($archivo_nombre, $asi_id, $per_id, $mod_asig, $ecal_id);
+                    $carga_archivo = $this->procesarArchivoCalificaciones($archivo_nombre, $asi_id, $per_id, $mod_asig, $ecal_id, $paca_id);
 
                     if ($carga_archivo['status']) {
                         \app\models\Utilities::putMessageLogFile('no estudiante controller...: ' . $carga_archivo['noalumno']);
@@ -493,7 +494,7 @@ class CalificacionregistrodocenteController extends \app\components\CController 
                 // Utilities::putMessageLogFile($pro_id);
                 $materias = (new Asignatura())->getAsignaturasBy($pro_id, NULL, $data['paca_id']);
                 // Utilities::putMessageLogFile($materias);
-                $message = array("asignaturas" => $materias, "paralelos" => $paralelos);
+                $message = array("asignaturas" => $materias);
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
             }
         }
@@ -609,7 +610,7 @@ class CalificacionregistrodocenteController extends \app\components\CController 
      * @param   
      * @return  
      */
-    public function procesarArchivoCalificaciones($fname, $asi_id, $per_id, $mod_asig, $ecal_id){
+    public function procesarArchivoCalificaciones($fname, $asi_id, $per_id, $mod_asig, $ecal_id, $paca_id){
         $file = Yii::$app->basePath . Yii::$app->params['documentFolder'] . "calificaciones/" . $fname;
         $fila = 0;
         $chk_ext = explode(".", $file);
@@ -647,7 +648,6 @@ class CalificacionregistrodocenteController extends \app\components\CController 
                 $fila = 0;
                 $tipo = -1; // O = Grado; 1 = Posgrado
 
-                $paca_id = (new PeriodoAcademico())->getPeriodoAcademicoActual()['id'];
                 $pro_id = (new Profesor())->getProfesoresxid($per_id)['Id'];
 
                 $ecun_id_posgrado = 4; // Posgrado
@@ -925,9 +925,9 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 
         $sql2 = "SELECT * FROM db_asgard.grup_rol where grol_id = " . $res['grol_id'];
         $comando = $con->createCommand($sql2);
-        $res2 = $comando->queryAll();
+        $res2 = $comando->queryOne();
 
-        if($res2[0]['gru_id'] == 6){
+        if($res2['gru_id'] == 6){
             return true;
         }
         else{

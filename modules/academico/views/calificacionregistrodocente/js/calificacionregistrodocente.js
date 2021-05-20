@@ -160,6 +160,7 @@ function cargarDocumento() {
     arrParams.asi_id = $('#cmb_asig option:selected').val();
     arrParams.ecal_id = $('#cmb_parcial option:selected').val();
     arrParams.per_id = $('#cmb_profesor option:selected').val();
+    arrParams.paca_id = $('#cmb_periodo option:selected').val();
     arrParams.archivo = $('#txth_doc_adj_calificacion2').val() + "." + $('#txth_doc_adj_calificacion').val().split('.').pop();
 
     // console.log(arrParams);

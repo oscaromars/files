@@ -60,6 +60,7 @@ $var = ArrayHelper::map(app\modules\academico\models\PeriodoAcademico::find()->w
         ],
     ]);
     ?>
+
     <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12">       
             <div class="form-group">
                 <label for="cmb_carrera" class="control-label col-sm-4"><?= Yii::t("formulario", "Carrera:") ?>  </label>

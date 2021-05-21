@@ -409,7 +409,7 @@ class ReportesController extends CController {
         $carrera = $mod_carrera->consultarCarrera();
         //$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $params = Yii::$app->request->queryParams;
-        $dataProvider = $searchModel->getListadoMatriculados($params,false,1);
+        $dataProvider = $searchModel->getListadoMatriculados($params,false,1,$arr_carrera["eaca_nombre"],$arr_carrera["id"]);
         return $this->render('matriculados', [
             'arr_carrera' => ArrayHelper::map(array_merge([["id" => "0", "value" => "Seleccione la carrera "]], $carrera), "id", "value"),
             'searchModel' => $searchModel,

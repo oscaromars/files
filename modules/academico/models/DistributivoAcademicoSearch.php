@@ -549,7 +549,7 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
         $con_db = \Yii::$app->db;
         
 
-        $sql = "select (@row_number:=@row_number + 1) AS Id, 
+        $sql = "select 
                 UPPER(CONCAT(per.per_pri_apellido,' ' ,per.per_seg_apellido,' ' ,per.per_pri_nombre,' ' ,per.per_seg_nombre)) as estudiante,
                 per.per_cedula as cedula,
                 asi.asi_descripcion as materia,

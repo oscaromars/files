@@ -1,9 +1,9 @@
 <?php
 
-use app\modules\academico\models\DistributivoAcademico;
+use app\modules\academico\models\MallaAcademica;
 use yii\helpers\Html;
 use kartik\grid\GridView;
-use app\modules\academico\Module as academico;
+use app\modules\academico\Module as academico; 
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -11,9 +11,9 @@ use app\modules\academico\Module as academico;
  * and open the template in the editor.
  */
 ?>
-<?php echo $this->render('_form_Matriculadosmateria', ['model' => $searchModel]); ?>
+<?php echo $this->render('_form_Mallas', ['model' => $searchModel]); ?>
 
-
+ 
 <?=
 
 GridView::widget([
@@ -25,7 +25,7 @@ GridView::widget([
     'striped' => false,
     'panel' => [
         'type' => 'primary',
-        'heading' => 'Reporte Matriculados por Materia'
+        'heading' => 'Reporte Mallas Academicas'
     ],
     'exportConfig' => [
         //GridView::CSV => ['label' => 'Save as CSV'],
@@ -71,53 +71,49 @@ GridView::widget([
         'target' => GridView::TARGET_BLANK,
     ],
     'columns' => [
-    	[
-            'attribute' => 'periodo',
-            'header' => academico::t("Academico", "Periodo"),
-            'value' => 'periodo',
-          
-        ],       
+       
         [
-            'attribute' => 'estudiante',
-            'header' => academico::t("Academico", "Estudiantes"),
-            'value' => 'estudiante',
+            'attribute' => 'malla',
+            'header' => academico::t("Academico", "Malla Academica"),
+            'value' => 'malla',
             'group' => false,
         ],
         [
-            'attribute' => 'cedula',
-            'header' => academico::t("Academico", "Cedula "),
-            'value' => 'cedula',
+            'attribute' => 'asignatura',
+            'header' => academico::t("Academico", "Asignatura "),
+            'value' => 'asignatura',
             'group' => false,
         ],
         [
-            'attribute' => 'materia',
-            'header' => academico::t("Academico", "Asignatura"),
-            'value' => 'materia',
+            'attribute' => 'semestre',
+            'header' => academico::t("Academico", "Semestre"),
+            'value' => 'semestre',
           
         ],
         [
-            'attribute' => 'unidad',
-            'header' => academico::t("Academico", "Unidad Academico"),
-            'value' => 'unidad',
+            'attribute' => 'credito',
+            'header' => academico::t("Academico", "Crédito"),
+            'value' => 'credito',
             'group' => false,
         ],
-        [
-            'attribute' => 'modalidad',
-            'header' => academico::t("Academico", "Modalidad"),
-            'value' => 'modalidad',
+         
+        /*[
+            'attribute' => 'unidad_estudio',
+            'header' => academico::t("Academico", "Unidad Estudio"),
+            'value' => 'unidad_estudio',
           
-        ],
+        ],*/
         [
-            'attribute' => 'n_matricula',
-            'header' => academico::t("Academico", "Matricula"),
-            'value' => 'n_matricula',
+            'attribute' => 'formacion_malla_academica',
+            'header' => academico::t("Academico", "Formacion Malla Academica"),
+            'value' => 'formacion_malla_academica',
             'group' => false, // enable grouping
         
         ],
         [
-            'attribute' => 'carrera',
-            'header' => academico::t("Academico", "Carrera"),
-            'value' => 'carrera',
+            'attribute' => 'materia_requisito',
+            'header' => academico::t("Academico", "Materia Requisito"),
+            'value' => 'materia_requisito',
           
         ],
     ],

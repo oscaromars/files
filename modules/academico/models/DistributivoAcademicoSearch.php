@@ -550,7 +550,7 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
         
 
         $sql = "select 
-                UPPER(CONCAT(per.per_pri_apellido,' ' ,per.per_seg_apellido,' ' ,per.per_pri_nombre,' ' ,per.per_seg_nombre)) as estudiante,
+                CONCAT(per.per_pri_apellido,' ' ,per.per_pri_nombre) as estudiante,
                 per.per_cedula as cedula,
                 asi.asi_descripcion as materia,
                 moda.mod_descripcion as modalidad,
@@ -565,7 +565,6 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
                 Inner Join db_academico.planificacion pla on pla.mod_id = moda.mod_id
                 Inner Join db_academico.registro_online ron on ron.per_id = pla.per_id
                 Inner Join db_academico.registro_online_item roi on roi.ron_id = ron.ron_id
-                -- Inner Join db_academico.registro_pago_matricula rpm on rpm.ron_id = ron.ron_id and rpm_estado_aprobacion = 1
                 Inner Join db_academico.planificacion_estudiante pes on pes.pes_id = ron.pes_id 
                 Inner Join db_asgard.persona per on per.per_id = pes.per_id 
                 Inner Join db_academico.estudiante est on est.per_id = per.per_id 

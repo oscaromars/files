@@ -67,7 +67,7 @@ class PlanificacionSearch extends Planificacion {
         
 
         $sql = "select  
-                UPPER(CONCAT(per.per_pri_apellido,' ' ,per.per_seg_apellido,' ' ,per.per_pri_nombre,' ' ,per.per_seg_nombre)) as estudiante,
+                CONCAT(per.per_pri_apellido,' ' ,per.per_pri_nombre) as estudiante,
                 per.per_cedula as cedula,
                 eaca.eaca_descripcion as carrera,
                 moda.mod_descripcion as modalidad,
@@ -106,6 +106,10 @@ class PlanificacionSearch extends Planificacion {
                 if ($this->pla_id) {
                     $sql = $sql . " and pla.pla_id =" . $this->pla_id;
                 }
+
+                if (isset($eaca_id)) {
+                $comando->bindParam(':eaca_id', $eaca_id, \PDO::PARAM_INT);
+            	}
             } 
         }
         if ($tipo == 2) {
@@ -117,10 +121,14 @@ class PlanificacionSearch extends Planificacion {
             if ($params['pla_id']) {
                 $sql = $sql . " and pla.pla_id =" . $params['pla_id'];
             }
+            if (isset($eaca_id)) {
+                $comando->bindParam(':eaca_id', $eaca_id, \PDO::PARAM_INT);
+            }
 
         }
         Utilities::putMessageLogFile('sql:' . $sql);
         $comando = $con_academico->createCommand($sql);
+        $comando->bindParam(":eaca_id", $eaca_id, \PDO::PARAM_INT);
         $res = $comando->queryAll();
 
         if ($onlyData)

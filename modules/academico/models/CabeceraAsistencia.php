@@ -272,7 +272,6 @@ class CabeceraAsistencia extends \yii\db\ActiveRecord
                          ,data.matricula
                          ,data.nombre
                          ,data.materia
-                         ,data.par_nombre
                          ,sum(data.u1) as u1
                          ,sum(data.u2) as u2
                          ,sum(data.u3) as u3
@@ -286,14 +285,20 @@ class CabeceraAsistencia extends \yii\db\ActiveRecord
                         ,est.est_matricula as matricula
                         ,concat(per.per_pri_nombre,' ',per.per_pri_apellido) as nombre
                         ,coalesce(casi.casi_id,0) as casi_id
-                        ,(SELECT gest.gest_descripcion 
-                            FROM " . $con->dbname . ".periodo_academico spaca,
-                                 " . $con->dbname . ".grupo_estacion gest
-                           WHERE spaca.gest_id = gest.gest_id
-                             AND spaca.paca_id = daca.paca_id) as periodo
+                        ,(SELECT ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca_anio),'') AS value
+                            FROM " . $con->dbname . ".semestre_academico AS saca
+                            INNER JOIN " . $con->dbname . ".periodo_academico AS paca ON saca.saca_id = paca.saca_id
+                            INNER JOIN " . $con->dbname . ".bloque_academico AS baca ON baca.baca_id = paca.baca_id
+                            WHERE
+                            paca_id = :paca_id AND
+                            paca.paca_activo = 'A' AND
+                            paca.paca_estado = 1 AND
+                            paca.paca_estado_logico = 1 AND
+                            saca.saca_estado = 1 AND
+                            saca.saca_estado_logico = 1 AND
+                            baca.baca_estado = 1 AND
+                            baca.baca_estado_logico = 1) as periodo
                         ,(SELECT asi.asi_descripcion FROM " . $con->dbname . ".asignatura asi WHERE asi.asi_id = daca.asi_id) as materia
-                        ,mppd.par_id
-                        ,(SELECT par.par_nombre FROM " . $con->dbname . ".paralelo par WHERE par.par_id = mppd.par_id) as paralelo
                         ,daca.paca_id as paca_id
                         ,daca.asi_id  as asi_id
                         ,daca.pro_id  as pro_id
@@ -314,14 +319,9 @@ class CabeceraAsistencia extends \yii\db\ActiveRecord
                             where dasi.casi_id = casi.casi_id
                             and ecun.ecal_id = 2
                             and dasi.dasi_tipo = 'u4') as u4
-                        ,paralelo.par_nombre
                    FROM " . $con->dbname . ".distributivo_academico daca
-             INNER JOIN " . $con->dbname . ".materias_paralelos_periodo_detalle mppd ON mppd.mppd_id = daca.mppd_id
-              LEFT JOIN " . $con->dbname . ".materias_paralelos_periodo mppe         ON mppe.mppe_id = mppd.mppd_id
-             INNER JOIN " . $con->dbname . ".distributivo_academico_estudiante daes  ON daes.mppd_id = mppd.mppd_id
-             INNER JOIN " . $con->dbname . ".paralelo paralelo                       ON  paralelo.par_id = mppd.par_id
-              LEFT JOIN " . $con->dbname . ".estudiante est                          
-                     ON est.est_id   = daes.est_id
+             INNER JOIN " . $con->dbname . ".distributivo_academico_estudiante daes  ON daes.daca_id = daca.daca_id
+              LEFT JOIN " . $con->dbname . ".estudiante est                          ON est.est_id = daes.est_id
                     AND est.est_estado = :estado
                     AND est.est_estado_logico = :estado
              INNER JOIN " . $con1->dbname. ".persona per                             ON per.per_id   = est.per_id
@@ -332,9 +332,6 @@ class CabeceraAsistencia extends \yii\db\ActiveRecord
                     AND casi.paca_id = daca.paca_id
                     AND casi.casi_estado = :estado
                     AND casi.casi_estado_logico = :estado
-                   #AND casi.aeun_id = 1
-                  /*AND casi.ecun_id = (SELECT ecun_id FROM " . $con->dbname . "esquema_calificacion_unidad 
-                                         WHERE ecal_id = 2 and uaca_id = '1')*/
               LEFT JOIN " . $con->dbname . ".asistencia_esquema_unidad aeun   ON aeun.aeun_id = casi.aeun_id
               LEFT JOIN " . $con->dbname . ".esquema_calificacion_unidad ecun ON ecun.ecun_id = aeun.ecun_id 
               LEFT JOIN " . $con->dbname . ".asignatura asi                   ON asi.asi_id = daca.asi_id
@@ -343,7 +340,7 @@ class CabeceraAsistencia extends \yii\db\ActiveRecord
             ,(SELECT @row_number:=0) AS t
            WHERE 1=1 
                  $str_search  
-        group by par_nombre, matricula, nombre, est_id, pro_id, materia, asi_id
+        group by matricula, nombre, est_id, pro_id, materia, asi_id
          ORDER BY nombre ASC
         ";
 

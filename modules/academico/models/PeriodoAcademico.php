@@ -218,7 +218,7 @@ class PeriodoAcademico extends \yii\db\ActiveRecord
 
     /**
      * Mostrará un solo período académico basado en el id, con el nombre del Grupo Estación
-     * @author Jorge Paladines
+     * @author Jorge Paladines <analista.desarrollo@uteg.edu.ec>;
      * @param
      * @return
      */
@@ -259,7 +259,7 @@ class PeriodoAcademico extends \yii\db\ActiveRecord
 
      /**
      * Función para modularizar las siguientes 2 funciones. Si se le da el parámetro $per_id, usa WHERE. Si no, no.
-     * @author Jorge Paladines
+     * @author Jorge Paladines <analista.desarrollo@uteg.edu.ec>;
      * @param
      * @return
      */
@@ -296,5 +296,51 @@ class PeriodoAcademico extends \yii\db\ActiveRecord
         }
 
         return $sql;
+    }
+
+    /**
+     * Function consulta el parcial segun unidad academica. 
+     * @author Givanni Vergara <analistadesarrollo02@uteg.edu.ec>;
+     * @param
+     * @return
+     */
+    public function getParcialUnidad($uaca_id) {
+        $con = \Yii::$app->db_academico;
+        $estado = 1;        
+        $sql = " SELECT ecun.ecal_id as id, 
+                        esc.ecal_nombre as name                        
+                   FROM " . $con->dbname . ".esquema_calificacion_unidad ecun
+             INNER JOIN " . $con->dbname . ".esquema_calificacion esc  ON esc.ecal_id = ecun.ecal_id                     
+                  WHERE ecun.uaca_id = :uaca_id AND
+                        ecun.ecun_estado = :estado AND
+                        ecun.ecun_estado_logico = :estado";
+
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $comando->bindParam(":uaca_id", $uaca_id, \PDO::PARAM_INT);        
+        $resultData = $comando->queryAll();
+        return $resultData;
+    }
+
+    /**
+     * Retorna todos los parciales
+     * @author Jorge Paladines <analista.desarrollo@uteg.edu.ec>;
+     * @param
+     * @return
+     */
+    public function getTodosParciales() {
+        $con = \Yii::$app->db_academico;
+        $estado = 1;        
+        $sql = "SELECT DISTINCT ecun.ecal_id as id, 
+                        esc.ecal_nombre as name                        
+                FROM " . $con->dbname . ".esquema_calificacion_unidad ecun
+                INNER JOIN " . $con->dbname . ".esquema_calificacion esc  ON esc.ecal_id = ecun.ecal_id                     
+                WHERE ecun.ecun_estado = :estado AND
+                      ecun.ecun_estado_logico = :estado";
+
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);       
+        $resultData = $comando->queryAll();
+        return $resultData;
     }
 }

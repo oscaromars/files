@@ -45,7 +45,10 @@ class PlanificacionController extends \app\components\CController {
         ];
     }
 
-    public function actionIndex() {
+    
+      
+  
+   public function actionIndex() {
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->get();
             $pla_periodo_academico = $data['pla_periodo_academico'];
@@ -103,13 +106,14 @@ class PlanificacionController extends \app\components\CController {
     }
 
 
-
-
     public function actionGenerator($periodo,$modalidad) {
     
      
-    
+      $hasplanning = Planificacion::getVerifypla($periodo, $modalidad);
 
+      if ($hasplanning["issaved"] ==Null)  {
+
+        
 $mensaje = "periodo ".$periodo." modalidad ".$modalidad;
 mail('oscaromars@hotmail.com', 'Mi título', $mensaje);
 
@@ -125,7 +129,7 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
    inner join db_academico.unidad_academica u on u.uaca_id = meu.uaca_id
    inner join db_academico.estudio_academico ea on ea.eaca_id = meu.eaca_id 
    inner join db_asgard.persona per on per.per_id = e.per_id
-   where e.per_id not in (select e.per_id from db_academico.planificacion_estudiante b where b.pes_estado=0) -- get full estudent with 0
+   where e.per_id not in (select e.per_id from db_academico.planificacion_estudiantex b where b.pes_estado=0) -- get full estudent with 0
                     and meu.mod_id = :modalidad
                     and e.est_estado = 1
                     and e.est_estado_logico = 1
@@ -168,7 +172,48 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
              //          ]);
 
          return $this->redirect(['index']);
+
+           }
+             return $this->redirect(['index']);
      }
+
+  public function actionDescargarples()  {    
+      
+        ini_set('memory_limit', '256M');
+        $content_type = Utilities::mimeContentType('xls');
+        $nombarch = 'Report-' . date('YmdHis') . '.xls';
+        header("Content-Type: $content_type");
+        header('Content-Disposition: attachment;filename=' . $nombarch);
+        header('Cache-Control: max-age=0');
+        $colPosition = array('C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K',);
+        $arrHeader = array(
+            Yii::t('formulario', 'DNI 1'),
+            Yii::t('formulario', 'Student'),
+            Yii::t('crm', 'Carrera'),
+            Yii::t('formulario', 'Period'),
+        );
+        $mod_periodo = new PlanificacionEstudiante();
+        $data = Yii::$app->request->get();
+        $pla_id = $data['pla_id'];
+         \app\models\Utilities::putMessageLogFile('dater'.$pla_id);
+       // $arrSearch['estudiante'] = $data['estudiante'];
+        //$arrSearch['unidad'] = $data['unidad'];
+        //$arrSearch['modalidad'] = $data['modalidad'];
+        //$arrSearch['carrera'] = $data['carrera'];
+        //$arrSearch['periodo'] = $data['periodo'];
+        $arrData = array();
+        //if (empty($arrSearch)) {
+            $arrData = $mod_periodo->consultarEstudianteplanificapesold($pla_id, true);
+             //$arrData = $mod_periodo->consultarEstudianteplanificapes($pla_id);
+        //} else {
+         //   $arrData = $mod_periodo->consultarEstudianteplanifica($arrSearch, true);
+        //}
+        $nameReport = academico::t('Academico', 'Lista de Planificación por Estudiante');
+        Utilities::generarReporteXLS($nombarch, $nameReport, $arrHeader, $arrData, $colPosition);
+        exit;
+         
+        
+    }
 
 
 

@@ -864,8 +864,15 @@ function fillDataAlert() {
 }
 
 
+
 function generate() {
     var periodo = $('#cmb_per_academico option:selected').val();
     var modalidad = $('#cmb_modalidad option:selected').val();
-    window.location.href = $('#txth_base').val() + "/academico/planificacionnew/generator?periodo=" + periodo + '&modalidad=' + modalidad;
+    window.location.href = $('#txth_base').val() + "/academico/planificacion/generator?periodo=" + periodo + '&modalidad=' + modalidad;
+}
+
+
+function descargarPlanificacionestu(pla_id) {
+    /* console.log("Entra a descargar", pla_id); */
+    window.location.href = $('#txth_base').val() + "/academico/planificacion/descargarples?pla_id=" + pla_id;
 }

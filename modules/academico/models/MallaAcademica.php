@@ -458,25 +458,31 @@ inner join db_academico.modalidad_estudio_unidad c on c.meun_id = b.meun_id
                 
                 
                   if ($statusasi=1 and $statuspre != 1)
-                  { 
-                if ($i == 0) 
+                   { 
+                if ($i == 0)  { 
                     $asi1 = $rows_in[$i]["made_codigo_asignatura"];
-                elseif ($i == 1) 
+                     $noasi1 = $rows_in[$i]["asi_nombre"];      }  
+                elseif ($i == 1)  { 
                     $asi2 = $rows_in[$i]["made_codigo_asignatura"];
-                elseif ($i == 2) 
-                    $asi3 = $rows_in[$i]["made_codigo_asignatura"];    
-                elseif ($i == 3) 
-                    $asi4 = $rows_in[$i]["made_codigo_asignatura"];   
-                elseif ($i == 4) 
-                    $asi5 = $rows_in[$i]["made_codigo_asignatura"];  
-                elseif ($i == 5) 
+                     $noasi2 = $rows_in[$i]["asi_nombre"];       }                    
+                elseif ($i == 2)  { 
+                    $asi3 = $rows_in[$i]["made_codigo_asignatura"];  
+                     $noasi3 = $rows_in[$i]["asi_nombre"];     }  
+                elseif ($i == 3)  { 
+                    $asi4 = $rows_in[$i]["made_codigo_asignatura"]; 
+                     $noasi4 = $rows_in[$i]["asi_nombre"];     }  
+                elseif ($i == 4)  { 
+                    $asi5 = $rows_in[$i]["made_codigo_asignatura"]; 
+                     $noasi5 = $rows_in[$i]["asi_nombre"];     }  
+                elseif ($i == 5)  { 
                     $asi6 = $rows_in[$i]["made_codigo_asignatura"];  
+                     $noasi6 = $rows_in[$i]["asi_nombre"];     }  
                       }  
                       
                      
                       
           }
-                      $sql = "select pla_id from db_academico.planificacion 
+                      $sql = "select pla_id from db_academico.planificacionx 
                       where mod_id = " . $mod_id . " 
                       and pla_estado = 1 and pla_estado_logico = 1;";  
                 
@@ -485,27 +491,31 @@ inner join db_academico.modalidad_estudio_unidad c on c.meun_id = b.meun_id
                      
                      $estado=1;
                      
-                                 if (count($rows_pla) == 0 ) {
+                                // if (count($rows_pla) == 0 ) {
+                                      if ($rows_pla["pla_id"] ==0)  {
                 
-                $sql = "INSERT INTO db_academico.planificacion (mod_id, per_id, pla_fecha_inicio, pla_fecha_fin, pla_periodo_academico, pla_estado, pla_estado_logico)
+                $sql = "INSERT INTO db_academico.planificacionx (mod_id, per_id, pla_fecha_inicio, pla_fecha_fin, pla_periodo_academico, pla_estado, pla_estado_logico)
                         VALUES (". $rows["mod_id"] .", 1, '" . $fecha_inicio . "', '" . $fecha_fin . "', '" . $estacion . "', '" . $estado . "', '" . $estado . "');";
                  $comando = $con->createCommand($sql); 
                      $rows_pla = $comando->execute();
               
-                $sql = "select pla_id from db_academico.planificacion where mod_id = " . $mod_id . " and pla_estado = 1 and pla_estado_logico = 1;";
+                $sql = "select pla_id from db_academico.planificacionx where mod_id = " . $mod_id . " and pla_estado = 1 and pla_estado_logico = 1;";
                   $comando = $con->createCommand($sql);
                    $rows_pla = $comando->queryOne();
-            } 
-            
-             $sql = "INSERT INTO db_academico.planificacion_estudiante
-                    (pla_id, per_id, pes_jornada, pes_carrera, pes_dni, pes_nombres, pes_mat_b1_h1_nombre, pes_mat_b1_h2_nombre, pes_mat_b1_h3_nombre, pes_mat_b1_h4_nombre, pes_mat_b1_h5_nombre,
+
+
+                       $sql = "INSERT INTO db_academico.planificacion_estudiantex
+                    (pla_id, per_id, pes_jornada, pes_carrera, pes_dni, pes_nombres,pes_mat_b1_h1_cod, pes_mat_b1_h2_cod, pes_mat_b1_h3_cod, pes_mat_b1_h4_cod, pes_mat_b1_h5_cod,
+                     pes_mat_b1_h6_cod, pes_mat_b1_h1_nombre, pes_mat_b1_h2_nombre, pes_mat_b1_h3_nombre, pes_mat_b1_h4_nombre, pes_mat_b1_h5_nombre,
                      pes_mat_b1_h6_nombre, pes_estado, pes_estado_logico)
-                    values (" . $rows_pla["pla_id"] ."," . $rows["per_id"] . ", '" . $rows["uaca_id"] . "', '" . $rows["eaca_nombre"] . "', '" . $rows["per_cedula"] . "', '" . $rows["estudiante"] . "', '" . $asi1 . "', '" . $asi2 . "', '" . $asi3 . "', '" . $asi4 . "', '" . $asi5 . "', '" . $asi6 . "', '" . $estado . "', '" . $estado ."')"; 
+                    values (" . $rows_pla["pla_id"] ."," . $rows["per_id"] . ", '" . $rows["uaca_id"] . "', '" . $rows["eaca_nombre"] . "', '" . $rows["per_cedula"] . "', '" . $rows["estudiante"] . "', '" . $asi1 . "', '" . $asi2 . "', '" . $asi3 . "', '" . $asi4 . "', '" . $asi5 . "', '" . $asi6 . "', '" . $noasi1 . "', '" . $noasi2 . "', '" . $noasi3 . "', '" . $noasi4 . "', '" . $noasi5 . "', '" . $noasi6 . "', '" . $estado . "', '" . $estado ."')"; 
                      $comando = $con->createCommand($sql);
                      $rows_pes = $comando->execute();
                      
                      
-                
+                     
+                     
+                  } 
                   }
          
         

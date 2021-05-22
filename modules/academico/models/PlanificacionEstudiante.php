@@ -1051,5 +1051,104 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
         $resultData = $comando->queryOne();
         return $resultData;
     }
+
+
+     public function consultarEstudianteplanificapesold($pla_id, $onlyData = false) {
+        $con = \Yii::$app->db_academico;
+        $con1 = \Yii::$app->db_asgard;
+        $estado = 1;
+       // if (isset($arrFiltro) && count($arrFiltro) > 0) {
+           // $str_search .= "(pers.per_pri_nombre like :estudiante OR ";
+           // $str_search .= "pers.per_seg_nombre like :estudiante OR ";
+           // $str_search .= "pers.per_pri_apellido like :estudiante OR ";
+           // $str_search .= "pers.per_seg_nombre like :estudiante OR ";
+           // $str_search .= "pers.per_cedula like :estudiante)  AND ";
+
+           // if ($arrFiltro['modalidad'] > 0) {
+            //    $str_search .= " plan.mod_id = :modalidad AND ";
+            //}
+
+           // if ($arrFiltro['carrera'] != 'Todas') {
+            //    $str_search .= " plae.pes_carrera like :carrera AND ";
+            //}
+
+            if ($pla_id != '0') {
+                $str_search .= " plae.pla_id = :pla_id  AND ";
+            }
+       // }
+       // if ($onlyData == false) {
+        //    $idplanifica = 'plae.pla_id, ';
+        //    $idper = 'plae.per_id, ';
+        //}
+        $sql = "SELECT 
+                     pers.per_cedula,
+                    plae.pes_nombres,
+                    plae.pes_carrera,
+                    plan.pla_periodo_academico,
+                    plae.pes_mat_b1_h1_nombre,
+                    plae.pes_mat_b1_h2_nombre,
+                    plae.pes_mat_b1_h3_nombre,
+                    plae.pes_mat_b1_h4_nombre,
+                    plae.pes_mat_b1_h5_nombre,
+                    plae.pes_mat_b1_h6_nombre
+                FROM " . $con->dbname . ".planificacion_estudiantex plae
+                LEFT JOIN " . $con->dbname . ".planificacionx plan ON plan.pla_id = plae.pla_id
+                -- INNER JOIN " . $con1->dbname . ".persona pers ON pers.per_id = plae.per_id
+                WHERE 
+                    $str_search
+                    plae.pes_estado = :estado AND
+                    plae.pes_estado_logico = :estado
+                    -- AND
+                    -- plan.pla_estado = :estado AND
+                    -- plan.pla_estado_logico = :estado 
+                    -- AND
+                    -- pers.per_estado = :estado AND
+                    -- pers.per_estado_logico = :estado
+                    ";
+                    
+         
+
+
+
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        // if (isset($arrFiltro) && count($arrFiltro) > 0) {
+          //  $search_cond = "%" . $arrFiltro["estudiante"] . "%";
+           // $comando->bindParam(":estudiante", $search_cond, \PDO::PARAM_STR);
+            
+           // if ($arrFiltro['modalidad'] > 0) {
+           //     $modalidad = $arrFiltro["modalidad"];
+          //      $comando->bindParam(":modalidad", $modalidad, \PDO::PARAM_INT);
+          //  }
+
+           // if ($arrFiltro['carrera'] != 'Todas') {
+           //     $search_carrera = "%" . $arrFiltro["carrera"] . "%";
+           //     $comando->bindParam(":carrera", $search_carrera, \PDO::PARAM_STR);
+           // }
+
+            if ($pla_id != '0') {
+              //  $periodo = $arrFiltro["pla_id "];
+                $comando->bindParam(":pla_id", $pla_id, \PDO::PARAM_INT);
+            }
+        // }
+
+        $resultData = $comando->queryAll();
+        $dataProvider = new ArrayDataProvider([
+            'key' => 'id',
+            'allModels' => $resultData,
+            'pagination' => [
+                'pageSize' => Yii::$app->params["pageSize"],
+            ],
+            'sort' => [
+                'attributes' => [
+                ],
+            ],
+        ]);
+        if ($onlyData) {
+            return $resultData;
+        } else {
+            return $dataProvider;
+        }
+    }
 }
 

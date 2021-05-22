@@ -190,7 +190,12 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
             Yii::t('formulario', 'DNI 1'),
             Yii::t('formulario', 'Student'),
             Yii::t('crm', 'Carrera'),
-            Yii::t('formulario', 'Period'),
+            Yii::t('formulario', 'Asignatura 1'),
+            Yii::t('formulario', 'Asignatura 2'),
+            Yii::t('formulario', 'Asignatura 3'),
+            Yii::t('formulario', 'Asignatura 4'),
+            Yii::t('formulario', 'Asignatura 5'),
+            Yii::t('formulario', 'Asignatura 6'),
         );
         $mod_periodo = new PlanificacionEstudiante();
         $data = Yii::$app->request->get();

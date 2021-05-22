@@ -453,11 +453,12 @@ inner join db_academico.modalidad_estudio_unidad c on c.meun_id = b.meun_id
                      
                      
                    // DATOS TEMPORALES
-                   //$statusasi=1;
-                   //$statuspre= 0;
+                   $statusasi=3;
+                   $statuspre= 1;
                 
                 
-                  if ($statusasi=1 and $statuspre != 1)
+           // if ($statuspre["enac_estado"]==1 and $statusasi["enac_estado"]==3 )
+                      if ($statusasi ==3 and $statuspre == 1)
                    { 
                 if ($i == 0)  { 
                     $asi1 = $rows_in[$i]["made_codigo_asignatura"];
@@ -484,10 +485,12 @@ inner join db_academico.modalidad_estudio_unidad c on c.meun_id = b.meun_id
           }
                       $sql = "select pla_id from db_academico.planificacionx 
                       where mod_id = " . $mod_id . " 
-                      and pla_estado = 1 and pla_estado_logico = 1;";  
+                      and pla_estado = 1 and pla_estado_logico = 1 and pla_periodo_academico = :periodo";  
                 
                    $comando = $con->createCommand($sql);
+                    $comando->bindParam(":periodo", $estacion, \PDO::PARAM_STR);
                      $rows_pla = $comando->queryOne();
+                     
                      
                      $estado=1;
                      
@@ -499,10 +502,10 @@ inner join db_academico.modalidad_estudio_unidad c on c.meun_id = b.meun_id
                  $comando = $con->createCommand($sql); 
                      $rows_pla = $comando->execute();
               
-                $sql = "select pla_id from db_academico.planificacionx where mod_id = " . $mod_id . " and pla_estado = 1 and pla_estado_logico = 1;";
+                 $sql = "select pla_id from db_academico.planificacionx where mod_id = " . $mod_id . " and pla_estado = 1 and pla_estado_logico = 1 and pla_periodo_academico = :periodo ";
                   $comando = $con->createCommand($sql);
+                   $comando->bindParam(":periodo", $estacion, \PDO::PARAM_STR);
                    $rows_pla = $comando->queryOne();
-
 
                        $sql = "INSERT INTO db_academico.planificacion_estudiantex
                     (pla_id, per_id, pes_jornada, pes_carrera, pes_dni, pes_nombres,pes_mat_b1_h1_cod, pes_mat_b1_h2_cod, pes_mat_b1_h3_cod, pes_mat_b1_h4_cod, pes_mat_b1_h5_cod,

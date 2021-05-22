@@ -866,10 +866,21 @@ function fillDataAlert() {
 
 
 function generate() {
+     var haspla = $('#frm_hasplanning').val(); 
     var periodo = $('#cmb_per_academico option:selected').val();
     var modalidad = $('#cmb_modalidad option:selected').val();
-    window.location.href = $('#txth_base').val() + "/academico/planificacion/generator?periodo=" + periodo + '&modalidad=' + modalidad;
+
+    if (haspla = 1) {
+ 
+ showAlert('NO_OK', 'error','wtmessage'); 
+  
+} else {
+     showLoadingPopup();
+    window.location.href = $('#txth_base').val() + "/academico/planificacion/generator?periodo=" + periodo + '&modalidad=' + modalidad + '&haspla=' + haspla;
 }
+}
+
+
 
 
 function descargarPlanificacionestu(pla_id) {

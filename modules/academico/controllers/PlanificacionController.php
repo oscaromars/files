@@ -53,6 +53,7 @@ class PlanificacionController extends \app\components\CController {
             $data = Yii::$app->request->get();
             $pla_periodo_academico = $data['pla_periodo_academico'];
             $mod_id = $data['mod_id'];
+            $hasplanning = Planificacion::getVerifypla($pla_periodo_academico, $mod_id);
             $dataPlanificaciones = Planificacion::getAllPlanificacionesGrid($search, $pla_periodo_academico, $mod_id);
             $dataProvider = new ArrayDataProvider([
                 'key' => 'pla_id',
@@ -64,9 +65,20 @@ class PlanificacionController extends \app\components\CController {
                     'attributes' => ['PeriodoAcademico'],
                 ],
             ]);
-            return $this->renderPartial('index-grid', [
+
+             if ($hasplanning["issaved"] ==Null)  {
+            return $this->renderPartial('indexa-grid', [
                         'model' => $dataProvider,
+                        
             ]);
+
+              }else {
+              
+               return $this->renderAjax('index-grid', [
+                        'model' => $dataProvider,
+                        
+             ]);      
+              }
             /*   }
              */
         }

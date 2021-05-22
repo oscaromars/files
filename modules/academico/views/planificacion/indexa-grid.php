@@ -5,6 +5,9 @@ use yii\helpers\Url;
 use app\widgets\PbGridView\PbGridView;
 use app\models\Utilities;
 use app\models\ObjetoModulo;
+use app\widgets\PbSearchBox\PbSearchBox;
+use yii\data\ArrayDataProvider;
+use yii\helpers\ArrayHelper;
 ?>
 
 <?=
@@ -35,12 +38,11 @@ use app\models\ObjetoModulo;
                 'template' => '{download} {approve} {deny}',
                 'buttons' => [
                     'download' => function ($url, $model) {
-                        return Html::a('<span style="margin-left: 2px;margin-right: 2px;" class="glyphicon glyphicon-download"></span>', null, ["data-toggle" => "tooltip", "title" => "Descargar", "onclick" => "descargarPlanificacion('" . $model['id'] . "')"]);
+                        return Html::a('<span style="margin-left: 2px;margin-right: 2px;" class="glyphicon glyphicon-download"></span>', null, ["data-toggle" => "tooltip", "title" => "Descargar", "onclick" => "descargarPlanificacionestu('" . $model['id'] . "')"]);
                     },
                 ],
             ],
         ],
     ])
 ?>
-
-<input type="hidden" id="frm_hasplanning" value="1">
+<input type="hidden" id="frm_hasplanning" value="0">

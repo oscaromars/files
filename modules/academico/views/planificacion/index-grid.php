@@ -43,4 +43,3 @@ use app\models\ObjetoModulo;
     ])
 ?>
 
-<input type="hidden" id="frm_hasplanning" value="1">

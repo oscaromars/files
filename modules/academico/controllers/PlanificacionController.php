@@ -66,19 +66,19 @@ class PlanificacionController extends \app\components\CController {
                 ],
             ]);
 
-             if ($hasplanning["issaved"] ==Null)  {
-            return $this->renderPartial('indexa-grid', [
+          //   if ($hasplanning["issaved"] ==Null)  {
+            return $this->renderPartial('index-grid', [
                         'model' => $dataProvider,
                         
             ]);
 
-              }else {
+            //  }else {
               
-               return $this->renderAjax('index-grid', [
-                        'model' => $dataProvider,
+          //     return $this->renderPartial('indexa-grid', [
+            //            'model' => $dataProvider,
                         
-             ]);      
-              }
+         //    ]);      
+           //   }
             /*   }
              */
         }

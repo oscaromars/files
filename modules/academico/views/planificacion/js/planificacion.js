@@ -870,9 +870,11 @@ function generate() {
     var periodo = $('#cmb_per_academico option:selected').val();
     var modalidad = $('#cmb_modalidad option:selected').val();
 
-    if (haspla = 1) {
+    if (haspla) {
  
- showAlert('NO_OK', 'error','wtmessage'); 
+  // showAlert('NO_OK', 'error','wtmessage'); 
+  showAlert('NO_OK', 'error', {"wtmessage": 'Ya existe una planificacion activa para la modalidad elegida', "title": 'Información'});
+
   
 } else {
      showLoadingPopup();

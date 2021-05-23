@@ -1081,7 +1081,7 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
         //    $idper = 'plae.per_id, ';
         //}
         $sql = "SELECT 
-                     pers.per_cedula,
+                    --  pers.per_cedula,
                     plae.pes_nombres,
                     plae.pes_carrera,
                     plan.pla_periodo_academico,

@@ -1072,7 +1072,7 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
             //    $str_search .= " plae.pes_carrera like :carrera AND ";
             //}
 
-            if ($pla_id != '0') {
+            if ($pla_id != 0) {
                 $str_search .= " plae.pla_id = :pla_id  AND ";
             }
        // }
@@ -1095,7 +1095,7 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
                 LEFT JOIN " . $con->dbname . ".planificacionx plan ON plan.pla_id = plae.pla_id
                 INNER JOIN " . $con1->dbname . ".persona pers ON pers.per_id = plae.per_id
                 WHERE 
-                    -- $str_search
+                     $str_search
                     plae.pes_estado = :estado AND
                     plae.pes_estado_logico = :estado
                     -- AND
@@ -1126,7 +1126,7 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
            //     $comando->bindParam(":carrera", $search_carrera, \PDO::PARAM_STR);
            // }
 
-            if ($pla_id != '0') {
+            if ($pla_id != 0) {
               //  $periodo = $arrFiltro["pla_id "];
                 $comando->bindParam(":pla_id", $pla_id, \PDO::PARAM_INT);
             }

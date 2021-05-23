@@ -1081,7 +1081,7 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
         //    $idper = 'plae.per_id, ';
         //}
         $sql = "SELECT 
-                    --  pers.per_cedula,
+                    pers.per_cedula,
                     plae.pes_nombres,
                     plae.pes_carrera,
                     plan.pla_periodo_academico,
@@ -1093,9 +1093,9 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
                     plae.pes_mat_b1_h6_nombre
                 FROM " . $con->dbname . ".planificacion_estudiantex plae
                 LEFT JOIN " . $con->dbname . ".planificacionx plan ON plan.pla_id = plae.pla_id
-                -- INNER JOIN " . $con1->dbname . ".persona pers ON pers.per_id = plae.per_id
+                INNER JOIN " . $con1->dbname . ".persona pers ON pers.per_id = plae.per_id
                 WHERE 
-                    $str_search
+                    -- $str_search
                     plae.pes_estado = :estado AND
                     plae.pes_estado_logico = :estado
                     -- AND

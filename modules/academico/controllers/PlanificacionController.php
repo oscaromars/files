@@ -197,11 +197,12 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
         header("Content-Type: $content_type");
         header('Content-Disposition: attachment;filename=' . $nombarch);
         header('Cache-Control: max-age=0');
-        $colPosition = array('C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K',);
+        $colPosition = array('C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K','L',);
         $arrHeader = array(
-            Yii::t('formulario', 'DNI 1'),
+             Yii::t('formulario', 'DNI 1'),
             Yii::t('formulario', 'Student'),
             Yii::t('crm', 'Carrera'),
+             Yii::t('formulario', 'Period'),
             Yii::t('formulario', 'Asignatura 1'),
             Yii::t('formulario', 'Asignatura 2'),
             Yii::t('formulario', 'Asignatura 3'),

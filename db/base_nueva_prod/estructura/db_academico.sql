@@ -2005,6 +2005,7 @@ create table if not exists `componente_unidad` (
   `cuni_id` bigint(20) NOT NULL AUTO_INCREMENT primary key,
   `com_id` bigint(20) NOT NULL,
   `uaca_id` bigint(20) NOT NULL,  
+  `mod_id` bigint(20) NOT NULL,  
   `cuni_calificacion` double NOT NULL,  
   `cuni_estado` varchar(1) NOT NULL,
   `cuni_fecha_creacion` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,

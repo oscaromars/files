@@ -337,6 +337,7 @@ class MallaAcademica extends \yii\db\ActiveRecord
 
      
     
+      
     function consultarAsignaturas($rows,$gest) {
     $con = \Yii::$app->db_academico;
     $activo="A";
@@ -426,13 +427,13 @@ inner join db_academico.modalidad_estudio_unidad c on c.meun_id = b.meun_id
                    
                           
                  
-                     \app\models\Utilities::putMessageLogFile('automa statusasi '.$statusasi["enac_id"]);
+                 //    \app\models\Utilities::putMessageLogFile('automa statusasi '.$statusasi["enac_id"]);
               
-                     \app\models\Utilities::putMessageLogFile('automa asiasi '.$statusasi["asi_id"]);
+                   //  \app\models\Utilities::putMessageLogFile('automa asiasi '.$statusasi["asi_id"]);
                  
-                     \app\models\Utilities::putMessageLogFile('automa maessasi '.$statusasi["maes_id"]);
+                   //  \app\models\Utilities::putMessageLogFile('automa maessasi '.$statusasi["maes_id"]);
                     
-                     \app\models\Utilities::putMessageLogFile('automa fullasi '.$statusasi);
+                   //  \app\models\Utilities::putMessageLogFile('automa fullasi '.$statusasi);
                      
                  
                  
@@ -461,13 +462,13 @@ inner join db_academico.modalidad_estudio_unidad c on c.meun_id = b.meun_id
                      $statuspre = $comando->queryOne();
                      
                             
-                  \app\models\Utilities::putMessageLogFile('automa statuspre '.$statuspre["enac_id"]);
+               //   \app\models\Utilities::putMessageLogFile('automa statuspre '.$statuspre["enac_id"]);
                   
-                      \app\models\Utilities::putMessageLogFile('automa asipre '.$statuspre["asi_id"]);
+                //      \app\models\Utilities::putMessageLogFile('automa asipre '.$statuspre["asi_id"]);
                   
-                      \app\models\Utilities::putMessageLogFile('automa maesspre '.$statuspre["maes_id"]);
+                 //     \app\models\Utilities::putMessageLogFile('automa maesspre '.$statuspre["maes_id"]);
                    
-                         \app\models\Utilities::putMessageLogFile('automa fullpre '.$statuspre);
+                   //      \app\models\Utilities::putMessageLogFile('automa fullpre '.$statuspre);
             
                      
                    
@@ -481,37 +482,98 @@ inner join db_academico.modalidad_estudio_unidad c on c.meun_id = b.meun_id
                   // $mensaje = "statuspre ".$statuspre["enac_id"]." statusasi ".$statusasi["enac_id"];
                   // mail('oscaromars@hotmail.com', 'enac_estado', $mensaje);
                   //  }
-                   $sstatusasi=3;
-                   $sstatuspre= 1;
+                  
                    
-                   
-                   
-                
-                
-                //  if ($statuspre["enac_id"]==1 and $statusasi["enac_id"]==3 )
-                    if ($sstatusasi ==3 and $sstatuspre == 1)
-                  { 
-                if ($i == 0)  { 
+                    if ($statusasi["maes_id"]){ 
+                    
+                       if ($statusasi["enac_id"]==3){ 
+                      $sstatusasi= $statusasi["enac_id"];  
+                      
+                      
+                        if ($requisito !=Null){                  
+                      $sstatuspre= $statuspre["enac_id"]; 
+                      
+                      
+                        if ($statuspre["enac_id"]==1){ 
+                        
+                            \app\models\Utilities::putMessageLogFile('CON PR ');
+                        \app\models\Utilities::putMessageLogFile('pasa statusasi '.$sstatusasi);
+                         \app\models\Utilities::putMessageLogFile('automa maesspre '.$statusasi["maes_id"]);
+                          \app\models\Utilities::putMessageLogFile('automa maesspre '.$rows_in[$i]["made_codigo_asignatura"]);
+                           \app\models\Utilities::putMessageLogFile('automa maesspre '.$rows_in[$i]["asi_nombre"]);
+                               \app\models\Utilities::putMessageLogFile('======================================================= ');
+                        
+                          if ($asi1 == Null)  { 
                   
                    $asi1 = $rows_in[$i]["made_codigo_asignatura"];
                      $noasi1 = $rows_in[$i]["asi_nombre"];      }  
-                elseif ($i == 1)  { 
+                elseif ($asi2 == Null)  { 
                     $asi2 = $rows_in[$i]["made_codigo_asignatura"];
                      $noasi2 = $rows_in[$i]["asi_nombre"];       }                    
-                elseif ($i == 2)  { 
+                elseif ($asi3 == Null)  { 
                     $asi3 = $rows_in[$i]["made_codigo_asignatura"];  
                      $noasi3 = $rows_in[$i]["asi_nombre"];     }  
-                elseif ($i == 3)  { 
+                elseif ($asi4 == Null)  { 
                     $asi4 = $rows_in[$i]["made_codigo_asignatura"]; 
                      $noasi4 = $rows_in[$i]["asi_nombre"];     }  
-                elseif ($i == 4)  { 
+                elseif ($asi5 == Null)  { 
                     $asi5 = $rows_in[$i]["made_codigo_asignatura"]; 
                      $noasi5 = $rows_in[$i]["asi_nombre"];     }  
-                elseif ($i == 5)  { 
+                elseif ($asi6 == Null)  { 
                     $asi6 = $rows_in[$i]["made_codigo_asignatura"];  
-                     $noasi6 = $rows_in[$i]["asi_nombre"];     }  
-                      }  
-                      
+                     $noasi6 = $rows_in[$i]["asi_nombre"];     } 
+                        
+                        }
+                         
+                       
+                           }else {      
+                         
+                         
+                         
+                          \app\models\Utilities::putMessageLogFile('SIN PR ');
+                        \app\models\Utilities::putMessageLogFile('pasa statusasi '.$sstatusasi);
+                         \app\models\Utilities::putMessageLogFile('automa maesspre '.$statusasi["maes_id"]);
+                          \app\models\Utilities::putMessageLogFile('automa maesspre '.$rows_in[$i]["made_codigo_asignatura"]);
+                           \app\models\Utilities::putMessageLogFile('automa maesspre '.$rows_in[$i]["asi_nombre"]);
+                          \app\models\Utilities::putMessageLogFile('======================================================= ');
+                        
+                        
+                          if ($asi1 == Null)  { 
+                  
+                   $asi1 = $rows_in[$i]["made_codigo_asignatura"];
+                     $noasi1 = $rows_in[$i]["asi_nombre"];      }  
+                elseif ($asi2 == Null)  { 
+                    $asi2 = $rows_in[$i]["made_codigo_asignatura"];
+                     $noasi2 = $rows_in[$i]["asi_nombre"];       }                    
+                elseif ($asi3 == Null)  { 
+                    $asi3 = $rows_in[$i]["made_codigo_asignatura"];  
+                     $noasi3 = $rows_in[$i]["asi_nombre"];     }  
+                elseif ($asi4 == Null)  { 
+                    $asi4 = $rows_in[$i]["made_codigo_asignatura"]; 
+                     $noasi4 = $rows_in[$i]["asi_nombre"];     }  
+                elseif ($asi5 == Null)  { 
+                    $asi5 = $rows_in[$i]["made_codigo_asignatura"]; 
+                     $noasi5 = $rows_in[$i]["asi_nombre"];     }  
+                elseif ($asi6 == Null)  { 
+                    $asi6 = $rows_in[$i]["made_codigo_asignatura"];  
+                     $noasi6 = $rows_in[$i]["asi_nombre"];     } 
+                    }
+                    
+                    
+           
+                       
+                         }        }  
+                         
+                         
+                   
+                       
+                       
+                       
+                   
+               
+              
+               
+                   
                      
                         }  
        
@@ -568,6 +630,3 @@ inner join db_academico.modalidad_estudio_unidad c on c.meun_id = b.meun_id
     
     
 }   }
-
-
- 

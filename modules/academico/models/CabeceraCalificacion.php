@@ -1444,7 +1444,7 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord
 
         if ($per_id != "" && $per_id > 0) {
             //$str_perfil_user .= " persona.per_id = :per_id AND";
-            $str_perfil_user .= " persona.per_id = " . 3948 . " AND"; //GALO
+            $str_perfil_user .= " persona.per_id = " . $per_id . " AND"; //GALO
         }
 
 

@@ -229,7 +229,6 @@ class PeriodoAcademico extends \yii\db\ActiveRecord
         $sql = $this->periodoConsultaSQL($con, $per_id);
 
         $comando = $con->createCommand($sql);
-        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
         $resultData = $comando->queryAll();
 
         if($onlyData) { return $resultData; }
@@ -265,34 +264,45 @@ class PeriodoAcademico extends \yii\db\ActiveRecord
      */
     private function periodoConsultaSQL($con, $per_id = null){
         if($per_id){
-            $sql = "SELECT  pera.paca_id as id,
-                            -- ge.gest_id as gest_id,
-                            pera.paca_activo as estado,
-                            -- ge.gest_descripcion as nombre,
-                            pera.paca_fecha_inicio as fecha_inicio,
-                            pera.paca_fecha_fin as fecha_fin -- ,
-                            -- pera.paca_clases_grado as numero_de_clases_grado,
-                            -- pera.paca_clases_posgrado as numero_de_clases_posgrado
-                FROM " . $con->dbname . ".periodo_academico as pera
-                    -- inner join " . $con->dbname . ".grupo_estacion ge  ON ge.gest_id = pera.gest_id
-                WHERE pera.paca_id = " . $per_id . " AND 
-                      pera.paca_estado = 1 AND
-                      pera.paca_estado_logico = 1
-                ORDER BY id";
+            $sql = "SELECT  paca.paca_id as id,
+                            ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca_anio),'') AS nombre,
+                            baca.baca_nombre,
+                            paca.paca_activo as estado,
+                            paca.paca_fecha_inicio as fecha_inicio,
+                            paca.paca_fecha_fin as fecha_fin
+                    FROM " . $con->dbname . ".semestre_academico AS saca
+                    INNER JOIN " . $con->dbname . ".periodo_academico AS paca ON saca.saca_id = paca.saca_id
+                    INNER JOIN " . $con->dbname . ".bloque_academico AS baca ON baca.baca_id = paca.baca_id
+                    WHERE 
+                    paca.paca_id = " . $per_id . " AND 
+                    paca.paca_estado = 1 AND
+                    paca.paca_estado_logico = 1 AND
+                    saca.saca_estado = 1 AND
+                    saca.saca_estado_logico = 1 AND
+                    baca.baca_estado = 1 AND
+                    baca.baca_estado_logico = 1
+
+                    ORDER BY id";
         }
         else{
-            $sql = "SELECT  pera.paca_id as id,
-                        pera.paca_activo as estado,
-                        -- ge.gest_descripcion as nombre,
-                        pera.paca_fecha_inicio as fecha_inicio,
-                        pera.paca_fecha_fin as fecha_fin -- ,
-                        -- pera.paca_clases_grado as numero_de_clases_grado,
-                        -- pera.paca_clases_posgrado as numero_de_clases_posgrado
-                FROM " . $con->dbname . ".periodo_academico pera
-                    -- inner join " . $con->dbname . ".grupo_estacion ge ON ge.gest_id = pera.gest_id 
-                WHERE pera.paca_estado = 1 AND  
-                      pera.paca_estado_logico = 1  
-                ORDER BY id";
+            $sql = "SELECT  paca.paca_id as id,
+                            ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca_anio),'') AS nombre,
+                            baca.baca_nombre,
+                            paca.paca_activo as estado,
+                            paca.paca_fecha_inicio as fecha_inicio,
+                            paca.paca_fecha_fin as fecha_fin
+                    FROM " . $con->dbname . ".semestre_academico AS saca
+                    INNER JOIN " . $con->dbname . ".periodo_academico AS paca ON saca.saca_id = paca.saca_id
+                    INNER JOIN " . $con->dbname . ".bloque_academico AS baca ON baca.baca_id = paca.baca_id
+                    WHERE 
+                    paca.paca_estado = 1 AND
+                    paca.paca_estado_logico = 1 AND
+                    saca.saca_estado = 1 AND
+                    saca.saca_estado_logico = 1 AND
+                    baca.baca_estado = 1 AND
+                    baca.baca_estado_logico = 1
+                    
+                    ORDER BY id";
         }
 
         return $sql;

@@ -486,7 +486,7 @@ inner join db_academico.modalidad_estudio_unidad c on c.meun_id = b.meun_id
                    
                     if ($statusasi["maes_id"]){ 
                     
-                       if ($statusasi["enac_id"]==3){ 
+                    if ($statusasi["enac_id"]==3 or $statusasi["enac_id"]==2 or $statusasi["enac_id"]==4 or $statusasi["enac_id"]==1 or $statusasi["enac_id"]==Null){ 
                       $sstatusasi= $statusasi["enac_id"];  
                       
                       
@@ -494,7 +494,7 @@ inner join db_academico.modalidad_estudio_unidad c on c.meun_id = b.meun_id
                       $sstatuspre= $statuspre["enac_id"]; 
                       
                       
-                        if ($statuspre["enac_id"]==1){ 
+                  if ($statuspre["enac_id"]==1 or $statuspre["enac_id"]==2 or $statuspre["enac_id"]==3 or $statuspre["enac_id"]==4 or $statuspre["enac_id"]==Null ){ 
                         
                             \app\models\Utilities::putMessageLogFile('CON PR ');
                         \app\models\Utilities::putMessageLogFile('pasa statusasi '.$sstatusasi);
@@ -577,7 +577,7 @@ inner join db_academico.modalidad_estudio_unidad c on c.meun_id = b.meun_id
                      
                         }  
        
-                     $sql = "select pla_id from db_academico.planificacionx 
+                     $sql = "select pla_id from db_academico.planificacion 
                       where mod_id = " . $mod_id . " 
                       and pla_estado = 1 and pla_estado_logico = 1 and pla_periodo_academico = :periodo";  
                 
@@ -591,21 +591,21 @@ inner join db_academico.modalidad_estudio_unidad c on c.meun_id = b.meun_id
                                if ($rows_pla["pla_id"] ==0)  {
                                  
                 
-                $sql = "INSERT INTO db_academico.planificacionx (mod_id, per_id, pla_fecha_inicio, pla_fecha_fin, pla_periodo_academico, pla_estado, pla_estado_logico)
+                $sql = "INSERT INTO db_academico.planificacion (mod_id, per_id, pla_fecha_inicio, pla_fecha_fin, pla_periodo_academico, pla_estado, pla_estado_logico)
                         VALUES (". $rows["mod_id"] .", 1, '" . $fecha_inicio . "', '" . $fecha_fin . "', '" . $estacion . "', '" . $estado . "', '" . $estado . "');";
                  $comando = $con->createCommand($sql); 
                      $rows_pla = $comando->execute();
               
               
                   } 
-                 $sql = "select pla_id from db_academico.planificacionx where mod_id = " . $mod_id . " and pla_estado = 1 and pla_estado_logico = 1 and pla_periodo_academico = :periodo ";
+                 $sql = "select pla_id from db_academico.planificacion where mod_id = " . $mod_id . " and pla_estado = 1 and pla_estado_logico = 1 and pla_periodo_academico = :periodo ";
                   $comando = $con->createCommand($sql);
                    $comando->bindParam(":periodo", $estacion, \PDO::PARAM_STR);
                    $rows_pla = $comando->queryOne();
            
          
                      
-                      $sql = "INSERT INTO db_academico.planificacion_estudiantex
+                      $sql = "INSERT INTO db_academico.planificacion_estudiante
                     (pla_id, per_id, pes_jornada, pes_carrera, pes_dni, pes_nombres,pes_mat_b1_h1_cod, pes_mat_b1_h2_cod, pes_mat_b1_h3_cod, pes_mat_b1_h4_cod, pes_mat_b1_h5_cod,
                      pes_mat_b1_h6_cod, pes_mat_b1_h1_nombre, pes_mat_b1_h2_nombre, pes_mat_b1_h3_nombre, pes_mat_b1_h4_nombre, pes_mat_b1_h5_nombre,
                      pes_mat_b1_h6_nombre, pes_estado, pes_estado_logico)

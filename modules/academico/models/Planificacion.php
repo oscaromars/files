@@ -123,7 +123,7 @@ class Planificacion extends \yii\db\ActiveRecord {
                     pla.pla_periodo_academico as PeriodoAcademico,
                     moda.mod_id as ModaId,
                     moda.mod_nombre as Modalidad
-                FROM " . $con_academico->dbname . ".planificacionx as pla,
+                FROM " . $con_academico->dbname . ".planificacion as pla,
                 " . $con_academico->dbname . ".modalidad as moda
                  WHERE moda.mod_id = pla.mod_id        
                 AND pla.pla_periodo_academico =:pla_periodo_academico
@@ -234,7 +234,7 @@ class Planificacion extends \yii\db\ActiveRecord {
         $estado = 1;
         $sql = "SELECT 
                 pla_id as issaved
-                FROM " . $con_academico->dbname . ".planificacionx 
+                FROM " . $con_academico->dbname . ".planificacion 
                 WHERE pla_periodo_academico =:pla_periodo_academico
                 AND mod_id =:mod_id
                 AND pla_estado =:estado

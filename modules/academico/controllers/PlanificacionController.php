@@ -141,7 +141,7 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
    inner join db_academico.unidad_academica u on u.uaca_id = meu.uaca_id
    inner join db_academico.estudio_academico ea on ea.eaca_id = meu.eaca_id 
    inner join db_asgard.persona per on per.per_id = e.per_id
-   where e.per_id not in (select e.per_id from db_academico.planificacion_estudiantex b where b.pes_estado=0) -- get full estudent with 0
+   where e.per_id not in (select e.per_id from db_academico.planificacion_estudiante b where b.pes_estado=0) -- get full estudent with 0
                     and meu.mod_id = :modalidad
                     and e.est_estado = 1
                     and e.est_estado_logico = 1

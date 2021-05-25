@@ -682,7 +682,16 @@ class PagosfacturasController extends \app\components\CController {
                                     $valor_pagado      = $valor_pagado - $saldo; 
                                     \app\models\Utilities::putMessageLogFile('cargo->ccar_abono ...: ' . print_r($cargo->ccar_abono,true));
                                     \app\models\Utilities::putMessageLogFile('valor_pagado ...: ' . print_r($valor_pagado,true));
-                                    if($fpag_id == 1){
+                                    //// ini gap - cambio solicitado para q ponga en estado cancelado...
+                                    //// carga cartera cuando se haga transferencias o deposito
+                                    $valor_cuota_cancelada = $cuota - ($saldo + $abono);
+
+                                    \app\models\Utilities::putMessageLogFile('valor_cuota_cancelada ...: ' . print_r($valor_cuota_cancelada,true));
+                               
+                                    if($valor_cuota_cancelada <= 0)
+                                        $cargo->ccar_estado_cancela = 'C';                                      
+                                    /////////////////////
+                                    /*if($fpag_id == 1){
                                         $valor_cuota_cancelada = $cuota - ($saldo + $abono);
 
                                         \app\models\Utilities::putMessageLogFile('valor_cuota_cancelada ...: ' . print_r($valor_cuota_cancelada,true));
@@ -690,6 +699,7 @@ class PagosfacturasController extends \app\components\CController {
                                         if($valor_cuota_cancelada <= 0)
                                             $cargo->ccar_estado_cancela = 'C';                                      
                                     }//if
+                                    */
 
                                     $cargo->ccar_fecha_modificacion = $fecha;
                                     $cargo->ccar_usu_modifica       = $usuario;
@@ -701,6 +711,13 @@ class PagosfacturasController extends \app\components\CController {
                                     $cargo->ccar_abono = $cargo->ccar_abono + $valor_pagado;
                                     $valor_pagado      = $valor_pagado - $cargo->ccar_abono;
                                     
+                                    //// ini gap - cambio solicitado para q ponga en estado cancelado...
+                                    //// carga cartera cuando se haga transferencias o deposito
+
+                                    if($cargo->ccar_abono == $cuota)
+                                            $cargo->ccar_estado_cancela  = 'C';
+                                        
+                                    /*
                                     if($fpag_id == 1){
                                         if($cargo->ccar_abono == $cuota)
                                             $cargo->ccar_estado_cancela  = 'C';
@@ -708,6 +725,7 @@ class PagosfacturasController extends \app\components\CController {
                                         $cargo->ccar_estado_cancela     = 'N';
                                         
                                     }
+                                    */
                                     $cargo->ccar_fecha_modificacion = $fecha;
                                     $cargo->ccar_usu_modifica       = $usuario;
                                     

@@ -16,26 +16,14 @@ $(document).ready(function () {
             if (response.status == "OK") {
                 data = response.message;
                 setComboDataselect(data.modalidad, "cmb_modalidad_bus", "Select");
-                var arrParams = new Object();
-                if (data.modalidad.length > 0) {
-                    arrParams.unidada = $('#cmb_unidad_bus').val();
-                    arrParams.moda_id = data.modalidad[0].id;
-                    arrParams.getcarrera = true;
-                    requestHttpAjax(link, arrParams, function (response) {
-                        if (response.status == "OK") {
-                            data = response.message;
-                            setComboDataselect(data.carrera, "cmb_carrera_bus", "Select");
-                        }
-                    }, true);
-                }
             }
         }, true);
     });
-    /*$('#cmb_modalidad_bus').change(function () {
+    $('#cmb_modalidad_bus').change(function () {
         var link = $('#txth_base').val() + "/academico/calificacionestudiante/index";
         var arrParams = new Object();
-        arrParams.unidada = $('#cmb_unidad_bus').val();
-        arrParams.moda_id = $(this).val();
+        arrParams.unidad = $('#cmb_unidad_bus').val();
+        arrParams.mod_id = $(this).val();
         arrParams.getcarrera = true;
         requestHttpAjax(link, arrParams, function (response) {
             if (response.status == "OK") {
@@ -43,7 +31,7 @@ $(document).ready(function () {
                 setComboDataselect(data.carrera, "cmb_carrera_bus", "Select");
             }
         }, true);
-    });*/
+    });
 
 });
 

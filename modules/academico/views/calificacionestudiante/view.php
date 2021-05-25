@@ -11,6 +11,7 @@ use app\modules\academico\Module as academico;
         $this->render('view-cab', [
             'nombres' => $nombres,
             'matricula' => $matricula,
+            'profesor' => $profesor,
             'unidad' => $unidad,
             'modalidad' => $modalidad,
             'asignatura' => $asignatura,

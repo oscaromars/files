@@ -28,12 +28,12 @@ PbGridView::widget([
     'pajax' => true,
     'columns' => [
         ['class' => 'yii\grid\SerialColumn', 'options' => ['width' => '10']],
-        [
+        /*[
             'attribute' => 'Matricula',
             'header' => academico::t("Academico", "Enrollment Number"),
             'value' => 'est_matricula',
         ],
-        /*[
+        [
             'attribute' => 'Nombres Completos',
             'header' => academico::t("Academico", "Names"),
             'value' => 'Nombres_completos',
@@ -47,6 +47,11 @@ PbGridView::widget([
             'attribute' => 'Materia',
             'header' => academico::t("Academico", "Materia"),
             'value' => 'materia',
+        ],
+        [
+            'attribute' => 'Profesor',
+            'header' => academico::t("Academico", "Teacher"),
+            'value' => 'profesor',
         ],
         [
             'attribute' => 'PartialI',

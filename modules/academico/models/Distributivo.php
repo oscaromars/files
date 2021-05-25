@@ -659,7 +659,7 @@ class Distributivo extends \yii\db\ActiveRecord {
         }else{
           $mod_paca        = new PeriodoAcademico(); 
           $paca_actual_id  = $mod_paca->getPeriodoAcademicoActual();
-          $str_search      = "a.paca_id = ".$paca_actual_id['id']." AND ";
+          $str_search      = "a.paca_id = ".$paca_actual_id['id']." AND a.mod_id = 0 AND ";
         }
 
 

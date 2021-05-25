@@ -17,9 +17,9 @@ aspirante::registerTranslations();
     <div class='col-md-12 col-sm-12 col-xs-12 col-lg-12'>
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
             <div class="form-group">
-                <label for="txt_nombres" class="col-lg-5 col-md-5 col-sm-4 col-xs-3 control-label" id="lbl_nombres"><?= Yii::t("formulario", "Names") ?></label>
+                <label for="txt_nombres" class="col-lg-5 col-md-5 col-sm-4 col-xs-3 control-label" id="lbl_nombres"><?= academico::t("Academico", "Teacher") ?></label>
                 <div class="col-lg-7 col-md-7 col-sm-8 col-xs-9">
-                    <input type="text" class="form-control" value="<?= $nombres ?>" id="txt_nombres" disabled data-type="alfa">
+                    <input type="text" class="form-control" value="<?= $profesor ?>" id="txt_nombres" disabled data-type="alfa">
                 </div>
             </div>
         </div> 

@@ -78,11 +78,11 @@ class CalificacionestudianteController extends \app\components\CController {
         $Asignatura_distri = new Asignatura();
 
         $per_id = Yii::$app->session->get("PB_perid");
-        $per_id = 3948;
+        // $per_id = 3948;
         $user_usermane = Yii::$app->session->get("PB_username");
         
         $resp_estudianteid = $mod_Estudiante->getEstudiantexperid($per_id);
-        $resp_estudianteid["est_id"] = 682;
+        // $resp_estudianteid["est_id"] = 682;
         // Utilities::putMessageLogFile("LINEA 84  per_id: " .$per_id);
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();

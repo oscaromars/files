@@ -1091,8 +1091,8 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
                     plae.pes_mat_b1_h4_nombre,
                     plae.pes_mat_b1_h5_nombre,
                     plae.pes_mat_b1_h6_nombre
-                FROM " . $con->dbname . ".planificacion_estudiantex plae
-                LEFT JOIN " . $con->dbname . ".planificacionx plan ON plan.pla_id = plae.pla_id
+                FROM " . $con->dbname . ".planificacion_estudiante plae
+                LEFT JOIN " . $con->dbname . ".planificacion plan ON plan.pla_id = plae.pla_id
                 INNER JOIN " . $con1->dbname . ".persona pers ON pers.per_id = plae.per_id
                 WHERE 
                      $str_search

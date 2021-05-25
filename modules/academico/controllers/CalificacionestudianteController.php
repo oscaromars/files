@@ -105,6 +105,7 @@ class CalificacionestudianteController extends \app\components\CController {
         $arr_carrera = $modcanal->consultarCarreraModalidadEstudiante($resp_estudianteid["est_id"], $arr_ninteres[0]["id"], $arr_modalidad[0]["id"]);
         
         $perfil_user = $arr_grupos[0]["id"];
+        $per_id = @Yii::$app->session->get("PB_perid");
         Utilities::putMessageLogFile("LINEA 108  perfil_user: " .$perfil_user);
 
         if ($data['PBgetFilter']) {
@@ -124,9 +125,9 @@ class CalificacionestudianteController extends \app\components\CController {
             $arrSearch["modalidad"] = (isset($data['modalidad']) && $data['modalidad'] > 0)?$data['modalidad']:NULL;
             $arrSearch["carrera"] = (isset($data['carrera']) && $data['carrera'] > 0)?$data['carrera']:NULL;
             $arrSearch["periodo"] = (isset($data['periodo']) && $data['periodo'] > 0)?$data['periodo']:NULL;
-            $arrSearch["per_id"] = $per_id;
+            // $arrSearch["per_id"] = $per_id;
             
-            $arr_estudiante = $cabeceraCalificacion->consultaCalificacionRegistroDocenteAllStudentSearch($arrSearch, $per_id, $perfil_user, false);
+            $arr_estudiante = $cabeceraCalificacion->consultaCalificacionRegistroDocenteAllStudentSearch($arrSearch, $per_id, false);
              return $this->renderPartial('index-grid', [
                             "model" => $arr_estudiante,
                 ]);
@@ -144,9 +145,8 @@ class CalificacionestudianteController extends \app\components\CController {
 
             //$arr_estudiante = $cabeceraCalificacion->consultaCalificacionRegistroDocenteAllStudentSearch($per_id,$arr_ninteres[0]["id"],$arr_carrera[0]["id"],$arr_periodoActual[0]["id"],$asignatura[0]['id'],$arr_profesor_all[0]["pro_id"],$arr_paralelo_clcf[0]["id"], $perfil_user);
 
-            $arr_estudiante = $cabeceraCalificacion->consultaCalificacionRegistroDocenteAllStudentSearch($arrSearch, $per_id, $perfil_user, false);
+            $arr_estudiante = $cabeceraCalificacion->consultaCalificacionRegistroDocenteAllStudentSearch($arrSearch, $per_id, false);
         }else{
-            //Utilities::putMessageLogFile("Paso no Cordinador... cualquier perfil...  ");
             //No es Cordinador
            
             $arr_profesor_all = $mod_profesor->getProfesoresEnAsignaturasByPerId($per_id);
@@ -155,11 +155,12 @@ class CalificacionestudianteController extends \app\components\CController {
             $asignatura = $Asignatura_distri->getAsignaturaRegistro($arr_profesor_all[0]['pro_id'],$arr_ninteres[0]["id"],1,$arr_periodoActual[0]["id"]);
             //$arr_estudiante = $cabeceraCalificacion->consultaCalificacionRegistroDocente($arr_periodoActual[0]["id"],$asignatura[0]['id'],$arr_profesor["Id"]);
              //Obtener paralelo
-            $arr_paralelo_clcf= $Asignatura_distri->getCourseProfesor($arr_profesor_all[0]['pro_id'],$arr_periodoActual[0]["id"],$asignatura[0]["id"]);
-            
+            // $arr_paralelo_clcf = $Asignatura_distri->getCourseProfesor($arr_profesor_all[0]['pro_id'],$arr_periodoActual[0]["id"],$asignatura[0]["id"]);
+            $arr_paralelo_clcf = [];
+
             /*$arr_estudiante = $cabeceraCalificacion->consultaCalificacionRegistroDocenteAllStudentSearch($per_id, $arr_ninteres[0]["id"],$arr_ninteres[0]["id"],$arr_periodoActual[0]["id"],$asignatura[0]['id'],$arr_profesor_all[0]['pro_id'],$arr_paralelo_clcf[0]["id"], $perfil_user);*/
 
-            $arr_estudiante = $cabeceraCalificacion->consultaCalificacionRegistroDocenteAllStudentSearch($arrSearch, $per_id, $perfil_user, false);
+            $arr_estudiante = $cabeceraCalificacion->consultaCalificacionRegistroDocenteAllStudentSearch($arrSearch, $per_id, false);
         }
 
         return $this->render('index', [
@@ -211,7 +212,6 @@ class CalificacionestudianteController extends \app\components\CController {
 
         $mod_cabecera = new CabeceraCalificacion();
         $supletorio = $mod_cabecera->getSupletorioPorIDs($est_id, $asi_id, $pro_id, $paca_id)['ccal_calificacion'];
-        
 
         $promedio_final = 0;
 

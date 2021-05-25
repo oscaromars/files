@@ -16,8 +16,8 @@ academico::registerTranslations();
 PbGridView::widget([
     'id' => 'Tbg_Calificaciones',
     'showExport' => true,
-    'fnExportEXCEL' => "exportExcel",
-    'fnExportPDF' => "exportPdf",
+    //'fnExportEXCEL' => "exportExcel",
+    //'fnExportPDF' => "exportPdf",
     'tableOptions' => [
         'class' => 'table table-striped',
     ],
@@ -33,25 +33,35 @@ PbGridView::widget([
             'header' => academico::t("Academico", "Enrollment Number"),
             'value' => 'est_matricula',
         ],
-        [
+        /*[
             'attribute' => 'Nombres Completos',
             'header' => academico::t("Academico", "Names"),
             'value' => 'Nombres_completos',
+        ],*/
+        [
+            'attribute' => 'Periodo',
+            'header' => academico::t("Academico", "Period"),
+            'value' => 'periodo',
         ],
         [
             'attribute' => 'Materia',
             'header' => academico::t("Academico", "Materia"),
-            'value' => 'asi_nombre',
+            'value' => 'materia',
         ],
         [
             'attribute' => 'PartialI',
-            'header' => academico::t("Academico", "Partial I"),
+            'header' => academico::t("Academico", "Parcial I"),
             'value' => 'parcial_1',
         ],
         [
             'attribute' => 'PartialII',
-            'header' => academico::t("Academico", "Partial II"),
+            'header' => academico::t("Academico", "Parcial II"),
             'value' => 'parcial_2',
+        ],
+        [
+            'attribute' => 'Supletorio',
+            'header' => academico::t("Academico", "Supletorio"),
+            'value' => 'supletorio',
         ],
         [
             'attribute' => 'PromedioFinal',
@@ -68,10 +78,21 @@ PbGridView::widget([
             'header' => academico::t("Academico", "Acciones"),
             'template' => '{view}',
             'buttons' => [
-                'view' => function ($url, $model) {
-                    
-                    if ($model['paca_id'] != null && $model['est_id'] != null && $model['asi_id'] != null && $model['pro_id'] != null
-                           && $model['asistencia_parcial_1'] != null && ($model['asistencia_parcial_2'] != null || $model['asistencia_parcial_2'] == null)  ){
+                'view' => function ($url, $model) {                 
+                    if (
+                        ($model['paca_id'] > 0 && $model['paca_id'] != null) && 
+                        ($model['est_id'] > 0 && $model['paca_id'] != null) && 
+                        ($model['asi_id'] > 0 && $model['paca_id'] != null) && 
+                        ($model['pro_id'] > 0 && $model['paca_id'] != null) && 
+                        $model['parcial_1'] != 'NN'
+                        ){
+
+                        if($model['asistencia_parcial_1'] == 'NN'){
+                            $model['asistencia_parcial_1'] = 0;
+                        }
+                        if($model['asistencia_parcial_2'] == 'NN'){
+                            $model['asistencia_parcial_2'] = 0;
+                        }
 
                         return Html::a('<span class="'.Utilities::getIcon('view').'"></span>', Url::to(['calificacionestudiante/view', 
                                 'paca_id' => base64_encode($model['paca_id']), 

@@ -1415,251 +1415,188 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord
      * @return  
      *  Consulta dal calificaciones de los estudiantes segun unidad, modalidad, programa, y periodo.
      */
-    public function consultaCalificacionRegistroDocenteAllStudentSearch($search,$per_id,$perfil_user, $onlyData = false){
-        $con = \Yii::$app->db_academico;
-        $con1 = \Yii::$app->db_asgard;
-        $estado = 1;
+    public function consultaCalificacionRegistroDocenteAllStudentSearch($search,$per_id,$onlyData = false){
+        $con = Yii::$app->db_academico;
+        $con1 = Yii::$app->db_asgard;;
 
         if (!empty($search) && count($search) > 0) {
             if ($search['periodo'] != "" && $search['periodo'] != "0") {
                 \app\models\Utilities::putMessageLogFile('1548      $search[periodo]:  '.$search['periodo']);
-                $str_search .= " paca.paca_id = :periodo AND ";
+                //$str_search .= " paca.paca_id = :periodo AND ";
+                $str_search .= " paca.paca_id = ". $search['periodo'] ." AND ";
             }
             if ($search['unidad'] != "" && $search['unidad'] != "0") {
                 \app\models\Utilities::putMessageLogFile('1548      $search[unidad]:  '.$search['unidad']);
-                $str_search .= " ( ecun.uaca_id = :unidad OR ecun.uaca_id IS NULL ) AND ";
+                //$str_search .= " ( ecun.uaca_id = :unidad OR ecun.uaca_id IS NULL ) AND ";
+                $str_search .= " ( estudiante.uaca_id = " . $search['unidad'] . " OR resultado.uaca_id IS NULL ) AND ";
             }
             if ($search['carrera'] != "" && $search['carrera'] != "0") {
                 \app\models\Utilities::putMessageLogFile('1519      $search[carrera]:  '.$search['carrera']);
-                $str_search .= " meun.eaca_id = :carrera AND ";
+                //$str_search .= " meun.eaca_id = :carrera AND ";
+                $str_search .= " meun.eaca_id = " . $search['carrera'] . " AND ";
             }
-        } 
-
-        /*if ($asi_id != "" && $asi_id > 0) {
-            //$str_search .= " clfc.asi_id = :asi_id AND ";
-            $str_search .= " daca.asi_id = :asi_id AND "; 
-        }
-        if ($pro_id != "" && $pro_id > 0) {
-            $str_search .= " daca.pro_id =  :pro_id AND ";
         }        
-        if ($par_id != "" && $par_id > 0) {
-            $str_search .= " mppd.par_id =  :par_id AND ";
-        }*/ 
-
-        if ($perfil_user != "" && $perfil_user == 12) {
-            $str_perfil_user .= " persona.per_id = :per_id AND";
+        
+        if ($uaca_id != "" && $uaca_id > 0) {
+            //$str_search .= " (ecun.uaca_id = :uaca_id OR ecun.uaca_id  IS NULL) AND";
+            $str_search .= " (estudiante.uaca_id = " . uaca_id . " OR estudiante.uaca_id  IS NULL) AND";
         }
+
+        if ($per_id != "" && $per_id > 0) {
+            //$str_perfil_user .= " persona.per_id = :per_id AND";
+            $str_perfil_user .= " persona.per_id = " . 3948 . " AND"; //GALO
+        }
+
 
         $sql = "SELECT
-                    CASE
-                        WHEN resultado.uaca_id = 3 
-                        THEN resultado.parcial_1
-                        ELSE ROUND((IFNULL(resultado.parcial_1,0) + IFNULL(resultado.parcial_2,0))/2,2)
-                        END 
-                    AS promedio_final,
-                    ROUND((IFNULL(resultado.asistencia_parcial_1,0) + IFNULL(resultado.asistencia_parcial_2,0))/2,2) AS asistencia_final,
-                    resultado.* 
-                FROM (
+                estudiante.est_id,
+                estudiante.est_matricula,
+                estudiante.nombre,
+                estudiante.paca_nombre as periodo,
+                estudiante.paca_id,
+                estudiante.pro_id,
+                estudiante.asi_id,
+                estudiante.asi_nombre as materia,
+                IFNULL(A.PARCIAL_I,'NN') parcial_1,
+                IFNULL(B.PARCIAL_II,'NN') parcial_2,
+                IFNULL(C.SUPLETORIO,'NN') supletorio,
+                CASE
+                WHEN estudiante.uaca_id = 3 THEN
+                     IFNULL(A.PARCIAL_I,'NN')
+                ELSE
+                    ROUND((IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2,2)
+                END AS promedio_final,
+                IFNULL(D.ASISTENCIA_PARCIAL_I,'NN') asistencia_parcial_1,
+                IFNULL(E.ASISTENCIA_PARCIAL_II,'NN') asistencia_parcial_2,
+                ((coalesce(D.ASISTENCIA_PARCIAL_I, 0) + coalesce(E.ASISTENCIA_PARCIAL_II, 0)) / 2) as asistencia_final
+                FROM 
+                    (
                     SELECT 
-                        gest.gest_descripcion as paca_nombre,
-                        paca.paca_id,
-                        estudiante.est_id, 
+                        estudiante.est_id,
                         estudiante.est_matricula,
-                        concat(persona.per_pri_nombre,' ',persona.per_pri_apellido) as Nombres_completos,
-                        persona.per_pri_apellido,
-                        paralelo.par_nombre,
-                        clfc.pro_id,
-                        ecun.uaca_id,
-                        IFNULL((SELECT  clfc3.ccal_calificacion 
-                                FROM db_academico.cabecera_calificacion clfc3
-                                INNER JOIN db_academico.esquema_calificacion_unidad ecun_par3 ON ecun_par3.ecun_id = clfc3.ecun_id
-                                INNER JOIN db_academico.esquema_calificacion esquema_calificacion3 ON esquema_calificacion3.ecal_id = ecun_par3.ecal_id
-                                WHERE clfc3.est_id = clfc.est_id AND
-                                clfc3.pro_id = clfc.pro_id AND
-                                clfc3.asi_id = clfc.asi_id AND
-                                clfc3.ccal_estado = 1 AND
-                                clfc3.ccal_estado_logico = 1 AND
-                                ecun_par3.ecun_estado = 1 AND
-                                ecun_par3.ecun_estado_logico = 1 AND
-                                esquema_calificacion3.ecal_estado = 1 AND
-                                esquema_calificacion3.ecal_estado_logico = 1 AND
-                                esquema_calificacion3.ecal_id = 3 AND
-                                ecun_par3.uaca_id = ecun.uaca_id),'NN'
-                        ) as 'supletorio',
-                        (   SELECT clfc1.ccal_calificacion 
-                            FROM db_academico.cabecera_calificacion clfc1
-                            INNER JOIN db_academico.esquema_calificacion_unidad ecun_par ON ecun_par.ecun_id = clfc1.ecun_id
-                            INNER JOIN db_academico.esquema_calificacion esquema_calificacion1 ON esquema_calificacion1.ecal_id = ecun_par.ecal_id
-                            WHERE clfc1.est_id = clfc.est_id AND
-                            clfc1.pro_id = clfc.pro_id AND
-                            clfc1.asi_id = clfc.asi_id AND
-                            clfc1.ccal_estado = 1 AND
-                            clfc1.ccal_estado_logico = 1 AND
-                            ecun_par.ecun_estado = 1 AND
-                            ecun_par.ecun_estado_logico = 1 AND
-                            esquema_calificacion1.ecal_estado = 1 AND
-                            esquema_calificacion1.ecal_estado_logico = 1 AND
-                            esquema_calificacion1.ecal_id = 1 AND
-                            ecun_par.uaca_id = ecun.uaca_id 
-                        ) as 'parcial_1',
-                        (   SELECT clfc2.ccal_calificacion 
-                            FROM db_academico.cabecera_calificacion clfc2
-                            INNER JOIN db_academico.esquema_calificacion_unidad ecun_par2 ON ecun_par2.ecun_id = clfc2.ecun_id
-                            INNER JOIN db_academico.esquema_calificacion esquema_calificacion2 ON esquema_calificacion2.ecal_id = ecun_par2.ecal_id
-                            WHERE clfc2.est_id = clfc.est_id AND
-                            clfc2.pro_id = clfc.pro_id AND
-                            clfc2.asi_id = clfc.asi_id AND
-                            clfc2.ccal_estado = 1 AND
-                            clfc2.ccal_estado_logico = 1 AND
-                            ecun_par2.ecun_estado = 1 AND
-                            ecun_par2.ecun_estado_logico = 1 AND
-                            esquema_calificacion2.ecal_estado = 1 AND
-                            esquema_calificacion2.ecal_estado_logico = 1 AND
-                            esquema_calificacion2.ecal_id = 2 AND
-                            ecun_par2.uaca_id = ecun.uaca_id
-                        ) as 'parcial_2',
-                        (   SELECT  casi.casi_porc_total
-                            FROM db_academico.cabecera_asistencia casi
-                            INNER JOIN db_academico.asistencia_esquema_unidad aeun_id_asistencia ON aeun_id_asistencia.aeun_id = casi.aeun_id
-                            INNER JOIN db_academico.esquema_calificacion_unidad esquema_calificacion_unidad ON esquema_calificacion_unidad.ecun_id = aeun_id_asistencia.aeun_id
-                            INNER JOIN db_academico.esquema_calificacion esquema_calificacion_asistencia ON  esquema_calificacion_asistencia.ecal_id = esquema_calificacion_unidad.ecal_id
-                            WHERE casi.paca_id = clfc.paca_id and
-                            casi.est_id = clfc.est_id  and 
-                            casi.pro_id = clfc.pro_id and 
-                            casi.asi_id = clfc.asi_id AND 
-                            esquema_calificacion_unidad.uaca_id = ecun.uaca_id AND
-                            esquema_calificacion_asistencia.ecal_id = 1 and 
-                            casi.casi_estado = 1 and 
-                            casi.casi_estado_logico = 1 AND
-                            aeun_id_asistencia.aeun_estado = 1 AND
-                            aeun_id_asistencia.aeun_estado_logico = 1 and 
-                            esquema_calificacion_unidad.ecun_estado = 1 and
-                            esquema_calificacion_unidad.ecun_estado_logico = 1 and 
-                            esquema_calificacion_asistencia.ecal_estado = 1 and 
-                            esquema_calificacion_asistencia.ecal_estado_logico = 1
-                         ) as asistencia_parcial_1,
-                         (  SELECT  casi.casi_porc_total
-                            FROM db_academico.cabecera_asistencia casi
-                            INNER JOIN db_academico.asistencia_esquema_unidad aeun_id_asistencia ON aeun_id_asistencia.aeun_id = casi.aeun_id
-                            INNER JOIN db_academico.esquema_calificacion_unidad esquema_calificacion_unidad ON esquema_calificacion_unidad.ecun_id = aeun_id_asistencia.aeun_id
-                            INNER JOIN db_academico.esquema_calificacion esquema_calificacion_asistencia ON  esquema_calificacion_asistencia.ecal_id = esquema_calificacion_unidad.ecal_id
-                            WHERE casi.paca_id = clfc.paca_id and
-                            casi.est_id = clfc.est_id  and 
-                            casi.pro_id = clfc.pro_id and 
-                            casi.asi_id = clfc.asi_id AND 
-                            esquema_calificacion_unidad.uaca_id = ecun.uaca_id AND
-                            esquema_calificacion_asistencia.ecal_id = 2 and 
-                            casi.casi_estado = 1 and 
-                            casi.casi_estado_logico = 1 AND
-                            aeun_id_asistencia.aeun_estado = 1 AND
-                            aeun_id_asistencia.aeun_estado_logico = 1 and 
-                            esquema_calificacion_unidad.ecun_estado = 1 and
-                            esquema_calificacion_unidad.ecun_estado_logico = 1 and 
-                            esquema_calificacion_asistencia.ecal_estado = 1 and 
-                            esquema_calificacion_asistencia.ecal_estado_logico = 1
-                         ) as asistencia_parcial_2,
-                        asignatura2.asi_descripcion as asi_nombre,
-                        asignatura2.asi_id as asi_id
-                    FROM db_academico.estudiante estudiante
-                    LEFT JOIN db_academico.cabecera_calificacion clfc ON estudiante.est_id =  clfc.est_id 
-                    LEFT JOIN db_academico.esquema_calificacion_unidad ecun ON ecun.ecun_id = clfc.ecun_id
-                    INNER JOIN db_asgard.persona persona ON persona.per_id = estudiante.per_id 
-                    LEFT JOIN db_academico.distributivo_academico_estudiante daca_est ON daca_est.est_id = estudiante.est_id
-                    LEFT JOIN db_academico.materias_paralelos_periodo_detalle mppd ON mppd.mppd_id = daca_est.mppd_id
-                    LEFT JOIN db_academico.paralelo paralelo ON paralelo.par_id = mppd.par_id
-                    LEFT JOIN db_academico.materias_paralelos_periodo materias_para_per ON materias_para_per.mppe_id = mppd.mppe_id
-                    LEFT JOIN db_academico.asignaturas_por_periodo asi_per ON asi_per.aspe_id = materias_para_per.aspe_id
-                    LEFT JOIN db_academico.asignatura asignatura2 ON asignatura2.asi_codigo = asi_per.aspe_codigo
-                    INNER JOIN db_academico.estudiante_carrera_programa AS ecpr ON ecpr.est_id = estudiante.est_id
-                    INNER JOIN db_academico.modalidad_estudio_unidad AS meun ON meun.meun_id = ecpr.meun_id
-                    INNER JOIN db_academico.periodo_academico AS paca ON paca.paca_id = asi_per.paca_id
-                    INNER JOIN db_academico.grupo_estacion AS gest ON gest.gest_id = paca.gest_id
-                    WHERE 
-                    $str_search 
+                        estudiante.est_activo,
+                        concat(persona.per_pri_nombre,' ',persona.per_pri_apellido) as nombre,
+                        paca.paca_id, 
+                        ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca_anio),'') AS paca_nombre,
+                        daca.pro_id,
+                        asi.asi_id,
+                        meun.uaca_id as uaca_id,
+                        asi.asi_descripcion as asi_nombre
+                    FROM " . $con->dbname . ".estudiante AS estudiante
+                    INNER JOIN " . $con1->dbname . ".persona AS persona ON persona.per_id = estudiante.per_id
+                    INNER JOIN " . $con->dbname . ".distributivo_academico_estudiante AS daca_est ON daca_est.est_id = estudiante.est_id
+                    LEFT JOIN " . $con->dbname . ".distributivo_academico AS daca on daca_est.daca_id = daca.daca_id
+                    INNER JOIN " . $con->dbname . ".asignatura AS asi ON asi.asi_id = daca.asi_id 
+                    INNER JOIN " . $con->dbname . ".estudiante_carrera_programa AS ecpr ON ecpr.est_id = estudiante.est_id
+                    INNER JOIN " . $con->dbname . ".modalidad_estudio_unidad AS meun ON meun.meun_id = ecpr.meun_id
+                    INNER JOIN " . $con->dbname . ".semestre_academico AS saca
+                    INNER JOIN " . $con->dbname . ".periodo_academico AS paca ON saca.saca_id = paca.saca_id
+                    INNER JOIN " . $con->dbname . ".bloque_academico AS baca ON baca.baca_id = paca.baca_id
+                    WHERE
+                    $str_search
                     $str_perfil_user
-                    estudiante.est_activo = 1
-                    AND meun.uaca_id = asignatura2.uaca_id
+                    meun.uaca_id = asi.uaca_id
+                    AND paca.paca_activo = 'A'
+                    AND estudiante.est_activo = 1
                     AND estudiante.est_estado = 1
                     AND estudiante.est_estado_logico = 1
                     AND persona.per_estado = 1
-                    AND persona.per_estado_logico = 1 
+                    AND persona.per_estado_logico = 1
+                    AND ((daca.daca_estado = 1 AND daca.daca_estado_logico = 1) OR daca.daca_id IS NULL)
                     AND daca_est.daes_estado = 1
                     AND daca_est.daes_estado_logico = 1
-                    AND mppd.mppd_estado= 1
-                    AND mppd.mppd_estado_logico = 1
-                    AND paralelo.par_estado = 1
-                    AND paralelo.par_estado_logico = 1 
-                    AND materias_para_per.mppe_estado = 1
-                    AND materias_para_per.mppe_estado_logico = 1
-                    AND asi_per.aspe_estado = 1
-                    AND asi_per.aspe_estado_logico = 1
-                    AND asignatura2.asi_estado = 1 
-                    AND asignatura2.asi_estado_logico = 1
-                    AND paca.paca_estado = 1 AND paca.paca_estado_logico = 1
-                    AND gest.gest_estado = 1 AND gest.gest_estado_logico = 1
-                    GROUP BY estudiante.est_id,
-                          clfc.paca_id,
-                          clfc.pro_id,
-                          ecun.uaca_id,
-                          clfc.asi_id,
-                          clfc.paca_id,
-                          asignatura2.asi_descripcion,
-                          asignatura2.asi_id,
-                          paralelo.par_nombre,
-                          gest.gest_descripcion,paca.paca_id
-                  ) AS resultado";
+                    AND asi.asi_estado = 1
+                    AND asi.asi_estado_logico = 1
+                    AND ecpr.ecpr_estado = 1
+                    AND ecpr.ecpr_estado_logico = 1
+                    AND meun.meun_estado= 1
+                    AND meun.meun_estado_logico = 1
+                    AND paca.paca_activo = 'A' 
+                    AND paca.paca_estado = 1 
+                    AND paca.paca_estado_logico = 1 
+                    AND saca.saca_estado = 1 
+                    AND saca.saca_estado_logico = 1
+                    AND baca.baca_estado = 1
+                    AND baca.baca_estado_logico = 1
+                    ) estudiante
+                LEFT JOIN
+                (
+                    SELECT clfc.ccal_id, clfc.paca_id, clfc.est_id, clfc.asi_id,ecun.uaca_id,clfc.pro_id,clfc.ccal_calificacion AS PARCIAL_I FROM 
+                        " . $con->dbname . ".cabecera_calificacion clfc
+                    INNER JOIN " . $con->dbname . ".esquema_calificacion_unidad ecun ON ecun.ecun_id = clfc.ecun_id
+                    INNER JOIN " . $con->dbname . ".esquema_calificacion ecal ON ecal.ecal_id = ecun.ecal_id
+                    WHERE   ecal.ecal_id = 1
+                ) A  on  estudiante.est_id = A.est_id   
+                AND estudiante.paca_id = A.paca_id 
+                AND estudiante.pro_id  = A.pro_id  
+                AND estudiante.asi_id = A.asi_id     
+                AND estudiante.uaca_id = A.uaca_id
+                LEFT JOIN
+                (
+                    SELECT clfc.ccal_id, clfc.paca_id, clfc.est_id, clfc.asi_id,ecun.uaca_id,clfc.pro_id,ecal.ecal_descripcion  ,clfc.ccal_calificacion AS PARCIAL_II FROM 
+                        " . $con->dbname . ".cabecera_calificacion clfc
+                    INNER JOIN " . $con->dbname . ".esquema_calificacion_unidad ecun ON ecun.ecun_id = clfc.ecun_id
+                    INNER JOIN " . $con->dbname . ".esquema_calificacion ecal ON ecal.ecal_id = ecun.ecal_id
+                    WHERE ecal.ecal_id = 2
+                ) B  ON estudiante.est_id = B.est_id 
+                AND estudiante.paca_id = B.paca_id 
+                AND estudiante.pro_id  = B.pro_id  
+                AND estudiante.asi_id = B.asi_id 
+                AND estudiante.uaca_id = B.uaca_id
+                LEFT JOIN
+                (
+                    SELECT clfc.ccal_id, clfc.paca_id, clfc.est_id, clfc.asi_id,ecun.uaca_id,clfc.pro_id,ecal.ecal_descripcion  ,clfc.ccal_calificacion AS SUPLETORIO FROM 
+                    " . $con->dbname . ".cabecera_calificacion clfc
+                    INNER JOIN " . $con->dbname . ".esquema_calificacion_unidad ecun ON ecun.ecun_id = clfc.ecun_id
+                    INNER JOIN " . $con->dbname . ".esquema_calificacion ecal ON ecal.ecal_id = ecun.ecal_id
+                    WHERE ecal.ecal_id = 3
+                ) C ON estudiante.est_id = C.est_id 
+                AND estudiante.paca_id = C.paca_id 
+                AND estudiante.pro_id  = C.pro_id  
+                AND estudiante.asi_id = C.asi_id 
+                    AND estudiante.uaca_id = C.uaca_id
+                LEFT JOIN 
+                (
+                    SELECT  casi.casi_id, casi.paca_id, casi.est_id,casi.asi_id,esquema_calificacion_unidad.uaca_id,casi.pro_id, casi.casi_porc_total as ASISTENCIA_PARCIAL_I
+                    FROM " . $con->dbname . ".cabecera_asistencia casi
+                    INNER JOIN " . $con->dbname . ".asistencia_esquema_unidad aeun_id_asistencia ON aeun_id_asistencia.aeun_id = casi.aeun_id
+                    INNER JOIN " . $con->dbname . ".esquema_calificacion_unidad esquema_calificacion_unidad ON esquema_calificacion_unidad.ecun_id = aeun_id_asistencia.ecun_id
+                    INNER JOIN " . $con->dbname . ".esquema_calificacion esquema_calificacion_asistencia ON esquema_calificacion_asistencia.ecal_id = esquema_calificacion_unidad.ecal_id
+                    WHERE esquema_calificacion_asistencia.ecal_id = 1
+                ) D ON  estudiante.est_id = D.est_id  AND estudiante.paca_id = D.paca_id 
+                AND estudiante.pro_id  = D.pro_id  
+                AND estudiante.asi_id = D.asi_id
+                AND estudiante.uaca_id = D.uaca_id
+                LEFT JOIN 
+                (
+                    SELECT  casi.casi_id, casi.paca_id, casi.est_id,casi.asi_id,esquema_calificacion_unidad.uaca_id,casi.pro_id, casi.casi_porc_total as ASISTENCIA_PARCIAL_II
+                    FROM " . $con->dbname . ".cabecera_asistencia casi
+                    INNER JOIN " . $con->dbname . ".asistencia_esquema_unidad aeun_id_asistencia ON aeun_id_asistencia.aeun_id = casi.aeun_id
+                    INNER JOIN " . $con->dbname . ".esquema_calificacion_unidad esquema_calificacion_unidad ON esquema_calificacion_unidad.ecun_id = aeun_id_asistencia.ecun_id
+                    INNER JOIN " . $con->dbname . ".esquema_calificacion esquema_calificacion_asistencia ON esquema_calificacion_asistencia.ecal_id = esquema_calificacion_unidad.ecal_id
+                    WHERE esquema_calificacion_asistencia.ecal_id = 2
+                ) E ON  estudiante.est_id = E.est_id  AND estudiante.paca_id = E.paca_id 
+                AND estudiante.pro_id  = E.pro_id  
+                AND estudiante.asi_id = E.asi_id 
+                AND estudiante.uaca_id = E.uaca_id;";          
 
         $comando = $con->createCommand($sql);
-        
-        if (!empty($search) && count($search) > 0) {
-            if ($search['periodo'] != "" && $search['periodo'] != "0") {
-                $periodo = $search["periodo"];
-                $comando->bindParam(":periodo", $periodo, \PDO::PARAM_STR);
-            }
-
-            if ($search['unidad'] != "" && $search['unidad'] != "0") {
-                $unidad = $search["unidad"];
-                $comando->bindParam(":unidad", $unidad, \PDO::PARAM_STR);
-            }
-
-            if ($search['carrera'] != "" && $search['carrera'] != "0") {
-                $carrera = $search["carrera"];
-                $comando->bindParam(":carrera", $carrera, \PDO::PARAM_STR);
-            }
-        }
-
-        /*if ($asi_id!= "" && $asi_id> 0) {
-            //$materia = $arrFiltro["materia"];
-            $comando->bindParam(":asi_id", $asi_id, \PDO::PARAM_INT);
-        }
-        
-        if ($pro_id != "" && $pro_id > 0) {
-            //$profesor = $arrFiltro["profesor"];
-            $comando->bindParam(":pro_id", $pro_id, \PDO::PARAM_INT);
-        }    
-        if ($par_id != "" && $par_id > 0) {
-            //$profesor = $arrFiltro["profesor"];
-            $comando->bindParam(":par_id", $par_id, \PDO::PARAM_INT);
-        }*/    
-        
-        if ($perfil_user != "" && $perfil_user == 12) {
-            $comando->bindParam(":per_id", $per_id, \PDO::PARAM_STR);
-        }
+        //\app\models\Utilities::putMessageLogFile('consultaCalificacionRegistroDocenteAllStudentSearch Sql: '.$sql);
 
         $resultData = $comando->queryAll();
-        \app\models\Utilities::putMessageLogFile('consultaCalificacionRegistroDocenteAllStudentSearch: '.$comando->getRawSql());
+        // \app\models\Utilities::putMessageLogFile('consultaCalificacionRegistroDocenteAllStudentSearch: '.$comando->getRawSql());
+
         $dataProvider = new ArrayDataProvider([
-            'key' => 'id',
-            'allModels' => $resultData,
-            'pagination' => [
-                'pageSize' => Yii::$app->params["pageSize"],
-            ],
-            'sort' => [
-                'attributes' => [
-                ],
-            ],
+           'key' => 'id',
+           'allModels' => $resultData,
+           'pagination' => [
+               'pageSize' => Yii::$app->params["pageSize"],
+           ],
+           'sort' => [
+               'attributes' => [
+               ],
+           ],
         ]);
-        
         if($onlyData)
             return $resultData;
         else

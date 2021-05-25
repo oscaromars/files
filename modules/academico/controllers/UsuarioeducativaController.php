@@ -1032,7 +1032,7 @@ class UsuarioeducativaController extends \app\components\CController {
                         readfile($url_file);
                     }
                 }
-    }
+    } 
     
     public function actionAsignarestudiantecurso() {
         $per_id = @Yii::$app->session->get("PB_perid");

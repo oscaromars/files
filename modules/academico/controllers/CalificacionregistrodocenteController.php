@@ -250,9 +250,9 @@ class CalificacionregistrodocenteController extends \app\components\CController 
             }    
         }//if
 
-        $arr_periodoActual = $mod_periodoActual->getAllGrupoEstacion(true);   
+        $arr_periodoActual = [$mod_periodoActual->getPeriodoAcademicoActual()];
         $arr_ninteres      = $mod_unidad->consultarUnidadAcademicasEmpresa(1);
-        $arr_modalidad     = $mod_modalidad->consultarModalidad($arr_ninteres[0]["id"], 1);  
+        $arr_modalidad     = $mod_modalidad->consultarModalidad($arr_ninteres[0]["id"], 1);
         //$asignatura        = $Asignatura_distri->getAsignaturaRegistro($arr_profesor["Id"],1,1,$arr_periodoActual[0]["id"]);      
         $arr_parcialunidad = $mod_periodoActual->getParcialUnidad(1);
 
@@ -264,20 +264,20 @@ class CalificacionregistrodocenteController extends \app\components\CController 
             //Es Cordinador
             $arr_profesor_all = $mod_profesor->getProfesoresEnAsignaturas();
             $asignatura = $Asignatura_distri->getAsignaturaRegistro($arr_profesor_all[0]['pro_id'],$arr_ninteres[0]["id"],1,$arr_periodoActual[0]["id"]);
-            $arr_paralelo_clcf = $Asignatura_distri->getCourseProfesor($arr_profesor_all[0]['pro_id'],$arr_periodoActual[0]["id"],$asignatura[0]["id"]);
+            $arr_paralelo_clcf = [];
             //print_r("Es Cordinador");
         }else{
             //No es coordinador
             $arr_profesor_all = $mod_profesor->getProfesoresEnAsignaturasByPerId($per_id);
             $asignatura = $Asignatura_distri->getAsignaturaRegistro($arr_profesor_all[0]['pro_id'],$arr_ninteres[0]["id"],1,$arr_periodoActual[0]["id"]);
-            $arr_paralelo_clcf = $Asignatura_distri->getCourseProfesor($arr_profesor_all[0]['pro_id'],$arr_periodoActual[0]["id"],$asignatura[0]["id"]);
+            $arr_paralelo_clcf = [];
             //print_r("NO Es Cordinador");
         }
 
         
        
         return $this->render('register', [
-            'arr_periodoActual' => ArrayHelper::map($arr_periodoActual, "id", "value"),
+            'arr_periodoActual' => ArrayHelper::map($arr_periodoActual, "id", "nombre"),
             //'arr_ninteres'      => ArrayHelper::map(array_merge([["id" => "", "name" => Yii::t("formulario", "All")]], $arr_ninteres), "id", "name"),
             'arr_ninteres'      => ArrayHelper::map($arr_ninteres, "id", "name"),
             'arr_modalidad'     => ArrayHelper::map($arr_modalidad, "id", "name"),

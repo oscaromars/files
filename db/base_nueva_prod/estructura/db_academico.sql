@@ -2012,7 +2012,8 @@ create table if not exists `componente_unidad` (
   `cuni_fecha_modificacion` timestamp NULL DEFAULT NULL,
   `cuni_estado_logico` varchar(1) NOT NULL,
   foreign key (uaca_id) references `unidad_academica`(uaca_id),
-  foreign key (com_id) references `componente`(com_id)
+  foreign key (com_id) references `componente`(com_id),
+  foreign key (mod_id) references `modalidad`(mod_id)
 );
 
 -- --------------------------------------------------------

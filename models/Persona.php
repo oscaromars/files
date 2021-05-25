@@ -985,4 +985,33 @@ class Persona extends \yii\db\ActiveRecord {
     }
 
 
+/**
+     * Function consultaDatosPersonaid
+     * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
+     * @property integer        
+     * @return  
+     */
+    public function consultaDatosPersonaid($per_id) {
+        $con = \Yii::$app->db_asgard;
+        $estado = 1;
+        $sql = "SELECT   
+                per_pri_nombre,
+                per_seg_nombre,
+                per_pri_apellido,
+                per_seg_apellido,                  
+                per_correo,
+                per_cedula
+               FROM " . $con->dbname . ".persona                     
+               WHERE 
+                    per_id = :per_id AND
+                    per_estado = :estado AND
+                    per_estado_logico=:estado";
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
+        $resultData = $comando->queryOne();
+        return $resultData;
+    }
+    
+
 }

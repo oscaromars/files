@@ -228,6 +228,28 @@ class Planificacion extends \yii\db\ActiveRecord {
         $resultData = $comando->queryAll();
         return $resultData;
     }
+
+       public static function getVerifypla($pla_periodo_academico, $mod_id) {
+        $con_academico = \Yii::$app->db_academico;
+        $estado = 1;
+        $sql = "SELECT 
+                pla_id as issaved
+                FROM " . $con_academico->dbname . ".planificacion 
+                WHERE pla_periodo_academico =:pla_periodo_academico
+                AND mod_id =:mod_id
+                AND pla_estado =:estado
+                AND pla_estado_logico =:estado
+            ";
+
+        $comando = $con_academico->createCommand($sql);
+        $comando->bindParam(":pla_periodo_academico", $pla_periodo_academico, \PDO::PARAM_STR);
+        $comando->bindParam(":mod_id", $mod_id, \PDO::PARAM_INT);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $resultData = $comando->queryOne();
+
+        return $resultData;
+    }
+    
     
 
 }

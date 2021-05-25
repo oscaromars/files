@@ -1032,7 +1032,7 @@ class UsuarioeducativaController extends \app\components\CController {
                         readfile($url_file);
                     }
                 }
-    }
+    } 
     
     public function actionAsignarestudiantecurso() {
         $per_id = @Yii::$app->session->get("PB_perid");
@@ -1761,13 +1761,14 @@ class UsuarioeducativaController extends \app\components\CController {
         $data = Yii::$app->request->get();
 
         if ($data['PBgetFilter']) {
+            $reporte = null;
             $search = $data['search'];
             $unidad = (isset($data['unidad']) && $data['unidad'] > 0) ? $data['unidad'] : NULL;
             $modalidad = (isset($data['modalidad']) && $data['modalidad'] > 0) ? $data['modalidad'] : NULL;
             $periodo = (isset($data['periodo']) && $data['periodo'] > 0) ? $data['periodo'] : NULL;
             $materia = (isset($data['materia']) && $data['materia'] > 0) ? $data['materia'] : NULL;
             $jornada = (isset($data['jornada']) && $data['jornada'] > 0) ? $data['jornada'] : NULL;
-            $model = $distributivo_model->getListadoDistributivoedu($search, $modalidad, $materia, $jornada, $unidad, $periodo);
+            $model = $distributivo_model->getListadoDistributivoedu($search, $modalidad, $materia, $jornada, $unidad, $periodo, $reporte);
             return $this->render('asignar-grid', [
                         "model" => $model,
             ]);
@@ -1895,6 +1896,7 @@ class UsuarioeducativaController extends \app\components\CController {
         );
         $distributivo_model = new CursoEducativaDistributivo();
         $data = Yii::$app->request->get();
+        $reporte = 1;
         $arrSearch["search"] = ($data['search'] != "") ? $data['search'] : NULL;
         $arrSearch["unidad"] = ($data['unidad'] > 0) ? $data['unidad'] : NULL;
         $arrSearch["modalidad"] = ($data['modalidad'] > 0) ? $data['modalidad'] : NULL;
@@ -1902,7 +1904,7 @@ class UsuarioeducativaController extends \app\components\CController {
         $arrSearch["materia"] = ($data['materia'] > 0) ? $data['materia'] : NULL;
         $arrSearch["jornada"] = ($data['jornada'] > 0) ? $data['jornada'] : NULL;
 
-        $arrData = $distributivo_model->getListadoDistributivoedu($arrSearch["search"], $arrSearch["modalidad"], $arrSearch["asignatura"], $arrSearch["jornada"], $arrSearch["unidad"], $arrSearch["periodo"], true);
+        $arrData = $distributivo_model->getListadoDistributivoedu($arrSearch["search"], $arrSearch["modalidad"], $arrSearch["materia"], $arrSearch["jornada"], $arrSearch["unidad"], $arrSearch["periodo"], true, $reporte);
         foreach ($arrData as $key => $value) {
             unset($arrData[$key]["Id"]);
         }
@@ -1927,6 +1929,7 @@ class UsuarioeducativaController extends \app\components\CController {
         );
         $distributivo_model = new CursoEducativaDistributivo();
         $data = Yii::$app->request->get();
+        $reporte = 1;
         $arrSearch["search"] = ($data['search'] != "") ? $data['search'] : NULL;
         $arrSearch["unidad"] = ($data['unidad'] > 0) ? $data['unidad'] : NULL;
         $arrSearch["modalidad"] = ($data['modalidad'] > 0) ? $data['modalidad'] : NULL;
@@ -1934,7 +1937,7 @@ class UsuarioeducativaController extends \app\components\CController {
         $arrSearch["materia"] = ($data['materia'] > 0) ? $data['materia'] : NULL;
         $arrSearch["jornada"] = ($data['jornada'] > 0) ? $data['jornada'] : NULL;
 
-        $arrData = $distributivo_model->getListadoDistributivoedu($arrSearch["search"], $arrSearch["modalidad"], $arrSearch["asignatura"], $arrSearch["jornada"], $arrSearch["unidad"], $arrSearch["periodo"], true);
+        $arrData = $distributivo_model->getListadoDistributivoedu($arrSearch["search"], $arrSearch["modalidad"], $arrSearch["materia"], $arrSearch["jornada"], $arrSearch["unidad"], $arrSearch["periodo"], true, $reporte);
         $report->orientation = "P"; // tipo de orientacion L => Horizontal, P => Vertical                                
         $report->createReportPdf(
                 $this->render('exportpdf', [

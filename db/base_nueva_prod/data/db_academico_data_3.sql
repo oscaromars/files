@@ -39,6 +39,78 @@ INSERT INTO `actividad_evaluacion` (`aeva_id`, `aeva_descripcion`, `aeva_nombre`
 (8, 'Talleres prácticos', 'Talleres prácticos', '1', '1'),
 (9, 'Otros', 'Otros', '1', '1');
 
+
+-- Data de calificaciones 
+INSERT INTO `componente` (`com_id`, `com_nombre`, `com_descripcion`, `com_estado`, `com_estado_logico`) VALUES
+(1, 'Asíncrona', 'Asynchronous', '1', '1'),
+(2, 'Síncrona', 'Synchronous', '1', '1'),
+(3, 'Autónoma', 'Autonomous', '1', '1'),
+(4, 'Evaluación', 'Evaluation', '1', '1'),
+(5, 'Examen', 'Exam', '1', '1'),
+(6, 'Trabajo final', 'Final work', '1', '1');
+
+INSERT INTO `actividad` (`act_id`, `act_nombre`, `act_descripcion`, `act_estado`, `act_estado_logico`) VALUES
+(1, 'Foros', 'Forums', '1', '1'),
+(2, 'Participación en Clases ', 'Class Participation', '1', '1'),
+(3, 'Talleres', 'Workshops', '1', '1'),
+(4, 'Cuestionarios', 'Questionnaire', '1', '1'),
+(5, 'Trabajo Final', 'Midterm - Final', '1', '1'),
+(6, 'Descargas', 'Downloads', '1', '1'),
+(7, 'Paper-Proyecto', 'Paper-Project', '1', '1');
+
+INSERT INTO `componente_unidad` (`cuni_id`, `com_id`, `uaca_id`, `cuni_calificacion`, `cuni_estado`, `cuni_estado_logico`) VALUES
+-- Grado
+(1, 1, 1, 10, '1', '1'),
+(2, 2, 1, 10, '1', '1'),
+(3, 3, 1, 20, '1', '1'),
+(4, 4, 1, 20, '1', '1'),
+(5, 5, 1, 40, '1', '1'),
+-- Posgrado
+(6, 1, 2, 10, '1', '1'),
+(7, 3, 2, 20, '1', '1'),
+(8, 4, 2, 20, '1', '1'),
+(9, 6, 2, 50, '1', '1');
+
+
+INSERT INTO `componente_unidad_actividad` (`cuac_id`, `cuni_id`, `act_id`, `cuac_estado`, `cuac_estado_logico`) VALUES
+-- Grado
+(1, 1, 1, '1', '1'),
+(2, 2, 2, '1', '1'),
+(3, 3, 3, '1', '1'),
+(4, 4, 4, '1', '1'),
+(5, 5, 5, '1', '1'),
+-- Posgrado
+(6, 6, 1, '1', '1'),
+(7, 7, 6, '1', '1'),
+(8, 8, 3, '1', '1'),
+(9, 9, 4, '1', '1'),
+(10, 10, 7, '1', '1');
+
+
+INSERT INTO `esquema_calificacion` (`ecal_id`, `ecal_nombre`, `ecal_descripcion`, `ecal_estado`, `ecal_estado_logico`) VALUES
+(1, 'Parcial I', 'Parcial I', '1', '1'),
+(2, 'Parcial II', 'Parcial II', '1', '1'),
+(3, 'Supletorio', 'Supletorio', '1', '1');
+
+INSERT INTO `esquema_calificacion_unidad` (`ecun_id`, `ecal_id`, `uaca_id`, `ecun_estado`, `ecun_estado_logico`) VALUES
+-- Grado
+(1, 1, 1, '1', '1'),
+(2, 2, 1, '1', '1'),
+(3, 3, 1, '1', '1'),
+-- Posgrado
+(4, 1, 2, '1', '1'),
+(5, 2, 2, '1', '1'),
+(6, 3, 2, '1', '1');
+
+
+INSERT INTO `asistencia_esquema_unidad` (`aeun_id`, `ecun_id`, `aeun_cantidad`, `aeun_estado`, `aeun_estado_logico`) VALUES
+-- Grado
+(1, 1, 6, '1', '1'),
+(2, 2, 6, '1', '1'),
+-- Posgrado
+(3, 4, 2, '1', '1'),
+(4, 5, 2, '1', '1');
+
 -- -- ------------------------ ------------------------------
 --
 -- Volcado de datos para la tabla `valor_desarrollo`

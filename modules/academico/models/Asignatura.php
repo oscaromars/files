@@ -606,4 +606,190 @@ class Asignatura extends \yii\db\ActiveRecord
         $resultData = $comando->queryAll();
         return $resultData;
     }
+
+    /**
+     * Busca la asigantura por asi_id y por uaca_id
+     * @author  Jorge Paladines <analista.desarrollo@uteg.edu.ec>;
+     * @property       
+     * @return  
+     */
+    public function consultarAsignaturaConUnidad($asi_id, $uaca_id){
+        $con = Yii::$app->db_academico;
+
+        $sql = "SELECT asi_id, asi_nombre
+                FROM " . $con->dbname . ".asignatura
+                WHERE
+                asi_id = :asi_id AND
+                uaca_id = :uaca_id AND
+                asi_estado = 1 AND
+                asi_estado_logico = 1";
+
+        $comando = $con->createCommand($sql);
+
+        $comando->bindParam(":asi_id", $asi_id, \PDO::PARAM_INT);
+        $comando->bindParam(":uaca_id", $uaca_id, \PDO::PARAM_INT);
+
+        $resultData = $comando->queryOne();
+        return $resultData;
+    }
+
+/**
+     * Function consulta asiganturas ddel profesor, segun periodo, unidad, modalidad
+     * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>;
+     * @property       
+     * @return  
+     */
+    public function getAsignaturaRegistro($pro_id, $uaca_id, $mod_id, $paca_id){        
+        $con_academico = \Yii::$app->db_academico;
+        $estado = '1';
+
+        //print_r($uaca_id);die();
+        if($uaca_id == 0)
+            $str_search = "";
+        else
+            $str_search = " and asig.uaca_id  = :uaca_id ";
+
+        $sql = "SELECT distinct asig.asi_id as id, 
+                       asig.asi_descripcion as name
+                  FROM " . $con_academico->dbname . ".distributivo_academico AS daca
+            INNER JOIN " . $con_academico->dbname . ".asignatura AS asig ON asig.asi_id = daca.asi_id
+                 WHERE daca.pro_id  = :pro_id 
+                   AND daca.paca_id = :paca_id 
+                   AND asig.asi_estado = :estado 
+                   AND asig.asi_estado_logico = :estado 
+                   $str_search
+              GROUP BY id, name
+              ORDER BY name";
+        $comando = $con_academico->createCommand($sql);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $comando->bindParam(":pro_id", $pro_id, \PDO::PARAM_INT);
+        $comando->bindParam(":paca_id", $paca_id, \PDO::PARAM_INT);
+
+        if($uaca_id != 0)
+            $comando->bindParam(":uaca_id", $uaca_id, \PDO::PARAM_INT);    
+
+        $res = $comando->queryAll();
+
+        // \app\models\Utilities::putMessageLogFile('ASIGNATURAS gap: ' .$comando->getRawSql());
+        return $res;
+    }
+
+    public function getCourseProfesor($pro_id,$paca_id,$asi_id){
+        $con = \Yii::$app->db_academico;      
+        $estado = 1;
+
+        $sql = "SELECT
+                    paralelo.par_id id, 
+                    paralelo.par_nombre name 
+                FROM
+                        db_academico.distributivo_academico daca 
+                    INNER JOIN db_academico.materias_paralelos_periodo_detalle mppd ON mppd.mppd_id = daca.mppd_id
+                    INNER JOIN db_academico.paralelo paralelo ON paralelo.par_id = mppd.par_id
+                WHERE daca.pro_id = :pro_id  AND daca.paca_id = :paca_id AND  asi_id = :asi_id
+                        AND daca.daca_estado = :estado  
+                        AND daca.daca_estado_logico = 1
+                        AND mppd.mppd_estado = 1 
+                        AND mppd.mppd_estado_logico = 1 
+                        AND paralelo.par_estado = 1 
+                        AND paralelo.par_estado_logico = 1";
+
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":pro_id", $pro_id, \PDO::PARAM_INT);
+        $comando->bindParam(":paca_id", $paca_id, \PDO::PARAM_INT); 
+         $comando->bindParam(":asi_id", $asi_id, \PDO::PARAM_INT); 
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);          
+        $resultData = $comando->queryAll();
+        //\app\models\Utilities::putMessageLogFile('ASIGNATURAS gap: ' .$comando->getRawSql());
+        return $resultData;
+    } 
+
+
+/**
+     * Función para retornar todas las asignaturas, y filtrarlas por los IDs de profesor, unidad académica y período académico
+     * @author  Jorge Paladines <analista.desarrollo@uteg.edu.ec>;
+     * @property       
+     * @return  
+     */
+    public function getAsignaturasBy($pro_id = NULL, $uaca_id = NULL, $paca_id = NULL){        
+        $con_academico = Yii::$app->db_academico;
+
+        $str_search = "";
+
+        if($pro_id != 0 || $pro_id != NULL){
+            $str_search .= " AND daca.pro_id  = " . $pro_id;
+        }
+        if($uaca_id != 0 || $uaca_id != NULL){
+            $str_search .= " AND asi.uaca_id  = " . $uaca_id;
+        }
+        if($paca_id != 0 || $paca_id != NULL){
+            $str_search .= " AND daca.paca_id = " . $paca_id;
+        }
+
+        $sql = "SELECT DISTINCT daca.paca_id, daca.uaca_id, daca.asi_id, asi.asi_descripcion
+                FROM " . $con_academico->dbname . ".distributivo_academico AS daca
+                INNER JOIN " . $con_academico->dbname . ".asignatura AS asi ON asi.asi_id = daca.asi_id
+                WHERE
+                daca.daca_estado = 1 AND daca.daca_estado_logico = 1 
+                AND asi.asi_estado = 1 AND asi.asi_estado_logico = 1 
+                $str_search 
+                ORDER BY asi_descripcion";
+
+        $comando = $con_academico->createCommand($sql);   
+        $res = $comando->queryAll();
+        // \app\models\Utilities::putMessageLogFile($res);
+        // \app\models\Utilities::putMessageLogFile('ASIGNATURAS gap: ' .$comando->getRawSql());
+        return $res;
+    }
+    
+    public function consultarAsignatura($asi_id){
+        $con = Yii::$app->db_academico;      
+
+        $sql = "SELECT * FROM db_academico.asignatura AS asi
+                WHERE asi.asi_estado = 1 AND asi.asi_estado_logico = 1
+                AND asi.asi_id = $asi_id";
+
+        $comando = $con->createCommand($sql);         
+        $resultData = $comando->queryAll();
+        return $resultData;
+    }
+
+    /**
+     * Function consulta asiganturas ddel profesor, segun periodo, unidad, modalidad para consulta  de calificaciones
+     * @author  Didimo Zamora <analistadesarrollo03@uteg.edu.ec>;
+     * @property       
+     * @return  
+     */
+    public function getAsignaturaByProfesorDistributivo($paca_id,$pro_id,$uaca_id,$mod_id){
+        $con = \Yii::$app->db_academico;
+        $con1 = \Yii::$app->db_asgard;
+        //inner join ". $con->dbname  .".unidad_academica uaca  on daca.uaca_id = uaca.uaca_id)
+        $sql = "SELECT distinct 
+                daca.asi_id id,
+                asig.asi_descripcion  name
+                FROM ". $con1->dbname  .".persona per inner join ".$con->dbname  .".profesor pro on per.per_id = pro.per_id
+                inner join ". $con->dbname  .".distributivo_academico daca on daca.pro_id = pro.pro_id
+                inner join ". $con->dbname  .".asignatura asig on asig.asi_id = daca.asi_id 
+                WHERE 
+                    per.per_estado = 1
+                    and per.per_estado_logico = 1
+                    
+                    and pro.pro_estado = 1
+                    and pro.pro_estado_logico = 1
+                    
+                    and daca.daca_estado = 1
+                    and daca_estado_logico = 1
+                    
+                    and asig.asi_estado = 1
+                    and asig.asi_estado_logico = 1
+
+                    and pro.pro_id = :pro_id  
+                    and daca.paca_id = :paca_id"; 
+       //echo "Sentencia: ".$sql;
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":paca_id", $paca_id, \PDO::PARAM_INT);
+        $comando->bindParam(":pro_id", $pro_id, \PDO::PARAM_INT);
+    
+        $resultData = $comando->queryAll();
+        return $resultData;
+    }
 }

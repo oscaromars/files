@@ -90,7 +90,7 @@ class CursoEducativaDistributivo extends \yii\db\ActiveRecord
         return $this->hasOne(DistributivoAcademico::className(), ['daca_id' => 'daca_id']);
     }
 
-    public function getListadoDistributivoedu($search = NULL, $modalidad = NULL, $asignatura = NULL, $jornada = NULL, $unidadAcademico = NULL, $periodoAcademico = NULL, $onlyData = false) {
+    public function getListadoDistributivoedu($search = NULL, $modalidad = NULL, $asignatura = NULL, $jornada = NULL, $unidadAcademico = NULL, $periodoAcademico = NULL, $onlyData = false, $reporte = NULL) {
         $con_academico = \Yii::$app->db_academico;
         $con_db = \Yii::$app->db;
         $search_cond = "%" . $search . "%";
@@ -194,18 +194,20 @@ class CursoEducativaDistributivo extends \yii\db\ActiveRecord
 
         $res = $comando->queryAll();
 
-        $mod_educativa = new CursoEducativa();
-        //$arr_curso = $mod_educativa->consultarCursostodos();  
-        $arr_curso = $mod_educativa->consultarCursosxpacaid($periodoAcademico);
-        $arr_curso = array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $arr_curso);
+        if (empty($reporte))
+        {
+            $mod_educativa = new CursoEducativa();
+            //$arr_curso = $mod_educativa->consultarCursostodos();  
+            $arr_curso = $mod_educativa->consultarCursosxpacaid($periodoAcademico);
+            $arr_curso = array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $arr_curso);
+            
+            //print_r($arr_curso);
+            foreach ($res as $key => $value) {
+                $value['cursos'] = $arr_curso;
+                $res[$key] =  $value;
+            }    
         
-        //print_r($arr_curso);
-        foreach ($res as $key => $value) {
-            $value['cursos'] = $arr_curso;
-            $res[$key] =  $value;
-        }    
-        /*if ($onlyData)
-            return $res;*/
+        }
         $dataProvider = new ArrayDataProvider([
             'key' => 'id',
             'allModels' => $res,

@@ -147,6 +147,10 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
         }else{
           $mod_paca        = new PeriodoAcademico(); 
           $paca_actual_id  = $mod_paca->getPeriodoAcademicoActual();
+          if (empty($paca_actual_id['id']))
+          {
+            $paca_actual_id['id'] = 0;
+          }      
           $str_search      = "a.paca_id = ".$paca_actual_id['id']." AND ";
         }        
 

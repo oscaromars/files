@@ -42,13 +42,17 @@ INSERT INTO `actividad_evaluacion` (`aeva_id`, `aeva_descripcion`, `aeva_nombre`
 
 -- Data de calificaciones 
 INSERT INTO `componente` (`com_id`, `com_nombre`, `com_descripcion`, `com_estado`, `com_estado_logico`) VALUES
-(1, 'Asíncrona', 'Asynchronous', '1', '1'),
-(2, 'Síncrona', 'Synchronous', '1', '1'),
-(3, 'Autónoma', 'Autonomous', '1', '1'),
-(4, 'Evaluación', 'Evaluation', '1', '1'),
-(5, 'Examen', 'Exam', '1', '1'),
-(6, 'Trabajo final', 'Final work', '1', '1');
+(1, 'Asíncrona', 'Asíncrona', '1', '1'),
+(2, 'Síncrona', 'Síncrona', '1', '1'),
+(3, 'Cuestionarios', 'Cuestionarios', '1', '1'),
+(4, 'Autónoma', 'Autónoma', '1', '1'),
+(5, 'Evaluación', 'Evaluación', '1', '1'),
+(6, 'Examen', 'Examen', '1', '1'),
+(7, 'Talleres', 'Talleres', '1', '1'),
+(8, 'Deberes', 'Deberes', '1', '1'),
+(9, 'Aporte', 'Aporte', '1', '1');
 
+/*
 INSERT INTO `actividad` (`act_id`, `act_nombre`, `act_descripcion`, `act_estado`, `act_estado_logico`) VALUES
 (1, 'Foros', 'Forums', '1', '1'),
 (2, 'Participación en Clases ', 'Class Participation', '1', '1'),
@@ -57,21 +61,40 @@ INSERT INTO `actividad` (`act_id`, `act_nombre`, `act_descripcion`, `act_estado`
 (5, 'Trabajo Final', 'Midterm - Final', '1', '1'),
 (6, 'Descargas', 'Downloads', '1', '1'),
 (7, 'Paper-Proyecto', 'Paper-Project', '1', '1');
+*/
 
-INSERT INTO `componente_unidad` (`cuni_id`, `com_id`, `uaca_id`, `cuni_calificacion`, `cuni_estado`, `cuni_estado_logico`) VALUES
--- Grado
-(1, 1, 1, 10, '1', '1'),
-(2, 2, 1, 10, '1', '1'),
-(3, 3, 1, 20, '1', '1'),
-(4, 4, 1, 20, '1', '1'),
-(5, 5, 1, 40, '1', '1'),
--- Posgrado
-(6, 1, 2, 10, '1', '1'),
-(7, 3, 2, 20, '1', '1'),
-(8, 4, 2, 20, '1', '1'),
-(9, 6, 2, 50, '1', '1');
+INSERT INTO `componente_unidad` (`cuni_id`, `com_id`, `uaca_id`, `mod_id`, `cuni_calificacion`, `cuni_estado`, `cuni_estado_logico`) VALUES
+-- Grado online
+(1, 1, 1, 1, 2, '1', '1'),
+(2, 2, 1, 1, 2, '1', '1'),
+(3, 3, 1, 1, 4, '1', '1'),
+(4, 4, 1, 1, 6, '1', '1'),
+(5, 5, 1, 1, 6, '1', '1'),
+-- Grado presencial
+(6, 8, 1, 2, 4, '1', '1'),
+(7, 9, 1, 2, 4, '1', '1'), 
+(8, 6, 1, 2, 12, '1', '1'),
+-- Grado semipresencial
+(9, 8, 1, 3, 4, '1', '1'),
+(10, 9, 1, 3, 4, '1', '1'),
+(11, 6, 1, 3, 12, '1', '1'),
+-- Grado distancia
+(12, 1, 1, 4, 6, '1', '1'),
+(13, 2, 1, 4, 4, '1', '1'),
+(14, 5, 1, 4, 4, '1', '1'),
+(15, 6, 1, 4, 6, '1', '1'),
+-- Posgrado online
+(16, 4, 2, 1, 5, '1', '1'),
+(17, 5, 2, 1, 1, '1', '1'),
+(18, 1, 2, 1, 1, '1', '1'),
+(19, 6, 2, 1, 3, '1', '1'),
+-- Posgrado presencial
+(20, 7, 2, 2, 4, '1', '1'),
+(21, 8, 2, 2, 3, '1', '1'),
+(22, 6, 2, 2, 3, '1', '1');
 
 
+/*
 INSERT INTO `componente_unidad_actividad` (`cuac_id`, `cuni_id`, `act_id`, `cuac_estado`, `cuac_estado_logico`) VALUES
 -- Grado
 (1, 1, 1, '1', '1'),
@@ -85,7 +108,7 @@ INSERT INTO `componente_unidad_actividad` (`cuac_id`, `cuni_id`, `act_id`, `cuac
 (8, 8, 3, '1', '1'),
 (9, 9, 4, '1', '1'),
 (10, 10, 7, '1', '1');
-
+*/
 
 INSERT INTO `esquema_calificacion` (`ecal_id`, `ecal_nombre`, `ecal_descripcion`, `ecal_estado`, `ecal_estado_logico`) VALUES
 (1, 'Parcial I', 'Parcial I', '1', '1'),
@@ -99,8 +122,7 @@ INSERT INTO `esquema_calificacion_unidad` (`ecun_id`, `ecal_id`, `uaca_id`, `ecu
 (3, 3, 1, '1', '1'),
 -- Posgrado
 (4, 1, 2, '1', '1'),
-(5, 2, 2, '1', '1'),
-(6, 3, 2, '1', '1');
+(5, 3, 2, '1', '1');
 
 
 INSERT INTO `asistencia_esquema_unidad` (`aeun_id`, `ecun_id`, `aeun_cantidad`, `aeun_estado`, `aeun_estado_logico`) VALUES

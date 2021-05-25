@@ -577,4 +577,42 @@ class CargaCartera extends \yii\db\ActiveRecord
             return $dataProvider;
         }
     }
+
+    /**
+     * Function consultarEstudiantesautorizados
+     * @author  Galo Aguirre <analistadesarrollo06@uteg.edu.ec>
+     * @param   
+     * @return  
+     */
+    public function consultarEstudiantesautorizados() {
+        $con = \Yii::$app->db_facturacion;
+        $sql = "SELECT * 
+                  FROM (
+                       SELECT est_id
+                              ,ccar_fecha_vencepago
+                              ,CASE WHEN ccar_fecha_vencepago <= NOW() 
+                                    THEN ifnull((CASE WHEN ccar_estado_cancela = 'C'
+                                                      THEN 'Autorizado'
+                                                      ELSE 'No Autorizado' 
+                                                 END),'No Autorizado')
+                                    WHEN ccar_fecha_vencepago >= NOW() 
+                                    THEN ifnull((CASE WHEN ccar_estado_cancela = 'N' or ccar_estado_cancela = 'C'
+                                                      THEN 'Autorizado'
+                                                      ELSE 'No Autorizado' 
+                                                 END ),'No Autorizado')                      
+                                    ELSE 'No Autorizado'
+                                    END as pago 
+                         FROM db_facturacion.carga_cartera 
+                        WHERE ccar_fecha_vencepago <= now()
+                          AND ccar_estado = 1 
+                          AND ccar_estado_logico = 1
+                    ) estudiantes
+                WHERE pago = 'Autorizado'
+             GROUP BY 1,2";
+
+        $comando = $con->createCommand($sql);
+        //$comando->bindParam(":est_id", $est_id, \PDO::PARAM_INT);       
+        $resultData = $comando->queryAll();
+        return $resultData;
+    }//function consultarEstudiantesautorizados
 }

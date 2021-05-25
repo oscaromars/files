@@ -462,4 +462,33 @@ class Profesor extends \yii\db\ActiveRecord
         // Si llega aquí, tiene registro en la tabla como aprobado
         return 1;
     }
+
+    /**
+     * Function consulta si el profesor.
+     * @author Julio Lopez <analistadesarrollo01@uteg.edu.ec>;
+     * @param
+     * @return
+     */
+    public function getProfesoresDist($pro_id){
+        $con_asgard = \Yii::$app->db_asgard;
+        $con_academico = \Yii::$app->db_academico;
+
+        $sql = "SELECT
+                    pro.pro_id AS id,
+                    CONCAT(pe.per_pri_nombre, ' ', pe.per_pri_apellido) AS name
+                FROM 
+                    " . $con_academico->dbname . ".profesor AS pro
+                    INNER JOIN " . $con_asgard->dbname . ".persona AS pe ON pro.per_id = pe.per_id
+                WHERE 
+                    pro.pro_estado = 1 AND 
+                    pro.pro_estado_logico = 1 AND 
+                    pe.per_estado = 1 AND
+                    pe.per_estado_logico = 1 AND
+                    pro.pro_id = :pro_id
+                ORDER BY pe.per_pri_apellido ASC;";
+        $comando = $con_academico->createCommand($sql);
+        $comando->bindParam(":pro_id",$pro_id, \PDO::PARAM_INT);
+        $res = $comando->queryAll();
+        return $res;
+    }
 }

@@ -191,4 +191,32 @@ class UnidadAcademica extends \app\modules\academico\components\CActiveRecord {
         return $resultData;
     }
 
+    /**
+     * Retorna las Unidades Académicas en las que se ha registrado el estudiante, usando el est_id
+     * @author  Jorge Paladines <analista.desarrollo@uteg.edu.ec>;
+     * @property       
+     * @return  
+     */
+    public function consultarUnidadAcademicaDelEstudiante($est_id){
+        $con = Yii::$app->db_academico;
+            
+        $sql = "SELECT distinct uaca.uaca_id as id, uaca.uaca_nombre as name
+                FROM " . $con->dbname . ".unidad_academica AS uaca
+                INNER JOIN " . $con->dbname . ".modalidad_estudio_unidad AS meun ON uaca.uaca_id = meun.uaca_id
+                INNER JOIN " . $con->dbname . ".estudiante_carrera_programa AS ecpr ON ecpr.meun_id = meun.meun_id
+                WHERE ecpr.est_id = :est_id
+                AND ecpr.ecpr_estado = 1 AND ecpr.ecpr_estado_logico = 1
+                AND meun.meun_estado = 1 AND meun.meun_estado_logico = 1
+                AND uaca.uaca_estado = 1 AND uaca.uaca_estado_logico = 1
+                ORDER BY id ASC";
+
+        $comando = $con->createCommand($sql);
+
+        $comando->bindParam(":est_id", $est_id, \PDO::PARAM_INT);   
+             
+        $resultData = $comando->queryAll();
+        // \app\models\Utilities::putMessageLogFile('consultarUnidadAcademicasEstudiante: '.$comando->getRawSql());
+        return $resultData;
+    }
+
 }

@@ -69,7 +69,7 @@ class CalificacionestudianteController extends \app\components\CController {
         $mod_estudiante = new Estudiante();
         $mod_programa = new EstudioAcademico();
         $mod_modalidad = new Modalidad();
-        $mod_unidad = new CabeceraCalificacion();
+        $mod_unidad = new UnidadAcademica();
         $mod_profesor = new Profesor();
         $cabeceraCalificacion = new CabeceraCalificacion();
         $mod_Estudiante = new Estudiante();
@@ -78,10 +78,12 @@ class CalificacionestudianteController extends \app\components\CController {
         $Asignatura_distri = new Asignatura();
 
         $per_id = Yii::$app->session->get("PB_perid");
+        // $per_id = 3948;
         $user_usermane = Yii::$app->session->get("PB_username");
         
         $resp_estudianteid = $mod_Estudiante->getEstudiantexperid($per_id);
-    Utilities::putMessageLogFile("LINEA 84  per_id: " .$per_id);
+        // $resp_estudianteid["est_id"] = 682;
+        // Utilities::putMessageLogFile("LINEA 84  per_id: " .$per_id);
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
             if (isset($data["getmodalidad"])) {
@@ -90,7 +92,7 @@ class CalificacionestudianteController extends \app\components\CController {
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
             }
             if (isset($data["getcarrera"])) {
-                $carrera = $modcanal->consultarCarreraModalidadEstudiante($resp_estudianteid["est_id"],$data["unidada"], $data["moda_id"]);
+                $carrera = $modcanal->consultarCarreraModalidadEstudiante($resp_estudianteid["est_id"],$data["unidad"], $data["mod_id"]);
                 $message = array("carrera" => $carrera);
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
             }
@@ -100,12 +102,13 @@ class CalificacionestudianteController extends \app\components\CController {
 
         $arr_grupos = $grupo_model->getAllGruposByUser($user_usermane);        
         $arr_periodoActual = $mod_periodoActual->consultarPeriodoAcademico();
-        $arr_ninteres = $mod_unidad->consultarUnidadAcademicasEstudiante(1, $resp_estudianteid["est_id"]);         
-        $arr_modalidad = $mod_modalidad->consultarModalidad($arr_ninteres[0]["id"], 1);
-        $arr_carrera = $modcanal->consultarCarreraModalidadEstudiante($resp_estudianteid["est_id"], $arr_ninteres[0]["id"], $arr_modalidad[0]["id"]);
+        $arr_ninteres = $mod_unidad->consultarUnidadAcademicaDelEstudiante($resp_estudianteid["est_id"]);
+        $arr_modalidad = [];
+        $arr_carrera = []; 
+        // $arr_modalidad = $mod_modalidad->consultarModalidad($arr_ninteres[0]["id"], 1);
+        // $arr_carrera = $modcanal->consultarCarreraModalidadEstudiante($resp_estudianteid["est_id"], $arr_ninteres[0]["id"], $arr_modalidad[0]["id"]);
         
         $perfil_user = $arr_grupos[0]["id"];
-        $per_id = @Yii::$app->session->get("PB_perid");
         Utilities::putMessageLogFile("LINEA 108  perfil_user: " .$perfil_user);
 
         if ($data['PBgetFilter']) {
@@ -186,6 +189,7 @@ class CalificacionestudianteController extends \app\components\CController {
         $asistencia_parcial_2 = base64_decode($asistencia_parcial_2);
 
         $mod_estudiante = new Estudiante();
+        $mod_profesor = new Profesor();
         $persona_model = new Persona();
         $mod_modalidad = new Modalidad();
         $mod_unidad = new UnidadAcademica();
@@ -195,11 +199,13 @@ class CalificacionestudianteController extends \app\components\CController {
 
         $dataPersona = $persona_model->consultaDatosPersonaid($per_id);
         $dataEstudiante = $mod_estudiante->consultarDatosPersona($est_id);
+        $dataProfesor = $mod_profesor->getProfesoresDist($pro_id);
         $uaca_id = $mod_estudiante->getEstudiantexestid($est_id)['unidad'];
         $arr_modalidad = $mod_modalidad->consultarModalidad($uaca_id, 1);
 
         $nombres = $dataEstudiante['nombres'];
         $matricula = $dataEstudiante['matricula'];
+        $profesor = $dataProfesor[0]['name'];
         $unidad = $mod_unidad->consultarNombreunidad($uaca_id)['nombre_unidad'];
         $modalidad = $arr_modalidad[0]['name'];
         $asignatura = $mod_asignatura->consultarAsignatura($asi_id)[0]['asi_descripcion'];
@@ -228,6 +234,7 @@ class CalificacionestudianteController extends \app\components\CController {
             'notas_estudiante' => $notas_estudiante,
             'nombres' => $nombres,
             'matricula' => $matricula,
+            'profesor' => $profesor,
             'unidad' => $unidad,
             'modalidad' => $modalidad,
             'asignatura' => $asignatura,

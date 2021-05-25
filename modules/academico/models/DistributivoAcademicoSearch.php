@@ -17,7 +17,7 @@ use yii\data\ArrayDataProvider;
 
 class DistributivoAcademicoSearch extends DistributivoAcademico {
 
-    public function rules() {
+    public function rules() { 
         return [
             [['paca_id', 'tdis_id', 'asi_id', 'uaca_id', 'mod_id', 'daho_id', 'daca_num_estudiantes_online', 'daca_usuario_ingreso', 'daca_usuario_modifica'], 'integer'],
         ];
@@ -573,15 +573,10 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
                 Inner Join db_academico.asignatura asi on asi.asi_id = daca.asi_id
                 Inner Join db_academico.periodo_academico paca on paca.paca_id = daca.paca_id 
                 Where
-                    pla.saca_id = 7 AND
-                    ron.pes_id = 20 AND
-                    per.per_id = 1030 AND
-                    est.per_id = 1030 AND
-                    ecpr.est_id = 26 AND
-                    meun.meun_id = 18 AND
-                    uaca.uaca_id = 1 AND
                     moda.mod_id = 2 AND
-                    eaca.eaca_id = 14";
+                    est.est_estado = 1 AND est.est_estado_logico = 1 AND
+                    meun.meun_estado = 1 AND meun.meun_estado_logico = 1 AND
+                    eaca.eaca_estado = 1 AND eaca.eaca_esta_logico = 1";
         if ($tipo == 1) {
             $this->load($params);
             if ($this->validate()) {
@@ -613,6 +608,84 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
             if ($params['asi_id']) {
                 $sql = $sql . " and daca.asi_id =" . $params['asi_id'];
             }
+        }
+        Utilities::putMessageLogFile('sql:' . $sql);
+        $comando = $con_academico->createCommand($sql);
+        $res = $comando->queryAll();
+
+        if ($onlyData)
+            return $res;
+        $dataProvider = new ArrayDataProvider([
+            'key' => 'Id',
+            'allModels' => $res,
+            'pagination' => [
+                'pageSize' => Yii::$app->params["pageSize"],
+            ],
+            'sort' => [
+                'attributes' => [],
+            ],
+        ]);
+
+        return $dataProvider;
+    }
+
+    public function getListadoreportInscriptos($params = null, $onlyData = false, $tipo = 1) {
+        $con_academico = \Yii::$app->db_academico;
+        $con_db = \Yii::$app->db;
+        
+
+        $sql = "select 
+                CONCAT(per.per_pri_apellido,' ' ,per.per_pri_nombre) as nombres,
+                per.per_cedula as cedula,
+                per.per_correo as correo,
+                per.per_celular as telefono,
+                est.est_matricula as matricula,
+                uaca.uaca_descripcion as unidad,
+                moda.mod_descripcion as modalidad,
+                eaca.eaca_descripcion as carrera
+                FROM db_captacion.admitido adm 
+                inner join db_captacion.interesado inte ON inte.int_id = adm.int_id
+                Inner join db_asgard.persona per ON per.per_id = inte.per_id
+                Inner join db_academico.estudiante est ON est.per_id = per.per_id
+                Inner join db_academico.estudiante_carrera_programa ecpr ON ecpr.est_id = est.est_id
+                Inner Join db_academico.modalidad_estudio_unidad meun on meun.meun_id = ecpr.meun_id
+                Inner join db_academico.estudio_academico eaca ON eaca.eaca_id = meun.eaca_id
+                Inner Join db_academico.modalidad moda on moda.mod_id = meun.mod_id
+                inner join db_academico.distributivo_academico daca on daca.mod_id = moda.mod_id
+                Inner Join db_academico.unidad_academica uaca on uaca.uaca_id = daca.uaca_id
+                Inner Join db_academico.periodo_academico paca on paca.paca_id = daca.paca_id
+                Inner Join db_academico.semestre_academico saca on saca.saca_id = paca.saca_id
+                Inner Join db_academico.bloque_academico baca on baca.baca_id = paca.saca_id
+                where adm.adm_fecha_creacion between '2018-07-08 05:00:00' and '2019-09-22 04:59:59'
+                and daca.daca_estado = 1 and daca.daca_estado_logico = 1
+                and adm.adm_estado = 1 and adm.adm_estado_logico = 1
+                and inte.int_estado = 1 and inte.int_estado_logico = 1
+                and est.est_estado = 1 and est.est_estado_logico = 1
+                and paca.paca_estado = 1 and paca.paca_estado_logico = 1";
+        if ($tipo == 1) {
+            $this->load($params);
+            if ($this->validate()) {
+               
+                if ($this->paca_id) {
+                    $sql = $sql . " and daca.paca_id =" . $this->paca_id;
+                }
+
+                if ($this->mod_id) {
+                    $sql = $sql . " and daca.mod_id =" . $this->mod_id;
+                }
+
+            } 
+        }
+        if ($tipo == 2) {
+
+            if ($params['paca_id']) {
+                $sql = $sql . " and daca.paca_id =" . $params['paca_id'];
+            }
+
+            if ($params['mod_id']) {
+                $sql = $sql . " and daca.mod_id =" . $params['mod_id'];
+            }
+
         }
         Utilities::putMessageLogFile('sql:' . $sql);
         $comando = $con_academico->createCommand($sql);

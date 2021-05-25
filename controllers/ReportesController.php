@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 use app\modules\academico\models\DistributivoAcademicoSearch;
+use app\modules\academico\models\DistributivoAcademicoEstudianteSearch;
 use Yii;
 use app\components\CController;
 use app\models\Grupo;
@@ -440,5 +441,28 @@ class ReportesController extends CController {
             'dataProvider' => $dataProvider,
         ]);       
     }
+
+    public function actionReporteinscritos(){
+        $searchModel = new DistributivoAcademicoSearch();
+        //$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $params = Yii::$app->request->queryParams;
+        $dataProvider = $searchModel->getListadoreportInscriptos($params,false,1);
+        return $this->render('reporteinscritos', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]); 
+    }
+
+    public function actionReportepromedios() { 
+        $searchModel = new DistributivoAcademicoEstudianteSearch();
+        //$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $params = Yii::$app->request->queryParams;
+        $dataProvider = $searchModel->getListadoReportepromedio($params,false,1);
+        return $this->render('reportepromedios', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);       
+    }
+
 
 }

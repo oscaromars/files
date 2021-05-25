@@ -89,13 +89,31 @@ class UsuarioeducativaController extends \app\components\CController {
             if ($data["procesar_file"]) {
                 try {
                 ini_set('memory_limit', '256M');
-                //\app\models\Utilities::putMessageLogFile('Files controller ...: ' . $data["archivo"]);
+                
                 $carga_archivo = $mod_educativa->CargarArchivoeducativa($data["archivo"]);
                 if ($carga_archivo['status']) {
-                    //\app\models\Utilities::putMessageLogFile('no estudiante controller...: ' . $arroout['noalumno']);
                     if (!empty($carga_archivo['noalumno'])){                        
                     $noalumno = ' No se encontró los usuarios '. $carga_archivo['noalumno'] . ' que no pertenecen a estudiantes en asgard. ';
-                    }
+                    //\app\models\Utilities::putMessageLogFile('no estudiante controller...: ' . $carga_archivo['noalumno']);
+                    /*$nousuario = explode(",", $carga_archivo['noalumno']);
+                    $arrData = array();
+                    foreach ($nousuario as $user_noasgard) {  // empieza foreach genera usuarios no encontrados
+                        $arrData =  $user_noasgard;                       
+                    } // cierra foreach 
+                    ini_set('memory_limit', '256M');
+                    $content_type = Utilities::mimeContentType("xls");
+                    $nombarch = "No estudiantes-" . date("YmdHis") . ".xls";
+                    header("Content-Type: $content_type");
+                    header("Content-Disposition: attachment;filename=" . $nombarch);
+                    header('Cache-Control: max-age=0');
+                    $colPosition = array("C", "D", "E", "F", "G");
+                    $arrHeader = array(
+                        Yii::t("formulario", "Usuario"),                        
+                    );
+                    $nameReport = academico::t("Academico", "Usuario que no estan en asgard");
+                    Utilities::generarReporteXLS($nombarch, $nameReport, $arrHeader, $arrData, $colPosition);
+                    exit;*/
+                }
                     $message = array(
                         "wtmessage" => Yii::t("notificaciones", "Archivo procesado correctamente." . $carga_archivo['data'] .  $noalumno),
                         "title" => Yii::t('jslang', 'Success'),

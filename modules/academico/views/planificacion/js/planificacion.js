@@ -864,8 +864,28 @@ function fillDataAlert() {
 }
 
 
+
 function generate() {
+     var haspla = $('#frm_hasplanning').val(); 
     var periodo = $('#cmb_per_academico option:selected').val();
     var modalidad = $('#cmb_modalidad option:selected').val();
-    window.location.href = $('#txth_base').val() + "/academico/planificacionnew/generator?periodo=" + periodo + '&modalidad=' + modalidad;
+
+    if (haspla) {
+ 
+  // showAlert('NO_OK', 'error','wtmessage'); 
+  showAlert('NO_OK', 'error', {"wtmessage": 'Ya existe una planificacion activa para la modalidad elegida', "title": 'Información'});
+
+  
+} else {
+     showLoadingPopup();
+    window.location.href = $('#txth_base').val() + "/academico/planificacion/generator?periodo=" + periodo + '&modalidad=' + modalidad + '&haspla=' + haspla;
+}
+}
+
+
+
+
+function descargarPlanificacionestu(pla_id) {
+    /* console.log("Entra a descargar", pla_id); */
+    window.location.href = $('#txth_base').val() + "/academico/planificacion/descargarples?pla_id=" + pla_id;
 }

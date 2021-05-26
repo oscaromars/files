@@ -66,28 +66,28 @@ class DistributivoAcademicoEstudianteSearch extends DistributivoAcademicoEstudia
                       IFNULL(eaca.eaca_nombre, '') as carrera,
                       asi.asi_descripcion as asignatura,
 					  ccal.ccal_calificacion as calificacion
-                                FROM db_academico.distributivo_academico_estudiante daes 
-                                INNER JOIN db_academico.cabecera_calificacion ccal ON ccal.est_id = daes.est_id
-                                INNER JOIN db_academico.esquema_calificacion_unidad ecun ON ecun.ecun_id = ccal.ecun_id
-                                INNER JOIN db_academico.esquema_calificacion ecal ON ecal.ecal_id = ecun.ecal_id
-                                LEFT JOIN db_academico.estudiante est ON est.est_id = daes.est_id
-                                INNER JOIN db_asgard.persona per ON per.per_id = est.per_id
-                                INNER JOIN db_academico.asignatura asi ON asi.asi_id = ccal.asi_id
-								INNER JOIN db_academico.estudiante_carrera_programa ecpr ON ecpr.est_id = est.est_id
-								INNER JOIN db_academico.modalidad_estudio_unidad meun ON meun.meun_id = ecpr.meun_id
-								INNER JOIN db_academico.estudio_academico eaca ON eaca.eaca_id = meun.eaca_id
-								INNER JOIN db_academico.periodo_academico AS paca ON paca.paca_id = ccal.paca_id
-                                WHERE 
-								meun.uaca_id = asi.uaca_id
-								AND est.est_estado = 1
-								AND est.est_estado_logico = 1
-								AND per.per_estado = 1
-								AND per.per_estado_logico = 1 
-								AND daes.daes_estado = 1
-								AND daes.daes_estado_logico = 1
-								AND asi.asi_estado = 1 
-								AND asi.asi_estado_logico = 1
-								AND paca.paca_estado = 1 AND paca.paca_estado_logico = 1";
+                FROM db_academico.distributivo_academico_estudiante daes 
+                INNER JOIN db_academico.cabecera_calificacion ccal ON ccal.est_id = daes.est_id
+                INNER JOIN db_academico.esquema_calificacion_unidad ecun ON ecun.ecun_id = ccal.ecun_id
+                INNER JOIN db_academico.esquema_calificacion ecal ON ecal.ecal_id = ecun.ecal_id
+                LEFT JOIN db_academico.estudiante est ON est.est_id = daes.est_id
+                INNER JOIN db_asgard.persona per ON per.per_id = est.per_id
+                INNER JOIN db_academico.asignatura asi ON asi.asi_id = ccal.asi_id
+				INNER JOIN db_academico.estudiante_carrera_programa ecpr ON ecpr.est_id = est.est_id
+				INNER JOIN db_academico.modalidad_estudio_unidad meun ON meun.meun_id = ecpr.meun_id
+				INNER JOIN db_academico.estudio_academico eaca ON eaca.eaca_id = meun.eaca_id
+				INNER JOIN db_academico.periodo_academico AS paca ON paca.paca_id = ccal.paca_id
+                WHERE 
+				meun.uaca_id = asi.uaca_id
+				AND est.est_estado = 1
+				AND est.est_estado_logico = 1
+				AND per.per_estado = 1
+				AND per.per_estado_logico = 1 
+				AND daes.daes_estado = 1
+				AND daes.daes_estado_logico = 1
+				AND asi.asi_estado = 1 
+				AND asi.asi_estado_logico = 1
+				AND paca.paca_estado = 1 AND paca.paca_estado_logico = 1";
 
         if ($tipo == 1) {
             $this->load($params);

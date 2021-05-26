@@ -72,47 +72,47 @@ GridView::widget([
     ],
     'columns' => [
     	[
-            'attribute' => 'periodo',
-            'header' => academico::t("Academico", "Periodo"),
-            'value' => 'periodo',
+            'attribute' => 'nombres',
+            'header' => academico::t("Academico", "Nombre Completo"),
+            'value' => 'nombres',
           
         ],       
         [
-            'attribute' => 'estudiante',
-            'header' => academico::t("Academico", "Estudiantes"),
-            'value' => 'estudiante',
-            'group' => false,
-        ],
-        [
             'attribute' => 'cedula',
-            'header' => academico::t("Academico", "Cedula "),
+            'header' => academico::t("Academico", "Cédula"),
             'value' => 'cedula',
             'group' => false,
         ],
         [
-            'attribute' => 'materia',
-            'header' => academico::t("Academico", "Asignatura"),
-            'value' => 'materia',
+            'attribute' => 'correo',
+            'header' => academico::t("Academico", "Correo "),
+            'value' => 'correo',
+            'group' => false,
+        ],
+        [
+            'attribute' => 'telefono',
+            'header' => academico::t("Academico", "Teléfono"),
+            'value' => 'telefono',
           
         ],
         [
-            'attribute' => 'unidad',
-            'header' => academico::t("Academico", "Unidad Academico"),
-            'value' => 'unidad',
+            'attribute' => 'matricula',
+            'header' => academico::t("Academico", "Matrícula"),
+            'value' => 'matricula',
             'group' => false,
+        ],
+        [
+            'attribute' => 'unidad',
+            'header' => academico::t("Academico", "Unidad Academica"),
+            'value' => 'unidad',
+            'group' => false, // enable grouping
+        
         ],
         [
             'attribute' => 'modalidad',
             'header' => academico::t("Academico", "Modalidad"),
             'value' => 'modalidad',
           
-        ],
-        [
-            'attribute' => 'n_matricula',
-            'header' => academico::t("Academico", "Matricula"),
-            'value' => 'n_matricula',
-            'group' => false, // enable grouping
-        
         ],
         [
             'attribute' => 'carrera',

@@ -635,7 +635,7 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
         
 
         $sql = "select 
-                CONCAT(per.per_pri_apellido,' ' ,per.per_pri_nombre) as nombres,
+                CONCAT(per.per_pri_apellido,' ' ,per.per_seg_apellido,' ' ,per.per_pri_nombre) as nombres,
                 per.per_cedula as cedula,
                 per.per_correo as correo,
                 per.per_celular as telefono,
@@ -657,6 +657,7 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
                 Inner Join db_academico.semestre_academico saca on saca.saca_id = paca.saca_id
                 Inner Join db_academico.bloque_academico baca on baca.baca_id = paca.saca_id
                 where adm.adm_fecha_creacion between '2018-07-08 05:00:00' and '2019-09-22 04:59:59'
+                and moda.mod_id = 2
                 and daca.daca_estado = 1 and daca.daca_estado_logico = 1
                 and adm.adm_estado = 1 and adm.adm_estado_logico = 1
                 and inte.int_estado = 1 and inte.int_estado_logico = 1

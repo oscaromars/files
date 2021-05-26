@@ -783,7 +783,7 @@ class Estudiante extends \yii\db\ActiveRecord {
     public function consultarDatosPersona($est_id){
         $con = Yii::$app->db_academico;
 
-        $sql = "SELECT est.est_id, per.per_id, est.est_activo, est.est_matricula AS matricula, per.per_cedula AS cedula, concat(per.per_pri_nombre, ' ', per.per_pri_apellido) AS nombres, per.per_correo AS correo 
+        $sql = "SELECT est.est_id, per.per_id, est.est_estado, est.est_matricula AS matricula, per.per_cedula AS cedula, concat(per.per_pri_nombre, ' ', per.per_pri_apellido) AS nombres, per.per_correo AS correo 
                 FROM db_academico.estudiante AS est
                 INNER JOIN db_asgard.persona AS per ON per.per_id = est.per_id
                 WHERE est.est_estado = 1 AND est.est_estado_logico = 1

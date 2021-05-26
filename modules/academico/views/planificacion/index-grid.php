@@ -35,7 +35,7 @@ use app\models\ObjetoModulo;
                 'template' => '{download} {approve} {deny}',
                 'buttons' => [
                     'download' => function ($url, $model) {
-                        return Html::a('<span style="margin-left: 2px;margin-right: 2px;" id="frm_hasplanning" value="1" class="glyphicon glyphicon-download"></span>', null, ["data-toggle" => "tooltip", "title" => "Descargar", "onclick" => "descargarPlanificacion('" . $model['id'] . "')"]);
+                        return Html::a('<span style="margin-left: 2px;margin-right: 2px;" id="frm_hasplanning" value="1" class="glyphicon glyphicon-download"></span>', null, ["data-toggle" => "tooltip", "title" => "Descargar", "onclick" => "descargarPlanificacionestu('" . $model['id'] . "')"]);
                     },
                 ],
             ],

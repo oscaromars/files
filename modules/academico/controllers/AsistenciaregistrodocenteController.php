@@ -61,7 +61,7 @@ class AsistenciaregistrodocenteController extends \app\components\CController {
         ];
     }
 
-    /*public function actionIndex() {
+    public function actionIndex() {
 
          \app\models\Utilities::putMessageLogFile('actionIndex');
 
@@ -86,7 +86,8 @@ class AsistenciaregistrodocenteController extends \app\components\CController {
             }
         }
 
-        $arr_periodoActual = $mod_periodoActual->getAllGrupoEstacion(true);
+        //$arr_periodoActual = $mod_periodoActual->getAllGrupoEstacion(true);
+        $arr_periodoActual = $mod_periodoActual->consultarPeriodosActivos();                 
         $arr_profesor = $mod_profesor->getProfesoresxid($per_id);
         //$asignatura = $Asignatura_distri->getAsignaturaByProfesorDistributivo("0",$per_id);
         $asignatura = $Asignatura_distri->getAsignaturaRegistro($arr_profesor["Id"],1,1,$arr_periodoActual[0]["id"]);
@@ -106,7 +107,7 @@ class AsistenciaregistrodocenteController extends \app\components\CController {
                    // 'arr_carrerra1' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $arr_carrerra1), "id", "name"),
                     'arr_estados' => $this->estados()
         ]);
-    }*/
+    }
 
     public function actionCargararchivoasistencia() {
         if (Yii::$app->request->isAjax) {
@@ -441,7 +442,7 @@ class AsistenciaregistrodocenteController extends \app\components\CController {
 
     public function actionRegistro() {
         $per_id = @Yii::$app->session->get("PB_perid");
-
+         $emp_id = @Yii::$app->session->get("PB_idempresa");
         $user_usermane = Yii::$app->session->get("PB_username");
 
         $mod_estudiante    = new Estudiante();
@@ -488,13 +489,19 @@ class AsistenciaregistrodocenteController extends \app\components\CController {
         $arr_profesor      = $mod_profesor->getProfesoresxid($per_id);
         $arr_periodoActual = $mod_periodoActual->consultarPeriodosActivos();     
         $asignatura        = $Asignatura_distri->getAsignaturaRegistro($arr_profesor["Id"],1,1,$arr_periodoActual[0]["id"]);
-        $arr_ninteres      = $mod_unidad->consultarUnidadAcademicasEmpresa(1);
+        $arr_ninteres      = $mod_unidad->consultarUnidadAcademicasEmpresa($emp_id);
         $arr_modalidad     = $mod_modalidad->consultarModalidad($arr_ninteres[0]["id"], 1);        
         $arr_estudiante    = $mod_estudiante->consultarEstudiante();        
         $arr_parcialunidad = $mod_periodoActual->getTodosParciales();
         $arr_componente    = $mod_calificacion->getComponenteUnidad($arr_ninteres[0]["id"]);
+        \app\models\Utilities::putMessageLogFile('COMP-U ID '.$arr_componente[0]["id"]);
+        \app\models\Utilities::putMessageLogFile('COMP-U COL '.$arr_componente[0]["columna"]);
+        \app\models\Utilities::putMessageLogFile('COMP-U NOMBRE '.$arr_componente[0]["nombre"]);
+        \app\models\Utilities::putMessageLogFile('CONS-UACA '.$arr_ninteres[0]["id"]);
         $componenteuni     = $mod_calificacion->getComponente($arr_componente[0]["id"], $arr_componente[0]["columna"], $arr_componente[0]["nombre"], $arr_ninteres[0]["id"]);
-        
+         //\app\models\Utilities::putMessageLogFile('CONS-UACA '.$componenteuni);
+
+
         $asignatura = $Asignatura_distri->getAsignaturaRegistro($arr_profesor_all[0]['pro_id'],$arr_ninteres[0]["id"],1,$arr_periodoActual[0]["id"]);
         
         return $this->render('register', [

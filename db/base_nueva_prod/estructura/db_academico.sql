@@ -2192,10 +2192,13 @@ create view componente_columna as (
       select comp.com_id as id, coun.uaca_id as uaca_id,  
              case when comp.com_id  = 1 then 0   end as 'Asíncrona', 
              case when comp.com_id  = 2 then 0   end as 'Síncrona', 
-             case when comp.com_id  = 3 then 0   end as 'Autónoma',
-             case when comp.com_id  = 4 then 0   end as 'Evaluación', 
-             case when comp.com_id  = 5 then 0   end as 'Examen', 
-             case when comp.com_id  = 6 then 0   end as 'Trabajo_Final'
+             case when comp.com_id  = 3 then 0   end as 'Cuestionarios',
+             case when comp.com_id  = 4 then 0   end as 'Autónoma',
+             case when comp.com_id  = 5 then 0   end as 'Evaluación', 
+             case when comp.com_id  = 6 then 0   end as 'Examen', 
+             case when comp.com_id  = 7 then 0   end as 'Talleres', 
+             case when comp.com_id  = 8 then 0   end as 'Deberes', 
+             case when comp.com_id  = 9 then 0   end as 'Aporte'
              from db_academico.componente_unidad coun
              INNER JOIN db_academico.componente comp ON comp.com_id = coun.com_id
        -- WHERE coun.uaca_id = 3  

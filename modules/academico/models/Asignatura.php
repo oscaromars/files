@@ -683,13 +683,13 @@ class Asignatura extends \yii\db\ActiveRecord
                     paralelo.par_nombre name 
                 FROM
                         db_academico.distributivo_academico daca 
-                    INNER JOIN db_academico.materias_paralelos_periodo_detalle mppd ON mppd.mppd_id = daca.mppd_id
-                    INNER JOIN db_academico.paralelo paralelo ON paralelo.par_id = mppd.par_id
+                    -- INNER JOIN db_academico.materias_paralelos_periodo_detalle mppd ON mppd.mppd_id = daca.mppd_id
+                    INNER JOIN db_academico.paralelo paralelo ON paralelo.uaca_id = daca.uaca_id
                 WHERE daca.pro_id = :pro_id  AND daca.paca_id = :paca_id AND  asi_id = :asi_id
                         AND daca.daca_estado = :estado  
                         AND daca.daca_estado_logico = 1
-                        AND mppd.mppd_estado = 1 
-                        AND mppd.mppd_estado_logico = 1 
+                        -- AND mppd.mppd_estado = 1 
+                        -- AND mppd.mppd_estado_logico = 1 
                         AND paralelo.par_estado = 1 
                         AND paralelo.par_estado_logico = 1";
 

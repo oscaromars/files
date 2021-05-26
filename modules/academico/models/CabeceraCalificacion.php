@@ -1053,7 +1053,7 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord
                            where esca.ecal_id = ecun.ecal_id
                              and ecun.ecun_id = clfc.ecun_id) as ecal_id
                    FROM " . $con->dbname . ".distributivo_academico daca
-             INNER JOIN " . $con->dbname . ".materias_paralelos_periodo_detalle mppd ON mppd.mppd_id = daca.mppd_id
+            -- INNER JOIN " . $con->dbname . ".materias_paralelos_periodo_detalle mppd ON mppd.mppd_id = daca.mppd_id
               #LEFT JOIN " . $con->dbname . ".materias_paralelos_periodo mppe         ON mppe.mppe_id = mppd.mppd_id
              INNER JOIN " . $con->dbname . ".distributivo_academico_estudiante daes  ON daes.mppd_id = mppd.mppd_id
               LEFT JOIN " . $con->dbname . ".estudiante est                          ON est.est_id   = daes.est_id
@@ -1116,7 +1116,7 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord
                            where esca.ecal_id = ecun.ecal_id
                              and ecun.ecun_id = clfc.ecun_id) as ecal_id
                    FROM " . $con->dbname . ".distributivo_academico daca
-             INNER JOIN " . $con->dbname . ".materias_paralelos_periodo_detalle mppd ON mppd.mppd_id = daca.mppd_id
+           --  INNER JOIN " . $con->dbname . ".materias_paralelos_periodo_detalle mppd ON mppd.mppd_id = daca.mppd_id
               #LEFT JOIN " . $con->dbname . ".materias_paralelos_periodo mppe         ON mppe.mppe_id = mppd.mppd_id
              INNER JOIN " . $con->dbname . ".distributivo_academico_estudiante daes  ON daes.mppd_id = mppd.mppd_id
               LEFT JOIN " . $con->dbname . ".estudiante est                          ON est.est_id   = daes.est_id
@@ -1340,8 +1340,8 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord
                     WHERE 
                     $str_search 
                     $str_perfil_user
-                    estudiante.est_activo = 1
-                    AND meun.uaca_id = asignatura.uaca_id
+                    -- estudiante.est_activo = 1 AND 
+                    meun.uaca_id = asignatura.uaca_id
                     AND estudiante.est_estado = 1
                     AND estudiante.est_estado_logico = 1
                     AND persona.per_estado = 1
@@ -1470,7 +1470,7 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord
                     SELECT 
                         estudiante.est_id,
                         estudiante.est_matricula,
-                        estudiante.est_activo,
+                        estudiante.est_estado, -- CHANGED
                         concat(persona.per_pri_nombre,' ',persona.per_pri_apellido) as nombre,
                         paca.paca_id, 
                         ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca_anio),'') AS paca_nombre,
@@ -1496,7 +1496,7 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord
                     $str_perfil_user
                     meun.uaca_id = asi.uaca_id
                     AND paca.paca_activo = 'A'
-                    AND estudiante.est_activo = 1
+                    -- AND estudiante.est_activo = 1
                     AND estudiante.est_estado = 1
                     AND estudiante.est_estado_logico = 1
                     AND persona.per_estado = 1

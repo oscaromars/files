@@ -2008,6 +2008,7 @@ create table if not exists `componente_unidad` (
   `com_id` bigint(20) NOT NULL,
   `uaca_id` bigint(20) NOT NULL,  
   `mod_id` bigint(20) NOT NULL,  
+  `ecal_id` bigint(20),  
   `cuni_calificacion` double NOT NULL,  
   `cuni_estado` varchar(1) NOT NULL,
   `cuni_fecha_creacion` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -2015,7 +2016,8 @@ create table if not exists `componente_unidad` (
   `cuni_estado_logico` varchar(1) NOT NULL,
   foreign key (uaca_id) references `unidad_academica`(uaca_id),
   foreign key (com_id) references `componente`(com_id),
-  foreign key (mod_id) references `modalidad`(mod_id)
+  foreign key (mod_id) references `modalidad`(mod_id),
+  foreign key (ecal_id) references `esquema_calificacion`(ecal_id)
 );
 
 -- --------------------------------------------------------

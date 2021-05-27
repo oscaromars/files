@@ -13,6 +13,7 @@ use app\modules\academico\models\ModalidadEstudioUnidad;
 use app\modules\academico\models\UnidadAcademica;
 use app\modules\academico\models\Paralelo;
 use app\modules\academico\models\Estudiante;
+use app\modules\academico\models\UsuarioEducativa;
 use app\modules\academico\models\EstudianteCarreraPrograma;
 use app\modules\academico\models\Profesor;
 use app\modules\admision\models\Oportunidad;
@@ -512,19 +513,21 @@ class CalificacionregistrodocenteController extends \app\components\CController 
             $usu_id = Yii::$app->session->get("PB_iduser");
             $admin = $this->isAdmin($usu_id);
 
+            $admin = 1;
+
             if($admin){// Es administrador
                 $pro_id = $mod_profesor->getProfesoresxid($per_id)['Id'];
                 if(isset($pro_id)){ // Y profesor
                     $materias = $asig_mod->getAsignaturasBy($pro_id, NULL, $periodo_actual['id']);
                 }
                 else{
-                    $materias = $asig_mod->getAsignaturasBy();
+                    $materias = $asig_mod->getAsignaturasBy($profesores[0]['pro_id'], NULL, $periodo_actual['id']);
                 }
             }
             else{ // No es administrador
                 $pro_id = $mod_profesor->getProfesoresxid($per_id)['Id'];
                 if(!isset($pro_id)){ // Ni profesor
-                    $materias = []; // En realidad no se debería permitir entrar en la pantalla, pero por si acaso
+                    $materias = $asig_mod->getAsignaturasBy($profesores[0]['pro_id'], NULL, $periodo_actual['id']); // En realidad no se debería permitir entrar en la pantalla, pero por si acaso
                 }
                 else{
                     $materias = $asig_mod->getAsignaturasBy($pro_id, NULL, $periodo_actual['id']);
@@ -655,11 +658,11 @@ class CalificacionregistrodocenteController extends \app\components\CController 
                 foreach ($dataArr as $val) {
                     $fila++;
 
-                    if (!is_null($val[4]) || $val[4]) {
+                    if (!is_null($val[5]) || $val[5]) {
                         if($tipo == 0 || $val[5] == "PRIMER PARCIAL") // GRADO
                         {
                             $tipo = 0;
-                            if($fila == 1 || $fila == 2 || $fila == 3 || $fila == 4 || $fila == 5 || $fila == 6){ // No leer estas filas
+                            if($fila == 1 || $fila == 2 || $fila == 3 || $fila == 4 || $fila == 5){ // No leer estas filas
                                 continue;
                             }
                             else{ //Aquí se hace el cálculo
@@ -680,10 +683,11 @@ class CalificacionregistrodocenteController extends \app\components\CController 
                                 ** $val[17] -> 'Calificación' - 2° PARCIAL  No se usa porque el sistema lo calcula por si acaso esté mal calculado
                                 */
 
-                                $matricula = $val[2];
+                                $usuario = $val[2];
                                 $nombre = $val[4];
 
-                                $estudiante = Estudiante::find()->where(['est_matricula' => $matricula])->asArray()->one();
+                                $estudiante = UsuarioEducativa::find()->where(['uedu_usuario' => $usuario])->asArray()->one();
+
                                 // Si el estudiante no existe, continuar al siguiente, y colocarlo en la lista
                                 if(!isset($estudiante)){
                                     $noalumno .= $nombre . " (no es un estudiante registrado), ";
@@ -710,34 +714,31 @@ class CalificacionregistrodocenteController extends \app\components\CController 
                                 }
 
                                 // Modalidad ID
-                                /*
-                                * 
-                                */
                                 $mod_id = $meun['mod_id'];
 
                                 // Grado Online
                                 if($mod_id == 1){
-                                    $seguir = $this->calificarGradoOnline($mod_id, $uaca_id, $ecal_id, $val, $nombre, $noalumno);
+                                    $seguir = $this->calificarGradoOnline($mod_id, $uaca_id, $ecal_id, $val, $nombre, $noalumno, $paca_id, $est_id, $pro_id, $asi_id);
                                     if(!$seguir){ continue; }
                                 }
                                 // Grado Presencial
                                 elseif($mod_id == 2){
-                                    $seguir = $this->calificarGradoPresencial($mod_id, $uaca_id, $ecal_id, $val, $nombre, $noalumno);
+                                    $seguir = $this->calificarGradoPresencial($mod_id, $uaca_id, $ecal_id, $val, $nombre, $noalumno, $paca_id, $est_id, $pro_id, $asi_id);
                                     if(!$seguir){ continue; }
                                 }
                                 // Grado Semi-Presencial
                                 elseif($mod_id == 3){
-                                    $seguir = $this->calificarGradoSemiPresencial($mod_id, $uaca_id, $ecal_id, $val, $nombre, $noalumno);
+                                    $seguir = $this->calificarGradoSemiPresencial($mod_id, $uaca_id, $ecal_id, $val, $nombre, $noalumno, $paca_id, $est_id, $pro_id, $asi_id);
                                     if(!$seguir){ continue; }
                                 }
                                 // Grado Distancia
                                 else{ // mod_id = 4
-                                    $seguir = $this->calificarGradoDistancia($mod_id, $uaca_id, $ecal_id, $val, $nombre, $noalumno);
+                                    $seguir = $this->calificarGradoDistancia($mod_id, $uaca_id, $ecal_id, $val, $nombre, $noalumno, $paca_id, $est_id, $pro_id, $asi_id);
                                     if(!$seguir){ continue; }
                                 }
                             }
                         }
-                        else if ($tipo == 1 || $val[4] != "PRIMER PARCIAL") // POSGRADO
+                        else if ($tipo == 1 || $val[5] != "PRIMER PARCIAL") // POSGRADO
                         { 
                             $tipo = 1;
                             if($fila == 1){ // No leer la primera fila ni la 2da
@@ -753,10 +754,10 @@ class CalificacionregistrodocenteController extends \app\components\CController 
                                 ** $val[9] -> 'Calificación' No se usa porque el sistema lo calcula por si acaso esté mal calculado
                                 */
 
-                                $matricula = $val[2];
+                                $usuario = $val[2];
                                 $nombre = $val[4];
 
-                                $estudiante = Estudiante::find()->where(['est_matricula' => $matricula])->asArray()->one();
+                                $estudiante = UsuarioEducativa::find()->where(['uedu_usuario' => $usuario])->asArray()->one();
 
                                 // Si el estudiante no existe, continuar al siguiente, y colocarlo en la lista
                                 if(!isset($estudiante)){
@@ -788,12 +789,12 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 
                                 // Posgrado Online
                                 if($mod_id == 1){
-                                    $seguir = $this->calificarPosgradoOnline($mod_id, $uaca_id, $ecal_id, $val, $nombre, $noalumno);
+                                    $seguir = $this->calificarPosgradoOnline($mod_id, $uaca_id, $ecal_id, $val, $nombre, $noalumno, $paca_id, $est_id, $pro_id, $asi_id, $ecun_id_posgrado);
                                     if(!$seguir){ continue; }
                                 }
                                 // Posgrado Presencial
                                 else{ // mod_id = 2
-                                    $seguir = $this->calificarPosgradoPresencial($mod_id, $uaca_id, $ecal_id, $val, $nombre, $noalumno);
+                                    $seguir = $this->calificarPosgradoPresencial($mod_id, $uaca_id, $ecal_id, $val, $nombre, $noalumno, $paca_id, $est_id, $pro_id, $asi_id, $ecun_id_posgrado);
                                     if(!$seguir){ continue; }
                                 }
                             }
@@ -824,17 +825,19 @@ class CalificacionregistrodocenteController extends \app\components\CController 
      * @param   
      * @return  
      */
-    private function calificarGradoOnline($mod_id, $uaca_id, $ecal_id, $val, $nombre, $noalumno){
-        // Componentes Unidades
-        $cuni_asincrono = ComponenteUnidad::find()->where(['com_id' => 1, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id])->asArray()->one();
-        $cuni_sincrono = ComponenteUnidad::find()->where(['com_id' => 2, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id])->asArray()->one();
-        $cuni_cuestionarios = ComponenteUnidad::find()->where(['com_id' => 3, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id])->asArray()->one();
-        $cuni_autonoma = ComponenteUnidad::find()->where(['com_id' => 4, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id])->asArray()->one();
-        $cuni_evaluacion = ComponenteUnidad::find()->where(['com_id' => 5, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id])->asArray()->one();
-
+    private function calificarGradoOnline($mod_id, $uaca_id, $ecal_id, $val, $nombre, &$noalumno, $paca_id, $est_id, $pro_id, $asi_id){
         // Tomar las calificaciones dependiendo del parcial elegido
         if($ecal_id == 1){ // 1er Parcial
+            // Componentes Unidades
+            $cuni_asincrono = ComponenteUnidad::find()->where(['com_id' => 1, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id])->asArray()->one();
+            $cuni_sincrono = ComponenteUnidad::find()->where(['com_id' => 2, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id])->asArray()->one();
+            $cuni_cuestionarios = ComponenteUnidad::find()->where(['com_id' => 3, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id])->asArray()->one();
+            $cuni_autonoma = ComponenteUnidad::find()->where(['com_id' => 4, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id])->asArray()->one();
+            $cuni_evaluacion = ComponenteUnidad::find()->where(['com_id' => 5, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id])->asArray()->one();
+
             $cal_asin = $val[5];
+            \app\models\Utilities::putMessageLogFile("cal_asin: " . $cal_asin);
+            \app\models\Utilities::putMessageLogFile("cuni_asincrono['cuni_calificacion']: " . $cuni_asincrono['cuni_calificacion']);
             if($cal_asin > $cuni_asincrono['cuni_calificacion'] || $cal_asin < 0){
                 $noalumno .= $nombre . " (la nota 'Act. Asincro 2P' está mal colocada), "; 
                 return 0; 
@@ -867,7 +870,21 @@ class CalificacionregistrodocenteController extends \app\components\CController 
             $cal_calif = $cal_asin + $cal_sinc + $cal_cuest + $cal_aut + $cal_eval;
         }
         elseif($ecal_id == 2){ // 2do Parcial
+            // Componentes Unidades
+            $cuni_asincrono = ComponenteUnidad::find()->where(['com_id' => 1, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id, 'ecal_id' => $ecal_id])->asArray()->one();
+            $cuni_sincrono = ComponenteUnidad::find()->where(['com_id' => 2, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id, 'ecal_id' => $ecal_id])->asArray()->one();
+            $cuni_cuestionarios = ComponenteUnidad::find()->where(['com_id' => 3, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id, 'ecal_id' => $ecal_id])->asArray()->one();
+            $cuni_autonoma = ComponenteUnidad::find()->where(['com_id' => 4, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id, 'ecal_id' => $ecal_id])->asArray()->one();
+            $cuni_evaluacion = ComponenteUnidad::find()->where(['com_id' => 5, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id, 'ecal_id' => $ecal_id])->asArray()->one();
+
             $cal_asin = $val[12];
+            \app\models\Utilities::putMessageLogFile("cal_asin: " . $cal_asin);
+
+            \app\models\Utilities::putMessageLogFile("uaca_id: " . $uaca_id);
+            \app\models\Utilities::putMessageLogFile("mod_id: " . $mod_id);
+            \app\models\Utilities::putMessageLogFile("ecal_id: " . $ecal_id);
+            \app\models\Utilities::putMessageLogFile("cuni_asincrono: " . $cuni_asincrono);
+            \app\models\Utilities::putMessageLogFile("cuni_asincrono['cuni_calificacion']: " . $cuni_asincrono['cuni_calificacion']);
             if($cal_asin > $cuni_asincrono['cuni_calificacion'] || $cal_asin < 0){
                 $noalumno .= $nombre . " (la nota 'Act. Asincro 2P' está mal colocada), "; 
                 return 0; 
@@ -893,12 +910,17 @@ class CalificacionregistrodocenteController extends \app\components\CController 
             
             $cal_eval = $val[16];
             if($cal_eval > $cuni_evaluacion['cuni_calificacion'] || $cal_eval < 0){
+                \app\models\Utilities::putMessageLogFile("noalumno: " . $noalumno);
+                \app\models\Utilities::putMessageLogFile("nombre: " . $nombre);
                 $noalumno .= $nombre . " (la nota 'Evaluación Par. 6P' está mal colocada), ";
+                \app\models\Utilities::putMessageLogFile("noalumno: " . $noalumno);
                 return 0; 
             }
 
             $cal_calif = $cal_asin + $cal_sinc + $cal_cuest + $cal_aut + $cal_eval;
         }
+
+        \app\models\Utilities::putMessageLogFile("cal_calif: " . $cal_calif);
 
         // $cal_prom = $val[19]; // No usada
 
@@ -941,11 +963,11 @@ class CalificacionregistrodocenteController extends \app\components\CController 
      * @param   
      * @return  
      */
-    private function calificarGradoPresencial($mod_id, $uaca_id, $ecal_id, $val, $nombre, $noalumno){
+    private function calificarGradoPresencial($mod_id, $uaca_id, $ecal_id, $val, $nombre, &$noalumno, $paca_id, $est_id, $pro_id, $asi_id){
         // Componentes Unidades
-        $cuni_asincrono = ComponenteUnidad::find()->where(['com_id' => 6, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id])->asArray()->one();
-        $cuni_sincrono = ComponenteUnidad::find()->where(['com_id' => 7, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id])->asArray()->one();
-        $cuni_cuestionarios = ComponenteUnidad::find()->where(['com_id' => 8, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id])->asArray()->one();
+        $cuni_asincrono = ComponenteUnidad::find()->where(['com_id' => 8, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id])->asArray()->one();
+        $cuni_sincrono = ComponenteUnidad::find()->where(['com_id' => 9, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id])->asArray()->one();
+        $cuni_cuestionarios = ComponenteUnidad::find()->where(['com_id' => 6, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id])->asArray()->one();
 
         // Tomar las calificaciones dependiendo del parcial elegido
         if($ecal_id == 1){ // 1er Parcial
@@ -1028,11 +1050,11 @@ class CalificacionregistrodocenteController extends \app\components\CController 
      * @param   
      * @return  
      */
-    private function calificarGradoSemiPresencial($mod_id, $uaca_id, $ecal_id, $val, $nombre, $noalumno){
+    private function calificarGradoSemiPresencial($mod_id, $uaca_id, $ecal_id, $val, $nombre, &$noalumno, $paca_id, $est_id, $pro_id, $asi_id){
         // Componentes Unidades
-        $cuni_asincrono = ComponenteUnidad::find()->where(['com_id' => 9, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id])->asArray()->one();
-        $cuni_sincrono = ComponenteUnidad::find()->where(['com_id' => 10, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id])->asArray()->one();
-        $cuni_cuestionarios = ComponenteUnidad::find()->where(['com_id' => 11, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id])->asArray()->one();
+        $cuni_asincrono = ComponenteUnidad::find()->where(['com_id' => 8, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id])->asArray()->one();
+        $cuni_sincrono = ComponenteUnidad::find()->where(['com_id' => 9, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id])->asArray()->one();
+        $cuni_cuestionarios = ComponenteUnidad::find()->where(['com_id' => 6, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id])->asArray()->one();
 
         // Tomar las calificaciones dependiendo del parcial elegido
         if($ecal_id == 1){ // 1er Parcial
@@ -1115,12 +1137,12 @@ class CalificacionregistrodocenteController extends \app\components\CController 
      * @param   
      * @return  
      */
-    private function calificarGradoDistancia($mod_id, $uaca_id, $ecal_id, $val, $nombre, $noalumno){
+    private function calificarGradoDistancia($mod_id, $uaca_id, $ecal_id, $val, $nombre, &$noalumno, $paca_id, $est_id, $pro_id, $asi_id){
         // Componentes Unidades
-        $cuni_asincrono = ComponenteUnidad::find()->where(['com_id' => 12, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id])->asArray()->one();
-        $cuni_sincrono = ComponenteUnidad::find()->where(['com_id' => 13, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id])->asArray()->one();
-        $cuni_cuestionarios = ComponenteUnidad::find()->where(['com_id' => 14, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id])->asArray()->one();
-        $cuni_autonoma = ComponenteUnidad::find()->where(['com_id' => 15, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id])->asArray()->one();
+        $cuni_asincrono = ComponenteUnidad::find()->where(['com_id' => 1, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id])->asArray()->one();
+        $cuni_sincrono = ComponenteUnidad::find()->where(['com_id' => 2, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id])->asArray()->one();
+        $cuni_cuestionarios = ComponenteUnidad::find()->where(['com_id' => 5, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id])->asArray()->one();
+        $cuni_autonoma = ComponenteUnidad::find()->where(['com_id' => 6, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id])->asArray()->one();
 
         // Tomar las calificaciones dependiendo del parcial elegido
         if($ecal_id == 1){ // 1er Parcial
@@ -1217,12 +1239,12 @@ class CalificacionregistrodocenteController extends \app\components\CController 
      * @param   
      * @return  
      */
-    private function calificarPosgradoOnline($mod_id, $uaca_id, $ecal_id, $val, $nombre, $noalumno){
+    private function calificarPosgradoOnline($mod_id, $uaca_id, $ecal_id, $val, $nombre, &$noalumno, $paca_id, $est_id, $pro_id, $asi_id, $ecun_id_posgrado){
         // Componentes Unidades
-        $cuni_autonoma = ComponenteUnidad::find()->where(['com_id' => 16, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id])->asArray()->one();
-        $cuni_eval = ComponenteUnidad::find()->where(['com_id' => 17, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id])->asArray()->one();
-        $cuni_asincrono = ComponenteUnidad::find()->where(['com_id' => 18, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id])->asArray()->one();
-        $cuni_examen = ComponenteUnidad::find()->where(['com_id' => 19, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id])->asArray()->one();
+        $cuni_autonoma = ComponenteUnidad::find()->where(['com_id' => 4, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id])->asArray()->one();
+        $cuni_eval = ComponenteUnidad::find()->where(['com_id' => 5, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id])->asArray()->one();
+        $cuni_asincrono = ComponenteUnidad::find()->where(['com_id' => 1, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id])->asArray()->one();
+        $cuni_examen = ComponenteUnidad::find()->where(['com_id' => 6, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id])->asArray()->one();
 
         $cal_aut = $val[5];
         if($cal_aut > $cuni_autonoma['cuni_calificacion'] || $cal_aut < 0){
@@ -1285,11 +1307,11 @@ class CalificacionregistrodocenteController extends \app\components\CController 
      * @param   
      * @return  
      */
-    private function calificarPosgradoPresencial($mod_id, $uaca_id, $ecal_id, $val, $nombre, $noalumno){
+    private function calificarPosgradoPresencial($mod_id, $uaca_id, $ecal_id, $val, $nombre, &$noalumno, $paca_id, $est_id, $pro_id, $asi_id, $ecun_id_posgrado){
         // Componentes Unidades
-        $cuni_talleres = ComponenteUnidad::find()->where(['com_id' => 20, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id])->asArray()->one();
-        $cuni_deberes = ComponenteUnidad::find()->where(['com_id' => 21, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id])->asArray()->one();
-        $cuni_examen = ComponenteUnidad::find()->where(['com_id' => 22, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id])->asArray()->one();
+        $cuni_talleres = ComponenteUnidad::find()->where(['com_id' => 7, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id])->asArray()->one();
+        $cuni_deberes = ComponenteUnidad::find()->where(['com_id' => 8, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id])->asArray()->one();
+        $cuni_examen = ComponenteUnidad::find()->where(['com_id' => 6, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id])->asArray()->one();
 
         $cal_talleres = $val[5];
         if($cal_talleres > $cuni_talleres['cuni_calificacion'] || $cal_talleres < 0){

@@ -118,6 +118,7 @@ return array(
     'Page moved permanently' => 'Página movida permanentemente.',
     'N/A' => 'N/A',
     'The attention date can not be before the reception date or today' => 'La fecha atención no puede ser antes de la fecha recepción.',
+    'The end date can not be before the start date' => 'La fecha fin no puede ser antes de la fecha inicio.',
     'The next date can not be before the attention date' => 'La fecha próxima atención no puede ser antes de la fecha atención.',
     'Invalid time' => 'No es válido, el formato hora es HH:MM',
     'The reception date can not be after the today' => 'No es válido, La fecha recepción no puede ser después de hoy. ',

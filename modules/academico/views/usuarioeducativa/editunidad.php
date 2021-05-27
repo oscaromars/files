@@ -68,7 +68,7 @@ academico::registerTranslations();
                     'disabled' => false,
                     'value' => $arr_unidad ["ceuni_fecha_fin"],
                     'type' => DatePicker::TYPE_INPUT,
-                    'options' => ["class" => "form-control PBvalidation", "id" => "txt_fecha_fined", "placeholder" => Yii::t("formulario", "End date")],
+                    'options' => ["class" => "form-control PBvalidation", "id" => "txt_fecha_fined", "data-type" => "fecha_eduac", "placeholder" => Yii::t("formulario", "End date")],
                     'pluginOptions' => [
                         'autoclose' => true,
                         'format' => Yii::$app->params["dateByDatePicker"],

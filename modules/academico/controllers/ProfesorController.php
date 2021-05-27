@@ -17,6 +17,7 @@ use app\models\ExportFile;
 use app\models\Canton;
 use app\modules\academico\models\Especies;
 use app\modules\academico\models\Profesor;
+use app\modules\academico\models\DedicacionDocente;
 use app\modules\academico\models\ProfesorExpDoc;
 use app\modules\academico\models\ProfesorExpProf;
 use app\modules\academico\models\ProfesorIdiomas;
@@ -55,14 +56,14 @@ class ProfesorController extends \app\components\CController {
         $perfil = '0'; // perfil administrador o talento humano        
 
         $arr_grupos = $grupo_model->getAllGruposByUser($user_usermane);
-        if (!in_array(['id' => '1'], $arr_grupos) && !in_array(['id' => '15'], $arr_grupos)) {
+        if (!in_array(['id' => '1'], $arr_grupos) && !in_array(['id' => '6'], $arr_grupos) && !in_array(['id' => '7'], $arr_grupos) && !in_array(['id' => '8'], $arr_grupos)  && !in_array(['id' => '15'], $arr_grupos)) {
             $search = $user_perId;
             $perfil = '1';
         }
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->get();
             $search = $data["search"];
-            if (!in_array(['id' => '1'], $arr_grupos) && !in_array(['id' => '15'], $arr_grupos)) {
+            if (!in_array(['id' => '1'], $arr_grupos) && !in_array(['id' => '6'], $arr_grupos)&& !in_array(['id' => '7'], $arr_grupos)&& !in_array(['id' => '8'], $arr_grupos)&& !in_array(['id' => '15'], $arr_grupos)) {
                 $search = $user_perId;
                 $perfil = '1';  // perfil profesor o no administrador ni talento humano
             }
@@ -97,15 +98,17 @@ class ProfesorController extends \app\components\CController {
             $grupo_model = new Grupo();
             $arr_grupos = $grupo_model->getAllGruposByUser($user_usermane);
             if ($id != $user_perId) {
-                if (!in_array(['id' => '1'], $arr_grupos) && !in_array(['id' => '15'], $arr_grupos))
+                if (!in_array(['id' => '1'], $arr_grupos) && !in_array(['id' => '6'], $arr_grupos) && !in_array(['id' => '7'], $arr_grupos) && !in_array(['id' => '8'], $arr_grupos) && !in_array(['id' => '15'], $arr_grupos))
                     return $this->redirect(['profesor/index']);
             }
 
             /**
              * Inf. Basica
              */
-            $ViewFormTab1 = $this->renderPartial('ViewFormTab1', [
-                'persona_model' => $persona_model,
+           $arr_dedic = DedicacionDocente::findAll(["ddoc_estado" => 1, "ddoc_estado_logico" => 1]);
+             $ViewFormTab1 = $this->renderPartial('ViewFormTab1', [
+            'arr_dedic'=>(empty(ArrayHelper::map($arr_dedic, "ddoc_id", "ddoc_nombre"))) ? array(Yii::t("dedicacion", "-- Select Dedicación --")) : (ArrayHelper::map($arr_dedic, "ddoc_id", "ddoc_nombre")),
+                  'persona_model' => $persona_model,
             ]);
 
             /**
@@ -317,16 +320,18 @@ class ProfesorController extends \app\components\CController {
             $grupo_model = new Grupo();
             $arr_grupos = $grupo_model->getAllGruposByUser($user_usermane);
             if ($id != $user_perId) {
-                if (!in_array(['id' => '1'], $arr_grupos) && !in_array(['id' => '15'], $arr_grupos))
+                if (!in_array(['id' => '1'], $arr_grupos) && !in_array(['id' => '6'], $arr_grupos) && !in_array(['id' => '7'], $arr_grupos) && !in_array(['id' => '8'], $arr_grupos)  && !in_array(['id' => '15'], $arr_grupos))
                     return $this->redirect(['profesor/index']);
             }
 
             /**
              * Inf. Basica
              */
-            $EditFormTab1 = $this->renderPartial('EditFormTab1', [
+              $arr_dedic = DedicacionDocente::findAll(["ddoc_estado" => 1, "ddoc_estado_logico" => 1]);
+    
+            $EditFormTab1 = $this->renderPartial('EditFormTab1', [  'arr_dedic'=>(empty(ArrayHelper::map($arr_dedic, "ddoc_id", "ddoc_nombre"))) ? array(Yii::t("dedicacion", "-- Select Dedicación --")) : (ArrayHelper::map($arr_dedic, "ddoc_id", "ddoc_nombre")),
                 'persona_model' => $persona_model,
-                'email' => $email,
+                'email' => $email,             
             ]);
 
             /**
@@ -496,8 +501,9 @@ class ProfesorController extends \app\components\CController {
     public function actionNew() {
 
         $_SESSION['JSLANG']['Must be Fill all information in fields with label *.'] = Academico::t("profesor", "Must be Fill all information in fields with label *.");
-
-        $NewFormTab1 = $this->renderPartial('NewFormTab1');
+        $dedicacionDocente = new \app\modules\academico\models\DedicacionDocente();
+        $model_dedicacion=$dedicacionDocente->getDedicacionDocente();
+        $NewFormTab1 = $this->renderPartial('NewFormTab1',['model_dedicacion'=>ArrayHelper::map(array_merge([["Id" => "0", "name" => Yii::t("formulario", "Select")]], $model_dedicacion), "Id", "name"),]);
 
         $arr_pais = Pais::findAll(["pai_estado" => 1, "pai_estado_logico" => 1]);
         list($firstpais) = $arr_pais;
@@ -705,6 +711,9 @@ class ProfesorController extends \app\components\CController {
                 $nacionalidad = $data["nacionalidad"];
                 $celular = $data["celular"];
                 $phone = $data["phone"];
+                $dedicacion=$data["dedicacion"];
+                $pro_num_contrato =$data["pro_num_contrato"];
+                $pro_num_contrato =$data["pro_num_contrato"];
                 $fecha_nacimiento = $data["fecha_nacimiento"];
                 $foto = $data['foto'];
 
@@ -779,6 +788,7 @@ class ProfesorController extends \app\components\CController {
                     $persona_model->per_domicilio_telefono = $phone;
                     $persona_model->per_celular = $celular;
                     $persona_model->per_fecha_nacimiento = $fecha_nacimiento;
+                    
                     $arr_file = explode($foto, '.jpg');
                     if (isset($arr_file[0]) && $arr_file[0] != "") {
                         $oldFile = $this->folder_cv . '/' . $foto;
@@ -808,6 +818,8 @@ class ProfesorController extends \app\components\CController {
                     if ($persona_model->save()) {
                         $profesor_model = new Profesor();
                         $profesor_model->per_id = $per_id_existente;
+                        $profesor_model->ddoc_id=$dedicacion;
+                         $profesor_model->pro_num_contrato=$pro_num_contrato;
                         $profesor_model->pro_estado = '1';
                         $profesor_model->pro_estado_logico = '1';
                         $profesor_model->pro_usuario_ingreso = $user_ingresa;
@@ -1068,6 +1080,8 @@ class ProfesorController extends \app\components\CController {
                         }
 
                         $profesor_model = new Profesor();
+                        $profesor_model->ddoc_id=$dedicacion;
+                        $profesor_model->pro_num_contrato = $pro_num_contrato;
                         $profesor_model->per_id = $per_id;
                         $profesor_model->pro_estado = '1';
                         $profesor_model->pro_estado_logico = '1';
@@ -1315,7 +1329,9 @@ class ProfesorController extends \app\components\CController {
                 $grupo_model = new Grupo();
                 $arr_grupos = $grupo_model->getAllGruposByUser($user_usermane);
                 if ($per_id != $user_perId) {
-                    if (!in_array(['id' => '1'], $arr_grupos) && !in_array(['id' => '15'], $arr_grupos))
+                    // if (!in_array(['id' => '1'], $arr_grupos) && !in_array(['id' => '6'], $arr_grupos) && !in_array(['id' => '7'], $arr_grupos) && !in_array(['id' => '8'], $arr_grupos)  && !in_array(['id' => '15'], $arr_grupos))
+       
+                    if (!in_array(['id' => '1'], $arr_grupos) && !in_array(['id' => '6'], $arr_grupos)&& !in_array(['id' => '7'], $arr_grupos) && !in_array(['id' => '8'], $arr_grupos)  && !in_array(['id' => '15'], $arr_grupos)  )
                         return $this->redirect(['profesor/index']);
                 }
 
@@ -1333,6 +1349,8 @@ class ProfesorController extends \app\components\CController {
                 $nacionalidad = $data["nacionalidad"];
                 $celular = $data["celular"];
                 $phone = $data["phone"];
+                $dedicacion=$data["dedicacion"];
+                $pro_num_contrato=$data["pro_num_contrato"];
                 $fecha_nacimiento = $data["fecha_nacimiento"];
                 $foto = $data['foto'];
 
@@ -1415,7 +1433,9 @@ class ProfesorController extends \app\components\CController {
 
                     /** Se agregan Informacion de Expediente * */
                     $profesor_model = Profesor::findOne(["per_id" => $per_id]);
-
+                    $profesor_model->ddoc_id = $dedicacion;
+                    $profesor_model->pro_num_contrato = $pro_num_contrato;
+                    $profesor_model->save();
                     //ProfesorInstruccion::deleteAllInfo($profesor_model->pro_id);
                     if (isset($arr_instuccion)) {
                         foreach ($arr_instuccion as $key0 => $value0) {

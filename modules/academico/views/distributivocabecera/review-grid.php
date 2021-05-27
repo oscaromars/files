@@ -64,6 +64,17 @@ academico::registerTranslations();
                 'value' => 'Asignatura',
             ],
             [
+                'attribute' => 'mpp_num_paralelo',
+                'header' => Yii::t("formulario", "# Paralelo"),
+                'value' => 'mpp_num_paralelo',
+            ],
+            [
+                'attribute' => 'nroEstudiantes',
+                'header' => Yii::t("formulario", "# Estudiante"),
+                'value' => 'nroEstudiantes',
+            ],
+            
+            [
                 'attribute' => 'total_horas',
                 'header' => academico::t("Academico", "Total Horas"),
                 'value' => 'total_horas',

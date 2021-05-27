@@ -65,7 +65,7 @@ academico::registerTranslations();
                 'template' => '{view} {delete}', 
                 'buttons' => [
                     'view' => function ($url, $model) {
-                        return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', Url::to(['usuarioeducativa/viewusuario', 'uedu_id' => base64_encode($model["uedu_id"])]), ["data-toggle" => "tooltip", "title" => "Ver Usario", "data-pjax" => 0]);
+                        return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', Url::to(['usuarioeducativa/viewusuario', 'uedu_id' => base64_encode($model["uedu_id"])]), ["data-toggle" => "tooltip", "title" => "Ver Usuario", "data-pjax" => 0]);
                     },
                     'delete' => function ($url, $model) {
                        return Html::a('<span class="glyphicon glyphicon-trash"></span>', "#", ['onclick' => "eliminarusuario(" . $model['uedu_id'] . ");", "data-toggle" => "tooltip", "title" => "Eliminar Usuario", "data-pjax" => 0]);

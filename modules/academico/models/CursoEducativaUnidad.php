@@ -8,6 +8,7 @@ use yii\data\ActiveDataProvider;
 use app\modules\academico\models\CursoEducativa;
 use yii\base\Exception;
 use yii\helpers\VarDumper;
+
 /**
  * This is the model class for table "curso_educativa_unidad".
  *
@@ -17,6 +18,8 @@ use yii\helpers\VarDumper;
  * @property string $ceuni_descripcion_unidad
  * @property int $ceuni_usuario_ingreso
  * @property int $ceuni_usuario_modifica
+ * @property string $ceuni_fecha_inicio
+ * @property string $ceuni_fecha_fin
  * @property string $ceuni_estado
  * @property string $ceuni_fecha_creacion
  * @property string $ceuni_fecha_modificacion
@@ -50,7 +53,7 @@ class CursoEducativaUnidad extends \yii\db\ActiveRecord
         return [
             [['cedu_id', 'ceuni_codigo_unidad', 'ceuni_descripcion_unidad', 'ceuni_usuario_ingreso', 'ceuni_estado', 'ceuni_estado_logico'], 'required'],
             [['cedu_id', 'ceuni_codigo_unidad', 'ceuni_usuario_ingreso', 'ceuni_usuario_modifica'], 'integer'],
-            [['ceuni_fecha_creacion', 'ceuni_fecha_modificacion'], 'safe'],
+            [['ceuni_fecha_inicio', 'ceuni_fecha_fin', 'ceuni_fecha_creacion', 'ceuni_fecha_modificacion'], 'safe'],
             [['ceuni_descripcion_unidad'], 'string', 'max' => 500],
             [['ceuni_estado', 'ceuni_estado_logico'], 'string', 'max' => 1],
             [['cedu_id'], 'exist', 'skipOnError' => true, 'targetClass' => CursoEducativa::className(), 'targetAttribute' => ['cedu_id' => 'cedu_id']],
@@ -69,6 +72,8 @@ class CursoEducativaUnidad extends \yii\db\ActiveRecord
             'ceuni_descripcion_unidad' => 'Ceuni Descripcion Unidad',
             'ceuni_usuario_ingreso' => 'Ceuni Usuario Ingreso',
             'ceuni_usuario_modifica' => 'Ceuni Usuario Modifica',
+            'ceuni_fecha_inicio' => 'Ceuni Fecha Inicio',
+            'ceuni_fecha_fin' => 'Ceuni Fecha Fin',
             'ceuni_estado' => 'Ceuni Estado',
             'ceuni_fecha_creacion' => 'Ceuni Fecha Creacion',
             'ceuni_fecha_modificacion' => 'Ceuni Fecha Modificacion',
@@ -137,6 +142,55 @@ class CursoEducativaUnidad extends \yii\db\ActiveRecord
                     
         }
         $resultData = $comando->queryAll();
+
+        \app\models\Utilities::putMessageLogFile('consultarUnidadEducativa: '.$comando->getRawSql());
+        
+        $dataProvider = new ArrayDataProvider([
+            'key' => 'id',
+            'allModels' => $resultData,
+            'pagination' => [
+                'pageSize' => Yii::$app->params["pageSize"],
+            ],
+            'sort' => [
+                'attributes' => [],
+            ],
+        ]);
+        if ($reporte == 1) {
+            return $dataProvider;
+        } else {
+            return $resultData;
+        }
+    }
+
+    /**
+     * Function Obtiene información de unidades en educatica x CeduId
+     * @author Galo Aguirre <analistadesarrollo06@uteg.edu.ec>;
+     * @param
+     * @return
+     */
+    public function consultarUnidadEducativaxCeduid($cedu_id) {
+        $con = \Yii::$app->db_academico;        
+        $estado = 1;
+
+        $sql = " SELECT cure.cedu_id,
+                        cure.ceuni_id,
+                        cur.cedu_asi_nombre,                         
+                        cure.ceuni_codigo_unidad,
+                        cure.ceuni_descripcion_unidad
+                   FROM " . $con->dbname . ".curso_educativa_unidad cure 
+             INNER JOIN " . $con->dbname . ".curso_educativa cur ON cur.cedu_id = cure.cedu_id
+                  WHERE cure.cedu_id      = :cedu_id
+                    AND cure.ceuni_estado = :estado
+                    AND cure.ceuni_estado_logico = :estado";
+
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":estado",  $estado, \PDO::PARAM_STR);
+        $comando->bindParam(":cedu_id", $cedu_id, \PDO::PARAM_INT);
+
+        $resultData = $comando->queryAll();
+
+        //\app\models\Utilities::putMessageLogFile('consultarUnidadEducativa: '.$comando->getRawSql());
+        
         $dataProvider = new ArrayDataProvider([
             'key' => 'id',
             'allModels' => $resultData,
@@ -176,7 +230,7 @@ class CursoEducativaUnidad extends \yii\db\ActiveRecord
                 ceuni_descripcion_unidad = :ceuni_descripcion_unidad AND
                 ceuni_estado = :estado AND
                 ceuni_estado_logico = :estado ";
-        \app\models\Utilities::putMessageLogFile('entro: ' .$sql); 
+        //\app\models\Utilities::putMessageLogFile('entro: ' .$sql); 
         $comando = $con->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
         $comando->bindParam(":cedu_id", $cedu_id, \PDO::PARAM_INT);
@@ -483,9 +537,9 @@ class CursoEducativaUnidad extends \yii\db\ActiveRecord
     public function consultarunidadeducativaexi($cedu_id, $ceuni_codigo_unidad, $ceuni_descripcion_unidad) {
         $con = \Yii::$app->db_academico;     
         $estado = 1;         
-       \app\models\Utilities::putMessageLogFile('entro 2 : ' .$cedu_id);  
+       /*\app\models\Utilities::putMessageLogFile('entro 2 : ' .$cedu_id);  
        \app\models\Utilities::putMessageLogFile('entro 3 : ' .$ceuni_codigo_unidad);  
-       \app\models\Utilities::putMessageLogFile('entro 4 : ' .$ceuni_descripcion_unidad);  
+       \app\models\Utilities::putMessageLogFile('entro 4 : ' .$ceuni_descripcion_unidad);  */
         $sql = "SELECT 	
                         count(*) as existe_unidad                       
                         
@@ -519,13 +573,13 @@ class CursoEducativaUnidad extends \yii\db\ActiveRecord
         $mod_educativaunidad->ceuni_fecha_creacion = $fecha_transaccion;
         $mod_educativaunidad->ceuni_estado_logico = "1";
 
-        \app\models\Utilities::putMessageLogFile('paca_id ' .$paca_id);
+       /* \app\models\Utilities::putMessageLogFile('paca_id ' .$paca_id);
         \app\models\Utilities::putMessageLogFile('asi_id '. $asi_id);
         \app\models\Utilities::putMessageLogFile('1: ' .$val[1]);
         \app\models\Utilities::putMessageLogFile('2: ' .$val[2]);
         \app\models\Utilities::putMessageLogFile('3: ' .$val[3]);
         \app\models\Utilities::putMessageLogFile('fecha: ' .$fecha_transaccion);
-        \app\models\Utilities::putMessageLogFile('usu_id: ' .$usu_id);        
+        \app\models\Utilities::putMessageLogFile('usu_id: ' .$usu_id);  */      
 
         return $mod_educativaunidad->save();
     }

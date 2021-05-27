@@ -101,7 +101,14 @@ Academico::registerTranslations();
             </div>
         </div>
     </div>
-    
+     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="form-group">
+            <label for="txt_contrato" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("profesor", "# Contrato") ?></label>
+            <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
+                <input type="text" class="form-control PBvalidation" id="txt_contrato" value="<?= $persona_model->profesor[0]->pro_num_contrato ?>" disabled="disabled" data-required="false" data-type="number"  placeholder="<?= Yii::t("profesor", "# Contrato")  ?>">
+            </div>
+        </div>
+    </div>
      <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
             <label for="cmb_dedicacion" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Academico::t("profesor", "Dedicación") ?></label>

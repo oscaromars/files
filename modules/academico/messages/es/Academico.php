@@ -76,6 +76,7 @@ return [
     "Other" => "Otros",
     "Parallel" => "Paralelo",
     "Parallels" => "Paralelos",
+    "Partial" => "Parcial",
     "Period" => "Período",
     "Planning Load" => "Carga de Planificación",
     "Promotion" => "Promoción",

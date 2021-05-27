@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 use app\modules\academico\models\DistributivoAcademicoSearch;
+use app\modules\academico\models\DistributivoAcademicoEstudianteSearch;
 use Yii;
 use app\components\CController;
 use app\models\Grupo;
@@ -15,6 +16,11 @@ use yii\base\Exception;
 use app\models\Utilities;
 use app\models\Reporte;
 use app\models\Empresa;
+use app\modules\academico\models\PeriodoAcademico;
+use app\modules\academico\models\PlanificacionSearch;
+use app\modules\academico\models\MallaAcademicaSearch;
+use app\modules\academico\models\ModalidadEstudioUnidadSearch;
+use app\modules\academico\models\EstudioAcademico;
 use app\modules\financiero\models\CargaCartera;
 use app\models\ExportFile;
 use app\modules\academico\Module as academico;
@@ -327,7 +333,7 @@ class ReportesController extends CController {
     public function actionReportdistributivodocente() {
         
         
-        
+
         $searchModel = new DistributivoAcademicoSearch();
         //$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $params = Yii::$app->request->queryParams;
@@ -388,7 +394,7 @@ class ReportesController extends CController {
       }
       
       
-      public function actionReportdistributivoposgrado() {
+    public function actionReportdistributivoposgrado() {
         $searchModel = new DistributivoAcademicoSearch();
         //$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $params = Yii::$app->request->queryParams;
@@ -399,6 +405,64 @@ class ReportesController extends CController {
         ]);
          
     }
+
+    public function actionMatriculados() { 
+        $searchModel = new PlanificacionSearch();
+        $mod_carrera = new EstudioAcademico();
+        $carrera = $mod_carrera->consultarCarrera();
+        //$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $params = Yii::$app->request->queryParams;
+        $dataProvider = $searchModel->getListadoMatriculados($params,false,1,$carrera["eaca_nombre"],$carrera["id"]);
+        return $this->render('matriculados', [
+            'arr_carrera' => ArrayHelper::map(array_merge([["id" => "0", "value" => "Seleccione la carrera "]], $carrera), "id", "value"),
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);       
+    }
+
+    public function actionMatriculadospormateria() { 
+        $searchModel = new DistributivoAcademicoSearch();
+        //$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $params = Yii::$app->request->queryParams;
+        $dataProvider = $searchModel->getListadoMatriculadosporMateria($params,false,1);
+        return $this->render('matriculadospormateria', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);       
+    }
     
-    
+    public function actionReportemallas() { 
+        $searchModel = new ModalidadEstudioUnidadSearch();
+        //$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $params = Yii::$app->request->queryParams;
+        $dataProvider = $searchModel->consultarMallasacademicas($params,false,1);
+        return $this->render('reportemallas', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);       
+    }
+
+    public function actionReporteinscritos(){
+        $searchModel = new DistributivoAcademicoSearch();
+        //$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $params = Yii::$app->request->queryParams;
+        $dataProvider = $searchModel->getListadoreportInscriptos($params,false,1);
+        return $this->render('reporteinscritos', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]); 
+    }
+
+    public function actionReportepromedios() { 
+        $searchModel = new DistributivoAcademicoEstudianteSearch();
+        //$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $params = Yii::$app->request->queryParams;
+        $dataProvider = $searchModel->getListadoReportepromedio($params,false,1);
+        return $this->render('reportepromedios', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);       
+    }
+
+
 }

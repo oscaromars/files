@@ -146,13 +146,15 @@ class UsuarioEducativa extends \yii\db\ActiveRecord
                         if (!empty($val[5])) {
                         $est_id = $mod_estudiante->consultarEstidxdni($val[5]);
                         }else{
-                            $est_id['est_id'] = null;
-                            $est_id['per_id'] = null;
+                            
+                            $estudiante = $mod_educativa->consultarEstutudiantexusuario($val[1]);
+                            $est_id['est_id'] = $estudiante['est_id'];
+                            $est_id['per_id'] = $estudiante['per_id'];
                         }
                         //\app\models\Utilities::putMessageLogFile('est_id consulta ...: ' .$est_id['est_id']);
                         //\app\models\Utilities::putMessageLogFile('per_id consulta ...: ' . $est_id['per_id']);
                         $fila++;         
-                        //if (!empty($est_id['est_id'])) {
+                        if (!empty($est_id['est_id']) && !empty($est_id['per_id'])) {
                         $existe = $mod_educativa->consultarexisteusuario($val[1], $val[4], $val[5], $val[6]);
                             if ($existe['existe_usuario'] == 0) {
                         $save_documento = $this->saveDocumentoDB($val, $est_id['est_id'], $est_id['per_id']);
@@ -167,11 +169,11 @@ class UsuarioEducativa extends \yii\db\ActiveRecord
                         }
                       }else{
                         $ingresadoant .= $val[1] . ", ";
+                     }
                     }
-                     /*}
                     else{
                         $noestudiantes .= $val[1] . ", ";
-                    }*/
+                    }
                   }
                 }
                 //\app\models\Utilities::putMessageLogFile('anterio ...: ' . $ingresadoant);
@@ -474,8 +476,8 @@ class UsuarioEducativa extends \yii\db\ActiveRecord
      * @param   
      * @return  $resultData (Retornar el código de Usuario).
      */
-    public function insertarUsuarioeducativa($uedu_usuario, $uedu_nombres, $uedu_apellidos, $uedu_cedula, $uedu_matricula, $uedu_correo, $uedu_usuario_ingreso) {
-        \app\models\Utilities::putMessageLogFile('entro inserUsuario...: ' ); 
+    public function insertarUsuarioeducativa($uedu_usuario, $est_id, $per_id, $uedu_nombres, $uedu_apellidos, $uedu_cedula, $uedu_matricula, $uedu_correo, $uedu_usuario_ingreso) {
+        //\app\models\Utilities::putMessageLogFile('entro inserUsuario...: ' ); 
         $con = \Yii::$app->db_academico;
         $trans = $con->getTransaction(); // se obtiene la transacción actual
         if ($trans !== null) {
@@ -496,6 +498,16 @@ class UsuarioEducativa extends \yii\db\ActiveRecord
             $bsol_sql .= ", :uedu_usuario";
         }
         
+        if (isset($est_id)) {
+            $param_sql .= ", est_id";
+            $bsol_sql .= ", :est_id";
+        }
+        
+        if (isset($per_id)) {
+            $param_sql .= ", per_id";
+            $bsol_sql .= ", :per_id";
+        }
+      
         if (isset($uedu_nombres)) {
             $param_sql .= ", uedu_nombres";
             $bsol_sql .= ", :uedu_nombres";
@@ -535,9 +547,17 @@ class UsuarioEducativa extends \yii\db\ActiveRecord
             $sql = "INSERT INTO " . $con->dbname . ".usuario_educativa ($param_sql) VALUES($bsol_sql)";
             $comando = $con->createCommand($sql);
 
-            \app\models\Utilities::putMessageLogFile('sql insert usuario educativa...: ' .$sql); 
+            //\app\models\Utilities::putMessageLogFile('sql insert usuario educativa...: ' .$sql); 
             if (isset($uedu_usuario)) {
                 $comando->bindParam(':uedu_usuario', $uedu_usuario, \PDO::PARAM_STR);
+            }
+            
+            if (isset($est_id)) {
+                $comando->bindParam(':est_id', $est_id, \PDO::PARAM_INT);
+            }
+            
+            if (isset($per_id)) {
+                $comando->bindParam(':per_id', $per_id, \PDO::PARAM_INT);
             }
             
             if (isset($uedu_nombres)) {
@@ -578,4 +598,90 @@ class UsuarioEducativa extends \yii\db\ActiveRecord
             return FALSE;
         }
     }
+
+    /**
+     * Function Consultar per_id y est_id segun la columna usuario del archivo
+     * sea este correo, matricula o cedula.
+     * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>;
+     * @property       
+     * @return  
+     */
+    public function consultarEstutudiantexusuario($string) {
+        $con = \Yii::$app->db_academico; 
+        $con1 = \Yii::$app->db_asgard;     
+        $estado = 1;
+
+        $sql = "SELECT 
+                concat(pers.per_pri_nombre ,' ', pers.per_pri_apellido) as nombre,
+                pers.per_id as per_id,
+                est.est_id as est_id
+                FROM " . $con1->dbname . ".persona pers
+                INNER JOIN " . $con->dbname . ".estudiante est ON est.per_id = pers.per_id
+                WHERE (pers.per_cedula = :string OR
+                    pers.per_correo = :string OR
+                    est.est_matricula = :string ) AND
+                    pers.per_estado = :estado AND
+                    pers.per_estado_logico = :estado AND
+                    est.est_estado = :estado AND
+                    est.est_estado_logico = :estado";
+
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":string", $string, \PDO::PARAM_STR);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);        
+        $resultData = $comando->queryOne();
+        return $resultData;
+    }
+
+    /**
+     * Consultar usuario por el est_id para ver si tiene usuario educativa cargado.
+     * @author  Galo Aguirre <analistadesarrollo06@uteg.edu.ec>;
+     * @property       
+     * @return  
+     */
+    public function consultarexisteusuarioxest($est_id) {
+        $con = \Yii::$app->db_academico;     
+        $estado = 1;
+
+        $sql = "SELECT count(*) as existe_usuario                             
+                  FROM " . $con->dbname . ".usuario_educativa                 
+                 WHERE est_id = :est_id
+                   AND uedu_estado = :estado 
+                   AND uedu_estado_logico = :estado ";
+
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $comando->bindParam(":est_id", $est_id, \PDO::PARAM_STR);
+   
+        $resultData = $comando->queryOne();
+
+        //Utilities::putMessageLogFile($comando->getRawSql());
+        return $resultData;
+    }//function consultarexisteusuarioxest
+
+    /**
+     * Consultar usuario por el est_id para ver si tiene usuario educativa cargado.
+     * @author  Galo Aguirre <analistadesarrollo06@uteg.edu.ec>;
+     * @property       
+     * @return  
+     */
+    public function usuarioeducativa($est_id) {
+        $con = \Yii::$app->db_academico;     
+        $estado = 1;
+
+        $sql = "SELECT uedu_usuario                             
+                  FROM " . $con->dbname . ".usuario_educativa                 
+                 WHERE est_id = :est_id
+                   AND uedu_estado = :estado 
+                   AND uedu_estado_logico = :estado ";
+
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $comando->bindParam(":est_id", $est_id, \PDO::PARAM_STR);
+   
+        $resultData = $comando->queryOne();
+
+        //Utilities::putMessageLogFile($comando->getRawSql());
+        return $resultData;
+    }//function consultarexisteusuarioxest
+
 }

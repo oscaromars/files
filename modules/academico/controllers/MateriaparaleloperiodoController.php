@@ -35,54 +35,146 @@ class MateriaparaleloperiodoController extends \app\components\CController {
         ]);
     }
 
-    //// action for gridview
-    public function actionSave() {
-         $usu_id = @Yii::$app->session->get("PB_iduser");
-         $mes=0;
+    /**
+     * Lists all SemestreAcademicoSearch models.
+     * @return mixed
+     */
+    public function actionNew() {
+        $searchModel = new MateriaParaleloPeriodoSearch();
+        $dataProvider = $searchModel->searchAsinaturas(Yii::$app->request->queryParams);
+
+        return $this->render('new', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+        ]);
+    }
+    
+    
+    
+    /**
+     * Lists all SemestreAcademicoSearch models.
+     * @return mixed
+     */
+    public function actionUpdate($mod_id,$paca_id,$asi_id)
+    {//asi_id', 'mod_id', 'paca_id','mpp_num_paralelo'
+       $model = MateriaParaleloPeriodo::find()->where(" asi_id=:asi_id and mod_id=:mod_id and paca_id=:paca_id ",[":asi_id"=>$asi_id,":mod_id"=>$mod_id,":paca_id"=>$paca_id])->orderBy("mpp_num_paralelo DESC")->one();
+
+        return $this->render('update', [
+            'model' => $model,
+           
+        ]);
+    }
+    
+    
+      public function actionActualizar(){
+            \app\models\Utilities::putMessageLogFile("Actualizar MateriaparaleloperiodoController: ".$data['num_paralelos']);
+        $usu_id = @Yii::$app->session->get("PB_iduser");
+        $mes = 0;
         $fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
-             $con = \Yii::$app->db_academico;
-                  
-             $transaction = $con->beginTransaction();
-               $datos = $data["data"] ;
-                // $datos = json_decode($dts);
-   
-                        for ($i = 0; $i < sizeof($datos); $i++) {
-                             \app\models\Utilities::putMessageLogFile($datos[$i]['asig_id']);
-                            for($j=1;$j <= $datos[$i]['numero_paralelo'];$j++){
-                                    $model  =new MateriaParaleloPeriodo();
-                                    $model->paca_id  = $datos[$i]['paca_id'];
-                                    $model->asi_id = $datos[$i]['asig_id'];
-                                    $model->mod_id = $datos[$i]['mod_id'];
-                                    $model->mpp_num_paralelo = $j;
-                                    $model->mpp_usuario_ingreso = $usu_id;
-                                    $model->mpp_estado = '1';
-                                    $model->mpp_fecha_creacion = $fecha_transaccion;
-                                    $model->mpp_estado_logico = '1';
-                            if($model->save()){
-                             $mes++;
-                            } 
-                            }
-                        }
-           
-            if ($mes != 0) {
-                    $transaction->commit();
-                    $message = array(
-                        "wtmessage" => Yii::t("notificaciones", "La infomación ha sido grabada. "),
-                        "title" => Yii::t('jslang', 'Success'),
-                    );
-                    return Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), false, $message);
-                } else {
-                    $transaction->rollback();
-                    $message = array(
-                        "wtmessage" => Yii::t('notificaciones', 'Su información no ha sido grabada. Por favor intente nuevamente o contacte al área de DesarrolloXXX.'),
-                        "title" => Yii::t('jslang', 'Error'),
-                    );
-                    return Utilities::ajaxResponse('NOOK', 'alert', Yii::t('jslang', 'Error'), 'true', $message);
+            $con = \Yii::$app->db_academico;
+
+            $transaction = $con->beginTransaction();
+           // $datos = $data["data"];
+            // $datos = json_decode($dts);
+
+             //   \app\models\Utilities::putMessageLogFile($datos[$i]['asig_id']);
+                for ($j = $data['mpp_num_paralelo']; $j <= $data['num_paralelos']; $j++) {
+                    $model = new MateriaParaleloPeriodo();
+                    $model->paca_id = $data['paca_id'];
+                    $model->asi_id = $data['asig_id'];
+                    $model->mod_id = $data['mod_id'];
+                    $model->mpp_num_paralelo = $j;
+                    $model->mpp_usuario_ingreso = $usu_id;
+                    $model->mpp_estado = '1';
+                    $model->mpp_fecha_creacion = $fecha_transaccion;
+                    $model->mpp_estado_logico = '1';
+                    if ($model->save()) {
+                        $mes++;
+                    }
                 }
             
+
+            if ($mes != 0) {
+                $transaction->commit();
+                $message = array(
+                    "wtmessage" => Yii::t("notificaciones", "La infomación ha sido grabada. "),
+                    "title" => Yii::t('jslang', 'Success'),
+                );
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), false, $message);
+            } else {
+                $transaction->rollback();
+                $message = array(
+                    "wtmessage" => Yii::t('notificaciones', 'Su información no ha sido grabada. Por favor intente nuevamente o contacte al área de DesarrolloXXX.'),
+                    "title" => Yii::t('jslang', 'Error'),
+                );
+                return Utilities::ajaxResponse('NOOK', 'alert', Yii::t('jslang', 'Error'), 'true', $message);
             }
+        }
+      }
+    /**
+     * Finds the Rol model based on its primary key value.
+     * If the model is not found, a 404 HTTP exception will be thrown.
+     * @param integer $id
+     * @return Rol the loaded model
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    protected function findModel($id)
+    {
+        if (($model = MateriaParaleloPeriodo::findOne($id)) !== null) {
+            return $model;
+        }
+
+        throw new NotFoundHttpException('The requested page does not exist.');
+    }
+    //// action for gridview
+    public function actionSave() {
+   //     \app\models\Utilities::putMessageLogFile("Save MateriaparaleloperiodoController");
+        $usu_id = @Yii::$app->session->get("PB_iduser");
+        $mes = 0;
+        $fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
+        if (Yii::$app->request->isAjax) {
+            $data = Yii::$app->request->post();
+            $con = \Yii::$app->db_academico;
+
+            $transaction = $con->beginTransaction();
+            $datos = $data["data"];
+            // $datos = json_decode($dts);
+            for ($i = 0; $i < sizeof($datos); $i++) {
+             //   \app\models\Utilities::putMessageLogFile($datos[$i]['asig_id']);
+                for ($j = 1; $j <= $datos[$i]['numero_paralelo']; $j++) {
+                    $model = new MateriaParaleloPeriodo();
+                    $model->paca_id = $datos[$i]['paca_id'];
+                    $model->asi_id = $datos[$i]['asig_id'];
+                    $model->mod_id = $datos[$i]['mod_id'];
+                    $model->mpp_num_paralelo = $j;
+                    $model->mpp_usuario_ingreso = $usu_id;
+                    $model->mpp_estado = '1';
+                    $model->mpp_fecha_creacion = $fecha_transaccion;
+                    $model->mpp_estado_logico = '1';
+                    if ($model->save()) {
+                        $mes++;
+                    }
+                }
+            }
+
+            if ($mes != 0) {
+                $transaction->commit();
+                $message = array(
+                    "wtmessage" => Yii::t("notificaciones", "La infomación ha sido grabada. "),
+                    "title" => Yii::t('jslang', 'Success'),
+                );
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), false, $message);
+            } else {
+                $transaction->rollback();
+                $message = array(
+                    "wtmessage" => Yii::t('notificaciones', 'Su información no ha sido grabada. Por favor intente nuevamente o contacte al área de DesarrolloXXX.'),
+                    "title" => Yii::t('jslang', 'Error'),
+                );
+                return Utilities::ajaxResponse('NOOK', 'alert', Yii::t('jslang', 'Error'), 'true', $message);
+            }
+        }
     }
 
     //// action for gridview
@@ -109,7 +201,7 @@ class MateriaparaleloperiodoController extends \app\components\CController {
             //  $model  = $this->findModel($id);
             $model = new MateriaParaleloPeriodo();
             $model->mpp_id = $id;
-            $model->paca_id = 3;
+            //$model->paca_id = 3;
             // $model->mpp_num_paralelo=0;
             // Grab the post parameters array (as attribute => value)
             // $_POST == [

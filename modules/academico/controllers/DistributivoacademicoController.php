@@ -4,6 +4,7 @@ namespace app\modules\academico\controllers;
 
 use Yii;
 use app\modules\academico\models\Asignatura;
+use app\modules\academico\models\MateriaParaleloPeriodo;
 use app\modules\academico\models\DistributivoAcademico;
 use app\modules\academico\models\DistributivoAcademicoHorario;
 use app\modules\academico\models\SemestreAcademico;
@@ -117,6 +118,7 @@ class DistributivoacademicoController extends \app\components\CController {
         $mod_tipo_distributivo = new TipoDistributivo();
         $arr_periodoActual = $mod_periodoActual->getPeriodoAcademicoActual();
         $mod_horario = new DistributivoAcademicoHorario();
+        $paralelo = new MateriaParaleloPeriodo();
 
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
@@ -141,7 +143,7 @@ class DistributivoacademicoController extends \app\components\CController {
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
             }
             if (isset($data["getasignatura"])) {
-                $asignatura = $mod_asignatura->getAsignatura_x_bloque_x_planif($data["periodo_id"], $data["jornada_id"], $arr_periodoActual["baca_nombre"]);
+                $asignatura = $mod_asignatura->getAsignatura_x_bloque_x_planif($data["periodo_id"], $data["mod_id"]);
                 $message = array("asignatura" => $asignatura);
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
             }
@@ -158,8 +160,17 @@ class DistributivoacademicoController extends \app\components\CController {
             }
 
             if (isset($data["getparalelo"])) {
-                $paralelos = $mod_horario->consultarParaleloHorario($data["daho_id"]);
+            
+                $paralelos = $paralelo->getParalelosAsignatura($data["paca_id"],$data["mod_id"],$data["asig_id"]);
                 $message = array("paralelo" => $paralelos);
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+            }
+            
+            if (isset($data["getparaleloposgrado"])) {
+            
+                //$paralelos = $paralelo->getParalelosAsignatura($data["paca_id"],$data["mod_id"],$data["asig_id"]);
+                $paralelos =$mod_horario->consultarParaleloHorario($data["hora_id"]);
+                $message = array("paralelo" =>  $paralelos);
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
             }
         }
@@ -169,7 +180,7 @@ class DistributivoacademicoController extends \app\components\CController {
         $arr_modalidad = $mod_modalidad->consultarModalidad($arr_unidad[0]["id"], $emp_id);
         $arr_periodo = $mod_periodo->getPeriodos_x_modalidad($arr_modalidad[0]["id"]);
         $arr_jornada = $distributivo_model->getJornadasByUnidadAcad($arr_unidad[0]["id"], $arr_modalidad[0]["id"]);
-        $arr_asignatura = $mod_asignatura->getAsignatura_x_bloque_x_planif($arr_periodo[0]["id"], "N", $arr_periodoActual["baca_nombre"]);
+        $arr_asignatura = $mod_asignatura->getAsignatura_x_bloque_x_planif(0, 0);
         $arr_horario = $distributivo_model->getHorariosByUnidadAcad($arr_unidad[0]["id"], $arr_modalidad[0]["id"], $arr_jornada[0]["id"]);
         $model = $distributivo_model->getDistribAcadXprofesorXperiodo(0, 0);
         $arr_tipo_distributivo = $mod_tipo_distributivo->consultarTipoDistributivo(null);
@@ -487,7 +498,7 @@ class DistributivoacademicoController extends \app\components\CController {
         $arr_modalidad = $mod_modalidad->consultarModalidad($arr_unidad[0]["id"], $emp_id);
         $arr_periodo = $mod_periodo->getPeriodos_x_modalidad($arr_modalidad[0]["id"]);
         $arr_jornada = $distributivo_model->getJornadasByUnidadAcad($arr_unidad[0]["id"], $arr_modalidad[0]["id"]);
-        $arr_asignatura = $mod_asignatura->getAsignatura_x_bloque_x_planif($arr_periodo[0]["id"], "N", $arr_periodoActual["baca_nombre"]);
+        $arr_asignatura = $mod_asignatura->getAsignatura_x_bloque_x_planif(0, 0);
         $arr_horario = $distributivo_model->getHorariosByUnidadAcad($arr_unidad[0]["id"], $arr_modalidad[0]["id"], $arr_jornada[0]["id"]);
         $arr_tipo_distributivo = $mod_tipo_distributivo->consultarTipoDistributivo();
         $arr_programa = $distributivo_model->getModalidadEstudio(2, 1);
@@ -546,7 +557,7 @@ class DistributivoacademicoController extends \app\components\CController {
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
             }
             if (isset($data["getasignatura"])) {
-                $asignatura = $mod_asignatura->getAsignatura_x_bloque_x_planif($data["periodo_id"], $data["jornada_id"], $arr_periodoActual["baca_nombre"]);
+                 $asignatura = $mod_asignatura->getAsignatura_x_bloque_x_planif($data["periodo_id"], $data["mod_id"]);
                 $message = array("asignatura" => $asignatura);
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
             }
@@ -570,7 +581,7 @@ class DistributivoacademicoController extends \app\components\CController {
         $arr_modalidad = $mod_modalidad->consultarModalidad($arr_unidad[0]["id"], $emp_id);
         $arr_periodo = $mod_periodo->getPeriodos_x_modalidad($arr_modalidad[0]["id"]);
         $arr_jornada = array(); //$distributivo_model->getJornadasByUnidadAcad($arr_unidad[0]["id"], $arr_modalidad[0]["id"]);           
-        $arr_asignatura = $mod_asignatura->getAsignatura_x_bloque_x_planif($arr_periodo[0]["id"], "N", $arr_periodoActual["baca_nombre"]);
+        $arr_asignatura = $mod_asignatura->getAsignatura_x_bloque_x_planif(0, 0);
         $arr_horario = $distributivo_model->getHorariosByUnidadAcad($arr_unidad[0]["id"], $arr_modalidad[0]["id"], $arr_jornada[0]["id"]);
         $model = $distributivo_model->getDistribAcadXprofesorXperiodo(0, 0);
         $arr_tipo_distributivo = $mod_tipo_distributivo->consultarTipoDistributivo($resCab["ddoc_id"]);

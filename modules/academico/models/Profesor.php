@@ -68,6 +68,7 @@ class Profesor extends \yii\db\ActiveRecord
             [['pro_fecha_contratacion', 'pro_fecha_terminacion', 'pro_fecha_creacion', 'pro_fecha_modificacion'], 'safe'],
             [['pro_cv'], 'string', 'max' => 255],
             [['pro_estado', 'pro_estado_logico'], 'string', 'max' => 1],
+            [['pro_num_contrato'], 'string', 'max' => 30],
         ];
     }
 
@@ -335,6 +336,158 @@ class Profesor extends \yii\db\ActiveRecord
                 ORDER BY 
                     pe.per_pri_apellido ASC";
         $comando = $con_academico->createCommand($sql);
+        $res = $comando->queryAll();
+        return $res;
+    }
+
+    /**
+     * Consulta los profesores que estén dando alguna asignatura
+     * @author 
+     * @param
+     * @return Arreglo con per_id, pro_id, cedula y nombres de los profesores que tengan materias registradas para disctar y hayan sido aprobados
+     */
+     public function getProfesoresEnAsignaturasByPerId($per_id, $onlyData = true){
+        $con_asgard = Yii::$app->db_asgard;
+        $con_academico = Yii::$app->db_academico;
+
+        $sql = "SELECT DISTINCT per.per_id, pro.pro_id, per.per_cedula, per.per_correo, CONCAT(per.per_pri_nombre, ' ', per.per_pri_apellido) AS nombres
+                FROM " . $con_asgard->dbname . ".persona as per
+                INNER JOIN " . $con_academico->dbname . ".profesor AS pro ON pro.per_id = per.per_id
+                INNER JOIN " . $con_academico->dbname . ".distributivo_academico AS daca ON daca.pro_id = pro.pro_id
+                INNER JOIN " . $con_academico->dbname . ".distributivo_cabecera AS dcab ON dcab.pro_id = pro.pro_id
+                WHERE per.per_id = :per_id AND dcab.dcab_estado_revision = 2
+                AND per.per_estado = 1 AND per.per_estado_logico = 1
+                AND pro.pro_estado = 1 AND pro.pro_estado_logico = 1
+                AND daca.daca_estado = 1 AND daca.daca_estado_logico = 1
+                AND dcab.dcab_estado = 1 AND dcab.dcab_estado_logico = 1
+                ORDER BY nombres DESC";
+
+        $comando = $con_academico->createCommand($sql);
+        $comando->bindParam(":per_id",$per_id, \PDO::PARAM_INT);
+        $resultData = $comando->queryAll();
+
+        /*if($onlyData){
+            return $resultData;
+        }*/
+
+        return $resultData;
+    }
+
+    /**
+     * Consulta los profesores que estén dando alguna asignatura
+     * @author Jorge Paladines <analista.desarrollo@uteg.edu.ec>;
+     * @param
+     * @return Arreglo con per_id, pro_id, cedula y nombres de los profesores que tengan materias registradas para disctar y hayan sido aprobados
+     */
+    public function getProfesoresEnAsignaturas($onlyData = true){
+        $con_asgard = Yii::$app->db_asgard;
+        $con_academico = Yii::$app->db_academico;
+
+        $sql = "SELECT DISTINCT per.per_id, pro.pro_id, per.per_cedula, per.per_correo, CONCAT(per.per_pri_nombre, ' ', per.per_pri_apellido) AS nombres
+                FROM " . $con_asgard->dbname . ".persona as per
+                INNER JOIN " . $con_academico->dbname . ".profesor AS pro ON pro.per_id = per.per_id
+                INNER JOIN " . $con_academico->dbname . ".distributivo_academico AS daca ON daca.pro_id = pro.pro_id
+                INNER JOIN " . $con_academico->dbname . ".distributivo_cabecera AS dcab ON dcab.pro_id = pro.pro_id
+                WHERE dcab.dcab_estado_revision = 2
+                AND per.per_estado = 1 AND per.per_estado_logico = 1
+                AND pro.pro_estado = 1 AND pro.pro_estado_logico = 1
+                AND daca.daca_estado = 1 AND daca.daca_estado_logico = 1
+                AND dcab.dcab_estado = 1 AND dcab.dcab_estado_logico = 1
+                ORDER BY nombres DESC";
+
+        $comando = $con_academico->createCommand($sql);
+        $resultData = $comando->queryAll();
+
+        if($onlyData){
+            return $resultData;
+        }
+
+        return $resultData;
+    }
+
+    public function getProfesoresxid($per_id){
+        $con_asgard = Yii::$app->db_asgard;
+        $con_academico = Yii::$app->db_academico;
+        $estado = '1';
+
+        $sql = "SELECT
+                    pro.pro_id AS Id,
+                    CONCAT(pe.per_pri_apellido, ' ', pe.per_pri_nombre) AS Nombres
+                FROM 
+                    " . $con_academico->dbname . ".profesor AS pro
+                    INNER JOIN " . $con_asgard->dbname . ".persona AS pe ON pro.per_id = pe.per_id
+                WHERE 
+                    pro.per_id = :per_id AND
+                    pro.pro_estado = :estado AND 
+                    pro.pro_estado_logico = :estado AND 
+                    pe.per_estado = :estado AND
+                    pe.per_estado_logico = :estado";
+
+        $comando = $con_academico->createCommand($sql);
+        $comando->bindParam(":per_id",$per_id, \PDO::PARAM_INT);
+        $comando->bindParam(":estado",$estado, \PDO::PARAM_STR);
+        $res = $comando->queryOne();
+        return $res;
+    }
+
+    /**
+     * Retorna si el profesor está aprobado en el distributivo
+     * @author Jorge Paladines <analista.desarrollo@uteg.edu.ec>;
+     * @param
+     * @return 
+     */
+    public function isAprobado($pro_id){
+        $con = Yii::$app->db_academico;
+
+        $sql = "SELECT * FROM " . $con->dbname . ".distributivo_cabecera AS dcab
+                INNER JOIN " . $con->dbname . ".profesor AS pro ON pro.pro_id = dcab.pro_id
+                WHERE dcab.dcab_estado = 1 AND dcab.dcab_estado_logico = 1
+                AND pro.pro_estado = 1 AND pro.pro_estado_logico = 1
+                AND pro.pro_id = $pro_id";
+
+        $comando = $con->createCommand($sql);
+        $resultData = $comando->queryAll();
+
+        // Si aún no tiene registro en la tabla
+        if(empty($resultData)){
+            return 0;
+        }
+
+        // Si no está aprobado
+        $estado = $resultData[0]['dcab_estado_revision'];
+        if($estado != 2){
+            return 0;
+        }
+
+        // Si llega aquí, tiene registro en la tabla como aprobado
+        return 1;
+    }
+
+    /**
+     * Function consulta si el profesor.
+     * @author Julio Lopez <analistadesarrollo01@uteg.edu.ec>;
+     * @param
+     * @return
+     */
+    public function getProfesoresDist($pro_id){
+        $con_asgard = \Yii::$app->db_asgard;
+        $con_academico = \Yii::$app->db_academico;
+
+        $sql = "SELECT
+                    pro.pro_id AS id,
+                    CONCAT(pe.per_pri_nombre, ' ', pe.per_pri_apellido) AS name
+                FROM 
+                    " . $con_academico->dbname . ".profesor AS pro
+                    INNER JOIN " . $con_asgard->dbname . ".persona AS pe ON pro.per_id = pe.per_id
+                WHERE 
+                    pro.pro_estado = 1 AND 
+                    pro.pro_estado_logico = 1 AND 
+                    pe.per_estado = 1 AND
+                    pe.per_estado_logico = 1 AND
+                    pro.pro_id = :pro_id
+                ORDER BY pe.per_pri_apellido ASC;";
+        $comando = $con_academico->createCommand($sql);
+        $comando->bindParam(":pro_id",$pro_id, \PDO::PARAM_INT);
         $res = $comando->queryAll();
         return $res;
     }

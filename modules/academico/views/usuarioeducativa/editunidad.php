@@ -44,15 +44,15 @@ academico::registerTranslations();
 </div>
 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
-            <label for="txt_inicio" class="col-sm-2 col-md-2 col-xs-2 col-lg-2 control-label" id="lbl_inicio"><?= Yii::t("formulario", "Start date") ?><span class="text-danger"> *</span></label>
+            <label for="txt_fecha_inied" class="col-sm-2 col-md-2 col-xs-2 col-lg-2 control-label" id="lbl_inicio"><?= Yii::t("formulario", "Start date") ?><span class="text-danger"> *</span></label>
             <div class="col-sm-3 col-md-3 col-xs-3 col-lg-3">
                 <?=
                 DatePicker::widget([
-                    'name' => 'txt_fecha_ini',
+                    'name' => 'txt_fecha_inied',
                     'disabled' => false,
                     'value' => $arr_unidad ["ceuni_fecha_inicio"],
                     'type' => DatePicker::TYPE_INPUT,
-                    'options' => ["class" => "form-control", "id" => "txt_fecha_ini", "placeholder" => Yii::t("formulario", "Start date")],
+                    'options' => ["class" => "form-control PBvalidation", "id" => "txt_fecha_inied", "placeholder" => Yii::t("formulario", "Start date")],
                     'pluginOptions' => [
                         'autoclose' => true,
                         'format' => Yii::$app->params["dateByDatePicker"],
@@ -60,15 +60,15 @@ academico::registerTranslations();
                 );
                 ?>
             </div>
-            <label for="txt_fin" class="col-sm-2 col-md-2 col-xs-2 col-lg-2 control-label" id="lbl_fin"><?= Yii::t("formulario", "End date") ?><span class="text-danger"> *</span></label>
+            <label for="txt_fecha_fined" class="col-sm-2 col-md-2 col-xs-2 col-lg-2 control-label" id="lbl_fin"><?= Yii::t("formulario", "End date") ?><span class="text-danger"> *</span></label>
             <div class="col-sm-3 col-md-3 col-xs-3 col-lg-3">
                 <?=
                 DatePicker::widget([
-                    'name' => 'txt_fecha_fin',
+                    'name' => 'txt_fecha_fined',
                     'disabled' => false,
                     'value' => $arr_unidad ["ceuni_fecha_fin"],
                     'type' => DatePicker::TYPE_INPUT,
-                    'options' => ["class" => "form-control", "id" => "txt_fecha_fin", "placeholder" => Yii::t("formulario", "End date")],
+                    'options' => ["class" => "form-control PBvalidation", "id" => "txt_fecha_fined", "placeholder" => Yii::t("formulario", "End date")],
                     'pluginOptions' => [
                         'autoclose' => true,
                         'format' => Yii::$app->params["dateByDatePicker"],

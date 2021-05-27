@@ -40,12 +40,48 @@ academico::registerTranslations();
             <div class="col-sm-3 col-md-3 col-xs-3 col-lg-3">
             <input type="text" class="form-control PBvalidation keyupmce" value="<?php echo $arr_unidad ["ceuni_descripcion_unidad"]?>" id="txt_descripcioneditunidad" data-type="all" data-keydown="true" placeholder="<?= academico::t("matriculacion", 'Nombre Unidad') ?>"> 
          </div>
-    </div>
-        <!-- <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">  
+    </div>        
+</div>
+<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="form-group">
+            <label for="txt_inicio" class="col-sm-2 col-md-2 col-xs-2 col-lg-2 control-label" id="lbl_inicio"><?= Yii::t("formulario", "Start date") ?><span class="text-danger"> *</span></label>
+            <div class="col-sm-3 col-md-3 col-xs-3 col-lg-3">
+                <?=
+                DatePicker::widget([
+                    'name' => 'txt_fecha_ini',
+                    'disabled' => false,
+                    'value' => $arr_unidad ["ceuni_fecha_inicio"],
+                    'type' => DatePicker::TYPE_INPUT,
+                    'options' => ["class" => "form-control", "id" => "txt_fecha_ini", "placeholder" => Yii::t("formulario", "Start date")],
+                    'pluginOptions' => [
+                        'autoclose' => true,
+                        'format' => Yii::$app->params["dateByDatePicker"],
+                    ]]
+                );
+                ?>
+            </div>
+            <label for="txt_fin" class="col-sm-2 col-md-2 col-xs-2 col-lg-2 control-label" id="lbl_fin"><?= Yii::t("formulario", "End date") ?><span class="text-danger"> *</span></label>
+            <div class="col-sm-3 col-md-3 col-xs-3 col-lg-3">
+                <?=
+                DatePicker::widget([
+                    'name' => 'txt_fecha_fin',
+                    'disabled' => false,
+                    'value' => $arr_unidad ["ceuni_fecha_fin"],
+                    'type' => DatePicker::TYPE_INPUT,
+                    'options' => ["class" => "form-control", "id" => "txt_fecha_fin", "placeholder" => Yii::t("formulario", "End date")],
+                    'pluginOptions' => [
+                        'autoclose' => true,
+                        'format' => Yii::$app->params["dateByDatePicker"],
+                    ]]
+                );
+                ?>
+            </div>
+        </div>   
+</div>
+<!-- <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">  
         <div class="col-sm-8"></div>
         <div class="col-sm-2">                
             <a id="btn_editunidad" href="javascript:" class="btn btn-primary btn-block"> <?= Yii::t("formulario", "Update") ?></a>
-        </div>-->    
-</div>
+</div>-->    
 </br>
 </form>

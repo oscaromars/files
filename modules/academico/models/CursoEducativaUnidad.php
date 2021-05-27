@@ -177,8 +177,8 @@ class CursoEducativaUnidad extends \yii\db\ActiveRecord
                         cur.cedu_asi_nombre,                         
                         cure.ceuni_codigo_unidad,
                         cure.ceuni_descripcion_unidad,
-                        cure.ceuni_fecha_inicio,
-                        cure.ceuni_fecha_fin
+                        DATE_FORMAT(cure.ceuni_fecha_inicio,'%Y-%m-%d'),
+                        DATE_FORMAT(cure.ceuni_fecha_fin,'%Y-%m-%d')                    
                    FROM " . $con->dbname . ".curso_educativa_unidad cure 
              INNER JOIN " . $con->dbname . ".curso_educativa cur ON cur.cedu_id = cure.cedu_id
                   WHERE cure.cedu_id      = :cedu_id
@@ -357,8 +357,8 @@ class CursoEducativaUnidad extends \yii\db\ActiveRecord
                         ced.paca_id,                                     
                         ceu.ceuni_codigo_unidad,
                         ceu.ceuni_descripcion_unidad,
-                        ceu.ceuni_fecha_inicio,
-                        ceu.ceuni_fecha_fin
+                        DATE_FORMAT(ceu.ceuni_fecha_inicio,'%Y-%m-%d') as ceuni_fecha_inicio,
+                        DATE_FORMAT(ceu.ceuni_fecha_fin,'%Y-%m-%d') as ceuni_fecha_fin
                         
                 FROM " . $con->dbname . ".curso_educativa_unidad ceu                 
                 INNER JOIN " . $con->dbname . ".curso_educativa ced ON ced.cedu_id = ceu.cedu_id

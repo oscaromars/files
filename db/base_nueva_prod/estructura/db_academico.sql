@@ -1944,6 +1944,8 @@ create table if not exists `curso_educativa_unidad` (
  `ceuni_descripcion_unidad` varchar(500) not null,
  `ceuni_usuario_ingreso` bigint(20) not null,
  `ceuni_usuario_modifica` bigint(20) null,
+ `ceuni_fecha_inicio` timestamp null default null,
+ `ceuni_fecha_fin` timestamp null default null,
  `ceuni_estado` varchar(1) not null,
  `ceuni_fecha_creacion` timestamp not null default current_timestamp,
  `ceuni_fecha_modificacion` timestamp null default null,

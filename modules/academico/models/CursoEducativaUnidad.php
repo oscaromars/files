@@ -8,6 +8,7 @@ use yii\data\ActiveDataProvider;
 use app\modules\academico\models\CursoEducativa;
 use yii\base\Exception;
 use yii\helpers\VarDumper;
+
 /**
  * This is the model class for table "curso_educativa_unidad".
  *
@@ -17,6 +18,8 @@ use yii\helpers\VarDumper;
  * @property string $ceuni_descripcion_unidad
  * @property int $ceuni_usuario_ingreso
  * @property int $ceuni_usuario_modifica
+ * @property string $ceuni_fecha_inicio
+ * @property string $ceuni_fecha_fin
  * @property string $ceuni_estado
  * @property string $ceuni_fecha_creacion
  * @property string $ceuni_fecha_modificacion
@@ -50,7 +53,7 @@ class CursoEducativaUnidad extends \yii\db\ActiveRecord
         return [
             [['cedu_id', 'ceuni_codigo_unidad', 'ceuni_descripcion_unidad', 'ceuni_usuario_ingreso', 'ceuni_estado', 'ceuni_estado_logico'], 'required'],
             [['cedu_id', 'ceuni_codigo_unidad', 'ceuni_usuario_ingreso', 'ceuni_usuario_modifica'], 'integer'],
-            [['ceuni_fecha_creacion', 'ceuni_fecha_modificacion'], 'safe'],
+            [['ceuni_fecha_inicio', 'ceuni_fecha_fin', 'ceuni_fecha_creacion', 'ceuni_fecha_modificacion'], 'safe'],
             [['ceuni_descripcion_unidad'], 'string', 'max' => 500],
             [['ceuni_estado', 'ceuni_estado_logico'], 'string', 'max' => 1],
             [['cedu_id'], 'exist', 'skipOnError' => true, 'targetClass' => CursoEducativa::className(), 'targetAttribute' => ['cedu_id' => 'cedu_id']],
@@ -69,6 +72,8 @@ class CursoEducativaUnidad extends \yii\db\ActiveRecord
             'ceuni_descripcion_unidad' => 'Ceuni Descripcion Unidad',
             'ceuni_usuario_ingreso' => 'Ceuni Usuario Ingreso',
             'ceuni_usuario_modifica' => 'Ceuni Usuario Modifica',
+            'ceuni_fecha_inicio' => 'Ceuni Fecha Inicio',
+            'ceuni_fecha_fin' => 'Ceuni Fecha Fin',
             'ceuni_estado' => 'Ceuni Estado',
             'ceuni_fecha_creacion' => 'Ceuni Fecha Creacion',
             'ceuni_fecha_modificacion' => 'Ceuni Fecha Modificacion',

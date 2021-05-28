@@ -118,7 +118,9 @@ class CursoEducativaUnidad extends \yii\db\ActiveRecord
         $sql = "SELECT  $campos
                         cur.cedu_asi_nombre,                         
                         cure.ceuni_codigo_unidad,
-                        cure.ceuni_descripcion_unidad
+                        cure.ceuni_descripcion_unidad,
+                        DATE_FORMAT(cure.ceuni_fecha_inicio,'%Y-%m-%d') as ceuni_fecha_inicio,
+                        DATE_FORMAT(cure.ceuni_fecha_fin,'%Y-%m-%d') as ceuni_fecha_fin
                 FROM " . $con->dbname . ".curso_educativa_unidad cure 
                 INNER JOIN " . $con->dbname . ".curso_educativa cur ON cur.cedu_id = cure.cedu_id
                 WHERE $str_search  cure.ceuni_estado = :estado
@@ -177,8 +179,8 @@ class CursoEducativaUnidad extends \yii\db\ActiveRecord
                         cur.cedu_asi_nombre,                         
                         cure.ceuni_codigo_unidad,
                         cure.ceuni_descripcion_unidad,
-                        DATE_FORMAT(cure.ceuni_fecha_inicio,'%Y-%m-%d'),
-                        DATE_FORMAT(cure.ceuni_fecha_fin,'%Y-%m-%d')                    
+                        DATE_FORMAT(cure.ceuni_fecha_inicio,'%Y-%m-%d') as ceuni_fecha_inicio,
+                        DATE_FORMAT(cure.ceuni_fecha_fin,'%Y-%m-%d') as ceuni_fecha_fin                   
                    FROM " . $con->dbname . ".curso_educativa_unidad cure 
              INNER JOIN " . $con->dbname . ".curso_educativa cur ON cur.cedu_id = cure.cedu_id
                   WHERE cure.cedu_id      = :cedu_id

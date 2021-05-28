@@ -198,7 +198,8 @@ class CursoEducativaUnidad extends \yii\db\ActiveRecord
              INNER JOIN " . $con->dbname . ".curso_educativa cur ON cur.cedu_id = cure.cedu_id
                   WHERE cure.cedu_id      = :cedu_id
                     AND cure.ceuni_estado = :estado
-                    AND cure.ceuni_estado_logico = :estado";
+                    AND cure.ceuni_estado_logico = :estado
+                    AND NOW() BETWEEN ceuni.ceuni_fecha_inicio AND ceuni.ceuni_fecha_fin";
 
         $comando = $con->createCommand($sql);
         $comando->bindParam(":estado",  $estado, \PDO::PARAM_STR);

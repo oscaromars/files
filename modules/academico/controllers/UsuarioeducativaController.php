@@ -668,7 +668,9 @@ class UsuarioeducativaController extends \app\components\CController {
         if ($data['PBgetFilter']) {
             $arrSearch["search"] = $data['search'];  
             $arrSearch["periodo"] = $data['periodo'];  
-            $arrSearch["curso"] = $data['curso'];                               
+            $arrSearch["curso"] = $data['curso'];    
+            $arrSearch["fechain"] = $data['fechain'];
+            $arrSearch["fechafin"] = $data['fechafin'];                           
             $model = $mod_educativaunidad->consultarUnidadEducativa($arrSearch, 1, 1);
             return $this->render('indexunidad-grid', [
                         "model" => $model,

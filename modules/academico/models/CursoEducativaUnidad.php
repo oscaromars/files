@@ -113,6 +113,11 @@ class CursoEducativaUnidad extends \yii\db\ActiveRecord
             if ($arrFiltro['curso'] != "" && $arrFiltro['curso'] > 0) {
                 $str_search .= "cure.cedu_id = :cedu_id AND ";
             }
+
+            if ($arrFiltro['fechain'] != "" && $arrFiltro['fechafin'] != "") {
+                $str_search .= "cure.ceuni_fecha_inicio >= :fechain AND ";
+                $str_search .= "cure.ceuni_fecha_fin <= :fechafin AND ";
+            }
                     
         }
         $sql = "SELECT  $campos
@@ -141,11 +146,19 @@ class CursoEducativaUnidad extends \yii\db\ActiveRecord
                 $curso = $arrFiltro["curso"];
                 $comando->bindParam(":cedu_id", $curso, \PDO::PARAM_INT);
             }
+
+            $fechain = $arrFiltro["fechain"] . " 00:00:00";
+            $fechafin = $arrFiltro["fechafin"] . " 23:59:59";
+
+            if ($arrFiltro['fechain'] != "" && $arrFiltro['fechafin'] != "") {
+                $comando->bindParam(":fechain", $fechain, \PDO::PARAM_STR);
+                $comando->bindParam(":fechafin", $fechafin, \PDO::PARAM_STR);
+            }
                     
         }
         $resultData = $comando->queryAll();
 
-        \app\models\Utilities::putMessageLogFile('consultarUnidadEducativa: '.$comando->getRawSql());
+        //\app\models\Utilities::putMessageLogFile('consultarUnidadEducativa: '.$comando->getRawSql());
         
         $dataProvider = new ArrayDataProvider([
             'key' => 'id',

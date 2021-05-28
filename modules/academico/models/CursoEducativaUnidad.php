@@ -512,6 +512,8 @@ class CursoEducativaUnidad extends \yii\db\ActiveRecord
                     if (!is_null($val[1]) || $val[1]) {
                         $val[1] = strval($val[1]);
                         $val[3] = strval($val[3]);
+                        $val[4] = strval($val[4]);
+                        $val[5] = strval($val[5]);
                         $cedu_id = $model_curso->consultarCursoexiste($val[1]);
                         $fila++; 
                         \app\models\Utilities::putMessageLogFile('cedu_id *** ...: ' .$val[1]);
@@ -604,6 +606,8 @@ class CursoEducativaUnidad extends \yii\db\ActiveRecord
         $mod_educativaunidad->ceuni_codigo_unidad = $val[2];
         $mod_educativaunidad->ceuni_descripcion_unidad = $val[3];
         $mod_educativaunidad->ceuni_usuario_ingreso = $usu_id;
+        $mod_educativaunidad->ceuni_fecha_inicio =  $val[4];
+        $mod_educativaunidad->ceuni_fecha_fin =  $val[5];
         $mod_educativaunidad->ceuni_estado = "1";
         $mod_educativaunidad->ceuni_fecha_creacion = $fecha_transaccion;
         $mod_educativaunidad->ceuni_estado_logico = "1";
@@ -613,6 +617,8 @@ class CursoEducativaUnidad extends \yii\db\ActiveRecord
         \app\models\Utilities::putMessageLogFile('1: ' .$val[1]);
         \app\models\Utilities::putMessageLogFile('2: ' .$val[2]);
         \app\models\Utilities::putMessageLogFile('3: ' .$val[3]);
+        \app\models\Utilities::putMessageLogFile('4: ' .$val[4]);
+        \app\models\Utilities::putMessageLogFile('5: ' .$val[5]);
         \app\models\Utilities::putMessageLogFile('fecha: ' .$fecha_transaccion);
         \app\models\Utilities::putMessageLogFile('usu_id: ' .$usu_id);  */      
 

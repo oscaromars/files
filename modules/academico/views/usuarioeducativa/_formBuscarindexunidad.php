@@ -16,7 +16,43 @@ academico::registerTranslations();
                 <input type="text" class="form-control" value="" id="txt_buscarDataunidad" placeholder="<?= academico::t("Academico", "Search by Unit") ?>">
             </div>
         </div>
-    </div>    
+    </div>  
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="form-group">
+            <label for="txt_fecha_inidex" class="col-sm-2 col-md-2 col-xs-2 col-lg-2 control-label" id="lbl_inicio"><?= Yii::t("formulario", "Start date") ?></label>
+            <div class="col-sm-3 col-md-3 col-xs-3 col-lg-3">
+                <?=
+                DatePicker::widget([
+                    'name' => 'txt_fecha_inidex',
+                    'disabled' => false,
+                    'value' => '',
+                    'type' => DatePicker::TYPE_INPUT,
+                    'options' => ["class" => "form-control PBvalidation", "id" => "txt_fecha_inidex", "placeholder" => Yii::t("formulario", "Start date")],
+                    'pluginOptions' => [
+                        'autoclose' => true,
+                        'format' => Yii::$app->params["dateByDatePicker"],
+                    ]]
+                );
+                ?>
+            </div>
+            <label for="txt_fecha_finidex" class="col-sm-2 col-md-2 col-xs-2 col-lg-2 control-label" id="lbl_fin"><?= Yii::t("formulario", "End date") ?></label>
+            <div class="col-sm-3 col-md-3 col-xs-3 col-lg-3">
+                <?=
+                DatePicker::widget([
+                    'name' => 'txt_fecha_finidex',
+                    'disabled' => false,
+                    'value' => '',
+                    'type' => DatePicker::TYPE_INPUT,
+                    'options' => ["class" => "form-control PBvalidation", "id" => "txt_fecha_finidex", "data-type" => "fecha_eduac", "placeholder" => Yii::t("formulario", "End date")],
+                    'pluginOptions' => [
+                        'autoclose' => true,
+                        'format' => Yii::$app->params["dateByDatePicker"],
+                    ]]
+                );
+                ?>
+            </div>
+        </div>   
+</div>  
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
             <label for="lbl_periodounidad" class="col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= academico::t("matriculacion", 'Academic Period') ?></label>

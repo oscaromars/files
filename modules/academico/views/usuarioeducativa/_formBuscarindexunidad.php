@@ -27,7 +27,7 @@ academico::registerTranslations();
                     'disabled' => false,
                     'value' => '',
                     'type' => DatePicker::TYPE_INPUT,
-                    'options' => ["class" => "form-control PBvalidation", "id" => "txt_fecha_inidex", "placeholder" => Yii::t("formulario", "Start date")],
+                    'options' => ["class" => "form-control", "id" => "txt_fecha_inidex", "placeholder" => Yii::t("formulario", "Start date")],
                     'pluginOptions' => [
                         'autoclose' => true,
                         'format' => Yii::$app->params["dateByDatePicker"],
@@ -43,7 +43,7 @@ academico::registerTranslations();
                     'disabled' => false,
                     'value' => '',
                     'type' => DatePicker::TYPE_INPUT,
-                    'options' => ["class" => "form-control PBvalidation", "id" => "txt_fecha_finidex", "data-type" => "fecha_eduac", "placeholder" => Yii::t("formulario", "End date")],
+                    'options' => ["class" => "form-control", "id" => "txt_fecha_finidex", "data-type" => "fecha_eduac", "placeholder" => Yii::t("formulario", "End date")],
                     'pluginOptions' => [
                         'autoclose' => true,
                         'format' => Yii::$app->params["dateByDatePicker"],

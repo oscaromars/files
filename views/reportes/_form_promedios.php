@@ -10,7 +10,7 @@ use yii\helpers\ArrayHelper;
 
 $var = ArrayHelper::map(app\modules\academico\models\Estudiante::find()->where(['est_estado' => 1,'est_estado_logico' => 1])->all(), 'per_id',
                 function ($model) {
-                     return $model->per_id->per_pri_nombre . '-' . $model->per_id->per_pri_apellido . '-' . $model->per_id->per_seg_apellido;
+                     return $model->per_id->per_pri_apellido . '-' . $model->per_id->per_seg_apellido . '-' . $model->per_id->per_pri_nombre;
                 });
 
 ?>
@@ -38,7 +38,7 @@ $var = ArrayHelper::map(app\modules\academico\models\Estudiante::find()->where([
 
     <?=
     $form->field($model, 'est_id')->label('Estudiante:')->widget(Select2::classname(), [
-        //'data' => ArrayHelper::map(app\modules\academico\models\Estudiante::find()->where(['est_estado_logico' => '1','est_estado' => '1'])->all(), 'est_id', 'per_id'),
+        //'data' => ArrayHelper::map(app\modules\academico\models\Estudiante::find()->where(['est_estado_logico' => '1','est_estado' => '1'])->all(), 'per_pri_apellido', 'per_seg_apellido', 'per_pri_nombre'),
         'data' => $var,
         'size' => Select2::MEDIUM,
         'options' => ['placeholder' => 'Seleccione Estudiante ...', 'multiple' => false],

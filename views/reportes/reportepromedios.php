@@ -71,38 +71,12 @@ GridView::widget([
         'target' => GridView::TARGET_BLANK,
     ],
     'columns' => [
-       
-        [
-            'attribute' => 'estudiante',
-            'header' => academico::t("Academico", "Estudiante"),
-            'value' => 'estudiante',
-            'group' => false,
-        ],
-        [
-            'attribute' => 'cedula',
-            'header' => academico::t("Academico", "Cédula "),
-            'value' => 'cedula',
-            'group' => false,
-        ],
-        [
-            'attribute' => 'matricula',
-            'header' => academico::t("Academico", "Matricula"),
-            'value' => 'matricula',
-          
-        ],
         [
             'attribute' => 'carrera',
             'header' => academico::t("Academico", "Carrera"),
             'value' => 'carrera',
             'group' => false,
         ],
-         
-        /*[
-            'attribute' => 'unidad_estudio',
-            'header' => academico::t("Academico", "Unidad Estudio"),
-            'value' => 'unidad_estudio',
-          
-        ],*/
         [
             'attribute' => 'asignatura',
             'header' => academico::t("Academico", "Asignatura"),
@@ -111,9 +85,15 @@ GridView::widget([
         
         ],
         [
-            'attribute' => 'calificacion',
-            'header' => academico::t("Academico", "Calificación"),
-            'value' => 'calificacion',
+            'attribute' => 'malla',
+            'header' => academico::t("Academico", "Malla Academica"),
+            'value' => 'malla',
+          
+        ],
+        [
+            'attribute' => 'promedio',
+            'header' => academico::t("Academico", "Promedio"),
+            'value' => 'promedio',
           
         ],
     ],

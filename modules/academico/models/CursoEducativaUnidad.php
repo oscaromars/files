@@ -113,12 +113,19 @@ class CursoEducativaUnidad extends \yii\db\ActiveRecord
             if ($arrFiltro['curso'] != "" && $arrFiltro['curso'] > 0) {
                 $str_search .= "cure.cedu_id = :cedu_id AND ";
             }
+
+            if ($arrFiltro['fechain'] != "" && $arrFiltro['fechafin'] != "") {
+                $str_search .= "cure.ceuni_fecha_inicio >= :fechain AND ";
+                $str_search .= "cure.ceuni_fecha_fin <= :fechafin AND ";
+            }
                     
         }
         $sql = "SELECT  $campos
                         cur.cedu_asi_nombre,                         
                         cure.ceuni_codigo_unidad,
-                        cure.ceuni_descripcion_unidad
+                        cure.ceuni_descripcion_unidad,
+                        DATE_FORMAT(cure.ceuni_fecha_inicio,'%Y-%m-%d') as ceuni_fecha_inicio,
+                        DATE_FORMAT(cure.ceuni_fecha_fin,'%Y-%m-%d') as ceuni_fecha_fin
                 FROM " . $con->dbname . ".curso_educativa_unidad cure 
                 INNER JOIN " . $con->dbname . ".curso_educativa cur ON cur.cedu_id = cure.cedu_id
                 WHERE $str_search  cure.ceuni_estado = :estado
@@ -139,11 +146,19 @@ class CursoEducativaUnidad extends \yii\db\ActiveRecord
                 $curso = $arrFiltro["curso"];
                 $comando->bindParam(":cedu_id", $curso, \PDO::PARAM_INT);
             }
+
+            $fechain = $arrFiltro["fechain"] . " 00:00:00";
+            $fechafin = $arrFiltro["fechafin"] . " 23:59:59";
+
+            if ($arrFiltro['fechain'] != "" && $arrFiltro['fechafin'] != "") {
+                $comando->bindParam(":fechain", $fechain, \PDO::PARAM_STR);
+                $comando->bindParam(":fechafin", $fechafin, \PDO::PARAM_STR);
+            }
                     
         }
         $resultData = $comando->queryAll();
 
-        \app\models\Utilities::putMessageLogFile('consultarUnidadEducativa: '.$comando->getRawSql());
+        //\app\models\Utilities::putMessageLogFile('consultarUnidadEducativa: '.$comando->getRawSql());
         
         $dataProvider = new ArrayDataProvider([
             'key' => 'id',
@@ -177,8 +192,8 @@ class CursoEducativaUnidad extends \yii\db\ActiveRecord
                         cur.cedu_asi_nombre,                         
                         cure.ceuni_codigo_unidad,
                         cure.ceuni_descripcion_unidad,
-                        DATE_FORMAT(cure.ceuni_fecha_inicio,'%Y-%m-%d'),
-                        DATE_FORMAT(cure.ceuni_fecha_fin,'%Y-%m-%d')                    
+                        DATE_FORMAT(cure.ceuni_fecha_inicio,'%Y-%m-%d') as ceuni_fecha_inicio,
+                        DATE_FORMAT(cure.ceuni_fecha_fin,'%Y-%m-%d') as ceuni_fecha_fin                   
                    FROM " . $con->dbname . ".curso_educativa_unidad cure 
              INNER JOIN " . $con->dbname . ".curso_educativa cur ON cur.cedu_id = cure.cedu_id
                   WHERE cure.cedu_id      = :cedu_id
@@ -512,6 +527,8 @@ class CursoEducativaUnidad extends \yii\db\ActiveRecord
                     if (!is_null($val[1]) || $val[1]) {
                         $val[1] = strval($val[1]);
                         $val[3] = strval($val[3]);
+                        $val[4] = strval($val[4]);
+                        $val[5] = strval($val[5]);
                         $cedu_id = $model_curso->consultarCursoexiste($val[1]);
                         $fila++; 
                         \app\models\Utilities::putMessageLogFile('cedu_id *** ...: ' .$val[1]);
@@ -604,6 +621,8 @@ class CursoEducativaUnidad extends \yii\db\ActiveRecord
         $mod_educativaunidad->ceuni_codigo_unidad = $val[2];
         $mod_educativaunidad->ceuni_descripcion_unidad = $val[3];
         $mod_educativaunidad->ceuni_usuario_ingreso = $usu_id;
+        $mod_educativaunidad->ceuni_fecha_inicio =  $val[4];
+        $mod_educativaunidad->ceuni_fecha_fin =  $val[5];
         $mod_educativaunidad->ceuni_estado = "1";
         $mod_educativaunidad->ceuni_fecha_creacion = $fecha_transaccion;
         $mod_educativaunidad->ceuni_estado_logico = "1";
@@ -613,6 +632,8 @@ class CursoEducativaUnidad extends \yii\db\ActiveRecord
         \app\models\Utilities::putMessageLogFile('1: ' .$val[1]);
         \app\models\Utilities::putMessageLogFile('2: ' .$val[2]);
         \app\models\Utilities::putMessageLogFile('3: ' .$val[3]);
+        \app\models\Utilities::putMessageLogFile('4: ' .$val[4]);
+        \app\models\Utilities::putMessageLogFile('5: ' .$val[5]);
         \app\models\Utilities::putMessageLogFile('fecha: ' .$fecha_transaccion);
         \app\models\Utilities::putMessageLogFile('usu_id: ' .$usu_id);  */      
 

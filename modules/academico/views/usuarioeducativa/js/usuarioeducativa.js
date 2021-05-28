@@ -498,11 +498,13 @@ function accion(id, tmp) {
 function actualizarGridUnidad() {
     var search = $('#txt_buscarDataunidad').val();
     var periodo =  $('#cmb_periodounidad option:selected').val();
-    var curso =  $('#cmb_curso option:selected').val();    
+    var curso =  $('#cmb_curso option:selected').val();  
+    var fechain = $('#txt_fecha_inidex').val();
+    var fechafin = $('#txt_fecha_finidex').val();  
     //Buscar almenos una clase con el nombre para ejecutar
     if (!$(".blockUI").length) {
         showLoadingPopup();
-    $('#Pbunidad').PbGridView('applyFilterData', {'search': search, 'periodo': periodo, 'curso': curso});
+    $('#Pbunidad').PbGridView('applyFilterData', {'search': search, 'periodo': periodo, 'curso': curso, 'fechain': fechain, 'fechafin': fechafin});
         setTimeout(hideLoadingPopup, 2000);
     }
 }
@@ -511,14 +513,18 @@ function exportExcelunidad() {
     var search = $('#txt_buscarDataunidad').val();
     var periodo =  $('#cmb_periodounidad option:selected').val();
     var curso = $('#cmb_curso option:selected').val(); 
-    window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/expexcelunidad?search=" + search + "&periodo=" + periodo + "&curso=" + curso;
+    var fechain = $('#txt_fecha_inidex').val();
+    var fechafin = $('#txt_fecha_finidex').val();
+    window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/expexcelunidad?search=" + search + "&periodo=" + periodo + "&curso=" + curso + "&fechain=" + fechain + "&fechafin=" + fechafin;
 }
 
 function exportPdfunidad() {
     var search = $('#txt_buscarDataunidad').val();
     var periodo =  $('#cmb_periodounidad option:selected').val();
     var curso = $('#cmb_curso option:selected').val(); 
-    window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/exppdfunidad?pdf=1&search=" + search + "&periodo=" + periodo + "&curso=" + curso;
+    var fechain = $('#txt_fecha_inidex').val();
+    var fechafin = $('#txt_fecha_finidex').val();
+    window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/exppdfunidad?pdf=1&search=" + search + "&periodo=" + periodo + "&curso=" + curso + "&fechain=" + fechain + "&fechafin=" + fechafin;
 }
 
 function saveunidad() {

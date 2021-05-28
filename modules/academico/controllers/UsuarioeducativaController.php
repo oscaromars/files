@@ -668,7 +668,9 @@ class UsuarioeducativaController extends \app\components\CController {
         if ($data['PBgetFilter']) {
             $arrSearch["search"] = $data['search'];  
             $arrSearch["periodo"] = $data['periodo'];  
-            $arrSearch["curso"] = $data['curso'];                               
+            $arrSearch["curso"] = $data['curso'];    
+            $arrSearch["fechain"] = $data['fechain'];
+            $arrSearch["fechafin"] = $data['fechafin'];                           
             $model = $mod_educativaunidad->consultarUnidadEducativa($arrSearch, 1, 1);
             return $this->render('indexunidad-grid', [
                         "model" => $model,
@@ -704,12 +706,13 @@ class UsuarioeducativaController extends \app\components\CController {
         header("Content-Type: $content_type");
         header("Content-Disposition: attachment;filename=" . $nombarch);
         header('Cache-Control: max-age=0');
-        $colPosition = array("C", "D", "E", "F", "G");
+        $colPosition = array("C", "D", "E", "F", "G", "H", "I");
         $arrHeader = array(
             academico::t("Academico", "Course"), 
             Yii::t("formulario", "Code"). ' '. Yii::t("formulario", "Unit"),
-            Yii::t("formulario", "Description"),       
-                      
+            Yii::t("formulario", "Description"),  
+            Yii::t("formulario", "Start date"),
+            Yii::t("formulario", "End date"),                      
         );
       
         $mod_educativa = new CursoEducativaUnidad();
@@ -717,6 +720,8 @@ class UsuarioeducativaController extends \app\components\CController {
         $arrSearch["search"] = $data['search'];
         $arrSearch["periodo"] = $data['periodo'];
         $arrSearch["curso"] = $data['curso'];  
+        $arrSearch["fechain"] = $data['fechain'];
+        $arrSearch["fechafin"] = $data['fechafin'];
         $arrData = array();
         if (empty($arrSearch)) {
             $arrData = $mod_educativa->consultarUnidadEducativa(array(), 0, 0);
@@ -736,12 +741,16 @@ class UsuarioeducativaController extends \app\components\CController {
             academico::t("Academico", "Course"), 
             Yii::t("formulario", "Code"). ' '. Yii::t("formulario", "Unit"),
             Yii::t("formulario", "Description"),
+            Yii::t("formulario", "Start date"),
+            Yii::t("formulario", "End date"), 
         );
         $mod_educativa = new CursoEducativaUnidad();
         $data = Yii::$app->request->get();
         $arrSearch["search"] = $data['search'];
         $arrSearch["periodo"] = $data['periodo'];
-        $arrSearch["curso"] = $data['curso'];  
+        $arrSearch["curso"] = $data['curso']; 
+        $arrSearch["fechain"] = $data['fechain'];
+        $arrSearch["fechafin"] = $data['fechafin']; 
         $arrData = array();
         if (empty($arrSearch)) {
             $arrData = $mod_educativa->consultarUnidadEducativa(array(), 0, 0);

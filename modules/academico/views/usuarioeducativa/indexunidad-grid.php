@@ -7,7 +7,7 @@ use app\widgets\PbGridView\PbGridView;
 use app\modules\admision\Module;
 use app\modules\academico\Module as academico;
 use app\modules\admision\Module as admision;
-
+//print_r($model);
 admision::registerTranslations();
 academico::registerTranslations();
 ?>
@@ -48,7 +48,17 @@ academico::registerTranslations();
                 'attribute' => 'descripcion',
                 'header' => Yii::t("formulario", "Description"),
                 'value' => 'ceuni_descripcion_unidad',
-            ],                     
+            ],             
+            [
+                'attribute' => 'fechainicio',
+                'header' => Yii::t("formulario", "Start date"),
+                'value' => 'ceuni_fecha_inicio',
+            ],
+            [
+                'attribute' => 'fechafin',
+                'header' => Yii::t("formulario", "End date"),
+                'value' => 'ceuni_fecha_fin',
+            ],
                                                   
             [
                 'class' => 'yii\grid\ActionColumn',

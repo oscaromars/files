@@ -481,7 +481,7 @@ class Estudiante extends \yii\db\ActiveRecord {
         }
         $sql = "SELECT distinct
                       $estid  
-	           -- pers.per_id,
+	                 -- pers.per_id,
                       concat(pers.per_pri_nombre, ' ', pers.per_pri_apellido) as nombres,
                       pers.per_cedula as dni,
                       pers.per_correo as correo,
@@ -505,7 +505,7 @@ class Estudiante extends \yii\db\ActiveRecord {
                 LEFT JOIN " . $con->dbname . ".modalidad moda ON moda.mod_id = meun.mod_id
                 LEFT JOIN " . $con->dbname . ".estudio_academico esac ON esac.eaca_id = meun.eaca_id
                 LEFT JOIN " . $con->dbname . ".registro_online r ON r.per_id = pers.per_id
-                LEFT JOIN " . $con->dbname . ".planificacion_estudiante pes ON pes.pes_id = r.pes_id AND pla_id IN ($inlist)
+                LEFT JOIN " . $con->dbname . ".planificacion_estudiante pes ON pes.pes_id = r.pes_id  AND pla_id IN ($inlist)
                 WHERE 
                 $str_search
                 pers.per_id > 1000                
@@ -783,7 +783,7 @@ class Estudiante extends \yii\db\ActiveRecord {
     public function consultarDatosPersona($est_id){
         $con = Yii::$app->db_academico;
 
-        $sql = "SELECT est.est_id, per.per_id, est.est_activo, est.est_matricula AS matricula, per.per_cedula AS cedula, concat(per.per_pri_nombre, ' ', per.per_pri_apellido) AS nombres, per.per_correo AS correo 
+        $sql = "SELECT est.est_id, per.per_id, est.est_estado, est.est_matricula AS matricula, per.per_cedula AS cedula, concat(per.per_pri_nombre, ' ', per.per_pri_apellido) AS nombres, per.per_correo AS correo 
                 FROM db_academico.estudiante AS est
                 INNER JOIN db_asgard.persona AS per ON per.per_id = est.per_id
                 WHERE est.est_estado = 1 AND est.est_estado_logico = 1

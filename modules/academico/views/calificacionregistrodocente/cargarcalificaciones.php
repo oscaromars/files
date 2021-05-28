@@ -24,8 +24,6 @@ $per_id = Yii::$app->session->get("PB_perid");
 
 $mod_profesor = new Profesor();
 
-$admin = 1;
-
 $pro_id = $mod_profesor->getProfesoresxid($per_id)['Id'];
 if(isset($pro_id)){
     $aprobado = $mod_profesor->isAprobado($pro_id);

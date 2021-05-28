@@ -353,4 +353,7 @@ class PeriodoAcademico extends \yii\db\ActiveRecord
         $resultData = $comando->queryAll();
         return $resultData;
     }
+
+  
+
 }

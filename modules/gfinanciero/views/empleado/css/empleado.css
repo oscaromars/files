@@ -1,0 +1,52 @@
+.lbltxtTamañoImgAvatar {
+    font-family: 'Source Sans Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
+    font-size: 11px !important;
+    color: #a94442 !important;
+    font-weight: normal;
+}
+
+.titulo_CabeceraInfo {
+    font-family: 'Source Sans Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
+    font-size: 21px;
+    font-weight: bold;
+}
+
+#lbl_ContactoEmerge {
+    font-family: 'Source Sans Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
+    font-size: 11px;
+    color: #a94442 !important;
+    padding: 0px;
+    margin: 0px;
+}
+
+#lbl_ContactoEmerge2 {
+    font-family: 'Source Sans Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
+    font-size: 11px;
+    color: #a94442 !important;
+    padding: 0px;
+    margin: 0px;
+}
+
+.tabla_estile {
+    background: #F9F9F9;
+}
+
+.margin-credencial {
+    margin: 0 25px;
+}
+
+.carnet {
+    padding: 30px 0px;
+    text-align: center;
+    height: 583px;
+}
+
+.imgCred {
+    width: 100%;
+    max-width: 325px;
+}
+
+.imgQR {
+    width: 100%;
+    max-width: 320px;
+}

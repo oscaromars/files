@@ -1944,6 +1944,8 @@ create table if not exists `curso_educativa_unidad` (
  `ceuni_descripcion_unidad` varchar(500) not null,
  `ceuni_usuario_ingreso` bigint(20) not null,
  `ceuni_usuario_modifica` bigint(20) null,
+ `ceuni_fecha_inicio` timestamp null default null,
+ `ceuni_fecha_fin` timestamp null default null,
  `ceuni_estado` varchar(1) not null,
  `ceuni_fecha_creacion` timestamp not null default current_timestamp,
  `ceuni_fecha_modificacion` timestamp null default null,
@@ -2006,6 +2008,7 @@ create table if not exists `componente_unidad` (
   `com_id` bigint(20) NOT NULL,
   `uaca_id` bigint(20) NOT NULL,  
   `mod_id` bigint(20) NOT NULL,  
+  `ecal_id` bigint(20),  
   `cuni_calificacion` double NOT NULL,  
   `cuni_estado` varchar(1) NOT NULL,
   `cuni_fecha_creacion` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -2013,7 +2016,8 @@ create table if not exists `componente_unidad` (
   `cuni_estado_logico` varchar(1) NOT NULL,
   foreign key (uaca_id) references `unidad_academica`(uaca_id),
   foreign key (com_id) references `componente`(com_id),
-  foreign key (mod_id) references `modalidad`(mod_id)
+  foreign key (mod_id) references `modalidad`(mod_id),
+  foreign key (ecal_id) references `esquema_calificacion`(ecal_id)
 );
 
 -- --------------------------------------------------------
@@ -2192,10 +2196,13 @@ create view componente_columna as (
       select comp.com_id as id, coun.uaca_id as uaca_id,  
              case when comp.com_id  = 1 then 0   end as 'Asíncrona', 
              case when comp.com_id  = 2 then 0   end as 'Síncrona', 
-             case when comp.com_id  = 3 then 0   end as 'Autónoma',
-             case when comp.com_id  = 4 then 0   end as 'Evaluación', 
-             case when comp.com_id  = 5 then 0   end as 'Examen', 
-             case when comp.com_id  = 6 then 0   end as 'Trabajo_Final'
+             case when comp.com_id  = 3 then 0   end as 'Cuestionarios',
+             case when comp.com_id  = 4 then 0   end as 'Autónoma',
+             case when comp.com_id  = 5 then 0   end as 'Evaluación', 
+             case when comp.com_id  = 6 then 0   end as 'Examen', 
+             case when comp.com_id  = 7 then 0   end as 'Talleres', 
+             case when comp.com_id  = 8 then 0   end as 'Deberes', 
+             case when comp.com_id  = 9 then 0   end as 'Aporte'
              from db_academico.componente_unidad coun
              INNER JOIN db_academico.componente comp ON comp.com_id = coun.com_id
        -- WHERE coun.uaca_id = 3  

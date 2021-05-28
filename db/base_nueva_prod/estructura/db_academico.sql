@@ -1935,6 +1935,26 @@ create table if not exists `curso_educativa_estudiante` (
 
 -- --------------------------------------------------------
 --
+-- Estructura de tabla para la tabla `curso_educativa_estudiante_historial`
+-- --------------------------------------------------------
+create table if not exists `curso_educativa_estudiante_historial` (
+    `ceeh_id` bigint(20) not null auto_increment primary key,
+    `ceest_id` bigint(20) not null,
+    `ceeh_estado_pago` varchar(20) not null,
+    `ceeh_est_bloqueo_anterior` varchar(20) not null,
+    `ceeh_est_bloqueo` varchar(20) not null,
+    `ceeh_unidad` varchar(20) NULL,
+    `ceeh_usuario_creacion` bigint(20) NOT NULL,
+    `ceeh_estado` varchar(1) not null,
+    `ceeh_fecha_creacion` timestamp not null default current_timestamp,
+    `ceeh_fecha_modificacion` timestamp null default null,
+    `ceeh_estado_logico` varchar(1) not null
+);
+
+
+
+-- --------------------------------------------------------
+--
 -- Estructura de tabla para la tabla `curso_educativa_unidad`
 -- --------------------------------------------------------
 create table if not exists `curso_educativa_unidad` (

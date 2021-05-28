@@ -1951,8 +1951,6 @@ create table if not exists `curso_educativa_estudiante_historial` (
     `ceeh_estado_logico` varchar(1) not null
 );
 
-
-
 -- --------------------------------------------------------
 --
 -- Estructura de tabla para la tabla `curso_educativa_unidad`

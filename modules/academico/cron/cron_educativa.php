@@ -208,13 +208,16 @@
 					    ceuni.ceuni_id,
 						cedu.cedu_asi_nombre,                         
 						ceuni.ceuni_codigo_unidad,
-						ceuni.ceuni_descripcion_unidad
+						ceuni.ceuni_descripcion_unidad,
+						ceuni.ceuni_fecha_inicio,
+                        ceuni.ceuni_fecha_fin
 				   FROM db_academico.curso_educativa_unidad ceuni
 			 INNER JOIN db_academico.curso_educativa cedu 
 					 ON cedu.cedu_id = ceuni.cedu_id
 				  WHERE ceuni.cedu_id = $cedu_id
 					AND ceuni.ceuni_estado = 1
-					AND ceuni.ceuni_estado_logico = 1";
+					AND ceuni.ceuni_estado_logico = 1
+					AND NOW() BETWEEN ceuni.ceuni_fecha_inicio AND ceuni.ceuni_fecha_fin";
 		     //AQUI VA EL CAMBIO CUANDO SE PREGUNTE POR LA FECHA DE LA UNIDAD
 
         $comando = $con->prepare($sql);

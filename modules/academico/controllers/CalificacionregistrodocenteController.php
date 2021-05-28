@@ -13,6 +13,7 @@ use app\modules\academico\models\ModalidadEstudioUnidad;
 use app\modules\academico\models\UnidadAcademica;
 use app\modules\academico\models\Paralelo;
 use app\modules\academico\models\Estudiante;
+use app\modules\academico\models\UsuarioEducativa;
 use app\modules\academico\models\EstudianteCarreraPrograma;
 use app\modules\academico\models\Profesor;
 use app\modules\admision\models\Oportunidad;
@@ -512,19 +513,21 @@ class CalificacionregistrodocenteController extends \app\components\CController 
             $usu_id = Yii::$app->session->get("PB_iduser");
             $admin = $this->isAdmin($usu_id);
 
+            $admin = 1;
+
             if($admin){// Es administrador
                 $pro_id = $mod_profesor->getProfesoresxid($per_id)['Id'];
                 if(isset($pro_id)){ // Y profesor
                     $materias = $asig_mod->getAsignaturasBy($pro_id, NULL, $periodo_actual['id']);
                 }
                 else{
-                    $materias = $asig_mod->getAsignaturasBy();
+                    $materias = $asig_mod->getAsignaturasBy($profesores[0]['pro_id'], NULL, $periodo_actual['id']);
                 }
             }
             else{ // No es administrador
                 $pro_id = $mod_profesor->getProfesoresxid($per_id)['Id'];
                 if(!isset($pro_id)){ // Ni profesor
-                    $materias = []; // En realidad no se debería permitir entrar en la pantalla, pero por si acaso
+                    $materias = $asig_mod->getAsignaturasBy($profesores[0]['pro_id'], NULL, $periodo_actual['id']); // En realidad no se debería permitir entrar en la pantalla, pero por si acaso
                 }
                 else{
                     $materias = $asig_mod->getAsignaturasBy($pro_id, NULL, $periodo_actual['id']);
@@ -606,7 +609,7 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 
     /**
      * Guarda las calificaciones que provienen del archivo de excel
-     * @author  Jorge Paladines analista.desarrollo@uteg.edu.ec
+     * @author  Jorge Paladines <analista.desarrollo@uteg.edu.ec>
      * @param   
      * @return  
      */
@@ -656,10 +659,10 @@ class CalificacionregistrodocenteController extends \app\components\CController 
                     $fila++;
 
                     if (!is_null($val[5]) || $val[5]) {
-                        if($tipo == 0 || $val[5] == "1° PARCIAL") // GRADO
+                        if($tipo == 0 || $val[5] == "PRIMER PARCIAL") // GRADO
                         {
                             $tipo = 0;
-                            if($fila == 1 || $fila == 2){ // No leer la primera fila ni la 2da
+                            if($fila == 1 || $fila == 2 || $fila == 3 || $fila == 4 || $fila == 5){ // No leer estas filas
                                 continue;
                             }
                             else{ //Aquí se hace el cálculo
@@ -680,10 +683,11 @@ class CalificacionregistrodocenteController extends \app\components\CController 
                                 ** $val[17] -> 'Calificación' - 2° PARCIAL  No se usa porque el sistema lo calcula por si acaso esté mal calculado
                                 */
 
-                                $matricula = $val[2];
+                                $usuario = $val[2];
                                 $nombre = $val[4];
 
-                                $estudiante = Estudiante::find()->where(['est_matricula' => $matricula])->asArray()->one();
+                                $estudiante = UsuarioEducativa::find()->where(['uedu_usuario' => $usuario])->asArray()->one();
+
                                 // Si el estudiante no existe, continuar al siguiente, y colocarlo en la lista
                                 if(!isset($estudiante)){
                                     $noalumno .= $nombre . " (no es un estudiante registrado), ";
@@ -693,15 +697,14 @@ class CalificacionregistrodocenteController extends \app\components\CController 
                                 $est_id = $estudiante['est_id'];
 
                                 $meun_id = EstudianteCarreraPrograma::find()->where(['est_id' => $est_id])->asArray()->one()['meun_id'];
-                                $uaca_id = ModalidadEstudioUnidad::find()->where(['meun_id' => $meun_id])->asArray()->one()['uaca_id'];
+                                $meun = ModalidadEstudioUnidad::find()->where(['meun_id' => $meun_id])->asArray()->one();
+                                $uaca_id = $meun['uaca_id'];
+
                                 // Si el estudiante no es parte de Grado
                                 if($uaca_id != 1){
                                     $noalumno .= $nombre . " (no pertenece a la Unidad Académica de Grado), ";
                                     continue;
                                 }
-
-                                // ecun_id es igual que ecal_id para parciales en Unidad Académica de Grado
-                                $ecun_id = $ecal_id;
 
                                 // Sacar la asignatura correcta
                                 $asignatura = $mod_asig->consultarAsignaturaConUnidad($asi_id, $uaca_id);
@@ -710,64 +713,32 @@ class CalificacionregistrodocenteController extends \app\components\CController 
                                     continue;
                                 }
 
-                                // Tomar las calificaciones dependiendo del parcial elegido
-                                if($ecal_id == 1){ // 1er Parcial
-                                    $cal_asin = $val[5]; if($cal_asin > 10 || $cal_asin < 0){ $noalumno .= $nombre . " (la nota 'Act. Asincro 10P' está mal colocada), "; continue; }
-                                    $cal_sinc = $val[6]; if($cal_sinc > 10 || $cal_sinc < 0){ $noalumno .= $nombre . " (la nota 'Act. Sincro 10P' está mal colocada), "; continue; }
-                                    $cal_aut = $val[7]; if($cal_aut > 20 || $cal_aut < 0){ $noalumno .= $nombre . " (la nota 'Autónomas 20P' está mal colocada), "; continue; }
-                                    $cal_eval = $val[8]; if($cal_eval > 20 || $cal_eval < 0){ $noalumno .= $nombre . " (la nota 'Evaluación Par. 20P' está mal colocada), "; continue; }
-                                    $cal_exam = $val[9]; if($cal_exam > 40 || $cal_exam < 0){ $noalumno .= $nombre . " (la nota 'Examen 40P' está mal colocada), "; continue; }
-                                    // $cal_calif = ($cal_asin * 0.1) + ($cal_sinc * 0.1) + ($cal_aut * 0.2) + ($cal_eval * 0.2) + ($cal_exam * 0.4);
-                                    $cal_calif = $cal_asin + $cal_sinc + $cal_aut + $cal_eval + $cal_exam;
+                                // Modalidad ID
+                                $mod_id = $meun['mod_id'];
+
+                                // Grado Online
+                                if($mod_id == 1){
+                                    $seguir = $this->calificarGradoOnline($mod_id, $uaca_id, $ecal_id, $val, $nombre, $noalumno, $paca_id, $est_id, $pro_id, $asi_id);
+                                    if(!$seguir){ continue; }
                                 }
-                                elseif($ecal_id == 2){ // 2do Parcial
-                                    $cal_asin = $val[12]; if($cal_asin > 10 || $cal_asin < 0){ $noalumno .= $nombre . " (la nota 'Act. Asincro 10P' está mal colocada), "; continue; }
-                                    $cal_sinc = $val[13]; if($cal_sinc > 10 || $cal_sinc < 0){ $noalumno .= $nombre . " (la nota 'Act. Sincro 10P' está mal colocada), "; continue; }
-                                    $cal_aut = $val[14]; if($cal_aut > 20 || $cal_aut < 0){ $noalumno .= $nombre . " (la nota 'Autónomas 20P' está mal colocada), "; continue; }
-                                    $cal_eval = $val[15]; if($cal_eval > 20 || $cal_eval < 0){ $noalumno .= $nombre . " (la nota 'Evaluación Par. 20P' está mal colocada), "; continue; }
-                                    $cal_exam = $val[16]; if($cal_exam > 40 || $cal_exam < 0){ $noalumno .= $nombre . " (la nota 'Examen 40P' está mal colocada), "; continue; }
-                                    // $cal_calif = ($cal_asin * 0.1) + ($cal_sinc * 0.1) + ($cal_aut * 0.2) + ($cal_eval * 0.2) + ($cal_exam * 0.4);
-                                    $cal_calif = ($cal_asin + $cal_sinc + $cal_aut + $cal_eval + $cal_exam) / 5;
+                                // Grado Presencial
+                                elseif($mod_id == 2){
+                                    $seguir = $this->calificarGradoPresencial($mod_id, $uaca_id, $ecal_id, $val, $nombre, $noalumno, $paca_id, $est_id, $pro_id, $asi_id);
+                                    if(!$seguir){ continue; }
                                 }
-
-                                // $cal_prom = $val[19]; // No usada
-
-                                // Componentes Unidades
-                                $componente_unidad_asincrono = ComponenteUnidad::find()->where(['com_id' => 1, 'uaca_id' => $uaca_id])->asArray()->one();
-                                $componente_unidad_sincrono = ComponenteUnidad::find()->where(['com_id' => 2, 'uaca_id' => $uaca_id])->asArray()->one();
-                                $componente_unidad_autonoma = ComponenteUnidad::find()->where(['com_id' => 3, 'uaca_id' => $uaca_id])->asArray()->one();
-                                $componente_unidad_evaluacion = ComponenteUnidad::find()->where(['com_id' => 4, 'uaca_id' => $uaca_id])->asArray()->one();
-                                $componente_unidad_examen = ComponenteUnidad::find()->where(['com_id' => 5, 'uaca_id' => $uaca_id])->asArray()->one();
-
-                                $mod_cab_cal = new CabeceraCalificacion();
-
-                                // Si el estudiaante ya tiene calificación, actualizar, sino, insertar
-                                $has_cabecera_calificacion = CabeceraCalificacion::find()->where(['est_id' => $est_id, 'asi_id' => $asi_id, 'paca_id' => $paca_id, 'ecun_id' => $ecun_id, 'pro_id' => $pro_id])->asArray()->all();
-
-                                if(empty($has_cabecera_calificacion)){ // INSERT
-                                    $ccal_id = $mod_cab_cal->insertarCabeceraCalificacion($paca_id, $est_id, $pro_id, $asi_id, $ecun_id, $cal_calif);
-
-                                    $idDetAsin = $mod_cab_cal->insertarDetalleCalificacion($ccal_id, $componente_unidad_asincrono['cuni_id'], $cal_asin);
-                                    $idDetSinc = $mod_cab_cal->insertarDetalleCalificacion($ccal_id, $componente_unidad_sincrono['cuni_id'], $cal_sinc);
-                                    $idDetAut = $mod_cab_cal->insertarDetalleCalificacion($ccal_id, $componente_unidad_autonoma['cuni_id'], $cal_aut);
-                                    $idDetEval = $mod_cab_cal->insertarDetalleCalificacion($ccal_id, $componente_unidad_evaluacion['cuni_id'], $cal_eval);
-                                    $idDetExam = $mod_cab_cal->insertarDetalleCalificacion($ccal_id, $componente_unidad_examen['cuni_id'], $cal_exam);
+                                // Grado Semi-Presencial
+                                elseif($mod_id == 3){
+                                    $seguir = $this->calificarGradoSemiPresencial($mod_id, $uaca_id, $ecal_id, $val, $nombre, $noalumno, $paca_id, $est_id, $pro_id, $asi_id);
+                                    if(!$seguir){ continue; }
                                 }
-                                else{ // UPDATE
-                                    $cabecera = $has_cabecera_calificacion[0];
-
-                                    $ccal_id = $cabecera['ccal_id'];
-
-                                    $mod_cab_cal->actualizarCabeceraCalificacion($ccal_id, $cal_calif);
-                                    $mod_cab_cal->actualizarDetalleCalificacion($ccal_id, $componente_unidad_asincrono['cuni_id'], $cal_asin);
-                                    $mod_cab_cal->actualizarDetalleCalificacion($ccal_id, $componente_unidad_sincrono['cuni_id'], $cal_sinc);
-                                    $mod_cab_cal->actualizarDetalleCalificacion($ccal_id, $componente_unidad_autonoma['cuni_id'], $cal_aut);
-                                    $mod_cab_cal->actualizarDetalleCalificacion($ccal_id, $componente_unidad_evaluacion['cuni_id'], $cal_eval);
-                                    $mod_cab_cal->actualizarDetalleCalificacion($ccal_id, $componente_unidad_examen['cuni_id'], $cal_exam);
+                                // Grado Distancia
+                                else{ // mod_id = 4
+                                    $seguir = $this->calificarGradoDistancia($mod_id, $uaca_id, $ecal_id, $val, $nombre, $noalumno, $paca_id, $est_id, $pro_id, $asi_id);
+                                    if(!$seguir){ continue; }
                                 }
                             }
                         }
-                        else if ($tipo == 1 || $val[5] != "1° PARCIAL") // POSGRADO
+                        else if ($tipo == 1 || $val[5] != "PRIMER PARCIAL") // POSGRADO
                         { 
                             $tipo = 1;
                             if($fila == 1){ // No leer la primera fila ni la 2da
@@ -783,10 +754,11 @@ class CalificacionregistrodocenteController extends \app\components\CController 
                                 ** $val[9] -> 'Calificación' No se usa porque el sistema lo calcula por si acaso esté mal calculado
                                 */
 
-                                $matricula = $val[2];
+                                $usuario = $val[2];
                                 $nombre = $val[4];
 
-                                $estudiante = Estudiante::find()->where(['est_matricula' => $matricula])->asArray()->one();
+                                $estudiante = UsuarioEducativa::find()->where(['uedu_usuario' => $usuario])->asArray()->one();
+
                                 // Si el estudiante no existe, continuar al siguiente, y colocarlo en la lista
                                 if(!isset($estudiante)){
                                     $noalumno .= $nombre . " (no es un estudiante registrado), ";
@@ -796,7 +768,9 @@ class CalificacionregistrodocenteController extends \app\components\CController 
                                 $est_id = $estudiante['est_id'];
 
                                 $meun_id = EstudianteCarreraPrograma::find()->where(['est_id' => $est_id])->asArray()->one()['meun_id'];
-                                $uaca_id = ModalidadEstudioUnidad::find()->where(['meun_id' => $meun_id])->asArray()->one()['uaca_id'];
+                                $meun = ModalidadEstudioUnidad::find()->where(['meun_id' => $meun_id])->asArray()->one();
+                                $uaca_id = $meun['uaca_id'];
+
                                 // Si el estudiante no es parte de Posgrado
                                 if($uaca_id != 2){
                                     $noalumno .= $nombre . " (no pertenece a la Unidad Académica de Posgrado), ";
@@ -810,42 +784,18 @@ class CalificacionregistrodocenteController extends \app\components\CController 
                                     continue;
                                 }
 
-                                $cal_asin = $val[5]; if($cal_asin > 10 || $cal_asin < 0){ $noalumno .= $nombre . " (la nota 'Act. Asincro 10P' está mal colocada), "; continue; }
-                                $cal_aut = $val[6]; if($cal_aut > 20 || $cal_aut < 0){ $noalumno .= $nombre . " (la nota 'Autónomas 20P' está mal colocada), "; continue; }
-                                $cal_eval = $val[7]; if($cal_eval > 20 || $cal_eval < 0){ $noalumno .= $nombre . " (la nota 'Evaluación Par. 20P' está mal colocada), "; continue; }
-                                $cal_final = $val[8]; if($cal_final > 50 || $cal_final < 0){ $noalumno .= $nombre . " (la nota 'Trabajo Final' está mal colocada), "; continue; }
-                                // $cal_calif = ($cal_asin * 0.1) + ($cal_aut * 0.2) + ($cal_eval * 0.2) + ($cal_final * 0.5);
-                                $cal_calif = ($cal_asin + $cal_aut + $cal_eval + $cal_final) / 5;
+                                // Modalidad ID
+                                $mod_id = $meun['mod_id'];
 
-                                // Componentes Unidades
-                                $componente_unidad_asincrono = ComponenteUnidad::find()->where(['com_id' => 1, 'uaca_id' => $uaca_id])->asArray()->one();
-                                $componente_unidad_autonoma = ComponenteUnidad::find()->where(['com_id' => 3, 'uaca_id' => $uaca_id])->asArray()->one();
-                                $componente_unidad_evaluacion = ComponenteUnidad::find()->where(['com_id' => 4, 'uaca_id' => $uaca_id])->asArray()->one();
-                                $componente_unidad_final = ComponenteUnidad::find()->where(['com_id' => 6, 'uaca_id' => $uaca_id])->asArray()->one();
-
-                                $mod_cab_cal = new CabeceraCalificacion();
-
-                                // Si el estudiaante ya tiene calificación, actualizar, sino, insertar
-                                $has_cabecera_calificacion = CabeceraCalificacion::find()->where(['est_id' => $est_id, 'asi_id' => $asi_id, 'paca_id' => $paca_id, 'pro_id' => $pro_id])->asArray()->all();
-
-                                if(empty($has_cabecera_calificacion)){ // INSERT
-                                    $ccal_id = $mod_cab_cal->insertarCabeceraCalificacion($paca_id, $est_id, $pro_id, $asi_id, $ecun_id_posgrado, $cal_calif);
-
-                                    $idDetAsin = $mod_cab_cal->insertarDetalleCalificacion($ccal_id, $componente_unidad_asincrono['cuni_id'], $cal_asin);
-                                    $idDetAut = $mod_cab_cal->insertarDetalleCalificacion($ccal_id, $componente_unidad_autonoma['cuni_id'], $cal_aut);
-                                    $idDetEval = $mod_cab_cal->insertarDetalleCalificacion($ccal_id, $componente_unidad_evaluacion['cuni_id'], $cal_eval);
-                                    $idDetFinal = $mod_cab_cal->insertarDetalleCalificacion($ccal_id, $componente_unidad_final['cuni_id'], $cal_final);
+                                // Posgrado Online
+                                if($mod_id == 1){
+                                    $seguir = $this->calificarPosgradoOnline($mod_id, $uaca_id, $ecal_id, $val, $nombre, $noalumno, $paca_id, $est_id, $pro_id, $asi_id, $ecun_id_posgrado);
+                                    if(!$seguir){ continue; }
                                 }
-                                else{ // UPDATE
-                                    $cabecera = $has_cabecera_calificacion[0];
-
-                                    $ccal_id = $cabecera['ccal_id'];
-
-                                    $mod_cab_cal->actualizarCabeceraCalificacion($ccal_id, $cal_calif);
-                                    $mod_cab_cal->actualizarDetalleCalificacion($ccal_id, $componente_unidad_asincrono['cuni_id'], $cal_asin);
-                                    $mod_cab_cal->actualizarDetalleCalificacion($ccal_id, $componente_unidad_autonoma['cuni_id'], $cal_aut);
-                                    $mod_cab_cal->actualizarDetalleCalificacion($ccal_id, $componente_unidad_evaluacion['cuni_id'], $cal_eval);
-                                    $mod_cab_cal->actualizarDetalleCalificacion($ccal_id, $componente_unidad_final['cuni_id'], $cal_final);
+                                // Posgrado Presencial
+                                else{ // mod_id = 2
+                                    $seguir = $this->calificarPosgradoPresencial($mod_id, $uaca_id, $ecal_id, $val, $nombre, $noalumno, $paca_id, $est_id, $pro_id, $asi_id, $ecun_id_posgrado);
+                                    if(!$seguir){ continue; }
                                 }
                             }
                         }
@@ -867,6 +817,547 @@ class CalificacionregistrodocenteController extends \app\components\CController 
                 return $arroout;
             }
         }
+    }
+
+    /**
+     * Modularización de la función de calificaciones. Para estudiantes de Grado modalidad Online
+     * @author  Jorge Paladines <analista.desarrollo@uteg.edu.ec>
+     * @param   
+     * @return  
+     */
+    private function calificarGradoOnline($mod_id, $uaca_id, $ecal_id, $val, $nombre, &$noalumno, $paca_id, $est_id, $pro_id, $asi_id){
+        // Tomar las calificaciones dependiendo del parcial elegido
+        if($ecal_id == 1){ // 1er Parcial
+            // Componentes Unidades
+            $cuni_asincrono = ComponenteUnidad::find()->where(['com_id' => 1, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id])->asArray()->one();
+            $cuni_sincrono = ComponenteUnidad::find()->where(['com_id' => 2, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id])->asArray()->one();
+            $cuni_cuestionarios = ComponenteUnidad::find()->where(['com_id' => 3, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id])->asArray()->one();
+            $cuni_autonoma = ComponenteUnidad::find()->where(['com_id' => 4, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id])->asArray()->one();
+            $cuni_evaluacion = ComponenteUnidad::find()->where(['com_id' => 5, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id])->asArray()->one();
+
+            $cal_asin = $val[5];
+            \app\models\Utilities::putMessageLogFile("cal_asin: " . $cal_asin);
+            \app\models\Utilities::putMessageLogFile("cuni_asincrono['cuni_calificacion']: " . $cuni_asincrono['cuni_calificacion']);
+            if($cal_asin > $cuni_asincrono['cuni_calificacion'] || $cal_asin < 0){
+                $noalumno .= $nombre . " (la nota 'Act. Asincro 2P' está mal colocada), "; 
+                return 0; 
+            }
+            
+            $cal_sinc = $val[6];
+            if($cal_sinc > $cuni_sincrono['cuni_calificacion'] || $cal_sinc < 0){
+                $noalumno .= $nombre . " (la nota 'Act. Sincro 2P' está mal colocada), ";
+                return 0; 
+            }
+            
+            $cal_cuest = $val[7];
+            if($cal_cuest > $cuni_cuestionarios['cuni_calificacion'] || $cal_cuest < 0){
+                $noalumno .= $nombre . " (la nota 'Cuestionarios 4P' está mal colocada), ";
+                return 0; 
+            }
+            
+            $cal_aut = $val[8];
+            if($cal_aut > $cuni_autonoma['cuni_calificacion'] || $cal_aut < 0){
+                $noalumno .= $nombre . " (la nota 'Autónomas 6P' está mal colocada), ";
+                return 0; 
+            }
+            
+            $cal_eval = $val[9];
+            if($cal_eval > $cuni_evaluacion['cuni_calificacion'] || $cal_eval < 0){
+                $noalumno .= $nombre . " (la nota 'Evaluación Par. 6P' está mal colocada), ";
+                return 0; 
+            }
+            
+            $cal_calif = $cal_asin + $cal_sinc + $cal_cuest + $cal_aut + $cal_eval;
+        }
+        elseif($ecal_id == 2){ // 2do Parcial
+            // Componentes Unidades
+            $cuni_asincrono = ComponenteUnidad::find()->where(['com_id' => 1, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id, 'ecal_id' => $ecal_id])->asArray()->one();
+            $cuni_sincrono = ComponenteUnidad::find()->where(['com_id' => 2, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id, 'ecal_id' => $ecal_id])->asArray()->one();
+            $cuni_cuestionarios = ComponenteUnidad::find()->where(['com_id' => 3, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id, 'ecal_id' => $ecal_id])->asArray()->one();
+            $cuni_autonoma = ComponenteUnidad::find()->where(['com_id' => 4, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id, 'ecal_id' => $ecal_id])->asArray()->one();
+            $cuni_evaluacion = ComponenteUnidad::find()->where(['com_id' => 5, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id, 'ecal_id' => $ecal_id])->asArray()->one();
+
+            $cal_asin = $val[12];
+            \app\models\Utilities::putMessageLogFile("cal_asin: " . $cal_asin);
+
+            \app\models\Utilities::putMessageLogFile("uaca_id: " . $uaca_id);
+            \app\models\Utilities::putMessageLogFile("mod_id: " . $mod_id);
+            \app\models\Utilities::putMessageLogFile("ecal_id: " . $ecal_id);
+            \app\models\Utilities::putMessageLogFile("cuni_asincrono: " . $cuni_asincrono);
+            \app\models\Utilities::putMessageLogFile("cuni_asincrono['cuni_calificacion']: " . $cuni_asincrono['cuni_calificacion']);
+            if($cal_asin > $cuni_asincrono['cuni_calificacion'] || $cal_asin < 0){
+                $noalumno .= $nombre . " (la nota 'Act. Asincro 2P' está mal colocada), "; 
+                return 0; 
+            }
+            
+            $cal_sinc = $val[13];
+            if($cal_sinc > $cuni_sincrono['cuni_calificacion'] || $cal_sinc < 0){
+                $noalumno .= $nombre . " (la nota 'Act. Sincro 2P' está mal colocada), ";
+                return 0; 
+            }
+            
+            $cal_cuest = $val[14];
+            if($cal_cuest > $cuni_cuestionarios['cuni_calificacion'] || $cal_cuest < 0){
+                $noalumno .= $nombre . " (la nota 'Cuestionarios 4P' está mal colocada), ";
+                return 0; 
+            }
+            
+            $cal_aut = $val[15];
+            if($cal_aut > $cuni_autonoma['cuni_calificacion'] || $cal_aut < 0){
+                $noalumno .= $nombre . " (la nota 'Autónomas 6P' está mal colocada), ";
+                return 0; 
+            }
+            
+            $cal_eval = $val[16];
+            if($cal_eval > $cuni_evaluacion['cuni_calificacion'] || $cal_eval < 0){
+                \app\models\Utilities::putMessageLogFile("noalumno: " . $noalumno);
+                \app\models\Utilities::putMessageLogFile("nombre: " . $nombre);
+                $noalumno .= $nombre . " (la nota 'Evaluación Par. 6P' está mal colocada), ";
+                \app\models\Utilities::putMessageLogFile("noalumno: " . $noalumno);
+                return 0; 
+            }
+
+            $cal_calif = $cal_asin + $cal_sinc + $cal_cuest + $cal_aut + $cal_eval;
+        }
+
+        \app\models\Utilities::putMessageLogFile("cal_calif: " . $cal_calif);
+
+        // $cal_prom = $val[19]; // No usada
+
+        $mod_cab_cal = new CabeceraCalificacion();
+
+        // ecun_id es igual que ecal_id para parciales en Unidad Académica de Grado
+        $ecun_id = $ecal_id;
+
+        // Si el estudiaante ya tiene calificación, actualizar, sino, insertar
+        $has_cabecera_calificacion = CabeceraCalificacion::find()->where(['est_id' => $est_id, 'asi_id' => $asi_id, 'paca_id' => $paca_id, 'ecun_id' => $ecun_id, 'pro_id' => $pro_id])->asArray()->all();
+
+        if(empty($has_cabecera_calificacion)){ // INSERT
+            $ccal_id = $mod_cab_cal->insertarCabeceraCalificacion($paca_id, $est_id, $pro_id, $asi_id, $ecun_id, $cal_calif);
+
+            $idDetAsin = $mod_cab_cal->insertarDetalleCalificacion($ccal_id, $cuni_asincrono['cuni_id'], $cal_asin);
+            $idDetSinc = $mod_cab_cal->insertarDetalleCalificacion($ccal_id, $cuni_sincrono['cuni_id'], $cal_sinc);
+            $idDetAut = $mod_cab_cal->insertarDetalleCalificacion($ccal_id, $cuni_cuestionarios['cuni_id'], $cal_cuest);
+            $idDetEval = $mod_cab_cal->insertarDetalleCalificacion($ccal_id, $cuni_autonoma['cuni_id'], $cal_aut);
+            $idDetExam = $mod_cab_cal->insertarDetalleCalificacion($ccal_id, $cuni_evaluacion['cuni_id'], $cal_eval);
+        }
+        else{ // UPDATE
+            $cabecera = $has_cabecera_calificacion[0];
+            $ccal_id = $cabecera['ccal_id'];
+
+            $mod_cab_cal->actualizarCabeceraCalificacion($ccal_id, $cal_calif);
+
+            $mod_cab_cal->actualizarDetalleCalificacion($ccal_id, $cuni_asincrono['cuni_id'], $cal_asin);
+            $mod_cab_cal->actualizarDetalleCalificacion($ccal_id, $cuni_sincrono['cuni_id'], $cal_sinc);
+            $mod_cab_cal->actualizarDetalleCalificacion($ccal_id, $cuni_cuestionarios['cuni_id'], $cal_cuest);
+            $mod_cab_cal->actualizarDetalleCalificacion($ccal_id, $cuni_autonoma['cuni_id'], $cal_aut);
+            $mod_cab_cal->actualizarDetalleCalificacion($ccal_id, $cuni_evaluacion['cuni_id'], $cal_eval);
+        }
+
+        return 1;
+    }
+
+    /**
+     * Modularización de la función de calificaciones. Para estudiantes de Grado modalidad Presencial
+     * @author  Jorge Paladines <analista.desarrollo@uteg.edu.ec>
+     * @param   
+     * @return  
+     */
+    private function calificarGradoPresencial($mod_id, $uaca_id, $ecal_id, $val, $nombre, &$noalumno, $paca_id, $est_id, $pro_id, $asi_id){
+        // Componentes Unidades
+        $cuni_asincrono = ComponenteUnidad::find()->where(['com_id' => 8, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id])->asArray()->one();
+        $cuni_sincrono = ComponenteUnidad::find()->where(['com_id' => 9, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id])->asArray()->one();
+        $cuni_cuestionarios = ComponenteUnidad::find()->where(['com_id' => 6, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id])->asArray()->one();
+
+        // Tomar las calificaciones dependiendo del parcial elegido
+        if($ecal_id == 1){ // 1er Parcial
+            $cal_asin = $val[5];
+            if($cal_asin > $cuni_asincrono['cuni_calificacion'] || $cal_asin < 0){
+                $noalumno .= $nombre . " (la nota 'Act. Asincro 2P' está mal colocada), "; 
+                return 0; 
+            }
+            
+            $cal_sinc = $val[6];
+            if($cal_sinc > $cuni_sincrono['cuni_calificacion'] || $cal_sinc < 0){
+                $noalumno .= $nombre . " (la nota 'Act. Sincro 2P' está mal colocada), ";
+                return 0; 
+            }
+            
+            $cal_cuest = $val[7];
+            if($cal_cuest > $cuni_cuestionarios['cuni_calificacion'] || $cal_cuest < 0){
+                $noalumno .= $nombre . " (la nota 'Cuestionarios 4P' está mal colocada), ";
+                return 0; 
+            }
+            
+            $cal_calif = $cal_asin + $cal_sinc + $cal_cuest;
+        }
+        elseif($ecal_id == 2){ // 2do Parcial
+            $cal_asin = $val[12];
+            if($cal_asin > $cuni_asincrono['cuni_calificacion'] || $cal_asin < 0){
+                $noalumno .= $nombre . " (la nota 'Act. Asincro 2P' está mal colocada), "; 
+                return 0; 
+            }
+            
+            $cal_sinc = $val[13];
+            if($cal_sinc > $cuni_sincrono['cuni_calificacion'] || $cal_sinc < 0){
+                $noalumno .= $nombre . " (la nota 'Act. Sincro 2P' está mal colocada), ";
+                return 0; 
+            }
+            
+            $cal_cuest = $val[14];
+            if($cal_cuest > $cuni_cuestionarios['cuni_calificacion'] || $cal_cuest < 0){
+                $noalumno .= $nombre . " (la nota 'Cuestionarios 4P' está mal colocada), ";
+                return 0; 
+            }
+
+            $cal_calif = $cal_asin + $cal_sinc + $cal_cuest;
+        }
+
+        // $cal_prom = $val[19]; // No usada
+
+        $mod_cab_cal = new CabeceraCalificacion();
+
+        // ecun_id es igual que ecal_id para parciales en Unidad Académica de Grado
+        $ecun_id = $ecal_id;
+
+        // Si el estudiaante ya tiene calificación, actualizar, sino, insertar
+        $has_cabecera_calificacion = CabeceraCalificacion::find()->where(['est_id' => $est_id, 'asi_id' => $asi_id, 'paca_id' => $paca_id, 'ecun_id' => $ecun_id, 'pro_id' => $pro_id])->asArray()->all();
+
+        if(empty($has_cabecera_calificacion)){ // INSERT
+            $ccal_id = $mod_cab_cal->insertarCabeceraCalificacion($paca_id, $est_id, $pro_id, $asi_id, $ecun_id, $cal_calif);
+
+            $idDetAsin = $mod_cab_cal->insertarDetalleCalificacion($ccal_id, $cuni_asincrono['cuni_id'], $cal_asin);
+            $idDetSinc = $mod_cab_cal->insertarDetalleCalificacion($ccal_id, $cuni_sincrono['cuni_id'], $cal_sinc);
+            $idDetAut = $mod_cab_cal->insertarDetalleCalificacion($ccal_id, $cuni_cuestionarios['cuni_id'], $cal_cuest);
+        }
+        else{ // UPDATE
+            $cabecera = $has_cabecera_calificacion[0];
+            $ccal_id = $cabecera['ccal_id'];
+
+            $mod_cab_cal->actualizarCabeceraCalificacion($ccal_id, $cal_calif);
+
+            $mod_cab_cal->actualizarDetalleCalificacion($ccal_id, $cuni_asincrono['cuni_id'], $cal_asin);
+            $mod_cab_cal->actualizarDetalleCalificacion($ccal_id, $cuni_sincrono['cuni_id'], $cal_sinc);
+            $mod_cab_cal->actualizarDetalleCalificacion($ccal_id, $cuni_cuestionarios['cuni_id'], $cal_cuest);
+        }
+
+        return 1;
+    }
+
+    /**
+     * Modularización de la función de calificaciones. Para estudiantes de Grado modalidad Semi-Presencial
+     * @author  Jorge Paladines <analista.desarrollo@uteg.edu.ec>
+     * @param   
+     * @return  
+     */
+    private function calificarGradoSemiPresencial($mod_id, $uaca_id, $ecal_id, $val, $nombre, &$noalumno, $paca_id, $est_id, $pro_id, $asi_id){
+        // Componentes Unidades
+        $cuni_asincrono = ComponenteUnidad::find()->where(['com_id' => 8, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id])->asArray()->one();
+        $cuni_sincrono = ComponenteUnidad::find()->where(['com_id' => 9, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id])->asArray()->one();
+        $cuni_cuestionarios = ComponenteUnidad::find()->where(['com_id' => 6, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id])->asArray()->one();
+
+        // Tomar las calificaciones dependiendo del parcial elegido
+        if($ecal_id == 1){ // 1er Parcial
+            $cal_asin = $val[5];
+            if($cal_asin > $cuni_asincrono['cuni_calificacion'] || $cal_asin < 0){
+                $noalumno .= $nombre . " (la nota 'Act. Asincro 2P' está mal colocada), "; 
+                return 0; 
+            }
+            
+            $cal_sinc = $val[6];
+            if($cal_sinc > $cuni_sincrono['cuni_calificacion'] || $cal_sinc < 0){
+                $noalumno .= $nombre . " (la nota 'Act. Sincro 2P' está mal colocada), ";
+                return 0; 
+            }
+            
+            $cal_cuest = $val[7];
+            if($cal_cuest > $cuni_cuestionarios['cuni_calificacion'] || $cal_cuest < 0){
+                $noalumno .= $nombre . " (la nota 'Cuestionarios 4P' está mal colocada), ";
+                return 0; 
+            }
+            
+            $cal_calif = $cal_asin + $cal_sinc + $cal_cuest;
+        }
+        elseif($ecal_id == 2){ // 2do Parcial
+            $cal_asin = $val[12];
+            if($cal_asin > $cuni_asincrono['cuni_calificacion'] || $cal_asin < 0){
+                $noalumno .= $nombre . " (la nota 'Act. Asincro 2P' está mal colocada), "; 
+                return 0; 
+            }
+            
+            $cal_sinc = $val[13];
+            if($cal_sinc > $cuni_sincrono['cuni_calificacion'] || $cal_sinc < 0){
+                $noalumno .= $nombre . " (la nota 'Act. Sincro 2P' está mal colocada), ";
+                return 0; 
+            }
+            
+            $cal_cuest = $val[14];
+            if($cal_cuest > $cuni_cuestionarios['cuni_calificacion'] || $cal_cuest < 0){
+                $noalumno .= $nombre . " (la nota 'Cuestionarios 4P' está mal colocada), ";
+                return 0; 
+            }
+
+            $cal_calif = $cal_asin + $cal_sinc + $cal_cuest;
+        }
+
+        // $cal_prom = $val[19]; // No usada
+
+        $mod_cab_cal = new CabeceraCalificacion();
+
+        // ecun_id es igual que ecal_id para parciales en Unidad Académica de Grado
+        $ecun_id = $ecal_id;
+
+        // Si el estudiaante ya tiene calificación, actualizar, sino, insertar
+        $has_cabecera_calificacion = CabeceraCalificacion::find()->where(['est_id' => $est_id, 'asi_id' => $asi_id, 'paca_id' => $paca_id, 'ecun_id' => $ecun_id, 'pro_id' => $pro_id])->asArray()->all();
+
+        if(empty($has_cabecera_calificacion)){ // INSERT
+            $ccal_id = $mod_cab_cal->insertarCabeceraCalificacion($paca_id, $est_id, $pro_id, $asi_id, $ecun_id, $cal_calif);
+
+            $idDetAsin = $mod_cab_cal->insertarDetalleCalificacion($ccal_id, $cuni_asincrono['cuni_id'], $cal_asin);
+            $idDetSinc = $mod_cab_cal->insertarDetalleCalificacion($ccal_id, $cuni_sincrono['cuni_id'], $cal_sinc);
+            $idDetAut = $mod_cab_cal->insertarDetalleCalificacion($ccal_id, $cuni_cuestionarios['cuni_id'], $cal_cuest);
+        }
+        else{ // UPDATE
+            $cabecera = $has_cabecera_calificacion[0];
+            $ccal_id = $cabecera['ccal_id'];
+
+            $mod_cab_cal->actualizarCabeceraCalificacion($ccal_id, $cal_calif);
+
+            $mod_cab_cal->actualizarDetalleCalificacion($ccal_id, $cuni_asincrono['cuni_id'], $cal_asin);
+            $mod_cab_cal->actualizarDetalleCalificacion($ccal_id, $cuni_sincrono['cuni_id'], $cal_sinc);
+            $mod_cab_cal->actualizarDetalleCalificacion($ccal_id, $cuni_cuestionarios['cuni_id'], $cal_cuest);
+        }
+
+        return 1;
+    }
+
+    /**
+     * Modularización de la función de calificaciones. Para estudiantes de Grado modalidad Distancia
+     * @author  Jorge Paladines <analista.desarrollo@uteg.edu.ec>
+     * @param   
+     * @return  
+     */
+    private function calificarGradoDistancia($mod_id, $uaca_id, $ecal_id, $val, $nombre, &$noalumno, $paca_id, $est_id, $pro_id, $asi_id){
+        // Componentes Unidades
+        $cuni_asincrono = ComponenteUnidad::find()->where(['com_id' => 1, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id])->asArray()->one();
+        $cuni_sincrono = ComponenteUnidad::find()->where(['com_id' => 2, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id])->asArray()->one();
+        $cuni_cuestionarios = ComponenteUnidad::find()->where(['com_id' => 5, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id])->asArray()->one();
+        $cuni_autonoma = ComponenteUnidad::find()->where(['com_id' => 6, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id])->asArray()->one();
+
+        // Tomar las calificaciones dependiendo del parcial elegido
+        if($ecal_id == 1){ // 1er Parcial
+            $cal_asin = $val[5];
+            if($cal_asin > $cuni_asincrono['cuni_calificacion'] || $cal_asin < 0){
+                $noalumno .= $nombre . " (la nota 'Act. Asincro 2P' está mal colocada), "; 
+                return 0; 
+            }
+            
+            $cal_sinc = $val[6];
+            if($cal_sinc > $cuni_sincrono['cuni_calificacion'] || $cal_sinc < 0){
+                $noalumno .= $nombre . " (la nota 'Act. Sincro 2P' está mal colocada), ";
+                return 0; 
+            }
+            
+            $cal_cuest = $val[7];
+            if($cal_cuest > $cuni_cuestionarios['cuni_calificacion'] || $cal_cuest < 0){
+                $noalumno .= $nombre . " (la nota 'Cuestionarios 4P' está mal colocada), ";
+                return 0; 
+            }
+            
+            $cal_aut = $val[8];
+            if($cal_aut > $cuni_autonoma['cuni_calificacion'] || $cal_aut < 0){
+                $noalumno .= $nombre . " (la nota 'Autónomas 6P' está mal colocada), ";
+                return 0; 
+            }
+            
+            $cal_calif = $cal_asin + $cal_sinc + $cal_cuest + $cal_aut;
+        }
+        elseif($ecal_id == 2){ // 2do Parcial
+            $cal_asin = $val[12];
+            if($cal_asin > $cuni_asincrono['cuni_calificacion'] || $cal_asin < 0){
+                $noalumno .= $nombre . " (la nota 'Act. Asincro 2P' está mal colocada), "; 
+                return 0; 
+            }
+            
+            $cal_sinc = $val[13];
+            if($cal_sinc > $cuni_sincrono['cuni_calificacion'] || $cal_sinc < 0){
+                $noalumno .= $nombre . " (la nota 'Act. Sincro 2P' está mal colocada), ";
+                return 0; 
+            }
+            
+            $cal_cuest = $val[14];
+            if($cal_cuest > $cuni_cuestionarios['cuni_calificacion'] || $cal_cuest < 0){
+                $noalumno .= $nombre . " (la nota 'Cuestionarios 4P' está mal colocada), ";
+                return 0; 
+            }
+            
+            $cal_aut = $val[15];
+            if($cal_aut > $cuni_autonoma['cuni_calificacion'] || $cal_aut < 0){
+                $noalumno .= $nombre . " (la nota 'Autónomas 6P' está mal colocada), ";
+                return 0; 
+            }
+
+            $cal_calif = $cal_asin + $cal_sinc + $cal_cuest + $cal_aut;
+        }
+
+        // $cal_prom = $val[19]; // No usada
+
+        $mod_cab_cal = new CabeceraCalificacion();
+
+        // ecun_id es igual que ecal_id para parciales en Unidad Académica de Grado
+        $ecun_id = $ecal_id;
+
+        // Si el estudiaante ya tiene calificación, actualizar, sino, insertar
+        $has_cabecera_calificacion = CabeceraCalificacion::find()->where(['est_id' => $est_id, 'asi_id' => $asi_id, 'paca_id' => $paca_id, 'ecun_id' => $ecun_id, 'pro_id' => $pro_id])->asArray()->all();
+
+        if(empty($has_cabecera_calificacion)){ // INSERT
+            $ccal_id = $mod_cab_cal->insertarCabeceraCalificacion($paca_id, $est_id, $pro_id, $asi_id, $ecun_id, $cal_calif);
+
+            $idDetAsin = $mod_cab_cal->insertarDetalleCalificacion($ccal_id, $cuni_asincrono['cuni_id'], $cal_asin);
+            $idDetSinc = $mod_cab_cal->insertarDetalleCalificacion($ccal_id, $cuni_sincrono['cuni_id'], $cal_sinc);
+            $idDetAut = $mod_cab_cal->insertarDetalleCalificacion($ccal_id, $cuni_cuestionarios['cuni_id'], $cal_cuest);
+            $idDetEval = $mod_cab_cal->insertarDetalleCalificacion($ccal_id, $cuni_autonoma['cuni_id'], $cal_aut);
+        }
+        else{ // UPDATE
+            $cabecera = $has_cabecera_calificacion[0];
+            $ccal_id = $cabecera['ccal_id'];
+
+            $mod_cab_cal->actualizarCabeceraCalificacion($ccal_id, $cal_calif);
+
+            $mod_cab_cal->actualizarDetalleCalificacion($ccal_id, $cuni_asincrono['cuni_id'], $cal_asin);
+            $mod_cab_cal->actualizarDetalleCalificacion($ccal_id, $cuni_sincrono['cuni_id'], $cal_sinc);
+            $mod_cab_cal->actualizarDetalleCalificacion($ccal_id, $cuni_cuestionarios['cuni_id'], $cal_cuest);
+            $mod_cab_cal->actualizarDetalleCalificacion($ccal_id, $cuni_autonoma['cuni_id'], $cal_aut);
+        }
+
+        return 1;
+    }
+
+    /**
+     * Modularización de la función de calificaciones. Para estudiantes de Posgrado modalidad Online
+     * @author  Jorge Paladines <analista.desarrollo@uteg.edu.ec>
+     * @param   
+     * @return  
+     */
+    private function calificarPosgradoOnline($mod_id, $uaca_id, $ecal_id, $val, $nombre, &$noalumno, $paca_id, $est_id, $pro_id, $asi_id, $ecun_id_posgrado){
+        // Componentes Unidades
+        $cuni_autonoma = ComponenteUnidad::find()->where(['com_id' => 4, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id])->asArray()->one();
+        $cuni_eval = ComponenteUnidad::find()->where(['com_id' => 5, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id])->asArray()->one();
+        $cuni_asincrono = ComponenteUnidad::find()->where(['com_id' => 1, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id])->asArray()->one();
+        $cuni_examen = ComponenteUnidad::find()->where(['com_id' => 6, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id])->asArray()->one();
+
+        $cal_aut = $val[5];
+        if($cal_aut > $cuni_autonoma['cuni_calificacion'] || $cal_aut < 0){
+            $noalumno .= $nombre . " (la nota 'Autónomas Talleres (5 Puntos)' está mal colocada), ";
+            return 0; 
+        }
+
+        $cal_eval = $val[6];
+        if($cal_eval > $cuni_eval['cuni_calificacion'] || $cal_eval < 0){
+            $noalumno .= $nombre . " (la nota 'Evaluaciones 1 Punto' está mal colocada), ";
+            return 0; 
+        }
+
+        $cal_asin = $val[7];
+        if($cal_asin > $cuni_asincrono['cuni_calificacion'] || $cal_asin < 0){
+            $noalumno .= $nombre . " (la nota 'Asíncronas % Avance 1 Punto' está mal colocada), ";
+            return 0; 
+        }
+
+        $cal_exam = $val[8];
+        if($cal_exam > $cuni_examen['cuni_calificacion'] || $cal_exam < 0){
+            $noalumno .= $nombre . " (la nota 'Examen 3 Puntos' está mal colocada), ";
+            return 0; 
+        }
+        // $cal_calif = ($cal_asin * 0.1) + ($cal_cuest * 0.2) + ($cal_aut * 0.2) + ($cal_final * 0.5);
+        $cal_calif = $cal_aut + $cal_eval + $cal_asin + $cal_exam;
+
+        $mod_cab_cal = new CabeceraCalificacion();
+
+        // Si el estudiaante ya tiene calificación, actualizar, sino, insertar
+        $has_cabecera_calificacion = CabeceraCalificacion::find()->where(['est_id' => $est_id, 'asi_id' => $asi_id, 'paca_id' => $paca_id, 'pro_id' => $pro_id])->asArray()->all();
+
+        if(empty($has_cabecera_calificacion)){ // INSERT
+            $ccal_id = $mod_cab_cal->insertarCabeceraCalificacion($paca_id, $est_id, $pro_id, $asi_id, $ecun_id_posgrado, $cal_calif);
+
+            $idDetAsin = $mod_cab_cal->insertarDetalleCalificacion($ccal_id, $cuni_autonoma['cuni_id'], $cal_aut);
+            $idDetAut = $mod_cab_cal->insertarDetalleCalificacion($ccal_id, $cuni_eval['cuni_id'], $cal_eval);
+            $idDetEval = $mod_cab_cal->insertarDetalleCalificacion($ccal_id, $cuni_asincrono['cuni_id'], $cal_asin);
+            $idDetFinal = $mod_cab_cal->insertarDetalleCalificacion($ccal_id, $cuni_examen['cuni_id'], $cal_exam);
+        }
+        else{ // UPDATE
+            $cabecera = $has_cabecera_calificacion[0];
+
+            $ccal_id = $cabecera['ccal_id'];
+
+            $mod_cab_cal->actualizarCabeceraCalificacion($ccal_id, $cal_calif);
+
+            $mod_cab_cal->actualizarDetalleCalificacion($ccal_id, $cuni_autonoma['cuni_id'], $cal_aut);
+            $mod_cab_cal->actualizarDetalleCalificacion($ccal_id, $cuni_eval['cuni_id'], $cal_eval);
+            $mod_cab_cal->actualizarDetalleCalificacion($ccal_id, $cuni_asincrono['cuni_id'], $cal_asin);
+            $mod_cab_cal->actualizarDetalleCalificacion($ccal_id, $cuni_examen['cuni_id'], $cal_exam);
+        }
+
+        return 1;
+    }
+
+    /**
+     * Modularización de la función de calificaciones. Para estudiantes de Posgrado modalidad Presencial
+     * @author  Jorge Paladines <analista.desarrollo@uteg.edu.ec>
+     * @param   
+     * @return  
+     */
+    private function calificarPosgradoPresencial($mod_id, $uaca_id, $ecal_id, $val, $nombre, &$noalumno, $paca_id, $est_id, $pro_id, $asi_id, $ecun_id_posgrado){
+        // Componentes Unidades
+        $cuni_talleres = ComponenteUnidad::find()->where(['com_id' => 7, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id])->asArray()->one();
+        $cuni_deberes = ComponenteUnidad::find()->where(['com_id' => 8, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id])->asArray()->one();
+        $cuni_examen = ComponenteUnidad::find()->where(['com_id' => 6, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id])->asArray()->one();
+
+        $cal_talleres = $val[5];
+        if($cal_talleres > $cuni_talleres['cuni_calificacion'] || $cal_talleres < 0){
+            $noalumno .= $nombre . " (la nota 'Talleres (4 Puntos)' está mal colocada), ";
+            return 0; 
+        }
+
+        $cal_deberes = $val[6];
+        if($cal_deberes > $cuni_deberes['cuni_calificacion'] || $cal_deberes < 0){
+            $noalumno .= $nombre . " (la nota 'Deberes (3 Puntos)' está mal colocada), ";
+            return 0; 
+        }
+
+        $cal_exam = $val[7];
+        if($cal_exam > $cuni_examen['cuni_calificacion'] || $cal_exam < 0){
+            $noalumno .= $nombre . " (la nota 'Examen (3 Puntos)' está mal colocada), ";
+            return 0; 
+        }
+
+        $cal_calif = $cal_talleres + $cal_deberes + $cal_exam;
+
+        $mod_cab_cal = new CabeceraCalificacion();
+
+        // Si el estudiaante ya tiene calificación, actualizar, sino, insertar
+        $has_cabecera_calificacion = CabeceraCalificacion::find()->where(['est_id' => $est_id, 'asi_id' => $asi_id, 'paca_id' => $paca_id, 'pro_id' => $pro_id])->asArray()->all();
+
+        if(empty($has_cabecera_calificacion)){ // INSERT
+            $ccal_id = $mod_cab_cal->insertarCabeceraCalificacion($paca_id, $est_id, $pro_id, $asi_id, $ecun_id_posgrado, $cal_calif);
+
+            $idDetAsin = $mod_cab_cal->insertarDetalleCalificacion($ccal_id, $cuni_talleres['cuni_id'], $cal_talleres);
+            $idDetAut = $mod_cab_cal->insertarDetalleCalificacion($ccal_id, $cuni_deberes['cuni_id'], $cal_deberes);
+            $idDetEval = $mod_cab_cal->insertarDetalleCalificacion($ccal_id, $cuni_examen['cuni_id'], $cal_exam);
+        }
+        else{ // UPDATE
+            $cabecera = $has_cabecera_calificacion[0];
+
+            $ccal_id = $cabecera['ccal_id'];
+
+            $mod_cab_cal->actualizarCabeceraCalificacion($ccal_id, $cal_calif);
+
+            $mod_cab_cal->actualizarDetalleCalificacion($ccal_id, $cuni_talleres['cuni_id'], $cal_talleres);
+            $mod_cab_cal->actualizarDetalleCalificacion($ccal_id, $cuni_deberes['cuni_id'], $cal_deberes);
+            $mod_cab_cal->actualizarDetalleCalificacion($ccal_id, $cuni_examen['cuni_id'], $cal_exam);
+        }
+
+        return 1;
     }
 
     public function actionDownloadplantillagrado() {

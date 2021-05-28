@@ -498,11 +498,13 @@ function accion(id, tmp) {
 function actualizarGridUnidad() {
     var search = $('#txt_buscarDataunidad').val();
     var periodo =  $('#cmb_periodounidad option:selected').val();
-    var curso =  $('#cmb_curso option:selected').val();    
+    var curso =  $('#cmb_curso option:selected').val();  
+    var fechain = $('#txt_fecha_inidex').val();
+    var fechafin = $('#txt_fecha_finidex').val();  
     //Buscar almenos una clase con el nombre para ejecutar
     if (!$(".blockUI").length) {
         showLoadingPopup();
-    $('#Pbunidad').PbGridView('applyFilterData', {'search': search, 'periodo': periodo, 'curso': curso});
+    $('#Pbunidad').PbGridView('applyFilterData', {'search': search, 'periodo': periodo, 'curso': curso, 'fechain': fechain, 'fechafin': fechafin});
         setTimeout(hideLoadingPopup, 2000);
     }
 }
@@ -511,14 +513,18 @@ function exportExcelunidad() {
     var search = $('#txt_buscarDataunidad').val();
     var periodo =  $('#cmb_periodounidad option:selected').val();
     var curso = $('#cmb_curso option:selected').val(); 
-    window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/expexcelunidad?search=" + search + "&periodo=" + periodo + "&curso=" + curso;
+    var fechain = $('#txt_fecha_inidex').val();
+    var fechafin = $('#txt_fecha_finidex').val();
+    window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/expexcelunidad?search=" + search + "&periodo=" + periodo + "&curso=" + curso + "&fechain=" + fechain + "&fechafin=" + fechafin;
 }
 
 function exportPdfunidad() {
     var search = $('#txt_buscarDataunidad').val();
     var periodo =  $('#cmb_periodounidad option:selected').val();
     var curso = $('#cmb_curso option:selected').val(); 
-    window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/exppdfunidad?pdf=1&search=" + search + "&periodo=" + periodo + "&curso=" + curso;
+    var fechain = $('#txt_fecha_inidex').val();
+    var fechafin = $('#txt_fecha_finidex').val();
+    window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/exppdfunidad?pdf=1&search=" + search + "&periodo=" + periodo + "&curso=" + curso + "&fechain=" + fechain + "&fechafin=" + fechafin;
 }
 
 function saveunidad() {
@@ -527,6 +533,8 @@ function saveunidad() {
     arrParams.curso = $('#cmb_cursounidad option:selected').val();
     arrParams.codigounidad = $('#txt_codigonewunidad').val();
     arrParams.nombreunidad = $('#txt_descripcionnewunidad').val();
+    arrParams.fechainiciog = $('#txt_fecha_iniig').val();
+    arrParams.fechafing = $('#txt_fecha_finig').val();
     if ($('#cmb_cursounidad option:selected').val() != 0) {           
         if (!validateForm()) {
             requestHttpAjax(link, arrParams, function(response) {
@@ -539,7 +547,7 @@ function saveunidad() {
             }, true);
         }    
     } else {
-        showAlert('NO_OK', 'error', {"wtmessage": 'Curso: El campo no debe estar vacío.', "title": 'Error'});
+        showAlert('NO_OK', 'error', {"wtmessage": 'Aula: El campo no debe estar vacío.', "title": 'Error'});
      }  
 }
 
@@ -551,6 +559,9 @@ function editunidad() {
     arrParams.cursodounidad = $('#cmb_cursoeditunidad option:selected').val();
     arrParams.codigounidad = $('#txt_codigoeditunidad').val();
     arrParams.nombreunidad = $('#txt_descripcioneditunidad').val();
+    arrParams.fechainicioed = $('#txt_fecha_inied').val();
+    arrParams.fechafined = $('#txt_fecha_fined').val();
+
     if ($('#cmb_cursoeditunidad option:selected').val() != 0) { 
         if (!validateForm()) {
             requestHttpAjax(link, arrParams, function(response) {
@@ -563,7 +574,7 @@ function editunidad() {
             }, true);
         }    
     } else {
-        showAlert('NO_OK', 'error', {"wtmessage": 'Curso: El campo no debe estar vacío.', "title": 'Error'});
+        showAlert('NO_OK', 'error', {"wtmessage": 'Aula: El campo no debe estar vacío.', "title": 'Error'});
      }  
 }
 
@@ -686,7 +697,7 @@ function asignarCurso() {
             showAlert('NO_OK', 'error', {"wtmessage": 'Selecciona: Debe seleccionar al menos un estudiante a asignar.', "title": 'Error'});
          } 
     } else {
-        showAlert('NO_OK', 'error', {"wtmessage": 'Curso: El campo no debe estar vacío.', "title": 'Error'});
+        showAlert('NO_OK', 'error', {"wtmessage": 'Aula: El campo no debe estar vacío.', "title": 'Error'});
      }  
 }
 
@@ -804,7 +815,7 @@ function asignarBloqueo() {
          showAlert('NO_OK', 'error', {"wtmessage": 'Selecciona: Debe seleccionar al menos un estudiante para permitir evaluaciones.', "title": 'Error'});
       } 
  } else {
-     showAlert('NO_OK', 'error', {"wtmessage": 'Curso: El campo no debe estar vacío.', "title": 'Error'});
+     showAlert('NO_OK', 'error', {"wtmessage": 'Aula: El campo no debe estar vacío.', "title": 'Error'});
   }  
 }
 

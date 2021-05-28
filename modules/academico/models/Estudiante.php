@@ -481,7 +481,7 @@ class Estudiante extends \yii\db\ActiveRecord {
         }
         $sql = "SELECT distinct
                       $estid  
-	           -- pers.per_id,
+	                 -- pers.per_id,
                       concat(pers.per_pri_nombre, ' ', pers.per_pri_apellido) as nombres,
                       pers.per_cedula as dni,
                       pers.per_correo as correo,
@@ -505,7 +505,7 @@ class Estudiante extends \yii\db\ActiveRecord {
                 LEFT JOIN " . $con->dbname . ".modalidad moda ON moda.mod_id = meun.mod_id
                 LEFT JOIN " . $con->dbname . ".estudio_academico esac ON esac.eaca_id = meun.eaca_id
                 LEFT JOIN " . $con->dbname . ".registro_online r ON r.per_id = pers.per_id
-                LEFT JOIN " . $con->dbname . ".planificacion_estudiante pes ON pes.pes_id = r.pes_id AND pla_id IN ($inlist)
+                LEFT JOIN " . $con->dbname . ".planificacion_estudiante pes ON pes.pes_id = r.pes_id  AND pla_id IN ($inlist)
                 WHERE 
                 $str_search
                 pers.per_id > 1000                

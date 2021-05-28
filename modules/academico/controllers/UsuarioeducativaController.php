@@ -668,7 +668,9 @@ class UsuarioeducativaController extends \app\components\CController {
         if ($data['PBgetFilter']) {
             $arrSearch["search"] = $data['search'];  
             $arrSearch["periodo"] = $data['periodo'];  
-            $arrSearch["curso"] = $data['curso'];                               
+            $arrSearch["curso"] = $data['curso'];    
+            $arrSearch["fechain"] = $data['fechain'];
+            $arrSearch["fechafin"] = $data['fechafin'];                           
             $model = $mod_educativaunidad->consultarUnidadEducativa($arrSearch, 1, 1);
             return $this->render('indexunidad-grid', [
                         "model" => $model,
@@ -704,12 +706,13 @@ class UsuarioeducativaController extends \app\components\CController {
         header("Content-Type: $content_type");
         header("Content-Disposition: attachment;filename=" . $nombarch);
         header('Cache-Control: max-age=0');
-        $colPosition = array("C", "D", "E", "F", "G");
+        $colPosition = array("C", "D", "E", "F", "G", "H", "I");
         $arrHeader = array(
             academico::t("Academico", "Course"), 
             Yii::t("formulario", "Code"). ' '. Yii::t("formulario", "Unit"),
-            Yii::t("formulario", "Description"),       
-                      
+            Yii::t("formulario", "Description"),  
+            Yii::t("formulario", "Start date"),
+            Yii::t("formulario", "End date"),                      
         );
       
         $mod_educativa = new CursoEducativaUnidad();
@@ -717,6 +720,8 @@ class UsuarioeducativaController extends \app\components\CController {
         $arrSearch["search"] = $data['search'];
         $arrSearch["periodo"] = $data['periodo'];
         $arrSearch["curso"] = $data['curso'];  
+        $arrSearch["fechain"] = $data['fechain'];
+        $arrSearch["fechafin"] = $data['fechafin'];
         $arrData = array();
         if (empty($arrSearch)) {
             $arrData = $mod_educativa->consultarUnidadEducativa(array(), 0, 0);
@@ -736,12 +741,16 @@ class UsuarioeducativaController extends \app\components\CController {
             academico::t("Academico", "Course"), 
             Yii::t("formulario", "Code"). ' '. Yii::t("formulario", "Unit"),
             Yii::t("formulario", "Description"),
+            Yii::t("formulario", "Start date"),
+            Yii::t("formulario", "End date"), 
         );
         $mod_educativa = new CursoEducativaUnidad();
         $data = Yii::$app->request->get();
         $arrSearch["search"] = $data['search'];
         $arrSearch["periodo"] = $data['periodo'];
-        $arrSearch["curso"] = $data['curso'];  
+        $arrSearch["curso"] = $data['curso']; 
+        $arrSearch["fechain"] = $data['fechain'];
+        $arrSearch["fechafin"] = $data['fechafin']; 
         $arrData = array();
         if (empty($arrSearch)) {
             $arrData = $mod_educativa->consultarUnidadEducativa(array(), 0, 0);
@@ -785,6 +794,8 @@ class UsuarioeducativaController extends \app\components\CController {
             $curso = $data["curso"];            
             $codigounidad = $data["codigounidad"];
             $nombreunidad = ucwords(strtolower($data["nombreunidad"]));
+            $fechainicio = $data["fechainiciog"];
+            $fechafin = $data["fechafing"];
             $con = \Yii::$app->db_academico;
             $transaction = $con->beginTransaction();
             try {
@@ -792,7 +803,7 @@ class UsuarioeducativaController extends \app\components\CController {
                 $existe = $mod_educativa->consultarunidadexiste($curso, $codigounidad, $nombreunidad);
                 //\app\models\Utilities::putMessageLogFile('existe curso...: ' . $existe['existe_curso']);     
                 if ($existe['existe_curso'] == 0) {
-                    $savecurso = $mod_educativa->insertarUnidadeducativa($curso, $codigounidad, $nombreunidad, $usuario);
+                    $savecurso = $mod_educativa->insertarUnidadeducativa($curso, $codigounidad, $nombreunidad, $usuario, $fechainicio, $fechafin);
                     if ($savecurso) {
                         $exito = 1;
                     }
@@ -888,13 +899,15 @@ class UsuarioeducativaController extends \app\components\CController {
             $data = Yii::$app->request->post();
             $ceuni_id = $data["ceuni_id"];
             $cursodounidad = $data["cursodounidad"];
-            $codigounidad = $data["codigounidad"];
+            $codigounidad = $data["codigounidad"];            
+            $fechainicio = $data["fechainicioed"];
+            $fechafin = $data["fechafined"];
             $nombreunidad = ucwords(strtolower($data["nombreunidad"]));
             $con = \Yii::$app->db_academico;
             $transaction = $con->beginTransaction();
             try {
                 $mod_educativa = new CursoEducativaUnidad();
-                $editunidad = $mod_educativa->modificarUnidadeducativa($ceuni_id, $cursodounidad, $codigounidad, $nombreunidad, $usuario);
+                $editunidad = $mod_educativa->modificarUnidadeducativa($ceuni_id, $cursodounidad, $codigounidad, $nombreunidad, $usuario, $fechainicio, $fechafin);
                     if ($editunidad) {
                         $exito = 1;
                     }

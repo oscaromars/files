@@ -310,6 +310,24 @@ function validateType(type, valor, ref) {
                 result.errorMessage = objLang.Invalid_url_;
             }
             break;
+        case 'fecha_eduac':
+            var fecha_fin = valor;
+            if (fecha_fin >= $('#txt_fecha_inied').val()) {
+                  result.response = validarExpresion(/^(19|20)\d\d[-](0[1-9]|1[012])[-](0[1-9]|[12][0-9]|3[01])/, valor);
+            }
+            if (!result.response) {
+               result.errorMessage = objLang.The_end_date_can_not_be_before_the_start_date;
+            }
+            break;
+        case 'fecha_edusa':
+            var fecha_fin = valor;
+            if (fecha_fin >= $('#txt_fecha_iniig').val()) {
+                result.response = validarExpresion(/^(19|20)\d\d[-](0[1-9]|1[012])[-](0[1-9]|[12][0-9]|3[01])/, valor);
+            }
+            if (!result.response) {
+                result.errorMessage = objLang.The_end_date_can_not_be_before_the_start_date;
+            }
+            break;    
         default: // all
             result.response = validarExpresion(/^(.|\n)+$/, valor);
             if (!result.response) {

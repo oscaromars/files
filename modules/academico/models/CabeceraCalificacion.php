@@ -331,6 +331,9 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord
             $sql = "INSERT INTO " . $con->dbname . ".cabecera_calificacion (paca_id, est_id, pro_id, asi_id, ecun_id, ccal_calificacion, ccal_fecha_creacion, ccal_estado, ccal_estado_logico) VALUES($paca_id, $est_id, $pro_id, $asi_id, $ecun_id, $ccal_calificacion, now(), 1, 1)";
 
             $comando = $con->createCommand($sql);
+
+            \app\models\Utilities::putMessageLogFile($comando->getRawSql());
+
             $result = $comando->execute();
             $idtable = $con->getLastInsertID($con->dbname . '.cabecera_calificacion');
 

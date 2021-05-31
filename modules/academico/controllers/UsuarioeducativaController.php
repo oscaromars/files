@@ -1244,7 +1244,7 @@ class UsuarioeducativaController extends \app\components\CController {
                             //$exito = 1;
                         //} else {
                             // es un insert pagados
-                            $resp_guardarpago = $mod_asignar->insertarEstudiantecurso($cedu_id, $est_id, $usu_id);
+                            $resp_guardarpago = $mod_asignar->insertarEstudianteCursoEducativaUnidad($cedu_id, $est_id, $usu_id);
                             $exito = 1;
                         }
                     } // cierra foreach 
@@ -1868,13 +1868,15 @@ class UsuarioeducativaController extends \app\components\CController {
                 // $daca_id = $value['daca_id'];
 
                 $hasRegistro = CursoEducativaEstudiante::find()->where(['est_id' => $est_id, 'cedu_id' => $cedu_id])->asArray()->one();
+                // \app\models\Utilities::putMessageLogFile($hasRegistro);
                 if(isset($hasRegistro)){
                     $tam -= 1;
                 }
                 else{
-                    $insertID = $mod_cursoeduc->insertarEstudiantecurso($cedu_id, $est_id, $usu_id);
+                    $insertID = $mod_cursoeduc->insertarEstudianteCursoEducativaUnidad($cedu_id, $est_id, $usu_id, $tam);
                 }
             }
+
             if($insertID){
                 $message = array(
                     "wtmessage" => Yii::t("notificaciones", "Your information was successfully update."),

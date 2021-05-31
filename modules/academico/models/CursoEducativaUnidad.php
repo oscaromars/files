@@ -238,7 +238,7 @@ class CursoEducativaUnidad extends \yii\db\ActiveRecord
        /*\app\models\Utilities::putMessageLogFile('entro 2 : ' .$cedu_id);  
        \app\models\Utilities::putMessageLogFile('entro 3 : ' .$ceuni_codigo_unidad);  
        \app\models\Utilities::putMessageLogFile('entro 4 : ' .$ceuni_descripcion_unidad); */ 
-        $sql = "SELECT 	
+        $sql = "SELECT  
                         count(*) as existe_curso                       
                         
                 FROM " . $con->dbname . ".curso_educativa_unidad                 
@@ -368,7 +368,7 @@ class CursoEducativaUnidad extends \yii\db\ActiveRecord
     public function consultarUnidadxid($ceuni_id) {
         $con = \Yii::$app->db_academico;     
         $estado = 1; 
-        $sql = "SELECT 	
+        $sql = "SELECT  
                         ceu.cedu_id,     
                         ced.paca_id,                                     
                         ceu.ceuni_codigo_unidad,
@@ -412,7 +412,7 @@ class CursoEducativaUnidad extends \yii\db\ActiveRecord
 
         try {
             $comando = $con->createCommand
-                    ("UPDATE " . $con->dbname . ".curso_educativa_unidad		       
+                    ("UPDATE " . $con->dbname . ".curso_educativa_unidad               
                       SET cedu_id = :cedu_id,
                           ceuni_codigo_unidad = :ceuni_codigo_unidad,
                           ceuni_descripcion_unidad = :ceuni_descripcion_unidad,
@@ -465,7 +465,7 @@ class CursoEducativaUnidad extends \yii\db\ActiveRecord
         }
         try {
             $comando = $con->createCommand
-                    ("UPDATE " . $con->dbname . ".curso_educativa_unidad		       
+                    ("UPDATE " . $con->dbname . ".curso_educativa_unidad               
                       SET ceuni_estado = :ceuni_estado,
                           ceuni_usuario_modifica = :ceuni_usuario_modifica,
                           ceuni_fecha_modificacion = :ceuni_fecha_modificacion                          
@@ -593,7 +593,7 @@ class CursoEducativaUnidad extends \yii\db\ActiveRecord
        /*\app\models\Utilities::putMessageLogFile('entro 2 : ' .$cedu_id);  
        \app\models\Utilities::putMessageLogFile('entro 3 : ' .$ceuni_codigo_unidad);  
        \app\models\Utilities::putMessageLogFile('entro 4 : ' .$ceuni_descripcion_unidad);  */
-        $sql = "SELECT 	
+        $sql = "SELECT  
                         count(*) as existe_unidad                       
                         
                 FROM " . $con->dbname . ".curso_educativa_unidad                 

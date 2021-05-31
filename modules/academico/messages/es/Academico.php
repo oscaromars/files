@@ -37,6 +37,7 @@ return [
     "Dial type" => "Tipo marcación",
     "Distributive List" => "Listar Distributivo",
     "Distributive Type" => "Tipo Distributivo",
+    "Educational unit" => "Unidad Educativa",
     "Edit course" => "Editar Cursos",
     "Edit Unit" => "Editar Unidad",
     "End date effective" => "Fecha Final Vigencia",

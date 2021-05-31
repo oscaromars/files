@@ -328,11 +328,12 @@ function actualizarGridEstregistro() {
     var asignatura = $('#cmb_asignaturaes option:selected').val();
     var estado = $('#cmb_estadoes option:selected').val();
     var curso = $('#cmb_cursoreg option:selected').val();
+    var unidadedu = $('#cmb_uniddades option:selected').val();
     //var jornada = $('#cmb_jornadaes option:selected').val();
     //Buscar almenos una clase con el nombre para ejecutar
     if (!$(".blockUI").length) {
         showLoadingPopup();
-    $('#Tbg_Registro_educativa').PbGridView('applyFilterData', {'search': search, 'profesor': profesor, 'unidad': unidad, 'modalidad': modalidad, 'periodo': periodo, 'asignatura': asignatura, 'estado': estado, 'curso': curso/*, 'jornada': jornada*/});
+    $('#Tbg_Registro_educativa').PbGridView('applyFilterData', {'search': search, 'profesor': profesor, 'unidad': unidad, 'modalidad': modalidad, 'periodo': periodo, 'asignatura': asignatura, 'estado': estado, 'curso': curso, 'unidadedu': unidadedu /*, 'jornada': jornada*/});
         setTimeout(hideLoadingPopup, 2000);
     }
 }
@@ -347,7 +348,8 @@ function exportExcelEduregistro() {
     var estado = $('#cmb_estadoes option:selected').val();
     var curso = $('#cmb_cursoreg option:selected').val();
     //var jornada = $('#cmb_jornadaes option:selected').val();
-    window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/expexcelestregistro?search=" + search + "&profesor=" + profesor + "&unidad=" + unidad + "&modalidad=" + modalidad + "&periodo=" + periodo + "&asignatura=" + asignatura + "&estado=" + estado + "&curso=" + curso /*+ "&jornada=" + jornada*/;
+    var unidadedu = $('#cmb_uniddades option:selected').val();
+    window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/expexcelestregistro?search=" + search + "&profesor=" + profesor + "&unidad=" + unidad + "&modalidad=" + modalidad + "&periodo=" + periodo + "&asignatura=" + asignatura + "&estado=" + estado + "&curso=" + curso , "&unidadedu="+ unidadedu /*+ "&jornada=" + jornada*/;
 }
 
 function exportPdfEduregistro() {
@@ -360,7 +362,8 @@ function exportPdfEduregistro() {
     var estado = $('#cmb_estadoes option:selected').val();
     var curso = $('#cmb_cursoreg option:selected').val();
     //var jornada = $('#cmb_jornadaes option:selected').val();
-    window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/exppdfestregistro?pdf=1&search=" + search + "&profesor=" + profesor + "&unidad=" + unidad + "&modalidad=" + modalidad + "&periodo=" + periodo + "&asignatura=" + asignatura + "&estado=" + estado + "&curso=" + curso/*+ "&jornada=" + jornada*/;
+    var unidadedu = $('#cmb_uniddades option:selected').val();
+    window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/exppdfestregistro?pdf=1&search=" + search + "&profesor=" + profesor + "&unidad=" + unidad + "&modalidad=" + modalidad + "&periodo=" + periodo + "&asignatura=" + asignatura + "&estado=" + estado + "&curso=" + curso, "&unidadedu="+ unidadedu/*+ "&jornada=" + jornada*/;
 }
 
 function actualizarGridDisteducativa() {

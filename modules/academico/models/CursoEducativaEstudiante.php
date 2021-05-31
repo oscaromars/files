@@ -644,6 +644,9 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
             if ($arrFiltro['curso'] != "" && $arrFiltro['curso'] > 0) {
                 $str_search .= "cur.cedu_id = :curso AND ";
             }
+            if ($arrFiltro['unidadedu'] != "" && $arrFiltro['unidadedu'] > 0) {
+                $str_search .= "cur.ceuni_id = :ceuni_id AND ";
+            }
         }else{
           $mod_paca        = new PeriodoAcademico(); 
           $paca_actual_id  = $mod_paca->getPeriodoAcademicoActual();
@@ -663,7 +666,8 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
                         p.per_cedula as identificacion, 
                         concat(p.per_pri_nombre, ' ', p.per_pri_apellido, ' ', ifnull(p.per_seg_apellido,'')) as estudiante,
                         concat(saca_nombre, '-', baca_nombre,'-',baca_anio) as periodo,
-                        z.asi_nombre as asignatura,                                       
+                        z.asi_nombre as asignatura,                                    
+                        ceunid.ceuni_descripcion_unidad,    
                           case 
                                 when m.ccar_fecha_vencepago <= NOW() then  ifnull((SELECT
                                             CASE WHEN mi.ccar_estado_cancela = 'C'
@@ -702,6 +706,7 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
                     -- left join " . $con->dbname . ".estudiante_periodo_pago m on (m.est_id = g.est_id and m.paca_id = f.paca_id)
                     left join " . $con2->dbname . ".carga_cartera m on (m.est_id = g.est_id /* and m.paca_id = f.paca_id */)
                     inner join " . $con->dbname . ".curso_educativa_estudiante cur on cur.est_id = h.est_id
+                    inner join " . $con->dbname . ".curso_educativa_unidad ceunid on ceunid.ceuni_id = cur.ceuni_id
                     WHERE $str_search 
                     a.daca_estado = :estado
                     and a.daca_estado_logico = :estado
@@ -751,6 +756,10 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
             if ($arrFiltro['curso'] != "" && $arrFiltro['curso'] > 0) {
                 $curso = $arrFiltro["curso"];
                 $comando->bindParam(":curso", $curso, \PDO::PARAM_INT);
+            }
+            if ($arrFiltro['unidadedu'] != "" && $arrFiltro['unidadedu'] > 0) {
+                $ceuni_id = $arrFiltro["unidadedu"];
+                $comando->bindParam(":ceuni_id", $ceuni_id, \PDO::PARAM_INT);
             }
         }
         $resultData = $comando->queryAll();

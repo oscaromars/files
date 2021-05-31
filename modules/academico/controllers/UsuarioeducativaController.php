@@ -168,6 +168,7 @@ class UsuarioeducativaController extends \app\components\CController {
         $mod_educativa      = new CursoEducativa();
         $mod_periodo        = new PeriodoAcademicoMetIngreso();
         $model_cursoest     = new CursoEducativaEstudiante();
+        $model_unideduca     = new CursoEducativaUnidad();
         $data = Yii::$app->request->get();
 
         if ($data['PBgetFilter']) {
@@ -204,12 +205,18 @@ class UsuarioeducativaController extends \app\components\CController {
                 $message = array("periodoreg" => $periodoreg);
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
             }
+            if (isset($data["getunidadreg"])) {
+                $unidadreg = $model_unideduca->consultarUnidadesxcursoid($data["aulareg"]);
+                $message = array("unidadreg" => $unidadreg);
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+            }
         }
         $arr_unidad = $mod_unidad->consultarUnidadAcademicasEmpresa(1);
         $arr_modalidad = $mod_modalidad->consultarModalidad($arr_unidad[0]["id"], 1);
         $arr_periodo = $mod_periodo->consultarPeriodoAcademicotodos();
         $arr_asignatura = $distributivo_model->consultarAsiganturaxuniymoda(0, 0);
         $arr_curso = $mod_educativa->consultarCursosxpacaid(0); // parametro q envia es el paca_id
+        $arr_unidadeduc = $model_unideduca->consultarUnidadesxcursoid(0); // parametro q envia es el cedu_id
         return $this->render('listarestudianteregistro', [
                     'mod_unidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Grid")]], $arr_unidad), "id", "name"),
                     'mod_modalidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Grid")]], $arr_modalidad), "id", "name"),
@@ -218,6 +225,7 @@ class UsuarioeducativaController extends \app\components\CController {
                     'model' => $model,
                     'mod_estado' => array("-1" => "Todos", "0" => "No Autorizado", "1" => "Autorizado"),
                     'arr_curso' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $arr_curso), "id", "name"),
+                    'arr_unieduca' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $arr_unidadeduc), "id", "name"),
                     //'mod_jornada' => array("0" => "Todos", "1" => "(M) Matutino", "2" => "(N) Nocturno", "3" => "(S) Semipresencial", "4" => "(D) Distancia"),
         ]);
     }

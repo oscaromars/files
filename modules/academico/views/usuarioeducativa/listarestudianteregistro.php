@@ -14,6 +14,7 @@ use app\modules\academico\Module as academico;
             'arr_asignatura' => $mod_asignatura,
             'arr_estado' => $mod_estado,
             'arr_curso' => $arr_curso,
+            'arr_unieduca' => $arr_unieduca,
             //'arr_jornada' => $mod_jornada,
             ]);
         ?>

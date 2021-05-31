@@ -51,20 +51,24 @@ use app\modules\academico\Module as academico;
             </div>                 
         </div>
     </div> 
-     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">            
-        <label for="cmb_cursoreg" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= Yii::t("formulario", "Course") ?></label>
+        <label for="cmb_cursoreg" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= academico::t("Academico", "Course") ?></label>
             <div class="col-sm-3 col-xs-3 col-md-3 col-lg-3">
                 <?= Html::dropDownList("cmb_cursoreg", " ", $arr_curso, ["class" => "form-control", "id" => "cmb_cursoreg"]) ?>
             </div>        
+            <label for="cmb_uniddades" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= Yii::t("formulario", "Unit") ?></label>
+            <div class="col-sm-3 col-xs-3 col-md-3 col-lg-3">
+                <?= Html::dropDownList("cmb_uniddades", " ", $arr_unieduca, ["class" => "form-control", "id" => "cmb_uniddades"]) ?>
+            </div>            
+        </div>
+    </div>
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="form-group"> 
             <label for="cmb_estadoes" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= Yii::t("formulario", "Status") ?></label>
             <div class="col-sm-3 col-xs-3 col-md-3 col-lg-3">
                 <?= Html::dropDownList("cmb_estadoes", " ", $arr_estado, ["class" => "form-control", "id" => "cmb_estadoes"]) ?>
-            </div> 
-            <!-- <label for="cmb_jornadaes" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= academico::t("Academico", "Working day") ?></label>
-            <div class="col-sm-3 col-xs-3 col-md-3 col-lg-3">
-                 Html::dropDownList("cmb_jornadaes", " ", $arr_jornada, ["class" => "form-control", "id" => "cmb_jornadaes"]) 
-            </div>  --> 
+            </div>            
         </div>
     </div> 
     <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12">

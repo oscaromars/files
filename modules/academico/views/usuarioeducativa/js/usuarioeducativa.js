@@ -193,6 +193,31 @@ $(document).ready(function() {
             if (response.status == "OK") {
                 data = response.message;
                 setComboDataselect(data.periodoreg, "cmb_cursoreg", "Todos");
+                var arrParams = new Object();
+                if (data.periodoreg.length > 0) {
+                    arrParams.paca_id = $('#cmb_periodoes').val(); 
+                    arrParams.aulareg = $('#cmb_cursoreg').val();                  
+                    arrParams.getunidadreg = true;
+                    requestHttpAjax(link, arrParams, function (response) {
+                        if (response.status == "OK") {
+                            data = response.message;
+                            setComboDataselect(data.unidadreg, "cmb_uniddades", "Todos");
+                        }
+                    }, true);
+                }
+            }
+        }, true);
+    });
+
+    $('#cmb_cursoreg').change(function() {
+        var link = $('#txth_base').val() + "/academico/usuarioeducativa/listarestudianteregistro";
+        var arrParams = new Object();
+        arrParams.aulareg = $('#cmb_cursoreg').val(); ;
+        arrParams.getunidadreg = true;
+        requestHttpAjax(link, arrParams, function(response) {
+            if (response.status == "OK") {
+                data = response.message;
+                setComboDataselect(data.unidadreg, "cmb_uniddades", "Todos");
             }
         }, true);
     });

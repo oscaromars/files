@@ -868,4 +868,112 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
 
         return $resultData;
     }
+
+    /**
+     * Retorna los estudiantes presentes en la tabla curso_educativa_estudiante junto con el período, la modalidad, el aula, y la unidad a la que pertenecen
+     * @author Jorge Paladines <analista.desarrollo@uteg.edu.ec>;
+     * @param
+     * @return
+     */
+    public function consultarEstudiantesEvaluacion($arrFiltro, $onlyData = false){
+        $con_academico = Yii::$app->db_academico;
+        $con_asgard = Yii::$app->db_asgard;
+
+        $str_search = "";
+
+        if (isset($arrFiltro) && count($arrFiltro) > 0) {
+            if ($arrFiltro['unidadeduc'] != "" && $arrFiltro['unidadeduc'] > 0) {
+                $str_search .= "ceuni.ceuni_id = :unidadeduc AND ";
+            }
+            if ($arrFiltro['modalidad'] != "" && $arrFiltro['modalidad'] > 0) {
+                $str_search .= "modalidad.mod_id = :modalidad AND ";
+            }
+            if ($arrFiltro['periodo'] != "" && $arrFiltro['periodo'] > 0) {
+                $str_search .= "paca.paca_id = :periodo AND ";
+            }
+            if ($arrFiltro['aula'] != "" && $arrFiltro['aula'] > 0) {
+                $str_search .= "cedu.cedu_id = :aula AND ";
+            }   
+        }
+
+        $sql = "SELECT DISTINCT
+                paca.paca_id, 
+                est.est_id, per.per_id, 
+                modalidad.mod_id,
+                cedu.cedu_id,
+                ceuni.ceuni_id,
+                ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca_anio),'') AS Periodo,
+                CONCAT(per.per_pri_apellido, ' ', per.per_pri_nombre) AS Nombre,
+                modalidad.mod_descripcion AS Modalidad,
+                cedu.cedu_asi_nombre AS Aula,
+                ceuni.ceuni_descripcion_unidad AS Unidad
+                FROM " . $con_academico->dbname . ".estudiante AS est
+                INNER JOIN " . $con_asgard->dbname . ".persona AS per ON per.per_id = est.per_id
+                INNER JOIN " . $con_academico->dbname . ".curso_educativa_estudiante AS ceest ON ceest.est_id = est.est_id
+                INNER JOIN " . $con_academico->dbname . ".curso_educativa AS cedu ON cedu.cedu_id = ceest.cedu_id
+                INNER JOIN " . $con_academico->dbname . ".curso_educativa_unidad AS ceuni ON ceuni.ceuni_id = ceest.ceuni_id
+                INNER JOIN " . $con_academico->dbname . ".estudiante_carrera_programa AS ecpr ON ecpr.est_id = ceest.est_id
+                INNER JOIN " . $con_academico->dbname . ".modalidad_estudio_unidad AS meun ON meun.meun_id = ecpr.meun_id
+                INNER JOIN " . $con_academico->dbname . ".unidad_academica AS uaca ON uaca.uaca_id = meun.uaca_id
+                INNER JOIN " . $con_academico->dbname . ".modalidad AS modalidad ON modalidad.mod_id = meun.mod_id
+                INNER JOIN " . $con_academico->dbname . ".periodo_academico AS paca ON paca.paca_id = cedu.paca_id
+                INNER JOIN " . $con_academico->dbname . ".semestre_academico AS saca ON saca.saca_id = paca.saca_id
+                INNER JOIN " . $con_academico->dbname . ".bloque_academico AS baca ON baca.baca_id = paca.baca_id
+                WHERE
+                $str_search
+                ceest.ceest_estado = 1 AND ceest.ceest_estado_logico = 1 AND
+                cedu.cedu_estado = 1 AND cedu.cedu_estado_logico = 1 AND
+                ceuni.ceuni_estado = 1 AND ceuni.ceuni_estado_logico = 1 AND
+                ecpr.ecpr_estado = 1 AND ecpr.ecpr_estado_logico = 1 AND
+                meun.meun_estado = 1 AND meun.meun_estado_logico = 1 AND
+                uaca.uaca_estado = 1 AND uaca.uaca_estado_logico = 1 AND
+                modalidad.mod_estado = 1 AND modalidad.mod_estado_logico = 1 AND
+                paca.paca_activo = 'A' AND paca.paca_estado = 1 AND paca.paca_estado_logico = 1 AND
+                saca.saca_estado = 1 AND saca.saca_estado_logico = 1 AND
+                baca.baca_estado = 1 AND baca.baca_estado_logico = 1
+                ORDER BY Nombre ASC";
+
+        $comando = $con_academico->createCommand($sql);
+
+        if (isset($arrFiltro) && count($arrFiltro) > 0) {
+            if ($arrFiltro['unidadeduc'] != "" && $arrFiltro['unidadeduc'] > 0) {
+                $search_uni = $arrFiltro["unidadeduc"];
+                $comando->bindParam(":unidadeduc", $search_uni, \PDO::PARAM_INT);
+            }
+            if ($arrFiltro['modalidad'] != "" && $arrFiltro['modalidad'] > 0) {
+                $search_mod = $arrFiltro["modalidad"];
+                $comando->bindParam(":modalidad", $search_mod, \PDO::PARAM_INT);
+            }
+            if ($arrFiltro['periodo'] != "" && $arrFiltro['periodo'] > 0) {
+                $search_per = $arrFiltro["periodo"];
+                $comando->bindParam(":periodo", $search_per, \PDO::PARAM_INT);
+            }
+            if ($arrFiltro['aula'] != "" && $arrFiltro['aula'] > 0) {
+                $search_aula = $arrFiltro["aula"];
+                $comando->bindParam(":aula", $search_aula, \PDO::PARAM_INT);
+            }            
+        }
+
+        Utilities::putMessageLogFile($comando->getRawSql());
+
+        $resultData = $comando->queryAll();
+
+        if($onlyData)
+        {
+            return $resultData;
+        }
+
+        $dataProvider = new ArrayDataProvider([
+            'key' => 'est_id',
+            'allModels' => $resultData,
+            'pagination' => [
+                'pageSize' => Yii::$app->params["pageSize"],
+            ],
+            'sort' => [
+                'attributes' => [],
+            ],
+        ]);
+
+        return $dataProvider;
+    }
 }

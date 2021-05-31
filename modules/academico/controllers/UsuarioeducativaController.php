@@ -2210,4 +2210,65 @@ class UsuarioeducativaController extends \app\components\CController {
             }
         }
     }
+
+    public function actionAsignarevaluacion(){
+        // $per_id = @Yii::$app->session->get("PB_perid");
+        // $emp_id = @Yii::$app->session->get("PB_idempresa");
+
+        $mod_unidad = new UnidadAcademica();
+        $mod_modalidad = new Modalidad();
+        $mod_periodo = new PeriodoAcademicoMetIngreso();
+        $mod_educativa = new CursoEducativa();
+        $model_unideduca = new CursoEducativaUnidad();
+        $mod_cursoeduc_est = new CursoEducativaEstudiante();
+
+        $data = Yii::$app->request->get();
+
+        if ($data['PBgetFilter'])
+        { 
+            $arrSearch["periodo"] = $data['periodo'];  
+            $arrSearch["modalidad"] = $data['modalidad'];    
+            $arrSearch["aula"] = $data['aula'];
+            $arrSearch["unidadeduc"] = $data['unidadeduc'];
+
+            $model = $mod_cursoeduc_est->consultarEstudiantesEvaluacion($arrSearch, false);
+            return $this->render('_asignarevaluacion-grid', [
+                        "model" => $model,
+            ]);
+        }
+        else
+        {
+            $model = $mod_cursoeduc_est->consultarEstudiantesEvaluacion(NULL, false);
+        }
+
+        if (Yii::$app->request->isAjax) {
+            $data = Yii::$app->request->post();
+            if (isset($data["getcursoreg"])) {
+                $periodoreg = $mod_educativa->consultarCursosxpacaid($data["codcursoreg"]);
+                $message = array("periodoreg" => $periodoreg);
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+            }
+            if (isset($data["getunidadreg"])) {
+                $unidadreg = $model_unideduca->consultarUnidadesxcursoid($data["aulareg"]);
+                $message = array("unidadreg" => $unidadreg);
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+            }
+        }
+
+        $arr_unidad = $mod_unidad->consultarUnidadAcademicasEmpresa(1);
+        $arr_modalidad = $mod_modalidad->consultarModalidad($arr_unidad[0]["id"], 1);
+        $arr_periodo = $mod_periodo->consultarPeriodoAcademicotodos();
+        $arr_aula = $mod_educativa->consultarCursosxpacaid(0);
+        $arr_unidadeduc = $model_unideduca->consultarUnidadesxcursoid(0);
+
+        return $this->render('asignarevaluacion', [  
+            'model' => $model,
+            'arr_modalidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Grid")]], $arr_modalidad), "id", "name"),
+            "arr_periodo" => ArrayHelper::map($arr_periodo, "id", "name"),
+            'arr_aula' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $arr_aula), "id", "name"),
+            'arr_unidadeduc' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $arr_unidadeduc), "id", "name"),
+            'arr_evaluacion' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], []), "id", "name"),
+        ]);  
+
+    }
 }  

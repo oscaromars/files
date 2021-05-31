@@ -644,6 +644,9 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
             if ($arrFiltro['curso'] != "" && $arrFiltro['curso'] > 0) {
                 $str_search .= "cur.cedu_id = :curso AND ";
             }
+            if ($arrFiltro['unidadedu'] != "" && $arrFiltro['unidadedu'] > 0) {
+                $str_search .= "cur.ceuni_id = :ceuni_id AND ";
+            }
         }else{
           $mod_paca        = new PeriodoAcademico(); 
           $paca_actual_id  = $mod_paca->getPeriodoAcademicoActual();
@@ -751,6 +754,10 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
             if ($arrFiltro['curso'] != "" && $arrFiltro['curso'] > 0) {
                 $curso = $arrFiltro["curso"];
                 $comando->bindParam(":curso", $curso, \PDO::PARAM_INT);
+            }
+            if ($arrFiltro['unidadedu'] != "" && $arrFiltro['unidadedu'] > 0) {
+                $ceuni_id = $arrFiltro["unidadedu"];
+                $comando->bindParam(":ceuni_id", $ceuni_id, \PDO::PARAM_INT);
             }
         }
         $resultData = $comando->queryAll();

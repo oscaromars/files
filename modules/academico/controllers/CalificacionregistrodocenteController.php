@@ -513,7 +513,7 @@ class CalificacionregistrodocenteController extends \app\components\CController 
             $usu_id = Yii::$app->session->get("PB_iduser");
             $admin = $this->isAdmin($usu_id);
 
-            $admin = 1;
+            // $admin = 1;
 
             if($admin){// Es administrador
                 $pro_id = $mod_profesor->getProfesoresxid($per_id)['Id'];
@@ -683,15 +683,27 @@ class CalificacionregistrodocenteController extends \app\components\CController 
                                 ** $val[17] -> 'Calificación' - 2° PARCIAL  No se usa porque el sistema lo calcula por si acaso esté mal calculado
                                 */
 
-                                $usuario = $val[2];
+                                $usuario = $val[2]; // Si es est de Grado Online
+                                $cedula = $val[2]; // Si es est de grado no online
                                 $nombre = $val[4];
 
-                                $estudiante = UsuarioEducativa::find()->where(['uedu_usuario' => $usuario])->asArray()->one();
+                                $estudianteOnline = UsuarioEducativa::find()->where(['uedu_usuario' => $usuario, 'uedu_estado' => 1, 'uedu_estado_logico' => 1])->asArray()->one();
 
-                                // Si el estudiante no existe, continuar al siguiente, y colocarlo en la lista
-                                if(!isset($estudiante)){
+                                $persona = Persona::find()->where(['per_cedula' => $cedula, 'per_estado' => 1, 'per_estado_logico' => 1])->asArray()->one();
+
+                                // Si no retorna nada, puede que sea un estudiante de grado no online
+                                if (!isset($estudianteOnline) && !isset($persona)){
+                                    // Si el estudiante no existe en ninguna de las dos, continuar al siguiente, y colocarlo en la lista
                                     $noalumno .= $nombre . " (no es un estudiante registrado), ";
                                     continue;
+                                }
+                                // Si es de Online
+                                elseif (isset($estudianteOnline)){
+                                    $estudiante = $estudianteOnline;
+                                }
+                                // Si no es de online
+                                elseif (isset($persona)) {
+                                    $estudiante = Estudiante::find()->where(['per_id' => $persona['per_id']])->asArray()->one();
                                 }
 
                                 $est_id = $estudiante['est_id'];
@@ -754,11 +766,17 @@ class CalificacionregistrodocenteController extends \app\components\CController 
                                 ** $val[9] -> 'Calificación' No se usa porque el sistema lo calcula por si acaso esté mal calculado
                                 */
 
-                                $usuario = $val[2];
+                                $cedula = $val[2];
                                 $nombre = $val[4];
 
-                                $estudiante = UsuarioEducativa::find()->where(['uedu_usuario' => $usuario])->asArray()->one();
+                                $persona = Persona::find()->where(['per_cedula' => $cedula, 'per_estado' => 1, 'per_estado_logico' => 1])->asArray()->one();
+                                // Si el estudiante no existe, continuar al siguiente, y colocarlo en la lista
+                                if(!isset($persona)){
+                                    $noalumno .= $nombre . " (no es un estudiante registrado), ";
+                                    continue;
+                                }
 
+                                $estudiante = Estudiante::find()->where(['per_id' => $persona['per_id']])->asArray()->one();
                                 // Si el estudiante no existe, continuar al siguiente, y colocarlo en la lista
                                 if(!isset($estudiante)){
                                     $noalumno .= $nombre . " (no es un estudiante registrado), ";
@@ -1442,10 +1460,6 @@ class CalificacionregistrodocenteController extends \app\components\CController 
         $unidad = $data['unidad'];
         $materia = $data['materia'];
         $profesor = $data['profesor'];
-        \app\models\Utilities::putMessageLogFile($periodo);
-        \app\models\Utilities::putMessageLogFile($unidad);
-        \app\models\Utilities::putMessageLogFile($materia);
-        \app\models\Utilities::putMessageLogFile($profesor);
         /* return Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), false, $ron_id); */
 
         //$arr_estudiante = $cabeceraCalificacion->consultaCalificacionRegistroDocenteSearch($unidad,$periodo,$materia,$profesor);

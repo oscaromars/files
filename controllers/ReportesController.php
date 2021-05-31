@@ -464,5 +464,16 @@ class ReportesController extends CController {
         ]);       
     }
 
+    public function actionHistorico() { 
+        $searchModel = new EstudianteCarreraProgramaSearch();
+        //$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $params = Yii::$app->request->queryParams;
+        $dataProvider = $searchModel->getListadoReportepromedio($params,false,1);
+        return $this->render('reportepromedios', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);       
+    }
+
 
 }

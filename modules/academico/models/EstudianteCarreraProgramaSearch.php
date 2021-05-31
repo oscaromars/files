@@ -60,7 +60,7 @@ class EstudianteCarreraProgramaSearch extends EstudianteCarreraPrograma {
         
 
         $sql = "SELECT  CONCAT(per.per_pri_apellido,' ' ,per.per_seg_apellido,' ' ,per.per_pri_nombre) as nombres, 
-						h.carrera as carrera, 
+						eaca.eaca_nombre as carrera, 
 						enac.enac_asig_estado as estado_nota, 
 						asi.asi_descripcion as asignatura, 
 						maca.maca_nombre as malla,
@@ -71,9 +71,10 @@ class EstudianteCarreraProgramaSearch extends EstudianteCarreraPrograma {
 				INNER JOIN db_academico.malla_academico_estudiante maes ON maes.per_id = per.per_id
 				INNER JOIN db_academico.promedio_malla_academico pmac on pmac.maes_id = maes.maes_id
 				INNER JOIN db_academico.estado_nota_academico enac on enac.enac_id = pmac.enac_id
-				INNER JOIN db_academico.historico_siga h on h.per_id = per.per_id
 				INNER JOIN db_academico.asignatura asi on asi.asi_id = maes.asi_id
 				INNER JOIN db_academico.malla_academica maca on maca.maca_id = maes.maca_id
+				INNER JOIN db_academico.modalidad_estudio_unidad meun on meun.meun_id = ecpr.meun_id
+				INNER JOIN db_academico.estudio_academico eaca on eaca.eaca_id = meun.eaca_id
 				WHERE ecpr.ecpr_estado = 1 AND ecpr.ecpr_estado_logico = 1
 				AND est.est_estado = 1 AND est.est_estado_logico = 1
 				AND per.per_estado = 1 AND per.per_estado_logico = 1 

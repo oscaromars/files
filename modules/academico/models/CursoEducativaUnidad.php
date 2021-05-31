@@ -640,4 +640,29 @@ class CursoEducativaUnidad extends \yii\db\ActiveRecord
 
         return $mod_educativaunidad->save();
     }
+
+    /**
+     * Function Consultar unidades por cedu_id.
+     * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>;
+     * @property       
+     * @return  
+     */
+    public function consultarUnidadesxcursoid($cedu_id) {
+        $con = \Yii::$app->db_academico;      
+        $estado = 1;
+
+        $sql = "SELECT 
+                     ceuni_id as id,
+                     ceuni_descripcion_unidad as name
+                FROM db_academico.curso_educativa_unidad 
+                WHERE cedu_id = :cedu_id AND               
+                ceuni_estado = :estado AND
+                ceuni_estado_logico = :estado";
+
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":cedu_id", $cedu_id, \PDO::PARAM_INT);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);        
+        $resultData = $comando->queryAll();
+        return $resultData;
+    }
 }

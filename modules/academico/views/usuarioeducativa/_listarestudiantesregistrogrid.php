@@ -66,6 +66,11 @@ academico::registerTranslations();
                 'attribute' => 'Estudiante',
                 'header' => Yii::t("formulario", "Complete Names"),
                 'value' => 'estudiante',
+            ], 
+            [
+                'attribute' => 'unidadeduca',
+                'header' => Yii::t("formulario", "Unidad Educativa"),
+                'value' => 'ceuni_descripcion_unidad',
             ],           
             [
                 'attribute' => 'Estado',

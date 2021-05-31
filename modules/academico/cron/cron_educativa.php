@@ -74,6 +74,7 @@
 
 		                //Este for es para recorrer en caso de que haya mas de una unidad
 		                foreach ($id_unidad_array as $key => $value) {
+		                	$unidad = $value['ceuni_codigo_unidad'];
 		                	putMessageLogFile("Unidad a procesar: ".$value['ceuni_codigo_unidad']); 
 		                	//Invocacion el primer Web Service que devuelve los id de los examenes...
 		                	//a desbloquear

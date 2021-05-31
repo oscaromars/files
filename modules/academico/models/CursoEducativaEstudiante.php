@@ -618,7 +618,11 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
                 $comando->bindParam(":curso", $curso, \PDO::PARAM_INT);
             }
         }
+        Utilities::putMessageLogFile($comando->getRawSql());
+        
         $resultData = $comando->queryAll();
+
+        
 
         $resultData2 = array();
 

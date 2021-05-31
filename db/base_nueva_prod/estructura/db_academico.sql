@@ -1921,7 +1921,10 @@ create table if not exists `curso_educativa` (
 create table if not exists `curso_educativa_estudiante` (
  `ceest_id` bigint(20) not null auto_increment primary key,
  `cedu_id` bigint(20) not null,
+ `ceuni_id` bigint(20) not null,
  `est_id` bigint(20) not null,
+ `ceest_codigo_evaluacion` varchar(20),
+ `ceest_descripcion_evaluacion` varchar(500),
  `ceest_estado_bloqueo` varchar(1) not null, -- B bloqueado, A aceptado
  `ceest_usuario_ingreso` bigint(20) not null,
  `ceest_usuario_modifica` bigint(20) null,
@@ -1930,7 +1933,8 @@ create table if not exists `curso_educativa_estudiante` (
  `ceest_fecha_modificacion` timestamp null default null,
  `ceest_estado_logico` varchar(1) not null,
  foreign key (est_id) references `estudiante`(est_id),
- foreign key (cedu_id) references `curso_educativa`(cedu_id)
+ foreign key (cedu_id) references `curso_educativa`(cedu_id),
+ foreign key (ceuni_id) references `curso_educativa_unidad`(ceuni_id)
 );
 
 -- --------------------------------------------------------

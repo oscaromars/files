@@ -873,7 +873,44 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
                 $trans->rollback();
             return FALSE;
         }
-    } 
+    }//modificarEstadobloqueo
+
+    /**
+     * Function modificar curso_educativa_estudiante.
+     * @author Galo Aguirre <analistadesarrollo06@uteg.edu.ec>;
+     * @param
+     * @return
+     */
+    public function modificarEstadobloqueoxid($ceest_id, $ceest_estado_bloqueo, $ceest_usuario_modifica) {
+        $fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
+        $con = \Yii::$app->db_academico;
+        $estado = 1; 
+ 
+        if ($trans !== null) {
+            $trans = null; // si existe la transacción entonces no se crea una
+        } else {
+            $trans = $con->beginTransaction(); // si no existe la transacción entonces se crea una
+        }
+        try {
+            $comando = $con->createCommand
+                    ("UPDATE " . $con->dbname . ".curso_educativa_estudiante               
+                         SET ceest_estado_bloqueo     = $ceest_estado_bloqueo,  
+                             ceest_usuario_modifica   = $ceest_usuario_modifica,
+                             ceest_fecha_modificacion = now()                          
+                       WHERE ceest_id            = $ceest_id
+                         AND ceest_estado        = 1 
+                         AND ceest_estado_logico = 1");
+
+            $response = $comando->execute();
+            if ($trans !== null)
+                $trans->commit();
+            return $response;
+        } catch (Exception $ex) {
+            if ($trans !== null)
+                $trans->rollback();
+            return FALSE;
+        }
+    }//modificarEstadobloqueoxid
 
     /**
      * Retorna los est_id, daca_id y cedu_id de la tabla curso_educativa que sean del período académico actual, que sean FK de la tabla curso_educativa_distributivo, y cuyo daca_id sea FK de la tabla distributivo_academico_estudiante

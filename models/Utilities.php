@@ -990,4 +990,23 @@ class Utilities {
 
         return $dias_diferencia;
     }
+
+    /**
+     * Devuelve una conexion al Web Service de Educativa
+     * @access public
+     * @author Galo Aguirre
+     */
+    public static function getWseducativa(){
+        
+        $client = new \SoapClient(Yii::$app->params["url"], 
+                                  array("login"    => Yii::$app->params["wsLogin"], 
+                                        "password" => Yii::$app->params["wsPassword"],
+                                        "trace"    => 1, "exceptions" => 0));
+
+        $client->setCredentials(Yii::$app->params["wsLogin"],
+                                Yii::$app->params["wsPassword"],
+                                "basic");
+
+        return $client;
+    }//function getWseducativa
 }

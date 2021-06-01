@@ -68,9 +68,17 @@ academico::registerTranslations();
                 'value' => 'estudiante',
             ], 
             [
-                'attribute' => 'unidadeduca',
-                'header' => Yii::t("formulario", "Unidad Educativa"),
-                'value' => 'ceuni_descripcion_unidad',
+                'class' => 'yii\grid\ActionColumn',
+                'header' => academico::t("Academico", "Educational unit"),  
+                'template' => '{view}',             
+                'buttons' => [
+                    'view' => function ($url, $model) {
+                        if (strlen($model['ceuni_descripcion_unidad']) > 10) {
+                            $texto = '...';
+                        }
+                        return Html::a('<span>' . substr($model['asignatura'], 0, 7) . $texto . '</span>', "javascript:", ["data-toggle" => "tooltip", "title" => $model['asignatura']]);
+                    },
+                ],
             ],
             [
                 'attribute' => 'item',

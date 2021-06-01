@@ -80,6 +80,10 @@ $(document).ready(function() {
         insertarEstudiantesConfirm();
     });
 
+    $('#btn_buscarData_educativa').click(function() {
+        actualizarGridEducativa();
+    });
+
     $('#cmb_unidad_dises').change(function () {
         var link = $('#txth_base').val() + "/academico/distributivo/listarestudiantespago";
         var arrParams = new Object();
@@ -1009,3 +1013,61 @@ function insertarEstudiantesConfirm(){
         }, true);
     }
 }
+
+function actualizarGridEducativa(){
+    var periodo =  $('#cmb_periodo_educ option:selected').val();
+    var modalidad =  $('#cmb_modalidad_educ option:selected').val();
+    var aula = $('#cmb_aula_educ option:selected').val();
+    var unidadeduc =  $('#cmb_unidad_educ option:selected').val();
+
+    if (!$(".blockUI").length) {
+        showLoadingPopup();
+    $('#Tbg_Asignar_Evaluacion').PbGridView('applyFilterData', {'periodo': periodo, 'modalidad': modalidad, 'aula': aula, 'unidadeduc': unidadeduc});
+        setTimeout(hideLoadingPopup, 2000);
+    }
+}
+
+$('#cmb_periodo_educ').change(function() {
+    var link = $('#txth_base').val() + "/academico/usuarioeducativa/asignarevaluacion";
+    var arrParams = new Object();
+
+    arrParams.codcursoreg = $(this).val();
+    arrParams.getcursoreg = true;
+
+    requestHttpAjax(link, arrParams, function(response) {
+        if (response.status == "OK") {
+            data = response.message;
+            setComboDataselect(data.periodoreg, "cmb_aula_educ", "Todos");
+
+            var arrParams = new Object();
+
+            if (data.periodoreg.length > 0) {
+                arrParams.paca_id = $('#cmb_periodo_educ').val(); 
+                arrParams.aulareg = $('#cmb_aula_educ').val();                  
+                arrParams.getunidadreg = true;
+
+                requestHttpAjax(link, arrParams, function (response) {
+                    if (response.status == "OK") {
+                        data = response.message;
+                        setComboDataselect(data.unidadreg, "cmb_unidad_educ", "Todos");
+                    }
+                }, true);
+            }
+        }
+    }, true);
+});
+
+$('#cmb_aula_educ').change(function() {
+    var link = $('#txth_base').val() + "/academico/usuarioeducativa/asignarevaluacion";
+    var arrParams = new Object();
+
+    arrParams.aulareg = $('#cmb_aula_educ').val(); ;
+    arrParams.getunidadreg = true;
+
+    requestHttpAjax(link, arrParams, function(response) {
+        if (response.status == "OK") {
+            data = response.message;
+            setComboDataselect(data.unidadreg, "cmb_unidad_educ", "Todos");
+        }
+    }, true);
+});

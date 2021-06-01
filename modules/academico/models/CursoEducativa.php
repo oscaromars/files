@@ -46,6 +46,16 @@ class CursoEducativa extends \yii\db\ActiveRecord
     }
 
     /**
+     * Function findIdentity
+     * @author  Diana Lopez <dlopez@uteg.edu.ec>
+     * @param      
+     * @return  
+     */
+    public static function findIdentity($id) {
+        return static::findOne($id);
+    }
+    
+    /**
      * {@inheritdoc}
      */
     public function rules()

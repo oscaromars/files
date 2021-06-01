@@ -1015,10 +1015,10 @@ function insertarEstudiantesConfirm(){
 }
 
 function actualizarGridEducativa(){
-    var periodo =  $('#cmb_periodo_educ option:selected').val();
-    var modalidad =  $('#cmb_modalidad_educ option:selected').val();
-    var aula = $('#cmb_aula_educ option:selected').val();
-    var unidadeduc =  $('#cmb_unidad_educ option:selected').val();
+    var periodo    = $('#cmb_periodo_educ option:selected').val();
+    var modalidad  = $('#cmb_modalidad_educ option:selected').val();
+    var aula       = $('#cmb_aula_educ option:selected').val();
+    var unidadeduc = $('#cmb_unidad_educ option:selected').val();
 
     if (!$(".blockUI").length) {
         showLoadingPopup();
@@ -1071,3 +1071,74 @@ $('#cmb_aula_educ').change(function() {
         }
     }, true);
 });
+
+
+var globalItems = '';
+
+$('#cmb_unidad_educ').change(function() {
+    var link = $('#txth_base').val() + "/academico/usuarioeducativa/asignarevaluacion";
+    var arrParams = new Object();
+
+    arrParams.aulareg = $('#cmb_aula_educ').val();
+    arrParams.unidad  = $('#cmb_unidad_educ').val();
+    arrParams.getitems = true;
+
+    if($('#cmb_unidad_educ').val() == 0 || $('#cmb_unidad_educ').val() == ''){
+        console.log("nada");
+    }else{
+        requestHttpAjax(link, arrParams, function(response) {
+            if (response.status == "OK") {
+                data = response.message;
+                setComboDataselect(data.items, "cmb_evaluacion_educ", "Todos");
+            }
+        }, true);
+    }
+});
+
+/**
+ * Asigna a los estudiantes con el check el examen elegido
+ * @author Galo Aguirre <analistadesarrollo06@uteg.edu.ec>;
+ * @param
+ * @return
+ */
+function asignarItems() {        
+    var link         = $('#txth_base').val() + "/academico/usuarioeducativa/asignaritems";
+    var arrParams    = new Object();    
+    arrParams.aula   = $('#cmb_aula_educ').val();
+    arrParams.unidad = $('#cmb_unidad_educ').val();
+    arrParams.item   = $('#cmb_evaluacion_educ option:selected').val();
+    arrParams.desc   = $('#cmb_evaluacion_educ option:selected').text();
+
+    //alert(arrParams.desc);return false;
+    var selecteds    = '';
+    var unselecteds  = '';       
+    $('#Tbg_Asignar_Evaluacion input[type=checkbox]').each(function () {
+        if (this.checked) {
+            selecteds += $(this).val() + ',';
+        }else{
+            unselecteds += $(this).val() + ',';
+        }               
+    });
+    arrParams.nobloqueado = selecteds.slice(0,-1);
+    arrParams.bloqueado   = unselecteds.slice(0,-1);
+
+    if ($('#cmb_evaluacion_educ option:selected').val() != 0) {
+        if (selecteds != '') {
+            if (!validateForm()) {
+                requestHttpAjax(link, arrParams, function (response) {
+                    showAlert(response.status, response.label, response.message);
+                    //alert("completado");
+                    console.log(response);
+                   // actualizarGridEducativa();
+                    
+                    setTimeout(function () {
+                        window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/asignarevaluacion";
+                    }, 3000);
+                    
+                }, true);
+            }//if
+        }else 
+            showAlert('NO_OK', 'error', {"wtmessage": 'Selecciona: Debe seleccionar al menos un estudiante para permitir evaluaciones.', "title": 'Error'});
+    }else 
+        showAlert('NO_OK', 'error', {"wtmessage": 'No hay Evaluación valida.', "title": 'Error'});
+}//function asignarItems

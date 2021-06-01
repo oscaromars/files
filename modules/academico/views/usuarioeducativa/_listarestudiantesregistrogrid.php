@@ -71,10 +71,23 @@ academico::registerTranslations();
                 'attribute' => 'unidadeduca',
                 'header' => Yii::t("formulario", "Unidad Educativa"),
                 'value' => 'ceuni_descripcion_unidad',
-            ],           
+            ],
+            [
+                'attribute' => 'item',
+                'header' => Yii::t("formulario", "Examen/Item"),
+                'contentOptions' => ['class' => 'text-center'],
+                'headerOptions' => ['class' => 'text-center'],
+                'format' => 'html',
+                'value' => function ($model) {
+                    if ($model["item"] == '')
+                        return '<small class="label label-danger">No Asignado</small>';               
+                    else
+                        return $model["item"];
+                },
+            ],         
             [
                 'attribute' => 'Estado',
-                'header' => Yii::t("formulario", 'Status'),
+                'header' => Yii::t("formulario", 'Financial Statement'),
                 'contentOptions' => ['class' => 'text-center'],
                 'headerOptions' => ['class' => 'text-center'],
                 'format' => 'html',
@@ -106,7 +119,7 @@ academico::registerTranslations();
                 'template' => '{select}',
                 'buttons' => [
                     'select' => function ($url, $model) {
-                        if ($model["pago"] != 'No Autorizado')
+                        if ($model["pago"] != 'No Autorizado' && $model["item"] != '' )//
                             return Html::checkbox("", false, ["value" => $model['est_id']]);
                         else 
                             return Html::checkbox("", false, ["value" => $model['est_id'], "style" => "display:none"]);

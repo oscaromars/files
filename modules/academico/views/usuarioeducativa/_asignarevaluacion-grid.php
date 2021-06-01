@@ -46,6 +46,29 @@ academico::registerTranslations();
                 'header' => Yii::t("formulario", "Unit"),
                 'value' => 'Unidad',
             ],
+            [
+                'attribute' => 'Evaluacion',
+                'header' => Yii::t("formulario", "Evaluation"),
+                'format' => 'html',
+                'value' => function ($model) {
+                    if (isset($model["evaluacion"]))
+                        return $model["evaluacion"];                   
+                    else
+                        return '<small class="label label-danger">No Asignado</small>';
+                },
+            ],
+            [
+                'class' => 'yii\grid\ActionColumn',
+                'header' => Academico::t("matriculacion", "Select"),
+                'contentOptions' => ['style' => 'text-align: center;'],
+                'headerOptions' => ['width' => '60'],
+                'template' => '{select}',
+                'buttons' => [
+                    'select' => function ($url, $model) {
+                        return Html::checkbox("", false, ["value" => $model['ceest_id']]);
+                    },
+                ],
+            ],
         ],
     ])
     ?>

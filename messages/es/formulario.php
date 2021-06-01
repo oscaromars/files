@@ -288,6 +288,7 @@ return [
     "File Uploads" => "Archivos Subidos",
     "File validation" => "Validación del Expediente",
     "Financed" => "Financiada",
+    "Financial Statement" => "Estado Financiero",
     "First Name" => "Primer Nombre",
     "First Names" => "Nombres",
     "For revision" => "Para revisión",

@@ -709,6 +709,7 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
                     -- ifnull(DATE_FORMAT(m.eppa_fecha_registro, '%Y-%m-%d'), ' ') as fecha_pago 
                     , cur.ceest_estado_bloqueo as estado_bloqueo
                     , cur.ceest_descripcion_evaluacion as item
+                    , cur.ceest_id
                     /* , cur.ceest_codigo_evaluacion */
                     FROM " . $con->dbname . ".distributivo_academico a inner join " . $con->dbname . ".profesor b
                     on b.pro_id = a.pro_id 

@@ -128,9 +128,9 @@ academico::registerTranslations();
                 'buttons' => [
                     'select' => function ($url, $model) {
                         if ($model["pago"] != 'No Autorizado' && $model["item"] != '' )//
-                            return Html::checkbox("", false, ["value" => $model['est_id']]);
+                            return Html::checkbox("", false, ["value" => $model['ceest_id']]);
                         else 
-                            return Html::checkbox("", false, ["value" => $model['est_id'], "style" => "display:none"]);
+                            return Html::checkbox("", false, ["value" => $model['ceest_id'], "style" => "display:none"]);
                     },
                 ],
             ],

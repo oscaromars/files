@@ -1071,3 +1071,26 @@ $('#cmb_aula_educ').change(function() {
         }
     }, true);
 });
+
+
+var globalItems = '';
+
+$('#cmb_unidad_educ').change(function() {
+    var link = $('#txth_base').val() + "/academico/usuarioeducativa/asignarevaluacion";
+    var arrParams = new Object();
+
+    arrParams.aulareg = $('#cmb_aula_educ').val();
+    arrParams.unidad  = $('#cmb_unidad_educ').val();
+    arrParams.getitems = true;
+
+    if($('#cmb_unidad_educ').val() == 0 || $('#cmb_unidad_educ').val() == ''){
+        console.log("nada");
+    }else{
+        requestHttpAjax(link, arrParams, function(response) {
+            if (response.status == "OK") {
+                data = response.message;
+                setComboDataselect(data.items, "cmb_evaluacion_educ", "Todos");
+            }
+        }, true);
+    }
+});

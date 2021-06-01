@@ -1605,35 +1605,6 @@ class UsuarioeducativaController extends \app\components\CController {
             $cedu_id     = $data["curso"];
             $nobloqueado = $data["nobloqueado"];
             $bloqueado   = $data["bloqueado"];
-            //\app\models\Utilities::putMessageLogFile('no bloqueo '. $nobloqueado);
-            //print_r($data);die();
-            /**********************************/
-            /*
-            $client = new \SoapClient("https://campusvirtual.uteg.edu.ec/soap/?wsdl=true", 
-                                      array("login"    => Yii::$app->params["wsLogin"], 
-                                            "password" => Yii::$app->params["wsPassword"],
-                                     "trace" => 1, "exceptions" => 0));
-
-            $client->setCredentials(Yii::$app->params["wsLogin"], 
-                                    Yii::$app->params["wsPassword"],"basic");
-            
-            
-            $method = 'obtener_prg_items';
-            $args = Array('id_grupo'     =>  '2918',
-                          'id_tipo_item' => 'EV',
-                          'id_unidad'    => '52545' 
-                         );  
-            
-              
-            $method = 'asignar_usuarios_alcance_prg_items';
-            $args = Array('asignar_usuario_item' => Array('id_usuario' => '202100034',
-                                                            'id_prg_item' => '95341')); //21405
-            
-            $result = $client->__call( $method, Array( $args ) );
-
-            return \app\models\Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), false, $result);
-            */
-            /**********************************/
 
             $client = new \SoapClient("https://campusvirtual.uteg.edu.ec/soap/?wsdl=true", 
                                                   array("login" => Yii::$app->params["wsLogin"], 
@@ -2220,11 +2191,11 @@ class UsuarioeducativaController extends \app\components\CController {
         // $per_id = @Yii::$app->session->get("PB_perid");
         // $emp_id = @Yii::$app->session->get("PB_idempresa");
 
-        $mod_unidad = new UnidadAcademica();
-        $mod_modalidad = new Modalidad();
-        $mod_periodo = new PeriodoAcademicoMetIngreso();
-        $mod_educativa = new CursoEducativa();
-        $model_unideduca = new CursoEducativaUnidad();
+        $mod_unidad        = new UnidadAcademica();
+        $mod_modalidad     = new Modalidad();
+        $mod_periodo       = new PeriodoAcademicoMetIngreso();
+        $mod_educativa     = new CursoEducativa();
+        $model_unideduca   = new CursoEducativaUnidad();
         $mod_cursoeduc_est = new CursoEducativaEstudiante();
 
         $data = Yii::$app->request->get();
@@ -2258,19 +2229,62 @@ class UsuarioeducativaController extends \app\components\CController {
                 $message = array("unidadreg" => $unidadreg);
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
             }
+            if (isset($data["getitems"])) {
+                $mod_aula = CursoEducativa::findIdentity($data["aulareg"]);
+                $aula = $mod_aula->cedu_asi_id;
+
+                $mod_unidades = CursoEducativaUnidad::findIdentity($data["unidad"]);
+                $unidad = $mod_unidades->ceuni_codigo_unidad;
+
+                $client = new \SoapClient("https://campusvirtual.uteg.edu.ec/soap/?wsdl=true", 
+                                           array("login" => Yii::$app->params["wsLogin"], 
+                                                  "password"    => Yii::$app->params["wsPassword"],
+                                                  "trace"       => 1, "exceptions" => 0));
+
+                $client->setCredentials(Yii::$app->params["wsLogin"], Yii::$app->params["wsPassword"],"basic");
+
+                $method = 'obtener_prg_items';
+                $args = Array('id_grupo'     => $aula,
+                              'id_tipo_item' => 'EV',
+                              'id_unidad'    => $unidad
+                );  
+                $result = $client->__call( $method, Array( $args ) );
+
+                $prg_item = $result->prg_item;
+                //Entra por if si solo tiene un item 
+                //y entra por else en caso de tener mas de un item
+                $arrValores = array();
+
+                if(isset($prg_item->id_prg_item)){
+                    $arrtemp["id"]   = $prg_item->id_prg_item;
+                    $arrtemp["name"] = $prg_item->nombre;
+
+                    $arrValores[] = $arrtemp;
+                }else{
+                    foreach ($prg_item as $key => $value) {
+                        $arrtemp["id"]   = $value->id_prg_item;
+                        $arrtemp["name"] = $value->nombre;
+
+                        $arrValores[] = $arrtemp;
+                    }//foreach
+                }//else 
+
+                $message = array("items" => $arrValores);
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+            }
         }
 
-        $arr_unidad = $mod_unidad->consultarUnidadAcademicasEmpresa(1);
-        $arr_modalidad = $mod_modalidad->consultarModalidad($arr_unidad[0]["id"], 1);
-        $arr_periodo = $mod_periodo->consultarPeriodoAcademicotodos();
-        $arr_aula = $mod_educativa->consultarCursosxpacaid(0);
+        $arr_unidad     = $mod_unidad->consultarUnidadAcademicasEmpresa(1);
+        $arr_modalidad  = $mod_modalidad->consultarModalidad($arr_unidad[0]["id"], 1);
+        $arr_periodo    = $mod_periodo->consultarPeriodoAcademicotodos();
+        $arr_aula       = $mod_educativa->consultarCursosxpacaid(0);
         $arr_unidadeduc = $model_unideduca->consultarUnidadesxcursoid(0);
 
         return $this->render('asignarevaluacion', [  
             'model' => $model,
-            'arr_modalidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Grid")]], $arr_modalidad), "id", "name"),
-            "arr_periodo" => ArrayHelper::map($arr_periodo, "id", "name"),
-            'arr_aula' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $arr_aula), "id", "name"),
+            'arr_modalidad'  => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Grid")]], $arr_modalidad), "id", "name"),
+            "arr_periodo"    => ArrayHelper::map($arr_periodo, "id", "name"),
+            'arr_aula'       => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $arr_aula), "id", "name"),
             'arr_unidadeduc' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $arr_unidadeduc), "id", "name"),
             'arr_evaluacion' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], []), "id", "name"),
         ]);  

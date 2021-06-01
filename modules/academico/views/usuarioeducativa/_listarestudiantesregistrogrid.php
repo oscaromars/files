@@ -76,7 +76,7 @@ academico::registerTranslations();
                         if (strlen($model['ceuni_descripcion_unidad']) > 10) {
                             $texto = '...';
                         }
-                        return Html::a('<span>' . substr($model['ceuni_descripcion_unidad'], 0, 7) . $texto . '</span>', "javascript:", ["data-toggle" => "tooltip", "title" => $model['asignatura']]);
+                        return Html::a('<span>' . substr($model['ceuni_descripcion_unidad'], 0, 7) . $texto . '</span>', "javascript:", ["data-toggle" => "tooltip", "title" => $model['ceuni_descripcion_unidad']]);
                     },
                 ],
             ],

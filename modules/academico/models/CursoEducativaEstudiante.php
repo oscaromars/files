@@ -491,36 +491,44 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
      * @param
      * @return
      */
-    public function modificarEstudiantecurso($ceest_id, $cedu_id, $est_id, $cees_usuario_modifica) {
+    public function modificarEstudiantecurso($ceest_id, $ceest_codigo_evaluacion, $ceest_descripcion_evaluacion, $ceest_usuario_modifica) {
         $fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
         $con = \Yii::$app->db_academico;
         $estado = 1; 
+
         if ($trans !== null) {
             $trans = null; // si existe la transacción entonces no se crea una
         } else {
             $trans = $con->beginTransaction(); // si no existe la transacción entonces se crea una
         }
+
         try {
             $comando = $con->createCommand
                     ("UPDATE " . $con->dbname . ".curso_educativa_estudiante               
-                      SET cedu_id = :cedu_id,                        
-                          est_id = :est_id,
-                          cees_usuario_modifica = :cees_usuario_modifica,
-                          cees_fecha_modificacion = :cees_fecha_modificacion                          
+                      SET
+                          ceest_codigo_evaluacion = :ceest_codigo_evaluacion,
+                          ceest_descripcion_evaluacion = :ceest_descripcion_evaluacion,
+                          ceest_usuario_modifica = :ceest_usuario_modifica,
+                          ceest_fecha_modificacion = :ceest_fecha_modificacion                          
                       WHERE 
                       ceest_id = :ceest_id AND
                       ceest_estado = :estado AND
                       ceest_estado_logico = :estado");
-            $comando->bindParam(":ceest_id", $ceest_id, \PDO::PARAM_INT);  
-            $comando->bindParam(":cedu_id", $cedu_id, \PDO::PARAM_INT); 
-            $comando->bindParam(":est_id", $est_id, \PDO::PARAM_INT);              
-            $comando->bindParam(":cees_usuario_modifica", $cees_usuario_modifica, \PDO::PARAM_INT);
-            $comando->bindParam(":cees_fecha_modificacion", $fecha_transaccion, \PDO::PARAM_STR);
+
+            $comando->bindParam(":ceest_id", $ceest_id, \PDO::PARAM_INT);
+            $comando->bindParam(":ceest_codigo_evaluacion", $ceest_codigo_evaluacion, \PDO::PARAM_STR);
+            $comando->bindParam(":ceest_descripcion_evaluacion", $ceest_descripcion_evaluacion, \PDO::PARAM_STR);
+            $comando->bindParam(":ceest_usuario_modifica", $ceest_usuario_modifica, \PDO::PARAM_INT);
+            $comando->bindParam(":ceest_fecha_modificacion", $fecha_transaccion, \PDO::PARAM_STR);
             $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+
             $response = $comando->execute();
+
             if ($trans !== null)
                 $trans->commit();
+
             return $response;
+
         } catch (Exception $ex) {
             if ($trans !== null)
                 $trans->rollback();
@@ -910,6 +918,7 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
         }
 
         $sql = "SELECT DISTINCT
+                ceest.ceest_id,
                 paca.paca_id, 
                 est.est_id, per.per_id, 
                 modalidad.mod_id,
@@ -919,7 +928,8 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
                 CONCAT(per.per_pri_apellido, ' ', per.per_pri_nombre) AS Nombre,
                 modalidad.mod_descripcion AS Modalidad,
                 cedu.cedu_asi_nombre AS Aula,
-                ceuni.ceuni_descripcion_unidad AS Unidad
+                ceuni.ceuni_descripcion_unidad AS Unidad,
+                ceest.ceest_descripcion_evaluacion AS evaluacion
                 FROM " . $con_academico->dbname . ".estudiante AS est
                 INNER JOIN " . $con_asgard->dbname . ".persona AS per ON per.per_id = est.per_id
                 INNER JOIN " . $con_academico->dbname . ".curso_educativa_estudiante AS ceest ON ceest.est_id = est.est_id
@@ -977,7 +987,7 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
         }
 
         $dataProvider = new ArrayDataProvider([
-            'key' => 'est_id',
+            'key' => 'ceest_id',
             'allModels' => $resultData,
             'pagination' => [
                 'pageSize' => Yii::$app->params["pageSize"],

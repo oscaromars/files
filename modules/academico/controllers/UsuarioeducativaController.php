@@ -2230,12 +2230,15 @@ class UsuarioeducativaController extends \app\components\CController {
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
             }
             if (isset($data["getitems"])) {
+                //Obtenemos el codigo del aula mediante su ID
                 $mod_aula = CursoEducativa::findIdentity($data["aulareg"]);
                 $aula = $mod_aula->cedu_asi_id;
 
+                //Obtenemos el codigo de la unidad mediante su ID
                 $mod_unidades = CursoEducativaUnidad::findIdentity($data["unidad"]);
                 $unidad = $mod_unidades->ceuni_codigo_unidad;
 
+                //Se configura el llamado al web Service
                 $client = new \SoapClient("https://campusvirtual.uteg.edu.ec/soap/?wsdl=true", 
                                            array("login" => Yii::$app->params["wsLogin"], 
                                                   "password"    => Yii::$app->params["wsPassword"],
@@ -2243,6 +2246,7 @@ class UsuarioeducativaController extends \app\components\CController {
 
                 $client->setCredentials(Yii::$app->params["wsLogin"], Yii::$app->params["wsPassword"],"basic");
 
+                //Configuracion del Metodo que nos devolvera el o los items
                 $method = 'obtener_prg_items';
                 $args = Array('id_grupo'     => $aula,
                               'id_tipo_item' => 'EV',
@@ -2250,25 +2254,27 @@ class UsuarioeducativaController extends \app\components\CController {
                 );  
                 $result = $client->__call( $method, Array( $args ) );
 
+                //Almacenamos el resultado
                 $prg_item = $result->prg_item;
+
+
                 //Entra por if si solo tiene un item 
                 //y entra por else en caso de tener mas de un item
                 $arrValores = array();
-
                 if(isset($prg_item->id_prg_item)){
                     $arrtemp["id"]   = $prg_item->id_prg_item;
                     $arrtemp["name"] = $prg_item->nombre;
-
-                    $arrValores[] = $arrtemp;
+                    $arrValores[]    = $arrtemp;
                 }else{
+                    //Se recorre cada uno de los items recibidos
                     foreach ($prg_item as $key => $value) {
                         $arrtemp["id"]   = $value->id_prg_item;
                         $arrtemp["name"] = $value->nombre;
-
-                        $arrValores[] = $arrtemp;
+                        $arrValores[]    = $arrtemp;
                     }//foreach
                 }//else 
 
+                //Enviamos los items a la vista
                 $message = array("items" => $arrValores);
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
             }
@@ -2288,6 +2294,63 @@ class UsuarioeducativaController extends \app\components\CController {
             'arr_unidadeduc' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $arr_unidadeduc), "id", "name"),
             'arr_evaluacion' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], []), "id", "name"),
         ]);  
+    }//function actionAsignarevaluacion
 
-    }
+    public function actionAsignaritems() {
+        $usu_id = @Yii::$app->session->get("PB_iduser");
+        if (Yii::$app->request->isAjax) {
+            $data        = Yii::$app->request->post();  
+            $cedu_id     = $data["curso"];
+            $nobloqueado = $data["nobloqueado"];
+            $bloqueado   = $data["bloqueado"];
+
+            $con = \Yii::$app->db_academico;
+            $transaction = $con->beginTransaction();
+
+            $noactualizados = array();
+            try {
+                if (!empty($nobloqueado)) {
+                    $nobloqueado = explode(",", $nobloqueado); //permitidos
+                    foreach ($nobloqueado as $ceest_id) {  // empieza foreach para guardar los asignados
+                        
+                        //Valida si esta asignado al curso virtual
+                        $mod_asignar = CursoEducativaEstudiante::findIdentity($ceest_id);
+                        $mod_asignar->ceest_codigo_evaluacion      = $data["item"];
+                        $mod_asignar->ceest_descripcion_evaluacion = $data["desc"];
+                        $mod_asignar->save();
+                        $exito = 1;
+                    } // cierra foreach 
+                }
+
+                if ($exito) {
+                    $transaction->commit();
+                    $message = array(
+                        "wtmessage" => Yii::t("notificaciones", "La información ha sido grabada con exito."),
+                        "title" => Yii::t('jslang', 'Success'),
+                        "noactualizados" => $noactualizados,
+                        "obtener_prg_items" => $obtener_prg_items,
+                    );
+                    return \app\models\Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), false, $message);
+                } else {
+                    $transaction->rollback();
+                    if (empty($message)) {
+                        $message = array
+                            (
+                            "wtmessage" => Yii::t("notificaciones", "Error al grabar. " . $mensaje), "title" =>
+                            Yii::t('jslang', 'Success'),
+                        );
+                    }
+                    return \app\models\Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Sucess"), false, $message);
+                }
+            } catch (Exception $ex) {
+                $transaction->rollback();
+                $message = array(
+                    "wtmessage" => Yii::t("notificaciones", "Error al grabar." . $mensaje),
+                    "title" => Yii::t('jslang', 'Success'),
+                );
+                return \app\models\Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Sucess"), false, $message);
+            }
+            return;
+        }
+    }//function actionAsignaritems
 }  

@@ -65,7 +65,7 @@ academico::registerTranslations();
                 'template' => '{select}',
                 'buttons' => [
                     'select' => function ($url, $model) {
-                        return Html::checkbox("", false, ["value" => $model['est_id']]);
+                        return Html::checkbox("", false, ["value" => $model['ceest_id']]);
                     },
                 ],
             ],

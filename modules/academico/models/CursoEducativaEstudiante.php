@@ -441,20 +441,23 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
         try 
         {
             foreach ($mod_curso_unidad as $key => $value) {
+                $param_sql_cp = $param_sql;
+                $bsol_sql_cp = $bsol_sql;
+
                 $ceuni_id = $value['ceuni_id'];
 
                 if (isset($ceuni_id)) {
-                    $param_sql .= ", ceuni_id";
-                    $bsol_sql .= ", :ceuni_id";
+                    $param_sql_cp .= ", ceuni_id";
+                    $bsol_sql_cp .= ", :ceuni_id";
                 }
 
-                $param_sql .= ", ceest_codigo_evaluacion";
-                $bsol_sql .= ", NULL";
+                $param_sql_cp .= ", ceest_codigo_evaluacion";
+                $bsol_sql_cp .= ", NULL";
 
-                $param_sql .= ", ceest_descripcion_evaluacion";
-                $bsol_sql .= ", NULL";
+                $param_sql_cp .= ", ceest_descripcion_evaluacion";
+                $bsol_sql_cp .= ", NULL";
 
-                $sql = "INSERT INTO " . $con->dbname . ".curso_educativa_estudiante ($param_sql) VALUES($bsol_sql)";
+                $sql = "INSERT INTO " . $con->dbname . ".curso_educativa_estudiante ($param_sql_cp) VALUES($bsol_sql_cp)";
                 $comando = $con->createCommand($sql);            
 
                 // $comando->bindParam(':ceest_estado_bloqueo', $ceest_estado_bloqueo, \PDO::PARAM_STR); 

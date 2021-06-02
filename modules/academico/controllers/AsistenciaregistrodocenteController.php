@@ -363,15 +363,21 @@ class AsistenciaregistrodocenteController extends \app\components\CController {
                             $noalumno .= "El estudiante " . $nombre . " (excede el 100% en la asistencia en el campo 'U2' ), "; 
                             continue;
                         }
-
+                        // VALIDAR SI SE GRABA U1 O U2
                         $mod_cab_asi = new CabeceraAsistencia();
                         $has_cabecera_asistencia = CabeceraAsistencia::find()->where(['paca_id' => $paca_id, 'est_id' => $est_id, 'pro_id' => $pro_id, 'asi_id' => $asi_id,
                             'aeun_id' =>$aeun_id])->asArray()->all();
 
                         if(empty($has_cabecera_asistencia)){
                             $casi_id = $mod_cab_asi->insertCabeceraAsistencia($paca_id, $est_id, $pro_id, $asi_id, $aeun_id, $casi_cant_total, $casi_porc_total);
+
+                            if ($asi_u1 != NULL) { 
                             $idDetParcial1 = $mod_cab_asi->insertDetalleAsistencia($casi_id, $ecal_id, $dasi_tipo_v1, $asi_u1);
+                            }
+                             
+                             if ($asi_u2 != NULL) { 
                             $idDetParcial2 = $mod_cab_asi->insertDetalleAsistencia($casi_id, $ecal_id, $dasi_tipo_v2, $asi_u2);  
+                            }
 
                             if ($idDetParcial1 >0 && $idDetParcial2 > 0) {
                                 $exito = 1;
@@ -384,8 +390,14 @@ class AsistenciaregistrodocenteController extends \app\components\CController {
                             $respuesta_detalle = $detalle_model->selectDetalleAsistencia($casi_id);
                             for ($det = 0; $det < sizeof($respuesta_detalle); $det++) { 
                                 $dasi_id = $respuesta_detalle[0]["dasi_id"];
+
+                                if ($asi_u1 != NULL) { 
                                 $mod_cab_asi->updateDetalleAsistencia($dasi_id, $casi_id, $ecal_id, $asi_u1);
+                                 }
+                                
+                                if ($asi_u2 != NULL) { 
                                 $mod_cab_asi->updateDetalleAsistencia($dasi_id, $casi_id, $ecal_id, $asi_u2);
+                                 }
                                 
                                 if ($mod_cab_asi >0 && $mod_cab_asi > 0) {
                                     $exito = 1;

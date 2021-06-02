@@ -308,6 +308,64 @@ class MallaAcademica extends \yii\db\ActiveRecord
         $resultData = $comando->queryAll();
         return $resultData;
     }
+
+    public function consultarasignaturaxmallaaut($per_id) {
+        $con = \Yii::$app->db_academico;
+        $estado = 1;
+        $sql = "SELECT mad.asi_id as 'id', concat(mad.made_codigo_asignatura, ' - ', asi.asi_nombre) as 'name'
+                        FROM " . $con->dbname . ".malla_academica_detalle mad
+                        INNER JOIN " . $con->dbname . ".asignatura asi ON asi.asi_id = mad.asi_id
+                        WHERE   mad.maca_id = :maca_id AND
+                                mad.made_estado = :estado AND
+                                mad.made_estado_logico = :estado AND
+                                asi.asi_estado = :estado AND
+                                asi.asi_estado_logico = :estado and 
+                                mad.made_codigo_asignatura not in 
+                (SELECT mad.made_codigo_asignatura
+                        FROM " . $con->dbname . ".malla_academica_detalle mad
+                        INNER JOIN " . $con->dbname . ".asignatura asi ON asi.asi_id = mad.asi_id
+                        INNER JOIN " . $con->dbname . ".planificacion_estudiante ples on mad.made_codigo_asignatura in (ples.pes_mat_b1_h1_cod,ples.pes_mat_b1_h2_cod,ples.pes_mat_b1_h3_cod,ples.pes_mat_b1_h4_cod,ples.pes_mat_b1_h5_cod,ples.pes_mat_b1_h6_cod,
+                                                                ples.pes_mat_b2_h1_cod,ples.pes_mat_b2_h2_cod,ples.pes_mat_b2_h3_cod,ples.pes_mat_b2_h4_cod,ples.pes_mat_b2_h5_cod,ples.pes_mat_b2_h6_cod)
+                        INNER JOIN " . $con->dbname . ".planificacion pla on pla.pla_id = ples.pla_id                     
+                        WHERE   mad.maca_id = :maca_id AND
+                                mad.made_estado = :estado AND
+                                mad.made_estado_logico = :estado AND
+                                asi.asi_estado = :estado AND
+                                asi.asi_estado_logico = :estado and
+                                pla.pla_estado_logico = :estado and
+                                pla.pla_estado = :estado and
+                                mad.made_codigo_asignatura in (ples.pes_mat_b1_h1_cod,ples.pes_mat_b1_h2_cod,ples.pes_mat_b1_h3_cod,ples.pes_mat_b1_h4_cod,ples.pes_mat_b1_h5_cod,ples.pes_mat_b1_h6_cod,
+                                                                ples.pes_mat_b2_h1_cod,ples.pes_mat_b2_h2_cod,ples.pes_mat_b2_h3_cod,ples.pes_mat_b2_h4_cod,ples.pes_mat_b2_h5_cod,ples.pes_mat_b2_h6_cod)
+)
+                    ORDER BY name";
+        $sql2="SELECT distinct(maes.asi_id) as 'id',
+        concat(made.made_codigo_asignatura,' - ',a.asi_nombre) as 'name',
+        made.made_asi_requisito as 'materia previa',
+        (select b.asi_nombre from " . $con->dbname . ".asignatura b where b.asi_id = maes.asi_id) as 'requisito'
+        from " . $con->dbname . ".malla_academico_estudiante maes
+        inner join " . $con->dbname . ".promedio_malla_academico pmac on pmac.maes_id = maes.maes_id
+        inner join " . $con->dbname . ".asignatura a on a.asi_id = maes.asi_id
+        inner join " . $con->dbname . ".malla_academica_detalle made on made.made_id = maes.made_id,
+        " . $con->dbname . ".planificacion_estudiante ples  
+        where maes.per_id = $per_id and pmac.enac_id not in (1,4) and
+        made.made_codigo_asignatura not in
+        (select mad.made_codigo_asignatura from " . $con->dbname . ".planificacion_estudiante ple,
+        " . $con->dbname . ".malla_academica_detalle mad
+        where mad.made_codigo_asignatura in (
+        ple.pes_mat_b1_h1_cod,ple.pes_mat_b1_h2_cod,ple.pes_mat_b1_h3_cod,ple.pes_mat_b1_h4_cod,ple.pes_mat_b1_h5_cod,ple.pes_mat_b1_h6_cod,
+        ple.pes_mat_b2_h1_cod,ple.pes_mat_b2_h2_cod,ple.pes_mat_b2_h3_cod,ple.pes_mat_b2_h4_cod,ple.pes_mat_b2_h5_cod,ple.pes_mat_b2_h6_cod)
+        and per_id = $per_id)";    
+        $comando = $con->createCommand($sql2);
+        if($per_id == null){
+            $resultData = [];
+        }else{
+            $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+            //$comando->bindParam(":maca_id", $maca_id, \PDO::PARAM_INT);
+            $resultData = $comando->queryAll();
+        }
+        return $resultData;
+    }
+
     /**
      * Function Consultar malla segun la carrera del estudiante autenticado.
      * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>;
@@ -317,7 +375,7 @@ class MallaAcademica extends \yii\db\ActiveRecord
     public function consultarMallaEstudiante($per_id) {
         $con = \Yii::$app->db_academico;
         $estado = 1;
-        $sql = "SELECT 	
+        $sql = "SELECT  
                     mac.maca_id as idmalla,
                     mac.maca_codigo as codmalla        
                 FROM " . $con->dbname . ".estudiante est
@@ -334,10 +392,8 @@ class MallaAcademica extends \yii\db\ActiveRecord
         $resultData = $comando->queryOne();
         return $resultData;
     }
-
-     
     
-      
+    
     function consultarAsignaturas($rows,$gest) {
     $con = \Yii::$app->db_academico;
     $activo="A";
@@ -484,9 +540,9 @@ inner join db_academico.modalidad_estudio_unidad c on c.meun_id = b.meun_id
                   //  }
                   
                    
-                    if ($statusasi["maes_id"]){ 
+                    // if ($statusasi["maes_id"]){ 
                     
-                    if ($statusasi["enac_id"]==3 or $statusasi["enac_id"]==2 or $statusasi["enac_id"]==4 or $statusasi["enac_id"]==1 or $statusasi["enac_id"]==Null){ 
+                       if ($statusasi["enac_id"]==3 /*or $statusasi["enac_id"]==2 or $statusasi["enac_id"]==4 or $statusasi["enac_id"]==1 or $statusasi["enac_id"]==Null*/){ 
                       $sstatusasi= $statusasi["enac_id"];  
                       
                       
@@ -494,13 +550,13 @@ inner join db_academico.modalidad_estudio_unidad c on c.meun_id = b.meun_id
                       $sstatuspre= $statuspre["enac_id"]; 
                       
                       
-                  if ($statuspre["enac_id"]==1 or $statuspre["enac_id"]==2 or $statuspre["enac_id"]==3 or $statuspre["enac_id"]==4 or $statuspre["enac_id"]==Null ){ 
+                        if ($statuspre["enac_id"]==1 /* or $statuspre["enac_id"]==2 or $statuspre["enac_id"]==3 or $statuspre["enac_id"]==4 or $statuspre["enac_id"]==Null*/){ 
                         
                             \app\models\Utilities::putMessageLogFile('CON PR ');
-                        \app\models\Utilities::putMessageLogFile('pasa statusasi '.$sstatusasi);
-                         \app\models\Utilities::putMessageLogFile('automa maesspre '.$statusasi["maes_id"]);
-                          \app\models\Utilities::putMessageLogFile('automa maesspre '.$rows_in[$i]["made_codigo_asignatura"]);
-                           \app\models\Utilities::putMessageLogFile('automa maesspre '.$rows_in[$i]["asi_nombre"]);
+                        \app\models\Utilities::putMessageLogFile('TIENE STATUS '.$sstatusasi);
+                         \app\models\Utilities::putMessageLogFile('TIENE MAES '.$statusasi["maes_id"]);
+                          \app\models\Utilities::putMessageLogFile('CODIGO '.$rows_in[$i]["made_codigo_asignatura"]);
+                           \app\models\Utilities::putMessageLogFile('NOMBRE '.$rows_in[$i]["asi_nombre"]);
                                \app\models\Utilities::putMessageLogFile('======================================================= ');
                         
                           if ($asi1 == Null)  { 
@@ -522,7 +578,14 @@ inner join db_academico.modalidad_estudio_unidad c on c.meun_id = b.meun_id
                 elseif ($asi6 == Null)  { 
                     $asi6 = $rows_in[$i]["made_codigo_asignatura"];  
                      $noasi6 = $rows_in[$i]["asi_nombre"];     } 
-                        
+                
+                elseif ($asi7 == Null)  { 
+                    $asi7 = $rows_in[$i]["made_codigo_asignatura"]; 
+                     $noasi7 = $rows_in[$i]["asi_nombre"];     }  
+                elseif ($asi8 == Null)  { 
+                    $asi8 = $rows_in[$i]["made_codigo_asignatura"];  
+                     $noasi8 = $rows_in[$i]["asi_nombre"];     }    
+                     
                         }
                          
                        
@@ -531,10 +594,10 @@ inner join db_academico.modalidad_estudio_unidad c on c.meun_id = b.meun_id
                          
                          
                           \app\models\Utilities::putMessageLogFile('SIN PR ');
-                        \app\models\Utilities::putMessageLogFile('pasa statusasi '.$sstatusasi);
-                         \app\models\Utilities::putMessageLogFile('automa maesspre '.$statusasi["maes_id"]);
-                          \app\models\Utilities::putMessageLogFile('automa maesspre '.$rows_in[$i]["made_codigo_asignatura"]);
-                           \app\models\Utilities::putMessageLogFile('automa maesspre '.$rows_in[$i]["asi_nombre"]);
+                        \app\models\Utilities::putMessageLogFile('TIENE STATUS '.$sstatusasi);
+                         \app\models\Utilities::putMessageLogFile('TIENE MAES '.$statusasi["maes_id"]);
+                          \app\models\Utilities::putMessageLogFile('CODIGO '.$rows_in[$i]["made_codigo_asignatura"]);
+                           \app\models\Utilities::putMessageLogFile('NOMBRE '.$rows_in[$i]["asi_nombre"]);
                           \app\models\Utilities::putMessageLogFile('======================================================= ');
                         
                         
@@ -557,12 +620,19 @@ inner join db_academico.modalidad_estudio_unidad c on c.meun_id = b.meun_id
                 elseif ($asi6 == Null)  { 
                     $asi6 = $rows_in[$i]["made_codigo_asignatura"];  
                      $noasi6 = $rows_in[$i]["asi_nombre"];     } 
+                elseif ($asi7 == Null)  { 
+                    $asi7 = $rows_in[$i]["made_codigo_asignatura"];  
+                     $noasi7 = $rows_in[$i]["asi_nombre"];     } 
+                elseif ($asi8 == Null)  { 
+                    $asi8 = $rows_in[$i]["made_codigo_asignatura"];  
+                    $noasi8 = $rows_in[$i]["asi_nombre"];     } 
+                               
                     }
                     
                     
            
                        
-                         }        }  
+                         }       // }  
                          
                          
                    
@@ -577,7 +647,7 @@ inner join db_academico.modalidad_estudio_unidad c on c.meun_id = b.meun_id
                      
                         }  
        
-                     $sql = "select pla_id from db_academico.planificacion 
+                     $sql = "select pla_id from db_academico.planificacionx 
                       where mod_id = " . $mod_id . " 
                       and pla_estado = 1 and pla_estado_logico = 1 and pla_periodo_academico = :periodo";  
                 
@@ -591,21 +661,23 @@ inner join db_academico.modalidad_estudio_unidad c on c.meun_id = b.meun_id
                                if ($rows_pla["pla_id"] ==0)  {
                                  
                 
-                $sql = "INSERT INTO db_academico.planificacion (mod_id, per_id, pla_fecha_inicio, pla_fecha_fin, pla_periodo_academico, pla_estado, pla_estado_logico)
+                $sql = "INSERT INTO db_academico.planificacionx (mod_id, per_id, pla_fecha_inicio, pla_fecha_fin, pla_periodo_academico, pla_estado, pla_estado_logico)
                         VALUES (". $rows["mod_id"] .", 1, '" . $fecha_inicio . "', '" . $fecha_fin . "', '" . $estacion . "', '" . $estado . "', '" . $estado . "');";
                  $comando = $con->createCommand($sql); 
                      $rows_pla = $comando->execute();
               
               
                   } 
-                 $sql = "select pla_id from db_academico.planificacion where mod_id = " . $mod_id . " and pla_estado = 1 and pla_estado_logico = 1 and pla_periodo_academico = :periodo ";
+                 $sql = "select pla_id from db_academico.planificacionx where mod_id = " . $mod_id . " and pla_estado = 1 and pla_estado_logico = 1 and pla_periodo_academico = :periodo ";
                   $comando = $con->createCommand($sql);
                    $comando->bindParam(":periodo", $estacion, \PDO::PARAM_STR);
                    $rows_pla = $comando->queryOne();
            
          
                      
-                      $sql = "INSERT INTO db_academico.planificacion_estudiante
+                          if ($asi1 != Null)  { 
+                      /*
+                      $sql = "INSERT INTO db_academico.planificacion_estudiantex
                     (pla_id, per_id, pes_jornada, pes_carrera, pes_dni, pes_nombres,pes_mat_b1_h1_cod, pes_mat_b1_h2_cod, pes_mat_b1_h3_cod, pes_mat_b1_h4_cod, pes_mat_b1_h5_cod,
                      pes_mat_b1_h6_cod, pes_mat_b1_h1_nombre, pes_mat_b1_h2_nombre, pes_mat_b1_h3_nombre, pes_mat_b1_h4_nombre, pes_mat_b1_h5_nombre,
                      pes_mat_b1_h6_nombre, pes_estado, pes_estado_logico)
@@ -613,7 +685,19 @@ inner join db_academico.modalidad_estudio_unidad c on c.meun_id = b.meun_id
                      $comando = $con->createCommand($sql);
                      $rows_pes = $comando->execute();
                      
+       
                      
+                        */
+                    
+                     $sql = "INSERT INTO db_academico.planificacion_estudiantex
+                    (pla_id, per_id, pes_jornada, pes_carrera, pes_dni, pes_nombres,pes_mat_b1_h1_cod, pes_mat_b1_h2_cod, pes_mat_b1_h3_cod, pes_mat_b1_h4_cod, pes_mat_b2_h1_cod,
+                     pes_mat_b2_h2_cod,pes_mat_b2_h3_cod,pes_mat_b2_h4_cod, pes_mat_b1_h1_nombre, pes_mat_b1_h2_nombre, pes_mat_b1_h3_nombre, pes_mat_b1_h4_nombre, pes_mat_b2_h1_nombre,  pes_mat_b2_h2_nombre, pes_mat_b2_h3_nombre, pes_mat_b2_h4_nombre, pes_estado, pes_estado_logico)
+                    values (" . $rows_pla["pla_id"] ."," . $rows["per_id"] . ", '" . $rows["uaca_id"] . "', '" . $rows["eaca_nombre"] . "', '" . $rows["per_cedula"] . "', '" . $rows["estudiante"] . "', '" . $asi1 . "', '" . $asi2 . "', '" . $asi3 . "', '" . $asi4 . "', '" . $asi5 . "', '" . $asi6 . "', '" . $asi7 . "', '" . $asi8 . "', '" . $noasi1 . "', '" . $noasi2 . "', '" . $noasi3 . "', '" . $noasi4 . "', '" . $noasi5 . "', '" . $noasi6 . "', '" . $noasi7 . "', '" . $noasi8 . "', '" . $estado . "', '" . $estado ."')"; 
+                     $comando = $con->createCommand($sql);
+                     $rows_pes = $comando->execute();
+                  
+                     
+                      }
                       
                 
                   }

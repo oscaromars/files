@@ -1764,6 +1764,8 @@ class UsuarioeducativaController extends \app\components\CController {
         $ids = $mod_cursoeduc->consultarCursoEducativaDistributivoPeriodoActual();
         $tam = count($ids);
 
+        // \app\models\Utilities::putMessageLogFile($tam);
+
         try{
             foreach ($ids as $key => $value) {
                 $est_id = $value['est_id'];
@@ -1772,13 +1774,18 @@ class UsuarioeducativaController extends \app\components\CController {
 
                 $hasRegistro = CursoEducativaEstudiante::find()->where(['est_id' => $est_id, 'cedu_id' => $cedu_id])->asArray()->one();
                 // \app\models\Utilities::putMessageLogFile($hasRegistro);
+                \app\models\Utilities::putMessageLogFile($hasRegistro);
                 if(isset($hasRegistro)){
                     $tam -= 1;
                 }
                 else{
                     $insertID = $mod_cursoeduc->insertarEstudianteCursoEducativaUnidad($cedu_id, $est_id, $usu_id, $tam);
+                    \app\models\Utilities::putMessageLogFile($insertID);
                 }
             }
+
+            // \app\models\Utilities::putMessageLogFile($insertID);
+            // \app\models\Utilities::putMessageLogFile($tam);
 
             if($insertID){
                 $message = array(

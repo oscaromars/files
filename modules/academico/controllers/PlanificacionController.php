@@ -197,7 +197,7 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
         header("Content-Type: $content_type");
         header('Content-Disposition: attachment;filename=' . $nombarch);
         header('Cache-Control: max-age=0');
-        $colPosition = array('C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K','L',);
+        $colPosition = array('C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K','L','M','N',);
         $arrHeader = array(
              Yii::t('formulario', 'DNI 1'),
             Yii::t('formulario', 'Student'),
@@ -209,6 +209,8 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
             Yii::t('formulario', 'Asignatura 4'),
             Yii::t('formulario', 'Asignatura 5'),
             Yii::t('formulario', 'Asignatura 6'),
+            Yii::t('formulario', 'Asignatura 7'),
+            Yii::t('formulario', 'Asignatura 8'),
         );
         $mod_periodo = new PlanificacionEstudiante();
         $data = Yii::$app->request->get();

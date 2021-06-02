@@ -1774,13 +1774,13 @@ class UsuarioeducativaController extends \app\components\CController {
 
                 $hasRegistro = CursoEducativaEstudiante::find()->where(['est_id' => $est_id, 'cedu_id' => $cedu_id])->asArray()->one();
                 // \app\models\Utilities::putMessageLogFile($hasRegistro);
-                \app\models\Utilities::putMessageLogFile($hasRegistro);
+                // \app\models\Utilities::putMessageLogFile($hasRegistro);
                 if(isset($hasRegistro)){
                     $tam -= 1;
                 }
                 else{
                     $insertID = $mod_cursoeduc->insertarEstudianteCursoEducativaUnidad($cedu_id, $est_id, $usu_id, $tam);
-                    \app\models\Utilities::putMessageLogFile($insertID);
+                    // \app\models\Utilities::putMessageLogFile($insertID);
                 }
             }
 

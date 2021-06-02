@@ -319,7 +319,8 @@ class AsistenciaregistrodocenteController extends \app\components\CController {
                             continue;
                         }
 
-                        // Tomar las asistencias dependiendo del parcial elegido
+                        // Tomar las asistencias dependiendo del parcial elegido  UPDATE-----
+                        /*
                         if($ecal_id == 1){ // 1er Parcial
                             $asi_u1 = $val[5];
                             $asi_u2 = $val[6];
@@ -335,6 +336,24 @@ class AsistenciaregistrodocenteController extends \app\components\CController {
                             $dasi_tipo_v2 = "u4";
                             $casi_cant_total = $asi_u1 + $asi_u2;
                             $casi_porc_total = ($asi_u1 + $asi_u2) / 2;
+                        }
+                         */   
+
+                        if($ecal_id == 1){ // 1er Parcial
+                            $asi_u1 = $val[5];
+                          //  $asi_u2 = $val[6];
+                            $dasi_tipo_v1 = "u1";
+                           // $dasi_tipo_v2 = "u2";
+                            $casi_cant_total = $asi_u1 ;                            
+                            $casi_porc_total = ($asi_u1);
+                        }
+                        elseif($ecal_id == 2){ // 2do Parcial
+                            $asi_u2 = $val[6];
+                          //  $asi_u2 = $val[8];
+                          //  $dasi_tipo_v1 = "u3";
+                            $dasi_tipo_v2 = "u2";
+                            $casi_cant_total = $asi_u2;
+                            $casi_porc_total = ($asi_u2);
                         }
 
                         if ( $asi_u1 > 100 ){

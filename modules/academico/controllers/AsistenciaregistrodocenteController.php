@@ -11,6 +11,7 @@ use app\modules\academico\models\Modalidad;
 use app\modules\academico\models\ModuloEstudio;
 use app\modules\academico\models\ModalidadEstudioUnidad;
 use app\modules\academico\models\UnidadAcademica;
+use app\modules\academico\models\UsuarioEducativa;
 use app\modules\academico\models\Estudiante;
 use app\modules\academico\models\EstudianteCarreraPrograma;
 use app\modules\academico\models\Profesor;
@@ -192,13 +193,17 @@ class AsistenciaregistrodocenteController extends \app\components\CController {
         }
         else {
             //carga combos
+            $mod_modalidad  = new Modalidad();
+            $mod_unidad     = new UnidadAcademica();
             $mod_periodo = new PeriodoAcademico();
             $asig_mod = new Asignatura();
             $mod_profesor = new Profesor();
 
             $periodos = $mod_periodo->consultarPeriodosActivos();
             $periodo_actual = $mod_periodo->getPeriodoAcademicoActual();
-            $profesores = $mod_profesor->getProfesoresEnAsignaturas();            
+            $profesores = $mod_profesor->getProfesoresEnAsignaturas();  
+             $arr_unidad = $mod_unidad->consultarUnidadAcademicasEmpresa($emp_id);
+            $arr_modalidad = $mod_modalidad->consultarModalidad($arr_unidad[0]["id"], 1);            
 
             // Determinar si el usuario logueado es sólo profesor o tiene más privilegios
             $per_id = Yii::$app->session->get("PB_perid");
@@ -226,6 +231,8 @@ class AsistenciaregistrodocenteController extends \app\components\CController {
 
             return $this->render('cargararchivoasistencias', [
                 'periodos' =>  ArrayHelper::map(array_merge($periodos), "paca_id", "paca_nombre"),
+                 'unidades' =>  ArrayHelper::map(array_merge($arr_unidad), "id", "name"),
+                'modalidades' =>  ArrayHelper::map(array_merge($arr_modalidad), "id", "name"),
                 'periodo_actual' => $periodo_actual,
                 'materias' => ArrayHelper::map(array_merge($materias), "asi_id", "asi_descripcion"),
                 'parciales' => $this->parciales(),
@@ -284,7 +291,8 @@ class AsistenciaregistrodocenteController extends \app\components\CController {
                         $matricula = $val[1];
                         $nombre = $val[2] . ' ' . $val[3];
                         //obtengo:  est_id, per_id
-                        $estudiante = Estudiante::find()->where(['est_matricula' => $matricula])->asArray()->one();
+                        //$estudiante = Estudiante::find()->where(['est_matricula' => $matricula])->asArray()->one();
+                        $estudiante = UsuarioEducativa::find()->where(['uedu_usuario' => $matricula])->asArray()->one();
                         // Si el estudiante no existe, continuar al siguiente, y colocarlo en la lista
                         if(!isset($estudiante)){
                             $val_estudiante = 1;

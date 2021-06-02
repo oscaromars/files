@@ -391,12 +391,15 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
         //\app\models\Utilities::putMessageLogFile('ceest_usuario_ingreso...: ' . $ceest_usuario_ingreso ); 
         $con = \Yii::$app->db_academico;
         $ceest_estado_bloqueo = 'B';
+        /*
         $trans = $con->getTransaction(); // se obtiene la transacción actual
         if ($trans !== null) {
             $trans = null; // si existe la transacción entonces no se crea una
         } else {
             $trans = $con->beginTransaction(); // si no existe la transacción entonces se crea una
-        }
+        }*/
+        //$trans = $con->beginTransaction();
+
         $fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
 
         $mod_curso_unidad = CursoEducativaUnidad::find()->where(['cedu_id' => $cedu_id, 'ceuni_estado' => 1, 'ceuni_estado_logico' => 1])->asArray()->all();
@@ -442,20 +445,20 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
         {
             foreach ($mod_curso_unidad as $key => $value) {
                 $param_sql_cp = $param_sql;
-                $bsol_sql_cp = $bsol_sql;
+                $bsol_sql_cp  = $bsol_sql;
 
                 $ceuni_id = $value['ceuni_id'];
 
                 if (isset($ceuni_id)) {
                     $param_sql_cp .= ", ceuni_id";
-                    $bsol_sql_cp .= ", :ceuni_id";
+                    $bsol_sql_cp  .= ", :ceuni_id";
                 }
 
                 $param_sql_cp .= ", ceest_codigo_evaluacion";
-                $bsol_sql_cp .= ", NULL";
+                $bsol_sql_cp  .= ", NULL";
 
                 $param_sql_cp .= ", ceest_descripcion_evaluacion";
-                $bsol_sql_cp .= ", NULL";
+                $bsol_sql_cp  .= ", NULL";
 
                 $sql = "INSERT INTO " . $con->dbname . ".curso_educativa_estudiante ($param_sql_cp) VALUES($bsol_sql_cp)";
                 $comando = $con->createCommand($sql);            
@@ -486,7 +489,8 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
                 
                 $result = $comando->execute();
 
-                if ($trans !== null){ $trans->commit(); }
+                //if ($trans != null){ $trans->commit(); }
+                //$trans->commit(); 
             }
 
             return 1;

@@ -136,6 +136,8 @@ function cargarDocumentoAsistencia() {
     arrParams.procesar_file = true;
     arrParams.emp_id = $('#cmb_empresa option:selected').val();
     arrParams.paca_id = $('#cmb_periodo option:selected').val();
+    arrParams.uaca_id = $('#cmb_nunidad option:selected').val();
+    arrParams.mod_id = $('#cmb_nmodalidad option:selected').val();
     arrParams.ecal_id = $('#cmb_parcial option:selected').val();
     arrParams.per_id = $('#cmb_profesor option:selected').val();
     arrParams.asi_id = $('#cmb_asig option:selected').val();

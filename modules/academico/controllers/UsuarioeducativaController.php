@@ -1637,6 +1637,7 @@ class UsuarioeducativaController extends \app\components\CController {
                                                                           'id_prg_item' => $ceest_codigo_evaluacion));
                             $result = $clientWS->__call( $method, Array( $args ) );
 
+                            $mod_asignar = new CursoEducativaEstudiante();
                             $resp_guardarbloqueo = $mod_asignar->modificarEstadobloqueoxid($ceest_id, 'A', $usu_id);
 
                             $exito = 1;
@@ -1672,6 +1673,7 @@ class UsuarioeducativaController extends \app\components\CController {
                 $message = array(
                     "wtmessage" => Yii::t("notificaciones", "Error al grabar." . $mensaje),
                     "title" => Yii::t('jslang', 'Success'),
+                    "Error" => $ex
                 );
                 return \app\models\Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Sucess"), false, $message);
             }
@@ -1762,6 +1764,8 @@ class UsuarioeducativaController extends \app\components\CController {
         $ids = $mod_cursoeduc->consultarCursoEducativaDistributivoPeriodoActual();
         $tam = count($ids);
 
+        // \app\models\Utilities::putMessageLogFile($tam);
+
         try{
             foreach ($ids as $key => $value) {
                 $est_id = $value['est_id'];
@@ -1770,13 +1774,18 @@ class UsuarioeducativaController extends \app\components\CController {
 
                 $hasRegistro = CursoEducativaEstudiante::find()->where(['est_id' => $est_id, 'cedu_id' => $cedu_id])->asArray()->one();
                 // \app\models\Utilities::putMessageLogFile($hasRegistro);
+                // \app\models\Utilities::putMessageLogFile($hasRegistro);
                 if(isset($hasRegistro)){
                     $tam -= 1;
                 }
                 else{
                     $insertID = $mod_cursoeduc->insertarEstudianteCursoEducativaUnidad($cedu_id, $est_id, $usu_id, $tam);
+                    // \app\models\Utilities::putMessageLogFile($insertID);
                 }
             }
+
+            // \app\models\Utilities::putMessageLogFile($insertID);
+            // \app\models\Utilities::putMessageLogFile($tam);
 
             if($insertID){
                 $message = array(

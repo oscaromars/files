@@ -74,7 +74,7 @@ else{
         <div class="form-group">
             <label for="lbl_plantilla" class="col-lg-2 col-md-2 col-sm-2 col-xs-2 control-label"><?= academico::t("Academico", "Template"); ?></label>
             <div class="col-sm-5 col-md-5 col-xs-5 col-lg-5">
-                <?= Html::a(academico::t("matriculacion", "Download") . " Assistance", Url::to(['downloadplantillaasistencia', 'filename' => 'teacher_assistance.xlsx']));   ?>
+                <?= Html::a(academico::t("matriculacion", "Download") . " Plantilla Asistencia", Url::to(['downloadplantillaasistencia', 'filename' => 'teacher_assistance.xlsx']));   ?>
             </div>                       
         </div> 
     </div>

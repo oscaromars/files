@@ -109,6 +109,7 @@ return [
     "Teacher" => "Profesor",
     "Teacher Dialing" => "Marcación Profesor",    
     "Teacher list unchecked" => "Listado profesores sin marcar",
+    "Template" => "Plantilla",    
     "Total Quota" => "Total Cupo",
     "Topic" => "Tema",
     "Training" => "Formación",    

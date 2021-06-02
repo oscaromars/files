@@ -661,6 +661,7 @@ return [
     "Update Picture" => "Actualizar Imagen",
     "Updated" => "Modificado",
     "Upload documents" => "Subir Documentos",
+    "Upload File" => "Adjuntar Archivo",
     "Url" => "Url",
     "User login" => "Usuario Ingreso",
     "Users" => "Usuarios",

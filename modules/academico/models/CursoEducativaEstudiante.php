@@ -895,7 +895,7 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
         try {
             $comando = $con->createCommand
                     ("UPDATE " . $con->dbname . ".curso_educativa_estudiante               
-                         SET ceest_estado_bloqueo     = $ceest_estado_bloqueo,  
+                         SET ceest_estado_bloqueo     = '$ceest_estado_bloqueo',  
                              ceest_usuario_modifica   = $ceest_usuario_modifica,
                              ceest_fecha_modificacion = now()                          
                        WHERE ceest_id            = $ceest_id
@@ -979,7 +979,8 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
                 modalidad.mod_descripcion AS Modalidad,
                 cedu.cedu_asi_nombre AS Aula,
                 ceuni.ceuni_descripcion_unidad AS Unidad,
-                ceest.ceest_descripcion_evaluacion AS evaluacion
+                ceest.ceest_descripcion_evaluacion AS evaluacion,
+                ceest.ceest_estado_bloqueo
                 FROM " . $con_academico->dbname . ".estudiante AS est
                 INNER JOIN " . $con_asgard->dbname . ".persona AS per ON per.per_id = est.per_id
                 INNER JOIN " . $con_academico->dbname . ".curso_educativa_estudiante AS ceest ON ceest.est_id = est.est_id

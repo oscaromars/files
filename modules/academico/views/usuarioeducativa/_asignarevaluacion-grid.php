@@ -65,7 +65,11 @@ academico::registerTranslations();
                 'template' => '{select}',
                 'buttons' => [
                     'select' => function ($url, $model) {
-                        return Html::checkbox("", false, ["value" => $model['ceest_id']]);
+                        //echo(print_r($model['ceest_estado_bloqueo']));
+                        if($model['ceest_estado_bloqueo'] == 'B')
+                            return Html::checkbox("", false, ["value" => $model['ceest_id']]);
+                        else
+                            return '';
                     },
                 ],
             ],

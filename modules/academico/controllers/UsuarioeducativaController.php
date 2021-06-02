@@ -1637,6 +1637,7 @@ class UsuarioeducativaController extends \app\components\CController {
                                                                           'id_prg_item' => $ceest_codigo_evaluacion));
                             $result = $clientWS->__call( $method, Array( $args ) );
 
+                            $mod_asignar = new CursoEducativaEstudiante();
                             $resp_guardarbloqueo = $mod_asignar->modificarEstadobloqueoxid($ceest_id, 'A', $usu_id);
 
                             $exito = 1;
@@ -1672,6 +1673,7 @@ class UsuarioeducativaController extends \app\components\CController {
                 $message = array(
                     "wtmessage" => Yii::t("notificaciones", "Error al grabar." . $mensaje),
                     "title" => Yii::t('jslang', 'Success'),
+                    "Error" => $ex
                 );
                 return \app\models\Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Sucess"), false, $message);
             }

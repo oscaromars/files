@@ -1140,5 +1140,5 @@ function asignarItems() {
         }else 
             showAlert('NO_OK', 'error', {"wtmessage": 'Selecciona: Debe seleccionar al menos un estudiante para permitir evaluaciones.', "title": 'Error'});
     }else 
-        showAlert('NO_OK', 'error', {"wtmessage": 'No hay Evaluación valida.', "title": 'Error'});
+        showAlert('NO_OK', 'error', {"wtmessage": 'Debe seleccionar una evaluacion.', "title": 'Error'});
 }//function asignarItems

@@ -62,71 +62,31 @@
 	                $id_grupo     = $estudiantes[$i]['cedu_asi_id']; 
 	                $pago         = $estudiantes[$i]['pago']; 
 	                $ceest_id     = $estudiantes[$i]['ceest_id']; 
-	                $ceest_estado_bloqueo = $estudiantes[$i]['ceest_estado_bloqueo']; 
+	                $ceest_estado_bloqueo    = $estudiantes[$i]['ceest_estado_bloqueo']; 
+	                $ceest_codigo_evaluacion = $estudiantes[$i]['ceest_codigo_evaluacion'];
+	                $unidad = $estudiantes[$i]['ceest_codigo_evaluacion'];
 
 	                putMessageLogFile("Procesando al estudiante: ".$est_id);
 	                putMessageLogFile("Estado del estudiante: ".$pago);
 	                putMessageLogFile("Estado Anterior: ".$ceest_estado_bloqueo);
 
-	                if($pago == 'Autorizado'){
-                		//Despues obtenemos los id de las unidades a bloquear
-		                $id_unidad_array = consultarUnidadEducativaxCeduid($cedu_id);
+	                if($pago == 'Autorizado' && $ceest_codigo_evaluacion != ''){
+                		$method = 'asignar_usuarios_alcance_prg_items';
 
-		                //Este for es para recorrer en caso de que haya mas de una unidad
-		                foreach ($id_unidad_array as $key => $value) {
-		                	$unidad = $value['ceuni_codigo_unidad'];
-		                	putMessageLogFile("Unidad a procesar: ".$value['ceuni_codigo_unidad']); 
-		                	//Invocacion el primer Web Service que devuelve los id de los examenes...
-		                	//a desbloquear
-	                        $method = 'obtener_prg_items';
-	                        $args = Array('id_grupo'     =>  $id_grupo,
-	                                      'id_tipo_item' => 'EV',
-	                                      'id_unidad'    => $value['ceuni_codigo_unidad']
-	                        );  
-	                        $result = $client->__call( $method, Array( $args ) );
-	                        
-	                        /*
-	                        $obtener_prg_items = array();
-	                        array_push($obtener_prg_items,$result);
-	                        */
-	                        //Obtengo el o los items
-	                        //puede devolver mas de un item en caso que el examen tenga varias filas
-	                        //Ej: Examen 1er parcial fila 1, Examen 1er parcial fila 2
-	                        $prg_item = $result->prg_item;
+                        $args = Array('asignar_usuario_item' => Array('id_usuario'  => $uedu_usuario, 
+                                                                      'id_prg_item' => $ceest_codigo_evaluacion));
 
-	                        //Entra por if si solo tiene un item 
-	                        //y entra por else en caso de tener mas de un item
-	                        if(isset($prg_item->id_prg_item)){
-	                            $method = 'asignar_usuarios_alcance_prg_items';
+                        $result = $client->__call( $method, Array( $args ) );
 
-	                            $args = Array('asignar_usuario_item' => Array('id_usuario'  => $uedu_usuario, 
-	                                                                          'id_prg_item' => $prg_item->id_prg_item));
-	    
-	                            $result = $client->__call( $method, Array( $args ) );
-
-	                            modificarEstadobloqueo($cedu_id, $est_id, 'A', 1);
-	                            putMessageLogFile("Nuevo Estado: A");
-	                            if($ceest_estado_bloqueo == 'B')
-	                                 registrarcambiohistorial($ceest_id, $pago, $ceest_estado_bloqueo, "A", $unidad);
-	                        }else{
-	                            if(count($prg_item) > 0){
-	                                foreach ($prg_item as $key => $value) {
-	                                    $method = 'asignar_usuarios_alcance_prg_items';
-	                                    $args = Array('asignar_usuario_item' => Array('id_usuario'  => $uedu_usuario, 
-	                                                                                 'id_prg_item' => $value->id_prg_item));
-	    
-	                                    $result = $client->__call( $method, Array( $args ) );
-
-	                                    modificarEstadobloqueo($cedu_id, $est_id, 'A', 1);
-	                                    if($ceest_estado_bloqueo == 'B')
-	                                    	registrarcambiohistorial($ceest_id, $pago, $ceest_estado_bloqueo, "A", $unidad);
-	                                }//foreach
-	                            }//if
-	                        }//else  
-	                    }//foreach
+                        modificarEstadobloqueo($ceest_id, 'A', 1);
+                        putMessageLogFile("Nuevo Estado: A");
+                        
+                        if($ceest_estado_bloqueo == 'B')
+                             registrarcambiohistorial($ceest_id, $pago, $ceest_estado_bloqueo, "A", $unidad);
+		               
 		                putMessageLogFile("----*********-----");
 	                }else{
-	                	modificarEstadobloqueo($cedu_id, $est_id, 'B', 1);
+	                	modificarEstadobloqueo($ceest_id, 'B', 1);
 	                	if($ceest_estado_bloqueo == 'A')
 	                        registrarcambiohistorial($ceest_id, $pago, $ceest_estado_bloqueo, "B", '');
 	                }              
@@ -135,9 +95,6 @@
 
 	            putMessageLogFile("La información ha sido grabada.");
 	            putMessageLogFile("Los no actualizados son: ");
-	            //putMessageLogFile($noactualizados);
-	            //putMessageLogFile("obtener_prg_items: ");
-	            //putMessageLogFile($obtener_prg_items);
 
 	        }else{
 	            putMessageLogFile("No hay registros por insertar.");
@@ -156,6 +113,7 @@
 	    //en los periodos que esten activos.
 	    $sql = "SELECT distinct ccar.est_id
 			          ,uedu.uedu_usuario
+			          ,ceest.ceest_codigo_evaluacion
 			          ,ceest.cedu_id
 			          ,cedu.cedu_asi_id
 			          ,cedu.cedu_asi_nombre
@@ -226,19 +184,18 @@
         return $comando->fetchAll(\PDO::FETCH_ASSOC);
     }//function consultarUnidadEducativaxCeduid
 
-    function modificarEstadobloqueo($cedu_id, $est_id, $ceest_estado_bloqueo, $ceest_usuario_modifica) {
+    function modificarEstadobloqueo($ceest_id, $ceest_estado_bloqueo, $ceest_usuario_modifica) {
         GLOBAL $dsn, $dbuser, $dbpass, $dbname;
 	    $con = new \PDO($dsn, $dbuser, $dbpass);
 
-	    $sql = " UPDATE db_academico.curso_educativa_estudiante		       
-	                SET ceest_estado_bloqueo     = '$ceest_estado_bloqueo',  
-	                    ceest_usuario_modifica   = $ceest_usuario_modifica,
-	                    ceest_fecha_modificacion = now()                          
-	              WHERE cedu_id = $cedu_id 
-	                AND est_id  =  $est_id 
-	                AND ceest_estado = 1 
-	                AND ceest_estado_logico = 1";
-	    //putMessageLogFile("modificarEstadobloqueo: ".$sql);
+	    $sql = "UPDATE db_academico.curso_educativa_estudiante               
+                   SET ceest_estado_bloqueo     = '$ceest_estado_bloqueo',  
+                       ceest_usuario_modifica   = $ceest_usuario_modifica,
+                       ceest_fecha_modificacion = now()                          
+                 WHERE ceest_id            = $ceest_id
+                   AND ceest_estado        = 1 
+                   AND ceest_estado_logico = 1";
+
 	    $comando = $con->prepare($sql);
         $comando->execute();
         return $comando->fetchAll(\PDO::FETCH_ASSOC);

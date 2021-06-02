@@ -68,9 +68,17 @@ academico::registerTranslations();
                 'value' => 'estudiante',
             ], 
             [
-                'attribute' => 'unidadeduca',
-                'header' => Yii::t("formulario", "Unidad Educativa"),
-                'value' => 'ceuni_descripcion_unidad',
+                'class' => 'yii\grid\ActionColumn',
+                'header' => academico::t("Academico", "Educational unit"),  
+                'template' => '{view}',             
+                'buttons' => [
+                    'view' => function ($url, $model) {
+                        if (strlen($model['ceuni_descripcion_unidad']) > 10) {
+                            $texto = '...';
+                        }
+                        return Html::a('<span>' . substr($model['ceuni_descripcion_unidad'], 0, 7) . $texto . '</span>', "javascript:", ["data-toggle" => "tooltip", "title" => $model['ceuni_descripcion_unidad']]);
+                    },
+                ],
             ],
             [
                 'attribute' => 'item',
@@ -120,9 +128,9 @@ academico::registerTranslations();
                 'buttons' => [
                     'select' => function ($url, $model) {
                         if ($model["pago"] != 'No Autorizado' && $model["item"] != '' )//
-                            return Html::checkbox("", false, ["value" => $model['est_id']]);
+                            return Html::checkbox("", false, ["value" => $model['ceest_id']]);
                         else 
-                            return Html::checkbox("", false, ["value" => $model['est_id'], "style" => "display:none"]);
+                            return Html::checkbox("", false, ["value" => $model['ceest_id'], "style" => "display:none"]);
                     },
                 ],
             ],

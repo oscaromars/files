@@ -1606,12 +1606,8 @@ class UsuarioeducativaController extends \app\components\CController {
             $nobloqueado = $data["nobloqueado"];
             $bloqueado   = $data["bloqueado"];
 
-            $client = new \SoapClient("https://campusvirtual.uteg.edu.ec/soap/?wsdl=true", 
-                                                  array("login" => Yii::$app->params["wsLogin"], 
-                                                  "password"    => Yii::$app->params["wsPassword"],
-                                                  "trace"       => 1, "exceptions" => 0));
-
-            $client->setCredentials(Yii::$app->params["wsLogin"], Yii::$app->params["wsPassword"],"basic");
+            //Se configura el llamado al web Service
+            $clientWS = Utilities::getWseducativa();
 
             $con = \Yii::$app->db_academico;
             $transaction = $con->beginTransaction();
@@ -1620,116 +1616,37 @@ class UsuarioeducativaController extends \app\components\CController {
             try {
                 if (!empty($nobloqueado)) {
                     $nobloqueado = explode(",", $nobloqueado); //permitidos
-                    foreach ($nobloqueado as $est_id) {  // empieza foreach para guardar los asignados
+                    //foreach ($nobloqueado as $est_id) {  // empieza foreach para guardar los asignados
+                    foreach ($nobloqueado as $ceest_id) {  // empieza foreach para guardar los asignados
+                        $mod_cursoeduc_est = CursoEducativaEstudiante::findIdentity($ceest_id);   
+                        $est_id = $mod_cursoeduc_est->est_id;
+                        $ceest_codigo_evaluacion = $mod_cursoeduc_est->ceest_codigo_evaluacion;                
 
-                        //Valida si el usuario tiene id de educativa
-                        $mod_usuaedu = new UsuarioEducativa();
+                        //Valida si el estudiante tiene id de educativa
+                        $mod_usuaedu    = new UsuarioEducativa();
                         $result_usuaedu = $mod_usuaedu->consultarexisteusuarioxest($est_id);
-                        $uedu_usuario   = $mod_usuaedu->usuarioeducativa($est_id);
                         
-                        //Valida si esta asignado al curso virtual
-                        $mod_asignar = new CursoEducativaEstudiante();
-                        $resp_consAsignacion = $mod_asignar->consultarAsignacionexiste($cedu_id, $est_id);
+                        //Si tiene id de educativa entro por el if
+                        if($result_usuaedu['existe_usuario'] > 0){
+                            //Obtengo el usuario de educativa
+                            $uedu_usuario   = $mod_usuaedu->usuarioeducativa($est_id);
+                            //Metodo de activacion de examenes
+                            $method = 'asignar_usuarios_alcance_prg_items';
+                            //Le pasamos el usuario educativa y el codigo del item que previamente estaba almacenado en Curso Educativa Estudiante
+                            $args = Array('asignar_usuario_item' => Array('id_usuario'  => $uedu_usuario['uedu_usuario'], 
+                                                                          'id_prg_item' => $ceest_codigo_evaluacion));
+                            $result = $clientWS->__call( $method, Array( $args ) );
 
-                        if($result_usuaedu['existe_usuario'] > 0 && $resp_consAsignacion["exiteasigna"] > 0){
-
-                            //Primero obtenemos el Id del Curso
-                            $mod_ceducativa = new CursoEducativa();
-                            $id_grupo_array = $mod_ceducativa->consultarCursoxid($cedu_id);
-                            $id_grupo       = $id_grupo_array['cedu_asi_id'];
-
-                            //Despues obtenemos los id de las unidades a bloquear
-                            $mod_educativaunidad = new CursoEducativaUnidad();
-                            $id_unidad_array     = $mod_educativaunidad->consultarUnidadEducativaxCeduid($cedu_id);
-
-                            $obtener_prg_items = array();
-
-                            foreach ($id_unidad_array as $key => $value) {
-                                $method = 'obtener_prg_items';
-                                $args = Array('id_grupo'     =>  $id_grupo,
-                                              'id_tipo_item' => 'EV',
-                                              'id_unidad'    => $value['ceuni_codigo_unidad']
-                                             );  
-                                $result = $client->__call( $method, Array( $args ) );
-
-                                
-                                array_push($obtener_prg_items,$result);
-
-    
-                                $prg_item = $result->prg_item;
-                                if(isset($prg_item->id_prg_item)){
-                                    $method = 'asignar_usuarios_alcance_prg_items';
-
-                                    //print_r($uedu_usuario);die();
-                                    $args = Array('asignar_usuario_item' => Array('id_usuario'  => $uedu_usuario['uedu_usuario'], 
-                                                                                  'id_prg_item' => $prg_item->id_prg_item));
-            
-                                    $result = $client->__call( $method, Array( $args ) );
-
-                                    $resp_guardarbloqueo = $mod_asignar->modificarEstadobloqueo($cedu_id, $est_id, 'A', $usu_id);
-                                }   
-                                else{
-                                    if(count($prg_item) > 0){
-                                        foreach ($prg_item as $key => $value) {
-                                            $method = 'asignar_usuarios_alcance_prg_items';
-                                            $args = Array('asignar_usuario_item' => Array('id_usuario'  => $uedu_usuario['uedu_usuario'], 
-                                                                                         'id_prg_item' => $value->id_prg_item));
-            
-                                            $result = $client->__call( $method, Array( $args ) );
-
-                                            $resp_guardarbloqueo = $mod_asignar->modificarEstadobloqueo($cedu_id, $est_id, 'A', $usu_id);
-                                        }//foreach
-                                    }//if
-                                }//else
-                                
-                            }//foreach
+                            $resp_guardarbloqueo = $mod_asignar->modificarEstadobloqueoxid($ceest_id, 'A', $usu_id);
 
                             $exito = 1;
                         }else{
                             array_push($noactualizados,$est_id);
                             $exito = 1;
-                        }
+                        }//else                 
+                    }//cierra foreach 
+                }//if
 
-
-                        /*
-
-                        if ($resp_consAsignacion["exiteasigna"] > 0) {
-                            // update estado bloqueo   
-                            
-                        } else {
-                            // no estan asignados, mostrar mensaje
-                            $exito = 1;
-                            /*$transaction->rollback();
-                            $message = array(
-                                "wtmessage" => Yii::t("notificaciones", "Los Estudiantes que no se cambio estado es que no estan asignados a un curso "),
-                                "title" => Yii::t('jslang', 'Error'),
-                            );
-                            return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);*/
-                        //}
-                        
-                    } // cierra foreach 
-                }
-                // SI AL ESTAR SIN SELECCIONAR SE CAMBIA A NO PERMITIDO
-                /*if (!empty($bloqueado)) {
-                    $bloqueado = explode(",", $bloqueado); //bloqueado
-                    foreach ($nobloqueado as $est_id) {  // empieza foreach para guardar los asignados
-                        $mod_asignar = new CursoEducativaEstudiante();
-                        $resp_consAsignacion = $mod_asignar->consultarAsignacionexiste($cedu_id, $est_id);
-                        if ($resp_consAsignacion["exiteasigna"] == 0) {
-                            // update estado bloqueo    
-                            $resp_guardarbloqueo = $mod_asignar->modificarEstadobloqueo($cedu_id, $est_id, 'B', $usu_id);
-                            $exito = 1;
-                        } /*else {
-                            // no estan asignados, mostrar mensaje
-                            $transaction->rollback();
-                            $message = array(
-                                "wtmessage" => Yii::t("notificaciones", "Los Estudiantes que no se cambio estado es que no estan asignados a un curso "),
-                                "title" => Yii::t('jslang', 'Error'),
-                            );
-                            return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
-                        }
-                    } // cierra foreach 
-                }*/
                 if ($exito) {
                     $transaction->commit();
                     $message = array(
@@ -1750,7 +1667,7 @@ class UsuarioeducativaController extends \app\components\CController {
                     }
                     return \app\models\Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Sucess"), false, $message);
                 }
-            } catch (Exception $ex) {
+            }catch (Exception $ex) {
                 $transaction->rollback();
                 $message = array(
                     "wtmessage" => Yii::t("notificaciones", "Error al grabar." . $mensaje),
@@ -1760,7 +1677,7 @@ class UsuarioeducativaController extends \app\components\CController {
             }
             return;
         }
-    }
+    }//function actionSavestudiantesbloqueo
 
     public function actionAsignardistributivo() {
         $per_id = @Yii::$app->session->get("PB_perid");
@@ -2239,12 +2156,7 @@ class UsuarioeducativaController extends \app\components\CController {
                 $unidad = $mod_unidades->ceuni_codigo_unidad;
 
                 //Se configura el llamado al web Service
-                $client = new \SoapClient("https://campusvirtual.uteg.edu.ec/soap/?wsdl=true", 
-                                           array("login" => Yii::$app->params["wsLogin"], 
-                                                  "password"    => Yii::$app->params["wsPassword"],
-                                                  "trace"       => 1, "exceptions" => 0));
-
-                $client->setCredentials(Yii::$app->params["wsLogin"], Yii::$app->params["wsPassword"],"basic");
+                $clientWS = Utilities::getWseducativa();
 
                 //Configuracion del Metodo que nos devolvera el o los items
                 $method = 'obtener_prg_items';
@@ -2252,7 +2164,7 @@ class UsuarioeducativaController extends \app\components\CController {
                               'id_tipo_item' => 'EV',
                               'id_unidad'    => $unidad
                 );  
-                $result = $client->__call( $method, Array( $args ) );
+                $result = $clientWS->__call( $method, Array( $args ) );
 
                 //Almacenamos el resultado
                 $prg_item = $result->prg_item;

@@ -109,10 +109,11 @@ class PlanificacionController extends \app\components\CController {
         ]);
         return $this->render('index', [
                     'arr_pla' => ( empty(ArrayHelper::map($arr_pla, 'pla_periodo_academico', 'pla_periodo_academico')) ) ? array(Yii::t('planificacion', '-- Select periodo --')) : ( ArrayHelper::map($arr_pla, 'pla_periodo_academico', 'pla_periodo_academico') ),
-                    'arr_modalidad' => ( empty(ArrayHelper::map($arr_modalidad, 'mod_id', 'mod_nombre')) ) ? array(Yii::t('planificacion', '-- Select Modality --')) : ( ArrayHelper::map($arr_modalidad, 'mod_id', 'mod_nombre') ),
+                      'arr_modalidad' => ArrayHelper::map(array_merge([["mod_id" => "0", "mod_nombre" => Yii::t("formulario", "Select")]], $arr_modalidad), "mod_id", "mod_nombre"),
+                    //'arr_modalidad' => ( empty(ArrayHelper::map($arr_modalidad, 'mod_id', 'mod_nombre')) ) ? array(Yii::t('planificacion', '-- Select Modality --')) : ( ArrayHelper::map($arr_modalidad, 'mod_id', 'mod_nombre') ),
                     'model' => $dataProvider,
                     'pla_periodo_academico' => $pla_periodo_academico,
-                    'mod_id' => $mod_id,
+                    'mod_id' => 0,
         ]);
         //}
     }
@@ -203,14 +204,14 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
             Yii::t('formulario', 'Student'),
             Yii::t('crm', 'Carrera'),
              Yii::t('formulario', 'Period'),
-            Yii::t('formulario', 'Asignatura 1'),
-            Yii::t('formulario', 'Asignatura 2'),
-            Yii::t('formulario', 'Asignatura 3'),
-            Yii::t('formulario', 'Asignatura 4'),
-            Yii::t('formulario', 'Asignatura 5'),
-            Yii::t('formulario', 'Asignatura 6'),
-            Yii::t('formulario', 'Asignatura 7'),
-            Yii::t('formulario', 'Asignatura 8'),
+            Yii::t('formulario', 'Asignatura B1 H1'),
+            Yii::t('formulario', 'Asignatura B1 H2'),
+            Yii::t('formulario', 'Asignatura B1 H3'),
+            Yii::t('formulario', 'Asignatura B1 H4'),
+            Yii::t('formulario', 'Asignatura B2 H1'),
+            Yii::t('formulario', 'Asignatura B2 H2'),
+            Yii::t('formulario', 'Asignatura B2 H3'),
+            Yii::t('formulario', 'Asignatura B2 H4'),
         );
         $mod_periodo = new PlanificacionEstudiante();
         $data = Yii::$app->request->get();

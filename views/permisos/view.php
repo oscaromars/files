@@ -23,7 +23,7 @@ use app\models\ObjetoModulo;
     <div class="form-group">
         <label for="cmb_objmods" class="col-sm-3 control-label"><?= Yii::t("modulo", "Assign permissions to Modules") ?></label>
         <div class="col-sm-9">
-            <?= Html::dropDownList("cmb_objmods", $arr_ids, $arr_objMod, ["class" => "form-control", "id" => "cmb_objmods", "multiple" => "", "disabled" => "disabled"]) ?>
+            <?= Html::dropDownList("cmb_objmods", $arr_ids, $arr_objMod, ["class" => "", "id" => "cmb_objmods", "multiple" => "", "disabled" => "disabled"]) ?>
         </div>
     </div>
 </form>

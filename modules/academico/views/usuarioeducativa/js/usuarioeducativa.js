@@ -1133,7 +1133,7 @@ function asignarItems() {
                     
                     setTimeout(function () {
                         window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/asignarevaluacion";
-                    }, 3000);
+                    }, 7000);
                     
                 }, true);
             }//if

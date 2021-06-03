@@ -151,7 +151,7 @@ class CalificacionregistrodocenteController extends \app\components\CController 
             Utilities::putMessageLogFile("Paso por cordinador");
             // Utilities::putMessageLogFile(print_r($arr_profesor_all,true));
             //$arr_profesor_all = $mod_profesor->getProfesoresEnAsignaturasByPerId($per_id);
-            $asignatura = $Asignatura_distri->getAsignaturaRegistro($arr_profesor_all[0]['pro_id'],$arr_ninteres[0]["id"],1,$arr_periodoActual[0]["id"]);
+            $asignatura = $Asignatura_distri->getAsignaturasBy($arr_profesor_all[0]['pro_id'],$arr_ninteres[0]["id"],$arr_periodoActual[0]["id"]);
              //Obtener paralelo
             $arr_paralelo_clcf = [];
             //$arr_estudiante = $cabeceraCalificacion->consultaCalificacionRegistroDocente($arr_periodoActual[0]["id"],$asignatura[0]['id'],$arr_profesor_all[0]["pro_id"]);
@@ -164,7 +164,7 @@ class CalificacionregistrodocenteController extends \app\components\CController 
             $arr_profesor_all = $mod_profesor->getProfesoresEnAsignaturasByPerId($per_id);
             // Utilities::putMessageLogFile(print_r($arr_profesor_all,true));
 
-            $asignatura = $Asignatura_distri->getAsignaturaRegistro($arr_profesor_all[0]['pro_id'],$arr_ninteres[0]["id"],1,$arr_periodoActual[0]["id"]);
+            $asignatura = $Asignatura_distri->getAsignaturasBy($arr_profesor_all[0]['pro_id'],$arr_ninteres[0]["id"],$arr_periodoActual[0]["id"]);
             //$arr_estudiante = $cabeceraCalificacion->consultaCalificacionRegistroDocente($arr_periodoActual[0]["id"],$asignatura[0]['id'],$arr_profesor["Id"]);
              //Obtener paralelo
              // $arr_paralelo_clcf = $Asignatura_distri->getCourseProfesor($arr_profesor_all[0]['pro_id'],$arr_periodoActual[0]["id"],$asignatura[0]["id"]);
@@ -235,47 +235,30 @@ class CalificacionregistrodocenteController extends \app\components\CController 
                 $message = array("parcial" => $parcial);
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
             }
-            if (isset($data["getmateria"])) {               
-                $materia       = $Asignatura_distri->getAsignaturaRegistro($data["pro_id"], $data["uaca_id"], $data["mod_id"], $data["paca_id"]);
-
-                $paralelo_clcf = $Asignatura_distri->getCourseProfesor($data['pro_id'],$data["paca_id"],$materia[0]["id"]);
-
-                $message = array("materia" => $materia,"paralelo_clcf" => $paralelo_clcf);
+            if (isset($data["getmateria"])) {
+                $materia = $Asignatura_distri->getAsignaturasBy($data["pro_id"], $data["uaca_id"], $data["paca_id"]);
+                $message = array("materia" => $materia);
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
-            }    
-            if (isset($data["getparalelos"])) {               
-                $paralelo_clcf = $Asignatura_distri->getCourseProfesor2($data['pro_id'],$data["paca_id"],$data["materia"]);
-                //print_r($paralelo_clcf);
-                $message = array("paralelo_clcf" => $paralelo_clcf);
-                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
-            }    
-        }//if
+            }
+        }
 
         $arr_periodoActual = [$mod_periodoActual->getPeriodoAcademicoActual()];
         $arr_ninteres      = $mod_unidad->consultarUnidadAcademicasEmpresa(1);
-        $arr_modalidad     = $mod_modalidad->consultarModalidad($arr_ninteres[0]["id"], 1);
-        //$asignatura        = $Asignatura_distri->getAsignaturaRegistro($arr_profesor["Id"],1,1,$arr_periodoActual[0]["id"]);      
-        $arr_parcialunidad = $mod_periodoActual->getParcialUnidad(1);
-
+        $arr_modalidad     = $mod_modalidad->consultarModalidad($arr_ninteres[0]["id"], 1);     
+        $arr_parcialunidad = $mod_periodoActual->getParcialUnidad($arr_ninteres[0]["id"]);
         $arr_grupos        = $grupo_model->getAllGruposByUser($user_usermane);
-
-        
 
         if (in_array(['id' => '6'], $arr_grupos)) {
             //Es Cordinador
             $arr_profesor_all = $mod_profesor->getProfesoresEnAsignaturas();
-            $asignatura = $Asignatura_distri->getAsignaturaRegistro($arr_profesor_all[0]['pro_id'],$arr_ninteres[0]["id"],1,$arr_periodoActual[0]["id"]);
-            $arr_paralelo_clcf = [];
+            $asignatura = $Asignatura_distri->getAsignaturasBy($arr_profesor_all[0]['pro_id'],$arr_ninteres[0]["id"],$arr_periodoActual[0]["id"]);
             //print_r("Es Cordinador");
         }else{
             //No es coordinador
             $arr_profesor_all = $mod_profesor->getProfesoresEnAsignaturasByPerId($per_id);
-            $asignatura = $Asignatura_distri->getAsignaturaRegistro($arr_profesor_all[0]['pro_id'],$arr_ninteres[0]["id"],1,$arr_periodoActual[0]["id"]);
-            $arr_paralelo_clcf = [];
+            $asignatura = $Asignatura_distri->getAsignaturasBy($arr_profesor_all[0]['pro_id'],$arr_ninteres[0]["id"],$arr_periodoActual[0]["id"]);
             //print_r("NO Es Cordinador");
         }
-
-        
        
         return $this->render('register', [
             'arr_periodoActual' => ArrayHelper::map($arr_periodoActual, "id", "nombre"),
@@ -287,7 +270,6 @@ class CalificacionregistrodocenteController extends \app\components\CController 
             'pro_id'            => $arr_profesor["Id"],
             'model'             => "",
             'arr_profesor_all'  => ArrayHelper::map($arr_profesor_all, "pro_id", "nombres"),
-            'arr_paralelo_clcf' => ArrayHelper::map(array_merge([["id" => "", "name" => Yii::t("formulario", "All")]], $arr_paralelo_clcf), "id", "name"),
             //'componente'        => $componenteuni,
             //'campos'            => $campos,
         ]);

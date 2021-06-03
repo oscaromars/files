@@ -725,7 +725,13 @@ class Asignatura extends \yii\db\ActiveRecord
             $str_search .= " AND daca.paca_id = " . $paca_id;
         }
 
-        $sql = "SELECT DISTINCT daca.paca_id, daca.uaca_id, daca.asi_id, asi.asi_descripcion
+        $sql = "SELECT DISTINCT 
+                daca.paca_id, 
+                daca.uaca_id, 
+                daca.asi_id, 
+                asi.asi_descripcion,
+                daca.asi_id AS id,
+                asi.asi_descripcion AS name
                 FROM " . $con_academico->dbname . ".distributivo_academico AS daca
                 INNER JOIN " . $con_academico->dbname . ".asignatura AS asi ON asi.asi_id = daca.asi_id
                 WHERE

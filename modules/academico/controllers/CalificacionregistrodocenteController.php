@@ -1360,8 +1360,8 @@ class CalificacionregistrodocenteController extends \app\components\CController 
         return 1;
     }
 
-    public function actionDownloadplantillagrado() {
-        $file = 'plantilla_grado.xlsx';
+    public function actionDownloadplantillagradoonline() {
+        $file = 'plantilla_grado_online.xlsx';
         $route = str_replace("../", "", $file);
         $url_file = Yii::$app->basePath . "/uploads/calificaciones/plantilla/" . $route;
         $arrfile = explode(".", $url_file);
@@ -1373,7 +1373,7 @@ class CalificacionregistrodocenteController extends \app\components\CController 
                 header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
                 header('Cache-Control: private', false);
                 header("Content-type: application/xlsx");
-                header('Content-Disposition: attachment; filename="plantillacalificacion_GRADO' . '.xlsx";');
+                header('Content-Disposition: attachment; filename="plantilla_calificacion_GRADO_ONLINE' . '.xlsx";');
                 header('Content-Transfer-Encoding: binary');
                 header('Content-Length: ' . filesize($url_file));
                 readfile($url_file);
@@ -1381,8 +1381,8 @@ class CalificacionregistrodocenteController extends \app\components\CController 
         }
     }
 
-    public function actionDownloadplantillaposgrado() {
-        $file = 'plantilla_posgrado.xlsx';
+    public function actionDownloadplantillaposgradoonline() {
+        $file = 'plantilla_posgrado_online.xlsx';
         $route = str_replace("../", "", $file);
         $url_file = Yii::$app->basePath . "/uploads/calificaciones/plantilla/" . $route;
         $arrfile = explode(".", $url_file);
@@ -1394,7 +1394,28 @@ class CalificacionregistrodocenteController extends \app\components\CController 
                 header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
                 header('Cache-Control: private', false);
                 header("Content-type: application/xlsx");
-                header('Content-Disposition: attachment; filename="plantillacalificacion_POSGRADO' . '.xlsx";');
+                header('Content-Disposition: attachment; filename="plantilla_calificacion_POSGRADO_ONLINE' . '.xlsx";');
+                header('Content-Transfer-Encoding: binary');
+                header('Content-Length: ' . filesize($url_file));
+                readfile($url_file);
+            }
+        }
+    }
+
+    public function actionDownloadplantillaposgradopresencial() {
+        $file = 'plantilla_posgrado_presencial.xlsx';
+        $route = str_replace("../", "", $file);
+        $url_file = Yii::$app->basePath . "/uploads/calificaciones/plantilla/" . $route;
+        $arrfile = explode(".", $url_file);
+        $typeImage = $arrfile[count($arrfile) - 1];
+        if (file_exists($url_file)) {
+            if (strtolower($typeImage) == "xlsx") {
+                header('Pragma: public');
+                header('Expires: 0');
+                header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+                header('Cache-Control: private', false);
+                header("Content-type: application/xlsx");
+                header('Content-Disposition: attachment; filename="plantilla_calificacion_POSGRADO_PRESENCIAL' . '.xlsx";');
                 header('Content-Transfer-Encoding: binary');
                 header('Content-Length: ' . filesize($url_file));
                 readfile($url_file);

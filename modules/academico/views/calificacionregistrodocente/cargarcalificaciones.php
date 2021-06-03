@@ -75,9 +75,11 @@ else{
         <div class="form-group">
             <label for="lbl_plantilla" class="col-lg-2 col-md-2 col-sm-2 col-xs-2 control-label"><?= academico::t("Academico", "Template"); ?></label>
             <div class="col-sm-5 col-md-5 col-xs-5 col-lg-5">
-                <?= Html::a(academico::t("matriculacion", "Download") . " Grado", Url::to(['downloadplantillagrado', 'filename' => 'plantilla_grado.xlsx']));   ?>
+                <?= Html::a(academico::t("matriculacion", "Download") . " Grado Online", Url::to(['downloadplantillagradoonline', 'filename' => 'plantilla_grado_online.xlsx']));   ?>
                 <br>
-                <?= Html::a(academico::t("matriculacion", "Download") . " Posgrado", Url::to(['downloadplantillaposgrado', 'filename' => 'plantilla_posgrado.xlsx'])); ?>
+                <?= Html::a(academico::t("matriculacion", "Download") . " Posgrado Online", Url::to(['downloadplantillaposgradoonline', 'filename' => 'plantilla_posgrado_online.xlsx'])); ?>
+                <br>
+                <?= Html::a(academico::t("matriculacion", "Download") . " Posgrado Presencial", Url::to(['downloadplantillaposgradopresencial', 'filename' => 'plantilla_posgrado_presencial.xlsx'])); ?>
             </div>                       
         </div> 
     </div>

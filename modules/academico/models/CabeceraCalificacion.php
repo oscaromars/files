@@ -166,22 +166,32 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord
      * @param   
      * @return  $resultData (Retornar los datos).
      */
-    public function getComponenteUnidadarr($uaca_id){
-        $con_academico = \Yii::$app->db_academico;
+    public function getComponenteUnidadarr($uaca_id = 1, $mod_id = 1){
+        $con_academico = Yii::$app->db_academico;
         $estado = "1";
+
+        $str_parcial = "";
+
+        // Si se está buscando Grado y a la vez Online, para evitar problemas, se busca el ecal_id 1 que es el 1er Parcial, y este tiene los componentes iguales que el 2do Parcial
+        if($uaca_id == 1 && $mod_id == 1){
+            $str_parcial = "AND coun.ecal_id = 1 ";
+        }
         
         $sql = "SELECT coun.cuni_id as id,
                        com_nombre as nombre
                   FROM " . $con_academico->dbname . ".componente_unidad coun 
             INNER JOIN " . $con_academico->dbname . ".componente comp 
                     ON comp.com_id = coun.com_id                     
-                 WHERE coun.uaca_id = :uaca_id                       
+                 WHERE coun.uaca_id = :uaca_id
+                   AND coun.mod_id = :mod_id
+                   $str_parcial
                    AND coun.cuni_estado = :estado
                    AND coun.cuni_estado_logico = :estado";        
         
         $comando = $con_academico->createCommand($sql);
-        $comando->bindParam(":uaca_id", $uaca_id, \PDO::PARAM_INT);                
-        $comando->bindParam("estado", $estado, \PDO::PARAM_STR);
+        $comando->bindParam(":uaca_id", $uaca_id, \PDO::PARAM_INT); 
+        $comando->bindParam(":mod_id", $mod_id, \PDO::PARAM_INT);                
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
 
         $res = $comando->queryAll();               
         return $res;      
@@ -969,15 +979,15 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord
      * @param   
      * @return  $resultData (Retornar los datos).
      */
-
     public function getRegistroCalificaciones($arrFiltro){
         $con        = \Yii::$app->db_academico; 
         $con1       = \Yii::$app->db_asgard; 
         $str_search = "";
         $estado     = "1";
-        $mod_calificacion = new CabeceraCalificacion();
 
-        $arr_componentes  = $mod_calificacion->getComponenteUnidadarr($arrFiltro['unidad']);
+        // \app\models\Utilities::putMessageLogFile($arrFiltro);
+
+        $arr_componentes  = $this->getComponenteUnidadarr($arrFiltro['unidad'], $arrFiltro['modalidad']);
 
         if (isset($arrFiltro) && count($arrFiltro) > 0) {
 
@@ -996,34 +1006,33 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord
             if ($arrFiltro['parcial'] != "" && $arrFiltro['parcial'] > 0) {
                 $str_search .= " AND data.nparcial = (select ecal_nombre FROM esquema_calificacion WHERE ecal_id = :ecal_id)  ";
             }
-            if ($arrFiltro['paralelo'] != "" && $arrFiltro['paralelo'] > 0) {
-                $str_search .= " AND data.par_id = :paralelo  ";
-            }
-            /*
             if ($arrFiltro['modalidad'] != "" && $arrFiltro['modalidad'] > 0) {
-                $str_search .= " AND daca.mod_id = :mod_id  ";
+                $str_search .= " AND data.mod_id = :mod_id  ";
             } 
-            */
             
-        } 
+        }
 
-        $sql = " SELECT /*ROW_NUMBER() OVER (ORDER BY nombre) row_num,*/
-                        (@row_number:=@row_number + 1) AS row_num, 
-                        data.* 
-                   FROM (
-                 SELECT * FROM (
+        $sql = "SELECT (@row_number:=@row_number + 1) AS row_num,  data.*
+                  FROM (
                  SELECT est.est_id
                         ,est.est_matricula as matricula
                         ,concat(per.per_pri_nombre,' ',per.per_pri_apellido) as nombre
-                        ,'Parcial I' as nparcial 
-                        ,(SELECT gest.gest_descripcion 
-                            FROM " . $con->dbname . ".periodo_academico spaca,
-                                 " . $con->dbname . ".grupo_estacion gest
-                           WHERE spaca.gest_id = gest.gest_id
-                             AND spaca.paca_id = daca.paca_id) as periodo
-                        ,(SELECT asi.asi_descripcion FROM " . $con->dbname . ".asignatura asi WHERE asi.asi_id = daca.asi_id) as materia
-                        ,mppd.par_id
-                        ,(SELECT par.par_nombre FROM " . $con->dbname . ".paralelo par WHERE par.par_id = mppd.par_id) as paralelo
+                        ,CASE WHEN ecun.ecal_id = 1 THEN'Parcial I' 
+                              WHEN ecun.ecal_id = 2 THEN'Parcial II'
+                              WHEN ecun.ecal_id = 3 THEN'Supletorio' 
+                        END as nparcial
+                        ,ecun.ecal_id as ecal_id
+                        ,(SELECT ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca_anio),'') AS paca_nombre
+                        FROM db_academico.semestre_academico AS saca
+                        INNER JOIN db_academico.periodo_academico AS paca ON saca.saca_id = paca.saca_id
+                        INNER JOIN db_academico.bloque_academico AS baca ON baca.baca_id = paca.baca_id
+                        WHERE
+                        paca.paca_activo = 'A' AND paca.paca_estado = 1 AND paca.paca_estado_logico = 1 AND
+                        saca.saca_estado = 1 AND saca.saca_estado_logico = 1 AND
+                        baca.baca_estado = 1 AND baca.baca_estado_logico = 1
+                        ) as periodo
+                        ,asi.asi_id
+                        ,asi.asi_descripcion as materia
                         ,coalesce(clfc.ccal_id,0) as ccal_id
         ";
 
@@ -1038,110 +1047,44 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord
                              AND com1.com_nombre = '".$value['nombre']."') as '".$value['nombre']."' ";   
         }//foreach
 
-        $sql .= "       ,(SELECT sum(dc1.dcal_calificacion)
+        $sql .= ",(SELECT sum(dc1.dcal_calificacion)
                             FROM " . $con->dbname . ".detalle_calificacion dc1,
                                  " . $con->dbname . ".componente_unidad cu1,
                                  " . $con->dbname . ".componente com1
                            WHERE dc1.ccal_id = clfc.ccal_id
                              AND dc1.cuni_id = cu1.cuni_id
                              AND cu1.com_id  = com1.com_id ) as 'total'
-                        ,asi.asi_descripcion as materia2
                         ,daca.paca_id as paca_id
-                        ,daca.asi_id  as asi_id
                         ,daca.pro_id  as pro_id
-                        ,asi.uaca_id  as uaca_id
-                        ,(select esca.ecal_id 
-                            from " . $con->dbname . ".esquema_calificacion esca,
-                                 " . $con->dbname . ".esquema_calificacion_unidad ecun
-                           where esca.ecal_id = ecun.ecal_id
-                             and ecun.ecun_id = clfc.ecun_id) as ecal_id
+                        ,daca.mod_id  as mod_id
+                        ,meun.uaca_id as uaca_id
                    FROM " . $con->dbname . ".distributivo_academico daca
-            -- INNER JOIN " . $con->dbname . ".materias_paralelos_periodo_detalle mppd ON mppd.mppd_id = daca.mppd_id
-              #LEFT JOIN " . $con->dbname . ".materias_paralelos_periodo mppe         ON mppe.mppe_id = mppd.mppd_id
-             INNER JOIN " . $con->dbname . ".distributivo_academico_estudiante daes  ON daes.mppd_id = mppd.mppd_id
+             INNER JOIN " . $con->dbname . ".distributivo_academico_estudiante daes  ON daes.daca_id = daca.daca_id
               LEFT JOIN " . $con->dbname . ".estudiante est                          ON est.est_id   = daes.est_id
              INNER JOIN " . $con1->dbname. ".persona per                             ON per.per_id   = est.per_id
+              LEFT JOIN " . $con->dbname . ".estudiante_carrera_programa ecpr 
+                     ON ecpr.est_id = est.est_id
+             INNER JOIN " . $con->dbname . ".modalidad_estudio_unidad meun
+                     ON meun.meun_id = ecpr.meun_id
+                    AND meun.meun_estado = 1 AND meun.meun_estado_logico = 1
+             INNER JOIN " . $con->dbname . ".asignatura AS asi
+                     ON asi.asi_id = daca.asi_id
+                    AND asi.uaca_id = meun.uaca_id
+              LEFT JOIN " . $con->dbname . ".esquema_calificacion_unidad ecun  
+                     ON ecun.uaca_id = meun.uaca_id
               LEFT JOIN " . $con->dbname . ".cabecera_calificacion clfc              
                      ON clfc.est_id  = est.est_id 
-                    AND clfc.asi_id  = daca.asi_id
                     AND clfc.pro_id  = daca.pro_id
                     AND clfc.paca_id = daca.paca_id
-                    AND clfc.ecun_id = (SELECT ecun_id FROM esquema_calificacion_unidad 
-                                         WHERE ecal_id = 1 and uaca_id = :uaca_id)
-              left JOIN " . $con->dbname . ".esquema_calificacion_unidad ecun        
-                     ON ecun.ecun_id = clfc.ecun_id 
-              LEFT JOIN " . $con->dbname . ".asignatura asi 
-                     ON asi.asi_id = daca.asi_id 
-            ) as data1
-            UNION ALL
-                SELECT * FROM (
-                 SELECT est.est_id
-                        ,est.est_matricula as matricula
-                        ,concat(per.per_pri_nombre,' ',per.per_pri_apellido) as nombre
-                        ,'Parcial II' as nparcial
-                        ,(SELECT gest.gest_descripcion 
-                            FROM " . $con->dbname . ".periodo_academico spaca,
-                                 " . $con->dbname . ".grupo_estacion gest
-                           WHERE spaca.gest_id = gest.gest_id
-                             AND spaca.paca_id = daca.paca_id) as periodo
-                        ,(SELECT asi.asi_descripcion FROM " . $con->dbname . ".asignatura asi WHERE asi.asi_id = daca.asi_id) as materia
-                        ,mppd.par_id
-                        ,(SELECT par.par_nombre FROM " . $con->dbname . ".paralelo par WHERE par.par_id = mppd.par_id) as paralelo
-                        ,coalesce(clfc.ccal_id,0) as ccal_id 
-        ";
-
-        foreach ($arr_componentes as $key => $value){
-            $sql .= "   ,(SELECT dc1.dcal_calificacion
-                            FROM " . $con->dbname . ".detalle_calificacion dc1,
-                                 " . $con->dbname . ".componente_unidad cu1,
-                                 " . $con->dbname . ".componente com1
-                           WHERE dc1.ccal_id = clfc.ccal_id
-                             AND dc1.cuni_id = cu1.cuni_id
-                             AND cu1.com_id  = com1.com_id
-                             AND com1.com_nombre = '".$value['nombre']."') as '".$value['nombre']."' ";   
-        }//foreach
-
-        $sql .= "       ,(SELECT sum(dc1.dcal_calificacion)
-                            FROM " . $con->dbname . ".detalle_calificacion dc1,
-                                 " . $con->dbname . ".componente_unidad cu1,
-                                 " . $con->dbname . ".componente com1
-                           WHERE dc1.ccal_id = clfc.ccal_id
-                             AND dc1.cuni_id = cu1.cuni_id
-                             AND cu1.com_id  = com1.com_id ) as 'total'
-                        ,asi.asi_descripcion as materia2
-                        ,daca.paca_id as paca_id
-                        ,daca.asi_id  as asi_id
-                        ,daca.pro_id  as pro_id
-                        ,asi.uaca_id  as uaca_id
-                        ,(select esca.ecal_id 
-                            from " . $con->dbname . ".esquema_calificacion esca,
-                                 " . $con->dbname . ".esquema_calificacion_unidad ecun
-                           where esca.ecal_id = ecun.ecal_id
-                             and ecun.ecun_id = clfc.ecun_id) as ecal_id
-                   FROM " . $con->dbname . ".distributivo_academico daca
-           --  INNER JOIN " . $con->dbname . ".materias_paralelos_periodo_detalle mppd ON mppd.mppd_id = daca.mppd_id
-              #LEFT JOIN " . $con->dbname . ".materias_paralelos_periodo mppe         ON mppe.mppe_id = mppd.mppd_id
-             INNER JOIN " . $con->dbname . ".distributivo_academico_estudiante daes  ON daes.mppd_id = mppd.mppd_id
-              LEFT JOIN " . $con->dbname . ".estudiante est                          ON est.est_id   = daes.est_id
-             INNER JOIN " . $con1->dbname. ".persona per                             ON per.per_id   = est.per_id
-              LEFT JOIN " . $con->dbname . ".cabecera_calificacion clfc              
-                     ON clfc.est_id  = est.est_id 
-                    AND clfc.asi_id  = daca.asi_id
-                    AND clfc.pro_id  = daca.pro_id
-                    AND clfc.paca_id = daca.paca_id
-                    AND clfc.ecun_id = (SELECT ecun_id FROM esquema_calificacion_unidad 
-                                         WHERE ecal_id = 2 and uaca_id = :uaca_id)
-              left JOIN " . $con->dbname . ".esquema_calificacion_unidad ecun        
-                     ON ecun.ecun_id = clfc.ecun_id 
-              LEFT JOIN " . $con->dbname . ".asignatura asi 
-                     ON asi.asi_id = daca.asi_id 
-            ) as data2
-        ) as data
-        ,(SELECT @row_number:=0) AS t
-        WHERE 1=1 
-            $str_search
-        ORDER BY 4,5 asc
-        ";
+                    AND clfc.asi_id  = asi.asi_id
+                    AND clfc.ecun_id = ecun.ecun_id
+                  WHERE ecun.ecal_id = 1 or ecun.ecal_id = 2 or ecun.ecal_id = 3
+               ORDER BY 3,4 LIMIT 5000
+            ) as data
+            ,(SELECT @row_number:=0) AS t
+            WHERE 1=1
+                  $str_search
+            ";
 
         $comando = $con->createCommand($sql);
 
@@ -1169,21 +1112,16 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord
                 $parcial = $arrFiltro["parcial"];
                 $comando->bindParam(":ecal_id", $parcial, \PDO::PARAM_INT);
             }
-            if ($arrFiltro['paralelo'] != "" && $arrFiltro['paralelo'] > 0) {
-                $paralelo = $arrFiltro["paralelo"];
-                $comando->bindParam(":paralelo", $paralelo, \PDO::PARAM_STR);
-            }
-            /*
             if ($arrFiltro['modalidad'] != "" && $arrFiltro['modalidad'] > 0) {
                 $modalidad = $arrFiltro["modalidad"];
                 $comando->bindParam(":mod_id", $modalidad, \PDO::PARAM_INT);
             }  
-            */
+
         }
 
         $res = $comando->queryAll();
 
-        \app\models\Utilities::putMessageLogFile($comando->getRawSql());
+        // \app\models\Utilities::putMessageLogFile($comando->getRawSql());
 
         return $res;
     }//function getRegistroCalificaciones

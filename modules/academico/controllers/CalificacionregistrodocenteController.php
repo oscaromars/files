@@ -287,7 +287,6 @@ class CalificacionregistrodocenteController extends \app\components\CController 
         $arrSearch["materia"]   = $data['materia'];
         $arrSearch["parcial"]   = $data['parcial'];
         $arrSearch["profesor"]  = $data['profesor'];
-        $arrSearch["paralelo"]  = $data['paralelo'];
 
         $model = $mod_calificacion->getRegistroCalificaciones($arrSearch);
         return json_encode($model);

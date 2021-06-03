@@ -704,7 +704,7 @@ class Asignatura extends \yii\db\ActiveRecord
     } 
 
 
-/**
+    /**
      * Función para retornar todas las asignaturas, y filtrarlas por los IDs de profesor, unidad académica y período académico
      * @author  Jorge Paladines <analista.desarrollo@uteg.edu.ec>;
      * @property       
@@ -797,5 +797,35 @@ class Asignatura extends \yii\db\ActiveRecord
     
         $resultData = $comando->queryAll();
         return $resultData;
+    }
+
+    /**
+     * Función para retornar si el estudiante pertenece a la asignatura
+     * @author  Jorge Paladines <analista.desarrollo@uteg.edu.ec>;
+     * @property       
+     * @return  
+     */
+    public function consultarEstudiantePertenece($est_id, $asi_id, $uaca_id){
+        $con_academico = Yii::$app->db_academico;
+
+        $sql = "SELECT *
+                FROM
+                    db_academico.distributivo_academico_estudiante AS daes
+                    INNER JOIN db_academico.distributivo_academico AS daca ON daca.daca_id = daes.daca_id
+                    INNER JOIN db_academico.asignatura AS asi ON asi.asi_id = daca.asi_id
+                WHERE
+                    daes.daes_estado = 1 AND daes.daes_estado_logico = 1
+                    AND daca.daca_estado = 1 AND daca.daca_estado_logico = 1
+                    AND asi.asi_estado = 1 AND asi.asi_estado_logico = 1
+                    AND daca.dcab_id IS NOT NULL
+                    AND daes.est_id = $est_id
+                    AND daca.asi_id = $asi_id
+                    AND asi.uaca_id = $uaca_id";
+
+        $comando = $con_academico->createCommand($sql);   
+        $res = $comando->queryAll();
+        // \app\models\Utilities::putMessageLogFile($res);
+        // \app\models\Utilities::putMessageLogFile('ASIGNATURAS gap: ' .$comando->getRawSql());
+        return $res;
     }
 }

@@ -178,12 +178,12 @@ else{
         </div>
     <?php endif; ?>
     
-    <!-- 
+    
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="col-md-2">
             <a id="btn_guardarcalificacion" href="javascript:" class="btn btn-primary btn-block"> <?= Yii::t("formulario", "Save") ?> </a>
         </div>
     </div> 
-    -->
+    
     
 </form>

@@ -701,11 +701,12 @@ class CalificacionregistrodocenteController extends \app\components\CController 
                                 }
 
                                 // Sacar la asignatura correcta
-                                $asignatura = $mod_asig->consultarAsignaturaConUnidad($asi_id, $uaca_id);
-                                if(!isset($asignatura)){
+                                $asignatura = $mod_asig->consultarEstudiantePertenece($est_id, $asi_id, $uaca_id);
+                                if(empty($asignatura)){
                                     $noalumno .= $nombre . " (no pertenece a esta asignatura), ";
                                     continue;
                                 }
+
 
                                 // Modalidad ID
                                 $mod_id = $meun['mod_id'];
@@ -778,8 +779,8 @@ class CalificacionregistrodocenteController extends \app\components\CController 
                                 }
 
                                 // Sacar la asignatura correcta
-                                $asignatura = $mod_asig->consultarAsignaturaConUnidad($asi_id, $uaca_id);
-                                if(!isset($asignatura)){
+                                $asignatura = $mod_asig->consultarEstudiantePertenece($est_id, $asi_id, $uaca_id);
+                                if(empty($asignatura)){
                                     $noalumno .= $nombre . " (no pertenece a esta asignatura), ";
                                     continue;
                                 }
@@ -836,8 +837,8 @@ class CalificacionregistrodocenteController extends \app\components\CController 
             $cuni_evaluacion = ComponenteUnidad::find()->where(['com_id' => 5, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id])->asArray()->one();
 
             $cal_asin = $val[5];
-            \app\models\Utilities::putMessageLogFile("cal_asin: " . $cal_asin);
-            \app\models\Utilities::putMessageLogFile("cuni_asincrono['cuni_calificacion']: " . $cuni_asincrono['cuni_calificacion']);
+            // \app\models\Utilities::putMessageLogFile("cal_asin: " . $cal_asin);
+            // \app\models\Utilities::putMessageLogFile("cuni_asincrono['cuni_calificacion']: " . $cuni_asincrono['cuni_calificacion']);
             if($cal_asin > $cuni_asincrono['cuni_calificacion'] || $cal_asin < 0){
                 $noalumno .= $nombre . " (la nota 'Act. Asincro 2P' está mal colocada), "; 
                 return 0; 
@@ -878,13 +879,13 @@ class CalificacionregistrodocenteController extends \app\components\CController 
             $cuni_evaluacion = ComponenteUnidad::find()->where(['com_id' => 5, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id, 'ecal_id' => $ecal_id])->asArray()->one();
 
             $cal_asin = $val[12];
-            \app\models\Utilities::putMessageLogFile("cal_asin: " . $cal_asin);
+            // \app\models\Utilities::putMessageLogFile("cal_asin: " . $cal_asin);
 
-            \app\models\Utilities::putMessageLogFile("uaca_id: " . $uaca_id);
-            \app\models\Utilities::putMessageLogFile("mod_id: " . $mod_id);
-            \app\models\Utilities::putMessageLogFile("ecal_id: " . $ecal_id);
-            \app\models\Utilities::putMessageLogFile("cuni_asincrono: " . $cuni_asincrono);
-            \app\models\Utilities::putMessageLogFile("cuni_asincrono['cuni_calificacion']: " . $cuni_asincrono['cuni_calificacion']);
+            // \app\models\Utilities::putMessageLogFile("uaca_id: " . $uaca_id);
+            // \app\models\Utilities::putMessageLogFile("mod_id: " . $mod_id);
+            // \app\models\Utilities::putMessageLogFile("ecal_id: " . $ecal_id);
+            // \app\models\Utilities::putMessageLogFile("cuni_asincrono: " . $cuni_asincrono);
+            // \app\models\Utilities::putMessageLogFile("cuni_asincrono['cuni_calificacion']: " . $cuni_asincrono['cuni_calificacion']);
             if($cal_asin > $cuni_asincrono['cuni_calificacion'] || $cal_asin < 0){
                 $noalumno .= $nombre . " (la nota 'Act. Asincro 2P' está mal colocada), "; 
                 return 0; 
@@ -920,7 +921,7 @@ class CalificacionregistrodocenteController extends \app\components\CController 
             $cal_calif = $cal_asin + $cal_sinc + $cal_cuest + $cal_aut + $cal_eval;
         }
 
-        \app\models\Utilities::putMessageLogFile("cal_calif: " . $cal_calif);
+        // \app\models\Utilities::putMessageLogFile("cal_calif: " . $cal_calif);
 
         // $cal_prom = $val[19]; // No usada
 

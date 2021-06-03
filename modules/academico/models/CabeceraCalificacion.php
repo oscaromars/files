@@ -1058,20 +1058,30 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord
                         ,daca.pro_id  as pro_id
                         ,daca.mod_id  as mod_id
                         ,meun.uaca_id as uaca_id
-                   FROM " . $con->dbname . ".distributivo_academico daca
-             INNER JOIN " . $con->dbname . ".distributivo_academico_estudiante daes  ON daes.daca_id = daca.daca_id
-              LEFT JOIN " . $con->dbname . ".estudiante est                          ON est.est_id   = daes.est_id
-             INNER JOIN " . $con1->dbname. ".persona per                             ON per.per_id   = est.per_id
+                   FROM " . $con->dbname . ".distributivo_academico daca 
+             INNER JOIN " . $con->dbname . ".distributivo_academico_estudiante daes
+                     ON daes.daca_id = daca.daca_id
+                    AND daes.daes_estado = 1 AND daes.daes_estado_logico = 1
+                    AND daca.daca_estado = 1 AND daca.daca_estado_logico = 1
+              LEFT JOIN " . $con->dbname . ".estudiante est 
+                     ON est.est_id   = daes.est_id
+                    AND est.est_estado = 1 AND est.est_estado_logico = 1 AND est.est_activo = 1
+             INNER JOIN " . $con1->dbname. ".persona per 
+                     ON per.per_id   = est.per_id
+                    AND per.per_estado = 1 AND per.per_estado_logico = 1
               LEFT JOIN " . $con->dbname . ".estudiante_carrera_programa ecpr 
                      ON ecpr.est_id = est.est_id
+                    AND ecpr.ecpr_estado = 1 AND ecpr.ecpr_estado_logico = 1
              INNER JOIN " . $con->dbname . ".modalidad_estudio_unidad meun
                      ON meun.meun_id = ecpr.meun_id
                     AND meun.meun_estado = 1 AND meun.meun_estado_logico = 1
              INNER JOIN " . $con->dbname . ".asignatura AS asi
                      ON asi.asi_id = daca.asi_id
                     AND asi.uaca_id = meun.uaca_id
+                    AND asi.asi_estado = 1 AND asi.asi_estado_logico = 1
               LEFT JOIN " . $con->dbname . ".esquema_calificacion_unidad ecun  
                      ON ecun.uaca_id = meun.uaca_id
+                    AND ecun.ecun_estado = 1 AND ecun.ecun_estado_logico = 1
               LEFT JOIN " . $con->dbname . ".cabecera_calificacion clfc              
                      ON clfc.est_id  = est.est_id 
                     AND clfc.pro_id  = daca.pro_id
@@ -1121,7 +1131,7 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord
 
         $res = $comando->queryAll();
 
-        // \app\models\Utilities::putMessageLogFile($comando->getRawSql());
+        \app\models\Utilities::putMessageLogFile($comando->getRawSql());
 
         return $res;
     }//function getRegistroCalificaciones

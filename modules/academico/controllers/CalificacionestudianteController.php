@@ -137,7 +137,7 @@ class CalificacionestudianteController extends \app\components\CController {
         }
 
         if (in_array(['id' => '6'], $arr_grupos)) {
-            //Es Coordinador
+              $noperid= 0;//Es Coordinador//Es Coordinador
             $arr_profesor_all = $mod_profesor->getProfesoresEnAsignaturas(); 
             //Utilities::putMessageLogFile("Paso por cordinador");
             //Utilities::putMessageLogFile(print_r($arr_profesor_all,true));
@@ -163,7 +163,7 @@ class CalificacionestudianteController extends \app\components\CController {
 
             /*$arr_estudiante = $cabeceraCalificacion->consultaCalificacionRegistroDocenteAllStudentSearch($per_id, $arr_ninteres[0]["id"],$arr_ninteres[0]["id"],$arr_periodoActual[0]["id"],$asignatura[0]['id'],$arr_profesor_all[0]['pro_id'],$arr_paralelo_clcf[0]["id"], $perfil_user);*/
 
-            $arr_estudiante = $cabeceraCalificacion->consultaCalificacionRegistroDocenteAllStudentSearch($arrSearch, $per_id, false);
+            $arr_estudiante = $cabeceraCalificacion->consultaCalificacionRegistroDocenteAllStudentSearch($arrSearch, $noperid, false);
         }
 
         return $this->render('index', [

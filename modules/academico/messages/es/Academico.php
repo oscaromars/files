@@ -83,6 +83,8 @@ return [
     "Parallel" => "Paralelo",
     "Parallels" => "Paralelos",
     "Partial" => "Parcial",
+    "Partial Avg I" => "Parcial I",
+    "Partial Avg II" => "Parcial II",  
     "Period" => "Período",
     "Planning Load" => "Carga de Planificación",
     "Program" => "Programa Académico",

@@ -134,6 +134,32 @@ class PeriodoAcademico extends \yii\db\ActiveRecord
         return $this->hasMany(PlanificacionAcademicaMalla::className(), ['paca_id' => 'paca_id']);
     }
     
+    
+    /**
+     * Function consulta el período académico actual. 
+     * @author Grace Viteri <analistadesarrollo01@uteg.edu.ec>;
+     * @param
+     * @return
+     */
+    public function getPeriodoAcademico() {
+        $con = \Yii::$app->db_academico;
+        $estado = 1;
+        
+        $sql = "SELECT  pera.paca_id as id,
+                        ifnull(CONCAT(blq.baca_nombre,'-',sem.saca_nombre,' ',sem.saca_anio),'') as  name                       
+                FROM " . $con->dbname . ".periodo_academico pera
+                     inner join " . $con->dbname . ".semestre_academico sem  ON sem.saca_id = pera.saca_id
+                     inner join " . $con->dbname . ".bloque_academico blq ON blq.baca_id = pera.baca_id
+                WHERE pera.paca_activo = 'A' AND
+                      pera.paca_estado = :estado AND
+                      pera.paca_estado_logico = :estado";
+
+          $comando = $con->createCommand($sql);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $resultData = $comando->queryAll();
+        return $resultData;
+    }
+    
      /**
      * Function consulta el período académico actual. 
      * @author Grace Viteri <analistadesarrollo01@uteg.edu.ec>;

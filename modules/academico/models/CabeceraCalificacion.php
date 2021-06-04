@@ -768,7 +768,7 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord
         }  
 
         $sql = "
-            SELECT 
+            SELECT DISTINCT
                 CASE
                     WHEN resultado.uaca_id = 3  THEN 
                         resultado.Parcial_I
@@ -776,8 +776,8 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord
                         ROUND((IFNULL(resultado.Parcial_I,0) + IFNULL(resultado.Parcial_II,0))/2,2)
                 END AS promedio_final,
                 resultado.* FROM (
-                        SELECT  
-                        (   SELECT ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca_anio),'') AS value
+                        SELECT DISTINCT
+                        (   SELECT DISTINCT ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca_anio),'') AS value
                             FROM " . $con->dbname . ".semestre_academico AS saca
                             INNER JOIN " . $con->dbname . ".periodo_academico AS paca ON saca.saca_id = paca.saca_id
                             INNER JOIN " . $con->dbname . ".bloque_academico AS baca ON baca.baca_id = paca.baca_id
@@ -801,7 +801,7 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord
                         clfc.ccal_calificacion,
                         ecun.uaca_id,
                         IFNULL(
-                        (   SELECT clfc3.ccal_calificacion FROM " . $con->dbname . ".cabecera_calificacion clfc3
+                        (   SELECT DISTINCT clfc3.ccal_calificacion FROM " . $con->dbname . ".cabecera_calificacion clfc3
                             INNER JOIN " . $con->dbname . ".esquema_calificacion_unidad ecun_par3 ON ecun_par3.ecun_id = clfc3.ecun_id
                             INNER JOIN " . $con->dbname . ".esquema_calificacion esquema_calificacion3 ON esquema_calificacion3.ecal_id = ecun_par3.ecal_id
                             WHERE   
@@ -820,7 +820,7 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord
 
                             ecun_par3.uaca_id = :uaca_id ),'NN'
                         ) as 'supletorio',
-                        (   SELECT clfc1.ccal_calificacion FROM " . $con->dbname . ".cabecera_calificacion clfc1
+                        (   SELECT DISTINCT clfc1.ccal_calificacion FROM " . $con->dbname . ".cabecera_calificacion clfc1
                             INNER JOIN " . $con->dbname . ".esquema_calificacion_unidad ecun_par ON ecun_par.ecun_id = clfc1.ecun_id
                             INNER JOIN " . $con->dbname . ".esquema_calificacion esquema_calificacion1 ON esquema_calificacion1.ecal_id = ecun_par.ecal_id
                             WHERE 
@@ -836,7 +836,7 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord
                             esquema_calificacion1.ecal_id = 1 AND
                             ecun_par.uaca_id = :uaca_id 
                         ) as 'Parcial_I',
-                        (   SELECT clfc2.ccal_calificacion FROM ". $con->dbname . ".cabecera_calificacion clfc2
+                        (   SELECT DISTINCT clfc2.ccal_calificacion FROM ". $con->dbname . ".cabecera_calificacion clfc2
                             INNER JOIN " . $con->dbname . ".esquema_calificacion_unidad ecun_par2 ON ecun_par2.ecun_id = clfc2.ecun_id
                             INNER JOIN " . $con->dbname . ".esquema_calificacion esquema_calificacion2 ON esquema_calificacion2.ecal_id = ecun_par2.ecal_id
                             WHERE
@@ -853,7 +853,7 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord
                             esquema_calificacion2.ecal_id = 2 AND
                             ecun_par2.uaca_id = :uaca_id  
                         ) as 'Parcial_II',
-                        (SELECT  casi.casi_porc_total
+                        (SELECT DISTINCT casi.casi_porc_total
                          FROM db_academico.cabecera_asistencia casi
                             INNER JOIN db_academico.asistencia_esquema_unidad aeun_id_asistencia ON aeun_id_asistencia.aeun_id = casi.aeun_id
                             INNER JOIN db_academico.esquema_calificacion_unidad esquema_calificacion_unidad ON esquema_calificacion_unidad.ecun_id = aeun_id_asistencia.aeun_id
@@ -873,7 +873,7 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord
                                      esquema_calificacion_asistencia.ecal_estado = 1 and 
                                      esquema_calificacion_asistencia.ecal_estado_logico = 1
                         ) as asistencia_parcial_I,
-                        (SELECT  casi.casi_porc_total
+                        (SELECT DISTINCT casi.casi_porc_total
                          FROM db_academico.cabecera_asistencia casi
                             INNER JOIN db_academico.asistencia_esquema_unidad aeun_id_asistencia ON aeun_id_asistencia.aeun_id = casi.aeun_id
                             INNER JOIN db_academico.esquema_calificacion_unidad esquema_calificacion_unidad ON esquema_calificacion_unidad.ecun_id = aeun_id_asistencia.aeun_id
@@ -925,7 +925,8 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord
                         AND daca_est.daes_estado = 1
                         AND daca_est.daes_estado_logico = 1
 
-                ) AS resultado";
+                ) AS resultado
+                ORDER BY Nombres_completos";
 
           //\app\models\Utilities::putMessageLogFile('consultaCalificacionRegistroDocenteSearch Sql: '.$sql);    
 
@@ -950,12 +951,13 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord
             //$profesor = $arrFiltro["profesor"];
             $comando->bindParam(":uaca_id", $uaca_id, \PDO::PARAM_INT);
         }  
-        
        
         $comando->bindParam(":estado", $estado, \PDO::PARAM_INT);
 
         $resultData = $comando->queryAll();
-                \app\models\Utilities::putMessageLogFile('consultaCalificacionRegistroDocenteSearch: '.$comando->getRawSql());
+
+        \app\models\Utilities::putMessageLogFile('consultaCalificacionRegistroDocenteSearch: '.$comando->getRawSql());
+
          $dataProvider = new ArrayDataProvider([
             'key' => 'id',
             'allModels' => $resultData,
@@ -1144,7 +1146,7 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord
      * @return  
      *  Consulta dal calificaciones de los estudiantes pot Docente y Priodo academico y  asignatura
      */
-    public function consultaCalificacionRegistroDocenteAllSearch($uaca_id,$paca_id,$asi_id,$pro_id,$onlyData = false){
+    public function consultaCalificacionRegistroDocenteAllSearch($uaca_id,$paca_id,$asi_id,$pro_id,$mod_id, $onlyData = false){
         $con = \Yii::$app->db_academico;
         $con1 = \Yii::$app->db_asgard;;
         $estado = 1;
@@ -1164,8 +1166,12 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord
         
         if ($uaca_id != "" && $uaca_id > 0) {
             //$str_search .= " ecun.uaca_id =  :uaca_id AND ";
-            $str_search .= " (ecun.uaca_id = :uaca_id OR ecun.uaca_id  IS NULL) AND";
-        }  
+            $str_search .= " (ecun.uaca_id = :uaca_id OR ecun.uaca_id IS NULL) AND";
+        }
+
+        if ($mod_id != "" && $mod_id > 0) {
+            $str_search .= " meun.mod_id  = :mod_id AND ";
+        }
 
         $sql = "SELECT
                     CASE
@@ -1275,7 +1281,8 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord
                             esquema_calificacion_asistencia.ecal_estado_logico = 1
                          ) as asistencia_parcial_2,
                         asignatura.asi_descripcion as asi_nombre,
-                        asignatura.asi_id as asi_id
+                        asignatura.asi_id as asi_id,
+                        meun.mod_id as mod_id
                     FROM db_academico.estudiante estudiante
                     LEFT JOIN db_academico.cabecera_calificacion clfc ON estudiante.est_id =  clfc.est_id 
                     LEFT JOIN db_academico.esquema_calificacion_unidad ecun ON ecun.ecun_id = clfc.ecun_id
@@ -1311,8 +1318,10 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord
                           clfc.asi_id,
                           clfc.paca_id,
                           asignatura.asi_descripcion,
-                          asignatura.asi_id
-                  ) AS resultado";
+                          asignatura.asi_id,
+                          meun.mod_id
+                  ) AS resultado
+                  ORDER BY Nombres_completos";
 
 
                        
@@ -1337,9 +1346,15 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord
             //$profesor = $arrFiltro["profesor"];
             $comando->bindParam(":uaca_id", $uaca_id, \PDO::PARAM_INT);
         }
+        if ($mod_id != "" && $mod_id > 0) {
+            //$profesor = $arrFiltro["profesor"];
+            $comando->bindParam(":mod_id", $mod_id, \PDO::PARAM_INT);
+        }
 
         $resultData = $comando->queryAll();
-         // \app\models\Utilities::putMessageLogFile('consultaCalificacionRegistroDocenteAllSearch: '.$comando->getRawSql());
+
+        \app\models\Utilities::putMessageLogFile('consultaCalificacionRegistroDocenteAllSearch: '.$comando->getRawSql());
+
          $dataProvider = new ArrayDataProvider([
             'key' => 'id',
             'allModels' => $resultData,

@@ -264,6 +264,13 @@ class Persona extends \yii\db\ActiveRecord {
     public static function findByCondition($condition) {
         return parent::findByCondition($condition);
     }
+    
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+ public function getProfesor() {
+        return $this->hasMany(\app\modules\academico\models\Profesor::className(), ['per_id' => 'per_id']);
+    }
 
     public static function getPersonas() {
         $con = \Yii::$app->db;

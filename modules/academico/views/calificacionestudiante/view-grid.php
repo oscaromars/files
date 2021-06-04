@@ -7,6 +7,7 @@ use app\models\Utilities;
 use app\modules\academico\Module as academico;
 
 academico::registerTranslations();
+
 ?>
 
 <div class="table-responsive">
@@ -184,7 +185,7 @@ academico::registerTranslations();
     ?>
     <?php endif; ?>
     
-     <?php if($unidad=="PostGrado" and $modalidad=="Online"): ?>
+     <?php if($unidad=="Posgrado" and $modalidad=="Online"): ?>
     <?=
     PbGridView::widget([
         'id' => 'Tbg_Calificaciones_Por_Periodo',
@@ -240,7 +241,7 @@ academico::registerTranslations();
     ])
     ?>
     <?php endif; ?>
-     <?php if($unidad=="PostGrado" and $modalidad=="Presencial"): ?>
+     <?php if($unidad=="Posgrado" and $modalidad=="Presencial"): ?>
     <?=
     PbGridView::widget([
         'id' => 'Tbg_Calificaciones_Por_Periodo',

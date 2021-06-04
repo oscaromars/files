@@ -103,11 +103,8 @@ class CalificacionestudianteController extends \app\components\CController {
         $arr_grupos = $grupo_model->getAllGruposByUser($user_usermane);        
         $arr_periodoActual = $mod_periodoActual->consultarPeriodoAcademico();
         $arr_ninteres = $mod_unidad->consultarUnidadAcademicaDelEstudiante($resp_estudianteid["est_id"]);
-        $arr_modalidad = [];
-        $arr_carrera = []; 
-        // $arr_modalidad = $mod_modalidad->consultarModalidad($arr_ninteres[0]["id"], 1);
-        // $arr_carrera = $modcanal->consultarCarreraModalidadEstudiante($resp_estudianteid["est_id"], $arr_ninteres[0]["id"], $arr_modalidad[0]["id"]);
-         $noperid= 0;
+        $arr_modalidad = $mod_modalidad->consultarModalidad($arr_ninteres[0]["id"], 1);
+        $arr_carrera = $modcanal->consultarCarreraModalidadEstudiante($resp_estudianteid["est_id"], $arr_ninteres[0]["id"], $arr_modalidad[0]["id"]);
         $perfil_user = $arr_grupos[0]["id"];
         Utilities::putMessageLogFile("LINEA 108  perfil_user: " .$perfil_user);
 
@@ -130,14 +127,13 @@ class CalificacionestudianteController extends \app\components\CController {
             $arrSearch["periodo"] = (isset($data['periodo']) && $data['periodo'] > 0)?$data['periodo']:NULL;
             // $arrSearch["per_id"] = $per_id;
             
-            $arr_estudiante = $cabeceraCalificacion->consultaCalificacionRegistroDocenteAllStudentSearch($arrSearch, $noperid, false);
+            $arr_estudiante = $cabeceraCalificacion->consultaCalificacionRegistroDocenteAllStudentSearch($arrSearch, $per_id, false);
              return $this->renderPartial('index-grid', [
                             "model" => $arr_estudiante,
                 ]);
         }
 
         if (in_array(['id' => '6'], $arr_grupos)) {
-              $noperid= 0;//Es Coordinador//Es Coordinador
             $arr_profesor_all = $mod_profesor->getProfesoresEnAsignaturas(); 
             //Utilities::putMessageLogFile("Paso por cordinador");
             //Utilities::putMessageLogFile(print_r($arr_profesor_all,true));
@@ -157,13 +153,8 @@ class CalificacionestudianteController extends \app\components\CController {
 
             $asignatura = $Asignatura_distri->getAsignaturaRegistro($arr_profesor_all[0]['pro_id'],$arr_ninteres[0]["id"],1,$arr_periodoActual[0]["id"]);
             //$arr_estudiante = $cabeceraCalificacion->consultaCalificacionRegistroDocente($arr_periodoActual[0]["id"],$asignatura[0]['id'],$arr_profesor["Id"]);
-             //Obtener paralelo
-            // $arr_paralelo_clcf = $Asignatura_distri->getCourseProfesor($arr_profesor_all[0]['pro_id'],$arr_periodoActual[0]["id"],$asignatura[0]["id"]);
-            $arr_paralelo_clcf = [];
 
-            /*$arr_estudiante = $cabeceraCalificacion->consultaCalificacionRegistroDocenteAllStudentSearch($per_id, $arr_ninteres[0]["id"],$arr_ninteres[0]["id"],$arr_periodoActual[0]["id"],$asignatura[0]['id'],$arr_profesor_all[0]['pro_id'],$arr_paralelo_clcf[0]["id"], $perfil_user);*/
-
-            $arr_estudiante = $cabeceraCalificacion->consultaCalificacionRegistroDocenteAllStudentSearch($arrSearch, $noperid, false);
+            $arr_estudiante = $cabeceraCalificacion->consultaCalificacionRegistroDocenteAllStudentSearch($arrSearch, $per_id, false);
         }
 
         return $this->render('index', [
@@ -175,7 +166,6 @@ class CalificacionestudianteController extends \app\components\CController {
                     'arr_carrera' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $arr_carrera), "id", "name"),
                     'arr_estados' => $this->estados(),
                     'arr_profesor_all' => ArrayHelper::map(array_merge( $arr_profesor_all), "pro_id", "nombres"),
-                    'arr_paralelo_clcf' => ArrayHelper::map(array_merge( $arr_paralelo_clcf), "id", "name"),
         ]);
     }//function actionIndex
 

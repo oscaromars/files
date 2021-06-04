@@ -1397,9 +1397,13 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord
                 $str_search .= " meun.uaca_id = " . $search['unidad'] . " AND ";
             }
             if ($search['carrera'] != "" && $search['carrera'] != "0") {
-                \app\models\Utilities::putMessageLogFile('1519      $search[carrera]:  '.$search['carrera']);
+                // \app\models\Utilities::putMessageLogFile('1519      $search[carrera]:  '.$search['carrera']);
                 //$str_search .= " meun.eaca_id = :carrera AND ";
                 $str_search .= " meun.eaca_id = " . $search['carrera'] . " AND ";
+            }
+            if ($search['modalidad'] != "" && $search['modalidad'] != "0") {
+                // \app\models\Utilities::putMessageLogFile('1519      $search[carrera]:  '.$search['carrera']);
+                $str_search .= " meun.mod_id = " . $search['modalidad'] . " AND ";
             }
         }
 
@@ -1548,7 +1552,7 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord
                 AND estudiante.uaca_id = E.uaca_id";          
 
         $comando = $con->createCommand($sql);
-        //\app\models\Utilities::putMessageLogFile('consultaCalificacionRegistroDocenteAllStudentSearch Sql: '.$sql);
+        \app\models\Utilities::putMessageLogFile('consultaCalificacionRegistroDocenteAllStudentSearch Sql: '.$sql);
 
         $resultData = $comando->queryAll();
         // \app\models\Utilities::putMessageLogFile('consultaCalificacionRegistroDocenteAllStudentSearch: '.$comando->getRawSql());

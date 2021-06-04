@@ -34,7 +34,7 @@ PbGridView::widget([
         ],
         [
             'attribute' => 'Materia',
-            'header' => academico::t("Academico", "course"),
+            'header' => academico::t("Academico", "Course"),
             'value' => 'asi_nombre',
         ],
         /*[
@@ -44,12 +44,12 @@ PbGridView::widget([
         ],*/
         [
             'attribute' => 'Promedio Parcial I',
-            'header' => academico::t("Academico", "Promedio Parcial I"),
+            'header' => academico::t("Academico", "Partial Avg I"),
             'value' => 'parcial_1',
         ],
         [
             'attribute' => 'Promedio Parcial II',
-            'header' => academico::t("Academico", "Promedio Parcial II"),
+            'header' => academico::t("Academico", "Partial Avg II"),
             'value' => 'parcial_2',
         ],
         [

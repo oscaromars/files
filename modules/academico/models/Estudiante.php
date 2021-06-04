@@ -52,6 +52,8 @@ class Estudiante extends \yii\db\ActiveRecord {
             [['est_matricula'], 'string', 'max' => 20],
             [['est_categoria'], 'string', 'max' => 2],
             [['est_estado', 'est_estado_logico'], 'string', 'max' => 1],
+            [['per_id'], 'exist', 'skipOnError' => true, 'targetClass' => \app\models\Persona::className(), 'targetAttribute' => ['per_id' => 'per_id']],
+            
         ];
     }
 
@@ -81,6 +83,14 @@ class Estudiante extends \yii\db\ActiveRecord {
         return $this->hasMany(Matriculacion::className(), ['est_id' => 'est_id']);
     }
 
+    
+     /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getPersona() {
+        return $this->hasOne(\app\models\Persona::className(), ['per_id' => 'per_id']);
+    }
+    
     /**
      * @return \yii\db\ActiveQuery
      */

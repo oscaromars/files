@@ -1208,78 +1208,78 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord
                                 esquema_calificacion3.ecal_id = 3 AND
                                 ecun_par3.uaca_id = ecun.uaca_id),'NN'
                         ) as 'supletorio',
-                        (   SELECT clfc1.ccal_calificacion 
-                            FROM db_academico.cabecera_calificacion clfc1
-                            INNER JOIN db_academico.esquema_calificacion_unidad ecun_par ON ecun_par.ecun_id = clfc1.ecun_id
-                            INNER JOIN db_academico.esquema_calificacion esquema_calificacion1 ON esquema_calificacion1.ecal_id = ecun_par.ecal_id
-                            WHERE clfc1.est_id = clfc.est_id AND
-                            clfc1.pro_id = clfc.pro_id AND
-                            clfc1.asi_id = clfc.asi_id AND
-                            clfc1.ccal_estado = 1 AND
-                            clfc1.ccal_estado_logico = 1 AND
-                            ecun_par.ecun_estado = 1 AND
-                            ecun_par.ecun_estado_logico = 1 AND
-                            esquema_calificacion1.ecal_estado = 1 AND
-                            esquema_calificacion1.ecal_estado_logico = 1 AND
-                            esquema_calificacion1.ecal_id = 1 AND
-                            ecun_par.uaca_id = ecun.uaca_id 
+                        IFNULL((SELECT clfc1.ccal_calificacion 
+                                FROM db_academico.cabecera_calificacion clfc1
+                                INNER JOIN db_academico.esquema_calificacion_unidad ecun_par ON ecun_par.ecun_id = clfc1.ecun_id
+                                INNER JOIN db_academico.esquema_calificacion esquema_calificacion1 ON esquema_calificacion1.ecal_id = ecun_par.ecal_id
+                                WHERE clfc1.est_id = clfc.est_id AND
+                                clfc1.pro_id = clfc.pro_id AND
+                                clfc1.asi_id = clfc.asi_id AND
+                                clfc1.ccal_estado = 1 AND
+                                clfc1.ccal_estado_logico = 1 AND
+                                ecun_par.ecun_estado = 1 AND
+                                ecun_par.ecun_estado_logico = 1 AND
+                                esquema_calificacion1.ecal_estado = 1 AND
+                                esquema_calificacion1.ecal_estado_logico = 1 AND
+                                esquema_calificacion1.ecal_id = 1 AND
+                            ecun_par.uaca_id = ecun.uaca_id), 'NN'
                         ) as 'parcial_1',
-                        (   SELECT clfc2.ccal_calificacion 
-                            FROM db_academico.cabecera_calificacion clfc2
-                            INNER JOIN db_academico.esquema_calificacion_unidad ecun_par2 ON ecun_par2.ecun_id = clfc2.ecun_id
-                            INNER JOIN db_academico.esquema_calificacion esquema_calificacion2 ON esquema_calificacion2.ecal_id = ecun_par2.ecal_id
-                            WHERE clfc2.est_id = clfc.est_id AND
-                            clfc2.pro_id = clfc.pro_id AND
-                            clfc2.asi_id = clfc.asi_id AND
-                            clfc2.ccal_estado = 1 AND
-                            clfc2.ccal_estado_logico = 1 AND
-                            ecun_par2.ecun_estado = 1 AND
-                            ecun_par2.ecun_estado_logico = 1 AND
-                            esquema_calificacion2.ecal_estado = 1 AND
-                            esquema_calificacion2.ecal_estado_logico = 1 AND
-                            esquema_calificacion2.ecal_id = 2 AND
-                            ecun_par2.uaca_id = ecun.uaca_id
+                        IFNULL((SELECT clfc2.ccal_calificacion 
+                                FROM db_academico.cabecera_calificacion clfc2
+                                INNER JOIN db_academico.esquema_calificacion_unidad ecun_par2 ON ecun_par2.ecun_id = clfc2.ecun_id
+                                INNER JOIN db_academico.esquema_calificacion esquema_calificacion2 ON esquema_calificacion2.ecal_id = ecun_par2.ecal_id
+                                WHERE clfc2.est_id = clfc.est_id AND
+                                clfc2.pro_id = clfc.pro_id AND
+                                clfc2.asi_id = clfc.asi_id AND
+                                clfc2.ccal_estado = 1 AND
+                                clfc2.ccal_estado_logico = 1 AND
+                                ecun_par2.ecun_estado = 1 AND
+                                ecun_par2.ecun_estado_logico = 1 AND
+                                esquema_calificacion2.ecal_estado = 1 AND
+                                esquema_calificacion2.ecal_estado_logico = 1 AND
+                                esquema_calificacion2.ecal_id = 2 AND
+                            ecun_par2.uaca_id = ecun.uaca_id), 'NN'
                         ) as 'parcial_2',
-                        (   SELECT  casi.casi_porc_total
-                            FROM db_academico.cabecera_asistencia casi
-                            INNER JOIN db_academico.asistencia_esquema_unidad aeun_id_asistencia ON aeun_id_asistencia.aeun_id = casi.aeun_id
-                            INNER JOIN db_academico.esquema_calificacion_unidad esquema_calificacion_unidad ON esquema_calificacion_unidad.ecun_id = aeun_id_asistencia.aeun_id
-                            INNER JOIN db_academico.esquema_calificacion esquema_calificacion_asistencia ON  esquema_calificacion_asistencia.ecal_id = esquema_calificacion_unidad.ecal_id
-                            WHERE casi.paca_id = clfc.paca_id and
-                            casi.est_id = clfc.est_id  and 
-                            casi.pro_id = clfc.pro_id and 
-                            casi.asi_id = clfc.asi_id AND 
-                            esquema_calificacion_unidad.uaca_id = ecun.uaca_id AND
-                            esquema_calificacion_asistencia.ecal_id = 1 and 
-                            casi.casi_estado = 1 and 
-                            casi.casi_estado_logico = 1 AND
-                            aeun_id_asistencia.aeun_estado = 1 AND
-                            aeun_id_asistencia.aeun_estado_logico = 1 and 
-                            esquema_calificacion_unidad.ecun_estado = 1 and
-                            esquema_calificacion_unidad.ecun_estado_logico = 1 and 
-                            esquema_calificacion_asistencia.ecal_estado = 1 and 
-                            esquema_calificacion_asistencia.ecal_estado_logico = 1
+                        IFNULL((SELECT  casi.casi_porc_total
+                                FROM db_academico.cabecera_asistencia casi
+                                INNER JOIN db_academico.asistencia_esquema_unidad aeun_id_asistencia ON aeun_id_asistencia.aeun_id = casi.aeun_id
+                                INNER JOIN db_academico.esquema_calificacion_unidad esquema_calificacion_unidad ON esquema_calificacion_unidad.ecun_id = aeun_id_asistencia.aeun_id
+                                INNER JOIN db_academico.esquema_calificacion esquema_calificacion_asistencia ON  esquema_calificacion_asistencia.ecal_id = esquema_calificacion_unidad.ecal_id
+                                WHERE casi.paca_id = clfc.paca_id and
+                                casi.est_id = clfc.est_id  and 
+                                casi.pro_id = clfc.pro_id and 
+                                casi.asi_id = clfc.asi_id AND 
+                                esquema_calificacion_unidad.uaca_id = ecun.uaca_id AND
+                                esquema_calificacion_asistencia.ecal_id = 1 and 
+                                casi.casi_estado = 1 and 
+                                casi.casi_estado_logico = 1 AND
+                                aeun_id_asistencia.aeun_estado = 1 AND
+                                aeun_id_asistencia.aeun_estado_logico = 1 and 
+                                esquema_calificacion_unidad.ecun_estado = 1 and
+                                esquema_calificacion_unidad.ecun_estado_logico = 1 and 
+                                esquema_calificacion_asistencia.ecal_estado = 1 and 
+                                esquema_calificacion_asistencia.ecal_estado_logico = 1), 'N'
                          ) as asistencia_parcial_1,
-                         (  SELECT  casi.casi_porc_total
-                            FROM db_academico.cabecera_asistencia casi
-                            INNER JOIN db_academico.asistencia_esquema_unidad aeun_id_asistencia ON aeun_id_asistencia.aeun_id = casi.aeun_id
-                            INNER JOIN db_academico.esquema_calificacion_unidad esquema_calificacion_unidad ON esquema_calificacion_unidad.ecun_id = aeun_id_asistencia.aeun_id
-                            INNER JOIN db_academico.esquema_calificacion esquema_calificacion_asistencia ON  esquema_calificacion_asistencia.ecal_id = esquema_calificacion_unidad.ecal_id
-                            WHERE casi.paca_id = clfc.paca_id and
-                            casi.est_id = clfc.est_id  and 
-                            casi.pro_id = clfc.pro_id and 
-                            casi.asi_id = clfc.asi_id AND 
-                            esquema_calificacion_unidad.uaca_id = ecun.uaca_id AND
-                            esquema_calificacion_asistencia.ecal_id = 2 and 
-                            casi.casi_estado = 1 and 
-                            casi.casi_estado_logico = 1 AND
-                            aeun_id_asistencia.aeun_estado = 1 AND
-                            aeun_id_asistencia.aeun_estado_logico = 1 and 
-                            esquema_calificacion_unidad.ecun_estado = 1 and
-                            esquema_calificacion_unidad.ecun_estado_logico = 1 and 
-                            esquema_calificacion_asistencia.ecal_estado = 1 and 
-                            esquema_calificacion_asistencia.ecal_estado_logico = 1
-                         ) as asistencia_parcial_2,
+                        IFNULL((SELECT  casi.casi_porc_total
+                                FROM db_academico.cabecera_asistencia casi
+                                INNER JOIN db_academico.asistencia_esquema_unidad aeun_id_asistencia ON aeun_id_asistencia.aeun_id = casi.aeun_id
+                                INNER JOIN db_academico.esquema_calificacion_unidad esquema_calificacion_unidad ON esquema_calificacion_unidad.ecun_id = aeun_id_asistencia.aeun_id
+                                INNER JOIN db_academico.esquema_calificacion esquema_calificacion_asistencia ON  esquema_calificacion_asistencia.ecal_id = esquema_calificacion_unidad.ecal_id
+                                WHERE casi.paca_id = clfc.paca_id and
+                                casi.est_id = clfc.est_id  and 
+                                casi.pro_id = clfc.pro_id and 
+                                casi.asi_id = clfc.asi_id AND 
+                                esquema_calificacion_unidad.uaca_id = ecun.uaca_id AND
+                                esquema_calificacion_asistencia.ecal_id = 2 and 
+                                casi.casi_estado = 1 and 
+                                casi.casi_estado_logico = 1 AND
+                                aeun_id_asistencia.aeun_estado = 1 AND
+                                aeun_id_asistencia.aeun_estado_logico = 1 and 
+                                esquema_calificacion_unidad.ecun_estado = 1 and
+                                esquema_calificacion_unidad.ecun_estado_logico = 1 and 
+                                esquema_calificacion_asistencia.ecal_estado = 1 and 
+                                esquema_calificacion_asistencia.ecal_estado_logico = 1), 'NN'
+                        ) as asistencia_parcial_2,
                         asignatura.asi_descripcion as asi_nombre,
                         asignatura.asi_id as asi_id,
                         meun.mod_id as mod_id

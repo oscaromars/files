@@ -145,7 +145,7 @@ class CalificacionregistrodocenteController extends \app\components\CController 
         $arr_modalidad = $mod_modalidad->consultarModalidad($arr_ninteres[0]["id"], 1);
 
 
-        if (true) {
+        if (in_array(['id' => '6'], $arr_grupos)) {
             //Es Cordinados
             $arr_profesor_all = $mod_profesor->getProfesoresEnAsignaturas(); 
             Utilities::putMessageLogFile("Paso por cordinador");

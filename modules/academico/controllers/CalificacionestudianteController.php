@@ -107,7 +107,7 @@ class CalificacionestudianteController extends \app\components\CController {
         $arr_carrera = []; 
         // $arr_modalidad = $mod_modalidad->consultarModalidad($arr_ninteres[0]["id"], 1);
         // $arr_carrera = $modcanal->consultarCarreraModalidadEstudiante($resp_estudianteid["est_id"], $arr_ninteres[0]["id"], $arr_modalidad[0]["id"]);
-        
+         $noperid= 0;
         $perfil_user = $arr_grupos[0]["id"];
         Utilities::putMessageLogFile("LINEA 108  perfil_user: " .$perfil_user);
 
@@ -130,7 +130,7 @@ class CalificacionestudianteController extends \app\components\CController {
             $arrSearch["periodo"] = (isset($data['periodo']) && $data['periodo'] > 0)?$data['periodo']:NULL;
             // $arrSearch["per_id"] = $per_id;
             
-            $arr_estudiante = $cabeceraCalificacion->consultaCalificacionRegistroDocenteAllStudentSearch($arrSearch, $per_id, false);
+            $arr_estudiante = $cabeceraCalificacion->consultaCalificacionRegistroDocenteAllStudentSearch($arrSearch, $noperid, false);
              return $this->renderPartial('index-grid', [
                             "model" => $arr_estudiante,
                 ]);

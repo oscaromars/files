@@ -26,7 +26,9 @@ use app\modules\academico\Module as academico;
     <?=
     $this->render('view-grid', [
         'notas_estudiante' => $notas_estudiante,
-        'supletorio' => $supletorio
+        'supletorio' => $supletorio,
+        'unidad' => $unidad,
+        'modalidad' => $modalidad
         ]);
     ?>
 </div>

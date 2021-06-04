@@ -162,7 +162,7 @@ academico::registerTranslations();
                      //   return Html::a('<span class="'.Utilities::getIcon('remove').'"></span>', null, ['href' => 'javascript:confirmDelete(\'deleteItem\',[\'' . $model['Id'] . '\']);', "data-toggle" => "tooltip", "title" => Yii::t("accion","Delete")]);
                     //},
                     'add' => function ($url, $model){
-                        return Html::a('<span class="fa fa-user-plus"></span>', null, ['href' => 'javascript:showListStudents([\'' . $model['Id'] . '\']);',"data-toggle" => "tooltip", "title" => academico::t("distributivoacademico","Add Student")]);
+                        return Html::a('<span class="fa fa-user-plus"></span>', null, ['href' => 'javascript:showListStudentsPosgrado([\'' . $model['Id'] . '\']);',"data-toggle" => "tooltip", "title" => academico::t("distributivoacademico","Add Student")]);
                     }
                                 ],               
             ],                                

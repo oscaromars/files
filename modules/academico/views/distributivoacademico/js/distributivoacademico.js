@@ -395,6 +395,11 @@ function showListStudents(id) {
     window.location = link;
 }
 
+function showListStudentsPosgrado(id) {
+    var link = $('#txth_base').val() + "/academico/distributivoestudiante/newposgrado/" + id;
+    window.location = link;
+}
+
 function edit() {
     var link = $('#txth_base').val() + "/academico/distributivoacademico/editcab" + "?id=" + $("#txth_ids").val();
     window.location = link;

@@ -72,6 +72,42 @@ class DistributivoestudianteController extends \app\components\CController {
         );
     }
 
+    public function actionNewposgrado($id) {
+        $distributivo_model = DistributivoAcademico::findOne($id);
+        $data = array();
+        ///sizeof($estuden);
+        $estuden = $distributivo_model->buscarEstudiantesPosgrados($id);
+        for ($i = 0; $i < sizeof($estuden); $i++) {
+            $model = new DistributivoAcademicoEstudiante();
+            $model->daca_id = $id;
+
+            $model->est_id = $estuden[$i]['est_id'];
+            $model->daes_estado = 0;
+            $data[] = $model;
+        }
+
+        // print_r($data);
+        $dataProvider = new ArrayDataProvider([
+            'allModels' => $data,
+            'key' => 'est_id',
+            'pagination' => [
+                'pageSize' => 10,
+            ],
+            'sort' => [
+                'attributes' => ['daes_id', 'daca_id', 'est_id'],
+            ],
+        ]);
+
+        return $this->render('newposgrado',
+                        ['dataProvider' => $dataProvider,
+                         'distributivo_model' => $distributivo_model,
+                         ]
+        );
+    }
+
+    
+    
+    
     public function actionCambioparalelo($id, $daes_id) {
         $distributivo_model = DistributivoAcademico::findOne($id);
         $estudiante_model = DistributivoAcademicoEstudiante::findOne($daes_id);

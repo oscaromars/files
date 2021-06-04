@@ -134,6 +134,18 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
     public function getDistributivoAcademicoEstudiantes() {
         return $this->hasMany(DistributivoAcademicoEstudiante::className(), ['daca_id' => 'daca_id']);
     }
+    public function buscarEstudiantesPosgrados($id) {
+        $con_academico = \Yii::$app->db_academico;
+        
+        $sql = " select est_id from db_academico.estudiante_carrera_programa as ecp 
+               inner join db_academico.distributivo_academico as da  on  ecp.meun_id = da.meun_id and uaca_id =2
+               where daca_id=".$id;
+        
+        
+         $comando = $con_academico->createCommand($sql);
+          $res = $comando->queryAll();
+          return $res;
+    }
     
     public function buscarEstudiantesMatriculados($id, $num_paralelo) {
         $con_academico = \Yii::$app->db_academico;

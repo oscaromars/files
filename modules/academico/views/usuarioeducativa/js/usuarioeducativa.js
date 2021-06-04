@@ -293,13 +293,12 @@ function cargarUsuario() {
 
     if (!validateForm()) {
         requestHttpAjax(link, arrParams, function(response) {
-
             //Ruta es la direccion que deseemos que el boton nos dirija al momento de dar click
             var ruta = [$('#txth_base').val() + "/academico/usuarioeducativa/usuarioindex"];
             //acciones son las variables que debemos enviar para dibujar el o los botones en el modal
             var acciones = [{ id      : 'reloadpage',     //id que tendra el boton
                               class   : 'btn btn-primary',//La clase para poderle dar un estilo al boton 
-                              value   : 'Volver', //Este es el texto que tendra el boton//objLang.Accept, 
+                              value   : 'Regresar', //Este es el texto que tendra el boton//objLang.Accept, 
                               callback: 'gotoPage', //funcion que debe ejecutar el boton
                               paramCallback : ruta, //variable a ser llamada por la funcion anterior ej gotoPage(ruta)
                            }]; 
@@ -311,9 +310,6 @@ function cargarUsuario() {
             response.message.closeaction = cancelar;
             //Dejamos que la funcion showAlert dibuje el modal
             showAlert(response.status, response.label, response.message);
-
-            
-
             /*
             alertify.alert(response.message.wtmessage, function(){
                 alertify.message('OK');
@@ -330,19 +326,39 @@ function cargarDocumento() {
     arrParams.archivo = $('#txth_doc_adj_educativacu2').val() + "." + $('#txth_doc_adj_educativacu').val().split('.').pop();
     arrParams.paca_id = $("#cmb_per_aca").val();    
     if ($('#cmb_per_aca option:selected').val() != 0) {     
-    if (!validateForm()) {
-        requestHttpAjax(link, arrParams, function(response) {      
-            showAlert(response.status, response.label, response.message);
-            setTimeout(function () {
-                    window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/index";
-                }, 5000);  
-        }, true);
-    }
-  } else {
-    showAlert('NO_OK', 'error', {"wtmessage": 'Periodo Académico: El campo no debe estar vacío.', "title": 'Error'});
- } 
+        if (!validateForm()) {
+            requestHttpAjax(link, arrParams, function(response) {     
+                //Aqui va el cambio gap 
+                /*
+                showAlert(response.status, response.label, response.message);
+                setTimeout(function () {
+                        window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/index";
+                    }, 5000); 
+                */
 
-}
+                //Ruta es la direccion que deseemos que el boton nos dirija al momento de dar click
+                var ruta = [$('#txth_base').val() + "/academico/usuarioeducativa/index"];
+                //acciones son las variables que debemos enviar para dibujar el o los botones en el modal
+                var acciones = [{ id      : 'reloadpage',     //id que tendra el boton
+                                  class   : 'btn btn-primary',//La clase para poderle dar un estilo al boton 
+                                  value   : 'Regresar', //Este es el texto que tendra el boton//objLang.Accept, 
+                                  callback: 'gotoPage', //funcion que debe ejecutar el boton
+                                  paramCallback : ruta, //variable a ser llamada por la funcion anterior ej gotoPage(ruta)
+                               }]; 
+                var cancelar = [{ callback: 'reloadPage', //funcion que debe ejecutar el boton
+                                  //paramCallback : ruta, //variable a ser llamada por la funcion anterior ej gotoPage(ruta)
+                               }];
+                //Agregamos a nuestra variables message nuestras acciones
+                response.message.acciones    = acciones;
+                response.message.closeaction = cancelar;
+                //Dejamos que la funcion showAlert dibuje el modal
+                showAlert(response.status, response.label, response.message); 
+            }, true);
+        }
+    } else {
+        showAlert('NO_OK', 'error', {"wtmessage": 'Periodo Académico: El campo no debe estar vacío.', "title": 'Error'});
+    }//else
+}//function cargarDocumento
 
 function setComboDataselect(arr_data, element_id, texto) {
     var option_arr = "";
@@ -688,11 +704,30 @@ function cargarUnidad() {
     arrParams.procesar_file = true;
     arrParams.archivo = $('#txth_doc_adj_educativaun2').val() + "." + $('#txth_doc_adj_educativaun').val().split('.').pop();
     if (!validateForm()) {
-        requestHttpAjax(link, arrParams, function(response) {      
+        requestHttpAjax(link, arrParams, function(response) {    
+            /*
             showAlert(response.status, response.label, response.message);
             setTimeout(function () {
                     window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/indexunidad";
-                }, 5000);  
+                }, 5000);
+            */
+
+            var ruta = [$('#txth_base').val() + "/academico/usuarioeducativa/indexunidad"];
+            //acciones son las variables que debemos enviar para dibujar el o los botones en el modal
+            var acciones = [{ id      : 'reloadpage',     //id que tendra el boton
+                              class   : 'btn btn-primary',//La clase para poderle dar un estilo al boton 
+                              value   : 'Regresar', //Este es el texto que tendra el boton//objLang.Accept, 
+                              callback: 'gotoPage', //funcion que debe ejecutar el boton
+                              paramCallback : ruta, //variable a ser llamada por la funcion anterior ej gotoPage(ruta)
+                           }]; 
+            var cancelar = [{ callback: 'reloadPage', //funcion que debe ejecutar el boton
+                              //paramCallback : ruta, //variable a ser llamada por la funcion anterior ej gotoPage(ruta)
+                           }];
+            //Agregamos a nuestra variables message nuestras acciones
+            response.message.acciones    = acciones;
+            response.message.closeaction = cancelar;
+            //Dejamos que la funcion showAlert dibuje el modal
+            showAlert(response.status, response.label, response.message); 
         }, true);
     }  
 

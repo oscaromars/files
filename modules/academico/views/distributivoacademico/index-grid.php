@@ -55,22 +55,33 @@ academico::registerTranslations();
                 'attribute' => 'Jornada',
                 'header' => academico::t("Academico", "Working day"),
                 'value' => 'Jornada',
-            ],            
+            ],    
+             [
+                'attribute' => 'mpp_num_paralelo',
+                'header' => academico::t("Academico", "Paralelo"),
+                'value' => 'mpp_num_paralelo',
+            ],
+            
+            [
+                'attribute' => 'total_est',
+                'header' => academico::t("Academico", "Total Estudiantes"),
+                'value' => 'total_est',
+            ], 
             [
                 'class' => 'yii\grid\ActionColumn',
                 'header' => '',
-                'template' => '{view}{delete}{add}{edit}',
+                'template' => '{add}',
                 'contentOptions' => ['class' => 'text-center'],
                 'buttons' => [
                     'view' => function ($url, $model) {
                         return Html::a('<span class="'.Utilities::getIcon('view').'"></span>', Url::to(['distributivoacademico/view', 'id' => $model['Id']]), ["data-toggle" => "tooltip", "title" => Yii::t("accion","View")]);
                     },
-                    'edit' => function ($url, $model) {
-                        return Html::a('<span class="'.Utilities::getIcon('edit').'"></span>', Url::to(['distributivoacademico/editcab', 'id' => $model['Id']]), ["data-toggle" => "tooltip", "title" => Yii::t("accion","Edit")]);
-                    },
-                    'delete' => function ($url, $model) {
-                        return Html::a('<span class="'.Utilities::getIcon('remove').'"></span>', null, ['href' => 'javascript:confirmDelete(\'deleteItem\',[\'' . $model['Id'] . '\']);', "data-toggle" => "tooltip", "title" => Yii::t("accion","Delete")]);
-                    },
+                    //'edit' => function ($url, $model) {
+                      //  return Html::a('<span class="'.Utilities::getIcon('edit').'"></span>', Url::to(['distributivoacademico/editcab', 'id' => $model['Id']]), ["data-toggle" => "tooltip", "title" => Yii::t("accion","Edit")]);
+                    //},
+                    //'delete' => function ($url, $model) {
+                     //   return Html::a('<span class="'.Utilities::getIcon('remove').'"></span>', null, ['href' => 'javascript:confirmDelete(\'deleteItem\',[\'' . $model['Id'] . '\']);', "data-toggle" => "tooltip", "title" => Yii::t("accion","Delete")]);
+                    //},
                     'add' => function ($url, $model){
                         return Html::a('<span class="fa fa-user-plus"></span>', null, ['href' => 'javascript:showListStudents([\'' . $model['Id'] . '\']);',"data-toggle" => "tooltip", "title" => academico::t("distributivoacademico","Add Student")]);
                     }

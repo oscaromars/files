@@ -12,7 +12,7 @@ academico::registerTranslations();
 ?>
 <?= Html::hiddenInput('txth_tipo', 'new', ['id' => 'txth_periodoid']); ?>
 <?= Html::hiddenInput('txth_idperiodo', $arr_periodoActual['id'], ['id' => 'txth_idperiodo']); ?>
-<h3>Período Académico: <span id="lbl_etiqueta"><?= $arr_periodoActual['nombre'] ?></span></h3>
+
 </br>
 <form class="form-horizontal">
     <div class="row">          
@@ -22,7 +22,14 @@ academico::registerTranslations();
                 <div class="col-sm-3 col-xs-3 col-md-3 col-lg-3">
                     <?= Html::dropDownList("cmb_profesor", 0, $arr_profesor, ["class" => "form-control", "id" => "cmb_profesor"]) ?>
 
-                </div>                            
+                </div> 
+                
+                <div  >
+                    <label for="cmb_periodo" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= Yii::t("formulario", "Period") ?></label>
+                    <div class="col-sm-3 col-xs-3 col-md-3 col-lg-3">
+                        <?= Html::dropDownList("cmb_periodo", 0, $arr_periodo, ["class" => "form-control", "id" => "cmb_periodo"]) ?>
+                    </div>
+                </div>
             </div>
         </div>        
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" >
@@ -56,12 +63,7 @@ academico::registerTranslations();
                         <?= Html::dropDownList("cmb_modalidad", 0, $arr_modalidad, ["class" => "form-control", "id" => "cmb_modalidad"]) ?>
                     </div>
                 </div>
-                <div id="bloque2-1" style="display: none">
-                    <label for="cmb_periodo" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= Yii::t("formulario", "Period") ?></label>
-                    <div class="col-sm-3 col-xs-3 col-md-3 col-lg-3">
-                        <?= Html::dropDownList("cmb_periodo", 0, $arr_periodo, ["class" => "form-control", "id" => "cmb_periodo"]) ?>
-                    </div>
-                </div>
+                
                 <div id="bloque6" style="display: none">
                     <label for="cmb_programa" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= academico::t("Academico", "Career/Program") ?></label>
                     <div class="col-sm-3 col-xs-3 col-md-3 col-lg-3">
@@ -156,6 +158,8 @@ academico::registerTranslations();
                 </div>
             </div>
         </div>
+        
+       
     </div>
 
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">

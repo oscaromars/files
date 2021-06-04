@@ -117,6 +117,16 @@ class UsuarioeducativaController extends \app\components\CController {
                     $message = array(
                         "wtmessage" => Yii::t("notificaciones", "Archivo procesado correctamente." . $carga_archivo['data'] .  $noalumno),
                         "title" => Yii::t('jslang', 'Success'),
+                        /*
+                        "acciones" => array(
+                                             array(
+                                             "id"      => "reloadpage",
+                                             "class"   => "btn-primary clclass",
+                                             "value"   => "objLang.Accept",
+                                             "callback" => "gotoPage",
+                                             "paramCallback" => array("")
+                                             ),
+                        */
                     );
                     return Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Success"), false, $message);
                 } else {

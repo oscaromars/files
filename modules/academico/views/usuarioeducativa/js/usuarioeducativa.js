@@ -1,4 +1,19 @@
 $(document).ready(function() {
+
+    if(!alertify.errorAlert){
+      //define a new errorAlert base on alert
+      alertify.dialog('errorAlert',function factory(){
+        return{
+                build:function(){
+                    var errorHeader = '<span class="success-modalPB" '
+                    +    'style="vertical-align:middle;color:#e10000;">'
+                    + '</span> Application Error';
+                    this.setHeader(errorHeader);
+                }
+            };
+        },true,'alert');
+    }
+
     $('#btn_guardareducativa').click(function () {
         cargarUsuario();
     });
@@ -278,10 +293,32 @@ function cargarUsuario() {
 
     if (!validateForm()) {
         requestHttpAjax(link, arrParams, function(response) {
+
+            //Ruta es la direccion que deseemos que el boton nos dirija al momento de dar click
+            var ruta = [$('#txth_base').val() + "/academico/usuarioeducativa/usuarioindex"];
+            //acciones son las variables que debemos enviar para dibujar el o los botones en el modal
+            var acciones = [{ id      : 'reloadpage',     //id que tendra el boton
+                              class   : 'btn btn-primary',//La clase para poderle dar un estilo al boton 
+                              value   : 'Volver', //Este es el texto que tendra el boton//objLang.Accept, 
+                              callback: 'gotoPage', //funcion que debe ejecutar el boton
+                              paramCallback : ruta, //variable a ser llamada por la funcion anterior ej gotoPage(ruta)
+                           }]; 
+            var cancelar = [{ callback: 'reloadPage', //funcion que debe ejecutar el boton
+                              //paramCallback : ruta, //variable a ser llamada por la funcion anterior ej gotoPage(ruta)
+                           }];
+            //Agregamos a nuestra variables message nuestras acciones
+            response.message.acciones    = acciones;
+            response.message.closeaction = cancelar;
+            //Dejamos que la funcion showAlert dibuje el modal
             showAlert(response.status, response.label, response.message);
-            setTimeout(function() {
-                window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/usuarioindex";
-            }, 5000);
+
+            
+
+            /*
+            alertify.alert(response.message.wtmessage, function(){
+                alertify.message('OK');
+            }).set({title:response.message.title});
+            */
         }, true);
     }
 }

@@ -25,6 +25,8 @@ class AppAsset extends AssetBundle {
         'plugins/bootstrap-toggle/css/bootstrap-toggle.min.css',
         'https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.13.3/css/selectize.default.css',
         'https://cdnjs.cloudflare.com/ajax/libs/slim-select/1.27.0/slimselect.css',
+        'https://cdnjs.cloudflare.com/ajax/libs/AlertifyJS/1.13.1/css/alertify.css',
+        'https://cdnjs.cloudflare.com/ajax/libs/AlertifyJS/1.13.1/css/themes/default.rtl.css',
     ];
     public $js = [
         'js/PBscripts.js',
@@ -35,6 +37,7 @@ class AppAsset extends AssetBundle {
         'plugins/bootstrap-toggle/js/bootstrap-toggle.min.js',
         'https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.13.3/js/standalone/selectize.js',
         'https://cdnjs.cloudflare.com/ajax/libs/slim-select/1.27.0/slimselect.js',
+        'https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js',
     ];
     public $jsOptions = ['position' => \yii\web\View::POS_END];
     public $depends = [

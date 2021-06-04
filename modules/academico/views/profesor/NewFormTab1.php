@@ -9,7 +9,6 @@ use yii\helpers\Url;
 use kartik\select2\Select2;
 use yii\widgets\ActiveForm;
 use app\components\CFileInputAjax;
-
 use app\modules\Academico\Module as Academico;
 
 Academico::registerTranslations();
@@ -112,20 +111,16 @@ Academico::registerTranslations();
         </div>
     </div>
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+       <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
-            <label for="cmb_dedicacion" class="col-lg-3 col-md-3 col-sm-3 col-xs-3 control-label"><?= Yii::t("perfil", "Dedicación") ?> <span class="text-danger">*</span></label>
-            <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9">
-                <?=
-                Select2::widget([
-                    'name' => 'cmb_dedicacion',
-                    'data' => $model_dedicacion,
-                    'options' => [
-                        'placeholder' => 'Seleccione dedicacion ...',                        
-                    ],
-                ]);
-                ?>  
+            <label for="cmb_dedicacion" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Academico::t("perfil", "Dedicación") ?></label>
+            <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
+                <?= Html::dropDownList("cmb_dedicacion", 0, $model_dedicacion, ["class" => "form-control", "id" => "cmb_dedicacion" ]) ?>
             </div>
         </div>
+    </div>
+        
+       
     </div>
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
@@ -146,11 +141,13 @@ Academico::registerTranslations();
             </div>
         </div>
     </div>
+    
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">           
-            <label for="txth_doc_foto" class="col-lg-3 col-md-3 col-sm-3 col-xs-3 control-label"><?= Yii::t("formulario", "Photo") ?> <span class="text-danger">*</span></label>                    
+            <label for="txth_doc_foto" class="col-lg-3 col-md-3 col-sm-3 col-xs-3 control-label"><?= Yii::t("formulario", "Photo") ?> </label>                    
             <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9">
-                <?= Html::hiddenInput('txth_doc_cv', $per_foto, ['id' => 'txth_doc_cv']); ?>
+               
+                <?= Html::hiddenInput('txth_doc_cv', $typeFile, ['id' => 'txth_doc_cv']); ?>
                 <?= Html::hiddenInput('txth_doc_foto', $per_foto, ['id' => 'txth_doc_foto']); ?>
                 <?php
                 echo CFileInputAjax::widget([
@@ -168,21 +165,25 @@ Academico::registerTranslations();
                         'browseIcon' => '<i class="fa fa-folder-open"></i> ',
                         'browseLabel' => "Subir Foto",
                         'uploadUrl' => Url::to(['/academico/profesor/new']),
-                        'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
+                        'maxFileSize' => Yii::$app->params["MaxFileSize2m"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
                             return {"upload_file": true, "name_file": "foto-' . @Yii::$app->session->get("PB_iduser") . '-' . time() . '"};
                         }',
                     ],
-                    'options' => ['accept' => 'application/jpg'],
+                    'options' => ['accept' => 'image/*'],
                     'pluginEvents' => [
                         "filebatchselected" => "function (event) {
                             $('#txth_doc_foto').val('foto-" . @Yii::$app->session->get("PB_iduser") . '-' . time() . "');
-                            $('#txth_doc_cv').val($('#txth_doc_cv').val());
+
+                            $('#txth_doc_cv').val($('#txt_doc_cv').val());
                             $('#txt_doc_cv').fileinput('upload');
                         }",
                         "fileuploaderror" => "function (event, data, msg) {
                             $(this).parent().parent().children().first().addClass('hide');
-                            $('#txth_doc_cv').val('');        
+                            $('#txth_doc_cv').val('');  
+                            $('#txt_doc_cv').val('');  
+                            var mensaje = {wtmessage: msg, title: 'Información'};
+                                 showAlert('NO_OK', 'error', mensaje);      
                         }",
                         "filebatchuploadcomplete" => "function (event, files, extra) { 
                             $(this).parent().parent().children().first().addClass('hide');
@@ -200,7 +201,7 @@ Academico::registerTranslations();
                     ],
                 ]);
                 ?>
-            </div>
-        </div>            
-    </div>
+</div>
+            </div>            
+        </div>
 </form>

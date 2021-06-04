@@ -30,14 +30,89 @@ admision::registerTranslations();
 
 class DistributivoestudianteController extends \app\components\CController {
 
+    public function actionNew($id) {
+        $distributivo_model = DistributivoAcademico::findOne($id);
+        $data = array();
+        ///sizeof($estuden);
+        $estuden = $distributivo_model->buscarEstudiantesMatriculados($distributivo_model->asi_id, $distributivo_model->mpp->mpp_num_paralelo);
+        for ($i = 0; $i < sizeof($estuden); $i++) {
+            $model = new DistributivoAcademicoEstudiante();
+            $model->daca_id = $id;
+
+            $model->est_id = $estuden[$i]['est_id'];
+            $model->daes_estado = 0;
+            $data[] = $model;
+        }
+
+        $estuden = $distributivo_model->buscarEstudiantesAsignados($distributivo_model->asi_id, $distributivo_model->mpp->mpp_num_paralelo);
+        for ($i = 0; $i < sizeof($estuden); $i++) {
+            $model = new DistributivoAcademicoEstudiante();
+            $model->daca_id = $id;
+            $model->daes_id = $estuden[$i]['daes_id'];
+            $model->est_id = $estuden[$i]['est_id'];
+            $model->daes_estado = 1;
+            $data[] = $model;
+        }
+
+        // print_r($data);
+        $dataProvider = new ArrayDataProvider([
+            'allModels' => $data,
+            'key' => 'est_id',
+            'pagination' => [
+                'pageSize' => 10,
+            ],
+            'sort' => [
+                'attributes' => ['daes_id', 'daca_id', 'est_id'],
+            ],
+        ]);
+
+        return $this->render('new',
+                        ['dataProvider' => $dataProvider,
+                            'distributivo_model' => $distributivo_model,]
+        );
+    }
+
+    public function actionCambioparalelo($id, $daes_id) {
+        $distributivo_model = DistributivoAcademico::findOne($id);
+        $estudiante_model = DistributivoAcademicoEstudiante::findOne($daes_id);
+        $paralelos = $distributivo_model->getParalelo($distributivo_model->asi_id);
+        return $this->render('cambioparalelo',
+                        ['distributivo_model' => $distributivo_model,
+                            'estudiante_model' => $estudiante_model,
+                            'paralelos' => ArrayHelper::map(array_merge($paralelos), "id", "name")]
+        );
+    }
+
+    public function actionSavechangeparalelo() {
+        $emp_id = @Yii::$app->session->get("PB_idempresa");
+        $fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
+
+        if (Yii::$app->request->isAjax) {
+            $data = Yii::$app->request->post();
+            $daca_id = $data['daca_id'];
+            $daes_id = $data['daes_id'];
+
+            $estudiante_model = DistributivoAcademicoEstudiante::findOne($daes_id);
+            $estudiante_model->daca_id = $daca_id;
+            if ($estudiante_model->save()) {
+               $message = array(
+                        "wtmessage" => Yii::t("notificaciones", "Your information was successfully saved."),
+                        "title" => Yii::t('jslang', 'Success'),
+                    );
+                    return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+              
+            }
+        }
+    }
+
     public function actionIndex($id) {
         $per_id = @Yii::$app->session->get("PB_perid");
         $emp_id = @Yii::$app->session->get("PB_idempresa");
         $distributivoEst_model = new DistributivoAcademicoEstudiante();
-        if(!isset($id) && $id <= 0){
+        if (!isset($id) && $id <= 0) {
             return $this->redirect('distributivoacademico/index');
         }
-        
+
         $data = Yii::$app->request->get();
 
         if ($data['PBgetFilter']) {
@@ -48,7 +123,7 @@ class DistributivoestudianteController extends \app\components\CController {
                         "model" => $model,
             ]);
         }
-        
+
         $distributivo_model = DistributivoAcademico::findOne($id);
         $distributivo_hora = DistributivoAcademicoHorario::findOne($distributivo_model->daho_id);
         $mod_modalidad = Modalidad::findOne($distributivo_hora->mod_id);
@@ -77,7 +152,7 @@ class DistributivoestudianteController extends \app\components\CController {
     public function actionEdit($id) {
         $emp_id = @Yii::$app->session->get("PB_idempresa");
         $distributivoEst_model = new DistributivoAcademicoEstudiante();
-        if(!isset($id) && $id <= 0){
+        if (!isset($id) && $id <= 0) {
             return $this->redirect('distributivoacademico/index');
         }
         $data = Yii::$app->request->get();
@@ -89,7 +164,7 @@ class DistributivoestudianteController extends \app\components\CController {
                         "model" => $model,
             ]);
         }
-        
+
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
             if ($data['PBgetAutoComplete']) {
@@ -98,7 +173,7 @@ class DistributivoestudianteController extends \app\components\CController {
                 $response = $distributivoEst_model->getEstudiantesXUnidadAcademica($unidad, $search);
                 return json_encode($response);
             }
-            if($data['PBgetDataEstudiante']){
+            if ($data['PBgetDataEstudiante']) {
                 $est_id = $data['est_id'];
                 $mod_est = Estudiante::findOne($est_id);
                 $mod_per = Persona::findOne($mod_est->per_id);
@@ -138,29 +213,37 @@ class DistributivoestudianteController extends \app\components\CController {
         ]);
     }
 
-    public function actionSave(){
+    public function actionSave() {
         $emp_id = @Yii::$app->session->get("PB_idempresa");
         $fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
-        $distributivoEst_model = new DistributivoAcademicoEstudiante();
-        try{
+
+        try {
             if (Yii::$app->request->isAjax) {
                 $data = Yii::$app->request->post();
-                $daca_id = $data['id'];
+                $daca_id = $data['daca_id'];
                 $est_id = $data['est_id'];
-                $dataExists = DistributivoAcademicoEstudiante::findOne(['daca_id' => $daca_id, 'est_id' => $est_id, 'daes_estado' => '1', 'daes_estado_logico' => '1']);
-                if(isset($dataExists) && $dataExists != ""){
-                    $message = array(
-                        "wtmessage" => academico::t('distributivoacademico', 'Register already exists in System.'),
-                        "title" => Yii::t('jslang', 'Error'),
-                    );
-                    return Utilities::ajaxResponse('NOOK', 'alert', Yii::t('jslang', 'Error'), 'true', $message);
+                $verifica = 0;
+                for ($i = 0; $i < sizeof($est_id); $i++) {
+                    $distributivoEst_model = new DistributivoAcademicoEstudiante();
+                    $distributivoEst_model->daca_id = $daca_id;
+                    $distributivoEst_model->est_id = $est_id[$i];
+                    $distributivoEst_model->daes_fecha_registro = $fecha_transaccion;
+                    $distributivoEst_model->daes_estado = '1';
+                    $distributivoEst_model->daes_estado_logico = '1';
+                    if ($distributivoEst_model->save()) {
+                        $verifica++;
+                    }
                 }
-                $distributivoEst_model->daca_id = $daca_id;
-                $distributivoEst_model->est_id = $est_id;
-                $distributivoEst_model->daes_fecha_registro = $fecha_transaccion;
-                $distributivoEst_model->daes_estado = '1';
-                $distributivoEst_model->daes_estado_logico = '1';
-                if ($distributivoEst_model->save()) {
+                /*  $dataExists = DistributivoAcademicoEstudiante::findOne(['daca_id' => $daca_id, 'est_id' => $est_id, 'daes_estado' => '1', 'daes_estado_logico' => '1']);
+                  if(isset($dataExists) && $dataExists != ""){
+                  $message = array(
+                  "wtmessage" => academico::t('distributivoacademico', 'Register already exists in System.'),
+                  "title" => Yii::t('jslang', 'Error'),
+                  );
+                  return Utilities::ajaxResponse('NOOK', 'alert', Yii::t('jslang', 'Error'), 'true', $message);
+                  } */
+
+                if ($verifica >= 1) {
                     $message = array(
                         "wtmessage" => Yii::t("notificaciones", "Your information was successfully saved."),
                         "title" => Yii::t('jslang', 'Success'),
@@ -170,7 +253,7 @@ class DistributivoestudianteController extends \app\components\CController {
                     throw new Exception('Error en Guardar registro.');
                 }
             }
-        }catch(Exception $e){
+        } catch (Exception $e) {
             $message = array(
                 "wtmessage" => Yii::t('notificaciones', 'Your information has not been saved. Please try again.'),
                 "title" => Yii::t('jslang', 'Error'),
@@ -179,7 +262,7 @@ class DistributivoestudianteController extends \app\components\CController {
         }
     }
 
-    public function actionDelete(){
+    public function actionDelete() {
         if (Yii::$app->request->isAjax) {
             $usu_id = @Yii::$app->session->get("PB_iduser");
             $data = Yii::$app->request->post();
@@ -228,11 +311,11 @@ class DistributivoestudianteController extends \app\components\CController {
         );
         $distributivo_model = new DistributivoAcademicoEstudiante();
         $data = Yii::$app->request->get();
-        $arrSearch["search"] = ($data['search'] != "")?$data['search']:NULL;
-        $arrSearch["id"] = ($data['id'] > 0)?$data['id']:NULL;
+        $arrSearch["search"] = ($data['search'] != "") ? $data['search'] : NULL;
+        $arrSearch["id"] = ($data['id'] > 0) ? $data['id'] : NULL;
 
         $arrData = $distributivo_model->getListadoDistributivoEstudiante($arrSearch["id"], $arrSearch["search"], true);
-        foreach($arrData as $key => $value){
+        foreach ($arrData as $key => $value) {
             unset($arrData[$key]["Id"]);
         }
         $nameReport = academico::t("distributivoacademico", "Student Lists by Subject");
@@ -254,8 +337,8 @@ class DistributivoestudianteController extends \app\components\CController {
         );
         $distributivo_model = new DistributivoAcademicoEstudiante();
         $data = Yii::$app->request->get();
-        $arrSearch["search"] = ($data['search'] != "")?$data['search']:NULL;
-        $arrSearch["id"] = ($data['id'] > 0)?$data['id']:NULL;
+        $arrSearch["search"] = ($data['search'] != "") ? $data['search'] : NULL;
+        $arrSearch["id"] = ($data['id'] > 0) ? $data['id'] : NULL;
 
         $arrData = $distributivo_model->getListadoDistributivoEstudiante($arrSearch["id"], $arrSearch["search"], true);
         $report->orientation = "P"; // tipo de orientacion L => Horizontal, P => Vertical                                
@@ -267,15 +350,17 @@ class DistributivoestudianteController extends \app\components\CController {
         );
         $report->mpdf->Output('Reporte_' . date("Ymdhis") . ".pdf", ExportFile::OUTPUT_TO_DOWNLOAD);
     }
-    public function actionHorarioestudiante() { 
-        $per_id = @Yii::$app->session->get("PB_perid");           
-        $mod_distributivoest = new DistributivoAcademicoEstudiante(); 
+
+    public function actionHorarioestudiante() {
+        $per_id = @Yii::$app->session->get("PB_perid");
+        $mod_distributivoest = new DistributivoAcademicoEstudiante();
         $mod_estudiante = new Estudiante();
         // Obtener est_id a partir del per_id
         $arr_estudiante = $mod_estudiante->getEstudiantexperid($per_id);
-        $arr_horario = $mod_distributivoest->consultarHorarioEstudiante($arr_estudiante["est_id"]);      
+        $arr_horario = $mod_distributivoest->consultarHorarioEstudiante($arr_estudiante["est_id"]);
         return $this->render('horarioestudiante', [
-                    'arr_horario' => $arr_horario,                   
+                    'arr_horario' => $arr_horario,
         ]);
-    } 
+    }
+
 }

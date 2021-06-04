@@ -110,6 +110,9 @@ class AsistenciaregistrodocenteController extends \app\components\CController {
         ]);
     }
 
+
+ 
+
     public function actionCargararchivoasistencia() {
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
@@ -198,12 +201,13 @@ class AsistenciaregistrodocenteController extends \app\components\CController {
             $mod_periodo = new PeriodoAcademico();
             $asig_mod = new Asignatura();
             $mod_profesor = new Profesor();
+            
 
             $periodos = $mod_periodo->consultarPeriodosActivos();
             $periodo_actual = $mod_periodo->getPeriodoAcademicoActual();
-            $profesores = $mod_profesor->getProfesoresEnAsignaturas();  
+            $profesores = $mod_profesor->getProfesoresEnAsignaturas();   
              $arr_unidad = $mod_unidad->consultarUnidadAcademicasEmpresa($emp_id);
-            $arr_modalidad = $mod_modalidad->consultarModalidad($arr_unidad[0]["id"], 1);            
+            $arr_modalidad = $mod_modalidad->consultarModalidad($arr_unidad[0]["id"], 1);  
 
             // Determinar si el usuario logueado es sólo profesor o tiene más privilegios
             $per_id = Yii::$app->session->get("PB_perid");
@@ -231,7 +235,7 @@ class AsistenciaregistrodocenteController extends \app\components\CController {
 
             return $this->render('cargararchivoasistencias', [
                 'periodos' =>  ArrayHelper::map(array_merge($periodos), "paca_id", "paca_nombre"),
-                 'unidades' =>  ArrayHelper::map(array_merge($arr_unidad), "id", "name"),
+                'unidades' =>  ArrayHelper::map(array_merge($arr_unidad), "id", "name"),
                 'modalidades' =>  ArrayHelper::map(array_merge($arr_modalidad), "id", "name"),
                 'periodo_actual' => $periodo_actual,
                 'materias' => ArrayHelper::map(array_merge($materias), "asi_id", "asi_descripcion"),
@@ -249,6 +253,7 @@ class AsistenciaregistrodocenteController extends \app\components\CController {
         $con = Yii::$app->db_facturacion;
         $transaccion = $con->getTransaction();
         $model = new CabeceraAsistencia();
+        
 
         if ($transaccion !== null) { $transaccion = null; }
         else { $transaccion = $con->beginTransaction(); }
@@ -287,12 +292,26 @@ class AsistenciaregistrodocenteController extends \app\components\CController {
                     if( $fila == 1 ){ // No leer la primera fila ni la 2da
                         continue;
                     }else{
-
-                        $matricula = $val[1];
+                        // VALIDATE IF ONLINE & BACHELLOR DEGREE       --------------------------------------------------------------
+                        $matricula = $val[1]; 
+                        
+                          \app\models\Utilities::putMessageLogFile('Matricula' . $matricula);
+                          
                         $nombre = $val[2] . ' ' . $val[3];
                         //obtengo:  est_id, per_id
-                        //$estudiante = Estudiante::find()->where(['est_matricula' => $matricula])->asArray()->one();
-                        $estudiante = UsuarioEducativa::find()->where(['uedu_usuario' => $matricula])->asArray()->one();
+                        
+                                 \app\models\Utilities::putMessageLogFile('nombre' . $nombre);
+                        
+                       $estudiante = Estudiante::find()->where(['est_matricula' => $matricula])->asArray()->one();
+                        \app\models\Utilities::putMessageLogFile('ID' . $estudiante['est_id']);
+                       
+                       
+                       //    $estudiante = UsuarioEducativa::find()->where(['uedu_usuario' => $matricula])->asArray()->one();
+                      //   $mod_usueducativa = new UsuarioEducativa();
+                       //  $estudiante = $mod_usueducativa->getusuarioeducativaby($matricula);
+                        
+                        // ----------------------------------------------------------------------------------------------------------
+                        
                         // Si el estudiante no existe, continuar al siguiente, y colocarlo en la lista
                         if(!isset($estudiante)){
                             $val_estudiante = 1;
@@ -300,15 +319,27 @@ class AsistenciaregistrodocenteController extends \app\components\CController {
                             $noalumno .= $nombre . " (no es un estudiante registrado), ";
                             continue;
                         }
-
+                  
                         $est_id = $estudiante['est_id'];
+                               \app\models\Utilities::putMessageLogFile('ESTID' . $est_id);
                         $meun_id = EstudianteCarreraPrograma::find()->where(['est_id' => $est_id])->asArray()->one()['meun_id'];
+                          \app\models\Utilities::putMessageLogFile('MEUNID' . $meun_id);
                         $uaca_id = ModalidadEstudioUnidad::find()->where(['meun_id' => $meun_id])->asArray()->one()['uaca_id'];
+                          \app\models\Utilities::putMessageLogFile('UACAID' . $uaca_id);
+                      
+                                
 
                         // Esquema Calificación Unidad
                         $respEsquemaCalUni = $model->selectEsquemaCalificacionUnidad($ecal_id, $uaca_id);
+                                 \app\models\Utilities::putMessageLogFile('UACAID' . $respEsquemaCalUni);
                         //$ecun_id = $respEsquemaCalUni[0]["ecun_id"];
                         $aeun_id = $respEsquemaCalUni[0]["aeun_id"];
+                         \app\models\Utilities::putMessageLogFile('AEUNID' . $aeun_id);
+                      
+                             
+                        
+                         
+                                  
 
                         // Sacar la asignatura correcta
                         $asignatura = $mod_asig->consultarAsignaturaConUnidad($asi_id, $uaca_id);
@@ -319,8 +350,7 @@ class AsistenciaregistrodocenteController extends \app\components\CController {
                             continue;
                         }
 
-                        // Tomar las asistencias dependiendo del parcial elegido  UPDATE-----
-                        /*
+                        // Tomar las asistencias dependiendo del parcial elegido
                         if($ecal_id == 1){ // 1er Parcial
                             $asi_u1 = $val[5];
                             $asi_u2 = $val[6];
@@ -330,30 +360,12 @@ class AsistenciaregistrodocenteController extends \app\components\CController {
                             $casi_porc_total = ($asi_u1 + $asi_u2) / 2;
                         }
                         elseif($ecal_id == 2){ // 2do Parcial
-                            $asi_u1 = $val[7];
-                            $asi_u2 = $val[8];
-                            $dasi_tipo_v1 = "u3";
-                            $dasi_tipo_v2 = "u4";
+                            $asi_u1 = $val[5];
+                            $asi_u2 = $val[6];
+                            $dasi_tipo_v1 = "u1";
+                            $dasi_tipo_v2 = "u2";
                             $casi_cant_total = $asi_u1 + $asi_u2;
                             $casi_porc_total = ($asi_u1 + $asi_u2) / 2;
-                        }
-                         */   
-
-                        if($ecal_id == 1){ // 1er Parcial
-                            $asi_u1 = $val[5];
-                          //  $asi_u2 = $val[6];
-                            $dasi_tipo_v1 = "u1";
-                           // $dasi_tipo_v2 = "u2";
-                            $casi_cant_total = $asi_u1 ;                            
-                            $casi_porc_total = ($asi_u1);
-                        }
-                        elseif($ecal_id == 2){ // 2do Parcial
-                            $asi_u2 = $val[6];
-                          //  $asi_u2 = $val[8];
-                          //  $dasi_tipo_v1 = "u3";
-                            $dasi_tipo_v2 = "u2";
-                            $casi_cant_total = $asi_u2;
-                            $casi_porc_total = ($asi_u2);
                         }
 
                         if ( $asi_u1 > 100 ){
@@ -363,21 +375,15 @@ class AsistenciaregistrodocenteController extends \app\components\CController {
                             $noalumno .= "El estudiante " . $nombre . " (excede el 100% en la asistencia en el campo 'U2' ), "; 
                             continue;
                         }
-                        // VALIDAR SI SE GRABA U1 O U2
+
                         $mod_cab_asi = new CabeceraAsistencia();
                         $has_cabecera_asistencia = CabeceraAsistencia::find()->where(['paca_id' => $paca_id, 'est_id' => $est_id, 'pro_id' => $pro_id, 'asi_id' => $asi_id,
                             'aeun_id' =>$aeun_id])->asArray()->all();
 
                         if(empty($has_cabecera_asistencia)){
                             $casi_id = $mod_cab_asi->insertCabeceraAsistencia($paca_id, $est_id, $pro_id, $asi_id, $aeun_id, $casi_cant_total, $casi_porc_total);
-
-                            if ($asi_u1 != NULL) { 
                             $idDetParcial1 = $mod_cab_asi->insertDetalleAsistencia($casi_id, $ecal_id, $dasi_tipo_v1, $asi_u1);
-                            }
-                             
-                             if ($asi_u2 != NULL) { 
                             $idDetParcial2 = $mod_cab_asi->insertDetalleAsistencia($casi_id, $ecal_id, $dasi_tipo_v2, $asi_u2);  
-                            }
 
                             if ($idDetParcial1 >0 && $idDetParcial2 > 0) {
                                 $exito = 1;
@@ -390,14 +396,8 @@ class AsistenciaregistrodocenteController extends \app\components\CController {
                             $respuesta_detalle = $detalle_model->selectDetalleAsistencia($casi_id);
                             for ($det = 0; $det < sizeof($respuesta_detalle); $det++) { 
                                 $dasi_id = $respuesta_detalle[0]["dasi_id"];
-
-                                if ($asi_u1 != NULL) { 
                                 $mod_cab_asi->updateDetalleAsistencia($dasi_id, $casi_id, $ecal_id, $asi_u1);
-                                 }
-                                
-                                if ($asi_u2 != NULL) { 
                                 $mod_cab_asi->updateDetalleAsistencia($dasi_id, $casi_id, $ecal_id, $asi_u2);
-                                 }
                                 
                                 if ($mod_cab_asi >0 && $mod_cab_asi > 0) {
                                     $exito = 1;
@@ -433,7 +433,7 @@ class AsistenciaregistrodocenteController extends \app\components\CController {
             }
         }
     }
-
+ 
     public function actionDownloadplantillaasistencia() {
         $file = 'teacher_assistance.xlsx';
         $route = str_replace("../", "", $file);

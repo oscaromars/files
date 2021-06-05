@@ -405,7 +405,10 @@ create table if not exists `profesor` (
   `pro_estado` varchar(1) not null,
   `pro_fecha_creacion` timestamp not null default current_timestamp,
   `pro_fecha_modificacion` timestamp null default null,
-  `pro_estado_logico` varchar(1) not null
+  `pro_estado_logico` varchar(1) not null,
+  `ddoc_id` bigint(20) null,
+  `pro_num_contrato` varchar(45) null
+
 );
 
 -- --------------------------------------------------------

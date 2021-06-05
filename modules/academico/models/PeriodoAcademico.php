@@ -1,6 +1,7 @@
 <?php
 
 namespace app\modules\academico\models;
+use yii\data\ArrayDataProvider;
 
 use Yii;
 
@@ -243,7 +244,7 @@ class PeriodoAcademico extends \yii\db\ActiveRecord
     }
 
     /**
-     * Mostrará un solo período académico basado en el id, con el nombre del Grupo Estación
+     * Mostrará un solo período académico basado en el per_id
      * @author Jorge Paladines <analista.desarrollo@uteg.edu.ec>;
      * @param
      * @return
@@ -293,6 +294,7 @@ class PeriodoAcademico extends \yii\db\ActiveRecord
             $sql = "SELECT  paca.paca_id as id,
                             ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca_anio),'') AS nombre,
                             baca.baca_nombre,
+                            saca.saca_nombre,
                             paca.paca_activo as estado,
                             paca.paca_fecha_inicio as fecha_inicio,
                             paca.paca_fecha_fin as fecha_fin
@@ -314,6 +316,7 @@ class PeriodoAcademico extends \yii\db\ActiveRecord
             $sql = "SELECT  paca.paca_id as id,
                             ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca_anio),'') AS nombre,
                             baca.baca_nombre,
+                            saca.saca_nombre,
                             paca.paca_activo as estado,
                             paca.paca_fecha_inicio as fecha_inicio,
                             paca.paca_fecha_fin as fecha_fin

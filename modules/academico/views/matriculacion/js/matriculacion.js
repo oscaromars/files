@@ -367,3 +367,43 @@ function generar() {
         }
     }, true);
 }
+
+
+function continuarRegistro(){
+    var link = $('#txth_base').val() + "/academico/matriculacion/registrodetalle";
+
+    var arrParams = new Object();
+
+    var selecteds = '';
+    var unselecteds = '';
+
+    $('#grid_registro_list input[type=checkbox]').each(function () {
+        if (this.checked) {
+            selecteds += $(this).val() + ',';
+        }else{
+            unselecteds += $(this).val() + ',';
+        }               
+    });
+
+    arrParams.seleccionados = selecteds.slice(0,-1);
+    arrParams.noseleccionados = unselecteds.slice(0,-1);
+
+    console.log(arrParams);
+
+    if (selecteds != '') {
+        if (!validateForm()) {
+            requestHttpAjax(link, arrParams, function (response) {
+                showAlert(response.status, response.label, response.message);
+                //alert("completado");
+                console.log(response);
+                /*
+                setTimeout(function () {
+                window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/listarestudianteregistro";
+                }, 3000);
+                */
+            }, true);
+        }
+    } else {
+        showAlert('NO_OK', 'error', {"wtmessage": 'Selecciona: Debe seleccionar al menos una materia.', "title": 'Error'});
+    }
+}

@@ -290,7 +290,7 @@ class CabeceraAsistencia extends \yii\db\ActiveRecord
                             INNER JOIN " . $con->dbname . ".periodo_academico AS paca ON saca.saca_id = paca.saca_id
                             INNER JOIN " . $con->dbname . ".bloque_academico AS baca ON baca.baca_id = paca.baca_id
                             WHERE
-                            paca_id = :paca_id AND
+                            paca.paca_id = :paca_id AND
                             paca.paca_activo = 'A' AND
                             paca.paca_estado = 1 AND
                             paca.paca_estado_logico = 1 AND

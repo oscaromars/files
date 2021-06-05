@@ -1442,4 +1442,62 @@ class MatriculacionController extends \app\components\CController {
         return;
     }
 
+    public function actionRegistrodetalle(){
+        $per_id = Yii::$app->session->get("PB_perid");
+        $usu_id = Yii::$app->session->get("PB_iduser");
+        $fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
+
+        if (Yii::$app->request->isAjax) {
+            $data = Yii::$app->request->post();
+
+            $materias = explode(",", $data['seleccionados']);
+
+            $matriculacion_model = new Matriculacion();
+
+            $ron = RegistroOnline::find()->where(['per_id' => $per_id])->asArray()->one();
+
+            $today = date("Y-m-d H:i:s");
+            $result_process = $matriculacion_model->checkToday($today);
+            $pla_id = $result_process[0]['pla_id'];
+
+            $dataPlanificacion = $matriculacion_model->getAllDataPlanificacionEstudiante($per_id, $pla_id);
+            $dataPlanificacionCostos = $matriculacion_model->getPlanificationFromRegistroOnline($ron['ron_id']);
+
+            // $roi = RegistroOnlineItem::find()->where(['ron_id' => $ron['ron_id'], 'roi_estado' => 1, 'roi_estado_logico' => 1])->asArray()->all();
+            $valor_total = 0;
+
+            // Colocar sólo aquellas materias seleccionadas
+            $roi_arr = [];
+
+            for ($i = 0; $i < count($dataPlanificacion); $i++) { 
+                if(in_array($dataPlanificacion[$i]['Subject'], $materias)){
+                    $dataPlanificacion[$i]['Cost'] = $dataPlanificacionCostos[$i]['Cost'];
+                    $roi_arr[] = $dataPlanificacion[$i];
+                    $valor_total += $dataPlanificacionCostos[$i]['Cost'];
+                }
+            }
+
+            $data_student = $matriculacion_model->getDataStudenFromRegistroOnline($per_id, $ron['pes_id']);
+            $persona = Persona::find()->where(['per_id' => $per_id])->asArray()->one();
+
+            $periodo = (new PeriodoAcademico())->consultarPeriodo($data_student['paca_id'], true)[0];
+            $tipo_semestre = 0;
+
+            // Calcular cuál semestre es
+            if($periodo['saca_nombre'] == "Abril - Agosto"){ // Inicio del semestre
+                $tipo_semestre = 1;
+            }
+            else if(str_contains($periodo['saca_nombre'], '(Intensivo)')){ // Instensivo
+                $tipo_semestre = 2;
+            }
+            else{ // Segundo Bloque
+                $tipo_semestre = 3;
+            }
+
+
+
+
+        }
+    }
+
 }

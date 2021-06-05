@@ -14,7 +14,7 @@ $var = ArrayHelper::map(app\modules\academico\models\Estudiante::find()->where([
                 });
 
 ?>
-<div class="reportepromedios-search">
+<div class="historialacademico-search">
 
     <?php
     $form = ActiveForm::begin([
@@ -30,7 +30,7 @@ $var = ArrayHelper::map(app\modules\academico\models\Estudiante::find()->where([
                         'button' => 'col-sm-4'
                     ],
                 ],
-                'action' => ['reportepromedios'],
+                'action' => ['historialacademico'],
                 'method' => 'get',
     ]);
     ?>
@@ -38,8 +38,8 @@ $var = ArrayHelper::map(app\modules\academico\models\Estudiante::find()->where([
 
     <?=
     $form->field($model, 'est_id')->label('Estudiante:')->widget(Select2::classname(), [
-        //'data' => ArrayHelper::map(app\modules\academico\models\Estudiante::find()->where(['est_estado_logico' => '1','est_estado' => '1'])->all(), 'per_pri_apellido', 'per_pri_nombre'),
-        'data' => $var,
+        'data' => ArrayHelper::map(app\modules\academico\models\Estudiante::find()->where(['est_estado_logico' => '1','est_estado' => '1'])->all(), 'per_pri_apellido', 'per_pri_nombre'),
+        //'data' => $var,
         'size' => Select2::MEDIUM,
         'options' => ['placeholder' => 'Seleccione Estudiante ...', 'multiple' => false],
         'pluginOptions' => [

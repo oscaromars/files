@@ -119,4 +119,63 @@ class EstudianteCarreraProgramaSearch extends EstudianteCarreraPrograma {
         return $dataProvider;
     }
 
+    public function getListadoHistorialacademico($params = null, $onlyData = false, $tipo = 1) {
+        $con_academico = \Yii::$app->db_academico;
+        $con_db = \Yii::$app->db;
+        
+
+        $sql = "select h.carrera as carrera,
+                concat(per.per_pri_apellido, ' ', per.per_seg_apellido, ' ', per_pri_nombre) as estudiante,
+                per.per_cedula as cedula,
+                est.est_matricula as matricula,
+                asi.asi_descripcion as asignatura,
+                maca.maca_nombre as malla_academica,
+                pmac.pmac_nota as promedio,
+                enac.enac_asig_estado as estado
+                from db_academico.historico_siga h
+                inner join db_asgard.persona per on per.per_id = h.per_id
+                inner join db_academico.estudiante est on est.per_id = per.per_id
+                inner join db_academico.asignatura asi on asi.asi_id = h.asi_id
+                inner join db_academico.malla_academica maca on maca.maca_id = h.maca_id
+                inner join db_academico.malla_academico_estudiante maes on maes.maca_id = maca.maca_id and maes.per_id = per.per_id
+                inner join db_academico.promedio_malla_academico pmac on pmac.maes_id = maes.maes_id
+                inner join db_academico.estado_nota_academico enac on enac.enac_id = pmac.enac_id;";
+
+        if ($tipo == 1) {
+            $this->load($params);
+            if ($this->validate()) {
+               
+                if ($this->est_id) {
+                    $sql = $sql . " and h.est_id =" . $this->est_id;
+                }
+
+            } 
+        }
+        if ($tipo == 2) {
+
+            if ($params['est_id']) {
+                $sql = $sql . " and h.est_id =" . $params['est_id'];
+            }
+
+        }
+        Utilities::putMessageLogFile('sql:' . $sql);
+        $comando = $con_academico->createCommand($sql);
+        $res = $comando->queryAll();
+
+        if ($onlyData)
+            return $res;
+        $dataProvider = new ArrayDataProvider([
+            'key' => 'Id',
+            'allModels' => $res,
+            'pagination' => [
+                'pageSize' => Yii::$app->params["pageSize"],
+            ],
+            'sort' => [
+                'attributes' => [],
+            ],
+        ]);
+
+        return $dataProvider;
+    }
+
 }

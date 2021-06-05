@@ -11,7 +11,7 @@ use app\modules\academico\Module as academico;
  * and open the template in the editor.
  */
 ?>
-<?php echo $this->render('_form_promedios', ['model' => $searchModel]); ?>
+<?php echo $this->render('_form_historial', ['model' => $searchModel]); ?>
 
  
 <?=
@@ -25,7 +25,7 @@ GridView::widget([
     'striped' => false,
     'panel' => [
         'type' => 'primary',
-        'heading' => 'Reporte Promedios'
+        'heading' => 'Reporte Historial Academico'
     ],
     'exportConfig' => [
         //GridView::CSV => ['label' => 'Save as CSV'],
@@ -78,29 +78,41 @@ GridView::widget([
             'group' => false,
         ],
         [
-            'attribute' => 'nombres',
+            'attribute' => 'estudiante',
             'header' => academico::t("Academico", "Nombres Completos"),
-            'value' => 'nombres',
+            'value' => 'estudiante',
+            'group' => false, // enable grouping
+        
+        ],
+        [
+            'attribute' => 'matricula',
+            'header' => academico::t("Academico", "Matricula"),
+            'value' => 'matricula',
             'group' => false, // enable grouping
         
         ],
         [
             'attribute' => 'asignatura',
-            'header' => academico::t("Academico", "Asignatura"),
+            'header' => academico::t("Academico", "Asignaturas"),
             'value' => 'asignatura',
-            'group' => false, // enable grouping
-        
+          
         ],
         [
-            'attribute' => 'malla',
+            'attribute' => 'malla_academica',
             'header' => academico::t("Academico", "Malla Academica"),
-            'value' => 'malla',
+            'value' => 'malla_academica',
           
         ],
         [
             'attribute' => 'promedio',
             'header' => academico::t("Academico", "Promedio"),
             'value' => 'promedio',
+          
+        ],
+        [
+            'attribute' => 'estado',
+            'header' => academico::t("Academico", "Estado"),
+            'value' => 'estado',
           
         ],
     ],

@@ -468,8 +468,8 @@ class ReportesController extends CController {
         $searchModel = new EstudianteCarreraProgramaSearch();
         //$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $params = Yii::$app->request->queryParams;
-        $dataProvider = $searchModel->getListadoReportepromedio($params,false,1);
-        return $this->render('reportepromedios', [
+        $dataProvider = $searchModel->getListadoHistorialacademico($params,false,1);
+        return $this->render('historialacademico', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);       

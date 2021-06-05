@@ -820,7 +820,7 @@ class Asignatura extends \yii\db\ActiveRecord
                     AND daca.dcab_id IS NOT NULL
                     AND daes.est_id = $est_id
                     AND daca.asi_id = $asi_id
-                    AND asi.uaca_id = $uaca_id";
+                    AND daca.uaca_id = $uaca_id";
 
         $comando = $con_academico->createCommand($sql);   
         $res = $comando->queryAll();

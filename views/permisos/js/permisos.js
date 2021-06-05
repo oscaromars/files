@@ -9,6 +9,30 @@ $(document).ready(function () {
                 setComboData(response.message,"cmb_rol");
         }, true);
     });
+
+    //$("#cmb_objmods").select2({});
+    /*
+    $("#cmb_objmods").selectize({
+        plugins: ['remove_button'],
+        delimiter: ',',
+        persist: false,
+        create: function(input) {
+            return {
+                value: input,
+                text: input
+            }
+        }
+    });  
+    */  
+
+    //import SlimSelect from 'slim-select'
+
+    new SlimSelect({
+      select: '#cmb_objmods',
+      closeOnSelect: false,
+      searchFocus: false,
+      //hideSelectedOption: true
+    })
 });
 function searchModules(idbox, idgrid) {
     var arrParams = new Object();

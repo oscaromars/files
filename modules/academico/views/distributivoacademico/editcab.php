@@ -27,7 +27,7 @@ academico::registerTranslations();
                 <div class="form-group">
                     <label for="txt_periodo" class="col-sm-5 col-md-5 col-xs-5 col-lg-5 control-label" id="lbl_nombre1"><?= Yii::t("formulario", "Period") ?></label>
                     <div class="col-sm-7 col-md-7 col-xs-7 col-lg-7">
-                        <input type="text" class="form-control keyupmce" value="<?php echo $arr_cabecera['periodo'] ?>" id="txt_periodo" disabled data-type="alfa" placeholder="<?= Yii::t("formulario", "Period") ?>">
+                        <?= Html::dropDownList("cmb_periodo", $arr_cabecera["paca_id"],  $arr_periodo, ["class" => "form-control", "id" => "cmb_periodo","disabled"=>"true"]) ?>
                     </div>
                 </div>
             </div>
@@ -99,12 +99,7 @@ academico::registerTranslations();
                         <?= Html::dropDownList("cmb_modalidad", 0, $arr_modalidad, ["class" => "form-control", "id" => "cmb_modalidad"]) ?>
                     </div>
                 </div>
-                <div id="bloque2-1" style="display: none">
-                    <label for="cmb_periodo" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= Yii::t("formulario", "Period") ?></label>
-                    <div class="col-sm-3 col-xs-3 col-md-3 col-lg-3">
-                        <?= Html::dropDownList("cmb_periodo", 0,  $arr_periodo, ["class" => "form-control", "id" => "cmb_periodo"]) ?>
-                    </div>
-                </div>
+               
                 <div id="bloque6" style="display: none">
                     <label for="cmb_programa" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= academico::t("Academico", "Career/Program") ?></label>
                     <div class="col-sm-3 col-xs-3 col-md-3 col-lg-3">

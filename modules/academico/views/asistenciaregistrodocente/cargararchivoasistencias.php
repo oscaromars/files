@@ -74,7 +74,7 @@ else{
         <div class="form-group">
             <label for="lbl_plantilla" class="col-lg-2 col-md-2 col-sm-2 col-xs-2 control-label"><?= academico::t("Academico", "Template"); ?></label>
             <div class="col-sm-5 col-md-5 col-xs-5 col-lg-5">
-                <?= Html::a(academico::t("matriculacion", "Download") . " Assistance", Url::to(['downloadplantillaasistencia', 'filename' => 'teacher_assistance.xlsx']));   ?>
+                <?= Html::a(academico::t("matriculacion", "Download") . " Plantilla Asistencia", Url::to(['downloadplantillaasistencia', 'filename' => 'teacher_assistance.xlsx']));   ?>
             </div>                       
         </div> 
     </div>
@@ -98,6 +98,20 @@ else{
         </div>
     </div>
 
+ <div class="form-group">     
+        <label for="txth_doc_adj_asistencia" class="col-lg-2 col-md-2 col-sm-2 col-xs-2 control-label keyupmce"><?= academico::t("Academico", "Unidad") ?></label>
+        <div class="col-sm-5 col-md-5 col-xs-5 col-lg-5">
+            <?= Html::dropDownList("cmb_nunidad", 0, $unidades, ["class" => "form-control", "id" => "cmb_nunidad"]) ?>
+        </div>
+    </div>
+
+
+<div class="form-group">     
+        <label for="txth_doc_adj_asistencia" class="col-lg-2 col-md-2 col-sm-2 col-xs-2 control-label keyupmce"><?= academico::t("Academico", "Modalidad") ?></label>
+        <div class="col-sm-5 col-md-5 col-xs-5 col-lg-5">
+            <?= Html::dropDownList("cmb_nmodalidad", 0, $modalidades, ["class" => "form-control", "id" => "cmb_nmodalidad"]) ?>
+        </div>
+    </div>
     <div class="form-group">     
         <label for="txth_doc_adj_asistencia" class="col-lg-2 col-md-2 col-sm-2 col-xs-2 control-label keyupmce"><?= academico::t("Academico", "Partial") ?></label>
         <div class="col-sm-5 col-md-5 col-xs-5 col-lg-5">
@@ -123,7 +137,8 @@ else{
         </div>
     </div>
 
-    <?php if(count($materias) > 0 && $aprobado) : ?>
+  
+         <!-- BEGIN IF -->
         <div class="form-group">
             <label for="txth_doc_adj_asistencia" class="col-lg-2 col-md-2 col-sm-2 col-xs-2 control-label keyupmce"><?= Yii::t("formulario", "Attach document") ?></label>
             <div class="col-sm-5 col-md-5 col-xs-5 col-lg-5">
@@ -177,10 +192,10 @@ else{
                 ?>
             </div>     
         </div>
-    <?php else: ?>
-        <div class="form-group">     
+      <?php if(count($materias) > 0 && $aprobado) : ?> <?php else: ?>
+        <!--<div class="form-group">     
             <label for="txth_doc_adj_asistencia" style="color: red;" class="col-lg-6 col-md-6 col-sm-6 col-xs-6 control-label"><?= academico::t("profesor", "You are still not approved") ?></label>
-        </div>       
+        </div> -->      
     <?php endif; ?>  
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" >
             <div class="col-md-2">

@@ -14,6 +14,11 @@ function searchModules() {
     $("#Tbg_Distributivo_Aca").PbGridView("applyFilterData", arrParams);
 }
 
+function cambiarparalelo(daca_id,est_id) { // function utilizada para el SearchboxList en evento getSource
+    var link = $('#txth_base').val() + "/academico/distributivoestudiante/cambioparalelo" + "?id="+daca_id +"&daes_id="+ est_id;
+     window.location = link;
+}
+
 function getListStudent(search, response) { // function utilizada para el SearchboxList en evento getSource
     var link = $('#txth_base').val() + "/academico/distributivoestudiante/edit" + "?id=" + $("#txth_ids").val();
     var arrParams = new Object();
@@ -47,15 +52,44 @@ function edit() {
     window.location = link;
 }
 
-function save() {
-    var link = $('#txth_base').val() + "/academico/distributivoestudiante/save";
-    var arrParams = new Object();
-    arrParams.id = $("#txth_ids").val();
-    arrParams.est_id = $("#txth_esid").val();
+function savechangeparalelo() {
+    var link = $('#txth_base').val() + "/academico/distributivoestudiante/savechangeparalelo"; 
+     var arrParams = new Object();
+       arrParams.daes_id = $("#txth_daes_id").val();
+        arrParams.daca_id = $("#cmb_paralelo").val();
     requestHttpAjax(link, arrParams, function(response) {
         if (response.status == "OK") {
-            searchModules();
-            clearDataSearch();
+            //searchModules();
+          //  clearDataSearch();
+          showAlert(response.status, response.label, response.message);
+          
+           setTimeout(function() {
+                var link = $('#txth_base').val() + "/academico/distributivoacademico/index";
+                window.location = link;
+            }, 1000);
+        } else {
+            showAlert(response.status, response.label, response.message);
+        }
+    }, true);
+}
+
+function save() {
+    var link = $('#txth_base').val() + "/academico/distributivoestudiante/save";
+     var keys = $('#grid').yiiGridView('getSelectedRows');
+    // alert(keys);
+   var arrParams = new Object();
+    arrParams.daca_id = $("#txth_ids").val();
+    arrParams.est_id = keys;
+    requestHttpAjax(link, arrParams, function(response) {
+        if (response.status == "OK") {
+            //searchModules();
+          //  clearDataSearch();
+          showAlert(response.status, response.label, response.message);
+          
+           setTimeout(function() {
+                var link = $('#txth_base').val() + "/academico/distributivoacademico/index";
+                window.location = link;
+            }, 1000);
         } else {
             showAlert(response.status, response.label, response.message);
         }

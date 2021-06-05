@@ -139,11 +139,11 @@ INSERT INTO `esquema_calificacion_unidad` (`ecun_id`, `ecal_id`, `uaca_id`, `ecu
 
 INSERT INTO `asistencia_esquema_unidad` (`aeun_id`, `ecun_id`, `aeun_cantidad`, `aeun_estado`, `aeun_estado_logico`) VALUES
 -- Grado
-(1, 1, 6, '1', '1'),
-(2, 2, 6, '1', '1'),
+(1, 1, 100, '1', '1'),
+(2, 2, 100, '1', '1'),
 -- Posgrado
-(3, 4, 2, '1', '1'),
-(4, 5, 2, '1', '1');
+(3, 4, 100, '1', '1'),
+(4, 5, 100, '1', '1');
 
 -- -- ------------------------ ------------------------------
 --

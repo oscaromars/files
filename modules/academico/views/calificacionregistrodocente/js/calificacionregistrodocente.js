@@ -115,8 +115,7 @@ $(document).ready(function () {
         requestHttpAjax(link, arrParams, function (response) {
             if (response.status == "OK") {
                 data = response.message;
-                console.log(data);
-                setComboDataselect(data.materia   , "cmb_materia","Todos");
+                setComboDataselect(data.materia, "cmb_materia","Todos");
             }
         }, true);
     });

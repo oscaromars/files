@@ -64,6 +64,7 @@ class DistributivoAcademicoEstudiante extends \yii\db\ActiveRecord {
         return $this->hasOne(DistributivoAcademico::className(), ['daca_id' => 'daca_id']);
     }
 
+  
     public function getListadoDistributivoEstudiante($daca_id, $search = null, $onlyData = false){
         $con_academico = \Yii::$app->db_academico;
         $con_db = \Yii::$app->db;

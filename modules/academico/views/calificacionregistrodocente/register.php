@@ -18,7 +18,6 @@ academico::registerTranslations();
             'arr_modalidad' => $arr_modalidad, 
             'arr_parcial' => $arr_parcial,
             'arr_profesor_all' => $arr_profesor_all,
-            'arr_paralelo_clcf' => $arr_paralelo_clcf,  
         ]);
         ?>
     </form>

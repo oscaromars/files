@@ -74,10 +74,27 @@ $isUser = FALSE;
 if ($session->isActive){
     $isUser = ($session->get('PB_isuser'))?TRUE:FALSE;
 }
+/******************************************************************
+* ini - cambio por: Galo Aguirre <analistadesarrollo06@uteg.edu.ec>
+* ****************************************************************/
 if(!$isUser){
     //return Yii::$app->response->redirect(Url::to(['site/login', 'id' => id]));
-    return Yii::$app->response->redirect(Url::to(['site/login']));
+    
+    //return Yii::$app->response->redirect(Url::to(['site/login']));
+    //return Yii::$app->response->redirect(Url::base(true).'site/login');
+    return Yii::$app->response->redirect(Url::home(false).'site/login');
 }
+/*
+else{
+    //echo(Url::to(['site/login']));
+    //echo(Url::base(true).'/site/login'); 
+    echo( Url::home(false).'site/login' ); 
+    die();
+}*/
+/*************************************************
+* fin 
+* ***********************************************/
+
 if (Yii::$app->controller->action->id === 'login' && $isUser) {
     echo $this->render(
         'login',

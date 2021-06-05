@@ -39,7 +39,9 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
             [['mod_id'], 'exist', 'skipOnError' => true, 'targetClass' => Modalidad::className(), 'targetAttribute' => ['mod_id' => 'mod_id']],
             [['tdis_id'], 'exist', 'skipOnError' => true, 'targetClass' => TipoDistributivo::className(), 'targetAttribute' => ['tdis_id' => 'tdis_id']],
             [['dcab_id'], 'exist', 'skipOnError' => true, 'targetClass' => DistributivoCabecera::className(), 'targetAttribute' => ['dcab_id' => 'dcab_id']],
-        ];
+            [['mpp_id'], 'exist', 'skipOnError' => true, 'targetClass' => MateriaParaleloPeriodo::className(), 'targetAttribute' => ['mpp_id' => 'mpp_id']],
+
+            ];
     }
 
     /**
@@ -77,6 +79,13 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
         return $this->hasOne(Profesor::className(), ['pro_id' => 'pro_id']);
     }
 
+    
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getMpp() {
+        return $this->hasOne(MateriaParaleloPeriodo::className(), ['mpp_id' => 'mpp_id']);
+    }
     /**
      * @return \yii\db\ActiveQuery
      */
@@ -125,6 +134,75 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
     public function getDistributivoAcademicoEstudiantes() {
         return $this->hasMany(DistributivoAcademicoEstudiante::className(), ['daca_id' => 'daca_id']);
     }
+    public function buscarEstudiantesPosgrados($id) {
+        $con_academico = \Yii::$app->db_academico;
+        
+        $sql = " select est_id from db_academico.estudiante_carrera_programa as ecp 
+               inner join db_academico.distributivo_academico as da  on  ecp.meun_id = da.meun_id and uaca_id =2
+               where daca_id=".$id;
+        
+        
+         $comando = $con_academico->createCommand($sql);
+          $res = $comando->queryAll();
+          return $res;
+    }
+    
+    public function buscarEstudiantesMatriculados($id, $num_paralelo) {
+        $con_academico = \Yii::$app->db_academico;
+        $con_db = \Yii::$app->db;
+        $sql = " select e.est_id as est_id, daes_id
+                 from db_academico.registro_online as ron
+		inner join db_academico.registro_online_item as roi on roi.ron_id=ron.ron_id and roi_estado='1'
+		inner join db_asgard.persona as p on p.per_id = ron.per_id
+                inner join db_academico.registro_pago_matricula as pm on ron.per_id=pm.per_id 
+                inner join db_academico.estudiante as e on e.per_id=p.per_id
+                inner join db_academico.planificacion_estudiante as pe on pe.pes_id=ron.pes_id
+                inner join db_academico.malla_academica_detalle as mad on  mad.made_codigo_asignatura=roi.roi_materia_cod
+		inner join db_academico.asignatura as a on a.asi_id = mad.asi_id
+                left join db_academico.distributivo_academico_estudiante as dae on dae.est_id = e.est_id
+                 where dae.est_id is null and mad.asi_id=".$id;
+        
+        
+         $comando = $con_academico->createCommand($sql);
+          $res = $comando->queryAll();
+          return $res;
+    }
+
+    public function buscarEstudiantesAsignados($id, $num_paralelo) {
+        $con_academico = \Yii::$app->db_academico;
+        $con_db = \Yii::$app->db;
+        $sql = " select e.est_id as est_id, daes_id
+                 from db_academico.registro_online as ron
+		inner join db_academico.registro_online_item as roi on roi.ron_id=ron.ron_id and roi_estado='1'
+		inner join db_asgard.persona as p on p.per_id = ron.per_id
+                inner join db_academico.registro_pago_matricula as pm on ron.per_id=pm.per_id 
+                inner join db_academico.estudiante as e on e.per_id=p.per_id
+                inner join db_academico.planificacion_estudiante as pe on pe.pes_id=ron.pes_id
+                inner join db_academico.malla_academica_detalle as mad on  mad.made_codigo_asignatura=roi.roi_materia_cod
+		inner join db_academico.asignatura as a on a.asi_id = mad.asi_id
+                inner join db_academico.distributivo_academico_estudiante as dae on dae.est_id = e.est_id
+                inner join db_academico.distributivo_academico as da on dae.daca_id = da.daca_id
+                inner join db_academico.materia_paralelo_periodo as mpp on mpp.mpp_id =da.mpp_id and mpp.mpp_num_paralelo=".$num_paralelo.
+                " where  mad.asi_id=".$id;
+        
+        
+         $comando = $con_academico->createCommand($sql);
+          $res = $comando->queryAll();
+          return $res;
+    }
+    
+     public function getParalelo($asi_id) {
+        $con_academico = \Yii::$app->db_academico;
+        $con_db = \Yii::$app->db;
+        $sql = " select da.daca_id as id, mpp_num_paralelo as name from db_academico.distributivo_academico as da
+                   inner join db_academico.materia_paralelo_periodo as mpp on mpp.mpp_id = da.mpp_id
+                   where da.asi_id = ".$asi_id;
+        
+        
+         $comando = $con_academico->createCommand($sql);
+          $res = $comando->queryAll();
+          return $res;
+    }
 
     public function getListadoDistributivoBloqueDocente($onlyData = false) {
         $con_academico = \Yii::$app->db_academico;
@@ -165,7 +243,7 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
         return $dataProvider;
     }
 
-    public function getListadoDistributivo($search = NULL, $modalidad = NULL, $asignatura = NULL, $jornada = NULL, $unidadAcademico = NULL, $periodoAcademico = NULL, $onlyData = false) {
+    public function getListadoDistributivoGrado($search = NULL, $modalidad = NULL, $asignatura = NULL, $jornada = NULL, $unidadAcademico = NULL, $periodoAcademico = NULL, $onlyData = false) {
         $con_academico = \Yii::$app->db_academico;
         $con_db = \Yii::$app->db;
         $search_cond = "%" . $search . "%";
@@ -212,18 +290,22 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
                         WHEN dh.daho_jornada = 3 THEN '(S) Semipresencial'
                         WHEN dh.daho_jornada = 4 THEN '(D) Distancia'
                         ELSE ''
-                    END AS Jornada
+                    END AS Jornada,
+                    mpp_num_paralelo,
+                  (select count(dae.daca_id) from db_academico.distributivo_academico_estudiante  as dae where dae.daca_id =da.daca_id ) as total_est          
                 FROM 
                     " . $con_academico->dbname . ".distributivo_academico AS da 
-                    LEFT JOIN " . $con_academico->dbname . ".distributivo_academico_horario AS dh ON da.daho_id = dh.daho_id
+                    INNER JOIN " . $con_academico->dbname . ".distributivo_cabecera dc on dc.dcab_id=da.dcab_id 
+                    LEFT  JOIN " . $con_academico->dbname . ".distributivo_academico_horario AS dh ON da.daho_id = dh.daho_id
                     INNER JOIN " . $con_academico->dbname . ".profesor AS p ON da.pro_id = p.pro_id
+                    INNER JOIN " . $con_academico->dbname . ".materia_paralelo_periodo as mpp on mpp.mpp_id=da.mpp_id
                     INNER JOIN " . $con_academico->dbname . ".modalidad AS m ON da.mod_id = m.mod_id
                     INNER JOIN " . $con_academico->dbname . ".unidad_academica AS ua ON da.uaca_id = ua.uaca_id
                     INNER JOIN " . $con_academico->dbname . ".asignatura AS a ON da.asi_id = a.asi_id
                     INNER JOIN " . $con_academico->dbname . ".periodo_academico AS pa ON da.paca_id = pa.paca_id
-                    INNER JOIN " . $con_db->dbname . ".persona AS pe ON p.per_id = pe.per_id
-                    LEFT JOIN " . $con_academico->dbname . ".semestre_academico sem  ON sem.saca_id = pa.saca_id 
-                    LEFT JOIN " . $con_academico->dbname . ".bloque_academico blq ON blq.baca_id = pa.baca_id
+                    INNER JOIN " . $con_db->dbname        . ".persona AS pe ON p.per_id = pe.per_id
+                    LEFT  JOIN " . $con_academico->dbname . ".semestre_academico sem  ON sem.saca_id = pa.saca_id 
+                    LEFT  JOIN " . $con_academico->dbname . ".bloque_academico blq ON blq.baca_id = pa.baca_id
                 WHERE 
                     $str_search 
                     $str_modalidad 
@@ -235,13 +317,15 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
                     pa.paca_estado = :estado AND
                     da.daca_estado_logico = :estado AND 
                     da.daca_estado = :estado AND
+                    da.daca_estado = :estado AND
                     p.pro_estado_logico = :estado AND 
                     p.pro_estado = :estado AND
                     m.mod_estado_logico = :estado AND 
                     m.mod_estado = :estado AND
                     ua.uaca_estado_logico = :estado AND 
                     ua.uaca_estado = :estado AND
-                    pa.paca_estado_logico = :estado";
+                    pa.paca_estado_logico = :estado and
+                     da.uaca_id=1 ";
 
         $comando = $con_academico->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
@@ -282,17 +366,143 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
         return $dataProvider;
     }
 
+     public function getListadoDistributivoPosgrado($search = NULL, $modalidad = NULL, $asignatura = NULL, $jornada = NULL, $unidadAcademico = NULL, $periodoAcademico = NULL, $onlyData = false) {
+        $con_academico = \Yii::$app->db_academico;
+        $con_db = \Yii::$app->db;
+        $search_cond = "%" . $search . "%";
+        $estado = "1";
+        $str_search = "";
+        $str_unidad = "";
+        $str_periodo = "";
+        $str_modalidad = "";
+        $str_jornada = "";
+// array("0" => "Todos", "1" => "(M) Matutino", "2" => "(N) Nocturno", "3" => "(S) Semipresencial", "4" => "(D) Distancia")
+
+        if (isset($search) && $search != "") {
+            $str_search = "(pe.per_pri_nombre like :search OR ";
+            $str_search .= "pe.per_pri_apellido like :search OR ";
+            $str_search .= "pe.per_cedula like :search) AND ";
+        }
+        if (isset($modalidad) && $modalidad > 0) {
+            $str_modalidad = "m.mod_id = :modalidad AND ";
+        }
+        if (isset($asignatura) && $asignatura > 0) {
+            $str_asignatura = "a.asi_id = :asignatura AND ";
+        }
+        if (isset($unidadAcademico) && $unidadAcademico > 0) {
+            $str_unidad = "ua.uaca_id = :unidad AND ";
+        }
+        if (isset($periodoAcademico) && $periodoAcademico > 0) {
+            $str_periodo = "pa.paca_id = :periodo AND ";
+        }
+        if (isset($jornada) && $jornada > 0) {
+            $str_jornada = "dh.daho_jornada = :jornada AND ";
+        }
+
+        $sql = "SELECT 
+                    da.daca_id AS Id, 
+                    CONCAT(pe.per_pri_nombre, ' ', pe.per_pri_apellido) AS Nombres,
+                    pe.per_cedula AS Cedula,
+                    ua.uaca_nombre AS UnidadAcademica,
+                    m.mod_nombre AS Modalidad,
+                    ifnull(CONCAT(blq.baca_anio,' (',blq.baca_nombre,'-',sem.saca_nombre,')'),blq.baca_anio) AS Periodo,
+                    a.asi_nombre AS Asignatura,
+                    CASE
+                        WHEN dh.daho_jornada = 1 THEN '(M) Matutino'
+                        WHEN dh.daho_jornada = 2 THEN '(N) Nocturno'
+                        WHEN dh.daho_jornada = 3 THEN '(S) Semipresencial'
+                        WHEN dh.daho_jornada = 4 THEN '(D) Distancia'
+                        ELSE ''
+                    END AS Jornada,
+                    dhpa_paralelo,
+                  (select count(dae.daca_id) from db_academico.distributivo_academico_estudiante  as dae where dae.daca_id =da.daca_id ) as total_est          
+                FROM 
+                    " . $con_academico->dbname . ".distributivo_academico AS da 
+                    INNER JOIN " . $con_academico->dbname . ".distributivo_cabecera dc on dc.dcab_id=da.dcab_id 
+                    LEFT  JOIN " . $con_academico->dbname . ".distributivo_academico_horario AS dh ON da.daho_id = dh.daho_id
+                    INNER JOIN " . $con_academico->dbname . ".profesor AS p ON da.pro_id = p.pro_id
+                    INNER JOIN " . $con_academico->dbname . ".distributivo_horario_paralelo as dhp on dhp.daho_id=da.daho_id
+                    INNER JOIN " . $con_academico->dbname . ".modalidad AS m ON da.mod_id = m.mod_id
+                    INNER JOIN " . $con_academico->dbname . ".unidad_academica AS ua ON da.uaca_id = ua.uaca_id
+                    INNER JOIN " . $con_academico->dbname . ".asignatura AS a ON da.asi_id = a.asi_id
+                    INNER JOIN " . $con_academico->dbname . ".periodo_academico AS pa ON da.paca_id = pa.paca_id
+                    INNER JOIN " . $con_db->dbname        . ".persona AS pe ON p.per_id = pe.per_id
+                    LEFT  JOIN " . $con_academico->dbname . ".semestre_academico sem  ON sem.saca_id = pa.saca_id 
+                    LEFT  JOIN " . $con_academico->dbname . ".bloque_academico blq ON blq.baca_id = pa.baca_id
+                WHERE 
+                    $str_search 
+                    $str_modalidad 
+                    $str_asignatura
+                    $str_unidad
+                    $str_periodo
+                    $str_jornada
+                    pa.paca_activo = 'A' AND
+                    pa.paca_estado = :estado AND
+                    da.daca_estado_logico = :estado AND 
+                    da.daca_estado = :estado AND
+                    da.daca_estado = :estado AND
+                    p.pro_estado_logico = :estado AND 
+                    p.pro_estado = :estado AND
+                    m.mod_estado_logico = :estado AND 
+                    m.mod_estado = :estado AND
+                    ua.uaca_estado_logico = :estado AND 
+                    ua.uaca_estado = :estado AND
+                    pa.paca_estado_logico = :estado  and
+                     da.uaca_id=2 ";
+
+        $comando = $con_academico->createCommand($sql);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        if (isset($search) && $search != "") {
+            $comando->bindParam(":search", $search_cond, \PDO::PARAM_STR);
+        }
+        if (isset($modalidad) && $modalidad != "") {
+            $comando->bindParam(":modalidad", $modalidad, \PDO::PARAM_INT);
+        }
+        if (isset($asignatura) && $asignatura != "") {
+            $comando->bindParam(":asignatura", $asignatura, \PDO::PARAM_INT);
+        }
+        if (isset($unidadAcademico) && $unidadAcademico != "") {
+            $comando->bindParam(":unidad", $unidadAcademico, \PDO::PARAM_INT);
+        }
+        if (isset($periodoAcademico) && $periodoAcademico != "") {
+            $comando->bindParam(":periodo", $periodoAcademico, \PDO::PARAM_INT);
+        }
+
+        if (isset($jornada) && $jornada > 0) {
+            $comando->bindParam(":jornada", $jornada, \PDO::PARAM_INT);            
+        }
+
+        $res = $comando->queryAll();
+        if ($onlyData)
+            return $res;
+        $dataProvider = new ArrayDataProvider([
+            'key' => 'Id',
+            'allModels' => $res,
+            'pagination' => [
+                'pageSize' => Yii::$app->params["pageSize"],
+            ],
+            'sort' => [
+                'attributes' => ['Nombres', "Cedula", "UnidadAcademica", "Modalidad", "Periodo"],
+            ],
+        ]);
+
+        return $dataProvider;
+    }
+    
+    
+    
+    
     public function getHorariosByUnidadAcad($uaca_id = null, $mod_id = null, $jornada_id = null) {
         $con_academico = \Yii::$app->db_academico;
         $str_condition = "";
         if (isset($uaca_id) && $uaca_id > 0) {
-            $str_condition .= "uaca_id = :uaca_id AND ";
+            $str_condition .= "uaca_id = ".$uaca_id." AND ";
         }
         if (isset($mod_id) && $mod_id > 0) {
-            $str_condition .= "mod_id = :mod_id AND ";
+            $str_condition .= "mod_id = ".$mod_id." AND ";
         }
         if (isset($jornada_id) && $jornada_id > 0) {
-            $str_condition .= "daho_jornada = :jornada_id AND ";
+            $str_condition .= "daho_jornada = ".$jornada_id." AND ";
         }
         $sql = "SELECT 
                     daho_id as id,
@@ -308,12 +518,7 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
                 ORDER BY
                     daho_horario ASC";
         $comando = $con_academico->createCommand($sql);
-        if (isset($uaca_id) && $uaca_id > 0)
-            $comando->bindParam(":uaca_id", $uaca_id, \PDO::PARAM_INT);
-        if (isset($mod_id) && $mod_id > 0)
-            $comando->bindParam(":mod_id", $mod_id, \PDO::PARAM_INT);
-        if (isset($jornada_id) && $jornada_id > 0)
-            $comando->bindParam(":jornada_id", $jornada_id, \PDO::PARAM_STR);
+       
         $res = $comando->queryAll();
         return $res;
     }

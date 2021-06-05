@@ -7,6 +7,7 @@ use app\models\Utilities;
 use app\modules\academico\Module as academico;
 
 academico::registerTranslations();
+
 ?>
 
 <div class="table-responsive">
@@ -14,6 +15,7 @@ academico::registerTranslations();
 </div>
 
 <div>
+<?php if($unidad=="Grado" and $modalidad=="Online"): ?>
     <?=
     PbGridView::widget([
         'id' => 'Tbg_Calificaciones_Por_Periodo',
@@ -46,18 +48,18 @@ academico::registerTranslations();
                 'value' => '1',
             ],
             [
-                'attribute' => 'Horario',
-                'header' => academico::t("estudiantes", "Autonomous"),
+                'attribute' => 'Carga',
+                'header' => academico::t("estudiantes", "Cuestionario"),
                 'value' => '2',
             ],
             [
-                'attribute' => 'Carga',
-                'header' => academico::t("estudiantes", "Evaluation"),
+                'attribute' => 'Horario',
+                'header' => academico::t("estudiantes", "Autonomous"),
                 'value' => '3',
             ],
             [
                 'attribute' => 'Carga',
-                'header' => academico::t("estudiantes", "Exam"),
+                'header' => academico::t("estudiantes", "Evaluation"),
                 'value' => '4',
             ],
             [
@@ -73,6 +75,224 @@ academico::registerTranslations();
         ],
     ])
     ?>
+    <?php endif; ?>
+    
+    <?php if($unidad=="Grado" and ($modalidad=="Presencial" or $modalidad=="Semipresencial")): ?>
+    <?=
+    PbGridView::widget([
+        'id' => 'Tbg_Calificaciones_Por_Periodo',
+        'showExport' => true,
+        // 'fnExportEXCEL' => "exportExcel",
+        // 'fnExportPDF' => "exportPdf",
+        'tableOptions' => [
+            'class' => 'table table-striped',
+        ],
+        'options' => [
+            'class' => 'table-responsive',
+        ],
+        'dataProvider' => $notas_estudiante,
+        // 'pajax' => true,
+        'columns' =>
+        [            
+            [
+                'attribute' => 'Parcial',
+                'header' => academico::t("Academico", "Partial"),
+                'value' => 'parcial',
+            ],
+            [
+                'attribute' => 'Codigo',
+                'header' => academico::t("estudiantes", "Deberes"),
+                'value' => '0',
+            ],
+            [
+                'attribute' => 'Paralelo',
+                'header' => academico::t("estudiantes", "Aporte"),
+                'value' => '1',
+            ],
+            [
+                'attribute' => 'Carga',
+                'header' => academico::t("estudiantes", "Examen"),
+                'value' => '2',
+            ],
+            [
+                'attribute' => 'Carga',
+                'header' => academico::t("estudiantes", "Grade"),
+                'value' => 'promedio',
+            ],
+            [
+                'attribute' => 'Asistencia',
+                'header' => academico::t("estudiantes", "Asistencia"),
+                'value' => 'asistencia',
+            ]
+        ],
+    ])
+    ?>
+    <?php endif; ?>
+    <?php if($unidad=="Grado" and $modalidad=="Distancia"): ?>
+    <?=
+    PbGridView::widget([
+        'id' => 'Tbg_Calificaciones_Por_Periodo',
+        'showExport' => true,
+        // 'fnExportEXCEL' => "exportExcel",
+        // 'fnExportPDF' => "exportPdf",
+        'tableOptions' => [
+            'class' => 'table table-striped',
+        ],
+        'options' => [
+            'class' => 'table-responsive',
+        ],
+        'dataProvider' => $notas_estudiante,
+        // 'pajax' => true,
+        'columns' =>
+        [            
+            [
+                'attribute' => 'Parcial',
+                'header' => academico::t("Academico", "Partial"),
+                'value' => 'parcial',
+            ],
+            [
+                'attribute' => 'Codigo',
+                'header' => academico::t("estudiantes", "Asynchronous"),
+                'value' => '0',
+            ],
+            [
+                'attribute' => 'Paralelo',
+                'header' => academico::t("estudiantes", "Synchronous"),
+                'value' => '1',
+            ],
+            [
+                'attribute' => 'Carga',
+                'header' => academico::t("estudiantes", "Evaluation"),
+                'value' => '2',
+            ],
+            [
+                'attribute' => 'Horario',
+                'header' => academico::t("estudiantes", "Exam"),
+                'value' => '3',
+            ],
+            [
+                'attribute' => 'Carga',
+                'header' => academico::t("estudiantes", "Grade"),
+                'value' => 'promedio',
+            ],
+            [
+                'attribute' => 'Asistencia',
+                'header' => academico::t("estudiantes", "Asistencia"),
+                'value' => 'asistencia',
+            ]
+        ],
+    ])
+    ?>
+    <?php endif; ?>
+    
+     <?php if($unidad=="Posgrado" and $modalidad=="Online"): ?>
+    <?=
+    PbGridView::widget([
+        'id' => 'Tbg_Calificaciones_Por_Periodo',
+        'showExport' => true,
+        // 'fnExportEXCEL' => "exportExcel",
+        // 'fnExportPDF' => "exportPdf",
+        'tableOptions' => [
+            'class' => 'table table-striped',
+        ],
+        'options' => [
+            'class' => 'table-responsive',
+        ],
+        'dataProvider' => $notas_estudiante,
+        // 'pajax' => true,
+        'columns' =>
+        [            
+            [
+                'attribute' => 'Parcial',
+                'header' => academico::t("Academico", "Partial"),
+                'value' => 'parcial',
+            ],
+            [
+                'attribute' => 'Codigo',
+                'header' => academico::t("estudiantes", "Autonomous"),
+                'value' => '0',
+            ],
+            [
+                'attribute' => 'Paralelo',
+                'header' => academico::t("estudiantes", "Evaluation"),
+                'value' => '1',
+            ],
+            [
+                'attribute' => 'Carga',
+                'header' => academico::t("estudiantes", "Asynchronous"),
+                'value' => '2',
+            ],
+            [
+                'attribute' => 'Horario',
+                'header' => academico::t("estudiantes", "Exam"),
+                'value' => '3',
+            ],
+            [
+                'attribute' => 'Carga',
+                'header' => academico::t("estudiantes", "Grade"),
+                'value' => 'promedio',
+            ],
+            [
+                'attribute' => 'Asistencia',
+                'header' => academico::t("estudiantes", "Asistencia"),
+                'value' => 'asistencia',
+            ]
+        ],
+    ])
+    ?>
+    <?php endif; ?>
+     <?php if($unidad=="Posgrado" and $modalidad=="Presencial"): ?>
+    <?=
+    PbGridView::widget([
+        'id' => 'Tbg_Calificaciones_Por_Periodo',
+        'showExport' => true,
+        // 'fnExportEXCEL' => "exportExcel",
+        // 'fnExportPDF' => "exportPdf",
+        'tableOptions' => [
+            'class' => 'table table-striped',
+        ],
+        'options' => [
+            'class' => 'table-responsive',
+        ],
+        'dataProvider' => $notas_estudiante,
+        // 'pajax' => true,
+        'columns' =>
+        [            
+            [
+                'attribute' => 'Parcial',
+                'header' => academico::t("Academico", "Partial"),
+                'value' => 'parcial',
+            ],
+            [
+                'attribute' => 'Codigo',
+                'header' => academico::t("estudiantes", "Talleres"),
+                'value' => '0',
+            ],
+            [
+                'attribute' => 'Paralelo',
+                'header' => academico::t("estudiantes", "Deberes"),
+                'value' => '1',
+            ],
+            [
+                'attribute' => 'Carga',
+                'header' => academico::t("estudiantes", "Examen"),
+                'value' => '2',
+            ],
+           [
+                'attribute' => 'Carga',
+                'header' => academico::t("estudiantes", "Grade"),
+                'value' => 'promedio',
+            ],
+            [
+                'attribute' => 'Asistencia',
+                'header' => academico::t("estudiantes", "Asistencia"),
+                'value' => 'asistencia',
+            ]
+        ],
+    ])
+    ?>
+    <?php endif; ?>
+    
 </div>
 
 <br>

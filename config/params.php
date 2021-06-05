@@ -53,6 +53,7 @@ return [
     'dateByDefault' => 'Y-m-d',
     'dateByDatePicker' => 'yyyy-mm-dd',
     'cookieSession' => 3600 * 24 * 30,
+    //'cookieSession' => 3600,
     'logfile' => __DIR__ . '/../runtime/logs/pb.log',
     'limitRow' => 10,
     'pageSize' => 20,

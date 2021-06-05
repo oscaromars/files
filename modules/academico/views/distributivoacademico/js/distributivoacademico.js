@@ -5,7 +5,7 @@ $(document).ready(function () {
         var link = $('#txth_base').val() + "/academico/distributivocabecera/validadistributivo";
         var arrParams = new Object();
         arrParams.pro_id = $('#cmb_profesor').val();
-        arrParams.paca_id = $('#txth_idperiodo').val();
+        arrParams.paca_id = $('#cmb_periodo').val();
         arrParams.transaccion = "N";
         arrParams.getvalida = true;
         requestHttpAjax(link, arrParams, function (response) {
@@ -20,6 +20,12 @@ $(document).ready(function () {
         }, false);
 
     });
+$('#cmb_periodo').change(function () { 
+    if($('#cmb_periodo').val()!=0){
+        document.getElementById("cmb_periodo").disabled = true;
+    }
+
+});
 
     $('#cmb_tipo_asignacion').change(function () {
         document.getElementById("cmb_profesor").disabled = true;
@@ -223,17 +229,7 @@ $(document).ready(function () {
                     }
                 }, true);
                 break;
-            default :
-                var arrParams = new Object();
-                arrParams.mod_id = $(this).val();
-                arrParams.getperiodo = true;
-                requestHttpAjax(link, arrParams, function (response) {
-                    if (response.status == "OK") {
-                        data = response.message;
-                        setComboDataselect(data.periodo, "cmb_periodo", "Todos");
-                    }
-                }, true);
-                break;
+            
         }
 
         var arrParams = new Object();
@@ -271,7 +267,7 @@ $(document).ready(function () {
         if($('#cmb_unidad_dis').val()==1){
         var link = $('#txth_base').val() + "/academico/distributivoacademico/new";
         var arrParams = new Object();
-        arrParams.periodo_id = $('#txth_idperiodo').val();
+        arrParams.periodo_id = $('#cmb_periodo').val();
         arrParams.mod_id = $('#cmb_modalidad').val();
         // arrParams.jornada_id = $(this).val();
         arrParams.getasignatura = true;
@@ -282,20 +278,20 @@ $(document).ready(function () {
             }
         }, true);
     }
-    });
+    
 
-    //     var arrParams = new Object();
-    //    arrParams.uaca_id = $('#cmb_unidad_dis').val();
-    //    arrParams.mod_id = $('#cmb_modalidad').val();
-    //    arrParams.jornada_id = $(this).val();
-    //    arrParams.gethorario = true;
-    //    requestHttpAjax(link, arrParams, function(response) {
-    //        if (response.status == "OK") {
-    //            data = response.message;
-    //            setComboDataselect(data.horario, "cmb_horario", "Todos");
-    //        }
-    //    }, true);           
-    // });
+         var arrParams = new Object();
+        arrParams.uaca_id = $('#cmb_unidad_dis').val();
+        arrParams.mod_id = $('#cmb_modalidad').val();
+        arrParams.jornada_id = $(this).val();
+        arrParams.gethorario = true;
+        requestHttpAjax(link, arrParams, function(response) {
+            if (response.status == "OK") {
+                data = response.message;
+                setComboDataselect(data.horario, "cmb_horario", "Todos");
+            }
+        }, true);           
+     });
 
     $('#btn_buscarData_dist').click(function () {
         searchModules();
@@ -329,7 +325,7 @@ $('#cmb_materia').change(function () {
         var link = $('#txth_base').val() + "/academico/distributivoacademico/new";
         var arrParams = new Object();
         arrParams.asig_id = $('#cmb_materia').val();
-        arrParams.paca_id = $('#txth_idperiodo').val();
+        arrParams.paca_id = $('#cmb_periodo').val();
         arrParams.mod_id = $('#cmb_modalidad').val();
         arrParams.getparalelo = true;
         requestHttpAjax(link, arrParams, function (response) {
@@ -395,7 +391,12 @@ function searchModules() {
 }
 
 function showListStudents(id) {
-    var link = $('#txth_base').val() + "/academico/distributivoestudiante/index/" + id;
+    var link = $('#txth_base').val() + "/academico/distributivoestudiante/new/" + id;
+    window.location = link;
+}
+
+function showListStudentsPosgrado(id) {
+    var link = $('#txth_base').val() + "/academico/distributivoestudiante/newposgrado/" + id;
     window.location = link;
 }
 
@@ -456,8 +457,8 @@ function save() {
     var link = $('#txth_base').val() + "/academico/distributivoacademico/save";
     var arrParams = new Object();
     arrParams.profesor = $('#cmb_profesor').val();
-    arrParams.periodo = $('#txth_idperiodo').val();
-    console.log('ingresa2');
+    arrParams.periodo = $('#cmb_periodo').val();
+    console.log("Periodo:"+arrParams.periodo);
     /** Session Storage **/
     if (sessionStorage.dts_asignacion_list) {
         console.log('ingresa3');
@@ -539,7 +540,7 @@ function actualizar() {
     var link = $('#txth_base').val() + "/academico/distributivoacademico/actualizar";
     var arrParams = new Object();
     arrParams.profesor = $('#txth_proid').val();
-    arrParams.periodo = $('#txth_idperiodo').val();
+    arrParams.periodo = $('#cmb_periodo').val();
     arrParams.id = $('#txth_cabid').val();
     //console.log('profesor: ' + arrParams.profesor);
     //console.log('cabid: ' + arrParams.id);
@@ -965,7 +966,7 @@ function limpiarDetalle() {
     //$('#cmb_unidad_dis option[value="0"]').attr("selected", true);    
     document.getElementById("cmb_unidad_dis").value = 0;
     document.getElementById("cmb_modalidad").value = 0;
-    document.getElementById("cmb_periodo").value = 0;
+    //document.getElementById("cmb_periodo").value = 0;
     document.getElementById("cmb_jornada").value = 0;
     document.getElementById("cmb_materia").value = 0;
     document.getElementById("cmb_horario").value = 0;

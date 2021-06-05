@@ -72,4 +72,3 @@ class DistributivoCabeceraSearch extends DistributivoCabecera
     }
 
 }
-

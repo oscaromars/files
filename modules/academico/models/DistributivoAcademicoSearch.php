@@ -17,7 +17,7 @@ use yii\data\ArrayDataProvider;
 
 class DistributivoAcademicoSearch extends DistributivoAcademico {
 
-    public function rules() { 
+    public function rules() {
         return [
             [['paca_id', 'tdis_id', 'asi_id', 'uaca_id', 'mod_id', 'daho_id', 'daca_num_estudiantes_online', 'daca_usuario_ingreso', 'daca_usuario_modifica'], 'integer'],
         ];
@@ -53,7 +53,87 @@ from  db_academico.materia_paralelo_periodo mpp
 left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da.mod_id=mpp.mod_id and da.asi_id=mpp.asi_id  and da.paca_id=mpp.paca_id
     where da.mpp_id is null and mpp.mod_id =:mod_id";
         
-      
+       /*$sql1 = " and a.asi_id  not in (
+                select da.asi_id 
+                  from " . $con_academico->dbname . ".distributivo_academico da
+                  inner join " . $con_academico->dbname . ".distributivo_cabecera dc on da.dcab_id= dc.dcab_id  and da.daca_estado='1'"
+               . " and daca_estado_logico='1' and da.asi_id is not null  and da.paca_id= " . $paca_id."  and mod_id=".$mod_id . ")  ";
+        
+        
+        if ($bloque=="B1") {
+            $sql = "SELECT distinct a.asi_id id, asi_nombre name
+                FROM db_academico.planificacion_estudiante pe 
+                   inner join db_academico.planificacion p on p.pla_id=pe.pla_id
+                   inner join db_academico.malla_academica_detalle md  on md.made_codigo_asignatura = pe.pes_mat_b1_h1_cod
+                   inner join db_academico.asignatura a on a.asi_id = md.asi_id
+                WHERE pes_estado = 1       and pes_estado_logico = 1 and mod_id =:mod_id  ".$sql1
+                ." UNION
+                SELECT distinct a.asi_id id, asi_nombre name
+                FROM db_academico.planificacion_estudiante pe 
+                   inner join db_academico.planificacion p on p.pla_id=pe.pla_id
+                  inner join db_academico.malla_academica_detalle md     on md.made_codigo_asignatura = pe.pes_mat_b1_h2_cod
+                  inner join db_academico.asignatura a on a.asi_id = md.asi_id
+                WHERE mod_id =:mod_id and pes_estado = 1  and pes_estado_logico = 1  ".$sql1."
+                UNION
+                SELECT distinct a.asi_id id, asi_nombre name
+                FROM db_academico.planificacion_estudiante pe 
+                  inner join db_academico.planificacion p on p.pla_id=pe.pla_id
+                  inner join db_academico.malla_academica_detalle md     on md.made_codigo_asignatura = pe.pes_mat_b1_h3_cod
+                  inner join db_academico.asignatura a on a.asi_id = md.asi_id
+                WHERE mod_id =:mod_id  and pes_estado = 1  and pes_estado_logico = 1 ".$sql1."
+                UNION
+                SELECT distinct a.asi_id id, asi_nombre name
+                FROM db_academico.planificacion_estudiante pe 
+                inner join db_academico.planificacion p on p.pla_id=pe.pla_id
+                inner join db_academico.malla_academica_detalle md on md.made_codigo_asignatura = pe.pes_mat_b1_h4_cod
+                inner join db_academico.asignatura a on a.asi_id = md.asi_id
+                WHERE mod_id =:mod_id    and pes_estado = 1   and pes_estado_logico = 1 ".$sql1."
+                UNION
+                SELECT distinct a.asi_id id, asi_nombre name
+                FROM db_academico.planificacion_estudiante pe 
+                inner join db_academico.planificacion p on p.pla_id=pe.pla_id
+                inner join db_academico.malla_academica_detalle md   on md.made_codigo_asignatura = pe.pes_mat_b1_h5_cod
+                inner join db_academico.asignatura a on a.asi_id = md.asi_id
+                WHERE mod_id =:mod_id  and pes_estado = 1   and pes_estado_logico = 1" .$sql1 ;
+        } else {
+            $sql = "SELECT distinct a.asi_id id, asi_nombre name
+                FROM db_academico.planificacion_estudiante pe 
+                inner join db_academico.planificacion p on p.pla_id=pe.pla_id
+                inner join db_academico.malla_academica_detalle md  on md.made_codigo_asignatura = pe.pes_mat_b2_h1_cod
+                inner join db_academico.asignatura a on a.asi_id = md.asi_id
+                WHERE mod_id =:mod_id   and pes_estado = 1    and pes_estado_logico = 1 ".$sql1."
+                UNION
+                SELECT distinct a.asi_id id, asi_nombre name
+                FROM db_academico.planificacion_estudiante pe 
+                inner join db_academico.planificacion p on p.pla_id=pe.pla_id
+                inner join db_academico.malla_academica_detalle md    on md.made_codigo_asignatura = pe.pes_mat_b2_h2_cod
+                inner join db_academico.asignatura a on a.asi_id = md.asi_id
+                WHERE mod_id =:mod_id  and pes_estado = 1 and pes_estado_logico = 1 ".$sql1."
+                UNION
+                SELECT distinct a.asi_id id, asi_nombre name
+                FROM db_academico.planificacion_estudiante pe 
+                inner join db_academico.planificacion p on p.pla_id=pe.pla_id
+                inner join db_academico.malla_academica_detalle md      on md.made_codigo_asignatura = pe.pes_mat_b2_h3_cod
+                inner join db_academico.asignatura a on a.asi_id = md.asi_id
+                WHERE mod_id =:mod_id  and pes_estado = 1 and pes_estado_logico = 1 ".$sql1."
+                UNION
+                SELECT distinct a.asi_id id, asi_nombre name
+                FROM db_academico.planificacion_estudiante pe 
+                inner join db_academico.planificacion p on p.pla_id=pe.pla_id
+                inner join db_academico.malla_academica_detalle md  on md.made_codigo_asignatura = pe.pes_mat_b2_h4_cod
+                inner join db_academico.asignatura a on a.asi_id = md.asi_id
+                WHERE mod_id =:mod_id  and pes_estado = 1   and pes_estado_logico = 1 ".$sql1."
+                UNION
+                SELECT distinct a.asi_id id, asi_nombre name
+                FROM db_academico.planificacion_estudiante pe 
+                inner join db_academico.planificacion p on p.pla_id=pe.pla_id
+                inner join db_academico.malla_academica_detalle md   on md.made_codigo_asignatura = pe.pes_mat_b2_h5_cod
+                inner join db_academico.asignatura a on a.asi_id = md.asi_id
+                WHERE mod_id =:mod_id and pes_estado = 1 and pes_estado_logico = 1 " .$sql1;
+        }        
+        */
+      //  $comando = $con->createCommand($sql);
+       // $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);  
        
           Utilities::putMessageLogFile('sql:' . $sql);
         $comando = $con_academico->createCommand($sql);
@@ -539,171 +619,6 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
 //        $query->andFilterWhere(['like', 'daho_descripcion', $this->daho_descripcion])
 //            ->andFilterWhere(['like', 'daho_jornada', $this->daho_jornada])
 //                ->andFilterWhere(['like', 'daho_jornada', $this->daho_jornada]);
-
-        return $dataProvider;
-    }
-
-
-    public function getListadoMatriculadosporMateria($params = null, $onlyData = false, $tipo = 1) {
-        $con_academico = \Yii::$app->db_academico;
-        $con_db = \Yii::$app->db;
-        
-
-        $sql = "select 
-                CONCAT(per.per_pri_apellido,' ' ,per.per_pri_nombre) as estudiante,
-                per.per_cedula as cedula,
-                asi.asi_descripcion as materia,
-                moda.mod_descripcion as modalidad,
-                uaca.uaca_descripcion as unidad,
-                eaca.eaca_descripcion as carrera,
-                est.est_matricula as n_matricula,
-                daca.paca_id as periodo
-                FROM db_academico.distributivo_academico daca
-                Inner Join db_academico.unidad_academica uaca on uaca.uaca_id = daca.uaca_id
-                Inner Join db_academico.modalidad_estudio_unidad meun on meun.uaca_id = uaca.uaca_id
-                Inner Join db_academico.modalidad moda on moda.mod_id = daca.mod_id
-                Inner Join db_academico.planificacion pla on pla.mod_id = moda.mod_id
-                Inner Join db_academico.registro_online ron on ron.per_id = pla.per_id
-                Inner Join db_academico.registro_online_item roi on roi.ron_id = ron.ron_id
-                Inner Join db_academico.planificacion_estudiante pes on pes.pes_id = ron.pes_id 
-                Inner Join db_asgard.persona per on per.per_id = pes.per_id 
-                Inner Join db_academico.estudiante est on est.per_id = per.per_id 
-                Inner Join db_academico.estudiante_carrera_programa ecpr on ecpr.est_id = est.est_id 
-                Inner Join db_academico.estudio_academico eaca on eaca.eaca_id = meun.eaca_id
-                Inner Join db_academico.asignatura asi on asi.asi_id = daca.asi_id
-                Inner Join db_academico.periodo_academico paca on paca.paca_id = daca.paca_id 
-                Where
-                    moda.mod_id = 2 AND
-                    est.est_estado = 1 AND est.est_estado_logico = 1 AND
-                    meun.meun_estado = 1 AND meun.meun_estado_logico = 1 AND
-                    eaca.eaca_estado = 1 AND eaca.eaca_esta_logico = 1";
-        if ($tipo == 1) {
-            $this->load($params);
-            if ($this->validate()) {
-               
-                if ($this->paca_id) {
-                    $sql = $sql . " and daca.paca_id =" . $this->paca_id;
-                }
-
-                if ($this->mod_id) {
-                    $sql = $sql . " and daca.mod_id =" . $this->mod_id;
-                }
-
-                if ($this->asi_id) {
-                    $sql = $sql . " and daca.asi_id =" . $this->asi_id;
-                }
-            } 
-        }
-        if ($tipo == 2) {
-
-            if ($params['paca_id']) {
-                $sql = $sql . " and daca.paca_id =" . $params['paca_id'];
-            }
-
-            if ($params['mod_id']) {
-                $sql = $sql . " and daca.mod_id =" . $params['mod_id'];
-            }
-
-            
-            if ($params['asi_id']) {
-                $sql = $sql . " and daca.asi_id =" . $params['asi_id'];
-            }
-        }
-        Utilities::putMessageLogFile('sql:' . $sql);
-        $comando = $con_academico->createCommand($sql);
-        $res = $comando->queryAll();
-
-        if ($onlyData)
-            return $res;
-        $dataProvider = new ArrayDataProvider([
-            'key' => 'Id',
-            'allModels' => $res,
-            'pagination' => [
-                'pageSize' => Yii::$app->params["pageSize"],
-            ],
-            'sort' => [
-                'attributes' => [],
-            ],
-        ]);
-
-        return $dataProvider;
-    }
-
-    public function getListadoreportInscriptos($params = null, $onlyData = false, $tipo = 1) {
-        $con_academico = \Yii::$app->db_academico;
-        $con_db = \Yii::$app->db;
-        
-
-        $sql = "select 
-                CONCAT(per.per_pri_apellido,' ' ,per.per_seg_apellido,' ' ,per.per_pri_nombre) as nombres,
-                per.per_cedula as cedula,
-                per.per_correo as correo,
-                per.per_celular as telefono,
-                est.est_matricula as matricula,
-                uaca.uaca_descripcion as unidad,
-                moda.mod_descripcion as modalidad,
-                eaca.eaca_descripcion as carrera
-                FROM db_captacion.admitido adm 
-                inner join db_captacion.interesado inte ON inte.int_id = adm.int_id
-                Inner join db_asgard.persona per ON per.per_id = inte.per_id
-                Inner join db_academico.estudiante est ON est.per_id = per.per_id
-                Inner join db_academico.estudiante_carrera_programa ecpr ON ecpr.est_id = est.est_id
-                Inner Join db_academico.modalidad_estudio_unidad meun on meun.meun_id = ecpr.meun_id
-                Inner join db_academico.estudio_academico eaca ON eaca.eaca_id = meun.eaca_id
-                Inner Join db_academico.modalidad moda on moda.mod_id = meun.mod_id
-                inner join db_academico.distributivo_academico daca on daca.mod_id = moda.mod_id
-                Inner Join db_academico.unidad_academica uaca on uaca.uaca_id = daca.uaca_id
-                Inner Join db_academico.periodo_academico paca on paca.paca_id = daca.paca_id
-                Inner Join db_academico.semestre_academico saca on saca.saca_id = paca.saca_id
-                Inner Join db_academico.bloque_academico baca on baca.baca_id = paca.saca_id
-                where adm.adm_fecha_creacion between '2018-07-08 05:00:00' and '2019-09-22 04:59:59'
-                and moda.mod_id = 2
-                and daca.daca_estado = 1 and daca.daca_estado_logico = 1
-                and adm.adm_estado = 1 and adm.adm_estado_logico = 1
-                and inte.int_estado = 1 and inte.int_estado_logico = 1
-                and est.est_estado = 1 and est.est_estado_logico = 1
-                and paca.paca_estado = 1 and paca.paca_estado_logico = 1";
-        if ($tipo == 1) {
-            $this->load($params);
-            if ($this->validate()) {
-               
-                if ($this->paca_id) {
-                    $sql = $sql . " and daca.paca_id =" . $this->paca_id;
-                }
-
-                if ($this->mod_id) {
-                    $sql = $sql . " and daca.mod_id =" . $this->mod_id;
-                }
-
-            } 
-        }
-        if ($tipo == 2) {
-
-            if ($params['paca_id']) {
-                $sql = $sql . " and daca.paca_id =" . $params['paca_id'];
-            }
-
-            if ($params['mod_id']) {
-                $sql = $sql . " and daca.mod_id =" . $params['mod_id'];
-            }
-
-        }
-        Utilities::putMessageLogFile('sql:' . $sql);
-        $comando = $con_academico->createCommand($sql);
-        $res = $comando->queryAll();
-
-        if ($onlyData)
-            return $res;
-        $dataProvider = new ArrayDataProvider([
-            'key' => 'Id',
-            'allModels' => $res,
-            'pagination' => [
-                'pageSize' => Yii::$app->params["pageSize"],
-            ],
-            'sort' => [
-                'attributes' => [],
-            ],
-        ]);
 
         return $dataProvider;
     }

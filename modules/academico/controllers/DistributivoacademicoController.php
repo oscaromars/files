@@ -53,6 +53,7 @@ class DistributivoacademicoController extends \app\components\CController {
         $per_id = @Yii::$app->session->get("PB_perid");
         $emp_id = @Yii::$app->session->get("PB_idempresa");
         $model = NULL;
+        $model_posgrado = NULL;
         $distributivo_model = new DistributivoAcademico();
         $mod_modalidad = new Modalidad();
         $mod_unidad = new UnidadAcademica();
@@ -66,12 +67,13 @@ class DistributivoacademicoController extends \app\components\CController {
             $periodo = (isset($data['periodo']) && $data['periodo'] > 0) ? $data['periodo'] : NULL;
             $materia = (isset($data['materia']) && $data['materia'] > 0) ? $data['materia'] : NULL;
             $jornada = (isset($data['jornada']) && $data['jornada'] > 0) ? $data['jornada'] : NULL;
-            $model = $distributivo_model->getListadoDistributivo($search, $modalidad, $materia, $jornada, $unidad, $periodo);
+            $model = $distributivo_model->getListadoDistributivoGrado($search, $modalidad, $materia, $jornada, $unidad, $periodo);
             return $this->render('index-grid', [
                         "model" => $model,
             ]);
         } else {
-            $model = $distributivo_model->getListadoDistributivo();
+            $model = $distributivo_model->getListadoDistributivoGrado();
+            $model_posgrado = $distributivo_model->getListadoDistributivoPosgrado();
         }
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
@@ -102,6 +104,7 @@ class DistributivoacademicoController extends \app\components\CController {
                     'mod_periodo' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Grid")]], $arr_periodo), "id", "name"),
                     'mod_materias' => ArrayHelper::map(array_merge([["asi_id" => "0", "asi_nombre" => Yii::t("formulario", "Grid")]], $mod_asignatura), "asi_id", "asi_nombre"),
                     'model' => $model,
+                    'model_posgrado' => $model_posgrado,
                     'mod_jornada' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Grid")]], $arr_jornada), "id", "name"),
         ]);
     }
@@ -128,7 +131,8 @@ class DistributivoacademicoController extends \app\components\CController {
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
             }
             if (isset($data["getperiodo"])) {
-                $periodo = $mod_periodo->getPeriodos_x_modalidad($data["mod_id"]);
+                $mod_periodoActual = new PeriodoAcademico();
+                $periodo = $mod_periodoActual->getPeriodoAcademico();
                 $message = array("periodo" => $periodo);
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
             }
@@ -178,7 +182,7 @@ class DistributivoacademicoController extends \app\components\CController {
         $arr_profesor = $mod_profesor->getProfesores();
         $arr_unidad = $mod_unidad->consultarUnidadAcademicasEmpresa($emp_id);
         $arr_modalidad = $mod_modalidad->consultarModalidad($arr_unidad[0]["id"], $emp_id);
-        $arr_periodo = $mod_periodo->getPeriodos_x_modalidad($arr_modalidad[0]["id"]);
+        $arr_periodo = $mod_periodoActual->getPeriodoAcademico();
         $arr_jornada = $distributivo_model->getJornadasByUnidadAcad($arr_unidad[0]["id"], $arr_modalidad[0]["id"]);
         $arr_asignatura = $mod_asignatura->getAsignatura_x_bloque_x_planif(0, 0);
         $arr_horario = $distributivo_model->getHorariosByUnidadAcad($arr_unidad[0]["id"], $arr_modalidad[0]["id"], $arr_jornada[0]["id"]);
@@ -224,7 +228,7 @@ class DistributivoacademicoController extends \app\components\CController {
             $con = \Yii::$app->db_academico;
             $transaction = $con->beginTransaction();
             try {
-                //\app\models\Utilities::putMessageLogFile('existe validacion ');   
+                \app\models\Utilities::putMessageLogFile('existe validacion ');   
                 $pro_id = $data['profesor'];
                 $paca_id = $data['periodo'];
                 $dts = (isset($data["grid_docencia"]) && $data["grid_docencia"] != "") ? $data["grid_docencia"] : NULL;
@@ -232,7 +236,7 @@ class DistributivoacademicoController extends \app\components\CController {
                 //Validar que no exista en distributivo_cabecera porque para crear no debe existir.
                 $cons = $distributivo_cab->existeDistCabecera($paca_id, $pro_id);
                 if ($cons == 0) {
-                //    \app\models\Utilities::putMessageLogFile('existe validacion 1' . $dts);
+                    \app\models\Utilities::putMessageLogFile('existe validacion 1' . $dts);
                     if (isset($datos)) {
                         $valida = 1;
                         for ($i = 0; $i < sizeof($datos); $i++) {
@@ -256,6 +260,7 @@ class DistributivoacademicoController extends \app\components\CController {
 
                     if ($valida == 1) {
                         $estado = '1';
+                        \app\models\Utilities::putMessageLogFile('existe validacion 2'.$paca_id);
                         // $cab = $distributivo_cab->insertarDistributivoCab($paca_id, $pro_id); 
                         $distributivo_cab->paca_id = $paca_id;
                         $distributivo_cab->pro_id = $pro_id;
@@ -532,7 +537,7 @@ class DistributivoacademicoController extends \app\components\CController {
         $distributivo_model = new DistributivoAcademico();
         $mod_periodoActual = new PeriodoAcademico();
         $mod_tipo_distributivo = new TipoDistributivo();
-        $arr_periodoActual = $mod_periodoActual->getPeriodoAcademicoActual();
+        $arr_periodoActual = $mod_periodoActual->getPeriodoAcademico();
 
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
@@ -579,7 +584,7 @@ class DistributivoacademicoController extends \app\components\CController {
         $arr_profesor = $mod_profesor->getProfesores();
         $arr_unidad = $mod_unidad->consultarUnidadAcademicasEmpresa($emp_id);
         $arr_modalidad = $mod_modalidad->consultarModalidad($arr_unidad[0]["id"], $emp_id);
-        $arr_periodo = $mod_periodo->getPeriodos_x_modalidad($arr_modalidad[0]["id"]);
+        $arr_periodo = $mod_periodoActual->getPeriodoAcademico();
         $arr_jornada = array(); //$distributivo_model->getJornadasByUnidadAcad($arr_unidad[0]["id"], $arr_modalidad[0]["id"]);           
         $arr_asignatura = $mod_asignatura->getAsignatura_x_bloque_x_planif(0, 0);
         $arr_horario = $distributivo_model->getHorariosByUnidadAcad($arr_unidad[0]["id"], $arr_modalidad[0]["id"], $arr_jornada[0]["id"]);

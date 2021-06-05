@@ -121,7 +121,7 @@ class CalificacionregistrodocenteController extends \app\components\CController 
             //$search = $data['search'];
              Utilities::putMessageLogFile("124  PBgetFilter");
             $unidad = (isset($data['unidad']) && $data['unidad'] > 0)?$data['unidad']:NULL;
-            //$modalidad = (isset($data['modalidad']) && $data['modalidad'] > 0)?$data['modalidad']:NULL;
+            $modalidad = (isset($data['modalidad']) && $data['modalidad'] > 0)?$data['modalidad']:NULL;
             $periodo = (isset($data['periodo']) && $data['periodo'] > 0)?$data['periodo']:NULL;
             $materia = (isset($data['materia']) && $data['materia'] > 0)?$data['materia']:NULL;
             $profesor = (isset($data['profesor']) && $data['profesor'] > 0)?$data['profesor']:NULL;
@@ -130,7 +130,7 @@ class CalificacionregistrodocenteController extends \app\components\CController 
                 $unidad="";
             }
 
-            $arr_estudiante = $cabeceraCalificacion->consultaCalificacionRegistroDocenteAllSearch($unidad,$periodo,$materia,$profesor);
+            $arr_estudiante = $cabeceraCalificacion->consultaCalificacionRegistroDocenteAllSearch($unidad,$periodo,$materia,$profesor,$modalidad);
              return $this->render('index-grid', [
                             "model" => $arr_estudiante,
                 ]);
@@ -150,39 +150,27 @@ class CalificacionregistrodocenteController extends \app\components\CController 
             $arr_profesor_all = $mod_profesor->getProfesoresEnAsignaturas(); 
             Utilities::putMessageLogFile("Paso por cordinador");
             // Utilities::putMessageLogFile(print_r($arr_profesor_all,true));
-            //$arr_profesor_all = $mod_profesor->getProfesoresEnAsignaturasByPerId($per_id);
-            $asignatura = $Asignatura_distri->getAsignaturaRegistro($arr_profesor_all[0]['pro_id'],$arr_ninteres[0]["id"],1,$arr_periodoActual[0]["id"]);
-             //Obtener paralelo
-            $arr_paralelo_clcf = [];
-            //$arr_estudiante = $cabeceraCalificacion->consultaCalificacionRegistroDocente($arr_periodoActual[0]["id"],$asignatura[0]['id'],$arr_profesor_all[0]["pro_id"]);
-            $arr_estudiante = $cabeceraCalificacion->consultaCalificacionRegistroDocenteSearch($arr_ninteres[0]["id"],$arr_periodoActual[0]["id"],$asignatura[0]['id'],$arr_profesor_all[0]["pro_id"],$arr_paralelo_clcf[0]["id"]);
+            $asignatura = $Asignatura_distri->getAsignaturasBy($arr_profesor_all[0]['pro_id'],$arr_ninteres[0]["id"],$arr_periodoActual[0]["id"]);
+            $arr_estudiante = $cabeceraCalificacion->consultaCalificacionRegistroDocenteSearch($arr_ninteres[0]["id"],$arr_periodoActual[0]["id"],$asignatura[0]['id'],$arr_profesor_all[0]["pro_id"]);
         }else{
             Utilities::putMessageLogFile("Paso no Cordinador");
             //No es Cordinador
-            //$arr_profesor_all = $mod_profesor->getProfesoresEnAsignaturasByPerId($per_id);
-           
             $arr_profesor_all = $mod_profesor->getProfesoresEnAsignaturasByPerId($per_id);
             // Utilities::putMessageLogFile(print_r($arr_profesor_all,true));
-
-            $asignatura = $Asignatura_distri->getAsignaturaRegistro($arr_profesor_all[0]['pro_id'],$arr_ninteres[0]["id"],1,$arr_periodoActual[0]["id"]);
-            //$arr_estudiante = $cabeceraCalificacion->consultaCalificacionRegistroDocente($arr_periodoActual[0]["id"],$asignatura[0]['id'],$arr_profesor["Id"]);
-             //Obtener paralelo
-             // $arr_paralelo_clcf = $Asignatura_distri->getCourseProfesor($arr_profesor_all[0]['pro_id'],$arr_periodoActual[0]["id"],$asignatura[0]["id"]);
-             $arr_paralelo_clcf = [];
-             $arr_estudiante    = $cabeceraCalificacion->consultaCalificacionRegistroDocenteSearch($arr_ninteres[0]["id"],$arr_periodoActual[0]["id"],$asignatura[0]['id'],$arr_profesor_all[0]['pro_id']);
+            $asignatura = $Asignatura_distri->getAsignaturasBy($arr_profesor_all[0]['pro_id'],$arr_ninteres[0]["id"],$arr_periodoActual[0]["id"]);
+             $arr_estudiante = $cabeceraCalificacion->consultaCalificacionRegistroDocenteSearch($arr_ninteres[0]["id"],$arr_periodoActual[0]["id"],$asignatura[0]['id'],$arr_profesor_all[0]['pro_id']);
         }
         //Obtiene el grupo id del suaurio
 
         return $this->render('index', [
                     'model' => $arr_estudiante,
-                    'arr_asignatura' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $asignatura), "id", "name"),
+                    'arr_asignatura' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Todos")]], $asignatura), "id", "name"),
                     'arr_periodoActual' => ArrayHelper::map(array_merge($arr_periodoActual), "id", "nombre"),
-                    'arr_ninteres' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $arr_ninteres), "id", "name"),
-                    'arr_modalidad' => ArrayHelper::map(array_merge( $arr_modalidad), "id", "name"),
+                    'arr_ninteres' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Todos")]], $arr_ninteres), "id", "name"),
+                    'arr_modalidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Todos")]], $arr_modalidad), "id", "name"),
                    // 'arr_carrerra1' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $arr_carrerra1), "id", "name"),
                     'arr_estados' => $this->estados(),
                     'arr_profesor_all' => ArrayHelper::map(array_merge( $arr_profesor_all), "pro_id", "nombres"),
-                    'arr_paralelo_clcf' => ArrayHelper::map(array_merge( $arr_paralelo_clcf), "id", "name"),
         ]);//
     }//function actionIndex
    
@@ -235,47 +223,30 @@ class CalificacionregistrodocenteController extends \app\components\CController 
                 $message = array("parcial" => $parcial);
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
             }
-            if (isset($data["getmateria"])) {               
-                $materia       = $Asignatura_distri->getAsignaturaRegistro($data["pro_id"], $data["uaca_id"], $data["mod_id"], $data["paca_id"]);
-
-                $paralelo_clcf = $Asignatura_distri->getCourseProfesor($data['pro_id'],$data["paca_id"],$materia[0]["id"]);
-
-                $message = array("materia" => $materia,"paralelo_clcf" => $paralelo_clcf);
+            if (isset($data["getmateria"])) {
+                $materia = $Asignatura_distri->getAsignaturasBy($data["pro_id"], $data["uaca_id"], $data["paca_id"]);
+                $message = array("materia" => $materia);
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
-            }    
-            if (isset($data["getparalelos"])) {               
-                $paralelo_clcf = $Asignatura_distri->getCourseProfesor2($data['pro_id'],$data["paca_id"],$data["materia"]);
-                //print_r($paralelo_clcf);
-                $message = array("paralelo_clcf" => $paralelo_clcf);
-                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
-            }    
-        }//if
+            }
+        }
 
         $arr_periodoActual = [$mod_periodoActual->getPeriodoAcademicoActual()];
         $arr_ninteres      = $mod_unidad->consultarUnidadAcademicasEmpresa(1);
-        $arr_modalidad     = $mod_modalidad->consultarModalidad($arr_ninteres[0]["id"], 1);
-        //$asignatura        = $Asignatura_distri->getAsignaturaRegistro($arr_profesor["Id"],1,1,$arr_periodoActual[0]["id"]);      
-        $arr_parcialunidad = $mod_periodoActual->getParcialUnidad(1);
-
+        $arr_modalidad     = $mod_modalidad->consultarModalidad($arr_ninteres[0]["id"], 1);     
+        $arr_parcialunidad = $mod_periodoActual->getParcialUnidad($arr_ninteres[0]["id"]);
         $arr_grupos        = $grupo_model->getAllGruposByUser($user_usermane);
-
-        
 
         if (in_array(['id' => '6'], $arr_grupos)) {
             //Es Cordinador
             $arr_profesor_all = $mod_profesor->getProfesoresEnAsignaturas();
-            $asignatura = $Asignatura_distri->getAsignaturaRegistro($arr_profesor_all[0]['pro_id'],$arr_ninteres[0]["id"],1,$arr_periodoActual[0]["id"]);
-            $arr_paralelo_clcf = [];
+            $asignatura = $Asignatura_distri->getAsignaturasBy($arr_profesor_all[0]['pro_id'],$arr_ninteres[0]["id"],$arr_periodoActual[0]["id"]);
             //print_r("Es Cordinador");
         }else{
             //No es coordinador
             $arr_profesor_all = $mod_profesor->getProfesoresEnAsignaturasByPerId($per_id);
-            $asignatura = $Asignatura_distri->getAsignaturaRegistro($arr_profesor_all[0]['pro_id'],$arr_ninteres[0]["id"],1,$arr_periodoActual[0]["id"]);
-            $arr_paralelo_clcf = [];
+            $asignatura = $Asignatura_distri->getAsignaturasBy($arr_profesor_all[0]['pro_id'],$arr_ninteres[0]["id"],$arr_periodoActual[0]["id"]);
             //print_r("NO Es Cordinador");
         }
-
-        
        
         return $this->render('register', [
             'arr_periodoActual' => ArrayHelper::map($arr_periodoActual, "id", "nombre"),
@@ -287,7 +258,6 @@ class CalificacionregistrodocenteController extends \app\components\CController 
             'pro_id'            => $arr_profesor["Id"],
             'model'             => "",
             'arr_profesor_all'  => ArrayHelper::map($arr_profesor_all, "pro_id", "nombres"),
-            'arr_paralelo_clcf' => ArrayHelper::map(array_merge([["id" => "", "name" => Yii::t("formulario", "All")]], $arr_paralelo_clcf), "id", "name"),
             //'componente'        => $componenteuni,
             //'campos'            => $campos,
         ]);
@@ -305,7 +275,6 @@ class CalificacionregistrodocenteController extends \app\components\CController 
         $arrSearch["materia"]   = $data['materia'];
         $arrSearch["parcial"]   = $data['parcial'];
         $arrSearch["profesor"]  = $data['profesor'];
-        $arrSearch["paralelo"]  = $data['paralelo'];
 
         $model = $mod_calificacion->getRegistroCalificaciones($arrSearch);
         return json_encode($model);
@@ -719,11 +688,12 @@ class CalificacionregistrodocenteController extends \app\components\CController 
                                 }
 
                                 // Sacar la asignatura correcta
-                                $asignatura = $mod_asig->consultarAsignaturaConUnidad($asi_id, $uaca_id);
-                                if(!isset($asignatura)){
+                                $asignatura = $mod_asig->consultarEstudiantePertenece($est_id, $asi_id, $uaca_id);
+                                if(empty($asignatura)){
                                     $noalumno .= $nombre . " (no pertenece a esta asignatura), ";
                                     continue;
                                 }
+
 
                                 // Modalidad ID
                                 $mod_id = $meun['mod_id'];
@@ -796,8 +766,8 @@ class CalificacionregistrodocenteController extends \app\components\CController 
                                 }
 
                                 // Sacar la asignatura correcta
-                                $asignatura = $mod_asig->consultarAsignaturaConUnidad($asi_id, $uaca_id);
-                                if(!isset($asignatura)){
+                                $asignatura = $mod_asig->consultarEstudiantePertenece($est_id, $asi_id, $uaca_id);
+                                if(empty($asignatura)){
                                     $noalumno .= $nombre . " (no pertenece a esta asignatura), ";
                                     continue;
                                 }
@@ -854,8 +824,8 @@ class CalificacionregistrodocenteController extends \app\components\CController 
             $cuni_evaluacion = ComponenteUnidad::find()->where(['com_id' => 5, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id])->asArray()->one();
 
             $cal_asin = $val[5];
-            \app\models\Utilities::putMessageLogFile("cal_asin: " . $cal_asin);
-            \app\models\Utilities::putMessageLogFile("cuni_asincrono['cuni_calificacion']: " . $cuni_asincrono['cuni_calificacion']);
+            // \app\models\Utilities::putMessageLogFile("cal_asin: " . $cal_asin);
+            // \app\models\Utilities::putMessageLogFile("cuni_asincrono['cuni_calificacion']: " . $cuni_asincrono['cuni_calificacion']);
             if($cal_asin > $cuni_asincrono['cuni_calificacion'] || $cal_asin < 0){
                 $noalumno .= $nombre . " (la nota 'Act. Asincro 2P' está mal colocada), "; 
                 return 0; 
@@ -896,13 +866,13 @@ class CalificacionregistrodocenteController extends \app\components\CController 
             $cuni_evaluacion = ComponenteUnidad::find()->where(['com_id' => 5, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id, 'ecal_id' => $ecal_id])->asArray()->one();
 
             $cal_asin = $val[12];
-            \app\models\Utilities::putMessageLogFile("cal_asin: " . $cal_asin);
+            // \app\models\Utilities::putMessageLogFile("cal_asin: " . $cal_asin);
 
-            \app\models\Utilities::putMessageLogFile("uaca_id: " . $uaca_id);
-            \app\models\Utilities::putMessageLogFile("mod_id: " . $mod_id);
-            \app\models\Utilities::putMessageLogFile("ecal_id: " . $ecal_id);
-            \app\models\Utilities::putMessageLogFile("cuni_asincrono: " . $cuni_asincrono);
-            \app\models\Utilities::putMessageLogFile("cuni_asincrono['cuni_calificacion']: " . $cuni_asincrono['cuni_calificacion']);
+            // \app\models\Utilities::putMessageLogFile("uaca_id: " . $uaca_id);
+            // \app\models\Utilities::putMessageLogFile("mod_id: " . $mod_id);
+            // \app\models\Utilities::putMessageLogFile("ecal_id: " . $ecal_id);
+            // \app\models\Utilities::putMessageLogFile("cuni_asincrono: " . $cuni_asincrono);
+            // \app\models\Utilities::putMessageLogFile("cuni_asincrono['cuni_calificacion']: " . $cuni_asincrono['cuni_calificacion']);
             if($cal_asin > $cuni_asincrono['cuni_calificacion'] || $cal_asin < 0){
                 $noalumno .= $nombre . " (la nota 'Act. Asincro 2P' está mal colocada), "; 
                 return 0; 
@@ -938,7 +908,7 @@ class CalificacionregistrodocenteController extends \app\components\CController 
             $cal_calif = $cal_asin + $cal_sinc + $cal_cuest + $cal_aut + $cal_eval;
         }
 
-        \app\models\Utilities::putMessageLogFile("cal_calif: " . $cal_calif);
+        // \app\models\Utilities::putMessageLogFile("cal_calif: " . $cal_calif);
 
         // $cal_prom = $val[19]; // No usada
 
@@ -1378,8 +1348,8 @@ class CalificacionregistrodocenteController extends \app\components\CController 
         return 1;
     }
 
-    public function actionDownloadplantillagrado() {
-        $file = 'plantilla_grado.xlsx';
+    public function actionDownloadplantillagradoonline() {
+        $file = 'plantilla_grado_online.xlsx';
         $route = str_replace("../", "", $file);
         $url_file = Yii::$app->basePath . "/uploads/calificaciones/plantilla/" . $route;
         $arrfile = explode(".", $url_file);
@@ -1391,16 +1361,17 @@ class CalificacionregistrodocenteController extends \app\components\CController 
                 header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
                 header('Cache-Control: private', false);
                 header("Content-type: application/xlsx");
-                header('Content-Disposition: attachment; filename="plantillacalificacion_GRADO' . '.xlsx";');
+                header('Content-Disposition: attachment; filename="plantilla_calificacion_GRADO_ONLINE' . '.xlsx";');
                 header('Content-Transfer-Encoding: binary');
                 header('Content-Length: ' . filesize($url_file));
                 readfile($url_file);
+                exit();
             }
         }
     }
 
-    public function actionDownloadplantillaposgrado() {
-        $file = 'plantilla_posgrado.xlsx';
+    public function actionDownloadplantillaposgradoonline() {
+        $file = 'plantilla_posgrado_online.xlsx';
         $route = str_replace("../", "", $file);
         $url_file = Yii::$app->basePath . "/uploads/calificaciones/plantilla/" . $route;
         $arrfile = explode(".", $url_file);
@@ -1412,10 +1383,33 @@ class CalificacionregistrodocenteController extends \app\components\CController 
                 header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
                 header('Cache-Control: private', false);
                 header("Content-type: application/xlsx");
-                header('Content-Disposition: attachment; filename="plantillacalificacion_POSGRADO' . '.xlsx";');
+                header('Content-Disposition: attachment; filename="plantilla_calificacion_POSGRADO_ONLINE' . '.xlsx";');
                 header('Content-Transfer-Encoding: binary');
                 header('Content-Length: ' . filesize($url_file));
                 readfile($url_file);
+                exit();
+            }
+        }
+    }
+
+    public function actionDownloadplantillaposgradopresencial() {
+        $file = 'plantilla_posgrado_presencial.xlsx';
+        $route = str_replace("../", "", $file);
+        $url_file = Yii::$app->basePath . "/uploads/calificaciones/plantilla/" . $route;
+        $arrfile = explode(".", $url_file);
+        $typeImage = $arrfile[count($arrfile) - 1];
+        if (file_exists($url_file)) {
+            if (strtolower($typeImage) == "xlsx") {
+                header('Pragma: public');
+                header('Expires: 0');
+                header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+                header('Cache-Control: private', false);
+                header("Content-type: application/xlsx");
+                header('Content-Disposition: attachment; filename="plantilla_calificacion_POSGRADO_PRESENCIAL' . '.xlsx";');
+                header('Content-Transfer-Encoding: binary');
+                header('Content-Length: ' . filesize($url_file));
+                readfile($url_file);
+                exit();
             }
         }
     }
@@ -1460,10 +1454,11 @@ class CalificacionregistrodocenteController extends \app\components\CController 
         $unidad = $data['unidad'];
         $materia = $data['materia'];
         $profesor = $data['profesor'];
+        $modalidad = $data['modalidad'];
         /* return Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), false, $ron_id); */
 
         //$arr_estudiante = $cabeceraCalificacion->consultaCalificacionRegistroDocenteSearch($unidad,$periodo,$materia,$profesor);
-        $arr_estudiante = $cabeceraCalificacion->consultaCalificacionRegistroDocenteAllSearch($unidad,$periodo,$materia,$profesor,true);
+        $arr_estudiante = $cabeceraCalificacion->consultaCalificacionRegistroDocenteAllSearch($unidad,$periodo,$materia,$profesor,$modalidad,true);
 
         //$data_student = $matriculacion_model->getDataStudenbyRonId($ron_id);
         //$dataPlanificacion = $matriculacion_model->getPlanificationFromRegistroOnline($ron_id);

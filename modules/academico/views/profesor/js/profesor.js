@@ -148,6 +148,11 @@ function update() {
     }
 }
 
+function test() {
+    console.log("foto: " + $('#txth_doc_foto').val());
+    console.log("extfoto: " + $('#txth_doc_cv').val());
+      console.log("cmb_dedicacion: " + $('#cmb_dedicacion').val());
+}
 function save() {
     var link = $('#txth_base').val() + "/academico/profesor/save";
     var arrParams = new Object();
@@ -172,16 +177,19 @@ function save() {
     arrParams.celular = $('#txt_cel').val();
     arrParams.phone = $('#txt_phone').val();
     arrParams.pro_num_contrato = $('#txt_contrato').val();
-    arrParams.dedicacion = $('#txt_dedicacion').val();
+    arrParams.dedicacion = $('#cmb_dedicacion').val();
     arrParams.fecha_nacimiento = $('#txt_fecha_nacimiento').val();
-
+   console.log("dedicacion: " + arrParams.dedicacion);
     arrParams.usuario = $('#txt_usuario').val();
     arrParams.clave = $('#frm_clave').val();
     arrParams.gru_id = $('#cmb_grupo').val();
     arrParams.rol_id = $('#cmb_rol').val();
     arrParams.emp_id = $('#cmb_empresa').val();
-    arrParams.foto = $('#txth_doc_foto').val() + ".jpg";
-
+    //arrParams.foto = $('#txth_doc_foto').val() + ".jpg";
+    arrParams.foto = $('#txth_doc_foto').val();
+    arrParams.extfoto = $('#txth_doc_cv').val() ;
+    console.log("foto: " + arrParams.foto);
+    console.log("extfoto: " + $('#txth_doc_cv').val());
     /** Session Storages **/
     arrParams.grid_instruccion_list = (JSON.parse(sessionStorage.grid_instruccion_list)).data;
     arrParams.grid_docencia_list = (JSON.parse(sessionStorage.grid_docencia_list)).data;

@@ -43,7 +43,7 @@ class ProfesorController extends \app\components\CController {
 
     public $folder_cv = 'expediente';
     public $pdf_cla_acceso = "";
-    
+
     public function actionIndex() {
         $pro_model = new profesor();
         Utilities::putMessageLogFile('saludos1');
@@ -56,14 +56,14 @@ class ProfesorController extends \app\components\CController {
         $perfil = '0'; // perfil administrador o talento humano        
 
         $arr_grupos = $grupo_model->getAllGruposByUser($user_usermane);
-        if (!in_array(['id' => '1'], $arr_grupos) && !in_array(['id' => '6'], $arr_grupos) && !in_array(['id' => '7'], $arr_grupos) && !in_array(['id' => '8'], $arr_grupos)  && !in_array(['id' => '15'], $arr_grupos)) {
+        if (!in_array(['id' => '1'], $arr_grupos) && !in_array(['id' => '6'], $arr_grupos) && !in_array(['id' => '7'], $arr_grupos) && !in_array(['id' => '8'], $arr_grupos) && !in_array(['id' => '15'], $arr_grupos)) {
             $search = $user_perId;
             $perfil = '1';
         }
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->get();
             $search = $data["search"];
-            if (!in_array(['id' => '1'], $arr_grupos) && !in_array(['id' => '6'], $arr_grupos)&& !in_array(['id' => '7'], $arr_grupos)&& !in_array(['id' => '8'], $arr_grupos)&& !in_array(['id' => '15'], $arr_grupos)) {
+            if (!in_array(['id' => '1'], $arr_grupos) && !in_array(['id' => '6'], $arr_grupos) && !in_array(['id' => '7'], $arr_grupos) && !in_array(['id' => '8'], $arr_grupos) && !in_array(['id' => '15'], $arr_grupos)) {
                 $search = $user_perId;
                 $perfil = '1';  // perfil profesor o no administrador ni talento humano
             }
@@ -105,10 +105,10 @@ class ProfesorController extends \app\components\CController {
             /**
              * Inf. Basica
              */
-           $arr_dedic = DedicacionDocente::findAll(["ddoc_estado" => 1, "ddoc_estado_logico" => 1]);
-             $ViewFormTab1 = $this->renderPartial('ViewFormTab1', [
-            'arr_dedic'=>(empty(ArrayHelper::map($arr_dedic, "ddoc_id", "ddoc_nombre"))) ? array(Yii::t("dedicacion", "-- Select Dedicación --")) : (ArrayHelper::map($arr_dedic, "ddoc_id", "ddoc_nombre")),
-                  'persona_model' => $persona_model,
+            $arr_dedic = DedicacionDocente::findAll(["ddoc_estado" => 1, "ddoc_estado_logico" => 1]);
+            $ViewFormTab1 = $this->renderPartial('ViewFormTab1', [
+                'arr_dedic' => (empty(ArrayHelper::map($arr_dedic, "ddoc_id", "ddoc_nombre"))) ? array(Yii::t("dedicacion", "-- Select Dedicación --")) : (ArrayHelper::map($arr_dedic, "ddoc_id", "ddoc_nombre")),
+                'persona_model' => $persona_model,
             ]);
 
             /**
@@ -320,18 +320,18 @@ class ProfesorController extends \app\components\CController {
             $grupo_model = new Grupo();
             $arr_grupos = $grupo_model->getAllGruposByUser($user_usermane);
             if ($id != $user_perId) {
-                if (!in_array(['id' => '1'], $arr_grupos) && !in_array(['id' => '6'], $arr_grupos) && !in_array(['id' => '7'], $arr_grupos) && !in_array(['id' => '8'], $arr_grupos)  && !in_array(['id' => '15'], $arr_grupos))
+                if (!in_array(['id' => '1'], $arr_grupos) && !in_array(['id' => '6'], $arr_grupos) && !in_array(['id' => '7'], $arr_grupos) && !in_array(['id' => '8'], $arr_grupos) && !in_array(['id' => '15'], $arr_grupos))
                     return $this->redirect(['profesor/index']);
             }
 
             /**
              * Inf. Basica
              */
-              $arr_dedic = DedicacionDocente::findAll(["ddoc_estado" => 1, "ddoc_estado_logico" => 1]);
-    
-            $EditFormTab1 = $this->renderPartial('EditFormTab1', [  'arr_dedic'=>(empty(ArrayHelper::map($arr_dedic, "ddoc_id", "ddoc_nombre"))) ? array(Yii::t("dedicacion", "-- Select Dedicación --")) : (ArrayHelper::map($arr_dedic, "ddoc_id", "ddoc_nombre")),
+            $arr_dedic = DedicacionDocente::findAll(["ddoc_estado" => 1, "ddoc_estado_logico" => 1]);
+
+            $EditFormTab1 = $this->renderPartial('EditFormTab1', ['arr_dedic' => (empty(ArrayHelper::map($arr_dedic, "ddoc_id", "ddoc_nombre"))) ? array(Yii::t("dedicacion", "-- Select Dedicación --")) : (ArrayHelper::map($arr_dedic, "ddoc_id", "ddoc_nombre")),
                 'persona_model' => $persona_model,
-                'email' => $email,             
+                'email' => $email,
             ]);
 
             /**
@@ -501,9 +501,6 @@ class ProfesorController extends \app\components\CController {
     public function actionNew() {
 
         $_SESSION['JSLANG']['Must be Fill all information in fields with label *.'] = Academico::t("profesor", "Must be Fill all information in fields with label *.");
-        $dedicacionDocente = new \app\modules\academico\models\DedicacionDocente();
-        $model_dedicacion=$dedicacionDocente->getDedicacionDocente();
-        $NewFormTab1 = $this->renderPartial('NewFormTab1',['model_dedicacion'=>ArrayHelper::map(array_merge([["Id" => "0", "name" => Yii::t("formulario", "Select")]], $model_dedicacion), "Id", "name"),]);
 
         $arr_pais = Pais::findAll(["pai_estado" => 1, "pai_estado_logico" => 1]);
         list($firstpais) = $arr_pais;
@@ -541,12 +538,19 @@ class ProfesorController extends \app\components\CController {
                     return json_encode(['error' => Yii::t("notificaciones", "Error to process File. Try again.")]);
                 }
                 //Recibe Parámetros
+
                 $files = $_FILES[key($_FILES)];
                 $arrIm = explode(".", basename($files['name']));
                 $typeFile = strtolower($arrIm[count($arrIm) - 1]);
+
                 if (($typeFile == 'jpg') or ( $typeFile == 'jpeg') or ( $typeFile == 'png')) {
                     $dirFileEnd = Yii::$app->params["documentFolder"] . "expediente/" . $data["name_file"] . "." . $typeFile;
                     $status = Utilities::moveUploadFile($files['tmp_name'], $dirFileEnd);
+                    //\app\models\Utilities::putMessageLogFile('pedro: ' .$typeFile);
+
+                    $this->renderPartial('NewFormTab1', [
+                        "typeFile" => $typeFile,
+                    ]);
                     if ($status) {
                         return true;
                     } else {
@@ -560,6 +564,10 @@ class ProfesorController extends \app\components\CController {
 
         list($firstpro) = $arr_pro;
 
+        $dedicacionDocente = new \app\modules\academico\models\DedicacionDocente();
+        $model_dedicacion = $dedicacionDocente->getDedicacionDocente();
+        $NewFormTab1 = $this->renderPartial('NewFormTab1', ['model_dedicacion' => ArrayHelper::map(array_merge([["Id" => "0", "name" => Yii::t("formulario", "Select")]], $model_dedicacion), "Id", "name"),
+        ]);
         $arr_can = Canton::find()
                         ->select(["can_id", "can_nombre"])
                         ->andWhere(["can_estado" => 1, "can_estado_logico" => 1,
@@ -571,9 +579,8 @@ class ProfesorController extends \app\components\CController {
             'arr_can' => (empty(ArrayHelper::map($arr_can, "can_id", "can_nombre"))) ? array(Yii::t("canton", "-- Select Canton --")) : (ArrayHelper::map($arr_can, "can_id", "can_nombre")),
         ]);
 
-
         $arr_inst_level = NivelInstruccion::findAll(["nins_estado" => 1, "nins_estado_logico" => 1]);
-        
+
         $NewFormTab4 = $this->renderPartial('NewFormTab4', [
             'model' => new ArrayDataProvider(array()),
             'arr_inst_level' => (empty(ArrayHelper::map($arr_inst_level, "nins_id", "nins_nombre"))) ? array(Academico::t("profesor", "-- Select Instruction Level --")) : (ArrayHelper::map($arr_inst_level, "nins_id", "nins_nombre")),
@@ -695,6 +702,8 @@ class ProfesorController extends \app\components\CController {
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
             $user_ingresa = Yii::$app->session->get("PB_iduser");
+            // $con = \Yii::$app->db_academico;
+            //  $con = \Yii::$app->db_asgard;
             try {
 
                 /**
@@ -711,11 +720,11 @@ class ProfesorController extends \app\components\CController {
                 $nacionalidad = $data["nacionalidad"];
                 $celular = $data["celular"];
                 $phone = $data["phone"];
-                $dedicacion=$data["dedicacion"];
-                $pro_num_contrato =$data["pro_num_contrato"];
-                $pro_num_contrato =$data["pro_num_contrato"];
+                $dedicacion = $data["dedicacion"];
+                $pro_num_contrato = $data["pro_num_contrato"];
                 $fecha_nacimiento = $data["fecha_nacimiento"];
                 $foto = $data['foto'];
+                $extfoto = $data['extfoto'];
 
                 /**
                  * Inf. Domicilio
@@ -767,7 +776,7 @@ class ProfesorController extends \app\components\CController {
                      * Si la persona existe y no esta eliminada
                      */
                     $message = array(
-                        "wtmessage" => Yii::t('notificaciones', 'Your information has not been saved. Usuario ya existente.'),
+                        "wtmessage" => Yii::t('notificaciones', 'Your information has not been saved. Persona ya existente.'),
                         "title" => Yii::t('jslang', 'Error'),
                     );
 
@@ -788,7 +797,7 @@ class ProfesorController extends \app\components\CController {
                     $persona_model->per_domicilio_telefono = $phone;
                     $persona_model->per_celular = $celular;
                     $persona_model->per_fecha_nacimiento = $fecha_nacimiento;
-                    
+
                     $arr_file = explode($foto, '.jpg');
                     if (isset($arr_file[0]) && $arr_file[0] != "") {
                         $oldFile = $this->folder_cv . '/' . $foto;
@@ -818,9 +827,10 @@ class ProfesorController extends \app\components\CController {
                     if ($persona_model->save()) {
                         $profesor_model = new Profesor();
                         $profesor_model->per_id = $per_id_existente;
-                        $profesor_model->ddoc_id=$dedicacion;
-                         $profesor_model->pro_num_contrato=$pro_num_contrato;
+                        $profesor_model->ddoc_id = $dedicacion;
+                        $profesor_model->pro_num_contrato = $pro_num_contrato;
                         $profesor_model->pro_estado = '1';
+                        $profesor_model->pro_fecha_creacion = date("Y-m-d H:i:s");
                         $profesor_model->pro_estado_logico = '1';
                         $profesor_model->pro_usuario_ingreso = $user_ingresa;
                         $profesor_model->save();
@@ -1037,6 +1047,8 @@ class ProfesorController extends \app\components\CController {
                     /**
                      * Registro nuevo
                      */
+                    // $transaction = $con->beginTransaction();
+
                     $persona_model = new Persona();
                     $persona_model->per_pri_nombre = $pri_nombre;
                     $persona_model->per_seg_nombre = $seg_nombre;
@@ -1064,30 +1076,63 @@ class ProfesorController extends \app\components\CController {
                     $persona_model->per_domicilio_ref = $referencia;
                     $persona_model->per_estado = '1';
                     $persona_model->per_estado_logico = '1';
-
+                    \app\models\Utilities::putMessageLogFile('1');
                     if ($persona_model->save()) {
+                        \app\models\Utilities::putMessageLogFile('2');
                         $per_id = $persona_model->getPrimaryKey();
+                        $arr_file_ext = explode('.', $extfoto);
 
-                        $arr_file = explode($foto, '.jpg');
-                        if (isset($arr_file[0]) && $arr_file[0] != "") {
-                            $oldFile = $this->folder_cv . '/' . $foto;
+                        \app\models\Utilities::putMessageLogFile($arr_file_ext);
+                        $foto = $foto . '.' . $arr_file_ext[1];
+                       
+                        if (isset($arr_file_ext[0]) && $arr_file_ext[0] != "") {
+                            //$oldFile = $this->folder_cv . '/' . $foto;
+                            $oldFile1 = $this->folder_cv . '/' . $foto;
                             $persona_model = Persona::findOne(["per_id" => $per_id]);
-                            //Utilities::putMessageLogFile('ruta foto:' . $this->folder_cv.'/'. $per_id . "_" . $foto);
+                            Utilities::putMessageLogFile('ruta foto:' . $this->folder_cv . '/' . $per_id . "_" . $foto);
                             $persona_model->per_foto = $this->folder_cv . '/' . $per_id . "_" . $foto;
+
+                            \app\models\Utilities::putMessageLogFile('1118    $persona_model->per_foto : ' .$persona_model->per_foto );  
+                            //\app\models\Utilities::putMessageLogFile('1119     $per_id : ' .$per_id );  
+
                             $urlBase = Yii::$app->basePath . Yii::$app->params["documentFolder"];
-                            rename($urlBase . $oldFile, $urlBase . $persona_model->per_foto);
+                            rename($urlBase . $oldFile1, $urlBase . $persona_model->per_foto);
                             $persona_model->update();
                         }
 
+                        /*    $per_id = $persona_model->getPrimaryKey();
+                          \app\models\Utilities::putMessageLogFile('imagen: '.$foto);
+                          $arr_file = explode($foto, '.jpg');
+                          \app\models\Utilities::putMessageLogFile('imagen-aaa: '.$arr_file[0]);
+                          if (isset($arr_file[0]) && $arr_file[0] != "") {
+                          $oldFile = $this->folder_cv . '/' . $foto;
+                          \app\models\Utilities::putMessageLogFile('oldFile: '.$oldFile);
+                          $persona_model = Persona::findOne(["per_id" => $per_id]);
+                          \app\models\Utilities::putMessageLogFile('ruta foto:' . $this->folder_cv.'/'. $per_id . "_" . $foto);
+                          $persona_model->per_foto = $this->folder_cv . '/' . $per_id . "_" . $foto;
+                          $urlBase = Yii::$app->basePath . Yii::$app->params["documentFolder"];
+                          rename($urlBase . $oldFile, $urlBase . $persona_model->per_foto);
+                          $persona_model->update();
+
+
+                          } */
+                        
+                            
+                        
                         $profesor_model = new Profesor();
-                        $profesor_model->ddoc_id=$dedicacion;
+                        $profesor_model->ddoc_id = $dedicacion;
                         $profesor_model->pro_num_contrato = $pro_num_contrato;
                         $profesor_model->per_id = $per_id;
                         $profesor_model->pro_estado = '1';
                         $profesor_model->pro_estado_logico = '1';
+                        $profesor_model->pro_fecha_creacion = date("Y-m-d H:i:s");
                         $profesor_model->pro_usuario_ingreso = $user_ingresa;
-                        $profesor_model->save();
-
+                        if($profesor_model->save()){
+                           \app\models\Utilities::putMessageLogFile('persona: '  );   
+                        }else{
+                           \app\models\Utilities::putMessageLogFile('erro: ' .$dedicacion );    
+                        }
+                        
                         $usuario_model = new Usuario();
                         $usuario_model->per_id = $per_id;
                         $usuario_model->usu_user = $usuario;
@@ -1299,10 +1344,15 @@ class ProfesorController extends \app\components\CController {
                                 }
                             }
                         }
-
+                        //  $transaction->commit();
                         return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
                     } else {
-                        throw new Exception('Error SubModulo no creado.');
+                        //    $transaction->rollback();
+                        $message = array(
+                            "wtmessage" => Yii::t('notificaciones', 'Your information has not been saved. Please try again.'),
+                            "title" => Yii::t('jslang', 'Error'),
+                        );
+                        return Utilities::ajaxResponse('NOOK', 'alert', Yii::t('jslang', 'Error'), 'true', $message);
                     }
                 }
             } catch (Exception $ex) {
@@ -1330,8 +1380,8 @@ class ProfesorController extends \app\components\CController {
                 $arr_grupos = $grupo_model->getAllGruposByUser($user_usermane);
                 if ($per_id != $user_perId) {
                     // if (!in_array(['id' => '1'], $arr_grupos) && !in_array(['id' => '6'], $arr_grupos) && !in_array(['id' => '7'], $arr_grupos) && !in_array(['id' => '8'], $arr_grupos)  && !in_array(['id' => '15'], $arr_grupos))
-       
-                    if (!in_array(['id' => '1'], $arr_grupos) && !in_array(['id' => '6'], $arr_grupos)&& !in_array(['id' => '7'], $arr_grupos) && !in_array(['id' => '8'], $arr_grupos)  && !in_array(['id' => '15'], $arr_grupos)  )
+
+                    if (!in_array(['id' => '1'], $arr_grupos) && !in_array(['id' => '6'], $arr_grupos) && !in_array(['id' => '7'], $arr_grupos) && !in_array(['id' => '8'], $arr_grupos) && !in_array(['id' => '15'], $arr_grupos))
                         return $this->redirect(['profesor/index']);
                 }
 
@@ -1349,8 +1399,8 @@ class ProfesorController extends \app\components\CController {
                 $nacionalidad = $data["nacionalidad"];
                 $celular = $data["celular"];
                 $phone = $data["phone"];
-                $dedicacion=$data["dedicacion"];
-                $pro_num_contrato=$data["pro_num_contrato"];
+                $dedicacion = $data["dedicacion"];
+                $pro_num_contrato = $data["pro_num_contrato"];
                 $fecha_nacimiento = $data["fecha_nacimiento"];
                 $foto = $data['foto'];
 
@@ -1843,7 +1893,7 @@ class ProfesorController extends \app\components\CController {
             $ciudad = new Canton();
             $canton = $ciudad->NombrecantonXid($persona_model['can_id_domicilio']);
             $instruccion_model = new ProfesorInstruccion();
-            $profesor_model = Profesor::findOne(['per_id' => $persona_model->per_id]);      
+            $profesor_model = Profesor::findOne(['per_id' => $persona_model->per_id]);
             $proExpDoc = new ProfesorExpDoc();
             $proExpPro = new ProfesorExpProf();
             $proIdiomas = new ProfesorIdiomas();
@@ -1853,7 +1903,7 @@ class ProfesorController extends \app\components\CController {
             $proPub = new ProfesorPublicacion();
             $proCoor = new ProfesorCoordinacion();
             $proRef = new ProfesorReferencia();
-            
+
             $rep = new ExportFile();
             //$this->layout = false;
             $this->layout = '@modules/academico/views/tpl_profesor/main';
@@ -1863,19 +1913,19 @@ class ProfesorController extends \app\components\CController {
             $this->pdf_cla_acceso = $ids;
             $rep->orientation = "P"; // tipo de orientacion L => Horizontal, P => Vertical   
             $rep->createReportPdf(
-                    $this->render('@modules/academico/views/tpl_profesor/profesor', [                      
+                    $this->render('@modules/academico/views/tpl_profesor/profesor', [
                         'canton' => $canton,
                         'persona_model' => $persona_model, // 1
                         'instruccion' => $instruccion_model->getAllInstruccionGrid($profesor_model->pro_id, true), //2
-                        'experienciadoc' => $proExpDoc->getAllExperienciaGrid($profesor_model->pro_id, true),//3
-                        'experienciapro' => $proExpPro->getAllExperienciaGrid($profesor_model->pro_id, true),//4
+                        'experienciadoc' => $proExpDoc->getAllExperienciaGrid($profesor_model->pro_id, true), //3
+                        'experienciapro' => $proExpPro->getAllExperienciaGrid($profesor_model->pro_id, true), //4
                         'idioma' => $proIdiomas->getAllIdiomasGrid($profesor_model->pro_id, true), //5
                         'investigacion' => $proInvestigacion->getAllInvestigacionGrid($profesor_model->pro_id, true), //6
-                        'capacitacion' => $proCap->getAllCapacitacionGrid($profesor_model->pro_id, true),//7
-                        'conferencia' => $proConf->getAllConferenciaGrid($profesor_model->pro_id, true),//8
-                        'publicacion' => $proPub->getAllPublicacionGrid($profesor_model->pro_id, true),//9
-                        'coodirecion' => $proCoor->getAllCoordinacionGrid($profesor_model->pro_id, true),//10
-                        'referencia' => $proRef->getAllReferenciaGrid($profesor_model->pro_id, true),//11
+                        'capacitacion' => $proCap->getAllCapacitacionGrid($profesor_model->pro_id, true), //7
+                        'conferencia' => $proConf->getAllConferenciaGrid($profesor_model->pro_id, true), //8
+                        'publicacion' => $proPub->getAllPublicacionGrid($profesor_model->pro_id, true), //9
+                        'coodirecion' => $proCoor->getAllCoordinacionGrid($profesor_model->pro_id, true), //10
+                        'referencia' => $proRef->getAllReferenciaGrid($profesor_model->pro_id, true), //11
                     ])
             );
             $rep->mpdf->Output('PROFESOR_' . $ids . ".pdf", ExportFile::OUTPUT_TO_DOWNLOAD);

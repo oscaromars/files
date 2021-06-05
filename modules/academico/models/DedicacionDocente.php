@@ -69,4 +69,21 @@ class DedicacionDocente extends \yii\db\ActiveRecord
     {
         return $this->hasMany(Distributivo::className(), ['ddoc_id' => 'ddoc_id']);
     }
+    
+    
+    public function getDedicacionDocente() {
+             $con_academico = \Yii::$app->db_academico;
+
+        $sql = "SELECT
+                    ddoc_id AS Id,
+                   ddoc_nombre AS name
+                FROM 
+                    " . $con_academico->dbname . ".dedicacion_docente 
+                WHERE 
+                    ddoc_estado = 1 AND 
+                    ddoc_estado_logico = 1";
+        $comando = $con_academico->createCommand($sql);
+        $res = $comando->queryAll();
+        return $res;  
+    }
 }

@@ -137,16 +137,18 @@ class EstudianteCarreraProgramaSearch extends EstudianteCarreraPrograma {
                 inner join db_academico.estudiante est on est.per_id = per.per_id
                 inner join db_academico.asignatura asi on asi.asi_id = h.asi_id
                 inner join db_academico.malla_academica maca on maca.maca_id = h.maca_id
-                inner join db_academico.malla_academico_estudiante maes on maes.maca_id = maca.maca_id and maes.per_id = per.per_id
+                inner join db_academico.malla_academico_estudiante maes on maes.maca_id = maca.maca_id
                 inner join db_academico.promedio_malla_academico pmac on pmac.maes_id = maes.maes_id
-                inner join db_academico.estado_nota_academico enac on enac.enac_id = pmac.enac_id;";
+                inner join db_academico.estado_nota_academico enac on enac.enac_id = pmac.enac_id
+                where per.per_estado and per.per_estado_logico
+                and est.est_estado and est.est_estado_logico";
 
         if ($tipo == 1) {
             $this->load($params);
             if ($this->validate()) {
                
                 if ($this->est_id) {
-                    $sql = $sql . " and h.est_id =" . $this->est_id;
+                    $sql = $sql . " and est.est_id =" . $this->est_id;
                 }
 
             } 
@@ -154,7 +156,7 @@ class EstudianteCarreraProgramaSearch extends EstudianteCarreraPrograma {
         if ($tipo == 2) {
 
             if ($params['est_id']) {
-                $sql = $sql . " and h.est_id =" . $params['est_id'];
+                $sql = $sql . " and est.est_id =" . $params['est_id'];
             }
 
         }

@@ -8,9 +8,9 @@ use yii\helpers\ArrayHelper;
 /* @var $model app\models\UsuarioSearch */
 /* @var $form yii\widgets\ActiveForm */
 
-$var = ArrayHelper::map(app\modules\academico\models\Estudiante::find()->where(['est_estado' => 1,'est_estado_logico' => 1])->all(), 'per_id',
+$var = ArrayHelper::map(app\modules\academico\models\Estudiante::find()->where(['est_estado' => 1,'est_estado_logico' => 1, 'est_id' => 'per_id'])->all(), 'per_id',
                 function ($model) {
-                     return $model->per_id->per_pri_apellido . '-' . $model->per_id->per_seg_apellido . '-' . $model->per_id->per_pri_nombre;
+                    return $model->per_id->per_pri_apellido;
                 });
 
 ?>
@@ -38,7 +38,7 @@ $var = ArrayHelper::map(app\modules\academico\models\Estudiante::find()->where([
 
     <?=
     $form->field($model, 'est_id')->label('Estudiante:')->widget(Select2::classname(), [
-        //'data' => ArrayHelper::map(app\modules\academico\models\Estudiante::find()->where(['est_estado_logico' => '1','est_estado' => '1'])->all(), 'per_pri_apellido', 'per_pri_nombre'),
+        //'data' => ArrayHelper::map(app\models\Persona::find()->where(['per_estado_logico' => '1','per_estado' => '1'])->all(), 'per_id', 'per_pri_apellido','per_pri_nombre'),
         'data' => $var,
         'size' => Select2::MEDIUM,
         'options' => ['placeholder' => 'Seleccione Estudiante ...', 'multiple' => false],

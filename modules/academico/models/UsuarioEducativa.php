@@ -683,5 +683,33 @@ class UsuarioEducativa extends \yii\db\ActiveRecord
         //Utilities::putMessageLogFile($comando->getRawSql());
         return $resultData;
     }//function consultarexisteusuarioxest
+    
+    
+     /**
+     * Consultar per_id y est_id con matricula educativa
+     * @author   <analistadesarrollo05@uteg.edu.ec>;
+     * @property       
+     * @return  
+     */
+    public function getusuarioeducativaby($matricula) {
+        $con = \Yii::$app->db_academico;     
+        $estado = 1;
+
+        $sql = "SELECT per_id, est_id                             
+                  FROM " . $con->dbname . ".usuario_educativa                 
+                 WHERE uedu_usuario = :matricula
+                   AND uedu_estado = :estado 
+                   AND uedu_estado_logico = :estado ";
+
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $comando->bindParam(":matricula", $matricula, \PDO::PARAM_STR);
+   
+        $resultData = $comando->queryOne();
+
+        //Utilities::putMessageLogFile($comando->getRawSql());
+        return $resultData;
+    }//function getusuarioeducativaby
+
 
 }

@@ -275,7 +275,6 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
     }
 
     public function processFile($fname, $pla_id) {
-        \app\models\Utilities::putMessageLogFile('entraaaa1: ');
         $file = Yii::$app->basePath . Yii::$app->params['documentFolder'] . "planificacion/" . $fname;
         $fila = 0;
         $chk_ext = explode(".", $file);
@@ -376,7 +375,7 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
     }
 
     public function saveDocumentoDB($val, $pla_id, $per_id_estudiante) {
-        \app\models\Utilities::putMessageLogFile('entraaaa2: ');
+
         $model_planificacion_estudiante = new PlanificacionEstudiante();
         $model_planificacion_estudiante->pla_id = $pla_id;
 
@@ -563,10 +562,115 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
                     pers.per_cedula,
                     plae.pes_nombres,
                     plae.pes_carrera,
-                    plan.pla_periodo_academico
+                    plan.pla_periodo_academico      
                 FROM " . $con->dbname . ".planificacion_estudiante plae
                 INNER JOIN " . $con->dbname . ".planificacion plan ON plan.pla_id = plae.pla_id
                 INNER JOIN " . $con1->dbname . ".persona pers ON pers.per_id = plae.per_id
+                WHERE 
+                    $str_search
+                    plae.pes_estado = :estado AND
+                    plae.pes_estado_logico = :estado AND
+                    plan.pla_estado = :estado AND
+                    plan.pla_estado_logico = :estado AND
+                    pers.per_estado = :estado AND
+                    pers.per_estado_logico = :estado";
+
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        if (isset($arrFiltro) && count($arrFiltro) > 0) {
+            $search_cond = "%" . $arrFiltro["estudiante"] . "%";
+            $comando->bindParam(":estudiante", $search_cond, \PDO::PARAM_STR);
+            
+            if ($arrFiltro['modalidad'] > 0) {
+                $modalidad = $arrFiltro["modalidad"];
+                $comando->bindParam(":modalidad", $modalidad, \PDO::PARAM_INT);
+            }
+
+            if ($arrFiltro['carrera'] != 'Todas') {
+                $search_carrera = "%" . $arrFiltro["carrera"] . "%";
+                $comando->bindParam(":carrera", $search_carrera, \PDO::PARAM_STR);
+            }
+
+            if ($arrFiltro['periodo'] != '0') {
+                $periodo = $arrFiltro["periodo"];
+                $comando->bindParam(":periodo", $periodo, \PDO::PARAM_STR);
+            }
+        }
+
+        $resultData = $comando->queryAll();
+        $dataProvider = new ArrayDataProvider([
+            'key' => 'id',
+            'allModels' => $resultData,
+            'pagination' => [
+                'pageSize' => Yii::$app->params["pageSize"],
+            ],
+            'sort' => [
+                'attributes' => [
+                ],
+            ],
+        ]);
+        if ($onlyData) {
+            return $resultData;
+        } else {
+            return $dataProvider;
+        }
+    }
+
+    public function consultarEstudianteplanificaPdf($arrFiltro = array(), $onlyData = false) {
+        $con = \Yii::$app->db_academico;
+        $con1 = \Yii::$app->db_asgard;
+        $estado = 1;
+        if (isset($arrFiltro) && count($arrFiltro) > 0) {
+            $str_search .= "(pers.per_pri_nombre like :estudiante OR ";
+            $str_search .= "pers.per_seg_nombre like :estudiante OR ";
+            $str_search .= "pers.per_pri_apellido like :estudiante OR ";
+            $str_search .= "pers.per_seg_nombre like :estudiante OR ";
+            $str_search .= "pers.per_cedula like :estudiante)  AND ";
+
+            if ($arrFiltro['modalidad'] > 0) {
+                $str_search .= " plan.mod_id = :modalidad AND ";
+            }
+
+            if ($arrFiltro['carrera'] != 'Todas') {
+                $str_search .= " plae.pes_carrera like :carrera AND ";
+            }
+
+            if ($arrFiltro['periodo'] != '0') {
+                $str_search .= " plan.pla_periodo_academico = :periodo AND ";
+            }
+        }
+        if ($onlyData == false) {
+            $idplanifica = 'plae.pla_id, ';
+            $idper = 'plae.per_id, ';
+        }
+        $sql = "SELECT 
+                    $idplanifica
+                    $idper
+                    pers.per_cedula,
+                    plae.pes_nombres,
+                    plae.pes_carrera,
+                    plan.pla_periodo_academico,
+                    mad.made_codigo_asignatura,/**/
+                    asig.asi_nombre
+                    /*asig2.asi_nombre *//*ComentDBE*/       
+                FROM " . $con->dbname . ".planificacion_estudiante plae
+                INNER JOIN " . $con->dbname . ".planificacion plan ON plan.pla_id = plae.pla_id
+                INNER JOIN " . $con1->dbname . ".persona pers ON pers.per_id = plae.per_id
+                INNER JOIN ". $con->dbname . ".malla_academica_detalle mad ON 
+                    mad.made_codigo_asignatura in (plae.pes_mat_b1_h1_cod ,plae.pes_mat_b1_h2_cod
+                        ,plae.pes_mat_b1_h3_cod
+                        ,plae.pes_mat_b1_h4_cod
+                        ,plae.pes_mat_b1_h5_cod
+                        ,plae.pes_mat_b1_h6_cod
+                        ,plae.pes_mat_b2_h1_cod
+                        ,plae.pes_mat_b2_h2_cod
+                        ,plae.pes_mat_b2_h3_cod
+                        ,plae.pes_mat_b2_h4_cod
+                        ,plae.pes_mat_b2_h5_cod
+                        ,plae.pes_mat_b2_h6_cod)
+                INNER JOIN ". $con->dbname . ".asignatura asig ON
+                    asig.asi_id = mad.asi_id   
+                
                 WHERE 
                     $str_search
                     plae.pes_estado = :estado AND
@@ -931,6 +1035,32 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
         return $resultData;
     }
 
+    public function busquedaEstudianteplanificacionaut($per_id) {
+        $con = \Yii::$app->db_academico;
+        $estado = 1;
+        
+        $sql = "SELECT est.per_id as id, concat(pers.per_cedula, ' - ', 
+                    ifnull(pers.per_pri_nombre, ' ') ,' ', 
+                    ifnull(pers.per_pri_apellido,' ')) as name
+                    FROM db_academico.estudiante est
+                    JOIN db_asgard.persona pers ON pers.per_id = est.per_id
+                WHERE pers.per_estado = :estado AND
+                      pers.per_estado_logico = :estado AND
+                      est.est_estado = :estado AND
+                      est.est_estado_logico = :estado AND
+                      est.per_id = $per_id limit 0,1;";
+        if($per_id == null){
+            $resultData = [];
+        }else{
+            $comando = $con->createCommand($sql);
+            $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+            $resultData = $comando->queryAll();
+        }
+        
+        return $resultData;
+    }
+
+
     /**
      * Function Consultar modalidad y periodo en planificacion.
      * @author  Giovanni Vergara <analistadesarrollo01@uteg.edu.ec>;
@@ -1024,6 +1154,66 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
         }
     }
 
+    public function confirmarPlanificacionExistente($pla_id, $per_id, $periodo, $id) {
+        $con = \Yii::$app->db_academico;
+        $con2 = \Yii::$app->db_asgard;
+        $pes_usuario_modificacion = date(Yii::$app->params["dateTimeByDefault"]);
+        $estado = 1;
+   
+        try {
+            if($per_id == null){
+                $resultData = [];
+            }else{
+                $sql = ("SELECT * from " . $con->dbname . ".planificacion_estudiante                                              
+                        WHERE 
+                        per_id = $per_id AND
+                        pes_estado = 1 AND
+                        pes_estado_logico = 1;");
+                $comando = $con->createCommand($sql);
+                $resultData = $comando->queryOne(); 
+            }
+            
+            if($resultData == null){
+                $pla_periodo_academico = $periodo;
+                $saca_id = $id;
+                $sql2 = ("INSERT into " . $con->dbname . ".planificacion(per_id,mod_id,pla_estado,pla_estado_logico,pla_periodo_academico,saca_id)
+                    select distinct(est.per_id),meu.mod_id,1,1,'$pla_periodo_academico',$saca_id from db_academico.modalidad_estudio_unidad meu
+                    inner join " . $con->dbname . ".estudio_academico es on meu.eaca_id = es.eaca_id
+                    inner join " . $con->dbname . ".estudiante_carrera_programa ecp on ecp.meun_id = meu.meun_id
+                    inner join " . $con->dbname . ".estudiante est on est.est_id = ecp.est_id
+                    inner join " . $con->dbname . ".malla_unidad_modalidad muo on muo.meun_id = meu.meun_id
+                    inner join " . $con->dbname . ".malla_academica_detalle mad on mad.maca_id = muo.maca_id
+                    where est.per_id = $per_id;");
+                    $comando2 = $con->createCommand($sql2);
+                    $result2 = $comando2->execute();
+
+                $sql3 = 
+                    ("INSERT INTO " . $con->dbname . ".planificacion_estudiante(pes_cod_malla,pes_carrera,per_id,pes_dni,pes_nombres,pla_id,pes_estado,pes_estado_logico)
+                    select distinct(ma.maca_codigo),ma.maca_nombre,e.per_id, pe.per_cedula, 
+                    concat(pe.per_pri_nombre, ' ', pe.per_seg_nombre,' ', pe.per_pri_apellido, ' ',pe.per_seg_apellido) as nombres, 1 as pla_id, 1,1
+                    from " . $con->dbname . ".estudiante_carrera_programa ecp 
+                    inner join " . $con->dbname . ".modalidad_estudio_unidad meu on ecp.meun_id = meu.meun_id
+                    inner join " . $con->dbname . ".estudio_academico es on es.eaca_id = meu.eaca_id 
+                    inner join " . $con->dbname . ".estudiante e on e.est_id = ecp.est_id
+                    inner join " . $con->dbname . ".malla_academico_estudiante maes on maes.per_id = e.per_id 
+                    inner join " . $con->dbname . ".malla_academica ma on ma.maca_id = maes.maca_id
+                    inner join " . $con2->dbname . ".persona pe on pe.per_id = e.per_id
+                    where e.per_id = $per_id");
+                    $comando3 = $con->createCommand($sql3);
+                $result3 = $comando3->execute();
+                $resultData = $resultData + $result2 + $result3;                
+                return $resultData;
+                
+            }else{
+                return $resultData;
+            }
+            
+        } catch (Exception $ex) {
+            
+            return $ex->getMessage();
+        }
+    }
+
       /**
      * Function Consultar codigo asigantura para archivo de planificacion estudiante.
      * @author  Giovanni Vergara <analistadesarrollo01@uteg.edu.ec>;
@@ -1052,7 +1242,785 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
         return $resultData;
     }
 
+       public function consultarResumenplanificaPdf($arrFiltro = array(), $onlyData = false) {
+        $con = \Yii::$app->db_academico;
+        $con1 = \Yii::$app->db_asgard;
+        $estado = 1;
+        $str_search ='';
+        if (isset($arrFiltro) && count($arrFiltro) > 0) {
+            
+            if ($arrFiltro['modalidad'] != 0) {
+                if($arrFiltro['modalidad'] == 1) {
+                    $str_search .= " and meu.mod_id = 1";
+                }
+                if($arrFiltro['modalidad'] == 2) {
+                    $str_search .= " and meu.mod_id = 2";
+                }
+                if($arrFiltro['modalidad'] == 3) {
+                    $str_search .= " and meu.mod_id = 3";
+                }
+                if($arrFiltro['modalidad'] == 4) {
+                    $str_search .= " and meu.mod_id = 4";
+                }
+            }
 
+            if ($arrFiltro['periodo'] != 0) {
+                $periodo = $arrFiltro['periodo'];
+                $str_search2 .= "and pla.saca_id = $periodo";
+            }
+        }
+        if ($onlyData == false) {
+            $idplanifica = 'plae.pla_id, ';
+            $idper = 'plae.per_id, ';
+        }
+        $sql = "SELECT  
+        CASE meu.mod_id
+        when 1 then 'ONLINE'
+        when 2 then 'PRESENCIAL'
+        WHEN 3 then 'SEMIPRESENCIAL'
+        WHEN 4 then 'DISTANCIA'
+        end as 'Modalidad',
+        (select concat(saca.saca_nombre,'-',saca.saca_anio) 
+        from ". $con->dbname . ".semestre_academico saca,
+        ". $con->dbname . ".planificacion p
+        where p.pla_id = pe.pla_id
+        and saca.saca_id = p.saca_id) as 'Periodo',
+        a.asi_id as 'Codigo de Materia',
+        a.asi_nombre as Materia,
+        (select count(*) from  ". $con->dbname . ".planificacion pla,
+        ". $con->dbname . ".planificacion_estudiante pes,
+        ". $con->dbname . ".semestre_academico se
+        where pla.pla_id = pes.pla_id
+        and pla.per_id = pes.per_id
+        and se.saca_id = pla.saca_id
+        $str_search2
+        and mad.made_codigo_asignatura in (pes.pes_mat_b1_h1_cod,
+                                pes.pes_mat_b1_h2_cod,
+                                pes.pes_mat_b1_h3_cod,
+                                pes.pes_mat_b1_h4_cod,
+                                pes.pes_mat_b1_h5_cod,
+                                pes.pes_mat_b1_h6_cod,
+                                pes.pes_mat_b2_h1_cod,
+                                pes.pes_mat_b2_h2_cod,
+                                pes.pes_mat_b2_h3_cod,
+                                pes.pes_mat_b2_h4_cod,
+                                pes.pes_mat_b2_h5_cod,
+                                pes.pes_mat_b2_h6_cod)) as Cantidad
+        from " . $con->dbname . ".planificacion_estudiante pe,
+        " . $con->dbname . ".malla_academica_detalle mad,
+        " . $con->dbname . ".asignatura a,
+        " . $con->dbname . ".modalidad_estudio_unidad meu,
+        " . $con->dbname . ".malla_unidad_modalidad mum
+        where mad.made_codigo_asignatura in 
+        (pe.pes_mat_b1_h1_cod,
+        pe.pes_mat_b1_h2_cod,
+        pe.pes_mat_b1_h3_cod,
+        pe.pes_mat_b1_h4_cod,
+        pe.pes_mat_b1_h5_cod,
+        pe.pes_mat_b1_h6_cod,
+        pe.pes_mat_b2_h1_cod,
+        pe.pes_mat_b2_h2_cod,
+        pe.pes_mat_b2_h3_cod,
+        pe.pes_mat_b2_h4_cod,
+        pe.pes_mat_b2_h5_cod,
+        pe.pes_mat_b2_h6_cod)
+        and mad.asi_id = a.asi_id
+        and mad.maca_id = mum.maca_id
+        $str_search2
+        and (select count(*) from  ". $con->dbname . ".planificacion pla,
+        ". $con->dbname . ".planificacion_estudiante pes,
+        ". $con->dbname . ".semestre_academico se
+        where pla.pla_id = pes.pla_id
+        and pla.per_id = pes.per_id
+        and se.saca_id = pla.saca_id
+        $str_search2
+        and mad.made_codigo_asignatura in (pes.pes_mat_b1_h1_cod,
+                                pes.pes_mat_b1_h2_cod,
+                                pes.pes_mat_b1_h3_cod,
+                                pes.pes_mat_b1_h4_cod,
+                                pes.pes_mat_b1_h5_cod,
+                                pes.pes_mat_b1_h6_cod,
+                                pes.pes_mat_b2_h1_cod,
+                                pes.pes_mat_b2_h2_cod,
+                                pes.pes_mat_b2_h3_cod,
+                                pes.pes_mat_b2_h4_cod,
+                                pes.pes_mat_b2_h5_cod,
+                                pes.pes_mat_b2_h6_cod))> 0
+        $str_search
+        and meu.meun_id = (select meun_id from db_academico.malla_unidad_modalidad where maca_id = mum.maca_id limit 0,1)
+        group by a.asi_id,a.asi_nombre
+        order by cantidad;";
+
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        if (isset($arrFiltro) && count($arrFiltro) > 0) {
+            $search_cond = "%" . $arrFiltro["estudiante"] . "%";
+            
+            
+            if ($arrFiltro['modalidad'] > 0) {
+                $modalidad = $arrFiltro["modalidad"];
+                $comando->bindParam(":modalidad", $modalidad, \PDO::PARAM_INT);
+            }
+
+            if ($arrFiltro['periodo'] != '0') {
+                $periodo = $arrFiltro["periodo"];
+                $comando->bindParam(":periodo", $periodo, \PDO::PARAM_INT);
+            }
+        }
+
+        $resultData = $comando->queryAll();
+        $dataProvider = new ArrayDataProvider([
+            'key' => 'id',
+            'allModels' => $resultData,
+            'pagination' => [
+                'pageSize' => Yii::$app->params["pageSize"],
+            ],
+            'sort' => [
+                'attributes' => [
+                ],
+            ],
+        ]);
+        if ($onlyData) {
+            return $resultData;
+        } else {
+            return $dataProvider;
+        }
+    }
+
+    public function consultarEstudiantePeriodo($arrFiltro = array(), $onlyData = false) {
+        $con = \Yii::$app->db_academico;
+        $con1 = \Yii::$app->db_asgard;
+        $estado = 1;
+        if (isset($arrFiltro) && count($arrFiltro) > 0) {
+            
+            if ($arrFiltro['modalidad'] != 0) {
+                if($arrFiltro['modalidad'] == 1) {
+                    $str_search .= " and meu.mod_id = 1";
+                }
+                if($arrFiltro['modalidad'] == 2) {
+                    $str_search .= " and meu.mod_id = 2";
+                }
+                if($arrFiltro['modalidad'] == 3) {
+                    $str_search .= " and meu.mod_id = 3";
+                }
+                if($arrFiltro['modalidad'] == 4) {
+                    $str_search .= " and meu.mod_id = 4";
+                }
+            }
+
+            if ($arrFiltro['periodo'] != 0) {
+                $periodo = $arrFiltro['periodo'];
+                $str_search2 .= "and pla.saca_id = $periodo";
+            }
+
+            //if($arrFiltro['modalidad'] )
+        }
+        
+        $sql = "SELECT  
+                        CASE meu.mod_id
+                        when 1 then 'ONLINE'
+                        when 2 then 'PRESENCIAL'
+                        WHEN 3 then 'SEMIPRESENCIAL'
+                        WHEN 4 then 'DISTANCIA'
+                        end as 'Modalidad',
+                        (select concat(saca.saca_nombre,'-',saca.saca_anio) 
+                        from ". $con->dbname . ".semestre_academico saca,
+                        ". $con->dbname . ".planificacion p
+                        where p.pla_id = pe.pla_id
+                        and saca.saca_id = p.saca_id) as 'Periodo',
+                        a.asi_id as 'Codigo de Materia',
+                        a.asi_nombre as Materia,
+                        (select count(*) from  ". $con->dbname . ".planificacion pla,
+                        ". $con->dbname . ".planificacion_estudiante pes,
+                        ". $con->dbname . ".semestre_academico se
+                        where pla.pla_id = pes.pla_id
+                        and pla.per_id = pes.per_id
+                        and se.saca_id = pla.saca_id
+                        $str_search2
+                        and mad.made_codigo_asignatura in (pes.pes_mat_b1_h1_cod,
+                                                pes.pes_mat_b1_h2_cod,
+                                                pes.pes_mat_b1_h3_cod,
+                                                pes.pes_mat_b1_h4_cod,
+                                                pes.pes_mat_b1_h5_cod,
+                                                pes.pes_mat_b1_h6_cod,
+                                                pes.pes_mat_b2_h1_cod,
+                                                pes.pes_mat_b2_h2_cod,
+                                                pes.pes_mat_b2_h3_cod,
+                                                pes.pes_mat_b2_h4_cod,
+                                                pes.pes_mat_b2_h5_cod,
+                                                pes.pes_mat_b2_h6_cod)) as Cantidad
+                        from " . $con->dbname . ".planificacion_estudiante pe,
+                        " . $con->dbname . ".malla_academica_detalle mad,
+                        " . $con->dbname . ".asignatura a,
+                        " . $con->dbname . ".modalidad_estudio_unidad meu,
+                        " . $con->dbname . ".malla_unidad_modalidad mum
+                        where mad.made_codigo_asignatura in 
+                        (pe.pes_mat_b1_h1_cod,
+                        pe.pes_mat_b1_h2_cod,
+                        pe.pes_mat_b1_h3_cod,
+                        pe.pes_mat_b1_h4_cod,
+                        pe.pes_mat_b1_h5_cod,
+                        pe.pes_mat_b1_h6_cod,
+                        pe.pes_mat_b2_h1_cod,
+                        pe.pes_mat_b2_h2_cod,
+                        pe.pes_mat_b2_h3_cod,
+                        pe.pes_mat_b2_h4_cod,
+                        pe.pes_mat_b2_h5_cod,
+                        pe.pes_mat_b2_h6_cod)
+                        and mad.asi_id = a.asi_id
+                        and mad.maca_id = mum.maca_id
+                        and (select count(*) from  ". $con->dbname . ".planificacion pla,
+                        ". $con->dbname . ".planificacion_estudiante pes,
+                        ". $con->dbname . ".semestre_academico se
+                        where pla.pla_id = pes.pla_id
+                        and pla.per_id = pes.per_id
+                        and se.saca_id = pla.saca_id
+                        $str_search2
+                        and mad.made_codigo_asignatura in (pes.pes_mat_b1_h1_cod,
+                                                pes.pes_mat_b1_h2_cod,
+                                                pes.pes_mat_b1_h3_cod,
+                                                pes.pes_mat_b1_h4_cod,
+                                                pes.pes_mat_b1_h5_cod,
+                                                pes.pes_mat_b1_h6_cod,
+                                                pes.pes_mat_b2_h1_cod,
+                                                pes.pes_mat_b2_h2_cod,
+                                                pes.pes_mat_b2_h3_cod,
+                                                pes.pes_mat_b2_h4_cod,
+                                                pes.pes_mat_b2_h5_cod,
+                                                pes.pes_mat_b2_h6_cod)) > 0
+                        $str_search
+                        and meu.meun_id = (select s.meun_id from db_academico.malla_unidad_modalidad s where s.maca_id = mum.maca_id limit 0,1)
+                        group by a.asi_id,a.asi_nombre
+                        order by cantidad;";
+        $sql2="SELECT 
+            
+            c.id_dummy,
+            c.materia as Materia,
+            count(c.materia) as Cantidad,
+            c.id_modalidad
+        FROM " . $con->dbname . ".dummy_pruebasiga c     
+        where   $str_search
+                c.nota=0
+                group by c.periodo,c.materia, c.carrera, c.modalidad, c.bloque_academico";
+
+        $comando = $con->createCommand($sql);
+        
+        if (isset($arrFiltro) && count($arrFiltro) > 0) {
+                        
+            if ($arrFiltro['modalidad'] > 0) {
+                $modalidad = $arrFiltro["modalidad"];
+                $comando->bindParam(":modalidad", $modalidad, \PDO::PARAM_INT);
+            }
+
+            if ($arrFiltro['periodo'] != '0') {
+                $periodo = $arrFiltro["periodo"];
+                $comando->bindParam(":periodo", $periodo, \PDO::PARAM_INT);
+            }
+        }
+
+        $resultData = $comando->queryAll();
+        $dataProvider = new ArrayDataProvider([
+            'key' => 'id',
+            'allModels' => $resultData,
+            'pagination' => [
+                'pageSize' => Yii::$app->params["pageSize"],
+            ],
+            'sort' => [
+                'attributes' => [
+                ],
+            ],
+        ]);
+        if ($onlyData) {
+            return $resultData;
+        } else {
+            return $dataProvider;
+        }
+    }
+
+    public function consultarPeriodoAcadplanifica() {
+        $con = \Yii::$app->db_academico;
+        $estado = 1;
+        $condition = "";
+
+        $sql = "SELECT saca_id as id,
+                concat(saca_nombre, ' ',saca_anio) as 'name'
+                  FROM " . $con->dbname . ".semestre_academico
+                  WHERE saca_estado = 1 AND
+                  saca_estado_logico = 1
+                  order by saca_anio;";
+
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $resultData = $comando->queryAll();
+        return $resultData;
+    }
+
+    public function consultarProcesonull(){
+        $sql = "select Asignatura,Jornada,Bloque,Modalidad,Hora from dual";
+        $comando = $con->createCommand($sql);
+        $resultData = $comando->queryAll();
+        $dataProvider = new ArrayDataProvider([
+            'key' => 'id',
+            'allModels' => $resultData,
+            'pagination' => [
+                'pageSize' => Yii::$app->params["pageSize"],
+            ],
+            'sort' => [
+                'attributes' => [
+                ],
+            ],
+        ]);
+        return $dataProvider;
+                  
+    }
+
+    public function consultaPeriodoAcadVigente(){
+        $con = \Yii::$app->db_academico;
+        $estado = 'A';
+        $sql = "select 
+                a.paca_id as 'id',
+                concat(b.saca_nombre , ' ' , b.saca_anio) as 'name'
+                from  ". $con->dbname . ".periodo_academico a 
+                inner join ". $con->dbname . ".semestre_academico b on a.saca_id = b.saca_id
+                where a.paca_activo = 'A'
+                order by a.paca_id desc;"; 
+        $comando = $con->createCommand($sql);
+        //$comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $resultData = $comando->queryAll();
+        return $resultData;
+    }
+
+    public function consultaPeriodoAcadVigenteFechas(){
+        $con = \Yii::$app->db_academico;
+        $estado = 'A';
+        $sql = "select 
+                a.paca_id as 'id',
+                concat(b.saca_nombre , ' ' , b.saca_anio) as 'name',
+                paca_fecha_inicio as fecha_inicio,
+                paca_fecha_fin as fecha_fin
+                from  ". $con->dbname . ".periodo_academico a 
+                inner join ". $con->dbname . ".semestre_academico b on a.saca_id = b.saca_id
+                where a.paca_activo = 'A'
+                order by a.paca_id desc;"; 
+        $comando = $con->createCommand($sql);
+        //$comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $resultData = $comando->queryAll();
+        return $resultData;
+    }
+
+    public function consultaPlanificacionEstVigente($per_id){
+        $con = \Yii::$app->db_academico;
+        $estado = '1';
+        $sql = "SELECT pl.pla_id as 'id', pl.pla_id as 'name'
+                from ". $con->dbname . ".planificacion_estudiante pl
+                where pl.per_id = $per_id 
+                and pl.pes_estado_logico = 1 
+                order by pl.pla_id desc
+                limit 0,1;"; 
+        if($per_id == null){
+            $resultData = [];
+        }else{
+            $comando = $con->createCommand($sql);
+            //$comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+            $resultData = $comando->queryAll();
+            
+        }
+        return $resultData;
+    }
+
+    public function consultaMallaEstudiante($per_id){
+        $con = \Yii::$app->db_academico;
+        
+        
+        $sql = "SELECT b.maca_id as 'id',
+                       b.maca_nombre as 'name'  
+                       from ". $con->dbname . ".planificacion_estudiante a
+                       inner join ". $con->dbname . ".malla_academica b on a.pes_cod_malla = b.maca_codigo
+                       where a.per_id = $per_id;"; 
+        
+        if($per_id == null){
+            $resultData = [];
+        }else{
+            $comando = $con->createCommand($sql);
+            //$comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+            $resultData = $comando->queryAll();
+            
+        }
+        return $resultData;
+    }
+
+
+    public function consultaracarreraxmallaaut($per_id) {
+        $con = \Yii::$app->db_academico;
+        $estado = 1;
+        $sql = "SELECT m.maca_id as 'id', pe.per_id as 'name'
+                        from " . $con->dbname . ".planificacion_estudiante pe
+                        inner join " . $con->dbname . ".malla_academica m on m.maca_codigo = pe.pes_cod_malla
+                        and pe.per_id = $per_id";
+        $comando = $con->createCommand($sql);
+        if($per_id == null){
+            $resultData = [];
+        }else{
+            
+            $resultData = $comando->queryAll();
+        }
+        return $resultData;
+    }
+
+    public function consultarProcesoPlanificacionAut($arrFiltro = array(), $onlyData = false) {
+        $con = \Yii::$app->db_academico;
+        $con1 = \Yii::$app->db_asgard;
+        $estado = 1;
+        if (isset($arrFiltro) && count($arrFiltro) > 0) {
+            $estudiante = $arrFiltro['estudiante'];
+            $estudiante = $_GET['estudiante'];
+                //$str_search2 .= "and pla.saca_id = $periodo";
+            /*$str_search .= "(h.per_nombre like '%$estudiante%' OR ";
+            $str_search .= "h.per_nombre_segundo like '%$estudiante%' OR ";
+            $str_search .= "h.per_apellido like '%$estudiante%' OR ";
+            $str_search .= "h.per_apellido_segundo like '%$estudiante%' OR ";
+            
+            $str_search .= "h.cedula like '%$estudiante%')  AND ";*/
+
+            $str_search .= "a.per_id = $estudiante AND ";
+           /* if ($arrFiltro['modalidad'] != 0) {
+                if($arrFiltro['modalidad'] == 1) {
+                    $str_search .= " and meu.mod_id = 1";
+                }
+                if($arrFiltro['modalidad'] == 2) {
+                    $str_search .= " and meu.mod_id = 2";
+                }
+                if($arrFiltro['modalidad'] == 3) {
+                    $str_search .= " and meu.mod_id = 3";
+                }
+                if($arrFiltro['modalidad'] == 4) {
+                    $str_search .= " and meu.mod_id = 4";
+                }
+            }
+*/
+            if ($arrFiltro['periodo'] != 0) {
+                $periodo = $arrFiltro['periodo'];
+                $str_search2 .= "and pla.saca_id = $periodo";
+            }
+
+            if ($arrFiltro['unidad'] != "" && $arrFiltro['unidad'] > 0) {
+                $str_search .= "me.uaca_id = :unidad AND ";
+            }
+            if ($arrFiltro['modalidad'] != "" && $arrFiltro['modalidad'] > 0) {
+                $str_search .= "mo.mod_id = :modalidad AND ";
+            }
+            if ($arrFiltro['carrera'] != "" && $arrFiltro['carrera'] > 0) {
+                $str_search .= "me.eaca_id = :carrera AND ";
+            }
+
+            //if($arrFiltro['modalidad'] )
+        }
+        if ($onlyData == false) {
+            $idplanifica = 'plae.pla_id, ';
+            $idper = 'plae.per_id, ';
+        }
+        
+        $sql = "select 
+                    h.cedula as 'Identificacion',
+                    concat(h.per_nombre,' ', h.per_apellido) as 'Estudiante',
+                    b.asi_nombre as 'Asignatura',
+                    a.per_id,
+                    d.made_semestre,
+                    c.pmac_nota,
+                    e.enac_asig_estado
+                from ". $con->dbname . ".malla_academico_estudiante a
+                inner join " . $con->dbname . ".malla_academica_detalle md on md.made_id=a.made_id
+                inner join " . $con->dbname . ".malla_unidad_modalidad mu on mu.maca_id=a.maca_id
+                inner join " . $con->dbname . ".modalidad_estudio_unidad me on me.meun_id=mu.meun_id
+                inner join ". $con->dbname . ".asignatura b on b.asi_id=a.asi_id
+                inner join ". $con->dbname . ".promedio_malla_academico c on c.maes_id=a.maes_id
+                inner join ". $con->dbname . ".malla_academica_detalle d on a.made_id=d.made_id
+                inner join ". $con->dbname . ".estado_nota_academico e on e.enac_id=c.enac_id
+                inner join ". $con->dbname . ".historico_siga h on h.per_id=a.per_id
+                inner join " . $con->dbname . ".modalidad mo on mo.mod_id=h.modalidad
+                where $str_search 
+                c.enac_id >=2 
+                and a.per_id in (SELECT per_id FROM ". $con->dbname . ".estudiante)";
+        
+        $comando = $con->createCommand($sql);
+        
+        if (isset($arrFiltro) && count($arrFiltro) > 0) {
+            if ($arrFiltro['estudiante'] != "") {
+                $search_cond = "%" . $arrFiltro["estudiante"] . "%";
+                $comando->bindParam(":estudiante", $search_cond, \PDO::PARAM_STR);
+            }
+            
+            $unidad = $arrFiltro["unidad"];
+            if ($arrFiltro['unidad'] != "" && $arrFiltro['unidad'] > 0) {
+                $comando->bindParam(":unidad", $unidad, \PDO::PARAM_INT);
+            }
+            $modalidad = $arrFiltro["modalidad"];
+            if ($arrFiltro['modalidad'] != "" && $arrFiltro['modalidad'] > 0) {
+                $comando->bindParam(":modalidad", $modalidad, \PDO::PARAM_INT);
+            }
+            $carrera = $arrFiltro["carrera"];
+            if ($arrFiltro['carrera'] != "" && $arrFiltro['carrera'] > 0) {
+                $comando->bindParam(":carrera", $carrera, \PDO::PARAM_INT);
+            }
+            $periodo = $arrFiltro["periodo"];
+            if ($arrFiltro['periodo'] != "" && $arrFiltro['periodo'] > 0) {
+                $comando->bindParam(":periodo", $periodo, \PDO::PARAM_INT);
+            }
+            $resultData = $comando->queryAll();
+            
+        }else{
+            $resultData = [];
+        }
+
+        $rows_in = $resultData;
+                if (count($rows_in) > 0) { 
+                    //$per_id_init = array_keys($rows_in)[0];
+                    //echo $per_id_init;
+                    $aux=array();
+                    $array=array();
+                    $per_id_init = $rows_in[0]["Identificacion"];
+                    for ($i = 0; $i < count($rows_in); $i++) { 
+                        for($j = 0 ; $j < 6; $j++){
+                            if($rows_in[$i]["Identificacion"] == $per_id_init){
+                                $aux=array( "Identificacion" => isset($rows_in[$i]["Identificacion"])?$rows_in[$i]["Identificacion"]:"0000", 
+                                                        "Estudiante" => isset($rows_in[$i]["Estudiante"])?$rows_in[$i]["Estudiante"]:"0000",
+                                                        "Asignatura" => isset($rows_in[$i]["Asignatura"] )?$rows_in[$i]["Asignatura"]:"0000"
+                                            );
+                                array_push($array,$aux);
+                                $aux = array();
+                                $i++;
+                            }else{
+                                break;
+                            }
+                        }
+                        while($per_id_init == $rows_in[$i]["Identificacion"]){
+                            $i++;
+                        }
+                        $per_id_init = $rows_in[$i]["Identificacion"];
+                        }
+                        //$rows_in[$i]["Identificacion"] = '0101';
+                }
+
+        
+        $dataProvider = new ArrayDataProvider([
+            'key' => 'id',
+            'allModels' => $array,
+            'pagination' => [
+                'pageSize' => Yii::$app->params["pageSize"],
+            ],
+            'sort' => [
+                'attributes' => [ "Asignatura"
+                ],
+            ],
+        ]);
+        if ($onlyData) {
+            return $resultData;
+        } else {
+            return $dataProvider;
+        }
+    }
+
+
+    public function consultarProcesoPlanificacionEstudiante($estudiante, $onlyData = false) {
+        $con = \Yii::$app->db_academico;
+        $con1 = \Yii::$app->db_asgard;
+        $estado = 1;
+
+            //$estudiante = $arrFiltro['estudiante'];
+                //$str_search2 .= "and pla.saca_id = $periodo";
+            $str_search .= "(h.per_nombre like '%$estudiante%' OR ";
+            $str_search .= "h.per_nombre_segundo like '%$estudiante%' OR ";
+            $str_search .= "h.per_apellido like '%$estudiante%' OR ";
+            $str_search .= "h.per_apellido_segundo like '%$estudiante%' OR ";
+            $str_search .= "h.cedula like '%$estudiante%')  AND ";
+
+        if ($onlyData == false) {
+            $idplanifica = 'plae.pla_id, ';
+            $idper = 'plae.per_id, ';
+        }
+        
+        $sql = "select 
+                    h.cedula as 'Identificacion',
+                    concat(h.per_nombre,' ', h.per_apellido) as 'Estudiante',
+                    a.per_id,
+                    d.made_semestre,
+                    b.asi_nombre as 'Materia',
+                    c.pmac_nota,
+                    e.enac_asig_estado,
+                    (select pes.pes_carrera from db_academico.planificacion_estudiante pes where pes.per_id = a.per_id) as 'Carrera'
+                from ". $con->dbname . ".malla_academico_estudiante a
+                inner join ". $con->dbname . ".asignatura b on b.asi_id=a.asi_id
+                inner join ". $con->dbname . ".promedio_malla_academico c on c.maes_id=a.maes_id
+                inner join ". $con->dbname . ".malla_academica_detalle d on a.made_id=d.made_id
+                inner join ". $con->dbname . ".estado_nota_academico e on e.enac_id=c.enac_id
+                inner join ". $con->dbname . ".historico_siga h on h.per_id=a.per_id
+                where $str_search 
+                c.enac_id >=2 
+                and a.per_id in (SELECT per_id FROM ". $con->dbname . ".estudiante)";
+        $sql2="SELECT 
+            
+            c.id_dummy,
+            c.materia as Materia,
+            count(c.materia) as Cantidad,
+            c.id_modalidad
+        FROM " . $con->dbname . ".dummy_pruebasiga c     
+        where   $str_search
+                c.nota=0
+                group by c.periodo,c.materia, c.carrera, c.modalidad, c.bloque_academico";
+
+        $comando = $con->createCommand($sql);
+        
+        if (isset($arrFiltro) && count($arrFiltro) > 0) {
+                        
+            if ($arrFiltro['modalidad'] > 0) {
+                $modalidad = $arrFiltro["modalidad"];
+                $comando->bindParam(":modalidad", $modalidad, \PDO::PARAM_INT);
+            }
+
+            if ($arrFiltro['periodo'] != '0') {
+                $periodo = $arrFiltro["periodo"];
+                $comando->bindParam(":periodo", $periodo, \PDO::PARAM_INT);
+            }
+        }
+
+        $resultData = $comando->queryAll();
+        $rows_in = $resultData;
+            if (count($rows_in) > 0) { 
+                //$per_id_init = array_keys($rows_in)[0];
+                //echo $per_id_init;
+                $aux=array();
+                $array=array();
+                $per_id_init = $rows_in[0]["Identificacion"];
+                 for ($i = 0; $i < count($rows_in); $i++) { 
+                    for($j = 0 ; $j < 6; $j++){
+                        if($rows_in[$i]["Identificacion"] == $per_id_init){
+                            $aux=array( "Identificacion" => isset($rows_in[$i]["Identificacion"])?$rows_in[$i]["Identificacion"]:"0000", 
+                                                     "Estudiante" => isset($rows_in[$i]["Estudiante"])?$rows_in[$i]["Estudiante"]:"0000",
+                                                     "Materia" => isset($rows_in[$i]["Materia"] )?$rows_in[$i]["Materia"]:"0000"
+                                        );
+                            array_push($array,$aux);
+                            $aux = array();
+                            $i++;
+                        }else{
+                            break;
+                        }
+                    }
+                    while($per_id_init == $rows_in[$i]["Identificacion"]){
+                        $i++;
+                    }
+                    $per_id_init = $rows_in[$i]["Identificacion"];
+                    }
+                    //$rows_in[$i]["Identificacion"] = '0101';
+            }
+        $dataProvider = new ArrayDataProvider([
+            'key' => 'id',
+            'allModels' => $array,
+            'pagination' => [
+                'pageSize' => Yii::$app->params["pageSize"],
+            ],
+            'sort' => [
+                'attributes' => [
+                ],
+            ],
+        ]);
+        if ($onlyData) {
+            return $resultData;
+        } else {
+            return $dataProvider;
+        }
+    }
+    
+    
+      
+
+     
+    public function consultarEstudianteplanificax($arrFiltro = array(), $onlyData = false) {
+        $con = \Yii::$app->db_academico;
+        $con1 = \Yii::$app->db_asgard;
+        $estado = 1;
+        if (isset($arrFiltro) && count($arrFiltro) > 0) {
+            $str_search .= "(pers.per_pri_nombre like :estudiante OR ";
+            $str_search .= "pers.per_seg_nombre like :estudiante OR ";
+            $str_search .= "pers.per_pri_apellido like :estudiante OR ";
+            $str_search .= "pers.per_seg_nombre like :estudiante OR ";
+            $str_search .= "pers.per_cedula like :estudiante)  AND ";
+
+            if ($arrFiltro['modalidad'] > 0) {
+                $str_search .= " plan.mod_id = :modalidad AND ";
+            }
+
+            if ($arrFiltro['carrera'] != 'Todas') {
+                $str_search .= " plae.pes_carrera like :carrera AND ";
+            }
+
+            if ($arrFiltro['periodo'] != '0') {
+                $str_search .= " plan.pla_periodo_academico = :periodo AND ";
+            }
+        }
+        if ($onlyData == false) {
+            $idplanifica = 'plae.pla_id, ';
+            $idper = 'plae.per_id, ';
+        }
+        $sql = "SELECT
+                    $idplanifica
+                    $idper
+                    pers.per_cedula,
+                    plae.pes_nombres,
+                    plae.pes_carrera,
+                    plan.pla_periodo_academico
+                FROM " . $con->dbname . ".planificacion_estudiantex plae
+                INNER JOIN " . $con->dbname . ".planificacionx plan ON plan.pla_id = plae.pla_id
+                INNER JOIN " . $con1->dbname . ".persona pers ON pers.per_id = plae.per_id
+                WHERE 
+                    $str_search
+                    plae.pes_estado = :estado AND
+                    plae.pes_estado_logico = :estado AND
+                    plan.pla_estado = :estado AND
+                    plan.pla_estado_logico = :estado AND
+                    pers.per_estado = :estado AND
+                    pers.per_estado_logico = :estado";
+
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        if (isset($arrFiltro) && count($arrFiltro) > 0) {
+            $search_cond = "%" . $arrFiltro["estudiante"] . "%";
+            $comando->bindParam(":estudiante", $search_cond, \PDO::PARAM_STR);
+            
+            if ($arrFiltro['modalidad'] > 0) {
+                $modalidad = $arrFiltro["modalidad"];
+                $comando->bindParam(":modalidad", $modalidad, \PDO::PARAM_INT);
+            }
+
+            if ($arrFiltro['carrera'] != 'Todas') {
+                $search_carrera = "%" . $arrFiltro["carrera"] . "%";
+                $comando->bindParam(":carrera", $search_carrera, \PDO::PARAM_STR);
+            }
+
+            if ($arrFiltro['periodo'] != '0') {
+                $periodo = $arrFiltro["periodo"];
+                $comando->bindParam(":periodo", $periodo, \PDO::PARAM_STR);
+            }
+        }
+
+        $resultData = $comando->queryAll();
+        $dataProvider = new ArrayDataProvider([
+            'key' => 'id',
+            'allModels' => $resultData,
+            'pagination' => [
+                'pageSize' => Yii::$app->params["pageSize"],
+            ],
+            'sort' => [
+                'attributes' => [
+                ],
+            ],
+        ]);
+        if ($onlyData) {
+            return $resultData;
+        } else {
+            return $dataProvider;
+        }
+    }
+    
      public function consultarEstudianteplanificapesold($pla_id, $onlyData = false) {
         $con = \Yii::$app->db_academico;
         $con1 = \Yii::$app->db_asgard;
@@ -1092,9 +2060,9 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
                     plae.pes_mat_b2_h1_nombre,
                     plae.pes_mat_b2_h2_nombre,
                     plae.pes_mat_b2_h3_nombre,
-                    plae.pes_mat_b2_h4_nombre   
-                FROM " . $con->dbname . ".planificacion_estudiante plae
-                LEFT JOIN " . $con->dbname . ".planificacion plan ON plan.pla_id = plae.pla_id
+                    plae.pes_mat_b2_h4_nombre                    
+                FROM " . $con->dbname . ".planificacion_estudiantex plae
+                LEFT JOIN " . $con->dbname . ".planificacionx plan ON plan.pla_id = plae.pla_id
                 INNER JOIN " . $con1->dbname . ".persona pers ON pers.per_id = plae.per_id
                 WHERE 
                      $str_search
@@ -1152,5 +2120,94 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
             return $dataProvider;
         }
     }
-}
 
+    public function consultarDetalleplanificaaut($arrFiltro = array(), $onlyData = true) {
+        $con = \Yii::$app->db_academico;
+        //if (isset($arrFiltro) && count($arrFiltro) > 0) {
+        if($arrFiltro['estudiante']){
+            $per_id = $arrFiltro['estudiante'];
+            $per_id = $_GET['estudiante'];
+            $pla_id = $arrFiltro['planificacion'];
+            //$pla_id = '1';
+        }
+        // Bloque 1
+        for ($i = 1; $i < 7; $i++) {
+            $sql .= "SELECT pes_id as Ids, pes_jor_b1_h" . $i . " as jor_materia, pes_mat_b1_h" . $i . "_cod as cod_asignatura, asig.asi_nombre as asignatura, CASE pes_jornada  
+                            WHEN 'M' THEN 'Matutino'  
+                            WHEN 'N' THEN 'Nocturno'  
+                            WHEN 'S' THEN 'Semipresencial'
+                            WHEN 'D' THEN 'Distancia'
+		    END AS pes_jornada, 'Bloque 1', moda.mod_nombre as modalidad, 'Hora " . $i . "'
+                    FROM " . $con->dbname . ".planificacion_estudiante ples
+                    INNER JOIN " . $con->dbname . ".modalidad moda ON  moda.mod_id = ples.pes_mod_b1_h" . $i . "
+                    INNER JOIN " . $con->dbname . ".malla_academica_detalle mad ON  mad.made_codigo_asignatura = pes_mat_b1_h" . $i . "_cod
+                    INNER JOIN " . $con->dbname . ".asignatura asig ON  asig.asi_id = mad.asi_id
+                    where pla_id = $pla_id and per_id =  $per_id 
+                    UNION ";
+        }
+        // Bloque 2
+        for ($j = 1; $j < 7; $j++) {
+            $sql .= "SELECT pes_id as Ids, pes_jor_b2_h" . $j . " as jor_materia, pes_mat_b2_h" . $j . "_cod as cod_asignatura, asig.asi_nombre as asignatura, CASE pes_jornada  
+                            WHEN 'M' THEN 'Matutino'  
+                            WHEN 'N' THEN 'Nocturno'  
+                            WHEN 'S' THEN 'Semipresencial'
+                            WHEN 'D' THEN 'Distancia'
+		    END AS pes_jornada, 'Bloque 2', moda.mod_nombre as modalidad, 'Hora " . $j . "' 
+                    FROM " . $con->dbname . ".planificacion_estudiante ples
+                    INNER JOIN " . $con->dbname . ".modalidad moda ON  moda.mod_id = ples.pes_mod_b2_h" . $j . "
+                    INNER JOIN " . $con->dbname . ".malla_academica_detalle mad ON  mad.made_codigo_asignatura = pes_mat_b2_h" . $j . "_cod
+                    INNER JOIN " . $con->dbname . ".asignatura asig ON  asig.asi_id = mad.asi_id
+                    where pla_id =  $pla_id  and per_id =  $per_id  ";
+            if ($j < 6) {
+                $sql .= "UNION ";
+            }
+        }
+        if ($per_id == null || $pla_id == null) {
+            $resultData = [];
+        }else{
+            $comando = $con->createCommand($sql);
+            $resultData = $comando->queryall();
+            /*if ($arrFiltro['pla_id'] > 0) {
+                $modalidad = $arrFiltro["pla_id"];
+                $comando->bindParam(":pla_id", $modalidad, \PDO::PARAM_INT);
+            }
+            $resultData = $comando->queryAll();*/
+        }
+       
+
+        $dataProvider = new ArrayDataProvider([
+            'key' => 'id',
+            'allModels' => $resultData,
+            'pagination' => [
+                'pageSize' => Yii::$app->params["pageSize"],
+            ],
+            'sort' => [
+                'attributes' => [],
+            ],
+        ]);
+        if ($onlyData) {
+            return $resultData;
+        } else {
+            return $dataProvider;
+        }
+    }
+
+    public function getPla_id($per_id){
+        $con = \Yii::$app->db_academico;
+
+        $sql = "SELECT
+                pla_id as id,
+                pes_nombres as nombres
+                from " . $con->dbname . ".planificacion_estudiante
+                where per_id = :per_id and pes_estado_logico = 1 limit 0,1;";
+        
+        if($per_id == NULL){
+            $resultData = [];
+        }else{
+            $comando = $con->createCommand($sql);
+            $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
+            $resultData = $comando->queryAll();
+        }
+        return $resultData;
+    }
+}

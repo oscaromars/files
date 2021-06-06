@@ -70,7 +70,6 @@ class DedicacionDocente extends \yii\db\ActiveRecord
         return $this->hasMany(Distributivo::className(), ['ddoc_id' => 'ddoc_id']);
     }
     
-    
     public function getDedicacionDocente() {
              $con_academico = \Yii::$app->db_academico;
 
@@ -86,4 +85,5 @@ class DedicacionDocente extends \yii\db\ActiveRecord
         $res = $comando->queryAll();
         return $res;  
     }
+
 }

@@ -25,27 +25,40 @@ academico::registerTranslations();
                 'attribute' => 'Subject',
                 'header' => Academico::t("matriculacion", "Subject"),
                 'value' => 'Subject',
-            ],
+            ],    
             [
-                'attribute' => 'CodeAsignatura',
+                'attribute' => 'Code',
                 'header' => Academico::t("matriculacion", "Subject Code"),
-                'value' => 'CodeAsignatura',
-            ],
-            [
-                'attribute' => 'Block',
-                'header' => Academico::t("matriculacion", "Block"),
-                'value' => 'Block',
-            ],
-            [
-                'attribute' => 'Hour',
-                'header' => Academico::t("matriculacion", "Hour"),
-                'value' => 'Hour',
-            ],
+                'value' => 'Code',
+            ], 
             [
                 'attribute' => 'Credit',
                 'header' => Academico::t("matriculacion", "Credit"),
                 'value' => 'Credit',
             ],
+            [
+                'attribute' => 'Cost',
+                'header' => Academico::t("matriculacion", "Unit Cost"),
+                'value' => function($data){
+                    return '$' . (number_format(($data['Cost']), 2, '.', ','));
+                },
+            ],
+            /*[
+                'attribute' => 'Subject',
+                'header' => Academico::t("matriculacion", "Block"),
+                'value' => function($data) use ($materiasxEstudiante){
+                    if(strtoupper($data["Subject"]) == strtoupper($materiasxEstudiante->pes_mat_b1_h1_nombre)) return "B1";
+                    if(strtoupper($data["Subject"]) == strtoupper($materiasxEstudiante->pes_mat_b1_h2_nombre)) return "B1";
+                    if(strtoupper($data["Subject"]) == strtoupper($materiasxEstudiante->pes_mat_b1_h3_nombre)) return "B1";
+                    if(strtoupper($data["Subject"]) == strtoupper($materiasxEstudiante->pes_mat_b1_h4_nombre)) return "B1";
+                    if(strtoupper($data["Subject"]) == strtoupper($materiasxEstudiante->pes_mat_b1_h5_nombre)) return "B1";
+                    if(strtoupper($data["Subject"]) == strtoupper($materiasxEstudiante->pes_mat_b2_h1_nombre)) return "B2";
+                    if(strtoupper($data["Subject"]) == strtoupper($materiasxEstudiante->pes_mat_b2_h2_nombre)) return "B2";
+                    if(strtoupper($data["Subject"]) == strtoupper($materiasxEstudiante->pes_mat_b2_h3_nombre)) return "B2";
+                    if(strtoupper($data["Subject"]) == strtoupper($materiasxEstudiante->pes_mat_b2_h4_nombre)) return "B2";
+                    if(strtoupper($data["Subject"]) == strtoupper($materiasxEstudiante->pes_mat_b2_h5_nombre)) return "B2";
+                },
+            ],    */               
         ]
     ])
 ?>

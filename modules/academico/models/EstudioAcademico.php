@@ -372,7 +372,9 @@ class EstudioAcademico extends \app\modules\admision\components\CActiveRecord {
                         INNER JOIN " . $con->dbname . ".estudio_academico as eac on eac.eaca_id = mcn.eaca_id
                     WHERE 
                         mcn.uaca_id =:unidad AND
-                        mcn.mod_id =:modalidad AND                                  
+                        mcn.mod_id =:modalidad AND          
+                        -- eac.eaca_estado_logico=:estado AND
+                        -- eac.eaca_estado=:estado AND
                         mcn.meun_estado_logico = :estado AND
                         mcn.meun_estado = :estado
                         ORDER BY name asc";
@@ -385,8 +387,7 @@ class EstudioAcademico extends \app\modules\admision\components\CActiveRecord {
         return $resultData;
     }
 
-
-     /**
+      /**
      * Function para consultar el estudio académico por el ID del estudiante
      * @author   Jorge Paladines <analista.desarrollo@uteg.edu.ec>
      * @property       
@@ -410,6 +411,5 @@ class EstudioAcademico extends \app\modules\admision\components\CActiveRecord {
         return $resultData;
     }
     
-
 
 }

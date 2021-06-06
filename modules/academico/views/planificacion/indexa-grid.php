@@ -45,3 +45,4 @@ use yii\helpers\ArrayHelper;
         ],
     ])
 ?>
+<input type="" id="frm_hasplanning" value="1">

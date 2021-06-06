@@ -35,7 +35,7 @@ class DetalleAsistencia extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['casi_id', 'ecal_id', 'dasi_tipo' ,'dasi_cantidad', 'dasi_usuario_creacion', 'dasi_estado', 'dasi_estado_logico'], 'required'],
+            [['casi_id', 'ecal_id', 'dasi_tipo' 'dasi_cantidad', 'dasi_usuario_creacion', 'dasi_estado', 'dasi_estado_logico'], 'required'],
             [['casi_id', 'dasi_cantidad', 'dasi_usuario_creacion', 'dasi_usuario_modificacion'], 'integer'],
             [['dasi_fecha_creacion', 'dasi_fecha_modificacion'], 'safe'],
             [['dasi_estado', 'dasi_estado_logico'], 'string', 'max' => 1],

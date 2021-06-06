@@ -61,6 +61,10 @@ Academico::registerTranslations();
         <div class="col-sm-2 col-md-2 col-xs-4 col-lg-2">                
             <a id="btn_buscarDataestClfcns" href="javascript:" class="btn btn-primary btn-block"> <?= academico::t("Academico", "Search") ?></a>
         </div>
+          <div class="col-sm-8 col-md-8 col-xs-8 col-lg-8 "></div>
+        <div class="col-sm-2 col-md-2 col-xs-4 col-lg-2">                
+          <br>
+        </div>
          <div class="col-sm-8 col-md-8 col-xs-8 col-lg-8 "></div>
         <div class="col-sm-2 col-md-2 col-xs-4 col-lg-2">                
             <a id="btn_download_acta" href="javascript:" class="btn btn-primary btn-block"> <?= academico::t("Academico", "Acta de Calificaciones") ?></a>

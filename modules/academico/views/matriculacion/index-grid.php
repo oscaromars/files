@@ -7,15 +7,13 @@ use app\models\Utilities;
 use app\modules\academico\Module as academico;
 use yii\grid\CheckboxColumn;
 academico::registerTranslations();
+print_r($planificacion);
 ?>
 
 <?=
     PbGridView::widget([
         'id' => 'grid_registro_list',
-        'showExport' => false,
-        //'fnExportEXCEL' => "exportExcel",
-        //'fnExportPDF' => "exportPdf",
-        /* 'dataProvider' => $model, */
+        'showExport' => false,       
         'dataProvider' => $planificacion,
         'pajax' => true,
         'columns' => [
@@ -26,24 +24,21 @@ academico::registerTranslations();
                 'value' => 'Subject',
             ],
             [
-                'attribute' => 'CodeAsignatura',
+                'attribute' => 'Code',
                 'header' => Academico::t("matriculacion", "Subject Code"),
-                'value' => 'CodeAsignatura',
-            ],
-            [
-                'attribute' => 'Block',
-                'header' => Academico::t("matriculacion", "Block"),
-                'value' => 'Block',
-            ],
-            [
-                'attribute' => 'Hour',
-                'header' => Academico::t("matriculacion", "Hour"),
-                'value' => 'Hour',
-            ],
+                'value' => 'Code',
+            ],          
             [
                 'attribute' => 'Credit',
                 'header' => Academico::t("matriculacion", "Credit"),
                 'value' => 'Credit',
+            ],
+            [
+                'attribute' => 'Cost',
+                'header' => Academico::t("matriculacion", "Unit Cost"),
+                'value' => function($data){
+                    return '$' . (number_format(($data['Cost'] * $data['Credit']), 2, '.', ','));
+                },
             ],
             [
                 'class' => 'yii\grid\ActionColumn',
@@ -53,7 +48,7 @@ academico::registerTranslations();
                 'template' => '{select}',
                 'buttons' => [
                     'select' => function ($url, $planificacion) {
-                        return Html::checkbox("", false, ["value" => $planificacion['Alias']]);
+                        return Html::checkbox($planificacion['Code'], false, ["value" => $planificacion['Subject']]);
                         /* return Html::checkbox("", false, ["value" => $planificacion['Subject'], "onchange" => "handleChange(this)"]); */
                     },                    
                 ],

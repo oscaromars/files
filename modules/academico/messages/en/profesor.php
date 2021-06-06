@@ -120,5 +120,4 @@ return [
     'Position' => 'Position',
     'Contact Number' => 'Contact Number',
     'CV' => 'CV',
-    "You are still not approved" => "You are still not approved",
 ];

@@ -87,12 +87,14 @@ class PlanificacionSearch extends Planificacion {
                 Inner Join db_academico.estudio_academico eaca on eaca.eaca_id = meun.eaca_id
                 Where
                     pla.saca_id = 7 AND
+                    pes.pla_id in (14) AND
+                    per.per_id = 1030 AND
+                    est.per_id = 1030 AND
+                    ecpr.est_id = 26 AND
+                    meun.meun_id = 18 AND
                     uaca.uaca_id = 1 AND
                     moda.mod_id = 2 AND
-                    pla.pla_estado = 1 AND pla.pla_estado_logico = 1 AND
-                    pes.pes_estado = 1 AND pes.pes_estado_logico = 1 AND   
-                    est.est_estado = 1 AND est.est_estado_logico = 1 AND
-                    meun.meun_estado = 1 AND meun.meun_estado_logico = 1";
+                    eaca.eaca_id = 14";
         if ($tipo == 1) {
             $this->load($params);
             if ($this->validate()) {

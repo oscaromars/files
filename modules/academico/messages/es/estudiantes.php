@@ -44,4 +44,12 @@ return [
     "Data General Students" => "Datos General Estudiantes",
     "Data Career/Program" => "Datos Carrera/Programa",
     "View Students" => "Ver Estudiantes",
+    "Asynchronous" => "Asincrónica",
+    "Synchronous" => "Sincrónica ",
+    "Autonomous" => "Autónoma",
+    "Evaluation" => "Evaluación",
+    "Exam" => "Examen",
+    "Grade" => "Puntaje",
+     "Final Grade" => "Puntaje Final",
+   
 ];

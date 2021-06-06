@@ -13,11 +13,13 @@ use yii\helpers\ArrayHelper;
  * and open the template in the editor.
  */
 ?>
+
 <div class="row">
 
     <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12">
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-            <div class="form-group">                 
+            <div class="form-group">            
+            <br>
                 <label for="cmb_unidad_bus" class="col-lg-4 col-md-4 col-sm-3 col-xs-3 control-label"><?= Yii::t("formulario", "Academic unit") ?></label>
                 <div class="col-lg-6 col-md-6 col-sm-7 col-xs-7">  
                         <?= Html::dropDownList("cmb_unidad_bus",0,$arr_ninteres , ["class" => "form-control", "id" => "cmb_unidad_bus"]) ?>              
@@ -26,6 +28,7 @@ use yii\helpers\ArrayHelper;
         </div>
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
             <div class="form-group">                 
+            <br>
                 <label for="cmb_modalidad_bus" class="col-lg-4 col-md-4 col-sm-3 col-xs-3 control-label"><?= Yii::t("formulario", "Modality") ?></label>
                 <div class="col-lg-6 col-md-6 col-sm-7 col-xs-7">
                         <?= Html::dropDownList("cmb_modalidad_bus", 0,$arr_modalidad, ["class" => "form-control", "id" => "cmb_modalidad_bus"]) ?>

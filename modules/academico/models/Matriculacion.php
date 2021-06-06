@@ -2,10 +2,12 @@
 
 namespace app\modules\academico\models;
 
-use app\models\Utilities;
 use Yii;
 use yii\data\ArrayDataProvider;
 use yii\base\Exception;
+use app\modules\academico\models\MallaAcademicaDetalle;
+use app\modules\academico\models\ProgramaCostoCredito;
+
 
 /**
  * This is the model class for table "matriculacion".
@@ -356,53 +358,58 @@ class Matriculacion extends \yii\db\ActiveRecord {
 
     /**
      * Function to check if today is between process inscription dates
-     * @author Emilio Moran <emiliojmp9@gmail.com>
+     * @author -
      * @param $date
      * @return $resultData
      */
-    public function checkToday($date, $per_id=NULL)
+    public function checkToday($date)
     {
         $con = \Yii::$app->db_academico;
         $estado = 1;
-        $select = $join = $where = "";
-        if(isset($per_id)){
-            $select = ", pes.pes_id ";
-            $join   = " INNER JOIN  " . $con->dbname . ".planificacion AS plan ON plan.pla_id = reg_conf.pla_id ";
-            $join  .= " INNER JOIN  " . $con->dbname . ".planificacion_estudiante AS pes ON pes.pla_id = plan.pla_id ";
-            $where  = " AND plan.pla_estado =:estado AND plan.pla_estado_logico =:estado ";
-            $where .= " AND pes.pes_estado =:estado AND pes.pes_estado_logico =:estado ";
-            $where .= " AND pes.per_id =:per_id ";
-        }
+
         $sql = "
-            SELECT 
-                reg_conf.rco_id, 
-                reg_conf.pla_id, 
-                reg_conf.rco_num_bloques
-                $select
-            FROM 
-                " . $con->dbname . ".registro_configuracion as reg_conf $join
-            WHERE 
-                :date BETWEEN reg_conf.rco_fecha_inicio AND reg_conf.rco_fecha_fin
-                AND reg_conf.rco_estado =:estado
-                AND reg_conf.rco_estado_logico =:estado
-                $where
-            ORDER BY 
-                reg_conf.rco_fecha_inicio DESC
+            SELECT rco_id, pla_id, rco_num_bloques, rco_fecha_fin 
+            FROM " . $con->dbname . ".registro_configuracion as reg_conf
+            WHERE :date
+            BETWEEN reg_conf.rco_fecha_inicio AND reg_conf.rco_fecha_fin_periodoextra
+            AND rco_estado =:estado
+            AND rco_estado_logico =:estado
         ";
-        
+
         $comando = $con->createCommand($sql);
         $comando->bindParam(":date", $date, \PDO::PARAM_STR);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
-        if(isset($per_id))
-            $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
         $resultData = $comando->queryAll();
         return $resultData;
     }
 
 
+    public function checkTodayisdrop($date)
+    {
+        $con = \Yii::$app->db_academico;
+        $estado = 1;
+
+        $sql = "
+            SELECT rco_id, pla_id, rco_num_bloques, rco_fecha_fin_periodoextra  
+            FROM " . $con->dbname . ".registro_configuracion as reg_conf
+            WHERE :date
+            BETWEEN reg_conf.rco_fecha_ini_periodoextra AND reg_conf.rco_fecha_fin_periodoextra
+            AND rco_estado =:estado
+            AND rco_estado_logico =:estado
+        ";
+
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":date", $date, \PDO::PARAM_STR);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $resultData = $comando->queryAll();
+        return $resultData;
+    }
+
+
+
     /**
      * Function to get data student from planificacion, planificacion_estudiante and persona
-     * @author Emilio Moran <emiliojmp9@gmail.com>
+     * @author -
      * @param $per_id, $pla_id, $pes_id
      * @return $resultData
      */
@@ -415,26 +422,17 @@ class Matriculacion extends \yii\db\ActiveRecord {
         $estado = 1;
 
         $sql = "
-            SELECT 
-                pla.pla_periodo_academico, 
-                pes.pes_nombres, 
-                pes.pes_dni, 
-                moda.mod_nombre, 
-                pes.pes_carrera, 
-                per.per_celular, 
-                e.est_matricula, 
-                e.est_categoria
-            FROM " . $con_academico->dbname . ".planificacion as pla
-                INNER JOIN " . $con_academico->dbname . ".planificacion_estudiante as pes ON pes.pla_id = pla.pla_id
-                INNER JOIN " . $con_academico->dbname . ".modalidad as moda ON moda.mod_id = pla.mod_id
-                INNER JOIN " . $con_academico->dbname . ".estudiante as e ON pes.per_id = e.per_id
-                INNER JOIN " . $con_asgard->dbname . ".persona as per ON per.per_id = e.per_id
-            WHERE           
-                per.per_id =:per_id
-                AND pla.pla_id =:pla_id
-                AND pes.pes_id =:pes_id
-            ORDER BY
-                pes.pes_id DESC;";
+            SELECT pla.pla_periodo_academico, pes.pes_nombres, pes.pes_dni, moda.mod_nombre, pes.pes_carrera, per.per_celular, pes_jornada
+            FROM " . $con_academico->dbname . ".planificacion as pla,
+            " . $con_academico->dbname . ".planificacion_estudiante as pes,
+            " . $con_academico->dbname . ".modalidad as moda,
+            " . $con_asgard->dbname . ".persona as per
+            WHERE pla.mod_id = moda.mod_id
+            AND pes.per_id = per.per_id            
+            AND per.per_id =:per_id
+            AND pla.pla_id =:pla_id
+            AND pes.pes_id =:pes_id;
+        ";
 
         $comando = $con_academico->createCommand($sql);
         $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
@@ -447,21 +445,23 @@ class Matriculacion extends \yii\db\ActiveRecord {
 
     /**
      * Function to get data from planificacion_estudiante
-     * @author Emilio Moran <emiliojmp9@gmail.com>
+     * @author -
      * @param $per_id, $pla_id, $rco_num_bloques
      * @return $dataPlanificacion
      */
-    public function getAllDataPlanificacionEstudiante($per_id, $pla_id, $rco_num_bloques)
+    public function getAllDataPlanificacionEstudiante($per_id, $pla_id)
     {
         $con_academico = \Yii::$app->db_academico;
         $estado = 1;
 
-        $str_bloques = "pes.pes_mat_b1_h1_nombre, pes.pes_mat_b1_h2_nombre, pes.pes_mat_b1_h3_nombre, pes.pes_mat_b1_h4_nombre, pes.pes_mat_b1_h5_nombre, pes.pes_mat_b2_h1_nombre, pes.pes_mat_b2_h2_nombre, pes.pes_mat_b2_h3_nombre, pes.pes_mat_b2_h4_nombre, pes.pes_mat_b2_h5_nombre";
-
+        $str_bloques = "pes.pes_mat_b1_h1_cod, pes.pes_mat_b1_h2_cod, pes.pes_mat_b1_h3_cod, pes.pes_mat_b1_h4_cod, pes.pes_mat_b1_h5_cod, pes.pes_mat_b2_h1_cod, pes.pes_mat_b2_h2_cod, pes.pes_mat_b2_h3_cod, pes.pes_mat_b2_h4_cod, pes.pes_mat_b2_h5_cod";
+        $str_bloques1 = "pes.pes_mat_b1_h1_nombre, pes.pes_mat_b1_h2_nombre, pes.pes_mat_b1_h3_nombre, pes.pes_mat_b1_h4_nombre, pes.pes_mat_b1_h5_nombre, pes.pes_mat_b2_h1_nombre, pes.pes_mat_b2_h2_nombre, pes.pes_mat_b2_h3_nombre, pes.pes_mat_b2_h4_nombre, pes.pes_mat_b2_h5_nombre";
+        
         $sql = "
-            SELECT pes_dni, " . $str_bloques . "
+            SELECT pes_dni, " . $str_bloques . "," . $str_bloques1 . "
             FROM " . $con_academico->dbname . ".planificacion_estudiante as pes            
-            WHERE pes.per_id =:per_id AND pes.pla_id =:pla_id;
+            WHERE pes.per_id =:per_id
+            AND pes.pla_id =:pla_id;
         ";
 
         $comando = $con_academico->createCommand($sql);
@@ -482,29 +482,68 @@ class Matriculacion extends \yii\db\ActiveRecord {
         SELECT
             -- a.asi_id,
             a.asi_nombre AS Asignatura,
-            a.asi_alias AS AliasAsignatura,
-            -- ua.uaca_nombre AS UnidadAcademica,
-            -- mo.mod_nombre AS Modalidad,
-            -- ea.eaca_codigo AS CodEstudio,
-            -- ea.eaca_nombre AS EstudioAcademico,
-            -- ea.eaca_alias AS AliasEstudioAca,
-            -- e.est_matricula AS Matricula,
-            -- e.est_categoria AS Categoria,
-            -- ma.maca_nombre AS MallaAcademica,
-            -- ma.maca_codigo AS MallaCod,
-            mad.made_codigo_asignatura AS MallaCodAsig, 
+            -- mad.made_codigo_asignatura AS MallaCodAsig, 
             -- CONCAT(p.per_pri_nombre, ' ',p.per_pri_apellido) AS Estudiante,
             -- em.emp_nombre_comercial AS Empresa,
             mad.made_credito AS AsigCreditos,
-            mcc.mcco_code AS ModCode
+            pcc.pccr_costo_credito as CostoCredito
+            -- mcc.mcco_code AS ModCode
+        FROM 
+            " . $con_academico->dbname . ".estudiante AS e
+            INNER JOIN " . $con_academico->dbname . ".estudiante_carrera_programa AS ec ON e.est_id = ec.est_id
+            INNER JOIN " . $con_academico->dbname . ".modalidad_estudio_unidad AS me ON ec.meun_id = me.meun_id
+            INNER JOIN " . $con_academico->dbname . ".estudio_academico AS ea ON ea.eaca_id = me.eaca_id
+            INNER JOIN " . $con_academico->dbname . ".unidad_academica AS ua ON me.uaca_id = ua.uaca_id
+            INNER JOIN " . $con_academico->dbname . ".asignatura AS a ON ua.uaca_id = a.uaca_id
+            INNER JOIN " . $con_academico->dbname . ".tipo_estudio_academico AS tp ON tp.teac_id = ea.teac_id
+            INNER JOIN ".Yii::$app->db_asgard->dbname.".persona AS p ON p.per_id = e.per_id
+            INNER JOIN ".Yii::$app->db_asgard->dbname.".empresa AS em ON em.emp_id = me.emp_id
+            INNER JOIN " . $con_academico->dbname . ".planificacion_estudiante AS pes ON pes.pes_dni = p.per_cedula
+            INNER JOIN " . $con_academico->dbname . ".planificacion AS pla ON pla.pla_id = pes.pla_id
+            INNER JOIN " . $con_academico->dbname . ".malla_academica_detalle AS mad ON mad.asi_id = a.asi_id
+            INNER JOIN " . $con_academico->dbname . ".malla_academica AS ma ON mad.maca_id = ma.maca_id 
+            INNER JOIN " . $con_academico->dbname . ".malla_unidad_modalidad AS mu ON mu.maca_id = ma.maca_id AND mu.meun_id = me.meun_id
+            INNER JOIN " . $con_academico->dbname . ".programa_costo_credito AS pcc ON pcc.eaca_id = ea.eaca_id AND pcc.mod_id = me.mod_id AND pcc.pccr_creditos=mad.made_credito AND pcc.pccr_categoria=e.est_categoria
+        WHERE
+            p.per_id =:per_id AND
+            a.asi_estado = 1 AND a.asi_estado_logico = 1 AND 
+            ua.uaca_estado = 1 AND ua.uaca_estado_logico = 1 AND 
+            me.meun_estado = 1 AND me.meun_estado_logico = 1 AND
+            -- mo.mod_estado = 1 AND mo.mod_estado_logico = 1 AND 
+            -- mcc.mcco_estado = 1 AND mcc.mcco_estado_logico = 1 AND 
+            pcc.pccr_estado =1 AND pcc.pccr_estado_logico = 1 AND 
+            ea.eaca_estado = 1 AND ea.eaca_estado_logico = 1 AND 
+            tp.teac_estado = 1 AND tp.teac_estado_logico = 1 AND 
+            ma.maca_estado = 1 AND ma.maca_estado_logico = 1 AND 
+            mad.made_estado = 1 AND mad.made_estado_logico = 1 AND
+            ec.ecpr_estado = 1 AND ec.ecpr_estado_logico = 1 AND
+            e.est_estado = 1 AND e.est_estado_logico = 1 AND
+            p.per_estado = 1 AND p.per_estado_logico = 1 AND 
+            em.emp_estado = 1 AND em.emp_estado_logico = 1 AND
+            mu.mumo_estado =1 AND mu.mumo_estado_logico =1 AND
+            pes.pes_estado = 1 AND pes.pes_estado_logico = 1 
+        ";
+
+
+        $comando = $con_academico->createCommand($sql);
+        $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
+        $dataCredits = $comando->queryAll();
+        return $dataCredits;
+    }
+    public static function getEstudioAcademicoByEstudiante($per_id){
+        $con_academico = \Yii::$app->db_academico;
+        $estado = 1;
+
+        $sql = "
+        SELECT
+            ea.eaca_id as id,
+            me.mod_id as mod_id
         FROM 
             estudiante AS e
             INNER JOIN estudiante_carrera_programa AS ec ON e.est_id = ec.est_id
             INNER JOIN modalidad_estudio_unidad AS me ON ec.meun_id = me.meun_id
             INNER JOIN estudio_academico AS ea ON ea.eaca_id = me.eaca_id
             INNER JOIN unidad_academica AS ua ON me.uaca_id = ua.uaca_id
-            INNER JOIN modalidad AS mo ON mo.mod_id = me.mod_id
-            INNER JOIN modalidad_centro_costo AS mcc ON mcc.mod_id = mo.mod_id
             INNER JOIN asignatura AS a ON ua.uaca_id = a.uaca_id
             INNER JOIN tipo_estudio_academico AS tp ON tp.teac_id = ea.teac_id
             INNER JOIN ".Yii::$app->db_asgard->dbname.".persona AS p ON p.per_id = e.per_id
@@ -519,8 +558,6 @@ class Matriculacion extends \yii\db\ActiveRecord {
             a.asi_estado = 1 AND a.asi_estado_logico = 1 AND 
             ua.uaca_estado = 1 AND ua.uaca_estado_logico = 1 AND 
             me.meun_estado = 1 AND me.meun_estado_logico = 1 AND
-            mo.mod_estado = 1 AND mo.mod_estado_logico = 1 AND 
-            mcc.mcco_estado = 1 AND mcc.mcco_estado_logico = 1 AND 
             ea.eaca_estado = 1 AND ea.eaca_estado_logico = 1 AND 
             tp.teac_estado = 1 AND tp.teac_estado_logico = 1 AND 
             ma.maca_estado = 1 AND ma.maca_estado_logico = 1 AND 
@@ -535,18 +572,246 @@ class Matriculacion extends \yii\db\ActiveRecord {
 
         $comando = $con_academico->createCommand($sql);
         $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
-        $dataCredits = $comando->queryAll();
-        return $dataCredits;
+        $result = $comando->queryOne();
+        return $result;
     }
 
     /**
      * Function to get parse into array the information about subjects
-     * @author Emilio Moran <emiliojmp9@gmail.com>
+     * @author -
      * @param $dict, $num
      * @return $arrData
      */
 
     public function parseDataSubject($dict, $dataCredits = array())
+    {
+        $arrData = array();
+
+        if (!is_null($dict['pes_mat_b1_h1_cod']) && trim($dict['pes_mat_b1_h1_cod']) != "") {
+            $modAsig = Asignatura::findOne(['asi_nombre' => trim($dict['pes_mat_b1_h1_nombre']), 'asi_estado_logico' => '1', 'asi_estado' => '1']);
+            $codeAsignatura = $credits  = $costoCredito ="";
+            foreach($dataCredits as $key => $value){
+                if($value['Asignatura'] == trim($dict['pes_mat_b1_h1_nombre'])){
+                    $credits = $value['AsigCreditos'];
+                    $codeAsignatura = $value['MallaCodAsig'];
+                    $costoCredito = $value['CostoCredito'];
+                }
+            }
+            $arrRow11 = array(
+                "Subject" => trim($modAsig->asi_nombre),//trim($dict['pes_mat_b1_h1_nombre']),
+                "Code" => trim($dict['pes_mat_b1_h1_cod']),
+                "Block" => "B1",
+                "Hour" => "H1",
+                "Credit" => $credits,
+                "Cost" => $costoCredito,
+                "CostSubject" => $costoCredito,
+            );
+            array_push($arrData, $arrRow11);
+        }
+
+        if (!is_null($dict['pes_mat_b1_h2_cod']) && trim($dict['pes_mat_b1_h2_cod']) != "") {
+            $modAsig = Asignatura::findOne(['asi_nombre' => trim($dict['pes_mat_b1_h2_nombre']), 'asi_estado_logico' => '1', 'asi_estado' => '1']);
+            $codeAsignatura = $credits =$costoCredito = "";
+            foreach($dataCredits as $key => $value){
+                if($value['Asignatura'] == trim($dict['pes_mat_b1_h2_nombre'])){
+                    $credits = $value['AsigCreditos'];
+                    $codeAsignatura = $value['MallaCodAsig'];
+                    $costoCredito = $value['CostoCredito'];
+                }
+            }
+            $arrRow12 = array(
+                "Subject" => trim($modAsig->asi_nombre),//trim($dict['pes_mat_b1_h2_nombre']),
+                "Code" => trim($dict['pes_mat_b1_h2_cod']),
+                "Block" => "B1",
+                "Hour" => "H2",
+                "Credit" => $credits,
+                "Cost" => $costoCredito,
+                "CostSubject" => $costoCredito,
+            );
+            array_push($arrData, $arrRow12);
+        }
+
+        if (!is_null($dict['pes_mat_b1_h3_cod']) && trim($dict['pes_mat_b1_h3_cod']) != "") {
+            $modAsig = Asignatura::findOne(['asi_nombre' => trim($dict['pes_mat_b1_h3_nombre']), 'asi_estado_logico' => '1', 'asi_estado' => '1']);
+            $codeAsignatura = $credits  =$costoCredito = "";
+            foreach($dataCredits as $key => $value){
+                if($value['Asignatura'] == trim($dict['pes_mat_b1_h3_nombre'])){
+                    $credits = $value['AsigCreditos'];
+                    $codeAsignatura = $value['MallaCodAsig'];
+                    $costoCredito = $value['CostoCredito'];
+                }
+            }
+            $arrRow13 = array(
+                "Subject" => trim($modAsig->asi_nombre),//trim($dict['pes_mat_b1_h3_nombre']),
+                "Code" => trim($dict['pes_mat_b1_h3_cod']),
+                "Block" => "B1",
+                "Hour" => "H3",
+                "Credit" => $credits,
+                "Cost" => $costoCredito,
+                "CostSubject" => $costoCredito,
+            );
+            array_push($arrData, $arrRow13);
+        }
+
+        if (!is_null($dict['pes_mat_b1_h4_cod']) && trim($dict['pes_mat_b1_h4_cod']) != "") {
+            $modAsig = Asignatura::findOne(['asi_nombre' => trim($dict['pes_mat_b1_h4_nombre']), 'asi_estado_logico' => '1', 'asi_estado' => '1']);
+            $codeAsignatura = $credits  = $costoCredito = "";
+            foreach($dataCredits as $key => $value){
+                if($value['Asignatura'] == trim($dict['pes_mat_b1_h4_nombre'])){
+                    $credits = $value['AsigCreditos'];
+                    $codeAsignatura = $value['MallaCodAsig'];
+                    $costoCredito = $value['CostoCredito'];
+                }
+            }
+            $arrRow14 = array(
+                "Subject" => trim($modAsig->asi_nombre),//trim($dict['pes_mat_b1_h4_nombre']),
+                "Code" => trim($dict['pes_mat_b1_h4_cod']),
+                "Block" => "B1",
+                "Hour" => "H4",
+                "Credit" => $credits,
+                "Cost" => $costoCredito,
+                "CostSubject" => $costoCredito,
+            );
+            array_push($arrData, $arrRow14);
+        }
+
+        if (!is_null($dict['pes_mat_b1_h5_cod']) && trim($dict['pes_mat_b1_h5_cod']) != "") {
+            $modAsig = Asignatura::findOne(['asi_nombre' => trim($dict['pes_mat_b1_h5_nombre']), 'asi_estado_logico' => '1', 'asi_estado' => '1']);
+            $codeAsignatura = $credits = $costoCredito ="";
+            foreach($dataCredits as $key => $value){
+                if($value['Asignatura'] == trim($dict['pes_mat_b1_h5_nombre'])){
+                    $credits = $value['AsigCreditos'];
+                    $codeAsignatura = $value['MallaCodAsig'];
+                    $costoCredito = $value['CostoCredito'];
+                }
+            }
+            $arrRow15 = array(
+                "Subject" => trim($modAsig->asi_nombre),//trim($dict['pes_mat_b1_h5_nombre']),
+                "Code" => trim($dict['pes_mat_b1_h5_cod']),
+                "Block" => "B1",
+                "Hour" => "H5",
+                "Credit" => $credits,
+                "Cost" => $costoCredito,
+                "CostSubject" => $costoCredito,
+            );
+            array_push($arrData, $arrRow15);
+        }
+
+        if (!is_null($dict['pes_mat_b2_h1_cod']) && trim($dict['pes_mat_b2_h1_cod']) != "") {
+            $modAsig = Asignatura::findOne(['asi_nombre' => trim($dict['pes_mat_b2_h1_nombre']), 'asi_estado_logico' => '1', 'asi_estado' => '1']);
+            $codeAsignatura = $credits = $costoCredito = "";
+            foreach($dataCredits as $key => $value){
+                if($value['Asignatura'] == trim($dict['pes_mat_b2_h1_nombre'])){
+                    $credits = $value['AsigCreditos'];
+                    $codeAsignatura = $value['MallaCodAsig'];
+                    $costoCredito = $value['CostoCredito'];
+                }
+            }
+            $arrRow21 = array(
+                "Subject" => trim($modAsig->asi_nombre),//trim($dict['pes_mat_b2_h1_nombre']),
+                "Code" => trim($dict['pes_mat_b2_h1_cod']),
+                "Block" => "B2",
+                "Hour" => "H1",
+                "Credit" => $credits,
+                "Cost" => $costoCredito,
+                "CostSubject" => $costoCredito,
+            );
+            array_push($arrData, $arrRow21);
+        }
+
+        
+        if (!is_null($dict['pes_mat_b2_h2_cod']) && trim($dict['pes_mat_b2_h2_cod']) != "") {
+            $modAsig = Asignatura::findOne(['asi_nombre' => trim($dict['pes_mat_b2_h2_nombre']), 'asi_estado_logico' => '1', 'asi_estado' => '1']);
+            $codeAsignatura = $credits = $costoCredito = "";
+            foreach($dataCredits as $key => $value){
+                if($value['Asignatura'] == trim($dict['pes_mat_b2_h2_nombre'])){
+                    $credits = $value['AsigCreditos'];
+                    $codeAsignatura = $value['MallaCodAsig'];
+                    $costoCredito = $value['CostoCredito'];
+                }
+            }
+            $arrRow22 = array(
+                "Subject" => trim($modAsig->asi_nombre),//trim($dict['pes_mat_b2_h2_nombre']),
+                "Code" => trim($dict['pes_mat_b2_h2_cod']),
+                "Block" => "B2",
+                "Hour" => "H2",
+                "Credit" => $credits,
+                "Cost" => $costoCredito,
+                "CostSubject" => $costoCredito ,
+            );
+            array_push($arrData, $arrRow22);
+        }
+
+        if (!is_null($dict['pes_mat_b2_h3_cod']) && trim($dict['pes_mat_b2_h3_cod']) != "") {
+            $modAsig = Asignatura::findOne(['asi_nombre' => trim($dict['pes_mat_b2_h3_nombre']), 'asi_estado_logico' => '1', 'asi_estado' => '1']);
+            $codeAsignatura = $credits =/* $costoCredito = */"";
+            foreach($dataCredits as $key => $value){
+                if($value['Asignatura'] == trim($dict['pes_mat_b2_h3_nombre'])){
+                    $credits = $value['AsigCreditos'];
+                    $codeAsignatura = $value['MallaCodAsig'];
+                    $costoCredito = $value['CostoCredito'];
+                }
+            }
+            $arrRow23 = array(
+                "Subject" => trim($modAsig->asi_nombre),//trim($dict['pes_mat_b2_h3_nombre']),
+                "Code" => trim($dict['pes_mat_b2_h3_cod']),
+                "Block" => "B2",
+                "Hour" => "H3",
+                "Credit" => $credits,
+                "Cost" => $costoCredito,
+                "CostSubject" => $costoCredito ,
+            );
+            array_push($arrData, $arrRow23);
+        }
+
+        if (!is_null($dict['pes_mat_b2_h4_cod']) && trim($dict['pes_mat_b2_h4_cod']) != "") {
+            $modAsig = Asignatura::findOne(['asi_nombre' => trim($dict['pes_mat_b2_h4_nombre']), 'asi_estado_logico' => '1', 'asi_estado' => '1']);
+            $codeAsignatura = $credits = $costoCredito = "";
+            foreach($dataCredits as $key => $value){
+                if($value['Asignatura'] == trim($dict['pes_mat_b2_h4_nombre'])){
+                    $credits = $value['AsigCreditos'];
+                    $codeAsignatura = $value['MallaCodAsig'];
+                    $costoCredito = $value['CostoCredito'];
+                }
+            }
+            $arrRow24 = array(
+                "Subject" => trim($modAsig->asi_nombre),//trim($dict['pes_mat_b2_h4_nombre']),
+                "Code" => trim($dict['pes_mat_b2_h4_cod']),
+                "Block" => "B2",
+                "Hour" => "H4",
+                "Credit" => $credits,
+                "Cost" => $costoCredito,
+                "CostSubject" => $costoCredito ,
+            );
+            array_push($arrData, $arrRow24);
+        }
+
+        if (!is_null($dict['pes_mat_b2_h5_cod']) && trim($dict['pes_mat_b2_h5_cod']) != "") {
+            $modAsig = Asignatura::findOne(['asi_nombre' => trim($dict['pes_mat_b2_h5_nombre']), 'asi_estado_logico' => '1', 'asi_estado' => '1']);
+            $codeAsignatura = $credits = $costoCredito = "";
+            foreach($dataCredits as $key => $value){
+                if($value['Asignatura'] == trim($dict['pes_mat_b2_h5_nombre'])){
+                    $credits = $value['AsigCreditos'];
+                    $codeAsignatura = $value['MallaCodAsig'];
+                    $costoCredito = $value['CostoCredito'];
+                }
+            }
+            $arrRow25 = array(
+                "Subject" => trim($modAsig->asi_nombre),//trim($dict['pes_mat_b2_h5_nombre']),
+                "Code" => trim($dict['pes_mat_b2_h5_nombre']),
+                "Block" => "B2",
+                "Hour" => "H5",
+                "Credit" => $credits,
+                "Cost" => $costoCredito,
+                "CostSubject" => $costoCredito ,
+            );
+            array_push($arrData, $arrRow25);
+        }
+        return $arrData;
+    }
+
+
+/*    public function parseDataSubject($dict, $dataCredits = array())
     {
         $arrData = array();
 
@@ -761,10 +1026,11 @@ class Matriculacion extends \yii\db\ActiveRecord {
         }
         return $arrData;
     }
+
     
     /**
      * Function to get the id from planificacion_estudiante
-     * @author Emilio Moran <emiliojmp9@gmail.com>
+     * @author -
      * @param $per_id, $pla_id
      * @return $resultData
      */
@@ -779,7 +1045,8 @@ class Matriculacion extends \yii\db\ActiveRecord {
             WHERE pes.per_id=:per_id
             -- AND pes.pla_id=:pla_id
             AND pes.pes_estado=:estado
-            AND pes.pes_estado_logico=:estado;
+            AND pes.pes_estado_logico=:estado
+            ORDER BY pla_id desc;
         ";
 
         $comando = $con_academico->createCommand($sql);
@@ -793,7 +1060,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
 
     /**
      * Function to check if a exist a planificacion_estudianto in registro_online to /matriculacion/index without import the ron_estado_registro value
-     * @author Emilio Moran <emiliojmp9@gmail.com>
+     * @author -
      * @param $per_id, $pes_id
      * @return $resultData
      */
@@ -827,7 +1094,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
 
     /**
      * Function to check if a exist a planificacion_estudianto in registro_online to /matriculacion/register with ron_estado_registro equals 1
-     * @author Emilio Moran <emiliojmp9@gmail.com>
+     * @author -
      * @param $per_id, $pes_id
      * @return $resultData
      */
@@ -860,7 +1127,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
 
     /**
      * Function to check if a exist a planificacion_estudianto in registro_online to /matriculacion/register with ron_estado_registro equals 1
-     * @author Emilio Moran <emiliojmp9@gmail.com>
+     * @author -
      * @param $per_id, $pes_id
      * @return $resultData
      */
@@ -895,7 +1162,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
 
     /**
      * Function to get data student when exist a register into registro_online
-     * @author Emilio Moran <emiliojmp9@gmail.com>
+     * @author -
      * @param $ron_id
      * @return $resultData
      */
@@ -905,20 +1172,33 @@ class Matriculacion extends \yii\db\ActiveRecord {
         $con_academico = \Yii::$app->db_academico;
         $estado = 1;
         $sql = "
-            SELECT ron.ron_id, pla.pla_periodo_academico, pes.pes_nombres, pes.pes_dni, ron.ron_modalidad as mod_nombre, ron.ron_carrera as pes_carrera, per.per_celular, per.per_correo, est.est_categoria, est.est_matricula
-            FROM " . $con_academico->dbname . ".planificacion as pla,
-            " . $con_academico->dbname . ".planificacion_estudiante as pes,
-            " . $con_academico->dbname . ".estudiante as est,
-            " . $con_asgard->dbname . ".persona as per,
-            " . $con_academico->dbname . ".registro_online as ron
-            WHERE ron.pes_id = pes.pes_id
-            AND ron.per_id = per.per_id
-            AND pes.pla_id = pla.pla_id
-            AND ron.per_id =:per_id
+            SELECT distinct
+            ron.ron_id, 
+	    pla.paca_id,
+            pla.pla_periodo_academico, 
+            pes.pes_nombres, 
+            pes.pes_dni, 
+            mo.mod_nombre as mod_nombre, 
+            ea.eaca_nombre as pes_carrera,
+            ua.uaca_nombre as pes_unidad,  
+            per.per_celular, 
+            per.per_correo, 
+            est.est_categoria, 
+            est.est_matricula
+            FROM " . $con_academico->dbname . ".planificacion pla
+            inner join " . $con_academico->dbname . ".planificacion_estudiante pes on pla.pla_id =pes.pla_id
+            inner join " . $con_academico->dbname . ".estudiante est on est.per_id=pes.per_id
+            inner join " . $con_asgard->dbname . ".persona per on per.per_id=est.per_id
+            inner join " . $con_academico->dbname . ".registro_online ron on ron.per_id=pes.per_id
+            inner join " . $con_academico->dbname . ".modalidad mo on mo.mod_id=ron.ron_modalidad
+            inner join " . $con_academico->dbname . ".estudio_academico ea on ea.eaca_id= ron.ron_carrera
+            inner join " . $con_academico->dbname . ".modalidad_estudio_unidad  meu on ea.eaca_id= meu.eaca_id
+            inner join " . $con_academico->dbname . ".unidad_academica ua on ua.uaca_id= meu.uaca_id
+            WHERE ron.per_id =:per_id
             AND ron.pes_id =:pes_id
             AND ron.ron_estado =:estado
             AND ron.ron_estado_logico =:estado
-            ORDER BY ron.ron_id desc 
+            ORDER BY ron.ron_id desc;
         ";
 
         $comando = $con_academico->createCommand($sql);
@@ -936,25 +1216,25 @@ class Matriculacion extends \yii\db\ActiveRecord {
         $con_academico = \Yii::$app->db_academico;
         $estado = 1;
         $sql = "
-            SELECT 
-                pla.pla_periodo_academico, 
-                pes.pes_nombres, 
-                pes.pes_dni, 
-                ron.ron_num_orden,
-                ron.ron_modalidad as mod_nombre, 
-                ron.ron_carrera as pes_carrera, 
-                per.per_celular, 
-                per.per_correo,
-                est.est_matricula
+            SELECT pla.pla_periodo_academico, 
+            pes.pes_nombres, 
+            pes.pes_dni, 
+            mo.mod_nombre as mod_nombre, 
+            ea.eaca_nombre as pes_carrera,
+            per.per_celular,
+            per.per_correo, 
+            pes_jornada
             FROM " . $con_academico->dbname . ".planificacion as pla,
             " . $con_academico->dbname . ".planificacion_estudiante as pes,
             " . $con_asgard->dbname . ".persona as per,
-            " . $con_academico->dbname . ".estudiante as est,
-            " . $con_academico->dbname . ".registro_online as ron
+            " . $con_academico->dbname . ".registro_online as ron,
+            " . $con_academico->dbname . ".modalidad as mo,
+            " . $con_academico->dbname . ".estudio_academico as ea
             WHERE ron.pes_id = pes.pes_id
-            AND est.per_id = per.per_id
             AND ron.per_id = per.per_id
-            AND pes.pla_id = pla.pla_id            
+            AND pes.pla_id = pla.pla_id
+            AND mo.mod_id=ron.ron_modalidad
+            AND ea.eaca_id= ron.ron_carrera  
             AND ron.ron_id =:ron_id
             AND ron.ron_estado =:estado
             AND ron.ron_estado_logico =:estado
@@ -970,7 +1250,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
 
     /**
      * Function to get cost register when exist a register into registro_online
-     * @author Emilio Moran <emiliojmp9@gmail.com>
+     * @author -
      * @param $ron_id
      * @return $resultData['roc_costo']
      */
@@ -996,7 +1276,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
 
     /**
      * Function to get planification data when exist a register into registro_online
-     * @author Emilio Moran <emiliojmp9@gmail.com>
+     * @author -
      * @param $ron_id
      * @return $resultData
      */
@@ -1005,14 +1285,15 @@ class Matriculacion extends \yii\db\ActiveRecord {
         $con_academico = \Yii::$app->db_academico;
         $estado = 1;
         $sql = "
-            SELECT 
-                roi.roi_id, 
+            SELECT roi.roi_id, 
                 roi.roi_materia_nombre as Subject, 
                 roi_creditos as Credit, 
-                roi_materia_cod as CodeAsignatura, 
-                roi_costo as Price,
-                roi_hora as Hour,
-                roi_bloque as Block
+		roi.roi_materia_cod as Code,
+                roi.roi_materia_cod as CodeAsignatura, 
+		roi.roi_costo as Cost,
+                roi.roi_costo as Price,
+                roi.roi_hora as Hour,
+                roi.roi_bloque as Block
             FROM " . $con_academico->dbname . ".registro_online_item as roi
             WHERE ron_id =:ron_id
             AND roi_estado =:estado
@@ -1029,22 +1310,19 @@ class Matriculacion extends \yii\db\ActiveRecord {
 
     /**
      * Function to get the last registro_online to show in /matriculacion/registro when is non-registering time
-     * @author Emilio Moran <emiliojmp9@gmail.com>
+     * @author -
      * @param
      * @return $resultData
      */
-    public function getLastIdRegistroOnline($per_id)
+    public function getLastIdRegistroOnline($per_id = NULL)
     {
         $con_academico = \Yii::$app->db_academico;
         $estado = 1;
+        $per_id = (isset($per_id))?$per_id:(Yii::$app->session->get("PB_perid"));
         $sql = "
             SELECT ron.ron_id, ron.pes_id
-            FROM " . $con_academico->dbname . ".registro_online AS ron 
-            INNER JOIN " . $con_academico->dbname . ".planificacion_estudiante AS pes ON pes.pes_id = ron.pes_id
-            WHERE 
-            pes.per_id =:per_id AND 
-            ron.ron_estado_registro =:estado AND ron.ron_estado =:estado AND ron.ron_estado_logico =:estado
-            AND pes.pes_estado =:estado AND pes.pes_estado_logico =:estado
+            FROM " . $con_academico->dbname . ".registro_online as ron
+            WHERE ron.ron_estado_registro =:estado AND ron.per_id =:per_id 
             ORDER BY ron.ron_fecha_registro DESC;
         ";
 
@@ -1056,26 +1334,22 @@ class Matriculacion extends \yii\db\ActiveRecord {
         return $resultData;
     }
 
-    public static function getPlanificacionPago($mod_id)
+    public static function getPlanificacionPago($per_id)
     {
         $con_academico = \Yii::$app->db_academico;
         $estado = 1;
-        $sql = "SELECT pla.pla_id, pla.pla_periodo_academico, moda.mod_nombre /*, pes.pes_id */
-                       ,imu.ite_id
-                       ,(select ip.ipre_precio from db_facturacion.item_precio ip where ip.ite_id = imu.ite_id) as valor
-                  FROM " . $con_academico->dbname . ".planificacion as pla 
-         /* inner join " . $con_academico->dbname . ".planificacion_estudiante pes on pes.pla_id = pla.pla_id*/
-            inner join " . $con_academico->dbname . ".modalidad as moda on moda.mod_id = pla.mod_id
-            inner join db_facturacion.item_matricula_unidad as imu on imu.mod_id = pla.mod_id
-                 WHERE /* pes.per_id = :per_id
-                   AND */ pla.pla_estado =:estado
-                   and pla.mod_id = :mod_id
-                   AND pla.pla_estado_logico =:estado 
-                   and moda.mod_estado = :estado
-                   and moda.mod_estado_logico = :estado";
+        $sql = "SELECT pla.pla_id, pla.pla_periodo_academico, moda.mod_nombre, pes.pes_id
+            FROM " . $con_academico->dbname . ".planificacion as pla 
+                    inner join " . $con_academico->dbname . ".planificacion_estudiante pes on pes.pla_id = pla.pla_id
+                    inner join " . $con_academico->dbname . ".modalidad as moda on moda.mod_id = pla.mod_id
+            WHERE pes.per_id = :per_id
+            AND pla.pla_estado =:estado
+            AND pla.pla_estado_logico =:estado 
+            and moda.mod_estado = :estado
+            and moda.mod_estado_logico = :estado";
                 
         $comando = $con_academico->createCommand($sql);
-        $comando->bindParam(":mod_id", $mod_id, \PDO::PARAM_INT);
+        $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
         $resultData = $comando->queryOne();
 
@@ -1108,7 +1382,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
                     rpm.rpm_archivo AS Archivo,
                     rpm.rpm_estado_aprobacion AS EstadoAprobacion
             from " . $con_academico->dbname . ".registro_online as ron
-                 INNER JOIN " . $con_academico->dbname . ".registro_pago_matricula rpm  ON rpm.per_id = ron.per_id
+                 INNER JOIN " . $con_academico->dbname . ".registro_pago_matricula rpm  ON rpm.per_id = ron.per_id and ron.ron_id = rpm.ron_id
                  INNER JOIN " . $con_academico->dbname . ".planificacion pla ON pla.pla_id = rpm.pla_id
                  INNER JOIN " . $con_academico->dbname . ".planificacion_estudiante pes ON pes.per_id =  ron.per_id
             WHERE pla.pla_estado =:estado

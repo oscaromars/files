@@ -384,6 +384,31 @@ class CabeceraAsistencia extends \yii\db\ActiveRecord
         return $res;
     }//function getAsistencia
 
+    /**
+     * Function consulta detalle_asistencia
+     * @author Julio Lopez <analistadesarrollo01@uteg.edu.ec>;
+     * @param
+     * @return
+     */
+    public function selectDetalleAsistencia($casi_id) {
+        $con = \Yii::$app->db_academico;
+        $estado = 1;
+
+        $sql = "SELECT d.dasi_id
+            FROM " . $con->dbname . ".detalle_asistencia d
+            WHERE d.casi_id = :casi_id
+            AND d.dasi_estado = :estado  
+            AND d.dasi_estado_logico = :estado"; 
+
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_INT);
+        $comando->bindParam(":casi_id", $casi_id, \PDO::PARAM_INT);        
+        $resultData = $comando->queryAll();
+        return $resultData;
+    }
+
+    /**
+
 
   /**
      * Actualizar registro en la tabla detalle_calificacion

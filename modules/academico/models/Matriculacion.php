@@ -1574,7 +1574,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
         $sql = " SELECT cfca.cfca_numero_documento
                  FROM  db_academico.cuotas_facturacion_cartera as cfca
                 INNER JOIN db_facturacion.carga_cartera as ccar ON ccar.ccar_numero_documento = cfca.cfca_numero_documento
-                WHERE cfca.rama_id = :rama_id and
+                WHERE cfca.cfca_rama_id = :rama_id and
                       cfca.cfca_estado = :estado and 
                       cfca.cfca_estado_logico = :estado and
                       ccar.ccar_estado = :estado and 

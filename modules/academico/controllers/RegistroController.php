@@ -2412,6 +2412,10 @@ class RegistroController extends \app\components\CController {
 
             $pla_id = $datos_planficacion[0]['pla_id'];
             $pes_id = $datos_planficacion[0]['pes_id'];
+
+             \app\models\Utilities::putMessageLogFile(' $datos_planficacion[0][pla_id]; '. $datos_planficacion[0]['pla_id']);
+
+
             $data_student = $matriculacion_model->getDataStudent($per_id, $pla_id, $pes_id);
             $direccion = $modelPersona[0]['per_domicilio_cpri'];
             $matricula = $modelEstudiante[0]['est_matricula'];

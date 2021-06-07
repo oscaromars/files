@@ -46,7 +46,7 @@ if ($model->paca_id == null) {//Ingresa un nuevo
     $form->field($model, 'saca_id')->widget(Select2::classname(), [
         'data' => ArrayHelper::map(SemestreAcademico::find()->all(), 'saca_id', 'saca_nombre', 'saca_anio'),
         'size' => Select2::MEDIUM,
-        'options' => ['placeholder' => 'Seleccione  Semestre Academico ...', 'multiple' => false],
+        'options' => ['placeholder' => 'Seleccione  Semestre Académico ...', 'multiple' => false],
         'pluginOptions' => [
             'allowClear' => true,
             'width' => '295px',
@@ -57,17 +57,22 @@ if ($model->paca_id == null) {//Ingresa un nuevo
     $form->field($model, 'baca_id')->widget(Select2::classname(), [
         'data' => ArrayHelper::map(BloqueAcademico::find()->all(), 'baca_id', 'baca_descripcion', 'baca_anio', 'baca_nombre'),
         'size' => Select2::MEDIUM,
-        'options' => ['placeholder' => 'Seleccione Bloque Academico ...', 'multiple' => false],
+        'options' => ['placeholder' => 'Seleccione Bloque Académico ...', 'multiple' => false],
         'pluginOptions' => [
             'allowClear' => true,
             'width' => '295px',
         ],
     ]);
     ?>
+    
+    
+     <?= $form->field($model, 'paca_semanas_periodo')->textInput(['maxlength' => true, 'style' => 'width:300px']) ?>
+    
+    
          
             <?=
-            $form->field($model, 'paca_estado')->widget(Select2::classname(), [
-                'data' => ['1' => "Activo", '0' => "Inactivo"],
+            $form->field($model, 'paca_activo')->widget(Select2::classname(), [
+                'data' => ['A' => "Activo", 'I' => "Inactivo"],
                 'size' => Select2::MEDIUM,
                 'options' => ['placeholder' => 'Seleccione Estado ...', 'multiple' => false],
                 'pluginOptions' => [

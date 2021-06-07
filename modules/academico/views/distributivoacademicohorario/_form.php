@@ -59,7 +59,7 @@ if ($model->daho_id == null) {//Ingresa un nuevo
             $form->field($model, 'uaca_id')->widget(Select2::classname(), [
                 'data' => ArrayHelper::map(UnidadAcademica::find()->all(), 'uaca_id', 'uaca_nombre'),
                 'size' => Select2::MEDIUM,
-                'options' => ['placeholder' => 'Seleccione  Unidad Academica ...', 'multiple' => false],
+                'options' => ['placeholder' => 'Seleccione  Unidad Académica ...', 'multiple' => false],
                 'pluginOptions' => [
                     'allowClear' => true,
                     'width' => '295px',
@@ -74,7 +74,7 @@ if ($model->daho_id == null) {//Ingresa un nuevo
             $form->field($model, 'eaca_id')->widget(Select2::classname(), [
                 'data' => ArrayHelper::map(EstudioAcademico::find()->all(), 'eaca_id', 'eaca_descripcion'),
                 'size' => Select2::MEDIUM,
-                'options' => ['placeholder' => 'Seleccione Estudio Academico ...', 'multiple' => false],
+                'options' => ['placeholder' => 'Seleccione Estudio Académico ...', 'multiple' => false],
                 'pluginOptions' => [
                     'allowClear' => true,
                     'width' => '295px',
@@ -114,6 +114,10 @@ if ($model->daho_id == null) {//Ingresa un nuevo
         
         <div class="col-md-6">
             <?= $form->field($model, 'daho_horario')->textInput(['style' => 'width:300px']) ?>
+
+        </div>
+        <div class="col-md-6">
+            <?= $form->field($model, 'daho_total_horas')->textInput(['style' => 'width:300px']) ?>
 
         </div>
         <div class="form-group">

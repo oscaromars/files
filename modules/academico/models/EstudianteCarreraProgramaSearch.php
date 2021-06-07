@@ -172,7 +172,7 @@ class EstudianteCarreraProgramaSearch extends EstudianteCarreraPrograma {
                 $sql = $sql . " and est.est_id =" . $params['est_id'];
             }
 
-        }*/
+        }
         Utilities::putMessageLogFile('sql:' . $sql);
         $comando = $con_academico->createCommand($sql);
         $res = $comando->queryAll();

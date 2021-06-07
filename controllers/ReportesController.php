@@ -3,6 +3,7 @@
 namespace app\controllers;
 use app\modules\academico\models\DistributivoAcademicoSearch;
 use app\modules\academico\models\PlanificacionEstudianteSearch;
+use app\modules\academico\models\EstudianteCarreraProgramaSearch;
 use Yii;
 use app\components\CController;
 use app\models\Grupo;
@@ -453,11 +454,13 @@ class ReportesController extends CController {
     }
 
     public function actionReportepromedios() { 
-        $searchModel = new PLanificacionEstudianteSearch();
+        //$searchModel = new PLanificacionEstudianteSearch();
+        $searchModel = new EstudianteCarreraProgramaSearch();
         //$mod_estudiante = new EstudianteCarreraProgramaSearch();
         //$estudiante = $mod_estudiante->getEstudiantesporpersona();
         $params = Yii::$app->request->queryParams;
-        $dataProvider = $searchModel->getListadoPromedios($params,false,1);
+        //$dataProvider = $searchModel->getListadoPromedios($params,false,1);
+        $dataProvider = $searchModel->getListadoReportepromedio($params,false,1);
 
         //$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         return $this->render('reportepromedios', [

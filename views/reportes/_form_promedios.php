@@ -39,8 +39,8 @@ $var = ArrayHelper::map(app\modules\academico\models\Estudiante::find()->where([
         <?=
         //$mod_estudiante = new EstudianteCarreraProgramaSearch();
         //$estudiante = $mod_estudiante->getEstudiantesporpersona();
-        $form->field($model, 'per_id')->label('Estudiante:')->widget(Select2::classname(), [
-            'data' => ArrayHelper::map(app\modules\academico\models\Estudiante::find()->where(['est_estado_logico' => '1','est_estado' => '1'])->all(), 'per_id','per_pri_apellido', 'per_seg_apellido'),
+        $form->field($model, 'est_id')->label('Estudiante:')->widget(Select2::classname(), [
+            'data' => ArrayHelper::map(app\modules\academico\models\Estudiante::find()->where(['est_estado_logico' => '1','est_estado' => '1'])->all(), 'est_id','per_pri_apellido', 'per_seg_apellido'),
             //'data' => $var,
             'size' => Select2::MEDIUM,
             'options' => ['placeholder' => 'Seleccione el Estudiante...', 'multiple' => false],

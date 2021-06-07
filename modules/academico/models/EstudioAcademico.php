@@ -63,7 +63,7 @@ class EstudioAcademico extends \app\modules\admision\components\CActiveRecord {
     public function attributeLabels() {
         return [
             'eaca_id' => 'Eaca ID',
-            'teac_id' => 'Tipo de Estudio Academico',
+            'teac_id' => 'Tipo de Estudio Académico',
             'eaca_nombre' => 'Nombre',
             'eaca_descripcion' => 'Descripción',
             'eaca_alias' => 'Alias',

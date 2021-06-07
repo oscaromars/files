@@ -201,4 +201,16 @@
         echo '</tbody> </table>';
         ?><br><br>
     </div>
+
+    <p>Cláusulas:</p> 
+        <ul>
+            <li>Esta pre-inscripción está sujeta de acuerdo a la disponibilidad de cupos en las materias seleccionadas, en caso de solicitar activación deberá comunicarse con la secretaria de su Facultad.</li>
+            <li>Los valores correspondientes a cada mensualidad deberán cancelarse en las fechas establecidas.</li>
+            <li>Todos los pagos deben realizarse directamente en las cuentas institucionales indicadas por la UTEG</li>
+            <li>El comprobante de depósito deberá ser enviado al correo de colecturia@uteg.edu.ec dentro de las 24 horas posteriores para su registro en sistema y emisión de la factura correspondiente.</li>
+            <li>El estudiante acepta acoger las disposiciones académicas y reglamentarias de la Universidad Tecnológica Empresarial de Guayaquil.</li>
+            <li>La confirmación mediante correo electrónico por parte del Estudiante constituye la aceptación de la hoja de inscripción.</li>
+        </ul>
+    <hr>
+    <p>Compromiso de Pago - Crédito Universitario Directo</p>
 </div>

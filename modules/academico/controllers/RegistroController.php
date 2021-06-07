@@ -2414,6 +2414,8 @@ class RegistroController extends \app\components\CController {
 
             $pla_id = $datos_planficacion['pla_id'];
             $pes_id = $datos_planficacion['pes_id'];
+    \app\models\Utilities::putMessageLogFile(' pla_id: ' . $pla_id);
+    \app\models\Utilities::putMessageLogFile(' pes_id: ' . $pes_id);
 
     \app\models\Utilities::putMessageLogFile(' $datos_planficacion[0][pla_id]: '. $datos_planficacion['pla_id']);
 
@@ -2434,7 +2436,7 @@ class RegistroController extends \app\components\CController {
             $registro_pago_matricula = new RegistroPagoMatricula();
             $cant_cuota = $registro_pago_matricula->getCuotasPeriodo($rama_id);
             $ccar_numero_documento = $matriculacion_model->getNumeroDocumentoRegistroOnline($rama_id);
-            $est_id = $modelEstudiante[0]['est_id'];
+            $est_id = $modelEstudiante['est_id'];
             $detallePagos = $matriculacion_model->getDetalleCuotasRegistroOnline($ccar_numero_documento, $est_id);
 
             //Valores de registro online

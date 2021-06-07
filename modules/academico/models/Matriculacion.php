@@ -1570,7 +1570,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
     public function getNumeroDocumentoRegistroOnline($rama_id)
     {
         $estado = 1;
-        $sql = "SELECT cfca.cfca_numero_documento
+        $sql = " SELECT cfca.cfca_numero_documento
                  FROM  db_academico.cuotas_facturacion_cartera as cfca
                 INNER JOIN db_facturacion.carga_cartera as ccar ON ccar.ccar_numero_documento = cfca.cfca_numero_documento
                 WHERE cfca.rama_id = :rama_id and

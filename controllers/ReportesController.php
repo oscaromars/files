@@ -2,7 +2,7 @@
 
 namespace app\controllers;
 use app\modules\academico\models\DistributivoAcademicoSearch;
-use app\modules\academico\models\EstudianteCarreraProgramaSearch;
+use app\modules\academico\models\PlanificacionEstudianteSearch;
 use Yii;
 use app\components\CController;
 use app\models\Grupo;
@@ -313,8 +313,7 @@ class ReportesController extends CController {
         return $this->render('reportdistributivo', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
-        ]);
-         
+        ]);  
     }
     
      public function actionReportemateriasnoasignadas() {
@@ -454,11 +453,15 @@ class ReportesController extends CController {
     }
 
     public function actionReportepromedios() { 
-        $searchModel = new EstudianteCarreraProgramaSearch();
-        //$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $searchModel = new PLanificacionEstudianteSearch();
+        //$mod_estudiante = new EstudianteCarreraProgramaSearch();
+        //$estudiante = $mod_estudiante->getEstudiantesporpersona();
         $params = Yii::$app->request->queryParams;
-        $dataProvider = $searchModel->getListadoReportepromedio($params,false,1);
+        $dataProvider = $searchModel->getListadoPromedios($params,false,1);
+
+        //$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         return $this->render('reportepromedios', [
+            //'estudiante' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $estudiante), "id", "name"),
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);       

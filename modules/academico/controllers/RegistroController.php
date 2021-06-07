@@ -2410,18 +2410,18 @@ class RegistroController extends \app\components\CController {
 
             /*Cabecera*/
             $datos_planficacion = $matriculacion_model->getDataPlanStudent($per_id);
-    \app\models\Utilities::putMessageLogFile('datos_planficacion '.$datos_planficacion);
+    // \app\models\Utilities::putMessageLogFile('datos_planficacion '.$datos_planficacion);
 
-            $pla_id = $datos_planficacion[0]['pla_id'];
-            $pes_id = $datos_planficacion[0]['pes_id'];
+            $pla_id = $datos_planficacion['pla_id'];
+            $pes_id = $datos_planficacion['pes_id'];
 
-    \app\models\Utilities::putMessageLogFile(' $datos_planficacion[0][pla_id]: '. $datos_planficacion[0]['pla_id']);
+    \app\models\Utilities::putMessageLogFile(' $datos_planficacion[0][pla_id]: '. $datos_planficacion['pla_id']);
 
 
             $data_student = $matriculacion_model->getDataStudent($per_id, $pla_id, $pes_id);
-            $direccion = $modelPersona[0]['per_domicilio_cpri'];
-            $matricula = $modelEstudiante[0]['est_matricula'];
-    \app\models\Utilities::putMessageLogFile(' $data_student[0][pla_id]: ' .$data_student[0]['pes_nombres']);
+            $direccion = $modelPersona['per_domicilio_cpri'];
+            $matricula = $modelEstudiante['est_matricula'];
+    \app\models\Utilities::putMessageLogFile(' $data_student[0][pla_id]: ' .$data_student['pes_nombres']);
     \app\models\Utilities::putMessageLogFile(' direccion: ' . $direccion);
     \app\models\Utilities::putMessageLogFile(' $matricula:' .$matricula);
 

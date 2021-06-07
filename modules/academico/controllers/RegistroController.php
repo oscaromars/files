@@ -45,7 +45,7 @@ Academico::registerTranslations();
 
 
 class RegistroController extends \app\components\CController {
-
+    public $pdf_cla_acceso = "";
      public function init() {
         if (!is_dir(Yii::getAlias('@bower')))
             Yii::setAlias('@bower', '@vendor/bower-asset');
@@ -2429,7 +2429,8 @@ class RegistroController extends \app\components\CController {
 
             /*Detalle de materias*/
             $matriculacion_model = new Matriculacion();
-            $ron_id = $matriculacion_model->getDataStudenFromRegistroOnline($per_id, $pes_id);
+            $resp_ron_id = $matriculacion_model->getDataStudenFromRegistroOnline($per_id, $pes_id);
+            $ron_id = $resp_ron_id['ron_id'];
             $dataPlanificacion = $matriculacion_model->getPlanificationFromRegistroOnline($ron_id);
 
             /*Detalles de pagos */
@@ -2448,7 +2449,7 @@ class RegistroController extends \app\components\CController {
             setlocale(LC_TIME, 'es_CO.UTF-8');
 
             //$cabFact['FechaDia'] = strftime("%A %d de %B %G", strtotime(date("d-m-Y")));   
-            $this->pdf_cla_acceso = $ids;
+            //$this->pdf_cla_acceso = $ids;
             $rep->orientation = "P"; // tipo de orientacion L => Horizontal, P => Vertical   
             $rep->createReportPdf(
                     $this->render('@modules/academico/views/tpl_registropagomatricula/registro', [

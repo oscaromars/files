@@ -1447,57 +1447,165 @@ class MatriculacionController extends \app\components\CController {
         $usu_id = Yii::$app->session->get("PB_iduser");
         $fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
 
+        $materias = ["Actualidad Económica","Planeación y Dirección Estratégica","Investigación de Operaciones", "Derecho Financiero y Tributario"];
+
         if (Yii::$app->request->isAjax) {
+            // \app\models\Utilities::putMessageLogFile("AJAX");
             $data = Yii::$app->request->post();
 
             $materias = explode(",", $data['seleccionados']);
 
-            $matriculacion_model = new Matriculacion();
+            // \app\models\Utilities::putMessageLogFile($materias);
+        }
 
-            $ron = RegistroOnline::find()->where(['per_id' => $per_id])->asArray()->one();
+        $matriculacion_model = new Matriculacion();
 
-            $today = date("Y-m-d H:i:s");
-            $result_process = $matriculacion_model->checkToday($today);
-            $pla_id = $result_process[0]['pla_id'];
+        $ron = RegistroOnline::find()->where(['per_id' => $per_id])->asArray()->one();
 
-            $dataPlanificacion = $matriculacion_model->getAllDataPlanificacionEstudiante($per_id, $pla_id);
-            $dataPlanificacionCostos = $matriculacion_model->getPlanificationFromRegistroOnline($ron['ron_id']);
+        $today = date("Y-m-d H:i:s");
+        $result_process = $matriculacion_model->checkToday($today);
+        $pla_id = $result_process[0]['pla_id'];
 
-            // $roi = RegistroOnlineItem::find()->where(['ron_id' => $ron['ron_id'], 'roi_estado' => 1, 'roi_estado_logico' => 1])->asArray()->all();
-            $valor_total = 0;
+        $dataPlanificacion = $matriculacion_model->getAllDataPlanificacionEstudiante($per_id, $pla_id);
 
-            // Colocar sólo aquellas materias seleccionadas
-            $roi_arr = [];
+        // $roi = RegistroOnlineItem::find()->where(['ron_id' => $ron['ron_id'], 'roi_estado' => 1, 'roi_estado_logico' => 1])->asArray()->all();
+        $valor_total = 0;
 
-            for ($i = 0; $i < count($dataPlanificacion); $i++) { 
-                if(in_array($dataPlanificacion[$i]['Subject'], $materias)){
-                    $dataPlanificacion[$i]['Cost'] = $dataPlanificacionCostos[$i]['Cost'];
-                    $roi_arr[] = $dataPlanificacion[$i];
-                    $valor_total += $dataPlanificacionCostos[$i]['Cost'];
+        // Colocar sólo aquellas materias seleccionadas
+        $materias_data_arr = [];
+
+        for ($i = 0; $i < count($dataPlanificacion); $i++) {
+            if(in_array($dataPlanificacion[$i]['Subject'], $materias)){
+                $valor = number_format($dataPlanificacion[$i]['Cost']*$dataPlanificacion[$i]['Credit'],2 );
+                $dataPlanificacion[$i]['Cost'] = $valor;
+                $materias_data_arr[] = $dataPlanificacion[$i];
+                $valor_total += $dataPlanificacion[$i]['Cost'];
+            }
+        }
+
+        $data_student = $matriculacion_model->getDataStudenFromRegistroOnline($per_id, $ron['pes_id']);
+        $persona = Persona::find()->where(['per_id' => $per_id])->asArray()->one();
+
+        $periodo = (new PeriodoAcademico())->consultarPeriodo($data_student['paca_id'], true)[0];
+        $tipo_semestre = 0;
+        $cuotas = 0;
+
+        // Calcular cuál semestre es
+        if($periodo['saca_nombre'] == "Abril - Agosto"){ // Inicio del semestre
+            $tempBlock = []; // Colocar todos los bloques en un arreglo aparte
+            foreach ($materias_data_arr as $key => $value) {
+                $tempBlock[] = $value['Block'];
+            }
+
+            $bloque = $tempBlock[0]; // Tomar el primer bloque
+            $cuotas = 3; // Empezar con 3 cuotas
+
+            foreach ($tempBlock as $key => $value) { // recorrer la lista de bloques
+                if($value != $bloque){ // Si uno de ellos es diferente, quiere decir que hay más de un bloque
+                    $cuotas = 6; // Así que las cuotas son 6
+                    break; // Salir del foreach
+                }
+                // Si nunca entra al condicional, quiere decir que todas las materias son del mismo bloque
+            }
+        }
+        else if(str_contains($periodo['saca_nombre'], '(Intensivo)')){ // Instensivo
+            $tempBlock = [];
+            foreach ($materias_data_arr as $key => $value) {
+                $tempBlock[] = $value['Block'];
+            }
+
+            $bloque = $tempBlock[0]; // Tomar el primer bloque
+            $cuotas = 0; // Poner las cuotas como 0 para comparar luego
+            foreach ($tempBlock as $key => $value) { // recorrer la lista de bloques
+                if($value != $bloque){ // Si uno de ellos es diferente, quiere decir que hay más de un bloque
+                    $cuotas = 5; // Así que las cuotas son 5
+                    break; // Salir del foreach
+                }
+                // Si nunca entra al condicional, quiere decir que todas las materias son del mismo bloque
+            }
+
+            // Si luego del foreach las cuotas son 0 aún, el arreglo contiene sólo 1 bloque
+            if($cuotas == 0){
+                if($bloque == "B1"){ // Si el bloque es B1
+                    $cuotas = 2; // Son 2 cuotas
+                }
+                else{ // Si no, el bloque es B2
+                    $cuotas = 3; // Y las cuotas son 3
                 }
             }
-
-            $data_student = $matriculacion_model->getDataStudenFromRegistroOnline($per_id, $ron['pes_id']);
-            $persona = Persona::find()->where(['per_id' => $per_id])->asArray()->one();
-
-            $periodo = (new PeriodoAcademico())->consultarPeriodo($data_student['paca_id'], true)[0];
-            $tipo_semestre = 0;
-
-            // Calcular cuál semestre es
-            if($periodo['saca_nombre'] == "Abril - Agosto"){ // Inicio del semestre
-                $tipo_semestre = 1;
-            }
-            else if(str_contains($periodo['saca_nombre'], '(Intensivo)')){ // Instensivo
-                $tipo_semestre = 2;
-            }
-            else{ // Segundo Bloque
-                $tipo_semestre = 3;
-            }
-
-
-
-
         }
+        else{ // Segundo Bloque
+            $cuotas = 3;
+        }
+
+        \app\models\Utilities::putMessageLogFile($cuotas);
+
+        $valor_unitario = $valor_total / $cuotas;
+        $porcentaje = $valor_unitario / $valor_total * 100;
+
+        $porc_mayor = round($porcentaje, 2);
+        $por_menor = 100 - ($porc_mayor * ($cuotas - 1));
+
+        $arr_pagos = [];
+        for ($i=0; $i < $cuotas; $i++) { 
+            if($i == 0){
+                $arr_pagos[] = [
+                                    "0" => "PAGO N° " . strval($i + 1), 
+                                    "1" => null, 
+                                    "2" => strval($por_menor) . "%",
+                                    "3" => round($valor_total * $por_menor / 100, 2)
+                                ];
+            }
+            else{
+                $arr_pagos[] = [
+                                    "0" => "PAGO N° " . strval($i + 1), 
+                                    "1" => null, 
+                                    "2" => strval($porc_mayor) . "%",
+                                    "3" => round($valor_total * $porc_mayor / 100, 2)
+                                ];
+            }
+        }
+
+        $matDataProvider = new ArrayDataProvider([
+            'key' => '',
+            'allModels' => $materias_data_arr,
+            'pagination' => [
+                'pageSize' => Yii::$app->params["pageSize"],
+            ],
+            'sort' => [
+                'attributes' => [],
+            ],
+        ]);
+
+        $pagosDataProvider = new ArrayDataProvider([
+            'key' => '',
+            'allModels' => $arr_pagos,
+            'pagination' => [
+                'pageSize' => Yii::$app->params["pageSize"],
+            ],
+            'sort' => [
+                'attributes' => [],
+            ],
+        ]); 
+
+        /*\app\models\Utilities::putMessageLogFile($data_student);
+        \app\models\Utilities::putMessageLogFile($persona);
+        \app\models\Utilities::putMessageLogFile($materias_data_arr);
+        \app\models\Utilities::putMessageLogFile("valor_total: " . $valor_total);
+        \app\models\Utilities::putMessageLogFile($cuotas);
+        \app\models\Utilities::putMessageLogFile($valor_unitario);
+        \app\models\Utilities::putMessageLogFile($porcentaje);
+        \app\models\Utilities::putMessageLogFile($arr_pagos);*/
+
+        // return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $data_student);
+
+        return $this->render('registrodetalle', [
+            "data_student" => $data_student,
+            "persona" => $persona,
+            "valor_total" => $valor_total,
+            "matDataProvider" => $matDataProvider,
+            "pagosDataProvider" => $pagosDataProvider
+        ]);
     }
 
 }

@@ -100,17 +100,17 @@ PbGridView::widget([
                     $perInt=null;       
                     if ($model["Estado"] != "2" && $model["Estado"] != "1" && $esEstu == TRUE) {                    
                         if($model['Aprobacion'] == "2")
-                            return Html::a('<span class="glyphicon glyphicon-usd"></span>', Url::to(['registro/new', 'id' => $model['per_id'], 'rama_id' => $model['rama_id'],'costo' => $model['Costo'],'periodo' => $perInt?1:0,]), ["data-toggle" => "tooltip", "title" => academico::t("registro", "To Pay"), "data-pjax" => 0]);
+                            return Html::a('<span class="glyphicon glyphicon-usd"></span>', Url::to(['registro/new', 'id' => $model['per_id'], 'rama_id' => $model['rama_id'],'costo' => $model['Costo'],'periodo' => $perInt?1:0,'pla_id'=>$model['pla_id']]), ["data-toggle" => "tooltip", "title" => academico::t("registro", "To Pay"), "data-pjax" => 0]);
                         else
                            if ($model['Cant'] > 0)
-                            return Html::a('<span class="glyphicon glyphicon-usd"></span>', Url::to(['registro/new', 'id' => $model['per_id'], 'rama_id' => $model['rama_id'], 'costo' => $model['Costo'],'periodo' => $perInt?1:0,]), ["data-toggle" => "tooltip", "title" => academico::t("registro", "To Pay"), "data-pjax" => 0]);
+                            return Html::a('<span class="glyphicon glyphicon-usd"></span>', Url::to(['registro/new', 'id' => $model['per_id'], 'rama_id' => $model['rama_id'], 'costo' => $model['Costo'],'periodo' => $perInt?1:0,'pla_id'=>$model['pla_id']]), ["data-toggle" => "tooltip", "title" => academico::t("registro", "To Pay"), "data-pjax" => 0]);
                     } else {
-                        return Html::a('<span class="' . Utilities::getIcon('view') . '"></span>', Url::to(['registro/view', 'id' => $model['Id'], 'rama_id' => $model['rama_id'],'periodo' => $perInt?1:0,]), ["data-toggle" => "tooltip", "title" => Yii::t("accion", "View"), "data-pjax" => 0]);
+                        return Html::a('<span class="' . Utilities::getIcon('view') . '"></span>', Url::to(['registro/view', 'id' => $model['Id'], 'rama_id' => $model['rama_id'],'periodo' => $perInt?1:0,'pla_id'=>$model['pla_id']]), ["data-toggle" => "tooltip", "title" => Yii::t("accion", "View"), "data-pjax" => 0]);
                     }
                 },
                 'download' => function ($url, $model) {
                     //if ($model['perfil'] == 1 ) {// Procesado
-                        return Html::a('<span class="glyphicon glyphicon-download"></span>', Url::to(['/academico/registro/hoja_inscripcionUteg', 'ids' => $model['per_id'], 'rama_id' => $model['rama_id'] ]), ["data-toggle" => "tooltip", "title" => "Descargar Hoja de Inscripción", "data-pjax" => "0"]);
+                        return Html::a('<span class="glyphicon glyphicon-download"></span>', Url::to(['/academico/registro/hoja_inscripcionUteg', 'ids' => $model['per_id'], 'rama_id' => $model['rama_id']]), ["data-toggle" => "tooltip", "title" => "Descargar Hoja de Inscripción", "data-pjax" => "0"]);
                     //}
                 },
             ],

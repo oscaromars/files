@@ -2405,6 +2405,8 @@ class RegistroController extends \app\components\CController {
             $modelEstudiante = Estudiante::findOne($per_id);
 
     \app\models\Utilities::putMessageLogFile('actionInscripcionpdf ');
+        \app\models\Utilities::putMessageLogFile(' per_id: ' . $per_id);
+        \app\models\Utilities::putMessageLogFile(' rama_id: ' . $rama_id);
 
             /*Cabecera*/
             $datos_planficacion = $matriculacion_model->getDataPlanStudent($per_id);
@@ -2413,12 +2415,15 @@ class RegistroController extends \app\components\CController {
             $pla_id = $datos_planficacion[0]['pla_id'];
             $pes_id = $datos_planficacion[0]['pes_id'];
 
-             \app\models\Utilities::putMessageLogFile(' $datos_planficacion[0][pla_id]; '. $datos_planficacion[0]['pla_id']);
+    \app\models\Utilities::putMessageLogFile(' $datos_planficacion[0][pla_id]: '. $datos_planficacion[0]['pla_id']);
 
 
             $data_student = $matriculacion_model->getDataStudent($per_id, $pla_id, $pes_id);
             $direccion = $modelPersona[0]['per_domicilio_cpri'];
             $matricula = $modelEstudiante[0]['est_matricula'];
+    \app\models\Utilities::putMessageLogFile(' $data_student[0][pla_id]: ' .$data_student[0]['pes_nombres']);
+    \app\models\Utilities::putMessageLogFile(' direccion: ' . $direccion);
+    \app\models\Utilities::putMessageLogFile(' $matricula:' .$matricula);
 
             /*Detalle de materias*/
             $matriculacion_model = new Matriculacion();
@@ -2426,7 +2431,8 @@ class RegistroController extends \app\components\CController {
             $dataPlanificacion = $matriculacion_model->getPlanificationFromRegistroOnline($ron_id);
 
             /*Detalles de pagos */
-            $cant_cuota = 6;
+            $registro_pago_matricula = new RegistroPagoMatricula();
+            $cant_cuota = $registro_pago_matricula->getCuotasPeriodo($rama_id);
             $ccar_numero_documento = $matriculacion_model->getNumeroDocumentoRegistroOnline($rama_id);
             $est_id = $modelEstudiante[0]['est_id'];
             $detallePagos = $matriculacion_model->getDetalleCuotasRegistroOnline($ccar_numero_documento, $est_id);

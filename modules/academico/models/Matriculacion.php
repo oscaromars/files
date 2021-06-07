@@ -1487,6 +1487,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
         $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_INT);
         $resultData = $comando->queryOne();
+        \app\models\Utilities::putMessageLogFile('getDataPlanStudent: '.$comando->getRawSql());
 
         return $resultData;
     }

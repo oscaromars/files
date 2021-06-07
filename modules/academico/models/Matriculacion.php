@@ -1446,11 +1446,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
 
     public function getDetalleCuotasRegistroOnline($ccar_numero_documento, $est_id)
     {
-        //$con_academico = \Yii::$app->db_academico;
-        //$con_asgard = \Yii::$app->db_asgard;
         $estado = 1;
-        //
-
         $sql = "SELECT 
                     substring(c.ccar_num_cuota,2,1) as NO,
                     
@@ -1480,7 +1476,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
         return $resultData;
     }
 
-        /**
+    /**
      * Function to get data student from registro_online
      * @author Julio Lopez
      * @param $per_id
@@ -1509,5 +1505,31 @@ class Matriculacion extends \yii\db\ActiveRecord {
     }
 
 
+    /**
+     * Function to get data student from cuotas_facturacion_cartera
+     * @author Julio Lopez
+     * @param $rama_id
+     * @return $resultData
+     */
+
+    public function getNumeroDocumentoRegistroOnline($rama_id)
+    {
+        $estado = 1;
+        $sql = "SELECT cfca.cfca_numero_documento
+                 FROM  db_academico.cuotas_facturacion_cartera as cfca
+                INNER JOIN db_facturacion.carga_cartera as ccar ON ccar.ccar_numero_documento = cfca.cfca_numero_documento
+                WHERE cfca.rama_id = :rama_id and
+                      cfca.cfca_estado = :estado and 
+                      cfca.cfca_estado_logico = :estado and
+                      ccar.ccar_estado = :estado and 
+                      ccar.ccar_estado_logico = :estado ";
+
+        $comando = $con_academico->createCommand($sql);
+        $comando->bindParam(":rama_id", $rama_id, \PDO::PARAM_INT);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_INT);
+        $resultData = $comando->queryOne();
+
+        return $resultData;
+    }
 
 }

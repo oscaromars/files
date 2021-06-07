@@ -2400,7 +2400,7 @@ class RegistroController extends \app\components\CController {
 
             /*Detalles de pagos */
             $cant_cuota = 6;
-            $ccar_numero_documento = '00000282';
+            $ccar_numero_documento = $matriculacion_model->getNumeroDocumentoRegistroOnline($rama_id);
             $est_id = $modelEstudiante[0]['est_id'];
             $detallePagos = $matriculacion_model->getDetalleCuotasRegistroOnline($ccar_numero_documento, $est_id);
 

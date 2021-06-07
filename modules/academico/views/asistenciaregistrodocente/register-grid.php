@@ -1,4 +1,4 @@
-<?php
+ <?php
 
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -56,12 +56,13 @@ academico::registerTranslations();
                 <tr>
                     <th>U1</th>
                     <th>U2</th>
-                    <th>U1</th>
-                    <th>U2</th>
+                    <th>U3</th>
+                    <th>U4</th>
                     <th>paca_id</th>
                     <th>est_id</th>
                     <th>pro_id</th>
                     <th>asi_id</th>
+                     <th>uaca_id</th>
                 </tr>
                 <!--tr>
                     <th class='no-sort'><i class='fa fa-clone' aria-hidden='true'></i></th>
@@ -140,7 +141,7 @@ academico::registerTranslations();
                 { targets: "no-sort", "orderable": false, "order": [],},
                 { targets: [ 1,2,3,4 ], responsivePriority: 1},     
                 {
-                    "targets": [ 11,12,13,14 ],
+                    "targets": [ 10,11,12,13,14 ],
                     "visible": false,
                     "searchable": false
                 },

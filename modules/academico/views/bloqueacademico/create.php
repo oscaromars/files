@@ -5,9 +5,7 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model app\models\Rol */
 
-$this->title = 'Nuevo Bloque';
-$this->params['breadcrumbs'][] = ['label' => 'Semestre', 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
+
 ?>
 <div class="semestreacademico-create">
     <h3><?= Html::encode($this->title) ?></h3>

@@ -40,6 +40,7 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
             [['tdis_id'], 'exist', 'skipOnError' => true, 'targetClass' => TipoDistributivo::className(), 'targetAttribute' => ['tdis_id' => 'tdis_id']],
             [['dcab_id'], 'exist', 'skipOnError' => true, 'targetClass' => DistributivoCabecera::className(), 'targetAttribute' => ['dcab_id' => 'dcab_id']],
             [['mpp_id'], 'exist', 'skipOnError' => true, 'targetClass' => MateriaParaleloPeriodo::className(), 'targetAttribute' => ['mpp_id' => 'mpp_id']],
+            [['dhpa_id'], 'exist', 'skipOnError' => true, 'targetClass' => DistributivoHorarioParalelo::className(), 'targetAttribute' => ['dhpa_id' => 'dhpa_id']],
 
             ];
     }
@@ -59,6 +60,7 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
             'mod_id' => 'Mod ID',
             'daho_id' => 'Daho ID',
             'mpp_id' => 'Dhpa ID',
+            'dhpa_id' => 'Dhpa ID',
             'daca_num_estudiantes_online' => 'Daca Num Estudiantes Online',
             'daca_jornada' => 'Daca Jornada',
             'daca_horario' => 'Daca Horario',
@@ -93,6 +95,12 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
         return $this->hasOne(PeriodoAcademico::className(), ['paca_id' => 'paca_id']);
     }
 
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getDhpa() {
+        return $this->hasOne(DistributivoHorarioParalelo::className(), ['dhpa_id' => 'dhpa_id']);
+    }
     /**
      * @return \yii\db\ActiveQuery
      */
@@ -139,7 +147,8 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
         
         $sql = " select est_id from db_academico.estudiante_carrera_programa as ecp 
                inner join db_academico.distributivo_academico as da  on  ecp.meun_id = da.meun_id and uaca_id =2
-               where daca_id=".$id;
+                left join db_academico.distributivo_academico_estudiante as dae on dae.est_id = ecp.est_id
+               where ecp.est_id is null and  daca_id=".$id;
         
         
          $comando = $con_academico->createCommand($sql);

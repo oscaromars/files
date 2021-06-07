@@ -231,6 +231,8 @@ class CalificacionregistrodocenteController extends \app\components\CController 
         }
 
         $arr_periodoActual = [$mod_periodoActual->getPeriodoAcademicoActual()];
+
+        //print_r($arr_periodoActual);die();
         $arr_ninteres      = $mod_unidad->consultarUnidadAcademicasEmpresa(1);
         $arr_modalidad     = $mod_modalidad->consultarModalidad($arr_ninteres[0]["id"], 1);     
         $arr_parcialunidad = $mod_periodoActual->getParcialUnidad($arr_ninteres[0]["id"]);

@@ -1501,6 +1501,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
 
     public function getDetalleCuotasRegistroOnline($ccar_numero_documento, $est_id)
     {
+        $con_academico = \Yii::$app->db_academico;
         $estado = 1;
         $sql = "SELECT 
                     substring(c.ccar_num_cuota,2,1) as NO,

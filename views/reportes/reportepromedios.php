@@ -3,6 +3,7 @@
 //use app\modules\academico\models\DistributivoAcademicoEstudiante;
 use yii\helpers\Html;
 use kartik\grid\GridView;
+use app\widgets\PbGridView\PbGridView;
 use app\modules\academico\Module as academico; 
 
 /*
@@ -11,12 +12,13 @@ use app\modules\academico\Module as academico;
  * and open the template in the editor.
  */
 ?>
-<?php echo $this->render('_form_promedios', ['model' => $searchModel]); ?>
+<?php echo $this->render('_form_promedios', ['model' => $searchModel, 'estudiante' => $estudiante]); ?>
 
  
 <?=
 
 GridView::widget([
+    'id' => 'Tbg_Registro_promedios',
     'dataProvider' => $dataProvider,
     //'filterModel' => $searchModel,
     'pjax' => true,
@@ -71,12 +73,12 @@ GridView::widget([
         'target' => GridView::TARGET_BLANK,
     ],
     'columns' => [
-        [
+        /*[
             'attribute' => 'carrera',
             'header' => academico::t("Academico", "Carrera"),
             'value' => 'carrera',
             'group' => false,
-        ],
+        ],*/
         [
             'attribute' => 'nombres',
             'header' => academico::t("Academico", "Nombres Completos"),
@@ -91,12 +93,12 @@ GridView::widget([
             'group' => false, // enable grouping
         
         ],
-        [
+        /*[
             'attribute' => 'malla',
             'header' => academico::t("Academico", "Malla Academica"),
             'value' => 'malla',
           
-        ],
+        ],*/
         [
             'attribute' => 'promedio',
             'header' => academico::t("Academico", "Promedio"),

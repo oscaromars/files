@@ -198,6 +198,7 @@ $("#cancelar_btn").click(function(){
 });
 
 
+ 
 function actualizarGridRegistro(dready = 0) {
     var arrParams = new Object();
     arrParams.periodo   = $('#cmb_periodo option:selected').val();
@@ -229,8 +230,7 @@ function actualizarGridRegistro(dready = 0) {
         var url_editor = $('#txth_base').val() + "/academico/asistenciaregistrodocente/actualizarnotaasistencia";
 
         editor = new $.fn.dataTable.Editor( {
-            //ajax:  url_editor,
-            
+            ajax:  url_editor,
             formOptions: {
                 inline: {   
                     submit: 'all'
@@ -238,19 +238,6 @@ function actualizarGridRegistro(dready = 0) {
                 main: {   
                     submit: 'all'
                 }
-            },
-            ajax: {
-                data: function(d) {
-                        d.unidad = $('#cmb_unidad').val();
-                        //console.log(d.data[d.DT_RowID]);
-                        //paca_id = d.data[d.matricula]['paca_id'];
-                        //est_id  = d.data[d.matricula]['est_id'];
-                        //pro_id  = d.data[d.matricula]['pro_id'];
-                        //asi_id  = d.data[d.matricula]['asi_id'];
-                        console.log(d);
-                      },
-                type: "POST",
-                url : url_editor
             },
             table: "#gridResumen",
             idSrc: "row_num",
@@ -307,6 +294,10 @@ function actualizarGridRegistro(dready = 0) {
                     name: "asi_id",
                     type: "hidden",
                 },
+                {
+                    name: "uaca_id",
+                    type: "hidden",
+                },
             ],
             i18n: {
                 close: 'Cerrar',
@@ -325,8 +316,8 @@ function actualizarGridRegistro(dready = 0) {
                     title:  "Eliminar",
                     submit: "Eliminar",
                     confirm: {
-                        _: "¿Estas seguro de eliminar los %d registro?",
-                        1: "¿Estas seguro de eliminar 1 registro?"
+                        _: "Estas seguro de eliminar los %d registro?",
+                        1: "Estas seguro de eliminar 1 registro?"
                     }
                 },
                 error: {
@@ -451,6 +442,7 @@ function actualizarGridRegistro(dready = 0) {
                 { data: "est_id"},
                 { data: "pro_id"},
                 { data: "asi_id"},
+                { data: "uaca_id"},
             ],
             /*
             "ajax":{
@@ -526,7 +518,7 @@ function actualizarGridRegistro(dready = 0) {
                 { targets: "no-sort", "orderable": false, "order": [],},
                 { targets: [ 1,2,3,4 ], responsivePriority: 1},     
                 {
-                    "targets": [ 11,12,13,14 ],
+                    "targets": [ 10,11,12,13,14 ], 
                     "visible": false,
                     "searchable": false
                 },
@@ -536,7 +528,7 @@ function actualizarGridRegistro(dready = 0) {
                 style:    'os',
                 selector: 'td.select-checkbox'
             },
-            order: [4, 'asc'],
+            //order: [4, 'asc'],
             //rowGroup: {
                 //dataSrc: "empresaNombre"
         //                    },
@@ -550,6 +542,7 @@ function actualizarGridRegistro(dready = 0) {
         }*/
     }, true);
 }//function actualizarGridRegistro
+
 
 
 
@@ -897,3 +890,4 @@ function actualizarGridRegistroother(dready = 0) {
         }*/
     }, true);
 }//function actualizarGridRegistro
+

@@ -283,7 +283,8 @@ class Asignatura extends \yii\db\ActiveRecord
         $con = \Yii::$app->db_academico;
         $estado = 1;
         if ($bloque=="B1") {
-            $sql = "SELECT distinct a.asi_id id, asi_nombre name
+            $sql = "SELECT * from ( 
+                SELECT distinct a.asi_id id, asi_nombre name
                 FROM    db_academico.planificacion_estudiante pe 
                         inner join  db_academico.planificacion p on p.pla_id = pe.pla_id
                         inner join db_academico.malla_academica_detalle md     on md.made_codigo_asignatura = pe.pes_mat_b1_h1_cod
@@ -342,9 +343,11 @@ class Asignatura extends \yii\db\ActiveRecord
                     and p.mod_id =:mod_id
                     and pes_estado = 1
                     and pes_estado_logico = 1
-                    and mpp.asi_id is null";
+                    and mpp.asi_id is null
+                    ) b order by name";
         } else {
-            $sql = "SELECT distinct a.asi_id id, asi_nombre name
+            $sql = "SELECT * from ( 
+                SELECT distinct a.asi_id id, asi_nombre name
                 FROM db_academico.planificacion_estudiante pe 
                 inner join  db_academico.planificacion p on p.pla_id = pe.pla_id
                 inner join db_academico.malla_academica_detalle md  on md.made_codigo_asignatura = pe.pes_mat_b2_h1_cod
@@ -402,7 +405,8 @@ class Asignatura extends \yii\db\ActiveRecord
                     and p.mod_id =:mod_id
                     and pes_estado = 1
                     and pes_estado_logico = 1
-                    and mpp.asi_id is null";
+                    and mpp.asi_id is null 
+                     ) b order by name";
         }        
         
         $comando = $con->createCommand($sql);

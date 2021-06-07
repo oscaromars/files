@@ -637,30 +637,26 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
                 eaca.eaca_descripcion as carrera,
                 est.est_matricula as n_matricula,
                 daca.paca_id as periodo
-                FROM db_academico.distributivo_academico daca
-                Inner Join db_academico.unidad_academica uaca on uaca.uaca_id = daca.uaca_id
-                Inner Join db_academico.modalidad_estudio_unidad meun on meun.uaca_id = uaca.uaca_id
-                Inner Join db_academico.modalidad moda on moda.mod_id = daca.mod_id
-                Inner Join db_academico.planificacion pla on pla.mod_id = moda.mod_id
-                Inner Join db_academico.registro_online ron on ron.per_id = pla.per_id
-                Inner Join db_academico.registro_online_item roi on roi.ron_id = ron.ron_id
-                Inner Join db_academico.planificacion_estudiante pes on pes.pes_id = ron.pes_id 
-                Inner Join db_asgard.persona per on per.per_id = pes.per_id 
-                Inner Join db_academico.estudiante est on est.per_id = per.per_id 
-                Inner Join db_academico.estudiante_carrera_programa ecpr on ecpr.est_id = est.est_id 
-                Inner Join db_academico.estudio_academico eaca on eaca.eaca_id = meun.eaca_id
-                Inner Join db_academico.asignatura asi on asi.asi_id = daca.asi_id
-                Inner Join db_academico.periodo_academico paca on paca.paca_id = daca.paca_id 
+                FROM " . $con_academico->dbname . ".distributivo_academico daca
+                Inner Join " . $con_academico->dbname . ".unidad_academica uaca on uaca.uaca_id = daca.uaca_id
+                Inner Join " . $con_academico->dbname . ".modalidad_estudio_unidad meun on meun.uaca_id = uaca.uaca_id
+                Inner Join " . $con_academico->dbname . ".modalidad moda on moda.mod_id = daca.mod_id
+                Inner Join " . $con_academico->dbname . ".planificacion pla on pla.mod_id = moda.mod_id
+                Inner Join " . $con_academico->dbname . ".registro_online ron on ron.per_id = pla.per_id
+                Inner Join " . $con_academico->dbname . ".registro_online_item roi on roi.ron_id = ron.ron_id
+                Inner Join " . $con_academico->dbname . ".planificacion_estudiante pes on pes.pes_id = ron.pes_id 
+                Inner Join " . $con_db->dbname . ".persona per on per.per_id = pes.per_id 
+                Inner Join " . $con_academico->dbname . ".estudiante est on est.per_id = per.per_id 
+                Inner Join " . $con_academico->dbname . ".estudiante_carrera_programa ecpr on ecpr.est_id = est.est_id 
+                Inner Join " . $con_academico->dbname . ".estudio_academico eaca on eaca.eaca_id = meun.eaca_id
+                Inner Join " . $con_academico->dbname . ".asignatura asi on asi.asi_id = daca.asi_id
+                Inner Join " . $con_academico->dbname . ".periodo_academico paca on paca.paca_id = daca.paca_id 
                 Where
                     pla.saca_id = 7 AND
                     ron.pes_id = 20 AND
-                    per.per_id = 1030 AND
-                    est.per_id = 1030 AND
-                    ecpr.est_id = 26 AND
-                    meun.meun_id = 18 AND
-                    uaca.uaca_id = 1 AND
-                    moda.mod_id = 2 AND
-                    eaca.eaca_id = 14";
+                    per.per_id = est.per_id AND
+                    daca.daca_estado = 1 and daca.daca_estado_logico = 1
+                    and est.est_estado = 1 and est.est_estado_logico = 1";
         if ($tipo == 1) {
             $this->load($params);
             if ($this->validate()) {

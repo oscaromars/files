@@ -4,6 +4,7 @@ namespace app\modules\academico\models;
 
 use app\models\Utilities;
 use app\modules\academico\models\EstudianteCarreraPrograma;
+use app\modules\academico\models\Estudiante;
 use yii\base\Model;
 use Yii;
 use yii\data\ActiveDataProvider;
@@ -16,14 +17,25 @@ use yii\data\ArrayDataProvider;
  */
 
 class EstudianteCarreraProgramaSearch extends EstudianteCarreraPrograma {
+
+    /**
+     * {@inheritdoc}
+     */
 	public function rules() {
         return [
             [['est_id', 'meun_id', 'ecpr_usuario_ingreso', 'ecpr_usuario_modifica'], 'integer'],
         ];
     }
 
+    /**
+     * Creates data provider instance with search query applied
+     *
+     * @param array $params
+     *
+     * @return ActiveDataProvider
+     */
     function search($params) {
-        $query = EstudianteCarreraPrograma::find();
+        $query = EstudianteCarreraProgramaSearch::find();
 
         // add conditions that should always apply here
 
@@ -54,17 +66,21 @@ class EstudianteCarreraProgramaSearch extends EstudianteCarreraPrograma {
     }
 
 
-    public function getListadoReportepromedio($params = null, $onlyData = false, $tipo = 1) {
+    public function getListadoReportepromedio($arrFiltro = array(), $params = null, $onlyData = false, $tipo = 1) {
         $con_academico = \Yii::$app->db_academico;
         $con_db = \Yii::$app->db;
-        
 
-        $sql = "SELECT  CONCAT(per.per_pri_apellido,' ' ,per.per_seg_apellido,' ' ,per.per_pri_nombre) as nombres, 
+   
+        if ($arrFiltro['estudiante'] != "" && $arrFiltro['estudiante'] > 0) {
+            $str_search .= "ecpr.est_id = :per_id AND ";
+        }
+
+        $sql = "SELECT  ifnull(CONCAT(per.per_pri_apellido,' ' ,per.per_seg_apellido,' ' ,per.per_pri_nombre),'') as nombres, 
 						eaca.eaca_nombre as carrera, 
 						enac.enac_asig_estado as estado_nota, 
 						asi.asi_descripcion as asignatura, 
 						maca.maca_nombre as malla,
-				        pmac.pmac_nota as promedio
+				        ifnull((pmac.pmac_nota),'') as promedio
 				FROM db_academico.estudiante_carrera_programa ecpr
 				INNER JOIN db_academico.estudiante est ON est.est_id = ecpr.est_id
 				INNER JOIN db_asgard.persona per ON per.per_id = est.per_id
@@ -75,14 +91,19 @@ class EstudianteCarreraProgramaSearch extends EstudianteCarreraPrograma {
 				INNER JOIN db_academico.malla_academica maca on maca.maca_id = maes.maca_id
 				INNER JOIN db_academico.modalidad_estudio_unidad meun on meun.meun_id = ecpr.meun_id
 				INNER JOIN db_academico.estudio_academico eaca on eaca.eaca_id = meun.eaca_id
-				WHERE ecpr.ecpr_estado = 1 AND ecpr.ecpr_estado_logico = 1
+				WHERE $str_search
+                ecpr.ecpr_estado = 1 AND ecpr.ecpr_estado_logico = 1
 				AND est.est_estado = 1 AND est.est_estado_logico = 1
 				AND per.per_estado = 1 AND per.per_estado_logico = 1 
 				AND maes.maes_estado = 1 AND maes.maes_estado_logico = 1
 				AND pmac.pmac_estado = 1 AND pmac.pmac_estado_logico = 1
 				AND asi.asi_estado = 1 AND asi.asi_estado_logico = 1";
-
-        if ($tipo == 1) {
+        
+        if ($arrFiltro['estudiante'] != "" && $arrFiltro['estudiante'] > 0) {
+                $estudiante = $arrFiltro["estudiante"];
+                $comando->bindParam(":per_id", $estudiante, \PDO::PARAM_INT);
+            }
+        /*if ($tipo == 1) {
             $this->load($params);
             if ($this->validate()) {
                
@@ -98,7 +119,7 @@ class EstudianteCarreraProgramaSearch extends EstudianteCarreraPrograma {
                 $sql = $sql . " and ecpr.est_id =" . $params['est_id'];
             }
 
-        }
+        }*/
         Utilities::putMessageLogFile('sql:' . $sql);
         $comando = $con_academico->createCommand($sql);
         $res = $comando->queryAll();
@@ -137,16 +158,18 @@ class EstudianteCarreraProgramaSearch extends EstudianteCarreraPrograma {
                 inner join db_academico.estudiante est on est.per_id = per.per_id
                 inner join db_academico.asignatura asi on asi.asi_id = h.asi_id
                 inner join db_academico.malla_academica maca on maca.maca_id = h.maca_id
-                inner join db_academico.malla_academico_estudiante maes on maes.maca_id = maca.maca_id and maes.per_id = per.per_id
+                inner join db_academico.malla_academico_estudiante maes on maes.maca_id = maca.maca_id
                 inner join db_academico.promedio_malla_academico pmac on pmac.maes_id = maes.maes_id
-                inner join db_academico.estado_nota_academico enac on enac.enac_id = pmac.enac_id;";
+                inner join db_academico.estado_nota_academico enac on enac.enac_id = pmac.enac_id
+                where per.per_estado and per.per_estado_logico
+                and est.est_estado and est.est_estado_logico";
 
-        if ($tipo == 1) {
+        /*if ($tipo == 1) {
             $this->load($params);
             if ($this->validate()) {
                
                 if ($this->est_id) {
-                    $sql = $sql . " and h.est_id =" . $this->est_id;
+                    $sql = $sql . " and est.est_id =" . $this->est_id;
                 }
 
             } 
@@ -154,10 +177,10 @@ class EstudianteCarreraProgramaSearch extends EstudianteCarreraPrograma {
         if ($tipo == 2) {
 
             if ($params['est_id']) {
-                $sql = $sql . " and h.est_id =" . $params['est_id'];
+                $sql = $sql . " and est.est_id =" . $params['est_id'];
             }
 
-        }
+        }*/
         Utilities::putMessageLogFile('sql:' . $sql);
         $comando = $con_academico->createCommand($sql);
         $res = $comando->queryAll();
@@ -176,6 +199,26 @@ class EstudianteCarreraProgramaSearch extends EstudianteCarreraPrograma {
         ]);
 
         return $dataProvider;
+    }
+
+
+    public function getEstudiantesporpersona() {
+        $con = \Yii::$app->db_academico;
+        $con1 = \Yii::$app->db_asgard;
+        $estado = 1;
+        
+        $sql = "SELECT 
+                CONCAT(per.per_pri_apellido,'-',per.per_seg_apellido,' ',per.per_pri_nombre) as estudiante      
+                FROM db_asgard.persona per
+                inner join db_academico.estudiante est ON est.per_id = per.per_id
+                WHERE per.per_id = est.per_id and 
+                per.per_estado = 1 AND per.per_estado_logico = 1 and
+                est.est_estado = 1 AND est.est_estado_logico = 1";
+
+          $comando = $con->createCommand($sql);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $resultData = $comando->queryAll();
+        return $resultData;
     }
 
 }

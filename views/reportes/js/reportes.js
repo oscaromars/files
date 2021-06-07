@@ -11,7 +11,12 @@ $(document).ready(function () {
 
     $('#btn_buscarDatacartera').click(function () {
         buscarDatacartera();
-    });    
+    });  
+
+    $('#btn_buscarDatapromedios').click(function () {
+        buscarDatapromedios();
+    });  
+
     
 });
 
@@ -54,4 +59,15 @@ function buscarDatacartera() {
     var estadopago = $('#cmb_estadocartera').val();    
 
     window.location.href = $('#txth_base').val() + "/reportes/expexcelreportcartera?search=" + search + "&f_inif=" + f_inif + "&f_finf=" + f_finf + '&f_iniv=' + f_iniv + "&f_finv=" + f_finv + "&estadopago=" + estadopago;
+}
+
+function buscarDatapromedios(){
+    var estudiante = $('#cmb_estudiante').val();
+    //alert($('#cmb_estudiante').val());
+
+    //if(!$(".blockUI").length) {
+        showLoadingPopup();
+        $('#Tbg_Registro_promedios').PbGridView('applyFilterData', {'estudiante': estudiante});
+        setTimeout(hideLoadingPopup, 2000);
+    //}
 }

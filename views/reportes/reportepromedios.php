@@ -12,15 +12,16 @@ use app\modules\academico\Module as academico;
  * and open the template in the editor.
  */
 ?>
-<?php echo $this->render('_form_promedios', ['model' => $searchModel]); ?>
+<?php echo $this->render('_form_promedios', ['model' => $searchModel, 'estudiante' => $estudiante]); ?>
 
  
 <?=
 
 GridView::widget([
+    'id' => 'Tbg_Registro_promedios',
     'dataProvider' => $dataProvider,
     //'filterModel' => $searchModel,
-    //'pjax' => true,
+    'pjax' => true,
     //  'autoXlFormat' => true,
     'showPageSummary' => true,
     'striped' => false,

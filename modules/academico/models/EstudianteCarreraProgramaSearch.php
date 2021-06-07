@@ -66,16 +66,21 @@ class EstudianteCarreraProgramaSearch extends EstudianteCarreraPrograma {
     }
 
 
-    public function getListadoReportepromedio($params = null, $onlyData = false, $tipo = 1) {
+    public function getListadoReportepromedio($arrFiltro = array(), $params = null, $onlyData = false, $tipo = 1) {
         $con_academico = \Yii::$app->db_academico;
         $con_db = \Yii::$app->db;
 
-        $sql = "SELECT  CONCAT(per.per_pri_apellido,' ' ,per.per_seg_apellido,' ' ,per.per_pri_nombre) as nombres, 
+   
+        if ($arrFiltro['estudiante'] != "" && $arrFiltro['estudiante'] > 0) {
+            $str_search .= "ecpr.est_id = :per_id AND ";
+        }
+
+        $sql = "SELECT  ifnull(CONCAT(per.per_pri_apellido,' ' ,per.per_seg_apellido,' ' ,per.per_pri_nombre),'') as nombres, 
 						eaca.eaca_nombre as carrera, 
 						enac.enac_asig_estado as estado_nota, 
 						asi.asi_descripcion as asignatura, 
 						maca.maca_nombre as malla,
-				        pmac.pmac_nota as promedio
+				        ifnull((pmac.pmac_nota),'') as promedio
 				FROM db_academico.estudiante_carrera_programa ecpr
 				INNER JOIN db_academico.estudiante est ON est.est_id = ecpr.est_id
 				INNER JOIN db_asgard.persona per ON per.per_id = est.per_id
@@ -86,7 +91,7 @@ class EstudianteCarreraProgramaSearch extends EstudianteCarreraPrograma {
 				INNER JOIN db_academico.malla_academica maca on maca.maca_id = maes.maca_id
 				INNER JOIN db_academico.modalidad_estudio_unidad meun on meun.meun_id = ecpr.meun_id
 				INNER JOIN db_academico.estudio_academico eaca on eaca.eaca_id = meun.eaca_id
-				WHERE
+				WHERE $str_search
                 ecpr.ecpr_estado = 1 AND ecpr.ecpr_estado_logico = 1
 				AND est.est_estado = 1 AND est.est_estado_logico = 1
 				AND per.per_estado = 1 AND per.per_estado_logico = 1 
@@ -94,8 +99,11 @@ class EstudianteCarreraProgramaSearch extends EstudianteCarreraPrograma {
 				AND pmac.pmac_estado = 1 AND pmac.pmac_estado_logico = 1
 				AND asi.asi_estado = 1 AND asi.asi_estado_logico = 1";
         
-
-        if ($tipo == 1) {
+        if ($arrFiltro['estudiante'] != "" && $arrFiltro['estudiante'] > 0) {
+                $estudiante = $arrFiltro["estudiante"];
+                $comando->bindParam(":per_id", $estudiante, \PDO::PARAM_INT);
+            }
+        /*if ($tipo == 1) {
             $this->load($params);
             if ($this->validate()) {
                
@@ -111,7 +119,7 @@ class EstudianteCarreraProgramaSearch extends EstudianteCarreraPrograma {
                 $sql = $sql . " and ecpr.est_id =" . $params['est_id'];
             }
 
-        }
+        }*/
         Utilities::putMessageLogFile('sql:' . $sql);
         $comando = $con_academico->createCommand($sql);
         $res = $comando->queryAll();
@@ -200,15 +208,12 @@ class EstudianteCarreraProgramaSearch extends EstudianteCarreraPrograma {
         $estado = 1;
         
         $sql = "SELECT 
-                CONCAT(est.est_id, ' ', per.per_pri_apellido,'-',per.per_seg_apellido,' ',per.per_pri_nombre) as estudiante      
+                CONCAT(per.per_pri_apellido,'-',per.per_seg_apellido,' ',per.per_pri_nombre) as estudiante      
                 FROM db_asgard.persona per
                 inner join db_academico.estudiante est ON est.per_id = per.per_id
-                inner join db_academico.estudiante_carrera_programa ecpr on ecpr.est_id = est.est_id
-                WHERE 
+                WHERE per.per_id = est.per_id and 
                 per.per_estado = 1 AND per.per_estado_logico = 1 and
-                est.est_estado = 1 AND est.est_estado_logico = 1 and
-                ecpr.ecpr_estado = 1 AND ecpr_estado_logico = 1
-";
+                est.est_estado = 1 AND est.est_estado_logico = 1";
 
           $comando = $con->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);

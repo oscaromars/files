@@ -1458,7 +1458,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
                         WHEN substring(c.ccar_num_cuota,2,1) = 5 THEN '5to PAGO'
                         WHEN substring(c.ccar_num_cuota,2,1) = 6 THEN '6to PAGO'
                     END as pago,
-                    upper( DATE_FORMAT( c.ccar_fecha_vencepago, "%d %M %Y") ) as fecha_vencimiento,
+                    upper( DATE_FORMAT( c.ccar_fecha_vencepago, '%d %M %Y') ) as fecha_vencimiento,
                      c.ccar_valor_cuota as valor_cuota, c.ccar_valor_factura as valor_factura,
                      format(((c.ccar_valor_cuota/ c.ccar_valor_factura) * 100),2) as porcentaje
                 FROM db_facturacion.carga_cartera c

@@ -385,42 +385,19 @@ class CabeceraAsistencia extends \yii\db\ActiveRecord
     }//function getAsistencia
 
 
-    /**
-     * Function consulta detalle_asistencia
-     * @author Julio Lopez <analistadesarrollo01@uteg.edu.ec>;
-     * @param
-     * @return
-     */
-    public function selectDetalleAsistencia($casi_id) {
-        $con = \Yii::$app->db_academico;
-        $estado = 1;
-
-        $sql = "SELECT d.dasi_id
-            FROM " . $con->dbname . ".detalle_asistencia d
-            WHERE d.casi_id = :casi_id
-            AND d.dasi_estado = :estado  
-            AND d.dasi_estado_logico = :estado"; 
-
-        $comando = $con->createCommand($sql);
-        $comando->bindParam(":estado", $estado, \PDO::PARAM_INT);
-        $comando->bindParam(":casi_id", $casi_id, \PDO::PARAM_INT);        
-        $resultData = $comando->queryAll();
-        return $resultData;
-    }
-
-    /**
+  /**
      * Actualizar registro en la tabla detalle_calificacion
      * @author  Galo Aguirre <analistadesarrollo06@uteg.edu.ec>
      * @param   
      * @return  
      */
-    public function ActualizarNotaAsistencia($data, $unidad){
+    public function ActualizarNotaAsistencia($data/*, $unidad*/){
         $con    = \Yii::$app->db_academico;
         $estado = '1';
         $usu_id = @Yii::$app->session->get("PB_iduser");
 
         \app\models\Utilities::putMessageLogFile(print_r($data,true));
-        
+        /*
         if($unidad == 1){
             $aeun_id_u1_u2 = 1;
             $aeun_id_u3_u4 = 2;
@@ -432,8 +409,21 @@ class CabeceraAsistencia extends \yii\db\ActiveRecord
         if($unidad == 3){
             $aeun_id_u1_u2 = 5;
             $aeun_id_u3_u4 = 6;
-        }
+        } */
 
+        
+         if($data['uaca_id'] == 1){
+            $aeun_id_u1_u2 = 1;
+            $aeun_id_u3_u4 = 2;
+        }
+        if($data['uaca_id'] == 2){
+            $aeun_id_u1_u2 = 3;
+            $aeun_id_u3_u4 = 4;
+        }
+        if($data['uaca_id'] == 3){
+            $aeun_id_u1_u2 = 5;
+            $aeun_id_u3_u4 = 6;
+        }
         //////////////////////////////////////////////////////
         //PRIMERO PREGUNTAMOS SI TIENE CABECERA PARA U1 Y U2//
         //////////////////////////////////////////////////////
@@ -586,6 +576,19 @@ class CabeceraAsistencia extends \yii\db\ActiveRecord
             $result  = $command->execute();
         }
         
+          //Actualizamos la cabecera con los nuevos valores
+        $sql = "UPDATE db_academico.cabecera_asistencia
+                   SET casi_cant_total = (SELECT sum(dasi_cantidad) as casi_cant_total
+                                            FROM db_academico.detalle_asistencia 
+                                           where casi_id = $casi_id),
+                       casi_porc_total = (SELECT sum(dasi_cantidad) / 2 as casi_porc_total
+                                            FROM db_academico.detalle_asistencia 
+                                           where casi_id = $casi_id)
+                WHERE casi_id = $casi_id
+        ";
+        
+           $command = $con->createCommand($sql);
+        $result  = $command->execute();
         //////////////////////////////////////////////////////
         //PRIMERO PREGUNTAMOS SI TIENE CABECERA PARA U3 Y U4//
         //////////////////////////////////////////////////////
@@ -644,7 +647,7 @@ class CabeceraAsistencia extends \yii\db\ActiveRecord
         $sql = "SELECT dasi.dasi_id, dasi.casi_id
                   FROM db_academico.detalle_asistencia dasi
                  WHERE dasi.casi_id   = $casi_id 
-                   AND dasi.dasi_tipo = 'u3'";
+                   AND dasi.dasi_tipo = 'u1'";
 
         $command = $con->createCommand($sql);
         $res_u3  = $command->queryOne();
@@ -663,7 +666,7 @@ class CabeceraAsistencia extends \yii\db\ActiveRecord
                                 VALUES
                                 ($casi_id,
                                  $u3,
-                                 'u3',
+                                 'u1',
                                  $usu_id,
                                  $estado,
                                  now(),
@@ -687,7 +690,7 @@ class CabeceraAsistencia extends \yii\db\ActiveRecord
         $sql = "SELECT dasi.dasi_id, dasi.casi_id
                   FROM db_academico.detalle_asistencia dasi
                  WHERE dasi.casi_id   = $casi_id 
-                   AND dasi.dasi_tipo = 'u4'";
+                   AND dasi.dasi_tipo = 'u2'";
 
         $command = $con->createCommand($sql);
         $res_u4  = $command->queryOne();
@@ -708,7 +711,7 @@ class CabeceraAsistencia extends \yii\db\ActiveRecord
                                 (
                                  $casi_id,
                                  $u4,
-                                 'u4',
+                                 'u2',
                                  $usu_id,
                                  $estado,
                                  now(),
@@ -725,6 +728,21 @@ class CabeceraAsistencia extends \yii\db\ActiveRecord
             $command = $con->createCommand($sql);
             $result  = $command->execute();
         }
+        
+          //Actualizamos la cabecera con los nuevos valores
+        $sql = "UPDATE db_academico.cabecera_asistencia
+                   SET casi_cant_total = (SELECT sum(dasi_cantidad) as casi_cant_total
+                                            FROM db_academico.detalle_asistencia 
+                                           where casi_id = $casi_id),
+                       casi_porc_total = (SELECT sum(dasi_cantidad) / 2 as casi_porc_total
+                                            FROM db_academico.detalle_asistencia 
+                                           where casi_id = $casi_id)
+                WHERE casi_id = $casi_id
+        ";
+
+        $command = $con->createCommand($sql);
+        $result  = $command->execute();
+        
         return true;
     }//function actualizarDetalleCalificacionporid
 

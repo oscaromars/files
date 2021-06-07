@@ -580,19 +580,30 @@ class AsistenciaregistrodocenteController extends \app\components\CController {
         return json_encode($model);
     }//function actionTraerModelo
 
-    public function actionActualizarnotaasistencia() {
+     public function actionActualizarnotaasistencia() {
         $per_id         = @Yii::$app->session->get("PB_perid");
         $mod_asistencia = new CabeceraAsistencia();
 
         $data = Yii::$app->request->post();
 
         
-        $matricula = array_key_first ( $data['data'] );
+        $row_id = array_key_first ( $data['data'] );
 
-        print_r($data); die();
+        $valor  = array();
 
-        $mod_asistencia->ActualizarNotaAsistencia($data['data'][$matricula], $data['unidad']);
+        $valor["DT_RowId"] = "row_".$row_id;
+        $valor["row_num"]  = $row_id;
+        $valor["u1"]       = $data['data'][$row_id]['u1'];
+        $valor["u2"]       = $data['data'][$row_id]['u2'];
+        $valor["u3"]       = $data['data'][$row_id]['u3'];
+        $valor["u4"]       = $data['data'][$row_id]['u4'];
 
-        return json_encode( array('data' =>  ""));
+        //print_r($data); die();
+
+        $mod_asistencia->ActualizarNotaAsistencia($data['data'][$row_id]);
+
+        $respuesta["data"] = array();
+        $respuesta['data'][] = $valor;
+        return json_encode($respuesta, JSON_PRETTY_PRINT); 
     }//function actionActualizarnota
 }

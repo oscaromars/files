@@ -2440,7 +2440,7 @@ class RegistroController extends \app\components\CController {
             $detallePagos = $matriculacion_model->getDetalleCuotasRegistroOnline($ccar_numero_documento, $est_id);
 
             //Valores de registro online
-            $detallePagosRon = getDetvalorRegistroOnline($ron_id);
+            $detallePagosRon = $matriculacion_model->getDetvalorRegistroOnline($ron_id);
 
             $rep = new ExportFile();
             //$this->layout = false;

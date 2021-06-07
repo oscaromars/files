@@ -7,27 +7,19 @@ use kartik\grid\GridView;
 /* @var $searchModel app\models\RolSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Bloque Academico';
-$this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="rol-index">
 
-    <h3><?= Html::encode($this->title) ?></h3>
+   
+   
 
-    <p>
-        <?= Html::a('Nuevo', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
-
-    <?php echo $this->render('_search', ['model' => $searchModel]); ?>
+    <?php //echo $this->render('_search', ['model' => $searchModel]); */?>
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'pjax' => true,
-    'panel' => [
-        'type' => 'primary'
-        
-    ],
+   
     'export' => [
         'showConfirmAlert' => false,
         'target' => GridView::TARGET_BLANK,
@@ -62,7 +54,11 @@ $this->params['breadcrumbs'][] = $this->title;
             'baca_nombre',
             'baca_anio',
 
-            ['class' => 'yii\grid\ActionColumn'],
+            ['class' => 'yii\grid\ActionColumn',
+              'header' => 'Acción',
+              'template' => '{update}',
+               
+                ],
         ],
     ]); ?>
 

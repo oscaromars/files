@@ -2385,8 +2385,12 @@ class RegistroController extends \app\components\CController {
             $modelPersona = Persona::findOne($per_id);
             $modelEstudiante = Estudiante::findOne($per_id);
 
+    \app\models\Utilities::putMessageLogFile('actionInscripcionpdf ');
+
             /*Cabecera*/
             $datos_planficacion = $matriculacion_model->getDataPlanStudent($per_id);
+    \app\models\Utilities::putMessageLogFile('datos_planficacion '.$datos_planficacion);
+
             $pla_id = $datos_planficacion[0]['pla_id'];
             $pes_id = $datos_planficacion[0]['pes_id'];
             $data_student = $matriculacion_model->getDataStudent($per_id, $pla_id, $pes_id);

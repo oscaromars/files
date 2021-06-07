@@ -1569,6 +1569,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
 
     public function getNumeroDocumentoRegistroOnline($rama_id)
     {
+        $con_academico = \Yii::$app->db_academico;
         $estado = 1;
         $sql = " SELECT cfca.cfca_numero_documento
                  FROM  db_academico.cuotas_facturacion_cartera as cfca

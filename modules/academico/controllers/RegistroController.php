@@ -2377,16 +2377,18 @@ class RegistroController extends \app\components\CController {
     }
 
     /* JULIO */
-    public function actionInscripcionpdf($ids, $rama_id) {//ok
+    public function actionInscripcionpdf($ids) {//ok
         try {
             $ids = $_GET['ids'];
             $per_id = $ids;
+            $rama_id =  $_GET['rama_id'];
             $matriculacion_model = new Matriculacion();
             $modelPersona = Persona::findOne($per_id);
             $modelEstudiante = Estudiante::findOne($per_id);
 
     \app\models\Utilities::putMessageLogFile('actionInscripcionpdf ');
-
+\app\models\Utilities::putMessageLogFile('ids '.$ids);
+\app\models\Utilities::putMessageLogFile('rama_id '.$rama_id);
             /*Cabecera*/
             $datos_planficacion = $matriculacion_model->getDataPlanStudent($per_id);
     \app\models\Utilities::putMessageLogFile('datos_planficacion '.$datos_planficacion);

@@ -175,7 +175,7 @@
              '</tr>';
         
         
-        echo "<tr><td colspan="4"> </td><td>TOTAL US$ " . $total_costo . "</td></tr>";
+        echo "<tr><td colspan='4'> </td><td>TOTAL US$ " . $total_costo . "</td></tr>";
         if (empty(count($dataPlanificacion))) {
             echo '<tr style="border: 1px solid #002060;"><td><br></td><td></td><td></td><td></td><td></td></tr>';
         }
@@ -193,7 +193,7 @@
             echo '<tr style="border: 1px solid #002060;"><td>' . $detallePagos[$i]['NO'] . '</td><td>' . $detallePagos[$i]['pago'] . '</td><td>' . $detallePagos[$i]['fecha_vencimiento'] . '</td><td>' . $detallePagos[$i]['porcentaje'] . '</td><td> ' . $detallePagos[$i]['valor_cuota'] . ' </td></tr>';
         }
 
-        echo "<tr><td colspan="4"> </td><td>TOTAL US$ " . $total_valor_cuota . "</td></tr>";
+        echo "<tr><td colspan='4'> </td><td>TOTAL US$ " . $total_valor_cuota . "</td></tr>";
 
         if (empty(count($detallePagos))) {
             echo '<tr style="border: 1px solid #002060;"><td><br></td><td></td><td></td><td></td><td></td></tr>';

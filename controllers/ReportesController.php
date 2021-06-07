@@ -455,8 +455,8 @@ class ReportesController extends CController {
     }
 
     public function actionReportepromedios() { 
-        $searchModel = new PLanificacionEstudianteSearch();
-        //$searchModel = new EstudianteCarreraProgramaSearch();
+        //$searchModel = new PLanificacionEstudianteSearch();
+        $searchModel = new EstudianteCarreraProgramaSearch();
         $mod_estudiante = new EstudianteCarreraProgramaSearch();
         $mod_periodo = new PlanificacionEstudiante();
         //$estudiante = $mod_estudiante->getEstudiantesporpersona();
@@ -469,14 +469,14 @@ class ReportesController extends CController {
             \app\models\Utilities::putMessageLogFile('perid:' . $data['estudiante']);
             $arrSearch["per_id"] = $data['estudiante'];
             //\app\models\Utilities::putMessageLogFile('perid:' . $data['estudiante']);                      
-            $dataProvider = $searchModel->getListadoPromedios($arrSearch,$params,false,1);
+            $dataProvider = $searchModel->getListadoReportepromedio($arrSearch,$params,false,1);
             return $this->render('reportepromedios', [
                 'estudiante' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']], $estudiante), 'id', 'name'),
                 'searchModel' => $searchModel,
                 'dataProvider' => $dataProvider,
         ]);
         } else {
-            $dataProvider = $searchModel->getListadoPromedios($arrSearch,$params,false,1);
+            $dataProvider = $searchModel->getListadoReportepromedio($arrSearch,$params,false,1);
         }
         //$dataProvider = $searchModel->getListadoReportepromedio($params,false,1);
 

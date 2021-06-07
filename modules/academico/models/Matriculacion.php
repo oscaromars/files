@@ -1259,11 +1259,17 @@ class Matriculacion extends \yii\db\ActiveRecord {
         $con_academico = \Yii::$app->db_academico;
         $estado = 1;
         $sql = "
-            SELECT SUM(roc.roc_costo) AS costo
-            FROM " . $con_academico->dbname . ".registro_online_cuota AS roc
-            WHERE ron_id =:ron_id
-            AND roc_estado =:estado
-            AND roc_estado_logico =:estado
+
+            SELECT distinct SUM(roc.roi_costo) AS costo,
+            ron.ron_valor_gastos_adm,
+            ron.ron_valor_aso_estudiante
+            FROM " . $con_academico->dbname . ".registro_online_item AS roc
+            inner join " . $con_academico->dbname . ".registro_online ron on roc.ron_id=ron.ron_id
+            
+            WHERE ron.ron_id =:ron_id
+            AND roc.roi_estado =:estado
+            AND roc.roi_estado_logico =:estado
+            
         ";
 
         $comando = $con_academico->createCommand($sql);
@@ -1271,8 +1277,56 @@ class Matriculacion extends \yii\db\ActiveRecord {
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
         $resultData = $comando->queryOne();
 
-        return $resultData['costo'];
+        return $resultData;
     }
+
+    public function getRegistroAdiciOnline($ron_id)
+    {
+        $con_academico = \Yii::$app->db_academico;
+        $estado = 1;
+        $sql = "
+
+            SELECT ron_id as ron_id, MAX(rama_id) AS id 
+            FROM " . $con_academico->dbname . ".registro_adicional_materias 
+
+            WHERE ron_id =:ron_id
+            AND rama_estado =:estado
+            AND rama_estado_logico =:estado
+            GROUP BY ron_id, rama_id
+        ";
+
+        $comando = $con_academico->createCommand($sql);
+        $comando->bindParam(":ron_id", $ron_id, \PDO::PARAM_INT);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $resultData = $comando->queryOne();
+
+        return $resultData;
+    }
+
+    public function getEstadoGenerado($ron_id)
+    {
+        $con_academico = \Yii::$app->db_academico;
+        $estado = 1;
+        $sql = "
+
+            SELECT ron_id, rpm_estado_generado 
+            FROM " . $con_academico->dbname . ".registro_pago_matricula
+
+            WHERE ron_id =:ron_id
+            AND rpm_estado =:estado
+            AND rpm_estado_logico =:estado
+            
+        ";
+
+        $comando = $con_academico->createCommand($sql);
+        $comando->bindParam(":ron_id", $ron_id, \PDO::PARAM_INT);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $resultData = $comando->queryOne();
+
+        return $resultData;
+    }
+
+
 
     /**
      * Function to get planification data when exist a register into registro_online
@@ -1458,7 +1512,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
                         WHEN substring(c.ccar_num_cuota,2,1) = 5 THEN '5to PAGO'
                         WHEN substring(c.ccar_num_cuota,2,1) = 6 THEN '6to PAGO'
                     END as pago,
-                    upper( DATE_FORMAT( c.ccar_fecha_vencepago, "%d %M %Y") ) as fecha_vencimiento,
+                    upper( DATE_FORMAT( c.ccar_fecha_vencepago, '%d %M %Y') ) as fecha_vencimiento,
                      c.ccar_valor_cuota as valor_cuota, c.ccar_valor_factura as valor_factura,
                      format(((c.ccar_valor_cuota/ c.ccar_valor_factura) * 100),2) as porcentaje
                 FROM db_facturacion.carga_cartera c

@@ -2375,4 +2375,63 @@ class RegistroController extends \app\components\CController {
             return;
         }
     }
+
+    /* JULIO */
+    public function actionInscripcionpdf($ids, $rama_id) {//ok
+        try {
+            $ids = $_GET['ids'];
+            $per_id = $ids;
+            $matriculacion_model = new Matriculacion();
+            $modelPersona = Persona::findOne($per_id);
+            $modelEstudiante = Estudiante::findOne($per_id);
+
+            /*Cabecera*/
+            $datos_planficacion = $matriculacion_model->getDataPlanStudent($per_id);
+            $pla_id = $datos_planficacion[0]['pla_id'];
+            $pes_id = $datos_planficacion[0]['pes_id'];
+            $data_student = $matriculacion_model->getDataStudent($per_id, $pla_id, $pes_id);
+            $direccion = $modelPersona[0]['per_domicilio_cpri'];
+            $matricula = $modelEstudiante[0]['est_matricula'];
+
+            /*Detalle de materias*/
+            $matriculacion_model = new Matriculacion();
+            $ron_id = $matriculacion_model->getDataStudenFromRegistroOnline($per_id, $pes_id);
+            $dataPlanificacion = $matriculacion_model->getPlanificationFromRegistroOnline($ron_id);
+
+            /*Detalles de pagos */
+            $cant_cuota = 6;
+            $ccar_numero_documento = '00000282';
+            $est_id = $modelEstudiante[0]['est_id'];
+            $detallePagos = $matriculacion_model->getDetalleCuotasRegistroOnline($ccar_numero_documento, $est_id);
+
+            //Valores de registro online
+            $detallePagosRon = getDetvalorRegistroOnline($ron_id);
+
+            $rep = new ExportFile();
+            //$this->layout = false;
+            $this->layout = '@modules/academico/views/tpl_registropagomatricula/main';
+            setlocale(LC_TIME, 'es_CO.UTF-8');
+
+            //$cabFact['FechaDia'] = strftime("%A %d de %B %G", strtotime(date("d-m-Y")));   
+            $this->pdf_cla_acceso = $ids;
+            $rep->orientation = "P"; // tipo de orientacion L => Horizontal, P => Vertical   
+            $rep->createReportPdf(
+                    $this->render('@modules/academico/views/tpl_registropagomatricula/registro', [
+                        'data_student' => $data_student,
+                        'direccion' => $direccion,
+                        'matricula' => $matricula,
+                        'dataPlanificacion' => $dataPlanificacion,
+                        'cant_cuota' => $cant_cuota,
+                        'detallePagos' => $detallePagos,
+                        'detallePagosRon' => $detallePagosRon,
+                    ])
+            );
+            $rep->mpdf->Output('HOJAINSCRIPCION' . $ids . ".pdf", ExportFile::OUTPUT_TO_DOWNLOAD);
+            //exit;
+        }
+         catch (Exception $e) {
+            echo $e->getMessage();
+        }
+    
+    }
 }

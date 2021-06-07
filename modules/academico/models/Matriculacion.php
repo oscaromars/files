@@ -1408,4 +1408,106 @@ class Matriculacion extends \yii\db\ActiveRecord {
         return $resultData;
     }
 
+
+
+    /**
+     * Function to get data student from planificacion_estudiante
+     * @author Julio Lopez
+     * @param $per_id
+     * @return $resultData
+     */
+
+    public function getDataPlanStudent($per_id)
+    {
+        $con_academico = \Yii::$app->db_academico;
+        $con_asgard = \Yii::$app->db_asgard;
+        $estado = 1;
+
+        $sql = "SELECT pes.pes_id as pes_id, pes.pla_id as pla_id
+                FROM " . $con_academico->dbname . ".planificacion_estudiante as pes
+                WHERE pes.per_id = :per_id
+                AND pes.pes_estado = :estado
+                AND pes.pes_estado_logico =:estado ";
+
+        $comando = $con_academico->createCommand($sql);
+        $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_INT);
+        $resultData = $comando->queryOne();
+
+        return $resultData;
+    }
+
+    /**
+     * Function to get data student from planificacion_estudiante
+     * @author Julio Lopez
+     * @param $per_id
+     * @return $resultData
+     */
+
+    public function getDetalleCuotasRegistroOnline($ccar_numero_documento, $est_id)
+    {
+        //$con_academico = \Yii::$app->db_academico;
+        //$con_asgard = \Yii::$app->db_asgard;
+        $estado = 1;
+        //
+
+        $sql = "SELECT 
+                    substring(c.ccar_num_cuota,2,1) as NO,
+                    
+                    CASE
+                        WHEN substring(c.ccar_num_cuota,2,1) = 1 THEN '1er PAGO'
+                        WHEN substring(c.ccar_num_cuota,2,1) = 2 THEN '2do PAGO'
+                        WHEN substring(c.ccar_num_cuota,2,1) = 3 THEN '3er PAGO'
+                        WHEN substring(c.ccar_num_cuota,2,1) = 4 THEN '4to PAGO'
+                        WHEN substring(c.ccar_num_cuota,2,1) = 5 THEN '5to PAGO'
+                        WHEN substring(c.ccar_num_cuota,2,1) = 6 THEN '6to PAGO'
+                    END as pago,
+                    upper( DATE_FORMAT( c.ccar_fecha_vencepago, "%d %M %Y") ) as fecha_vencimiento,
+                     c.ccar_valor_cuota as valor_cuota, c.ccar_valor_factura as valor_factura,
+                     format(((c.ccar_valor_cuota/ c.ccar_valor_factura) * 100),2) as porcentaje
+                FROM db_facturacion.carga_cartera c
+                where c.ccar_numero_documento = :ccar_numero_documento
+                  and c.est_id = :est_id  
+                  and c.ccar_estado = :estado
+                  and c.ccar_estado_logico = :estado;";
+
+        $comando = $con_academico->createCommand($sql);
+        $comando->bindParam(":ccar_numero_documento", $ccar_numero_documento, \PDO::PARAM_INT);
+        $comando->bindParam(":est_id", $est_id, \PDO::PARAM_INT);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_INT);
+        $resultData = $comando->queryAll();
+
+        return $resultData;
+    }
+
+        /**
+     * Function to get data student from registro_online
+     * @author Julio Lopez
+     * @param $per_id
+     * @return $resultData
+     */
+
+    public function getDetvalorRegistroOnline($ron_id)
+    {
+        $con_academico = \Yii::$app->db_academico;
+        $con_asgard = \Yii::$app->db_asgard;
+        $estado = 1;
+
+        $sql = "SELECT ifnull(ron.ron_valor_aso_estudiante,0) as ron_valor_aso_estudiante, 
+                       ron.ron_valor_gastos_adm as ron_valor_gastos_adm
+                FROM " . $con_academico->dbname . ".registro_online ron
+                where ron.ron_id = $ron_id
+                and ron.ron_estado = :estado 
+                and ron.ron_estado_logico = :estado;";
+
+        $comando = $con_academico->createCommand($sql);
+        $comando->bindParam(":ron_id", $ron_id, \PDO::PARAM_INT);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_INT);
+        $resultData = $comando->queryOne();
+
+        return $resultData;
+    }
+
+
+
 }

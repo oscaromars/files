@@ -467,7 +467,7 @@ class ReportesController extends CController {
         ]);       
     }
 
-    public function actionHistorialacademico() { 
+    /*public function actionHistorialacademico() { 
         $searchModel = new EstudianteCarreraProgramaSearch();
         //$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $params = Yii::$app->request->queryParams;
@@ -476,7 +476,7 @@ class ReportesController extends CController {
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);       
-    }
+    }*/
 
 
 }

@@ -2401,8 +2401,13 @@ class RegistroController extends \app\components\CController {
             $per_id = $ids;
             $rama_id  = $_GET['rama_id'];
             $matriculacion_model = new Matriculacion();
-            $modelPersona = Persona::findOne($per_id);
-            $modelEstudiante = Estudiante::findOne($per_id);
+            //$modelPersona = Persona::findOne($per_id);
+            //$modelEstudiante = Estudiante::findOne($per_id);
+            
+            $modelPersona = Persona::find()->where(['per_id' => $per_id])->asArray()->one();
+            $modelEstudiante = Estudiante::find()->where(['per_id' => $per_id])->asArray()->one();
+
+            
 
     \app\models\Utilities::putMessageLogFile('actionInscripcionpdf ');
         \app\models\Utilities::putMessageLogFile(' per_id: ' . $per_id);

@@ -168,7 +168,7 @@
              '</tr>';
          echo '<tr> 
                 <td> </td>
-                <td> VARIODS ADMINISTRATIVOS</td>
+                <td> VARIOS ADMINISTRATIVOS</td>
                 <td> </td>
                 <td> </td>
                 <td> </td>' . $ron_valor_gastos_adm .

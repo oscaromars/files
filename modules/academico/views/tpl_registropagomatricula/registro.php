@@ -164,14 +164,14 @@
                 <td> ASOCIACION DE ESTUDIANTES</td>
                 <td> </td>
                 <td> </td>
-                <td> </td>' . $detallePagosRon['ron_valor_aso_estudiante'] .
+                <td> </td>' . $ron_valor_aso_estudiante .
              '</tr>';
          echo '<tr> 
                 <td> </td>
                 <td> VARIODS ADMINISTRATIVOS</td>
                 <td> </td>
                 <td> </td>
-                <td> </td>' . $detallePagosRon['ron_valor_gastos_adm'] .
+                <td> </td>' . $ron_valor_gastos_adm .
              '</tr>';
         
         

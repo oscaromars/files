@@ -2452,6 +2452,11 @@ class RegistroController extends \app\components\CController {
 
             //Valores de registro online
             $detallePagosRon = $matriculacion_model->getDetvalorRegistroOnline($ron_id);
+            $ron_valor_aso_estudiante = $detallePagosRon['ron_valor_aso_estudiante'];
+            $ron_valor_gastos_adm =  $detallePagosRon['ron_valor_gastos_adm']
+ 
+  \app\models\Utilities::putMessageLogFile(' ron_valor_aso_estudiante:' .$ron_valor_aso_estudiante);
+    \app\models\Utilities::putMessageLogFile(' ron_valor_gastos_adm:' .$ron_valor_gastos_adm);
 
             $rep = new ExportFile();
             //$this->layout = false;
@@ -2469,7 +2474,8 @@ class RegistroController extends \app\components\CController {
                         'dataPlanificacion' => $dataPlanificacion,
                         'cant_cuota' => $cant_cuota,
                         'detallePagos' => $detallePagos,
-                        'detallePagosRon' => $detallePagosRon,
+                        'ron_valor_aso_estudiante' => $ron_valor_aso_estudiante,
+                        'ron_valor_gastos_adm' => $ron_valor_gastos_adm,
                     ])
             );
             $rep->mpdf->Output('HOJAINSCRIPCION' . $ids . ".pdf", ExportFile::OUTPUT_TO_DOWNLOAD);

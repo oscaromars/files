@@ -126,21 +126,21 @@
             </tr>
             <tr class="tr">
                 <td colspan="1" class="aleft td"><span class="bold">ALUMNO: </span></td>
-                <td colspan="1" class="aleft td"><span class="bold"><?= $data_student[0]['pes_nombres'] ?></span></td>
+                <td colspan="1" class="aleft td"><span class="bold"><?= $data_student['pes_nombres'] ?></span></td>
                 <td colspan="1" class="aleft td"><span class="bold">TELEFONO:</span></td>
-                <td colspan="1" class="aleft td"><span class="bold"><?= $data_student[0]['per_celular'] ?></span></td>
+                <td colspan="1" class="aleft td"><span class="bold"><?= $data_student['per_celular'] ?></span></td>
             </tr>
             <tr class="tr">
                 <td colspan="1" class="aleft td"><span class="bold">CÉDULA: </span></td>
-                <td colspan="1" class="aleft td"><span class="bold"><?= $data_student[0]['pes_dni'] ?></span></td>
+                <td colspan="1" class="aleft td"><span class="bold"><?= $data_student['pes_dni'] ?></span></td>
                 <td colspan="1" class="aleft td"><span class="bold">DIRECCION:</span></td>
                 <td colspan="1" class="aleft td"><span class="bold"><?= $direccion ?></span></td>
             </tr>
             <tr class="tr">
                 <td colspan="1" class="aleft td"><span class="bold">UNIDAD ACADEMICA: </span></td>
-                <td colspan="1" class="aleft td"><span class="bold"><?= $data_student[0]['mod_nombre'] ?></span></td>
+                <td colspan="1" class="aleft td"><span class="bold"><?= $data_student['mod_nombre'] ?></span></td>
                 <td colspan="1" class="aleft td"><span class="bold">CARRERA:</span></td>
-                <td colspan="1" class="aleft td"><span class="bold"><?= $data_student[0]['pes_carrera'] ?></span></td>
+                <td colspan="1" class="aleft td"><span class="bold"><?= $data_student['pes_carrera'] ?></span></td>
             </tr>
             <tr class="tr">
                 <td colspan="1" class="aleft td"><span class="bold">FLUJO: </span></td>

@@ -2455,7 +2455,8 @@ class RegistroController extends \app\components\CController {
 
             /*Detalles de pagos */
             $registro_pago_matricula = new RegistroPagoMatricula();
-            $cant_cuota = $registro_pago_matricula->getCuotasPeriodo($rama_id);
+            $resp_cant_cuota = $registro_pago_matricula->getCuotasPeriodo($rama_id);
+            $cant_cuota = $resp_cant_cuota['cuota'];
             $resp_ccar_numero_documento = $matriculacion_model->getNumeroDocumentoRegistroOnline($rama_id);
 
             $ccar_numero_documento = $resp_ccar_numero_documento['cfca_numero_documento'];

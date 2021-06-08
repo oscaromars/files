@@ -27,9 +27,9 @@ Academico::registerTranslations();
                 </div> 
                 <div class="col-md-6 col-sm-6 col-xs-6 col-lg-6">
                     <div class="form-group">
-                        <label for="lbl_unidad" class="col-lg-4 col-md-4 col-sm-4 col-xs-4 control-label"><?= Academico::t("matriculacion", "Academic Unit") ?>: </label>
+                        <label for="lbl_programa" class="col-lg-4 col-md-4 col-sm-4 col-xs-4 control-label"><?= Academico::t("matriculacion", "Career") ?>: </label>
                         <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
-                            <span> <?= $data_student['pes_unidad'] ?> <?= $data_student['mod_nombre'] ?> </span>
+                            <span><?= $data_student['pes_carrera'] ?></span>
                         </div>
                     </div>
                 </div> 
@@ -38,37 +38,43 @@ Academico::registerTranslations();
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <div class="col-md-6 col-sm-6 col-xs-6 col-lg-6">
                     <div class="form-group">
-                        <label for="lbl_id" class="col-lg-4 col-md-4 col-sm-4 col-xs-4 control-label"><?= Academico::t("matriculacion", "DNI") ?>: </label>
-                         <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
-                            <span><?= $data_student['pes_dni'] ?></span>
+                        <label for="lbl_estudiante" class="col-lg-4 col-md-4 col-sm-4 col-xs-4 control-label"><?= Academico::t("matriculacion", "Student") ?>:</label>
+                        <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
+                            <span><?= $data_student['pes_nombres'] ?></span>
                         </div>
                     </div>
                 </div> 
 
-            <div class="col-md-6 col-sm-6 col-xs-6 col-lg-6">
-                <div class="form-group">
-                    <label for="lbl_estudiante" class="col-lg-4 col-md-4 col-sm-4 col-xs-4 control-label"><?= Academico::t("matriculacion", "Student") ?>:</label>
-                    <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
-                        <span><?= $data_student['pes_nombres'] ?></span>
+                <div class="col-md-6 col-sm-6 col-xs-6 col-lg-6">
+                    <div class="form-group">
+                        <label for="lbl_modalidad" class="col-lg-4 col-md-4 col-sm-4 col-xs-4 control-label"><?= Academico::t("matriculacion", "Registration Number") ?>: </label>
+                        <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
+                            <span><?= $data_student['est_matricula'] ?></span>
+                        </div>
                     </div>
-                </div>
-            </div> 
-        </div>
+                </div> 
+            </div>
 
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <div class="col-md-6 col-sm-6 col-xs-6 col-lg-6">
                 <div class="form-group">
-                    <label for="lbl_modalidad" class="col-lg-4 col-md-4 col-sm-4 col-xs-4 control-label"><?= Academico::t("matriculacion", "Address") ?>:  </label>
-                    <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
-                        <span> <?= $persona['direccion'] ?></span>
+                    <label for="lbl_id" class="col-lg-4 col-md-4 col-sm-4 col-xs-4 control-label"><?= Academico::t("matriculacion", "DNI") ?>: </label>
+                     <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
+                        <span><?= $data_student['pes_dni'] ?></span>
                     </div>
                 </div>
             </div> 
             <div class="col-md-6 col-sm-6 col-xs-6 col-lg-6">
                 <div class="form-group">
-                    <label for="lbl_programa" class="col-lg-4 col-md-4 col-sm-4 col-xs-4 control-label"><?= Academico::t("matriculacion", "Career") ?>: </label>
+                    <label for="lbl_modalidad" class="col-lg-4 col-md-4 col-sm-4 col-xs-4 control-label"><?= Academico::t("matriculacion", "Dirección") ?>:  </label>
                     <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
-                        <span><?= $data_student['pes_carrera'] ?></span>
+                        <span> <?= $persona['per_domicilio_cpri'] . 
+                                    " " . 
+                                    $persona['per_domicilio_csec'] . 
+                                    " " . 
+                                    $persona['per_domicilio_num'] 
+                                ?>
+                        </span>
                     </div>
                 </div>
             </div> 
@@ -77,9 +83,9 @@ Academico::registerTranslations();
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <div class="col-md-6 col-sm-6 col-xs-6 col-lg-6">
                 <div class="form-group">
-                    <label for="lbl_modalidad" class="col-lg-4 col-md-4 col-sm-4 col-xs-4 control-label"><?= Academico::t("matriculacion", "Registration Number") ?>: </label>
+                    <label for="lbl_unidad" class="col-lg-4 col-md-4 col-sm-4 col-xs-4 control-label"><?= Academico::t("matriculacion", "Academic Unit") ?>: </label>
                     <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
-                        <span><?= $data_student['est_matricula'] ?></span>
+                        <span> <?= $data_student['pes_unidad'] ?> <?= $data_student['mod_nombre'] ?> </span>
                     </div>
                 </div>
             </div> 
@@ -111,3 +117,7 @@ Academico::registerTranslations();
         "valor_total" => $valor_total
     ]);
 ?>
+
+<br>
+
+<a href="<?= Url::to(['/academico/registro/index', 'per_id' => $persona['per_id'], 'costo' => $valor_total ]) ?>" class="btn btn-primary pull-right" style="margin: 0px 5px;"><?= Academico::t("matriculacion", "Go to Pay") ?></a>

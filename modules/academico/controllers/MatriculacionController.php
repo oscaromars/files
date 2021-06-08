@@ -25,8 +25,8 @@ use app\modules\academico\Module as Academico;
 use app\modules\financiero\Module as financiero;
 use app\modules\financiero\models\PagosFacturaEstudiante;
 use app\modules\academico\models\Especies;
-
 use app\modules\financiero\models\FormaPago;
+use app\modules\financiero\models\FechasVencimientoPago;
 
 Academico::registerTranslations();
 financiero::registerTranslations();
@@ -1446,18 +1446,7 @@ class MatriculacionController extends \app\components\CController {
         $per_id = Yii::$app->session->get("PB_perid");
         $usu_id = Yii::$app->session->get("PB_iduser");
         $fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
-
-        $materias = ["Actualidad Económica","Planeación y Dirección Estratégica","Investigación de Operaciones", "Derecho Financiero y Tributario"];
-
-        if (Yii::$app->request->isAjax) {
-            // \app\models\Utilities::putMessageLogFile("AJAX");
-            $data = Yii::$app->request->post();
-
-            $materias = explode(",", $data['seleccionados']);
-
-            // \app\models\Utilities::putMessageLogFile($materias);
-        }
-
+        
         $matriculacion_model = new Matriculacion();
 
         $ron = RegistroOnline::find()->where(['per_id' => $per_id])->asArray()->one();
@@ -1468,15 +1457,22 @@ class MatriculacionController extends \app\components\CController {
 
         $dataPlanificacion = $matriculacion_model->getAllDataPlanificacionEstudiante($per_id, $pla_id);
 
-        // $roi = RegistroOnlineItem::find()->where(['ron_id' => $ron['ron_id'], 'roi_estado' => 1, 'roi_estado_logico' => 1])->asArray()->all();
+        // \app\models\Utilities::putMessageLogFile($dataPlanificacion);
+
+        $roi = RegistroOnlineItem::find()->where(['ron_id' => $ron['ron_id'], 'roi_estado' => 1, 'roi_estado_logico' => 1])->asArray()->all();
         $valor_total = 0;
 
         // Colocar sólo aquellas materias seleccionadas
         $materias_data_arr = [];
+        $materias_roi = [];
+
+        foreach ($roi as $key => $value) {
+            $materias_roi[] = $value['roi_materia_nombre'];
+        }
 
         for ($i = 0; $i < count($dataPlanificacion); $i++) {
-            if(in_array($dataPlanificacion[$i]['Subject'], $materias)){
-                $valor = number_format($dataPlanificacion[$i]['Cost']*$dataPlanificacion[$i]['Credit'],2 );
+            if(in_array($dataPlanificacion[$i]['Subject'], $materias_roi)){
+                $valor = number_format($dataPlanificacion[$i]['Cost'] * $dataPlanificacion[$i]['Credit'], 2);
                 $dataPlanificacion[$i]['Cost'] = $valor;
                 $materias_data_arr[] = $dataPlanificacion[$i];
                 $valor_total += $dataPlanificacion[$i]['Cost'];
@@ -1538,7 +1534,7 @@ class MatriculacionController extends \app\components\CController {
             $cuotas = 3;
         }
 
-        \app\models\Utilities::putMessageLogFile($cuotas);
+        // \app\models\Utilities::putMessageLogFile($cuotas);
 
         $valor_unitario = $valor_total / $cuotas;
         $porcentaje = $valor_unitario / $valor_total * 100;
@@ -1546,12 +1542,13 @@ class MatriculacionController extends \app\components\CController {
         $porc_mayor = round($porcentaje, 2);
         $por_menor = 100 - ($porc_mayor * ($cuotas - 1));
 
+        $fechas_vencimiento = FechasVencimientoPago::find()->where(['fvpa_paca_id' => $data_student['paca_id'], 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();
         $arr_pagos = [];
         for ($i=0; $i < $cuotas; $i++) { 
             if($i == 0){
                 $arr_pagos[] = [
                                     "0" => "PAGO N° " . strval($i + 1), 
-                                    "1" => null, 
+                                    "1" => explode(" ", $fechas_vencimiento[$i]['fvpa_fecha_vencimiento'])[0], 
                                     "2" => strval($por_menor) . "%",
                                     "3" => round($valor_total * $por_menor / 100, 2)
                                 ];
@@ -1559,7 +1556,7 @@ class MatriculacionController extends \app\components\CController {
             else{
                 $arr_pagos[] = [
                                     "0" => "PAGO N° " . strval($i + 1), 
-                                    "1" => null, 
+                                    "1" => explode(" ", $fechas_vencimiento[$i]['fvpa_fecha_vencimiento'])[0], 
                                     "2" => strval($porc_mayor) . "%",
                                     "3" => round($valor_total * $porc_mayor / 100, 2)
                                 ];
@@ -1596,8 +1593,6 @@ class MatriculacionController extends \app\components\CController {
         \app\models\Utilities::putMessageLogFile($valor_unitario);
         \app\models\Utilities::putMessageLogFile($porcentaje);
         \app\models\Utilities::putMessageLogFile($arr_pagos);*/
-
-        // return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $data_student);
 
         return $this->render('registrodetalle', [
             "data_student" => $data_student,

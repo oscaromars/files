@@ -629,6 +629,7 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
         $con1 = \Yii::$app->db_asgard;
         $con2 = \Yii::$app->db_facturacion;
         $estado = 1;
+        $textopago = '';
         // $curso = 0;
         if (isset($arrFiltro) && count($arrFiltro) > 0) {
             $str_search .= "(p.per_pri_nombre like :search OR ";
@@ -652,16 +653,18 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
             if ($arrFiltro['periodo'] != "" && $arrFiltro['periodo'] > 0) {
                 $str_search .= "a.paca_id = :periodo AND ";
             }
-            if ($arrFiltro['asignatura'] != "" && $arrFiltro['asignatura'] > 0) {
+            /*if ($arrFiltro['asignatura'] != "" && $arrFiltro['asignatura'] > 0) {
                 $str_search .= "a.asi_id = :asignatura AND ";
-            }           
+            } */    
             if ($arrFiltro['estado_pago'] == "0" or $arrFiltro['estado_pago'] == "1") {            
-                if ($arrFiltro['estado_pago'] == "0") {            
-                $str_search .= " ((m.ccar_estado_cancela is null OR m.ccar_estado_cancela = :estado_pago) AND NOW() > m.ccar_fecha_vencepago ) AND ";
-            }else{
-                $str_search .= " (m.ccar_estado_cancela = :estado_pago OR NOW() < m.ccar_fecha_vencepago) AND ";
+                if ($arrFiltro['estado_pago'] == "0") { 
+                    $textopago = 'No Autorizado';           
+                    //$str_search .= " ((m.ccar_estado_cancela is null OR m.ccar_estado_cancela = :estado_pago) AND NOW() > m.ccar_fecha_vencepago ) AND ";
+               }else{
+                $textopago = 'Autorizado';
+                    //$str_search .= " (m.ccar_estado_cancela = :estado_pago OR NOW() < m.ccar_fecha_vencepago) AND ";
+               } 
             } 
-        } 
             /**************************************************************  **/ 
             if ($arrFiltro['jornada'] != "" && $arrFiltro['jornada'] > 0) {
                 $str_search .= "a.daca_jornada = :jornada AND ";
@@ -691,7 +694,7 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
                         p.per_cedula as identificacion, 
                         concat(p.per_pri_nombre, ' ', p.per_pri_apellido, ' ', ifnull(p.per_seg_apellido,'')) as estudiante,
                         concat(saca_nombre, '-', baca_nombre,'-',baca_anio) as periodo,
-                        z.asi_nombre as asignatura,                                    
+                        /*z.asi_nombre as asignatura,*/                                   
                         ceunid.ceuni_descripcion_unidad,    
                           case 
                                 when m.ccar_fecha_vencepago <= NOW() then  ifnull((SELECT
@@ -730,7 +733,7 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
                     inner join " . $con1->dbname . ".persona p on p.per_id = h.per_id
                     inner join " . $con->dbname . ".semestre_academico s on s.saca_id = f.saca_id
                     inner join " . $con->dbname . ".bloque_academico t on t.baca_id = f.baca_id
-                    inner join " . $con->dbname . ".asignatura z on a.asi_id = z.asi_id
+                    -- inner join " . $con->dbname . ".asignatura z on a.asi_id = z.asi_id
                     -- left join " . $con->dbname . ".estudiante_periodo_pago m on (m.est_id = g.est_id and m.paca_id = f.paca_id)
                     left join " . $con2->dbname . ".carga_cartera m on (m.est_id = g.est_id /* and m.paca_id = f.paca_id */)
                     inner join " . $con->dbname . ".curso_educativa_estudiante cur on cur.est_id = h.est_id
@@ -763,10 +766,11 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
                 $search_per = $arrFiltro["periodo"];
                 $comando->bindParam(":periodo", $search_per, \PDO::PARAM_INT);
             }
-            if ($arrFiltro['asignatura'] != "" && $arrFiltro['asignatura'] > 0) {
+            /*if ($arrFiltro['asignatura'] != "" && $arrFiltro['asignatura'] > 0) {
                 $search_asi = $arrFiltro["asignatura"];
                 $comando->bindParam(":asignatura", $search_asi, \PDO::PARAM_INT);
-            }            
+            } */
+            /*           
             if ($arrFiltro['estado_pago'] != '-1') {
                 if ($arrFiltro['estado_pago'] == '0') {
                     $filestado = 'N';
@@ -775,6 +779,7 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
               } 
                 $comando->bindParam(":estado_pago", $filestado, \PDO::PARAM_STR);
             }
+            */
             /***************************************************************** */
 
             if ($arrFiltro['jornada'] != "" && $arrFiltro['jornada'] > 0) {
@@ -792,9 +797,7 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
         }
         Utilities::putMessageLogFile($comando->getRawSql());
         
-        $resultData = $comando->queryAll();
-
-        
+        $resultData = $comando->queryAll();    
 
         $resultData2 = array();
 
@@ -816,12 +819,25 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
             if($band == 1)
                 $resultData2[] = $value;
         }//foreach
+        
+        Utilities::putMessageLogFile(print_r($resultData2,true));
+        //print_r($resultData2,true);die();
+
+        $resultData3 = array();
+        foreach ($resultData2 as $key => $value) {
+            if($textopago != ''){
+                if($resultData2[$key]['pago'] == $textopago)
+                    $resultData3[] = $value;
+            }else
+                 $resultData3[] = $value;
+        }
+
         //\app\models\Utilities::putMessageLogFile(print_r($resultData2,true));
 
 
         $dataProvider = new ArrayDataProvider([
             'key' => 'id',
-            'allModels' => $resultData2,
+            'allModels' => $resultData3,
             'pagination' => [
                 'pageSize' => Yii::$app->params["pageSize"],
             ],
@@ -832,7 +848,7 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
         if ($reporte == 1) {
             return $dataProvider;
         } else {
-            return $resultData2;
+            return $resultData3;
         }
     }
    /**

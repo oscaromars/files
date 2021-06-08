@@ -230,7 +230,7 @@ class CalificacionregistrodocenteController extends \app\components\CController 
             }
         }
 
-        $arr_periodoActual = [$mod_periodoActual->getPeriodoAcademicoActual()];
+        $arr_periodoActual = $mod_periodoActual->getPeriodoAcademicoActual();
 
         //print_r($arr_periodoActual);die();
         $arr_ninteres      = $mod_unidad->consultarUnidadAcademicasEmpresa(1);
@@ -243,13 +243,16 @@ class CalificacionregistrodocenteController extends \app\components\CController 
             $arr_profesor_all = $mod_profesor->getProfesoresEnAsignaturas();
             $asignatura = $Asignatura_distri->getAsignaturasBy($arr_profesor_all[0]['pro_id'],$arr_ninteres[0]["id"],$arr_periodoActual[0]["id"]);
             //print_r("Es Cordinador");
+            print_r($arr_profesor_all);die();
         }else{
             //No es coordinador
-            $arr_profesor_all = $mod_profesor->getProfesoresEnAsignaturasByPerId($per_id);
+            $arr_profesor_all = $mod_profesor->getProfesoresEnAsignaturasByPerId2($per_id);
             $asignatura = $Asignatura_distri->getAsignaturasBy($arr_profesor_all[0]['pro_id'],$arr_ninteres[0]["id"],$arr_periodoActual[0]["id"]);
+            //print_r($arr_profesor_all);die();
             //print_r("NO Es Cordinador");
         }
-       
+        
+
         return $this->render('register', [
             'arr_periodoActual' => ArrayHelper::map($arr_periodoActual, "id", "nombre"),
             //'arr_ninteres'      => ArrayHelper::map(array_merge([["id" => "", "name" => Yii::t("formulario", "All")]], $arr_ninteres), "id", "name"),
@@ -266,6 +269,7 @@ class CalificacionregistrodocenteController extends \app\components\CController 
     }//function actionRegistro
 
     public function actionTraermodelo() {
+        /*
         $per_id         = @Yii::$app->session->get("PB_perid");
 
         $mod_calificacion  = new CabeceraCalificacion();
@@ -280,6 +284,30 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 
         $model = $mod_calificacion->getRegistroCalificaciones($arrSearch);
         return json_encode($model);
+        */
+        $per_id         = @Yii::$app->session->get("PB_perid");
+
+        $mod_calificacion  = new CabeceraCalificacion();
+        $data = Yii::$app->request->post();
+
+        $arrSearch["periodo"]   = $data['periodo'];
+        $arrSearch["unidad"]    = $data['uaca_id'];
+        $arrSearch["modalidad"] = $data['mod_id'];
+        $arrSearch["materia"]   = $data['materia'];
+        $arrSearch["parcial"]   = $data['parcial'];
+        $arrSearch["profesor"]  = $data['profesor'];
+        $arrSearch["paralelo"]  = $data['paralelo'];
+
+        $model       = array();
+        $componentes = array();
+        $model['data']        = $mod_calificacion->getRegistroCalificaciones($arrSearch);
+        
+        $componentes_temp = $mod_calificacion->getComponenteUnidadarr($arrSearch["unidad"]);
+        foreach ($componentes_temp as $key => $value) {
+            $componentes[$value['nombre']] = array('id'=>$value['id'],'notamax'=>$value['notamax']);
+        }
+        $model['componentes'] = $componentes;
+        return json_encode($model);
     }//function actionTraerModelo
 
 
@@ -289,6 +317,8 @@ class CalificacionregistrodocenteController extends \app\components\CController 
         $mod_calificacion  = new CabeceraCalificacion();
 
         $data   = Yii::$app->request->post();
+
+        print_r($data);die();
 
         $row_id  = array_key_first ( $data['data'] );
 
@@ -336,6 +366,8 @@ class CalificacionregistrodocenteController extends \app\components\CController 
             $est_id  = $data['data'][$row_id]['est_id'];
             $pro_id  = $data['data'][$row_id]['pro_id'];
             $asi_id  = $data['data'][$row_id]['asi_id'];
+
+            //$mod_id  = $data['data']['modalidad'];
             //$ecal_id = $data['data'][$ccal_id]['nparcial'];
 
             if($data['data'][$row_id]['nparcial'] == 'Parcial I' )
@@ -362,7 +394,7 @@ class CalificacionregistrodocenteController extends \app\components\CController 
                     $key!='ccal_id'  &&
                     $key!='uaca_id'){
                         if($value!=''){
-                            $mod_calificacion->crearDetalleCalificacionporcomponente($ccal_id,$key,$value,$uaca_id);
+                            $mod_calificacion->crearDetalleCalificacionporcomponente($ccal_id,$key,$value,$uaca_id,$mod_id,$ecal_id);
 
                             if(!(is_null($value)) && $value != ''){
                                 $valor[$key] = $value;

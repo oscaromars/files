@@ -516,7 +516,7 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord
      * @param   
      * @return  
      */
-    public function crearDetalleCalificacionporcomponente($ccal_id,$key,$value,$uaca_id){
+    public function crearDetalleCalificacionporcomponente($ccal_id,$key,$value,$uaca_id,$mod_id,$ecal_id){
         $con    = \Yii::$app->db_academico;
         $estado = '1';
         $usu_id = @Yii::$app->session->get("PB_iduser");
@@ -539,9 +539,11 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord
                                     (SELECT cuni.cuni_id
                                        from db_academico.componente_unidad cuni,
                                             db_academico.componente com
-                                      where cuni.com_id = com.com_id
+                                      where cuni.com_id    = com.com_id
                                         and com.com_nombre = '$key'
-                                        and cuni.uaca_id = $uaca_id),
+                                        and cuni.uaca_id   = $uaca_id
+                                        and cuni.mod_id    = $mod_id
+                                        and cuni.ecal_id   = $ecal_id),
                                     $usu_id,
                                     1,
                                     now(),
@@ -567,7 +569,9 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord
                                             db_academico.componente com
                                       where cuni.com_id = com.com_id
                                         and com.com_nombre = '$key'
-                                        and cuni.uaca_id = $uaca_id),
+                                        and cuni.uaca_id = $uaca_id
+                                        and cuni.mod_id    = $mod_id
+                                        and cuni.ecal_id   = $ecal_id),
                                     $value,
                                     $usu_id,
                                     1,
@@ -1024,18 +1028,24 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord
                               WHEN ecun.ecal_id = 3 THEN'Supletorio' 
                         END as nparcial
                         ,ecun.ecal_id as ecal_id
-                        ,(SELECT ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca_anio),'') AS paca_nombre
-                        FROM db_academico.semestre_academico AS saca
-                        INNER JOIN db_academico.periodo_academico AS paca ON saca.saca_id = paca.saca_id
-                        INNER JOIN db_academico.bloque_academico AS baca ON baca.baca_id = paca.baca_id
-                        WHERE
-                        paca.paca_activo = 'A' AND paca.paca_estado = 1 AND paca.paca_estado_logico = 1 AND
-                        saca.saca_estado = 1 AND saca.saca_estado_logico = 1 AND
-                        baca.baca_estado = 1 AND baca.baca_estado_logico = 1
-                        ) as periodo
+                        ,(  SELECT ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca_anio),'') AS paca_nombre
+                              FROM db_academico.semestre_academico AS saca
+                        INNER JOIN db_academico.periodo_academico AS paca 
+                                ON saca.saca_id = paca.saca_id
+                               AND paca.paca_estado = 1 
+                               AND paca.paca_estado_logico = 1 
+                        INNER JOIN db_academico.bloque_academico AS baca 
+                                ON baca.baca_id = paca.baca_id
+                               AND baca.baca_estado = 1 
+                               AND baca.baca_estado_logico = 1
+                             WHERE paca.paca_activo = 'A' 
+                               AND saca.saca_estado = 1 
+                               AND saca.saca_estado_logico = 1 
+                               AND paca.paca_id = daca.paca_id) as periodo
                         ,asi.asi_id
                         ,asi.asi_descripcion as materia
                         ,coalesce(clfc.ccal_id,0) as ccal_id
+                        ,1 as paralelo
         ";
 
         foreach ($arr_componentes as $key => $value){
@@ -1067,7 +1077,7 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord
                     AND daca.daca_estado = 1 AND daca.daca_estado_logico = 1
               LEFT JOIN " . $con->dbname . ".estudiante est 
                      ON est.est_id   = daes.est_id
-                    AND est.est_estado = 1 AND est.est_estado_logico = 1 AND est.est_activo = 1
+                    AND est.est_estado = 1 AND est.est_estado_logico = 1 
              INNER JOIN " . $con1->dbname. ".persona per 
                      ON per.per_id   = est.per_id
                     AND per.per_estado = 1 AND per.per_estado_logico = 1

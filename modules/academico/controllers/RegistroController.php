@@ -2488,7 +2488,7 @@ class RegistroController extends \app\components\CController {
                         'direccion' => $direccion,
                         'matricula' => $matricula,
                         'dataPlanificacion' => $dataPlanificacion,
-                        'cant_cuota' => $cant_cuota,
+                        'cant_cuota' => $cant_cuota?$cant_cuota:6,
                         'detallePagos' => $detallePagos,
                         'ron_valor_aso_estudiante' => $ron_valor_aso_estudiante,
                         'ron_valor_gastos_adm' => $ron_valor_gastos_adm,

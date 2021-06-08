@@ -203,7 +203,7 @@
     </div>
 
     <div class="blue">
-        <p>Cláusulas:</p> 
+        <p><b>Cláusulas:</b></p> 
             <p>
                 <ul>
                     <li>Esta pre-inscripción está sujeta de acuerdo a la disponibilidad de cupos en las materias seleccionadas, en caso de solicitar activación deberá comunicarse con la secretaria de su Facultad.</li>
@@ -222,6 +222,7 @@
             puntualmente las cuotas señaladas anteriormente, hasta el día dos de cada mes, durante el periodo de <?= $data_student['pla_periodo_academico'] ?>. Por el incumplimiento de lo antes señalado, me sujeto a cumplir las disposiciones que establece la universidad.
         </p>
     </div>
+    <br><br>
     <div class="blue">
         <p style='text-align:center'>__________________________________</p>
         <p style='text-align:center'>              Firma Alumno (a)    </p>

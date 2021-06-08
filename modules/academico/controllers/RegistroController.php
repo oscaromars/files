@@ -2443,6 +2443,9 @@ class RegistroController extends \app\components\CController {
             $cant_cuota = $registro_pago_matricula->getCuotasPeriodo($rama_id);
             $ccar_numero_documento = $matriculacion_model->getNumeroDocumentoRegistroOnline($rama_id);
             $est_id = $modelEstudiante['est_id'];
+    \app\models\Utilities::putMessageLogFile(' $ccar_numero_documento:' .$ccar_numero_documento);
+\app\models\Utilities::putMessageLogFile(' $est_id:' .$est_id);
+
             $detallePagos = $matriculacion_model->getDetalleCuotasRegistroOnline($ccar_numero_documento, $est_id);
 
             //Valores de registro online

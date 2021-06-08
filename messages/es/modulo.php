@@ -74,6 +74,7 @@ return [
     "SubModule Link Entity" => "Link Entidad",
     "-- Select Module --" => "-- Seleccion el Modulo --",
     "-- Select SubModule Main --" => "-- Seleccione SubModulo Padre --",
+    "Student Scores" => "Calificaciones de Estudiantes",
     'Type of Module' => 'Tipo de Módulo',
     "Type of SubModule" => "Tipo",
     "Type of Button" => "Tipo de Botón",

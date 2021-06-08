@@ -45,32 +45,28 @@ use app\modules\academico\Module as academico;
             <div class="col-sm-3 col-xs-3 col-md-3 col-lg-3">
                 <?= Html::dropDownList("cmb_periodoes", 0, $arr_periodo, ["class" => "form-control", "id" => "cmb_periodoes"]) ?>
             </div>            
-            <label for="cmb_asignaturaes" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= Yii::t("formulario", "Subject") ?></label>
+            <!-- <label for="cmb_asignaturaes" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= Yii::t("formulario", "Subject") ?></label>
             <div class="col-sm-3 col-xs-3 col-md-3 col-lg-3">
                 <?= Html::dropDownList("cmb_asignaturaes", 0, $arr_asignatura, ["class" => "form-control", "id" => "cmb_asignaturaes"]) ?>
-            </div>                 
+            </div> -->  
+            <label for="cmb_cursoreg" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= academico::t("Academico", "Course") ?></label>
+            <div class="col-sm-3 col-xs-3 col-md-3 col-lg-3">
+                <?= Html::dropDownList("cmb_cursoreg", " ", $arr_curso, ["class" => "form-control", "id" => "cmb_cursoreg"]) ?>
+            </div>                   
         </div>
     </div> 
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-        <div class="form-group">            
-        <label for="cmb_cursoreg" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= academico::t("Academico", "Course") ?></label>
-            <div class="col-sm-3 col-xs-3 col-md-3 col-lg-3">
-                <?= Html::dropDownList("cmb_cursoreg", " ", $arr_curso, ["class" => "form-control", "id" => "cmb_cursoreg"]) ?>
-            </div>        
+        <div class="form-group">  
             <label for="cmb_uniddades" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= Yii::t("formulario", "Unit") ?></label>
             <div class="col-sm-3 col-xs-3 col-md-3 col-lg-3">
                 <?= Html::dropDownList("cmb_uniddades", " ", $arr_unieduca, ["class" => "form-control", "id" => "cmb_uniddades"]) ?>
-            </div>            
-        </div>
-    </div>
-    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-        <div class="form-group"> 
-            <label for="cmb_estadoes" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= Yii::t("formulario", "Status") ?></label>
+            </div>   
+            <label for="cmb_estadoes" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= Yii::t("formulario", "Financial Statement") ?></label>
             <div class="col-sm-3 col-xs-3 col-md-3 col-lg-3">
                 <?= Html::dropDownList("cmb_estadoes", " ", $arr_estado, ["class" => "form-control", "id" => "cmb_estadoes"]) ?>
-            </div>            
+            </div>               
         </div>
-    </div> 
+    </div>
     <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12">
         <div class="col-sm-8"></div>
         <div class="col-sm-2 col-md-2 col-xs-4 col-lg-2">                

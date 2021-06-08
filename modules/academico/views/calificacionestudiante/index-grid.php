@@ -5,7 +5,6 @@ use yii\helpers\Url;
 use app\widgets\PbGridView\PbGridView;
 use app\models\Utilities;
 use app\modules\academico\Module as academico;
-
 academico::registerTranslations();
 ?>
 
@@ -35,8 +34,8 @@ PbGridView::widget([
         ],
         [
             'attribute' => 'Nombres Completos',
-            'header' => academico::t("Academico", "Names"),
-            'value' => 'Nombres_completos',
+            'header' => academico::t("Academico", "Student"),
+            'value' => 'nombre',
         ],*/
         [
             'attribute' => 'Periodo',

@@ -53,6 +53,18 @@ use kartik\grid\GridView;
             'baca_descripcion',
             'baca_nombre',
             'baca_anio',
+            ['attribute' => 'baca_estado',
+                'contentOptions' => ['class' => 'text-center'],
+                'headerOptions' => ['class' => 'text-center'],
+                'format' => 'html',
+                'header' => 'Estado',
+                'value' => function ($model, $key, $index, $widget) {
+                    if($model->saca_estado == "1")
+                        return '<small class="label label-success">'.academico::t("asignatura", "Enabled").'</small>';
+                    else
+                        return '<small class="label label-danger">'.academico::t("asignatura", "Disabled").'</small>';
+                },
+            ],
 
             ['class' => 'yii\grid\ActionColumn',
               'header' => 'Acción',

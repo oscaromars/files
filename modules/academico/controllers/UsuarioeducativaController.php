@@ -187,7 +187,7 @@ class UsuarioeducativaController extends \app\components\CController {
             $arrSearch["unidad"]      = $data['unidad'];
             $arrSearch["modalidad"]   = $data['modalidad'];
             $arrSearch["periodo"]     = $data['periodo'];
-            $arrSearch["asignatura"]  = $data['asignatura'];
+            //$arrSearch["asignatura"]  = $data['asignatura'];
             $arrSearch["estado_pago"] = $data['estado'];
             //$arrSearch["jornada"] = $data['jornada'];
             $arrSearch["curso"] = $data['curso'];
@@ -212,7 +212,7 @@ class UsuarioeducativaController extends \app\components\CController {
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
             }
             if (isset($data["getcursoreg"])) {
-                $periodoreg = $mod_educativa->consultarCursosxpacaid($data["codcursoreg"]);
+                $periodoreg = $mod_educativa->consultarCursosdistributivoxpacaid($data["codcursoreg"]);
                 $message = array("periodoreg" => $periodoreg);
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
             }
@@ -226,7 +226,8 @@ class UsuarioeducativaController extends \app\components\CController {
         $arr_modalidad = $mod_modalidad->consultarModalidad($arr_unidad[0]["id"], 1);
         $arr_periodo = $mod_periodo->consultarPeriodoAcademicotodos();
         $arr_asignatura = $distributivo_model->consultarAsiganturaxuniymoda(0, 0);
-        $arr_curso = $mod_educativa->consultarCursosxpacaid(0); // parametro q envia es el paca_id
+        //$arr_curso = $mod_educativa->consultarCursosxpacaid(0); // parametro q envia es el paca_id
+        $arr_curso = $mod_educativa->consultarCursosdistributivoxpacaid(0); // parametro q envia es el paca_id
         $arr_unidadeduc = $model_unideduca->consultarUnidadesxcursoid(0); // parametro q envia es el cedu_id
         return $this->render('listarestudianteregistro', [
                     'mod_unidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Grid")]], $arr_unidad), "id", "name"),
@@ -250,14 +251,14 @@ class UsuarioeducativaController extends \app\components\CController {
         header("Content-Type: $content_type");
         header("Content-Disposition: attachment;filename=" . $nombarch);
         header('Cache-Control: max-age=0');
-        $colPosition = array("C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P");
+        $colPosition = array("C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O");
         $arrHeader = array(
             Yii::t("formulario", "Academic unit"),
             Yii::t("formulario", "Mode"),
             Yii::t("formulario", "DNI"),
             Yii::t("formulario", "Complete Names"),
             Yii::t("formulario", "Period"),
-            Yii::t("formulario", "Subject"),
+            //Yii::t("formulario", "Subject"),
             academico::t("Academico", "Educational unit"),
             Yii::t("formulario", "Payment Status"),
             Yii::t("formulario", "Status")." Educativa",
@@ -270,7 +271,7 @@ class UsuarioeducativaController extends \app\components\CController {
         $arrSearch["unidad"] = $data['unidad'];
         $arrSearch["modalidad"] = $data['modalidad'];
         $arrSearch["periodo"] = $data['periodo'];
-        $arrSearch["asignatura"] = $data['asignatura'];
+        //$arrSearch["asignatura"] = $data['asignatura'];
         $arrSearch["estado_pago"] = $data['estado'];
         $arrSearch["curso"] = $data['curso'];
         $arrSearch["unidadedu"] = $data['unidadedu'];
@@ -296,7 +297,7 @@ class UsuarioeducativaController extends \app\components\CController {
             Yii::t("formulario", "DNI"),
             Yii::t("formulario", "Complete Names"),
             Yii::t("formulario", "Period"),
-            Yii::t("formulario", "Subject"),
+            //Yii::t("formulario", "Subject"),
             academico::t("Academico", "Educational unit"),
             Yii::t("formulario", "Payment Status"),
             Yii::t("formulario", "Status")." Educativa",
@@ -309,7 +310,7 @@ class UsuarioeducativaController extends \app\components\CController {
         $arrSearch["unidad"] = $data['unidad'];
         $arrSearch["modalidad"] = $data['modalidad'];
         $arrSearch["periodo"] = $data['periodo'];
-        $arrSearch["asignatura"] = $data['asignatura'];
+        //$arrSearch["asignatura"] = $data['asignatura'];
         $arrSearch["estado_pago"] = $data['estado'];
         $arrSearch["curso"] = $data['curso'];
         $arrSearch["unidadedu"] = $data['unidadedu'];

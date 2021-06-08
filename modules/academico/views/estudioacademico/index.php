@@ -8,36 +8,25 @@ use app\modules\academico\Module as academico;
 /* @var $searchModel app\models\RolSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Estudio Academico';
-$this->params['breadcrumbs'][] = $this->title;
+
 $gridColumns =['eaca_nombre','teac.teac_nombre','eaca_descripcion','eaca_alias_resumen'];
 ?>
 
-<?php if (Yii::$app->session->hasFlash('success')): ?>
-    <div class="alert alert-success alert-dismissable">
-        <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
-        <h4><i class="icon fa fa-check"></i>Información!</h4>
-        <?= Yii::$app->session->getFlash('success') ?>
-    </div>
-<?php endif; ?>
+
 <div class="estudioacademico-index">
 
 
     <div style="float: right;">
 
-        <p>
-            <?= Html::a('Nuevo Estudio Academico', ['create'], ['class' => 'btn btn-success']) ?>
-        </p>
+       
     </div>
-    <h3><?= Html::encode($this->title) ?></h3>
+   
     <?php echo $this->render('_search', ['model' => $searchModel]); ?>
 <?php echo 
     GridView::widget([
         'dataProvider' => $dataProvider,
         'pjax' => true,
-        'panel' => [
-            'type' => 'primary'
-        ],
+        
         'export' => [
             'showConfirmAlert' => false,
             'target' => GridView::TARGET_BLANK,
@@ -66,10 +55,28 @@ $gridColumns =['eaca_nombre','teac.teac_nombre','eaca_descripcion','eaca_alias_r
         ],
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
+             ['attribute' =>'eaca_codigo',
+                 'header'=>'Código',
+                'value' => function ($model, $key, $index, $widget) {
+                    if ($model->eaca_codigo == null) {
+                        return 'N/A';
+                    } else {
+                        return $model->eaca_codigo;
+                    }
+                },
+                ],
             'eaca_nombre',
             'teac.teac_nombre',
             'eaca_descripcion',
-            'eaca_alias',
+            ['attribute' =>'eaca_alias',
+                'value' => function ($model, $key, $index, $widget) {
+                    if ($model->eaca_alias == null) {
+                        return 'N/A';
+                    } else {
+                        return $model->eaca_alias;
+                    }
+                },
+                ],
             ['attribute' => 'eaca_alias_resumen',
                 'value' => function ($model, $key, $index, $widget) {
                     if ($model->eaca_alias_resumen == null) {

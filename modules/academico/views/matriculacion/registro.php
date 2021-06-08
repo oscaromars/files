@@ -2,11 +2,29 @@
 
 use yii\helpers\Html;
 use app\modules\academico\Module as Academico;
+use yii\helpers\Url;
+
 Academico::registerTranslations();
+// print_r($registredSuject);
+ // print_r($costo);
+  //print_r($planificacion[0]['CostSubject']);
+   //print_r($planificacion);
+   //CostSubject
+ 
 
+if ($isdrop) {
+echo "<b style='color:green'>REGISTRO ADICIONAL DE MATERIAS DISPONIBLE HASTA ". $isdrop[0]["rco_fecha_fin_periodoextra"]."</b>";
+} Else
 
-//$total = $model_registroOnline->ron_valor_aso_estudiante + $model_registroOnline->ron_valor_gastos_adm + $model_registroOnline->ron_valor_matricula + $costoMaterias;
-$total = $model_registroOnline->ron_valor_aso_estudiante + $model_registroOnline->ron_valor_gastos_adm + $costoMaterias;
+if ($isreg) {
+echo "<b style='color:green'>REGISTRO DE MATERIAS ABIERTO HASTA ". $isreg[0]["rco_fecha_fin"]."</b>";
+}
+Else {
+echo "<b style='color:green'>EL PERIODO DE INSCRIPCION ESTA CERRADO</b>";
+
+}
+
+ 
 
 ?>
 
@@ -14,113 +32,114 @@ $total = $model_registroOnline->ron_valor_aso_estudiante + $model_registroOnline
     <h3><?= Academico::t("matriculacion", "Online Registration") ?></h3>
     <br></br>
     <div class="row">
-        <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12"></div>
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12"></div>
         <!-- Data -->
-        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-            <div class="row">
-                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                    <span><strong><?= Academico::t("matriculacion", "Academic Period") ?>: </strong></span>
-                </div>
-                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                    <span><?= $data_student['pla_periodo_academico'] ?></span>
-                </div>
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="col-md-6 col-sm-6 col-xs-6 col-lg-6">
+                    <div class="form-group">
+                        <label for="lbl_periodo" class="col-lg-4 col-md-4 col-sm-4 col-xs-4 control-label"><?= Academico::t("matriculacion", "Academic Period") ?>:</label>
+                        <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
+                            <span><?= $data_student['pla_periodo_academico'] ?></span>
+                        </div>
+                    </div>
+                </div> 
+                <div class="col-md-6 col-sm-6 col-xs-6 col-lg-6">
+                    <div class="form-group">
+                        <label for="lbl_estudiante" class="col-lg-4 col-md-4 col-sm-4 col-xs-4 control-label"><?= Academico::t("matriculacion", "Student") ?>:</label>
+                        <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
+                            <span><?= $data_student['pes_nombres'] ?></span>
+                        </div>
+                    </div>
+                </div> 
             </div>
-            <div class="row">
-                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                    <span><strong><?= Academico::t("matriculacion", "Student") ?>: </strong></span>
+        
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="col-md-6 col-sm-6 col-xs-6 col-lg-6">
+                    <div class="form-group">
+                        <label for="lbl_id" class="col-lg-4 col-md-4 col-sm-4 col-xs-4 control-label"><?= Academico::t("matriculacion", "DNI") ?>: </label>
+                         <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
+                            <span><?= $data_student['pes_dni'] ?></span>
+                        </div>
+                    </div>
+                </div> 
+
+            <div class="col-md-6 col-sm-6 col-xs-6 col-lg-6">
+                <div class="form-group">
+                    <label for="lbl_unidad" class="col-lg-4 col-md-4 col-sm-4 col-xs-4 control-label"><?= Academico::t("matriculacion", "Academic Unit") ?>: </label>
+                    <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
+                        <span> <?= $data_student['pes_unidad'] ?></span>
+                    </div>
                 </div>
-                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                    <span><?= $data_student['pes_nombres'] ?></span>
-                </div>                
-            </div>
-            <div class="row">
-                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                    <span><strong><?= Academico::t("matriculacion", "DNI") ?>: </strong></span>
-                </div>
-                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                    <span><?= $data_student['pes_dni'] ?></span>
-                </div>                
-            </div>
-            <div class="row">
-                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                    <span><strong><?= Academico::t("matriculacion", "Academic Unit") ?>: </strong></span>
-                </div>
-                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                    <span><?= Academico::t("matriculacion", "Modality") ?> <?= $data_student['mod_nombre'] ?></span>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                    <span><strong><?= Academico::t("matriculacion", "Career") ?>: </strong></span>
-                </div>
-                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                    <span><?= $data_student['pes_carrera'] ?></span>
-                </div>                
-            </div>
-            <div class="row">
-                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                    <span><strong><?= Academico::t("matriculacion", "Phone") ?>: </strong></span>
-                </div>
-                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                    <span><?= $data_student['per_celular'] ?></span>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                    <span><strong><?= Academico::t("matriculacion", "Registration Number") ?>: </strong></span>
-                </div>
-                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                    <span><?= $data_student['est_matricula'] ?></span>
-                </div>                
-            </div>
-            <!-- <div class="row">
-                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                    <span><strong><?= Academico::t("matriculacion", "Register Cost") ?>: </strong></span>
-                </div>
-                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                    <span><?= $cost_total ?></span>
-                </div>
-            </div>  -->
+            </div> 
         </div>
-        <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12"></div>
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="col-md-6 col-sm-6 col-xs-6 col-lg-6">
+                <div class="form-group">
+                    <label for="lbl_modalidad" class="col-lg-4 col-md-4 col-sm-4 col-xs-4 control-label"><?= Academico::t("matriculacion", "Modality") ?>:  </label>
+                    <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
+                        <span> <?= $data_student['mod_nombre'] ?></span>
+                    </div>
+                </div>
+            </div> 
+            <div class="col-md-6 col-sm-6 col-xs-6 col-lg-6">
+                <div class="form-group">
+                    <label for="lbl_programa" class="col-lg-4 col-md-4 col-sm-4 col-xs-4 control-label"><?= Academico::t("matriculacion", "Career") ?>: </label>
+                    <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
+                        <span><?= $data_student['pes_carrera'] ?></span>
+                    </div>
+                </div>
+            </div> 
+        </div>
+            
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="col-md-6 col-sm-6 col-xs-6 col-lg-6">
+                <div class="form-group">
+                    <label for="lbl_modalidad" class="col-lg-4 col-md-4 col-sm-4 col-xs-4 control-label"><?= Academico::t("matriculacion", "Registration Number") ?>: </label>
+                    <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
+                        <span><?= $data_student['est_matricula'] ?></span>
+                    </div>
+                </div>
+            </div> 
+            <div class="col-md-6 col-sm-6 col-xs-6 col-lg-6">
+                <div class="form-group">
+                    <label for="lbl_programa" class="col-lg-4 col-md-4 col-sm-4 col-xs-4 control-label"><?= Academico::t("matriculacion", "Phone") ?>: </label>
+                    <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
+                    <span><?= $data_student['per_celular'] ?></span>
+                    </div>
+                </div>
+            </div> 
+        </div>
+                                                           
     </div>
-</div>
+    
+   
 <input type="hidden" id="frm_ron_id" value="<?= $ron_id ?>">
-<br></br>
+<input type="hidden" id="frm_pes_id" value="<?= $pes_id ?>">
+<input type="hidden" id="frm_per_id" value="<?= $per_id ?>">
+<input type="hidden" id="frm_min_cancel" value="<?= $min_cancel ?>">
+
+<br>
 <?=
-    $this->render('registro-grid', ['planificacion' => $planificacion,'materiasxEstudiante' => $materiasxEstudiante,]);
+    $this->render('registro-grid', ['planificacion' => $planificacion,'materiasxEstudiante' => $materiasxEstudiante, 'registredSuject' => $registredSuject, "cancelStatus" => $cancelStatus, "ron_id" => $ron_id, "isdrop" => $isdrop, ]);
 ?>
+<?php if($howmuchSubject > '1'): ?>
+
 <div class="col-xs-8"><?php echo $leyenda; ?></div>
 <div class="col-xs-4">
-    <div class="table-responsive">
-        <table style="text-align: right;" class="table">
-            <tbody>
-                <tr>
-                    <th style="width:50%"><?= academico::t('matriculacion','Cost per Subject') ?></th>
-                    <td id="costMat">$<?= isset($costoMaterias)?(number_format($costoMaterias, 2, '.', ',')):'0.00' ?></td>
-                </tr>
-                <tr style='display: none;'>
-                    <th><?= academico::t('matriculacion','Registration payment') ?></th>
-                    <td id="costMatr">$<?= isset($model_registroOnline->ron_valor_matricula)?(number_format($model_registroOnline->ron_valor_matricula, 2, '.', ',')):'0.00' ?></td>
-                </tr>
-                <tr>
-                    <th><?= academico::t('matriculacion','Administrative Expenses') ?></th>
-                    <td id="costAdmin">$<?= isset($model_registroOnline->ron_valor_gastos_adm)?(number_format($model_registroOnline->ron_valor_gastos_adm, 2, '.', ',')):'0.00' ?></td>
-                </tr>
-                <tr>
-                    <th><?= academico::t('matriculacion','Students Association') ?></th>
-                    <td id="costStud">$<?= isset($model_registroOnline->ron_valor_aso_estudiante)?(number_format($model_registroOnline->ron_valor_aso_estudiante, 2, '.', ',')):'0.00' ?></td>
-                </tr>
-                <tr>
-                    <th style="font-size: 25px;"><?= academico::t('matriculacion', 'Register Cost') ?></th>
-                    <td style="font-size: 25px; font-weight: bold;" id="costTotal">$<?= isset($total)?(number_format($total, 2, '.', ',')):'0.00' ?></td>
-                </tr>
-            </tbody>
-        </table>
+
+<a href="<?= Url::to(['/academico/registro/index', 'per_id' => $per_id, 'costo' => $costo ]) ?>" class="btn btn-primary pull-right" style="margin: 0px 5px;"><?= Academico::t("matriculacion", "Go to Pay") ?></a>
+<?php endif; ?>
+
+<a id="btn_registro_detalle" href="javascript:" class="btn btn-primary pull-right" style="margin: 0px 5px;"><?= Academico::t("matriculacion", "Continue") ?></a>
+
+<?php if($cancelStatus == '0'): ?>
+<?php endif; ?>
+
+
+
+    <a id="btn_registro" href="javascript:" class="btn btn-success pull-right" style="margin: 0px 5px;"><?= Academico::t("matriculacion", "Register More Subjects") ?></a>
+
+    <?php if(isset($hasSubject) && $hasSubject == true && $isadd ==Null): ?>
+    <?php endif; ?>
+        
     </div>
-</div>
-<div class="col-xs-12">
-<?=
-    $this->render('cuotas-grid', ['cuotas' => $cuotas,]);
-?>
-</div>

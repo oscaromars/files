@@ -58,10 +58,7 @@ class EstudioacademicoController extends \app\components\CController {
             Yii::$app->session->setFlash('success', 'Datos guardados correctamente');
             $searchModel = new EstudioAcademicoSearch();
             $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-            return $this->render('index', [
-                        'searchModel' => $searchModel,
-                        'dataProvider' => $dataProvider,
-            ]);
+            return $this->redirect(['index']);
         }
 
         return $this->render('create', [
@@ -84,10 +81,7 @@ class EstudioacademicoController extends \app\components\CController {
             //return $this->redirect(['create', 'eaca_id' => $model->eaca_id]);
             $searchModel = new EstudioAcademicoSearch();
             $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-            return $this->render('index', [
-                        'searchModel' => $searchModel,
-                        'dataProvider' => $dataProvider,
-            ]);
+            return $this->redirect(['index']);
         }
 
         return $this->render('update', ['model' => $model,]);

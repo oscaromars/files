@@ -1,4 +1,4 @@
-<?php
+  <?php
 
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -7,7 +7,7 @@ use app\widgets\PbSearchBox\PbSearchBox;
 use app\models\Utilities;
 use yii\data\ArrayDataProvider;
 use yii\helpers\ArrayHelper;
-
+print_r($hasplanned);
 ?>
 <form class="form-horizontal">    
     <div class="row">

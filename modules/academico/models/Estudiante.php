@@ -83,14 +83,6 @@ class Estudiante extends \yii\db\ActiveRecord {
         return $this->hasMany(Matriculacion::className(), ['est_id' => 'est_id']);
     }
 
-    
-     /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getPersona() {
-        return $this->hasOne(\app\models\Persona::className(), ['per_id' => 'per_id']);
-    }
-    
     /**
      * @return \yii\db\ActiveQuery
      */
@@ -98,6 +90,13 @@ class Estudiante extends \yii\db\ActiveRecord {
         return $this->hasMany(MatriculacionProgramaInscrito::className(), ['est_id' => 'est_id']);
     }
 
+     /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getPersona() {
+        return $this->hasOne(\app\models\Persona::className(), ['per_id' => 'per_id']);
+    }
+    
     /**
      * Function guardar estudiante
      * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
@@ -491,7 +490,7 @@ class Estudiante extends \yii\db\ActiveRecord {
         }
         $sql = "SELECT distinct
                       $estid  
-	                 -- pers.per_id,
+	           -- pers.per_id,
                       concat(pers.per_pri_nombre, ' ', pers.per_pri_apellido) as nombres,
                       pers.per_cedula as dni,
                       pers.per_correo as correo,
@@ -515,7 +514,7 @@ class Estudiante extends \yii\db\ActiveRecord {
                 LEFT JOIN " . $con->dbname . ".modalidad moda ON moda.mod_id = meun.mod_id
                 LEFT JOIN " . $con->dbname . ".estudio_academico esac ON esac.eaca_id = meun.eaca_id
                 LEFT JOIN " . $con->dbname . ".registro_online r ON r.per_id = pers.per_id
-                LEFT JOIN " . $con->dbname . ".planificacion_estudiante pes ON pes.pes_id = r.pes_id  AND pla_id IN ($inlist)
+                LEFT JOIN " . $con->dbname . ".planificacion_estudiante pes ON pes.pes_id = r.pes_id AND pla_id IN ($inlist)
                 WHERE 
                 $str_search
                 pers.per_id > 1000                
@@ -789,8 +788,32 @@ class Estudiante extends \yii\db\ActiveRecord {
         $resultData = $comando->queryOne();
         return $resultData;
     }
+    
+    public function isScholarship($est_id, $paca_id){
+        $con = \Yii::$app->db_academico;
 
-    public function consultarDatosPersona($est_id){
+        $sql = "
+                 SELECT
+                 est_id as bec_id
+                from db_academico.asignacion_becas_estudiante 
+                where est_id = :est_id and 
+                paca_id = :paca_id and
+                abe_estado_logico ='1'
+
+                ";
+
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":est_id", $est_id, \PDO::PARAM_INT);
+        $comando->bindParam(":paca_id", $paca_id, \PDO::PARAM_INT);
+        $resultData = $comando->queryOne();
+        
+            return $resultData;
+        
+    
+
+    }
+    
+     public function consultarDatosPersona($est_id){
         $con = Yii::$app->db_academico;
 
         $sql = "SELECT est.est_id, per.per_id, est.est_estado, est.est_matricula AS matricula, per.per_cedula AS cedula, concat(per.per_pri_nombre, ' ', per.per_pri_apellido) AS nombres, per.per_correo AS correo 
@@ -805,6 +828,5 @@ class Estudiante extends \yii\db\ActiveRecord {
         
         return $resultData;
     }
-    
 
 }

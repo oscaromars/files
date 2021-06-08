@@ -662,6 +662,9 @@ class Distributivo extends \yii\db\ActiveRecord {
           $str_search      = "a.paca_id = ".$paca_actual_id['id']." AND a.mod_id = 0 AND ";
         }
 
+
+        
+
         $sql = "SELECT  distinct h.est_id, 
                         d.uaca_nombre as unidad, 
                         e.mod_nombre as modalidad,
@@ -697,7 +700,7 @@ class Distributivo extends \yii\db\ActiveRecord {
                 FROM " . $con->dbname . ".distributivo_academico a inner join " . $con->dbname . ".profesor b
                     on b.pro_id = a.pro_id 
                     inner join " . $con1->dbname . ".persona c on c.per_id = b.per_id
-                    -- inner join " . $con1->dbname . ".persona pe on pe.per_id = b.per_id
+                    inner join " . $con1->dbname . ".persona pe on pe.per_id = b.per_id
                     inner join " . $con->dbname . ".unidad_academica d on d.uaca_id = a.uaca_id
                     inner join " . $con->dbname . ".modalidad e on e.mod_id = a.mod_id
                     inner join " . $con->dbname . ".periodo_academico f on f.paca_id = a.paca_id

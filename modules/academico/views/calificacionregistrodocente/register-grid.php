@@ -56,66 +56,21 @@ academico::registerTranslations();
 </div>
 
 <script type="text/javascript">
-        //envio de los datos
-        /*
-        function cargarArchivo(){
-            console.log("cargarArchivo");
-            //$("#frm_carga").on('submit', function(e){
-            //e.preventDefault();
-            var myUrl = "{{ url('ajax_archivo') }}";
-            var formData = new FormData(document.getElementById('frm_carga'));
 
-            $.ajax({
-                type       : "POST",
-                url        : myUrl,
-                data       : formData,
-                dataType   : 'json',
-                cache      : false,
-                contentType: false,
-                processData: false
-            }).done(function(resp){
-                console.log(resp);
-                if(resp.status == 'success') {
-                    $.alert({
-                        title:'Atención',
-                        content: '<strong>Archivo Procesado</strong>',
-                        icon: 'fa fa-check-circle-o',
-                        theme: 'modern',
-                        //closeIcon: true,
-                        animation: 'scale',
-                        type: 'green',
-                    });
-                }
-                else {
-                    $.alert({
-                        title:'Atención',
-                        content: '<strong>'+resp.message+'</strong>',
-                        icon: 'fa fa-exclamation-circle',
-                        theme: 'modern',
-                        //closeIcon: true,
-                        animation: 'scale',
-                        type: 'orange',
-                    });
-                }
-
-                $('#boton_cerrar').trigger('click');
-            });
-        };
-        */
     $(document).ready(function () {
         //1 para indicarle que viene de document ready
         var editor;
         $('#gridResumen').DataTable({
             responsive: true,
+            destroy: true,
             columnDefs: [      
                     {
-                        "targets": [ 14,15,16,17,18,19,20 ],
+                        "targets": [ 13,14,15,16,17,18,19,20 ],
                         "visible": false,
                         "searchable": false
                     },  
                 ],
         });
         $('#cmb_profesor_rc').change();
-        //actualizarGridRegistro(1);
     });
 </script>

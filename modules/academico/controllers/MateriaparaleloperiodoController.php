@@ -143,6 +143,7 @@ class MateriaparaleloperiodoController extends \app\components\CController {
             // $datos = json_decode($dts);
             for ($i = 0; $i < sizeof($datos); $i++) {
              //   \app\models\Utilities::putMessageLogFile($datos[$i]['asig_id']);
+                if($datos[$i]['numero_paralelo']>0){
                 for ($j = 1; $j <= $datos[$i]['numero_paralelo']; $j++) {
                     $model = new MateriaParaleloPeriodo();
                     $model->paca_id = $datos[$i]['paca_id'];
@@ -158,7 +159,7 @@ class MateriaparaleloperiodoController extends \app\components\CController {
                     }
                 }
             }
-
+            }
             if ($mes != 0) {
                 $transaction->commit();
                 $message = array(

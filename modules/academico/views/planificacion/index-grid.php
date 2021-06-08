@@ -5,6 +5,9 @@ use yii\helpers\Url;
 use app\widgets\PbGridView\PbGridView;
 use app\models\Utilities;
 use app\models\ObjetoModulo;
+use app\widgets\PbSearchBox\PbSearchBox;
+use yii\data\ArrayDataProvider;
+use yii\helpers\ArrayHelper;
 ?>
 
 <?=
@@ -42,4 +45,3 @@ use app\models\ObjetoModulo;
         ],
     ])
 ?>
-

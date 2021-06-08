@@ -44,8 +44,8 @@ $form = ActiveForm::begin(['layout' => 'horizontal',
 <?=
 $form->field($model, 'teac_id')->widget(Select2::classname(), [
     'data' => ArrayHelper::map(TipoEstudioAcademico::find()->all(), 'teac_id', 'teac_nombre'),
-    'size' => Select2::SMALL,
-    'options' => ['placeholder' => 'Seleccione Tipo de Estudio Academico ...', 'multiple' => false],
+    'size' => Select2::MEDIUM,
+    'options' => ['placeholder' => 'Seleccione Tipo de Estudio Académico ...', 'multiple' => false],
     'pluginOptions' => [
         'allowClear' => true,
         'width' => '295px',

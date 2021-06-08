@@ -164,14 +164,14 @@
                 <td> ASOCIACION DE ESTUDIANTES</td>
                 <td> </td>
                 <td> </td>
-                <td> </td>' . $detallePagosRon[0]['ron_valor_aso_estudiante'] .
+                <td> </td>' . $detallePagosRon['ron_valor_aso_estudiante'] .
              '</tr>';
          echo '<tr> 
                 <td> </td>
                 <td> VARIODS ADMINISTRATIVOS</td>
                 <td> </td>
                 <td> </td>
-                <td> </td>' . $detallePagosRon[0]['ron_valor_gastos_adm'] .
+                <td> </td>' . $detallePagosRon['ron_valor_gastos_adm'] .
              '</tr>';
         
         
@@ -204,20 +204,26 @@
 
     <div class="blue">
         <p>Cláusulas:</p> 
-            <ul>
-                <li>Esta pre-inscripción está sujeta de acuerdo a la disponibilidad de cupos en las materias seleccionadas, en caso de solicitar activación deberá comunicarse con la secretaria de su Facultad.</li>
-                <li>Los valores correspondientes a cada mensualidad deberán cancelarse en las fechas establecidas.</li>
-                <li>Todos los pagos deben realizarse directamente en las cuentas institucionales indicadas por la UTEG</li>
-                <li>El comprobante de depósito deberá ser enviado al correo de colecturia@uteg.edu.ec dentro de las 24 horas posteriores para su registro en sistema y emisión de la factura correspondiente.</li>
-                <li>El estudiante acepta acoger las disposiciones académicas y reglamentarias de la Universidad Tecnológica Empresarial de Guayaquil.</li>
-                <li>La confirmación mediante correo electrónico por parte del Estudiante constituye la aceptación de la hoja de inscripción.</li>
-            </ul>
-        <hr>
+            <p>
+                <ul>
+                    <li>Esta pre-inscripción está sujeta de acuerdo a la disponibilidad de cupos en las materias seleccionadas, en caso de solicitar activación deberá comunicarse con la secretaria de su Facultad.</li>
+                    <li>Los valores correspondientes a cada mensualidad deberán cancelarse en las fechas establecidas.</li>
+                    <li>Todos los pagos deben realizarse directamente en las cuentas institucionales indicadas por la UTEG</li>
+                    <li>El comprobante de depósito deberá ser enviado al correo de colecturia@uteg.edu.ec dentro de las 24 horas posteriores para su registro en sistema y emisión de la factura correspondiente.</li>
+                    <li>El estudiante acepta acoger las disposiciones académicas y reglamentarias de la Universidad Tecnológica Empresarial de Guayaquil.</li>
+                    <li>La confirmación mediante correo electrónico por parte del Estudiante constituye la aceptación de la hoja de inscripción.</li>
+                </ul>
+            </p> 
     </div>
+    <hr>
     <div class="blue">
-        <p style='text-align:center'>Compromiso de Pago - Crédito Universitario Directo</p>
+        <p style='text-align:center'><b>Compromiso de Pago - Crédito Universitario Directo</b></p>
             <p>Yo, alumno(a) <?= $data_student['pes_nombres'] ?> con C.I. No. <?= $data_student['pes_dni'] ?>, perteneciente a la facultad de MODALIDAD <?= $data_student['mod_nombre'] ?>, carrera de <?= $data_student['pes_carrera'] ?>, me comprometo a cancelar
             puntualmente las cuotas señaladas anteriormente, hasta el día dos de cada mes, durante el periodo de <?= $data_student['pla_periodo_academico'] ?>. Por el incumplimiento de lo antes señalado, me sujeto a cumplir las disposiciones que establece la universidad.
         </p>
     </div>
+    <div class="blue">
+        <p style='text-align:center'>__________________________________</p>
+        <p style='text-align:center'>              Firma Alumno (a)    </p>
+    </div>  
 </div>

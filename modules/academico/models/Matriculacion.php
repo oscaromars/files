@@ -439,7 +439,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
         $comando->bindParam(":pla_id", $pla_id, \PDO::PARAM_INT);
         $comando->bindParam(":pes_id", $pes_id, \PDO::PARAM_INT);
         $resultData = $comando->queryOne();
-
+\app\models\Utilities::putMessageLogFile('selectEsquemaCalificacionUnidad: '.$comando->getRawSql());
         return $resultData;
     }
 

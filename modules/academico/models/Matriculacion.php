@@ -1573,7 +1573,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
     {
         $con_academico = \Yii::$app->db_academico;
         $estado = 1;
-        $sql = " SELECT cfca.cfca_numero_documento
+        $sql = " SELECT cfca.cfca_numero_documento as cfca_numero_documento
                  FROM  db_academico.cuotas_facturacion_cartera as cfca
                 INNER JOIN db_facturacion.carga_cartera as ccar ON ccar.ccar_numero_documento = cfca.cfca_numero_documento
                 WHERE cfca.cfca_rama_id = :rama_id and
@@ -1586,7 +1586,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
         $comando->bindParam(":rama_id", $rama_id, \PDO::PARAM_INT);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_INT);
         $resultData = $comando->queryOne();
-
+\app\models\Utilities::putMessageLogFile('getNumeroDocumentoRegistroOnline: '.$comando->getRawSql());
         return $resultData;
     }
 

@@ -214,7 +214,7 @@
             </ul>
         <hr>
     </div>
-    <div>
+    <div class="blue">
         <p>Compromiso de Pago - Crédito Universitario Directo</p>
             <p>Yo, alumno(a) <?= $model[0]['pes_nombres'] ?> con C.I. No. 2450726142, perteneciente a la facultad de MODALIDAD A
             DISTANCIA, carrera de LICENCIATURA EN ADMINISTRACION DE EMPRESAS -DIST-2020, me comprometo a cancelar

@@ -2441,7 +2441,9 @@ class RegistroController extends \app\components\CController {
             /*Detalles de pagos */
             $registro_pago_matricula = new RegistroPagoMatricula();
             $cant_cuota = $registro_pago_matricula->getCuotasPeriodo($rama_id);
-            $ccar_numero_documento = $matriculacion_model->getNumeroDocumentoRegistroOnline($rama_id);
+            $resp_ccar_numero_documento = $matriculacion_model->getNumeroDocumentoRegistroOnline($rama_id);
+
+            $ccar_numero_documento = $resp_ccar_numero_documento['cfca_numero_documento'];
             $est_id = $modelEstudiante['est_id'];
     \app\models\Utilities::putMessageLogFile(' $ccar_numero_documento:' .$ccar_numero_documento);
 \app\models\Utilities::putMessageLogFile(' $est_id:' .$est_id);

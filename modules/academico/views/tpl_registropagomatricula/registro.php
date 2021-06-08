@@ -154,7 +154,7 @@
     <div class="blue">
         <?php
         echo '<table class="tabla"><tbody>';
-        echo '<tr style="background: #AED6F1;border: 1px solid #002060;"><th>CODIGO</th><th>MATERIA</th><th>ESPECIALIAZACIÓN</th><th>HORARIO</th><th>COSTO UNITARIO</th></tr>';
+        echo '<tr style="background: #AED6F1;border: 1px solid #002060;"><th>CODIGO</th><th>MATERIA</th><th>HORARIO</th><th>COSTO UNITARIO</th></tr>';
         for ($i = 0; $i < count($dataPlanificacion); $i++) {
             $total_costo = $total_costo + $dataPlanificacion[$i]['Cost'];
             echo '<tr style="border: 1px solid #002060;"><td>' . $dataPlanificacion[$i]['Code'] . '</td><td>' . $dataPlanificacion[$i]['Subject'] . '</td><td>' . $dataPlanificacion[$i]['Hour'] . ' - '  . $dataPlanificacion[$i]['Block'] .'</td><td>' . $dataPlanificacion[$i]['Cost'] . '</td><td> ';

@@ -375,6 +375,40 @@ class Profesor extends \yii\db\ActiveRecord
 
     /**
      * Consulta los profesores que estén dando alguna asignatura
+     * @author Galo Aguirre <analistadesarrollo06@gmail.com
+     * @param
+     * @return Arreglo con per_id, pro_id, cedula y nombres de los profesores que tengan materias registradas para disctar y hayan sido aprobados
+     * Esta es una copia de la funcion original para no dañar alguna otra parte donde se la este llamando
+     */
+     public function getProfesoresEnAsignaturasByPerId2($per_id, $onlyData = true){
+        $con_asgard = Yii::$app->db_asgard;
+        $con_academico = Yii::$app->db_academico;
+
+        $sql = "SELECT DISTINCT per.per_id, pro.pro_id, per.per_cedula, per.per_correo, CONCAT(per.per_pri_nombre, ' ', per.per_pri_apellido) AS nombres
+                FROM " . $con_asgard->dbname . ".persona as per
+                INNER JOIN " . $con_academico->dbname . ".profesor AS pro ON pro.per_id = per.per_id
+                INNER JOIN " . $con_academico->dbname . ".distributivo_academico AS daca ON daca.pro_id = pro.pro_id
+                INNER JOIN " . $con_academico->dbname . ".distributivo_cabecera AS dcab ON dcab.pro_id = pro.pro_id
+                WHERE per.per_id = :per_id AND dcab.dcab_estado_revision = 2
+                AND per.per_estado = 1 AND per.per_estado_logico = 1
+                AND pro.pro_estado = 1 AND pro.pro_estado_logico = 1
+                AND daca.daca_estado = 1 AND daca.daca_estado_logico = 1
+                AND dcab.dcab_estado = 1 AND dcab.dcab_estado_logico = 1
+                ORDER BY nombres DESC";
+
+        $comando = $con_academico->createCommand($sql);
+        $comando->bindParam(":per_id",$per_id, \PDO::PARAM_INT);
+        $resultData = $comando->queryAll();
+
+        /*if($onlyData){
+            return $resultData;
+        }*/
+
+        return $resultData;
+    }
+
+    /**
+     * Consulta los profesores que estén dando alguna asignatura
      * @author Jorge Paladines <analista.desarrollo@uteg.edu.ec>;
      * @param
      * @return Arreglo con per_id, pro_id, cedula y nombres de los profesores que tengan materias registradas para disctar y hayan sido aprobados

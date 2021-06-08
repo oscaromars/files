@@ -439,7 +439,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
         $comando->bindParam(":pla_id", $pla_id, \PDO::PARAM_INT);
         $comando->bindParam(":pes_id", $pes_id, \PDO::PARAM_INT);
         $resultData = $comando->queryOne();
-
+\app\models\Utilities::putMessageLogFile('selectEsquemaCalificacionUnidad: '.$comando->getRawSql());
         return $resultData;
     }
 
@@ -1501,6 +1501,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
 
     public function getDetalleCuotasRegistroOnline($ccar_numero_documento, $est_id)
     {
+        $con_academico = \Yii::$app->db_academico;
         $estado = 1;
         $sql = "SELECT 
                     substring(c.ccar_num_cuota,2,1) as NO,
@@ -1527,6 +1528,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
         $comando->bindParam(":est_id", $est_id, \PDO::PARAM_INT);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_INT);
         $resultData = $comando->queryAll();
+        \app\models\Utilities::putMessageLogFile('selectEsquemaCalificacionUnidad: '.$comando->getRawSql());
 
         return $resultData;
     }
@@ -1569,11 +1571,12 @@ class Matriculacion extends \yii\db\ActiveRecord {
 
     public function getNumeroDocumentoRegistroOnline($rama_id)
     {
+        $con_academico = \Yii::$app->db_academico;
         $estado = 1;
-        $sql = "SELECT cfca.cfca_numero_documento
+        $sql = " SELECT cfca.cfca_numero_documento as cfca_numero_documento
                  FROM  db_academico.cuotas_facturacion_cartera as cfca
                 INNER JOIN db_facturacion.carga_cartera as ccar ON ccar.ccar_numero_documento = cfca.cfca_numero_documento
-                WHERE cfca.rama_id = :rama_id and
+                WHERE cfca.cfca_rama_id = :rama_id and
                       cfca.cfca_estado = :estado and 
                       cfca.cfca_estado_logico = :estado and
                       ccar.ccar_estado = :estado and 
@@ -1583,7 +1586,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
         $comando->bindParam(":rama_id", $rama_id, \PDO::PARAM_INT);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_INT);
         $resultData = $comando->queryOne();
-
+\app\models\Utilities::putMessageLogFile('getNumeroDocumentoRegistroOnline: '.$comando->getRawSql());
         return $resultData;
     }
 

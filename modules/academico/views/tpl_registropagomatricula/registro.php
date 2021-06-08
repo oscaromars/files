@@ -120,27 +120,27 @@
         <table class="default">
             <tr class="tr">
                 <td colspan="1" class="aleft td"><span class="bold">PERIODO ACADEMICO: </span></td>
-                <td colspan="1" class="aleft td"><span class="bold"><?= $data_student[0]['pla_periodo_academico'] ?></span></td>
+                <td colspan="1" class="aleft td"><span class="bold"><?= $data_student['pla_periodo_academico'] ?></span></td>
                 <td colspan="1" class="aleft td"><span class="bold">NUM DOC PED:</span></td>
-                <td colspan="1" class="aleft td"><span class="bold"><?= $model[0]['pla_periodo_academico'] ?></span></td>
+                <td colspan="1" class="aleft td"><span class="bold"><?= $data_student['pla_periodo_academico'] ?></span></td>
             </tr>
             <tr class="tr">
                 <td colspan="1" class="aleft td"><span class="bold">ALUMNO: </span></td>
-                <td colspan="1" class="aleft td"><span class="bold"><?= $model[0]['pes_nombres'] ?></span></td>
+                <td colspan="1" class="aleft td"><span class="bold"><?= $data_student['pes_nombres'] ?></span></td>
                 <td colspan="1" class="aleft td"><span class="bold">TELEFONO:</span></td>
-                <td colspan="1" class="aleft td"><span class="bold"><?= $model[0]['per_celular'] ?></span></td>
+                <td colspan="1" class="aleft td"><span class="bold"><?= $data_student['per_celular'] ?></span></td>
             </tr>
             <tr class="tr">
                 <td colspan="1" class="aleft td"><span class="bold">CÉDULA: </span></td>
-                <td colspan="1" class="aleft td"><span class="bold"><?= $model[0]['pes_dni'] ?></span></td>
+                <td colspan="1" class="aleft td"><span class="bold"><?= $data_student['pes_dni'] ?></span></td>
                 <td colspan="1" class="aleft td"><span class="bold">DIRECCION:</span></td>
                 <td colspan="1" class="aleft td"><span class="bold"><?= $direccion ?></span></td>
             </tr>
             <tr class="tr">
                 <td colspan="1" class="aleft td"><span class="bold">UNIDAD ACADEMICA: </span></td>
-                <td colspan="1" class="aleft td"><span class="bold"><?= $data_student[0]['mod_nombre'] ?></span></td>
+                <td colspan="1" class="aleft td"><span class="bold"><?= $data_student['mod_nombre'] ?></span></td>
                 <td colspan="1" class="aleft td"><span class="bold">CARRERA:</span></td>
-                <td colspan="1" class="aleft td"><span class="bold"><?= $data_student[0]['pes_carrera'] ?></span></td>
+                <td colspan="1" class="aleft td"><span class="bold"><?= $data_student['pes_carrera'] ?></span></td>
             </tr>
             <tr class="tr">
                 <td colspan="1" class="aleft td"><span class="bold">FLUJO: </span></td>
@@ -154,7 +154,7 @@
     <div class="blue">
         <?php
         echo '<table class="tabla"><tbody>';
-        echo '<tr style="background: #AED6F1;border: 1px solid #002060;"><th>CODIGO</th><th>MATERIA</th><th>ESPECIALIAZACIÓN</th><th>HORARIO</th><th>COSTO UNITARIO</th></tr>';
+        echo '<tr style="background: #AED6F1;border: 1px solid #002060;"><th>CODIGO</th><th>MATERIA</th><th>HORARIO</th><th>COSTO UNITARIO</th></tr>';
         for ($i = 0; $i < count($dataPlanificacion); $i++) {
             $total_costo = $total_costo + $dataPlanificacion[$i]['Cost'];
             echo '<tr style="border: 1px solid #002060;"><td>' . $dataPlanificacion[$i]['Code'] . '</td><td>' . $dataPlanificacion[$i]['Subject'] . '</td><td>' . $dataPlanificacion[$i]['Hour'] . ' - '  . $dataPlanificacion[$i]['Block'] .'</td><td>' . $dataPlanificacion[$i]['Cost'] . '</td><td> ';
@@ -164,18 +164,18 @@
                 <td> ASOCIACION DE ESTUDIANTES</td>
                 <td> </td>
                 <td> </td>
-                <td> </td>' . $detallePagosRon[0]['ron_valor_aso_estudiante']
+                <td> </td>' . $detallePagosRon[0]['ron_valor_aso_estudiante'] .
              '</tr>';
          echo '<tr> 
                 <td> </td>
                 <td> VARIODS ADMINISTRATIVOS</td>
                 <td> </td>
                 <td> </td>
-                <td> </td>' . $detallePagosRon[0]['ron_valor_gastos_adm']
+                <td> </td>' . $detallePagosRon[0]['ron_valor_gastos_adm'] .
              '</tr>';
         
         
-        echo "<tr><td colspan="4"> </td><td>TOTAL US$ " . $total_costo . "</td></tr>";
+        echo "<tr><td colspan='4'> </td><td>TOTAL US$ " . $total_costo . "</td></tr>";
         if (empty(count($dataPlanificacion))) {
             echo '<tr style="border: 1px solid #002060;"><td><br></td><td></td><td></td><td></td><td></td></tr>';
         }
@@ -193,7 +193,7 @@
             echo '<tr style="border: 1px solid #002060;"><td>' . $detallePagos[$i]['NO'] . '</td><td>' . $detallePagos[$i]['pago'] . '</td><td>' . $detallePagos[$i]['fecha_vencimiento'] . '</td><td>' . $detallePagos[$i]['porcentaje'] . '</td><td> ' . $detallePagos[$i]['valor_cuota'] . ' </td></tr>';
         }
 
-        echo "<tr><td colspan="4"> </td><td>TOTAL US$ " . $total_valor_cuota . "</td></tr>";
+        echo "<tr><td colspan='4'> </td><td>TOTAL US$ " . $total_valor_cuota . "</td></tr>";
 
         if (empty(count($detallePagos))) {
             echo '<tr style="border: 1px solid #002060;"><td><br></td><td></td><td></td><td></td><td></td></tr>';
@@ -214,7 +214,7 @@
             </ul>
         <hr>
     </div>
-    <div>
+    <div class="blue">
         <p>Compromiso de Pago - Crédito Universitario Directo</p>
             <p>Yo, alumno(a) <?= $model[0]['pes_nombres'] ?> con C.I. No. 2450726142, perteneciente a la facultad de MODALIDAD A
             DISTANCIA, carrera de LICENCIATURA EN ADMINISTRACION DE EMPRESAS -DIST-2020, me comprometo a cancelar

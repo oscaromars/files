@@ -185,9 +185,10 @@ class PeriodoAcademico extends \yii\db\ActiveRecord
 
         $comando = $con->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);        
-        $resultData = $comando->queryOne();
+        $resultData = $comando->queryAll();
+
         return $resultData;
-    }
+    }//function getPeriodoAcademicoActual
     
     /**
      * Consultar todos los períodos académicos, así no estén activos

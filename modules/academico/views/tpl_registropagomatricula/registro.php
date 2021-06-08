@@ -215,7 +215,7 @@
         <hr>
     </div>
     <div class="blue">
-        <p>Compromiso de Pago - Crédito Universitario Directo</p>
+        <p style='text-align:center'>Compromiso de Pago - Crédito Universitario Directo</p>
             <p>Yo, alumno(a) <?= $data_student['pes_nombres'] ?> con C.I. No. <?= $data_student['pes_dni'] ?>, perteneciente a la facultad de MODALIDAD <?= $data_student['mod_nombre'] ?>, carrera de <?= $data_student['pes_carrera'] ?>, me comprometo a cancelar
             puntualmente las cuotas señaladas anteriormente, hasta el día dos de cada mes, durante el periodo de <?= $data_student['pla_periodo_academico'] ?>. Por el incumplimiento de lo antes señalado, me sujeto a cumplir las disposiciones que establece la universidad.
         </p>

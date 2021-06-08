@@ -1549,7 +1549,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
         $sql = "SELECT ifnull(ron.ron_valor_aso_estudiante,0) as ron_valor_aso_estudiante, 
                        ron.ron_valor_gastos_adm as ron_valor_gastos_adm
                 FROM " . $con_academico->dbname . ".registro_online ron
-                where ron.ron_id = $ron_id
+                where ron.ron_id = :ron_id
                 and ron.ron_estado = :estado 
                 and ron.ron_estado_logico = :estado;";
 
@@ -1557,7 +1557,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
         $comando->bindParam(":ron_id", $ron_id, \PDO::PARAM_INT);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_INT);
         $resultData = $comando->queryOne();
-
+\app\models\Utilities::putMessageLogFile('getDetvalorRegistroOnline: '.$comando->getRawSql());
         return $resultData;
     }
 

@@ -66,8 +66,8 @@ function buscarDatapromedios(){
     //alert($('#cmb_estudiante').val());
 
     //if(!$(".blockUI").length) {
-        showLoadingPopup();
+        //showLoadingPopup();
         $('#Tbg_Registro_promedios').PbGridView('applyFilterData', {'estudiante': estudiante});
-        setTimeout(hideLoadingPopup, 2000);
+        //setTimeout(hideLoadingPopup, 2000);
     //}
 }

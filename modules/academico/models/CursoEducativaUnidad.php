@@ -664,7 +664,7 @@ class CursoEducativaUnidad extends \yii\db\ActiveRecord
         $sql = "SELECT 
                      ceuni_id as id,
                      ceuni_descripcion_unidad as name
-                FROM db_academico.curso_educativa_unidad 
+                FROM " . $con->dbname . ".curso_educativa_unidad 
                 WHERE cedu_id = :cedu_id AND               
                 ceuni_estado = :estado AND
                 ceuni_estado_logico = :estado";

@@ -624,4 +624,32 @@ class CursoEducativa extends \yii\db\ActiveRecord
         $resultData = $comando->queryAll();
         return $resultData;
     }
+
+    /**
+     * Function Consultar cursos de distributivo por paca_id.
+     * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>;
+     * @property       
+     * @return  
+     */
+    public function consultarCursosdistributivoxpacaid($paca_id) {
+        $con = \Yii::$app->db_academico;      
+        $estado = 1;
+
+        $sql = "SELECT 	Distinct
+                        cedu.cedu_id as id,
+                        cedu.cedu_asi_nombre as name               
+                        
+                FROM " . $con->dbname . ".curso_educativa_distributivo cedi
+                INNER JOIN " . $con->dbname . ".curso_educativa cedu  ON cedu.cedu_id = cedi.cedu_id       
+                WHERE 
+                cedu.paca_id = :paca_id AND               
+                cedu.cedu_estado = :estado AND
+                cedu.cedu_estado_logico = :estado";
+
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":paca_id", $paca_id, \PDO::PARAM_INT);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);        
+        $resultData = $comando->queryAll();
+        return $resultData;
+    }
 }

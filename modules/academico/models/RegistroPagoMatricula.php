@@ -716,6 +716,7 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
                     pe.pes_dni as Cedula,
                     mo.mod_nombre as Modalidad,
                     p.pla_periodo_academico as Periodo,
+                    p.pla_id as pla_id,
                     tmp.Cant as Cant,
                     tmp.Costo as Costo,
                     rf.Refund as Refund,
@@ -1138,14 +1139,15 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
         return $arr_vencimiento;
     }
 
-    public static function fechasVencimientoPeriodo(){
+    public static function fechasVencimientoPeriodo($pla_id){
         $con = \Yii::$app->db_academico;
 
         for($i = 1; $i <= 6; $i++){
-            $sql = "SELECT fecha_vencimiento as fecha
+            $sql = "SELECT fvpa_fecha_vencimiento as fecha
                     from " . $con->dbname . ".fechas_vencimiento_pago 
-                    WHERE estado_logico = '1'
-                    and cuota = $i;";
+                    WHERE fvpa_estado_logico = '1'
+                    and fvpa_paca_id = $pla_id
+                    and fvpa_cuota = $i;";
             $comando = $con->createCommand($sql);
             \app\models\Utilities::putMessageLogFile('mensaje: ' .$comando->getRawSql());
             
@@ -1185,6 +1187,28 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
         $resultData = $comando->queryOne();
 
         return $resultData;
+    }
+
+    public function getCuotasPeriodo($rama_id){
+        $con = \Yii::$app->db_academico;
+
+        $sql = "SELECT CASE count(distinct roi.roi_bloque) 
+                        when 1 then 3
+                        when 2 then 6
+                        when 3 then 2
+                        when 4 then 5
+                        end as 'cuota'
+        from  " . $con->dbname . ".registro_adicional_materias ram
+        inner join  " . $con->dbname . ".registro_configuracion rc on rc.pla_id = ram.pla_id
+        inner join  " . $con->dbname . ".registro_online ro on ram.ron_id = ro.ron_id
+        inner join  " . $con->dbname . ".registro_online_item roi on ro.ron_id = roi.ron_id
+        where ram.rama_id = $rama_id;";
+         $comando = $con->createCommand($sql);
+         //\app\models\Utilities::putMessageLogFile('mensaje: ' .$comando->getRawSql());
+         
+         $resultData = $comando->queryOne();
+ 
+         return $resultData;
     }
 }
 

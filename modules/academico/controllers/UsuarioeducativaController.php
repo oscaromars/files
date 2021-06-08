@@ -212,7 +212,7 @@ class UsuarioeducativaController extends \app\components\CController {
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
             }
             if (isset($data["getcursoreg"])) {
-                $periodoreg = $mod_educativa->consultarCursosxpacaid($data["codcursoreg"]);
+                $periodoreg = $mod_educativa->consultarCursosdistributivoxpacaid($data["codcursoreg"]);
                 $message = array("periodoreg" => $periodoreg);
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
             }
@@ -226,7 +226,8 @@ class UsuarioeducativaController extends \app\components\CController {
         $arr_modalidad = $mod_modalidad->consultarModalidad($arr_unidad[0]["id"], 1);
         $arr_periodo = $mod_periodo->consultarPeriodoAcademicotodos();
         $arr_asignatura = $distributivo_model->consultarAsiganturaxuniymoda(0, 0);
-        $arr_curso = $mod_educativa->consultarCursosxpacaid(0); // parametro q envia es el paca_id
+        //$arr_curso = $mod_educativa->consultarCursosxpacaid(0); // parametro q envia es el paca_id
+        $arr_curso = $mod_educativa->consultarCursosdistributivoxpacaid(0); // parametro q envia es el paca_id
         $arr_unidadeduc = $model_unideduca->consultarUnidadesxcursoid(0); // parametro q envia es el cedu_id
         return $this->render('listarestudianteregistro', [
                     'mod_unidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Grid")]], $arr_unidad), "id", "name"),

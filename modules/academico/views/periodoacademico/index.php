@@ -9,16 +9,10 @@ use app\modules\academico\Module as academico;
 /* @var $searchModel app\models\RolSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Periodo Academico';
-$this->params['breadcrumbs'][] = $this->title;
+
 ?>
 <div class="estudioacademico-index"> 
-<div style="float: right;">
-        <p>
-            <?= Html::a('Nuevo Periodo Academico ', ['create'], ['class' => 'btn btn-success']) ?>
-        </p>
-    </div>
-    <h1 align="center" ><?= Html::encode($this->title) ?></h1>
+   
     
     <?php echo $this->render('_search', ['model' => $searchModel]); ?>
     
@@ -71,13 +65,14 @@ $this->params['breadcrumbs'][] = $this->title;
             'baca.baca_nombre',
             'baca.baca_descripcion',
             'baca.baca_anio',
-            ['attribute' => 'Estado',
+            'paca_semanas_periodo',
+            ['attribute' => 'paca_activo',
                 'contentOptions' => ['class' => 'text-center'],
                 'headerOptions' => ['class' => 'text-center'],
                 'format' => 'html',
                 'header' => 'Estado',
                 'value' => function ($model, $key, $index, $widget) {
-                    if($model->paca_estado == "1")
+                    if($model->paca_activo == "A")
                         return '<small class="label label-success">'.academico::t("asignatura", "Enabled").'</small>';
                     else
                         return '<small class="label label-danger">'.academico::t("asignatura", "Disabled").'</small>';

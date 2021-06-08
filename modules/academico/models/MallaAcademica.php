@@ -326,7 +326,7 @@ class MallaAcademica extends \yii\db\ActiveRecord
                         INNER JOIN " . $con->dbname . ".asignatura asi ON asi.asi_id = mad.asi_id
                         INNER JOIN " . $con->dbname . ".planificacion_estudiante ples on mad.made_codigo_asignatura in (ples.pes_mat_b1_h1_cod,ples.pes_mat_b1_h2_cod,ples.pes_mat_b1_h3_cod,ples.pes_mat_b1_h4_cod,ples.pes_mat_b1_h5_cod,ples.pes_mat_b1_h6_cod,
                                                                 ples.pes_mat_b2_h1_cod,ples.pes_mat_b2_h2_cod,ples.pes_mat_b2_h3_cod,ples.pes_mat_b2_h4_cod,ples.pes_mat_b2_h5_cod,ples.pes_mat_b2_h6_cod)
-                        INNER JOIN " . $con->dbname . ".planificacion pla on pla.pla_id = ples.pla_id                     
+						INNER JOIN " . $con->dbname . ".planificacion pla on pla.pla_id = ples.pla_id                     
                         WHERE   mad.maca_id = :maca_id AND
                                 mad.made_estado = :estado AND
                                 mad.made_estado_logico = :estado AND
@@ -375,7 +375,7 @@ class MallaAcademica extends \yii\db\ActiveRecord
     public function consultarMallaEstudiante($per_id) {
         $con = \Yii::$app->db_academico;
         $estado = 1;
-        $sql = "SELECT  
+        $sql = "SELECT 	
                     mac.maca_id as idmalla,
                     mac.maca_codigo as codmalla        
                 FROM " . $con->dbname . ".estudiante est

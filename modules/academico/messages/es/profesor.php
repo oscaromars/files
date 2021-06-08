@@ -122,5 +122,4 @@ return [
     'CV' => 'CV',
     '-- Select Level --' => '-- Seleccione un Nivel --',
     'Thesis topic' => 'Tema de tesis',
-    "You are still not approved" => "Usted aún no está aprobado"
 ];

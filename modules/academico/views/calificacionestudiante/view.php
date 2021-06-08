@@ -28,7 +28,7 @@ use app\modules\academico\Module as academico;
         'notas_estudiante' => $notas_estudiante,
         'supletorio' => $supletorio,
         'unidad' => $unidad,
-        'modalidad' => $modalidad
+        'modalidad' => $modalidad,
         ]);
     ?>
 </div>

@@ -15,20 +15,11 @@ use app\modules\academico\Module as academico;
 
 academico::registerTranslations();
 
-use kartik\export\ExportMenu;
 
-$this->title = 'Academico Horarios';
-$this->params['breadcrumbs'][] = $this->title;
-$gridColumns = ['daho_descripcion', 'daho_horario', 'daho_total_horas', 'daho_total_horas', 'daho_jornada', 'mod.mod_nombre', 'uaca.uaca_nombre'];
 ?>
 
 <div class="distributivohorarioparalelo-index">
 
-    <h3><?= Html::encode($this->title) ?></h3>
-
-    <p>
-    <?= Html::a('Nuevo Horario', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
     <?php echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <?php
@@ -37,9 +28,7 @@ $gridColumns = ['daho_descripcion', 'daho_horario', 'daho_total_horas', 'daho_to
         'dataProvider' => $dataProvider,
         /// 'filterModel' => $searchModel,
         'pjax' => true,
-        'panel' => [
-            'type' => 'primary'
-        ],
+       
         'export' => [
             'showConfirmAlert' => false,
             'target' => GridView::TARGET_BLANK,
@@ -117,9 +106,7 @@ $gridColumns = ['daho_descripcion', 'daho_horario', 'daho_total_horas', 'daho_to
                 'vAlign' => 'middle',
                 'label' => 'Modalidad',
                 'value' => function ($model, $key, $index, $widget) {
-                    return Html::a($model->mod->mod_nombre,
-                            '#',
-                            ['title' => $model->mod->mod_nombre, 'onclick' => '']);
+                    return $model->mod->mod_nombre;
                 },
                 'filterType' => GridView::FILTER_SELECT2,
                 'filter' => ArrayHelper::map(Modalidad::find()->asArray()->all(), 'mod_id', 'mod_nombre'),
@@ -135,9 +122,7 @@ $gridColumns = ['daho_descripcion', 'daho_horario', 'daho_total_horas', 'daho_to
                 'vAlign' => 'middle',
                 'label' => 'Unidad Academica',
                 'value' => function ($model, $key, $index, $widget) {
-                    return Html::a($model->uaca->uaca_nombre,
-                            '#',
-                            ['title' => $model->uaca->uaca_nombre, 'onclick' => '']);
+                    return $model->uaca->uaca_nombre;
                 },
                 'filterType' => GridView::FILTER_SELECT2,
                 'filter' => ArrayHelper::map(UnidadAcademica::find()->asArray()->all(), 'uaca_id', 'uaca_nombre'),

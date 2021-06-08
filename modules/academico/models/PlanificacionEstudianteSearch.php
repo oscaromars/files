@@ -52,28 +52,39 @@ class PlanificacionEstudianteSearch extends PlanificacionEstudiante {
         return $dataProvider;
     }
 
-    public function getListadoPromedios($params = null, $onlyData = false, $tipo = 1) {
+    public function getListadoPromedios($arrFiltro = array(), $params = null, $onlyData = false, $tipo = 1) {
         $con_academico = \Yii::$app->db_academico;
         $con_db = \Yii::$app->db;
         
+        if ($arrFiltro['estudiante'] != "" && $arrFiltro['estudiante'] > 0) {
+            $str_search .= "pes.per_id = :per_id AND ";
+        }
 
-        $sql = "SELECT  CONCAT(per.per_pri_apellido,' ' ,per.per_seg_apellido,' ' ,per.per_pri_nombre) as nombres,
-			enac.enac_asig_estado as estado_nota, 
-			asi.asi_descripcion as asignatura, 
-			pmac.pmac_nota as promedio
-	FROM db_academico.planificacion_estudiante pes
-    INNER JOIN db_asgard.persona per ON per.per_id = per.per_id
-	INNER JOIN db_academico.estudiante est ON est.per_id = per.per_id
-	INNER JOIN db_academico.malla_academico_estudiante maes ON maes.per_id = per.per_id
-	INNER JOIN db_academico.promedio_malla_academico pmac on pmac.maes_id = maes.maes_id
-	INNER JOIN db_academico.estado_nota_academico enac on enac.enac_id = pmac.enac_id
-	INNER JOIN db_academico.asignatura asi on asi.asi_id = maes.asi_id
-	WHERE
-	pes.pes_estado = 1 AND pes.pes_estado_logico = 1
-	AND est.est_estado = 1 AND est.est_estado_logico = 1
-	AND per.per_estado = 1 AND per.per_estado_logico = 1 
-	AND pmac.pmac_estado = 1 AND pmac.pmac_estado_logico = 1
-	AND asi.asi_estado = 1 AND asi.asi_estado_logico = 1";
+        $sql = "SELECT  ifnull(CONCAT(per.per_pri_apellido,' ' ,per.per_seg_apellido,' ' ,per.per_pri_nombre), '') as nombres, 
+                        enac.enac_asig_estado as estado_nota, 
+                        asi.asi_descripcion as asignatura, 
+                        maca.maca_nombre as malla,
+                        ifnull((pmac.pmac_nota),'') as promedio
+                FROM db_academico.planificacion_estudiante pes
+                INNER JOIN db_asgard.persona per ON per.per_id = per.per_id
+                INNER JOIN db_academico.estudiante est ON est.per_id = per.per_id
+                INNER JOIN db_academico.malla_academico_estudiante maes ON maes.per_id = per.per_id
+                INNER JOIN db_academico.malla_academica maca on maca.maca_id = maes.maca_id
+                INNER JOIN db_academico.promedio_malla_academico pmac on pmac.maes_id = maes.maes_id
+                INNER JOIN db_academico.estado_nota_academico enac on enac.enac_id = pmac.enac_id
+                INNER JOIN db_academico.asignatura asi on asi.asi_id = maes.asi_id
+                WHERE $str_search
+                pes.pes_estado = 1 AND pes.pes_estado_logico = 1
+                AND est.est_estado = 1 AND est.est_estado_logico = 1
+                AND per.per_estado = 1 AND per.per_estado_logico = 1 
+                AND maes.maes_estado = 1 AND maes.maes_estado_logico = 1
+                AND pmac.pmac_estado = 1 AND pmac.pmac_estado_logico = 1
+                AND asi.asi_estado = 1 AND asi.asi_estado_logico = 1";
+
+            if ($arrFiltro['estudiante'] != "" && $arrFiltro['estudiante'] > 0) {
+                $estudiante = $arrFiltro["estudiante"];
+                $comando->bindParam(":per_id", $estudiante, \PDO::PARAM_INT);
+            }
         if ($tipo == 1) {
             $this->load($params);
             if ($this->validate()) {
@@ -89,7 +100,7 @@ class PlanificacionEstudianteSearch extends PlanificacionEstudiante {
                 $sql = $sql . " and pes.per_id =" . $params['per_id'];
             }
         }
-        Utilities::putMessageLogFile('sql:' . $sql);
+        //Utilities::putMessageLogFile('sql:' . $sql);
         $comando = $con_academico->createCommand($sql);
        
         $res = $comando->queryAll();
@@ -110,25 +121,5 @@ class PlanificacionEstudianteSearch extends PlanificacionEstudiante {
         return $dataProvider;
     }
 
-    public function getEstudiantesporpersona() {
-        $con = \Yii::$app->db_academico;
-        $con1 = \Yii::$app->db_asgard;
-        $estado = 1;
-        
-        $sql = "SELECT 
-CONCAT(per.per_pri_apellido,'-',per.per_seg_apellido,' ',per.per_pri_nombre) as estudiante      
-FROM db_academico.planificacion_estudiante pes
-inner join db_asgard.persona per on per.per_id = pes.per_id
-inner join db_academico.estudiante est ON est.per_id = per.per_id
-WHERE per.per_id = est.per_id and 
-pes.pes_estado = 1 and pes.pes_estado_logico = 1 and
-per.per_estado = 1 AND per.per_estado_logico = 1 and
-est.est_estado = 1 AND est.est_estado_logico = 1;
-";
 
-          $comando = $con->createCommand($sql);
-        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
-        $resultData = $comando->queryAll();
-        return $resultData;
-    }
 }

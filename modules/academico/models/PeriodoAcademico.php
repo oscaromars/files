@@ -68,9 +68,9 @@ class PeriodoAcademico extends \yii\db\ActiveRecord
     {
         return [
             'paca_id' => 'Paca ID',
-            'saca_id' => 'Semestre Academico',
-            'baca_id' => 'Bloque Academico',
-            'paca_activo' => '',
+            'saca_id' => 'Semestre Académico',
+            'baca_id' => 'Bloque Académico',
+            'paca_activo' => 'Estado',
             'paca_fecha_inicio' => '',
             'paca_fecha_fin' => '',
             'paca_usuario_ingreso' => '',
@@ -79,6 +79,7 @@ class PeriodoAcademico extends \yii\db\ActiveRecord
             'paca_fecha_creacion' => '',
             'paca_fecha_modificacion' => '',
             'paca_estado_logico' => '',
+            'paca_semanas_periodo'=> '# de Semana',
         ];
     }
 

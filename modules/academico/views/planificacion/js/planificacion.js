@@ -16,12 +16,22 @@ $(document).ready(function () {
         actualizarGridPlanest();
     });
 
+    $('#btn_buscarPlanest').click(function () {
+        actualizarGridPlanestudiante();
+    });
+
     $('#btn_saveplanificacion').click(function () {
         guardaplanificacion();
     });
 
     $('#btn_modificarplanificacion').click(function () {
         modificarplanificacion();
+    });
+    $('#btn_modificarplanificacionaut').click(function () {
+        modificarplanificacionaut();
+    });
+    $('#btn_limpiarbuscador').click(function () {
+        limpiarBuscador();
     });
 
     /************ planificacion x estudiante **********************************/
@@ -539,6 +549,25 @@ function accionmat(plaid, perid, bloque, hora) {
     }
 }
 
+function accionmataut(plaid, perid, bloque, hora) {
+    var link = $('#txth_base').val() + "/academico/planificacion/deletematest";
+    var arrParams = new Object();
+    arrParams.pla_id = plaid;
+    arrParams.per_id = perid;
+    arrParams.bloque = bloque;
+    arrParams.hora = hora;
+    if (!validateForm()) {
+        requestHttpAjax(link, arrParams, function (response) {
+            showAlert(response.status, response.label, response.message);
+            if (!response.error) {
+                setTimeout(function () {
+                    window.location.href = $('#txth_base').val() + "/academico/planificacion/newplanificacion?pla_id=" + arrParams.pla_id + "&estudiante=" + arrParams.per_id;
+                }, 1000);
+            }
+        }, true);
+    }
+}
+
 function deletematestudiante(plaid, perid, bloque, hora) {
     var mensj = "¿Seguro desea eliminar la materia?";
     var messagePB = new Object();
@@ -556,15 +585,35 @@ function deletematestudiante(plaid, perid, bloque, hora) {
     showAlert("warning", "warning", messagePB);
 }
 
+function deletematestudianteaut(pla_id,perid, bloque, hora) {
+    var mensj = "¿Seguro desea eliminar la materia?";
+   
+    var messagePB = new Object();
+    messagePB.wtmessage = mensj;
+    messagePB.title = "Eliminar";
+    var objAccept = new Object();
+    objAccept.id = "btnid2del";
+    objAccept.class = "btn-primary";
+    objAccept.value = "Aceptar";
+    objAccept.callback = 'accionmataut';
+    //var pla_id = $("#txth_pla_id").val(); 
+    //alert('Se va a eliminar :'.pla_id + ":");
+    var params = new Array(pla_id, perid, bloque, hora);
+    objAccept.paramCallback = params;
+    messagePB.acciones = new Array();
+    messagePB.acciones[0] = objAccept;
+    showAlert("warning", "warning", messagePB);
+}
+
 function buscaDatoTabla(par_tabla, par_comboID, par_clase){ 
     var retorna = false;
-    console.log(par_tabla)
-    console.log(par_comboID  )
-    console.log(par_clase)
+    console.log('Tabla:'+par_tabla)
+    console.log('Combo: '+par_comboID  )
+    console.log('Clase:'+par_clase)
     $('#' + par_tabla + ' tr').each(function() {
         var bloqueID = $(this).find("." + par_clase).html(); 
-        console.log(bloqueID);
-        console.log(par_comboID);
+        console.log('Bloque: '+bloqueID);
+        console.log('Combo: '+par_comboID);
         if (bloqueID === par_comboID){ 
             retorna = true; 
         } 
@@ -577,7 +626,7 @@ function agregarItems(opAccion) {
     var tGrid = 'PbPlanificaestudiantnew';
     //var nombre = $('#cmb_estandar_evi option:selected').text();
     //Verifica que tenga nombre producto y tenga foto
-    //alert('dsasd' + $('#cmb_modalidadesth').val());
+    //alert('add :1-' + $('#cmb_modalidadesth').val()+' :2-'+$('#cmb_bloqueest').val()+' :3-'+ $('#cmb_modalidadesth').val() +' :4-'+$('#cmb_horaest').val());
     if ($('#cmb_asignaest').val() != '0' /*&& $('#cmb_jornadaest').val() != '0'*/ && $('#cmb_bloqueest').val() != '0' && $('#cmb_modalidadesth').val() != '0' && $('#cmb_horaest').val() != '0') {
         /* var valor = $('#cmb_estandar_evi option:selected').text();*/
         if (opAccion != "edit") {
@@ -588,20 +637,25 @@ function agregarItems(opAccion) {
                 arr_Grid = JSON.parse(sessionStorage.dts_datosItemplan);
                 var size = arr_Grid.length;
                 if (size > 0) {
-                    var vasignatura = $('#cmb_asignaest option:selected').text();
+                    var str = $('#cmb_asignaest option:selected').text();
+                    var n = str.indexOf(" - ");
+                    var vasignatura = str.substring(0,n);// $('#cmb_asignaest option:selected').text();
                     var vbloque = $('#cmb_bloqueest option:selected').text();
                     var vhora = $('#cmb_horaest option:selected').text();
                     var vBloque =  buscaDatoTabla(tGrid, vbloque, 'bloque');
                     var vHora =  buscaDatoTabla(tGrid, vhora, 'hora');
+                    var vExiste = (sessionStorage.dts_datosItemplan).indexOf(vasignatura);
                     var viguales = 0;
-                    console.log(vBloque);
-                    console.log( vHora);
-                    //console.log(vasignatura);
+                    console.log('Bloque: '+vBloque);
+                    console.log('Hora: '+ vHora);
+                    //console.log(str + ' - - ' +vasignatura);
+                    console.log('Existe: '+vExiste);
+                    console.log('Grid: '+tGrid);
                     if (vBloque   && vHora ){
                         viguales = 1;
                     }
                     //alert ('sdsds' + viguales);
-                    if (checkId(vasignatura, 'asignatura') /*||  (viguales === 1)*/) {
+                    if (vExiste > 0){//(checkId(vasignatura, 'asignatura') /*||  (viguales === 1)*/) {
                      //if (vBloque && vhora) {                         
                         showAlert('NO_OK', 'error', { "wtmessage": "Ya ha ingresado esa asignatura", "title": 'Información' });
                         return;
@@ -613,7 +667,7 @@ function agregarItems(opAccion) {
                     else {
                         //Varios Items                    
                         arr_Grid[size] = objProducto(size);
-                        sessionStorage.dts_datosItemplan = JSON.stringify(arr_Grid);
+                        sessionStorage.dts_datosItemplan = JSON.stringify(arr_Grid);//alert(JSON.stringify(arr_Grid));
                         addVariosItem(tGrid, arr_Grid, -1);
                     }         
                     limpiarDetalle();
@@ -708,8 +762,8 @@ function retornaFila(c, Grid, TbGtable, op) {
 
 function checkId(id, cadena) {
     let ids = document.querySelectorAll('#PbPlanificaestudiantnew td[for="' + cadena + '"]');
-    //console.log('+++' + ids);
-    //console.log('sdd' + [].filter.call(ids, td => td.textContent === id).length === 1);
+    console.log('+++' + ids);
+    console.log('sdd' + [].filter.call(ids, td => td.textContent === id).length === 1);
     return [].filter.call(ids, td => td.textContent === id).length === 1;    
 }
 
@@ -863,12 +917,55 @@ function fillDataAlert() {
     showResponse(type, status, label, messagew);
 }
 
+function exportPdfplanificacion() {
+    var estudiante = $('#txt_buscarDataPlanifica').val();
+    // var unidad = $('#cmb_unidades option:selected').val();
+    var modalidad = $('#cmb_modalidades option:selected').val();
+    var carrera = $('#cmb_carreras option:selected').text(); //$('#cmb_carreras option:selected').val();
+    var periodo = $('#cmb_periodo option:selected').val();
+    window.location.href = $('#txth_base').val() + "/academico/planificacion/exppdfplanificacion?pdf=1&estudiante=" + estudiante + /*"&unidad=" + unidad +*/ '&modalidad=' + modalidad + "&carrera=" + carrera + "&periodo=" + periodo;
+}
+
+function exportExcelplanificacion() {
+    var estudiante = $('#txt_buscarDataPlanifica').val();
+    //var unidad = $('#cmb_unidades option:selected').val();
+    var modalidad = $('#cmb_modalidades option:selected').val();
+    var carrera = $('#cmb_carreras option:selected').text(); //$('#cmb_carreras option:selected').val();
+    var periodo = $('#cmb_periodo option:selected').val();
+    window.location.href = $('#txth_base').val() + "/academico/planificacion/expexcelplanificacion?estudiante=" + estudiante + /*"&unidad=" + unidad +*/ '&modalidad=' + modalidad + "&carrera=" + carrera + "&periodo=" + periodo;
+}
+
+
+function actualizarGridPlanestudiante() {
+    var estudiante = $('#cmb_buscarest option:selected').val();
+    var unidad = $('#cmb_unidadest option:selected').val();
+    var modalidad = $('#cmb_modalidadest option:selected').val();
+    //var carrera = $('#cmb_carreraest option:selected').text(); //$('#cmb_carreras option:selected').val();//$('#cmb_carreras option:selected').val();
+    var carrera = $('#txt_carrera').val();
+    var periodo = $('#cmb_periodoest option:selected').val();
+    //var malla = $('#cmb_mallaest option:selected').val();
+    var malla = $('#txt_malla').val();
+    var per_id = estudiante;
+    var pla_id = $('#txth_pla_id').val();
+
+    //Buscar almenos una clase con el nombre para ejecutar
+    //alert('OK : '+estudiante);
+    if (!$(".blockUI").length) {
+        showLoadingPopup();
+        //$('#PbPlanificaestudiante').PbGridView('applyFilterData', { 'per_id': estudiante, 'unidad': unidad, 'modalidad': modalidad, 'carrera': carrera, 'periodo': periodo,'malla':malla });
+        window.location.href = $('#txth_base').val() + "/academico/planificacion/newplanificacion?estudiante=" + estudiante + '&unidad=' + unidad + '&modalidad=' + modalidad +'&malla=' + malla + "&carrera=" + carrera + "&periodo=" + periodo + "&per_id=" + per_id + "&pla_id=" + pla_id;
+        setTimeout(hideLoadingPopup, 2000);
+    }
+}
+
 
 
 function generate() {
      var haspla = $('#frm_hasplanning').val(); 
     var periodo = $('#cmb_per_academico option:selected').val();
     var modalidad = $('#cmb_modalidad option:selected').val();
+    
+    
 
     if (haspla != undefined) {
  
@@ -888,4 +985,58 @@ function generate() {
 function descargarPlanificacionestu(pla_id) {
     /* console.log("Entra a descargar", pla_id); */
     window.location.href = $('#txth_base').val() + "/academico/planificacion/descargarples?pla_id=" + pla_id;
+}
+
+
+function modificarplanificacionaut() {
+    var arrParams = new Object();
+    var accion = "Update";
+    var link = $('#txth_base').val() + "/academico/planificacion/saveplanificacion";
+
+    arrParams.jornadaest = $('#cmb_jornadaest').val();
+    arrParams.carreraest = $('#txt_carrera').val();
+    arrParams.modalidadest = $('#cmb_modalidadest').val();
+    //arrParams.mallaest = $('#cmb_malladoest').val();
+    arrParams.periodoest = $('#cmb_periodoest').val();
+    arrParams.nombreest = $('#cmb_buscarest').val();
+    arrParams.pla_id = $('#txth_pla_id').val();
+    arrParams.per_id = $('#txth_per_id').val();
+    //alert($('#txth_base').val()+':1-' + $('#cmb_jornadaest').val()+':2-'+$('#txt_carrera').val()+':3-'+$('#cmb_modalidadest').val()+':4-'+$('#cmb_periodoest').val()+':5-'+$('#cmb_buscarest').val()+':6-'+$('#txth_pla_id').val()+':7-'+$('#txth_per_id').val());
+    //if ($('#cmb_jornadaest').val() != '0' && $('#txt_carrera').text() != 'Seleccionar' && $('#cmb_modalidadest').val() != '0' && /*$('#cmb_malladoest').val() != '0' &&*/ $('#cmb_periodoest').val() != '0' && $('#cmb_buscarest').val() > '0') {
+    if (sessionStorage.dts_datosItemplan) {
+    var arr_Grid = JSON.parse(sessionStorage.dts_datosItemplan);
+    if (arr_Grid.length > 0) {
+        arrParams.DATAS = sessionStorage.dts_datosItemplan
+        arrParams.ACCION = accion;
+        requestHttpAjax(link, arrParams, function (response) {
+            var message = response.message;
+            if (response.status == "OK") {
+                showAlert(response.status, response.type, { "wtmessage": message.info, "title": response.label });
+                limpiarDetalle();
+                sessionStorage.removeItem('dts_datosItemplan')
+                
+                setTimeout(function () {
+                    //window.location.href = $('#txth_base').val() + "/academico/planificacion/newplanificacion?estudiante=" .$('#cmb_buscarest').val()+"&pla_id=".$('#txth_pla_id').val();
+                    window.location.href = $('#txth_base').val() + "/academico/planificacion/newplanificacion";
+                }, 2000);
+                
+            } else {
+                showAlert(response.status, response.type, { "wtmessage": message.info, "title": response.label });
+            }
+        }, true);
+    } else {
+        showAlert('NO_OK', 'error', { "wtmessage": "No Existe datos ", "title": 'Información' });
+    }
+     } else {
+        showAlert('NO_OK', 'error', {"wtmessage": "No ha ingresado nuevas asignaturas del estudiante", "title": 'Información'});
+    }
+    /*} else {
+        showAlert('NO_OK', 'error', {"wtmessage": "Todos los datos de la cabecera planificación son obligatorios", "title": 'Información'});
+    }*/
+
+}
+
+function limpiarBuscador(){
+    //alert($('#txth_base').val());
+    window.location.href = $('#txth_base').val() + "/academico/planificacion/newplanificacion";
 }

@@ -123,7 +123,7 @@ class Planificacion extends \yii\db\ActiveRecord {
                     pla.pla_periodo_academico as PeriodoAcademico,
                     moda.mod_id as ModaId,
                     moda.mod_nombre as Modalidad
-                FROM " . $con_academico->dbname . ".planificacion as pla,
+                FROM " . $con_academico->dbname . ".planificacionx as pla,
                 " . $con_academico->dbname . ".modalidad as moda
                  WHERE moda.mod_id = pla.mod_id        
                 AND pla.pla_periodo_academico =:pla_periodo_academico
@@ -143,6 +143,10 @@ class Planificacion extends \yii\db\ActiveRecord {
         return $resultData;
     }
 
+    
+    
+   
+    
     public static function getPeriodosAcademico() {
         $con_academico = \Yii::$app->db_academico;
         $sql = "SELECT @row_number:=@row_number+1 as pla_id, pla_periodo_academico " .
@@ -228,13 +232,13 @@ class Planificacion extends \yii\db\ActiveRecord {
         $resultData = $comando->queryAll();
         return $resultData;
     }
-
+    
        public static function getVerifypla($pla_periodo_academico, $mod_id) {
         $con_academico = \Yii::$app->db_academico;
         $estado = 1;
         $sql = "SELECT 
                 pla_id as issaved
-                FROM " . $con_academico->dbname . ".planificacion 
+                FROM " . $con_academico->dbname . ".planificacionx 
                 WHERE pla_periodo_academico =:pla_periodo_academico
                 AND mod_id =:mod_id
                 AND pla_estado =:estado
@@ -249,6 +253,25 @@ class Planificacion extends \yii\db\ActiveRecord {
 
         return $resultData;
     }
+    
+    public function getPaca_id($per_id){
+        $con = \Yii::$app->db_academico;
+
+        $sql = "SELECT
+                pla_academico_periodo as acad_per
+                from " . $con->dbname . ".planificacion
+                where per_id = :per_id and pes_estado_logico = 1 limit 0,1;";
+        
+        if($per_id == NULL){
+            $resultData = [];
+        }else{
+            $comando = $con->createCommand($sql);
+            $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
+            $resultData = $comando->queryAll();
+        }
+        return $resultData;
+    }
+    
     
     
 

@@ -23,6 +23,7 @@ use app\modules\academico\models\MallaAcademicaSearch;
 use app\modules\academico\models\ModalidadEstudioUnidadSearch;
 use app\modules\academico\models\EstudioAcademico;
 use app\modules\financiero\models\CargaCartera;
+use app\modules\academico\models\PlanificacionEstudiante;
 use app\models\ExportFile;
 use app\modules\academico\Module as academico;
 use app\modules\financiero\Module as financiero;
@@ -456,15 +457,32 @@ class ReportesController extends CController {
     public function actionReportepromedios() { 
         //$searchModel = new PLanificacionEstudianteSearch();
         $searchModel = new EstudianteCarreraProgramaSearch();
-        //$mod_estudiante = new EstudianteCarreraProgramaSearch();
+        $mod_estudiante = new EstudianteCarreraProgramaSearch();
+        $mod_periodo = new PlanificacionEstudiante();
         //$estudiante = $mod_estudiante->getEstudiantesporpersona();
+        $estudiante = $mod_periodo->busquedaEstudianteplanificacion();
         $params = Yii::$app->request->queryParams;
         //$dataProvider = $searchModel->getListadoPromedios($params,false,1);
-        $dataProvider = $searchModel->getListadoReportepromedio($params,false,1);
+        //\app\models\Utilities::putMessageLogFile('estudiante:' . $data['estudiante']);
+        $data = Yii::$app->request->get();
+        if ($data['PBgetFilter']) {
+            \app\models\Utilities::putMessageLogFile('perid:' . $data['estudiante']);
+            $arrSearch["per_id"] = $data['estudiante'];
+            //\app\models\Utilities::putMessageLogFile('perid:' . $data['estudiante']);                      
+            $dataProvider = $searchModel->getListadoReportepromedio($arrSearch,$params,false,1);
+            return $this->render('reportepromedios', [
+                'estudiante' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']], $estudiante), 'id', 'name'),
+                'searchModel' => $searchModel,
+                'dataProvider' => $dataProvider,
+        ]);
+        } else {
+            $dataProvider = $searchModel->getListadoReportepromedio($arrSearch,$params,false,1);
+        }
+        //$dataProvider = $searchModel->getListadoReportepromedio($params,false,1);
 
         //$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         return $this->render('reportepromedios', [
-            //'estudiante' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $estudiante), "id", "name"),
+            'estudiante' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']], $estudiante), 'id', 'name'),
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);       

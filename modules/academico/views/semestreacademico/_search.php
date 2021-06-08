@@ -1,7 +1,7 @@
 <?php
 
 use yii\helpers\Html;
-use kartik\widgets\ActiveForm;
+use yii\bootstrap\ActiveForm;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\RolSearch */
@@ -11,15 +11,18 @@ use kartik\widgets\ActiveForm;
 <div class="semestreacademico-search">
 
     <?php
-    $form = ActiveForm::begin(['id' => 'login-form-inline',
-                'type' => ActiveForm::TYPE_HORIZONTAL,
-                'tooltipStyleFeedback' => true, // shows tooltip styled validation error feedback
-                'fieldConfig' => ['options' => ['class' => 'form-group mr-2']], // spacing field groups
-                'formConfig' => ['showErrors' => true],
-                'options' => ['style' => 'align-items: flex-start'],
-                'action' => ['index'],
-                'method' => 'get',
-    ]);
+      $form = ActiveForm::begin(['layout' => 'horizontal',
+                'fieldConfig' => [
+                    'template' => "{label}\n{beginWrapper}\n{input}\n{hint}\n{error}\n{endWrapper}",
+                    'horizontalCssClasses' => [
+                        'label' => 'col-sm-4',
+                        'offset' => 'col-sm-offset-4',
+                        'wrapper' => 'col-sm-8',
+                        'error' => '',
+                        'hint' => ''
+                    ],
+                ],
+    ]); 
     ?>
     <div class="form-group row">
         <div class="col-sm-3"></div>

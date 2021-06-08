@@ -123,14 +123,14 @@ class MateriaParaleloPeriodoSearch extends MateriaParaleloPeriodo {
             $model->mpp_id = $i;
             $model->asi_id = $resul[$i]['id'];
             $model->paca_id = 2;
-            $model->mpp_num_paralelo = 1;
+            $model->mpp_num_paralelo = 0;
             $data[] = $model;
         }
 
         $dataProvider = new ArrayDataProvider([
             'allModels' => $data,
             'pagination' => [
-                'pageSize' => 10,
+                'pageSize' => 100,
             ],
             'sort' => [
                 'attributes' => ['asi_id', 'paca_id', 'mpp_num_paralelo'],

@@ -52,8 +52,10 @@ use app\modules\academico\Module as academico;
             </div>
              <label for="txt_paralelo" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= academico::t("Academico", "Paralelo") ?></label>
             <div class="col-sm-3 col-xs-3 col-md-3 col-lg-3">
-                   <?= Html::dropDownList("cmb_paralelo", $distributivo_model->daca_id, $paralelos, ["class" => "form-control", "id" => "cmb_paralelo"]) ?>
-            </div>          
+       
+                  <?= Html::dropDownList("cmb_paralelo", $distributivo_model->daca_id, $paralelos, ["class" => "form-control", "id" => "cmb_paralelo"]) ?>
+            </div>
+             
         </div>
     </div> 
     

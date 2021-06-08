@@ -44,7 +44,7 @@ use kartik\select2\Select2;
             $form->field($model, 'teac_id')->widget(Select2::classname(), [
                 'data' => ArrayHelper::map(TipoEstudioAcademico::find()->all(), 'teac_id', 'teac_nombre'),
                 'size' => Select2::MEDIUM,
-                'options' => ['placeholder' => 'Seleccione Tipo de Estudio Academico ...', 'multiple' => false],
+                'options' => ['placeholder' => 'Seleccione Tipo de Estudio Académico ...', 'multiple' => false],
                 'pluginOptions' => [
                     'allowClear' => true,
                     'width' => '295px',

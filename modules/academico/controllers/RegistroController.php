@@ -568,12 +568,12 @@ class RegistroController extends \app\components\CController {
                         }*/
 
                         //$model_ron->ron_valor_matricula = str_replace(',','',$total);
-                        $model_ron->ron_valor_matricula = $totaldesc;
+                       // $model_ron->ron_valor_matricula = $totaldesc?$totaldesc:0;
                         //$model_ron->ron_valor_gastos_adm = str_replace(',','',$interes);
                         //$model_ron->ron_valor_arancel = str_replace(',','',$financiamiento); 
-                        if(!$model_ron->save()){
+                       /* if(!$model_ron->save()){
                             throw new Exception('Error to Update Online Registry.');
-                        }
+                        }*/
 
                         // Yii::$app->params["descarrera"]
                         // Yii::$app->params["desperiodo"]
@@ -2340,6 +2340,7 @@ class RegistroController extends \app\components\CController {
             \app\models\Utilities::putMessageLogFile('controller 1...: ');
             $total      = $data['total'];
             $tpago      = $data['tpago'];
+            $rama_id    = $data['rama'];
             $numcuotas  = $data['numcuotas'];
             $con = \Yii::$app->db_facturacion;
             $transaction = $con->beginTransaction();
@@ -2358,29 +2359,43 @@ class RegistroController extends \app\components\CController {
                         $cedula = $persona->consultaPersonaId($per_id);
                         $estudiante = new Estudiante();
                         $est_id = $estudiante->getEstudiantexperid($per_id);
-                        for($in = 1; $in <= $numcuotas; $in++){
-                            $fechaCuotaActual = $modelCargaCartera->getCuotaActual($in);
-                            $registros_cuotas = $modelCargaCartera->registrarCargaCartera($est_id['est_id'],$cedula['per_cedula'],$per_id, $secuencial['secuencial']?$secuencial['secuencial']:'00000011', $forma_pago,$fechaCuotaActual['fecha'],$in, $numcuotas, $valor_cuota, $total, $usuario);
-                        }
-                        if ($registros_cuotas) {
-                            $exito = 1;
-                        }
-                        if ($exito) {
-                            $transaction->commit();
+                        $repetidos = $modelCargaCartera->getRegistrosDuplicados($rama_id);
+                        \app\models\Utilities::putMessageLogFile('log 0...');
+                        if($repetidos['repetidos']==0 ){ //If grid cuotas repetidos
+                            \app\models\Utilities::putMessageLogFile('log 1...');
+                            $registros_relacionados = $modelCargaCartera->registrarRelacionCartera($est_id['est_id'],$rama_id, $secuencial['secuencial']);
+                            \app\models\Utilities::putMessageLogFile('log 2...');
+                                \app\models\Utilities::putMessageLogFile('controller N1...: '.$est_id['est_id'].'-'.$rama_id.'-'. $secuencial['secuencial']);
+                            for($in = 1; $in <= $numcuotas; $in++){
+                                $fechaCuotaActual = $modelCargaCartera->getCuotaActual($in);
+                                $registros_cuotas = $modelCargaCartera->registrarCargaCartera($est_id['est_id'],$cedula['per_cedula'],$per_id, $secuencial['secuencial']?$secuencial['secuencial']:'00000011', $forma_pago,$fechaCuotaActual['fecha'],$in, $numcuotas, $valor_cuota, $total, $usuario);
+                            }
+                            if ($registros_cuotas) {
+                                $exito = 1;
+                            }
+                            if ($exito) {
+                                $transaction->commit();
+                                $message = array(
+                                    "wtmessage" => Yii::t("notificaciones", "Se ha guardado el pago."),
+                                    "title" => Yii::t('jslang', 'Success'),
+                                );
+                                return Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), true, $message);
+                            } else {
+                                $transaction->rollback();
+                                $message = array(
+                                    "wtmessage" => Yii::t("notificaciones", "Error al grabar." . $message),
+                                    "title" => Yii::t('jslang', 'Error'),
+                                );
+                                return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+                            }
+                        }  
+                    } else{  //If grid cuotas repetidos
                             $message = array(
-                                "wtmessage" => Yii::t("notificaciones", "Se ha guardado el pago."),
-                                "title" => Yii::t('jslang', 'Success'),
-                            );
-                            return Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), true, $message);
-                        } else {
-                            $transaction->rollback();
-                            $message = array(
-                                "wtmessage" => Yii::t("notificaciones", "Error al grabar." . $mensaje),
+                                "wtmessage" => Yii::t("notificaciones", "Registros repetidos."),
                                 "title" => Yii::t('jslang', 'Error'),
                             );
-                            return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
-                        }
-                    }                                    
+                            Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+                    }                                   
             } catch (Exception $ex) {
                 \app\models\Utilities::putMessageLogFile('controller 4...: ');
                 $transaction->rollback();
@@ -2453,7 +2468,7 @@ class RegistroController extends \app\components\CController {
             //Valores de registro online
             $detallePagosRon = $matriculacion_model->getDetvalorRegistroOnline($ron_id);
             $ron_valor_aso_estudiante = $detallePagosRon['ron_valor_aso_estudiante'];
-            $ron_valor_gastos_adm =  $detallePagosRon['ron_valor_gastos_adm']
+            $ron_valor_gastos_adm =  $detallePagosRon['ron_valor_gastos_adm'];
  
   \app\models\Utilities::putMessageLogFile(' ron_valor_aso_estudiante:' .$ron_valor_aso_estudiante);
     \app\models\Utilities::putMessageLogFile(' ron_valor_gastos_adm:' .$ron_valor_gastos_adm);

@@ -459,12 +459,12 @@ class ReportesController extends CController {
         $mod_estudiante = new EstudianteCarreraProgramaSearch();
         $mod_periodo = new PlanificacionEstudiante();
         $estudiante = $mod_periodo->busquedaEstudianteplanificacion();
-        \app\models\Utilities::putMessageLogFile('estudianteControlador:' . $data['estudiante']);
+        //\app\models\Utilities::putMessageLogFile('estudianteControlador:' . $data['estudiante']);
         $data = Yii::$app->request->get();
         if ($data['PBgetFilter']) {
-            \app\models\Utilities::putMessageLogFile('perid:' . $data['estudiante']);
+            //\app\models\Utilities::putMessageLogFile('perid:' . $data['estudiante']);
             $arrSearch["estudiante"] = $data['estudiante'];
-            Utilities::putMessageLogFile('eeeeeeeee:' . $data['estudiante']);
+            //Utilities::putMessageLogFile('eeeeeeeee:' . $data['estudiante']);
             //\app\models\Utilities::putMessageLogFile('perid:' . $data['estudiante']);                      
             $dataProvider = $searchModel->getListadoReportepromedio($arrSearch,false);
             return $this->render('reportepromedios', [

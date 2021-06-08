@@ -120,9 +120,9 @@
         <table class="default">
             <tr class="tr">
                 <td colspan="1" class="aleft td"><span class="bold">PERIODO ACADEMICO: </span></td>
-                <td colspan="1" class="aleft td"><span class="bold"><?= $data_student[0]['pla_periodo_academico'] ?></span></td>
+                <td colspan="1" class="aleft td"><span class="bold"><?= $data_student['pla_periodo_academico'] ?></span></td>
                 <td colspan="1" class="aleft td"><span class="bold">NUM DOC PED:</span></td>
-                <td colspan="1" class="aleft td"><span class="bold"><?= $model[0]['pla_periodo_academico'] ?></span></td>
+                <td colspan="1" class="aleft td"><span class="bold"><?= $data_student['pla_periodo_academico'] ?></span></td>
             </tr>
             <tr class="tr">
                 <td colspan="1" class="aleft td"><span class="bold">ALUMNO: </span></td>

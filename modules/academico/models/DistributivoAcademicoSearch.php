@@ -627,7 +627,6 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
         $con_academico = \Yii::$app->db_academico;
         $con_db = \Yii::$app->db;
         
-
         $sql = "select 
                 CONCAT(per.per_pri_apellido,' ' ,per.per_pri_nombre) as estudiante,
                 per.per_cedula as cedula,
@@ -652,11 +651,10 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
                 Inner Join " . $con_academico->dbname . ".asignatura asi on asi.asi_id = daca.asi_id
                 Inner Join " . $con_academico->dbname . ".periodo_academico paca on paca.paca_id = daca.paca_id 
                 Where
-                    pla.saca_id = 7 AND
-                    ron.pes_id = 20 AND
                     per.per_id = est.per_id AND
                     daca.daca_estado = 1 and daca.daca_estado_logico = 1
-                    and est.est_estado = 1 and est.est_estado_logico = 1";
+                    and est.est_estado = 1 and est.est_estado_logico = 1
+                    and per.per_estado = 1 and per.per_estado_logico = 1";
         if ($tipo == 1) {
             $this->load($params);
             if ($this->validate()) {

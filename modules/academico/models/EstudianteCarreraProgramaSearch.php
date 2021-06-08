@@ -55,6 +55,7 @@ class EstudianteCarreraProgramaSearch extends EstudianteCarreraPrograma {
 // grid filtering conditions
         $query->andFilterWhere([
             'ecpr_id' => $this->ecpr_id,
+
         ]);
 
         $query->andFilterWhere([
@@ -66,16 +67,24 @@ class EstudianteCarreraProgramaSearch extends EstudianteCarreraPrograma {
     }
 
 
-    public function getListadoReportepromedio($arrFiltro = array(), $params = null, $onlyData = false, $tipo = 1) {
+    public function getListadoReportepromedio($arrFiltro = array(), $onlyData = false) {
         $con_academico = \Yii::$app->db_academico;
         $con_db = \Yii::$app->db;
+        $estado = 1;
 
-   
-        if ($arrFiltro['estudiante'] != "" && $arrFiltro['estudiante'] > 0) {
-            $str_search .= "ecpr.est_id = :per_id AND ";
+        $estudiante = '';
+        //Utilities::putMessageLogFile('valor de estudiante:' . $per_id);
+        Utilities::putMessageLogFile('estudiantemodelo:' . $arrFiltro['estudiante']);
+        if (isset($arrFiltro) && count($arrFiltro) > 0) {
+            if ($arrFiltro['estudiante'] != "" && $arrFiltro['estudiante'] > 0) {
+                Utilities::putMessageLogFile('xxxxxxxxxx:' . $str_search);
+                $str_search = "per.per_id = ".$arrFiltro['estudiante']." AND ";
+
+            }   
         }
 
-        $sql = "SELECT  ifnull(CONCAT(per.per_pri_apellido,' ' ,per.per_seg_apellido,' ' ,per.per_pri_nombre),'') as nombres, 
+
+        $sql = "SELECT  ifnull(CONCAT(per.per_pri_apellido,' ' ,per.per_seg_apellido,' ' ,per.per_pri_nombre),'') as estudiante, 
 						eaca.eaca_nombre as carrera, 
 						enac.enac_asig_estado as estado_nota, 
 						asi.asi_descripcion as asignatura, 
@@ -98,36 +107,22 @@ class EstudianteCarreraProgramaSearch extends EstudianteCarreraPrograma {
 				AND maes.maes_estado = 1 AND maes.maes_estado_logico = 1
 				AND pmac.pmac_estado = 1 AND pmac.pmac_estado_logico = 1
 				AND asi.asi_estado = 1 AND asi.asi_estado_logico = 1";
-        
-        if ($arrFiltro['estudiante'] != "" && $arrFiltro['estudiante'] > 0) {
-                $estudiante = $arrFiltro["estudiante"];
-                $comando->bindParam(":per_id", $estudiante, \PDO::PARAM_INT);
-            }
-        /*if ($tipo == 1) {
-            $this->load($params);
-            if ($this->validate()) {
-               
-                if ($this->est_id) {
-                    $sql = $sql . " and ecpr.est_id =" . $this->est_id;
-                }
-
-            } 
-        }
-        if ($tipo == 2) {
-
-            if ($params['est_id']) {
-                $sql = $sql . " and ecpr.est_id =" . $params['est_id'];
-            }
-
-        }*/
-        Utilities::putMessageLogFile('sql:' . $sql);
+    
+        //Utilities::putMessageLogFile('sql:' . $sql);
         $comando = $con_academico->createCommand($sql);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        if (isset($arrFiltro) && count($arrFiltro) > 0) {
+            if ($arrFiltro['estudiante'] != "" && $arrFiltro['estudiante'] > 0) {
+                $estudiante = $arrFiltro["estudiante"];
+                $comando->bindParam(":estudiante", $estudiante, \PDO::PARAM_INT);
+            }
+        }
         $res = $comando->queryAll();
 
         if ($onlyData)
             return $res;
         $dataProvider = new ArrayDataProvider([
-            'key' => 'Id',
+            'key' => 'id',
             'allModels' => $res,
             'pagination' => [
                 'pageSize' => Yii::$app->params["pageSize"],
@@ -201,24 +196,5 @@ class EstudianteCarreraProgramaSearch extends EstudianteCarreraPrograma {
         return $dataProvider;
     }
 
-
-    public function getEstudiantesporpersona() {
-        $con = \Yii::$app->db_academico;
-        $con1 = \Yii::$app->db_asgard;
-        $estado = 1;
-        
-        $sql = "SELECT 
-                CONCAT(per.per_pri_apellido,'-',per.per_seg_apellido,' ',per.per_pri_nombre) as estudiante      
-                FROM db_asgard.persona per
-                inner join db_academico.estudiante est ON est.per_id = per.per_id
-                WHERE per.per_id = est.per_id and 
-                per.per_estado = 1 AND per.per_estado_logico = 1 and
-                est.est_estado = 1 AND est.est_estado_logico = 1";
-
-          $comando = $con->createCommand($sql);
-        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
-        $resultData = $comando->queryAll();
-        return $resultData;
-    }
 
 }

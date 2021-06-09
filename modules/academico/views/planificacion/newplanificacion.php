@@ -181,7 +181,7 @@ academico::registerTranslations();
                     'template' => '{delete}',
                     'buttons' => [
                         'delete' => function ($url, $model_detalle) {
-                            return Html::a('<span class="' . Utilities::getIcon('remove') . '"></span>', null, ['href' => 'javascript:', 'onclick' => "deletematestudianteaut( " . $_SESSION['plan_id'] .",". $_GET['per_id'] . ", " . substr($model_detalle['Bloque 1'], -1) . ", " . substr($model_detalle['Hora 1'], -1) . ");", "data-toggle" => "tooltip", "title" => Yii::t("accion", "Delete")]);
+                            return Html::a('<span class="' . Utilities::getIcon('remove') . '"></span>', null, ['href' => 'javascript:', 'onclick' => "deletematestudianteaut( " . $_SESSION['plan_id'] .",". $_SESSION['per_ids'] . ", " . substr($model_detalle['Bloque 1'], -1) . ", " . substr($model_detalle['Hora 1'], -1) . ");", "data-toggle" => "tooltip", "title" => Yii::t("accion", "Delete")]);
                        
                         },
                     ],

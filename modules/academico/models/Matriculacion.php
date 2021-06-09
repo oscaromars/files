@@ -444,7 +444,43 @@ class Matriculacion extends \yii\db\ActiveRecord {
 
 
 
-    /**
+    /*
+     * Function to get data student from planificacion, planificacion_estudiante and persona
+     * @author -
+     * @param $per_id, $pla_id, $pes_id
+     * @return $resultData
+     */
+
+    public function getDataStudent($per_id, $pla_id, $pes_id)
+    {
+        $con_academico = \Yii::$app->db_academico;
+        $con_asgard = \Yii::$app->db_asgard;
+        /*$con_utegsea = \Yii::$app->utegsea;*/
+        $estado = 1;
+
+        $sql = "
+            SELECT pla.pla_periodo_academico, pes.pes_nombres, pes.pes_dni, moda.mod_nombre, pes.pes_carrera, per.per_celular, pes_jornada
+            FROM " . $con_academico->dbname . ".planificacion as pla,
+            " . $con_academico->dbname . ".planificacion_estudiante as pes,
+            " . $con_academico->dbname . ".modalidad as moda,
+            " . $con_asgard->dbname . ".persona as per
+            WHERE pla.mod_id = moda.mod_id
+            AND pes.per_id = per.per_id            
+            AND per.per_id =:per_id
+            AND pla.pla_id =:pla_id
+            AND pes.pes_id =:pes_id;
+        ";
+
+        $comando = $con_academico->createCommand($sql);
+        $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
+        $comando->bindParam(":pla_id", $pla_id, \PDO::PARAM_INT);
+        $comando->bindParam(":pes_id", $pes_id, \PDO::PARAM_INT);
+        $resultData = $comando->queryOne();
+        //\app\models\Utilities::putMessageLogFile('selectEsquemaCalificacionUnidad: '.$comando->getRawSql());
+        return $resultData;
+    }
+
+    /*
      * Function to get data from planificacion_estudiante
      * @author -
      * @param $per_id, $pla_id, $rco_num_bloques
@@ -1340,7 +1376,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
         $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_INT);
         $resultData = $comando->queryOne();
-        \app\models\Utilities::putMessageLogFile('getDataPlanStudent: '.$comando->getRawSql());
+        //\app\models\Utilities::putMessageLogFile('getDataPlanStudent: '.$comando->getRawSql());
 
         return $resultData;
     }
@@ -1381,7 +1417,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
         $comando->bindParam(":est_id", $est_id, \PDO::PARAM_INT);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_INT);
         $resultData = $comando->queryAll();
-        \app\models\Utilities::putMessageLogFile('selectEsquemaCalificacionUnidad: '.$comando->getRawSql());
+        //\app\models\Utilities::putMessageLogFile('selectEsquemaCalificacionUnidad: '.$comando->getRawSql());
 
         return $resultData;
     }
@@ -1410,7 +1446,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
         $comando->bindParam(":ron_id", $ron_id, \PDO::PARAM_INT);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_INT);
         $resultData = $comando->queryOne();
-\app\models\Utilities::putMessageLogFile('getDetvalorRegistroOnline: '.$comando->getRawSql());
+        //\app\models\Utilities::putMessageLogFile('getDetvalorRegistroOnline: '.$comando->getRawSql());
         return $resultData;
     }
 

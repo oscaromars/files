@@ -117,7 +117,7 @@
 </style>
 <div>
     <div class="blue">
-        <table class="default">
+        <table class="tabla">
             <tr class="tr">
                 <td colspan="1" class="aleft td"><span class="bold">PERIODO ACADEMICO: </span></td>
                 <td colspan="1" class="aleft td"><span class="bold"><?= $data_student['pla_periodo_academico'] ?></span></td>
@@ -150,7 +150,7 @@
             </tr>
         </table>
     </div>
-
+    <br>
     <div class="blue">
         <?php
         echo '<table class="tabla"><tbody>';
@@ -159,32 +159,30 @@
             $total_costo = $total_costo + $dataPlanificacion[$i]['Cost'];
             echo '<tr style="border: 1px solid #002060;"><td>' . $dataPlanificacion[$i]['Code'] . '</td><td>' . $dataPlanificacion[$i]['Subject'] . '</td><td>' . $dataPlanificacion[$i]['Hour'] . ' - '  . $dataPlanificacion[$i]['Block'] .'</td><td>' . $dataPlanificacion[$i]['Cost'] . '</td><td> ';
         }
-        echo '<tr> 
+        echo '<tr style="border: 1px solid #002060;"> 
                 <td> </td>
                 <td> ASOCIACION DE ESTUDIANTES</td>
                 <td> </td>
-                <td> </td>
-                <td> </td>' . $ron_valor_aso_estudiante .
-             '</tr>';
-         echo '<tr> 
+                <td>' . $ron_valor_aso_estudiante . '</td> 
+             </tr>';
+         echo '<tr style="border: 1px solid #002060;"> 
                 <td> </td>
                 <td> VARIOS ADMINISTRATIVOS</td>
                 <td> </td>
-                <td> </td>
-                <td> </td>' . $ron_valor_gastos_adm .
-             '</tr>';
+                <td>' . $ron_valor_gastos_adm . '</td> 
+             </tr>';
         
-        
-        echo "<tr><td colspan='4'> </td><td>TOTAL US$ " . $total_costo . "</td></tr>";
+        echo "<tr><td colspan='3'></td><td>TOTAL US$ " . $total_costo . "</td></tr>";
         if (empty(count($dataPlanificacion))) {
             echo '<tr style="border: 1px solid #002060;"><td><br></td><td></td><td></td><td></td><td></td></tr>';
         }
         echo '</tbody> </table>';
-        ?><br><br>
+        ?>
+        <br><br>
     </div>
 
     <div class="blue">
-       <p><u><b><?php echo "CREDITO DIRECTO (" .$cant_cuota . " Pagos)" ?></b><br></u></p><br><br>
+        <p style='text-align:center'><b><?php echo "CREDITO DIRECTO (" .$cant_cuota . " Pagos)" ?></b><br></p>
         <?php
         echo '<table class="tabla"><tbody>';
         echo '<tr style="background: #AED6F1;border: 1px solid #002060;"><th>NO.</th><th>PAGO</th><th>VENCIMIENTO</th><th>PORCENTAJE</th><th>PAGO ACTUAL</th></tr>';
@@ -203,7 +201,7 @@
     </div>
 
     <div class="blue">
-        <p>Cláusulas:</p> 
+        <p><b>Cláusulas:</b></p> 
             <p>
                 <ul>
                     <li>Esta pre-inscripción está sujeta de acuerdo a la disponibilidad de cupos en las materias seleccionadas, en caso de solicitar activación deberá comunicarse con la secretaria de su Facultad.</li>
@@ -222,6 +220,7 @@
             puntualmente las cuotas señaladas anteriormente, hasta el día dos de cada mes, durante el periodo de <?= $data_student['pla_periodo_academico'] ?>. Por el incumplimiento de lo antes señalado, me sujeto a cumplir las disposiciones que establece la universidad.
         </p>
     </div>
+    <br><br>
     <div class="blue">
         <p style='text-align:center'>__________________________________</p>
         <p style='text-align:center'>              Firma Alumno (a)    </p>

@@ -139,7 +139,7 @@ class RegistroConfiguracion extends \yii\db\ActiveRecord
         $con2 = \Yii::$app->db_asgard;
         $con3 = \Yii::$app->db_academico;
         $estado = 1;
-        \app\models\Utilities::putMessageLogFile('modelo 1...: ');
+        \app\models\Utilities::putMessageLogFile('modelo...: '.$in.' cuota');
 
         $trans = $con->getTransaction(); // se obtiene la transacción actual
         if ($trans !== null) {
@@ -184,7 +184,7 @@ class RegistroConfiguracion extends \yii\db\ActiveRecord
                      '$forma_pago', 
                      ('0$in / 0$numero_cuota'), :fecha_transaccion, 
                     '$fecha', NULL,
-                    :valor_cuota, :total, NULL, NULL, NULL, NULL, NULL, 'C', NULL, NULL, NULL, $id_user, NULL,:estado,NULL, :fecha_transaccion, NULL ,:estado);";
+                    :valor_cuota, :total, NULL, NULL, NULL, NULL, NULL, 'C', NULL, NULL, NULL, '$id_user', NULL,:estado,NULL, :fecha_transaccion, NULL ,:estado);";
 
         $comando = $con->createCommand($sql);
         $comando->bindParam(":est_id", $est_id, \PDO::PARAM_STR);
@@ -224,15 +224,206 @@ class RegistroConfiguracion extends \yii\db\ActiveRecord
         $con = \Yii::$app->db_academico;
         $estado = 1;
 
-        $sql = "SELECT fecha_vencimiento as 'fecha'
+        $sql = "SELECT fvpa_fecha_vencimiento as 'fecha'
                 from " . $con->dbname . ".fechas_vencimiento_pago 
-                where cuota = $in and 
-                estado_logico = 1";
+                where fvpa_cuota = $in 
+                and fvpa_estado_logico = 1";
 
         $comando = $con->createCommand($sql);
         
         $resultData = $comando->queryOne();
 
         return $resultData;
+    }
+
+    public function setFinProcesoRegistro($per_id){
+        $con = \Yii::$app->db_academico;
+        $estado = 1;
+
+        $sql = "UPDATE " . $con->dbname . ".registro_pago_matricula 
+                SET rpm_estado_generado = 1 
+                WHERE per_id = $per_id ";
+
+        $comando = $con->createCommand($sql);
+        
+        $resultData = $comando->queryOne();
+
+        return $resultData;
+    }
+
+    public function getRegistrosDuplicados($rama_id){
+        $con = \Yii::$app->db_academico;
+
+        $estado = 1;
+
+        $sql = "SELECT count(cfca_rama_id) as 'repetidos'
+                from " . $con->dbname . ".cuotas_facturacion_cartera 
+                where cfca_rama_id = $rama_id 
+                and cfca_estado = 1
+                and cfca_estado_logico = 1";
+
+        $comando = $con->createCommand($sql);
+        
+        $resultData = $comando->queryOne();
+
+        return $resultData;
+    }
+
+    public function registrarRelacionCartera($est_id,$rama_id,$secuencial){
+        $con = \Yii::$app->db_academico;
+        $estado = 1;
+        \app\models\Utilities::putMessageLogFile('modelo N...: '.$est_id.'-'.$rama_id.'-'. $secuencial);
+        $trans = $con->getTransaction(); // se obtiene la transacción actual
+        $fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
+        try {
+            $sql="INSERT INTO " . $con->dbname . ".cuotas_facturacion_cartera 
+            (
+                cfca_rama_id,
+                cfca_numero_documento,
+                cfca_est_id,
+                cfca_estado,
+                cfca_fecha_creacion,
+                cfca_estado_logico )
+                    VALUES ( :rama_id, 
+                        :secuencial,
+                        :est_id,
+                        :estado, 
+                        :fecha_transaccion, 
+                        1
+                        );";
+            \app\models\Utilities::putMessageLogFile('modelo X...: '.$sql);
+            $comando = $con->createCommand($sql);
+            $comando->bindParam(":rama_id", $rama_id, \PDO::PARAM_INT);
+            $comando->bindParam(":secuencial", $secuencial, \PDO::PARAM_STR);
+            $comando->bindParam(":est_id", $est_id, \PDO::PARAM_STR);
+            $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+            $comando->bindParam(":fecha_transaccion", $fecha_transaccion, \PDO::PARAM_STR);
+            
+            
+            
+            $resultData = $comando->execute();
+            if ($trans !== null){
+                $trans->commit();}
+            \app\models\Utilities::putMessageLogFile('modelo OK...: '.$trans.'- OK');
+            return $con->getLastInsertID($con->dbname . '.cuotas_facturacion_cartera');
+        } catch (Exception $ex) {
+            if ($trans !== null){
+                $trans->rollback();}
+            \app\models\Utilities::putMessageLogFile('modelo KO...: '.$trans.'- KO - '.$ex->getMessage());
+            return FALSE;
+        }
+    }
+
+
+    public function registrarPagoMatricula($usu, $per_id,$pla_id,$ron_id,$total){
+        $con = \Yii::$app->db_academico;
+        $estado = 1;
+        \app\models\Utilities::putMessageLogFile('modelo Pago Matricula...: ');
+        $trans = $con->getTransaction(); // se obtiene la transacción actual
+        $fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
+        try {
+            $sql="INSERT INTO " . $con->dbname . ".registro_pago_matricula 
+            (
+                per_id,
+                pla_id,
+                ron_id,
+                rpm_estado_aprobacion,
+                rpm_estado_generado,
+                rpm_usuario_apruebareprueba,
+                rpm_fecha_transaccion,
+                rpm_total,
+                rpm_estado,
+                rpm_fecha_creacion,
+                rpm_estado_logico
+                 )
+                    VALUES ( :per_id, 
+                        :pla_id,
+                        :ron_id,
+                        :estado,
+                        :estado, 
+                        :usu, 
+                        :fecha_transaccion,
+                        :total,
+                        :estado,
+                        :fecha_transaccion,
+                        :estado);";
+            \app\models\Utilities::putMessageLogFile('modelo Pago Matricula FIN...: '.$sql);
+            $comando = $con->createCommand($sql);
+            $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
+            $comando->bindParam(":pla_id", $pla_id, \PDO::PARAM_INT);
+            $comando->bindParam(":ron_id", $ron_id, \PDO::PARAM_INT);
+            $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+            $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+            $comando->bindParam(":usu", $usu, \PDO::PARAM_INT);
+            $comando->bindParam(":fecha_transaccion", $fecha_transaccion, \PDO::PARAM_STR);
+            $comando->bindParam(":total", $total, \PDO::PARAM_STR);
+            $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+            $comando->bindParam(":fecha_transaccion", $fecha_transaccion, \PDO::PARAM_STR);
+            $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+         
+            $resultData = $comando->execute();
+            if ($trans !== null){
+                $trans->commit();}
+            \app\models\Utilities::putMessageLogFile('modelo OK...: '.$trans.'- OK');
+            return $con->getLastInsertID($con->dbname . '.registro_pago_matricula');
+        } catch (Exception $ex) {
+            if ($trans !== null){
+                $trans->rollback();}
+            \app\models\Utilities::putMessageLogFile('modelo KO...: '.$trans.'- KO - '.$ex->getMessage());
+            return FALSE;
+        }
+    }
+
+    public function registroOnlineCuota($ron_id, $rpm_id,$in,$fecha_vencimiento,$porcentaje,$costo){
+        $con = \Yii::$app->db_academico;
+        $estado = 1;
+        \app\models\Utilities::putMessageLogFile('modelo Online Cuota...: ');
+        $trans = $con->getTransaction(); // se obtiene la transacción actual
+        $fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
+        try {
+            $sql="INSERT INTO " . $con->dbname . ".registro_online_cuota 
+            (
+                ron_id,
+                rpm_id,
+                roc_numero_cuota,
+                roc_vencimiento,
+                roc_porcentaje,
+                roc_costo,
+                roc_estado,
+                roc_fecha_creacion,
+                roc_estado_logico
+                 )
+                    VALUES ( :ron_id, 
+                        :rpm_id,
+                        :in,
+                        :fecha_vencimiento,
+                        FORMAT(:porcentaje,2), 
+                        :costo, 
+                        :estado,
+                        :fecha_transaccion,
+                        :estado);";
+            \app\models\Utilities::putMessageLogFile('modelo Online Cuota FIN...: '.$sql);
+            $comando = $con->createCommand($sql);
+            $comando->bindParam(":ron_id", $ron_id, \PDO::PARAM_INT);
+            $comando->bindParam(":rpm_id", $rpm_id, \PDO::PARAM_INT);
+            $comando->bindParam(":in", $in, \PDO::PARAM_INT);
+            $comando->bindParam(":fecha_transaccion", $fecha_transaccion, \PDO::PARAM_STR);
+            $comando->bindParam(":porcentaje", $porcentaje, \PDO::PARAM_STR);
+            $comando->bindParam(":costo", $costo, \PDO::PARAM_STR);
+            $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+            $comando->bindParam(":fecha_transaccion", $fecha_transaccion, \PDO::PARAM_STR);
+            $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+         
+            $resultData = $comando->execute();
+            if ($trans !== null){
+                $trans->commit();}
+            \app\models\Utilities::putMessageLogFile('modelo OK...: '.$trans.'- OK');
+            return $con->getLastInsertID($con->dbname . '.registro_online_cuota');
+        } catch (Exception $ex) {
+            if ($trans !== null){
+                $trans->rollback();}
+            \app\models\Utilities::putMessageLogFile('modelo KO...: '.$trans.'- KO - '.$ex->getMessage());
+            return FALSE;
+        }
     }
 }

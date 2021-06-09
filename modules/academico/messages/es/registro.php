@@ -99,4 +99,5 @@ return [
     'Payment #' => 'Pago #',
     'The cancellation of the registration was successful.' => 'La cancelación del registro fue exitosa.',
     'Paid Registration' => 'Inscripción pagada',
+    'List Enrollment' => 'Listar Matriculación',
 ];

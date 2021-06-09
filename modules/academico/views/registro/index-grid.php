@@ -94,9 +94,10 @@ PbGridView::widget([
             //'header' => 'Action',
             'contentOptions' => ['style' => 'text-align: center;'],
             'headerOptions' => ['width' => '60'],
-            'template' => '{pay} {download}',
+            //'template' => '{pay} {download}',
+            'template' => '{download}',
             'buttons' => [
-                'pay' => function ($url, $model) use ($esEstu) {   
+                /*'pay' => function ($url, $model) use ($esEstu) {   
                     $perInt=null;       
                     if ($model["Estado"] != "2" && $model["Estado"] != "1" && $esEstu == TRUE) {                    
                         if($model['Aprobacion'] == "2")
@@ -107,11 +108,11 @@ PbGridView::widget([
                     } else {
                         return Html::a('<span class="' . Utilities::getIcon('view') . '"></span>', Url::to(['registro/view', 'id' => $model['Id'], 'rama_id' => $model['rama_id'],'periodo' => $perInt?1:0,'pla_id'=>$model['pla_id']]), ["data-toggle" => "tooltip", "title" => Yii::t("accion", "View"), "data-pjax" => 0]);
                     }
-                },
+                },*/
                 'download' => function ($url, $model) {
-                    //if ($model['perfil'] == 1 ) {// Procesado
+                    if ($model['Estado'] == 1 ) {// Procesado
                         return Html::a('<span class="glyphicon glyphicon-download"></span>', Url::to(['/academico/registro/inscripcionpdf', 'ids' => $model['per_id'], 'rama_id' => $model['rama_id']]), ["data-toggle" => "tooltip", "title" => "Descargar Hoja de Inscripción", "data-pjax" => "0"]);
-                    //}
+                    }
                 },
             ],
         ],

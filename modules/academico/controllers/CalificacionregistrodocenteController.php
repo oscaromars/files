@@ -238,18 +238,22 @@ class CalificacionregistrodocenteController extends \app\components\CController 
         $arr_parcialunidad = $mod_periodoActual->getParcialUnidad($arr_ninteres[0]["id"]);
         $arr_grupos        = $grupo_model->getAllGruposByUser($user_usermane);
 
+        //print_r($arr_grupos);die();
+
         if (in_array(['id' => '6'], $arr_grupos)) {
             //Es Cordinador
             $arr_profesor_all = $mod_profesor->getProfesoresEnAsignaturas();
             $asignatura = $Asignatura_distri->getAsignaturasBy($arr_profesor_all[0]['pro_id'],$arr_ninteres[0]["id"],$arr_periodoActual[0]["id"]);
             //print_r("Es Cordinador");
-            print_r($arr_profesor_all);die();
+            //print_r($arr_profesor_all);die();
         }else{
             //No es coordinador
             $arr_profesor_all = $mod_profesor->getProfesoresEnAsignaturasByPerId2($per_id);
-            $asignatura = $Asignatura_distri->getAsignaturasBy($arr_profesor_all[0]['pro_id'],$arr_ninteres[0]["id"],$arr_periodoActual[0]["id"]);
-            //print_r($arr_profesor_all);die();
-            //print_r("NO Es Cordinador");
+            $asignatura = $Asignatura_distri->getAsignaturasBy($arr_profesor_all[0]['pro_id'],
+                                                               $arr_ninteres[0]["id"],
+                                                               $arr_periodoActual[0]["id"]);
+            //print_r($per_id);die();
+            //print_r("NO Es Cordinador");die();
         }
         
 
@@ -318,7 +322,7 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 
         $data   = Yii::$app->request->post();
 
-        print_r($data);die();
+        //print_r($data);die();
 
         $row_id  = array_key_first ( $data['data'] );
 
@@ -330,15 +334,6 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 
         $valor["DT_RowId"] = "row_".$row_id;
         $valor["row_num"]  = $row_id;
-        //$valor["nparcial"] = $data['data'][$row_id]['nparcial'];
-        //$valor["paca_id"]  = $data['data'][$row_id]['paca_id'];
-        //$valor["est_id"]   = $data['data'][$row_id]['est_id'];
-        //$valor["pro_id"]   = $data['data'][$row_id]['pro_id'];
-        //$valor["asi_id"]   = $data['data'][$row_id]['asi_id'];
-        //$valor["ecal_id"]  = $data['data'][$row_id]['ecal_id'];
-        //$valor["uaca_id"]  = $data['data'][$row_id]['uaca_id'];
-
-        //print_r($valor);die();
 
         if($ccal_id != 0){
             $valor["ccal_id"] = $data['data'][$row_id]['ccal_id'];
@@ -366,6 +361,7 @@ class CalificacionregistrodocenteController extends \app\components\CController 
             $est_id  = $data['data'][$row_id]['est_id'];
             $pro_id  = $data['data'][$row_id]['pro_id'];
             $asi_id  = $data['data'][$row_id]['asi_id'];
+            $mod_id  = $data['data'][$row_id]['mod_id'];
 
             //$mod_id  = $data['data']['modalidad'];
             //$ecal_id = $data['data'][$ccal_id]['nparcial'];
@@ -381,9 +377,9 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 
             $ccal_id = $mod_calificacion->crearCabeceraCalificacionporcomponente($paca_id,$est_id,$pro_id,$asi_id,$ecal_id,$uaca_id);
 
+            $valor["ccal_id"] = $ccal_id;
+            
             foreach ($data['data'][$row_id] as $key => $value) {
-
-                //if($value == '')$value = 'null';
 
                 if($key!='nparcial' &&
                     $key!='paca_id'  &&
@@ -392,17 +388,18 @@ class CalificacionregistrodocenteController extends \app\components\CController 
                     $key!='asi_id'   &&
                     $key!='ecal_id'  &&
                     $key!='ccal_id'  &&
+                    $key!='mod_id'  &&
                     $key!='uaca_id'){
-                        if($value!=''){
+                        //if($value!=''){
                             $mod_calificacion->crearDetalleCalificacionporcomponente($ccal_id,$key,$value,$uaca_id,$mod_id,$ecal_id);
 
                             if(!(is_null($value)) && $value != ''){
                                 $valor[$key] = $value;
                             }
                             $total = $total + intval($value); 
-                        }
-                }      
-            }
+                        //}//if
+                }//if  
+            }//foeach
         }//else
 
         $mod_calificacion->actualizarDetalleCalificacion2($ccal_id,$total);

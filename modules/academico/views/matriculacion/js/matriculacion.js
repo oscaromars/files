@@ -106,6 +106,10 @@ $(document).ready(function() {
     });
 
     $('.pago_documento').hide(); 
+
+    $('#btn_registro_detalle').click(function () {
+        continuarRegistro();
+    });
 });
 
 function savemethod() {
@@ -388,19 +392,16 @@ function continuarRegistro(){
     arrParams.seleccionados = selecteds.slice(0,-1);
     arrParams.noseleccionados = unselecteds.slice(0,-1);
 
-    console.log(arrParams);
+    // console.log(arrParams);
 
     if (selecteds != '') {
         if (!validateForm()) {
             requestHttpAjax(link, arrParams, function (response) {
-                showAlert(response.status, response.label, response.message);
+                // showAlert(response.status, response.label, response.message);
                 //alert("completado");
-                console.log(response);
-                /*
-                setTimeout(function () {
-                window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/listarestudianteregistro";
-                }, 3000);
-                */
+                // console.log(response);
+                window.location.href = $('#txth_base').val() + "/academico/matriculacion/registrodetalle";
+                
             }, true);
         }
     } else {

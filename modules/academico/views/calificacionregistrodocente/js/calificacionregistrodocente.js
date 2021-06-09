@@ -357,13 +357,18 @@ function actualizarGridRegistro(dready = 0) {
               var indice = key;
               break;
             }
-
+            console.log(componentes);
             if(action == 'edit'){
                 $.each(o.data[indice], function( index, value ) {
                     if(componentes[index]){
+                        /*
                         console.log(index);
+                        console.log("------------------");
                         console.log(componentes[index]['notamax']);
+                        console.log("************************");
                         console.log(value);
+                        console.log("////////////////////");
+                        */
                         if(value < 0 || value > parseInt(componentes[index]['notamax'])){
                             alertify.error("El cambio no se ha registrado, los valores del componente Asíncrona debe estar entre 0 a "+componentes[index]['notamax']);
                             bandera = 1;
@@ -401,7 +406,6 @@ function actualizarGridRegistro(dready = 0) {
             // Edit the value, but this selector allows clicking on label as well
             editor.inline( $('span.dtr-data', this) );
         } );
-            
 
         $("#html_thead").html(''); 
         var html = `
@@ -413,7 +417,7 @@ function actualizarGridRegistro(dready = 0) {
                 <th>Nombre</th>
                 <th>Materia</th>
                 <th>Parcial</th>
-                <!--th>Paralelo</th-->`;        
+                <th>Paralelo</th>`;        
 
         var numeroCols = 6;
             
@@ -435,7 +439,7 @@ function actualizarGridRegistro(dready = 0) {
                 { data: "nombre" },
                 { data: "materia"},
                 { data: "nparcial"},
-                //{ data: "paralelo"}
+                { data: "paralelo"}
                 ]; 
 
         $.each( response['componentes'], function( key, value ) {
@@ -455,7 +459,7 @@ function actualizarGridRegistro(dready = 0) {
             numeroCols++;
             html += '<th>'+key+'</th>';
         });
-
+        numeroCols++;
         console.log("# de columnnas = "+numeroCols);
         var columnas2 =[ 
                 { data: "total"},

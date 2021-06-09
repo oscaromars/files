@@ -774,7 +774,7 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
                             per_id
                     ) AS mi ON mi.ron_id = r.ron_id
                     LEFT JOIN " . $con_academico->dbname . ".registro_pago_matricula AS reg on reg.per_id = per.per_id 
-                        and r.ron_id = reg.ron_id and reg.rpm_estado = 1 and reg.rpm_estado_logico =1 and reg.rpm_id = ram.rpm_id
+                        and r.ron_id = reg.ron_id and reg.rpm_estado = 1 and reg.rpm_estado_logico =1
                     LEFT JOIN " . $con_academico->dbname . ".enrolamiento_agreement AS enr on enr.ron_id = r.ron_id 
                         and reg.rpm_estado = 1 and reg.rpm_estado_logico =1 and enr.rpm_id = ram.rpm_id and enr.eagr_estado = 1 and enr.eagr_estado_logico = 1
                     LEFT JOIN (

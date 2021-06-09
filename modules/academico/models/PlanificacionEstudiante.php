@@ -1102,6 +1102,7 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
             $data = isset($data['DATA']) ? $data['DATAS'] : array();
             $this->modificarPlanificacionestudiante($con,$pla_id, $per_id, $pes_usuario_modifica,$fecha, $modificar);
             $trans->commit();
+            $this->agregarMateriasPlanificacionEstudiante($pla_id,$per_id);
             $con->close();
             //RETORNA DATOS 
             $arroout["status"] = true;
@@ -1150,6 +1151,55 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
         } catch (Exception $ex) {
             if ($trans !== null)
                 $trans->rollback();
+            return FALSE;
+        }
+    }
+
+    public function agregarMateriasPlanificacionEstudiante($pla_id, $per_id) {
+        $con = \Yii::$app->db_academico;
+        $trans = $con->beginTransaction();
+        $estado = 1;
+        //$trans = $con->getTransaction(); // se obtiene la transacción actual       
+        try {
+            for($i = 1,$i <= 6;$i++;){
+                for($j = 1;$j <=2; $j++){
+                    $campo = "pes_mat_b".$j."_h".$i."_nombre ";
+                    $registro = "pes_mat_b".$j."_h".$i."_cod ";
+                    $comando = $con->createCommand
+                    ("UPDATE " . $con->dbname . ".planificacion_estudiante      
+                      SET ".$campo." = 
+                            (SELECT asi.asi_nombre from " . $con->dbname . ".planificacion_estudiante pla
+                            inner join " . $con->dbname . ".malla_academica_detalle mad on mad.made_codigo_asignatura = pla.".$registro."
+                            inner join " . $con->dbname . ".asignatura asi on mad.asi_id = asi.asi_id 
+                            WHERE
+                            pla.pla_id = " . $pla_id . " AND                        
+                            pla.per_id = " . $per_id . " AND
+                            pla.pes_estado = :estado AND
+                            pla.pes_estado_logico = :estado)                
+                      WHERE
+                        pla_id = " . $pla_id . " AND                        
+                        per_id = " . $per_id . " AND
+                        pes_estado = :estado AND
+                        pes_estado_logico = :estado");
+                     $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+                     $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+                     $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+                     $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+                    $result = $comando->execute();
+                    //if ($trans !== null){
+                        $trans->commit();//}
+                }
+            }
+            
+            
+            if ($trans !== null)
+                $trans->commit();
+                $con->close();
+            return TRUE;//$con->getLastInsertID($con->dbname . '.planificacion_estudiante');
+        } catch (Exception $ex) {
+            if ($trans !== null)
+                $trans->rollback();
+                $con->close();
             return FALSE;
         }
     }

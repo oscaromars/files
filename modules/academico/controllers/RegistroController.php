@@ -490,10 +490,10 @@ class RegistroController extends \app\components\CController {
                             $total      = $data['total'];
                             $tpago      = $data['tpago'];
                             $numcuotas  = $data['numcuotas'];
-                            $con = \Yii::$app->db_facturacion;
-                            $con2 = \Yii::$app->db_academico;
-                            $transaction = $con->beginTransaction();
-                            $transaction2 = $con2->beginTransaction();
+                            $conx = \Yii::$app->db_facturacion;
+                            $conx2 = \Yii::$app->db_academico;
+                            $transactionx = $conx->beginTransaction();
+                            $transactionx2 = $conx2->beginTransaction();
                             try {
                                 $modelCargaCartera = new RegistroConfiguracion();
                                 $secuencial = $modelCargaCartera->getSecuencialCargaCartera();
@@ -510,8 +510,8 @@ class RegistroController extends \app\components\CController {
                                         $est_id = $estudiante->getEstudiantexperid($per_id);
                                         $repetidos = $modelCargaCartera->getRegistrosDuplicados($rama_id);
                                         if($repetidos['repetidos']==0 ){ //If grid cuotas repetidos
-                                            $registros_relacionados = $modelCargaCartera->registrarRelacionCartera($est_id['est_id'],$rama_id, $secuencial['secuencial'], NULL);
-                                                \app\models\Utilities::putMessageLogFile('controller N1...: '+$est_id['est_id']+'-'+$rama_id+'-'+ $secuencial['secuencial']+'-'+ NULL);
+                                            $registros_relacionados = $modelCargaCartera->registrarRelacionCartera($est_id['est_id'],$rama_id, $secuencial['secuencial']);
+                                                \app\models\Utilities::putMessageLogFile('controller N1...: '.$est_id['est_id'].'-'.$rama_id.'-'. $secuencial['secuencial']);
                                             for($in = 1; $in <= $numcuotas; $in++){
                                                 $fechaCuotaActual = $modelCargaCartera->getCuotaActual($in);
                                                 $registros_cuotas = $modelCargaCartera->registrarCargaCartera($est_id['est_id'],$cedula['per_cedula'],$per_id, $secuencial['secuencial']?$secuencial['secuencial']:'00000011', $forma_pago,$fechaCuotaActual['fecha'],$in, $numcuotas, $valor_cuota, $total, $usuario);
@@ -521,16 +521,16 @@ class RegistroController extends \app\components\CController {
                                                 $exito = 1;
                                             }
                                             if ($exito) {
-                                                $transaction->commit();
-                                                $transaction2->commit();
+                                                $transactionx->commit();
+                                                $transactionx2->commit();
                                                 $message = array(
                                                     "wtmessage" => Yii::t("notificaciones", "Se ha guardado el pago."),
                                                     "title" => Yii::t('jslang', 'Success'),
                                                 );
                                                 Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), true, $message);
                                             } else {
-                                                $transaction->rollback();
-                                                $transaction2->rollback();
+                                                $transactionx->rollback();
+                                                $transactionx2->rollback();
                                                 $message = array(
                                                     "wtmessage" => Yii::t("notificaciones", "Error al grabar." . $mensaje),
                                                     "title" => Yii::t('jslang', 'Error'),
@@ -547,8 +547,8 @@ class RegistroController extends \app\components\CController {
                                     }                                    
                             } catch (Exception $ex) {
                                 \app\models\Utilities::putMessageLogFile('controller 4...: ');
-                                $transaction->rollback();
-                                $transaction2->rollback();
+                                $transactionx->rollback();
+                                $transactionx2->rollback();
                                 $message = array(
                                     "wtmessage" => Yii::t("notificaciones", "Error al grabar.".$ex->getMessage()),
                                     "title" => Yii::t('jslang', 'Error'),
@@ -2342,6 +2342,7 @@ class RegistroController extends \app\components\CController {
             $tpago      = $data['tpago'];
             $rama_id    = $data['rama'];
             $numcuotas  = $data['numcuotas'];
+            $pla_id     = $data['pla_id'];
             $con = \Yii::$app->db_facturacion;
             $transaction = $con->beginTransaction();
 
@@ -2360,15 +2361,19 @@ class RegistroController extends \app\components\CController {
                         $estudiante = new Estudiante();
                         $est_id = $estudiante->getEstudiantexperid($per_id);
                         $repetidos = $modelCargaCartera->getRegistrosDuplicados($rama_id);
-                        \app\models\Utilities::putMessageLogFile('log 0...');
+                        $porcentaje = 100/$numcuotas;
+                        $ron_id = 1;
+                        \app\models\Utilities::putMessageLogFile('log 0...'.$repetidos['repetidos']);
                         if($repetidos['repetidos']==0 ){ //If grid cuotas repetidos
                             \app\models\Utilities::putMessageLogFile('log 1...');
                             $registros_relacionados = $modelCargaCartera->registrarRelacionCartera($est_id['est_id'],$rama_id, $secuencial['secuencial']);
+                            $registro_pago_matricula = $modelCargaCartera->registrarPagoMatricula($perid, $per_id, $pla_id, $ron_id, $total);
                             \app\models\Utilities::putMessageLogFile('log 2...');
                                 \app\models\Utilities::putMessageLogFile('controller N1...: '.$est_id['est_id'].'-'.$rama_id.'-'. $secuencial['secuencial']);
                             for($in = 1; $in <= $numcuotas; $in++){
                                 $fechaCuotaActual = $modelCargaCartera->getCuotaActual($in);
                                 $registros_cuotas = $modelCargaCartera->registrarCargaCartera($est_id['est_id'],$cedula['per_cedula'],$per_id, $secuencial['secuencial']?$secuencial['secuencial']:'00000011', $forma_pago,$fechaCuotaActual['fecha'],$in, $numcuotas, $valor_cuota, $total, $usuario);
+                                $registro_online_cuota = $modelCargaCartera->registroOnlineCuota($ron_id, $registro_pago_matricula['rpm_id'],$in,$fechaCuotaActual['fecha'],$porcentaje,$total);
                             }
                             if ($registros_cuotas) {
                                 $exito = 1;

@@ -1279,6 +1279,13 @@ class Matriculacion extends \yii\db\ActiveRecord {
 
         return $resultData;
     }
+    
+    /**
+     * Function getRegistroAdiciOnline
+     * @author  Luis Cajamarca <analista.desarrollo@uteg.edu.ec>
+     * @param   
+     * @return  $resultData (Retornar el ultimo registro de ron_id o registroadicionalmateria).
+     */
 
     public function getRegistroAdiciOnline($ron_id)
     {

@@ -26,15 +26,15 @@ if (!\defined('CURL_HTTP_VERSION_2TLS')) {
 
 class CurlClient implements ClientInterface
 {
-    protected static $instance;
+    private static $instance;
 
     public static function instance()
     {
-        if (!static::$instance) {
-            static::$instance = new static();
+        if (!self::$instance) {
+            self::$instance = new self();
         }
 
-        return static::$instance;
+        return self::$instance;
     }
 
     protected $defaultOptions;

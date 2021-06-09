@@ -1,16 +1,5 @@
 # Changelog
 
-## 7.77.0 - 2021-04-12
-* [#1110](https://github.com/stripe/stripe-php/pull/1110) Update PHPDocs
-  * Add support for `acss_debit` on `PaymentMethod`
-  * Add support for `payment_method_options` on `Checkout\Session`
-* [#1107](https://github.com/stripe/stripe-php/pull/1107) Remove duplicate object phpdoc
-
-## 7.76.0 - 2021-03-22
-* [#1100](https://github.com/stripe/stripe-php/pull/1100) Update PHPDocs
-  * Added support for `amount_shipping` on `Checkout.Session.total_details`
-* [#1088](https://github.com/stripe/stripe-php/pull/1088) Make possibility to extend CurlClient
-
 ## 7.75.0 - 2021-02-22
 * [#1094](https://github.com/stripe/stripe-php/pull/1094) Add support for Billing Portal Configuration API
 
@@ -23,7 +12,7 @@
   * Add support for `afterpay_clearpay` on `PaymentMethod`.
 
 ## 7.72.0 - 2021-02-08
-* [#1089](https://github.com/stripe/stripe-php/pull/1089) Update PHPDocs
+* [#1089](https://github.com/stripe/stripe-php/pull/1089) API Updates
   * Add support for `afterpay_clearpay_payments` on `Account.capabilities`
   * Add support for `payment_settings` on `Invoice`
 

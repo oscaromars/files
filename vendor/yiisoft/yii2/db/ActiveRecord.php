@@ -289,7 +289,7 @@ class ActiveRecord extends BaseActiveRecord
         $query->where($pk);
 
         /* @var $record BaseActiveRecord */
-        $record = $query->noCache()->one();
+        $record = $query->one();
         return $this->refreshInternal($record);
     }
 

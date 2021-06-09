@@ -1,0 +1,29 @@
+{
+    "name": "penblu/barcode",
+    "description": "Extension creada por PenBlu para el uso de la libreria Barcode creada por EddieZhao (https://github.com/EddieZhao/yii2-barcode).",
+    "type": "yii2-extension",
+    "keywords": [
+        "yii2",
+        "extension",
+        "barcode"
+    ],
+    "minimum-stability": "stable",
+    "support": {
+        "source": "https://github.com/EddieZhao/yii2-barcode"
+    },
+    "license": "GPL-2.0",
+    "authors": [
+        {
+            "name": "Eduardo Cueva",
+            "email": "ecueva@penblu.com"
+        }
+    ],
+    "require": {
+        "yiisoft/yii2": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "penblu\\barcode\\": ""
+        }
+    }
+}

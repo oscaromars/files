@@ -1013,3 +1013,30 @@ insert into `otros_item_metodo_nivel` (`oimn_id`, `ite_id`, `ming_id`, `uaca_id`
 (1, 162, null, 1, 2, 1, '1', '1'),
 (2, 163, null, 1, 3, 1, '1', '1'),
 (3, 164, null, 1, 4, 1, '1', '1');
+
+
+-- 
+
+insert into db_facturacion.item (ite_id, scat_id, ite_nombre, ite_descripcion, ite_codigo, ite_usu_ingreso, ite_estado, ite_estado_logico) values
+(204, 8, 'Matrícula Grado Presencial', 'Matrícula Grado Presencial', '0204', 1, 1, 1),
+(205, 8, 'Matrícula Grado Semipresencial', 'Matrícula Grado Semipresencial', '0205', 1, 1, 1),
+(206, 8, 'Matrícula Grado Distancia', 'Matrícula Grado Distancia', '0206', 1, 1, 1),
+(207, 8, 'Matrícula Grado Online', 'Matrícula Grado Online', '0207', 1, 1, 1);
+
+insert into db_facturacion.item_precio (ipre_id, ite_id, ipre_precio, ipre_fecha_inicio, ipre_estado_precio, ipre_usu_ingreso, ipre_estado, ipre_estado_logico) values
+(204, 204, 200, '2021-03-22 00:00:00', 'A', 1, '1', '1'),
+(205, 205, 200, '2021-03-22 00:00:00', 'A', 1, '1', '1'),
+(206, 206, 115, '2021-03-22 00:00:00', 'A', 1, '1', '1'),
+(207, 207, 65, '2021-03-22 00:00:00', 'A', 1, '1', '1');
+
+insert into db_facturacion.historial_item_precio (`hipr_id`, `ite_id`, `hipr_precio`, `hipr_fecha_inicio`, `hipr_usu_transaccion`, `hipr_estado`, `hipr_estado_logico`) values
+(208, 204, 200, '2021-03-22 00:00:00',1, 1, 1),
+(209, 205, 200, '2021-03-22 00:00:00',1, 1, 1),
+(210, 206, 115, '2021-03-22 00:00:00',1, 1, 1),
+(211, 207, 65, '2021-03-22 00:00:00',1, 1, 1);
+
+insert into db_facturacion.item_matricula_unidad (imun_id, ite_id, uaca_id, mod_id, imun_usu_ingreso, imun_estado, imun_estado_logico) values
+(1, 204, 1, 2, 1,1,1),
+(2, 205, 1, 3, 1,1,1),
+(3, 206, 1, 4, 1,1,1),
+(4, 207, 1, 1, 1,1,1);"

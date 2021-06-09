@@ -238,18 +238,20 @@ class CalificacionregistrodocenteController extends \app\components\CController 
         $arr_parcialunidad = $mod_periodoActual->getParcialUnidad($arr_ninteres[0]["id"]);
         $arr_grupos        = $grupo_model->getAllGruposByUser($user_usermane);
 
+        //print_r($arr_grupos);die();
+
         if (in_array(['id' => '6'], $arr_grupos)) {
             //Es Cordinador
             $arr_profesor_all = $mod_profesor->getProfesoresEnAsignaturas();
             $asignatura = $Asignatura_distri->getAsignaturasBy($arr_profesor_all[0]['pro_id'],$arr_ninteres[0]["id"],$arr_periodoActual[0]["id"]);
             //print_r("Es Cordinador");
-            print_r($arr_profesor_all);die();
+            //print_r($arr_profesor_all);die();
         }else{
             //No es coordinador
             $arr_profesor_all = $mod_profesor->getProfesoresEnAsignaturasByPerId2($per_id);
             $asignatura = $Asignatura_distri->getAsignaturasBy($arr_profesor_all[0]['pro_id'],$arr_ninteres[0]["id"],$arr_periodoActual[0]["id"]);
-            //print_r($arr_profesor_all);die();
-            //print_r("NO Es Cordinador");
+            //print_r($per_id);die();
+            //print_r("NO Es Cordinador");die();
         }
         
 

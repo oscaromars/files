@@ -187,6 +187,7 @@ class PeriodoAcademico extends \yii\db\ActiveRecord
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);        
         $resultData = $comando->queryAll();
 
+        //print_r($resultData);die();
         return $resultData;
     }//function getPeriodoAcademicoActual
     

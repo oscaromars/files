@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use app\modules\academico\Module as academico;
 academico::registerTranslations();
+//echo(print_r($arr_periodoActual));
 ?>
 <?= Html::hiddenInput('txth_proid', $pro_id, ['id' => 'txth_proid']); ?>
 <!--div class="col-md-12 col-sm-12 col-xs-12 col-lg-12">
@@ -10,7 +11,10 @@ academico::registerTranslations();
 </div></br></br></br-->
 <div>
     <form class="form-horizontal">
+
         <?=
+         
+
         $this->render('_formregister',[
             'arr_asignatura'  => $arr_asignatura,
             'arr_periodoActual' => $arr_periodoActual,

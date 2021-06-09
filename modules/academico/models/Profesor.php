@@ -384,17 +384,22 @@ class Profesor extends \yii\db\ActiveRecord
         $con_asgard = Yii::$app->db_asgard;
         $con_academico = Yii::$app->db_academico;
 
-        $sql = "SELECT DISTINCT per.per_id, pro.pro_id, per.per_cedula, per.per_correo, CONCAT(per.per_pri_nombre, ' ', per.per_pri_apellido) AS nombres
-                FROM " . $con_asgard->dbname . ".persona as per
-                INNER JOIN " . $con_academico->dbname . ".profesor AS pro ON pro.per_id = per.per_id
-                INNER JOIN " . $con_academico->dbname . ".distributivo_academico AS daca ON daca.pro_id = pro.pro_id
-                INNER JOIN " . $con_academico->dbname . ".distributivo_cabecera AS dcab ON dcab.pro_id = pro.pro_id
-                WHERE per.per_id = :per_id AND dcab.dcab_estado_revision = 2
-                AND per.per_estado = 1 AND per.per_estado_logico = 1
-                AND pro.pro_estado = 1 AND pro.pro_estado_logico = 1
-                AND daca.daca_estado = 1 AND daca.daca_estado_logico = 1
-                AND dcab.dcab_estado = 1 AND dcab.dcab_estado_logico = 1
-                ORDER BY nombres DESC";
+        $sql = "SELECT DISTINCT per.per_id 
+                       ,pro.pro_id
+                       ,per.per_cedula
+                       ,per.per_correo 
+                       ,CONCAT(per.per_pri_nombre, ' ', per.per_pri_apellido) AS nombres
+                  FROM " . $con_asgard->dbname . ".persona as per
+            INNER JOIN " . $con_academico->dbname . ".profesor AS pro ON pro.per_id = per.per_id
+            INNER JOIN " . $con_academico->dbname . ".distributivo_academico AS daca ON daca.pro_id = pro.pro_id
+            INNER JOIN " . $con_academico->dbname . ".distributivo_cabecera AS dcab ON dcab.pro_id = pro.pro_id
+                 WHERE per.per_id = :per_id 
+                   #AND dcab.dcab_estado_revision = 2
+                   AND per.per_estado   = 1 AND per.per_estado_logico   = 1
+                   AND pro.pro_estado   = 1 AND pro.pro_estado_logico   = 1
+                   AND daca.daca_estado = 1 AND daca.daca_estado_logico = 1
+                   AND dcab.dcab_estado = 1 AND dcab.dcab_estado_logico = 1
+              ORDER BY nombres DESC";
 
         $comando = $con_academico->createCommand($sql);
         $comando->bindParam(":per_id",$per_id, \PDO::PARAM_INT);
@@ -422,7 +427,8 @@ class Profesor extends \yii\db\ActiveRecord
                 INNER JOIN " . $con_academico->dbname . ".profesor AS pro ON pro.per_id = per.per_id
                 INNER JOIN " . $con_academico->dbname . ".distributivo_academico AS daca ON daca.pro_id = pro.pro_id
                 INNER JOIN " . $con_academico->dbname . ".distributivo_cabecera AS dcab ON dcab.pro_id = pro.pro_id
-                WHERE dcab.dcab_estado_revision = 2
+                WHERE 1=1
+                AND dcab.dcab_estado_revision = 2
                 AND per.per_estado = 1 AND per.per_estado_logico = 1
                 AND pro.pro_estado = 1 AND pro.pro_estado_logico = 1
                 AND daca.daca_estado = 1 AND daca.daca_estado_logico = 1
@@ -435,7 +441,7 @@ class Profesor extends \yii\db\ActiveRecord
         if($onlyData){
             return $resultData;
         }
-
+        //print_r($resultData);die();
         return $resultData;
     }
 

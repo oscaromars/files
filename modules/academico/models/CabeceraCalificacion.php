@@ -179,6 +179,7 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord
         
         $sql = "SELECT coun.cuni_id as id,
                        com_nombre as nombre
+                       ,coun.cuni_calificacion as notamax
                   FROM " . $con_academico->dbname . ".componente_unidad coun 
             INNER JOIN " . $con_academico->dbname . ".componente comp 
                     ON comp.com_id = coun.com_id                     
@@ -1045,7 +1046,7 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord
                         ,asi.asi_id
                         ,asi.asi_descripcion as materia
                         ,coalesce(clfc.ccal_id,0) as ccal_id
-                        ,1 as paralelo
+                        ,'Paralelo 1' as paralelo
         ";
 
         foreach ($arr_componentes as $key => $value){

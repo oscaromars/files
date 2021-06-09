@@ -26,7 +26,7 @@ use app\modules\financiero\Module as financiero;
 use app\modules\financiero\models\PagosFacturaEstudiante;
 use app\modules\academico\models\Especies;
 use app\modules\financiero\models\FormaPago;
-use app\modules\financiero\models\FechasVencimientoPago;
+use app\modules\academico\models\FechasVencimientoPago;
 
 Academico::registerTranslations();
 financiero::registerTranslations();

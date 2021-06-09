@@ -169,6 +169,43 @@ class Matriculacion extends \yii\db\ActiveRecord {
         }
     }
     
+    public function getDataStudent($per_id, $pla_id, $pes_id)
+    {
+        $con_academico = \Yii::$app->db_academico;
+        $con_asgard = \Yii::$app->db_asgard;
+        /*$con_utegsea = \Yii::$app->utegsea;*/
+        $estado = 1;
+
+        $sql = "
+            SELECT 
+                pla.pla_periodo_academico, 
+                pes.pes_nombres, 
+                pes.pes_dni, 
+                moda.mod_nombre, 
+                pes.pes_carrera, 
+                per.per_celular, 
+                e.est_matricula, 
+                e.est_categoria
+            FROM " . $con_academico->dbname . ".planificacion as pla
+                INNER JOIN " . $con_academico->dbname . ".planificacion_estudiante as pes ON pes.pla_id = pla.pla_id
+                INNER JOIN " . $con_academico->dbname . ".modalidad as moda ON moda.mod_id = pla.mod_id
+                INNER JOIN " . $con_academico->dbname . ".estudiante as e ON pes.per_id = e.per_id
+                INNER JOIN " . $con_asgard->dbname . ".persona as per ON per.per_id = e.per_id
+            WHERE           
+                per.per_id =:per_id
+                AND pla.pla_id =:pla_id
+                AND pes.pes_id =:pes_id
+            ORDER BY
+                pes.pes_id DESC;";
+
+        $comando = $con_academico->createCommand($sql);
+        $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
+        $comando->bindParam(":pla_id", $pla_id, \PDO::PARAM_INT);
+        $comando->bindParam(":pes_id", $pes_id, \PDO::PARAM_INT);
+        $resultData = $comando->queryOne();
+
+        return $resultData;
+    }
     
     public function insertarAsignacionxMeting($par_id, $mat_id, $mest_id, $apar_descripcion, $apar_fecha_asignacion, $apar_usuario_asignacion) {
 
@@ -979,7 +1016,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
         $sql = "
             SELECT distinct
             ron.ron_id, 
-	    pla.paca_id,
+        pla.paca_id,
             pla.pla_periodo_academico, 
             pes.pes_nombres, 
             pes.pes_dni, 
@@ -1154,9 +1191,9 @@ class Matriculacion extends \yii\db\ActiveRecord {
             SELECT roi.roi_id, 
                 roi.roi_materia_nombre as Subject, 
                 roi_creditos as Credit, 
-		roi.roi_materia_cod as Code,
+        roi.roi_materia_cod as Code,
                 roi.roi_materia_cod as CodeAsignatura, 
-		roi.roi_costo as Cost,
+        roi.roi_costo as Cost,
                 roi.roi_costo as Price,
                 roi.roi_hora as Hour,
                 roi.roi_bloque as Block
@@ -1200,8 +1237,6 @@ class Matriculacion extends \yii\db\ActiveRecord {
         return $resultData;
     }
 
-    //Esta funcion se reemplazo con al de produccion debido a errores de usuario al 
-    //momento de manipular el git.
     public static function getPlanificacionPago($mod_id)
     {
         $con_academico = \Yii::$app->db_academico;

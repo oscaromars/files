@@ -14,7 +14,7 @@ if($esEstu) $styleBar = "display: none;";
 //print_r($periodoAcademico);
 ?>
 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-    <h4><span id="lbl_titulo"><?= academico::t("registro", "Payment Registry") ?></span></h4>
+    <h4><span id="lbl_titulo"><?= academico::t("registro", "List Enrollment") ?></span></h4>
 </div>
 <br />
 <form class="form-horizontal">

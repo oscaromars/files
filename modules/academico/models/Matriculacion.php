@@ -439,7 +439,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
         $comando->bindParam(":pla_id", $pla_id, \PDO::PARAM_INT);
         $comando->bindParam(":pes_id", $pes_id, \PDO::PARAM_INT);
         $resultData = $comando->queryOne();
-\app\models\Utilities::putMessageLogFile('selectEsquemaCalificacionUnidad: '.$comando->getRawSql());
+        //\app\models\Utilities::putMessageLogFile('selectEsquemaCalificacionUnidad: '.$comando->getRawSql());
         return $resultData;
     }
 
@@ -1487,7 +1487,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
         $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_INT);
         $resultData = $comando->queryOne();
-        \app\models\Utilities::putMessageLogFile('getDataPlanStudent: '.$comando->getRawSql());
+        //\app\models\Utilities::putMessageLogFile('getDataPlanStudent: '.$comando->getRawSql());
 
         return $resultData;
     }
@@ -1528,7 +1528,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
         $comando->bindParam(":est_id", $est_id, \PDO::PARAM_INT);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_INT);
         $resultData = $comando->queryAll();
-        \app\models\Utilities::putMessageLogFile('selectEsquemaCalificacionUnidad: '.$comando->getRawSql());
+        //\app\models\Utilities::putMessageLogFile('selectEsquemaCalificacionUnidad: '.$comando->getRawSql());
 
         return $resultData;
     }
@@ -1557,7 +1557,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
         $comando->bindParam(":ron_id", $ron_id, \PDO::PARAM_INT);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_INT);
         $resultData = $comando->queryOne();
-\app\models\Utilities::putMessageLogFile('getDetvalorRegistroOnline: '.$comando->getRawSql());
+        //\app\models\Utilities::putMessageLogFile('getDetvalorRegistroOnline: '.$comando->getRawSql());
         return $resultData;
     }
 

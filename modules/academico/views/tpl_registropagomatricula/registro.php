@@ -172,7 +172,7 @@
                 <td>' . $ron_valor_gastos_adm . '</td> 
              </tr>';
         
-        echo "<tr><td colspan='6'>                              TOTAL US$ " . $total_costo . "</td></tr>";
+        echo "<tr><td colspan='3'></td><td>TOTAL US$ " . $total_costo . "</td></tr>";
         if (empty(count($dataPlanificacion))) {
             echo '<tr style="border: 1px solid #002060;"><td><br></td><td></td><td></td><td></td><td></td></tr>';
         }

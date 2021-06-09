@@ -416,7 +416,7 @@ function exportPdfEduregistro() {
     var curso = $('#cmb_cursoreg option:selected').val();
     //var jornada = $('#cmb_jornadaes option:selected').val();
     var unidadedu = $('#cmb_uniddades option:selected').val();
-    window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/exppdfestregistro?pdf=1&search=" + search + "&profesor=" + profesor + "&unidad=" + unidad + "&modalidad=" + modalidad + "&periodo=" + periodo + "&asignatura=" + asignatura + "&estado=" + estado + "&curso=" + curso, "&unidadedu="+ unidadedu/*+ "&jornada=" + jornada*/;
+    window.location.href = $('#txth_base').val() + "/academico/usuarioeducativa/exppdfestregistro?pdf=1&search=" + search + "&profesor=" + profesor + "&unidad=" + unidad + "&modalidad=" + modalidad + "&periodo=" + periodo + /*"&asignatura=" + asignatura +*/ "&estado=" + estado + "&curso=" + curso, "&unidadedu="+ unidadedu/*+ "&jornada=" + jornada*/;
 }
 
 function actualizarGridDisteducativa() {

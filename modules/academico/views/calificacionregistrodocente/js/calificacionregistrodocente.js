@@ -361,14 +361,6 @@ function actualizarGridRegistro(dready = 0) {
             if(action == 'edit'){
                 $.each(o.data[indice], function( index, value ) {
                     if(componentes[index]){
-                        /*
-                        console.log(index);
-                        console.log("------------------");
-                        console.log(componentes[index]['notamax']);
-                        console.log("************************");
-                        console.log(value);
-                        console.log("////////////////////");
-                        */
                         if(value < 0 || value > parseInt(componentes[index]['notamax'])){
                             alertify.error("El cambio no se ha registrado, los valores del componente Asíncrona debe estar entre 0 a "+componentes[index]['notamax']);
                             bandera = 1;
@@ -419,8 +411,23 @@ function actualizarGridRegistro(dready = 0) {
                 <th>Parcial</th>
                 <th>Paralelo</th>`;        
 
-        var numeroCols = 6;
+       
+        //,columnDefs: [centrarArr]
+
+        /*
+        columnDefs: [   
+                { targets: "no-sort", "orderable": false, "order": [],},
+                { targets: 4, responsivePriority: 1},      
+                
+                {
+                    "targets": [ 14,15,16,17,18,19,20,21 ],
+                    "visible": false,
+                    "searchable": false
+                },  
             
+            ],
+        */
+
         var columnas1 =[
                 {   // Responsive control column
                     data: null,
@@ -441,11 +448,14 @@ function actualizarGridRegistro(dready = 0) {
                 { data: "nparcial"},
                 { data: "paralelo"}
                 ]; 
+        
+        var centrar = [];
+        var numeroCols = 6;
 
         $.each( response['componentes'], function( key, value ) {
             var element = {};
             element.data = key;
-            columnas1.push(element);
+            columnas1.push(element);         
 
             editor.add( {
                 label    : key,
@@ -456,11 +466,28 @@ function actualizarGridRegistro(dready = 0) {
                     max : value.notamax
                 },
             });
-            numeroCols++;
+            //numeroCols++;
+            //centrar.push(numeroCols);
             html += '<th>'+key+'</th>';
         });
         numeroCols++;
         console.log("# de columnnas = "+numeroCols);
+
+        centrar.push(numeroCols+1);
+        centrar.push(numeroCols+2);
+        centrar.push(numeroCols+3);
+        centrar.push(numeroCols+4);
+        centrar.push(numeroCols+5);
+        centrar.push(numeroCols+6);
+        centrar.push(numeroCols+7);
+        centrar.push(numeroCols+8);
+
+         var centrarArr = {};
+        centrarArr.targets = centrar;
+        centrarArr.className = "dt-center";
+
+        console.log(centrarArr);
+
         var columnas2 =[ 
                 { data: "total"},
                 { data: "paca_id"},

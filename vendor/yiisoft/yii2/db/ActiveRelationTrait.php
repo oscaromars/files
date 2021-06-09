@@ -17,8 +17,8 @@ use yii\base\InvalidConfigException;
  * @author Carsten Brandt <mail@cebe.cc>
  * @since 2.0
  *
- * @method ActiveRecordInterface one($db = null)
- * @method ActiveRecordInterface[] all($db = null)
+ * @method ActiveRecordInterface one()
+ * @method ActiveRecordInterface[] all()
  * @property ActiveRecord $modelClass
  */
 trait ActiveRelationTrait
@@ -585,23 +585,22 @@ trait ActiveRelationTrait
         if (count($key) > 1) {
             return serialize($key);
         }
-        return reset($key);
+        $key = reset($key);
+        return is_scalar($key) ? $key : serialize($key);
     }
 
     /**
-     * @param mixed $value raw key value. Since 2.0.40 non-string values must be convertable to string (like special
-     * objects for cross-DBMS relations, for example: `|MongoId`).
+     * @param mixed $value raw key value.
      * @return string normalized key value.
      */
     private function normalizeModelKey($value)
     {
-        try {
-            return (string)$value;
-        } catch (\Exception $e) {
-            throw new InvalidConfigException('Value must be convertable to string.');
-        } catch (\Throwable $e) {
-            throw new InvalidConfigException('Value must be convertable to string.');
+        if (is_object($value) && method_exists($value, '__toString')) {
+            // ensure matching to special objects, which are convertable to string, for cross-DBMS relations, for example: `|MongoId`
+            $value = $value->__toString();
         }
+
+        return $value;
     }
 
     /**

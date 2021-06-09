@@ -409,24 +409,7 @@ function actualizarGridRegistro(dready = 0) {
                 <th>Nombre</th>
                 <th>Materia</th>
                 <th>Parcial</th>
-                <th>Paralelo</th>`;        
-
-       
-        //,columnDefs: [centrarArr]
-
-        /*
-        columnDefs: [   
-                { targets: "no-sort", "orderable": false, "order": [],},
-                { targets: 4, responsivePriority: 1},      
-                
-                {
-                    "targets": [ 14,15,16,17,18,19,20,21 ],
-                    "visible": false,
-                    "searchable": false
-                },  
-            
-            ],
-        */
+                <th>Paralelo</th>`;       
 
         var columnas1 =[
                 {   // Responsive control column
@@ -466,13 +449,14 @@ function actualizarGridRegistro(dready = 0) {
                     max : value.notamax
                 },
             });
-            //numeroCols++;
+            numeroCols++;
             //centrar.push(numeroCols);
             html += '<th>'+key+'</th>';
         });
         numeroCols++;
         console.log("# de columnnas = "+numeroCols);
-
+        
+        numeroCols++
         centrar.push(numeroCols+1);
         centrar.push(numeroCols+2);
         centrar.push(numeroCols+3);
@@ -482,9 +466,27 @@ function actualizarGridRegistro(dready = 0) {
         centrar.push(numeroCols+7);
         centrar.push(numeroCols+8);
 
-         var centrarArr = {};
-        centrarArr.targets = centrar;
-        centrarArr.className = "dt-center";
+        var arrcolumnDefs = new Array();
+        var centrarArr = {};
+        centrarArr.targets   = centrar;
+        centrarArr.visible = false;
+        centrarArr.searchable = false;
+
+        arrcolumnDefs.push(centrarArr); 
+
+        /*
+        columnDefs: [   
+                { targets: "no-sort", "orderable": false, "order": [],},
+                { targets: 4, responsivePriority: 1},      
+                
+                {
+                    "targets": [ 14,15,16,17,18,19,20,21 ],
+                    "visible": false,
+                    "searchable": false
+                },  
+            
+            ],
+        */
 
         console.log(centrarArr);
 
@@ -598,19 +600,20 @@ function actualizarGridRegistro(dready = 0) {
                 }
             },
             */
-            
+            /*
             columnDefs: [   
                 { targets: "no-sort", "orderable": false, "order": [],},
                 { targets: 4, responsivePriority: 1},      
-                /*
+                
                 {
                     "targets": [ 14,15,16,17,18,19,20,21 ],
                     "visible": false,
                     "searchable": false
                 },  
-                */
+                
             ],
-            
+            */
+            columnDefs: [centrarArr],
             select: {
                 style:    'os',
                 selector: 'td.select-checkbox'

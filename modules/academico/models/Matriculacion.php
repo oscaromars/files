@@ -1605,9 +1605,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
         return $resultData;
     }
 
-}
-
-/**
+    /**
      * Function to get nombre malla academica
      * @author Julio Lopez
      * @param $per_id
@@ -1636,3 +1634,6 @@ class Matriculacion extends \yii\db\ActiveRecord {
         //\app\models\Utilities::putMessageLogFile('getMallaAcademicaRegistroOnline: '.$comando->getRawSql());
         return $resultData;
     }
+
+
+}

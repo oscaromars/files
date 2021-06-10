@@ -210,13 +210,12 @@ class RegistroConfiguracion extends \yii\db\ActiveRecord
         $con = \Yii::$app->db_facturacion;
         $estado = 1;
 
-        $sql = "SELECT substring(concat('00000000',max(ccar_id)),-8) as secuencial 
+        $sql = "SELECT substring(concat('00000000',count(ccar_id)),-8) as 'secuencial' 
                 from " . $con->dbname . ".carga_cartera;";
 
         $comando = $con->createCommand($sql);
         
         $resultData = $comando->queryOne();
-
         return $resultData;
     }
     
@@ -426,6 +425,34 @@ class RegistroConfiguracion extends \yii\db\ActiveRecord
             if ($trans !== null){
                 $trans->rollback();}
             \app\models\Utilities::putMessageLogFile('modelo KO...Pago: '.$trans.'- KO - '.$ex->getMessage());
+            return FALSE;
+        }
+    }
+
+    public function updateAdicionalMateria($rama_id, $rpm_id){
+        $con = \Yii::$app->db_academico;
+        $estado = 1;
+        \app\models\Utilities::putMessageLogFile('registro adicional materia...: ');
+        $trans = $con->getTransaction(); // se obtiene la transacción actual
+        $fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
+        try {
+            $sql=" UPDATE " . $con->dbname . ".registro_adicional_materias 
+                    SET rpm_id = :rpm_id 
+                    WHERE rama_id = :rama_id);";
+            //\app\models\Utilities::putMessageLogFile('modelo Online Cuota FIN...: '.$sql);
+            $comando = $con->createCommand($sql);
+            $comando->bindParam(":rpm_id", $rpm_id, \PDO::PARAM_INT);
+            $comando->bindParam(":rama_id", $rama_id, \PDO::PARAM_INT);
+            
+            $resultData = $comando->execute();
+            if ($trans !== null){
+                $trans->commit();}
+            \app\models\Utilities::putMessageLogFile('rpm OK...: '.$trans.'- OK');
+            return $con->getLastInsertID($con->dbname . '.registro_adicional_materias');
+        } catch (Exception $ex) {
+            if ($trans !== null){
+                $trans->rollback();}
+            \app\models\Utilities::putMessageLogFile('rpm KO...: '.$trans.'- KO - '.$ex->getMessage());
             return FALSE;
         }
     }

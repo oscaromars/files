@@ -497,7 +497,7 @@ function save() {
 function eliminarItems(val, daca_id, TbGtable) {
     console.log('session', sessionStorage.dts_asignacion_list);
     var ids = "";
-    var arrParams = new Object();
+    
     //var count=0;
     if (sessionStorage.dts_asignacion_list) {
         var Grid = JSON.parse(sessionStorage.dts_asignacion_list);
@@ -514,14 +514,20 @@ function eliminarItems(val, daca_id, TbGtable) {
         }
     }
     if (daca_id != 0) {
-        var link = $('#txth_base').val() + "/academico/distributivoacademico/delete" + "?id=" + val + "&daca_id=" + daca_id;
-        window.location = link;
-        var link1 = $('#txth_base').val() + "/academico/distributivoacademico/editcab/" + daca_id;
-
+        var arrParams = new Object();
+        arrParams.id=val;
+        arrParams.daca_id=daca_id;
+        
+        var link = $('#txth_base').val() + "/academico/distributivoacademico/delete";
         requestHttpAjax(link, arrParams, function (response) {
-            showAlert(response.status, response.label, response.message);
+         showAlert(response.status, response.label, response.message);
             if (response.status == "OK") {
-                window.location = link1;
+                setTimeout(function () {
+                            var link1 = $('#txth_base').val() + "/academico/distributivoacademico/editcab/" + daca_id;
+                            window.location = link1;
+                        }, 1000);
+               
+             
             }
         }, true);
     }

@@ -703,14 +703,15 @@ class DistributivoacademicoController extends \app\components\CController {
         }
     }
 
-    public function actionDelete($id,$daca_id) {
-        //if (Yii::$app->request->isAjax) {
+    public function actionDelete() {
+        if (Yii::$app->request->isAjax) {
             $usu_id = @Yii::$app->session->get("PB_iduser");
-           // $data = Yii::$app->request->post();
+          $data = Yii::$app->request->post();
+         
             $fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
             try {
                
-                $model = DistributivoAcademico::findOne($id);
+                $model = DistributivoAcademico::findOne($data['id']);
                 $model->daca_fecha_modificacion = $fecha_transaccion;
                 $model->daca_usuario_modifica = $usu_id;
                 $model->daca_estado = '0';
@@ -733,7 +734,7 @@ class DistributivoacademicoController extends \app\components\CController {
                 );
                 return Utilities::ajaxResponse('NOOK', 'alert', Yii::t('jslang', 'Error'), 'true', $message);
             }
-        //}
+        }
     }
 
     public function actionExportexcel() {

@@ -270,9 +270,11 @@ class RegistroConfiguracion extends \yii\db\ActiveRecord
 
     public function registrarRelacionCartera($est_id,$rama_id,$secuencial){
         $con = \Yii::$app->db_academico;
+        $con2 = \Yii::$app->db_academico;
         $estado = 1;
         \app\models\Utilities::putMessageLogFile('modelo N...: '.$est_id.'-'.$rama_id.'-'. $secuencial);
         $trans = $con->getTransaction(); // se obtiene la transacción actual
+        $trans2 = $con->getTransaction();
         $fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
         try {
             $sql="INSERT INTO " . $con->dbname . ".cuotas_facturacion_cartera 
@@ -303,12 +305,24 @@ class RegistroConfiguracion extends \yii\db\ActiveRecord
             $resultData = $comando->execute();
             if ($trans !== null){
                 $trans->commit();}
-            \app\models\Utilities::putMessageLogFile('modelo OK...: '.$trans.'- OK');
-            return $con->getLastInsertID($con->dbname . '.cuotas_facturacion_cartera');
+            \app\models\Utilities::putMessageLogFile('modelo OK...:'.$trans.' - OK');
+
+            $sql2="SELECT cfca_id FROM " . $con->dbname . ".cuotas_facturacion_cartera 
+                    WHERE rama_id = :rama_id and cfca_esado = 1;";
+            \app\models\Utilities::putMessageLogFile('modelo X...: '.$sql2);
+            $comando2->bindParam(":rama_id", $rama_id, \PDO::PARAM_INT);
+            $comando2 = $con2->createCommand($sql2);
+            $resultData2 = $comando2->queryOne();
+            if ($trans2 !== null){
+                $trans2->commit();}
+                \app\models\Utilities::putMessageLogFile('modelo OK...:'.$trans.' - OK');
+            return $resultData2;
         } catch (Exception $ex) {
             if ($trans !== null){
                 $trans->rollback();}
-            \app\models\Utilities::putMessageLogFile('modelo KO...: '.$trans.'- KO - '.$ex->getMessage());
+            if ($trans2 !== null){
+                $trans2->rollback();}
+            \app\models\Utilities::putMessageLogFile('modelo KO...:'.$trans.' - KO - '.$ex->getMessage());
             return FALSE;
         }
     }
@@ -316,9 +330,11 @@ class RegistroConfiguracion extends \yii\db\ActiveRecord
 
     public function registrarPagoMatricula($usu, $per_id,$pla_id,$ron_id,$total){
         $con = \Yii::$app->db_academico;
+        $con2 = \Yii::$app->db_academico;
         $estado = 1;
         \app\models\Utilities::putMessageLogFile('modelo Pago Matricula...: ');
         $trans = $con->getTransaction(); // se obtiene la transacción actual
+        $trans2 = $con2->getTransaction(); // se obtiene la transacción actual
         $fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
         try {
             $sql="INSERT INTO " . $con->dbname . ".registro_pago_matricula 
@@ -365,12 +381,25 @@ class RegistroConfiguracion extends \yii\db\ActiveRecord
             if ($trans !== null){
                 $trans->commit();}
             \app\models\Utilities::putMessageLogFile('modelo OK...: '.$trans.'- OK');
-            return $con->getLastInsertID($con->dbname . '.registro_pago_matricula');
+
+            $sql2="SELECT rpm_id FROM " . $con->dbname . ".registro_pago_matricula 
+                    WHERE per_id = :per_id and pla_id = :pla_id and ron_id = :ron_id and rpm_estado = 1 order by rpm_id desc limit 0,1;";
+            $comando2 = $con->createCommand($sql2);
+            $comando2->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
+            $comando2->bindParam(":pla_id", $pla_id, \PDO::PARAM_INT);
+            $comando2->bindParam(":ron_id", $ron_id, \PDO::PARAM_INT);
+            $resultData2 = $comando->queryOne();
+            if ($trans2 !== null){
+                $trans2->commit();}
+            \app\models\Utilities::putMessageLogFile('modelo OK...: '.$trans.'- OK');
+            return $resultData2;
         } catch (Exception $ex) {
             if ($trans !== null){
                 $trans->rollback();}
+                if ($trans2 !== null){
+                    $trans2->rollback();}
             \app\models\Utilities::putMessageLogFile('modelo KO...: '.$trans.'- KO - '.$ex->getMessage());
-            return FALSE;
+            return 1;
         }
     }
 

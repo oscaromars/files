@@ -2437,16 +2437,27 @@ class RegistroController extends \app\components\CController {
             $registro_pago_matricula = new RegistroPagoMatricula();
             $resp_cant_cuota = $registro_pago_matricula->getCuotasPeriodo($rama_id);
             $cant_cuota = $resp_cant_cuota['cuota'];
-            $resp_ccar_numero_documento = $matriculacion_model->getNumeroDocumentoRegistroOnline($rama_id);
+            $est_id = $modelEstudiante['est_id'];
 
+            // nuevo
+            $resp_rpm_id = $matriculacion_model->getNumeroDocumentoRegistroOnline($rama_id, $ron_id, $per_id);
+            $rpm_id = $resp_rpm_id['rpm_id'];
+            $detallePagos = $matriculacion_model->getDetalleCuotasRegistroOnline($ron_id, $rpm_id);
+            // nuevo
+
+            /*$resp_ccar_numero_documento = $matriculacion_model->getNumeroDocumentoRegistroOnline($rama_id);
             $ccar_numero_documento = $resp_ccar_numero_documento['cfca_numero_documento'];
             $est_id = $modelEstudiante['est_id'];
-            $detallePagos = $matriculacion_model->getDetalleCuotasRegistroOnline($ccar_numero_documento, $est_id);
+            $detallePagos = $matriculacion_model->getDetalleCuotasRegistroOnline($ccar_numero_documento, $est_id);*/
 
             //Valores de registro online
             $detallePagosRon = $matriculacion_model->getDetvalorRegistroOnline($ron_id);
             $ron_valor_aso_estudiante = $detallePagosRon['ron_valor_aso_estudiante'];
             $ron_valor_gastos_adm =  $detallePagosRon['ron_valor_gastos_adm']; 
+
+            //malla academica
+            $resp_maca_nombre = $matriculacion_model->getMallaAcademicaRegistroOnline($per_id);
+            $maca_nombre = $resp_maca_nombre['maca_nombre'];
 
             $rep = new ExportFile();
             //$this->layout = false;
@@ -2466,6 +2477,8 @@ class RegistroController extends \app\components\CController {
                         'detallePagos' => $detallePagos,
                         'ron_valor_aso_estudiante' => $ron_valor_aso_estudiante,
                         'ron_valor_gastos_adm' => $ron_valor_gastos_adm,
+                        'ron_id' => $ron_id,
+                        'maca_nombre' => $maca_nombre,
                     ])
             );
             $rep->mpdf->Output('HOJAINSCRIPCION' . $ids . ".pdf", ExportFile::OUTPUT_TO_DOWNLOAD);

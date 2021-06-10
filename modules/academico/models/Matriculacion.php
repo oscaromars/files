@@ -1512,33 +1512,33 @@ class Matriculacion extends \yii\db\ActiveRecord {
      * @return $resultData
      */
 
-    public function getDetalleCuotasRegistroOnline($ccar_numero_documento, $est_id)
+    public function getDetalleCuotasRegistroOnline($ron_id, $rpm_id)
     {
         $con_academico = \Yii::$app->db_academico;
         $estado = 1;
         $sql = "SELECT 
-                    substring(c.ccar_num_cuota,2,1) as NO,
-                    
+                    roc.roc_num_cuota as NO,
                     CASE
-                        WHEN substring(c.ccar_num_cuota,2,1) = 1 THEN '1er PAGO'
-                        WHEN substring(c.ccar_num_cuota,2,1) = 2 THEN '2do PAGO'
-                        WHEN substring(c.ccar_num_cuota,2,1) = 3 THEN '3er PAGO'
-                        WHEN substring(c.ccar_num_cuota,2,1) = 4 THEN '4to PAGO'
-                        WHEN substring(c.ccar_num_cuota,2,1) = 5 THEN '5to PAGO'
-                        WHEN substring(c.ccar_num_cuota,2,1) = 6 THEN '6to PAGO'
+                        WHEN roc.roc_num_cuota = 1 THEN '1er PAGO'
+                        WHEN roc.roc_num_cuota = 2 THEN '2do PAGO'
+                        WHEN roc.roc_num_cuota = 3 THEN '3er PAGO'
+                        WHEN roc.roc_num_cuota = 4 THEN '4to PAGO'
+                        WHEN roc.roc_num_cuota = 5 THEN '5to PAGO'
+                        WHEN roc.roc_num_cuota = 6 THEN '6to PAGO'
                     END as pago,
-                    upper( DATE_FORMAT( c.ccar_fecha_vencepago, '%d %M %Y') ) as fecha_vencimiento,
-                     c.ccar_valor_cuota as valor_cuota, c.ccar_valor_factura as valor_factura,
-                     format(((c.ccar_valor_cuota/ c.ccar_valor_factura) * 100),2) as porcentaje
-                FROM db_facturacion.carga_cartera c
-                where c.ccar_numero_documento = :ccar_numero_documento
-                  and c.est_id = :est_id  
-                  and c.ccar_estado = :estado
-                  and c.ccar_estado_logico = :estado;";
+                    roc.roc_vencimiento as fecha_vencimiento,
+                    format( (roc.roc_costo * (roc.roc_porcentaje/100)) , 2) as valor_cuota,
+                    roc.roc_costo as valor_factura,
+                    roc_porcentaje as porcentaje    
+                FROM db_academico.registro_online_cuota as roc 
+                where roc.ron_id = :ron_id
+                and roc.rpm_id = :rpm_id
+                and roc.roc_estado = :estado
+                and roc.roc_estado_logico = :estado;";
 
         $comando = $con_academico->createCommand($sql);
-        $comando->bindParam(":ccar_numero_documento", $ccar_numero_documento, \PDO::PARAM_INT);
-        $comando->bindParam(":est_id", $est_id, \PDO::PARAM_INT);
+        $comando->bindParam(":ron_id", $ron_id, \PDO::PARAM_INT);
+        $comando->bindParam(":rpm_id", $rpm_id, \PDO::PARAM_INT);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_INT);
         $resultData = $comando->queryAll();
         //\app\models\Utilities::putMessageLogFile('selectEsquemaCalificacionUnidad: '.$comando->getRawSql());
@@ -1582,21 +1582,23 @@ class Matriculacion extends \yii\db\ActiveRecord {
      * @return $resultData
      */
 
-    public function getNumeroDocumentoRegistroOnline($rama_id)
+    public function getNumeroDocumentoRegistroOnline($rama_id, $ron_id, $per_id)
     {
         $con_academico = \Yii::$app->db_academico;
         $estado = 1;
-        $sql = " SELECT cfca.cfca_numero_documento as cfca_numero_documento
-                 FROM  db_academico.cuotas_facturacion_cartera as cfca
-                INNER JOIN db_facturacion.carga_cartera as ccar ON ccar.ccar_numero_documento = cfca.cfca_numero_documento
-                WHERE cfca.cfca_rama_id = :rama_id and
-                      cfca.cfca_estado = :estado and 
-                      cfca.cfca_estado_logico = :estado and
-                      ccar.ccar_estado = :estado and 
-                      ccar.ccar_estado_logico = :estado ";
+        $sql = " SELECT rama.rpm_id as rpm_id
+                FROM db_academico.registro_adicional_materias as rama 
+                WHERE rama.rama_id= :rama_id 
+                  AND rama.ron_id = :ron_id 
+                  AND rama.per_id = :per_id 
+                  AND rama.rama_estado = :estado
+                  AND rama.rama_estado_logico = :estado;";  
+
 
         $comando = $con_academico->createCommand($sql);
         $comando->bindParam(":rama_id", $rama_id, \PDO::PARAM_INT);
+        $comando->bindParam(":ron_id", $ron_id, \PDO::PARAM_INT);
+        $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_INT);
         $resultData = $comando->queryOne();
 \app\models\Utilities::putMessageLogFile('getNumeroDocumentoRegistroOnline: '.$comando->getRawSql());
@@ -1604,3 +1606,33 @@ class Matriculacion extends \yii\db\ActiveRecord {
     }
 
 }
+
+/**
+     * Function to get nombre malla academica
+     * @author Julio Lopez
+     * @param $per_id
+     * @return $resultData
+     */
+
+    public function getMallaAcademicaRegistroOnline($per_id)
+    {
+        $con_academico = \Yii::$app->db_academico;
+        $estado = 1;
+
+        $sql = "SELECT distinct maca.maca_id as maca_id, maca.maca_nombre as maca_nombre
+                FROM db_academico.malla_academico_estudiante as maes 
+                INNER JOIN db_academico.malla_academica as maca 
+                WHERE maes.per_id = :per_id
+                  AND maes.maca_id = maca.maca_id
+                  AND maes.maes_estado = :estado
+                  AND maes.maes_estado_logico = :estado
+                  AND maca.maca_estado = :estado
+                  AND maca.maca_estado_logico = :estado;";
+
+        $comando = $con_academico->createCommand($sql);
+        $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_INT);
+        $resultData = $comando->queryOne();
+        //\app\models\Utilities::putMessageLogFile('getMallaAcademicaRegistroOnline: '.$comando->getRawSql());
+        return $resultData;
+    }

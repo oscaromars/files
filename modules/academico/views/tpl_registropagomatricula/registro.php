@@ -127,11 +127,11 @@
 <div>
     <div class="blue">
         <table class="tabla">
-            <tr class="tr">
-                <td class="tcell_cen " colspan="1" ><span class="bold">PERIODO ACADEMICO: </span></td>
-                <td class="tcell_cen " colspan="1" ><span ><?= $data_student['pla_periodo_academico'] ?></span></td>
-                <td class="tcell_cen " colspan="1" ><span class="bold">NUM DOC PED:</span></td>
-                <td class="tcell_cen" colspan="1" ><span ><?= $ron_id ?></span></td>
+            <tr class="tr tr_bor">
+                <td class="tcell_cen tr_bor" colspan="1" ><span class="bold">PERIODO ACADEMICO: </span></td>
+                <td class="tcell_cen tr_bor" colspan="1" ><span ><?= $data_student['pla_periodo_academico'] ?></span></td>
+                <td class="tcell_cen tr_bor" colspan="1" ><span class="bold">NUM DOC PED:</span></td>
+                <td class="tcell_cen tr_bor" colspan="1" ><span ><?= $ron_id ?></span></td>
             </tr>
             <tr class="tr tr_bor">
                 <td class="tcell_cen tr_bor" colspan="1" ><span class="bold">ALUMNO: </span></td>

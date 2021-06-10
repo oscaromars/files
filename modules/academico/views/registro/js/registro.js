@@ -15,13 +15,18 @@ $(document).ready(function() {
     $('#cmb_tpago').change(function() {
         if ($(this).val() == 1) {
             $('.nocredit').hide();
-            $('#frm_valor').val($('#frm_costo_carr').val());
+            $('.nocredit2').show();
+            $('#frm_valor').val($('#frm_valor').val());
         } else if ($(this).val() == 2) {
             $('.nocredit').hide();
-            $('#frm_valor').val($('#frm_costo_item').val());
+            $('.nocredit2').show();
+            $('#frm_valor').val($('#frm_valor').val());
         } else {
             $('.nocredit').show();
-            $('#frm_valor').val($('#frm_costo_item').val());
+            $('#frm_valor').val($('#frm_valor').val());
+        }
+        if ($(this).val() == 3) {
+            $('.nocredit2').hide();
         }
     });
     $('#cmb_fpago').change(function() {
@@ -43,8 +48,16 @@ $(document).ready(function() {
             $('#atach_docum_pago').css('display', 'block');
         }
     });
+    $('#cmb_tpago').change(function() {
+        let value = $('#cmb_cuota').val();
+        let total = ($('#frm_valor').val()).replace(/,/g, '');//($('#frm_costo_item').val()).replace(/,/g, '');
+        let cuota = currencyFormat(parseFloat(total / value));
+        if (value == 0) $('#frm_cuota').val(currencyFormat(parseFloat(total)));
+        else $('#frm_cuota').val(cuota);
+        generarDataTable(value);
+    });
     $('#cmb_cuota').change(function() {
-        let value = $(this).val();
+        let value = $('#cmb_cuota').val();
         let total = ($('#frm_valor').val()).replace(/,/g, '');//($('#frm_costo_item').val()).replace(/,/g, '');
         let cuota = currencyFormat(parseFloat(total / value));
         if (value == 0) $('#frm_cuota').val(currencyFormat(parseFloat(total)));
@@ -52,7 +65,7 @@ $(document).ready(function() {
         generarDataTable(value);
     });
     $('#btn_calculoCuotas').click(function() {
-        let value = $(this).val();
+        let value = $('#cmb_cuota').val();
         let div = $('#cmb_cuota').val();
         let total = ($('#frm_valor').val()).replace(/,/g, '');//($('#frm_costo_item').val()).replace(/,/g, '');
         let cuota = currencyFormat(parseFloat(total / div));
@@ -308,7 +321,7 @@ function save() {
                     if (response.status == "OK") {
                         setTimeout(function() {
 			   // window.location.href = $('#txth_base').val() + "/academico/matriculacion/index";
-			   window.location.href = $('#txth_base').val() + "/academico/matriculacion/fundacion";
+			   //window.location.href = $('#txth_base').val() + "/academico/matriculacion/fundacion";
 			 // window.location.href = $('#txth_base').val() + "/academico/registro/index?per_id=" + $('#frm_per_id').val();
 			 //   window.location.href = $('#txth_base').val() + "/academico/registro/index" + $('#frm_per_id').val();
                            // window.location.href = $('#txth_base').val() + "/academico/registro/index";
@@ -622,29 +635,32 @@ function guardarCargarCartera(){
     arrParams.numcuotas = $('#cmb_cuota').val();
     arrParams.rama_id = $('#frm_rama_id').val();
     arrParams.per_id = $('#txt_per_id').val();
+    arrParams.pla_id = $('#txt_pla_id').val();
+    var terminos = ($('#cmb_req').is(':checked')) ? 1 : 0;
     // $per_id,  $forma_pago,$in, $numcuotas,$valor_cuota, $total, $usu_id);
     //alert(link);
     $redirect = $('#txth_base').val() + "/academico/registro/new/"+arrParams.per_id+'?rama_id='+arrParams.rama_id ;
     $redirect = $('#txth_base').val() + "/academico/registro/index";
     //alert(arrParams.tpago+'-'+arrParams.total+'-'+arrParams.interes +'-'+arrParams.financiamiento+'-'+arrParams.numcuotas+'-'+arrParams.rama_id+'-'+arrParams.per_id +'-'+ $redirect);
-    if(/*$('#cmb_cuota option:selected').val()*/arrParams.numcuotas != 0){
-       
-        try{
-            requestHttpAjax(link, arrParams, function(response) {
-            var message = response.message;
-            if (response.status == "OK") {
-                setTimeout(function() {
-                   //windows.location.href = $redirect;
-                   showAlert(response.status, response.type, { "wtmessage": 'SU PAGO FUE INGRESADO CORRECTAMENTE', "title": response.label });
-                   windows.location.href = $('#txth_base').val() + "/academico/registro/index";
-                }, 3000);
-            } else {
-                showAlert(response.status, response.type, { "wtmessage": message.info, "title": response.label });
+    if(/*$('#cmb_cuota option:selected').val()*/arrParams.numcuotas != 0 || terminos==0){
+        if(terminos != 0){
+            try{
+                requestHttpAjax(link, arrParams, function(response) {
+                var message = response.message;
+                if (response.status == "OK") {
+                    setTimeout(function() {
+                    //windows.location.href = $redirect;
+                    showAlert(response.status, response.type, { "wtmessage": 'SU PAGO FUE INGRESADO CORRECTAMENTE', "title": response.label });
+                    //windows.location.href = $('#txth_base').val() + "/academico/registro/index";
+                    }, 3000);
+                } else {
+                    showAlert(response.status, response.type, { "wtmessage": message.info, "title": response.label });
+                }
+                }, true);
+            }catch(err){
+                alert( "wtmessage <p>+"+$err+"</p>");    
+                console.log("error: "+err)
             }
-            }, true);
-        }catch(err){
-            alert( "wtmessage <p>+"+$err+"</p>");    
-            console.log("error: "+err)
         }
     } else {
         showAlert('NO_OK', 'error', { "wtmessage": "Se debe escoger el numero de cuotas.", "title": 'Información' });

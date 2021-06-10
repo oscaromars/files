@@ -9,23 +9,6 @@ academico::registerTranslations();
 //print_r($dataGrid);
 $cont = 0;
 ?>
-<script>
-    (function(window) {
-        window.onload = function(){
-            let value = $(this).val();
-            let total = ($('#frm_valor').val()).replace(/,/g, '');//($('#frm_costo_item').val()).replace(/,/g, '');
-            let cuota = currencyFormat(parseFloat(total / value));
-            if (value == 0) $('#frm_cuota').val(currencyFormat(parseFloat(total)));
-            else $('#frm_cuota').val(cuota);
-            generarDataTable(value);
-                            };
-                }
-            )(this);
-
-            
-</script>
-
-<div id="someId">
 <?=
 
 PbGridView::widget([
@@ -80,13 +63,4 @@ PbGridView::widget([
     ],
 ]);
 ?>
-</div>
-<script type="text/javascript">
-        let value = $(this).val();
-        let total = ($('#frm_valor').val()).replace(/,/g, '');//($('#frm_costo_item').val()).replace(/,/g, '');
-        let cuota = currencyFormat(parseFloat(total / value));
-        if (value == 0) $('#frm_cuota').val(currencyFormat(parseFloat(total)));
-        else $('#frm_cuota').val(cuota);
-        generarDataTable(value);
-</script>
 <br />

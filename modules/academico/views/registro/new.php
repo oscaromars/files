@@ -18,8 +18,9 @@ StripeAsset::register($this);
 
 ?>
 <?= Html::hiddenInput('txt_per_id', $id, ['id' => 'txt_per_id']); ?>
-<?= Html::hiddenInput('txt_rama', $rama, ['id' => 'txt_rama']); ?>
+<?= Html::hiddenInput('txt_rama', $rama_id, ['id' => 'txt_rama']); ?>
 <?= Html::hiddenInput('txt_existe2', $pes_id, ['id' => 'txt_existe2']); ?>
+<?= Html::hiddenInput('txt_pla_id', $pla_id, ['id' => 'txt_pla_id']); ?>
 <?= Html::hiddenInput('frm_cuota', 0, ['id' => 'frm_cuota']); ?>
 <div class='col-md-12 col-sm-12 col-xs-12 col-lg-12'>        
             <div class="col-sm-10 col-md-10 col-xs-8 col-lg-10"></div>
@@ -71,7 +72,7 @@ StripeAsset::register($this);
                 <label for="
                 " class="col-sm-3 col-md-3 col-xs-3 col-lg-3 control-label"><?= academico::t("registro", 'Credit') ?></label>
                 <div class="col-sm-7 col-md-7 col-xs-7 col-lg-7">
-                    <?= Html::dropDownList("cmb_tpago", 3, $arr_credito, ["class" => "form-control", "id" => "cmb_tpago"]) ?>  
+                    <?= Html::dropDownList("cmb_tpago", 2, $arr_credito, ["class" => "form-control", "id" => "cmb_tpago"]) ?>  
                 </div>
             </div>
         </div>
@@ -164,7 +165,7 @@ StripeAsset::register($this);
     <div class="row">
 
          <div class="col-md-6 col-sm-6 col-xs-6 col-lg-6">
-            <div class="form-group">
+            <div class="form-group nocredit2">
                 <label for="cmb_fpago" class="col-sm-3 col-md-3 col-xs-3 col-lg-3 control-label"><?= academico::t("registro", 'Payment Method') ?></label>
                 <div class="col-sm-7 col-md-7 col-xs-7 col-lg-7">
                     <?= Html::dropDownList("cmb_fpago", 0, $arr_forma_pago, ["class" => "form-control", "id" => "cmb_fpago"]) ?>  
@@ -319,7 +320,7 @@ StripeAsset::register($this);
     </div> 
        
 
-        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 " id="pago_stripe">
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 nocredit2" id="pago_stripe">
             <!------------------------------------------------------->
             <!----- INI PAGO STRIPE --------------------------------->                
             <!------------------------------------------------------->

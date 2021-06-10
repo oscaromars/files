@@ -569,13 +569,7 @@
             $.each(data.attributes, function () {
                 if (this.status === 2) {
                     this.status = 3;
-
-                    var $container = $form.find(this.container),
-                        $input = findInput($form, this);
-
-                    var $errorElement = data.settings.validationStateOn === 'input' ? $input : $container;
-
-                    $errorElement.addClass(data.settings.validatingCssClass);
+                    $form.find(this.container).addClass(data.settings.validatingCssClass);
                 }
             });
             methods.validate.call($form);

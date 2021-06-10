@@ -18,7 +18,7 @@ StripeAsset::register($this);
 
 ?>
 <?= Html::hiddenInput('txt_per_id', $id, ['id' => 'txt_per_id']); ?>
-<?= Html::hiddenInput('txt_rama', $rama, ['id' => 'txt_rama']); ?>
+<?= Html::hiddenInput('txt_rama', $rama_id, ['id' => 'txt_rama']); ?>
 <?= Html::hiddenInput('txt_existe2', $pes_id, ['id' => 'txt_existe2']); ?>
 <?= Html::hiddenInput('txt_pla_id', $pla_id, ['id' => 'txt_pla_id']); ?>
 <?= Html::hiddenInput('frm_cuota', 0, ['id' => 'frm_cuota']); ?>

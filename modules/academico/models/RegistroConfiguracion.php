@@ -334,7 +334,8 @@ class RegistroConfiguracion extends \yii\db\ActiveRecord
                 rpm_total,
                 rpm_estado,
                 rpm_fecha_creacion,
-                rpm_estado_logico
+                rpm_estado_logico,
+                rpm_archivo
                  )
                     VALUES ( :per_id, 
                         :pla_id,
@@ -346,7 +347,7 @@ class RegistroConfiguracion extends \yii\db\ActiveRecord
                         :total,
                         :estado,
                         :fecha_transaccion,
-                        :estado);";
+                        :estado,'');";
             \app\models\Utilities::putMessageLogFile('modelo Pago Matricula FIN...: '.$sql);
             $comando = $con->createCommand($sql);
             $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
@@ -377,7 +378,7 @@ class RegistroConfiguracion extends \yii\db\ActiveRecord
     public function registroOnlineCuota($ron_id, $rpm_id,$in,$fecha_vencimiento,$porcentaje,$costo){
         $con = \Yii::$app->db_academico;
         $estado = 1;
-        \app\models\Utilities::putMessageLogFile('modelo Online Cuota...: ');
+        \app\models\Utilities::putMessageLogFile('modelo Online Cuota...: '.$in);
         $trans = $con->getTransaction(); // se obtiene la transacción actual
         $fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
         try {
@@ -385,13 +386,14 @@ class RegistroConfiguracion extends \yii\db\ActiveRecord
             (
                 ron_id,
                 rpm_id,
-                roc_numero_cuota,
+                roc_num_cuota,
                 roc_vencimiento,
                 roc_porcentaje,
                 roc_costo,
                 roc_estado,
                 roc_fecha_creacion,
-                roc_estado_logico
+                roc_estado_logico,
+                roc_estado_pago
                  )
                     VALUES ( :ron_id, 
                         :rpm_id,
@@ -401,13 +403,14 @@ class RegistroConfiguracion extends \yii\db\ActiveRecord
                         :costo, 
                         :estado,
                         :fecha_transaccion,
-                        :estado);";
-            \app\models\Utilities::putMessageLogFile('modelo Online Cuota FIN...: '.$sql);
+                        :estado,
+                        '');";
+            //\app\models\Utilities::putMessageLogFile('modelo Online Cuota FIN...: '.$sql);
             $comando = $con->createCommand($sql);
             $comando->bindParam(":ron_id", $ron_id, \PDO::PARAM_INT);
             $comando->bindParam(":rpm_id", $rpm_id, \PDO::PARAM_INT);
             $comando->bindParam(":in", $in, \PDO::PARAM_INT);
-            $comando->bindParam(":fecha_transaccion", $fecha_transaccion, \PDO::PARAM_STR);
+            $comando->bindParam(":fecha_vencimiento", $fecha_vencimiento, \PDO::PARAM_STR);
             $comando->bindParam(":porcentaje", $porcentaje, \PDO::PARAM_STR);
             $comando->bindParam(":costo", $costo, \PDO::PARAM_STR);
             $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
@@ -417,12 +420,12 @@ class RegistroConfiguracion extends \yii\db\ActiveRecord
             $resultData = $comando->execute();
             if ($trans !== null){
                 $trans->commit();}
-            \app\models\Utilities::putMessageLogFile('modelo OK...: '.$trans.'- OK');
+            \app\models\Utilities::putMessageLogFile('modelo OK...pago: '.$trans.'- OK');
             return $con->getLastInsertID($con->dbname . '.registro_online_cuota');
         } catch (Exception $ex) {
             if ($trans !== null){
                 $trans->rollback();}
-            \app\models\Utilities::putMessageLogFile('modelo KO...: '.$trans.'- KO - '.$ex->getMessage());
+            \app\models\Utilities::putMessageLogFile('modelo KO...Pago: '.$trans.'- KO - '.$ex->getMessage());
             return FALSE;
         }
     }

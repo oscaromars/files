@@ -11,7 +11,7 @@ use app\modules\academico\models\EstudioAcademico;
 
 $var = ArrayHelper::map(app\modules\academico\models\PeriodoAcademico::find()->where(['paca_estado' => 1,'paca_estado_logico' => 1,'paca_activo' => 'A'])->all(), 'paca_id',
                 function ($model) {
-                     return $model->sem->saca_nombre . '-' . $model->sem->saca_anio;
+                     return $model->baca->baca_nombre . '-' . $model->sem->saca_nombre . '-' . $model->sem->saca_anio;
                 });
 ?>
 <div class="matriculados-search">

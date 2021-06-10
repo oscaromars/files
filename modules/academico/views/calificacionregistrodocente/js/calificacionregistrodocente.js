@@ -254,7 +254,8 @@ var table = '';
 
 //function actualizarGridRegistro
 function actualizarGridRegistro(dready = 0) {
-    var arrParams = new Object();
+    //Listado de parametros para ser enviados al servidor para desplegar la inforacion del grid
+    var arrParams       = new Object();
     arrParams.periodo   = $('#cmb_periodo option:selected').val();
     arrParams.uaca_id   = $('#cmb_unidad').val();
     arrParams.mod_id    = $('#cmb_modalidad option:selected').val();  
@@ -262,18 +263,25 @@ function actualizarGridRegistro(dready = 0) {
     arrParams.parcial   = $('#cmb_parcial').val();
     arrParams.profesor  = $('#cmb_profesor_rc').val();
 
+    //URL para actualizar el grid
     var link = $('#txth_base').val() + "/academico/calificacionregistrodocente/traermodelo";
- 
+    
+    //Llamado del ajax
     requestHttpAjax(link, arrParams, function (response) {
-
-        console.log(response);
-        
+        //console.log(response);
+        //Esta es la funcion en el controlador que actualizara las notas
         var url_editor = $('#txth_base').val() + "/academico/calificacionregistrodocente/actualizarnota";
 
+        //Armamos el componente editor, aqui el indicamos que campos del grid son editables
         editor = new $.fn.dataTable.Editor( {
             ajax:  url_editor,
             table: "#gridResumen",
+            //La variable idSrc es para saber que linea estamos editando
+            //Esto es importante para que al regresar del controlador con la respuesta
+            //nos actualize el campo correcto y no tengamos q reiniciar pantalla
             idSrc: "row_num",
+            //Esto form option al poner submit all enviaremos toda la fila de datos
+            //ya que necesitamos algunos parametros para actualizar el regsitro
             formOptions: {
                 inline: {   
                     submit: 'all'

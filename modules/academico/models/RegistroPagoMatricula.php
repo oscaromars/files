@@ -4,6 +4,7 @@ namespace app\modules\academico\models;
 
 use Yii;
 use yii\data\ArrayDataProvider;
+use \yii\data\ActiveDataProvider;
 use app\modules\academico\Module as Academico;
 
 Academico::registerTranslations();
@@ -60,6 +61,7 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
+    /*
     public function rules()
     {
         return [
@@ -75,6 +77,7 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
             [['ron_id'], 'exist', 'skipOnError' => true, 'targetClass' => RegistroOnline::className(), 'targetAttribute' => ['ron_id' => 'ron_id']],
         ];
     }
+    */
 
     /**
      * {@inheritdoc}

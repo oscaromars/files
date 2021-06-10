@@ -2572,44 +2572,23 @@ class RegistroController extends \app\components\CController {
             return;
     }
 
-    /* JULIO */
-    public function actionInscripcionpdf($ids,$flag) {//ok
+    public function actionInscripcionpdf($ids) {
         try {
-            \app\models\Utilities::putMessageLogFile('flag..: '.$flag);
             $ids = $_GET['ids'];
             $per_id = $ids;
             $rama_id  = $_GET['rama_id'];
-            $matriculacion_model = new Matriculacion();
-            //$modelPersona = Persona::findOne($per_id);
-            //$modelEstudiante = Estudiante::findOne($per_id);
-            
+            $matriculacion_model = new Matriculacion();          
             $modelPersona = Persona::find()->where(['per_id' => $per_id])->asArray()->one();
             $modelEstudiante = Estudiante::find()->where(['per_id' => $per_id])->asArray()->one();
-
-            
-
-    \app\models\Utilities::putMessageLogFile('actionInscripcionpdf ');
-        \app\models\Utilities::putMessageLogFile(' per_id: ' . $per_id);
-        \app\models\Utilities::putMessageLogFile(' rama_id: ' . $rama_id);
-
+           
             /*Cabecera*/
-            $datos_planficacion = $matriculacion_model->getDataPlanStudent($per_id);
-    // \app\models\Utilities::putMessageLogFile('datos_planficacion '.$datos_planficacion);
-
+            $datos_planficacion = $matriculacion_model->getDataPlanStudent($per_id);    
             $pla_id = $datos_planficacion['pla_id'];
             $pes_id = $datos_planficacion['pes_id'];
-    \app\models\Utilities::putMessageLogFile(' pla_id: ' . $pla_id);
-    \app\models\Utilities::putMessageLogFile(' pes_id: ' . $pes_id);
-
-    \app\models\Utilities::putMessageLogFile(' $datos_planficacion[0][pla_id]: '. $datos_planficacion['pla_id']);
-
 
             $data_student = $matriculacion_model->getDataStudent($per_id, $pla_id, $pes_id);
             $direccion = $modelPersona['per_domicilio_cpri'];
             $matricula = $modelEstudiante['est_matricula'];
-    \app\models\Utilities::putMessageLogFile(' $data_student[0][pla_id]: ' .$data_student['pes_nombres']);
-    \app\models\Utilities::putMessageLogFile(' direccion: ' . $direccion);
-    \app\models\Utilities::putMessageLogFile(' $matricula:' .$matricula);
 
             /*Detalle de materias*/
             $matriculacion_model = new Matriculacion();
@@ -2621,22 +2600,27 @@ class RegistroController extends \app\components\CController {
             $registro_pago_matricula = new RegistroPagoMatricula();
             $resp_cant_cuota = $registro_pago_matricula->getCuotasPeriodo($rama_id);
             $cant_cuota = $resp_cant_cuota['cuota'];
-            $resp_ccar_numero_documento = $matriculacion_model->getNumeroDocumentoRegistroOnline($rama_id);
+            $est_id = $modelEstudiante['est_id'];
 
+            // nuevo
+            $resp_rpm_id = $matriculacion_model->getNumeroDocumentoRegistroOnline($rama_id, $ron_id, $per_id);
+            $rpm_id = $resp_rpm_id['rpm_id'];
+            $detallePagos = $matriculacion_model->getDetalleCuotasRegistroOnline($ron_id, $rpm_id);
+            // nuevo
+
+            /*$resp_ccar_numero_documento = $matriculacion_model->getNumeroDocumentoRegistroOnline($rama_id);
             $ccar_numero_documento = $resp_ccar_numero_documento['cfca_numero_documento'];
             $est_id = $modelEstudiante['est_id'];
-    \app\models\Utilities::putMessageLogFile(' $ccar_numero_documento:' .$ccar_numero_documento);
-\app\models\Utilities::putMessageLogFile(' $est_id:' .$est_id);
-
-            $detallePagos = $matriculacion_model->getDetalleCuotasRegistroOnline($ccar_numero_documento, $est_id);
+            $detallePagos = $matriculacion_model->getDetalleCuotasRegistroOnline($ccar_numero_documento, $est_id);*/
 
             //Valores de registro online
             $detallePagosRon = $matriculacion_model->getDetvalorRegistroOnline($ron_id);
             $ron_valor_aso_estudiante = $detallePagosRon['ron_valor_aso_estudiante'];
-            $ron_valor_gastos_adm =  $detallePagosRon['ron_valor_gastos_adm'];
- 
-  \app\models\Utilities::putMessageLogFile(' ron_valor_aso_estudiante:' .$ron_valor_aso_estudiante);
-    \app\models\Utilities::putMessageLogFile(' ron_valor_gastos_adm:' .$ron_valor_gastos_adm);
+            $ron_valor_gastos_adm =  $detallePagosRon['ron_valor_gastos_adm']; 
+
+            //malla academica
+            $resp_maca_nombre = $matriculacion_model->getMallaAcademicaRegistroOnline($per_id);
+            $maca_nombre = $resp_maca_nombre['maca_nombre'];
 
             $rep = new ExportFile();
             //$this->layout = false;
@@ -2656,24 +2640,15 @@ class RegistroController extends \app\components\CController {
                         'detallePagos' => $detallePagos,
                         'ron_valor_aso_estudiante' => $ron_valor_aso_estudiante,
                         'ron_valor_gastos_adm' => $ron_valor_gastos_adm,
+                        'ron_id' => $ron_id,
+                        'maca_nombre' => $maca_nombre,
                     ])
             );
-            
-            if($flag){
-                $path = "Registro_" . date("Ymdhis") . ".pdf";
-                $tmp_path = sys_get_temp_dir() . "/" . $path;
-                $rep->mpdf->Output($tmp_path, ExportFile::OUTPUT_TO_FILE);//OUTPUT_TO_STRING);//
-                \app\models\Utilities::putMessageLogFile('path2..: '.$tmp_path);
-                return $tmp_path;
-            }else{
-                $rep->mpdf->Output('HOJAINSCRIPCION' . $ids . ".pdf", ExportFile::OUTPUT_TO_DOWNLOAD);
-            }
-            
-            //exit;$file = $rep->mpdf->Output('HOJAINSCRIPCION' . $ids . ".pdf", ExportFile::OUTPUT_TO_FILE);
+            $rep->mpdf->Output('HOJAINSCRIPCION' . $ids . ".pdf", ExportFile::OUTPUT_TO_DOWNLOAD);
+            //exit;
         }
          catch (Exception $e) {
             echo $e->getMessage();
-            \app\models\Utilities::putMessageLogFile('error..: '.$e->getMessage());
         }
     
     }

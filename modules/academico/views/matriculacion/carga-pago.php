@@ -234,7 +234,8 @@ Academico::registerTranslations();
             </style>
             
             <div class="col-xs-12 col-sm-12 col-md-2 col-lg-2" style=" display: flex; justify-content: center;">
-                <img src="https://www.uteg.edu.ec/wp-content/themes/UTEG4/images/055693c79f5990e523846b9f43c6779d_logouteg.png" alt="UTEG" style="border-radius:4px;height:200px;">
+                <!--img src="https://www.uteg.edu.ec/wp-content/themes/UTEG4/images/055693c79f5990e523846b9f43c6779d_logouteg.png" alt="UTEG" style="border-radius:4px;height:200px;"-->
+                <img src="https://www.uteg.edu.ec/wp-content/themes/UTEG4/images/055693c79f5990e523846b9f43c6779d_logouteg.png" alt="UTEG" style="border-radius:4px;height:40px;margin-top: 10px;margin-bottom: 10px;">
             </div>
             <div class="col-xs-12 col-sm-12 col-md-10 col-lg-10">
                 <div id="card-element"><!--Stripe.js injects the Card Element--></div>

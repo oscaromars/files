@@ -197,31 +197,24 @@ class FileCache extends Cache
     }
 
     /**
-     * Returns the cache file path given the normalized cache key.
-     * @param string $normalizedKey normalized cache key by [[buildKey]] method
+     * Returns the cache file path given the cache key.
+     * @param string $key cache key
      * @return string the cache file path
      */
-    protected function getCacheFile($normalizedKey)
+    protected function getCacheFile($key)
     {
-        $cacheKey = $normalizedKey;
-
-        if ($this->keyPrefix !== '') {
-            // Remove key prefix to avoid generating constant directory levels
-            $lenKeyPrefix = strlen($this->keyPrefix);
-            $cacheKey = substr_replace($normalizedKey, '', 0, $lenKeyPrefix);
-        }
-
-        $cachePath = $this->cachePath;
-
         if ($this->directoryLevel > 0) {
+            $base = $this->cachePath;
             for ($i = 0; $i < $this->directoryLevel; ++$i) {
-                if (($subDirectory = substr($cacheKey, $i + $i, 2)) !== false) {
-                    $cachePath .= DIRECTORY_SEPARATOR . $subDirectory;
+                if (($prefix = substr($key, $i + $i, 2)) !== false) {
+                    $base .= DIRECTORY_SEPARATOR . $prefix;
                 }
             }
+
+            return $base . DIRECTORY_SEPARATOR . $key . $this->cacheFileSuffix;
         }
 
-        return $cachePath . DIRECTORY_SEPARATOR . $normalizedKey . $this->cacheFileSuffix;
+        return $this->cachePath . DIRECTORY_SEPARATOR . $key . $this->cacheFileSuffix;
     }
 
     /**
@@ -261,7 +254,7 @@ class FileCache extends Cache
     {
         if (($handle = opendir($path)) !== false) {
             while (($file = readdir($handle)) !== false) {
-                if (strpos($file, '.') === 0) {
+                if ($file[0] === '.') {
                     continue;
                 }
                 $fullPath = $path . DIRECTORY_SEPARATOR . $file;

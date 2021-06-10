@@ -47,7 +47,7 @@ class CurlTransport extends Transport
         curl_close($curlResource);
 
         if ($errorNumber > 0) {
-            throw new Exception('Curl error: #' . $errorNumber . ' - ' . $errorMessage, $errorNumber);
+            throw new Exception('Curl error: #' . $errorNumber . ' - ' . $errorMessage);
         }
 
         $response = $request->client->createResponse($responseContent, $responseHeaders);

@@ -26,7 +26,7 @@ use app\modules\financiero\Module as financiero;
 use app\modules\financiero\models\PagosFacturaEstudiante;
 use app\modules\academico\models\Especies;
 use app\modules\financiero\models\FormaPago;
-use app\modules\financiero\models\FechasVencimientoPago;
+use app\modules\academico\models\FechasVencimientoPago;
 
 Academico::registerTranslations();
 financiero::registerTranslations();
@@ -392,7 +392,7 @@ class MatriculacionController extends \app\components\CController {
                                     'customer'    => $customer->id, 
                                     'amount'      => $itemPriceCents, 
                                     'currency'    => "usd", 
-                                    'description' => "Pago de Matricula"
+                                    'description' => "Pago de Matricula desde el sistema Asgard/UTEG"
                                 )); 
                             }catch(Exception $e) {  
                                 $api_error = $e->getMessage();  

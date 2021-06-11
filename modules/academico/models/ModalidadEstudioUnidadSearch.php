@@ -191,7 +191,7 @@ class ModalidadEstudioUnidadSearch extends ModalidadEstudioUnidad {
         }
         //Utilities::putMessageLogFile('sql:' . $sql);
         $comando = $con_academico->createCommand($sql);
-        $comando->bindParam(":eaca_id", $eaca_id, \PDO::PARAM_INT);
+        
         $res = $comando->queryAll();
 
         if ($onlyData)

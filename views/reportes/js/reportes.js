@@ -66,8 +66,5 @@ function buscarDatacartera() {
     window.location.href = $('#txth_base').val() + "/reportes/expexcelreportcartera?search=" + search + "&f_inif=" + f_inif + "&f_finf=" + f_finf + '&f_iniv=' + f_iniv + "&f_finv=" + f_finv + "&estadopago=" + estadopago;
 }
 
-function buscarDatamatriculados(){
-    var carrera = $('#cmb_carrera').val();
-    $('#Tbg_Registro_matriculados').PbGridView('applyFilterData', {'carrera': carrera});
-}
+
 

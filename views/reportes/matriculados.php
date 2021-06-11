@@ -84,9 +84,9 @@ GridView::widget([
             'value' => 'cedula',
         ],
         [
-            'attribute' => 'periodo',
-            'header' => academico::t("Academico", "Periodo Academico "),
-            'value' => 'periodo',
+            'attribute' => 'semestre',
+            'header' => academico::t("Academico", "Semestre Academico "),
+            'value' => 'semestre',
         ],
         [
             'attribute' => 'carrera',

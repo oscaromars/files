@@ -15,7 +15,12 @@ $(document).ready(function () {
 
     $('#btn_buscarDatapromedios').click(function () {
         buscarDatapromedios();
-    });  
+    });
+
+    $('#btn_buscarDatamatriculados').click(function () {
+        buscarDatamatriculados();
+    });
+      
 
     
 });
@@ -70,4 +75,8 @@ function buscarDatapromedios(){
         $('#Tbg_Registro_promedios').PbGridView('applyFilterData', {'estudiante': estudiante});
         //setTimeout(hideLoadingPopup, 2000);
     //}
+}
+function buscarDatamatriculados(){
+    var carrera = $('#cmb_carrera').val();
+        $('#Tbg_Registro_matriculados').PbGridView('applyFilterData', {'carrera': carrera});
 }

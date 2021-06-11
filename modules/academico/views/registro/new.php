@@ -18,7 +18,7 @@ StripeAsset::register($this);
 
 ?>
 <?= Html::hiddenInput('txt_per_id', $id, ['id' => 'txt_per_id']); ?>
-<?= Html::hiddenInput('txt_rama', $rama, ['id' => 'txt_rama']); ?>
+<?= Html::hiddenInput('txt_rama', $rama_id, ['id' => 'txt_rama']); ?>
 <?= Html::hiddenInput('txt_existe2', $pes_id, ['id' => 'txt_existe2']); ?>
 <?= Html::hiddenInput('txt_pla_id', $pla_id, ['id' => 'txt_pla_id']); ?>
 <?= Html::hiddenInput('frm_cuota', 0, ['id' => 'frm_cuota']); ?>
@@ -140,12 +140,12 @@ StripeAsset::register($this);
                 </div>
             </div>
         </div>
-        <div class="col-md-6 col-sm-6 col-xs-6 col-lg-6">      
+       <!-- <div class="col-md-6 col-sm-6 col-xs-6 col-lg-6">      
             <div class="form-group">     
                 <a id="btn_calculoCuotas" href="javascript:" class="btn btn-primary pull-center btn-Action"> <i class="glyphicon glyphicon-th-list"></i><?= Yii::t("formulario", "&nbsp;&nbsp; Calcular Cuotas") ?></a>
                 
             </div>        
-        </div> 
+        </div> -->
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">  
         </div>
         

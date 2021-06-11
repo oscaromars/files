@@ -254,7 +254,8 @@ var table = '';
 
 //function actualizarGridRegistro
 function actualizarGridRegistro(dready = 0) {
-    var arrParams = new Object();
+    //Listado de parametros para ser enviados al servidor para desplegar la inforacion del grid
+    var arrParams       = new Object();
     arrParams.periodo   = $('#cmb_periodo option:selected').val();
     arrParams.uaca_id   = $('#cmb_unidad').val();
     arrParams.mod_id    = $('#cmb_modalidad option:selected').val();  
@@ -262,18 +263,25 @@ function actualizarGridRegistro(dready = 0) {
     arrParams.parcial   = $('#cmb_parcial').val();
     arrParams.profesor  = $('#cmb_profesor_rc').val();
 
+    //URL para actualizar el grid
     var link = $('#txth_base').val() + "/academico/calificacionregistrodocente/traermodelo";
- 
+    
+    //Llamado del ajax
     requestHttpAjax(link, arrParams, function (response) {
-
-        console.log(response);
-        
+        //console.log(response);
+        //Esta es la funcion en el controlador que actualizara las notas
         var url_editor = $('#txth_base').val() + "/academico/calificacionregistrodocente/actualizarnota";
 
+        //Armamos el componente editor, aqui el indicamos que campos del grid son editables
         editor = new $.fn.dataTable.Editor( {
             ajax:  url_editor,
             table: "#gridResumen",
+            //La variable idSrc es para saber que linea estamos editando
+            //Esto es importante para que al regresar del controlador con la respuesta
+            //nos actualize el campo correcto y no tengamos q reiniciar pantalla
             idSrc: "row_num",
+            //Esto form option al poner submit all enviaremos toda la fila de datos
+            //ya que necesitamos algunos parametros para actualizar el regsitro
             formOptions: {
                 inline: {   
                     submit: 'all'
@@ -361,14 +369,6 @@ function actualizarGridRegistro(dready = 0) {
             if(action == 'edit'){
                 $.each(o.data[indice], function( index, value ) {
                     if(componentes[index]){
-                        /*
-                        console.log(index);
-                        console.log("------------------");
-                        console.log(componentes[index]['notamax']);
-                        console.log("************************");
-                        console.log(value);
-                        console.log("////////////////////");
-                        */
                         if(value < 0 || value > parseInt(componentes[index]['notamax'])){
                             alertify.error("El cambio no se ha registrado, los valores del componente Asíncrona debe estar entre 0 a "+componentes[index]['notamax']);
                             bandera = 1;
@@ -417,10 +417,8 @@ function actualizarGridRegistro(dready = 0) {
                 <th>Nombre</th>
                 <th>Materia</th>
                 <th>Parcial</th>
-                <th>Paralelo</th>`;        
+                <th>Paralelo</th>`;       
 
-        var numeroCols = 6;
-            
         var columnas1 =[
                 {   // Responsive control column
                     data: null,
@@ -441,11 +439,14 @@ function actualizarGridRegistro(dready = 0) {
                 { data: "nparcial"},
                 { data: "paralelo"}
                 ]; 
+        
+        var centrar = [];
+        var numeroCols = 6;
 
         $.each( response['componentes'], function( key, value ) {
             var element = {};
             element.data = key;
-            columnas1.push(element);
+            columnas1.push(element);         
 
             editor.add( {
                 label    : key,
@@ -457,10 +458,46 @@ function actualizarGridRegistro(dready = 0) {
                 },
             });
             numeroCols++;
+            //centrar.push(numeroCols);
             html += '<th>'+key+'</th>';
         });
         numeroCols++;
         console.log("# de columnnas = "+numeroCols);
+        
+        numeroCols++
+        centrar.push(numeroCols+1);
+        centrar.push(numeroCols+2);
+        centrar.push(numeroCols+3);
+        centrar.push(numeroCols+4);
+        centrar.push(numeroCols+5);
+        centrar.push(numeroCols+6);
+        centrar.push(numeroCols+7);
+        centrar.push(numeroCols+8);
+
+        var arrcolumnDefs = new Array();
+        var centrarArr = {};
+        centrarArr.targets   = centrar;
+        centrarArr.visible = false;
+        centrarArr.searchable = false;
+
+        arrcolumnDefs.push(centrarArr); 
+
+        /*
+        columnDefs: [   
+                { targets: "no-sort", "orderable": false, "order": [],},
+                { targets: 4, responsivePriority: 1},      
+                
+                {
+                    "targets": [ 14,15,16,17,18,19,20,21 ],
+                    "visible": false,
+                    "searchable": false
+                },  
+            
+            ],
+        */
+
+        console.log(centrarArr);
+
         var columnas2 =[ 
                 { data: "total"},
                 { data: "paca_id"},
@@ -571,19 +608,20 @@ function actualizarGridRegistro(dready = 0) {
                 }
             },
             */
-            
+            /*
             columnDefs: [   
                 { targets: "no-sort", "orderable": false, "order": [],},
                 { targets: 4, responsivePriority: 1},      
-                /*
+                
                 {
                     "targets": [ 14,15,16,17,18,19,20,21 ],
                     "visible": false,
                     "searchable": false
                 },  
-                */
+                
             ],
-            
+            */
+            columnDefs: [centrarArr],
             select: {
                 style:    'os',
                 selector: 'td.select-checkbox'

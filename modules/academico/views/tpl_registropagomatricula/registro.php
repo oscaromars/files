@@ -1,7 +1,7 @@
 <style>
     .modCab{
         color: #000000;        
-        line-height: 16px;
+        line-height: 12px;
     }
     .panelUserInfo{
         /*margin: 10px 0px 18px;*/
@@ -113,40 +113,49 @@
         padding: 0.3em;
         caption-side: bottom;
     }  
-
+    .tcell_cen {
+        widtd: 50%;
+        float: left;
+        font-size: 14px;
+        text-align: left;
+        font-family: Arial;
+    }
+    .tr_bor {
+        border: 1px solid #002060;
+    }
 </style>
 <div>
     <div class="blue">
         <table class="tabla">
-            <tr class="tr">
-                <td colspan="1" class="aleft td"><span class="bold">PERIODO ACADEMICO: </span></td>
-                <td colspan="1" class="aleft td"><span class="bold"><?= $data_student['pla_periodo_academico'] ?></span></td>
-                <td colspan="1" class="aleft td"><span class="bold">NUM DOC PED:</span></td>
-                <td colspan="1" class="aleft td"><span class="bold"><?= $data_student['pla_periodo_academico'] ?></span></td>
+            <tr class="tr tr_bor">
+                <td class="tcell_cen tr_bor" colspan="1" ><span class="bold">PERIODO ACADEMICO: </span></td>
+                <td class="tcell_cen tr_bor" colspan="1" ><span ><?= $data_student['pla_periodo_academico'] ?></span></td>
+                <td class="tcell_cen tr_bor" colspan="1" ><span class="bold">NUM DOC PED:</span></td>
+                <td class="tcell_cen tr_bor" colspan="1" ><span ><?= $ron_id ?></span></td>
             </tr>
-            <tr class="tr">
-                <td colspan="1" class="aleft td"><span class="bold">ALUMNO: </span></td>
-                <td colspan="1" class="aleft td"><span class="bold"><?= $data_student['pes_nombres'] ?></span></td>
-                <td colspan="1" class="aleft td"><span class="bold">TELEFONO:</span></td>
-                <td colspan="1" class="aleft td"><span class="bold"><?= $data_student['per_celular'] ?></span></td>
+            <tr class="tr tr_bor">
+                <td class="tcell_cen tr_bor" colspan="1" ><span class="bold">ALUMNO: </span></td>
+                <td class="tcell_cen tr_bor" colspan="1" ><span ><?= $data_student['pes_nombres'] ?></span></td>
+                <td class="tcell_cen tr_bor" colspan="1" ><span class="bold">TELEFONO:</span></td>
+                <td class="tcell_cen tr_bor" colspan="1" ><span ><?= $data_student['per_celular'] ?></span></td>
             </tr>
-            <tr class="tr">
-                <td colspan="1" class="aleft td"><span class="bold">CÉDULA: </span></td>
-                <td colspan="1" class="aleft td"><span class="bold"><?= $data_student['pes_dni'] ?></span></td>
-                <td colspan="1" class="aleft td"><span class="bold">DIRECCION:</span></td>
-                <td colspan="1" class="aleft td"><span class="bold"><?= $direccion ?></span></td>
+            <tr class="tr tr_bor">
+                <td class="tcell_cen tr_bor" colspan="1" ><span class="bold">CÉDULA: </span></td>
+                <td class="tcell_cen tr_bor" colspan="1" ><span ><?= $data_student['pes_dni'] ?></span></td>
+                <td class="tcell_cen tr_bor" colspan="1" ><span class="bold">DIRECCION:</span></td>
+                <td class="tcell_cen tr_bor" colspan="1" ><span ><?= $direccion ?></span></td>
             </tr>
-            <tr class="tr">
-                <td colspan="1" class="aleft td"><span class="bold">UNIDAD ACADEMICA: </span></td>
-                <td colspan="1" class="aleft td"><span class="bold"><?= $data_student['mod_nombre'] ?></span></td>
-                <td colspan="1" class="aleft td"><span class="bold">CARRERA:</span></td>
-                <td colspan="1" class="aleft td"><span class="bold"><?= $data_student['pes_carrera'] ?></span></td>
+            <tr class="tr tr_bor">
+                <td class="tcell_cen tr_bor" colspan="1" ><span class="bold">UNIDAD ACADEMICA: </span></td>
+                <td class="tcell_cen tr_bor" colspan="1" ><span ><?= $data_student['mod_nombre'] ?></span></td>
+                <td class="tcell_cen tr_bor" colspan="1" ><span class="bold">CARRERA:</span></td>
+                <td class="tcell_cen tr_bor" colspan="1" ><span ><?= $data_student['pes_carrera'] ?></span></td>
             </tr>
-            <tr class="tr">
-                <td colspan="1" class="aleft td"><span class="bold">FLUJO: </span></td>
-                <td colspan="1" class="aleft td"><span class="bold"><?= $matricula ?></span></td>
-                <td colspan="1" class="aleft td"><span class="bold">USUARIO:</span></td>
-                <td colspan="1" class="aleft td"><span class="bold"><?= $matricula ?></span></td>
+            <tr class="tr tr_bor" >
+                <td class="tcell_cen tr_bor" colspan="1" ><span class="bold">FLUJO: </span></td>
+                <td class="tcell_cen tr_bor" colspan="1" ><span ><?= $maca_nombre ?></span></td>
+                <td class="tcell_cen tr_bor" colspan="1" ><span class="bold">USUARIO:</span></td>
+                <td class="tcell_cen tr_bor" colspan="1" ><span ><?= $matricula ?></span></td>
             </tr>
         </table>
     </div>
@@ -172,18 +181,21 @@
                 <td>' . $ron_valor_gastos_adm . '</td> 
              </tr>';
         
-        echo "<tr><td colspan='3'></td><td>TOTAL US$ " . $total_costo . "</td></tr>";
+        echo "<tr><td colspan='3'></td><td><b>TOTAL US$ " . $total_costo . "</b></td></tr>";
         if (empty(count($dataPlanificacion))) {
             echo '<tr style="border: 1px solid #002060;"><td><br></td><td></td><td></td><td></td><td></td></tr>';
         }
         echo '</tbody> </table>';
         ?>
-        <br><br>
+        <br>
     </div>
 
     <div class="blue">
-        <p style='text-align:center'><b><?php echo "CREDITO DIRECTO (" .$cant_cuota . " Pagos)" ?></b><br></p>
         <?php
+        echo '<table class="tabla"><tbody>';
+        echo "<tr><td colspan='5'> <b>CREDITO DIRECTO (" . $cant_cuota . " Pagos</b>) </td></tr>";
+        echo '</tbody> </table>';
+
         echo '<table class="tabla"><tbody>';
         echo '<tr style="background: #AED6F1;border: 1px solid #002060;"><th>NO.</th><th>PAGO</th><th>VENCIMIENTO</th><th>PORCENTAJE</th><th>PAGO ACTUAL</th></tr>';
         for ($i = 0; $i < count($detallePagos); $i++) {
@@ -191,7 +203,7 @@
             echo '<tr style="border: 1px solid #002060;"><td>' . $detallePagos[$i]['NO'] . '</td><td>' . $detallePagos[$i]['pago'] . '</td><td>' . $detallePagos[$i]['fecha_vencimiento'] . '</td><td>' . $detallePagos[$i]['porcentaje'] . '</td><td> ' . $detallePagos[$i]['valor_cuota'] . ' </td></tr>';
         }
 
-        echo "<tr><td colspan='4'> </td><td>TOTAL US$ " . $total_valor_cuota . "</td></tr>";
+        echo "<tr><td colspan='4'> </td><td><b>TOTAL US$ " . $total_valor_cuota . "</b></td></tr>";
 
         if (empty(count($detallePagos))) {
             echo '<tr style="border: 1px solid #002060;"><td><br></td><td></td><td></td><td></td><td></td></tr>';
@@ -202,16 +214,16 @@
 
     <div class="blue">
         <p><b>Cláusulas:</b></p> 
-            <p>
-                <ul>
-                    <li>Esta pre-inscripción está sujeta de acuerdo a la disponibilidad de cupos en las materias seleccionadas, en caso de solicitar activación deberá comunicarse con la secretaria de su Facultad.</li>
-                    <li>Los valores correspondientes a cada mensualidad deberán cancelarse en las fechas establecidas.</li>
-                    <li>Todos los pagos deben realizarse directamente en las cuentas institucionales indicadas por la UTEG</li>
-                    <li>El comprobante de depósito deberá ser enviado al correo de colecturia@uteg.edu.ec dentro de las 24 horas posteriores para su registro en sistema y emisión de la factura correspondiente.</li>
-                    <li>El estudiante acepta acoger las disposiciones académicas y reglamentarias de la Universidad Tecnológica Empresarial de Guayaquil.</li>
-                    <li>La confirmación mediante correo electrónico por parte del Estudiante constituye la aceptación de la hoja de inscripción.</li>
-                </ul>
-            </p> 
+        <p>    
+            <ul style= "list-style-type: disc;">
+                <li>Esta pre-inscripción está sujeta de acuerdo a la disponibilidad de cupos en las materias seleccionadas, en caso de solicitar activación deberá comunicarse con la secretaria de su Facultad.</li>
+                <li>Los valores correspondientes a cada mensualidad deberán cancelarse en las fechas establecidas.</li>
+                <li>Todos los pagos deben realizarse directamente en las cuentas institucionales indicadas por la UTEG</li>
+                <li>El comprobante de depósito deberá ser enviado al correo de colecturia@uteg.edu.ec dentro de las 24 horas posteriores para su registro en sistema y emisión de la factura correspondiente.</li>
+                <li>El estudiante acepta acoger las disposiciones académicas y reglamentarias de la Universidad Tecnológica Empresarial de Guayaquil.</li>
+                <li>La confirmación mediante correo electrónico por parte del Estudiante constituye la aceptación de la hoja de inscripción.</li>
+            </ul>
+        </p>    
     </div>
     <hr>
     <div class="blue">

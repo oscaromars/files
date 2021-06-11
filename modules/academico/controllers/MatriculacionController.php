@@ -27,7 +27,7 @@ use app\modules\financiero\Module as financiero;
 use app\modules\financiero\models\PagosFacturaEstudiante;
 use app\modules\academico\models\Especies;
 use app\modules\financiero\models\FormaPago;
-use app\modules\financiero\models\FechasVencimientoPago;
+use app\modules\academico\models\FechasVencimientoPago;
 
 Academico::registerTranslations();
 financiero::registerTranslations();
@@ -422,7 +422,7 @@ class MatriculacionController extends \app\components\CController {
                                     'customer'    => $customer->id, 
                                     'amount'      => $itemPriceCents, 
                                     'currency'    => "usd", 
-                                    'description' => "Pago de Matricula"
+                                    'description' => "Pago de Matricula desde el sistema Asgard/UTEG"
                                 )); 
                             }catch(Exception $e) {  
                                 $api_error = $e->getMessage();  
@@ -653,34 +653,47 @@ class MatriculacionController extends \app\components\CController {
                         }
                     } else {
                         */
+                        //print_r($data);die();
                         $model_registro_pago_matricula = new RegistroPagoMatricula();
+
                         $model_registro_pago_matricula->per_id = $per_id;
                         $model_registro_pago_matricula->pla_id = $data['pla_id'];
                         // $model_registro_pago_matricula->pes_id = $data['pes_id'];
-                        $model_registro_pago_matricula->rpm_archivo = "pagosmatricula/" . $data["archivo"];
+                        if($data['pla_id']!=1)
+                            $model_registro_pago_matricula->rpm_archivo = "pagosmatricula/" . $data["archivo"];
+                        else
+                            $model_registro_pago_matricula->rpm_archivo = "pagosmatricula por stripe";
+
+                        //$model_registro_pago_matricula->ron_id = null;
                         $model_registro_pago_matricula->rpm_estado_aprobacion = "0";
                         $model_registro_pago_matricula->rpm_estado_generado   = "0";
+                        $model_registro_pago_matricula->rpm_acepta_terminos   = "0";
                         $model_registro_pago_matricula->rpm_estado            = "1";
                         $model_registro_pago_matricula->rpm_estado_logico     = "1";
+                        $model_registro_pago_matricula->rpm_fecha_creacion    = date(Yii::$app->params['dateTimeByDefault']) ; 
 
-                        if ($model_registro_pago_matricula->save()) {
+                        $bandera = $model_registro_pago_matricula->save();
+                        if ($bandera) {
                             $message = array(
                                 "wtmessage" => Yii::t("notificaciones", "Your information was successfully saved."),
                                 "title" => Yii::t('jslang', 'Success'),
                             );
                             return Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Success"), false, $message);
                         } else {
+                            //Utilities::putMessageLogFile();
                             $message = array(
-                                "wtmessage" => Yii::t('notificaciones', 'Your information has not been saved. Please try again.'),
+                                "wtmessage" => Yii::t('notificaciones', '1Your information has not been saved. Please try again.'),
                                 "title" => Yii::t('jslang', 'Error'),
+                                "error" => $bandera,
                             );
                             return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), true, $message);
                         }
                     //}
                 } catch (Exception $ex) {
                     $message = array(
-                        "wtmessage" => Yii::t('notificaciones', 'Your information has not been saved. Please try again.'),
+                        "wtmessage" => Yii::t('notificaciones', '2Your information has not been saved. Please try again.'),
                         "title" => Yii::t('jslang', 'Error'),
+                        "error" => $ex,
                     );
                     return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), true, $message);
                 }

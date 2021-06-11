@@ -57,14 +57,15 @@ academico::registerTranslations();
         </div>
     </div>
 </div>
-<div class='col-xs-12 col-sm-12 col-md-6 col-lg-6'>
+
+<!--<div class='col-xs-12 col-sm-12 col-md-6 col-lg-6'>
     <div class="form-group"> 
         <label for="cmb_parcial" class="col-xs-12 col-sm-12 col-md-5 col-lg-5 control-label"><?= academico::t("Academico", "Partial") ?></label>
         <div class="col-xs-12 col-sm-12 col-md-7 col-lg-7">
                 <?= Html::dropDownList("cmb_parcial", 0,$arr_parcial, ["class" => "form-control", "id" => "cmb_parcial"]) ?>
         </div>
     </div>
-</div>
+</div> -->
 
 <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
     <div class="col-xs-12 col-sm-12 col-md-5 col-lg-5 "></div>

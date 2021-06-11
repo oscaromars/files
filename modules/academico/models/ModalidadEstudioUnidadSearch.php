@@ -128,7 +128,7 @@ class ModalidadEstudioUnidadSearch extends ModalidadEstudioUnidad {
         $sql = "select  
                 CONCAT(per.per_pri_apellido, ' ', per.per_seg_apellido, ' ', per.per_pri_nombre) as estudiante,
                 per.per_cedula as cedula,
-                CONCAT(baca.baca_nombre, '-', pla.pla_periodo_academico) as semestre,
+                CONCAT(baca.baca_nombre, '-', pla.pla_periodo_academico) as periodo,
                 eaca.eaca_descripcion as carrera,
                 moda.mod_descripcion as modalidad,
                 est.est_matricula as n_matricula
@@ -164,10 +164,6 @@ class ModalidadEstudioUnidadSearch extends ModalidadEstudioUnidad {
                 if ($this->eaca_id) {
                     $sql = $sql . " and meun.eaca_id =" . $this->eaca_id;
                 }
-
-                if (isset($eaca_id)) {
-                $comando->bindParam(':eaca_id', $eaca_id, \PDO::PARAM_INT);
-                }
             } 
         }
         if ($tipo == 2) {
@@ -182,10 +178,6 @@ class ModalidadEstudioUnidadSearch extends ModalidadEstudioUnidad {
 
             if ($params['eaca_id']) {
                 $sql = $sql . " and meun.eaca_id =" . $params['eaca_id'];
-            }
-
-            if (isset($eaca_id)) {
-                $comando->bindParam(':eaca_id', $eaca_id, \PDO::PARAM_INT);
             }
 
         }

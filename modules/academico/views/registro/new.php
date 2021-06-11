@@ -140,12 +140,12 @@ StripeAsset::register($this);
                 </div>
             </div>
         </div>
-        <div class="col-md-6 col-sm-6 col-xs-6 col-lg-6">      
+       <!-- <div class="col-md-6 col-sm-6 col-xs-6 col-lg-6">      
             <div class="form-group">     
                 <a id="btn_calculoCuotas" href="javascript:" class="btn btn-primary pull-center btn-Action"> <i class="glyphicon glyphicon-th-list"></i><?= Yii::t("formulario", "&nbsp;&nbsp; Calcular Cuotas") ?></a>
                 
             </div>        
-        </div> 
+        </div> -->
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">  
         </div>
         

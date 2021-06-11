@@ -325,7 +325,7 @@ class PagosFacturaEstudiante extends \yii\db\ActiveRecord
                         d.dpfa_valor_cuota as valor_cuota,
                         d.dpfa_factura,
                         pfe.pfes_fecha_registro,   
-                        pfe.pfes_valor_pago valor_pago,                        
+                        pfe.pfes_valor_pago as valor_pago,                        
                         case d.dpfa_estado_pago  
                             when 1 then 'Pendiente'  
                             when 2 then 'Aprobado'                                

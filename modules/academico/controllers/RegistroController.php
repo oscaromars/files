@@ -2347,12 +2347,14 @@ class RegistroController extends \app\components\CController {
             $pla_id     = $data['pla_id']?$data['pla_id']:14;
             $per_id     = $data['per_id'];
             $con = \Yii::$app->db_facturacion;
+            $con2  = \Yii::$app->db_academico;
             $transaction = $con->beginTransaction();
+            $transaction2 = $con2->beginTransaction();
 
             try {
                 $modelCargaCartera = new RegistroConfiguracion();
                 $secuencial = $modelCargaCartera->getSecuencialCargaCartera();
-                \app\models\Utilities::putMessageLogFile('controller 2...: '. $secuencial['secuencial']);
+                \app\models\Utilities::putMessageLogFile('controller 2...: | '. $secuencial['secuencial'].' | .....');
                 $valor_cuota = $total / $numcuotas;
                 $valor_cuota = number_format($valor_cuota, 2, '.', ',');  
                 //if ($secuencial['secuencial'] == 0) {
@@ -2368,11 +2370,12 @@ class RegistroController extends \app\components\CController {
                         $ron_id = 1;
                         \app\models\Utilities::putMessageLogFile('log 0...'.$repetidos['repetidos']);
                         if($repetidos['repetidos']==0 ){ //If grid cuotas repetidos
-                            \app\models\Utilities::putMessageLogFile('log 1...');
+                            \app\models\Utilities::putMessageLogFile('log 1...'.$est_id['est_id'].'-'.$rama_id.'-'. $secuencial['secuencial']);
                             $registros_relacionados = $modelCargaCartera->registrarRelacionCartera($est_id['est_id'],$rama_id, $secuencial['secuencial']);
                             $registro_pago_matricula = $modelCargaCartera->registrarPagoMatricula($perid, $per_id, $pla_id, $ron_id, $total);
                             \app\models\Utilities::putMessageLogFile('RPM: '.$registro_pago_matricula.'- OK');
-                            $rpm_id = $registro_pago_matricula?$registro_pago_matricula:1;
+                            $rpm_id = $registro_pago_matricula;
+                            $updateAdicionalMateria = $modelCargaCartera->updateAdicionalMateria($rama_id, $rpma_id);
                             \app\models\Utilities::putMessageLogFile('log 2...');
                                 \app\models\Utilities::putMessageLogFile('controller N1...: '.$est_id['est_id'].'-'.$rama_id.'-'. $secuencial['secuencial']);
                             for($in = 1; $in <= $numcuotas; $in++){
@@ -2385,6 +2388,7 @@ class RegistroController extends \app\components\CController {
                             }
                             if ($exito) {
                                 $transaction->commit();
+                                $transaction2->commit();
                                 $message = array(
                                     "wtmessage" => Yii::t("notificaciones", "Se ha guardado el pago."),
                                     "title" => Yii::t('jslang', 'Success'),
@@ -2392,6 +2396,7 @@ class RegistroController extends \app\components\CController {
                                 return Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), true, $message);
                             } else {
                                 $transaction->rollback();
+                                $transaction2->rolback();
                                 $message = array(
                                     "wtmessage" => Yii::t("notificaciones", "Error al grabar." . $message),
                                     "title" => Yii::t('jslang', 'Error'),
@@ -2409,6 +2414,7 @@ class RegistroController extends \app\components\CController {
             } catch (Exception $ex) {
                 \app\models\Utilities::putMessageLogFile('controller 4...: ');
                 $transaction->rollback();
+                $transaction2->rollback();
                 $message = array(
                     "wtmessage" => Yii::t("notificaciones", "Error al grabar.".$ex->getMessage()),
                     "title" => Yii::t('jslang', 'Error'),
@@ -2427,36 +2433,19 @@ class RegistroController extends \app\components\CController {
                 $per_id      = $data['per_id'];
                 $rama_id     = $data['rama_id'];
             $matriculacion_model = new Matriculacion();
-            //$modelPersona = Persona::findOne($per_id);
-            //$modelEstudiante = Estudiante::findOne($per_id);
             
             $modelPersona = Persona::find()->where(['per_id' => $per_id])->asArray()->one();
             $modelEstudiante = Estudiante::find()->where(['per_id' => $per_id])->asArray()->one();
 
-            
-
-    \app\models\Utilities::putMessageLogFile('actionInscripcionpdf ');
-        \app\models\Utilities::putMessageLogFile(' per_id: ' . $per_id);
-        \app\models\Utilities::putMessageLogFile(' rama_id: ' . $rama_id);
-
             /*Cabecera*/
             $datos_planficacion = $matriculacion_model->getDataPlanStudent($per_id);
-    // \app\models\Utilities::putMessageLogFile('datos_planficacion '.$datos_planficacion);
 
             $pla_id = $datos_planficacion['pla_id'];
             $pes_id = $datos_planficacion['pes_id'];
-    \app\models\Utilities::putMessageLogFile(' pla_id: ' . $pla_id);
-    \app\models\Utilities::putMessageLogFile(' pes_id: ' . $pes_id);
-
-    \app\models\Utilities::putMessageLogFile(' $datos_planficacion[0][pla_id]: '. $datos_planficacion['pla_id']);
-
 
             $data_student = $matriculacion_model->getDataStudent($per_id, $pla_id, $pes_id);
             $direccion = $modelPersona['per_domicilio_cpri'];
             $matricula = $modelEstudiante['est_matricula'];
-    \app\models\Utilities::putMessageLogFile(' $data_student[0][pla_id]: ' .$data_student['pes_nombres']);
-    \app\models\Utilities::putMessageLogFile(' direccion: ' . $direccion);
-    \app\models\Utilities::putMessageLogFile(' $matricula:' .$matricula);
 
             /*Detalle de materias*/
             $matriculacion_model = new Matriculacion();
@@ -2470,11 +2459,9 @@ class RegistroController extends \app\components\CController {
             $resp_cant_cuota = $registro_pago_matricula->getCuotasPeriodo($rama_id);
             $cant_cuota = $resp_cant_cuota['cuota'];
             $resp_ccar_numero_documento = $matriculacion_model->getNumeroDocumentoRegistroOnline($rama_id);
-\app\models\Utilities::putMessageLogFile(' $rama_id:' .$rama_id);
+
             $ccar_numero_documento = $resp_ccar_numero_documento['cfca_numero_documento'];
             $est_id = $modelEstudiante['est_id'];
-    \app\models\Utilities::putMessageLogFile(' $ccar_numero_documento:' .$ccar_numero_documento);
-\app\models\Utilities::putMessageLogFile(' $est_id:' .$est_id);
 
             $detallePagos = $matriculacion_model->getDetalleCuotasRegistroOnline($ccar_numero_documento, $est_id);
 
@@ -2482,17 +2469,11 @@ class RegistroController extends \app\components\CController {
             $detallePagosRon = $matriculacion_model->getDetvalorRegistroOnline($ron_id);
             $ron_valor_aso_estudiante = $detallePagosRon['ron_valor_aso_estudiante'];
             $ron_valor_gastos_adm =  $detallePagosRon['ron_valor_gastos_adm'];
- 
-  \app\models\Utilities::putMessageLogFile(' ron_valor_aso_estudiante:' .$ron_valor_aso_estudiante);
-    \app\models\Utilities::putMessageLogFile(' ron_valor_gastos_adm:' .$ron_valor_gastos_adm);
 
             $rep = new ExportFile();
-            //$this->layout = false;
             $this->layout = '@modules/academico/views/tpl_registropagomatricula/main';
             setlocale(LC_TIME, 'es_CO.UTF-8');
 
-            //$cabFact['FechaDia'] = strftime("%A %d de %B %G", strtotime(date("d-m-Y")));   
-            //$this->pdf_cla_acceso = $ids;
             $rep->orientation = "P"; // tipo de orientacion L => Horizontal, P => Vertical   
             $rep->createReportPdf(
                     $this->render('@modules/academico/views/tpl_registropagomatricula/registro', [
@@ -2509,13 +2490,31 @@ class RegistroController extends \app\components\CController {
                 
                 $titulo_mensaje = Academico::t('matriculacion',"Hoja Inscripcion");
                 $asunto = Academico::t('matriculacion',"Envio de Hoja de Inscripcion DBE");
-                $body= Utilities::getMailMessage('registro', array(
-                    "[[user]]" => '',
+                //************************************************************************************* */
+                $routeBase = Yii::$app->basePath . "/mail/layouts/messages/es/registro";
+                $lang = "es";
+                $content = "";
+                
+                $slack = ["[[user]]" => $data_student['pes_nombres'],
+                "[[periodo]]" => '',
+                "[[modalidad]]" => '',];
+                
+                if (is_file($routeBase))
+                    $content = file_get_contents($routeBase);
+                if (count($slack) > 0) {
+                    foreach ($slack as $key => $value) {
+                        $content = str_replace($key, $value, $content);
+                    }
+                }
+                
+                //************************************************************************************* */
+                /*$body = Utilities::getMailMessage('registro', array(
+                    "[[user]]" => $data_student['pes_nombres'],
                     "[[periodo]]" => '',
                     "[[modalidad]]" => '',
-                    ));
+                    ),Yii::$app->language);*/
+                $body = $content;
                 
-                \app\models\Utilities::putMessageLogFile('rama..: '.$rama_id);
                 Yii::$app->session->set('rama_id', $rama_id);
                 $ron_id      = $data['ron_id']?$data['ron_id']:1;
                 $pes_id      = $data['pes_id']?$data['pes_id']:1;
@@ -2550,6 +2549,11 @@ class RegistroController extends \app\components\CController {
 
                 Utilities::removeTemporalFile($tmp_path);
             
+                $message = array(
+                    "wtmessage" => Yii::t("notificaciones", "Su información ha sido procesada con éxito."),
+                    "title" => Yii::t('jslang', 'Success'),
+                );
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), true, $message);
             //exit;$file = $rep->mpdf->Output('HOJAINSCRIPCION' . $ids . ".pdf", ExportFile::OUTPUT_TO_FILE);
         }
          catch (Exception $e) {

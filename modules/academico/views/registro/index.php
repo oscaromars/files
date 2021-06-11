@@ -11,7 +11,7 @@ use app\modules\academico\Module as academico;
 academico::registerTranslations();
 $styleBar = "";
 if($esEstu) $styleBar = "display: none;";
-//print_r($model);
+//print_r($periodoAcademico);
 ?>
 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
     <h4><span id="lbl_titulo"><?= academico::t("registro", "List Enrollment") ?></span></h4>

@@ -8,7 +8,7 @@ Academico::registerTranslations();
 // print_r($registredSuject);
  // print_r($costo);
   //print_r($planificacion[0]['CostSubject']);
-   //print_r($planificacion);
+print_r($planificacion);
    //CostSubject
  
 
@@ -122,24 +122,66 @@ echo "<b style='color:green'>EL PERIODO DE INSCRIPCION ESTA CERRADO</b>";
 <?=
     $this->render('registro-grid', ['planificacion' => $planificacion,'materiasxEstudiante' => $materiasxEstudiante, 'registredSuject' => $registredSuject, "cancelStatus" => $cancelStatus, "ron_id" => $ron_id, "isdrop" => $isdrop, ]);
 ?>
-<?php if($howmuchSubject > '1'): ?>
+
+
+
+
 
 <div class="col-xs-8"><?php echo $leyenda; ?></div>
 <div class="col-xs-4">
 
-<a href="<?= Url::to(['/academico/registro/index', 'per_id' => $per_id, 'costo' => $costo ]) ?>" class="btn btn-primary pull-right" style="margin: 0px 5px;"><?= Academico::t("matriculacion", "Go to Pay") ?></a>
-<?php endif; ?>
+            <div class="table-responsive">
+        <table style="text-align: right;" class="table">
+            <tbody>
+                     
+                <tr>
 
-<a id="btn_registro_detalle" href="javascript:" class="btn btn-primary pull-right" style="margin: 0px 5px;"><?= Academico::t("matriculacion", "Continue") ?></a>
+                    <br>
+                    <th style="width:50%"><?= academico::t('matriculacion','Cost per Subject') ?></th>
+                    <td id="costo">$<?= isset($costo1)?(number_format($costo1, 2, '.', ',')):'0.00' ?></td>
+                </tr>
+                <tr style='display: none;'>
+                    <th><?= academico::t('matriculacion','Registration payment') ?></th>
+                    <td id="costMatr">$<?= isset($modelRonOn->ron_valor_matricula)?(number_format($modelRonOn->ron_valor_matricula, 2, '.', ',')):'0.00' ?></td>
+                </tr>
+                <tr>
+                    <th><?= academico::t('matriculacion','Administrative Expenses') ?></th>
+                    <td id="costAdmin">$<?= isset($gasto_adm)?(number_format($gasto_adm, 2, '.', ',')):'0.00' ?></td>
+                </tr>
+                <tr>
+                    <th><?= academico::t('matriculacion','Students Association') ?></th>
+                    <td id="costStud">$<?= isset($aso_est)?(number_format($aso_est, 2, '.', ',')):'0.00' ?></td>
+                </tr>
+                <tr>
+                    <th style="font-size: 20px;"><?= academico::t('matriculacion', 'Register Cost') ?></th>
+                    <td style="font-size: 20px; font-weight: bold;" id="costTotal">$<?= isset($total)?(number_format($total, 2, '.', ',')):'0.00' ?></td>
+                </tr>
+                
+                    
+                       
+                    
+                
+                
+            </tbody>
+        </table>
+         <a href="<?= Url::to(['/academico/registro/index', 'per_id' => $per_id, 'costo' => $total ]) ?>" class="btn btn-primary pull-right" style="margin: 0px 5px;"><?= Academico::t("matriculacion", "Go to Pay") ?></a>
+         
+            <?php if($howmuchSubject > '1'): ?>
+    
+            <?php endif; ?>
 
-<?php if($cancelStatus == '0'): ?>
-<?php endif; ?>
+            <?php if($cancelStatus == '0'): ?>
+            <?php endif; ?>
+    
 
 
 
-    <a id="btn_registro" href="javascript:" class="btn btn-success pull-right" style="margin: 0px 5px;"><?= Academico::t("matriculacion", "Register More Subjects") ?></a>
+
+
+    <a href="javascript:" class="btn btn-success pull-right" onclick="registerSubject()" style="margin: 0px 5px;"><?= Academico::t("matriculacion", "Register More Subjects") ?></a>
 
     <?php if(isset($hasSubject) && $hasSubject == true && $isadd ==Null): ?>
     <?php endif; ?>
         
     </div>
+</div>

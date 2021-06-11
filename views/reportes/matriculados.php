@@ -17,6 +17,7 @@ use app\modules\academico\Module as academico;
 <?=
 
 GridView::widget([
+    'id' => 'Tbg_Registro_matriculados',
     'dataProvider' => $dataProvider,
     //'filterModel' => $searchModel,
     'pjax' => true,

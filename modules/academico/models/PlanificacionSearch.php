@@ -4,6 +4,7 @@ namespace app\modules\academico\models;
 
 use app\models\Utilities;
 use app\modules\academico\models\Planificacion;
+use app\modules\academico\models\EstudioAcademico;
 use yii\base\Model;
 use Yii;
 use yii\data\ActiveDataProvider;
@@ -20,12 +21,17 @@ class PlanificacionSearch extends Planificacion {
 	public function rules() {
         return [
             [['pla_id', 'saca_id', 'mod_id', 'per_id'], 'integer'],
+            [['pla_fecha_creacion', 'pla_fecha_modificacion', 'pla_usuario_modifica', 'eaca_id'], 'safe'],
         ];
     }
 
     function search($params) {
-        $query = Planificacion::find();
-        $arr_carrera = EstudioAcademico();
+        $query = Planificacion::find()
+            ->joinWith(['modalidad'])
+            ->joinWith(['modalidad_estudio_unidad'])
+            ->joinWith(['estudio_academico.eaca_id']);
+        $mod_carrera = new EstudioAcademico();
+        $arr_carrera = $mod_carrera->consultarCarrera();
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -34,6 +40,7 @@ class PlanificacionSearch extends Planificacion {
                 'pagesize' => 10 
             ]
         ]);
+
 
         $this->load($params);
 
@@ -46,11 +53,17 @@ class PlanificacionSearch extends Planificacion {
             'daca_id' => $this->daca_id,
         ]);
 
+        $query->andFilterWhere(['like', 'carrera.eaca_id', $this->eaca_id]);
         $query->andFilterWhere([
             'pla_id' => $this->pla_id,
             'saca_id' => $this->saca_id,
             'mod_id' => $this->mod_id,
             'per_id' => $this->per_id,
+            'eaca_id' => $this->eaca_id,
+            'arr_carrera' => $arr_carrera,
+        ]);
+
+        $arr_carrera ->andFilterWhere([
             'eaca_id' => $this->eaca_id,
         ]);
 
@@ -61,6 +74,7 @@ class PlanificacionSearch extends Planificacion {
         $con_academico = \Yii::$app->db_academico;
         $con_db = \Yii::$app->db;
 
+        Utilities::putMessageLogFile('xxxxxxxxxx:' . $str_carrera);
         if (isset($eaca_id) && $eaca_id > 0) {
             $str_carrera = "eaca.eaca_id = :eaca_id AND ";
         }
@@ -69,6 +83,7 @@ class PlanificacionSearch extends Planificacion {
         $sql = "select  
                 CONCAT(per.per_pri_apellido,' ' ,per.per_pri_nombre) as estudiante,
                 per.per_cedula as cedula,
+                CONCAT(baca.baca_nombre, '-', pla.pla_periodo_academico) as semestre,
                 eaca.eaca_descripcion as carrera,
                 moda.mod_descripcion as modalidad,
                 uaca.uaca_descripcion as unidad,
@@ -84,8 +99,9 @@ class PlanificacionSearch extends Planificacion {
                 Inner Join db_academico.unidad_academica uaca on uaca.uaca_id = meun.uaca_id 
                 Inner Join db_academico.modalidad moda on moda.mod_id = pla.mod_id 
                 Inner Join db_academico.estudio_academico eaca on eaca.eaca_id = meun.eaca_id
-                Where $str_carrera
-                    rpm.rpm_estado_aprobacion = 1 and
+                Inner Join db_academico.periodo_academico paca on paca.paca_id = pla.paca_id
+                Inner Join db_academico.bloque_academico baca on baca.baca_id = paca.baca_id
+                Where rpm.rpm_estado_aprobacion = 1 and
                     pla.pla_estado = 1 and pla.pla_estado_logico = 1
                     and est.est_estado = 1 and est.est_estado_logico = 1
                     and per.per_estado = 1 and per.per_estado_logico = 1";
@@ -95,6 +111,7 @@ class PlanificacionSearch extends Planificacion {
                
                 if ($this->mod_id) {
                     $sql = $sql . " and pla.mod_id =" . $this->mod_id;
+
                 }
 
                 if ($this->pla_id) {
@@ -129,7 +146,7 @@ class PlanificacionSearch extends Planificacion {
             }
 
         }
-        Utilities::putMessageLogFile('sql:' . $sql);
+        //Utilities::putMessageLogFile('sql:' . $sql);
         $comando = $con_academico->createCommand($sql);
         $comando->bindParam(":eaca_id", $eaca_id, \PDO::PARAM_INT);
         $res = $comando->queryAll();

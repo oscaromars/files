@@ -37,7 +37,7 @@ $var = ArrayHelper::map(app\modules\academico\models\PeriodoAcademico::find()->w
   
     <?=
     $form->field($model, 'pla_id')->label('Periodo:')->widget(Select2::classname(), [
-        //'data' => ArrayHelper::map(app\modules\academico\models\Planificacion::find()->where(['paca_estado_logico' => '1','paca_estado' => '1'])->all(), 'paca_id', 'pla_periodo_academico'),
+        //'data' => ArrayHelper::map(app\modules\academico\models\Planificacion::find()->where(['pla_estado_logico' => '1','pla_estado' => '1'])->all(), 'pla_id', 'pla_periodo_academico'),
         'data' => $var,
         'size' => Select2::MEDIUM,
         'options' => ['placeholder' => 'Seleccione Periodo ...', 'multiple' => false],
@@ -52,7 +52,7 @@ $var = ArrayHelper::map(app\modules\academico\models\PeriodoAcademico::find()->w
     $form->field($model, 'mod_id')->label('Modalidad:')->widget(Select2::classname(), [
         'data' => ArrayHelper::map(app\modules\academico\models\Modalidad::find()->where(['mod_estado_logico' => '1','mod_estado' => '1'])->all(), 'mod_id', 'mod_nombre'),
         // 'data' => $var,
-        'size' => Select2::MEDIUM,
+        //'size' => Select2::MEDIUM,
         'options' => ['placeholder' => 'Seleccione Modalidad ...', 'multiple' => false],
         'pluginOptions' => [
             'allowClear' => true,
@@ -76,14 +76,16 @@ $var = ArrayHelper::map(app\modules\academico\models\PeriodoAcademico::find()->w
                     'data' => $arr_carrera,
                     //'options' => ['placeholder' => 'Seleccionar'],
                     'pluginOptions' => [
-                    'tags' => true,
-                    'tokenSeparators' => [',', ' '],
-                    'maximumInputLength' => 50
+                        'allowClear' => true,
+                        'width' => '295px',
+                    //'tags' => true,
+                    //'tokenSeparators' => [',', ' '],
+                    //'maximumInputLength' => 50
                     ],
                     ]); 
                 
                 ?>
-                    <!--<?= Html::dropDownList("cmb_carrera", 0, $arr_carrera, ["class" => "form-control", "id" => "cmb_carrera"])?>-->                     
+                                        
                 </div>
             </div>     
     </div>

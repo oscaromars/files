@@ -99,7 +99,7 @@ class PlanificacionSearch extends Planificacion {
                 }
 
                 if ($this->pla_id) {
-                    $sql = $sql . " and pla.pla_id =" . $this->pla_id;
+                    $sql = $sql . " and pla.paca_id =" . $this->pla_id;
                 }
 
                 /*if ($this->eaca_id) {

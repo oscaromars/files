@@ -409,34 +409,13 @@ class ReportesController extends CController {
 
     public function actionMatriculados() { 
         $searchModel = new PlanificacionSearch();
-        $mod_carrera = new EstudioAcademico();
-        $carrera = $mod_carrera->consultarCarrera();
+        $searchModel = new ModalidadEstudioUnidadSearch();
         $params = Yii::$app->request->queryParams;
-        $dataProvider = $searchModel->getListadoMatriculados($arrSearch, $params,false,1);
+        $dataProvider = $searchModel->getListadoMatriculados($params,false,1);
         return $this->render('matriculados', [
-            'arr_carrera' => ArrayHelper::map(array_merge([["id" => "0", "value" => "Seleccione la carrera "]], $carrera), "id", "value"),
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]); 
-
-        /*$mod_carrera = new EstudioAcademico();
-        $carrera = $mod_carrera->consultarCarrera();
-        $data = Yii::$app->request->get();
-        if ($data['PBgetFilter']) {
-            $arrSearch["carrera"] = $data['carrera']; 
-            $dataProvider = $searchModel->getListadoMatriculados($arrSearch, $params,false,1);
-            return $this->render('matriculados', [
-                'arr_carrera' => ArrayHelper::map(array_merge([["id" => "0", "value" => "Seleccione la carrera "]], $carrera), "id", "value"),
-                'dataProvider' => $dataProvider,
-            ]); 
-        } else {
-            $dataProvider = $searchModel->getListadoMatriculados($arrSearch, $params,false,1);
-        }
-
-        return $this->render('matriculados', [
-                'arr_carrera' => ArrayHelper::map(array_merge([["id" => "0", "value" => "Seleccione la carrera "]], $carrera), "id", "value"),
-                'dataProvider' => $dataProvider,
-            ]); */
     }
 
     public function actionMatriculadospormateria() { 
@@ -471,33 +450,17 @@ class ReportesController extends CController {
         ]); 
     }
 
-    public function actionReportepromedios() { 
+    public function actionPromedios(){
         $searchModel = new EstudianteCarreraProgramaSearch();
-        $mod_estudiante = new EstudianteCarreraProgramaSearch();
-        $mod_periodo = new PlanificacionEstudiante();
-        $estudiante = $mod_periodo->busquedaEstudianteplanificacion();
-        //\app\models\Utilities::putMessageLogFile('estudianteControlador:' . $data['estudiante']);
-        $data = Yii::$app->request->get();
-        if ($data['PBgetFilter']) {
-            //\app\models\Utilities::putMessageLogFile('perid:' . $data['estudiante']);
-            $arrSearch["estudiante"] = $data['estudiante'];
-            //Utilities::putMessageLogFile('eeeeeeeee:' . $data['estudiante']);
-            //\app\models\Utilities::putMessageLogFile('perid:' . $data['estudiante']);                      
-            $dataProvider = $searchModel->getListadoReportepromedio($arrSearch,false);
-            return $this->render('reportepromedios', [
-                'estudiante' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']], $estudiante), 'id', 'name'),
-                //'searchModel' => $searchModel,
-                'dataProvider' => $dataProvider,
-        ]);
-        } else {
-            $dataProvider = $searchModel->getListadoReportepromedio($arrSearch,false, $estudiante);
-        }
-            return $this->render('reportepromedios', [
-                'estudiante' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']], $estudiante), 'id', 'name'),
-                //'searchModel' => $searchModel,
-                'dataProvider' => $dataProvider,
-            ]);       
+        //$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $params = Yii::$app->request->queryParams;
+        $dataProvider = $searchModel->getListadoPromedio($params,false,1);
+        return $this->render('promedios', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]); 
     }
+
 
     /*public function actionHistorialacademico() { 
         $searchModel = new EstudianteCarreraProgramaSearch();

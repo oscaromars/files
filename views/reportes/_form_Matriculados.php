@@ -13,6 +13,11 @@ $var = ArrayHelper::map(app\modules\academico\models\PeriodoAcademico::find()->w
                 function ($model) {
                      return $model->baca->baca_nombre . '-' . $model->sem->saca_nombre . '-' . $model->sem->saca_anio;
                 });
+
+$mod_carrera = new EstudioAcademico();
+$carrera = $mod_carrera->consultarCarrera();
+$var1 = ArrayHelper::map(array_merge([['id' => '0', 'value' => 'Seleccionar']], $carrera), 'id', 'value');
+
 ?>
 <div class="matriculados-search">
 
@@ -36,11 +41,11 @@ $var = ArrayHelper::map(app\modules\academico\models\PeriodoAcademico::find()->w
     ?>
   
     <?=
-    $form->field($model, 'pla_id')->label('Periodo:')->widget(Select2::classname(), [
-        //'data' => ArrayHelper::map(app\modules\academico\models\Planificacion::find()->where(['pla_estado_logico' => '1','pla_estado' => '1'])->all(), 'pla_id', 'pla_periodo_academico'),
-        'data' => $var,
+    $form->field($model, 'eaca_id')->label('Carrera:')->widget(Select2::classname(), [
+        'data' => ArrayHelper::map(app\modules\academico\models\EstudioAcademico::find()->where(['eaca_estado_logico' => '1','eaca_estado' => '1'])->all(), 'eaca_id', 'eaca_nombre'),
+        //'data' => $var,
         'size' => Select2::MEDIUM,
-        'options' => ['placeholder' => 'Seleccione Periodo ...', 'multiple' => false],
+        'options' => ['placeholder' => 'Seleccione Carrera ...', 'multiple' => false],
         'pluginOptions' => [
             'allowClear' => true,
             'width' => '295px',
@@ -61,7 +66,7 @@ $var = ArrayHelper::map(app\modules\academico\models\PeriodoAcademico::find()->w
     ]);
     ?>
 
-    <div class="col-sm-11">       
+    <!--<div class="col-sm-12">       
             <div class="form-group">
                 <label for="cmb_carrera" class="control-label col-sm-4"><?= Yii::t("formulario", "Carrera:") ?>  </label>
                 <div class="col-sm-4">
@@ -73,7 +78,7 @@ $var = ArrayHelper::map(app\modules\academico\models\PeriodoAcademico::find()->w
                     'name' => 'cmb_carrera',
                     'id' => 'cmb_carrera',
                     'value' => '0', // initial value
-                    'data' => $arr_carrera,
+                    'data' => $var1,
                     //'options' => ['placeholder' => 'Seleccionar'],
                     'pluginOptions' => [
                         'allowClear' => true,
@@ -88,7 +93,7 @@ $var = ArrayHelper::map(app\modules\academico\models\PeriodoAcademico::find()->w
                                         
                 </div>
             </div>     
-    </div>
+    </div>-->
     
 
     <div class="form-group">

@@ -21,18 +21,13 @@ class PlanificacionSearch extends Planificacion {
 	public function rules() {
         return [
             [['pla_id', 'saca_id', 'mod_id', 'per_id'], 'integer'],
-            [['pla_fecha_creacion', 'pla_fecha_modificacion', 'pla_usuario_modifica', 'eaca_id'], 'safe'],
+            
         ];
     }
 
     function search($params) {
-        $query = Planificacion::find()
-            ->joinWith(['modalidad'])
-            ->joinWith(['modalidad_estudio_unidad'])
-            ->joinWith(['estudio_academico.eaca_id']);
-        $mod_carrera = new EstudioAcademico();
-        $arr_carrera = $mod_carrera->consultarCarrera();
-
+        $query = Planificacion::find();
+           
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'arr_carrera' => $arr_carrera,
@@ -53,32 +48,21 @@ class PlanificacionSearch extends Planificacion {
             'daca_id' => $this->daca_id,
         ]);
 
-        $query->andFilterWhere(['like', 'carrera.eaca_id', $this->eaca_id]);
         $query->andFilterWhere([
             'pla_id' => $this->pla_id,
             'saca_id' => $this->saca_id,
             'mod_id' => $this->mod_id,
             'per_id' => $this->per_id,
-            'eaca_id' => $this->eaca_id,
-            'arr_carrera' => $arr_carrera,
+            
         ]);
 
-        $arr_carrera ->andFilterWhere([
-            'eaca_id' => $this->eaca_id,
-        ]);
 
         return $dataProvider;
     }
 
-    public function getListadoMatriculados($arrFiltro = array(), $params = null, $onlyData = false, $tipo = 1) {
+    public function getListadoMatriculados($params = null, $onlyData = false, $tipo = 1) {
         $con_academico = \Yii::$app->db_academico;
         $con_db = \Yii::$app->db;
-
-        Utilities::putMessageLogFile('xxxxxxxxxx:' . $str_carrera);
-        if (isset($eaca_id) && $eaca_id > 0) {
-            $str_carrera = "eaca.eaca_id = :eaca_id AND ";
-        }
-        
 
         $sql = "select  
                 CONCAT(per.per_pri_apellido,' ' ,per.per_pri_nombre) as estudiante,
@@ -122,9 +106,6 @@ class PlanificacionSearch extends Planificacion {
                     $sql = $sql . " and eaca.eaca_id =" . $this->eaca_id;
                 }*/
 
-                if (isset($eaca_id)) {
-                $comando->bindParam(':eaca_id', $eaca_id, \PDO::PARAM_INT);
-            	}
             } 
         }
         if ($tipo == 2) {
@@ -141,14 +122,10 @@ class PlanificacionSearch extends Planificacion {
                 $sql = $sql . " and eaca.eaca_id =" . $params['eaca_id'];
             }*/
 
-            if (isset($eaca_id)) {
-                $comando->bindParam(':eaca_id', $eaca_id, \PDO::PARAM_INT);
-            }
-
         }
         //Utilities::putMessageLogFile('sql:' . $sql);
         $comando = $con_academico->createCommand($sql);
-        $comando->bindParam(":eaca_id", $eaca_id, \PDO::PARAM_INT);
+        //$comando->bindParam(":eaca_id", $eaca_id, \PDO::PARAM_INT);
         $res = $comando->queryAll();
 
         if ($onlyData)

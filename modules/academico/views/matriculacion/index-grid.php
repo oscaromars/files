@@ -7,7 +7,7 @@ use app\models\Utilities;
 use app\modules\academico\Module as academico;
 use yii\grid\CheckboxColumn;
 academico::registerTranslations();
-print_r($planificacion);
+//print_r($planificacion);
 ?>
 
 <?=
@@ -36,8 +36,9 @@ print_r($planificacion);
             [
                 'attribute' => 'Cost',
                 'header' => Academico::t("matriculacion", "Unit Cost"),
-                'value' => function($data){
-                    return '$' . (number_format(($data['Cost'] * $data['Credit']), 2, '.', ','));
+                'value' => function($planificacion){
+                    print_r($planificacion);
+                    return 0;//'$' . (number_format(($data['Cost'] * $data['Credit']), 2, '.', ','));
                 },
             ],
             [

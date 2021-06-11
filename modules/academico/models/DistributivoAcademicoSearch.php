@@ -635,7 +635,7 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
                 uaca.uaca_descripcion as unidad,
                 eaca.eaca_descripcion as carrera,
                 est.est_matricula as n_matricula,
-                CONCAT(baca.baca_nombre, '-', pla.pla_periodo_academico) as semestre
+                CONCAT(baca.baca_nombre, '-', pla.pla_periodo_academico) as periodo
                 FROM " . $con_academico->dbname . ".distributivo_academico daca
                 Inner Join " . $con_academico->dbname . ".unidad_academica uaca on uaca.uaca_id = daca.uaca_id
                 Inner Join " . $con_academico->dbname . ".modalidad_estudio_unidad meun on meun.uaca_id = uaca.uaca_id

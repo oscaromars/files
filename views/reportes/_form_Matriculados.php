@@ -61,19 +61,38 @@ $var = ArrayHelper::map(app\modules\academico\models\PeriodoAcademico::find()->w
     ]);
     ?>
 
-    <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12">       
+    <div class="col-sm-11">       
             <div class="form-group">
                 <label for="cmb_carrera" class="control-label col-sm-4"><?= Yii::t("formulario", "Carrera:") ?>  </label>
-                <div class="col-sm-3 col-md-3 col-xs-3 col-lg-3">
-                    <?= Html::dropDownList("cmb_carrera", 0, $arr_carrera, ["class" => "form-control", "id" => "cmb_carrera"])?>                     
+                <div class="col-sm-4">
+   
+                    <?php
+                    echo Select2::widget([
+                    //'size' => Select2::MEDIUM,
+                    'options' => ['placeholder' => 'Seleccione Carrera ...', 'multiple' => false],
+                    'name' => 'cmb_carrera',
+                    'id' => 'cmb_carrera',
+                    'value' => '0', // initial value
+                    'data' => $arr_carrera,
+                    //'options' => ['placeholder' => 'Seleccionar'],
+                    'pluginOptions' => [
+                    'tags' => true,
+                    'tokenSeparators' => [',', ' '],
+                    'maximumInputLength' => 50
+                    ],
+                    ]); 
+                
+                ?>
+                    <!--<?= Html::dropDownList("cmb_carrera", 0, $arr_carrera, ["class" => "form-control", "id" => "cmb_carrera"])?>-->                     
                 </div>
             </div>     
     </div>
+    
 
     <div class="form-group">
-        <div class="col-sm-offset-4">
-<?= Html::submitButton('Buscar', ['class' => 'btn btn-primary']) ?>
-               </div>   
+        <div class="col-sm-offset-3">
+            <?= Html::submitButton('Buscar', ['class' => 'btn btn-primary', 'id' => 'btn_buscarDatamatriculados', 'href' => 'javascript:']) ?>
+        </div>   
     </div>
 
 <?php ActiveForm::end(); ?>

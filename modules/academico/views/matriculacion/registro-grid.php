@@ -22,6 +22,7 @@ if($modelCancelRon){
     ->asArray()
     ->all();
 }
+//
 
 ?>
 
@@ -54,11 +55,32 @@ if($modelCancelRon){
             [
                 'attribute' => 'Hour',
                 'header' => Academico::t("matriculacion", "Hour"),
-                'value' => 'Hour',
+                'contentOptions' => ['class' => 'text-center'],
+                'headerOptions' => ['class' => 'text-center'],
+                'format' => 'html',
+                
+                'value' => function ($model) {
+                    if ($model["Hour"] == 'H1')
+                        return Html::a('<span>' . $model['Hour'] . '</span>', Url::to(['#']), ["data-toggle" => "tooltip", "title" => 'L-M-W :: 19:00-20:00']);
+                    else if ($model["Hour"] == 'H2')
+                        return Html::a('<span>' . $model['Hour'] . '</span>', Url::to(['#']), ["data-toggle" => "tooltip", "title" => 'L-M-W :: 20:00-21:00']);
+                        
+                    else if ($model["Hour"] == 'H3')
+                        return Html::a('<span>' . $model['Hour'] . '</span>', Url::to(['#']), ["data-toggle" => "tooltip", "title" => 'L-M-W :: 21:00-22:00']);
+                    else if ($model["Hour"] == 'H4')
+                        return Html::a('<span>' . $model['Hour'] . '</span>', Url::to(['#']), ["data-toggle" => "tooltip", "title" => 'L-M-W :: 19:00-20:30']);
+                    else if ($model["Hour"] == 'H5')
+                        return Html::a('<span>' . $model['Hour'] . '</span>', Url::to(['#']), ["data-toggle" => "tooltip", "title" => 'L-M-W :: 20:00-21:30']);
+                    else
+                        return Html::a('<span>' . $model['Hour']. '</span>', Url::to(['#']), ["data-toggle" => "tooltip", "title" => $model['Hour']]);
+                },
+
             ],
             [
                 'attribute' => 'Credit',
                 'header' => Academico::t("matriculacion", "Credit"),
+                'contentOptions' => ['class' => 'text-center'],
+                'headerOptions' => ['class' => 'text-center'],
                 'value' => 'Credit',
             ],
             /*[
@@ -71,6 +93,8 @@ if($modelCancelRon){
             [
                 'attribute' => 'CostSubject',
                 'header' => Academico::t("matriculacion", "Cost Subject"),
+                'contentOptions' => ['class' => 'text-center'],
+                'headerOptions' => ['class' => 'text-center'],
                 'value' => function($data){
                     return '$' . number_format($data['Cost']*$data['Credit'],2 );
                 },

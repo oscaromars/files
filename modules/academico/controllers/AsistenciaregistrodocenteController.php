@@ -146,7 +146,9 @@ class AsistenciaregistrodocenteController extends \app\components\CController {
                     $ecal_id = $data['ecal_id'];//parcial
                     $paca_id = $data['paca_id'];//periodo
                     $asi_id = $data['asi_id'];//id asignatura
-
+                    $uaca_id = $data['uaca_id'];//id unidad
+                    $mod_id = $data['mod_id'];//id modalidad
+ 
                     //\app\models\Utilities::putMessageLogFile($asignatura);
                     //\app\models\Utilities::putMessageLogFile('LINEA 153 : '.$per_id);
                     
@@ -1134,6 +1136,8 @@ class AsistenciaregistrodocenteController extends \app\components\CController {
                     $ecal_id = $data['ecal_id'];//parcial
                     $paca_id = $data['paca_id'];//periodo
                     $asi_id = $data['asi_id'];//id asignatura
+                    $uaca_id = $data['uaca_id'];//id unidad
+                    $mod_id = $data['mod_id'];//id modalidad
 
                     //\app\models\Utilities::putMessageLogFile($asignatura);
                     //\app\models\Utilities::putMessageLogFile('LINEA 153 : '.$per_id);

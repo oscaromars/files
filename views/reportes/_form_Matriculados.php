@@ -41,11 +41,10 @@ $var1 = ArrayHelper::map(array_merge([['id' => '0', 'value' => 'Seleccionar']], 
     ?>
   
     <?=
-    $form->field($model, 'eaca_id')->label('Carrera:')->widget(Select2::classname(), [
-        'data' => ArrayHelper::map(app\modules\academico\models\EstudioAcademico::find()->where(['eaca_estado_logico' => '1','eaca_estado' => '1'])->all(), 'eaca_id', 'eaca_nombre'),
-        //'data' => $var,
+    $form->field($model, 'pla_id')->label('Periodo:')->widget(Select2::classname(), [
+        'data' => $var,
         'size' => Select2::MEDIUM,
-        'options' => ['placeholder' => 'Seleccione Carrera ...', 'multiple' => false],
+        'options' => ['placeholder' => 'Seleccione Periodo ...', 'multiple' => false],
         'pluginOptions' => [
             'allowClear' => true,
             'width' => '295px',
@@ -64,37 +63,7 @@ $var1 = ArrayHelper::map(array_merge([['id' => '0', 'value' => 'Seleccionar']], 
             'width' => '295px',
         ],
     ]);
-    ?>
-
-    <!--<div class="col-sm-12">       
-            <div class="form-group">
-                <label for="cmb_carrera" class="control-label col-sm-4"><?= Yii::t("formulario", "Carrera:") ?>  </label>
-                <div class="col-sm-4">
-   
-                    <?php
-                    echo Select2::widget([
-                    //'size' => Select2::MEDIUM,
-                    'options' => ['placeholder' => 'Seleccione Carrera ...', 'multiple' => false],
-                    'name' => 'cmb_carrera',
-                    'id' => 'cmb_carrera',
-                    'value' => '0', // initial value
-                    'data' => $var1,
-                    //'options' => ['placeholder' => 'Seleccionar'],
-                    'pluginOptions' => [
-                        'allowClear' => true,
-                        'width' => '295px',
-                    //'tags' => true,
-                    //'tokenSeparators' => [',', ' '],
-                    //'maximumInputLength' => 50
-                    ],
-                    ]); 
-                
-                ?>
-                                        
-                </div>
-            </div>     
-    </div>-->
-    
+    ?>    
 
     <div class="form-group">
         <div class="col-sm-offset-3">

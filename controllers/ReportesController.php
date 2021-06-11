@@ -409,7 +409,7 @@ class ReportesController extends CController {
 
     public function actionMatriculados() { 
         $searchModel = new PlanificacionSearch();
-        $searchModel = new ModalidadEstudioUnidadSearch();
+        //$searchModel = new ModalidadEstudioUnidadSearch();
         $params = Yii::$app->request->queryParams;
         $dataProvider = $searchModel->getListadoMatriculados($params,false,1);
         return $this->render('matriculados', [

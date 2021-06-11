@@ -94,11 +94,11 @@ GridView::widget([
             'value' => 'carrera',
           
         ],
-        /*[
+        [
             'attribute' => 'unidad',
             'header' => academico::t("Academico", "Unidad Academico"),
             'value' => 'unidad',
-        ],*/
+        ],
          
         [
             'attribute' => 'modalidad',

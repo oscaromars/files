@@ -106,17 +106,20 @@ class AsignaturaController extends \app\components\CController {
                 $nombre = $data["nombre"];
                 $descripcion = $data["descripcion"];
                 $scon_id = $data["scon_id"];
-                $acon_id = $data["acon_id"];
                 $estado = $data["estado"];
                 $unidad = $data["uaca_id"];
                 
                 $asignatura_model = new Asignatura();
                 $asignatura_model->asi_nombre = $nombre;
                 $asignatura_model->asi_descripcion = $descripcion;
+                $asignatura_model->asi_alias = $descripcion;
                 $asignatura_model->scon_id = $scon_id;
                 $asignatura_model->asi_estado = $estado;
                 $asignatura_model->uaca_id = $unidad;
                 $asignatura_model->asi_estado_logico = "1";
+                $asignatura_model->asi_estado = "1";
+                $asignatura_model->asi_fecha_creacion = date(Yii::$app->params["dateTimeByDefault"]);
+                 $asignatura_model->asi_usuario_ingreso=@Yii::$app->session->get("PB_iduser");
                 
                 $message = array(
                     "wtmessage" => Yii::t("notificaciones", "Your information was successfully saved."),

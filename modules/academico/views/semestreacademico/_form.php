@@ -10,7 +10,7 @@ if ($model->saca_id == null) {//Ingresa un nuevo
     $model->saca_estado = '1';
     $model->saca_estado_logico = '1';
     $model->saca_usuario_ingreso = Yii::$app->session->get("PB_iduser");
-   // $model->saca_usuario_modifica = Yii::$app->session->get("PB_iduser");
+    $model->saca_usuario_modifica = Yii::$app->session->get("PB_iduser");
     $model->saca_fecha_creacion = date("Y-m-d H:i:s");
     $model->saca_fecha_registro = date("Y-m-d H:i:s");
 } else {//Modifica

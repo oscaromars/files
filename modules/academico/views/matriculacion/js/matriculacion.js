@@ -206,6 +206,62 @@ function registro() {
     }
 }
 
+function registerSubject() {
+    var arrParams = new Object();
+    var link = $('#txth_base').val() + "/academico/matriculacion/registro";
+    var materias = new Array();
+    var codes = new Array();
+    var credits = new Array();
+    var costs = new Array();
+    var contador = 0;
+
+    $('#grid_registro_list input[type=checkbox]').each(function() {
+        console.log(materias);
+        if (this.checked) {
+            materias[contador] = $(this).val();
+            codes[contador] = $(this).attr('name');
+            credits[contador] = $(this).parent().prev().prev().prev().text();
+            costs[contador] = $(this).parent().prev().prev().text();
+            contador += 1;
+        }
+    });
+
+    var message = {
+        "wtmessage": objLang.You_must_choose_at_least_two,
+        "title": objLang.Error
+    }
+
+    if (contador < 2) {
+        message.wtmessage = message.wtmessage;
+        showAlert("NO_OK", "Error", message);
+        return;
+    }
+
+    arrParams.pes_id = $('#frm_pes_id').val();
+    arrParams.ron_id = $('#frm_ron_id').val();
+    arrParams.per_id = $('#frm_per_id').val();
+    arrParams.registerSubject = 1;
+    arrParams.modalidad = $('#frm_modalidad').val();
+    arrParams.carrera = $('#frm_carrera').val();
+    arrParams.pdf = 1;
+    arrParams.codes = codes;
+    arrParams.credits = credits;
+    arrParams.costs = costs;
+    arrParams.materias = materias;
+
+    console.log(arrParams);
+
+    requestHttpAjax(link, arrParams, function(response) {
+        showAlert(response.status, response.label, response.message);
+        /*
+        setTimeout(function() {
+            parent.window.location.href = $('#txth_base').val() + "/academico/matriculacion/index";
+        }, 2000);
+        */
+
+    }, true);
+}
+
 function exportPDF() {
     var ron_id = $('#frm_ron_id').val();
     /* console.log(ron_id); */

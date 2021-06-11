@@ -180,4 +180,56 @@ class RegistroOnlineItem extends \yii\db\ActiveRecord {
         $res = $comando->queryOne();
         return $res;
     }
+
+     public function insertRegistroOnlineItem(
+        $ron_id, 
+        $roi_materia_cod, 
+        $roi_materia_nombre, 
+        $roi_creditos, 
+        $roi_costo, 
+        $roi_bloque, 
+        $roi_hora
+        
+    ){
+
+        $con = Yii::$app->db_academico;
+
+        $date = date(Yii::$app->params['dateTimeByDefault']);
+        $anio = strval(date("Y"));
+
+        $sql = "INSERT INTO " . $con->dbname . ".registro_online_item
+                (ron_id, 
+                roi_materia_cod, 
+                roi_materia_nombre, 
+                roi_creditos, 
+                roi_costo, 
+                roi_bloque, 
+                roi_hora, 
+                roi_estado, 
+                roi_fecha_creacion, 
+                roi_usuario_modifica, 
+                roi_fecha_modificacion, 
+                roi_estado_logico
+                )
+                VALUES (
+                    $ron_id, 
+                    '$roi_materia_cod', 
+                    '$roi_materia_nombre', 
+                    '$roi_creditos', 
+                    $roi_costo, 
+                    '$roi_bloque', 
+                    '$roi_hora', 
+                    1, 
+                    '$date', 
+                    1, 
+                    '$date',
+                    1
+                )";
+
+        $command = $con->createCommand($sql);
+        \app\models\Utilities::putMessageLogFile($command->getRawSql());
+        $command->execute();
+
+        return $con->getLastInsertID($con->dbname . '.registro_online_item');
+    }
 }

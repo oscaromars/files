@@ -169,43 +169,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
         }
     }
     
-    public function getDataStudent($per_id, $pla_id, $pes_id)
-    {
-        $con_academico = \Yii::$app->db_academico;
-        $con_asgard = \Yii::$app->db_asgard;
-        /*$con_utegsea = \Yii::$app->utegsea;*/
-        $estado = 1;
-
-        $sql = "
-            SELECT 
-                pla.pla_periodo_academico, 
-                pes.pes_nombres, 
-                pes.pes_dni, 
-                moda.mod_nombre, 
-                pes.pes_carrera, 
-                per.per_celular, 
-                e.est_matricula, 
-                e.est_categoria
-            FROM " . $con_academico->dbname . ".planificacion as pla
-                INNER JOIN " . $con_academico->dbname . ".planificacion_estudiante as pes ON pes.pla_id = pla.pla_id
-                INNER JOIN " . $con_academico->dbname . ".modalidad as moda ON moda.mod_id = pla.mod_id
-                INNER JOIN " . $con_academico->dbname . ".estudiante as e ON pes.per_id = e.per_id
-                INNER JOIN " . $con_asgard->dbname . ".persona as per ON per.per_id = e.per_id
-            WHERE           
-                per.per_id =:per_id
-                AND pla.pla_id =:pla_id
-                AND pes.pes_id =:pes_id
-            ORDER BY
-                pes.pes_id DESC;";
-
-        $comando = $con_academico->createCommand($sql);
-        $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
-        $comando->bindParam(":pla_id", $pla_id, \PDO::PARAM_INT);
-        $comando->bindParam(":pes_id", $pes_id, \PDO::PARAM_INT);
-        $resultData = $comando->queryOne();
-
-        return $resultData;
-    }
+    
     
     public function insertarAsignacionxMeting($par_id, $mat_id, $mest_id, $apar_descripcion, $apar_fecha_asignacion, $apar_usuario_asignacion) {
 
@@ -459,19 +423,36 @@ class Matriculacion extends \yii\db\ActiveRecord {
         $estado = 1;
 
         $sql = "
-            SELECT pla.pla_periodo_academico, pes.pes_nombres, pes.pes_dni, moda.mod_nombre, pes.pes_carrera, per.per_celular, pes_jornada
-            FROM " . $con_academico->dbname . ".planificacion as pla,
-            " . $con_academico->dbname . ".planificacion_estudiante as pes,
-            " . $con_academico->dbname . ".modalidad as moda,
-            " . $con_asgard->dbname . ".persona as per
-            WHERE pla.mod_id = moda.mod_id
-            AND pes.per_id = per.per_id            
-            AND per.per_id =:per_id
+            SELECT distinct 
+                    
+                    pla.paca_id,
+                    pla.pla_periodo_academico,
+                    pes.pes_nombres,
+                    pes.pes_dni,
+                    mo.mod_id,
+                    mo.mod_nombre as mod_nombre,
+                    ea.eaca_id,
+                    ea.eaca_nombre as pes_carrera,
+                    ua.uaca_nombre as pes_unidad,
+                    per.per_celular,
+                    per.per_correo,
+                    est.est_categoria,
+                    est.est_matricula
+                    FROM db_academico.planificacion pla
+                    inner join db_academico.planificacion_estudiante pes on pla.pla_id =pes.pla_id
+                    inner join db_academico.estudiante est on est.per_id=pes.per_id
+                    inner join db_academico.estudiante_carrera_programa ecp on ecp.est_id=est.est_id
+                    inner join db_asgard.persona per on per.per_id=est.per_id
+                    inner join db_academico.modalidad_estudio_unidad meu on meu.meun_id= ecp.meun_id
+                    inner join db_academico.modalidad mo on mo.mod_id=meu.mod_id
+                    inner join db_academico.estudio_academico ea on ea.eaca_id= meu.eaca_id
+                    inner join db_academico.unidad_academica ua on ua.uaca_id= meu.uaca_id
+                    WHERE per.per_id =:per_id
             AND pla.pla_id =:pla_id
-            AND pes.pes_id =:pes_id;
-        ";
+            AND pes.pes_id =:pes_id";
+                    
 
-        $comando = $con_academico->createCommand($sql);
+      $comando = $con_academico->createCommand($sql);
         $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
         $comando->bindParam(":pla_id", $pla_id, \PDO::PARAM_INT);
         $comando->bindParam(":pes_id", $pes_id, \PDO::PARAM_INT);
@@ -486,7 +467,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
      * @param $per_id, $pla_id, $rco_num_bloques
      * @return $dataPlanificacion
      */
-    public function getAllDataPlanificacionEstudiante($per_id, $pla_id, $rco_num_bloques)
+    public function getAllDataPlanificacionEstudiante($per_id, $pla_id)
     {
         $con_academico = \Yii::$app->db_academico;
         $estado = 1;
@@ -1050,9 +1031,9 @@ class Matriculacion extends \yii\db\ActiveRecord {
         $con_academico = \Yii::$app->db_academico;
         $estado = 1;
         $sql = "
-            SELECT distinct
+            SELECT distinct 
             ron.ron_id, 
-        pla.paca_id,
+            pla.paca_id,
             pla.pla_periodo_academico, 
             pes.pes_nombres, 
             pes.pes_dni, 
@@ -1351,8 +1332,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
         return $resultData;
     }
 
-
-
+    
     /**
      * Function to get data student from planificacion_estudiante
      * @author Julio Lopez

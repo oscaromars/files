@@ -11,12 +11,13 @@ use app\modules\academico\Module as academico;
  * and open the template in the editor.
  */
 ?>
-<?php echo $this->render('_form_Matriculados', ['model' => $searchModel, 'arr_carrera' => $arr_carrera]); ?>
+<?php echo $this->render('_form_Matriculados', ['model' => $searchModel]); ?>
 
 
 <?=
 
 GridView::widget([
+    'id' => 'Tbg_Registro_matriculados',
     'dataProvider' => $dataProvider,
     //'filterModel' => $searchModel,
     'pjax' => true,
@@ -76,13 +77,16 @@ GridView::widget([
             'attribute' => 'estudiante',
             'header' => academico::t("Academico", "Estudiantes"),
             'value' => 'estudiante',
-            'group' => false,
         ],
         [
             'attribute' => 'cedula',
             'header' => academico::t("Academico", "Cedula "),
             'value' => 'cedula',
-            'group' => false,
+        ],
+        [
+            'attribute' => 'semestre',
+            'header' => academico::t("Academico", "Semestre Academico "),
+            'value' => 'semestre',
         ],
         [
             'attribute' => 'carrera',
@@ -94,7 +98,6 @@ GridView::widget([
             'attribute' => 'unidad',
             'header' => academico::t("Academico", "Unidad Academico"),
             'value' => 'unidad',
-            'group' => false,
         ],
          
         [
@@ -107,7 +110,6 @@ GridView::widget([
             'attribute' => 'n_matricula',
             'header' => academico::t("Academico", "Matricula"),
             'value' => 'n_matricula',
-            'group' => false, // enable grouping
         
         ],
     ],

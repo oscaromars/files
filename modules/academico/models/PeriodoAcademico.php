@@ -416,4 +416,28 @@ class PeriodoAcademico extends \yii\db\ActiveRecord
         return $resultData;
     }
 
+
+     public function getDaesbyperiodo($paca_id, $asi_id, $pro_id) {
+        $con = \Yii::$app->db_academico;
+        $estado = 1;     
+
+        $sql= "  SELECT daes.daes_id 
+        FROM " . $con->dbname . ".distributivo_academico_estudiante daes 
+        INNER JOIN " . $con->dbname . ".distributivo_academico daca
+        WHERE   daca.paca_id= :paca_id 
+        AND  daca.asi_id= :asi_id 
+        AND  daca.pro_id=:pro_id
+        AND daes.daes_estado = :estado AND daes.daes_estado_logico = :estado
+        AND daca.daca_estado = :estado AND daca.daca_estado_logico = :estado
+        ";
+
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $comando->bindParam(":paca_id", $paca_id, \PDO::PARAM_INT);      
+        $comando->bindParam(":asi_id", $asi_id, \PDO::PARAM_INT);   
+        $comando->bindParam(":pro_id", $pro_id, \PDO::PARAM_INT);     
+        $resultData = $comando->queryAll();
+        return $resultData;
+    }
+
 }

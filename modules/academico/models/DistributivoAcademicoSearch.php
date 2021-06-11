@@ -635,7 +635,7 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
                 uaca.uaca_descripcion as unidad,
                 eaca.eaca_descripcion as carrera,
                 est.est_matricula as n_matricula,
-                daca.paca_id as periodo
+                saca.saca_nombre as periodo
                 FROM " . $con_academico->dbname . ".distributivo_academico daca
                 Inner Join " . $con_academico->dbname . ".unidad_academica uaca on uaca.uaca_id = daca.uaca_id
                 Inner Join " . $con_academico->dbname . ".modalidad_estudio_unidad meun on meun.uaca_id = uaca.uaca_id
@@ -650,6 +650,7 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
                 Inner Join " . $con_academico->dbname . ".estudio_academico eaca on eaca.eaca_id = meun.eaca_id
                 Inner Join " . $con_academico->dbname . ".asignatura asi on asi.asi_id = daca.asi_id
                 Inner Join " . $con_academico->dbname . ".periodo_academico paca on paca.paca_id = daca.paca_id 
+                Inner Join " . $con_academico->dbname . ".semestre_academico saca on saca.saca_id = paca.saca_id 
                 Where
                     per.per_id = est.per_id AND
                     daca.daca_estado = 1 and daca.daca_estado_logico = 1

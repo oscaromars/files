@@ -411,19 +411,36 @@ class ReportesController extends CController {
         $searchModel = new PlanificacionSearch();
         $mod_carrera = new EstudioAcademico();
         $carrera = $mod_carrera->consultarCarrera();
-        //$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $params = Yii::$app->request->queryParams;
-        $dataProvider = $searchModel->getListadoMatriculados($arrsearch, $params,false,1);
+        $dataProvider = $searchModel->getListadoMatriculados($arrSearch, $params,false,1);
         return $this->render('matriculados', [
             'arr_carrera' => ArrayHelper::map(array_merge([["id" => "0", "value" => "Seleccione la carrera "]], $carrera), "id", "value"),
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
-        ]);       
+        ]); 
+
+        /*$mod_carrera = new EstudioAcademico();
+        $carrera = $mod_carrera->consultarCarrera();
+        $data = Yii::$app->request->get();
+        if ($data['PBgetFilter']) {
+            $arrSearch["carrera"] = $data['carrera']; 
+            $dataProvider = $searchModel->getListadoMatriculados($arrSearch, $params,false,1);
+            return $this->render('matriculados', [
+                'arr_carrera' => ArrayHelper::map(array_merge([["id" => "0", "value" => "Seleccione la carrera "]], $carrera), "id", "value"),
+                'dataProvider' => $dataProvider,
+            ]); 
+        } else {
+            $dataProvider = $searchModel->getListadoMatriculados($arrSearch, $params,false,1);
+        }
+
+        return $this->render('matriculados', [
+                'arr_carrera' => ArrayHelper::map(array_merge([["id" => "0", "value" => "Seleccione la carrera "]], $carrera), "id", "value"),
+                'dataProvider' => $dataProvider,
+            ]); */
     }
 
     public function actionMatriculadospormateria() { 
         $searchModel = new DistributivoAcademicoSearch();
-        //$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $params = Yii::$app->request->queryParams;
         $dataProvider = $searchModel->getListadoMatriculadosporMateria($params,false,1);
         return $this->render('matriculadospormateria', [

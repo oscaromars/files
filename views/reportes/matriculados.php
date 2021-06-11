@@ -77,13 +77,16 @@ GridView::widget([
             'attribute' => 'estudiante',
             'header' => academico::t("Academico", "Estudiantes"),
             'value' => 'estudiante',
-            'group' => false,
         ],
         [
             'attribute' => 'cedula',
             'header' => academico::t("Academico", "Cedula "),
             'value' => 'cedula',
-            'group' => false,
+        ],
+        [
+            'attribute' => 'semestre',
+            'header' => academico::t("Academico", "Semestre Academico "),
+            'value' => 'semestre',
         ],
         [
             'attribute' => 'carrera',
@@ -95,7 +98,6 @@ GridView::widget([
             'attribute' => 'unidad',
             'header' => academico::t("Academico", "Unidad Academico"),
             'value' => 'unidad',
-            'group' => false,
         ],
          
         [
@@ -108,7 +110,6 @@ GridView::widget([
             'attribute' => 'n_matricula',
             'header' => academico::t("Academico", "Matricula"),
             'value' => 'n_matricula',
-            'group' => false, // enable grouping
         
         ],
     ],

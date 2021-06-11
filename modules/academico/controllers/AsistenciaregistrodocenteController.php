@@ -249,6 +249,11 @@ class AsistenciaregistrodocenteController extends \app\components\CController {
         $con = Yii::$app->db_facturacion;
         $transaccion = $con->getTransaction();
         $model = new CabeceraAsistencia();
+        $modelpaca = new PeriodoAcademico();
+        $daes = $modelpaca->getDaesbyperiodo($paca_id, $asi_id, $pro_id);
+        $horasasignatura = $modelpaca->getHorasmaxAsistenciaxest($daes[0]['daes_id']);
+        $sems = $horasasignatura['paca_semanas_periodo'];
+        $hours = $horasasignatura['daho_total_horas'];
         
 
         if ($transaccion !== null) { $transaccion = null; }

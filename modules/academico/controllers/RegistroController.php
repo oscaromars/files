@@ -148,12 +148,12 @@ class RegistroController extends \app\components\CController {
 
         $modalidad = $registro_pago_matricula->getModalidadEstudiante($per_id);
 
-        if ( $grupo_id == 5){
+        //if ( $grupo_id == 5){
             $mod_modalidad = new Modalidad();
             $mod_unidad = new UnidadAcademica();             
             $arr_unidad = $mod_unidad->consultarUnidadAcademicasEmpresa(1);
-            $modalidad = $mod_modalidad->consultarModalidad($arr_unidad[1]["id"], 1);
-        }
+            $modalidadT = $mod_modalidad->consultarModalidad($arr_unidad[1]["id"], 1);
+        //}
 
         return $this->render('index', [
             'esEstu' => TRUE,//$esEstu, --DBE
@@ -164,10 +164,13 @@ class RegistroController extends \app\components\CController {
               'costo' => $costoc,
             'model' => $model->getAllListRegistryPaymentGrid(NULL, TRUE/*$esEstu*/, NULL, NULL, NULL, true, $per_id, $grupo_id ),
             'per_id' => $per_id,
+            'modalidad'=>array_merge([1 => Academico::t("matriculacion", $modalidad['name'])]),//$modalidad['name']
+            'modalidadT' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $modalidadT), "id", "name"),
             //'modalidad'=>array_merge([1 => Academico::t("matriculacion", $modalidad['name'])]),//$modalidad['name']
+            //'modalidadT' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $modalidadT), "id", "name"),
 
 
-            'modalidad' => $modalidad['name']?(array_merge([1 => Academico::t("matriculacion", $modalidad['name'])])):(ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $modalidad), "id", "name")),
+            //'modalidad' => $modalidad['name']?(array_merge([1 => Academico::t("matriculacion", $modalidad['name'])])):(ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $modalidad), "id", "name")),
         ]);
     }
 

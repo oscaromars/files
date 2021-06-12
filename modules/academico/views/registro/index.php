@@ -26,7 +26,7 @@ if($esEstu) $styleBar = "display: none;";
                 <?php if($grupo_id==12) : ?>
                     <?= Html::dropDownList("cmb_mod", 0, $modalidad, ["class" => "form-control", "id" => "cmb_mod"]) ?>
                 <?php else : ?>
-                    <?= Html::dropDownList("cmb_mod", 0, $modalidad, ["class" => "form-control", "id" => "cmb_mod"]) ?>
+                    <?= Html::dropDownList("cmb_mod", 0, $modalidadT, ["class" => "form-control", "id" => "cmb_mod"]) ?>
                 <?php endif; ?>
 
             </div>

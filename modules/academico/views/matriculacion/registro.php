@@ -175,6 +175,7 @@ echo "<b style='color:green'>EL PERIODO DE INSCRIPCION ESTA CERRADO</b>";
          <a href="<?= Url::to(['/academico/registro/index', 'per_id' => $per_id, 'costo' => $total ]) ?>" class="btn btn-primary pull-right" style="margin: 0px 5px;"><?= Academico::t("matriculacion", "Go to Pay") ?></a>
          
             <?php if($howmuchSubject > '1'): ?>
+    <a href="javascript:" class="btn btn-success pull-right" onclick="registerSubject()" style="margin: 0px 5px;"><?= Academico::t("matriculacion", "Register More Subjects") ?></a>
     
             <?php endif; ?>
 
@@ -186,7 +187,6 @@ echo "<b style='color:green'>EL PERIODO DE INSCRIPCION ESTA CERRADO</b>";
 
 
 
-    <a href="javascript:" class="btn btn-success pull-right" onclick="registerSubject()" style="margin: 0px 5px;"><?= Academico::t("matriculacion", "Register More Subjects") ?></a>
 
     <?php if(isset($hasSubject) && $hasSubject == true && $isadd ==Null): ?>
     <?php endif; ?>

@@ -11,10 +11,10 @@ use yii\grid\CheckboxColumn;
 academico::registerTranslations();
 
 $modelCancelItem = array();
-
+//print_r($planificacion);
 $modelCancelRon = CancelacionRegistroOnline::findOne(['ron_id' => $ron_id, 'cron_estado' => '1', 'cron_estado_logico' => '1',]);
 if($modelCancelRon){
-    $cancelStatus = $modelCancelRon->cron_estado_cancelacion;
+    //$cancelStatus = $modelCancelRon->cron_estado_cancelacion;
     $modelCancelItem = CancelacionRegistroOnlineItem::find()
     ->select(['r.roi_materia_cod as code'])
     ->join('INNER JOIN', 'registro_online_item as r', 'r.roi_id = cancelacion_registro_online_item.roi_id')
@@ -60,19 +60,18 @@ if($modelCancelRon){
                 'format' => 'html',
                 
                 'value' => function ($model) {
-                    if ($model["Hour"] == 'H1')
-                        return Html::a('<span>' . $model['Hour'] . '</span>', Url::to(['#']), ["data-toggle" => "tooltip", "title" => 'L-M-W :: 19:00-20:00']);
+                     if ($model["Hour"] == 'H1')
+                        return '<span title="L-M-W :: 19:00-20:00">'.$model['Hour'].'</span>';
                     else if ($model["Hour"] == 'H2')
-                        return Html::a('<span>' . $model['Hour'] . '</span>', Url::to(['#']), ["data-toggle" => "tooltip", "title" => 'L-M-W :: 20:00-21:00']);
-                        
+                        return '<span title="L-M-W :: 20:00-21:00">'.$model['Hour'].'</span>';
                     else if ($model["Hour"] == 'H3')
-                        return Html::a('<span>' . $model['Hour'] . '</span>', Url::to(['#']), ["data-toggle" => "tooltip", "title" => 'L-M-W :: 21:00-22:00']);
+                        return '<span title="L-M-W :: 21:00-22:00">'.$model['Hour'].'</span>';
                     else if ($model["Hour"] == 'H4')
-                        return Html::a('<span>' . $model['Hour'] . '</span>', Url::to(['#']), ["data-toggle" => "tooltip", "title" => 'L-M-W :: 19:00-20:30']);
+                        return '<span title="L-M-W :: 19:00-20:30">'.$model['Hour'].'</span>';
                     else if ($model["Hour"] == 'H5')
-                        return Html::a('<span>' . $model['Hour'] . '</span>', Url::to(['#']), ["data-toggle" => "tooltip", "title" => 'L-M-W :: 20:00-21:30']);
+                        return '<span title="L-M-W :: 20:00-21:30">'.$model['Hour'].'</span>';
                     else
-                        return Html::a('<span>' . $model['Hour']. '</span>', Url::to(['#']), ["data-toggle" => "tooltip", "title" => $model['Hour']]);
+                        return '<span title="'.$model['Hour'].'">'.$model['Hour'].'</span>';
                 },
 
             ],
@@ -128,9 +127,18 @@ if($modelCancelRon){
                 'headerOptions' => ['width' => '60'],
                 'template' => '{select}',
                 'buttons' => [
+                    'select' => function ($url, $model) {
+                            if($model['Roi_id'] > 0)
+                                return Html::checkbox($model['Code'], false, ["value" => $model['Subject'], "disabled" => true, "class" => "chequeado" ]);
+                            else 
+                                return Html::checkbox($model['Code'], false, ["value" => $model['Subject'], "class" => "byregister"]);
+                        },
+                    /*
                     'select' => function ($url, $planificacion) use ($registredSuject, $cancelStatus, $modelCancelItem) {
                         if(isset($registredSuject)){
                             if(array_search($planificacion['Code'], $registredSuject) === FALSE){
+                                echo($cancelStatus);
+                                echo("-----------------");
                                 if($cancelStatus == '1'){
                                     return Html::checkbox($planificacion['Code'], false, ["value" => $planificacion['Subject'], "disabled" => true,]);
                                 }
@@ -158,7 +166,8 @@ if($modelCancelRon){
                             return Html::checkbox($planificacion['Code'], true, ["value" => $planificacion['Subject'], "disabled" => true,]);
                         }
                         /* return Html::checkbox("", false, ["value" => $planificacion['Subject'], "onchange" => "handleChange(this)"]); */
-                    },                    
+                    //},     
+                 
                 ],
             ],
          

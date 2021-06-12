@@ -8,8 +8,15 @@ Academico::registerTranslations();
 // print_r($registredSuject);
  // print_r($costo);
   //print_r($planificacion[0]['CostSubject']);
-print_r($planificacion);
+/*
+print_r($costo['asociacion']);
+print_r($costo['gastos']);
+print_r($costo['costo']);
+print_r($costo);
+*/
+
    //CostSubject
+$total=$costo['costo']+$costo['gastos']+$costo['asociacion'];
  
 
 if ($isdrop) {
@@ -117,6 +124,9 @@ echo "<b style='color:green'>EL PERIODO DE INSCRIPCION ESTA CERRADO</b>";
 <input type="hidden" id="frm_pes_id" value="<?= $pes_id ?>">
 <input type="hidden" id="frm_per_id" value="<?= $per_id ?>">
 <input type="hidden" id="frm_min_cancel" value="<?= $min_cancel ?>">
+<input type="hidden" id="frm_modalidad" value="<?= $data_student['mod_id'] ?>">
+<input type="hidden" id="frm_carrera" value="<?= $data_student['eaca_id'] ?>">
+<input type="hidden" id="costoadm" value="<?= $costo['gastos'] ?>">
 
 <br>
 <?=
@@ -138,7 +148,7 @@ echo "<b style='color:green'>EL PERIODO DE INSCRIPCION ESTA CERRADO</b>";
 
                     <br>
                     <th style="width:50%"><?= academico::t('matriculacion','Cost per Subject') ?></th>
-                    <td id="costo">$<?= isset($costo1)?(number_format($costo1, 2, '.', ',')):'0.00' ?></td>
+                    <td id="costo">$<?= isset($costo['costo'])?(number_format($costo['costo'], 2, '.', ',')):'0.00' ?></td>
                 </tr>
                 <tr style='display: none;'>
                     <th><?= academico::t('matriculacion','Registration payment') ?></th>
@@ -146,7 +156,7 @@ echo "<b style='color:green'>EL PERIODO DE INSCRIPCION ESTA CERRADO</b>";
                 </tr>
                 <tr>
                     <th><?= academico::t('matriculacion','Administrative Expenses') ?></th>
-                    <td id="costAdmin">$<?= isset($gasto_adm)?(number_format($gasto_adm, 2, '.', ',')):'0.00' ?></td>
+                    <td id="costAdmin">$<?= isset($costo['gastos'])?(number_format($costo['gastos'], 2, '.', ',')):'0.00' ?></td>
                 </tr>
                 <tr>
                     <th><?= academico::t('matriculacion','Students Association') ?></th>
@@ -182,6 +192,8 @@ echo "<b style='color:green'>EL PERIODO DE INSCRIPCION ESTA CERRADO</b>";
 
     <?php if(isset($hasSubject) && $hasSubject == true && $isadd ==Null): ?>
     <?php endif; ?>
+
+    
         
     </div>
 </div>

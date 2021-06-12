@@ -145,10 +145,10 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
     public function buscarEstudiantesPosgrados($id) {
         $con_academico = \Yii::$app->db_academico;
         
-        $sql = " select est_id from db_academico.estudiante_carrera_programa as ecp 
+        $sql = " select dae.est_id from db_academico.estudiante_carrera_programa as ecp 
                inner join db_academico.distributivo_academico as da  on  ecp.meun_id = da.meun_id and uaca_id =2
                 left join db_academico.distributivo_academico_estudiante as dae on dae.est_id = ecp.est_id
-               where ecp.est_id is null and  daca_id=".$id;
+               where ecp.est_id is null and  da.daca_id=".$id;
         
         
          $comando = $con_academico->createCommand($sql);

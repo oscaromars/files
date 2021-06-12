@@ -8,6 +8,7 @@ use app\modules\academico\CancelacionRegistroOnline;
 use app\modules\academico\Module as academico;
 use yii\grid\CheckboxColumn;
 academico::registerTranslations();
+
 /*
 $modelCancelItem = array();
 
@@ -22,6 +23,7 @@ if($modelCancelRon){
     ->all();
 }
 */
+
 
 ?>
 
@@ -57,21 +59,20 @@ if($modelCancelRon){
                 'contentOptions' => ['class' => 'text-center'],
                 'headerOptions' => ['class' => 'text-center'],
                 'format' => 'html',
-                
                 'value' => function ($model) {
                     if ($model["Hour"] == 'H1')
-                        return Html::a('<span>' . $model['Hour'] . '</span>', Url::to(['#']), ["data-toggle" => "tooltip", "title" => 'L-M-W :: 19:00-20:00']);
+                        return '<span title="L-M-W :: 19:00-20:00">'.$model['Hour'].'</span>';
                     else if ($model["Hour"] == 'H2')
-                        return Html::a('<span>' . $model['Hour'] . '</span>', Url::to(['#']), ["data-toggle" => "tooltip", "title" => 'L-M-W :: 20:00-21:00']);
-                        
+                        return '<span title="L-M-W :: 20:00-21:00">'.$model['Hour'].'</span>';
                     else if ($model["Hour"] == 'H3')
-                        return Html::a('<span>' . $model['Hour'] . '</span>', Url::to(['#']), ["data-toggle" => "tooltip", "title" => 'L-M-W :: 21:00-22:00']);
+                        return '<span title="L-M-W :: 21:00-22:00">'.$model['Hour'].'</span>';
                     else if ($model["Hour"] == 'H4')
-                        return Html::a('<span>' . $model['Hour'] . '</span>', Url::to(['#']), ["data-toggle" => "tooltip", "title" => 'L-M-W :: 19:00-20:30']);
+                        return '<span title="L-M-W :: 19:00-20:30">'.$model['Hour'].'</span>';
                     else if ($model["Hour"] == 'H5')
-                        return Html::a('<span>' . $model['Hour'] . '</span>', Url::to(['#']), ["data-toggle" => "tooltip", "title" => 'L-M-W :: 20:00-21:30']);
+                        return '<span title="L-M-W :: 20:00-21:30">'.$model['Hour'].'</span>';
                     else
-                        return Html::a('<span>' . $model['Hour']. '</span>', Url::to(['#']), ["data-toggle" => "tooltip", "title" => $model['Hour']]);
+                        return '<span title="'.$model['Hour'].'">'.$model['Hour'].'</span>';
+                        //return Html::a('<span>' . $model['Hour']. '</span>', Url::to(['#']), ["data-toggle" => "tooltip", "title" => $model['Hour']]);
                 },
 
             ],

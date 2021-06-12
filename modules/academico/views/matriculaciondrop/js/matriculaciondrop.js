@@ -295,31 +295,36 @@ function registerSubject() {
 }
 
 function cancelSubject() {
-    var ron_id = $('#frm_ron_id').val();
-    var link = $('#txth_base').val() + "/academico/matriculacion/anularregistro?ron_id=" + ron_id;
-    var codes = "";
+    var ron_id   = $('#frm_ron_id').val();
+    var link     = $('#txth_base').val() + "/academico/matriculacion/anularregistro?ron_id=" + ron_id;
+    var codes    = "";
     var contador = 0;
+
     $('#grid_registro_list input.byremove[type=checkbox]').each(function() {
         if (this.checked) {
             codes += $(this).attr('name') + ";";
             contador += 1;
         }
     });
+    //alert(contador);
     var message = {
         "wtmessage": objLang.You_must_choose_at_least_one_Subject_to_Cancel_Registration,
         "title": objLang.Error
     }
-
-    if (contador > 0 && contador < 4) {
-
-        link += "&pdf=1&cancelSubject=1&codes=" + codes;
-        window.location.href = link;
-    } else{
+    if (contador < 0 && contador >= 4) {
         message.wtmessage = message.wtmessage;
         showAlert("NO_OK", "Error", message);
         return;
-    } 
-}
+    }
+    if (validCancel() == false) {
+        message.wtmessage = objLang.The_number_of_subject_that_you_can_cancel_is_ + $('#frm_min_cancel').val();
+        showAlert("NO_OK", "Error", message);
+        return;
+    }
+    link += "&pdf=1&cancelSubject=1&codes=" + codes;
+
+    window.location.href = link;
+}//function cancelSubject
 
 function validCancel() {
     var minCancel = $('#frm_min_cancel').val();

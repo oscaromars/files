@@ -1684,10 +1684,12 @@ class MatriculacionController extends \app\components\CController {
         $today = date("Y-m-d H:i:s");
         $result_process = $matriculacion_model->checkToday($today);
         $pla_id = $result_process[0]['pla_id'];
+        $resultIdPlanificacionEstudiante = $matriculacion_model->getIdPlanificacionEstudiante($per_id, $pla_id);
+        $pla_id = $resultIdPlanificacionEstudiante[0]['pla_id'];
 
         $dataPlanificacion = $matriculacion_model->getAllDataPlanificacionEstudiante($per_id, $pla_id);
 
-        // \app\models\Utilities::putMessageLogFile($dataPlanificacion);
+        \app\models\Utilities::putMessageLogFile($dataPlanificacion);
 
         $roi = RegistroOnlineItem::find()->where(['ron_id' => $ron['ron_id'], 'roi_estado' => 1, 'roi_estado_logico' => 1])->asArray()->all();
         $valor_total = 0;
@@ -1829,7 +1831,8 @@ class MatriculacionController extends \app\components\CController {
             "persona" => $persona,
             "valor_total" => $valor_total,
             "matDataProvider" => $matDataProvider,
-            "pagosDataProvider" => $pagosDataProvider
+            "pagosDataProvider" => $pagosDataProvider,
+            "pla_id" => $pla_id
         ]);
     }
 

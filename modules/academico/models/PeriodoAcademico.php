@@ -52,14 +52,17 @@ class PeriodoAcademico extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['saca_id', 'baca_id', 'paca_usuario_ingreso', 'paca_estado', 'paca_estado_logico'], 'required'],
-            [['saca_id', 'baca_id', 'paca_usuario_ingreso', 'paca_usuario_modifica'], 'integer'],
-            [['paca_fecha_inicio', 'paca_fecha_fin', 'paca_fecha_creacion', 'paca_fecha_modificacion'], 'safe'],
-            [['paca_activo', 'paca_estado', 'paca_estado_logico'], 'string', 'max' => 1],
+            [['saca_id', 'baca_id', ], 'required'],
+            [['saca_id', 'baca_id', 'paca_usuario_ingreso', 'paca_usuario_modifica','paca_semanas_periodo'], 'integer'],
+              [['paca_fecha_inicio', 'paca_fecha_fin', 'paca_fecha_creacion', 'paca_fecha_modificacion'], 'safe'],
+            [['paca_activo','paca_estado','paca_estado_logico'], 'string', 'max' => 1],
+
             [['saca_id'], 'exist', 'skipOnError' => true, 'targetClass' => SemestreAcademico::className(), 'targetAttribute' => ['saca_id' => 'saca_id']],
             [['baca_id'], 'exist', 'skipOnError' => true, 'targetClass' => BloqueAcademico::className(), 'targetAttribute' => ['baca_id' => 'baca_id']],
         ];
     }
+
+   
 
     /**
      * {@inheritdoc}
@@ -67,15 +70,15 @@ class PeriodoAcademico extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'paca_id' => 'Paca ID',
+            'paca_id' => '',
             'saca_id' => 'Semestre Académico',
             'baca_id' => 'Bloque Académico',
             'paca_activo' => 'Estado',
-            'paca_fecha_inicio' => '',
-            'paca_fecha_fin' => '',
+            'paca_fecha_inicio' => 'Fecha Inicio',
+            'paca_fecha_fin' => 'Fecha Fin',
             'paca_usuario_ingreso' => '',
             'paca_usuario_modifica' => '',
-            'paca_estado' => 'Estado',
+            'paca_estado' => '',
             'paca_fecha_creacion' => '',
             'paca_fecha_modificacion' => '',
             'paca_estado_logico' => '',
@@ -135,6 +138,42 @@ class PeriodoAcademico extends \yii\db\ActiveRecord
     {
         return $this->hasMany(PlanificacionAcademicaMalla::className(), ['paca_id' => 'paca_id']);
     }
+    
+    
+     public function savePeriodo($model){
+        $con = \Yii::$app->db_academico;
+          $sql = "INSERT INTO db_academico.periodo_academico (saca_id, baca_id, paca_activo, paca_fecha_inicio, paca_fecha_fin, paca_usuario_ingreso, paca_estado, paca_fecha_creacion,  paca_estado_logico, paca_semanas_periodo) 
+              VALUES (".$model->saca_id.",". $model->baca_id.",'". $model->paca_activo."','". $model->paca_fecha_inicio."','". $model->paca_fecha_fin."','". $model->paca_usuario_ingreso."','". $model->paca_estado."','". $model->paca_fecha_creacion."','". $model->paca_estado_logico."',". $model->paca_semanas_periodo.")";
+          \app\models\Utilities::putMessageLogFile("Sql: " . $sql);
+        $command = $con->createCommand($sql);
+
+        $command->execute();
+        $id = $con->getLastInsertID($con->dbname . '.periodo_academico');
+        return $id;
+        
+    }
+
+     public function updatePeriodo($model){
+        $con = \Yii::$app->db_academico;
+         $sql = "update db_academico.periodo_academico set "
+                 . " baca_id=".$model->baca_id
+                 . " ,saca_id=".$model->saca_id
+                 . " ,paca_activo='".$model->paca_activo."'"
+                 . " ,paca_fecha_inicio='".$model->paca_fecha_inicio."'"
+                 . " ,paca_fecha_fin='".$model->paca_fecha_fin."'"
+                 . " ,paca_semanas_periodo=".$model->paca_semanas_periodo
+                 . " ,paca_fecha_modificacion='".$model->paca_fecha_modificacion."'"
+                 . " ,paca_usuario_modifica='".$model->paca_usuario_modifica."'"
+                 . " where paca_id=".$model->paca_id;
+               \app\models\Utilities::putMessageLogFile("Sql: " . $sql);
+        $command = $con->createCommand($sql);
+
+     
+       $id= $command->execute();
+        return $id;
+        
+    }
+
     
     
     /**
@@ -413,6 +452,30 @@ class PeriodoAcademico extends \yii\db\ActiveRecord
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
         $comando->bindParam(":daes_id", $daes_id, \PDO::PARAM_INT);        
         $resultData = $comando->queryOne();
+        return $resultData;
+    }
+
+
+     public function getDaesbyperiodo($paca_id, $asi_id, $pro_id) {
+        $con = \Yii::$app->db_academico;
+        $estado = 1;     
+
+        $sql= "  SELECT daes.daes_id 
+        FROM " . $con->dbname . ".distributivo_academico_estudiante daes 
+        INNER JOIN " . $con->dbname . ".distributivo_academico daca
+        WHERE   daca.paca_id= :paca_id 
+        AND  daca.asi_id= :asi_id 
+        AND  daca.pro_id=:pro_id
+        AND daes.daes_estado = :estado AND daes.daes_estado_logico = :estado
+        AND daca.daca_estado = :estado AND daca.daca_estado_logico = :estado
+        ";
+
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $comando->bindParam(":paca_id", $paca_id, \PDO::PARAM_INT);      
+        $comando->bindParam(":asi_id", $asi_id, \PDO::PARAM_INT);   
+        $comando->bindParam(":pro_id", $pro_id, \PDO::PARAM_INT);     
+        $resultData = $comando->queryAll();
         return $resultData;
     }
 

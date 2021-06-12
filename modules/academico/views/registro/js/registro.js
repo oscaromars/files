@@ -11,6 +11,7 @@ $(document).ready(function() {
     $('#btn_modificarcargacartera').click(function() {
         save();
         guardarCargarCartera();
+        enviarPdf();
     });
     $('#cmb_tpago').change(function() {
         if ($(this).val() == 1) {
@@ -109,7 +110,7 @@ function searchModules() {
     //arrParams2.search = $("#txt_buscarData").val();
     arrParams2.periodo = ($("#cmb_per_acad option:selected").val());
     //arrParams2.mod_id = $("#cmb_mod").val();
-    arrParams2.estado = $("#cmb_status").val();
+//arrParams2.estado = $("#cmb_status").val();
     //alert(arrParams2.periodo+'-'+arrParams2.estado);
     $("#grid_registropay_list").PbGridView("applyFilterData", arrParams2);
 }
@@ -410,13 +411,13 @@ function generarDataTable(cuotas, primerPago) {
         tb_item[2] = (primerPago !== null && cuotas > 1 && i == 1) ? (perPriC + '%') : (percentaje + '%');
         tb_item[3] = (primerPago !== null && cuotas > 1 && i == 1) ? ('$' + currencyFormat(parseFloat(primerPago))) : ('$' + currencyFormat(parseFloat(cuota)));
         tb_item[4] = $('#vencimiento_' + i).val();
-        tb_item[5] = (i == 1) ? "TO CHECK" : "PENDING";
+        tb_item[5] = "PENDING";//(i == 1) ? "TO CHECK" : "PENDING";
         tb_item2[0] = 0;
         tb_item2[1] = labelPay + i;
         tb_item2[2] = (primerPago !== null && cuotas > 1 && i == 1) ? (perPriC + '%') : (percentaje + '%');
         tb_item2[3] = (primerPago !== null && cuotas > 1 && i == 1) ? ('$' + currencyFormat(parseFloat(primerPago))) : ('$' + currencyFormat(parseFloat(cuota)));
         tb_item2[4] = $('#vencimiento_' + i).val();
-        tb_item2[5] = (i == 1) ? "TO CHECK" : "PENDING";
+        tb_item2[5] = "PENDING";//(i == 1) ? "TO CHECK" : "PENDING";
         if (arrData.data) {
             var item = arrData.data;
             tb_item[0] = item.length;
@@ -638,7 +639,7 @@ function guardarCargarCartera(){
     arrParams.pla_id = $('#txt_pla_id').val();
     var terminos = ($('#cmb_req').is(':checked')) ? 1 : 0;
     // $per_id,  $forma_pago,$in, $numcuotas,$valor_cuota, $total, $usu_id);
-    //alert(link);
+    //alert(arrParams.pla_id + '-' + arrParams.per_id);
     $redirect = $('#txth_base').val() + "/academico/registro/new/"+arrParams.per_id+'?rama_id='+arrParams.rama_id ;
     $redirect = $('#txth_base').val() + "/academico/registro/index";
     //alert(arrParams.tpago+'-'+arrParams.total+'-'+arrParams.interes +'-'+arrParams.financiamiento+'-'+arrParams.numcuotas+'-'+arrParams.rama_id+'-'+arrParams.per_id +'-'+ $redirect);
@@ -650,7 +651,7 @@ function guardarCargarCartera(){
                 if (response.status == "OK") {
                     setTimeout(function() {
                     //windows.location.href = $redirect;
-                    showAlert(response.status, response.type, { "wtmessage": 'SU PAGO FUE INGRESADO CORRECTAMENTE', "title": response.label });
+                    //showAlert(response.status, response.type, { "wtmessage": 'SU PAGO FUE INGRESADO CORRECTAMENTE', "title": response.label });
                     //windows.location.href = $('#txth_base').val() + "/academico/registro/index";
                     }, 3000);
                 } else {
@@ -664,6 +665,29 @@ function guardarCargarCartera(){
         }
     } else {
         showAlert('NO_OK', 'error', { "wtmessage": "Se debe escoger el numero de cuotas.", "title": 'Información' });
+    }
+}
+function enviarPdf(){
+    var link = $('#txth_base').val() + "/academico/registro/sendpdf";
+    var arrParams = new Object();
+    arrParams.per_id = $('#txt_per_id').val();
+    arrParams.rama_id = $('#txt_rama').val();
+    //alert(arrParams.rama_id);
+    try{
+        requestHttpAjax(link, arrParams, function(response) {
+        var message = response.message;
+        if (response.status == "OK") {
+            setTimeout(function() {
+            //windows.location.href = $redirect;
+            showAlert(response.status, response.type, { "wtmessage": 'SU PAGO FUE INGRESADO CORRECTAMENTE', "title": response.label });
+            //windows.location.href = $('#txth_base').val() + "/academico/registro/index";
+            //parent.window.location.href = $('#txth_base').val() + "/academico/registro/index";
+            }, 3000);
+        } 
+        }, true);
+    }catch(err){
+        //alert( "wtmessage <p>+"+$err+"</p>");    
+        console.log("error: "+err)
     }
 }
 

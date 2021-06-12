@@ -11,7 +11,7 @@ use app\modules\academico\Module as academico;
 academico::registerTranslations();
 $styleBar = "";
 if($esEstu) $styleBar = "display: none;";
-//print_r($model);
+//print_r($periodoAcademico);
 ?>
 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
     <h4><span id="lbl_titulo"><?= academico::t("registro", "List Enrollment") ?></span></h4>
@@ -23,7 +23,12 @@ if($esEstu) $styleBar = "display: none;";
         <div class="form-group">
             <label for="cmb_mod" class="col-lg-2 col-md-2 col-sm-2 col-xs-2 control-label"><?= academico::t("matriculacion", "Modality") ?></label>
             <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
-                <?= Html::dropDownList("cmb_mod", 0, $modalidad, ["class" => "form-control", "id" => "cmb_mod","Disabled" => "true"]) ?>
+                <?php if($grupo_id==12) : ?>
+                    <?= Html::dropDownList("cmb_mod", 0, $modalidad, ["class" => "form-control", "id" => "cmb_mod"]) ?>
+                <?php else : ?>
+                    <?= Html::dropDownList("cmb_mod", 0, $modalidadT, ["class" => "form-control", "id" => "cmb_mod"]) ?>
+                <?php endif; ?>
+
             </div>
                
             <label for="cmb_per_acad" class="col-lg-2 col-md-2 col-sm-2 col-xs-2 control-label"><?= academico::t("matriculacion", "Academic Period") ?></label>

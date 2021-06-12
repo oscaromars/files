@@ -8,22 +8,14 @@ use app\modules\academico\Module as academico;
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\RolSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
-
+$formatter = \Yii::$app->formatter;
 
 ?>
 <div class="estudioacademico-index"> 
    
     
     <?php echo $this->render('_search', ['model' => $searchModel]); ?>
-    
-   <?php $gridColumns =['saca.saca_nombre',
-                        'saca.saca_descripcion',
-                        'saca.saca_anio',
-                        'baca.baca_nombre',
-                        'baca.baca_descripcion',
-                        'baca.baca_anio'];
-           
-           ?>    
+  
 <?php echo   GridView::widget([
         'dataProvider' => $dataProvider,
         //'filterModel' => $searchModel,
@@ -60,11 +52,22 @@ use app\modules\academico\Module as academico;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
             'saca.saca_nombre',
-            'saca.saca_descripcion',
+           
             'saca.saca_anio',
             'baca.baca_nombre',
-            'baca.baca_descripcion',
+            
             'baca.baca_anio',
+            ['attribute' => 'paca_fecha_inicio',
+                 'value' => function ($model, $key, $index, $widget) {
+                    return Yii::$app->formatter->asDate($model->paca_fecha_inicio, 'yyyy-MM-dd');
+                          },
+                ],
+                                  ['attribute' => 'paca_fecha_fin',
+                 'value' => function ($model, $key, $index, $widget) {
+                    return Yii::$app->formatter->asDate($model->paca_fecha_fin, 'yyyy-MM-dd');
+                          },
+                ],
+          
             'paca_semanas_periodo',
             ['attribute' => 'paca_activo',
                 'contentOptions' => ['class' => 'text-center'],

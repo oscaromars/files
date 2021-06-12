@@ -29,6 +29,7 @@ use yii\data\ArrayDataProvider;
 use yii\base\Exception;
 use app\modules\academico\Module as Academico;
 use app\modules\financiero\models\FormaPago;
+use app\modules\financiero\models\FacturasPendientesEstudiante;
 
 Academico::registerTranslations();
 
@@ -992,7 +993,7 @@ class MatriculaciondropController extends \app\components\CController {
         $error = false;
         try{
             $matriculacion_model = new Matriculacion();
-            $modelPersona = Persona::findOne($per_id);
+            $modelPersona        = Persona::findOne($per_id);
             $today = date("Y-m-d H:i:s");
             $result_process = $matriculacion_model->checkToday($today);
             if (count($result_process) > 0) {
@@ -1005,14 +1006,155 @@ class MatriculaciondropController extends \app\components\CController {
                 $modelRegPag = RegistroPagoMatricula::findOne(['per_id' => $per_id, 'pla_id' => $pla_id, 'ron_id' => $ron_id, 'rpm_estado' => '1', 'rpm_estado_logico'=>'1',]);
                 if(isset($data['cancelSubject']) && $data['cancelSubject'] = '1'){ // si hay un registro de pago se debe tomar en consideracion la anulacion por materias
                     $arr_sub_cancel = explode(";", $data['codes']);
+
+                        
+                          \app\models\Utilities::putMessageLogFile('Inicio Proceso cron:'.$arr_sub_cancel[0]);
+                           $cod= $arr_sub_cancel[0];
+
+
+                     //calcula cantidad de materias
+                      $tm = count($arr_sub_cancel)-1; 
+
+                    //Obtener cuotas y totales
+                    $roc_model = new RegistroOnlineItem();
+                      $facturas_model = new FacturasPendientesEstudiante();
+                      $cuotas_model = new RegistroOnlineCuota();
+                      $today = date("Y-m-d H:i:s");
+                      $recalculo=$cuotas_model->recalcCuotas($ron_id);  
+                      $pago=$cuotas_model->totalCuotas($ron_id);  
+                     // $costo_mat = $roc_model->getCostobyRon($ron_id,$cod);
+                      // $tm = $tm * $costo_mat[0]['roi_costo'] ;
+                       
+                       
+                       $i=0; 
+                      $costo_mat = 0;
+                      $existrpm = 0;
+                      \app\models\Utilities::putMessageLogFile('Codigos de materias');
+                       \app\models\Utilities::putMessageLogFile(print_r($arr_sub_cancel,true));
+                     //foreach($arr_sub_cancel as $arr_sub_cancel ){  
+                      for($i=0; $i<count($arr_sub_cancel)-1; $i++){
+                            $cod= $arr_sub_cancel[$i];
+                            \app\models\Utilities::putMessageLogFile('codigo  MAT: '.$cod);
+                            \app\models\Utilities::putMessageLogFile('codigo RON_ID: '.$ron_id);
+
+                            $mat = $roc_model->getCostobyRon($ron_id,$cod);
+                            $costo_mat += $mat[0]['roi_costo'];
+                             // $i++;
+                           //Validar que si tiene pago la matria a eliminar no recalcular  
+                            $res_rpm_item =   $roc_model->verificarPagoMateriaByRegistroOnLine($ron_id,$cod);
+                            \app\models\Utilities::putMessageLogFile('Resultado de contar pago de materia: '.$res_rpm_item['exist_rpm']);  
+                            if ($res_rpm_item['exist_rpm'] >0){
+                                $existrpm++;
+                            }
+                      } 
+                    \app\models\Utilities::putMessageLogFile('totaldesc:'.$costo_mat);   
+                    \app\models\Utilities::putMessageLogFile('recalculo:'.count($recalculo));
+
+
+                      \app\models\Utilities::putMessageLogFile('Existen registros de pago matricula: '.$existrpm);
+
+
+
+                      /**
+                        DZM analista desarrollo03 proceso  recalculo de  las cuotas pendientes
+                      */
+                        //Obtenemos los saldos pendientes del estudiantes.
+                        if  ($recalculo[0]['Cant'] > 0  && $existrpm > 0) {
+                            $total_anul_costo = $costo_mat; // costo total de anulacion
+                              $fpe_saldo_pendiente = $cuotas_model->getcurrentSaldoPersona($per_id);
+                              //recorrer las facturas pendientes 
+                              $cant_fpe =  count($fpe_saldo_pendiente); // cantidad de fpe
+                              $val_desc = $total_anul_costo / $cant_fpe;
+                              \app\models\Utilities::putMessageLogFile('1 - Anulacion materia  Cantidad de fpe:'.$val_desc);   
+                              \app\models\Utilities::putMessageLogFile('1 - Anulacion materia  valor desc fpe:'.$val_desc);   
+                              $i=0;
+                              foreach($fpe_saldo_pendiente as $key => $value){
+                                //restar el valor 
+                                if(!$facturas_model->updateSaldosPendientesByAnulMaterias(
+                                    $fpe_saldo_pendiente[$i]['fpe_id'],$val_desc,$usu_id)
+                                )
+                                {
+                                    //error
+                                }
+                                 \app\models\Utilities::putMessageLogFile('1 - Anulacion materia Actualiza fpe:'.$fpe_saldo_pendiente[$i]['fpe_id']);
+                                
+                                $i++;
+
+                              }
+
+                        }
+
+
+
+
+
+                        $prueba = false;
+
+
+                        //$resp_persona['existen'] == 0) 
+                      //Cambiar a saldo pendientes   
+                      if  ($recalculo[0]['Cant'] > 0  && $existrpm > 0 && $prueba)  {
+                      //recalcular
+                          $tm= $costo_mat;
+                          $cantcuotas = $recalculo[0]['Cant'] ;
+                          $costcuotas = $recalculo[0]['Costo'];   
+                          $pagadas = $pago[0]['Cant'];  
+                          $pagadastot = $pago[0]['Costo']; 
+                           //actualizar cuotas
+                           //actualizar cuotas
+                          $change_cuotas = $cuotas_model->updatecancelCuotas($pagadas,$tm,$cantcuotas,$costcuotas,$ron_id);
+                          //$facturas_pendientes = $cuotas_model->getcurrentCuotas($ron_id);
+                          $facturas_pendientesnew = $facturas_model->getcurrentCuotas($per_id);  
+                          $fpe_pendientesnew = $facturas_model->getcurrentId($per_id);
+
+                          // foreach ($facturas_pendientes as $key => $value) {
+                                     //$facturas_model = new FacturasPendientesEstudiante();
+                                  //$inserta_f = $facturas_model->insertarFacturacancel($promocion, $asi_id);
+                                                                    
+
+                            //  }
+                            $cantcuotasf = $facturas_pendientesnew[0]['Cantf'] ;
+                             
+                            \app\models\Utilities::putMessageLogFile('valor pendiente:'.$facturas_pendientesnew[0]['Costof']);
+                            \app\models\Utilities::putMessageLogFile('cantidad cuotas:'.$cantcuotasf);
+
+                            $costcuotasf = $facturas_pendientesnew[0]['Costof'] - $tm; 
+                            
+                            \app\models\Utilities::putMessageLogFile('costo cuotas:'.$costcuotasf);
+                            \app\models\Utilities::putMessageLogFile('fpeid:'.$fpe_pendientesnew[0]['fpeid']);
+                            \app\models\Utilities::putMessageLogFile('fpeid:'.$fpe_pendientesnew[1]['fpeid']);
+                            \app\models\Utilities::putMessageLogFile('fpeid:'.$fpe_pendientesnew[2]['fpeid']);
+                            \app\models\Utilities::putMessageLogFile('fpeid:'.$fpe_pendientesnew[3]['fpeid']);
+                            // for($i=0; $i<count($facturas_pendientesnew); $i++){
+                             $i=0;
+                              foreach($fpe_pendientesnew as $key => $value){
+                                    //$facturas_model = new FacturasPendientesEstudiante();
+                                    //$datafpeid= $datafpeid+1;  
+                                     $datafpeid = $fpe_pendientesnew[$i]['fpeid'];  //registro online cuota
+                                    // $existefactura = $facturas_model->getcurrentFacturas($dataid);
+                                    //  if  (count($existefactura) > 0) {
+                                    //$inserta_f = $facturas_model->insertarFacturacancel($datafpeid, $dataid, $datacuota, $datacosto); 
+                                    $inserta_fact = $facturas_model->insertarnewFacturacancel($datafpeid,$cantcuotasf,$costcuotasf);          
+                                    //} Else {
+                                    // $inserta_f = $facturas_model->insertarnewFacturacancel($perid, $dataid, $datacuota, $datacosto);
+                                    //} 
+                                    $i++;
+                             }  
+                        // } 
+                      }
+
+
+
+
                     $modelRegItem = RegistroOnlineItem::findAll(['ron_id' => $ron_id, 'roi_estado' => '1', 'roi_estado_logico' => '1']);
                     $modelPlanif = Planificacion::findOne(['pla_id' => $pla_id, 'pla_estado' => '1', 'pla_estado_logico' => '1',]);
-                    $minime = count($modelRegItem) - count($arr_sub_cancel);
-                         if( $minime < 3 ){
-                            throw new Exception('You cant maintain less than 3 subjects');
-                        }
                     $i = 0;
+                    
                     $subReg = count($arr_sub_cancel) - 1; // cantidad de materias a cancelar
+                     $minime = count($modelRegItem) - $subReg;
+                        if( $minime < 3 ){
+                            throw new Exception('Error to Update Online Register.');
+                        }
                     foreach($modelRegItem as $key => $item){ $i++; } // cantidad de materias registradas
                     if($modelRegPag){// existe un pago de registro por lo que debe realizar el proceso     
                         $template = "removeSubjects";
@@ -1035,7 +1177,7 @@ class MatriculaciondropController extends \app\components\CController {
                             throw new Exception('Error to Create Cancel Register.');
                         }
                         for($j = 0; $j < (count($arr_sub_cancel) - 1); $j++){
-                        $asigeliminada[$j]=arr_sub_cancel[$j];
+                        $asigeliminada[$j]=$arr_sub_cancel[$j];
                             $modelRegItem = RegistroOnlineItem::findOne(['ron_id' => $ron_id, 'roi_estado' => '1', 'roi_estado_logico' => '1', 'roi_materia_cod' => $arr_sub_cancel[$j]]);
                             $modelCancelIt = new CancelacionRegistroOnlineItem();
                             $modelCancelIt->roi_id = $modelRegItem->roi_id;
@@ -1048,8 +1190,7 @@ class MatriculaciondropController extends \app\components\CController {
                             }
                         }
                     }
-                    
-                    
+
                     //else{ // no existe pago, solo se recalcula todo nuevamente
                         if($i == $subReg){ // Se debe continuar con la cancelacion normal
                             $template = "cancelregister";
@@ -1089,6 +1230,7 @@ class MatriculaciondropController extends \app\components\CController {
                                 }
                             }
                             // cambiar estados en registro_pago_matricula
+                                
                             if($modelRegPag){
                                 foreach($modelRegPag as $key => $reg){
                                     $reg->rpm_estado = '0';
@@ -1099,7 +1241,7 @@ class MatriculaciondropController extends \app\components\CController {
                                         throw new Exception('Error to Update Payment Register.');
                                     }
                                 }
-                            }
+                            } 
                             // cambiar estados en enrolamiento_agreement
                             $modelEnroll = EnrolamientoAgreement::findAll(['ron_id' => $ron_id, 'per_id' => $per_id]);
                             if($modelEnroll){
@@ -1154,7 +1296,14 @@ class MatriculaciondropController extends \app\components\CController {
                                 throw new Exception('Error to Update Online Register.');
                             }
                         }
-                   // }
+                    //}
+
+
+
+
+
+
+
                 }
                 // envio de mail a colecturia del proceso de anulacion
                 $data_student = $matriculacion_model->getDataStudenbyRonId($ron_id);
@@ -1175,10 +1324,8 @@ class MatriculaciondropController extends \app\components\CController {
                 $titulo_mensaje = Academico::t("matriculacion", "Online Registration Cancellation");
 
                 
-                
-                
-                
-                 $report = new ExportFile();
+                ///PDF
+                $report = new ExportFile();
                 $this->view->title = Academico::t("matriculacion", "Registration"); // Titulo del reporte
                 $matriculacion_model = new Matriculacion();
                 $materiasxEstudiante = PlanificacionEstudiante::findOne($pes_id);
@@ -1194,8 +1341,9 @@ class MatriculaciondropController extends \app\components\CController {
                         'attributes' => ["Subject"],
                     ],
                 ]);
-
-                $path = "CancelacionRegistro_" . date("Ymdhis") . ".pdf";
+                
+                
+                  $path = "Registro_" . date("Ymdhis") . ".pdf";
                 $report->orientation = "P"; // tipo de orientacion L => Horizontal, P => Vertical
                 $report->createReportPdf(
                         $this->render('exportpdf', [
@@ -1203,16 +1351,10 @@ class MatriculaciondropController extends \app\components\CController {
                             "data_student" => $data_student,
                             "materiasxEstudiante" => $materiasxEstudiante,
                         ])
-                );
+               );
 
-                $tmp_path = sys_get_temp_dir() . "/" . $path;
-
-                $report->mpdf->Output($tmp_path, ExportFile::OUTPUT_TO_FILE);
-
-                  $filesest = array(
-                    "0" => $tmp_path,
-                );
-                
+              $tmp_path = sys_get_temp_dir() . "/" . $path;
+              $report->mpdf->Output($tmp_path, ExportFile::OUTPUT_TO_FILE);
                 
                 
                 $from = Yii::$app->params["adminEmail"];
@@ -1224,42 +1366,40 @@ class MatriculaciondropController extends \app\components\CController {
                     "0" => Yii::$app->basePath . Yii::$app->params["documentFolder"] . "pagosmatricula/" . $data["file"],
                 );*/
                 $toest = $modelPersona->per_correo;
-                //$files = array();
+                $files = array();
+                  $files = array( "0" => $tmp_path,);
                 $asunto = Academico::t("matriculacion", "Cancellation Registration");
+                
+               $asignatura_model = new Asignatura();
+              $asignatura1 = $asignatura_model->getAsignaturaname($asigeliminada[0]);
+              $asignatura2 = $asignatura_model->getAsignaturaname($asigeliminada[1]); 
                 
                 $bodyest = Utilities::getMailMessage($templateEst, array(
                             "[[user]]" => $user_names_est,
                             "[[periodo]]" => $data_student["pla_periodo_academico"],
                             "[[modalidad]]" => $data_student["mod_nombre"],
-                            "[[asig1]]" => $asigeliminada[0],
-                             "[[asig2]]" => $asigeliminada[1]
+                             "[[asig1]]" =>  $asignatura1["asignatura"],
+                             "[[asig2]]" =>  $asignatura2["asignatura"]
                                 ), Yii::$app->language, Yii::$app->basePath . "/modules/academico");
-                                                     
-                                
-                                
-                                
-                                
-                                
-                                
 
                 $transaction->commit();
                 Utilities::sendEmail($titulo_mensaje, $from, $to, $asunto, $body, $files);
-                Utilities::sendEmail($titulo_mensaje, $from, $toest, $asunto, $bodyest, $filesest);
-                 Utilities::removeTemporalFile($tmp_path);
-                Yii::$app->session->setFlash('success',"<h4>".Yii::t('jslang', Exito)."</h4>".academico::t("matriculacion","The cancellation of the registration was successful."));
-            
+                Utilities::sendEmail($titulo_mensaje, $from, $toest, $asunto, $bodyest, $files);
+             Utilities::removeTemporalFile($tmp_path);
+                Yii::$app->session->setFlash('success',"<h4>".academico::t('jslang', 'Exito')."</h4>".academico::t("registro","The cancellation of the registration was successful."));
             }
             if(isset($data['admin']) && $data['admin'] == '1')
                 return $this->redirect('list');
             return $this->redirect('index');
         } catch (Exception $ex) {
             $transaction->rollback();
-            $msg = ($error)?($ex->getMessage()):(Yii::t('notificaciones', 'Your information has not been saved. Please try again.'));
+            //$msg = ($error)?($ex->getMessage()):(Yii::t('notificaciones', 'Your information has not been saved. Please try again.'));
+            $msg = $ex;
             Yii::$app->session->setFlash('success',"<h4>".Yii::t('jslang', 'Error')."</h4>". $msg);
             if(isset($data['admin']) && $data['admin'] == '1')
                 return $this->redirect('list');
             return $this->redirect('registro');
         }
-    }
+    }//function actionAnularregistro
     
 }

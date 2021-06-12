@@ -11,8 +11,13 @@ use app\modules\academico\models\EstudioAcademico;
 
 $var = ArrayHelper::map(app\modules\academico\models\PeriodoAcademico::find()->where(['paca_estado' => 1,'paca_estado_logico' => 1,'paca_activo' => 'A'])->all(), 'paca_id',
                 function ($model) {
-                     return $model->sem->saca_nombre . '-' . $model->sem->saca_anio;
+                     return $model->baca->baca_nombre . '-' . $model->sem->saca_nombre . '-' . $model->sem->saca_anio;
                 });
+
+$mod_carrera = new EstudioAcademico();
+$carrera = $mod_carrera->consultarCarrera();
+$var1 = ArrayHelper::map(array_merge([['id' => '0', 'value' => 'Seleccionar']], $carrera), 'id', 'value');
+
 ?>
 <div class="matriculados-search">
 
@@ -37,7 +42,6 @@ $var = ArrayHelper::map(app\modules\academico\models\PeriodoAcademico::find()->w
   
     <?=
     $form->field($model, 'pla_id')->label('Periodo:')->widget(Select2::classname(), [
-        //'data' => ArrayHelper::map(app\modules\academico\models\Planificacion::find()->where(['paca_estado_logico' => '1','paca_estado' => '1'])->all(), 'paca_id', 'pla_periodo_academico'),
         'data' => $var,
         'size' => Select2::MEDIUM,
         'options' => ['placeholder' => 'Seleccione Periodo ...', 'multiple' => false],
@@ -52,28 +56,19 @@ $var = ArrayHelper::map(app\modules\academico\models\PeriodoAcademico::find()->w
     $form->field($model, 'mod_id')->label('Modalidad:')->widget(Select2::classname(), [
         'data' => ArrayHelper::map(app\modules\academico\models\Modalidad::find()->where(['mod_estado_logico' => '1','mod_estado' => '1'])->all(), 'mod_id', 'mod_nombre'),
         // 'data' => $var,
-        'size' => Select2::MEDIUM,
+        //'size' => Select2::MEDIUM,
         'options' => ['placeholder' => 'Seleccione Modalidad ...', 'multiple' => false],
         'pluginOptions' => [
             'allowClear' => true,
             'width' => '295px',
         ],
     ]);
-    ?>
-
-    <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12">       
-            <div class="form-group">
-                <label for="cmb_carrera" class="control-label col-sm-4"><?= Yii::t("formulario", "Carrera:") ?>  </label>
-                <div class="col-sm-3 col-md-3 col-xs-3 col-lg-3">
-                    <?= Html::dropDownList("cmb_carrera", 0, $arr_carrera, ["class" => "form-control", "id" => "cmb_carrera"])?>                     
-                </div>
-            </div>     
-    </div>
+    ?>    
 
     <div class="form-group">
-        <div class="col-sm-offset-4">
-<?= Html::submitButton('Buscar', ['class' => 'btn btn-primary']) ?>
-               </div>   
+        <div class="col-sm-offset-3">
+            <?= Html::submitButton('Buscar', ['class' => 'btn btn-primary', 'id' => 'btn_buscarDatamatriculados', 'href' => 'javascript:']) ?>
+        </div>   
     </div>
 
 <?php ActiveForm::end(); ?>

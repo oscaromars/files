@@ -94,11 +94,10 @@ class PlanificacionController extends \app\components\CController {
         ]);
         return $this->render('index', [
                     'arr_pla' => ( empty(ArrayHelper::map($arr_pla, 'pla_periodo_academico', 'pla_periodo_academico')) ) ? array(Yii::t('planificacion', '-- Select periodo --')) : ( ArrayHelper::map($arr_pla, 'pla_periodo_academico', 'pla_periodo_academico') ),
-                   // 'arr_modalidad' => ( empty(ArrayHelper::map($arr_modalidad, 'mod_id', 'mod_nombre')) ) ? array(Yii::t('planificacion', '-- Select Modality --')) : ( ArrayHelper::map($arr_modalidad, 'mod_id', 'mod_nombre') ),
-                    'arr_modalidad' => ArrayHelper::map(array_merge([["mod_id" => "0", "mod_nombre" => Yii::t("formulario", "Select")]], $arr_modalidad), "mod_id", "mod_nombre"),
+                    'arr_modalidad' => ( empty(ArrayHelper::map($arr_modalidad, 'mod_id', 'mod_nombre')) ) ? array(Yii::t('planificacion', '-- Select Modality --')) : ( ArrayHelper::map($arr_modalidad, 'mod_id', 'mod_nombre') ),
                     'model' => $dataProvider,
                     'pla_periodo_academico' => $pla_periodo_academico,
-                    'mod_id' => 0,
+                    'mod_id' => $mod_id,
         ]);
         //}
     }
@@ -1003,7 +1002,7 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
                         $jormateria  = "pes_jor_b" . $bloque . "_h" . $horario . "= '" . $arrplanedit[$i]['jornada'] . "', "; 
                         $modificar .=  $codmateria . ' ' .  $modmateria . ' ' .  $jormateria;                    
                     }   
-                    //\app\models\Utilities::putMessageLogFile('modificar..: '. $modificar);    
+                    \app\models\Utilities::putMessageLogFile('modificar..: '. $modificar);    
                     $resul = $mod_planifica->modificarDataPlanificacionestudiante($plan_id, $pers_id, $usu_autenticado, $modificar);
             }
 
@@ -1345,6 +1344,7 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
         $pla_id = $mod_periodo->consultaPlanificacionEstVigente($per_id);
         $plan =  $pla_id[0]["id"];
         $session->set("plan_id",$plan);
+        $session->set("per_ids",$per_id);
         Yii::$app->session->set('pla_id', $plan);
         $existe = $mod_periodo->confirmarPlanificacionExistente($plan, $per_id,$periodo_activo[0]['name'],$periodo_activo[0]['id']);
         

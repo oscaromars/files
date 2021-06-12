@@ -1,4 +1,4 @@
-$(document).ready(function () {
+ $(document).ready(function () {
     $('#btn_guardarasistencia').click(function() {
        cargarDocumentoAsistencia();
     });
@@ -44,7 +44,7 @@ $(document).ready(function () {
     });
 
     $('#cmb_profesor_asis').change(function () {
-        var link = $('#txth_base').val() + "/academico/calificacionregistrodocente/registro";
+        var link = $('#txth_base').val() + "/academico/asistenciaregistrodocente/registro";
         var arrParams = new Object();
         arrParams.pro_id  = $('#cmb_profesor_asis').val();
         arrParams.uaca_id = $('#cmb_unidad').val();
@@ -80,7 +80,11 @@ $(document).ready(function () {
 
     });
     */
-
+     
+     $('#btn_buscarDataregistrosemanal').click(function() {
+        actualizarGridRegistrosemanal(0);
+    });
+     
     $('#btn_buscarDataregistro').click(function() {
         actualizarGridRegistro(0);
     });
@@ -197,8 +201,6 @@ $("#cancelar_btn").click(function(){
     window.location.href = $('#txth_base').val() + "/academico/asistenciaregistrodocente/cargararchivoasistencia";
 });
 
-
- 
 function actualizarGridRegistro(dready = 0) {
     var arrParams = new Object();
     arrParams.periodo   = $('#cmb_periodo option:selected').val();
@@ -261,24 +263,6 @@ function actualizarGridRegistro(dready = 0) {
                     }, 
                 },
                 {
-                    label: "U3",
-                    name: "u3",
-                    attr: {
-                        type: "number",
-                        min:"0",
-                        max:"100"
-                    },
-                },
-                {
-                    label: "U4",
-                    name: "u4",
-                    attr: {
-                        type: "number",
-                        min:"0",
-                        max:"100"
-                    }, 
-                },
-                {
                     name: "paca_id",
                     type: "hidden",
                 },
@@ -296,6 +280,18 @@ function actualizarGridRegistro(dready = 0) {
                 },
                 {
                     name: "uaca_id",
+                    type: "hidden",
+                },
+                 {
+                    name: "mod_id",
+                    type: "hidden",
+                },
+                 {
+                    name: "daes_id",
+                    type: "hidden",
+                },
+         {
+                    name: "daho_total_horas",
                     type: "hidden",
                 },
             ],
@@ -344,8 +340,17 @@ function actualizarGridRegistro(dready = 0) {
 
             var bandera = 0;
             if(action == 'edit'){
+                 var maxi = 0;
                 $.each(o.data[indice], function( index, value ) {
-                    
+                            //console.log(index+" : "+value);
+     
+                  if(index == 'daho_total_horas' ){
+                        maxi = value * 5;
+                   }
+                });
+ 
+                $.each(o.data[indice], function( index, value ) {
+                            console.log(index+" : "+value);
                      /*
                      if(index == 'u1' ||
                         index == 'u2' ||
@@ -357,30 +362,24 @@ function actualizarGridRegistro(dready = 0) {
                             }//if
                         }//if   
                         */
+                        /*
+                          if(index == 'daho_total_horas' ){
+                                var maxi = value * 5;
+                           }
+                           */
+ 
                     if(index == 'u1' ){
-                        if(value < 0 || value > 100){
-                            alertify.success("El cambio no se ha registrado, los valores del componente Síncrona debe estar entre 0 a 10");
+                        if(value < 0 || value > maxi){
+                            alertify.error("El cambio no se ha registrado, los valores del componente debe estar entre 0 a " + maxi);
                             bandera = 1;
                         }//if
                     }//if 
                     if(index == 'u2' ){
-                        if(value < 0 || value > 100){
-                            alertify.success("El cambio no se ha registrado, los valores del componente Síncrona debe estar entre 0 a 10");
+                        if(value < 0 || value > maxi){
+                            alertify.error("El cambio no se ha registrado, los valores del componente debe estar entre 0 a "+ maxi);
                             bandera = 1;
                         }//if
-                    }//if  
-                    if(index == 'u3' ){
-                        if(value < 0 || value > 100){
-                            alertify.success("El cambio no se ha registrado, los valores del componente Síncrona debe estar entre 0 a 10");
-                            bandera = 1;
-                        }//if
-                    }//if  
-                    if(index == 'u4' ){
-                        if(value < 0 || value > 100){
-                            alertify.success("El cambio no se ha registrado, los valores del componente Síncrona debe estar entre 0 a 10");
-                            bandera = 1;
-                        }//if
-                    }//if  
+                    }//if   
                 });
             }//if
 
@@ -436,13 +435,16 @@ function actualizarGridRegistro(dready = 0) {
                 { data: "materia"},
                 { data: "u1"},
                 { data: "u2"},
-                { data: "u3"},
-                { data: "u4"},
                 { data: "paca_id"},
                 { data: "est_id"},
                 { data: "pro_id"},
                 { data: "asi_id"},
                 { data: "uaca_id"},
+                { data: "mod_id"},
+                { data: "daes_id"},
+            { data: "daho_total_horas"},
+        
+
             ],
             /*
             "ajax":{
@@ -457,7 +459,7 @@ function actualizarGridRegistro(dready = 0) {
             */
             "language": {
                 "decimal"       : "",
-                "emptyTable"    : "No data available in table",
+                "emptyTable"    : "No hay datos cargados",
                 "info"          : "Mostrando _START_ de _END_ de _TOTAL_ registros",
                 "infoEmpty"     : "Mostrando 0 de 0 de 0 registros",
                 "infoFiltered"  : "(filtrado de un total de _MAX_ entries)",
@@ -518,7 +520,7 @@ function actualizarGridRegistro(dready = 0) {
                 { targets: "no-sort", "orderable": false, "order": [],},
                 { targets: [ 1,2,3,4 ], responsivePriority: 1},     
                 {
-                    "targets": [ 10,11,12,13,14 ], 
+                    "targets": [ 8,9,10,11,12,13,14,15 ], 
                     "visible": false,
                     "searchable": false
                 },
@@ -544,20 +546,18 @@ function actualizarGridRegistro(dready = 0) {
 }//function actualizarGridRegistro
 
 
-
-
-function actualizarGridRegistroother(dready = 0) {
+function actualizarGridRegistrosemanal(dready = 0) {
     var arrParams = new Object();
     arrParams.periodo   = $('#cmb_periodo option:selected').val();
     arrParams.uaca_id   = $('#cmb_unidad').val();
     arrParams.modalidad = $('#cmb_modalidad option:selected').val();  
     arrParams.materia   = $('#cmb_materia option:selected').val();  
     arrParams.parcial   = $('#cmb_parcial').val();
-    arrParams.profesor  = $('#cmb_profesor_rc').val();
+    arrParams.profesor  = $('#cmb_profesor_asis').val();
 
     console.log(arrParams);
 
-    var link = $('#txth_base').val() + "/academico/asistenciaregistrodocente/traermodelo";
+    var link = $('#txth_base').val() + "/academico/asistenciaregistrodocente/traermodelosemanal";
  
     requestHttpAjax(link, arrParams, function (response) {
         console.log(response);
@@ -574,7 +574,7 @@ function actualizarGridRegistroother(dready = 0) {
         }//if
 
 
-        var url_editor = $('#txth_base').val() + "/academico/asistenciaregistrodocente/actualizarnotaasistencia";
+        var url_editor = $('#txth_base').val() + "/academico/asistenciaregistrodocente/actualizarnotaasistenciasemanal";
 
         editor = new $.fn.dataTable.Editor( {
             ajax:  url_editor,
@@ -590,8 +590,8 @@ function actualizarGridRegistroother(dready = 0) {
             idSrc: "row_num",
             fields: [ 
                 {
-                    label: "U1",
-                    name: "u1",
+                    label: "S1",
+                    name: "s1",
                     attr: {
                         type: "number",
                         min:"0",
@@ -599,26 +599,80 @@ function actualizarGridRegistroother(dready = 0) {
                     },
                 },
                 {
-                    label: "U2",
-                    name: "u2",
+                    label: "S2",
+                    name: "s2",
                     attr: {
                         type: "number",
                         min:"0",
                         max:"100"
                     }, 
                 },
-                {
-                    label: "U3",
-                    name: "u3",
+         {
+                    label: "S3",
+                    name: "s3",
                     attr: {
                         type: "number",
                         min:"0",
                         max:"100"
-                    },
+                    }, 
                 },
-                {
-                    label: "U4",
-                    name: "u4",
+         {
+                    label: "S4",
+                    name: "s4",
+                    attr: {
+                        type: "number",
+                        min:"0",
+                        max:"100"
+                    }, 
+                },
+         {
+                    label: "S5",
+                    name: "s5",
+                    attr: {
+                        type: "number",
+                        min:"0",
+                        max:"100"
+                    }, 
+                },
+         {
+                    label: "S1",
+                    name: "s6",
+                    attr: {
+                        type: "number",
+                        min:"0",
+                        max:"100"
+                    }, 
+                },
+         {
+                    label: "S2",
+                    name: "s7",
+                    attr: {
+                        type: "number",
+                        min:"0",
+                        max:"100"
+                    }, 
+                },
+         {
+                    label: "S3",
+                    name: "s8",
+                    attr: {
+                        type: "number",
+                        min:"0",
+                        max:"100"
+                    }, 
+                },
+         {
+                    label: "S4",
+                    name: "s9",
+                    attr: {
+                        type: "number",
+                        min:"0",
+                        max:"100"
+                    }, 
+                },
+         {
+                    label: "S5",
+                    name: "s0",
                     attr: {
                         type: "number",
                         min:"0",
@@ -643,6 +697,18 @@ function actualizarGridRegistroother(dready = 0) {
                 },
                 {
                     name: "uaca_id",
+                    type: "hidden",
+                },
+                 {
+                    name: "mod_id",
+                    type: "hidden",
+                },
+                 {
+                    name: "daes_id",
+                    type: "hidden",
+                },
+         {
+                    name: "daho_total_horas",
                     type: "hidden",
                 },
             ],
@@ -691,6 +757,17 @@ function actualizarGridRegistroother(dready = 0) {
 
             var bandera = 0;
             if(action == 'edit'){
+
+                 var maxim = 0;
+                $.each(o.data[indice], function( index, value ) {
+                            //console.log(index+" : "+value);
+     
+                  if(index == 'daho_total_horas' ){
+                        maxim = value ;
+                   }
+                });
+
+
                 $.each(o.data[indice], function( index, value ) {
                     
                      /*
@@ -704,30 +781,69 @@ function actualizarGridRegistroother(dready = 0) {
                             }//if
                         }//if   
                         */
-                    if(index == 'u1' ){
-                        if(value < 0 || value > 100){
-                            alertify.success("El cambio no se ha registrado, los valores del componente Síncrona debe estar entre 0 a 10");
+     
+                        
+ 
+                    if(index == 's1' ){
+                        if(value < 0 || value > maxim){
+                            alertify.error("El cambio no se ha registrado, los valores del componente debe estar entre 0 a " + maxim);
                             bandera = 1;
                         }//if
                     }//if 
-                    if(index == 'u2' ){
-                        if(value < 0 || value > 100){
-                            alertify.success("El cambio no se ha registrado, los valores del componente Síncrona debe estar entre 0 a 10");
+                    if(index == 's2' ){
+                        if(value < 0 || value > maxim){
+                            alertify.error("El cambio no se ha registrado, los valores del componente debe estar entre 0 a " + maxim);
                             bandera = 1;
                         }//if
-                    }//if  
-                    if(index == 'u3' ){
-                        if(value < 0 || value > 100){
-                            alertify.success("El cambio no se ha registrado, los valores del componente Síncrona debe estar entre 0 a 10");
+                    }//if   
+                     if(index == 's3' ){
+                        if(value < 0 || value > maxim){
+                            alertify.error("El cambio no se ha registrado, los valores del componente debe estar entre 0 a " + maxim);
                             bandera = 1;
                         }//if
-                    }//if  
-                    if(index == 'u4' ){
-                        if(value < 0 || value > 100){
-                            alertify.success("El cambio no se ha registrado, los valores del componente Síncrona debe estar entre 0 a 10");
+                    }//if   
+                     if(index == 's4' ){
+                        if(value < 0 || value > maxim){
+                            alertify.error("El cambio no se ha registrado, los valores del componente debe estar entre 0 a "+ maxim);
                             bandera = 1;
                         }//if
-                    }//if  
+                    }//if   
+                     if(index == 's5' ){
+                        if(value < 0 || value > maxim){
+                            alertify.error("El cambio no se ha registrado, los valores del componente debe estar entre 0 a " + maxim);
+                            bandera = 1;
+                        }//if
+                    }//if   
+                     if(index == 's6' ){
+                        if(value < 0 || value > maxim){
+                            alertify.error("El cambio no se ha registrado, los valores del componente debe estar entre 0 a " + maxim);
+                            bandera = 1;
+                        }//if
+                    }//if   
+                     if(index == 's7' ){
+                        if(value < 0 || value > maxim){
+                            alertify.error("El cambio no se ha registrado, los valores del componente debe estar entre 0 a " + maxim);
+                            bandera = 1;
+                        }//if
+                    }//if   
+                     if(index == 's8' ){
+                        if(value < 0 || value > maxim){
+                            alertify.error("El cambio no se ha registrado, los valores del componente debe estar entre 0 a " + maxim);
+                            bandera = 1;
+                        }//if
+                    }//if   
+                     if(index == 's9' ){
+                        if(value < 0 || value > maxim){
+                            alertify.error("El cambio no se ha registrado, los valores del componente debe estar entre 0 a 30" + maxim);
+                            bandera = 1;
+                        }//if
+                    }//if   
+                     if(index == 's0' ){
+                        if(value < 0 || value > maxim){
+                            alertify.error("El cambio no se ha registrado, los valores del componente debe estar entre 0 a " + maxim);
+                            bandera = 1;
+                        }//if
+                    }//if   
                 });
             }//if
 
@@ -781,16 +897,26 @@ function actualizarGridRegistroother(dready = 0) {
                 { data: "matricula"},
                 { data: "nombre" },
                 { data: "materia"},
-                { data: "par_nombre"},
-                { data: "u1"},
-                { data: "u2"},
-                { data: "u3"},
-                { data: "u4"},
+                { data: "s1"},
+                { data: "s2"},
+        { data: "s3"},
+                { data: "s4"},
+            { data: "s5"},
+                { data: "s6"},
+                { data: "s7"},
+                { data: "s8"},
+                { data: "s9"},
+                { data: "s0"},
                 { data: "paca_id"},
                 { data: "est_id"},
                 { data: "pro_id"},
                 { data: "asi_id"},
                 { data: "uaca_id"},
+                { data: "mod_id"},
+                { data: "daes_id"},
+            { data: "daho_total_horas"},
+        
+
             ],
             /*
             "ajax":{
@@ -805,7 +931,7 @@ function actualizarGridRegistroother(dready = 0) {
             */
             "language": {
                 "decimal"       : "",
-                "emptyTable"    : "No data available in table",
+                "emptyTable"    : "No hay datos cargados",
                 "info"          : "Mostrando _START_ de _END_ de _TOTAL_ registros",
                 "infoEmpty"     : "Mostrando 0 de 0 de 0 registros",
                 "infoFiltered"  : "(filtrado de un total de _MAX_ entries)",
@@ -866,7 +992,7 @@ function actualizarGridRegistroother(dready = 0) {
                 { targets: "no-sort", "orderable": false, "order": [],},
                 { targets: [ 1,2,3,4 ], responsivePriority: 1},     
                 {
-                    "targets": [ 11,12,13,14,15 ],
+                    "targets": [ 16,17,18,19,20,21,22,23 ], 
                     "visible": false,
                     "searchable": false
                 },
@@ -891,3 +1017,4 @@ function actualizarGridRegistroother(dready = 0) {
     }, true);
 }//function actualizarGridRegistro
 
+ 

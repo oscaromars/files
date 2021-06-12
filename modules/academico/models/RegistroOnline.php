@@ -57,17 +57,20 @@ class RegistroOnline extends \yii\db\ActiveRecord
         return Yii::$app->get('db_academico');
     }
 
+
     /**
      * {@inheritdoc}
      */
+    /*
     public function rules()
     {
         return [
             [['per_id', 'pes_id', 'ron_num_orden', 'ron_estado_registro', 'ron_estado', 'ron_estado_logico'], 'required'],
-            [['per_id', 'pes_id', 'ron_num_orden', 'ron_usuario_modifica'], 'integer'],
+            [['per_id', 'pes_id', 'ron_usuario_modifica'], 'integer'],
             [['ron_fecha_registro', 'ron_fecha_creacion', 'ron_fecha_modificacion'], 'safe'],
             [['ron_valor_arancel', 'ron_valor_matricula', 'ron_valor_gastos_adm', 'ron_valor_aso_estudiante'], 'number'],
             [['ron_anio'], 'string', 'max' => 4],
+            [['ron_num_orden'], 'string', 'max' => 10],
             [['ron_semestre', 'ron_estado_registro', 'ron_estado', 'ron_estado_logico', 'ron_estado_cancelacion'], 'string', 'max' => 1],
             [['ron_modalidad'], 'string', 'max' => 80],
             [['ron_carrera'], 'string', 'max' => 500],
@@ -75,6 +78,7 @@ class RegistroOnline extends \yii\db\ActiveRecord
             [['pes_id'], 'exist', 'skipOnError' => true, 'targetClass' => PlanificacionEstudiante::className(), 'targetAttribute' => ['pes_id' => 'pes_id']],
         ];
     }
+    */
 
     /**
      * {@inheritdoc}
@@ -244,4 +248,72 @@ class RegistroOnline extends \yii\db\ActiveRecord
         }
         return $resultData;
     }
+
+    public function insertRegistroOnline(
+        $per_id, 
+        $pes_id, 
+        $numOrden, 
+        $modalidad, 
+        $carrera, 
+        $semestre, 
+        $est_categoria, 
+        //$ron_valor_arancel, 
+        $ron_valor_aso_estudiante, 
+        $ron_valor_gastos_adm, 
+        $ron_valor_matricula,
+        $ron_estado_cancelacion
+    ){
+
+        $con = Yii::$app->db_academico;
+
+        $date = date(Yii::$app->params['dateTimeByDefault']);
+        $anio = strval(date("Y"));
+
+        $sql = "INSERT INTO " . $con->dbname . ".registro_online
+                (per_id, 
+                pes_id, 
+                ron_num_orden, 
+                ron_anio, 
+                ron_modalidad, 
+                ron_carrera, 
+                ron_semestre, 
+                ron_categoria_est, 
+                /*ron_valor_arancel, */
+                ron_valor_aso_estudiante, 
+                ron_valor_gastos_adm, 
+                ron_valor_matricula, 
+                ron_estado_registro, 
+                ron_fecha_registro, 
+                ron_fecha_creacion, 
+                ron_estado, 
+                ron_estado_logico,
+                ron_estado_cancelacion)
+                VALUES (
+                    $per_id, 
+                    $pes_id, 
+                    '$numOrden', 
+                    '$anio',
+                    '$modalidad', 
+                    '$carrera', 
+                    $semestre, 
+                    '$est_categoria',
+                    $ron_valor_aso_estudiante,
+                    $ron_valor_gastos_adm, 
+                    $ron_valor_matricula,
+                    1,
+                    '$date', 
+                    '$date', 
+                    1, 
+                    1,
+                    $ron_estado_cancelacion
+                )";
+
+        $command = $con->createCommand($sql);
+        \app\models\Utilities::putMessageLogFile($command->getRawSql());
+        $command->execute();
+
+        return $con->getLastInsertID($con->dbname . '.registro_online');
+    }
+
+   
 }

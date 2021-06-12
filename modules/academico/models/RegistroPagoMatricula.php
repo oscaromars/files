@@ -712,10 +712,10 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
 
         if ($grupo_id == 12){
             \app\models\Utilities::putMessageLogFile('ENTRO getAllListRegistryPaymentGrid' .$isEstud);
-            if($isEstud) {
+            //if($isEstud) {
                 \app\models\Utilities::putMessageLogFile('getAllListRegistryPaymentGrid' .$isEstud);
                 $condition .= "per.per_id = :per_id AND ";
-            }    
+            //}    
         }
         
         

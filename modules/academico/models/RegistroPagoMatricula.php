@@ -704,7 +704,7 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
         }
         if(isset($periodo) && $periodo != ""){
             $periodo = "%" . $periodo . "%";
-            $condition .= "p.pla_id like :periodo AND ";
+            $condition .= "p.pla_id = :periodo AND ";
             //$condition .= "p.pla_periodo_academico like :periodo AND ";
         }
  \app\models\Utilities::putMessageLogFile('getAllListRegistryPaymentGrid' .$grupo_id);
@@ -813,7 +813,6 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
                     p.pla_estado =1 and p.pla_estado_logico =1 and
                     per.per_estado = 1 and per.per_estado_logico = 1 and 
                     est.est_estado =1 and est.est_estado_logico = 1 and
-                    ram.rama_estado = 1 and ram.rama_estado_logico = 1 and 
                     r.ron_estado =1 and r.ron_estado_logico =1";
 
       

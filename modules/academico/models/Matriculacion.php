@@ -1064,6 +1064,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
         $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
         $comando->bindParam(":pes_id", $pes_id, \PDO::PARAM_INT);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        \app\models\Utilities::putMessageLogFile('getDataStudenFromRegistroOnline: '.$comando->getRawSql());
         $resultData = $comando->queryOne();
 
         return $resultData;
@@ -1224,7 +1225,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
         $comando->bindParam(":ron_id", $ron_id, \PDO::PARAM_INT);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
         $resultData = $comando->queryAll();
-
+        \app\models\Utilities::putMessageLogFile('getPlanificationFromRegistroOnline: '.$comando->getRawSql());
         return $resultData;
     }
 
@@ -1397,7 +1398,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
         $comando->bindParam(":rpm_id", $rpm_id, \PDO::PARAM_INT);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_INT);
         $resultData = $comando->queryAll();
-        //\app\models\Utilities::putMessageLogFile('selectEsquemaCalificacionUnidad: '.$comando->getRawSql());
+        \app\models\Utilities::putMessageLogFile('getDetalleCuotasRegistroOnline: '.$comando->getRawSql());
 
         return $resultData;
     }
@@ -1487,7 +1488,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
         $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_INT);
         $resultData = $comando->queryOne();
-        //\app\models\Utilities::putMessageLogFile('getMallaAcademicaRegistroOnline: '.$comando->getRawSql());
+        \app\models\Utilities::putMessageLogFile('getMallaAcademicaRegistroOnline: '.$comando->getRawSql());
         return $resultData;
     }
 

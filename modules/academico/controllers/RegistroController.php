@@ -35,6 +35,7 @@ use app\modules\academico\models\RegistroPagoMatricula;
 use app\modules\financiero\models\DatosPagoRegistro;
 use app\modules\financiero\models\PagosFacturaEstudiante;
 use app\modules\financiero\models\FacturasPendientesEstudiante;
+use app\modules\academico\models\UnidadAcademica;
 use yii\data\ArrayDataProvider;
 use yii\base\Exception;
 use app\modules\academico\Module as Academico;
@@ -91,6 +92,7 @@ class RegistroController extends \app\components\CController {
         $emp_id = Yii::$app->session->get("PB_idempresa");
         $data = Yii::$app->request->get();
         $model = new RegistroPagoMatricula();
+        $resp_perfil = new RegistroPagoMatricula();
         
         $emp_perMod = EmpresaPersona::findOne(['emp_id' => $emp_id, 'per_id' => $per_id, 'eper_estado' => '1', 'eper_estado_logico' => '1']);
         $grol_id = 32; //grol_id = 32 es estudiante
@@ -102,16 +104,30 @@ class RegistroController extends \app\components\CController {
         if($usagrolMod) $esEstu = TRUE;
         if ($per_id != $perid) { $esEstu = TRUE; } 
 
+\app\models\Utilities::putMessageLogFile('perid: '.$perid);
+
+\app\models\Utilities::putMessageLogFile('per_id: '.$per_id);
+
+\app\models\Utilities::putMessageLogFile('usagrolMod: '.$usagrolMod);
+\app\models\Utilities::putMessageLogFile('usu_id:     '.$usu_id);
+
+        $resp_grupo_id = $resp_perfil->getPerfilSearchListPago($usu_id);
+        $grupo_id = $resp_grupo_id ['gru_id'];
+
+\app\models\Utilities::putMessageLogFile('grupo_id : '.$grupo_id);        
+
         Yii::$app->session->set('usugrolMod', $usugrolMod);
         Yii::$app->session->set('per_id_perid', $per_id.'-'.$perid);
 
+\app\models\Utilities::putMessageLogFile('FUERA del PBgetFilter $esEstu: '.$esEstu);
         if ($data['PBgetFilter']) {
+\app\models\Utilities::putMessageLogFile('DENTRO del PBgetFilter $esEstu: '.$esEstu);
             $search = $data['search'];
             $periodo = $data['periodo'];
             $modalidad = $data['mod_id'];
             $estado = $data['estado'];
             return $this->renderPartial('index-grid', [
-                'model' => $model->getAllListRegistryPaymentGrid($search, $esEstu, $modalidad, $estado, $periodo, true, $per_id),
+                'model' => $model->getAllListRegistryPaymentGrid($search, $esEstu, $modalidad, $estado, $periodo, true, $per_id, $grupo_id ),
             ]);
         }
 
@@ -132,15 +148,26 @@ class RegistroController extends \app\components\CController {
 
         $modalidad = $registro_pago_matricula->getModalidadEstudiante($per_id);
 
+        if ( $grupo_id == 5){
+            $mod_modalidad = new Modalidad();
+            $mod_unidad = new UnidadAcademica();             
+            $arr_unidad = $mod_unidad->consultarUnidadAcademicasEmpresa(1);
+            $modalidad = $mod_modalidad->consultarModalidad($arr_unidad[1]["id"], 1);
+        }
+
         return $this->render('index', [
             'esEstu' => TRUE,//$esEstu, --DBE
+            'grupo_id' => $grupo_id,
             'periodoAcademico' => array_merge([0 => Academico::t("matriculacion", "-- Select Academic Period --")], ArrayHelper::map($arr_pla_per, "pla_id", "pla_periodo_academico")),
-            'arr_modalidad' => array_merge([0 => Academico::t("matriculacion", "-- Select Modality --")], ArrayHelper::map($arr_modalidad, "mod_id", "mod_nombre")),
+            //'arr_modalidad' => array_merge([0 => Academico::t("matriculacion", "-- Select Modality --")], ArrayHelper::map($arr_modalidad, "mod_id", "mod_nombre")),
             'arr_status' => $arr_status,
               'costo' => $costoc,
-            'model' => $model->getAllListRegistryPaymentGrid(NULL, TRUE/*$esEstu*/, NULL, NULL, NULL, true,$per_id),
+            'model' => $model->getAllListRegistryPaymentGrid(NULL, TRUE/*$esEstu*/, NULL, NULL, NULL, true, $per_id, $grupo_id ),
             'per_id' => $per_id,
-            'modalidad'=>array_merge([1 => Academico::t("matriculacion", $modalidad['name'])]),//$modalidad['name']
+            //'modalidad'=>array_merge([1 => Academico::t("matriculacion", $modalidad['name'])]),//$modalidad['name']
+
+
+            'modalidad' => $modalidad['name']?(array_merge([1 => Academico::t("matriculacion", $modalidad['name'])])):(ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $modalidad), "id", "name")),
         ]);
     }
 
@@ -2594,6 +2621,7 @@ class RegistroController extends \app\components\CController {
             $matriculacion_model = new Matriculacion();
             $resp_ron_id = $matriculacion_model->getDataStudenFromRegistroOnline($per_id, $pes_id);
             $ron_id = $resp_ron_id['ron_id'];
+            \app\models\Utilities::putMessageLogFile('A1: '.$ron_id);
             $dataPlanificacion = $matriculacion_model->getPlanificationFromRegistroOnline($ron_id);
 
             /*Detalles de pagos */

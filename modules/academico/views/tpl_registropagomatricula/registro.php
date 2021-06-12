@@ -212,7 +212,7 @@
         ?><br><br>
     </div>
 
-    <div class="blue">
+    <div class="blue" style="text-justify: auto">
         <p><b>Cláusulas:</b></p> 
         <p>    
             <ul style= "list-style-type: disc;">

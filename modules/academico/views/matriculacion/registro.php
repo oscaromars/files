@@ -132,11 +132,11 @@ echo "<b style='color:green'>EL PERIODO DE INSCRIPCION ESTA CERRADO</b>";
 <input type="hidden" id="frm_min_cancel" value="<?= $min_cancel ?>">
 <input type="hidden" id="frm_modalidad" value="<?= $data_student['mod_id'] ?>">
 <input type="hidden" id="frm_carrera" value="<?= $data_student['eaca_id'] ?>">
-<<<<<<< HEAD
+
 <input type="hidden" id="costoadm" value="<?= $gastoAdm ?>">
-=======
-<input type="hidden" id="costoadm" value="<?= $costo['gastos'] ?>">
->>>>>>> f43d82986dd44079df7ada60f27bb567438c5475
+
+<!--<input type="hidden" id="costoadm" value=" /*<?= $costo['gastos'] ?>*/"> -->
+
 
 <br>
 <?=

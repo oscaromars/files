@@ -95,11 +95,11 @@ class RegistroController extends \app\components\CController {
         $resp_perfil = new RegistroPagoMatricula();
         
         $emp_perMod = EmpresaPersona::findOne(['emp_id' => $emp_id, 'per_id' => $per_id, 'eper_estado' => '1', 'eper_estado_logico' => '1']);
-        $grol_id = 32; //grol_id = 32 es estudiante
+        $grol_id = 37; //grol_id = 32 es estudiante
         $usagrolMod = NULL;
         $esEstu = FALSE;
         if($emp_perMod){
-            $usagrolMod = UsuaGrolEper::findOne(['eper_id' => $emp_perMod->eper_id, 'usu_id' => $usu_id, 'grol_id' => '32', 'ugep_estado' => '1', 'ugep_estado_logico' => '1']);
+            $usagrolMod = UsuaGrolEper::findOne(['eper_id' => $emp_perMod->eper_id, 'usu_id' => $usu_id, 'grol_id' => '37', 'ugep_estado' => '1', 'ugep_estado_logico' => '1']);
         }
         if($usagrolMod) $esEstu = TRUE;
         if ($per_id != $perid) { $esEstu = TRUE; } 

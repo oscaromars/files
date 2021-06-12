@@ -11,7 +11,11 @@ use yii\grid\CheckboxColumn;
 academico::registerTranslations();
 
 $modelCancelItem = array();
+
 //print_r($data_student['mod_id']);die();
+
+//print_r($planificacion);
+>>>>>>> f43d82986dd44079df7ada60f27bb567438c5475
 $modelCancelRon = CancelacionRegistroOnline::findOne(['ron_id' => $ron_id, 'cron_estado' => '1', 'cron_estado_logico' => '1',]);
 if($modelCancelRon){
     //$cancelStatus = $modelCancelRon->cron_estado_cancelacion;
@@ -60,6 +64,7 @@ if($modelCancelRon){
                 'format' => 'html',
                 
                 'value' => function ($model) {
+
                     if ($model['modalidad']=='1'){
                         if ($model["Hour"] == 'H1')
                             return '<span title="L-M-W :: 19:00-20:00">'.$model['Hour'].'</span>';
@@ -115,6 +120,7 @@ if($modelCancelRon){
                         else
                             return '<span title="">'.$model['Hour'].'</span>';
                     }
+
                 },
 
             ],

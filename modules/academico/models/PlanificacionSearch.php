@@ -4,6 +4,7 @@ namespace app\modules\academico\models;
 
 use app\models\Utilities;
 use app\modules\academico\models\Planificacion;
+use app\modules\academico\models\EstudioAcademico;
 use yii\base\Model;
 use Yii;
 use yii\data\ActiveDataProvider;
@@ -20,13 +21,13 @@ class PlanificacionSearch extends Planificacion {
 	public function rules() {
         return [
             [['pla_id', 'saca_id', 'mod_id', 'per_id'], 'integer'],
+            
         ];
     }
 
     function search($params) {
         $query = Planificacion::find();
-        $arr_carrera = EstudioAcademico();
-
+           
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'arr_carrera' => $arr_carrera,
@@ -34,6 +35,7 @@ class PlanificacionSearch extends Planificacion {
                 'pagesize' => 10 
             ]
         ]);
+
 
         $this->load($params);
 
@@ -51,24 +53,21 @@ class PlanificacionSearch extends Planificacion {
             'saca_id' => $this->saca_id,
             'mod_id' => $this->mod_id,
             'per_id' => $this->per_id,
-            'eaca_id' => $this->eaca_id,
+            
         ]);
+
 
         return $dataProvider;
     }
 
-    public function getListadoMatriculados($arrFiltro = array(), $params = null, $onlyData = false, $tipo = 1) {
+    public function getListadoMatriculados($params = null, $onlyData = false, $tipo = 1) {
         $con_academico = \Yii::$app->db_academico;
         $con_db = \Yii::$app->db;
-
-        if (isset($eaca_id) && $eaca_id > 0) {
-            $str_carrera = "eaca.eaca_id = :eaca_id AND ";
-        }
-        
 
         $sql = "select  
                 CONCAT(per.per_pri_apellido,' ' ,per.per_pri_nombre) as estudiante,
                 per.per_cedula as cedula,
+                CONCAT(baca.baca_nombre, '-', pla.pla_periodo_academico) as semestre,
                 eaca.eaca_descripcion as carrera,
                 moda.mod_descripcion as modalidad,
                 uaca.uaca_descripcion as unidad,
@@ -84,8 +83,9 @@ class PlanificacionSearch extends Planificacion {
                 Inner Join db_academico.unidad_academica uaca on uaca.uaca_id = meun.uaca_id 
                 Inner Join db_academico.modalidad moda on moda.mod_id = pla.mod_id 
                 Inner Join db_academico.estudio_academico eaca on eaca.eaca_id = meun.eaca_id
-                Where $str_carrera
-                    rpm.rpm_estado_aprobacion = 1 and
+                Inner Join db_academico.periodo_academico paca on paca.paca_id = pla.paca_id
+                Inner Join db_academico.bloque_academico baca on baca.baca_id = paca.baca_id
+                Where rpm.rpm_estado_aprobacion = 1 and
                     pla.pla_estado = 1 and pla.pla_estado_logico = 1
                     and est.est_estado = 1 and est.est_estado_logico = 1
                     and per.per_estado = 1 and per.per_estado_logico = 1";
@@ -95,19 +95,17 @@ class PlanificacionSearch extends Planificacion {
                
                 if ($this->mod_id) {
                     $sql = $sql . " and pla.mod_id =" . $this->mod_id;
+
                 }
 
                 if ($this->pla_id) {
-                    $sql = $sql . " and pla.pla_id =" . $this->pla_id;
+                    $sql = $sql . " and pla.paca_id =" . $this->pla_id;
                 }
 
                 /*if ($this->eaca_id) {
                     $sql = $sql . " and eaca.eaca_id =" . $this->eaca_id;
                 }*/
 
-                if (isset($eaca_id)) {
-                $comando->bindParam(':eaca_id', $eaca_id, \PDO::PARAM_INT);
-            	}
             } 
         }
         if ($tipo == 2) {
@@ -124,14 +122,10 @@ class PlanificacionSearch extends Planificacion {
                 $sql = $sql . " and eaca.eaca_id =" . $params['eaca_id'];
             }*/
 
-            if (isset($eaca_id)) {
-                $comando->bindParam(':eaca_id', $eaca_id, \PDO::PARAM_INT);
-            }
-
         }
-        Utilities::putMessageLogFile('sql:' . $sql);
+        //Utilities::putMessageLogFile('sql:' . $sql);
         $comando = $con_academico->createCommand($sql);
-        $comando->bindParam(":eaca_id", $eaca_id, \PDO::PARAM_INT);
+        //$comando->bindParam(":eaca_id", $eaca_id, \PDO::PARAM_INT);
         $res = $comando->queryAll();
 
         if ($onlyData)

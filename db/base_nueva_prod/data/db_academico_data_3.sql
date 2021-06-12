@@ -63,6 +63,46 @@ INSERT INTO `actividad` (`act_id`, `act_nombre`, `act_descripcion`, `act_estado`
 (7, 'Paper-Proyecto', 'Paper-Project', '1', '1');
 */
 
+/*
+INSERT INTO `componente_unidad_actividad` (`cuac_id`, `cuni_id`, `act_id`, `cuac_estado`, `cuac_estado_logico`) VALUES
+-- Grado
+(1, 1, 1, '1', '1'),
+(2, 2, 2, '1', '1'),
+(3, 3, 3, '1', '1'),
+(4, 4, 4, '1', '1'),
+(5, 5, 5, '1', '1'),
+-- Posgrado
+(6, 6, 1, '1', '1'),
+(7, 7, 6, '1', '1'),
+(8, 8, 3, '1', '1'),
+(9, 9, 4, '1', '1'),
+(10, 10, 7, '1', '1');
+*/
+
+INSERT INTO `esquema_calificacion` (`ecal_id`, `ecal_nombre`, `ecal_descripcion`, `ecal_estado`, `ecal_estado_logico`) VALUES
+(1, 'Parcial I', 'Parcial I', '1', '1'),
+(2, 'Parcial II', 'Parcial II', '1', '1'),
+(3, 'Supletorio', 'Supletorio', '1', '1');
+
+INSERT INTO `esquema_calificacion_unidad` (`ecun_id`, `ecal_id`, `uaca_id`, `ecun_estado`, `ecun_estado_logico`) VALUES
+-- Grado
+(1, 1, 1, '1', '1'),
+(2, 2, 1, '1', '1'),
+(3, 3, 1, '1', '1'),
+-- Posgrado
+(4, 1, 2, '1', '1'),
+(5, 3, 2, '1', '1');
+
+
+INSERT INTO `asistencia_esquema_unidad` (`aeun_id`, `ecun_id`, `aeun_cantidad`, `aeun_estado`, `aeun_estado_logico`) VALUES
+-- Grado
+(1, 1, 100, '1', '1'),
+(2, 2, 100, '1', '1'),
+-- Posgrado
+(3, 4, 100, '1', '1'),
+(4, 5, 100, '1', '1');
+
+
 INSERT INTO `componente_unidad` (`cuni_id`, `com_id`, `uaca_id`, `mod_id`, `ecal_id` , `cuni_calificacion`, `cuni_estado`, `cuni_estado_logico`) VALUES
 -- Grado online
 -- Parcial 1
@@ -104,46 +144,6 @@ INSERT INTO `componente_unidad` (`cuni_id`, `com_id`, `uaca_id`, `mod_id`, `ecal
 (25, 7, 2, 2, NULL, 4, '1', '1'),
 (26, 8, 2, 2, NULL, 3, '1', '1'),
 (27, 6, 2, 2, NULL, 3, '1', '1');
-
-
-/*
-INSERT INTO `componente_unidad_actividad` (`cuac_id`, `cuni_id`, `act_id`, `cuac_estado`, `cuac_estado_logico`) VALUES
--- Grado
-(1, 1, 1, '1', '1'),
-(2, 2, 2, '1', '1'),
-(3, 3, 3, '1', '1'),
-(4, 4, 4, '1', '1'),
-(5, 5, 5, '1', '1'),
--- Posgrado
-(6, 6, 1, '1', '1'),
-(7, 7, 6, '1', '1'),
-(8, 8, 3, '1', '1'),
-(9, 9, 4, '1', '1'),
-(10, 10, 7, '1', '1');
-*/
-
-INSERT INTO `esquema_calificacion` (`ecal_id`, `ecal_nombre`, `ecal_descripcion`, `ecal_estado`, `ecal_estado_logico`) VALUES
-(1, 'Parcial I', 'Parcial I', '1', '1'),
-(2, 'Parcial II', 'Parcial II', '1', '1'),
-(3, 'Supletorio', 'Supletorio', '1', '1');
-
-INSERT INTO `esquema_calificacion_unidad` (`ecun_id`, `ecal_id`, `uaca_id`, `ecun_estado`, `ecun_estado_logico`) VALUES
--- Grado
-(1, 1, 1, '1', '1'),
-(2, 2, 1, '1', '1'),
-(3, 3, 1, '1', '1'),
--- Posgrado
-(4, 1, 2, '1', '1'),
-(5, 3, 2, '1', '1');
-
-
-INSERT INTO `asistencia_esquema_unidad` (`aeun_id`, `ecun_id`, `aeun_cantidad`, `aeun_estado`, `aeun_estado_logico`) VALUES
--- Grado
-(1, 1, 100, '1', '1'),
-(2, 2, 100, '1', '1'),
--- Posgrado
-(3, 4, 100, '1', '1'),
-(4, 5, 100, '1', '1');
 
 -- -- ------------------------ ------------------------------
 --

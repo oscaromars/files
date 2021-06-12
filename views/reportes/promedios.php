@@ -1,9 +1,8 @@
 <?php
 
-use app\modules\academico\models\DistributivoAcademico;
 use yii\helpers\Html;
 use kartik\grid\GridView;
-use app\modules\academico\Module as academico;
+use app\modules\academico\Module as academico; 
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -11,13 +10,12 @@ use app\modules\academico\Module as academico;
  * and open the template in the editor.
  */
 ?>
-<?php echo $this->render('_form_Matriculados', ['model' => $searchModel]); ?>
+<?php echo $this->render('_form_reportepromedio', ['model' => $searchModel]); ?>
 
-
+ 
 <?=
 
 GridView::widget([
-    'id' => 'Tbg_Registro_matriculados',
     'dataProvider' => $dataProvider,
     //'filterModel' => $searchModel,
     'pjax' => true,
@@ -26,7 +24,7 @@ GridView::widget([
     'striped' => false,
     'panel' => [
         'type' => 'primary',
-        'heading' => 'Reporte Matriculados'
+        'heading' => 'Reporte Promedios'
     ],
     'exportConfig' => [
         //GridView::CSV => ['label' => 'Save as CSV'],
@@ -74,43 +72,28 @@ GridView::widget([
     'columns' => [
        
         [
-            'attribute' => 'estudiante',
-            'header' => academico::t("Academico", "Estudiantes"),
-            'value' => 'estudiante',
-        ],
-        [
-            'attribute' => 'cedula',
-            'header' => academico::t("Academico", "Cedula "),
-            'value' => 'cedula',
-        ],
-        [
-            'attribute' => 'semestre',
-            'header' => academico::t("Academico", "Semestre Academico "),
-            'value' => 'semestre',
-        ],
-        [
             'attribute' => 'carrera',
             'header' => academico::t("Academico", "Carrera"),
             'value' => 'carrera',
+          //'group' => false,
+        ],
+        [
+            'attribute' => 'estudiante',
+            'header' => academico::t("Academico", "Nombres Completos"),
+            'value' => 'estudiante',
+            //'group' => false, // enable grouping
+        ],
+        [
+            'attribute' => 'asignatura',
+            'header' => academico::t("Academico", "Asignatura"),
+            'value' => 'asignatura',
+            //'group' => false, // enable grouping
+        ],           
+        [
+            'attribute' => 'promedio',
+            'header' => academico::t("Academico", "Promedio"),
+            'value' => 'promedio',
           
-        ],
-        [
-            'attribute' => 'unidad',
-            'header' => academico::t("Academico", "Unidad Academico"),
-            'value' => 'unidad',
-        ],
-         
-        [
-            'attribute' => 'modalidad',
-            'header' => academico::t("Academico", "Modalidad"),
-            'value' => 'modalidad',
-          
-        ],
-        [
-            'attribute' => 'n_matricula',
-            'header' => academico::t("Academico", "Matricula"),
-            'value' => 'n_matricula',
-        
         ],
     ],
 ]);

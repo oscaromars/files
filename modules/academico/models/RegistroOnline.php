@@ -57,9 +57,11 @@ class RegistroOnline extends \yii\db\ActiveRecord
         return Yii::$app->get('db_academico');
     }
 
+
     /**
      * {@inheritdoc}
      */
+    /*
     public function rules()
     {
         return [
@@ -76,6 +78,7 @@ class RegistroOnline extends \yii\db\ActiveRecord
             [['pes_id'], 'exist', 'skipOnError' => true, 'targetClass' => PlanificacionEstudiante::className(), 'targetAttribute' => ['pes_id' => 'pes_id']],
         ];
     }
+    */
 
     /**
      * {@inheritdoc}
@@ -257,7 +260,8 @@ class RegistroOnline extends \yii\db\ActiveRecord
         //$ron_valor_arancel, 
         $ron_valor_aso_estudiante, 
         $ron_valor_gastos_adm, 
-        $ron_valor_matricula
+        $ron_valor_matricula,
+        $ron_estado_cancelacion
     ){
 
         $con = Yii::$app->db_academico;
@@ -282,7 +286,8 @@ class RegistroOnline extends \yii\db\ActiveRecord
                 ron_fecha_registro, 
                 ron_fecha_creacion, 
                 ron_estado, 
-                ron_estado_logico)
+                ron_estado_logico,
+                ron_estado_cancelacion)
                 VALUES (
                     $per_id, 
                     $pes_id, 
@@ -299,7 +304,8 @@ class RegistroOnline extends \yii\db\ActiveRecord
                     '$date', 
                     '$date', 
                     1, 
-                    1
+                    1,
+                    $ron_estado_cancelacion
                 )";
 
         $command = $con->createCommand($sql);

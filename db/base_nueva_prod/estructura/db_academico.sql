@@ -1919,6 +1919,26 @@ create table if not exists `curso_educativa` (
 
 -- --------------------------------------------------------
 --
+-- Estructura de tabla para la tabla `curso_educativa_unidad`
+-- --------------------------------------------------------
+create table if not exists `curso_educativa_unidad` (
+ `ceuni_id` bigint(20) not null auto_increment primary key,
+ `cedu_id` bigint(20) not null,
+ `ceuni_codigo_unidad` bigint(20) not null,
+ `ceuni_descripcion_unidad` varchar(500) not null,
+ `ceuni_usuario_ingreso` bigint(20) not null,
+ `ceuni_usuario_modifica` bigint(20) null,
+ `ceuni_fecha_inicio` timestamp null default null,
+ `ceuni_fecha_fin` timestamp null default null,
+ `ceuni_estado` varchar(1) not null,
+ `ceuni_fecha_creacion` timestamp not null default current_timestamp,
+ `ceuni_fecha_modificacion` timestamp null default null,
+ `ceuni_estado_logico` varchar(1) not null,
+ foreign key (cedu_id) references `curso_educativa`(cedu_id)
+);
+
+-- --------------------------------------------------------
+--
 -- Estructura de tabla para la tabla `curso_educativa_estudiante`
 -- --------------------------------------------------------
 create table if not exists `curso_educativa_estudiante` (
@@ -1956,26 +1976,6 @@ create table if not exists `curso_educativa_estudiante_historial` (
     `ceeh_fecha_creacion` timestamp not null default current_timestamp,
     `ceeh_fecha_modificacion` timestamp null default null,
     `ceeh_estado_logico` varchar(1) not null
-);
-
--- --------------------------------------------------------
---
--- Estructura de tabla para la tabla `curso_educativa_unidad`
--- --------------------------------------------------------
-create table if not exists `curso_educativa_unidad` (
- `ceuni_id` bigint(20) not null auto_increment primary key,
- `cedu_id` bigint(20) not null,
- `ceuni_codigo_unidad` bigint(20) not null,
- `ceuni_descripcion_unidad` varchar(500) not null,
- `ceuni_usuario_ingreso` bigint(20) not null,
- `ceuni_usuario_modifica` bigint(20) null,
- `ceuni_fecha_inicio` timestamp null default null,
- `ceuni_fecha_fin` timestamp null default null,
- `ceuni_estado` varchar(1) not null,
- `ceuni_fecha_creacion` timestamp not null default current_timestamp,
- `ceuni_fecha_modificacion` timestamp null default null,
- `ceuni_estado_logico` varchar(1) not null,
- foreign key (cedu_id) references `curso_educativa`(cedu_id)
 );
 
 -- --------------------------------------------------------
@@ -2026,6 +2026,20 @@ create table if not exists `actividad` (
 
 -- --------------------------------------------------------
 -- 
+-- Estructura de tabla para la tabla `esquema_calificacion`
+-- --------------------------------------------------------
+create table if not exists `esquema_calificacion` (
+  `ecal_id` bigint(20) NOT NULL AUTO_INCREMENT primary key,
+  `ecal_nombre` varchar(100) NOT NULL, 
+  `ecal_descripcion` varchar(100) NOT NULL,   
+  `ecal_estado` varchar(1) NOT NULL,
+  `ecal_fecha_creacion` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `ecal_fecha_modificacion` timestamp NULL DEFAULT NULL,
+  `ecal_estado_logico` varchar(1) NOT NULL  
+);
+
+-- --------------------------------------------------------
+-- 
 -- Estructura de tabla para la tabla `componente_unidad`
 -- --------------------------------------------------------
 create table if not exists `componente_unidad` (
@@ -2059,20 +2073,6 @@ create table if not exists `componente_unidad_actividad` (
   `cuac_estado_logico` varchar(1) NOT NULL,
   foreign key (cuni_id) references `componente_unidad`(cuni_id),
   foreign key (act_id) references `actividad`(act_id)
-);
-
--- --------------------------------------------------------
--- 
--- Estructura de tabla para la tabla `esquema_calificacion`
--- --------------------------------------------------------
-create table if not exists `esquema_calificacion` (
-  `ecal_id` bigint(20) NOT NULL AUTO_INCREMENT primary key,
-  `ecal_nombre` varchar(100) NOT NULL, 
-  `ecal_descripcion` varchar(100) NOT NULL,   
-  `ecal_estado` varchar(1) NOT NULL,
-  `ecal_fecha_creacion` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `ecal_fecha_modificacion` timestamp NULL DEFAULT NULL,
-  `ecal_estado_logico` varchar(1) NOT NULL  
 );
 
 -- --------------------------------------------------------

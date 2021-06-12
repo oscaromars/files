@@ -683,7 +683,7 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
 
     
 
-    function getAllListRegistryPaymentGrid($search = NULL, $isEstud, $mod_id = NULL, $estado = NULL, $periodo = NULL, $dataProvider = false, $per_id){
+    function getAllListRegistryPaymentGrid($search = NULL, $isEstud, $mod_id = NULL, $estado = NULL, $periodo = NULL, $dataProvider = false, $per_id, $grupo_id){
         $con_academico = \Yii::$app->db_academico;
         $con = \Yii::$app->db;
          if ($per_id==Null) { $per_id = Yii::$app->session->get("PB_perid"); } 
@@ -704,11 +704,20 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
         }
         if(isset($periodo) && $periodo != ""){
             $periodo = "%" . $periodo . "%";
-            $condition .= "p.pla_periodo_academico like :periodo AND ";
+            $condition .= "p.pla_id like :periodo AND ";
+            //$condition .= "p.pla_periodo_academico like :periodo AND ";
         }
-        if($isEstud) {
-            $condition .= "per.per_id = :per_id AND ";
+ \app\models\Utilities::putMessageLogFile('getAllListRegistryPaymentGrid' .$grupo_id);
+  \app\models\Utilities::putMessageLogFile('getAllListRegistryPaymentGrid' .$isEstud);
+
+        if ($grupo_id == 12){
+            \app\models\Utilities::putMessageLogFile('ENTRO getAllListRegistryPaymentGrid' .$isEstud);
+            if($isEstud) {
+                \app\models\Utilities::putMessageLogFile('getAllListRegistryPaymentGrid' .$isEstud);
+                $condition .= "per.per_id = :per_id AND ";
+            }    
         }
+        
         
         $sql = "SELECT distinct
                     r.ron_id as Id, 
@@ -809,7 +818,7 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
 
       
         $comando = $con_academico->createCommand($sql);
-        \app\models\Utilities::putMessageLogFile($comando->getRawSql());
+        
         if(isset($search) && $search != "")  $comando->bindParam(":search",$search_cond, \PDO::PARAM_STR);
         if(isset($mod_id) && $mod_id != "" && $mod_id != 0)  $comando->bindParam(":mod_id",$mod_id, \PDO::PARAM_INT);
         if(isset($estado) && $estado != "" && $estado != -1)  $comando->bindParam(":estado",$estado, \PDO::PARAM_INT);
@@ -817,6 +826,8 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
         if($isEstud)    $comando->bindParam(":per_id",$per_id, \PDO::PARAM_INT);
 
         $res = $comando->queryAll();
+        \app\models\Utilities::putMessageLogFile($comando->getRawSql());
+
         if($dataProvider){
             $dataProvider = new ArrayDataProvider([
                 'key' => 'Id',
@@ -1185,7 +1196,7 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
                 inner join " . $con->dbname . ".modalidad md on pla.mod_id = md.mod_id
                 where pla.per_id = $per_id limit 0,1;";
         $comando = $con->createCommand($sql);
-        //\app\models\Utilities::putMessageLogFile('mensaje: ' .$comando->getRawSql());
+        \app\models\Utilities::putMessageLogFile('mensaje: ' .$comando->getRawSql());
         
         $resultData = $comando->queryOne();
 
@@ -1212,6 +1223,44 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
          $resultData = $comando->queryOne();
  
          return $resultData;
+    }
+
+ public function getPerfilSearchListPago($usu_id){
+    $con = \Yii::$app->db_academico;
+    $sql = "SELECT 
+                g.gru_id as gru_id, u.usu_id as usu_id, u.usu_user as usu_user
+                FROM 
+                    db_asgard.usuario AS u 
+                    INNER JOIN db_asgard.usua_grol_eper AS ug ON u.usu_id = ug.usu_id
+                    INNER JOIN db_asgard.empresa_persona AS ep ON ug.eper_id = ep.eper_id
+                    INNER JOIN db_asgard.empresa AS e ON ep.emp_id = e.emp_id
+                    INNER JOIN db_asgard.grup_rol AS gr ON gr.grol_id = ug.grol_id 
+                    INNER JOIN db_asgard.grupo AS g ON g.gru_id = gr.gru_id  -- gru_id: 12 Estudiante,  5: colecturia, 4:financiero
+                    INNER JOIN db_asgard.persona AS p ON p.per_id = u.per_id 
+                WHERE 
+                    u.usu_id = :usu_id AND  -- 1511 
+                    g.gru_id in(12,5) AND
+                    ug.ugep_estado_logico=1 AND 
+                    ug.ugep_estado=1 AND 
+                    ep.eper_estado_logico=1 AND 
+                    ep.eper_estado=1 AND
+                    e.emp_estado_logico=1 AND 
+                    e.emp_estado=1 AND
+                    gr.grol_estado_logico=1 AND 
+                    gr.grol_estado=1 AND 
+                    p.per_estado_logico=1 AND 
+                    p.per_estado=1 AND 
+                    g.gru_estado = 1 AND 
+                    g.gru_estado_logico=1 AND 
+                    u.usu_estado=1 AND 
+                    u.usu_estado_logico=1;";
+
+    $comando = $con->createCommand($sql);
+    $comando->bindParam(":usu_id", $usu_id, \PDO::PARAM_INT);
+    $resultData = $comando->queryOne();
+    \app\models\Utilities::putMessageLogFile('getPerfilSearchListPago: '.$comando->getRawSql());
+    return $resultData;            
+
     }
 }
 

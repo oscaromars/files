@@ -59,7 +59,6 @@ if($modelCancelRon){
                 'contentOptions' => ['class' => 'text-center'],
                 'headerOptions' => ['class' => 'text-center'],
                 'format' => 'html',
-                
                 'value' => function ($model) {
                     if ($model["Hour"] == 'H1')
                         return '<span title="L-M-W :: 19:00-20:00">'.$model['Hour'].'</span>';

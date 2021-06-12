@@ -245,6 +245,22 @@ function registerSubject() {
     var contador = 0;
 
     $('#grid_registro_list input[type=checkbox]').each(function() {
+        if (this.checked ) {
+            contador += 1;
+        }
+    });
+    var message = {
+        "wtmessage": objLang.You_must_choose_at_least_two,
+        "title": objLang.Error
+    }
+
+    if (contador < 2) {
+        message.wtmessage = message.wtmessage;
+        showAlert("NO_OK", "Error", message);
+        return;
+    }
+
+    $('#grid_registro_list input[type=checkbox]').each(function() {
         //console.log("-----------------");
         //console.log(this);
         if (this.checked &&  $(this).attr('disabled') != "disabled" ) {
@@ -258,16 +274,7 @@ function registerSubject() {
         }
     });
 
-    var message = {
-        "wtmessage": objLang.You_must_choose_at_least_two,
-        "title": objLang.Error
-    }
-
-    if (contador < 2) {
-        message.wtmessage = message.wtmessage;
-        showAlert("NO_OK", "Error", message);
-        return;
-    }
+    
 
     arrParams.pes_id = $('#frm_pes_id').val();
     arrParams.ron_id = $('#frm_ron_id').val();

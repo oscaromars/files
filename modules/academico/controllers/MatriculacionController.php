@@ -6,44 +6,29 @@ use Yii;
 use app\modules\admision\models\SolicitudInscripcion;
 use app\modules\academico\models\Matriculacion;
 use yii\helpers\ArrayHelper;
-use yii\helpers\Url;
 use app\models\Utilities;
 use app\models\ExportFile;
 use app\models\Usuario;
 use app\models\Persona;
-use app\modules\academico\models\CancelacionRegistroOnline;
-use app\modules\academico\models\CancelacionRegistroOnlineItem;
-use app\modules\academico\models\EnrolamientoAgreement;
 use app\modules\academico\models\Estudiante;
-use app\modules\academico\models\EstudiantePagoCarrera;
 use app\modules\academico\models\Planificacion;
 use app\modules\academico\models\Modalidad;
 use app\modules\academico\models\RegistroOnline;
 use app\modules\academico\models\RegistroOnlineCuota;
 use app\modules\academico\models\PlanificacionEstudiante;
-use app\modules\academico\models\ProgramaCostoCredito;
-use app\modules\academico\models\PeriodoAcademico;
-use app\modules\academico\models\RegistroAdicionalMaterias;
 use app\modules\academico\models\RegistroOnlineItem;
 use app\modules\academico\models\RegistroPagoMatricula;
-use app\modules\academico\models\AsignaturasPorPeriodo;
+use app\modules\academico\models\PeriodoAcademico;
+use app\modules\financiero\models\Secuencias;
 use app\modules\academico\models\Asignatura;
 use app\modules\financiero\models\FacturasPendientesEstudiante;
-use app\modules\academico\models\AsignacionBecasEstudiante;
-use app\modules\financiero\models\PagosFacturaEstudiante;
-use app\modules\academico\models\Especies;
-use app\modules\financiero\models\FormaPago;
-use app\modules\academico\models\EstudioAcademico;
-use app\modules\academico\models\UnidadAcademica;
-use app\modules\academico\models\ModuloEstudio;
-use app\modules\admision\models\Oportunidad;
-use app\models\EmpresaPersona;
-use app\models\UsuaGrolEper;
-use app\modules\academico\models\NumeroMatricula;
-use app\modules\academico\models\FechasVencimientoPago;
 use yii\data\ArrayDataProvider;
 use yii\base\Exception;
 use yii\base\Security;
+use app\modules\financiero\models\PagosFacturaEstudiante;
+use app\modules\academico\models\Especies;
+use app\modules\financiero\models\FormaPago;
+use app\modules\academico\models\FechasVencimientoPago;
 
 
 use app\modules\academico\Module as Academico;
@@ -971,7 +956,7 @@ class MatriculacionController extends \app\components\CController {
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
 
-            //print_r($data);die();
+            print_r($data);die();
             /*
             if (Yii::$app->session->get("PB_perid") < 1000) {
                 $per_id = $data['per_id'];

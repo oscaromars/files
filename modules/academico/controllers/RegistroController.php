@@ -95,11 +95,11 @@ class RegistroController extends \app\components\CController {
         $resp_perfil = new RegistroPagoMatricula();
         
         $emp_perMod = EmpresaPersona::findOne(['emp_id' => $emp_id, 'per_id' => $per_id, 'eper_estado' => '1', 'eper_estado_logico' => '1']);
-        $grol_id = 37; //grol_id = 32 es estudiante
+        $grol_id = 32; //grol_id = 32 es estudiante
         $usagrolMod = NULL;
         $esEstu = FALSE;
         if($emp_perMod){
-            $usagrolMod = UsuaGrolEper::findOne(['eper_id' => $emp_perMod->eper_id, 'usu_id' => $usu_id, 'grol_id' => '37', 'ugep_estado' => '1', 'ugep_estado_logico' => '1']);
+            $usagrolMod = UsuaGrolEper::findOne(['eper_id' => $emp_perMod->eper_id, 'usu_id' => $usu_id, 'grol_id' => '32', 'ugep_estado' => '1', 'ugep_estado_logico' => '1']);
         }
         if($usagrolMod) $esEstu = TRUE;
         if ($per_id != $perid) { $esEstu = TRUE; } 
@@ -161,7 +161,7 @@ class RegistroController extends \app\components\CController {
             'periodoAcademico' => array_merge([0 => Academico::t("matriculacion", "-- Select Academic Period --")], ArrayHelper::map($arr_pla_per, "pla_id", "pla_periodo_academico")),
             //'arr_modalidad' => array_merge([0 => Academico::t("matriculacion", "-- Select Modality --")], ArrayHelper::map($arr_modalidad, "mod_id", "mod_nombre")),
             'arr_status' => $arr_status,
-            'costo' => $costoc,
+              'costo' => $costoc,
             'model' => $model->getAllListRegistryPaymentGrid(NULL, TRUE/*$esEstu*/, NULL, NULL, NULL, true, $per_id, $grupo_id ),
             'per_id' => $per_id,
             'modalidad'=>array_merge([1 => Academico::t("matriculacion", $modalidad['name'])]),//$modalidad['name']
@@ -174,11 +174,13 @@ class RegistroController extends \app\components\CController {
         ]);
     }
 
-    public function actionNew($id,$rama_id,$periodo,$pla_id){
+    public function actionNew($id,$ron, $cuotas,$idtotal){
         \app\models\Utilities::putMessageLogFile('RegistroOnline::findOne($id);: '.$id);
-        $model = RegistroOnline::findOne($id);
+        $model = RegistroOnline::findOne(base64_decode($id));
         $data = Yii::$app->request->get();
-        $rama_id = $data['rama_id'];
+        $rama_id = base64_decode($data['ron']);
+        $cuotas = base64_decode($data['cuotas']);
+        $idtotal = base64_decode($data['idtotal']);
         $costo = $data['costo'];
         $registroOnline = new RegistroOnline();
         $pes_id = $registroOnline->getPes_id($id);//$model[0]['pes_id'];
@@ -204,7 +206,7 @@ class RegistroController extends \app\components\CController {
         $_SESSION['JSLANG']['Please select a number of installments.'] = Academico::t('registro', 'Please select a number of installments.');
 
         $model_pes = PlanificacionEstudiante::findOne($pes_id);
-        $per_id = $id;
+        $per_id = base64_decode($id);
         $model_pes = PlanificacionEstudiante::findOne($per_id);
         $planificacionEst = new PlanificacionEstudiante();
         $pla = $planificacionEst->getPla_id($per_id);
@@ -243,7 +245,7 @@ class RegistroController extends \app\components\CController {
         $arr_vence = RegistroPagoMatricula::getFechasVencimiento2($periodo[0]['fecha_fin']);
         $registro_pago_matricula = new RegistroPagoMatricula();
         $arr_vencimiento = $registro_pago_matricula->fechasVencimientoPeriodo($pla_id);
-        $cuotas = $registro_pago_matricula->getCuotasPeriodo($rama_id);
+        //$cuotas = $registro_pago_matricula->getCuotasPeriodo($rama_id);
         $dataValue = array();//['Id' => 1, 'Pago' => 'Payment #1', 'Porcentaje' => '100.00%', 'Valor' => '$'.(number_format($arr_cost_mat['Costo'], 2, '.', ','))];
         $dataProvider = new ArrayDataProvider([
             'key' => 'Id',
@@ -266,7 +268,7 @@ class RegistroController extends \app\components\CController {
             'arr_forma_pago' => $arr_forma_pago,
             'arr_credito' => $this->getCreditoPayNew(),
             'id' => $id,
-            'cuotas' => $cuotas['cuota']?$cuotas['cuota']:6,
+            'cuotas' => $cuotas?$cuotas:6,
             'dataGrid' => $dataProvider,
             'costCarrera' => $costCarrera,//,(number_format($costCarrera, 2, '.', ',')),
             'costoCredito' => $modelProCre[0]['cosotzero'],
@@ -280,7 +282,7 @@ class RegistroController extends \app\components\CController {
             'model_pes' => $modelProCre[0]['pccr_costo_carrera'],
             'pes_id' => $pes_id,
             'ron_id' => $ron_id[0]['id'],
-            'costo' => $costo,
+            'costo' => $idtotal,
             'rama' => $rama_id,
             'pla_id' => $pla_id,
         ]);
@@ -435,14 +437,18 @@ class RegistroController extends \app\components\CController {
 
 
     //Pago de registro de matricula 
-    public function actionSave($id){        
-                $model = RegistroOnline::findOne($id);
+    public function actionSave(){//$id){   
+                //$id = base64_decode($id);  
                 $per_id = Yii::$app->session->get("PB_perid"); 
                 $usu_id = Yii::$app->session->get("PB_iduser");
                 $emp_id = Yii::$app->session->get("PB_idempresa");
                 $fecha_modificacion = date(Yii::$app->params["dateTimeByDefault"]);
                 if (Yii::$app->request->isAjax) {
-                    $data = Yii::$app->request->post();            
+                    $data = Yii::$app->request->post(); 
+                    $id = base64_decode($data['per_id']);
+                    \app\models\Utilities::putMessageLogFile('ID...: '.$id);  
+                    $model = RegistroOnline::findOne($id);
+           
                     if ($data["upload_file"]) {
                         if (empty($_FILES)) {
                             return json_encode(['error' => Yii::t("notificaciones", "Error to process File. Try again.")]);
@@ -512,85 +518,17 @@ class RegistroController extends \app\components\CController {
                         /*
                         //DBE
                         */
-                        \app\models\Utilities::putMessageLogFile('Action Save:($id);: '.$id);
+                       // \app\models\Utilities::putMessageLogFile('Action Save:($id);: '.$id);
                         //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>CUOTAS>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                         /*$per_id = @Yii::$app->session->get("PB_perid");
                         $usuario = @Yii::$app->user->identity->usu_id;  
                         if (Yii::$app->request->isAjax) {
                             $data = Yii::$app->request->post();*/
-                            \app\models\Utilities::putMessageLogFile('DBE controller 1...: '.$data);
-                            $total      = $data['total'];
-                            $tpago      = $data['tpago'];
-                            $numcuotas  = $data['numcuotas'];
-                            $conx = \Yii::$app->db_facturacion;
-                            $conx2 = \Yii::$app->db_academico;
-                            $transactionx = $conx->beginTransaction();
-                            $transactionx2 = $conx2->beginTransaction();
-                            try {
-                                $modelCargaCartera = new RegistroConfiguracion();
-                                $secuencial = $modelCargaCartera->getSecuencialCargaCartera();
-                                \app\models\Utilities::putMessageLogFile('controller 2...: '. $secuencial['secuencial'].'total: '.$total.' cuotas: '.$numcuotas);
-                                $valor_cuota = $total / $numcuotas;
-                                $valor_cuota = number_format($valor_cuota, 2, '.', ',');  
-                                //if ($secuencial['secuencial'] == 0) {
-                                    if($tpago == 3) {
-                                        \app\models\Utilities::putMessageLogFile('controller 3...: ');
-                                        $forma_pago = 'CR';
-                                        $persona = new Persona();
-                                        $cedula = $persona->consultaPersonaId($per_id);
-                                        $estudiante = new Estudiante();
-                                        $est_id = $estudiante->getEstudiantexperid($per_id);
-                                        $repetidos = $modelCargaCartera->getRegistrosDuplicados($rama_id);
-                                        if($repetidos['repetidos']==0 ){ //If grid cuotas repetidos
-                                            $registros_relacionados = $modelCargaCartera->registrarRelacionCartera($est_id['est_id'],$rama_id, $secuencial['secuencial']);
-                                                \app\models\Utilities::putMessageLogFile('controller N1...: '.$est_id['est_id'].'-'.$rama_id.'-'. $secuencial['secuencial']);
-                                            for($in = 1; $in <= $numcuotas; $in++){
-                                                $fechaCuotaActual = $modelCargaCartera->getCuotaActual($in);
-                                                $registros_cuotas = $modelCargaCartera->registrarCargaCartera($est_id['est_id'],$cedula['per_cedula'],$per_id, $secuencial['secuencial']?$secuencial['secuencial']:'00000011', $forma_pago,$fechaCuotaActual['fecha'],$in, $numcuotas, $valor_cuota, $total, $usuario);
-                                                
-                                            }
-                                            if ($registros_cuotas) {
-                                                $exito = 1;
-                                            }
-                                            if ($exito) {
-                                                $transactionx->commit();
-                                                $transactionx2->commit();
-                                                $message = array(
-                                                    "wtmessage" => Yii::t("notificaciones", "Se ha guardado el pago."),
-                                                    "title" => Yii::t('jslang', 'Success'),
-                                                );
-                                                Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), true, $message);
-                                            } else {
-                                                $transactionx->rollback();
-                                                $transactionx2->rollback();
-                                                $message = array(
-                                                    "wtmessage" => Yii::t("notificaciones", "Error al grabar." . $mensaje),
-                                                    "title" => Yii::t('jslang', 'Error'),
-                                                );
-                                                Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
-                                            }
-                                        } else{  //If grid cuotas repetidos
-                                            $message = array(
-                                                "wtmessage" => Yii::t("notificaciones", "Registros repetidos."),
-                                                "title" => Yii::t('jslang', 'Error'),
-                                            );
-                                            Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
-                                        }
-                                    }                                    
-                            } catch (Exception $ex) {
-                                \app\models\Utilities::putMessageLogFile('controller 4...: ');
-                                $transactionx->rollback();
-                                $transactionx2->rollback();
-                                $message = array(
-                                    "wtmessage" => Yii::t("notificaciones", "Error al grabar.".$ex->getMessage()),
-                                    "title" => Yii::t('jslang', 'Error'),
-                                );
-                                Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
-                            }
+                          
                             //return;
 //                        }/**/
                         //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>CUOTAS>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                        \app\models\Utilities::putMessageLogFile('actionModificarcargacartera fin');
+                       // \app\models\Utilities::putMessageLogFile('actionModificarcargacartera fin');
                         
 
                         /*
@@ -2372,10 +2310,10 @@ class RegistroController extends \app\components\CController {
             \app\models\Utilities::putMessageLogFile('controller 1...: ');
             $total      = $data['total'];
             $tpago      = $data['tpago'];
-            $rama_id    = $data['rama'];
+            $ron_id    = $data['ron_id'];
             $numcuotas  = $data['numcuotas'];
             $pla_id     = $data['pla_id']?$data['pla_id']:14;
-            $per_id     = $data['per_id'];
+            $per_id     = base64_decode($data['per_id']);
             $con = \Yii::$app->db_facturacion;
             $con2  = \Yii::$app->db_academico;
             $transaction = $con->beginTransaction();
@@ -2395,22 +2333,22 @@ class RegistroController extends \app\components\CController {
                         $cedula = $persona->consultaPersonaId($per_id);
                         $estudiante = new Estudiante();
                         $est_id = $estudiante->getEstudiantexperid($per_id);
-                        $repetidos = $modelCargaCartera->getRegistrosDuplicados($rama_id);
+                        //$repetidos = $modelCargaCartera->getRegistrosDuplicados($ron_id);
                         $porcentaje = 100/$numcuotas;
                         $datosRonPes= $modelCargaCartera->getRonPes($per_id);
                         $ron_id = $datosRonPes['ron_id'];
                         $pes_id = $datosRonPes['pes_id'];
-                        \app\models\Utilities::putMessageLogFile('log 0...'.$repetidos['repetidos']);
-                        if($repetidos['repetidos']==0 ){ //If grid cuotas repetidos
-                            \app\models\Utilities::putMessageLogFile('log 1...'.$est_id['est_id'].'-'.$rama_id.'-'. $secuencial['secuencial']);
-                            $registros_relacionados = $modelCargaCartera->registrarRelacionCartera($est_id['est_id'],$rama_id, $secuencial['secuencial']);
+                        //\app\models\Utilities::putMessageLogFile('log 0...'.$repetidos['repetidos']);
+                        //if($repetidos['repetidos']==0 ){ //If grid cuotas repetidos
+                            \app\models\Utilities::putMessageLogFile('log 1...'.$est_id['est_id'].'-'.$ron_id.'-'. $secuencial['secuencial']);
+                            //$registros_relacionados = $modelCargaCartera->registrarRelacionCartera($est_id['est_id'],$ron_id, $secuencial['secuencial']);
                             $registro_pago_matricula = $modelCargaCartera->registrarPagoMatricula($perid, $per_id, $pla_id, $ron_id, $total);
                             \app\models\Utilities::putMessageLogFile('RPM: '.$registro_pago_matricula.'- OK');
                             $rpm_id = $modelCargaCartera->getRpmId($per_id, $pla_id, $ron_id);
                             $rpm_id = $rpm_id['rpm_id'];
-                            $updateAdicionalMateria = $modelCargaCartera->updateAdicionalMateria($rama_id, $rpm_id);
+                            //$updateAdicionalMateria = $modelCargaCartera->updateAdicionalMateria($rama_id, $rpm_id);
                             \app\models\Utilities::putMessageLogFile('log 2...');
-                                \app\models\Utilities::putMessageLogFile('controller N1...: '.$est_id['est_id'].'-'.$rama_id.'-'. $secuencial['secuencial']);
+                                \app\models\Utilities::putMessageLogFile('controller N1...: '.$est_id['est_id'].'-'.$ron_id.'-'. $secuencial['secuencial']);
                             for($in = 1; $in <= $numcuotas; $in++){
                                 $fechaCuotaActual = $modelCargaCartera->getCuotaActual($in);
                                 $registros_cuotas = $modelCargaCartera->registrarCargaCartera($est_id['est_id'],$cedula['per_cedula'], $secuencial['secuencial'], $forma_pago,$fechaCuotaActual['fecha'],$in, $numcuotas, $valor_cuota, $total, $usuario);
@@ -2423,7 +2361,7 @@ class RegistroController extends \app\components\CController {
                                 $transaction->commit();
                                 $transaction2->commit();
                                 $message = array(
-                                    "wtmessage" => Yii::t("notificaciones", "Se ha guardado el pago."),
+                                    "wtmessage" => Yii::t("notificaciones", "Su información ha sido guardada con éxito."),
                                     "title" => Yii::t('jslang', 'Success'),
                                 );
                                 \app\models\Utilities::putMessageLogFile('controller 4...: '.$registros_cuotas);
@@ -2432,22 +2370,18 @@ class RegistroController extends \app\components\CController {
                                 $transaction->rollback();
                                 $transaction2->rollback();
                                 $message = array(
-                                    "wtmessage" => Yii::t("notificaciones", "Error al grabar." . $message),
+                                    "wtmessage" => Yii::t("notificaciones", "Error al grabar." ),
                                     "title" => Yii::t('jslang', 'Error'),
                                 );
                                 \app\models\Utilities::putMessageLogFile('controller 4...: '.$message);
                                 return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
                             }
-                        }else{
+                       /* }else{
                             \app\models\Utilities::putMessageLogFile('repetidos...: ');
-                        }  
+                        }*/  
                     } else{  //If grid cuotas repetidos
-                            $message = array(
-                                "wtmessage" => Yii::t("notificaciones", "Registros repetidos."),
-                                "title" => Yii::t('jslang', 'Error'),
-                            );
                             \app\models\Utilities::putMessageLogFile('Tipo de pago no es Credito Directo...: ');
-                            Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+                            //Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
                     }                                   
             } catch (Exception $ex) {
                 \app\models\Utilities::putMessageLogFile('controller 4...: ');
@@ -2467,8 +2401,8 @@ class RegistroController extends \app\components\CController {
 
         try {       
             $data = Yii::$app->request->post();            
-            $per_id      = $data['per_id'];
-            $rama_id     = $data['rama_id'];
+            $per_id      = base64_decode($data['per_id']);
+            $cuotas     = $data['cuotas'];
             $matriculacion_model = new Matriculacion();          
             $modelPersona = Persona::find()->where(['per_id' => $per_id])->asArray()->one();
             $modelEstudiante = Estudiante::find()->where(['per_id' => $per_id])->asArray()->one();  
@@ -2490,14 +2424,14 @@ class RegistroController extends \app\components\CController {
 
             /*Detalles de pagos */
             $registro_pago_matricula = new RegistroPagoMatricula();
-            $resp_cant_cuota = $registro_pago_matricula->getCuotasPeriodo($rama_id);
-            $cant_cuota = $resp_cant_cuota['cuota'];
+            //$resp_cant_cuota = $registro_pago_matricula->getCuotasPeriodo($rama_id);
+            $cant_cuota = $cuotas;// $resp_cant_cuota['cuota'];
             $est_id = $modelEstudiante['est_id'];
 
             // nuevo
-            $resp_rpm_id = $matriculacion_model->getNumeroDocumentoRegistroOnline($rama_id, $ron_id, $per_id);
-            $rpm_id = $resp_rpm_id['rpm_id'];
-            $detallePagos = $matriculacion_model->getDetalleCuotasRegistroOnline($ron_id, $rpm_id);
+            /*$resp_rpm_id = $matriculacion_model->getNumeroDocumentoRegistroOnline( $ron_id, $per_id);
+            $rpm_id = $resp_rpm_id['rpm_id'];*/
+            $detallePagos = [];//$matriculacion_model->getDetalleCuotasRegistroOnline($ron_id, $rpm_id);
             // nuevo
 
             /*$resp_ccar_numero_documento = $matriculacion_model->getNumeroDocumentoRegistroOnline($rama_id);
@@ -2566,15 +2500,17 @@ class RegistroController extends \app\components\CController {
                     ),Yii::$app->language);*/
                 $body = $content;
                 
-                Yii::$app->session->set('rama_id', $rama_id);
+               // Yii::$app->session->set('rama_id', $rama_id);
                 $ron_id      = $data['ron_id']?$data['ron_id']:1;
                 $pes_id      = $data['pes_id']?$data['pes_id']:1;
 
                 $mail_estudiante = Persona::getPerCorreo($per_id);
+                $admin_email = date(Yii::$app->params["soporteEmail"]);
+                \app\models\Utilities::putMessageLogFile('correo..: '.$mail_estudiante.'||'.$admin_email);
 
                 $to = array(
-                    "0" => 'analista.desarrollo@uteg.edu.ec',
-                    "1" => "'".$data_student['per_correo']."'",
+                    "0" => 'analistadesarrollo01@uteg.edu.ec',
+                    "1" => $mail_estudiante,
                 );
 
             
@@ -2589,7 +2525,7 @@ class RegistroController extends \app\components\CController {
                     
                 Utilities::sendEmail($titulo_mensaje,
                 Yii::$app->params["adminEmail"],  
-                $to,//'dtp_ltp_010@yopmail.com', 
+                $to,
                 $asunto, 
                 $body,
                 $files);

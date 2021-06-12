@@ -109,8 +109,8 @@ function searchModules() {
     arrParams2.PBgetFilter = true;
     //arrParams2.search = $("#txt_buscarData").val();
     arrParams2.periodo = ($("#cmb_per_acad option:selected").val());
-    arrParams2.mod_id = $("#cmb_mod").val();
-//arrParams2.estado = $("#cmb_status").val();
+    //arrParams2.mod_id = $("#cmb_mod").val();
+    //arrParams2.estado = $("#cmb_status").val();
     //alert(arrParams2.periodo+'-'+arrParams2.estado);
     $("#grid_registropay_list").PbGridView("applyFilterData", arrParams2);
 }
@@ -129,7 +129,7 @@ function save() {
     //guardarCargarCartera();
     //Se debe de enviar el pago  y retornar el mensaje de exito o error
     var arrParams = new Object();
-    var link = $('#txth_base').val() + "/academico/registro/save/" + $('#txt_per_id').val();//$('#frm_id').val();
+    var link = $('#txth_base').val() + "/academico/registro/save/";//, + $('#txt_per_id').val();//$('#frm_id').val();
     var total = ($('#frm_costo_item').val()).replace(/,/g, '');//($('#frm_costo_item').val()).replace(/,/g, '');
     var numCuota = $('#cmb_cuota').val();
     var cuota = (total / numCuota);
@@ -403,19 +403,23 @@ function generarDataTable(cuotas, primerPago) {
         if (i == cuotas && sumTot != total) {
             cuota = ((total - sumTot) + (parseFloat(cuota))).toFixed(2);
         }
+        primerCuota = ((total*(100/cuotas))/100).toFixed(1);
+        cuotageneral = (total*percentaje/100).toFixed(2);
 
         var tb_item = new Array();
         var tb_item2 = new Array();
         tb_item[0] = 0;
         tb_item[1] = labelPay + i;
         tb_item[2] = (primerPago !== null && cuotas > 1 && i == 1) ? (perPriC + '%') : (percentaje + '%');
-        tb_item[3] = (primerPago !== null && cuotas > 1 && i == 1) ? ('$' + currencyFormat(parseFloat(primerPago))) : ('$' + currencyFormat(parseFloat(cuota)));
+        tb_item[3] = ( i == 1) ? primerCuota: cuotageneral;//('$' + currencyFormat(parseFloat(primerPago))) : ('$' + currencyFormat(parseFloat(cuota)));
+        //tb_item[3] = ('$'+ (cuota/tb_item[2]).toFixed(2));
         tb_item[4] = $('#vencimiento_' + i).val();
         tb_item[5] = "PENDING";//(i == 1) ? "TO CHECK" : "PENDING";
         tb_item2[0] = 0;
         tb_item2[1] = labelPay + i;
         tb_item2[2] = (primerPago !== null && cuotas > 1 && i == 1) ? (perPriC + '%') : (percentaje + '%');
-        tb_item2[3] = (primerPago !== null && cuotas > 1 && i == 1) ? ('$' + currencyFormat(parseFloat(primerPago))) : ('$' + currencyFormat(parseFloat(cuota)));
+        tb_item2[3] = ( i == 1) ? primerCuota: cuotageneral;//(primerPago !== null && cuotas > 1 && i == 1) ? ('$' + currencyFormat(parseFloat(primerPago))) : ('$' + currencyFormat(parseFloat(cuota)));
+        //tb_item[3] = ('$'+ (cuota/tb_item[2]).toFixed(2));
         tb_item2[4] = $('#vencimiento_' + i).val();
         tb_item2[5] = "PENDING";//(i == 1) ? "TO CHECK" : "PENDING";
         if (arrData.data) {
@@ -634,7 +638,7 @@ function guardarCargarCartera(){
     arrParams.interes = $('#frm_int_ced').val();
     arrParams.financiamiento = $('#frm_finan').val();
     arrParams.numcuotas = $('#cmb_cuota').val();
-    arrParams.rama_id = $('#frm_rama_id').val();
+    arrParams.ron_id = $('#txt_ron_id').val();
     arrParams.per_id = $('#txt_per_id').val();
     arrParams.pla_id = $('#txt_pla_id').val();
     var terminos = ($('#cmb_req').is(':checked')) ? 1 : 0;
@@ -655,7 +659,7 @@ function guardarCargarCartera(){
                     //windows.location.href = $('#txth_base').val() + "/academico/registro/index";
                     }, 3000);
                 } else {
-                    showAlert(response.status, response.type, { "wtmessage": message.info, "title": response.label });
+                    //showAlert(response.status, response.type, { "wtmessage": message.info, "title": response.label });
                 }
                 }, true);
             }catch(err){
@@ -671,7 +675,7 @@ function enviarPdf(){
     var link = $('#txth_base').val() + "/academico/registro/sendpdf";
     var arrParams = new Object();
     arrParams.per_id = $('#txt_per_id').val();
-    arrParams.rama_id = $('#txt_rama').val();
+    arrParams.cuotas = $('#txt_cuotas').val();
     //alert(arrParams.rama_id);
     try{
         requestHttpAjax(link, arrParams, function(response) {
@@ -679,10 +683,10 @@ function enviarPdf(){
         if (response.status == "OK") {
             setTimeout(function() {
             //windows.location.href = $redirect;
-            showAlert(response.status, response.type, { "wtmessage": 'SU PAGO FUE INGRESADO CORRECTAMENTE', "title": response.label });
+            showAlert(response.status, response.type, { "wtmessage": 'SU INFORMACIÓN SE REGISTRO CORRECTAMENTE', "title": response.label });
             //windows.location.href = $('#txth_base').val() + "/academico/registro/index";
             //parent.window.location.href = $('#txth_base').val() + "/academico/registro/index";
-            }, 3000);
+            }, 5000);
         } 
         }, true);
     }catch(err){

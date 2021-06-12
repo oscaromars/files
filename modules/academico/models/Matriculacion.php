@@ -484,14 +484,18 @@ class Matriculacion extends \yii\db\ActiveRecord {
             AND pes.pla_id =:pla_id;
         ";
 
+	// \app\models\Utilities::putMessageLogFile('sql: ' . $sql);
+
         $comando = $con_academico->createCommand($sql);
         $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
         $comando->bindParam(":pla_id", $pla_id, \PDO::PARAM_INT);
+	// \app\models\Utilities::putMessageLogFile('raw: ' . $comando->getRawSql());
         $resultData = $comando->queryOne();
         $dataCredits = $this->getInfoMallaEstudiante($per_id);
+	// \app\models\Utilities::putMessageLogFile('resultData: ' . $resultData);
         $dataPlanificacion = $this->parseDataSubject($resultData, $dataCredits);
 
-        \app\models\Utilities::putMessageLogFile('getAllDataPlanificacionEstudiante: '.print_r($dataPlanificacion,true));
+        // \app\models\Utilities::putMessageLogFile('getAllDataPlanificacionEstudiante: '.print_r($dataPlanificacion,true));
 
         return $dataPlanificacion;
     }
@@ -527,7 +531,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
             INNER JOIN " . $con_academico->dbname . ".malla_academica AS ma ON mum.maca_id = ma.maca_id 
             INNER JOIN " . $con_academico->dbname . ".malla_academica_detalle AS mad ON mad.maca_id = ma.maca_id
             INNER JOIN " . $con_academico->dbname . ".asignatura AS a ON mad.asi_id = a.asi_id
-            INNER JOIN " . $con_academico->dbname . ".malla_unidad_modalidad AS mu ON mu.maca_id = ma.maca_id AND mu.meun_id = me.meun_id
+            -- INNER JOIN " . $con_academico->dbname . ".malla_unidad_modalidad AS mu ON mu.maca_id = ma.maca_id AND mu.meun_id = me.meun_id
             INNER JOIN " . $con_academico->dbname . ".programa_costo_credito AS pcc ON pcc.eaca_id = ea.eaca_id AND pcc.mod_id = me.mod_id AND pcc.pccr_creditos=mad.made_credito AND pcc.pccr_categoria=e.est_categoria
             LEFT JOIN db_academico.registro_online as ron 
                    ON ron.per_id = p.per_id
@@ -553,13 +557,9 @@ class Matriculacion extends \yii\db\ActiveRecord {
             e.est_estado = 1 AND e.est_estado_logico = 1 AND
             p.per_estado = 1 AND p.per_estado_logico = 1 AND 
             em.emp_estado = 1 AND em.emp_estado_logico = 1 AND
-            mu.mumo_estado =1 AND mu.mumo_estado_logico =1 AND
+            mum.mumo_estado =1 AND mum.mumo_estado_logico =1 AND
             pes.pes_estado = 1 AND pes.pes_estado_logico = 1 
-<<<<<<< HEAD
             group by 1,2,3,4,5
-=======
-            group by 1,2,3,4
->>>>>>> f43d82986dd44079df7ada60f27bb567438c5475
         ";
 
 
@@ -638,10 +638,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
                     $credits        = $value['AsigCreditos'];
                     $codeAsignatura = $value['MallaCodAsig'];
                     $costoCredito   = $value['CostoCredito'];
-<<<<<<< HEAD
                     $modalidad     =$value['modalidad'];
-=======
->>>>>>> f43d82986dd44079df7ada60f27bb567438c5475
                     $roi_id         = $value['roi_id'];
                 }
             }
@@ -653,10 +650,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
                 "Credit" => $credits,
                 "Cost" => $costoCredito,
                 "CostSubject" => $costoCredito,
-<<<<<<< HEAD
                 "modalidad"=>$modalidad,
-=======
->>>>>>> f43d82986dd44079df7ada60f27bb567438c5475
                 "Roi_id" => $roi_id,
             );
             array_push($arrData, $arrRow11);
@@ -671,10 +665,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
                     $credits = $value['AsigCreditos'];
                     $codeAsignatura = $value['MallaCodAsig'];
                     $costoCredito = $value['CostoCredito'];
-<<<<<<< HEAD
                     $modalidad     =$value['modalidad'];
-=======
->>>>>>> f43d82986dd44079df7ada60f27bb567438c5475
                     $roi_id         = $value['roi_id'];
                 }
             }
@@ -686,10 +677,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
                 "Credit" => $credits,
                 "Cost" => $costoCredito,
                 "CostSubject" => $costoCredito,
-<<<<<<< HEAD
                 "modalidad"=>$modalidad,
-=======
->>>>>>> f43d82986dd44079df7ada60f27bb567438c5475
                 "Roi_id" => $roi_id,
             );
             array_push($arrData, $arrRow12);
@@ -704,10 +692,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
                     $credits = $value['AsigCreditos'];
                     $codeAsignatura = $value['MallaCodAsig'];
                     $costoCredito = $value['CostoCredito'];
-<<<<<<< HEAD
                     $modalidad     =$value['modalidad'];
-=======
->>>>>>> f43d82986dd44079df7ada60f27bb567438c5475
                     $roi_id         = $value['roi_id'];
                 }
             }
@@ -719,17 +704,16 @@ class Matriculacion extends \yii\db\ActiveRecord {
                 "Credit" => $credits,
                 "Cost" => $costoCredito,
                 "CostSubject" => $costoCredito,
-<<<<<<< HEAD
                 "modalidad"=>$modalidad,
-=======
->>>>>>> f43d82986dd44079df7ada60f27bb567438c5475
                 "Roi_id" => $roi_id,
             );
             array_push($arrData, $arrRow13);
         }
 
         if (!is_null($dict['pes_mat_b1_h4_cod']) && trim($dict['pes_mat_b1_h4_cod']) != "") {
+		// \app\models\Utilities::putMessageLogFile($dict['pes_mat_b1_h4_cod']);
             $modCod = MallaAcademicaDetalle::findOne(['made_codigo_asignatura' => trim($dict['pes_mat_b1_h4_cod']), 'made_estado_logico' => '1', 'made_estado' => '1']);
+		// \app\models\Utilities::putMessageLogFile("modCod: " . $modCod);
             $asignatura = $codeAsignatura = $credits  = $costoCredito ="";
             foreach($dataCredits as $key => $value){
                 if($value['MallaCodAsig'] == trim($dict['pes_mat_b1_h4_cod'])){
@@ -737,10 +721,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
                     $credits = $value['AsigCreditos'];
                     $codeAsignatura = $value['MallaCodAsig'];
                     $costoCredito = $value['CostoCredito'];
-<<<<<<< HEAD
                     $modalidad     =$value['modalidad'];
-=======
->>>>>>> f43d82986dd44079df7ada60f27bb567438c5475
                     $roi_id         = $value['roi_id'];
                 }
             }
@@ -752,12 +733,10 @@ class Matriculacion extends \yii\db\ActiveRecord {
                 "Credit" => $credits,
                 "Cost" => $costoCredito,
                 "CostSubject" => $costoCredito,
-<<<<<<< HEAD
                 "modalidad"=>$modalidad,
-=======
->>>>>>> f43d82986dd44079df7ada60f27bb567438c5475
                 "Roi_id" => $roi_id,
             );
+		\app\models\Utilities::putMessageLogFile("arrRow14" . $arrRow14);
             array_push($arrData, $arrRow14);
         }
 
@@ -770,10 +749,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
                     $credits = $value['AsigCreditos'];
                     $codeAsignatura = $value['MallaCodAsig'];
                     $costoCredito = $value['CostoCredito'];
-<<<<<<< HEAD
                     $modalidad     =$value['modalidad'];
-=======
->>>>>>> f43d82986dd44079df7ada60f27bb567438c5475
                     $roi_id         = $value['roi_id'];
                 }
             }
@@ -785,10 +761,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
                 "Credit" => $credits,
                 "Cost" => $costoCredito,
                 "CostSubject" => $costoCredito,
-<<<<<<< HEAD
                 "modalidad"=>$modalidad,
-=======
->>>>>>> f43d82986dd44079df7ada60f27bb567438c5475
                 "Roi_id" => $roi_id,
             );
             array_push($arrData, $arrRow15);
@@ -803,10 +776,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
                     $credits = $value['AsigCreditos'];
                     $codeAsignatura = $value['MallaCodAsig'];
                     $costoCredito = $value['CostoCredito'];
-<<<<<<< HEAD
                     $modalidad     =$value['modalidad'];
-=======
->>>>>>> f43d82986dd44079df7ada60f27bb567438c5475
                     $roi_id         = $value['roi_id'];
                 }
             }
@@ -818,10 +788,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
                 "Credit" => $credits,
                 "Cost" => $costoCredito,
                 "CostSubject" => $costoCredito,
-<<<<<<< HEAD
                 "modalidad"=>$modalidad,
-=======
->>>>>>> f43d82986dd44079df7ada60f27bb567438c5475
                 "Roi_id" => $roi_id,
             );
             array_push($arrData, $arrRow16);
@@ -836,10 +803,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
                     $credits = $value['AsigCreditos'];
                     $codeAsignatura = $value['MallaCodAsig'];
                     $costoCredito = $value['CostoCredito'];
-<<<<<<< HEAD
                     $modalidad     =$value['modalidad'];
-=======
->>>>>>> f43d82986dd44079df7ada60f27bb567438c5475
                     $roi_id         = $value['roi_id'];
                 }
             }
@@ -851,10 +815,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
                 "Credit" => $credits,
                 "Cost" => $costoCredito,
                 "CostSubject" => $costoCredito,
-<<<<<<< HEAD
                 "modalidad"=>$modalidad,
-=======
->>>>>>> f43d82986dd44079df7ada60f27bb567438c5475
                 "Roi_id" => $roi_id,
             );
             array_push($arrData, $arrRow21);
@@ -870,10 +831,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
                     $credits = $value['AsigCreditos'];
                     $codeAsignatura = $value['MallaCodAsig'];
                     $costoCredito = $value['CostoCredito'];
-<<<<<<< HEAD
                     $modalidad     =$value['modalidad'];
-=======
->>>>>>> f43d82986dd44079df7ada60f27bb567438c5475
                     $roi_id         = $value['roi_id'];
                 }
             }
@@ -885,10 +843,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
                 "Credit" => $credits,
                 "Cost" => $costoCredito,
                 "CostSubject" => $costoCredito,
-<<<<<<< HEAD
                 "modalidad"=>$modalidad,
-=======
->>>>>>> f43d82986dd44079df7ada60f27bb567438c5475
                 "Roi_id" => $roi_id,
             );
             array_push($arrData, $arrRow22);
@@ -903,10 +858,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
                     $credits = $value['AsigCreditos'];
                     $codeAsignatura = $value['MallaCodAsig'];
                     $costoCredito = $value['CostoCredito'];
-<<<<<<< HEAD
                     $modalidad     =$value['modalidad'];
-=======
->>>>>>> f43d82986dd44079df7ada60f27bb567438c5475
                     $roi_id         = $value['roi_id'];
                 }
             }
@@ -918,10 +870,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
                 "Credit" => $credits,
                 "Cost" => $costoCredito,
                 "CostSubject" => $costoCredito,
-<<<<<<< HEAD
                 "modalidad"=>$modalidad,
-=======
->>>>>>> f43d82986dd44079df7ada60f27bb567438c5475
                 "Roi_id" => $roi_id,
             );
             array_push($arrData, $arrRow23);
@@ -936,10 +885,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
                     $credits = $value['AsigCreditos'];
                     $codeAsignatura = $value['MallaCodAsig'];
                     $costoCredito = $value['CostoCredito'];
-<<<<<<< HEAD
                     $modalidad     =$value['modalidad'];
-=======
->>>>>>> f43d82986dd44079df7ada60f27bb567438c5475
                     $roi_id         = $value['roi_id'];
                 }
             }
@@ -951,10 +897,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
                 "Credit" => $credits,
                 "Cost" => $costoCredito,
                 "CostSubject" => $costoCredito,
-<<<<<<< HEAD
                 "modalidad"=>$modalidad,
-=======
->>>>>>> f43d82986dd44079df7ada60f27bb567438c5475
                 "Roi_id" => $roi_id,
             );
             array_push($arrData, $arrRow24);
@@ -969,10 +912,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
                     $credits = $value['AsigCreditos'];
                     $codeAsignatura = $value['MallaCodAsig'];
                     $costoCredito = $value['CostoCredito'];
-<<<<<<< HEAD
                     $modalidad     =$value['modalidad'];
-=======
->>>>>>> f43d82986dd44079df7ada60f27bb567438c5475
                     $roi_id         = $value['roi_id'];
                 }
             }
@@ -984,10 +924,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
                 "Credit" => $credits,
                 "Cost" => $costoCredito,
                 "CostSubject" => $costoCredito,
-<<<<<<< HEAD
                 "modalidad"=>$modalidad,
-=======
->>>>>>> f43d82986dd44079df7ada60f27bb567438c5475
                 "Roi_id" => $roi_id,
             );
             array_push($arrData, $arrRow25);
@@ -1003,10 +940,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
                     $credits = $value['AsigCreditos'];
                     $codeAsignatura = $value['MallaCodAsig'];
                     $costoCredito = $value['CostoCredito'];
-<<<<<<< HEAD
                     $modalidad     =$value['modalidad'];
-=======
->>>>>>> f43d82986dd44079df7ada60f27bb567438c5475
                     $roi_id         = $value['roi_id'];
                 }
             }
@@ -1018,14 +952,13 @@ class Matriculacion extends \yii\db\ActiveRecord {
                 "Credit" => $credits,
                 "Cost" => $costoCredito,
                 "CostSubject" => $costoCredito,
-<<<<<<< HEAD
                 "modalidad"=>$modalidad,
-=======
->>>>>>> f43d82986dd44079df7ada60f27bb567438c5475
                 "Roi_id" => $roi_id,
             );
             array_push($arrData, $arrRow26);
         }
+
+	\app\models\Utilities::putMessageLogFile('arrData h1: ' . print_r($arrData,true));
 
         return $arrData;
     }
@@ -1209,7 +1142,6 @@ class Matriculacion extends \yii\db\ActiveRecord {
         $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
         $comando->bindParam(":pes_id", $pes_id, \PDO::PARAM_INT);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
-        \app\models\Utilities::putMessageLogFile('getDataStudenFromRegistroOnline: '.$comando->getRawSql());
         $resultData = $comando->queryOne();
 
         return $resultData;
@@ -1369,7 +1301,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
         $comando->bindParam(":ron_id", $ron_id, \PDO::PARAM_INT);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
         $resultData = $comando->queryAll();
-        \app\models\Utilities::putMessageLogFile('getPlanificationFromRegistroOnline: '.$comando->getRawSql());
+
         return $resultData;
     }
 
@@ -1542,7 +1474,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
         $comando->bindParam(":rpm_id", $rpm_id, \PDO::PARAM_INT);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_INT);
         $resultData = $comando->queryAll();
-        \app\models\Utilities::putMessageLogFile('getDetalleCuotasRegistroOnline: '.$comando->getRawSql());
+        //\app\models\Utilities::putMessageLogFile('selectEsquemaCalificacionUnidad: '.$comando->getRawSql());
 
         return $resultData;
     }
@@ -1583,13 +1515,12 @@ class Matriculacion extends \yii\db\ActiveRecord {
      * @return $resultData
      */
 
-    public function getNumeroDocumentoRegistroOnline($rama_id, $ron_id, $per_id)
+    public function getNumeroDocumentoRegistroOnline( $ron_id, $per_id)
     {
         $con_academico = \Yii::$app->db_academico;
         $estado = 1;
         $sql = " SELECT rama.rpm_id as rpm_id
                 FROM db_academico.registro_adicional_materias as rama 
-                WHERE rama.rama_id= :rama_id 
                   AND rama.ron_id = :ron_id 
                   AND rama.per_id = :per_id 
                   AND rama.rama_estado = :estado
@@ -1597,7 +1528,6 @@ class Matriculacion extends \yii\db\ActiveRecord {
 
 
         $comando = $con_academico->createCommand($sql);
-        $comando->bindParam(":rama_id", $rama_id, \PDO::PARAM_INT);
         $comando->bindParam(":ron_id", $ron_id, \PDO::PARAM_INT);
         $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_INT);
@@ -1632,7 +1562,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
         $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_INT);
         $resultData = $comando->queryOne();
-        \app\models\Utilities::putMessageLogFile('getMallaAcademicaRegistroOnline: '.$comando->getRawSql());
+        //\app\models\Utilities::putMessageLogFile('getMallaAcademicaRegistroOnline: '.$comando->getRawSql());
         return $resultData;
     }
 

@@ -747,7 +747,7 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
                     INNER JOIN " . $con_academico->dbname . ".estudio_academico AS ea ON ea.eaca_id = me.eaca_id
                     INNER JOIN " . $con_academico->dbname . ".unidad_academica AS ua ON me.uaca_id = ua.uaca_id
                     INNER JOIN " . $con_academico->dbname . ".modalidad AS mo ON mo.mod_id = me.mod_id
-                    INNER JOIN " . $con_academico->dbname . ".registro_adicional_materias AS ram on ram.ron_id = r.ron_id
+                    LEFT JOIN " . $con_academico->dbname . ".registro_adicional_materias AS ram on ram.ron_id = r.ron_id
                     INNER JOIN (
                         SELECT 
                             r.pes_id as pes_id,
@@ -758,7 +758,7 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
                         FROM
                             " . $con_academico->dbname . ".registro_online AS r
                             INNER JOIN " . $con_academico->dbname . ".registro_online_item AS it ON it.ron_id = r.ron_id
-                            INNER JOIN " . $con_academico->dbname . ".registro_adicional_materias AS rm ON rm.ron_id = r.ron_id 
+                            LEFT JOIN " . $con_academico->dbname . ".registro_adicional_materias AS rm ON rm.ron_id = r.ron_id 
                             AND (
                             rm.roi_id_1 = it.roi_id OR
                             rm.roi_id_2 = it.roi_id OR
@@ -1191,10 +1191,16 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
 
     public function getModalidadEstudiante($per_id){
         $con = \Yii::$app->db_academico;
-
-        $sql = "SELECT md.mod_id as 'id',md.mod_nombre as 'name' from db_academico.planificacion pla 
+        $sql = "SELECT md.mod_id as 'id',md.mod_nombre as 'name' 
+                from " . $con->dbname . ".planificacion pla 
+                inner join " . $con->dbname . ".planificacion_estudiante as pest on pla.pla_id = pest.pla_id
                 inner join " . $con->dbname . ".modalidad md on pla.mod_id = md.mod_id
-                where pla.per_id = $per_id limit 0,1;";
+                where pest.per_id = $per_id
+                and pla.pla_estado = 1 and pla.pla_estado_logico=1
+                and pest.pes_estado = 1 and pest.pes_estado_logico=1
+                and md.mod_estado=1 and md.mod_estado_logico=1
+                 limit 0,1;";
+
         $comando = $con->createCommand($sql);
         \app\models\Utilities::putMessageLogFile('mensaje: ' .$comando->getRawSql());
         

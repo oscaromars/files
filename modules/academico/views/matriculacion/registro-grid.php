@@ -11,7 +11,11 @@ use yii\grid\CheckboxColumn;
 academico::registerTranslations();
 
 $modelCancelItem = array();
+
+//print_r($data_student['mod_id']);die();
+
 //print_r($planificacion);
+>>>>>>> f43d82986dd44079df7ada60f27bb567438c5475
 $modelCancelRon = CancelacionRegistroOnline::findOne(['ron_id' => $ron_id, 'cron_estado' => '1', 'cron_estado_logico' => '1',]);
 if($modelCancelRon){
     //$cancelStatus = $modelCancelRon->cron_estado_cancelacion;
@@ -60,18 +64,63 @@ if($modelCancelRon){
                 'format' => 'html',
                 
                 'value' => function ($model) {
-                     if ($model["Hour"] == 'H1')
-                        return '<span title="L-M-W :: 19:00-20:00">'.$model['Hour'].'</span>';
-                    else if ($model["Hour"] == 'H2')
-                        return '<span title="L-M-W :: 20:00-21:00">'.$model['Hour'].'</span>';
-                    else if ($model["Hour"] == 'H3')
-                        return '<span title="L-M-W :: 21:00-22:00">'.$model['Hour'].'</span>';
-                    else if ($model["Hour"] == 'H4')
-                        return '<span title="L-M-W :: 19:00-20:30">'.$model['Hour'].'</span>';
-                    else if ($model["Hour"] == 'H5')
-                        return '<span title="L-M-W :: 20:00-21:30">'.$model['Hour'].'</span>';
-                    else
-                        return '<span title="'.$model['Hour'].'">'.$model['Hour'].'</span>';
+
+                    if ($model['modalidad']=='1'){
+                        if ($model["Hour"] == 'H1')
+                            return '<span title="L-M-W :: 19:00-20:00">'.$model['Hour'].'</span>';
+                        else if ($model["Hour"] == 'H2')
+                            return '<span title="L-M-W :: 20:00-21:00">'.$model['Hour'].'</span>';
+                        else if ($model["Hour"] == 'H3')
+                            return '<span title="L-M-W :: 21:00-22:00">'.$model['Hour'].'</span>';
+                        else if ($model["Hour"] == 'H4')
+                            return '<span title="L-M-W :: 19:00-20:30">'.$model['Hour'].'</span>';
+                        else if ($model["Hour"] == 'H5')
+                            return '<span title="L-M-W :: 20:00-21:30">'.$model['Hour'].'</span>';
+                        else
+                            return '<span title="'.$model['Hour'].'">'.$model['Hour'].'</span>';
+                    } else if ($model['modalidad']=='2'){
+                        if ($model["Hour"] == 'H1')
+                            return '<span title="L-M-J :: 18:20-20:20">'.$model['Hour'].'</span>';
+                        else if ($model["Hour"] == 'H2')
+                            return '<span title="L-M-W :: 20:20-22:20">'.$model['Hour'].'</span>';
+                        else if ($model["Hour"] == 'H3')
+                            return '<span title="Mie - Vie :: 18:20-21:20">'.$model['Hour'].'</span>';
+                        else if ($model["Hour"] == 'H4')
+                            return '<span title="Vier :: 18:20-21:20">'.$model['Hour'].'</span>';
+                        else if ($model["Hour"] == 'H5')
+                            return '<span title="Sáb :: 07:15-09:15">'.$model['Hour'].'</span>';
+                        else
+                            return '<span title="">'.$model['Hour'].'</span>';
+                    }
+                    else if ($model['modalidad']=='3'){
+                        if ($model["Hour"] == 'H1')
+                            return '<span title="Sáb :: 07:15-10:15">'.$model['Hour'].'</span>';
+                        else if ($model["Hour"] == 'H2')
+                            return '<span title="Sáb :: 10:30-13:30">'.$model['Hour'].'</span>';
+                        else if ($model["Hour"] == 'H3')
+                            return '<span title="Sáb :: 14:30-17:30">'.$model['Hour'].'</span>';
+                        else if ($model["Hour"] == 'H4')
+                            return '<span title="">'.$model['Hour'].'</span>';
+                        else if ($model["Hour"] == 'H5')
+                            return '<span title="">'.$model['Hour'].'</span>';
+                        else
+                            return '<span title="">'.$model['Hour'].'</span>';
+                    }
+                    else if ($model['modalidad']=='4'){
+                        if ($model["Hour"] == 'H1')
+                            return '<span title="Sáb :: 08:15-10:15">'.$model['Hour'].'</span>';
+                        else if ($model["Hour"] == 'H2')
+                            return '<span title="Sáb :: 10:30-12:30">'.$model['Hour'].'</span>';
+                        else if ($model["Hour"] == 'H3')
+                            return '<span title="Sáb :: 13:30-15:30">'.$model['Hour'].'</span>';
+                        else if ($model["Hour"] == 'H4')
+                            return '<span title="">'.$model['Hour'].'</span>';
+                        else if ($model["Hour"] == 'H5')
+                            return '<span title="">'.$model['Hour'].'</span>';
+                        else
+                            return '<span title="">'.$model['Hour'].'</span>';
+                    }
+
                 },
 
             ],

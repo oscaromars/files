@@ -286,7 +286,11 @@ class Estudiante extends \yii\db\ActiveRecord {
 
     public function getCategoryCost() {
         $con = \Yii::$app->db_sea;
-        $sql = "SELECT COD_CAT AS Cod, NOM_CAT AS Nombre, VAL_ARA AS Precio FROM " . $con->dbname . ".CAT_ARANCEL WHERE EST_LOG = 1";
+        $sql = "SELECT COD_CAT AS Cod, 
+                       NOM_CAT AS Nombre,
+                       VAL_ARA AS Precio 
+                  FROM " . $con->dbname . ".CAT_ARANCEL 
+                 WHERE est_log = 1";
         $comando = $con->createCommand($sql);
         $resultData = $comando->queryAll();
         return $resultData;

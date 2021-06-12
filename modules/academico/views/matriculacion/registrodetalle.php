@@ -121,7 +121,6 @@ Academico::registerTranslations();
 <br>
 
 <a href="<?= Url::to(['/academico/registro/new', 
-                        'per_id' => base64_encode($persona['per_id']), 
-                        'costo' => base64_encode($valor_total), 
-                        'pla_id' => base64_encode($pla_id)]) 
-        ?>" class="btn btn-primary pull-right" style="margin: 0px 5px;"><?= Academico::t("matriculacion", "Go to Pay") ?></a>
+                        'id' => base64_encode($persona['per_id']), 
+                        'ron' => base64_encode($ron_id)
+                    ]) ?>" class="btn btn-primary pull-right" style="margin: 0px 5px;"><?= Academico::t("matriculacion", "Go to Pay") ?></a>

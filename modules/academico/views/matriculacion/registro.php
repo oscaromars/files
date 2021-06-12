@@ -6,9 +6,15 @@ use yii\helpers\Url;
 
 Academico::registerTranslations();
 // print_r($registredSuject);
- // print_r($costo);
+//print_r("mensaje");
   //print_r($planificacion[0]['CostSubject']);
+
+
+//print_r($gastoAdm);
+//print_r($costo);
+
 /*
+=======
 print_r($costo['asociacion']);
 print_r($costo['gastos']);
 print_r($costo['costo']);
@@ -126,11 +132,15 @@ echo "<b style='color:green'>EL PERIODO DE INSCRIPCION ESTA CERRADO</b>";
 <input type="hidden" id="frm_min_cancel" value="<?= $min_cancel ?>">
 <input type="hidden" id="frm_modalidad" value="<?= $data_student['mod_id'] ?>">
 <input type="hidden" id="frm_carrera" value="<?= $data_student['eaca_id'] ?>">
-<input type="hidden" id="costoadm" value="<?= $costo['gastos'] ?>">
+
+<input type="hidden" id="costoadm" value="<?= $gastoAdm ?>">
+
+<!--<input type="hidden" id="costoadm" value=" /*<?= $costo['gastos'] ?>*/"> -->
+
 
 <br>
 <?=
-    $this->render('registro-grid', ['planificacion' => $planificacion,'materiasxEstudiante' => $materiasxEstudiante, 'registredSuject' => $registredSuject, "cancelStatus" => $cancelStatus, "ron_id" => $ron_id, "isdrop" => $isdrop, ]);
+    $this->render('registro-grid', ['planificacion' => $planificacion,'materiasxEstudiante' => $materiasxEstudiante, 'registredSuject' => $registredSuject, "cancelStatus" => $cancelStatus, "ron_id" => $ron_id, "isdrop" => $isdrop, "data_student"=>$data_student]);
 ?>
 
 
@@ -156,6 +166,7 @@ echo "<b style='color:green'>EL PERIODO DE INSCRIPCION ESTA CERRADO</b>";
                 </tr>
                 <tr>
                     <th><?= academico::t('matriculacion','Administrative Expenses') ?></th>
+
                     <td id="costAdmin">$<?= isset($costo['gastos'])?(number_format($costo['gastos'], 2, '.', ',')):'0.00' ?></td>
                 </tr>
                 <tr>
@@ -176,6 +187,7 @@ echo "<b style='color:green'>EL PERIODO DE INSCRIPCION ESTA CERRADO</b>";
         </table>
          <a href="<?= Url::to(['/academico/registro/index', 'per_id' => $per_id, 'costo' => $total ]) ?>" class="btn btn-primary pull-right" style="margin: 0px 5px;"><?= Academico::t("matriculacion", "Go to Pay") ?></a>
          
+    <a href="javascript:" class="btn btn-success pull-right" onclick="registerSubject()" style="margin: 0px 5px;"><?= Academico::t("matriculacion", "Register More Subjects") ?></a>
             <?php if($howmuchSubject > '1'): ?>
     
             <?php endif; ?>
@@ -188,7 +200,6 @@ echo "<b style='color:green'>EL PERIODO DE INSCRIPCION ESTA CERRADO</b>";
 
 
 
-    <a href="javascript:" class="btn btn-success pull-right" onclick="registerSubject()" style="margin: 0px 5px;"><?= Academico::t("matriculacion", "Register More Subjects") ?></a>
 
     <?php if(isset($hasSubject) && $hasSubject == true && $isadd ==Null): ?>
     <?php endif; ?>

@@ -1831,7 +1831,8 @@ class MatriculacionController extends \app\components\CController {
             "persona" => $persona,
             "valor_total" => $valor_total,
             "matDataProvider" => $matDataProvider,
-            "pagosDataProvider" => $pagosDataProvider
+            "pagosDataProvider" => $pagosDataProvider,
+            "pla_id" => $pla_id
         ]);
     }
 

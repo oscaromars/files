@@ -956,20 +956,12 @@ class MatriculacionController extends \app\components\CController {
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
 
-<<<<<<< HEAD
             //print_r($data);die();
-=======
-            print_r($data);die();
->>>>>>> f43d82986dd44079df7ada60f27bb567438c5475
+
             /*
             if (Yii::$app->session->get("PB_perid") < 1000) {
                 $per_id = $data['per_id'];
             }*/
-            
-<<<<<<< HEAD
-
-=======
->>>>>>> f43d82986dd44079df7ada60f27bb567438c5475
             try{
                 if (isset($data["pes_id"])) {
                     $modelPersona = Persona::findOne($per_id);
@@ -1409,10 +1401,8 @@ class MatriculacionController extends \app\components\CController {
                     $hasSubject = (count($dataPlanificacion) == count($dataRegRs))?false:true;
                     $howmuchSubject = count($dataRegRs);
                     $costo       = $matriculacion_model->getCostFromRegistroOnline($ron_id);
-<<<<<<< HEAD
+
                     //$costo['costo'] = $gastoAdm;
-=======
->>>>>>> f43d82986dd44079df7ada60f27bb567438c5475
                     $registro_add= $matriculacion_model->getRegistroAdiciOnline($ron_id);
                     //$costo=$dataplanificacion[0]['CostSubject'];
                     // if($modelRonOn->ron_estado_cancelacion == '1')
@@ -1876,7 +1866,9 @@ class MatriculacionController extends \app\components\CController {
             "persona" => $persona,
             "valor_total" => $valor_total,
             "matDataProvider" => $matDataProvider,
-            "pagosDataProvider" => $pagosDataProvider
+            "pagosDataProvider" => $pagosDataProvider,
+            "pla_id" => $pla_id,
+            "ron_id" => $ron['ron_id'],
         ]);
     }
 
@@ -2049,15 +2041,11 @@ class MatriculacionController extends \app\components\CController {
                     
                     $subReg = count($arr_sub_cancel) - 1; // cantidad de materias a cancelar
                      $minime = count($modelRegItem) - $subReg;
-<<<<<<< HEAD
+
                     if( $minime < 2 ){
                         throw new Exception('Error to Update Online Register.');
                     }
-=======
-                        if( $minime < 3 ){
-                            throw new Exception('Error to Update Online Register.');
-                        }
->>>>>>> f43d82986dd44079df7ada60f27bb567438c5475
+
                     foreach($modelRegItem as $key => $item){ $i++; } // cantidad de materias registradas
                     if($modelRegPag){// existe un pago de registro por lo que debe realizar el proceso     
                         $template = "removeSubjects";

@@ -109,6 +109,7 @@ class Modalidad extends \app\modules\academico\components\CActiveRecord {
         $comando->bindParam(":uaca_id", $uaca_id, \PDO::PARAM_INT);
         $comando->bindParam(":emp_id", $emp_id, \PDO::PARAM_INT);
         $resultData = $comando->queryAll();
+        \app\models\Utilities::putMessageLogFile('consultarModalidad: '.$comando->getRawSql());
         return $resultData;
     }
 

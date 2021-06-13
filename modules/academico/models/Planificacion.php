@@ -281,7 +281,7 @@ class Planificacion extends \yii\db\ActiveRecord {
                 WHERE pla.mod_id = :mod_id;";
 
 
-        $comando = $con_academico->createCommand($sql);
+        $comando = $con->createCommand($sql);
         $comando->bindParam(":mod_id", $mod_id, \PDO::PARAM_INT);
         $resultData = $comando->queryAll();
         \app\models\Utilities::putMessageLogFile('getPeriodosAcademicoPorModalidad: '.$comando->getRawSql());

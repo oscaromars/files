@@ -120,7 +120,7 @@ $(document).ready(function() {
         /*document.getElementById("cmb_carrerabus").options.item(0).selected = 'selected';*/
         var arrParams = new Object();
         arrParams.nint_id = $(this).val();
-        arrParams.getmodalidad = true;
+        arrParams.getperiodo = true;
         requestHttpAjax(link, arrParams, function (response) {
             if (response.status == "OK") {
                 data = response.message;
@@ -140,7 +140,7 @@ $(document).ready(function() {
             }
         }, true);
     });
-    
+
 });
 
 function generateFee(){

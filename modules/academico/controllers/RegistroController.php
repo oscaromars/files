@@ -141,6 +141,7 @@ class RegistroController extends \app\components\CController {
             2 => Academico::t("registro", "Paid Out"),
         ];
         //$arr_pla_per = Planificacion::getPeriodosAcademicoPorModalidad();
+
         $arr_modalidad = Planificacion::find()
                 ->select(['m.mod_id', 'm.mod_nombre'])
                 ->join('inner join', 'modalidad m')
@@ -152,12 +153,18 @@ class RegistroController extends \app\components\CController {
         $modalidad = $registro_pago_matricula->getModalidadEstudiante($per_id);
 
         //if ( $grupo_id == 5){
-            $mod_modalidad = new Modalidad();
-            $mod_unidad = new UnidadAcademica();             
-            $arr_unidad = $mod_unidad->consultarUnidadAcademicasEmpresa(1);
-            $modalidadT = $mod_modalidad->consultarModalidad($arr_unidad[1]["id"], 1);
+        $mod_modalidad = new Modalidad();
+        $mod_unidad = new UnidadAcademica();             
+        $arr_unidad = $mod_unidad->consultarUnidadAcademicasEmpresa(1);
+        $modalidadT = $mod_modalidad->consultarModalidad($arr_unidad[1]["id"], 1);
         //}
 
+        if ( $grupo_id == 12){
+
+           $arr_pla_per = Planificacion::getPeriodosAcademicoPorModalidad($modalidad);
+        }else{
+            $arr_pla_per = Planificacion::getPeriodosAcademicoPorModalidad($modalidadT);
+        }
         return $this->render('index', [
             'esEstu' => TRUE,//$esEstu, --DBE
             'grupo_id' => $grupo_id,

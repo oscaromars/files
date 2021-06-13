@@ -164,7 +164,11 @@ class RegistroController extends \app\components\CController {
         $mod_unidad = new UnidadAcademica();             
         $arr_unidad = $mod_unidad->consultarUnidadAcademicasEmpresa(1);
         $modalidadT = $mod_modalidad->consultarModalidad($arr_unidad[1]["id"], 1);
+
         //}
+\app\models\Utilities::putMessageLogFile('grupo_id:     '.$grupo_id);
+\app\models\Utilities::putMessageLogFile('modalidad:     '.$modalidad);
+\app\models\Utilities::putMessageLogFile('modalidadT:     '.$$modalidadT[0]["id"]);
 
         if ( $grupo_id == 12){
 

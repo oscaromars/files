@@ -115,9 +115,9 @@ class RegistroController extends \app\components\CController {
         if (Yii::$app->request->isAjax) {
 \app\models\Utilities::putMessageLogFile('DENTRO AJAX: ');
             $data = Yii::$app->request->post();
-            \app\models\Utilities::putMessageLogFile('$data["mod_id"]:  ' .$data["mod_id"]);
+            \app\models\Utilities::putMessageLogFile('Modalidad $data["nint_id"]:  ' .$data["nint_id"]);
             if (isset($data["getperiodo"])) {
-                $arr_pla_per = Planificacion::getPeriodosAcademicoPorModalidad($data["mod_id"]);
+                $arr_pla_per = Planificacion::getPeriodosAcademicoPorModalidad($data["nint_id"]);
                 $message = array("arr_pla_per" => $arr_pla_per);
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
             }

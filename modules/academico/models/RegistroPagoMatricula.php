@@ -1190,7 +1190,7 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
 
     public function getModalidadEstudiante($per_id){
         $con = \Yii::$app->db_academico;
-        $sql = "SELECT md.mod_id as 'id',md.mod_nombre as 'name' 
+        $sql = "SELECT md.mod_id as id, md.mod_nombre as name 
                 from " . $con->dbname . ".planificacion pla 
                 inner join " . $con->dbname . ".planificacion_estudiante as pest on pla.pla_id = pest.pla_id
                 inner join " . $con->dbname . ".modalidad md on pla.mod_id = md.mod_id
@@ -1203,7 +1203,7 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
         $comando = $con->createCommand($sql);
         \app\models\Utilities::putMessageLogFile('mensaje: ' .$comando->getRawSql());
         
-        $resultData = $comando->queryOne();
+        $resultData = $comando->queryAll();
 
         return $resultData;
     }

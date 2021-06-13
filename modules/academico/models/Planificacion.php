@@ -276,7 +276,7 @@ class Planificacion extends \yii\db\ActiveRecord {
     public static function getPeriodosAcademicoPorModalidad($mod_id) {
         $con = \Yii::$app->db_academico;
 
-        $sql = "SELECT pla.pla_id, pla.pla_periodo_academico 
+        $sql = "SELECT pla.pla_id as id, pla.pla_periodo_academico as name
                 FROM " . $con->dbname . ".planificacion as pla
                 WHERE pla.mod_id = :mod_id;";
 

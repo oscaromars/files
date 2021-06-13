@@ -703,7 +703,7 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
             $condition .= "reg.rpm_estado_generado = :estado AND ";
         }
         if(isset($periodo) && $periodo != ""){
-            $periodo = "%" . $periodo . "%";
+            //$periodo = "%" . $periodo . "%";
             $condition .= "p.pla_id = :periodo AND ";
             //$condition .= "p.pla_periodo_academico like :periodo AND ";
         }

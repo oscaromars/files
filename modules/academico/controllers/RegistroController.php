@@ -104,23 +104,34 @@ class RegistroController extends \app\components\CController {
         if($usagrolMod) $esEstu = TRUE;
         if ($per_id != $perid) { $esEstu = TRUE; } 
 
+
 \app\models\Utilities::putMessageLogFile('perid: '.$perid);
 \app\models\Utilities::putMessageLogFile('per_id: '.$per_id);
 
 //\app\models\Utilities::putMessageLogFile('usagrolMod: '.$usagrolMod);
 \app\models\Utilities::putMessageLogFile('usu_id:     '.$usu_id);
 
+
         $resp_grupo_id = $resp_perfil->getPerfilSearchListPago($usu_id);
         $grupo_id = $resp_grupo_id ['gru_id'];
 
-\app\models\Utilities::putMessageLogFile('grupo_id : '.$grupo_id);        
 
         Yii::$app->session->set('usugrolMod', $usugrolMod);
         Yii::$app->session->set('per_id_perid', $per_id.'-'.$perid);
 
 \app\models\Utilities::putMessageLogFile('FUERA del PBgetFilter $esEstu: '.$esEstu);
+
+        if (Yii::$app->request->isAjax) {
+            $data = Yii::$app->request->post();
+            if (isset($data["mod_id"])) {
+                $arr_pla_per = Planificacion::getPeriodosAcademicoPorModalidad($data["mod_id"]);
+                $message = array("arr_pla_per" => $arr_pla_per);
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+            }
+        }
+
+
         if ($data['PBgetFilter']) {
-\app\models\Utilities::putMessageLogFile('DENTRO del PBgetFilter $esEstu: '.$esEstu);
             $search = $data['search'];
             $periodo = $data['periodo'];
             $modalidad = $data['mod_id'];
@@ -136,7 +147,7 @@ class RegistroController extends \app\components\CController {
             1 => Academico::t("registro", "To Check"), 
             2 => Academico::t("registro", "Paid Out"),
         ];
-        $arr_pla_per = Planificacion::getPeriodosAcademico();
+        //$arr_pla_per = Planificacion::getPeriodosAcademicoPorModalidad();
         $arr_modalidad = Planificacion::find()
                 ->select(['m.mod_id', 'm.mod_nombre'])
                 ->join('inner join', 'modalidad m')

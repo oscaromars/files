@@ -108,8 +108,8 @@ function searchModules() {
     var arrParams2 = new Object();
     arrParams2.PBgetFilter = true;
     //arrParams2.search = $("#txt_buscarData").val();
+    arrParams2.mod_id = $("#cmb_mod").val();
     arrParams2.periodo = ($("#cmb_per_acad option:selected").val());
-    //arrParams2.mod_id = $("#cmb_mod").val();
     //arrParams2.estado = $("#cmb_status").val();
     //alert(arrParams2.periodo+'-'+arrParams2.estado);
     $("#grid_registropay_list").PbGridView("applyFilterData", arrParams2);

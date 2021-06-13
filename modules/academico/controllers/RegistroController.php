@@ -104,43 +104,28 @@ class RegistroController extends \app\components\CController {
         if($usagrolMod) $esEstu = TRUE;
         if ($per_id != $perid) { $esEstu = TRUE; } 
 
-
-\app\models\Utilities::putMessageLogFile('perid: '.$perid);
-\app\models\Utilities::putMessageLogFile('per_id: '.$per_id);
-
-//\app\models\Utilities::putMessageLogFile('usagrolMod: '.$usagrolMod);
-\app\models\Utilities::putMessageLogFile('usu_id:     '.$usu_id);
-
-
         $resp_grupo_id = $resp_perfil->getPerfilSearchListPago($usu_id);
         $grupo_id = $resp_grupo_id ['gru_id'];
-
 
         Yii::$app->session->set('usugrolMod', $usugrolMod);
         Yii::$app->session->set('per_id_perid', $per_id.'-'.$perid);
 
-\app\models\Utilities::putMessageLogFile('FUERA del PBgetFilter $esEstu: '.$esEstu);
-
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
-    \app\models\Utilities::putMessageLogFile('FUERA AJAX ');
             if (isset($data["mod_id"])) {
-   \app\models\Utilities::putMessageLogFile('DENTRO AJAX ');
                 $arr_pla_per = Planificacion::getPeriodosAcademicoPorModalidad($data["mod_id"]);
                 $message = array("arr_pla_per" => $arr_pla_per);
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
             }
         }
 
-$data = Yii::$app->request->get();
+        $data = Yii::$app->request->get();
+
         if ($data['PBgetFilter']) {
             $search = $data['search'];
             $periodo = $data['periodo'];
             $modalidad = $data['mod_id'];
             $estado = $data['estado'];
-\app\models\Utilities::putMessageLogFile('DENTRO del PBgetFilter');
-\app\models\Utilities::putMessageLogFile('DENTRO del PBgetFilter $modalidad: '.$data['mod_id']);
-\app\models\Utilities::putMessageLogFile('DENTRO del PBgetFilter $periodo: '.$data['periodo']);
 
             return $this->renderPartial('index-grid', [
                 'model' => $model->getAllListRegistryPaymentGrid($search, $esEstu, $modalidad, $estado, $periodo, true, $per_id, $grupo_id ),
@@ -172,13 +157,9 @@ $data = Yii::$app->request->get();
         $arr_unidad = $mod_unidad->consultarUnidadAcademicasEmpresa(1);
         $modalidadT = $mod_modalidad->consultarModalidad($arr_unidad[1]["id"], 1);
 
-        \app\models\Utilities::putMessageLogFile('grupo_id:     '.$grupo_id);
-
         if ( $grupo_id == 12){
-            \app\models\Utilities::putMessageLogFile('modalidad:     '.$modalidad[0]['id']);
            $arr_pla_per = Planificacion::getPeriodosAcademicoPorModalidad($modalidad[0]['id']);
         }else{
-            \app\models\Utilities::putMessageLogFile('modalidadT:     '.$$modalidadT[0]["id"]);
             $arr_pla_per = Planificacion::getPeriodosAcademicoPorModalidad($modalidadT[0]["id"]);
         }
 
@@ -190,12 +171,9 @@ $data = Yii::$app->request->get();
             'modalidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $modalidad), "id", "name"),
             'modalidadT' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $modalidadT), "id", "name"),
             'periodoAcademico' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $arr_pla_per), "id", "name"),
-            //'periodoAcademico' => array_merge([0 => Academico::t("matriculacion", "-- Select Academic Period --")], ArrayHelper::map($arr_pla_per, "pla_id", "pla_periodo_academico")),
             'arr_status' => $arr_status,
             'costo' => $costoc,
             'model' => $model->getAllListRegistryPaymentGrid(NULL, TRUE/*$esEstu*/, NULL, NULL, NULL, true, $per_id, $grupo_id ),
-            
-
         ]);
     }
 

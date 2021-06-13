@@ -167,31 +167,29 @@ class RegistroController extends \app\components\CController {
 
         //}
 \app\models\Utilities::putMessageLogFile('grupo_id:     '.$grupo_id);
-\app\models\Utilities::putMessageLogFile('modalidad:     '.$modalidad['id']);
+\app\models\Utilities::putMessageLogFile('modalidad:     '.$modalidad[0]['id']);
 \app\models\Utilities::putMessageLogFile('modalidadT:     '.$$modalidadT[0]["id"]);
 
         if ( $grupo_id == 12){
 
-           $arr_pla_per = Planificacion::getPeriodosAcademicoPorModalidad($modalidad['id']);
+           $arr_pla_per = Planificacion::getPeriodosAcademicoPorModalidad($modalidad[0]['id']);
         }else{
             $arr_pla_per = Planificacion::getPeriodosAcademicoPorModalidad($modalidadT[0]["id"]);
         }
         return $this->render('index', [
-            'esEstu' => TRUE,//$esEstu, --DBE
-            'grupo_id' => $grupo_id,
-            'periodoAcademico' => array_merge([0 => Academico::t("matriculacion", "-- Select Academic Period --")], ArrayHelper::map($arr_pla_per, "pla_id", "pla_periodo_academico")),
-            //'arr_modalidad' => array_merge([0 => Academico::t("matriculacion", "-- Select Modality --")], ArrayHelper::map($arr_modalidad, "mod_id", "mod_nombre")),
+            'esEstu' => TRUE,
+            'grupo_id' => $grupo_id,            
+            'per_id' => $per_id,
+            //'modalidad'=>array_merge([1 => Academico::t("matriculacion", $modalidad['name'])]),//$modalidad['name']
+            'modalidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $modalidad), "id", "name"),
+            'modalidadT' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $modalidadT), "id", "name"),
+            'periodoAcademico' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $arr_pla_per), "id", "name"),
+            //'periodoAcademico' => array_merge([0 => Academico::t("matriculacion", "-- Select Academic Period --")], ArrayHelper::map($arr_pla_per, "pla_id", "pla_periodo_academico")),
             'arr_status' => $arr_status,
               'costo' => $costoc,
             'model' => $model->getAllListRegistryPaymentGrid(NULL, TRUE/*$esEstu*/, NULL, NULL, NULL, true, $per_id, $grupo_id ),
-            'per_id' => $per_id,
-            'modalidad'=>array_merge([1 => Academico::t("matriculacion", $modalidad['name'])]),//$modalidad['name']
-            'modalidadT' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $modalidadT), "id", "name"),
-            //'modalidad'=>array_merge([1 => Academico::t("matriculacion", $modalidad['name'])]),//$modalidad['name']
-            //'modalidadT' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $modalidadT), "id", "name"),
+            
 
-
-            //'modalidad' => $modalidad['name']?(array_merge([1 => Academico::t("matriculacion", $modalidad['name'])])):(ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $modalidad), "id", "name")),
         ]);
     }
 
@@ -609,7 +607,7 @@ class RegistroController extends \app\components\CController {
 
                         if ($modelReg->save()) {   
                         //Registrar datos de factura pago stripe
-                                    if($fpago == 6  || $fpago==1){
+                                   /* if($fpago == 6  || $fpago==1){
                                             //Inserta datos de factura pago
                                         $datosPagoRegistro = new  DatosPagoRegistro();
                                         \app\models\Utilities::putMessageLogFile('dpre_ssn_id :'.$data['factssnid']);
@@ -632,8 +630,8 @@ class RegistroController extends \app\components\CController {
                                             $per_id,
                                             $modelReg->rpm_id
                                         );
-                                    }
-
+                                    }*/
+/*
                                     $modelRegPaAd = RegistroAdicionalMaterias::findOne(['rama_id' => $rama_id, 'ron_id' => $id, 'per_id' => $per_id, 'rama_estado' => '1', 'rama_estado_logico' => '1']);
                                     $modelRegPaAd->rpm_id = $modelReg->rpm_id;
                                     if(!$modelRegPaAd->save()){
@@ -787,26 +785,10 @@ class RegistroController extends \app\components\CController {
                                                         Utilities::putMessageLogFile('>>>>>>>>>>>>>>>>>>>>><Resultado de Id CAbecera de Pago '. $pfes_id_result);
                                                                             //detalle de pago de matricula inicial
                                                         $resp_detpagofactura = $pagosFacturaEstudiante->insertarDetpagospendientes($pfes_id_result,$modelCuota->roc_id,$modelCuota->roc_costo,$usu_id,$dpfa_estado_pago);
-
                                                       }
-                                                    
-
-
-
-
-
                                             }   
-
-
-
-
-
-
-
-
-
-//comentar 1
-
+*/
+/*
                                             $TieneRpM = $RegistroPagoMatricula->getFacturasPendientesCuotas($id,$per_id);
                                             $cantPendCuot = count($TieneRpM);
                                             \app\models\Utilities::putMessageLogFile(print_r($TieneRpM, true));
@@ -945,12 +927,12 @@ class RegistroController extends \app\components\CController {
                                                 }
 
                                             }//if(count($TieneRpM)<=0){
-                                            
+                                       */     
 //comentar 2
 
 
                                             //Si no hay registros de pendientes procedo a insertar pendients. 
-
+/*
                                             if(count($TieneRpM)<=0){ //comentar 3
 
                                                 for($i=0; $i < $numcuotas; $i++){
@@ -1032,7 +1014,7 @@ class RegistroController extends \app\components\CController {
 
                                
                                 
-
+*/
                             
 
                             // procesos de creacion de ficha de enrolamiento
@@ -1097,10 +1079,10 @@ class RegistroController extends \app\components\CController {
                                         /******************************************************************/
                                         /********** PARA DESARROLLO  **************************************/
                                         /******************************************************************/
-                                       /* $stripe = array(
+                                       $stripe = array(
                                             'secret_key'      => 'sk_test_51HrVkKC4VyMkdPFRrDhbuQLABtvVq3tfZ8c3E3fm55Q7kg5anz6fqO5qrlPBVu7fDc9XVWGTb55M6TiIq4hwHz8J00rVFgisaj',
                                             'publishable_key' => 'pk_test_51HrVkKC4VyMkdPFRZ5aImiv4UNRIm1N7qh2VWG5YMcXJMufmwqvCVYAKSZVxvsjpP6PbjW4sSrc8OKrgfNsrmswt00OezUqkuN',
-                                        );*/
+                                        );
                                 
                                         /******************************************************************/
                                         /********** PARA PRODUCCION  **************************************/
@@ -1265,9 +1247,7 @@ class RegistroController extends \app\components\CController {
                             //return $this->redirect(['index']);
                             //$transaction->commit();
                             //return Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Success"), false, $message);
-                        }else{
-                            throw new Exception('Error to Save Information.');
-                        }
+                        
                     } catch (Exception $ex) {
                         $transaction->rollback();
                         $con->rollback();

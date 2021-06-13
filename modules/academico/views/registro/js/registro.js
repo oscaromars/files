@@ -143,6 +143,18 @@ $(document).ready(function() {
 
 });
 
+function setComboDataselect(arr_data, element_id, texto) {
+    var option_arr = "";
+    option_arr += "<option value= '0'>" + texto + "</option>";
+    for (var i = 0; i < arr_data.length; i++) {
+        var id = arr_data[i].id;
+        var value = arr_data[i].name;
+
+        option_arr += "<option value='" + id + "'>" + value + "</option>";
+    }
+    $("#" + element_id).html(option_arr);
+}
+
 function generateFee(){
     let value = $(this).val();
     let total = ($('#frm_valor').val()).replace(/,/g, '');//($('#frm_costo_item').val()).replace(/,/g, '');

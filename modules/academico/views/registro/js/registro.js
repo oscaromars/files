@@ -9,9 +9,26 @@ $(document).ready(function() {
         searchModulesList();
     });
     $('#btn_modificarcargacartera').click(function() {
-        save();
-        guardarCargarCartera();
-        enviarPdf();
+        var txt_dpre_ssn_id_fact_aux= $('txt_dpre_ssn_id_fact_aux').val();
+        var txt_nombres_fac_aux     = $('txt_nombres_fac_aux').val();
+        var txt_apellidos_fac_aux   = $('txt_apellidos_fac_aux').val();
+        var txt_dir_fac_aux         = $('txt_dir_fac_aux').val();
+        var txt_tel_fac_aux         = $('txt_tel_fac_aux').val();
+        var txt_correo_fac_aux      = $('txt_correo_fac_aux').val();
+        if (txt_dpre_ssn_id_fact_aux != null ||
+            txt_nombres_fac_aux != null ||
+            txt_apellidos_fac_aux != null ||
+            txt_dir_fac_aux != null ||
+            txt_tel_fac_aux != null ||
+            txt_correo_fac_aux != null){
+            save();
+            guardarCargarCartera();
+            enviarPdf();
+        }else{
+            var mensaje = {wtmessage: 'Se deben ingresar todos los campos de facturacion correspondientes', title: "Datos de Facturacion"};
+            showAlert("NO_OK", "error", mensaje);
+            return;
+        }
     });
     $('#cmb_tpago').change(function() {
         if ($(this).val() == 1) {
@@ -162,7 +179,7 @@ function save() {
         var mensaje = {wtmessage: '', title: "Se deben aceptar los terminos y condiciones para continuar"};
         //alert('Se deben aceptar terminos y condiciones');
         showAlert("NO_OK", "error", mensaje);
-        //return;
+        return;
     }
     /**
     * Datos de factura por  pago boton en linea
@@ -405,21 +422,20 @@ function generarDataTable(cuotas, primerPago) {
         }
         primerCuota = ((total*(100/cuotas))/100).toFixed(1);
         cuotageneral = (total*percentaje/100).toFixed(2);
-
+        porc = (primerPago !== null && cuotas > 1 && i == 1) ? (perPriC) : (percentaje);
+        monto = (total*(porc/100)).toFixed(2);
         var tb_item = new Array();
         var tb_item2 = new Array();
         tb_item[0] = 0;
         tb_item[1] = labelPay + i;
         tb_item[2] = (primerPago !== null && cuotas > 1 && i == 1) ? (perPriC + '%') : (percentaje + '%');
-        tb_item[3] = ( i == 1) ? primerCuota: cuotageneral;//('$' + currencyFormat(parseFloat(primerPago))) : ('$' + currencyFormat(parseFloat(cuota)));
-        //tb_item[3] = ('$'+ (cuota/tb_item[2]).toFixed(2));
+        tb_item[3] = '$ '+monto;//( i == 1) ? primerCuota: cuotageneral;//('$' + currencyFormat(parseFloat(primerPago))) : ('$' + currencyFormat(parseFloat(cuota)));
         tb_item[4] = $('#vencimiento_' + i).val();
         tb_item[5] = "PENDING";//(i == 1) ? "TO CHECK" : "PENDING";
         tb_item2[0] = 0;
         tb_item2[1] = labelPay + i;
         tb_item2[2] = (primerPago !== null && cuotas > 1 && i == 1) ? (perPriC + '%') : (percentaje + '%');
-        tb_item2[3] = ( i == 1) ? primerCuota: cuotageneral;//(primerPago !== null && cuotas > 1 && i == 1) ? ('$' + currencyFormat(parseFloat(primerPago))) : ('$' + currencyFormat(parseFloat(cuota)));
-        //tb_item[3] = ('$'+ (cuota/tb_item[2]).toFixed(2));
+        tb_item2[3] = '$ '+monto;//( i == 1) ? primerCuota: cuotageneral;//(primerPago !== null && cuotas > 1 && i == 1) ? ('$' + currencyFormat(parseFloat(primerPago))) : ('$' + currencyFormat(parseFloat(cuota)));
         tb_item2[4] = $('#vencimiento_' + i).val();
         tb_item2[5] = "PENDING";//(i == 1) ? "TO CHECK" : "PENDING";
         if (arrData.data) {
@@ -616,7 +632,7 @@ function confirmarDevolucion(id) {
             //$("#payBtn").hide();
 
             //llamar a la funcion de save de pagos.
-            //save();
+            
             //sendInscripcionSubirPago3();
             //$.LoadingOverlay("hide");
             
@@ -647,7 +663,7 @@ function guardarCargarCartera(){
     $redirect = $('#txth_base').val() + "/academico/registro/new/"+arrParams.per_id+'?rama_id='+arrParams.rama_id ;
     $redirect = $('#txth_base').val() + "/academico/registro/index";
     //alert(arrParams.tpago+'-'+arrParams.total+'-'+arrParams.interes +'-'+arrParams.financiamiento+'-'+arrParams.numcuotas+'-'+arrParams.rama_id+'-'+arrParams.per_id +'-'+ $redirect);
-    if(/*$('#cmb_cuota option:selected').val()*/arrParams.numcuotas != 0 || terminos==0){
+    if(arrParams.numcuotas != 0 || terminos==0){
         if(terminos != 0){
             try{
                 requestHttpAjax(link, arrParams, function(response) {

@@ -702,7 +702,9 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
         if(isset($estado) && $estado != "" && $estado != -1){
             $condition .= "reg.rpm_estado_generado = :estado AND ";
         }
+        \app\models\Utilities::putMessageLogFile('A1' .$periodo);
         if(isset($periodo) && $periodo != ""){
+             \app\models\Utilities::putMessageLogFile('A2' .$periodo);
             //$periodo = "%" . $periodo . "%";
             $condition .= "p.pla_id = :periodo AND ";
             //$condition .= "p.pla_periodo_academico like :periodo AND ";

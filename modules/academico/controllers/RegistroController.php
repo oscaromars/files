@@ -123,7 +123,9 @@ class RegistroController extends \app\components\CController {
 
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
+    \app\models\Utilities::putMessageLogFile('FUERA AJAX ');
             if (isset($data["mod_id"])) {
+   \app\models\Utilities::putMessageLogFile('DENTRO AJAX ');
                 $arr_pla_per = Planificacion::getPeriodosAcademicoPorModalidad($data["mod_id"]);
                 $message = array("arr_pla_per" => $arr_pla_per);
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
@@ -136,6 +138,9 @@ class RegistroController extends \app\components\CController {
             $periodo = $data['periodo'];
             $modalidad = $data['mod_id'];
             $estado = $data['estado'];
+\app\models\Utilities::putMessageLogFile('DENTRO del PBgetFilter $modalidad: '.$modalidad);
+\app\models\Utilities::putMessageLogFile('DENTRO del PBgetFilter $periodo: '.$periodo);
+
             return $this->renderPartial('index-grid', [
                 'model' => $model->getAllListRegistryPaymentGrid($search, $esEstu, $modalidad, $estado, $periodo, true, $per_id, $grupo_id ),
             ]);
@@ -149,33 +154,33 @@ class RegistroController extends \app\components\CController {
         ];
         //$arr_pla_per = Planificacion::getPeriodosAcademicoPorModalidad();
 
-        $arr_modalidad = Planificacion::find()
+        /*$arr_modalidad = Planificacion::find()
                 ->select(['m.mod_id', 'm.mod_nombre'])
                 ->join('inner join', 'modalidad m')
                 ->where('pla_estado_logico = 1 and pla_estado = 1 and m.mod_estado =1 and m.mod_estado_logico = 1')
                 ->asArray()
-                ->all();
-        $registro_pago_matricula = new RegistroPagoMatricula();
+                ->all();*/
+        //$registro_pago_matricula = new RegistroPagoMatricula();
+        //$modalidad = $registro_pago_matricula->getModalidadEstudiante($per_id);
 
-        $modalidad = $registro_pago_matricula->getModalidadEstudiante($per_id);
+        $resp_mod_pago_matricula = new Modalidad();
+        $modalidad = $resp_mod_pago_matricula->getModalidadEstudiantePM($per_id);
 
-        //if ( $grupo_id == 5){
         $mod_modalidad = new Modalidad();
         $mod_unidad = new UnidadAcademica();             
         $arr_unidad = $mod_unidad->consultarUnidadAcademicasEmpresa(1);
         $modalidadT = $mod_modalidad->consultarModalidad($arr_unidad[1]["id"], 1);
 
-        //}
-\app\models\Utilities::putMessageLogFile('grupo_id:     '.$grupo_id);
-\app\models\Utilities::putMessageLogFile('modalidad:     '.$modalidad[0]['id']);
-\app\models\Utilities::putMessageLogFile('modalidadT:     '.$$modalidadT[0]["id"]);
+        \app\models\Utilities::putMessageLogFile('grupo_id:     '.$grupo_id);
 
         if ( $grupo_id == 12){
-
+            \app\models\Utilities::putMessageLogFile('modalidad:     '.$modalidad[0]['id']);
            $arr_pla_per = Planificacion::getPeriodosAcademicoPorModalidad($modalidad[0]['id']);
         }else{
+            \app\models\Utilities::putMessageLogFile('modalidadT:     '.$$modalidadT[0]["id"]);
             $arr_pla_per = Planificacion::getPeriodosAcademicoPorModalidad($modalidadT[0]["id"]);
         }
+
         return $this->render('index', [
             'esEstu' => TRUE,
             'grupo_id' => $grupo_id,            

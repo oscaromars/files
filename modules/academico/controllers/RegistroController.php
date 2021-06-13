@@ -167,12 +167,12 @@ class RegistroController extends \app\components\CController {
 
         //}
 \app\models\Utilities::putMessageLogFile('grupo_id:     '.$grupo_id);
-\app\models\Utilities::putMessageLogFile('modalidad:     '.$modalidad);
+\app\models\Utilities::putMessageLogFile('modalidad:     '.$modalidad['id']);
 \app\models\Utilities::putMessageLogFile('modalidadT:     '.$$modalidadT[0]["id"]);
 
         if ( $grupo_id == 12){
 
-           $arr_pla_per = Planificacion::getPeriodosAcademicoPorModalidad($modalidad);
+           $arr_pla_per = Planificacion::getPeriodosAcademicoPorModalidad($modalidad['id']);
         }else{
             $arr_pla_per = Planificacion::getPeriodosAcademicoPorModalidad($modalidadT[0]["id"]);
         }

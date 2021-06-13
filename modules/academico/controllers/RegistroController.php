@@ -109,7 +109,7 @@ class RegistroController extends \app\components\CController {
 
         Yii::$app->session->set('usugrolMod', $usugrolMod);
         Yii::$app->session->set('per_id_perid', $per_id.'-'.$perid);
-
+\app\models\Utilities::putMessageLogFile('FUERA AJAX: ');
         if (Yii::$app->request->isAjax) {
             \app\models\Utilities::putMessageLogFile('DENTRO AJAX: ');
             $data = Yii::$app->request->post();

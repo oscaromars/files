@@ -163,7 +163,7 @@ class RegistroController extends \app\components\CController {
 
            $arr_pla_per = Planificacion::getPeriodosAcademicoPorModalidad($modalidad);
         }else{
-            $arr_pla_per = Planificacion::getPeriodosAcademicoPorModalidad($modalidadT);
+            $arr_pla_per = Planificacion::getPeriodosAcademicoPorModalidad($modalidadT[0]["id"]);
         }
         return $this->render('index', [
             'esEstu' => TRUE,//$esEstu, --DBE

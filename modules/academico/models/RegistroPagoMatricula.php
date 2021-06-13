@@ -820,7 +820,7 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
         if(isset($search) && $search != "")  $comando->bindParam(":search",$search_cond, \PDO::PARAM_STR);
         if(isset($mod_id) && $mod_id != "" && $mod_id != 0)  $comando->bindParam(":mod_id",$mod_id, \PDO::PARAM_INT);
         if(isset($estado) && $estado != "" && $estado != -1)  $comando->bindParam(":estado",$estado, \PDO::PARAM_INT);
-        if(isset($periodo) && $periodo != "") $comando->bindParam(":periodo",$periodo, \PDO::PARAM_STR);
+        if(isset($periodo) && $periodo != "" && $periodo != 0) $comando->bindParam(":periodo",$periodo, \PDO::PARAM_STR);
         if($isEstud)    $comando->bindParam(":per_id",$per_id, \PDO::PARAM_INT);
 
         $res = $comando->queryAll();

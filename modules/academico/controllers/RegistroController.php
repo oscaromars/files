@@ -90,7 +90,7 @@ class RegistroController extends \app\components\CController {
         if ($per_id==Null) { $per_id = Yii::$app->session->get("PB_perid"); } 
         $usu_id = Yii::$app->session->get("PB_iduser");
         $emp_id = Yii::$app->session->get("PB_idempresa");
-        $data = Yii::$app->request->get();
+      //  $data = Yii::$app->request->get();
         $model = new RegistroPagoMatricula();
         $resp_perfil = new RegistroPagoMatricula();
         
@@ -132,14 +132,15 @@ class RegistroController extends \app\components\CController {
             }
         }
 
-
+$data = Yii::$app->request->get();
         if ($data['PBgetFilter']) {
             $search = $data['search'];
             $periodo = $data['periodo'];
             $modalidad = $data['mod_id'];
             $estado = $data['estado'];
-\app\models\Utilities::putMessageLogFile('DENTRO del PBgetFilter $modalidad: '.$modalidad);
-\app\models\Utilities::putMessageLogFile('DENTRO del PBgetFilter $periodo: '.$periodo);
+\app\models\Utilities::putMessageLogFile('DENTRO del PBgetFilter');
+\app\models\Utilities::putMessageLogFile('DENTRO del PBgetFilter $modalidad: '.$data['mod_id']);
+\app\models\Utilities::putMessageLogFile('DENTRO del PBgetFilter $periodo: '.$data['periodo']);
 
             return $this->renderPartial('index-grid', [
                 'model' => $model->getAllListRegistryPaymentGrid($search, $esEstu, $modalidad, $estado, $periodo, true, $per_id, $grupo_id ),
@@ -191,7 +192,7 @@ class RegistroController extends \app\components\CController {
             'periodoAcademico' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $arr_pla_per), "id", "name"),
             //'periodoAcademico' => array_merge([0 => Academico::t("matriculacion", "-- Select Academic Period --")], ArrayHelper::map($arr_pla_per, "pla_id", "pla_periodo_academico")),
             'arr_status' => $arr_status,
-              'costo' => $costoc,
+            'costo' => $costoc,
             'model' => $model->getAllListRegistryPaymentGrid(NULL, TRUE/*$esEstu*/, NULL, NULL, NULL, true, $per_id, $grupo_id ),
             
 

@@ -748,7 +748,7 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
                     INNER JOIN " . $con_academico->dbname . ".unidad_academica AS ua ON me.uaca_id = ua.uaca_id
                     INNER JOIN " . $con_academico->dbname . ".modalidad AS mo ON mo.mod_id = me.mod_id
                     LEFT JOIN " . $con_academico->dbname . ".registro_adicional_materias AS ram on ram.ron_id = r.ron_id
-                    INNER JOIN (
+                    LEFT JOIN (
                         SELECT 
                             r.pes_id as pes_id,
                             rm.rama_id as rama_id,

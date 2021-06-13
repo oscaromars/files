@@ -113,10 +113,10 @@ class RegistroController extends \app\components\CController {
         Yii::$app->session->set('per_id_perid', $per_id.'-'.$perid);
 \app\models\Utilities::putMessageLogFile('FUERA AJAX: ');
         if (Yii::$app->request->isAjax) {
-            \app\models\Utilities::putMessageLogFile('DENTRO AJAX: ');
+\app\models\Utilities::putMessageLogFile('DENTRO AJAX: ');
             $data = Yii::$app->request->post();
             \app\models\Utilities::putMessageLogFile('$data["mod_id"]:  ' .$data["mod_id"]);
-            if (isset($data["mod_id"])) {
+            if (isset($data["getperiodo"])) {
                 $arr_pla_per = Planificacion::getPeriodosAcademicoPorModalidad($data["mod_id"]);
                 $message = array("arr_pla_per" => $arr_pla_per);
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);

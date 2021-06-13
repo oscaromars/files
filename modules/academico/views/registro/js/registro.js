@@ -110,6 +110,37 @@ $(document).ready(function() {
         generarDataTable(numCuota, value);
     });
     sessionStorage.setItem('grid_direct_credit', '');
+
+
+        /***********************************************/
+    /* Filtro para busqueda en listado solicitudes */
+    /***********************************************/
+    $('#cmb_mod').change(function () {
+        var link = $('#txth_base').val() + "/academico/registro/index";
+        /*document.getElementById("cmb_carrerabus").options.item(0).selected = 'selected';*/
+        var arrParams = new Object();
+        arrParams.nint_id = $(this).val();
+        arrParams.getmodalidad = true;
+        requestHttpAjax(link, arrParams, function (response) {
+            if (response.status == "OK") {
+                data = response.message;
+                setComboDataselect(data.modalidad, "cmb_per_acad", "Todos");
+                /*var arrParams = new Object();
+                if (data.modalidad.length > 0) {
+                    arrParams.unidada = $('#cmb_unidadbus').val();
+                    arrParams.moda_id = data.modalidad[0].id;
+                    arrParams.getcarrera = true;
+                    requestHttpAjax(link, arrParams, function (response) {
+                        if (response.status == "OK") {
+                            data = response.message;
+                            setComboDataselect(data.carrera, "cmb_carrerabus", "Todos");
+                        }
+                    }, true);
+                }*/
+            }
+        }, true);
+    });
+    
 });
 
 function generateFee(){

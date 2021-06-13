@@ -107,6 +107,8 @@ class RegistroController extends \app\components\CController {
         $resp_grupo_id = $resp_perfil->getPerfilSearchListPago($usu_id);
         $grupo_id = $resp_grupo_id ['gru_id'];
 
+\app\models\Utilities::putMessageLogFile('GRUPO: '.$grupo_id);
+
         Yii::$app->session->set('usugrolMod', $usugrolMod);
         Yii::$app->session->set('per_id_perid', $per_id.'-'.$perid);
 \app\models\Utilities::putMessageLogFile('FUERA AJAX: ');

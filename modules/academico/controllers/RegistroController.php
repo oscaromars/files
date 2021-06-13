@@ -105,6 +105,13 @@ class RegistroController extends \app\components\CController {
         if ($per_id != $perid) { $esEstu = TRUE; } 
 
 
+\app\models\Utilities::putMessageLogFile('perid: '.$perid);
+\app\models\Utilities::putMessageLogFile('per_id: '.$per_id);
+
+//\app\models\Utilities::putMessageLogFile('usagrolMod: '.$usagrolMod);
+\app\models\Utilities::putMessageLogFile('usu_id:     '.$usu_id);
+
+
         $resp_grupo_id = $resp_perfil->getPerfilSearchListPago($usu_id);
         $grupo_id = $resp_grupo_id ['gru_id'];
 
@@ -2326,8 +2333,8 @@ class RegistroController extends \app\components\CController {
             $per_id     = base64_decode($data['per_id']);
             $con = \Yii::$app->db_facturacion;
             $con2  = \Yii::$app->db_academico;
-            $transaction = $con->beginTransaction();
-            $transaction2 = $con2->beginTransaction();
+            //$transaction = $con->beginTransaction();
+            //$transaction2 = $con2->beginTransaction();
 
             try {
                 $modelCargaCartera = new RegistroConfiguracion();
@@ -2364,28 +2371,25 @@ class RegistroController extends \app\components\CController {
                                 $registros_cuotas = $modelCargaCartera->registrarCargaCartera($est_id['est_id'],$cedula['per_cedula'], $secuencial['secuencial'], $forma_pago,$fechaCuotaActual['fecha'],$in, $numcuotas, $valor_cuota, $total, $usuario);
                                 $registro_online_cuota = $modelCargaCartera->registroOnlineCuota($ron_id, $rpm_id,$in,$fechaCuotaActual['fecha'],$porcentaje,$total);
                             }
-                            if ($registros_cuotas) {
-                                $exito = 1;
-                            }
-                            if ($exito) {
-                                $transaction->commit();
-                                $transaction2->commit();
+                            
+                                //$transaction->commit();
+                                //$transaction2->commit();
                                 $message = array(
                                     "wtmessage" => Yii::t("notificaciones", "Su información ha sido guardada con éxito."),
                                     "title" => Yii::t('jslang', 'Success'),
                                 );
                                 \app\models\Utilities::putMessageLogFile('controller 4...: '.$registros_cuotas);
                                 return Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), true, $message);
-                            } else {
+                            /*} else {
                                 $transaction->rollback();
                                 $transaction2->rollback();
                                 $message = array(
-                                    "wtmessage" => Yii::t("notificaciones", "Error al grabar." ),
+                                    "wtmessage" => Yii::t("notificaciones", "Error al grabar.".$transaction ),
                                     "title" => Yii::t('jslang', 'Error'),
                                 );
-                                \app\models\Utilities::putMessageLogFile('controller 4...: '.$message);
+                                \app\models\Utilities::putMessageLogFile('controller 5...: '.$message);
                                 return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
-                            }
+                            }*/
                        /* }else{
                             \app\models\Utilities::putMessageLogFile('repetidos...: ');
                         }*/  
@@ -2394,9 +2398,9 @@ class RegistroController extends \app\components\CController {
                             //Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
                     }                                   
             } catch (Exception $ex) {
-                \app\models\Utilities::putMessageLogFile('controller 4...: ');
-                $transaction->rollback();
-                $transaction2->rollback();
+                \app\models\Utilities::putMessageLogFile('controller 6...: ');
+                //$transaction->rollback();
+                //$transaction2->rollback();
                 $message = array(
                     "wtmessage" => Yii::t("notificaciones", "Error al grabar.".$ex->getMessage()),
                     "title" => Yii::t('jslang', 'Error'),

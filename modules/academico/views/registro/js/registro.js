@@ -124,7 +124,7 @@ $(document).ready(function() {
         requestHttpAjax(link, arrParams, function (response) {
             if (response.status == "OK") {
                 data = response.message;
-                setComboDataselect(data.modalidad, "cmb_per_acad", "Todos");
+                setComboDataselect(data.periodo, "cmb_per_acad", "Todos");
                 /*var arrParams = new Object();
                 if (data.modalidad.length > 0) {
                     arrParams.unidada = $('#cmb_unidadbus').val();

@@ -167,26 +167,28 @@ class RegistroController extends \app\components\CController {
 
         //}
 \app\models\Utilities::putMessageLogFile('grupo_id:     '.$grupo_id);
-\app\models\Utilities::putMessageLogFile('modalidad:     '.$modalidad['id']);
+\app\models\Utilities::putMessageLogFile('modalidad:     '.$modalidad[0]['id']);
 \app\models\Utilities::putMessageLogFile('modalidadT:     '.$$modalidadT[0]["id"]);
 
         if ( $grupo_id == 12){
 
-           $arr_pla_per = Planificacion::getPeriodosAcademicoPorModalidad($modalidad['id']);
+           $arr_pla_per = Planificacion::getPeriodosAcademicoPorModalidad($modalidad[0]['id']);
         }else{
             $arr_pla_per = Planificacion::getPeriodosAcademicoPorModalidad($modalidadT[0]["id"]);
         }
         return $this->render('index', [
             'esEstu' => TRUE,
-            'grupo_id' => $grupo_id,
-            'periodoAcademico' => array_merge([0 => Academico::t("matriculacion", "-- Select Academic Period --")], ArrayHelper::map($arr_pla_per, "pla_id", "pla_periodo_academico")),
-            'arr_status' => $arr_status,
-              'costo' => $costoc,
-            'model' => $model->getAllListRegistryPaymentGrid(NULL, TRUE/*$esEstu*/, NULL, NULL, NULL, true, $per_id, $grupo_id ),
+            'grupo_id' => $grupo_id,            
             'per_id' => $per_id,
             //'modalidad'=>array_merge([1 => Academico::t("matriculacion", $modalidad['name'])]),//$modalidad['name']
             'modalidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $modalidad), "id", "name"),
             'modalidadT' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $modalidadT), "id", "name"),
+            'periodoAcademico' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $arr_pla_per), "id", "name"),
+            //'periodoAcademico' => array_merge([0 => Academico::t("matriculacion", "-- Select Academic Period --")], ArrayHelper::map($arr_pla_per, "pla_id", "pla_periodo_academico")),
+            'arr_status' => $arr_status,
+              'costo' => $costoc,
+            'model' => $model->getAllListRegistryPaymentGrid(NULL, TRUE/*$esEstu*/, NULL, NULL, NULL, true, $per_id, $grupo_id ),
+            
 
         ]);
     }

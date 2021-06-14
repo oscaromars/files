@@ -8,42 +8,42 @@
         margin: 5px 0px 0px;
     }    
     .tcoll_cen {
-        widtd: 50%;
+        width: 50%;
         float: left;
         font-size: 9px;
         text-align: left;
         font-family: Arial;
     }
     .tcolr_cen {
-        widtd: 50%;
+        width: 50%;
         float: left;
         font-size: 9px;
         text-align: left;
         font-family: Arial;
     }
     .tcoll_cen2 {
-        widtd: 40%;
+        width: 40%;
         float: left;
         font-size: 9px;
         text-align: left;
         font-family: Arial;
     }
     .tcolr_cen2 {
-        widtd: 60%;
+        width: 60%;
         float: left;
         font-size: 9px;
         text-align: left;
         font-family: Arial;
     }
     .tcoll_ad {
-        widtd: 30%;
+        width: 30%;
         float: left;
         font-size: 9px;
         text-align: left;
         font-family: Arial;
     }
     .tcolr_ad {
-        widtd: 70%;
+        width: 70%;
         float: left;
         font-size: 9px;
         text-align: left;
@@ -51,41 +51,41 @@
     }
     .divDetalles{
         float: left;
-        widtd: 100%;
+        width: 100%;
         position: absolute;      
         left: 0;
         margin-top: 10px;
     }
     .divDetalleAd{
         float: left;
-        widtd: 65%;
+        width: 65%;
         position: absolute;      
         left: 0;
     }
     .divDetalleTot{  
-        widtd: 35%;
+        width: 35%;
         position: absolute;      
         right: 0;
     }
     .div_modInfoAd{
         float: left;
-        widtd: 70%;
+        width: 70%;
     }
     .div_modInfoVal{
         float: left;
-        widtd: 100%;       
+        width: 100%;       
     }
     .div_modInfoDet{
         float: left;
-        widtd: 60%;
+        width: 60%;
     }
     .div_modInfoDet2{
         float: left;
-        widtd: 75%;
+        width: 75%;
     }
     .div_modInfoDet1{
         float: left;
-        widtd: 40%;
+        width: 40%;
     }    
     .bordeDivDet{ 
         border: 1px solid #000000;       
@@ -114,7 +114,7 @@
         caption-side: bottom;
     }  
     .tcell_cen {
-        widtd: 50%;
+        width: 30%;
         float: left;
         font-size: 14px;
         text-align: left;
@@ -123,8 +123,12 @@
     .tr_bor {
         border: 1px solid #002060;
     }
+
+    .table_end {
+        border: 1px solid black;
+    }
 </style>
-<div>
+<div class ="table_end">
     <div class="blue">
         <table class="tabla">
             <tr class="tr tr_bor">
@@ -212,7 +216,7 @@
         ?><br><br>
     </div>
 
-    <div class="blue" style="text-justify: auto">
+    <div class="blue table_end" style="text-justify: auto">
         <p><b>Cláusulas:</b></p> 
         <p>    
             <ul style= "list-style-type: disc;">
@@ -226,7 +230,7 @@
         </p>    
     </div>
     <hr>
-    <div class="blue">
+    <div class="blue table_end">
         <p style='text-align:center'><b>Compromiso de Pago - Crédito Universitario Directo</b></p>
             <p>Yo, alumno(a) <?= $data_student['pes_nombres'] ?> con C.I. No. <?= $data_student['pes_dni'] ?>, perteneciente a la facultad de MODALIDAD <?= $data_student['mod_nombre'] ?>, carrera de <?= $data_student['pes_carrera'] ?>, me comprometo a cancelar
             puntualmente las cuotas señaladas anteriormente, hasta el día dos de cada mes, durante el periodo de <?= $data_student['pla_periodo_academico'] ?>. Por el incumplimiento de lo antes señalado, me sujeto a cumplir las disposiciones que establece la universidad.
@@ -238,3 +242,4 @@
         <p style='text-align:center'>              Firma Alumno (a)    </p>
     </div>  
 </div>
+

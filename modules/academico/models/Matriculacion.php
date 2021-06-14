@@ -1425,9 +1425,12 @@ class Matriculacion extends \yii\db\ActiveRecord {
 
         $sql = "SELECT pes.pes_id as pes_id, pes.pla_id as pla_id
                 FROM " . $con_academico->dbname . ".planificacion_estudiante as pes
+                INNER JOIN db_academico.planificacion as pla ON pla.pla_id = pes.pla_id
                 WHERE pes.per_id = :per_id
                 AND pes.pes_estado = :estado
-                AND pes.pes_estado_logico =:estado ";
+                AND pes.pes_estado_logico =:estado
+                AND pla.pla_estado= :estado
+                AND pla.pla_estado_logico=:estado ";
 
         $comando = $con_academico->createCommand($sql);
         $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);

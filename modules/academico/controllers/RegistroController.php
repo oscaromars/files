@@ -191,6 +191,7 @@ class RegistroController extends \app\components\CController {
         $rama_id = base64_decode($data['ron']);
         $cuotas = base64_decode($data['cuotas']);
         $idtotal = base64_decode($data['idtotal']);
+        $pla_periodo_academico = base64_decode($data['idpla']);
         $costo = $data['costo'];
         $registroOnline = new RegistroOnline();
         $pes_id = $registroOnline->getPes_id($id);//$model[0]['pes_id'];
@@ -295,6 +296,7 @@ class RegistroController extends \app\components\CController {
             'costo' => $idtotal,
             'rama' => $rama_id,
             'pla_id' => $pla_id,
+            'periodo_actual' =>$pla_periodo_academico,
         ]);
     }
 

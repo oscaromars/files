@@ -29,7 +29,7 @@ $(document).ready(function() {
             txt_correo_fac != 0){
                 
                if( $('#cmb_tpago').val()!== 3){
-                alert($('#cmb_tpago').val());
+                //alert($('#cmb_tpago').val());
                 //save();     
                }
                guardarCargarCartera();

@@ -1459,7 +1459,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
                         WHEN roc.roc_num_cuota = 5 THEN '5to PAGO'
                         WHEN roc.roc_num_cuota = 6 THEN '6to PAGO'
                     END as pago,
-                    roc.roc_vencimiento as fecha_vencimiento,
+                    upper( DATE_FORMAT( roc.roc_vencimiento, '%d %M %Y')) as fecha_vencimiento,
                     format( (roc.roc_costo * (roc.roc_porcentaje/100)) , 2) as valor_cuota,
                     roc.roc_costo as valor_factura,
                     roc_porcentaje as porcentaje    
@@ -1519,12 +1519,21 @@ class Matriculacion extends \yii\db\ActiveRecord {
     {
         $con_academico = \Yii::$app->db_academico;
         $estado = 1;
-        $sql = " SELECT rama.rpm_id as rpm_id
+        /*$sql = " SELECT rama.rpm_id as rpm_id
                 FROM db_academico.registro_adicional_materias as rama 
                   AND rama.ron_id = :ron_id 
                   AND rama.per_id = :per_id 
                   AND rama.rama_estado = :estado
-                  AND rama.rama_estado_logico = :estado;";  
+                  AND rama.rama_estado_logico = :estado;"; */
+
+        $sql = " SELECT rpm_id as rpm_id
+                    FROM db_academico.registro_pago_matricula r
+                    WHERE r.per_id = :per_id  
+                      AND r.ron_id = :ron_id 
+                      AND r.rpm_estado = :estado
+                      AND r.rpm_estado_logico = :estado
+                    ORDER BY r.rpm_id DESC
+                    LIMIT 0,1;";
 
 
         $comando = $con_academico->createCommand($sql);

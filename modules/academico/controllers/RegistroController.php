@@ -90,7 +90,11 @@ class RegistroController extends \app\components\CController {
         if ($per_id==Null) { $per_id = Yii::$app->session->get("PB_perid"); } 
         $usu_id = Yii::$app->session->get("PB_iduser");
         $emp_id = Yii::$app->session->get("PB_idempresa");
+<<<<<<< HEAD
       //  $data = Yii::$app->request->get();
+=======
+
+>>>>>>> af2cfd319aa555493220881a417737e736ea6c1b
         $model = new RegistroPagoMatricula();
         $resp_perfil = new RegistroPagoMatricula();
         
@@ -111,11 +115,18 @@ class RegistroController extends \app\components\CController {
 
         Yii::$app->session->set('usugrolMod', $usugrolMod);
         Yii::$app->session->set('per_id_perid', $per_id.'-'.$perid);
+<<<<<<< HEAD
 \app\models\Utilities::putMessageLogFile('FUERA AJAX: ');
+=======
+
+>>>>>>> af2cfd319aa555493220881a417737e736ea6c1b
         if (Yii::$app->request->isAjax) {
 \app\models\Utilities::putMessageLogFile('DENTRO AJAX: ');
             $data = Yii::$app->request->post();
+<<<<<<< HEAD
             \app\models\Utilities::putMessageLogFile('Modalidad $data["nint_id"]:  ' .$data["nint_id"]);
+=======
+>>>>>>> af2cfd319aa555493220881a417737e736ea6c1b
             if (isset($data["getperiodo"])) {
                 $periodo = Planificacion::getPeriodosAcademicoPorModalidad($data["nint_id"]);
                 $message = array("periodo" => $periodo);
@@ -124,7 +135,6 @@ class RegistroController extends \app\components\CController {
         }
 
         $data = Yii::$app->request->get();
-
         if ($data['PBgetFilter']) {
             $search = $data['search'];
             $periodo = $data['periodo'];

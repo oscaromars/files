@@ -702,13 +702,12 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
         if(isset($estado) && $estado != "" && $estado != -1){
             $condition .= "reg.rpm_estado_generado = :estado AND ";
         }
-        if(isset($periodo) && $periodo != ""){
+        \app\models\Utilities::putMessageLogFile('A1' .$periodo);
+        if(isset($periodo) && $periodo != "" && $periodo != 0){
             //$periodo = "%" . $periodo . "%";
             $condition .= "p.pla_id = :periodo AND ";
             //$condition .= "p.pla_periodo_academico like :periodo AND ";
         }
- \app\models\Utilities::putMessageLogFile('getAllListRegistryPaymentGrid' .$grupo_id);
-  \app\models\Utilities::putMessageLogFile('getAllListRegistryPaymentGrid' .$isEstud);
 
         if ($grupo_id == 12){
             \app\models\Utilities::putMessageLogFile('ENTRO getAllListRegistryPaymentGrid' .$isEstud);
@@ -721,8 +720,8 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
         
         $sql = "SELECT distinct
                     r.ron_id as Id, 
-                    reg.rpm_id as rpm_id, 
-                    ram.rama_id as rama_id,
+                    -- reg.rpm_id as rpm_id, 
+                    -- ram.rama_id as rama_id,
                     pe.pes_nombres as Estudiante,
                     pe.per_id as per_id,
                     pe.pes_dni as Cedula,
@@ -821,7 +820,7 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
         if(isset($search) && $search != "")  $comando->bindParam(":search",$search_cond, \PDO::PARAM_STR);
         if(isset($mod_id) && $mod_id != "" && $mod_id != 0)  $comando->bindParam(":mod_id",$mod_id, \PDO::PARAM_INT);
         if(isset($estado) && $estado != "" && $estado != -1)  $comando->bindParam(":estado",$estado, \PDO::PARAM_INT);
-        if(isset($periodo) && $periodo != "") $comando->bindParam(":periodo",$periodo, \PDO::PARAM_STR);
+        if(isset($periodo) && $periodo != "" && $periodo != 0) $comando->bindParam(":periodo",$periodo, \PDO::PARAM_STR);
         if($isEstud)    $comando->bindParam(":per_id",$per_id, \PDO::PARAM_INT);
 
         $res = $comando->queryAll();
@@ -1208,10 +1207,17 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
         return $resultData;
     }
 
-    public function getCuotasPeriodo($rama_id){
+    public function getCuotasPeriodo($ron_id, $rpm_id){
         $con = \Yii::$app->db_academico;
 
-        $sql = "SELECT CASE count(distinct roi.roi_bloque) 
+         $sql = " SELECT count(*) as cuota
+            FROM " . $con->dbname . ".registro_online_cuota r
+            WHERE r.ron_id = $ron_id
+            AND r.rpm_id = $rpm_id
+            AND r.roc_estado =1
+            AND r.roc_estado_logico=1;";
+
+        /*$sql = "SELECT CASE count(distinct roi.roi_bloque) 
                         when 1 then 3
                         when 2 then 6
                         when 3 then 2
@@ -1221,7 +1227,9 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
         inner join  " . $con->dbname . ".registro_configuracion rc on rc.pla_id = ram.pla_id
         inner join  " . $con->dbname . ".registro_online ro on ram.ron_id = ro.ron_id
         inner join  " . $con->dbname . ".registro_online_item roi on ro.ron_id = roi.ron_id
-        where ram.rama_id = $rama_id;";
+        where ram.rama_id = $rama_id;";*/
+
+
          $comando = $con->createCommand($sql);
          //\app\models\Utilities::putMessageLogFile('mensaje: ' .$comando->getRawSql());
          

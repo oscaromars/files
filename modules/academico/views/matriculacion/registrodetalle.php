@@ -123,6 +123,8 @@ Academico::registerTranslations();
 <?php if($pagado == 0 || isset($rama)){ ?>
     <a href="<?= Url::to(['/academico/registro/new', 
                         'id' => base64_encode($persona['per_id']), 
-                        'ron' => base64_encode($ron_id)
+                        'ron' => base64_encode($ron_id),
+                        'cuotas' => base64_encode($cuotas),
+                        'idtotal' => base64_encode($valor_total),
                     ]) ?>" class="btn btn-primary pull-right" style="margin: 0px 5px;"><?= Academico::t("matriculacion", "Go to Pay") ?></a>
 <?php } ?>

@@ -1215,7 +1215,7 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
             WHERE r.ron_id = $ron_id
             AND r.rpm_id = $rpm_id
             AND r.roc_estado =1
-            AND r.roc_estado_logico=1;":
+            AND r.roc_estado_logico=1;";
 
         /*$sql = "SELECT CASE count(distinct roi.roi_bloque) 
                         when 1 then 3

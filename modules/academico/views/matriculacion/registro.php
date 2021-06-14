@@ -42,7 +42,7 @@ echo "<b style='color:green'>EL PERIODO DE INSCRIPCION ESTA CERRADO</b>";
 
 $bloque="B1";
 if($howmuchSubject <= '1'){
-    $gasto=$costo['gastos'];
+    $gasto=$gastoAdm;//$costo['gastos'];
 }else if ($howmuchSubject > '1') {
     $gasto=0;
 }else if ($howmuchSubject <= '1' and $bloque==$planificacion['Block']) {

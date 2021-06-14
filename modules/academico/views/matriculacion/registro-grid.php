@@ -147,7 +147,7 @@ if($modelCancelRon){
                 'contentOptions' => ['class' => 'text-center'],
                 'headerOptions' => ['class' => 'text-center'],
                 'value' => function($data){
-                    return '$' . number_format($data['Cost']*$data['Credit'],2 );
+                    return '$' . number_format( (empty($data['Cost'])?0:$data['Cost']) * (empty($data['Credit'])?0:$data['Credit']),2 );
                 },
             ],
             [

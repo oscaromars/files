@@ -203,7 +203,7 @@
             echo '<tr style="border: 1px solid #002060;"><td>' . $detallePagos[$i]['NO'] . '</td><td>' . $detallePagos[$i]['pago'] . '</td><td>' . $detallePagos[$i]['fecha_vencimiento'] . '</td><td>' . $detallePagos[$i]['porcentaje'] . '</td><td> ' . $detallePagos[$i]['valor_cuota'] . ' </td></tr>';
         }
 
-        echo "<tr><td colspan='4'> </td><td><b>TOTAL US$ " . $total_valor_cuota . "</b></td></tr>";
+        echo "<tr><td colspan='4'> </td><td><b>TOTAL US$ " . $detallePagos[0]['valor_factura'] . "</b></td></tr>";
 
         if (empty(count($detallePagos))) {
             echo '<tr style="border: 1px solid #002060;"><td><br></td><td></td><td></td><td></td><td></td></tr>';

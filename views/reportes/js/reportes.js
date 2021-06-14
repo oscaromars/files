@@ -29,11 +29,11 @@ $(document).ready(function () {
         requestHttpAjax(link, arrParams, function (response) {
             if (response.status == "OK") {
                 data = response.message;
-                //setComboDataselect(data.modalidad, "modalidadestudiounidadsearch-mod_id", "Todos");
+                setComboDataselect(data.modalidad, "modalidadestudiounidadsearch-mod_id", "Todos");
                 var arrParams = new Object();
                 if (data.modalidad.length > 0) {
                     arrParams.uaca_id = $('#modalidadestudiounidadsearch-uaca_id').val();
-                    arrParams.moda_id = data.modalidad[0].id;
+                    arrParams.mod_id = data.modalidad[0].id;
                     arrParams.getcarrera = true;
                     requestHttpAjax(link, arrParams, function (response) {
                         if (response.status == "OK") {
@@ -45,12 +45,12 @@ $(document).ready(function () {
             }
         }, true);
     });
-    
+
     $('#modalidadestudiounidadsearch-mod_id').change(function () {
         var link = $('#txth_base').val() + "/reportes/reportemallas";
         var arrParams = new Object();
         arrParams.uaca_id = $('#modalidadestudiounidadsearch-uaca_id').val();
-        arrParams.moda_id = $(this).val();
+        arrParams.mod_id = $(this).val();
         arrParams.getcarrera = true;
         requestHttpAjax(link, arrParams, function (response) {
             if (response.status == "OK") {
@@ -60,7 +60,36 @@ $(document).ready(function () {
         }, true);
     });
 
+        $('#modalidadestudiounidadsearch-eaca_id').change(function () {
+        var link = $('#txth_base').val() + "/reportes/reportemallas";
+        var arrParams = new Object();
+        arrParams.uaca_id = $('#modalidadestudiounidadsearch-uaca_id').val();
+        arrParams.mod_id = $('#modalidadestudiounidadsearch-mod_id').val();
+        arrParams.eaca_id = $(this).val();
+        arrParams.getmalla = true;
+        arrParams.empresa_id = 1;
+        requestHttpAjax(link, arrParams, function (response) {
+            if (response.status == "OK") {
+                data = response.message;
+                setComboDataselect(data.mallaca, "cmb_malla", "Todos");
+            }
+        }, true);
+    });
+
+
 });
+
+function setComboDataselect(arr_data, element_id, texto) {
+    var option_arr = "";
+    option_arr += "<option value= '0'>" + texto + "</option>";
+    for (var i = 0; i < arr_data.length; i++) {
+        var id = arr_data[i].id;
+        var value = arr_data[i].name;
+
+        option_arr += "<option value='" + id + "'>" + value + "</option>";
+    }
+    $("#" + element_id).html(option_arr);
+}
 
 function exportAgendamiento(){
     buscarActividades("1");//Reporte de Oportunidad x Actividad
@@ -102,6 +131,7 @@ function buscarDatacartera() {
 
     window.location.href = $('#txth_base').val() + "/reportes/expexcelreportcartera?search=" + search + "&f_inif=" + f_inif + "&f_finf=" + f_finf + '&f_iniv=' + f_iniv + "&f_finv=" + f_finv + "&estadopago=" + estadopago;
 }
+
 
 
 

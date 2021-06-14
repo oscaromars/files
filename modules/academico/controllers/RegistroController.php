@@ -2554,7 +2554,7 @@ class RegistroController extends \app\components\CController {
         try {
             $ids = $_GET['ids'];
             $per_id = $ids;
-            $rama_id  = $_GET['rama_id'];
+            //$rama_id  = $_GET['rama_id'];
             $matriculacion_model = new Matriculacion();          
             $modelPersona = Persona::find()->where(['per_id' => $per_id])->asArray()->one();
             $modelEstudiante = Estudiante::find()->where(['per_id' => $per_id])->asArray()->one();

@@ -1124,18 +1124,26 @@ class Matriculacion extends \yii\db\ActiveRecord {
             est.est_categoria, 
             est.est_matricula
             FROM " . $con_academico->dbname . ".planificacion pla
-            inner join " . $con_academico->dbname . ".planificacion_estudiante pes on pla.pla_id =pes.pla_id
-            inner join " . $con_academico->dbname . ".estudiante est on est.per_id=pes.per_id
-            inner join " . $con_asgard->dbname . ".persona per on per.per_id=est.per_id
-            inner join " . $con_academico->dbname . ".registro_online ron on ron.per_id=pes.per_id
-            inner join " . $con_academico->dbname . ".modalidad mo on mo.mod_id=ron.ron_modalidad
-            inner join " . $con_academico->dbname . ".estudio_academico ea on ea.eaca_id= ron.ron_carrera
-            inner join " . $con_academico->dbname . ".modalidad_estudio_unidad  meu on ea.eaca_id= meu.eaca_id
-            inner join " . $con_academico->dbname . ".unidad_academica ua on ua.uaca_id= meu.uaca_id
-            WHERE ron.per_id =:per_id
-            AND ron.pes_id =:pes_id
-            AND ron.ron_estado =:estado
-            AND ron.ron_estado_logico =:estado
+            inner join " . $con_academico->dbname . ".planificacion_estudiante pes on pla.pla_id = pes.pla_id
+            inner join " . $con_academico->dbname . ".estudiante est on est.per_id = pes.per_id
+            inner join " . $con_asgard->dbname . ".persona per on per.per_id = est.per_id
+            inner join " . $con_academico->dbname . ".registro_online ron on ron.per_id = pes.per_id
+            inner join " . $con_academico->dbname . ".modalidad mo on mo.mod_id = ron.ron_modalidad
+            inner join " . $con_academico->dbname . ".estudio_academico ea on ea.eaca_id = ron.ron_carrera
+            inner join " . $con_academico->dbname . ".modalidad_estudio_unidad meu on ea.eaca_id = meu.eaca_id
+            inner join " . $con_academico->dbname . ".unidad_academica ua on ua.uaca_id = meu.uaca_id
+            WHERE ron.per_id = :per_id
+            AND ron.pes_id = :pes_id
+            AND ron.ron_estado = :estado
+            AND ron.ron_estado_logico = :estado
+            AND pla.pla_estado = 1 AND pla.pla_estado_logico = 1
+            AND pes.pes_estado = 1 AND pes.pes_estado_logico = 1
+            AND est.est_estado = 1 AND est.est_estado_logico = 1
+            AND per.per_estado = 1 AND per.per_estado_logico = 1
+            AND mo.mod_estado = 1 AND mo.mod_estado_logico = 1
+            AND ea.eaca_estado = 1 AND ea.eaca_estado_logico = 1
+            AND meu.meun_estado = 1 AND meu.meun_estado_logico = 1
+            AND ua.uaca_estado = 1 AND ua.uaca_estado_logico = 1
             ORDER BY ron.ron_id desc;
         ";
 

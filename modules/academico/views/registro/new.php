@@ -297,7 +297,7 @@ StripeAsset::register($this);
         </div>
         <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
             <div class="form-group">
-                <label class="col-xs-12 col-sm-12 col-md-12 col-lg-3 control-label" for="txt_tel_fac" id="lbl_apellido1"><?= Yii::t("formulario", "Phone") ?></label>
+                <label class="col-xs-12 col-sm-12 col-md-12 col-lg-3 control-label" for="txt_tel_fac" id="lbl_apellido1"><?= Yii::t("formulario", "Phone") ?><span class="text-danger">*</span></label>
                 <div   class="col-xs-12 col-sm-12 col-md-12 col-lg-9">
                     <?= Html::hiddenInput('txt_tel_fac_aux', '', ['id' => 'txt_tel_fac_aux']); ?>
                     <input type="text" class="form-control" value="" id="txt_tel_fac" data-type="number" data-keydown="true" placeholder="<?= Yii::t("formulario", "Phone") ?>">                        
@@ -306,7 +306,7 @@ StripeAsset::register($this);
         </div>
         <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
             <div class="form-group">
-                <label class="col-xs-12 col-sm-12 col-md-12 col-lg-3 control-label" for="txt_correo_fac" ><?= Yii::t("formulario", "Email") ?> </label>
+                <label class="col-xs-12 col-sm-12 col-md-12 col-lg-3 control-label" for="txt_correo_fac" ><?= Yii::t("formulario", "Email") ?><span class="text-danger">*</span> </label>
                 <div   class="col-xs-12 col-sm-12 col-md-12 col-lg-9">
                     <?= Html::hiddenInput('txt_correo_fac_aux', '', ['id' => 'txt_correo_fac_aux']); ?>
                     <input type="text" class="form-control keyupmce" value="" data-required="true" id="txt_correo_fac" data-type="email" data-keydown="true" placeholder="<?= Yii::t("formulario", "Email") ?>">

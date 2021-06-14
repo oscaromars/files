@@ -9,21 +9,31 @@ $(document).ready(function() {
         searchModulesList();
     });
     $('#btn_modificarcargacartera').click(function() {
-        var txt_dpre_ssn_id_fact_aux= $('txt_dpre_ssn_id_fact_aux').val();
-        var txt_nombres_fac_aux     = $('txt_nombres_fac_aux').val();
-        var txt_apellidos_fac_aux   = $('txt_apellidos_fac_aux').val();
-        var txt_dir_fac_aux         = $('txt_dir_fac_aux').val();
-        var txt_tel_fac_aux         = $('txt_tel_fac_aux').val();
-        var txt_correo_fac_aux      = $('txt_correo_fac_aux').val();
-        if (txt_dpre_ssn_id_fact_aux != null ||
-            txt_nombres_fac_aux != null ||
-            txt_apellidos_fac_aux != null ||
-            txt_dir_fac_aux != null ||
-            txt_tel_fac_aux != null ||
-            txt_correo_fac_aux != null){
-            save();
-            guardarCargarCartera();
-            enviarPdf();
+        var txt_dpre_ssn_id_fact= $('#txt_dpre_ssn_id_fact').val()?$('#txt_dpre_ssn_id_fact').val():0;
+        var txt_nombres_fac     = $('#txt_nombres_fac').val()?$('#txt_nombres_fac').val():0;
+        var txt_apellidos_fac   = $('#txt_apellidos_fac').val()?$('#txt_apellidos_fac').val():0;
+        var txt_dir_fac         = $('#txt_dir_fac').val()?$('#txt_dir_fac').val():0;
+        var txt_tel_fac         = $('#txt_tel_fac').val()?$('#txt_tel_fac').val():0;
+        var txt_correo_fac      = $('#txt_correo_fac').val()?$('#txt_correo_fac').val():0;
+        /*alert(txt_dpre_ssn_id_fact+'-'+
+            txt_nombres_fac +'-'+
+            txt_apellidos_fac +'-'+
+            txt_dir_fac +'-'+
+            txt_tel_fac+'-'+
+            txt_correo_fac);*/
+        if (txt_dpre_ssn_id_fact != 0 ||
+            txt_nombres_fac != 0 ||
+            txt_apellidos_fac != 0 ||
+            txt_dir_fac != 0 ||
+            txt_tel_fac != 0 ||
+            txt_correo_fac != 0){
+                
+               if( $('#cmb_tpago').val()!== 3){
+                alert($('#cmb_tpago').val());
+                //save();     
+               }
+               guardarCargarCartera();
+               enviarPdf();
         }else{
             var mensaje = {wtmessage: 'Se deben ingresar todos los campos de facturacion correspondientes', title: "Datos de Facturacion"};
             showAlert("NO_OK", "error", mensaje);
@@ -110,7 +120,50 @@ $(document).ready(function() {
         generarDataTable(numCuota, value);
     });
     sessionStorage.setItem('grid_direct_credit', '');
+
+
+        /***********************************************/
+    /* Filtro para busqueda en listado solicitudes */
+    /***********************************************/
+    $('#cmb_mod').change(function () {
+        var link = $('#txth_base').val() + "/academico/registro/index";
+        /*document.getElementById("cmb_carrerabus").options.item(0).selected = 'selected';*/
+        var arrParams = new Object();
+        arrParams.nint_id = $(this).val();
+        arrParams.getperiodo = true;
+        requestHttpAjax(link, arrParams, function (response) {
+            if (response.status == "OK") {
+                data = response.message;
+                setComboDataselect(data.periodo, "cmb_per_acad", "Todos");
+                /*var arrParams = new Object();
+                if (data.modalidad.length > 0) {
+                    arrParams.unidada = $('#cmb_unidadbus').val();
+                    arrParams.moda_id = data.modalidad[0].id;
+                    arrParams.getcarrera = true;
+                    requestHttpAjax(link, arrParams, function (response) {
+                        if (response.status == "OK") {
+                            data = response.message;
+                            setComboDataselect(data.carrera, "cmb_carrerabus", "Todos");
+                        }
+                    }, true);
+                }*/
+            }
+        }, true);
+    });
+
 });
+
+function setComboDataselect(arr_data, element_id, texto) {
+    var option_arr = "";
+    option_arr += "<option value= '0'>" + texto + "</option>";
+    for (var i = 0; i < arr_data.length; i++) {
+        var id = arr_data[i].id;
+        var value = arr_data[i].name;
+
+        option_arr += "<option value='" + id + "'>" + value + "</option>";
+    }
+    $("#" + element_id).html(option_arr);
+}
 
 function generateFee(){
     let value = $(this).val();
@@ -417,24 +470,40 @@ function generarDataTable(cuotas, primerPago) {
         if (i == cuotas && sumPer != 100) {
             percentaje = ((100 - sumPer) + parseFloat(percentaje)).toFixed(2);
         }
+        if(i==6){
+            per_one = percentaje;
+        }else{
+            per_total = percentaje;
+        }
+    }
+   // alert(per_one + '-'+ per_total);
+    //alert((total*per_one).toFixed(2));
+    //alert((total*per_total).toFixed(2));
+
+    for (let i = 1; i <= cuotas; i++) {
+        /*sumPer += (primerPago !== null && cuotas > 1 && i == 1) ? parseFloat(perPriC) : parseFloat(percentaje);
+        sumTot += (primerPago !== null && cuotas > 1 && i == 1) ? parseFloat(primerPago) : parseFloat(cuota);
+        if (i == cuotas && sumPer != 100) {
+            percentaje = ((100 - sumPer) + parseFloat(percentaje)).toFixed(2);
+        }
         if (i == cuotas && sumTot != total) {
             cuota = ((total - sumTot) + (parseFloat(cuota))).toFixed(2);
-        }
-        primerCuota = ((total*(100/cuotas))/100).toFixed(1);
-        cuotageneral = (total*percentaje/100).toFixed(2);
-        porc = (primerPago !== null && cuotas > 1 && i == 1) ? (perPriC) : (percentaje);
-        monto = (total*(porc/100)).toFixed(2);
+        }*/
+        primerCuota = ((total*(100/percentaje))/100).toFixed(1);
+        cuotageneral = (total*cuotas/100).toFixed(2);
+        porc = (i == 1) ? (per_one) : (percentaje);
+        monto = (i == 1) ? (total*(per_one/100)).toFixed(2):(total*(per_total/100)).toFixed(2);
         var tb_item = new Array();
         var tb_item2 = new Array();
         tb_item[0] = 0;
         tb_item[1] = labelPay + i;
-        tb_item[2] = (primerPago !== null && cuotas > 1 && i == 1) ? (perPriC + '%') : (percentaje + '%');
+        tb_item[2] = (i == 1) ? (per_one + '%') : (per_total + '%');
         tb_item[3] = '$ '+monto;//( i == 1) ? primerCuota: cuotageneral;//('$' + currencyFormat(parseFloat(primerPago))) : ('$' + currencyFormat(parseFloat(cuota)));
         tb_item[4] = $('#vencimiento_' + i).val();
         tb_item[5] = "PENDING";//(i == 1) ? "TO CHECK" : "PENDING";
         tb_item2[0] = 0;
         tb_item2[1] = labelPay + i;
-        tb_item2[2] = (primerPago !== null && cuotas > 1 && i == 1) ? (perPriC + '%') : (percentaje + '%');
+        tb_item2[2] = (i == 1) ? (per_one + '%') : (per_total + '%');
         tb_item2[3] = '$ '+monto;//( i == 1) ? primerCuota: cuotageneral;//(primerPago !== null && cuotas > 1 && i == 1) ? ('$' + currencyFormat(parseFloat(primerPago))) : ('$' + currencyFormat(parseFloat(cuota)));
         tb_item2[4] = $('#vencimiento_' + i).val();
         tb_item2[5] = "PENDING";//(i == 1) ? "TO CHECK" : "PENDING";

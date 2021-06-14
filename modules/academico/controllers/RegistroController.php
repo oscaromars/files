@@ -90,7 +90,7 @@ class RegistroController extends \app\components\CController {
         if ($per_id==Null) { $per_id = Yii::$app->session->get("PB_perid"); } 
         $usu_id = Yii::$app->session->get("PB_iduser");
         $emp_id = Yii::$app->session->get("PB_idempresa");
-        $data = Yii::$app->request->get();
+      //  $data = Yii::$app->request->get();
         $model = new RegistroPagoMatricula();
         $resp_perfil = new RegistroPagoMatricula();
         
@@ -104,38 +104,33 @@ class RegistroController extends \app\components\CController {
         if($usagrolMod) $esEstu = TRUE;
         if ($per_id != $perid) { $esEstu = TRUE; } 
 
-
-\app\models\Utilities::putMessageLogFile('perid: '.$perid);
-\app\models\Utilities::putMessageLogFile('per_id: '.$per_id);
-
-//\app\models\Utilities::putMessageLogFile('usagrolMod: '.$usagrolMod);
-\app\models\Utilities::putMessageLogFile('usu_id:     '.$usu_id);
-
-
         $resp_grupo_id = $resp_perfil->getPerfilSearchListPago($usu_id);
         $grupo_id = $resp_grupo_id ['gru_id'];
 
+\app\models\Utilities::putMessageLogFile('GRUPO: '.$grupo_id);
 
         Yii::$app->session->set('usugrolMod', $usugrolMod);
         Yii::$app->session->set('per_id_perid', $per_id.'-'.$perid);
-
-\app\models\Utilities::putMessageLogFile('FUERA del PBgetFilter $esEstu: '.$esEstu);
-
+\app\models\Utilities::putMessageLogFile('FUERA AJAX: ');
         if (Yii::$app->request->isAjax) {
+\app\models\Utilities::putMessageLogFile('DENTRO AJAX: ');
             $data = Yii::$app->request->post();
-            if (isset($data["mod_id"])) {
-                $arr_pla_per = Planificacion::getPeriodosAcademicoPorModalidad($data["mod_id"]);
-                $message = array("arr_pla_per" => $arr_pla_per);
+            \app\models\Utilities::putMessageLogFile('Modalidad $data["nint_id"]:  ' .$data["nint_id"]);
+            if (isset($data["getperiodo"])) {
+                $periodo = Planificacion::getPeriodosAcademicoPorModalidad($data["nint_id"]);
+                $message = array("periodo" => $periodo);
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
             }
         }
 
+        $data = Yii::$app->request->get();
 
         if ($data['PBgetFilter']) {
             $search = $data['search'];
             $periodo = $data['periodo'];
             $modalidad = $data['mod_id'];
             $estado = $data['estado'];
+
             return $this->renderPartial('index-grid', [
                 'model' => $model->getAllListRegistryPaymentGrid($search, $esEstu, $modalidad, $estado, $periodo, true, $per_id, $grupo_id ),
             ]);
@@ -149,47 +144,43 @@ class RegistroController extends \app\components\CController {
         ];
         //$arr_pla_per = Planificacion::getPeriodosAcademicoPorModalidad();
 
-        $arr_modalidad = Planificacion::find()
+        /*$arr_modalidad = Planificacion::find()
                 ->select(['m.mod_id', 'm.mod_nombre'])
                 ->join('inner join', 'modalidad m')
                 ->where('pla_estado_logico = 1 and pla_estado = 1 and m.mod_estado =1 and m.mod_estado_logico = 1')
                 ->asArray()
-                ->all();
-        $registro_pago_matricula = new RegistroPagoMatricula();
+                ->all();*/
+        //$registro_pago_matricula = new RegistroPagoMatricula();
+        //$modalidad = $registro_pago_matricula->getModalidadEstudiante($per_id);
 
-        $modalidad = $registro_pago_matricula->getModalidadEstudiante($per_id);
+        $resp_mod_pago_matricula = new Modalidad();
+        $modalidad = $resp_mod_pago_matricula->getModalidadEstudiantePM($per_id);
 
-        //if ( $grupo_id == 5){
         $mod_modalidad = new Modalidad();
         $mod_unidad = new UnidadAcademica();             
         $arr_unidad = $mod_unidad->consultarUnidadAcademicasEmpresa(1);
         $modalidadT = $mod_modalidad->consultarModalidad($arr_unidad[1]["id"], 1);
 
-        //}
-\app\models\Utilities::putMessageLogFile('grupo_id:     '.$grupo_id);
-\app\models\Utilities::putMessageLogFile('modalidad:     '.$modalidad[0]['id']);
-\app\models\Utilities::putMessageLogFile('modalidadT:     '.$$modalidadT[0]["id"]);
-
         if ( $grupo_id == 12){
-
            $arr_pla_per = Planificacion::getPeriodosAcademicoPorModalidad($modalidad[0]['id']);
         }else{
             $arr_pla_per = Planificacion::getPeriodosAcademicoPorModalidad($modalidadT[0]["id"]);
         }
+
         return $this->render('index', [
             'esEstu' => TRUE,
             'grupo_id' => $grupo_id,            
             'per_id' => $per_id,
-            //'modalidad'=>array_merge([1 => Academico::t("matriculacion", $modalidad['name'])]),//$modalidad['name']
-            'modalidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $modalidad), "id", "name"),
+            //'modalidad'=>array_merge([1 => Academico::t("matriculacion", $modalidad['name'])]),//$modalidad['name']//funciona mal
+            //'modalidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $modalidad), "id", "name"),//ok, funcion actual
+
+            'modalidad' => ArrayHelper::map(array_merge( $modalidad), "id", "name"),
+
             'modalidadT' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $modalidadT), "id", "name"),
             'periodoAcademico' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $arr_pla_per), "id", "name"),
-            //'periodoAcademico' => array_merge([0 => Academico::t("matriculacion", "-- Select Academic Period --")], ArrayHelper::map($arr_pla_per, "pla_id", "pla_periodo_academico")),
             'arr_status' => $arr_status,
-              'costo' => $costoc,
+            'costo' => $costoc,
             'model' => $model->getAllListRegistryPaymentGrid(NULL, TRUE/*$esEstu*/, NULL, NULL, NULL, true, $per_id, $grupo_id ),
-            
-
         ]);
     }
 
@@ -2336,6 +2327,14 @@ class RegistroController extends \app\components\CController {
                         $est_id = $estudiante->getEstudiantexperid($per_id);
                         //$repetidos = $modelCargaCartera->getRegistrosDuplicados($ron_id);
                         $porcentaje = 100/$numcuotas;
+                        if($numcuotas == 3 || $numcuotas == 6){
+                            $porc_mayor = round($porcentaje, 2);
+                            $porc_menor = round(($porcentaje - 0.02),2);
+                        }else{
+                            $porc_mayor = $porcentaje;
+                            $porc_menor = $porcentaje;    
+                        }
+                        
                         $datosRonPes= $modelCargaCartera->getRonPes($per_id);
                         $ron_id = $datosRonPes['ron_id'];
                         $pes_id = $datosRonPes['pes_id'];
@@ -2353,7 +2352,13 @@ class RegistroController extends \app\components\CController {
                             for($in = 1; $in <= $numcuotas; $in++){
                                 $fechaCuotaActual = $modelCargaCartera->getCuotaActual($in);
                                 $registros_cuotas = $modelCargaCartera->registrarCargaCartera($est_id['est_id'],$cedula['per_cedula'], $secuencial['secuencial'], $forma_pago,$fechaCuotaActual['fecha'],$in, $numcuotas, $valor_cuota, $total, $usuario);
-                                $registro_online_cuota = $modelCargaCartera->registroOnlineCuota($ron_id, $rpm_id,$in,$fechaCuotaActual['fecha'],$porcentaje,$total);
+                                if($in==1){
+                                    //$porcentaje = 100 - ($porc_mayor * ($numcuotas - 1));
+                                    $registro_online_cuota = $modelCargaCartera->registroOnlineCuota($ron_id, $rpm_id,$in,$fechaCuotaActual['fecha'],$porc_menor,$total);
+                                }else{
+                                    //$porc_mayor = round($porcentaje, 2);
+                                    $registro_online_cuota = $modelCargaCartera->registroOnlineCuota($ron_id, $rpm_id,$in,$fechaCuotaActual['fecha'],$porc_mayor,$total);
+                                }
                             }
                             
                                 //$transaction->commit();
@@ -2416,20 +2421,23 @@ class RegistroController extends \app\components\CController {
 
             /*Detalle de materias*/
             $matriculacion_model = new Matriculacion();
+            //obtengo el ron_id
             $resp_ron_id = $matriculacion_model->getDataStudenFromRegistroOnline($per_id, $pes_id);
             $ron_id = $resp_ron_id['ron_id'];
             $dataPlanificacion = $matriculacion_model->getPlanificationFromRegistroOnline($ron_id);
 
             /*Detalles de pagos */
+            // nuevo
+            //$resp_rpm_id = $matriculacion_model->getNumeroDocumentoRegistroOnline($rama_id, $ron_id, $per_id);
+            $resp_rpm_id = $matriculacion_model->getNumeroDocumentoRegistroOnline($ron_id, $per_id); //registro_pago_matricula -// AQUI
+            $rpm_id = $resp_rpm_id['rpm_id'];
+
             $registro_pago_matricula = new RegistroPagoMatricula();
-            //$resp_cant_cuota = $registro_pago_matricula->getCuotasPeriodo($rama_id);
-            $cant_cuota = $cuotas;// $resp_cant_cuota['cuota'];
+            $resp_cant_cuota = $registro_pago_matricula->getCuotasPeriodo($ron_id, $rpm_id);//registro_online_cuotas  ///  AQUI
+            $cant_cuota = $resp_cant_cuota['cuota'];
             $est_id = $modelEstudiante['est_id'];
 
-            // nuevo
-            /*$resp_rpm_id = $matriculacion_model->getNumeroDocumentoRegistroOnline( $ron_id, $per_id);
-            $rpm_id = $resp_rpm_id['rpm_id'];*/
-            $detallePagos = [];//$matriculacion_model->getDetalleCuotasRegistroOnline($ron_id, $rpm_id);
+            $detallePagos = $matriculacion_model->getDetalleCuotasRegistroOnline($ron_id, $rpm_id);
             // nuevo
 
             /*$resp_ccar_numero_documento = $matriculacion_model->getNumeroDocumentoRegistroOnline($rama_id);
@@ -2563,7 +2571,7 @@ class RegistroController extends \app\components\CController {
         try {
             $ids = $_GET['ids'];
             $per_id = $ids;
-            $rama_id  = $_GET['rama_id'];
+            //$rama_id  = $_GET['rama_id'];
             $matriculacion_model = new Matriculacion();          
             $modelPersona = Persona::find()->where(['per_id' => $per_id])->asArray()->one();
             $modelEstudiante = Estudiante::find()->where(['per_id' => $per_id])->asArray()->one();
@@ -2579,19 +2587,22 @@ class RegistroController extends \app\components\CController {
 
             /*Detalle de materias*/
             $matriculacion_model = new Matriculacion();
+            //obtengo el ron_id
             $resp_ron_id = $matriculacion_model->getDataStudenFromRegistroOnline($per_id, $pes_id);
             $ron_id = $resp_ron_id['ron_id'];
             $dataPlanificacion = $matriculacion_model->getPlanificationFromRegistroOnline($ron_id);
 
             /*Detalles de pagos */
+            // nuevo
+            //$resp_rpm_id = $matriculacion_model->getNumeroDocumentoRegistroOnline($rama_id, $ron_id, $per_id);
+            $resp_rpm_id = $matriculacion_model->getNumeroDocumentoRegistroOnline($ron_id, $per_id); //registro_pago_matricula -// AQUI
+            $rpm_id = $resp_rpm_id['rpm_id'];
+
             $registro_pago_matricula = new RegistroPagoMatricula();
-            $resp_cant_cuota = $registro_pago_matricula->getCuotasPeriodo($rama_id);
+            $resp_cant_cuota = $registro_pago_matricula->getCuotasPeriodo($ron_id, $rpm_id);//registro_online_cuotas  ///  AQUI
             $cant_cuota = $resp_cant_cuota['cuota'];
             $est_id = $modelEstudiante['est_id'];
 
-            // nuevo
-            $resp_rpm_id = $matriculacion_model->getNumeroDocumentoRegistroOnline($rama_id, $ron_id, $per_id);
-            $rpm_id = $resp_rpm_id['rpm_id'];
             $detallePagos = $matriculacion_model->getDetalleCuotasRegistroOnline($ron_id, $rpm_id);
             // nuevo
 

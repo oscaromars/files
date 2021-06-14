@@ -683,7 +683,7 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
 
     
 
-    function getAllListRegistryPaymentGrid($search = NULL, $isEstud, $mod_id = NULL, $estado = NULL, $periodo = NULL, $dataProvider = false, $per_id){
+    function getAllListRegistryPaymentGrid($search = NULL, $isEstud, $mod_id = NULL, $estado = NULL, $periodo = NULL, $dataProvider = false, $per_id, $grupo_id){
         $con_academico = \Yii::$app->db_academico;
         $con = \Yii::$app->db;
          if ($per_id==Null) { $per_id = Yii::$app->session->get("PB_perid"); } 
@@ -702,18 +702,26 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
         if(isset($estado) && $estado != "" && $estado != -1){
             $condition .= "reg.rpm_estado_generado = :estado AND ";
         }
-        if(isset($periodo) && $periodo != ""){
-            $periodo = "%" . $periodo . "%";
-            $condition .= "p.pla_periodo_academico like :periodo AND ";
+        \app\models\Utilities::putMessageLogFile('A1' .$periodo);
+        if(isset($periodo) && $periodo != "" && $periodo != 0){
+            //$periodo = "%" . $periodo . "%";
+            $condition .= "p.pla_id = :periodo AND ";
+            //$condition .= "p.pla_periodo_academico like :periodo AND ";
         }
-        if($isEstud) {
-            $condition .= "per.per_id = :per_id AND ";
+
+        if ($grupo_id == 12){
+            \app\models\Utilities::putMessageLogFile('ENTRO getAllListRegistryPaymentGrid' .$isEstud);
+            //if($isEstud) {
+                \app\models\Utilities::putMessageLogFile('getAllListRegistryPaymentGrid' .$isEstud);
+                $condition .= "per.per_id = :per_id AND ";
+            //}    
         }
+        
         
         $sql = "SELECT distinct
                     r.ron_id as Id, 
-                    reg.rpm_id as rpm_id, 
-                    ram.rama_id as rama_id,
+                    -- reg.rpm_id as rpm_id, 
+                    -- ram.rama_id as rama_id,
                     pe.pes_nombres as Estudiante,
                     pe.per_id as per_id,
                     pe.pes_dni as Cedula,
@@ -738,8 +746,8 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
                     INNER JOIN " . $con_academico->dbname . ".estudio_academico AS ea ON ea.eaca_id = me.eaca_id
                     INNER JOIN " . $con_academico->dbname . ".unidad_academica AS ua ON me.uaca_id = ua.uaca_id
                     INNER JOIN " . $con_academico->dbname . ".modalidad AS mo ON mo.mod_id = me.mod_id
-                    INNER JOIN " . $con_academico->dbname . ".registro_adicional_materias AS ram on ram.ron_id = r.ron_id
-                    INNER JOIN (
+                    LEFT JOIN " . $con_academico->dbname . ".registro_adicional_materias AS ram on ram.ron_id = r.ron_id
+                    LEFT JOIN (
                         SELECT 
                             r.pes_id as pes_id,
                             rm.rama_id as rama_id,
@@ -749,7 +757,7 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
                         FROM
                             " . $con_academico->dbname . ".registro_online AS r
                             INNER JOIN " . $con_academico->dbname . ".registro_online_item AS it ON it.ron_id = r.ron_id
-                            INNER JOIN " . $con_academico->dbname . ".registro_adicional_materias AS rm ON rm.ron_id = r.ron_id 
+                            LEFT JOIN " . $con_academico->dbname . ".registro_adicional_materias AS rm ON rm.ron_id = r.ron_id 
                             AND (
                             rm.roi_id_1 = it.roi_id OR
                             rm.roi_id_2 = it.roi_id OR
@@ -804,19 +812,20 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
                     p.pla_estado =1 and p.pla_estado_logico =1 and
                     per.per_estado = 1 and per.per_estado_logico = 1 and 
                     est.est_estado =1 and est.est_estado_logico = 1 and
-                    ram.rama_estado = 1 and ram.rama_estado_logico = 1 and 
                     r.ron_estado =1 and r.ron_estado_logico =1";
 
       
         $comando = $con_academico->createCommand($sql);
-        \app\models\Utilities::putMessageLogFile($comando->getRawSql());
+        
         if(isset($search) && $search != "")  $comando->bindParam(":search",$search_cond, \PDO::PARAM_STR);
         if(isset($mod_id) && $mod_id != "" && $mod_id != 0)  $comando->bindParam(":mod_id",$mod_id, \PDO::PARAM_INT);
         if(isset($estado) && $estado != "" && $estado != -1)  $comando->bindParam(":estado",$estado, \PDO::PARAM_INT);
-        if(isset($periodo) && $periodo != "") $comando->bindParam(":periodo",$periodo, \PDO::PARAM_STR);
+        if(isset($periodo) && $periodo != "" && $periodo != 0) $comando->bindParam(":periodo",$periodo, \PDO::PARAM_STR);
         if($isEstud)    $comando->bindParam(":per_id",$per_id, \PDO::PARAM_INT);
 
         $res = $comando->queryAll();
+        \app\models\Utilities::putMessageLogFile($comando->getRawSql());
+
         if($dataProvider){
             $dataProvider = new ArrayDataProvider([
                 'key' => 'Id',
@@ -1180,22 +1189,35 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
 
     public function getModalidadEstudiante($per_id){
         $con = \Yii::$app->db_academico;
-
-        $sql = "SELECT md.mod_id as 'id',md.mod_nombre as 'name' from db_academico.planificacion pla 
+        $sql = "SELECT md.mod_id as id, md.mod_nombre as name 
+                from " . $con->dbname . ".planificacion pla 
+                inner join " . $con->dbname . ".planificacion_estudiante as pest on pla.pla_id = pest.pla_id
                 inner join " . $con->dbname . ".modalidad md on pla.mod_id = md.mod_id
-                where pla.per_id = $per_id limit 0,1;";
+                where pest.per_id = $per_id
+                and pla.pla_estado = 1 and pla.pla_estado_logico=1
+                and pest.pes_estado = 1 and pest.pes_estado_logico=1
+                and md.mod_estado=1 and md.mod_estado_logico=1
+                 limit 0,1;";
+
         $comando = $con->createCommand($sql);
-        //\app\models\Utilities::putMessageLogFile('mensaje: ' .$comando->getRawSql());
+        \app\models\Utilities::putMessageLogFile('mensaje: ' .$comando->getRawSql());
         
-        $resultData = $comando->queryOne();
+        $resultData = $comando->queryAll();
 
         return $resultData;
     }
 
-    public function getCuotasPeriodo($rama_id){
+    public function getCuotasPeriodo($ron_id, $rpm_id){
         $con = \Yii::$app->db_academico;
 
-        $sql = "SELECT CASE count(distinct roi.roi_bloque) 
+         $sql = " SELECT count(*) as cuota
+            FROM " . $con->dbname . ".registro_online_cuota r
+            WHERE r.ron_id = $ron_id
+            AND r.rpm_id = $rpm_id
+            AND r.roc_estado =1
+            AND r.roc_estado_logico=1;";
+
+        /*$sql = "SELECT CASE count(distinct roi.roi_bloque) 
                         when 1 then 3
                         when 2 then 6
                         when 3 then 2
@@ -1205,13 +1227,53 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
         inner join  " . $con->dbname . ".registro_configuracion rc on rc.pla_id = ram.pla_id
         inner join  " . $con->dbname . ".registro_online ro on ram.ron_id = ro.ron_id
         inner join  " . $con->dbname . ".registro_online_item roi on ro.ron_id = roi.ron_id
-        where ram.rama_id = $rama_id;";
+        where ram.rama_id = $rama_id;";*/
+
+
          $comando = $con->createCommand($sql);
          //\app\models\Utilities::putMessageLogFile('mensaje: ' .$comando->getRawSql());
          
          $resultData = $comando->queryOne();
  
          return $resultData;
+    }
+
+ public function getPerfilSearchListPago($usu_id){
+    $con = \Yii::$app->db_academico;
+    $sql = "SELECT 
+                g.gru_id as gru_id, u.usu_id as usu_id, u.usu_user as usu_user
+                FROM 
+                    db_asgard.usuario AS u 
+                    INNER JOIN db_asgard.usua_grol_eper AS ug ON u.usu_id = ug.usu_id
+                    INNER JOIN db_asgard.empresa_persona AS ep ON ug.eper_id = ep.eper_id
+                    INNER JOIN db_asgard.empresa AS e ON ep.emp_id = e.emp_id
+                    INNER JOIN db_asgard.grup_rol AS gr ON gr.grol_id = ug.grol_id 
+                    INNER JOIN db_asgard.grupo AS g ON g.gru_id = gr.gru_id  -- gru_id: 12 Estudiante,  5: colecturia, 4:financiero
+                    INNER JOIN db_asgard.persona AS p ON p.per_id = u.per_id 
+                WHERE 
+                    u.usu_id = :usu_id AND  -- 1511 
+                    g.gru_id in(12,5) AND
+                    ug.ugep_estado_logico=1 AND 
+                    ug.ugep_estado=1 AND 
+                    ep.eper_estado_logico=1 AND 
+                    ep.eper_estado=1 AND
+                    e.emp_estado_logico=1 AND 
+                    e.emp_estado=1 AND
+                    gr.grol_estado_logico=1 AND 
+                    gr.grol_estado=1 AND 
+                    p.per_estado_logico=1 AND 
+                    p.per_estado=1 AND 
+                    g.gru_estado = 1 AND 
+                    g.gru_estado_logico=1 AND 
+                    u.usu_estado=1 AND 
+                    u.usu_estado_logico=1;";
+
+    $comando = $con->createCommand($sql);
+    $comando->bindParam(":usu_id", $usu_id, \PDO::PARAM_INT);
+    $resultData = $comando->queryOne();
+    \app\models\Utilities::putMessageLogFile('getPerfilSearchListPago: '.$comando->getRawSql());
+    return $resultData;            
+
     }
 }
 

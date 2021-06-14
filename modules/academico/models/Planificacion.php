@@ -273,6 +273,26 @@ class Planificacion extends \yii\db\ActiveRecord {
     }
     
     
-    
+    public static function getPeriodosAcademicoPorModalidad($mod_id) {
+        $con = \Yii::$app->db_academico;
+
+        if(isset($mod_id) && $mod_id != "" && $mod_id != 0){
+            $condition .= "WHERE pla.mod_id = :mod_id;";
+        }
+
+        $sql = "SELECT pla.pla_id as id, pla.pla_periodo_academico as name
+                FROM " . $con->dbname . ".planificacion as pla
+                 $condition";
+    /*     WHERE pla.mod_id = :mod_id;";*/
+
+        $comando = $con->createCommand($sql);
+        if(isset($mod_id) && $mod_id != "" && $mod_id != 0)  
+            $comando->bindParam(":mod_id",$mod_id, \PDO::PARAM_INT);
+        //$comando->bindParam(":mod_id", $mod_id, \PDO::PARAM_INT);
+        $resultData = $comando->queryAll();
+        \app\models\Utilities::putMessageLogFile('getPeriodosAcademicoPorModalidad: '.$comando->getRawSql());
+
+        return $resultData;
+    }
 
 }

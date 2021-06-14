@@ -654,6 +654,8 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
                 Where
                     per.per_id = est.per_id AND
                     daca.daca_estado = 1 and daca.daca_estado_logico = 1
+                    and ron.ron_estado = 1 and ron.ron_estado_logico = 1
+                    and roi.est_estado = 1 and roi.est_estado_logico = 1
                     and est.est_estado = 1 and est.est_estado_logico = 1
                     and per.per_estado = 1 and per.per_estado_logico = 1";
         if ($tipo == 1) {

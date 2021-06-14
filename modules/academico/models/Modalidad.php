@@ -109,6 +109,7 @@ class Modalidad extends \app\modules\academico\components\CActiveRecord {
         $comando->bindParam(":uaca_id", $uaca_id, \PDO::PARAM_INT);
         $comando->bindParam(":emp_id", $emp_id, \PDO::PARAM_INT);
         $resultData = $comando->queryAll();
+        \app\models\Utilities::putMessageLogFile('consultarModalidad: '.$comando->getRawSql());
         return $resultData;
     }
 
@@ -171,6 +172,26 @@ class Modalidad extends \app\modules\academico\components\CActiveRecord {
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
         $comando->bindParam(":modalidad", $mod_id, \PDO::PARAM_INT);
         $resultData = $comando->queryOne();
+        return $resultData;
+    }
+
+    
+    public function getModalidadEstudiantePM($per_id){
+        $con = \Yii::$app->db_academico;
+        $sql = "SELECT md.mod_id as id, md.mod_nombre as name 
+                from " . $con->dbname . ".planificacion pla 
+                inner join " . $con->dbname . ".planificacion_estudiante as pest on pla.pla_id = pest.pla_id
+                inner join " . $con->dbname . ".modalidad md on pla.mod_id = md.mod_id
+                where pest.per_id = $per_id
+                and pla.pla_estado = 1 and pla.pla_estado_logico=1
+                and pest.pes_estado = 1 and pest.pes_estado_logico=1
+                and md.mod_estado=1 and md.mod_estado_logico=1
+                 limit 0,1;";
+
+        $comando = $con->createCommand($sql);               
+        $resultData = $comando->queryAll();
+        \app\models\Utilities::putMessageLogFile('getModalidadEstudiantePM: ' .$comando->getRawSql()); 
+
         return $resultData;
     }
 

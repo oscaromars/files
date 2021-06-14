@@ -386,8 +386,9 @@ class RegistroConfiguracion extends \yii\db\ActiveRecord
             if ($trans !== null){
                 $trans->commit();
             \app\models\Utilities::putMessageLogFile('modelo OK...: registro_pago_matricula COMMIT - OK');}
-
-            return $resultData;
+            $lastId = $con->getLastInsertID($con->dbname . '.registro_pago_matricula');
+            \app\models\Utilities::putMessageLogFile('lastId: '.$lastId);
+            return $lastId;
         } catch (Exception $ex) {
             if ($trans !== null){
                 $trans->rollback();}

@@ -155,7 +155,6 @@ class ComposerStaticInitf285fe9957bad1e329ae97a6417e73ab
             'Symfony\\Component\\CssSelector\\' => 30,
             'Symfony\\Component\\Console\\' => 26,
             'Symfony\\Component\\BrowserKit\\' => 29,
-            'Stripe\\' => 7,
         ),
         'P' => 
         array (

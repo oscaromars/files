@@ -232,4 +232,28 @@ class RegistroOnlineItem extends \yii\db\ActiveRecord {
 
         return $con->getLastInsertID($con->dbname . '.registro_online_item');
     }
+
+    public function getIdPlanificacionEstudiante($ron_id)
+    {
+        $con_academico = \Yii::$app->db_academico;
+        $estado = 1;
+
+        $sql = "
+            SELECT pes_id, pla_id
+            FROM " . $con_academico->dbname . ".planificacion_estudiante as pes
+            WHERE pes.per_id=:per_id
+            -- AND pes.pla_id=:pla_id
+            AND pes.pes_estado=:estado
+            AND pes.pes_estado_logico=:estado
+            ORDER BY pla_id desc;
+        ";
+
+        $comando = $con_academico->createCommand($sql);
+        $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
+        $comando->bindParam(":pla_id", $pla_id, \PDO::PARAM_INT);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $resultData = $comando->queryAll();
+        \app\models\Utilities::putMessageLogFile('getIdPlanificacionEstudiante: '.$comando->getRawSql());
+        return $resultData;
+    }
 }

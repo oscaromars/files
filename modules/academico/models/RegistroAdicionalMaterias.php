@@ -2,6 +2,7 @@
 
 namespace app\modules\academico\models;
 
+use Exception;
 use Yii;
 
 /**
@@ -89,5 +90,83 @@ class RegistroAdicionalMaterias extends \yii\db\ActiveRecord
     public function getRon()
     {
         return $this->hasOne(RegistroOnline::className(), ['ron_id' => 'ron_id']);
+    }
+
+    public function insertRegistroAdicionalMaterias(
+        $ron_id,
+        $per_id,
+        $pla_id,
+        $paca_id,
+        $rpm_id = " NULL ",
+        $roi_id_1,
+        $roi_id_2,
+        $roi_id_3,
+        $roi_id_4,
+        $roi_id_5,
+        $roi_id_6
+        
+    ){
+
+        $con = Yii::$app->db_academico;
+        $transaction=$con->beginTransaction();
+
+        $date = date(Yii::$app->params['dateTimeByDefault']);
+        try{
+
+        if(empty($roi_id_1)){ $roi_id_1=" Null "; }
+        if(empty($roi_id_2)){ $roi_id_2=" Null "; }
+        if(empty($roi_id_3)){ $roi_id_3=" Null "; }
+        if(empty($roi_id_4)){ $roi_id_4=" Null "; }
+        if(empty($roi_id_5)){ $roi_id_5=" Null "; }
+        if(empty($roi_id_6)){ $roi_id_6=" Null "; }
+        
+
+        $sql = "INSERT INTO " . $con->dbname . ".registro_adicional_materias
+                (ron_id,
+                per_id,
+                pla_id,
+                paca_id,
+                rpm_id,
+                roi_id_1,
+                roi_id_2,
+                roi_id_3,
+                roi_id_4,
+                roi_id_5,
+                roi_id_6,
+                rama_estado,
+                rama_fecha_creacion,
+                rama_fecha_modificacion,
+                rama_estado_logico
+                )
+                VALUES (
+                    $ron_id,
+                    $per_id,
+                    $pla_id,
+                    $paca_id,
+                    :rpm_id,
+                    $roi_id_1,
+                    $roi_id_2,
+                    $roi_id_3,
+                    $roi_id_4,
+                    $roi_id_5,
+                    $roi_id_6,
+                    1, 
+                    '$date', 
+                    '$date',
+                    1
+                )";
+
+        $command = $con->createCommand($sql);
+        $comando->bindParam(":rpm_id", $rpm_id, \PDO::PARAM_INT);
+        $command->execute();
+        if ($transaction !== null)
+                $transaction->commit();
+            return $con->getLastInsertID($con->dbname . '.registro_adicional_materias');
+        } catch (Exception $ex) {
+            if ($transaction !== null)
+                $transaction->rollback();
+            return FALSE;
+        }
+
     }
 }

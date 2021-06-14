@@ -1136,14 +1136,6 @@ class Matriculacion extends \yii\db\ActiveRecord {
             AND ron.pes_id = :pes_id
             AND ron.ron_estado = :estado
             AND ron.ron_estado_logico = :estado
-            AND pla.pla_estado = 1 AND pla.pla_estado_logico = 1
-            AND pes.pes_estado = 1 AND pes.pes_estado_logico = 1
-            AND est.est_estado = 1 AND est.est_estado_logico = 1
-            AND per.per_estado = 1 AND per.per_estado_logico = 1
-            AND mo.mod_estado = 1 AND mo.mod_estado_logico = 1
-            AND ea.eaca_estado = 1 AND ea.eaca_estado_logico = 1
-            AND meu.meun_estado = 1 AND meu.meun_estado_logico = 1
-            AND ua.uaca_estado = 1 AND ua.uaca_estado_logico = 1
             ORDER BY ron.ron_id desc;
         ";
 

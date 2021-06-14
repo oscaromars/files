@@ -720,8 +720,8 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
         
         $sql = "SELECT distinct
                     r.ron_id as Id, 
-                    reg.rpm_id as rpm_id, 
-                    ram.rama_id as rama_id,
+                    -- reg.rpm_id as rpm_id, 
+                    -- ram.rama_id as rama_id,
                     pe.pes_nombres as Estudiante,
                     pe.per_id as per_id,
                     pe.pes_dni as Cedula,

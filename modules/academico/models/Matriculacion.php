@@ -1459,7 +1459,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
                         WHEN roc.roc_num_cuota = 5 THEN '5to PAGO'
                         WHEN roc.roc_num_cuota = 6 THEN '6to PAGO'
                     END as pago,
-                    roc.roc_vencimiento as fecha_vencimiento,
+                    upper( DATE_FORMAT( roc.roc_vencimiento, '%d %M %Y')) as fecha_vencimiento,
                     format( (roc.roc_costo * (roc.roc_porcentaje/100)) , 2) as valor_cuota,
                     roc.roc_costo as valor_factura,
                     roc_porcentaje as porcentaje    

@@ -1,4 +1,4 @@
- <?php
+<?php
 
 namespace app\modules\academico\controllers;
 
@@ -146,7 +146,9 @@ class AsistenciaregistrodocenteController extends \app\components\CController {
                     $ecal_id = $data['ecal_id'];//parcial
                     $paca_id = $data['paca_id'];//periodo
                     $asi_id = $data['asi_id'];//id asignatura
-
+                    $uaca_id = $data['uaca_id'];//id unidad
+                    $mod_id = $data['mod_id'];//id modalidad
+ 
                     //\app\models\Utilities::putMessageLogFile($asignatura);
                     //\app\models\Utilities::putMessageLogFile('LINEA 153 : '.$per_id);
                     
@@ -249,6 +251,11 @@ class AsistenciaregistrodocenteController extends \app\components\CController {
         $con = Yii::$app->db_facturacion;
         $transaccion = $con->getTransaction();
         $model = new CabeceraAsistencia();
+        $modelpaca = new PeriodoAcademico();
+        $daes = $modelpaca->getDaesbyperiodo($paca_id, $asi_id, $pro_id);
+        $horasasignatura = $modelpaca->getHorasmaxAsistenciaxest($daes[0]['daes_id']);
+        $sems = $horasasignatura['paca_semanas_periodo'];
+        $hours = $horasasignatura['daho_total_horas'];
         
 
         if ($transaccion !== null) { $transaccion = null; }
@@ -1129,6 +1136,8 @@ class AsistenciaregistrodocenteController extends \app\components\CController {
                     $ecal_id = $data['ecal_id'];//parcial
                     $paca_id = $data['paca_id'];//periodo
                     $asi_id = $data['asi_id'];//id asignatura
+                    $uaca_id = $data['uaca_id'];//id unidad
+                    $mod_id = $data['mod_id'];//id modalidad
 
                     //\app\models\Utilities::putMessageLogFile($asignatura);
                     //\app\models\Utilities::putMessageLogFile('LINEA 153 : '.$per_id);

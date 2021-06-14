@@ -379,6 +379,10 @@ class ComposerStaticInitf285fe9957bad1e329ae97a6417e73ab
         array (
             0 => __DIR__ . '/..' . '/symfony/css-selector',
         ),
+        'Stripe\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/stripe/stripe-php/lib',
+        ),
         'Symfony\\Component\\Console\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/console',

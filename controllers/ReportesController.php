@@ -18,6 +18,8 @@ use app\models\Utilities;
 use app\models\Reporte;
 use app\models\Empresa;
 use app\modules\academico\models\PeriodoAcademico;
+use app\modules\academico\models\UnidadAcademica;
+use app\modules\academico\models\Modalidad;
 use app\modules\academico\models\PlanificacionSearch;
 use app\modules\academico\models\MallaAcademicaSearch;
 use app\modules\academico\models\ModalidadEstudioUnidadSearch;
@@ -409,21 +411,17 @@ class ReportesController extends CController {
 
     public function actionMatriculados() { 
         $searchModel = new PlanificacionSearch();
-        $mod_carrera = new EstudioAcademico();
-        $carrera = $mod_carrera->consultarCarrera();
-        //$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        //$searchModel = new ModalidadEstudioUnidadSearch();
         $params = Yii::$app->request->queryParams;
-        $dataProvider = $searchModel->getListadoMatriculados($params,false,1,$carrera["eaca_nombre"],$carrera["id"]);
+        $dataProvider = $searchModel->getListadoMatriculados($params,false,1);
         return $this->render('matriculados', [
-            'arr_carrera' => ArrayHelper::map(array_merge([["id" => "0", "value" => "Seleccione la carrera "]], $carrera), "id", "value"),
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
-        ]);       
+        ]); 
     }
 
     public function actionMatriculadospormateria() { 
         $searchModel = new DistributivoAcademicoSearch();
-        //$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $params = Yii::$app->request->queryParams;
         $dataProvider = $searchModel->getListadoMatriculadosporMateria($params,false,1);
         return $this->render('matriculadospormateria', [
@@ -433,9 +431,25 @@ class ReportesController extends CController {
     }
     
     public function actionReportemallas() { 
+        $emp_id = @Yii::$app->session->get("PB_idempresa");
         $searchModel = new ModalidadEstudioUnidadSearch();
         //$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $params = Yii::$app->request->queryParams;
+        $mod_modalidad = new Modalidad();
+        $mod_unidad = new UnidadAcademica();
+        if (Yii::$app->request->isAjax) {
+            $data = Yii::$app->request->post();
+            if (isset($data["getmodalidad"])) {
+                $modalidad = $mod_modalidad->consultarModalidad($data["uaca_id"], $emp_id);
+                $message = array("modalidad" => $modalidad);
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+            }
+            if (isset($data["getcarrera"])) {
+                $carrera = $distributivo_model->getModalidadEstudio($data["uaca_id"], $data["mod_id"]);
+                $message = array("carrera" => $carrera);
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+            }
+        }
         $dataProvider = $searchModel->consultarMallasacademicas($params,false,1);
         return $this->render('reportemallas', [
             'searchModel' => $searchModel,
@@ -454,33 +468,17 @@ class ReportesController extends CController {
         ]); 
     }
 
-    public function actionReportepromedios() { 
+    public function actionPromedios(){
         $searchModel = new EstudianteCarreraProgramaSearch();
-        $mod_estudiante = new EstudianteCarreraProgramaSearch();
-        $mod_periodo = new PlanificacionEstudiante();
-        $estudiante = $mod_periodo->busquedaEstudianteplanificacion();
-        //\app\models\Utilities::putMessageLogFile('estudianteControlador:' . $data['estudiante']);
-        $data = Yii::$app->request->get();
-        if ($data['PBgetFilter']) {
-            //\app\models\Utilities::putMessageLogFile('perid:' . $data['estudiante']);
-            $arrSearch["estudiante"] = $data['estudiante'];
-            //Utilities::putMessageLogFile('eeeeeeeee:' . $data['estudiante']);
-            //\app\models\Utilities::putMessageLogFile('perid:' . $data['estudiante']);                      
-            $dataProvider = $searchModel->getListadoReportepromedio($arrSearch,false);
-            return $this->render('reportepromedios', [
-                'estudiante' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']], $estudiante), 'id', 'name'),
-                //'searchModel' => $searchModel,
-                'dataProvider' => $dataProvider,
-        ]);
-        } else {
-            $dataProvider = $searchModel->getListadoReportepromedio($arrSearch,false, $estudiante);
-        }
-            return $this->render('reportepromedios', [
-                'estudiante' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']], $estudiante), 'id', 'name'),
-                //'searchModel' => $searchModel,
-                'dataProvider' => $dataProvider,
-            ]);       
+        //$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $params = Yii::$app->request->queryParams;
+        $dataProvider = $searchModel->getListadoPromedio($params,false,1);
+        return $this->render('promedios', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]); 
     }
+
 
     /*public function actionHistorialacademico() { 
         $searchModel = new EstudianteCarreraProgramaSearch();

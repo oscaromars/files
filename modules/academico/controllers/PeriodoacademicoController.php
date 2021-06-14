@@ -52,17 +52,20 @@ class PeriodoacademicoController extends \app\components\CController {
     public function actionUpdate($id) {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            //return $this->redirect(['create', 'eaca_id' => $model->eaca_id]);
-            Yii::$app->session->setFlash('success', 'Datos Modificados Correctamente');
-            $searchModel = new PeriodoAcademicoSearch();
-            $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-            return $this->render('index', [
-                        'searchModel' => $searchModel,
-                        'dataProvider' => $dataProvider,
-            ]);
-        }
+       if ($model->load(Yii::$app->request->post()) && $model->save()) {
 
+            //return $this->redirect(['create', 'eaca_id' => $model->eaca_id]);
+  
+                         
+                Yii::$app->session->setFlash('success', 'Datos Modificados Correctamente');
+                $searchModel = new PeriodoAcademicoSearch();
+                $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+                return $this->render('index', [
+                            'searchModel' => $searchModel,
+                            'dataProvider' => $dataProvider,
+                ]);
+            } 
+        
         return $this->render('update', ['model' => $model,]);
     }
 
@@ -73,16 +76,18 @@ class PeriodoacademicoController extends \app\components\CController {
      */
     public function actionCreate() {
         $model = new PeriodoAcademico();
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            Yii::$app->session->setFlash('success', 'Datos guardados correctamente');
-            $searchModel = new PeriodoAcademicoSearch();
-            $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-            return $this->render('index', [
-                        'searchModel' => $searchModel,
-                        'dataProvider' => $dataProvider,
-            ]);
-        }
+        // Yii::$app->session->setFlash('success', 'prueba');
+        if ($model->load(Yii::$app->request->post())) {
+            // print_r($model);
+            if ($model->savePeriodo($model)) {
+                //   if ($model->load(Yii::$app->request->post()) && $model->save()) {
+                Yii::$app->session->setFlash('success', 'Datos guardados correctamente');
 
+                return $this->redirect('index');
+            } else {
+                Yii::$app->session->setFlash('error', 'Datos no guardados');
+            }
+        }
         return $this->render('create', [
                     'model' => $model,
         ]);
@@ -96,12 +101,11 @@ class PeriodoacademicoController extends \app\components\CController {
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionDelete($id) {
-        if($this->findModel($id)->delete())
-        {
+        if ($this->findModel($id)->delete()) {
             Yii::$app->session->setFlash('success', 'Registro eliminado correctamente...');
-         }else  {
-             Yii::$app->session->setFlash('error', 'No se pudo eliminar el registro');
-         }
+        } else {
+            Yii::$app->session->setFlash('error', 'No se pudo eliminar el registro');
+        }
         return $this->redirect(['index']);
     }
 

@@ -15,9 +15,51 @@ $(document).ready(function () {
 
     $('#btn_buscarDatapromedios').click(function () {
         buscarDatapromedios();
-    });  
+    });
 
+    $('#btn_buscarDatamatriculados').click(function () {
+        buscarDatamatriculados();
+    });
+
+    $('#modalidadestudiounidadsearch-uaca_id').change(function () {
+        var link = $('#txth_base').val() + "/reportes/reportemallas";
+        var arrParams = new Object();
+        arrParams.uaca_id = $(this).val();
+        arrParams.getmodalidad = true;
+        requestHttpAjax(link, arrParams, function (response) {
+            if (response.status == "OK") {
+                data = response.message;
+                //setComboDataselect(data.modalidad, "modalidadestudiounidadsearch-mod_id", "Todos");
+                var arrParams = new Object();
+                if (data.modalidad.length > 0) {
+                    arrParams.uaca_id = $('#modalidadestudiounidadsearch-uaca_id').val();
+                    arrParams.moda_id = data.modalidad[0].id;
+                    arrParams.getcarrera = true;
+                    requestHttpAjax(link, arrParams, function (response) {
+                        if (response.status == "OK") {
+                            data = response.message;
+                            setComboDataselect(data.carrera, "modalidadestudiounidadsearch-eaca_id", "Todos");
+                        }
+                    }, true);
+                }
+            }
+        }, true);
+    });
     
+    $('#modalidadestudiounidadsearch-mod_id').change(function () {
+        var link = $('#txth_base').val() + "/reportes/reportemallas";
+        var arrParams = new Object();
+        arrParams.uaca_id = $('#modalidadestudiounidadsearch-uaca_id').val();
+        arrParams.moda_id = $(this).val();
+        arrParams.getcarrera = true;
+        requestHttpAjax(link, arrParams, function (response) {
+            if (response.status == "OK") {
+                data = response.message;
+                setComboDataselect(data.carrera, "modalidadestudiounidadsearch-eaca_id", "Todos");
+            }
+        }, true);
+    });
+
 });
 
 function exportAgendamiento(){
@@ -61,13 +103,5 @@ function buscarDatacartera() {
     window.location.href = $('#txth_base').val() + "/reportes/expexcelreportcartera?search=" + search + "&f_inif=" + f_inif + "&f_finf=" + f_finf + '&f_iniv=' + f_iniv + "&f_finv=" + f_finv + "&estadopago=" + estadopago;
 }
 
-function buscarDatapromedios(){
-    var estudiante = $('#cmb_estudiante').val();
-    //alert($('#cmb_estudiante').val());
 
-    //if(!$(".blockUI").length) {
-        //showLoadingPopup();
-        $('#Tbg_Registro_promedios').PbGridView('applyFilterData', {'estudiante': estudiante});
-        //setTimeout(hideLoadingPopup, 2000);
-    //}
-}
+

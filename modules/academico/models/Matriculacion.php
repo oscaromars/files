@@ -555,11 +555,8 @@ class Matriculacion extends \yii\db\ActiveRecord {
             em.emp_estado = 1 AND em.emp_estado_logico = 1 AND
             mu.mumo_estado =1 AND mu.mumo_estado_logico =1 AND
             pes.pes_estado = 1 AND pes.pes_estado_logico = 1 
-<<<<<<< HEAD
+
             group by 1,2,3,4,5
-=======
-            group by 1,2,3,4
->>>>>>> f43d82986dd44079df7ada60f27bb567438c5475
         ";
 
 
@@ -638,10 +635,8 @@ class Matriculacion extends \yii\db\ActiveRecord {
                     $credits        = $value['AsigCreditos'];
                     $codeAsignatura = $value['MallaCodAsig'];
                     $costoCredito   = $value['CostoCredito'];
-<<<<<<< HEAD
+
                     $modalidad     =$value['modalidad'];
-=======
->>>>>>> f43d82986dd44079df7ada60f27bb567438c5475
                     $roi_id         = $value['roi_id'];
                 }
             }
@@ -653,10 +648,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
                 "Credit" => $credits,
                 "Cost" => $costoCredito,
                 "CostSubject" => $costoCredito,
-<<<<<<< HEAD
                 "modalidad"=>$modalidad,
-=======
->>>>>>> f43d82986dd44079df7ada60f27bb567438c5475
                 "Roi_id" => $roi_id,
             );
             array_push($arrData, $arrRow11);
@@ -671,10 +663,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
                     $credits = $value['AsigCreditos'];
                     $codeAsignatura = $value['MallaCodAsig'];
                     $costoCredito = $value['CostoCredito'];
-<<<<<<< HEAD
                     $modalidad     =$value['modalidad'];
-=======
->>>>>>> f43d82986dd44079df7ada60f27bb567438c5475
                     $roi_id         = $value['roi_id'];
                 }
             }
@@ -686,10 +675,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
                 "Credit" => $credits,
                 "Cost" => $costoCredito,
                 "CostSubject" => $costoCredito,
-<<<<<<< HEAD
                 "modalidad"=>$modalidad,
-=======
->>>>>>> f43d82986dd44079df7ada60f27bb567438c5475
                 "Roi_id" => $roi_id,
             );
             array_push($arrData, $arrRow12);
@@ -704,10 +690,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
                     $credits = $value['AsigCreditos'];
                     $codeAsignatura = $value['MallaCodAsig'];
                     $costoCredito = $value['CostoCredito'];
-<<<<<<< HEAD
                     $modalidad     =$value['modalidad'];
-=======
->>>>>>> f43d82986dd44079df7ada60f27bb567438c5475
                     $roi_id         = $value['roi_id'];
                 }
             }
@@ -719,10 +702,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
                 "Credit" => $credits,
                 "Cost" => $costoCredito,
                 "CostSubject" => $costoCredito,
-<<<<<<< HEAD
                 "modalidad"=>$modalidad,
-=======
->>>>>>> f43d82986dd44079df7ada60f27bb567438c5475
                 "Roi_id" => $roi_id,
             );
             array_push($arrData, $arrRow13);
@@ -737,10 +717,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
                     $credits = $value['AsigCreditos'];
                     $codeAsignatura = $value['MallaCodAsig'];
                     $costoCredito = $value['CostoCredito'];
-<<<<<<< HEAD
                     $modalidad     =$value['modalidad'];
-=======
->>>>>>> f43d82986dd44079df7ada60f27bb567438c5475
                     $roi_id         = $value['roi_id'];
                 }
             }
@@ -752,10 +729,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
                 "Credit" => $credits,
                 "Cost" => $costoCredito,
                 "CostSubject" => $costoCredito,
-<<<<<<< HEAD
                 "modalidad"=>$modalidad,
-=======
->>>>>>> f43d82986dd44079df7ada60f27bb567438c5475
                 "Roi_id" => $roi_id,
             );
             array_push($arrData, $arrRow14);
@@ -770,10 +744,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
                     $credits = $value['AsigCreditos'];
                     $codeAsignatura = $value['MallaCodAsig'];
                     $costoCredito = $value['CostoCredito'];
-<<<<<<< HEAD
                     $modalidad     =$value['modalidad'];
-=======
->>>>>>> f43d82986dd44079df7ada60f27bb567438c5475
                     $roi_id         = $value['roi_id'];
                 }
             }
@@ -785,10 +756,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
                 "Credit" => $credits,
                 "Cost" => $costoCredito,
                 "CostSubject" => $costoCredito,
-<<<<<<< HEAD
                 "modalidad"=>$modalidad,
-=======
->>>>>>> f43d82986dd44079df7ada60f27bb567438c5475
                 "Roi_id" => $roi_id,
             );
             array_push($arrData, $arrRow15);
@@ -803,10 +771,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
                     $credits = $value['AsigCreditos'];
                     $codeAsignatura = $value['MallaCodAsig'];
                     $costoCredito = $value['CostoCredito'];
-<<<<<<< HEAD
                     $modalidad     =$value['modalidad'];
-=======
->>>>>>> f43d82986dd44079df7ada60f27bb567438c5475
                     $roi_id         = $value['roi_id'];
                 }
             }
@@ -818,10 +783,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
                 "Credit" => $credits,
                 "Cost" => $costoCredito,
                 "CostSubject" => $costoCredito,
-<<<<<<< HEAD
                 "modalidad"=>$modalidad,
-=======
->>>>>>> f43d82986dd44079df7ada60f27bb567438c5475
                 "Roi_id" => $roi_id,
             );
             array_push($arrData, $arrRow16);
@@ -836,10 +798,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
                     $credits = $value['AsigCreditos'];
                     $codeAsignatura = $value['MallaCodAsig'];
                     $costoCredito = $value['CostoCredito'];
-<<<<<<< HEAD
                     $modalidad     =$value['modalidad'];
-=======
->>>>>>> f43d82986dd44079df7ada60f27bb567438c5475
                     $roi_id         = $value['roi_id'];
                 }
             }
@@ -851,10 +810,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
                 "Credit" => $credits,
                 "Cost" => $costoCredito,
                 "CostSubject" => $costoCredito,
-<<<<<<< HEAD
                 "modalidad"=>$modalidad,
-=======
->>>>>>> f43d82986dd44079df7ada60f27bb567438c5475
                 "Roi_id" => $roi_id,
             );
             array_push($arrData, $arrRow21);
@@ -870,10 +826,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
                     $credits = $value['AsigCreditos'];
                     $codeAsignatura = $value['MallaCodAsig'];
                     $costoCredito = $value['CostoCredito'];
-<<<<<<< HEAD
                     $modalidad     =$value['modalidad'];
-=======
->>>>>>> f43d82986dd44079df7ada60f27bb567438c5475
                     $roi_id         = $value['roi_id'];
                 }
             }
@@ -885,10 +838,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
                 "Credit" => $credits,
                 "Cost" => $costoCredito,
                 "CostSubject" => $costoCredito,
-<<<<<<< HEAD
                 "modalidad"=>$modalidad,
-=======
->>>>>>> f43d82986dd44079df7ada60f27bb567438c5475
                 "Roi_id" => $roi_id,
             );
             array_push($arrData, $arrRow22);
@@ -903,10 +853,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
                     $credits = $value['AsigCreditos'];
                     $codeAsignatura = $value['MallaCodAsig'];
                     $costoCredito = $value['CostoCredito'];
-<<<<<<< HEAD
                     $modalidad     =$value['modalidad'];
-=======
->>>>>>> f43d82986dd44079df7ada60f27bb567438c5475
                     $roi_id         = $value['roi_id'];
                 }
             }
@@ -918,10 +865,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
                 "Credit" => $credits,
                 "Cost" => $costoCredito,
                 "CostSubject" => $costoCredito,
-<<<<<<< HEAD
                 "modalidad"=>$modalidad,
-=======
->>>>>>> f43d82986dd44079df7ada60f27bb567438c5475
                 "Roi_id" => $roi_id,
             );
             array_push($arrData, $arrRow23);
@@ -936,10 +880,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
                     $credits = $value['AsigCreditos'];
                     $codeAsignatura = $value['MallaCodAsig'];
                     $costoCredito = $value['CostoCredito'];
-<<<<<<< HEAD
                     $modalidad     =$value['modalidad'];
-=======
->>>>>>> f43d82986dd44079df7ada60f27bb567438c5475
                     $roi_id         = $value['roi_id'];
                 }
             }
@@ -951,10 +892,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
                 "Credit" => $credits,
                 "Cost" => $costoCredito,
                 "CostSubject" => $costoCredito,
-<<<<<<< HEAD
                 "modalidad"=>$modalidad,
-=======
->>>>>>> f43d82986dd44079df7ada60f27bb567438c5475
                 "Roi_id" => $roi_id,
             );
             array_push($arrData, $arrRow24);
@@ -969,10 +907,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
                     $credits = $value['AsigCreditos'];
                     $codeAsignatura = $value['MallaCodAsig'];
                     $costoCredito = $value['CostoCredito'];
-<<<<<<< HEAD
                     $modalidad     =$value['modalidad'];
-=======
->>>>>>> f43d82986dd44079df7ada60f27bb567438c5475
                     $roi_id         = $value['roi_id'];
                 }
             }
@@ -984,10 +919,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
                 "Credit" => $credits,
                 "Cost" => $costoCredito,
                 "CostSubject" => $costoCredito,
-<<<<<<< HEAD
                 "modalidad"=>$modalidad,
-=======
->>>>>>> f43d82986dd44079df7ada60f27bb567438c5475
                 "Roi_id" => $roi_id,
             );
             array_push($arrData, $arrRow25);
@@ -1003,10 +935,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
                     $credits = $value['AsigCreditos'];
                     $codeAsignatura = $value['MallaCodAsig'];
                     $costoCredito = $value['CostoCredito'];
-<<<<<<< HEAD
                     $modalidad     =$value['modalidad'];
-=======
->>>>>>> f43d82986dd44079df7ada60f27bb567438c5475
                     $roi_id         = $value['roi_id'];
                 }
             }
@@ -1018,10 +947,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
                 "Credit" => $credits,
                 "Cost" => $costoCredito,
                 "CostSubject" => $costoCredito,
-<<<<<<< HEAD
                 "modalidad"=>$modalidad,
-=======
->>>>>>> f43d82986dd44079df7ada60f27bb567438c5475
                 "Roi_id" => $roi_id,
             );
             array_push($arrData, $arrRow26);

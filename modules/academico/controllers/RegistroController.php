@@ -61,8 +61,8 @@ class RegistroController extends \app\components\CController {
     ];
 
     public $arrCreditoNew = [
-        '2' => 'Total Payment of Period',
-        '3' => 'Direct Credit', 
+        '2' => 'Pago Total del Periodo',
+        '3' => 'Crédito Directo', 
     ];
 
     private function getCreditoPay(){

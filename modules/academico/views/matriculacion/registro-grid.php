@@ -11,7 +11,7 @@ use yii\grid\CheckboxColumn;
 academico::registerTranslations();
 
 $modelCancelItem = array();
-//print_r($planificacion);
+print_r($planificacion);die();
 $modelCancelRon = CancelacionRegistroOnline::findOne(['ron_id' => $ron_id, 'cron_estado' => '1', 'cron_estado_logico' => '1',]);
 if($modelCancelRon){
     //$cancelStatus = $modelCancelRon->cron_estado_cancelacion;

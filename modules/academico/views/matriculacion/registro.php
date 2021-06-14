@@ -6,14 +6,12 @@ use yii\helpers\Url;
 
 Academico::registerTranslations();
 // print_r($registredSuject);
- // print_r($costo);
+//print_r("mensaje");
   //print_r($planificacion[0]['CostSubject']);
-/*
-print_r($costo['asociacion']);
-print_r($costo['gastos']);
-print_r($costo['costo']);
-print_r($costo);
-*/
+
+//print_r($gastoAdm);
+//print_r($costo);
+
 
    //CostSubject
 $total=$costo['costo']+$costo['gastos']+$costo['asociacion'];
@@ -126,7 +124,7 @@ echo "<b style='color:green'>EL PERIODO DE INSCRIPCION ESTA CERRADO</b>";
 <input type="hidden" id="frm_min_cancel" value="<?= $min_cancel ?>">
 <input type="hidden" id="frm_modalidad" value="<?= $data_student['mod_id'] ?>">
 <input type="hidden" id="frm_carrera" value="<?= $data_student['eaca_id'] ?>">
-<input type="hidden" id="costoadm" value="<?= $costo['gastos'] ?>">
+<input type="hidden" id="costoadm" value="<?= $gastoAdm ?>">
 
 <br>
 <?=
@@ -156,7 +154,7 @@ echo "<b style='color:green'>EL PERIODO DE INSCRIPCION ESTA CERRADO</b>";
                 </tr>
                 <tr>
                     <th><?= academico::t('matriculacion','Administrative Expenses') ?></th>
-                    <td id="costAdmin">$<?= isset($costo['gastos'])?(number_format($costo['gastos'], 2, '.', ',')):'0.00' ?></td>
+                    <td id="costAdmin">$<?= isset($gastoAdm)?(number_format($gastoAdm, 2, '.', ',')):'0.00' ?></td>
                 </tr>
                 <tr>
                     <th><?= academico::t('matriculacion','Students Association') ?></th>

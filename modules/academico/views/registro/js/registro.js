@@ -470,7 +470,7 @@ function generarDataTable(cuotas, primerPago) {
         if (i == cuotas && sumPer != 100) {
             percentaje = ((100 - sumPer) + parseFloat(percentaje)).toFixed(2);
         }
-        if(i==6){
+        if(i==cuotas){
             per_one = percentaje;
         }else{
             per_total = percentaje;

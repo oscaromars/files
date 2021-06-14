@@ -18,6 +18,8 @@ use app\models\Utilities;
 use app\models\Reporte;
 use app\models\Empresa;
 use app\modules\academico\models\PeriodoAcademico;
+use app\modules\academico\models\UnidadAcademica;
+use app\modules\academico\models\Modalidad;
 use app\modules\academico\models\PlanificacionSearch;
 use app\modules\academico\models\MallaAcademicaSearch;
 use app\modules\academico\models\ModalidadEstudioUnidadSearch;
@@ -429,9 +431,25 @@ class ReportesController extends CController {
     }
     
     public function actionReportemallas() { 
+        $emp_id = @Yii::$app->session->get("PB_idempresa");
         $searchModel = new ModalidadEstudioUnidadSearch();
         //$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $params = Yii::$app->request->queryParams;
+        $mod_modalidad = new Modalidad();
+        $mod_unidad = new UnidadAcademica();
+        if (Yii::$app->request->isAjax) {
+            $data = Yii::$app->request->post();
+            if (isset($data["getmodalidad"])) {
+                $modalidad = $mod_modalidad->consultarModalidad($data["uaca_id"], $emp_id);
+                $message = array("modalidad" => $modalidad);
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+            }
+            if (isset($data["getcarrera"])) {
+                $carrera = $distributivo_model->getModalidadEstudio($data["uaca_id"], $data["mod_id"]);
+                $message = array("carrera" => $carrera);
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+            }
+        }
         $dataProvider = $searchModel->consultarMallasacademicas($params,false,1);
         return $this->render('reportemallas', [
             'searchModel' => $searchModel,

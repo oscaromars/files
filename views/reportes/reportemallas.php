@@ -3,6 +3,10 @@
 use app\modules\academico\models\MallaAcademica;
 use yii\helpers\Html;
 use kartik\grid\GridView;
+use app\modules\academico\models\UnidadAcademica;
+use yii\helpers\ArrayHelper;
+use yii\widgets\ActiveForm;
+
 use app\modules\academico\Module as academico; 
 
 /*
@@ -18,7 +22,7 @@ use app\modules\academico\Module as academico;
 
 GridView::widget([
     'dataProvider' => $dataProvider,
-    //'filterModel' => $searchModel,
+    'filterModel' => $searchModel,
     'pjax' => true,
     //  'autoXlFormat' => true,
     'showPageSummary' => true,
@@ -71,6 +75,7 @@ GridView::widget([
         'target' => GridView::TARGET_BLANK,
     ],
     'columns' => [
+        ['class' => 'yii\grid\SerialColumn'],
        
         [
             'attribute' => 'malla',
@@ -82,6 +87,20 @@ GridView::widget([
             'attribute' => 'asignatura',
             'header' => academico::t("Academico", "Asignatura "),
             'value' => 'asignatura',
+            'group' => false,
+        ],
+        [
+            'attribute' => 'unidad',
+            'header' => academico::t("Academico", "Unidad "),
+            'value' => 'unidad'/*array($searchModel, 'buscarunidad')*/,
+            //'filter' => Html::activeDropDownList($searchModel, 'uaca_id', ArrayHelper::map(UnidadAcademica::find()->all(), 'uaca_id', 'uaca_nombre'), ['prompt' => 'Seleccionar Unidad']),
+            'group' => false,
+        ],
+        [
+            'attribute' => 'modalidad',
+            'header' => academico::t("Academico", "Modalidad "),
+            'value' => 'modalidad'/*array($searchModel, 'buscarunidad')*/,
+            //'filter' => Html::activeDropDownList($searchModel, 'uaca_id', ArrayHelper::map(UnidadAcademica::find()->all(), 'uaca_id', 'uaca_nombre'), ['prompt' => 'Seleccionar Unidad']),
             'group' => false,
         ],
         [

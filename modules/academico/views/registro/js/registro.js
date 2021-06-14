@@ -9,9 +9,36 @@ $(document).ready(function() {
         searchModulesList();
     });
     $('#btn_modificarcargacartera').click(function() {
-        save();
-        guardarCargarCartera();
-        enviarPdf();
+        var txt_dpre_ssn_id_fact= $('#txt_dpre_ssn_id_fact').val()?$('#txt_dpre_ssn_id_fact').val():0;
+        var txt_nombres_fac     = $('#txt_nombres_fac').val()?$('#txt_nombres_fac').val():0;
+        var txt_apellidos_fac   = $('#txt_apellidos_fac').val()?$('#txt_apellidos_fac').val():0;
+        var txt_dir_fac         = $('#txt_dir_fac').val()?$('#txt_dir_fac').val():0;
+        var txt_tel_fac         = $('#txt_tel_fac').val()?$('#txt_tel_fac').val():0;
+        var txt_correo_fac      = $('#txt_correo_fac').val()?$('#txt_correo_fac').val():0;
+        /*alert(txt_dpre_ssn_id_fact+'-'+
+            txt_nombres_fac +'-'+
+            txt_apellidos_fac +'-'+
+            txt_dir_fac +'-'+
+            txt_tel_fac+'-'+
+            txt_correo_fac);*/
+        if (txt_dpre_ssn_id_fact != 0 ||
+            txt_nombres_fac != 0 ||
+            txt_apellidos_fac != 0 ||
+            txt_dir_fac != 0 ||
+            txt_tel_fac != 0 ||
+            txt_correo_fac != 0){
+                
+               if( $('#cmb_tpago').val()!== 3){
+                alert($('#cmb_tpago').val());
+                //save();     
+               }
+               guardarCargarCartera();
+               enviarPdf();
+        }else{
+            var mensaje = {wtmessage: 'Se deben ingresar todos los campos de facturacion correspondientes', title: "Datos de Facturacion"};
+            showAlert("NO_OK", "error", mensaje);
+            return;
+        }
     });
     $('#cmb_tpago').change(function() {
         if ($(this).val() == 1) {
@@ -93,7 +120,50 @@ $(document).ready(function() {
         generarDataTable(numCuota, value);
     });
     sessionStorage.setItem('grid_direct_credit', '');
+
+
+        /***********************************************/
+    /* Filtro para busqueda en listado solicitudes */
+    /***********************************************/
+    $('#cmb_mod').change(function () {
+        var link = $('#txth_base').val() + "/academico/registro/index";
+        /*document.getElementById("cmb_carrerabus").options.item(0).selected = 'selected';*/
+        var arrParams = new Object();
+        arrParams.nint_id = $(this).val();
+        arrParams.getperiodo = true;
+        requestHttpAjax(link, arrParams, function (response) {
+            if (response.status == "OK") {
+                data = response.message;
+                setComboDataselect(data.periodo, "cmb_per_acad", "Todos");
+                /*var arrParams = new Object();
+                if (data.modalidad.length > 0) {
+                    arrParams.unidada = $('#cmb_unidadbus').val();
+                    arrParams.moda_id = data.modalidad[0].id;
+                    arrParams.getcarrera = true;
+                    requestHttpAjax(link, arrParams, function (response) {
+                        if (response.status == "OK") {
+                            data = response.message;
+                            setComboDataselect(data.carrera, "cmb_carrerabus", "Todos");
+                        }
+                    }, true);
+                }*/
+            }
+        }, true);
+    });
+
 });
+
+function setComboDataselect(arr_data, element_id, texto) {
+    var option_arr = "";
+    option_arr += "<option value= '0'>" + texto + "</option>";
+    for (var i = 0; i < arr_data.length; i++) {
+        var id = arr_data[i].id;
+        var value = arr_data[i].name;
+
+        option_arr += "<option value='" + id + "'>" + value + "</option>";
+    }
+    $("#" + element_id).html(option_arr);
+}
 
 function generateFee(){
     let value = $(this).val();
@@ -108,9 +178,9 @@ function searchModules() {
     var arrParams2 = new Object();
     arrParams2.PBgetFilter = true;
     //arrParams2.search = $("#txt_buscarData").val();
+    arrParams2.mod_id = $("#cmb_mod").val();
     arrParams2.periodo = ($("#cmb_per_acad option:selected").val());
-    //arrParams2.mod_id = $("#cmb_mod").val();
-//arrParams2.estado = $("#cmb_status").val();
+    //arrParams2.estado = $("#cmb_status").val();
     //alert(arrParams2.periodo+'-'+arrParams2.estado);
     $("#grid_registropay_list").PbGridView("applyFilterData", arrParams2);
 }
@@ -129,7 +199,7 @@ function save() {
     //guardarCargarCartera();
     //Se debe de enviar el pago  y retornar el mensaje de exito o error
     var arrParams = new Object();
-    var link = $('#txth_base').val() + "/academico/registro/save/" + $('#txt_per_id').val();//$('#frm_id').val();
+    var link = $('#txth_base').val() + "/academico/registro/save/";//, + $('#txt_per_id').val();//$('#frm_id').val();
     var total = ($('#frm_costo_item').val()).replace(/,/g, '');//($('#frm_costo_item').val()).replace(/,/g, '');
     var numCuota = $('#cmb_cuota').val();
     var cuota = (total / numCuota);
@@ -162,7 +232,7 @@ function save() {
         var mensaje = {wtmessage: '', title: "Se deben aceptar los terminos y condiciones para continuar"};
         //alert('Se deben aceptar terminos y condiciones');
         showAlert("NO_OK", "error", mensaje);
-        //return;
+        return;
     }
     /**
     * Datos de factura por  pago boton en linea
@@ -400,22 +470,41 @@ function generarDataTable(cuotas, primerPago) {
         if (i == cuotas && sumPer != 100) {
             percentaje = ((100 - sumPer) + parseFloat(percentaje)).toFixed(2);
         }
+        if(i==6){
+            per_one = percentaje;
+        }else{
+            per_total = percentaje;
+        }
+    }
+   // alert(per_one + '-'+ per_total);
+    //alert((total*per_one).toFixed(2));
+    //alert((total*per_total).toFixed(2));
+
+    for (let i = 1; i <= cuotas; i++) {
+        /*sumPer += (primerPago !== null && cuotas > 1 && i == 1) ? parseFloat(perPriC) : parseFloat(percentaje);
+        sumTot += (primerPago !== null && cuotas > 1 && i == 1) ? parseFloat(primerPago) : parseFloat(cuota);
+        if (i == cuotas && sumPer != 100) {
+            percentaje = ((100 - sumPer) + parseFloat(percentaje)).toFixed(2);
+        }
         if (i == cuotas && sumTot != total) {
             cuota = ((total - sumTot) + (parseFloat(cuota))).toFixed(2);
-        }
-
+        }*/
+        primerCuota = ((total*(100/percentaje))/100).toFixed(1);
+        cuotageneral = (total*cuotas/100).toFixed(2);
+        porc = (i == 1) ? (per_one) : (percentaje);
+        monto = (i == 1) ? (total*(per_one/100)).toFixed(2):(total*(per_total/100)).toFixed(2);
         var tb_item = new Array();
         var tb_item2 = new Array();
         tb_item[0] = 0;
         tb_item[1] = labelPay + i;
-        tb_item[2] = (primerPago !== null && cuotas > 1 && i == 1) ? (perPriC + '%') : (percentaje + '%');
-        tb_item[3] = (primerPago !== null && cuotas > 1 && i == 1) ? ('$' + currencyFormat(parseFloat(primerPago))) : ('$' + currencyFormat(parseFloat(cuota)));
+        tb_item[2] = (i == 1) ? (per_one + '%') : (per_total + '%');
+        tb_item[3] = '$ '+monto;//( i == 1) ? primerCuota: cuotageneral;//('$' + currencyFormat(parseFloat(primerPago))) : ('$' + currencyFormat(parseFloat(cuota)));
         tb_item[4] = $('#vencimiento_' + i).val();
         tb_item[5] = "PENDING";//(i == 1) ? "TO CHECK" : "PENDING";
         tb_item2[0] = 0;
         tb_item2[1] = labelPay + i;
-        tb_item2[2] = (primerPago !== null && cuotas > 1 && i == 1) ? (perPriC + '%') : (percentaje + '%');
-        tb_item2[3] = (primerPago !== null && cuotas > 1 && i == 1) ? ('$' + currencyFormat(parseFloat(primerPago))) : ('$' + currencyFormat(parseFloat(cuota)));
+        tb_item2[2] = (i == 1) ? (per_one + '%') : (per_total + '%');
+        tb_item2[3] = '$ '+monto;//( i == 1) ? primerCuota: cuotageneral;//(primerPago !== null && cuotas > 1 && i == 1) ? ('$' + currencyFormat(parseFloat(primerPago))) : ('$' + currencyFormat(parseFloat(cuota)));
         tb_item2[4] = $('#vencimiento_' + i).val();
         tb_item2[5] = "PENDING";//(i == 1) ? "TO CHECK" : "PENDING";
         if (arrData.data) {
@@ -612,7 +701,7 @@ function confirmarDevolucion(id) {
             //$("#payBtn").hide();
 
             //llamar a la funcion de save de pagos.
-            //save();
+            
             //sendInscripcionSubirPago3();
             //$.LoadingOverlay("hide");
             
@@ -634,7 +723,7 @@ function guardarCargarCartera(){
     arrParams.interes = $('#frm_int_ced').val();
     arrParams.financiamiento = $('#frm_finan').val();
     arrParams.numcuotas = $('#cmb_cuota').val();
-    arrParams.rama_id = $('#frm_rama_id').val();
+    arrParams.ron_id = $('#txt_ron_id').val();
     arrParams.per_id = $('#txt_per_id').val();
     arrParams.pla_id = $('#txt_pla_id').val();
     var terminos = ($('#cmb_req').is(':checked')) ? 1 : 0;
@@ -643,7 +732,7 @@ function guardarCargarCartera(){
     $redirect = $('#txth_base').val() + "/academico/registro/new/"+arrParams.per_id+'?rama_id='+arrParams.rama_id ;
     $redirect = $('#txth_base').val() + "/academico/registro/index";
     //alert(arrParams.tpago+'-'+arrParams.total+'-'+arrParams.interes +'-'+arrParams.financiamiento+'-'+arrParams.numcuotas+'-'+arrParams.rama_id+'-'+arrParams.per_id +'-'+ $redirect);
-    if(/*$('#cmb_cuota option:selected').val()*/arrParams.numcuotas != 0 || terminos==0){
+    if(arrParams.numcuotas != 0 || terminos==0){
         if(terminos != 0){
             try{
                 requestHttpAjax(link, arrParams, function(response) {
@@ -655,7 +744,7 @@ function guardarCargarCartera(){
                     //windows.location.href = $('#txth_base').val() + "/academico/registro/index";
                     }, 3000);
                 } else {
-                    showAlert(response.status, response.type, { "wtmessage": message.info, "title": response.label });
+                    //showAlert(response.status, response.type, { "wtmessage": message.info, "title": response.label });
                 }
                 }, true);
             }catch(err){
@@ -671,7 +760,7 @@ function enviarPdf(){
     var link = $('#txth_base').val() + "/academico/registro/sendpdf";
     var arrParams = new Object();
     arrParams.per_id = $('#txt_per_id').val();
-    arrParams.rama_id = $('#txt_rama').val();
+    arrParams.cuotas = $('#txt_cuotas').val();
     //alert(arrParams.rama_id);
     try{
         requestHttpAjax(link, arrParams, function(response) {
@@ -679,10 +768,10 @@ function enviarPdf(){
         if (response.status == "OK") {
             setTimeout(function() {
             //windows.location.href = $redirect;
-            showAlert(response.status, response.type, { "wtmessage": 'SU PAGO FUE INGRESADO CORRECTAMENTE', "title": response.label });
+            showAlert(response.status, response.type, { "wtmessage": 'SU INFORMACIÓN SE REGISTRO CORRECTAMENTE', "title": response.label });
             //windows.location.href = $('#txth_base').val() + "/academico/registro/index";
             //parent.window.location.href = $('#txth_base').val() + "/academico/registro/index";
-            }, 3000);
+            }, 5000);
         } 
         }, true);
     }catch(err){

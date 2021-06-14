@@ -180,7 +180,7 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
           {
             $paca_actual_id['id'] = 0;
           }      
-          $str_search      = "a.paca_id = ".$paca_actual_id['id']." AND ";
+          $str_search      = "a.paca_id = ".$paca_actual_id[0]['id']." AND ";
         }        
 
             $sql = "SELECT  distinct h.est_id, 

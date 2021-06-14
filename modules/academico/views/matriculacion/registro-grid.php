@@ -12,10 +12,13 @@ academico::registerTranslations();
 
 $modelCancelItem = array();
 
+//print_r($planificacion);die();
+
+
 //print_r($data_student['mod_id']);die();
 
 //print_r($planificacion);
->>>>>>> f43d82986dd44079df7ada60f27bb567438c5475
+
 $modelCancelRon = CancelacionRegistroOnline::findOne(['ron_id' => $ron_id, 'cron_estado' => '1', 'cron_estado_logico' => '1',]);
 if($modelCancelRon){
     //$cancelStatus = $modelCancelRon->cron_estado_cancelacion;
@@ -144,7 +147,7 @@ if($modelCancelRon){
                 'contentOptions' => ['class' => 'text-center'],
                 'headerOptions' => ['class' => 'text-center'],
                 'value' => function($data){
-                    return '$' . number_format($data['Cost']*$data['Credit'],2 );
+                    return '$' . number_format( (empty($data['Cost'])?0:$data['Cost']) * (empty($data['Credit'])?0:$data['Credit']),2 );
                 },
             ],
             [

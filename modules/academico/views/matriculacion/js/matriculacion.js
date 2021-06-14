@@ -97,9 +97,11 @@ $(document).ready(function() {
         });
 
         var costoadm  = $('#costoadm').val();
+        if(costoadm == 0)
+            costoadm = 0;
         //total = subtotal + parseFloat(asoc) + parseFloat(mat) + parseFloat(gastos);
         total = subtotal + parseFloat(costoadm);
-        console.log(subtotal);
+
         $('#costo').text("$"+subtotal.toFixed(2));
         $('#costTotal').text("$"+total.toFixed(2));
         //$('#costo').text('$' + (subtotal.toFixed(2)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
@@ -260,6 +262,7 @@ function registerSubject() {
         return;
     }
 
+    var contador = 0;
     $('#grid_registro_list input[type=checkbox]').each(function() {
         //console.log("-----------------");
         //console.log(this);
@@ -272,9 +275,7 @@ function registerSubject() {
             costs[contador]    = $(this).parent().prev().prev().text();
             contador += 1;
         }
-    });
-
-    
+    });   
 
     arrParams.pes_id = $('#frm_pes_id').val();
     arrParams.ron_id = $('#frm_ron_id').val();
@@ -294,11 +295,10 @@ function registerSubject() {
 
     requestHttpAjax(link, arrParams, function(response) {
         showAlert(response.status, response.label, response.message);
-        /*
         setTimeout(function() {
-            parent.window.location.href = $('#txth_base').val() + "/academico/matriculacion/index";
+            location.reload();
+            //parent.window.location.href = $('#txth_base').val() + "/academico/matriculacion/index";
         }, 2000);
-        */
 
     }, true);
 }

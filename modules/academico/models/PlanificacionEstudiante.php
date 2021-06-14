@@ -1234,13 +1234,13 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
                     inner join " . $con->dbname . ".malla_unidad_modalidad muo on muo.meun_id = meu.meun_id
                     inner join " . $con->dbname . ".malla_academica_detalle mad on mad.maca_id = muo.maca_id
                     where est.per_id = $per_id;");
-                    $comando2 = $con->createCommand($sql2);
-                    $result2 = $comando2->execute();
+                    //$comando2 = $con->createCommand($sql2);
+                    //$result2 = $comando2->execute();
 
                 $sql3 = 
                     ("INSERT INTO " . $con->dbname . ".planificacion_estudiante(pes_cod_malla,pes_carrera,per_id,pes_dni,pes_nombres,pla_id,pes_estado,pes_estado_logico)
                     select distinct(ma.maca_codigo),ma.maca_nombre,e.per_id, pe.per_cedula, 
-                    concat(pe.per_pri_nombre, ' ', pe.per_seg_nombre,' ', pe.per_pri_apellido, ' ',pe.per_seg_apellido) as nombres, 1 as pla_id, 1,1
+                    concat(pe.per_pri_nombre, ' ', pe.per_seg_nombre,' ', pe.per_pri_apellido, ' ',pe.per_seg_apellido) as nombres, $pla_id as pla_id, 1,1
                     from " . $con->dbname . ".estudiante_carrera_programa ecp 
                     inner join " . $con->dbname . ".modalidad_estudio_unidad meu on ecp.meun_id = meu.meun_id
                     inner join " . $con->dbname . ".estudio_academico es on es.eaca_id = meu.eaca_id 

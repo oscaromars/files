@@ -61,8 +61,8 @@ class RegistroController extends \app\components\CController {
     ];
 
     public $arrCreditoNew = [
-        '2' => 'Total Payment of Period',
-        '3' => 'Direct Credit', 
+        '2' => 'Pago Total del Periodo',
+        '3' => 'Crédito Directo', 
     ];
 
     private function getCreditoPay(){
@@ -191,6 +191,7 @@ class RegistroController extends \app\components\CController {
         $rama_id = base64_decode($data['ron']);
         $cuotas = base64_decode($data['cuotas']);
         $idtotal = base64_decode($data['idtotal']);
+        $pla_periodo_academico = base64_decode($data['idpla']);
         $costo = $data['costo'];
         $registroOnline = new RegistroOnline();
         $pes_id = $registroOnline->getPes_id($id);//$model[0]['pes_id'];
@@ -295,6 +296,7 @@ class RegistroController extends \app\components\CController {
             'costo' => $idtotal,
             'rama' => $rama_id,
             'pla_id' => $pla_id,
+            'periodo_actual' =>$pla_periodo_academico,
         ]);
     }
 
@@ -2327,6 +2329,14 @@ class RegistroController extends \app\components\CController {
                         $est_id = $estudiante->getEstudiantexperid($per_id);
                         //$repetidos = $modelCargaCartera->getRegistrosDuplicados($ron_id);
                         $porcentaje = 100/$numcuotas;
+                        if($numcuotas == 3 || $numcuotas == 6){
+                            $porc_mayor = round($porcentaje, 2);
+                            $porc_menor = round(($porcentaje - 0.02),2);
+                        }else{
+                            $porc_mayor = $porcentaje;
+                            $porc_menor = $porcentaje;    
+                        }
+                        
                         $datosRonPes= $modelCargaCartera->getRonPes($per_id);
                         $ron_id = $datosRonPes['ron_id'];
                         $pes_id = $datosRonPes['pes_id'];
@@ -2344,7 +2354,13 @@ class RegistroController extends \app\components\CController {
                             for($in = 1; $in <= $numcuotas; $in++){
                                 $fechaCuotaActual = $modelCargaCartera->getCuotaActual($in);
                                 $registros_cuotas = $modelCargaCartera->registrarCargaCartera($est_id['est_id'],$cedula['per_cedula'], $secuencial['secuencial'], $forma_pago,$fechaCuotaActual['fecha'],$in, $numcuotas, $valor_cuota, $total, $usuario);
-                                $registro_online_cuota = $modelCargaCartera->registroOnlineCuota($ron_id, $rpm_id,$in,$fechaCuotaActual['fecha'],$porcentaje,$total);
+                                if($in==1){
+                                    //$porcentaje = 100 - ($porc_mayor * ($numcuotas - 1));
+                                    $registro_online_cuota = $modelCargaCartera->registroOnlineCuota($ron_id, $rpm_id,$in,$fechaCuotaActual['fecha'],$porc_menor,$total);
+                                }else{
+                                    //$porc_mayor = round($porcentaje, 2);
+                                    $registro_online_cuota = $modelCargaCartera->registroOnlineCuota($ron_id, $rpm_id,$in,$fechaCuotaActual['fecha'],$porc_mayor,$total);
+                                }
                             }
                             
                                 //$transaction->commit();
@@ -2407,20 +2423,23 @@ class RegistroController extends \app\components\CController {
 
             /*Detalle de materias*/
             $matriculacion_model = new Matriculacion();
+            //obtengo el ron_id
             $resp_ron_id = $matriculacion_model->getDataStudenFromRegistroOnline($per_id, $pes_id);
             $ron_id = $resp_ron_id['ron_id'];
             $dataPlanificacion = $matriculacion_model->getPlanificationFromRegistroOnline($ron_id);
 
             /*Detalles de pagos */
+            // nuevo
+            //$resp_rpm_id = $matriculacion_model->getNumeroDocumentoRegistroOnline($rama_id, $ron_id, $per_id);
+            $resp_rpm_id = $matriculacion_model->getNumeroDocumentoRegistroOnline($ron_id, $per_id); //registro_pago_matricula -// AQUI
+            $rpm_id = $resp_rpm_id['rpm_id'];
+
             $registro_pago_matricula = new RegistroPagoMatricula();
-            //$resp_cant_cuota = $registro_pago_matricula->getCuotasPeriodo($rama_id);
-            $cant_cuota = $cuotas;// $resp_cant_cuota['cuota'];
+            $resp_cant_cuota = $registro_pago_matricula->getCuotasPeriodo($ron_id, $rpm_id);//registro_online_cuotas  ///  AQUI
+            $cant_cuota = $resp_cant_cuota['cuota'];
             $est_id = $modelEstudiante['est_id'];
 
-            // nuevo
-            /*$resp_rpm_id = $matriculacion_model->getNumeroDocumentoRegistroOnline( $ron_id, $per_id);
-            $rpm_id = $resp_rpm_id['rpm_id'];*/
-            $detallePagos = [];//$matriculacion_model->getDetalleCuotasRegistroOnline($ron_id, $rpm_id);
+            $detallePagos = $matriculacion_model->getDetalleCuotasRegistroOnline($ron_id, $rpm_id);
             // nuevo
 
             /*$resp_ccar_numero_documento = $matriculacion_model->getNumeroDocumentoRegistroOnline($rama_id);
@@ -2554,7 +2573,7 @@ class RegistroController extends \app\components\CController {
         try {
             $ids = $_GET['ids'];
             $per_id = $ids;
-            $rama_id  = $_GET['rama_id'];
+            //$rama_id  = $_GET['rama_id'];
             $matriculacion_model = new Matriculacion();          
             $modelPersona = Persona::find()->where(['per_id' => $per_id])->asArray()->one();
             $modelEstudiante = Estudiante::find()->where(['per_id' => $per_id])->asArray()->one();
@@ -2570,19 +2589,22 @@ class RegistroController extends \app\components\CController {
 
             /*Detalle de materias*/
             $matriculacion_model = new Matriculacion();
+            //obtengo el ron_id
             $resp_ron_id = $matriculacion_model->getDataStudenFromRegistroOnline($per_id, $pes_id);
             $ron_id = $resp_ron_id['ron_id'];
             $dataPlanificacion = $matriculacion_model->getPlanificationFromRegistroOnline($ron_id);
 
             /*Detalles de pagos */
+            // nuevo
+            //$resp_rpm_id = $matriculacion_model->getNumeroDocumentoRegistroOnline($rama_id, $ron_id, $per_id);
+            $resp_rpm_id = $matriculacion_model->getNumeroDocumentoRegistroOnline($ron_id, $per_id); //registro_pago_matricula -// AQUI
+            $rpm_id = $resp_rpm_id['rpm_id'];
+
             $registro_pago_matricula = new RegistroPagoMatricula();
-            $resp_cant_cuota = $registro_pago_matricula->getCuotasPeriodo($rama_id);
+            $resp_cant_cuota = $registro_pago_matricula->getCuotasPeriodo($ron_id, $rpm_id);//registro_online_cuotas  ///  AQUI
             $cant_cuota = $resp_cant_cuota['cuota'];
             $est_id = $modelEstudiante['est_id'];
 
-            // nuevo
-            $resp_rpm_id = $matriculacion_model->getNumeroDocumentoRegistroOnline($rama_id, $ron_id, $per_id);
-            $rpm_id = $resp_rpm_id['rpm_id'];
             $detallePagos = $matriculacion_model->getDetalleCuotasRegistroOnline($ron_id, $rpm_id);
             // nuevo
 

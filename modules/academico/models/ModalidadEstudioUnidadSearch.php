@@ -93,32 +93,35 @@ class ModalidadEstudioUnidadSearch extends ModalidadEstudioUnidad {
         $con_db = \Yii::$app->db;
        
         $sql = "Select concat(mac.maca_codigo,' - ',mac.maca_nombre) AS malla,
-                        -- d.made_codigo_asignatura,  
-                        a.asi_nombre as asignatura,
-                        d.made_semestre as semestre,
-                        uaca.uaca_nombre as unidad,
-                        moda.mod_nombre as modalidad,
-                        eaca.eaca_nombre as carrera,
-                        d.made_credito as credito,
-                        u.uest_nombre as unidad_estudio,       
-                        f.fmac_nombre as formacion_malla_academica,
-                        ifnull(asi.asi_nombre,'') as materia_requisito
-                  FROM db_academico.modalidad_estudio_unidad meu  
-                      INNER JOIN db_academico.malla_unidad_modalidad mum ON mum.meun_id = meu.meun_id                  
-                      INNER JOIN db_academico.malla_academica mac ON mac.maca_id = mum.maca_id 
-                      Inner Join db_academico.estudio_academico eaca on eaca.eaca_id = meu.eaca_id
-                      inner join db_academico.malla_academica_detalle d on d.maca_id = mac.maca_id
-                      inner join db_academico.asignatura a on a.asi_id = d.asi_id
-                      inner join db_academico.unidad_estudio u on u.uest_id = d.uest_id
-                      inner join db_academico.nivel_estudio n on n.nest_id = d.nest_id
-                      inner join db_academico.formacion_malla_academica f on f.fmac_id = d.fmac_id
-                      inner join db_academico.unidad_academica uaca on uaca.uaca_id = meu.uaca_id
-                      inner join db_academico.modalidad moda on moda.mod_id = meu.mod_id
-                      left join db_academico.asignatura asi on asi.asi_id = d.made_asi_requisito
-                   WHERE  meu.meun_estado_logico = 1 AND meu.meun_estado = 1 AND
-                          mum.mumo_estado_logico = 1 AND mum.mumo_estado = 1 AND
-                          mac.maca_estado_logico = 1 AND mac.maca_estado = 1 AND
-                          d.made_estado_logico = 1 AND d.made_estado = 1";
+                    -- d.made_codigo_asignatura,  
+                    a.asi_nombre as asignatura,
+                    d.made_semestre as semestre,
+                    uaca.uaca_nombre as unidad,
+                    moda.mod_nombre as modalidad,
+                    eaca.eaca_nombre as carrera,
+                    d.made_credito as credito,
+                    u.uest_nombre as unidad_estudio,       
+                    f.fmac_nombre as formacion_malla_academica,
+                    ifnull(asi.asi_nombre,'') as materia_requisito
+              FROM db_academico.modalidad_estudio_unidad meu  
+                  inner join db_academico.unidad_academica uaca on uaca.uaca_id = meu.uaca_id
+                  inner join db_academico.modalidad moda on moda.mod_id = meu.mod_id
+                  Inner Join db_academico.estudio_academico eaca on eaca.eaca_id = meu.eaca_id
+                  INNER JOIN db_academico.malla_unidad_modalidad mum ON mum.meun_id = meu.meun_id                  
+                  INNER JOIN db_academico.malla_academica mac ON mac.maca_id = mum.maca_id 
+                  inner join db_academico.malla_academica_detalle d on d.maca_id = mac.maca_id
+                  inner join db_academico.asignatura a on a.asi_id = d.asi_id
+                  inner join db_academico.unidad_estudio u on u.uest_id = d.uest_id
+                  inner join db_academico.nivel_estudio n on n.nest_id = d.nest_id
+                  inner join db_academico.formacion_malla_academica f on f.fmac_id = d.fmac_id
+                  left join db_academico.asignatura asi on asi.asi_id = d.made_asi_requisito
+               WHERE  meu.meun_estado_logico = 1 AND meu.meun_estado = 1 AND
+                      uaca.uaca_estado_logico = 1 AND uaca.uaca_estado = 1 AND
+                      moda.mod_estado_logico = 1 AND moda.mod_estado = 1 AND
+                      eaca.eaca_estado_logico = 1 AND eaca.eaca_estado = 1 AND
+                      mum.mumo_estado_logico = 1 AND mum.mumo_estado = 1 AND
+                      mac.maca_estado_logico = 1 AND mac.maca_estado = 1 AND
+                      d.made_estado_logico = 1 AND d.made_estado = 1";
 
         if ($tipo == 1) {
             $this->load($params);

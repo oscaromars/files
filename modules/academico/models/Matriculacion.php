@@ -451,7 +451,8 @@ class Matriculacion extends \yii\db\ActiveRecord {
                     inner join db_academico.unidad_academica ua on ua.uaca_id= meu.uaca_id
                     WHERE per.per_id =:per_id
             AND pla.pla_id =:pla_id
-            AND pes.pes_id =:pes_id";
+            AND pes.pes_id =:pes_id
+            AND pla.paca_id is not null";
                     
 
       $comando = $con_academico->createCommand($sql);

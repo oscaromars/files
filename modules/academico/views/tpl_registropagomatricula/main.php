@@ -86,6 +86,8 @@
                 .logo_cab{
                     margin: 30px 0px 30px 0px;
                     width: 200px;
+                    float:center !important;
+                    border: 1px;
                 }
                 .tcolr_num_aut {
                     width: 100%;                      

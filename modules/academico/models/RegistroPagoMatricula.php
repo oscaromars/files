@@ -1207,10 +1207,17 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
         return $resultData;
     }
 
-    public function getCuotasPeriodo($rama_id){
+    public function getCuotasPeriodo($ron_id, $rpm_id){
         $con = \Yii::$app->db_academico;
 
-        $sql = "SELECT CASE count(distinct roi.roi_bloque) 
+         $sql = " SELECT count(*) as cuota
+            FROM " . $con->dbname . ".registro_online_cuota r
+            WHERE r.ron_id = $ron_id
+            AND r.rpm_id = $rpm_id
+            AND r.roc_estado =1
+            AND r.roc_estado_logico=1;":
+
+        /*$sql = "SELECT CASE count(distinct roi.roi_bloque) 
                         when 1 then 3
                         when 2 then 6
                         when 3 then 2
@@ -1220,7 +1227,9 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
         inner join  " . $con->dbname . ".registro_configuracion rc on rc.pla_id = ram.pla_id
         inner join  " . $con->dbname . ".registro_online ro on ram.ron_id = ro.ron_id
         inner join  " . $con->dbname . ".registro_online_item roi on ro.ron_id = roi.ron_id
-        where ram.rama_id = $rama_id;";
+        where ram.rama_id = $rama_id;";*/
+
+
          $comando = $con->createCommand($sql);
          //\app\models\Utilities::putMessageLogFile('mensaje: ' .$comando->getRawSql());
          

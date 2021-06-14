@@ -2570,19 +2570,22 @@ class RegistroController extends \app\components\CController {
 
             /*Detalle de materias*/
             $matriculacion_model = new Matriculacion();
+            //obtengo el ron_id
             $resp_ron_id = $matriculacion_model->getDataStudenFromRegistroOnline($per_id, $pes_id);
             $ron_id = $resp_ron_id['ron_id'];
             $dataPlanificacion = $matriculacion_model->getPlanificationFromRegistroOnline($ron_id);
 
             /*Detalles de pagos */
+            // nuevo
+            //$resp_rpm_id = $matriculacion_model->getNumeroDocumentoRegistroOnline($rama_id, $ron_id, $per_id);
+            $resp_rpm_id = $matriculacion_model->getNumeroDocumentoRegistroOnline($ron_id, $per_id); //registro_pago_matricula -// AQUI
+            $rpm_id = $resp_rpm_id['rpm_id'];
+
             $registro_pago_matricula = new RegistroPagoMatricula();
-            $resp_cant_cuota = $registro_pago_matricula->getCuotasPeriodo($rama_id);
+            $resp_cant_cuota = $registro_pago_matricula->getCuotasPeriodo($ron_id, $rpm_id);//registro_online_cuotas  ///  AQUI
             $cant_cuota = $resp_cant_cuota['cuota'];
             $est_id = $modelEstudiante['est_id'];
 
-            // nuevo
-            $resp_rpm_id = $matriculacion_model->getNumeroDocumentoRegistroOnline($rama_id, $ron_id, $per_id);
-            $rpm_id = $resp_rpm_id['rpm_id'];
             $detallePagos = $matriculacion_model->getDetalleCuotasRegistroOnline($ron_id, $rpm_id);
             // nuevo
 

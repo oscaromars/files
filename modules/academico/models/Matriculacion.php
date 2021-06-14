@@ -1519,12 +1519,21 @@ class Matriculacion extends \yii\db\ActiveRecord {
     {
         $con_academico = \Yii::$app->db_academico;
         $estado = 1;
-        $sql = " SELECT rama.rpm_id as rpm_id
+        /*$sql = " SELECT rama.rpm_id as rpm_id
                 FROM db_academico.registro_adicional_materias as rama 
                   AND rama.ron_id = :ron_id 
                   AND rama.per_id = :per_id 
                   AND rama.rama_estado = :estado
-                  AND rama.rama_estado_logico = :estado;";  
+                  AND rama.rama_estado_logico = :estado;"; */
+
+        $sql = " SELECT rpm_id as rpm_id
+                    FROM db_academico.registro_pago_matricula r
+                    WHERE r.per_id = :per_id  
+                      AND r.ron_id = :ron_id 
+                      AND r.rpm_estado = :estado
+                      AND r.rpm_estado_logico = :estado
+                    ORDER BY r.rpm_id DESC
+                    LIMIT 0,1;";
 
 
         $comando = $con_academico->createCommand($sql);

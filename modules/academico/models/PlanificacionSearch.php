@@ -75,16 +75,16 @@ class PlanificacionSearch extends Planificacion {
                 Inner Join db_academico.registro_pago_matricula rpm on rpm.per_id = ron.per_id
                 Inner Join db_asgard.persona per on  per.per_id = ron.per_id
                 Inner Join db_academico.planificacion pla on pla.pla_id = rpm.pla_id 
-                Inner Join db_academico.semestre_academico sa on sa.saca_id =pla.saca_id
-                Inner Join db_academico.modalidad m on m.mod_id=pla.mod_id 
+                Inner Join db_academico.semestre_academico sa on sa.saca_id = pla.saca_id
+                Inner Join db_academico.modalidad m on m.mod_id = pla.mod_id 
                 Inner Join db_academico.estudiante est on est.per_id = per.per_id 
-                Inner Join db_academico.estudiante_carrera_programa ecpr on ecpr.est_id=est.est_id
-                Inner Join  db_academico.modalidad_estudio_unidad  meu on meu.mod_id = m.mod_id and ecpr.meun_id=meu.meun_id
-                Inner Join  db_academico.unidad_academica ua on ua.uaca_id=meu.uaca_id
+                Inner Join db_academico.estudiante_carrera_programa ecpr on ecpr.est_id = est.est_id
+                Inner Join  db_academico.modalidad_estudio_unidad  meu on meu.mod_id = m.mod_id and ecpr.meun_id = meu.meun_id
+                Inner Join  db_academico.unidad_academica ua on ua.uaca_id = meu.uaca_id
                 Inner Join  db_academico.estudio_academico ea on ea.eaca_id = meu.eaca_id
                 Inner Join db_academico.periodo_academico paca on paca.paca_id = pla.paca_id
                 Inner Join db_academico.bloque_academico baca on baca.baca_id = paca.saca_id
-                Where pla.mod_id=1 and pla.pla_id = 14 and rpm.rpm_estado_aprobacion = 1 
+                Where rpm.rpm_estado_aprobacion = 1 
                     and pla.pla_estado = 1 and pla.pla_estado_logico = 1
                     and ron.ron_estado = 1 and ron.ron_estado_logico = 1
                     and rpm.rpm_estado = 1 and rpm.rpm_estado_logico = 1

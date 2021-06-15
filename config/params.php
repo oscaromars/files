@@ -69,6 +69,7 @@ return [
     'currency' => '$',
     'numDecimals' => '4',
     'memorylimit' => '512M',
+    'costocreditZero' => '0.00',
     'backtracklimit' => '536870912', // bytes -> MB
     'keywordEncription' => 'PBdoHUHYU909854874HNGFGKO',
     'tokenid' => 'HU787390kdnhyyejkKJHWFRDERD3573LOSNQ2JKTDCA67253',
@@ -83,7 +84,7 @@ return [
     /***** Valores para Stripe (Pago con tarjeta de credito) ****************/
     //Desarrollo Cuenta UTEG
     'stripeJsKey' => "pk_test_y0O1WHdyGNgjQDrnTcUvw9UT",
-    'secret_key'  => "sk_test_eNDH9rGC6bhEcW8JhRXRA4xk1",
+    'secret_key'  => "sk_test_eNDH9rGC6bhEcW8JhRXRA4xk",
     //Produccion Cuenta UTEG
     /*
     'stripeJsKey' => "pk_live_T1YxYu1Tszv8o3G24jmUxTDG",

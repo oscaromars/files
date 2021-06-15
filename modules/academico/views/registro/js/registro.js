@@ -771,7 +771,7 @@ function enviarPdf(){
             showAlert(response.status, response.type, { "wtmessage": 'Su información se registro con éxito.', "title": response.label });
             //windows.location.href = $('#txth_base').val() + "/academico/registro/index";
             //parent.window.location.href = $('#txth_base').val() + "/academico/registro/index";
-            }, 5000);
+            }, 4000);
         } 
         }, true);
     }catch(err){

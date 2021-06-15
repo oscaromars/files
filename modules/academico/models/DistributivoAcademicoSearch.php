@@ -634,7 +634,7 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
                 moda.mod_descripcion as modalidad,
                 uaca.uaca_descripcion as unidad,
                 pes.pes_carrera as carrera,
-                est.est_matricula as n_matricula
+                ifnull(est.est_matricula,'') as n_matricula
                 from db_academico.registro_online as ron
                 inner join db_academico.registro_online_item as roi on roi.ron_id=ron.ron_id 
                 inner join db_asgard.persona as per on per.per_id = ron.per_id
@@ -643,8 +643,8 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
                 inner join db_academico.planificacion_estudiante as pes on pes.pes_id=ron.pes_id
                 inner join db_academico.malla_academica_detalle as mad on  mad.made_codigo_asignatura=roi.roi_materia_cod
                 inner join db_academico.asignatura as asi on asi.asi_id = mad.asi_id
-                left join db_academico.distributivo_academico_estudiante as dae on dae.est_id = est.est_id 
-                left join db_academico.distributivo_academico as daca on daca.daca_id = dae.daca_id and daca.asi_id = asi.asi_id
+                inner join db_academico.distributivo_academico_estudiante as dae on dae.est_id = est.est_id 
+                inner join db_academico.distributivo_academico as daca on daca.daca_id = dae.daca_id and daca.asi_id = asi.asi_id
                 Inner Join db_academico.modalidad moda on moda.mod_id = daca.mod_id 
                 Inner Join db_academico.unidad_academica uaca on uaca.uaca_id = daca.uaca_id
                  where per.per_id = est.per_id and pm.rpm_estado_aprobacion = 1
@@ -656,7 +656,7 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
                     and ron.ron_estado = 1 and ron.ron_estado_logico = 1
                     and pm.rpm_estado = 1 and pm.rpm_estado_logico = 1
                     and pes.pes_estado = 1 and pes.pes_estado_logico = 1
-                 group by est.est_id";
+                    and asi.asi_estado = 1 and asi.asi_estado_logico = 1";
         if ($tipo == 1) {
             $this->load($params);
             if ($this->validate()) {
@@ -670,7 +670,7 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
                 }
 
                 if ($this->asi_id) {
-                    $sql = $sql . " and daca.asi_id =" . $this->asi_id;
+                    $sql = $sql . " and mad.asi_id =" . $this->asi_id;
                 }
             } 
         }
@@ -686,7 +686,7 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
 
             
             if ($params['asi_id']) {
-                $sql = $sql . " and daca.asi_id =" . $params['asi_id'];
+                $sql = $sql . " and mad.asi_id =" . $params['asi_id'];
             }
         }
         Utilities::putMessageLogFile('sql:' . $sql);

@@ -916,7 +916,7 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
                     e.est_estado = 1 AND e.est_estado_logico = 1 AND
                     meu.meun_estado = 1 AND meu.meun_estado_logico = 1 AND 
                     ecp.ecpr_estado = 1 AND ecp.ecpr_estado_logico = 1 AND
-                    ea.eaca_estado = 1 AND ea.eaca_estado_logico = 1 AND
+                    ea.eaca_estado = 1 AND 
                     p.per_estado = 1 AND p.per_estado_logico = 1 AND
                     em.emp_estado = 1 AND em.emp_estado_logico = 1";
         $comando = $con->createCommand($sql);

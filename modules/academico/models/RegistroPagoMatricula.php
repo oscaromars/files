@@ -812,7 +812,12 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
                     p.pla_estado =1 and p.pla_estado_logico =1 and
                     per.per_estado = 1 and per.per_estado_logico = 1 and 
                     est.est_estado =1 and est.est_estado_logico = 1 and
-                    r.ron_estado =1 and r.ron_estado_logico =1";
+                    r.ron_estado =1 and r.ron_estado_logico =1
+                    and tmp.Cant is not null
+                    and tmp.Costo is not null
+                    and rf.Refund is not null
+                    and tmp.Creditos is not null
+                    and enr.ron_id is not null";
 
       
         $comando = $con_academico->createCommand($sql);

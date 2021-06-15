@@ -85,7 +85,7 @@ class PlanificacionSearch extends Planificacion {
                 Inner Join  db_academico.estudio_academico ea on ea.eaca_id = meu.eaca_id
                 Inner Join db_academico.periodo_academico paca on paca.paca_id = pla.paca_id
                 Inner Join db_academico.bloque_academico baca on baca.baca_id = paca.saca_id
-                Where rpm.rpm_estado_aprobacion = 1 
+                Where pla.pla_id = pla.paca_id and rpm.rpm_estado_aprobacion = 1 
                     and pla.pla_estado = 1 and pla.pla_estado_logico = 1
                     and ron.ron_estado = 1 and ron.ron_estado_logico = 1
                     and rpm.rpm_estado = 1 and rpm.rpm_estado_logico = 1

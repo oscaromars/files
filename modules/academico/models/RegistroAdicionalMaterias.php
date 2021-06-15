@@ -96,7 +96,7 @@ class RegistroAdicionalMaterias extends \yii\db\ActiveRecord
         $per_id,
         $pla_id,
         $paca_id,
-        $rpm_id,
+        
         $roi_id_1,
         $roi_id_2,
         $roi_id_3,
@@ -142,7 +142,7 @@ class RegistroAdicionalMaterias extends \yii\db\ActiveRecord
                     $per_id,
                     $pla_id,
                     $paca_id,
-                    $rpm_id,
+                    null,
                     $roi_id_1,
                     $roi_id_2,
                     $roi_id_3,

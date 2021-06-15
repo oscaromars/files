@@ -86,20 +86,31 @@ $(document).ready(function() {
         //alert("hola mundo");
         var subtotal = 0;
         var total    = 0;
-
+    var cont =0;
+    var contMax=6;
         $('#grid_registro_list > table > tbody > tr > td > input').each(function() {
             if ($(this).is(':checked')) {  
                 //console.log($(this).parent().prev().prev().text());
                 $txt_cost_materia = $(this).parent().prev().prev().text();
                 subtotal += parseFloat($txt_cost_materia.replace("$",""));
+                cont+=1;
             }
             //$('#costMat').text('$' + (subtotal.toFixed(2)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
         });
 
+
         var costoadm  = $('#costoadm').val();
+        if(cont>4 || cont<=contMax) {
+            costoadm =costoadm *1 ; 
+        }else if (cont>){
+            costoadm =costoadm/2;
+        }else{
+            costoadm=0;
+        }
+
         //total = subtotal + parseFloat(asoc) + parseFloat(mat) + parseFloat(gastos);
         total = subtotal + parseFloat(costoadm);
-        console.log(subtotal);
+
         $('#costo').text("$"+subtotal.toFixed(2));
         $('#costTotal').text("$"+total.toFixed(2));
         //$('#costo').text('$' + (subtotal.toFixed(2)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
@@ -260,6 +271,7 @@ function registerSubject() {
         return;
     }
 
+    var contador = 0;
     $('#grid_registro_list input[type=checkbox]').each(function() {
         //console.log("-----------------");
         //console.log(this);
@@ -272,9 +284,7 @@ function registerSubject() {
             costs[contador]    = $(this).parent().prev().prev().text();
             contador += 1;
         }
-    });
-
-    
+    });   
 
     arrParams.pes_id = $('#frm_pes_id').val();
     arrParams.ron_id = $('#frm_ron_id').val();
@@ -294,11 +304,10 @@ function registerSubject() {
 
     requestHttpAjax(link, arrParams, function(response) {
         showAlert(response.status, response.label, response.message);
-        /*
         setTimeout(function() {
-            parent.window.location.href = $('#txth_base').val() + "/academico/matriculacion/index";
+            location.reload();
+            //parent.window.location.href = $('#txth_base').val() + "/academico/matriculacion/index";
         }, 2000);
-        */
 
     }, true);
 }

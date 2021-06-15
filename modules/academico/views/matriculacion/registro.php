@@ -9,8 +9,8 @@ Academico::registerTranslations();
 //print_r("mensaje");
 //print_r($planificacion[5]['Hour']);
 
-
-//print_r($gastoAdm);
+echo "hola";
+print_r($gastoAdm);
 //print_r($costo);
 
 /*
@@ -36,18 +36,9 @@ echo "<b style='color:green'>EL PERIODO DE INSCRIPCION ESTA CERRADO</b>";
 
 }
 
-$bloque="B1";
-if($howmuchSubject <= '1'){
-    $gasto=$costo['gastos'];
-}else if ($howmuchSubject > '1') {
-    $gasto=0;
-}else if ($howmuchSubject <= '1' and $bloque==$planificacion['Block']) {
-    $gasto=$costo['gastos']/2;
-}else if ($howmuchSubject <= '1' and $bloque!=$planificacion['Block']) {
-    $gasto=$costo['gastos']/2;
-}
 
-$total=$costo['costo']+$gasto+$costo['asociacion'];
+
+$total=$costo['costo']+$gastoAdm+$costo['asociacion'];
  
 
 ?>
@@ -261,10 +252,9 @@ $total=$costo['costo']+$gasto+$costo['asociacion'];
                 </tr>
                 <tr>
                     <th><?= academico::t('matriculacion','Administrative Expenses') ?></th>
-
-                    <td id="costAdmin">$<?= isset($gastos)?(number_format($costo['gastos'], 2, '.', ',')):'0.00' ?></td>
+                    <td id="costAdmin">$<?= isset($gastoAdm)?(number_format($gastoAdm, 2, '.', ',')):'0.00' ?></td>
                 </tr>
-                <tr>
+                <tr style="display: none;">
                     <th><?= academico::t('matriculacion','Students Association') ?></th>
                     <td id="costStud">$<?= isset($aso_est)?(number_format($aso_est, 2, '.', ',')):'0.00' ?></td>
                 </tr>
@@ -280,7 +270,7 @@ $total=$costo['costo']+$gasto+$costo['asociacion'];
                 
             </tbody>
         </table>
-         <a href="<?= Url::to(['/academico/registro/index', 'per_id' => $per_id, 'costo' => $total ]) ?>" class="btn btn-primary pull-right" style="margin: 0px 5px;"><?= Academico::t("matriculacion", "Go to Pay") ?></a>
+         <a href="<?= Url::to(['/academico/matriculacion/registrodetalle', 'per_id' => $per_id ]) ?>" class="btn btn-primary pull-right" style="margin: 0px 5px;"><?= Academico::t("matriculacion", "Continuar") ?></a>
          
     <a href="javascript:" class="btn btn-success pull-right" onclick="registerSubject()" style="margin: 0px 5px;"><?= Academico::t("matriculacion", "Register More Subjects") ?></a>
             

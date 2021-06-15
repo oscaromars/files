@@ -462,38 +462,49 @@ class PagosfacturasController extends \app\components\CController {
                         */
                         $mensaje_error = $e->getError()->message . "(".$e->getError()->code.")";
                         $mensaje_cod   = $e->getError()->code;
+                        $bandera = 1;
                     } catch (\Stripe\Exception\RateLimitException $e) {
                       // Too many requests made to the API too quickly
                         $mensaje_error = $e->getError()->message;
                         $mensaje_cod   = $e->getError()->code;
+                        $bandera = 2;
                     } catch (\Stripe\Exception\InvalidRequestException $e) {
                       // Invalid parameters were supplied to Stripe's API
                         $mensaje_error = $e->getError()->message;
                         $mensaje_cod   = $e->getError()->code;
+                        $bandera = 3;
                     } catch (\Stripe\Exception\AuthenticationException $e) {
                       // Authentication with Stripe's API failed
                       // (maybe you changed API keys recently)
                         $mensaje_error = $e->getError()->message;
                         $mensaje_cod   = $e->getError()->code;
+                        //print_r($e->getError());die();
+                        $bandera = 4;
                     } catch (\Stripe\Exception\ApiConnectionException $e) {
                       // Network communication with Stripe failed
                         $mensaje_error = $e->getError()->message;
                         $mensaje_cod   = $e->getError()->code;
+                        $bandera = 5;
                     } catch (\Stripe\Exception\ApiErrorException $e) {
                       // Display a very generic error to the user, and maybe send
                       // yourself an email
                         $mensaje_error = $e->getError()->message;
                         $mensaje_cod   = $e->getError()->code;
-                    } catch (\Stripe_Error $e) {
+                        $bandera = 6;
+                    } catch (\Stripe\Error\Base $e) {
                         $mensaje_error = $e->getError()->message;
                         $mensaje_cod   = $e->getError()->code;
+                        $bandera = 7;
                     } catch (Exception $e) {
                       // Something else happened, completely unrelated to Stripe
                         $mensaje_error = $e->getError()->message;
                         $mensaje_cod   = $e->getError()->code;
+                        $bandera = 8;
                     }
 
-                    if($mensaje_cod != '' && $mensaje_error != ''){
+                    if($mensaje_cod != '' || $mensaje_error != ''){
+                        if($mensaje_cod=='')
+                            $mensaje_cod = $mensaje_error;
                         $message = array(
                             "wtmessage" => Yii::t("facturacion", $mensaje_cod),
                             "title" => Yii::t('jslang', 'Error'),
@@ -517,6 +528,7 @@ class PagosfacturasController extends \app\components\CController {
                                 'currency'    => "usd", 
                                 'description' => "Pago de Cuotas desde el sistema Asgard/UTEG"
                             )); 
+                            \app\models\Utilities::putMessageLogFile2(print_r($charge,true),"stripe");
                         }catch(Exception $e) {  
                             $api_error = $e->getMessage();  
                             //return json_encode("GALO".$api_error);
@@ -560,14 +572,14 @@ class PagosfacturasController extends \app\components\CController {
                             $statusMsg = "Charge creation failed! $mensaje_cod";  
                         } 
                     }else{  
-                        $statusMsg = "Invalid card details! $mensaje_cod";  
+                        $statusMsg = "Invalid card details! bandera = $bandera";  
                     } 
                 }else{ 
                     $statusMsg = "Error on form submission."; 
                 }
                 if($statusMsg != ''){
                     $message = array(
-                        "wtmessage" => Yii::t("notificaciones", "1Error al pagar online: " . $statusMsg),
+                        "wtmessage" => Yii::t("notificaciones", "Error al pagar online: " . $statusMsg),
                         "title" => Yii::t('jslang', 'Error'),
                     );
                     echo Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);

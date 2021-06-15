@@ -86,19 +86,33 @@ $(document).ready(function() {
         //alert("hola mundo");
         var subtotal = 0;
         var total    = 0;
-
+    var cont =0;
+    var contMax=6;
         $('#grid_registro_list > table > tbody > tr > td > input').each(function() {
             if ($(this).is(':checked')) {  
                 //console.log($(this).parent().prev().prev().text());
                 $txt_cost_materia = $(this).parent().prev().prev().text();
                 subtotal += parseFloat($txt_cost_materia.replace("$",""));
+                cont+=1;
             }
             //$('#costMat').text('$' + (subtotal.toFixed(2)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
         });
 
+
         var costoadm  = $('#costoadm').val();
+<<<<<<< HEAD
+        if(cont>4 || cont<=contMax) {
+            costoadm =costoadm *1 ; 
+        }else if (cont>){
+            costoadm =costoadm/2;
+        }else{
+            costoadm=0;
+        }
+
+=======
         if(costoadm == 0)
             costoadm = 0;
+>>>>>>> ab5bf79ea194801634cc491b001a0aa109e7991c
         //total = subtotal + parseFloat(asoc) + parseFloat(mat) + parseFloat(gastos);
         total = subtotal + parseFloat(costoadm);
 

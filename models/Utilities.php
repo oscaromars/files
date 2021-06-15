@@ -126,6 +126,40 @@ class Utilities {
     }
 
     /**
+     * Función escribir en log del sistema segun el nombre del archivo enviado 
+     * en el parametro logfile
+     * @access public
+     * @author Galo Aguirre
+     * @param  string $message       Escribe variable en archivo de logs.
+     */
+    public static function putMessageLogFile2($message, $logFile) {
+        //'logfile' => __DIR__ . '/../runtime/logs/pb.log',
+        $logFile = __DIR__."/../runtime/logs/".$logFile.".log";
+        //print_r($logFile);die();
+        if (is_array($message))
+            $message = json_encode($message);
+
+        $message = date("Y-m-d H:i:s") . " " . $message . "\r\n";
+
+        if (!is_dir(dirname(Yii::$app->params["logfile"]))) {
+            mkdir(dirname(Yii::$app->params["logfile"]), 0777, true);
+            chmod(dirname(Yii::$app->params["logfile"]), 0777);
+            touch(Yii::$app->params["logfile"]);
+        }
+
+        
+        //print_r($logFile);die();
+        /*
+        if ((filesize($logFile) / pow(1024, 2)) > 100) { // si el log es mayor a 100 MB entonces se debe limpiar el archivo
+            file_put_contents($logFile, $message, LOCK_EX);
+        } else {
+            file_put_contents($logFile, $message, FILE_APPEND | LOCK_EX);
+        }
+        */
+        file_put_contents($logFile, $message, FILE_APPEND | LOCK_EX);
+    }//function putMessageLogFile2
+
+    /**
      * Función que devuelve la ip del usuario en session
      *
      * @access public

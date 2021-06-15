@@ -2,6 +2,7 @@
 
 namespace app\modules\academico\models;
 
+use Exception;
 use Yii;
 
 /**
@@ -96,7 +97,11 @@ class RegistroAdicionalMaterias extends \yii\db\ActiveRecord
         $per_id,
         $pla_id,
         $paca_id,
+<<<<<<< HEAD
         
+=======
+        $rpm_id = " NULL ",
+>>>>>>> ab5bf79ea194801634cc491b001a0aa109e7991c
         $roi_id_1,
         $roi_id_2,
         $roi_id_3,
@@ -142,7 +147,11 @@ class RegistroAdicionalMaterias extends \yii\db\ActiveRecord
                     $per_id,
                     $pla_id,
                     $paca_id,
+<<<<<<< HEAD
                     null,
+=======
+                    :rpm_id,
+>>>>>>> ab5bf79ea194801634cc491b001a0aa109e7991c
                     $roi_id_1,
                     $roi_id_2,
                     $roi_id_3,
@@ -156,6 +165,7 @@ class RegistroAdicionalMaterias extends \yii\db\ActiveRecord
                 )";
 
         $command = $con->createCommand($sql);
+        $comando->bindParam(":rpm_id", $rpm_id, \PDO::PARAM_INT);
         $command->execute();
         if ($transaction !== null)
                 $transaction->commit();

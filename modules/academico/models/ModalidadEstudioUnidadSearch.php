@@ -28,30 +28,12 @@ class ModalidadEstudioUnidadSearch extends ModalidadEstudioUnidad {
         ];
     }
 
-    /*public function buscarunidad($data, $id){
-        $modelunidad = UnidadAcademica::findOne($data->uaca_id);
-        $unidad = $modelunidad->uaca_nombre;
-        return $unidad;
-    }
-    public function buscarmodalidad($data, $id){
-        $emp_id = @Yii::$app->session->get("PB_idempresa");
-        $modelmoda = Modalidad::findOne($data->mod_id);
-        $modalidad = $mod_modalidad->consultarModalidad($data["uaca_id"], $emp_id);
-        return $modalidad;
-    }
-
-
-    public function buscarcarrera($data, $id){
-        $modelcarrera = EstudioAcademico::findOne($data->eaca_id);
-        $carrera = $modelcarrera->eaca_nombre;
-        return $carrera;
-    }*/
-
     public function search($params) {
         $query = ModalidadEstudioUnidad::find()
             ->joinWith('uaca')
             ->joinWith('mod')
-            ->joinWith('eaca');
+            ->joinWith('eaca')
+            ->joinWith('maca_id');
 
         // add conditions that should always apply here
 
@@ -79,11 +61,13 @@ class ModalidadEstudioUnidadSearch extends ModalidadEstudioUnidad {
             'mod_id' => $this->mod_id,
             'eaca_id' => $this->eaca_id,
             'emp_id' => $this->emp_id,
+            'maca_id' => $this->maca_id,
         ]);
 
         $query->andFilterWhere(['like', 'uaca.uaca_nombre', $this->uaca])
             ->andFilterWhere(['like', 'mod.mod_nombre', $this->mod])
-            ->andFilterWhere(['like', 'eaca.uaca_nombre', $this->eaca]);
+            ->andFilterWhere(['like', 'eaca.uaca_nombre', $this->eaca])
+            ->andFilterWhere(['like', 'maca_id.maca_nombre', $this->maca_id]);
 
         return $dataProvider;
     }
@@ -138,6 +122,10 @@ class ModalidadEstudioUnidadSearch extends ModalidadEstudioUnidad {
                 if (($this->eaca_id) > 0) {
                     $sql = $sql . " and meu.eaca_id =" . $this->eaca_id;
                 }
+
+                /*if (($this->maca_id) > 0) {
+                    $sql = $sql . " and mum.maca_id =" . $this->maca_id;
+                }*/
             } 
         }
         if ($tipo == 2) {
@@ -152,8 +140,11 @@ class ModalidadEstudioUnidadSearch extends ModalidadEstudioUnidad {
             if (($params['eaca_id']) > 0) {
                 $sql = $sql . " and meu.eaca_id =" . $params['eaca_id'];
             }
+            /*if (($params['maca_id']) > 0) {
+                $sql = $sql . " and meu.maca_id =" . $params['maca_id'];
+            }*/
         }
-        Utilities::putMessageLogFile('sql:' . $sql);
+        //Utilities::putMessageLogFile('sql:' . $sql);
         $comando = $con_academico->createCommand($sql);
         $res = $comando->queryAll();
 

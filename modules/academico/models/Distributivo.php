@@ -471,7 +471,7 @@ class Distributivo extends \yii\db\ActiveRecord {
         }else{
           $mod_paca        = new PeriodoAcademico(); 
           $paca_actual_id  = $mod_paca->getPeriodoAcademicoActual();
-          $str_search      = "a.paca_id = ".$paca_actual_id['id']." AND ";
+          $str_search      = "a.paca_id = ".$paca_actual_id[0]['id']." AND ";
         }
 
         $sql = "SELECT  distinct d.uaca_nombre as unidad, e.mod_nombre as modalidad,
@@ -659,11 +659,8 @@ class Distributivo extends \yii\db\ActiveRecord {
         }else{
           $mod_paca        = new PeriodoAcademico(); 
           $paca_actual_id  = $mod_paca->getPeriodoAcademicoActual();
-          $str_search      = "a.paca_id = ".$paca_actual_id['id']." AND a.mod_id = 0 AND ";
+          $str_search      = "a.paca_id = ".$paca_actual_id[0]['id']." AND a.mod_id = 0 AND ";
         }
-
-
-        
 
         $sql = "SELECT  distinct h.est_id, 
                         d.uaca_nombre as unidad, 

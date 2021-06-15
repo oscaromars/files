@@ -240,7 +240,10 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 
         //print_r($arr_grupos);die();
 
-        if (in_array(['id' => '6'], $arr_grupos)) {
+        if ( in_array(['id' => '6'], $arr_grupos) ||
+             in_array(['id' => '7'], $arr_grupos) ||
+             in_array(['id' => '8'], $arr_grupos)
+        ){
             //Es Cordinador
             $arr_profesor_all = $mod_profesor->getProfesoresEnAsignaturas();
             $asignatura = $Asignatura_distri->getAsignaturasBy($arr_profesor_all[0]['pro_id'],$arr_ninteres[0]["id"],$arr_periodoActual[0]["id"]);
@@ -256,7 +259,6 @@ class CalificacionregistrodocenteController extends \app\components\CController 
             //print_r("NO Es Cordinador");die();
         }
         
-
         return $this->render('register', [
             'arr_periodoActual' => ArrayHelper::map($arr_periodoActual, "id", "nombre"),
             //'arr_ninteres'      => ArrayHelper::map(array_merge([["id" => "", "name" => Yii::t("formulario", "All")]], $arr_ninteres), "id", "name"),
@@ -306,7 +308,7 @@ class CalificacionregistrodocenteController extends \app\components\CController 
         $componentes = array();
         $model['data']        = $mod_calificacion->getRegistroCalificaciones($arrSearch);
         
-        $componentes_temp = $mod_calificacion->getComponenteUnidadarr($arrSearch["unidad"]);
+        $componentes_temp = $mod_calificacion->getComponenteUnidadarr($arrSearch["unidad"],$arrSearch["modalidad"]);
         foreach ($componentes_temp as $key => $value) {
             $componentes[$value['nombre']] = array('id'=>$value['id'],'notamax'=>$value['notamax']);
         }
@@ -352,8 +354,9 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 
                         if(!(is_null($value)) && $value != ''){
                             $valor[$key] = $value;
+                            $total = $total + intval($value); 
                         }
-                        $total = $total + intval($value); 
+                        
                     }//if
             }
         }else{
@@ -395,8 +398,9 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 
                             if(!(is_null($value)) && $value != ''){
                                 $valor[$key] = $value;
+                                $total = $total + intval($value); 
                             }
-                            $total = $total + intval($value); 
+                            
                         //}//if
                 }//if  
             }//foeach

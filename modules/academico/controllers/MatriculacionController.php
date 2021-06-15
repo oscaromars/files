@@ -14,9 +14,11 @@ use app\modules\academico\models\Estudiante;
 use app\modules\academico\models\Planificacion;
 use app\modules\academico\models\Modalidad;
 use app\modules\academico\models\RegistroOnline;
+use app\modules\academico\models\CancelacionRegistroOnline;
+use app\modules\academico\models\CancelacionRegistroOnlineItem;
 use app\modules\academico\models\RegistroOnlineCuota;
-use app\modules\academico\models\RegistroAdicionalMaterias;
 use app\modules\academico\models\PlanificacionEstudiante;
+use app\modules\academico\models\RegistroAdicionalMaterias;
 use app\modules\academico\models\RegistroOnlineItem;
 use app\modules\academico\models\RegistroPagoMatricula;
 use app\modules\academico\models\PeriodoAcademico;
@@ -942,7 +944,7 @@ class MatriculacionController extends \app\components\CController {
      * @return
      */
     public function actionRegistro() { // pantalla para que el estudiante seleccione las materias a registrarse
-       // \app\models\Utilities::putMessageLogFile('>>>>PER 1 :'.$per_id);       
+       \app\models\Utilities::putMessageLogFile('>>>>PER 1 :'.$per_id);       
        // if ($per_id==Null) { $per_id = Yii::$app->session->get("PB_perid"); } 
       // $userper_id = Yii::$app->session->get("PB_perid");
       // if ($userperid != $per_id) {$noAdd=2; } else {$noAdd=1; } 
@@ -958,15 +960,16 @@ class MatriculacionController extends \app\components\CController {
             $data = Yii::$app->request->post();
 
             //print_r($data);die();
-
             /*
             if (Yii::$app->session->get("PB_perid") < 1000) {
                 $per_id = $data['per_id'];
             }*/
+            
+
             try{
                 if (isset($data["pes_id"])) {
                     $modelPersona = Persona::findOne($per_id);
-                    //\app\models\Utilities::putMessageLogFile(1);
+
                     $modelPlaEst = PlanificacionEstudiante::findOne($data["pes_id"]);
 
                     $pla_id_est = $modelPlaEst->pla_id;
@@ -974,12 +977,14 @@ class MatriculacionController extends \app\components\CController {
                     //\app\models\Utilities::putMessageLogFile('pla_id_est: '.$pla_id_est);
                     //echo($pla_id_est);die();
 
+                    $modelPla = Planificacion::findOne($modelPlaEst->pla_id);
                     $matriculacion_model = new Matriculacion();
                     $modModalidad = new Modalidad();
                     $mod_est = Estudiante::findOne(['per_id' => $per_id]);
                     $today = date("Y-m-d H:i:s");
                     $result_process = $matriculacion_model->checkToday($today, $per_id);
                     $rco_id = $result_process[0]['rco_id'];
+
                     //$rco_num_bloques = $result_process[0]['rco_num_bloques'];
                     //$pla_id = $result_process[0]['pla_id'];
                     $matricula=$matriculacion_model->getPlanificacionPago($data['modalidad']);
@@ -988,6 +993,7 @@ class MatriculacionController extends \app\components\CController {
                     $pes_id = $data["pes_id"];
                     $pla_id = $resultIdPlanificacionEstudiante[0]['pla_id'];
                     $dataPlanificacion   = $matriculacion_model->getAllDataPlanificacionEstudiante($per_id, $pla_id);
+
                     /*$resultRegistroOnline = $matriculacion_model->checkPlanificacionEstudianteRegisterConfiguracion($per_id, $pes_id, $pla_id);
                     if (count($resultRegistroOnline) > 0) {
                         //Cuando existe un registro en registro_online
@@ -1000,6 +1006,7 @@ class MatriculacionController extends \app\components\CController {
                     $matStudent=$matricula['valor'];
                     $modelAd = $modReg = null;
                     //\app\models\Utilities::putMessageLogFile('pla_id_est: '.$matStudent);                    
+
                     
 
                     $dataMaterias = $matriculacion_model->getInfoMallaEstudiante($per_id);
@@ -1077,26 +1084,31 @@ class MatriculacionController extends \app\components\CController {
                             $gastoAdm=50;
                             $cobMat=65;
                             $dataMat['VARIOS']=$gastoAdm;
+                            $dataMat['MAT-GRAD']=$cobMat;
                         } else if ($data['modalidad']=='2') {
                             // code...
                             $gastoAdm=300;
                             $cobMat=200;
                             $dataMat['VARIOS']=$gastoAdm;
+                            $dataMat['MAT-GRAD']=$cobMat;
                         } else if ($data['modalidad']=='3') {
                             // code...
                             $gastoAdm=300;
                              $cobMat=200;
                             $dataMat['VARIOS']=$gastoAdm;
+                            $dataMat['MAT-GRAD']=$cobMat;
                         } else if ($data['modalidad']=='4') {
                             // code...
                             $gastoAdm=300;
                              $cobMat=115;
                             $dataMat['VARIOS']=$gastoAdm;
+                            $dataMat['MAT-GRAD']=$cobMat;
                         } else {
                             // code...
                             $gastoAdm=0;
                             $cobMat=0;
                             $dataMat['VARIOS']=$gastoAdm;
+                            $dataMat['MAT-GRAD']=$cobMat;
                         }  
                         
 
@@ -1112,7 +1124,7 @@ class MatriculacionController extends \app\components\CController {
                                 //$dataCat[$mod_est->est_categoria], 
                                 0,/**$dataMat['ASOEST'], -*/
                                 $dataMat['VARIOS'], 
-                                $matricula['valor'],
+                                $dataMat['MAT-GRAD'],
                                 1//CAMBIAR ESTE VALOR OJO!!!!!!!!!!!
                             );
                     }else{
@@ -1129,8 +1141,7 @@ class MatriculacionController extends \app\components\CController {
                         $costoMaterias = 0;
                         $data_student = $matriculacion_model->getDataStudent($per_id, $pla_id, $pes_id);
                         $dataPlanificacion = $matriculacion_model->getAllDataPlanificacionEstudiante($per_id, $pla_id);
-                        
-                        //\app\models\Utilities::putMessageLogFile($dataPlanificacion['Asignatura']);
+
                         $num_min = 0;
                         $num_max = 10;
                         if (count($dataPlanificacion) <= 2) {
@@ -1140,9 +1151,6 @@ class MatriculacionController extends \app\components\CController {
                             $num_min = 2;
                         }
                         // $CatPrecio = $data[$data_student['est_categoria']];
-                        //$registro_online_model = RegistroOnline::findOne($ron_id);
-                        
-                        //\app\models\Utilities::putMessageLogFile("matricula adicional" . $modelAd);
                         
                         // Se debe buscar la materia por medio del Alias y obtener el codigo de la asignatura, creditos, y codigo de la malla
                         $contMateria = 0;
@@ -1180,7 +1188,6 @@ class MatriculacionController extends \app\components\CController {
                             $asignatura = $materia;
                             $bloque     = $bloques[$contMateria];
                             $hora       = $horas[$contMateria];
-                            
                             foreach($dataMaterias as $key => $value){
                                 if(trim(strtolower($value['Asignatura'])) == trim(strtolower($materia))){
                                     $asignatura = $value['Asignatura'];
@@ -1230,29 +1237,24 @@ class MatriculacionController extends \app\components\CController {
                                 $costo, 
                                 strval($bloque), 
                                 strval($hora)
-
       
                             );
-                            //\app\models\Utilities::putMessageLogFile("A4");
-                            
-                            
-/*                            $modelAd->ron_id  = $id;
-                            $modelAd->per_id  = $per_id;
-                            $modelAd->pla_id  = $pla_id;
-                            $modelAd->paca_id = $modelPla->paca_id;
-                            $modelAd->rama_estado = 1;
-                            $modelAd->rama_estado_logico = 1;*/
-                            
+                            \app\models\Utilities::putMessageLogFile("A4");
+
+
+                            /*if(!$registro_online_item_model->save()){
+                                throw new Exception('Error en Registro Online Item.');
+                            }*/
                             $contMateria++;
                         }//foreach
+
                     }
+
                     
                         
                     if ($id_roi>0){
 
                         $roi_id = RegistroOnlineItem::find()->where(['ron_id' => $id, 'roi_estado' => 1, 'roi_estado_logico' => 1])->asArray()->all();
-                        //\app\models\Utilities::putMessageLogFile("registro online " . $id);
-                        
 
                         //\app\models\Utilities::putMessageLogFile("registro pago " . $model_rpm['rpm_id']);
                         $modelPla = Planificacion::findOne($modelPlaEst->pla_id);
@@ -1285,6 +1287,8 @@ class MatriculacionController extends \app\components\CController {
                                 $per_id,
                                 $pla_id,
                                 $paca_id,
+
+                      
                                 $roi_id['0']['roi_id'],
                                 $roi_id['1']['roi_id'],
                                 $roi_id['2']['roi_id'],
@@ -1295,6 +1299,8 @@ class MatriculacionController extends \app\components\CController {
       
                             );
                     
+                        
+
                                             
                         \app\models\Utilities::putMessageLogFile("gastos ". $gastos_administrativos_valor);
                         // Se crea registro de cuotas
@@ -1450,13 +1456,14 @@ class MatriculacionController extends \app\components\CController {
             $pla_id = $result_process[0]['pla_id'];
             
             $resultIdPlanificacionEstudiante = $matriculacion_model->getIdPlanificacionEstudiante($per_id, $pla_id);
-            
+            \app\models\Utilities::putMessageLogFile("getId". $resultIdPlanificacionEstudiante);
             if (count($resultIdPlanificacionEstudiante) > 0) {
                 /*                 * Exist a register of planificacion_estudiante */
                 $pes_id = $resultIdPlanificacionEstudiante[0]['pes_id'];
                 $pla_id = $resultIdPlanificacionEstudiante[0]['pla_id'];
-
+		\app\models\Utilities::putMessageLogFile("getId". $resultIdPlanificacionEstudiante);
                 $data_student = $matriculacion_model->getDataStudent($per_id, $pla_id, $pes_id);
+		\app\models\Utilities::putMessageLogFile("getId". $data_student);
                 //$data_student = $matriculacion_model->getDataStudenFromRegistroOnline($per_id, $pes_id);
                 if ($data_student) {
                     $RegistroOnline = RegistroOnline::find()->select("ron_id")->where(["per_id" => $per_id, "pes_id" => $pes_id ])->asArray()->all();
@@ -1486,7 +1493,6 @@ class MatriculacionController extends \app\components\CController {
                     $hasSubject = (count($dataPlanificacion) == count($dataRegRs))?false:true;
                     $howmuchSubject = count($dataRegRs);
                     $costo       = $matriculacion_model->getCostFromRegistroOnline($ron_id);
-
                     //$costo['costo'] = $gastoAdm;
                     $registro_add= $matriculacion_model->getRegistroAdiciOnline($ron_id);
                     //$costo=$dataplanificacion[0]['CostSubject'];
@@ -1800,7 +1806,7 @@ class MatriculacionController extends \app\components\CController {
         
         $matriculacion_model = new Matriculacion();
 
-        $ron = RegistroOnline::find()->where(['per_id' => $per_id])->asArray()->one();
+        $ron = RegistroOnline::find()->where(['per_id' => $per_id, 'ron_estado' => 1, 'ron_estado_logico' => 1])->asArray()->one();
 
         $today = date("Y-m-d H:i:s");
         $result_process = $matriculacion_model->checkToday($today);
@@ -1811,7 +1817,7 @@ class MatriculacionController extends \app\components\CController {
 
         $dataPlanificacion = $matriculacion_model->getAllDataPlanificacionEstudiante($per_id, $pla_id);
 
-        // \app\models\Utilities::putMessageLogFile($dataPlanificacion);
+        // \app\models\Utilities::putMessageLogFile("dataPlanificacion: " . $dataPlanificacion);
 
         $roi = RegistroOnlineItem::find()->where(['ron_id' => $ron['ron_id'], 'roi_estado' => 1, 'roi_estado_logico' => 1])->asArray()->all();
         $valor_total = 0;
@@ -1869,6 +1875,9 @@ class MatriculacionController extends \app\components\CController {
         // \app\models\Utilities::putMessageLogFile($materias_data_arr);
 
         $data_student = $matriculacion_model->getDataStudenFromRegistroOnline($per_id, $ron['pes_id']);
+        \app\models\Utilities::putMessageLogFile("per_id: " . $per_id);
+        \app\models\Utilities::putMessageLogFile("pes_id: " . $ron['pes_id']);
+        \app\models\Utilities::putMessageLogFile('data_student: ' . print_r($data_student,true));
         $persona = Persona::find()->where(['per_id' => $per_id])->asArray()->one();
 
         $periodo = (new PeriodoAcademico())->consultarPeriodo($data_student['paca_id'], true)[0];
@@ -1997,6 +2006,7 @@ class MatriculacionController extends \app\components\CController {
             "ron_id" => $ron['ron_id'],
             "pagado" => $pagado,
             "rama" => $rama,
+            "cuotas" => $cuotas,
         ]);
     }
 
@@ -2169,11 +2179,9 @@ class MatriculacionController extends \app\components\CController {
                     
                     $subReg = count($arr_sub_cancel) - 1; // cantidad de materias a cancelar
                      $minime = count($modelRegItem) - $subReg;
-
                     if( $minime < 2 ){
                         throw new Exception('Error to Update Online Register.');
                     }
-
                     foreach($modelRegItem as $key => $item){ $i++; } // cantidad de materias registradas
                     if($modelRegPag){// existe un pago de registro por lo que debe realizar el proceso     
                         $template = "removeSubjects";

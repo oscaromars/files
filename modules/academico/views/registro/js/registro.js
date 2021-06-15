@@ -29,7 +29,7 @@ $(document).ready(function() {
             txt_correo_fac != 0){
                 
                if( $('#cmb_tpago').val()!== 3){
-                alert($('#cmb_tpago').val());
+                //alert($('#cmb_tpago').val());
                 //save();     
                }
                guardarCargarCartera();
@@ -470,7 +470,7 @@ function generarDataTable(cuotas, primerPago) {
         if (i == cuotas && sumPer != 100) {
             percentaje = ((100 - sumPer) + parseFloat(percentaje)).toFixed(2);
         }
-        if(i==6){
+        if(i==cuotas){
             per_one = percentaje;
         }else{
             per_total = percentaje;
@@ -768,10 +768,10 @@ function enviarPdf(){
         if (response.status == "OK") {
             setTimeout(function() {
             //windows.location.href = $redirect;
-            showAlert(response.status, response.type, { "wtmessage": 'SU INFORMACIÓN SE REGISTRO CORRECTAMENTE', "title": response.label });
+            showAlert(response.status, response.type, { "wtmessage": 'Su información se registro con éxito.', "title": response.label });
             //windows.location.href = $('#txth_base').val() + "/academico/registro/index";
             //parent.window.location.href = $('#txth_base').val() + "/academico/registro/index";
-            }, 5000);
+            }, 4000);
         } 
         }, true);
     }catch(err){

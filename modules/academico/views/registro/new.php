@@ -58,7 +58,7 @@ StripeAsset::register($this);
             <div class="form-group">
                 <label for="frm_periodo" class="col-sm-3 col-md-3 col-xs-3 col-lg-3 control-label"><?= academico::t("Academico", 'Period') ?></label>
                 <div class="col-sm-7 col-md-7 col-xs-7 col-lg-7">
-                    <input type="text" class="form-control PBvalidation" value="<?= $periodo ?>" id="frm_periodo" data-type="all" disabled='disabled' placeholder="<?= academico::t("Academico", "Period") ?>">
+                    <input type="text" class="form-control PBvalidation" value="<?= $periodo_actual ?>" id="frm_periodo" data-type="all" disabled='disabled' placeholder="<?= academico::t("Academico", "Period") ?>">
                 </div>
             </div>
         </div>

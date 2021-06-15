@@ -420,6 +420,7 @@ class PagosfacturasController extends \app\components\CController {
             //Obtenemos su email ya que estos datos son solicitados por stripe
             $mod_usuario = Persona::find()->select("per_correo")->where(["per_id" => $data['per_id']])->asArray()->all();
             $email       = $mod_usuario[0]['per_correo'];   
+            
             if($data["formapago"]==1){
                 //Si la forma de Pago es 1 significa que es por Tarjeta de credito
                 $statusMsg = '';
@@ -434,25 +435,87 @@ class PagosfacturasController extends \app\components\CController {
                     /******************************************************************/
                     $stripe = array(
                         'secret_key'      => Yii::$app->params["secret_key"],
-                        'publishable_key' => Yii::$app->params["publishable_key"],
                     );
 
                     //Se hace invocacion a libreria de stripe que se encuentra en el vendor
                     \Stripe\Stripe::setApiKey($stripe['secret_key']);
                      
-                    //Se crea el usuario para stripe
+                    
+                    $mensaje_error = '';
+                    $mensaje_cod   = '';
                     try {  
+                        //Se crea el usuario para stripe
                         $customer = \Stripe\Customer::create(array( 
                             'email'   => $email, 
                             'source'  => $token 
                         )); 
-                    }catch(Exception $e) {  
-                        $api_error = $e->getMessage();  
-                        return json_encode($api_error);
-                    } 
+                    }catch(\Stripe\Exception\CardException $e) {  
+                        //$api_error = $e->getMessage();  
+                        // Since it's a decline, \Stripe\Exception\CardException will be caught
+                        /*
+                        $mensaje = '';
+                        $mensaje .= 'Status is:' . $e->getHttpStatus() . '\n';
+                        $mensaje .= 'Type is:' . $e->getError()->type . '\n';
+                        $mensaje .= 'Code is:' . $e->getError()->code . '\n';
+                         // param is '' in this case
+                        $mensaje .= 'Param is:' . $e->getError()->param . '\n';
+                        */
+                        $mensaje_error = $e->getError()->message . "(".$e->getError()->code.")";
+                        $mensaje_cod   = $e->getError()->code;
+                        $bandera = 1;
+                    } catch (\Stripe\Exception\RateLimitException $e) {
+                      // Too many requests made to the API too quickly
+                        $mensaje_error = $e->getError()->message;
+                        $mensaje_cod   = $e->getError()->code;
+                        $bandera = 2;
+                    } catch (\Stripe\Exception\InvalidRequestException $e) {
+                      // Invalid parameters were supplied to Stripe's API
+                        $mensaje_error = $e->getError()->message;
+                        $mensaje_cod   = $e->getError()->code;
+                        $bandera = 3;
+                    } catch (\Stripe\Exception\AuthenticationException $e) {
+                      // Authentication with Stripe's API failed
+                      // (maybe you changed API keys recently)
+                        $mensaje_error = $e->getError()->message;
+                        $mensaje_cod   = $e->getError()->code;
+                        //print_r($e->getError());die();
+                        $bandera = 4;
+                    } catch (\Stripe\Exception\ApiConnectionException $e) {
+                      // Network communication with Stripe failed
+                        $mensaje_error = $e->getError()->message;
+                        $mensaje_cod   = $e->getError()->code;
+                        $bandera = 5;
+                    } catch (\Stripe\Exception\ApiErrorException $e) {
+                      // Display a very generic error to the user, and maybe send
+                      // yourself an email
+                        $mensaje_error = $e->getError()->message;
+                        $mensaje_cod   = $e->getError()->code;
+                        $bandera = 6;
+                    } catch (\Stripe\Error\Base $e) {
+                        $mensaje_error = $e->getError()->message;
+                        $mensaje_cod   = $e->getError()->code;
+                        $bandera = 7;
+                    } catch (Exception $e) {
+                      // Something else happened, completely unrelated to Stripe
+                        $mensaje_error = $e->getError()->message;
+                        $mensaje_cod   = $e->getError()->code;
+                        $bandera = 8;
+                    }
+
+                    if($mensaje_cod != '' || $mensaje_error != ''){
+                        if($mensaje_cod=='')
+                            $mensaje_cod = $mensaje_error;
+                        $message = array(
+                            "wtmessage" => Yii::t("facturacion", $mensaje_cod),
+                            "title" => Yii::t('jslang', 'Error'),
+                        );
+                        echo Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+                        return; 
+                    }//if
                      
                     //Si se creo el usuario y no hay error 
-                    if(empty($api_error) && $customer){  
+                    //print_r($mensaje_cod);die();
+                    if(empty($mensaje_cod) && $customer){  
                         //El valor se multiplica por 100 para convertirlo a centavos
                         $valor_inscripcion = $data['valor']; 
                         $itemPriceCents    = ($valor_inscripcion*100); 
@@ -465,9 +528,16 @@ class PagosfacturasController extends \app\components\CController {
                                 'currency'    => "usd", 
                                 'description' => "Pago de Cuotas desde el sistema Asgard/UTEG"
                             )); 
+                            \app\models\Utilities::putMessageLogFile2(print_r($charge,true),"stripe");
                         }catch(Exception $e) {  
                             $api_error = $e->getMessage();  
-                            return json_encode($api_error);
+                            //return json_encode("GALO".$api_error);
+                            $message = array(
+                                "wtmessage" => Yii::t("notificaciones", $mensaje_cod),
+                                "title" => Yii::t('jslang', 'Error'),
+                            );
+                            echo Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+                            return;
                         } 
                          
                         //Si se creo el combo y no hubo error se devuelve el resultado de la transaccion
@@ -499,10 +569,10 @@ class PagosfacturasController extends \app\components\CController {
                                 $statusMsg = "Transaction has been failed!"; 
                             } 
                         }else{ 
-                            $statusMsg = "Charge creation failed! $api_error";  
+                            $statusMsg = "Charge creation failed! $mensaje_cod";  
                         } 
                     }else{  
-                        $statusMsg = "Invalid card details! $api_error";  
+                        $statusMsg = "Invalid card details! bandera = $bandera";  
                     } 
                 }else{ 
                     $statusMsg = "Error on form submission."; 
@@ -513,6 +583,7 @@ class PagosfacturasController extends \app\components\CController {
                         "title" => Yii::t('jslang', 'Error'),
                     );
                     echo Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+                    return;
                 }
             }else{
                 $mod_fpago     = new FormaPago();

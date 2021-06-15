@@ -7,20 +7,29 @@ use yii\helpers\Url;
 Academico::registerTranslations();
 // print_r($registredSuject);
 //print_r("mensaje");
+
+  //print_r($planificacion[0]['CostSubject']);
+
 //print_r($planificacion[5]['Hour']);
 
+<<<<<<< HEAD
 echo "hola";
 print_r($gastoAdm);
+=======
+
+
+//print_r($gastoAdm);
+>>>>>>> ab5bf79ea194801634cc491b001a0aa109e7991c
 //print_r($costo);
 
+
 /*
-=======
+
 print_r($costo['asociacion']);
 print_r($costo['gastos']);
 print_r($costo['costo']);
 print_r($costo);
 */
-
    //CostSubject
  
 
@@ -36,6 +45,19 @@ echo "<b style='color:green'>EL PERIODO DE INSCRIPCION ESTA CERRADO</b>";
 
 }
 
+<<<<<<< HEAD
+=======
+$bloque="B1";
+if($howmuchSubject <= '1'){
+    $gasto=$gastoAdm;//$costo['gastos'];
+}else if ($howmuchSubject > '1') {
+    $gasto=0;
+}else if ($howmuchSubject <= '1' and $bloque==$planificacion['Block']) {
+    $gasto=$costo['gastos']/2;
+}else if ($howmuchSubject <= '1' and $bloque!=$planificacion['Block']) {
+    $gasto=$costo['gastos']/2;
+}
+>>>>>>> ab5bf79ea194801634cc491b001a0aa109e7991c
 
 
 $total=$costo['costo']+$gastoAdm+$costo['asociacion'];
@@ -137,7 +159,6 @@ $total=$costo['costo']+$gastoAdm+$costo['asociacion'];
 
 <input type="hidden" id="costoadm" value="<?= $gastoAdm ?>">
 
-<!--<input type="hidden" id="costoadm" value=" /*<?= $costo['gastos'] ?>*/"> -->
 
 
 <br>

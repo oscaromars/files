@@ -100,6 +100,7 @@ $(document).ready(function() {
 
 
         var costoadm  = $('#costoadm').val();
+<<<<<<< HEAD
         if(cont>4 || cont<=contMax) {
             costoadm =costoadm *1 ; 
         }else if (cont>){
@@ -108,6 +109,10 @@ $(document).ready(function() {
             costoadm=0;
         }
 
+=======
+        if(costoadm == 0)
+            costoadm = 0;
+>>>>>>> ab5bf79ea194801634cc491b001a0aa109e7991c
         //total = subtotal + parseFloat(asoc) + parseFloat(mat) + parseFloat(gastos);
         total = subtotal + parseFloat(costoadm);
 

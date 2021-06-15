@@ -451,7 +451,8 @@ class Matriculacion extends \yii\db\ActiveRecord {
                     inner join db_academico.unidad_academica ua on ua.uaca_id= meu.uaca_id
                     WHERE per.per_id =:per_id
             AND pla.pla_id =:pla_id
-            AND pes.pes_id =:pes_id";
+            AND pes.pes_id =:pes_id
+            AND pla.paca_id is not null";
                     
 
       $comando = $con_academico->createCommand($sql);
@@ -549,7 +550,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
             -- mo.mod_estado = 1 AND mo.mod_estado_logico = 1 AND 
             -- mcc.mcco_estado = 1 AND mcc.mcco_estado_logico = 1 AND 
             pcc.pccr_estado =1 AND pcc.pccr_estado_logico = 1 AND 
-            ea.eaca_estado = 1 AND ea.eaca_estado_logico = 1 AND 
+            ea.eaca_estado = 1 AND  
             tp.teac_estado = 1 AND tp.teac_estado_logico = 1 AND 
             ma.maca_estado = 1 AND ma.maca_estado_logico = 1 AND 
             mad.made_estado = 1 AND mad.made_estado_logico = 1 AND
@@ -598,7 +599,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
             a.asi_estado = 1 AND a.asi_estado_logico = 1 AND 
             ua.uaca_estado = 1 AND ua.uaca_estado_logico = 1 AND 
             me.meun_estado = 1 AND me.meun_estado_logico = 1 AND
-            ea.eaca_estado = 1 AND ea.eaca_estado_logico = 1 AND 
+            ea.eaca_estado = 1 AND 
             tp.teac_estado = 1 AND tp.teac_estado_logico = 1 AND 
             ma.maca_estado = 1 AND ma.maca_estado_logico = 1 AND 
             mad.made_estado = 1 AND mad.made_estado_logico = 1 AND
@@ -1123,18 +1124,18 @@ class Matriculacion extends \yii\db\ActiveRecord {
             est.est_categoria, 
             est.est_matricula
             FROM " . $con_academico->dbname . ".planificacion pla
-            inner join " . $con_academico->dbname . ".planificacion_estudiante pes on pla.pla_id =pes.pla_id
-            inner join " . $con_academico->dbname . ".estudiante est on est.per_id=pes.per_id
-            inner join " . $con_asgard->dbname . ".persona per on per.per_id=est.per_id
-            inner join " . $con_academico->dbname . ".registro_online ron on ron.per_id=pes.per_id
-            inner join " . $con_academico->dbname . ".modalidad mo on mo.mod_id=ron.ron_modalidad
-            inner join " . $con_academico->dbname . ".estudio_academico ea on ea.eaca_id= ron.ron_carrera
-            inner join " . $con_academico->dbname . ".modalidad_estudio_unidad  meu on ea.eaca_id= meu.eaca_id
-            inner join " . $con_academico->dbname . ".unidad_academica ua on ua.uaca_id= meu.uaca_id
-            WHERE ron.per_id =:per_id
-            AND ron.pes_id =:pes_id
-            AND ron.ron_estado =:estado
-            AND ron.ron_estado_logico =:estado
+            inner join " . $con_academico->dbname . ".planificacion_estudiante pes on pla.pla_id = pes.pla_id
+            inner join " . $con_academico->dbname . ".estudiante est on est.per_id = pes.per_id
+            inner join " . $con_asgard->dbname . ".persona per on per.per_id = est.per_id
+            inner join " . $con_academico->dbname . ".registro_online ron on ron.per_id = pes.per_id
+            inner join " . $con_academico->dbname . ".modalidad mo on mo.mod_id = ron.ron_modalidad
+            inner join " . $con_academico->dbname . ".estudio_academico ea on ea.eaca_id = ron.ron_carrera
+            inner join " . $con_academico->dbname . ".modalidad_estudio_unidad meu on ea.eaca_id = meu.eaca_id
+            inner join " . $con_academico->dbname . ".unidad_academica ua on ua.uaca_id = meu.uaca_id
+            WHERE ron.per_id = :per_id
+            AND ron.pes_id = :pes_id
+            AND ron.ron_estado = :estado
+            AND ron.ron_estado_logico = :estado
             ORDER BY ron.ron_id desc;
         ";
 
@@ -1425,9 +1426,12 @@ class Matriculacion extends \yii\db\ActiveRecord {
 
         $sql = "SELECT pes.pes_id as pes_id, pes.pla_id as pla_id
                 FROM " . $con_academico->dbname . ".planificacion_estudiante as pes
+                INNER JOIN db_academico.planificacion as pla ON pla.pla_id = pes.pla_id
                 WHERE pes.per_id = :per_id
                 AND pes.pes_estado = :estado
-                AND pes.pes_estado_logico =:estado ";
+                AND pes.pes_estado_logico =:estado
+                AND pla.pla_estado= :estado
+                AND pla.pla_estado_logico=:estado ";
 
         $comando = $con_academico->createCommand($sql);
         $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
@@ -1448,7 +1452,13 @@ class Matriculacion extends \yii\db\ActiveRecord {
     public function getDetalleCuotasRegistroOnline($ron_id, $rpm_id)
     {
         $con_academico = \Yii::$app->db_academico;
+        $con_academico2 = \Yii::$app->db_academico;
         $estado = 1;
+
+        $sql_set ="SET lc_time_names = 'es_ES';";
+        $comando2 = $con_academico2->createCommand($sql_set);
+        $resultData2 = $comando2->execute();
+
         $sql = "SELECT 
                     roc.roc_num_cuota as NO,
                     CASE

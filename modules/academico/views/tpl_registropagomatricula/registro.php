@@ -10,44 +10,44 @@
     .tcoll_cen {
         width: 50%;
         float: left;
-        font-size: 9px;
+        font-size: 7px;
         text-align: left;
-        font-family: Arial;
+        /*font-family: Arial;*/
     }
     .tcolr_cen {
         width: 50%;
         float: left;
-        font-size: 9px;
+        font-size: 7px;
         text-align: left;
-        font-family: Arial;
+        /*font-family: Arial;*/
     }
     .tcoll_cen2 {
         width: 40%;
         float: left;
-        font-size: 9px;
+        font-size: 7px;
         text-align: left;
-        font-family: Arial;
+        /*font-family: Arial;*/
     }
     .tcolr_cen2 {
         width: 60%;
         float: left;
-        font-size: 9px;
+        font-size: 7px;
         text-align: left;
-        font-family: Arial;
+        /*font-family: Arial;*/
     }
     .tcoll_ad {
         width: 30%;
         float: left;
-        font-size: 9px;
+        font-size: 7px;
         text-align: left;
-        font-family: Arial;
+        /*font-family: Arial;*/
     }
     .tcolr_ad {
         width: 70%;
         float: left;
-        font-size: 9px;
+        font-size: 7px;
         text-align: left;
-        font-family: Arial;
+        /*font-family: Arial;*/
     }
     .divDetalles{
         float: left;
@@ -102,6 +102,7 @@
     }
     .blue{
         color:#002060 !important;
+        font-size: 12px !important;
     }
     .tabla {       
         color:#002060 !important;
@@ -114,11 +115,11 @@
         caption-side: bottom;
     }  
     .tcell_cen {
-        width: 50%;
+        width: 30%;
         float: left;
         font-size: 14px;
         text-align: left;
-        font-family: Arial;
+        /*font-family: Arial;*/;
     }
     .tr_bor {
         border: 1px solid #002060;
@@ -126,6 +127,10 @@
 
     .table_end {
         border: 1px solid black;
+    }
+    table, th, td {
+      border: 1px solid black;
+      font-size: 12px !important;
     }
 </style>
 <div class ="table_end">
@@ -166,21 +171,21 @@
     <br>
     <div class="blue">
         <?php
-        echo '<table class="tabla"><tbody>';
+        echo '<table style="margin:0" class="tabla"><tbody>';
         echo '<tr style="background: #AED6F1;border: 1px solid #002060;"><th>CODIGO</th><th>MATERIA</th><th>HORARIO</th><th>COSTO UNITARIO</th></tr>';
         for ($i = 0; $i < count($dataPlanificacion); $i++) {
             $total_costo = $total_costo + $dataPlanificacion[$i]['Cost'];
-            echo '<tr style="border: 1px solid #002060;"><td>' . $dataPlanificacion[$i]['Code'] . '</td><td>' . $dataPlanificacion[$i]['Subject'] . '</td><td>' . $dataPlanificacion[$i]['Hour'] . ' - '  . $dataPlanificacion[$i]['Block'] .'</td><td>' . $dataPlanificacion[$i]['Cost'] . '</td><td> ';
+            echo '<tr style="border: 1px solid #002060;"><td>' . $dataPlanificacion[$i]['Code'] . '</td><td style="text-align:left">' . $dataPlanificacion[$i]['Subject'] . '</td><td>' . $dataPlanificacion[$i]['Hour'] . ' - '  . $dataPlanificacion[$i]['Block'] .'</td><td>' . $dataPlanificacion[$i]['Cost'] . '</td><td> ';
         }
-        echo '<tr style="border: 1px solid #002060;"> 
+        /*echo '<tr style="border: 1px solid #002060;"> 
                 <td> </td>
                 <td> ASOCIACION DE ESTUDIANTES</td>
                 <td> </td>
                 <td>' . $ron_valor_aso_estudiante . '</td> 
-             </tr>';
+             </tr>';*/
          echo '<tr style="border: 1px solid #002060;"> 
                 <td> </td>
-                <td> VARIOS ADMINISTRATIVOS</td>
+                <td> GASTOS ADMINISTRATIVOS</td>
                 <td> </td>
                 <td>' . $ron_valor_gastos_adm . '</td> 
              </tr>';
@@ -216,10 +221,10 @@
         ?><br><br>
     </div>
 
-    <div class="blue table_end" style="text-justify: auto">
-        <p><b>Cláusulas:</b></p> 
+    <div class="blue" style="text-justify: auto">
+        <p><b>Cláusulas:</b></p><br> 
         <p>    
-            <ul style= "list-style-type: disc;">
+            <ul style= "list-style-type: disc; padding-left: 5%;">
                 <li>Esta pre-inscripción está sujeta de acuerdo a la disponibilidad de cupos en las materias seleccionadas, en caso de solicitar activación deberá comunicarse con la secretaria de su Facultad.</li>
                 <li>Los valores correspondientes a cada mensualidad deberán cancelarse en las fechas establecidas.</li>
                 <li>Todos los pagos deben realizarse directamente en las cuentas institucionales indicadas por la UTEG</li>
@@ -227,14 +232,14 @@
                 <li>El estudiante acepta acoger las disposiciones académicas y reglamentarias de la Universidad Tecnológica Empresarial de Guayaquil.</li>
                 <li>La confirmación mediante correo electrónico por parte del Estudiante constituye la aceptación de la hoja de inscripción.</li>
             </ul>
-        </p>    
+        </p><br>    
     </div>
     <hr>
-    <div class="blue table_end">
-        <p style='text-align:center'><b>Compromiso de Pago - Crédito Universitario Directo</b></p>
+    <div class="blue">
+        <p style='text-align:center'><b><i>Compromiso de Pago - Crédito Universitario Directo</i></b></p>
             <p>Yo, alumno(a) <?= $data_student['pes_nombres'] ?> con C.I. No. <?= $data_student['pes_dni'] ?>, perteneciente a la facultad de MODALIDAD <?= $data_student['mod_nombre'] ?>, carrera de <?= $data_student['pes_carrera'] ?>, me comprometo a cancelar
             puntualmente las cuotas señaladas anteriormente, hasta el día dos de cada mes, durante el periodo de <?= $data_student['pla_periodo_academico'] ?>. Por el incumplimiento de lo antes señalado, me sujeto a cumplir las disposiciones que establece la universidad.
-        </p>
+            </p>
     </div>
     <br><br>
     <div class="blue">
@@ -242,3 +247,4 @@
         <p style='text-align:center'>              Firma Alumno (a)    </p>
     </div>  
 </div>
+

@@ -1227,6 +1227,8 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
      * @return  $resultData (Retornar los datos).
      */
     public function getModalidadEstudio($uaca_id, $mod_id) {
+        \app\models\Utilities::putMessageLogFile('UnidadAcademica modelo en carrera: ' . $uaca_id);
+        \app\models\Utilities::putMessageLogFile('Modalidad modelo: ' . $mod_id);
         $con_academico = \Yii::$app->db_academico;
         $estado = "1";
 

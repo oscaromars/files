@@ -15,7 +15,7 @@ use app\modules\academico\Module as academico;
  * and open the template in the editor.
  */
 ?>
-<?php echo $this->render('_form_Mallas', ['model' => $searchModel]); ?>
+<?php echo $this->render('_form_Mallas', ['model' => $searchModel, 'arr_malla' =>  $arr_malla]); ?>
 
  
 <?=

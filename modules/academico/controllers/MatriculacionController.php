@@ -1777,7 +1777,7 @@ class MatriculacionController extends \app\components\CController {
         
         $matriculacion_model = new Matriculacion();
 
-        $ron = RegistroOnline::find()->where(['per_id' => $per_id])->asArray()->one();
+        $ron = RegistroOnline::find()->where(['per_id' => $per_id, 'ron_estado' => 1, 'ron_estado_logico' => 1])->asArray()->one();
 
         $today = date("Y-m-d H:i:s");
         $result_process = $matriculacion_model->checkToday($today);
@@ -1788,7 +1788,7 @@ class MatriculacionController extends \app\components\CController {
 
         $dataPlanificacion = $matriculacion_model->getAllDataPlanificacionEstudiante($per_id, $pla_id);
 
-        // \app\models\Utilities::putMessageLogFile($dataPlanificacion);
+        // \app\models\Utilities::putMessageLogFile("dataPlanificacion: " . $dataPlanificacion);
 
         $roi = RegistroOnlineItem::find()->where(['ron_id' => $ron['ron_id'], 'roi_estado' => 1, 'roi_estado_logico' => 1])->asArray()->all();
         $valor_total = 0;
@@ -1846,6 +1846,9 @@ class MatriculacionController extends \app\components\CController {
         // \app\models\Utilities::putMessageLogFile($materias_data_arr);
 
         $data_student = $matriculacion_model->getDataStudenFromRegistroOnline($per_id, $ron['pes_id']);
+        // \app\models\Utilities::putMessageLogFile("per_id: " . $per_id);
+        // \app\models\Utilities::putMessageLogFile("pes_id: " . $ron['pes_id']);
+        // \app\models\Utilities::putMessageLogFile('data_student: ' . print_r($data_student,true));
         $persona = Persona::find()->where(['per_id' => $per_id])->asArray()->one();
 
         $periodo = (new PeriodoAcademico())->consultarPeriodo($data_student['paca_id'], true)[0];

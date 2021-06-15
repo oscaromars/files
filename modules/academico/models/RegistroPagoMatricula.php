@@ -730,10 +730,9 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
                     p.pla_id as pla_id,
                     tmp.Cant as Cant,
                     tmp.Costo as Costo,
-                    rf.Refund as Refund,
+                    ifnull(rf.Refund, '0.00') as Refund,
                     tmp.Creditos as Creditos,
-                    --mi.ron_id as Enroll,
-                    enr.ron_id as Enroll,
+                    ifnull(enr.ron_id,'0.00') as Enroll,
                     ifnull(reg.rpm_estado_aprobacion,2) as Aprobacion,
                     ifnull(reg.rpm_estado_generado,0) as Estado
                 FROM " . $con_academico->dbname . ".planificacion_estudiante AS pe
@@ -812,12 +811,7 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
                     p.pla_estado =1 and p.pla_estado_logico =1 and
                     per.per_estado = 1 and per.per_estado_logico = 1 and 
                     est.est_estado =1 and est.est_estado_logico = 1 and
-                    r.ron_estado =1 and r.ron_estado_logico =1
-                    and tmp.Cant is not null
-                    and tmp.Costo is not null
-                    and rf.Refund is not null
-                    and tmp.Creditos is not null
-                    and enr.ron_id is not null";
+                    r.ron_estado =1 and r.ron_estado_logico =1";
 
       
         $comando = $con_academico->createCommand($sql);

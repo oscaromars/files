@@ -2479,8 +2479,8 @@ class RegistroController extends \app\components\CController {
                     ])
             );
                 
-                $titulo_mensaje = Academico::t('matriculacion',"Hoja Inscripcion");
-                $asunto = Academico::t('matriculacion',"Envio de Hoja de Inscripcion DBE");
+                $titulo_mensaje = Academico::t('matriculacion',"Hoja Inscripción");
+                $asunto = Academico::t('matriculacion',"Envio de Hoja de Inscripcion");
                 //************************************************************************************* */
                 $routeBase = Yii::$app->basePath . "/modules/academico/mail/layouts/messages/es/registro";
                 $lang = "es";
@@ -2599,7 +2599,7 @@ class RegistroController extends \app\components\CController {
             //$resp_rpm_id = $matriculacion_model->getNumeroDocumentoRegistroOnline($rama_id, $ron_id, $per_id);
             $resp_rpm_id = $matriculacion_model->getNumeroDocumentoRegistroOnline($ron_id, $per_id); //registro_pago_matricula -// AQUI
             $rpm_id = $resp_rpm_id['rpm_id'];
-
+            \app\models\Utilities::putMessageLogFile('Inicio Proceso:'.$ron_id.'- '.$rpm_id);
             $registro_pago_matricula = new RegistroPagoMatricula();
             $resp_cant_cuota = $registro_pago_matricula->getCuotasPeriodo($ron_id, $rpm_id);//registro_online_cuotas  ///  AQUI
             $cant_cuota = $resp_cant_cuota['cuota'];
@@ -2631,7 +2631,7 @@ class RegistroController extends \app\components\CController {
             //$this->pdf_cla_acceso = $ids;
             $rep->orientation = "P"; // tipo de orientacion L => Horizontal, P => Vertical   
             $rep->createReportPdf(
-                    $this->render('@modules/academico/views/tpl_registropagomatricula/registro', [
+                    $this->render('@modules/academico/views/tpl_registropagomatricula/registro_controller', [
                         'data_student' => $data_student,
                         'direccion' => $direccion,
                         'matricula' => $matricula,

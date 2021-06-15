@@ -354,8 +354,9 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 
                         if(!(is_null($value)) && $value != ''){
                             $valor[$key] = $value;
+                            $total = $total + intval($value); 
                         }
-                        $total = $total + intval($value); 
+                        
                     }//if
             }
         }else{
@@ -397,8 +398,9 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 
                             if(!(is_null($value)) && $value != ''){
                                 $valor[$key] = $value;
+                                $total = $total + intval($value); 
                             }
-                            $total = $total + intval($value); 
+                            
                         //}//if
                 }//if  
             }//foeach

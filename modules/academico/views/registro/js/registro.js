@@ -768,7 +768,7 @@ function enviarPdf(){
         if (response.status == "OK") {
             setTimeout(function() {
             //windows.location.href = $redirect;
-            showAlert(response.status, response.type, { "wtmessage": 'SU INFORMACIÓN SE REGISTRO CORRECTAMENTE', "title": response.label });
+            showAlert(response.status, response.type, { "wtmessage": 'Su información se registro con éxito.', "title": response.label });
             //windows.location.href = $('#txth_base').val() + "/academico/registro/index";
             //parent.window.location.href = $('#txth_base').val() + "/academico/registro/index";
             }, 5000);

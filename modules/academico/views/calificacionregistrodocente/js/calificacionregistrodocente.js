@@ -389,12 +389,7 @@ function actualizarGridRegistro(dready = 0) {
 
         // Activate an inline edit on click of a table cell
         
-        $('#gridResumen').on( 'click', 'tbody td:not(.child)', function (e) {
-            if ( $(this).hasClass( 'control' ) || $(this).hasClass('select-checkbox') ) {
-                return;
-            }
-            editor.inline( this );
-        });
+        
             
         editor.on( 'opened', function ( e, json, data ) {       
             $('#DTE_Field_nparcial').addClass("form-control");
@@ -402,10 +397,7 @@ function actualizarGridRegistro(dready = 0) {
             //$('#DTE_Field_est_nivel').selectpicker();
         });
 
-        $('#gridResumen').on( 'click', 'tbody ul.dtr-details li', function (e) {
-            // Edit the value, but this selector allows clicking on label as well
-            editor.inline( $('span.dtr-data', this) );
-        } );
+        
 
         $("#html_thead").html(''); 
         var html = `
@@ -462,9 +454,10 @@ function actualizarGridRegistro(dready = 0) {
             html += '<th>'+key+'</th>';
         });
         numeroCols++;
-        console.log("# de columnnas = "+numeroCols);
         
-        numeroCols++
+        
+        numeroCols++;
+        console.log("# de columnnas = "+numeroCols);
         centrar.push(numeroCols+1);
         centrar.push(numeroCols+2);
         centrar.push(numeroCols+3);
@@ -496,7 +489,6 @@ function actualizarGridRegistro(dready = 0) {
             ],
         */
 
-        console.log(centrarArr);
 
         var columnas2 =[ 
                 { data: "total"},
@@ -522,7 +514,30 @@ function actualizarGridRegistro(dready = 0) {
                  <th>ccal_id</th>
                  <th>mod_id</th>
             </tr>`;
+
+        $("#tablacontenedor").html(`<table id="gridResumen" class="display compact responsive nowrap" style="width:100%">
+            <thead id="html_thead"></thead></table>`);
+
         $("#html_thead").html(html);
+        //$("#html_thead").parent().html('');
+        //$("#html_thead").html('');
+        console.log(html);
+        console.log(arrcolumnDefs);
+
+        $('#gridResumen').on( 'click', 'tbody td:not(.child)', function (e) {
+            if ( $(this).hasClass( 'control' ) || $(this).hasClass('select-checkbox') ) {
+                return;
+            }
+            editor.inline( this );
+        });
+
+        $('#gridResumen').on( 'click', 'tbody ul.dtr-details li', function (e) {
+            // Edit the value, but this selector allows clicking on label as well
+            editor.inline( $('span.dtr-data', this) );
+        } );
+
+
+
 
         table = $('#gridResumen').DataTable({
             "dom": '<"top"Bf>rt<"bottom"lp><"clear">',
@@ -621,7 +636,7 @@ function actualizarGridRegistro(dready = 0) {
                 
             ],
             */
-            columnDefs: [centrarArr],
+            //columnDefs: [centrarArr],
             select: {
                 style:    'os',
                 selector: 'td.select-checkbox'

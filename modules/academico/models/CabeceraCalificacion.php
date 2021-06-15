@@ -544,7 +544,7 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord
                                         and com.com_nombre = '$key'
                                         and cuni.uaca_id   = $uaca_id
                                         and cuni.mod_id    = $mod_id
-                                        and cuni.ecal_id   = $ecal_id),
+                                        /*and cuni.ecal_id   = $ecal_id*/),
                                     $usu_id,
                                     1,
                                     now(),
@@ -572,7 +572,7 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord
                                         and com.com_nombre = '$key'
                                         and cuni.uaca_id = $uaca_id
                                         and cuni.mod_id    = $mod_id
-                                        and cuni.ecal_id   = $ecal_id),
+                                        /*and cuni.ecal_id   = $ecal_id*/),
                                     $value,
                                     $usu_id,
                                     1,

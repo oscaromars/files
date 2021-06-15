@@ -64,7 +64,8 @@ class PlanificacionSearch extends Planificacion {
         $con_academico = \Yii::$app->db_academico;
         $con_db = \Yii::$app->db;
 
-            $sql = "select est.est_id , CONCAT(per.per_pri_apellido, ' ', per.per_seg_apellido, ' ', per.per_pri_nombre) as estudiante,
+            $sql = "select est.est_id , 
+                ifnull(CONCAT(per.per_pri_apellido, ' ', per.per_seg_apellido, ' ', per.per_pri_nombre), '') as estudiante,
                 per.per_cedula as cedula, 
                 CONCAT(baca.baca_nombre, ' ', sa.saca_nombre, ' ', baca.baca_anio) as semestre,
                 mod_descripcion as modalidad,

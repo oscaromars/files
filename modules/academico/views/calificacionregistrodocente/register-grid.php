@@ -25,7 +25,7 @@ academico::registerTranslations();
         <div class="bounce2"></div>
         <div class="bounce3"></div>
     </div>
-    <div class="container" style="width:auto;">
+    <div class="container" style="width:auto;" id="tablacontenedor">
         <table id="gridResumen" class="display compact responsive nowrap" style="width:100%">
             <thead id="html_thead">
                 <tr>
@@ -63,6 +63,8 @@ academico::registerTranslations();
         $('#gridResumen').DataTable({
             responsive: true,
             destroy: true,
+            paging: false,
+            retrieve: false,
             columnDefs: [      
                     {
                         "targets": [ 13,14,15,16,17,18,19,20 ],

@@ -1452,7 +1452,13 @@ class Matriculacion extends \yii\db\ActiveRecord {
     public function getDetalleCuotasRegistroOnline($ron_id, $rpm_id)
     {
         $con_academico = \Yii::$app->db_academico;
+        $con_academico2 = \Yii::$app->db_academico;
         $estado = 1;
+
+        $sql_set ="SET lc_time_names = 'es_ES';";
+        $comando2 = $con_academico2->createCommand($sql_set);
+        $resultData2 = $comando2->execute();
+
         $sql = "SELECT 
                     roc.roc_num_cuota as NO,
                     CASE

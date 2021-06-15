@@ -730,15 +730,15 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
                     p.pla_id as pla_id,
                     tmp.Cant as Cant,
                     tmp.Costo as Costo,
-                    rf.Refund as Refund,
+                    ifnull(rf.Refund, '0.00') as Refund,
                     tmp.Creditos as Creditos,
-                    --mi.ron_id as Enroll,
-                    enr.ron_id as Enroll,
+                    ifnull(enr.ron_id,'0.00') as Enroll,
                     ifnull(reg.rpm_estado_aprobacion,2) as Aprobacion,
                     ifnull(reg.rpm_estado_generado,0) as Estado
                 FROM " . $con_academico->dbname . ".planificacion_estudiante AS pe
                     INNER JOIN " . $con_academico->dbname . ".planificacion as p on p.pla_id = pe.pla_id
                     INNER JOIN " . $con_academico->dbname . ".registro_online as r on r.pes_id = pe.pes_id
+                    INNER JOIN " . $con_academico->dbname . ".registro_online_cuota roc on roc.ron_id = r.ron_id
                     INNER JOIN " . $con->dbname . ".persona as per on per.per_id = pe.per_id
                     INNER JOIN " . $con_academico->dbname . ".estudiante as est on est.per_id = per.per_id
                     INNER JOIN " . $con_academico->dbname . ".estudiante_carrera_programa AS ec ON est.est_id = ec.est_id
@@ -747,6 +747,7 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
                     INNER JOIN " . $con_academico->dbname . ".unidad_academica AS ua ON me.uaca_id = ua.uaca_id
                     INNER JOIN " . $con_academico->dbname . ".modalidad AS mo ON mo.mod_id = me.mod_id
                     LEFT JOIN " . $con_academico->dbname . ".registro_adicional_materias AS ram on ram.ron_id = r.ron_id
+                    
                     LEFT JOIN (
                         SELECT 
                             r.pes_id as pes_id,
@@ -812,12 +813,7 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
                     p.pla_estado =1 and p.pla_estado_logico =1 and
                     per.per_estado = 1 and per.per_estado_logico = 1 and 
                     est.est_estado =1 and est.est_estado_logico = 1 and
-                    r.ron_estado =1 and r.ron_estado_logico =1
-                    and tmp.Cant is not null
-                    and tmp.Costo is not null
-                    and rf.Refund is not null
-                    and tmp.Creditos is not null
-                    and enr.ron_id is not null";
+                    r.ron_estado =1 and r.ron_estado_logico =1";
 
       
         $comando = $con_academico->createCommand($sql);
@@ -922,7 +918,7 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
                     e.est_estado = 1 AND e.est_estado_logico = 1 AND
                     meu.meun_estado = 1 AND meu.meun_estado_logico = 1 AND 
                     ecp.ecpr_estado = 1 AND ecp.ecpr_estado_logico = 1 AND
-                    ea.eaca_estado = 1 AND ea.eaca_estado_logico = 1 AND
+                    ea.eaca_estado = 1 AND 
                     p.per_estado = 1 AND p.per_estado_logico = 1 AND
                     em.emp_estado = 1 AND em.emp_estado_logico = 1";
         $comando = $con->createCommand($sql);

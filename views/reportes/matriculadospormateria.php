@@ -71,12 +71,12 @@ GridView::widget([
         'target' => GridView::TARGET_BLANK,
     ],
     'columns' => [
-    	[
+    	/*[
             'attribute' => 'periodo',
             'header' => academico::t("Academico", "Periodo"),
             'value' => 'periodo',
           
-        ],       
+        ],    */   
         [
             'attribute' => 'estudiante',
             'header' => academico::t("Academico", "Estudiantes"),

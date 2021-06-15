@@ -627,37 +627,36 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
         $con_academico = \Yii::$app->db_academico;
         $con_db = \Yii::$app->db;
         
-        $sql = "select 
-                CONCAT(per.per_pri_apellido,' ' ,per.per_pri_nombre) as estudiante,
-                per.per_cedula as cedula,
+        $sql = "select est.est_id, 
+                ifnull(CONCAT(ifnull(per.per_pri_apellido,''), ' ', ifnull(per.per_seg_apellido,''), ' ', ifnull(per.per_pri_nombre,'')), '') as estudiante,
+                per.per_cedula as cedula, 
                 asi.asi_descripcion as materia,
                 moda.mod_descripcion as modalidad,
                 uaca.uaca_descripcion as unidad,
-                eaca.eaca_descripcion as carrera,
-                est.est_matricula as n_matricula,
-                CONCAT(baca.baca_nombre, '-', pla.pla_periodo_academico) as periodo
-                FROM " . $con_academico->dbname . ".distributivo_academico daca
-                Inner Join " . $con_academico->dbname . ".unidad_academica uaca on uaca.uaca_id = daca.uaca_id
-                Inner Join " . $con_academico->dbname . ".modalidad_estudio_unidad meun on meun.uaca_id = uaca.uaca_id
-                Inner Join " . $con_academico->dbname . ".modalidad moda on moda.mod_id = daca.mod_id
-                Inner Join " . $con_academico->dbname . ".planificacion pla on pla.mod_id = moda.mod_id
-                Inner Join " . $con_academico->dbname . ".registro_online ron on ron.per_id = pla.per_id
-                Inner Join " . $con_academico->dbname . ".registro_online_item roi on roi.ron_id = ron.ron_id
-                Inner Join " . $con_academico->dbname . ".planificacion_estudiante pes on pes.pes_id = ron.pes_id 
-                Inner Join " . $con_db->dbname . ".persona per on per.per_id = pes.per_id 
-                Inner Join " . $con_academico->dbname . ".estudiante est on est.per_id = per.per_id 
-                Inner Join " . $con_academico->dbname . ".estudiante_carrera_programa ecpr on ecpr.est_id = est.est_id 
-                Inner Join " . $con_academico->dbname . ".estudio_academico eaca on eaca.eaca_id = meun.eaca_id
-                Inner Join " . $con_academico->dbname . ".asignatura asi on asi.asi_id = daca.asi_id
-                Inner Join " . $con_academico->dbname . ".periodo_academico paca on paca.paca_id = daca.paca_id 
-                Inner Join " . $con_academico->dbname . ".bloque_academico baca on baca.baca_id = paca.baca_id 
-                Where
-                    per.per_id = est.per_id AND
-                    daca.daca_estado = 1 and daca.daca_estado_logico = 1
+                pes.pes_carrera as carrera,
+                est.est_matricula as n_matricula
+                from db_academico.registro_online as ron
+                inner join db_academico.registro_online_item as roi on roi.ron_id=ron.ron_id 
+                inner join db_asgard.persona as per on per.per_id = ron.per_id
+                inner join db_academico.registro_pago_matricula as pm on ron.per_id=pm.per_id 
+                inner join db_academico.estudiante as est on est.per_id=per.per_id
+                inner join db_academico.planificacion_estudiante as pes on pes.pes_id=ron.pes_id
+                inner join db_academico.malla_academica_detalle as mad on  mad.made_codigo_asignatura=roi.roi_materia_cod
+                inner join db_academico.asignatura as asi on asi.asi_id = mad.asi_id
+                left join db_academico.distributivo_academico_estudiante as dae on dae.est_id = est.est_id 
+                left join db_academico.distributivo_academico as daca on daca.daca_id = dae.daca_id and daca.asi_id = asi.asi_id
+                Inner Join db_academico.modalidad moda on moda.mod_id = daca.mod_id 
+                Inner Join db_academico.unidad_academica uaca on uaca.uaca_id = daca.uaca_id
+                 where per.per_id = est.per_id and pm.rpm_estado_aprobacion = 1
+                    and daca.daca_estado = 1 and daca.daca_estado_logico = 1
                     and ron.ron_estado = 1 and ron.ron_estado_logico = 1
-                    and roi.est_estado = 1 and roi.est_estado_logico = 1
+                    and roi.roi_estado = 1 and roi.roi_estado_logico = 1
                     and est.est_estado = 1 and est.est_estado_logico = 1
-                    and per.per_estado = 1 and per.per_estado_logico = 1";
+                    and per.per_estado = 1 and per.per_estado_logico = 1
+                    and ron.ron_estado = 1 and ron.ron_estado_logico = 1
+                    and pm.rpm_estado = 1 and pm.rpm_estado_logico = 1
+                    and pes.pes_estado = 1 and pes.pes_estado_logico = 1
+                 group by est.est_id";
         if ($tipo == 1) {
             $this->load($params);
             if ($this->validate()) {

@@ -64,31 +64,38 @@ class PlanificacionSearch extends Planificacion {
         $con_academico = \Yii::$app->db_academico;
         $con_db = \Yii::$app->db;
 
-        $sql = "select  
-                CONCAT(per.per_pri_apellido,' ' ,per.per_pri_nombre) as estudiante,
-                per.per_cedula as cedula,
-                CONCAT(baca.baca_nombre, '-', pla.pla_periodo_academico) as semestre,
-                eaca.eaca_descripcion as carrera,
-                moda.mod_descripcion as modalidad,
-                uaca.uaca_descripcion as unidad,
-                est.est_matricula as n_matricula
-                FROM db_academico.planificacion pla  
-                Inner Join db_academico.registro_online ron on ron.per_id = pla.per_id
-                Inner Join db_academico.registro_pago_matricula rpm on rpm.ron_id = ron.ron_id and rpm_estado_aprobacion = 1
-                Inner Join db_academico.planificacion_estudiante pes on pes.pes_id = ron.pes_id 
-                Inner Join db_asgard.persona per on per.per_id = pes.per_id 
+            $sql = "select est.est_id , 
+                ifnull(CONCAT(ifnull(per.per_pri_apellido,''), ' ', ifnull(per.per_seg_apellido,''), ' ', ifnull(per.per_pri_nombre,'')), '') as estudiante,
+                per.per_cedula as cedula, 
+                CONCAT(baca.baca_nombre, ' ', sa.saca_nombre, ' ', sa.saca_anio) as semestre,
+                mod_descripcion as modalidad,
+                uaca_descripcion as unidad,
+                est.est_matricula as n_matricula,
+                eaca_descripcion as carrera
+                from  db_academico.registro_online as ron
+                Inner Join db_academico.registro_pago_matricula rpm on rpm.per_id = ron.per_id
+                Inner Join db_asgard.persona per on  per.per_id = ron.per_id
+                Inner Join db_academico.planificacion pla on pla.pla_id = rpm.pla_id 
+                Inner Join db_academico.semestre_academico sa on sa.saca_id = pla.saca_id
+                Inner Join db_academico.modalidad m on m.mod_id = pla.mod_id 
                 Inner Join db_academico.estudiante est on est.per_id = per.per_id 
-                Inner Join db_academico.estudiante_carrera_programa ecpr on ecpr.est_id = est.est_id 
-                Inner Join db_academico.modalidad_estudio_unidad meun on meun.meun_id = ecpr.meun_id 
-                Inner Join db_academico.unidad_academica uaca on uaca.uaca_id = meun.uaca_id 
-                Inner Join db_academico.modalidad moda on moda.mod_id = pla.mod_id 
-                Inner Join db_academico.estudio_academico eaca on eaca.eaca_id = meun.eaca_id
+                Inner Join db_academico.estudiante_carrera_programa ecpr on ecpr.est_id = est.est_id
+                Inner Join  db_academico.modalidad_estudio_unidad  meu on meu.mod_id = m.mod_id and ecpr.meun_id = meu.meun_id
+                Inner Join  db_academico.unidad_academica ua on ua.uaca_id = meu.uaca_id
+                Inner Join  db_academico.estudio_academico ea on ea.eaca_id = meu.eaca_id
                 Inner Join db_academico.periodo_academico paca on paca.paca_id = pla.paca_id
-                Inner Join db_academico.bloque_academico baca on baca.baca_id = paca.baca_id
-                Where rpm.rpm_estado_aprobacion = 1 and
-                    pla.pla_estado = 1 and pla.pla_estado_logico = 1
+                Inner Join db_academico.bloque_academico baca on baca.baca_id = paca.saca_id
+                Where pla.pla_id = pla.paca_id and rpm.rpm_estado_aprobacion = 1 
+                    and pla.pla_estado = 1 and pla.pla_estado_logico = 1
+                    and ron.ron_estado = 1 and ron.ron_estado_logico = 1
+                    and rpm.rpm_estado = 1 and rpm.rpm_estado_logico = 1
+                    and per.per_estado = 1 and per.per_estado_logico = 1
                     and est.est_estado = 1 and est.est_estado_logico = 1
-                    and per.per_estado = 1 and per.per_estado_logico = 1";
+                    and ecpr.ecpr_estado = 1 and ecpr.ecpr_estado_logico = 1
+                    and meu.meun_estado = 1 and meu.meun_estado_logico = 1
+                    and ua.uaca_estado = 1 and ua.uaca_estado_logico = 1
+                    and m.mod_estado = 1 and m.mod_estado_logico = 1
+                    and ea.eaca_estado = 1 and ea.eaca_estado_logico = 1";
         if ($tipo == 1) {
             $this->load($params);
             if ($this->validate()) {
@@ -99,7 +106,7 @@ class PlanificacionSearch extends Planificacion {
                 }
 
                 if ($this->pla_id) {
-                    $sql = $sql . " and pla.paca_id =" . $this->pla_id;
+                    $sql = $sql . " and pla.pla_id =" . $this->pla_id;
                 }
 
                 /*if ($this->eaca_id) {

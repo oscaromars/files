@@ -550,7 +550,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
             -- mo.mod_estado = 1 AND mo.mod_estado_logico = 1 AND 
             -- mcc.mcco_estado = 1 AND mcc.mcco_estado_logico = 1 AND 
             pcc.pccr_estado =1 AND pcc.pccr_estado_logico = 1 AND 
-            ea.eaca_estado = 1 AND ea.eaca_estado_logico = 1 AND 
+            ea.eaca_estado = 1 AND  
             tp.teac_estado = 1 AND tp.teac_estado_logico = 1 AND 
             ma.maca_estado = 1 AND ma.maca_estado_logico = 1 AND 
             mad.made_estado = 1 AND mad.made_estado_logico = 1 AND
@@ -599,7 +599,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
             a.asi_estado = 1 AND a.asi_estado_logico = 1 AND 
             ua.uaca_estado = 1 AND ua.uaca_estado_logico = 1 AND 
             me.meun_estado = 1 AND me.meun_estado_logico = 1 AND
-            ea.eaca_estado = 1 AND ea.eaca_estado_logico = 1 AND 
+            ea.eaca_estado = 1 AND 
             tp.teac_estado = 1 AND tp.teac_estado_logico = 1 AND 
             ma.maca_estado = 1 AND ma.maca_estado_logico = 1 AND 
             mad.made_estado = 1 AND mad.made_estado_logico = 1 AND

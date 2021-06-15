@@ -83,7 +83,7 @@ return [
     /***** Valores para Stripe (Pago con tarjeta de credito) ****************/
     //Desarrollo Cuenta UTEG
     'stripeJsKey' => "pk_test_y0O1WHdyGNgjQDrnTcUvw9UT",
-    'secret_key'  => "sk_test_eNDH9rGC6bhEcW8JhRXRA4xk1",
+    'secret_key'  => "sk_test_eNDH9rGC6bhEcW8JhRXRA4xk",
     //Produccion Cuenta UTEG
     /*
     'stripeJsKey' => "pk_live_T1YxYu1Tszv8o3G24jmUxTDG",

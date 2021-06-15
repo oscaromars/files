@@ -67,7 +67,7 @@ class PlanificacionSearch extends Planificacion {
             $sql = "select est.est_id , 
                 ifnull(CONCAT(per.per_pri_apellido, ' ', per.per_seg_apellido, ' ', per.per_pri_nombre), '') as estudiante,
                 per.per_cedula as cedula, 
-                CONCAT(baca.baca_nombre, ' ', sa.saca_nombre, ' ', baca.baca_anio) as semestre,
+                CONCAT(baca.baca_nombre, ' ', sa.saca_nombre, ' ', sa.saca_anio) as semestre,
                 mod_descripcion as modalidad,
                 uaca_descripcion as unidad,
                 est.est_matricula as n_matricula,

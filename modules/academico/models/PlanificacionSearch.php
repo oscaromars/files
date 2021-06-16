@@ -208,8 +208,8 @@ class PlanificacionSearch extends Planificacion {
             }
             
             if ($arrFiltro['modalidad'] != "" && $arrFiltro['modalidad'] > 0) {
-                $curso = $arrFiltro["modalidad"];
-                $comando->bindParam(":mod_id", $curso, \PDO::PARAM_INT);
+                $modalidad = $arrFiltro["modalidad"];
+                $comando->bindParam(":mod_id", $modalidad, \PDO::PARAM_INT);
             }
                     
         }

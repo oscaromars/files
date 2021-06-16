@@ -164,4 +164,109 @@ class ModalidadEstudioUnidadSearch extends ModalidadEstudioUnidad {
         return $dataProvider;
     }
 
+    public function getListadoMallaexcel($arrFiltro = NULL, $onlyData = false) {
+        $con_academico = \Yii::$app->db_academico;
+        $con_db = \Yii::$app->db;
+
+        if (isset($arrFiltro) && count($arrFiltro) > 0) { 
+            if ($arrFiltro['unidad'] != "" && $arrFiltro['unidad'] > 0) {
+                $str_search .= "meun.uaca_id = :uaca_id AND ";
+            }
+            if ($arrFiltro['modalidad'] != "" && $arrFiltro['modalidad'] > 0) {
+                $str_search .= "meun.mod_id = :mod_id AND ";
+            } 
+            if ($arrFiltro['carrera'] != "" && $arrFiltro['carrera'] > 0) {
+                $str_search .= "meun.eaca_id = :eaca_id AND ";
+            } 
+            if ($arrFiltro['malla'] != "" && $arrFiltro['malla'] > 0) {
+                $str_search .= "maca.maca_id = :maca_id AND ";
+            }         
+        }
+
+            $sql = "Select concat(mac.maca_codigo,' - ',mac.maca_nombre) AS malla, 
+                    a.asi_nombre as asignatura,
+                    uaca.uaca_nombre as unidad,
+                    moda.mod_nombre as modalidad,
+                    d.made_semestre as semestre,
+                    d.made_credito as credito,                    
+                    eaca.eaca_nombre as carrera,
+                    u.uest_nombre as unidad_estudio,       
+                    f.fmac_nombre as formacion_malla_academica,
+                    ifnull(asi.asi_nombre,'') as materia_requisito
+              FROM db_academico.modalidad_estudio_unidad meu  
+                  inner join db_academico.unidad_academica uaca on uaca.uaca_id = meu.uaca_id
+                  inner join db_academico.modalidad moda on moda.mod_id = meu.mod_id
+                  Inner Join db_academico.estudio_academico eaca on eaca.eaca_id = meu.eaca_id
+                  INNER JOIN db_academico.malla_unidad_modalidad mum ON mum.meun_id = meu.meun_id                  
+                  INNER JOIN db_academico.malla_academica mac ON mac.maca_id = mum.maca_id 
+                  inner join db_academico.malla_academica_detalle d on d.maca_id = mac.maca_id
+                  inner join db_academico.asignatura a on a.asi_id = d.asi_id
+                  inner join db_academico.unidad_estudio u on u.uest_id = d.uest_id
+                  inner join db_academico.nivel_estudio n on n.nest_id = d.nest_id
+                  inner join db_academico.formacion_malla_academica f on f.fmac_id = d.fmac_id
+                  left join db_academico.asignatura asi on asi.asi_id = d.made_asi_requisito
+               WHERE  meu.meun_estado_logico = 1 AND meu.meun_estado = 1 AND
+                      uaca.uaca_estado_logico = 1 AND uaca.uaca_estado = 1 AND
+                      moda.mod_estado_logico = 1 AND moda.mod_estado = 1 AND
+                      eaca.eaca_estado_logico = 1 AND eaca.eaca_estado = 1 AND
+                      mum.mumo_estado_logico = 1 AND mum.mumo_estado = 1 AND
+                      mac.maca_estado_logico = 1 AND mac.maca_estado = 1 AND
+                      d.made_estado_logico = 1 AND d.made_estado = 1";
+        
+        //Utilities::putMessageLogFile('sql:' . $sql);
+        $comando = $con_academico->createCommand($sql);
+        //$comando->bindParam(":eaca_id", $eaca_id, \PDO::PARAM_INT);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        if (isset($arrFiltro) && count($arrFiltro) > 0) {
+           
+            if ($arrFiltro['unidad'] != "" && $arrFiltro['unidad'] > 0) {
+                $unidad = $arrFiltro["unidad"];
+                $comando->bindParam(":paca_id", $periodo, \PDO::PARAM_INT);
+            }
+            
+            if ($arrFiltro['modalidad'] != "" && $arrFiltro['modalidad'] > 0) {
+                $modalidad = $arrFiltro["modalidad"];
+                $comando->bindParam(":mod_id", $modalidad, \PDO::PARAM_INT);
+            }
+
+            if ($arrFiltro['carrera'] != "" && $arrFiltro['carrera'] > 0) {
+                $carrera = $arrFiltro["carrera"];
+                $comando->bindParam(":eaca_id", $carrera, \PDO::PARAM_INT);
+            }
+
+            if ($arrFiltro['malla'] != "" && $arrFiltro['malla'] > 0) {
+                $malla = $arrFiltro["malla"];
+                $comando->bindParam(":maca_id", $malla, \PDO::PARAM_INT);
+            }
+                    
+        }
+        $res = $comando->queryAll();
+
+
+        $dataProvider = new ArrayDataProvider([
+            'key' => 'Id',
+            'allModels' => $res,
+            'pagination' => [
+                'pageSize' => Yii::$app->params["pageSize"],
+            ],
+            'sort' => [
+                'attributes' => [
+                    'malla', 
+                    'asignatura',
+                    'unidad',
+                    'modalidad',
+                    'semestre',
+                    'credito',
+                    'formacion_malla_academica',
+                    'materia_requisito'],
+            ],
+        ]);
+
+        if ($onlyData) {
+            return $res;
+        } else {
+            return $dataProvider;
+        }
+    }
+
 }

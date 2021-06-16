@@ -24,7 +24,7 @@ use app\modules\academico\Module as academico;
             PbGridView::widget([
                 'id' => 'Tbg_Registro_matriculadospormateria',
                 'showExport' => true,
-                'fnExportEXCEL' => "exportExcelmatriculadospormateria",
+                'fnExportEXCEL' => "exportExcelmatripormateria",
                 'dataProvider' => $dataProvider,
                 'columns' => [
                 	[

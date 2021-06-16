@@ -466,7 +466,7 @@ class ReportesController extends CController {
         ]);       
     }
 
-    public function actionExpexcelmatriculadospormateria() {
+    public function actionExpexcelmatripormateria() {
         ini_set('memory_limit', '256M');
         $content_type = Utilities::mimeContentType("xls");
         $nombarch = "Report-" . date("YmdHis") . ".xls";
@@ -492,9 +492,9 @@ class ReportesController extends CController {
         $arrSearch["asignatura"] = $data['asignatura'];
         $arrData = array();
         if (empty($arrSearch)) {
-            $arrData = $searchModel->getListadoMatriculadospormateriaexcel(NULL,true);
+            $arrData = $searchModel->getListadoMatripormateriaexcel(NULL,true);
         } else {
-            $arrData = $searchModel->getListadoMatriculadospormateriaexcel($arrSearch,true);
+            $arrData = $searchModel->getListadoMatripormateriaexcel($arrSearch,true);
         }
         for ($i = 0; $i < count($arrData); $i++) { 
             unset($arrData[$i]['est_id']);
@@ -610,7 +610,6 @@ class ReportesController extends CController {
             Yii::t("formulario", "Correo"),
             Yii::t("formulario", "Teléfono"),
             Yii::t("formulario", "Matrícula"),
-            Yii::t("formulario", "Crédito"),
             Yii::t("formulario", "Unidad Académica"),
             Yii::t("formulario", "Modalidad"),
             Yii::t("formulario", "Carrera"),
@@ -626,7 +625,6 @@ class ReportesController extends CController {
             $arrData = $searchModel->getListadoReporteinscritosexcel($arrSearch,true);
         }
         for ($i = 0; $i < count($arrData); $i++) { 
-            unset($arrData[$i]['carrera']);
             unset($arrData[$i]['unidad_estudio']);
         }
         $nameReport = academico::t("Academico", "Reporte Inscritos");

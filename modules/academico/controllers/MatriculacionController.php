@@ -1875,9 +1875,6 @@ class MatriculacionController extends \app\components\CController {
         // \app\models\Utilities::putMessageLogFile($materias_data_arr);
 
         $data_student = $matriculacion_model->getDataStudenFromRegistroOnline($per_id, $ron['pes_id']);
-        \app\models\Utilities::putMessageLogFile("per_id: " . $per_id);
-        \app\models\Utilities::putMessageLogFile("pes_id: " . $ron['pes_id']);
-        \app\models\Utilities::putMessageLogFile('data_student: ' . print_r($data_student,true));
         $persona = Persona::find()->where(['per_id' => $per_id])->asArray()->one();
 
         $periodo = (new PeriodoAcademico())->consultarPeriodo($data_student['paca_id'], true)[0];

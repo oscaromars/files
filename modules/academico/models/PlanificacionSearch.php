@@ -163,7 +163,7 @@ class PlanificacionSearch extends Planificacion {
             }         
         }
 
-            $sql = "select est.est_id , 
+            $sql = "select est.est_id as est_id, 
                 ifnull(CONCAT(ifnull(per.per_pri_apellido,''), ' ', ifnull(per.per_seg_apellido,''), ' ', ifnull(per.per_pri_nombre,'')), '') as estudiante,
                 per.per_cedula as cedula, 
                 CONCAT(baca.baca_nombre, ' ', sa.saca_nombre, ' ', sa.saca_anio) as semestre,
@@ -227,10 +227,10 @@ class PlanificacionSearch extends Planificacion {
                     'estudiante', 
                     'cedula',
                     'semestre',
-                    'modalidad',
+                    'carrera',
                     'unidad',
-                    'n_matricula',
-                    'carrera'],
+                    'modalidad',
+                    'n_matricula''],
             ],
         ]);
 

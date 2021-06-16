@@ -687,8 +687,8 @@ class CalificacionregistrodocenteController extends \app\components\CController 
                                 ** $val[17] -> 'Calificación' - 2° PARCIAL  No se usa porque el sistema lo calcula por si acaso esté mal calculado
                                 */
 
-                                $usuario = $val[2]; // Si es est de Grado Online
-                                $cedula = $val[2]; // Si es est de grado no online
+                                $usuario = trim($val[2], " "); // Si es est de Grado Online
+                                $cedula = trim($val[2], " "); // Si es est de grado no online
                                 $nombre = $val[4];
 
                                 $estudianteOnline = UsuarioEducativa::find()->where(['uedu_usuario' => $usuario, 'uedu_estado' => 1, 'uedu_estado_logico' => 1])->asArray()->one();
@@ -732,6 +732,14 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 
                                 // Modalidad ID
                                 $mod_id = $meun['mod_id'];
+
+                                // Validar que el período académico sea el correcto
+                                $daca = DistributivoAcademico::find()->where(['asi_id' => $asi_id, 'pro_id' => $pro_id, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id])->asArray()->one();
+                                $paca_id_daca = $daca['paca_id'];
+                                if($paca_id != $paca_id_daca){
+                                    $noalumno .= $nombre . " (no pertenece al período académico seleccionado), ";
+                                    continue;
+                                }
 
                                 // Grado Online
                                 if($mod_id == 1){
@@ -809,6 +817,14 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 
                                 // Modalidad ID
                                 $mod_id = $meun['mod_id'];
+
+                                // Validar que el período académico sea el correcto
+                                $daca = DistributivoAcademico::find()->where(['asi_id' => $asi_id, 'pro_id' => $pro_id, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id])->asArray()->one();
+                                $paca_id_daca = $daca['paca_id'];
+                                if($paca_id != $paca_id_daca){
+                                    $noalumno .= $nombre . " (no pertenece al período académico seleccionado), ";
+                                    continue;
+                                }
 
                                 // Posgrado Online
                                 if($mod_id == 1){

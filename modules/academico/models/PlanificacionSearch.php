@@ -230,7 +230,7 @@ class PlanificacionSearch extends Planificacion {
                     'carrera',
                     'unidad',
                     'modalidad',
-                    'n_matricula''],
+                    'n_matricula'],
             ],
         ]);
 

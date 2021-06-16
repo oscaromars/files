@@ -1490,6 +1490,7 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord
                     INNER JOIN " . $con->dbname . ".esquema_calificacion_unidad ecun ON ecun.ecun_id = clfc.ecun_id
                     INNER JOIN " . $con->dbname . ".esquema_calificacion ecal ON ecal.ecal_id = ecun.ecal_id
                     WHERE   ecal.ecal_id = 1
+                    AND clfc.ccal_estado = 1 AND clfc.ccal_estado_logico = 1
                 ) A  on  estudiante.est_id = A.est_id   
                 AND estudiante.paca_id = A.paca_id 
                 AND estudiante.pro_id  = A.pro_id  
@@ -1502,6 +1503,7 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord
                     INNER JOIN " . $con->dbname . ".esquema_calificacion_unidad ecun ON ecun.ecun_id = clfc.ecun_id
                     INNER JOIN " . $con->dbname . ".esquema_calificacion ecal ON ecal.ecal_id = ecun.ecal_id
                     WHERE ecal.ecal_id = 2
+                    AND clfc.ccal_estado = 1 AND clfc.ccal_estado_logico = 1
                 ) B  ON estudiante.est_id = B.est_id 
                 AND estudiante.paca_id = B.paca_id 
                 AND estudiante.pro_id  = B.pro_id  
@@ -1514,6 +1516,7 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord
                     INNER JOIN " . $con->dbname . ".esquema_calificacion_unidad ecun ON ecun.ecun_id = clfc.ecun_id
                     INNER JOIN " . $con->dbname . ".esquema_calificacion ecal ON ecal.ecal_id = ecun.ecal_id
                     WHERE ecal.ecal_id = 3
+                    AND clfc.ccal_estado = 1 AND clfc.ccal_estado_logico = 1
                 ) C ON estudiante.est_id = C.est_id 
                 AND estudiante.paca_id = C.paca_id 
                 AND estudiante.pro_id  = C.pro_id  
@@ -1527,6 +1530,7 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord
                     INNER JOIN " . $con->dbname . ".esquema_calificacion_unidad esquema_calificacion_unidad ON esquema_calificacion_unidad.ecun_id = aeun_id_asistencia.ecun_id
                     INNER JOIN " . $con->dbname . ".esquema_calificacion esquema_calificacion_asistencia ON esquema_calificacion_asistencia.ecal_id = esquema_calificacion_unidad.ecal_id
                     WHERE esquema_calificacion_asistencia.ecal_id = 1
+                    AND casi.casi_estado = 1 AND casi.casi_estado_logico = 1
                 ) D ON  estudiante.est_id = D.est_id  AND estudiante.paca_id = D.paca_id 
                 AND estudiante.pro_id  = D.pro_id  
                 AND estudiante.asi_id = D.asi_id
@@ -1539,6 +1543,7 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord
                     INNER JOIN " . $con->dbname . ".esquema_calificacion_unidad esquema_calificacion_unidad ON esquema_calificacion_unidad.ecun_id = aeun_id_asistencia.ecun_id
                     INNER JOIN " . $con->dbname . ".esquema_calificacion esquema_calificacion_asistencia ON esquema_calificacion_asistencia.ecal_id = esquema_calificacion_unidad.ecal_id
                     WHERE esquema_calificacion_asistencia.ecal_id = 2
+                    AND casi.casi_estado = 1 AND casi.casi_estado_logico = 1
                 ) E ON  estudiante.est_id = E.est_id  AND estudiante.paca_id = E.paca_id 
                 AND estudiante.pro_id  = E.pro_id  
                 AND estudiante.asi_id = E.asi_id 

@@ -429,7 +429,7 @@ class ReportesController extends CController {
         header('Cache-Control: max-age=0');
         $colPosition = array("C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O");
         $arrHeader = array(
-            Yii::t("formulario", "No."),
+            //Yii::t("formulario", "No."),
             Yii::t("formulario", "Estudiante"),
             Yii::t("formulario", "Cedula"),
             Yii::t("formulario", "Semestre Academico"),

@@ -167,10 +167,10 @@ class PlanificacionSearch extends Planificacion {
                 ifnull(CONCAT(ifnull(per.per_pri_apellido,''), ' ', ifnull(per.per_seg_apellido,''), ' ', ifnull(per.per_pri_nombre,'')), '') as estudiante,
                 per.per_cedula as cedula, 
                 CONCAT(baca.baca_nombre, ' ', sa.saca_nombre, ' ', sa.saca_anio) as semestre,
-                mod_descripcion as modalidad,
+                eaca_descripcion as carrera,
                 uaca_descripcion as unidad,
-                est.est_matricula as n_matricula,
-                eaca_descripcion as carrera
+                mod_descripcion as modalidad,
+                est.est_matricula as n_matricula
                 from  db_academico.registro_online as ron
                 Inner Join db_academico.registro_pago_matricula rpm on rpm.per_id = ron.per_id
                 Inner Join db_asgard.persona per on  per.per_id = ron.per_id

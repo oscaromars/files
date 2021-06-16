@@ -76,7 +76,7 @@ use app\modules\academico\Module as academico;
             'target' => GridView::TARGET_BLANK,
         ],*/
         'columns' => [
-            ['class' => 'yii\grid\SerialColumn', 'options' => ['width' => '10']],
+           
             [
                 'attribute' => 'estudiante',
                 'header' => academico::t("Academico", "Estudiantes"),

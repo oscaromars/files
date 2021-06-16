@@ -87,11 +87,7 @@ else{
     <div class="form-group">     
         <label for="txth_doc_adj_calificacion" class="col-lg-2 col-md-2 col-sm-2 col-xs-2 control-label keyupmce"><?= academico::t("Academico", "Period") ?></label>
         <div class="col-sm-5 col-md-5 col-xs-5 col-lg-5">
-            <?php if($admin) : ?>
-                <?= Html::dropDownList("cmb_periodo", 0, $periodos, ["class" => "form-control", "id" => "cmb_periodo"]) ?>
-            <?php else : ?>
-                <?= Html::dropDownList("cmb_periodo", $periodo_actual[0]['id'], $periodos, ["class" => "form-control", "id" => "cmb_periodo", "disabled" => true]) ?>
-            <?php endif; ?>
+            <?= Html::dropDownList("cmb_periodo", 0, $periodos, ["class" => "form-control", "id" => "cmb_periodo"]) ?>
         </div>
     </div>
 

@@ -11,15 +11,8 @@ Academico::registerTranslations();
   //print_r($planificacion[0]['CostSubject']);
 
 //print_r($planificacion[5]['Hour']);
-
-<<<<<<< HEAD
-echo "hola";
-print_r($gastoAdm);
-=======
-
-
 //print_r($gastoAdm);
->>>>>>> ab5bf79ea194801634cc491b001a0aa109e7991c
+//print_r($gastoAdm);
 //print_r($costo);
 
 
@@ -45,9 +38,7 @@ echo "<b style='color:green'>EL PERIODO DE INSCRIPCION ESTA CERRADO</b>";
 
 }
 
-<<<<<<< HEAD
-=======
-$bloque="B1";
+/*$bloque="B1";
 if($howmuchSubject <= '1'){
     $gasto=$gastoAdm;//$costo['gastos'];
 }else if ($howmuchSubject > '1') {
@@ -56,8 +47,7 @@ if($howmuchSubject <= '1'){
     $gasto=$costo['gastos']/2;
 }else if ($howmuchSubject <= '1' and $bloque!=$planificacion['Block']) {
     $gasto=$costo['gastos']/2;
-}
->>>>>>> ab5bf79ea194801634cc491b001a0aa109e7991c
+}*/
 
 
 $total=$costo['costo']+$gastoAdm+$costo['asociacion'];
@@ -174,15 +164,15 @@ $total=$costo['costo']+$gastoAdm+$costo['asociacion'];
 <?php  
         if ($data_student['mod_id']==1){
             
-                $a="L-M-W :: 19:00-20:00";
-                $b="L-M-W :: 20:00-21:00";
-                $c="L-M-W :: 21:00-22:00";
-                $d="L-M-W :: 19:00-20:30";
-                $e="L-M-W :: 20:00-21:30";
+                $a="Lun-Mar-Mie :: 19:00-20:00";
+                $b="Lun-Mar-Mie :: 20:00-21:00";
+                $c="Lun-Mar-Mie :: 21:00-22:00";
+                $d="Lun-Mar-Mie :: 19:00-20:30";
+                $e="Lun-Mar-Mie :: 20:00-21:30";
                 $f="N/A";
         } else if ($data_student['mod_id']==2){
-                $a="L-M-J :: 18:20-20:20";
-                $b="L-M-W :: 20:20-22:20";
+                $a="Lun-Mar-Jue :: 18:20-20:20";
+                $b="Lun-Mar-Mie :: 20:20-22:20";
                 $c="Mie - Vie :: 18:20-21:20";
                 $d="Vier :: 18:20-21:20";
                 $e="Sáb :: 07:15-09:15";

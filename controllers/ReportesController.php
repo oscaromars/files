@@ -476,6 +476,7 @@ class ReportesController extends CController {
         $colPosition = array("C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O");
         $arrHeader = array(
             //Yii::t("formulario", "No."),
+            Yii::t("formulario", "Periodo"),
             Yii::t("formulario", "Estudiante"),
             Yii::t("formulario", "Cédula"),
             Yii::t("formulario", "Asignatura"),
@@ -491,9 +492,9 @@ class ReportesController extends CController {
         $arrSearch["asignatura"] = $data['asignatura'];
         $arrData = array();
         if (empty($arrSearch)) {
-            $arrData = $searchModel->getListadoMatriculadosporMateriaexcel(NULL,true);
+            $arrData = $searchModel->getListadoMatriculadospormateriaexcel(NULL,true);
         } else {
-            $arrData = $searchModel->getListadoMatriculadosporMateriaexcel($arrSearch,true);
+            $arrData = $searchModel->getListadoMatriculadospormateriaexcel($arrSearch,true);
         }
         for ($i = 0; $i < count($arrData); $i++) { 
             unset($arrData[$i]['est_id']);

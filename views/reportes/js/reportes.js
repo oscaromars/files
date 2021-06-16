@@ -150,7 +150,7 @@ function exportExcelmallas() {
     var malla =  $('#cmb_malla').val();
     window.location.href = $('#txth_base').val() + "/reportes/expexcelmallas?unidad=" + unidad + "&modalidad=" + modalidad + "&carrera=" + carrera + "&malla=" + malla;
 }
-function exportExcelincritos() {
+function exportExcelinscritosreporte() {
     var periodo = $('#distributivoacademicosearch-paca_id').val();
     var modalidad =  $('#distributivoacademicosearch-mod_id').val();
     window.location.href = $('#txth_base').val() + "/reportes/expexcelinscritos?periodo=" + periodo + "&modalidad=" + modalidad;

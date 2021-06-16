@@ -24,7 +24,7 @@ use app\modules\academico\Module as academico;
         PbGridView::widget([
             'id' => 'Tbg_Registro_inscritos',
             'showExport' => true,
-            'fnExportEXCEL' => "exportExcelinscritos",
+            'fnExportEXCEL' => "exportExcelinscritosreporte",
             'dataProvider' => $dataProvider,
             'columns' => [
             	[

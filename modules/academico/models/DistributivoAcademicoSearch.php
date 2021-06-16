@@ -713,7 +713,7 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
         return $dataProvider;
     }
 
-    public function getListadoMatriculadosporMateriaexcel($arrFiltro = NULL, $onlyData = false) {
+    public function getListadoMatriculadospormateriaexcel($arrFiltro = NULL, $onlyData = false) {
         $con_academico = \Yii::$app->db_academico;
         $con_db = \Yii::$app->db;
 

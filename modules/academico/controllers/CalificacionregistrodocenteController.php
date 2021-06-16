@@ -138,7 +138,7 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 
         $arr_grupos = $grupo_model->getAllGruposByUser($user_usermane);
         
-        $arr_periodoActual = [$mod_periodoActual->getPeriodoAcademicoActual()];
+        $arr_periodoActual = $mod_periodoActual->getPeriodoAcademicoActual();
 
         $arr_ninteres = $mod_unidad->consultarUnidadAcademicasEmpresa(1);
 
@@ -522,19 +522,19 @@ class CalificacionregistrodocenteController extends \app\components\CController 
             if($admin){// Es administrador
                 $pro_id = $mod_profesor->getProfesoresxid($per_id)['Id'];
                 if(isset($pro_id)){ // Y profesor
-                    $materias = $asig_mod->getAsignaturasBy($pro_id, NULL, $periodo_actual['id']);
+                    $materias = $asig_mod->getAsignaturasBy($pro_id, NULL, $periodo_actual[0]['id']);
                 }
                 else{
-                    $materias = $asig_mod->getAsignaturasBy($profesores[0]['pro_id'], NULL, $periodo_actual['id']);
+                    $materias = $asig_mod->getAsignaturasBy($profesores[0]['pro_id'], NULL, $periodo_actual[0]['id']);
                 }
             }
             else{ // No es administrador
                 $pro_id = $mod_profesor->getProfesoresxid($per_id)['Id'];
                 if(!isset($pro_id)){ // Ni profesor
-                    $materias = $asig_mod->getAsignaturasBy($profesores[0]['pro_id'], NULL, $periodo_actual['id']); // En realidad no se debería permitir entrar en la pantalla, pero por si acaso
+                    $materias = $asig_mod->getAsignaturasBy($profesores[0]['pro_id'], NULL, $periodo_actual[0]['id']); // En realidad no se debería permitir entrar en la pantalla, pero por si acaso
                 }
                 else{
-                    $materias = $asig_mod->getAsignaturasBy($pro_id, NULL, $periodo_actual['id']);
+                    $materias = $asig_mod->getAsignaturasBy($pro_id, NULL, $periodo_actual[0]['id']);
                 }
             }
 
@@ -542,7 +542,7 @@ class CalificacionregistrodocenteController extends \app\components\CController 
             
             return $this->render('cargarcalificaciones', [
                 'periodos' => ArrayHelper::map(array_merge($periodos), "paca_id", "paca_nombre"),
-                'periodo_actual' => $periodo_actual,
+                'periodo_actual' => $periodo_actual[0],
                 'materias' => ArrayHelper::map(array_merge($materias), "asi_id", "asi_descripcion"),
                 'parciales' => $this->parciales(),
                 'profesores' => ArrayHelper::map(array_merge($profesores), "per_id", "nombres"),

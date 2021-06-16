@@ -420,6 +420,40 @@ class ReportesController extends CController {
             'dataProvider' => $dataProvider,
         ]); 
     }
+    public function actionExpexcelmatriculados() {
+        ini_set('memory_limit', '256M');
+        $content_type = Utilities::mimeContentType("xls");
+        $nombarch = "Report-" . date("YmdHis") . ".xls";
+        header("Content-Type: $content_type");
+        header("Content-Disposition: attachment;filename=" . $nombarch);
+        header('Cache-Control: max-age=0');
+        $colPosition = array("C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O");
+        $arrHeader = array(
+            Yii::t("formulario", "Estudiante"),
+            Yii::t("formulario", "Cedula"),
+            Yii::t("formulario", "Semestre Academico"),
+            Yii::t("formulario", "Carrera"),
+            Yii::t("formulario", "Unidad Academica"),
+            Yii::t("formulario", "Modalidad"),
+            Yii::t("formulario", "Matricula"),
+        );
+        $searchModel = new PlanificacionSearch();
+        $data = Yii::$app->request->get();
+        //\app\models\Utilities::putMessageLogFile('periodo '. $data['periodo']);
+        //\app\models\Utilities::putMessageLogFile('modalidad '. $data['modalidad']);
+        $arrSearch["periodo"] = $data['periodo'];
+        $arrSearch["modalidad"] = $data['modalidad'];
+        //\app\models\Utilities::putMessageLogFile('datos de base '. $arrData);
+        $arrData = array();
+        if (empty($arrSearch)) {
+            $arrData = $searchModel->getListadoMatriculadosexcel(NULL,true);
+        } else {
+            $arrData = $searchModel->getListadoMatriculadosexcel($arrSearch,true);
+        }
+        $nameReport = academico::t("Academico", "Reporte Matriculados");
+        Utilities::generarReporteXLS($nombarch, $nameReport, $arrHeader, $arrData, $colPosition);
+        exit;
+    }
 
     public function actionMatriculadospormateria() { 
         $searchModel = new DistributivoAcademicoSearch();

@@ -132,6 +132,14 @@ function buscarDatacartera() {
     window.location.href = $('#txth_base').val() + "/reportes/expexcelreportcartera?search=" + search + "&f_inif=" + f_inif + "&f_finf=" + f_finf + '&f_iniv=' + f_iniv + "&f_finv=" + f_finv + "&estadopago=" + estadopago;
 }
 
+function exportExcelmatriculados() {
+    var periodo = $('#planificacionsearch-pla_id').val();
+    var modalidad =  $('#planificacionsearch-mod_id').val();
+    //alert($('#planificacionsearch-pla_id').val());
+    //alert($('#planificacionsearch-mod_id').val());
+    window.location.href = $('#txth_base').val() + "/reportes/expexcelmatriculados?periodo=" + periodo + "&modalidad=" + modalidad;
+}
+
 
 
 

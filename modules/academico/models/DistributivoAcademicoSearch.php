@@ -630,6 +630,7 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
         $sql = "select est.est_id, 
                 ifnull(CONCAT(ifnull(per.per_pri_apellido,''), ' ', ifnull(per.per_seg_apellido,''), ' ', ifnull(per.per_pri_nombre,'')), '') as estudiante,
                 per.per_cedula as cedula, 
+                CONCAT(baca.baca_nombre, ' ', sa.saca_nombre, ' ', sa.saca_anio) as periodo,
                 asi.asi_descripcion as materia,
                 moda.mod_descripcion as modalidad,
                 uaca.uaca_descripcion as unidad,

@@ -8,84 +8,84 @@
         margin: 5px 0px 0px;
     }    
     .tcoll_cen {
-        widtd: 50%;
+        width: 50%;
         float: left;
-        font-size: 9px;
+        font-size: 7px;
         text-align: left;
-        font-family: Arial;
+        /*font-family: Arial;*/
     }
     .tcolr_cen {
-        widtd: 50%;
+        width: 50%;
         float: left;
-        font-size: 9px;
+        font-size: 7px;
         text-align: left;
-        font-family: Arial;
+        /*font-family: Arial;*/
     }
     .tcoll_cen2 {
-        widtd: 40%;
+        width: 40%;
         float: left;
-        font-size: 9px;
+        font-size: 7px;
         text-align: left;
-        font-family: Arial;
+        /*font-family: Arial;*/
     }
     .tcolr_cen2 {
-        widtd: 60%;
+        width: 60%;
         float: left;
-        font-size: 9px;
+        font-size: 7px;
         text-align: left;
-        font-family: Arial;
+        /*font-family: Arial;*/
     }
     .tcoll_ad {
-        widtd: 30%;
+        width: 30%;
         float: left;
-        font-size: 9px;
+        font-size: 7px;
         text-align: left;
-        font-family: Arial;
+        /*font-family: Arial;*/
     }
     .tcolr_ad {
-        widtd: 70%;
+        width: 70%;
         float: left;
-        font-size: 9px;
+        font-size: 7px;
         text-align: left;
-        font-family: Arial;
+        /*font-family: Arial;*/
     }
     .divDetalles{
         float: left;
-        widtd: 100%;
+        width: 100%;
         position: absolute;      
         left: 0;
         margin-top: 10px;
     }
     .divDetalleAd{
         float: left;
-        widtd: 65%;
+        width: 65%;
         position: absolute;      
         left: 0;
     }
     .divDetalleTot{  
-        widtd: 35%;
+        width: 35%;
         position: absolute;      
         right: 0;
     }
     .div_modInfoAd{
         float: left;
-        widtd: 70%;
+        width: 70%;
     }
     .div_modInfoVal{
         float: left;
-        widtd: 100%;       
+        width: 100%;       
     }
     .div_modInfoDet{
         float: left;
-        widtd: 60%;
+        width: 60%;
     }
     .div_modInfoDet2{
         float: left;
-        widtd: 75%;
+        width: 75%;
     }
     .div_modInfoDet1{
         float: left;
-        widtd: 40%;
+        width: 40%;
     }    
     .bordeDivDet{ 
         border: 1px solid #000000;       
@@ -102,6 +102,7 @@
     }
     .blue{
         color:#002060 !important;
+        font-size: 12px !important;
     }
     .tabla {       
         color:#002060 !important;
@@ -114,17 +115,25 @@
         caption-side: bottom;
     }  
     .tcell_cen {
-        widtd: 50%;
+        width: 30%;
         float: left;
         font-size: 14px;
         text-align: left;
-        font-family: Arial;
+        /*font-family: Arial;*/;
     }
     .tr_bor {
         border: 1px solid #002060;
     }
+
+    .table_end {
+        border: 1px solid black;
+    }
+    table, th, td {
+      border: 1px solid black;
+      font-size: 12px !important;
+    }
 </style>
-<div>
+<div class ="table_end">
     <div class="blue">
         <table class="tabla">
             <tr class="tr tr_bor">
@@ -162,26 +171,26 @@
     <br>
     <div class="blue">
         <?php
-        echo '<table class="tabla"><tbody>';
+        echo '<table style="margin:0" class="tabla"><tbody>';
         echo '<tr style="background: #AED6F1;border: 1px solid #002060;"><th>CODIGO</th><th>MATERIA</th><th>HORARIO</th><th>COSTO UNITARIO</th></tr>';
         for ($i = 0; $i < count($dataPlanificacion); $i++) {
             $total_costo = $total_costo + $dataPlanificacion[$i]['Cost'];
-            echo '<tr style="border: 1px solid #002060;"><td>' . $dataPlanificacion[$i]['Code'] . '</td><td>' . $dataPlanificacion[$i]['Subject'] . '</td><td>' . $dataPlanificacion[$i]['Hour'] . ' - '  . $dataPlanificacion[$i]['Block'] .'</td><td>' . $dataPlanificacion[$i]['Cost'] . '</td><td> ';
+            echo '<tr style="border: 1px solid #002060;"><td>' . $dataPlanificacion[$i]['Code'] . '</td><td style="text-align:left">' . $dataPlanificacion[$i]['Subject'] . '</td><td>' . $dataPlanificacion[$i]['Hour'] . ' - '  . $dataPlanificacion[$i]['Block'] .'</td><td>' . $dataPlanificacion[$i]['Cost'] . '</td><td> ';
         }
-        echo '<tr style="border: 1px solid #002060;"> 
+        /*echo '<tr style="border: 1px solid #002060;"> 
                 <td> </td>
                 <td> ASOCIACION DE ESTUDIANTES</td>
                 <td> </td>
                 <td>' . $ron_valor_aso_estudiante . '</td> 
-             </tr>';
+             </tr>';*/
          echo '<tr style="border: 1px solid #002060;"> 
                 <td> </td>
-                <td> VARIOS ADMINISTRATIVOS</td>
+                <td> GASTOS ADMINISTRATIVOS</td>
                 <td> </td>
                 <td>' . $ron_valor_gastos_adm . '</td> 
              </tr>';
-        
-        echo "<tr><td colspan='3'></td><td><b>TOTAL US$ " . $total_costo . "</b></td></tr>";
+        $total = $total_costo + $ron_valor_aso_estudiante + $ron_valor_gastos_adm;
+        echo "<tr><td colspan='3'></td><td><b>TOTAL US$ " . number_format($total,2 ) . "</b></td></tr>";
         if (empty(count($dataPlanificacion))) {
             echo '<tr style="border: 1px solid #002060;"><td><br></td><td></td><td></td><td></td><td></td></tr>';
         }
@@ -203,7 +212,7 @@
             echo '<tr style="border: 1px solid #002060;"><td>' . $detallePagos[$i]['NO'] . '</td><td>' . $detallePagos[$i]['pago'] . '</td><td>' . $detallePagos[$i]['fecha_vencimiento'] . '</td><td>' . $detallePagos[$i]['porcentaje'] . '</td><td> ' . $detallePagos[$i]['valor_cuota'] . ' </td></tr>';
         }
 
-        echo "<tr><td colspan='4'> </td><td><b>TOTAL US$ " . $total_valor_cuota . "</b></td></tr>";
+        echo "<tr><td colspan='4'> </td><td><b>TOTAL US$ " . number_format($detallePagos[0]['valor_factura'],2 ) . "</b></td></tr>";
 
         if (empty(count($detallePagos))) {
             echo '<tr style="border: 1px solid #002060;"><td><br></td><td></td><td></td><td></td><td></td></tr>';
@@ -212,10 +221,10 @@
         ?><br><br>
     </div>
 
-    <div class="blue">
-        <p><b>Cláusulas:</b></p> 
+    <div class="blue" style="text-justify: auto">
+        <p><b>Cláusulas:</b></p><br> 
         <p>    
-            <ul style= "list-style-type: disc;">
+            <ul style= "list-style-type: disc; padding-left: 5%;">
                 <li>Esta pre-inscripción está sujeta de acuerdo a la disponibilidad de cupos en las materias seleccionadas, en caso de solicitar activación deberá comunicarse con la secretaria de su Facultad.</li>
                 <li>Los valores correspondientes a cada mensualidad deberán cancelarse en las fechas establecidas.</li>
                 <li>Todos los pagos deben realizarse directamente en las cuentas institucionales indicadas por la UTEG</li>
@@ -223,14 +232,14 @@
                 <li>El estudiante acepta acoger las disposiciones académicas y reglamentarias de la Universidad Tecnológica Empresarial de Guayaquil.</li>
                 <li>La confirmación mediante correo electrónico por parte del Estudiante constituye la aceptación de la hoja de inscripción.</li>
             </ul>
-        </p>    
+        </p><br>    
     </div>
     <hr>
     <div class="blue">
-        <p style='text-align:center'><b>Compromiso de Pago - Crédito Universitario Directo</b></p>
+        <p style='text-align:center'><b><i>Compromiso de Pago - Crédito Universitario Directo</i></b></p>
             <p>Yo, alumno(a) <?= $data_student['pes_nombres'] ?> con C.I. No. <?= $data_student['pes_dni'] ?>, perteneciente a la facultad de MODALIDAD <?= $data_student['mod_nombre'] ?>, carrera de <?= $data_student['pes_carrera'] ?>, me comprometo a cancelar
             puntualmente las cuotas señaladas anteriormente, hasta el día dos de cada mes, durante el periodo de <?= $data_student['pla_periodo_academico'] ?>. Por el incumplimiento de lo antes señalado, me sujeto a cumplir las disposiciones que establece la universidad.
-        </p>
+            </p>
     </div>
     <br><br>
     <div class="blue">
@@ -238,3 +247,4 @@
         <p style='text-align:center'>              Firma Alumno (a)    </p>
     </div>  
 </div>
+

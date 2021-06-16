@@ -61,16 +61,18 @@ $(document).ready(function() {
         searchModulesList('boxgrid', 'grid_listadoregistrados_list');
     });
 
+    /*
     $('#grid_registro_list > table > tbody > tr > td > input').change(function() {
+        //alert("hola mundo");
         var subtotal = 0;
-        var total = 0;
-        var asoc = $('#frm_asc_est').val();
-        var mat = $('#frm_mat_cos').val();
-        var gastos = $('#frm_gas_adm').val();
+        var total    = 0;
+        var asoc     = $('#frm_asc_est').val();
+        var mat      = $('#frm_mat_cos').val();
+        var gastos   = $('#frm_gas_adm').val();
         $('#grid_registro_list > table > tbody > tr > td > input').each(function() {
             if ($(this).is(':checked')) {
                 var credits = $(this).parent().prev().text();
-                var cat = $('#frm_cat_price').val();
+                var cat     = $('#frm_cat_price').val();
                 var costMat = cat * credits;
                 subtotal += costMat;
             }
@@ -79,6 +81,45 @@ $(document).ready(function() {
         //total = subtotal + parseFloat(asoc) + parseFloat(mat) + parseFloat(gastos);
         total = subtotal + parseFloat(asoc) + parseFloat(gastos);
         $('#costTotal').text('$' + (total.toFixed(2)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+    });*/
+    $('#grid_registro_list > table > tbody > tr > td > input').change(function() {
+        //alert("hola mundo");
+        var subtotal = 0;
+        var total    = 0;
+    var cont =0;
+    var contMax=6;
+        $('#grid_registro_list > table > tbody > tr > td > input').each(function() {
+            if ($(this).is(':checked')) {  
+                //console.log($(this).parent().prev().prev().text());
+                $txt_cost_materia = $(this).parent().prev().prev().text();
+                subtotal += parseFloat($txt_cost_materia.replace("$",""));
+                cont+=1;
+            }
+            //$('#costMat').text('$' + (subtotal.toFixed(2)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+        });
+
+
+        var costoadm  = $('#costoadm').val();
+<<<<<<< HEAD
+        if(cont>4 || cont<=contMax) {
+            costoadm =costoadm *1 ; 
+        }else if (cont>){
+            costoadm =costoadm/2;
+        }else{
+            costoadm=0;
+        }
+
+=======
+        if(costoadm == 0)
+            costoadm = 0;
+>>>>>>> ab5bf79ea194801634cc491b001a0aa109e7991c
+        //total = subtotal + parseFloat(asoc) + parseFloat(mat) + parseFloat(gastos);
+        total = subtotal + parseFloat(costoadm);
+
+        $('#costo').text("$"+subtotal.toFixed(2));
+        $('#costTotal').text("$"+total.toFixed(2));
+        //$('#costo').text('$' + (subtotal.toFixed(2)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+        //$('#costTotal').text('$' + (total.toFixed(2)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
     });
 
     $("#cmb_formapago").on('change', function(){   
@@ -110,6 +151,8 @@ $(document).ready(function() {
     $('#btn_registro_detalle').click(function () {
         continuarRegistro();
     });
+
+    $('.chequeado').prop("checked",true);
 });
 
 function savemethod() {
@@ -210,22 +253,18 @@ function registerSubject() {
     var arrParams = new Object();
     var link = $('#txth_base').val() + "/academico/matriculacion/registro";
     var materias = new Array();
-    var codes = new Array();
-    var credits = new Array();
-    var costs = new Array();
+    var codes    = new Array();
+    var bloque   = new Array();
+    var hora     = new Array();
+    var credits  = new Array();
+    var costs    = new Array();
     var contador = 0;
 
     $('#grid_registro_list input[type=checkbox]').each(function() {
-        console.log(materias);
-        if (this.checked) {
-            materias[contador] = $(this).val();
-            codes[contador] = $(this).attr('name');
-            credits[contador] = $(this).parent().prev().prev().prev().text();
-            costs[contador] = $(this).parent().prev().prev().text();
+        if (this.checked ) {
             contador += 1;
         }
     });
-
     var message = {
         "wtmessage": objLang.You_must_choose_at_least_two,
         "title": objLang.Error
@@ -237,6 +276,21 @@ function registerSubject() {
         return;
     }
 
+    var contador = 0;
+    $('#grid_registro_list input[type=checkbox]').each(function() {
+        //console.log("-----------------");
+        //console.log(this);
+        if (this.checked &&  $(this).attr('disabled') != "disabled" ) {
+            materias[contador] = $(this).val();
+            codes[contador]    = $(this).attr('name');
+            bloque[contador]   = $(this).parent().prev().prev().prev().prev().prev().text();
+            hora[contador]     = $(this).parent().prev().prev().prev().prev().find('span').text();
+            credits[contador]  = $(this).parent().prev().prev().prev().text();
+            costs[contador]    = $(this).parent().prev().prev().text();
+            contador += 1;
+        }
+    });   
+
     arrParams.pes_id = $('#frm_pes_id').val();
     arrParams.ron_id = $('#frm_ron_id').val();
     arrParams.per_id = $('#frm_per_id').val();
@@ -245,6 +299,8 @@ function registerSubject() {
     arrParams.carrera = $('#frm_carrera').val();
     arrParams.pdf = 1;
     arrParams.codes = codes;
+    arrParams.bloque = bloque;
+    arrParams.hora = hora;
     arrParams.credits = credits;
     arrParams.costs = costs;
     arrParams.materias = materias;
@@ -253,11 +309,10 @@ function registerSubject() {
 
     requestHttpAjax(link, arrParams, function(response) {
         showAlert(response.status, response.label, response.message);
-        /*
         setTimeout(function() {
-            parent.window.location.href = $('#txth_base').val() + "/academico/matriculacion/index";
+            location.reload();
+            //parent.window.location.href = $('#txth_base').val() + "/academico/matriculacion/index";
         }, 2000);
-        */
 
     }, true);
 }

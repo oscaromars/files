@@ -112,22 +112,21 @@ $leyenda = '<div class="col-md-12 col-sm-12 col-xs-12 col-lg-12">
                                                            
     </div>
 
+<a href="javascript:" class="btn btn-success pull-right" onclick="registerSubject()" style="margin: 0px 5px;"><?= Academico::t("matriculacion", "Register More Subjects") ?></a>
+
 <?=
     $this->render('index-grid', ['planificacion' => $planificacion,]);
 ?>
 
-<div class="col-md-12 col-sm-12 col-xs-12 col-lg-12">
-    <div class="form-group">          
-        <div class="">
-            <a href="javascript:" class="btn btn-success pull-right" onclick="registerSubject()" style="margin: 0px 5px;"><?= Academico::t("matriculacion", "Register Subjects") ?></a>
-        </div>    
-    </div>
-</div>
-<input type="hidden" id="frm_notscholar" value="<?= $notscholar ?>">
-<input type="hidden" id="frm_per_id" value="<?= $per_id ?>">
-<input type="hidden" id="frm_ron_id" value="<?= $ron_id ?>">
+
 <input type="hidden" id="frm_pes_id" value="<?= $pes_id ?>">
+<input type="hidden" id="frm_per_id" value="<?= $per_id ?>">
 <input type="hidden" id="frm_num_min" value="<?= $num_min ?>">
 <input type="hidden" id="frm_num_max" value="<?= $num_max ?>">
 <input type="hidden" id="frm_modalidad" value="<?= $data_student['mod_id'] ?>">
 <input type="hidden" id="frm_carrera" value="<?= $data_student['eaca_id'] ?>">
+<input type="hidden" id="frm_categoria" value="<?= $data_student['est_categoria'] ?>">
+<input type="hidden" id="frm_cat_price" value="<?= $CatPrecio ?>">
+<input type="hidden" id="frm_asc_est" value="<?= isset($dataMat['ASOEST'])?(number_format($dataMat['ASOEST'], 2, '.', ',')):'0.00' ?>">
+<input type="hidden" id="frm_mat_cos" value="<?= isset($dataMat['MAT-GRAD'])?(number_format($dataMat['MAT-GRAD'], 2, '.', ',')):'0.00' ?>">
+<input type="hidden" id="frm_gas_adm" value="<?= isset($dataMat['VARIOS'])?(number_format($dataMat['VARIOS'], 2, '.', ',')):'0.00' ?>">

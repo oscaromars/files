@@ -37,14 +37,20 @@ class DistributivoestudianteController extends \app\components\CController {
         $estuden = $distributivo_model->buscarEstudiantesMatriculados($distributivo_model->asi_id, $distributivo_model->mpp->mpp_num_paralelo);
         for ($i = 0; $i < sizeof($estuden); $i++) {
             $model = new DistributivoAcademicoEstudiante();
+            $dae_id=$distributivo_model->buscarEstudiantesAsignados($distributivo_model->asi_id,$estuden[$i]['est_id'] ,$distributivo_model->mpp->mpp_num_paralelo,$id);
             $model->daca_id = $id;
-
+            if($dae_id){
+            $model->daes_id = $dae_id;
+            $model->daes_estado = 1;
+            }else{
+                   $model->daes_estado = 0; 
+            }
             $model->est_id = $estuden[$i]['est_id'];
-            $model->daes_estado = 0;
+          
             $data[] = $model;
         }
 
-        $estuden = $distributivo_model->buscarEstudiantesAsignados($distributivo_model->asi_id, $distributivo_model->mpp->mpp_num_paralelo);
+        /*$estuden = $distributivo_model->buscarEstudiantesAsignados($distributivo_model->asi_id, $distributivo_model->mpp->mpp_num_paralelo,$id);
         for ($i = 0; $i < sizeof($estuden); $i++) {
             $model = new DistributivoAcademicoEstudiante();
             $model->daca_id = $id;
@@ -52,7 +58,7 @@ class DistributivoestudianteController extends \app\components\CController {
             $model->est_id = $estuden[$i]['est_id'];
             $model->daes_estado = 1;
             $data[] = $model;
-        }
+        }*/
 
         // print_r($data);
         $dataProvider = new ArrayDataProvider([

@@ -12,9 +12,16 @@ academico::registerTranslations();
 
 $modelCancelItem = array();
 
+//print_r($planificacion);die();
+
+
+//print_r($data_student['mod_id']);die();
+
+//print_r($planificacion);
+
 $modelCancelRon = CancelacionRegistroOnline::findOne(['ron_id' => $ron_id, 'cron_estado' => '1', 'cron_estado_logico' => '1',]);
 if($modelCancelRon){
-    $cancelStatus = $modelCancelRon->cron_estado_cancelacion;
+    //$cancelStatus = $modelCancelRon->cron_estado_cancelacion;
     $modelCancelItem = CancelacionRegistroOnlineItem::find()
     ->select(['r.roi_materia_cod as code'])
     ->join('INNER JOIN', 'registro_online_item as r', 'r.roi_id = cancelacion_registro_online_item.roi_id')
@@ -60,19 +67,63 @@ if($modelCancelRon){
                 'format' => 'html',
                 
                 'value' => function ($model) {
-                    if ($model["Hour"] == 'H1')
-                        return Html::a('<span>' . $model['Hour'] . '</span>', Url::to(['#']), ["data-toggle" => "tooltip", "title" => 'L-M-W :: 19:00-20:00']);
-                    else if ($model["Hour"] == 'H2')
-                        return Html::a('<span>' . $model['Hour'] . '</span>', Url::to(['#']), ["data-toggle" => "tooltip", "title" => 'L-M-W :: 20:00-21:00']);
-                        
-                    else if ($model["Hour"] == 'H3')
-                        return Html::a('<span>' . $model['Hour'] . '</span>', Url::to(['#']), ["data-toggle" => "tooltip", "title" => 'L-M-W :: 21:00-22:00']);
-                    else if ($model["Hour"] == 'H4')
-                        return Html::a('<span>' . $model['Hour'] . '</span>', Url::to(['#']), ["data-toggle" => "tooltip", "title" => 'L-M-W :: 19:00-20:30']);
-                    else if ($model["Hour"] == 'H5')
-                        return Html::a('<span>' . $model['Hour'] . '</span>', Url::to(['#']), ["data-toggle" => "tooltip", "title" => 'L-M-W :: 20:00-21:30']);
-                    else
-                        return Html::a('<span>' . $model['Hour']. '</span>', Url::to(['#']), ["data-toggle" => "tooltip", "title" => $model['Hour']]);
+
+                    if ($model['modalidad']=='1'){
+                        if ($model["Hour"] == 'H1')
+                            return '<span title="L-M-W :: 19:00-20:00">'.$model['Hour'].'</span>';
+                        else if ($model["Hour"] == 'H2')
+                            return '<span title="L-M-W :: 20:00-21:00">'.$model['Hour'].'</span>';
+                        else if ($model["Hour"] == 'H3')
+                            return '<span title="L-M-W :: 21:00-22:00">'.$model['Hour'].'</span>';
+                        else if ($model["Hour"] == 'H4')
+                            return '<span title="L-M-W :: 19:00-20:30">'.$model['Hour'].'</span>';
+                        else if ($model["Hour"] == 'H5')
+                            return '<span title="L-M-W :: 20:00-21:30">'.$model['Hour'].'</span>';
+                        else
+                            return '<span title="'.$model['Hour'].'">'.$model['Hour'].'</span>';
+                    } else if ($model['modalidad']=='2'){
+                        if ($model["Hour"] == 'H1')
+                            return '<span title="L-M-J :: 18:20-20:20">'.$model['Hour'].'</span>';
+                        else if ($model["Hour"] == 'H2')
+                            return '<span title="L-M-W :: 20:20-22:20">'.$model['Hour'].'</span>';
+                        else if ($model["Hour"] == 'H3')
+                            return '<span title="Mie - Vie :: 18:20-21:20">'.$model['Hour'].'</span>';
+                        else if ($model["Hour"] == 'H4')
+                            return '<span title="Vier :: 18:20-21:20">'.$model['Hour'].'</span>';
+                        else if ($model["Hour"] == 'H5')
+                            return '<span title="Sáb :: 07:15-09:15">'.$model['Hour'].'</span>';
+                        else
+                            return '<span title="">'.$model['Hour'].'</span>';
+                    }
+                    else if ($model['modalidad']=='3'){
+                        if ($model["Hour"] == 'H1')
+                            return '<span title="Sáb :: 07:15-10:15">'.$model['Hour'].'</span>';
+                        else if ($model["Hour"] == 'H2')
+                            return '<span title="Sáb :: 10:30-13:30">'.$model['Hour'].'</span>';
+                        else if ($model["Hour"] == 'H3')
+                            return '<span title="Sáb :: 14:30-17:30">'.$model['Hour'].'</span>';
+                        else if ($model["Hour"] == 'H4')
+                            return '<span title="">'.$model['Hour'].'</span>';
+                        else if ($model["Hour"] == 'H5')
+                            return '<span title="">'.$model['Hour'].'</span>';
+                        else
+                            return '<span title="">'.$model['Hour'].'</span>';
+                    }
+                    else if ($model['modalidad']=='4'){
+                        if ($model["Hour"] == 'H1')
+                            return '<span title="Sáb :: 08:15-10:15">'.$model['Hour'].'</span>';
+                        else if ($model["Hour"] == 'H2')
+                            return '<span title="Sáb :: 10:30-12:30">'.$model['Hour'].'</span>';
+                        else if ($model["Hour"] == 'H3')
+                            return '<span title="Sáb :: 13:30-15:30">'.$model['Hour'].'</span>';
+                        else if ($model["Hour"] == 'H4')
+                            return '<span title="">'.$model['Hour'].'</span>';
+                        else if ($model["Hour"] == 'H5')
+                            return '<span title="">'.$model['Hour'].'</span>';
+                        else
+                            return '<span title="">'.$model['Hour'].'</span>';
+                    }
+
                 },
 
             ],
@@ -96,7 +147,7 @@ if($modelCancelRon){
                 'contentOptions' => ['class' => 'text-center'],
                 'headerOptions' => ['class' => 'text-center'],
                 'value' => function($data){
-                    return '$' . number_format($data['Cost']*$data['Credit'],2 );
+                    return '$' . number_format( (empty($data['Cost'])?0:$data['Cost']) * (empty($data['Credit'])?0:$data['Credit']),2 );
                 },
             ],
             [
@@ -128,9 +179,18 @@ if($modelCancelRon){
                 'headerOptions' => ['width' => '60'],
                 'template' => '{select}',
                 'buttons' => [
+                    'select' => function ($url, $model) {
+                            if($model['Roi_id'] > 0)
+                                return Html::checkbox($model['Code'], false, ["value" => $model['Subject'], "disabled" => true, "class" => "chequeado" ]);
+                            else 
+                                return Html::checkbox($model['Code'], false, ["value" => $model['Subject'], "class" => "byregister"]);
+                        },
+                    /*
                     'select' => function ($url, $planificacion) use ($registredSuject, $cancelStatus, $modelCancelItem) {
                         if(isset($registredSuject)){
                             if(array_search($planificacion['Code'], $registredSuject) === FALSE){
+                                echo($cancelStatus);
+                                echo("-----------------");
                                 if($cancelStatus == '1'){
                                     return Html::checkbox($planificacion['Code'], false, ["value" => $planificacion['Subject'], "disabled" => true,]);
                                 }
@@ -158,7 +218,8 @@ if($modelCancelRon){
                             return Html::checkbox($planificacion['Code'], true, ["value" => $planificacion['Subject'], "disabled" => true,]);
                         }
                         /* return Html::checkbox("", false, ["value" => $planificacion['Subject'], "onchange" => "handleChange(this)"]); */
-                    },                    
+                    //},     
+                 
                 ],
             ],
          

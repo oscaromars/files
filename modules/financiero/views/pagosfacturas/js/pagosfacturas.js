@@ -246,11 +246,17 @@ function guardarPagofactura() {
                     arrParams.token = result.token.id;
                     if (!validateForm()) {
                         requestHttpAjax(link, arrParams, function (response) {
-                            showAlert(response.status, response.label, response.message);
+                            response.message.closeaction = cancelar;
 
+                            var cancelar = [{ callback: '', //funcion que debe ejecutar el boton
+                              //paramCallback : ruta, //variable a ser llamada por la funcion anterior ej gotoPage(ruta)
+                            }];
+                            showAlert(response.status, response.label, response.message);
+                            /*
                             setTimeout(function () {
                                 parent.window.location.href = $('#txth_base').val() + "/financiero/pagosfacturas/viewsaldo";
                             }, 2000);
+                            */
                         }, true);
                     }//if
                 }//else

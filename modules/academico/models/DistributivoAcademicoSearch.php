@@ -630,7 +630,7 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
         $sql = "select est.est_id, 
                 ifnull(CONCAT(ifnull(per.per_pri_apellido,''), ' ', ifnull(per.per_seg_apellido,''), ' ', ifnull(per.per_pri_nombre,'')), '') as estudiante,
                 per.per_cedula as cedula, 
-                CONCAT(baca.baca_nombre, ' ', sa.saca_nombre, ' ', sa.saca_anio) as periodo,
+                CONCAT(baca.baca_nombre, ' ', saca.saca_nombre, ' ', saca.saca_anio) as periodo,
                 asi.asi_descripcion as materia,
                 moda.mod_descripcion as modalidad,
                 uaca.uaca_descripcion as unidad,
@@ -648,6 +648,9 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
                 inner join db_academico.distributivo_academico as daca on daca.daca_id = dae.daca_id and daca.asi_id = asi.asi_id
                 Inner Join db_academico.modalidad moda on moda.mod_id = daca.mod_id 
                 Inner Join db_academico.unidad_academica uaca on uaca.uaca_id = daca.uaca_id
+                Inner Join db_academico.periodo_academico paca on paca.paca_id = daca.paca_id 
+                Inner Join db_academico.semestre_academico saca on saca.saca_id = paca.saca_id
+                Inner Join db_academico.bloque_academico baca on baca.baca_id = paca.baca_id
                  where per.per_id = est.per_id and pm.rpm_estado_aprobacion = 1
                     and daca.daca_estado = 1 and daca.daca_estado_logico = 1
                     and ron.ron_estado = 1 and ron.ron_estado_logico = 1

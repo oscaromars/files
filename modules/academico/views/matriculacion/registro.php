@@ -11,7 +11,9 @@ Academico::registerTranslations();
   //print_r($planificacion[0]['CostSubject']);
 
 //print_r($planificacion[5]['Hour']);
-//print_r($gastoAdm);
+
+
+
 //print_r($gastoAdm);
 //print_r($costo);
 
@@ -38,16 +40,6 @@ echo "<b style='color:green'>EL PERIODO DE INSCRIPCION ESTA CERRADO</b>";
 
 }
 
-/*$bloque="B1";
-if($howmuchSubject <= '1'){
-    $gasto=$gastoAdm;//$costo['gastos'];
-}else if ($howmuchSubject > '1') {
-    $gasto=0;
-}else if ($howmuchSubject <= '1' and $bloque==$planificacion['Block']) {
-    $gasto=$costo['gastos']/2;
-}else if ($howmuchSubject <= '1' and $bloque!=$planificacion['Block']) {
-    $gasto=$costo['gastos']/2;
-}*/
 
 
 $total=$costo['costo']+$gastoAdm+$costo['asociacion'];
@@ -143,6 +135,7 @@ $total=$costo['costo']+$gastoAdm+$costo['asociacion'];
 <input type="hidden" id="frm_ron_id" value="<?= $ron_id ?>">
 <input type="hidden" id="frm_pes_id" value="<?= $pes_id ?>">
 <input type="hidden" id="frm_per_id" value="<?= $per_id ?>">
+<input type="hidden" id="frm_gastos" value="<?= $gastos ?>">
 <input type="hidden" id="frm_min_cancel" value="<?= $min_cancel ?>">
 <input type="hidden" id="frm_modalidad" value="<?= $data_student['mod_id'] ?>">
 <input type="hidden" id="frm_carrera" value="<?= $data_student['eaca_id'] ?>">
@@ -164,15 +157,15 @@ $total=$costo['costo']+$gastoAdm+$costo['asociacion'];
 <?php  
         if ($data_student['mod_id']==1){
             
-                $a="Lun-Mar-Mie :: 19:00-20:00";
-                $b="Lun-Mar-Mie :: 20:00-21:00";
-                $c="Lun-Mar-Mie :: 21:00-22:00";
-                $d="Lun-Mar-Mie :: 19:00-20:30";
-                $e="Lun-Mar-Mie :: 20:00-21:30";
+                $a="L-M-W :: 19:00-20:00";
+                $b="L-M-W :: 20:00-21:00";
+                $c="L-M-W :: 21:00-22:00";
+                $d="L-M-W :: 19:00-20:30";
+                $e="L-M-W :: 20:00-21:30";
                 $f="N/A";
         } else if ($data_student['mod_id']==2){
-                $a="Lun-Mar-Jue :: 18:20-20:20";
-                $b="Lun-Mar-Mie :: 20:20-22:20";
+                $a="L-M-J :: 18:20-20:20";
+                $b="L-M-W :: 20:20-22:20";
                 $c="Mie - Vie :: 18:20-21:20";
                 $d="Vier :: 18:20-21:20";
                 $e="Sáb :: 07:15-09:15";
@@ -265,7 +258,7 @@ $total=$costo['costo']+$gastoAdm+$costo['asociacion'];
                     <th><?= academico::t('matriculacion','Administrative Expenses') ?></th>
                     <td id="costAdmin">$<?= isset($gastoAdm)?(number_format($gastoAdm, 2, '.', ',')):'0.00' ?></td>
                 </tr>
-                <tr style="display: none;">
+                <tr style='display: none;'>
                     <th><?= academico::t('matriculacion','Students Association') ?></th>
                     <td id="costStud">$<?= isset($aso_est)?(number_format($aso_est, 2, '.', ',')):'0.00' ?></td>
                 </tr>
@@ -281,11 +274,12 @@ $total=$costo['costo']+$gastoAdm+$costo['asociacion'];
                 
             </tbody>
         </table>
-         <a href="<?= Url::to(['/academico/matriculacion/registrodetalle', 'per_id' => $per_id ]) ?>" class="btn btn-primary pull-right" style="margin: 0px 5px;"><?= Academico::t("matriculacion", "Continuar") ?></a>
          
-    <a href="javascript:" class="btn btn-success pull-right" onclick="registerSubject()" style="margin: 0px 5px;"><?= Academico::t("matriculacion", "Register More Subjects") ?></a>
-            
-
+         
+    <a href="javascript:" class="btn btn-success pull-right" onclick="registerSubject()" style="margin: 0px 5px;"><?= Academico::t("matriculacion", "Register Subjects") ?></a>
+            <?php if ($howmuchSubject > '1'): ?>
+        <a href="<?= Url::to(['/academico/matriculacion/registrodetalle', 'per_id' => $per_id ]) ?>" class="btn btn-primary pull-right" style="margin: 0px 5px;"><?= Academico::t("matriculacion", "Continuar") ?></a>
+        <?php endif; ?>
             <?php if($cancelStatus == '0'): ?>
             <?php endif; ?>
     

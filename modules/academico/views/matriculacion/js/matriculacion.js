@@ -83,41 +83,66 @@ $(document).ready(function() {
         $('#costTotal').text('$' + (total.toFixed(2)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
     });*/
     $('#grid_registro_list > table > tbody > tr > td > input').change(function() {
-        //alert("hola mundo");
+        //alert(contador);
         var subtotal = 0;
         var total    = 0;
-    var cont =0;
-    var contMax=6;
+        var contador=0;
+        var contadorb1=0;
+        var contadorb2=0;
+        var gastos=0.00;
+        var bloque=['B1','B2'];
+        
         $('#grid_registro_list > table > tbody > tr > td > input').each(function() {
             if ($(this).is(':checked')) {  
-                //console.log($(this).parent().prev().prev().text());
+                //console.log($(this).parent().prev().prev().prev().prev().prev().text());
                 $txt_cost_materia = $(this).parent().prev().prev().text();
                 subtotal += parseFloat($txt_cost_materia.replace("$",""));
-                cont+=1;
+                $txt_bloque = $(this).parent().prev().prev().prev().prev().prev().text();
+                $mitad=1;
+                if ($txt_bloque==bloque[0]){
+                    //$mitad=2;
+                    contadorb1+=1;
+
+                } else {
+                    //$mitad = 1;
+                    contadorb2+=1; // Así que se divide a la mitad
+                } 
+                /*console.log(contadorb1);
+                console.log(contadorb2);
+                console.log("==================");*/
+            }else {
+                contador -=1;
+                gastos=(contador>0)?gastos:0;
+                /*console.log(contadorb1);
+                console.log(contadorb2);
+                console.log("==================    p");*/
+
             }
+
             //$('#costMat').text('$' + (subtotal.toFixed(2)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
         });
 
-
-        var costoadm  = $('#costoadm').val();
-<<<<<<< HEAD
-        if(cont>4 || cont<=contMax) {
-            costoadm =costoadm *1 ; 
-        }else if (cont>){
-            costoadm =costoadm/2;
+        var costoadm  = parseFloat($('#costoadm').val());
+        if(contadorb1>0&& contadorb2>0){
+            gastos=costoadm;
+            
         }else{
-            costoadm=0;
+            gastos=costoadm/2;
         }
 
-=======
-        if(costoadm == 0)
-            costoadm = 0;
->>>>>>> ab5bf79ea194801634cc491b001a0aa109e7991c
-        //total = subtotal + parseFloat(asoc) + parseFloat(mat) + parseFloat(gastos);
-        total = subtotal + parseFloat(costoadm);
+            if(contadorb1==0&&contadorb2==0){
+                gastos=0;    
+            }
+        /*console.log(gastos);
+        console.log(subtotal);
+        console.log(total);*/
 
-        $('#costo').text("$"+subtotal.toFixed(2));
-        $('#costTotal').text("$"+total.toFixed(2));
+        //total = subtotal + parseFloat(asoc) + parseFloat(mat) + parseFloat(gastos);
+        //total = subtotal + gastos;
+        total = subtotal + parseFloat(gastos);
+        $('#costo').text("$" +subtotal.toFixed(2));
+        $('#costAdmin').text("$"+gastos.toFixed(2));
+        $('#costTotal').text("$" +total.toFixed(2));
         //$('#costo').text('$' + (subtotal.toFixed(2)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
         //$('#costTotal').text('$' + (total.toFixed(2)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
     });

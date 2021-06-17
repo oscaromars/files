@@ -8,9 +8,16 @@ use app\models\ObjetoModulo;
 ?>
 
 <!-- Left side column. contains the logo and sidebar -->
-<aside class="main-sidebar" style="position:fixed">
+<!--style type="text/css">
+    .sidebar:hover {
+      overflow-y: scroll;
+    }
+</style-->
+<!--aside class="main-sidebar" style="position:fixed; top: 0;bottom: 0; left:0"-->
+<aside class="main-sidebar" >
     <!-- sidebar: style can be found in sidebar.less -->
-    <section class="sidebar">
+    <!--section class="sidebar" style="height: 100% !important; overflow: auto;"-->
+    <section class="sidebar" >
         <!-- Sidebar Menu -->
         <ul class="sidebar-menu">
 

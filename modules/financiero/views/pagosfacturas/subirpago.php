@@ -76,9 +76,6 @@ academico::registerTranslations();
 </style>
 <form class="form-horizontal" enctype="multipart/form-data" id="formsolicitud">   
     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-        <p class="text-danger"> <?= Yii::t("formulario", "Fields with * are required") ?> </p>
-    </div>
-    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
         <div class="form-row">
             <h4><span id="lbl_general"><?= Pagos::t("Pagos", "Student Data") ?></span></h4> 
         </div>
@@ -132,6 +129,9 @@ academico::registerTranslations();
         <div class="form-row">
             <h4><span id="lbl_general"><?= Pagos::t("Pagos", "Payment Data") ?></span></h4> 
         </div>
+    </div>
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <p class="text-danger"> <?= Yii::t("formulario", "Fields with * are required") ?> </p>
     </div>
     <div class='col-xs-12 col-sm-12 col-md-6 col-lg-6'>
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
@@ -340,6 +340,9 @@ academico::registerTranslations();
             <h4><span id="lbl_general"><?= Pagos::t("Pagos", "Pending Invoices Data") ?></span></h4> 
         </div>
     </div>
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <p class="text-danger"> <?= Yii::t("formulario", "Select the amounts to pay") ?> </p>
+    </div>
     <div class='col-md-12 col-sm-12 col-xs-12 col-lg-12'>        
         <?=
         PbGridView::widget([
@@ -348,11 +351,13 @@ academico::registerTranslations();
             'columns' => [
                 [
                     'attribute' => 'Cuota_pendiente',
+                    'contentOptions' => ['style' => 'text-align: center;'],
                     'header' => Pagos::t("Pagos", "Pending Fee"),
                     'value' => 'cuota',
                 ],
                 [
                     'attribute' => 'Factura',
+                    'contentOptions' => ['style' => 'text-align: center;'],
                     'header' => Pagos::t("Pagos", "Bill"),
                     'value' => 'NUM_NOF',
                 ],
@@ -371,6 +376,7 @@ academico::registerTranslations();
                 ],*/
                 [
                     'attribute' => 'Fecha_factura',
+                    'contentOptions' => ['style' => 'text-align: center;'],
                     'header' => Pagos::t("Pagos", "Date Bill"),
                     'value' => 'F_SUS_D',
                 ],
@@ -382,21 +388,25 @@ academico::registerTranslations();
                 
                 [
                     'attribute' => 'valor_cuota',
+                    'contentOptions' => ['style' => 'text-align: center;'],
                     'header' => Pagos::t("Pagos", "Quota value"),
                     'value' => 'ccar_valor_cuota',
                 ],
                 [
                     'attribute' => 'vencimiento',
+                    'contentOptions' => ['style' => 'text-align: center;'],
                     'header' => Pagos::t("Pagos", "Expiration date"),
                     'value' => 'F_VEN_D',
                 ],
                 [
                     'attribute' => 'Abono',
+                    'contentOptions' => ['style' => 'text-align: center;'],
                     'header' => Pagos::t("Pagos", "Abono"),
                     'value' => 'abono',
                 ],
                 [
                     'attribute' => 'Saldo',
+                    'contentOptions' => ['style' => 'text-align: center;'],
                     'header' => Pagos::t("Pagos", "Saldo"),
                     'value' => 'saldo',
                 ],
@@ -409,7 +419,7 @@ academico::registerTranslations();
                 */
                 [
                     'class' => 'yii\grid\ActionColumn',
-                    'header' => Academico::t("matriculacion", "Select"),
+                    'header' => '<i class="fa fa-arrow-circle-o-down" aria-hidden="true"></i>',//Academico::t("matriculacion", "Select"),
                     'contentOptions' => ['style' => 'text-align: center;'],
                     'headerOptions' => ['width' => '60'],
                     'template' => '{select}',
@@ -455,5 +465,9 @@ academico::registerTranslations();
 
     #TbgPagopendiente > .summary{
         display: none;
+    }
+
+    .sorting{
+        text-align: center;
     }
 </style>

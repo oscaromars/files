@@ -62,9 +62,9 @@ $empresas = Empresa::getListaEmpresasxUserID(Yii::$app->session->get("PB_iduser"
     <a href="<?= Yii::$app->params['web'] ?>" class="logo" >
         <!-- mini logo for sidebar mini 50x50 pixels -->
 
-        <span class="logo-mini">
+        <span class="logo-mini" style="height: 100%;">
             <!--b><?= Yii::$app->params['alias'] ?></b-->
-            <img src="<?= Html::encode($directoryAsset . "/img/logos/logop.png") ?>" alt="logo" style="height: 100%;" />
+            <img src="<?= Html::encode($directoryAsset . "/img/logos/logopmini.png") ?>" alt="logo" style="width: 90%;" />
         </span>
         <!--<img src="<?= Html::encode($directoryAsset . "/img/logos/logo-back.png") ?>" alt="logo" style="height: 100%;" /> -->
         <!-- logo for regular state and mobile devices -->

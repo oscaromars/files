@@ -571,7 +571,7 @@ class CabeceraAsistencia extends \yii\db\ActiveRecord
                    SET casi_cant_total = (SELECT sum(dasi_cantidad) as casi_cant_total
                                             FROM db_academico.detalle_asistencia 
                                            where casi_id = $casi_id),
-                       casi_porc_total = (SELECT sum(dasi_cantidad) / 0.3 as casi_porc_total
+                       casi_porc_total = (SELECT round ((sum(dasi_cantidad) / 0.3),2) as casi_porc_total
                                             FROM db_academico.detalle_asistencia 
                                            where casi_id = $casi_id)
                 WHERE casi_id = $casi_id
@@ -679,7 +679,7 @@ class CabeceraAsistencia extends \yii\db\ActiveRecord
                    SET casi_cant_total = (SELECT sum(dasi_cantidad) as casi_cant_total
                                             FROM db_academico.detalle_asistencia 
                                            where casi_id = $casi_id),
-                       casi_porc_total = (SELECT sum(dasi_cantidad) / 0.3 as casi_porc_total
+                       casi_porc_total = (SELECT round ((sum(dasi_cantidad) / 0.3),2) as  casi_porc_total
                                             FROM db_academico.detalle_asistencia 
                                            where casi_id = $casi_id)
                 WHERE casi_id = $casi_id
@@ -1271,7 +1271,7 @@ class CabeceraAsistencia extends \yii\db\ActiveRecord
                    SET casi_cant_total = (SELECT sum(dasi_cantidad) as casi_cant_total
                                             FROM db_academico.detalle_asistencia 
                                            where casi_id = $casi_id),
-                       casi_porc_total = (SELECT sum(dasi_cantidad) / 0.3 as casi_porc_total
+                       casi_porc_total = (SELECT round ((sum(dasi_cantidad) / 0.3),2) as  casi_porc_total
                                             FROM db_academico.detalle_asistencia 
                                            where casi_id = $casi_id)
                 WHERE casi_id = $casi_id
@@ -1564,7 +1564,7 @@ class CabeceraAsistencia extends \yii\db\ActiveRecord
                    SET casi_cant_total = (SELECT sum(dasi_cantidad) as casi_cant_total
                                             FROM db_academico.detalle_asistencia 
                                            where casi_id = $casi_id),
-                       casi_porc_total = (SELECT sum(dasi_cantidad) / 0.3 as casi_porc_total
+                       casi_porc_total = (SELECT round ((sum(dasi_cantidad) / 0.3),2) as  casi_porc_total
                                             FROM db_academico.detalle_asistencia 
                                            where casi_id = $casi_id)
                 WHERE casi_id = $casi_id

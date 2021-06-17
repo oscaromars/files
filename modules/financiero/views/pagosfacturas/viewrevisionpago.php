@@ -11,6 +11,10 @@ use app\modules\academico\Module as academico;
 Especies::registerTranslations();
 Financiero::registerTranslations();
 academico::registerTranslations();
+
+use app\assets\DatatableAsset;
+DatatableAsset::register($this);
+
 ?>
 <?= Html::hiddenInput('txth_dpfa_id', base64_decode($_GET["dpfa_id"]), ['id' => 'txth_dpfa_id']); ?>
 <form class="form-horizontal" enctype="multipart/form-data" id="formver"> 
@@ -139,8 +143,11 @@ academico::registerTranslations();
             <div class="form-group">
                 <label for="txth_doc_pago" class="col-sm-5 col-md-5 col-xs-5 col-lg-5 control-label keyupmce"><?= Especies::t("Especies", "Payment") ?></label>
                 <div class="col-sm-7 col-md-7 col-xs-7 col-lg-7 ">                
-                    <?php
-                    echo "<a href='" . Url::to(['/site/getimage', 'route' => "/uploads/pagosfinanciero/" . $model['imagen']]) . "' download='" . $model['imagen'] . "' ><span class='glyphicon glyphicon-download-alt'></span>Descargar Pago</a>"
+                    <?php 
+                        if($model['forma_pago_id'] == '1')
+                            echo "<a href='" . $model['imagen'] . "' target='_blank' ><span class='glyphicon glyphicon-download-alt'></span> Ver Pago</a>";
+                        else
+                            echo "<a href='" . Url::to(['/site/getimage', 'route' => "/uploads/pagosfinanciero/" . $model['imagen']]) . "' download='" . $model['imagen'] . "' ><span class='glyphicon glyphicon-download-alt'></span>Descargar Pago</a> ";
                     ?>
                 </div>
             </div>

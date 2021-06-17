@@ -334,8 +334,8 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
                     ua.uaca_estado_logico = :estado AND 
                     ua.uaca_estado = :estado AND
                     pa.paca_estado_logico = :estado and
-                     da.uaca_id=1 and
-                     dcab_estado_revision=2";
+                    da.uaca_id=1 and
+                    dcab_estado_revision=2";
 
         $comando = $con_academico->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
@@ -458,8 +458,8 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
                     ua.uaca_estado_logico = :estado AND 
                     ua.uaca_estado = :estado AND
                     pa.paca_estado_logico = :estado  and
-                     da.uaca_id=2 and 
-                     dcab_estado_revision=2";
+                    da.uaca_id=2 and 
+                    dcab_estado_revision=2";
 
         $comando = $con_academico->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);

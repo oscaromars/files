@@ -546,7 +546,11 @@ class PagosfacturasController extends \app\components\CController {
                             $chargeJson = $charge->jsonSerialize(); 
                          
                             // Check whether the charge is successful 
-                            if( $chargeJson['amount_refunded'] == 0 && empty($chargeJson['failure_code'])  && $chargeJson['paid'] == 1 && $chargeJson['captured'] == 1){                                
+                            if( $chargeJson['amount_refunded'] == 0 && 
+                                 empty($chargeJson['failure_code'])  && 
+                                 $chargeJson['paid'] == 1 && 
+                                 $chargeJson['captured'] == 1)
+                            {                                
                                 // Transaction details  
                                 $transactionID  = $chargeJson['balance_transaction']; 
                                 $paidAmount     = $chargeJson['amount']; 
@@ -560,8 +564,10 @@ class PagosfacturasController extends \app\components\CController {
 
                                     //Estas variables es para indicar que como fue con tarjeta de una vez 
                                     //se actualize y ya no salgan como pendientes
-                                    $dpfa_estado_pago = 2;
+                                    $dpfa_estado_pago       = 2;
                                     $dpfa_estado_financiero = 'C';
+
+                                    $certificado = $chargeJson['receipt_url'];
                                 }else{ 
                                     $statusMsg = "Your Payment has Failed!"; 
                                 } 
@@ -629,7 +635,7 @@ class PagosfacturasController extends \app\components\CController {
             
             //En caso de ser pago por tarjeta entra por if o entra en else si es deposito o transferencia
             if($data["formapago"]==1){
-                $imagen   = "pago_online";
+                $imagen   = $certificado;//"pago_online";
             }else{
                 $arrIm    = explode(".", basename($data["documento"]));
                 $typeFile = strtolower($arrIm[count($arrIm) - 1]);

@@ -1133,7 +1133,9 @@ class MatriculacionController extends \app\components\CController {
                             }
                         }  
                         
-                        
+                       \app\models\Utilities::putMessageLogFile($data["gastos"]);
+                       \app\models\Utilities::putMessageLogFile($gastoAdm);
+                       \app\models\Utilities::putMessageLogFile($dataMat['Varios']); 
 
                     if($ron_id == 0){
                         $id = $registro_online_model->insertRegistroOnline(

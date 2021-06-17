@@ -105,7 +105,7 @@ class DistributivoController extends \app\components\CController {
         } else {
             $arrData = $distributivo_model->consultarDistributivoReporte($arrSearch);
         }
-        $report->orientation = "L"; // tipo de orientacion L => Horizontal, P => Vertical                                
+        $report->orientation = "L"; // tipo de orientacion L => Horizontal, P => Vertical
         $report->createReportPdf(
                 $this->render('exportpdf', [
                     'arr_head' => $arrHeader,
@@ -193,12 +193,12 @@ class DistributivoController extends \app\components\CController {
             if($data['estado'] == '1')
             {
                 $estadopago = 'C';
-            } 
+            }
             if($data['estado'] == '0')
             {
                 $estadopago = 'N';
-            }  
-            $arrSearch["estado"] = $estadopago;            
+            }
+            $arrSearch["estado"] = $estadopago;
             $arrSearch["jornada"] = $data['jornada'];
             $model = $distributivo_model->consultarDistributivoxProfesor($arrSearch, $per_id, 1);
             return $this->render('listar_distributivo-grid', [
@@ -259,11 +259,11 @@ class DistributivoController extends \app\components\CController {
         if($data['estado'] == '1')
             {
                 $estadopago = 'C';
-            } 
+            }
             if($data['estado'] == '0')
             {
                 $estadopago = 'N';
-            }  
+            }
             $arrSearch["estado"] = $estadopago;
         $arrData = array();
         if ($arrSearch["unidad"] == 0 and $arrSearch["modalidad"] == 0 and $arrSearch["periodo"] == 0 and $arrSearch["estado"] == 2 and ( empty($arrSearch["search"]))) {
@@ -299,20 +299,20 @@ class DistributivoController extends \app\components\CController {
         if($data['estado'] == '1')
             {
                 $estadopago = 'C';
-            } 
+            }
             if($data['estado'] == '0')
             {
                 $estadopago = 'N';
-            }  
+            }
             $arrSearch["estado"] = $estadopago;
-            
+
         $arrData = array();
         if ($arrSearch["unidad"] == 0 and $arrSearch["modalidad"] == 0 and $arrSearch["periodo"] == 0 and $arrSearch["estado"] == 2 and ( empty($arrSearch["search"]))) {
             $arrData = $distributivo_model->consultarDistributivoxProfesor(array(), $per_id, 0);
         } else {
             $arrData = $distributivo_model->consultarDistributivoxProfesor($arrSearch, $per_id, 0);
         }
-        $report->orientation = "L"; // tipo de orientacion L => Horizontal, P => Vertical                                
+        $report->orientation = "L"; // tipo de orientacion L => Horizontal, P => Vertical
         $report->createReportPdf(
                 $this->render('exportpdf', [
                     'arr_head' => $arrHeader,
@@ -395,7 +395,7 @@ class DistributivoController extends \app\components\CController {
                         $distributivo_model = new Distributivo();
                         $resp_consPeriodopago = $distributivo_model->consultarPeriodopago($periodo, null, $est_id);
                         if (!empty($resp_consPeriodopago["eppa_id"])) {
-                            // update pagados   
+                            // update pagados
                             $resp_guardapago = $distributivo_model->modificarPagoestudiante($periodo, null, $est_id, 1, $usu_id);
                             $exito = 1;
                         } else {
@@ -403,16 +403,16 @@ class DistributivoController extends \app\components\CController {
                             $resp_modificarpago = $distributivo_model->insertarPagoestudiante($periodo, null, $est_id, 1, $usu_id);
                             $exito = 1;
                         }
-                    } // cierra foreach 
+                    } // cierra foreach
                 }
                 if (!empty($nopagado)) {
                     $nopagados = explode(",", $nopagado); //NO PAGADOS
                     foreach ($nopagados as $est_id) {  // empieza foreach para guardar los no pagados
-                        //Verificar que no haya guardado el estudiante en el periodo y est_id para insert, si guardo es update NO PAGADOS.                    
+                        //Verificar que no haya guardado el estudiante en el periodo y est_id para insert, si guardo es update NO PAGADOS.
                         $distributivo_model = new Distributivo();
                         $resp_consPeriodonopago = $distributivo_model->consultarPeriodopago($periodo, null, $est_id);
                         if (!empty($resp_consPeriodonopago["eppa_id"])) {
-                            // update NO pagados 
+                            // update NO pagados
                             $resp_guardanopago = $distributivo_model->modificarPagoestudiante($periodo, null, $est_id, 0, $usu_id);
                             $exito = 1;
                         } else {
@@ -420,7 +420,7 @@ class DistributivoController extends \app\components\CController {
                             $resp_modificarnopago = $distributivo_model->insertarPagoestudiante($periodo, null, $est_id, 0, $usu_id);
                             $exito = 1;
                         }
-                    } // cierra foreach 
+                    } // cierra foreach
                 }
                 if ($exito) {
                     $transaction->commit();
@@ -526,7 +526,7 @@ class DistributivoController extends \app\components\CController {
         } else {
             $arrData = $distributivo_model->consultarDistributivoxEstudiante($arrSearch, 0);
         }
-        $report->orientation = "L"; // tipo de orientacion L => Horizontal, P => Vertical                                
+        $report->orientation = "L"; // tipo de orientacion L => Horizontal, P => Vertical
         $report->createReportPdf(
                 $this->render('exportpdf', [
                     'arr_head' => $arrHeader,
@@ -664,7 +664,7 @@ class DistributivoController extends \app\components\CController {
         } else {
             $arrData = $distributivo_model->consultarDistributivoxEstudiantepos($arrSearch, 0);
         }
-        $report->orientation = "L"; // tipo de orientacion L => Horizontal, P => Vertical                                
+        $report->orientation = "L"; // tipo de orientacion L => Horizontal, P => Vertical
         $report->createReportPdf(
                 $this->render('exportpdf', [
                     'arr_head' => $arrHeader,
@@ -695,7 +695,7 @@ class DistributivoController extends \app\components\CController {
                         // OJO MODIFICAR Y PROBAR EN POSGRADO Y GRADO QUE CONSULTE SEGUN PERIODO O PROMOCION
                         $resp_consPeriodopago = $distributivo_model->consultarPeriodopago(null, $promocion, $est_id);
                         if (!empty($resp_consPeriodopago["eppa_id"])) {
-                            // update update pagados   
+                            // update update pagados
                             // OJO MODIFICAR Y PROBAR EN POSGRADO Y GRADO QUE MODIFIQUE SEGUN PERIODO O PROMOCION
                             $resp_guardapago = $distributivo_model->modificarPagoestudiante(null, $promocion, $est_id, 1, $usu_id);
                             $exito = 1;
@@ -705,17 +705,17 @@ class DistributivoController extends \app\components\CController {
                             $resp_modificarpago = $distributivo_model->insertarPagoestudiante(null, $promocion, $est_id, 1, $usu_id);
                             $exito = 1;
                         }
-                    } // cierra foreach 
+                    } // cierra foreach
                 }
                 if (!empty($nopagado)) {
                     $nopagados = explode(",", $nopagado); //NO PAGADOS
                     foreach ($nopagados as $est_id) {  // empieza foreach para guardar los no pagados
-                        //Verificar que no haya guardado el estudiante en el periodo y est_id para insert, si guardo es update NO PAGADOS.                    
+                        //Verificar que no haya guardado el estudiante en el periodo y est_id para insert, si guardo es update NO PAGADOS.
                         $distributivo_model = new Distributivo();
                         // OJO MODIFICAR Y PROBAR EN POSGRADO Y GRADO QUE CONSULTE SEGUN PERIODO O PROMOCION
                         $resp_consPeriodonopago = $distributivo_model->consultarPeriodopago(null, $promocion, $est_id);
                         if (!empty($resp_consPeriodonopago["eppa_id"])) {
-                            // update update NO pagados 
+                            // update update NO pagados
                             // OJO MODIFICAR Y PROBAR EN POSGRADO Y GRADO QUE MODIFIQUE SEGUN PERIODO O PROMOCION
                             $resp_guardanopago = $distributivo_model->modificarPagoestudiante(null, $promocion, $est_id, 0, $usu_id);
                             $exito = 1;
@@ -725,7 +725,7 @@ class DistributivoController extends \app\components\CController {
                             $resp_modificarnopago = $distributivo_model->insertarPagoestudiante(null, $promocion, $est_id, 0, $usu_id);
                             $exito = 1;
                         }
-                    } // cierra foreach 
+                    } // cierra foreach
                 }
                 if ($exito) {
                     $transaction->commit();

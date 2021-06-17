@@ -12,9 +12,6 @@ Especies::registerTranslations();
 Financiero::registerTranslations();
 academico::registerTranslations();
 
-use app\assets\DatatableAsset;
-DatatableAsset::register($this);
-
 ?>
 <?= Html::hiddenInput('txth_dpfa_id', base64_decode($_GET["dpfa_id"]), ['id' => 'txth_dpfa_id']); ?>
 <form class="form-horizontal" enctype="multipart/form-data" id="formver"> 

@@ -465,6 +465,53 @@ class Matriculacion extends \yii\db\ActiveRecord {
         return $resultData;
     }
 
+    public function insertarActualizacionGastos($ron_id,$gastos_administrativos) {        
+        $con = \Yii::$app->db_academico;
+        $ron_fecha_modificacion = date(Yii::$app->params["dateTimeByDefault"]);
+        $estado = 1;
+        $trans = $con->getTransaction(); // se obtiene la transacción actual
+        if ($trans !== null) {
+            $trans = null; // si existe la transacción entonces no se crea una
+        } else {
+            $trans = $con->beginTransaction(); // si no existe la transacción entonces se crea una
+        }
+
+        try {
+            $comando = $con->createCommand
+                    ("UPDATE " . $con->dbname . ".registro_online               
+                      SET ron_valor_gastos_adm = :gastos_administrativos,
+                        ron_fecha_modificacion = :ron_fecha_modificacion
+                        
+                      WHERE 
+                        ron_id = :ron_id
+                        rmar_estado = :estado AND
+                        rmar_estado_logico = :estado");
+
+            if (isset($gastos_administrativos)) {
+                $comando->bindParam(':gastos_administrativos', $gastos_administrativos, \PDO::PARAM_STR);
+            }
+            if (isset($ron_id)) {
+                $comando->bindParam(':ron_id', $ron_id, \PDO::PARAM_INT);
+            }
+            if (!empty((isset($ron_fecha_modificacion)))) {
+                $comando->bindParam(':ron_fecha_modificacion', $ron_fecha_modificacion, \PDO::PARAM_STR);
+            }
+            
+            $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+            $result = $comando->execute();
+            if ($trans !== null)
+                $trans->commit();
+            return $con->getLastInsertID($con->dbname . '.registro_marcacion');
+        } catch (Exception $ex) {
+            if ($trans !== null)
+                $trans->rollback();
+            return FALSE;
+        }
+    }
+
+
+
+
     /*
      * Function to get data from planificacion_estudiante
      * @author -

@@ -111,11 +111,9 @@ class RegistroController extends \app\components\CController {
 
         Yii::$app->session->set('usugrolMod', $usugrolMod);
         Yii::$app->session->set('per_id_perid', $per_id.'-'.$perid);
-\app\models\Utilities::putMessageLogFile('FUERA AJAX: ');
+
         if (Yii::$app->request->isAjax) {
-\app\models\Utilities::putMessageLogFile('DENTRO AJAX: ');
             $data = Yii::$app->request->post();
-            \app\models\Utilities::putMessageLogFile('Modalidad $data["nint_id"]:  ' .$data["nint_id"]);
             if (isset($data["getperiodo"])) {
                 $periodo = Planificacion::getPeriodosAcademicoPorModalidad($data["nint_id"]);
                 $message = array("periodo" => $periodo);
@@ -171,11 +169,7 @@ class RegistroController extends \app\components\CController {
             'esEstu' => TRUE,
             'grupo_id' => $grupo_id,            
             'per_id' => $per_id,
-            //'modalidad'=>array_merge([1 => Academico::t("matriculacion", $modalidad['name'])]),//$modalidad['name']//funciona mal
-            //'modalidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $modalidad), "id", "name"),//ok, funcion actual
-
             'modalidad' => ArrayHelper::map(array_merge( $modalidad), "id", "name"),
-
             'modalidadT' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $modalidadT), "id", "name"),
             'periodoAcademico' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $arr_pla_per), "id", "name"),
             'arr_status' => $arr_status,

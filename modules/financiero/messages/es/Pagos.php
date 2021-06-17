@@ -71,5 +71,6 @@ namespace app\modules\financiero\messages;
      "Upload Purse" => "Cargar Cartera",
      "Value" => "Valor",
      "Way to pay" => "Forma Pago",  
-     "# Voucher" => "# Comprobante",   
+     "# Voucher" => "# Comprobante",
+     "Select the amounts to pay" => "Seleccione las cuotas a pagar o abonar"  
  ];

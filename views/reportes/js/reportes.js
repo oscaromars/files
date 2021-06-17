@@ -137,11 +137,11 @@ function exportExcelmatriculados() {
     var modalidad =  $('#planificacionsearch-mod_id').val();
     window.location.href = $('#txth_base').val() + "/reportes/expexcelmatriculados?periodo=" + periodo + "&modalidad=" + modalidad;
 }
-function exportExcelmatripormateria() {
-    var periodo = $('#distributivoacademicosearch-paca_id').val();
-    var modalidad =  $('#distributivoacademicosearch-mod_id').val();
-    var asignatura =  $('#distributivoacademicosearch-asi_id').val();
-    window.location.href = $('#txth_base').val() + "/reportes/expexcelmatripormateria?periodo=" + periodo + "&modalidad=" + modalidad + "&asignatura=" + asignatura;
+function exportExcel() {
+    var periodos = $('#distributivoacademicosearch-paca_id').val();
+    var modalidades =  $('#distributivoacademicosearch-mod_id').val();
+    var asignaturas =  $('#distributivoacademicosearch-asi_id').val();
+    window.location.href = $('#txth_base').val() + "/reportes/expexcel?periodos=" + periodos + "&modalidades=" + modalidades + "&asignaturas=" + asignaturas;
 }
 function exportExcelmallas() {
     var unidad = $('#modalidadestudiounidadsearch-uaca_id').val();

@@ -466,7 +466,8 @@ class ReportesController extends CController {
         ]);       
     }
 
-    public function actionExpexcelmatripormateria() {
+    public function actionExpexcel() {
+        \app\models\Utilities::putMessageLogFile("AAAAA");
         ini_set('memory_limit', '256M');
         $content_type = Utilities::mimeContentType("xls");
         $nombarch = "Report-" . date("YmdHis") . ".xls";
@@ -485,11 +486,12 @@ class ReportesController extends CController {
             Yii::t("formulario", "Matrícula"),
             Yii::t("formulario", "Carrera"),
         );
+       
         $searchModel = new DistributivoAcademicoSearch();
         $data = Yii::$app->request->get();
-        $arrSearch["periodo"] = $data['periodo'];
-        $arrSearch["modalidad"] = $data['modalidad'];
-        $arrSearch["asignatura"] = $data['asignatura'];
+        $arrSearch["periodos"] = $data['periodos'];
+        $arrSearch["modalidades"] = $data['modalidades'];
+        $arrSearch["asignaturas"] = $data['asignaturas'];
         $arrData = array();
         if (empty($arrSearch)) {
             $arrData = $searchModel->getListadoMatripormateriaexcel(NULL,true);

@@ -4,7 +4,6 @@ use app\modules\academico\models\DistributivoAcademico;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use app\widgets\PbGridView\PbGridView;
-use kartik\grid\GridView;
 use app\modules\academico\Module as academico;
 
 /*
@@ -21,59 +20,59 @@ use app\modules\academico\Module as academico;
     </div>
     <div>
         <?=
-            PbGridView::widget([
-                'id' => 'Tbg_Registro_matriculadospormateria',
-                'showExport' => true,
-                'fnExportEXCEL' => "exportExcelmatripormateria",
-                'dataProvider' => $dataProvider,
-                'columns' => [
-                	[
-                        'attribute' => 'periodo',
-                        'header' => academico::t("Academico", "Periodo"),
-                        'value' => 'periodo',
-                      
-                    ],    
-                    [
-                        'attribute' => 'estudiante',
-                        'header' => academico::t("Academico", "Estudiantes"),
-                        'value' => 'estudiante',
-                    ],
-                    [
-                        'attribute' => 'cedula',
-                        'header' => academico::t("Academico", "Cedula "),
-                        'value' => 'cedula',
-                    ],
-                    [
-                        'attribute' => 'materia',
-                        'header' => academico::t("Academico", "Asignatura"),
-                        'value' => 'materia',
-                      
-                    ],
-                    [
-                        'attribute' => 'unidad',
-                        'header' => academico::t("Academico", "Unidad Academico"),
-                        'value' => 'unidad',
-                    ],
-                    [
-                        'attribute' => 'modalidad',
-                        'header' => academico::t("Academico", "Modalidad"),
-                        'value' => 'modalidad',
-                      
-                    ],
-                    [
-                        'attribute' => 'n_matricula',
-                        'header' => academico::t("Academico", "Matricula"),
-                        'value' => 'n_matricula',
-                    
-                    ],
-                    [
-                        'attribute' => 'carrera',
-                        'header' => academico::t("Academico", "Carrera"),
-                        'value' => 'carrera',
-                      
-                    ],
+        PbGridView::widget([
+            'id' => 'Tbg_Registro_matriculadospormateria',
+            'showExport' => true,
+            'fnExportEXCEL' => "exportExcel",
+            'dataProvider' => $dataProvider,
+            'columns' => [
+                [
+                    'attribute' => 'periodo',
+                    'header' => academico::t("Academico", "Periodo"),
+                    'value' => 'periodo',
+                  
+                ],    
+                [
+                    'attribute' => 'estudiante',
+                    'header' => academico::t("Academico", "Estudiantes"),
+                    'value' => 'estudiante',
                 ],
-            ]);
+                [
+                    'attribute' => 'cedula',
+                    'header' => academico::t("Academico", "Cedula "),
+                    'value' => 'cedula',
+                ],
+                [
+                    'attribute' => 'materia',
+                    'header' => academico::t("Academico", "Asignatura"),
+                    'value' => 'materia',
+                  
+                ],
+                [
+                    'attribute' => 'unidad',
+                    'header' => academico::t("Academico", "Unidad Academico"),
+                    'value' => 'unidad',
+                ],
+                [
+                    'attribute' => 'modalidad',
+                    'header' => academico::t("Academico", "Modalidad"),
+                    'value' => 'modalidad',
+                  
+                ],
+                [
+                    'attribute' => 'n_matricula',
+                    'header' => academico::t("Academico", "Matricula"),
+                    'value' => 'n_matricula',
+                
+                ],
+                [
+                    'attribute' => 'carrera',
+                    'header' => academico::t("Academico", "Carrera"),
+                    'value' => 'carrera',
+                  
+                ],
+            ],
+        ]);
         ?>
     </div>
 </div>

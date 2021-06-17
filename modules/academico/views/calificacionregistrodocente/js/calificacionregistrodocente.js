@@ -636,7 +636,7 @@ function actualizarGridRegistro(dready = 0) {
                 
             ],
             */
-            //columnDefs: [centrarArr],
+            columnDefs: [centrarArr],
             select: {
                 style:    'os',
                 selector: 'td.select-checkbox'

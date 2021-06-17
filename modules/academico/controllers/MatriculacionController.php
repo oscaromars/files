@@ -1849,7 +1849,7 @@ class MatriculacionController extends \app\components\CController {
             }
         }
 
-        \app\models\Utilities::putMessageLogFile($materias_roi);
+        \app\models\Utilities::putMessageLogFile("materias_roi: " . print_r($materias_roi, true));
 
         for ($i = 0; $i < count($dataPlanificacion); $i++) {
             if(in_array($dataPlanificacion[$i]['Subject'], $materias_roi)){
@@ -1872,7 +1872,7 @@ class MatriculacionController extends \app\components\CController {
                                 "Hour" => "",
                                 ];
 
-        // \app\models\Utilities::putMessageLogFile($materias_data_arr);
+        // \app\models\Utilities::putMessageLogFile("materias_roi: " . print_r($materias_roi, true));
 
         $data_student = $matriculacion_model->getDataStudenFromRegistroOnline($per_id, $ron['pes_id']);
         $persona = Persona::find()->where(['per_id' => $per_id])->asArray()->one();
@@ -1884,20 +1884,25 @@ class MatriculacionController extends \app\components\CController {
         // Calcular cuál semestre es
         if($periodo['saca_nombre'] == "Abril - Agosto"){ // Inicio del semestre
             $tempBlock = []; // Colocar todos los bloques en un arreglo aparte
-            foreach ($materias_data_arr as $key => $value) {
-                $tempBlock[] = $value['Block'];
+            for ($x=0; $x < count($materias_data_arr) - 1; $x++) { 
+                $tempBlock[] = $materias_data_arr[$x]['Block'];
             }
+
+            // \app\models\Utilities::putMessageLogFile("tempBlock: " . print_r($tempBlock, true));
 
             $bloque = $tempBlock[0]; // Tomar el primer bloque
             $cuotas = 3; // Empezar con 3 cuotas
 
             foreach ($tempBlock as $key => $value) { // recorrer la lista de bloques
+                \app\models\Utilities::putMessageLogFile("IF: " . ($value != $bloque));
                 if($value != $bloque){ // Si uno de ellos es diferente, quiere decir que hay más de un bloque
                     $cuotas = 6; // Así que las cuotas son 6
                     break; // Salir del foreach
                 }
                 // Si nunca entra al condicional, quiere decir que todas las materias son del mismo bloque
             }
+
+            // \app\models\Utilities::putMessageLogFile("cuotas: " . $cuotas);
         }
         else if(str_contains($periodo['saca_nombre'], '(Intensivo)')){ // Instensivo
             $tempBlock = [];

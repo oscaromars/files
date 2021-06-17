@@ -172,7 +172,7 @@ else{
         </div>
     <?php else: ?>
         <div class="form-group">     
-            <label for="txth_doc_adj_calificacion" style="color: red;" class="col-lg-6 col-md-6 col-sm-6 col-xs-6 control-label"><?= academico::t("profesor", "You are still not approved") ?></label>
+            <label for="txth_doc_adj_calificacion" style="color: red;" class="col-lg-6 col-md-6 col-sm-6 col-xs-6 control-label"><?= academico::t("profesor", "Aún no está aprobado") ?></label>
         </div>
     <?php endif; ?>
     

@@ -362,6 +362,7 @@ class AsistenciaregistrodocenteController extends \app\components\CController {
                             $casi_cant_total = $asi_u1;     
 
                             $casi_porc_total = ($asi_u1 / 30);
+                            $casi_porc_total = round($casi_porc_total, 2); 
                         }
                         elseif($ecal_id == 2){ // 2do Parcial
                           //  $asi_u1 = $val[5];
@@ -370,6 +371,7 @@ class AsistenciaregistrodocenteController extends \app\components\CController {
                             $dasi_tipo_v2 = "u2";
                             $casi_cant_total = $asi_u2;
                             $casi_porc_total = ($asi_u2 / 30);
+                            $casi_porc_total = round($casi_porc_total, 2); 
                         }
 
                         if ( $asi_u1 > 30 ){
@@ -960,6 +962,7 @@ class AsistenciaregistrodocenteController extends \app\components\CController {
                             
                             $casi_cant_total = $asi_u1 + $asi_s2 + $asi_s3 + $asi_s4 + $asi_s5 ;  
                             $casi_porc_total = ($casi_cant_total  / 30);
+                            $casi_porc_total = round($casi_porc_total, 2); 
                         }
                         elseif($ecal_id == 2){ // 2do Parcial
                           //  $asi_u1 = $val[5];
@@ -979,6 +982,7 @@ class AsistenciaregistrodocenteController extends \app\components\CController {
                             
                            $casi_cant_total = $asi_u1 + $asi_s2 + $asi_s3 + $asi_s4 + $asi_s5 ; 
                             $casi_porc_total = ($casi_cant_total / 30);
+                            $casi_porc_total = round($casi_porc_total, 2); 
                         }
 
                         if ( $asi_u1 > 30 ){

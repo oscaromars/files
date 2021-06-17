@@ -134,8 +134,8 @@ class Distributivo extends \yii\db\ActiveRecord {
                 FROM " . $con->dbname . ".distributivo d inner join " . $con->dbname . ".profesor p on p.pro_id = d.pro_id
                 inner join " . $con1->dbname . ".persona per on per.per_id = p.per_id
                 inner join " . $con->dbname . ".asignatura a on a.asi_id = d.asi_id
-                inner join " . $con->dbname . ".unidad_academica ua on ua.uaca_id = a.uaca_id 
-                inner join " . $con->dbname . ".dedicacion_docente dd on dd.ddoc_id = d.ddoc_id 
+                inner join " . $con->dbname . ".unidad_academica ua on ua.uaca_id = a.uaca_id
+                inner join " . $con->dbname . ".dedicacion_docente dd on dd.ddoc_id = d.ddoc_id
                 inner join " . $con->dbname . ".semestre_academico sa on sa.saca_id = d.saca_id
                 WHERE $str_search
                       d.dis_estado = '1'
@@ -151,7 +151,7 @@ class Distributivo extends \yii\db\ActiveRecord {
                       and dd.ddoc_estado = '1'
                       and dd.ddoc_estado_logico = '1'
                       and sa.saca_estado = '1'
-                      and sa.saca_estado_logico = '1' 
+                      and sa.saca_estado_logico = '1'
                 ORDER BY d.dis_id desc";
 
         $comando = $con->createCommand($sql);
@@ -208,18 +208,18 @@ class Distributivo extends \yii\db\ActiveRecord {
                 $str_search .= "d.saca_id = :semestre AND ";
             }
         }
-        $sql = "SELECT  per.per_cedula,                        
-                        concat(per.per_pri_nombre,' ', per.per_pri_apellido) as docente,   
-                        dd.ddoc_nombre as dedicacion,                        
+        $sql = "SELECT  per.per_cedula,
+                        concat(per.per_pri_nombre,' ', per.per_pri_apellido) as docente,
+                        dd.ddoc_nombre as dedicacion,
                         ua.uaca_nombre as unidad,
-                        a.asi_nombre as asignatura,                                                
+                        a.asi_nombre as asignatura,
                         concat(sa.saca_nombre,' ',sa.saca_anio) as semestre,
                         d.dis_descripcion
                 FROM " . $con->dbname . ".distributivo d inner join " . $con->dbname . ".profesor p on p.pro_id = d.pro_id
                 inner join " . $con1->dbname . ".persona per on per.per_id = p.per_id
                 inner join " . $con->dbname . ".asignatura a on a.asi_id = d.asi_id
-                inner join " . $con->dbname . ".unidad_academica ua on ua.uaca_id = a.uaca_id 
-                inner join " . $con->dbname . ".dedicacion_docente dd on dd.ddoc_id = d.ddoc_id 
+                inner join " . $con->dbname . ".unidad_academica ua on ua.uaca_id = a.uaca_id
+                inner join " . $con->dbname . ".dedicacion_docente dd on dd.ddoc_id = d.ddoc_id
                 inner join " . $con->dbname . ".semestre_academico sa on sa.saca_id = d.saca_id
                 WHERE $str_search
                       d.dis_estado = '1'
@@ -235,7 +235,7 @@ class Distributivo extends \yii\db\ActiveRecord {
                       and dd.ddoc_estado = '1'
                       and dd.ddoc_estado_logico = '1'
                       and sa.saca_estado = '1'
-                      and sa.saca_estado_logico = '1' 
+                      and sa.saca_estado_logico = '1'
                 ORDER BY d.dis_id desc";
 
         $comando = $con->createCommand($sql);
@@ -308,16 +308,16 @@ class Distributivo extends \yii\db\ActiveRecord {
                         ifnull(SUM(dcho_horas),'') as total
                 FROM " . $con->dbname . ".distributivo_carga_horaria d
                 inner join " . $con->dbname . ".profesor p on p.pro_id = d.pro_id
-                inner join " . $con1->dbname . ".persona per on per.per_id = p.per_id						
+                inner join " . $con1->dbname . ".persona per on per.per_id = p.per_id
                 inner join " . $con->dbname . ".semestre_academico sa on sa.saca_id = d.saca_id
                 inner join " . $con->dbname . ".tipo_distributivo t on t.tdis_id = d.tdis_id
-                WHERE $str_search					  
+                WHERE $str_search
                       d.dcho_estado = :estado
                       and d.dcho_estado_logico = :estado
                       and p.pro_estado = :estado
                       and p.pro_estado_logico = :estado
                       and per.per_estado = :estado
-                      and per.per_estado_logico = :estado                      
+                      and per.per_estado_logico = :estado
                       and sa.saca_estado = :estado
                       and sa.saca_estado_logico = :estado
                 GROUP BY  d.saca_id, d.pro_id";
@@ -375,8 +375,8 @@ class Distributivo extends \yii\db\ActiveRecord {
                 $str_search .= "d.saca_id = :semestre AND ";
             }
         }
-        $sql = "SELECT  per.per_cedula,                        
-                        IFNULL(concat(per.per_pri_nombre,' ', per.per_pri_apellido),'') as docente,                        
+        $sql = "SELECT  per.per_cedula,
+                        IFNULL(concat(per.per_pri_nombre,' ', per.per_pri_apellido),'') as docente,
                         (CASE WHEN d.saca_id > 0 then
                             CONCAT(sa.saca_nombre,' ',sa.saca_anio)
                             else '' END) as semestre,
@@ -395,16 +395,16 @@ class Distributivo extends \yii\db\ActiveRecord {
 			SUM(dcho_horas) as total
                 FROM " . $con->dbname . ".distributivo_carga_horaria d
                 inner join " . $con->dbname . ".profesor p on p.pro_id = d.pro_id
-                inner join " . $con1->dbname . ".persona per on per.per_id = p.per_id						
+                inner join " . $con1->dbname . ".persona per on per.per_id = p.per_id
                 inner join " . $con->dbname . ".semestre_academico sa on sa.saca_id = d.saca_id
                 inner join " . $con->dbname . ".tipo_distributivo t on t.tdis_id = d.tdis_id
-                WHERE $str_search					  
+                WHERE $str_search
                       d.dcho_estado = :estado
                       and d.dcho_estado_logico = :estado
                       and p.pro_estado = :estado
                       and p.pro_estado_logico = :estado
                       and per.per_estado = :estado
-                      and per.per_estado_logico = :estado                      
+                      and per.per_estado_logico = :estado
                       and sa.saca_estado = :estado
                       and sa.saca_estado_logico = :estado
                 GROUP BY  d.saca_id, d.pro_id";
@@ -458,30 +458,30 @@ class Distributivo extends \yii\db\ActiveRecord {
             /*if ($arrFiltro['estado'] == "C" or $arrFiltro['estado'] == "N") {
                 $str_search .= "ifnull(m.ccar_estado_cancela,'N') = :estpago AND ";
             }*/
-            if ($arrFiltro['estado_pago'] == "0" or $arrFiltro['estado_pago'] == "1") {            
-                if ($arrFiltro['estado_pago'] == "0") {            
+            if ($arrFiltro['estado_pago'] == "0" or $arrFiltro['estado_pago'] == "1") {
+                if ($arrFiltro['estado_pago'] == "0") {
                 $str_search .= " ((m.ccar_estado_cancela is null OR m.ccar_estado_cancela = :estado_pago) AND NOW() > m.ccar_fecha_vencepago ) AND ";
             }else{
                 $str_search .= " (m.ccar_estado_cancela = :estado_pago OR NOW() < m.ccar_fecha_vencepago) ";
-            } 
-        } 
+            }
+        }
             if ($arrFiltro['jornada'] != "" && $arrFiltro['jornada'] > 0) {
                 $str_search .= "a.daca_jornada = :jornada AND ";
             }
         }else{
-          $mod_paca        = new PeriodoAcademico(); 
+          $mod_paca        = new PeriodoAcademico();
           $paca_actual_id  = $mod_paca->getPeriodoAcademicoActual();
           $str_search      = "a.paca_id = ".$paca_actual_id[0]['id']." AND ";
         }
 
         $sql = "SELECT  distinct d.uaca_nombre as unidad, e.mod_nombre as modalidad,
-                        p.per_cedula as identificacion, 
+                        p.per_cedula as identificacion,
                         concat(p.per_pri_apellido, ' ', ifnull(p.per_seg_apellido,''), ' ', p.per_pri_nombre) as estudiante,
                         concat(saca_nombre, '-', baca_nombre,'-',baca_anio) as periodo,
                         z.asi_nombre as asignatura,
                         -- case when m.eppa_estado_pago = '1' then 'Autorizado' else 'No Autorizado' end as pago
                         -- case when m.ccar_estado_cancela = 'C' then 'Autorizado' else 'No Autorizado' end as pago
-                        case 
+                        case
                                 when m.ccar_fecha_vencepago <= NOW() then  ifnull((SELECT
                                             CASE WHEN mi.ccar_estado_cancela = 'C'
                                             THEN 'Autorizado'
@@ -497,11 +497,11 @@ class Distributivo extends \yii\db\ActiveRecord {
                                             FROM db_facturacion.carga_cartera mi
                                             WHERE mi.est_id = g.est_id and mi.ccar_fecha_vencepago >= NOW()
                                             ORDER BY mi.ccar_fecha_vencepago asc
-                                            LIMIT 1),'No Autorizado')						 
+                                            LIMIT 1),'No Autorizado')
                                 else 'No Autorizado'
-                                end as pago 
+                                end as pago
                 FROM " . $con->dbname . ".distributivo_academico a inner join " . $con->dbname . ".profesor b
-                    on b.pro_id = a.pro_id 
+                    on b.pro_id = a.pro_id
                     inner join " . $con1->dbname . ".persona c on c.per_id = b.per_id
                     inner join " . $con->dbname . ".unidad_academica d on d.uaca_id = a.uaca_id
                     inner join " . $con->dbname . ".modalidad e on e.mod_id = a.mod_id
@@ -519,7 +519,7 @@ class Distributivo extends \yii\db\ActiveRecord {
                     and a.daca_estado = :estado
                     and a.daca_estado_logico = :estado
                     and g.daes_estado = :estado
-                    and g.daes_estado_logico = :estado 
+                    and g.daes_estado_logico = :estado
                 order by p.per_pri_apellido, p.per_seg_apellido";
 
         $comando = $con->createCommand($sql);
@@ -551,7 +551,7 @@ class Distributivo extends \yii\db\ActiveRecord {
                     $filestado = 'N';
                 } else {
                     $filestado = 'C';
-              } 
+              }
                 $comando->bindParam(":estado_pago", $filestado, \PDO::PARAM_STR);
             }
 
@@ -645,36 +645,36 @@ class Distributivo extends \yii\db\ActiveRecord {
                     $str_search .= " m.eppa_estado_pago = :estado_pago AND ";
                 }
             }*/
-            if ($arrFiltro['estado_pago'] == "0" or $arrFiltro['estado_pago'] == "1") {            
-                if ($arrFiltro['estado_pago'] == "0") {            
+            if ($arrFiltro['estado_pago'] == "0" or $arrFiltro['estado_pago'] == "1") {
+                if ($arrFiltro['estado_pago'] == "0") {
                 $str_search .= " ((m.ccar_estado_cancela is null OR m.ccar_estado_cancela = :estado_pago) AND NOW() > m.ccar_fecha_vencepago ) AND ";
             }else{
                 $str_search .= " (m.ccar_estado_cancela = :estado_pago OR NOW() < m.ccar_fecha_vencepago) AND ";
-            } 
-        } 
-            /**************************************************************  **/ 
+            }
+        }
+            /**************************************************************  **/
             if ($arrFiltro['jornada'] != "" && $arrFiltro['jornada'] > 0) {
                 $str_search .= "a.daca_jornada = :jornada AND ";
             }
         }else{
-          $mod_paca        = new PeriodoAcademico(); 
+          $mod_paca        = new PeriodoAcademico();
           $paca_actual_id  = $mod_paca->getPeriodoAcademicoActual();
           $str_search      = "a.paca_id = ".$paca_actual_id[0]['id']." AND a.mod_id = 0 AND ";
         }
 
-        $sql = "SELECT  distinct h.est_id, 
-                        d.uaca_nombre as unidad, 
+        $sql = "SELECT  distinct h.est_id,
+                        d.uaca_nombre as unidad,
                         e.mod_nombre as modalidad,
-                        p.per_cedula as identificacion, 
+                        p.per_cedula as identificacion,
                         concat(p.per_pri_nombre, ' ', p.per_pri_apellido, ' ', ifnull(p.per_seg_apellido,'')) as estudiante,
                         concat(saca_nombre, '-', baca_nombre,'-',baca_anio) as periodo,
                         z.asi_nombre as asignatura,
-                        -- case 
-                          --   when m.eppa_estado_pago = '0' then 'No Autorizado' 
+                        -- case
+                          --   when m.eppa_estado_pago = '0' then 'No Autorizado'
                           --   when m.eppa_estado_pago = '1' then 'Autorizado'
                           --   else 'No Autorizado'
-                          --   end as 'pago',                           
-                          case 
+                          --   end as 'pago',
+                          case
                                 when m.ccar_fecha_vencepago <= NOW() then  ifnull((SELECT
                                             CASE WHEN mi.ccar_estado_cancela = 'C'
                                             THEN 'Autorizado'
@@ -690,12 +690,12 @@ class Distributivo extends \yii\db\ActiveRecord {
                                             FROM db_facturacion.carga_cartera mi
                                             WHERE mi.est_id = g.est_id and mi.ccar_fecha_vencepago >= NOW()
                                             ORDER BY mi.ccar_fecha_vencepago asc
-                                            LIMIT 1),'No Autorizado')						 
+                                            LIMIT 1),'No Autorizado')
                                 else 'No Autorizado'
-                                end as pago  
-                        -- ifnull(DATE_FORMAT(m.eppa_fecha_registro, '%Y-%m-%d'), ' ') as fecha_pago 
+                                end as pago
+                        -- ifnull(DATE_FORMAT(m.eppa_fecha_registro, '%Y-%m-%d'), ' ') as fecha_pago
                 FROM " . $con->dbname . ".distributivo_academico a inner join " . $con->dbname . ".profesor b
-                    on b.pro_id = a.pro_id 
+                    on b.pro_id = a.pro_id
                     inner join " . $con1->dbname . ".persona c on c.per_id = b.per_id
                     inner join " . $con1->dbname . ".persona pe on pe.per_id = b.per_id
                     inner join " . $con->dbname . ".unidad_academica d on d.uaca_id = a.uaca_id
@@ -750,7 +750,7 @@ class Distributivo extends \yii\db\ActiveRecord {
                     $filestado = 'N';
                 } else {
                     $filestado = 'C';
-              } 
+              }
                 $comando->bindParam(":estado_pago", $filestado, \PDO::PARAM_STR);
             }
             /***************************************************************** */
@@ -805,8 +805,8 @@ class Distributivo extends \yii\db\ActiveRecord {
     /**
      * Function obtener asigantura segun unidad academico y modalidad
      * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>;
-     * @property       
-     * @return  
+     * @property
+     * @return
      */
     public function consultarAsiganturaxuniymoda($uaca_id, $mod_id) {
         $con = \Yii::$app->db_academico;
@@ -815,7 +815,7 @@ class Distributivo extends \yii\db\ActiveRecord {
                            asig.asi_nombre as name
                     FROM " . $con->dbname . ".distributivo_academico diac "
                 . "inner join " . $con->dbname . ".asignatura asig ON asig.asi_id = diac.asi_id
-                    WHERE diac.uaca_id = :uaca_id 
+                    WHERE diac.uaca_id = :uaca_id
                     and diac.mod_id =:mod_id
                     and diac.daca_estado_logico = :estado
                     and diac.daca_estado = :estado
@@ -834,7 +834,7 @@ class Distributivo extends \yii\db\ActiveRecord {
     /**
      * Function Consulta si ya tiene data en la tabla period pago, segun periodo academico y est_id.
      * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
-     * @param   
+     * @param
      * @return  estudiante_periodo_pago_id eppa_id
      */
     public function consultarPeriodopago($paca_id, $ppro_id, $est_id) {
@@ -848,12 +848,12 @@ class Distributivo extends \yii\db\ActiveRecord {
         }
         $sql = "
                     SELECT eppa_id as eppa_id
-                    FROM 
-                        " . $con->dbname . ".estudiante_periodo_pago                   
+                    FROM
+                        " . $con->dbname . ".estudiante_periodo_pago
                     WHERE
                         -- paca_id= :idbusqueda AND
                         $busqueda
-                        est_id= :est_id AND                                               
+                        est_id= :est_id AND
                         eppa_estado = :estado AND
                         eppa_estado_logico = :estado";
 
@@ -980,12 +980,12 @@ class Distributivo extends \yii\db\ActiveRecord {
         }
         try {
             $comando = $con->createCommand
-                    ("UPDATE " . $con->dbname . ".estudiante_periodo_pago		       
+                    ("UPDATE " . $con->dbname . ".estudiante_periodo_pago
                       SET eppa_estado_pago = :eppa_estado_pago,
                           eppa_usuario_modifica = :eppa_usuario_modifica,
                           eppa_fecha_registro = :fecha,
                           eppa_fecha_modificacion = :fecha
-                      WHERE                     
+                      WHERE
                         $modifica
                         est_id =  :est_id AND
                         eppa_estado = :estado AND
@@ -1060,21 +1060,21 @@ class Distributivo extends \yii\db\ActiveRecord {
                 $str_search .= "a.daca_jornada = :paralelo AND ";
             }
         }
-        $sql = "SELECT  h.est_id, 
-                        d.uaca_nombre as unidad, 
+        $sql = "SELECT  h.est_id,
+                        d.uaca_nombre as unidad,
                         e.mod_nombre as modalidad,
-                        p.per_cedula as identificacion, 
+                        p.per_cedula as identificacion,
                         concat(p.per_pri_nombre, ' ', p.per_pri_apellido, ' ', ifnull(p.per_seg_apellido,'')) as estudiante,
-                        pp.ppro_codigo as promocion,                        
+                        pp.ppro_codigo as promocion,
                         z.asi_nombre as asignatura,
-                        case 
-                             when m.eppa_estado_pago = '0' then 'No Autorizado' 
+                        case
+                             when m.eppa_estado_pago = '0' then 'No Autorizado'
                              when m.eppa_estado_pago = '1' then 'Autorizado'
                              else 'No Autorizado'
-                             end as 'pago',                           
-                        ifnull(DATE_FORMAT(m.eppa_fecha_registro, '%Y-%m-%d'), ' ') as fecha_pago 
+                             end as 'pago',
+                        ifnull(DATE_FORMAT(m.eppa_fecha_registro, '%Y-%m-%d'), ' ') as fecha_pago
                 FROM " . $con->dbname . ".distributivo_academico a inner join " . $con->dbname . ".profesor b
-                    on b.pro_id = a.pro_id 
+                    on b.pro_id = a.pro_id
                     inner join " . $con1->dbname . ".persona c on c.per_id = b.per_id
                     inner join " . $con1->dbname . ".persona pe on pe.per_id = b.per_id
                     inner join " . $con->dbname . ".unidad_academica d on d.uaca_id = a.uaca_id
@@ -1082,10 +1082,10 @@ class Distributivo extends \yii\db\ActiveRecord {
                     inner join " . $con->dbname . ".promocion_programa pp on pp.ppro_id = a.ppro_id
                     inner join " . $con->dbname . ".distributivo_academico_estudiante g on g.daca_id = a.daca_id
                     inner join " . $con->dbname . ".estudiante h on h.est_id = g.est_id
-                    inner join " . $con1->dbname . ".persona p on p.per_id = h.per_id                  
+                    inner join " . $con1->dbname . ".persona p on p.per_id = h.per_id
                     inner join " . $con->dbname . ".asignatura z on a.asi_id = z.asi_id
                     left join " . $con->dbname . ".estudiante_periodo_pago m on (m.est_id = g.est_id)
-                WHERE $str_search  a.uaca_id = 2                 
+                WHERE $str_search  a.uaca_id = 2
                     and a.daca_estado = :estado
                     and a.daca_estado_logico = :estado
                     and g.daes_estado = :estado

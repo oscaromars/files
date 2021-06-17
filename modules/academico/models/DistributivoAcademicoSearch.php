@@ -630,6 +630,7 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
         $sql = "select est.est_id, 
                 ifnull(CONCAT(ifnull(per.per_pri_apellido,''), ' ', ifnull(per.per_seg_apellido,''), ' ', ifnull(per.per_pri_nombre,'')), '') as estudiante,
                 per.per_cedula as cedula, 
+                CONCAT(baca.baca_nombre, ' ', saca.saca_nombre, ' ', saca.saca_anio) as periodo,
                 asi.asi_descripcion as materia,
                 moda.mod_descripcion as modalidad,
                 uaca.uaca_descripcion as unidad,
@@ -647,6 +648,9 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
                 inner join db_academico.distributivo_academico as daca on daca.daca_id = dae.daca_id and daca.asi_id = asi.asi_id
                 Inner Join db_academico.modalidad moda on moda.mod_id = daca.mod_id 
                 Inner Join db_academico.unidad_academica uaca on uaca.uaca_id = daca.uaca_id
+                Inner Join db_academico.periodo_academico paca on paca.paca_id = daca.paca_id 
+                Inner Join db_academico.semestre_academico saca on saca.saca_id = paca.saca_id
+                Inner Join db_academico.bloque_academico baca on baca.baca_id = paca.baca_id
                  where per.per_id = est.per_id and pm.rpm_estado_aprobacion = 1
                     and daca.daca_estado = 1 and daca.daca_estado_logico = 1
                     and ron.ron_estado = 1 and ron.ron_estado_logico = 1
@@ -689,7 +693,7 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
                 $sql = $sql . " and mad.asi_id =" . $params['asi_id'];
             }
         }
-        Utilities::putMessageLogFile('sql:' . $sql);
+        //Utilities::putMessageLogFile('sql:' . $sql);
         $comando = $con_academico->createCommand($sql);
         $res = $comando->queryAll();
 
@@ -707,6 +711,107 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
         ]);
 
         return $dataProvider;
+    }
+
+    public function getListadoMatripormateriaexcel($arrFiltro = NULL, $onlyData = false) {
+        $con_academico = \Yii::$app->db_academico;
+        $con_db = \Yii::$app->db;
+
+        if (isset($arrFiltro) && count($arrFiltro) > 0) { 
+            if ($arrFiltro['periodo'] != "" && $arrFiltro['periodo'] > 0) {
+                $str_search .= "daca.uaca_id = :paca_id AND ";
+            }
+            if ($arrFiltro['modalidad'] != "" && $arrFiltro['modalidad'] > 0) {
+                $str_search .= "daca.mod_id = :mod_id AND ";
+            } 
+            if ($arrFiltro['asignatura'] != "" && $arrFiltro['asignatura'] > 0) {
+                $str_search .= "daca.asi_id = :asi_id AND ";
+            }         
+        }
+
+            $sql = "select est.est_id as est_id,  
+                CONCAT(baca.baca_nombre, ' ', saca.saca_nombre, ' ', saca.saca_anio) as periodo,
+                ifnull(CONCAT(ifnull(per.per_pri_apellido,''), ' ', ifnull(per.per_seg_apellido,''), ' ', ifnull(per.per_pri_nombre,'')), '') as estudiante,
+                per.per_cedula as cedula,
+                asi.asi_descripcion as materia,
+                uaca.uaca_descripcion as unidad,
+                moda.mod_descripcion as modalidad,
+                ifnull(est.est_matricula,'') as n_matricula,
+                pes.pes_carrera as carrera
+                from db_academico.registro_online as ron
+                inner join db_academico.registro_online_item as roi on roi.ron_id=ron.ron_id 
+                inner join db_asgard.persona as per on per.per_id = ron.per_id
+                inner join db_academico.registro_pago_matricula as pm on ron.per_id=pm.per_id 
+                inner join db_academico.estudiante as est on est.per_id=per.per_id
+                inner join db_academico.planificacion_estudiante as pes on pes.pes_id=ron.pes_id
+                inner join db_academico.malla_academica_detalle as mad on  mad.made_codigo_asignatura=roi.roi_materia_cod
+                inner join db_academico.asignatura as asi on asi.asi_id = mad.asi_id
+                inner join db_academico.distributivo_academico_estudiante as dae on dae.est_id = est.est_id 
+                inner join db_academico.distributivo_academico as daca on daca.daca_id = dae.daca_id and daca.asi_id = asi.asi_id
+                Inner Join db_academico.modalidad moda on moda.mod_id = daca.mod_id 
+                Inner Join db_academico.unidad_academica uaca on uaca.uaca_id = daca.uaca_id
+                Inner Join db_academico.periodo_academico paca on paca.paca_id = daca.paca_id 
+                Inner Join db_academico.semestre_academico saca on saca.saca_id = paca.saca_id
+                Inner Join db_academico.bloque_academico baca on baca.baca_id = paca.baca_id
+                 where per.per_id = est.per_id and pm.rpm_estado_aprobacion = 1
+                    and daca.daca_estado = 1 and daca.daca_estado_logico = 1
+                    and ron.ron_estado = 1 and ron.ron_estado_logico = 1
+                    and roi.roi_estado = 1 and roi.roi_estado_logico = 1
+                    and est.est_estado = 1 and est.est_estado_logico = 1
+                    and per.per_estado = 1 and per.per_estado_logico = 1
+                    and ron.ron_estado = 1 and ron.ron_estado_logico = 1
+                    and pm.rpm_estado = 1 and pm.rpm_estado_logico = 1
+                    and pes.pes_estado = 1 and pes.pes_estado_logico = 1
+                    and asi.asi_estado = 1 and asi.asi_estado_logico = 1";
+        
+        //Utilities::putMessageLogFile('sql:' . $sql);
+        $comando = $con_academico->createCommand($sql);
+        //$comando->bindParam(":eaca_id", $eaca_id, \PDO::PARAM_INT);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        if (isset($arrFiltro) && count($arrFiltro) > 0) {
+           
+            if ($arrFiltro['periodo'] != "" && $arrFiltro['periodo'] > 0) {
+                $periodo = $arrFiltro["periodo"];
+                $comando->bindParam(":paca_id", $periodo, \PDO::PARAM_INT);
+            }
+            
+            if ($arrFiltro['modalidad'] != "" && $arrFiltro['modalidad'] > 0) {
+                $modalidad = $arrFiltro["modalidad"];
+                $comando->bindParam(":mod_id", $modalidad, \PDO::PARAM_INT);
+            }
+
+            if ($arrFiltro['asignatura'] != "" && $arrFiltro['asignatura'] > 0) {
+                $asignatura = $arrFiltro["asignatura"];
+                $comando->bindParam(":asi_id", $asignatura, \PDO::PARAM_INT);
+            } 
+        }
+        $res = $comando->queryAll();
+
+
+        $dataProvider = new ArrayDataProvider([
+            'key' => 'Id',
+            'allModels' => $res,
+            'pagination' => [
+                'pageSize' => Yii::$app->params["pageSize"],
+            ],
+            'sort' => [
+                'attributes' => [
+                    'periodo', 
+                    'estudiante',
+                    'cedula',
+                    'materia',
+                    'unidad',
+                    'modalidad',
+                    'matricula',
+                    'carrera'],
+            ],
+        ]);
+
+        if ($onlyData) {
+            return $res;
+        } else {
+            return $dataProvider;
+        }
     }
 
     public function getListadoreportInscriptos($params = null, $onlyData = false, $tipo = 1) {
@@ -781,6 +886,94 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
         ]);
 
         return $dataProvider;
+    }
+
+    public function getListadoReporteinscritosexcel($arrFiltro = NULL, $onlyData = false) {
+        $con_academico = \Yii::$app->db_academico;
+        $con_db = \Yii::$app->db;
+
+        if (isset($arrFiltro) && count($arrFiltro) > 0) { 
+            if ($arrFiltro['periodo'] != "" && $arrFiltro['periodo'] > 0) {
+                $str_search .= "pla.paca_id = :paca_id AND ";
+            }
+            if ($arrFiltro['modalidad'] != "" && $arrFiltro['modalidad'] > 0) {
+                $str_search .= "pla.mod_id = :mod_id AND ";
+            }         
+        }
+
+            $sql = "select 
+                CONCAT(per.per_pri_apellido,' ' ,per.per_pri_nombre) as nombres,
+                per.per_cedula as cedula,
+                per.per_correo as correo,
+                per.per_celular as telefono,
+                est.est_matricula as matricula,
+                uaca.uaca_descripcion as unidad,
+                moda.mod_descripcion as modalidad,
+                eaca.eaca_descripcion as carrera
+                FROM db_captacion.admitido adm 
+                inner join db_captacion.interesado inte ON inte.int_id = adm.int_id
+                Inner join db_asgard.persona per ON per.per_id = inte.per_id
+                Inner join db_academico.estudiante est ON est.per_id = per.per_id
+                Inner join db_academico.estudiante_carrera_programa ecpr ON ecpr.est_id = est.est_id
+                Inner Join db_academico.modalidad_estudio_unidad meun on meun.meun_id = ecpr.meun_id
+                Inner join db_academico.estudio_academico eaca ON eaca.eaca_id = meun.eaca_id
+                Inner Join db_academico.modalidad moda on moda.mod_id = meun.mod_id
+                inner join db_academico.distributivo_academico daca on daca.mod_id = moda.mod_id
+                Inner Join db_academico.unidad_academica uaca on uaca.uaca_id = daca.uaca_id
+                Inner Join db_academico.periodo_academico paca on paca.paca_id = daca.paca_id
+                Inner Join db_academico.semestre_academico saca on saca.saca_id = paca.saca_id
+                Inner Join db_academico.bloque_academico baca on baca.baca_id = paca.saca_id
+                where adm.adm_fecha_creacion between '2018-07-08 05:00:00' and '2019-09-22 04:59:59'
+                and daca.daca_estado = 1 and daca.daca_estado_logico = 1
+                and adm.adm_estado = 1 and adm.adm_estado_logico = 1
+                and inte.int_estado = 1 and inte.int_estado_logico = 1
+                and est.est_estado = 1 and est.est_estado_logico = 1
+                and paca.paca_estado = 1 and paca.paca_estado_logico = 1";
+        
+        //Utilities::putMessageLogFile('sql:' . $sql);
+        $comando = $con_academico->createCommand($sql);
+        //$comando->bindParam(":eaca_id", $eaca_id, \PDO::PARAM_INT);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        if (isset($arrFiltro) && count($arrFiltro) > 0) {
+           
+            if ($arrFiltro['periodo'] != "" && $arrFiltro['periodo'] > 0) {
+                $periodo = $arrFiltro["periodo"];
+                $comando->bindParam(":paca_id", $periodo, \PDO::PARAM_INT);
+            }
+            
+            if ($arrFiltro['modalidad'] != "" && $arrFiltro['modalidad'] > 0) {
+                $modalidad = $arrFiltro["modalidad"];
+                $comando->bindParam(":mod_id", $modalidad, \PDO::PARAM_INT);
+            }
+                    
+        }
+        $res = $comando->queryAll();
+
+
+        $dataProvider = new ArrayDataProvider([
+            'key' => 'Id',
+            'allModels' => $res,
+            'pagination' => [
+                'pageSize' => Yii::$app->params["pageSize"],
+            ],
+            'sort' => [
+                'attributes' => [
+                    'nombres', 
+                    'cedula',
+                    'correo',
+                    'telefono',
+                    'matricula',
+                    'unidad',
+                    'modalidad',
+                    'carrera'],
+            ],
+        ]);
+
+        if ($onlyData) {
+            return $res;
+        } else {
+            return $dataProvider;
+        }
     }
 
 }

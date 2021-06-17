@@ -12,14 +12,9 @@ Academico::registerTranslations();
 
 //print_r($planificacion[5]['Hour']);
 
-<<<<<<< HEAD
-echo "hola";
-print_r($gastoAdm);
-=======
 
 
 //print_r($gastoAdm);
->>>>>>> ab5bf79ea194801634cc491b001a0aa109e7991c
 //print_r($costo);
 
 
@@ -45,19 +40,6 @@ echo "<b style='color:green'>EL PERIODO DE INSCRIPCION ESTA CERRADO</b>";
 
 }
 
-<<<<<<< HEAD
-=======
-$bloque="B1";
-if($howmuchSubject <= '1'){
-    $gasto=$gastoAdm;//$costo['gastos'];
-}else if ($howmuchSubject > '1') {
-    $gasto=0;
-}else if ($howmuchSubject <= '1' and $bloque==$planificacion['Block']) {
-    $gasto=$costo['gastos']/2;
-}else if ($howmuchSubject <= '1' and $bloque!=$planificacion['Block']) {
-    $gasto=$costo['gastos']/2;
-}
->>>>>>> ab5bf79ea194801634cc491b001a0aa109e7991c
 
 
 $total=$costo['costo']+$gastoAdm+$costo['asociacion'];
@@ -153,6 +135,7 @@ $total=$costo['costo']+$gastoAdm+$costo['asociacion'];
 <input type="hidden" id="frm_ron_id" value="<?= $ron_id ?>">
 <input type="hidden" id="frm_pes_id" value="<?= $pes_id ?>">
 <input type="hidden" id="frm_per_id" value="<?= $per_id ?>">
+<input type="hidden" id="frm_gastos" value="<?= $gastos ?>">
 <input type="hidden" id="frm_min_cancel" value="<?= $min_cancel ?>">
 <input type="hidden" id="frm_modalidad" value="<?= $data_student['mod_id'] ?>">
 <input type="hidden" id="frm_carrera" value="<?= $data_student['eaca_id'] ?>">
@@ -275,7 +258,7 @@ $total=$costo['costo']+$gastoAdm+$costo['asociacion'];
                     <th><?= academico::t('matriculacion','Administrative Expenses') ?></th>
                     <td id="costAdmin">$<?= isset($gastoAdm)?(number_format($gastoAdm, 2, '.', ',')):'0.00' ?></td>
                 </tr>
-                <tr style="display: none;">
+                <tr style='display: none;'>
                     <th><?= academico::t('matriculacion','Students Association') ?></th>
                     <td id="costStud">$<?= isset($aso_est)?(number_format($aso_est, 2, '.', ',')):'0.00' ?></td>
                 </tr>
@@ -291,11 +274,12 @@ $total=$costo['costo']+$gastoAdm+$costo['asociacion'];
                 
             </tbody>
         </table>
-         <a href="<?= Url::to(['/academico/matriculacion/registrodetalle', 'per_id' => $per_id ]) ?>" class="btn btn-primary pull-right" style="margin: 0px 5px;"><?= Academico::t("matriculacion", "Continuar") ?></a>
          
-    <a href="javascript:" class="btn btn-success pull-right" onclick="registerSubject()" style="margin: 0px 5px;"><?= Academico::t("matriculacion", "Register More Subjects") ?></a>
-            
-
+         
+    <a href="javascript:" class="btn btn-success pull-right" onclick="registerSubject()" style="margin: 0px 5px;"><?= Academico::t("matriculacion", "Register Subjects") ?></a>
+            <?php if ($howmuchSubject > '1'): ?>
+        <a href="<?= Url::to(['/academico/matriculacion/registrodetalle', 'per_id' => $per_id ]) ?>" class="btn btn-primary pull-right" style="margin: 0px 5px;"><?= Academico::t("matriculacion", "Continuar") ?></a>
+        <?php endif; ?>
             <?php if($cancelStatus == '0'): ?>
             <?php endif; ?>
     

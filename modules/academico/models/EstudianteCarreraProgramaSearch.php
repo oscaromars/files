@@ -132,53 +132,54 @@ class EstudianteCarreraProgramaSearch extends EstudianteCarreraPrograma {
         return $dataProvider;
     }
 
-    public function getListadoHistorialacademico($params = null, $onlyData = false, $tipo = 1) {
+    public function getListadoPromediosexcel($arrFiltro = NULL, $onlyData = false) {
         $con_academico = \Yii::$app->db_academico;
         $con_db = \Yii::$app->db;
-        
 
-        $sql = "select h.carrera as carrera,
-                concat(per.per_pri_apellido, ' ', per.per_seg_apellido, ' ', per_pri_nombre) as estudiante,
-                per.per_cedula as cedula,
-                est.est_matricula as matricula,
-                asi.asi_descripcion as asignatura,
-                maca.maca_nombre as malla_academica,
-                pmac.pmac_nota as promedio,
-                enac.enac_asig_estado as estado
-                from db_academico.historico_siga h
-                inner join db_asgard.persona per on per.per_id = h.per_id
-                inner join db_academico.estudiante est on est.per_id = per.per_id
-                inner join db_academico.asignatura asi on asi.asi_id = h.asi_id
-                inner join db_academico.malla_academica maca on maca.maca_id = h.maca_id
-                inner join db_academico.malla_academico_estudiante maes on maes.maca_id = maca.maca_id
-                inner join db_academico.promedio_malla_academico pmac on pmac.maes_id = maes.maes_id
-                inner join db_academico.estado_nota_academico enac on enac.enac_id = pmac.enac_id
-                where per.per_estado and per.per_estado_logico
-                and est.est_estado and est.est_estado_logico";
-
-        /*if ($tipo == 1) {
-            $this->load($params);
-            if ($this->validate()) {
-               
-                if ($this->est_id) {
-                    $sql = $sql . " and est.est_id =" . $this->est_id;
-                }
-
-            } 
+        if (isset($arrFiltro) && count($arrFiltro) > 0) { 
+            if ($arrFiltro['estudiante'] != "" && $arrFiltro['estudiante'] > 0) {
+                $str_search .= "est.per_id = :per_id AND ";
+            }        
         }
-        if ($tipo == 2) {
 
-            if ($params['est_id']) {
-                $sql = $sql . " and est.est_id =" . $params['est_id'];
-            }
-
-        }*/
-        Utilities::putMessageLogFile('sql:' . $sql);
+            $sql = "SELECT eaca.eaca_nombre as carrera, 
+                        ifnull(CONCAT(per.per_pri_apellido,' ' ,per.per_seg_apellido,' ' ,per.per_pri_nombre),'') as estudiante, 
+                        enac.enac_asig_estado as estado_nota, 
+                        asi.asi_descripcion as asignatura, 
+                        maca.maca_nombre as malla,
+                        ifnull((pmac.pmac_nota),'') as promedio
+                FROM db_academico.estudiante_carrera_programa ecpr
+                INNER JOIN db_academico.estudiante est ON est.est_id = ecpr.est_id
+                INNER JOIN db_asgard.persona per ON per.per_id = est.per_id
+                INNER JOIN db_academico.malla_academico_estudiante maes ON maes.per_id = per.per_id
+                INNER JOIN db_academico.promedio_malla_academico pmac on pmac.maes_id = maes.maes_id
+                INNER JOIN db_academico.estado_nota_academico enac on enac.enac_id = pmac.enac_id
+                INNER JOIN db_academico.asignatura asi on asi.asi_id = maes.asi_id
+                INNER JOIN db_academico.malla_academica maca on maca.maca_id = maes.maca_id
+                INNER JOIN db_academico.modalidad_estudio_unidad meun on meun.meun_id = ecpr.meun_id
+                INNER JOIN db_academico.estudio_academico eaca on eaca.eaca_id = meun.eaca_id
+                WHERE 
+                ecpr.ecpr_estado = 1 AND ecpr.ecpr_estado_logico = 1
+                AND est.est_estado = 1 AND est.est_estado_logico = 1
+                AND per.per_estado = 1 AND per.per_estado_logico = 1 
+                AND maes.maes_estado = 1 AND maes.maes_estado_logico = 1
+                AND pmac.pmac_estado = 1 AND pmac.pmac_estado_logico = 1
+                AND asi.asi_estado = 1 AND asi.asi_estado_logico = 1";
+        
+        //Utilities::putMessageLogFile('sql:' . $sql);
         $comando = $con_academico->createCommand($sql);
+        //$comando->bindParam(":eaca_id", $eaca_id, \PDO::PARAM_INT);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        if (isset($arrFiltro) && count($arrFiltro) > 0) {
+           
+            if ($arrFiltro['estudiante'] != "" && $arrFiltro['estudiante'] > 0) {
+                $estudiante = $arrFiltro["estudiante"];
+                $comando->bindParam(":per_id", $estudiante, \PDO::PARAM_INT);
+            }                    
+        }
         $res = $comando->queryAll();
 
-        if ($onlyData)
-            return $res;
+
         $dataProvider = new ArrayDataProvider([
             'key' => 'Id',
             'allModels' => $res,
@@ -186,11 +187,20 @@ class EstudianteCarreraProgramaSearch extends EstudianteCarreraPrograma {
                 'pageSize' => Yii::$app->params["pageSize"],
             ],
             'sort' => [
-                'attributes' => [],
+                'attributes' => [
+                    'carrera', 
+                    'estudiante',
+                    'asignatura',
+                    'promedio'],
             ],
         ]);
 
-        return $dataProvider;
+        if ($onlyData) {
+            return $res;
+        } else {
+            return $dataProvider;
+        }
     }
 
+    
 }

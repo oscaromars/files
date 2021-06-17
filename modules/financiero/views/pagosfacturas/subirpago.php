@@ -11,6 +11,9 @@ use app\modules\financiero\Module as Pagos;
 use app\modules\admision\Module as crm;
 use app\modules\academico\Module as academico;
 
+use app\assets\DatatableAsset;
+DatatableAsset::register($this);
+
 use app\assets\StripeAsset;
 StripeAsset::register($this);
 //print_r($model);
@@ -18,6 +21,8 @@ Especies::registerTranslations();
 Pagos::registerTranslations();
 crm::registerTranslations();
 academico::registerTranslations();
+
+
 ?>
 
 <?= Html::hiddenInput('txth_idest', $arr_persona['est_id'], ['id' => 'txth_idest']); ?>
@@ -71,10 +76,7 @@ academico::registerTranslations();
 </style>
 <form class="form-horizontal" enctype="multipart/form-data" id="formsolicitud">   
     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-        <p class="text-danger"> <?= Yii::t("formulario", "Fields with * are required") ?> </p>
-    </div>
-    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-        <div class="form-group">
+        <div class="form-row">
             <h4><span id="lbl_general"><?= Pagos::t("Pagos", "Student Data") ?></span></h4> 
         </div>
     </div>
@@ -95,7 +97,7 @@ academico::registerTranslations();
         </div>
     </div>    
     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-        <div class="form-group">
+        <div class="form-row">
             <h4><span id="lbl_general"><?= Pagos::t("Pagos", "Academic Data") ?></span></h4> 
         </div>
     </div>
@@ -124,9 +126,12 @@ academico::registerTranslations();
         </div>                                        
     </div>
     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-        <div class="form-group">
+        <div class="form-row">
             <h4><span id="lbl_general"><?= Pagos::t("Pagos", "Payment Data") ?></span></h4> 
         </div>
+    </div>
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <p class="text-danger"> <?= Yii::t("formulario", "Fields with * are required") ?> </p>
     </div>
     <div class='col-xs-12 col-sm-12 col-md-6 col-lg-6'>
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
@@ -322,19 +327,21 @@ academico::registerTranslations();
             <!------------------------------------------------------->      
         </div>
     </div>
-    <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12" id="div_detalle"></div>
+    <!--div class="col-md-12 col-sm-12 col-xs-12 col-lg-12" id="div_detalle"></div>
     <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12">
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6"></div>
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
             &nbsp;&nbsp;
         </div>
-    </div>  
-    <div class='col-md-12 col-sm-12 col-xs-12 col-lg-12'>
-        <div class="col-md-7 col-sm-7 col-xs-7 col-lg-7">
-            <div class="form-group">
-                <h4><span id="lbl_general"><?= Pagos::t("Pagos", "Pending Invoices Data") ?></span></h4> 
-            </div>
+    </div--> 
+
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="form-row">
+            <h4><span id="lbl_general"><?= Pagos::t("Pagos", "Pending Invoices Data") ?></span></h4> 
         </div>
+    </div>
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <p class="text-danger"> <?= Yii::t("formulario", "Select the amounts to pay") ?> </p>
     </div>
     <div class='col-md-12 col-sm-12 col-xs-12 col-lg-12'>        
         <?=
@@ -343,7 +350,14 @@ academico::registerTranslations();
             'dataProvider' => $model,
             'columns' => [
                 [
+                    'attribute' => 'Cuota_pendiente',
+                    'contentOptions' => ['style' => 'text-align: center;'],
+                    'header' => Pagos::t("Pagos", "Pending Fee"),
+                    'value' => 'cuota',
+                ],
+                [
                     'attribute' => 'Factura',
+                    'contentOptions' => ['style' => 'text-align: center;'],
                     'header' => Pagos::t("Pagos", "Bill"),
                     'value' => 'NUM_NOF',
                 ],
@@ -362,6 +376,7 @@ academico::registerTranslations();
                 ],*/
                 [
                     'attribute' => 'Fecha_factura',
+                    'contentOptions' => ['style' => 'text-align: center;'],
                     'header' => Pagos::t("Pagos", "Date Bill"),
                     'value' => 'F_SUS_D',
                 ],
@@ -370,28 +385,28 @@ academico::registerTranslations();
                     'header' => Pagos::t("Pagos", "Balance"),
                     'value' => 'SALDO',
                 ],*/
-                [
-                    'attribute' => 'Cuota_pendiente',
-                    'header' => Pagos::t("Pagos", "Pending Fee"),
-                    'value' => 'cuota',
-                ],
+                
                 [
                     'attribute' => 'valor_cuota',
+                    'contentOptions' => ['style' => 'text-align: center;'],
                     'header' => Pagos::t("Pagos", "Quota value"),
                     'value' => 'ccar_valor_cuota',
                 ],
                 [
                     'attribute' => 'vencimiento',
+                    'contentOptions' => ['style' => 'text-align: center;'],
                     'header' => Pagos::t("Pagos", "Expiration date"),
                     'value' => 'F_VEN_D',
                 ],
                 [
                     'attribute' => 'Abono',
+                    'contentOptions' => ['style' => 'text-align: center;'],
                     'header' => Pagos::t("Pagos", "Abono"),
                     'value' => 'abono',
                 ],
                 [
                     'attribute' => 'Saldo',
+                    'contentOptions' => ['style' => 'text-align: center;'],
                     'header' => Pagos::t("Pagos", "Saldo"),
                     'value' => 'saldo',
                 ],
@@ -404,7 +419,7 @@ academico::registerTranslations();
                 */
                 [
                     'class' => 'yii\grid\ActionColumn',
-                    'header' => Academico::t("matriculacion", "Select"),
+                    'header' => '<i class="fa fa-arrow-circle-o-down" aria-hidden="true"></i>',//Academico::t("matriculacion", "Select"),
                     'contentOptions' => ['style' => 'text-align: center;'],
                     'headerOptions' => ['width' => '60'],
                     'template' => '{select}',
@@ -427,3 +442,32 @@ academico::registerTranslations();
         </div>
     </div>-->
 </form>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+
+        $('#TbgPagopendiente > table').DataTable({
+            "dom": 't',
+            responsive: true,
+            columnDefs: [   
+                { targets: 0, responsivePriority: 1},    
+                { targets: 3, responsivePriority: 2},    
+                { targets: 7, responsivePriority: 3},  
+            ],
+        });
+    });
+</script>
+
+<style type="text/css">
+    .barexportp{
+        display: none;
+    }
+
+    #TbgPagopendiente > .summary{
+        display: none;
+    }
+
+    .sorting{
+        text-align: center;
+    }
+</style>

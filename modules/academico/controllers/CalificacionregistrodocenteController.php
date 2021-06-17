@@ -138,7 +138,7 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 
         $arr_grupos = $grupo_model->getAllGruposByUser($user_usermane);
         
-        $arr_periodoActual = [$mod_periodoActual->getPeriodoAcademicoActual()];
+        $arr_periodoActual = $mod_periodoActual->getPeriodoAcademicoActual();
 
         $arr_ninteres = $mod_unidad->consultarUnidadAcademicasEmpresa(1);
 
@@ -522,19 +522,19 @@ class CalificacionregistrodocenteController extends \app\components\CController 
             if($admin){// Es administrador
                 $pro_id = $mod_profesor->getProfesoresxid($per_id)['Id'];
                 if(isset($pro_id)){ // Y profesor
-                    $materias = $asig_mod->getAsignaturasBy($pro_id, NULL, $periodo_actual['id']);
+                    $materias = $asig_mod->getAsignaturasBy($pro_id, NULL, $periodo_actual[0]['id']);
                 }
                 else{
-                    $materias = $asig_mod->getAsignaturasBy($profesores[0]['pro_id'], NULL, $periodo_actual['id']);
+                    $materias = $asig_mod->getAsignaturasBy($profesores[0]['pro_id'], NULL, $periodo_actual[0]['id']);
                 }
             }
             else{ // No es administrador
                 $pro_id = $mod_profesor->getProfesoresxid($per_id)['Id'];
                 if(!isset($pro_id)){ // Ni profesor
-                    $materias = $asig_mod->getAsignaturasBy($profesores[0]['pro_id'], NULL, $periodo_actual['id']); // En realidad no se debería permitir entrar en la pantalla, pero por si acaso
+                    $materias = $asig_mod->getAsignaturasBy($profesores[0]['pro_id'], NULL, $periodo_actual[0]['id']); // En realidad no se debería permitir entrar en la pantalla, pero por si acaso
                 }
                 else{
-                    $materias = $asig_mod->getAsignaturasBy($pro_id, NULL, $periodo_actual['id']);
+                    $materias = $asig_mod->getAsignaturasBy($pro_id, NULL, $periodo_actual[0]['id']);
                 }
             }
 
@@ -542,7 +542,7 @@ class CalificacionregistrodocenteController extends \app\components\CController 
             
             return $this->render('cargarcalificaciones', [
                 'periodos' => ArrayHelper::map(array_merge($periodos), "paca_id", "paca_nombre"),
-                'periodo_actual' => $periodo_actual,
+                'periodo_actual' => $periodo_actual[0],
                 'materias' => ArrayHelper::map(array_merge($materias), "asi_id", "asi_descripcion"),
                 'parciales' => $this->parciales(),
                 'profesores' => ArrayHelper::map(array_merge($profesores), "per_id", "nombres"),
@@ -687,8 +687,8 @@ class CalificacionregistrodocenteController extends \app\components\CController 
                                 ** $val[17] -> 'Calificación' - 2° PARCIAL  No se usa porque el sistema lo calcula por si acaso esté mal calculado
                                 */
 
-                                $usuario = $val[2]; // Si es est de Grado Online
-                                $cedula = $val[2]; // Si es est de grado no online
+                                $usuario = trim($val[2], " "); // Si es est de Grado Online
+                                $cedula = trim($val[2], " "); // Si es est de grado no online
                                 $nombre = $val[4];
 
                                 $estudianteOnline = UsuarioEducativa::find()->where(['uedu_usuario' => $usuario, 'uedu_estado' => 1, 'uedu_estado_logico' => 1])->asArray()->one();
@@ -732,6 +732,14 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 
                                 // Modalidad ID
                                 $mod_id = $meun['mod_id'];
+
+                                // Validar que el período académico sea el correcto
+                                $daca = DistributivoAcademico::find()->where(['asi_id' => $asi_id, 'pro_id' => $pro_id, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id])->asArray()->one();
+                                $paca_id_daca = $daca['paca_id'];
+                                if($paca_id != $paca_id_daca){
+                                    $noalumno .= $nombre . " (no pertenece al período académico seleccionado), ";
+                                    continue;
+                                }
 
                                 // Grado Online
                                 if($mod_id == 1){
@@ -809,6 +817,14 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 
                                 // Modalidad ID
                                 $mod_id = $meun['mod_id'];
+
+                                // Validar que el período académico sea el correcto
+                                $daca = DistributivoAcademico::find()->where(['asi_id' => $asi_id, 'pro_id' => $pro_id, 'uaca_id' => $uaca_id, 'mod_id' => $mod_id])->asArray()->one();
+                                $paca_id_daca = $daca['paca_id'];
+                                if($paca_id != $paca_id_daca){
+                                    $noalumno .= $nombre . " (no pertenece al período académico seleccionado), ";
+                                    continue;
+                                }
 
                                 // Posgrado Online
                                 if($mod_id == 1){

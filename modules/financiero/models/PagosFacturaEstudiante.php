@@ -320,6 +320,7 @@ class PagosFacturaEstudiante extends \yii\db\ActiveRecord
                         u.uaca_id,
                         mo.mod_id,
                         ea.eaca_nombre as carrera,
+                        f.fpag_id as forma_pago_id,
                         f.fpag_nombre as forma_pago,
                         d.dpfa_num_cuota,
                         d.dpfa_valor_cuota as valor_cuota,

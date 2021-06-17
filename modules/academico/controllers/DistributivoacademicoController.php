@@ -745,7 +745,7 @@ class DistributivoacademicoController extends \app\components\CController {
         header("Content-Type: $content_type");
         header("Content-Disposition: attachment;filename=" . $nombarch);
         header('Cache-Control: max-age=0');
-        $colPosition = array("C", "D", "E", "F", "G", "H", "I");
+        $colPosition = array("C", "D", "E", "F", "G", "H", "I", "J", "K");
         $arrHeader = array(
             academico::t("Academico", "Teacher"),
             Yii::t("formulario", "DNI 1"),
@@ -754,6 +754,8 @@ class DistributivoacademicoController extends \app\components\CController {
             Yii::t("formulario", "Period"),
             Yii::t("formulario", "Subject"),
             academico::t("Academico", "Working day"),
+            academico::t("Academico", "Paralelo"),
+            academico::t("Academico", "Total Estudiantes")
         );
         $distributivo_model = new DistributivoAcademico();
         $data = Yii::$app->request->get();

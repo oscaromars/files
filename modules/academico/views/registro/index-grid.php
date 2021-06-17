@@ -91,7 +91,7 @@ PbGridView::widget([
         ],
         [
             'class' => 'yii\grid\ActionColumn',
-            //'header' => 'Action',
+            'header' => Yii::t("formulario", "Action"),
             'contentOptions' => ['style' => 'text-align: center;'],
             'headerOptions' => ['width' => '60'],
             //'template' => '{pay} {download}',

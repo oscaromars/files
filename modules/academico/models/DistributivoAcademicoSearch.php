@@ -736,8 +736,8 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
                 asi.asi_descripcion as materia,
                 uaca.uaca_descripcion as unidad,
                 moda.mod_descripcion as modalidad,
-                pes.pes_carrera as carrera,
-                ifnull(est.est_matricula,'') as n_matricula
+                ifnull(est.est_matricula,'') as n_matricula,
+                pes.pes_carrera as carrera
                 from db_academico.registro_online as ron
                 inner join db_academico.registro_online_item as roi on roi.ron_id=ron.ron_id 
                 inner join db_asgard.persona as per on per.per_id = ron.per_id

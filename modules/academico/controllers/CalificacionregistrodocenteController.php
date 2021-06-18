@@ -539,6 +539,8 @@ class CalificacionregistrodocenteController extends \app\components\CController 
             }
 
             // Utilities::putMessageLogFile($periodo_actual['id']);
+
+            // \app\models\Utilities::putMessageLogFile("materias: " . print_r($materias, true));
             
             return $this->render('cargarcalificaciones', [
                 'periodos' => ArrayHelper::map(array_merge($periodos), "paca_id", "paca_nombre"),

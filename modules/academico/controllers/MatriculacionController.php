@@ -1133,7 +1133,9 @@ class MatriculacionController extends \app\components\CController {
                             }
                         }  
                         
-                        
+                       \app\models\Utilities::putMessageLogFile($data["gastos"]);
+                       \app\models\Utilities::putMessageLogFile($gastoAdm);
+                       \app\models\Utilities::putMessageLogFile($dataMat['Varios']); 
 
                     if($ron_id == 0){
                         $id = $registro_online_model->insertRegistroOnline(
@@ -1858,7 +1860,7 @@ class MatriculacionController extends \app\components\CController {
             }
         }
 
-        \app\models\Utilities::putMessageLogFile("materias_roi: " . print_r($materias_roi, true));
+        // \app\models\Utilities::putMessageLogFile("materias_roi: " . print_r($materias_roi, true));
 
         for ($i = 0; $i < count($dataPlanificacion); $i++) {
             if(in_array($dataPlanificacion[$i]['Subject'], $materias_roi)){
@@ -1903,7 +1905,7 @@ class MatriculacionController extends \app\components\CController {
             $cuotas = 3; // Empezar con 3 cuotas
 
             foreach ($tempBlock as $key => $value) { // recorrer la lista de bloques
-                \app\models\Utilities::putMessageLogFile("IF: " . ($value != $bloque));
+                // \app\models\Utilities::putMessageLogFile("IF: " . ($value != $bloque));
                 if($value != $bloque){ // Si uno de ellos es diferente, quiere decir que hay más de un bloque
                     $cuotas = 6; // Así que las cuotas son 6
                     break; // Salir del foreach

@@ -332,7 +332,7 @@ academico::registerTranslations();
         </div>
     </div>
     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-        <p class="text-danger"> <?= Yii::t("formulario", "Select the amounts to pay") ?> </p>
+        <p class="text-danger"> <?= Pagos::t("Pagos", "Select the amounts to pay") ?> </p>
     </div>
     <div class='col-md-12 col-sm-12 col-xs-12 col-lg-12'>        
         <?=

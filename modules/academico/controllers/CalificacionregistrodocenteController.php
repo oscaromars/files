@@ -324,13 +324,11 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 
         $data   = Yii::$app->request->post();
 
-        //print_r($data);die();
-
         $row_id  = array_key_first ( $data['data'] );
 
         $ccal_id = $data['data'][$row_id]['ccal_id'];
 
-        $total = 0;
+        
         
         $valor  = array();
 
@@ -339,6 +337,7 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 
         if($ccal_id != 0){
             $valor["ccal_id"] = $data['data'][$row_id]['ccal_id'];
+            $total = 0;
 
             foreach ($data['data'][$row_id] as $key => $value) {
                 if($key!='nparcial' &&
@@ -348,13 +347,15 @@ class CalificacionregistrodocenteController extends \app\components\CController 
                     $key!='asi_id'   &&
                     $key!='ecal_id'  &&
                     $key!='ccal_id'  &&
+                    $key!='mod_id'  &&
                     $key!='uaca_id')
                     if($value!=''){
                         $mod_calificacion->actualizarDetalleCalificacionporcomponente($ccal_id,$key,$value);
 
                         if(!(is_null($value)) && $value != ''){
                             $valor[$key] = $value;
-                            $total = $total + intval($value); 
+                            $total = $total + $value; 
+                            //\app\models\Utilities::putMessageLogFile($value);
                         }
                         
                     }//if
@@ -365,18 +366,10 @@ class CalificacionregistrodocenteController extends \app\components\CController 
             $pro_id  = $data['data'][$row_id]['pro_id'];
             $asi_id  = $data['data'][$row_id]['asi_id'];
             $mod_id  = $data['data'][$row_id]['mod_id'];
-
-            //$mod_id  = $data['data']['modalidad'];
-            //$ecal_id = $data['data'][$ccal_id]['nparcial'];
-
-            if($data['data'][$row_id]['nparcial'] == 'Parcial I' )
-                $ecal_id = 1;
-            if($data['data'][$row_id]['nparcial'] == 'Parcial II' )
-                $ecal_id = 2;
-            
+            $ecal_id  = $data['data'][$row_id]['ecal_id'];           
             $uaca_id = $data['data'][$row_id]['uaca_id'];
 
-            //print_r($ecal_id);die();
+            $total = 0;
 
             $ccal_id = $mod_calificacion->crearCabeceraCalificacionporcomponente($paca_id,$est_id,$pro_id,$asi_id,$ecal_id,$uaca_id);
 
@@ -393,19 +386,19 @@ class CalificacionregistrodocenteController extends \app\components\CController 
                     $key!='ccal_id'  &&
                     $key!='mod_id'  &&
                     $key!='uaca_id'){
-                        //if($value!=''){
-                            $mod_calificacion->crearDetalleCalificacionporcomponente($ccal_id,$key,$value,$uaca_id,$mod_id,$ecal_id);
+                        $mod_calificacion->crearDetalleCalificacionporcomponente($ccal_id,$key,$value,$uaca_id,$mod_id,$ecal_id);
 
-                            if(!(is_null($value)) && $value != ''){
-                                $valor[$key] = $value;
-                                $total = $total + intval($value); 
-                            }
-                            
-                        //}//if
+                        if(!(is_null($value)) && $value != ''){
+                            $valor[$key] = $value;
+                            $total = $total + $value; 
+
+                        }
                 }//if  
             }//foeach
         }//else
 
+        //Solucion temporal, debe revisarse porq suma 1 de mas en la iteraccion
+        //$total--;
         $mod_calificacion->actualizarDetalleCalificacion2($ccal_id,$total);
 
         header('Content-Type: application/json');

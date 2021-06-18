@@ -528,7 +528,6 @@ class PagosfacturasController extends \app\components\CController {
                                 'currency'    => "usd", 
                                 'description' => "Pago de Cuotas desde el sistema Asgard/UTEG"
                             )); 
-                            \app\models\Utilities::putMessageLogFile2(print_r($charge,true),"stripe");
                         }catch(Exception $e) {  
                             $api_error = $e->getMessage();  
                             //return json_encode("GALO".$api_error);
@@ -557,6 +556,11 @@ class PagosfacturasController extends \app\components\CController {
                                 $paidAmount     = ($paidAmount/100); 
                                 $paidCurrency   = $chargeJson['currency']; 
                                 $payment_status = $chargeJson['status']; 
+                                //print_r($chargeJson); die();
+                                $tarjeta        = $chargeJson['payment_method_details']['card']['brand']; 
+                                $tipo           = $chargeJson['payment_method_details']['card']['funding']; 
+                                $digito         = $chargeJson['payment_method_details']['card']['last4']; 
+                                $recibo         = $chargeJson['receipt_url'];
                                  
                                 // Si el pago fue correcto
                                 if($payment_status == 'succeeded'){ 
@@ -711,14 +715,51 @@ class PagosfacturasController extends \app\components\CController {
                         } 
                     }
 
-                    if($fpag_id == 1){
-                        $body = Utilities::getMailMessage("pagostripe", array("[[user]]" => $name ), Yii::$app->language);    
-                        Utilities::sendEmail($tituloMensaje, Yii::$app->params["contactoEmail"], [$email => $name], $asunto, $body);
+                    if($mod_id == 1){ //online
+                        $telefono = Yii::$app->params["tlfonline"];
+                        //$bodypmatricula = Utilities::getMailMessage("pagoMatriculaDecano", array("[[user]]" => $nombres, "[[cedula]]" => $cedula, "[[telefono]]" => $telefono ), Yii::$app->language);
+                        //Utilities::sendEmail($tituloMensaje, Yii::$app->params["colecturia"], [Yii::$app->params["decanatoonline"] => "Decanato Online"], $asunto, $bodypmatricula);
+                        //Utilities::sendEmail($tituloMensaje, Yii::$app->params["colecturia"], [Yii::$app->params["secretariaonline1"] => "Secretaria Online"], $asunto, $bodypmatricula);
+                        //Utilities::sendEmail($tituloMensaje, Yii::$app->params["colecturia"], [Yii::$app->params["secretariaonline2"] => "Secretaria Online"], $asunto, $bodypmatricula);
+                    }else if($mod_id == 2){//presencial
+                        $telefono = Yii::$app->params["tlfpresencial"];
+                        //$bodypmatricula = Utilities::getMailMessage("pagoMatriculaDecano", array("[[user]]" => $nombres, "[[cedula]]" => $cedula, "[[telefono]]" => $telefono ), Yii::$app->language);
+                        //Utilities::sendEmail($tituloMensaje, Yii::$app->params["colecturia"], [Yii::$app->params["decanogradopresencial"] => "Decanato Presencial"], $asunto, $bodypmatricula);
+                        //Utilities::sendEmail($tituloMensaje, Yii::$app->params["colecturia"], [Yii::$app->params["secretariagrado1"] => "Secretaria Presencial"], $asunto, $bodypmatricula);
+                        //Utilities::sendEmail($tituloMensaje, Yii::$app->params["colecturia"], [Yii::$app->params["secretariagrado2"] => "Secretaria Presencial"], $asunto, $bodypmatricula);
+                        //Utilities::sendEmail($tituloMensaje, Yii::$app->params["colecturia"], [Yii::$app->params["coordinadorgrado"] => "Coordinador Presencial"], $asunto, $bodypmatricula);
                     }else{
-                        $body = Utilities::getMailMessage("pago", array("[[user]]" => $name), Yii::$app->language, Yii::$app->basePath . "/modules/financiero");
-                        Utilities::sendEmail($tituloMensaje, Yii::$app->params["contactoEmail"], [$email => $name], $asunto, $body);
+                        $telefono = Yii::$app->params["tlfdistancia"];
+                        //$bodypmatricula = Utilities::getMailMessage("pagoMatriculaDecano", array("[[user]]" => $nombres, "[[cedula]]" => $cedula, "[[telefono]]" => $telefono ), Yii::$app->language);
+                        //Utilities::sendEmail($tituloMensaje, Yii::$app->params["colecturia"], [Yii::$app->params["decanogradosemi"] => "Decanato SemiPresencial"], $asunto, $bodypmatricula);
+                        //Utilities::sendEmail($tituloMensaje, Yii::$app->params["colecturia"], [Yii::$app->params["secretariasemi"]  => "Secretaria SemiPresencial"], $asunto, $bodypmatricula);
                     }
-                    $bodycolec = Utilities::getMailMessage("colecturia", array("[[user]]" => $name), Yii::$app->language);
+
+                    if($fpag_id == 1){
+                        $body = Utilities::getMailMessage("pagostripe", 
+                                                          array("[[user]]"     => $name, 
+                                                                "[[telefono]]" => $telefono), 
+                                                          Yii::$app->language);    
+                        Utilities::sendEmail($tituloMensaje, Yii::$app->params["contactoEmail"], [$email => $name], $asunto, $body);
+                        $bodycolec = Utilities::getMailMessage("colecturiatc", 
+                                                               array("[[ident]]"   => $data['txt_cedula'],
+                                                                     "[[user]]"    => $name,
+                                                                     "[[email]]"   => $email,
+                                                                     "[[valor]]"   => $paidAmount,
+                                                                     "[[tarjeta]]" => $tarjeta,
+                                                                     "[[tipo]]"    => $tipo,
+                                                                     "[[digitos]]" => $digito,
+                                                                     "[[recibo]]"  => $recibo,),
+                                                               Yii::$app->language);
+                    }else{
+                        $body = Utilities::getMailMessage("pago", 
+                                                          array("[[user]]"     => $name, 
+                                                                "[[telefono]]" => $telefono), 
+                                                          Yii::$app->language);  
+                        Utilities::sendEmail($tituloMensaje, Yii::$app->params["contactoEmail"], [$email => $name], $asunto, $body);
+                        $bodycolec = Utilities::getMailMessage("colecturia", array("[[user]]" => $name), Yii::$app->language);
+                    }
+                    
                    
                     Utilities::sendEmail($tituloMensaje, Yii::$app->params["colecturia"]     , [Yii::$app->params["supercolecturia"] => "Colecturia"], $asunto, $bodycolec);
                     Utilities::sendEmail($tituloMensaje, Yii::$app->params["supercolecturia"], [Yii::$app->params["colecturia"]      => "Supervisor Colecturia"], $asunto, $bodycolec);
@@ -1078,13 +1119,13 @@ class PagosfacturasController extends \app\components\CController {
     }
 
     public function actionConsultarevision() {
-        $dpfa_id = base64_decode($_GET["dpfa_id"]);
-        $mod_pagos = new PagosFacturaEstudiante();
-        $mod_unidad = new UnidadAcademica();
+        $dpfa_id       = base64_decode($_GET["dpfa_id"]);
+        $mod_pagos     = new PagosFacturaEstudiante();
+        $mod_unidad    = new UnidadAcademica();
         $mod_modalidad = new Modalidad();
 
-        $model = $mod_pagos->consultarPago($dpfa_id);
-        $arr_unidadac = $mod_unidad->consultarUnidadAcademicas();
+        $model         = $mod_pagos->consultarPago($dpfa_id);
+        $arr_unidadac  = $mod_unidad->consultarUnidadAcademicas();
         $arr_modalidad = $mod_modalidad->consultarModalidad($arr_unidadac[0]["id"], 1);
         return $this->render('viewrevisionpago', [
                     'model' => $model,
@@ -1093,7 +1134,7 @@ class PagosfacturasController extends \app\components\CController {
                     'arrEstados' => $this->estadoRechazo(),
                     'arrObservacion' => array("0" => "Seleccione", "Archivo Ilegible" => "Archivo Ilegible", "Archivo no corresponde al pago" => "Archivo no corresponde al pago", "Archivo con Error" => "Archivo con Error", "Valor pagado no cubre factura" => "Valor pagado no cubre factura", "Archivo duplicado" => "Archivo duplicado"),
         ]);
-    }
+    }//function actionConsultarevision
     
     public function actionPagos() {
         $per_idsession = @Yii::$app->session->get("PB_perid");

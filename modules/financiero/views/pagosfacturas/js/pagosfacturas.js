@@ -131,6 +131,7 @@ function guardarPagofactura() {
     arrParams.formapago   = $('#cmb_formapago').val();
     arrParams.valor       = $('#txt_valor').val();
     arrParams.observacion = $('#txt_observa').val();
+    arrParams.txt_cedula  = $('#txt_cedula ').val();
     
     //Pregunto por el metodo de pago
     if (arrParams.formapago == 0) {
@@ -258,11 +259,11 @@ function guardarPagofactura() {
                               //paramCallback : ruta, //variable a ser llamada por la funcion anterior ej gotoPage(ruta)
                             }];
                             showAlert(response.status, response.label, response.message);
-                            /*
+    
                             setTimeout(function () {
                                 parent.window.location.href = $('#txth_base').val() + "/financiero/pagosfacturas/viewsaldo";
                             }, 2000);
-                            */
+                            
                         }, true);
                     }//if
                 }//else

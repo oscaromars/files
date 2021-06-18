@@ -60,7 +60,8 @@ namespace app\modules\financiero\messages;
      "Quota value" => "Valor cuota",
      "Reason/Item/Service" => "Motivo/Item/Servicio",
      "Reference" => "Comprobante No.",
-     "Registration Payments for Collections" => "Registro Pagos por Colecturía",  
+     "Registration Payments for Collections" => "Registro Pagos por Colecturía",
+     "Select the amounts to pay" => "Seleccione las cuotas a pagar o abonar",
      "Student Data" => "Datos Estudiante",
      "Tax" =>"Impuesto",
      "Transaction Date" => "Fecha Transacción",
@@ -72,5 +73,5 @@ namespace app\modules\financiero\messages;
      "Value" => "Valor",
      "Way to pay" => "Forma Pago",  
      "# Voucher" => "# Comprobante",
-     "Select the amounts to pay" => "Seleccione las cuotas a pagar o abonar"  
+     
  ];

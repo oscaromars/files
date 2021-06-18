@@ -521,6 +521,11 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord
         $con    = \Yii::$app->db_academico;
         $estado = '1';
         $usu_id = @Yii::$app->session->get("PB_iduser");
+
+        if($uaca_id == 1 && $mod_id == 1){
+            $strCond = "and cuni.ecal_id   = $ecal_id";
+        }else
+            $strCond = "";
         
         //$fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
         if($value == ''){
@@ -544,7 +549,7 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord
                                         and com.com_nombre = '$key'
                                         and cuni.uaca_id   = $uaca_id
                                         and cuni.mod_id    = $mod_id
-                                        /*and cuni.ecal_id   = $ecal_id*/),
+                                        $strCond ),
                                     $usu_id,
                                     1,
                                     now(),
@@ -572,7 +577,7 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord
                                         and com.com_nombre = '$key'
                                         and cuni.uaca_id = $uaca_id
                                         and cuni.mod_id    = $mod_id
-                                        /*and cuni.ecal_id   = $ecal_id*/),
+                                       $strCond ),
                                     $value,
                                     $usu_id,
                                     1,

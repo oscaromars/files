@@ -70,6 +70,12 @@ $(document).ready(function () {
             $('.pago_documento').hide();           
 
             $('#pago_stripe').show();
+        }else if(opcion==0){
+            $('#txt_fechapago').removeClass('PBvalidation');
+            $('#pago_documento').hide(); 
+            $('.pago_documento').hide();           
+
+            $('#pago_stripe').hide();
         }else{
             $('#txt_fechapago').addClass('PBvalidation');
             $('#pago_documento').show();

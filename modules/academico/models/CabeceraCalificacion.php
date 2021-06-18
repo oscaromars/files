@@ -1406,7 +1406,7 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord
         }
 
 
-        $sql = "SELECT
+        $sql = "SELECT DISTINCT
                 estudiante.est_id,
                 estudiante.est_matricula,
                 estudiante.nombre,
@@ -1430,7 +1430,7 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord
                 ((coalesce(D.ASISTENCIA_PARCIAL_I, 0) + coalesce(E.ASISTENCIA_PARCIAL_II, 0)) / 2) as asistencia_final
                 FROM 
                     (
-                    SELECT 
+                    SELECT DISTINCT
                         estudiante.est_id,
                         estudiante.est_matricula,
                         estudiante.est_estado, -- CHANGED
@@ -1485,7 +1485,7 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord
                     ) estudiante
                 LEFT JOIN
                 (
-                    SELECT clfc.ccal_id, clfc.paca_id, clfc.est_id, clfc.asi_id,ecun.uaca_id,clfc.pro_id,clfc.ccal_calificacion AS PARCIAL_I
+                    SELECT DISTINCT clfc.ccal_id, clfc.paca_id, clfc.est_id, clfc.asi_id,ecun.uaca_id,clfc.pro_id,clfc.ccal_calificacion AS PARCIAL_I
                     FROM " . $con->dbname . ".cabecera_calificacion clfc
                     INNER JOIN " . $con->dbname . ".esquema_calificacion_unidad ecun ON ecun.ecun_id = clfc.ecun_id
                     INNER JOIN " . $con->dbname . ".esquema_calificacion ecal ON ecal.ecal_id = ecun.ecal_id
@@ -1498,7 +1498,7 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord
                 AND estudiante.uaca_id = A.uaca_id
                 LEFT JOIN
                 (
-                    SELECT clfc.ccal_id, clfc.paca_id, clfc.est_id, clfc.asi_id,ecun.uaca_id,clfc.pro_id,ecal.ecal_descripcion  ,clfc.ccal_calificacion AS PARCIAL_II 
+                    SELECT DISTINCT clfc.ccal_id, clfc.paca_id, clfc.est_id, clfc.asi_id,ecun.uaca_id,clfc.pro_id,ecal.ecal_descripcion  ,clfc.ccal_calificacion AS PARCIAL_II 
                     FROM " . $con->dbname . ".cabecera_calificacion clfc
                     INNER JOIN " . $con->dbname . ".esquema_calificacion_unidad ecun ON ecun.ecun_id = clfc.ecun_id
                     INNER JOIN " . $con->dbname . ".esquema_calificacion ecal ON ecal.ecal_id = ecun.ecal_id
@@ -1511,7 +1511,7 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord
                 AND estudiante.uaca_id = B.uaca_id
                 LEFT JOIN
                 (
-                    SELECT clfc.ccal_id, clfc.paca_id, clfc.est_id, clfc.asi_id,ecun.uaca_id,clfc.pro_id,ecal.ecal_descripcion  ,clfc.ccal_calificacion AS SUPLETORIO 
+                    SELECT DISTINCT clfc.ccal_id, clfc.paca_id, clfc.est_id, clfc.asi_id,ecun.uaca_id,clfc.pro_id,ecal.ecal_descripcion  ,clfc.ccal_calificacion AS SUPLETORIO 
                     FROM " . $con->dbname . ".cabecera_calificacion clfc
                     INNER JOIN " . $con->dbname . ".esquema_calificacion_unidad ecun ON ecun.ecun_id = clfc.ecun_id
                     INNER JOIN " . $con->dbname . ".esquema_calificacion ecal ON ecal.ecal_id = ecun.ecal_id
@@ -1524,7 +1524,7 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord
                     AND estudiante.uaca_id = C.uaca_id
                 LEFT JOIN 
                 (
-                    SELECT  casi.casi_id, casi.paca_id, casi.est_id,casi.asi_id,esquema_calificacion_unidad.uaca_id,casi.pro_id, casi.casi_porc_total as ASISTENCIA_PARCIAL_I
+                    SELECT DISTINCT casi.casi_id, casi.paca_id, casi.est_id,casi.asi_id,esquema_calificacion_unidad.uaca_id,casi.pro_id, casi.casi_porc_total as ASISTENCIA_PARCIAL_I
                     FROM " . $con->dbname . ".cabecera_asistencia casi
                     INNER JOIN " . $con->dbname . ".asistencia_esquema_unidad aeun_id_asistencia ON aeun_id_asistencia.aeun_id = casi.aeun_id
                     INNER JOIN " . $con->dbname . ".esquema_calificacion_unidad esquema_calificacion_unidad ON esquema_calificacion_unidad.ecun_id = aeun_id_asistencia.ecun_id
@@ -1537,7 +1537,7 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord
                 AND estudiante.uaca_id = D.uaca_id
                 LEFT JOIN 
                 (
-                    SELECT  casi.casi_id, casi.paca_id, casi.est_id,casi.asi_id,esquema_calificacion_unidad.uaca_id,casi.pro_id, casi.casi_porc_total as ASISTENCIA_PARCIAL_II
+                    SELECT DISTINCT casi.casi_id, casi.paca_id, casi.est_id,casi.asi_id,esquema_calificacion_unidad.uaca_id,casi.pro_id, casi.casi_porc_total as ASISTENCIA_PARCIAL_II
                     FROM " . $con->dbname . ".cabecera_asistencia casi
                     INNER JOIN " . $con->dbname . ".asistencia_esquema_unidad aeun_id_asistencia ON aeun_id_asistencia.aeun_id = casi.aeun_id
                     INNER JOIN " . $con->dbname . ".esquema_calificacion_unidad esquema_calificacion_unidad ON esquema_calificacion_unidad.ecun_id = aeun_id_asistencia.ecun_id

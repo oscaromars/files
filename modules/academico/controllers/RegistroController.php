@@ -2571,7 +2571,8 @@ class RegistroController extends \app\components\CController {
             $matriculacion_model = new Matriculacion();          
             $modelPersona = Persona::find()->where(['per_id' => $per_id])->asArray()->one();
             $modelEstudiante = Estudiante::find()->where(['per_id' => $per_id])->asArray()->one();
-           
+            $modelCargaCartera = new RegistroConfiguracion();
+
             /*Cabecera*/
             $datos_planficacion = $matriculacion_model->getDataPlanStudent($per_id);    
             $pla_id = $datos_planficacion['pla_id'];
@@ -2584,7 +2585,10 @@ class RegistroController extends \app\components\CController {
             /*Detalle de materias*/
             $matriculacion_model = new Matriculacion();
             //obtengo el ron_id
-            $resp_ron_id = $matriculacion_model->getDataStudenFromRegistroOnline($per_id, $pes_id);
+                //$resp_ron_id = $matriculacion_model->getDataStudenFromRegistroOnline($per_id, $pes_id);
+
+            //obtengo el ron_id
+            $resp_ron_id= $modelCargaCartera->getRonPes($per_id);
             $ron_id = $resp_ron_id['ron_id'];
             $dataPlanificacion = $matriculacion_model->getPlanificationFromRegistroOnline($ron_id);
 

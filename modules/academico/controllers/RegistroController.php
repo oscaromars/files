@@ -233,6 +233,7 @@ class RegistroController extends \app\components\CController {
         unset($arr_forma_pago[6]);
         unset($arr_forma_pago[7]);
         unset($arr_forma_pago[8]);
+        //unset($arr_forma_pago[9]);
         // get Credits and get Cost x Credit
         $eaca_id = $arrCarrera['eaca_id'];
         $mod_id = $arrCarrera['mod_id'];
@@ -2405,6 +2406,8 @@ class RegistroController extends \app\components\CController {
             $matriculacion_model = new Matriculacion();          
             $modelPersona = Persona::find()->where(['per_id' => $per_id])->asArray()->one();
             $modelEstudiante = Estudiante::find()->where(['per_id' => $per_id])->asArray()->one();  
+            $modelCargaCartera = new RegistroConfiguracion();
+
 
             /*Cabecera*/
             $datos_planficacion = $matriculacion_model->getDataPlanStudent($per_id);    
@@ -2418,8 +2421,10 @@ class RegistroController extends \app\components\CController {
             /*Detalle de materias*/
             $matriculacion_model = new Matriculacion();
             //obtengo el ron_id
+            $datosRonPes= $modelCargaCartera->getRonPes($per_id);
             $resp_ron_id = $matriculacion_model->getDataStudenFromRegistroOnline($per_id, $pes_id);
             $ron_id = $resp_ron_id['ron_id'];
+            $ron_id = $datosRonPes['ron_id'];
             $dataPlanificacion = $matriculacion_model->getPlanificationFromRegistroOnline($ron_id);
 
             /*Detalles de pagos */
@@ -2476,7 +2481,7 @@ class RegistroController extends \app\components\CController {
                 $titulo_mensaje = Academico::t('matriculacion',"Hoja Inscripción");
                 $asunto = Academico::t('matriculacion',"Envio de Hoja de Inscripcion");
                 //************************************************************************************* */
-                $routeBase = Yii::$app->basePath . "/modules/academico/mail/layouts/messages/es/registro";
+                $routeBase = Yii::$app->basePath . "/modules/academico/mail/layouts/messages/es/registro_matricula";
                 $lang = "es";
                 $content = "";
                 
@@ -2629,7 +2634,7 @@ class RegistroController extends \app\components\CController {
             //$this->pdf_cla_acceso = $ids;
             $rep->orientation = "P"; // tipo de orientacion L => Horizontal, P => Vertical   
             $rep->createReportPdf(
-                    $this->render('@modules/academico/views/tpl_registropagomatricula/registro_controller', [
+                    $this->render('@modules/academico/views/tpl_registropagomatricula/registro', [
                         'data_student' => $data_student,
                         'direccion' => $direccion,
                         'matricula' => $matricula,

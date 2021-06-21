@@ -48,13 +48,13 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
     /**
      * Function findIdentity
      * @author  Diana Lopez <dlopez@uteg.edu.ec>
-     * @param
-     * @return
+     * @param      
+     * @return  
      */
     public static function findIdentity($id) {
         return static::findOne($id);
     }
-
+    
     /**
      * {@inheritdoc}
      */
@@ -130,7 +130,7 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
         $con1 = \Yii::$app->db_asgard;
         $con2 = \Yii::$app->db_facturacion;
         $estado = 1;
-
+        
         if (isset($arrFiltro) && count($arrFiltro) > 0) {
             /* $str_search .= "(p.per_pri_nombre like :search OR ";
             $str_search .= "p.per_seg_nombre like :search OR ";
@@ -155,7 +155,7 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
             }
             if ($arrFiltro['asignatura'] != "" && $arrFiltro['asignatura'] > 0) {
                 $str_search .= "a.asi_id = :asignatura AND ";
-            }
+            }             
             if ($arrFiltro['curso'] != "" && $arrFiltro['curso'] > 0) {
                 $str_search .= "cur.cedu_id = :curso AND ";
             }
@@ -168,39 +168,39 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
                 $noasigna = " and
                 NOT EXISTS (SELECT NULL
                                      FROM db_academico.curso_educativa_estudiante cures
-                                    WHERE cures.est_id = h.est_id
+                                    WHERE cures.est_id = h.est_id 
                                           and cures.cedu_id = cur.cedu_id) "; //no asignados
-                }
+                }         
             }
-
+   
         }else{
-          $mod_paca        = new PeriodoAcademico();
+          $mod_paca        = new PeriodoAcademico(); 
           $paca_actual_id  = $mod_paca->getPeriodoAcademicoActual();
           if (empty($paca_actual_id['id']))
           {
             $paca_actual_id['id'] = 0;
-          }
+          }      
           $str_search      = "a.paca_id = ".$paca_actual_id['id']." AND ";
-        }
+        }        
 
-            $sql = "SELECT  distinct h.est_id,
-                        d.uaca_nombre as unidad,
+            $sql = "SELECT  distinct h.est_id, 
+                        d.uaca_nombre as unidad, 
                         e.mod_nombre as modalidad,
-                        p.per_cedula as identificacion,
+                        p.per_cedula as identificacion, 
                         concat(p.per_pri_nombre, ' ', p.per_pri_apellido, ' ', ifnull(p.per_seg_apellido,'')) as estudiante,
                         concat(saca_nombre, '-', baca_nombre,'-',baca_anio) as periodo,
                         z.asi_nombre as asignatura,
-                        cur.cedu_asi_nombre as curso ";
+                        cur.cedu_asi_nombre as curso "; 
         if ($reporte == 1 ) {
             $sql .=   " , (select ifnull(cee.ceest_id,' ')
                          from " . $con->dbname . ".curso_educativa_estudiante cee
-                         where cee.cedu_id = cur.cedu_id and
-                               cee.est_id = h.est_id and
+                         where cee.cedu_id = cur.cedu_id and 
+                               cee.est_id = h.est_id and                               
                                cee.ceest_estado = :estado and
                                cee.ceest_estado_logico = :estado)  estado_asignado ";
-                            }
+                            }               
             $sql .=   "   FROM " . $con->dbname . ".distributivo_academico a inner join " . $con->dbname . ".profesor b
-                    on b.pro_id = a.pro_id
+                    on b.pro_id = a.pro_id 
                     inner join " . $con1->dbname . ".persona c on c.per_id = b.per_id
                     inner join " . $con1->dbname . ".persona pe on pe.per_id = b.per_id
                     inner join " . $con->dbname . ".unidad_academica d on d.uaca_id = a.uaca_id
@@ -214,7 +214,7 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
                     inner join " . $con->dbname . ".asignatura z on a.asi_id = z.asi_id
                     inner join " . $con->dbname . ".curso_educativa cur on cur.paca_id = a.paca_id
                     $asignado
-                    WHERE $str_search
+                    WHERE $str_search 
                     a.daca_estado = :estado
                     and a.daca_estado_logico = :estado
                     and g.daes_estado = :estado
@@ -293,14 +293,14 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
     }
 
    /**
-     * Function guarda asignacion de estudiantes a cursos en integracion educativa
+     * Function guarda asignacion de estudiantes a cursos en integracion educativa 
      * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
-     * @param
+     * @param   
      * @return  $resultData (Retornar el código).
      */
     public function insertarEstudiantecurso($cedu_id, $est_id, $ceest_usuario_ingreso) {
-        /*\app\models\Utilities::putMessageLogFile('cedu_id...: ' . $cedu_id );
-        \app\models\Utilities::putMessageLogFile('est_id...: ' . $est_id );
+        /*\app\models\Utilities::putMessageLogFile('cedu_id...: ' . $cedu_id ); 
+        \app\models\Utilities::putMessageLogFile('est_id...: ' . $est_id ); 
         \app\models\Utilities::putMessageLogFile('ceest_usuario_ingreso...: ' . $ceest_usuario_ingreso ); */
         $con = \Yii::$app->db_academico;
         $ceest_estado_bloqueo = 'B';
@@ -311,7 +311,7 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
             $trans = $con->beginTransaction(); // si no existe la transacción entonces se crea una
         }
         $fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
-
+                       
         $param_sql = "ceest_estado_logico";
         $bsol_sql = "1";
 
@@ -330,7 +330,7 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
             $param_sql .= ", est_id";
             $bsol_sql .= ", :est_id";
         }
-
+        
         if (isset($ceest_usuario_ingreso)) {
             $param_sql .= ", ceest_usuario_ingreso";
             $bsol_sql .= ", :ceest_usuario_ingreso";
@@ -339,14 +339,14 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
         if (isset($fecha_transaccion)) {
             $param_sql .= ",ceest_fecha_creacion";
             $bsol_sql .= ", :ceest_fecha_creacion";
-        }
+        }   
 
         try {
             $sql = "INSERT INTO " . $con->dbname . ".curso_educativa_estudiante ($param_sql) VALUES($bsol_sql)";
-            $comando = $con->createCommand($sql);
-            \app\models\Utilities::putMessageLogFile('sql...: ' .$sql);
+            $comando = $con->createCommand($sql);            
+            \app\models\Utilities::putMessageLogFile('sql...: ' .$sql); 
 
-            // $comando->bindParam(':ceest_estado_bloqueo', $ceest_estado_bloqueo, \PDO::PARAM_STR);
+            // $comando->bindParam(':ceest_estado_bloqueo', $ceest_estado_bloqueo, \PDO::PARAM_STR); 
 
             if (isset($cedu_id)) {
                 $comando->bindParam(':cedu_id', $cedu_id, \PDO::PARAM_INT);
@@ -354,7 +354,7 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
 
             if (isset($est_id)) {
                 $comando->bindParam(':est_id', $est_id, \PDO::PARAM_INT);
-            }
+            }            
 
             if (isset($ceest_usuario_ingreso)) {
                 $comando->bindParam(':ceest_usuario_ingreso', $ceest_usuario_ingreso, \PDO::PARAM_INT);
@@ -363,32 +363,32 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
             if (isset($fecha_transaccion)) {
                 $comando->bindParam(':ceest_fecha_creacion', $fecha_transaccion, \PDO::PARAM_STR);
             }
-
+            
             $result = $comando->execute();
 
             $id = $con->getLastInsertID($con->dbname . '.curso_educativa_estudiante;');
 
             if ($trans !== null)
                 $trans->commit();
-
+            
             return $id;
         } catch (Exception $ex) {
             if ($trans !== null)
                 $trans->rollback();
             return FALSE;
         }
-    }
+    } 
 
     /**
      * Misma función que la anterior pero para que inserte las evaluaciones
      * @author  Jorge Paladines <analista.desarrollo@uteg.edu.ec>
-     * @param
+     * @param   
      * @return  $resultData (Retornar el código).
      */
     public function insertarEstudianteCursoEducativaUnidad($cedu_id, $est_id, $ceest_usuario_ingreso, &$tam) {
-        //\app\models\Utilities::putMessageLogFile('cedu_id...: ' . $cedu_id );
-        //\app\models\Utilities::putMessageLogFile('est_id...: ' . $est_id );
-        //\app\models\Utilities::putMessageLogFile('ceest_usuario_ingreso...: ' . $ceest_usuario_ingreso );
+        //\app\models\Utilities::putMessageLogFile('cedu_id...: ' . $cedu_id ); 
+        //\app\models\Utilities::putMessageLogFile('est_id...: ' . $est_id ); 
+        //\app\models\Utilities::putMessageLogFile('ceest_usuario_ingreso...: ' . $ceest_usuario_ingreso ); 
         $con = \Yii::$app->db_academico;
         $ceest_estado_bloqueo = 'B';
         /*
@@ -404,14 +404,14 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
 
         $mod_curso_unidad = CursoEducativaUnidad::find()->where(['cedu_id' => $cedu_id, 'ceuni_estado' => 1, 'ceuni_estado_logico' => 1])->asArray()->all();
 
-        // Si no hay FK del cedu_id en la tabla de ceuni, sólo reducir el tamaño del contador y retornar
+        // Si no hay FK del cedu_id en la tabla de ceuni, sólo reducir el tamaño del contador y retornar 
         if(empty($mod_curso_unidad)){
             $tam -= 1;
             return 0;
         }
 
         \app\models\Utilities::putMessageLogFile($mod_curso_unidad);
-
+                       
         $param_sql = "ceest_estado_logico";
         $bsol_sql = "1";
 
@@ -430,7 +430,7 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
             $param_sql .= ", est_id";
             $bsol_sql .= ", :est_id";
         }
-
+        
         if (isset($ceest_usuario_ingreso)) {
             $param_sql .= ", ceest_usuario_ingreso";
             $bsol_sql .= ", :ceest_usuario_ingreso";
@@ -441,7 +441,7 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
             $bsol_sql .= ", :ceest_fecha_creacion";
         }
 
-        try
+        try 
         {
             foreach ($mod_curso_unidad as $key => $value) {
                 $param_sql_cp = $param_sql;
@@ -461,9 +461,9 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
                 $bsol_sql_cp  .= ", NULL";
 
                 $sql = "INSERT INTO " . $con->dbname . ".curso_educativa_estudiante ($param_sql_cp) VALUES($bsol_sql_cp)";
-                $comando = $con->createCommand($sql);
+                $comando = $con->createCommand($sql);            
 
-                // $comando->bindParam(':ceest_estado_bloqueo', $ceest_estado_bloqueo, \PDO::PARAM_STR);
+                // $comando->bindParam(':ceest_estado_bloqueo', $ceest_estado_bloqueo, \PDO::PARAM_STR); 
 
                 if (isset($cedu_id)) {
                     $comando->bindParam(':cedu_id', $cedu_id, \PDO::PARAM_INT);
@@ -475,7 +475,7 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
 
                 if (isset($est_id)) {
                     $comando->bindParam(':est_id', $est_id, \PDO::PARAM_INT);
-                }
+                }            
 
                 if (isset($ceest_usuario_ingreso)) {
                     $comando->bindParam(':ceest_usuario_ingreso', $ceest_usuario_ingreso, \PDO::PARAM_INT);
@@ -486,11 +486,11 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
                 }
 
                 \app\models\Utilities::putMessageLogFile($comando->getRawSql());
-
+                
                 $result = $comando->execute();
 
                 //if ($trans != null){ $trans->commit(); }
-                //$trans->commit();
+                //$trans->commit(); 
             }
 
             return 1;
@@ -500,7 +500,7 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
                 $trans->rollback();
             return FALSE;
         }
-    }
+    } 
 
     /**
      * Function modificar curso_educativa_estudiante.
@@ -511,7 +511,7 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
     public function modificarEstudiantecurso($ceest_id, $ceest_codigo_evaluacion, $ceest_descripcion_evaluacion, $ceest_usuario_modifica) {
         $fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
         $con = \Yii::$app->db_academico;
-        $estado = 1;
+        $estado = 1; 
 
         if ($trans !== null) {
             $trans = null; // si existe la transacción entonces no se crea una
@@ -521,13 +521,13 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
 
         try {
             $comando = $con->createCommand
-                    ("UPDATE " . $con->dbname . ".curso_educativa_estudiante
+                    ("UPDATE " . $con->dbname . ".curso_educativa_estudiante               
                       SET
                           ceest_codigo_evaluacion = :ceest_codigo_evaluacion,
                           ceest_descripcion_evaluacion = :ceest_descripcion_evaluacion,
                           ceest_usuario_modifica = :ceest_usuario_modifica,
-                          ceest_fecha_modificacion = :ceest_fecha_modificacion
-                      WHERE
+                          ceest_fecha_modificacion = :ceest_fecha_modificacion                          
+                      WHERE 
                       ceest_id = :ceest_id AND
                       ceest_estado = :estado AND
                       ceest_estado_logico = :estado");
@@ -556,25 +556,25 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
     /**
      * Function Consultar si existe asignacion curso.
      * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>;
-     * @property
-     * @return
+     * @property       
+     * @return  
      */
     public function consultarAsignacionexiste($cedu_id, $est_id) {
-        $con = \Yii::$app->db_academico;
-        $estado = 1;
-        $sql = "SELECT
-                        count(*) as exiteasigna
-
-                FROM " . $con->dbname . ".curso_educativa_estudiante
-                WHERE
+        $con = \Yii::$app->db_academico;     
+        $estado = 1;   
+        $sql = "SELECT  
+                        count(*) as exiteasigna                       
+                        
+                FROM " . $con->dbname . ".curso_educativa_estudiante                 
+                WHERE 
                 cedu_id = :cedu_id AND
                 est_id = :est_id AND
                 ceest_estado = :estado AND
-                ceest_estado_logico = :estado ";
+                ceest_estado_logico = :estado ";        
         $comando = $con->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
-        $comando->bindParam(":cedu_id", $cedu_id, \PDO::PARAM_INT);
-        $comando->bindParam(":est_id", $est_id, \PDO::PARAM_INT);
+        $comando->bindParam(":cedu_id", $cedu_id, \PDO::PARAM_INT); 
+        $comando->bindParam(":est_id", $est_id, \PDO::PARAM_INT);       
         $resultData = $comando->queryOne();
         return $resultData;
     }
@@ -588,7 +588,7 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
     public function eliminarAsignacioncurso($ceest_id, $cees_usuario_modifica, $cees_fecha_modificacion) {
         $estado = 0;
         $con = \Yii::$app->db_academico;
-
+        
         if ($trans !== null) {
             $trans = null; // si existe la transacción entonces no se crea una
         } else {
@@ -596,13 +596,13 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
         }
         try {
             $comando = $con->createCommand
-                    ("UPDATE " . $con->dbname . ".curso_educativa_estudiante
+                    ("UPDATE " . $con->dbname . ".curso_educativa_estudiante               
                       SET cees_estado = :cees_estado,
                           cees_usuario_modifica = :cees_usuario_modifica,
-                          cees_fecha_modificacion = :cees_fecha_modificacion
-                      WHERE
+                          cees_fecha_modificacion = :cees_fecha_modificacion                          
+                      WHERE 
                       ceest_id = :ceest_id ");
-            $comando->bindParam(":ceest_id", $ceest_id, \PDO::PARAM_INT);
+            $comando->bindParam(":ceest_id", $ceest_id, \PDO::PARAM_INT);          
             $comando->bindParam(":cees_usuario_modifica", $cees_usuario_modifica, \PDO::PARAM_INT);
             $comando->bindParam(":cees_fecha_modificacion", $cees_fecha_modificacion, \PDO::PARAM_STR);
             $comando->bindParam(":cees_estado", $estado, \PDO::PARAM_STR);
@@ -655,20 +655,20 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
             }
             /*if ($arrFiltro['asignatura'] != "" && $arrFiltro['asignatura'] > 0) {
                 $str_search .= "a.asi_id = :asignatura AND ";
-            } */
-            if ($arrFiltro['estado_pago'] == "0" or $arrFiltro['estado_pago'] == "1") {
-                if ($arrFiltro['estado_pago'] == "0") {
-                    $textopago = 'No Autorizado';
+            } */    
+            if ($arrFiltro['estado_pago'] == "0" or $arrFiltro['estado_pago'] == "1") {            
+                if ($arrFiltro['estado_pago'] == "0") { 
+                    $textopago = 'No Autorizado';           
                     //$str_search .= " ((m.ccar_estado_cancela is null OR m.ccar_estado_cancela = :estado_pago) AND NOW() > m.ccar_fecha_vencepago ) AND ";
                }else{
                 $textopago = 'Autorizado';
                     //$str_search .= " (m.ccar_estado_cancela = :estado_pago OR NOW() < m.ccar_fecha_vencepago) AND ";
-               }
-            }
-            /**************************************************************  **/
-            /*if ($arrFiltro['jornada'] != "" && $arrFiltro['jornada'] > 0) {
+               } 
+            } 
+            /**************************************************************  **/ 
+            if ($arrFiltro['jornada'] != "" && $arrFiltro['jornada'] > 0) {
                 $str_search .= "a.daca_jornada = :jornada AND ";
-            }*/
+            }
             if ($arrFiltro['curso'] != "" && $arrFiltro['curso'] > 0) {
                 $str_search .= "cur.cedu_id = :curso AND ";
             }
@@ -676,27 +676,27 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
                 $str_search .= "cur.ceuni_id = :ceuni_id AND ";
             }
         }else{
-          $mod_paca        = new PeriodoAcademico();
+          $mod_paca        = new PeriodoAcademico(); 
           $paca_actual_id  = $mod_paca->getPeriodoAcademicoActual();
           //$str_search      = "a.paca_id = ".$paca_actual_id['id']." AND ";
           $str_search      = "a.paca_id = 0 AND ";
         }
 
         if ($reporte == 1 ) {
-          $estuid = " h.est_id,
+          $estuid = " h.est_id, 
                       cur.cedu_id, ";
-        }
+        }          
 
-        $sql .= "SELECT  distinct
-                        $estuid
-                        d.uaca_nombre as unidad,
+        $sql .= "SELECT  distinct 
+                        $estuid 
+                        d.uaca_nombre as unidad, 
                         e.mod_nombre as modalidad,
-                        p.per_cedula as identificacion,
+                        p.per_cedula as identificacion, 
                         concat(p.per_pri_nombre, ' ', p.per_pri_apellido, ' ', ifnull(p.per_seg_apellido,'')) as estudiante,
                         concat(saca_nombre, '-', baca_nombre,'-',baca_anio) as periodo,
-                        /*z.asi_nombre as asignatura,*/
-                        ceunid.ceuni_descripcion_unidad,
-                          case
+                        /*z.asi_nombre as asignatura,*/                                   
+                        ceunid.ceuni_descripcion_unidad,    
+                          case 
                                 when m.ccar_fecha_vencepago <= NOW() then  ifnull((SELECT
                                             CASE WHEN mi.ccar_estado_cancela = 'C'
                                             THEN 'Autorizado'
@@ -712,17 +712,17 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
                                             FROM db_facturacion.carga_cartera mi
                                             WHERE mi.est_id = g.est_id and mi.ccar_fecha_vencepago >= NOW()
                                             ORDER BY mi.ccar_fecha_vencepago asc
-                                            LIMIT 1),'No Autorizado')
+                                            LIMIT 1),'No Autorizado')                        
                                 else 'No Autorizado'
-                                end as pago " ;
-                    $sql .= "
-                    -- ifnull(DATE_FORMAT(m.eppa_fecha_registro, '%Y-%m-%d'), ' ') as fecha_pago
+                                end as pago " ;                    
+                    $sql .= "    
+                    -- ifnull(DATE_FORMAT(m.eppa_fecha_registro, '%Y-%m-%d'), ' ') as fecha_pago 
                     , cur.ceest_estado_bloqueo as estado_bloqueo
                     , cur.ceest_descripcion_evaluacion as item
                     , cur.ceest_id
                     /* , cur.ceest_codigo_evaluacion */
                     FROM " . $con->dbname . ".distributivo_academico a inner join " . $con->dbname . ".profesor b
-                    on b.pro_id = a.pro_id
+                    on b.pro_id = a.pro_id 
                     inner join " . $con1->dbname . ".persona c on c.per_id = b.per_id
                     inner join " . $con1->dbname . ".persona pe on pe.per_id = b.per_id
                     inner join " . $con->dbname . ".unidad_academica d on d.uaca_id = a.uaca_id
@@ -738,7 +738,7 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
                     left join " . $con2->dbname . ".carga_cartera m on (m.est_id = g.est_id /* and m.paca_id = f.paca_id */)
                     inner join " . $con->dbname . ".curso_educativa_estudiante cur on cur.est_id = h.est_id
                     inner join " . $con->dbname . ".curso_educativa_unidad ceunid on ceunid.ceuni_id = cur.ceuni_id
-                    WHERE $str_search
+                    WHERE $str_search 
                     a.daca_estado = :estado
                     and a.daca_estado_logico = :estado
                     and g.daes_estado = :estado
@@ -770,22 +770,22 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
                 $search_asi = $arrFiltro["asignatura"];
                 $comando->bindParam(":asignatura", $search_asi, \PDO::PARAM_INT);
             } */
-            /*
+            /*           
             if ($arrFiltro['estado_pago'] != '-1') {
                 if ($arrFiltro['estado_pago'] == '0') {
                     $filestado = 'N';
                 } else {
                     $filestado = 'C';
-              }
+              } 
                 $comando->bindParam(":estado_pago", $filestado, \PDO::PARAM_STR);
             }
             */
             /***************************************************************** */
 
-            /*if ($arrFiltro['jornada'] != "" && $arrFiltro['jornada'] > 0) {
+            if ($arrFiltro['jornada'] != "" && $arrFiltro['jornada'] > 0) {
                 $search_jor = $arrFiltro["jornada"];
                 $comando->bindParam(":jornada", $search_jor, \PDO::PARAM_INT);
-            }*/
+            }
             if ($arrFiltro['curso'] != "" && $arrFiltro['curso'] > 0) {
                 $curso = $arrFiltro["curso"];
                 $comando->bindParam(":curso", $curso, \PDO::PARAM_INT);
@@ -796,8 +796,8 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
             }
         }
         Utilities::putMessageLogFile($comando->getRawSql());
-
-        $resultData = $comando->queryAll();
+        
+        $resultData = $comando->queryAll();    
 
         $resultData2 = array();
 
@@ -819,7 +819,7 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
             if($band == 1)
                 $resultData2[] = $value;
         }//foreach
-
+        
         Utilities::putMessageLogFile(print_r($resultData2,true));
         //print_r($resultData2,true);die();
 
@@ -860,12 +860,12 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
     public function modificarEstadobloqueo($cedu_id, $est_id, $ceest_estado_bloqueo, $ceest_usuario_modifica) {
         $fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
         $con = \Yii::$app->db_academico;
-        $estado = 1;
+        $estado = 1; 
         /*\app\models\Utilities::putMessageLogFile('cedu_id bloqueo '. $cedu_id);
         \app\models\Utilities::putMessageLogFile('est_id bloqueo '. $est_id);
         \app\models\Utilities::putMessageLogFile('ceest_estado_bloqueo '. $ceest_estado_bloqueo);
         \app\models\Utilities::putMessageLogFile('cees_usuario_modifica bloqueo '. $ceest_usuario_modifica);*/
-
+ 
         if ($trans !== null) {
             $trans = null; // si existe la transacción entonces no se crea una
         } else {
@@ -873,18 +873,18 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
         }
         try {
             $comando = $con->createCommand
-                    ("UPDATE " . $con->dbname . ".curso_educativa_estudiante
-                      SET ceest_estado_bloqueo = :ceest_estado_bloqueo,
+                    ("UPDATE " . $con->dbname . ".curso_educativa_estudiante               
+                      SET ceest_estado_bloqueo = :ceest_estado_bloqueo,  
                           ceest_usuario_modifica = :ceest_usuario_modifica,
-                          ceest_fecha_modificacion = :ceest_fecha_modificacion
-                      WHERE
+                          ceest_fecha_modificacion = :ceest_fecha_modificacion                          
+                      WHERE 
                       cedu_id = :cedu_id AND
                       est_id = :est_id AND
                       ceest_estado = :estado AND
                       ceest_estado_logico = :estado");
-            $comando->bindParam(":cedu_id", $cedu_id, \PDO::PARAM_INT);
-            $comando->bindParam(":est_id", $est_id, \PDO::PARAM_INT);
-            $comando->bindParam(":ceest_estado_bloqueo", $ceest_estado_bloqueo, \PDO::PARAM_STR);
+            $comando->bindParam(":cedu_id", $cedu_id, \PDO::PARAM_INT);  
+            $comando->bindParam(":est_id", $est_id, \PDO::PARAM_INT);              
+            $comando->bindParam(":ceest_estado_bloqueo", $ceest_estado_bloqueo, \PDO::PARAM_STR); 
             $comando->bindParam(":ceest_usuario_modifica", $cees_usuario_modifica, \PDO::PARAM_INT);
             $comando->bindParam(":ceest_fecha_modificacion", $fecha_transaccion, \PDO::PARAM_STR);
             $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
@@ -908,8 +908,8 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
     public function modificarEstadobloqueoxid($ceest_id, $ceest_estado_bloqueo, $ceest_usuario_modifica) {
         $fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
         $con = \Yii::$app->db_academico;
-        $estado = 1;
-
+        $estado = 1; 
+ 
         if ($trans !== null) {
             $trans = null; // si existe la transacción entonces no se crea una
         } else {
@@ -917,12 +917,12 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
         }
         try {
             $comando = $con->createCommand
-                    ("UPDATE " . $con->dbname . ".curso_educativa_estudiante
-                         SET ceest_estado_bloqueo     = '$ceest_estado_bloqueo',
+                    ("UPDATE " . $con->dbname . ".curso_educativa_estudiante               
+                         SET ceest_estado_bloqueo     = '$ceest_estado_bloqueo',  
                              ceest_usuario_modifica   = $ceest_usuario_modifica,
-                             ceest_fecha_modificacion = now()
+                             ceest_fecha_modificacion = now()                          
                        WHERE ceest_id            = $ceest_id
-                         AND ceest_estado        = 1
+                         AND ceest_estado        = 1 
                          AND ceest_estado_logico = 1");
 
             $response = $comando->execute();
@@ -987,13 +987,13 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
             }
             if ($arrFiltro['aula'] != "" && $arrFiltro['aula'] > 0) {
                 $str_search .= "cedu.cedu_id = :aula AND ";
-            }
+            }   
         }
 
         $sql = "SELECT DISTINCT
                 ceest.ceest_id,
-                paca.paca_id,
-                est.est_id, per.per_id,
+                paca.paca_id, 
+                est.est_id, per.per_id, 
                 modalidad.mod_id,
                 cedu.cedu_id,
                 ceuni.ceuni_id,
@@ -1048,7 +1048,7 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
             if ($arrFiltro['aula'] != "" && $arrFiltro['aula'] > 0) {
                 $search_aula = $arrFiltro["aula"];
                 $comando->bindParam(":aula", $search_aula, \PDO::PARAM_INT);
-            }
+            }            
         }
 
         Utilities::putMessageLogFile($comando->getRawSql());

@@ -16,8 +16,8 @@ academico::registerTranslations();
     PbGridView::widget([
         'id' => 'Tbg_Asignar_Evaluacion',
         'showExport' => true,
-        // 'fnExportEXCEL' => "exportExcelEduregistro",
-        // 'fnExportPDF' => "exportPdfEduregistro",
+        'fnExportEXCEL' => "exportExcelEvaluacion",
+        'fnExportPDF' => "exportPdfEvaluacion",
         'dataProvider' => $model,
         'columns' =>
         [         

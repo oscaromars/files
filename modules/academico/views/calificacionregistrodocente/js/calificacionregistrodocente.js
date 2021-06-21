@@ -365,7 +365,7 @@ function actualizarGridRegistro(dready = 0) {
               var indice = key;
               break;
             }
-            console.log(componentes);
+            //console.log(componentes);
             if(action == 'edit'){
                 $.each(o.data[indice], function( index, value ) {
                     if(componentes[index]){
@@ -381,6 +381,7 @@ function actualizarGridRegistro(dready = 0) {
         });
 
         editor.on('submitComplete', function (e, json, data, action) {
+            console.log(data);
             if(action == 'edit'){
                 alertify.success('Registro editado con exito');
             }//if
@@ -388,8 +389,6 @@ function actualizarGridRegistro(dready = 0) {
         });
 
         // Activate an inline edit on click of a table cell
-        
-        
             
         editor.on( 'opened', function ( e, json, data ) {       
             $('#DTE_Field_nparcial').addClass("form-control");
@@ -457,7 +456,9 @@ function actualizarGridRegistro(dready = 0) {
         
         
         numeroCols++;
+        
         console.log("# de columnnas = "+numeroCols);
+
         centrar.push(numeroCols+1);
         centrar.push(numeroCols+2);
         centrar.push(numeroCols+3);
@@ -521,7 +522,6 @@ function actualizarGridRegistro(dready = 0) {
         $("#html_thead").html(html);
         //$("#html_thead").parent().html('');
         //$("#html_thead").html('');
-        console.log(html);
         console.log(arrcolumnDefs);
 
         $('#gridResumen').on( 'click', 'tbody td:not(.child)', function (e) {
@@ -636,7 +636,7 @@ function actualizarGridRegistro(dready = 0) {
                 
             ],
             */
-            //columnDefs: [centrarArr],
+            columnDefs: [centrarArr],
             select: {
                 style:    'os',
                 selector: 'td.select-checkbox'

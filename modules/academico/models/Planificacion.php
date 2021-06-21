@@ -277,12 +277,14 @@ class Planificacion extends \yii\db\ActiveRecord {
         $con = \Yii::$app->db_academico;
 
         if(isset($mod_id) && $mod_id != "" && $mod_id != 0){
-            $condition .= "WHERE pla.mod_id = :mod_id;";
+            //$condition .= "WHERE pla.mod_id = :mod_id;";
+            $condition .= " pla.mod_id = :mod_id AND ";
         }
 
         $sql = "SELECT pla.pla_id as id, pla.pla_periodo_academico as name
                 FROM " . $con->dbname . ".planificacion as pla
-                 $condition";
+                WHERE $condition
+                pla.pla_estado = 1 and pla.pla_estado_logico = 1;";
     /*     WHERE pla.mod_id = :mod_id;";*/
 
         $comando = $con->createCommand($sql);

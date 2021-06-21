@@ -12,7 +12,7 @@ admision::registerTranslations();
 academico::registerTranslations();
 ?>
 <div>
- <?php 
+ <?php
  $content1 =PbGridView::widget([
         'id' => 'Tbg_Distributivo_Acagra',
         'showExport' => true,
@@ -22,27 +22,27 @@ academico::registerTranslations();
         //'pajax' => false,
         'columns' =>
         [
-            [ 
+            [
                 'attribute' => 'Nombres',
                 'header' => academico::t("Academico", "Teacher"),
                 'value' => 'Nombres',
             ],
-            [ 
+            [
                 'attribute' => 'Cedula',
                 'header' => Yii::t("formulario", "DNI 1"),
                 'value' => 'Cedula',
-            ],   
+            ],
             [
                 'attribute' => 'UnidadAcademica',
                 'header' => Yii::t("formulario", "Academic unit"),
                 'value' => 'UnidadAcademica',
-            ],   
+            ],
             [
                 'attribute' => 'Modalidad',
                 'header' => Yii::t("formulario", "Mode"),
                 'value' => 'Modalidad',
             ],
-            [ 
+            [
                 'attribute' => 'Periodo',
                 'header' => Yii::t("formulario", "Period"),
                 'value' => 'Periodo',
@@ -51,23 +51,22 @@ academico::registerTranslations();
                 'attribute' => 'Asignatura',
                 'header' => Yii::t("formulario", "Subject"),
                 'value' => 'Asignatura',
-            ],  
+            ],
             [
                 'attribute' => 'Jornada',
                 'header' => academico::t("Academico", "Working day"),
                 'value' => 'Jornada',
-            ],    
+            ],
              [
                 'attribute' => 'mpp_num_paralelo',
                 'header' => academico::t("Academico", "Paralelo"),
                 'value' => 'mpp_num_paralelo',
             ],
-            
             [
                 'attribute' => 'total_est',
                 'header' => academico::t("Academico", "Total Estudiantes"),
                 'value' => 'total_est',
-            ], 
+            ],
             [
                 'class' => 'yii\grid\ActionColumn',
                 'header' => '',
@@ -86,11 +85,11 @@ academico::registerTranslations();
                     'add' => function ($url, $model){
                         return Html::a('<span class="fa fa-user-plus"></span>', null, ['href' => 'javascript:showListStudents([\'' . $model['Id'] . '\']);',"data-toggle" => "tooltip", "title" => academico::t("distributivoacademico","Add Student")]);
                     }
-                                ],               
-            ],                                
+                                ],
+            ],
         ],
     ]);
- 
+
   $content2 =PbGridView::widget([
         'id' => 'Tbg_Distributivo_Acapos',
         'showExport' => true,
@@ -100,27 +99,27 @@ academico::registerTranslations();
         //'pajax' => false,
         'columns' =>
         [
-            [ 
+            [
                 'attribute' => 'Nombres',
                 'header' => academico::t("Academico", "Teacher"),
                 'value' => 'Nombres',
             ],
-            [ 
+            [
                 'attribute' => 'Cedula',
                 'header' => Yii::t("formulario", "DNI 1"),
                 'value' => 'Cedula',
-            ],   
+            ],
             [
                 'attribute' => 'UnidadAcademica',
                 'header' => Yii::t("formulario", "Academic unit"),
                 'value' => 'UnidadAcademica',
-            ],   
+            ],
             [
                 'attribute' => 'Modalidad',
                 'header' => Yii::t("formulario", "Mode"),
                 'value' => 'Modalidad',
             ],
-            [ 
+            [
                 'attribute' => 'Periodo',
                 'header' => Yii::t("formulario", "Period"),
                 'value' => 'Periodo',
@@ -129,23 +128,23 @@ academico::registerTranslations();
                 'attribute' => 'Asignatura',
                 'header' => Yii::t("formulario", "Subject"),
                 'value' => 'Asignatura',
-            ],  
+            ],
             [
                 'attribute' => 'Jornada',
                 'header' => academico::t("Academico", "Working day"),
                 'value' => 'Jornada',
-            ],    
+            ],
              [
                 'attribute' => 'dhpa_paralelo',
                 'header' => academico::t("Academico", "Paralelo"),
                 'value' => 'dhpa_paralelo',
             ],
-            
+
             [
                 'attribute' => 'total_est',
                 'header' => academico::t("Academico", "Total Estudiantes"),
                 'value' => 'total_est',
-            ], 
+            ],
             [
                 'class' => 'yii\grid\ActionColumn',
                 'header' => '',
@@ -164,11 +163,11 @@ academico::registerTranslations();
                     'add' => function ($url, $model){
                         return Html::a('<span class="fa fa-user-plus"></span>', null, ['href' => 'javascript:showListStudentsPosgrado([\'' . $model['Id'] . '\']);',"data-toggle" => "tooltip", "title" => academico::t("distributivoacademico","Add Student")]);
                     }
-                                ],               
-            ],                                
+                                ],
+            ],
         ],
     ]);
- 
+
  $items = [
     [
         'label'=>'<i class="fa fa-graduation-cap"></i> Grado',
@@ -181,9 +180,9 @@ academico::registerTranslations();
         'content'=>$content2,
        // 'linkOptions'=>['data-url'=>Url::to(['/site/fetch-tab?tab=2'])]
     ],
-    
+
 ];
- 
+
  echo TabsX::widget([
         'items'=>$items,
     'position'=>TabsX::POS_ABOVE,
@@ -192,5 +191,5 @@ academico::registerTranslations();
     'encodeLabels'=>false
 ]);
     ?>
-    
+
 </div>

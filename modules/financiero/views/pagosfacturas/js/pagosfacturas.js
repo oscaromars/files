@@ -70,6 +70,12 @@ $(document).ready(function () {
             $('.pago_documento').hide();           
 
             $('#pago_stripe').show();
+        }else if(opcion==0){
+            $('#txt_fechapago').removeClass('PBvalidation');
+            $('#pago_documento').hide(); 
+            $('.pago_documento').hide();           
+
+            $('#pago_stripe').hide();
         }else{
             $('#txt_fechapago').addClass('PBvalidation');
             $('#pago_documento').show();
@@ -125,6 +131,7 @@ function guardarPagofactura() {
     arrParams.formapago   = $('#cmb_formapago').val();
     arrParams.valor       = $('#txt_valor').val();
     arrParams.observacion = $('#txt_observa').val();
+    arrParams.txt_cedula  = $('#txt_cedula ').val();
     
     //Pregunto por el metodo de pago
     if (arrParams.formapago == 0) {
@@ -252,11 +259,11 @@ function guardarPagofactura() {
                               //paramCallback : ruta, //variable a ser llamada por la funcion anterior ej gotoPage(ruta)
                             }];
                             showAlert(response.status, response.label, response.message);
-                            /*
+    
                             setTimeout(function () {
                                 parent.window.location.href = $('#txth_base').val() + "/financiero/pagosfacturas/viewsaldo";
                             }, 2000);
-                            */
+                            
                         }, true);
                     }//if
                 }//else

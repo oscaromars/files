@@ -11,6 +11,9 @@ use app\modules\financiero\Module as Pagos;
 use app\modules\admision\Module as crm;
 use app\modules\academico\Module as academico;
 
+use app\assets\DatatableAsset;
+DatatableAsset::register($this);
+
 use app\assets\StripeAsset;
 StripeAsset::register($this);
 //print_r($model);
@@ -18,6 +21,8 @@ Especies::registerTranslations();
 Pagos::registerTranslations();
 crm::registerTranslations();
 academico::registerTranslations();
+
+
 ?>
 
 <?= Html::hiddenInput('txth_idest', $arr_persona['est_id'], ['id' => 'txth_idest']); ?>
@@ -71,10 +76,7 @@ academico::registerTranslations();
 </style>
 <form class="form-horizontal" enctype="multipart/form-data" id="formsolicitud">   
     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-        <p class="text-danger"> <?= Yii::t("formulario", "Fields with * are required") ?> </p>
-    </div>
-    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-        <div class="form-group">
+        <div class="form-row">
             <h4><span id="lbl_general"><?= Pagos::t("Pagos", "Student Data") ?></span></h4> 
         </div>
     </div>
@@ -95,7 +97,7 @@ academico::registerTranslations();
         </div>
     </div>    
     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-        <div class="form-group">
+        <div class="form-row">
             <h4><span id="lbl_general"><?= Pagos::t("Pagos", "Academic Data") ?></span></h4> 
         </div>
     </div>
@@ -124,9 +126,12 @@ academico::registerTranslations();
         </div>                                        
     </div>
     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-        <div class="form-group">
+        <div class="form-row">
             <h4><span id="lbl_general"><?= Pagos::t("Pagos", "Payment Data") ?></span></h4> 
         </div>
+    </div>
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <p class="text-danger"> <?= Yii::t("formulario", "Fields with * are required") ?> </p>
     </div>
     <div class='col-xs-12 col-sm-12 col-md-6 col-lg-6'>
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
@@ -173,106 +178,97 @@ academico::registerTranslations();
             </div>
         </div>
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" id="pago_documento" style="display:none;">
-            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                <div class="form-group">
-                    <label class="col-xs-12 col-sm-12 col-md-5 col-lg-5 control-label" for="txt_fechapago" class="col-sm-5 col-md-5 col-xs-5 col-lg-5 control-label"><?= Pagos::t("Pagos", "Payment Date") ?><span class="text-danger"> * </span></label>
-                    <div   class="col-xs-12 col-sm-12 col-md-7 col-lg-7" data-tip="Fecha en la que se realizó la transacción">
-                        <?=
-                        DatePicker::widget([
-                            'name' => 'txt_fechapago',
-                            'value' => '',
-                            'type' => DatePicker::TYPE_INPUT,
-                            'options' => ["class" => "form-control PBvalidation keyupmce", "id" => "txt_fechapago", "placeholder" => Pagos::t("Pagos", "Fecha en la que se realizó la transacción")],
+
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-12 col-md-5 col-lg-5 control-label" for="txt_fechapago" class="col-sm-5 col-md-5 col-xs-5 col-lg-5 control-label"><?= Pagos::t("Pagos", "Payment Date") ?><span class="text-danger"> * </span></label>
+                <div   class="col-xs-12 col-sm-12 col-md-7 col-lg-7" data-tip="Fecha en la que se realizó la transacción">
+                    <?=
+                    DatePicker::widget([
+                        'name' => 'txt_fechapago',
+                        'value' => '',
+                        'type' => DatePicker::TYPE_INPUT,
+                        'options' => ["class" => "form-control PBvalidation keyupmce", "id" => "txt_fechapago", "placeholder" => Pagos::t("Pagos", "Fecha en la que se realizó la transacción")],
+                        'pluginOptions' => [
+                            'autoclose' => true,
+                            'format' => Yii::$app->params["dateByDatePicker"],
+                        ]]
+                    );
+                    ?></div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-12 col-sm-12 col-md-5 col-lg-5 control-label  keyupmce" for="txth_doc_pago" id="txth_doc_titulo" name="txth_doc_pago"><?= Yii::t("formulario", "Attach document") ?><span class="text-danger"> * </span></label>
+                <div   class="col-xs-12 col-sm-12 col-md-7 col-lg-7">
+                    <?= Html::hiddenInput('txth_per', @Yii::$app->session->get("PB_perid"), ['id' => 'txth_per']); ?>
+                    <?= Html::hiddenInput('txth_doc_pago', '', ['id' => 'txth_doc_pago']); ?>
+                    <?php
+                        echo CFileInputAjax::widget([
+                            'id' => 'txt_doc_pago',
+                            'name' => 'txth_doc_pago',
+                            'pluginLoading' => false,
+                            'showMessage' => false,
+                            //'options' => ["class" => "form-control PBvalidation keyupmce", "id" => "txt_doc_pago", "placeholder" => Pagos::t("Pagos", "Payment Date")],
                             'pluginOptions' => [
-                                'autoclose' => true,
-                                'format' => Yii::$app->params["dateByDatePicker"],
-                            ]]
-                        );
-                        ?></div>
-                </div>
+                                'showPreview' => false,
+                                'showCaption' => true,
+                                'showRemove' => true,
+                                'showUpload' => false,
+                                'showCancel' => false,
+                                'browseClass' => 'btn btn-primary btn-block',
+                                'browseIcon' => '<i class="fa fa-folder-open"></i> ',
+                                'browseLabel' => "Subir Archivo",
+                                'uploadUrl' => Url::to(['pagosfacturas/cargarpago']),
+                                'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
+                                'uploadExtraData' => 'javascript:function (previewId,index) {
+                                    var name_pago= $("#txth_doc_pago").val();
+                                    return {"upload_file": true, "name_file": name_pago};
+                                }', 
+                            ],
+                            'pluginEvents' => [
+                                "filebatchselected" => "function (event) {                        
+                                    function d2(n) {
+                                        if(n<9) return '0'+n;
+                                        return n;
+                                    }
+                                    today = new Date();
+                                    var name_pago = 'pagoest_' + $('#txth_per').val() + '-' + today.getFullYear() + '-' + d2(parseInt(today.getMonth()+1)) + '-' + d2(today.getDate()) + ' ' + d2(today.getHours()) + ':' + d2(today.getMinutes()) + ':' + d2(today.getSeconds());
+                                    $('#txth_doc_pago').val(name_pago);                        
+                                    $('#txt_doc_pago').fileinput('upload');
+                                    var fileSent = $('#txt_doc_pago').val();
+                                    var ext = fileSent.split('.');
+                                    $('#txth_doc_pago').val(name_pago + '.' + ext[ext.length - 1]);
+                                }",
+                                "fileuploaderror" => "function (event, data, msg) {
+                                    $(this).parent().parent().children().first().addClass('hide');
+                                    $('#txth_doc_pago').val('');
+                                    //showAlert('NO_OK', 'error', {'wtmessage': objLang.Error_to_process_File__Try_again_, 'title': objLang.Error});   
+                                }",
+                                "filebatchuploadcomplete" => "function (event, files, extra) { 
+                                    $(this).parent().parent().children().first().addClass('hide');
+                                }",
+                                "filebatchuploadsuccess" => "function (event, data, previewId, index) {
+                                    var form = data.form, files = data.files, extra = data.extra,
+                                    response = data.response, reader = data.reader;
+                                    $(this).parent().parent().children().first().addClass('hide');
+                                    var acciones = [{id: 'reloadpage', class: 'btn btn-primary', value: objLang.Accept, callback: 'reloadPage'}];
+                                    //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});  
+                                }",
+                                "fileuploaded" => "function (event, data, previewId, index) {
+                                    $(this).parent().parent().children().first().addClass('hide');        
+                                    var acciones = [{id: 'reloadpage', class: 'btn btn-primary', value: objLang.Accept, callback: 'reloadPage'}];
+                                    //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});                              
+                                }",
+                            ],
+                        ]);
+                    ?>
+                </div> 
             </div>
-            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                <div class="form-group">
-                    <label class="col-xs-12 col-sm-12 col-md-5 col-lg-5 control-label  keyupmce" for="txth_doc_pago" id="txth_doc_titulo" name="txth_doc_pago"><?= Yii::t("formulario", "Attach document") ?><span class="text-danger"> * </span></label>
-                    <div   class="col-xs-12 col-sm-12 col-md-7 col-lg-7">
-                        <?= Html::hiddenInput('txth_per', @Yii::$app->session->get("PB_perid"), ['id' => 'txth_per']); ?>
-                        <?= Html::hiddenInput('txth_doc_pago', '', ['id' => 'txth_doc_pago']); ?>
-                        <?php
-                            echo CFileInputAjax::widget([
-                                'id' => 'txt_doc_pago',
-                                'name' => 'txth_doc_pago',
-                                'pluginLoading' => false,
-                                'showMessage' => false,
-                                //'options' => ["class" => "form-control PBvalidation keyupmce", "id" => "txt_doc_pago", "placeholder" => Pagos::t("Pagos", "Payment Date")],
-                                'pluginOptions' => [
-                                    'showPreview' => false,
-                                    'showCaption' => true,
-                                    'showRemove' => true,
-                                    'showUpload' => false,
-                                    'showCancel' => false,
-                                    'browseClass' => 'btn btn-primary btn-block',
-                                    'browseIcon' => '<i class="fa fa-folder-open"></i> ',
-                                    'browseLabel' => "Subir Archivo",
-                                    'uploadUrl' => Url::to(['pagosfacturas/cargarpago']),
-                                    'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
-                                    'uploadExtraData' => 'javascript:function (previewId,index) {
-                                        var name_pago= $("#txth_doc_pago").val();
-                                        return {"upload_file": true, "name_file": name_pago};
-                                    }', 
-                                ],
-                                'pluginEvents' => [
-                                    "filebatchselected" => "function (event) {                        
-                                        function d2(n) {
-                                            if(n<9) return '0'+n;
-                                            return n;
-                                        }
-                                        today = new Date();
-                                        var name_pago = 'pagoest_' + $('#txth_per').val() + '-' + today.getFullYear() + '-' + d2(parseInt(today.getMonth()+1)) + '-' + d2(today.getDate()) + ' ' + d2(today.getHours()) + ':' + d2(today.getMinutes()) + ':' + d2(today.getSeconds());
-                                        $('#txth_doc_pago').val(name_pago);                        
-                                        $('#txt_doc_pago').fileinput('upload');
-                                        var fileSent = $('#txt_doc_pago').val();
-                                        var ext = fileSent.split('.');
-                                        $('#txth_doc_pago').val(name_pago + '.' + ext[ext.length - 1]);
-                                    }",
-                                    "fileuploaderror" => "function (event, data, msg) {
-                                        $(this).parent().parent().children().first().addClass('hide');
-                                        $('#txth_doc_pago').val('');
-                                        //showAlert('NO_OK', 'error', {'wtmessage': objLang.Error_to_process_File__Try_again_, 'title': objLang.Error});   
-                                    }",
-                                    "filebatchuploadcomplete" => "function (event, files, extra) { 
-                                        $(this).parent().parent().children().first().addClass('hide');
-                                    }",
-                                    "filebatchuploadsuccess" => "function (event, data, previewId, index) {
-                                        var form = data.form, files = data.files, extra = data.extra,
-                                        response = data.response, reader = data.reader;
-                                        $(this).parent().parent().children().first().addClass('hide');
-                                        var acciones = [{id: 'reloadpage', class: 'btn btn-primary', value: objLang.Accept, callback: 'reloadPage'}];
-                                        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});  
-                                    }",
-                                    "fileuploaded" => "function (event, data, previewId, index) {
-                                        $(this).parent().parent().children().first().addClass('hide');        
-                                        var acciones = [{id: 'reloadpage', class: 'btn btn-primary', value: objLang.Accept, callback: 'reloadPage'}];
-                                        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});                              
-                                    }",
-                                ],
-                            ]);
-                        ?>
-                    </div>  
-                </div>
+            <div class="form-row">
+                    <div class="alert alert-info" style="margin-bottom: 1em;"><span style="font-weight: bold"> Nota: </span> Al subir archivo debe ser 800 KB máximo y tipo jpg, png o pdf.</div>
+                </div> 
+            <div class="form-row">
+                <label class = "col-xs-10 col-sm-10 col-md-10 col-lg-10 control-label " for="txt_nombres_fac" id="lbl_nombre1" style="text-align: left"><?= Yii::t("formulario", "Acepta Condiciones Y Terminos. <br> Acepto que los documentos no han sido alterados o manipulados") ?><span class="text-danger">*</span></label>  
+                <input class = "col-xs-2 col-sm-2 col-md-2 col-lg-2 form-check-input checkAcepta" type="checkbox" value="1" id="checkAcepta">
             </div>
-            <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12">
-                <div class="form-group">
-                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                        <div class="alert alert-info"><span style="font-weight: bold"> Nota: </span> Al subir archivo debe ser 800 KB máximo y tipo jpg, png o pdf.</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                <div class="form-check">
-                    <label class = "col-xs-10 col-sm-10 col-md-10 col-lg-10 control-label " for="txt_nombres_fac" id="lbl_nombre1" style="text-align: left"><?= Yii::t("formulario", "Acepta Condiciones Y Terminos. <br> Acepto que los documentos no han sido alterados o manipulados") ?><span class="text-danger">*</span></label>  
-                    <input class = "col-xs-2 col-sm-2 col-md-2 col-lg-2 form-check-input checkAcepta" type="checkbox" value="1" id="checkAcepta">
-                </div>
-            </div> 
         </div>
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 " id="pago_stripe">
             <!------------------------------------------------------->
@@ -322,19 +318,21 @@ academico::registerTranslations();
             <!------------------------------------------------------->      
         </div>
     </div>
-    <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12" id="div_detalle"></div>
+    <!--div class="col-md-12 col-sm-12 col-xs-12 col-lg-12" id="div_detalle"></div>
     <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12">
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6"></div>
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
             &nbsp;&nbsp;
         </div>
-    </div>  
-    <div class='col-md-12 col-sm-12 col-xs-12 col-lg-12'>
-        <div class="col-md-7 col-sm-7 col-xs-7 col-lg-7">
-            <div class="form-group">
-                <h4><span id="lbl_general"><?= Pagos::t("Pagos", "Pending Invoices Data") ?></span></h4> 
-            </div>
+    </div--> 
+
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="form-row">
+            <h4><span id="lbl_general"><?= Pagos::t("Pagos", "Pending Invoices Data") ?></span></h4> 
         </div>
+    </div>
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <p class="text-danger"> <?= Pagos::t("Pagos", "Select the amounts to pay") ?> </p>
     </div>
     <div class='col-md-12 col-sm-12 col-xs-12 col-lg-12'>        
         <?=
@@ -343,7 +341,14 @@ academico::registerTranslations();
             'dataProvider' => $model,
             'columns' => [
                 [
+                    'attribute' => 'Cuota_pendiente',
+                    'contentOptions' => ['style' => 'text-align: center;'],
+                    'header' => Pagos::t("Pagos", "Pending Fee"),
+                    'value' => 'cuota',
+                ],
+                [
                     'attribute' => 'Factura',
+                    'contentOptions' => ['style' => 'text-align: center;'],
                     'header' => Pagos::t("Pagos", "Bill"),
                     'value' => 'NUM_NOF',
                 ],
@@ -362,6 +367,7 @@ academico::registerTranslations();
                 ],*/
                 [
                     'attribute' => 'Fecha_factura',
+                    'contentOptions' => ['style' => 'text-align: center;'],
                     'header' => Pagos::t("Pagos", "Date Bill"),
                     'value' => 'F_SUS_D',
                 ],
@@ -370,28 +376,28 @@ academico::registerTranslations();
                     'header' => Pagos::t("Pagos", "Balance"),
                     'value' => 'SALDO',
                 ],*/
-                [
-                    'attribute' => 'Cuota_pendiente',
-                    'header' => Pagos::t("Pagos", "Pending Fee"),
-                    'value' => 'cuota',
-                ],
+                
                 [
                     'attribute' => 'valor_cuota',
+                    'contentOptions' => ['style' => 'text-align: center;'],
                     'header' => Pagos::t("Pagos", "Quota value"),
                     'value' => 'ccar_valor_cuota',
                 ],
                 [
                     'attribute' => 'vencimiento',
+                    'contentOptions' => ['style' => 'text-align: center;'],
                     'header' => Pagos::t("Pagos", "Expiration date"),
                     'value' => 'F_VEN_D',
                 ],
                 [
                     'attribute' => 'Abono',
+                    'contentOptions' => ['style' => 'text-align: center;'],
                     'header' => Pagos::t("Pagos", "Abono"),
                     'value' => 'abono',
                 ],
                 [
                     'attribute' => 'Saldo',
+                    'contentOptions' => ['style' => 'text-align: center;'],
                     'header' => Pagos::t("Pagos", "Saldo"),
                     'value' => 'saldo',
                 ],
@@ -404,7 +410,7 @@ academico::registerTranslations();
                 */
                 [
                     'class' => 'yii\grid\ActionColumn',
-                    'header' => Academico::t("matriculacion", "Select"),
+                    'header' => '<i class="fa fa-arrow-circle-o-down" aria-hidden="true"></i>',//Academico::t("matriculacion", "Select"),
                     'contentOptions' => ['style' => 'text-align: center;'],
                     'headerOptions' => ['width' => '60'],
                     'template' => '{select}',
@@ -427,3 +433,32 @@ academico::registerTranslations();
         </div>
     </div>-->
 </form>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+
+        $('#TbgPagopendiente > table').DataTable({
+            "dom": 't',
+            responsive: true,
+            columnDefs: [   
+                { targets: 0, responsivePriority: 1},    
+                { targets: 3, responsivePriority: 2},    
+                { targets: 7, responsivePriority: 3},  
+            ],
+        });
+    });
+</script>
+
+<style type="text/css">
+    .barexportp{
+        display: none;
+    }
+
+    #TbgPagopendiente > .summary{
+        display: none;
+    }
+
+    .sorting{
+        text-align: center;
+    }
+</style>

@@ -133,7 +133,6 @@ class CalificacionestudianteController extends \app\components\CController {
                 ]);
         }
 
-        print_r($arr_grupos,true);die();
         if (in_array(['id' => '6','id' => '7','id' => '8'], $arr_grupos)) {
             $arr_profesor_all = $mod_profesor->getProfesoresEnAsignaturas(); 
             //Utilities::putMessageLogFile("Paso por cordinador");

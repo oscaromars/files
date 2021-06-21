@@ -164,14 +164,14 @@ class DistributivoacademicoController extends \app\components\CController {
             }
 
             if (isset($data["getparalelo"])) {
-            
+
                 $paralelos = $paralelo->getParalelosAsignatura($data["paca_id"],$data["mod_id"],$data["asig_id"]);
                 $message = array("paralelo" => $paralelos);
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
             }
-            
+
             if (isset($data["getparaleloposgrado"])) {
-            
+
                 //$paralelos = $paralelo->getParalelosAsignatura($data["paca_id"],$data["mod_id"],$data["asig_id"]);
                 $paralelos =$mod_horario->consultarParaleloHorario($data["hora_id"]);
                 $message = array("paralelo" =>  $paralelos);
@@ -228,7 +228,7 @@ class DistributivoacademicoController extends \app\components\CController {
             $con = \Yii::$app->db_academico;
             $transaction = $con->beginTransaction();
             try {
-                \app\models\Utilities::putMessageLogFile('existe validacion ');   
+                \app\models\Utilities::putMessageLogFile('existe validacion ');
                 $pro_id = $data['profesor'];
                 $paca_id = $data['periodo'];
                 $dts = (isset($data["grid_docencia"]) && $data["grid_docencia"] != "") ? $data["grid_docencia"] : NULL;
@@ -261,7 +261,7 @@ class DistributivoacademicoController extends \app\components\CController {
                     if ($valida == 1) {
                         $estado = '1';
                         \app\models\Utilities::putMessageLogFile('existe validacion 2'.$paca_id);
-                        // $cab = $distributivo_cab->insertarDistributivoCab($paca_id, $pro_id); 
+                        // $cab = $distributivo_cab->insertarDistributivoCab($paca_id, $pro_id);
                         $distributivo_cab->paca_id = $paca_id;
                         $distributivo_cab->pro_id = $pro_id;
                         $distributivo_cab->dcab_estado_revision = '0';
@@ -388,7 +388,7 @@ class DistributivoacademicoController extends \app\components\CController {
                 $datos = json_decode($dts);
 
                 //Validar que no exista en distributivo_cabecera porque para crear no debe existir.
-                //$cons = $distributivo_cab->existeDistCabecera($paca_id,$pro_id);       
+                //$cons = $distributivo_cab->existeDistCabecera($paca_id,$pro_id);
                 //   $cons = $distributivo_cab->EliminaexisteDistCabecera($pcab_id, $pro_id);
 
                 $ok = '1';
@@ -466,7 +466,7 @@ class DistributivoacademicoController extends \app\components\CController {
                         "title" => Yii::t('jslang', 'Error'),
                     );
                     return Utilities::ajaxResponse('NOOK', 'alert', Yii::t('jslang', 'Error'), 'true', $message);
-           
+
                }
             } catch (Exception $e) {
                 \app\models\Utilities::putMessageLogFile('error: ' . $e);
@@ -585,7 +585,7 @@ class DistributivoacademicoController extends \app\components\CController {
         $arr_unidad = $mod_unidad->consultarUnidadAcademicasEmpresa($emp_id);
         $arr_modalidad = $mod_modalidad->consultarModalidad($arr_unidad[0]["id"], $emp_id);
         $arr_periodo = $mod_periodoActual->getPeriodoAcademico();
-        $arr_jornada = array(); //$distributivo_model->getJornadasByUnidadAcad($arr_unidad[0]["id"], $arr_modalidad[0]["id"]);           
+        $arr_jornada = array(); //$distributivo_model->getJornadasByUnidadAcad($arr_unidad[0]["id"], $arr_modalidad[0]["id"]);
         $arr_asignatura = $mod_asignatura->getAsignatura_x_bloque_x_planif(0, 0);
         $arr_horario = $distributivo_model->getHorariosByUnidadAcad($arr_unidad[0]["id"], $arr_modalidad[0]["id"], $arr_jornada[0]["id"]);
         $model = $distributivo_model->getDistribAcadXprofesorXperiodo(0, 0);
@@ -707,10 +707,10 @@ class DistributivoacademicoController extends \app\components\CController {
         if (Yii::$app->request->isAjax) {
             $usu_id = @Yii::$app->session->get("PB_iduser");
           $data = Yii::$app->request->post();
-         
+
             $fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
             try {
-               
+
                 $model = DistributivoAcademico::findOne($data['id']);
                 $model->daca_fecha_modificacion = $fecha_transaccion;
                 $model->daca_usuario_modifica = $usu_id;
@@ -719,7 +719,7 @@ class DistributivoacademicoController extends \app\components\CController {
                 $message = array(
                     "wtmessage" => Yii::t("notificaciones", "Your information was successfully saved."),
                     "title" => Yii::t('jslang', 'Success'),
-                   
+
                 );
                 if ($model->update() !== false) {
                     //return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
@@ -745,7 +745,7 @@ class DistributivoacademicoController extends \app\components\CController {
         header("Content-Type: $content_type");
         header("Content-Disposition: attachment;filename=" . $nombarch);
         header('Cache-Control: max-age=0');
-        $colPosition = array("C", "D", "E", "F", "G", "H", "I");
+        $colPosition = array("C", "D", "E", "F", "G", "H", "I", "J", "K");
         $arrHeader = array(
             academico::t("Academico", "Teacher"),
             Yii::t("formulario", "DNI 1"),
@@ -754,6 +754,8 @@ class DistributivoacademicoController extends \app\components\CController {
             Yii::t("formulario", "Period"),
             Yii::t("formulario", "Subject"),
             academico::t("Academico", "Working day"),
+            academico::t("Academico", "Paralelo"),
+            academico::t("Academico", "Total Estudiantes"),
         );
         $distributivo_model = new DistributivoAcademico();
         $data = Yii::$app->request->get();
@@ -763,9 +765,12 @@ class DistributivoacademicoController extends \app\components\CController {
         $arrSearch["periodo"] = ($data['periodo'] > 0) ? $data['periodo'] : NULL;
         $arrSearch["asignatura"] = ($data['asignatura'] > 0) ? $data['asignatura'] : NULL;
         $arrSearch["jornada"] = ($data['jornada'] > 0) ? $data['jornada'] : NULL;
-
-        $arrData = $distributivo_model->getListadoDistributivo($arrSearch["search"], $arrSearch["modalidad"], $arrSearch["asignatura"], $arrSearch["jornada"], $arrSearch["unidad"], $arrSearch["periodo"], true);
-        foreach ($arrData as $key => $value) {
+        if ($arrSearch["unidad"] == 1) {
+            $arrData = $distributivo_model->getListadoDistributivoGrado($arrSearch["search"], $arrSearch["modalidad"], $arrSearch["asignatura"], $arrSearch["jornada"], $arrSearch["unidad"], $arrSearch["periodo"], true);
+        }else{
+            $arrData = $distributivo_model->getListadoDistributivoPosgrado($arrSearch["search"], $arrSearch["modalidad"], $arrSearch["asignatura"], $arrSearch["jornada"], $arrSearch["unidad"], $arrSearch["periodo"], true);
+        }
+            foreach ($arrData as $key => $value) {
             unset($arrData[$key]["Id"]);
         }
         $nameReport = academico::t("distributivoacademico", "Profesor Lists by Subject");
@@ -785,6 +790,8 @@ class DistributivoacademicoController extends \app\components\CController {
             Yii::t("formulario", "Period"),
             Yii::t("formulario", "Subject"),
             academico::t("Academico", "Working day"),
+            academico::t("Academico", "Paralelo"),
+            academico::t("Academico", "Total Estudiantes"),
         );
         $distributivo_model = new DistributivoAcademico();
         $data = Yii::$app->request->get();
@@ -795,8 +802,13 @@ class DistributivoacademicoController extends \app\components\CController {
         $arrSearch["asignatura"] = ($data['asignatura'] > 0) ? $data['asignatura'] : NULL;
         $arrSearch["jornada"] = ($data['jornada'] > 0) ? $data['jornada'] : NULL;
 
-        $arrData = $distributivo_model->getListadoDistributivo($arrSearch["search"], $arrSearch["modalidad"], $arrSearch["asignatura"], $arrSearch["jornada"], $arrSearch["unidad"], $arrSearch["periodo"], true);
-        $report->orientation = "P"; // tipo de orientacion L => Horizontal, P => Vertical                                
+        //$arrData = $distributivo_model->getListadoDistributivo($arrSearch["search"], $arrSearch["modalidad"], $arrSearch["asignatura"], $arrSearch["jornada"], $arrSearch["unidad"], $arrSearch["periodo"], true);
+        if ($arrSearch["unidad"] == 1) {
+            $arrData = $distributivo_model->getListadoDistributivoGrado($arrSearch["search"], $arrSearch["modalidad"], $arrSearch["asignatura"], $arrSearch["jornada"], $arrSearch["unidad"], $arrSearch["periodo"], true);
+        }else{
+            $arrData = $distributivo_model->getListadoDistributivoPosgrado($arrSearch["search"], $arrSearch["modalidad"], $arrSearch["asignatura"], $arrSearch["jornada"], $arrSearch["unidad"], $arrSearch["periodo"], true);
+        }
+        $report->orientation = "P"; // tipo de orientacion L => Horizontal, P => Vertical
         $report->createReportPdf(
                 $this->render('exportpdf', [
                     'arr_head' => $arrHeader,

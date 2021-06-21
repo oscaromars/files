@@ -729,7 +729,9 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
                     p.pla_periodo_academico as Periodo,
                     p.pla_id as pla_id,
                     tmp.Cant as Cant,
-                    tmp.Costo as Costo,
+                    -- tmp.Costo as Costo,
+                    -- roc.roc_costo as Costo,
+                    (tmp.Costo + tmp.costo_adm) as Costo,    
                     ifnull(rf.Refund, '0.00') as Refund,
                     tmp.Creditos as Creditos,
                     ifnull(enr.ron_id,'0.00') as Enroll,
@@ -753,7 +755,8 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
                             r.pes_id as pes_id,
                             rm.rama_id as rama_id,
                             COUNT(*) as Cant,
-                            SUM(it.roi_costo) as Costo, 
+                            SUM(it.roi_costo) as Costo,
+                            r.ron_valor_gastos_adm as costo_adm, 
                             SUM(it.roi_creditos) as Creditos
                         FROM
                             " . $con_academico->dbname . ".registro_online AS r
@@ -813,7 +816,8 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
                     p.pla_estado =1 and p.pla_estado_logico =1 and
                     per.per_estado = 1 and per.per_estado_logico = 1 and 
                     est.est_estado =1 and est.est_estado_logico = 1 and
-                    r.ron_estado =1 and r.ron_estado_logico =1";
+                    r.ron_estado =1 and r.ron_estado_logico =1 AND 
+                    roc.roc_estado=1 AND roc.roc_estado_logico=1";
 
       
         $comando = $con_academico->createCommand($sql);

@@ -111,11 +111,9 @@ class RegistroController extends \app\components\CController {
 
         Yii::$app->session->set('usugrolMod', $usugrolMod);
         Yii::$app->session->set('per_id_perid', $per_id.'-'.$perid);
-\app\models\Utilities::putMessageLogFile('FUERA AJAX: ');
+
         if (Yii::$app->request->isAjax) {
-\app\models\Utilities::putMessageLogFile('DENTRO AJAX: ');
             $data = Yii::$app->request->post();
-            \app\models\Utilities::putMessageLogFile('Modalidad $data["nint_id"]:  ' .$data["nint_id"]);
             if (isset($data["getperiodo"])) {
                 $periodo = Planificacion::getPeriodosAcademicoPorModalidad($data["nint_id"]);
                 $message = array("periodo" => $periodo);
@@ -171,11 +169,7 @@ class RegistroController extends \app\components\CController {
             'esEstu' => TRUE,
             'grupo_id' => $grupo_id,            
             'per_id' => $per_id,
-            //'modalidad'=>array_merge([1 => Academico::t("matriculacion", $modalidad['name'])]),//$modalidad['name']//funciona mal
-            //'modalidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $modalidad), "id", "name"),//ok, funcion actual
-
             'modalidad' => ArrayHelper::map(array_merge( $modalidad), "id", "name"),
-
             'modalidadT' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $modalidadT), "id", "name"),
             'periodoAcademico' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $arr_pla_per), "id", "name"),
             'arr_status' => $arr_status,
@@ -239,6 +233,7 @@ class RegistroController extends \app\components\CController {
         unset($arr_forma_pago[6]);
         unset($arr_forma_pago[7]);
         unset($arr_forma_pago[8]);
+        //unset($arr_forma_pago[9]);
         // get Credits and get Cost x Credit
         $eaca_id = $arrCarrera['eaca_id'];
         $mod_id = $arrCarrera['mod_id'];
@@ -2411,6 +2406,8 @@ class RegistroController extends \app\components\CController {
             $matriculacion_model = new Matriculacion();          
             $modelPersona = Persona::find()->where(['per_id' => $per_id])->asArray()->one();
             $modelEstudiante = Estudiante::find()->where(['per_id' => $per_id])->asArray()->one();  
+            $modelCargaCartera = new RegistroConfiguracion();
+
 
             /*Cabecera*/
             $datos_planficacion = $matriculacion_model->getDataPlanStudent($per_id);    
@@ -2424,8 +2421,10 @@ class RegistroController extends \app\components\CController {
             /*Detalle de materias*/
             $matriculacion_model = new Matriculacion();
             //obtengo el ron_id
+            $datosRonPes= $modelCargaCartera->getRonPes($per_id);
             $resp_ron_id = $matriculacion_model->getDataStudenFromRegistroOnline($per_id, $pes_id);
             $ron_id = $resp_ron_id['ron_id'];
+            $ron_id = $datosRonPes['ron_id'];
             $dataPlanificacion = $matriculacion_model->getPlanificationFromRegistroOnline($ron_id);
 
             /*Detalles de pagos */
@@ -2482,7 +2481,7 @@ class RegistroController extends \app\components\CController {
                 $titulo_mensaje = Academico::t('matriculacion',"Hoja Inscripción");
                 $asunto = Academico::t('matriculacion',"Envio de Hoja de Inscripcion");
                 //************************************************************************************* */
-                $routeBase = Yii::$app->basePath . "/modules/academico/mail/layouts/messages/es/registro";
+                $routeBase = Yii::$app->basePath . "/modules/academico/mail/layouts/messages/es/registro_matricula";
                 $lang = "es";
                 $content = "";
                 
@@ -2577,7 +2576,8 @@ class RegistroController extends \app\components\CController {
             $matriculacion_model = new Matriculacion();          
             $modelPersona = Persona::find()->where(['per_id' => $per_id])->asArray()->one();
             $modelEstudiante = Estudiante::find()->where(['per_id' => $per_id])->asArray()->one();
-           
+            $modelCargaCartera = new RegistroConfiguracion();
+
             /*Cabecera*/
             $datos_planficacion = $matriculacion_model->getDataPlanStudent($per_id);    
             $pla_id = $datos_planficacion['pla_id'];
@@ -2590,7 +2590,10 @@ class RegistroController extends \app\components\CController {
             /*Detalle de materias*/
             $matriculacion_model = new Matriculacion();
             //obtengo el ron_id
-            $resp_ron_id = $matriculacion_model->getDataStudenFromRegistroOnline($per_id, $pes_id);
+                //$resp_ron_id = $matriculacion_model->getDataStudenFromRegistroOnline($per_id, $pes_id);
+
+            //obtengo el ron_id
+            $resp_ron_id= $modelCargaCartera->getRonPes($per_id);
             $ron_id = $resp_ron_id['ron_id'];
             $dataPlanificacion = $matriculacion_model->getPlanificationFromRegistroOnline($ron_id);
 
@@ -2631,7 +2634,7 @@ class RegistroController extends \app\components\CController {
             //$this->pdf_cla_acceso = $ids;
             $rep->orientation = "P"; // tipo de orientacion L => Horizontal, P => Vertical   
             $rep->createReportPdf(
-                    $this->render('@modules/academico/views/tpl_registropagomatricula/registro_controller', [
+                    $this->render('@modules/academico/views/tpl_registropagomatricula/registro', [
                         'data_student' => $data_student,
                         'direccion' => $direccion,
                         'matricula' => $matricula,

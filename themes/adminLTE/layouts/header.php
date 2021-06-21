@@ -56,15 +56,22 @@ use app\models\Empresa;
 $empresas = Empresa::getListaEmpresasxUserID(Yii::$app->session->get("PB_iduser"));
 ?>
 
-<header class="main-header">
+<header class="main-header" style="position: fixed; width:100%">
 
     <!-- Logo -->
-    <a href="<?= Yii::$app->params['web'] ?>" class="logo">
+    <a href="<?= Yii::$app->params['web'] ?>" class="logo" >
         <!-- mini logo for sidebar mini 50x50 pixels -->
-        <span class="logo-mini"><b><?= Yii::$app->params['alias'] ?></b></span>
-        <!--<img src="<?= Html::encode($directoryAsset . "/img/logos/logo-back.png") ?>" alt="logo" style="height: 100%;" /><!--
+
+        <span class="logo-mini" style="height: 100%;">
+            <!--b><?= Yii::$app->params['alias'] ?></b-->
+            <img src="<?= Html::encode($directoryAsset . "/img/logos/logopmini.png") ?>" alt="logo" style="width: 90%;" />
+        </span>
+        <!--<img src="<?= Html::encode($directoryAsset . "/img/logos/logo-back.png") ?>" alt="logo" style="height: 100%;" /> -->
         <!-- logo for regular state and mobile devices -->
-        <span class="logo-lg"><b><?= Yii::$app->params['copyright'] ?></b></span>
+        <span class="logo-lg" style="height: 100%;">
+            <!--b><?= Yii::$app->params['copyright'] ?></b-->
+            <img src="<?= Html::encode($directoryAsset . "/img/logos/logop.png") ?>" alt="logo" style="height: 100%;" />
+        </span>
     </a>
 
     <!-- Header Navbar -->

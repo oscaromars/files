@@ -1341,6 +1341,7 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
         $session = Yii::$app->session;
         $data = Yii::$app->request->get();
         $per_id = $data['estudiante'];
+        $periodoAcad = $data['periodo'];
         $pla_id = $mod_periodo->consultaPlanificacionEstVigente($per_id);
         $plan =  $pla_id[0]["id"];
         $session->set("plan_id",$plan);
@@ -1351,6 +1352,8 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
         if ($data['estudiante'] != null) {
             $arrSearch['estudiante'] = $per_id;
             $arrSearch['planificacion'] = $pla_id[0]["id"];
+            $plan = $mod_periodo->getPlanificacionxPeriodo($periodoAcad,$per_id);
+            $arrSearch['periodoAca'] = $data["periodo"];
             $model_plan = $mod_periodo->consultarDetalleplanificaaut($arrSearch,false);
             $carrera_activa = $mod_periodo->consultaracarreraxmallaaut($per_id);
             //$pla_id = $mod_periodo->consultaPlanificacionEstVigente($per_id);
@@ -1374,7 +1377,7 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
                 'arr_materia' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']], $materia), 'id', 'name'),
                 'arr_alumno' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']], $busquedalumno), 'id', 'name'),
                 'model_detalle' => $model_plan,//$mod_detalle,//$model_plan,
-                'periodo_activo' => ArrayHelper::map($periodo_activo, 'id', 'name'),
+                'periodo_activo' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']],$periodo_activo), 'id', 'name'),
                 'arr_initial' => $arr_initial,
                 'model' => $model_plan,
                 'carrera_activa' => $id_carrera,//ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']],$carrera_activa), 'id', 'name'),
@@ -1436,7 +1439,7 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
                     'arr_materia' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']], $materia), 'id', 'name'),
                     'arr_alumno' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']], $busquedalumno), 'id', 'name'),
                     'model_detalle' => $model_plan,//$mod_detalle,//$model_plan,
-                    'periodo_activo' => ArrayHelper::map($periodo_activo, 'id', 'name'),
+                    'periodo_activo' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']],$periodo_activo), 'id', 'name'),
                     'arr_initial' => $data['estudiante'],
                     'carrera_activa' => $id_carrera,//ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']],$carrera_activa), 'id', 'name'),
                     'pla_id' => $id_pla,//ArrayHelper::map($pla_id, 'id', 'name'),

@@ -11,13 +11,14 @@ financiero::registerTranslations();
 use app\assets\StripeAsset;
 StripeAsset::register($this);
 //print_r('arr: '.$arr_forma_pago);
-//print_r('Per_id: '.$id);
+print_r('Per_id: '.$id_en);
 //print_r($arr_vencimiento);
 //print_r('</br>');
 //print_r('rama: '.$rama)
 
 ?>
 <?= Html::hiddenInput('txt_per_id', $id, ['id' => 'txt_per_id']); ?>
+<?= Html::hiddenInput('txt_id_code', $id_en, ['id' => 'txt_id_code']); ?>
 <?= Html::hiddenInput('txt_ron_id', $ron_id, ['id' => 'txt_ron_id']); ?>
 <?= Html::hiddenInput('txt_existe2', $pes_id, ['id' => 'txt_existe2']); ?>
 <?= Html::hiddenInput('txt_pla_id', $pla_id, ['id' => 'txt_pla_id']); ?>
@@ -194,15 +195,15 @@ StripeAsset::register($this);
                             'browseIcon' => '<i class="fa fa-folder-open"></i> ',
                             'browseLabel' => Yii::t("formulario", "Upload File"),
                             'allowedFileExtensions' => ['png','jpeg', 'jpg'],
-                            'uploadUrl' => Url::to(["registro/save/$id"]),
+                            'uploadUrl' => Url::to(["registro/save/$id_en"]),
                              'maxFileSize' => Yii::$app->params["MaxFileSize2m"], // en Kbytes
                             'uploadExtraData' => 'javascript:function (previewId,index) {
-                                return {"upload_file": true, "name_file": "payment-' . $per_id . '-' .  "$id-" . date('YmdHis') . '"};
+                                return {"upload_file": true, "name_file": "payment-' . base64_decode($id) . '-' . date('YmdHis') . '"};
                             }',
                         ],
                         'pluginEvents' => [
                             "filebatchselected" => "function (event) {
-                                $('#txth_pago_doc2').val('payment-" . $per_id . '-' .  "$id-" . date('YmdHis') . "');
+                                $('#txth_pago_doc2').val('payment-" . base64_decode($id) . '-' . date('YmdHis') . "');
                                 $('#txth_pago_doc').val($('#txt_pago_doc').val());
                                 $('#txt_pago_doc').fileinput('upload');
                             }",
@@ -255,7 +256,7 @@ StripeAsset::register($this);
      
 
 
-    <div  class= "row"   style="display: block;"  id="paylink2" >
+    <div  class= "row"   style="display: block;"  id="paylink2"  class="nocredit" >
       
         <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 ">   
             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
@@ -373,7 +374,7 @@ StripeAsset::register($this);
     </div>
 
 </form>
-<input type="hidden" id="frm_per_id" value="<?= $per_id ?>" />
+<input type="hidden" id="frm_per_id" value="<?= $id_en ?>" />
 <input type="hidden" id="frm_id" value="<?= $ron_id ?>" />
 <input type="hidden" id="frm_rama_id" value="<?= $rama_id ?>" />
 <input type="hidden" id="frm_costo_item" value="<?= $costoItem ?>" />

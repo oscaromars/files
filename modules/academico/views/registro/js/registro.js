@@ -21,23 +21,22 @@ $(document).ready(function() {
             txt_dir_fac +'-'+
             txt_tel_fac+'-'+
             txt_correo_fac);*/
+        
         if (txt_dpre_ssn_id_fact != 0 ||
             txt_nombres_fac != 0 ||
             txt_apellidos_fac != 0 ||
             txt_dir_fac != 0 ||
             txt_tel_fac != 0 ||
             txt_correo_fac != 0){
-                
-               if( $('#cmb_tpago').val()!== 3){
-                //alert($('#cmb_tpago').val());
-                //save();     
-               }
                guardarCargarCartera();
                enviarPdf();
-        }else{
+        }else if(( $('#cmb_tpago').val()=== 3)||( $('#cmb_fpago').val() === 1)){
             var mensaje = {wtmessage: 'Se deben ingresar todos los campos de facturacion correspondientes', title: "Datos de Facturacion"};
             showAlert("NO_OK", "error", mensaje);
             return;
+        }else{
+            guardarCargarCartera();
+               enviarPdf();
         }
     });
     $('#cmb_tpago').change(function() {
@@ -56,6 +55,7 @@ $(document).ready(function() {
         }
         if ($(this).val() == 3) {
             $('.nocredit2').hide();
+            document.getElementById("paylink2").hidden = false;
         }
     });
     $('#cmb_fpago').change(function() {
@@ -200,7 +200,7 @@ function save() {
     //guardarCargarCartera();
     //Se debe de enviar el pago  y retornar el mensaje de exito o error
     var arrParams = new Object();
-    var link = $('#txth_base').val() + "/academico/registro/save/";//, + $('#txt_per_id').val();//$('#frm_id').val();
+    var link = $('#txth_base').val() + "/academico/registro/save/" + $('#txt_id_code').val();//$('#frm_id').val();//
     var total = ($('#frm_costo_item').val()).replace(/,/g, '');//($('#frm_costo_item').val()).replace(/,/g, '');
     var numCuota = $('#cmb_cuota').val();
     var cuota = (total / numCuota);

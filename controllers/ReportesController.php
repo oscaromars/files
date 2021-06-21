@@ -402,7 +402,7 @@ class ReportesController extends CController {
         $searchModel = new DistributivoAcademicoSearch();
         //$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $params = Yii::$app->request->queryParams;
-        $dataProvider = $searchModel->getListadoDistributivoPosgrado($params,false,1);
+        $dataProvider = $searchModel->getListadoDistributivoPosgrados($params,false,1);
         return $this->render('reportdistributivo_posgrado', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,

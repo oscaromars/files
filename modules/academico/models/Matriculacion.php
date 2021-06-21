@@ -1115,7 +1115,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
     {
         $con_asgard = \Yii::$app->db_asgard;
         $con_academico = \Yii::$app->db_academico;
-        $estado = 1;
+
         $sql = "
             SELECT distinct 
             ron.ron_id, 
@@ -1141,8 +1141,8 @@ class Matriculacion extends \yii\db\ActiveRecord {
             inner join " . $con_academico->dbname . ".unidad_academica ua on ua.uaca_id = meu.uaca_id
             WHERE ron.per_id = :per_id
             AND ron.pes_id = :pes_id
-            AND ron.ron_estado = :estado
-            AND ron.ron_estado_logico = :estado
+            AND pla.paca_id IS NOT NULL
+            AND ron.ron_estado = 1 AND ron.ron_estado_logico = 1
             AND pla.pla_estado = 1 AND pla.pla_estado_logico = 1
             AND pes.pes_estado = 1 AND pes.pes_estado_logico = 1
             AND est.est_estado = 1 AND est.est_estado_logico = 1
@@ -1157,9 +1157,10 @@ class Matriculacion extends \yii\db\ActiveRecord {
         $comando = $con_academico->createCommand($sql);
         $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
         $comando->bindParam(":pes_id", $pes_id, \PDO::PARAM_INT);
-        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
         $resultData = $comando->queryOne();
-\app\models\Utilities::putMessageLogFile('getDataStudenFromRegistroOnline: '.$comando->getRawSql());
+
+        // \app\models\Utilities::putMessageLogFile('getDataStudenFromRegistroOnline: '.$comando->getRawSql());
+        
         return $resultData;
     }
 

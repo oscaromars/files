@@ -178,9 +178,10 @@ class RegistroController extends \app\components\CController {
         ]);
     }
 
-    public function actionNew($id,$ron, $cuotas,$idtotal){
-        \app\models\Utilities::putMessageLogFile('RegistroOnline::findOne($id);: '.$id);
+    public function actionNew($id,$ron, $cuotas,$idtotal,$idpla){
+        \app\models\Utilities::putMessageLogFile('RegistroOnline::findOne($id);: '.base64_decode($id));
         $model = RegistroOnline::findOne(base64_decode($id));
+        $id = base64_decode($id);
         $data = Yii::$app->request->get();
         $rama_id = base64_decode($data['ron']);
         $cuotas = base64_decode($data['cuotas']);
@@ -211,11 +212,12 @@ class RegistroController extends \app\components\CController {
         $_SESSION['JSLANG']['Please select a number of installments.'] = Academico::t('registro', 'Please select a number of installments.');
 
         $model_pes = PlanificacionEstudiante::findOne($pes_id);
-        $per_id = base64_decode($id);
+        $per_id = $id;
         $model_pes = PlanificacionEstudiante::findOne($per_id);
         $planificacionEst = new PlanificacionEstudiante();
         $pla = $planificacionEst->getPla_id($per_id);
         $pla_id = $pla[0]['id'];
+        //$pla_id = base64_decode($idpla);
         $model_pla = Planificacion::findOne($pla_id);
         /*$planificacion = new Planificacion();
         $paca_id = $planificacion->getPaca_id($per_id);
@@ -223,16 +225,16 @@ class RegistroController extends \app\components\CController {
         
         
         $emp_id = Yii::$app->session->get("PB_idempresa");
-        \app\models\Utilities::putMessageLogFile(' Periodo y emp_id: '.$per_id . " ".$emp_id  );
+        \app\models\Utilities::putMessageLogFile(' Per y emp_id: '.$per_id . " ".$emp_id  );
         $arrCarrera = RegistroPagoMatricula::getCarreraByPersona($per_id, $emp_id);
         $modelFP = new FormaPago();
         $arr_forma_pago = $modelFP->consultarFormaPago();
-        unset($arr_forma_pago[1]);
+        /*unset($arr_forma_pago[1]);
         unset($arr_forma_pago[2]);
-        unset($arr_forma_pago[5]);
+        unset($arr_forma_pago[3]);
+        unset($arr_forma_pago[4]);
         unset($arr_forma_pago[6]);
-        unset($arr_forma_pago[7]);
-        unset($arr_forma_pago[8]);
+        unset($arr_forma_pago[8]);*/
         //unset($arr_forma_pago[9]);
         // get Credits and get Cost x Credit
         $eaca_id = $arrCarrera['eaca_id'];
@@ -273,7 +275,8 @@ class RegistroController extends \app\components\CController {
             'periodo' => $periodo[0]['name'],
             'arr_forma_pago' => $arr_forma_pago,
             'arr_credito' => $this->getCreditoPayNew(),
-            'id' => $id,
+            'id' => base64_encode($id),
+            'id_en' => $id,
             'cuotas' => $cuotas?$cuotas:6,
             'dataGrid' => $dataProvider,
             'costCarrera' => $costCarrera,//,(number_format($costCarrera, 2, '.', ',')),
@@ -296,7 +299,7 @@ class RegistroController extends \app\components\CController {
     }
 
     public function actionEdit($id){
-        $model = RegistroOnline::findOne($id);
+        $model = RegistroOnline::findOne(base64_decode($id));
         $data = Yii::$app->request->get();
         $rama_id = $data['rama_id'];
         $modelRegAd = RegistroAdicionalMaterias::findOne(['rama_id' => $rama_id, 'rama_estado' => '1', 'rama_estado_logico' => '1',]);
@@ -444,15 +447,15 @@ class RegistroController extends \app\components\CController {
 
 
     //Pago de registro de matricula 
-    public function actionSave(){//$id){   
-                //$id = base64_decode($id);  
+    public function actionSave($id){  
+                $id = base64_decode($id);  
                 $per_id = Yii::$app->session->get("PB_perid"); 
                 $usu_id = Yii::$app->session->get("PB_iduser");
                 $emp_id = Yii::$app->session->get("PB_idempresa");
                 $fecha_modificacion = date(Yii::$app->params["dateTimeByDefault"]);
                 if (Yii::$app->request->isAjax) {
                     $data = Yii::$app->request->post(); 
-                    $id = base64_decode($data['per_id']);
+                    //$id = base64_decode($data['per_id']);
                     \app\models\Utilities::putMessageLogFile('ID...: '.$id);  
                     $model = RegistroOnline::findOne($id);
            
@@ -1253,7 +1256,7 @@ class RegistroController extends \app\components\CController {
     
 
     public function actionUpdate($id){
-        $model = RegistroOnline::findOne($id);
+        $model = RegistroOnline::findOne(base64_decode($id));
         $per_id = Yii::$app->session->get("PB_perid"); 
         $usu_id = Yii::$app->session->get("PB_iduser");
         $emp_id = Yii::$app->session->get("PB_idempresa");
@@ -1316,7 +1319,7 @@ class RegistroController extends \app\components\CController {
     }
 
     public function actionView($id){
-        $model = RegistroOnline::findOne($id);
+        $model = RegistroOnline::findOne(base64_decode($id));
         $data = Yii::$app->request->get();
         $rama_id = $data['rama_id'];
         $modelRegAd = RegistroAdicionalMaterias::findOne(['rama_id' => $rama_id, 'rama_estado' => '1', 'rama_estado_logico' => '1',]);
@@ -1522,7 +1525,7 @@ class RegistroController extends \app\components\CController {
 
     public function actionDownloadenroll(){
         try {
-            $id = $_GET['id'];
+            $id = base64_decode($_GET['id']);
             $rpm_id = $_GET['rpm_id'];
             $per_id = Yii::$app->session->get("PB_perid"); 
             $usu_id = Yii::$app->session->get("PB_iduser");

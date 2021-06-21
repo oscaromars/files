@@ -127,4 +127,5 @@ return [
     'Order' => 'Order',
     'Number Subjects' => 'Number Subjects',
     'Number Credits' => 'Number Credits',
+    'Consulta de Registro de Matrícula' => 'Consulta de Registro de Matrícula'
 ];

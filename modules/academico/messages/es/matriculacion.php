@@ -152,4 +152,5 @@ return [
     'You must choose at least a number or subjects ' => 'Usted deberia seleccionar al menos un numero de materias ',
     'You must choose at least two' => 'Usted deberia seleccionar al menos dos',
     'You must choose subjetc' => 'Usted deberia seleccionar materias',
+    'Consulta de Registro de Matrícula' => 'Consulta de Registro de Matrícula'
 ];

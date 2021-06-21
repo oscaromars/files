@@ -423,7 +423,7 @@ function cargarDocumento() {
             if(response.status == 'OK'){
                 setTimeout(function () {
                      var params = (arrParams.per_id == 0) ? "" : "?per_id=" + base64_encode(arrParams.per_id)
-                     parent.window.location.href = $('#txth_base').val() + "/academico/matriculacion/index" + params;
+                     parent.window.location.href = $('#txth_base').val() + "/academico/matriculacion/registro" + params;
                 }, 2000);
             }
         }, true);
@@ -446,7 +446,7 @@ function cargarDocumento() {
                         if(response.status == 'OK'){
                             setTimeout(function () {
                                  var params = (arrParams.per_id == 0) ? "" : "?per_id=" + base64_encode(arrParams.per_id)
-                                 parent.window.location.href = $('#txth_base').val() + "/academico/matriculacion/index" + params;
+                                 parent.window.location.href = $('#txth_base').val() + "/academico/matriculacion/registro" + params;
                             }, 2000);
                         }
                     }, true);

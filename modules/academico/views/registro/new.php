@@ -10,7 +10,7 @@ academico::registerTranslations();
 financiero::registerTranslations();
 use app\assets\StripeAsset;
 StripeAsset::register($this);
-//print_r('arr: '.$model_pes);
+//print_r('arr: '.$arr_forma_pago);
 //print_r('Per_id: '.$id);
 //print_r($arr_vencimiento);
 //print_r('</br>');
@@ -30,7 +30,10 @@ StripeAsset::register($this);
             </div>        
         </div> 
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">  
-        </div>
+</div>
+<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    <h3><span id="lbl_registro_online"><?= academico::t("Academico", "Registro de pago en Línea") ?></span></h3>
+</div><br><br><br>
 <form class="form-horizontal" enctype="multipart/form-data">
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <h4><span><?= academico::t("registro", "Student Information") ?></span></h4>
@@ -107,7 +110,7 @@ StripeAsset::register($this);
     <div class="row">
         
     </div>
-    <div class="row nocredit" <?= $style ?>>
+    <div id="ex1" class="row nocredit" hidden <?= $style ?>>
         <div class="col-md-6 col-sm-6 col-xs-6 col-lg-6">
             <div class="form-group">
                 <label for="frm_int_ced" class="col-sm-3 col-md-3 col-xs-3 col-lg-3 control-label"><?= academico::t("registro", 'Interest on Direct Credit') ?></label>
@@ -131,7 +134,7 @@ StripeAsset::register($this);
             </div>
         </div>
     </div>
-    <div class="row nocredit" <?= $style ?>>
+    <div id="ex1" class="row nocredit" hidden <?= $style ?>>
         <div class="col-md-6 col-sm-6 col-xs-6 col-lg-6">
             <div class="form-group">
                 <label for="cmb_cuota" class="col-sm-3 col-md-3 col-xs-3 col-lg-3 control-label"><?= academico::t("registro", 'Payment Installments') ?></label>
@@ -148,10 +151,10 @@ StripeAsset::register($this);
     </div>
 
 
-    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 nocredit" <?= $style ?>>
+    <div id="ex1"  class="col-lg-12 col-md-12 col-sm-12 col-xs-12 nocredit" hidden <?= $style ?>>
         <h4><span><?= academico::t("registro", "Direct Credit") ?></span></h4>
     </div>
-    <div class="row nocredit" <?= $style ?>>
+    <div id="ex1"  class="row nocredit" hidden <?= $style ?>>
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <?= $this->render('new-grid', ['dataGrid' => $dataGrid]); ?>
         </div>

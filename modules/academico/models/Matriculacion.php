@@ -452,7 +452,14 @@ class Matriculacion extends \yii\db\ActiveRecord {
                     WHERE per.per_id =:per_id
             AND pla.pla_id =:pla_id
             AND pes.pes_id =:pes_id
-            AND pla.paca_id is not null";
+            AND pla.pla_estado = 1 AND pla.pla_estado_logico = 1
+            AND pes.pes_estado = 1 AND pes.pes_estado_logico = 1
+            AND est.est_estado = 1 AND est.est_estado_logico = 1
+            AND per.per_estado = 1 AND per.per_estado_logico = 1
+            AND mo.mod_estado = 1 AND mo.mod_estado_logico = 1
+            AND ea.eaca_estado = 1 
+            AND meu.meun_estado = 1 AND meu.meun_estado_logico = 1
+            AND ua.uaca_estado = 1 AND ua.uaca_estado_logico = 1";
                     
 
       $comando = $con_academico->createCommand($sql);
@@ -464,53 +471,6 @@ class Matriculacion extends \yii\db\ActiveRecord {
         \app\models\Utilities::putMessageLogFile('getDataStudent: '.$comando->getRawSql());
         return $resultData;
     }
-
-    public function insertarActualizacionGastos($ron_id,$gastos_administrativos) {        
-        $con = \Yii::$app->db_academico;
-        $ron_fecha_modificacion = date(Yii::$app->params["dateTimeByDefault"]);
-        $estado = 1;
-        $trans = $con->getTransaction(); // se obtiene la transacción actual
-        if ($trans !== null) {
-            $trans = null; // si existe la transacción entonces no se crea una
-        } else {
-            $trans = $con->beginTransaction(); // si no existe la transacción entonces se crea una
-        }
-
-        try {
-            $comando = $con->createCommand
-                    ("UPDATE " . $con->dbname . ".registro_online               
-                      SET ron_valor_gastos_adm = :gastos_administrativos,
-                        ron_fecha_modificacion = :ron_fecha_modificacion
-                        
-                      WHERE 
-                        ron_id = :ron_id
-                        rmar_estado = :estado AND
-                        rmar_estado_logico = :estado");
-
-            if (isset($gastos_administrativos)) {
-                $comando->bindParam(':gastos_administrativos', $gastos_administrativos, \PDO::PARAM_STR);
-            }
-            if (isset($ron_id)) {
-                $comando->bindParam(':ron_id', $ron_id, \PDO::PARAM_INT);
-            }
-            if (!empty((isset($ron_fecha_modificacion)))) {
-                $comando->bindParam(':ron_fecha_modificacion', $ron_fecha_modificacion, \PDO::PARAM_STR);
-            }
-            
-            $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
-            $result = $comando->execute();
-            if ($trans !== null)
-                $trans->commit();
-            return $con->getLastInsertID($con->dbname . '.registro_marcacion');
-        } catch (Exception $ex) {
-            if ($trans !== null)
-                $trans->rollback();
-            return FALSE;
-        }
-    }
-
-
-
 
     /*
      * Function to get data from planificacion_estudiante

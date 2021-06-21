@@ -41,6 +41,7 @@ $(document).ready(function() {
         }
     });
     $('#cmb_tpago').change(function() {
+        document.getElementById("ex1").hidden = false;
         if ($(this).val() == 1) {
             $('.nocredit').hide();
             $('.nocredit2').show();
@@ -455,6 +456,7 @@ function generarDataTable(cuotas, primerPago) {
     let perPriC = 0;
     let perCuot = 0;
     let diffCuota = 0;
+    let per_one = 0;
     if (primerPago !== null && cuotas > 1) {
         perPriC = ((primerPago * 100) / total).toFixed(2);
         diffCuota = (total - primerPago);
@@ -715,7 +717,7 @@ function confirmarDevolucion(id) {
 
 function guardarCargarCartera(){
     var link = $('#txth_base').val() + "/academico/registro/modificarcargacartera";
-    
+    showLoadingPopup();
     var arrParams = new Object();
     arrParams.rama = $('#txt_rama').val();
     arrParams.tpago = $('#cmb_tpago').val();
@@ -766,11 +768,11 @@ function enviarPdf(){
         requestHttpAjax(link, arrParams, function(response) {
         var message = response.message;
         if (response.status == "OK") {
-            setTimeout(function() {
-            //windows.location.href = $redirect;
             showAlert(response.status, response.type, { "wtmessage": 'Su información se registro con éxito.', "title": response.label });
+            setTimeout(function() {
             //windows.location.href = $('#txth_base').val() + "/academico/registro/index";
-            //parent.window.location.href = $('#txth_base').val() + "/academico/registro/index";
+            hideLoadingPopup();
+            parent.window.location.href = $('#txth_base').val() + "/academico/registro/index";
             }, 4000);
         } 
         }, true);

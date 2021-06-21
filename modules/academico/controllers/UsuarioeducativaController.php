@@ -2285,4 +2285,105 @@ class UsuarioeducativaController extends \app\components\CController {
             return;
         }
     }//function actionAsignaritems
+
+    public function actionExpexcelasigeval() {
+        ini_set('memory_limit', '256M');
+        $content_type = Utilities::mimeContentType("xls");
+        $nombarch = "Report-" . date("YmdHis") . ".xls";
+        header("Content-Type: $content_type");
+        header("Content-Disposition: attachment;filename=" . $nombarch);
+        header('Cache-Control: max-age=0');
+
+        $colPosition = array("C", "D", "E", "F", "G", "H");
+        $arrHeader = array(
+            academico::t("Academico", "Period"),
+            Yii::t("formulario", "Complete Names"),
+            Yii::t("formulario", "Mode"),
+            Yii::t("formulario", "Subject"),
+            Yii::t("formulario", "Unit"),
+            Yii::t("formulario", "Evaluation"),
+        );
+
+        $distributivo_model = new CursoEducativaEstudiante();
+
+        $data = Yii::$app->request->get();
+        $arrSearch["periodo"] = $data['periodo'];
+        $arrSearch["modalidad"] = $data['modalidad'];
+        $arrSearch["aula"] = $data['aula'];
+        $arrSearch["unidadeduc"] = $data['unidadeduc'];
+
+        $arrData = array();
+
+        if (empty($arrSearch)) {
+            $arrData = $distributivo_model->consultarEstudiantesEvaluacion(NULL, true);
+        } else {
+            $arrData = $distributivo_model->consultarEstudiantesEvaluacion($arrSearch, true);
+        }
+
+        foreach($arrData as $key => $value){
+            unset($arrData[$key]["ceest_id"]);
+            unset($arrData[$key]["paca_id"]);
+            unset($arrData[$key]["est_id"]);
+            unset($arrData[$key]["per_id"]);
+            unset($arrData[$key]["mod_id"]);
+            unset($arrData[$key]["cedu_id"]);
+            unset($arrData[$key]["ceuni_id"]);
+            unset($arrData[$key]["ceest_estado_bloqueo"]);
+        }
+
+        $nameReport = academico::t("Academico", "Evaluaciones asignadas a estudiantes");
+        Utilities::generarReporteXLS($nombarch, $nameReport, $arrHeader, $arrData, $colPosition);
+        exit;
+    }// function actionExpexcelasigeval
+
+    public function actionExppdfasigeval() {
+        $report = new ExportFile();
+        $this->view->title =academico::t("Academico", "Evaluaciones asignadas a estudiantes"); // Titulo del reporte
+        
+        $arrHeader = array(
+            academico::t("Academico", "Period"),
+            Yii::t("formulario", "Complete Names"),
+            Yii::t("formulario", "Mode"),
+            Yii::t("formulario", "Subject"),
+            Yii::t("formulario", "Unit"),
+            Yii::t("formulario", "Evaluation"),
+        );
+
+        $distributivo_model = new CursoEducativaEstudiante();
+
+        $data = Yii::$app->request->get();
+        $arrSearch["periodo"] = $data['periodo'];
+        $arrSearch["modalidad"] = $data['modalidad'];
+        $arrSearch["aula"] = $data['aula'];
+        $arrSearch["unidadeduc"] = $data['unidadeduc'];
+
+        $arrData = array();
+        if (empty($arrSearch)) {
+            $arrData = $distributivo_model->consultarEstudiantesEvaluacion(NULL, true);
+        } else {
+            $arrData = $distributivo_model->consultarEstudiantesEvaluacion($arrSearch, true);
+        }
+
+        foreach($arrData as $key => $value){
+            unset($arrData[$key]["ceest_id"]);
+            unset($arrData[$key]["paca_id"]);
+            unset($arrData[$key]["est_id"]);
+            unset($arrData[$key]["per_id"]);
+            unset($arrData[$key]["mod_id"]);
+            unset($arrData[$key]["cedu_id"]);
+            unset($arrData[$key]["ceuni_id"]);
+            unset($arrData[$key]["ceest_estado_bloqueo"]);
+        }
+
+        Utilities::putMessageLogFile("PDF export: " . print_r($arrData, true));
+
+        $report->orientation = "P"; // tipo de orientacion L => Horizontal, P => Vertical                                
+        $report->createReportPdf(
+                $this->render('exportpdf', [
+                    'arr_head' => $arrHeader,
+                    'arr_body' => $arrData,
+                ])
+        );
+        $report->mpdf->Output('Reporte_' . date("Ymdhis") . ".pdf", ExportFile::OUTPUT_TO_DOWNLOAD);
+    }// function actionExppdfasigeval
 }  

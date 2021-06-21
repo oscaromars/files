@@ -1051,9 +1051,11 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
             }            
         }
 
-        Utilities::putMessageLogFile($comando->getRawSql());
+        // Utilities::putMessageLogFile("consultarEstudiantesEvaluacion: " . $comando->getRawSql());
 
         $resultData = $comando->queryAll();
+
+        Utilities::putMessageLogFile("consultarEstudiantesEvaluacion resultado: " . print_r($resultData, true));
 
         if($onlyData)
         {

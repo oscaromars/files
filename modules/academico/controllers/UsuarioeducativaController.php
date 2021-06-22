@@ -2294,7 +2294,7 @@ class UsuarioeducativaController extends \app\components\CController {
         header("Content-Disposition: attachment;filename=" . $nombarch);
         header('Cache-Control: max-age=0');
 
-        $colPosition = array("C", "D", "E", "F", "G", "H");
+        $colPosition = array("C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P");
         $arrHeader = array(
             academico::t("Academico", "Period"),
             Yii::t("formulario", "Complete Names"),

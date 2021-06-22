@@ -832,4 +832,28 @@ class Asignatura extends \yii\db\ActiveRecord
         // \app\models\Utilities::putMessageLogFile('ASIGNATURAS gap: ' .$comando->getRawSql());
         return $res;
     }
+
+    /**
+     * Función para retornar si la asignatura se encuentra asignada a un profesor en el distributivo académico
+     * @author  Jorge Paladines <analistadesarrollo04@uteg.edu.ec>;
+     * @property       
+     * @return  
+     */
+    public function hasDistributivo($asi_id){
+        $con_academico = Yii::$app->db_academico;
+
+        $sql = "SELECT *
+                FROM
+                    db_academico.distributivo_academico AS daca
+                WHERE
+                    daca.daca_estado = 1 AND daca.daca_estado_logico = 1
+                    AND daca.dcab_id IS NOT NULL
+                    AND daca.meun_id IS NOT NULL
+                    AND daca.asi_id = $asi_id"
+                    ;
+
+        $comando = $con_academico->createCommand($sql);
+        $res = $comando->queryAll();
+        return $res;
+    }
 }

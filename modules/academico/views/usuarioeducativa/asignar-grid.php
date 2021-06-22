@@ -28,33 +28,33 @@ academico::registerTranslations();
         //'pajax' => false,
         'columns' =>
         [
-            [ 
+            [
                 'attribute' => '#',
                 'header' => academico::t("Academico", "#"),
                 'value' => 'pro_id',
             ],
 
-            [ 
+            [
                 'attribute' => 'Nombres',
                 'header' => academico::t("Academico", "Teacher"),
                 'value' => 'Nombres',
             ],
-            [ 
+            [
                 'attribute' => 'Cedula',
                 'header' => Yii::t("formulario", "DNI 1"),
                 'value' => 'Cedula',
-            ],   
+            ],
             [
                 'attribute' => 'UnidadAcademica',
                 'header' => Yii::t("formulario", "Academic unit"),
                 'value' => 'UnidadAcademica',
-            ],   
+            ],
             [
                 'attribute' => 'Modalidad',
                 'header' => Yii::t("formulario", "Mode"),
                 'value' => 'Modalidad',
             ],
-            [ 
+            [
                 'attribute' => 'Periodo',
                 'header' => Yii::t("formulario", "Period"),
                 'value' => 'Periodo',
@@ -63,12 +63,12 @@ academico::registerTranslations();
                 'attribute' => 'Asignatura',
                 'header' => Yii::t("formulario", "Subject"),
                 'value' => 'Asignatura',
-            ],  
+            ],
             [
                 'attribute' => 'Jornada',
                 'header' => academico::t("Academico", "Working day"),
                 'value' => 'Jornada',
-            ],   
+            ],
             [
                 'attribute' => 'cursos',
                 'header' => academico::t("Academico", "Aulas"),
@@ -78,9 +78,9 @@ academico::registerTranslations();
                 ],
                 'format' => 'raw',
                 'value'  => function ($model) {
-                    return Html::dropDownList('cursos', empty($model['id'])?0:$model['id'], ArrayHelper::map($model['cursos'] , "id", "name"), ["class" => "form-control", "id" => "curso_".$model['id'] ]);                                        
+                    return Html::dropDownList('cursos', empty($model['id'])?0:$model['id'], ArrayHelper::map($model['cursos'] , "id", "name"), ["class" => "form-control", "id" => "curso_".$model['id'] ]);
                     }
-            ],      
+            ],
         ],
     ])
     ?>

@@ -1236,8 +1236,9 @@ function exportPdfEvaluacion(){
     var unidadeduc = $('#cmb_unidad_educ option:selected').val();
 
     window.location.href = $('#txth_base').val() 
-                            + "/academico/usuarioeducativa/exppdfasigeval?periodo=" + periodo 
+                            + "/academico/usuarioeducativa/exppdfasigeval?pdf=1&periodo=" + periodo 
                                                                         + "&modalidad=" + modalidad 
                                                                         + "&aula=" + aula 
                                                                         + "&unidadeduc=" + unidadeduc;
 }// function exportPdfEvaluacion
+

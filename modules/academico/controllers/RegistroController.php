@@ -2575,7 +2575,7 @@ class RegistroController extends \app\components\CController {
         try {
             $ids = $_GET['ids'];
             $per_id = $ids;
-            //$rama_id  = $_GET['rama_id'];
+            $rama_id  = $_GET['rama_id'];
             $matriculacion_model = new Matriculacion();          
             $modelPersona = Persona::find()->where(['per_id' => $per_id])->asArray()->one();
             $modelEstudiante = Estudiante::find()->where(['per_id' => $per_id])->asArray()->one();
@@ -2598,7 +2598,11 @@ class RegistroController extends \app\components\CController {
             //obtengo el ron_id
             $resp_ron_id= $modelCargaCartera->getRonPes($per_id);
             $ron_id = $resp_ron_id['ron_id'];
-            $dataPlanificacion = $matriculacion_model->getPlanificationFromRegistroOnline($ron_id);
+
+            $rama_id = $rama_id?$rama_id:0;//nuevo 22/06/2021
+            $dataPlanificacion = $matriculacion_model->getPlanificationFromRegistroOnline($ron_id,$rama_id);
+
+            //$dataPlanificacion = $matriculacion_model->getPlanificationFromRegistroOnline($ron_id);
 
             /*Detalles de pagos */
             // nuevo

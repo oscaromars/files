@@ -1296,9 +1296,10 @@ class Matriculacion extends \yii\db\ActiveRecord {
      */
     public function getPlanificationFromRegistroOnline($ron_id)
     {
+         $rama_id = $rama_id?$rama_id:0;
         $con_academico = \Yii::$app->db_academico;
         $estado = 1;
-        $sql = "
+        /*$sql = "
             SELECT roi.roi_id, 
                 roi.roi_materia_nombre as Subject, 
                 roi_creditos as Credit, 
@@ -1312,6 +1313,30 @@ class Matriculacion extends \yii\db\ActiveRecord {
             WHERE ron_id =:ron_id
             AND roi_estado =:estado
             AND roi_estado_logico =:estado
+        ";*/
+
+        if($rama_id>0) $str_search = " AND rama.rama_id = $rama_id ";
+        $sql = "
+            SELECT roi.roi_id, 
+                roi.roi_materia_nombre as Subject, 
+                roi_creditos as Credit, 
+        roi.roi_materia_cod as Code,
+                roi.roi_materia_cod as CodeAsignatura, 
+        roi.roi_costo as Cost,
+                roi.roi_costo as Price,
+                roi.roi_hora as Hour,
+                roi.roi_bloque as Block
+            FROM " . $con_academico->dbname . ".registro_online_item as roi
+            inner join " . $con_academico->dbname . ".registro_adicional_materias as rama on roi.roi_id = rama.roi_id_1
+                                                                        or roi.roi_id = rama.roi_id_2
+                                                                        or roi.roi_id = rama.roi_id_3
+                                                                        or roi.roi_id = rama.roi_id_4
+                                                                        or roi.roi_id = rama.roi_id_5
+                                                                        or roi.roi_id = rama.roi_id_6
+            WHERE roi.ron_id =:ron_id
+            AND roi.roi_estado =:estado
+            AND roi.roi_estado_logico =:estado
+            $str_search
         ";
 
         $comando = $con_academico->createCommand($sql);

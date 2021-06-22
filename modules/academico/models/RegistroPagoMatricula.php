@@ -721,7 +721,7 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
         $sql = "SELECT distinct
                     r.ron_id as Id, 
                     -- reg.rpm_id as rpm_id, 
-                    -- ram.rama_id as rama_id,
+                    ram.rama_id as rama_id,
                     pe.pes_nombres as Estudiante,
                     pe.per_id as per_id,
                     pe.pes_dni as Cedula,
@@ -771,11 +771,10 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
                             rm.roi_id_6 = it.roi_id
                             )
                         WHERE
-                            r.ron_estado = '1' AND r.ron_estado_logico = '1' AND
-                            it.roi_estado = '1' AND it.roi_estado_logico = '1' AND
-                            rm.rama_estado = '1' AND rm.rama_estado_logico = '1'
-                        GROUP BY
-                            r.pes_id, rm.rama_id
+                            r.ron_estado = 1 AND r.ron_estado_logico = 1 AND
+                            it.roi_estado = 1 AND it.roi_estado_logico = 1 AND
+                            rm.rama_estado = 1 AND rm.rama_estado_logico = 1
+                        GROUP BY r.pes_id, rm.rama_id
                     ) AS tmp ON tmp.rama_id = ram.rama_id -- tmp.pes_id = pe.pes_id
                     LEFT JOIN (
                         SELECT 
@@ -784,14 +783,13 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
                         FROM
                             " . $con_academico->dbname . ".registro_online AS r
                         WHERE 
-                            r.ron_estado =1 and r.ron_estado_logico =1
-                        GROUP BY
-                            per_id
+                            r.ron_estado = 1 AND r.ron_estado_logico = 1
+                        GROUP BY per_id
                     ) AS mi ON mi.ron_id = r.ron_id
                     LEFT JOIN " . $con_academico->dbname . ".registro_pago_matricula AS reg on reg.per_id = per.per_id 
-                        and r.ron_id = reg.ron_id and reg.rpm_estado = 1 and reg.rpm_estado_logico =1
+                        AND r.ron_id = reg.ron_id AND reg.rpm_estado = 1 AND reg.rpm_estado_logico = 1
                     LEFT JOIN " . $con_academico->dbname . ".enrolamiento_agreement AS enr on enr.ron_id = r.ron_id 
-                        and reg.rpm_estado = 1 and reg.rpm_estado_logico =1 and enr.rpm_id = ram.rpm_id and enr.eagr_estado = 1 and enr.eagr_estado_logico = 1
+                        AND reg.rpm_estado = 1 AND reg.rpm_estado_logico = 1 AND enr.rpm_id = ram.rpm_id AND enr.eagr_estado = 1 AND enr.eagr_estado_logico = 1
                     LEFT JOIN (
                         SELECT
                             ro.ron_id as ron_id,
@@ -806,18 +804,21 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
                             it.croi_estado = 1 AND it.croi_estado_logico = 1 AND
                             ro.cron_estado = 1 AND ro.cron_estado_logico = 1 AND
                             ri.roi_estado = 1 AND ri.roi_estado_logico = 1
-                        GROUP BY
-                            ro.ron_id, ro.rpm_id
+                        GROUP BY ro.ron_id, ro.rpm_id
                     ) AS rf ON rf.ron_id = r.ron_id AND rf.rpm_id = reg.rpm_id
                 WHERE 
                     $str_search 
                     $condition
-                    pe.pes_estado =1 and pe.pes_estado_logico =1 and
-                    p.pla_estado =1 and p.pla_estado_logico =1 and
-                    per.per_estado = 1 and per.per_estado_logico = 1 and 
-                    est.est_estado =1 and est.est_estado_logico = 1 and
-                    r.ron_estado =1 and r.ron_estado_logico =1 AND 
-                    roc.roc_estado=1 AND roc.roc_estado_logico=1";
+                    pe.pes_estado = 1 AND pe.pes_estado_logico = 1 AND
+                    p.pla_estado = 1 AND p.pla_estado_logico = 1 AND
+                    per.per_estado = 1 AND per.per_estado_logico = 1 AND 
+                    est.est_estado = 1 AND est.est_estado_logico = 1 AND
+                    r.ron_estado = 1 AND r.ron_estado_logico = 1 AND 
+                    roc.roc_estado = 1 AND roc.roc_estado_logico = 1 AND
+                    ram.rama_estado =1 and ram.rama_estado_logico =1 AND
+                    tmp.Cant IS NOT NULL AND
+                    tmp.Costo IS NOT NULL AND
+                    tmp.costo_adm IS NOT NULL";
 
       
         $comando = $con_academico->createCommand($sql);

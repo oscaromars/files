@@ -111,7 +111,7 @@ PbGridView::widget([
                 },*/
                 'download' => function ($url, $model) {
                     if ($model['Estado'] == 1 ) {// Procesado
-                        return Html::a('<span class="glyphicon glyphicon-download"></span>', Url::to(['/academico/registro/inscripcionpdf', 'ids' => $model['per_id']]), ["data-toggle" => "tooltip", "title" => "Descargar Hoja de Inscripción", "data-pjax" => "0"]);
+                        return Html::a('<span class="glyphicon glyphicon-download"></span>', Url::to(['/academico/registro/inscripcionpdf', 'ids' => $model['per_id'], 'rama_id' => $model['rama_id'] ]), ["data-toggle" => "tooltip", "title" => "Descargar Hoja de Inscripción", "data-pjax" => "0"]);
                     }
                 },
             ],

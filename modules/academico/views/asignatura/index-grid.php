@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use yii\helpers\Url;
 use app\widgets\PbGridView\PbGridView;
+use app\modules\academico\models\Asignatura;
 use app\models\Utilities;
 use app\modules\academico\Module as academico;
 academico::registerTranslations();
@@ -63,7 +64,17 @@ academico::registerTranslations();
                         return Html::a('<span class="'.Utilities::getIcon('view').'"></span>', Url::to(['/academico/asignatura/view', 'id' => $model['id']]), ["data-toggle" => "tooltip", "title" => Yii::t("accion","View")]);
                     },
                     'delete' => function ($url, $model) {
-                         return Html::a('<span class="'.Utilities::getIcon('remove').'"></span>', null, ['href' => 'javascript:confirmDelete(\'deleteItem\',[\'' . $model['id'] . '\']);', "data-toggle" => "tooltip", "title" => Yii::t("accion","Delete")]);
+                        $mod_asig = new Asignatura();
+
+                        $isAsignada = !empty($mod_asig->hasDistributivo($model['id']));
+
+                        if(!$isAsignada){
+                            return Html::a('<span class="'.Utilities::getIcon('remove').'"></span>', null, ['href' => 'javascript:confirmDelete(\'deleteItem\',[\'' . $model['id'] . '\']);', "data-toggle" => "tooltip", "title" => Yii::t("accion","Delete")]);
+                        }
+                        else{
+                            return "<span class = 'glyphicon glyphicon-remove' data-toggle = 'tooltip' title =" . Yii::t("accion","Delete") . " data-pjax = 0></span>";
+                        }
+                        
                     },
                 ],
             ],

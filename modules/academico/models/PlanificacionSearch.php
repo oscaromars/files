@@ -9,7 +9,7 @@ use yii\base\Model;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\data\ArrayDataProvider;
-
+ 
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -20,7 +20,7 @@ class PlanificacionSearch extends Planificacion {
 
 	public function rules() {
         return [
-            [['pla_id', 'mod_id', 'per_id'], 'integer'],
+            [['pla_id', 'saca_id', 'mod_id', 'per_id'], 'integer'],
             
         ];
     }
@@ -30,7 +30,6 @@ class PlanificacionSearch extends Planificacion {
            
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
-            'arr_carrera' => $arr_carrera,
             'pagination' => [
                 'pagesize' => 10 
             ]
@@ -50,6 +49,7 @@ class PlanificacionSearch extends Planificacion {
 
         $query->andFilterWhere([
             'pla_id' => $this->pla_id,
+            'saca_id' => $this->saca_id, 
             'mod_id' => $this->mod_id,
             'per_id' => $this->per_id,
             

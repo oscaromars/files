@@ -20,7 +20,7 @@ class PlanificacionSearch extends Planificacion {
 
 	public function rules() {
         return [
-            [['pla_id', 'saca_id', 'mod_id', 'per_id'], 'integer'],
+            [['pla_id', 'mod_id', 'per_id'], 'integer'],
             
         ];
     }
@@ -50,7 +50,6 @@ class PlanificacionSearch extends Planificacion {
 
         $query->andFilterWhere([
             'pla_id' => $this->pla_id,
-            'saca_id' => $this->saca_id,
             'mod_id' => $this->mod_id,
             'per_id' => $this->per_id,
             

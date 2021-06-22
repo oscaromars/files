@@ -36,12 +36,12 @@ use app\modules\academico\Module as academico;
                         ],
                         [
                             'attribute' => 'cedula',
-                            'header' => academico::t("Academico", "Cedula "),
+                            'header' => academico::t("Academico", "Cédula "),
                             'value' => 'cedula',
                         ],
                         [
                             'attribute' => 'semestre',
-                            'header' => academico::t("Academico", "Semestre Academico "),
+                            'header' => academico::t("Academico", "Semestre Académico "),
                             'value' => 'semestre',
                         ],
                         [
@@ -52,7 +52,7 @@ use app\modules\academico\Module as academico;
                         ],
                         [
                             'attribute' => 'unidad',
-                            'header' => academico::t("Academico", "Unidad Academico"),
+                            'header' => academico::t("Academico", "Unidad Académica"),
                             'value' => 'unidad',
                         ],
                          
@@ -64,7 +64,7 @@ use app\modules\academico\Module as academico;
                         ],
                         [
                             'attribute' => 'n_matricula',
-                            'header' => academico::t("Academico", "Matricula"),
+                            'header' => academico::t("Academico", "Matrícula"),
                             'value' => 'n_matricula',
                         
                         ],

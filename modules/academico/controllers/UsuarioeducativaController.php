@@ -262,6 +262,7 @@ class UsuarioeducativaController extends \app\components\CController {
             academico::t("Academico", "Educational unit"),
             Yii::t("formulario", "Payment Status"),
             Yii::t("formulario", "Status")." Educativa",
+            Yii::t("formulario", "Item"),
         );
         //\app\models\Utilities::putMessageLogFile('perid:' . $per_id);
         $distributivo_model = new CursoEducativaEstudiante();
@@ -307,7 +308,7 @@ class UsuarioeducativaController extends \app\components\CController {
             academico::t("Academico", "Educational unit"),
             Yii::t("formulario", "Payment Status"),
             Yii::t("formulario", "Status")." Educativa",
-
+            Yii::t("formulario", "Item"),
         );
         $distributivo_model = new CursoEducativaEstudiante();
         $data = Yii::$app->request->get();

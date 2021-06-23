@@ -97,7 +97,6 @@ class RegistroAdicionalMaterias extends \yii\db\ActiveRecord
         $per_id,
         $pla_id,
         $paca_id,
-        $rpm_id = " NULL ",
         $roi_id_1,
         $roi_id_2,
         $roi_id_3,
@@ -106,67 +105,125 @@ class RegistroAdicionalMaterias extends \yii\db\ActiveRecord
         $roi_id_6
         
     ){
-
         $con = Yii::$app->db_academico;
         $transaction=$con->beginTransaction();
-
         $date = date(Yii::$app->params['dateTimeByDefault']);
+
         try{
+            if(empty($roi_id_1)){ $roi_id_1 = "NULL"; }
+            if(empty($roi_id_2)){ $roi_id_2 = "NULL"; }
+            if(empty($roi_id_3)){ $roi_id_3 = "NULL"; }
+            if(empty($roi_id_4)){ $roi_id_4 = "NULL"; }
+            if(empty($roi_id_5)){ $roi_id_5 = "NULL"; }
+            if(empty($roi_id_6)){ $roi_id_6 = "NULL"; }            
 
-        if(empty($roi_id_1)){ $roi_id_1=" Null "; }
-        if(empty($roi_id_2)){ $roi_id_2=" Null "; }
-        if(empty($roi_id_3)){ $roi_id_3=" Null "; }
-        if(empty($roi_id_4)){ $roi_id_4=" Null "; }
-        if(empty($roi_id_5)){ $roi_id_5=" Null "; }
-        if(empty($roi_id_6)){ $roi_id_6=" Null "; }
-        
+            $sql = "INSERT INTO " . $con->dbname . ".registro_adicional_materias
+                    (ron_id,
+                    per_id,
+                    pla_id,
+                    paca_id,
+                    rpm_id,
+                    roi_id_1,
+                    roi_id_2,
+                    roi_id_3,
+                    roi_id_4,
+                    roi_id_5,
+                    roi_id_6,
+                    rama_estado,
+                    rama_fecha_creacion,
+                    rama_fecha_modificacion,
+                    rama_estado_logico
+                    )
+                    VALUES (
+                        $ron_id,
+                        $per_id,
+                        $pla_id,
+                        $paca_id,
+                        Null,
+                        $roi_id_1,
+                        $roi_id_2,
+                        $roi_id_3,
+                        $roi_id_4,
+                        $roi_id_5,
+                        $roi_id_6,
+                        1, 
+                        '$date', 
+                        '$date',
+                        1
+                    )";
 
-        $sql = "INSERT INTO " . $con->dbname . ".registro_adicional_materias
-                (ron_id,
-                per_id,
-                pla_id,
-                paca_id,
-                rpm_id,
-                roi_id_1,
-                roi_id_2,
-                roi_id_3,
-                roi_id_4,
-                roi_id_5,
-                roi_id_6,
-                rama_estado,
-                rama_fecha_creacion,
-                rama_fecha_modificacion,
-                rama_estado_logico
-                )
-                VALUES (
-                    $ron_id,
-                    $per_id,
-                    $pla_id,
-                    $paca_id,
-                    :rpm_id,
-                    $roi_id_1,
-                    $roi_id_2,
-                    $roi_id_3,
-                    $roi_id_4,
-                    $roi_id_5,
-                    $roi_id_6,
-                    1, 
-                    '$date', 
-                    '$date',
-                    1
-                )";
+            $command = $con->createCommand($sql);
+            $command->execute();
+           
+           \app\models\Utilities::putMessageLogFile('insertRegistroAdicionalMaterias: ' . $command->getRawSql());
 
-        $command = $con->createCommand($sql);
-        $comando->bindParam(":rpm_id", $rpm_id, \PDO::PARAM_INT);
-        $command->execute();
-        if ($transaction !== null)
+            if ($transaction !== null){
                 $transaction->commit();
-            return $con->getLastInsertID($con->dbname . '.registro_adicional_materias');
+            }
+
+            return true;
+
         } catch (Exception $ex) {
             if ($transaction !== null)
                 $transaction->rollback();
             return FALSE;
         }
 
+    }
+
+
+    public function insertarActualizacionRegistroAdicional($rama_id, $ron_id,$roi_id_nuevo,$i) {
+        /*\app\models\Utilities::putMessageLogFile('ron_id: ' . $ron_id);
+        \app\models\Utilities::putMessageLogFile('roi_id_nuevo: ' . $roi_id_nuevo);
+        \app\models\Utilities::putMessageLogFile('i: ' . $i);*/
+
+        $con = \Yii::$app->db_academico;
+        $rama_fecha_modificacion = date(Yii::$app->params["dateTimeByDefault"]);
+        $estado = 1;
+        $trans = $con->getTransaction(); // se obtiene la transacción actual
+        if ($trans !== null) {
+            $trans = null; // si existe la transacción entonces no se crea una
+        } else {
+            $trans = $con->beginTransaction(); // si no existe la transacción entonces se crea una
+        }
+
+        try {
+            $comando = $con->createCommand
+            ("UPDATE " . $con->dbname . ".registro_adicional_materias               
+              SET roi_id_".($i+1)." = :roi_id_nuevo,
+                rama_fecha_modificacion = :rama_fecha_modificacion
+              WHERE 
+                rama_id = :rama_id
+                AND ron_id = :ron_id
+                AND rama_estado = :estado 
+                AND rama_estado_logico = :estado");
+
+            if (isset($rama_id)) {
+                $comando->bindParam(':rama_id', $rama_id, \PDO::PARAM_INT);
+            }
+            if (isset($roi_id_nuevo)) {
+                $comando->bindParam(':roi_id_nuevo', $roi_id_nuevo, \PDO::PARAM_INT);
+            }
+            if (isset($ron_id)) {
+                $comando->bindParam(':ron_id', $ron_id, \PDO::PARAM_INT);
+            }
+            if (!empty((isset($rama_fecha_modificacion)))) {
+                $comando->bindParam(':rama_fecha_modificacion', $rama_fecha_modificacion, \PDO::PARAM_STR);
+            }
+            $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+
+            $result = $comando->execute();
+
+            if ($trans !== null)
+                $trans->commit();
+                                            
+            \app\models\Utilities::putMessageLogFile('insertarActualizacionGastos: ' . $comando->getRawSql());
+
+            return TRUE;
+        } catch (Exception $ex) {
+            if ($trans !== null)
+                $trans->rollback();
+            return FALSE;
+        }
     }
 }

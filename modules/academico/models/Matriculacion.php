@@ -484,8 +484,8 @@ class Matriculacion extends \yii\db\ActiveRecord {
                         
                       WHERE 
                         ron_id = :ron_id
-                        rmar_estado = :estado AND
-                        rmar_estado_logico = :estado");
+                        AND ron_estado = :estado 
+                        AND ron_estado_logico = :estado");
 
             if (isset($gastos_administrativos)) {
                 $comando->bindParam(':gastos_administrativos', $gastos_administrativos, \PDO::PARAM_STR);
@@ -501,7 +501,8 @@ class Matriculacion extends \yii\db\ActiveRecord {
             $result = $comando->execute();
             if ($trans !== null)
                 $trans->commit();
-            return $con->getLastInsertID($con->dbname . '.registro_marcacion');
+            return $con->getLastInsertID($con->dbname . '.registro_adicional_materias');
+            \app\models\Utilities::putMessageLogFile('insertarActualizacionGastos: '.$comando->getRawSql());
         } catch (Exception $ex) {
             if ($trans !== null)
                 $trans->rollback();
@@ -1493,6 +1494,28 @@ class Matriculacion extends \yii\db\ActiveRecord {
         $comando->bindParam(":estado", $estado, \PDO::PARAM_INT);
         $resultData = $comando->queryOne();
         \app\models\Utilities::putMessageLogFile('getDataPlanStudent: '.$comando->getRawSql());
+
+        return $resultData;
+    }
+
+    public function getRegistroAdicionalM($ron_id)
+    {
+        $con_academico = \Yii::$app->db_academico;
+        $con_asgard = \Yii::$app->db_asgard;
+        $estado = 1;
+
+        $sql = "SELECT rpm_id,ron_id
+                FROM " . $con_academico->dbname . ".registro_adicional_materias 
+                WHERE ron_id = :ron_id
+                AND rama_estado = :estado
+                AND rama_estado _logico =:estado
+                ORDER BY rama_id desc limit 0,1 ";
+
+        $comando = $con_academico->createCommand($sql);
+        $comando->bindParam(":ron_id", $per_id, \PDO::PARAM_INT);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_INT);
+        $resultData = $comando->queryOne();
+        \app\models\Utilities::putMessageLogFile('getRegistroAddicionalM: '.$comando->getRawSql());
 
         return $resultData;
     }

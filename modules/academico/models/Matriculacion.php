@@ -472,8 +472,8 @@ class Matriculacion extends \yii\db\ActiveRecord {
         return $resultData;
     }
 
-<<<<<<< HEAD
-    public function insertarActualizacionGastos($ron_id,$gastos_administrativos) {        
+
+    public function insertarActualizacionGastos($ron_id,$gastos_administrativos_valor) {        
         $con = \Yii::$app->db_academico;
         $ron_fecha_modificacion = date(Yii::$app->params["dateTimeByDefault"]);
         $estado = 1;
@@ -487,7 +487,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
         try {
             $comando = $con->createCommand
                     ("UPDATE " . $con->dbname . ".registro_online               
-                      SET ron_valor_gastos_adm = :gastos_administrativos,
+                      SET ron_valor_gastos_adm = :gastos_administrativos_valor,
                         ron_fecha_modificacion = :ron_fecha_modificacion
                         
                       WHERE 
@@ -495,8 +495,8 @@ class Matriculacion extends \yii\db\ActiveRecord {
                         AND ron_estado = :estado 
                         AND ron_estado_logico = :estado");
 
-            if (isset($gastos_administrativos)) {
-                $comando->bindParam(':gastos_administrativos', $gastos_administrativos, \PDO::PARAM_STR);
+            if (isset($gastos_administrativos_valor)) {
+                $comando->bindParam(':gastos_administrativos_valor', $gastos_administrativos_valor, \PDO::PARAM_STR);
             }
             if (isset($ron_id)) {
                 $comando->bindParam(':ron_id', $ron_id, \PDO::PARAM_INT);
@@ -509,7 +509,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
             $result = $comando->execute();
             if ($trans !== null)
                 $trans->commit();
-            return $con->getLastInsertID($con->dbname . '.registro_adicional_materias');
+            return TRUE;
             \app\models\Utilities::putMessageLogFile('insertarActualizacionGastos: '.$comando->getRawSql());
         } catch (Exception $ex) {
             if ($trans !== null)
@@ -520,9 +520,6 @@ class Matriculacion extends \yii\db\ActiveRecord {
 
 
 
-
-=======
->>>>>>> f120eb02d66d799a92c062d1ccb78066dacdc946
     /*
      * Function to get data from planificacion_estudiante
      * @author -

@@ -1093,13 +1093,13 @@ class MatriculacionController extends \app\components\CController {
                         } else if ($data['modalidad']=='3') {
                             // code...
                             $gastoAdm=300;
-                             $cobMat=200;
+                            $cobMat=200;
                             $dataMat['VARIOS']=$gastoAdm;
                             $dataMat['MAT-GRAD']=$cobMat;
                         } else if ($data['modalidad']=='4') {
                             // code...
                             $gastoAdm=300;
-                             $cobMat=115;
+                            $cobMat=115;
                             $dataMat['VARIOS']=$gastoAdm;
                             $dataMat['MAT-GRAD']=$cobMat;
                         } else {
@@ -1110,7 +1110,7 @@ class MatriculacionController extends \app\components\CController {
                             $dataMat['MAT-GRAD']=$cobMat;
                         }  
                         
-
+                        
                     if($ron_id == 0){
                         $id = $registro_online_model->insertRegistroOnline(
                                 $per_id, 
@@ -1122,7 +1122,7 @@ class MatriculacionController extends \app\components\CController {
                                 strval($mod_est->est_categoria),
                                 //$dataCat[$mod_est->est_categoria], 
                                 0,/**$dataMat['ASOEST'], -*/
-                                $dataMat['VARIOS'],
+                                0,//$dataMat['VARIOS'],
                                 $dataMat['MAT-GRAD'],
                                 1//CAMBIAR ESTE VALOR OJO!!!!!!!!!!!
                             );
@@ -1178,7 +1178,10 @@ class MatriculacionController extends \app\components\CController {
                         if (!isset($RegistroOnline['ron_valor_gastos_adm'])){
                             // Si hay 1 sólo bloque o sólo son dos materias, es /1, si hay más de un bloque, es /2
                             $gastos_administrativos = $gastos_administrativos_valor['gadm_gastos_varios'] * $mitad;
-                            $ron_gastos=Matriculacion::insertarActualizacionGastos($ron_id,$gastos_administrativos);
+                            $ron_gastos=(new RegistroOnline())->insertarActualizacionGastos($ron_id,$gastos_administrativos);
+                            if(!$update){
+                                throw new Exception('Error al Registrar las Materias adicionales.');
+                            }
 
                         }*/
 
@@ -1260,9 +1263,12 @@ class MatriculacionController extends \app\components\CController {
 
                                 $roi_id = RegistroOnlineItem::find()->where(['ron_id' => $id, 'roi_estado' => 1, 'roi_estado_logico' => 1])->asArray()->all();
                                 \app\models\Utilities::putMessageLogFile("registro online " . $id);
-                                
                                 //\app\models\Utilities::putMessageLogFile("registro pago " . $model_rpm['rpm_id']);
                                 $modelPla = Planificacion::findOne($modelPlaEst->pla_id);
+                                $resultIdPlanificacionEstudiante = $matriculacion_model->getIdPlanificacionEstudiante($per_id, $modelPla['pla_id']);
+                                $pla_id = $resultIdPlanificacionEstudiante[0]['pla_id'];
+                                $resultIdPlanificacionEstudiante = $matriculacion_model->getIdPlanificacionEstudiante($per_id, $modelPla['pla_id']);
+                                $pla_id = $resultIdPlanificacionEstudiante[0]['pla_id'];
                                 $paca_id=$modelPla['paca_id'];
                                 \app\models\Utilities::putMessageLogFile("periodo" . $modelPla['paca_id']);
                                 $registro_adicional_materias_model  = new RegistroAdicionalMaterias();

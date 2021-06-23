@@ -472,7 +472,6 @@ class Matriculacion extends \yii\db\ActiveRecord {
         return $resultData;
     }
 
-<<<<<<< HEAD
     public function insertarActualizacionGastos($ron_id,$gastos_administrativos) {        
         $con = \Yii::$app->db_academico;
         $ron_fecha_modificacion = date(Yii::$app->params["dateTimeByDefault"]);
@@ -518,11 +517,6 @@ class Matriculacion extends \yii\db\ActiveRecord {
         }
     }
 
-
-
-
-=======
->>>>>>> f120eb02d66d799a92c062d1ccb78066dacdc946
     /*
      * Function to get data from planificacion_estudiante
      * @author -

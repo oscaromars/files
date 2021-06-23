@@ -1152,7 +1152,7 @@ class MatriculaciondropController extends \app\components\CController {
                     
                     $subReg = count($arr_sub_cancel) - 1; // cantidad de materias a cancelar
                      $minime = count($modelRegItem) - $subReg;
-                        if( $minime < 3 ){
+                        if( $minime < 2 ){
                             throw new Exception('Error to Update Online Register.');
                         }
                     foreach($modelRegItem as $key => $item){ $i++; } // cantidad de materias registradas

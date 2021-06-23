@@ -472,6 +472,57 @@ class Matriculacion extends \yii\db\ActiveRecord {
         return $resultData;
     }
 
+<<<<<<< HEAD
+    public function insertarActualizacionGastos($ron_id,$gastos_administrativos) {        
+        $con = \Yii::$app->db_academico;
+        $ron_fecha_modificacion = date(Yii::$app->params["dateTimeByDefault"]);
+        $estado = 1;
+        $trans = $con->getTransaction(); // se obtiene la transacción actual
+        if ($trans !== null) {
+            $trans = null; // si existe la transacción entonces no se crea una
+        } else {
+            $trans = $con->beginTransaction(); // si no existe la transacción entonces se crea una
+        }
+
+        try {
+            $comando = $con->createCommand
+                    ("UPDATE " . $con->dbname . ".registro_online               
+                      SET ron_valor_gastos_adm = :gastos_administrativos,
+                        ron_fecha_modificacion = :ron_fecha_modificacion
+                        
+                      WHERE 
+                        ron_id = :ron_id
+                        AND ron_estado = :estado 
+                        AND ron_estado_logico = :estado");
+
+            if (isset($gastos_administrativos)) {
+                $comando->bindParam(':gastos_administrativos', $gastos_administrativos, \PDO::PARAM_STR);
+            }
+            if (isset($ron_id)) {
+                $comando->bindParam(':ron_id', $ron_id, \PDO::PARAM_INT);
+            }
+            if (!empty((isset($ron_fecha_modificacion)))) {
+                $comando->bindParam(':ron_fecha_modificacion', $ron_fecha_modificacion, \PDO::PARAM_STR);
+            }
+            
+            $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+            $result = $comando->execute();
+            if ($trans !== null)
+                $trans->commit();
+            return $con->getLastInsertID($con->dbname . '.registro_adicional_materias');
+            \app\models\Utilities::putMessageLogFile('insertarActualizacionGastos: '.$comando->getRawSql());
+        } catch (Exception $ex) {
+            if ($trans !== null)
+                $trans->rollback();
+            return FALSE;
+        }
+    }
+
+
+
+
+=======
+>>>>>>> f120eb02d66d799a92c062d1ccb78066dacdc946
     /*
      * Function to get data from planificacion_estudiante
      * @author -
@@ -1479,6 +1530,28 @@ class Matriculacion extends \yii\db\ActiveRecord {
         $comando->bindParam(":estado", $estado, \PDO::PARAM_INT);
         $resultData = $comando->queryOne();
         \app\models\Utilities::putMessageLogFile('getDataPlanStudent: '.$comando->getRawSql());
+
+        return $resultData;
+    }
+
+    public function getRegistroAdicionalM($ron_id)
+    {
+        $con_academico = \Yii::$app->db_academico;
+        $con_asgard = \Yii::$app->db_asgard;
+        $estado = 1;
+
+        $sql = "SELECT rpm_id,ron_id
+                FROM " . $con_academico->dbname . ".registro_adicional_materias 
+                WHERE ron_id = :ron_id
+                AND rama_estado = :estado
+                AND rama_estado _logico =:estado
+                ORDER BY rama_id desc limit 0,1 ";
+
+        $comando = $con_academico->createCommand($sql);
+        $comando->bindParam(":ron_id", $per_id, \PDO::PARAM_INT);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_INT);
+        $resultData = $comando->queryOne();
+        \app\models\Utilities::putMessageLogFile('getRegistroAddicionalM: '.$comando->getRawSql());
 
         return $resultData;
     }

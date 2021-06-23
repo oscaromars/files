@@ -1995,6 +1995,8 @@ class MatriculacionController extends \app\components\CController {
         $roi = RegistroOnlineItem::find()->where(['ron_id' => $ron['ron_id'], 'roi_estado' => 1, 'roi_estado_logico' => 1])->asArray()->all();
         $valor_total = 0;
 
+        $data_student = $matriculacion_model->getDataStudenFromRegistroOnline($per_id, $ron['pes_id']);
+
         // Colocar sólo aquellas materias seleccionadas
         $materias_data_arr = [];
         $materias_roi = [];
@@ -2002,25 +2004,29 @@ class MatriculacionController extends \app\components\CController {
         // Si se encuentran datos en registro_adicional_materias se debe realizar el cálculo sólo tomando en cuenta esas materias y debe aparecer el botón Pagar
         $rama = RegistroAdicionalMaterias::find()->where(['ron_id' => $ron['ron_id'], 'per_id' => $per_id, 'pla_id' => $pla_id, 'paca_id' => $data_student['paca_id'], 'rpm_id' => NULL, 'rama_estado' => 1, 'rama_estado_logico' => 1])->asArray()->one();
 
-        // \app\models\Utilities::putMessageLogFile($rama);
+        // \app\models\Utilities::putMessageLogFile("rama: " . print_r($rama, true));
 
         if(isset($rama)){
             $roi_IDs = [$rama['roi_id_1'], $rama['roi_id_2'], $rama['roi_id_3'], $rama['roi_id_4'], $rama['roi_id_5'], $rama['roi_id_6']];
         }
 
-        // \app\models\Utilities::putMessageLogFile($rama);
+        // \app\models\Utilities::putMessageLogFile("roi_IDs: " . print_r($roi_IDs, true));
+
+        // \app\models\Utilities::putMessageLogFile("roi: " . print_r($roi, true));
 
         foreach ($roi as $key => $value) {
             // Si hay registro en RegistroAdicionalMaterias
             if(isset($rama)){ // considerar sólo la que están ahí
-                if(in_array($roi['roi_id'], $roi_IDs)){
+                if(in_array($value['roi_id'], $roi_IDs)){
                     $materias_roi[] = $value['roi_materia_nombre'];
                 }
             }
-            else{ // Si no hay nada, considerar todas
+            /*else{ // Si no hay nada, considerar todas
                 $materias_roi[] = $value['roi_materia_nombre'];
-            }
+            }*/
         }
+
+        // \app\models\Utilities::putMessageLogFile("materias_roi: " . print_r($materias_roi, true));
 
         // \app\models\Utilities::putMessageLogFile("materias_roi: " . print_r($materias_roi, true));
 
@@ -2047,7 +2053,6 @@ class MatriculacionController extends \app\components\CController {
 
         // \app\models\Utilities::putMessageLogFile("materias_roi: " . print_r($materias_roi, true));
 
-        $data_student = $matriculacion_model->getDataStudenFromRegistroOnline($per_id, $ron['pes_id']);
         $persona = Persona::find()->where(['per_id' => $per_id])->asArray()->one();
 
         $periodo = (new PeriodoAcademico())->consultarPeriodo($data_student['paca_id'], true)[0];

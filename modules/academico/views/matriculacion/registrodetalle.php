@@ -11,7 +11,7 @@ Academico::registerTranslations();
 ?>
 
 <div>
-    <h3><?= Academico::t("matriculacion", "Online Registration") ?></h3>
+    <h3><?= Academico::t("matriculacion", 'Consulta de Registro de Matrícula') ?></h3>
     <br></br>
     <div class="row">
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12"></div>

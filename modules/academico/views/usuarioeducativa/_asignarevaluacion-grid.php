@@ -16,11 +16,11 @@ academico::registerTranslations();
     PbGridView::widget([
         'id' => 'Tbg_Asignar_Evaluacion',
         'showExport' => true,
-        // 'fnExportEXCEL' => "exportExcelEduregistro",
-        // 'fnExportPDF' => "exportPdfEduregistro",
+        'fnExportEXCEL' => "exportExcelEvaluacion",
+        'fnExportPDF' => "exportPdfEvaluacion",
         'dataProvider' => $model,
         'columns' =>
-        [         
+        [
             [
                 'attribute' => 'Período',
                 'header' => academico::t("Academico", "Period"),
@@ -30,12 +30,12 @@ academico::registerTranslations();
                 'attribute' => 'Nombre',
                 'header' => Yii::t("formulario", "Complete Names"),
                 'value' => 'Nombre',
-            ], 
+            ],
             [
                 'attribute' => 'Modalidad',
                 'header' => Yii::t("formulario", "Mode"),
                 'value' => 'Modalidad',
-            ],            
+            ],
             [
                 'attribute' => 'Aula',
                 'header' => Yii::t("formulario", "Subject"),
@@ -52,7 +52,7 @@ academico::registerTranslations();
                 'format' => 'html',
                 'value' => function ($model) {
                     if (isset($model["evaluacion"]))
-                        return $model["evaluacion"];                   
+                        return $model["evaluacion"];
                     else
                         return '<small class="label label-danger">No Asignado</small>';
                 },

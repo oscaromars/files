@@ -452,7 +452,14 @@ class Matriculacion extends \yii\db\ActiveRecord {
                     WHERE per.per_id =:per_id
             AND pla.pla_id =:pla_id
             AND pes.pes_id =:pes_id
-            AND pla.paca_id is not null";
+            AND pla.pla_estado = 1 AND pla.pla_estado_logico = 1
+            AND pes.pes_estado = 1 AND pes.pes_estado_logico = 1
+            AND est.est_estado = 1 AND est.est_estado_logico = 1
+            AND per.per_estado = 1 AND per.per_estado_logico = 1
+            AND mo.mod_estado = 1 AND mo.mod_estado_logico = 1
+            AND ea.eaca_estado = 1 
+            AND meu.meun_estado = 1 AND meu.meun_estado_logico = 1
+            AND ua.uaca_estado = 1 AND ua.uaca_estado_logico = 1";
                     
 
       $comando = $con_academico->createCommand($sql);
@@ -465,6 +472,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
         return $resultData;
     }
 
+<<<<<<< HEAD
     public function insertarActualizacionGastos($ron_id,$gastos_administrativos) {        
         $con = \Yii::$app->db_academico;
         $ron_fecha_modificacion = date(Yii::$app->params["dateTimeByDefault"]);
@@ -513,6 +521,8 @@ class Matriculacion extends \yii\db\ActiveRecord {
 
 
 
+=======
+>>>>>>> f120eb02d66d799a92c062d1ccb78066dacdc946
     /*
      * Function to get data from planificacion_estudiante
      * @author -
@@ -1156,7 +1166,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
     {
         $con_asgard = \Yii::$app->db_asgard;
         $con_academico = \Yii::$app->db_academico;
-        $estado = 1;
+
         $sql = "
             SELECT distinct 
             ron.ron_id, 
@@ -1182,8 +1192,8 @@ class Matriculacion extends \yii\db\ActiveRecord {
             inner join " . $con_academico->dbname . ".unidad_academica ua on ua.uaca_id = meu.uaca_id
             WHERE ron.per_id = :per_id
             AND ron.pes_id = :pes_id
-            AND ron.ron_estado = :estado
-            AND ron.ron_estado_logico = :estado
+            AND pla.paca_id IS NOT NULL
+            AND ron.ron_estado = 1 AND ron.ron_estado_logico = 1
             AND pla.pla_estado = 1 AND pla.pla_estado_logico = 1
             AND pes.pes_estado = 1 AND pes.pes_estado_logico = 1
             AND est.est_estado = 1 AND est.est_estado_logico = 1
@@ -1198,9 +1208,10 @@ class Matriculacion extends \yii\db\ActiveRecord {
         $comando = $con_academico->createCommand($sql);
         $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
         $comando->bindParam(":pes_id", $pes_id, \PDO::PARAM_INT);
-        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
         $resultData = $comando->queryOne();
-\app\models\Utilities::putMessageLogFile('getDataStudenFromRegistroOnline: '.$comando->getRawSql());
+
+        // \app\models\Utilities::putMessageLogFile('getDataStudenFromRegistroOnline: '.$comando->getRawSql());
+        
         return $resultData;
     }
 
@@ -1336,9 +1347,10 @@ class Matriculacion extends \yii\db\ActiveRecord {
      */
     public function getPlanificationFromRegistroOnline($ron_id)
     {
+         $rama_id = $rama_id?$rama_id:0;
         $con_academico = \Yii::$app->db_academico;
         $estado = 1;
-        $sql = "
+        /*$sql = "
             SELECT roi.roi_id, 
                 roi.roi_materia_nombre as Subject, 
                 roi_creditos as Credit, 
@@ -1352,6 +1364,30 @@ class Matriculacion extends \yii\db\ActiveRecord {
             WHERE ron_id =:ron_id
             AND roi_estado =:estado
             AND roi_estado_logico =:estado
+        ";*/
+
+        if($rama_id>0) $str_search = " AND rama.rama_id = $rama_id ";
+        $sql = "
+            SELECT roi.roi_id, 
+                roi.roi_materia_nombre as Subject, 
+                roi_creditos as Credit, 
+        roi.roi_materia_cod as Code,
+                roi.roi_materia_cod as CodeAsignatura, 
+        roi.roi_costo as Cost,
+                roi.roi_costo as Price,
+                roi.roi_hora as Hour,
+                roi.roi_bloque as Block
+            FROM " . $con_academico->dbname . ".registro_online_item as roi
+            inner join " . $con_academico->dbname . ".registro_adicional_materias as rama on roi.roi_id = rama.roi_id_1
+                                                                        or roi.roi_id = rama.roi_id_2
+                                                                        or roi.roi_id = rama.roi_id_3
+                                                                        or roi.roi_id = rama.roi_id_4
+                                                                        or roi.roi_id = rama.roi_id_5
+                                                                        or roi.roi_id = rama.roi_id_6
+            WHERE roi.ron_id =:ron_id
+            AND roi.roi_estado =:estado
+            AND roi.roi_estado_logico =:estado
+            $str_search
         ";
 
         $comando = $con_academico->createCommand($sql);

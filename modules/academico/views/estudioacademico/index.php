@@ -2,7 +2,7 @@
 
 use yii\helpers\Html;
 use kartik\grid\GridView;
-
+use app\modules\academico\models\EstudioAcademico;
 use app\modules\academico\Module as academico;
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\RolSearch */
@@ -99,7 +99,19 @@ $gridColumns =['eaca_nombre','teac.teac_nombre','eaca_descripcion','eaca_alias_r
                 },
             ],           
             ['class' => 'yii\grid\ActionColumn',
-                'template' => '{update} {create}',
+                'template' => '{update} {create} {delete}',
+                'buttons' => [
+                    'delete' => function ($url, $model) {
+                        $mod_est = new EstudioAcademico();
+                        $result = $mod_est->consultarEstudioAcademicoEnUso($model->eaca_id);
+                        if(empty($result)){
+                            return Html::a('<span class="glyphicon glyphicon-remove"></span>', null, ['href' =>  "javascript:confirmDelete('deleteItem', [ '" . $model->eaca_id . "' ]);", "data-toggle" => "tooltip", "title" => Yii::t("formulario", "Delete")]);
+                        }
+                        else{
+                            return "<span class = 'glyphicon glyphicon-remove' data-toggle = 'tooltip' title =" . Yii::t("accion","Delete") . " data-pjax = 0></span>";
+                        }
+                    },
+                ],
             ],
         ],
     ]);

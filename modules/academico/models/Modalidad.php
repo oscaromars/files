@@ -90,6 +90,7 @@ class Modalidad extends \app\modules\academico\components\CActiveRecord {
      * @return  
      */
     public function consultarModalidad($uaca_id, $emp_id) {
+        \app\models\Utilities::putMessageLogFile('unidad academica modelo '. $uaca_id);
         $con = \Yii::$app->db_academico;
         $estado = 1;
             $sql = "SELECT distinct moda.mod_id as id,

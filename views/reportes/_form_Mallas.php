@@ -13,6 +13,10 @@ use yii\helpers\ArrayHelper;
 /* @var $form yii\widgets\ActiveForm */
 
 
+$mod_unidad = new UnidadAcademica();
+$arr_unidad = $mod_unidad->consultarUnidadAcademicasxUteg();
+$unidad = ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $arr_unidad), "id", "name");
+
 ?>
 <div class="reportemallas-search">
 
@@ -40,8 +44,8 @@ use yii\helpers\ArrayHelper;
     $form->field($model, 'uaca_id')->label('Unidad Academica:')->widget(Select2::classname(), [
         'id' => 'cmb_unidad',
         'name' => 'cmb_unidad',
-        'data' => ArrayHelper::map(app\modules\academico\models\UnidadAcademica::find()->where(['uaca_estado_logico' => '1','uaca_estado' => '1'])->all(), 'uaca_id', 'uaca_nombre'),
-        // 'data' => $var,
+        //'data' => ArrayHelper::map(app\modules\academico\models\UnidadAcademica::find()->where(['uaca_estado_logico' => '1','uaca_estado' => '1'])->all(), 'uaca_id', 'uaca_nombre'),
+        'data' => $unidad,
         'size' => Select2::MEDIUM,
         'options' => ['placeholder' => 'Seleccione Unidad Academica ...', 'multiple' => false],
         'pluginOptions' => [

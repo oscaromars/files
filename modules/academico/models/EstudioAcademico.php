@@ -412,5 +412,27 @@ class EstudioAcademico extends \app\modules\admision\components\CActiveRecord {
         return $resultData;
     }
     
+    /**
+     * Function para consultar si el estudio académico está siendo usado
+     * @author   Jorge Paladines <analista.desarrollo@uteg.edu.ec>
+     * @property       
+     * @return  
+     */
+    public function consultarEstudioAcademicoEnUso($eaca_id){
+        $con = Yii::$app->db_academico;
+
+        $sql = "SELECT * FROM db_academico_mbtu.estudio_academico as eaca
+                INNER JOIN db_academico_mbtu.modalidad_estudio_unidad as meun ON meun.eaca_id = eaca.eaca_id
+                INNER JOIN db_academico_mbtu.estudiante_carrera_programa as ecpr ON ecpr.meun_id = meun.meun_id
+                WHERE eaca.eaca_estado = 1 AND eaca.eaca_estado_logico = 1
+                AND meun.meun_estado = 1 AND meun.meun_estado_logico = 1
+                AND ecpr.ecpr_estado = 1 AND ecpr.ecpr_estado_logico = 1
+                AND eaca.eaca_id = $eaca_id";
+
+        $comando = $con->createCommand($sql);
+        $resultData = $comando->queryAll();
+
+        return $resultData;
+    }
 
 }

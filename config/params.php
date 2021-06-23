@@ -79,6 +79,7 @@ return [
         'twitter' => 'https://twitter.com/uteg_ec',
         'youtube' => 'https://www.youtube.com/channel/UC8_6Fr2MGrNkr-kM7BZzkdQ',
     ],
+    'costocreditZero' => '0.00',
 
     /************************************************************************/
     /***** Valores para Stripe (Pago con tarjeta de credito) ****************/

@@ -278,7 +278,7 @@ $total=$costo['costo']+$gastoAdm+$costo['asociacion'];
          
     <a href="javascript:" class="btn btn-success pull-right" onclick="registerSubject()" style="margin: 0px 5px;"><?= Academico::t("matriculacion", "Register Subjects") ?></a>
             <?php if ($howmuchSubject > '1'): ?>
-        <a href="<?= Url::to(['/academico/matriculacion/registrodetalle', 'per_id' => $per_id ]) ?>" class="btn btn-primary pull-right" style="margin: 0px 5px;"><?= Academico::t("matriculacion", "Continuar") ?></a>
+        <a href="<?= Url::to(['/academico/matriculacion/registrodetalle']) ?>" class="btn btn-primary pull-right" style="margin: 0px 5px;"><?= Academico::t("matriculacion", "Continuar") ?></a>
         <?php endif; ?>
             <?php if($cancelStatus == '0'): ?>
             <?php endif; ?>

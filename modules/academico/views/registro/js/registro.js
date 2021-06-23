@@ -21,26 +21,26 @@ $(document).ready(function() {
             txt_dir_fac +'-'+
             txt_tel_fac+'-'+
             txt_correo_fac);*/
+        
         if (txt_dpre_ssn_id_fact != 0 ||
             txt_nombres_fac != 0 ||
             txt_apellidos_fac != 0 ||
             txt_dir_fac != 0 ||
             txt_tel_fac != 0 ||
             txt_correo_fac != 0){
-                
-               if( $('#cmb_tpago').val()!== 3){
-                //alert($('#cmb_tpago').val());
-                //save();     
-               }
                guardarCargarCartera();
                enviarPdf();
-        }else{
+        }else if(( $('#cmb_tpago').val()=== 3)||( $('#cmb_fpago').val() === 1)){
             var mensaje = {wtmessage: 'Se deben ingresar todos los campos de facturacion correspondientes', title: "Datos de Facturacion"};
             showAlert("NO_OK", "error", mensaje);
             return;
+        }else{
+            guardarCargarCartera();
+               enviarPdf();
         }
     });
     $('#cmb_tpago').change(function() {
+        document.getElementById("ex1").hidden = false;
         if ($(this).val() == 1) {
             $('.nocredit').hide();
             $('.nocredit2').show();
@@ -55,6 +55,7 @@ $(document).ready(function() {
         }
         if ($(this).val() == 3) {
             $('.nocredit2').hide();
+            document.getElementById("paylink2").hidden = false;
         }
     });
     $('#cmb_fpago').change(function() {
@@ -199,7 +200,7 @@ function save() {
     //guardarCargarCartera();
     //Se debe de enviar el pago  y retornar el mensaje de exito o error
     var arrParams = new Object();
-    var link = $('#txth_base').val() + "/academico/registro/save/";//, + $('#txt_per_id').val();//$('#frm_id').val();
+    var link = $('#txth_base').val() + "/academico/registro/save/" + $('#txt_id_code').val();//$('#frm_id').val();//
     var total = ($('#frm_costo_item').val()).replace(/,/g, '');//($('#frm_costo_item').val()).replace(/,/g, '');
     var numCuota = $('#cmb_cuota').val();
     var cuota = (total / numCuota);
@@ -455,6 +456,7 @@ function generarDataTable(cuotas, primerPago) {
     let perPriC = 0;
     let perCuot = 0;
     let diffCuota = 0;
+    let per_one = 0;
     if (primerPago !== null && cuotas > 1) {
         perPriC = ((primerPago * 100) / total).toFixed(2);
         diffCuota = (total - primerPago);
@@ -715,7 +717,7 @@ function confirmarDevolucion(id) {
 
 function guardarCargarCartera(){
     var link = $('#txth_base').val() + "/academico/registro/modificarcargacartera";
-    
+    showLoadingPopup();
     var arrParams = new Object();
     arrParams.rama = $('#txt_rama').val();
     arrParams.tpago = $('#cmb_tpago').val();
@@ -766,11 +768,11 @@ function enviarPdf(){
         requestHttpAjax(link, arrParams, function(response) {
         var message = response.message;
         if (response.status == "OK") {
-            setTimeout(function() {
-            //windows.location.href = $redirect;
             showAlert(response.status, response.type, { "wtmessage": 'Su información se registro con éxito.', "title": response.label });
+            setTimeout(function() {
             //windows.location.href = $('#txth_base').val() + "/academico/registro/index";
-            //parent.window.location.href = $('#txth_base').val() + "/academico/registro/index";
+            hideLoadingPopup();
+            parent.window.location.href = $('#txth_base').val() + "/academico/registro/index";
             }, 4000);
         } 
         }, true);

@@ -2000,7 +2000,7 @@ class MatriculacionController extends \app\components\CController {
         $materias_roi = [];
 
         // Si se encuentran datos en registro_adicional_materias se debe realizar el cálculo sólo tomando en cuenta esas materias y debe aparecer el botón Pagar
-        $rama = RegistroAdicionalMaterias::find()->where(['ron_id' => $ron['ron_id'], 'per_id' => $per_id, 'pla_id' => $pla_id, 'paca_id' => $data_student['paca_id'], 'rpm_id' => $rpm['rpm_id'], 'rama_estado' => 1, 'rama_estado_logico' => 1])->asArray()->one();
+        $rama = RegistroAdicionalMaterias::find()->where(['ron_id' => $ron['ron_id'], 'per_id' => $per_id, 'pla_id' => $pla_id, 'paca_id' => $data_student['paca_id'], 'rpm_id' => NULL, 'rama_estado' => 1, 'rama_estado_logico' => 1])->asArray()->one();
 
         // \app\models\Utilities::putMessageLogFile($rama);
 

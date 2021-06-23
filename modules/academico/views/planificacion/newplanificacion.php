@@ -43,7 +43,7 @@ academico::registerTranslations();
                 </div> 
                 <label for="lbl_per_act_est" class="col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= academico::t("crm", "Periodo") ?> <span class="text-danger">*</span> </label>
                 <div class="col-sm-3 col-md-3 col-xs-3 col-lg-3">
-                    <?= Html::dropDownList("cmb_periodoest", 0, $periodo_activo, ["class" => "form-control", "id" => "cmb_periodoest","Disabled" => "true"]) ?>
+                    <?= Html::dropDownList("cmb_periodoest", 0, $periodo_activo, ["class" => "form-control", "id" => "cmb_periodoest","Enabled" => "true"]) ?>
                 </div>                
             </div>        
         </div> 
@@ -157,7 +157,7 @@ academico::registerTranslations();
                 [
                     'attribute' => 'jornada',
                     'header' => academico::t("Academico", "Working day"),
-                    'value' => 'jor_materia',
+                    'value' => 'pes_jornada',
                 ],          
                 [
                     'attribute' => 'bloque',

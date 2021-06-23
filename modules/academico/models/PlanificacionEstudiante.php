@@ -1234,8 +1234,8 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
                     inner join " . $con->dbname . ".malla_unidad_modalidad muo on muo.meun_id = meu.meun_id
                     inner join " . $con->dbname . ".malla_academica_detalle mad on mad.maca_id = muo.maca_id
                     where est.per_id = $per_id;");
-                    //$comando2 = $con->createCommand($sql2);
-                    //$result2 = $comando2->execute();
+                    $comando2 = $con->createCommand($sql2);
+                    $result2 = $comando2->execute();
 
                 $sql3 = 
                     ("INSERT INTO " . $con->dbname . ".planificacion_estudiante(pes_cod_malla,pes_carrera,per_id,pes_dni,pes_nombres,pla_id,pes_estado,pes_estado_logico)
@@ -2178,7 +2178,7 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
             $per_id = $arrFiltro['estudiante'];
             $per_id = $_GET['estudiante'];
             $pla_id = $arrFiltro['planificacion'];
-            //$pla_id = '1';
+            $periodo = $arrFiltro['periodoAca'];
         }
         // Bloque 1
         for ($i = 1; $i < 7; $i++) {
@@ -2187,12 +2187,21 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
                             WHEN 'N' THEN 'Nocturno'  
                             WHEN 'S' THEN 'Semipresencial'
                             WHEN 'D' THEN 'Distancia'
+                            WHEN '1' THEN 'Matutino'  
+                            WHEN '2' THEN 'Nocturno'  
+                            WHEN '3' THEN 'Semipresencial'
+                            WHEN '4' THEN 'Distancia'
 		    END AS pes_jornada, 'Bloque 1', moda.mod_nombre as modalidad, 'Hora " . $i . "'
                     FROM " . $con->dbname . ".planificacion_estudiante ples
                     INNER JOIN " . $con->dbname . ".modalidad moda ON  moda.mod_id = ples.pes_mod_b1_h" . $i . "
                     INNER JOIN " . $con->dbname . ".malla_academica_detalle mad ON  mad.made_codigo_asignatura = pes_mat_b1_h" . $i . "_cod
                     INNER JOIN " . $con->dbname . ".asignatura asig ON  asig.asi_id = mad.asi_id
-                    where pla_id = $pla_id and per_id =  $per_id 
+                    where per_id =  $per_id and pla_id = (SELECT pla.pla_id
+                                                            from " . $con->dbname . ".periodo_academico per
+                                                            inner join " . $con->dbname . ".planificacion pla on pla.paca_id = per.paca_id
+                                                            inner join " . $con->dbname . ".planificacion_estudiante pes on pes.pla_id = pla.pla_id
+                                                            where per.paca_id = $periodo and pes.per_id = $per_id
+                                                            limit 0,1)
                     UNION ";
         }
         // Bloque 2
@@ -2202,12 +2211,21 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
                             WHEN 'N' THEN 'Nocturno'  
                             WHEN 'S' THEN 'Semipresencial'
                             WHEN 'D' THEN 'Distancia'
+                            WHEN '1' THEN 'Matutino'  
+                            WHEN '2' THEN 'Nocturno'  
+                            WHEN '3' THEN 'Semipresencial'
+                            WHEN '4' THEN 'Distancia'
 		    END AS pes_jornada, 'Bloque 2', moda.mod_nombre as modalidad, 'Hora " . $j . "' 
                     FROM " . $con->dbname . ".planificacion_estudiante ples
                     INNER JOIN " . $con->dbname . ".modalidad moda ON  moda.mod_id = ples.pes_mod_b2_h" . $j . "
                     INNER JOIN " . $con->dbname . ".malla_academica_detalle mad ON  mad.made_codigo_asignatura = pes_mat_b2_h" . $j . "_cod
                     INNER JOIN " . $con->dbname . ".asignatura asig ON  asig.asi_id = mad.asi_id
-                    where pla_id =  $pla_id  and per_id =  $per_id  ";
+                    where per_id =  $per_id and pla_id = (SELECT pla.pla_id
+                                                            from " . $con->dbname . ".periodo_academico per
+                                                            inner join " . $con->dbname . ".planificacion pla on pla.paca_id = per.paca_id
+                                                            inner join " . $con->dbname . ".planificacion_estudiante pes on pes.pla_id = pla.pla_id
+                                                            where per.paca_id = $periodo and pes.per_id = $per_id
+                                                            limit 0,1)";
             if ($j < 6) {
                 $sql .= "UNION ";
             }
@@ -2217,6 +2235,8 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
         }else{
             $comando = $con->createCommand($sql);
             $resultData = $comando->queryall();
+            \app\models\Utilities::putMessageLogFile('query 1...: '.$sql);
+
             /*if ($arrFiltro['pla_id'] > 0) {
                 $modalidad = $arrFiltro["pla_id"];
                 $comando->bindParam(":pla_id", $modalidad, \PDO::PARAM_INT);
@@ -2257,6 +2277,27 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
             $comando = $con->createCommand($sql);
             $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
             $resultData = $comando->queryAll();
+        }
+        return $resultData;
+    }
+
+    public function getPlanificacionxPeriodo($paca_id,$per_id){
+        $con = \Yii::$app->db_academico;
+
+        $sql = "SELECT pla.pla_id 
+                from db_academico.periodo_academico per
+                inner join " . $con->dbname . ".planificacion pla on pla.paca_id = per.paca_id
+                inner join " . $con->dbname . ".planificacion_estudiante pes on pes.pla_id = pla.pla_id
+                where per.paca_id = :paca_id and pes.per_id = :per_id
+                limit 0,1;";
+        
+        if($paca_id == NULL){
+            $resultData = [];
+        }else{
+            $comando = $con->createCommand($sql);
+            $comando->bindParam(":paca_id", $paca_id, \PDO::PARAM_INT);
+            $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
+            $resultData = $comando->queryOne();
         }
         return $resultData;
     }

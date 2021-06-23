@@ -4,10 +4,16 @@ use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use kartik\select2\Select2;
 use yii\helpers\ArrayHelper;
+use app\modules\academico\models\Asignatura;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\UsuarioSearch */
 /* @var $form yii\widgets\ActiveForm */
+
+$mod_asignatura = new Asignatura();
+$arr_asignatura = $mod_asignatura->consultarAsignaturasxuacaid(1);
+$asignatura = ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $arr_asignatura), "id", "name");
+
 
 $var = ArrayHelper::map(app\modules\academico\models\PeriodoAcademico::find()->where(['paca_estado' => 1,'paca_estado_logico' => 1,'paca_activo' => 'A'])->all(), 'paca_id',
                 function ($model) {
@@ -62,8 +68,8 @@ $var = ArrayHelper::map(app\modules\academico\models\PeriodoAcademico::find()->w
     ?>
     <?=
     $form->field($model, 'asi_id')->label('Asignatura:')->widget(Select2::classname(), [
-        'data' => ArrayHelper::map(app\modules\academico\models\Asignatura::find()->where(['asi_estado_logico' => '1','asi_estado' => '1'])->all(), 'asi_id', 'asi_nombre'),
-        // 'data' => $var,
+        //'data' => ArrayHelper::map(app\modules\academico\models\Asignatura::find()->where(['asi_estado_logico' => '1','asi_estado' => '1'])->all(), 'asi_id', 'asi_nombre'),
+        'data' => $asignatura,
         'size' => Select2::MEDIUM,
         'options' => ['placeholder' => 'Seleccione Asignatura ...', 'multiple' => false],
         'pluginOptions' => [

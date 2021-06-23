@@ -682,10 +682,10 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
           $str_search      = "a.paca_id = 0 AND ";
         }
 
-        if ($reporte == 1 ) {
+        //if ($reporte == 1 ) {
           $estuid = " h.est_id,
                       cur.cedu_id, ";
-        }
+        //}
 
         $sql .= "SELECT  distinct
                         $estuid

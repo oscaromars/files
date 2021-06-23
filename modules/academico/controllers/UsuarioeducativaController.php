@@ -282,6 +282,12 @@ class UsuarioeducativaController extends \app\components\CController {
         } else {
             $arrData = $distributivo_model->consultarDistributivoxEducativa($arrSearch, 0);
         }
+        foreach($arrData as $key => $value){
+            unset($arrData[$key]["est_id"]);
+            unset($arrData[$key]["cedu_id"]);
+            unset($arrData[$key]["ceest_id"]);
+         }
+
         $nameReport = academico::t("Academico", "Listado de estudiantes registro");
         Utilities::generarReporteXLS($nombarch, $nameReport, $arrHeader, $arrData, $colPosition);
         exit;
@@ -321,6 +327,11 @@ class UsuarioeducativaController extends \app\components\CController {
         } else {
             $arrData = $distributivo_model->consultarDistributivoxEducativa($arrSearch, 0);
         }
+        foreach($arrData as $key => $value){
+            unset($arrData[$key]["est_id"]);
+            unset($arrData[$key]["cedu_id"]);
+            unset($arrData[$key]["ceest_id"]);
+         }
         $report->orientation = "L"; // tipo de orientacion L => Horizontal, P => Vertical
         $report->createReportPdf(
                 $this->render('exportpdf', [

@@ -856,4 +856,21 @@ class Asignatura extends \yii\db\ActiveRecord
         $res = $comando->queryAll();
         return $res;
     }
+    
+    public function getAsignaturaname($codigo){        
+        $con_academico = \Yii::$app->db_academico;
+        $estado = '1';
+
+        $sql = "SELECT
+                    a.asi_nombre as asignatura
+                FROM  " . $con_academico->dbname . ".asignatura a
+                inner join  " . $con_academico->dbname . ".malla_academica_detalle made on a.asi_id=made.asi_id
+                                WHERE made_codigo_asignatura = :cod_id";
+
+        $comando = $con_academico->createCommand($sql);        
+        $comando->bindParam(":cod_id", $codigo, \PDO::PARAM_STR);
+               
+        $res = $comando->queryOne();
+        return $res;
+    }
 }

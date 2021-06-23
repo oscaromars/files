@@ -1294,9 +1294,9 @@ class Matriculacion extends \yii\db\ActiveRecord {
      * @param $ron_id
      * @return $resultData
      */
-    public function getPlanificationFromRegistroOnline($ron_id)
+    public function getPlanificationFromRegistroOnline($ron_id, $rama_id)
     {
-         $rama_id = $rama_id?$rama_id:0;
+        $rama_id = $rama_id?$rama_id:0;
         $con_academico = \Yii::$app->db_academico;
         $estado = 1;
         /*$sql = "
@@ -1316,16 +1316,15 @@ class Matriculacion extends \yii\db\ActiveRecord {
         ";*/
 
         if($rama_id>0) $str_search = " AND rama.rama_id = $rama_id ";
-        $sql = "
-            SELECT roi.roi_id, 
-                roi.roi_materia_nombre as Subject, 
-                roi_creditos as Credit, 
-        roi.roi_materia_cod as Code,
-                roi.roi_materia_cod as CodeAsignatura, 
-        roi.roi_costo as Cost,
-                roi.roi_costo as Price,
-                roi.roi_hora as Hour,
-                roi.roi_bloque as Block
+        $sql = "SELECT roi.roi_id, 
+                       roi.roi_materia_nombre as Subject, 
+                       roi_creditos as Credit, 
+                       roi.roi_materia_cod as Code,
+                       roi.roi_materia_cod as CodeAsignatura, 
+                       roi.roi_costo as Cost,
+                       roi.roi_costo as Price,
+                       roi.roi_hora as Hour,
+                       roi.roi_bloque as Block
             FROM " . $con_academico->dbname . ".registro_online_item as roi
             inner join " . $con_academico->dbname . ".registro_adicional_materias as rama on roi.roi_id = rama.roi_id_1
                                                                         or roi.roi_id = rama.roi_id_2
@@ -1337,7 +1336,8 @@ class Matriculacion extends \yii\db\ActiveRecord {
             AND roi.roi_estado =:estado
             AND roi.roi_estado_logico =:estado
             $str_search
-        ";
+            AND rama.rama_estado = 1 
+            AND rama.rama_estado_logico = 1";
 
         $comando = $con_academico->createCommand($sql);
         $comando->bindParam(":ron_id", $ron_id, \PDO::PARAM_INT);

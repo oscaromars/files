@@ -2058,7 +2058,7 @@ class MatriculacionController extends \app\components\CController {
         $cuotas = 0;
 
         // Calcular cuál semestre es
-        if(str_contains($periodo['saca_nombre'], '(Intensivo)')){ // Instensivo
+        if($periodo['saca_intensivo']){ // Instensivo
             $tempBlock = [];
             foreach ($materias_data_arr as $key => $value) {
                 $tempBlock[] = $value['Block'];

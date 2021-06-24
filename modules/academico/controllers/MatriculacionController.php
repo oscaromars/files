@@ -2007,7 +2007,7 @@ class MatriculacionController extends \app\components\CController {
         $materias_data_arr = [];
         $materias_roi = [];
 
-        // Si se encuentran datos en registro_adicional_materias se debe realizar el cálculo sólo tomando en cuenta esas materias y debe aparecer el botón Pagar
+        // Si se encuentran datos en registro_adicional_materias se debe realizar el cálculo sólo tomando en cuenta esas materias (que son pendientes de pago) y debe aparecer el botón Pagar
         $rama = RegistroAdicionalMaterias::find()->where(['ron_id' => $ron['ron_id'], 'per_id' => $per_id, 'pla_id' => $pla_id, 'paca_id' => $data_student['paca_id'], 'rpm_id' => NULL, 'rama_estado' => 1, 'rama_estado_logico' => 1])->asArray()->one();
 
         // Las siguientes acciones se realizan sólo si hay registros en la tabla de registro_adicional_materias, pues todas usan del arreglo materias_roi
@@ -2030,6 +2030,10 @@ class MatriculacionController extends \app\components\CController {
                 }
             }
         }
+        else{
+            // Si no hay materias para pagar, retornar al registro
+            return $this->redirect('registro');
+        }
 
         // \app\models\Utilities::putMessageLogFile("rama: " . print_r($rama, true));
         // \app\models\Utilities::putMessageLogFile("roi_IDs: " . print_r($roi_IDs, true));
@@ -2039,15 +2043,17 @@ class MatriculacionController extends \app\components\CController {
 
         // Incluír los gastos administrativos
         $gastos_administrativos = $ron['ron_valor_gastos_adm'];
-        $valor_total += $gastos_administrativos;
-        // Llenar con campos vacíos las olumnas que no tengan datos para que no aparezcan como "(no definido)"
-        $materias_data_arr[] = [
-                                "Subject" => "Gastos Administrativos", 
-                                "Cost" => $gastos_administrativos,
-                                "Code" => "",
-                                "Block" => "",
-                                "Hour" => "",
-                                ];
+        if($gastos_administrativos > 0){
+            $valor_total += $gastos_administrativos;
+            // Llenar con campos vacíos las olumnas que no tengan datos para que no aparezcan como "(no definido)"
+            $materias_data_arr[] = [
+                                    "Subject" => "Gastos Administrativos", 
+                                    "Cost" => $gastos_administrativos,
+                                    "Code" => "",
+                                    "Block" => "",
+                                    "Hour" => "",
+                                    ];
+        }
 
         // \app\models\Utilities::putMessageLogFile("materias_roi: " . print_r($materias_roi, true));
 
@@ -2114,7 +2120,14 @@ class MatriculacionController extends \app\components\CController {
         $porc_mayor = round($porcentaje, 2);
         $por_menor = 100 - ($porc_mayor * ($cuotas - 1));
 
-        $fechas_vencimiento = FechasVencimientoPago::find()->where(['fvpa_paca_id' => $data_student['paca_id'], 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();
+        // Si son 3 cuotas
+        if($cuotas == 3){ // Considerar sólo el bloque escogido
+            $fechas_vencimiento = FechasVencimientoPago::find()->where(['saca_id' => $data_student['saca_id'], 'fvpa_bloque' => $bloque, 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();
+        }
+        else{ // Si son 6 cuotas, se deben tomar las fechas de los dos bloques
+            $fechas_vencimiento = FechasVencimientoPago::find()->where(['saca_id' => $data_student['saca_id'], 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();
+        }
+        
         $arr_pagos = [];
         for ($i=0; $i < $cuotas; $i++) { 
             if($i == 0){

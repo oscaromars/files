@@ -2058,29 +2058,7 @@ class MatriculacionController extends \app\components\CController {
         $cuotas = 0;
 
         // Calcular cuál semestre es
-        if($periodo['saca_nombre'] == "Abril - Agosto"){ // Inicio del semestre
-            $tempBlock = []; // Colocar todos los bloques en un arreglo aparte
-            for ($x=0; $x < count($materias_data_arr) - 1; $x++) { 
-                $tempBlock[] = $materias_data_arr[$x]['Block'];
-            }
-
-            // \app\models\Utilities::putMessageLogFile("tempBlock: " . print_r($tempBlock, true));
-
-            $bloque = $tempBlock[0]; // Tomar el primer bloque
-            $cuotas = 3; // Empezar con 3 cuotas
-
-            foreach ($tempBlock as $key => $value) { // recorrer la lista de bloques
-                // \app\models\Utilities::putMessageLogFile("IF: " . ($value != $bloque));
-                if($value != $bloque){ // Si uno de ellos es diferente, quiere decir que hay más de un bloque
-                    $cuotas = 6; // Así que las cuotas son 6
-                    break; // Salir del foreach
-                }
-                // Si nunca entra al condicional, quiere decir que todas las materias son del mismo bloque
-            }
-
-            // \app\models\Utilities::putMessageLogFile("cuotas: " . $cuotas);
-        }
-        else if(str_contains($periodo['saca_nombre'], '(Intensivo)')){ // Instensivo
+        if(str_contains($periodo['saca_nombre'], '(Intensivo)')){ // Instensivo
             $tempBlock = [];
             foreach ($materias_data_arr as $key => $value) {
                 $tempBlock[] = $value['Block'];
@@ -2106,10 +2084,28 @@ class MatriculacionController extends \app\components\CController {
                 }
             }
         }
-        else{ // Segundo Bloque
-            $cuotas = 3;
-        }
+        else{ // No intensivo
+            $tempBlock = []; // Colocar todos los bloques en un arreglo aparte
+            for ($x=0; $x < count($materias_data_arr) - 1; $x++) { 
+                $tempBlock[] = $materias_data_arr[$x]['Block'];
+            }
 
+            // \app\models\Utilities::putMessageLogFile("tempBlock: " . print_r($tempBlock, true));
+
+            $bloque = $tempBlock[0]; // Tomar el primer bloque
+            $cuotas = 3; // Empezar con 3 cuotas
+
+            foreach ($tempBlock as $key => $value) { // recorrer la lista de bloques
+                // \app\models\Utilities::putMessageLogFile("IF: " . ($value != $bloque));
+                if($value != $bloque){ // Si uno de ellos es diferente, quiere decir que hay más de un bloque
+                    $cuotas = 6; // Así que las cuotas son 6
+                    break; // Salir del foreach
+                }
+                // Si nunca entra al condicional, quiere decir que todas las materias son del mismo bloque
+            }
+
+            // \app\models\Utilities::putMessageLogFile("cuotas: " . $cuotas);
+        }
         // \app\models\Utilities::putMessageLogFile($cuotas);
 
         $valor_unitario = $valor_total / $cuotas;

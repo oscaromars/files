@@ -330,8 +330,8 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
                       and a.meun_estado = 1
                       and a.meun_estado_logico = 1) as maestria,
                 CONCAT( 'G.',dhpa_grupo ,'.',dhpa_paralelo)  as paralelo,
-                IFNULL( asi_nombre,'N/A' )as materia,
-                IFNULL( CONCAT( da.daca_fecha_inicio_post,' al ' ,da.daca_fecha_fin_post ) ,'N/A')as dias,
+                IFNULL( asi_nombre,'N/A' ) as materia,
+                IFNULL( CONCAT( da.daca_fecha_inicio_post,' al ' ,da.daca_fecha_fin_post ) ,'N/A') as dias,
                 dah.daho_horario as hora,
                 da.daca_num_estudiantes_online as num_est,
                 case when td.tdis_id=7 then tdis_num_semanas else (pc.paca_semanas_periodo * case  when dah.daho_total_horas is null then tdis_num_semanas else dah.daho_total_horas end) end as total_horas_dictar,
@@ -343,7 +343,7 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
                      where mum.meun_id =da.meun_id and mad.asi_id =da.asi_id) as credito,
                 per_cedula as no_cedula,
                 UPPER(dd.ddoc_nombre)  as  tiempo_dedicacion,
-                tdis_nombre,     
+                tdis_nombre as tdis_nombre,     
                 case when da.tdis_id=7 then round(tdis_num_semanas/paca_semanas_periodo) else ( case  when dah.daho_total_horas is null then tdis_num_semanas else dah.daho_total_horas end) end as promedio
                 from " . $con_academico->dbname . ".distributivo_academico da 
                 inner join " . $con_academico->dbname . ".distributivo_cabecera dc on da.dcab_id=dc.dcab_id
@@ -388,7 +388,7 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
                 'pageSize' => Yii::$app->params["pageSize"],
             ],
             'sort' => [
-                'attributes' => ['docente','titulo_tercel_nivel', 'titulo_cuarto_nivel', 'maestria', 'paralelo', 'materia', 'dias', 'hora', 'num_est', 'total_horas_dictar', 'modalidad', 'aula', 'credito'],
+                'attributes' => ['docente', 'titulo_tercel_nivel', 'titulo_cuarto_nivel', 'maestria', 'paralelo', 'materia', 'dias', 'hora', 'num_est', 'total_horas_dictar', 'modalidad', 'aula', 'credito'],
             ],
         ]);
 

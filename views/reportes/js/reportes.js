@@ -60,7 +60,7 @@ $(document).ready(function () {
         }, true);
     });
 
-        $('#modalidadestudiounidadsearch-eaca_id').change(function () {
+    $('#modalidadestudiounidadsearch-eaca_id').change(function () {
         var link = $('#txth_base').val() + "/reportes/reportemallas";
         var arrParams = new Object();
         arrParams.uaca_id = $('#modalidadestudiounidadsearch-uaca_id').val();

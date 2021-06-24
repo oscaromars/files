@@ -60,8 +60,12 @@ $(document).ready(function() {
         $("#grid_pagos_list").PbGridView("applyFilterData", arrParams2);
     });
     $('.chequeado').prop("checked",true);
-    
-
+    /*
+    $('.micheckbox:checked').each(
+        function() {
+            alert("");
+        }
+    );*/
     
     
 
@@ -295,11 +299,13 @@ function registerSubject() {
 }
 
 function cancelSubject() {
+    var checkbox = document.getElementById('chequeado');
+    //var checkedn = checkbox.checked;
     var ron_id   = $('#frm_ron_id').val();
     var link     = $('#txth_base').val() + "/academico/matriculacion/anularregistro?ron_id=" + ron_id;
     var codes    = "";
     var contador = 0;
-
+    //alert(" hjuik"+checkbox);
     $('#grid_registro_list input.byremove[type=checkbox]').each(function() {
         if (this.checked) {
             codes += $(this).attr('name') + ";";
@@ -311,16 +317,31 @@ function cancelSubject() {
         "wtmessage": objLang.You_must_choose_at_least_one_Subject_to_Cancel_Registration,
         "title": objLang.Error
     }
+    var message_cancelacion = {
+        "wtmessage": objLang.You_reached_the_maximum_number_of_canceled_subjects_registered,
+        "title": objLang.Error
+    }
 
-    if (contador > 0 && contador < 4) {
+    if(checkbox==null){
+        if (contador > 0 && contador < 4) {
 
-        link += "&pdf=1&cancelSubject=1&codes=" + codes;
-        window.location.href = link;
-    } else{
-        message.wtmessage = message.wtmessage;
-        showAlert("NO_OK", "Error", message);
-        return;
-    } 
+            link += "&pdf=1&cancelSubject=1&codes=" + codes;
+            window.location.href = link;
+        }else{
+            message.wtmessage = message.wtmessage;
+            showAlert("NO_OK", "Error", message);
+            return;
+        } 
+
+    }else{
+        if(checkbox.checked){
+            message_cancelacion.wtmessage = message_cancelacion.wtmessage;
+            showAlert("NO_OK", "Error", message_cancelacion);
+            return;
+        }
+    }
+
+
 }//function cancelSubject
 
 function validCancel() {

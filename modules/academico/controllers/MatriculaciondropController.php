@@ -97,7 +97,7 @@ class MatriculaciondropController extends \app\components\CController {
         $_SESSION['JSLANG']['You must choose at least a number or subjects '] = Academico::t('matriculacion', 'You must choose at least a number or subjects ');
         $_SESSION['JSLANG']['You must choose at least one'] = Academico::t('matriculacion', 'You must choose at least one');
         $_SESSION['JSLANG']['The number of subject that you can cancel is '] = Academico::t('matriculacion', 'The number of subject that you can cancel is ');
-
+        $_SESSION['JSLANG']['You reached the maximum number of canceled subjects registered'] = Academico::t('matriculacion', 'You reached the maximum number of canceled subjects registered');
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
             if (isset($data["pes_id"])) {
@@ -325,9 +325,9 @@ class MatriculaciondropController extends \app\components\CController {
                     $isscholar=$scholarship['bec_id'];    
 
                   
-                     if ($isscholar != NULL ) {
+                    if ($isscholar != NULL ) {
                      
-                    return $this->render('registro-sch', [
+                    /*return $this->render('registro-sch', [
                                 "pes_id" => $pes_id,
                                 "hasSubject" => $hasSubject,
                                 "registredSuject" => $dataRegRs,
@@ -344,7 +344,7 @@ class MatriculaciondropController extends \app\components\CController {
                                 "cancelpending" => $pending,
                                  "isdrop" => $isdroptime,
                                  "isreg" => $result_process, 
-                    ]);
+                    ]);*/
                     
                     } Else {
                     
@@ -454,7 +454,7 @@ class MatriculaciondropController extends \app\components\CController {
         ]);
     }
 
-    public function actionRegistry($id) { // pantalla para aprobar matriculacion de estudiante
+    public function actionRegistro($id) { // pantalla para aprobar matriculacion de estudiante
         $model = RegistroOnline::findOne($id);
         if ($model) {
             $data = Yii::$app->request->get();
@@ -552,7 +552,7 @@ class MatriculaciondropController extends \app\components\CController {
                 ],
             ]);
 
-            return $this->render('registry', [
+            return $this->render('registro', [
                         "materiasxEstudiante" => $dataProvider,
                         "materias" => $dataPlanificacion,
                         "data_student" => $data_student,

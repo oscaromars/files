@@ -192,7 +192,7 @@ if($modelCancelRon){
                             }
                             
                             if($numcan < 3)  {
-                            return Html::checkbox($planificacion['Code'], false, ["value" => $planificacion['Subject'], "disabled" => true,"class" => "chequeado"]);
+                            return Html::checkbox($planificacion['Code'], false, ["value" => $planificacion['Subject'], "disabled" => true,"class" => "chequeado","id"=>"chequeado"]);
                             }
                              return Html::checkbox($planificacion['Code'], false, ["value" => $planificacion['Subject'], "class" => "byremove",]);
                              

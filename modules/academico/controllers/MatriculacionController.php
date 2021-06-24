@@ -2010,40 +2010,32 @@ class MatriculacionController extends \app\components\CController {
         // Si se encuentran datos en registro_adicional_materias se debe realizar el cálculo sólo tomando en cuenta esas materias y debe aparecer el botón Pagar
         $rama = RegistroAdicionalMaterias::find()->where(['ron_id' => $ron['ron_id'], 'per_id' => $per_id, 'pla_id' => $pla_id, 'paca_id' => $data_student['paca_id'], 'rpm_id' => NULL, 'rama_estado' => 1, 'rama_estado_logico' => 1])->asArray()->one();
 
-        // \app\models\Utilities::putMessageLogFile("rama: " . print_r($rama, true));
-
+        // Las siguientes acciones se realizan sólo si hay registros en la tabla de registro_adicional_materias, pues todas usan del arreglo materias_roi
         if(isset($rama)){
             $roi_IDs = [$rama['roi_id_1'], $rama['roi_id_2'], $rama['roi_id_3'], $rama['roi_id_4'], $rama['roi_id_5'], $rama['roi_id_6']];
-        }
 
-        // \app\models\Utilities::putMessageLogFile("roi_IDs: " . print_r($roi_IDs, true));
-
-        // \app\models\Utilities::putMessageLogFile("roi: " . print_r($roi, true));
-
-        foreach ($roi as $key => $value) {
-            // Si hay registro en RegistroAdicionalMaterias
-            if(isset($rama)){ // considerar sólo la que están ahí
+            foreach ($roi as $key => $value) {
+                // Si hay registro en RegistroAdicionalMaterias
                 if(in_array($value['roi_id'], $roi_IDs)){
                     $materias_roi[] = $value['roi_materia_nombre'];
                 }
             }
-            /*else{ // Si no hay nada, considerar todas
-                $materias_roi[] = $value['roi_materia_nombre'];
-            }*/
-        }
 
-        // \app\models\Utilities::putMessageLogFile("materias_roi: " . print_r($materias_roi, true));
-
-        // \app\models\Utilities::putMessageLogFile("materias_roi: " . print_r($materias_roi, true));
-
-        for ($i = 0; $i < count($dataPlanificacion); $i++) {
-            if(in_array($dataPlanificacion[$i]['Subject'], $materias_roi)){
-                $valor = number_format($dataPlanificacion[$i]['Cost'] * $dataPlanificacion[$i]['Credit'], 2);
-                $dataPlanificacion[$i]['Cost'] = $valor;
-                $materias_data_arr[] = $dataPlanificacion[$i];
-                $valor_total += $dataPlanificacion[$i]['Cost'];
+            for ($i = 0; $i < count($dataPlanificacion); $i++) {
+                if(in_array($dataPlanificacion[$i]['Subject'], $materias_roi)){
+                    $valor = number_format($dataPlanificacion[$i]['Cost'] * $dataPlanificacion[$i]['Credit'], 2);
+                    $dataPlanificacion[$i]['Cost'] = $valor;
+                    $materias_data_arr[] = $dataPlanificacion[$i];
+                    $valor_total += $dataPlanificacion[$i]['Cost'];
+                }
             }
         }
+
+        // \app\models\Utilities::putMessageLogFile("rama: " . print_r($rama, true));
+        // \app\models\Utilities::putMessageLogFile("roi_IDs: " . print_r($roi_IDs, true));
+        // \app\models\Utilities::putMessageLogFile("roi: " . print_r($roi, true));
+        // \app\models\Utilities::putMessageLogFile("materias_roi: " . print_r($materias_roi, true));
+        // \app\models\Utilities::putMessageLogFile("materias_roi: " . print_r($materias_roi, true));
 
         // Incluír los gastos administrativos
         $gastos_administrativos = $ron['ron_valor_gastos_adm'];

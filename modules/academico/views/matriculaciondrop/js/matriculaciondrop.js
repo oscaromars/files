@@ -59,7 +59,7 @@ $(document).ready(function() {
         /* console.log(arrParams2); */
         $("#grid_pagos_list").PbGridView("applyFilterData", arrParams2);
     });
-
+    $('.chequeado').prop("checked",true);
     
 
     
@@ -167,7 +167,7 @@ function registro() {
         requestHttpAjax(link, arrParams, function(response) {
             showAlert(response.status, response.label, response.message);
             setTimeout(function() {
-                parent.window.location.href = $('#txth_base').val() + "/academico/matriculacion/index";
+                parent.window.location.href = $('#txth_base').val() + "/academico/matriculacion/registro";
             }, 2000);
 
         }, true);
@@ -195,7 +195,7 @@ function cargarDocumento() {
             showAlert(response.status, response.label, response.message);
             if (!response.error) {
                 setTimeout(function() {
-                    window.location.href = $('#txth_base').val() + "/academico/matriculacion/index";
+                    window.location.href = $('#txth_base').val() + "/academico/matriculacion/registro";
                 }, 3000);
             }
         }, true);
@@ -288,7 +288,7 @@ function registerSubject() {
     requestHttpAjax(link, arrParams, function(response) {
         showAlert(response.status, response.label, response.message);
         setTimeout(function() {
-            parent.window.location.href = $('#txth_base').val() + "/academico/matriculacion/index";
+            parent.window.location.href = $('#txth_base').val() + "/academico/matriculacion/registro";
         }, 2000);
 
     }, true);
@@ -311,19 +311,16 @@ function cancelSubject() {
         "wtmessage": objLang.You_must_choose_at_least_one_Subject_to_Cancel_Registration,
         "title": objLang.Error
     }
-    if (contador < 0 && contador >= 4) {
+
+    if (contador > 0 && contador < 4) {
+
+        link += "&pdf=1&cancelSubject=1&codes=" + codes;
+        window.location.href = link;
+    } else{
         message.wtmessage = message.wtmessage;
         showAlert("NO_OK", "Error", message);
         return;
-    }
-    if (validCancel() == false) {
-        message.wtmessage = objLang.The_number_of_subject_that_you_can_cancel_is_ + $('#frm_min_cancel').val();
-        showAlert("NO_OK", "Error", message);
-        return;
-    }
-    link += "&pdf=1&cancelSubject=1&codes=" + codes;
-
-    window.location.href = link;
+    } 
 }//function cancelSubject
 
 function validCancel() {

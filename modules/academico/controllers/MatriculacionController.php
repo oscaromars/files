@@ -2603,7 +2603,7 @@ class MatriculacionController extends \app\components\CController {
             }
             if(isset($data['admin']) && $data['admin'] == '1')
                 return $this->redirect('list');
-            return $this->redirect('index');
+            return $this->redirect('registro');
         } catch (Exception $ex) {
             $transaction->rollback();
             //$msg = ($error)?($ex->getMessage()):(Yii::t('notificaciones', 'Your information has not been saved. Please try again.'));

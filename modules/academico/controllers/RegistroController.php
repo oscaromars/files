@@ -2599,7 +2599,7 @@ class RegistroController extends \app\components\CController {
             $resp_ron_id= $modelCargaCartera->getRonPes($per_id);
             $ron_id = $resp_ron_id['ron_id'];
 
-            $rama_id = $rama_id?$rama_id:0;//nuevo 22/06/2021
+            //$rama_id = $rama_id?$rama_id:0;//nuevo 22/06/2021
             $dataPlanificacion = $matriculacion_model->getPlanificationFromRegistroOnline($ron_id,$rama_id);
 
             //$dataPlanificacion = $matriculacion_model->getPlanificationFromRegistroOnline($ron_id);

@@ -59,9 +59,13 @@ $(document).ready(function() {
         /* console.log(arrParams2); */
         $("#grid_pagos_list").PbGridView("applyFilterData", arrParams2);
     });
-
-    
-
+    $('.chequeado').prop("checked",true);
+    /*
+    $('.micheckbox:checked').each(
+        function() {
+            alert("");
+        }
+    );*/
     
     
 
@@ -167,7 +171,7 @@ function registro() {
         requestHttpAjax(link, arrParams, function(response) {
             showAlert(response.status, response.label, response.message);
             setTimeout(function() {
-                parent.window.location.href = $('#txth_base').val() + "/academico/matriculacion/index";
+                parent.window.location.href = $('#txth_base').val() + "/academico/matriculacion/registro";
             }, 2000);
 
         }, true);
@@ -195,7 +199,7 @@ function cargarDocumento() {
             showAlert(response.status, response.label, response.message);
             if (!response.error) {
                 setTimeout(function() {
-                    window.location.href = $('#txth_base').val() + "/academico/matriculacion/index";
+                    window.location.href = $('#txth_base').val() + "/academico/matriculacion/registro";
                 }, 3000);
             }
         }, true);
@@ -288,18 +292,20 @@ function registerSubject() {
     requestHttpAjax(link, arrParams, function(response) {
         showAlert(response.status, response.label, response.message);
         setTimeout(function() {
-            parent.window.location.href = $('#txth_base').val() + "/academico/matriculacion/index";
+            parent.window.location.href = $('#txth_base').val() + "/academico/matriculacion/registro";
         }, 2000);
 
     }, true);
 }
 
 function cancelSubject() {
+    var checkbox = document.getElementById('chequeado');
+    //var checkedn = checkbox.checked;
     var ron_id   = $('#frm_ron_id').val();
     var link     = $('#txth_base').val() + "/academico/matriculacion/anularregistro?ron_id=" + ron_id;
     var codes    = "";
     var contador = 0;
-
+    //alert(" hjuik"+checkbox);
     $('#grid_registro_list input.byremove[type=checkbox]').each(function() {
         if (this.checked) {
             codes += $(this).attr('name') + ";";
@@ -311,19 +317,31 @@ function cancelSubject() {
         "wtmessage": objLang.You_must_choose_at_least_one_Subject_to_Cancel_Registration,
         "title": objLang.Error
     }
-    if (contador < 0 && contador >= 4) {
-        message.wtmessage = message.wtmessage;
-        showAlert("NO_OK", "Error", message);
-        return;
+    var message_cancelacion = {
+        "wtmessage": objLang.You_reached_the_maximum_number_of_canceled_subjects_registered,
+        "title": objLang.Error
     }
-    if (validCancel() == false) {
-        message.wtmessage = objLang.The_number_of_subject_that_you_can_cancel_is_ + $('#frm_min_cancel').val();
-        showAlert("NO_OK", "Error", message);
-        return;
-    }
-    link += "&pdf=1&cancelSubject=1&codes=" + codes;
 
-    window.location.href = link;
+    if(checkbox==null){
+        if (contador > 0 && contador < 4) {
+
+            link += "&pdf=1&cancelSubject=1&codes=" + codes;
+            window.location.href = link;
+        }else{
+            message.wtmessage = message.wtmessage;
+            showAlert("NO_OK", "Error", message);
+            return;
+        } 
+
+    }else{
+        if(checkbox.checked){
+            message_cancelacion.wtmessage = message_cancelacion.wtmessage;
+            showAlert("NO_OK", "Error", message_cancelacion);
+            return;
+        }
+    }
+
+
 }//function cancelSubject
 
 function validCancel() {

@@ -136,5 +136,5 @@ $leyenda = '<div class="col-md-12 col-sm-12 col-xs-12 col-lg-12">
 <input type="hidden" id="frm_pes_id" value="<?= $pes_id ?>">
 <input type="hidden" id="frm_num_min" value="<?= $num_min ?>">
 <input type="hidden" id="frm_num_max" value="<?= $num_max ?>">
-<input type="hidden" id="frm_modalidad" value="<?= $data_student['mod_nombre'] ?>">
-<input type="hidden" id="frm_carrera" value="<?= $data_student['pes_carrera'] ?>">
+<input type="hidden" id="frm_modalidad" value="<?= $data_student['mod_id'] ?>">
+<input type="hidden" id="frm_carrera" value="<?= $data_student['eaca_id'] ?>">

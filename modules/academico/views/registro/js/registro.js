@@ -21,22 +21,26 @@ $(document).ready(function() {
             txt_dir_fac +'-'+
             txt_tel_fac+'-'+
             txt_correo_fac);*/
-        
-        if (txt_dpre_ssn_id_fact != 0 ||
-            txt_nombres_fac != 0 ||
-            txt_apellidos_fac != 0 ||
-            txt_dir_fac != 0 ||
-            txt_tel_fac != 0 ||
-            txt_correo_fac != 0){
-               guardarCargarCartera();
-               enviarPdf();
-        }else if(( $('#cmb_tpago').val()=== 3)||( $('#cmb_fpago').val() === 1)){
-            var mensaje = {wtmessage: 'Se deben ingresar todos los campos de facturacion correspondientes', title: "Datos de Facturacion"};
-            showAlert("NO_OK", "error", mensaje);
-            return;
+        var terminos = ($('#cmb_req').is(':checked')) ? 1 : 0;
+        if(terminos != 0){
+            if (txt_dpre_ssn_id_fact != 0 ||
+                txt_nombres_fac != 0 ||
+                txt_apellidos_fac != 0 ||
+                txt_dir_fac != 0 ||
+                txt_tel_fac != 0 ||
+                txt_correo_fac != 0){
+                guardarCargarCartera();
+                enviarPdf();
+            }else if(( $('#cmb_tpago').val()=== 3)||( $('#cmb_fpago').val() === 1)){
+                var mensaje = {wtmessage: 'Se deben ingresar todos los campos de facturacion correspondientes', title: "Datos de Facturacion"};
+                showAlert("NO_OK", "error", mensaje);
+                return;
+            }else{
+                guardarCargarCartera();
+                enviarPdf();
+            }
         }else{
-            guardarCargarCartera();
-               enviarPdf();
+            showAlert('NO_OK', 'error', { "wtmessage": "Se deben aceptar los Términos y Condiciones", "title": 'Información' });
         }
     });
     $('#cmb_tpago').change(function() {
@@ -736,23 +740,26 @@ function guardarCargarCartera(){
     //alert(arrParams.tpago+'-'+arrParams.total+'-'+arrParams.interes +'-'+arrParams.financiamiento+'-'+arrParams.numcuotas+'-'+arrParams.rama_id+'-'+arrParams.per_id +'-'+ $redirect);
     if(arrParams.numcuotas != 0 || terminos==0){
         if(terminos != 0){
-            try{
-                requestHttpAjax(link, arrParams, function(response) {
-                var message = response.message;
-                if (response.status == "OK") {
-                    setTimeout(function() {
-                    //windows.location.href = $redirect;
-                    //showAlert(response.status, response.type, { "wtmessage": 'SU PAGO FUE INGRESADO CORRECTAMENTE', "title": response.label });
-                    //windows.location.href = $('#txth_base').val() + "/academico/registro/index";
-                    }, 3000);
-                } else {
-                    //showAlert(response.status, response.type, { "wtmessage": message.info, "title": response.label });
+            if(!validateForm()){
+                try{
+                        requestHttpAjax(link, arrParams, function(response) {
+                        var message = response.message;
+                        if (response.status == "OK") {
+                            setTimeout(function() {
+                            //windows.location.href = $redirect;
+                            //showAlert(response.status, response.type, { "wtmessage": 'SU PAGO FUE INGRESADO CORRECTAMENTE', "title": response.label });
+                            //windows.location.href = $('#txth_base').val() + "/academico/registro/index";
+                            }, 3000);
+                        } else {
+                            //showAlert(response.status, response.type, { "wtmessage": message.info, "title": response.label });
+                        }
+
+                        }, true);
+                }catch(err){
+                    alert( "wtmessage <p>+"+$err+"</p>");    
+                    console.log("error: "+err)
                 }
-                }, true);
-            }catch(err){
-                alert( "wtmessage <p>+"+$err+"</p>");    
-                console.log("error: "+err)
-            }
+            }    
         }
     } else {
         showAlert('NO_OK', 'error', { "wtmessage": "Se debe escoger el numero de cuotas.", "title": 'Información' });

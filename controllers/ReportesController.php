@@ -307,9 +307,6 @@ class ReportesController extends CController {
         exit;
     }
     
-    
-   
-    
     public function actionReportdistributivo() {
         $searchModel = new DistributivoAcademicoSearch();
         //$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -320,8 +317,47 @@ class ReportesController extends CController {
             'dataProvider' => $dataProvider,
         ]);  
     }
+
+    public function actionExpexceldistributivo() {
+        ini_set('memory_limit', '256M');
+        $content_type = Utilities::mimeContentType("xls");
+        $nombarch = "Report-" . date("YmdHis") . ".xls";
+        header("Content-Type: $content_type");
+        header("Content-Disposition: attachment;filename=" . $nombarch);
+        header('Cache-Control: max-age=0');
+        $colPosition = array("C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O");
+        $arrHeader = array(
+            Yii::t("formulario", "Docente"),
+            Yii::t("formulario", "N° Cédula"),
+            Yii::t("formulario", "Título Tercer Nivel"),
+            Yii::t("formulario", "Título Cuarto Nivel"),
+            Yii::t("formulario", "Correo Electronico"),
+            Yii::t("formulario", "Tiempo de Dedicación"),
+            Yii::t("formulario", "Tipo Asignación"),
+            Yii::t("formulario", "Materia"),
+            Yii::t("formulario", "Total Horas a Dictar"),
+            Yii::t("formulario", "Promedio"),
+        );
+        $searchModel = new DistributivoAcademicoSearch();
+        $data = Yii::$app->request->get();
+        $arrSearch["periodo"] = $data['periodo'];
+        $arrSearch["tipo_asignacion"] = $data['tipo_asignacion'];
+        $arrSearch["modalidad"] = $data['modalidad'];
+        $arrData = array();
+        if (empty($arrSearch)) {
+            $arrData = $searchModel->getListadoDistributivoexcel(NULL,true);
+        } else {
+            $arrData = $searchModel->getListadoDistributivoexcel($arrSearch,true);
+        }
+        /*for ($i = 0; $i < count($arrData); $i++) { 
+            unset($arrData[$i]['est_id']);
+        }*/
+        $nameReport = academico::t("Academico", "Reporte Distributivo");
+        Utilities::generarReporteXLS($nombarch, $nameReport, $arrHeader, $arrData, $colPosition);
+        exit;
+    }
     
-     public function actionReportemateriasnoasignadas() {
+    public function actionReportemateriasnoasignadas() {
          $mod_periodoActual = new PeriodoAcademico();
          $arr_periodoActual = $mod_periodoActual->getPeriodoAcademicoActual();
          $searchModel = new DistributivoAcademicoSearch();
@@ -332,12 +368,40 @@ class ReportesController extends CController {
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
-     }
+    }
+
+    public function actionExpexcelmateriasnoasignadas() {
+        ini_set('memory_limit', '256M');
+        $content_type = Utilities::mimeContentType("xls");
+        $nombarch = "Report-" . date("YmdHis") . ".xls";
+        header("Content-Type: $content_type");
+        header("Content-Disposition: attachment;filename=" . $nombarch);
+        header('Cache-Control: max-age=0');
+        $colPosition = array("C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O");
+        $arrHeader = array(
+            Yii::t("formulario", "Código"),
+            Yii::t("formulario", "Materia"),
+            Yii::t("formulario", "Paralelo"),
+        );
+        $searchModel = new DistributivoAcademicoSearch();
+        $data = Yii::$app->request->get();
+        \app\models\Utilities::putMessageLogFile('modalidad '. $data['modalidad']);
+        $arrSearch["modalidad"] = $data['modalidad'];
+        $arrData = array();
+        if (empty($arrSearch)) {
+            $arrData = $searchModel->getListadoMateriaNoAsignadaexcel(NULL,true,$data['modalidad']);
+        } else {
+            $arrData = $searchModel->getListadoMateriaNoAsignadaexcel($arrSearch,true,$data['modalidad']);
+        }
+        /*for ($i = 0; $i < count($arrData); $i++) { 
+            unset($arrData[$i]['est_id']);
+        }*/
+        $nameReport = academico::t("Academico", "Reporte Materias No Asignadas");
+        Utilities::generarReporteXLS($nombarch, $nameReport, $arrHeader, $arrData, $colPosition);
+        exit;
+    }
     
     public function actionReportdistributivodocente() {
-        
-        
-
         $searchModel = new DistributivoAcademicoSearch();
         //$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $params = Yii::$app->request->queryParams;
@@ -353,7 +417,7 @@ class ReportesController extends CController {
         ]);
        
     }
-       public function actionExportpdflistadodocente() {
+    public function actionExportpdflistadodocente() {
             $searchModel = new DistributivoAcademicoSearch();
         //$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $params = Yii::$app->request->queryParams;
@@ -372,9 +436,8 @@ class ReportesController extends CController {
 }
 	
     
-      public function actionReportematrizdistributivo(){
-          
-          $searchModel = new DistributivoAcademicoSearch();
+    public function actionReportematrizdistributivo(){ 
+        $searchModel = new DistributivoAcademicoSearch();
         //$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $params = Yii::$app->request->queryParams;
         $dataProvider = $searchModel->getReportematrizdistributivo($params,false,1);
@@ -382,20 +445,89 @@ class ReportesController extends CController {
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
-      }
-          public function actionReportemateriasparalelos(){
-          
-          $searchModel = new DistributivoAcademicoSearch();
+    }
+
+    public function actionExpexcelmatrizdistributivo() {
+        ini_set('memory_limit', '256M');
+        $content_type = Utilities::mimeContentType("xls");
+        $nombarch = "Report-" . date("YmdHis") . ".xls";
+        header("Content-Type: $content_type");
+        header("Content-Disposition: attachment;filename=" . $nombarch);
+        header('Cache-Control: max-age=0');
+        $colPosition = array("C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S");
+        $arrHeader = array( 
+            Yii::t("formulario", "Código_IES"),
+            Yii::t("formulario", "Tipo de Identificación"),
+            Yii::t("formulario", "Identificación"),
+            Yii::t("formulario", "Docente"),
+            Yii::t("formulario", "N° Documento"),
+            Yii::t("formulario", "Horas Clase"),
+            Yii::t("formulario", "Horas Tutorías"),
+            Yii::t("formulario", "Horas Administrativas"),
+            Yii::t("formulario", "Horas Investigación"),
+            Yii::t("formulario", "Horas Vinculación"),
+            Yii::t("formulario", "Horas Otras Actividades"),
+            Yii::t("formulario", "Horas Clase Tercer Nivel"),
+            Yii::t("formulario", "Horas Clase Cuarto Nivel"),
+            Yii::t("formulario", "Calificación Actividades Docencia "),
+            Yii::t("formulario", "Calificación Actividades Investigación"),
+        );
+        $searchModel = new DistributivoAcademicoSearch();
+        $data = Yii::$app->request->get();
+        $arrSearch["periodo"] = $data['periodo'];
+        $arrSearch["dedicacion"] = $data['dedicacion'];
+        $arrData = array();
+        if (empty($arrSearch)) {
+            $arrData = $searchModel->getReportematrizdistributivoexcel(NULL,true);
+        } else {
+            $arrData = $searchModel->getReportematrizdistributivoexcel($arrSearch,true);
+        }
+        /*for ($i = 0; $i < count($arrData); $i++) { 
+            unset($arrData[$i]['est_id']);
+        }*/
+        $nameReport = academico::t("Academico", "Reporte Matriz Distributivo Docente");
+        Utilities::generarReporteXLS($nombarch, $nameReport, $arrHeader, $arrData, $colPosition);
+        exit;
+    }
+    public function actionReportemateriasparalelos(){
+        $searchModel = new DistributivoAcademicoSearch();
         //$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $params = Yii::$app->request->queryParams;
         $dataProvider = $searchModel->getReportemateriasparalelos($params,false,1);
         return $this->render('reportemateriasparalelos', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+        'searchModel' => $searchModel,
+        'dataProvider' => $dataProvider,
         ]);
-       
-          
-      }
+    }
+
+    public function actionExpexcelmateriasparalelo() {
+        ini_set('memory_limit', '256M');
+        $content_type = Utilities::mimeContentType("xls");
+        $nombarch = "Report-" . date("YmdHis") . ".xls";
+        header("Content-Type: $content_type");
+        header("Content-Disposition: attachment;filename=" . $nombarch);
+        header('Cache-Control: max-age=0');
+        $colPosition = array("C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O");
+        $arrHeader = array(
+            Yii::t("formulario", "Docente"),
+            Yii::t("formulario", "Materia"),
+            Yii::t("formulario", "Paralelo"),
+            Yii::t("formulario", "Horario"),
+        );
+        $searchModel = new DistributivoAcademicoSearch();
+        $data = Yii::$app->request->get();
+        $arrSearch["periodo"] = $data['periodo'];
+        $arrData = array();
+        if (empty($arrSearch)) {
+            $arrData = $searchModel->getReportemateriasparalelosexcel(NULL,true);
+        } else {
+            $arrData = $searchModel->getReportemateriasparalelosexcel($arrSearch,true);
+        }
+        
+        $nameReport = academico::t("Academico", "Reporte Materias Paralelo");
+        Utilities::generarReporteXLS($nombarch, $nameReport, $arrHeader, $arrData, $colPosition);
+        exit;
+    }
       
       
     public function actionReportdistributivoposgrado() {
@@ -409,6 +541,50 @@ class ReportesController extends CController {
         ]);
          
     }
+    
+    public function actionExpexceldistributivoposgrado() {
+        ini_set('memory_limit', '256M');
+        $content_type = Utilities::mimeContentType("xls");
+        $nombarch = "Report-" . date("YmdHis") . ".xls";
+        header("Content-Type: $content_type");
+        header("Content-Disposition: attachment;filename=" . $nombarch);
+        header('Cache-Control: max-age=0');
+        $colPosition = array("C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q");
+        $arrHeader = array(
+            Yii::t("formulario", "Profesor"),
+            Yii::t("formulario", "3er. Nivel"),
+            Yii::t("formulario", "4to Nivel"),
+            Yii::t("formulario", "Maestría"),
+            Yii::t("formulario", "Grupo Paralelo"),
+            Yii::t("formulario", "Materias"),
+            Yii::t("formulario", "Días"),
+            Yii::t("formulario", "Hora"),
+            Yii::t("formulario", "No. Estudiantes"),
+            Yii::t("formulario", "Total Horas a dictar"),
+            Yii::t("formulario", "Modalidad"),
+            Yii::t("formulario", "Aula"),
+            Yii::t("formulario", "Total crédito"),
+        );
+        $searchModel = new DistributivoAcademicoSearch();
+        $data = Yii::$app->request->get();
+        $arrSearch["periodo"] = $data['periodo'];
+        $arrData = array();
+        if (empty($arrSearch)) {
+            $arrData = $searchModel->getListadoDistributivoPosgradosexcel(NULL,true);
+        } else {
+            $arrData = $searchModel->getListadoDistributivoPosgradosexcel($arrSearch,true);
+        }
+        for ($i = 0; $i < count($arrData); $i++) { 
+            unset($arrData[$i]['no_cedula']);
+            unset($arrData[$i]['tiempo_dedicacion']);
+            unset($arrData[$i]['tdis_nombre']);
+            unset($arrData[$i]['promedio']);
+        }
+        $nameReport = academico::t("Academico", "Reporte Distributivo Posgrado");
+        Utilities::generarReporteXLS($nombarch, $nameReport, $arrHeader, $arrData, $colPosition);
+        exit;
+    }
+
 
     public function actionMatriculados() { 
         $searchModel = new PlanificacionSearch();

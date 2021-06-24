@@ -178,7 +178,7 @@ class RegistroConfiguracion extends \yii\db\ActiveRecord
                      '$forma_pago', 
                      ('0$in / 0$numero_cuota'), :fecha_transaccion, 
                     '$fecha', NULL,
-                    :valor_cuota, :total, NULL, NULL, NULL, NULL, NULL, 'N', NULL, NULL, NULL, '$id_user', NULL,:estado,NULL, :fecha_transaccion, NULL ,:estado);";
+                    :valor_cuota, :total, NULL, NULL, NULL, NULL, NULL, 'N', NULL, NULL, NULL, '$id_user', NULL,:estado,0, :fecha_transaccion, NULL ,:estado);";
 
         $comando = $con->createCommand($sql);
         $comando->bindParam(":est_id", $est_id, \PDO::PARAM_STR);

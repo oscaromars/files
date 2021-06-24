@@ -156,13 +156,65 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
         return $dataProvider;
     }
 
+    public function getListadoMateriaNoAsignadaexcel($arrFiltro = NULL, $onlyData = false, $mod_id) {
+        \app\models\Utilities::putMessageLogFile('modalidad '. $mod_id);
+        $con_academico = \Yii::$app->db_academico;
+        $con_db = \Yii::$app->db;
+
+        if (isset($arrFiltro) && count($arrFiltro) > 0) { 
+            if ($arrFiltro['modalidad'] != "" && $arrFiltro['modalidad'] > 0) {
+                $str_search .= "daca.mod_id = :mod_id AND ";
+            } 
+                     
+        }
+
+            $sql = "select mpp.asi_id id,(select asi_nombre from db_academico.asignatura a where a.asi_id=mpp.asi_id) name , mpp_num_paralelo
+                from  db_academico.materia_paralelo_periodo mpp 
+                left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da.mod_id=mpp.mod_id and da.asi_id=mpp.asi_id  and da.paca_id=mpp.paca_id
+                    where da.mpp_id is null and mpp.mod_id =:mod_id";
+        
+        
+        $comando = $con_academico->createCommand($sql);
+        if (isset($arrFiltro) && count($arrFiltro) > 0) {
+            
+            if ($arrFiltro['modalidad'] != "" && $arrFiltro['modalidad'] > 0) {
+                $modalidad = $arrFiltro["modalidad"];
+                $comando->bindParam(":mod_id", $modalidad, \PDO::PARAM_INT);
+            }
+
+            
+        }
+        $res = $comando->queryAll();
+
+        \app\models\Utilities::putMessageLogFile('getListadoDistributivoexcel: '.$comando->getRawSql());
+        $dataProvider = new ArrayDataProvider([
+            'key' => 'Id',
+            'allModels' => $res,
+            'pagination' => [
+                'pageSize' => Yii::$app->params["pageSize"],
+            ],
+            'sort' => [
+                'attributes' => [
+                    'id', 
+                    'name',
+                    'mpp_num_paralelo'],
+            ],
+        ]);
+
+        if ($onlyData) {
+            return $res;
+        } else {
+            return $dataProvider;
+        }
+    }
+
     
-     /*public function getListadoDistributivoPosgrados($params = null, $onlyData = false, $tipo = 1) {
+    public function getListadoDistributivoPosgrados($params = null, $onlyData = false, $tipo = 1) {
         $con_academico = \Yii::$app->db_academico;
         $con_db = \Yii::$app->db;
         
 
-        $sql = "select (@row_number:=@row_number + 1) AS Id, UPPER(CONCAT(persona.per_pri_apellido,' ' ,persona.per_seg_apellido,' ' ,persona.per_pri_nombre,' ' ,persona.per_seg_nombre)) as docente,
+        $sql = "select UPPER(CONCAT(persona.per_pri_apellido,' ' ,persona.per_seg_apellido,' ' ,persona.per_pri_nombre,' ' ,persona.per_seg_nombre)) as docente,
                 per_cedula as no_cedula,
                 IFNULL(UPPER(pi3.pins_titulo),'N/A') as  titulo_tercel_nivel,
                 IFNULL(UPPER(pi4.pins_titulo),'N/A') as  titulo_cuarto_nivel,
@@ -180,30 +232,32 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
                 IFNULL( CONCAT( da.daca_fecha_inicio_post,' al ' ,da.daca_fecha_fin_post ) ,'N/A')as dias,
                 da.daca_num_estudiantes_online as num_est,
                 'N/A' as aula,
-                (select made_credito  
+                made_credito as credito,
+                /*(select made_credito 
                     from db_academico.malla_academica_detalle mad
                     inner join db_academico.malla_unidad_modalidad mum on mad.maca_id=mum.maca_id
-                     where mum.meun_id =da.meun_id and mad.asi_id =da.asi_id) as credito,
-                     
+                    where mum.meun_id =da.meun_id and mad.asi_id =da.asi_id) as credito,*/
                 UPPER(dd.ddoc_nombre)  as  tiempo_dedicacion,
                 IFNULL( asi_nombre,'N/A' )as materia,
                 tdis_nombre,
                 case when td.tdis_id=7 then tdis_num_semanas else (pc.paca_semanas_periodo * case  when dah.daho_total_horas is null then tdis_num_semanas else dah.daho_total_horas end) end as total_horas_dictar,
-                 case when da.tdis_id=7 then round(tdis_num_semanas/paca_semanas_periodo) else ( case  when dah.daho_total_horas is null then tdis_num_semanas else dah.daho_total_horas end) end as promedio
-                from " . $con_academico->dbname . ".distributivo_academico da 
-                inner join " . $con_academico->dbname . ".distributivo_cabecera dc on da.dcab_id=dc.dcab_id
-                inner join " . $con_academico->dbname . ".modalidad m on m.mod_id =  da.mod_id
-                inner join " . $con_academico->dbname . ".profesor profesor on da.pro_id = profesor.pro_id 
-                inner join " . $con_db->dbname . ".persona persona on profesor.per_id = persona.per_id 
-                inner join " . $con_academico->dbname . ".distributivo_horario_paralelo dhp on dhp.dhpa_id = da.dhpa_id
-                inner join " . $con_academico->dbname . ".dedicacion_docente dd on dd.ddoc_id = profesor.ddoc_id  
-                left join " . $con_academico->dbname . ".asignatura asi on asi.asi_id = da.asi_id 
-                left join " . $con_academico->dbname . ".profesor_instruccion pi3 on pi3.pro_id = profesor.pro_id and pi3.nins_id =3 and pi3.pins_estado=1 and pi3.pins_estado_logico=1
-                left join " . $con_academico->dbname . ".profesor_instruccion pi4 on pi4.pro_id = profesor.pro_id and pi4.nins_id =4 and pi4.pins_estado=1 and pi4.pins_estado_logico=1    
-                INNER JOIN " . $con_academico->dbname . ".periodo_academico pc on da.paca_id  = pc.paca_id and  pc.paca_activo='A'
-                INNER JOIN " . $con_academico->dbname . ".tipo_distributivo td on td.tdis_id  = da.tdis_id 
-                LEFT JOIN " . $con_academico->dbname . ".distributivo_academico_horario dah on dah.daho_id  = da.daho_id    
-                where  da.daca_estado='1' and daca_estado_logico='1'  and td.tdis_id <> 6 and da.uaca_id=2    and dc.dcab_estado_revision=2";
+                case when da.tdis_id=7 then round(tdis_num_semanas/paca_semanas_periodo) else ( case  when dah.daho_total_horas is null then tdis_num_semanas else dah.daho_total_horas end) end as promedio
+                from db_academico.distributivo_academico da 
+                inner join  db_academico.distributivo_cabecera dc on da.dcab_id=dc.dcab_id
+                inner join  db_academico.modalidad m on m.mod_id =  da.mod_id
+                inner join  db_academico.profesor profesor on da.pro_id = profesor.pro_id 
+                inner join db_asgard.persona persona on profesor.per_id = persona.per_id 
+                inner join  db_academico.distributivo_horario_paralelo dhp on dhp.dhpa_id = da.dhpa_id
+                inner join  db_academico.dedicacion_docente dd on dd.ddoc_id = profesor.ddoc_id  
+                left join  db_academico.asignatura asi on asi.asi_id = da.asi_id 
+                inner join db_academico.malla_academica_detalle mad on mad.asi_id = da.asi_id
+                inner join db_academico.malla_unidad_modalidad mum on mad.maca_id = mum.maca_id and mum.meun_id =da.meun_id
+                left join  db_academico.profesor_instruccion pi3 on pi3.pro_id = profesor.pro_id and pi3.nins_id =3 and pi3.pins_estado=1 and pi3.pins_estado_logico=1
+                left join  db_academico.profesor_instruccion pi4 on pi4.pro_id = profesor.pro_id and pi4.nins_id =4 and pi4.pins_estado=1 and pi4.pins_estado_logico=1    
+                INNER JOIN  db_academico.periodo_academico pc on da.paca_id  = pc.paca_id and  pc.paca_activo='A'
+                INNER JOIN  db_academico.tipo_distributivo td on td.tdis_id  = da.tdis_id 
+                LEFT JOIN  db_academico.distributivo_academico_horario dah on dah.daho_id  = da.daho_id and dah.mod_id = da.mod_id 
+                where td.tdis_id <> 6 and da.uaca_id=2    and dc.dcab_estado_revision=2";
         if ($tipo == 1) {
             $this->load($params);
             if ($this->validate()) {
@@ -230,7 +284,7 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
                 $sql = $sql . " and da.tdis_id =" . $params['tdis_id'];
             }
         }
-        Utilities::putMessageLogFile('sql:' . $sql);
+        //Utilities::putMessageLogFile('sql:' . $sql);
         $comando = $con_academico->createCommand($sql);
         $res = $comando->queryAll();
 
@@ -249,7 +303,104 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
 
         return $dataProvider;
     }
-    */
+    
+    public function getListadoDistributivoPosgradosexcel($arrFiltro = NULL, $onlyData = false) {
+        $con_academico = \Yii::$app->db_academico;
+        $con_db = \Yii::$app->db;
+
+        if (isset($arrFiltro) && count($arrFiltro) > 0) { 
+            if ($arrFiltro['tipo_asignacion'] != "" && $arrFiltro['tipo_asignacion'] > 0) {
+                $str_search .= "daca.tdis_id = :tdis_id AND ";
+            }
+            if ($arrFiltro['modalidad'] != "" && $arrFiltro['modalidad'] > 0) {
+                $str_search .= "daca.mod_id = :mod_id AND ";
+            } 
+                     
+        }
+
+            $sql = "select UPPER(CONCAT(persona.per_pri_apellido,' ' ,persona.per_seg_apellido,' ' ,persona.per_pri_nombre,' ' ,persona.per_seg_nombre)) as docente,
+                per_cedula as no_cedula,
+                IFNULL(UPPER(pi3.pins_titulo),'N/A') as  titulo_tercel_nivel,
+                IFNULL(UPPER(pi4.pins_titulo),'N/A') as  titulo_cuarto_nivel,
+                ( SELECT b.eaca_nombre name
+                FROM db_academico.modalidad_estudio_unidad a
+                inner join db_academico.estudio_academico b   on b.eaca_id = a.eaca_id
+                WHERE a.uaca_id = da.uaca_id
+                       and a.meun_id=da.meun_id
+                      and a.mod_id = da.mod_id
+                      and a.meun_estado = 1
+                      and a.meun_estado_logico = 1) as maestria,
+                 m.mod_nombre as modalidad,
+                dah.daho_horario as hora,
+                CONCAT( 'G.',dhpa_grupo ,'.',dhpa_paralelo)  as paralelo,
+                IFNULL( CONCAT( da.daca_fecha_inicio_post,' al ' ,da.daca_fecha_fin_post ) ,'N/A')as dias,
+                da.daca_num_estudiantes_online as num_est,
+                'N/A' as aula,
+                made_credito as credito,
+                /*(select made_credito 
+                    from db_academico.malla_academica_detalle mad
+                    inner join db_academico.malla_unidad_modalidad mum on mad.maca_id=mum.maca_id
+                    where mum.meun_id =da.meun_id and mad.asi_id =da.asi_id) as credito,*/
+                UPPER(dd.ddoc_nombre)  as  tiempo_dedicacion,
+                IFNULL( asi_nombre,'N/A' )as materia,
+                tdis_nombre,
+                case when td.tdis_id=7 then tdis_num_semanas else (pc.paca_semanas_periodo * case  when dah.daho_total_horas is null then tdis_num_semanas else dah.daho_total_horas end) end as total_horas_dictar,
+                case when da.tdis_id=7 then round(tdis_num_semanas/paca_semanas_periodo) else ( case  when dah.daho_total_horas is null then tdis_num_semanas else dah.daho_total_horas end) end as promedio
+                from db_academico.distributivo_academico da 
+                inner join  db_academico.distributivo_cabecera dc on da.dcab_id=dc.dcab_id
+                inner join  db_academico.modalidad m on m.mod_id =  da.mod_id
+                inner join  db_academico.profesor profesor on da.pro_id = profesor.pro_id 
+                inner join db_asgard.persona persona on profesor.per_id = persona.per_id 
+                inner join  db_academico.distributivo_horario_paralelo dhp on dhp.dhpa_id = da.dhpa_id
+                inner join  db_academico.dedicacion_docente dd on dd.ddoc_id = profesor.ddoc_id  
+                left join  db_academico.asignatura asi on asi.asi_id = da.asi_id 
+                inner join db_academico.malla_academica_detalle mad on mad.asi_id = da.asi_id
+                inner join db_academico.malla_unidad_modalidad mum on mad.maca_id = mum.maca_id and mum.meun_id =da.meun_id
+                left join  db_academico.profesor_instruccion pi3 on pi3.pro_id = profesor.pro_id and pi3.nins_id =3 and pi3.pins_estado=1 and pi3.pins_estado_logico=1
+                left join  db_academico.profesor_instruccion pi4 on pi4.pro_id = profesor.pro_id and pi4.nins_id =4 and pi4.pins_estado=1 and pi4.pins_estado_logico=1    
+                INNER JOIN  db_academico.periodo_academico pc on da.paca_id  = pc.paca_id and  pc.paca_activo='A'
+                INNER JOIN  db_academico.tipo_distributivo td on td.tdis_id  = da.tdis_id 
+                LEFT JOIN  db_academico.distributivo_academico_horario dah on dah.daho_id  = da.daho_id and dah.mod_id = da.mod_id 
+                where td.tdis_id <> 6 and da.uaca_id=2    and dc.dcab_estado_revision=2";
+        
+        
+        $comando = $con_academico->createCommand($sql);
+        //$comando->bindParam(":eaca_id", $eaca_id, \PDO::PARAM_INT);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        if (isset($arrFiltro) && count($arrFiltro) > 0) {
+
+            if ($arrFiltro['tipo_asignacion'] != "" && $arrFiltro['tipo_asignacion'] > 0) {
+                $tipo_asignacion = $arrFiltro["tipo_asignacion"];
+                $comando->bindParam(":tdis_id", $tipo_asignacion, \PDO::PARAM_INT);
+            } 
+            
+            if ($arrFiltro['modalidad'] != "" && $arrFiltro['modalidad'] > 0) {
+                $modalidad = $arrFiltro["modalidad"];
+                $comando->bindParam(":mod_id", $modalidad, \PDO::PARAM_INT);
+            }
+
+            
+        }
+        $res = $comando->queryAll();
+
+        \app\models\Utilities::putMessageLogFile('getListadoDistributivoexcel: '.$comando->getRawSql());
+        $dataProvider = new ArrayDataProvider([
+            'key' => 'Id',
+            'allModels' => $res,
+            'pagination' => [
+                'pageSize' => Yii::$app->params["pageSize"],
+            ],
+            'sort' => [
+                'attributes' => ['docente', 'no_cedula', "titulo_tercel_nivel", "titulo_cuarto_nivel", "correo", "tiempo_dedicacion", "desempeno", 'materia', 'total_horas_dictar'],
+            ],
+        ]);
+
+        if ($onlyData) {
+            return $res;
+        } else {
+            return $dataProvider;
+        }
+    }
     
     public function getListadoDistributivoBloqueDocente($params = null, $onlyData = false, $tipo = 1) {
         $con_academico = \Yii::$app->db_academico;
@@ -331,6 +482,102 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
         return $dataProvider;
     }
 
+    public function getListadoDistributivoexcel($arrFiltro = NULL, $onlyData = false) {
+        $con_academico = \Yii::$app->db_academico;
+        $con_db = \Yii::$app->db;
+
+        if (isset($arrFiltro) && count($arrFiltro) > 0) { 
+            if ($arrFiltro['periodo'] != "" && $arrFiltro['periodo'] > 0) {
+                $str_search .= "daca.uaca_id = :paca_id AND ";
+            }
+            if ($arrFiltro['tipo_asignacion'] != "" && $arrFiltro['tipo_asignacion'] > 0) {
+                $str_search .= "daca.tdis_id = :tdis_id AND ";
+            }
+            if ($arrFiltro['modalidad'] != "" && $arrFiltro['modalidad'] > 0) {
+                $str_search .= "daca.mod_id = :mod_id AND ";
+            } 
+                     
+        }
+
+            $sql = "select 
+                UPPER(CONCAT(persona.per_pri_apellido,' ' ,persona.per_seg_apellido,' ' ,persona.per_pri_nombre,' ' ,persona.per_seg_nombre)) as docente,
+                per_cedula as no_cedula,
+                IFNULL(UPPER(pi3.pins_titulo),'N/A') as  titulo_tercel_nivel,
+                IFNULL(UPPER(pi4.pins_titulo),'N/A') as  titulo_cuarto_nivel,
+                persona.per_correo as correo,
+                UPPER(dd.ddoc_nombre)  as  tiempo_dedicacion,
+                tdis_nombre,
+                IFNULL( asi_nombre,'N/A' )as materia,
+                case when td.tdis_id=7 then tdis_num_semanas else (pc.paca_semanas_periodo * case  when dah.daho_total_horas is null then tdis_num_semanas else dah.daho_total_horas end) end as total_horas_dictar,
+                 case when da.tdis_id=7 then round(tdis_num_semanas/paca_semanas_periodo) else ( case  when dah.daho_total_horas is null then tdis_num_semanas else dah.daho_total_horas end) end as promedio
+                from " . $con_academico->dbname . ".distributivo_academico da 
+                inner join " . $con_academico->dbname . ".distributivo_cabecera dc on da.dcab_id=dc.dcab_id
+                inner join " . $con_academico->dbname . ".profesor profesor on da.pro_id = profesor.pro_id 
+                inner join " . $con_db->dbname .        ".persona persona on profesor.per_id = persona.per_id 
+                inner join " . $con_academico->dbname . ".dedicacion_docente dd on dd.ddoc_id = profesor.ddoc_id  
+                LEFT JOIN " . $con_academico->dbname . ".modalidad AS m ON da.mod_id = m.mod_id
+                left join " . $con_academico->dbname .  ".asignatura asi on asi.asi_id = da.asi_id 
+                left join " . $con_academico->dbname .  ".profesor_instruccion pi3 on pi3.pro_id = profesor.pro_id and pi3.nins_id =3 and pi3.pins_estado=1 and pi3.pins_estado_logico=1
+                left join " . $con_academico->dbname .  ".profesor_instruccion pi4 on pi4.pro_id = profesor.pro_id and pi4.nins_id =4 and pi4.pins_estado=1 and pi4.pins_estado_logico=1    
+                INNER JOIN " . $con_academico->dbname . ".periodo_academico pc on da.paca_id  = pc.paca_id and  pc.paca_activo='A'
+                INNER JOIN " . $con_academico->dbname . ".tipo_distributivo td on td.tdis_id  = da.tdis_id 
+                LEFT JOIN " . $con_academico->dbname .  ".distributivo_academico_horario dah on dah.daho_id  = da.daho_id    
+                where  da.daca_estado='1' and daca_estado_logico='1'  and td.tdis_id <> 6 and dc.dcab_estado_revision=2";
+        
+        
+        $comando = $con_academico->createCommand($sql);
+        //$comando->bindParam(":eaca_id", $eaca_id, \PDO::PARAM_INT);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        if (isset($arrFiltro) && count($arrFiltro) > 0) {
+           
+            if ($arrFiltro['periodo'] != "" && $arrFiltro['periodo'] > 0) {
+                $periodo = $arrFiltro["periodo"];
+                $comando->bindParam(":paca_id", $periodo, \PDO::PARAM_INT);
+            }
+
+            if ($arrFiltro['tipo_asignacion'] != "" && $arrFiltro['tipo_asignacion'] > 0) {
+                $tipo_asignacion = $arrFiltro["tipo_asignacion"];
+                $comando->bindParam(":tdis_id", $tipo_asignacion, \PDO::PARAM_INT);
+            } 
+            
+            if ($arrFiltro['modalidad'] != "" && $arrFiltro['modalidad'] > 0) {
+                $modalidad = $arrFiltro["modalidad"];
+                $comando->bindParam(":mod_id", $modalidad, \PDO::PARAM_INT);
+            }
+
+            
+        }
+        $res = $comando->queryAll();
+
+        \app\models\Utilities::putMessageLogFile('getListadoDistributivoexcel: '.$comando->getRawSql());
+        $dataProvider = new ArrayDataProvider([
+            'key' => 'Id',
+            'allModels' => $res,
+            'pagination' => [
+                'pageSize' => Yii::$app->params["pageSize"],
+            ],
+            'sort' => [
+                'attributes' => [
+                    'docente', 
+                    'no_cedula',
+                    'titulo_tercel_nivel',
+                    'titulo_cuarto_nivel',
+                    'correo',
+                    'tiempo_dedicacion',
+                    'tdis_nombre',
+                    'materia',
+                    'total_horas_dictar',
+                    'promedio'],
+            ],
+        ]);
+
+        if ($onlyData) {
+            return $res;
+        } else {
+            return $dataProvider;
+        }
+    }
+
     public function getReportemateriasparalelos($params = null, $onlyData = false, $tipo = 1) {
         $con_academico = \Yii::$app->db_academico;
         $con_db = \Yii::$app->db;
@@ -378,11 +625,69 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
                 'pageSize' => Yii::$app->params["pageSize"],
             ],
             'sort' => [
-                'attributes' => ['docente', 'no_cedula', "titulo_tercel_nivel", "titulo_cuarto_nivel", "correo", "tiempo_dedicacion", "desempeno", 'materia', 'total_horas_dictar'],
+                'attributes' => ['docente', 'asignatura', 'dhpa_paralelo', 'daho_descripcion'],
             ],
         ]);
 
         return $dataProvider;
+    }
+
+    public function getReportemateriasparalelosexcel($arrFiltro = NULL, $onlyData = false) {
+        $con_academico = \Yii::$app->db_academico;
+        $con_db = \Yii::$app->db;
+
+        if (isset($arrFiltro) && count($arrFiltro) > 0) { 
+            if ($arrFiltro['periodo'] != "" && $arrFiltro['periodo'] > 0) {
+                $str_search .= "daca.paca_id = :paca_id AND ";
+            }
+                     
+        }
+
+            $sql = "select UPPER(CONCAT(persona.per_pri_apellido,' ' ,persona.per_seg_apellido,' ' ,persona.per_pri_nombre,' ' ,persona.per_seg_nombre)) as docente,
+                ifnull(asi_nombre,'') as asignatura,
+                dhpa_paralelo,
+                daho_descripcion
+                    from distributivo_academico da
+            inner join " . $con_academico->dbname . ".distributivo_cabecera dc on da.dcab_id=dc.dcab_id
+                    inner join db_academico.profesor profesor on da.pro_id = profesor.pro_id 
+                    inner join " . $con_db->dbname . ".persona persona on profesor.per_id = persona.per_id 
+            inner join " . $con_academico->dbname . ".asignatura asi on asi.asi_id = da.asi_id 
+                    inner join " . $con_academico->dbname . ".distributivo_horario_paralelo dhp on dhp.dhpa_id=da.dhpa_id
+                    inner join " . $con_academico->dbname . ".distributivo_academico_horario dah on dah.daho_id=da.daho_id
+                    where  da.tdis_id in (1,7)  and da.daca_estado='1' and daca_estado_logico='1' ";
+        
+        
+        $comando = $con_academico->createCommand($sql);
+        //$comando->bindParam(":eaca_id", $eaca_id, \PDO::PARAM_INT);
+        //$comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        if (isset($arrFiltro) && count($arrFiltro) > 0) {
+           
+            if ($arrFiltro['periodo'] != "" && $arrFiltro['periodo'] > 0) {
+                $periodo = $arrFiltro["periodo"];
+                $comando->bindParam(":paca_id", $periodo, \PDO::PARAM_INT);
+            }
+            
+            
+        }
+        $res = $comando->queryAll();
+
+        \app\models\Utilities::putMessageLogFile('getListadoDistributivoexcel: '.$comando->getRawSql());
+        $dataProvider = new ArrayDataProvider([
+            'key' => 'Id',
+            'allModels' => $res,
+            'pagination' => [
+                'pageSize' => Yii::$app->params["pageSize"],
+            ],
+            'sort' => [
+                'attributes' => ['docente', 'asignatura', 'dhpa_paralelo', 'daho_descripcion'],
+            ],
+        ]);
+
+        if ($onlyData) {
+            return $res;
+        } else {
+            return $dataProvider;
+        }
     }
 
     public function getReportematrizdistributivo($params = null, $onlyData = false, $tipo = 1) {
@@ -462,6 +767,85 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
         ]);
 
         return $dataProvider;
+    }
+
+    public function getReportematrizdistributivoexcel($arrFiltro = NULL, $onlyData = false) {
+        $con_academico = \Yii::$app->db_academico;
+        $con_db = \Yii::$app->db;
+
+        if (isset($arrFiltro) && count($arrFiltro) > 0) { 
+            if ($arrFiltro['periodo'] != "" && $arrFiltro['periodo'] > 0) {
+                $str_search .= "daca.paca_id = :paca_id AND ";
+            }
+            if ($arrFiltro['dedicacion'] != "" && $arrFiltro['dedicacion'] > 0) {
+                $str_search .= "daca.uaca_id = :uaca_id AND ";
+            }
+                     
+        }
+
+            $sql = "select '1050' as codigo_ies, UPPER(CONCAT(persona.per_pri_apellido,' ' ,persona.per_seg_apellido,' ' ,persona.per_pri_nombre,' ' ,persona.per_seg_nombre)) as docente,
+                case when per_cedula is null then per_pasaporte else per_cedula end as no_cedula,
+                case when per_cedula is null then 'Pasaporte' else 'Cédula' end as tipo_identificacion,
+                IFNULL(pro_num_contrato,'') as pro_num_contrato,
+                case when td.tdis_id=1 or td.tdis_id=7  then  dah.daho_total_horas else 0 end as hora_clase,
+                case when td.tdis_id=2 then  tdis_num_semanas else 0 end as hora_tutorias,
+                case when td.tdis_id=3 then  tdis_num_semanas else 0 end as hora_investigacion,
+                case when td.tdis_id=4 then  tdis_num_semanas else 0 end as hora_vinculacion,
+                -- case when td.tdis_id=5 then  0  end as hora_administrativa,
+                -- case when td.tdis_id=6 then  daca_horas_otras_actividades else 0 end as hora_otras_actividades,
+               ddoc_horas,
+               case when da.uaca_id = 1  then  dah.daho_total_horas else 0 end as tercel_nivel,
+               case when da.uaca_id = 2  then  dah.daho_total_horas else 0 end as cuarto_nivel,
+                0 as comun,
+                case when td.tdis_id=7 then tdis_num_semanas else (pc.paca_semanas_periodo * case  when dah.daho_total_horas is null then tdis_num_semanas else dah.daho_total_horas end) end as total_horas_dictar,
+                case when da.tdis_id=7 then round(tdis_num_semanas/paca_semanas_periodo) else ( case  when dah.daho_total_horas is null then tdis_num_semanas else dah.daho_total_horas end) end as promedio
+                from db_academico.distributivo_academico da 
+                inner join db_academico.distributivo_cabecera dc on da.dcab_id=dc.dcab_id     
+                inner join db_academico.profesor profesor on da.pro_id = profesor.pro_id 
+                inner join db_asgard.persona persona on profesor.per_id = persona.per_id 
+                INNER JOIN db_academico.periodo_academico pc on da.paca_id  = pc.paca_id and  pc.paca_activo='A'
+                INNER JOIN db_academico.tipo_distributivo td on td.tdis_id  = da.tdis_id
+                INNER JOIN db_academico.dedicacion_docente  dd on dd.ddoc_id  = profesor.ddoc_id
+                LEFT JOIN db_academico.distributivo_academico_horario dah on dah.daho_id  = da.daho_id    
+                where  da.daca_estado='1' and daca_estado_logico='1' and dc.dcab_estado_revision=2";
+        
+        
+        $comando = $con_academico->createCommand($sql);
+        //$comando->bindParam(":eaca_id", $eaca_id, \PDO::PARAM_INT);
+        //$comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        if (isset($arrFiltro) && count($arrFiltro) > 0) {
+           
+            if ($arrFiltro['periodo'] != "" && $arrFiltro['periodo'] > 0) {
+                $periodo = $arrFiltro["periodo"];
+                $comando->bindParam(":paca_id", $periodo, \PDO::PARAM_INT);
+            }
+
+            if ($arrFiltro['dedicacion'] != "" && $arrFiltro['dedicacion'] > 0) {
+                $dedicacion = $arrFiltro["dedicacion"];
+                $comando->bindParam(":uaca_id", $dedicacion, \PDO::PARAM_INT);
+            } 
+            
+            
+        }
+        $res = $comando->queryAll();
+
+        \app\models\Utilities::putMessageLogFile('getListadoDistributivoexcel: '.$comando->getRawSql());
+        $dataProvider = new ArrayDataProvider([
+            'key' => 'Id',
+            'allModels' => $res,
+            'pagination' => [
+                'pageSize' => Yii::$app->params["pageSize"],
+            ],
+            'sort' => [
+                'attributes' => ['docente', 'no_cedula', "titulo_tercel_nivel", "titulo_cuarto_nivel", "correo", "tiempo_dedicacion", "desempeno", 'materia', 'total_horas_dictar'],
+            ],
+        ]);
+
+        if ($onlyData) {
+            return $res;
+        } else {
+            return $dataProvider;
+        }
     }
 
     public function getListadoDistributivoMateriaProfresor($params = null, $onlyData = false, $tipo = 1) {

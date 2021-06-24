@@ -132,6 +132,25 @@ function buscarDatacartera() {
     window.location.href = $('#txth_base').val() + "/reportes/expexcelreportcartera?search=" + search + "&f_inif=" + f_inif + "&f_finf=" + f_finf + '&f_iniv=' + f_iniv + "&f_finv=" + f_finv + "&estadopago=" + estadopago;
 }
 
+function exportExceldistributivo() {
+    var periodo = $('#distributivoacademicosearch-paca_id').val();
+    var tipo_asignacion =  $('#distributivoacademicosearch-tdis_id').val();
+    var modalidad =  $('#distributivoacademicosearch-mod_id').val();
+    window.location.href = $('#txth_base').val() + "/reportes/expexceldistributivo?periodo=" + periodo + "&tipo_asignacion=" + tipo_asignacion + "&modalidad=" + modalidad;
+}
+function exportExcelmateriasnoasignadas() {
+    var modalidad =  $('#distributivoacademicosearch-mod_id').val();
+    window.location.href = $('#txth_base').val() + "/reportes/expexcelmateriasnoasignadas?modalidad=" + modalidad;
+}
+function exportExcelmatrizdistributivo() {
+    var periodo = $('#distributivoacademicosearch-paca_id').val();
+    var dedicacion =  $('#distributivoacademicosearch-uaca_id').val();
+    window.location.href = $('#txth_base').val() + "/reportes/expexcelmatrizdistributivo?periodo=" + periodo + "&dedicacion=" + dedicacion;
+}
+function exportExcelmateriasparalelo() {
+    var periodo = $('#distributivoacademicosearch-paca_id').val();
+    window.location.href = $('#txth_base').val() + "/reportes/expexcelmateriasparalelo?periodo=" + periodo;
+}
 function exportExcelmatriculados() {
     var periodo = $('#planificacionsearch-pla_id').val();
     var modalidad =  $('#planificacionsearch-mod_id').val();
@@ -158,6 +177,11 @@ function exportExcelinscritosreporte() {
 function exportExcelpromedios() {
     var estudiante = $('#estudiantecarreraprogramasearch-est_id').val();
     window.location.href = $('#txth_base').val() + "/reportes/expexcelpromedios?estudiante=" + estudiante;
+}
+function exportExceldistributivoposgrado() {
+    var tipo_asignacion =  $('#distributivoacademicosearch-tdis_id').val();
+    var modalidad =  $('#distributivoacademicosearch-mod_id').val();
+    window.location.href = $('#txth_base').val() + "/reportes/expexceldistributivoposgrado?&tipo_asignacion=" + tipo_asignacion + "&modalidad=" + modalidad;
 }
 
 

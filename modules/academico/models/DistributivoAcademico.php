@@ -159,8 +159,8 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
     public function buscarEstudiantesMatriculados($id, $num_paralelo) {
         $con_academico = \Yii::$app->db_academico;
         $con_db = \Yii::$app->db;
-        $sql = " select e.est_id as est_id, daes_id
-                 from db_academico.registro_online as ron
+        $sql = " SELECT e.est_id as est_id, daes_id
+                   FROM db_academico.registro_online as ron
 		inner join db_academico.registro_online_item as roi on roi.ron_id=ron.ron_id and roi_estado='1'
 		inner join db_asgard.persona as p on p.per_id = ron.per_id
                 inner join db_academico.registro_pago_matricula as pm on ron.per_id=pm.per_id 
@@ -172,10 +172,11 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
                  where dae.est_id is null and mad.asi_id=".$id;
         
         
-         $comando = $con_academico->createCommand($sql);
-          $res = $comando->queryAll();
-          return $res;
-    }
+        $comando = $con_academico->createCommand($sql);
+        $res = $comando->queryAll();
+        \app\models\Utilities::putMessageLogFile($comando->getRawSql());
+        return $res;
+    }//function buscarEstudiantesMatriculados
 
     public function buscarEstudiantesAsignados($id, $num_paralelo) {
         $con_academico = \Yii::$app->db_academico;
@@ -254,15 +255,15 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
 
     public function getListadoDistributivoGrado($search = NULL, $modalidad = NULL, $asignatura = NULL, $jornada = NULL, $unidadAcademico = NULL, $periodoAcademico = NULL, $onlyData = false) {
         $con_academico = \Yii::$app->db_academico;
-        $con_db = \Yii::$app->db;
-        $search_cond = "%" . $search . "%";
-        $estado = "1";
-        $str_search = "";
-        $str_unidad = "";
-        $str_periodo = "";
+        $con_db        = \Yii::$app->db;
+        $search_cond   = "%" . $search . "%";
+        $estado        = "1";
+        $str_search    = "";
+        $str_unidad    = "";
+        $str_periodo   = "";
         $str_modalidad = "";
-        $str_jornada = "";
-// array("0" => "Todos", "1" => "(M) Matutino", "2" => "(N) Nocturno", "3" => "(S) Semipresencial", "4" => "(D) Distancia")
+        $str_jornada   = "";
+        // array("0" => "Todos", "1" => "(M) Matutino", "2" => "(N) Nocturno", "3" => "(S) Semipresencial", "4" => "(D) Distancia")
 
         if (isset($search) && $search != "") {
             $str_search = "(pe.per_pri_nombre like :search OR ";
@@ -338,7 +339,9 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
                     dcab_estado_revision=2";
 
         $comando = $con_academico->createCommand($sql);
+
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+
         if (isset($search) && $search != "") {
             $comando->bindParam(":search", $search_cond, \PDO::PARAM_STR);
         }
@@ -374,7 +377,7 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
         ]);
 
         return $dataProvider;
-    }
+    }//function getListadoDistributivoGrado
 
      public function getListadoDistributivoPosgrado($search = NULL, $modalidad = NULL, $asignatura = NULL, $jornada = NULL, $unidadAcademico = NULL, $periodoAcademico = NULL, $onlyData = false) {
         $con_academico = \Yii::$app->db_academico;

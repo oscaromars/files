@@ -311,7 +311,8 @@ create table if not exists `modulo_estudio` (
 --
 create table if not exists `semestre_academico` (
   `saca_id` bigint(20) not null auto_increment primary key, 
-  `saca_nombre` varchar(300) not null,   
+  `saca_nombre` varchar(300) not null, 
+  `saca_intensivo` varchar(300) not null,   
   `saca_descripcion` varchar(300) not null,
   `saca_anio` integer(4) not null,
   `saca_fecha_registro` timestamp null default null, 

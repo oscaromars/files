@@ -1339,7 +1339,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
      * @param $ron_id
      * @return $resultData
      */
-    public function getPlanificationFromRegistroOnline($ron_id, $rama_id)
+    public function getPlanificationFromRegistroOnline($ron_id, $rama_id=0)
     {
         $rama_id = $rama_id?$rama_id:0;
         $con_academico = \Yii::$app->db_academico;
@@ -1633,30 +1633,19 @@ class Matriculacion extends \yii\db\ActiveRecord {
      * @return $resultData
      */
 
-    public function getNumeroDocumentoRegistroOnline( $ron_id, $per_id)
+    public function getNumeroDocumentoRegistroOnline($rama_id)
     {
         $con_academico = \Yii::$app->db_academico;
         $estado = 1;
-        /*$sql = " SELECT rama.rpm_id as rpm_id
+        $sql = "SELECT rama.rpm_id as rpm_id
                 FROM db_academico.registro_adicional_materias as rama 
-                  AND rama.ron_id = :ron_id 
-                  AND rama.per_id = :per_id 
+                  AND rama.rama_id = :rama_id 
                   AND rama.rama_estado = :estado
-                  AND rama.rama_estado_logico = :estado;"; */
-
-        $sql = " SELECT rpm_id as rpm_id
-                    FROM db_academico.registro_pago_matricula r
-                    WHERE r.per_id = :per_id  
-                      AND r.ron_id = :ron_id 
-                      AND r.rpm_estado = :estado
-                      AND r.rpm_estado_logico = :estado
-                    ORDER BY r.rpm_id DESC
-                    LIMIT 0,1;";
-
+                  AND rama.rama_estado_logico = :estado;";
 
         $comando = $con_academico->createCommand($sql);
-        $comando->bindParam(":ron_id", $ron_id, \PDO::PARAM_INT);
-        $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
+        $comando->bindParam(":rama_id", $rama_id, \PDO::PARAM_INT);
+        //$comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_INT);
         $resultData = $comando->queryOne();
 \app\models\Utilities::putMessageLogFile('getNumeroDocumentoRegistroOnline: '.$comando->getRawSql());

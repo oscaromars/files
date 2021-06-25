@@ -814,15 +814,6 @@ function reloadPage() {
     location.reload();
 }
 
-/**
-* Function gotoPage
-* @author  Galo Aguirre <analistadesarrollo06@uteg.edu.ec>
-* Esta funcion redirecciona la pagina web a lla ruta enviada.
-*/
-function gotoPage(ruta) {
-    window.location.href = ruta;
-}
-
 function generatePassword() {
     var ramdonPass = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!¡@#$&/()=?¿-+*^{}[]";
     var newpass = "";
@@ -1033,3 +1024,23 @@ function goHome() {
 }
 
 window.onload = showClockTime;
+
+/**
+* Function gotoPage
+* @author  Galo Aguirre <analistadesarrollo06@uteg.edu.ec>
+* Esta funcion redirecciona la pagina web a lla ruta enviada.
+*/
+function gotoPage(ruta) {
+    window.location.href = ruta;
+}
+
+/**
+* Function gotoBackPage
+* @author  Galo Aguirre <analistadesarrollo06@uteg.edu.ec>
+* Esta funcion redirecciona a la pantalla anterior.
+*/
+function gotoBackPage() {
+    history.go(-1);
+}
+
+

@@ -1998,7 +1998,7 @@ class MatriculacionController extends \app\components\CController {
 
         $data_student = $matriculacion_model->getDataStudenFromRegistroOnline($per_id, $ron['pes_id']);
 
-        // Colocar sólo aquellas materias seleccionadas
+        // Colocar sólo aquellas materias que se encuentran en la tabla de registro adicional materias
         $materias_data_arr = [];
 
         // Si se encuentran datos en registro_adicional_materias se debe realizar el cálculo sólo tomando en cuenta esas materias (que son pendientes de pago) y debe aparecer el botón Pagar
@@ -2030,22 +2030,6 @@ class MatriculacionController extends \app\components\CController {
         // \app\models\Utilities::putMessageLogFile("rama: " . print_r($rama, true));
         // \app\models\Utilities::putMessageLogFile("roi_IDs: " . print_r($roi_IDs, true));
         // \app\models\Utilities::putMessageLogFile("roi: " . print_r($roi, true));
-        // \app\models\Utilities::putMessageLogFile("materias_data_arr: " . print_r($materias_data_arr, true));
-
-        // Incluír los gastos administrativos
-        $gastos_administrativos = $ron['ron_valor_gastos_adm'];
-        if($gastos_administrativos > 0){
-            $valor_total += $gastos_administrativos;
-            // Llenar con campos vacíos las olumnas que no tengan datos para que no aparezcan como "(no definido)"
-            $materias_data_arr[] = [
-                                    "Subject" => "Gastos Administrativos", 
-                                    "Cost" => $gastos_administrativos,
-                                    "Code" => "",
-                                    "Block" => "",
-                                    "Hour" => "",
-                                    ];
-        }
-
         // \app\models\Utilities::putMessageLogFile("materias_data_arr: " . print_r($materias_data_arr, true));
 
         $persona = Persona::find()->where(['per_id' => $per_id])->asArray()->one();
@@ -2103,6 +2087,20 @@ class MatriculacionController extends \app\components\CController {
         }
         // \app\models\Utilities::putMessageLogFile($cuotas);
 
+        // Incluír los gastos administrativos
+        $gastos_administrativos = $ron['ron_valor_gastos_adm'];
+        if($gastos_administrativos > 0){
+            $valor_total += $gastos_administrativos;
+            // Llenar con campos vacíos las olumnas que no tengan datos para que no aparezcan como "(no definido)"
+            $materias_data_arr[] = [
+                                    "Subject" => "Gastos Administrativos", 
+                                    "Cost" => $gastos_administrativos,
+                                    "Code" => "",
+                                    "Block" => "",
+                                    "Hour" => "",
+                                    ];
+        }
+
         $valor_unitario = $valor_total / $cuotas;
         $porcentaje = $valor_unitario / $valor_total * 100;
 
@@ -2112,8 +2110,8 @@ class MatriculacionController extends \app\components\CController {
         // Si son dos cuotas
         if($cuotas == 2){ // Quiere decir que es semestre intensivo B1
             $fechas_vencimiento = FechasVencimientoPago::find()->where(['saca_id' => $data_student['saca_id'], 'fvpa_bloque' => "B1", 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();
-            // Va a retornar 3 cuotas, así que hay que quitar la útima
-            array_pop($fechas_vencimiento);
+            // Va a retornar 3 cuotas, así que hay que quitar la primera
+            array_shift($fechas_vencimiento);
         }
         // Si son 3 cuotas
         else if($cuotas == 3){ // Considerar sólo el bloque escogido
@@ -2121,8 +2119,8 @@ class MatriculacionController extends \app\components\CController {
         }
         else if($cuotas == 5){
             $fechas_vencimiento = FechasVencimientoPago::find()->where(['saca_id' => $data_student['saca_id'], 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();
-            // Va a retornar 6 cuotas, así que hay que quitar la útima
-            array_pop($fechas_vencimiento);
+            // Va a retornar 6 cuotas, así que hay que quitar la primera
+            array_shift($fechas_vencimiento);
         }
         else{ // Si son 6 cuotas, se deben tomar las fechas de los dos bloques
             $fechas_vencimiento = FechasVencimientoPago::find()->where(['saca_id' => $data_student['saca_id'], 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();

@@ -2396,7 +2396,7 @@ class RegistroController extends \app\components\CController {
                             \app\models\Utilities::putMessageLogFile('log 2...rama_id'.$rama_id);
                                 \app\models\Utilities::putMessageLogFile('controller N1...: '.$est_id['est_id'].'-'.$ron_id.'-'. $secuencial['secuencial']);
                             for($in = 1; $in <= $numcuotas; $in++){
-                                $fechaCuotaActual = $fechas_vencimiento[$in-1]['fvpa_fecha_vencimiento'];//$modelCargaCartera->getCuotaActual($in);
+                                $fechaCuotaActual = explode(" ",$fechas_vencimiento[$in-1]['fvpa_fecha_vencimiento'])[0];//$modelCargaCartera->getCuotaActual($in);
                                 $registros_cuotas = $modelCargaCartera->registrarCargaCartera($est_id['est_id'],$cedula['per_cedula'], $secuencial['secuencial'], $forma_pago,$fechaCuotaActual['fecha'],$in, $numcuotas, $valor_cuota, $total, $usuario);
                                 if($in==1){
                                     $registro_online_cuota = $modelCargaCartera->registroOnlineCuota($ron_id, $rpm_id,$in,$fechaCuotaActual['fecha'],$porc_menor,$total);
@@ -2404,6 +2404,8 @@ class RegistroController extends \app\components\CController {
                                     $registro_online_cuota = $modelCargaCartera->registroOnlineCuota($ron_id, $rpm_id,$in,$fechaCuotaActual['fecha'],$porc_mayor,$total);
                                 }
                             }
+                            //adios Señor Meseek!
+                            $updatePendiete = $modelCargaCartera->updatePendiente($ron_id);
                                 $message = array(
                                     "wtmessage" => Yii::t("notificaciones", "Su información ha sido guardada con éxito."),
                                     "title" => Yii::t('jslang', 'Success'),

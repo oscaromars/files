@@ -2067,14 +2067,16 @@ class MatriculacionController extends \app\components\CController {
         }
         else{ // No intensivo
             $tempBlock = []; // Colocar todos los bloques en un arreglo aparte
-            for ($x=0; $x < count($materias_data_arr) - 1; $x++) { 
-                $tempBlock[] = $materias_data_arr[$x]['Block'];
+            foreach ($materias_data_arr as $key => $value) {
+                $tempBlock[] = $value['Block'];
             }
 
             // \app\models\Utilities::putMessageLogFile("tempBlock: " . print_r($tempBlock, true));
 
             $bloque = $tempBlock[0]; // Tomar el primer bloque
             $cuotas = 3; // Empezar con 3 cuotas
+
+            // \app\models\Utilities::putMessageLogFile("bloque: " . $bloque);
 
             foreach ($tempBlock as $key => $value) { // recorrer la lista de bloques
                 // \app\models\Utilities::putMessageLogFile("IF: " . ($value != $bloque));

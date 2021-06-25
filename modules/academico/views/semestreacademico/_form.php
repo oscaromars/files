@@ -61,10 +61,10 @@ if ($model->saca_id == null) {//Ingresa un nuevo
             ?>
         </div>
         <div class="col-sm-8">
-            <label for="frm_semestre_intensivo" class="col-sm-3 control-label"><?= academico::t("semestreacademico", "Intensivo") ?></label>
+            <label for="frm_semestre_intensivo" class="col-sm-3 control-label"><?= academico::t("semestreacademico", "Semestre Intensivo") ?></label>
             <div class="col-sm-1">
                 <div class="input-group">
-                    <input type="hidden" class="form-control PBvalidation" id="frm_semestre_intensivo" value="0" data-type="number" placeholder="<?= academico::t("semestreacademico", "Intensivo") ?>">
+                    <input type="hidden" class="form-control PBvalidation" id="frm_semestre_intensivo" value="0" data-type="number" placeholder="<?= academico::t("semestreacademico", "Semestre Intensivo") ?>">
                     <span id="spanSemIntensivo" class="input-group-addon input-group-addon-border-left input-group-addon-pointer"><i id="iconSemIntensivo" class="glyphicon glyphicon-unchecked"></i></span>
                 </div>
             </div>

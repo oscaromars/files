@@ -94,11 +94,6 @@ Yii::$app->session->setFlash('success', 'Datos guardados correctamente');
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
             try {
-                \app\models\Utilities::putMessageLogFile('nombre semestre...: ' . $data["nombre"]);
-                \app\models\Utilities::putMessageLogFile('intensivo semestre...: ' . $data["intensivo"]);
-                \app\models\Utilities::putMessageLogFile('descripción semestre...: ' . $data["descripcion"]);
-                \app\models\Utilities::putMessageLogFile('año semestre...: ' . $data["ano"]);
-                \app\models\Utilities::putMessageLogFile('estado semestre...: ' . $data["estado"]);
                 $nombre = $data["nombre"];
                 $intensivo = $data["intensivo"];
                 $descripcion = $data["descripcion"];
@@ -128,6 +123,42 @@ Yii::$app->session->setFlash('success', 'Datos guardados correctamente');
             } catch (Exception $ex) {
                 $message = array(
                     "wtmessage" => Yii::t('notificaciones', 'Your information has not been saved. Please try again.'),
+                    "title" => Yii::t('jslang', 'Error'),
+                );
+                return Utilities::ajaxResponse('NOOK', 'alert', Yii::t('jslang', 'Error'), 'true', $message);
+            }
+        }
+    }
+    public function actionUpdatesemestre() {
+        if (Yii::$app->request->isAjax) {
+            $data = Yii::$app->request->post();
+            try {
+                $id = $data["id"];
+                $nombre = $data["nombre"];
+                $intensivo = $data["intensivo"];
+                $descripcion = $data["descripcion"];
+                $ano = $data["ano"];
+                $estado = $data["estado"];
+                
+                $semestre_model = SemestreAcademico::findOne($id);
+                $semestre_model->saca_nombre = $nombre;
+                $semestre_model->saca_intensivo = $intensivo;
+                $semestre_model->saca_descripcion = $descripcion;
+                $semestre_model->saca_anio = $ano;
+                $semestre_model->saca_estado = $estado;
+                
+                $message = array(
+                    "wtmessage" => Yii::t("notificaciones", "Se ha actualizado el Semestre Académico."),
+                    "title" => Yii::t('jslang', 'Success'),
+                );
+                if ($semestre_model->save()) {
+                    return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+                } else {
+                    throw new Exception('Error SubModulo no ha sido actializado.');
+                }
+            } catch (Exception $ex) {
+                $message = array(
+                    "wtmessage" => Yii::t('notificaciones', 'Error al Actualizar. Please try again.'),
                     "title" => Yii::t('jslang', 'Error'),
                 );
                 return Utilities::ajaxResponse('NOOK', 'alert', Yii::t('jslang', 'Error'), 'true', $message);

@@ -22,7 +22,7 @@ $(document).ready(function() {
             txt_tel_fac+'-'+
             txt_correo_fac);*/
         var terminos = ($('#cmb_req').is(':checked')) ? 1 : 0;
-        alert(terminos);
+        //alert(terminos);
         if(terminos != 0){
             /*if (txt_dpre_ssn_id_fact != 0 ||
                 txt_nombres_fac != 0 ||
@@ -723,7 +723,6 @@ function confirmarDevolucion(id) {
     /************************************************************/
 
 function guardarCargarCartera(){
-    alert("knhvkbk");
     var link = $('#txth_base').val() + "/academico/registro/modificarcargacartera";
     showLoadingPopup();
     var arrParams = new Object();
@@ -736,11 +735,13 @@ function guardarCargarCartera(){
     arrParams.ron_id = $('#txt_ron_id').val();
     arrParams.per_id = $('#txt_per_id').val();
     arrParams.pla_id = $('#txt_pla_id').val();
-    //var terminos = ($('#cmb_req').is(':checked')) ? 1 : 0;
+    arrParams.bloque = $('#txt_bloque').val();
+    arrParams.saca_id = $('#txt_saca_id').val();
+    var terminos = ($('#cmb_req').is(':checked')) ? 1 : 0;
     // $per_id,  $forma_pago,$in, $numcuotas,$valor_cuota, $total, $usu_id);
     //alert(arrParams.pla_id + '-' + arrParams.per_id);
-    $redirect = $('#txth_base').val() + "/academico/registro/new/"+arrParams.per_id+'?rama_id='+arrParams.rama_id ;
-    $redirect = $('#txth_base').val() + "/academico/registro/index";
+    redirect = $('#txth_base').val() + "/academico/registro/new/"+arrParams.per_id+'?rama_id='+arrParams.rama_id ;
+    redirect = $('#txth_base').val() + "/academico/registro/index";
     //alert(arrParams.tpago+'-'+arrParams.total+'-'+arrParams.interes +'-'+arrParams.financiamiento+'-'+arrParams.numcuotas+'-'+arrParams.rama_id+'-'+arrParams.per_id +'-'+ $redirect);
     if(arrParams.numcuotas != 0 || terminos==0){
         //if(terminos != 0){
@@ -774,6 +775,7 @@ function enviarPdf(){
     var arrParams = new Object();
     arrParams.per_id = $('#txt_per_id').val();
     arrParams.cuotas = $('#txt_cuotas').val();
+    arrParams.rama = $('#txt_rama').val();
     //alert(arrParams.rama_id);
     try{
         requestHttpAjax(link, arrParams, function(response) {

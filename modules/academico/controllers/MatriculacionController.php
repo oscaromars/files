@@ -1991,12 +1991,7 @@ class MatriculacionController extends \app\components\CController {
         $result_process = $matriculacion_model->checkToday($today);
         $pla_id = $result_process[0]['pla_id'];
         $resultIdPlanificacionEstudiante = $matriculacion_model->getIdPlanificacionEstudiante($per_id, $pla_id);
-        $pla_id = $resultIdPlanificacionEstudiante[0]['pla_id'];
-        // Por cosas de cóóóóóóóóóóóóódigos se necesita hacer todo eso para agarrar el verdadero pla_id
-
-        $dataPlanificacion = $matriculacion_model->getAllDataPlanificacionEstudiante($per_id, $pla_id);
-
-        // \app\models\Utilities::putMessageLogFile("dataPlanificacion: " . $dataPlanificacion);
+        $pla_id = $resultIdPlanificacionEstudiante[0]['pla_id']; // Por cosas de códigos se necesita hacer todo eso para agarrar el verdadero pla_id
 
         $roi = RegistroOnlineItem::find()->where(['ron_id' => $ron['ron_id'], 'roi_estado' => 1, 'roi_estado_logico' => 1])->asArray()->all();
         $valor_total = 0;
@@ -2005,28 +2000,25 @@ class MatriculacionController extends \app\components\CController {
 
         // Colocar sólo aquellas materias seleccionadas
         $materias_data_arr = [];
-        $materias_roi = [];
 
         // Si se encuentran datos en registro_adicional_materias se debe realizar el cálculo sólo tomando en cuenta esas materias (que son pendientes de pago) y debe aparecer el botón Pagar
         $rama = RegistroAdicionalMaterias::find()->where(['ron_id' => $ron['ron_id'], 'per_id' => $per_id, 'pla_id' => $pla_id, 'paca_id' => $data_student['paca_id'], 'rpm_id' => NULL, 'rama_estado' => 1, 'rama_estado_logico' => 1])->asArray()->one();
 
-        // Las siguientes acciones se realizan sólo si hay registros en la tabla de registro_adicional_materias, pues todas usan del arreglo materias_roi
+        // Las siguientes acciones se realizan sólo si hay registros en la tabla de registro_adicional_materias, pues todas usan del arreglo materias_data_arr
         if(isset($rama)){
             $roi_IDs = [$rama['roi_id_1'], $rama['roi_id_2'], $rama['roi_id_3'], $rama['roi_id_4'], $rama['roi_id_5'], $rama['roi_id_6']];
 
             foreach ($roi as $key => $value) {
                 // Si hay registro en RegistroAdicionalMaterias
                 if(in_array($value['roi_id'], $roi_IDs)){
-                    $materias_roi[] = $value['roi_materia_nombre'];
-                }
-            }
-
-            for ($i = 0; $i < count($dataPlanificacion); $i++) {
-                if(in_array($dataPlanificacion[$i]['Subject'], $materias_roi)){
-                    $valor = number_format($dataPlanificacion[$i]['Cost'] * $dataPlanificacion[$i]['Credit'], 2);
-                    $dataPlanificacion[$i]['Cost'] = $valor;
-                    $materias_data_arr[] = $dataPlanificacion[$i];
-                    $valor_total += $dataPlanificacion[$i]['Cost'];
+                    $materias_data_arr[] = [
+                        "Subject" => $value['roi_materia_nombre'],
+                        "Cost" => $value['roi_costo'],
+                        "Code" => $value['roi_materia_cod'],
+                        "Block" => $value['roi_bloque'],
+                        "Hour" => $value['roi_hora']
+                    ];
+                    $valor_total += $value['roi_costo'];
                 }
             }
         }
@@ -2038,8 +2030,7 @@ class MatriculacionController extends \app\components\CController {
         // \app\models\Utilities::putMessageLogFile("rama: " . print_r($rama, true));
         // \app\models\Utilities::putMessageLogFile("roi_IDs: " . print_r($roi_IDs, true));
         // \app\models\Utilities::putMessageLogFile("roi: " . print_r($roi, true));
-        // \app\models\Utilities::putMessageLogFile("materias_roi: " . print_r($materias_roi, true));
-        // \app\models\Utilities::putMessageLogFile("materias_roi: " . print_r($materias_roi, true));
+        // \app\models\Utilities::putMessageLogFile("materias_data_arr: " . print_r($materias_data_arr, true));
 
         // Incluír los gastos administrativos
         $gastos_administrativos = $ron['ron_valor_gastos_adm'];
@@ -2055,7 +2046,7 @@ class MatriculacionController extends \app\components\CController {
                                     ];
         }
 
-        // \app\models\Utilities::putMessageLogFile("materias_roi: " . print_r($materias_roi, true));
+        // \app\models\Utilities::putMessageLogFile("materias_data_arr: " . print_r($materias_data_arr, true));
 
         $persona = Persona::find()->where(['per_id' => $per_id])->asArray()->one();
 
@@ -2109,8 +2100,6 @@ class MatriculacionController extends \app\components\CController {
                 }
                 // Si nunca entra al condicional, quiere decir que todas las materias son del mismo bloque
             }
-
-            // \app\models\Utilities::putMessageLogFile("cuotas: " . $cuotas);
         }
         // \app\models\Utilities::putMessageLogFile($cuotas);
 
@@ -2120,9 +2109,20 @@ class MatriculacionController extends \app\components\CController {
         $porc_mayor = round($porcentaje, 2);
         $por_menor = 100 - ($porc_mayor * ($cuotas - 1));
 
+        // Si son dos cuotas
+        if($cuotas == 2){ // Quiere decir que es semestre intensivo B1
+            $fechas_vencimiento = FechasVencimientoPago::find()->where(['saca_id' => $data_student['saca_id'], 'fvpa_bloque' => "B1", 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();
+            // Va a retornar 3 cuotas, así que hay que quitar la útima
+            array_pop($fechas_vencimiento);
+        }
         // Si son 3 cuotas
-        if($cuotas == 3){ // Considerar sólo el bloque escogido
+        else if($cuotas == 3){ // Considerar sólo el bloque escogido
             $fechas_vencimiento = FechasVencimientoPago::find()->where(['saca_id' => $data_student['saca_id'], 'fvpa_bloque' => $bloque, 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();
+        }
+        else if($cuotas == 5){
+            $fechas_vencimiento = FechasVencimientoPago::find()->where(['saca_id' => $data_student['saca_id'], 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();
+            // Va a retornar 6 cuotas, así que hay que quitar la útima
+            array_pop($fechas_vencimiento);
         }
         else{ // Si son 6 cuotas, se deben tomar las fechas de los dos bloques
             $fechas_vencimiento = FechasVencimientoPago::find()->where(['saca_id' => $data_student['saca_id'], 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();

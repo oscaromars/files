@@ -2150,7 +2150,6 @@ class MatriculacionController extends \app\components\CController {
             }
         }
 
-        print_r($materias_data_arr);die();
         $matDataProvider = new ArrayDataProvider([
             'key' => '',
             'allModels' => $materias_data_arr,

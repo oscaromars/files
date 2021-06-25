@@ -473,53 +473,6 @@ class Matriculacion extends \yii\db\ActiveRecord {
     }
 
 
-    public function insertarActualizacionGastos($ron_id,$gastos_administrativos_valor) {        
-        $con = \Yii::$app->db_academico;
-        $ron_fecha_modificacion = date(Yii::$app->params["dateTimeByDefault"]);
-        $estado = 1;
-        $trans = $con->getTransaction(); // se obtiene la transacción actual
-        if ($trans !== null) {
-            $trans = null; // si existe la transacción entonces no se crea una
-        } else {
-            $trans = $con->beginTransaction(); // si no existe la transacción entonces se crea una
-        }
-
-        try {
-            $comando = $con->createCommand
-                    ("UPDATE " . $con->dbname . ".registro_online               
-                      SET ron_valor_gastos_adm = :gastos_administrativos_valor,
-                        ron_fecha_modificacion = :ron_fecha_modificacion
-                        
-                      WHERE 
-                        ron_id = :ron_id
-                        AND ron_estado = :estado 
-                        AND ron_estado_logico = :estado");
-
-            if (isset($gastos_administrativos_valor)) {
-                $comando->bindParam(':gastos_administrativos_valor', $gastos_administrativos_valor, \PDO::PARAM_STR);
-            }
-            if (isset($ron_id)) {
-                $comando->bindParam(':ron_id', $ron_id, \PDO::PARAM_INT);
-            }
-            if (!empty((isset($ron_fecha_modificacion)))) {
-                $comando->bindParam(':ron_fecha_modificacion', $ron_fecha_modificacion, \PDO::PARAM_STR);
-            }
-            
-            $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
-            $result = $comando->execute();
-            if ($trans !== null)
-                $trans->commit();
-            return TRUE;
-            \app\models\Utilities::putMessageLogFile('insertarActualizacionGastos: '.$comando->getRawSql());
-        } catch (Exception $ex) {
-            if ($trans !== null)
-                $trans->rollback();
-            return FALSE;
-        }
-    }
-
-
-
     /*
      * Function to get data from planificacion_estudiante
      * @author -
@@ -1342,7 +1295,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
      * @param $ron_id
      * @return $resultData
      */
-    public function getPlanificationFromRegistroOnline($ron_id)
+    public function getPlanificationFromRegistroOnline($ron_id,$rama_id)
     {
          $rama_id = $rama_id?$rama_id:0;
         $con_academico = \Yii::$app->db_academico;
@@ -1636,7 +1589,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
      * @return $resultData
      */
 
-    public function getNumeroDocumentoRegistroOnline( $ron_id, $per_id)
+    public function getNumeroDocumentoRegistroOnline( $rama_id)
     {
         $con_academico = \Yii::$app->db_academico;
         $estado = 1;
@@ -1647,19 +1600,25 @@ class Matriculacion extends \yii\db\ActiveRecord {
                   AND rama.rama_estado = :estado
                   AND rama.rama_estado_logico = :estado;"; */
 
-        $sql = " SELECT rpm_id as rpm_id
+        /*$sql = " SELECT rpm_id as rpm_id
                     FROM db_academico.registro_pago_matricula r
                     WHERE r.per_id = :per_id  
                       AND r.ron_id = :ron_id 
                       AND r.rpm_estado = :estado
                       AND r.rpm_estado_logico = :estado
                     ORDER BY r.rpm_id DESC
-                    LIMIT 0,1;";
+                    LIMIT 0,1;";*/
+
+        $sql = "SELECT rpm_id as rpm_id
+        FROM db_academico.registro_adicional_materias r
+        WHERE r.rama_id = :rama_id
+          AND r.rpm_estado = :estado
+          AND r.rpm_estado_logico = :estado";            
 
 
         $comando = $con_academico->createCommand($sql);
-        $comando->bindParam(":ron_id", $ron_id, \PDO::PARAM_INT);
-        $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
+        $comando->bindParam(":rama_id", $rama_id, \PDO::PARAM_INT);
+        //$comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_INT);
         $resultData = $comando->queryOne();
 \app\models\Utilities::putMessageLogFile('getNumeroDocumentoRegistroOnline: '.$comando->getRawSql());

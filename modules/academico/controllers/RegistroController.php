@@ -2433,7 +2433,7 @@ class RegistroController extends \app\components\CController {
             /*Detalles de pagos */
             // nuevo
             //$resp_rpm_id = $matriculacion_model->getNumeroDocumentoRegistroOnline($rama_id, $ron_id, $per_id);
-            $resp_rpm_id = $matriculacion_model->getNumeroDocumentoRegistroOnline($ron_id, $per_id); //registro_pago_matricula -// AQUI
+            $resp_rpm_id = $matriculacion_model->getNumeroDocumentoRegistroOnline($rama_id); //registro_pago_matricula -// AQUI
             $rpm_id = $resp_rpm_id['rpm_id'];
 
             $registro_pago_matricula = new RegistroPagoMatricula();

@@ -2181,6 +2181,8 @@ class MatriculacionController extends \app\components\CController {
             "pagado" => $pagado,
             "rama" => $rama,
             "cuotas" => $cuotas,
+            "bloque" => $bloque,
+            "saca_id" => $data_student['saca_id'],
         ]);
     }
 

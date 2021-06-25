@@ -1980,8 +1980,8 @@ class MatriculacionController extends \app\components\CController {
 
     public function actionRegistrodetalle(){
         $per_id = Yii::$app->session->get("PB_perid");
-        $usu_id = Yii::$app->session->get("PB_iduser");
-        $fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
+        // $usu_id = Yii::$app->session->get("PB_iduser");
+        // $fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
         
         $matriculacion_model = new Matriculacion();
 
@@ -2088,7 +2088,7 @@ class MatriculacionController extends \app\components\CController {
         // \app\models\Utilities::putMessageLogFile($cuotas);
 
         // Incluír los gastos administrativos
-        $gastos_administrativos = $ron['ron_valor_gastos_adm'];
+        $gastos_administrativos = $ron['ron_valor_gastos_pendientes'];
         if($gastos_administrativos > 0){
             $valor_total += $gastos_administrativos;
             // Llenar con campos vacíos las olumnas que no tengan datos para que no aparezcan como "(no definido)"
@@ -2100,6 +2100,8 @@ class MatriculacionController extends \app\components\CController {
                                     "Hour" => "",
                                     ];
         }
+
+        // \app\models\Utilities::putMessageLogFile("materias_data_arr: " . print_r($materias_data_arr, true));
 
         $valor_unitario = $valor_total / $cuotas;
         $porcentaje = $valor_unitario / $valor_total * 100;

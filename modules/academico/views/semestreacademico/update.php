@@ -58,10 +58,10 @@ $this->params['breadcrumbs'][] = 'Update';
             ?>
         </div>
         <div class="col-sm-8">
-            <label for="frm_semestre_intensivo" class="col-sm-3 control-label"><?= academico::t("semestreacademico", "Intensivo") ?></label>
+            <label for="frm_semestre_intensivo" class="col-sm-3 control-label"><?= academico::t("semestreacademico", "Semestre Intensivo") ?></label>
             <div class="col-sm-1">
                 <div class="input-group">
-                    <input type="hidden" class="form-control PBvalidation" id="frm_semestre_intensivo" value="<?= $model->saca_intensivo ?>" data-type="number" placeholder="<?= academico::t("semestreacademico", "Intensivo") ?>">
+                    <input type="hidden" class="form-control PBvalidation" id="frm_semestre_intensivo" value="<?= $model->saca_intensivo ?>" data-type="number" placeholder="<?= academico::t("semestreacademico", " Semestre Intensivo") ?>">
                     <span id="spanSemIntensivo" class="input-group-addon input-group-addon-border-left input-group-addon-pointer"><i id="iconSemIntensivo" class="<?= ($model->saca_intensivo == 1)?"glyphicon glyphicon-check":"glyphicon glyphicon-unchecked" ?>"></i></span>
                 </div>
             </div>

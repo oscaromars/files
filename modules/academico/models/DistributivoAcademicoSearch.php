@@ -772,10 +772,10 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
 
         if (isset($arrFiltro) && count($arrFiltro) > 0) { 
             if ($arrFiltro['periodo'] != "" && $arrFiltro['periodo'] > 0) {
-                $str_search .= "daca.paca_id = :paca_id AND ";
+                $str_search .= "da.paca_id = :paca_id AND ";
             }
             if ($arrFiltro['dedicacion'] != "" && $arrFiltro['dedicacion'] > 0) {
-                $str_search .= "daca.uaca_id = :uaca_id AND ";
+                $str_search .= "da.uaca_id = :uaca_id AND ";
             }
                      
         }

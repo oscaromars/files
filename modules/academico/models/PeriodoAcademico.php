@@ -337,6 +337,7 @@ class PeriodoAcademico extends \yii\db\ActiveRecord
                             ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca_anio),'') AS nombre,
                             baca.baca_nombre,
                             saca.saca_nombre,
+                            saca.saca_intensivo,
                             paca.paca_activo as estado,
                             paca.paca_fecha_inicio as fecha_inicio,
                             paca.paca_fecha_fin as fecha_fin
@@ -359,6 +360,7 @@ class PeriodoAcademico extends \yii\db\ActiveRecord
                             ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca_anio),'') AS nombre,
                             baca.baca_nombre,
                             saca.saca_nombre,
+                            saca.saca_intensivo,
                             paca.paca_activo as estado,
                             paca.paca_fecha_inicio as fecha_inicio,
                             paca.paca_fecha_fin as fecha_fin

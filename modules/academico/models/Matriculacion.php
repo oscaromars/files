@@ -1121,6 +1121,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
             SELECT distinct 
             ron.ron_id, 
             pla.paca_id,
+            pla.saca_id,
             pla.pla_periodo_academico, 
             pes.pes_nombres, 
             pes.pes_dni, 

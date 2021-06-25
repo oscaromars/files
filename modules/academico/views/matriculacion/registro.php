@@ -276,18 +276,17 @@ $total=$costo['costo']+$gastoAdm+$costo['asociacion'];
         </table>
          
          
-    <a href="javascript:" class="btn btn-success pull-right" onclick="registerSubject()" style="margin: 0px 5px;"><?= Academico::t("matriculacion", "Register Subjects") ?></a>
-            <?php if ($howmuchSubject > '1'): ?>
+    <a id="register_subject_btn" href="javascript:" class="btn btn-success pull-right" onclick="registerSubject()" style="margin: 0px 5px; display: none;"><?= Academico::t("matriculacion", "Register Subjects") ?></a>
+
+    <?php if ($howmuchSubject > '1' && !$pagado) : ?>
         <a href="<?= Url::to(['/academico/matriculacion/registrodetalle']) ?>" class="btn btn-primary pull-right" style="margin: 0px 5px;"><?= Academico::t("matriculacion", "Continuar") ?></a>
-        <?php endif; ?>
-            <?php if($cancelStatus == '0'): ?>
-            <?php endif; ?>
-    
+    <?php endif; ?>
 
 
 
 
-
+    <?php if($cancelStatus == '0'): ?>
+    <?php endif; ?>
 
     <?php if(isset($hasSubject) && $hasSubject == true && $isadd ==Null): ?>
     <?php endif; ?>

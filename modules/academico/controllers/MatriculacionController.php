@@ -1690,11 +1690,9 @@ class MatriculacionController extends \app\components\CController {
                     $min_cancel = $this->limitCancel[$unidadAcade]['min'];
 
                     $estudiante_model = new Estudiante();
-                    $periodo_model    = new PeriodoAcademico();
                     $est_array        = $estudiante_model-> getEstudiantexperid($per_id);
-                    $paca_array       = $periodo_model-> getPeriodoAcademicoActual();
                     $est_id           = $est_array['est_id'];
-                    $paca_id          = $paca_array[0]['id'];
+                    $paca_id          = $data_student['paca_id'];
                     $scholarship      = $estudiante_model->isScholarship($est_id,$paca_id);
                     $isscholar        = $scholarship['bec_id'];     
 
@@ -1758,7 +1756,11 @@ class MatriculacionController extends \app\components\CController {
                         $cobMat=0;
                         $dataMat['VARIOS']=$gastoAdm;
                         $dataMat['MAT-GRAD']=$cobMat;
-                    } 
+                    }
+
+                    // Si tiene este objeto, quiere decir que no ha realizado el último pago
+                    $rama = RegistroAdicionalMaterias::find()->where(['ron_id' => $ron_id, 'per_id' => $per_id, 'pla_id' => $pla_id, 'paca_id' => $paca_id, 'rpm_id' => NULL, 'rama_estado' => 1, 'rama_estado_logico' => 1])->asArray()->one();
+                    $pagado = !isset($rama)
                      
                     return $this->render('registro', [
                                 "pes_id" => $pes_id,
@@ -1780,6 +1782,7 @@ class MatriculacionController extends \app\components\CController {
                                 "costo" => $costo, 
                                 "registro_add"=>$registro_add,
                                 "gastoAdm" => $gastoAdm,
+                                "pagado" => $pagado
                                 
                                 
                     ]);
@@ -2010,8 +2013,8 @@ class MatriculacionController extends \app\components\CController {
 
     public function actionRegistrodetalle(){
         $per_id = Yii::$app->session->get("PB_perid");
-        $usu_id = Yii::$app->session->get("PB_iduser");
-        $fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
+        // $usu_id = Yii::$app->session->get("PB_iduser");
+        // $fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
         
         $matriculacion_model = new Matriculacion();
 
@@ -2097,14 +2100,16 @@ class MatriculacionController extends \app\components\CController {
         }
         else{ // No intensivo
             $tempBlock = []; // Colocar todos los bloques en un arreglo aparte
-            for ($x=0; $x < count($materias_data_arr) - 1; $x++) { 
-                $tempBlock[] = $materias_data_arr[$x]['Block'];
+            foreach ($materias_data_arr as $key => $value) {
+                $tempBlock[] = $value['Block'];
             }
 
             // \app\models\Utilities::putMessageLogFile("tempBlock: " . print_r($tempBlock, true));
 
             $bloque = $tempBlock[0]; // Tomar el primer bloque
             $cuotas = 3; // Empezar con 3 cuotas
+
+            // \app\models\Utilities::putMessageLogFile("bloque: " . $bloque);
 
             foreach ($tempBlock as $key => $value) { // recorrer la lista de bloques
                 // \app\models\Utilities::putMessageLogFile("IF: " . ($value != $bloque));
@@ -2118,7 +2123,7 @@ class MatriculacionController extends \app\components\CController {
         // \app\models\Utilities::putMessageLogFile($cuotas);
 
         // Incluír los gastos administrativos
-        $gastos_administrativos = $ron['ron_valor_gastos_adm'];
+        $gastos_administrativos = $ron['ron_valor_gastos_pendientes'];
         if($gastos_administrativos > 0){
             $valor_total += $gastos_administrativos;
             // Llenar con campos vacíos las olumnas que no tengan datos para que no aparezcan como "(no definido)"
@@ -2130,6 +2135,8 @@ class MatriculacionController extends \app\components\CController {
                                     "Hour" => "",
                                     ];
         }
+
+        // \app\models\Utilities::putMessageLogFile("materias_data_arr: " . print_r($materias_data_arr, true));
 
         $valor_unitario = $valor_total / $cuotas;
         $porcentaje = $valor_unitario / $valor_total * 100;
@@ -2222,6 +2229,8 @@ class MatriculacionController extends \app\components\CController {
             "pagado" => $pagado,
             "rama" => $rama,
             "cuotas" => $cuotas,
+            "bloque" => $bloque,
+            "saca_id" => $data_student['saca_id'],
         ]);
     }
 

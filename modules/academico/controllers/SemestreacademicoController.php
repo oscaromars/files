@@ -94,11 +94,6 @@ Yii::$app->session->setFlash('success', 'Datos guardados correctamente');
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
             try {
-                \app\models\Utilities::putMessageLogFile('nombre semestre...: ' . $data["nombre"]);
-                \app\models\Utilities::putMessageLogFile('intensivo semestre...: ' . $data["intensivo"]);
-                \app\models\Utilities::putMessageLogFile('descripción semestre...: ' . $data["descripcion"]);
-                \app\models\Utilities::putMessageLogFile('año semestre...: ' . $data["ano"]);
-                \app\models\Utilities::putMessageLogFile('estado semestre...: ' . $data["estado"]);
                 $nombre = $data["nombre"];
                 $intensivo = $data["intensivo"];
                 $descripcion = $data["descripcion"];
@@ -138,11 +133,6 @@ Yii::$app->session->setFlash('success', 'Datos guardados correctamente');
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
             try {
-                \app\models\Utilities::putMessageLogFile('nombre semestre...: ' . $data["nombre"]);
-                \app\models\Utilities::putMessageLogFile('intensivo semestre...: ' . $data["intensivo"]);
-                \app\models\Utilities::putMessageLogFile('descripción semestre...: ' . $data["descripcion"]);
-                \app\models\Utilities::putMessageLogFile('año semestre...: ' . $data["ano"]);
-                \app\models\Utilities::putMessageLogFile('estado semestre...: ' . $data["estado"]);
                 $id = $data["id"];
                 $nombre = $data["nombre"];
                 $intensivo = $data["intensivo"];
@@ -156,10 +146,6 @@ Yii::$app->session->setFlash('success', 'Datos guardados correctamente');
                 $semestre_model->saca_descripcion = $descripcion;
                 $semestre_model->saca_anio = $ano;
                 $semestre_model->saca_estado = $estado;
-                /*$semestre_model->saca_estado_logico = "1";
-                $semestre_model->saca_estado = "1";
-                $semestre_model->saca_fecha_creacion = date(Yii::$app->params["dateTimeByDefault"]);
-                $semestre_model->saca_usuario_ingreso=@Yii::$app->session->get("PB_iduser");*/
                 
                 $message = array(
                     "wtmessage" => Yii::t("notificaciones", "Se ha actualizado el Semestre Académico."),

@@ -1264,8 +1264,8 @@ class MatriculacionController extends \app\components\CController {
                                     $ron_gastos=(new RegistroOnline())->insertarActualizacionGastos($id,$gastos_administrativos_valor,$gastos_pendientes);
                                     //break; // Salir del foreach
                                 }else{
-                                    $gastos_pendientes=0;
-                                    $gastos_administrativos_valor = $gastos_administrativos_valor * $mitad;
+                                    $gastos_administrativos_valor = $gastos_administrativos_valor * 2;
+                                    $gastos_pendientes=$gastos_administrativos_valor;
                                     $ron_gastos=(new RegistroOnline())->insertarActualizacionGastos($id,$gastos_administrativos_valor,$gastos_pendientes);
                                 }
                         
@@ -1281,12 +1281,11 @@ class MatriculacionController extends \app\components\CController {
                                 $gastos_administrativos_valor = GastoAdministrativo::find()->where(['mod_id' => $modalidad])->asArray()->one()['gadm_gastos_varios'];
                                 $gastos_registro = RegistroOnline::find()->where(['ron_id' => $id])->asArray()->one()['ron_valor_gastos_adm'];
                                 if($gastos_administrativos_valor==$gastos_registro){
-                                    $gastos_pendientes=0;
                                     $gastos_administrativos_valor = $gastos_administrativos_valor * 2;
+                                    $gastos_pendientes=$gastos_administrativos_valor;
                                     $ron_gastos=(new RegistroOnline())->insertarActualizacionGastos($id,$gastos_administrativos_valor,$gastos_pendientes);
 
                                 }
-
                             }
                         }
 
@@ -1297,8 +1296,6 @@ class MatriculacionController extends \app\components\CController {
                                 \app\models\Utilities::putMessageLogFile("registro online " . $id);
                                 //\app\models\Utilities::putMessageLogFile("registro pago " . $model_rpm['rpm_id']);
                                 $modelPla = Planificacion::findOne($modelPlaEst->pla_id);
-                                $resultIdPlanificacionEstudiante = $matriculacion_model->getIdPlanificacionEstudiante($per_id, $modelPla['pla_id']);
-                                $pla_id = $resultIdPlanificacionEstudiante[0]['pla_id'];
                                 $resultIdPlanificacionEstudiante = $matriculacion_model->getIdPlanificacionEstudiante($per_id, $modelPla['pla_id']);
                                 $pla_id = $resultIdPlanificacionEstudiante[0]['pla_id'];
                                 $paca_id=$modelPla['paca_id'];
@@ -1374,8 +1371,9 @@ class MatriculacionController extends \app\components\CController {
                                 else{
                                     // insertar nuevo registro con los nuevos roi ids
                                     $modelPla = Planificacion::findOne($modelPlaEst->pla_id);
-                                    $paca_id = $modelPla['paca_id'];
-
+                                    $resultIdPlanificacionEstudiante = $matriculacion_model->getIdPlanificacionEstudiante($per_id, $modelPla['pla_id']);
+                                    $pla_id = $resultIdPlanificacionEstudiante[0]['pla_id'];
+                                    $paca_id=$modelPla['paca_id'];
                                     \app\models\Utilities::putMessageLogFile('id: ' . $id);
                                     \app\models\Utilities::putMessageLogFile('per_id: ' . $per_id);
                                     \app\models\Utilities::putMessageLogFile('pla_id: ' . $pla_id);

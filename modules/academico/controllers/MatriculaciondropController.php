@@ -348,7 +348,7 @@ class MatriculaciondropController extends \app\components\CController {
                     
                     } Else {
                     
-                    return $this->render('registro', [
+                    return $this->render('registry', [
                                 "pes_id" => $pes_id,
                                 "hasSubject" => $hasSubject,
                                 "registredSuject" => $dataRegRs,

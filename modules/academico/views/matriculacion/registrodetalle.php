@@ -10,7 +10,7 @@ Academico::registerTranslations();
 
 ?>
 
-<?php if($pagado == 1 || !isset($rama)){ ?>
+<?php if(!isset($rama)){ ?>
     <div>
         <h3><?= Academico::t("matriculacion", 'No tiene materias pendientes de pago') ?></h3> 
     </div>

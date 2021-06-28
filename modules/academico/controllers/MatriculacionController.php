@@ -2206,10 +2206,6 @@ class MatriculacionController extends \app\components\CController {
             ],
         ]);
 
-        // Revisar si ya se ha pagado, para que no muestre el botón de pago si ya está hecho
-        $rpm = RegistroPagoMatricula::find()->where(['per_id' => $per_id, 'pla_id' => $pla_id, 'rpm_estado' => 1, 'rpm_estado_logico' => 1])->asArray()->one();
-        $pagado = $rpm['rpm_estado_generado'];
-
         /*\app\models\Utilities::putMessageLogFile($data_student);
         \app\models\Utilities::putMessageLogFile($persona);
         \app\models\Utilities::putMessageLogFile($materias_data_arr);
@@ -2227,7 +2223,6 @@ class MatriculacionController extends \app\components\CController {
             "pagosDataProvider" => $pagosDataProvider,
             "pla_id" => $pla_id,
             "ron_id" => $ron['ron_id'],
-            "pagado" => $pagado,
             "rama" => $rama,
             "cuotas" => $cuotas,
             "bloque" => $bloque,

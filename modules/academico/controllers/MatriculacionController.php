@@ -2139,6 +2139,14 @@ class MatriculacionController extends \app\components\CController {
                                     ];
         }
 
+        // Si no tiene ni materias pendientes de pago, ni gastos administrativos, quiere decir que el estudiante recién va a empezar el proceso de matriculación, o que ha pagado todo.
+        if($valor_total <= 0){
+            // Mandar a la pantalla con $rama NULL para que muestre el mensaje
+            return $this->render('registrodetalle', [
+                "rama" => NULL,
+            ]);
+        }
+
         // \app\models\Utilities::putMessageLogFile("materias_data_arr: " . print_r($materias_data_arr, true));
 
         $valor_unitario = $valor_total / $cuotas;

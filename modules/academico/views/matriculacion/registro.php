@@ -42,7 +42,7 @@ echo "<b style='color:green'>EL PERIODO DE INSCRIPCION ESTA CERRADO</b>";
 
 
 
-$total=$costo['costo']+$gastoAdm+$costo['asociacion'];
+$total=$costo['costo']+$costo['gastos']+$costo['asociacion'];
  
 
 ?>
@@ -256,7 +256,7 @@ $total=$costo['costo']+$gastoAdm+$costo['asociacion'];
                 </tr>
                 <tr>
                     <th><?= academico::t('matriculacion','Administrative Expenses') ?></th>
-                    <td id="costAdmin">$<?= isset($gastoAdm)?(number_format($gastoAdm, 2, '.', ',')):'0.00' ?></td>
+                    <td id="costAdmin">$<?= isset($costo['gastos'])?(number_format($gastoAdm, 2, '.', ',')):'0.00' ?></td>
                 </tr>
                 <tr style='display: none;'>
                     <th><?= academico::t('matriculacion','Students Association') ?></th>

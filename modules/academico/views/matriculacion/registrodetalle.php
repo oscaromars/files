@@ -136,5 +136,4 @@ Academico::registerTranslations();
                     'bloque' => base64_encode($bloque),
                 ]) ?>" class="btn btn-primary pull-right" style="margin: 0px 5px;"><?= Academico::t("matriculacion", "Go to Pay") ?></a>
 
-
 <?php } ?>

@@ -132,7 +132,7 @@ Academico::registerTranslations();
                     'idtotal' => base64_encode($valor_total),
                     'idpla' => base64_encode($data_student['pla_periodo_academico']),
                     'rama_id' => base64_encode($rama["rama_id"]),
-                    'saca_id' => base64_code($saca_id),
+                    'saca_id' => base64_encode($saca_id),
                     'bloque' => base64_encode($bloque),
                 ]) ?>" class="btn btn-primary pull-right" style="margin: 0px 5px;"><?= Academico::t("matriculacion", "Go to Pay") ?></a>
 

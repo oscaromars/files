@@ -2107,6 +2107,7 @@ class MatriculacionController extends \app\components\CController {
         $porc_mayor = round($porcentaje, 2);
         $por_menor = 100 - ($porc_mayor * ($cuotas - 1));
 
+        //print_r($cuotas);die();
         // Si son dos cuotas
         if($cuotas == 2){ // Quiere decir que es semestre intensivo B1
             $fechas_vencimiento = FechasVencimientoPago::find()->where(['saca_id' => $data_student['saca_id'], 'fvpa_bloque' => "B1", 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();
@@ -2115,6 +2116,7 @@ class MatriculacionController extends \app\components\CController {
         }
         // Si son 3 cuotas
         else if($cuotas == 3){ // Considerar sólo el bloque escogido
+            //print_r($bloque);die();
             $fechas_vencimiento = FechasVencimientoPago::find()->where(['saca_id' => $data_student['saca_id'], 'fvpa_bloque' => $bloque, 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();
         }
         else if($cuotas == 5){
@@ -2127,6 +2129,7 @@ class MatriculacionController extends \app\components\CController {
         }
         
         $arr_pagos = [];
+        //
         for ($i=0; $i < $cuotas; $i++) { 
             if($i == 0){
                 $arr_pagos[] = [
@@ -2146,7 +2149,7 @@ class MatriculacionController extends \app\components\CController {
             }
         }
 
-        print_r($materias_data_arr);die();
+
         $matDataProvider = new ArrayDataProvider([
             'key' => '',
             'allModels' => $materias_data_arr,
@@ -2158,6 +2161,7 @@ class MatriculacionController extends \app\components\CController {
             ],
         ]);
 
+        
         $pagosDataProvider = new ArrayDataProvider([
             'key' => '',
             'allModels' => $arr_pagos,

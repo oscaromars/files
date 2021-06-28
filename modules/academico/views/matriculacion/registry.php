@@ -75,7 +75,7 @@ academico::registerTranslations();
             <div class="form-group">
                 <label for="cmb_tpago" class="col-lg-6 col-md-6 col-sm-6 col-xs-6 control-label"><?= academico::t("registro", 'Credit') ?></label>
                 <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-                    <?= Html::dropDownList("cmb_tpago", $value_credit, $arr_credito, ["class" => "form-control", "id" => "cmb_tpago", "disabled" => "disabled"]) ?>  
+                    <!-- //Html::dropDownList("cmb_tpago", $value_credit, $arr_credito, ["class" => "form-control", "id" => "cmb_tpago", "disabled" => "disabled"])   -->
                 </div>
             </div>
         </div>

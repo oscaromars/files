@@ -512,8 +512,20 @@ class RegistroConfiguracion extends \yii\db\ActiveRecord
                 order by rpm_id desc 
                 limit 0,1;*/
         $comando = $con->createCommand($sql);
-        $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
-        $comando->bindParam(":pla_id", $pla_id, \PDO::PARAM_INT);
+        $comando->bindParam(":rama_id", $ron_id, \PDO::PARAM_INT);
+        $resultData = $comando->queryOne();
+        
+        \app\models\Utilities::putMessageLogFile('modelo OK...: getRpmId SELECT - OK');
+        return $resultData;
+    }
+
+    public function updatePendiente($ron_id){
+        $con = \Yii::$app->db_academico;
+        $sql = "UPDATE " . $con->dbname . ".registro_online 
+                set ron_valor_gastos_pendientes = 0
+                WHERE ron_id = :ron_id ";
+                
+        $comando = $con->createCommand($sql);
         $comando->bindParam(":ron_id", $ron_id, \PDO::PARAM_INT);
         $resultData = $comando->queryOne();
         

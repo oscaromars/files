@@ -22,6 +22,7 @@ use \yii\data\ArrayDataProvider;
  * @property string $ron_valor_arancel
  * @property string $ron_valor_matricula
  * @property string $ron_valor_gastos_adm
+ * @property string $ron_valor_gastos_pendientes
  * @property string $ron_valor_aso_estudiante
  * @property string $ron_estado_registro
  * @property string $ron_estado
@@ -260,12 +261,13 @@ class RegistroOnline extends \yii\db\ActiveRecord
         //$ron_valor_arancel, 
         $ron_valor_aso_estudiante, 
         $ron_valor_gastos_adm, 
+        $ron_valor_gastos_pendientes,
         $ron_valor_matricula,
         $ron_estado_cancelacion
     ){
 
         $con = Yii::$app->db_academico;
-
+        //$transaction=$con->beginTransaction();
         $date = date(Yii::$app->params['dateTimeByDefault']);
         $anio = strval(date("Y"));
 
@@ -281,6 +283,7 @@ class RegistroOnline extends \yii\db\ActiveRecord
                 /*ron_valor_arancel, */
                 ron_valor_aso_estudiante, 
                 ron_valor_gastos_adm, 
+                ron_valor_gastos_pendientes,
                 ron_valor_matricula, 
                 ron_estado_registro, 
                 ron_fecha_registro, 
@@ -299,6 +302,7 @@ class RegistroOnline extends \yii\db\ActiveRecord
                     '$est_categoria',
                     $ron_valor_aso_estudiante,
                     $ron_valor_gastos_adm, 
+                    $ron_valor_gastos_pendientes,
                     $ron_valor_matricula,
                     1,
                     '$date', 
@@ -315,5 +319,55 @@ class RegistroOnline extends \yii\db\ActiveRecord
         return $con->getLastInsertID($con->dbname . '.registro_online');
     }
 
+    public function insertarActualizacionGastos($ron_id,$gastosAdm,$gastos_pendientes) {        
+        $con = \Yii::$app->db_academico;
+        $ron_fecha_modificacion = date(Yii::$app->params["dateTimeByDefault"]);
+        $estado = 1;
+        $trans = $con->getTransaction(); // se obtiene la transacción actual
+        if ($trans !== null) {
+            $trans = null; // si existe la transacción entonces no se crea una
+        } else {
+            $trans = $con->beginTransaction(); // si no existe la transacción entonces se crea una
+        }
+
+        try {
+            $comando = $con->createCommand
+                    ("UPDATE " . $con->dbname . ".registro_online               
+                      SET ron_valor_gastos_adm = :gastosAdm,
+                        ron_valor_gastos_pendientes = :gastos_pendientes,
+                        ron_fecha_modificacion = :ron_fecha_modificacion
+                        
+                      WHERE 
+                        ron_id = :ron_id
+                        AND ron_estado = :estado 
+                        AND ron_estado_logico = :estado");
+
+            if (isset($gastosAdm)) {
+                $comando->bindParam(':gastosAdm', $gastosAdm, \PDO::PARAM_INT);
+            }
+            if (isset($gastos_pendientes)) {
+                $comando->bindParam(':gastos_pendientes', $gastos_pendientes, \PDO::PARAM_INT);
+            }
+            if (isset($ron_id)) {
+                $comando->bindParam(':ron_id', $ron_id, \PDO::PARAM_INT);
+            }
+            if (!empty((isset($ron_fecha_modificacion)))) {
+                $comando->bindParam(':ron_fecha_modificacion', $ron_fecha_modificacion, \PDO::PARAM_STR);
+            }
+            
+            $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+            $result = $comando->execute();
+            \app\models\Utilities::putMessageLogFile('insertarActualizacionGastos: '.$comando->getRawSql());
+            if ($trans !== null)
+                $trans->commit();
+            return TRUE;
+            \app\models\Utilities::putMessageLogFile('insertarActualizacionGastos: '.$comando->getRawSql());
+        } catch (Exception $ex) {
+            if ($trans !== null)
+                $trans->rollback();
+            return FALSE;
+        }
+    }
    
 }
+

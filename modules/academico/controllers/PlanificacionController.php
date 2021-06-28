@@ -1047,6 +1047,7 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
 
     //DBE
     public function actionAcademicoestudiante() {
+        \app\models\Utilities::putMessageLogFile('-----------------Looking for applied filter--------------------------');
         $emp_id = @Yii::$app->session->get('PB_idempresa');
         $mod_periodo = new PlanificacionEstudiante();
         $periodo = $mod_periodo->consultarPeriodoAcadplanifica();
@@ -1060,6 +1061,7 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
         $model_plan = $mod_periodo->consultarEstudiantePeriodo();
         $data = Yii::$app->request->get();
         if ($data['PBgetFilter']) {
+            \app\models\Utilities::putMessageLogFile('Filtros iniciales: '.$data['PBgetFilter']);
             //$arrSearch['estudiante'] = $data['estudiante'];
             ////$arrSearch['unidad'] = $data['unidad'];
             $arrSearch['modalidad'] = $data['modalidad'];
@@ -1070,12 +1072,17 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
             $model_plan = $mod_periodo->consultarEstudiantePeriodo($arrSearch);
             //$model_total_plan = $model_plan
             return $this->render('academicoestudiante-grid', [
-                        'model' => $model_plan,
+                    
+                //'arr_modalidad' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Todas']], $modalidad_data), 'id', 'name'),
+                
+                //'arr_periodo' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Todas']], $periodo), 'id', 'name'),
+                'model' => $model_plan,
+                //Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), true, $message),
             ]);
         }
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
-            if (isset($data['getmodalidad'])) {
+            /*if (isset($data['getmodalidad'])) {
                 if (( $data['nint_id'] == 1 ) or ( $data['nint_id'] == 2 )) {
                     $modalidad = $modalidad_model->consultarModalidad($data['nint_id'], $data['empresa_id']);
                 } else {
@@ -1093,6 +1100,45 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
                 }
                 $message = array('carrera' => $carrera);
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+            }*/
+            try{
+                if (($data['modalidad'] != 0 && $data['periodo'] != 0)) {
+                    $arrSearch['modalidad'] = $data['modalidad']?$data['modalidad']:0;
+                    $arrSearch['periodo'] = $data['periodo']?$data['periodo']:0;
+                    $model_plan = $mod_periodo->consultarEstudiantePeriodo($arrSearch);
+                    \app\models\Utilities::putMessageLogFile('FIltros...: ');
+                    \app\models\Utilities::putMessageLogFile('modalidad y periodod '.$arrSearch['modalidad'] .'-'.$arrSearch['periodo'] );
+                    return $this->render('academicoestudiante', [
+                    
+                        'arr_modalidad' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Todas']], $modalidad_data), 'id', 'name'),
+                        
+                        'arr_periodo' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Todas']], $periodo), 'id', 'name'),
+                        'model' => $model_plan,
+                        //Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), true, $message),
+                    ]);
+                    return Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), true, $message);
+                }else{
+                    $arrSearch['modalidad'] = $data['modalidad']?$data['modalidad']:0;
+                    $arrSearch['periodo'] = $data['periodo']?$data['periodo']:0;
+                    \app\models\Utilities::putMessageLogFile('todos...: ');
+                    \app\models\Utilities::putMessageLogFile('modalidad y periodod '.$arrSearch['modalidad'] .'-'.$arrSearch['periodo'] );
+                    $model_plan = $mod_periodo->consultarEstudiantePeriodo($arrSearch);
+                    return $this->render('academicoestudiante', [
+                    
+                        'arr_modalidad' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Todas']], $modalidad_data), 'id', 'name'),
+                        
+                        'arr_periodo' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Todas']], $periodo), 'id', 'name'),
+                        'model' => $model_plan,
+                        //Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), true, $message),
+                    ]);
+                }
+            }catch(Exception $ex) {
+                \app\models\Utilities::putMessageLogFile('catch...: ');
+                $message = array(
+                    "wtmessage" => Yii::t("notificaciones", "Error al buscar.".$ex->getMessage()),
+                    "title" => Yii::t('jslang', 'Error'),
+                );
+                //return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
             }
         }
         return $this->render('academicoestudiante', [

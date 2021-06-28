@@ -10,6 +10,11 @@ Academico::registerTranslations();
 
 ?>
 
+<?php if(!isset($rama)){ ?>
+    <div>
+        <h3><?= Academico::t("matriculacion", 'No tiene materias pendientes de pago') ?></h3> 
+    </div>
+<?php }else{ ?>
 <div>
     <h3><?= Academico::t("matriculacion", 'Consulta de Registro de Matrícula') ?></h3>
     <br></br>
@@ -120,12 +125,15 @@ Academico::registerTranslations();
 
 <br>
 
-<?php if($pagado == 0 || isset($rama)){ ?>
-    <a href="<?= Url::to(['/academico/registro/new', 
-                        'id' => base64_encode($persona['per_id']), 
-                        'ron' => base64_encode($ron_id),
-                        'cuotas' => base64_encode($cuotas),
-                        'idtotal' => base64_encode($valor_total),
-                        'idpla' => base64_encode($data_student['pla_periodo_academico']),
-                    ]) ?>" class="btn btn-primary pull-right" style="margin: 0px 5px;"><?= Academico::t("matriculacion", "Go to Pay") ?></a>
+<a href="<?= Url::to(['/academico/registro/new', 
+                    'id' => base64_encode($persona['per_id']), 
+                    'ron' => base64_encode($ron_id),
+                    'cuotas' => base64_encode($cuotas),
+                    'idtotal' => base64_encode($valor_total),
+                    'idpla' => base64_encode($data_student['pla_periodo_academico']),
+                    'rama_id' => base64_encode($rama["rama_id"]),
+                    'saca_id' => base64_encode($saca_id),
+                    'bloque' => base64_encode($bloque),
+                ]) ?>" class="btn btn-primary pull-right" style="margin: 0px 5px;"><?= Academico::t("matriculacion", "Go to Pay") ?></a>
+
 <?php } ?>

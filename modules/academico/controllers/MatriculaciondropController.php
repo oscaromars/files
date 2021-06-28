@@ -97,7 +97,7 @@ class MatriculaciondropController extends \app\components\CController {
         $_SESSION['JSLANG']['You must choose at least a number or subjects '] = Academico::t('matriculacion', 'You must choose at least a number or subjects ');
         $_SESSION['JSLANG']['You must choose at least one'] = Academico::t('matriculacion', 'You must choose at least one');
         $_SESSION['JSLANG']['The number of subject that you can cancel is '] = Academico::t('matriculacion', 'The number of subject that you can cancel is ');
-        $_SESSION['JSLANG']['You reached the maximum number of canceled subjects registered'] = Academico::t('matriculacion', 'You reached the maximum number of canceled subjects registered');
+
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
             if (isset($data["pes_id"])) {
@@ -220,7 +220,7 @@ class MatriculaciondropController extends \app\components\CController {
                 $plananual_model = new PeriodoAcademico();
                 $materiasxEstudiante = PlanificacionEstudiante::findOne($pes_id);
                 $data_student = $matriculacion_model->getDataStudenbyRonId($ron_id);
-                $dataPlanificacion = $matriculacion_model->getPlanificationFromRegistroOnline($ron_id);
+                $dataPlanificacion = $matriculacion_model->getPlanificationFromRegistroOnline($ron_id,0);
                 $dataPlananual = $plananual_model->getFechasPeriodoAcademicoActual();
                 $dataProvider = new ArrayDataProvider([
                     'key' => 'Ids',
@@ -233,7 +233,7 @@ class MatriculaciondropController extends \app\components\CController {
                     ],
                 ]);
 
-                $path = "CancelarRegistro_" . date("Ymdhis") . ".pdf";
+                $path = "Registro_" . date("Ymdhis") . ".pdf";
                 $report->orientation = "P"; // tipo de orientacion L => Horizontal, P => Vertical
                 $report->createReportPdf(
                         $this->render('exportpdf', [
@@ -285,18 +285,49 @@ class MatriculaciondropController extends \app\components\CController {
             if (count($resultIdPlanificacionEstudiante) > 0) {
                 /*                 * Exist a register of planificacion_estudiante */
                 $pes_id = $resultIdPlanificacionEstudiante[0]['pes_id'];
-
+                $pla_id = $resultIdPlanificacionEstudiante[0]['pla_id'];
                 $data_student = $matriculacion_model->getDataStudenFromRegistroOnline($per_id, $pes_id);
                 if ($data_student) {
                     $ron_id = $data_student["ron_id"];
+                    $roi = RegistroOnlineItem::find()->where(['ron_id' => $ron_id, 'roi_estado' => 1, 'roi_estado_logico' => 1])->asArray()->all();
+                    $paca_id          = $data_student['paca_id'];
                     $modelRonOn = RegistroOnline::findOne($ron_id);
-                    $dataRegistration = $matriculacion_model->getPlanificationFromRegistroOnline($ron_id);
+                    $dataRegistration = $matriculacion_model->getPlanificationFromRegistroOnline($ron_id,0);
                     $dataRegRs = ArrayHelper::map($dataRegistration, "roi_id", "Code");
-                    $dataPlanificacion = $matriculacion_model->getPlanificationFromRegistroOnline($ron_id);
+
+                    // Colocar sólo aquellas materias que se encuentran en la tabla de registro adicional materias
+                    $materias_data_arr = [];
+
+                    // Si se encuentran datos en registro_adicional_materias se debe realizar el cálculo sólo tomando en cuenta esas materias (que son pendientes de pago) y debe aparecer el botón Pagar
+                    $rama = RegistroAdicionalMaterias::find()->where(['ron_id' => $ron_id, 'per_id' => $per_id, 'pla_id' => $pla_id, 'paca_id' =>$paca_id , 'rpm_id' => NULL, 'rama_estado' => 1, 'rama_estado_logico' => 1])->asArray()->one();
+
+                    // Las siguientes acciones se realizan sólo si hay registros en la tabla de registro_adicional_materias, pues todas usan del arreglo materias_data_arr
+                    if(isset($rama)){
+                        $roi_IDs = [$rama['roi_id_1'], $rama['roi_id_2'], $rama['roi_id_3'], $rama['roi_id_4'], $rama['roi_id_5'], $rama['roi_id_6']];
+
+                        foreach ($roi as $key => $value) {
+                            // Si hay registro en RegistroAdicionalMaterias
+                            if(in_array($value['roi_id'], $roi_IDs)){
+                                $materias_data_arr[] = [
+                                    "Subject" => $value['roi_materia_nombre'],
+                                    "Cost" => $value['roi_costo'],
+                                    "Code" => $value['roi_materia_cod'],
+                                    "Block" => $value['roi_bloque'],
+                                    "Hour" => $value['roi_hora']
+                                ];
+                                $valor_total += $value['roi_costo'];
+                            }
+                        }
+                    }else{
+                        // Si no hay materias para pagar, retornar al registro
+                        return $this->redirect('/asgard/academico/matriculacion/registro');
+                    }
+
+                    //$dataPlanificacion = $matriculacion_model->getPlanificationFromRegistroOnline($ron_id,0);
                     $materiasxEstudiante = PlanificacionEstudiante::findOne($pes_id);
                     $dataProvider = new ArrayDataProvider([
                         'key' => 'Ids',
-                        'allModels' => $dataPlanificacion,
+                        'allModels' => $materias_data_arr,
                         'pagination' => [
                             'pageSize' => Yii::$app->params["pageSize"],
                         ],
@@ -304,12 +335,12 @@ class MatriculaciondropController extends \app\components\CController {
                             'attributes' => ["Subject"],
                         ],
                     ]);
-                    $hasSubject = (count($dataPlanificacion) == count($dataRegRs))?false:true;
+                    $hasSubject = (count($materias_data_arr) == count($dataRegRs))?false:true;
                     if($modelRonOn->ron_estado_cancelacion == '1') {
                      //   Yii::$app->session->setFlash('warning',"<h4>".Yii::t('jslang', 'Warning')."</h4>". Academico::t('matriculacion', 'There is a pending cancellation process.'));
                    $pending=True;
                     }
-                    $unidadAcade = strtolower($data_student['pes_unidad']); 
+                    $unidadAcade = strtolower($data_student['pes_jornada']); 
                     $min_cancel = $this->limitCancel[$unidadAcade]['min'];
                      $howelim =count($dataRegRs);
                      
@@ -325,11 +356,11 @@ class MatriculaciondropController extends \app\components\CController {
                     $isscholar=$scholarship['bec_id'];    
 
                   
-                    if ($isscholar != NULL ) {
+                     if ($isscholar != NULL ) {
                      
-                    /*return $this->render('registro-sch', [
+                    return $this->render('registro-sch', [
                                 "pes_id" => $pes_id,
-                                "hasSubject" => $hasSubject,
+                                //"hasSubject" => $hasSubject,
                                 "registredSuject" => $dataRegRs,
                                  "HowelSuject" => $howelim,
                                 "planificacion" => $dataProvider,
@@ -344,13 +375,13 @@ class MatriculaciondropController extends \app\components\CController {
                                 "cancelpending" => $pending,
                                  "isdrop" => $isdroptime,
                                  "isreg" => $result_process, 
-                    ]);*/
+                    ]);
                     
                     } Else {
                     
                     return $this->render('registro', [
                                 "pes_id" => $pes_id,
-                                "hasSubject" => $hasSubject,
+                                //"hasSubject" => $hasSubject,
                                 "registredSuject" => $dataRegRs,
                                  "HowelSuject" => $howelim,
                                 "planificacion" => $dataProvider,
@@ -391,7 +422,7 @@ class MatriculaciondropController extends \app\components\CController {
                 $last_ron_id = $resultData[0]['ron_id'];
                 $last_pes_id = $resultData[0]['pes_id'];
                 $data_student = $matriculacion_model->getDataStudenFromRegistroOnline($per_id, $last_pes_id);
-                $dataPlanificacion = $matriculacion_model->getPlanificationFromRegistroOnline($last_ron_id);
+                $dataPlanificacion = $matriculacion_model->getPlanificationFromRegistroOnline($last_ron_id,0);
                 $materiasxEstudiante = PlanificacionEstudiante::findOne($last_pes_id);
                 $modelRonOn = RegistroOnline::findOne($last_ron_id);
                 $dataProvider = new ArrayDataProvider([
@@ -454,7 +485,7 @@ class MatriculaciondropController extends \app\components\CController {
         ]);
     }
 
-    public function actionRegistro($id) { // pantalla para aprobar matriculacion de estudiante
+    public function actionRegistry($id) { // pantalla para aprobar matriculacion de estudiante
         $model = RegistroOnline::findOne($id);
         if ($model) {
             $data = Yii::$app->request->get();
@@ -463,7 +494,7 @@ class MatriculaciondropController extends \app\components\CController {
             $matriculacion_model = new Matriculacion();
             $model_registroPago = new RegistroPagoMatricula();
             $data_student = $matriculacion_model->getDataStudenFromRegistroOnline($model->per_id, $model->pes_id);
-            $dataPlanificacion = $matriculacion_model->getPlanificationFromRegistroOnline($id);
+            $dataPlanificacion = $matriculacion_model->getPlanificationFromRegistroOnline($id,0);
             
             // get subjects by Rama_id
             $inList = "";
@@ -552,7 +583,7 @@ class MatriculaciondropController extends \app\components\CController {
                 ],
             ]);
 
-            return $this->render('registro', [
+            return $this->render('registry', [
                         "materiasxEstudiante" => $dataProvider,
                         "materias" => $dataPlanificacion,
                         "data_student" => $data_student,
@@ -584,7 +615,7 @@ class MatriculaciondropController extends \app\components\CController {
             $matriculacion_model = new Matriculacion();
             $model_registroPago = new RegistroPagoMatricula();
             $data_student = $matriculacion_model->getDataStudenFromRegistroOnline($model->per_id, $model->pes_id);
-            $dataPlanificacion = $matriculacion_model->getPlanificationFromRegistroOnline($id);
+            $dataPlanificacion = $matriculacion_model->getPlanificationFromRegistroOnline($id,0);
             // get subjects by Rama_id
             $inList = "";
             $inList .= (isset($modelRegAd->roi_id_1))?($modelRegAd->roi_id_1):"";
@@ -699,7 +730,6 @@ class MatriculaciondropController extends \app\components\CController {
         }
         return $this->redirect('index');
     }
-
 
     public function actionUpdatepagoregistro() { // accion para aprobar matriculacion de estudiante
         $data = Yii::$app->request->get();
@@ -821,7 +851,7 @@ class MatriculaciondropController extends \app\components\CController {
         /* return Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), false, $ron_id); */
 
         $data_student = $matriculacion_model->getDataStudenbyRonId($ron_id);
-        $dataPlanificacion = $matriculacion_model->getPlanificationFromRegistroOnline($ron_id);
+        $dataPlanificacion = $matriculacion_model->getPlanificationFromRegistroOnline($ron_id,0);
         $dataProvider = new ArrayDataProvider([
             'key' => 'Ids',
             'allModels' => $dataPlanificacion,
@@ -1330,7 +1360,7 @@ class MatriculaciondropController extends \app\components\CController {
                 $matriculacion_model = new Matriculacion();
                 $materiasxEstudiante = PlanificacionEstudiante::findOne($pes_id);
                 $data_student = $matriculacion_model->getDataStudenbyRonId($ron_id);
-                $dataPlanificacion = $matriculacion_model->getPlanificationFromRegistroOnline($ron_id);
+                $dataPlanificacion = $matriculacion_model->getPlanificationFromRegistroOnline($ron_id,0);
                 $dataProvider = new ArrayDataProvider([
                     'key' => 'Ids',
                     'allModels' => $dataPlanificacion,

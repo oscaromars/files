@@ -731,7 +731,8 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
                     tmp.Cant as Cant,
                     -- tmp.Costo as Costo,
                     -- roc.roc_costo as Costo,
-                    (tmp.Costo + tmp.costo_adm) as Costo,    
+                    -- (tmp.Costo + tmp.costo_adm) as Costo, 
+                    roc.roc_costo as Costo,   
                     ifnull(rf.Refund, '0.00') as Refund,
                     tmp.Creditos as Creditos,
                     ifnull(enr.ron_id,'0.00') as Enroll,
@@ -809,6 +810,7 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
                 WHERE 
                     $str_search 
                     $condition
+                    roc.rpm_id = ram.rpm_id AND
                     pe.pes_estado = 1 AND pe.pes_estado_logico = 1 AND
                     p.pla_estado = 1 AND p.pla_estado_logico = 1 AND
                     per.per_estado = 1 AND per.per_estado_logico = 1 AND 
@@ -818,7 +820,8 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
                     ram.rama_estado =1 and ram.rama_estado_logico =1 AND
                     tmp.Cant IS NOT NULL AND
                     tmp.Costo IS NOT NULL AND
-                    tmp.costo_adm IS NOT NULL";
+                    tmp.costo_adm IS NOT NULL AND 
+                    ram.rpm_id IS NOT NULL;";
 
       
         $comando = $con_academico->createCommand($sql);
@@ -1164,7 +1167,7 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
             $sql = "SELECT fvpa_fecha_vencimiento as fecha
                     from " . $con->dbname . ".fechas_vencimiento_pago 
                     WHERE fvpa_estado_logico = '1'
-                    and fvpa_paca_id = $pla_id
+                    and saca_id = $pla_id
                     and fvpa_cuota = $i;";
             $comando = $con->createCommand($sql);
             \app\models\Utilities::putMessageLogFile('mensaje: ' .$comando->getRawSql());

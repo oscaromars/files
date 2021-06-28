@@ -517,6 +517,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
         }
     }
 
+
     /*
      * Function to get data from planificacion_estudiante
      * @author -
@@ -1165,6 +1166,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
             SELECT distinct 
             ron.ron_id, 
             pla.paca_id,
+            pla.saca_id,
             pla.pla_periodo_academico, 
             pes.pes_nombres, 
             pes.pes_dni, 
@@ -1632,16 +1634,31 @@ class Matriculacion extends \yii\db\ActiveRecord {
      * @param $rama_id
      * @return $resultData
      */
-
-    public function getNumeroDocumentoRegistroOnline($rama_id)
+    public function getNumeroDocumentoRegistroOnline( $rama_id)
     {
         $con_academico = \Yii::$app->db_academico;
         $estado = 1;
-        $sql = "SELECT rama.rpm_id as rpm_id
+        /*$sql = "SELECT rama.rpm_id as rpm_id
                 FROM db_academico.registro_adicional_materias as rama 
                   AND rama.rama_id = :rama_id 
                   AND rama.rama_estado = :estado
-                  AND rama.rama_estado_logico = :estado;";
+                  AND rama.rama_estado_logico = :estado;"; */
+
+        /*$sql = " SELECT rpm_id as rpm_id
+                    FROM db_academico.registro_pago_matricula r
+                    WHERE r.per_id = :per_id  
+                      AND r.ron_id = :ron_id 
+                      AND r.rpm_estado = :estado
+                      AND r.rpm_estado_logico = :estado
+                    ORDER BY r.rpm_id DESC
+                    LIMIT 0,1;";*/
+
+        $sql = "SELECT rpm_id as rpm_id
+        FROM db_academico.registro_adicional_materias r
+        WHERE r.rama_id = :rama_id
+          AND r.rpm_estado = :estado
+          AND r.rpm_estado_logico = :estado";            
+
 
         $comando = $con_academico->createCommand($sql);
         $comando->bindParam(":rama_id", $rama_id, \PDO::PARAM_INT);

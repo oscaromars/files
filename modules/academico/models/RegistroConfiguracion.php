@@ -346,6 +346,7 @@ class RegistroConfiguracion extends \yii\db\ActiveRecord
                 ron_id,
                 rpm_estado_aprobacion,
                 rpm_estado_generado,
+                rpm_acepta_terminos,
                 rpm_usuario_apruebareprueba,
                 rpm_fecha_transaccion,
                 rpm_total,
@@ -358,6 +359,7 @@ class RegistroConfiguracion extends \yii\db\ActiveRecord
                         :pla_id,
                         :ron_id,
                         :estado,
+                        :estado, 
                         :estado, 
                         :usu, 
                         :fecha_transaccion,
@@ -386,8 +388,10 @@ class RegistroConfiguracion extends \yii\db\ActiveRecord
             if ($trans !== null){
                 $trans->commit();
             \app\models\Utilities::putMessageLogFile('modelo OK...: registro_pago_matricula COMMIT - OK');}
-
-            return $resultData;
+            $last_id = $con->getLastInsertID($con->dbname . '.registro_pago_matricula');
+            \app\models\Utilities::putMessageLogFile('modelo OK...: registro_pago_matricula COMMIT - OK'.$last_id);
+            return $last_id;
+            //return $resultData;
         } catch (Exception $ex) {
             if ($trans !== null){
                 $trans->rollback();}
@@ -497,18 +501,31 @@ class RegistroConfiguracion extends \yii\db\ActiveRecord
         return $resultData;
     }
 
-    public function getRpmId($per_id, $pla_id, $ron_id){
+    public function getRpmId($rama_id){
         $con = \Yii::$app->db_academico;
-        $sql = "SELECT rpm_id FROM " . $con->dbname . ".registro_pago_matricula 
-                WHERE per_id = :per_id 
+        $sql = "SELECT rpm_id as rpm_id FROM " . $con->dbname . ".registro_adicional_materia 
+                WHERE rama_id = :rama_id ";
+                /*
                 and pla_id = :pla_id 
                 and ron_id = :ron_id 
                 and rpm_estado = 1 
                 order by rpm_id desc 
-                limit 0,1;";
+                limit 0,1;*/
         $comando = $con->createCommand($sql);
-        $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
-        $comando->bindParam(":pla_id", $pla_id, \PDO::PARAM_INT);
+        $comando->bindParam(":rama_id", $ron_id, \PDO::PARAM_INT);
+        $resultData = $comando->queryOne();
+        
+        \app\models\Utilities::putMessageLogFile('modelo OK...: getRpmId SELECT - OK');
+        return $resultData;
+    }
+
+    public function updatePendiente($ron_id){
+        $con = \Yii::$app->db_academico;
+        $sql = "UPDATE " . $con->dbname . ".registro_online 
+                set ron_valor_gastos_pendientes = 0
+                WHERE ron_id = :ron_id ";
+                
+        $comando = $con->createCommand($sql);
         $comando->bindParam(":ron_id", $ron_id, \PDO::PARAM_INT);
         $resultData = $comando->queryOne();
         

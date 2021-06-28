@@ -11,18 +11,21 @@ financiero::registerTranslations();
 use app\assets\StripeAsset;
 StripeAsset::register($this);
 //print_r('arr: '.$arr_forma_pago);
-print_r('Per_id: '.$id_en);
-//print_r($arr_vencimiento);
-//print_r('</br>');
-//print_r('rama: '.$rama)
+//print_r('Per_id: '.$id_en);
+print_r($saca_id);
+print_r('</br>');
+print_r('saca_id: '.$arr_vencimiento)
 
 ?>
 <?= Html::hiddenInput('txt_per_id', $id, ['id' => 'txt_per_id']); ?>
+<?= Html::hiddenInput('txt_rama', $rama, ['id' => 'txt_rama']); ?>
 <?= Html::hiddenInput('txt_id_code', $id_en, ['id' => 'txt_id_code']); ?>
 <?= Html::hiddenInput('txt_ron_id', $ron_id, ['id' => 'txt_ron_id']); ?>
 <?= Html::hiddenInput('txt_existe2', $pes_id, ['id' => 'txt_existe2']); ?>
 <?= Html::hiddenInput('txt_pla_id', $pla_id, ['id' => 'txt_pla_id']); ?>
 <?= Html::hiddenInput('txt_cuotas', $cuotas, ['id' => 'txt_cuotas']); ?>
+<?= Html::hiddenInput('txt_saca_id', $saca_id, ['id' => 'txt_saca_id']); ?>
+<?= Html::hiddenInput('txt_bloque', $bloque, ['id' => 'txt_bloque']); ?>
 <?= Html::hiddenInput('frm_cuota', 0, ['id' => 'frm_cuota']); ?>
 <div class='col-md-12 col-sm-12 col-xs-12 col-lg-12'>        
             <div class="col-sm-10 col-md-10 col-xs-8 col-lg-10"></div>
@@ -268,7 +271,7 @@ print_r('Per_id: '.$id_en);
                 <label class="col-xs-12 col-sm-12 col-md-12 col-lg-3 control-label" for="txt_dpre_ssn_id_fact" id="lbl_nombre1"><?= Yii::t("formulario", "Cédula") ?><span class="text-danger">*</span></label>
                 <div   class="col-xs-12 col-sm-12 col-md-12 col-lg-9">
                     <?= Html::hiddenInput('txt_dpre_ssn_id_fact_aux', '', ['id' => 'txt_dpre_ssn_id_fact_aux']); ?>
-                    <input type="text" class="form-control keyupmce"   id="txt_dpre_ssn_id_fact" data-required="true" data-type="number" placeholder="<?= Yii::t("formulario", "Cedula") ?>">
+                    <input type="text" class="form-control PBvalidation keyupmce"   id="txt_dpre_ssn_id_fact" data-required="true" data-type="number" placeholder="<?= Yii::t("formulario", "Cedula") ?>" >
                 </div>            
             </div>            
         </div>  
@@ -277,7 +280,7 @@ print_r('Per_id: '.$id_en);
                 <label class="col-xs-12 col-sm-12 col-md-12 col-lg-3 control-label" for="txt_nombres_fac" id="lbl_nombre1"><?= Yii::t("formulario", "Name") ?><span class="text-danger">*</span></label>
                 <div   class="col-xs-12 col-sm-12 col-md-12 col-lg-9">
                     <?= Html::hiddenInput('txt_nombres_fac_aux', '', ['id' => 'txt_nombres_fac_aux']); ?>
-                    <input type="text" class="form-control keyupmce" value="" id="txt_nombres_fac" data-required="true" data-type="alfa" placeholder="<?= Yii::t("formulario", "First Name") ?>">
+                    <input type="text" class="form-control PBvalidation keyupmce" value="" id="txt_nombres_fac" data-required="true" data-type="alfa" placeholder="<?= Yii::t("formulario", "First Name") ?>">
                 </div>            
             </div>            
         </div> 
@@ -286,7 +289,7 @@ print_r('Per_id: '.$id_en);
                 <label class="col-xs-12 col-sm-12 col-md-12 col-lg-3 control-label" for="txt_apellidos_fac" id="lbl_apellido1"><?= Yii::t("formulario", "Last Names") ?><span class="text-danger">*</span></label>
                 <div   class="col-xs-12 col-sm-12 col-md-12 col-lg-9">
                     <?= Html::hiddenInput('txt_apellidos_fac_aux', '', ['id' => 'txt_apellidos_fac_aux']); ?>
-                    <input type="text" class="form-control keyupmce" value="" data-required="true" id="txt_apellidos_fac" data-type="alfa" placeholder="<?= Yii::t("formulario", "First Name") ?>">
+                    <input type="text" class="form-control PBvalidation keyupmce" value="" data-required="true" id="txt_apellidos_fac" data-type="alfa" placeholder="<?= Yii::t("formulario", "First Name") ?>">
                 </div>
             </div>
         </div>
@@ -295,7 +298,7 @@ print_r('Per_id: '.$id_en);
                 <label class="col-xs-12 col-sm-12 col-md-12 col-lg-3 control-label" for="txt_dir_fac" id="lbl_dir_fac"><?= Yii::t("formulario", "Address") ?><span class="text-danger">*</span></label>
                 <div   class="col-xs-12 col-sm-12 col-md-12 col-lg-9">
                     <?= Html::hiddenInput('txt_dir_fac_aux', '', ['id' => 'txt_dir_fac_aux']); ?>
-                    <input type="text" class="form-control keyupmce" value="" data-required="true" id="txt_dir_fac" data-type="alfanumerico" placeholder="<?= Yii::t("formulario", "Address") ?>">
+                    <input type="text" class="form-control keyupmce PBvalidation" value="" data-required="true" id="txt_dir_fac" data-type="alfanumerico" placeholder="<?= Yii::t("formulario", "Address") ?>">
                 </div> 
             </div>  
         </div>
@@ -304,7 +307,7 @@ print_r('Per_id: '.$id_en);
                 <label class="col-xs-12 col-sm-12 col-md-12 col-lg-3 control-label" for="txt_tel_fac" id="lbl_apellido1"><?= Yii::t("formulario", "Phone") ?><span class="text-danger">*</span></label>
                 <div   class="col-xs-12 col-sm-12 col-md-12 col-lg-9">
                     <?= Html::hiddenInput('txt_tel_fac_aux', '', ['id' => 'txt_tel_fac_aux']); ?>
-                    <input type="text" class="form-control" value="" id="txt_tel_fac" data-type="number" data-keydown="true" placeholder="<?= Yii::t("formulario", "Phone") ?>">                        
+                    <input type="text" class="form-control PBvalidation" value="" id="txt_tel_fac" data-type="number" data-keydown="true" placeholder="<?= Yii::t("formulario", "Phone") ?>">                        
                 </div>
             </div>
         </div>
@@ -313,7 +316,7 @@ print_r('Per_id: '.$id_en);
                 <label class="col-xs-12 col-sm-12 col-md-12 col-lg-3 control-label" for="txt_correo_fac" ><?= Yii::t("formulario", "Email") ?><span class="text-danger">*</span> </label>
                 <div   class="col-xs-12 col-sm-12 col-md-12 col-lg-9">
                     <?= Html::hiddenInput('txt_correo_fac_aux', '', ['id' => 'txt_correo_fac_aux']); ?>
-                    <input type="text" class="form-control keyupmce" value="" data-required="true" id="txt_correo_fac" data-type="email" data-keydown="true" placeholder="<?= Yii::t("formulario", "Email") ?>">
+                    <input type="text" class="form-control PBvalidation keyupmce" value="" data-required="true" id="txt_correo_fac" data-type="email" data-keydown="true" placeholder="<?= Yii::t("formulario", "Email") ?>">
                 </div>
             </div>
         </div>        
@@ -387,6 +390,7 @@ print_r('Per_id: '.$id_en);
 <input type="hidden" id="lbl_payment" value="<?= academico::t("registro", 'Payment #') ?>" />
 <?php 
     for($i=1; $i <= count($arr_vencimiento); $i++){
-        echo "<input type='hidden' id='vencimiento_".($i)."' value='".$arr_vencimiento[$i-1]."' />";
+        $venc = explode(" ",$arr_vencimiento[$i-1]['fvpa_fecha_vencimiento'])[0];
+        echo "<input type='hidden' id='vencimiento_".($i)."' value='".$venc."' />";
     }
 ?>

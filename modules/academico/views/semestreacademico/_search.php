@@ -11,6 +11,7 @@ use yii\bootstrap\ActiveForm;
 <div class="semestreacademico-search">
 
     <?php
+
       $form = ActiveForm::begin(['layout' => 'horizontal',
                 'fieldConfig' => [
                     'template' => "{label}\n{beginWrapper}\n{input}\n{hint}\n{error}\n{endWrapper}",
@@ -22,6 +23,8 @@ use yii\bootstrap\ActiveForm;
                         'hint' => ''
                     ],
                 ],
+                'action' => ['index'],
+                'method' => 'get',
     ]); 
     ?>
     <div class="form-group row">

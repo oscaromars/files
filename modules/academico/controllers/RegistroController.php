@@ -20,6 +20,7 @@ use app\modules\academico\models\EnrolamientoAgreement;
 use app\modules\academico\models\Estudiante;
 use app\modules\academico\models\EstudiantePagoCarrera;
 use app\modules\academico\models\FechaGraduacion;
+use app\modules\academico\models\FechasVencimientoPago;
 use app\modules\academico\models\Matriculacion;
 use app\modules\academico\models\Modalidad;
 use app\modules\academico\models\PeriodoAcademico;
@@ -178,14 +179,16 @@ class RegistroController extends \app\components\CController {
         ]);
     }
 
-    public function actionNew($id,$ron, $cuotas,$idtotal,$idpla){
+    public function actionNew($id,$ron, $cuotas,$idtotal,$idpla,$rama_id,$saca_id,$bloque){
         \app\models\Utilities::putMessageLogFile('RegistroOnline::findOne($id);: '.base64_decode($id));
         $model = RegistroOnline::findOne(base64_decode($id));
         $id = base64_decode($id);
         $data = Yii::$app->request->get();
-        $rama_id = base64_decode($data['ron']);
+        $rama_id = base64_decode($data['rama_id']);
         $cuotas = base64_decode($data['cuotas']);
         $idtotal = base64_decode($data['idtotal']);
+        $bloque = base64_decode($_GET['bloque']);
+        $saca_id = base64_decode($_GET['saca_id']);
         $pla_periodo_academico = base64_decode($data['idpla']);
         $costo = $data['costo'];
         $registroOnline = new RegistroOnline();
@@ -250,9 +253,28 @@ class RegistroController extends \app\components\CController {
         //$model_paca = PeriodoAcademico::findOne(['paca_id' => $paca_id, 'paca_estado' => '1', 'paca_estado_logico' => '1',]);
         $mod_periodo = new PlanificacionEstudiante();
         $periodo = $mod_periodo->consultaPeriodoAcadVigenteFechas();
+
+        // Si son dos cuotas
+        if($cuotas == 2){ // Quiere decir que es semestre intensivo B1
+            $arr_vencimiento = FechasVencimientoPago::find()->where(['saca_id' => $saca_id, 'fvpa_bloque' => "B1", 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();
+            // Va a retornar 3 cuotas, así que hay que quitar la primera
+            array_shift($fechas_vencimiento);
+        }
+        // Si son 3 cuotas
+        else if($cuotas == 3){ // Considerar sólo el bloque escogido
+            $arr_vencimiento = FechasVencimientoPago::find()->where(['saca_id' => $saca_id, 'fvpa_bloque' => $bloque, 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();
+        }
+        else if($cuotas == 5){
+            $arr_vencimiento = FechasVencimientoPago::find()->where(['saca_id' => $saca_id, 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();
+            // Va a retornar 6 cuotas, así que hay que quitar la primera
+            array_shift($fechas_vencimiento);
+        }
+        else{ // Si son 6 cuotas, se deben tomar las fechas de los dos bloques
+            $arr_vencimiento = FechasVencimientoPago::find()->where(['saca_id' => $saca_id, 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();
+        }
         $arr_vence = RegistroPagoMatricula::getFechasVencimiento2($periodo[0]['fecha_fin']);
         $registro_pago_matricula = new RegistroPagoMatricula();
-        $arr_vencimiento = $registro_pago_matricula->fechasVencimientoPeriodo($pla_id);
+        //$arr_vencimiento = $registro_pago_matricula->fechasVencimientoPeriodo($pla_id);
         //$cuotas = $registro_pago_matricula->getCuotasPeriodo($rama_id);
         $dataValue = array();//['Id' => 1, 'Pago' => 'Payment #1', 'Porcentaje' => '100.00%', 'Valor' => '$'.(number_format($arr_cost_mat['Costo'], 2, '.', ','))];
         $dataProvider = new ArrayDataProvider([
@@ -295,6 +317,8 @@ class RegistroController extends \app\components\CController {
             'rama' => $rama_id,
             'pla_id' => $pla_id,
             'periodo_actual' =>$pla_periodo_academico,
+            'bloque' => $bloque,
+            'saca_id' => $saca_id,
         ]);
     }
 
@@ -2306,6 +2330,8 @@ class RegistroController extends \app\components\CController {
             $numcuotas  = $data['numcuotas'];
             $pla_id     = $data['pla_id']?$data['pla_id']:14;
             $per_id     = base64_decode($data['per_id']);
+            $bloque     =base64_decode($data['bloque']);
+            $saca_id    = base64_decode($data['saca_id']);
             $con = \Yii::$app->db_facturacion;
             $con2  = \Yii::$app->db_academico;
             //$transaction = $con->beginTransaction();
@@ -2334,6 +2360,23 @@ class RegistroController extends \app\components\CController {
                             $porc_mayor = $porcentaje;
                             $porc_menor = $porcentaje;    
                         }
+                        if($numcuotas == 2){ // Quiere decir que es semestre intensivo B1
+                            $fechas_vencimiento = FechasVencimientoPago::find()->where(['saca_id' => $data_student['saca_id'], 'fvpa_bloque' => "B1", 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();
+                            // Va a retornar 3 cuotas, así que hay que quitar la útima
+                            array_pop($fechas_vencimiento);
+                        }
+                        // Si son 3 cuotas
+                        else if($numcuotas == 3){ // Considerar sólo el bloque escogido
+                            $fechas_vencimiento = FechasVencimientoPago::find()->where(['saca_id' => $data_student['saca_id'], 'fvpa_bloque' => $bloque, 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();
+                        }
+                        else if($numcuotas == 5){
+                            $fechas_vencimiento = FechasVencimientoPago::find()->where(['saca_id' => $data_student['saca_id'], 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();
+                            // Va a retornar 6 cuotas, así que hay que quitar la útima
+                            array_pop($fechas_vencimiento);
+                        }
+                        else{ // Si son 6 cuotas, se deben tomar las fechas de los dos bloques
+                            $fechas_vencimiento = FechasVencimientoPago::find()->where(['saca_id' => $data_student['saca_id'], 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();
+                        }
                         
                         $datosRonPes= $modelCargaCartera->getRonPes($per_id);
                         $ron_id = $datosRonPes['ron_id'];
@@ -2344,25 +2387,25 @@ class RegistroController extends \app\components\CController {
                             //$registros_relacionados = $modelCargaCartera->registrarRelacionCartera($est_id['est_id'],$ron_id, $secuencial['secuencial']);
                             $registro_pago_matricula = $modelCargaCartera->registrarPagoMatricula($perid, $per_id, $pla_id, $ron_id, $total);
                             \app\models\Utilities::putMessageLogFile('RPM: '.$registro_pago_matricula.'- OK');
-                            $rpm_id = $modelCargaCartera->getRpmId($per_id, $pla_id, $ron_id);
-                            $rpm_id = $rpm_id['rpm_id'];
-                            //$updateAdicionalMateria = $modelCargaCartera->updateAdicionalMateria($rama_id, $rpm_id);
-                            \app\models\Utilities::putMessageLogFile('log 2...');
+                          
+                            $registroadicional = RegistroAdicionalMaterias::find()->where(["ron_id" => $ron_id,"per_id" => $per_id, "rpm_id" => NULL])->asArray()->one();
+                            $rama_id = $registroadicional["rama_id"];
+                            $rpm_id = $registro_pago_matricula;
+                            \app\models\Utilities::putMessageLogFile('RPM_ID: '.$rpm_id.'- OK');
+                            $updateAdicionalMateria = $modelCargaCartera->updateAdicionalMateria($rama_id, $rpm_id);
+                            \app\models\Utilities::putMessageLogFile('log 2...rama_id'.$rama_id);
                                 \app\models\Utilities::putMessageLogFile('controller N1...: '.$est_id['est_id'].'-'.$ron_id.'-'. $secuencial['secuencial']);
                             for($in = 1; $in <= $numcuotas; $in++){
-                                $fechaCuotaActual = $modelCargaCartera->getCuotaActual($in);
+                                $fechaCuotaActual = explode(" ",$fechas_vencimiento[$in-1]['fvpa_fecha_vencimiento'])[0];//$modelCargaCartera->getCuotaActual($in);
                                 $registros_cuotas = $modelCargaCartera->registrarCargaCartera($est_id['est_id'],$cedula['per_cedula'], $secuencial['secuencial'], $forma_pago,$fechaCuotaActual['fecha'],$in, $numcuotas, $valor_cuota, $total, $usuario);
                                 if($in==1){
-                                    //$porcentaje = 100 - ($porc_mayor * ($numcuotas - 1));
                                     $registro_online_cuota = $modelCargaCartera->registroOnlineCuota($ron_id, $rpm_id,$in,$fechaCuotaActual['fecha'],$porc_menor,$total);
                                 }else{
-                                    //$porc_mayor = round($porcentaje, 2);
                                     $registro_online_cuota = $modelCargaCartera->registroOnlineCuota($ron_id, $rpm_id,$in,$fechaCuotaActual['fecha'],$porc_mayor,$total);
                                 }
                             }
-                            
-                                //$transaction->commit();
-                                //$transaction2->commit();
+                            //adios Señor Meseek!
+                            $updatePendiete = $modelCargaCartera->updatePendiente($ron_id);
                                 $message = array(
                                     "wtmessage" => Yii::t("notificaciones", "Su información ha sido guardada con éxito."),
                                     "title" => Yii::t('jslang', 'Success'),
@@ -2406,6 +2449,8 @@ class RegistroController extends \app\components\CController {
             $data = Yii::$app->request->post();            
             $per_id      = base64_decode($data['per_id']);
             $cuotas     = $data['cuotas'];
+            $rama_id  = ($data['rama']);
+            \app\models\Utilities::putMessageLogFile('rama_id: '.$rama_id);
             $matriculacion_model = new Matriculacion();          
             $modelPersona = Persona::find()->where(['per_id' => $per_id])->asArray()->one();
             $modelEstudiante = Estudiante::find()->where(['per_id' => $per_id])->asArray()->one();  
@@ -2428,7 +2473,8 @@ class RegistroController extends \app\components\CController {
             $resp_ron_id = $matriculacion_model->getDataStudenFromRegistroOnline($per_id, $pes_id);
             $ron_id = $resp_ron_id['ron_id'];
             $ron_id = $datosRonPes['ron_id'];
-            $dataPlanificacion = $matriculacion_model->getPlanificationFromRegistroOnline($ron_id);
+            $rama_id = $rama_id?$rama_id:0;//nuevo 22/06/2021
+            $dataPlanificacion = $matriculacion_model->getPlanificationFromRegistroOnline($ron_id,$rama_id);
 
             for ($i = 0; $i < count($dataPlanificacion); $i++) {
                 $total_costo_materia = $total_costo_materia + $dataPlanificacion[$i]['Cost'];
@@ -2437,9 +2483,13 @@ class RegistroController extends \app\components\CController {
             /*Detalles de pagos */
             $resp_rpm_id = $matriculacion_model->getNumeroDocumentoRegistroOnline($rama_id); 
             $rpm_id = $resp_rpm_id['rpm_id'];
+            
+            $rpm_id = RegistroAdicionalMaterias::find()->where(["rama_id"=>$rama_id])->asArray()->one();
+            \app\models\Utilities::putMessageLogFile('rpm_id: '.$rpm_id['rpm_id']);
 
             $registro_pago_matricula = new RegistroPagoMatricula();
             $resp_cant_cuota = $registro_pago_matricula->getCuotasPeriodo($ron_id, $rpm_id);
+
             $cant_cuota = $resp_cant_cuota['cuota'];
             $est_id = $modelEstudiante['est_id'];
 
@@ -2604,6 +2654,7 @@ class RegistroController extends \app\components\CController {
 
             /*Detalles de pagos */
             $resp_rpm_id = $matriculacion_model->getNumeroDocumentoRegistroOnline($rama_id);
+
             $rpm_id = $resp_rpm_id['rpm_id'];
             \app\models\Utilities::putMessageLogFile('Inicio Proceso:'.$ron_id.'- '.$rpm_id);
             $registro_pago_matricula = new RegistroPagoMatricula();

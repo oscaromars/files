@@ -1167,7 +1167,7 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
             $sql = "SELECT fvpa_fecha_vencimiento as fecha
                     from " . $con->dbname . ".fechas_vencimiento_pago 
                     WHERE fvpa_estado_logico = '1'
-                    and fvpa_paca_id = $pla_id
+                    and saca_id = $pla_id
                     and fvpa_cuota = $i;";
             $comando = $con->createCommand($sql);
             \app\models\Utilities::putMessageLogFile('mensaje: ' .$comando->getRawSql());

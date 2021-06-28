@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use kartik\grid\GridView;
+use app\modules\academico\models\SemestreAcademico;
 use app\modules\academico\Module as academico;
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\RolSearch */
@@ -61,6 +62,19 @@ $gridColumns=['saca_nombre',
             'saca_nombre',
             'saca_descripcion',
             'saca_anio',
+            [
+                'attribute' => 'saca_intensivo',
+                'header' => Yii::t("formulario", 'Semestre Intensivo'),
+                'contentOptions' => ['class' => 'text-center'],
+                'headerOptions' => ['class' => 'text-center'],
+                'format' => 'html',
+                'value' => function ($model) {
+                    if ($model["saca_intensivo"] == '1')
+                        return '<small class="label label-success">Si</small>';                   
+                    else
+                        return '<small class="label label-info">No</small>';
+                },
+            ],
             ['attribute' => 'Estado',
                 'contentOptions' => ['class' => 'text-center'],
                 'headerOptions' => ['class' => 'text-center'],

@@ -178,6 +178,8 @@ $(document).ready(function() {
     });
 
     $('.chequeado').prop("checked",true);
+
+    showRegisterSubject();
 });
 
 function savemethod() {
@@ -543,4 +545,12 @@ function continuarRegistro(){
     } else {
         showAlert('NO_OK', 'error', {"wtmessage": 'Selecciona: Debe seleccionar al menos una materia.', "title": 'Error'});
     }
+}
+
+function showRegisterSubject(){
+    $('#grid_registro_list input[type=checkbox]').each(function() {
+        if (!this.checked) {
+            $("#register_subject_btn").show();
+        }
+    });
 }

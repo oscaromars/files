@@ -1233,7 +1233,7 @@ class MatriculacionController extends \app\components\CController {
 
 
                         }//foreach
-                        if($RegistroOnline['ron_valor_gastos_adm']==0){
+                        if($RegistroOnline['ron_valor_gastos_adm']<=0){
                             $roi_bloque = RegistroOnlineItem::find()->select("roi_bloque")->where(['ron_id' => $id, 'roi_estado' => 1, 'roi_estado_logico' => 1])->asArray()->all();
                             \app\models\Utilities::putMessageLogFile("roi_id: " . print_r($roi_bloque,true));
                             // Tomar el valor actual de gastos administrativos
@@ -1249,25 +1249,25 @@ class MatriculacionController extends \app\components\CController {
                             $mitad = 1;
                         }*/ // queda descartado 
                         
-                            foreach ($roi_bloque as $key => $value) { // recorrer la lista de bloques
+                            /*foreach ($roi_bloque as $key => $value) { // recorrer la lista de bloques
                                 if($value != $bloques ){ // Si uno de ellos es diferente, quiere decir que hay más de un bloque
                                     $mitad = 2; // Así que se divide a la mitad                                    
                                     break; // Salir del foreach
                                 }
                                 // Si nunca entra al condicional, quiere decir que todas las materias son del mismo bloque y se mantiene el valor de gatos administrativos
-                            } //end foreach
-                                
-                                if($block_roi==$bloque){ // Si uno de ellos es diferente, quiere decir que hay más de un bloque
-                                     // Así que se divide a la mitad
-                                    $gastos_pendientes=$gastos_administrativos_valor;
-                                    $gastos_administrativos_valor = $gastos_administrativos_valor * 1;
-                                    $ron_gastos=(new RegistroOnline())->insertarActualizacionGastos($id,$gastos_administrativos_valor,$gastos_pendientes);
-                                    //break; // Salir del foreach
-                                }else{
-                                    $gastos_administrativos_valor = $gastos_administrativos_valor * 2; // 300
-                                    $gastos_pendientes=$gastos_administrativos_valor; // 300
-                                    $ron_gastos=(new RegistroOnline())->insertarActualizacionGastos($id,$gastos_administrativos_valor,$gastos_pendientes);
-                                }
+                            } //end foreach*/
+                            
+                            if($block_roi==$bloque){ // Si uno de ellos es diferente, quiere decir que hay más de un bloque
+                                 // Así que se divide a la mitad
+                                $gastos_pendientes=$gastos_administrativos_valor;
+                                $gastos_administrativos_valor = $gastos_administrativos_valor * 1;
+                                $ron_gastos=(new RegistroOnline())->insertarActualizacionGastos($id,$gastos_administrativos_valor,$gastos_pendientes);
+                                //break; // Salir del foreach
+                            }else{
+                                $gastos_administrativos_valor = $gastos_administrativos_valor * 2;
+                                $gastos_pendientes=$gastos_administrativos_valor;
+                                $ron_gastos=(new RegistroOnline())->insertarActualizacionGastos($id,$gastos_administrativos_valor,$gastos_pendientes);
+                            }
                         
                             /*if(!$update){
                                 throw new Exception('Error al Registrar las Materias adicionales.');
@@ -1275,14 +1275,15 @@ class MatriculacionController extends \app\components\CController {
 
                         
                         }else{
-                            $RegistroOnline=RegistroOnline::find()->select("ron_valor_gastos_pendientes")->where(["per_id" => $per_id, "ron_id" => $id])->asArray()->one();
-                            $RegistroOnlineGastos=RegistroOnline::find()->select("ron_valor_gastos_adm")->where(["per_id" => $per_id, "ron_id" => $id])->asArray()->one();
-                            if($RegistroOnline['ron_valor_gastos_pendientes']==0 and $RegistroOnlineGastos['ron_valor_gastos_adm']>0 ){
+                            \app\models\Utilities::putMessageLogFile("1");
+                            $RegistroOnlineP=RegistroOnline::find()->where(["per_id" => $per_id, "ron_id" => $id])->asArray()->one()['ron_valor_gastos_pendientes'];
+                            $RegistroOnlineGastos=RegistroOnline::find()->where(["per_id" => $per_id, "ron_id" => $id])->asArray()->one()['ron_valor_gastos_adm'];
+                            if($RegistroOnlineP==0 and $RegistroOnlineGastos>0){
                                 $roi_bloque = RegistroOnlineItem::find()->select("roi_bloque")->where(['ron_id' => $id, 'roi_estado' => 1, 'roi_estado_logico' => 1])->asArray()->all();
                                 $gastos_administrativos_valor = GastoAdministrativo::find()->where(['mod_id' => $modalidad])->asArray()->one()['gadm_gastos_varios'];
                                 $gastos_registro = RegistroOnline::find()->where(['ron_id' => $id])->asArray()->one()['ron_valor_gastos_adm'];
-                                if($gastos_administrativos_valor==$gastos_registro){
-                                    $gastos_pendientes=$gastos_administrativos_valor;
+                                if($gastos_administrativos_valor==$RegistroOnlineGastos){
+                                    $gastos_pendientes=0;
                                     $gastos_administrativos_valor = $gastos_administrativos_valor * 2;
                                     $ron_gastos=(new RegistroOnline())->insertarActualizacionGastos($id,$gastos_administrativos_valor,$gastos_pendientes);
 
@@ -1293,6 +1294,7 @@ class MatriculacionController extends \app\components\CController {
                                 }
                             }
                         }
+                        //fin de validacion de pendiente pagos
 
                         $RegistroAdiconal=RegistroAdicionalMaterias::find()->select("rama_id")->where(["per_id" => $per_id, "ron_id" => $id])->asArray()->all();
                         if (empty($RegistroAdiconal)){

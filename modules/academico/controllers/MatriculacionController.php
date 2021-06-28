@@ -2025,10 +2025,6 @@ class MatriculacionController extends \app\components\CController {
                 }
             }
         }
-        else{
-            // Si no hay materias para pagar, retornar al registro
-            return $this->redirect('registro');
-        }
 
         // \app\models\Utilities::putMessageLogFile("rama: " . print_r($rama, true));
         // \app\models\Utilities::putMessageLogFile("roi_IDs: " . print_r($roi_IDs, true));

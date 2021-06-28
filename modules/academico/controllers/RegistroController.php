@@ -2695,6 +2695,7 @@ class RegistroController extends \app\components\CController {
                         'ron_valor_gastos_adm' => $ron_valor_gastos_adm,
                         'ron_id' => $ron_id,
                         'maca_nombre' => $maca_nombre,
+                        'rama_id' => $rama_id,
                         'valor_gasto_adm' => $valor_gasto_adm,
                     ])
             );

@@ -2476,31 +2476,30 @@ class RegistroController extends \app\components\CController {
             $rama_id = $rama_id?$rama_id:0;//nuevo 22/06/2021
             $dataPlanificacion = $matriculacion_model->getPlanificationFromRegistroOnline($ron_id,$rama_id);
 
+            for ($i = 0; $i < count($dataPlanificacion); $i++) {
+                $total_costo_materia = $total_costo_materia + $dataPlanificacion[$i]['Cost'];
+            }
+
             /*Detalles de pagos */
-            // nuevo
-            //$resp_rpm_id = $matriculacion_model->getNumeroDocumentoRegistroOnline($rama_id, $ron_id, $per_id);
-            $resp_rpm_id = $matriculacion_model->getNumeroDocumentoRegistroOnline($rama_id); //registro_pago_matricula -// AQUI
+            $resp_rpm_id = $matriculacion_model->getNumeroDocumentoRegistroOnline($rama_id); 
             $rpm_id = $resp_rpm_id['rpm_id'];
             
             $rpm_id = RegistroAdicionalMaterias::find()->where(["rama_id"=>$rama_id])->asArray()->one();
             \app\models\Utilities::putMessageLogFile('rpm_id: '.$rpm_id['rpm_id']);
 
             $registro_pago_matricula = new RegistroPagoMatricula();
-            $resp_cant_cuota = $registro_pago_matricula->getCuotasPeriodo($ron_id, $rpm_id['rpm_id']);//registro_online_cuotas  ///  AQUI
+            $resp_cant_cuota = $registro_pago_matricula->getCuotasPeriodo($ron_id, $rpm_id);
+
             $cant_cuota = $resp_cant_cuota['cuota'];
             $est_id = $modelEstudiante['est_id'];
 
             $detallePagos = $matriculacion_model->getDetalleCuotasRegistroOnline($ron_id, $rpm_id);
-            // nuevo
-
-            /*$resp_ccar_numero_documento = $matriculacion_model->getNumeroDocumentoRegistroOnline($rama_id);
-            $ccar_numero_documento = $resp_ccar_numero_documento['cfca_numero_documento'];
-            $est_id = $modelEstudiante['est_id'];
-            $detallePagos = $matriculacion_model->getDetalleCuotasRegistroOnline($ccar_numero_documento, $est_id);*/
+            
+            $valor_gasto_adm = $detallePagos[0]['valor_factura'] - $total_costo_materia;
 
             //Valores de registro online
             $detallePagosRon = $matriculacion_model->getDetvalorRegistroOnline($ron_id);
-            $ron_valor_aso_estudiante = $detallePagosRon['ron_valor_aso_estudiante'];
+            $ron_valor_aso_estudiante = $detallePagosRon['ron_valor_aso_estudiante'];$valor_gasto_adm = $detallePagos[0]['valor_factura'] - $total_costo_materia;
             $ron_valor_gastos_adm =  $detallePagosRon['ron_valor_gastos_adm']; 
 
             //malla academica
@@ -2527,6 +2526,7 @@ class RegistroController extends \app\components\CController {
                         'ron_valor_gastos_adm' => $ron_valor_gastos_adm,
                         'ron_id' => $ron_id,
                         'maca_nombre' => $maca_nombre,
+                        'valor_gasto_adm' => $valor_gasto_adm,
                     ])
             );
                 
@@ -2641,36 +2641,30 @@ class RegistroController extends \app\components\CController {
 
             /*Detalle de materias*/
             $matriculacion_model = new Matriculacion();
-            //obtengo el ron_id
-                //$resp_ron_id = $matriculacion_model->getDataStudenFromRegistroOnline($per_id, $pes_id);
 
             //obtengo el ron_id
             $resp_ron_id= $modelCargaCartera->getRonPes($per_id);
             $ron_id = $resp_ron_id['ron_id'];
-
-            $rama_id = $rama_id?$rama_id:0;//nuevo 22/06/2021
             $dataPlanificacion = $matriculacion_model->getPlanificationFromRegistroOnline($ron_id,$rama_id);
 
-            //$dataPlanificacion = $matriculacion_model->getPlanificationFromRegistroOnline($ron_id);
+            for ($i = 0; $i < count($dataPlanificacion); $i++) {
+                $total_costo_materia = $total_costo_materia + $dataPlanificacion[$i]['Cost'];
+            }
+
 
             /*Detalles de pagos */
-            // nuevo
-            //$resp_rpm_id = $matriculacion_model->getNumeroDocumentoRegistroOnline($rama_id, $ron_id, $per_id);
-            $resp_rpm_id = $matriculacion_model->getNumeroDocumentoRegistroOnline($rama_id); //registro_pago_matricula -// AQUI
+            $resp_rpm_id = $matriculacion_model->getNumeroDocumentoRegistroOnline($rama_id);
+
             $rpm_id = $resp_rpm_id['rpm_id'];
             \app\models\Utilities::putMessageLogFile('Inicio Proceso:'.$ron_id.'- '.$rpm_id);
             $registro_pago_matricula = new RegistroPagoMatricula();
-            $resp_cant_cuota = $registro_pago_matricula->getCuotasPeriodo($ron_id, $rpm_id);//registro_online_cuotas  ///  AQUI
+            $resp_cant_cuota = $registro_pago_matricula->getCuotasPeriodo($ron_id, $rpm_id);
             $cant_cuota = $resp_cant_cuota['cuota'];
             $est_id = $modelEstudiante['est_id'];
 
             $detallePagos = $matriculacion_model->getDetalleCuotasRegistroOnline($ron_id, $rpm_id);
-            // nuevo
 
-            /*$resp_ccar_numero_documento = $matriculacion_model->getNumeroDocumentoRegistroOnline($rama_id);
-            $ccar_numero_documento = $resp_ccar_numero_documento['cfca_numero_documento'];
-            $est_id = $modelEstudiante['est_id'];
-            $detallePagos = $matriculacion_model->getDetalleCuotasRegistroOnline($ccar_numero_documento, $est_id);*/
+            $valor_gasto_adm = $detallePagos[0]['valor_factura'] - $total_costo_materia;
 
             //Valores de registro online
             $detallePagosRon = $matriculacion_model->getDetvalorRegistroOnline($ron_id);
@@ -2701,6 +2695,7 @@ class RegistroController extends \app\components\CController {
                         'ron_valor_gastos_adm' => $ron_valor_gastos_adm,
                         'ron_id' => $ron_id,
                         'maca_nombre' => $maca_nombre,
+                        'valor_gasto_adm' => $valor_gasto_adm,
                     ])
             );
             $rep->mpdf->Output('HOJAINSCRIPCION' . $ids . ".pdf", ExportFile::OUTPUT_TO_DOWNLOAD);

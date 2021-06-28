@@ -138,13 +138,13 @@
         <table class="tabla">
             <tr class="tr tr_bor">
                 <td class="tcell_cen tr_bor" colspan="1" ><span class="bold">PERIODO ACADEMICO: </span></td>
-                <td class="tcell_cen tr_bor" colspan="1" ><span ><?= $data_student['pla_periodo_academico'] ?></span></td>
+                <td class="tcell_cen tr_bor" colspan="1" ><span ><?= strtoupper($data_student['pla_periodo_academico']) ?></span></td>
                 <td class="tcell_cen tr_bor" colspan="1" ><span class="bold">NUM DOC PED:</span></td>
                 <td class="tcell_cen tr_bor" colspan="1" ><span ><?= $ron_id ?></span></td>
             </tr>
             <tr class="tr tr_bor">
                 <td class="tcell_cen tr_bor" colspan="1" ><span class="bold">ALUMNO: </span></td>
-                <td class="tcell_cen tr_bor" colspan="1" ><span ><?= $data_student['pes_nombres'] ?></span></td>
+                <td class="tcell_cen tr_bor" colspan="1" ><span ><?= strtoupper($data_student['pes_nombres']) ?></span></td>
                 <td class="tcell_cen tr_bor" colspan="1" ><span class="bold">TELEFONO:</span></td>
                 <td class="tcell_cen tr_bor" colspan="1" ><span ><?= $data_student['per_celular'] ?></span></td>
             </tr>
@@ -152,17 +152,17 @@
                 <td class="tcell_cen tr_bor" colspan="1" ><span class="bold">CÉDULA: </span></td>
                 <td class="tcell_cen tr_bor" colspan="1" ><span ><?= $data_student['pes_dni'] ?></span></td>
                 <td class="tcell_cen tr_bor" colspan="1" ><span class="bold">DIRECCION:</span></td>
-                <td class="tcell_cen tr_bor" colspan="1" ><span ><?= $direccion ?></span></td>
+                <td class="tcell_cen tr_bor" colspan="1" ><span ><?= strtoupper($direccion) ?></span></td>
             </tr>
             <tr class="tr tr_bor">
                 <td class="tcell_cen tr_bor" colspan="1" ><span class="bold">UNIDAD ACADEMICA: </span></td>
-                <td class="tcell_cen tr_bor" colspan="1" ><span ><?= $data_student['mod_nombre'] ?></span></td>
+                <td class="tcell_cen tr_bor" colspan="1" ><span ><?= strtoupper($data_student['mod_nombre']) ?></span></td>
                 <td class="tcell_cen tr_bor" colspan="1" ><span class="bold">CARRERA:</span></td>
-                <td class="tcell_cen tr_bor" colspan="1" ><span ><?= $data_student['pes_carrera'] ?></span></td>
+                <td class="tcell_cen tr_bor" colspan="1" ><span ><?= strtoupper($data_student['pes_carrera']) ?></span></td>
             </tr>
             <tr class="tr tr_bor" >
                 <td class="tcell_cen tr_bor" colspan="1" ><span class="bold">FLUJO: </span></td>
-                <td class="tcell_cen tr_bor" colspan="1" ><span ><?= $maca_nombre ?></span></td>
+                <td class="tcell_cen tr_bor" colspan="1" ><span ><?= strtoupper($maca_nombre) ?></span></td>
                 <td class="tcell_cen tr_bor" colspan="1" ><span class="bold">USUARIO:</span></td>
                 <td class="tcell_cen tr_bor" colspan="1" ><span ><?= $matricula ?></span></td>
             </tr>
@@ -175,7 +175,7 @@
         echo '<tr style="background: #AED6F1;border: 1px solid #002060;"><th>CODIGO</th><th>MATERIA</th><th>HORARIO</th><th>COSTO UNITARIO</th></tr>';
         for ($i = 0; $i < count($dataPlanificacion); $i++) {
             $total_costo = $total_costo + $dataPlanificacion[$i]['Cost'];
-            echo '<tr style="border: 1px solid #002060;"><td>' . $dataPlanificacion[$i]['Code'] . '</td><td style="text-align:left">' . $dataPlanificacion[$i]['Subject'] . '</td><td>' . $dataPlanificacion[$i]['Hour'] . ' - '  . $dataPlanificacion[$i]['Block'] .'</td><td>' . $dataPlanificacion[$i]['Cost'] . '</td><td> ';
+            echo '<tr style="border: 1px solid #002060;"><td>' . $dataPlanificacion[$i]['Code'] . '</td><td style="text-align:left">' . strtoupper($dataPlanificacion[$i]['Subject']) . '</td><td>' . $dataPlanificacion[$i]['Hour'] . ' - '  . $dataPlanificacion[$i]['Block'] .'</td><td>' . $dataPlanificacion[$i]['Cost'] . '</td><td> ';
         }
         /*echo '<tr style="border: 1px solid #002060;"> 
                 <td> </td>
@@ -187,9 +187,9 @@
                 <td> </td>
                 <td> GASTOS ADMINISTRATIVOS</td>
                 <td> </td>
-                <td>' . $ron_valor_gastos_adm . '</td> 
+                <td>' . $valor_gasto_adm . '</td> 
              </tr>';
-        $total = $total_costo + $ron_valor_aso_estudiante + $ron_valor_gastos_adm;
+        $total = $total_costo + $ron_valor_aso_estudiante + $valor_gasto_adm;
         echo "<tr><td colspan='3'></td><td><b>TOTAL US$ " . number_format($total,2 ) . "</b></td></tr>";
         if (empty(count($dataPlanificacion))) {
             echo '<tr style="border: 1px solid #002060;"><td><br></td><td></td><td></td><td></td><td></td></tr>';

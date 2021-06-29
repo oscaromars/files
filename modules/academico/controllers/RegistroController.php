@@ -2435,6 +2435,71 @@ class RegistroController extends \app\components\CController {
                             \app\models\Utilities::putMessageLogFile('Tipo de pago no es Credito Directo...: ');
                             //--------------------------------------------------------------------------------------------------INICIO1
                            
+                            \app\models\Utilities::putMessageLogFile('controller 3...: ');
+                            $forma_pago = 'CR';
+                            $persona = new Persona();
+                            $cedula = $persona->consultaPersonaId($per_id);
+                            $estudiante = new Estudiante();
+                            $est_id = $estudiante->getEstudiantexperid($per_id);
+                            //$repetidos = $modelCargaCartera->getRegistrosDuplicados($ron_id);
+                            $porcentaje = 100/$numcuotas;
+                            if($numcuotas == 3 || $numcuotas == 6){
+                                $porc_mayor = round($porcentaje, 2);
+                                $porc_menor = round(($porcentaje - 0.02),2);
+                            }else{
+                                $porc_mayor = $porcentaje;
+                                $porc_menor = $porcentaje;    
+                            }
+                            if($numcuotas == 2){ // Quiere decir que es semestre intensivo B1
+                                $fechas_vencimiento = FechasVencimientoPago::find()->where(['saca_id' => $saca_id, 'fvpa_bloque' => "B1", 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();
+                                // Va a retornar 3 cuotas, así que hay que quitar la útima
+                                array_pop($fechas_vencimiento);
+                            }
+                            // Si son 3 cuotas
+                            else if($numcuotas == 3){ // Considerar sólo el bloque escogido
+                                $fechas_vencimiento = FechasVencimientoPago::find()->where(['saca_id' => $saca_id, 'fvpa_bloque' => $bloque, 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();
+                            }
+                            else if($numcuotas == 5){
+                                $fechas_vencimiento = FechasVencimientoPago::find()->where(['saca_id' => $saca_id, 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();
+                                // Va a retornar 6 cuotas, así que hay que quitar la útima
+                                array_pop($fechas_vencimiento);
+                            }
+                            else{ // Si son 6 cuotas, se deben tomar las fechas de los dos bloques
+                                $fechas_vencimiento = FechasVencimientoPago::find()->where(['saca_id' => $saca_id, 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();
+                            }
+                            
+                            $datosRonPes= $modelCargaCartera->getRonPes($per_id);
+                            $ron_id = $datosRonPes['ron_id'];
+                            $pes_id = $datosRonPes['pes_id'];
+                            //\app\models\Utilities::putMessageLogFile('log 0...'.$repetidos['repetidos']);
+                            //if($repetidos['repetidos']==0 ){ //If grid cuotas repetidos
+                                \app\models\Utilities::putMessageLogFile('log 1...'.$est_id['est_id'].'-'.$ron_id.'-'. $secuencial['secuencial']);
+                                //$registros_relacionados = $modelCargaCartera->registrarRelacionCartera($est_id['est_id'],$ron_id, $secuencial['secuencial']);
+                                $registro_pago_matricula = $modelCargaCartera->registrarPagoMatricula($perid, $per_id, $pla_id, $ron_id, $total);
+                                \app\models\Utilities::putMessageLogFile('RPM: '.$registro_pago_matricula.'- OK');
+                            
+                                $registroadicional = RegistroAdicionalMaterias::find()->where(["ron_id" => $ron_id,"per_id" => $per_id, "rpm_id" => NULL])->asArray()->one();
+                                $rama_id = $registroadicional["rama_id"];
+                                $rpm_id = $registro_pago_matricula;
+                                \app\models\Utilities::putMessageLogFile('RPM_ID: '.$rpm_id.'- OK');
+                                $updateAdicionalMateria = $modelCargaCartera->updateAdicionalMateria($rama_id, $rpm_id);
+                                \app\models\Utilities::putMessageLogFile('log 2...rama_id'.$rama_id);
+                                    \app\models\Utilities::putMessageLogFile('controller N1...: '.$est_id['est_id'].'-'.$ron_id.'-'. $secuencial['secuencial']);
+                                /*for($in = 1; $in <= $numcuotas; $in++){
+                                    $fechaCuotaActual = $fechas_vencimiento[$in-1]['fvpa_fecha_vencimiento'];//$modelCargaCartera->getCuotaActual($in);
+                                    \app\models\Utilities::putMessageLogFile('lvencimiento '.$in.' - '.$fechaCuotaActual.' - '.$saca_id);
+                                    $registros_cuotas = $modelCargaCartera->registrarCargaCartera($est_id['est_id'],$cedula['per_cedula'], $secuencial['secuencial'], $forma_pago,$fechaCuotaActual,$in, $numcuotas, $valor_cuota, $total, $usuario);
+                                    if($in==1){
+                                        $registro_online_cuota = $modelCargaCartera->registroOnlineCuota($ron_id, $rpm_id,$in,$fechaCuotaActual,$porc_menor,$total);
+                                    }else{
+                                        $registro_online_cuota = $modelCargaCartera->registroOnlineCuota($ron_id, $rpm_id,$in,$fechaCuotaActual,$porc_mayor,$total);
+                                    }
+                                }*/
+                                $updatePendiete = $modelCargaCartera->updatePendiente($ron_id);
+                                    $message = array(
+                                        "wtmessage" => Yii::t("notificaciones", "Su información ha sido guardada con éxito."),
+                                        "title" => Yii::t('jslang', 'Success'),
+                                    );
                             if($tpago==2){ //Pago total del Periodo
                                 //Si la forma de Pago es 1 significa que es por Tarjeta de credito
                                 $statusMsg = '';
@@ -2545,6 +2610,7 @@ class RegistroController extends \app\components\CController {
                                     if(empty($mensaje_cod) && $customer){                                           
                                         //Se crea el cobro
                                         try {  
+                                            \app\models\Utilities::putMessageLogFile(' --------------------------------- Customer :'.$customer);
                                             $charge = \Stripe\Charge::create(array( 
                                                 'customer'    => $customer->id, 
                                                 'amount'      => $total, 
@@ -2567,7 +2633,7 @@ class RegistroController extends \app\components\CController {
                                         if(empty($api_error) && $charge){ 
                                             //Cargamos los datos
                                             $chargeJson = $charge->jsonSerialize(); 
-                                         
+                                            \app\models\Utilities::putMessageLogFile(' --------------------------------- Se creo :'.$charge['paid']);
                                             // Check whether the charge is successful 
                                             if( $chargeJson['amount_refunded'] == 0 && 
                                                  empty($chargeJson['failure_code'])  && 
@@ -2694,10 +2760,10 @@ class RegistroController extends \app\components\CController {
                                     $pfes_referencia  = $data["referencia"]?$data["referencia"]:" ";
                                     $pfes_banco       = 0;//$data["banco"]?$data["banco"]:""; 
                                     //Pendiente cargar banco y comprobante
-                                    $fpag_id          = $data["cmb_fpago"];
+                                    $fpag_id          = $data["cmb_fpago"]?$data["cmb_fpago"]:1;
                                     $pfes_valor_pago  = $data['total'];
                                     $pfes_fecha_pago  = date(Yii::$app->params["dateTimeByDefault"]);;
-                                    $pfes_observacion = $data["observacion"]?$data["observacion"]:"";
+                                    $pfes_observacion = $data["observacion"]?$data["observacion"]:" ";
                                     //$est_id           = Estudiante::find()->where(['per_id' => $per_id])->asArray()->one();
                                     
                                     $mod_est_id       = Estudiante::findIdentity($per_id);
@@ -2711,9 +2777,11 @@ class RegistroController extends \app\components\CController {
                                     //if ($resp_consregistro['registro'] == '0') {
                                     if(true){
                                         //print_r($data);die();
+                                        //print_r($est_id.'-'.'ME'.'-'. $pfes_referencia.'-'. $pfes_banco.'-'. $fpag_id.'-'. $pfes_valor_pago.'-'. $pfes_fecha_pago.'-'. $pfes_observacion.'-'. $imagen.'-'. $usuario);die();
                                         $resp_pagofactura = $mod_pagos->insertarPagospendientes($est_id, 'ME', $pfes_referencia, $pfes_banco, $fpag_id, $pfes_valor_pago, $pfes_fecha_pago, $pfes_observacion, $imagen, $usuario);
 
                                         $pfes_id = $resp_pagofactura;
+                                        //print_r($resp_pagofactura);die();
 
                                         $tituloMensaje = Yii::t("interesado", "Pago Recibido UTEG");
                                         $asunto        = Yii::t("interesado", "Pago Recibido UTEG");
@@ -2791,7 +2859,7 @@ class RegistroController extends \app\components\CController {
                                     
                                         Utilities::sendEmail($tituloMensaje, Yii::$app->params["colecturia"]     , [Yii::$app->params["supercolecturia"] => "Colecturia"], $asunto, $bodycolec);
                                         Utilities::sendEmail($tituloMensaje, Yii::$app->params["supercolecturia"], [Yii::$app->params["colecturia"]      => "Supervisor Colecturia"], $asunto, $bodycolec);
-
+                                        //print_r($resp_pagofactura);die();
                                         if ($resp_pagofactura) {
                                             // se graba el detalle
                                             $pagados = explode("*", $pagado); //PAGADOS
@@ -2806,7 +2874,7 @@ class RegistroController extends \app\components\CController {
                                                 //CODIGO TEMPORAL
                                                 //$mod_ccartera     = new CargaCartera();
                                                 $resp_consfactura = $mod_ccartera->consultarPagospendientesp($personaData['per_cedula'], $parametro[0], $parametro[1]);
-
+                                                //print_r($resp_consfactura);die();
                                                 \app\models\Utilities::putMessageLogFile('resp_consfactura ...: ' . print_r($resp_consfactura,true));
                                                 \app\models\Utilities::putMessageLogFile('valor_pagado ...: ' . print_r($valor_pagado,true));
                                                 //Pregunto si el valor pagado es mayor a cero
@@ -2875,7 +2943,7 @@ class RegistroController extends \app\components\CController {
                                                         $cargo->ccar_fecha_modificacion = $fecha;
                                                         $cargo->ccar_usu_modifica       = $usuario;
                                                         
-                                                    }//else
+                                                    }//else*/
                                                     
                                                     if($valor_pagado < 0)
                                                         $valor_pagado = 0;
@@ -2895,8 +2963,8 @@ class RegistroController extends \app\components\CController {
                                                                                                                 //$resp_consfactura['ccar_valor_cuota'], 
                                                                                                                 $cargo->ccar_abono,
                                                                                                                 $resp_consfactura['F_VEN_D'], 
-                                                                                                                $dpfa_estado_pago, 
-                                                                                                                $dpfa_estado_financiero, 
+                                                                                                                1, 
+                                                                                                                1, 
                                                                                                                 $usuario);
                                                 }//if
                                                 
@@ -2923,6 +2991,8 @@ class RegistroController extends \app\components\CController {
                                                     "title" => Yii::t('jslang', 'Success'),
                                                 );
                                                 echo Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), false, $message);
+                                                Utilities::putMessageLogFile('La infomación ha sido grabada.');
+
                                             }//if
                                         }else{
                                             $transaction->rollback();
@@ -2930,6 +3000,7 @@ class RegistroController extends \app\components\CController {
                                                 "wtmessage" => Yii::t("notificaciones", "Error al grabar pago factura 1." . $mensaje),
                                                 "title" => Yii::t('jslang', 'Error'),
                                             );
+                                            Utilities::putMessageLogFile('Error al grabar pago factura 1.'. $cuota_pagada);
                                             echo Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
                                         }
                                     }else{
@@ -2939,6 +3010,7 @@ class RegistroController extends \app\components\CController {
                                             "wtmessage" => Yii::t("notificaciones", "La cuota " . $cuota_pagada . "  ya esta cargado el pago, espere porfavor su revisión"),
                                             "title" => Yii::t('jslang', 'Error'),
                                         );
+                                        Utilities::putMessageLogFile('La cuota ' . $cuota_pagada . '  ya esta cargado el pago, espere porfavor su revisión');
                                         echo Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
                                     }//else
                                 }catch (Exception $ex) {
@@ -2947,9 +3019,10 @@ class RegistroController extends \app\components\CController {
                                         "wtmessage" => Yii::t("notificaciones", "Error al grabar pago factura." . $ex),
                                         "title" => Yii::t('jslang', 'Error'),
                                     );
+                                    Utilities::putMessageLogFile('ROLLBACK');
                                     echo Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
                                 }
-                                return;
+                                return Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), false, $message);;
                             //---------------------------------------------------------------------------------------------FIN2
                     }                                   
             } catch (Exception $ex) {
@@ -2960,10 +3033,14 @@ class RegistroController extends \app\components\CController {
                     "wtmessage" => Yii::t("notificaciones", "Error al grabar.".$ex->getMessage()),
                     "title" => Yii::t('jslang', 'Error'),
                 );
+                Utilities::putMessageLogFile('ROLLBACK2');
                 return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
             }
-            return;
+            return Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), false, $message);;
         }
+        //sendPdf();
+        //********************************************************************************************* */
+       
     }
 
     public function actionSendpdf(){
@@ -3003,6 +3080,7 @@ class RegistroController extends \app\components\CController {
             // nuevo
             //$resp_rpm_id = $matriculacion_model->getNumeroDocumentoRegistroOnline($rama_id, $ron_id, $per_id);
             $resp_rpm_id = $matriculacion_model->getNumeroDocumentoRegistroOnline($rama_id); //registro_pago_matricula -// AQUI
+            \app\models\Utilities::putMessageLogFile('rama_id: '.$rama_id);
             $rpm_id = $resp_rpm_id['rpm_id'];
             
             $rpm_id = RegistroAdicionalMaterias::find()->where(["rama_id"=>$rama_id])->asArray()->one();

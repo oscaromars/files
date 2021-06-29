@@ -472,51 +472,6 @@ class Matriculacion extends \yii\db\ActiveRecord {
         return $resultData;
     }
 
-    public function insertarActualizacionGastos($ron_id,$gastos_administrativos_valor) {        
-        $con = \Yii::$app->db_academico;
-        $ron_fecha_modificacion = date(Yii::$app->params["dateTimeByDefault"]);
-        $estado = 1;
-        $trans = $con->getTransaction(); // se obtiene la transacción actual
-        if ($trans !== null) {
-            $trans = null; // si existe la transacción entonces no se crea una
-        } else {
-            $trans = $con->beginTransaction(); // si no existe la transacción entonces se crea una
-        }
-
-        try {
-            $comando = $con->createCommand
-                    ("UPDATE " . $con->dbname . ".registro_online               
-                      SET ron_valor_gastos_adm = :gastos_administrativos_valor,
-                        ron_fecha_modificacion = :ron_fecha_modificacion
-                        
-                      WHERE 
-                        ron_id = :ron_id
-                        AND ron_estado = :estado 
-                        AND ron_estado_logico = :estado");
-
-            if (isset($gastos_administrativos_valor)) {
-                $comando->bindParam(':gastos_administrativos_valor', $gastos_administrativos_valor, \PDO::PARAM_STR);
-            }
-            if (isset($ron_id)) {
-                $comando->bindParam(':ron_id', $ron_id, \PDO::PARAM_INT);
-            }
-            if (!empty((isset($ron_fecha_modificacion)))) {
-                $comando->bindParam(':ron_fecha_modificacion', $ron_fecha_modificacion, \PDO::PARAM_STR);
-            }
-            
-            $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
-            $result = $comando->execute();
-            if ($trans !== null)
-                $trans->commit();
-            return TRUE;
-            \app\models\Utilities::putMessageLogFile('insertarActualizacionGastos: '.$comando->getRawSql());
-        } catch (Exception $ex) {
-            if ($trans !== null)
-                $trans->rollback();
-            return FALSE;
-        }
-    }
-
 
     /*
      * Function to get data from planificacion_estudiante
@@ -538,15 +493,15 @@ class Matriculacion extends \yii\db\ActiveRecord {
             AND pes.pla_id =:pla_id;
         ";
 
-	// \app\models\Utilities::putMessageLogFile('sql: ' . $sql);
+    // \app\models\Utilities::putMessageLogFile('sql: ' . $sql);
 
         $comando = $con_academico->createCommand($sql);
         $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
         $comando->bindParam(":pla_id", $pla_id, \PDO::PARAM_INT);
-	// \app\models\Utilities::putMessageLogFile('raw: ' . $comando->getRawSql());
+    // \app\models\Utilities::putMessageLogFile('raw: ' . $comando->getRawSql());
         $resultData = $comando->queryOne();
         $dataCredits = $this->getInfoMallaEstudiante($per_id);
-	// \app\models\Utilities::putMessageLogFile('resultData: ' . $resultData);
+    // \app\models\Utilities::putMessageLogFile('resultData: ' . $resultData);
         $dataPlanificacion = $this->parseDataSubject($resultData, $dataCredits);
 
         // \app\models\Utilities::putMessageLogFile('getAllDataPlanificacionEstudiante: '.print_r($dataPlanificacion,true));
@@ -765,9 +720,9 @@ class Matriculacion extends \yii\db\ActiveRecord {
         }
 
         if (!is_null($dict['pes_mat_b1_h4_cod']) && trim($dict['pes_mat_b1_h4_cod']) != "") {
-		// \app\models\Utilities::putMessageLogFile($dict['pes_mat_b1_h4_cod']);
+        // \app\models\Utilities::putMessageLogFile($dict['pes_mat_b1_h4_cod']);
             $modCod = MallaAcademicaDetalle::findOne(['made_codigo_asignatura' => trim($dict['pes_mat_b1_h4_cod']), 'made_estado_logico' => '1', 'made_estado' => '1']);
-		// \app\models\Utilities::putMessageLogFile("modCod: " . $modCod);
+        // \app\models\Utilities::putMessageLogFile("modCod: " . $modCod);
             $asignatura = $codeAsignatura = $credits  = $costoCredito ="";
             foreach($dataCredits as $key => $value){
                 if($value['MallaCodAsig'] == trim($dict['pes_mat_b1_h4_cod'])){
@@ -790,7 +745,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
                 "modalidad"=>$modalidad,
                 "Roi_id" => $roi_id,
             );
-		\app\models\Utilities::putMessageLogFile("arrRow14" . $arrRow14);
+        \app\models\Utilities::putMessageLogFile("arrRow14" . $arrRow14);
             array_push($arrData, $arrRow14);
         }
 
@@ -1012,7 +967,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
             array_push($arrData, $arrRow26);
         }
 
-	\app\models\Utilities::putMessageLogFile('arrData h1: ' . print_r($arrData,true));
+    \app\models\Utilities::putMessageLogFile('arrData h1: ' . print_r($arrData,true));
 
         return $arrData;
     }
@@ -1259,7 +1214,6 @@ class Matriculacion extends \yii\db\ActiveRecord {
         $con_academico = \Yii::$app->db_academico;
         $estado = 1;
         $sql = "
-
             SELECT distinct SUM(roc.roi_costo) AS costo,
             ron.ron_valor_gastos_adm as gastos,
             ron.ron_valor_aso_estudiante as asociacion
@@ -1292,10 +1246,8 @@ class Matriculacion extends \yii\db\ActiveRecord {
         $con_academico = \Yii::$app->db_academico;
         $estado = 1;
         $sql = "
-
             SELECT ron_id as ron_id, MAX(rama_id) AS id 
             FROM " . $con_academico->dbname . ".registro_adicional_materias 
-
             WHERE ron_id =:ron_id
             AND rama_estado =:estado
             AND rama_estado_logico =:estado
@@ -1315,10 +1267,8 @@ class Matriculacion extends \yii\db\ActiveRecord {
         $con_academico = \Yii::$app->db_academico;
         $estado = 1;
         $sql = "
-
             SELECT ron_id, rpm_estado_generado 
             FROM " . $con_academico->dbname . ".registro_pago_matricula
-
             WHERE ron_id =:ron_id
             AND rpm_estado =:estado
             AND rpm_estado_logico =:estado
@@ -1341,9 +1291,9 @@ class Matriculacion extends \yii\db\ActiveRecord {
      * @param $ron_id
      * @return $resultData
      */
-    public function getPlanificationFromRegistroOnline($ron_id, $rama_id=0)
+    public function getPlanificationFromRegistroOnline($ron_id,$rama_id)
     {
-        $rama_id = $rama_id?$rama_id:0;
+         $rama_id = $rama_id?$rama_id:0;
         $con_academico = \Yii::$app->db_academico;
         $estado = 1;
         /*$sql = "
@@ -1363,15 +1313,16 @@ class Matriculacion extends \yii\db\ActiveRecord {
         ";*/
 
         if($rama_id>0) $str_search = " AND rama.rama_id = $rama_id ";
-        $sql = "SELECT roi.roi_id, 
-                       roi.roi_materia_nombre as Subject, 
-                       roi_creditos as Credit, 
-                       roi.roi_materia_cod as Code,
-                       roi.roi_materia_cod as CodeAsignatura, 
-                       roi.roi_costo as Cost,
-                       roi.roi_costo as Price,
-                       roi.roi_hora as Hour,
-                       roi.roi_bloque as Block
+        $sql = "
+            SELECT roi.roi_id, 
+                roi.roi_materia_nombre as Subject, 
+                roi_creditos as Credit, 
+        roi.roi_materia_cod as Code,
+                roi.roi_materia_cod as CodeAsignatura, 
+        roi.roi_costo as Cost,
+                roi.roi_costo as Price,
+                roi.roi_hora as Hour,
+                roi.roi_bloque as Block
             FROM " . $con_academico->dbname . ".registro_online_item as roi
             inner join " . $con_academico->dbname . ".registro_adicional_materias as rama on roi.roi_id = rama.roi_id_1
                                                                         or roi.roi_id = rama.roi_id_2
@@ -1383,8 +1334,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
             AND roi.roi_estado =:estado
             AND roi.roi_estado_logico =:estado
             $str_search
-            AND rama.rama_estado = 1 
-            AND rama.rama_estado_logico = 1";
+        ";
 
         $comando = $con_academico->createCommand($sql);
         $comando->bindParam(":ron_id", $ron_id, \PDO::PARAM_INT);
@@ -1634,13 +1584,15 @@ class Matriculacion extends \yii\db\ActiveRecord {
      * @param $rama_id
      * @return $resultData
      */
+
     public function getNumeroDocumentoRegistroOnline( $rama_id)
     {
         $con_academico = \Yii::$app->db_academico;
         $estado = 1;
-        /*$sql = "SELECT rama.rpm_id as rpm_id
+        /*$sql = " SELECT rama.rpm_id as rpm_id
                 FROM db_academico.registro_adicional_materias as rama 
-                  AND rama.rama_id = :rama_id 
+                  AND rama.ron_id = :ron_id 
+                  AND rama.per_id = :per_id 
                   AND rama.rama_estado = :estado
                   AND rama.rama_estado_logico = :estado;"; */
 

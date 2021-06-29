@@ -313,7 +313,8 @@ class MatriculaciondropController extends \app\components\CController {
                                     "Cost" => $value['roi_costo'],
                                     "Code" => $value['roi_materia_cod'],
                                     "Block" => $value['roi_bloque'],
-                                    "Hour" => $value['roi_hora']
+                                    "Hour" => $value['roi_hora'],
+                                    "Credit" => $value['roi_creditos']
                                 ];
                                 $valor_total += $value['roi_costo'];
                             }
@@ -1031,14 +1032,18 @@ class MatriculaciondropController extends \app\components\CController {
                 $modelRegOn = RegistroOnline::findOne(['ron_id' => $ron_id, 'per_id' => $per_id]);
                 $pes_id = $modelRegOn->pes_id;
                 $modelPes = PlanificacionEstudiante::findOne($pes_id);
-                $pla_id = $modelPes->pla_id;
+                //$pla_id = $modelPes->pla_id;
+                $modelPla = Planificacion::findOne($modelPlaEst->pla_id);
+                $resultIdPlanificacionEstudiante = $matriculacion_model->getIdPlanificacionEstudiante($per_id, $modelPla['pla_id']);
+                $pla_id = $resultIdPlanificacionEstudiante[0]['pla_id'];
+                $paca_id=$modelPla['paca_id'];
                 // Se verifica si hay algun pago realizado o por verificar
                 $modelRegPag = RegistroPagoMatricula::findOne(['per_id' => $per_id, 'pla_id' => $pla_id, 'ron_id' => $ron_id, 'rpm_estado' => '1', 'rpm_estado_logico'=>'1',]);
                 if(isset($data['cancelSubject']) && $data['cancelSubject'] = '1'){ // si hay un registro de pago se debe tomar en consideracion la anulacion por materias
                     $arr_sub_cancel = explode(";", $data['codes']);
 
                         
-                          \app\models\Utilities::putMessageLogFile('Inicio Proceso cron:'.$arr_sub_cancel[0]);
+                        //  \app\models\Utilities::putMessageLogFile('Inicio Proceso cron:'.$arr_sub_cancel[0]);
                            $cod= $arr_sub_cancel[0];
 
 
@@ -1059,29 +1064,29 @@ class MatriculaciondropController extends \app\components\CController {
                        $i=0; 
                       $costo_mat = 0;
                       $existrpm = 0;
-                      \app\models\Utilities::putMessageLogFile('Codigos de materias');
-                       \app\models\Utilities::putMessageLogFile(print_r($arr_sub_cancel,true));
+                      //\app\models\Utilities::putMessageLogFile('Codigos de materias');
+                      // \app\models\Utilities::putMessageLogFile(print_r($arr_sub_cancel,true));
                      //foreach($arr_sub_cancel as $arr_sub_cancel ){  
                       for($i=0; $i<count($arr_sub_cancel)-1; $i++){
                             $cod= $arr_sub_cancel[$i];
-                            \app\models\Utilities::putMessageLogFile('codigo  MAT: '.$cod);
-                            \app\models\Utilities::putMessageLogFile('codigo RON_ID: '.$ron_id);
+                            //\app\models\Utilities::putMessageLogFile('codigo  MAT: '.$cod);
+                            //\app\models\Utilities::putMessageLogFile('codigo RON_ID: '.$ron_id);
 
                             $mat = $roc_model->getCostobyRon($ron_id,$cod);
                             $costo_mat += $mat[0]['roi_costo'];
                              // $i++;
                            //Validar que si tiene pago la matria a eliminar no recalcular  
                             $res_rpm_item =   $roc_model->verificarPagoMateriaByRegistroOnLine($ron_id,$cod);
-                            \app\models\Utilities::putMessageLogFile('Resultado de contar pago de materia: '.$res_rpm_item['exist_rpm']);  
+                           // \app\models\Utilities::putMessageLogFile('Resultado de contar pago de materia: '.$res_rpm_item['exist_rpm']);  
                             if ($res_rpm_item['exist_rpm'] >0){
                                 $existrpm++;
                             }
                       } 
-                    \app\models\Utilities::putMessageLogFile('totaldesc:'.$costo_mat);   
+                    /*\app\models\Utilities::putMessageLogFile('totaldesc:'.$costo_mat);   
                     \app\models\Utilities::putMessageLogFile('recalculo:'.count($recalculo));
 
 
-                      \app\models\Utilities::putMessageLogFile('Existen registros de pago matricula: '.$existrpm);
+                      \app\models\Utilities::putMessageLogFile('Existen registros de pago matricula: '.$existrpm);*/
 
 
 
@@ -1095,8 +1100,8 @@ class MatriculaciondropController extends \app\components\CController {
                               //recorrer las facturas pendientes 
                               $cant_fpe =  count($fpe_saldo_pendiente); // cantidad de fpe
                               $val_desc = $total_anul_costo / $cant_fpe;
-                              \app\models\Utilities::putMessageLogFile('1 - Anulacion materia  Cantidad de fpe:'.$val_desc);   
-                              \app\models\Utilities::putMessageLogFile('1 - Anulacion materia  valor desc fpe:'.$val_desc);   
+                            /*  \app\models\Utilities::putMessageLogFile('1 - Anulacion materia  Cantidad de fpe:'.$val_desc);   
+                              \app\models\Utilities::putMessageLogFile('1 - Anulacion materia  valor desc fpe:'.$val_desc);   */
                               $i=0;
                               foreach($fpe_saldo_pendiente as $key => $value){
                                 //restar el valor 
@@ -1106,7 +1111,7 @@ class MatriculaciondropController extends \app\components\CController {
                                 {
                                     //error
                                 }
-                                 \app\models\Utilities::putMessageLogFile('1 - Anulacion materia Actualiza fpe:'.$fpe_saldo_pendiente[$i]['fpe_id']);
+                               //  \app\models\Utilities::putMessageLogFile('1 - Anulacion materia Actualiza fpe:'.$fpe_saldo_pendiente[$i]['fpe_id']);
                                 
                                 $i++;
 
@@ -1144,17 +1149,18 @@ class MatriculaciondropController extends \app\components\CController {
 
                             //  }
                             $cantcuotasf = $facturas_pendientesnew[0]['Cantf'] ;
-                             
+                            /* 
                             \app\models\Utilities::putMessageLogFile('valor pendiente:'.$facturas_pendientesnew[0]['Costof']);
-                            \app\models\Utilities::putMessageLogFile('cantidad cuotas:'.$cantcuotasf);
+                            \app\models\Utilities::putMessageLogFile('cantidad cuotas:'.$cantcuotasf);*/
 
                             $costcuotasf = $facturas_pendientesnew[0]['Costof'] - $tm; 
-                            
+                            /*
                             \app\models\Utilities::putMessageLogFile('costo cuotas:'.$costcuotasf);
                             \app\models\Utilities::putMessageLogFile('fpeid:'.$fpe_pendientesnew[0]['fpeid']);
                             \app\models\Utilities::putMessageLogFile('fpeid:'.$fpe_pendientesnew[1]['fpeid']);
                             \app\models\Utilities::putMessageLogFile('fpeid:'.$fpe_pendientesnew[2]['fpeid']);
-                            \app\models\Utilities::putMessageLogFile('fpeid:'.$fpe_pendientesnew[3]['fpeid']);
+                            \app\models\Utilities::putMessageLogFile('fpeid:'.$fpe_pendientesnew[3]['fpeid']);*/
+
                             // for($i=0; $i<count($facturas_pendientesnew); $i++){
                              $i=0;
                               foreach($fpe_pendientesnew as $key => $value){
@@ -1235,7 +1241,71 @@ class MatriculaciondropController extends \app\components\CController {
                             }
                             // cambiar estados en registro_online_item
                             $modelRegItem = RegistroOnlineItem::findAll(['ron_id' => $ron_id]);
+                            \app\models\Utilities::putMessageLogFile("Registro_online_item: " . $modelRegItem);
+                            $RegistroOnline=RegistroOnline::find()->select("ron_valor_gastos_pendientes")->where(["per_id" => $per_id, "ron_id" => $id])->asArray()->one();
+                            if($RegistroOnline['ron_valor_gastos_pendientes']>=0){
+                                
+                                // Tomar el valor actual de gastos administrativos
+                                $block_roi= RegistroOnlineItem::find()->where(['ron_id' => $ron_id, 'roi_estado' => 1, 'roi_estado_logico' => 1])->asArray()->one()['roi_bloque'];
+                                $gastos_administrativos_valor = GastoAdministrativo::find()->where(['mod_id' => $modalidad])->asArray()->one()['gadm_gastos_varios'];
+                                \app\models\Utilities::putMessageLogFile("roi_id: " . print_r($gastos_administrativos_valor,true));
+                                $bloque = 'B1'; // Tomar el primer bloque
+                                //$mitad = 1; // Empezar asumiendo que se toma 1 solo bloque
+                                \app\models\Utilities::putMessageLogFile("Bloquea: " . $bloques,true);
+                                \app\models\Utilities::putMessageLogFile("Block: " . $bloque);
+                            /*if(count($bloques) == 2){
+                                // Si sólo son 2 materias, los gastos administrativos son completos
+                                $mitad = 1;
+                            }*/ // queda descartado 
+                            
+                                /*foreach ($roi_bloque as $key => $value) { // recorrer la lista de bloques
+                                    if($value != $bloques ){ // Si uno de ellos es diferente, quiere decir que hay más de un bloque
+                                        $mitad = 2; // Así que se divide a la mitad                                    
+                                        break; // Salir del foreach
+                                    }
+                                    // Si nunca entra al condicional, quiere decir que todas las materias son del mismo bloque y se mantiene el valor de gatos administrativos
+                                } //end foreach*/
+                                
+                                if($block_roi==$bloque){ // Si uno de ellos es diferente, quiere decir que hay más de un bloque
+                                     // Así que se divide a la mitad
+                                    $gastos_pendientes=$gastos_administrativos_valor;
+                                    $gastos_administrativos_valor = $gastos_administrativos_valor /1;
+                                    $ron_gastos=(new RegistroOnline())->insertarActualizacionGastos($id,$gastos_administrativos_valor,$gastos_pendientes);
+                                    //break; // Salir del foreach
+                                }else{
+                                    $gastos_administrativos_valor = $gastos_administrativos_valor /2;
+                                    $gastos_pendientes=$gastos_administrativos_valor;
+                                    $ron_gastos=(new RegistroOnline())->insertarActualizacionGastos($id,$gastos_administrativos_valor,$gastos_pendientes);
+                                }
+                            
+                                /*if(!$update){
+                                    throw new Exception('Error al Registrar las Materias adicionales.');
+                                }*/
+
+                            
+                            }else{
+                                \app\models\Utilities::putMessageLogFile("1");
+                                $RegistroOnlineP=RegistroOnline::find()->where(["per_id" => $per_id, "ron_id" => $id])->asArray()->one()['ron_valor_gastos_pendientes'];
+                                $RegistroOnlineGastos=RegistroOnline::find()->where(["per_id" => $per_id, "ron_id" => $id])->asArray()->one()['ron_valor_gastos_adm'];
+                                if($RegistroOnlineP==0 and $RegistroOnlineGastos>0){
+                                    $roi_bloque = RegistroOnlineItem::find()->select("roi_bloque")->where(['ron_id' => $id, 'roi_estado' => 1, 'roi_estado_logico' => 1])->asArray()->all();
+                                    $gastos_administrativos_valor = GastoAdministrativo::find()->where(['mod_id' => $modalidad])->asArray()->one()['gadm_gastos_varios'];
+                                    $gastos_registro = RegistroOnline::find()->where(['ron_id' => $id])->asArray()->one()['ron_valor_gastos_adm'];
+                                    if($gastos_administrativos_valor==$RegistroOnlineGastos){
+                                        $gastos_pendientes=0;
+                                        $gastos_administrativos_valor = $gastos_administrativos_valor / 1;
+                                        $ron_gastos=(new RegistroOnline())->insertarActualizacionGastos($id,$gastos_administrativos_valor,$gastos_pendientes);
+
+                                    }else{
+                                        $gastos_administrativos_valor = $gastos_administrativos_valor / 1; // 300
+                                        $gastos_pendientes=0; // 0
+                                        $ron_gastos=(new RegistroOnline())->insertarActualizacionGastos($id,$gastos_administrativos_valor,$gastos_pendientes);
+                                    }
+                                }
+                            }
+
                             if($modelRegItem){
+                                \app\models\Utilities::putMessageLogFile("Registro_online_item: " . $modelRegItem);
                                 foreach($modelRegItem as $key => $item){
                                     $item->roi_estado = '0';
                                     $item->roi_estado_logico = '0';
@@ -1245,7 +1315,13 @@ class MatriculaciondropController extends \app\components\CController {
                                         throw new Exception('Error to Update Online Item Register.');
                                     }
                                 }
+                            
+
+                                // fin de registro gasto adm
+                            
                             }
+
+                           
                             // cambiar estados en registro_online_cuotas
                             $modelRegCuo = RegistroOnlineCuota::findAll(['ron_id' => $ron_id]);
                             if($modelRegCuo){
@@ -1308,6 +1384,7 @@ class MatriculaciondropController extends \app\components\CController {
                             }
                         }else{ // como no es igual entonces se hace eliminacion de la materias seleccionadas
                             $modelRegItem = RegistroOnlineItem::findAll(['ron_id' => $ron_id]);
+                            
                             $sumMatr = 0;
                             foreach($modelRegItem as $key => $item){
                                 if(in_array($item->roi_materia_cod, $arr_sub_cancel)){
@@ -1321,7 +1398,11 @@ class MatriculaciondropController extends \app\components\CController {
                                 }else
                                     $sumMatr += $item->roi_costo;
                             }
-                            $modelRegOn->ron_valor_matricula = $sumMatr;
+                            //$modelRegOn->ron_valor_matricula = $sumMatr;
+
+
+                           
+
                             if(!$modelRegOn->save()){
                                 throw new Exception('Error to Update Online Register.');
                             }

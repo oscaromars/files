@@ -19,7 +19,6 @@ Academico::registerTranslations();
 
 
 /*
-
 print_r($costo['asociacion']);
 print_r($costo['gastos']);
 print_r($costo['costo']);

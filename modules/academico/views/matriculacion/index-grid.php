@@ -11,7 +11,6 @@ academico::registerTranslations();
 
 /*
 $modelCancelItem = array();
-
 $modelCancelRon = CancelacionRegistroOnline::findOne(['ron_id' => $ron_id, 'cron_estado' => '1', 'cron_estado_logico' => '1',]);
 if($modelCancelRon){
     $cancelStatus = $modelCancelRon->cron_estado_cancelacion;
@@ -152,3 +151,4 @@ if($modelCancelRon){
         ]
     ])
 ?>
+

@@ -1467,6 +1467,7 @@ create table if not exists `registro_online` (
  `ron_valor_arancel` decimal(10,2) DEFAULT NULL, -- valor que se obtiene por la categoria del estudiante
  `ron_valor_matricula` decimal(10,2) DEFAULT NULL,
  `ron_valor_gastos_adm` decimal(10,2) DEFAULT NULL,
+ `ron_valor_gastos_pendientes` decimal(10,2) DEFAULT NULL,
  `ron_valor_aso_estudiante` decimal(10,2) DEFAULT NULL,
  `ron_estado_registro` varchar(1) not null, -- 1 registrado, 0 aun no registrado
  `ron_estado` varchar(1) not null, 
@@ -2233,3 +2234,19 @@ create view componente_columna as (
              INNER JOIN db_academico.componente comp ON comp.com_id = coun.com_id
        -- WHERE coun.uaca_id = 3  
   );
+
+create table if not exists `fechas_vencimiento_pago` (
+  `fvpa_id` int(11) NOT NULL AUTO_INCREMENT,
+  `saca_id` bigint(20) DEFAULT NULL,
+  `fvpa_cuota` int(11) DEFAULT NULL,
+  `fvpa_fecha_vencimiento` datetime DEFAULT NULL,
+  `fvpa_estado` bigint(20) DEFAULT NULL,
+  `fvpa_periodo_academico` bigint(20) DEFAULT NULL,
+  `fvpa_bloque` varchar(2) DEFAULT NULL,
+  `fvpa_fecha_creacion` datetime DEFAULT NULL,
+  `fvpa_usuario_modificacion` varchar(45) DEFAULT NULL,
+  `fvpa_fecha_modificacion` datetime DEFAULT NULL,
+  `fvpa_estado_logico` bigint(20) DEFAULT '1',
+  PRIMARY KEY (`fvpa_id`)
+);
+

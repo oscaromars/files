@@ -2657,12 +2657,12 @@ class MatriculacionController extends \app\components\CController {
                                             
                                             // Sacar los roi_ids
                                             $bloques = [
-                                                RegistroOnlineItem::find()->where(['roi_id' => $no_pagadas[0]['roi_id_1']])->asAray()->one()['roi_bloque'],
-                                                RegistroOnlineItem::find()->where(['roi_id' => $no_pagadas[0]['roi_id_2']])->asAray()->one()['roi_bloque'],
-                                                RegistroOnlineItem::find()->where(['roi_id' => $no_pagadas[0]['roi_id_3']])->asAray()->one()['roi_bloque'],
-                                                RegistroOnlineItem::find()->where(['roi_id' => $no_pagadas[0]['roi_id_4']])->asAray()->one()['roi_bloque'],
-                                                RegistroOnlineItem::find()->where(['roi_id' => $no_pagadas[0]['roi_id_5']])->asAray()->one()['roi_bloque'],
-                                                RegistroOnlineItem::find()->where(['roi_id' => $no_pagadas[0]['roi_id_6']])->asAray()->one()['roi_bloque'],
+                                                RegistroOnlineItem::find()->where(['roi_id' => $no_pagadas[0]['roi_id_1']])->asArray()->one()['roi_bloque'],
+                                                RegistroOnlineItem::find()->where(['roi_id' => $no_pagadas[0]['roi_id_2']])->asArray()->one()['roi_bloque'],
+                                                RegistroOnlineItem::find()->where(['roi_id' => $no_pagadas[0]['roi_id_3']])->asArray()->one()['roi_bloque'],
+                                                RegistroOnlineItem::find()->where(['roi_id' => $no_pagadas[0]['roi_id_4']])->asArray()->one()['roi_bloque'],
+                                                RegistroOnlineItem::find()->where(['roi_id' => $no_pagadas[0]['roi_id_5']])->asArray()->one()['roi_bloque'],
+                                                RegistroOnlineItem::find()->where(['roi_id' => $no_pagadas[0]['roi_id_6']])->asArray()->one()['roi_bloque'],
                                             ];
 
                                             // \app\models\Utilities::putMessageLogFile("bloques: " . print_r($bloques, true));

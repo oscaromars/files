@@ -100,6 +100,7 @@ class RegistroOnline extends \yii\db\ActiveRecord
             'ron_valor_arancel' => 'Ron Valor Arancel',
             'ron_valor_matricula' => 'Ron Valor Matricula',
             'ron_valor_gastos_adm' => 'Ron Valor Gastos Adm',
+            'ron_valor_gastos_pendientes' => 'Ron Valor Gastos Pendientes',
             'ron_valor_aso_estudiante' => 'Ron Valor Aso Estudiante',
             'ron_estado_registro' => 'Ron Estado Registro',
             'ron_estado' => 'Ron Estado',

@@ -1242,7 +1242,68 @@ class MatriculaciondropController extends \app\components\CController {
                             // cambiar estados en registro_online_item
                             $modelRegItem = RegistroOnlineItem::findAll(['ron_id' => $ron_id]);
                             \app\models\Utilities::putMessageLogFile("Registro_online_item: " . $modelRegItem);
-                            $RegistroOnline=RegistroOnline::find()->select("ron_valor_gastos_adm")->where(["per_id" => $per_id, "ron_id" => $id])->asArray()->one();
+                            $RegistroOnline=RegistroOnline::find()->select("ron_valor_gastos_pendientes")->where(["per_id" => $per_id, "ron_id" => $id])->asArray()->one();
+                            if($RegistroOnline['ron_valor_gastos_pendientes']>=0){
+                                
+                                // Tomar el valor actual de gastos administrativos
+                                $block_roi= RegistroOnlineItem::find()->where(['ron_id' => $ron_id, 'roi_estado' => 1, 'roi_estado_logico' => 1])->asArray()->one()['roi_bloque'];
+                                $gastos_administrativos_valor = GastoAdministrativo::find()->where(['mod_id' => $modalidad])->asArray()->one()['gadm_gastos_varios'];
+                                \app\models\Utilities::putMessageLogFile("roi_id: " . print_r($gastos_administrativos_valor,true));
+                                $bloque = 'B1'; // Tomar el primer bloque
+                                //$mitad = 1; // Empezar asumiendo que se toma 1 solo bloque
+                                \app\models\Utilities::putMessageLogFile("Bloquea: " . $bloques,true);
+                                \app\models\Utilities::putMessageLogFile("Block: " . $bloque);
+                            /*if(count($bloques) == 2){
+                                // Si sólo son 2 materias, los gastos administrativos son completos
+                                $mitad = 1;
+                            }*/ // queda descartado 
+                            
+                                /*foreach ($roi_bloque as $key => $value) { // recorrer la lista de bloques
+                                    if($value != $bloques ){ // Si uno de ellos es diferente, quiere decir que hay más de un bloque
+                                        $mitad = 2; // Así que se divide a la mitad                                    
+                                        break; // Salir del foreach
+                                    }
+                                    // Si nunca entra al condicional, quiere decir que todas las materias son del mismo bloque y se mantiene el valor de gatos administrativos
+                                } //end foreach*/
+                                
+                                if($block_roi==$bloque){ // Si uno de ellos es diferente, quiere decir que hay más de un bloque
+                                     // Así que se divide a la mitad
+                                    $gastos_pendientes=$gastos_administrativos_valor;
+                                    $gastos_administrativos_valor = $gastos_administrativos_valor /1;
+                                    $ron_gastos=(new RegistroOnline())->insertarActualizacionGastos($id,$gastos_administrativos_valor,$gastos_pendientes);
+                                    //break; // Salir del foreach
+                                }else{
+                                    $gastos_administrativos_valor = $gastos_administrativos_valor /2;
+                                    $gastos_pendientes=$gastos_administrativos_valor;
+                                    $ron_gastos=(new RegistroOnline())->insertarActualizacionGastos($id,$gastos_administrativos_valor,$gastos_pendientes);
+                                }
+                            
+                                /*if(!$update){
+                                    throw new Exception('Error al Registrar las Materias adicionales.');
+                                }*/
+
+                            
+                            }else{
+                                \app\models\Utilities::putMessageLogFile("1");
+                                $RegistroOnlineP=RegistroOnline::find()->where(["per_id" => $per_id, "ron_id" => $id])->asArray()->one()['ron_valor_gastos_pendientes'];
+                                $RegistroOnlineGastos=RegistroOnline::find()->where(["per_id" => $per_id, "ron_id" => $id])->asArray()->one()['ron_valor_gastos_adm'];
+                                if($RegistroOnlineP==0 and $RegistroOnlineGastos>0){
+                                    $roi_bloque = RegistroOnlineItem::find()->select("roi_bloque")->where(['ron_id' => $id, 'roi_estado' => 1, 'roi_estado_logico' => 1])->asArray()->all();
+                                    $gastos_administrativos_valor = GastoAdministrativo::find()->where(['mod_id' => $modalidad])->asArray()->one()['gadm_gastos_varios'];
+                                    $gastos_registro = RegistroOnline::find()->where(['ron_id' => $id])->asArray()->one()['ron_valor_gastos_adm'];
+                                    if($gastos_administrativos_valor==$RegistroOnlineGastos){
+                                        $gastos_pendientes=0;
+                                        $gastos_administrativos_valor = $gastos_administrativos_valor / 1;
+                                        $ron_gastos=(new RegistroOnline())->insertarActualizacionGastos($id,$gastos_administrativos_valor,$gastos_pendientes);
+
+                                    }else{
+                                        $gastos_administrativos_valor = $gastos_administrativos_valor / 1; // 300
+                                        $gastos_pendientes=0; // 0
+                                        $ron_gastos=(new RegistroOnline())->insertarActualizacionGastos($id,$gastos_administrativos_valor,$gastos_pendientes);
+                                    }
+                                }
+                            }
+
                             if($modelRegItem){
                                 \app\models\Utilities::putMessageLogFile("Registro_online_item: " . $modelRegItem);
                                 foreach($modelRegItem as $key => $item){
@@ -1254,30 +1315,11 @@ class MatriculaciondropController extends \app\components\CController {
                                         throw new Exception('Error to Update Online Item Register.');
                                     }
                                 }
-                            if($RegistroOnline['ron_valor_gastos_adm']>=0){
-                                
-                                \app\models\Utilities::putMessageLogFile("1");
-                                $RegistroOnlineP=RegistroOnline::find()->where(["per_id" => $per_id, "ron_id" => $id])->asArray()->one()['ron_valor_gastos_pendientes'];
-                                $RegistroOnlineGastos=RegistroOnline::find()->where(["per_id" => $per_id, "ron_id" => $id])->asArray()->one()['ron_valor_gastos_adm'];
-                                if($RegistroOnlineP>0 and $RegistroOnlineGastos>0){
-                                    $roi_bloque = RegistroOnlineItem::find()->select("roi_bloque")->where(['ron_id' => $id, 'roi_estado' => 1, 'roi_estado_logico' => 1])->asArray()->all();
-                                    $gastos_administrativos_valor = GastoAdministrativo::find()->where(['mod_id' => $modalidad])->asArray()->one()['gadm_gastos_varios'];
-                                    $gastos_registro = RegistroOnline::find()->where(['ron_id' => $id])->asArray()->one()['ron_valor_gastos_adm'];
-                                    if($gastos_administrativos_valor==$RegistroOnlineGastos){
-                                        $gastos_administrativos_valor = $gastos_administrativos_valor / 1;
-                                        $gastos_pendientes=$gastos_administrativos_valor;
-                                        $ron_gastos=(new RegistroOnline())->insertarActualizacionGastos($id,$gastos_administrativos_valor,$gastos_pendientes);
-
-                                    }else{
-                                        $gastos_administrativos_valor = $gastos_administrativos_valor / 2; // 300
-                                        $gastos_pendientes=$gastos_administrativos_valor; // 0
-                                        $ron_gastos=(new RegistroOnline())->insertarActualizacionGastos($id,$gastos_administrativos_valor,$gastos_pendientes);
-                                    }
-                                }
-                            }
+                            
 
                                 // fin de registro gasto adm
-                        }
+                            
+                            }
 
                            
                             // cambiar estados en registro_online_cuotas
@@ -1356,7 +1398,7 @@ class MatriculaciondropController extends \app\components\CController {
                                 }else
                                     $sumMatr += $item->roi_costo;
                             }
-                            $modelRegOn->ron_valor_matricula = $sumMatr;
+                            //$modelRegOn->ron_valor_matricula = $sumMatr;
 
 
                            

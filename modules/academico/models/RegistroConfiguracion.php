@@ -134,14 +134,33 @@ class RegistroConfiguracion extends \yii\db\ActiveRecord
 
     
     public function registrarCargaCartera($est_id,$cedula, $secuencial, $forma_pago,$fecha,$in, $numero_cuota,  
-    $valor_cuota, $total, $id_user){
+    $valor_cuota, $total, $id_user, $estadoCancelado){
         $con = \Yii::$app->db_facturacion;
         $estado = 1;
         \app\models\Utilities::putMessageLogFile('modelo...: '.$in.' cuota');
+        \app\modules\academico\controllers\RegistroController::putMessageLogFileCartera('modelo...: '.$in.' cuota');
         \app\models\Utilities::putMessageLogFile($est_id.'-'.$cedula.'-'.$secuencial.'-'.$forma_pago.'-'.$fecha.'-'.$in.'-'.$numero_cuota.'-'.
+        $valor_cuota.'-'.$total.'-'.$id_user);
+        \app\modules\academico\controllers\RegistroController::putMessageLogFileCartera($est_id.'-'.$cedula.'-'.$secuencial.'-'.$forma_pago.'-'.$fecha.'-'.$in.'-'.$numero_cuota.'-'.
         $valor_cuota.'-'.$total.'-'.$id_user);
         $trans = $con->getTransaction(); // se obtiene la transacción actual
         $fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
+        if($in == 0){
+            $cuota = substr($numero_cuota,-8);
+            $in ==1;
+            $abono = $total;
+        }else{
+            if($numero_cuota>=10){
+                if($in<=10){
+                    $in = '0'.$in;
+                }
+                $cuota = '('.$in.' / '.$numero_cuota.')';
+            }else{
+                $cuota = '(0'.$in.' / 0'.$numero_cuota.')';
+            }
+            $abono = 0;
+        }
+            
         try {
         $sql="INSERT INTO " . $con->dbname . ".carga_cartera 
         (
@@ -176,23 +195,24 @@ class RegistroConfiguracion extends \yii\db\ActiveRecord
                     'FE', :secuencial,
                     :cedula,
                      '$forma_pago', 
-                     ('0$in / 0$numero_cuota'), :fecha_transaccion, 
+                     :cuota, :fecha_transaccion, 
                     '$fecha', NULL,
-                    :valor_cuota, :total, NULL, NULL, NULL, NULL, NULL, 'N', NULL, NULL, NULL, '$id_user', NULL,:estado,0, :fecha_transaccion, NULL ,:estado);";
+                    :valor_cuota, :total, NULL, NULL, NULL, NULL, NULL, :estadoCancelado, NULL, NULL, NULL, '$id_user', NULL,:estado,$abono, :fecha_transaccion, NULL ,:estado);";
 
         $comando = $con->createCommand($sql);
         $comando->bindParam(":est_id", $est_id, \PDO::PARAM_STR);
         $comando->bindParam(":secuencial", $secuencial, \PDO::PARAM_STR);
         $comando->bindParam(":cedula", $cedula, \PDO::PARAM_STR);
+        $comando->bindParam(":cuota", $cuota, \PDO::PARAM_STR);
         $comando->bindParam(":fecha_transaccion", $fecha_transaccion, \PDO::PARAM_STR);
         $comando->bindParam(":valor_cuota", $valor_cuota, \PDO::PARAM_STR);
         $comando->bindParam(":total", $total, \PDO::PARAM_STR);
+        $comando->bindParam(":estadoCancelado", $estadoCancelado, \PDO::PARAM_STR);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
         $comando->bindParam(":fecha_transaccion", $fecha_transaccion, \PDO::PARAM_STR);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
         
-        
-        
+        \app\modules\academico\controllers\RegistroController::putMessageLogFileCartera(' --------------------------------- SQL :'.$comando->getRawSql());
         $resultData = $comando->execute();
         if ($trans !== null)
             $trans->commit();
@@ -330,7 +350,7 @@ class RegistroConfiguracion extends \yii\db\ActiveRecord
     }
 
 
-    public function registrarPagoMatricula($usu, $per_id,$pla_id,$ron_id,$total){
+    public function registrarPagoMatricula($usu, $per_id,$pla_id,$ron_id,$total,$tipo_pago){
         $con = \Yii::$app->db_academico;
         $con2 = \Yii::$app->db_academico;
         $estado = 1;
@@ -347,6 +367,7 @@ class RegistroConfiguracion extends \yii\db\ActiveRecord
                 rpm_estado_aprobacion,
                 rpm_estado_generado,
                 rpm_acepta_terminos,
+                rpm_tipo_pago,
                 rpm_usuario_apruebareprueba,
                 rpm_fecha_transaccion,
                 rpm_total,
@@ -361,6 +382,7 @@ class RegistroConfiguracion extends \yii\db\ActiveRecord
                         :estado,
                         :estado, 
                         :estado, 
+                        :tipo_pago,
                         :usu, 
                         :fecha_transaccion,
                         :total,
@@ -376,13 +398,11 @@ class RegistroConfiguracion extends \yii\db\ActiveRecord
             $comando->bindParam(":pla_id", $pla_id, \PDO::PARAM_INT);
             $comando->bindParam(":ron_id", $ron_id, \PDO::PARAM_INT);
             $comando->bindParam(":estado", $estado, \PDO::PARAM_INT);
-            $comando->bindParam(":estado", $estado, \PDO::PARAM_INT);
+            $comando->bindParam(":tipo_pago", $tipo_pago, \PDO::PARAM_INT);
             $comando->bindParam(":usu", $usu, \PDO::PARAM_INT);
             $comando->bindParam(":fecha_transaccion", $fecha_transaccion, \PDO::PARAM_STR);
             $comando->bindParam(":total", $total, \PDO::PARAM_STR);
-            $comando->bindParam(":estado", $estado, \PDO::PARAM_INT);
             $comando->bindParam(":fecha_transaccion", $fecha_transaccion, \PDO::PARAM_STR);
-            $comando->bindParam(":estado", $estado, \PDO::PARAM_INT);
          
             $resultData = $comando->execute();
             if ($trans !== null){
@@ -465,7 +485,7 @@ class RegistroConfiguracion extends \yii\db\ActiveRecord
         $fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
         try {
             $sql=" UPDATE " . $con->dbname . ".registro_adicional_materias 
-                    SET rpm_id = :rpm_id 
+                    SET rpm_id = 0
                     WHERE rama_id = :rama_id;";
             //\app\models\Utilities::putMessageLogFile('modelo Online Cuota FIN...: '.$sql);
             $comando = $con->createCommand($sql);
@@ -476,11 +496,13 @@ class RegistroConfiguracion extends \yii\db\ActiveRecord
             if ($trans !== null){
                 $trans->commit();
             \app\models\Utilities::putMessageLogFile('rpm OK...: registro_adicional_materias COMMIT - OK');}
+            \app\modules\academico\controllers\RegistroController::putMessageLogFileCartera('rpm OK...: registro_adicional_materias COMMIT - OK');
             return $con->getLastInsertID($con->dbname . '.registro_adicional_materias');
         } catch (Exception $ex) {
             if ($trans !== null){
                 $trans->rollback();}
             \app\models\Utilities::putMessageLogFile('rpm KO...: - KO - '.$ex->getMessage());
+            \app\modules\academico\controllers\RegistroController::putMessageLogFileCartera('rpm KO...: - KO - '.$ex->getMessage());
             return FALSE;
         }
     }
@@ -527,10 +549,9 @@ class RegistroConfiguracion extends \yii\db\ActiveRecord
                 
         $comando = $con->createCommand($sql);
         $comando->bindParam(":ron_id", $ron_id, \PDO::PARAM_INT);
-        $resultData = $comando->queryOne();
+        $resultData = $comando->execute();
         
         \app\models\Utilities::putMessageLogFile('modelo OK...: getRpmId SELECT - OK');
         return $resultData;
     }
-
 }

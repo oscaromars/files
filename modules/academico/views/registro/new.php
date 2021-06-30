@@ -12,9 +12,9 @@ use app\assets\StripeAsset;
 StripeAsset::register($this);
 //print_r('arr: '.$arr_forma_pago);
 //print_r('Per_id: '.$id_en);
-print_r($saca_id);
-print_r('</br>');
-print_r('saca_id: '.$arr_vencimiento)
+//print_r($bloque);
+//print_r('</br>');
+//print_r('saca_id: '.$rama)
 
 ?>
 <?= Html::hiddenInput('txt_per_id', $id, ['id' => 'txt_per_id']); ?>
@@ -329,7 +329,7 @@ print_r('saca_id: '.$arr_vencimiento)
             <!------------------------------------------------------->
             <style type="text/css">
                 #pago_stripe{
-                    background-color: antiquewhite;
+                    background-color: lightblue;
                     border-radius:6px;
                     border: 1px gray solid;
                     padding: 0 0 0 10px;

@@ -1376,7 +1376,7 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
         pe.pes_mat_b2_h6_cod)
         and mad.asi_id = a.asi_id
         and mad.maca_id = mum.maca_id
-        $str_search2
+        
         and (select count(*) from  ". $con->dbname . ".planificacion pla,
         ". $con->dbname . ".planificacion_estudiante pes,
         ". $con->dbname . ".semestre_academico se
@@ -1442,7 +1442,7 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
         $con1 = \Yii::$app->db_asgard;
         $estado = 1;
         if (isset($arrFiltro) && count($arrFiltro) > 0) {
-            
+            \app\models\Utilities::putMessageLogFile('----------------------------------------Con Filtros');
             if ($arrFiltro['modalidad'] != 0) {
                 if($arrFiltro['modalidad'] == 1) {
                     $str_search .= " and meu.mod_id = 1";
@@ -1581,8 +1581,10 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
             ],
         ]);
         if ($onlyData) {
+            \app\models\Utilities::putMessageLogFile('----------------------------------------true'.$onlyData);
             return $resultData;
         } else {
+            \app\models\Utilities::putMessageLogFile('----------------------------------------false'.$onlyData);
             return $dataProvider;
         }
     }

@@ -318,6 +318,13 @@ $('#cmb_periodo').change(function () {
         }, true);
     });
 
+    new SlimSelect({
+      select: '#cmb_materia',
+      closeOnSelect: true,
+      searchFocus: false,
+      showContent: 'down'
+      //hideSelectedOption: true
+    })
 });
 
 $('#cmb_materia').change(function () {
@@ -381,13 +388,14 @@ function setComboDataselect(arr_data, element_id, texto) {
 function searchModules() {
     var arrParams = new Object();
     arrParams.PBgetFilter = true;
-    arrParams.search = $("#txt_buscarData").val();
-    arrParams.unidad = $("#cmb_unidad_dis").val();
-    arrParams.periodo = $("#cmb_periodo").val();
+    arrParams.search    = $("#txt_buscarData").val();
+    arrParams.unidad    = $("#cmb_unidad_dis").val();
+    arrParams.periodo   = $("#cmb_periodo").val();
     arrParams.modalidad = $("#cmb_modalidad").val();
-    arrParams.materia = $("#cmb_materia").val();
-    arrParams.jornada = $("#cmb_jornada").val();
-    $("#Tbg_Distributivo_Aca").PbGridView("applyFilterData", arrParams);
+    arrParams.materia   = $("#cmb_materia").val();
+    arrParams.jornada   = $("#cmb_jornada").val();
+    $("#Tbg_Distributivo_Acagra").PbGridView("applyFilterData", arrParams);
+    $("#Tbg_Distributivo_Acapos").PbGridView("applyFilterData", arrParams);
 }
 
 function showListStudents(id) {

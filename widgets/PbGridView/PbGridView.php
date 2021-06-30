@@ -7,7 +7,6 @@
  */
 
 namespace app\widgets\PbGridView;
-
 use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\helpers\Json;
@@ -16,6 +15,7 @@ use yii\widgets\LinkPager;
 use yii\helpers\Url;
 use yii\widgets\Pjax;
 use app\widgets\PbGridView\resources\PbGridViewAsset;
+//use yii\widgets\DetailView;
 use Yii;
 
 class PbGridView extends GridView {
@@ -38,6 +38,7 @@ class PbGridView extends GridView {
     public $addButton_fn = null;
     public $addButton_link = null;
     public $addButton_popup = false;
+
 
     public function init() {
         parent::init();
@@ -75,6 +76,7 @@ class PbGridView extends GridView {
             'addButton_lk' => $this->addButton_link,
             'addButton_pp' => $this->addButton_popup,
             'totalCount' => $this->dataProvider->getCount(), //$this->dataProvider->totalCount,
+
             ]);
         echo Html::tag($tag, $content, $this->options);
         if($this->pajax)

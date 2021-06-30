@@ -311,7 +311,8 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
                 inner join " . $con_academico->dbname . ".profesor profesor on profesor.per_id = persona.per_id
                 inner join " . $con_academico->dbname . ".profesor_instruccion pi3 on pi3.pro_id = profesor.per_id and pi3.nins_id =3 and pi3.pins_estado=1 and pi3.pins_estado_logico=1
                 inner join " . $con_academico->dbname . ".profesor_instruccion pi4 on pi4.pro_id = profesor.per_id and pi4.nins_id =4 and pi4.pins_estado=1 and pi4.pins_estado_logico=1
-                inner join " . $con_academico->dbname . ".dedicacion_docente dd on dd.ddoc_id = profesor.ddoc_id";
+                inner join " . $con_academico->dbname . ".dedicacion_docente dd on dd.ddoc_id = profesor.ddoc_id
+                ";
         $comando = $con_academico->createCommand($sql);
 
         $res = $comando->queryAll();
@@ -414,7 +415,8 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
                     ua.uaca_estado = :estado AND
                     pa.paca_estado_logico = :estado and
                     da.uaca_id=1 and
-                    dcab_estado_revision=2";
+                    dcab_estado_revision=2
+                    order by 2 asc";
 
         $comando = $con_academico->createCommand($sql);
 
@@ -540,7 +542,8 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
                     ua.uaca_estado = :estado AND
                     pa.paca_estado_logico = :estado  and
                     da.uaca_id=2 and 
-                    dcab_estado_revision=2";
+                    dcab_estado_revision=2
+                    order by 2 asc";
 
         $comando = $con_academico->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);

@@ -4,7 +4,10 @@ $(document).ready(function() {
     });
     $('#btn_saveData_dist').click(function() {
         save();
-    })
+    });
+
+    //alert("mensaje");
+    
 });
 
 function searchModules() {
@@ -53,10 +56,10 @@ function edit() {
 }
 
 function savechangeparalelo() {
-    var link = $('#txth_base').val() + "/academico/distributivoestudiante/savechangeparalelo"; 
-     var arrParams = new Object();
-       arrParams.daes_id = $("#txth_daes_id").val();
-        arrParams.daca_id = $("#cmb_paralelo").val();
+    var link      = $('#txth_base').val() + "/academico/distributivoestudiante/savechangeparalelo"; 
+    var arrParams = new Object();
+    arrParams.daes_id = $("#txth_daes_id").val();
+    arrParams.daca_id = $("#cmb_paralelo").val();
     requestHttpAjax(link, arrParams, function(response) {
         if (response.status == "OK") {
             //searchModules();
@@ -71,7 +74,7 @@ function savechangeparalelo() {
             showAlert(response.status, response.label, response.message);
         }
     }, true);
-}
+}//function savechangeparalelo
 
 function save() {
     var link = $('#txth_base').val() + "/academico/distributivoestudiante/save";

@@ -3,22 +3,28 @@
 use yii\helpers\Html;
 use yii\helpers\Url;
 use kartik\tabs\TabsX;
+use kartik\detail\DetailView; 
 use app\widgets\PbGridView\PbGridView;
 use app\models\Utilities;
 use app\modules\academico\Module as academico;
 use app\modules\admision\Module as admision;
+use yii\grid\GridView;
+
 
 admision::registerTranslations();
 academico::registerTranslations();
 ?>
-<div>
+
+<div class="table-responsive">
  <?php
- $content1 =PbGridView::widget([
+ $content1 = PbGridView::widget([ 
+ //$content1 = GridView::widget([ 
         'id' => 'Tbg_Distributivo_Acagra',
         'showExport' => true,
         'fnExportEXCEL' => "exportExcel",
         'fnExportPDF' => "exportPdf",
         'dataProvider' => $model,
+        //'bootstrap' => true,
         //'pajax' => false,
         'columns' =>
         [
@@ -88,15 +94,20 @@ academico::registerTranslations();
                                 ],
             ],
         ],
-    ]);
 
-  $content2 =PbGridView::widget([
+        //'responsive'=>true,
+        //'hover'=>true,
+        //'responsiveWrap' => true,
+    ]);
+ $content2 = PbGridView::widget([ 
+  //$content2 =GridView::widget([
         'id' => 'Tbg_Distributivo_Acapos',
         'showExport' => true,
         'fnExportEXCEL' => "exportExcel",
         'fnExportPDF' => "exportPdf",
         'dataProvider' => $model_posgrado,
         //'pajax' => false,
+        //'responsive' => true,
         'columns' =>
         [
             [
@@ -190,6 +201,7 @@ academico::registerTranslations();
     'bordered'=>true,
     'encodeLabels'=>false
 ]);
+
     ?>
 
 </div>

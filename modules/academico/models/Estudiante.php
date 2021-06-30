@@ -195,6 +195,17 @@ class Estudiante extends \yii\db\ActiveRecord {
         }
     }
 
+
+    /**
+     * Function findIdentity
+     * @author  Diana Lopez <dlopez@uteg.edu.ec>
+     * @param      
+     * @return  
+     */
+    public static function findIdentity($id) {
+        return static::findOne($id);
+    }
+    
     /**
      * Function Consultar estudiante existe creado y ya esta matriculado.
      * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>;

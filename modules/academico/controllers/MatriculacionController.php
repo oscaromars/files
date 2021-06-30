@@ -1800,7 +1800,7 @@ class MatriculacionController extends \app\components\CController {
 
             // Si tiene este objeto, quiere decir que no ha realizado el último pago
                     $rama = RegistroAdicionalMaterias::find()->where(['ron_id' => $ron_id, 'per_id' => $per_id, 'pla_id' => $pla_id, 'paca_id' => $paca_id, 'rpm_id' => NULL, 'rama_estado' => 1, 'rama_estado_logico' => 1])->asArray()->one();
-                    $pagado = !isset($rama) || $rama['rpm_id'] == NULL;
+                    $pagado = !isset($rama) || $rama['roi_id_1'] == NULL;
                      
                     return $this->render('registro', [
                                 "pes_id" => $pes_id,

@@ -777,7 +777,7 @@ function guardarCargarCartera(){
     arrParams.bloque    = $('#txt_bloque').val();
     arrParams.saca_id   = $('#txt_saca_id').val();
     arrParams.cmb_fpago = $("#cmb_fpago").val();
-
+    arrParams.documento = $('#txth_doc_pago').val();
     //------Datos de Facturacion----------------
         arrParams.factssnid = $('#txt_dpre_ssn_id_fact').val();
         arrParams.factnombre = $('#txt_nombres_fac').val();

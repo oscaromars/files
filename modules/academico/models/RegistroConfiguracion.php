@@ -154,9 +154,9 @@ class RegistroConfiguracion extends \yii\db\ActiveRecord
                 if($in<=10){
                     $in = '0'.$in;
                 }
-                $cuota = '('.$in.' / '.$numero_cuota.')';
+                $cuota = $in.' / '.$numero_cuota;
             }else{
-                $cuota = '(0'.$in.' / 0'.$numero_cuota.')';
+                $cuota = '0'.$in.' / 0'.$numero_cuota;
             }
             $abono = 0;
         }
@@ -481,11 +481,12 @@ class RegistroConfiguracion extends \yii\db\ActiveRecord
         $con = \Yii::$app->db_academico;
         $estado = 1;
         \app\models\Utilities::putMessageLogFile('registro adicional materia...: ');
+        \app\modules\academico\controllers\RegistroController::putMessageLogFileCartera('registro adicional materia...: '.$rpm_id.' - rama: '.$rama_id);
         $trans = $con->getTransaction(); // se obtiene la transacción actual
         $fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
         try {
             $sql=" UPDATE " . $con->dbname . ".registro_adicional_materias 
-                    SET rpm_id = 0
+                    SET rpm_id = :rpm_id
                     WHERE rama_id = :rama_id;";
             //\app\models\Utilities::putMessageLogFile('modelo Online Cuota FIN...: '.$sql);
             $comando = $con->createCommand($sql);

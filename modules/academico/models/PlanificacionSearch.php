@@ -20,7 +20,7 @@ class PlanificacionSearch extends Planificacion {
 
 	public function rules() {
         return [
-            [['pla_id', 'saca_id', 'mod_id', 'per_id'], 'integer'],
+            [['pla_id', 'saca_id', 'mod_id', 'per_id', 'paca_id'], 'integer'],
             
         ];
     }
@@ -52,6 +52,7 @@ class PlanificacionSearch extends Planificacion {
             'saca_id' => $this->saca_id, 
             'mod_id' => $this->mod_id,
             'per_id' => $this->per_id,
+            'paca_id' => $this->paca_id,
             
         ]);
 
@@ -106,8 +107,8 @@ class PlanificacionSearch extends Planificacion {
 
                 }
 
-                if ($this->pla_id) {
-                    $sql = $sql . " and pla.pla_id =" . $this->pla_id;
+                if ($this->paca_id) {
+                    $sql = $sql . " and pla.paca_id =" . $this->paca_id;
                 }
 
                 /*if ($this->eaca_id) {
@@ -122,8 +123,8 @@ class PlanificacionSearch extends Planificacion {
                 $sql = $sql . " and pla.mod_id =" . $params['mod_id'];
             }
 
-            if ($params['pla_id']) {
-                $sql = $sql . " and pla.pla_id =" . $params['pla_id'];
+            if ($params['paca_id']) {
+                $sql = $sql . " and pla.paca_id =" . $params['paca_id'];
             }
 
             /*if ($params['eaca_id']) {

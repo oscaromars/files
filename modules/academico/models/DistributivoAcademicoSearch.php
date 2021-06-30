@@ -1008,7 +1008,7 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
         $con_academico = \Yii::$app->db_academico;
         $con_db = \Yii::$app->db;
         
-        $sql = "select est.est_id, 
+        $sql = "select  distinct est.est_id, 
                 ifnull(CONCAT(ifnull(per.per_pri_apellido,''), ' ', ifnull(per.per_seg_apellido,''), ' ', ifnull(per.per_pri_nombre,'')), '') as estudiante,
                 per.per_cedula as cedula, 
                 CONCAT(baca.baca_nombre, ' ', saca.saca_nombre, ' ', saca.saca_anio) as periodo,
@@ -1016,42 +1016,44 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
                 moda.mod_descripcion as modalidad,
                 uaca.uaca_descripcion as unidad,
                 pes.pes_carrera as carrera,
-                ifnull(est.est_matricula,'') as n_matricula
+                ifnull(est.est_matricula,'') as n_matricula                
                 from db_academico.registro_online as ron
                 inner join db_academico.registro_online_item as roi on roi.ron_id=ron.ron_id 
                 inner join db_asgard.persona as per on per.per_id = ron.per_id
-                inner join db_academico.registro_pago_matricula as pm on ron.per_id=pm.per_id 
                 inner join db_academico.estudiante as est on est.per_id=per.per_id
+                inner join db_academico.registro_pago_matricula as pm on ron.ron_id=pm.ron_id                 
                 inner join db_academico.planificacion_estudiante as pes on pes.pes_id=ron.pes_id
+                inner join db_academico.planificacion as pla on pla.pla_id = pes.pla_id
                 inner join db_academico.malla_academica_detalle as mad on  mad.made_codigo_asignatura=roi.roi_materia_cod
-                inner join db_academico.asignatura as asi on asi.asi_id = mad.asi_id
-                inner join db_academico.distributivo_academico_estudiante as dae on dae.est_id = est.est_id 
-                inner join db_academico.distributivo_academico as daca on daca.daca_id = dae.daca_id and daca.asi_id = asi.asi_id
-                Inner Join db_academico.modalidad moda on moda.mod_id = daca.mod_id 
-                Inner Join db_academico.unidad_academica uaca on uaca.uaca_id = daca.uaca_id
-                Inner Join db_academico.periodo_academico paca on paca.paca_id = daca.paca_id 
-                Inner Join db_academico.semestre_academico saca on saca.saca_id = paca.saca_id
-                Inner Join db_academico.bloque_academico baca on baca.baca_id = paca.baca_id
-                 where per.per_id = est.per_id and pm.rpm_estado_aprobacion = 1
-                    and daca.daca_estado = 1 and daca.daca_estado_logico = 1
+                inner join db_academico.asignatura as asi on asi.asi_id = mad.asi_id               
+                inner join db_academico.estudiante_carrera_programa ec on ec.est_id = est.est_id
+                inner join db_academico.modalidad_estudio_unidad meu on meu.meun_id = ec.meun_id                
+                Inner Join db_academico.modalidad moda on moda.mod_id = meu.mod_id 
+                Inner Join db_academico.unidad_academica uaca on uaca.uaca_id = meu.uaca_id               
+                Inner Join db_academico.semestre_academico saca on saca.saca_id = pla.saca_id
+                Inner Join db_academico.periodo_academico paca on paca.saca_id = saca.saca_id 
+                Inner Join db_academico.bloque_academico baca on (baca.baca_id = paca.baca_id and baca.baca_nombre = roi.roi_bloque)
+                 where per.per_estado = 1 and per.per_estado_logico = 1
+                    and est.est_estado = 1 and est.est_estado_logico = 1
                     and ron.ron_estado = 1 and ron.ron_estado_logico = 1
                     and roi.roi_estado = 1 and roi.roi_estado_logico = 1
-                    and est.est_estado = 1 and est.est_estado_logico = 1
-                    and per.per_estado = 1 and per.per_estado_logico = 1
-                    and ron.ron_estado = 1 and ron.ron_estado_logico = 1
-                    and pm.rpm_estado = 1 and pm.rpm_estado_logico = 1
+                    and pm.rpm_estado_aprobacion = 1 
+                    and pm.rpm_estado = 1 and pm.rpm_estado_logico = 1                  
                     and pes.pes_estado = 1 and pes.pes_estado_logico = 1
-                    and asi.asi_estado = 1 and asi.asi_estado_logico = 1";
+                    and asi.asi_estado = 1 and asi.asi_estado_logico = 1
+                    and ec.ecpr_estado = 1 and ec.ecpr_estado_logico = 1
+                    and meu.meun_estado = 1 and meu.meun_estado_logico = 1
+                    and pla.pla_estado = 1 and pla.pla_estado_logico = 1";
         if ($tipo == 1) {
             $this->load($params);
             if ($this->validate()) {
                
                 if ($this->paca_id) {
-                    $sql = $sql . " and daca.paca_id =" . $this->paca_id;
+                    $sql = $sql . " and pla.paca_id =" . $this->paca_id;
                 }
 
                 if ($this->mod_id) {
-                    $sql = $sql . " and daca.mod_id =" . $this->mod_id;
+                    $sql = $sql . " and meu.mod_id =" . $this->mod_id;
                 }
 
                 if ($this->asi_id) {
@@ -1062,11 +1064,11 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
         if ($tipo == 2) {
 
             if ($params['paca_id']) {
-                $sql = $sql . " and daca.paca_id =" . $params['paca_id'];
+                $sql = $sql . " and pla.paca_id =" . $params['paca_id'];
             }
 
             if ($params['mod_id']) {
-                $sql = $sql . " and daca.mod_id =" . $params['mod_id'];
+                $sql = $sql . " and meu.mod_id =" . $params['mod_id'];
             }
 
             
@@ -1110,40 +1112,42 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
             }         
         }
 
-            $sql = "select est.est_id as est_id,  
-                CONCAT(baca.baca_nombre, ' ', saca.saca_nombre, ' ', saca.saca_anio) as periodo,
+            $sql = "select  distinct est.est_id, 
                 ifnull(CONCAT(ifnull(per.per_pri_apellido,''), ' ', ifnull(per.per_seg_apellido,''), ' ', ifnull(per.per_pri_nombre,'')), '') as estudiante,
-                per.per_cedula as cedula,
+                per.per_cedula as cedula, 
+                CONCAT(baca.baca_nombre, ' ', saca.saca_nombre, ' ', saca.saca_anio) as periodo,
                 asi.asi_descripcion as materia,
-                uaca.uaca_descripcion as unidad,
                 moda.mod_descripcion as modalidad,
-                ifnull(est.est_matricula,'') as n_matricula,
-                pes.pes_carrera as carrera
+                uaca.uaca_descripcion as unidad,
+                pes.pes_carrera as carrera,
+                ifnull(est.est_matricula,'') as n_matricula                
                 from db_academico.registro_online as ron
                 inner join db_academico.registro_online_item as roi on roi.ron_id=ron.ron_id 
                 inner join db_asgard.persona as per on per.per_id = ron.per_id
-                inner join db_academico.registro_pago_matricula as pm on ron.per_id=pm.per_id 
                 inner join db_academico.estudiante as est on est.per_id=per.per_id
+                inner join db_academico.registro_pago_matricula as pm on ron.ron_id=pm.ron_id                 
                 inner join db_academico.planificacion_estudiante as pes on pes.pes_id=ron.pes_id
+                inner join db_academico.planificacion as pla on pla.pla_id = pes.pla_id
                 inner join db_academico.malla_academica_detalle as mad on  mad.made_codigo_asignatura=roi.roi_materia_cod
-                inner join db_academico.asignatura as asi on asi.asi_id = mad.asi_id
-                inner join db_academico.distributivo_academico_estudiante as dae on dae.est_id = est.est_id 
-                inner join db_academico.distributivo_academico as daca on daca.daca_id = dae.daca_id and daca.asi_id = asi.asi_id
-                Inner Join db_academico.modalidad moda on moda.mod_id = daca.mod_id 
-                Inner Join db_academico.unidad_academica uaca on uaca.uaca_id = daca.uaca_id
-                Inner Join db_academico.periodo_academico paca on paca.paca_id = daca.paca_id 
-                Inner Join db_academico.semestre_academico saca on saca.saca_id = paca.saca_id
-                Inner Join db_academico.bloque_academico baca on baca.baca_id = paca.baca_id
-                 where per.per_id = est.per_id and pm.rpm_estado_aprobacion = 1
-                    and daca.daca_estado = 1 and daca.daca_estado_logico = 1
+                inner join db_academico.asignatura as asi on asi.asi_id = mad.asi_id               
+                inner join db_academico.estudiante_carrera_programa ec on ec.est_id = est.est_id
+                inner join db_academico.modalidad_estudio_unidad meu on meu.meun_id = ec.meun_id                
+                Inner Join db_academico.modalidad moda on moda.mod_id = meu.mod_id 
+                Inner Join db_academico.unidad_academica uaca on uaca.uaca_id = meu.uaca_id               
+                Inner Join db_academico.semestre_academico saca on saca.saca_id = pla.saca_id
+                Inner Join db_academico.periodo_academico paca on paca.saca_id = saca.saca_id 
+                Inner Join db_academico.bloque_academico baca on (baca.baca_id = paca.baca_id and baca.baca_nombre = roi.roi_bloque)
+                 where per.per_estado = 1 and per.per_estado_logico = 1
+                    and est.est_estado = 1 and est.est_estado_logico = 1
                     and ron.ron_estado = 1 and ron.ron_estado_logico = 1
                     and roi.roi_estado = 1 and roi.roi_estado_logico = 1
-                    and est.est_estado = 1 and est.est_estado_logico = 1
-                    and per.per_estado = 1 and per.per_estado_logico = 1
-                    and ron.ron_estado = 1 and ron.ron_estado_logico = 1
-                    and pm.rpm_estado = 1 and pm.rpm_estado_logico = 1
+                    and pm.rpm_estado_aprobacion = 1 
+                    and pm.rpm_estado = 1 and pm.rpm_estado_logico = 1                  
                     and pes.pes_estado = 1 and pes.pes_estado_logico = 1
-                    and asi.asi_estado = 1 and asi.asi_estado_logico = 1";
+                    and asi.asi_estado = 1 and asi.asi_estado_logico = 1
+                    and ec.ecpr_estado = 1 and ec.ecpr_estado_logico = 1
+                    and meu.meun_estado = 1 and meu.meun_estado_logico = 1
+                    and pla.pla_estado = 1 and pla.pla_estado_logico = 1";
         
         //Utilities::putMessageLogFile('sql:' . $sql);
         $comando = $con_academico->createCommand($sql);

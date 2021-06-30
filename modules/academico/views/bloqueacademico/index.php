@@ -2,6 +2,8 @@
 
 use yii\helpers\Html;
 use kartik\grid\GridView;
+use app\modules\academico\Module as academico;
+academico::registerTranslations();
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\RolSearch */
@@ -59,7 +61,7 @@ use kartik\grid\GridView;
                 'format' => 'html',
                 'header' => 'Estado',
                 'value' => function ($model, $key, $index, $widget) {
-                    if($model->saca_estado == "1")
+                    if($model->baca_estado == "1")
                         return '<small class="label label-success">'.academico::t("asignatura", "Enabled").'</small>';
                     else
                         return '<small class="label label-danger">'.academico::t("asignatura", "Disabled").'</small>';

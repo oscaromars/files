@@ -150,7 +150,7 @@ class HistoricoestudianteController extends \app\components\CController {
             $arrData = $mod_estudiante->consultarHistoricoEstudiante($arrSearch,true);
         }
 
-        $nameReport = academico::t("Academico", "List students");
+        $nameReport = academico::t("Academico", "Récord Académico");
 
         Utilities::generarReporteXLS($nombarch, $nameReport, $arrHeader, $arrData, $colPosition);
         exit;
@@ -228,7 +228,7 @@ class HistoricoestudianteController extends \app\components\CController {
         $data = Yii::$app->request->get();
         $arrData = $mod_estudiante->consultarHistoricoID($per_id,true);
         
-        $nameReport = academico::t("Academico", "List students");
+        $nameReport = academico::t("Academico", "Récord Académico");
 
         Utilities::generarReporteXLS($nombarch, $nameReport, $arrHeader, $arrData, $colPosition);
         exit;

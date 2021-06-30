@@ -1240,7 +1240,21 @@ class MatriculaciondropController extends \app\components\CController {
                                 throw new Exception('Error to Update Online Register.');
                             }
                             // cambiar estados en registro_online_item
-                            $modelRegItem = RegistroOnlineItem::findAll(['ron_id' => $ron_id]);
+                            
+
+                            if($modelRegItem){
+                                \app\models\Utilities::putMessageLogFile("Registro_online_item: " . $modelRegItem);
+                                foreach($modelRegItem as $key => $item){
+                                    $item->roi_estado = '0';
+                                    $item->roi_estado_logico = '0';
+                                    $item->roi_fecha_modificacion = $today;
+                                    $item->roi_usuario_modifica = $usu_id;
+                                    if(!$item->save()){
+                                        throw new Exception('Error to Update Online Item Register.');
+                                    }
+                                }
+                                
+                                $modelRegItem = RegistroOnlineItem::findAll(['ron_id' => $ron_id]);
                             \app\models\Utilities::putMessageLogFile("Registro_online_item: " . $modelRegItem);
                             $RegistroOnline=RegistroOnline::find()->select("ron_valor_gastos_pendientes")->where(["per_id" => $per_id, "ron_id" => $id])->asArray()->one();
                             if($RegistroOnline['ron_valor_gastos_pendientes']>=0){
@@ -1303,19 +1317,6 @@ class MatriculaciondropController extends \app\components\CController {
                                     }
                                 }
                             }
-
-                            if($modelRegItem){
-                                \app\models\Utilities::putMessageLogFile("Registro_online_item: " . $modelRegItem);
-                                foreach($modelRegItem as $key => $item){
-                                    $item->roi_estado = '0';
-                                    $item->roi_estado_logico = '0';
-                                    $item->roi_fecha_modificacion = $today;
-                                    $item->roi_usuario_modifica = $usu_id;
-                                    if(!$item->save()){
-                                        throw new Exception('Error to Update Online Item Register.');
-                                    }
-                                }
-                            
 
                                 // fin de registro gasto adm
                             

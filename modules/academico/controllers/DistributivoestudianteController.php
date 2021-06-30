@@ -31,24 +31,37 @@ admision::registerTranslations();
 class DistributivoestudianteController extends \app\components\CController {
 
     public function actionNew($id) {
+
+        //
         $distributivo_model = DistributivoAcademico::findOne($id);
         $data = array();
         ///sizeof($estuden);
-        $estuden = $distributivo_model->buscarEstudiantesMatriculados($distributivo_model->asi_id, $distributivo_model->mpp->mpp_num_paralelo);
-        for ($i = 0; $i < sizeof($estuden); $i++) {
-            $model = new DistributivoAcademicoEstudiante();
-            $dae_id=$distributivo_model->buscarEstudiantesAsignados($distributivo_model->asi_id,$estuden[$i]['est_id'] ,$distributivo_model->mpp->mpp_num_paralelo,$id);
+        //print_r($distributivo_model->mpp->mpp_num_paralelo);die();
+        $asi_id       = $distributivo_model->asi_id;
+        $num_paralelo = $distributivo_model->mpp->mpp_num_paralelo;
+
+        $estuden = $distributivo_model->buscarEstudiantesMatriculados($asi_id, $num_paralelo);
+        
+        for ($i = 0; $i < sizeof($estuden); $i++) {  
+            $model          = new DistributivoAcademicoEstudiante();
+            $dae_id         = $distributivo_model->buscarEstudiantesAsignados($distributivo_model->asi_id,$estuden[$i]['est_id'] ,$num_paralelo);
             $model->daca_id = $id;
-            if($dae_id){
-            $model->daes_id = $dae_id;
-            $model->daes_estado = 1;
+
+            //print_r($dae_id);die();
+            if($dae_id['daes_id']!=''){
+                $model->daes_id = $dae_id;
+                $model->daes_estado = 1;
             }else{
-                   $model->daes_estado = 0; 
+                $model->daes_estado = 0; 
             }
+            
             $model->est_id = $estuden[$i]['est_id'];
-          
-            $data[] = $model;
-        }
+
+            if( is_null($dae_id['daca_id']))
+                $data[] = $model;
+            else if ( $dae_id['daca_id'] == $id)
+                $data[] = $model;
+        }//for
 
         /*$estuden = $distributivo_model->buscarEstudiantesAsignados($distributivo_model->asi_id, $distributivo_model->mpp->mpp_num_paralelo,$id);
         for ($i = 0; $i < sizeof($estuden); $i++) {
@@ -76,7 +89,7 @@ class DistributivoestudianteController extends \app\components\CController {
                         ['dataProvider' => $dataProvider,
                             'distributivo_model' => $distributivo_model,]
         );
-    }
+    }//function actionNew
 
     public function actionNewposgrado($id) {
         $distributivo_model = DistributivoAcademico::findOne($id);

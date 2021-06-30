@@ -94,7 +94,7 @@ $unidad = ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formular
                 'name' => 'cmb_malla',
                 'id' => 'cmb_malla',
                 'value' => '', // initial value
-                'data' => $malla,
+                'data' => $mallaca,
                 'options' => ['placeholder' => 'Seleccione Malla ...', 'multiple' => false],
                 'pluginOptions' => [
                     'allowClear' => true,

@@ -30,7 +30,7 @@ class Especies extends \yii\db\ActiveRecord {
         $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
         $rawData = $comando->queryScalar();
         if ($rawData === false)
-            return 0; //en caso de que existe problema o no retorne nada tiene 1 por defecto 
+            return 0; //en caso de que existe problema o no retorne nada tiene 1 por defecto
         return $rawData;
     }
 
@@ -45,7 +45,7 @@ class Especies extends \yii\db\ActiveRecord {
         $comando->bindParam(":mod_id", $mod_id, \PDO::PARAM_INT);
         $rawData = $comando->queryScalar();
         if ($rawData === false)
-            return 1; //en caso de que existe problema o no retorne nada tiene 1 por defecto 
+            return 1; //en caso de que existe problema o no retorne nada tiene 1 por defecto
         return $rawData;
     }
 
@@ -53,9 +53,9 @@ class Especies extends \yii\db\ActiveRecord {
         $con = \Yii::$app->db_academico;
         $con1 = \Yii::$app->db_asgard;
         $estado = 1;
-        $sql = "SELECT A.est_id, B.per_id Ids,B.per_pri_nombre,B.per_seg_nombre,B.per_pri_apellido, 
+        $sql = "SELECT A.est_id, B.per_id Ids,B.per_pri_nombre,B.per_seg_nombre,B.per_pri_apellido,
                             B.per_seg_apellido,B.per_cedula, B.per_correo, D.uaca_id, D.mod_id, D.eaca_id, A.est_matricula, A.est_categoria
-                    FROM " . $con->dbname . ".estudiante A 
+                    FROM " . $con->dbname . ".estudiante A
                             INNER JOIN " . $con1->dbname . ".persona B ON A.per_id=B.per_id
                             INNER JOIN " . $con->dbname . ".estudiante_carrera_programa C ON C.est_id = A.est_id
                             INNER JOIN " . $con->dbname . ".modalidad_estudio_unidad D ON D.meun_id = C.meun_id
@@ -99,8 +99,8 @@ class Especies extends \yii\db\ActiveRecord {
                     INNER JOIN " . $con->dbname . ".unidad_academica B ON B.uaca_id=A.uaca_id
                     INNER JOIN " . $con->dbname . ".modalidad C ON C.mod_id=A.mod_id
                     INNER JOIN " . $con1->dbname . ".forma_pago D ON D.fpag_id=A.fpag_id
-                    INNER JOIN " . $con->dbname . ".estudiante E ON E.est_id=A.est_id    
-                    INNER JOIN " . $con2->dbname . ".persona P ON P.per_id=E.per_id                        
+                    INNER JOIN " . $con->dbname . ".estudiante E ON E.est_id=A.est_id
+                    INNER JOIN " . $con2->dbname . ".persona P ON P.per_id=E.per_id
                 WHERE  A.csol_estado=:estado AND A.csol_estado_logico=:estado $estudiante  $str_search  ORDER BY A.csol_id DESC;";
 
         $comando = $con->createCommand($sql);
@@ -153,7 +153,7 @@ class Especies extends \yii\db\ActiveRecord {
     public static function getTramite($uaca_id) {
         $estado = 1;
         $con = \Yii::$app->db_academico;
-        $sql = "SELECT tra_id id,tra_nombre name 
+        $sql = "SELECT tra_id id,tra_nombre name
                     FROM " . $con->dbname . ".tramite
                 WHERE uaca_id =:uaca_id AND tra_estado=:estado AND tra_estado_logico=:estado; ";
         $comando = $con->createCommand($sql);
@@ -164,7 +164,7 @@ class Especies extends \yii\db\ActiveRecord {
 
     public static function getFormaPago() {
         $con = \Yii::$app->db_facturacion;
-        $sql = "SELECT fpag_id Ids,fpag_nombre Nombre 
+        $sql = "SELECT fpag_id Ids,fpag_nombre Nombre
                     FROM " . $con->dbname . ".forma_pago
                 WHERE fpag_estado=1 AND fpag_estado_logico=1 AND fpag_id IN(4,5,6);";
         $comando = $con->createCommand($sql);
@@ -188,7 +188,7 @@ class Especies extends \yii\db\ActiveRecord {
         $sql = "SELECT A.esp_id,A.esp_valor,A.esp_emision_certificado,A.esp_dia_vigencia,
 		concat(C.uaca_nomenclatura,tra_nomenclatura,lpad(ifnull(A.esp_codigo,0),3,'0')) codigo
                     FROM " . $con->dbname . ".especies A
-			INNER JOIN (" . $con->dbname . ".tramite B 
+			INNER JOIN (" . $con->dbname . ".tramite B
                             INNER JOIN " . $con->dbname . ".unidad_academica C ON B.uaca_id=C.uaca_id)
 			ON A.tra_id=B.tra_id
                 WHERE A.esp_estado=:estado AND A.esp_estado_logico=:estado AND A.esp_id=:esp_id; ";
@@ -215,7 +215,7 @@ class Especies extends \yii\db\ActiveRecord {
 
             $trans->commit();
             $con->close();
-            //RETORNA DATOS 
+            //RETORNA DATOS
             //$arroout["ids"]= $ftem_id;
             $arroout["status"] = true;
             //$arroout["secuencial"]= $doc_numero;
@@ -307,7 +307,7 @@ class Especies extends \yii\db\ActiveRecord {
 
             $trans->commit();
             $con->close();
-            //RETORNA DATOS 
+            //RETORNA DATOS
             $arroout["status"] = true;
             return $arroout;
         } catch (\Exception $e) {
@@ -330,7 +330,7 @@ class Especies extends \yii\db\ActiveRecord {
 
             $fecha_actual = date("d-m-Y");
             $this->actualizaCabPago($con, $csol_id, $estado, $observacion);
-            
+
             if ($estado==3) {
                 $cabSol = $this->consultarCabSolicitud($csol_id);
                 $detSol = $this->consultarDetSolicitud($csol_id);
@@ -355,10 +355,10 @@ class Especies extends \yii\db\ActiveRecord {
                     $this->generarEspecies($con, $detSol[$i]);
                 }
             }
-            
+
             $trans->commit();
             $con->close();
-            //RETORNA DATOS 
+            //RETORNA DATOS
             //$arroout["ids"]= $ftem_id;
             $arroout["status"] = true;
             //$arroout["secuencial"]= $doc_numero;
@@ -434,7 +434,7 @@ class Especies extends \yii\db\ActiveRecord {
     public function nuevaSecuencia($con, $esp_id) {
         $numero = 0;
         try {
-            $sql = "SELECT IFNULL(CAST(esp_numero AS UNSIGNED),0) secuencia FROM " . $con->dbname . ".especies 
+            $sql = "SELECT IFNULL(CAST(esp_numero AS UNSIGNED),0) secuencia FROM " . $con->dbname . ".especies
                     WHERE esp_estado=1 AND esp_estado_logico=1 AND esp_id=:esp_id FOR UPDATE ";
             $sql .= "  ";
             \app\models\Utilities::putMessageLogFile('sql:' . $sql);
@@ -517,10 +517,10 @@ class Especies extends \yii\db\ActiveRecord {
                     T.tra_nombre as tramite, C.esp_rubro,concat(D.per_pri_nombre,' ',D.per_pri_apellido) Nombres,
                     D.per_cedula, F.uaca_nombre,G.mod_nombre,date(A.egen_fecha_aprobacion) fecha_aprobacion,
                     A.egen_fecha_caducidad, A.egen_certificado,
-                    IFNULL((SELECT IFNULL(ceg.cgen_codigo,' ')  FROM " . $con->dbname . ".certificados_generadas ceg 
+                    IFNULL((SELECT IFNULL(ceg.cgen_codigo,' ')  FROM " . $con->dbname . ".certificados_generadas ceg
                         WHERE ceg.cgen_estado=:estado AND ceg.cgen_estado_logico=:estado AND ceg.egen_id=A.egen_id),' ') codigo_generado
                 FROM " . $con->dbname . ".especies_generadas A
-                            INNER JOIN (" . $con->dbname . ".estudiante B 
+                            INNER JOIN (" . $con->dbname . ".estudiante B
                                             INNER JOIN " . $con1->dbname . ".persona D ON B.per_id=D.per_id)
                                     ON A.est_id=B.est_id
                             INNER JOIN " . $con->dbname . ".especies C ON A.esp_id=C.esp_id
@@ -592,17 +592,17 @@ class Especies extends \yii\db\ActiveRecord {
                     A.uaca_id,F.uaca_nombre,G.mod_nombre,concat(E.resp_titulo,' ',E.resp_nombre) Responsable,date(A.egen_fecha_aprobacion) fecha_aprobacion,
                     A.egen_fecha_caducidad,D.per_correo,D.per_celular,A.esp_id, ea.eaca_nombre Carrera, esp_dia_vigencia, det.dsol_observacion as detalle, det.dsol_archivo_extra as imagen, D.per_id
                     FROM " . $con->dbname . ".especies_generadas A
-                            INNER JOIN (" . $con->dbname . ".estudiante B 
+                            INNER JOIN (" . $con->dbname . ".estudiante B
                                             INNER JOIN " . $con1->dbname . ".persona D ON B.per_id=D.per_id)
                                     ON A.est_id=B.est_id
-                            INNER JOIN " . $con->dbname . ".especies C ON A.esp_id=C.esp_id                                                        
+                            INNER JOIN " . $con->dbname . ".especies C ON A.esp_id=C.esp_id
                             INNER JOIN " . $con->dbname . ".estudiante_carrera_programa ecp ON ecp.est_id = A.est_id
                             INNER JOIN " . $con->dbname . ".modalidad_estudio_unidad meu ON meu.meun_id = ecp.meun_id
                             INNER JOIN " . $con->dbname . ".unidad_academica F ON F.uaca_id=A.uaca_id
                             INNER JOIN " . $con->dbname . ".modalidad G ON G.mod_id=A.mod_id
                             INNER JOIN " . $con->dbname . ".estudio_academico ea ON ea.eaca_id=meu.eaca_id
                             INNER JOIN " . $con->dbname . ".responsable_especie E ON (E.uaca_id=A.uaca_id and E.mod_id=A.mod_id)
-                            INNER JOIN " . $con->dbname . ".detalle_solicitud det ON det.dsol_id = A.dsol_id 
+                            INNER JOIN " . $con->dbname . ".detalle_solicitud det ON det.dsol_id = A.dsol_id
                 WHERE A.egen_estado=:estado AND A.egen_estado_logico=:estado AND A.egen_id=:egen_id ; ";
         $comando = $con->createCommand($sql);
         $comando->bindParam(":egen_id", $Ids, \PDO::PARAM_INT);
@@ -615,8 +615,8 @@ class Especies extends \yii\db\ActiveRecord {
     /**
      * Function consultaSolicitudexrubro
      * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
-     * @property integer $csol_id       
-     * @return  
+     * @property integer $csol_id
+     * @return
      */
     public function consultaSolicitudexrubro($csol_id) {
         $con = \Yii::$app->db_academico;
@@ -641,14 +641,14 @@ class Especies extends \yii\db\ActiveRecord {
     /**
      * Function consultaPeridxestid
      * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
-     * @property integer $est_id       
-     * @return  
+     * @property integer $est_id
+     * @return
      */
     public function consultaPeridxestid($est_id) {
         $con = \Yii::$app->db_academico;
         $estado = 1;
         $sql = "SELECT per_id
-                  FROM " . $con->dbname . ".estudiante                       
+                  FROM " . $con->dbname . ".estudiante
                   WHERE est_id = :est_id AND
                     est_estado = :estado AND
                     est_estado_logico = :estado";
@@ -671,7 +671,7 @@ class Especies extends \yii\db\ActiveRecord {
                     F.uaca_nombre,G.mod_nombre,date(A.egen_fecha_aprobacion) fecha_aprobacion,
                     A.egen_fecha_caducidad, Z.cgen_ruta_archivo_pdf as imagen, Z.cgen_estado_certificado
                 FROM " . $con->dbname . ".especies_generadas A
-                            INNER JOIN (" . $con->dbname . ".estudiante B 
+                            INNER JOIN (" . $con->dbname . ".estudiante B
                                             INNER JOIN " . $con1->dbname . ".persona D ON B.per_id=D.per_id)
                                     ON A.est_id=B.est_id
                             INNER JOIN " . $con->dbname . ".detalle_solicitud ds on ds.dsol_id = A.dsol_id
@@ -679,11 +679,11 @@ class Especies extends \yii\db\ActiveRecord {
                             INNER JOIN " . $con->dbname . ".especies C ON A.esp_id=C.esp_id
                             INNER JOIN " . $con->dbname . ".unidad_academica F ON F.uaca_id=A.uaca_id
                             INNER JOIN " . $con->dbname . ".modalidad G ON G.mod_id=A.mod_id
-                            INNER JOIN " . $con->dbname . ".tramite T ON T.tra_id = A.tra_id  
-                            LEFT JOIN " . $con->dbname . ".certificados_generadas Z ON Z.egen_id = A.egen_id  
-                WHERE cs.csol_id = :csol_id AND 
-                      A.egen_estado=:estado AND 
-                      A.egen_estado_logico=:estado  
+                            INNER JOIN " . $con->dbname . ".tramite T ON T.tra_id = A.tra_id
+                            LEFT JOIN " . $con->dbname . ".certificados_generadas Z ON Z.egen_id = A.egen_id
+                WHERE cs.csol_id = :csol_id AND
+                      A.egen_estado=:estado AND
+                      A.egen_estado_logico=:estado
                 ORDER BY A.egen_id DESC; ";
 
         $comando = $con->createCommand($sql);
@@ -715,14 +715,14 @@ class Especies extends \yii\db\ActiveRecord {
     /**
      * Function consultarcabeceraxdetalle
      * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
-     * @property integer $csol_id       
-     * @return  
+     * @property integer $csol_id
+     * @return
      */
     public function consultarcabeceraxdetalle($dsol_id) {
         $con = \Yii::$app->db_academico;
         $estado = 1;
         $sql = "SELECT csol_id
-                  FROM " . $con->dbname . ".detalle_solicitud                       
+                  FROM " . $con->dbname . ".detalle_solicitud
                   WHERE dsol_id = :dsol_id AND
                     dsol_estado = :estado AND
                     dsol_estado_logico = :estado";
@@ -745,7 +745,7 @@ class Especies extends \yii\db\ActiveRecord {
                     F.uaca_nombre,G.mod_nombre,date(A.egen_fecha_aprobacion) fecha_aprobacion,
                     A.egen_fecha_caducidad
                 FROM " . $con->dbname . ".especies_generadas A
-                            INNER JOIN (" . $con->dbname . ".estudiante B 
+                            INNER JOIN (" . $con->dbname . ".estudiante B
                                             INNER JOIN " . $con1->dbname . ".persona D ON B.per_id=D.per_id)
                                     ON A.est_id=B.est_id
                             INNER JOIN " . $con->dbname . ".detalle_solicitud ds on ds.dsol_id = A.dsol_id
@@ -753,10 +753,10 @@ class Especies extends \yii\db\ActiveRecord {
                             INNER JOIN " . $con->dbname . ".especies C ON A.esp_id=C.esp_id
                             INNER JOIN " . $con->dbname . ".unidad_academica F ON F.uaca_id=A.uaca_id
                             INNER JOIN " . $con->dbname . ".modalidad G ON G.mod_id=A.mod_id
-                            INNER JOIN " . $con->dbname . ".tramite T ON T.tra_id = A.tra_id  
+                            INNER JOIN " . $con->dbname . ".tramite T ON T.tra_id = A.tra_id
                 WHERE cs.csol_id = :csol_id AND ds.dsol_id = :dsol_id AND
-                      A.egen_estado=:estado AND 
-                      A.egen_estado_logico=:estado  
+                      A.egen_estado=:estado AND
+                      A.egen_estado_logico=:estado
                 ORDER BY A.egen_id DESC; ";
 
         $comando = $con->createCommand($sql);
@@ -789,14 +789,14 @@ class Especies extends \yii\db\ActiveRecord {
     /**
      * Function consultarPeriodoactivo
      * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
-     * @property integer $paca_id       
-     * @return  
+     * @property integer $paca_id
+     * @return
      */
     public function consultarPeriodoactivo() {
         $con = \Yii::$app->db_academico;
         $estado = 1;
         $sql = "SELECT group_concat(paca_id) as paca_id
-                  FROM " . $con->dbname . ".periodo_academico                       
+                  FROM " . $con->dbname . ".periodo_academico
                   WHERE paca_activo = 'A' AND
                     paca_estado = :estado AND
                     paca_estado_logico = :estado";
@@ -811,8 +811,8 @@ class Especies extends \yii\db\ActiveRecord {
     /**
      * Function consultarPagodia
      * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
-     * @property integer eppa_estado_pago       
-     * @return  
+     * @property integer eppa_estado_pago
+     * @return
      */
     public function consultarPagodia($paca_id, $est_id) {
         $con = \Yii::$app->db_academico;
@@ -821,7 +821,7 @@ class Especies extends \yii\db\ActiveRecord {
             $periodo = 'paca_id in (' . $paca_id . ') AND';
         }
         $sql = "SELECT count(*) as eppa_estado_pago
-                  FROM " . $con->dbname . ".estudiante_periodo_pago                       
+                  FROM " . $con->dbname . ".estudiante_periodo_pago
                   WHERE $periodo
                     eppa_estado_pago = :estado AND
                     est_id = :est_id AND
@@ -836,10 +836,10 @@ class Especies extends \yii\db\ActiveRecord {
     }
 
     /**
-     * Function 
+     * Function
      * @author  Giovanni Vergara <abalistadesarrollo02@uteg.edu.ec>
-     * @property      
-     * @return  
+     * @property
+     * @return
      */
     public function consultarSolicitudXcorreo($csol_id) {
         $con = \Yii::$app->db_academico;

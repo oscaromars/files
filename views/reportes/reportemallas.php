@@ -17,7 +17,7 @@ use app\modules\academico\Module as academico;
  * and open the template in the editor.
  */
 ?>
-<?php echo $this->render('_form_Mallas', ['model' => $searchModel, 'arr_malla' =>  $arr_malla]); ?>
+<?php echo $this->render('_form_Mallas', ['model' => $searchModel/*, 'arr_malla' =>  $arr_malla*/]); ?>
 <div class="panel panel-primary">
     <div class="panel-heading">
         <h3 class="panel-title">Reporte Malla Academica</h3>

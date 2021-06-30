@@ -1997,7 +1997,7 @@ class MatriculacionController extends \app\components\CController {
 
             // Si tiene este objeto, quiere decir que no ha realizado el último pago
                     $rama = RegistroAdicionalMaterias::find()->where(['ron_id' => $ron_id, 'per_id' => $per_id, 'pla_id' => $pla_id, 'paca_id' => $paca_id, 'rpm_id' => NULL, 'rama_estado' => 1, 'rama_estado_logico' => 1])->asArray()->one();
-                    $pagado = !isset($rama);
+                    $pagado = !isset($rama) || $rama['roi_id_1'] == NULL;
                      
                     return $this->render('registro', [
                                 "pes_id" => $pes_id,
@@ -2377,6 +2377,7 @@ class MatriculacionController extends \app\components\CController {
         $porc_mayor = round($porcentaje, 2);
         $por_menor = 100 - ($porc_mayor * ($cuotas - 1));
 
+        //print_r($cuotas);die();
         // Si son dos cuotas
         if($cuotas == 2){ // Quiere decir que es semestre intensivo B1
             $fechas_vencimiento = FechasVencimientoPago::find()->where(['saca_id' => $data_student['saca_id'], 'fvpa_bloque' => "B1", 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();
@@ -2385,6 +2386,7 @@ class MatriculacionController extends \app\components\CController {
         }
         // Si son 3 cuotas
         else if($cuotas == 3){ // Considerar sólo el bloque escogido
+            //print_r($bloque);die();
             $fechas_vencimiento = FechasVencimientoPago::find()->where(['saca_id' => $data_student['saca_id'], 'fvpa_bloque' => $bloque, 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();
         }
         else if($cuotas == 5){
@@ -2397,6 +2399,7 @@ class MatriculacionController extends \app\components\CController {
         }
         
         $arr_pagos = [];
+        //
         for ($i=0; $i < $cuotas; $i++) { 
             if($i == 0){
                 $arr_pagos[] = [
@@ -2427,6 +2430,7 @@ class MatriculacionController extends \app\components\CController {
             ],
         ]);
 
+        
         $pagosDataProvider = new ArrayDataProvider([
             'key' => '',
             'allModels' => $arr_pagos,
@@ -2481,6 +2485,7 @@ class MatriculacionController extends \app\components\CController {
                 $pes_id = $modelRegOn->pes_id;
                 $modelPes = PlanificacionEstudiante::findOne($pes_id);
                 $pla_id = $modelPes->pla_id;
+                $mod_id = Planificacion::find()->where(['pla_id' => $pla_id])->asArray()->one()['mod_id'];
                 // Se verifica si hay algun pago realizado o por verificar
                 $modelRegPag = RegistroPagoMatricula::findOne(['per_id' => $per_id, 'pla_id' => $pla_id, 'ron_id' => $ron_id, 'rpm_estado' => '1', 'rpm_estado_logico'=>'1',]);
                 if(isset($data['cancelSubject']) && $data['cancelSubject'] = '1'){ // si hay un registro de pago se debe tomar en consideracion la anulacion por materias
@@ -2767,10 +2772,215 @@ class MatriculacionController extends \app\components\CController {
                                     if(!$item->save()){
                                         throw new Exception('Error to Update Online Item Register.');
                                     }
-                                }else
-                                    $sumMatr += $item->roi_costo;
-                            }
-                            $modelRegOn->ron_valor_matricula = $sumMatr;
+
+                                    //// Eliminar el roi_id de registro_adicional_materias ////
+                                    
+                                    // \app\models\Utilities::putMessageLogFile("---Eliminar el roi_id de registro_adicional_materias---");
+
+                                    // Obtener el modelo de rama donde aún no se ha pagado
+                                    $modelRama = RegistroAdicionalMaterias::findOne(['ron_id' => $ron_id, 'per_id' => $per_id, 'pla_id' => $pla_id, 'paca_id' => $modelPlanif->paca_id, 'rama_estado' => 1, 'rama_estado_logico' => 1, 'rpm_id' => NULL]);
+                                    // \app\models\Utilities::putMessageLogFile("modelRama existe: " . isset($modelRama));
+
+                                    // Validación por si acaso
+                                    if(isset($modelRama)){
+                                        // Sacar los roi_ids que están presentes
+                                        $arr_roi_ids = [
+                                            $modelRama->roi_id_1,
+                                            $modelRama->roi_id_2,
+                                            $modelRama->roi_id_3,
+                                            $modelRama->roi_id_4,
+                                            $modelRama->roi_id_5,
+                                            $modelRama->roi_id_6,
+                                        ];
+
+                                        // \app\models\Utilities::putMessageLogFile("arr_roi_ids INICIO: " . print_r($arr_roi_ids, true));
+
+                                        // \app\models\Utilities::putMessageLogFile("item->roi_id: " . $item->roi_id);
+
+                                        // Encontrar el roi_id igual y removerlo
+                                        for ($i = 0; $i < count($arr_roi_ids); $i++) {
+                                            // \app\models\Utilities::putMessageLogFile("COMPARACIÓN: " . ($item->roi_id == $arr_roi_ids[$i]));
+                                            if(intval($item->roi_id) == intval($arr_roi_ids[$i])){
+                                                unset($arr_roi_ids[$i]);
+                                                break;
+                                            }
+                                        }
+
+                                        // \app\models\Utilities::putMessageLogFile("arr_roi_ids DESPUÉS: " . print_r($arr_roi_ids, true));
+
+                                        // Reordenar el arreglo
+                                        $arr_roi_ids = array_values($arr_roi_ids);
+
+                                        // \app\models\Utilities::putMessageLogFile("arr_roi_ids FINAL: " . print_r($arr_roi_ids, true));
+
+                                        // Remplazar los roi_ids del registro del modelo por este nuevo arreglo
+                                        $modelRama->roi_id_1 = $arr_roi_ids[0];
+                                        $modelRama->roi_id_2 = $arr_roi_ids[1];
+                                        $modelRama->roi_id_3 = $arr_roi_ids[2];
+                                        $modelRama->roi_id_4 = $arr_roi_ids[3];
+                                        $modelRama->roi_id_5 = $arr_roi_ids[4];
+                                        $modelRama->roi_id_6 = $arr_roi_ids[5];
+
+                                        // Actualizar
+                                        if(!$modelRama->save()){
+                                            throw new Exception('Error al actualizar los roi_ids de registro_adicional_materias');
+                                        }
+
+                                        //// Reducir los gatos administrativos en caso de que se eliminen materias del B2 quedando sólo de B1 ////
+
+                                        // Tomar todas las transacciones realizadas. Pagadas y no pagadas
+                                        $modelRama = RegistroAdicionalMaterias::findAll(['ron_id' => $ron_id, 'per_id' => $per_id, 'pla_id' => $pla_id, 'paca_id' => $modelPlanif->paca_id, 'rama_estado' => 1, 'rama_estado_logico' => 1]);
+
+                                        // \app\models\Utilities::putMessageLogFile("modelRama existe: " . isset($modelRama));
+
+                                        // Separar en pagadas y no pagadas
+                                        $pagadas = [];
+                                        $no_pagadas = [];
+                                        foreach ($modelRama as $key => $value) {
+                                            if(isset($value['rpm_id'])){
+                                                $pagadas[] = $value;
+                                            }
+                                            else{
+                                                $no_pagadas[] = $value;
+                                            }
+                                        }
+
+                                        // \app\models\Utilities::putMessageLogFile("pagadas: " . print_r($modelRama, true));
+                                        // \app\models\Utilities::putMessageLogFile("no_pagadas: " . print_r($modelRama, true));
+
+                                        // Si no hay materias pagadas, calcular sólo básándose en las pendientes
+                                        if(count($pagadas) <= 0){
+                                            // \app\models\Utilities::putMessageLogFile("---------NO Hay materias pagadas------------");
+                                            
+                                            // Sacar los roi_ids
+                                            $bloques = [
+                                                RegistroOnlineItem::find()->where(['roi_id' => $no_pagadas[0]['roi_id_1']])->asArray()->one()['roi_bloque'],
+                                                RegistroOnlineItem::find()->where(['roi_id' => $no_pagadas[0]['roi_id_2']])->asArray()->one()['roi_bloque'],
+                                                RegistroOnlineItem::find()->where(['roi_id' => $no_pagadas[0]['roi_id_3']])->asArray()->one()['roi_bloque'],
+                                                RegistroOnlineItem::find()->where(['roi_id' => $no_pagadas[0]['roi_id_4']])->asArray()->one()['roi_bloque'],
+                                                RegistroOnlineItem::find()->where(['roi_id' => $no_pagadas[0]['roi_id_5']])->asArray()->one()['roi_bloque'],
+                                                RegistroOnlineItem::find()->where(['roi_id' => $no_pagadas[0]['roi_id_6']])->asArray()->one()['roi_bloque'],
+                                            ];
+
+                                            // \app\models\Utilities::putMessageLogFile("bloques: " . print_r($bloques, true));
+
+                                            // Sacar el 1er bloque
+                                            $bloque = $bloques[0];
+
+                                            // \app\models\Utilities::putMessageLogFile("bloque: " . $bloque);
+
+                                            // Obtener los gastos administrativos
+                                            $gastos_administrativos_valor = GastoAdministrativo::find()->where(['mod_id' => $mod_id])->asArray()->one()['gadm_gastos_varios'];
+
+                                            // \app\models\Utilities::putMessageLogFile("gastos_administrativos_valor INICIO: " . $gastos_administrativos_valor);
+
+                                            foreach ($bloques as $key => $value) {
+                                                // Si se encuentran los bloques diferentes, los gastos son el doble
+                                                // \app\models\Utilities::putMessageLogFile("value != bloque: " . ($value != $bloque && isset($value)));
+                                                if($value != $bloque && isset($value)){
+                                                     $gastos_administrativos_valor = $gastos_administrativos_valor * 2;
+                                                     break;
+                                                }
+                                            }
+
+                                            // \app\models\Utilities::putMessageLogFile("gastos_administrativos_valor FIN: " . $gastos_administrativos_valor);
+
+                                            // Guardar en los gastos y pendientes
+                                            $modelRegOn->ron_valor_gastos_adm = $gastos_administrativos_valor; 
+                                            $modelRegOn->ron_valor_gastos_pendientes = $gastos_administrativos_valor;
+                                        }
+                                        else{ // Si sí hay pagadas, comparar
+                                            // \app\models\Utilities::putMessageLogFile("---------SÍ hay materias pagadas------------");
+                                            // Lista de los bloques pagados
+                                            $bloques_pagados = [];
+
+                                            foreach ($pagadas as $key => $value) {
+                                                // Tomar todos los rois de los roi_ids, sean null o no
+                                                $roi_1 = RegistroOnlineItem::find()->where(['roi_id' => $value['roi_id_1']])->asArray()->one();
+                                                $roi_2 = RegistroOnlineItem::find()->where(['roi_id' => $value['roi_id_2']])->asArray()->one();
+                                                $roi_3 = RegistroOnlineItem::find()->where(['roi_id' => $value['roi_id_3']])->asArray()->one();
+                                                $roi_4 = RegistroOnlineItem::find()->where(['roi_id' => $value['roi_id_4']])->asArray()->one();
+                                                $roi_5 = RegistroOnlineItem::find()->where(['roi_id' => $value['roi_id_5']])->asArray()->one();
+                                                $roi_6 = RegistroOnlineItem::find()->where(['roi_id' => $value['roi_id_6']])->asArray()->one();
+
+                                                // Si se encontró roi, agregar su bloque a la lista de bloques pagados
+                                                if(isset($roi_1)){ $bloques_pagados[] = $roi_1['roi_bloque']; }
+                                                if(isset($roi_2)){ $bloques_pagados[] = $roi_2['roi_bloque']; }
+                                                if(isset($roi_3)){ $bloques_pagados[] = $roi_3['roi_bloque']; }
+                                                if(isset($roi_4)){ $bloques_pagados[] = $roi_4['roi_bloque']; }
+                                                if(isset($roi_5)){ $bloques_pagados[] = $roi_5['roi_bloque']; }
+                                                if(isset($roi_6)){ $bloques_pagados[] = $roi_6['roi_bloque']; }
+                                            }
+
+                                            // \app\models\Utilities::putMessageLogFile("bloques_pagados: " . print_r($bloques_pagados, true));
+
+                                            // Tomar el primer bloque de la lista de bloques pagados
+                                            $bloque_pagado = $bloques_pagados[0];
+                                            // \app\models\Utilities::putMessageLogFile("bloque_pagado: " . $bloque_pagado);
+
+                                            // Obtener los gastos administrativos, y considerarlos como los pendientes por defecto ($150)
+                                            $gastos_administrativos_pendientes = GastoAdministrativo::find()->where(['mod_id' => $mod_id])->asArray()->one()['gadm_gastos_varios'];
+                                            // \app\models\Utilities::putMessageLogFile("gastos_administrativos_pendientes INICIO: " . $gastos_administrativos_pendientes);
+
+                                            foreach ($bloques_pagados as $key => $value) {
+                                                // Si se encuentran los bloques diferentes, los gastos pendientes son 0
+                                                // \app\models\Utilities::putMessageLogFile("value != bloque_pagado: " . ($value != $bloque_pagado));
+                                                if($value != $bloque_pagado){
+                                                     $gastos_administrativos_pendientes = 0;
+                                                     break;
+                                                }
+                                            }
+
+                                            // \app\models\Utilities::putMessageLogFile("gastos_administrativos_pendientes FIN: " . $gastos_administrativos_pendientes);
+
+                                            // Si los gastos administrativos pendientes son 0, colocarlos en el modelo y hacer que los gastos admin sean 300
+                                            if($gastos_administrativos_pendientes <= 0){
+                                                $modelRegOn->ron_valor_gastos_adm = GastoAdministrativo::find()->where(['mod_id' => $mod_id])->asArray()->one()['gadm_gastos_varios'] * 2;
+                                                $modelRegOn->ron_valor_gastos_pendientes = $gastos_administrativos_pendientes;
+                                            }
+                                            // Si no son 0, quiere decir que sólo hay pagadas materias de 1 bloque, por lo que hay que comparar si las pendientes de pago siguen siendo del mismo bloque para que no se le vuelva a cobrar, o del otro bloque para que sí se le cobre los gastos administrativos adicionales
+                                            else{
+                                                // Sacar los roi_ids no pagados
+                                                $bloques_no_pagados = [
+                                                    RegistroOnlineItem::find()->where(['roi_id' => $no_pagadas[0]['roi_id_1']])->asArray()->one()['roi_bloque'],
+                                                    RegistroOnlineItem::find()->where(['roi_id' => $no_pagadas[0]['roi_id_2']])->asArray()->one()['roi_bloque'],
+                                                    RegistroOnlineItem::find()->where(['roi_id' => $no_pagadas[0]['roi_id_3']])->asArray()->one()['roi_bloque'],
+                                                    RegistroOnlineItem::find()->where(['roi_id' => $no_pagadas[0]['roi_id_4']])->asArray()->one()['roi_bloque'],
+                                                    RegistroOnlineItem::find()->where(['roi_id' => $no_pagadas[0]['roi_id_5']])->asArray()->one()['roi_bloque'],
+                                                    RegistroOnlineItem::find()->where(['roi_id' => $no_pagadas[0]['roi_id_6']])->asArray()->one()['roi_bloque']
+                                                ];
+
+                                                // \app\models\Utilities::putMessageLogFile("bloques_no_pagados: " . print_r($bloques_no_pagados, true));
+
+                                                $gastos_administrativos_pendientes = 0;
+                                                foreach ($bloques_no_pagados as $key => $value) {
+                                                    // Si se encuentra un bloque diferente a los ya pagados, hay valor pendiente de pago. Si todos son los mismos, no hay pendiente
+                                                    // \app\models\Utilities::putMessageLogFile("value != bloque_pagado: " . ($value != $bloque_pagado && isset($value)));
+                                                    if($value != $bloque_pagado && isset($value)){
+                                                        $gastos_administrativos_pendientes = GastoAdministrativo::find()->where(['mod_id' => $mod_id])->asArray()->one()['gadm_gastos_varios'];
+                                                        break;
+                                                    }
+                                                }
+
+                                                // \app\models\Utilities::putMessageLogFile("gastos_administrativos_pendientes CORRECCION: " . $gastos_administrativos_pendientes);
+
+                                                // Si los gastos administrativos pendientes son 0, quiere decir que materias pagadas y no pagadas son del mismo bloque 
+                                                if($gastos_administrativos_pendientes <= 0){
+                                                    $modelRegOn->ron_valor_gastos_adm = GastoAdministrativo::find()->where(['mod_id' => $mod_id])->asArray()->one()['gadm_gastos_varios'];
+                                                    $modelRegOn->ron_valor_gastos_pendientes = $gastos_administrativos_pendientes;
+                                                }
+                                                // SI no, son de distintos bloques
+                                                else{
+                                                    $modelRegOn->ron_valor_gastos_adm = GastoAdministrativo::find()->where(['mod_id' => $mod_id])->asArray()->one()['gadm_gastos_varios'] * 2;
+                                                    $modelRegOn->ron_valor_gastos_pendientes = $gastos_administrativos_pendientes;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }/*else
+                                    $sumMatr += $item->roi_costo;*/
+                            }// foreach
+                            // $modelRegOn->ron_valor_matricula = $sumMatr;
                             if(!$modelRegOn->save()){
                                 throw new Exception('Error to Update Online Register.');
                             }

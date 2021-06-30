@@ -9,12 +9,12 @@ $(document).ready(function() {
         searchModulesList();
     });
     $('#btn_modificarcargacartera').click(function() {
-        var txt_dpre_ssn_id_fact= $('#txt_dpre_ssn_id_fact').val()?$('#txt_dpre_ssn_id_fact').val():0;
+        /*var txt_dpre_ssn_id_fact= $('#txt_dpre_ssn_id_fact').val()?$('#txt_dpre_ssn_id_fact').val():0;
         var txt_nombres_fac     = $('#txt_nombres_fac').val()?$('#txt_nombres_fac').val():0;
         var txt_apellidos_fac   = $('#txt_apellidos_fac').val()?$('#txt_apellidos_fac').val():0;
         var txt_dir_fac         = $('#txt_dir_fac').val()?$('#txt_dir_fac').val():0;
         var txt_tel_fac         = $('#txt_tel_fac').val()?$('#txt_tel_fac').val():0;
-        var txt_correo_fac      = $('#txt_correo_fac').val()?$('#txt_correo_fac').val():0;
+        var txt_correo_fac      = $('#txt_correo_fac').val()?$('#txt_correo_fac').val():0;*/
         /*alert(txt_dpre_ssn_id_fact+'-'+
             txt_nombres_fac +'-'+
             txt_apellidos_fac +'-'+
@@ -30,10 +30,15 @@ $(document).ready(function() {
                 txt_dir_fac != 0 ||
                 txt_tel_fac != 0 ||
                 txt_correo_fac != 0){*/
-                if(!validateForm()){
+                if($('#cmb_fpago').val() == 1){
+                    if(!validateForm()){
+                        guardarCargarCartera();
+                        //enviarPdf();
+                    }
+                }else{
                     guardarCargarCartera();
-                    enviarPdf();
-                }
+                }    
+                
             /*}else if(( $('#cmb_tpago').val()=== 3)||( $('#cmb_fpago').val() === 1)){
                 var mensaje = {wtmessage: 'Se deben ingresar todos los campos de facturacion correspondientes', title: "Datos de Facturacion"};
                 showAlert("NO_OK", "error", mensaje);
@@ -66,6 +71,40 @@ $(document).ready(function() {
         }
     });
     $('#cmb_fpago').change(function() {
+        //alert($('#cmb_fpago').val());
+        if($('#cmb_fpago').val() == 1){
+            $('txt_dpre_ssn_id_fact').addClass("PBvalidation");
+            $('txt_nombres_fac').addClass("PBvalidation");
+            $('txt_apellidos_fac').addClass("PBvalidation");
+            $('txt_dir_fac').addClass("PBvalidation");
+            $('txt_tel_fac').addClass("PBvalidation");
+            $('txt_correo_fac').addClass("PBvalidation");
+            $('#paylink2').show();
+            $('#atach_docum_pago').css('display', 'none');
+        }else{
+        //if($(this).val() == 3){
+            $('txt_dpre_ssn_id_fact').removeClass("PBvalidation");
+            $('txt_nombres_fac').removeClass("PBvalidation");
+            $('txt_apellidos_fac').removeClass("PBvalidation");
+            $('txt_dir_fac').removeClass("PBvalidation");
+            $('txt_tel_fac').removeClass("PBvalidation");
+            $('txt_correo_fac').removeClass("PBvalidation");
+            $('#paylink2').hide();
+            $('#atach_docum_pago').css('display', 'block');
+        }/*
+        if($(this).val() == 5){
+            $('txt_dpre_ssn_id_fact').removeClass("PBvalidation");
+            $('txt_nombres_fac').removeClass("PBvalidation");
+            $('txt_apellidos_fac').removeClass("PBvalidation");
+            $('txt_dir_fac').removeClass("PBvalidation");
+            $('txt_tel_fac').removeClass("PBvalidation");
+            $('txt_correo_fac').removeClass("PBvalidation");
+            $('#paylink2').hide();
+            $('#atach_docum_pago').css('display', 'block');
+        }*/
+        
+    });
+   /* $('#cmb_fpago').change(function() {
         if ($(this).val() == 6 || $(this).val() == 1) {
              $('#txt_correo_fac').addClass("PBvalidation");
              $('#txt_dir_fac').addClass("PBvalidation");
@@ -83,7 +122,7 @@ $(document).ready(function() {
             $('#paylink2').hide();
             $('#atach_docum_pago').css('display', 'block');
         }
-    });
+    });*/
     $('#cmb_tpago').change(function() {
         let value = $('#cmb_cuota').val();
         let total = ($('#frm_valor').val()).replace(/,/g, '');//($('#frm_costo_item').val()).replace(/,/g, '');
@@ -281,7 +320,7 @@ function save() {
             return;
         }
     }
-/*
+    /*
     if (arrParams.tpago == 3 && (parseFloat((arrParams.cuotaini).replace(/,/g, '')) < parseFloat(cuota))) {
         var msg = objLang.The_value_of_the_first_payment_must_be_greater_than_or_equal_to + ' $' + currencyFormat(parseFloat(cuota));
         shortModal(msg, objLang.Error, "error");
@@ -725,51 +764,109 @@ function confirmarDevolucion(id) {
 function guardarCargarCartera(){
     var link = $('#txth_base').val() + "/academico/registro/modificarcargacartera";
     showLoadingPopup();
-    var arrParams = new Object();
-    arrParams.rama = $('#txt_rama').val();
-    arrParams.tpago = $('#cmb_tpago').val();
-    arrParams.total = $('#frm_valor').val();
-    arrParams.interes = $('#frm_int_ced').val();
+    var arrParams       = new Object();
+    arrParams.rama      = $('#txt_rama').val();
+    arrParams.tpago     = $('#cmb_tpago').val();
+    arrParams.total     = $('#frm_valor').val();
+    arrParams.interes   = $('#frm_int_ced').val();
     arrParams.financiamiento = $('#frm_finan').val();
     arrParams.numcuotas = $('#cmb_cuota').val();
-    arrParams.ron_id = $('#txt_ron_id').val();
-    arrParams.per_id = $('#txt_per_id').val();
-    arrParams.pla_id = $('#txt_pla_id').val();
-    arrParams.bloque = $('#txt_bloque').val();
-    arrParams.saca_id = $('#txt_saca_id').val();
+    arrParams.ron_id    = $('#txt_ron_id').val();
+    arrParams.per_id    = $('#txt_per_id').val();
+    arrParams.pla_id    = $('#txt_pla_id').val();
+    arrParams.bloque    = $('#txt_bloque').val();
+    arrParams.saca_id   = $('#txt_saca_id').val();
+    arrParams.cmb_fpago = $("#cmb_fpago").val();
+
+    //------Datos de Facturacion----------------
+        arrParams.factssnid = $('#txt_dpre_ssn_id_fact').val();
+        arrParams.factnombre = $('#txt_nombres_fac').val();
+        arrParams.factapellido = $('#txt_apellidos_fac').val();
+        arrParams.factcorreo = $('#txt_correo_fac').val();
+        arrParams.factdirecc = $('#txt_dir_fac').val();
+        arrParams.facttelef = $('#txt_tel_fac').val();
+    //------------------------------------------
+
     var terminos = ($('#cmb_req').is(':checked')) ? 1 : 0;
     // $per_id,  $forma_pago,$in, $numcuotas,$valor_cuota, $total, $usu_id);
     //alert(arrParams.pla_id + '-' + arrParams.per_id);
-    redirect = $('#txth_base').val() + "/academico/registro/new/"+arrParams.per_id+'?rama_id='+arrParams.rama_id ;
-    redirect = $('#txth_base').val() + "/academico/registro/index";
+    //redirect = $('#txth_base').val() + "/academico/registro/new/"+arrParams.per_id+'?rama_id='+arrParams.rama_id ;
+    //redirect = $('#txth_base').val() + "/academico/registro/index";
     //alert(arrParams.tpago+'-'+arrParams.total+'-'+arrParams.interes +'-'+arrParams.financiamiento+'-'+arrParams.numcuotas+'-'+arrParams.rama_id+'-'+arrParams.per_id +'-'+ $redirect);
-    if(arrParams.numcuotas != 0 || terminos==0){
-        //if(terminos != 0){
-            //if(!validateForm()){
-                //try{
+    try{
+        if(arrParams.tpago == 2 && arrParams.cmb_fpago == 1){
+        stripe.createToken(cardElement).then(function(result) {
+            if (result.error) {
+                console.log(result);
+
+                var mensaje = {wtmessage: '<p>'+result.error.message+'</p>', title: "Error"};
+                showAlert("NO_OK", "error", mensaje);
+                return false;
+            } else {
+                arrParams.token = result.token.id;
+                console.log(arrParams.token);
+
+                if(arrParams.numcuotas != 0 || terminos==0){
+                    //if(terminos != 0){
+                        //if(!validateForm()){
+                            //try{
+                    setTimeout(function() {
                         requestHttpAjax(link, arrParams, function(response) {
-                        var message = response.message;
-                        if (response.status == "OK") {
-                            setTimeout(function() {
-                            //windows.location.href = $redirect;
-                            //showAlert(response.status, response.type, { "wtmessage": 'SU PAGO FUE INGRESADO CORRECTAMENTE', "title": response.label });
-                            //windows.location.href = $('#txth_base').val() + "/academico/registro/index";
-                            }, 3000);
-                        } else {
-                            //showAlert(response.status, response.type, { "wtmessage": message.info, "title": response.label });
-                        }
+                            var message = response.message;
+                            if (response.status == "OK") {
+                                setTimeout(function() {
+                                    //windows.location.href = $('#txth_base').val() + "/academico/registro/index";
+                                    hideLoadingPopup();
+                                    parent.window.location.href = $('#txth_base').val() + "/academico/registro/index";  
+                                    }, 4000);
+                            } else {
+                                //showAlert(response.status, response.type, { "wtmessage": message.info, "title": response.label });
+                            }
 
                         }, true);
-                /*}catch(err){
-                    alert( "wtmessage <p>+"+$err+"</p>");    
-                    console.log("error: "+err)
-                }*/
-            //}    
-        //}
-    } else {
-        showAlert('NO_OK', 'error', { "wtmessage": "Se debe escoger el numero de cuotas.", "title": 'Información' });
+
+                     }, 2000);
+                            /*}catch(err){
+                                alert( "wtmessage <p>+"+$err+"</p>");    
+                                console.log("error: "+err)
+                            }*/
+                        //}    
+                    //}
+                } else 
+                    showAlert('NO_OK', 'error', { "wtmessage": "Se debe escoger el numero de cuotas.", "title": 'Información' });
+    
+                //alert(arrParams.token);
+            }//else
+        });//stripe
+        }else{
+            setTimeout(function() {
+                requestHttpAjax(link, arrParams, function(response) {
+                    var message = response.message;
+                    if (response.status == "OK") {
+                        setTimeout(function() {
+                            if($('#cmb_tpago').val()==3){
+                                enviarPdf();
+                            }else{
+                                showAlert(response.status, response.type, { "wtmessage": 'Su información se registro con éxito.', "title": response.label });
+                                setTimeout(function() {
+                                //windows.location.href = $('#txth_base').val() + "/academico/registro/index";
+                                hideLoadingPopup();
+                                parent.window.location.href = $('#txth_base').val() + "/academico/registro/index";  
+                                }, 4000);
+                            }
+                        }, 3000);
+                    }
+                }, true);
+             }, 2000);
+        }
+    }catch(err){
+        var mensaje = {wtmessage: err+" ///catch", title: "Error"};
+        showAlert("NO_OK", "error1", mensaje);
+        return false;
     }
-}
+    
+}//function guardarCargarCartera
+
 function enviarPdf(){
     var link = $('#txth_base').val() + "/academico/registro/sendpdf";
     var arrParams = new Object();

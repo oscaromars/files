@@ -423,12 +423,12 @@ class PagosFacturaEstudiante extends \yii\db\ActiveRecord
      */
     public function insertarPagospendientes($est_id, $pfes_concepto, $pfes_referencia, $pfes_banco, $fpag_id, $pfes_valor_pago, $pfes_fecha_pago, $pfes_observacion, $pfes_archivo_pago, $pfes_usu_ingreso) {
         $con = \Yii::$app->db_facturacion;
-        $trans = $con->getTransaction(); // se obtiene la transacción actual
+        /*$trans = $con->getTransaction(); // se obtiene la transacción actual
         if ($trans !== null) {
             $trans = null; // si existe la transacción entonces no se crea una
-        } else {
+        } else {*/
             $trans = $con->beginTransaction(); // si no existe la transacción entonces se crea una
-        }
+        //}
         $fecha = date(Yii::$app->params["dateTimeByDefault"]);
         $param_sql = "pfes_estado";
         $bdet_sql = "1";
@@ -513,11 +513,15 @@ class PagosFacturaEstudiante extends \yii\db\ActiveRecord
                 $comando->bindParam(':pfes_usu_ingreso', $pfes_usu_ingreso, \PDO::PARAM_INT);
             }
             $comando->bindParam(":pfes_fecha_registro", $fecha, \PDO::PARAM_STR);
+            \app\modules\academico\controllers\RegistroController::putMessageLogFileCartera(' --------------------------------- SQL :'.$comando->getRawSql());
             $result = $comando->execute();
             if ($trans !== null)
                 $trans->commit();
-            return $con->getLastInsertID($con->dbname . '.pagos_factura_estudiante');
+            $insertado = $con->getLastInsertID($con->dbname . '.pagos_factura_estudiante');
+            \app\modules\academico\controllers\RegistroController::putMessageLogFileCartera(' --------------------------------- Id creado :'.$insertado);
+            return $insertado;
         } catch (Exception $ex) {
+            \app\modules\academico\controllers\RegistroController::putMessageLogFileCartera(' --------------------------------- Rollback pago estudiante :'.$trans);
             if ($trans !== null)
                 $trans->rollback();
             return $ex;
@@ -687,6 +691,7 @@ class PagosFacturaEstudiante extends \yii\db\ActiveRecord
                 $comando->bindParam(':dpfa_usu_ingreso', $dpfa_usu_ingreso, \PDO::PARAM_INT);
             }
             $comando->bindParam(":dpfa_fecha_registro", $fecha, \PDO::PARAM_STR);
+            \app\modules\academico\controllers\RegistroController::putMessageLogFileCartera(' --------------------------------- SQL :'.$comando->getRawSql());
             $result = $comando->execute();
             if ($trans !== null)
                 $trans->commit();
@@ -694,6 +699,7 @@ class PagosFacturaEstudiante extends \yii\db\ActiveRecord
         } catch (Exception $ex) {
             if ($trans !== null)
                 $trans->rollback();
+                \app\modules\academico\controllers\RegistroController::putMessageLogFileCartera(' --------------------------------- Rollback detalle:');
             return FALSE;
         }
     }
@@ -1108,4 +1114,27 @@ class PagosFacturaEstudiante extends \yii\db\ActiveRecord
         $resultData = $comando->queryAll();
         return $resultData;
     }//function actualizarCartera
+
+    public function consultarIdPago($est_id, $valor, $imagen) {
+        $con = \Yii::$app->db_facturacion;
+        //$estado = 1;
+        $sql = "SELECT pfes_id as id
+                    FROM " . $con->dbname . ".pagos_factura_estudiante pfe
+                    WHERE
+                    pfe.est_id = :est_id AND
+                    pfe.pfes_valor_pago = :valor AND
+                    pfe.pfes_archivo_pago = :imagen AND
+                    pfe.pfes_estado = 1
+                    order by pfe.pfes_id DESC
+                    limit 0,1;";
+
+        $comando = $con->createCommand($sql);
+        //$comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $comando->bindParam(":est_id", $est_id, \PDO::PARAM_INT);
+        //$comando->bindParam(":dpfa_tipo_factura", $dpfa_tipo_factura, \PDO::PARAM_STR);
+        $comando->bindParam(":valor", $valor, \PDO::PARAM_STR);
+        $comando->bindParam(":imagen", $imagen, \PDO::PARAM_STR);
+
+        return $comando->queryOne();
+    }
 }

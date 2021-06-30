@@ -86,7 +86,8 @@ class ModalidadEstudioUnidadSearch extends ModalidadEstudioUnidad {
                     d.made_credito as credito,
                     u.uest_nombre as unidad_estudio,       
                     f.fmac_nombre as formacion_malla_academica,
-                    ifnull(asi.asi_nombre,'') as materia_requisito
+                    ifnull(asi.asi_nombre,'') as materia_requisito,
+                    mac.maca_nombre
               FROM db_academico.modalidad_estudio_unidad meu  
                   inner join db_academico.unidad_academica uaca on uaca.uaca_id = meu.uaca_id
                   inner join db_academico.modalidad moda on moda.mod_id = meu.mod_id

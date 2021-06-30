@@ -258,6 +258,9 @@ class MallaAcademica extends \yii\db\ActiveRecord
      * @return  
      */
     public function consultarmallasxcarrera($uaca_id, $mod_id, $eaca_id) {
+        \app\models\Utilities::putMessageLogFile('unidad  modelo: '. $uaca_id);
+        \app\models\Utilities::putMessageLogFile('modalidad modelo: '. $mod_id);
+        \app\models\Utilities::putMessageLogFile('carrera modelo: '. $eaca_id);
         $con = \Yii::$app->db_academico;
         $estado = 1;
         $sql = "SELECT 

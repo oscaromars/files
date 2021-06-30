@@ -1031,13 +1031,13 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
                 Inner Join db_academico.modalidad moda on moda.mod_id = meu.mod_id 
                 Inner Join db_academico.unidad_academica uaca on uaca.uaca_id = meu.uaca_id               
                 Inner Join db_academico.semestre_academico saca on saca.saca_id = pla.saca_id
-                Inner Join db_academico.periodo_academico paca on paca.saca_id = saca.saca_id 
+                Inner Join db_academico.periodo_academico paca on paca.saca_id = saca.saca_id and paca.paca_id = pla.paca_id
                 Inner Join db_academico.bloque_academico baca on (baca.baca_id = paca.baca_id and baca.baca_nombre = roi.roi_bloque)
                  where per.per_estado = 1 and per.per_estado_logico = 1
                     and est.est_estado = 1 and est.est_estado_logico = 1
                     and ron.ron_estado = 1 and ron.ron_estado_logico = 1
                     and roi.roi_estado = 1 and roi.roi_estado_logico = 1
-                    and pm.rpm_estado_aprobacion = 1 
+                    and pla.paca_id = paca.paca_id and pm.rpm_estado_aprobacion = 1 
                     and pm.rpm_estado = 1 and pm.rpm_estado_logico = 1                  
                     and pes.pes_estado = 1 and pes.pes_estado_logico = 1
                     and asi.asi_estado = 1 and asi.asi_estado_logico = 1
@@ -1135,13 +1135,13 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
                 Inner Join db_academico.modalidad moda on moda.mod_id = meu.mod_id 
                 Inner Join db_academico.unidad_academica uaca on uaca.uaca_id = meu.uaca_id               
                 Inner Join db_academico.semestre_academico saca on saca.saca_id = pla.saca_id
-                Inner Join db_academico.periodo_academico paca on paca.saca_id = saca.saca_id 
+                Inner Join db_academico.periodo_academico paca on paca.saca_id = saca.saca_id and paca.paca_id = pla.paca_id
                 Inner Join db_academico.bloque_academico baca on (baca.baca_id = paca.baca_id and baca.baca_nombre = roi.roi_bloque)
                  where per.per_estado = 1 and per.per_estado_logico = 1
                     and est.est_estado = 1 and est.est_estado_logico = 1
                     and ron.ron_estado = 1 and ron.ron_estado_logico = 1
                     and roi.roi_estado = 1 and roi.roi_estado_logico = 1
-                    and pm.rpm_estado_aprobacion = 1 
+                    and pla.paca_id = paca.paca_id and pm.rpm_estado_aprobacion = 1 
                     and pm.rpm_estado = 1 and pm.rpm_estado_logico = 1                  
                     and pes.pes_estado = 1 and pes.pes_estado_logico = 1
                     and asi.asi_estado = 1 and asi.asi_estado_logico = 1

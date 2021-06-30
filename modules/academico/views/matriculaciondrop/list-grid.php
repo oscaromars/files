@@ -18,7 +18,6 @@ if (count($result_process) > 0) $showCancellation = true;
 ?>
 
 <?=
-
 PbGridView::widget([
     'id' => 'grid_listadoregistrados_list',
     'showExport' => false,
@@ -30,7 +29,7 @@ PbGridView::widget([
         ['class' => 'yii\grid\SerialColumn', 'options' => ['width' => '10']],
         [
             'attribute' => 'Estudiante',
-            'header' => academico::t("matriculacion", 'Student'),
+            'header' => academico::t("matriculacion", "Student"),
             'value' => 'Estudiante',
         ],
         [
@@ -40,20 +39,20 @@ PbGridView::widget([
         ],
         [
             'attribute' => 'Carrera',
-            'header' => academico::t("matriculacion", 'Program'),
+            'header' => academico::t("matriculacion", "Program"),
             'value' => 'Carrera',
         ],
         [
             'attribute' => 'Modalidad',
-            'header' => academico::t("matriculacion", 'Modality'),
+            'header' => academico::t("matriculacion", "Modality"),
             'value' => 'Modalidad',
         ],
         [
             'attribute' => 'Periodo',
-            'header' => academico::t("matriculacion", 'Academic Period'),
+            'header' => academico::t("matriculacion", "Academic Period"),
             'value' => 'Periodo',
         ],
-        [
+        /*[
             'attribute' => 'Estado',
             'contentOptions' => ['class' => 'text-center'],
             'headerOptions' => ['class' => 'text-center'],
@@ -67,8 +66,8 @@ PbGridView::widget([
                     return '<small class="label label-danger">' . academico::t("matriculacion",$data["DesEstado"]) . '</small>';
                 }
             },
-        ],
-        [
+        ],*/
+        /*[
             'class' => 'yii\grid\ActionColumn',
             //'header' => 'Action',
             'contentOptions' => ['style' => 'text-align: center;'],
@@ -92,9 +91,9 @@ PbGridView::widget([
                     } else {
                         return '';
                     }
-                },*/
+                },
             ],
-        ],
-    ],
+        ],*/
+    ]
 ])
 ?>

@@ -68,6 +68,25 @@ class MatriculacionController extends \app\components\CController {
         '1' => 'Approved',
     ];
 
+
+    /***********************************************  funciones nuevas matriculacion  *****************************************/
+
+    private function getCreditoPay(){
+        $arrCredito = $this->arrCredito;
+        for($i = 1; $i <= count($arrCredito); $i++){
+            $arrCredito[$i] = Academico::t('matriculacion', $arrCredito[$i]);
+        }
+        return $arrCredito;
+    }
+
+    private function getEstadoAprobar(){
+        $estadoAprobar = $this->estadoAprobar;
+        for($i = 1; $i <= count($estadoAprobar); $i++){
+            $arrCredito[$i] = Academico::t('matriculacion', $estadoAprobar[$i]);
+        }
+        return $estadoAprobar;
+    }
+
     public $leyenda = '
           <div class="form-group">          
           <div class="alert alert-info">
@@ -777,72 +796,250 @@ class MatriculacionController extends \app\components\CController {
         ]);
     }//funtion actionList
 
-    public function actionRegistry($id) {
+    public function actionRegistry($id) { // pantalla para aprobar matriculacion de estudiante
         $model = RegistroOnline::findOne($id);
         if ($model) {
+            $data = Yii::$app->request->get();
+            $rama_id = $data['rama_id'];
+            $modelRegAd = RegistroAdicionalMaterias::findOne(['rama_id' => $rama_id, 'rama_estado' => '1', 'rama_estado_logico' => '1',]);
             $matriculacion_model = new Matriculacion();
             $model_registroPago = new RegistroPagoMatricula();
             $data_student = $matriculacion_model->getDataStudenFromRegistroOnline($model->per_id, $model->pes_id);
             $dataPlanificacion = $matriculacion_model->getPlanificationFromRegistroOnline($id,0);
-            $materiasxEstudiante = PlanificacionEstudiante::findOne($model->pes_id);
-            $dataModel = $model_registroPago->getRegistroPagoMatriculaByRegistroOnline($id, $model->per_id);
+            
+            // get subjects by Rama_id
+            $inList = "";
+            $inList .= (isset($modelRegAd->roi_id_1))?($modelRegAd->roi_id_1):"";
+            $inList .= (isset($modelRegAd->roi_id_2))?("," . $modelRegAd->roi_id_2):"";
+            $inList .= (isset($modelRegAd->roi_id_3))?("," . $modelRegAd->roi_id_3):"";
+            $inList .= (isset($modelRegAd->roi_id_4))?("," . $modelRegAd->roi_id_4):"";
+            $inList .= (isset($modelRegAd->roi_id_5))?("," . $modelRegAd->roi_id_5):"";
+            $inList .= (isset($modelRegAd->roi_id_6))?("," . $modelRegAd->roi_id_6):"";
+            $materiasxEstudiante = RegistroOnlineItem::find()->where("ron_id = $id and roi_estado = 1 and roi_estado_logico = 1 and roi_id in ($inList)")->asArray()->all();
 
-            $arrModel_registroOnlineItem = RegistroOnlineItem::findAll(['ron_id' => $model->ron_id]);
-            $model_registroCuota = new RegistroOnlineCuota();
-            $costoMaterias = 0;
-            foreach($arrModel_registroOnlineItem as $item){
-                $costoMaterias += $item->roi_costo;
+            $dataModel = $model_registroPago->getRegistroPagoMatriculaByRegistroOnline($id, $model->per_id);
+            $modelFP = new FormaPago();
+            $model_rpm = RegistroPagoMatricula::findOne($dataModel["Id"]);
+            $arr_forma_pago = $modelFP->consultarFormaPago();
+            unset($arr_forma_pago[0]);
+            unset($arr_forma_pago[1]);
+            unset($arr_forma_pago[2]);
+            unset($arr_forma_pago[6]);
+            unset($arr_forma_pago[7]);
+            unset($arr_forma_pago[8]);
+            $arr_forma_pago = ArrayHelper::map($arr_forma_pago, "id", "value");
+
+            $dataProvider = new ArrayDataProvider([
+                'key' => 'roi_id',
+                'allModels' => $materiasxEstudiante,
+                'pagination' => [
+                    'pageSize' => Yii::$app->params["pageSize"],
+                ],
+            ]);
+
+            $emp_id = Yii::$app->session->get("PB_idempresa");
+            $arrCarrera = RegistroPagoMatricula::getCarreraByPersona($model->per_id, $emp_id);
+            $eaca_id = $arrCarrera['eaca_id'];
+            $mod_id = $arrCarrera['mod_id'];
+            $uaca_id = $arrCarrera['uaca_id'];
+            //$model_roc = RegistroOnlineCuota::findAll(['ron_id' => $id, 'roc_estado' => '1', 'roc_estado_logico' => '1']);
+            $model_roc = RegistroOnlineCuota::findAll(['rpm_id' => $modelRegAd->rpm_id, 'ron_id' => $id, 'roc_estado' => '1', 'roc_estado_logico' => '1']);
+            $dataValue = array();
+            $con = 0;
+            $model_can = CancelacionRegistroOnline::findOne(['ron_id' => $id, 'cron_estado' => '1', 'cron_estado_logico' => '1']);
+            if($model_can){
+                $modelEnroll = EnrolamientoAgreement::findOne(['ron_id' => $id, 'rpm_id' => $modelRegAd->rpm_id, 'per_id' => $model->per_id, 'eaca_id' => $eaca_id, 'uaca_id' => $uaca_id, 'eagr_estado' => '1', 'eagr_estado_logico' => '1',]);
+                $value_total = number_format($modelEnroll->eagr_costo_programa_est, 2, '.', ',');
+                foreach($model_roc as $key => $value){
+                    $con++;
+                    $cost = $value->roc_costo;
+                    $ven  = $value->roc_vencimiento;
+                    if($con == 1){
+                        $cost = $modelEnroll->eagr_primera_cuota_est;
+                        $ven = $modelEnroll->eagr_primera_ven_est;
+                    }
+                    if($con == 2){
+                        $cost = $modelEnroll->eagr_segunda_cuota_est;
+                        $ven = $modelEnroll->eagr_segunda_ven_est;
+                    }
+                    if($con == 3){
+                        $cost = $modelEnroll->eagr_tercera_cuota_est;
+                        $ven = $modelEnroll->eagr_tercera_ven_est;
+                    }
+                    if($con == 4){
+                        $cost = $modelEnroll->eagr_cuarta_cuota_est;
+                        $ven = $modelEnroll->eagr_cuarta_ven_est;
+                    }
+                    if($con == 5){
+                        $cost = $modelEnroll->eagr_quinta_cuota_est;
+                        $ven = $modelEnroll->eagr_quinta_ven_est;
+                    }
+                    $dataValue[] = ['Id' => $con, 'Pago' => Academico::t('matriculacion',"Payment") . ' #' . $con, 'Vencimiento' => $ven, 'Porcentaje' => $value->roc_porcentaje, 'Valor' => '$'.(number_format($cost, 2, '.', ','))];
+                }
+            }else{
+                foreach($model_roc as $key => $value){
+                    $con++;
+                    $dataValue[] = ['Id' => $con, 'Pago' => Academico::t('matriculacion',"Payment") . ' #' . $con, 'Vencimiento' => $value->roc_vencimiento, 'Porcentaje' => $value->roc_porcentaje, 'Valor' => '$'.(number_format($value->roc_costo, 2, '.', ','))];
+                }
             }
-            $dataProviderCuotas = $model_registroCuota->getDataCuotasRegistroOnline($model->ron_id, true);
-            $dataPlanificacion = $matriculacion_model->getPlanificationFromRegistroOnline($model->ron_id,0);
+            
+            $dataProvider2 = new ArrayDataProvider([
+                'key' => 'Id',
+                'allModels' => $dataValue,
+                'pagination' => [
+                    'pageSize' => Yii::$app->params["pageSize"],
+                ],
+                'sort' => [
+                    'attributes' => ["Pago"],
+                ],
+            ]);
 
             return $this->render('registry', [
-                        "materiasxEstudiante" => $materiasxEstudiante,
+                        "materiasxEstudiante" => $dataProvider,
                         "materias" => $dataPlanificacion,
                         "data_student" => $data_student,
                         "ron_id" => $id,
                         "rpm_id" => $dataModel["Id"],
-                        "est_id" => $model->per_id,
+                        "per_id" => $model_rpm->per_id,
                         "matriculacion_model" => RegistroPagoMatricula::findOne($dataModel["Id"]),
-                        "model_registroOnline" => $model,
-                        "costoMaterias" => $costoMaterias,
-                        "cuotas" =>$dataProviderCuotas,
+                        'arr_forma_pago' => $arr_forma_pago,
+                        'arr_credito' => $this->getCreditoPay(),
+                        'value_credit' => $model_rpm->rpm_tipo_pago,
+                        'value_payment' => $model_rpm->fpag_id,
+                        'value_total' => number_format($model_rpm->rpm_total, 2, '.', ','),
+                        'value_interes' => number_format($model_rpm->rpm_interes, 2, '.', ','),
+                        'value_financiamiento' => number_format($model_rpm->rpm_financiamiento, 2, '.', ','),
+                        'dataGrid' => $dataProvider2,
+                        'estadoAprobar' => $this->getEstadoAprobar(),
+
             ]);
         }
-        return $this->redirect('registro');
+        return $this->redirect('index');
     }
 
-    public function actionView($id) {
+    public function actionView($id) { // pantalla para ver la aprobacion de la matriculacion de un estudiante
         $model = RegistroOnline::findOne($id);
         if ($model) {
+            $data = Yii::$app->request->get();
+            $rama_id = $data['rama_id'];
+            $modelRegAd = RegistroAdicionalMaterias::findOne(['rama_id' => $rama_id, 'rama_estado' => '1', 'rama_estado_logico' => '1',]);
             $matriculacion_model = new Matriculacion();
             $model_registroPago = new RegistroPagoMatricula();
             $data_student = $matriculacion_model->getDataStudenFromRegistroOnline($model->per_id, $model->pes_id);
             $dataPlanificacion = $matriculacion_model->getPlanificationFromRegistroOnline($id,0);
-            $materiasxEstudiante = PlanificacionEstudiante::findOne($model->pes_id);
-            $dataModel = $model_registroPago->getRegistroPagoMatriculaByRegistroOnline($id, $model->per_id);
+            // get subjects by Rama_id
+            $inList = "";
+            $inList .= (isset($modelRegAd->roi_id_1))?($modelRegAd->roi_id_1):"";
+            $inList .= (isset($modelRegAd->roi_id_2))?("," . $modelRegAd->roi_id_2):"";
+            $inList .= (isset($modelRegAd->roi_id_3))?("," . $modelRegAd->roi_id_3):"";
+            $inList .= (isset($modelRegAd->roi_id_4))?("," . $modelRegAd->roi_id_4):"";
+            $inList .= (isset($modelRegAd->roi_id_5))?("," . $modelRegAd->roi_id_5):"";
+            $inList .= (isset($modelRegAd->roi_id_6))?("," . $modelRegAd->roi_id_6):"";
+            $materiasxEstudiante = RegistroOnlineItem::find()->where("ron_id = $id and roi_estado = 1 and roi_estado_logico = 1 and roi_id in ($inList)")->asArray()->all();
 
-            $arrModel_registroOnlineItem = RegistroOnlineItem::findAll(['ron_id' => $model->ron_id]);
-            $model_registroCuota = new RegistroOnlineCuota();
-            $costoMaterias = 0;
-            foreach($arrModel_registroOnlineItem as $item){
-                $costoMaterias += $item->roi_costo;
+            $dataModel = $model_registroPago->getRegistroPagoMatriculaByRegistroOnline($id, $model->per_id);
+            $modelFP = new FormaPago();
+            $model_rpm = RegistroPagoMatricula::findOne($dataModel["Id"]);
+            $arr_forma_pago = $modelFP->consultarFormaPago();
+            unset($arr_forma_pago[0]);
+            unset($arr_forma_pago[1]);
+            unset($arr_forma_pago[2]);
+            unset($arr_forma_pago[6]);
+            unset($arr_forma_pago[7]);
+            unset($arr_forma_pago[8]);
+            $arr_forma_pago = ArrayHelper::map($arr_forma_pago, "id", "value");
+            $arr_estado = $this->getEstadoAprobar();
+            $arr_estado[0] = Academico::t('matriculacion',"To Validate");
+
+            $dataProvider = new ArrayDataProvider([
+                'key' => 'roi_id',
+                'allModels' => $materiasxEstudiante,
+                'pagination' => [
+                    'pageSize' => Yii::$app->params["pageSize"],
+                ],
+            ]);
+
+            $emp_id = Yii::$app->session->get("PB_idempresa");
+            $arrCarrera = RegistroPagoMatricula::getCarreraByPersona($model->per_id, $emp_id);
+            $eaca_id = $arrCarrera['eaca_id'];
+            $mod_id = $arrCarrera['mod_id'];
+            $uaca_id = $arrCarrera['uaca_id'];
+            //$model_roc = RegistroOnlineCuota::findAll(['ron_id' => $id, 'roc_estado' => '1', 'roc_estado_logico' => '1']);
+            $model_roc = RegistroOnlineCuota::findAll(['rpm_id' => $modelRegAd->rpm_id, 'ron_id' => $id, 'roc_estado' => '1', 'roc_estado_logico' => '1']);
+            $dataValue = array();
+
+            $con = 0;
+            $model_can = CancelacionRegistroOnline::findOne(['ron_id' => $id, 'cron_estado' => '1', 'cron_estado_logico' => '1']);
+            if($model_can){
+                $modelEnroll = EnrolamientoAgreement::findOne(['ron_id' => $id, 'rpm_id' => $modelRegAd->rpm_id, 'per_id' => $model->per_id, 'eaca_id' => $eaca_id, 'uaca_id' => $uaca_id, 'eagr_estado' => '1', 'eagr_estado_logico' => '1',]);
+                $value_total = number_format($modelEnroll->eagr_costo_programa_est, 2, '.', ',');
+                foreach($model_roc as $key => $value){
+                    $con++;
+                    $cost = $value->roc_costo;
+                    $ven  = $value->roc_vencimiento;
+                    if($con == 1){
+                        $cost = $modelEnroll->eagr_primera_cuota_est;
+                        $ven = $modelEnroll->eagr_primera_ven_est;
+                    }
+                    if($con == 2){
+                        $cost = $modelEnroll->eagr_segunda_cuota_est;
+                        $ven = $modelEnroll->eagr_segunda_ven_est;
+                    }
+                    if($con == 3){
+                        $cost = $modelEnroll->eagr_tercera_cuota_est;
+                        $ven = $modelEnroll->eagr_tercera_ven_est;
+                    }
+                    if($con == 4){
+                        $cost = $modelEnroll->eagr_cuarta_cuota_est;
+                        $ven = $modelEnroll->eagr_cuarta_ven_est;
+                    }
+                    if($con == 5){
+                        $cost = $modelEnroll->eagr_quinta_cuota_est;
+                        $ven = $modelEnroll->eagr_quinta_ven_est;
+                    }
+                    $dataValue[] = ['Id' => $con, 'Pago' => Academico::t('matriculacion',"Payment") . ' #' . $con, 'Vencimiento' => $ven, 'Porcentaje' => $value->roc_porcentaje, 'Valor' => '$'.(number_format($cost, 2, '.', ','))];
+                }
+            }else{
+                foreach($model_roc as $key => $value){
+                    $con++;
+                    $dataValue[] = ['Id' => $con, 'Pago' => Academico::t('matriculacion',"Payment") . ' #' . $con, 'Vencimiento' => $value->roc_vencimiento, 'Porcentaje' => $value->roc_porcentaje, 'Valor' => '$'.(number_format($value->roc_costo, 2, '.', ','))];
+                }
             }
-            $dataProviderCuotas = $model_registroCuota->getDataCuotasRegistroOnline($model->ron_id, true);
-            $dataPlanificacion = $matriculacion_model->getPlanificationFromRegistroOnline($model->ron_id,0);
+            
+            $dataProvider2 = new ArrayDataProvider([
+                'key' => 'Id',
+                'allModels' => $dataValue,
+                'pagination' => [
+                    'pageSize' => Yii::$app->params["pageSize"],
+                ],
+                'sort' => [
+                    'attributes' => ["Pago"],
+                ],
+            ]);
+
             return $this->render('view', [
-                        "materiasxEstudiante" => $materiasxEstudiante,
+                        "materiasxEstudiante" => $dataProvider,
                         "materias" => $dataPlanificacion,
                         "data_student" => $data_student,
                         "ron_id" => $id,
                         "rpm_id" => $dataModel["Id"],
+                        "per_id" => $model_rpm->per_id,
                         "matriculacion_model" => RegistroPagoMatricula::findOne($dataModel["Id"]),
-                        "model_registroOnline" => $model,
-                        "costoMaterias" => $costoMaterias,
-                        "cuotas" =>$dataProviderCuotas,
+                        'arr_forma_pago' => $arr_forma_pago,
+                        'arr_credito' => $this->getCreditoPay(),
+                        'value_credit' => $model_rpm->rpm_tipo_pago,
+                        'value_payment' => $model_rpm->fpag_id,
+                        'value_total' => number_format($model_rpm->rpm_total, 2, '.', ','),
+                        'value_interes' => number_format($model_rpm->rpm_interes, 2, '.', ','),
+                        'value_financiamiento' => number_format($model_rpm->rpm_financiamiento, 2, '.', ','),
+                        'dataGrid' => $dataProvider2,
+                        'estadoAprobar' => $arr_estado,
+                        'esAprobado' => $model_rpm->rpm_estado_aprobacion,
+                        'observacion' => $model_rpm->rpm_observacion,
+                        'fileRegistration' => $model_rpm->rpm_hoja_matriculacion,
             ]);
         }
-        return $this->redirect('registro');
+        return $this->redirect('index');
     }
 
     public function actionUpdatepagoregistro() { // ACCION PARA SUBIR PAGO MATRICULA

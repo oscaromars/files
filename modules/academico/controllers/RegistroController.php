@@ -2408,7 +2408,7 @@ class RegistroController extends \app\components\CController {
                             $registro_pago_matricula = $modelCargaCartera->registrarPagoMatricula($perid, $per_id, $pla_id, $ron_id, $total,$tpago);
                             \app\models\Utilities::putMessageLogFile('RPM: '.$registro_pago_matricula.'- OK');
                             $this->putMessageLogFileCartera('RPM: '.$registro_pago_matricula.'- OK');
-                          
+                            $this->putMessageLogFileCartera('Ron: '.$ron_id.'- Per: '.$per_id);
                             $registroadicional = RegistroAdicionalMaterias::find()->where(["ron_id" => $ron_id,"per_id" => $per_id, "rpm_id" => NULL])->asArray()->one();
                             $rama_id = $registroadicional["rama_id"];
                             $rpm_id = $registro_pago_matricula;
@@ -3227,5 +3227,54 @@ class RegistroController extends \app\components\CController {
         //se escribe en el fichero*/
         file_put_contents(Yii::$app->params["logfilecartera"], $message, FILE_APPEND | LOCK_EX);
     }
+
+    public function actionCargarpago() {
+        $per_id = @Yii::$app->session->get("PB_perid");
+        //$ids = isset($_GET['ids']) ? base64_decode($_GET['ids']) : NULL;
+        /*$especiesADO = new Especies();
+        $est_id = $especiesADO->recuperarIdsEstudiente($per_id);
+        $mod_unidad = new UnidadAcademica();
+        $mod_modalidad = new Modalidad();
+        $mod_persona = new Persona();
+        $data_persona = $mod_persona->consultaPersonaId($per_id);*/
+        if (Yii::$app->request->isAjax) {
+            $data = Yii::$app->request->post();
+            if ($data["upload_file"]) {
+                if (empty($_FILES)) {
+                    return json_encode(['error' => Yii::t("notificaciones", "Error to process File {file}. Try again.", ['{file}' => basename($files['name'])])]);
+                }
+                //Recibe Parámetros
+                $files = $_FILES[key($_FILES)];
+                $arrIm = explode(".", basename($files['name']));
+                $typeFile = strtolower($arrIm[count($arrIm) - 1]);
+                if ($typeFile == 'jpg' || $typeFile == 'png' || $typeFile == 'pdf' || $typeFile == 'jpeg') {
+                    $dirFileEnd = Yii::$app->params["documentFolder"] . "pagosfinanciero/" . $data["name_file"] . "." . $typeFile;
+                    $status = Utilities::moveUploadFile($files['tmp_name'], $dirFileEnd);
+                    if ($status) {
+                        return true;
+                    } else {
+                        return json_encode(['error' => Yii::t("notificaciones", "Error to process File {file}. Try again.", ['{file}' => basename($files['name'])])]);
+                    }
+                }
+            }
+            if ($data["procesar_file"]) {
+                $message = array(
+                    "wtmessage" => Yii::t("notificaciones", "Archivo procesado correctamente." . $carga_archivo['data']),
+                    "title" => Yii::t('jslang', 'Success'),
+                );
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Success"), false, $message);
+            } else {
+                $message = array(
+                    "wtmessage" => Yii::t("notificaciones", "Error al procesar el archivo. " . $carga_archivo['message']),
+                    "title" => Yii::t('jslang', 'Error'),
+                );
+                return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), true, $message);
+            }
+            return;
+        }
+        return $this->render('subirpago', [
+        ]);
+    }
+
 }
 

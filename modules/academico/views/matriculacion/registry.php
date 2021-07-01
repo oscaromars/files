@@ -70,24 +70,7 @@ academico::registerTranslations();
             </div>
         </div> 
     </div>
-    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-        <div class="col-md-6 col-sm-6 col-xs-6 col-lg-6">
-            <div class="form-group">
-                <label for="cmb_tpago" class="col-lg-6 col-md-6 col-sm-6 col-xs-6 control-label"><?= academico::t("registro", 'Credit') ?></label>
-                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-                    <!-- //Html::dropDownList("cmb_tpago", $value_credit, $arr_credito, ["class" => "form-control", "id" => "cmb_tpago", "disabled" => "disabled"])   -->
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6 col-sm-6 col-xs-6 col-lg-6">
-            <div class="form-group">
-                <label for="cmb_fpago" class="col-lg-6 col-md-6 col-sm-6 col-xs-6 control-label"><?= academico::t("registro", 'Payment Method') ?></label>
-                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-                    <?= Html::dropDownList("cmb_fpago", $value_payment, $arr_forma_pago, ["class" => "form-control", "id" => "cmb_fpago", "disabled" => "disabled"]) ?>  
-                </div>
-            </div>
-        </div>
-    </div>
+    
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="col-md-6 col-sm-6 col-xs-6 col-lg-6">
             <div class="form-group">

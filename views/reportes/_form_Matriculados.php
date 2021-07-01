@@ -41,7 +41,7 @@ $var1 = ArrayHelper::map(array_merge([['id' => '0', 'value' => 'Seleccionar']], 
     ?>
   
     <?=
-    $form->field($model, 'pla_id')->label('Periodo:')->widget(Select2::classname(), [
+    $form->field($model, 'paca_id')->label('Periodo:')->widget(Select2::classname(), [
         'data' => $var,
         'size' => Select2::MEDIUM,
         'options' => ['placeholder' => 'Seleccione Periodo ...', 'multiple' => false],

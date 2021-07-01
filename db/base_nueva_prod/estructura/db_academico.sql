@@ -1499,6 +1499,28 @@ create table if not exists `registro_online_item` (
  foreign key (ron_id) references `registro_online`(ron_id)
 );
 
+CREATE TABLE `registro_adicional_materias` (
+  `rama_id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `ron_id` bigint(20) NOT NULL,
+  `per_id` bigint(20) NOT NULL,
+  `pla_id` bigint(20) NOT NULL,
+  `paca_id` bigint(20) NOT NULL,
+  `rpm_id` bigint(20) DEFAULT NULL,
+  `roi_id_1` bigint(20) DEFAULT NULL,
+  `roi_id_2` bigint(20) DEFAULT NULL,
+  `roi_id_3` bigint(20) DEFAULT NULL,
+  `roi_id_4` bigint(20) DEFAULT NULL,
+  `roi_id_5` bigint(20) DEFAULT NULL,
+  `roi_id_6` bigint(20) DEFAULT NULL,
+  `rama_estado` varchar(1) NOT NULL,
+  `rama_fecha_creacion` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `rama_fecha_modificacion` timestamp NULL DEFAULT NULL,
+  `rama_estado_logico` varchar(1) NOT NULL,
+  PRIMARY KEY (`rama_id`),
+  KEY `ron_id` (`ron_id`),
+  CONSTRAINT `registro_adicional_materias_ibfk_1` FOREIGN KEY (`ron_id`) REFERENCES `registro_online` (`ron_id`)
+);
+
 -- --------------------------------------------------------
 -- 
 -- Estructura de tabla para la tabla `registro_online_cuota`
@@ -2249,4 +2271,40 @@ create table if not exists `fechas_vencimiento_pago` (
   `fvpa_estado_logico` bigint(20) DEFAULT '1',
   PRIMARY KEY (`fvpa_id`)
 );
+
+CREATE TABLE `malla_academico_estudiante` (
+  `maes_id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `per_id` bigint(20) DEFAULT NULL,
+  `made_id` bigint(20) DEFAULT NULL,
+  `maca_id` bigint(20) DEFAULT NULL,
+  `asi_id` bigint(20) DEFAULT NULL,
+  `maes_usuario_ingreso` bigint(20) DEFAULT NULL,
+  `maes_usuario_modifica` bigint(20) DEFAULT NULL,
+  `maes_fecha_creacion` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `maes_fecha_modificacion` timestamp NULL DEFAULT NULL,
+  `maes_estado` varchar(1) NOT NULL,
+  `maes_estado_logico` varchar(1) NOT NULL,
+  PRIMARY KEY (`maes_id`),
+  KEY `MADE_ID` (`made_id`),
+  KEY `PER_ID` (`per_id`),
+  KEY `MACA_ID` (`maca_id`),
+  KEY `ASI_ID` (`asi_id`)
+);
+
+CREATE TABLE `promedio_malla_academico` (
+  `pmac_id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `maes_id` bigint(20) DEFAULT NULL,
+  `enac_id` bigint(20) DEFAULT NULL,
+  `pmac_nota` float DEFAULT NULL,
+  `pmac_usuario_ingreso` bigint(20) DEFAULT NULL,
+  `pmac_usuario_modifica` bigint(20) DEFAULT NULL,
+  `pmac_fecha_creacion` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `pmac_fecha_modificacion` timestamp NULL DEFAULT NULL,
+  `pmac_estado` bigint(20) DEFAULT NULL,
+  `pmac_estado_logico` bigint(20) DEFAULT NULL,
+  PRIMARY KEY (`pmac_id`),
+  KEY `estac_id` (`enac_id`),
+  CONSTRAINT `promedio_malla_academico_ibfk_1` FOREIGN KEY (`enac_id`) REFERENCES `estado_nota_academico` (`enac_id`)
+);
+
 

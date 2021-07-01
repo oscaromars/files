@@ -2437,45 +2437,8 @@ class RegistroController extends \app\components\CController {
                                 );
                                 \app\models\Utilities::putMessageLogFile('controller 4...: '.$registros_cuotas);
                                 $this->putMessageLogFileCartera('controller 4...: '.$registros_cuotas);
-                                //Registrar datos de factura pago stripe
-                                    //if($fpago == 6  || $fpago==1){
-                                            //Inserta datos de factura pago
-                                       /* $datosPagoRegistro = new  DatosPagoRegistro();
-                                        $this->putMessageLogFileCartera('dpre_ssn_id :'.$data['factssnid']);
-                                        $this->putMessageLogFileCartera('dpre_nombres :'.$data['factnombre']);
-                                        $this->putMessageLogFileCartera('dpre_apellidos :'.$data['factapellido']);
-                                        $this->putMessageLogFileCartera('dpre_correo :'.$data['factcorreo']);
-                                        $this->putMessageLogFileCartera('dpre_direccion :'.$data['factdirecc']);
-                                        $this->putMessageLogFileCartera('dpre_telefono :'.$data['facttelef']);
-                                        $this->putMessageLogFileCartera('rpm_id, :'.$rpm_id);
-                                        $pfes_id = "";
-                                        $resdatosFact = $datosPagoRegistro->insertarData(
-                                            $numcuotas, 
-                                            $pfes_id, 
-                                            $data['factssnid'], 
-                                            $data['factnombre'], 
-                                            $data['factapellido'], 
-                                            $data['factcorreo'], 
-                                            $data['factdirecc'], 
-                                            $data['facttelef'], 
-                                            $per_id,
-                                            $rpm_id
-                                        );*/
-                                    //}
+                                
                                 return Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), true, $message);
-                            /*} else {
-                                $transaction->rollback();
-                                $transaction2->rollback();
-                                $message = array(
-                                    "wtmessage" => Yii::t("notificaciones", "Error al grabar.".$transaction ),
-                                    "title" => Yii::t('jslang', 'Error'),
-                                );
-                                \app\models\Utilities::putMessageLogFile('controller 5...: '.$message);
-                                return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
-                            }*/
-                       /* }else{
-                            \app\models\Utilities::putMessageLogFile('repetidos...: ');
-                        }*/  
                     } else{  
                             \app\models\Utilities::putMessageLogFile('Tipo de pago no es Credito Directo...: ');
                             $this->putMessageLogFileCartera('Tipo de pago no es Credito Directo...: ');
@@ -2533,6 +2496,7 @@ class RegistroController extends \app\components\CController {
                                 $rpm_id = $registro_pago_matricula;
                                 \app\models\Utilities::putMessageLogFile('RPM_ID: '.$rpm_id.'- OK');
                                 $this->putMessageLogFileCartera('RPM_ID: '.$rpm_id.'- OK');
+                                $rpm_id = $registro_pago_matricula;
                                 $updateAdicionalMateria = $modelCargaCartera->updateAdicionalMateria($rama_id, $rpm_id);
                                 \app\models\Utilities::putMessageLogFile('log 2...rama_id'.$rama_id);
                                 $this->putMessageLogFileCartera('log 2...rama_id'.$rama_id);
@@ -2780,9 +2744,11 @@ class RegistroController extends \app\components\CController {
                                         //print_r($est_id.'-'.'ME'.'-'. $pfes_referencia.'-'. $pfes_banco.'-'. $fpag_id.'-'. $pfes_valor_pago.'-'. $pfes_fecha_pago.'-'. $pfes_observacion.'-'. $imagen.'-'. $usuario);die();
                                         $resp_pagofactura = $mod_pagos->insertarPagospendientes($estudiante, 'PT', $pfes_referencia, $pfes_banco, $fpag_id, $pfes_valor_pago, $pfes_fecha_pago, $pfes_observacion, $imagen, $usuario);
                                         $id_pago_factura = $mod_pagos->consultarIdPago($estudiante, $pfes_valor_pago, $imagen);
+                                        
                                         $this->putMessageLogFileCartera('Id Insertado Cabecera Pago: '.$id_pago_factura);
                                         //print_r($id_pago_factura['id']);die();
                                         $pfes_id = $id_pago_factura['id'];
+                                        $updatePagoTC = $modelCargaCartera->updatePagoTC($rama_id, $pfes_id);
                                         //print_r($resp_pagofactura);die();
 
                                         $tituloMensaje = Yii::t("interesado", "Pago Recibido UTEG");
@@ -3148,16 +3114,22 @@ class RegistroController extends \app\components\CController {
             //obtengo el ron_id
             $resp_ron_id= $modelCargaCartera->getRonPes($per_id);
             $ron_id = $resp_ron_id['ron_id'];
-            $dataPlanificacion = $matriculacion_model->getPlanificationFromRegistroOnline($ron_id,$rama_id);
 
+            $dataPlanificacion = $matriculacion_model->getPlanificationFromRegistroOnline($ron_id,$rama_id);
+            
             for ($i = 0; $i < count($dataPlanificacion); $i++) {
                 $total_costo_materia = $total_costo_materia + $dataPlanificacion[$i]['Cost'];
             }
-
-
+            
             /*Detalles de pagos */
             $resp_rpm_id = $matriculacion_model->getNumeroDocumentoRegistroOnline($rama_id);
             $rpm_id = $resp_rpm_id['rpm_id'];
+            $rama_fecha_creacion = $resp_rpm_id['rama_fecha_creacion'];
+
+            //Obtengo el rpm_estado_generado
+            $resp_rpm_estado_generado = $matriculacion_model->getEstadoGeneradoRpm($rpm_id, $ron_id);
+            $rpm_estado_generado = $resp_rpm_estado_generado['rpm_tipo_pago'];
+
             \app\models\Utilities::putMessageLogFile('Inicio Proceso:'.$ron_id.'- '.$rpm_id. '-'. $rama_id);
             $registro_pago_matricula = new RegistroPagoMatricula();
             $resp_cant_cuota = $registro_pago_matricula->getCuotasPeriodo($ron_id, $rpm_id);
@@ -3165,8 +3137,15 @@ class RegistroController extends \app\components\CController {
             $est_id = $modelEstudiante['est_id'];
 
             $detallePagos = $matriculacion_model->getDetalleCuotasRegistroOnline($ron_id, $rpm_id);
-
-            $valor_gasto_adm = $detallePagos[0]['valor_factura'] - $total_costo_materia;
+            $this->putMessageLogFileCartera('rpm_estado_generado: '.$rpm_estado_generado);
+            if($rpm_estado_generado == 3){
+                $valor_gasto_adm = $detallePagos[0]['valor_factura'] - $total_costo_materia;
+            }else{
+                $valor_gasto_adm = $matriculacion_model->getValorPagoTC($rama_id);
+                $this->putMessageLogFileCartera('valor_gasto_adm: '.$valor_gasto_adm.' - '.$total_costo_materia);
+                $valor_gasto_adm = $valor_gasto_adm - $total_costo_materia;
+            }
+            
 
             //Valores de registro online
             $detallePagosRon = $matriculacion_model->getDetvalorRegistroOnline($ron_id);
@@ -3198,6 +3177,8 @@ class RegistroController extends \app\components\CController {
                         'ron_id' => $ron_id,
                         'maca_nombre' => $maca_nombre,
                         'rama_id' => $rama_id,
+                        'rpm_estado_generado' => $rpm_estado_generado,
+                        'rama_fecha_creacion' => explode(" ",$rama_fecha_creacion)[0],
                         'valor_gasto_adm' => $valor_gasto_adm,
                     ])
             );
@@ -3209,7 +3190,6 @@ class RegistroController extends \app\components\CController {
         }
     
     }
-
     public static function putMessageLogFileCartera($message) {
         if (is_array($message))
             $message = json_encode($message);

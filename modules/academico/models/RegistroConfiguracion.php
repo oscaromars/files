@@ -555,4 +555,17 @@ class RegistroConfiguracion extends \yii\db\ActiveRecord
         \app\models\Utilities::putMessageLogFile('modelo OK...: getRpmId SELECT - OK');
         return $resultData;
     }
+    public function updatePagoTC($rama_id, $pfes_id){
+        $con = \Yii::$app->db_academico;
+        $sql = "UPDATE " . $con->dbname . ".registro_adicional_materias  
+                set pfes_id = :pfes_id
+                WHERE rama_id = :rama_id ";
+                
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":pfes_id", $pfes_id, \PDO::PARAM_INT);
+        $comando->bindParam(":rama_id", $rama_id, \PDO::PARAM_INT);
+        $resultData = $comando->execute();
+        \app\modules\academico\controllers\RegistroController::putMessageLogFileCartera('update pfes_id');
+        return $resultData;
+    }
 }

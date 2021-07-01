@@ -17,8 +17,9 @@ academico::registerTranslations();
 
 <div class="table-responsive">
  <?php
- $content1 = PbGridView::widget([ 
+ //$content1 = PbGridView::widget([ 
  //$content1 = GridView::widget([ 
+ echo PbGridView::widget([ 
         'id' => 'Tbg_Distributivo_Acagra',
         'showExport' => true,
         'fnExportEXCEL' => "exportExcel",
@@ -28,6 +29,7 @@ academico::registerTranslations();
         //'pajax' => false,
         'columns' =>
         [
+            ['class' => 'yii\grid\SerialColumn', 'options' => ['width' => '10']], 
             [
                 'attribute' => 'Nombres',
                 'header' => academico::t("Academico", "Teacher"),
@@ -63,10 +65,25 @@ academico::registerTranslations();
                 'header' => academico::t("Academico", "Working day"),
                 'value' => 'Jornada',
             ],
+            /*
              [
                 'attribute' => 'mpp_num_paralelo',
                 'header' => academico::t("Academico", "Paralelo"),
                 'value' => 'mpp_num_paralelo',
+            ],
+            */
+            [
+                //'class' => 'yii\grid\ActionColumn',
+                'attribute' => academico::t("Academico", "Paralelo"),
+                'header' => academico::t("Academico", "Paralelo"),
+                'format' => 'html', 
+                'value' => function ($model) {   
+                        //print_r($model);die();  
+                        if($model['mpp_num_paralelo'] != null)
+                            return $model['mpp_num_paralelo'];
+                        else
+                            return $model['dhpa_paralelo'];     
+                    },                             
             ],
             [
                 'attribute' => 'total_est',
@@ -99,6 +116,7 @@ academico::registerTranslations();
         //'hover'=>true,
         //'responsiveWrap' => true,
     ]);
+ /*
  $content2 = PbGridView::widget([ 
   //$content2 =GridView::widget([
         'id' => 'Tbg_Distributivo_Acapos',
@@ -193,7 +211,9 @@ academico::registerTranslations();
     ],
 
 ];
+*/
 
+/*
  echo TabsX::widget([
         'items'=>$items,
     'position'=>TabsX::POS_ABOVE,
@@ -201,6 +221,7 @@ academico::registerTranslations();
     'bordered'=>true,
     'encodeLabels'=>false
 ]);
+*/
 
     ?>
 

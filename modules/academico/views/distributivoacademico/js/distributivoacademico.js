@@ -102,6 +102,7 @@ $('#cmb_periodo').change(function () {
     });
 
     $('#cmb_unidad_dis').change(function () {
+        console.log("entro por change");
         var link = "";
         if ($('#txth_tipo').val() == 'new') {
             link = $('#txth_base').val() + "/academico/distributivoacademico/new";
@@ -394,8 +395,18 @@ function searchModules() {
     arrParams.modalidad = $("#cmb_modalidad").val();
     arrParams.materia   = $("#cmb_materia").val();
     arrParams.jornada   = $("#cmb_jornada").val();
-    $("#Tbg_Distributivo_Acagra").PbGridView("applyFilterData", arrParams);
-    $("#Tbg_Distributivo_Acapos").PbGridView("applyFilterData", arrParams);
+
+    var href = $("#w0").find(".active").children().attr("href");
+    //console.log(href);
+    $("#Tbg_Distributivo_Aca").PbGridView("applyFilterData", arrParams);
+    /*
+    if(href == '#w0-tab0'){
+        arrParams.grado   = 1;
+        $("#Tbg_Distributivo_Acagra").PbGridView("applyFilterData", arrParams);
+    }else{
+        arrParams.grado   = 2;
+        $("#Tbg_Distributivo_Acapos").PbGridView("applyFilterData", arrParams);
+    }*/
 }
 
 function showListStudents(id) {

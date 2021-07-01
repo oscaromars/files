@@ -20,7 +20,6 @@ use app\modules\academico\Module as academico;
     <?=
     $this->render('index-grid', [
         'model' => $model,
-       // 'model' => $model2,
         'model_posgrado' => $model_posgrado,
         
         ]);

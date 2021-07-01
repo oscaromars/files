@@ -24,6 +24,7 @@ use Yii;
  * @property string $rama_fecha_creacion
  * @property string $rama_fecha_modificacion
  * @property string $rama_estado_logico
+ * @property string $pfes_id
  *
  * @property RegistroOnline $ron
  */
@@ -81,6 +82,7 @@ class RegistroAdicionalMaterias extends \yii\db\ActiveRecord
             'rama_fecha_creacion' => 'Rama Fecha Creacion',
             'rama_fecha_modificacion' => 'Rama Fecha Modificacion',
             'rama_estado_logico' => 'Rama Estado Logico',
+            'pfes_id' => 'Pfes ID',
         ];
     }
 
@@ -132,7 +134,8 @@ class RegistroAdicionalMaterias extends \yii\db\ActiveRecord
                     rama_estado,
                     rama_fecha_creacion,
                     rama_fecha_modificacion,
-                    rama_estado_logico
+                    rama_estado_logico,
+                    pfes_id
                     )
                     VALUES (
                         $ron_id,
@@ -149,7 +152,8 @@ class RegistroAdicionalMaterias extends \yii\db\ActiveRecord
                         1, 
                         '$date', 
                         '$date',
-                        1
+                        1,
+                        Null
                     )";
 
             $command = $con->createCommand($sql);

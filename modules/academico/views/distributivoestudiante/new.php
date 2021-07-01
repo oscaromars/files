@@ -73,6 +73,7 @@ use app\modules\academico\Module as academico;
                 'buttons' => [
                     'update' => function ($url, $model) {
                         if ($model->daes_estado) {
+                            //print_r($model->daes_id);die();
                             return Html::a('<span class="fa fa-pencil fa-fw"></span>', null, ['href' => 'javascript:cambiarparalelo(' . $model->daca_id .','.$model->daes_id.');', "data-toggle" => "tooltip", "title" => academico::t("distributivoacademico", "Cambiar paralelo")]);
                         } else {
                             

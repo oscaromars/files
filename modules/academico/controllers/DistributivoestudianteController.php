@@ -49,7 +49,7 @@ class DistributivoestudianteController extends \app\components\CController {
 
             //print_r($dae_id);die();
             if($dae_id['daes_id']!=''){
-                $model->daes_id = $dae_id;
+                $model->daes_id = $dae_id['daes_id'];
                 $model->daes_estado = 1;
             }else{
                 $model->daes_estado = 0; 
@@ -87,7 +87,7 @@ class DistributivoestudianteController extends \app\components\CController {
 
         return $this->render('new',
                         ['dataProvider' => $dataProvider,
-                            'distributivo_model' => $distributivo_model,]
+                         'distributivo_model' => $distributivo_model,]
         );
     }//function actionNew
 
@@ -113,7 +113,7 @@ class DistributivoestudianteController extends \app\components\CController {
                 'pageSize' => 10,
             ],
             'sort' => [
-                'attributes' => ['daes_id', 'daca_id', 'est_id'],
+                'attributes' => ['daes_id', 'daca_id', 'est_id' ],
             ],
         ]);
 
@@ -148,6 +148,7 @@ class DistributivoestudianteController extends \app\components\CController {
             $daes_id = $data['daes_id'];
 
             $estudiante_model = DistributivoAcademicoEstudiante::findOne($daes_id);
+            //print_r($daes_id);die();
             $estudiante_model->daca_id = $daca_id;
             if ($estudiante_model->save()) {
                $message = array(

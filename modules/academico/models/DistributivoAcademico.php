@@ -311,7 +311,8 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
                 inner join " . $con_academico->dbname . ".profesor profesor on profesor.per_id = persona.per_id
                 inner join " . $con_academico->dbname . ".profesor_instruccion pi3 on pi3.pro_id = profesor.per_id and pi3.nins_id =3 and pi3.pins_estado=1 and pi3.pins_estado_logico=1
                 inner join " . $con_academico->dbname . ".profesor_instruccion pi4 on pi4.pro_id = profesor.per_id and pi4.nins_id =4 and pi4.pins_estado=1 and pi4.pins_estado_logico=1
-                inner join " . $con_academico->dbname . ".dedicacion_docente dd on dd.ddoc_id = profesor.ddoc_id";
+                inner join " . $con_academico->dbname . ".dedicacion_docente dd on dd.ddoc_id = profesor.ddoc_id
+                ";
         $comando = $con_academico->createCommand($sql);
 
         $res = $comando->queryAll();
@@ -379,14 +380,20 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
                         WHEN dh.daho_jornada = 4 THEN '(D) Distancia'
                         ELSE ''
                     END AS Jornada,
-                    mpp_num_paralelo,
+                    mpp.mpp_num_paralelo as mpp_num_paralelo,
+                    dhp.dhpa_paralelo as dhpa_paralelo,
                   (select count(dae.daca_id) from db_academico.distributivo_academico_estudiante  as dae where dae.daca_id =da.daca_id ) as total_est          
                 FROM 
                     " . $con_academico->dbname . ".distributivo_academico AS da 
                     INNER JOIN " . $con_academico->dbname . ".distributivo_cabecera dc on dc.dcab_id=da.dcab_id 
                     LEFT  JOIN " . $con_academico->dbname . ".distributivo_academico_horario AS dh ON da.daho_id = dh.daho_id
                     INNER JOIN " . $con_academico->dbname . ".profesor AS p ON da.pro_id = p.pro_id
-                    INNER JOIN " . $con_academico->dbname . ".materia_paralelo_periodo as mpp on mpp.mpp_id=da.mpp_id
+                    LEFT JOIN " . $con_academico->dbname . ".materia_paralelo_periodo as mpp 
+                           on mpp.mpp_id=da.mpp_id
+                          and da.uaca_id = 1
+                    left JOIN db_academico.distributivo_horario_paralelo as dhp 
+                             on dhp.daho_id = da.daho_id
+                            and da.uaca_id = 2
                     INNER JOIN " . $con_academico->dbname . ".modalidad AS m ON da.mod_id = m.mod_id
                     INNER JOIN " . $con_academico->dbname . ".unidad_academica AS ua ON da.uaca_id = ua.uaca_id
                     INNER JOIN " . $con_academico->dbname . ".asignatura AS a ON da.asi_id = a.asi_id
@@ -413,8 +420,9 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
                     ua.uaca_estado_logico = :estado AND 
                     ua.uaca_estado = :estado AND
                     pa.paca_estado_logico = :estado and
-                    da.uaca_id=1 and
-                    dcab_estado_revision=2";
+                    /*da.uaca_id=1 and*/
+                    dcab_estado_revision=2
+                    order by 4,2 asc";
 
         $comando = $con_academico->createCommand($sql);
 
@@ -441,6 +449,9 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
         }
 
         $res = $comando->queryAll();
+
+        \app\models\Utilities::putMessageLogFile($comando->getRawSql());
+
         if ($onlyData)
             return $res;
         $dataProvider = new ArrayDataProvider([
@@ -450,7 +461,7 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
                 'pageSize' => Yii::$app->params["pageSize"],
             ],
             'sort' => [
-                'attributes' => ['Nombres', "Cedula", "UnidadAcademica", "Modalidad", "Periodo"],
+                'attributes' => ['no_cedula', "titulo_tercel_nivel", "titulo_cuarto_nivel", "correo", "tiempo_dedicacion", "desempeno"],
             ],
         ]);
 
@@ -467,7 +478,7 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
         $str_periodo = "";
         $str_modalidad = "";
         $str_jornada = "";
-// array("0" => "Todos", "1" => "(M) Matutino", "2" => "(N) Nocturno", "3" => "(S) Semipresencial", "4" => "(D) Distancia")
+        // array("0" => "Todos", "1" => "(M) Matutino", "2" => "(N) Nocturno", "3" => "(S) Semipresencial", "4" => "(D) Distancia")
 
         if (isset($search) && $search != "") {
             $str_search = "(pe.per_pri_nombre like :search OR ";
@@ -540,7 +551,8 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
                     ua.uaca_estado = :estado AND
                     pa.paca_estado_logico = :estado  and
                     da.uaca_id=2 and 
-                    dcab_estado_revision=2";
+                    dcab_estado_revision=2
+                    order by 2 asc";
 
         $comando = $con_academico->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
@@ -565,6 +577,9 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
         }
 
         $res = $comando->queryAll();
+
+        
+
         if ($onlyData)
             return $res;
         $dataProvider = new ArrayDataProvider([

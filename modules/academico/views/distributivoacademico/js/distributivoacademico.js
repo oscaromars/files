@@ -390,23 +390,13 @@ function searchModules() {
     var arrParams = new Object();
     arrParams.PBgetFilter = true;
     arrParams.search    = $("#txt_buscarData").val();
-    arrParams.unidad    = $("#cmb_unidad_dis").val();
-    arrParams.periodo   = $("#cmb_periodo").val();
+    arrParams.unidad    = $("#cmb_unidad_dis_asignacion").val();
+    arrParams.periodo   = $("#cmb_periodo_asignacion").val();
     arrParams.modalidad = $("#cmb_modalidad").val();
     arrParams.materia   = $("#cmb_materia").val();
     arrParams.jornada   = $("#cmb_jornada").val();
 
-    var href = $("#w0").find(".active").children().attr("href");
-    //console.log(href);
-    $("#Tbg_Distributivo_Aca").PbGridView("applyFilterData", arrParams);
-    /*
-    if(href == '#w0-tab0'){
-        arrParams.grado   = 1;
-        $("#Tbg_Distributivo_Acagra").PbGridView("applyFilterData", arrParams);
-    }else{
-        arrParams.grado   = 2;
-        $("#Tbg_Distributivo_Acapos").PbGridView("applyFilterData", arrParams);
-    }*/
+    $("#Tbg_Distributivo_Acagra").PbGridView("applyFilterData", arrParams);
 }
 
 function showListStudents(id) {

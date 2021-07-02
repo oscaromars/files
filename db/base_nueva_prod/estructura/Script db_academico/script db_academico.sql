@@ -307,6 +307,7 @@ CREATE TABLE db_academico.`registro_adicional_materias` (
   `rama_fecha_creacion` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `rama_fecha_modificacion` timestamp NULL DEFAULT NULL,
   `rama_estado_logico` varchar(1) NOT NULL,
+  `pfes_id` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`rama_id`),
   KEY `ron_id` (`ron_id`),
   CONSTRAINT `registro_adicional_materias_ibfk_1` FOREIGN KEY (`ron_id`) REFERENCES `registro_online` (`ron_id`)

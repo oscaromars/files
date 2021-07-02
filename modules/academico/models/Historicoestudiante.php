@@ -144,7 +144,7 @@ class Historicoestudiante extends \yii\db\ActiveRecord
                 inner join " . $con->dbname . ".modalidad_estudio_unidad me on me.meun_id=mu.meun_id
                 inner join " . $con->dbname . ".asignatura a on pa.asi_id=a.asi_id
                 inner join " . $con->dbname . ".estudio_academico ea on ea.eaca_id=me.eaca_id
-                inner join " . $con->dbname . ".historico_siga h on h.per_id=pa.per_id
+                inner join " . $con->dbname . ".historico_siga_prueba h on h.per_id=pa.per_id
                 inner join " . $con1->dbname . ".persona per on per.per_id=h.per_id
                 inner join " . $con->dbname . ".modalidad mo on mo.mod_id=h.modalidad
                 inner join " . $con->dbname . ".promedio_malla_academico n on pa.maes_id=n.maes_id
@@ -246,7 +246,7 @@ class Historicoestudiante extends \yii\db\ActiveRecord
                 inner join " . $con->dbname . ".malla_unidad_modalidad mu on mu.maca_id=pa.maca_id
                 inner join " . $con->dbname . ".modalidad_estudio_unidad me on me.meun_id=mu.meun_id
                 inner join " . $con->dbname . ".asignatura a on pa.asi_id=a.asi_id
-                inner join " . $con->dbname . ".historico_siga h on h.per_id=pa.per_id
+                inner join " . $con->dbname . ".historico_siga_prueba h on h.per_id=pa.per_id
                 inner join " . $con1->dbname . ".persona per on per.per_id=h.per_id
                 inner join " . $con->dbname . ".modalidad mo on mo.mod_id=h.modalidad
                 inner join " . $con->dbname . ".promedio_malla_academico n on pa.maes_id=n.maes_id
@@ -295,7 +295,7 @@ class Historicoestudiante extends \yii\db\ActiveRecord
                     mo.mod_id
                     
                 from " . $con->dbname . ".malla_academico_estudiante pa 
-                inner join " . $con->dbname . ".historico_siga h on h.per_id=pa.per_id
+                inner join " . $con->dbname . ".historico_siga_prueba h on h.per_id=pa.per_id
                 inner join " . $con1->dbname . ".persona per on per.per_id=h.per_id
                 inner join " . $con->dbname . ".malla_unidad_modalidad mu on mu.maca_id=pa.maca_id
                 inner join " . $con->dbname . ".modalidad_estudio_unidad me on me.meun_id=mu.meun_id
@@ -324,7 +324,7 @@ class Historicoestudiante extends \yii\db\ActiveRecord
         $sql = "SELECT pers.per_id as id, concat(/*est.per_id, ' - ',*/ pers.per_cedula, ' - ', 
                     ifnull(pers.per_pri_nombre, ' ') ,' ', 
                     ifnull(pers.per_pri_apellido,' ')) as name
-                    FROM db_academico.historico_siga h
+                    FROM db_academico.historico_siga_prueba h
                     JOIN db_academico.malla_academico_estudiante m ON m.per_id = h.per_id
                     JOIN db_asgard.persona pers ON pers.per_id = m.per_id
                 WHERE pers.per_estado = :estado AND

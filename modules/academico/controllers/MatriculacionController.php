@@ -847,7 +847,7 @@ class MatriculacionController extends \app\components\CController {
             $dataValue = array();
             $con = 0;
             $model_can = CancelacionRegistroOnline::findOne(['ron_id' => $id, 'cron_estado' => '1', 'cron_estado_logico' => '1']);
-            if($model_can){
+            /*if($model_can){
                 $modelEnroll = EnrolamientoAgreement::findOne(['ron_id' => $id, 'rpm_id' => $modelRegAd->rpm_id, 'per_id' => $model->per_id, 'eaca_id' => $eaca_id, 'uaca_id' => $uaca_id, 'eagr_estado' => '1', 'eagr_estado_logico' => '1',]);
                 $value_total = number_format($modelEnroll->eagr_costo_programa_est, 2, '.', ',');
                 foreach($model_roc as $key => $value){
@@ -892,7 +892,7 @@ class MatriculacionController extends \app\components\CController {
                 'sort' => [
                     'attributes' => ["Pago"],
                 ],
-            ]);
+            ]);*/
 
             return $this->render('registry', [
                         "materiasxEstudiante" => $dataProvider,
@@ -909,7 +909,7 @@ class MatriculacionController extends \app\components\CController {
                         'value_total' => number_format($model_rpm->rpm_total, 2, '.', ','),
                         'value_interes' => number_format($model_rpm->rpm_interes, 2, '.', ','),
                         'value_financiamiento' => number_format($model_rpm->rpm_financiamiento, 2, '.', ','),
-                        'dataGrid' => $dataProvider2,
+                        //'dataGrid' => $dataProvider2,
                         'estadoAprobar' => $this->getEstadoAprobar(),
 
             ]);

@@ -12,7 +12,7 @@ use app\models\Usuario;
 use app\models\Persona;
 use app\modules\academico\models\CancelacionRegistroOnline;
 use app\modules\academico\models\CancelacionRegistroOnlineItem;
-use app\modules\academico\models\EnrolamientoAgreement;
+//use app\modules\academico\models\EnrolamientoAgreement;
 use app\modules\academico\models\Estudiante;
 use app\modules\academico\models\EstudiantePagoCarrera;
 use app\modules\academico\models\Planificacion;
@@ -27,6 +27,7 @@ use app\modules\academico\models\RegistroOnlineItem;
 use app\modules\academico\models\RegistroPagoMatricula;
 use yii\data\ArrayDataProvider;
 use yii\base\Exception;
+
 use app\modules\academico\Module as Academico;
 use app\modules\financiero\models\FormaPago;
 use app\modules\financiero\models\FacturasPendientesEstudiante;
@@ -537,7 +538,7 @@ class MatriculaciondropController extends \app\components\CController {
             $dataValue = array();
             $con = 0;
             $model_can = CancelacionRegistroOnline::findOne(['ron_id' => $id, 'cron_estado' => '1', 'cron_estado_logico' => '1']);
-            if($model_can){
+            /*if($model_can){
                 $modelEnroll = EnrolamientoAgreement::findOne(['ron_id' => $id, 'rpm_id' => $modelRegAd->rpm_id, 'per_id' => $model->per_id, 'eaca_id' => $eaca_id, 'uaca_id' => $uaca_id, 'eagr_estado' => '1', 'eagr_estado_logico' => '1',]);
                 $value_total = number_format($modelEnroll->eagr_costo_programa_est, 2, '.', ',');
                 foreach($model_roc as $key => $value){
@@ -582,7 +583,7 @@ class MatriculaciondropController extends \app\components\CController {
                 'sort' => [
                     'attributes' => ["Pago"],
                 ],
-            ]);
+            ]);*/
 
             return $this->render('registry', [
                         "materiasxEstudiante" => $dataProvider,
@@ -599,7 +600,7 @@ class MatriculaciondropController extends \app\components\CController {
                         'value_total' => number_format($model_rpm->rpm_total, 2, '.', ','),
                         'value_interes' => number_format($model_rpm->rpm_interes, 2, '.', ','),
                         'value_financiamiento' => number_format($model_rpm->rpm_financiamiento, 2, '.', ','),
-                        'dataGrid' => $dataProvider2,
+                        //'dataGrid' => $dataProvider2,
                         'estadoAprobar' => $this->getEstadoAprobar(),
 
             ]);
@@ -660,7 +661,7 @@ class MatriculaciondropController extends \app\components\CController {
 
             $con = 0;
             $model_can = CancelacionRegistroOnline::findOne(['ron_id' => $id, 'cron_estado' => '1', 'cron_estado_logico' => '1']);
-            if($model_can){
+            /*if($model_can){
                 $modelEnroll = EnrolamientoAgreement::findOne(['ron_id' => $id, 'rpm_id' => $modelRegAd->rpm_id, 'per_id' => $model->per_id, 'eaca_id' => $eaca_id, 'uaca_id' => $uaca_id, 'eagr_estado' => '1', 'eagr_estado_logico' => '1',]);
                 $value_total = number_format($modelEnroll->eagr_costo_programa_est, 2, '.', ',');
                 foreach($model_roc as $key => $value){
@@ -705,7 +706,7 @@ class MatriculaciondropController extends \app\components\CController {
                 'sort' => [
                     'attributes' => ["Pago"],
                 ],
-            ]);
+            ]);*/
 
             return $this->render('view', [
                         "materiasxEstudiante" => $dataProvider,
@@ -722,7 +723,7 @@ class MatriculaciondropController extends \app\components\CController {
                         'value_total' => number_format($model_rpm->rpm_total, 2, '.', ','),
                         'value_interes' => number_format($model_rpm->rpm_interes, 2, '.', ','),
                         'value_financiamiento' => number_format($model_rpm->rpm_financiamiento, 2, '.', ','),
-                        'dataGrid' => $dataProvider2,
+                        //'dataGrid' => $dataProvider2,
                         'estadoAprobar' => $arr_estado,
                         'esAprobado' => $model_rpm->rpm_estado_aprobacion,
                         'observacion' => $model_rpm->rpm_observacion,
@@ -1350,7 +1351,7 @@ class MatriculaciondropController extends \app\components\CController {
                                 }
                             } 
                             // cambiar estados en enrolamiento_agreement
-                            $modelEnroll = EnrolamientoAgreement::findAll(['ron_id' => $ron_id, 'per_id' => $per_id]);
+                            /*$modelEnroll = EnrolamientoAgreement::findAll(['ron_id' => $ron_id, 'per_id' => $per_id]);
                             if($modelEnroll){
                                 foreach($modelEnroll as $key2 => $item){
                                     $item->eagr_estado = '0';
@@ -1360,7 +1361,7 @@ class MatriculaciondropController extends \app\components\CController {
                                         throw new Exception('Error to Update Enroll Agreement.');
                                     }
                                 }
-                            }
+                            }*/
                             // cambiar estados en registro adicional materias
                             $modelAdMat = RegistroAdicionalMaterias::findAll(['ron_id' => $ron_id, 'per_id' => $per_id]);
                             if($modelAdMat){

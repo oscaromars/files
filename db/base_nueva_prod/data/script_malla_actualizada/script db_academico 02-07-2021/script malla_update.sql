@@ -51,9 +51,9 @@ UPDATE `db_academico`.`malla_academica_detalle` SET `asi_id` = '658', `made_codi
 
 -- maca_id 85
 -- insert falta de materias 
-INSERT INTO `db_academico`.`malla_academica_detalle` (`made_id`, `maca_id`, `asi_id`, `made_semestre`, `uest_id`, `nest_id`, `fmac_id`, `made_codigo_asignatura`, `made_hora`, `made_credito`, `made_usuario_ingreso`, `made_estado`, `made_fecha_creacion`, `made_estado_logico`) VALUES ('3531', '85', '1285', '1', '3', '1', '2', 'POS-0085-1285-011', '118', '2', '1', '1', '18/06/21 00:00', '1');
-INSERT INTO `db_academico`.`malla_academica_detalle` (`made_id`, `maca_id`, `asi_id`, `made_semestre`, `uest_id`, `nest_id`, `fmac_id`, `made_codigo_asignatura`, `made_hora`, `made_credito`, `made_usuario_ingreso`, `made_estado`, `made_fecha_creacion`, `made_estado_logico`) VALUES ('3532', '85', '1286', '1', '3', '1', '2', 'POS-0085-1286-012', '118', '2', '1', '1', '18/06/21 00:00', '1');
-INSERT INTO `db_academico`.`malla_academica_detalle` (`made_id`, `maca_id`, `asi_id`, `made_semestre`, `uest_id`, `nest_id`, `fmac_id`, `made_codigo_asignatura`, `made_hora`, `made_credito`, `made_usuario_ingreso`, `made_estado`, `made_fecha_creacion`, `made_estado_logico`) VALUES ('3533', '85', '757', '1', '3', '1', '2', 'POS-0085-0757-013', '240', '5', '1', '1', '18/06/21 00:00', '1');
+INSERT INTO `db_academico`.`malla_academica_detalle` (`made_id`, `maca_id`, `asi_id`, `made_semestre`, `uest_id`, `nest_id`, `fmac_id`, `made_codigo_asignatura`, `made_hora`, `made_credito`, `made_usuario_ingreso`, `made_estado`, `made_fecha_creacion`, `made_estado_logico`) VALUES ('3518', '85', '1285', '1', '3', '1', '2', 'POS-0085-1285-011', '118', '2', '1', '1', '18/06/21 00:00', '1');
+INSERT INTO `db_academico`.`malla_academica_detalle` (`made_id`, `maca_id`, `asi_id`, `made_semestre`, `uest_id`, `nest_id`, `fmac_id`, `made_codigo_asignatura`, `made_hora`, `made_credito`, `made_usuario_ingreso`, `made_estado`, `made_fecha_creacion`, `made_estado_logico`) VALUES ('3519', '85', '1286', '1', '3', '1', '2', 'POS-0085-1286-012', '118', '2', '1', '1', '18/06/21 00:00', '1');
+INSERT INTO `db_academico`.`malla_academica_detalle` (`made_id`, `maca_id`, `asi_id`, `made_semestre`, `uest_id`, `nest_id`, `fmac_id`, `made_codigo_asignatura`, `made_hora`, `made_credito`, `made_usuario_ingreso`, `made_estado`, `made_fecha_creacion`, `made_estado_logico`) VALUES ('3520', '85', '757', '1', '3', '1', '2', 'POS-0085-0757-013', '240', '5', '1', '1', '18/06/21 00:00', '1');
 -- update 
 UPDATE `db_academico`.`malla_academica_detalle` SET `asi_id` = '1279', `made_codigo_asignatura` = 'POS-0085-1279-001',`made_hora` = '118', `made_credito` = '2' WHERE (`made_id` = '3374');
 UPDATE `db_academico`.`malla_academica_detalle` SET `asi_id` = '1214', `made_codigo_asignatura` = 'POS-0085-1214-002',`made_hora` = '118', `made_credito` = '2' WHERE (`made_id` = '3375');
@@ -81,7 +81,7 @@ UPDATE `db_academico`.`malla_academica_detalle` SET `asi_id` = '1296', `made_cod
 UPDATE `db_academico`.`malla_academica_detalle` SET `asi_id` = '1297', `made_codigo_asignatura` = 'POS-0086-1297-011',`made_hora` = '114', `made_credito` = '2' WHERE (`made_id` = '3423');
 UPDATE `db_academico`.`malla_academica_detalle` SET `asi_id` = '1298', `made_codigo_asignatura` = 'POS-0086-1298-012',`made_hora` = '114', `made_credito` = '2' WHERE (`made_id` = '3424');
 -- insert
-INSERT INTO `db_academico`.`malla_academica_detalle` (`made_id`, `maca_id`, `asi_id`, `made_semestre`, `uest_id`, `nest_id`, `fmac_id`, `made_codigo_asignatura`, `made_hora`, `made_credito`, `made_usuario_ingreso`, `made_estado`, `made_fecha_creacion`, `made_estado_logico`) VALUES ('3534', '86', '757', '1', '3', '1', '2', 'POS-0086-0757-013', '240', '5', '1', '1', '2018-06-21 00:00:00', '1');
+INSERT INTO `db_academico`.`malla_academica_detalle` (`made_id`, `maca_id`, `asi_id`, `made_semestre`, `uest_id`, `nest_id`, `fmac_id`, `made_codigo_asignatura`, `made_hora`, `made_credito`, `made_usuario_ingreso`, `made_estado`, `made_fecha_creacion`, `made_estado_logico`) VALUES ('3521', '86', '757', '1', '3', '1', '2', 'POS-0086-0757-013', '240', '5', '1', '1', '2018-06-21 00:00:00', '1');
 -- maca_id 87
 -- update
 UPDATE `db_academico`.`malla_academica_detalle` SET `asi_id` = '1254', `made_codigo_asignatura` = 'POS-0087-1254-001', `made_hora` = '118', `made_credito` = '2' WHERE (`made_id` = '3398');
@@ -95,9 +95,9 @@ UPDATE `db_academico`.`malla_academica_detalle` SET `asi_id` = '1261', `made_cod
 UPDATE `db_academico`.`malla_academica_detalle` SET `asi_id` = '1262', `made_codigo_asignatura` = 'POS-0087-1262-009', `made_hora` = '118', `made_credito` = '2' WHERE (`made_id` = '3406');
 UPDATE `db_academico`.`malla_academica_detalle` SET `asi_id` = '1263', `made_codigo_asignatura` = 'POS-0087-1263-010', `made_hora` = '118', `made_credito` = '2' WHERE (`made_id` = '3407');
 -- insert
-INSERT INTO `db_academico`.`malla_academica_detalle` (`made_id`, `maca_id`, `asi_id`, `made_semestre`, `uest_id`, `nest_id`, `fmac_id`, `made_codigo_asignatura`, `made_hora`, `made_credito`, `made_usuario_ingreso`, `made_estado`, `made_fecha_creacion`, `made_estado_logico`) VALUES ('3535', '87', '1264', '1', '3', '1', '2', 'POS-0087-1264-011', '118', '2', '1', '1', '2021-05-28 17:58:52', '1');
-INSERT INTO `db_academico`.`malla_academica_detalle` (`made_id`, `maca_id`, `asi_id`, `made_semestre`, `uest_id`, `nest_id`, `fmac_id`, `made_codigo_asignatura`, `made_hora`, `made_credito`, `made_usuario_ingreso`, `made_estado`, `made_fecha_creacion`, `made_estado_logico`) VALUES ('3536', '87', '1265', '1', '3', '1', '2', 'POS-0087-1265-012', '118', '2', '1', '1', '2021-05-28 17:58:52', '1');
-INSERT INTO `db_academico`.`malla_academica_detalle` (`made_id`, `maca_id`, `asi_id`, `made_semestre`, `uest_id`, `nest_id`, `fmac_id`, `made_codigo_asignatura`, `made_hora`, `made_credito`, `made_usuario_ingreso`, `made_estado`, `made_fecha_creacion`, `made_estado_logico`) VALUES ('3537', '87', '1252', '1', '3', '1', '2', 'POS-0087-1252-013', '240', '5', '1', '1', '2021-05-28 17:58:52', '1');
+INSERT INTO `db_academico`.`malla_academica_detalle` (`made_id`, `maca_id`, `asi_id`, `made_semestre`, `uest_id`, `nest_id`, `fmac_id`, `made_codigo_asignatura`, `made_hora`, `made_credito`, `made_usuario_ingreso`, `made_estado`, `made_fecha_creacion`, `made_estado_logico`) VALUES ('3522', '87', '1264', '1', '3', '1', '2', 'POS-0087-1264-011', '118', '2', '1', '1', '2021-05-28 17:58:52', '1');
+INSERT INTO `db_academico`.`malla_academica_detalle` (`made_id`, `maca_id`, `asi_id`, `made_semestre`, `uest_id`, `nest_id`, `fmac_id`, `made_codigo_asignatura`, `made_hora`, `made_credito`, `made_usuario_ingreso`, `made_estado`, `made_fecha_creacion`, `made_estado_logico`) VALUES ('3523', '87', '1265', '1', '3', '1', '2', 'POS-0087-1265-012', '118', '2', '1', '1', '2021-05-28 17:58:52', '1');
+INSERT INTO `db_academico`.`malla_academica_detalle` (`made_id`, `maca_id`, `asi_id`, `made_semestre`, `uest_id`, `nest_id`, `fmac_id`, `made_codigo_asignatura`, `made_hora`, `made_credito`, `made_usuario_ingreso`, `made_estado`, `made_fecha_creacion`, `made_estado_logico`) VALUES ('3524', '87', '1252', '1', '3', '1', '2', 'POS-0087-1252-013', '240', '5', '1', '1', '2021-05-28 17:58:52', '1');
 
 -- made nuevos 
 -- maca_id 82
@@ -157,3 +157,35 @@ INSERT INTO `db_academico`.`malla_academica_detalle` (`made_id`, `maca_id`, `asi
 INSERT INTO `db_academico`.`malla_academica_detalle` (`made_id`, `maca_id`, `asi_id`, `made_semestre`, `uest_id`, `nest_id`, `fmac_id`, `made_codigo_asignatura`, `made_hora`, `made_credito`, `made_usuario_ingreso`, `made_estado`, `made_fecha_creacion`, `made_estado_logico`) VALUES ('3516', '89', '639', '1', '3', '1', '2', 'POS-0089-0639-012', '102', '3', '1', '1', '2021-06-18 00:00:00', '1');
 INSERT INTO `db_academico`.`malla_academica_detalle` (`made_id`, `maca_id`, `asi_id`, `made_semestre`, `uest_id`, `nest_id`, `fmac_id`, `made_codigo_asignatura`, `made_hora`, `made_credito`, `made_usuario_ingreso`, `made_estado`, `made_fecha_creacion`, `made_estado_logico`) VALUES ('3517', '89', '757', '1', '3', '1', '2', 'POS-0089-0757-013', '240', '8', '1', '1', '2021-06-18 00:00:00', '1');
 
+INSERT INTO db_academico.modalidad_estudio_unidad(meun_id, uaca_id, mod_id, eaca_id, emp_id, meun_usuario_ingreso, meun_fecha_creacion, meun_estado, meun_estado_logico) VALUES
+(127,2,1,74,1,1,current_date(),1,1),
+(128,2,2,75,1,1,current_date(),1,1),
+(129,2,2,75,1,1,current_date(),1,1),
+(130,2,1,76,1,1,current_date(),1,1),
+(131,2,1,77,1,1,current_date(),1,1),
+(132,2,1,78,1,1,current_date(),1,1),
+(133,2,1,80,1,1,current_date(),1,1),
+(134,2,2,19,1,1,current_date(),1,1),
+(135,2,2,69,1,1,current_date(),1,1),
+(136,2,2,67,1,1,current_date(),1,1),
+(137,2,2,68,1,1,current_date(),1,1),
+(138,2,1,79,1,1,current_date(),1,1),
+(139,2,2,24,1,1,current_date(),1,1),
+(140,2,1,73,1,1,current_date(),1,1)
+;
+
+INSERT INTO db_academico.malla_unidad_modalidad(mumo_id,maca_id,meun_id,mumo_fecha_creacion,mumo_estado,mumo_estado_logico) VALUES
+(111, 16, 40, current_date(), 1, 1),
+(112, 32, 63, current_date(), 1, 1),
+(113, 46, 127, current_date(), 1, 1),
+(114, 45, 128, current_date(), 1, 1),
+(115, 45, 128, current_date(), 1, 1),
+(116, 45, 129, current_date(), 1, 1),
+(117, 45, 129, current_date(), 1, 1),
+(118, 31, 130, current_date(), 1, 1),
+(119, 85, 131, current_date(), 1, 1),
+(120, 79, 132, current_date(), 1, 1),
+(121, 87, 133, current_date(), 1, 1),
+(122, 80, 134, current_date(), 1, 1),
+(123, 34, 135, current_date(), 1, 1)
+;

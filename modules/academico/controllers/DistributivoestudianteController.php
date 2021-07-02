@@ -31,49 +31,55 @@ admision::registerTranslations();
 class DistributivoestudianteController extends \app\components\CController {
 
     public function actionNew($id) {
-
-        //
-        $distributivo_model = DistributivoAcademico::findOne($id);
+        $daca_id = $id;
+        
+        $distributivo_model = DistributivoAcademico::findOne($daca_id);
         $data = array();
         ///sizeof($estuden);
         //print_r($distributivo_model->mpp->mpp_num_paralelo);die();
         $asi_id       = $distributivo_model->asi_id;
         $num_paralelo = $distributivo_model->mpp->mpp_num_paralelo;
+        $uaca_id      = $distributivo_model->uaca_id;
 
-        $estuden = $distributivo_model->buscarEstudiantesMatriculados($asi_id, $num_paralelo);
+        if($uaca_id == 1){
+            $estuden = $distributivo_model->buscarEstudiantesAsignados($asi_id,$num_paralelo,$daca_id);
         
-        for ($i = 0; $i < sizeof($estuden); $i++) {  
-            $model          = new DistributivoAcademicoEstudiante();
-            $dae_id         = $distributivo_model->buscarEstudiantesAsignados($distributivo_model->asi_id,$estuden[$i]['est_id'] ,$num_paralelo);
-            $model->daca_id = $id;
+            for ($i = 0; $i < sizeof($estuden); $i++) {  
+                $model          = new DistributivoAcademicoEstudiante();
+                //$dae_id         = $distributivo_model->buscarEstudiantesAsignados($distributivo_model->asi_id,$estuden[$i]['est_id'] ,$num_paralelo);
+                //$dae_id         = $distributivo_model->buscarEstudiantesAsignados($asi_id,$estuden[$i]['est_id'] ,$num_paralelo);
+                
+                $model->daca_id = $daca_id;
+                $model->est_id  = $estuden[$i]['est_id'];
 
-            //print_r($dae_id);die();
-            if($dae_id['daes_id']!=''){
-                $model->daes_id = $dae_id['daes_id'];
-                $model->daes_estado = 1;
-            }else{
-                $model->daes_estado = 0; 
-            }
-            
-            $model->est_id = $estuden[$i]['est_id'];
+                if($estuden[$i]['daes_id']!=''){
+                    $model->daes_id = $dae_id['daes_id'];
+                    $model->daes_estado = 1;
+                }else{
+                    $model->daes_estado = 0; 
+                }
+                
+        
+                if( is_null($estuden[$i]['daca_id']))
+                    $data[] = $model;
+                else if ( $estuden[$i]['daca_id'] == $daca_id)
+                    $data[] = $model;
+            }//for
+        }//if($uaca_id == 1)
 
-            if( is_null($dae_id['daca_id']))
+        if($uaca_id == 2){
+            $estuden = $distributivo_model->buscarEstudiantesPosgrados($id);
+            for ($i = 0; $i < sizeof($estuden); $i++) {
+                $model = new DistributivoAcademicoEstudiante();
+                $model->daca_id = $id;
+
+                $model->est_id = $estuden[$i]['est_id'];
+                $model->daes_estado = 0;
                 $data[] = $model;
-            else if ( $dae_id['daca_id'] == $id)
-                $data[] = $model;
-        }//for
+            }//for
+        }//if($uaca_id == 2)
+        
 
-        /*$estuden = $distributivo_model->buscarEstudiantesAsignados($distributivo_model->asi_id, $distributivo_model->mpp->mpp_num_paralelo,$id);
-        for ($i = 0; $i < sizeof($estuden); $i++) {
-            $model = new DistributivoAcademicoEstudiante();
-            $model->daca_id = $id;
-            $model->daes_id = $estuden[$i]['daes_id'];
-            $model->est_id = $estuden[$i]['est_id'];
-            $model->daes_estado = 1;
-            $data[] = $model;
-        }*/
-
-        // print_r($data);
         $dataProvider = new ArrayDataProvider([
             'allModels' => $data,
             'key' => 'est_id',

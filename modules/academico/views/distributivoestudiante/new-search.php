@@ -47,7 +47,15 @@ use app\modules\academico\Module as academico;
             </div>
              <label for="txt_paralelo" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= academico::t("Academico", "Paralelo") ?></label>
             <div class="col-sm-3 col-xs-3 col-md-3 col-lg-3">
-                    <?= Html::input("text", "txt_paralelo", $distributivo_model->mpp->mpp_num_paralelo, ["class" => "form-control", "id" => "txt_paralelo", "disabled" => "disabled"]) ?>
+                    <?=
+                        Html::input("text", "txt_paralelo", $distributivo_model->uaca_id == 1?$distributivo_model->mpp->mpp_num_paralelo:$distributivo_model->dhpa->dhpa_paralelo, ["class" => "form-control", "id" => "txt_paralelo", "disabled" => "disabled"]);
+                        /*
+                        if($distributivo_model->uaca_id == 1){
+                           Html::input("text", "txt_paralelo", $distributivo_model->mpp->mpp_num_paralelo, ["class" => "form-control", "id" => "txt_paralelo", "disabled" => "disabled"]);
+                        }else{
+                           Html::input("text", "txt_paralelo", $distributivo_model->dhpa->dhpa_paralelo, ["class" => "form-control", "id" => "txt_paralelo", "disabled" => "disabled"]);
+                        }*/
+                    ?>
             </div>
         </div>
     </div> 

@@ -518,10 +518,10 @@ class PagosFacturaEstudiante extends \yii\db\ActiveRecord
             if ($trans !== null)
                 $trans->commit();
             $insertado = $con->getLastInsertID($con->dbname . '.pagos_factura_estudiante');
-            \app\modules\academico\controllers\RegistroController::putMessageLogFileCartera(' --------------------------------- Id creado :'.$insertado);
+            //\app\modules\academico\controllers\RegistroController::putMessageLogFileCartera(' --------------------------------- Id creado :'.$insertado);
             return $insertado;
         } catch (Exception $ex) {
-            \app\modules\academico\controllers\RegistroController::putMessageLogFileCartera(' --------------------------------- Rollback pago estudiante :'.$trans);
+            //\app\modules\academico\controllers\RegistroController::putMessageLogFileCartera(' --------------------------------- Rollback pago estudiante :'.$trans);
             if ($trans !== null)
                 $trans->rollback();
             return $ex;
@@ -691,7 +691,7 @@ class PagosFacturaEstudiante extends \yii\db\ActiveRecord
                 $comando->bindParam(':dpfa_usu_ingreso', $dpfa_usu_ingreso, \PDO::PARAM_INT);
             }
             $comando->bindParam(":dpfa_fecha_registro", $fecha, \PDO::PARAM_STR);
-            \app\modules\academico\controllers\RegistroController::putMessageLogFileCartera(' --------------------------------- SQL :'.$comando->getRawSql());
+            //\app\modules\academico\controllers\RegistroController::putMessageLogFileCartera(' --------------------------------- SQL :'.$comando->getRawSql());
             $result = $comando->execute();
             if ($trans !== null)
                 $trans->commit();
@@ -699,7 +699,7 @@ class PagosFacturaEstudiante extends \yii\db\ActiveRecord
         } catch (Exception $ex) {
             if ($trans !== null)
                 $trans->rollback();
-                \app\modules\academico\controllers\RegistroController::putMessageLogFileCartera(' --------------------------------- Rollback detalle:');
+                //\app\modules\academico\controllers\RegistroController::putMessageLogFileCartera(' --------------------------------- Rollback detalle:');
             return FALSE;
         }
     }

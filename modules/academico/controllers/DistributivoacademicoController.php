@@ -69,29 +69,12 @@ class DistributivoacademicoController extends \app\components\CController {
             $jornada = (isset($data['jornada']) && $data['jornada'] > 0) ? $data['jornada'] : NULL;
             
             $model = $distributivo_model->getListadoDistributivoGrado($search, $modalidad, $materia, $jornada, $unidad, $periodo);
-                return $this->render('index-grid', [
-                        "model" => $model,
-                ]);
-                /*
-            //return $data['grado'];
-            if($data['grado']==1){
-                $model = $distributivo_model->getListadoDistributivoGrado($search, $modalidad, $materia, $jornada, $unidad, $periodo);
-                return $this->render('index-grid', [
-                        "model" => $model,
-                ]);
-            }else{
-                $model_posgrado = $distributivo_model->getListadoDistributivoPosgrado($search, $modalidad, $materia, $jornada, $unidad, $periodo);
-
-                return $this->render('index-grid', [
-                        'model_posgrado' => $model_posgrado,
-                ]);
-            }*/
-            
-            
-            
+            return $this->render('index-grid', [
+                    "model" => $model,
+            ]);
         } else {
             $model = $distributivo_model->getListadoDistributivoGrado();
-            $model_posgrado = $distributivo_model->getListadoDistributivoPosgrado();
+            //$model_posgrado = $distributivo_model->getListadoDistributivoPosgrado();
         }
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
@@ -122,7 +105,7 @@ class DistributivoacademicoController extends \app\components\CController {
                     'mod_periodo' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Grid")]], $arr_periodo), "id", "name"),
                     'mod_materias' => ArrayHelper::map(array_merge([["asi_id" => "0", "asi_nombre" => Yii::t("formulario", "Grid")]], $mod_asignatura), "asi_id", "asi_nombre"),
                     'model' => $model,
-                    'model_posgrado' => $model_posgrado,
+                    //'model_posgrado' => $model_posgrado,
                     'mod_jornada' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Grid")]], $arr_jornada), "id", "name"),
         ]);
     }

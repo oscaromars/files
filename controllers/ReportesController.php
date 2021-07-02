@@ -700,7 +700,7 @@ class ReportesController extends CController {
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
             }
             if (isset($data["getcarrera"])) {
-                $carrera = $distributivo_model->getModalidadEstudio($data["uaca_id"], $data["mod_id"]);
+                $carrera = $modcarrera->consultarCarreraModalidad($data["uaca_id"], $data["mod_id"]);
                 $message = array("carrera" => $carrera);
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
             }

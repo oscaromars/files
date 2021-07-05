@@ -3,7 +3,7 @@
  * The Asgard framework is free software. It is released under the terms of
  * the following BSD License.
  *
- * Copyright (C) 2017 by Asgard Software 
+ * Copyright (C) 2017 by Asgard Software
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,7 +36,7 @@
  * Asgard is based on code by
  * Yii Software LLC (http://www.yiisoft.com) Copyright Â© 2008
  *
- * 
+ *
  */
 
 use yii\helpers\Html;
@@ -54,11 +54,11 @@ use yii\helpers\Url;
 <div class="row">
     <?php foreach ($modules as $item => $values) { ?>
         <?php if($values->dash_estado == 1 && $values->dash_estado_logico == 1)  { ?>
-        <div class="col-sm-6 col-md-4">       
-            <div class="thumbnail">            
+        <div class="col-sm-6 col-md-4">
+            <div class="thumbnail">
                 <div class="caption">
                     <h2><?= $values->dash_title ?></h2>
-                    <?php foreach($dash_items as $key => $ditem){ 
+                    <?php foreach($dash_items as $key => $ditem){
                         if(($ditem['dash_id'] == $values->dash_id)  && ($ditem['dite_estado'] == '1' && $ditem['dite_estado_logico'] == '1') ) :
                     ?>
                     <?php if(empty($ditem->dite_detail))  { ?>
@@ -72,9 +72,9 @@ use yii\helpers\Url;
                         echo "<a class='btn btn-primary btn-flat margin' href='" . Url::to(['/site/getimage', 'route' => "$ditem->dite_link"]) . "' download='. $nombre[2].pdf .' ><span></span>$ditem->dite_title</a>"
                     ?><?php } ?>
                     <?php endif; } ?>
-                </div>                
-            </div>            
+                </div>
+            </div>
         </div>
         <?php } ?>
-    <?php } ?>   
+    <?php } ?>
 </div>

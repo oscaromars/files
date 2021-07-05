@@ -33,21 +33,21 @@ PbGridView::widget([
         ],*/
         [
             'attribute' => 'descripcion',
-            'header' => Academico::t("profesor", "Surname"),
+            'header' => yii::t("formulario", "Name"),
             'value' => 'reg_descripcion',
-        ],        
+        ],
         [
             'attribute' => 'fecha',
-            'header' => Academico::t("profesor", "Surname"),
+            'header' => yii::t("formulario", "Date"),
             'value' => 'reg_fecha_creacion',
-        ], 
+        ],
         [
             'class' => 'yii\grid\ActionColumn',
             'header' => 'Acción',
             'contentOptions' => ['style' => 'text-align: center;'],
             'headerOptions' => ['width' => '90'],
             'template' => '{download} {pdf}',
-            'buttons' => [              
+            'buttons' => [
                 /*'download' => function ($url, $model) {
                     //if ($model['perfil'] == 0) {
                         //if($model['Cv'] != "")
@@ -55,7 +55,7 @@ PbGridView::widget([
                         return Html::a('<span class="glyphicon glyphicon-download"></span>', Url::to(['/academico/profesor/curriculumpdf', 'ids' => $model['per_id']]), ["data-toggle" => "tooltip", "title" => "Descargar Curriculum", "data-pjax" => "0"]);
                     //}
                 },*/
-                'pdf' => function ($url, $model) {  
+                'pdf' => function ($url, $model) {
                         return Html::a('<span class="' . Utilities::getIcon('info') . '"></span>', 'javascript:', ["data-toggle" => "tooltip", "title" => Yii::t("accion", "View Document"), 'data-href' => Url::to(['cronograma/download', 'route' => $model['reg_archivo'], 'type' => 'view']), 'onclick' => 'viewPdf(this)']);
                 },
             ],

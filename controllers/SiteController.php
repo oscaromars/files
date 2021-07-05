@@ -144,8 +144,8 @@ class SiteController extends CController {
      * actionResourcesfiles
      *
      * @author Diana Lopez
-     * @access 
-     * @param 
+     * @access
+     * @param
      */
     public function actionResourcesfiles() {
         $folderResources = 'resourcesfiles';
@@ -223,7 +223,7 @@ class SiteController extends CController {
                     'url_educativa' => $url_educativa
         ]);
     }
-    
+
     public function actionPortalestudiante(){
         if (\Yii::$app->user->isGuest) {
             $link1 = Utilities::getLoginUrl();
@@ -296,7 +296,7 @@ class SiteController extends CController {
 
 
         /* Inicio - Para archivos descargables */
-        $folderResources = 'recusos_portal'; //nombre de la carpeta para presentar Instructivos Generales 
+        $folderResources = 'recusos_portal'; //nombre de la carpeta para presentar Instructivos Generales
         $root = Yii::$app->basePath . Yii::$app->params["documentFolder"] . $folderResources;
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
@@ -370,7 +370,7 @@ class SiteController extends CController {
         }
         $model = new LoginForm();
         $empresa_alias = isset($_GET['emp'])?$_GET['emp']:NULL;
-        
+
         if ($model->load(Yii::$app->request->post()) && $model->login($empresa_alias)) {
             // setting default url
             $mod = new Modulo();
@@ -470,7 +470,7 @@ class SiteController extends CController {
             ]);
         }
     }
-    
+
     public function actionForgotpassemp() {
         if (!\Yii::$app->user->isGuest) {
             return $this->redirect(Url::base(true) . 'site/loginemp');
@@ -625,16 +625,16 @@ class SiteController extends CController {
             $bb_credencial = Yii::$app->basePath . Yii::$app->params["documentFolder"] . "Credencial/credencial-docente-back.jpeg";
             $isDocente = true;
         }
-        
+
         if(is_file($foto_archivo)){
             // mostrar los archivos
             Header("Content-type: image/png");
             $size = [$this->widthImg,$this->heightImg];
-            $im1 = imagecreatefromjpeg($bg_credencial); //image 325 x 523 
-            $im2 = imagecreatefromjpeg($foto_archivo); //image 147 x 209 
+            $im1 = imagecreatefromjpeg($bg_credencial); //image 325 x 523
+            $im2 = imagecreatefromjpeg($foto_archivo); //image 147 x 209
             $image = ImageCreateTrueColor($size[0], $size[1]);
             imagecopyresampled($image,$im2,0,0,0,0,$size[0], $size[1], $size[0], $size[1]);
-            
+
             $angle = 0; // The default angle is set to 0º
             $topleft = true; // La esquina superior izquierda se muestra por defecto
             $bottomleft = true; // La esquina inferior izquierda se muestra por defecto
@@ -643,54 +643,54 @@ class SiteController extends CController {
             $white = ImageColorAllocate($image,255,255,255);
             $black = ImageColorAllocate($image,0,0,0);
             $corner_source = imagecreatefrompng($image_rounded);
-            $corner_width = imagesx($corner_source);  
-            $corner_height = imagesy($corner_source);  
+            $corner_width = imagesx($corner_source);
+            $corner_height = imagesy($corner_source);
             $corner_resized = ImageCreateTrueColor($corner_radius, $corner_radius);
             ImageCopyResampled($corner_resized, $corner_source, 0, 0, 0, 0, $corner_radius, $corner_radius, $corner_width, $corner_height);
-            $corner_width = imagesx($corner_resized);  
+            $corner_width = imagesx($corner_resized);
             $corner_height = imagesy($corner_resized);
 
             // Esquina inferior derecha
             if ($bottomright == true) {
-                $dest_x = $size[0] - $corner_width;  
-                $dest_y = $size[1] - $corner_height;  
+                $dest_x = $size[0] - $corner_width;
+                $dest_y = $size[1] - $corner_height;
                 $rotated = imagerotate($corner_resized, 180, 0);
-                imagecolortransparent($rotated, $black); 
-                imagecopymerge($image, $rotated, $dest_x, $dest_y, 0, 0, $corner_width, $corner_height, 100);  
+                imagecolortransparent($rotated, $black);
+                imagecopymerge($image, $rotated, $dest_x, $dest_y, 0, 0, $corner_width, $corner_height, 100);
             }
 
             // Esquina inferior izquierda
             if ($bottomleft == true) {
-                $dest_x = 0;  
-                $dest_y = $size[1] - $corner_height; 
+                $dest_x = 0;
+                $dest_y = $size[1] - $corner_height;
                 $rotated = imagerotate($corner_resized, 90, 0);
-                imagecolortransparent($rotated, $black); 
-                imagecopymerge($image, $rotated, $dest_x, $dest_y, 0, 0, $corner_width, $corner_height, 100);  
+                imagecolortransparent($rotated, $black);
+                imagecopymerge($image, $rotated, $dest_x, $dest_y, 0, 0, $corner_width, $corner_height, 100);
             }
 
             if(isset($image_rounded2)){
                 $corner_source = imagecreatefrompng($image_rounded2);
                 ImageCopyResampled($corner_resized, $corner_source, 0, 0, 0, 0, $corner_radius, $corner_radius, $corner_width, $corner_height);
-                $corner_width = imagesx($corner_resized);  
+                $corner_width = imagesx($corner_resized);
                 $corner_height = imagesy($corner_resized);
             }
 
             // Esquina superior derecha
             if ($topright == true) {
-                $dest_x = $size[0] - $corner_width;  
-                $dest_y = 0;  
+                $dest_x = $size[0] - $corner_width;
+                $dest_y = 0;
                 $rotated = imagerotate($corner_resized, 270, 0);
-                imagecolortransparent($rotated, $black); 
-                imagecopymerge($image, $rotated, $dest_x, $dest_y, 0, 0, $corner_width, $corner_height, 100);  
+                imagecolortransparent($rotated, $black);
+                imagecopymerge($image, $rotated, $dest_x, $dest_y, 0, 0, $corner_width, $corner_height, 100);
             }
 
             // Esquina superior izquierda
             if ($topleft == true) {
-                $dest_x = 0;  
-                $dest_y = 0;  
-                imagecolortransparent($corner_resized, $black); 
+                $dest_x = 0;
+                $dest_y = 0;
+                imagecolortransparent($corner_resized, $black);
                 imagecopymerge($image, $corner_resized, $dest_x, $dest_y, 0, 0, $corner_width, $corner_height, 100);
-            } 
+            }
 
             // Rotar la imagen
             $image_rn = imagerotate($image, $angle, $white);
@@ -706,7 +706,7 @@ class SiteController extends CController {
             if($isEstudiante){
                 $colorB = imagecolorallocate($im1, 0, 84, 139);//#00548b
             }
-            
+
             $colorW = imagecolorallocate($im1, 255, 255, 255);//#FFFFFF
             $font_size = 11;
             $angulo = 0;
@@ -722,7 +722,7 @@ class SiteController extends CController {
 
             $nombre = $modelPersona->per_pri_nombre . " " . $modelPersona->per_pri_apellido . " " . $modelPersona->per_seg_apellido; // limite 30 caracteres
             if(strlen($nombre) > 30){
-                $nombre = $modelPersona->per_pri_nombre . " " . $modelPersona->per_pri_apellido; 
+                $nombre = $modelPersona->per_pri_nombre . " " . $modelPersona->per_pri_apellido;
             }
             //$nombre = str_replace(array("Á","É", "Í", "Ó", "Ú"), array("A", "E", "I", "O", "U"), $nombre);
             $carrera = ""; // limite 30 caracteres
@@ -754,7 +754,7 @@ class SiteController extends CController {
             // Add text to image
             //Imagen, tamaño, ángulo, x, y, color, fuente, texto
             imagefttext($im1, $font_size, $angulo, $x, $posY + $widthDifference, $colorB, $ttf_font, strtoupper($nombre));
-            
+
             if(!$isEstudiante && !$isDocente){
                 $cargo = ""; ///********************************************************* */ LLENAR CARGO
                 // Get size of text
@@ -768,7 +768,7 @@ class SiteController extends CController {
                 // Add text to image
                 imagefttext($im1, $font_size, $angle, $x, 397, $colorB, $ttf_font, strtoupper($cargo));
             }
-            
+
             if($isEstudiante){
                 // Get size of text
                 list($left, $bottom, $right, , , $top) = imageftbbox($font_size, $angulo, $ttf_light, $carrera);
@@ -780,9 +780,9 @@ class SiteController extends CController {
                 $y = $centerY - $top_offset;
                 // Add text to image
                 imagefttext($im1, $font_size, $angulo, $x, 410, $colorB, $ttf_light, $carrera);
-            
-            
-                // Get size of text 
+
+
+                // Get size of text
                 list($left, $bottom, $right, , , $top) = imageftbbox($font_size, $angulo, $ttf_light, $modalidad);
                 // Determine offset of text
                 $left_offset = ($right - $left) / 2;
@@ -810,7 +810,7 @@ class SiteController extends CController {
             // Crear la imagen final
             //imagejpeg($image);
             imagecopy($im1, $image_rn, (imagesx($im1)/2)-(imagesx($image_rn)/2), (imagesy($im1)/2)-(imagesy($image_rn)/2)-$marginPhoto, 0, 0, imagesx($image_rn), imagesy($image_rn));
-            
+
             imagepng($im1);
             imagedestroy($im1);
             imagedestroy($image_rn);

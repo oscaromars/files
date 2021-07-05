@@ -20,6 +20,9 @@ $(document).ready(function () {
     $('#btn_buscarDatamatriculados').click(function () {
         buscarDatamatriculados();
     });
+    $('#btn_buscarMallas').click(function () {
+        actualizarGridMalla();
+    });
 
     $('#modalidadestudiounidadsearch-uaca_id').change(function () {
         var link = $('#txth_base').val() + "/reportes/reportemallas";
@@ -76,7 +79,6 @@ $(document).ready(function () {
         }, true);
     });
 
-
 });
 
 function setComboDataselect(arr_data, element_id, texto) {
@@ -89,6 +91,15 @@ function setComboDataselect(arr_data, element_id, texto) {
         option_arr += "<option value='" + id + "'>" + value + "</option>";
     }
     $("#" + element_id).html(option_arr);
+}
+
+function actualizarGridMalla() {
+    var malla = $('#cmb_malla option:selected').val();
+    if (!$(".blockUI").length) {
+        showLoadingPopup();
+    $('#Tbg_Registro_mallas').PbGridView('applyFilterData', {'malla': malla});
+        setTimeout(hideLoadingPopup, 2000);
+    }
 }
 
 function exportAgendamiento(){

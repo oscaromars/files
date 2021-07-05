@@ -8,6 +8,8 @@ use yii\base\Model;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\data\ArrayDataProvider;
+use yii\base\Exception;
+use yii\helpers\VarDumper;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -72,14 +74,16 @@ class ModalidadEstudioUnidadSearch extends ModalidadEstudioUnidad {
         return $dataProvider;
     }
 
-    public function consultarMallasacademicas($params = null, $onlyData = false, $tipo = 1, $maca_id) {
+    public function consultarMallasacademicas($arrFiltro = array(), $onlyData = false, $params = null, $tipo = 1) {
         $con_academico = \Yii::$app->db_academico;
         $con_db = \Yii::$app->db;
+        $estado = 1;
 
-        if (isset($arrFiltro) && count($arrFiltro) > 0) { 
+        if (isset($arrFiltro) && count($arrFiltro) > 0) {
+            //\app\models\Utilities::putMessageLogFile('malla filtro: '. $arrFiltro['malla']);
             if ($arrFiltro['malla'] != "" && $arrFiltro['malla'] > 0) {
-                $str_search .= "maca.maca_id = :maca_id AND ";
-            }         
+                $str_search .= "mac.maca_id = :malla AND ";
+            }
         }
        
         $sql = "Select concat(mac.maca_codigo,' - ',mac.maca_nombre) AS malla,
@@ -106,7 +110,9 @@ class ModalidadEstudioUnidadSearch extends ModalidadEstudioUnidad {
                   inner join db_academico.nivel_estudio n on n.nest_id = d.nest_id
                   inner join db_academico.formacion_malla_academica f on f.fmac_id = d.fmac_id
                   left join db_academico.asignatura asi on asi.asi_id = d.made_asi_requisito
-               WHERE  meu.meun_estado_logico = 1 AND meu.meun_estado = 1 AND
+               WHERE  
+                      $str_search
+                      meu.meun_estado_logico = 1 AND meu.meun_estado = 1 AND
                       uaca.uaca_estado_logico = 1 AND uaca.uaca_estado = 1 AND
                       moda.mod_estado_logico = 1 AND moda.mod_estado = 1 AND
                       eaca.eaca_estado_logico = 1 AND eaca.eaca_estado = 1 AND
@@ -130,9 +136,7 @@ class ModalidadEstudioUnidadSearch extends ModalidadEstudioUnidad {
                     $sql = $sql . " and meu.eaca_id =" . $this->eaca_id;
                 }
 
-                /*if (($this->maca_id) > 0) {
-                    $sql = $sql . " and mum.maca_id =" . $this->maca_id;
-                }*/
+               
             } 
         }
         if ($tipo == 2) {
@@ -147,20 +151,20 @@ class ModalidadEstudioUnidadSearch extends ModalidadEstudioUnidad {
             if (($params['eaca_id']) > 0) {
                 $sql = $sql . " and meu.eaca_id =" . $params['eaca_id'];
             }
-            /*if (($params['maca_id']) > 0) {
-                $sql = $sql . " and meu.maca_id =" . $params['maca_id'];
-            }*/
+           
         }
 
-        if (isset($arrFiltro) && count($arrFiltro) > 0) {
-            if ($arrFiltro['malla'] != "" && $arrFiltro['malla'] > 0) {
-                $malla = $arrFiltro["malla"];
-                $comando->bindParam(":maca_id", $malla, \PDO::PARAM_INT);
-            }
-                    
-        }
         //Utilities::putMessageLogFile('sql:' . $sql);
         $comando = $con_academico->createCommand($sql);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        if (isset($arrFiltro) && count($arrFiltro) > 0) {
+
+            if ($arrFiltro['malla'] != "" && $arrFiltro['malla'] > 0) {
+                $malla = $arrFiltro["malla"];
+                $comando->bindParam(":malla", $malla, \PDO::PARAM_INT);
+            }
+        }
+
         $res = $comando->queryAll();
 
         if ($onlyData)

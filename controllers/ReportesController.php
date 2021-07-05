@@ -691,7 +691,22 @@ class ReportesController extends CController {
         $modcarrera = new EstudioAcademico();
         $distributivo_model = new DistributivoAcademico();
         $mod_malla = new MallaAcademica();
-       
+        $data = Yii::$app->request->get();
+
+        if ($data['PBgetFilter']) {
+            $arrSearch["malla"] = $data['malla'];
+            \app\models\Utilities::putMessageLogFile('malla  control: '. $arrSearch["malla"]);
+            $dataProvider = $searchModel->consultarMallasacademicas($arrSearch, false, $params, 1);
+                return $this->render('reportemallas', [
+                    //'arr_malla' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']], $malla), 'id', 'name'),
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+                ]);       
+        } else {
+            $dataProvider = $searchModel->consultarMallasacademicas(null, false, $params, 1);
+        }
+
+
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
             if (isset($data["getmodalidad"])) {
@@ -705,16 +720,15 @@ class ReportesController extends CController {
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
             }
             if (isset($data['getmalla'])) {
-                \app\models\Utilities::putMessageLogFile('unidad  controlador: '. $data['uaca_id']);
-                \app\models\Utilities::putMessageLogFile('modalidad controlador: '. $data['mod_id']);
-                \app\models\Utilities::putMessageLogFile('carrera controlador: '. $data['eaca_id']);
                 $mallaca = $mod_malla->consultarmallasxcarrera($data['uaca_id'], $data['mod_id'], $data['eaca_id']);
                 $message = array('mallaca' => $mallaca);
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
             }
         }
+
         //$malla = $mod_malla->consultarmallasxcarrera($data['uaca_id'], $data['mod_id'], $data['eaca_id']);
-        $dataProvider = $searchModel->consultarMallasacademicas($params,false,1, $mallaca);
+        //\app\models\Utilities::putMessageLogFile('mallaccccccccc: '. $arrSearch);
+        $dataProvider = $searchModel->consultarMallasacademicas($arrSearch, false, $params, 1);
         return $this->render('reportemallas', [
             //'arr_malla' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']], $malla), 'id', 'name'),
             'searchModel' => $searchModel,

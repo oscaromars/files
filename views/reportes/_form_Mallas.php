@@ -108,7 +108,7 @@ $unidad = ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formular
 
     <div class="form-group">
         <div class="col-sm-offset-4">
-<?= Html::submitButton('Buscar', ['class' => 'btn btn-primary']) ?>
+<?= Html::submitButton('Buscar', ['class' => 'btn btn-primary', 'id' => 'btn_buscarMallas']) ?>
                </div>   
     </div>
 

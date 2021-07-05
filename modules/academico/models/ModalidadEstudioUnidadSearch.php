@@ -72,9 +72,15 @@ class ModalidadEstudioUnidadSearch extends ModalidadEstudioUnidad {
         return $dataProvider;
     }
 
-    public function consultarMallasacademicas($params = null, $onlyData = false, $tipo = 1) {
+    public function consultarMallasacademicas($params = null, $onlyData = false, $tipo = 1, $maca_id) {
         $con_academico = \Yii::$app->db_academico;
         $con_db = \Yii::$app->db;
+
+        if (isset($arrFiltro) && count($arrFiltro) > 0) { 
+            if ($arrFiltro['malla'] != "" && $arrFiltro['malla'] > 0) {
+                $str_search .= "maca.maca_id = :maca_id AND ";
+            }         
+        }
        
         $sql = "Select concat(mac.maca_codigo,' - ',mac.maca_nombre) AS malla,
                     -- d.made_codigo_asignatura,  
@@ -144,6 +150,14 @@ class ModalidadEstudioUnidadSearch extends ModalidadEstudioUnidad {
             /*if (($params['maca_id']) > 0) {
                 $sql = $sql . " and meu.maca_id =" . $params['maca_id'];
             }*/
+        }
+
+        if (isset($arrFiltro) && count($arrFiltro) > 0) {
+            if ($arrFiltro['malla'] != "" && $arrFiltro['malla'] > 0) {
+                $malla = $arrFiltro["malla"];
+                $comando->bindParam(":maca_id", $malla, \PDO::PARAM_INT);
+            }
+                    
         }
         //Utilities::putMessageLogFile('sql:' . $sql);
         $comando = $con_academico->createCommand($sql);

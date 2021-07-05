@@ -714,7 +714,7 @@ class ReportesController extends CController {
             }
         }
         //$malla = $mod_malla->consultarmallasxcarrera($data['uaca_id'], $data['mod_id'], $data['eaca_id']);
-        $dataProvider = $searchModel->consultarMallasacademicas($params,false,1);
+        $dataProvider = $searchModel->consultarMallasacademicas($params,false,1, $mallaca);
         return $this->render('reportemallas', [
             //'arr_malla' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']], $malla), 'id', 'name'),
             'searchModel' => $searchModel,

@@ -11,11 +11,12 @@ use Yii;
  * @property int $dash_id
  * @property string $dite_title
  * @property string $dite_detail
- * @property string|null $dite_link
- * @property string|null $dite_target
+ * @property string $dite_link
+ * @property string $dite_target
+ * @property string $dite_ruta_banner
  * @property string $dite_estado
  * @property string $dite_fecha_creacion
- * @property string|null $dite_fecha_modificacion
+ * @property string $dite_fecha_modificacion
  * @property string $dite_estado_logico
  *
  * @property Dash $dash
@@ -48,7 +49,7 @@ class DashItem extends \yii\db\ActiveRecord
             [['dash_id'], 'integer'],
             [['dite_fecha_creacion', 'dite_fecha_modificacion'], 'safe'],
             [['dite_title'], 'string', 'max' => 300],
-            [['dite_detail'], 'string', 'max' => 500],
+            [['dite_detail', 'dite_ruta_banner'], 'string', 'max' => 500],
             [['dite_link', 'dite_target'], 'string', 'max' => 250],
             [['dite_estado', 'dite_estado_logico'], 'string', 'max' => 1],
             [['dash_id'], 'exist', 'skipOnError' => true, 'targetClass' => Dash::className(), 'targetAttribute' => ['dash_id' => 'dash_id']],
@@ -67,6 +68,7 @@ class DashItem extends \yii\db\ActiveRecord
             'dite_detail' => 'Dite Detail',
             'dite_link' => 'Dite Link',
             'dite_target' => 'Dite Target',
+            'dite_ruta_banner' => 'Dite Ruta Banner',
             'dite_estado' => 'Dite Estado',
             'dite_fecha_creacion' => 'Dite Fecha Creacion',
             'dite_fecha_modificacion' => 'Dite Fecha Modificacion',
@@ -75,8 +77,6 @@ class DashItem extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[Dash]].
-     *
      * @return \yii\db\ActiveQuery
      */
     public function getDash()

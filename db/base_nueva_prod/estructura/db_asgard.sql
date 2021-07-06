@@ -130,11 +130,11 @@ create table if not exists `aplicacion` (
 -- Estructura de tabla para la tabla `continente`
 --
 create table if not exists `continente` (
-  `cont_id` bigint(20) not null auto_increment primary key, 
+  `cont_id` bigint(20) not null auto_increment primary key,
   `cont_nombre` varchar(300) not null,
   `cont_descripcion` varchar(500) not null,
   `cont_usuario_ingreso` bigint(20) not null,
-  `cont_usuario_modifica` bigint(20)  null,    
+  `cont_usuario_modifica` bigint(20)  null,
   `cont_estado` varchar(1) not null,
   `cont_fecha_creacion` timestamp not null default current_timestamp,
   `cont_fecha_modificacion` timestamp null default null,
@@ -156,7 +156,7 @@ create table if not exists `pais` (
  `pai_descripcion` varchar(500) default null,
  `pai_nacionalidad` varchar(200) default null,
  `pai_usuario_ingreso` bigint(20) null,
- `pai_usuario_modifica` bigint(20) null,    
+ `pai_usuario_modifica` bigint(20) null,
  `pai_estado` varchar(1) not null,
  `pai_fecha_creacion` timestamp not null default current_timestamp,
  `pai_fecha_modificacion` timestamp null default null,
@@ -202,7 +202,7 @@ create table if not exists `persona` (
  `per_id` bigint(20) not null auto_increment primary key,
  `per_pri_nombre` varchar(250) default null,
  `per_seg_nombre` varchar(250) default null,
- `per_pri_apellido` varchar(250) default null, 
+ `per_pri_apellido` varchar(250) default null,
  `per_seg_apellido` varchar(250) default null,
  `per_cedula` varchar(15) not null,
  `per_ruc` varchar(15) default null,
@@ -228,15 +228,15 @@ create table if not exists `persona` (
  `per_domicilio_ref` varchar(500) default null,
  `per_domicilio_telefono` varchar(50) default null,
  `per_domicilio_celular2` varchar(50) default null,
- `pai_id_domicilio` bigint(20) default null, 
- `pro_id_domicilio` bigint(20) default null, 
+ `pai_id_domicilio` bigint(20) default null,
+ `pro_id_domicilio` bigint(20) default null,
  `can_id_domicilio` bigint(20) default null,
-  
+
  `per_trabajo_nombre` varchar(250) default null,
  `per_trabajo_direccion` varchar(500) default null,
- `per_trabajo_telefono` varchar(50) default null, 
+ `per_trabajo_telefono` varchar(50) default null,
  `per_trabajo_ext` varchar(50) default null,
- `pai_id_trabajo` bigint(20) default null, 
+ `pai_id_trabajo` bigint(20) default null,
  `pro_id_trabajo` bigint(20) default null,
  `can_id_trabajo` bigint(20) default null,
 
@@ -246,20 +246,20 @@ create table if not exists `persona` (
  `per_fecha_creacion` timestamp not null default current_timestamp,
  `per_fecha_modificacion` timestamp null default null,
  `per_estado_logico` varchar(1) not null,
- foreign key (pai_id_nacimiento) references `pais`(pai_id), 
+ foreign key (pai_id_nacimiento) references `pais`(pai_id),
  foreign key (pro_id_nacimiento) references `provincia`(pro_id),
 
  foreign key (pai_id_domicilio) references `pais`(pai_id),
- foreign key (pro_id_domicilio) references `provincia`(pro_id), 
- foreign key (can_id_domicilio) references `canton`(can_id), 
+ foreign key (pro_id_domicilio) references `provincia`(pro_id),
+ foreign key (can_id_domicilio) references `canton`(can_id),
 
  foreign key (pai_id_trabajo) references `pais`(pai_id),
- foreign key (pro_id_trabajo) references `provincia`(pro_id), 
- foreign key (can_id_trabajo) references `canton`(can_id), 
+ foreign key (pro_id_trabajo) references `provincia`(pro_id),
+ foreign key (can_id_trabajo) references `canton`(can_id),
 
- foreign key (etn_id) references `etnia`(etn_id), 
+ foreign key (etn_id) references `etnia`(etn_id),
  foreign key (tsan_id) references `tipo_sangre`(tsan_id),
- unique per_cedula(per_cedula) 
+ unique per_cedula(per_cedula)
 );
 
 -- --------------------------------------------------------
@@ -268,7 +268,7 @@ create table if not exists `persona` (
 --
 create table if not exists `persona_contacto` (
  `pcon_id` bigint(20) not null auto_increment primary key,
- `per_id` bigint(20) default null, 
+ `per_id` bigint(20) default null,
  `pcon_nombre` varchar(250) default null,
  `tpar_id` bigint(20) default null,
  `pcon_direccion` varchar(500) default null,
@@ -277,9 +277,9 @@ create table if not exists `persona_contacto` (
  `pcon_estado` varchar(1) not null,
  `pcon_fecha_creacion` timestamp not null default current_timestamp,
  `pcon_fecha_modificacion` timestamp null default null,
- `pcon_estado_logico` varchar(1) not null, 
+ `pcon_estado_logico` varchar(1) not null,
  foreign key (per_id) references `persona`(per_id),
- foreign key (tpar_id) references `tipo_parentesco`(tpar_id) 
+ foreign key (tpar_id) references `tipo_parentesco`(tpar_id)
 );
 -- --------------------------------------------------------
 --
@@ -419,7 +419,7 @@ create table if not exists `configuracion_cuenta` (
  `ccue_estado_logico` varchar(1) not null,
  foreign key (usu_id) references `usuario`(usu_id),
  foreign key (idi_id) references `idioma`(idi_id),
- foreign key (pla_id) references `plantilla`(pla_id) 
+ foreign key (pla_id) references `plantilla`(pla_id)
 );
 -- --------------------------------------------------------
 --
@@ -456,7 +456,7 @@ create table if not exists `modulo` (
  `mod_fecha_creacion` timestamp not null default current_timestamp,
  `mod_fecha_actualizacion` timestamp null default null,
  `mod_estado_logico` varchar(1) not null,
- foreign key (apl_id) references `aplicacion`(apl_id) 
+ foreign key (apl_id) references `aplicacion`(apl_id)
 );
 -- --------------------------------------------------------
 --
@@ -540,7 +540,7 @@ create table if not exists `grup_obmo` (
  `gmod_fecha_modificacion` timestamp null default null,
  `gmod_estado_logico` varchar(1) not null,
  foreign key (gru_id) references `grupo`(gru_id),
- foreign key (omod_id) references `objeto_modulo`(omod_id) 
+ foreign key (omod_id) references `objeto_modulo`(omod_id)
 );
 -- --------------------------------------------------------
 --
@@ -555,7 +555,7 @@ create table if not exists `grup_obmo_grup_rol` (
  `gogr_fecha_modificacion` timestamp null default null,
  `gogr_estado_logico` varchar(1) not null,
  foreign key (grol_id) references `grup_rol`(grol_id),
- foreign key (gmod_id) references `grup_obmo`(gmod_id) 
+ foreign key (gmod_id) references `grup_obmo`(gmod_id)
 
 );
 -- --------------------------------------------------------
@@ -674,9 +674,9 @@ create table if not exists `tipo_discapacidad` (
 --
 create table if not exists `tipo_identificacion` (
   `tide_id` bigint(20) not null auto_increment primary key,
-  `tide_nombre` varchar(300) not null,  
-  `tide_descripcion` varchar(500) not null, 
-  `tide_numero_caracteres` varchar(3) null,   
+  `tide_nombre` varchar(300) not null,
+  `tide_descripcion` varchar(500) not null,
+  `tide_numero_caracteres` varchar(3) null,
   `tide_estado` varchar(1) not null,
   `tide_fecha_creacion` timestamp not null default current_timestamp,
   `tide_fecha_modificacion` timestamp null default null,
@@ -701,10 +701,10 @@ create table if not exists `otra_etnia` (
 --
 create table if not exists `dash` (
   `dash_id` bigint(20) not null auto_increment primary key,
-  `dash_title` varchar(300) not null,  
-  `dash_detail` varchar(500) not null, 
-  `dash_link` varchar(250) null,  
-  `dash_target` varchar(250) null, 
+  `dash_title` varchar(300) not null,
+  `dash_detail` varchar(500) not null,
+  `dash_link` varchar(250) null,
+  `dash_target` varchar(250) null,
   `dash_estado` varchar(1) not null,
   `dash_fecha_creacion` timestamp not null default current_timestamp,
   `dash_fecha_modificacion` timestamp null default null,
@@ -718,10 +718,11 @@ create table if not exists `dash` (
 create table if not exists `dash_item` (
   `dite_id` bigint(20) not null auto_increment primary key,
   `dash_id` bigint(20) not null,
-  `dite_title` varchar(300) not null,  
-  `dite_detail` varchar(500) not null, 
-  `dite_link` varchar(250) null,  
-  `dite_target` varchar(250) null, 
+  `dite_title` varchar(300) not null,
+  `dite_detail` varchar(500) not null,
+  `dite_link` varchar(250) null,
+  `dite_ruta_banner` varchar(500) null,
+  `dite_target` varchar(250) null,
   `dite_estado` varchar(1) not null,
   `dite_fecha_creacion` timestamp not null default current_timestamp,
   `dite_fecha_modificacion` timestamp null default null,

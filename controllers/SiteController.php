@@ -386,7 +386,7 @@ class SiteController extends CController {
             if($modEper != 0){
                 $url = Url::base(true) . "/site/dash";
             }
-            $url = Url::base(true) .""; // Se comenta y muestra la pagina de integracion de servicios
+            //$url = Url::base(true) .""; // Se comenta y muestra la pagina de integracion de servicios
             return $this->goBack($url);
         } else {
             if ($model->getErrorSession())
@@ -396,7 +396,6 @@ class SiteController extends CController {
             ]);
         }
     }
-
     /**
      * Login action Multiple Empresa.
      *

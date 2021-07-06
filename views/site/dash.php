@@ -64,7 +64,11 @@ use yii\helpers\Url;
                     <?php if(empty($ditem->dite_detail))  { ?>
                     <a class="btn btn-primary btn-flat margin" href="<?= (isset($ditem->dite_link) && $ditem->dite_link != "")?(Url::base() . $ditem->dite_link):"javascript:" ?>" target="_blank"><?= $ditem->dite_title ?></a>
                     <?php } if($ditem->dite_detail == 1) { ?>
-                    <a class="btn btn-primary btn-flat margin" href="<?= (isset($ditem->dite_link) && $ditem->dite_link != "")?( $ditem->dite_link):"javascript:" ?>"target="_blank"><?= $ditem->dite_title ?></a>
+                     <a class="btn btn-primary btn-flat margin" href="<?= (isset($ditem->dite_link) && $ditem->dite_link != "")?( $ditem->dite_link):"javascript:" ?>"target="_blank"><?= $ditem->dite_title ?></a>
+                    <!-- OJO IMAGEN LINK BASE, CUANDO SE TENGA DISEÑO 
+                      <a href="<?= $ditem->dite_link?>" title="<?= $ditem->dite_title?>" target="_blank">
+                      <img src="/asgard/<?= $ditem->dite_ruta_banner?>" />
+                    </a>-->
                     <?php } ?>
                     <?php if($ditem->dite_detail == 2) { ?>
                     <?php
@@ -78,3 +82,8 @@ use yii\helpers\Url;
         <?php } ?>
     <?php } ?>
 </div>
+
+<!-- <div>
+<img src="/asgard/web/img/bannerasgard/Banner Asgard-11.jpg" border="1" alt="Este es el ejemplo de un texto alternativo" width="400" height="300">
+<a href="/asgard"><img src="/asgard/web/img/bannerasgard/Banner Asgard-11.jpg" alt="logo"></a>
+</div>-->

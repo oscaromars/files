@@ -6,7 +6,7 @@ use app\modules\academico\models\UnidadAcademica;
 use app\modules\academico\models\Modalidad;
 use app\modules\academico\models\EstudioAcademico;
 use app\modules\academico\models\MallaAcademica;
-use kartik\select2\Select2;
+//use kartik\select2\Select2;
 use yii\helpers\ArrayHelper;
 /* @var $this yii\web\View */
 /* @var $model app\models\UsuarioSearch */
@@ -17,101 +17,58 @@ $mod_unidad = new UnidadAcademica();
 $arr_unidad = $mod_unidad->consultarUnidadAcademicasxUteg();
 $unidad = ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $arr_unidad), "id", "name");
 
+
+
 ?>
 <div class="reportemallas-search">
 
-    <?php
-    $form = ActiveForm::begin([
-                'layout' => 'horizontal',
-                'fieldConfig' => [
-                    'template' => "{label}\n{beginWrapper}\n{input}\n{hint}\n{error}\n{endWrapper}",
-                    'horizontalCssClasses' => [
-                        'label' => 'col-sm-4',
-                        'offset' => 'col-sm-offset-4',
-                        'wrapper' => 'col-sm-8',
-                        'error' => '',
-                        'hint' => '',
-                        'button' => 'col-sm-4'
-                    ],
-                ],
-                'action' => ['reportemallas'],
-                'method' => 'get',
-    ]);
-    ?>
-    
-    
-    <?=
-    $form->field($model, 'uaca_id')->label('Unidad Academica:')->widget(Select2::classname(), [
-        'id' => 'cmb_unidad',
-        'name' => 'cmb_unidad',
-        //'data' => ArrayHelper::map(app\modules\academico\models\UnidadAcademica::find()->where(['uaca_estado_logico' => '1','uaca_estado' => '1'])->all(), 'uaca_id', 'uaca_nombre'),
-        'data' => $unidad,
-        'size' => Select2::MEDIUM,
-        'options' => ['placeholder' => 'Seleccione Unidad Academica ...', 'multiple' => false],
-        'pluginOptions' => [
-            'allowClear' => true,
-            'width' => '295px',
-        ],
-    ]);
-    ?>
-
-    <?=
-    $form->field($model, 'mod_id')->label('Modalidad:')->widget(Select2::classname(), [
-        'id' => 'cmb_modalidad',
-        'name' => 'cmb_modalidad',
-        'data' => ArrayHelper::map(app\modules\academico\models\Modalidad::find()->where(['mod_estado_logico' => '1','mod_estado' => '1'])->all(), 'mod_id', 'mod_nombre'),
-        // 'data' => $var,
-        'size' => Select2::MEDIUM,
-        'options' => ['placeholder' => 'Seleccione Modalidad ...', 'multiple' => false],
-        'pluginOptions' => [
-            'allowClear' => true,
-            'width' => '295px',
-        ],
-    ]);
-    ?>  
-
-    <?=
-    $form->field($model, 'eaca_id')->label('Carrera:')->widget(Select2::classname(), [
-        'id' => 'cmb_carrera',
-        'name' => 'cmb_carrera',
-        'data' => ArrayHelper::map(app\modules\academico\models\EstudioAcademico::find()->where(['eaca_estado_logico' => '1','eaca_estado' => '1'])->all(), 'eaca_id', 'eaca_nombre'),
-        // 'data' => $var,
-        'size' => Select2::MEDIUM,
-        'options' => ['placeholder' => 'Seleccione Carrera ...', 'multiple' => false],
-        'pluginOptions' => [
-            'allowClear' => true,
-            'width' => '295px',
-        ],
-    ]);
-    ?>
-
-    <div class="col-sm-12">
+<form class="form-horizontal">   
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
-            <label for="txt_malla" class="col-sm-4 control-label"><?= Yii::t("formulario", "Malla Academica:") ?> </label>
+            <label for="txt_unidad" class="col-sm-4 col-lg-4 col-md-4 col-xs-4 control-label"><?= Yii::t("formulario", "Unidad Académica:") ?></label>
             <div class="col-sm-3 col-md-3 col-xs-3 col-lg-3">
-                <?php //echo '<label class="control-label">Tag Single</label>';
-                 echo Select2::widget([
-                'name' => 'cmb_malla',
-                'id' => 'cmb_malla',
-                'value' => '', // initial value
-                'data' => $mallaca,
-                'options' => ['placeholder' => 'Seleccione Malla ...', 'multiple' => false],
-                'pluginOptions' => [
-                    'allowClear' => true,
-                    'width' => '295px',
-                ],
-            ]); ?>
-            </div>                     
-        </div>      
+                <?= Html::dropDownList("cmb_unidad", 0, $unidad, ["class" => "form-control pro_combo", "id" => "cmb_unidad"]) ?>
+            </div>
+        </div>
+    </div>
+    
+   
+
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="form-group">
+            <label for="txt_modalidad" class="col-sm-4 col-lg-4 col-md-4 col-xs-4 control-label"><?= Yii::t("formulario", "Modalidad:") ?></label>
+            <div class="col-sm-3 col-md-3 col-xs-3 col-lg-3">
+                <?= Html::dropDownList("cmb_modalidad", 0, $arr_modalidad, ["class" => "form-control pro_combo", "id" => "cmb_modalidad"]) ?>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="form-group">
+            <label for="txt_carrera" class="col-sm-4 col-lg-4 col-md-4 col-xs-4 control-label"><?= Yii::t("formulario", "Carrera:") ?></label>
+            <div class="col-sm-3 col-md-3 col-xs-3 col-lg-3">
+                <?= Html::dropDownList("cmb_carrera", 0, $carrera, ["class" => "form-control pro_combo", "id" => "cmb_carrera"]) ?>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="form-group">
+            <label for="txt_malla" class="col-sm-4 col-lg-4 col-md-4 col-xs-4 control-label"><?= Yii::t("formulario", "Malla Académica:") ?></label>
+            <div class="col-sm-3 col-md-3 col-xs-3 col-lg-3">
+                <?= Html::dropDownList("cmb_malla", 0, $mallaca, ["class" => "form-control pro_combo", "id" => "cmb_malla"]) ?>
+            </div>
+        </div>
     </div>
 
 
     <div class="form-group">
         <div class="col-sm-offset-4">
-<?= Html::submitButton('Buscar', ['class' => 'btn btn-primary', 'id' => 'btn_buscarMallas']) ?>
-               </div>   
+            <?= Html::submitButton('Buscar', ['class' => 'btn btn-primary', 'id' => "btn_buscarMallas"]) ?>
+        </div>   
     </div>
 
-<?php ActiveForm::end(); ?>
 
+</form>
 </div>

@@ -4,7 +4,7 @@ use app\modules\academico\models\MallaAcademica;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use app\widgets\PbGridView\PbGridView;
-use kartik\grid\GridView;
+//use kartik\grid\GridView;
 use app\modules\academico\models\UnidadAcademica;
 use yii\helpers\ArrayHelper;
 use yii\widgets\ActiveForm;
@@ -16,8 +16,9 @@ use app\modules\academico\Module as academico;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+//print_r($arr_modalidad);
 ?>
-<?php echo $this->render('_form_Mallas', ['model' => $searchModel/*, 'arr_malla' =>  $arr_malla*/]); ?>
+<?php //echo $this->render('_form_Mallas', [/*'model' => $searchModel,*/ 'arr_modalidad' =>  $arr_modalidad, 'carrera' =>  $carrera, 'mallaca' =>  $mallaca]); ?>
 <div class="panel panel-primary">
     <div class="panel-heading">
         <h3 class="panel-title">Reporte Malla Academica</h3>
@@ -79,6 +80,11 @@ use app\modules\academico\Module as academico;
                         'header' => academico::t("Academico", "Materia Requisito"),
                         'value' => 'materia_requisito',                  
                     ],
+                    /*[
+                        'attribute' => 'carrera',
+                        'header' => academico::t("Academico", "Carrera"),
+                        'value' => 'carrera',                  
+                    ],*/
                 ],
             ]);
         ?>

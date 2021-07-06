@@ -24,7 +24,7 @@ $(document).ready(function () {
         actualizarGridMalla();
     });
 
-    $('#modalidadestudiounidadsearch-uaca_id').change(function () {
+    $('#cmb_unidad').change(function () {
         var link = $('#txth_base').val() + "/reportes/reportemallas";
         var arrParams = new Object();
         arrParams.uaca_id = $(this).val();
@@ -32,16 +32,16 @@ $(document).ready(function () {
         requestHttpAjax(link, arrParams, function (response) {
             if (response.status == "OK") {
                 data = response.message;
-                setComboDataselect(data.modalidad, "modalidadestudiounidadsearch-mod_id", "Todos");
+                setComboDataselect(data.modalidad, "cmb_modalidad", "Todos");
                 var arrParams = new Object();
                 if (data.modalidad.length > 0) {
-                    arrParams.uaca_id = $('#modalidadestudiounidadsearch-uaca_id').val();
+                    arrParams.uaca_id = $('#cmb_unidad').val();
                     arrParams.mod_id = data.modalidad[0].id;
                     arrParams.getcarrera = true;
                     requestHttpAjax(link, arrParams, function (response) {
                         if (response.status == "OK") {
                             data = response.message;
-                            setComboDataselect(data.carrera, "modalidadestudiounidadsearch-eaca_id", "Todos");
+                            setComboDataselect(data.carrera, "cmb_carrera", "Todos");
                         }
                     }, true);
                 }
@@ -49,25 +49,25 @@ $(document).ready(function () {
         }, true);
     });
 
-    $('#modalidadestudiounidadsearch-mod_id').change(function () {
+    $('#cmb_modalidad').change(function () {
         var link = $('#txth_base').val() + "/reportes/reportemallas";
         var arrParams = new Object();
-        arrParams.uaca_id = $('#modalidadestudiounidadsearch-uaca_id').val();
+        arrParams.uaca_id = $('#cmb_unidad').val();
         arrParams.mod_id = $(this).val();
         arrParams.getcarrera = true;
         requestHttpAjax(link, arrParams, function (response) {
             if (response.status == "OK") {
                 data = response.message;
-                setComboDataselect(data.carrera, "modalidadestudiounidadsearch-eaca_id", "Todos");
+                setComboDataselect(data.carrera, "cmb_carrera", "Todos");
             }
         }, true);
     });
 
-    $('#modalidadestudiounidadsearch-eaca_id').change(function () {
+    $('#cmb_carrera').change(function () {
         var link = $('#txth_base').val() + "/reportes/reportemallas";
         var arrParams = new Object();
-        arrParams.uaca_id = $('#modalidadestudiounidadsearch-uaca_id').val();
-        arrParams.mod_id = $('#modalidadestudiounidadsearch-mod_id').val();
+        arrParams.uaca_id = $('#cmb_unidad').val();
+        arrParams.mod_id = $('#cmb_modalidad').val();
         arrParams.eaca_id = $(this).val();
         arrParams.getmalla = true;
         arrParams.empresa_id = 1;
@@ -78,6 +78,13 @@ $(document).ready(function () {
             }
         }, true);
     });
+
+    function searchModules(idbox, idgrid) {
+    var arrParams = new Object();
+    arrParams.PBgetFilter = true;
+    arrParams.search = $("#" + idbox).val();
+    $("#" + idgrid).PbGridView("applyFilterData", arrParams);
+}
 
 });
 
@@ -94,10 +101,14 @@ function setComboDataselect(arr_data, element_id, texto) {
 }
 
 function actualizarGridMalla() {
+    var unidad = $('#cmb_unidad option:selected').val();
+    var modalidad =  $('#cmb_modalidad option:selected').val();
+    var carrera = $('#cmb_carrera option:selected').val();
     var malla = $('#cmb_malla option:selected').val();
+    //alert($('#cmb_malla').val());
     if (!$(".blockUI").length) {
         showLoadingPopup();
-    $('#Tbg_Registro_mallas').PbGridView('applyFilterData', {'malla': malla});
+    $('#Tbg_Registro_mallas').PbGridView('applyFilterData', {'unidad': unidad, 'modalidad': modalidad, 'carrera': carrera, 'malla': malla});
         setTimeout(hideLoadingPopup, 2000);
     }
 }

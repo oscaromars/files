@@ -694,18 +694,29 @@ class ReportesController extends CController {
         $data = Yii::$app->request->get();
 
         if ($data['PBgetFilter']) {
+            //\app\models\Utilities::putMessageLogFile('unidad  controlrrrr: '.$data['unidad']);
+            //\app\models\Utilities::putMessageLogFile('modalidad  controlrrrr: '. $data['modalidad']);
+            //\app\models\Utilities::putMessageLogFile('carrera  controlrrrr: '. $data['carrera']);
+            $arrSearch["unidad"] = $data['unidad'];
+            $arrSearch["modalidad"] = $data['modalidad'];
+            $arrSearch["carrera"] = $data['carrera'];
             $arrSearch["malla"] = $data['malla'];
-            \app\models\Utilities::putMessageLogFile('malla  control: '. $arrSearch["malla"]);
-            $dataProvider = $searchModel->consultarMallasacademicas($arrSearch, false, $params, 1);
-                return $this->render('reportemallas', [
+            $arr_modalidad = $mod_modalidad->consultarModalidad($data['unidad'], $emp_id);
+            $carrera = $modcarrera->consultarCarreraModalidad($data['unidad'], $data['unidad']);
+            $mallaca = $mod_malla->consultarmallasxcarrera($data['unidad'], $data['unidad'], $data['carrera']);
+            //\app\models\Utilities::putMessageLogFile('malla  control: '. $arrSearch["malla"]);
+            $dataProvider = $searchModel->consultarMallasacademicas($arrSearch, false/*, $params, 1*/);
+                return $this->render('indexmallas', [
                     //'arr_malla' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']], $malla), 'id', 'name'),
-                    'searchModel' => $searchModel,
+                    //'searchModel' => $searchModel,
+                    'mallaca' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']], $mallaca), 'id', 'name'),
+                    'arr_modalidad' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']], $arr_modalidad), 'id', 'name'),
+                    'carrera' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']], $carrera), 'id', 'name'),
                     'dataProvider' => $dataProvider,
                 ]);       
         } else {
-            $dataProvider = $searchModel->consultarMallasacademicas(null, false, $params, 1);
+            $dataProvider = $searchModel->consultarMallasacademicas(null, false/*, $params, 1*/);
         }
-
 
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
@@ -720,6 +731,9 @@ class ReportesController extends CController {
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
             }
             if (isset($data['getmalla'])) {
+                //\app\models\Utilities::putMessageLogFile('unidad  controladorxxxx: '. $data['uaca_id']);
+                //\app\models\Utilities::putMessageLogFile('modalidad controladorxxxx: '. $data['mod_id']);
+                //\app\models\Utilities::putMessageLogFile('carrera controladorxxxxx: '. $data['eaca_id']);
                 $mallaca = $mod_malla->consultarmallasxcarrera($data['uaca_id'], $data['mod_id'], $data['eaca_id']);
                 $message = array('mallaca' => $mallaca);
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
@@ -727,10 +741,15 @@ class ReportesController extends CController {
         }
 
         //$malla = $mod_malla->consultarmallasxcarrera($data['uaca_id'], $data['mod_id'], $data['eaca_id']);
+        $arr_modalidad = $mod_modalidad->consultarModalidad($data['unidad'], $emp_id);
+        $carrera = $modcarrera->consultarCarreraModalidad($data['unidad'], $data['unidad']);
+        $mallaca = $mod_malla->consultarmallasxcarrera($data['unidad'], $data['unidad'], $data['carrera']);
         //\app\models\Utilities::putMessageLogFile('mallaccccccccc: '. $arrSearch);
-        $dataProvider = $searchModel->consultarMallasacademicas($arrSearch, false, $params, 1);
-        return $this->render('reportemallas', [
-            //'arr_malla' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']], $malla), 'id', 'name'),
+        $dataProvider = $searchModel->consultarMallasacademicas($arrSearch, false, $params, 1, $data['uaca_id'], $data['mod_id'], $data['eaca_id']);
+        return $this->render('indexmallas', [
+            'mallaca' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']], $mallaca), 'id', 'name'),
+            'arr_modalidad' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']], $arr_modalidad), 'id', 'name'),
+            'carrera' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']], $carrera), 'id', 'name'),
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);       

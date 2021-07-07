@@ -19,3 +19,10 @@ UPDATE `db_asgard`.`dash_item` SET `dite_ruta_banner`='web/img/bannerasgard/Bann
 UPDATE `db_asgard`.`dash_item` SET `dite_ruta_banner`='web/img/bannerasgard/Banner Asgard-19.jpg' WHERE `dite_id`='12';
 UPDATE `db_asgard`.`dash_item` SET `dite_ruta_banner`='web/img/bannerasgard/Banner Asgard-21.jpg' WHERE `dite_id`='7';
 UPDATE `db_asgard`.`dash_item` SET `dite_ruta_banner`='web/img/bannerasgard/Banner Asgard-22.jpg' WHERE `dite_id`='14';
+
+UPDATE `db_asgard`.`dash_item` SET `dite_link`='/academico/matriculacion/registro' WHERE `dite_id`='1';
+UPDATE `db_asgard`.`dash_item` SET `dite_link`='https://www.alphaeditorialcloud.com/library' WHERE `dite_id`='16';
+
+
+
+

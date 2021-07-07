@@ -62,7 +62,7 @@ class PeriodoAcademico extends \yii\db\ActiveRecord
         ];
     }
 
-   
+
 
     /**
      * {@inheritdoc}
@@ -98,7 +98,7 @@ class PeriodoAcademico extends \yii\db\ActiveRecord
     {
         return $this->hasOne(SemestreAcademico::className(), ['saca_id' => 'saca_id']);
     }
-    
+
     /**
      * @return \yii\db\ActiveQuery
      */
@@ -138,11 +138,11 @@ class PeriodoAcademico extends \yii\db\ActiveRecord
     {
         return $this->hasMany(PlanificacionAcademicaMalla::className(), ['paca_id' => 'paca_id']);
     }
-    
-    
+
+
      public function savePeriodo($model){
         $con = \Yii::$app->db_academico;
-          $sql = "INSERT INTO db_academico.periodo_academico (saca_id, baca_id, paca_activo, paca_fecha_inicio, paca_fecha_fin, paca_usuario_ingreso, paca_estado, paca_fecha_creacion,  paca_estado_logico, paca_semanas_periodo) 
+          $sql = "INSERT INTO db_academico.periodo_academico (saca_id, baca_id, paca_activo, paca_fecha_inicio, paca_fecha_fin, paca_usuario_ingreso, paca_estado, paca_fecha_creacion,  paca_estado_logico, paca_semanas_periodo)
               VALUES (".$model->saca_id.",". $model->baca_id.",'". $model->paca_activo."','". $model->paca_fecha_inicio."','". $model->paca_fecha_fin."','". $model->paca_usuario_ingreso."','". $model->paca_estado."','". $model->paca_fecha_creacion."','". $model->paca_estado_logico."',". $model->paca_semanas_periodo.")";
           \app\models\Utilities::putMessageLogFile("Sql: " . $sql);
         $command = $con->createCommand($sql);
@@ -150,7 +150,7 @@ class PeriodoAcademico extends \yii\db\ActiveRecord
         $command->execute();
         $id = $con->getLastInsertID($con->dbname . '.periodo_academico');
         return $id;
-        
+
     }
 
      public function updatePeriodo($model){
@@ -168,16 +168,16 @@ class PeriodoAcademico extends \yii\db\ActiveRecord
                \app\models\Utilities::putMessageLogFile("Sql: " . $sql);
         $command = $con->createCommand($sql);
 
-     
+
        $id= $command->execute();
         return $id;
-        
+
     }
 
-    
-    
+
+
     /**
-     * Function consulta el período académico actual. 
+     * Function consulta el período académico actual.
      * @author Grace Viteri <analistadesarrollo01@uteg.edu.ec>;
      * @param
      * @return
@@ -185,9 +185,9 @@ class PeriodoAcademico extends \yii\db\ActiveRecord
     public function getPeriodoAcademico() {
         $con = \Yii::$app->db_academico;
         $estado = 1;
-        
+
         $sql = "SELECT  pera.paca_id as id,
-                        ifnull(CONCAT(blq.baca_nombre,'-',sem.saca_nombre,' ',sem.saca_anio),'') as  name                       
+                        ifnull(CONCAT(blq.baca_nombre,'-',sem.saca_nombre,' ',sem.saca_anio),'') as  name
                 FROM " . $con->dbname . ".periodo_academico pera
                      inner join " . $con->dbname . ".semestre_academico sem  ON sem.saca_id = pera.saca_id
                      inner join " . $con->dbname . ".bloque_academico blq ON blq.baca_id = pera.baca_id
@@ -200,9 +200,9 @@ class PeriodoAcademico extends \yii\db\ActiveRecord
         $resultData = $comando->queryAll();
         return $resultData;
     }
-    
+
      /**
-     * Function consulta el período académico actual. 
+     * Function consulta el período académico actual.
      * @author Grace Viteri <analistadesarrollo01@uteg.edu.ec>;
      * @param
      * @return
@@ -210,7 +210,7 @@ class PeriodoAcademico extends \yii\db\ActiveRecord
     public function getPeriodoAcademicoActual() {
         $con = \Yii::$app->db_academico;
         $estado = 1;
-        
+
         $sql = "SELECT  pera.paca_id as id,
                         ifnull(CONCAT(blq.baca_nombre,'-',sem.saca_nombre,' ',sem.saca_anio),'') as nombre,
                         blq.baca_nombre
@@ -223,13 +223,13 @@ class PeriodoAcademico extends \yii\db\ActiveRecord
                       pera.paca_estado_logico = :estado";
 
         $comando = $con->createCommand($sql);
-        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);        
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
         $resultData = $comando->queryAll();
 
         //print_r($resultData);die();
         return $resultData;
     }//function getPeriodoAcademicoActual
-    
+
     /**
      * Consultar todos los períodos académicos, así no estén activos
      * @author Jorge Paladies <analista.desarrollo@uteg.edu.ec>;
@@ -239,7 +239,7 @@ class PeriodoAcademico extends \yii\db\ActiveRecord
     public function consultarTodosPeriodosAcademicos() {
         $con = Yii::$app->db_academico;
         $estado = 1;
-        
+
         $sql = "SELECT paca.paca_id, ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca_anio),'') AS paca_nombre, baca.baca_nombre
                 FROM " . $con->dbname . ".semestre_academico AS saca
                 INNER JOIN " . $con->dbname . ".periodo_academico AS paca ON saca.saca_id = paca.saca_id
@@ -252,7 +252,7 @@ class PeriodoAcademico extends \yii\db\ActiveRecord
                 baca.baca_estado = 1 AND
                 baca.baca_estado_logico = 1";
 
-        $comando = $con->createCommand($sql);      
+        $comando = $con->createCommand($sql);
         $resultData = $comando->queryAll();
         return $resultData;
     }
@@ -266,7 +266,7 @@ class PeriodoAcademico extends \yii\db\ActiveRecord
     public function consultarPeriodosActivos() {
         $con = Yii::$app->db_academico;
         $estado = 1;
-        
+
         $sql = "SELECT paca.paca_id, ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca_anio),'') AS paca_nombre, baca.baca_nombre
                 FROM " . $con->dbname . ".semestre_academico AS saca
                 INNER JOIN " . $con->dbname . ".periodo_academico AS paca ON saca.saca_id = paca.saca_id
@@ -280,7 +280,7 @@ class PeriodoAcademico extends \yii\db\ActiveRecord
                 baca.baca_estado = 1 AND
                 baca.baca_estado_logico = 1";
 
-        $comando = $con->createCommand($sql);    
+        $comando = $con->createCommand($sql);
         $resultData = $comando->queryAll();
         return $resultData;
     }
@@ -344,8 +344,8 @@ class PeriodoAcademico extends \yii\db\ActiveRecord
                     FROM " . $con->dbname . ".semestre_academico AS saca
                     INNER JOIN " . $con->dbname . ".periodo_academico AS paca ON saca.saca_id = paca.saca_id
                     INNER JOIN " . $con->dbname . ".bloque_academico AS baca ON baca.baca_id = paca.baca_id
-                    WHERE 
-                    paca.paca_id = " . $per_id . " AND 
+                    WHERE
+                    paca.paca_id = " . $per_id . " AND
                     paca.paca_estado = 1 AND
                     paca.paca_estado_logico = 1 AND
                     saca.saca_estado = 1 AND
@@ -367,14 +367,14 @@ class PeriodoAcademico extends \yii\db\ActiveRecord
                     FROM " . $con->dbname . ".semestre_academico AS saca
                     INNER JOIN " . $con->dbname . ".periodo_academico AS paca ON saca.saca_id = paca.saca_id
                     INNER JOIN " . $con->dbname . ".bloque_academico AS baca ON baca.baca_id = paca.baca_id
-                    WHERE 
+                    WHERE
                     paca.paca_estado = 1 AND
                     paca.paca_estado_logico = 1 AND
                     saca.saca_estado = 1 AND
                     saca.saca_estado_logico = 1 AND
                     baca.baca_estado = 1 AND
                     baca.baca_estado_logico = 1
-                    
+
                     ORDER BY id";
         }
 
@@ -382,25 +382,25 @@ class PeriodoAcademico extends \yii\db\ActiveRecord
     }
 
     /**
-     * Function consulta el parcial segun unidad academica. 
+     * Function consulta el parcial segun unidad academica.
      * @author Givanni Vergara <analistadesarrollo02@uteg.edu.ec>;
      * @param
      * @return
      */
     public function getParcialUnidad($uaca_id) {
         $con = \Yii::$app->db_academico;
-        $estado = 1;        
-        $sql = " SELECT ecun.ecal_id as id, 
-                        esc.ecal_nombre as name                        
+        $estado = 1;
+        $sql = " SELECT ecun.ecal_id as id,
+                        esc.ecal_nombre as name
                    FROM " . $con->dbname . ".esquema_calificacion_unidad ecun
-             INNER JOIN " . $con->dbname . ".esquema_calificacion esc  ON esc.ecal_id = ecun.ecal_id                     
+             INNER JOIN " . $con->dbname . ".esquema_calificacion esc  ON esc.ecal_id = ecun.ecal_id
                   WHERE ecun.uaca_id = :uaca_id AND
                         ecun.ecun_estado = :estado AND
                         ecun.ecun_estado_logico = :estado";
 
         $comando = $con->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
-        $comando->bindParam(":uaca_id", $uaca_id, \PDO::PARAM_INT);        
+        $comando->bindParam(":uaca_id", $uaca_id, \PDO::PARAM_INT);
         $resultData = $comando->queryAll();
         return $resultData;
     }
@@ -413,16 +413,16 @@ class PeriodoAcademico extends \yii\db\ActiveRecord
      */
     public function getTodosParciales() {
         $con = \Yii::$app->db_academico;
-        $estado = 1;        
-        $sql = "SELECT DISTINCT ecun.ecal_id as id, 
-                        esc.ecal_nombre as name                        
+        $estado = 1;
+        $sql = "SELECT DISTINCT ecun.ecal_id as id,
+                        esc.ecal_nombre as name
                 FROM " . $con->dbname . ".esquema_calificacion_unidad ecun
-                INNER JOIN " . $con->dbname . ".esquema_calificacion esc  ON esc.ecal_id = ecun.ecal_id                     
+                INNER JOIN " . $con->dbname . ".esquema_calificacion esc  ON esc.ecal_id = ecun.ecal_id
                 WHERE ecun.ecun_estado = :estado AND
                       ecun.ecun_estado_logico = :estado";
 
         $comando = $con->createCommand($sql);
-        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);       
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
         $resultData = $comando->queryAll();
         return $resultData;
     }
@@ -435,7 +435,7 @@ class PeriodoAcademico extends \yii\db\ActiveRecord
      */
     public function getHorasmaxAsistenciaxest($daes_id) {
         $con = \Yii::$app->db_academico;
-        $estado = 1;     
+        $estado = 1;
 
         $sql = " SELECT daes.daes_id, paca.paca_semanas_periodo, daho.daho_total_horas
         FROM " . $con->dbname . ".distributivo_academico daca
@@ -452,7 +452,7 @@ class PeriodoAcademico extends \yii\db\ActiveRecord
 
         $comando = $con->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
-        $comando->bindParam(":daes_id", $daes_id, \PDO::PARAM_INT);        
+        $comando->bindParam(":daes_id", $daes_id, \PDO::PARAM_INT);
         $resultData = $comando->queryOne();
         return $resultData;
     }
@@ -460,13 +460,13 @@ class PeriodoAcademico extends \yii\db\ActiveRecord
 
      public function getDaesbyperiodo($paca_id, $asi_id, $pro_id) {
         $con = \Yii::$app->db_academico;
-        $estado = 1;     
+        $estado = 1;
 
-        $sql= "  SELECT daes.daes_id 
-        FROM " . $con->dbname . ".distributivo_academico_estudiante daes 
+        $sql= "  SELECT daes.daes_id
+        FROM " . $con->dbname . ".distributivo_academico_estudiante daes
         INNER JOIN " . $con->dbname . ".distributivo_academico daca
-        WHERE   daca.paca_id= :paca_id 
-        AND  daca.asi_id= :asi_id 
+        WHERE   daca.paca_id= :paca_id
+        AND  daca.asi_id= :asi_id
         AND  daca.pro_id=:pro_id
         AND daes.daes_estado = :estado AND daes.daes_estado_logico = :estado
         AND daca.daca_estado = :estado AND daca.daca_estado_logico = :estado
@@ -474,9 +474,9 @@ class PeriodoAcademico extends \yii\db\ActiveRecord
 
         $comando = $con->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
-        $comando->bindParam(":paca_id", $paca_id, \PDO::PARAM_INT);      
-        $comando->bindParam(":asi_id", $asi_id, \PDO::PARAM_INT);   
-        $comando->bindParam(":pro_id", $pro_id, \PDO::PARAM_INT);     
+        $comando->bindParam(":paca_id", $paca_id, \PDO::PARAM_INT);
+        $comando->bindParam(":asi_id", $asi_id, \PDO::PARAM_INT);
+        $comando->bindParam(":pro_id", $pro_id, \PDO::PARAM_INT);
         $resultData = $comando->queryAll();
         return $resultData;
     }

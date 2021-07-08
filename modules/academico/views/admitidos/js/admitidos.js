@@ -99,11 +99,13 @@ $(document).ready(function () {
 
 $(document).on('ready pjax:success', function() {
     console.log("readypjaxsuccess");
+    /*
     $('#dataTable').dataTable( {
             paging: false,
             searching: false
         } );
     $(".dataTable").DataTable( { responsive: true, });
+    */
 });
 
 function setComboDataselect(arr_data, element_id, texto) {

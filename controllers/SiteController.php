@@ -214,10 +214,12 @@ class SiteController extends CController {
 
         $modules = Dash::find(['dash_estado' => '1', 'dash_estado_logico' => '1'])->all();
         $dash_items = DashItem::find(['dite_estado' => '1', 'dite_estado_logico' => '1'])->all();
+        $dash = Dash::find(['dash_estado' => '1', 'dash_estado' => '1'])->all();
         $this->layout = '@themes/' . Yii::$app->getView()->theme->themeName . '/layouts/dash.php';
         return $this->render('dash', [
                     'modules' => $modules,
                     'dash_items' => $dash_items,
+                    'dash' => $dash,
                     'url_video' => Url::base(true) . "/site/portalestudiante",
                     'url_asgard' => $url,
                     'url_educativa' => $url_educativa

@@ -59,7 +59,7 @@ class Dash extends \yii\db\ActiveRecord
             'dash_estado_logico' => 'Dash Estado Logico',
         ];
     }
-    
+
     public static function findIdentity($id) {
         return static::findOne($id);
     }

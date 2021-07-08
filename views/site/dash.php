@@ -1,6 +1,7 @@
 <?php
 use yii\helpers\Html;
 use yii\helpers\Url;
+//print_r($dash);
 ?>
 <style>
 .centered {
@@ -56,7 +57,7 @@ use yii\helpers\Url;
       <div class="col-md-6">
         <div class="panel panel-default">
           <div class="panel-body">
-            <h1 class="font-weight-light text-center text-lg-left mt-4 mb-0 text-uppercase">Académico</h1>
+            <h1 class="font-weight-light text-center text-lg-left mt-4 mb-0 text-uppercase"><?=$dash[0]['dash_title']?></h1>
             <hr class="mt-2 mb-5">
             <div class="text-center">
             <?php foreach ($modules as $item => $values) { ?>
@@ -91,7 +92,7 @@ use yii\helpers\Url;
       <div class="col-md-6">
         <div class="panel panel-default">
           <div class="panel-body">
-            <h1 class="font-weight-light text-center text-lg-left mt-4 mb-0 text-uppercase">Administrativo</h1>
+            <h1 class="font-weight-light text-center text-lg-left mt-4 mb-0 text-uppercase"><?=$dash[4]['dash_title']?></h1>
             <hr class="mt-2 mb-5">
             <div class="text-center">
             <?php foreach ($modules as $item => $values) { ?>

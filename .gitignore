@@ -1,4 +1,4 @@
-/vendor/*
+/vendor
 runtime/*
 web/assets/*
 composer.lock

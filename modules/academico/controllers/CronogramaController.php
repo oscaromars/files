@@ -142,7 +142,7 @@ class CronogramaController extends \app\components\CController {
     public function actionDownload($route, $type) {
         if (Yii::$app->session->get('PB_isuser')) {
             $route = str_replace("../", "", $route);
-            if (preg_match("/^" . reglamentos . "\//", $route)) {
+            //if (preg_match("/^" . reglamentos . "\//", $route)) {
                 $url_image = Yii::$app->basePath . "/uploads/" . $route;
                 $arrIm = explode(".", $url_image);
                 $typeImage = $arrIm[count($arrIm) - 1];
@@ -163,7 +163,7 @@ class CronogramaController extends \app\components\CController {
                         readfile($url_image);
                     }
                 }
-            }
+            //}
         }
         exit();
     }

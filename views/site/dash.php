@@ -54,7 +54,7 @@ use yii\helpers\Url;
 </header>
 <div class="container-fluid">
     <div class="row centered ">
-      <div class="col-md-6">
+      <div class="col-md-5">
         <div class="panel panel-default">
           <div class="panel-body">
             <h1 class="font-weight-light text-center text-lg-left mt-4 mb-0 text-uppercase"><?=$dash[0]['dash_title']?></h1>
@@ -89,7 +89,7 @@ use yii\helpers\Url;
           </div>
         </div>
       </div>
-      <div class="col-md-6">
+      <div class="col-md-5">
         <div class="panel panel-default">
           <div class="panel-body">
             <h1 class="font-weight-light text-center text-lg-left mt-4 mb-0 text-uppercase"><?=$dash[4]['dash_title']?></h1>

@@ -1,0 +1,10 @@
+<strong>Hola [[user]],</strong>
+<br /><br />
+Su pago no ha sido aprobado, por el siguiente motivo:  [[motivo]].<br />
+Ingrese al sistema Asgard <a href='[[link]]' target='_blank'>[[link]]</a> y suba un pago válido. <br />
+Gracias por la atención prestada.<br />
+<br /><br /><br />
+<strong>Atentamente:</strong><br />
+<strong>Ney Loor López</strong><br />
+<strong>Departamento de Colecturía</strong><br />
+ <strong>Universidad Tecnológica Empresarial de Guayaquil</strong><br />

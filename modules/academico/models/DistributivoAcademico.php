@@ -158,20 +158,32 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
                    where ecp.est_id is null 
                      and da.daca_id=".$id;
         */
-        $sql = "SELECT ecpr.est_id
+        $sql = "  SELECT ecpr.est_id
+                         ,CONCAT(per.per_pri_nombre, ' ', per.per_pri_apellido) AS nombres
                          ,ecpr.meun_id
                          ,daes.daes_id
                          ,daca.daca_id
-                    FROM db_academico.estudiante_carrera_programa as ecpr
-              INNER JOIN db_academico.distributivo_academico as daca
+                    FROM db_academico.distributivo_academico as daca
+               left JOIN db_academico.estudiante_carrera_programa as ecpr
                       ON daca.meun_id = ecpr.meun_id
-                     and daca.uaca_id = 2
+                     AND daca.uaca_id = 2
+                     AND ecpr.ecpr_estado = 1 and ecpr.ecpr_estado_logico = 1
                LEFT JOIN db_academico.distributivo_academico_estudiante as daes
                       ON daes.est_id = ecpr.est_id
+                     AND daes.daes_estado = 1 and daes.daes_estado_logico = 1
+               INNER JOIN db_academico.estudiante est 
+                      ON est.est_id = ecpr.est_id
+                     AND est.est_estado = 1 and est.est_estado_logico = 1
+              INNER JOIN db_asgard.persona per 
+                      ON per.per_id = est.per_id
+                     AND per.per_estado = 1 and per.per_estado_logico = 1
                    where 1 = 1
-                    and daca.daca_id = $daca_id";
+                     and daca.daca_id = $daca_id";
         
         $comando = $con_academico->createCommand($sql);
+
+        \app\models\Utilities::putMessageLogFile($comando->getRawSql());
+        
         $res = $comando->queryAll();
         return $res;
     }//function buscarEstudiantesPosgrados

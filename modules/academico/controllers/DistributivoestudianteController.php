@@ -68,15 +68,18 @@ class DistributivoestudianteController extends \app\components\CController {
         }//if($uaca_id == 1)
 
         if($uaca_id == 2){
-            $estuden = $distributivo_model->buscarEstudiantesPosgrados($id);
+            $estuden = $distributivo_model->buscarEstudiantesPosgrados($daca_id);
+
             for ($i = 0; $i < sizeof($estuden); $i++) {
                 $model = new DistributivoAcademicoEstudiante();
-                $model->daca_id = $id;
+                $model->daca_id = $daca_id;
 
                 $model->est_id = $estuden[$i]['est_id'];
                 $model->daes_estado = 0;
                 $data[] = $model;
             }//for
+
+            //print_r($data);die;
         }//if($uaca_id == 2)
         
 

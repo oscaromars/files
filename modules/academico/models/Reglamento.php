@@ -76,17 +76,17 @@ class Reglamento extends \yii\db\ActiveRecord
 
     /**
      * Function consultar informacion del estudiantes
-     * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>         
-     * @property  
-     * @return  
+     * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
+     * @property
+     * @return
      */
     public function consultaReglamento($onlyData = false) {
         $con = \Yii::$app->db_academico;
-        //$con1 = \Yii::$app->db_asgard;      
+        //$con1 = \Yii::$app->db_asgard;
         $estado = '1';
-        $sql = "SELECT 
-                    reg_id, 
-                    reg_descripcion, 
+        $sql = "SELECT
+                    reg_id,
+                    reg_descripcion,
                     reg_archivo,
                     DATE_FORMAT(reg_fecha_creacion,'%Y-%m-%d') as reg_fecha_creacion
                 FROM " . $con->dbname . ".reglamento
@@ -96,7 +96,7 @@ class Reglamento extends \yii\db\ActiveRecord
 
         $comando = $con->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
-             
+
         $resultData = $comando->queryAll();
         $dataProvider = new ArrayDataProvider([
             'key' => 'id',

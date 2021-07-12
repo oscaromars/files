@@ -1,0 +1,18 @@
+<strong>Hola [[user]],</strong>
+<br /><br />
+Usted ha realizado un proceso anulación de Materias  de Registro en Linea para el período académico <strong>[[periodo]]</strong> de la modalidad [[modalidad]].
+<br><br><br><br>
+<strong>Asignatura(s) Cancelada(s)</strong><br><br>
+[[asig1]]<br>
+[[asig2]]<br>
+<br /><br />
+Su requerimiento será procesado en 5 dias.
+<br /><br />
+Si hay algún error por favor comunicarse con Coordinación Académico de su modaldiad.
+<br /><br />
+Gracias por la atención prestada.
+<br /><br />
+<strong>Atentamente:</strong><br />
+<strong>Arq. José Bohórquez Zavala, MSc.</strong><br />
+<strong>Secretario General</strong><br />
+<strong>Universidad Tecnológica Empresarial de Guayaquil</strong><br />

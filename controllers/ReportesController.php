@@ -894,9 +894,9 @@ class ReportesController extends CController {
         $arrSearch["estudiante"] = $data['estudiante'];
         $arrData = array();
         if (empty($arrSearch)) {
-            $arrData = $searchModel->getListadoPromediosexcel(NULL,true);
+            $arrData = $searchModel->getListadoPromedio(NULL,true);
         } else {
-            $arrData = $searchModel->getListadoPromediosexcel($arrSearch,true);
+            $arrData = $searchModel->getListadoPromedio($arrSearch,true);
         }
         for ($i = 0; $i < count($arrData); $i++) { 
             unset($arrData[$i]['estado_nota']);

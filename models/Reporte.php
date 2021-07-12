@@ -9,7 +9,8 @@
 namespace app\models;
 
 use yii;
-
+use yii\data\ActiveDataProvider;
+use yii\data\ArrayDataProvider;
 /**
  * Description of Reporte
  *
@@ -282,6 +283,172 @@ class Reporte extends \yii\db\ActiveRecord {
                 . " WHERE B.cemp_estado=1 AND B.cemp_estado_logico=1 "; 
         $comando = $con->createCommand($sql);
         return $comando->queryAll();
+    }
+
+    public function consultarMallasacademicas($arrFiltro = array(), $onlyData = false) {
+        $con_academico = \Yii::$app->db_academico;
+        $con_db = \Yii::$app->db;
+        $estado = 1;
+        //$str_search = '';
+
+        if (isset($arrFiltro) && count($arrFiltro) > 0) {
+            \app\models\Utilities::putMessageLogFile('unidad filtro: '. $arrFiltro['unidad']);
+            if ($arrFiltro['unidad'] != "" && $arrFiltro['unidad'] > 0) {
+                $str_search .= "uaca.uaca_id = :unidad AND ";
+            }
+            \app\models\Utilities::putMessageLogFile('modalidad filtro: '. $arrFiltro['modalidad']);
+            if ($arrFiltro['modalidad'] != "" && $arrFiltro['modalidad'] > 0) {
+                $str_search .= "moda.mod_id = :modalidad AND ";
+            } 
+            \app\models\Utilities::putMessageLogFile('carrera filtro: '. $arrFiltro['carrera']);
+            if ($arrFiltro['carrera'] != "" && $arrFiltro['carrera'] > 0) {
+                $str_search .= "eaca.eaca_id = :carrera AND ";
+            }
+            \app\models\Utilities::putMessageLogFile('malla filtro: '. $arrFiltro['malla']);
+            if ($arrFiltro['malla'] != "" && $arrFiltro['malla'] > 0) {
+                $str_search .= "mac.maca_id = :malla AND ";
+            }
+        }
+       
+        $sql = "Select concat(mac.maca_codigo,' - ',mac.maca_nombre) AS malla, 
+                    a.asi_nombre as asignatura,
+                    uaca.uaca_nombre as unidad,
+                    moda.mod_nombre as modalidad,
+                    d.made_semestre as semestre,
+                    d.made_credito as credito,
+                    u.uest_nombre as unidad_estudio,       
+                    f.fmac_nombre as formacion_malla_academica,
+                    ifnull(asi.asi_nombre,'') as materia_requisito,
+                    eaca.eaca_nombre as carrera
+              FROM db_academico.modalidad_estudio_unidad meu  
+                  inner join db_academico.unidad_academica uaca on uaca.uaca_id = meu.uaca_id
+                  inner join db_academico.modalidad moda on moda.mod_id = meu.mod_id
+                  Inner Join db_academico.estudio_academico eaca on eaca.eaca_id = meu.eaca_id
+                  INNER JOIN db_academico.malla_unidad_modalidad mum ON mum.meun_id = meu.meun_id                  
+                  INNER JOIN db_academico.malla_academica mac ON mac.maca_id = mum.maca_id 
+                  inner join db_academico.malla_academica_detalle d on d.maca_id = mac.maca_id
+                  inner join db_academico.asignatura a on a.asi_id = d.asi_id
+                  inner join db_academico.unidad_estudio u on u.uest_id = d.uest_id
+                  inner join db_academico.nivel_estudio n on n.nest_id = d.nest_id
+                  inner join db_academico.formacion_malla_academica f on f.fmac_id = d.fmac_id
+                  left join db_academico.asignatura asi on asi.asi_id = d.made_asi_requisito
+               WHERE  
+                      $str_search
+                      meu.meun_estado_logico = :estado AND meu.meun_estado = :estado AND
+                      uaca.uaca_estado_logico = :estado AND uaca.uaca_estado = :estado AND
+                      moda.mod_estado_logico = :estado AND moda.mod_estado = :estado AND
+                      eaca.eaca_estado_logico = :estado AND eaca.eaca_estado = :estado AND
+                      mum.mumo_estado_logico = :estado AND mum.mumo_estado = :estado AND
+                      mac.maca_estado_logico = :estado AND mac.maca_estado = :estado AND
+                      d.made_estado_logico = :estado AND d.made_estado = :estado";
+
+        Utilities::putMessageLogFile('sql:' . $sql);
+        $comando = $con_academico->createCommand($sql);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+
+        if (isset($arrFiltro) && count($arrFiltro) > 0) {
+            
+            if ($arrFiltro['unidad'] != "" && $arrFiltro['unidad'] > 0) {
+                $unidad = $arrFiltro["unidad"];
+                $comando->bindParam(":unidad", $unidad, \PDO::PARAM_INT);
+            }
+            
+            if ($arrFiltro['modalidad'] != "" && $arrFiltro['modalidad'] > 0) {
+                $modalidad = $arrFiltro["modalidad"];
+                $comando->bindParam(":modalidad", $modalidad, \PDO::PARAM_INT);
+            }
+
+            if ($arrFiltro['carrera'] != "" && $arrFiltro['carrera'] > 0) {
+                $carrera = $arrFiltro["carrera"];
+                $comando->bindParam(":carrera", $carrera, \PDO::PARAM_INT);
+            }
+
+            if ($arrFiltro['malla'] != "" && $arrFiltro['malla'] > 0) {
+                $malla = $arrFiltro["malla"];
+                $comando->bindParam(":malla", $malla, \PDO::PARAM_INT);
+            }
+        }
+
+        $res = $comando->queryAll();
+        if ($onlyData)
+            return $res;
+        $dataProvider = new ArrayDataProvider([
+            'key' => 'Id',
+            'allModels' => $res,
+            'pagination' => [
+                'pageSize' => Yii::$app->params["pageSize"],
+            ],
+            'sort' => [
+                'attributes' => [],
+            ],
+        ]);
+        
+        return $dataProvider;
+        
+    }
+
+    public function getListadoPromedio($arrFiltro = array(), $onlyData = false) {
+        $con_academico = \Yii::$app->db_academico;
+        $con_db = \Yii::$app->db;
+
+        if (isset($arrFiltro) && count($arrFiltro) > 0) {
+            \app\models\Utilities::putMessageLogFile('estudiante filtro: '. $arrFiltro['estudiante']);
+            if ($arrFiltro['estudiante'] != "" && $arrFiltro['estudiante'] > 0) {
+                $str_search .= "est.per_id = " . $arrFiltro['estudiante'] . " AND ";
+            }
+        }
+
+        $sql = "SELECT distinct ifnull(CONCAT(per.per_pri_apellido,' ' ,per.per_seg_apellido,' ' ,per.per_pri_nombre),'') as estudiante, 
+                        eaca.eaca_nombre as carrera, 
+                        enac.enac_asig_estado as estado_nota, 
+                        asi.asi_descripcion as asignatura, 
+                        maca.maca_nombre as malla,
+                        ifnull((pmac.pmac_nota),'') as promedio
+                FROM db_academico.estudiante_carrera_programa ecpr
+                INNER JOIN db_academico.estudiante est ON est.est_id = ecpr.est_id
+                INNER JOIN db_asgard.persona per ON per.per_id = est.per_id
+                INNER JOIN db_academico.malla_academico_estudiante maes ON maes.per_id = per.per_id
+                INNER JOIN db_academico.promedio_malla_academico pmac on pmac.maes_id = maes.maes_id
+                INNER JOIN db_academico.estado_nota_academico enac on enac.enac_id = pmac.enac_id
+                INNER JOIN db_academico.asignatura asi on asi.asi_id = maes.asi_id
+                INNER JOIN db_academico.malla_academica maca on maca.maca_id = maes.maca_id
+                INNER JOIN db_academico.modalidad_estudio_unidad meun on meun.meun_id = ecpr.meun_id
+                INNER JOIN db_academico.estudio_academico eaca on eaca.eaca_id = meun.eaca_id
+                WHERE $str_search
+                ecpr.ecpr_estado = 1 AND ecpr.ecpr_estado_logico = 1
+                AND est.est_estado = 1 AND est.est_estado_logico = 1
+                AND per.per_estado = 1 AND per.per_estado_logico = 1 
+                AND maes.maes_estado = 1 AND maes.maes_estado_logico = 1
+                AND pmac.pmac_estado = 1 AND pmac.pmac_estado_logico = 1
+                AND asi.asi_estado = 1 AND asi.asi_estado_logico = 1";
+
+        Utilities::putMessageLogFile('sql:' . $sql);
+        $comando = $con_academico->createCommand($sql);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $res = $comando->queryAll();
+
+        if (isset($arrFiltro) && count($arrFiltro) > 0) {
+            
+            if ($arrFiltro['estudiante'] != "" && $arrFiltro['estudiante'] > 0) {
+                $estudiante = $arrFiltro["estudiante"];
+                $comando->bindParam(':estudiante', $estudiante, \PDO::PARAM_INT);
+            }
+        }
+
+        if ($onlyData)
+            return $res;
+        $dataProvider = new ArrayDataProvider([
+            'key' => 'Id',
+            'allModels' => $res,
+            'pagination' => [
+                'pageSize' => Yii::$app->params["pageSize"],
+            ],
+            'sort' => [
+                'attributes' => [],
+            ],
+        ]);
+
+        return $dataProvider;
     }
 
 }

@@ -848,13 +848,30 @@ class ReportesController extends CController {
     }
 
     public function actionPromedios(){
-        $searchModel = new EstudianteCarreraProgramaSearch();
+        //$searchModel = new EstudianteCarreraProgramaSearch();
+        $mod_reporte = new Reporte();
+        $mod_periodo = new PlanificacionEstudiante();
+        $data = Yii::$app->request->get();
+        if ($data['PBgetFilter']) {
+            \app\models\Utilities::putMessageLogFile('estudiante********: '. $data['estudiante']);
+            $arrSearch["estudiante"] = $data['estudiante'];
+            
+            $model = $mod_reporte->getListadoPromedio($arrSearch, false);
+                return $this->render('promedios', [
+                    "model" => $model,
+                ]);       
+        } else {
+            $model = $mod_reporte->getListadoPromedio(null, false);
+        }
+        $arr_estudiante = $mod_periodo->busquedaEstudianteplanificacion();
         //$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $params = Yii::$app->request->queryParams;
-        $dataProvider = $searchModel->getListadoPromedio($params,false,1);
-        return $this->render('promedios', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+        //$params = Yii::$app->request->queryParams;
+        //$dataProvider = $searchModel->getListadoPromedio($params,false,1);
+        //$model = $mod_reporte->
+        return $this->render('indexpromedios', [
+            //'searchModel' => $searchModel,
+            'arr_estudiante' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']], $arr_estudiante), 'id', 'name'),
+            'model' => $model,
         ]); 
     }
 

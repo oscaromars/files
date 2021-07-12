@@ -113,6 +113,16 @@ function actualizarGridMalla() {
         setTimeout(hideLoadingPopup, 2000);
     }
 }
+function buscarDatapromedios() {
+    var estudiante = $('#cmb_estudiante option:selected').val();
+    alert($('#cmb_estudiante').val());
+    if (!$(".blockUI").length) {
+        showLoadingPopup();
+    $('#Tbg_Registro_promedios').PbGridView('applyFilterData', {'estudiante': estudiante});
+        setTimeout(hideLoadingPopup, 2000);
+    }
+}
+
 
 function exportAgendamiento(){
     buscarActividades("1");//Reporte de Oportunidad x Actividad
@@ -175,7 +185,7 @@ function exportExcelmateriasparalelo() {
     window.location.href = $('#txth_base').val() + "/reportes/expexcelmateriasparalelo?periodo=" + periodo;
 }
 function exportExcelpromedios() {
-    var estudiante = $('#estudiantecarreraprogramasearch-est_id').val();
+    var estudiante = $('#cmb_estudiante').val();
     //alert($('#estudiantecarreraprogramasearch-est_id').val());
     window.location.href = $('#txth_base').val() + "/reportes/expexcelpromedios?estudiante=" + estudiante;
 }

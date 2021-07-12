@@ -294,19 +294,19 @@ class Reporte extends \yii\db\ActiveRecord {
         if (isset($arrFiltro) && count($arrFiltro) > 0) {
             \app\models\Utilities::putMessageLogFile('unidad filtro: '. $arrFiltro['unidad']);
             if ($arrFiltro['unidad'] != "" && $arrFiltro['unidad'] > 0) {
-                $str_search .= "uaca.uaca_id = " . $arrFiltro['unidad'] . " AND ";
+                $str_search .= "uaca.uaca_id = :unidad AND ";
             }
             \app\models\Utilities::putMessageLogFile('modalidad filtro: '. $arrFiltro['modalidad']);
             if ($arrFiltro['modalidad'] != "" && $arrFiltro['modalidad'] > 0) {
-                $str_search .= "moda.mod_id = " . $arrFiltro['modalidad'] . " AND ";
+                $str_search .= "moda.mod_id = :modalidad AND ";
             } 
             \app\models\Utilities::putMessageLogFile('carrera filtro: '. $arrFiltro['carrera']);
             if ($arrFiltro['carrera'] != "" && $arrFiltro['carrera'] > 0) {
-                $str_search .= "eaca.eaca_id = " . $arrFiltro['carrera'] . " AND ";
+                $str_search .= "eaca.eaca_id = :carrera AND ";
             }
             \app\models\Utilities::putMessageLogFile('malla filtro: '. $arrFiltro['malla']);
             if ($arrFiltro['malla'] != "" && $arrFiltro['malla'] > 0) {
-                $str_search .= "mac.maca_id = " . $arrFiltro['malla'] . " AND ";
+                $str_search .= "mac.maca_id = :malla AND ";
             }
         }
        

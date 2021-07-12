@@ -114,7 +114,7 @@ function actualizarGridMalla() {
     }
 }
 function buscarDatapromedios() {
-    var estudiante = $('#cmb_estudiante').val();
+    var estudiante = $('#cmb_estudiante option:selected').val();
     //alert($('#cmb_estudiante').val());
     if (!$(".blockUI").length) {
         showLoadingPopup();

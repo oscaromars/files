@@ -8,9 +8,10 @@ use yii\helpers\Html;
     <form class="form-horizontal">
         <?=
         $this->render('_form_Mallas', [
-            'mallaca' => $mallaca, 
+            'arr_unidad' => $arr_unidad,
             'arr_modalidad' => $arr_modalidad,   
-            'carrera' => $carrera,         
+            'arr_carrera' => $arr_carrera,
+            'arr_malla' => $arr_malla,         
         ]);
         ?>
     </form>
@@ -18,7 +19,7 @@ use yii\helpers\Html;
 <div>
     <?=
     $this->render('reportemallas', [
-        'dataProvider' => $dataProvider,
+        'model' => $model,
     ]);
     ?>
 </div>

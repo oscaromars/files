@@ -79,14 +79,14 @@ $(document).ready(function () {
         }, true);
     });
 
-    function searchModules(idbox, idgrid) {
+});
+
+function searchModules(idbox, idgrid) {
     var arrParams = new Object();
     arrParams.PBgetFilter = true;
     arrParams.search = $("#" + idbox).val();
     $("#" + idgrid).PbGridView("applyFilterData", arrParams);
 }
-
-});
 
 function setComboDataselect(arr_data, element_id, texto) {
     var option_arr = "";
@@ -105,6 +105,7 @@ function actualizarGridMalla() {
     var modalidad =  $('#cmb_modalidad option:selected').val();
     var carrera = $('#cmb_carrera option:selected').val();
     var malla = $('#cmb_malla option:selected').val();
+
     //alert($('#cmb_malla').val());
     if (!$(".blockUI").length) {
         showLoadingPopup();
@@ -173,6 +174,11 @@ function exportExcelmateriasparalelo() {
     var periodo = $('#distributivoacademicosearch-paca_id').val();
     window.location.href = $('#txth_base').val() + "/reportes/expexcelmateriasparalelo?periodo=" + periodo;
 }
+function exportExcelpromedios() {
+    var estudiante = $('#estudiantecarreraprogramasearch-est_id').val();
+    //alert($('#estudiantecarreraprogramasearch-est_id').val());
+    window.location.href = $('#txth_base').val() + "/reportes/expexcelpromedios?estudiante=" + estudiante;
+}
 function exportExcelmatriculados() {
     var periodo = $('#planificacionsearch-pla_id').val();
     var modalidad =  $('#planificacionsearch-mod_id').val();
@@ -185,10 +191,15 @@ function exportExcel() {
     window.location.href = $('#txth_base').val() + "/reportes/expexcel?periodos=" + periodos + "&modalidades=" + modalidades + "&asignaturas=" + asignaturas;
 }
 function exportExcelmallas() {
-    var unidad = $('#modalidadestudiounidadsearch-uaca_id').val();
-    var modalidad =  $('#modalidadestudiounidadsearch-mod_id').val();
-    var carrera = $('#modalidadestudiounidadsearch-eaca_id').val();
+    var unidad = $('#cmb_unidad').val();
+    var modalidad =  $('#cmb_modalidad').val();
+    var carrera = $('#cmb_carrera').val();
     var malla =  $('#cmb_malla').val();
+    //alert($('#cmb_unidad').val());
+    //alert($('#cmb_modalidad').val());
+    //alert($('#cmb_carrera').val());
+    //alert($('#cmb_malla').val());
+    
     window.location.href = $('#txth_base').val() + "/reportes/expexcelmallas?unidad=" + unidad + "&modalidad=" + modalidad + "&carrera=" + carrera + "&malla=" + malla;
 }
 function exportExcelinscritosreporte() {
@@ -196,18 +207,9 @@ function exportExcelinscritosreporte() {
     var modalidad =  $('#distributivoacademicosearch-mod_id').val();
     window.location.href = $('#txth_base').val() + "/reportes/expexcelinscritos?periodo=" + periodo + "&modalidad=" + modalidad;
 }
-function exportExcelpromedios() {
-    var estudiante = $('#estudiantecarreraprogramasearch-est_id').val();
-    window.location.href = $('#txth_base').val() + "/reportes/expexcelpromedios?estudiante=" + estudiante;
-}
+
 function exportExceldistributivoposgrado() {
     var tipo_asignacion =  $('#distributivoacademicosearch-tdis_id').val();
     var modalidad =  $('#distributivoacademicosearch-mod_id').val();
     window.location.href = $('#txth_base').val() + "/reportes/expexceldistributivoposgrado?&tipo_asignacion=" + tipo_asignacion + "&modalidad=" + modalidad;
 }
-
-
-
-
-
-

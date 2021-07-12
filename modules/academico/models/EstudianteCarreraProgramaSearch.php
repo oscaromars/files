@@ -71,7 +71,7 @@ class EstudianteCarreraProgramaSearch extends EstudianteCarreraPrograma {
         $con_db = \Yii::$app->db;
         
 
-        $sql = "SELECT  ifnull(CONCAT(per.per_pri_apellido,' ' ,per.per_seg_apellido,' ' ,per.per_pri_nombre),'') as estudiante, 
+        $sql = "SELECT distinct ifnull(CONCAT(per.per_pri_apellido,' ' ,per.per_seg_apellido,' ' ,per.per_pri_nombre),'') as estudiante, 
                         eaca.eaca_nombre as carrera, 
                         enac.enac_asig_estado as estado_nota, 
                         asi.asi_descripcion as asignatura, 

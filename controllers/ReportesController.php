@@ -434,7 +434,7 @@ class ReportesController extends CController {
     // return the pdf output as per the destination setting
    $rep->mpdf->Output("Distributivo_Academic.pdf", ExportFile::OUTPUT_TO_DOWNLOAD); 
 }
-	
+    
     
     public function actionReportematrizdistributivo(){ 
         $searchModel = new DistributivoAcademicoSearch();
@@ -682,102 +682,103 @@ class ReportesController extends CController {
         exit;
     }
     
-    public function actionReportemallas() { 
+    public function actionReportemallas() {
         $emp_id = @Yii::$app->session->get("PB_idempresa");
-        $searchModel = new ModalidadEstudioUnidadSearch();
-        $params = Yii::$app->request->queryParams;
-        $mod_modalidad = new Modalidad();
+        $mod_reporte = new Reporte();
         $mod_unidad = new UnidadAcademica();
+        $mod_modalidad = new Modalidad();
         $modcarrera = new EstudioAcademico();
-        $distributivo_model = new DistributivoAcademico();
         $mod_malla = new MallaAcademica();
         $data = Yii::$app->request->get();
 
         if ($data['PBgetFilter']) {
-            //\app\models\Utilities::putMessageLogFile('unidad  controlrrrr: '.$data['unidad']);
-            //\app\models\Utilities::putMessageLogFile('modalidad  controlrrrr: '. $data['modalidad']);
-            //\app\models\Utilities::putMessageLogFile('carrera  controlrrrr: '. $data['carrera']);
             $arrSearch["unidad"] = $data['unidad'];
             $arrSearch["modalidad"] = $data['modalidad'];
             $arrSearch["carrera"] = $data['carrera'];
             $arrSearch["malla"] = $data['malla'];
-            $arr_modalidad = $mod_modalidad->consultarModalidad($data['unidad'], $emp_id);
-            $carrera = $modcarrera->consultarCarreraModalidad($data['unidad'], $data['unidad']);
-            $mallaca = $mod_malla->consultarmallasxcarrera($data['unidad'], $data['unidad'], $data['carrera']);
-            //\app\models\Utilities::putMessageLogFile('malla  control: '. $arrSearch["malla"]);
-            $dataProvider = $searchModel->consultarMallasacademicas($arrSearch, false/*, $params, 1*/);
-                return $this->render('indexmallas', [
-                    //'arr_malla' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']], $malla), 'id', 'name'),
-                    //'searchModel' => $searchModel,
-                    'mallaca' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']], $mallaca), 'id', 'name'),
-                    'arr_modalidad' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']], $arr_modalidad), 'id', 'name'),
-                    'carrera' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']], $carrera), 'id', 'name'),
-                    'dataProvider' => $dataProvider,
+            \app\models\Utilities::putMessageLogFile('unidad  controlrrrr: '.$data['unidad']);
+            \app\models\Utilities::putMessageLogFile('modalidad  controlrrrr: '.$data['modalidad']);
+            \app\models\Utilities::putMessageLogFile('carrera  controlrrrr: '.$data['carrera']);
+            \app\models\Utilities::putMessageLogFile('malla  controlrrrr: '.$data['malla']);
+            
+            $model = $mod_reporte->consultarMallasacademicas($arrSearch, false);
+                return $this->render('reportemallas', [
+                    'model' => $model,
                 ]);       
         } else {
-            $dataProvider = $searchModel->consultarMallasacademicas(null, false/*, $params, 1*/);
+            $model = $mod_reporte->consultarMallasacademicas(null, false);
         }
-
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
             if (isset($data["getmodalidad"])) {
+                \app\models\Utilities::putMessageLogFile('unidad 3333: '.$data['uaca_id']);
                 $modalidad = $mod_modalidad->consultarModalidad($data['uaca_id'], $emp_id);
                 $message = array("modalidad" => $modalidad);
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
             }
             if (isset($data["getcarrera"])) {
+                \app\models\Utilities::putMessageLogFile('unidad 44444: '.$data['uaca_id']);
+                \app\models\Utilities::putMessageLogFile('modalidad 55555: '.$data['mod_id']);
                 $carrera = $modcarrera->consultarCarreraModalidad($data["uaca_id"], $data["mod_id"]);
                 $message = array("carrera" => $carrera);
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
             }
             if (isset($data['getmalla'])) {
-                //\app\models\Utilities::putMessageLogFile('unidad  controladorxxxx: '. $data['uaca_id']);
-                //\app\models\Utilities::putMessageLogFile('modalidad controladorxxxx: '. $data['mod_id']);
-                //\app\models\Utilities::putMessageLogFile('carrera controladorxxxxx: '. $data['eaca_id']);
+                \app\models\Utilities::putMessageLogFile('unidad lllll: '.$data['uaca_id']);
+                \app\models\Utilities::putMessageLogFile('modalidad llllll: '.$data['mod_id']);
+                \app\models\Utilities::putMessageLogFile('carrera llllll: '.$data['eaca_id']);
                 $mallaca = $mod_malla->consultarmallasxcarrera($data['uaca_id'], $data['mod_id'], $data['eaca_id']);
                 $message = array('mallaca' => $mallaca);
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
             }
         }
-
-        //$malla = $mod_malla->consultarmallasxcarrera($data['uaca_id'], $data['mod_id'], $data['eaca_id']);
-        $arr_modalidad = $mod_modalidad->consultarModalidad($data['unidad'], $emp_id);
-        $carrera = $modcarrera->consultarCarreraModalidad($data['unidad'], $data['unidad']);
-        $mallaca = $mod_malla->consultarmallasxcarrera($data['unidad'], $data['unidad'], $data['carrera']);
-        //\app\models\Utilities::putMessageLogFile('mallaccccccccc: '. $arrSearch);
-        $dataProvider = $searchModel->consultarMallasacademicas($arrSearch, false, $params, 1, $data['uaca_id'], $data['mod_id'], $data['eaca_id']);
+        $arr_unidad = $mod_unidad->consultarUnidadAcademicasxUteg();
+        $modalidad = $mod_modalidad->consultarModalidad($arr_unidad[0]["id"], $emp_id);
+        $carrera = $modcarrera->consultarCarreraModalidad($arr_unidad[0]["id"], $modalidad[0]["id"]);
+        $mallaca = $mod_malla->consultarmallasxcarrera($arr_unidad[0]["id"], $modalidad[0]["id"], $carrera[0]["id"]);
+        \app\models\Utilities::putMessageLogFile('unidad sssss: '.$arr_unidad[0]["id"]);
+            \app\models\Utilities::putMessageLogFile('modalidad  sssss: '.$modalidad[0]["id"]);
+            \app\models\Utilities::putMessageLogFile('carrera  sssss: '.$carrera[0]["id"]);
+            \app\models\Utilities::putMessageLogFile('malla  ssss: '.$mallaca[0]["id"]);
+        //$arr_modalidad = $mod_modalidad->consultarModalidad($arr_unidad[0]["id"], $emp_id);
+        //$arr_carrera = $modcarrera->consultarCarreraModalidad($arr_unidad[0]["id"], $modalidad[0]["id"]);
+        //$arr_malla = $mod_malla->consultarmallasxcarrera($arr_unidad[0]["id"], $modalidad[0]["id"], $carrera[0]["id"]);
+        
         return $this->render('indexmallas', [
-            'mallaca' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']], $mallaca), 'id', 'name'),
-            'arr_modalidad' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']], $arr_modalidad), 'id', 'name'),
-            'carrera' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']], $carrera), 'id', 'name'),
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-        ]);       
-    }
+            'arr_unidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $arr_unidad), "id", "name"),
+            'arr_modalidad' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']], $modalidad), 'id', 'name'),
+            'arr_carrera' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']], $carrera), 'id', 'name'),
+            'arr_malla' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']], $mallaca), 'id', 'name'),
+            'model' => $model,
+        ]); 
 
+    }
+    
     public function actionExpexcelmallas() {
         ini_set('memory_limit', '256M');
-        $content_type = Utilities::mimeContentType("xls");
-        $nombarch = "Report-" . date("YmdHis") . ".xls";
-        header("Content-Type: $content_type");
-        header("Content-Disposition: attachment;filename=" . $nombarch);
-        header('Cache-Control: max-age=0');
-        $colPosition = array("C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O");
-        $arrHeader = array(
-            //Yii::t("formulario", "No."),
-            Yii::t("formulario", "Malla Academica"),
-            Yii::t("formulario", "Asignaturas"),
-            Yii::t("formulario", "Unidad"),
-            Yii::t("formulario", "Modalidad"),
-            Yii::t("formulario", "Semestre"),
-            Yii::t("formulario", "Crédito"),
-            Yii::t("formulario", "Formación Malla Academica"),
-            Yii::t("formulario", "Materia Requisito"),
+    $content_type = Utilities::mimeContentType("xls");
+    $nombarch = "Report-" . date("YmdHis") . ".xls";
+    header("Content-Type: $content_type");
+    header("Content-Disposition: attachment;filename=" . $nombarch);
+    header('Cache-Control: max-age=0');
+    $colPosition = array("C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O");
+    $arrHeader = array(
+        //Yii::t("formulario", "No."),
+        Yii::t("formulario", "Malla Academica"),
+        Yii::t("formulario", "Asignaturas"),
+        Yii::t("formulario", "Unidad"),
+        Yii::t("formulario", "Modalidad"),
+        Yii::t("formulario", "Semestre"),
+        Yii::t("formulario", "Crédito"),
+        Yii::t("formulario", "Formación Malla Academica"),
+        Yii::t("formulario", "Materia Requisito"),
         );
-        $searchModel = new ModalidadEstudioUnidadSearch();
+        $mod_reporte = new Reporte();
         $data = Yii::$app->request->get();
-        //\app\models\Utilities::putMessageLogFile('periodo '. $data['periodo']);
-        //\app\models\Utilities::putMessageLogFile('modalidad '. $data['modalidad']);
+        \app\models\Utilities::putMessageLogFile('unidad '. $data['unidad']);
+        \app\models\Utilities::putMessageLogFile('modalidad '. $data['modalidad']);
+        \app\models\Utilities::putMessageLogFile('carrera '. $data['carrera']);
+        \app\models\Utilities::putMessageLogFile('malla '. $data['malla']);
         $arrSearch["unidad"] = $data['unidad'];
         $arrSearch["modalidad"] = $data['modalidad'];
         $arrSearch["carrera"] = $data['carrera'];
@@ -785,9 +786,9 @@ class ReportesController extends CController {
         //\app\models\Utilities::putMessageLogFile('datos de base '. $arrData);
         $arrData = array();
         if (empty($arrSearch)) {
-            $arrData = $searchModel->getListadoMallaexcel(NULL,true);
+            $arrData = $mod_reporte->consultarMallasacademicas($arrSearch,true);
         } else {
-            $arrData = $searchModel->getListadoMallaexcel($arrSearch,true);
+            $arrData = $mod_reporte->consultarMallasacademicas(NULL,true);
         }
         for ($i = 0; $i < count($arrData); $i++) { 
             unset($arrData[$i]['carrera']);
@@ -864,9 +865,8 @@ class ReportesController extends CController {
         header("Content-Type: $content_type");
         header("Content-Disposition: attachment;filename=" . $nombarch);
         header('Cache-Control: max-age=0');
-        $colPosition = array("C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O");
+        $colPosition = array("C", "D", "E", "F", "G", "H", "I");
         $arrHeader = array(
-            //Yii::t("formulario", "No."),
             Yii::t("formulario", "Carrera"),
             Yii::t("formulario", "Nombres Completos"),
             Yii::t("formulario", "Asignaturas"),
@@ -889,6 +889,4 @@ class ReportesController extends CController {
         Utilities::generarReporteXLS($nombarch, $nameReport, $arrHeader, $arrData, $colPosition);
         exit;
     }
-
-
 }

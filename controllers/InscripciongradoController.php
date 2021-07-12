@@ -17,6 +17,8 @@ use app\models\Canton;
 use app\models\EstadoCivil;
 use app\modules\academico\models\MallaAcademica;
 use app\models\InscripcionGrado;
+use app\modules\admision\models\MetodoIngreso;
+use app\modules\admision\models\ConvenioEmpresa;
 use app\modules\academico\Module as academico;
 use app\modules\financiero\Module as financiero;
 use app\modules\admision\Module as admision;
@@ -53,6 +55,11 @@ class InscripciongradoController extends \yii\web\Controller {
         $arr_provincia = Provincia::provinciaXPais($arr_nacionalidad[0]["id"]);
         $arr_ciudad= Canton::cantonXProvincia($arr_provincia[0]["id"]);
         $arr_malla = $mod_malla->consultarmallasxcarrera($arr_unidad[0]['id'], $arr_carrera[0]['id'], $arr_modalidad[0]['id']);
+        $mod_metodo = new MetodoIngreso();
+        $arr_metodos = $mod_metodo->consultarMetodoUnidadAca_2($arr_unidad[0]["id"]);
+        $mod_conempresa = new ConvenioEmpresa();
+        $arr_convempresa = $mod_conempresa->consultarConvenioEmpresa();
+        $_SESSION['JSLANG']['Your information has not been saved. Please try again.'] = Yii::t('notificaciones', 'Your information has not been saved. Please try again.');
 
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
@@ -93,10 +100,12 @@ class InscripciongradoController extends \yii\web\Controller {
             "arr_provincia" => ArrayHelper::map($arr_provincia, "id", "value"),
             "arr_ciudad" => ArrayHelper::map($arr_ciudad, "id", "value"),
             'arr_malla' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']], $arr_malla), 'id', 'name'),
+            "arr_metodos" => ArrayHelper::map($arr_metodos, "id", "name"),
+            "arr_convenio_empresa" => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Ninguna")]], $arr_convempresa), "id", "name"),
         ]);
     }
 
-    public function actionSaveinscripciongradotemp() {
+    public function actionSaveinscripciongrado() {
         if (Yii::$app->request->isAjax) {
             $model = new InscripcionGrado();
             $data = Yii::$app->request->post();
@@ -143,7 +152,7 @@ class InscripciongradoController extends \yii\web\Controller {
                     $arrIm = explode(".", basename($data["DATA_1"][0]["ruta_doc_titulo"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
                     $titulo_archivoOld = Yii::$app->params["documentFolder"] . "inscripciongrado/" . $inscripgrado_id . "/doc_titulo_per_" . $inscripgrado_id . "." . $typeFile;
-                    $titulo_archivo = InscripcionAdmision::addLabelTimeDocumentos($inscripgrado_id, $titulo_archivoOld, $timeSt);
+                    $titulo_archivo = InscripcionGrado::addLabelTimeDocumentos($inscripgrado_id, $titulo_archivoOld, $timeSt);
                     $data["DATA_1"][0]["ruta_doc_titulo"] = $titulo_archivo;
                     if ($titulo_archivo === false)
                         throw new Exception('Error doc Titulo no renombrado.');
@@ -152,7 +161,7 @@ class InscripciongradoController extends \yii\web\Controller {
                     $arrIm = explode(".", basename($data["DATA_1"][0]["ruta_doc_dni"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
                     $dni_archivoOld = Yii::$app->params["documentFolder"] . "inscripciongrado/" . $inscripgrado_id . "/doc_dni_per_" . $inscripgrado_id . "." . $typeFile;
-                    $dni_archivo = InscripcionAdmision::addLabelTimeDocumentos($inscripgrado_id, $dni_archivoOld, $timeSt);
+                    $dni_archivo = InscripcionGrado::addLabelTimeDocumentos($inscripgrado_id, $dni_archivoOld, $timeSt);
                     $data["DATA_1"][0]["ruta_doc_dni"] = $dni_archivo;
                     if ($dni_archivo === false)
                         throw new Exception('Error doc Dni no renombrado.');
@@ -161,7 +170,7 @@ class InscripciongradoController extends \yii\web\Controller {
                     $arrIm = explode(".", basename($data["DATA_1"][0]["ruta_doc_certvota"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
                     $certvota_archivoOld = Yii::$app->params["documentFolder"] . "inscripciongrado/" . $inscripgrado_id . "/doc_certvota_per_" . $inscripgrado_id . "." . $typeFile;
-                    $certvota_archivo = InscripcionAdmision::addLabelTimeDocumentos($inscripgrado_id, $certvota_archivoOld, $timeSt);
+                    $certvota_archivo = InscripcionGrado::addLabelTimeDocumentos($inscripgrado_id, $certvota_archivoOld, $timeSt);
                     $data["DATA_1"][0]["ruta_doc_certvota"] = $certvota_archivo;
                     if ($certvota_archivo === false)
                         throw new Exception('Error doc certificado vot. no renombrado.');
@@ -170,7 +179,7 @@ class InscripciongradoController extends \yii\web\Controller {
                     $arrIm = explode(".", basename($data["DATA_1"][0]["ruta_doc_foto"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
                     $foto_archivoOld = Yii::$app->params["documentFolder"] . "inscripciongrado/" . $inscripgrado_id . "/doc_foto_per_" . $inscripgrado_id . "." . $typeFile;
-                    $foto_archivo = InscripcionAdmision::addLabelTimeDocumentos($inscripgrado_id, $foto_archivoOld, $timeSt);
+                    $foto_archivo = InscripcionGrado::addLabelTimeDocumentos($inscripgrado_id, $foto_archivoOld, $timeSt);
                     $data["DATA_1"][0]["ruta_doc_foto"] = $foto_archivo;
                     if ($foto_archivo === false)
                         throw new Exception('Error doc Foto no renombrado.');
@@ -188,7 +197,7 @@ class InscripciongradoController extends \yii\web\Controller {
                     $arrIm = explode(".", basename($data["DATA_1"][0]["ruta_doc_hojavida"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
                     $doc_hojaVidaOld = Yii::$app->params["documentFolder"] . "inscripciongrado/" . $inscripgrado_id . "/doc_hojavida_per_" . $inscripgrado_id . "." . $typeFile;
-                    $doc_hojaVida = InscripcionAdmision::addLabelTimeDocumentos($inscripgrado_id, $doc_hojaVidaOld, $timeSt);
+                    $doc_hojaVida = InscripcionGrado::addLabelTimeDocumentos($inscripgrado_id, $doc_hojaVidaOld, $timeSt);
                     $data["DATA_1"][0]["ruta_doc_hojavida"] = $doc_hojaVida;
                     if ($doc_hojaVida === false)
                         throw new Exception('Error doc Hoja de Vida no renombrado.');
@@ -197,7 +206,7 @@ class InscripciongradoController extends \yii\web\Controller {
                     $arrIm = explode(".", basename($data["DATA_1"][0]["ruta_doc_aceptacion"]));                    
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);                    
                     $doc_aceptacionOld = Yii::$app->params["documentFolder"] . "inscripciongrado/" . $inscripgrado_id . "/doc_aceptacion_per_" . $inscripgrado_id . "." . $typeFile;                    
-                    $doc_aceptacion = InscripcionAdmision::addLabelTimeDocumentos($inscripgrado_id, $doc_aceptacionOld, $timeSt);                    
+                    $doc_aceptacion = InscripcionGrado::addLabelTimeDocumentos($inscripgrado_id, $doc_aceptacionOld, $timeSt);                    
                     $data["DATA_1"][0]["ruta_doc_aceptacion"] = $doc_aceptacion;                    
                     if ($doc_aceptacion === false)
                         throw new Exception('Error documento aceptación.');
@@ -206,17 +215,17 @@ class InscripciongradoController extends \yii\web\Controller {
                     $arrIm = explode(".", basename($data["DATA_1"][0]["ruta_doc_pago"]));                    
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);                                                            
                     $doc_pagoOld = Yii::$app->params["documentFolder"] . "documentoadmision/" . $inscripgrado_id . "/pago_". $inscripgrado_id . "." . $typeFile;                                         
-                    $doc_pago = InscripcionAdmision::addLabelFechaDocPagos($inscripgrado_id, $doc_pagoOld, $fecha_registro);                      
+                    $doc_pago = InscripcionGrado::addLabelFechaDocPagos($inscripgrado_id, $doc_pagoOld, $fecha_registro);                      
                     $data["DATA_1"][0]["ruta_doc_pago"] = $doc_pago;                      
                     if ($doc_pagoOld === false)
                         throw new Exception('Error al cargar documento de pago.');
                 }                                
                 if ($accion == "create" || $accion == "Create") {
                     //Nuevo Registro                        
-                    $resul = $model->insertarInscripcion($data);
+                    $resul = $model->insertarInscripciongrado($data);
                 } else if ($accion == "Update") {
                     //Modificar Registro                        
-                    $resul = $model->actualizarInscripcion($data);                    
+                    $resul = $model->actualizarInscripciongrado($data);                    
                     //$model->insertaOriginal($resul["ids"]);
                 } else if ($accion == "Fin") {
                     $Ids = isset($data['codigo']) ? $data['codigo'] : 0;                                                         
@@ -235,10 +244,10 @@ class InscripciongradoController extends \yii\web\Controller {
                         'doc_pago' => $data["doc_pago"], 
                         'forma_pago' => $data["forma_pago"], 
                     );                      
-                    $resul = $model->insertaOriginal($Ids,$dataRegistro);                    
+                    $resul = $model->insertaOriginalgrado($Ids,$dataRegistro);                    
                 } else if ($accion == "UpdateDepTrans") {
                     //Modificar Registro                    
-                    $resul = $model->actualizarInscripcion($data);                                          
+                    $resul = $model->actualizarInscripciongrado($data);                                          
                 }             
                 if ($resul['status']) {
                     \app\models\Utilities::putMessageLogFile('resultado es ok');

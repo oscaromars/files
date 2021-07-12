@@ -142,7 +142,7 @@ class EstudianteCarreraProgramaSearch extends EstudianteCarreraPrograma {
             }        
         }
 
-            $sql = "SELECT eaca.eaca_nombre as carrera, 
+            $sql = "SELECT distinct eaca.eaca_nombre as carrera, 
                         ifnull(CONCAT(per.per_pri_apellido,' ' ,per.per_seg_apellido,' ' ,per.per_pri_nombre),'') as estudiante, 
                         enac.enac_asig_estado as estado_nota, 
                         asi.asi_descripcion as asignatura, 
@@ -158,7 +158,7 @@ class EstudianteCarreraProgramaSearch extends EstudianteCarreraPrograma {
                 INNER JOIN db_academico.malla_academica maca on maca.maca_id = maes.maca_id
                 INNER JOIN db_academico.modalidad_estudio_unidad meun on meun.meun_id = ecpr.meun_id
                 INNER JOIN db_academico.estudio_academico eaca on eaca.eaca_id = meun.eaca_id
-                WHERE 
+                WHERE est.per_id = " . $arrFiltro['estudiante'] . " AND
                 ecpr.ecpr_estado = 1 AND ecpr.ecpr_estado_logico = 1
                 AND est.est_estado = 1 AND est.est_estado_logico = 1
                 AND per.per_estado = 1 AND per.per_estado_logico = 1 

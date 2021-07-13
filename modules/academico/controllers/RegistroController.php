@@ -2941,16 +2941,22 @@ class RegistroController extends \app\components\CController {
             //obtengo el ron_id
             $resp_ron_id= $modelCargaCartera->getRonPes($per_id);
             $ron_id = $resp_ron_id['ron_id'];
-            $dataPlanificacion = $matriculacion_model->getPlanificationFromRegistroOnline($ron_id,$rama_id);
 
+            $dataPlanificacion = $matriculacion_model->getPlanificationFromRegistroOnline($ron_id,$rama_id);
+            
             for ($i = 0; $i < count($dataPlanificacion); $i++) {
                 $total_costo_materia = $total_costo_materia + $dataPlanificacion[$i]['Cost'];
             }
-
-
+            
             /*Detalles de pagos */
             $resp_rpm_id = $matriculacion_model->getNumeroDocumentoRegistroOnline($rama_id);
             $rpm_id = $resp_rpm_id['rpm_id'];
+            $rama_fecha_creacion = $resp_rpm_id['rama_fecha_creacion'];
+
+            //Obtengo el rpm_estado_generado
+            $resp_rpm_estado_generado = $matriculacion_model->getEstadoGeneradoRpm($rpm_id, $ron_id);
+            $rpm_estado_generado = $resp_rpm_estado_generado['rpm_tipo_pago'];
+
             \app\models\Utilities::putMessageLogFile('Inicio Proceso:'.$ron_id.'- '.$rpm_id. '-'. $rama_id);
             $registro_pago_matricula = new RegistroPagoMatricula();
             $resp_cant_cuota = $registro_pago_matricula->getCuotasPeriodo($ron_id, $rpm_id);
@@ -2958,8 +2964,15 @@ class RegistroController extends \app\components\CController {
             $est_id = $modelEstudiante['est_id'];
 
             $detallePagos = $matriculacion_model->getDetalleCuotasRegistroOnline($ron_id, $rpm_id);
-
-            $valor_gasto_adm = $detallePagos[0]['valor_factura'] - $total_costo_materia;
+            $this->putMessageLogFileCartera('rpm_estado_generado: '.$rpm_estado_generado);
+            if($rpm_estado_generado == 3){
+                $valor_gasto_adm = $detallePagos[0]['valor_factura'] - $total_costo_materia;
+            }else{
+                $valor_gasto_adm = $matriculacion_model->getValorPagoTC($rama_id);
+                $this->putMessageLogFileCartera('valor_gasto_adm: '.$valor_gasto_adm.' - '.$total_costo_materia);
+                $valor_gasto_adm = $valor_gasto_adm - $total_costo_materia;
+            }
+            
 
             //Valores de registro online
             $detallePagosRon = $matriculacion_model->getDetvalorRegistroOnline($ron_id);
@@ -2991,6 +3004,8 @@ class RegistroController extends \app\components\CController {
                         'ron_id' => $ron_id,
                         'maca_nombre' => $maca_nombre,
                         'rama_id' => $rama_id,
+                        'rpm_estado_generado' => $rpm_estado_generado,
+                        'rama_fecha_creacion' => explode(" ",$rama_fecha_creacion)[0],
                         'valor_gasto_adm' => $valor_gasto_adm,
                     ])
             );
@@ -3088,7 +3103,6 @@ class RegistroController extends \app\components\CController {
                 //-----------------------------------
             return;
     }
-
     public function actionInscripcionpdf($ids) {
         try {
             $ids = $_GET['ids'];

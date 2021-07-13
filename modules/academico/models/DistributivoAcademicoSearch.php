@@ -404,7 +404,7 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
         $con_db = \Yii::$app->db;
         $paca_id = 0;
 
-        $sql = "select (@row_number:=@row_number + 1) AS Id, IFNULL(CONCAT(persona.per_pri_apellido,' ' ,persona.per_seg_apellido,' ' ,persona.per_pri_nombre,' ' ,persona.per_seg_nombre), ' ') as docente,
+        $sql = "select (@row_number:=@row_number + 1) AS Id, IFNULL(CONCAT(ifnull(persona.per_pri_apellido,' '), ' ', ifnull(persona.per_seg_apellido,' '), ' ', ifnull(persona.per_pri_nombre,' '), ' ', ifnull(persona.per_seg_nombre, ' ')), '') as docente,
                 per_cedula as no_cedula,
                 IFNULL(UPPER(pi3.pins_titulo),'N/A') as  titulo_tercel_nivel,
                 IFNULL(UPPER(pi4.pins_titulo),'N/A') as  titulo_cuarto_nivel,
@@ -499,7 +499,7 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
         }
 
             $sql = "select 
-                UPPER(CONCAT(persona.per_pri_apellido,' ' ,persona.per_seg_apellido,' ' ,persona.per_pri_nombre,' ' ,persona.per_seg_nombre)) as docente,
+                IFNULL(CONCAT(ifnull(persona.per_pri_apellido,' '), ' ', ifnull(persona.per_seg_apellido,' '), ' ', ifnull(persona.per_pri_nombre,' '), ' ', ifnull(persona.per_seg_nombre, ' ')), '') as docente,
                 per_cedula as no_cedula,
                 IFNULL(UPPER(pi3.pins_titulo),'N/A') as  titulo_tercel_nivel,
                 IFNULL(UPPER(pi4.pins_titulo),'N/A') as  titulo_cuarto_nivel,

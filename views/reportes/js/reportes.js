@@ -123,7 +123,6 @@ function buscarDatapromedios() {
     }
 }
 
-
 function exportAgendamiento(){
     buscarActividades("1");//Reporte de Oportunidad x Actividad
 }

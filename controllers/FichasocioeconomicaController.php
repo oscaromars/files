@@ -33,7 +33,7 @@ class FichasocioeconomicaController extends \yii\web\Controller {
         $per_id = Yii::$app->session->get("PB_perid");
         $mod_persona = Persona::findIdentity($per_id);
 
-        $mod_pais = new Pais();
+        $mod_pais = new Pais(); 
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
             if (isset($data["getprovincias"])) {
@@ -61,7 +61,7 @@ class FichasocioeconomicaController extends \yii\web\Controller {
         } else {
             $per_id = Yii::$app->session->get("PB_perid");
         }*/
-
+  
         $per_genero = Persona::find()->select("per_id AS id, per_genero AS value")->where(["per_estado_logico" => "1", "per_estado" => "1"])->asArray()->all();
         $arr_nacionalidad = Pais::find()->select("pai_id AS id, pai_nacionalidad AS value")->where(["pai_estado_logico" => "1", "pai_estado" => "1"])->asArray()->all();
         $arr_pais = Pais::find()->select("pai_id AS id, pai_nombre AS value")->where(["pai_estado_logico" => "1", "pai_estado" => "1"])->asArray()->all();

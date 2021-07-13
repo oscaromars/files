@@ -28,15 +28,15 @@ academico::registerTranslations();
 
 class InscripciongradoController extends \yii\web\Controller {
 
-    public function init() {
+    /*public function init() {
         if (!is_dir(Yii::getAlias('@bower')))
             Yii::setAlias('@bower', '@vendor/bower-asset');
         return parent::init();
-    }
+    }*/
 
     public function actionIndex() {
-        $this->layout = '@themes/' . \Yii::$app->getView()->theme->themeName . '/layouts/basic.php';
-        $per_id = Yii::$app->session->get("PB_perid");
+        //$this->layout = '@themes/' . \Yii::$app->getView()->theme->themeName . '/layouts/basic.php';
+        //$per_id = Yii::$app->session->get("PB_perid");
         $mod_persona = Persona::findIdentity($per_id);
         $mod_unidad = new UnidadAcademica();
         $mod_carrera = new EstudioAcademico();
@@ -48,6 +48,15 @@ class InscripciongradoController extends \yii\web\Controller {
         $arr_carrera = $mod_carrera->consultarCarreraxunidad($arr_unidad[0]['id']);
         $arr_modalidad = $mod_carrera->consultarmodalidadxcarrera($arr_carrera[0]['id']);
         $arr_periodo = $mod_periodo->consultarPeriodosActivos();
+
+        if (base64_decode($_GET['ids']) != '') {// tomar el de parametro)
+            $per_id = base64_decode($_GET['ids']);
+        } else {
+            $per_id = Yii::$app->session->get("PB_perid");
+        }
+        //Búsqueda de los datos de persona logueada
+        $modperinteresado = new Persona();
+        $respPerinteresado = $modperinteresado->consultaPersonaId($per_id);
 
         $arr_nacionalidad = Pais::find()->select("pai_id AS id, pai_nacionalidad AS value")->where(["pai_estado_logico" => "1", "pai_estado" => "1"])->asArray()->all();
         $arr_estado_civil = EstadoCivil::find()->select("eciv_id AS id, eciv_nombre AS value")->where(["eciv_estado_logico" => "1", "eciv_estado" => "1"])->asArray()->all();

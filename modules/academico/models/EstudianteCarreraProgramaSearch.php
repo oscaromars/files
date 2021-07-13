@@ -142,8 +142,8 @@ class EstudianteCarreraProgramaSearch extends EstudianteCarreraPrograma {
             }        
         }
 
-            $sql = "SELECT distinct eaca.eaca_nombre as carrera, 
-                        ifnull(CONCAT(per.per_pri_apellido,' ' ,per.per_seg_apellido,' ' ,per.per_pri_nombre),'') as estudiante, 
+            $sql = "SELECT distinct ifnull(CONCAT(per.per_pri_apellido,' ' ,per.per_seg_apellido,' ' ,per.per_pri_nombre),'') as estudiante, 
+                        eaca.eaca_nombre as carrera, 
                         enac.enac_asig_estado as estado_nota, 
                         asi.asi_descripcion as asignatura, 
                         maca.maca_nombre as malla,

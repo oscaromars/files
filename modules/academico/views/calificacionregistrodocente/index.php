@@ -14,7 +14,7 @@ academico::registerTranslations();
         <?=
         $this->render('_formIndex',[
             'arr_asignatura'  => $arr_asignatura,
-            'arr_periodoActual' => $arr_periodoActual,
+            'arr_periodos' => $arr_periodos,
             'arr_ninteres' => $arr_ninteres,
             'arr_modalidad' => $arr_modalidad,
             'arr_profesor_all'=>$arr_profesor_all,

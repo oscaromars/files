@@ -20,7 +20,7 @@ Academico::registerTranslations();
         <div class="form-group">                 
             <label for="cmb_periodo_clfc" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= academico::t("Academico", "Period") ?></label>
             <div class="col-sm-3 col-xs-3 col-md-3 col-lg-3">  
-                    <?= Html::dropDownList("cmb_periodo_clfc",1,$arr_periodoActual, ["class" => "form-control", "id" => "cmb_periodo_clfc"]) ?>              
+                    <?= Html::dropDownList("cmb_periodo_clfc",1,$arr_periodos, ["class" => "form-control", "id" => "cmb_periodo_clfc"]) ?>              
             </div>
              <label for="cmb_profesor_clfc" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= academico::t("Academico", "Teacher") ?></label>
             <div class="col-sm-3 col-xs-3 col-md-3 col-lg-3">

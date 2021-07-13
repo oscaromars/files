@@ -78,6 +78,10 @@
 		    <td colspan="2" class="aleft td"><span class="bold">PERIODO:</span></td>
 		    <td colspan="3" class="aleft td">    <?= $model[0]['paca_nombre'] ?>   </td>
 		  </tr>
+		  <tr class="tr">
+		    <td colspan="2" class="aleft td"><span class="bold">DOCENTE:</span></td>
+		    <td id="docente_seccion_acta" colspan="3" class="aleft td"> <?= $profesor_data[0]['name'] . " - " . $profesor_data[0]['cedula'] ?>   </td>
+		  </tr>
 
 		</table>
     	<br>

@@ -138,7 +138,7 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 
         $arr_grupos = $grupo_model->getAllGruposByUser($user_usermane);
         
-        $arr_periodoActual = $mod_periodoActual->getPeriodoAcademicoActual();
+        $arr_periodos = $mod_periodoActual->consultarTodosPeriodosAcademicos();
 
         $arr_ninteres = $mod_unidad->consultarUnidadAcademicasEmpresa(1);
 
@@ -150,22 +150,22 @@ class CalificacionregistrodocenteController extends \app\components\CController 
             $arr_profesor_all = $mod_profesor->getProfesoresEnAsignaturas(); 
             Utilities::putMessageLogFile("Paso por cordinador");
             // Utilities::putMessageLogFile(print_r($arr_profesor_all,true));
-            $asignatura = $Asignatura_distri->getAsignaturasBy($arr_profesor_all[0]['pro_id'],$arr_ninteres[0]["id"],$arr_periodoActual[0]["id"]);
-            $arr_estudiante = $cabeceraCalificacion->consultaCalificacionRegistroDocenteSearch($arr_ninteres[0]["id"],$arr_periodoActual[0]["id"],$asignatura[0]['id'],$arr_profesor_all[0]["pro_id"]);
+            $asignatura = $Asignatura_distri->getAsignaturasBy($arr_profesor_all[0]['pro_id'],$arr_ninteres[0]["id"],$arr_periodos[0]["id"]);
+            $arr_estudiante = $cabeceraCalificacion->consultaCalificacionRegistroDocenteSearch($arr_ninteres[0]["id"],$arr_periodos[0]["id"],$asignatura[0]['id'],$arr_profesor_all[0]["pro_id"]);
         }else{
             Utilities::putMessageLogFile("Paso no Cordinador");
             //No es Cordinador
             $arr_profesor_all = $mod_profesor->getProfesoresEnAsignaturasByPerId($per_id);
             // Utilities::putMessageLogFile(print_r($arr_profesor_all,true));
-            $asignatura = $Asignatura_distri->getAsignaturasBy($arr_profesor_all[0]['pro_id'],$arr_ninteres[0]["id"],$arr_periodoActual[0]["id"]);
-             $arr_estudiante = $cabeceraCalificacion->consultaCalificacionRegistroDocenteSearch($arr_ninteres[0]["id"],$arr_periodoActual[0]["id"],$asignatura[0]['id'],$arr_profesor_all[0]['pro_id']);
+            $asignatura = $Asignatura_distri->getAsignaturasBy($arr_profesor_all[0]['pro_id'],$arr_ninteres[0]["id"],$arr_periodos[0]["id"]);
+             $arr_estudiante = $cabeceraCalificacion->consultaCalificacionRegistroDocenteSearch($arr_ninteres[0]["id"],$arr_periodos[0]["id"],$asignatura[0]['id'],$arr_profesor_all[0]['pro_id']);
         }
         //Obtiene el grupo id del suaurio
 
         return $this->render('index', [
                     'model' => $arr_estudiante,
                     'arr_asignatura' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Todos")]], $asignatura), "id", "name"),
-                    'arr_periodoActual' => ArrayHelper::map(array_merge($arr_periodoActual), "id", "nombre"),
+                    'arr_periodos' => ArrayHelper::map(array_merge($arr_periodos), "id", "nombre"),
                     'arr_ninteres' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Todos")]], $arr_ninteres), "id", "name"),
                     'arr_modalidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Todos")]], $arr_modalidad), "id", "name"),
                    // 'arr_carrerra1' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $arr_carrerra1), "id", "name"),
@@ -1506,6 +1506,12 @@ class CalificacionregistrodocenteController extends \app\components\CController 
         //$arr_estudiante = $cabeceraCalificacion->consultaCalificacionRegistroDocenteSearch($unidad,$periodo,$materia,$profesor);
         $arr_estudiante = $cabeceraCalificacion->consultaCalificacionRegistroDocenteAllSearch($unidad,$periodo,$materia,$profesor,$modalidad,true);
 
+        // \app\models\Utilities::putMessageLogFile('arr_estudiante: ' . print_r($arr_estudiante, true));
+
+        $profesor_data = (new Profesor())->getProfesoresDist($profesor);
+
+        // \app\models\Utilities::putMessageLogFile('profesor_data: ' . print_r($profesor_data, true));
+
         //$data_student = $matriculacion_model->getDataStudenbyRonId($ron_id);
         //$dataPlanificacion = $matriculacion_model->getPlanificationFromRegistroOnline($ron_id);
         /*$dataProvider = new ArrayDataProvider([
@@ -1523,6 +1529,7 @@ class CalificacionregistrodocenteController extends \app\components\CController 
         $report->createReportPdf(
                 $this->render('acta_body', [
                     "model" => $arr_estudiante,
+                    "profesor_data" => $profesor_data
                     //"data_student" => $data_student,
                 ])
         );

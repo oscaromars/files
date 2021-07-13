@@ -78,6 +78,7 @@ class ModalidadEstudioUnidadSearch extends ModalidadEstudioUnidad {
         $con_academico = \Yii::$app->db_academico;
         $con_db = \Yii::$app->db;
         $estado = 1;
+        $str_search = '';
 
         if (isset($arrFiltro) && count($arrFiltro) > 0) {
             \app\models\Utilities::putMessageLogFile('unidad filtro: '. $arrFiltro['unidad']);
@@ -212,6 +213,7 @@ class ModalidadEstudioUnidadSearch extends ModalidadEstudioUnidad {
     public function getListadoMallaexcel($arrFiltro = NULL, $onlyData = false) {
         $con_academico = \Yii::$app->db_academico;
         $con_db = \Yii::$app->db;
+        $estado = '1';
 
         if (isset($arrFiltro) && count($arrFiltro) > 0) { 
             if ($arrFiltro['unidad'] != "" && $arrFiltro['unidad'] > 0) {
@@ -266,7 +268,7 @@ class ModalidadEstudioUnidadSearch extends ModalidadEstudioUnidad {
            
             if ($arrFiltro['unidad'] != "" && $arrFiltro['unidad'] > 0) {
                 $unidad = $arrFiltro["unidad"];
-                $comando->bindParam(":paca_id", $periodo, \PDO::PARAM_INT);
+                $comando->bindParam(":uaca_id", $unidad, \PDO::PARAM_INT);
             }
             
             if ($arrFiltro['modalidad'] != "" && $arrFiltro['modalidad'] > 0) {

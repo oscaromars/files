@@ -32,8 +32,8 @@ class CronogramaController extends \app\components\CController {
         $arr_unidad = $mod_unidad->consultarUnidadAcademicasEmpresa(0);
         // pagina para subir una imagen de cronograma
         return $this->render('new', [
-            'arr_periodo' => ArrayHelper::map(array_merge([["id" => "0", "name" => "Seleccionar"]], $periodo), "id", "name"),          
-            'arr_unidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => "Seleccionar"]], $arr_unidad), "id", "name"),                    
+            'arr_periodo' => ArrayHelper::map(array_merge([["id" => "0", "name" => "Seleccionar"]], $periodo), "id", "name"),
+            'arr_unidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => "Seleccionar"]], $arr_unidad), "id", "name"),
         ]);
     }
 
@@ -48,16 +48,16 @@ class CronogramaController extends \app\components\CController {
         // obtener la unidad academica del estudiante autenticado
         $unidad_academica = $mod_especie->consultaDatosEstudiante($per_id);
         //obtener la imagen guardad del cronograma segun unidad academica y periodo actual
-        $cronograma = $mod_cronograma->consultaCronograma($unidad_academica["uaca_id"], $periodo_activo["id"]);
+        $cronograma = $mod_cronograma->consultaCronograma($unidad_academica["uaca_id"], $periodo_activo[0]["id"]);
         return $this->render('cronograma', [
-            'arr_cronograma' => $cronograma,   
+            'arr_cronograma' => $cronograma,
         ]);
     }
 
     public function actionCargarcronograma() {
         $usu_id = @Yii::$app->session->get("PB_iduser");
-        $modcronograma = new Cronograma();          
-        if (Yii::$app->request->isAjax) {            
+        $modcronograma = new Cronograma();
+        if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
             if ($data["upload_file"]) {
                 if (empty($_FILES)) {
@@ -81,29 +81,29 @@ class CronogramaController extends \app\components\CController {
             $typeFile = strtolower($arrIm[count($arrIm) - 1]);
             $imagen = $arrIm[0] . "." . $typeFile;
             $uaca_id = $data["uaca_id"];
-            $paca_id = $data["paca_id"];          
-            $cro_descripcion = ucwords(mb_strtolower($data["descripcion"]));           
+            $paca_id = $data["paca_id"];
+            $cro_descripcion = ucwords(mb_strtolower($data["descripcion"]));
 
             $con = \Yii::$app->db_academico;
             $transaction = $con->beginTransaction();
             try {
                 $modcronograma = new Cronograma();
                 $cronograma = $modcronograma->consultaCronograma($uaca_id, $paca_id);
-                //guardar la data Aqui                                  
+                //guardar la data Aqui
                 if (empty($cronograma["cro_archivo"])) {
                 $respcronograma = $modcronograma->insertarCronograma($uaca_id, $paca_id, $imagen, $cro_descripcion, $usu_id);
-                if ($respcronograma) {                                   
+                if ($respcronograma) {
                     $exito = 1;
                 }
                 if ($exito == 1) {
-                    $transaction->commit(); 
+                    $transaction->commit();
                     $message = array(
                         "wtmessage" => Yii::t("notificaciones", "Cronograma ha sido cargado."),
                         "title" => Yii::t('jslang', 'Success'),
                     );
                     return \app\models\Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), false, $message);
                 } else {
-                    $transaction->rollback(); 
+                    $transaction->rollback();
                     $message = array(
                         "wtmessage" => Yii::t("notificaciones", "Error: Cronograma No ha sido cargado."),
                         "title" => Yii::t('jslang', 'Success'),
@@ -111,7 +111,7 @@ class CronogramaController extends \app\components\CController {
                     return \app\models\Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), false, $message);
                 }
               } else {
-                $transaction->rollback(); 
+                $transaction->rollback();
                 $message = array(
                     "wtmessage" => Yii::t("notificaciones", "Se actualizó la imagen del cronograma."),
                     "title" => Yii::t('jslang', 'Success'),
@@ -119,7 +119,7 @@ class CronogramaController extends \app\components\CController {
                 return \app\models\Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), false, $message);
             }
             } catch (Exception $ex) {
-                $transaction->rollback(); 
+                $transaction->rollback();
                 $message = array(
                     "wtmessage" => Yii::t("notificaciones", "Error al grabar."),
                     "title" => Yii::t('jslang', 'Success'),
@@ -130,19 +130,19 @@ class CronogramaController extends \app\components\CController {
         }
     }
     public function actionReglamento() {
-        //$data = Yii::$app->request->get(); 
+        //$data = Yii::$app->request->get();
         $usu_id = @Yii::$app->session->get("PB_iduser");
         $modreglamento = new Reglamento();
         $reglamento = $modreglamento->consultaReglamento();
         return $this->render('reglamento', [
-            'model' => $reglamento,   
-        ]);         
+            'model' => $reglamento,
+        ]);
     }
 
-    public function actionDownload($route, $type) {       
+    public function actionDownload($route, $type) {
         if (Yii::$app->session->get('PB_isuser')) {
             $route = str_replace("../", "", $route);
-            if (preg_match("/^" . reglamentos . "\//", $route)) {
+            //if (preg_match("/^" . reglamentos . "\//", $route)) {
                 $url_image = Yii::$app->basePath . "/uploads/" . $route;
                 $arrIm = explode(".", $url_image);
                 $typeImage = $arrIm[count($arrIm) - 1];
@@ -160,12 +160,12 @@ class CronogramaController extends \app\components\CController {
                         }
                         header('Content-Transfer-Encoding: binary');
                         header('Content-Length: ' . filesize($url_image));
-                        readfile($url_image);                        
+                        readfile($url_image);
                     }
                 }
-            }
+            //}
         }
         exit();
     }
-    
+
 }

@@ -404,12 +404,14 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
         $con_db = \Yii::$app->db;
         $paca_id = 0;
 
-        $sql = "select (@row_number:=@row_number + 1) AS Id, UPPER(CONCAT(persona.per_pri_apellido,' ' ,persona.per_seg_apellido,' ' ,persona.per_pri_nombre,' ' ,persona.per_seg_nombre)) as docente,
+        $sql = "select (@row_number:=@row_number + 1) AS Id, IFNULL(CONCAT(persona.per_pri_apellido,' ' ,persona.per_seg_apellido,' ' ,persona.per_pri_nombre,' ' ,persona.per_seg_nombre), ' ') as docente,
                 per_cedula as no_cedula,
                 IFNULL(UPPER(pi3.pins_titulo),'N/A') as  titulo_tercel_nivel,
                 IFNULL(UPPER(pi4.pins_titulo),'N/A') as  titulo_cuarto_nivel,
                 persona.per_correo as correo,
-                UPPER(dd.ddoc_nombre)  as  tiempo_dedicacion,
+                -- UPPER(dd.ddoc_nombre)  as  tiempo_dedicacion,
+                ifnull((select ifnull(dd.ddoc_nombre, '') from db_academico.dedicacion_docente dd 
+                    where dd.ddoc_id = profesor.ddoc_id),' ') as tiempo_dedicacion,
                 IFNULL( asi_nombre,'N/A' )as materia,
                 tdis_nombre,
                 case when td.tdis_id=7 then tdis_num_semanas else (pc.paca_semanas_periodo * case  when dah.daho_total_horas is null then tdis_num_semanas else dah.daho_total_horas end) end as total_horas_dictar,
@@ -418,15 +420,15 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
                 inner join " . $con_academico->dbname . ".distributivo_cabecera dc on da.dcab_id=dc.dcab_id
                 inner join " . $con_academico->dbname . ".profesor profesor on da.pro_id = profesor.pro_id 
                 inner join " . $con_db->dbname .        ".persona persona on profesor.per_id = persona.per_id 
-                inner join " . $con_academico->dbname . ".dedicacion_docente dd on dd.ddoc_id = profesor.ddoc_id  
+               -- inner join " . $con_academico->dbname . ".dedicacion_docente dd on dd.ddoc_id = profesor.ddoc_id  
                 LEFT JOIN " . $con_academico->dbname . ".modalidad AS m ON da.mod_id = m.mod_id
-                left join " . $con_academico->dbname .  ".asignatura asi on asi.asi_id = da.asi_id 
-                left join " . $con_academico->dbname .  ".profesor_instruccion pi3 on pi3.pro_id = profesor.pro_id and pi3.nins_id =3 and pi3.pins_estado=1 and pi3.pins_estado_logico=1
-                left join " . $con_academico->dbname .  ".profesor_instruccion pi4 on pi4.pro_id = profesor.pro_id and pi4.nins_id =4 and pi4.pins_estado=1 and pi4.pins_estado_logico=1    
+                left join " . $con_academico->dbname . ".asignatura asi on asi.asi_id = da.asi_id 
+                left join " . $con_academico->dbname . ".profesor_instruccion pi3 on pi3.pro_id = profesor.pro_id and pi3.nins_id =3 and pi3.pins_estado=1 and pi3.pins_estado_logico=1
+                left join " . $con_academico->dbname . ".profesor_instruccion pi4 on pi4.pro_id = profesor.pro_id and pi4.nins_id =4 and pi4.pins_estado=1 and pi4.pins_estado_logico=1    
                 INNER JOIN " . $con_academico->dbname . ".periodo_academico pc on da.paca_id  = pc.paca_id and  pc.paca_activo='A'
                 INNER JOIN " . $con_academico->dbname . ".tipo_distributivo td on td.tdis_id  = da.tdis_id 
-                LEFT JOIN " . $con_academico->dbname .  ".distributivo_academico_horario dah on dah.daho_id  = da.daho_id    
-                where  da.daca_estado='1' and daca_estado_logico='1'  and td.tdis_id <> 6 and dc.dcab_estado_revision=2";
+                LEFT JOIN " . $con_academico->dbname . ".distributivo_academico_horario dah on dah.daho_id  = da.daho_id    
+                where da.daca_estado='1' and daca_estado_logico='1'  and td.tdis_id <> 6 and dc.dcab_estado_revision=2";
         if ($tipo == 1) {
             $this->load($params);
             if ($this->validate()) {
@@ -502,7 +504,9 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
                 IFNULL(UPPER(pi3.pins_titulo),'N/A') as  titulo_tercel_nivel,
                 IFNULL(UPPER(pi4.pins_titulo),'N/A') as  titulo_cuarto_nivel,
                 persona.per_correo as correo,
-                UPPER(dd.ddoc_nombre)  as  tiempo_dedicacion,
+                -- UPPER(dd.ddoc_nombre)  as  tiempo_dedicacion,
+                ifnull((select ifnull(dd.ddoc_nombre, '') from db_academico.dedicacion_docente dd 
+                    where dd.ddoc_id = profesor.ddoc_id),' ') as tiempo_dedicacion,
                 tdis_nombre,
                 IFNULL( asi_nombre,'N/A' )as materia,
                 case when td.tdis_id=7 then tdis_num_semanas else (pc.paca_semanas_periodo * case  when dah.daho_total_horas is null then tdis_num_semanas else dah.daho_total_horas end) end as total_horas_dictar,
@@ -511,7 +515,7 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
                 inner join " . $con_academico->dbname . ".distributivo_cabecera dc on da.dcab_id=dc.dcab_id
                 inner join " . $con_academico->dbname . ".profesor profesor on da.pro_id = profesor.pro_id 
                 inner join " . $con_db->dbname .        ".persona persona on profesor.per_id = persona.per_id 
-                inner join " . $con_academico->dbname . ".dedicacion_docente dd on dd.ddoc_id = profesor.ddoc_id  
+                -- inner join " . $con_academico->dbname . ".dedicacion_docente dd on dd.ddoc_id = profesor.ddoc_id  
                 LEFT JOIN " . $con_academico->dbname . ".modalidad AS m ON da.mod_id = m.mod_id
                 left join " . $con_academico->dbname .  ".asignatura asi on asi.asi_id = da.asi_id 
                 left join " . $con_academico->dbname .  ".profesor_instruccion pi3 on pi3.pro_id = profesor.pro_id and pi3.nins_id =3 and pi3.pins_estado=1 and pi3.pins_estado_logico=1

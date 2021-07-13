@@ -93,7 +93,7 @@ class Cronograma extends \yii\db\ActiveRecord
     }
      /**
      * Function grabar insertarCronograma
-     * @author Giovanni Vergara <analistadesarrollo02@uteg.edu.ec> 
+     * @author Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
      * @param
      * @return
      */
@@ -108,7 +108,7 @@ class Cronograma extends \yii\db\ActiveRecord
         (:uaca_id,:paca_id,:cro_archivo,:cro_descripcion,:cro_usuario_ingreso,
         :cro_estado,:cro_fecha_creacion,:cro_estado_logico)";
         $command = $con->createCommand($sql);
-       
+
         $command->bindParam(":uaca_id", $uaca_id, \PDO::PARAM_INT);
         $command->bindParam(":paca_id", $paca_id, \PDO::PARAM_INT);
         $command->bindParam(":cro_archivo", $cro_archivo, \PDO::PARAM_STR);
@@ -116,26 +116,26 @@ class Cronograma extends \yii\db\ActiveRecord
         $command->bindParam(":cro_usuario_ingreso", $cro_usuario_ingreso, \PDO::PARAM_STR);
         $command->bindParam(":cro_estado", $estado, \PDO::PARAM_STR);
         $command->bindParam(":cro_fecha_creacion", $fecha_registro, \PDO::PARAM_STR);
-        $command->bindParam(":cro_estado_logico", $estado, \PDO::PARAM_STR);        
+        $command->bindParam(":cro_estado_logico", $estado, \PDO::PARAM_STR);
         $command->execute();
-        return $con->getLastInsertID();        
+        return $con->getLastInsertID();
     }
 
      /**
      * Function grabar consulta la informacin de Cronograma
-     * @author Giovanni Vergara <analistadesarrollo02@uteg.edu.ec> 
+     * @author Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
      * @param
      * @return
      */
 
     public function consultaCronograma($uaca_id, $paca_id) {
-        $con = \Yii::$app->db_academico;        
+        $con = \Yii::$app->db_academico;
         $estado = 1;
         $sql = "SELECT cro_archivo
-                    FROM " . $con->dbname . ".cronograma                             
-                WHERE cro_estado =:estado AND 
-                      cro_estado_logico =:estado AND 
-                      uaca_id =:uaca_id AND 
+                    FROM " . $con->dbname . ".cronograma
+                WHERE cro_estado =:estado AND
+                      cro_estado_logico =:estado AND
+                      uaca_id =:uaca_id AND
                       paca_id =:paca_id;";
 
         $comando = $con->createCommand($sql);

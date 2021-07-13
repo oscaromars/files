@@ -12,7 +12,7 @@ use app\modules\academico\Module as academico;
  * and open the template in the editor.
  */
 ?>
-<?php echo $this->render('_form_reportepromedio', ['model' => $searchModel]); ?>
+
 <div class="panel panel-primary">
   <div class="panel-heading">
       <h3 class="panel-title">Reporte Promedios</h3>
@@ -25,7 +25,7 @@ use app\modules\academico\Module as academico;
         'id' => 'Tbg_Registro_promedios',
         'showExport' => true,
         'fnExportEXCEL' => "exportExcelpromedios",
-        'dataProvider' => $dataProvider,
+        'dataProvider' => $model,
         'columns' => [
            
             [

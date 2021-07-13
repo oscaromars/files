@@ -404,15 +404,14 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
         $con_db = \Yii::$app->db;
         $paca_id = 0;
 
-        $sql = "select (@row_number:=@row_number + 1) AS Id, UPPER(CONCAT(persona.per_pri_apellido,' ' ,persona.per_seg_apellido,' ' ,persona.per_pri_nombre,' ' ,persona.per_seg_nombre)) as docente,
+        $sql = "select (@row_number:=@row_number + 1) AS Id, IFNULL(CONCAT(persona.per_pri_apellido,' ' ,persona.per_seg_apellido,' ' ,persona.per_pri_nombre,' ' ,persona.per_seg_nombre), ' ') as docente,
                 per_cedula as no_cedula,
                 IFNULL(UPPER(pi3.pins_titulo),'N/A') as  titulo_tercel_nivel,
                 IFNULL(UPPER(pi4.pins_titulo),'N/A') as  titulo_cuarto_nivel,
                 persona.per_correo as correo,
                 -- UPPER(dd.ddoc_nombre)  as  tiempo_dedicacion,
-                (select ifnull(dd.ddoc_nombre, ' ') from db_academico.dedicacion_docente dd 
-                            where dd.ddoc_id = profesor.ddoc_id
-                            ) as tiempo_dedicacion,
+                ifnull((select ifnull(dd.ddoc_nombre, '') from db_academico.dedicacion_docente dd 
+                    where dd.ddoc_id = profesor.ddoc_id),' ') as tiempo_dedicacion,
                 IFNULL( asi_nombre,'N/A' )as materia,
                 tdis_nombre,
                 case when td.tdis_id=7 then tdis_num_semanas else (pc.paca_semanas_periodo * case  when dah.daho_total_horas is null then tdis_num_semanas else dah.daho_total_horas end) end as total_horas_dictar,
@@ -506,9 +505,8 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
                 IFNULL(UPPER(pi4.pins_titulo),'N/A') as  titulo_cuarto_nivel,
                 persona.per_correo as correo,
                 -- UPPER(dd.ddoc_nombre)  as  tiempo_dedicacion,
-                (select ifnull(dd.ddoc_nombre, ' ') from db_academico.dedicacion_docente dd 
-                            where dd.ddoc_id = profesor.ddoc_id
-                            ) as tiempo_dedicacion,
+                ifnull((select ifnull(dd.ddoc_nombre, '') from db_academico.dedicacion_docente dd 
+                    where dd.ddoc_id = profesor.ddoc_id),' ') as tiempo_dedicacion,
                 tdis_nombre,
                 IFNULL( asi_nombre,'N/A' )as materia,
                 case when td.tdis_id=7 then tdis_num_semanas else (pc.paca_semanas_periodo * case  when dah.daho_total_horas is null then tdis_num_semanas else dah.daho_total_horas end) end as total_horas_dictar,

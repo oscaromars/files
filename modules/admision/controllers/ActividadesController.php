@@ -239,7 +239,7 @@ class ActividadesController extends \app\components\CController {
             $con = \Yii::$app->db_crm;
             $transaction = $con->beginTransaction();
             try {
-                $padm_class = $mod_gestion->consultarAgenteAutenticado(5);
+                $padm_class = $mod_gestion->consultarAgenteAutenticado($per_id );
                 $padm_id = $padm_class['padm_id'];
                 if ($padm_id > 0) {
                     $opo_id = base64_decode($data['oportunidad']);
@@ -327,7 +327,7 @@ class ActividadesController extends \app\components\CController {
             $con = \Yii::$app->db_crm;
             $transaction = $con->beginTransaction();
             try {
-                $padm_class = $mod_gestion->consultarAgenteAutenticado(5);
+                $padm_class = $mod_gestion->consultarAgenteAutenticado($per_id);
                 $padm_id = $padm_class['padm_id'];
                 $act_id = base64_decode($data['bact_id']);
                 if ($padm_id > 0) {

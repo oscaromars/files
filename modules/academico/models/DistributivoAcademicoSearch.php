@@ -696,7 +696,7 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
         $con_db = \Yii::$app->db;
         $paca_id = 0;
 
-        $sql = "select '1050' as codigo_ies, UPPER(CONCAT(persona.per_pri_apellido,' ' ,persona.per_seg_apellido,' ' ,persona.per_pri_nombre,' ' ,persona.per_seg_nombre)) as docente,
+        $sql = "select '1050' as codigo_ies, IFNULL(CONCAT(ifnull(persona.per_pri_apellido,' '), ' ', ifnull(persona.per_seg_apellido,' '), ' ', ifnull(persona.per_pri_nombre,' '), ' ', ifnull(persona.per_seg_nombre, ' ')), '') as docente,
                 case when per_cedula is null then per_pasaporte else per_cedula end as no_cedula,
                 case when per_cedula is null then 'Pasaporte' else 'Cédula' end as tipo_identificacion,
                 IFNULL(pro_num_contrato,'') as pro_num_contrato,
@@ -736,21 +736,21 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
                     $sql = $sql . " and profesor.ddoc_id =" . $this->uaca_id;
                 }
             } else {
-                $sql = $sql . " and da.paca_id =0";
+                $sql = $sql . " and profesor.ddoc_id =0";
             }
         }
         if ($tipo == 2) {
 
-            if ($params['mod_id']) {
+            /*if ($params['mod_id']) {
                 $sql = $sql . " and da.mod_id =" . $params['mod_id'];
-            }
+            }*/
 
             if ($params['paca_id']) {
                 $sql = $sql . " and da.paca_id =" . $params['paca_id'];
             }
-            if ($params['tdis_id']) {
+            /*if ($params['tdis_id']) {
                 $sql = $sql . " and da.tdis_id =" . $params['tdis_id'];
-            }
+            }*/
         }
         $sql = $sql . "  group by codigo_ies,docente,no_cedula,tipo_identificacion,pro_num_contrato,ddoc_horas";
         Utilities::putMessageLogFile('sql:' . $sql);
@@ -787,7 +787,7 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
                      
         }
 
-            $sql = "select '1050' as codigo_ies, UPPER(CONCAT(persona.per_pri_apellido,' ' ,persona.per_seg_apellido,' ' ,persona.per_pri_nombre,' ' ,persona.per_seg_nombre)) as docente,
+            $sql = "select '1050' as codigo_ies, IFNULL(CONCAT(ifnull(persona.per_pri_apellido,' '), ' ', ifnull(persona.per_seg_apellido,' '), ' ', ifnull(persona.per_pri_nombre,' '), ' ', ifnull(persona.per_seg_nombre, ' ')), '') as docente,
                 case when per_cedula is null then per_pasaporte else per_cedula end as no_cedula,
                 case when per_cedula is null then 'Pasaporte' else 'Cédula' end as tipo_identificacion,
                 IFNULL(pro_num_contrato,'') as pro_num_contrato,

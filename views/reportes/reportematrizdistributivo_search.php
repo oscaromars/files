@@ -53,7 +53,7 @@ $var = ArrayHelper::map(app\modules\academico\models\PeriodoAcademico::find()->w
     
 
     <?=
-    $form->field($model, 'uaca_id')->label('Dedicación:')->widget(Select2::classname(), [
+    $form->field($model, 'pro_id')->label('Dedicación:')->widget(Select2::classname(), [
         'data' => ArrayHelper::map(app\modules\academico\models\DedicacionDocente::find()->all(), 'ddoc_id', 'ddoc_nombre'),
         // 'data' => $var,
         'size' => Select2::MEDIUM,

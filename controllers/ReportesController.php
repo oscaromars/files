@@ -457,9 +457,9 @@ class ReportesController extends CController {
         $colPosition = array("C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S");
         $arrHeader = array( 
             Yii::t("formulario", "Código_IES"),
+            Yii::t("formulario", "Docente"),
             Yii::t("formulario", "Tipo de Identificación"),
             Yii::t("formulario", "Identificación"),
-            Yii::t("formulario", "Docente"),
             Yii::t("formulario", "N° Documento"),
             Yii::t("formulario", "Horas Clase"),
             Yii::t("formulario", "Horas Tutorías"),

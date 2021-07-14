@@ -49,27 +49,6 @@ class InscripciongradoController extends \yii\web\Controller {
         $arr_modalidad = $mod_carrera->consultarmodalidadxcarrera($arr_carrera[0]['id']);
         $arr_periodo = $mod_periodo->consultarPeriodosActivos();
 
-        if (base64_decode($_GET['ids']) != '') {// tomar el de parametro)
-            $per_id = base64_decode($_GET['ids']);
-        } else {
-            $per_id = Yii::$app->session->get("PB_perid");
-        }
-        //Búsqueda de los datos de persona logueada
-        $modperinteresado = new Persona();
-        $respPerinteresado = $modperinteresado->consultaPersonaId($per_id);
-
-        $arr_nacionalidad = Pais::find()->select("pai_id AS id, pai_nacionalidad AS value")->where(["pai_estado_logico" => "1", "pai_estado" => "1"])->asArray()->all();
-        $arr_estado_civil = EstadoCivil::find()->select("eciv_id AS id, eciv_nombre AS value")->where(["eciv_estado_logico" => "1", "eciv_estado" => "1"])->asArray()->all();
-        $arr_pais = Pais::find()->select("pai_id AS id, pai_nombre AS value")->where(["pai_estado_logico" => "1", "pai_estado" => "1"])->asArray()->all();
-        $arr_provincia = Provincia::provinciaXPais($arr_nacionalidad[0]["id"]);
-        $arr_ciudad= Canton::cantonXProvincia($arr_provincia[0]["id"]);
-        $arr_malla = $mod_malla->consultarmallasxcarrera($arr_unidad[0]['id'], $arr_carrera[0]['id'], $arr_modalidad[0]['id']);
-        $mod_metodo = new MetodoIngreso();
-        $arr_metodos = $mod_metodo->consultarMetodoUnidadAca_2($arr_unidad[0]["id"]);
-        $mod_conempresa = new ConvenioEmpresa();
-        $arr_convempresa = $mod_conempresa->consultarConvenioEmpresa();
-        $_SESSION['JSLANG']['Your information has not been saved. Please try again.'] = Yii::t('notificaciones', 'Your information has not been saved. Please try again.');
-
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
             if (isset($data["getprovincias"])) {
@@ -89,12 +68,32 @@ class InscripciongradoController extends \yii\web\Controller {
                 $message = array('modalidad' => $modalidad);
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
             }
-            if (isset($data['getmalla'])) {
+            /*if (isset($data['getmalla'])) {
                 $mallaca = $mod_malla->consultarmallasxcarrera($data['uaca_id'], $data['moda_id'], $data['eaca_id']);
                 $message = array('mallaca' => $mallaca);
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
-            }
+            }*/
         }
+        if (base64_decode($_GET['ids']) != '') {// tomar el de parametro)
+            $per_id = base64_decode($_GET['ids']);
+        } else {
+            $per_id = Yii::$app->session->get("PB_perid");
+        }
+        //Búsqueda de los datos de persona logueada
+        $modperinteresado = new Persona();
+        $respPerinteresado = $modperinteresado->consultaPersonaId($per_id);
+
+        $arr_nacionalidad = Pais::find()->select("pai_id AS id, pai_nacionalidad AS value")->where(["pai_estado_logico" => "1", "pai_estado" => "1"])->asArray()->all();
+        $arr_estado_civil = EstadoCivil::find()->select("eciv_id AS id, eciv_nombre AS value")->where(["eciv_estado_logico" => "1", "eciv_estado" => "1"])->asArray()->all();
+        $arr_pais = Pais::find()->select("pai_id AS id, pai_nombre AS value")->where(["pai_estado_logico" => "1", "pai_estado" => "1"])->asArray()->all();
+        $arr_provincia = Provincia::provinciaXPais($arr_nacionalidad[0]["id"]);
+        $arr_ciudad= Canton::cantonXProvincia($arr_provincia[0]["id"]);
+        //$arr_malla = $mod_malla->consultarmallasxcarrera($arr_unidad[0]['id'], $arr_carrera[0]['id'], $arr_modalidad[0]['id']);
+        $mod_metodo = new MetodoIngreso();
+        $arr_metodos = $mod_metodo->consultarMetodoUnidadAca_2($arr_unidad[0]["id"]);
+        $mod_conempresa = new ConvenioEmpresa();
+        $arr_convempresa = $mod_conempresa->consultarConvenioEmpresa();
+        $_SESSION['JSLANG']['Your information has not been saved. Please try again.'] = Yii::t('notificaciones', 'Your information has not been saved. Please try again.');
 
         return $this->render('index', [
             "arr_unidad" => ArrayHelper::map($arr_unidad, "id", "name"),
@@ -108,9 +107,10 @@ class InscripciongradoController extends \yii\web\Controller {
             "arr_pais" => ArrayHelper::map($arr_pais, "id", "value"),
             "arr_provincia" => ArrayHelper::map($arr_provincia, "id", "value"),
             "arr_ciudad" => ArrayHelper::map($arr_ciudad, "id", "value"),
-            'arr_malla' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']], $arr_malla), 'id', 'name'),
+            //'arr_malla' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']], $arr_malla), 'id', 'name'),
             "arr_metodos" => ArrayHelper::map($arr_metodos, "id", "name"),
             "arr_convenio_empresa" => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Ninguna")]], $arr_convempresa), "id", "name"),
+            "respPerinteresado" => $respPerinteresado,
         ]);
     }
 

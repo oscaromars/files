@@ -72,7 +72,7 @@ use app\modules\academico\Module as academico;
                         'header' => academico::t("Academico", "Horas Administrativas"),
                        'value' => function ($model, $key, $index, $widget) {
                            
-                            return /*$model['ddoc_horas'] - */($model['hora_clase'] +$model['hora_otras_actividades']+ $model['hora_ivestigacion']+ $model['hora_tutorias']+ $model['hora_vinculacion']);
+                            return $model['ddoc_horas'] - ($model['hora_clase'] +$model['hora_otras_actividades']+ $model['hora_ivestigacion']+ $model['hora_tutorias']+ $model['hora_vinculacion']);
                         },
                     ],
                     [

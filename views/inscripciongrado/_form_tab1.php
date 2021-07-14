@@ -10,11 +10,24 @@ use yii\widgets\ActiveForm;
 use app\components\CFileInputAjax;
 use app\widgets\PbSearchBox\PbSearchBox;
 use app\modules\academico\Module as academico;
+use yii\web\Session;
+
+session_start();
+if (!empty($per_cedula)) {
+    $tipodoc = "CED";    
+} else {
+    if (!empty($per_pasaporte)) {
+        $tipodoc = "PASS";    
+    }
+    else{
+        $tipodoc = "CED";    
+    }   
+}
 
 academico::registerTranslations();
 
 ?>
-
+<?= Html::hiddenInput('txth_ids', base64_decode($_GET['ids']), ['id' => 'txth_ids']); ?>
 <form class="form-horizontal">
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <h3><span id="lbl_Personeria"><?= Yii::t("formulario", "Formulario de Inscripción Grado") ?></span></h3>
@@ -76,11 +89,11 @@ academico::registerTranslations();
             <div class="form-group">
                 <label for="txt_primer_nombre" class="col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= Yii::t("formulario", "First Name") ?><span class="text-danger">*</span></label>
                 <div class="col-sm-3 col-md-3 col-xs-3 col-lg-3">
-                    <input type="text" class="form-control PBvalidation keyupmce" id="txt_primer_nombre" data-type="alfa" data-keydown="true" placeholder="<?= Yii::t("formulario", "First Name") ?>">
+                    <input type="text" class="form-control PBvalidation keyupmce" value="<?= $per_pri_nombre ?>" id="txt_primer_nombre" data-type="alfa" data-keydown="true" placeholder="<?= Yii::t("formulario", "First Name") ?>">
                 </div>
                 <label for="txt_segundo_nombre" class="col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= Yii::t("formulario", "Middle Name") ?><span class="text-danger">*</span></label>
                 <div class="col-sm-3 col-md-3 col-xs-3 col-lg-3">
-                    <input type="text" class="form-control PBvalidation keyupmce" id="txt_segundo_nombre" data-type="alfa" data-keydown="true" placeholder="<?= Yii::t("formulario", "Middle Name") ?>">
+                    <input type="text" class="form-control PBvalidation keyupmce" value="<?= $per_seg_nombre ?>" id="txt_segundo_nombre" data-type="alfa" data-keydown="true" placeholder="<?= Yii::t("formulario", "Middle Name") ?>">
                 </div>
             </div>
         </div>
@@ -88,28 +101,28 @@ academico::registerTranslations();
             <div class="form-group">
                 <label for="txt_primer_apellido" class="col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= Yii::t("formulario", "Last Name") ?><span class="text-danger">*</span></label>
                 <div class="col-sm-3 col-md-3 col-xs-3 col-lg-3">
-                    <input type="text" class="form-control PBvalidation keyupmce" id="txt_primer_apellido" data-type="alfa" data-keydown="true" placeholder="<?= Yii::t("formulario", "Last Name") ?>">
+                    <input type="text" class="form-control PBvalidation keyupmce" value="<?= $per_pri_apellido ?>" id="txt_primer_apellido" data-type="alfa" data-keydown="true" placeholder="<?= Yii::t("formulario", "Last Name") ?>">
                 </div>
                 <label for="txt_segundo_apellido" class="col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= Yii::t("formulario", "Last Second Name") ?><span class="text-danger">*</span></label>
                 <div class="col-sm-3 col-md-3 col-xs-3 col-lg-3">
-                    <input type="text" class="form-control PBvalidation keyupmce" id="txt_segundo_apellido" data-type="alfa" data-keydown="true" placeholder="<?= Yii::t("formulario", "Last Second Name") ?>">
+                    <input type="text" class="form-control PBvalidation keyupmce" value="<?= $per_seg_apellido ?>" id="txt_segundo_apellido" data-type="alfa" data-keydown="true" placeholder="<?= Yii::t("formulario", "Last Second Name") ?>">
                 </div>
             </div>
         </div>
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <div class="form-group">
-                <label for="txt_lugar_nacimiento" class="col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= Yii::t("formulario", "Lugar de Nacimiento") ?><span class="text-danger">*</span></label>
+                <label for="cmb_ciu_nac" class="col-sm-2 col-md-2 col-xs-2 col-lg-2 control-label"><?= Yii::t("formulario", "City of birth") ?> <span class="text-danger">*</span> </label>
                 <div class="col-sm-3 col-md-3 col-xs-3 col-lg-3">
-                    <input type="text" class="form-control PBvalidation keyupmce" id="txt_lugar_nacimiento" data-type="alfa" data-keydown="true" placeholder="<?= Yii::t("formulario", "Ciudad de nacimiento") ?>">
+                    <?= Html::dropDownList("cmb_ciu_nac", $can_id_nacimiento, $arr_ciudad, ["class" => "form-control can_combo", "id" => "cmb_ciu_nac"]) ?>
                 </div>
-                <label for="txt_fecha_nac" class="col-sm-2 col-md-2 col-xs-2 col-lg-2 control-label"><?= Yii::t("formulario", "Fecha de Nacimiento") ?><span class="text-danger">*</span></label>
+                <label for="txt_fecha_nac" class="col-sm-2 col-md-2 col-xs-2 col-lg-2 control-label"><?= Yii::t("formulario", "Birth Date") ?><span class="text-danger">*</span></label>
                 <div class="col-sm-3 col-md-3 col-xs-3 col-lg-3">
                     <?=
                     DatePicker::widget([
                         'name' => 'txt_fecha_nac',
-                        'value' => '',
+                        'value' => $per_fecha_nacimiento,
                         'type' => DatePicker::TYPE_INPUT,
-                        'options' => ["class" => "form-control", "id" => "txt_fecha_nac", "placeholder" => Yii::t("formulario", "Fecha de Nacimiento")],
+                        'options' => ["class" => "form-control PBvalidation keyupmce", "id" => "txt_fecha_nac", "data-type" => "fecha", "data-keydown" => "true", "placeholder" => Yii::t("formulario", "Birth Date yyyy-mm-dd")],
                         'pluginOptions' => [
                             'autoclose' => true,
                             'format' => Yii::$app->params["dateByDatePicker"],
@@ -123,7 +136,7 @@ academico::registerTranslations();
             <div class="form-group">
                 <label for="cmb_nacionalidad" class="col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= Yii::t("formulario", "Nacionalidad") ?><span class="text-danger">*</span></label>
                 <div class="col-sm-3 col-md-3 col-xs-3 col-lg-3">
-                    <?= Html::dropDownList("cmb_nacionalidad", '', $arr_nacionalidad, ["class" => "form-control", "id" => "cmb_nacionalidad"]) ?>
+                    <input type="text" class="form-control PBvalidation keyupmce" id="cmb_nacionalidad" value="<?= $per_nacionalidad ?>" data-type="alfanumerico" data-keydown="true" placeholder="<?= Yii::t("formulario", "Nationality") ?>">
                 </div>
                 <label for="cmb_estado_civil" class="col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= Yii::t("formulario", "Estado Civil"); ?> <span class="text-danger">*</span> </label>
                 <div class="col-sm-3 col-md-3 col-xs-3 col-lg-3">

@@ -93,22 +93,36 @@ class PlanificacionController extends \app\components\CController {
             ],
         ]);
         return $this->render('index', [
-                    'arr_pla' => ( empty(ArrayHelper::map($arr_pla, 'pla_periodo_academico', 'pla_periodo_academico')) ) ? array(Yii::t('planificacion', '-- Select periodo --')) : ( ArrayHelper::map($arr_pla, 'pla_periodo_academico', 'pla_periodo_academico') ),
-                    'arr_modalidad' => ( empty(ArrayHelper::map($arr_modalidad, 'mod_id', 'mod_nombre')) ) ? array(Yii::t('planificacion', '-- Select Modality --')) : ( ArrayHelper::map($arr_modalidad, 'mod_id', 'mod_nombre') ),
+                    'arr_pla' => ( empty(ArrayHelper::map($arr_pla, 'pla_id', 'pla_periodo_academico')) ) ? array(Yii::t('planificacion', '-- Select periodo --')) : ( ArrayHelper::map($arr_pla, 'pla_id', 'pla_periodo_academico') ),
+                   // 'arr_modalidad' => ( empty(ArrayHelper::map($arr_modalidad, 'mod_id', 'mod_nombre')) ) ? array(Yii::t('planificacion', '-- Select Modality --')) : ( ArrayHelper::map($arr_modalidad, 'mod_id', 'mod_nombre') ),
+                    'arr_modalidad' => ArrayHelper::map(array_merge([["mod_id" => "0", "mod_nombre" => Yii::t("formulario", "Select")]], $arr_modalidad), "mod_id", "mod_nombre"),
                     'model' => $dataProvider,
-                    'pla_periodo_academico' => $pla_periodo_academico,
-                    'mod_id' => $mod_id,
+                    'pla_periodo_academico' => 0,
+                    'mod_id' => 0,
         ]);
         //}
     }
 
 
+ 
 
 
     public function actionGenerator($periodo,$modalidad) {
     
      
     
+
+                    $con = \Yii::$app->db_academico;
+                    $sql = "
+                            SELECT  
+                            CONCAT(saca_nombre,' ',saca_anio) as semestre
+                            FROM db_academico.semestre_academico where saca_id = :periodo
+                    ";
+                    $comando = $con->createCommand($sql);
+                    $comando->bindParam(":periodo", $periodo, \PDO::PARAM_STR);
+                    $saca_nombre = $comando->queryOne();
+               
+
 
 $mensaje = "periodo ".$periodo." modalidad ".$modalidad;
 mail('oscaromars@hotmail.com', 'Mi título', $mensaje);
@@ -117,15 +131,18 @@ mail('oscaromars@hotmail.com', 'Mi título', $mensaje);
  $sql = "
                  select e.est_id, e.per_id, e.est_matricula, e.est_fecha_creacion, e.est_categoria, meu.uaca_id, meu.mod_id, meu.eaca_id, -- 
 u.uaca_id, u.uaca_nombre, ea.teac_id, ea.eaca_nombre, ea.eaca_codigo,
-per.per_cedula, 
+per.per_cedula,  mumo.maca_id ,
 concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_apellido, ' ', ifnull(per.per_seg_apellido,'')) estudiante
  from db_academico.estudiante e
  inner join db_academico.estudiante_carrera_programa c on c.est_id = e.est_id
-  inner join db_academico.modalidad_estudio_unidad meu on meu.meun_id = c.meun_id   
+  inner join db_academico.modalidad_estudio_unidad meu on meu.meun_id = c.meun_id  
+  inner join db_academico.malla_unidad_modalidad mumo on mumo.meun_id = meu.meun_id 
    inner join db_academico.unidad_academica u on u.uaca_id = meu.uaca_id
    inner join db_academico.estudio_academico ea on ea.eaca_id = meu.eaca_id 
    inner join db_asgard.persona per on per.per_id = e.per_id
-   where e.per_id not in (select e.per_id from db_academico.planificacion_estudiantex b where b.pes_estado=0) -- get full estudent with 0
+   where e.per_id in (select b.per_id from db_academico.planificacion_estudiante b where
+    b.pla_id= ( select max(dap.pla_id) from db_academico.planificacion dap 
+    where meu.mod_id = dap.mod_id ))
                     and meu.mod_id = :modalidad
                     and e.est_estado = 1
                     and e.est_estado_logico = 1
@@ -155,18 +172,28 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
             for ($i = 0; $i < count($resultData); $i++) {                        
                 // consultar asignaturas_por_periodo programadas en abrirse.
                    $malla = new MallaAcademica();
-                  $centralprocess = $malla->consultarAsignaturas($resultData[$i],$periodo);           
+    $centralprocess = $malla->consultarAsignaturas($resultData[$i],$periodo,$saca_nombre["semestre"]);   
+                     
+                    if ($centralprocess == 1) { $ok=1;  }        
+
+                     \app\models\Utilities::putMessageLogFile("Received ".$centralprocess); 
+
             }
         }else{
            // putMessageLogFile("No hay registros por insertar.");
         }   
-               
-        
+             
+          if ($ok != 1)  {
+        \Yii::$app->getSession()->setFlash('msg', 'No existen datos suficientes para generar la planificacion seleccionada');
+        // \Yii::$app->getSession()->setFlash('msg') ;
+         return $this->redirect(['index']);
+
+        }
          //   return $resultData;
          //  return $this->render('temporal', [
            //         'resultData' => $centralprocess,
              //          ]);
-
+            \Yii::$app->getSession()->setFlash('msgok', 'Se ha generado con exito la planificacion');
          return $this->redirect(['index']);
      }
 
@@ -449,14 +476,24 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
                 $pla_id = $data['pla_id'];
                 $finicio = $data['finicio'];
                 $ffin = $data['ffin'];
-                $bloque = $data['bloque'];
-                $model = RegistroConfiguracion::findOne($id);
-                $model->pla_id = $pla_id;
-                $model->rco_fecha_inicio = $finicio . ' 00:00:00';
-                $model->rco_fecha_fin = $ffin . ' 23:59:59';
-                $model->rco_num_bloques = ( $bloque == 0 ) ? 1 : 2;
-                $model->rco_fecha_modificacion = date(Yii::$app->params['dateTimeByDefault']);
-                $model->rco_usuario_modifica = Yii::$app->session->get('PB_iduser');
+                
+                   $finicio1 = $data['finicioa'];
+                $ffin1 = $data['ffina'];
+
+             //   $finicio2 = $data['finicio2'];
+             //   $ffin2 = $data['ffin2'];
+
+                $finicio3 = $data['finicio3'];
+                $ffin3 = $data['ffin3'];
+
+                $finicio4 = $data['finicio4'];
+                $ffin4 = $data['ffin4'];
+
+                $finicio5 = $data['finicio5'];
+                $ffin5 = $data['ffin5'];
+
+                $modelconf = new RegistroConfiguracion();
+                $model = $modelconf->updatePlanAnual($id, $finicio, $ffin,$finicio1, $ffin1, /*$finicio2, $ffin2, */ $finicio3, $ffin3, $finicio4, $ffin4,$finicio5, $ffin5);
                 $message = array(
                     'wtmessage' => Yii::t('notificaciones', 'Your information was successfully saved.'),
                     'title' => Yii::t('jslang', 'Success'),
@@ -480,17 +517,39 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
             try {
-                $pla_id = $data['pla_id'];
+               $pla_id = $data['pla_id'];
                 $finicio = $data['finicio'];
+                \app\models\Utilities::putMessageLogFile('entro..: ');
+                \app\models\Utilities::putMessageLogFile('finicio..: '. $finicio);  
                 $ffin = $data['ffin'];
+                \app\models\Utilities::putMessageLogFile('ffin..: '. $ffin);
+                $finicio1 = $data['finicio1'];
+                \app\models\Utilities::putMessageLogFile('finicio1.: '. $finicio1);
+                $ffin1 = $data['ffin1'];
+                \app\models\Utilities::putMessageLogFile('ffin..: '. $ffin1);
+
+             //   $finicio2 = $data['finicio2'];
+             //   $ffin2 = $data['ffin2'];
+
+                $finicio3 = $data['finicio3'];
+                \app\models\Utilities::putMessageLogFile('finicio3.: '. $finicio3);
+                $ffin3 = $data['ffin3'];
+                \app\models\Utilities::putMessageLogFile('fin3.: '. $ffin3);
+                $finicio4 = $data['finicio4'];
+                \app\models\Utilities::putMessageLogFile('finicio4.: '. $finicio4);
+                $ffin4 = $data['ffin4'];
+                \app\models\Utilities::putMessageLogFile('fin4.: '. $ffin4);
+                $finicio5 = $data['finicio5'];
+                \app\models\Utilities::putMessageLogFile('finicio5.: '. $finicio5);
+                $ffin5 = $data['ffin5'];
+                \app\models\Utilities::putMessageLogFile('fin5.: '. $ffin5);
+
+
                 $bloque = $data['bloque'];
-                $model = new RegistroConfiguracion();
-                $model->pla_id = $pla_id;
-                $model->rco_fecha_inicio = $finicio . ' 00:00:00';
-                $model->rco_fecha_fin = $ffin . ' 23:59:59';
-                $model->rco_num_bloques = ( $bloque == 0 ) ? 1 : 2;
-                $model->rco_estado = '1';
-                $model->rco_estado_logico = '1';
+                $modelconf = new RegistroConfiguracion();
+                $inserta_planificacionanual = $modelconf->insertarPlanAnual($pla_id, $finicio, $ffin,$finicio1, $ffin1, /*$finicio2, $ffin2, */ $finicio3, $ffin3, $finicio4, $ffin4,$finicio5, $ffin5);
+
+
                 $message = array(
                     'wtmessage' => Yii::t('notificaciones', 'Your information was successfully saved.'),
                     'title' => Yii::t('jslang', 'Success'),
@@ -1051,6 +1110,7 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
         $emp_id = @Yii::$app->session->get('PB_idempresa');
         $mod_periodo = new PlanificacionEstudiante();
         $periodo = $mod_periodo->consultarPeriodoAcadplanifica();
+        $arr_pla = Planificacion::getPeriodosAcademicoMod();
         $uni_aca_model = new UnidadAcademica();
         $modestudio = new ModuloEstudio();
         $modalidad_model = new Modalidad();
@@ -1058,49 +1118,25 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
         $unidad_acad_data = $uni_aca_model->consultarUnidadAcademicas();
         $modalidad_data = $modalidad_model->consultarModalidad($unidad_acad_data[0]['id'], $emp_id);
         $academic_study_data = $modcanal->consultarCarreraModalidad(null, null);
-        $model_plan = $mod_periodo->consultarEstudiantePeriodo();
+        $arrSearch['planificacion'] = 0;
+            $arrSearch['modalidad'] = 0;
+        $model_plan = $mod_periodo->consultarEstudiantePeriodo($arrSearch);
         $data = Yii::$app->request->get();
-        if ($data['PBgetFilter']) {
+        if (!$data) {
             \app\models\Utilities::putMessageLogFile('Filtros iniciales: '.$data['PBgetFilter']);
-            //$arrSearch['estudiante'] = $data['estudiante'];
-            ////$arrSearch['unidad'] = $data['unidad'];
-            $arrSearch['modalidad'] = $data['modalidad'];
-            //$arrSearch['carrera'] = $data['carrera'];
-            $arrSearch['periodo'] = $data['periodo'];
-            $arrSearch['Materia'] = $data['materia'];
-            $arrSearch['Cantidad'] = $data['cantidad'];
+            $arrSearch['planificacion'] = 0;
+            $arrSearch['modalidad'] = 0;
             $model_plan = $mod_periodo->consultarEstudiantePeriodo($arrSearch);
+            //$model_plan = [];
             //$model_total_plan = $model_plan
-            return $this->render('academicoestudiante-grid', [
-                    
-                //'arr_modalidad' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Todas']], $modalidad_data), 'id', 'name'),
-                
-                //'arr_periodo' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Todas']], $periodo), 'id', 'name'),
+            return $this->render('academicoestudiante', [
+                'arr_modalidad' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Todas']], $modalidad_data), 'id', 'name'),
+                'arr_periodo' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Todas']], $arr_pla), 'id', 'name'),
                 'model' => $model_plan,
-                //Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), true, $message),
             ]);
         }
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
-            /*if (isset($data['getmodalidad'])) {
-                if (( $data['nint_id'] == 1 ) or ( $data['nint_id'] == 2 )) {
-                    $modalidad = $modalidad_model->consultarModalidad($data['nint_id'], $data['empresa_id']);
-                } else {
-                    $modalidad = $modestudio->consultarModalidadModestudio();
-                }
-                $message = array('modalidad' => $modalidad);
-                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
-            }
-            if (isset($data['getcarrera'])) {
-                if (( $data['unidada'] == 1 ) or ( $data['unidada'] == 2 )) {
-                    $carrera = $modcanal->consultarCarreraModalidad($data['unidada'], $data['moda_id']);
-                } else {
-                    $carrera = $modestudio->consultarCursoModalidad($data['unidada'], $data['moda_id']);
-                    // tomar id de impresa
-                }
-                $message = array('carrera' => $carrera);
-                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
-            }*/
             try{
                 if (($data['modalidad'] != 0 && $data['periodo'] != 0)) {
                     $arrSearch['modalidad'] = $data['modalidad']?$data['modalidad']:0;
@@ -1109,14 +1145,11 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
                     \app\models\Utilities::putMessageLogFile('FIltros...: ');
                     \app\models\Utilities::putMessageLogFile('modalidad y periodod '.$arrSearch['modalidad'] .'-'.$arrSearch['periodo'] );
                     return $this->render('academicoestudiante', [
-                    
                         'arr_modalidad' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Todas']], $modalidad_data), 'id', 'name'),
-                        
-                        'arr_periodo' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Todas']], $periodo), 'id', 'name'),
+                        'arr_periodo' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Todas']], $arr_pla), 'id', 'name'),
                         'model' => $model_plan,
-                        //Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), true, $message),
                     ]);
-                    return Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), true, $message);
+                    
                 }else{
                     $arrSearch['modalidad'] = $data['modalidad']?$data['modalidad']:0;
                     $arrSearch['periodo'] = $data['periodo']?$data['periodo']:0;
@@ -1124,12 +1157,9 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
                     \app\models\Utilities::putMessageLogFile('modalidad y periodod '.$arrSearch['modalidad'] .'-'.$arrSearch['periodo'] );
                     $model_plan = $mod_periodo->consultarEstudiantePeriodo($arrSearch);
                     return $this->render('academicoestudiante', [
-                    
                         'arr_modalidad' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Todas']], $modalidad_data), 'id', 'name'),
-                        
-                        'arr_periodo' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Todas']], $periodo), 'id', 'name'),
+                        'arr_periodo' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Todas']], $arr_pla), 'id', 'name'),
                         'model' => $model_plan,
-                        //Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), true, $message),
                     ]);
                 }
             }catch(Exception $ex) {
@@ -1145,9 +1175,81 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
                     
                     'arr_modalidad' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Todas']], $modalidad_data), 'id', 'name'),
                     
+                    'arr_periodo' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Todas']], $arr_pla), 'id', 'name'),
+                    $this->renderPartial('academicoestudiante-grid',[
+                        'model' => $model_plan,
+                    ])
+        ]);
+    }
+
+    public function actionResumenplanificacion() {
+        \app\models\Utilities::putMessageLogFile('-----------------Looking for applied filter--------------------------');
+        $emp_id = @Yii::$app->session->get('PB_idempresa');
+        $mod_periodo = new PlanificacionEstudiante();
+        $periodo = $mod_periodo->consultarPeriodoAcadplanifica();
+        $uni_aca_model = new UnidadAcademica();
+        $modestudio = new ModuloEstudio();
+        $modalidad_model = new Modalidad();
+        $modcanal = new Oportunidad();
+        $unidad_acad_data = $uni_aca_model->consultarUnidadAcademicas();
+        $modalidad_data = $modalidad_model->consultarModalidad($unidad_acad_data[0]['id'], $emp_id);
+        $academic_study_data = $modcanal->consultarCarreraModalidad(null, null);
+        $model_plan = $mod_periodo->consultarEstudiantePeriodo();
+        $data = Yii::$app->request->get();
+        if (Yii::$app->request->isAjax) {
+            $data = Yii::$app->request->post();
+            try{
+                if (($data['modalidad'] != 0 && $data['periodo'] != 0)) {
+                    $arrSearch['modalidad'] = $data['modalidad']?$data['modalidad']:0;
+                    $arrSearch['periodo'] = $data['periodo']?$data['periodo']:0;
+                    $model_plan = $mod_periodo->consultarEstudiantePeriodo($arrSearch);
+                    \app\models\Utilities::putMessageLogFile('FIltros...: ');
+                    \app\models\Utilities::putMessageLogFile('modalidad y periodod '.$arrSearch['modalidad'] .'-'.$arrSearch['periodo'] );
+                    return Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), false, $message).
+                    $this->render('resumenplanificacion', [
+                    
+                        'arr_modalidad' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Todas']], $modalidad_data), 'id', 'name'),
+                        
+                        'arr_periodo' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Todas']], $periodo), 'id', 'name'),
+                        'model' => $model_plan,
+                        //Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), true, $message),
+                    ]);
+                    return Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), true, $message);
+                }else{
+                    $arrSearch['modalidad'] = $data['modalidad']?$data['modalidad']:0;
+                    $arrSearch['periodo'] = $data['periodo']?$data['periodo']:0;
+                    \app\models\Utilities::putMessageLogFile('todos...: ');
+                    \app\models\Utilities::putMessageLogFile('modalidad y periodod '.$arrSearch['modalidad'] .'-'.$arrSearch['periodo'] );
+                    $model_plan = $mod_periodo->consultarEstudiantePeriodo($arrSearch);
+                    return Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), false, $message).
+                    $this->render('resumenplanificacion', [
+                    
+                        'arr_modalidad' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Todas']], $modalidad_data), 'id', 'name'),
+                        
+                        'arr_periodo' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Todas']], $periodo), 'id', 'name'),
+                        'model' => $model_plan,
+                        //Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), true, $message),
+                    ]);
+                    return Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), true, $message);
+                }
+            }catch(Exception $ex) {
+                \app\models\Utilities::putMessageLogFile('catch...: ');
+                $message = array(
+                    "wtmessage" => Yii::t("notificaciones", "Error al buscar.".$ex->getMessage()),
+                    "title" => Yii::t('jslang', 'Error'),
+                );
+                return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+            }
+        }
+        return $this->render('resumenplanificacion', [
+                    
+                    'arr_modalidad' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Todas']], $modalidad_data), 'id', 'name'),
+                    
                     'arr_periodo' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Todas']], $periodo), 'id', 'name'),
                     'model' => $model_plan,
+                    //Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), true, $message),
         ]);
+        return Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), false, $message);
     }
 
     public function actionProcesoplanificacion() {
@@ -1214,7 +1316,7 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
         $arrHeader = array(
             Yii::t('formulario', 'Modalidad'),
             Yii::t('formulario', 'Periodo'),
-            Yii::t('formulario', 'Codigo de Materia'),
+            //Yii::t('formulario', 'Codigo de Materia'),
             Yii::t('formulario', 'Materia del Periodo'),
             Yii::t('formulario', 'Cantidad'),
         );
@@ -1257,7 +1359,7 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
         $arrHeader = array(
             Yii::t('formulario', 'Modalidad'),
             Yii::t('formulario', 'Periodo'),
-            Yii::t('formulario', 'Codigo de Materia'),
+            //Yii::t('formulario', 'Codigo de Materia'),
             Yii::t('formulario', 'Materia del Periodo'),
             Yii::t('formulario', 'Cantidad'),
         );
@@ -1359,6 +1461,273 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
     }
 
 
+public function actionTemporalgetpla() {
+
+  $con = \Yii::$app->db_academico;
+ $sql = " SELECT a.pes_id, a.per_id, a.pes_cod_carrera, a.pes_carrera
+,a.pes_mat_b1_h1_cod,a.pes_mat_b1_h2_cod,a.pes_mat_b1_h3_cod
+,a.pes_mat_b1_h4_cod,a.pes_mat_b1_h5_cod,a.pes_mat_b1_h6_cod
+,a.pes_mat_b2_h1_cod,a.pes_mat_b2_h2_cod,a.pes_mat_b2_h3_cod
+,a.pes_mat_b2_h4_cod,a.pes_mat_b2_h5_cod,a.pes_mat_b2_h6_cod
+,a.pes_mat_b1_h1_nombre,a.pes_mat_b1_h2_nombre,a.pes_mat_b1_h3_nombre
+,a.pes_mat_b1_h4_nombre,a.pes_mat_b1_h5_nombre,a.pes_mat_b1_h6_nombre
+,a.pes_mat_b2_h1_nombre,a.pes_mat_b2_h2_nombre,a.pes_mat_b2_h3_nombre
+,a.pes_mat_b2_h4_nombre,a.pes_mat_b2_h5_nombre,a.pes_mat_b2_h6_nombre
+, b.maca_id,b.maca_nombre, a.pes_dni
+ FROM " . $con->dbname . ".planificacion_estudiantexx as a
+inner join " . $con->dbname . ".malla_academica as b on a.pes_cod_carrera = b.maca_codigo  
+ WHERE a.pes_id < 101
+                ";
+
+ $comando = $con->createCommand($sql);
+ $getterPla = $comando->queryAll();
+
+         for ($i = 0; $i < count($getterPla); $i++) {   
+
+
+          
+
+
+                 $maca_id  = $getterPla[$i]["maca_id"];
+                 $pes_id   = $getterPla[$i]["pes_id"];
+                 $eaca_id  = $getterPla[$i]["pes_cod_carrera"];
+                 $cedula  = $getterPla[$i]["pes_dni"];
+
+
+                 $sta  = $getterPla[$i]["pes_mat_b1_h1_cod"];
+                 $stb  = $getterPla[$i]["pes_mat_b1_h2_cod"];
+                 $stc  = $getterPla[$i]["pes_mat_b1_h3_cod"];
+                 $std  = $getterPla[$i]["pes_mat_b1_h4_cod"];
+                 $ste  = $getterPla[$i]["pes_mat_b1_h5_cod"];
+                 $stf  = $getterPla[$i]["pes_mat_b1_h6_cod"];
+                 $stg  = $getterPla[$i]["pes_mat_b2_h1_cod"];
+                 $sth  = $getterPla[$i]["pes_mat_b2_h2_cod"];
+                 $sti  = $getterPla[$i]["pes_mat_b2_h3_cod"];
+                 $stj  = $getterPla[$i]["pes_mat_b2_h4_cod"];
+                 $stk  = $getterPla[$i]["pes_mat_b2_h5_cod"];
+                 $stl  = $getterPla[$i]["pes_mat_b2_h6_cod"];
+
+           
+
+
+                $distri = new Planificacionxx(); 
+                
+                    $otherprocess = $distri->getMalla($cedula); 
+                    if ($otherprocess && $otherprocess["maca_codigo"] != Null && $otherprocess["maca_codigo"] !=''){
+                  $replacemalla = $distri ->updateMalla($pes_id,$otherprocess["maca_codigo"]);
+                    $maca_id  = $otherprocess["maca_id"];
+                     $maca_codigo  = $otherprocess["maca_codigo"];
+
+    
+           
+
+               /*
+                  return $this->render('temporal', [
+                     'cedula' => $cedula,
+                     'maca_codigo' => $maca_codigo,
+                     'maca_id' => $maca_id,
+                     'pes_id' => $pes_id,
+                              ]);
+                    
+
+                 
+
+
+
+
+               /*
+                $centralprocess = $distri->getCode($sta,$maca_id); 
+
+
+                  return $this->render('temporal', [
+                     'cod_source' => $sta,
+                     'malla_target' => $maca_id,
+                     'pes_id' => $pes_id,
+                     'new_id' => $centralprocess["made_codigo_asignatura"], 
+                     'position' => "pes_mat_b1_h1_cod", 
+                    ]);
+                   */    
+
+                 
+                  $centralprocess = $distri->getCode($sta,$maca_id); 
+                  if ($centralprocess && $sta !=Null && $sta !=''){
+                  $replacer = $distri ->updateCode("pes_mat_b1_h1_cod",$pes_id,$centralprocess["made_codigo_asignatura"]);
+                  }  else {
+                   
+                /*
+                   if ($sta !=Null && $sta !='' && $sta !='NO EN MALLA') {
+                     return $this->render('temporal', [
+                     'cod_source' => $sta,
+                     'malla_target' => $maca_id,
+                     'pes_id' => $pes_id,
+                      'new_id' => $centralprocess["made_codigo_asignatura"], 
+                       'position' => "pes_mat_b1_h1_cod", 
+                    ]); 
+                     } */
+                  } 
+
+                  $centralprocess = $distri->getCode($stb,$maca_id); 
+                    if ($centralprocess && $stb !=Null && $stb !=''){
+                  $replacer = $distri ->updateCode("pes_mat_b1_h2_cod",$pes_id,$centralprocess["made_codigo_asignatura"]);
+                   }  else {
+                       /*  if ($stb !=Null && $stb !='' && $stb !='NO EN MALLA'){
+                     return $this->render('temporal', [
+                     'cod_source' => $stb,
+                     'malla_target' => $maca_id,
+                     'pes_id' => $pes_id,
+                      'new_id' => $centralprocess["made_codigo_asignatura"], 
+                       'position' => "pes_mat_b1_h2_cod", 
+                    ]); }*/
+                     } 
+
+                  $centralprocess = $distri->getCode($stc,$maca_id); 
+                    if ($centralprocess && $stc !=Null && $stc !=''){
+                  $replacer = $distri ->updateCode("pes_mat_b1_h3_cod",$pes_id,$centralprocess["made_codigo_asignatura"]);
+                   }  else {
+                      /*  if ($stc !=Null && $stc !='' && $stc !='NO EN MALLA'){
+                     return $this->render('temporal', [
+                     'cod_source' => $stc,
+                     'malla_target' => $maca_id,
+                     'pes_id' => $pes_id,
+                      'new_id' => $centralprocess["made_codigo_asignatura"], 
+                          'position' => "pes_mat_b1_h3_cod", 
+                    ]); } */
+                  }   
+
+                  $centralprocess = $distri->getCode($std,$maca_id); 
+                    if ($centralprocess && $std !=Null && $std !=''){
+                  $replacer = $distri ->updateCode("pes_mat_b1_h4_cod",$pes_id,$centralprocess["made_codigo_asignatura"]);
+                   }  else {
+                     /*   if ($std !=Null && $std !='' && $std !='NO EN MALLA'){
+                     return $this->render('temporal', [
+                     'cod_source' => $std,
+                     'malla_target' => $maca_id,
+                     'pes_id' => $pes_id,
+                      'new_id' => $centralprocess["made_codigo_asignatura"], 
+                          'position' => "pes_mat_b1_h4_cod", 
+                    ]);}*/
+                  }   
+
+                   $centralprocess = $distri->getCode($ste,$maca_id); 
+                     if ($centralprocess && $ste !=Null && $ste !=''){
+                  $replacer = $distri ->updateCode("pes_mat_b1_h5_cod",$pes_id,$centralprocess["made_codigo_asignatura"]);
+                   }  else {
+                     /*  if ($ste !=Null && $ste !='' && $ste !='NO EN MALLA'){
+                     return $this->render('temporal', [
+                     'cod_source' => $ste,
+                     'malla_target' => $maca_id,
+                     'pes_id' => $pes_id,
+                      'new_id' => $centralprocess["made_codigo_asignatura"], 
+                          'position' => "pes_mat_b1_h5_cod", 
+                    ]); } */
+                  }   
+                  $centralprocess = $distri->getCode($stf,$maca_id); 
+                    if ($centralprocess && $stf !=Null && $stf !=''){
+                  $replacer = $distri ->updateCode("pes_mat_b1_h6_cod",$pes_id,$centralprocess["made_codigo_asignatura"]);
+                   }  else {
+                     /*   if ($stf !=Null && $stf !='' && $stf !='NO EN MALLA'){
+                     return $this->render('temporal', [
+                     'cod_source' => $stf,
+                     'malla_target' => $maca_id,
+                     'pes_id' => $pes_id,
+                      'new_id' => $centralprocess["made_codigo_asignatura"], 
+                          'position' => " ", 
+                    ]); } */
+                  }    
+                   $centralprocess = $distri->getCode($stg,$maca_id); 
+                     if ($centralprocess && $stg !=Null && $stg !=''){
+                  $replacer = $distri ->updateCode("pes_mat_b2_h1_cod",$pes_id,$centralprocess["made_codigo_asignatura"]);
+                   }  else {
+                   /*   if ($stg !=Null && $stg !='' && $stg !='NO EN MALLA'){
+                     return $this->render('temporal', [
+                     'cod_source' => $stg,
+                     'malla_target' => $maca_id,
+                     'pes_id' => $pes_id,
+                      'new_id' => $centralprocess["made_codigo_asignatura"], 
+                          'position' => "pes_mat_b2_h1_cod", 
+                    ]); } */
+                  }   
+                  $centralprocess = $distri->getCode($sth,$maca_id); 
+                    if ($centralprocess && $sth !=Null && $sth !=''){
+                  $replacer = $distri ->updateCode("pes_mat_b2_h2_cod",$pes_id,$centralprocess["made_codigo_asignatura"]);
+                   }  else {
+                   /*    if ($sth !=Null && $sth !='' && $sth !='NO EN MALLA'){
+                     return $this->render('temporal', [
+                     'cod_source' => $sth,
+                     'malla_target' => $maca_id,
+                     'pes_id' => $pes_id,
+                      'new_id' => $centralprocess["made_codigo_asignatura"], 
+                          'position' => "pes_mat_b2_h2_cod", 
+                    ]); } */
+                  }   
+                   $centralprocess = $distri->getCode($sti,$maca_id); 
+                     if ($centralprocess && $sti !=Null && $sti !=''){
+                  $replacer = $distri ->updateCode("pes_mat_b2_h3_cod",$pes_id,$centralprocess["made_codigo_asignatura"]);
+                   }  else {
+                    /*    if ($sti !=Null && $sti !='' && $sti !='NO EN MALLA'){
+                     return $this->render('temporal', [
+                     'cod_source' => $sti,
+                     'malla_target' => $maca_id,
+                     'pes_id' => $pes_id,
+                      'new_id' => $centralprocess["made_codigo_asignatura"], 
+                          'position' => "pes_mat_b2_h3_cod", 
+                    ]); } */
+                  }    
+                  $centralprocess = $distri->getCode($stj,$maca_id); 
+                    if ($centralprocess && $stj !=Null && $stj !=''){
+                  $replacer = $distri ->updateCode("pes_mat_b2_h4_cod",$pes_id,$centralprocess["made_codigo_asignatura"]);
+                   }  else {
+                    /*    if ($stj !=Null && $stj !='' && $stj !='NO EN MALLA'){
+                     return $this->render('temporal', [
+                     'cod_source' => $stj,
+                     'malla_target' => $maca_id,
+                     'pes_id' => $pes_id,
+                      'new_id' => $centralprocess["made_codigo_asignatura"], 
+                          'position' => "pes_mat_b2_h4_cod", 
+                    ]); } */
+                  }   
+                   $centralprocess = $distri->getCode($stk,$maca_id); 
+                     if ($centralprocess && $stk !=Null && $stk !=''){
+                  $replacer = $distri ->updateCode("pes_mat_b2_h5_cod",$pes_id,$centralprocess["made_codigo_asignatura"]);
+                   }  else {
+                    /*    if ($stk !=Null && $stk !='' && $stk !='NO EN MALLA'){
+                     return $this->render('temporal', [
+                     'cod_source' => $stk,
+                     'malla_target' => $maca_id,
+                     'pes_id' => $pes_id,
+                      'new_id' => $centralprocess["made_codigo_asignatura"], 
+                          'position' => "pes_mat_b2_h5_cod", 
+                    ]); } */
+                  }  
+                  $centralprocess = $distri->getCode($stl,$maca_id); 
+                    if ($centralprocess && $stl !=Null && $stl !=''){
+                  $replacer = $distri ->updateCode("pes_mat_b2_h6_cod",$pes_id,$centralprocess["made_codigo_asignatura"]);      
+                   }  else {
+                     /*   if ($stl !=Null && $stl !=''&& $stl !='NO EN MALLA'){
+                     return $this->render('temporal', [
+                     'cod_source' => $stl,
+                     'malla_target' => $maca_id,
+                     'pes_id' => $pes_id,
+                      'new_id' => $centralprocess["made_codigo_asignatura"], 
+                          'position' => "pes_mat_b2_h6_cod", 
+                    ]); }*/
+                  }   
+             }        
+     } 
+
+
+ $centralprocess = $distri->getCode($sta,$maca_id); 
+
+
+                  return $this->render('temporal', [
+                     'cod_source' => $sta,
+                     'malla_target' => $maca_id,
+                     'pes_id' => $pes_id,
+                     'new_id' => $centralprocess["made_codigo_asignatura"], 
+                     'position' => "pes_mat_b1_h1_cod (END)", 
+                    ]);
+     }
+
     public function actionNewplanificacion() {
         //$pla_id = $_GET['pla_id'];
         //$per_id = $_GET['per_id'];
@@ -1383,12 +1752,15 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
         
         //$mode_malla = $mod_periodo->consultaMallaEstudiante($per_id);
         
-        
+        $arr_pla = Planificacion::getPeriodosAcademicoMod();
+        $pla_periodo_academico = $arr_pla[0]->name;
+
         $session = Yii::$app->session;
         $data = Yii::$app->request->get();
         $per_id = $data['estudiante'];
         $periodoAcad = $data['periodo'];
-        $pla_id = $mod_periodo->consultaPlanificacionEstVigente($per_id);
+        $saca_id = $periodoAcad;
+        $pla_id = $mod_periodo->consultaPlanificacionEstVigente($per_id, $saca_id);
         $plan =  $pla_id[0]["id"];
         $session->set("plan_id",$plan);
         $session->set("per_ids",$per_id);
@@ -1400,6 +1772,7 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
             $arrSearch['planificacion'] = $pla_id[0]["id"];
             $plan = $mod_periodo->getPlanificacionxPeriodo($periodoAcad,$per_id);
             $arrSearch['periodoAca'] = $data["periodo"];
+            $arrSearch['saca_id'] = $saca_id;
             $model_plan = $mod_periodo->consultarDetalleplanificaaut($arrSearch,false);
             $carrera_activa = $mod_periodo->consultaracarreraxmallaaut($per_id);
             //$pla_id = $mod_periodo->consultaPlanificacionEstVigente($per_id);
@@ -1423,7 +1796,8 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
                 'arr_materia' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']], $materia), 'id', 'name'),
                 'arr_alumno' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']], $busquedalumno), 'id', 'name'),
                 'model_detalle' => $model_plan,//$mod_detalle,//$model_plan,
-                'periodo_activo' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']],$periodo_activo), 'id', 'name'),
+                //'periodo_activo' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']],$periodo_activo), 'id', 'name'),
+                'periodo_activo' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']],$arr_pla), 'id', 'name'),
                 'arr_initial' => $arr_initial,
                 'model' => $model_plan,
                 'carrera_activa' => $id_carrera,//ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']],$carrera_activa), 'id', 'name'),
@@ -1485,7 +1859,8 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
                     'arr_materia' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']], $materia), 'id', 'name'),
                     'arr_alumno' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']], $busquedalumno), 'id', 'name'),
                     'model_detalle' => $model_plan,//$mod_detalle,//$model_plan,
-                    'periodo_activo' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']],$periodo_activo), 'id', 'name'),
+                    //'periodo_activo' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']],$periodo_activo), 'id', 'name'),
+                    'periodo_activo' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']],$arr_pla), 'id', 'name'),
                     'arr_initial' => $data['estudiante'],
                     'carrera_activa' => $id_carrera,//ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']],$carrera_activa), 'id', 'name'),
                     'pla_id' => $id_pla,//ArrayHelper::map($pla_id, 'id', 'name'),

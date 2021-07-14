@@ -696,7 +696,7 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
         $con_db = \Yii::$app->db;
         $paca_id = 0;
 
-        $sql = "select '1050' as codigo_ies, UPPER(CONCAT(persona.per_pri_apellido,' ' ,persona.per_seg_apellido,' ' ,persona.per_pri_nombre,' ' ,persona.per_seg_nombre)) as docente,
+        $sql = "select '1050' as codigo_ies, IFNULL(CONCAT(ifnull(persona.per_pri_apellido,' '), ' ', ifnull(persona.per_seg_apellido,' '), ' ', ifnull(persona.per_pri_nombre,' '), ' ', ifnull(persona.per_seg_nombre, ' ')), '') as docente,
                 case when per_cedula is null then per_pasaporte else per_cedula end as no_cedula,
                 case when per_cedula is null then 'Pasaporte' else 'Cédula' end as tipo_identificacion,
                 IFNULL(pro_num_contrato,'') as pro_num_contrato,
@@ -706,7 +706,10 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
                 sum(case when td.tdis_id=4 then  tdis_num_semanas else 0 end) as hora_vinculacion,
 		sum(case when td.tdis_id=5 then  0  end) as hora_administrativa,
 		sum(case when td.tdis_id=6 then  daca_horas_otras_actividades else 0 end) as hora_otras_actividades,
-                ddoc_horas,
+                -- ddoc_horas,
+                ifnull((select ifnull(dd.ddoc_horas, ' ') from db_academico.dedicacion_docente dd 
+                            where dd.ddoc_id  = profesor.ddoc_id
+                            ),' ') as ddoc_horas,
                  sum(case when da.uaca_id = 1  then  dah.daho_total_horas else 0     end) as tercel_nivel,
                  sum(case when da.uaca_id = 2  then  dah.daho_total_horas else 0     end) as cuarto_nivel,
                 0 as comun
@@ -718,7 +721,7 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
                 inner join " . $con_db->dbname .        ".persona persona on profesor.per_id = persona.per_id 
                 INNER JOIN " . $con_academico->dbname . ".periodo_academico pc on da.paca_id  = pc.paca_id and  pc.paca_activo='A'
                 INNER JOIN " . $con_academico->dbname . ".tipo_distributivo td on td.tdis_id  = da.tdis_id
-                INNER JOIN " . $con_academico->dbname . ".dedicacion_docente  dd on dd.ddoc_id  = profesor.ddoc_id
+                -- INNER JOIN " . $con_academico->dbname . ".dedicacion_docente  dd on dd.ddoc_id  = profesor.ddoc_id
                 LEFT JOIN " . $con_academico->dbname . ".distributivo_academico_horario dah on dah.daho_id  = da.daho_id    
                 where  da.daca_estado='1' and daca_estado_logico='1' and dc.dcab_estado_revision=2";
         if ($tipo == 1) {
@@ -733,21 +736,21 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
                     $sql = $sql . " and profesor.ddoc_id =" . $this->uaca_id;
                 }
             } else {
-                $sql = $sql . " and da.paca_id =0";
+                $sql = $sql . " and profesor.ddoc_id =0";
             }
         }
         if ($tipo == 2) {
 
-            if ($params['mod_id']) {
+            /*if ($params['mod_id']) {
                 $sql = $sql . " and da.mod_id =" . $params['mod_id'];
-            }
+            }*/
 
             if ($params['paca_id']) {
                 $sql = $sql . " and da.paca_id =" . $params['paca_id'];
             }
-            if ($params['tdis_id']) {
+            /*if ($params['tdis_id']) {
                 $sql = $sql . " and da.tdis_id =" . $params['tdis_id'];
-            }
+            }*/
         }
         $sql = $sql . "  group by codigo_ies,docente,no_cedula,tipo_identificacion,pro_num_contrato,ddoc_horas";
         Utilities::putMessageLogFile('sql:' . $sql);
@@ -784,7 +787,7 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
                      
         }
 
-            $sql = "select '1050' as codigo_ies, UPPER(CONCAT(persona.per_pri_apellido,' ' ,persona.per_seg_apellido,' ' ,persona.per_pri_nombre,' ' ,persona.per_seg_nombre)) as docente,
+            $sql = "select '1050' as codigo_ies, IFNULL(CONCAT(ifnull(persona.per_pri_apellido,' '), ' ', ifnull(persona.per_seg_apellido,' '), ' ', ifnull(persona.per_pri_nombre,' '), ' ', ifnull(persona.per_seg_nombre, ' ')), '') as docente,
                 case when per_cedula is null then per_pasaporte else per_cedula end as no_cedula,
                 case when per_cedula is null then 'Pasaporte' else 'Cédula' end as tipo_identificacion,
                 IFNULL(pro_num_contrato,'') as pro_num_contrato,
@@ -794,7 +797,10 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
                 case when td.tdis_id=4 then  tdis_num_semanas else 0 end as hora_vinculacion,
                 -- case when td.tdis_id=5 then  0  end as hora_administrativa,
                 -- case when td.tdis_id=6 then  daca_horas_otras_actividades else 0 end as hora_otras_actividades,
-               ddoc_horas,
+               -- ddoc_horas,
+               ifnull((select ifnull(dd.ddoc_horas, ' ') from db_academico.dedicacion_docente dd 
+                            where dd.ddoc_id  = profesor.ddoc_id
+                            ),' ') as ddoc_horas,
                case when da.uaca_id = 1  then  dah.daho_total_horas else 0 end as tercel_nivel,
                case when da.uaca_id = 2  then  dah.daho_total_horas else 0 end as cuarto_nivel,
                 0 as comun,
@@ -806,7 +812,7 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
                 inner join db_asgard.persona persona on profesor.per_id = persona.per_id 
                 INNER JOIN db_academico.periodo_academico pc on da.paca_id  = pc.paca_id and  pc.paca_activo='A'
                 INNER JOIN db_academico.tipo_distributivo td on td.tdis_id  = da.tdis_id
-                INNER JOIN db_academico.dedicacion_docente  dd on dd.ddoc_id  = profesor.ddoc_id
+                -- INNER JOIN db_academico.dedicacion_docente  dd on dd.ddoc_id  = profesor.ddoc_id
                 LEFT JOIN db_academico.distributivo_academico_horario dah on dah.daho_id  = da.daho_id    
                 where  da.daca_estado='1' and daca_estado_logico='1' and dc.dcab_estado_revision=2";
         

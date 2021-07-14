@@ -522,27 +522,21 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
                 \app\models\Utilities::putMessageLogFile('entro..: ');
                 \app\models\Utilities::putMessageLogFile('finicio..: '. $finicio);  
                 $ffin = $data['ffin'];
-                \app\models\Utilities::putMessageLogFile('ffin..: '. $ffin);
+
                 $finicio1 = $data['finicio1'];
-                \app\models\Utilities::putMessageLogFile('finicio1.: '. $finicio1);
                 $ffin1 = $data['ffin1'];
-                \app\models\Utilities::putMessageLogFile('ffin..: '. $ffin1);
 
              //   $finicio2 = $data['finicio2'];
              //   $ffin2 = $data['ffin2'];
 
                 $finicio3 = $data['finicio3'];
-                \app\models\Utilities::putMessageLogFile('finicio3.: '. $finicio3);
                 $ffin3 = $data['ffin3'];
-                \app\models\Utilities::putMessageLogFile('fin3.: '. $ffin3);
+
                 $finicio4 = $data['finicio4'];
-                \app\models\Utilities::putMessageLogFile('finicio4.: '. $finicio4);
                 $ffin4 = $data['ffin4'];
-                \app\models\Utilities::putMessageLogFile('fin4.: '. $ffin4);
+
                 $finicio5 = $data['finicio5'];
-                \app\models\Utilities::putMessageLogFile('finicio5.: '. $finicio5);
                 $ffin5 = $data['ffin5'];
-                \app\models\Utilities::putMessageLogFile('fin5.: '. $ffin5);
 
 
                 $bloque = $data['bloque'];
@@ -1122,7 +1116,7 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
             $arrSearch['modalidad'] = 0;
         $model_plan = $mod_periodo->consultarEstudiantePeriodo($arrSearch);
         $data = Yii::$app->request->get();
-        if (!$data) {
+        if (!$data['PBgetFilter']) {
             \app\models\Utilities::putMessageLogFile('Filtros iniciales: '.$data['PBgetFilter']);
             $arrSearch['planificacion'] = 0;
             $arrSearch['modalidad'] = 0;
@@ -1176,13 +1170,11 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
                     'arr_modalidad' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Todas']], $modalidad_data), 'id', 'name'),
                     
                     'arr_periodo' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Todas']], $arr_pla), 'id', 'name'),
-                    $this->renderPartial('academicoestudiante-grid',[
                         'model' => $model_plan,
-                    ])
         ]);
     }
 
-    public function actionResumenplanificacion() {
+    public function actionResumenplanificacion2() {
         \app\models\Utilities::putMessageLogFile('-----------------Looking for applied filter--------------------------');
         $emp_id = @Yii::$app->session->get('PB_idempresa');
         $mod_periodo = new PlanificacionEstudiante();

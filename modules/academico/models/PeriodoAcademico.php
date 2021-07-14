@@ -240,7 +240,12 @@ class PeriodoAcademico extends \yii\db\ActiveRecord
         $con = Yii::$app->db_academico;
         $estado = 1;
 
-        $sql = "SELECT paca.paca_id, ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca_anio),'') AS paca_nombre, baca.baca_nombre
+        $sql = "SELECT 
+                paca.paca_id, 
+                paca.paca_id as id, 
+                ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca_anio),'') AS paca_nombre,
+                ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca_anio),'') AS nombre,
+                baca.baca_nombre
                 FROM " . $con->dbname . ".semestre_academico AS saca
                 INNER JOIN " . $con->dbname . ".periodo_academico AS paca ON saca.saca_id = paca.saca_id
                 INNER JOIN " . $con->dbname . ".bloque_academico AS baca ON baca.baca_id = paca.baca_id

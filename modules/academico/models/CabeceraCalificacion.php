@@ -964,9 +964,11 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord
        
         $comando->bindParam(":estado", $estado, \PDO::PARAM_INT);
 
+        // \app\models\Utilities::putMessageLogFile('consultaCalificacionRegistroDocenteSearch: '.$comando->getRawSql());
+
         $resultData = $comando->queryAll();
 
-        \app\models\Utilities::putMessageLogFile('consultaCalificacionRegistroDocenteSearch: '.$comando->getRawSql());
+        
 
          $dataProvider = new ArrayDataProvider([
             'key' => 'id',

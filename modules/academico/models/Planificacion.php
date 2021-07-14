@@ -123,10 +123,10 @@ class Planificacion extends \yii\db\ActiveRecord {
                     pla.pla_periodo_academico as PeriodoAcademico,
                     moda.mod_id as ModaId,
                     moda.mod_nombre as Modalidad
-                FROM " . $con_academico->dbname . ".planificacionx as pla,
+                FROM " . $con_academico->dbname . ".planificacion as pla,
                 " . $con_academico->dbname . ".modalidad as moda
                  WHERE moda.mod_id = pla.mod_id        
-                AND pla.pla_periodo_academico =:pla_periodo_academico
+                AND pla.saca_id =:pla_periodo_academico
                 AND pla.mod_id =:mod_id
                 $filter
                 AND pla.pla_estado =:estado
@@ -149,16 +149,49 @@ class Planificacion extends \yii\db\ActiveRecord {
     
     public static function getPeriodosAcademico() {
         $con_academico = \Yii::$app->db_academico;
-        $sql = "SELECT @row_number:=@row_number+1 as pla_id, pla_periodo_academico " .
-                "FROM " . Yii::$app->db_academico->dbname . ".planificacion, (SELECT @row_number:=0) AS t " .
-                "WHERE pla_estado_logico=1 AND pla_estado=1 " .
-                "GROUP BY pla_periodo_academico";
+      $sql = "select 
+                a.paca_id as pla_id,
+                concat(b.saca_nombre , ' ' , b.saca_anio, '(', c.baca_nombre, ')') as pla_periodo_academico
+                from  ". $con->dbname . ".periodo_academico a 
+                inner join ". $con->dbname . ".semestre_academico b on a.saca_id = b.saca_id
+                inner join db_academico.bloque_academico c on a.baca_id = c.baca_id
+                where a.paca_activo = 'A'
+                order by a.paca_id asc;";
+
+
+      $sql = "select distinct
+                a.saca_id as pla_id,
+                concat(b.saca_nombre , ' ' , b.saca_anio ) as pla_periodo_academico
+                from  ". $con->dbname . ".periodo_academico a 
+                inner join ". $con->dbname . ".semestre_academico b on a.saca_id = b.saca_id
+                where a.paca_activo = 'A'
+                order by a.paca_id asc;";  
 
         $comando = $con_academico->createCommand($sql);
         $resultData = $comando->queryAll();
 
         return $resultData;
     }
+
+
+
+    public static function getPeriodosAcademicofull() {
+        $con_academico = \Yii::$app->db_academico;
+              $sql = " SELECT a.paca_id as pla_id,
+                 CONCAT (c.baca_nombre , ' ',c.baca_descripcion,' ',c.baca_anio , '(',a.paca_activo, ')' ) as pla_periodo_academico 
+                 FROM db_academico.periodo_academico as a 
+INNER JOIN db_academico.semestre_academico as b on a.saca_id = b.saca_id
+INNER JOIN db_academico.bloque_academico as c on a.baca_id = c.baca_id
+WHERE paca_activo = 'A'
+        ";
+
+
+        $comando = $con_academico->createCommand($sql);
+        $resultData = $comando->queryAll();
+
+        return $resultData;
+    }
+
 
     public static function getCurrentPeriodoAcademico() {
         $con_academico = \Yii::$app->db_academico;
@@ -238,7 +271,7 @@ class Planificacion extends \yii\db\ActiveRecord {
         $estado = 1;
         $sql = "SELECT 
                 pla_id as issaved
-                FROM " . $con_academico->dbname . ".planificacionx 
+                FROM " . $con_academico->dbname . ".planificacion 
                 WHERE pla_periodo_academico =:pla_periodo_academico
                 AND mod_id =:mod_id
                 AND pla_estado =:estado
@@ -296,5 +329,123 @@ class Planificacion extends \yii\db\ActiveRecord {
 
         return $resultData;
     }
+
+
+
+ public function getCode($sta,$maca_id) {
+     $con = \Yii::$app->db_academico;
+    $sql = "
+          SELECT asi_id 
+          from " . $con->dbname . ".malla_academica_detalle where made_codigo_asignatura = :sta
+         ";
+
+          $comando = $con->createCommand($sql);
+          $comando->bindParam(":sta", $sta, \PDO::PARAM_STR);
+          $getterasi = $comando->queryOne();
+
+          $asi_id = $getterasi["asi_id"];
+
+
+     $con = \Yii::$app->db_academico;
+    $sql ="
+          SELECT made_codigo_asignatura from
+           " . $con->dbname . ".malla_academica_detalle where maca_id=:maca_id and asi_id = :asi_id
+         ";
+         
+
+          $comando = $con->createCommand($sql);
+          $comando->bindParam(":maca_id", $maca_id, \PDO::PARAM_INT);
+          $comando->bindParam(":asi_id", $asi_id, \PDO::PARAM_INT);
+          $gettercode = $comando->queryOne();
+
+        return $gettercode;
+    }
+
+
+
+    public function updateCode($columna,$pes_id,$coder){
+  $con = \Yii::$app->db_academico;
+$sql = " UPDATE " . $con->dbname . ".planificacion_estudiantexx
+
+ SET " .$columna. " = :coder WHERE pes_id = :pes_id
+
+ ";
+
+          $comando = $con->createCommand($sql);
+        //  $comando->bindParam("columna", $columna, \PDO::PARAM_INT);
+          $comando->bindParam(":coder", $coder, \PDO::PARAM_STR);
+           $comando->bindParam(":pes_id", $pes_id, \PDO::PARAM_INT);
+          $result = $comando->execute();
+
+          return $result;
+    }
+
+
+     public function getMalla($per_id) {
+     $con = \Yii::$app->db_academico;
+    $sql = "
+          SELECT maca_id 
+          from " . $con->dbname . ".historico_siga_prueba where cedula = :per_id
+         ";
+
+          $comando = $con->createCommand($sql);
+          $comando->bindParam(":per_id", $per_id, \PDO::PARAM_STR);
+          $getterasi = $comando->queryAll();
+
+  
+          $maca_id = $getterasi[0]["maca_id"];
+
+
+
+
+     $con = \Yii::$app->db_academico;
+    $sql ="
+          SELECT maca_id, maca_codigo from
+           " . $con->dbname . ".malla_academica where maca_id=:maca_id";
+         
+
+          $comando = $con->createCommand($sql);
+          $comando->bindParam(":maca_id", $maca_id, \PDO::PARAM_INT);
+        //  $comando->bindParam(":asi_id", $asi_id, \PDO::PARAM_INT);
+          $gettercode = $comando->queryOne();
+
+        return $gettercode;
+    }
+
+
+     public function updateMalla($pes_id,$codigo){
+  $con = \Yii::$app->db_academico;
+  $columna = "pes_cod_carrera";
+$sql = " UPDATE " . $con->dbname . ".planificacion_estudiantexx
+
+ SET " .$columna. " = :codigo WHERE pes_id = :pes_id
+
+ ";
+
+          $comando = $con->createCommand($sql);
+        //  $comando->bindParam("columna", $columna, \PDO::PARAM_INT);
+          $comando->bindParam(":codigo", $codigo, \PDO::PARAM_STR);
+           $comando->bindParam(":pes_id", $pes_id, \PDO::PARAM_INT);
+          $result = $comando->execute();
+
+          return $result;
+    }
+ 
+    public static function getPeriodosAcademicoMod() {
+        $con_academico = \Yii::$app->db_academico;
+      $sql = "SELECT distinct
+                a.saca_id as id,
+                concat(b.saca_nombre , ' ' , b.saca_anio ) as name
+                from  ". $con->dbname . ".periodo_academico a 
+                inner join ". $con->dbname . ".semestre_academico b on a.saca_id = b.saca_id
+                where a.paca_activo = 'A'
+                order by a.paca_id asc;";  
+
+        $comando = $con_academico->createCommand($sql);
+        $resultData = $comando->queryAll();
+
+        return $resultData;
+    }
+
 
 }

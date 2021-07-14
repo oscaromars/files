@@ -100,6 +100,58 @@ $(document).ready(function () {
         }, true);
     });
 
+
+     $('#cmb_unidad_bus').change(function () {
+        var link = $('#txth_base').val() + "/academico/calificacionregistrodocente/index";
+        var arrParams = new Object();
+        arrParams.paca_id = $('#cmb_periodo_clfc').val();
+        arrParams.uaca_id = $(this).val();
+        arrParams.mod_id = $('#cmb_modalidad').val();
+        arrParams.pro_id =  $('#cmb_profesor_clfc').val();
+        arrParams.getasignaturas_uaca = true;
+        requestHttpAjax(link, arrParams, function (response) {
+            if (response.status == "OK") {
+                data = response.message;
+                 setComboDataselect(data.asignatura, "cmb_materiabus","Todos");
+                 setComboDataselectpro(data.profesorup, "cmb_profesor_clfc","Todos");
+            }
+        }, true);
+    });
+
+     $('#cmb_periodo_clfc').change(function () {
+        var link = $('#txth_base').val() + "/academico/calificacionregistrodocente/index";
+        var arrParams = new Object();
+        arrParams.paca_id = $(this).val();
+        arrParams.uaca_id = $('#cmb_unidad_bus').val();
+        arrParams.mod_id = $('#cmb_modalidad').val();
+        arrParams.pro_id = $('#cmb_profesor_clfc').val();
+        arrParams.getasignaturas_prof_periodo = true;
+        requestHttpAjax(link, arrParams, function (response) {
+            if (response.status == "OK") {
+                data = response.message;
+                setComboDataselect(data.asignatura, "cmb_materiabus", "Seleccionar");
+                 setComboDataselectpro(data.profesorup, "cmb_profesor_clfc","Todos");
+            }
+        }, true);
+         });
+
+      $('#cmb_modalidad').change(function () {
+        var link = $('#txth_base').val() + "/academico/calificacionregistrodocente/index";
+        var arrParams = new Object();
+        arrParams.paca_id = $('#cmb_periodo_clfc').val();
+        arrParams.uaca_id = $('#cmb_unidad_bus').val();
+        arrParams.mod_id = $(this).val();
+        arrParams.pro_id = $('#cmb_profesor_clfc').val();
+        arrParams.getasignaturas_bus = true;
+        requestHttpAjax(link, arrParams, function (response) {
+            if (response.status == "OK") {
+                data = response.message;
+                setComboDataselect(data.asignatura, "cmb_materiabus","Todos");
+                 setComboDataselectpro(data.profesorup, "cmb_profesor_clfc","Todos");
+            }
+        }, true);
+    });
+
     $('#cmb_unidad').change(function () { 
         $('#cmb_profesor_rc').change();
     });
@@ -148,6 +200,20 @@ function setComboDataselect(arr_data, element_id, texto) {
     }
     $("#" + element_id).html(option_arr);
 }
+
+function setComboDataselectpro(arr_data, element_id, texto) {
+    var option_arr = "";
+    option_arr += "<option value= '0'>" + texto + "</option>";
+    for (var i = 0; i < arr_data.length; i++) {
+        var id = arr_data[i].pro_id;
+        var value = arr_data[i].nombres;
+
+        option_arr += "<option value='" + id + "'>" + value + "</option>";
+    }
+    $("#" + element_id).html(option_arr);
+}
+
+ 
 
 function cargarDocumento() {
     var link = $('#txth_base').val() + "/academico/calificacionregistrodocente/cargararchivo";
@@ -221,7 +287,7 @@ function searchCalificacionEstudiantes() {
     profesor = $("#cmb_profesor_clfc").val();
 
     if(profesor == null ||  profesor == -1){
-        var mensaje = {wtmessage: "No hay un prosesor o no ha sido asignado", title: "Exito"};
+        var mensaje = {wtmessage: "No hay un profesor o no ha sido asignado", title: "Exito"};
         showAlert("FALSE", "success", mensaje);
         return;
     }
@@ -246,7 +312,16 @@ function downloadDataClfc() {
      materia = $("#cmb_materiabus").val();
      profesor = $("#cmb_profesor_clfc").val();
 
+ 
+if(materia != 0 ) {
+
     window.location.href = $('#txth_base').val() + "/academico/calificacionregistrodocente/exportpdfclfc?pdf=1&paca="+periodo+"&unidad="+unidad+"&materia="+materia+"&profesor="+profesor;
+ 
+ } else {
+
+    showAlert('NO_OK', 'error', {"wtmessage": 'Para Generar el Acta, Seleccione Docente y Asignatura', "title": 'Información'});
+
+ }
 
 }
 

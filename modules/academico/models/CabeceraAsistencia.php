@@ -1,4 +1,4 @@
-<?php
+ <?php
 
 namespace app\modules\academico\models; 
 
@@ -7,6 +7,7 @@ use \yii\data\ActiveDataProvider;
 use \yii\data\ArrayDataProvider;
 use app\models\Utilities;
 use \yii\db\Query;
+use app\modules\academico\models\PeriodoAcademico;
 /**
  * This is the model class for table "db_academico.cabecera_asistencia".
  *
@@ -679,7 +680,7 @@ class CabeceraAsistencia extends \yii\db\ActiveRecord
                    SET casi_cant_total = (SELECT sum(dasi_cantidad) as casi_cant_total
                                             FROM db_academico.detalle_asistencia 
                                            where casi_id = $casi_id),
-                       casi_porc_total = (SELECT round ((sum(dasi_cantidad) / 0.3),2) as  casi_porc_total
+                       casi_porc_total = (SELECT round ((sum(dasi_cantidad) / 0.3),2) as casi_porc_total
                                             FROM db_academico.detalle_asistencia 
                                            where casi_id = $casi_id)
                 WHERE casi_id = $casi_id
@@ -1271,7 +1272,7 @@ class CabeceraAsistencia extends \yii\db\ActiveRecord
                    SET casi_cant_total = (SELECT sum(dasi_cantidad) as casi_cant_total
                                             FROM db_academico.detalle_asistencia 
                                            where casi_id = $casi_id),
-                       casi_porc_total = (SELECT round ((sum(dasi_cantidad) / 0.3),2) as  casi_porc_total
+                       casi_porc_total = (SELECT round ((sum(dasi_cantidad) / 0.3),2) as casi_porc_total
                                             FROM db_academico.detalle_asistencia 
                                            where casi_id = $casi_id)
                 WHERE casi_id = $casi_id
@@ -1564,7 +1565,7 @@ class CabeceraAsistencia extends \yii\db\ActiveRecord
                    SET casi_cant_total = (SELECT sum(dasi_cantidad) as casi_cant_total
                                             FROM db_academico.detalle_asistencia 
                                            where casi_id = $casi_id),
-                       casi_porc_total = (SELECT round ((sum(dasi_cantidad) / 0.3),2) as  casi_porc_total
+                       casi_porc_total = (SELECT round ((sum(dasi_cantidad) / 0.3),2) as casi_porc_total
                                             FROM db_academico.detalle_asistencia 
                                            where casi_id = $casi_id)
                 WHERE casi_id = $casi_id
@@ -1576,6 +1577,331 @@ class CabeceraAsistencia extends \yii\db\ActiveRecord
         return true;
     }//actualizarnotaasistenciasemanal
     
-    
+        public function getAsistenciadin($arrFiltro){
+        $con        = \Yii::$app->db_academico; 
+        $con1       = \Yii::$app->db_asgard; 
+        $str_search = "";
+        $estado     = "1";
+
+ ////////////////////////////////////////////////////////////////////////////////////////
+        $modelpaca = new PeriodoAcademico();
+        $daes = $modelpaca->getDaesbyperiodo($paca_id, $asi_id, $pro_id);
+        $horasasignatura = $modelpaca->getHorasmaxAsistenciaxest($daes[0]['daes_id']);
+        $sems = $horasasignatura['paca_semanas_periodo'];  $sems =10;
+        $hours = $horasasignatura['daho_total_horas'];   $hours = 6;
+/////////////////////////////////////////////////////////////////////////////////////////
+
+        if (isset($arrFiltro) && count($arrFiltro) > 0) {
+
+            if ($arrFiltro['periodo'] != "" && $arrFiltro['periodo'] > 0) {
+                $str_search .= " AND data.paca_id = :paca_id  ";
+            }
+            if ($arrFiltro['materia'] != "" && $arrFiltro['materia'] > 0) {
+                $str_search .= " AND data.asi_id = :asi_id  ";
+            }
+            if ($arrFiltro['profesor'] != "" && $arrFiltro['profesor'] > 0) {
+                $str_search .= " AND data.pro_id = :pro_id  ";
+            }
+            if ($arrFiltro['unidad'] != "" && $arrFiltro['unidad'] > 0) {
+                $str_search .= " AND data.uaca_id = :uaca_id  ";
+            }
+            
+            if ($arrFiltro['modalidad'] != "" && $arrFiltro['modalidad'] > 0) {
+                $str_search .= " AND data.mod_id = :mod_id  ";
+            } 
+            
+               
+        } 
+        $sql = "  SELECT (@row_number:=@row_number + 1) AS row_num,  data.*
+                            FROM (
+                  SELECT est.est_id
+                        ,est.est_matricula as matricula
+                        ,concat(per.per_pri_nombre,' ',per.per_pri_apellido) as nombre
+                       -- ,coalesce(casi.casi_id,0) as casi_id
+                      ,(SELECT ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca_anio),'') AS value
+                            FROM " . $con->dbname . ".semestre_academico AS saca
+                            INNER JOIN " . $con->dbname . ".periodo_academico AS paca ON saca.saca_id = paca.saca_id
+                            INNER JOIN " . $con->dbname . ".bloque_academico AS baca ON baca.baca_id = paca.baca_id
+                            WHERE
+                            paca.paca_id = :paca_id AND
+                            paca.paca_activo = 'A' AND
+                            paca.paca_estado = 1 AND
+                            paca.paca_estado_logico = 1 AND
+                            saca.saca_estado = 1 AND
+                            saca.saca_estado_logico = 1 AND
+                            baca.baca_estado = 1 AND
+                            baca.baca_estado_logico = 1) as periodo 
+                        ,(SELECT asi.asi_descripcion FROM " . $con->dbname . ".asignatura asi WHERE asi.asi_id = daca.asi_id) as materia
+                       ";
+
+
+
+ 
+              //////////////////////////////////////////////////////////////////////////////////
+         for ($x = 0; $x< $sems; ++$x) {
+             $nombre ='s'.$x;
+            $componentes[$nombre] = array(
+                'id'=> 's'.$x ,
+                'notamax'=>$hours,
+            );
+        
+
+           $sql .= "  
+            
+            ,(select dasi.dasi_cantidad from " . $con->dbname . ".detalle_asistencia dasi 
+                              where dasi.casi_id = casi.casi_id
+                             and dasi.dasi_tipo = '".$nombre."') as '".$nombre."'
+
+            ";
+
+            }
+        //////////////////////////////////////////////////////////////////////////////////
+
+
+            $sql .= "
+                        ,daca.paca_id as paca_id
+                        ,daca.asi_id  as asi_id
+                        ,daca.pro_id  as pro_id
+                        ,asi.uaca_id  as uaca_id
+                        , daca.mod_id
+                        , daes.daes_id
+                        ,daho.daho_total_horas
+                   FROM " . $con->dbname . ".distributivo_academico daca
+             INNER JOIN " . $con->dbname . ".distributivo_academico_estudiante daes  ON daes.daca_id = daca.daca_id
+             INNER JOIN " . $con->dbname . ".distributivo_academico_horario daho on daho.daho_id = daca.daho_id
+              LEFT JOIN " . $con->dbname . ".estudiante est                          ON est.est_id = daes.est_id
+                    AND est.est_estado = :estado
+                    AND est.est_estado_logico = :estado
+             INNER JOIN " . $con1->dbname. ".persona per                             ON per.per_id   = est.per_id
+              LEFT JOIN " . $con->dbname . ".cabecera_asistencia casi              
+                     ON casi.est_id  = est.est_id 
+                    AND casi.asi_id  = daca.asi_id
+                    AND casi.pro_id  = daca.pro_id
+                    AND casi.paca_id = daca.paca_id
+                    AND casi.casi_estado = :estado
+                    AND casi.casi_estado_logico = :estado
+              LEFT JOIN " . $con->dbname . ".asistencia_esquema_unidad aeun   ON aeun.aeun_id = casi.aeun_id
+              LEFT JOIN " . $con->dbname . ".esquema_calificacion_unidad ecun ON ecun.ecun_id = aeun.ecun_id 
+              LEFT JOIN " . $con->dbname . ".asignatura asi                   ON asi.asi_id = daca.asi_id
+            order by 3 asc
+            ) as data 
+            ,(SELECT @row_number:=0) AS t
+           WHERE 1=1 
+                 $str_search  
+        group by matricula, nombre, est_id, pro_id, materia, asi_id
+         ORDER BY nombre ASC
+        ";
+
+
+      
+
+        $comando = $con->createCommand($sql);
+
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR); 
+
+        if (isset($arrFiltro) && count($arrFiltro) > 0) {
+         
+            if ($arrFiltro['periodo'] != "" && $arrFiltro['periodo'] > 0) {
+                $periodo = $arrFiltro["periodo"];
+                $comando->bindParam(":paca_id", $periodo, \PDO::PARAM_INT);
+            }
+            if ($arrFiltro['unidad'] != "" && $arrFiltro['unidad'] > 0) {
+                $unidad = $arrFiltro["unidad"];
+                $comando->bindParam(":uaca_id", $unidad, \PDO::PARAM_INT);
+            }
+            
+            if ($arrFiltro['modalidad'] != "" && $arrFiltro['modalidad'] > 0) {
+                $modalidad = $arrFiltro["modalidad"];
+                $comando->bindParam(":mod_id", $modalidad, \PDO::PARAM_INT);
+            }  
+            
+            if ($arrFiltro['materia'] != "" && $arrFiltro['materia'] > 0) {
+                $materia = $arrFiltro["materia"];
+                $comando->bindParam(":asi_id", $materia, \PDO::PARAM_INT);
+            }
+           /* if ($arrFiltro['parcial'] != "" && $arrFiltro['parcial'] > 0) {
+                $parcial = $arrFiltro["parcial"];
+                $comando->bindParam(":ecal_id", $parcial, \PDO::PARAM_INT);
+            } */
+            if ($arrFiltro['profesor'] != "" && $arrFiltro['profesor'] > 0) {
+                $profesor = $arrFiltro["profesor"];
+                $comando->bindParam(":pro_id", $profesor, \PDO::PARAM_INT);
+            }
+        }
+
+        $res = $comando->queryAll();
+
+        \app\models\Utilities::putMessageLogFile('getAsistencia: ' .$comando->getRawSql());
+        return $res;
+    }//function getAsistenciadin
+
+
+
+    /**
+     * Actualizar registro en la tabla detalle_calificacion
+     * @author  Galo Aguirre <analistadesarrollo06@uteg.edu.ec>
+     * @param   
+     * @return  
+     */
+    public function actualizarDetalleporcomponente($ccal_id,$key , $value){
+        $con    = \Yii::$app->db_academico;
+        $estado = '1';
+        //$usu_id = @Yii::$app->session->get("PB_iduser");
+        //$fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
+        
+        //$com_nombre = array_key_first($value);    
+        $sql = "UPDATE db_academico.detalle_calificacion
+                   SET dcal_calificacion = $value
+                 WHERE dcal_id = (
+                       SELECT valor FROM(
+                              SELECT dc1.dcal_id as valor
+                                from db_academico.detalle_calificacion dc1,
+                                     db_academico.componente_unidad cu1,
+                                     db_academico.componente com1
+                               where dc1.ccal_id = $ccal_id
+                                 and dc1.cuni_id = cu1.cuni_id
+                                 and cu1.com_id = com1.com_id
+                                 and com1.com_nombre = '$key'
+                               ) AS alias_tabla1
+                );";
+        
+        $command = $con->createCommand($sql);
+        //$command->bindParam(":daca_id", $daca_id, \PDO::PARAM_INT);             
+        //$command->bindParam(":fecha", $fecha_transaccion, \PDO::PARAM_STR);
+        $idtabla= $command->execute();  
+
+        \app\models\Utilities::putMessageLogFile('actualizarDetalleCalificacionporcomponente: '.$command->getRawSql());
+        return $idtabla;
+    }//function actualizarDetalleporcomponente
+
+
+        /**
+     * Actualizar registro en la tabla detalle_calificacion
+     * @author  Galo Aguirre <analistadesarrollo06@uteg.edu.ec>
+     * @param   
+     * @return  
+     */
+    public function crearCabeceraporcomponente($paca_id,$est_id,$pro_id,$asi_id,$ecal_id,$uaca_id){
+        $con    = \Yii::$app->db_academico;
+        $transaccion = $con->beginTransaction();
+        //$estado = '1';
+        //$usu_id = @Yii::$app->session->get("PB_iduser");
+        
+        //$com_nombre = array_key_first($value);    
+        $sql = "INSERT INTO " . $con->dbname . ".cabecera_calificacion
+                            (
+                              `paca_id`,
+                              `est_id`,
+                              `pro_id`,
+                              `asi_id`,
+                              `ecun_id`,
+                              `ccal_calificacion`,
+                              `ccal_estado`,
+                              `ccal_fecha_creacion`,
+                              `ccal_estado_logico`
+                            )
+                     VALUES(
+                              $paca_id,
+                              $est_id,
+                              $pro_id,
+                              $asi_id,
+                              (select ecun_id FROM esquema_calificacion_unidad WHERE ecal_id = $ecal_id and uaca_id = $uaca_id),
+                              0,
+                              1,
+                              now(),
+                              1
+                )";
+        
+        $command = $con->createCommand($sql);
+        //$command->bindParam(":daca_id", $daca_id, \PDO::PARAM_INT);             
+        //$command->bindParam(":fecha", $fecha_transaccion, \PDO::PARAM_STR);
+        $idtabla= $command->execute();  
+
+        $idtable = $con->getLastInsertID($con->dbname . '.cabecera_calificacion');
+
+        $transaccion->commit();
+
+        \app\models\Utilities::putMessageLogFile('Crear Cabecera: '.$command->getRawSql());
+        return $idtable;
+    }//function actualizarDetalleCalificacionporid
+
+        /**
+     * Actualizar registro en la tabla detalle_calificacion
+     * @author  Galo Aguirre <analistadesarrollo06@uteg.edu.ec>
+     * @param   
+     * @return  
+     */
+    public function crearDetalleporcomponente($ccal_id,$key,$value,$uaca_id,$mod_id,$ecal_id){
+        $con    = \Yii::$app->db_academico;
+        $estado = '1';
+        $usu_id = @Yii::$app->session->get("PB_iduser");
+        
+        //$fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
+        if($value == ''){
+        
+            //$com_nombre = array_key_first($value);    
+            $sql = "INSERT INTO `db_academico`.`detalle_calificacion`
+                                (
+                                   `ccal_id`,
+                                   `cuni_id`,
+                                   `dcal_usuario_creacion`,
+                                   `dcal_estado`,
+                                   `dcal_fecha_creacion`,
+                                   `dcal_estado_logico`
+                                )
+                         VALUES (
+                                    $ccal_id,
+                                    (SELECT cuni.cuni_id
+                                       from db_academico.componente_unidad cuni,
+                                            db_academico.componente com
+                                      where cuni.com_id    = com.com_id
+                                        and com.com_nombre = '$key'
+                                        and cuni.uaca_id   = $uaca_id
+                                        and cuni.mod_id    = $mod_id
+                                        /*and cuni.ecal_id   = $ecal_id*/),
+                                    $usu_id,
+                                    1,
+                                    now(),
+                                    1
+                                )
+            ";
+        }else{
+            //$com_nombre = array_key_first($value);    
+            $sql = "INSERT INTO `db_academico`.`detalle_calificacion`
+                                (
+                                   `ccal_id`,
+                                   `cuni_id`,
+                                   `dcal_calificacion`,
+                                   `dcal_usuario_creacion`,
+                                   `dcal_estado`,
+                                   `dcal_fecha_creacion`,
+                                   `dcal_estado_logico`
+                                )
+                         VALUES (
+                                    $ccal_id,
+                                    (SELECT cuni.cuni_id
+                                       from db_academico.componente_unidad cuni,
+                                            db_academico.componente com
+                                      where cuni.com_id = com.com_id
+                                        and com.com_nombre = '$key'
+                                        and cuni.uaca_id = $uaca_id
+                                        and cuni.mod_id    = $mod_id
+                                        /*and cuni.ecal_id   = $ecal_id*/),
+                                    $value,
+                                    $usu_id,
+                                    1,
+                                    now(),
+                                    1
+                                )
+            ";
+        }
+        $command = $con->createCommand($sql);
+        //$command->bindParam(":daca_id", $daca_id, \PDO::PARAM_INT);             
+        //$command->bindParam(":fecha", $fecha_transaccion, \PDO::PARAM_STR);
+        $idtabla= $command->execute();  
+
+        \app\models\Utilities::putMessageLogFile('Crear Detalle: '.$command->getRawSql());
+        return $idtabla;
+    }//function actualizarDetalleCalificacionporid
     
 }

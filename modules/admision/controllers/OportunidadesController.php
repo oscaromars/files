@@ -64,7 +64,7 @@ class OportunidadesController extends \app\components\CController {
         $modestudio = new ModuloEstudio();
         $respOportunidad = $modoportunidad->consultarOportunidadById($opor_id);
         $resptipocarrera = $modoportunidad->consultarNombreCarrera($respOportunidad["subcarera_id"]);
-        $arr_carrerra1 = $modestudio->consultarEstudioEmpresa($respOportunidad["empresa"]); // tomar id de impresa        
+        $arr_carrerra1 = $modestudio->consultarEstudioEmpresa($respOportunidad["empresa"]); // tomar id de impresa
         $contactManage = $persges_mod->consultarPersonaGestion($pges_id);
         $uni_aca_model = new UnidadAcademica();
         $modalidad_model = new Modalidad();
@@ -120,7 +120,7 @@ class OportunidadesController extends \app\components\CController {
         $arr_carrerra2 = $modoportunidad->consultarTipoCarrera();
         $arr_subcarrera = $modoportunidad->consultarSubCarrera($respOportunidad["tcar_id"]);
         //$arr_moduloEstudio = $modestudio->consultarEstudioEmpresa($respOportunidad["empresa"]); // tomar id de impresa
-        $arr_moduloEstudio = $modestudio->consultarCursoModalidad($respOportunidad["uaca_id"], $respOportunidad["mod_id"], $respOportunidad["empresa"]); 
+        $arr_moduloEstudio = $modestudio->consultarCursoModalidad($respOportunidad["uaca_id"], $respOportunidad["mod_id"], $respOportunidad["empresa"]);
         $respRolPerAutentica = $modoportunidad->consultarAgenteAutenticado($per_id);
         $empresa = $empresa_mod->getAllEmpresa();
         if (Yii::$app->request->isAjax) {
@@ -155,7 +155,7 @@ class OportunidadesController extends \app\components\CController {
             }
         }
 
-        //if (($respOportunidad["per_id"] == $per_id) || ($respRolPerAutentica["rol"] == 'SUP')) {        
+        //if (($respOportunidad["per_id"] == $per_id) || ($respRolPerAutentica["rol"] == 'SUP')) {
         return $this->render('edit', [
                     'personalData' => $contactManage,
                     'dataOportunidad' => $respOportunidad,
@@ -188,8 +188,8 @@ class OportunidadesController extends \app\components\CController {
         $modalidad_model = new Modalidad();
         $modestudio = new ModuloEstudio();
         $modTipoOportunidad = new TipoOportunidadVenta();
-        $state_oportunidad_model = new EstadoOportunidad();        
-        $unidad_acad_data = $uni_aca_model->consultarUnidadAcademicas();        
+        $state_oportunidad_model = new EstadoOportunidad();
+        $unidad_acad_data = $uni_aca_model->consultarUnidadAcademicas();
         $modalidad_data = $modalidad_model->consultarModalidad($unidad_acad_data[0]["id"], $emp_id);
         $modcanal = new Oportunidad();
         $tipo_oportunidad_data = $modTipoOportunidad->consultarOporxUnidad($unidad_acad_data[0]["id"]);
@@ -205,20 +205,20 @@ class OportunidadesController extends \app\components\CController {
         unset($arrSeg[0]);
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
-            if (isset($data["getuacademias"])) {                
+            if (isset($data["getuacademias"])) {
                 //$data_u_acad = $uni_aca_model->consultarUnidadAcademicasEmpresa($data["empresa_id"]);
                 $data_u_acad = $uni_aca_model->consultarUnidadAcademicas();
                 $message = array("unidad_academica" => $data_u_acad);
-                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);                
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
             }
             if (isset($data["getmodalidad"])) {
                 if (($data["nint_id"]==1) or ($data["nint_id"]==2)){
-                    $modalidad = $modalidad_model->consultarModalidad($data["nint_id"], $data["empresa_id"]);                    
+                    $modalidad = $modalidad_model->consultarModalidad($data["nint_id"], $data["empresa_id"]);
                 } else {
-                    $modalidad = $modestudio->consultarModalidadModestudio();                    
+                    $modalidad = $modestudio->consultarModalidadModestudio();
                 }
                 $message = array("modalidad" => $modalidad);
-                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);                                
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
             }
             if (isset($data["getoportunidad"])) {
                 $oportunidad = $modTipoOportunidad->consultarOporxUnidad($data["unidada"]);
@@ -314,7 +314,7 @@ class OportunidadesController extends \app\components\CController {
             } else {
                 $estudio_academico = '';
                 $modulo_estudio = $data["id_estudio_academico"];
-            }   
+            }
             $canal_conocimiento = $data["canal_conocimiento"];
             $sub_carrera = ($data["sub_carrera"] != 0) ? $data["sub_carrera"] : null;
             $usuario = @Yii::$app->user->identity->usu_id;
@@ -435,7 +435,7 @@ class OportunidadesController extends \app\components\CController {
                 }
             } else {
                 $mest_id = $carrera_estudio;
-            }  
+            }
             $canal_conocimiento = $data["canal"];
             $sub_carrera = $data["subcarrera"];
             if ($sub_carrera == 0) {
@@ -493,9 +493,9 @@ class OportunidadesController extends \app\components\CController {
         header('Cache-Control: max-age=0');
         $colPosition = array("C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N");
 
-        $arrHeader = array(            
+        $arrHeader = array(
             admision::t("crm", "No Opportunity"),
-            admision::t("crm", "Contact"),           
+            admision::t("crm", "Contact"),
             Yii::t("formulario", "Company"),
             Yii::t("formulario", "Aca. Uni."),
             admision::t("crm", "Career/Program/Course"),
@@ -545,9 +545,9 @@ class OportunidadesController extends \app\components\CController {
         $arrSearch["fec_proxima_ini"] = $data['fecproximaini'];
         $arrSearch["fec_proxima_fin"] = $data['fecproximafin'];
 
-        $arr_head = array(        
+        $arr_head = array(
             admision::t("crm", "No Opportunity"),
-            admision::t("crm", "Contact"),           
+            admision::t("crm", "Contact"),
             Yii::t("formulario", "Company"),
             Yii::t("formulario", "Aca. Uni."),
             admision::t("crm", "Career/Program/Course"),
@@ -576,9 +576,9 @@ class OportunidadesController extends \app\components\CController {
     }
 
     public function actionCargargestion() {
-        $per_id = @Yii::$app->session->get("PB_perid");    
-        $usu_id = @Yii::$app->session->get("PB_iduser");    
-        $mod_gestion = new Oportunidad();        
+        $per_id = @Yii::$app->session->get("PB_perid");
+        $usu_id = @Yii::$app->session->get("PB_iduser");
+        $mod_gestion = new Oportunidad();
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
             if ($data["upload_file"]) {
@@ -598,11 +598,11 @@ class OportunidadesController extends \app\components\CController {
                         return json_encode(['error' => Yii::t("notificaciones", "Error to process File {file}. Try again.", ['{file}' => basename($files['name'])])]);
                     }
                 }
-            }            
+            }
             if ($data["procesar_file"]) {
-                $emp_id = $data["emp_id"];                
-                $mod_actividadTemp = new BitacoraActividadesTmp();                     
-                $resp_padm = $mod_actividadTemp->consultarIdXPadm($per_id);   //Buscar el Padm_id 
+                $emp_id = $data["emp_id"];
+                $mod_actividadTemp = new BitacoraActividadesTmp();
+                $resp_padm = $mod_actividadTemp->consultarIdXPadm($per_id);   //Buscar el Padm_id
                 if ($resp_padm) {
                     $carga_archivo = $mod_gestion->CargarArchivoGestion($emp_id, $data["archivo"], $usu_id, $resp_padm["padm_id"]);
                     if ($carga_archivo['status']) {
@@ -624,7 +624,7 @@ class OportunidadesController extends \app\components\CController {
                         "title" => Yii::t('jslang', 'Error'),
                     );
                     return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), true, $message);
-                }                                
+                }
                 return;
             }
         } else {

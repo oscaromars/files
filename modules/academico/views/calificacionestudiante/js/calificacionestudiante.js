@@ -52,9 +52,9 @@ function searchCalificacionEstudiantesPorPeriodo() {
   var arrParams = new Object();
   arrParams.PBgetFilter = true;
 
-	unidad = $("#cmb_unidad_bus").val();
-	modalidad = $("#cmb_modalidad_bus").val();
-	carrera = $("#cmb_carrera_bus").val();	
+    unidad = $("#cmb_unidad_bus").val();
+    modalidad = $("#cmb_modalidad_bus").val();
+    carrera = $("#cmb_carrera_bus").val();  
     periodo = $("#cmb_periodo").val();
 
   if (!$(".blockUI").length) {

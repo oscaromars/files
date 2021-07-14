@@ -10,7 +10,7 @@ use yii\data\ArrayDataProvider;
 use yii\helpers\ArrayHelper;
 ?>
 
-<?=
+<?= 
     PbGridView::widget([
         'id' => 'grid_planificaciones_list',
         'showExport' => false,
@@ -20,11 +20,11 @@ use yii\helpers\ArrayHelper;
         'pajax' => true,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn', 'options' => ['width' => '10']],
-            [
+           /* [
                 'attribute' => 'PeriodoAcademico',
-                'header' => 'Periodo Academico',
+                'header' => 'Semestre Academico ID',
                 'value' => 'PeriodoAcademico',
-            ],
+            ],*/
             [
                 'attribute' => 'Modalidad',
                 'header' => 'Modalidad',

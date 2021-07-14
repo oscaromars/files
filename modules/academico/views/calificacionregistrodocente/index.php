@@ -2,7 +2,7 @@
 
 use yii\helpers\Html;
 use app\modules\academico\Module as academico;
-
+//print_r($arr_periodoActual);
 academico::registerTranslations();
 ?>
 <?= Html::hiddenInput('txth_ids', '', ['id' => 'txth_ids']); ?>

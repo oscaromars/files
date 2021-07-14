@@ -738,7 +738,7 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
         }
         try {
             $comando = $con->createCommand
-                    ("UPDATE " . $con->dbname . ".planificacion_estudiante		       
+                    ("UPDATE " . $con->dbname . ".planificacion_estudiante             
                       SET pes_estado = :pes_estado,
                           pes_usuario_modifica = :pes_usuario_modifica,
                           pes_fecha_modificacion = :pes_fecha_modificacion                          
@@ -775,7 +775,7 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
                             WHEN 'N' THEN 'Nocturno'  
                             WHEN 'S' THEN 'Semipresencial'
                             WHEN 'D' THEN 'Distancia'
-		    END AS pes_jornada, 'Bloque 1', moda.mod_nombre as modalidad, 'Hora " . $i . "' 
+            END AS pes_jornada, 'Bloque 1', moda.mod_nombre as modalidad, 'Hora " . $i . "' 
                     FROM " . $con->dbname . ".planificacion_estudiante ples
                     INNER JOIN " . $con->dbname . ".modalidad moda ON  moda.mod_id = ples.pes_mod_b1_h" . $i . "
                     INNER JOIN " . $con->dbname . ".malla_academica_detalle mad ON  mad.made_codigo_asignatura = pes_mat_b1_h" . $i . "_cod
@@ -790,7 +790,7 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
                             WHEN 'N' THEN 'Nocturno'  
                             WHEN 'S' THEN 'Semipresencial'
                             WHEN 'D' THEN 'Distancia'
-		    END AS pes_jornada, 'Bloque 2', moda.mod_nombre as modalidad, 'Hora " . $j . "' 
+            END AS pes_jornada, 'Bloque 2', moda.mod_nombre as modalidad, 'Hora " . $j . "' 
                     FROM " . $con->dbname . ".planificacion_estudiante ples
                     INNER JOIN " . $con->dbname . ".modalidad moda ON  moda.mod_id = ples.pes_mod_b2_h" . $j . "
                     INNER JOIN " . $con->dbname . ".malla_academica_detalle mad ON  mad.made_codigo_asignatura = pes_mat_b2_h" . $j . "_cod
@@ -863,7 +863,7 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
                       pes_mod_b" . $bloque . "_h" . $hora . " = null,
                       pes_mat_b" . $bloque . "_h" . $hora . "_nombre = null,";
         }
-        $este = "UPDATE db_academico.planificacion_estudiante		       
+        $este = "UPDATE db_academico.planificacion_estudiante              
                       SET
                           $modificar
                           pes_usuario_modifica = $pes_usuario_modifica,
@@ -872,7 +872,7 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
                         pes_estado= 1 AND pla_id = $pla_id AND per_id = $per_id";
         try {
             $comando = $con->createCommand
-                    ("UPDATE " . $con->dbname . ".planificacion_estudiante		       
+                    ("UPDATE " . $con->dbname . ".planificacion_estudiante             
                       SET
                           $modificar
                           pes_usuario_modifica = :pes_usuario_modifica,
@@ -990,7 +990,7 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
                        plan.pes_jornada,
                        plan.pes_nombres,
                        ifnull((SELECT maca.maca_nombre FROM " . $con->dbname . ".malla_academica_detalle made  
-		                       INNER JOIN " . $con->dbname . ".malla_academica maca ON maca.maca_id = made.maca_id
+                               INNER JOIN " . $con->dbname . ".malla_academica maca ON maca.maca_id = made.maca_id
                                WHERE made_codigo_asignatura = :materia), ' ') as malla
                 FROM " . $con->dbname . ".planificacion_estudiante plan
                 INNER JOIN " . $con->dbname . ".estudio_academico esta ON esta.eaca_nombre = plan.pes_carrera
@@ -1240,7 +1240,7 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
                 $sql3 = 
                     ("INSERT INTO " . $con->dbname . ".planificacion_estudiante(pes_cod_malla,pes_carrera,per_id,pes_dni,pes_nombres,pla_id,pes_estado,pes_estado_logico)
                     select distinct(ma.maca_codigo),ma.maca_nombre,e.per_id, pe.per_cedula, 
-                    concat(pe.per_pri_nombre, ' ', pe.per_seg_nombre,' ', pe.per_pri_apellido, ' ',pe.per_seg_apellido) as nombres, $pla_id as pla_id, 1,1
+                    concat(pe.per_pri_nombre, ' ', pe.per_seg_nombre,' ', pe.per_pri_apellido, ' ',pe.per_seg_apellido) as nombres, 1 as pla_id, 1,1
                     from " . $con->dbname . ".estudiante_carrera_programa ecp 
                     inner join " . $con->dbname . ".modalidad_estudio_unidad meu on ecp.meun_id = meu.meun_id
                     inner join " . $con->dbname . ".estudio_academico es on es.eaca_id = meu.eaca_id 
@@ -1443,7 +1443,7 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
         $estado = 1;
         if (isset($arrFiltro) && count($arrFiltro) > 0) {
             \app\models\Utilities::putMessageLogFile('----------------------------------------Con Filtros');
-            if ($arrFiltro['modalidad'] != 0) {
+            /*if ($arrFiltro['modalidad'] != 0) {
                 if($arrFiltro['modalidad'] == 1) {
                     $str_search .= " and meu.mod_id = 1";
                 }
@@ -1456,12 +1456,32 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
                 if($arrFiltro['modalidad'] == 4) {
                     $str_search .= " and meu.mod_id = 4";
                 }
+                \app\models\Utilities::putMessageLogFile('-------------------'. $str_search .'---------------------');
+            }*/
+            if ($arrFiltro['modalidad'] != 0) {
+                if($arrFiltro['modalidad'] == 1) {
+                    $str_search .= " WHERE x.Modalidad = 'ONLINE'";
+                }
+                if($arrFiltro['modalidad'] == 2) {
+                    $str_search .= " WHERE x.Modalidad = 'PRESENCIAL'";
+                }
+                if($arrFiltro['modalidad'] == 3) {
+                    $str_search .= " WHERE x.Modalidad = 'SEMIPRESENCIAL'";
+                }
+                if($arrFiltro['modalidad'] == 4) {
+                    $str_search .= " WHERE x.Modalidad = 'DISTANCIA'";
+                }
+                \app\models\Utilities::putMessageLogFile('-------------------'. $str_search .'---------------------');
             }
 
             if ($arrFiltro['periodo'] != 0) {
                 $periodo = $arrFiltro['periodo'];
                 $str_search2 .= "and pla.saca_id = $periodo";
+                \app\models\Utilities::putMessageLogFile('-------------------'. $str_search2 .'---------------------');
+
             }
+            $pla_id = $arrFiltro['planificacion']?$arrFiltro['planificacion']:0;
+            $mod_id = $arrFiltro['modalidad']?$arrFiltro['modalidad']:0;
 
             //if($arrFiltro['modalidad'] )
         }
@@ -1542,18 +1562,43 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
                         and meu.meun_id = (select s.meun_id from db_academico.malla_unidad_modalidad s where s.maca_id = mum.maca_id limit 0,1)
                         group by a.asi_id,a.asi_nombre
                         order by cantidad;";
-        $sql2="SELECT 
-            
-            c.id_dummy,
-            c.materia as Materia,
-            count(c.materia) as Cantidad,
-            c.id_modalidad
-        FROM " . $con->dbname . ".dummy_pruebasiga c     
-        where   $str_search
-                c.nota=0
-                group by c.periodo,c.materia, c.carrera, c.modalidad, c.bloque_academico";
+        $sql2="SELECT distinct pe.per_id,
+                    CASE meu.mod_id
+                    when 1 then 'ONLINE'
+                    when 2 then 'PRESENCIAL'
+                    WHEN 3 then 'SEMIPRESENCIAL'
+                    WHEN 4 then 'DISTANCIA'
+                    else meu.mod_id
+                    end as Modalidad,
+                    -- mad.made_codigo_asignatura as cod_mat,
+                    -- maca.maca_codigo,maca.maca_nombre,
+                    a.asi_id,
+                    a.asi_nombre as Materia,
+                    count(a.asi_id) as Cantidad
+                    from  ". $con->dbname . ".planificacion_estudiante pe
+                    inner join  ". $con->dbname . ".malla_academica_detalle mad on mad.made_codigo_asignatura in (pe.pes_mat_b1_h1_cod,
+                                                                                                        pe.pes_mat_b1_h2_cod,
+                                                                                                        pe.pes_mat_b1_h3_cod,
+                                                                                                        pe.pes_mat_b1_h4_cod,
+                                                                                                        pe.pes_mat_b1_h5_cod,
+                                                                                                        pe.pes_mat_b1_h6_cod,
+                                                                                                        pe.pes_mat_b2_h1_cod,
+                                                                                                        pe.pes_mat_b2_h2_cod,
+                                                                                                        pe.pes_mat_b2_h3_cod,
+                                                                                                        pe.pes_mat_b2_h4_cod,
+                                                                                                        pe.pes_mat_b2_h5_cod,
+                                                                                                        pe.pes_mat_b2_h6_cod)
+                    inner join  ". $con->dbname . ".asignatura a on mad.asi_id = a.asi_id
+                    inner join  ". $con->dbname . ".malla_unidad_modalidad mum on mad.maca_id = mum.maca_id
+                    inner join  ". $con->dbname . ".modalidad_estudio_unidad meu on meu.meun_id = (select s.meun_id from db_academico.malla_unidad_modalidad s where s.maca_id = mum.maca_id limit 0,1)
+                    inner join  ". $con->dbname . ".planificacion pla on pla.pla_id = pe.pla_id
+                    -- inner join  ". $con->dbname . ".malla_academica maca on pe.pes_cod_carrera = maca.maca_codigo
+                    where pe.pla_id = $pla_id 
+                    and meu.mod_id = $mod_id
+                    group by a.asi_id, a.asi_nombre 
+                    order by a.asi_id"; 
 
-        $comando = $con->createCommand($sql);
+        $comando = $con->createCommand($sql2);
         
         if (isset($arrFiltro) && count($arrFiltro) > 0) {
                         
@@ -1569,6 +1614,7 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
         }
 
         $resultData = $comando->queryAll();
+        \app\models\Utilities::putMessageLogFile('consultarModalidad: '.$comando->getRawSql());
         $dataProvider = new ArrayDataProvider([
             'key' => 'id',
             'allModels' => $resultData,
@@ -1660,7 +1706,7 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
         return $resultData;
     }
 
-    public function consultaPlanificacionEstVigente($per_id){
+    public function consultaPlanificacionEstVigente($per_id, $saca_id){
         $con = \Yii::$app->db_academico;
         $estado = '1';
         $sql = "SELECT pl.pla_id as 'id', pl.pla_id as 'name'
@@ -1669,6 +1715,14 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
                 and pl.pes_estado_logico = 1 
                 order by pl.pla_id desc
                 limit 0,1;"; 
+
+        $sql2 = "SELECT distinct ples.pla_id from ". $con->dbname . ".periodo_academico pa
+                inner join ". $con->dbname . ".planificacion pla on pla.saca_id = pa.saca_id
+                inner join ". $con->dbname . ".planificacion_estudiante ples on ples.pla_id = pla.pla_id 
+                and ples.per_id = $per_id
+                and pa.saca_id = $paca_id
+                and ples.pes_estado = 1
+                and ples.pes_estado_logico = 1";
         if($per_id == null){
             $resultData = [];
         }else{
@@ -2020,8 +2074,8 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
                     plae.pes_nombres,
                     plae.pes_carrera,
                     plan.pla_periodo_academico
-                FROM " . $con->dbname . ".planificacion_estudiantex plae
-                INNER JOIN " . $con->dbname . ".planificacionx plan ON plan.pla_id = plae.pla_id
+                FROM " . $con->dbname . ".planificacion_estudiante plae
+                INNER JOIN " . $con->dbname . ".planificacion plan ON plan.pla_id = plae.pla_id
                 INNER JOIN " . $con1->dbname . ".persona pers ON pers.per_id = plae.per_id
                 WHERE 
                     $str_search
@@ -2113,8 +2167,8 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
                     plae.pes_mat_b2_h2_nombre,
                     plae.pes_mat_b2_h3_nombre,
                     plae.pes_mat_b2_h4_nombre                    
-                FROM " . $con->dbname . ".planificacion_estudiantex plae
-                LEFT JOIN " . $con->dbname . ".planificacionx plan ON plan.pla_id = plae.pla_id
+                FROM " . $con->dbname . ".planificacion_estudiante plae
+                LEFT JOIN " . $con->dbname . ".planificacion plan ON plan.pla_id = plae.pla_id
                 INNER JOIN " . $con1->dbname . ".persona pers ON pers.per_id = plae.per_id
                 WHERE 
                      $str_search
@@ -2180,6 +2234,7 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
             $per_id = $arrFiltro['estudiante'];
             $per_id = $_GET['estudiante'];
             $pla_id = $arrFiltro['planificacion'];
+            $saca_id = $arrFiltro['saca_id'];
             $periodo = $arrFiltro['periodoAca'];
         }
         // Bloque 1
@@ -2193,17 +2248,18 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
                             WHEN '2' THEN 'Nocturno'  
                             WHEN '3' THEN 'Semipresencial'
                             WHEN '4' THEN 'Distancia'
-		    END AS pes_jornada, 'Bloque 1', moda.mod_nombre as modalidad, 'Hora " . $i . "'
+            END AS pes_jornada, 'Bloque 1', moda.mod_nombre as modalidad, 'Hora " . $i . "'
                     FROM " . $con->dbname . ".planificacion_estudiante ples
                     INNER JOIN " . $con->dbname . ".modalidad moda ON  moda.mod_id = ples.pes_mod_b1_h" . $i . "
                     INNER JOIN " . $con->dbname . ".malla_academica_detalle mad ON  mad.made_codigo_asignatura = pes_mat_b1_h" . $i . "_cod
                     INNER JOIN " . $con->dbname . ".asignatura asig ON  asig.asi_id = mad.asi_id
-                    where per_id =  $per_id and pla_id = (SELECT pla.pla_id
-                                                            from " . $con->dbname . ".periodo_academico per
-                                                            inner join " . $con->dbname . ".planificacion pla on pla.paca_id = per.paca_id
-                                                            inner join " . $con->dbname . ".planificacion_estudiante pes on pes.pla_id = pla.pla_id
-                                                            where per.paca_id = $periodo and pes.per_id = $per_id
-                                                            limit 0,1)
+                    where per_id =  $per_id and pla_id = (SELECT distinct ples.pla_id from ". $con->dbname . ".periodo_academico pa
+                                                            inner join ". $con->dbname . ".planificacion pla on pla.saca_id = pa.saca_id
+                                                            inner join ". $con->dbname . ".planificacion_estudiante ples on ples.pla_id = pla.pla_id 
+                                                            and ples.per_id = $per_id
+                                                            and pa.saca_id = $saca_id
+                                                            and ples.pes_estado = 1
+                                                            and ples.pes_estado_logico = 1)
                     UNION ";
         }
         // Bloque 2
@@ -2217,17 +2273,18 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
                             WHEN '2' THEN 'Nocturno'  
                             WHEN '3' THEN 'Semipresencial'
                             WHEN '4' THEN 'Distancia'
-		    END AS pes_jornada, 'Bloque 2', moda.mod_nombre as modalidad, 'Hora " . $j . "' 
+            END AS pes_jornada, 'Bloque 2', moda.mod_nombre as modalidad, 'Hora " . $j . "' 
                     FROM " . $con->dbname . ".planificacion_estudiante ples
                     INNER JOIN " . $con->dbname . ".modalidad moda ON  moda.mod_id = ples.pes_mod_b2_h" . $j . "
                     INNER JOIN " . $con->dbname . ".malla_academica_detalle mad ON  mad.made_codigo_asignatura = pes_mat_b2_h" . $j . "_cod
                     INNER JOIN " . $con->dbname . ".asignatura asig ON  asig.asi_id = mad.asi_id
-                    where per_id =  $per_id and pla_id = (SELECT pla.pla_id
-                                                            from " . $con->dbname . ".periodo_academico per
-                                                            inner join " . $con->dbname . ".planificacion pla on pla.paca_id = per.paca_id
-                                                            inner join " . $con->dbname . ".planificacion_estudiante pes on pes.pla_id = pla.pla_id
-                                                            where per.paca_id = $periodo and pes.per_id = $per_id
-                                                            limit 0,1)";
+                    where per_id =  $per_id and pla_id = (SELECT distinct ples.pla_id from ". $con->dbname . ".periodo_academico pa
+                                                            inner join ". $con->dbname . ".planificacion pla on pla.saca_id = pa.saca_id
+                                                            inner join ". $con->dbname . ".planificacion_estudiante ples on ples.pla_id = pla.pla_id 
+                                                            and ples.per_id = $per_id
+                                                            and pa.saca_id = $saca_id
+                                                            and ples.pes_estado = 1
+                                                            and ples.pes_estado_logico = 1)";
             if ($j < 6) {
                 $sql .= "UNION ";
             }

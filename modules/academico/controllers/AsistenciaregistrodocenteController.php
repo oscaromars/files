@@ -62,7 +62,7 @@ class AsistenciaregistrodocenteController extends \app\components\CController {
         ];
     }
 
-    public function actionIndex() {
+    public function actionIndexno() {
 
          \app\models\Utilities::putMessageLogFile('actionIndex');
 
@@ -148,7 +148,7 @@ class AsistenciaregistrodocenteController extends \app\components\CController {
                     $asi_id = $data['asi_id'];//id asignatura
                     $uaca_id = $data['uaca_id'];//id unidad
                     $mod_id = $data['mod_id'];//id modalidad
- 
+
                     //\app\models\Utilities::putMessageLogFile($asignatura);
                     //\app\models\Utilities::putMessageLogFile('LINEA 153 : '.$per_id);
                     
@@ -306,10 +306,18 @@ class AsistenciaregistrodocenteController extends \app\components\CController {
                                  \app\models\Utilities::putMessageLogFile('nombre' . $nombre);
                         
                        $estudiante = Estudiante::find()->where(['est_matricula' => $matricula])->asArray()->one();
-                        \app\models\Utilities::putMessageLogFile('ID' . $estudiante['est_id']);
+                     
                        
                        
-                       //    $estudiante = UsuarioEducativa::find()->where(['uedu_usuario' => $matricula])->asArray()->one();
+                        $estudiante_online= UsuarioEducativa::find()->where(['uedu_usuario' => $matricula])->asArray()->one();
+
+                 \app\models\Utilities::putMessageLogFile('EDUCATIVA '.$estudiante_online['est_id']);
+                    
+                        if ($estudiante_online){
+                        
+                        $estudiante = $estudiante_online;
+
+                        }
                       //   $mod_usueducativa = new UsuarioEducativa();
                        //  $estudiante = $mod_usueducativa->getusuarioeducativaby($matricula);
                         
@@ -362,7 +370,7 @@ class AsistenciaregistrodocenteController extends \app\components\CController {
                             $casi_cant_total = $asi_u1;     
 
                             $casi_porc_total = ($asi_u1 / 30);
-                            $casi_porc_total = round($casi_porc_total, 2); 
+                           $casi_porc_total = round($casi_porc_total, 2); 
                         }
                         elseif($ecal_id == 2){ // 2do Parcial
                           //  $asi_u1 = $val[5];
@@ -371,7 +379,7 @@ class AsistenciaregistrodocenteController extends \app\components\CController {
                             $dasi_tipo_v2 = "u2";
                             $casi_cant_total = $asi_u2;
                             $casi_porc_total = ($asi_u2 / 30);
-                            $casi_porc_total = round($casi_porc_total, 2); 
+                             $casi_porc_total = round($casi_porc_total, 2); 
                         }
 
                         if ( $asi_u1 > 30 ){
@@ -536,47 +544,68 @@ class AsistenciaregistrodocenteController extends \app\components\CController {
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();    
 
-            if (isset($data["getparcial"])) {
-                $parcial = $mod_periodoActual->getParcialUnidad($data["uaca_id"]);
-                $message = array("parcial" => $parcial);
+             
+              if (isset($data["getuni"])) {
+                 $profesorup = $mod_profesor->getProfesoresEnAsignaturasByall($data["paca_id"],$data["uaca_id"],$data["mod_id"]);
+                $message = array("profesorup" => $profesorup);
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
             }
-            if (isset($data["getmateria"])) {               
+
+            
+
+             if (isset($data["getmateria"])) {
+                $materia = $Asignatura_distri->getAsignaturasBy($data["pro_id"], $data["uaca_id"], $data["paca_id"]);
+                $message = array("materia" => $materia);
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+            }
+
+              /*      if (isset($data["getmateria"])) {               
                 $materia = $Asignatura_distri->getAsignaturaRegistro($data["pro_id"], $data["uaca_id"], $data["mod_id"], $data["paca_id"]);
                 $message = array("materia" => $materia);
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
-            }        
+          } */
         }//if
 
          $arr_grupos        = $grupo_model->getAllGruposByUser($user_usermane);
 
-        if (in_array(['id' => '6'], $arr_grupos)) {
+              
+        if ( in_array(['id' => '6'], $arr_grupos) ||
+             in_array(['id' => '7'], $arr_grupos) ||
+             in_array(['id' => '8'], $arr_grupos)
+        )
+        {
             //Es Cordinador
             $arr_profesor_all = $mod_profesor->getProfesoresEnAsignaturas(); 
             //print_r("Es Cordinador");
         }else{
             //No es coordinador
-           // $arr_profesor_all = $mod_profesor->getProfesoresEnAsignaturasByPerId($per_id);
-              $arr_profesor_all = $mod_profesor->getProfesoresEnAsignaturas();
+            //$arr_profesor_all = $mod_profesor->getProfesoresEnAsignaturasByPerId($per_id);
+            $arr_profesor_all = $mod_profesor->getProfesoresEnAsignaturasByPerId2($per_id);
+           //   $arr_profesor_all = $mod_profesor->getProfesoresEnAsignaturas();
             //print_r("NO Es Cordinador");
         }
 
         $arr_profesor      = $mod_profesor->getProfesoresxid($per_id);
-        $arr_periodoActual = $mod_periodoActual->consultarPeriodosActivos();     
-        $asignatura        = $Asignatura_distri->getAsignaturaRegistro($arr_profesor["Id"],1,1,$arr_periodoActual[0]["id"]);
+        //$arr_periodoActual = $mod_periodoActual->consultarPeriodosActivos();    
+        $arr_periodoActual = $mod_periodoActual->getPeriodoAcademicoActual(); 
+        //$asignatura        = $Asignatura_distri->getAsignaturaRegistro($arr_profesor["Id"],1,1,$arr_periodoActual[0]["id"]);
         $arr_ninteres      = $mod_unidad->consultarUnidadAcademicasEmpresa($emp_id);
         $arr_modalidad     = $mod_modalidad->consultarModalidad($arr_ninteres[0]["id"], 1);        
         $arr_estudiante    = $mod_estudiante->consultarEstudiante();        
         $arr_parcialunidad = $mod_periodoActual->getTodosParciales();
         $arr_componente    = $mod_calificacion->getComponenteUnidad($arr_ninteres[0]["id"]);
-        $componenteuni     = $mod_calificacion->getComponente($arr_componente[0]["id"], $arr_componente[0]["columna"], $arr_componente[0]["nombre"], $arr_ninteres[0]["id"]);
+        //$componenteuni     = $mod_calificacion->getComponente($arr_componente[0]["id"], $arr_componente[0]["columna"], $arr_componente[0]["nombre"], $arr_ninteres[0]["id"]);
         
-        $asignatura = $Asignatura_distri->getAsignaturaRegistro($arr_profesor_all[0]['pro_id'],$arr_ninteres[0]["id"],1,$arr_periodoActual[0]["id"]);
+        //$asignatura = $Asignatura_distri->getAsignaturaRegistro($arr_profesor_all[0]['pro_id'],$arr_ninteres[0]["id"],1,$arr_periodoActual[0]["id"]);
+         $asignatura = $Asignatura_distri->getAsignaturasBy($arr_profesor_all[0]['pro_id'],
+                                                               $arr_ninteres[0]["id"],
+                                                               $arr_periodoActual[0]["id"]);
          
         return $this->render('register', [
             'arr_asignatura'    => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $asignatura), "id", "name"),
             //'arr_periodoActual' => ArrayHelper::map(array_merge([["id" => "0", "value" => Yii::t("formulario", "Select")]], $arr_periodoActual), "id", "value"),
-            'arr_periodoActual' => ArrayHelper::map($arr_periodoActual, "paca_id", "paca_nombre"),
+           // 'arr_periodoActual' => ArrayHelper::map($arr_periodoActual, "paca_id", "paca_nombre"),
+            'arr_periodoActual' => ArrayHelper::map($arr_periodoActual, "id", "nombre"),
             //'arr_ninteres'      => ArrayHelper::map($arr_ninteres, "id", "name"),
             'arr_ninteres'      => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $arr_ninteres), "id", "name"),
             //'arr_modalidad'     => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $arr_modalidad), "id", "name"),
@@ -584,7 +613,7 @@ class AsistenciaregistrodocenteController extends \app\components\CController {
             'arr_parcial'       => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $arr_parcialunidad), "id", "name"),
             'pro_id'            => $arr_profesor["Id"],
             'model'             => "",
-            'componente'        => $componenteuni,
+          //  'componente'        => $componenteuni,
             'campos'            => $campos,
             'unidad'            => $unidad,
             'arr_profesor_all'  => ArrayHelper::map($arr_profesor_all, "pro_id", "nombres"),
@@ -694,42 +723,57 @@ class AsistenciaregistrodocenteController extends \app\components\CController {
                 $message = array("parcial" => $parcial);
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
             }
-            if (isset($data["getmateria"])) {               
+
+              if (isset($data["getmateria"])) {
+                $materia = $Asignatura_distri->getAsignaturasBy($data["pro_id"], $data["uaca_id"], $data["paca_id"]);
+                $message = array("materia" => $materia);
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+            }
+
+           /* if (isset($data["getmateria"])) {               
                 $materia = $Asignatura_distri->getAsignaturaRegistro($data["pro_id"], $data["uaca_id"], $data["mod_id"], $data["paca_id"]);
                 $message = array("materia" => $materia);
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
-            }        
+            }        */
         }//if
 
          $arr_grupos        = $grupo_model->getAllGruposByUser($user_usermane);
 
-        if (in_array(['id' => '6'], $arr_grupos)) {
+         if ( in_array(['id' => '6'], $arr_grupos) ||
+              in_array(['id' => '7'], $arr_grupos) ||
+             in_array(['id' => '8'], $arr_grupos)
+        ) {
             //Es Cordinador
             $arr_profesor_all = $mod_profesor->getProfesoresEnAsignaturas(); 
             //print_r("Es Cordinador");
         }else{
             //No es coordinador
            // $arr_profesor_all = $mod_profesor->getProfesoresEnAsignaturasByPerId($per_id);
-              $arr_profesor_all = $mod_profesor->getProfesoresEnAsignaturas();
+              //$arr_profesor_all = $mod_profesor->getProfesoresEnAsignaturas();
+                  $arr_profesor_all = $mod_profesor->getProfesoresEnAsignaturasByPerId2($per_id);
             //print_r("NO Es Cordinador");
         }
 
         $arr_profesor      = $mod_profesor->getProfesoresxid($per_id);
-        $arr_periodoActual = $mod_periodoActual->consultarPeriodosActivos();     
+        //$arr_periodoActual = $mod_periodoActual->consultarPeriodosActivos();  
+        $arr_periodoActual = $mod_periodoActual->getPeriodoAcademicoActual();    
         $asignatura        = $Asignatura_distri->getAsignaturaRegistro($arr_profesor["Id"],1,1,$arr_periodoActual[0]["id"]);
         $arr_ninteres      = $mod_unidad->consultarUnidadAcademicasEmpresa($emp_id);
         $arr_modalidad     = $mod_modalidad->consultarModalidad($arr_ninteres[0]["id"], 1);        
         $arr_estudiante    = $mod_estudiante->consultarEstudiante();        
         $arr_parcialunidad = $mod_periodoActual->getTodosParciales();
         $arr_componente    = $mod_calificacion->getComponenteUnidad($arr_ninteres[0]["id"]);
-        $componenteuni     = $mod_calificacion->getComponente($arr_componente[0]["id"], $arr_componente[0]["columna"], $arr_componente[0]["nombre"], $arr_ninteres[0]["id"]);
+       // $componenteuni     = $mod_calificacion->getComponente($arr_componente[0]["id"], $arr_componente[0]["columna"], $arr_componente[0]["nombre"], $arr_ninteres[0]["id"]);
         
-        $asignatura = $Asignatura_distri->getAsignaturaRegistro($arr_profesor_all[0]['pro_id'],$arr_ninteres[0]["id"],1,$arr_periodoActual[0]["id"]);
+        //$asignatura = $Asignatura_distri->getAsignaturaRegistro($arr_profesor_all[0]['pro_id'],$arr_ninteres[0]["id"],1,$arr_periodoActual[0]["id"]);
+         $asignatura = $Asignatura_distri->getAsignaturasBy($arr_profesor_all[0]['pro_id'],
+                                                               $arr_ninteres[0]["id"],
+                                                               $arr_periodoActual[0]["id"]);
          
         return $this->render('registersemanal', [
             'arr_asignatura'    => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $asignatura), "id", "name"),
             //'arr_periodoActual' => ArrayHelper::map(array_merge([["id" => "0", "value" => Yii::t("formulario", "Select")]], $arr_periodoActual), "id", "value"),
-            'arr_periodoActual' => ArrayHelper::map($arr_periodoActual, "paca_id", "paca_nombre"),
+            'arr_periodoActual' => ArrayHelper::map($arr_periodoActual, "id", "nombre"),
             //'arr_ninteres'      => ArrayHelper::map($arr_ninteres, "id", "name"),
             'arr_ninteres'      => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $arr_ninteres), "id", "name"),
             //'arr_modalidad'     => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $arr_modalidad), "id", "name"),
@@ -737,7 +781,7 @@ class AsistenciaregistrodocenteController extends \app\components\CController {
             'arr_parcial'       => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $arr_parcialunidad), "id", "name"),
             'pro_id'            => $arr_profesor["Id"],
             'model'             => "",
-            'componente'        => $componenteuni,
+           // 'componente'        => $componenteuni,
             'campos'            => $campos,
             'unidad'            => $unidad,
             'arr_profesor_all'  => ArrayHelper::map($arr_profesor_all, "pro_id", "nombres"),
@@ -1101,6 +1145,236 @@ class AsistenciaregistrodocenteController extends \app\components\CController {
             }
         }
     }
+    
+
+      public function actionRegistrodin() {
+        $per_id = @Yii::$app->session->get("PB_perid");
+         $emp_id = @Yii::$app->session->get("PB_idempresa");
+        $user_usermane = Yii::$app->session->get("PB_username");
+
+        $mod_estudiante    = new Estudiante();
+        $mod_programa      = new EstudioAcademico();
+        $mod_modalidad     = new Modalidad();
+        $mod_unidad        = new UnidadAcademica();
+        $Asignatura_distri = new Asignatura();        
+        $mod_periodoActual = new PeriodoAcademico(); 
+        $mod_profesor      = new Profesor();
+        $mod_registro      = new DistributivoAcademico();
+        $mod_calificacion  = new CabeceraCalificacion();
+
+        $grupo_model       = new Grupo();
+        
+        $data = Yii::$app->request->get();
+
+        if (Yii::$app->request->isAjax) {
+            $data = Yii::$app->request->post();    
+
+            if (isset($data["getparcial"])) {
+                $parcial = $mod_periodoActual->getParcialUnidad($data["uaca_id"]);
+                $message = array("parcial" => $parcial);
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+            }
+            if (isset($data["getmateria"])) {               
+                $materia = $Asignatura_distri->getAsignaturaRegistro($data["pro_id"], $data["uaca_id"], $data["mod_id"], $data["paca_id"]);
+                $message = array("materia" => $materia);
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+            }        
+        }//if
+
+         $arr_grupos        = $grupo_model->getAllGruposByUser($user_usermane);
+
+        if (in_array(['id' => '6'], $arr_grupos)) {
+            //Es Cordinador
+            $arr_profesor_all = $mod_profesor->getProfesoresEnAsignaturas(); 
+            //print_r("Es Cordinador");
+        }else{
+            //No es coordinador
+           // $arr_profesor_all = $mod_profesor->getProfesoresEnAsignaturasByPerId($per_id);
+              $arr_profesor_all = $mod_profesor->getProfesoresEnAsignaturas();
+            //print_r("NO Es Cordinador");
+        }
+
+        $arr_profesor      = $mod_profesor->getProfesoresxid($per_id);
+        $arr_periodoActual = $mod_periodoActual->consultarPeriodosActivos();     
+        $asignatura        = $Asignatura_distri->getAsignaturaRegistro($arr_profesor["Id"],1,1,$arr_periodoActual[0]["id"]);
+        $arr_ninteres      = $mod_unidad->consultarUnidadAcademicasEmpresa($emp_id);
+        $arr_modalidad     = $mod_modalidad->consultarModalidad($arr_ninteres[0]["id"], 1);        
+        $arr_estudiante    = $mod_estudiante->consultarEstudiante();        
+        $arr_parcialunidad = $mod_periodoActual->getTodosParciales();
+        $arr_componente    = $mod_calificacion->getComponenteUnidad($arr_ninteres[0]["id"]);
+        $componenteuni     = $mod_calificacion->getComponente($arr_componente[0]["id"], $arr_componente[0]["columna"], $arr_componente[0]["nombre"], $arr_ninteres[0]["id"]);
+        
+        $asignatura = $Asignatura_distri->getAsignaturaRegistro($arr_profesor_all[0]['pro_id'],$arr_ninteres[0]["id"],1,$arr_periodoActual[0]["id"]);
+         
+        return $this->render('registerdin', [
+            'arr_asignatura'    => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $asignatura), "id", "name"),
+            //'arr_periodoActual' => ArrayHelper::map(array_merge([["id" => "0", "value" => Yii::t("formulario", "Select")]], $arr_periodoActual), "id", "value"),
+            'arr_periodoActual' => ArrayHelper::map($arr_periodoActual, "paca_id", "paca_nombre"),
+            //'arr_ninteres'      => ArrayHelper::map($arr_ninteres, "id", "name"),
+            'arr_ninteres'      => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $arr_ninteres), "id", "name"),
+            //'arr_modalidad'     => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $arr_modalidad), "id", "name"),
+            'arr_modalidad'     => ArrayHelper::map($arr_modalidad, "id", "name"),
+            'arr_parcial'       => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $arr_parcialunidad), "id", "name"),
+            'pro_id'            => $arr_profesor["Id"],
+            'model'             => "",
+            'componente'        => $componenteuni,
+            'campos'            => $campos,
+            'unidad'            => $unidad,
+            'arr_profesor_all'  => ArrayHelper::map($arr_profesor_all, "pro_id", "nombres"),
+        ]);
+    }//function actionRegistro
+
+
+     public function actionTraermodelodin() {
+        $per_id         = @Yii::$app->session->get("PB_perid");
+
+        $model_cabasistencia = new CabeceraAsistencia();
+        $data = Yii::$app->request->post();
+
+        $arrSearch["periodo"]   = $data['periodo'];
+        $arrSearch["unidad"]    = $data['uaca_id'];
+        $arrSearch["modalidad"] = $data['modalidad'];
+        $arrSearch["materia"]   = $data['materia'];
+        $arrSearch["parcial"]   = $data['parcial'];
+        $arrSearch["profesor"]  = $data['profesor'];       
+
+         \app\models\Utilities::putMessageLogFile('PACA'.$data['periodo']);
+        \app\models\Utilities::putMessageLogFile('UACA'.$data['uaca_id']);
+        \app\models\Utilities::putMessageLogFile('MOD'.$data['modalidad']);
+         \app\models\Utilities::putMessageLogFile('ASI'.$data['materia']);
+         \app\models\Utilities::putMessageLogFile('PARCIAL'.$data['parcial']);
+         \app\models\Utilities::putMessageLogFile('PROF'.$data['profesor']);     
+     
+       $modelpaca = new PeriodoAcademico();
+        $daes = $modelpaca->getDaesbyperiodo($paca_id, $asi_id, $pro_id);
+        \app\models\Utilities::putMessageLogFile('DAES '.$daes[0]['daes_id']);  
+        $horasasignatura = $modelpaca->getHorasmaxAsistenciaxest($daes[0]['daes_id']);
+        $sems = $horasasignatura['paca_semanas_periodo'];
+        $hours = $horasasignatura['daho_total_horas'];
+
+       /*  if ($data['modalidad'] == 1) {
+         $sems = $horasasignatura['paca_semanas_periodo'];  $sems =2;
+           $hours = $horasasignatura['daho_total_horas'];   $hours = 30;
+        }Else {*/
+         $sems = $horasasignatura['paca_semanas_periodo'];  $sems =10;
+         $hours = $horasasignatura['daho_total_horas'];   $hours = 6;
+       // } 
+
+         
+         \app\models\Utilities::putMessageLogFile('SEMANAS '.$horasasignatura['paca_semanas_periodo']);  
+         \app\models\Utilities::putMessageLogFile('HORAS '.$horasasignatura['daho_total_horas']); 
+        $model       = array();
+        $componentes = array();
+        $model['data']        = $model_cabasistencia->getAsistenciadin($arrSearch);    
+
+        for ($x = 0; $x< $sems; ++$x) {
+             $nombre ='s'.$x;
+            $componentes[$nombre] = array(
+                'id'=> 's'.$x ,
+                'notamax'=>$hours,
+            );
+            }
+           \app\models\Utilities::putMessageLogFile('resultado es ok'.$componentes["s0"]["id"]);
+        $model['componentes'] = $componentes;       
+       
+        
+        
+        return json_encode($model);
+    }//function actionTraerModelodin
+
+
+
+      public function actionActualizarnotaasistenciadin() {
+        $per_id            = @Yii::$app->session->get("PB_perid");
+        $mod_calificacion  = new CabeceraAsistencia();
+
+        $data   = Yii::$app->request->post();
+
+        $row_id  = array_key_first ( $data['data'] );
+
+        $casi_id = $data['data'][$row_id]['casi_id'];
+
+        $total = 0;
+        
+        $valor  = array();
+
+        $valor["DT_RowId"] = "row_".$row_id;
+        $valor["row_num"]  = $row_id;
+
+        if($casi_id != 0){
+            $valor["casi_id"] = $data['data'][$row_id]['casi_id'];
+
+            foreach ($data['data'][$row_id] as $key => $value) {
+                if( $key!='paca_id'  &&
+                    $key!='est_id'   &&
+                    $key!='pro_id'   &&
+                    $key!='asi_id'   &&
+                    $key!='uaca_id'  &&
+                    $key!='mod_id'   &&
+                    $key!='daes_id'  &&
+                    $key!='daho_id'  &&
+                    $key!='daho_total_horas'  &&
+                    $key!='semanas')
+                    if($value!=''){
+                       // $mod_calificacion->actualizarDetalleporcomponente($ccal_id,$key,$value);
+
+                        if(!(is_null($value)) && $value != ''){
+                            $valor[$key] = $value;
+                            $total = $total + intval($value); 
+                        }
+                        
+                    }//if
+            }
+        }else{
+            $paca_id = $data['data'][$row_id]['paca_id'];
+            $est_id  = $data['data'][$row_id]['est_id'];
+            $pro_id  = $data['data'][$row_id]['pro_id'];
+            $asi_id  = $data['data'][$row_id]['asi_id'];
+            $mod_id  = $data['data'][$row_id]['mod_id'];
+            $uaca_id = $data['data'][$row_id]['uaca_id'];
+ 
+          //  $ccal_id = $mod_calificacion->crearCabeceraporcomponente($paca_id,$est_id,$pro_id,$asi_id,$ecal_id,$uaca_id);
+
+            $valor["casi_id"] = $casi_id;
+            
+            foreach ($data['data'][$row_id] as $key => $value) {
+
+                if( $key!='paca_id'  &&
+                    $key!='est_id'   &&
+                    $key!='pro_id'   &&
+                    $key!='asi_id'   &&
+                    $key!='uaca_id'  &&
+                    $key!='mod_id'   &&
+                    $key!='daes_id'  &&
+                    $key!='daho_id'  &&
+                    $key!='daho_total_horas'  &&
+                    $key!='semanas')
+
+                {
+                        //if($value!=''){
+                          //  $mod_calificacion->crearDetalleporcomponente($casi_id,$key,$value,$uaca_id,$mod_id,$ecal_id);
+
+                            if(!(is_null($value)) && $value != ''){
+                                $valor[$key] = $value;
+                                $total = $total + intval($value); 
+                            }
+                            
+                        //}//if
+                }//if  
+            }//foeach
+        }//else
+
+        //$mod_calificacion->actualizarDetalleCalificacion2($casi_id,$total);
+
+        header('Content-Type: application/json');
+
+        $valor["total"]  = $total;
+
+        $respuesta["data"] = array();
+        $respuesta['data'][] = $valor;
+        return json_encode($respuesta, JSON_PRETTY_PRINT); 
+    }//function actionActualizarnotadin
+
     
     
      public function actionCargararchivoasistenciasemanal() {

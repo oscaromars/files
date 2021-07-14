@@ -74,8 +74,10 @@ class CalificacionregistrodocenteController extends \app\components\CController 
             2 => "2° " . academico::t("Academico", "Partial"),
         ];
     }
+ 
 
-    public function actionIndex() {
+
+  public function actionIndex() {
         $grupo_model    = new Grupo();
         $mod_estudiante = new Estudiante();
         $mod_programa   = new EstudioAcademico();
@@ -83,7 +85,7 @@ class CalificacionregistrodocenteController extends \app\components\CController 
         $mod_unidad     = new UnidadAcademica();
         $mod_profesor   = new Profesor();
         $cabeceraCalificacion = new CabeceraCalificacion();
-        $mod_periodoActual    = new PeriodoAcademico();   
+        $mod_periodos    = new PeriodoAcademico();   
         $per_id = Yii::$app->session->get("PB_perid");
         //$user_usermane = 'carlos.carrera@mbtu.us';//Yii::$app->session->get("PB_username");
         $user_usermane = Yii::$app->session->get("PB_username");
@@ -138,14 +140,17 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 
         $arr_grupos = $grupo_model->getAllGruposByUser($user_usermane);
         
-        $arr_periodos = $mod_periodoActual->consultarTodosPeriodosAcademicos();
+        $arr_periodos = $mod_periodos->consultarPeriodosActivos();
 
         $arr_ninteres = $mod_unidad->consultarUnidadAcademicasEmpresa(1);
 
         $arr_modalidad = $mod_modalidad->consultarModalidad($arr_ninteres[0]["id"], 1);
 
 
-        if (in_array(['id' => '6'], $arr_grupos)) {
+         if ( in_array(['id' => '6'], $arr_grupos) ||
+             in_array(['id' => '7'], $arr_grupos) ||
+             in_array(['id' => '8'], $arr_grupos)
+        ){
             //Es Cordinados
             $arr_profesor_all = $mod_profesor->getProfesoresEnAsignaturas(); 
             Utilities::putMessageLogFile("Paso por cordinador");

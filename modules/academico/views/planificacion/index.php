@@ -8,6 +8,21 @@ use app\models\Utilities;
 use yii\data\ArrayDataProvider;
 use yii\helpers\ArrayHelper;
 ?>
+<?php if (Yii::$app->session->hasFlash('msg')): ?>
+    <div class="alert alert-warning alert-dismissable" >
+         <button aria-hidden="true" data-dismiss="alert" class="close" type="button"></button>
+         <h4><i class="icon fa fa-exclamation"></i>Proceso no terminado</h4>
+         <?= Yii::$app->session->getFlash('msg') ?>
+    </div>
+<?php endif; ?> 
+<?php if (Yii::$app->session->hasFlash('msgok')): ?>
+    <div class="alert alert-success alert-dismissable" >
+         <button aria-hidden="true" data-dismiss="alert" class="close" type="button"></button>
+         <h4><i class="icon fa fa-check"></i>Exito</h4>
+         <?= Yii::$app->session->getFlash('msgok') ?>
+    </div>
+<?php endif; ?> 
+
 <form class="form-horizontal">    
     <div class="row">
         <div class="col-md-6">

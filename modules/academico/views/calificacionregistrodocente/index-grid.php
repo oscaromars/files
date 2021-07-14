@@ -53,6 +53,11 @@ PbGridView::widget([
             'value' => 'parcial_2',
         ],
         [
+            'attribute' => 'Promedio',
+            'header' => academico::t("Academico", "Average"),
+            'value' => 'promedio_',
+        ],
+        [
             'attribute' => 'Supletorio',
             'header' => academico::t("Academico", "Extension"),
             'value' =>  'supletorio',
@@ -64,13 +69,18 @@ PbGridView::widget([
         ],
         [
             'attribute' => 'Asistencia Parcial I',
-            'header' => academico::t("Academico", "Asistencia Parcial I"),
+            'header' => academico::t("Academico", "Asist. I"),
             'value' => 'asistencia_parcial_1',
         ],
         [
             'attribute' => 'Asistencia Parcial I',
-            'header' => academico::t("Academico", "Asistencia Parcial II"),
+            'header' => academico::t("Academico", "Asist. II"),
             'value' => 'asistencia_parcial_2',
+        ],
+          [
+            'attribute' => 'Asistencia Final',
+            'header' => academico::t("Academico", "Asistencia Final"),
+            'value' => 'asistencia_final',
         ],
         /*[
             'class' => 'yii\grid\ActionColumn',

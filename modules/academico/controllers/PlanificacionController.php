@@ -127,7 +127,7 @@ mail('oscaromars@hotmail.com', 'Mi título', $mensaje);
  $sql = "
                  select e.est_id, e.per_id, e.est_matricula, e.est_fecha_creacion, e.est_categoria, meu.uaca_id, meu.mod_id, meu.eaca_id, -- 
 u.uaca_id, u.uaca_nombre, ea.teac_id, ea.eaca_nombre, ea.eaca_codigo,
-per.per_cedula,  mumo.maca_id , maca.maca_codigo,
+per.per_cedula,  mumo.maca_id , maca.maca_codigo, maca.maca_nombre,
 concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_apellido, ' ', ifnull(per.per_seg_apellido,'')) estudiante
  from db_academico.estudiante e
  inner join db_academico.estudiante_carrera_programa c on c.est_id = e.est_id

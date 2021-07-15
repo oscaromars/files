@@ -21,7 +21,7 @@ academico::registerTranslations();
     <div class="form-group">                 
         <label for="cmb_periodo" class="col-xs-12 col-sm-12 col-md-5 col-lg-5 control-label"><?= academico::t("Academico", "Period") ?></label>
         <div class="col-xs-12 col-sm-12 col-md-7 col-lg-7">  
-                <?= Html::dropDownList("cmb_periodo",0,$arr_periodoActual, ["class" => "form-control", "id" => "cmb_periodo"]) ?>              
+                <?= Html::dropDownList("cmb_periodo",0,$arr_periodos, ["class" => "form-control", "id" => "cmb_periodo"]) ?>              
         </div>
     </div>
 </div>

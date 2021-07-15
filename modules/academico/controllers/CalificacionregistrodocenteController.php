@@ -212,7 +212,7 @@ class CalificacionregistrodocenteController extends \app\components\CController 
         $mod_modalidad     = new Modalidad();
         $mod_unidad        = new UnidadAcademica();
         $Asignatura_distri = new Asignatura();        
-        $mod_periodoActual = new PeriodoAcademico(); 
+        $mod_periodo = new PeriodoAcademico(); 
         $mod_profesor      = new Profesor();
         $mod_registro      = new DistributivoAcademico();
         $mod_calificacion  = new CabeceraCalificacion();
@@ -224,7 +224,7 @@ class CalificacionregistrodocenteController extends \app\components\CController 
             $data = Yii::$app->request->post();    
 
             if (isset($data["getparcial"])) {
-                $parcial = $mod_periodoActual->getParcialUnidad($data["uaca_id"]);
+                $parcial = $mod_periodo->getParcialUnidad($data["uaca_id"]);
                 $message = array("parcial" => $parcial);
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
             }
@@ -235,12 +235,11 @@ class CalificacionregistrodocenteController extends \app\components\CController 
             }
         }
 
-        $arr_periodoActual = $mod_periodoActual->getPeriodoAcademicoActual();
+        $arr_periodos = $mod_periodo->consultarPeriodosActivos();
 
-        //print_r($arr_periodoActual);die();
         $arr_ninteres      = $mod_unidad->consultarUnidadAcademicasEmpresa(1);
         $arr_modalidad     = $mod_modalidad->consultarModalidad($arr_ninteres[0]["id"], 1);     
-        $arr_parcialunidad = $mod_periodoActual->getParcialUnidad($arr_ninteres[0]["id"]);
+        $arr_parcialunidad = $mod_periodo->getParcialUnidad($arr_ninteres[0]["id"]);
         $arr_grupos        = $grupo_model->getAllGruposByUser($user_usermane);
 
         //print_r($arr_grupos);die();
@@ -251,7 +250,7 @@ class CalificacionregistrodocenteController extends \app\components\CController 
         ){
             //Es Cordinador
             $arr_profesor_all = $mod_profesor->getProfesoresEnAsignaturas();
-            $asignatura = $Asignatura_distri->getAsignaturasBy($arr_profesor_all[0]['pro_id'],$arr_ninteres[0]["id"],$arr_periodoActual[0]["id"]);
+            $asignatura = $Asignatura_distri->getAsignaturasBy($arr_profesor_all[0]['pro_id'],$arr_ninteres[0]["id"],$arr_periodos[0]["id"]);
             //print_r("Es Cordinador");
             //print_r($arr_profesor_all);die();
         }else{
@@ -259,13 +258,13 @@ class CalificacionregistrodocenteController extends \app\components\CController 
             $arr_profesor_all = $mod_profesor->getProfesoresEnAsignaturasByPerId2($per_id);
             $asignatura = $Asignatura_distri->getAsignaturasBy($arr_profesor_all[0]['pro_id'],
                                                                $arr_ninteres[0]["id"],
-                                                               $arr_periodoActual[0]["id"]);
+                                                               $arr_periodos[0]["id"]);
             //print_r($per_id);die();
             //print_r("NO Es Cordinador");die();
         }
         
         return $this->render('register', [
-            'arr_periodoActual' => ArrayHelper::map($arr_periodoActual, "id", "nombre"),
+            'arr_periodos' => ArrayHelper::map($arr_periodos, "id", "nombre"),
             //'arr_ninteres'      => ArrayHelper::map(array_merge([["id" => "", "name" => Yii::t("formulario", "All")]], $arr_ninteres), "id", "name"),
             'arr_ninteres'      => ArrayHelper::map($arr_ninteres, "id", "name"),
             'arr_modalidad'     => ArrayHelper::map($arr_modalidad, "id", "name"),

@@ -1,6 +1,7 @@
 vendor/*
 runtime/*
 web/assets/*
+db/evaluaciondocente/*
 composer.lock
 
 # vim

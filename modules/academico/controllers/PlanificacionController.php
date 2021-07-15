@@ -103,10 +103,6 @@ class PlanificacionController extends \app\components\CController {
         //}
     }
 
-
- 
-
-
     public function actionGenerator($periodo,$modalidad) {
     
      
@@ -131,12 +127,13 @@ mail('oscaromars@hotmail.com', 'Mi título', $mensaje);
  $sql = "
                  select e.est_id, e.per_id, e.est_matricula, e.est_fecha_creacion, e.est_categoria, meu.uaca_id, meu.mod_id, meu.eaca_id, -- 
 u.uaca_id, u.uaca_nombre, ea.teac_id, ea.eaca_nombre, ea.eaca_codigo,
-per.per_cedula,  mumo.maca_id ,
+per.per_cedula,  mumo.maca_id , maca.maca_codigo,
 concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_apellido, ' ', ifnull(per.per_seg_apellido,'')) estudiante
  from db_academico.estudiante e
  inner join db_academico.estudiante_carrera_programa c on c.est_id = e.est_id
   inner join db_academico.modalidad_estudio_unidad meu on meu.meun_id = c.meun_id  
   inner join db_academico.malla_unidad_modalidad mumo on mumo.meun_id = meu.meun_id 
+   inner join db_academico.malla_academica maca on maca.maca_id = mumo.maca_id 
    inner join db_academico.unidad_academica u on u.uaca_id = meu.uaca_id
    inner join db_academico.estudio_academico ea on ea.eaca_id = meu.eaca_id 
    inner join db_asgard.persona per on per.per_id = e.per_id
@@ -196,6 +193,9 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
             \Yii::$app->getSession()->setFlash('msgok', 'Se ha generado con exito la planificacion');
          return $this->redirect(['index']);
      }
+ 
+
+ 
 
       public function actionDescargarples()  {    
       

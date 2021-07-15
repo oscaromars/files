@@ -91,23 +91,28 @@ class CalificacionregistrodocenteController extends \app\components\CController 
         $user_usermane = Yii::$app->session->get("PB_username");
 
         $Asignatura_distri = new Asignatura();
-        Utilities::putMessageLogFile('58 $user_usermane: ' .$user_usermane);
+        Utilities::putMessageLogFile('user_usermane: ' . $user_usermane);
 
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
+            // \app\models\Utilities::putMessageLogFile('data: ' . print_r($data, true));
+
             /*if (isset($data["getasignaturas"])) {
                 $asignatura = $Asignatura_distri->getAsignaturaByProfesorDistributivo($data["paca_id"],$data['pro_id'],$data["uaca_id"],$data["mod_id"]);
                 $message = array("asignatura" => $asignatura);
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
             }*/
-             \app\models\Utilities::putMessageLogFile('Id de profesor: '.$data['pro_id']);
+
+            \app\models\Utilities::putMessageLogFile('Id de profesor: ' . $data['pro_id']);
+
             if (isset($data["getasignaturas_prof_periodo"])) {
                 $asignatura = $Asignatura_distri->getAsignaturaByProfesorDistributivo($data["paca_id"],$data['pro_id'],$data["uaca_id"],$data["mod_id"]);
                 $paralelo_clcf = [];
                 $message = array("asignatura" => $asignatura,"paralelo_clcf" => $paralelo_clcf);
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
             }
-            //Peridood academico
+
+            //Período Academico
             if (isset($data["getasignaturas_prof"])) {
                 $asignatura = $Asignatura_distri->getAsignaturaByProfesorDistributivo($data["paca_id"],$data['pro_id'],$data["uaca_id"],$data["mod_id"]);
                 $paralelo_clcf = [];
@@ -121,13 +126,13 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 
         if ($data['PBgetFilter']) {
             //$search = $data['search'];
-             Utilities::putMessageLogFile("124  PBgetFilter");
+            Utilities::putMessageLogFile("124  PBgetFilter");
             $unidad = (isset($data['unidad']) && $data['unidad'] > 0)?$data['unidad']:NULL;
             $modalidad = (isset($data['modalidad']) && $data['modalidad'] > 0)?$data['modalidad']:NULL;
             $periodo = (isset($data['periodo']) && $data['periodo'] > 0)?$data['periodo']:NULL;
             $materia = (isset($data['materia']) && $data['materia'] > 0)?$data['materia']:NULL;
             $profesor = (isset($data['profesor']) && $data['profesor'] > 0)?$data['profesor']:NULL;
-            //$model = $distributivo_model->getListadoDistributivo($search, NULL, $periodo);
+
             if($unidad <= 0){
                 $unidad="";
             }
@@ -151,12 +156,14 @@ class CalificacionregistrodocenteController extends \app\components\CController 
              in_array(['id' => '7'], $arr_grupos) ||
              in_array(['id' => '8'], $arr_grupos)
         ){
-            //Es Cordinados
+            //Es Cordinador
             $arr_profesor_all = $mod_profesor->getProfesoresEnAsignaturas(); 
             Utilities::putMessageLogFile("Paso por cordinador");
             // Utilities::putMessageLogFile(print_r($arr_profesor_all,true));
             $asignatura = $Asignatura_distri->getAsignaturasBy($arr_profesor_all[0]['pro_id'],$arr_ninteres[0]["id"],$arr_periodos[0]["id"]);
+            // Utilities::putMessageLogFile(print_r($asignatura,true));
             $arr_estudiante = $cabeceraCalificacion->consultaCalificacionRegistroDocenteSearch($arr_ninteres[0]["id"],$arr_periodos[0]["id"],$asignatura[0]['id'],$arr_profesor_all[0]["pro_id"]);
+            // Utilities::putMessageLogFile(print_r($arr_estudiante,true));
         }else{
             Utilities::putMessageLogFile("Paso no Cordinador");
             //No es Cordinador

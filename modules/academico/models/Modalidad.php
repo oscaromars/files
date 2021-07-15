@@ -90,7 +90,7 @@ class Modalidad extends \app\modules\academico\components\CActiveRecord {
      * @return  
      */
     public function consultarModalidad($uaca_id, $emp_id) {
-        \app\models\Utilities::putMessageLogFile('unidad academica modelo '. $uaca_id);
+        // \app\models\Utilities::putMessageLogFile('unidad academica modelo '. $uaca_id);
         $con = \Yii::$app->db_academico;
         $estado = 1;
             $sql = "SELECT distinct moda.mod_id as id,
@@ -110,7 +110,7 @@ class Modalidad extends \app\modules\academico\components\CActiveRecord {
         $comando->bindParam(":uaca_id", $uaca_id, \PDO::PARAM_INT);
         $comando->bindParam(":emp_id", $emp_id, \PDO::PARAM_INT);
         $resultData = $comando->queryAll();
-        \app\models\Utilities::putMessageLogFile('consultarModalidad: '.$comando->getRawSql());
+        // \app\models\Utilities::putMessageLogFile('consultarModalidad: '.$comando->getRawSql());
         return $resultData;
     }
 

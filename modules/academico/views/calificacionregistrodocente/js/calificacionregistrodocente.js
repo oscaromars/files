@@ -118,7 +118,7 @@ $(document).ready(function () {
         }, true);
     });
 
-     $('#cmb_periodo_clfc').change(function () {
+        $('#cmb_periodo_clfc').change(function () {
         var link = $('#txth_base').val() + "/academico/calificacionregistrodocente/index";
         var arrParams = new Object();
         arrParams.paca_id = $(this).val();
@@ -127,13 +127,13 @@ $(document).ready(function () {
         arrParams.pro_id = $('#cmb_profesor_clfc').val();
         arrParams.getasignaturas_prof_periodo = true;
         requestHttpAjax(link, arrParams, function (response) {
-            if (response.status == "OK") {
-                data = response.message;
-                setComboDataselect(data.asignatura, "cmb_materiabus", "Seleccionar");
-                 setComboDataselectpro(data.profesorup, "cmb_profesor_clfc","Todos");
-            }
-        }, true);
-         });
+                if (response.status == "OK") {
+                    data = response.message;
+                    setComboDataselect(data.asignatura, "cmb_materiabus", "Seleccionar");
+                    setComboDataselectpro(data.profesorup, "cmb_profesor_clfc","Todos");
+                }
+            }, true);
+        });
 
       $('#cmb_modalidad').change(function () {
         var link = $('#txth_base').val() + "/academico/calificacionregistrodocente/index";

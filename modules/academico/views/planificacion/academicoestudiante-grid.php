@@ -9,6 +9,13 @@ use app\modules\admision\Module as admision;
 admision::registerTranslations();
 ?>
 <?= Html::hiddenInput('txth_ids', '', ['id' => 'txth_ids']); ?>
+<!--<div>
+<?=
+    $this->render('academicoestudiante-grid', [
+        'model' => $model,
+    ]);
+    ?>
+</div> -->
 <div>        
     <?=
     PbGridView::widget([

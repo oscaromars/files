@@ -41,6 +41,9 @@ $(document).ready(function () {
     $('#btn_limpiarbuscador').click(function () {
         limpiarBuscador();
     });
+    $('PbPlanificaestudiante').change(function(){
+        setTimeout(hideLoadingPopup(), 2000);
+    });
 
     /************ planificacion x estudiante **********************************/
     $('#cmb_unidades').change(function () {
@@ -477,19 +480,21 @@ function actualizarGridPlanest() {
     var link = $('#txth_base').val() + "/academico/planificacion/academicoestudiante";
     //alert(link);
     var arrParams = new Object();
-    var modalidad = $('#cmb_modalidades option:selected').val();
+    var modalidad = $('#cmb_modalidadesacad option:selected').val();
     arrParams.modalidad = modalidad;
-    var periodo = $('#cmb_periodo option:selected').val();
+    var periodo = $('#cmb_periodoacad option:selected').val();
     arrParams.periodo = periodo;
-    arrParams.filtros = new Boolean(true);
+    arrParams.filtros = 1;
     //alert(modalidad+'-'+periodo+'-'+arrParams.filtros);
     //Buscar almenos una clase con el nombre para ejecutar
     //if (!$(".blockUI").length) {
         showLoadingPopup();
-        //parent.window.location.href = link;
-        $('#PbPlanificaestudiante').PbGridView('applyFilterData', { 'modalidad': modalidad, 'periodo': periodo });
-        setTimeout(hideLoadingPopup(), 2000);
-        //hideLoadingPopup();
+        //$('#PbPlanificaestudiante').PbGridView('applyFilterData', { 'modalidad': modalidad, 'periodo': periodo });
+        setTimeout(function() {
+            //windows.location.href = $('#txth_base').val() + "/academico/registro/index";    
+            //hideLoadingPopup();
+            parent.window.location.href = link+'?modalidad='+modalidad+'&periodo='+periodo+'&PBgetFilter='+arrParams.filtros;
+            }, 1000);
     /* }
     try{
         requestHttpAjax(link, arrParams, function(response) {
@@ -977,18 +982,19 @@ function fillDataAlert() {
 function exportPdfplanificacion() {
     var estudiante = $('#txt_buscarDataPlanifica').val();
     // var unidad = $('#cmb_unidades option:selected').val();
-    var modalidad = $('#cmb_modalidades option:selected').val();
+    var modalidad = $('#cmb_modalidadesacad option:selected').val();
     var carrera = $('#cmb_carreras option:selected').text(); //$('#cmb_carreras option:selected').val();
-    var periodo = $('#cmb_periodo option:selected').val();
+    var periodo = $('#cmb_periodoacad option:selected').val();
+    //alert('Modalidad : '+modalidad+' periodo: '+periodo);
     window.location.href = $('#txth_base').val() + "/academico/planificacion/exppdfplanificacion?pdf=1&estudiante=" + estudiante + /*"&unidad=" + unidad +*/ '&modalidad=' + modalidad + "&carrera=" + carrera + "&periodo=" + periodo;
 }
 
 function exportExcelplanificacion() {
     var estudiante = $('#txt_buscarDataPlanifica').val();
     //var unidad = $('#cmb_unidades option:selected').val();
-    var modalidad = $('#cmb_modalidades option:selected').val();
+    var modalidad = $('#cmb_modalidadesacad option:selected').val();
     var carrera = $('#cmb_carreras option:selected').text(); //$('#cmb_carreras option:selected').val();
-    var periodo = $('#cmb_periodo option:selected').val();
+    var periodo = $('#cmb_periodoacad option:selected').val();
     window.location.href = $('#txth_base').val() + "/academico/planificacion/expexcelplanificacion?estudiante=" + estudiante + /*"&unidad=" + unidad +*/ '&modalidad=' + modalidad + "&carrera=" + carrera + "&periodo=" + periodo;
 }
 

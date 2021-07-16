@@ -1437,132 +1437,46 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
         }
     }
 
-    public function consultarEstudiantePeriodo($arrFiltro = array(), $onlyData = false) {
+    public function consultarEstudiantePeriodo($arrFiltro = array(),$onlyData = false) {
         $con = \Yii::$app->db_academico;
         $con1 = \Yii::$app->db_asgard;
         $estado = 1;
         if (isset($arrFiltro) && count($arrFiltro) > 0) {
             \app\models\Utilities::putMessageLogFile('----------------------------------------Con Filtros');
-            /*if ($arrFiltro['modalidad'] != 0) {
-                if($arrFiltro['modalidad'] == 1) {
-                    $str_search .= " and meu.mod_id = 1";
-                }
-                if($arrFiltro['modalidad'] == 2) {
-                    $str_search .= " and meu.mod_id = 2";
-                }
-                if($arrFiltro['modalidad'] == 3) {
-                    $str_search .= " and meu.mod_id = 3";
-                }
-                if($arrFiltro['modalidad'] == 4) {
-                    $str_search .= " and meu.mod_id = 4";
-                }
-                \app\models\Utilities::putMessageLogFile('-------------------'. $str_search .'---------------------');
-            }*/
-            if ($arrFiltro['modalidad'] != 0) {
-                if($arrFiltro['modalidad'] == 1) {
-                    $str_search .= " WHERE x.Modalidad = 'ONLINE'";
-                }
-                if($arrFiltro['modalidad'] == 2) {
-                    $str_search .= " WHERE x.Modalidad = 'PRESENCIAL'";
-                }
-                if($arrFiltro['modalidad'] == 3) {
-                    $str_search .= " WHERE x.Modalidad = 'SEMIPRESENCIAL'";
-                }
-                if($arrFiltro['modalidad'] == 4) {
-                    $str_search .= " WHERE x.Modalidad = 'DISTANCIA'";
-                }
-                \app\models\Utilities::putMessageLogFile('-------------------'. $str_search .'---------------------');
-            }
-
-            if ($arrFiltro['periodo'] != 0) {
-                $periodo = $arrFiltro['periodo'];
-                $str_search2 .= "and pla.saca_id = $periodo";
-                \app\models\Utilities::putMessageLogFile('-------------------'. $str_search2 .'---------------------');
-
-            }
-            $pla_id = $arrFiltro['planificacion']?$arrFiltro['planificacion']:0;
+            $pla_id = $arrFiltro['periodo']?$arrFiltro['periodo']:0;
             $mod_id = $arrFiltro['modalidad']?$arrFiltro['modalidad']:0;
+            \app\modules\academico\controllers\RegistroController::putMessageLogFileCartera('pla_id y mod_id '.$arrFiltro['periodo'] .'-'.$arrFiltro['modalidad']);
+            $str_search = '';
 
-            //if($arrFiltro['modalidad'] )
+            /*if($arrFiltro['periodo'] <= 0 && $arrFiltro['modalidad'] <= 0){
+                $str_search .= " where pe.pla_id = 0 AND pla.mod_id = 0 and meu.mod_id = 0 ";
+            }*/
+
+            if(!strcmp($str_search, '' )){
+                if($pla_id != 0 && $mod_id != 0){
+                    $where .= " WHERE ";
+                }
+    
+                if ($arrFiltro['periodo'] != 0) {
+                    $str_search1 .= " pe.pla_id = $pla_id ";
+                    \app\models\Utilities::putMessageLogFile('-------------------'. $str_search2 .'---------------------');
+                }
+                if ($arrFiltro['modalidad'] != 0) {
+                    $str_search2 .= " pla.mod_id = $mod_id and meu.mod_id = $mod_id";
+                    \app\models\Utilities::putMessageLogFile('-------------------'. $str_search .'---------------------');
+                }
+                if(isset($where)){
+                    $str_search .= $where . (!strcmp($str_search1,'')?$str_search1.' AND':' ').$str_search2;
+                }
+                \app\models\Utilities::putMessageLogFile('else-------------------'. $str_search .'---------------------');
+                //print_r($str_search); die();
+            }
+            \app\modules\academico\controllers\RegistroController::putMessageLogFileCartera('str_search '.$str_search);
+            
+           
         }
         
-        $sql = "SELECT  
-                        CASE meu.mod_id
-                        when 1 then 'ONLINE'
-                        when 2 then 'PRESENCIAL'
-                        WHEN 3 then 'SEMIPRESENCIAL'
-                        WHEN 4 then 'DISTANCIA'
-                        end as 'Modalidad',
-                        (select concat(saca.saca_nombre,'-',saca.saca_anio) 
-                        from ". $con->dbname . ".semestre_academico saca,
-                        ". $con->dbname . ".planificacion p
-                        where p.pla_id = pe.pla_id
-                        and saca.saca_id = p.saca_id) as 'Periodo',
-                        a.asi_id as 'Codigo de Materia',
-                        a.asi_nombre as Materia,
-                        (select count(*) from  ". $con->dbname . ".planificacion pla,
-                        ". $con->dbname . ".planificacion_estudiante pes,
-                        ". $con->dbname . ".semestre_academico se
-                        where pla.pla_id = pes.pla_id
-                        and pla.per_id = pes.per_id
-                        and se.saca_id = pla.saca_id
-                        $str_search2
-                        and mad.made_codigo_asignatura in (pes.pes_mat_b1_h1_cod,
-                                                pes.pes_mat_b1_h2_cod,
-                                                pes.pes_mat_b1_h3_cod,
-                                                pes.pes_mat_b1_h4_cod,
-                                                pes.pes_mat_b1_h5_cod,
-                                                pes.pes_mat_b1_h6_cod,
-                                                pes.pes_mat_b2_h1_cod,
-                                                pes.pes_mat_b2_h2_cod,
-                                                pes.pes_mat_b2_h3_cod,
-                                                pes.pes_mat_b2_h4_cod,
-                                                pes.pes_mat_b2_h5_cod,
-                                                pes.pes_mat_b2_h6_cod)) as Cantidad
-                        from " . $con->dbname . ".planificacion_estudiante pe,
-                        " . $con->dbname . ".malla_academica_detalle mad,
-                        " . $con->dbname . ".asignatura a,
-                        " . $con->dbname . ".modalidad_estudio_unidad meu,
-                        " . $con->dbname . ".malla_unidad_modalidad mum
-                        where mad.made_codigo_asignatura in 
-                        (pe.pes_mat_b1_h1_cod,
-                        pe.pes_mat_b1_h2_cod,
-                        pe.pes_mat_b1_h3_cod,
-                        pe.pes_mat_b1_h4_cod,
-                        pe.pes_mat_b1_h5_cod,
-                        pe.pes_mat_b1_h6_cod,
-                        pe.pes_mat_b2_h1_cod,
-                        pe.pes_mat_b2_h2_cod,
-                        pe.pes_mat_b2_h3_cod,
-                        pe.pes_mat_b2_h4_cod,
-                        pe.pes_mat_b2_h5_cod,
-                        pe.pes_mat_b2_h6_cod)
-                        and mad.asi_id = a.asi_id
-                        and mad.maca_id = mum.maca_id
-                        and (select count(*) from  ". $con->dbname . ".planificacion pla,
-                        ". $con->dbname . ".planificacion_estudiante pes,
-                        ". $con->dbname . ".semestre_academico se
-                        where pla.pla_id = pes.pla_id
-                        and pla.per_id = pes.per_id
-                        and se.saca_id = pla.saca_id
-                        $str_search2
-                        and mad.made_codigo_asignatura in (pes.pes_mat_b1_h1_cod,
-                                                pes.pes_mat_b1_h2_cod,
-                                                pes.pes_mat_b1_h3_cod,
-                                                pes.pes_mat_b1_h4_cod,
-                                                pes.pes_mat_b1_h5_cod,
-                                                pes.pes_mat_b1_h6_cod,
-                                                pes.pes_mat_b2_h1_cod,
-                                                pes.pes_mat_b2_h2_cod,
-                                                pes.pes_mat_b2_h3_cod,
-                                                pes.pes_mat_b2_h4_cod,
-                                                pes.pes_mat_b2_h5_cod,
-                                                pes.pes_mat_b2_h6_cod)) > 0
-                        $str_search
-                        and meu.meun_id = (select s.meun_id from db_academico.malla_unidad_modalidad s where s.maca_id = mum.maca_id limit 0,1)
-                        group by a.asi_id,a.asi_nombre
-                        order by cantidad;";
-        $sql2="SELECT distinct pe.per_id,
+        $sql2="SELECT 
                     CASE meu.mod_id
                     when 1 then 'ONLINE'
                     when 2 then 'PRESENCIAL'
@@ -1570,9 +1484,12 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
                     WHEN 4 then 'DISTANCIA'
                     else meu.mod_id
                     end as Modalidad,
-                    -- mad.made_codigo_asignatura as cod_mat,
-                    -- maca.maca_codigo,maca.maca_nombre,
-                    a.asi_id,
+                    (select concat(saca.saca_nombre,'-',saca.saca_anio) 
+                        from ". $con->dbname . ".semestre_academico saca,
+                        ". $con->dbname . ".planificacion p
+                        where p.pla_id = pe.pla_id
+                        and saca.saca_id = p.saca_id) as 'Periodo',
+                    -- a.asi_id,
                     a.asi_nombre as Materia,
                     count(a.asi_id) as Cantidad
                     from  ". $con->dbname . ".planificacion_estudiante pe
@@ -1592,15 +1509,15 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
                     inner join  ". $con->dbname . ".malla_unidad_modalidad mum on mad.maca_id = mum.maca_id
                     inner join  ". $con->dbname . ".modalidad_estudio_unidad meu on meu.meun_id = (select s.meun_id from db_academico.malla_unidad_modalidad s where s.maca_id = mum.maca_id limit 0,1)
                     inner join  ". $con->dbname . ".planificacion pla on pla.pla_id = pe.pla_id
+                    inner join  ". $con->dbname . ".semestre_academico se on se.saca_id = pla.saca_id
                     -- inner join  ". $con->dbname . ".malla_academica maca on pe.pes_cod_carrera = maca.maca_codigo
-                    where pe.pla_id = $pla_id 
-                    and meu.mod_id = $mod_id
+                    $str_search 
                     group by a.asi_id, a.asi_nombre 
-                    order by a.asi_id"; 
+                    order by a.asi_id;"; 
 
         $comando = $con->createCommand($sql2);
         
-        if (isset($arrFiltro) && count($arrFiltro) > 0) {
+        /*if (isset($arrFiltro) && count($arrFiltro) > 0) {
                         
             if ($arrFiltro['modalidad'] > 0) {
                 $modalidad = $arrFiltro["modalidad"];
@@ -1611,10 +1528,11 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
                 $periodo = $arrFiltro["periodo"];
                 $comando->bindParam(":periodo", $periodo, \PDO::PARAM_INT);
             }
-        }
+        }*/
 
         $resultData = $comando->queryAll();
         \app\models\Utilities::putMessageLogFile('consultarModalidad: '.$comando->getRawSql());
+        \app\modules\academico\controllers\RegistroController::putMessageLogFileCartera('consultarModalidad: '.$comando->getRawSql());
         $dataProvider = new ArrayDataProvider([
             'key' => 'id',
             'allModels' => $resultData,
@@ -1622,8 +1540,7 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
                 'pageSize' => Yii::$app->params["pageSize"],
             ],
             'sort' => [
-                'attributes' => [
-                ],
+                'attributes' => [],
             ],
         ]);
         if ($onlyData) {

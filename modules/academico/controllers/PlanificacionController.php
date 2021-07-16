@@ -1112,14 +1112,13 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
         $unidad_acad_data = $uni_aca_model->consultarUnidadAcademicas();
         $modalidad_data = $modalidad_model->consultarModalidad($unidad_acad_data[0]['id'], $emp_id);
         $academic_study_data = $modcanal->consultarCarreraModalidad(null, null);
-        $arrSearch['planificacion'] = 0;
-            $arrSearch['modalidad'] = 0;
-        $model_plan = $mod_periodo->consultarEstudiantePeriodo($arrSearch);
-        $data = Yii::$app->request->get();
-        if (!$data['PBgetFilter']) {
+        $data = Yii::$app->request->get(); 
+        \app\models\Utilities::putMessageLogFile('-------------------'. $data['PBgetfilters'] .'---------------------');       
+        /*if ($data['PBgetfilters']) {
+            print_r('PBgetfilters');die();
             \app\models\Utilities::putMessageLogFile('Filtros iniciales: '.$data['PBgetFilter']);
-            $arrSearch['planificacion'] = 0;
-            $arrSearch['modalidad'] = 0;
+            $arrSearch['modalidad'] = $data['modalidad']?$data['modalidad']:0;
+            $arrSearch['periodo'] = $data['periodo']?$data['periodo']:0;
             $model_plan = $mod_periodo->consultarEstudiantePeriodo($arrSearch);
             //$model_plan = [];
             //$model_total_plan = $model_plan
@@ -1128,31 +1127,42 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
                 'arr_periodo' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Todas']], $arr_pla), 'id', 'name'),
                 'model' => $model_plan,
             ]);
-        }
-        if (Yii::$app->request->isAjax) {
+        }*/
+        if (Yii::$app->request->isAjax || $_GET['PBgetFilter'] == 1) {
+            
             $data = Yii::$app->request->post();
+            $periodo  = $_GET['periodo'];
+            $modalidad = $_GET['modalidad'];
+            $filtro = $_GET['PBgetFilter'];
+            //print_r('true '.$periodo.'-'.$modalidad.'-'.$filtro);
+            \app\models\Utilities::putMessageLogFile('Botón Buscar: '.$data);
             try{
-                if (($data['modalidad'] != 0 && $data['periodo'] != 0)) {
-                    $arrSearch['modalidad'] = $data['modalidad']?$data['modalidad']:0;
-                    $arrSearch['periodo'] = $data['periodo']?$data['periodo']:0;
+                if (($modalidad != 0 && $periodo != 0)) {
+                    $arrSearch['modalidad'] = $modalidad?$modalidad:0;
+                    $arrSearch['periodo'] = $periodo?$periodo:0;
                     $model_plan = $mod_periodo->consultarEstudiantePeriodo($arrSearch);
+                    
                     \app\models\Utilities::putMessageLogFile('FIltros...: ');
                     \app\models\Utilities::putMessageLogFile('modalidad y periodod '.$arrSearch['modalidad'] .'-'.$arrSearch['periodo'] );
+                    \app\modules\academico\controllers\RegistroController::putMessageLogFileCartera('modalidad y periodod '.$arrSearch['modalidad'] .'-'.$arrSearch['periodo'] );
                     return $this->render('academicoestudiante', [
-                        'arr_modalidad' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Todas']], $modalidad_data), 'id', 'name'),
-                        'arr_periodo' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Todas']], $arr_pla), 'id', 'name'),
+                        'arr_modalidad' => ArrayHelper::map(array_merge([['id' => "0", 'name' => 'Todas']], $modalidad_data), 'id', 'name'),
+                        'arr_periodo' => ArrayHelper::map(array_merge([['id' => "0", 'name' => 'Todas']], $arr_pla), 'id', 'name'),
                         'model' => $model_plan,
                     ]);
                     
                 }else{
-                    $arrSearch['modalidad'] = $data['modalidad']?$data['modalidad']:0;
-                    $arrSearch['periodo'] = $data['periodo']?$data['periodo']:0;
+                    //print_r('Error'); die();
+                    $arrSearch['modalidad'] = $modalidad?$modalidad:0;
+                    $arrSearch['periodo'] = $periodo?$periodo:0;
+                    $model_plan = $mod_periodo->consultarEstudiantePeriodo($arrSearch);
                     \app\models\Utilities::putMessageLogFile('todos...: ');
                     \app\models\Utilities::putMessageLogFile('modalidad y periodod '.$arrSearch['modalidad'] .'-'.$arrSearch['periodo'] );
-                    $model_plan = $mod_periodo->consultarEstudiantePeriodo($arrSearch);
+                    \app\modules\academico\controllers\RegistroController::putMessageLogFileCartera('modalidad y periodod '.$arrSearch['modalidad'] .'-'.$arrSearch['periodo'] );
+                    
                     return $this->render('academicoestudiante', [
-                        'arr_modalidad' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Todas']], $modalidad_data), 'id', 'name'),
-                        'arr_periodo' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Todas']], $arr_pla), 'id', 'name'),
+                        'arr_modalidad' => ArrayHelper::map(array_merge([['id' => "0", 'name' => 'Todas']], $modalidad_data), 'id', 'name'),
+                        'arr_periodo' => ArrayHelper::map(array_merge([['id' => "0", 'name' => 'Todas']], $arr_pla), 'id', 'name'),
                         'model' => $model_plan,
                     ]);
                 }
@@ -1162,19 +1172,38 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
                     "wtmessage" => Yii::t("notificaciones", "Error al buscar.".$ex->getMessage()),
                     "title" => Yii::t('jslang', 'Error'),
                 );
+                \app\modules\academico\controllers\RegistroController::putMessageLogFileCartera('consultarModalidad: '.$message);
                 //return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
             }
         }
+        /*$arrSearch['periodo'] = "x";
+        $arrSearch['modalidad'] = "x";
+        $model_plan = $mod_periodo->consultarEstudiantePeriodo($arrSearch);*/
+        $model_plan = [];
+        $model_plan = new ArrayDataProvider([
+            'key' => 'id',
+            'allModels' => $model_plan,
+            'pagination' => [
+                'pageSize' => Yii::$app->params["pageSize"],
+            ],
+            'sort' => [
+                'attributes' => [],
+            ],
+        ]);
+        
+        
+        \app\modules\academico\controllers\RegistroController::putMessageLogFileCartera('consultarModalidad: Inicio');
+
         return $this->render('academicoestudiante', [
                     
-                    'arr_modalidad' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Todas']], $modalidad_data), 'id', 'name'),
+                    'arr_modalidad' => ArrayHelper::map(array_merge([['id' => "0", 'name' => 'Todas']], $modalidad_data), 'id', 'name'),
                     
-                    'arr_periodo' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Todas']], $arr_pla), 'id', 'name'),
-                        'model' => $model_plan,
+                    'arr_periodo' => ArrayHelper::map(array_merge([['id' => "0", 'name' => 'Todas']], $arr_pla), 'id', 'name'),
+                    'model' => $model_plan,
         ]);
     }
 
-    public function actionResumenplanificacion2() {
+    public function actionResumenplanificacion() {
         \app\models\Utilities::putMessageLogFile('-----------------Looking for applied filter--------------------------');
         $emp_id = @Yii::$app->session->get('PB_idempresa');
         $mod_periodo = new PlanificacionEstudiante();
@@ -1321,10 +1350,10 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
         $arrSearch['periodo'] = $data['periodo'];
         $arrData = array();
         if (empty($arrSearch)) {
-            $arrData = $mod_periodo->consultarResumenplanificaPdf(array(), true);
+            $arrData = $mod_periodo->consultarEstudiantePeriodo(array(), true);
             #$arrData = $mod_periodo->consultarEstudianteplanificaPdf(array(), true);
         } else {
-            $arrData = $mod_periodo->consultarResumenplanificaPdf($arrSearch, true);
+            $arrData = $mod_periodo->consultarEstudiantePeriodo($arrSearch, true);
             #$arrData = $mod_periodo->consultarEstudianteplanificaPdf($arrSearch, true);
         }
         $report->orientation = 'L';
@@ -1364,9 +1393,9 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
         $arrSearch['periodo'] = $data['periodo'];
         $arrData = array();
         if (empty($arrSearch)) {
-            $arrData = $mod_periodo->consultarResumenplanificaPdf(array(), true);
+            $arrData = $mod_periodo->consultarEstudiantePeriodo(array(), true);
         } else {
-            $arrData = $mod_periodo->consultarResumenplanificaPdf($arrSearch, true);
+            $arrData = $mod_periodo->consultarEstudiantePeriodo($arrSearch, true);
         }
         $nameReport = academico::t('Academico', 'Resumen de Planificación');
         Utilities::generarReporteXLS($nombarch, $nameReport, $arrHeader, $arrData, $colPosition);

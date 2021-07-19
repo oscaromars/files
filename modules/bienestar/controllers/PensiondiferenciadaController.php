@@ -46,48 +46,12 @@ class PensiondiferenciadaController extends \app\components\CController
     }
 
     public function actionFormulario(){
-        $_SESSION['JSLANG']['Must be Fill all information in fields with label *.'] = Academico::t("profesor", "Must be Fill all information in fields with label *.");
-
-        
+        $_SESSION['JSLANG']['Must be Fill all information in fields with label *.'] = Academico::t("profesor", "Must be Fill all information in fields with label *.");       
     }
 
     public function actionIndex(){
-    	// Get todos los períodos
-    	$model_periodo = new PeriodoAcademico();
-    	$arr_periodos = $model_periodo->consultarPeriodosActivos();
-
-    	// Get asignaturas por período académico
-    	$model_asignaturas_por_periodo = new AsignaturasPorPeriodo();
-    	$arr_asig_por_per = $model_asignaturas_por_periodo->consultarAsignaturasPorPeriodo(true);
-
-        // Sección de filtrado
-        $data = Yii::$app->request->get();
-        if ($data['PBgetFilter'])
-        {
-            $arrSearch["periodo"] = $data['periodo'];
-            $arrSearch["asignatura"] = $data['asignatura'];
-            $arrSearch["numero_paralelos"] = $data['numero_paralelos'];
-            $arrSearch["cupos"] = $data['cupos'];
-
-            $dataProvider = $this->consultarReportParalelosPorMateria($arrSearch);
-
-            return $this->render('index-grid', [
-	            'model' => $dataProvider
-            ]);
-        }
-        else
-        {
-            $dataProvider = $this->consultarTodosParalelosPorMateria();
-        }
-
-        if (Yii::$app->request->isAjax) {
-            $data = Yii::$app->request->post();
-        }
-
         return $this->render('index', [
-            'model' => $dataProvider,
-            'arr_periodos' => ArrayHelper::map(array_merge([["id" => 0, "nombre" => Yii::t("formulario", "Grid")]], $arr_periodos), "id", "nombre"),
-            'arr_asig_por_per' => ArrayHelper::map(array_merge([["id" => 0, "asi_descripcion" => Yii::t("formulario", "Grid")]], $arr_asig_por_per), "aspe_id", "asi_descripcion"),
+            
         ]);
     }
 

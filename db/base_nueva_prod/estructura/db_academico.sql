@@ -2320,3 +2320,33 @@ CREATE TABLE `promedio_malla_academico` (
 );
 
 
+create table if not exists `horarios_semestre` (
+  `hose_id` bigint(20) not null auto_increment primary key,
+  `saca_id` bigint(20) not null,
+  `mod_id` bigint(20) not null,
+  `uaca_id` bigint(20) not null,
+  `hose_usuario_ingreso` bigint(20) not null,
+  `hose_usuario_modifica` bigint(20)  null,  
+  `hose_estado` varchar(1) not null,
+  `hose_fecha_creacion` timestamp not null default current_timestamp,
+  `hose_fecha_modificacion` timestamp null default null,
+  `hose_estado_logico` varchar(1) not null
+);
+
+
+create table if not exists `horarios_semestre_detalle` (
+  `hosd_id` bigint(20) not null auto_increment primary key,
+  `hose_id` bigint(20) not null,
+  `hosd_grupo` bigint(20) not null,
+  `hosd_bloque` bigint(20) not null,
+  `hosd_hora` bigint(20) not null,
+  `hosd_asi_id` bigint(20) not null,
+  `hosd_usuario_ingreso` bigint(20) not null,
+  `hosd_usuario_modifica` bigint(20)  null,  
+  `hosd_estado` varchar(1) not null,
+  `hosd_fecha_creacion` timestamp not null default current_timestamp,
+  `hosd_fecha_modificacion` timestamp null default null,
+  `hosd_estado_logico` varchar(1) not null,
+    foreign key (hose_id) references `horarios_semestre`(hose_id)
+);
+

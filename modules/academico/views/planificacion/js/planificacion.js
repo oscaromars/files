@@ -41,8 +41,31 @@ $(document).ready(function () {
     $('#btn_limpiarbuscador').click(function () {
         limpiarBuscador();
     });
-    $('PbPlanificaestudiante').change(function(){
+    $('#PbPlanificaestudiante').change(function(){
         setTimeout(hideLoadingPopup(), 2000);
+    });
+    $('#cmb_modalidadesth').change( function(){
+        $('#cmb_horaest').prop("disabled",false); 
+        $("#cmb_horaest")[0].selectedIndex=0;
+        if($('#cmb_modalidadesth option:selected').val() == 0){
+            $('#cmb_horaest').prop("disabled",true); 
+            var html_texto = `<option value="0" selected="">Seleccionar</option>`;
+        }else if($('#cmb_modalidadesth option:selected').val() == 2 || $('#cmb_modalidadesth option:selected').val() == 3){
+            var html_texto = `<option value="0" selected="">Seleccionar</option>
+            <option value="1">Hora 1</option>
+            <option value="2">Hora 2</option>
+            <option value="3">Hora 3</option>
+            <option value="4">Hora 4</option>
+            <option value="5">Hora 5</option>
+            <option value="6">Hora 6</option>`;
+            
+        }else if($('#cmb_modalidadesth option:selected').val() == 3 || $('#cmb_modalidadesth option:selected').val() == 4){
+            var html_texto = `<option value="0" selected="">Seleccionar</option>
+            <option value="1">Hora 1</option>
+            <option value="2">Hora 2</option>
+            <option value="3">Hora 3</option>`;
+        }
+        $("#cmb_horaest").html(html_texto);
     });
 
     /************ planificacion x estudiante **********************************/

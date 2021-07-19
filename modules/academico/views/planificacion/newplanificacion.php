@@ -114,8 +114,8 @@ academico::registerTranslations();
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <div class="form-group">                   
                     <label for="lbl_horaest" class="col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= academico::t("Academico", "Hour"); ?> <span class="text-danger">*</span> </label>
-                    <div class="col-sm-3 col-md-3 col-xs-3 col-lg-3">
-                        <?= Html::dropDownList("cmb_horaest", 0, $arr_hora, ["class" => "form-control", "id" => "cmb_horaest"]) ?>
+                    <div class="col-sm-3 col-md-3 col-xs-3 col-lg-3" id="hora_cmb">
+                        <?= Html::dropDownList("cmb_horaest", 0, $arr_hora, ["class" => "form-control", "id" => "cmb_horaest","disabled" => "true"]) ?>
                     </div> 
                 </div>        
             </div>

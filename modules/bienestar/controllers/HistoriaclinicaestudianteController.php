@@ -3,8 +3,8 @@
 namespace app\modules\bienestar\controllers;
 
 use Yii;
-use app\modules\academico\models\HistoriaClinicaEstudiante;
-/*use app\modules\academico\models\Asignatura;
+use app\modules\bienestar\models\HistoriaClinicaEstudiante;
+use app\modules\academico\models\Asignatura;
 use app\modules\academico\models\MateriaParaleloPeriodo;
 use app\modules\academico\models\DistributivoAcademico;
 use app\modules\academico\models\DistributivoAcademicoHorario;
@@ -20,7 +20,7 @@ use app\modules\academico\models\Planificacion;
 use app\modules\academico\models\Profesor;
 use app\modules\academico\models\PeriodoAcademico;
 use app\modules\academico\Module as academico;
-use app\modules\admision\Module as admision;*/
+use app\modules\admision\Module as admision;
 
 use yii\helpers\ArrayHelper;
 use app\models\Utilities;

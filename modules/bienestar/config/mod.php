@@ -1,5 +1,5 @@
 <?php
-return ['db_bienestar' => [
+return ['bienestar' => [
             'class' => 'app\modules\bienestar\Module',
             'db_bienestar' => [
                 'class' => 'app\components\CConnection',

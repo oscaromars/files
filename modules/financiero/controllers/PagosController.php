@@ -54,7 +54,7 @@ class PagosController extends \app\components\CController {
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->get();
             if (isset($data["op"]) && $data["op"] == '1') {
-                
+
             }
         }
         $arrEstados = ArrayHelper::map([["id" => "T", "value" => "Todos"], ["id" => "S", "value" => "Pagada"], ["id" => "P", "value" => "Pendiente"]], "id", "value");
@@ -81,7 +81,7 @@ class PagosController extends \app\components\CController {
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->get();
             if (isset($data["op"]) && $data["op"] == '1') {
-                
+
             }
         }
         return $this->render('cargardocpagos', [
@@ -118,7 +118,7 @@ class PagosController extends \app\components\CController {
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->get();
             if (isset($data["op"]) && $data["op"] == '1') {
-                
+
             }
         }
         return $this->render('validarpagocarga', [
@@ -151,7 +151,7 @@ class PagosController extends \app\components\CController {
             $transaction2 = $con2->beginTransaction();
             //Se consulta la información.
             $emp_id = 1;
-            $mod_documento = new Documento();            
+            $mod_documento = new Documento();
             $resp_datos = $mod_documento->consultarDatosxId($con2, $doc_id);
             if ($resp_datos["doc_pagado"] == 1) {
                 $identificacion = $resp_datos['pben_cedula'];
@@ -179,11 +179,11 @@ class PagosController extends \app\components\CController {
                         null, null, null, $usuario_ingreso, 1, 1
                     ];
                     $id_persona = $mod_persona->consultarIdPersona($resp_datos['pben_cedula'], $resp_datos['pben_cedula'], $resp_datos['pben_correo'], $resp_datos['pben_celular']);
-                    if ($id_persona == 0) {                        
-                        $id_persona = $mod_persona->insertarPersona($con, $parametros_per, $keys_per, 'persona');  
+                    if ($id_persona == 0) {
+                        $id_persona = $mod_persona->insertarPersona($con, $parametros_per, $keys_per, 'persona');
                         \app\models\Utilities::putMessageLogFile('despues de crear persona:'.$id_persona);
-                        if ($id_persona) {                            
-                            $mod_emp_persona = new EmpresaPersona();                            
+                        if ($id_persona) {
+                            $mod_emp_persona = new EmpresaPersona();
                             $keys = ['emp_id', 'per_id', 'eper_estado', 'eper_estado_logico'];
                             $parametros = [$emp_id, $id_persona, 1, 1];
                             $emp_per_id = $mod_emp_persona->consultarIdEmpresaPersona($id_persona, $emp_id);
@@ -237,10 +237,10 @@ class PagosController extends \app\components\CController {
                             }
                         }
                     }
-                    //Cuando ya está creada la persona.-    
+                    //Cuando ya está creada la persona.-
                     if (($crea_persona == "S") or ( $id_persona > 0)) {
                         $sins_fechasol = $resp_datos["sbpa_fecha_solicitud"];
-                        $rsin_id = 2; //Solicitud aprobada  
+                        $rsin_id = 2; //Solicitud aprobada
                         $usuario = new Usuario();
                         $usuario_id = $usuario->consultarIdUsuario($id_persona, $resp_datos['pben_correo']);
                         $solins_model = new SolicitudInscripcion();
@@ -255,18 +255,18 @@ class PagosController extends \app\components\CController {
                                     if ($sins_id) {
                                         \app\models\Utilities::putMessageLogFile('despues insertar sol.');
                                         $mod_ordenpago = new OrdenPago();
-                                        //Generar la orden de pago con valor correspondiente. Buscar precio para orden de pago.                                                                                                                         
-                                        $estadopago = 'S';                                              
+                                        //Generar la orden de pago con valor correspondiente. Buscar precio para orden de pago.
+                                        $estadopago = 'S';
                                         $resp_opago = $mod_ordenpago->insertarOrdenpago($sins_id, $resp_datos["sbpa_id"], $resp_detalle[$a]["total"], 0, $resp_detalle[$a]["total"], $estadopago, $usuario_id, $resp_datos["doc_fecha_pago"], $resp_detalle[$a]["total"]);
                                         if ($resp_opago) {
                                             \app\models\Utilities::putMessageLogFile('despues insertar o/p.');
-                                            //insertar desglose del pago                                                         
+                                            //insertar desglose del pago
                                             $fecha_ini = date(Yii::$app->params["dateByDefault"]);
                                             $resp_dpago = $mod_ordenpago->insertarDesglosepago($resp_opago, $resp_detalle[$a]["ite_id"], $resp_detalle[$a]["total"], 0, $resp_detalle[$a]["total"], $fecha_ini, null, $estadopago, $usuario_id);
                                             if ($resp_dpago) {
                                                 \app\models\Utilities::putMessageLogFile('despues insertar desg/p.');
-                                                //Grabar documento de registro de pago por botón de pagos.                                                                                                                
-                                                $fpag_id = 6;  //botón de pagos.                                                                                                            
+                                                //Grabar documento de registro de pago por botón de pagos.
+                                                $fpag_id = 6;  //botón de pagos.
                                                 $num_transaccion = 1;
                                                 $creadetalle = $mod_ordenpago->insertarRegistropago($resp_dpago, $fpag_id, $resp_detalle[$a]["total"], $resp_datos["doc_fecha_pago"], null, $num_transaccion, $resp_datos["doc_fecha_pago"], "Botón Pagos", "AP", $usuario_id, "RE");
                                                 if ($creadetalle) {
@@ -276,7 +276,7 @@ class PagosController extends \app\components\CController {
                                             } else {
                                                 $detalle = 'S';
                                             }
-                                            //Grabar datos de factura                                                                                                                   
+                                            //Grabar datos de factura
                                             if ($detalle == 'S') {
                                                 if ($resp_datos["tdoc_id"] == 1) {
                                                     $num_ident = $resp_datos["doc_cedula"];
@@ -306,7 +306,7 @@ class PagosController extends \app\components\CController {
             }
             if ($exito == 1) {
                 //$transaction->commit();
-                //$transaction1->commit(); 
+                //$transaction1->commit();
                 $transaction2->commit();
                 //Envío de correo.
                 $tituloMensaje = Yii::t("interesado", "UTEG - Registration Online");
@@ -432,7 +432,7 @@ class PagosController extends \app\components\CController {
     }
 
     public function actionSavepago() {
-        //online que sube doc capturar asi el id de la persona 
+        //online que sube doc capturar asi el id de la persona
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
             $per_id = $_SESSION['persona_solicita'];
@@ -485,7 +485,7 @@ class PagosController extends \app\components\CController {
             $transaction2 = $con2->beginTransaction();
 
             try {
-                $usuario_aprueba = @Yii::$app->user->identity->usu_id;   //Se obtiene el id del usuario.                            
+                $usuario_aprueba = @Yii::$app->user->identity->usu_id;   //Se obtiene el id del usuario.
                 $mod_ordpago = new OrdenPago();
                 if ($controladm == '1') {
                     //Insertar en tabla info_carga_prepago
@@ -493,7 +493,7 @@ class PagosController extends \app\components\CController {
                     $creadetalle = $mod_ordpago->insertarCargaprepago($opag_id, $fpag_id, $dcar_valor, $imagen, 'PE', null, null, $numero_transaccion, $fecha_transaccion, $fecha_registro);
                     $idd = $creadetalle;
                 }
-                //Obtener datos grabados en tablas temporales                        
+                //Obtener datos grabados en tablas temporales
                 $resp_cargo = $mod_ordpago->consultarCargo($idd, $opag_id);
                 if ($resp_cargo['existe'] == 'S') {
                     $valor_det = $resp_cargo['valor'];
@@ -507,15 +507,17 @@ class PagosController extends \app\components\CController {
                     $num_transaccion = $resp_cargo['icpr_num_transaccion'];
                     $fecha_transaccion = $resp_cargo['icpr_fecha_transaccion'];
                     $total_pagado = $resp_cargo['total_pagado'];
+                    // AQUI SE APRUEBA EL PAGO EN ESTE IF, AQUI DEBE YA DESPUES DE GUARDAR
+                    // CREAR COMO ESTUDIANTE EN TODAS LAS TABLAS
                     if ($banderacrea == 1) {
                         $creg_total = $valortotal;
                         $creg_resultado = 'OK';
                         $creg_fecha_pago_total = $fechapagtotal;
                         $creg_pagado = $total_pagado + $valor_det;
                         if ($valortotal > $creg_pagado) {
-                            $creg_estado_pago = 'NP'; //Pago Revisado                           
+                            $creg_estado_pago = 'NP'; //Pago Revisado
                         } else {
-                            $creg_estado_pago = 'SP'; //Pago Realizado en su totalidad.                          
+                            $creg_estado_pago = 'SP'; //Pago Realizado en su totalidad.
                         }
                         //Obtención de las cuotas pendientes de pago.
                         $resp_desglose = $mod_ordpago->obtenerDesglosepagopend($opag_id);
@@ -536,7 +538,7 @@ class PagosController extends \app\components\CController {
                                     }
                                 }
                             }
-                            //actualizar en detalle_cargo la gestión realizada.                                                                                    
+                            //actualizar en detalle_cargo la gestión realizada.
                             $resp_actcar = $mod_ordpago->actualizaDetallecargo($idd, $dcar_estado_revisa, $estado_revision, $observacion, $usuario_aprueba, $valor_det);
                             if ($resp_actcar) {
                                 $totalpagado = ($valorpagado + $valor_det);
@@ -547,22 +549,23 @@ class PagosController extends \app\components\CController {
                                 } else {
                                     $ccar_estado_pagado = 'P';
                                 }
-                                //actualiza datos de la orden de pago.                                         
+                                //actualiza datos de la orden de pago.
                                 $resp_opag = $mod_ordpago->actualizaOrdenpago($opag_id, $opag_estado_pagado, $creg_pagado, $fecha_pago_total, $usuario_aprueba);
                                 if ($resp_opag) {
                                     $exito = 1;
+                                    // CREAR COMO ESTUDIANTE EN TODAS LAS TABLAS if existo es 1
                                 }
                             } //fin de actualizar detalle cargo
                         } //fin de obtener registros de desglose
-                    } //fin  $banderacrea 
+                    } //fin  $banderacrea
                     else { //En el caso cuando no aprueba el pago.
-                        //actualizar en detalle_cargo la gestión realizada.                        
+                        //actualizar en detalle_cargo la gestión realizada.
                         $resp_actdetcar = $mod_ordpago->actualizaDetallecargo($idd, $dcar_estado_revisa, $estado_revision, $observacion, $usuario_aprueba, $valor_det);
                         if ($resp_actdetcar) {
                             $exito = 1;
                         }
                     }
-                }  //fin cuando aprueba el pago. 
+                }  //fin cuando aprueba el pago.
                 if ($exito) {
                     $transaction->commit();
                     $transaction2->commit();
@@ -594,7 +597,7 @@ class PagosController extends \app\components\CController {
     }
 
     public function actionEdit() {
-        
+
     }
 
     public function actionNew() {
@@ -654,7 +657,7 @@ class PagosController extends \app\components\CController {
                 $fecha_registro = date(Yii::$app->params["dateTimeByDefault"]);
                 $creadetalle = $modcargapago->insertarCargaprepago($opag_id, $fpag_id, $dcar_valor, $imagen, $dcar_revisado, $dcar_resultado, $dcar_observacion, $dcar_num_transaccion, $dcar_fecha_transaccion, $fecha_registro);
                 if ($creadetalle) {
-                    //Envío de correo a colecturia.                
+                    //Envío de correo a colecturia.
                     \app\models\Utilities::putMessageLogFile('Orden Pago:' . $opag_id);
                     \app\models\Utilities::putMessageLogFile('Empresa:' . $empresa);
                     $informacion_interesado = $modcargapago->datosBotonpago($opag_id, $empresa);
@@ -719,7 +722,7 @@ class PagosController extends \app\components\CController {
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->get();
             if (isset($data["op"]) && $data["op"] == '1') {
-                
+
             }
         }
         $arrEstados = ArrayHelper::map([["id" => "T", "value" => "Todos"], ["id" => "S", "value" => "Pagada"], ["id" => "P", "value" => "Pendiente"]/* , ["id" => "NA", "value" => "No Disponible"] */], "id", "value");
@@ -789,7 +792,7 @@ class PagosController extends \app\components\CController {
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->get();
             if (isset($data["op"]) && $data["op"] == '1') {
-                
+
             }
         }
         return $this->render('indexadm', [
@@ -818,7 +821,7 @@ class PagosController extends \app\components\CController {
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->get();
             if (isset($data["op"]) && $data["op"] == '1') {
-                
+
             }
         }
         \app\models\Utilities::putMessageLogFile('perId en Registrarpagoadm: ' . $per_id);
@@ -849,7 +852,7 @@ class PagosController extends \app\components\CController {
             $arrSearch["f_ini"] = $data['f_ini'];
             $arrSearch["f_fin"] = $data['f_fin'];
             $arrSearch["search"] = $data['search'];
-            //if (empty($per_ids)) {  //vista para el interesado  
+            //if (empty($per_ids)) {  //vista para el interesado
             $rol = 1;
             $resp_pago = $model_pag->listarSolicitud($sol_id, $per_id, null, $resp_gruporol["grol_id"], $arrSearch);
 
@@ -857,7 +860,7 @@ class PagosController extends \app\components\CController {
                         "model" => $resp_pago,
             ]);
         } else {
-            // if (empty($per_ids)) {  //vista para el interesado  
+            // if (empty($per_ids)) {  //vista para el interesado
             $rol = 1;
             $resp_pago = $model_pag->listarSolicitud($sol_id, $per_id, null, $resp_gruporol["grol_id"]);
         }
@@ -867,7 +870,7 @@ class PagosController extends \app\components\CController {
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->get();
             if (isset($data["op"]) && $data["op"] == '1') {
-                
+
             }
         }
         return $this->render('listarpagosolicitud', [
@@ -924,7 +927,7 @@ class PagosController extends \app\components\CController {
                         "model" => $data_pago_ext,
             ]);
         } else {
-            
+
         }
         $data_pago_ext = $model_sbpag->consultarPagoExterno($arrSearch);
         return $this->render('verificarpagoexterno', [
@@ -942,7 +945,7 @@ class PagosController extends \app\components\CController {
     }
 
     public function actionUpdate() {
-        
+
     }
 
     public function actionCargardocfact() {
@@ -952,7 +955,7 @@ class PagosController extends \app\components\CController {
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->get();
             if (isset($data["op"]) && $data["op"] == '1') {
-                
+
             }
         }
         $rowData = $mod_cargapago->consultarInteresadoPersona($sins_id);
@@ -1434,7 +1437,7 @@ class PagosController extends \app\components\CController {
             Yii::t("formulario", "Total value"),
             financiero::t("Pagos", "Boton Payment status"),
         );
-        // $per_id = Yii::$app->session->get("PB_perid");        
+        // $per_id = Yii::$app->session->get("PB_perid");
         //VERIFICAR SI LOS PARAMETROS $doc_id y $opag_id SE VAN USAR SINO BORRAR
         /* $model_persona = new Persona();
           $model_documento = new Documento();
@@ -1470,7 +1473,7 @@ class PagosController extends \app\components\CController {
             Yii::t("formulario", "Total value"),
             financiero::t("Pagos", "Boton Payment status"),
         );
-        // $per_id = Yii::$app->session->get("PB_perid");        
+        // $per_id = Yii::$app->session->get("PB_perid");
         //VERIFICAR SI LOS PARAMETROS $doc_id y $opag_id SE VAN USAR SINO BORRAR
         /* $model_persona = new Persona();
           $model_documento = new Documento();

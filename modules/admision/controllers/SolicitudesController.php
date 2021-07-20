@@ -57,8 +57,8 @@ class SolicitudesController extends \app\components\CController {
             $arrSearch["modalidad"] = $data['modalidad'];
             $arrSearch["carrera"] = $data['carrera'];
             $respSolicitud = $modSolicitud->consultarSolicitudes($arrSearch);
-        } else {                    
-            $respSolicitud = $modSolicitud->consultarSolicitudes(); 
+        } else {
+            $respSolicitud = $modSolicitud->consultarSolicitudes();
         }
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
@@ -88,9 +88,9 @@ class SolicitudesController extends \app\components\CController {
     }
 
     /**
-     * Function 
+     * Function
      * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
-     * @param   Ninguno. 
+     * @param   Ninguno.
      * @return  Una vista que recibe las solicitudes del usuario logeado.
      */
     public function actionListarsolicitudxinteresado() {
@@ -184,7 +184,7 @@ class SolicitudesController extends \app\components\CController {
     }
 
     public function actionEdit() {
-        
+
     }
 
     public function actionNew() {
@@ -243,13 +243,13 @@ class SolicitudesController extends \app\components\CController {
                 if (($data["unidada"] == 1) or ($data["unidada"] == 2)) {
                     $resItems = $modItemMetNivel->consultarXitemMetniv($data["unidada"], $data["moda_id"], $data["metodo"], $data["empresa_id"], $data["carrera_id"]);
                     $descuentos = $modDescuento->consultarDesctoxitem($resItems["ite_id"]);
-                } else {                    
+                } else {
                     //\app\models\Utilities::putMessageLogFile('item:'. $data["ite_id"]);
-                    $descuentos = $modDescuento->consultarDescuentoXitemUnidad($data["unidada"], $data["moda_id"], $data["ite_id"]);                    
+                    $descuentos = $modDescuento->consultarDescuentoXitemUnidad($data["unidada"], $data["moda_id"], $data["ite_id"]);
                 }
                 $message = array("descuento" => $descuentos);
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
-                
+
             }
             if (isset($data["getitem"])) {
                 if ($data["empresa_id"] != 1) {
@@ -290,7 +290,7 @@ class SolicitudesController extends \app\components\CController {
                 $message = array("preciodescuento" => $precioDescuento);
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
             }
-            if (isset($data["gethabilita"])) {                
+            if (isset($data["gethabilita"])) {
                 if ($data["ite_id"] == 155 or $data["ite_id"] == 156 or $data["ite_id"] == 157 or $data["ite_id"] == 10) {
                     $habilita = '1';
                 } else {
@@ -396,7 +396,7 @@ class SolicitudesController extends \app\components\CController {
                 $rsin_id = 1;
                 $subirDocumentos = 0;
             } else {
-                $rsin_id = 1; //Solicitud pendiente        
+                $rsin_id = 1; //Solicitud pendiente
                 $pre_observacion = null;
                 $fec_preobservacion = null;
             }
@@ -411,7 +411,7 @@ class SolicitudesController extends \app\components\CController {
                 //$resp_precio = $mod_solins->ObtenerPrecio($ming_id, $nint_id, $mod_id, $car_id);  //hasta el 9 de diciembre/2018.
                 $resp_precio = $mod_solins->ObtenerPrecioXitem($ite_id);
                 if ($resp_precio) {
-                    if ($nint_id < 3) { //GViteri: para grado y posgrado los items que corresponden a inscripción, está abierto la caja de texto hasta un valor tope.                       
+                    if ($nint_id < 3) { //GViteri: para grado y posgrado los items que corresponden a inscripción, está abierto la caja de texto hasta un valor tope.
                         if ($nint_id == 1) {
                             $ming_id = null;
                         }
@@ -437,7 +437,7 @@ class SolicitudesController extends \app\components\CController {
             }
             $observacion = ucwords(mb_strtolower($data["observacion"]));
             if ($errorprecio != 0) {
-                //Validar que no exista el registro en solicitudes.                    
+                //Validar que no exista el registro en solicitudes.
                 $resp_valida = $mod_solins->Validarsolicitud($interesado_id, $nint_id, $ming_id, $car_id);
                 if (empty($resp_valida['existe'])) {
                     $num_secuencia = Secuencias::nuevaSecuencia($con1, $emp_id, 1, 1, 'SOL');
@@ -499,7 +499,7 @@ class SolicitudesController extends \app\components\CController {
                         }
                     }
                 }
-                //Generar la orden de pago con valor correspondiente. Buscar precio para orden de pago.                                     
+                //Generar la orden de pago con valor correspondiente. Buscar precio para orden de pago.
                 if ($precio == 0) {
                     $estadopago = 'S';
                 } else {
@@ -508,7 +508,7 @@ class SolicitudesController extends \app\components\CController {
                 $val_total = $precio - $val_descuento;
                 $resp_opago = $mod_ordenpago->insertarOrdenpago($id_sins, null, $val_total, 0, $val_total, $estadopago, $usu_id);
                 if ($resp_opago) {
-                    //insertar desglose del pago                                    
+                    //insertar desglose del pago
                     $fecha_ini = date(Yii::$app->params["dateByDefault"]);
                     $resp_dpago = $mod_ordenpago->insertarDesglosepago($resp_opago, $ite_id, $val_total, 0, $val_total, $fecha_ini, null, $estadopago, $usu_id);
                     if ($resp_dpago) {
@@ -520,7 +520,7 @@ class SolicitudesController extends \app\components\CController {
                 $transaction->commit();
                 $transaction1->commit();
 
-                //Envío de correo con formas de pago.                    
+                //Envío de correo con formas de pago.
                 $informacion_interesado = $mod_ordenpago->datosBotonpago($resp_opago, $emp_id);
                 $link = Url::base(true) . "/formbotonpago/btnpago?ord_pago=" . base64_encode($resp_opago);
                 $link_paypal = Url::base(true) . "/pago/pypal?ord_pago=" . base64_encode($resp_opago);
@@ -631,7 +631,7 @@ class SolicitudesController extends \app\components\CController {
     }
 
     public function actionUpdate() {
-        
+
     }
 
     public function actionSubirdocumentos() {
@@ -807,7 +807,7 @@ class SolicitudesController extends \app\components\CController {
               $certvota_archivo = DocumentoAdjuntar::addLabelTimeDocumentos($sins_id, $certvota_archivo, $timeSt);
               if ($certvota_archivo === FALSE)
               throw new Exception('Error doc certificado vot. no renombrado.');
-            } 
+            }
             if (isset($data["arc_doc_foto"]) && $data["arc_doc_foto"] != "") {
                 $arrIm = explode(".", basename($data["arc_doc_foto"]));
                 $typeFile = strtolower($arrIm[count($arrIm) - 1]);
@@ -865,7 +865,7 @@ class SolicitudesController extends \app\components\CController {
             }
             if ((($uaca_id == 1) && /* !empty($titulo_archivo) && */!empty($dni_archivo) && !empty($foto_archivo)) or ( !empty($curriculum_archivo) /* && !empty($titulo_archivo) */ && !empty($dni_archivo) && !empty($foto_archivo) && ($uaca_id == "2"))) {
                 $mod_solinsxdoc1 = new SolicitudinsDocumento();
-                //1-Título, 2-DNI,3-Cert votación, 4-Foto, 5-Doc-Beca  
+                //1-Título, 2-DNI,3-Cert votación, 4-Foto, 5-Doc-Beca
                 if (isset($titulo_archivo)) {
                     $mod_solinsxdoc1->sins_id = $sins_id;
                     $mod_solinsxdoc1->int_id = $interesado_id;
@@ -911,7 +911,7 @@ class SolicitudesController extends \app\components\CController {
                           if (!$mod_solinsxdoc4->save()) {
                           throw new Exception('Error doc certvot no creado.');
                           }
-                        } 
+                        }
                         if ($beca == "1") {
                             $mod_solinsxdoc5 = new SolicitudinsDocumento();
                             $mod_solinsxdoc5->sins_id = $sins_id;
@@ -1035,7 +1035,7 @@ class SolicitudesController extends \app\components\CController {
                   $arrIm = explode(".", basename($data["arc_doc_certvota"]));
                   $typeFile = strtolower($arrIm[count($arrIm) - 1]);
                   $certvota_archivo = Yii::$app->params["documentFolder"] . "solicitudinscripcion/" . $per_id . "/doc_certvota_per_" . $per_id . "." . $typeFile;
-                } 
+                }
                 $foto_archivo = "";
                 if (isset($data["arc_doc_foto"]) && $data["arc_doc_foto"] != "") {
                     $arrIm = explode(".", basename($data["arc_doc_foto"]));
@@ -1162,7 +1162,7 @@ class SolicitudesController extends \app\components\CController {
                     if (!DocumentoAdjuntar::desactivarDocumentosxSolicitud($sins_id))
                         throw new Exception('Error no se reemplazo files.');
                     $mod_solinsxdoc1 = new SolicitudinsDocumento();
-                    //1-Título, 2-DNI,3-Cert votación, 4-Foto, 5-Doc-Beca  
+                    //1-Título, 2-DNI,3-Cert votación, 4-Foto, 5-Doc-Beca
                     if ($cemp_id > 0) {
                         $mod_solinsxdoc1->insertNewDocument($sins_id, $interesado_id, 8, $convenio_archivo, $observacion);
                     }
@@ -1198,7 +1198,7 @@ class SolicitudesController extends \app\components\CController {
                     } else {
                         throw new Exception('Error doc titulo no creado.' . $mensaje);
                     }
-                    // se cambia a pendiente la solicitud para revision.                    
+                    // se cambia a pendiente la solicitud para revision.
                     $mod_solinsxdoc1 = new SolicitudinsDocumento();
                     $solicitudInscripcion = SolicitudInscripcion::findOne($sins_id);
                     $solicitudInscripcion->rsin_id = 1;
@@ -1270,7 +1270,7 @@ class SolicitudesController extends \app\components\CController {
                 if ($rsin_id != 2) {
                     $mod_solins = new SolicitudInscripcion();
                     $mod_ordenpago = new OrdenPago();
-                    //Verificar que se hayan subido los documentos en Uteg.        
+                    //Verificar que se hayan subido los documentos en Uteg.
                     if ($empresa == 1) {
                         $respNumDoc = $mod_solins->consultarDocumentostosxSol($sins_id);
                         $numDocumentos = $respNumDoc["numDocumentos"];
@@ -1279,20 +1279,20 @@ class SolicitudesController extends \app\components\CController {
                     }
                     if ($numDocumentos > 0) {
                         $respusuario = $mod_solins->consultaDatosusuario($per_sistema);
-                        if ($banderapreaprueba == 0) {  //etapa de Aprobación.                    
+                        if ($banderapreaprueba == 0) {  //etapa de Aprobación.
                             if ($resultado == 2) {
-                                //consultar estado del pago.     
+                                //consultar estado del pago.
                                 $resp_pago = $mod_ordenpago->consultaOrdenPago($sins_id);
                                 if ($resp_pago["opag_estado_pago"] == 'S') {
                                     $respsolins = $mod_solins->apruebaSolicitud($sins_id, $resultado, $observacion, $observarevisa, $banderapreaprueba, $respusuario['usu_id']);
                                     if ($respsolins) {
-                                        //Se genera id de aspirante y correo de bienvenida.                                
+                                        //Se genera id de aspirante y correo de bienvenida.
                                         $resp_encuentra = $mod_ordenpago->encuentraAdmitido($int_id, $sins_id);
                                         if ($resp_encuentra) {
                                             $asp = $resp_encuentra['adm_id'];
                                             $continua = 1;
                                         } else {
-                                            //Se asigna al interesado como aspirante                                    
+                                            //Se asigna al interesado como aspirante
                                             $resp_asp = $mod_ordenpago->insertarAdmitido($int_id, $sins_id);
                                             if ($resp_asp) {
                                                 $asp = $resp_asp;
@@ -1303,13 +1303,13 @@ class SolicitudesController extends \app\components\CController {
                                     if ($continua == 1) {
                                         $resp_inte = $mod_ordenpago->actualizaEstadointeresado($int_id, $respusuario['usu_id']);
                                         if ($resp_inte) {
-                                            //Se obtienen el método de ingreso y el nivel de interés según la solicitud.                                                
+                                            //Se obtienen el método de ingreso y el nivel de interés según la solicitud.
                                             $resp_sol = $mod_solins->Obtenerdatosolicitud($sins_id);
                                             //Se obtiene el curso para luego registrarlo.
                                             if ($resp_sol) {
                                                 $mod_persona = new Persona();
                                                 $resp_persona = $mod_persona->consultaPersonaId($per_id);
-                                                //Modificar y activar clave de usuario con numero de cedula 
+                                                //Modificar y activar clave de usuario con numero de cedula
                                                 if ($resp_sol["emp_id"] == 1) {
                                                     $usu_sha = $security->generateRandomString();
                                                     $usu_pass = base64_encode($security->encryptByPassword($usu_sha, $resp_persona["per_cedula"]));
@@ -1318,7 +1318,7 @@ class SolicitudesController extends \app\components\CController {
                                                     if ($respUsu) {
                                                         $respUsugrol = $usergrol->actualizarRolEstudiante($resp_persona["usu_id"]);
                                                         if ($respUsugrol) {
-                                                            // Guardar en tabla esdudiante                                                                                                                      
+                                                            // Guardar en tabla esdudiante
                                                             $fecha = date(Yii::$app->params["dateTimeByDefault"]);
                                                             // Consultar el estudiante si no ha sido creado
                                                             $resp_estudianteid = $mod_Estudiante->getEstudiantexperid($per_id);
@@ -1404,10 +1404,10 @@ class SolicitudesController extends \app\components\CController {
                                 } else {
                                     $mensaje = 'La solicitud se encuentra pendiente de pago.';
                                 }
-                            } else { //No aprueban la solicitud  
+                            } else { //No aprueban la solicitud
                                 $respsolins = $mod_solins->apruebaSolicitud($sins_id, $resultado, $observacion, $observarevisa, $banderapreaprueba, $respusuario['usu_id']);
                                 if ($respsolins) {
-                                    $srec_etapa = "A";  //Aprobación                            
+                                    $srec_etapa = "A";  //Aprobación
                                     //Grabar en tabla de solicitudes rechazadas.
                                     if ($titulo == 1) {
                                         $obs_rechazo = "No cumple condiciones de aceptación en título.";
@@ -1441,7 +1441,7 @@ class SolicitudesController extends \app\components\CController {
                                                 $ok = "0";
                                             }
                                         }
-                                    }                                    
+                                    }
                                     if ($foto == 1) {
                                         $obs_rechazofoto = "No cumple condiciones de aceptación en foto.";
                                         for ($d = 0; $d < count($condicionesFoto); $d++) {
@@ -1515,7 +1515,7 @@ class SolicitudesController extends \app\components\CController {
                                     }
                                 }
                             }
-                        } else {  //Pre-Aprobación de la solicitud                
+                        } else {  //Pre-Aprobación de la solicitud
                             if ($resultado == 3) {
                                 //Verificar que se hayan subido los documentos.
                                 $respConsulta = $mod_solins->consultarDocumxSolic($sins_id);
@@ -1531,7 +1531,7 @@ class SolicitudesController extends \app\components\CController {
                                 if ($resultado == 4) {
                                     $respsolins = $mod_solins->apruebaSolicitud($sins_id, $resultado, $observacion, $observarevisa, $banderapreaprueba, $respusuario['usu_id']);
                                     if ($respsolins) {
-                                        $srec_etapa = "P";  //Preaprobación                       
+                                        $srec_etapa = "P";  //Preaprobación
                                         //Grabar en tabla de solicitudes rechazadas.
                                         if ($titulo == 1) {
                                             $obs_rechazo = "No cumple condiciones de aceptación en título.";
@@ -1687,7 +1687,7 @@ class SolicitudesController extends \app\components\CController {
         }
 
         $nameReport = admision::t("Solicitudes", "Request by Interested");
-        
+
         Utilities::generarReporteXLS($nombarch, $nameReport, $arrHeader, $arrData, $colPosition);
         exit;
     }

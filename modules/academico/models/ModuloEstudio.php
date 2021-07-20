@@ -99,17 +99,17 @@ class ModuloEstudio extends \app\modules\academico\components\CActiveRecord {
     /**
      * Function obtener cursos de Educación Continua y Centro de Idiomas según unidad academica y modalidad.
      * @author  Grace Viteri <analistadesarrollo01@uteg.edu.ec>;
-     * @property       
-     * @return  
+     * @property
+     * @return
      */
     public function consultarCursoModalidad($unidad, $modalidad) {
         $con = \Yii::$app->db_academico;
         $estado = 1;
 
         $sql = "SELECT me.mest_id as id, mest_nombre as name
-                FROM " . $con->dbname . ".modulo_estudio me inner join " . $con->dbname . ".modalidad m on m.mod_id = me.mod_id                     
+                FROM " . $con->dbname . ".modulo_estudio me inner join " . $con->dbname . ".modalidad m on m.mod_id = me.mod_id
                 WHERE me.uaca_id = :unidad
-                    and me.mod_id = :modalidad                    
+                    and me.mod_id = :modalidad
                     and me.mest_estado = :estado
                     and me.mest_estado_logico = :estado
                     and m.mod_estado = :estado
@@ -127,19 +127,19 @@ class ModuloEstudio extends \app\modules\academico\components\CActiveRecord {
     /**
      * Function obtener cursos de Educación Continua y Centro de Idiomas según empresa.
      * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>;
-     * @property       
-     * @return  
+     * @property
+     * @return
      */
     public function consultarEstudioEmpresa() {
         $con = \Yii::$app->db_academico;
         $estado = 1;
 
-        $sql = "SELECT 
-                    mest_id as id, 
+        $sql = "SELECT
+                    mest_id as id,
                     mest_nombre as name
-                    FROM 
+                    FROM
                     " . $con->dbname . ".modulo_estudio me
-                    WHERE                      
+                    WHERE
                     me.mest_estado_logico = :estado AND
                     me.mest_estado = :estado
                     ORDER BY name asc";
@@ -153,20 +153,20 @@ class ModuloEstudio extends \app\modules\academico\components\CActiveRecord {
     /**
      * Function obtener otros estudios academicos
      * @author  Kleber Loayza <analistadesarrollo03@uteg.edu.ec>;
-     * @property       
-     * @return  
+     * @property
+     * @return
      */
     public function consultarOtrosEstudiosAcademicos($uaca_id, $mod_id) {
         $con = \Yii::$app->db_academico;
         $estado = 1;
-        $sql = "SELECT 
+        $sql = "SELECT
                     oeac.oeac_id as id,
                     oeac.oeac_descripcion as name
-                    FROM 
+                    FROM
                     " . $con->dbname . ".otro_estudio_academico oeac "
                 . " inner join " . $con->dbname . ".unidad_academica as uaca on uaca.uaca_id = oeac.uaca_id"
-                . " inner join " . $con->dbname . ".modalidad modo on modo.mod_id = oeac.mod_id 
-                    WHERE                     
+                . " inner join " . $con->dbname . ".modalidad modo on modo.mod_id = oeac.mod_id
+                    WHERE
                     uaca.uaca_id = :uaca_id AND
                     oeac.mod_id = :mod_id AND
                     oeac.oeac_estado_logico= :estado AND
@@ -184,20 +184,20 @@ class ModuloEstudio extends \app\modules\academico\components\CActiveRecord {
     /**
      * Function obtener cursos de Smart y Ulink
      * @author  Grace Viteri <analistadesarrollo01@uteg.edu.ec>;
-     * @property       
-     * @return  
+     * @property
+     * @return
      */
     public function consultarDesModuloestudio($emp_id) {
         $con = \Yii::$app->db_academico;
         $estado = 1;
 
-        $sql = "SELECT 
-                    mes.mest_id as id, 
+        $sql = "SELECT
+                    mes.mest_id as id,
                     mes.mest_descripcion as name
-                    FROM 
+                    FROM
                     " . $con->dbname . ".modulo_estudio_empresa mee "
                 . "inner join " . $con->dbname . ".modulo_estudio mes on mes.mest_id = mee.mest_id
-                    WHERE                     
+                    WHERE
                     emp_id = :emp_id AND
                     mes.mest_estado_logico= :estado AND
                     mes.mest_estado= :estado AND
@@ -215,14 +215,14 @@ class ModuloEstudio extends \app\modules\academico\components\CActiveRecord {
     /**
      * Function obtener modalidad de Smart
      * @author  Grace Viteri <analistadesarrollo01@uteg.edu.ec>;
-     * @property       
-     * @return  
+     * @property
+     * @return
      */
     public function consultarModalidadModestudio() {
         $con = \Yii::$app->db_academico;
         $estado = 1;
 
-        $sql = "SELECT distinct m.mod_id id, m.mod_nombre name 
+        $sql = "SELECT distinct m.mod_id id, m.mod_nombre name
                 FROM db_academico.modulo_estudio me inner join db_academico.modalidad m on m.mod_id = me.mod_id
                 WHERE me.mest_estado = :estado
                       and me.mest_estado_logico = :estado
@@ -239,14 +239,14 @@ class ModuloEstudio extends \app\modules\academico\components\CActiveRecord {
     /**
      * Function obtener meun_id
      * @author  Giovanni Vergarai <analistadesarrollo02@uteg.edu.ec>;
-     * @property       
-     * @return  
+     * @property
+     * @return
      */
     public function consultarModalidadestudiouni($uaca_id, $mod_id, $eaca_id) {
         $con = \Yii::$app->db_academico;
         $estado = 1;
 
-        $sql = "SELECT meun_id 
+        $sql = "SELECT meun_id
                 FROM " . $con->dbname . ".modalidad_estudio_unidad
                 WHERE uaca_id = :uaca_id
                       and mod_id = :mod_id

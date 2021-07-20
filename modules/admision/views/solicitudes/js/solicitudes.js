@@ -1,6 +1,6 @@
 
 $(document).ready(function () {
-    $("#txt_precio_item").prop('disabled', false); 
+    $("#txt_precio_item").prop('disabled', false);
     $('input[name=opt_tipo_DNI]:radio').change(function () {
         if ($(this).val() == 1) {//ced
             $('#txt_dni_fac').addClass("PBvalidation");
@@ -300,7 +300,7 @@ $(document).ready(function () {
                 }, true);
             }
         }, true);
-        //                            
+        //
         arrParams.empresa_id = $('#cmb_empresa').val();
         arrParams.nint_id = $(this).val();
         arrParams.moda_id = $('#cmb_modalidad').val();
@@ -314,7 +314,7 @@ $(document).ready(function () {
             if (arrParams.nint_id == 2) {
                 $('#divMetodo').css('display', 'block');
                 $('#divAplicaDescuento').css('display', 'block');
-            } else {                
+            } else {
                 $('#divMetodo').css('display', 'none');
                 $('#divAplicaDescuento').css('display', 'block');
                 $('#opt_declara_Dctono').val(2);
@@ -358,7 +358,7 @@ $(document).ready(function () {
                             data = response.message;
                             setComboData(data.items, "cmb_item");
                         }
-                        //Precio.        
+                        //Precio.
                         var arrParams = new Object();
                         arrParams.ite_id = $('#cmb_item').val();
                         arrParams.getprecio = true;
@@ -546,7 +546,7 @@ $(document).ready(function () {
     /**
      * Function evento click en botón de PreAprobación
      * @author  Grace Viteri <analistadesarrollo01@uteg.edu.ec>
-     * @param   
+     * @param
      * @return  Grabar la pre-aprobación.
      */
     /***** BORRAR DESPUES *****/
@@ -598,11 +598,11 @@ $(document).ready(function () {
     });
 
     /**
-     * Function evento change de la lista de valores de "Resultado" de las pantallas de 
+     * Function evento change de la lista de valores de "Resultado" de las pantallas de
      *          Pre-Aprobación y Aprobación de Solicitudes.
      * @author  Grace Viteri <analistadesarrollo01@uteg.edu.ec>
-     * @param   
-     * @return  
+     * @param
+     * @return
      */
     $('#cmb_revision').change(function () {
         if ($('#cmb_revision').val() == 4) {
@@ -613,10 +613,10 @@ $(document).ready(function () {
     });
 
     /**
-     * Function evento change del control "chk_titulo": condiciones a revisar por tipo de documento "título".      
+     * Function evento change del control "chk_titulo": condiciones a revisar por tipo de documento "título".
      * @author  Grace Viteri <analistadesarrollo01@uteg.edu.ec>
-     * @param   
-     * @return  
+     * @param
+     * @return
      */
     $('#chk_titulo').change(function () {
         if ($('#chk_titulo').prop('checked')) {
@@ -629,8 +629,8 @@ $(document).ready(function () {
     /**
      * Function evento change del control "chk_documento": condiciones a revisar por tipo de documento "documento de identidad".
      * @author  Grace Viteri <analistadesarrollo01@uteg.edu.ec>
-     * @param   
-     * @return  
+     * @param
+     * @return
      */
     $('#chk_documento').change(function () {
         if ($('#chk_documento').prop('checked')) {
@@ -655,7 +655,7 @@ $(document).ready(function () {
             $('#Divcondcerti').css('visibility', 'hidden');
         }
     });
-    
+
     $('#chk_convenio').change(function () {
         if ($('#chk_convenio').prop('checked')) {
             $('#Divcondcon').css('visibility', 'visible');
@@ -881,12 +881,12 @@ $(document).ready(function () {
 
     $('#cmb_item').change(function () {
         var link = $('#txth_base').val() + "/admision/solicitudes/new";
-        //Descuentos                
-        var arrParams = new Object();                
+        //Descuentos
+        var arrParams = new Object();
         if ($('#cmb_ninteres').val() > 2) {
             arrParams.unidada = $('#cmb_ninteres').val();
-            arrParams.moda_id = $('#cmb_modalidad').val();       
-            arrParams.ite_id = $('#cmb_item').val();       
+            arrParams.moda_id = $('#cmb_modalidad').val();
+            arrParams.ite_id = $('#cmb_item').val();
             arrParams.getdescuento = true;
             requestHttpAjax(link, arrParams, function (response) {
                 if (response.status == "OK") {
@@ -894,7 +894,7 @@ $(document).ready(function () {
                     setComboData(data.descuento, "cmb_descuento");
                 }
             }, true);
-        }            
+        }
         //Precio.
         var arrParams = new Object();
         arrParams.ite_id = $('#cmb_item').val();
@@ -905,7 +905,7 @@ $(document).ready(function () {
                 $('#txt_precio_item').val(data.precio);
             }
         }, true);
-                        
+
         //Precio con descuento.
         var arrParams = new Object();
         arrParams.descuento_id = $('#cmb_descuento').val();
@@ -1124,7 +1124,7 @@ function SaveDocumentos() {
     arrParams.oserva = $('#txt_observa').val();
     arrParams.cemp_id=cemp_id;
     if(cemp_id>0){
-        arrParams.arc_doc_convenio = $('#txth_carta_convenio').val();    
+        arrParams.arc_doc_convenio = $('#txth_carta_convenio').val();
     }
     if ($('input[name=opt_declara_si]:checked').val() == 1) {
         arrParams.beca = 1;
@@ -1146,7 +1146,7 @@ function SaveDocumentos() {
 }
 function UpdateDocumentos() {
     var link = $('#txth_base').val() + "/admision/solicitudes/updatedocumentos";
-    var arrParams = new Object();    
+    var arrParams = new Object();
     arrParams.sins_id = $('#txth_ids').val();
     var cemp_id = $('#txth_cemp').val();
     arrParams.persona_id = $('#txth_idp').val();
@@ -1155,18 +1155,18 @@ function UpdateDocumentos() {
     arrParams.arc_doc_titulo = $('#txth_doc_titulo').val();
     arrParams.arc_doc_dni = $('#txth_doc_dni').val();
     arrParams.arc_doc_certvota = $('#txth_doc_certvota').val();
-    
+
     arrParams.arc_doc_foto = $('#txth_doc_foto').val();
     arrParams.arc_doc_beca = $('#txth_doc_beca').val();
     arrParams.opcion = $('#txth_opcion').val();
     arrParams.uaca_id = $('#txth_uaca').val();
     arrParams.oserva = $('#txt_observa').val();
-    
+
     arrParams.cemp_id=cemp_id;
     if(cemp_id>0){
-        arrParams.arc_doc_convenio = $('#txth_carta_convenio').val();    
+        arrParams.arc_doc_convenio = $('#txth_carta_convenio').val();
     }
-    
+
     if ($('input[name=opt_declara_si]:checked').val() == 1) {
         arrParams.beca = 1;
     } else {
@@ -1208,8 +1208,8 @@ var obscurriculum = "";
 /**
  * Function arreglo_check, forma arreglo con las condiciones elegidas tanto para los documentos: título y documento de identidad.
  * @author  Grace Viteri <analistadesarrollo01@uteg.edu.ec>
- * @param   
- * @return  
+ * @param
+ * @return
  */
 function arreglo_check() {
     if ($('#chk_titulo').prop('checked')) {
@@ -1304,7 +1304,7 @@ function arreglo_check() {
             len2 = len2 + 1;
         }
     }
-    
+
     //AQUI PARA CONVENIO
     if ($('#chk_convenio').prop('checked')) {
         obsconvi = $('#chk_certificado').attr('placeholder');
@@ -1315,8 +1315,8 @@ function arreglo_check() {
                 condicionconvi[len3] = $('#txth_cond_con0').val();
             }
             len3 = len3 + 1;
-        }       
-        
+        }
+
     }
 
     //AQUI PARA FOTO
@@ -1358,8 +1358,8 @@ function arreglo_check() {
                 condicioncurriculum[len5] = $('#txth_cond_curriculum0').val();
             }
             len5 = len5 + 1;
-        }       
-        
+        }
+
     }
 }
 

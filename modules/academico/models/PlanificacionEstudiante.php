@@ -1447,26 +1447,28 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
             $mod_id = $arrFiltro['modalidad']?$arrFiltro['modalidad']:0;
             \app\modules\academico\controllers\RegistroController::putMessageLogFileCartera('pla_id y mod_id '.$arrFiltro['periodo'] .'-'.$arrFiltro['modalidad']);
             $str_search = '';
+            $str_search1 = null;
 
             /*if($arrFiltro['periodo'] <= 0 && $arrFiltro['modalidad'] <= 0){
                 $str_search .= " where pe.pla_id = 0 AND pla.mod_id = 0 and meu.mod_id = 0 ";
             }*/
 
             if(!strcmp($str_search, '' )){
-                if($pla_id != 0 && $mod_id != 0){
+                if($arrFiltro['periodo']!= 0 || $arrFiltro['modalidad']!= 0){
                     $where .= " WHERE ";
                 }
     
                 if ($arrFiltro['periodo'] != 0) {
-                    $str_search1 .= " pe.pla_id = $pla_id ";
-                    \app\models\Utilities::putMessageLogFile('-------------------'. $str_search2 .'---------------------');
+                    $str_search1 = " pla.saca_id = $pla_id ";
+                    \app\modules\academico\controllers\RegistroController::putMessageLogFileCartera('-------------------'. $str_search1 .'---------------------');
                 }
                 if ($arrFiltro['modalidad'] != 0) {
                     $str_search2 .= " pla.mod_id = $mod_id and meu.mod_id = $mod_id";
-                    \app\models\Utilities::putMessageLogFile('-------------------'. $str_search .'---------------------');
+                    \app\modules\academico\controllers\RegistroController::putMessageLogFileCartera('-------------------'. $str_search2 .'---------------------');
                 }
                 if(isset($where)){
-                    $str_search .= $where . (!strcmp($str_search1,'')?$str_search1.' AND':' ').$str_search2;
+                    $str_search1 = (!is_null($str_search1)&&!is_null($str_search2)?$str_search1.' AND':$str_search1);
+                    $str_search .= $where .$str_search1 .$str_search2;
                 }
                 \app\models\Utilities::putMessageLogFile('else-------------------'. $str_search .'---------------------');
                 //print_r($str_search); die();

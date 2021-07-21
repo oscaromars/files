@@ -13,14 +13,12 @@ $_SESSION['persona_ingresa'] = base64_decode($_GET['ids']);
 ?>
 <?= Html::hiddenInput('txth_ftem_id', 0, ['id' => 'txth_ftem_id']); ?>
 <?= Html::hiddenInput('txth_errorFile', Yii::t("formulario", "The file extension is not valid or exceeds the maximum size in MB recommending him try again"), ['id' => 'txth_errorFile']); ?>
-<div class="col-md-12  col-xs-12 col-sm-12 col-lg-12">
-    <p class="text-danger"> <?= Yii::t("formulario", "Fields with * are required") ?> </p>
-</div>
+
 <div class="col-md-12  col-xs-12 col-sm-12 col-lg-12">
     <div class="nav-tabs-custom">
         <ul class="nav nav-tabs tabsdatos col-md-12  col-xs-12 col-sm-12 col-lg-12">
             <li class="active"><a href="#paso1" data-href="#paso1" data-toggle="tab" aria-expanded="true"><img class="" src="<?= Url::home() ?>img/users/n1.png" alt="User Image">  <?= Yii::t("interesado", "Personal Information") ?></a></li>
-            <li class="disabled"><a data-href="#paso2" data-toggle="none" aria-expanded="false"><img class="" src="<?= Url::home() ?>img/users/n2.png" alt="User Image">  <?= Yii::t("interesado", "Academic Information") ?></a></li>
+            <li class="disabled"><a data-href="#paso2" data-toggle="none" aria-expanded="false"><img class="" src="<?= Url::home() ?>img/users/n2.png" alt="User Image">  <?= Yii::t("interesado", "Subir Documentación") ?></a></li>
             
         </ul>
         
@@ -46,6 +44,9 @@ $_SESSION['persona_ingresa'] = base64_decode($_GET['ids']);
                         'pai_id_nacimiento' => $respPerinteresado['pai_id_nacimiento'],
                         'pro_id_nacimiento' => $respPerinteresado['pro_id_nacimiento'],
                         'can_id_nacimiento' => $respPerinteresado['can_id_nacimiento'],
+                        'pai_id_domicilio' => $respPerinteresado['pai_id_domicilio'],
+                        'pro_id_domicilio' => $respPerinteresado['pro_id_domicilio'],
+                        'can_id_domicilio' => $respPerinteresado['can_id_domicilio'],
                         'eciv_descripcion' => substr(strtoupper($respPerinteresado['eciv_descripcion']), 0, 3),
                         'per_correo' => $respPerinteresado['per_correo'],
                         'per_celular' => $respPerinteresado['per_celular'],
@@ -54,12 +55,14 @@ $_SESSION['persona_ingresa'] = base64_decode($_GET['ids']);
                         'per_nacionalidad' => $respPerinteresado['per_nacionalidad'],
                         'area' => $area['name'],
                         'per_pasaporte' => $respPerinteresado['per_pasaporte'],
-                        /*"arr_nacionalidad" => $arr_nacionalidad,
+                        "arr_nacionalidad" => $arr_nacionalidad,
+                        'eciv_id' => $respPerinteresado['eciv_id'],
                         "arr_estado_civil" => $arr_estado_civil,
                         "arr_pais" => $arr_pais,
-                        "arr_provincia" => $arr_provincia,*/
+                        "arr_provincia" => $arr_provincia,
                         "arr_ciudad" => $arr_ciudad,
                         //"arr_malla" => $arr_malla,
+                        'arr_tipparentesco' => $arr_tipparentesco,
                         "arr_metodos" => $arr_metodos,
                     ]);
                     ?>
@@ -69,7 +72,7 @@ $_SESSION['persona_ingresa'] = base64_decode($_GET['ids']);
                 <form class="form-horizontal">
                     <?=
                     $this->render('_form_tab2', [
-                        //'per_id' => $per_id,
+                        'per_id' => $per_id,
                         "arr_convenio_empresa" => $arr_convenio_empresa,
                     ]);
                     ?>                  

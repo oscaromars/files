@@ -50,6 +50,7 @@ return [
     "Section" => "Sección",
     "SOCIAL AND ECONOMIC ASPECTS VALIDATION" => "VALORACIÓN DE ASPECTOS SOCIOECONÓMICOS",
     "STUDENT'S PERSONAL DATA" => "DATOS PERSONALES DEL ESTUDIANTE",
+    "Select" => "Seleccione",
 
     // Sección 1
     "Last Name" => "Apellidos",
@@ -61,6 +62,14 @@ return [
     "Home Address" => "Dirección Domiciliaria",
     "Home Phone" => "Teléfono Domicilio",
     "CellPhone" => "Teléfono Celular",
-    "Email" => "Correo"
+    "Email" => "Correo",
+
+    // Sección 2
+    "Career" => "Carrera",
+    "Academic Unit" => "Unidad Académica",
+    "Modality" => "Modalidad",
+    "Number of approved credits" => "Número de cŕeditos aprobados",
+    "Last semester's academic score" => "Promedio académico del semestre anterior",
+    "Last semester's attendance score" => "Promedio de asistencia del semestre anterior",
     
 ];

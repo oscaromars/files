@@ -20,9 +20,12 @@ use app\modules\bienestar\models\FormularioSeccion;
 use app\modules\bienestar\models\FormularioSeccionCampo;
 
 use app\models\Persona;
-use app\models\academico\models\Estudiante;
-use app\models\academico\models\EstudianteCarreraPrograma;
-use app\models\academico\models\ModalidadEstudioUnidad;
+use app\modules\academico\models\Estudiante;
+use app\modules\academico\models\EstudianteCarreraPrograma;
+use app\modules\academico\models\ModalidadEstudioUnidad;
+use app\modules\academico\models\EstudioAcademico;
+use app\modules\academico\models\Modalidad;
+use app\modules\academico\models\UnidadAcademica;
 
 use app\modules\bienestar\Module as Bienestar;
 
@@ -64,25 +67,65 @@ class PensiondiferenciadaController extends \app\components\CController
 
     public function actionNew(){
         $per_id = Yii::$app->session->get("PB_perid");
+        // \app\models\Utilities::putMessageLogFile("per_id: " . $per_id);
 
         // Para los títulos de las secciones
         $secciones = FormularioSeccion::find()->where(['fsec_estado' => 1, 'fsec_estado_logico' => 1])->asArray()->all();
         $tabs = []; // Para almacenar las pestañas del formulario
+        $tabNum = 1; // Número de pestaña que será leída de los archivos
 
         // Sección 1
         $persona_model = Persona::find()->where(['per_id' => $per_id, 'per_estado' => 1, 'per_estado_logico' => 1])->asArray()->one();
-        $tabs[] = $this->renderPartial('newFormTab1', [
+        $tabs[] = $this->renderPartial('newFormTab' . $tabNum, [
             'persona' => $persona_model
         ]);
+        $tabNum++;
 
         // Sección 2
-        $estudiante_modelo = Estudiante::find()->where(['per_id' => $per_id, 'est_activo' => 1, 'est_estado' => 1, 'est_estado_logico' => 1])->asArray()->one();
-        $est_id = $estudiante_modelo['est_id'];
-        $estudiante_carrera_programa_modelo = EstudianteCarreraPrograma::find()->where(['est_id' => $est_id, 'ecpr_estado' => 1, 'ecpr_estado_logico' => 1])->asArray()->one();
-        $meun_id = $estudiante_carrera_programa_modelo['meun_id'];
-        $eaca_id = ModalidadEstudioUnidad::find()->where(['meun_id' => $meun_id])->asArray()->one()['eaca_id'];
+        $estudiante = Estudiante::find()->where(['per_id' => $per_id, 'est_activo' => 1, 'est_estado' => 1, 'est_estado_logico' => 1])->asArray()->one();
+        $est_id = $estudiante['est_id'];
+        $estudiante_carrera_programa = EstudianteCarreraPrograma::find()->where(['est_id' => $est_id, 'ecpr_estado' => 1, 'ecpr_estado_logico' => 1])->asArray()->one();
+        $meun_id = $estudiante_carrera_programa['meun_id'];
+        $modalidad_estudio_unidad = ModalidadEstudioUnidad::find()->where(['meun_id' => $meun_id])->asArray()->one();
+        $uaca_id = $modalidad_estudio_unidad['uaca_id'];
+        $mod_id = $modalidad_estudio_unidad['mod_id'];
+        $eaca_id = $modalidad_estudio_unidad['eaca_id'];
+        $estudio_academico = EstudioAcademico::find()->where(['eaca_id' => $eaca_id])->asArray()->one();
+        $modalidad = Modalidad::find()->where(['mod_id' => $mod_id, 'mod_estado' => 1, 'mod_estado_logico' => 1])->asArray()->all();
+        $unidad = UnidadAcademica::find()->where(['uaca_id' => $uaca_id, 'uaca_estado' => 1, 'uaca_estado_logico' => 1])->asArray()->all();
 
-        
+
+        $modelo_estudio_academico = new EstudioAcademico();
+        $carreras = $modelo_estudio_academico->consultarCarrera();
+        $modalidades = Modalidad::find()->where(['mod_estado' => 1, 'mod_estado_logico' => 1])->asArray()->all();
+        $unidades = UnidadAcademica::find()->where(['uaca_estado' => 1, 'uaca_estado_logico' => 1])->asArray()->all();
+
+        $tabs[] = $this->renderPartial('newFormTab' . $tabNum, [
+            'carreras' => (empty(ArrayHelper::map($carreras, "id", "value"))) ? array(Bienestar::t("pensiondiferenciada", "Select")) : (ArrayHelper::map($carreras, "id", "value")),
+            'modalidades' => (empty(ArrayHelper::map($modalidades, "mod_id", "mod_nombre"))) ? array(Bienestar::t("pensiondiferenciada", "Select")) : (ArrayHelper::map($modalidades, "mod_id", "mod_nombre")),
+            'unidades' => (empty(ArrayHelper::map($unidades, "uaca_id", "uaca_nombre"))) ? array(Bienestar::t("pensiondiferenciada", "Select")) : (ArrayHelper::map($unidades, "uaca_id", "uaca_nombre")),
+            'eaca_id' => $eaca_id,
+            'mod_id' => $mod_id,
+            'uaca_id' => $uaca_id,
+        ]);
+        $tabNum++;
+
+        /*
+        \app\models\Utilities::putMessageLogFile("estudiante: " . print_r($estudiante, true));
+        \app\models\Utilities::putMessageLogFile("est_id: " . $est_id);
+        \app\models\Utilities::putMessageLogFile("estudiante_carrera_programa: " . print_r($estudiante_carrera_programa, true));
+        \app\models\Utilities::putMessageLogFile("meun_id: " . $meun_id);
+        \app\models\Utilities::putMessageLogFile("modalidad_estudio_unidad: " . print_r($modalidad_estudio_unidad, true));
+        \app\models\Utilities::putMessageLogFile("mod_id: " . $mod_id);
+        \app\models\Utilities::putMessageLogFile("eaca_id: " . $eaca_id);
+        \app\models\Utilities::putMessageLogFile("estudio_academico: " . print_r($estudio_academico, true));
+
+        \app\models\Utilities::putMessageLogFile("carreras: " . print_r($carreras, true));
+        \app\models\Utilities::putMessageLogFile("modalidades: " . print_r($modalidades, true));
+        \app\models\Utilities::putMessageLogFile("unidades: " . print_r($unidades, true));
+        \app\models\Utilities::putMessageLogFile("modalidad: " . print_r($modalidad, true));
+        \app\models\Utilities::putMessageLogFile("unidad: " . print_r($unidad, true));
+        */
 
         $items = [];
         for ($i = 0; $i < count($tabs); $i++) { 
@@ -102,15 +145,15 @@ class PensiondiferenciadaController extends \app\components\CController
             }
         }
 
-    	/*$items = [
+    	$items = [
             [
                 'label' => Bienestar::t('pensiondiferenciada', "STUDENT'S PERSONAL DATA"),
-                'content' => $newFormTab1,
+                'content' => $tabs[0],
                 'active' => true
             ],
             [
                 'label' => Bienestar::t('pensiondiferenciada', "ACADEMIC DATA"),
-                'content' => $newFormTab2,
+                'content' => $tabs[1],
             ],
             [
                 'label' => Bienestar::t('pensiondiferenciada', "SOCIAL AND ECONOMIC ASPECTS VALIDATION"),
@@ -136,7 +179,7 @@ class PensiondiferenciadaController extends \app\components\CController
                 'label' => Bienestar::t('pensiondiferenciada', "OUTSTANDING ACTIVITIES"),
                 'content' => $newFormTab8,
             ]
-        ];*/
+        ];
 
         return $this->render('new', ['items' => $items]);
     }

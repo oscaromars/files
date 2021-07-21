@@ -13,7 +13,8 @@ use kartik\tabs\TabsX;
             TabsX::widget([
                 'items'=>$items,
                 'position'=>TabsX::POS_LEFT,
-                'encodeLabels'=>false
+                'bordered'=>true,
+                'encodeLabels'=>false,
             ]);
         ?>
     </div>

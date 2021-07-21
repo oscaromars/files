@@ -50,6 +50,7 @@ return [
     "Section" => "Section",
     "SOCIAL AND ECONOMIC ASPECTS VALIDATION" => "SOCIAL AND ECONOMIC ASPECTS VALIDATION",
     "STUDENT'S PERSONAL DATA" => "STUDENT'S PERSONAL DATA",
+    "Select" => "Select",
 
     // Sección 1
     "Last Name" => "Last Name",
@@ -62,5 +63,13 @@ return [
     "Home Phone" => "Home Phone",
     "CellPhone" => "CellPhone",
     "Email" => "Email"
+
+    // Sección 2
+    "Career" => "Career",
+    "Academic Unit" => "Academic Unit",
+    "Modality" => "Modality",
+    "Number of approved credits" => "Number of approved credits",
+    "Last semester's academic score" => "Last semester's academic score",
+    "Last semester's attendance score" => "Last semester's attendance score",
     
 ];

@@ -14,21 +14,28 @@ Bienestar::registerTranslations();
 
 ?>
 
-?>
 <form class="form-horizontal">
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
-            <label for="cmb_carrera" class="col-lg-3 col-md-3 col-sm-3 col-xs-3 control-label"><?= Bienestar::t("pensiondiferenciada", "Last Name") ?> <span class="text-danger">*</span></label>
-            <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9">
-                <input type="text" class="form-control PBvalidation" id="cmb_carrera" data-type="all" placeholder="<?= Bienestar::t("pensiondiferenciada", "Last Name") ?>">
+            <label for="cmb_eaca" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Bienestar::t("pensiondiferenciada", "Career") ?></label>
+            <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
+                <?= Html::dropDownList("cmb_eaca", $eaca_id, $carreras, ["class" => "form-control", "id" => "cmb_eaca", "disabled" => "true"]) ?>
             </div>
         </div>
     </div>
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
-            <label for="cmb_carrera" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Academico::t("profesor", "Country") ?></label>
+            <label for="cmb_mod" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Bienestar::t("pensiondiferenciada", "Modality") ?></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
-                <?= Html::dropDownList("cmb_carrera", $persona_model->pai_id_domicilio, $arr_pais, ["class" => "form-control", "id" => "cmb_carrera", "disabled" => "true"]) ?>
+                <?= Html::dropDownList("cmb_mod", $mod_id, $modalidades, ["class" => "form-control", "id" => "cmb_mod", "disabled" => "true"]) ?>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="form-group">
+            <label for="cmb_uaca" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Bienestar::t("pensiondiferenciada", "Academic Unit") ?></label>
+            <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
+                <?= Html::dropDownList("cmb_uaca", $uaca_id, $unidades, ["class" => "form-control", "id" => "cmb_uaca", "disabled" => "true"]) ?>
             </div>
         </div>
     </div>

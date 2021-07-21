@@ -40,14 +40,14 @@ Bienestar::registerTranslations();
     </div>
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
-            <label for="fecha_nacimiento" class="col-lg-3 col-md-3 col-sm-3 col-xs-3 control-label"><?= Yii::t("formulario", "Date of Birth") ?><span class="text-danger">*</span> </label>
+            <label for="fecha_nacimiento" class="col-lg-3 col-md-3 col-sm-3 col-xs-3 control-label"><?= Bienestar::t("pensiondiferenciada", "Date of Birth") ?><span class="text-danger">*</span> </label>
             <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9">
                 <?=
                 DatePicker::widget([
                     'name' => 'fecha_inicial',
                     'value' => '',
                     'type' => DatePicker::TYPE_INPUT,
-                    'options' => ["class" => "form-control", "id" => "fecha_nacimiento", "placeholder" => Yii::t("formulario", "Date of Birth")],
+                    'options' => ["class" => "form-control", "id" => "fecha_nacimiento", "placeholder" => Bienestar::t("pensiondiferenciada", "Date of Birth")],
                     'pluginOptions' => [
                         'autoclose' => true,
                         'format' => Yii::$app->params["dateByDatePicker"],

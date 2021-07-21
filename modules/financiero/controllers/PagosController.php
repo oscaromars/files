@@ -436,6 +436,7 @@ class PagosController extends \app\components\CController {
         $usuario = new Usuario();
         $security = new Security();
         $usergrol = new UsuaGrolEper();
+        $usu_autenticado = @Yii::$app->session->get("PB_iduser");
         //online que sube doc capturar asi el id de la persona
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
@@ -491,6 +492,7 @@ class PagosController extends \app\components\CController {
             try {
                 $mod_Estudiante = new Estudiante();
                 $mod_Modestuni = new ModuloEstudio();
+                $mod_solins = new SolicitudInscripcion();
                 $usuario_aprueba = @Yii::$app->user->identity->usu_id;   //Se obtiene el id del usuario.
                 $mod_ordpago = new OrdenPago();
                 if ($controladm == '1') {
@@ -561,40 +563,56 @@ class PagosController extends \app\components\CController {
                                     $exito = 1;
                                     // CREAR COMO ESTUDIANTE EN TODAS LAS TABLAS if existo es 1
                                     //Se obtienen el método de ingreso y el nivel de interés según la solicitud.
-                                    $resp_sol = $mod_solins->Obtenerdatosolicitud($sins_id);
+                                    \app\models\Utilities::putMessageLogFile('solictud de inscripcion: ' . $sins_id);
+                                    // Obtener el id de la solicitud a partir del num_solicitud $sins_id
+                                    $resp_idsol = $mod_solins->Obtenersinsidxnumsolicitud($sins_id);
+                                    $resp_sol = $mod_solins->Obtenerdatosolicitud($resp_idsol["sins_id"]);
+                                    \app\models\Utilities::putMessageLogFile('resp solicitud: ' . $resp_idsol["sins_id"]);
                                     if ($resp_sol) {
+                                        \app\models\Utilities::putMessageLogFile('entro 1: ');
                                         $mod_persona = new Persona();
+                                        \app\models\Utilities::putMessageLogFile('per_id: ' . $per_id);
                                         $resp_persona = $mod_persona->consultaPersonaId($per_id);
                                         //Modificar y activar clave de usuario con numero de cedula
                                         if ($resp_sol["emp_id"] == 1) {
+                                            //\app\models\Utilities::putMessageLogFile('entro 2: ');
                                             $usu_sha = $security->generateRandomString();
                                             $usu_pass = base64_encode($security->encryptByPassword($usu_sha, $resp_persona["per_cedula"]));
                                             $respUsu = $usuario->actualizarDataUsuario($usu_sha, $usu_pass, $resp_persona["usu_id"]);
                                             // YA TIENE USUARIO GROL PERO CON ROL 30 DEBERIA MODIFICARSE A 37 SE DEBE ENVIAR EL USU_ID
                                             if ($respUsu) {
+                                                \app\models\Utilities::putMessageLogFile('entro 3: ');
                                                 $respUsugrol = $usergrol->actualizarRolEstudiante($resp_persona["usu_id"]);
                                                 if ($respUsugrol) {
+                                                    \app\models\Utilities::putMessageLogFile('entro 4: ');
                                                     // Guardar en tabla esdudiante
                                                     $fecha = date(Yii::$app->params["dateTimeByDefault"]);
                                                     // Consultar el estudiante si no ha sido creado
                                                     $resp_estudianteid = $mod_Estudiante->getEstudiantexperid($per_id);
                                                     if ($resp_estudianteid["est_id"] == "") {
+                                                        \app\models\Utilities::putMessageLogFile('entro 5: ');
+                                                        \app\models\Utilities::putMessageLogFile('per_id en 5: ' . $per_id);
                                                         $resp_estudiante = $mod_Estudiante->insertarEstudiante($per_id, null, null, $usu_autenticado, null, $fecha, null);
                                                     } else {
+                                                        \app\models\Utilities::putMessageLogFile('entro 6: ');
                                                         $resp_estudiante = $resp_estudianteid["est_id"];
                                                     }
                                                     if ($resp_estudiante) {
-                                                        // Si el est_id ya esta en la tabla estudiante_carrera_programa 
+                                                        \app\models\Utilities::putMessageLogFile('entro 7: ');
+                                                        // Si el est_id ya esta en la tabla estudiante_carrera_programa
                                                         // no se inserta
                                                         // consultar si ya esta en la tabla estudiante_carrera_programa
                                                          $resp_estcarreraprograma = $mod_Estudiante->consultarEstcarreraprogrma($resp_estudiante);
-                                                         if (!empty($resp_estcarreraprograma["ecpr_id"])) {
+                                                         if (empty($resp_estcarreraprograma["ecpr_id"])) {
+                                                        \app\models\Utilities::putMessageLogFile('entro 8: ');
                                                         // Obtener el meun_id con lo con el uaca_id, mod_id y eaca_id, el est_id
                                                         $resp_mestuni = $mod_Modestuni->consultarModalidadestudiouni($resp_sol["nivel_interes"], $resp_sol["mod_id"], $resp_sol["eaca_id"]);
                                                         if ($resp_mestuni) {
+                                                            \app\models\Utilities::putMessageLogFile('entro 9: ');
                                                             //consultar si no esta guardado en estudiante_carrera_programa
                                                             $resp_estucarrera = $mod_Estudiante->consultarEstcarreraprogrma($resp_estudiante);
                                                             if ($resp_estucarrera["ecpr_id"] == "") {
+                                                                \app\models\Utilities::putMessageLogFile('entro 10: ');
                                                                 // Guardar en tabla estudiante_carrera_programa
                                                                 $resp_estudcarreprog = $mod_Estudiante->insertarEstcarreraprog($resp_estudiante, $resp_mestuni["meun_id"], $fecha, $usu_autenticado, $fecha);
                                                             }

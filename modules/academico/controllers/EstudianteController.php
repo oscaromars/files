@@ -250,7 +250,7 @@ class EstudianteController extends \app\components\CController {
                 $mod_emp_persona = new EmpresaPersona();
                 $usergrol = new UsuaGrolEper();
                 // consultar el per_id sino esta en estudiante si esta un else q diga ya existe estudiante getEstudiantexperid($per_id)
-                $resp_estudianteid = $mod_Estudiante->getEstudiantexperid($per_id); 
+                $resp_estudianteid = $mod_Estudiante->getEstudiantexperid($per_id);
                 if ($resp_estudianteid["est_id"] == "") {
                     // consultar datos de la person con per_id consultaPersonaId($per_id)
                     $resp_persona = $mod_persona->consultaPersonaId($per_id);
@@ -258,7 +258,7 @@ class EstudianteController extends \app\components\CController {
                     if ($resp_persona["usu_id"] == "") { // No existe el usuario
                         // se crea en la tabla usuario OJO FALTA
                         $usuarioid = $usuario->crearUsuario($resp_persona["per_correo"], $resp_persona["per_cedula"], $per_id);
-                        // consultar si existe en empresa_persona, sino guardar en empresa_persona 
+                        // consultar si existe en empresa_persona, sino guardar en empresa_persona
                         $emp_per_id = $mod_emp_persona->consultarIdEmpresaPersona($per_id, $emp_id);
                         if ($emp_per_id == 0) {
                             $keys = ['emp_id', 'per_id', 'eper_estado', 'eper_estado_logico'];
@@ -275,15 +275,18 @@ class EstudianteController extends \app\components\CController {
                             if ($usgrol_id) {
                                 $resp_estudiante = $mod_Estudiante->insertarEstudiante($per_id, $matricula, $categoria, $usu_autenticado, null, $fecha, null);
                                 if ($resp_estudiante) {
+                                    $resp_estcarreraprograma = $mod_Estudiante->consultarEstcarreraprogrma($resp_estudiante);
+                                    if (!empty($resp_estcarreraprograma["ecpr_id"])) {
                                     // if guarda estudiante consultar la tabla modalidad_estudio_unidad con uaca_id, mod_id y eaca_id, si no existe error de que no hay modalidad_estudio_unidad, caso contrario seguir
                                     $resp_mestuni = $mod_Modestuni->consultarModalidadestudiouni($uaca_id, $mod_id, $eaca_id);
                                     if ($resp_mestuni) {
-                                        // guardar en modalidad_estudio_unidad  
+                                        // guardar en modalidad_estudio_unidad
                                         $resp_estudcarreprog = $mod_Estudiante->insertarEstcarreraprog($resp_estudiante, $resp_mestuni["meun_id"], $fecha, $usu_autenticado, $fecha);
                                         if ($resp_estudcarreprog) {
                                             $exito = 1;
                                         }
                                     }
+                                  }
                                 }
                             }
                         }
@@ -309,15 +312,18 @@ class EstudianteController extends \app\components\CController {
                                 // guardar en tabla estudiante
                                 $resp_estudiante = $mod_Estudiante->insertarEstudiante($per_id, $matricula, $categoria, $usu_autenticado, null, $fecha, null);
                                 if ($resp_estudiante) {
+                                    $resp_estcarreraprograma = $mod_Estudiante->consultarEstcarreraprogrma($resp_estudiante);
+                                    if (!empty($resp_estcarreraprograma["ecpr_id"])) {
                                     // if guarda estudiante consultar la tabla modalidad_estudio_unidad con uaca_id, mod_id y eaca_id, si no existe error de que no hay modalidad_estudio_unidad, caso contrario seguir
                                     $resp_mestuni = $mod_Modestuni->consultarModalidadestudiouni($uaca_id, $mod_id, $eaca_id);
                                     if ($resp_mestuni) {
-                                        // guardar en modalidad_estudio_unidad  
+                                        // guardar en modalidad_estudio_unidad
                                         $resp_estudcarreprog = $mod_Estudiante->insertarEstcarreraprog($resp_estudiante, $resp_mestuni["meun_id"], $fecha, $usu_autenticado, $fecha);
                                         if ($resp_estudcarreprog) {
                                             $exito = 1;
                                         }
                                     }
+                                  }
                                 }
                             }
                         }
@@ -452,7 +458,7 @@ class EstudianteController extends \app\components\CController {
                                 $exito = 1;
                             }
                         } else {
-                            // modifica la tabla estudiante_carrera_programa   
+                            // modifica la tabla estudiante_carrera_programa
                             $resp_estudiantecarrera = $mod_Estudiante->updateEstudiantecarreraprogr($est_id, $resp_mestuni["meun_id"], $usu_autenticado, $fecha);
                             if ($resp_estudiantecarrera) {
                                 $exito = 1;

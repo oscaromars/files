@@ -587,8 +587,8 @@ class PagosController extends \app\components\CController {
                                                         // Si el est_id ya esta en la tabla estudiante_carrera_programa 
                                                         // no se inserta
                                                         // consultar si ya esta en la tabla estudiante_carrera_programa
-                                                        // $resp_estcarreraprograma = $mod_Modestuni->consultarModalidadestudiouni($resp_sol["nivel_interes"], $resp_sol["mod_id"], $resp_sol["eaca_id"]);
-                                                        //  if (!empty($resp_estcarreraprograma["est_id"])) {
+                                                         $resp_estcarreraprograma = $mod_Estudiante->consultarEstcarreraprogrma($resp_estudiante);
+                                                         if (!empty($resp_estcarreraprograma["ecpr_id"])) {
                                                         // Obtener el meun_id con lo con el uaca_id, mod_id y eaca_id, el est_id
                                                         $resp_mestuni = $mod_Modestuni->consultarModalidadestudiouni($resp_sol["nivel_interes"], $resp_sol["mod_id"], $resp_sol["eaca_id"]);
                                                         if ($resp_mestuni) {
@@ -598,8 +598,8 @@ class PagosController extends \app\components\CController {
                                                                 // Guardar en tabla estudiante_carrera_programa
                                                                 $resp_estudcarreprog = $mod_Estudiante->insertarEstcarreraprog($resp_estudiante, $resp_mestuni["meun_id"], $fecha, $usu_autenticado, $fecha);
                                                             }
-                                                        }
-                                                        //}
+                                                         }
+                                                       }
                                                     }
                                                 }
                                             }

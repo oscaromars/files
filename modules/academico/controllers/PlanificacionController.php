@@ -25,7 +25,26 @@ academico::registerTranslations();
 
 class PlanificacionController extends \app\components\CController {
 
-    private function Bloques() {
+    private function Bloques($id=0) {
+        if($id == 0){
+            return [
+                '0' => Yii::t('formulario', 'Seleccionar'),
+                '1' => Yii::t('formulario', 'Bloque 1'),
+                '2' => Yii::t('formulario', 'Bloque 2'),
+            ];
+        }
+        if($id == 1){
+            return [
+                '1' => Yii::t('formulario', 'Bloque 1'),
+                '2' => Yii::t('formulario', 'Bloque 2'),
+            ];
+        }
+        if($id == 2){
+            return [
+                '2' => Yii::t('formulario', 'Bloque 2'),
+                '1' => Yii::t('formulario', 'Bloque 1'),
+            ];
+        }
         return [
             '0' => Yii::t('formulario', 'Seleccionar'),
             '1' => Yii::t('formulario', 'Bloque 1'),
@@ -1133,6 +1152,7 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
             $data = Yii::$app->request->post();
             $periodo  = $_GET['periodo'];
             $modalidad = $_GET['modalidad'];
+            $bloque = $_GET['bloque'];
             $filtro = $_GET['PBgetFilter'];
             //print_r('true '.$periodo.'-'.$modalidad.'-'.$filtro);
             \app\models\Utilities::putMessageLogFile('Botón Buscar: '.$data);
@@ -1140,14 +1160,18 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
                 if (($modalidad != 0 && $periodo != 0)) {
                     $arrSearch['modalidad'] = $modalidad?$modalidad:0;
                     $arrSearch['periodo'] = $periodo?$periodo:0;
+                    $arrSearch['bloque'] = $bloque?$bloque:0;
                     $model_plan = $mod_periodo->consultarEstudiantePeriodo($arrSearch);
+
+                    //print_r($modalidad_data[$modalidad]);die();
                     
                     \app\models\Utilities::putMessageLogFile('FIltros...: ');
                     \app\models\Utilities::putMessageLogFile('modalidad y periodod '.$arrSearch['modalidad'] .'-'.$arrSearch['periodo'] );
                     \app\modules\academico\controllers\RegistroController::putMessageLogFileCartera('modalidad y periodod '.$arrSearch['modalidad'] .'-'.$arrSearch['periodo'] );
                     return $this->render('academicoestudiante', [
-                        'arr_modalidad' => ArrayHelper::map(array_merge([['id' => "0", 'name' => 'Todas']], $modalidad_data), 'id', 'name'),
-                        'arr_periodo' => ArrayHelper::map(array_merge([['id' => "0", 'name' => 'Todas']], $arr_pla), 'id', 'name'),
+                        'arr_modalidad' => ArrayHelper::map(array_merge([['id' => ($modalidad?$modalidad:"0"), 'name' => ($modalidad?$modalidad_data[$modalidad]:'Todas')]], $modalidad_data), 'id', 'name'),
+                        'arr_periodo' => ArrayHelper::map(array_merge([['id' => ($periodo?$periodo:"0"), 'name' => ($periodo?$arr_pla[$periodo]:'Todas')]], $arr_pla), 'id', 'name'),
+                        'arr_bloque' => $this->Bloques($bloque),//ArrayHelper::map(array_merge([['id' => ($bloque?$bloque:"0"), 'name' => ($bloque?$this->Bloques()[$periodo]:'Todas')]], $this->Bloques()), 'id', 'name'),
                         'model' => $model_plan,
                     ]);
                     
@@ -1161,8 +1185,9 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
                     \app\modules\academico\controllers\RegistroController::putMessageLogFileCartera('modalidad y periodod '.$arrSearch['modalidad'] .'-'.$arrSearch['periodo'] );
                     
                     return $this->render('academicoestudiante', [
-                        'arr_modalidad' => ArrayHelper::map(array_merge([['id' => "0", 'name' => 'Todas']], $modalidad_data), 'id', 'name'),
-                        'arr_periodo' => ArrayHelper::map(array_merge([['id' => "0", 'name' => 'Todas']], $arr_pla), 'id', 'name'),
+                        'arr_modalidad' => ArrayHelper::map(array_merge([['id' => ($modalidad?$modalidad:"0"), 'name' => ($modalidad?$modalidad_data[$modalidad]:'Todas')]], $modalidad_data), 'id', 'name'),
+                        'arr_periodo' => ArrayHelper::map(array_merge([['id' => ($periodo?$periodo:"0"), 'name' => ($periodo?$arr_pla[$periodo]:'Todas')]], $arr_pla), 'id', 'name'),
+                        'arr_bloque' => $this->Bloques($bloque),//ArrayHelper::map(array_merge([['id' => ($bloque?$bloque:"0"), 'name' => ($bloque?$this->Bloques()[$periodo]:'Todas')]], $this->Bloques()), 'id', 'name'),
                         'model' => $model_plan,
                     ]);
                 }
@@ -1197,7 +1222,7 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
         return $this->render('academicoestudiante', [
                     
                     'arr_modalidad' => ArrayHelper::map(array_merge([['id' => "0", 'name' => 'Todas']], $modalidad_data), 'id', 'name'),
-                    
+                    'arr_bloque' => $this->Bloques(),
                     'arr_periodo' => ArrayHelper::map(array_merge([['id' => "0", 'name' => 'Todas']], $arr_pla), 'id', 'name'),
                     'model' => $model_plan,
         ]);
@@ -1337,7 +1362,7 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
         $arrHeader = array(
             Yii::t('formulario', 'Modalidad'),
             Yii::t('formulario', 'Periodo'),
-            //Yii::t('formulario', 'Codigo de Materia'),
+            Yii::t('formulario', 'Bloque'),
             Yii::t('formulario', 'Materia del Periodo'),
             Yii::t('formulario', 'Cantidad'),
         );
@@ -1348,6 +1373,7 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
         $arrSearch['modalidad'] = $data['modalidad'];
         $arrSearch['carrera'] = $data['carrera'];
         $arrSearch['periodo'] = $data['periodo'];
+        $arrSearch['bloque'] = $data['bloque'];
         $arrData = array();
         if (empty($arrSearch)) {
             $arrData = $mod_periodo->consultarEstudiantePeriodo(array(), true);
@@ -1380,7 +1406,7 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
         $arrHeader = array(
             Yii::t('formulario', 'Modalidad'),
             Yii::t('formulario', 'Periodo'),
-            //Yii::t('formulario', 'Codigo de Materia'),
+            Yii::t('formulario', 'Bloque'),
             Yii::t('formulario', 'Materia del Periodo'),
             Yii::t('formulario', 'Cantidad'),
         );
@@ -1391,6 +1417,7 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
         $arrSearch['modalidad'] = $data['modalidad'];
         $arrSearch['carrera'] = $data['carrera'];
         $arrSearch['periodo'] = $data['periodo'];
+        $arrSearch['bloque'] = $data['bloque'];
         $arrData = array();
         if (empty($arrSearch)) {
             $arrData = $mod_periodo->consultarEstudiantePeriodo(array(), true);

@@ -26,7 +26,8 @@ use app\modules\academico\Module as academico;
 use app\models\EmpresaPersona;
 use app\models\UsuaGrolEper;
 use app\modules\admision\models\InteresadoEmpresa;
-
+use app\modules\academico\models\ModuloEstudio;
+use app\modules\academico\models\Estudiante;
 admision::registerTranslations();
 academico::registerTranslations();
 
@@ -432,6 +433,9 @@ class PagosController extends \app\components\CController {
     }
 
     public function actionSavepago() {
+        $usuario = new Usuario();
+        $security = new Security();
+        $usergrol = new UsuaGrolEper();
         //online que sube doc capturar asi el id de la persona
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
@@ -476,7 +480,7 @@ class PagosController extends \app\components\CController {
             $numero_transaccion = $data["numero_transaccion"];
             $fecha_transaccion = $data["fecha_transaccion"];
             $int_id = $data["int_id"];
-            $sins_id = $data["sins_id"];
+            $sins_id = $data["sins_id"]; // solicitud de inscripcion id, esta enviar para crear estudiante
             $per_id = $data["per_id"];
 
             $con = \Yii::$app->db_facturacion;
@@ -485,6 +489,8 @@ class PagosController extends \app\components\CController {
             $transaction2 = $con2->beginTransaction();
 
             try {
+                $mod_Estudiante = new Estudiante();
+                $mod_Modestuni = new ModuloEstudio();
                 $usuario_aprueba = @Yii::$app->user->identity->usu_id;   //Se obtiene el id del usuario.
                 $mod_ordpago = new OrdenPago();
                 if ($controladm == '1') {
@@ -554,6 +560,51 @@ class PagosController extends \app\components\CController {
                                 if ($resp_opag) {
                                     $exito = 1;
                                     // CREAR COMO ESTUDIANTE EN TODAS LAS TABLAS if existo es 1
+                                    //Se obtienen el método de ingreso y el nivel de interés según la solicitud.
+                                    $resp_sol = $mod_solins->Obtenerdatosolicitud($sins_id);
+                                    if ($resp_sol) {
+                                        $mod_persona = new Persona();
+                                        $resp_persona = $mod_persona->consultaPersonaId($per_id);
+                                        //Modificar y activar clave de usuario con numero de cedula
+                                        if ($resp_sol["emp_id"] == 1) {
+                                            $usu_sha = $security->generateRandomString();
+                                            $usu_pass = base64_encode($security->encryptByPassword($usu_sha, $resp_persona["per_cedula"]));
+                                            $respUsu = $usuario->actualizarDataUsuario($usu_sha, $usu_pass, $resp_persona["usu_id"]);
+                                            // YA TIENE USUARIO GROL PERO CON ROL 30 DEBERIA MODIFICARSE A 37 SE DEBE ENVIAR EL USU_ID
+                                            if ($respUsu) {
+                                                $respUsugrol = $usergrol->actualizarRolEstudiante($resp_persona["usu_id"]);
+                                                if ($respUsugrol) {
+                                                    // Guardar en tabla esdudiante
+                                                    $fecha = date(Yii::$app->params["dateTimeByDefault"]);
+                                                    // Consultar el estudiante si no ha sido creado
+                                                    $resp_estudianteid = $mod_Estudiante->getEstudiantexperid($per_id);
+                                                    if ($resp_estudianteid["est_id"] == "") {
+                                                        $resp_estudiante = $mod_Estudiante->insertarEstudiante($per_id, null, null, $usu_autenticado, null, $fecha, null);
+                                                    } else {
+                                                        $resp_estudiante = $resp_estudianteid["est_id"];
+                                                    }
+                                                    if ($resp_estudiante) {
+                                                        // Si el est_id ya esta en la tabla estudiante_carrera_programa 
+                                                        // no se inserta
+                                                        // consultar si ya esta en la tabla estudiante_carrera_programa
+                                                        // $resp_estcarreraprograma = $mod_Modestuni->consultarModalidadestudiouni($resp_sol["nivel_interes"], $resp_sol["mod_id"], $resp_sol["eaca_id"]);
+                                                        //  if (!empty($resp_estcarreraprograma["est_id"])) {
+                                                        // Obtener el meun_id con lo con el uaca_id, mod_id y eaca_id, el est_id
+                                                        $resp_mestuni = $mod_Modestuni->consultarModalidadestudiouni($resp_sol["nivel_interes"], $resp_sol["mod_id"], $resp_sol["eaca_id"]);
+                                                        if ($resp_mestuni) {
+                                                            //consultar si no esta guardado en estudiante_carrera_programa
+                                                            $resp_estucarrera = $mod_Estudiante->consultarEstcarreraprogrma($resp_estudiante);
+                                                            if ($resp_estucarrera["ecpr_id"] == "") {
+                                                                // Guardar en tabla estudiante_carrera_programa
+                                                                $resp_estudcarreprog = $mod_Estudiante->insertarEstcarreraprog($resp_estudiante, $resp_mestuni["meun_id"], $fecha, $usu_autenticado, $fecha);
+                                                            }
+                                                        }
+                                                        //}
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
                                 }
                             } //fin de actualizar detalle cargo
                         } //fin de obtener registros de desglose

@@ -606,7 +606,7 @@ class PagosController extends \app\components\CController {
                                                         // no se inserta
                                                         // consultar si ya esta en la tabla estudiante_carrera_programa
                                                          $resp_estcarreraprograma = $mod_Estudiante->consultarEstcarreraprogrma($resp_alumno["est_id"]);
-                                                         if ($resp_estcarreraprograma["ecpr_id"] == "") {
+                                                         if ($resp_estcarreraprograma["idestcarrera"] == "") {
                                                         //\app\models\Utilities::putMessageLogFile('entro 8: ');
                                                         // Obtener el meun_id con lo con el uaca_id, mod_id y eaca_id, el est_id
                                                         $resp_mestuni = $mod_Modestuni->consultarModalidadestudiouni($resp_sol["nivel_interes"], $resp_sol["mod_id"], $resp_sol["eaca_id"]);
@@ -614,7 +614,7 @@ class PagosController extends \app\components\CController {
                                                             //\app\models\Utilities::putMessageLogFile('entro 9: ');
                                                             //consultar si no esta guardado en estudiante_carrera_programa
                                                             $resp_estucarrera = $mod_Estudiante->consultarEstcarreraprogrma($resp_alumno["est_id"]);
-                                                            if ($resp_estucarrera["ecpr_id"] == "") {
+                                                            if ($resp_estucarrera["idestcarrera"] == "") {
                                                                 //\app\models\Utilities::putMessageLogFile('entro 10: ');
                                                                 // Guardar en tabla estudiante_carrera_programa
                                                                 $resp_estudcarreprog = $mod_Estudiante->insertarEstcarreraprog($resp_alumno["est_id"], $resp_mestuni["meun_id"], $fecha, $usu_autenticado, $fecha);

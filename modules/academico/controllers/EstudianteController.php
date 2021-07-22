@@ -313,7 +313,7 @@ class EstudianteController extends \app\components\CController {
                                 $resp_estudiante = $mod_Estudiante->insertarEstudiante($per_id, $matricula, $categoria, $usu_autenticado, null, $fecha, null);
                                 if ($resp_estudiante) {
                                     $resp_estcarreraprograma = $mod_Estudiante->consultarEstcarreraprogrma($resp_estudiante);
-                                    if (!empty($resp_estcarreraprograma["ecpr_id"])) {
+                                    if ($resp_estcarreraprograma["ecpr_id"] == "") {
                                     // if guarda estudiante consultar la tabla modalidad_estudio_unidad con uaca_id, mod_id y eaca_id, si no existe error de que no hay modalidad_estudio_unidad, caso contrario seguir
                                     $resp_mestuni = $mod_Modestuni->consultarModalidadestudiouni($uaca_id, $mod_id, $eaca_id);
                                     if ($resp_mestuni) {

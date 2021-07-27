@@ -408,7 +408,7 @@ function save() {
         camposnulos('#txt_apellido1');
     }
 
-    // Datos Beneficiario      
+    // Datos Beneficiario
     camposnulos('#txt_celularbene');
     camposnulos('#txt_celularbeni2');
     camposnulos('#txt_telefono_conbeni');
@@ -479,7 +479,7 @@ function save() {
         $('#txt_cedula').addClass("PBvalidation");
         var sub_carrera = ($('#cmb_subcarrera').val() != 0 && $('#cmb_subcarrera').val() != '') ? $('#cmb_subcarrera').val() : 0;
         $('#txt_correo').addClass("PBvalidation");
-        arrParams.id_tipo_oportunidad = null;
+        arrParams.id_tipo_oportunidad = 0;
         arrParams.id_pgest = $('#txth_pgid').val();
         arrParams.empresaid = $('#cmb_empresa').val();
         arrParams.id_unidad_academica = $('#cmb_nivelestudio').val();

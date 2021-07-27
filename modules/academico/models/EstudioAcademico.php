@@ -136,50 +136,6 @@ class EstudioAcademico extends \app\modules\admision\components\CActiveRecord {
         return $resultData;
     }
 
-    /* Esta funcion es para poder realizar la maquetacion de la asignacion de materia, puesto que aun 
-     * no se cuenta con su propio modelo, una vez realiazado el modelo , pasarlo alli y borrar de aqui
-      Giovanni Vergara Zárate 14/03/2018 13:58 */
-
-    /**
-     * Function Obtiene listado de materias
-     * @author Giovanni Vergara <analistadesarrollo01@uteg.edu.ec>;
-     * @param
-     * @return
-     */
-    public function listadoMateria() {
-        $con = \Yii::$app->db_academico;
-        $estado = 1;
-
-
-        $sql = "SELECT  asi_id as id, 
-                        asi_nombre as nombre_materia                  
-                FROM "
-                . $con->dbname . ".asignatura 
-                WHERE   asi_estado = :estado AND
-                        asi_estado_logico = :estado
-                ORDER BY nombre_materia asc";
-
-        $comando = $con->createCommand($sql);
-        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
-        $resultData = $comando->queryAll();
-        $dataProvider = new ArrayDataProvider([
-            'key' => 'id',
-            'allModels' => $resultData,
-            'pagination' => [
-                'pageSize' => Yii::$app->params["pageSize"],
-            ],
-            'sort' => [
-                'attributes' => [],
-            ],
-        ]);
-
-        if ($onlyData) {
-            return $resultData;
-        } else {
-            return $dataProvider;
-        }
-    }
-
     public function listadoAreaConocimiento() {
         $con = \Yii::$app->db_academico;
         $estado = 1;
@@ -432,6 +388,28 @@ class EstudioAcademico extends \app\modules\admision\components\CActiveRecord {
         $comando = $con->createCommand($sql);
         $resultData = $comando->queryAll();
 
+        return $resultData;
+    }
+
+    public function consultarEstudiosSemestreActual() {
+        $con = \Yii::$app->db_academico;
+        $estado = 1;
+        $sql = "SELECT 
+                    car.car_id AS id,
+                    car.car_nombre AS value  
+               FROM " . $con->dbname . ".modalidad_carrera_nivel mcn
+                    INNER JOIN " . $con->dbname . ".carrera as car on car.car_id = mcn.car_id
+               WHERE  car.car_estado_logico = :estado AND
+                    car.car_estado = :estado AND
+                    car.car_estado_logico=:estado AND 
+                    mcn.mcni_estado=:estado AND
+                    mcn.mcni_estado_logico=:estado AND
+                    mcn.mod_id=:nint_id
+               ORDER BY value asc";
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $comando->bindParam(":nint_id", $nint_id, \PDO::PARAM_INT);
+        $resultData = $comando->queryAll();
         return $resultData;
     }
 

@@ -53,7 +53,7 @@ class Estudiante extends \yii\db\ActiveRecord {
             [['est_categoria'], 'string', 'max' => 2],
             [['est_estado', 'est_estado_logico'], 'string', 'max' => 1],
             [['per_id'], 'exist', 'skipOnError' => true, 'targetClass' => \app\models\Persona::className(), 'targetAttribute' => ['per_id' => 'per_id']],
-            
+
         ];
     }
 
@@ -96,11 +96,11 @@ class Estudiante extends \yii\db\ActiveRecord {
     public function getPersona() {
         return $this->hasOne(\app\models\Persona::className(), ['per_id' => 'per_id']);
     }
-    
+
     /**
      * Function guardar estudiante
      * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
-     * @param   
+     * @param
      * @return  $resultData (Retornar el código de estudiante).
      */
     public function insertarEstudiante($per_id, $est_matricula, $est_categoria, $est_usuario_ingreso, $est_usuario_modifica, $est_fecha_creacion, $est_fecha_modificacion) {
@@ -199,31 +199,31 @@ class Estudiante extends \yii\db\ActiveRecord {
     /**
      * Function findIdentity
      * @author  Diana Lopez <dlopez@uteg.edu.ec>
-     * @param      
-     * @return  
+     * @param
+     * @return
      */
     public static function findIdentity($id) {
         return static::findOne($id);
     }
-    
+
     /**
      * Function Consultar estudiante existe creado y ya esta matriculado.
      * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>;
-     * @property       
-     * @return  
+     * @property
+     * @return
      */
     public function getEstudiantexid($per_id) {
         $con = \Yii::$app->db_academico;
         $estado = 1;
 
-        $sql = "SELECT 	
-                        est.est_id as idestudiante                       
-                        
+        $sql = "SELECT
+                        est.est_id as idestudiante
+
                 FROM " . $con->dbname . ".estudiante est
                         INNER JOIN " . $con->dbname . ".matriculacion_programa_inscrito mpi ON mpi.est_id = est.est_id
-                WHERE   per_id = :per_id                        
+                WHERE   per_id = :per_id
                         AND est.est_estado = :estado
-                        AND est.est_estado_logico = :estado 
+                        AND est.est_estado_logico = :estado
                         AND mpi.mpin_estado = :estado
                         AND mpi.mpin_estado_logico = :estado ";
 
@@ -237,18 +237,18 @@ class Estudiante extends \yii\db\ActiveRecord {
     /**
      * Function Consultar id estudiante segun per_id.
      * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>;
-     * @property       
-     * @return  
+     * @property
+     * @return
      */
     public function getEstudiantexperid($per_id) {
         $con = \Yii::$app->db_academico;
         $estado = 1;
 
-        $sql = "SELECT 	
-                        est_id                       
-                        
-                FROM " . $con->dbname . ".estudiante est                       
-                WHERE   per_id = :per_id                        
+        $sql = "SELECT
+                        est_id
+
+                FROM " . $con->dbname . ".estudiante est
+                WHERE   per_id = :per_id
                         AND est_estado = :estado
                         AND est_estado_logico = :estado ";
 
@@ -272,14 +272,14 @@ class Estudiante extends \yii\db\ActiveRecord {
                 m.mod_nombre AS Modalidad,
                 ea.eaca_alias_resumen AS ResumenCarrera
             FROM
-            " . $con->dbname . ".estudiante AS e 
+            " . $con->dbname . ".estudiante AS e
             INNER JOIN " . $con->dbname . ".estudiante_carrera_programa AS ecp ON e.est_id = ecp.est_id
             INNER JOIN " . $con->dbname . ".modalidad_estudio_unidad AS mea ON ecp.meun_id = mea.meun_id
             INNER JOIN " . $con->dbname . ".estudio_academico AS ea ON ea.eaca_id = mea.eaca_id
             -- INNER JOIN " . $con->dbname . ".unidad_academica AS ua ON ua.uaca_id = mea.uaca_id
             INNER JOIN " . $con->dbname . ".modalidad AS m ON m.mod_id = mea.mod_id
-            
-            WHERE 
+
+            WHERE
                 e.est_id = :est_id AND
                 mea.emp_id = :emp_id AND
                 e.est_estado = 1 AND
@@ -297,10 +297,10 @@ class Estudiante extends \yii\db\ActiveRecord {
 
     public function getCategoryCost() {
         $con = \Yii::$app->db_sea;
-        $sql = "SELECT COD_CAT AS Cod, 
+        $sql = "SELECT COD_CAT AS Cod,
                        NOM_CAT AS Nombre,
-                       VAL_ARA AS Precio 
-                  FROM " . $con->dbname . ".CAT_ARANCEL 
+                       VAL_ARA AS Precio
+                  FROM " . $con->dbname . ".CAT_ARANCEL
                  WHERE est_log = 1";
         $comando = $con->createCommand($sql);
         $resultData = $comando->queryAll();
@@ -314,8 +314,8 @@ class Estudiante extends \yii\db\ActiveRecord {
     public function getGastosMatriculaOtros($codMod) {
         $con = \Yii::$app->db_sea;
         $today = date('Y-m-d');
-        $sql = "SELECT 
-                    COD_ART AS Cod, 
+        $sql = "SELECT
+                    COD_ART AS Cod,
                     DES_COM AS Nombre,
                     P_VENTA AS Precio,
                     '' AS Bloque,
@@ -327,13 +327,13 @@ class Estudiante extends \yii\db\ActiveRecord {
                     '' AS FechaIniPer,
                     '' AS FechaFinPer
                 FROM " . $con->dbname . ".IG0020
-                WHERE 
-                    TIP_PRO = 'A' 
+                WHERE
+                    TIP_PRO = 'A'
                     AND (COD_ART = 'ASOEST')
                 UNION ALL
-                SELECT 
-                    COD_ART AS Cod, 
-                    '' AS Nombre, 
+                SELECT
+                    COD_ART AS Cod,
+                    '' AS Nombre,
                     VALOR_P AS Precio,
                     NUM_BLO AS Bloque,
                     NUM_SEM AS Semestre,
@@ -344,13 +344,13 @@ class Estudiante extends \yii\db\ActiveRecord {
                     FPER_INI AS FechaIniPer,
                     FPER_FIN AS FechaFinPer
                 FROM " . $con->dbname . ".ADM_ITEMS
-                WHERE 
+                WHERE
                     COD_CEN = '$codMod' AND
                     COD_ART = 'MAT-GRAD'
                 UNION ALL
-                SELECT 
-                    COD_ART AS Cod, 
-                    '' AS Nombre, 
+                SELECT
+                    COD_ART AS Cod,
+                    '' AS Nombre,
                     VALOR_P AS Precio,
                     NUM_BLO AS Bloque,
                     NUM_SEM AS Semestre,
@@ -361,7 +361,7 @@ class Estudiante extends \yii\db\ActiveRecord {
                     FPER_INI AS FechaIniPer,
                     FPER_FIN AS FechaFinPer
                 FROM " . $con->dbname . ".ADM_ITEMS
-                WHERE 
+                WHERE
                     COD_CEN = '$codMod' AND
                     (FREG_INI <= '$today' AND FREG_FIN >= '$today') AND
                     COD_ART = 'VARIOS'
@@ -374,7 +374,7 @@ class Estudiante extends \yii\db\ActiveRecord {
     /**
      * Function guardar estudiante carrera programa
      * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
-     * @param   
+     * @param
      * @return  $resultData (Retornar el código de ecpr_id).
      */
     public function insertarEstcarreraprog($est_id, $meun_id, $ecpr_fecha_registro, $ecpr_usuario_ingreso, $ecpr_fecha_creacion) {
@@ -453,9 +453,9 @@ class Estudiante extends \yii\db\ActiveRecord {
 
     /**
      * Function consultar informacion del estudiantes
-     * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>         
-     * @property  
-     * @return  
+     * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
+     * @property
+     * @return
      */
     public function consultarEstudiante($arrFiltro = array(), $onlyData = false) {
         $con = \Yii::$app->db_academico;
@@ -504,7 +504,7 @@ class Estudiante extends \yii\db\ActiveRecord {
             $cont ++;
         }
         $sql = "SELECT distinct
-                      $estid  
+                      $estid
 	           -- pers.per_id,
                       concat(pers.per_pri_nombre, ' ', pers.per_pri_apellido) as nombres,
                       pers.per_cedula as dni,
@@ -515,24 +515,24 @@ class Estudiante extends \yii\db\ActiveRecord {
                       IFNULL(unid.uaca_nombre, '') as undidad,
                       IFNULL(moda.mod_nombre, '') as modalidad,
                       IFNULL(esac.eaca_nombre, '') as carrera,
-                      CASE estu.est_estado                             
-                            WHEN '0' THEN 'Inactivo'  
-                            WHEN '1' THEN 'Activo'   
+                      CASE estu.est_estado
+                            WHEN '0' THEN 'Inactivo'
+                            WHEN '1' THEN 'Activo'
                             ELSE 'No estudiante'
                       END as estado,
-                      r.ron_id as registroOnline                      
+                      r.ron_id as registroOnline
                 FROM  " . $con->dbname . ".estudiante estu
-                RIGHT JOIN " . $con1->dbname . ".persona pers ON pers.per_id = estu.per_id		
+                RIGHT JOIN " . $con1->dbname . ".persona pers ON pers.per_id = estu.per_id
                 LEFT JOIN " . $con->dbname . ".estudiante_carrera_programa ecpr ON ecpr.est_id = estu.est_id
-                LEFT JOIN " . $con->dbname . ".modalidad_estudio_unidad meun ON meun.meun_id = ecpr.meun_id	
+                LEFT JOIN " . $con->dbname . ".modalidad_estudio_unidad meun ON meun.meun_id = ecpr.meun_id
                 LEFT JOIN " . $con->dbname . ".unidad_academica unid ON unid.uaca_id = meun.uaca_id
                 LEFT JOIN " . $con->dbname . ".modalidad moda ON moda.mod_id = meun.mod_id
                 LEFT JOIN " . $con->dbname . ".estudio_academico esac ON esac.eaca_id = meun.eaca_id
                 LEFT JOIN " . $con->dbname . ".registro_online r ON r.per_id = pers.per_id
                 LEFT JOIN " . $con->dbname . ".planificacion_estudiante pes ON pes.pes_id = r.pes_id AND pla_id IN ($inlist)
-                WHERE 
+                WHERE
                 $str_search
-                pers.per_id > 1000                
+                pers.per_id > 1000
                 /*ORDER BY estu.est_fecha_creacion DESC*/";
 
         $comando = $con->createCommand($sql);
@@ -588,18 +588,18 @@ class Estudiante extends \yii\db\ActiveRecord {
     /**
      * Function Consultar estudiante existe creado en estudiante_carrera_programa.
      * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>;
-     * @property       
-     * @return  
+     * @property
+     * @return
      */
     public function consultarEstcarreraprogrma($est_id) {
         $con = \Yii::$app->db_academico;
         $estado = 1;
 
-        $sql = "SELECT 	
-                        ecpr_id as idestcarrera                       
-                        
-                FROM " . $con->dbname . ".estudiante_carrera_programa                        
-                WHERE   est_id = :est_id                        
+        $sql = "SELECT
+                        ecpr_id as idestcarrera
+
+                FROM " . $con->dbname . ".estudiante_carrera_programa
+                WHERE   est_id = :est_id
                         AND ecpr_estado = :estado
                         AND ecpr_estado_logico = :estado ";
 
@@ -613,34 +613,34 @@ class Estudiante extends \yii\db\ActiveRecord {
     /**
      * Function Consultar información del estudinate con el est_id.
      * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>;
-     * @property       
-     * @return  
+     * @property
+     * @return
      */
     public function getEstudiantexestid($est_id) {
         $con = \Yii::$app->db_academico;
         $estado = 1;
 
-        $sql = "SELECT 	
-                        est.est_matricula as matricula,                        
-                        CASE est.est_categoria  
-                            WHEN 'A' THEN 1  
-                            WHEN 'B' THEN 2  
-                            WHEN 'C' THEN 3 
-                            WHEN 'D' THEN 4  
-                            WHEN 'E' THEN 5  
-                            WHEN 'F' THEN 6 
-                            WHEN 'G' THEN 7  
-                            WHEN 'H' THEN 8 
+        $sql = "SELECT
+                        est.est_matricula as matricula,
+                        CASE est.est_categoria
+                            WHEN 'A' THEN 1
+                            WHEN 'B' THEN 2
+                            WHEN 'C' THEN 3
+                            WHEN 'D' THEN 4
+                            WHEN 'E' THEN 5
+                            WHEN 'F' THEN 6
+                            WHEN 'G' THEN 7
+                            WHEN 'H' THEN 8
                          END as categoria,
                         meu.uaca_id as unidad,
                         meu.mod_id as modalidad,
                         meu.eaca_id as carrera
-                         
-                FROM " . $con->dbname . ".estudiante est  
+
+                FROM " . $con->dbname . ".estudiante est
                 LEFT JOIN " . $con->dbname . ".estudiante_carrera_programa ecp ON ecp.est_id = est.est_id
                 LEFT JOIN " . $con->dbname . ".modalidad_estudio_unidad meu ON meu.meun_id = ecp.meun_id
-                    
-                WHERE   est.est_id = :est_id                        
+
+                WHERE   est.est_id = :est_id
                         AND est.est_estado = :estado
                         AND est.est_estado_logico = :estado ";
 
@@ -668,13 +668,13 @@ class Estudiante extends \yii\db\ActiveRecord {
 
         try {
             $comando = $con->createCommand
-                    ("UPDATE " . $con->dbname . ".estudiante             
+                    ("UPDATE " . $con->dbname . ".estudiante
                       SET est_matricula = :est_matricula,
                           est_categoria = :est_categoria,
                           est_usuario_modifica = :est_usu_modifica,
-                          est_fecha_modificacion = :est_fecha_modificacion                          
-                      WHERE 
-                        est_id = :est_id AND                        
+                          est_fecha_modificacion = :est_fecha_modificacion
+                      WHERE
+                        est_id = :est_id AND
                         est_estado = :estado AND
                         est_estado_logico = :estado");
             $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
@@ -711,12 +711,12 @@ class Estudiante extends \yii\db\ActiveRecord {
         }
         try {
             $comando = $con->createCommand
-                    ("UPDATE " . $con->dbname . ".estudiante_carrera_programa		       
+                    ("UPDATE " . $con->dbname . ".estudiante_carrera_programa
                       SET meun_id = :meun_id,
                           ecpr_usuario_modifica = :ecpr_usuario_modifica,
-                          ecpr_fecha_modificacion = :ecpr_fecha_modificacion                          
-                      WHERE 
-                        est_id = :est_id AND                        
+                          ecpr_fecha_modificacion = :ecpr_fecha_modificacion
+                      WHERE
+                        est_id = :est_id AND
                         ecpr_estado = :estado AND
                         ecpr_estado_logico = :estado");
             $comando->bindParam(":est_id", $est_id, \PDO::PARAM_INT);
@@ -744,7 +744,7 @@ class Estudiante extends \yii\db\ActiveRecord {
     public function modificarEstadoest($est_id, $est_usuario_modifica, $est_estado, $est_fecha_modificacion) {
 
         $con = \Yii::$app->db_academico;
-        
+
         if ($trans !== null) {
             $trans = null; // si existe la transacción entonces no se crea una
         } else {
@@ -752,13 +752,13 @@ class Estudiante extends \yii\db\ActiveRecord {
         }
         try {
             $comando = $con->createCommand
-                    ("UPDATE " . $con->dbname . ".estudiante		       
+                    ("UPDATE " . $con->dbname . ".estudiante
                       SET est_estado = :est_estado,
                           est_usuario_modifica = :est_usuario_modifica,
-                          est_fecha_modificacion = :est_fecha_modificacion                          
-                      WHERE 
+                          est_fecha_modificacion = :est_fecha_modificacion
+                      WHERE
                         est_id = :est_id ");
-            $comando->bindParam(":est_id", $est_id, \PDO::PARAM_INT);          
+            $comando->bindParam(":est_id", $est_id, \PDO::PARAM_INT);
             $comando->bindParam(":est_usuario_modifica", $est_usuario_modifica, \PDO::PARAM_INT);
             $comando->bindParam(":est_fecha_modificacion", $est_fecha_modificacion, \PDO::PARAM_STR);
             $comando->bindParam(":est_estado", $est_estado, \PDO::PARAM_STR);
@@ -776,21 +776,21 @@ class Estudiante extends \yii\db\ActiveRecord {
      /**
      * Function Consultar estudiante existe creado en estudiante_carrera_programa.
      * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>;
-     * @property       
-     * @return  
+     * @property
+     * @return
      */
     public function consultarEstidxdni($per_dni) {
         $con = \Yii::$app->db_asgard;
         $con1 = \Yii::$app->db_academico;
         $estado = 1;
 
-        $sql = "SELECT 	
-                        est.est_id, 
-                        pers.per_id                       
-                        
+        $sql = "SELECT
+                        est.est_id,
+                        pers.per_id
+
                 FROM " . $con->dbname . ".persona pers
                 INNER JOIN " . $con1->dbname . ".estudiante est ON est.per_id = pers.per_id
-                WHERE (per_cedula = :per_dni 
+                WHERE (per_cedula = :per_dni
                 OR per_pasaporte = :per_dni) AND
                 est.est_estado = :estado AND
                 est.est_estado_logico = :estado AND
@@ -803,15 +803,15 @@ class Estudiante extends \yii\db\ActiveRecord {
         $resultData = $comando->queryOne();
         return $resultData;
     }
-    
+
     public function isScholarship($est_id, $paca_id){
         $con = \Yii::$app->db_academico;
 
         $sql = "
                  SELECT
                  est_id as bec_id
-                from db_academico.asignacion_becas_estudiante 
-                where est_id = :est_id and 
+                from db_academico.asignacion_becas_estudiante
+                where est_id = :est_id and
                 paca_id = :paca_id and
                 abe_estado_logico ='1'
 
@@ -821,17 +821,17 @@ class Estudiante extends \yii\db\ActiveRecord {
         $comando->bindParam(":est_id", $est_id, \PDO::PARAM_INT);
         $comando->bindParam(":paca_id", $paca_id, \PDO::PARAM_INT);
         $resultData = $comando->queryOne();
-        
+
             return $resultData;
-        
-    
+
+
 
     }
-    
+
      public function consultarDatosPersona($est_id){
         $con = Yii::$app->db_academico;
 
-        $sql = "SELECT est.est_id, per.per_id, est.est_estado, est.est_matricula AS matricula, per.per_cedula AS cedula, concat(per.per_pri_nombre, ' ', per.per_pri_apellido) AS nombres, per.per_correo AS correo 
+        $sql = "SELECT est.est_id, per.per_id, est.est_estado, est.est_matricula AS matricula, per.per_cedula AS cedula, concat(per.per_pri_nombre, ' ', per.per_pri_apellido) AS nombres, per.per_correo AS correo
                 FROM db_academico.estudiante AS est
                 INNER JOIN db_asgard.persona AS per ON per.per_id = est.per_id
                 WHERE est.est_estado = 1 AND est.est_estado_logico = 1
@@ -840,7 +840,7 @@ class Estudiante extends \yii\db\ActiveRecord {
 
         $comando = $con->createCommand($sql);
         $resultData = $comando->queryOne();
-        
+
         return $resultData;
     }
 

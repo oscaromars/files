@@ -1445,13 +1445,41 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
             \app\models\Utilities::putMessageLogFile('----------------------------------------Con Filtros');
             $pla_id = $arrFiltro['periodo']?$arrFiltro['periodo']:0;
             $mod_id = $arrFiltro['modalidad']?$arrFiltro['modalidad']:0;
+            $bloque = $arrFiltro['bloque']?$arrFiltro['bloque']:0;
             \app\modules\academico\controllers\RegistroController::putMessageLogFileCartera('pla_id y mod_id '.$arrFiltro['periodo'] .'-'.$arrFiltro['modalidad']);
             $str_search = '';
             $str_search1 = null;
 
-            /*if($arrFiltro['periodo'] <= 0 && $arrFiltro['modalidad'] <= 0){
-                $str_search .= " where pe.pla_id = 0 AND pla.mod_id = 0 and meu.mod_id = 0 ";
-            }*/
+            if($bloque == 0){
+                $filtro = '(pe.pes_mat_b1_h1_cod,
+                pe.pes_mat_b1_h2_cod,
+                pe.pes_mat_b1_h3_cod,
+                pe.pes_mat_b1_h4_cod,
+                pe.pes_mat_b1_h5_cod,
+                pe.pes_mat_b1_h6_cod,
+                pe.pes_mat_b2_h1_cod,
+                pe.pes_mat_b2_h2_cod,
+                pe.pes_mat_b2_h3_cod,
+                pe.pes_mat_b2_h4_cod,
+                pe.pes_mat_b2_h5_cod,
+                pe.pes_mat_b2_h6_cod)';
+            }
+            if($bloque == 1){
+                $filtro ='(pe.pes_mat_b1_h1_cod,
+                pe.pes_mat_b1_h2_cod,
+                pe.pes_mat_b1_h3_cod,
+                pe.pes_mat_b1_h4_cod,
+                pe.pes_mat_b1_h5_cod,
+                pe.pes_mat_b1_h6_cod)';
+            }
+            if($bloque == 2){
+                $filtro = '(pe.pes_mat_b2_h1_cod,
+                pe.pes_mat_b2_h2_cod,
+                pe.pes_mat_b2_h3_cod,
+                pe.pes_mat_b2_h4_cod,
+                pe.pes_mat_b2_h5_cod,
+                pe.pes_mat_b2_h6_cod)';
+            }
 
             if(!strcmp($str_search, '' )){
                 if($arrFiltro['periodo']!= 0 || $arrFiltro['modalidad']!= 0){
@@ -1491,22 +1519,17 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
                         ". $con->dbname . ".planificacion p
                         where p.pla_id = pe.pla_id
                         and saca.saca_id = p.saca_id) as 'Periodo',
-                    -- a.asi_id,
+                    case
+                    when mad.made_codigo_asignatura  in (pe.pes_mat_b1_h1_cod,pe.pes_mat_b1_h2_cod,pe.pes_mat_b1_h3_cod,
+                                                        pe.pes_mat_b1_h4_cod,pe.pes_mat_b1_h5_cod,pe.pes_mat_b1_h6_cod)
+                    then 'Bloque 1'
+                    when mad.made_codigo_asignatura  in (pe.pes_mat_b2_h1_cod,pe.pes_mat_b2_h2_cod,pe.pes_mat_b2_h3_cod,
+                                                            pe.pes_mat_b2_h4_cod,pe.pes_mat_b2_h5_cod,pe.pes_mat_b2_h6_cod)
+                    then 'Bloque 2' end as bloque,
                     a.asi_nombre as Materia,
                     count(a.asi_id) as Cantidad
                     from  ". $con->dbname . ".planificacion_estudiante pe
-                    inner join  ". $con->dbname . ".malla_academica_detalle mad on mad.made_codigo_asignatura in (pe.pes_mat_b1_h1_cod,
-                                                                                                        pe.pes_mat_b1_h2_cod,
-                                                                                                        pe.pes_mat_b1_h3_cod,
-                                                                                                        pe.pes_mat_b1_h4_cod,
-                                                                                                        pe.pes_mat_b1_h5_cod,
-                                                                                                        pe.pes_mat_b1_h6_cod,
-                                                                                                        pe.pes_mat_b2_h1_cod,
-                                                                                                        pe.pes_mat_b2_h2_cod,
-                                                                                                        pe.pes_mat_b2_h3_cod,
-                                                                                                        pe.pes_mat_b2_h4_cod,
-                                                                                                        pe.pes_mat_b2_h5_cod,
-                                                                                                        pe.pes_mat_b2_h6_cod)
+                    inner join  ". $con->dbname . ".malla_academica_detalle mad on mad.made_codigo_asignatura in $filtro
                     inner join  ". $con->dbname . ".asignatura a on mad.asi_id = a.asi_id
                     inner join  ". $con->dbname . ".malla_unidad_modalidad mum on mad.maca_id = mum.maca_id
                     inner join  ". $con->dbname . ".modalidad_estudio_unidad meu on meu.meun_id = (select s.meun_id from db_academico.malla_unidad_modalidad s where s.maca_id = mum.maca_id limit 0,1)
@@ -1516,7 +1539,7 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
                     $str_search 
                     group by a.asi_id, a.asi_nombre 
                     order by a.asi_id;"; 
-
+        \app\models\Utilities::putMessageLogFile('consultarModalidad: '.$sql2);
         $comando = $con->createCommand($sql2);
         
         /*if (isset($arrFiltro) && count($arrFiltro) > 0) {

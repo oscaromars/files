@@ -1310,7 +1310,8 @@ class SolicitudesController extends \app\components\CController {
                                                 $mod_persona = new Persona();
                                                 $resp_persona = $mod_persona->consultaPersonaId($per_id);
                                                 //Modificar y activar clave de usuario con numero de cedula
-                                                if ($resp_sol["emp_id"] == 1) {
+                                                //SE COMENTA YA NO SE GENERA ESTUDIANTE DESDE EL APROBAR SOLICITUD
+                                                /*if ($resp_sol["emp_id"] == 1) {
                                                     $usu_sha = $security->generateRandomString();
                                                     $usu_pass = base64_encode($security->encryptByPassword($usu_sha, $resp_persona["per_cedula"]));
                                                     $respUsu = $usuario->actualizarDataUsuario($usu_sha, $usu_pass, $resp_persona["usu_id"]);
@@ -1341,7 +1342,7 @@ class SolicitudesController extends \app\components\CController {
                                                             }
                                                         }
                                                     }
-                                                }
+                                                }*/
                                                 $correo = $resp_persona["usu_user"];
                                                 $apellidos = $resp_persona["per_pri_apellido"];
                                                 $nombres = $resp_persona["per_pri_nombre"];

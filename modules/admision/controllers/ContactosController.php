@@ -9,7 +9,7 @@ use app\modules\admision\models\Oportunidad;
 use app\modules\admision\models\PersonalAdmision;
 use app\modules\academico\models\UnidadAcademica;
 use app\modules\academico\models\Modalidad;
-use app\modules\academico\models\ModuloEstudio; 
+use app\modules\academico\models\ModuloEstudio;
 use app\modules\academico\models\TipoOportunidadVenta;
 use app\modules\admision\models\EstadoOportunidad;
 use app\modules\admision\models\BitacoraSeguimiento;
@@ -84,7 +84,7 @@ class ContactosController extends \app\components\CController {
         $emp_id = @Yii::$app->session->get("PB_idempresa");
         $modcanal = new Oportunidad();
         $mod_pais = new Pais();
-        $pais_id = 1; //Ecuador  
+        $pais_id = 1; //Ecuador
         $con_agente = $modcanal->consultarAgenteAutenticado($per_id);
         $empresa_mod = new Empresa();
         $empresa = $empresa_mod->getAllEmpresa();
@@ -92,12 +92,12 @@ class ContactosController extends \app\components\CController {
         $modalidad_model = new Modalidad();
         $modestudio = new ModuloEstudio();
         $modTipoOportunidad = new TipoOportunidadVenta();
-        $state_oportunidad_model = new EstadoOportunidad(); 
+        $state_oportunidad_model = new EstadoOportunidad();
         $canalconta = $modcanal->consultarConocimientoCanal('1');
-        $unidad_acad_data = $uni_aca_model->consultarUnidadAcademicas();        
+        $unidad_acad_data = $uni_aca_model->consultarUnidadAcademicas();
         $modalidad_data = $modalidad_model->consultarModalidad($unidad_acad_data[0]["id"], $emp_id);
         $_SESSION['JSLANG']['Enter a Type Contact.'] = admision::t('crm', 'Enter a Type Contact.');
-        
+
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
             if (isset($data["getprovincias"])) {
@@ -115,20 +115,20 @@ class ContactosController extends \app\components\CController {
                 $message = array("area" => $area);
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
             }
-            if (isset($data["getuacademias"])) {                
+            if (isset($data["getuacademias"])) {
                 //$data_u_acad = $uni_aca_model->consultarUnidadAcademicasEmpresa($data["empresa_id"]);
                 $data_u_acad = $uni_aca_model->consultarUnidadAcademicas();
                 $message = array("unidad_academica" => $data_u_acad);
-                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);                
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
             }
             if (isset($data["getmodalidad"])) {
                 if (($data["nint_id"]==1) or ($data["nint_id"]==2)){
-                    $modalidad = $modalidad_model->consultarModalidad($data["nint_id"], $data["empresa_id"]);                    
+                    $modalidad = $modalidad_model->consultarModalidad($data["nint_id"], $data["empresa_id"]);
                 } else {
-                    $modalidad = $modestudio->consultarModalidadModestudio();                    
+                    $modalidad = $modestudio->consultarModalidadModestudio();
                 }
                 $message = array("modalidad" => $modalidad);
-                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);                                
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
             }
             if (isset($data["getoportunidad"])) {
                 $oportunidad = $modTipoOportunidad->consultarOporxUnidad($data["unidada"]);
@@ -159,7 +159,7 @@ class ContactosController extends \app\components\CController {
         $arr_prov = Provincia::provinciaXPais($pais_id);
         $arr_ciu = Canton::cantonXProvincia($arr_prov[0]["id"]);
         $area = $mod_pais->consultarCodigoArea($pais_id);
-        
+
         $modcanal = new Oportunidad();
         $tipo_oportunidad_data = $modTipoOportunidad->consultarOporxUnidad($unidad_acad_data[0]["id"]);
         $state_oportunidad_data = $state_oportunidad_model->consultarEstadOportunidad();
@@ -393,7 +393,7 @@ class ContactosController extends \app\components\CController {
                     }
                 }
                 if ($busqueda == 0) {
-                    //Obtener el número máximo de persona_gestion.                    
+                    //Obtener el número máximo de persona_gestion.
                     $resp_consulta = $mod_pergestion->consultarMaxPergest();
                     $resp_persona = $mod_pergestion->insertarPersonaGestion($resp_consulta["maximo"], $tipo_persona, $conoce_uteg, $carrera, $nombre1, $nombre2, $apellido1, $apellido2, null, null, null, null, null, null, null, $pais, $provincia, $ciudad, $per_nac_ecuatoriano, null, $celular, $correo, null, null, null, null, null, null, null, $telefono, $celular2, null, null, null, null, null, null, null, null, null, null, 1, $medio, $empresa, $contacto_empresa, $numero_contacto, $telefono_empresa, $direccion, $cargo, $usuario_ingreso);
                     if ($resp_persona) {
@@ -420,16 +420,16 @@ class ContactosController extends \app\components\CController {
                             $estado_oportunidad = $data["id_estado_oportunidad"];
                             if ($unidad_academica < 3) {
                                 if (($unidad_academica == 1 || $unidad_academica == 2 ) && $empresa == 2) {
-                                    $estudio_academico = '';
+                                    $estudio_academico = 0;
                                     $modulo_estudio = $data["id_estudio_academico"];
                                 } else {
                                     $estudio_academico = $data["id_estudio_academico"];
-                                    $modulo_estudio = '';
+                                    $modulo_estudio = 0;
                                 }
                             } else {
-                                $estudio_academico = '';
+                                $estudio_academico = 0;
                                 $modulo_estudio = $data["id_estudio_academico"];
-                            }   
+                            }
                             $canal_conocimiento = $data["canal_conocimiento"];
                             $sub_carrera = ($data["sub_carrera"] != 0) ? $data["sub_carrera"] : null;
                             $usuario = @Yii::$app->user->identity->usu_id;
@@ -571,7 +571,7 @@ class ContactosController extends \app\components\CController {
         );
         $modPersonaGestion = new PersonaGestion();
         $data = Yii::$app->request->get();
-        $arrSearch["search"] = $data['search'];        
+        $arrSearch["search"] = $data['search'];
         $arrSearch["f_ini"] =  $data['f_ini'];
         $arrSearch["f_fin"] =  $data['f_fin'];
         $arrSearch["medio"] =  $data['medio'];
@@ -627,7 +627,7 @@ class ContactosController extends \app\components\CController {
         } else {
             $arrData = $modPersonaGestion->consultarReportContactos($arrSearch, true);
         }
-        $report->orientation = "L"; // tipo de orientacion L => Horizontal, P => Vertical                                
+        $report->orientation = "L"; // tipo de orientacion L => Horizontal, P => Vertical
         $report->createReportPdf(
                 $this->render('exportpdf', [
                     'arr_head' => $arrHeader,
@@ -869,7 +869,7 @@ class ContactosController extends \app\components\CController {
 
     public function actionExport() {
         $mod_oportunidad = new Oportunidad();
-        //$op= base64_decode($_GET["op"]);       
+        //$op= base64_decode($_GET["op"]);
         $tipoRep = $_GET["op"];
         if ($tipoRep == 1) {//oportunidad por unidad
             $Data = $mod_oportunidad->consultarOportUnidadAcademica();
@@ -965,7 +965,7 @@ class ContactosController extends \app\components\CController {
         $arrayData[$fil][7] = $sumafila; //SUMA
         $arrayData[$fil][8] = $sumafila / $numPro; //PROMEDIO
     }
-    
+
     public function actionCargarotroscanales () {
         $per_id = @Yii::$app->session->get("PB_perid");
         $mod_gestion = new Oportunidad();
@@ -989,7 +989,7 @@ class ContactosController extends \app\components\CController {
                     }
                 }
             }
-            if ($data["procesar_file"]) {                
+            if ($data["procesar_file"]) {
                 $carga_archivo = $mod_gestion->CargarArchivoOtroscanales($data["archivo"], $data["emp_id"], $data["tipo_proceso"]);
                 if ($carga_archivo['status']) {
                     $message = array(

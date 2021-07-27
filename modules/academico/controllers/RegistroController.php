@@ -3222,6 +3222,39 @@ class RegistroController extends \app\components\CController {
         file_put_contents(Yii::$app->params["logfilecartera"], $message, FILE_APPEND | LOCK_EX);
     }
 
+    public function actionFechasvencimiento(){
+        $perid = Yii::$app->session->get("PB_perid"); 
+        $model = new RegistroPagoMatricula();
+        if ($per_id==Null) { $per_id = Yii::$app->session->get("PB_perid"); } 
+        if ($per_id != $perid) { $esEstu = TRUE; } 
+        $resp_mod_pago_matricula = new Modalidad();
+        //$modalidad = $resp_mod_pago_matricula->getModalidadEstudiantePM($per_id);
+        $arr_modalidad = [
+            0 => Academico::t("matriculacion", "Todas"), 
+            1 => Academico::t("registro", "Online"), 
+            2 => Academico::t("registro", "Presencial"), 
+            3 => Academico::t("registro", "Semipresencial"),
+            4 => Academico::t("registro", "Distancia"),
+        ];
+        $model_plan = $model->getFechasVencimientosPagos();
+        /*$model_plan = new ArrayDataProvider([
+            'key' => 'id',
+            'allModels' => $model_plan,
+            'pagination' => [
+                'pageSize' => Yii::$app->params["pageSize"],
+            ],
+            'sort' => [
+                'attributes' => [],
+            ],
+        ]);*/
+        $arr_pla_per = Planificacion::getPeriodosAcademicoMod();
+        return $this->render('fechasvencimiento', [
+            'modalidad' => $arr_modalidad,//ArrayHelper::map(array_merge( $modalidad), "id", "name"),
+            'periodoAcademico' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $arr_pla_per), "id", "name"),
+            'model' => $model_plan,
+            ]);
+    }
+
     public function actionCargarpago() {
         $per_id = @Yii::$app->session->get("PB_perid");
         //$ids = isset($_GET['ids']) ? base64_decode($_GET['ids']) : NULL;

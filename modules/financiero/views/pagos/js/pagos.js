@@ -3,8 +3,8 @@ $(document).ready(function () {
     /**
      * Function evento click en botón de Revisarpagocarga
      * @author  Grace Viteri <analistadesarrollo01@uteg.edu.ec>
-     * @param   
-     * @return 
+     * @param
+     * @return
      */
     // BORRAR LUEGO
     $('#btn_enviar').click(function () {
@@ -62,8 +62,8 @@ $(document).ready(function () {
     /**
      * Function evento click en botón de Registrarpagoadm
      * @author  Grace Viteri <analistadesarrollo01@uteg.edu.ec>
-     * @param   
-     * @return 
+     * @param
+     * @return
      */
     // BORRAR LUEGO
     $('#cmd_registrarPagoadm').click(function () {
@@ -457,7 +457,7 @@ function exportExcelColec() {
 function generarSolicitud(doc_id) {
     var arrParams = new Object();
     var link = $('#txth_base').val() + "/financiero/pagos/generarsolicitud";
-    arrParams.doc_id = doc_id;    
+    arrParams.doc_id = doc_id;
     if (!validateForm()) {
         requestHttpAjax(link, arrParams, function (response) {
             showAlert(response.status, response.label, response.message);

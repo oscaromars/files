@@ -1179,6 +1179,7 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
                     //print_r('Error'); die();
                     $arrSearch['modalidad'] = $modalidad?$modalidad:0;
                     $arrSearch['periodo'] = $periodo?$periodo:0;
+                    $arrSearch['bloque'] = $bloque?$bloque:0;
                     $model_plan = $mod_periodo->consultarEstudiantePeriodo($arrSearch);
                     \app\models\Utilities::putMessageLogFile('todos...: ');
                     \app\models\Utilities::putMessageLogFile('modalidad y periodod '.$arrSearch['modalidad'] .'-'.$arrSearch['periodo'] );
@@ -1360,6 +1361,7 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
         $this->view->title = academico::t('Academico', 'Resumen de Planificación');
         // Titulo del reporte
         $arrHeader = array(
+            Yii::t('formulario', 'ID'),
             Yii::t('formulario', 'Modalidad'),
             Yii::t('formulario', 'Periodo'),
             Yii::t('formulario', 'Bloque'),
@@ -1404,6 +1406,7 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
         header('Cache-Control: max-age=0');
         $colPosition = array('C', 'D', 'E', 'F', 'G', 'H');
         $arrHeader = array(
+            Yii::t('formulario', 'ID'),
             Yii::t('formulario', 'Modalidad'),
             Yii::t('formulario', 'Periodo'),
             Yii::t('formulario', 'Bloque'),

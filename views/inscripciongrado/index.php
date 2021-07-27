@@ -6,9 +6,9 @@ use app\modules\academico\Module as academico;
 
 academico::registerTranslations();
 
-//print_r($respPerinteresado);
+/*//print_r($model);
 session_start();
-$_SESSION['persona_ingresa'] = base64_decode($_GET['ids']);
+$_SESSION['persona_ingresa'] = base64_decode($_GET['ids']);*/
 
 ?>
 <?= Html::hiddenInput('txth_ftem_id', 0, ['id' => 'txth_ftem_id']); ?>
@@ -33,30 +33,30 @@ $_SESSION['persona_ingresa'] = base64_decode($_GET['ids']);
                         "arr_periodo" => $arr_periodo,
                         "tipos_dni" => $tipos_dni,
                         "tipos_dni2" => $tipos_dni2,
-                        'per_pri_nombre' => $respPerinteresado['per_pri_nombre'],
-                        'per_seg_nombre' => $respPerinteresado['per_seg_nombre'],
-                        'per_pri_apellido' => $respPerinteresado['per_pri_apellido'],
-                        'per_seg_apellido' => $respPerinteresado['per_seg_apellido'],
-                        'per_cedula' => $respPerinteresado['per_cedula'],
-                        'per_genero' => $respPerinteresado['per_genero'],
-                        'per_fecha_nacimiento' => $respPerinteresado['per_fecha_nacimiento'],
-                        'etn_id' => $respPerinteresado['etn_id'],
-                        'pai_id_nacimiento' => $respPerinteresado['pai_id_nacimiento'],
-                        'pro_id_nacimiento' => $respPerinteresado['pro_id_nacimiento'],
-                        'can_id_nacimiento' => $respPerinteresado['can_id_nacimiento'],
-                        'pai_id_domicilio' => $respPerinteresado['pai_id_domicilio'],
-                        'pro_id_domicilio' => $respPerinteresado['pro_id_domicilio'],
-                        'can_id_domicilio' => $respPerinteresado['can_id_domicilio'],
-                        'eciv_descripcion' => substr(strtoupper($respPerinteresado['eciv_descripcion']), 0, 3),
-                        'per_correo' => $respPerinteresado['per_correo'],
-                        'per_celular' => $respPerinteresado['per_celular'],
-                        'tsan_id' => $respPerinteresado['tsan_id'],
+                        'per_pri_nombre' => $model['per_pri_nombre'],
+                        'per_seg_nombre' => $model['per_seg_nombre'],
+                        'per_pri_apellido' => $model['per_pri_apellido'],
+                        'per_seg_apellido' => $model['per_seg_apellido'],
+                        'per_cedula' => $model['per_cedula'],
+                        'per_genero' => $model['per_genero'],
+                        'per_fecha_nacimiento' => $model['per_fecha_nacimiento'],
+                        'etn_id' => $model['etn_id'],
+                        'pai_id_nacimiento' => $model['pai_id_nacimiento'],
+                        'pro_id_nacimiento' => $model['pro_id_nacimiento'],
+                        'can_id_nacimiento' => $model['can_id_nacimiento'],
+                        'pai_id_domicilio' => $model['pai_id_domicilio'],
+                        'pro_id_domicilio' => $model['pro_id_domicilio'],
+                        'can_id_domicilio' => $model['can_id_domicilio'],
+                        'eciv_descripcion' => substr(strtoupper($model['eciv_descripcion']), 0, 3),
+                        'per_correo' => $model['per_correo'],
+                        'per_celular' => $model['per_celular'],
+                        'tsan_id' => $model['tsan_id'],
                         'tipparent_dis' => $arr_tipparent_dis,
-                        'per_nacionalidad' => $respPerinteresado['per_nacionalidad'],
+                        'per_nacionalidad' => $model['per_nacionalidad'],
                         'area' => $area['name'],
-                        'per_pasaporte' => $respPerinteresado['per_pasaporte'],
+                        'per_pasaporte' => $model['per_pasaporte'],
                         "arr_nacionalidad" => $arr_nacionalidad,
-                        'eciv_id' => $respPerinteresado['eciv_id'],
+                        'eciv_id' => $model['eciv_id'],
                         "arr_estado_civil" => $arr_estado_civil,
                         "arr_pais" => $arr_pais,
                         "arr_provincia" => $arr_provincia,

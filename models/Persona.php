@@ -715,6 +715,7 @@ class Persona extends \yii\db\ActiveRecord {
      * @return  
      */
     public function ConsultaRegistroExiste($correo, $cedula, $pasaporte) {
+        \app\models\Utilities::putMessageLogFile(' yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy:  '.$cedula);
         $con = \Yii::$app->db_asgard;
         $filtro = '';
         $estado = 1;
@@ -1018,6 +1019,219 @@ class Persona extends \yii\db\ActiveRecord {
         $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
         $resultData = $comando->queryOne();
         return $resultData;
+    }
+
+/**
+     * Function Insertar Datos de Inscripcion Grado
+     * @author  Lisbeth Gonzalez <analista.desarrollo@uteg.edu.ec>
+     * @property integer        
+     * @return  
+     */
+    public function insertarPersonaInscripciongrado($per_pri_nombre, $per_seg_nombre, $per_pri_apellido, $per_seg_apellido, $per_dni, $eciv_id, $can_id_nacimiento, $per_fecha_nacimiento, $per_celular, $per_correo, $per_domicilio_csec, $per_domicilio_ref, $per_domicilio_telefono, $pai_id_domicilio, $pro_id_domicilio, $can_id_domicilio, $per_nacionalidad) {
+        //per_id
+        //$per_cedula='99999999999';
+        $con = \Yii::$app->db_asgard;
+        $sql = "INSERT INTO " . $con->dbname . ".persona
+            (per_pri_nombre,per_seg_nombre,per_pri_apellido,per_seg_apellido,per_cedula,eciv_id,can_id_nacimiento,per_fecha_nacimiento,per_celular,per_correo,per_domicilio_csec,per_domicilio_ref,per_domicilio_telefono,pai_id_domicilio,pro_id_domicilio,can_id_domicilio,per_nacionalidad,per_fecha_creacion,per_estado,per_estado_logico)VALUES
+            (:per_pri_nombre,:per_seg_nombre,:per_pri_apellido,:per_seg_apellido,:per_dni,:eciv_id,:can_id_nacimiento,:per_fecha_nacimiento,:per_celular,:per_correo,:per_domicilio_csec,:per_domicilio_ref,:per_domicilio_telefono,:pai_id_domicilio,:pro_id_domicilio,:can_id_domicilio,:per_nacionalidad,CURRENT_TIMESTAMP(),1,1) ";
+
+        $command = $con->createCommand($sql);
+        $command->bindParam(":per_pri_nombre", $per_pri_nombre, \PDO::PARAM_STR);
+        $command->bindParam(":per_seg_nombre", $per_seg_nombre, \PDO::PARAM_STR);
+        $command->bindParam(":per_pri_apellido", $per_pri_apellido, \PDO::PARAM_STR);
+        $command->bindParam(":per_seg_apellido", $per_seg_apellido, \PDO::PARAM_STR);
+        $command->bindParam(":per_dni", $per_dni, \PDO::PARAM_STR);
+        $command->bindParam(":eciv_id", $eciv_id, \PDO::PARAM_STR);
+        $command->bindParam(":can_id_nacimiento", $can_id_nacimiento, \PDO::PARAM_STR);
+        $command->bindParam(":per_fecha_nacimiento", $per_fecha_nacimiento, \PDO::PARAM_STR);
+        $command->bindParam(":per_celular", $per_celular, \PDO::PARAM_STR);
+        $command->bindParam(":per_correo", $per_correo, \PDO::PARAM_STR);
+        $command->bindParam(":per_domicilio_csec", $per_domicilio_csec, \PDO::PARAM_STR);
+        $command->bindParam(":per_domicilio_ref", $per_domicilio_ref, \PDO::PARAM_STR);
+        $command->bindParam(":per_domicilio_telefono", $per_domicilio_telefono, \PDO::PARAM_STR); //VALOR UNIQUE en la  base de Datos  
+        $command->bindParam(":pai_id_domicilio", $pai_id_domicilio, \PDO::PARAM_STR);
+        $command->bindParam(":pro_id_domicilio", $pro_id_domicilio, \PDO::PARAM_STR);
+        $command->bindParam(":can_id_domicilio", $can_id_domicilio, \PDO::PARAM_STR);
+        $command->bindParam(":per_nacionalidad", $per_nacionalidad, \PDO::PARAM_STR);
+        $command->execute();
+        return $con->getLastInsertID();
+    }
+
+    public function modificaPersonaInscripciongrado($per_pri_nombre, $per_seg_nombre, $per_pri_apellido, $per_seg_apellido, $per_dni, $eciv_id,  $can_id_nacimiento, $per_fecha_nacimiento, $per_celular, $per_correo, $per_domicilio_csec, $per_domicilio_ref, $per_domicilio_telefono, $pai_id_domicilio, $pro_id_domicilio, $can_id_domicilio, $per_nacionalidad) {
+        $con = \Yii::$app->db_asgard;
+        $usuario_modifica = @Yii::$app->session->get("PB_iduser");
+        $trans = $con->getTransaction(); // se obtiene la transacción actual
+        $estado = 1;
+        $per_fecha_modificacion = date("Y-m-d H:i:s");
+        if ($trans !== null) {
+            $trans = null; // si existe la transacción entonces no se crea una
+        } else {
+            $trans = $con->beginTransaction(); // si no existe la transacción entonces se crea una
+        }
+        try {
+            $comando = $con->createCommand
+                    ("UPDATE " . $con->dbname . ".persona            
+                      SET 
+                        per_pri_nombre = :per_pri_nombre,
+                        per_seg_nombre = :per_seg_nombre,
+                        per_pri_apellido = :per_pri_apellido,
+                        per_seg_apellido = :per_seg_apellido,
+                        per_cedula = :per_dni,                        
+                        eciv_id = :eciv_id,
+                        can_id_nacimiento = :can_id_nacimiento,
+                        per_fecha_nacimiento = :per_fecha_nacimiento,
+                        per_celular = :per_celular,
+                        per_correo = :per_correo,
+                        per_domicilio_csec = :per_domicilio_csec,
+                        per_domicilio_ref = :per_domicilio_ref,
+                        per_domicilio_telefono = :per_domicilio_telefono,
+                        pai_id_domicilio = :pai_id_domicilio,
+                        pro_id_domicilio = :pro_id_domicilio,
+                        can_id_domicilio = :can_id_domicilio,
+                        per_nacionalidad = :per_nacionalidad,
+                        per_fecha_modificacion = :per_fecha_modificacion,
+                        per_usuario_modifica = :usuario_modifica
+                      WHERE 
+                        per_cedula = :per_dni AND 
+                        per_estado = :estado AND
+                        per_estado_logico = :estado");
+
+            $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+            $comando->bindParam(":per_pri_nombre", ucwords(strtolower($per_pri_nombre)), \PDO::PARAM_STR);
+            $comando->bindParam(":per_seg_nombre", ucwords(strtolower($per_seg_nombre)), \PDO::PARAM_STR);
+            $comando->bindParam(":per_pri_apellido", ucwords(strtolower($per_pri_apellido)), \PDO::PARAM_STR);
+            $comando->bindParam(":per_seg_apellido", ucwords(strtolower($per_seg_apellido)), \PDO::PARAM_STR);
+            $comando->bindParam(":per_dni", $per_dni, \PDO::PARAM_INT);
+            $comando->bindParam(":eciv_id", $eciv_id, \PDO::PARAM_INT);
+            $comando->bindParam(":can_id_nacimiento", $can_id_nacimiento, \PDO::PARAM_INT);
+            $comando->bindParam(":per_fecha_nacimiento", $per_fecha_nacimiento, \PDO::PARAM_STR);
+            $comando->bindParam(":per_celular", $per_celular, \PDO::PARAM_STR);
+            $comando->bindParam(":per_correo", strtolower($per_correo), \PDO::PARAM_STR);
+            $comando->bindParam(":per_domicilio_csec", ucwords(strtolower($per_domicilio_csec)), \PDO::PARAM_STR);
+            $comando->bindParam(":per_domicilio_ref", ucwords(strtolower($per_domicilio_ref)), \PDO::PARAM_STR);
+            $comando->bindParam(":per_domicilio_telefono", $per_domicilio_telefono, \PDO::PARAM_STR);
+            $comando->bindParam(":pai_id_domicilio", $pai_id_domicilio, \PDO::PARAM_INT);
+            $comando->bindParam(":pro_id_domicilio", $pro_id_domicilio, \PDO::PARAM_INT);
+            $comando->bindParam(":can_id_domicilio", $can_id_domicilio, \PDO::PARAM_INT);
+            $comando->bindParam(":per_nacionalidad", ucwords(strtolower($per_nacionalidad)), \PDO::PARAM_STR);
+            $comando->bindParam(":per_fecha_modificacion", $per_fecha_modificacion, \PDO::PARAM_STR);
+            $comando->bindParam(":usuario_modifica", $usuario_modifica, \PDO::PARAM_INT);
+            $response = $comando->execute();
+
+            if ($trans !== null)
+                $trans->commit();
+            return $response;
+        } catch (Exception $ex) {
+            if ($trans !== null)
+                $trans->rollback();
+            return FALSE;
+        }
+        //UPDATE (table name, column values, condition)        
+    }
+
+    /**
+     * Function Insertar Datos de Inscripcion Grado
+     * @author  Lisbeth Gonzalez <analista.desarrollo@uteg.edu.ec>
+     * @property integer        
+     * @return  
+     */
+    public function insertarPersonaInscripcionposgrado($per_dni, $primer_nombre, $segundo_nombre, $primer_apellido, $segundo_apellido, $can_id_nacimiento, $per_fecha_nacimiento, $per_nacionalidad, $eciv_id, $pai_id_nacimiento, $pro_id_nacimiento, $can_id_nacimientos, $per_domicilio_ref, $per_celular, $per_domicilio_telefono, $per_correo) {
+        //per_id
+        //$per_cedula='99999999999';
+        $con = \Yii::$app->db_asgard;
+        $sql = "INSERT INTO " . $con->dbname . ".persona
+            (per_cedula,per_pri_nombre,per_seg_nombre,per_pri_apellido,per_seg_apellido,can_id_nacimiento,per_fecha_nacimiento,per_nacionalidad,eciv_id,pai_id_domicilio,pro_id_domicilio,can_id_domicilio,per_domicilio_ref,per_celular,per_domicilio_telefono,per_correo,per_fecha_creacion,per_estado,per_estado_logico)VALUES
+            (:per_dni,:primer_nombre,:segundo_nombre,:primer_apellido,:segundo_apellido,:can_id_nacimiento,:per_fecha_nacimiento,:per_nacionalidad,:eciv_id,:pai_id_domicilio,:pro_id_domicilio,:can_id_domicilio,:per_domicilio_ref,:per_celular,:per_domicilio_telefono,:per_correo,CURRENT_TIMESTAMP(),1,1) ";
+
+        $command = $con->createCommand($sql);
+        $command->bindParam(":per_dni", $per_dni, \PDO::PARAM_STR);
+        $command->bindParam(":primer_nombre", $primer_nombre, \PDO::PARAM_STR);
+        $command->bindParam(":segundo_nombre", $segundo_nombre, \PDO::PARAM_STR);
+        $command->bindParam(":primer_apellido", $primer_apellido, \PDO::PARAM_STR);
+        $command->bindParam(":segundo_apellido", $segundo_apellido, \PDO::PARAM_STR);
+        $command->bindParam(":can_id_nacimiento", $can_id_nacimiento, \PDO::PARAM_STR);
+        $command->bindParam(":per_fecha_nacimiento", $per_fecha_nacimiento, \PDO::PARAM_STR);
+        $command->bindParam(":per_nacionalidad", $per_nacionalidad, \PDO::PARAM_STR);
+        $command->bindParam(":eciv_id", $eciv_id, \PDO::PARAM_STR);
+        $command->bindParam(":pai_id_domicilio", $pai_id_domicilio, \PDO::PARAM_STR);
+        $command->bindParam(":pro_id_domicilio", $pro_id_domicilio, \PDO::PARAM_STR);
+        $command->bindParam(":can_id_domicilio", $can_id_domicilio, \PDO::PARAM_STR);
+        $command->bindParam(":per_domicilio_ref", $per_domicilio_ref, \PDO::PARAM_STR);
+        $command->bindParam(":per_celular", $per_celular, \PDO::PARAM_STR);
+        $command->bindParam(":per_domicilio_telefono", $per_domicilio_telefono, \PDO::PARAM_STR); 
+        $command->bindParam(":per_correo", $per_correo, \PDO::PARAM_STR);
+        $command->execute();
+        return $con->getLastInsertID();
+    }
+
+    public function modificaPersonaInscripcionposgrado($per_dni, $primer_nombre, $segundo_nombre, $primer_apellido, $segundo_apellido, $can_id_nacimiento, $per_fecha_nacimiento, $per_nacionalidad, $eciv_id, $pai_id_domicilio, $pro_id_domicilio, $can_id_domicilio, $per_domicilio_ref, $per_celular, $per_domicilio_telefono, $per_correo) {
+        $con = \Yii::$app->db_asgard;
+        $usuario_modifica = @Yii::$app->session->get("PB_iduser");
+        $trans = $con->getTransaction(); // se obtiene la transacción actual
+        $estado = 1;
+        $per_fecha_modificacion = date("Y-m-d H:i:s");
+        if ($trans !== null) {
+            $trans = null; // si existe la transacción entonces no se crea una
+        } else {
+            $trans = $con->beginTransaction(); // si no existe la transacción entonces se crea una
+        }
+        try {
+            $comando = $con->createCommand
+                    ("UPDATE " . $con->dbname . ".persona            
+                      SET 
+                        per_cedula = :per_dni,
+                        per_pri_nombre = :primer_nombre,
+                        per_seg_nombre = :segundo_nombre,
+                        per_pri_apellido = :primer_apellido,
+                        per_seg_apellido = :segundo_apellido, 
+                        can_id_nacimiento = :can_id_nacimiento, 
+                        per_fecha_nacimiento = :per_fecha_nacimiento,   
+                        per_nacionalidad = :per_nacionalidad,                   
+                        eciv_id = :eciv_id,
+                        pai_id_domicilio = :pai_id_domicilio,
+                        pro_id_domicilio = :pro_id_domicilio,
+                        can_id_domicilio = :can_id_domicilio,
+                        per_domicilio_ref = :per_domicilio_ref,
+                        per_celular = :per_celular,
+                        per_domicilio_telefono = :per_domicilio_telefono,
+                        per_correo = :per_correo,
+                        per_fecha_modificacion = :per_fecha_modificacion,
+                        per_usuario_modifica = :usuario_modifica
+                      WHERE 
+                        per_cedula = :per_dni AND 
+                        per_estado = :estado AND
+                        per_estado_logico = :estado");
+
+            $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+            $command->bindParam(":per_dni", $per_dni, \PDO::PARAM_STR);
+            $command->bindParam(":primer_nombre", $primer_nombre, \PDO::PARAM_STR);
+            $command->bindParam(":segundo_nombre", $segundo_nombre, \PDO::PARAM_STR);
+            $command->bindParam(":primer_apellido", $primer_apellido, \PDO::PARAM_STR);
+            $command->bindParam(":segundo_apellido", $segundo_apellido, \PDO::PARAM_STR);
+            $command->bindParam(":can_id_nacimiento", $can_id_nacimiento, \PDO::PARAM_STR);
+            $command->bindParam(":per_fecha_nacimiento", $per_fecha_nacimiento, \PDO::PARAM_STR);
+            $command->bindParam(":per_nacionalidad", $per_nacionalidad, \PDO::PARAM_STR);
+            $command->bindParam(":eciv_id", $eciv_id, \PDO::PARAM_STR);
+            $command->bindParam(":pai_id_domicilio", $pai_id_domicilio, \PDO::PARAM_STR);
+            $command->bindParam(":pro_id_domicilio", $pro_id_domicilio, \PDO::PARAM_STR);
+            $command->bindParam(":can_id_domicilio", $can_id_domicilio, \PDO::PARAM_STR);
+            $command->bindParam(":per_domicilio_ref", $per_domicilio_ref, \PDO::PARAM_STR);
+            $command->bindParam(":per_celular", $per_celular, \PDO::PARAM_STR);
+            $command->bindParam(":per_domicilio_telefono", $per_domicilio_telefono, \PDO::PARAM_STR); 
+            $command->bindParam(":per_correo", $per_correo, \PDO::PARAM_STR);
+            $comando->bindParam(":per_fecha_modificacion", $per_fecha_modificacion, \PDO::PARAM_STR);
+            $comando->bindParam(":usuario_modifica", $usuario_modifica, \PDO::PARAM_INT);
+            $response = $comando->execute();
+
+            if ($trans !== null)
+                $trans->commit();
+            return $response;
+        } catch (Exception $ex) {
+            if ($trans !== null)
+                $trans->rollback();
+            return FALSE;
+        }
+        //UPDATE (table name, column values, condition)        
     }
     
 

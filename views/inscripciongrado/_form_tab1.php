@@ -11,7 +11,7 @@ use app\widgets\PbSearchBox\PbSearchBox;
 use app\modules\academico\Module as academico;
 use yii\web\Session;
 
-session_start();
+/*session_start();
 if (!empty($per_cedula)) {
     $tipodoc = "CED";    
 } else {
@@ -21,7 +21,7 @@ if (!empty($per_cedula)) {
     else{
         $tipodoc = "CED";    
     }   
-}
+}*/
 
 academico::registerTranslations();
 
@@ -106,7 +106,13 @@ academico::registerTranslations();
             </div>
         </div>
     </div>
-    <!--<div style="display: none;" id="Divdatospersona">-->
+    <!--<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">  
+        <div class="col-sm-8"></div>
+        <div class="col-sm-2">                
+            <a id="btn_buscarCedula" href="javascript:" class="btn btn-primary btn-block"> <?= Yii::t("formulario", "Search") ?></a>
+        </div>
+    </div>
+    <div style="display: none;" id="Divdatospersona">-->
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
                 <div class="form-group">
@@ -324,12 +330,13 @@ academico::registerTranslations();
                 </div>
             </div>
         </div>
-    <!--</div>-->   
+      
        
-    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">   
-        <div class="col-md-10"></div>
-        <div class="col-md-2">
-            <a id="paso1next" href="javascript:" class="btn btn-primary btn-block"> <?= Yii::t("formulario", "Next") ?> <span class="glyphicon glyphicon-menu-right"></span></a>
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">   
+            <div class="col-md-10"></div>
+            <div class="col-md-2">
+                <a id="paso1next" href="javascript:" class="btn btn-primary btn-block"> <?= Yii::t("formulario", "Next") ?> <span class="glyphicon glyphicon-menu-right"></span></a>
+            </div>
         </div>
-    </div>
+    <!--</div>-->
 </form>

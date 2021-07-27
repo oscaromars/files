@@ -249,9 +249,9 @@ if (!empty($per_cedula)) {
         </div>
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
             <div class="form-group">
-                <label for="txt_parentesco" class="col-sm-3 control-label"><?= Yii::t("formulario", "Tipo de Parentesco") ?><span class="text-danger">*</span></label>
+                <label for="cmb_parentesco" class="col-sm-3 control-label"><?= Yii::t("formulario", "Tipo de Parentesco") ?><span class="text-danger">*</span></label>
                 <div class="col-sm-7">
-                    <input type="text" class="form-control PBvalidation keyupmce" id="txt_parentesco" data-type="alfa" data-keydown="true" placeholder="<?= Yii::t("formulario", "Tipo de Parentesco") ?>">
+                    <?= Html::dropDownList("cmb_parentesco", $tpar_id, $arr_tipparentesco, ["class" => "form-control", "id" => "cmb_parentesco"]) ?>
                 </div>
             </div>
         </div>

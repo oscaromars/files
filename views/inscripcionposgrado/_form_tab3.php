@@ -11,30 +11,19 @@ use yii\helpers\Url;
     <h3><span id="lbl_Personeria"><?= Yii::t("formulario", "Financiamiento") ?></span></h3><br><br></br>
 </div><br><br></br>
 
-<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12"> 
-    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">                      
-        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2" style="text-align: right;">
-            <input type="checkbox" id="chk_creditodirecto" data-type="alfa" data-keydown="true" placeholder="" >
+<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">  
+    <div class="form-group">
+        <label for="txt_financiamiento" class="col-sm-5 control-label"><?= Yii::t("bienestar", "Seleccionar Tipo de Financiamiento") ?><span class="text-danger">*</span></label>
+        <div class="col-sm-7" id="financiamiento">
+            <form id="tipoFinanciamiento">                
+                <input type="radio" name="signup" id="signup-directo" value="Crédito Directo" checked> Crédito Directo<br>            
+                <input type="radio" name="signup" id="signup-bancario" value="Crédito Bancario" > Crédito Bancario<br><input type="radio" name="signup" id="signup-pago" value="Pago al Contado" > Pago al Contado<br>
+            </form>
         </div>
-        <label for="chk_creditodirecto" class="col-lg-5 col-md-5 col-sm-5 col-xs-5"><?= Yii::t("formulario", "Crédito Directo") ?> </label>
-    </div>
-    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">                     
-        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2" style="text-align: right;">
-            <input type="checkbox" id="chk_creditobancario" data-type="alfa" data-keydown="true" placeholder="" >   
-        </div>
-        <label for="chk_creditobancario" class="col-lg-5 col-md-5 col-sm-5 col-xs-5"><?= Yii::t("formulario", "Crédito Bancario") ?> </label>
-    </div>
-    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">                     
-        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2" style="text-align: right;">
-            <input type="checkbox" id="chk_pagocontado" data-type="alfa" data-keydown="true" placeholder="" >
-        </div>
-        <label for="chk_pagocontado" class="col-lg-5 col-md-5 col-sm-5 col-xs-5"><?= Yii::t("formulario", "Pago al Contado") ?> </label>
-    </div><br><br></br>
+    </div><br></br><br></br>
 </div>
-
 <br></br>
 <br></br>
-
 
 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">   
     <div class="col-md-2">

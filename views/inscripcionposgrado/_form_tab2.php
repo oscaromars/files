@@ -100,7 +100,7 @@ use yii\helpers\Url;
         <div class="form-group">
             <label for="cmb_prov_emp" class="col-sm-3 control-label"><?= Yii::t("formulario", "State") ?> <span class="text-danger">*</span> </label>
             <div class="col-sm-7">
-                <?= Html::dropDownList("cmb_prov_emp", 0, $arr_prov_emp, ["class" => "form-control", "id" => "cmb_prov_col"]) ?>
+                <?= Html::dropDownList("cmb_prov_emp", 0, $arr_prov_emp, ["class" => "form-control", "id" => "cmb_prov_emp"]) ?>
             </div>
         </div>
     </div>
@@ -110,7 +110,7 @@ use yii\helpers\Url;
         <div class="form-group">
             <label for="cmb_ciu_emp" class="col-sm-3 control-label"><?= Yii::t("formulario", "Cantón") ?> <span class="text-danger">*</span> </label>
             <div class="col-sm-7">
-                <?= Html::dropDownList("cmb_ciu_emp", 0, $arr_ciu_emp, ["class" => "form-control", "id" => "cmb_ciu_col"]) ?>
+                <?= Html::dropDownList("cmb_ciu_emp", 0, $arr_ciu_emp, ["class" => "form-control", "id" => "cmb_ciu_emp"]) ?>
             </div>
         </div>
     </div>

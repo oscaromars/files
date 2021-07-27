@@ -354,15 +354,15 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">   
                 <h3><span id="lbl_Personeria"><?= Yii::t("formulario", "Documentos adicionales por homologación") ?></span></h3>
             </div><br><br></br> 
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12  doc_recordacad">   
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12  doc_record">   
                 <div class="form-group">
-                    <label for="txth_doc_recordacad" class="col-sm-2 col-md-2 col-xs-2 col-lg-2 control-label keyupmce"><?= Yii::t("formulario", "Récord Académico") ?></label>
+                    <label for="txth_doc_record" class="col-sm-2 col-md-2 col-xs-2 col-lg-2 control-label keyupmce"><?= Yii::t("formulario", "Récord Académico") ?></label>
                     <div class="col-sm-6 col-md-6 col-xs-6 col-lg-6">
-                        <?= Html::hiddenInput('txth_doc_recordacad', '', ['id' => 'txth_doc_recordacad']); ?>
+                        <?= Html::hiddenInput('txth_doc_record', '', ['id' => 'txth_doc_record']); ?>
                         <?php
                         echo CFileInputAjax::widget([
-                            'id' => 'txt_doc_recordacad',
-                            'name' => 'txt_doc_recordacad',
+                            'id' => 'txt_doc_record',
+                            'name' => 'txt_doc_record',
                             'pluginLoading' => false,
                             'showMessage' => false,
                             'pluginOptions' => [
@@ -377,17 +377,17 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                                 'uploadUrl' => Url::to(['/inscripciongrado/guardarinscripciongrado']),
                                 'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                                 'uploadExtraData' => 'javascript:function (previewId,index) {
-                    return {"upload_file": true, "name_file": "doc_recordacad-' . @Yii::$app->session->get("PB_perid") . '-' . time() . '"};
+                    return {"upload_file": true, "name_file": "doc_record-' . @Yii::$app->session->get("PB_perid") . '-' . time() . '"};
                 }',
                             ],
                             'pluginEvents' => [
                                 "filebatchselected" => "function (event) {
-                $('#txth_doc_recordacad').val($('#txt_doc_recordacad').val());
-                $('#txt_doc_recordacad').fileinput('upload');
+                $('#txth_doc_record').val($('#txt_doc_record').val());
+                $('#txt_doc_record').fileinput('upload');
             }",
                                 "fileuploaderror" => "function (event, data, msg) {
                 $(this).parent().parent().children().first().addClass('hide');
-                $('#txth_doc_recordacad').val('');
+                $('#txth_doc_record').val('');
                 //showAlert('NO_OK', 'error', {'wtmessage': objLang.Error_to_process_File__Try_again_, 'title': objLang.Error});   
             }",
                                 "filebatchuploadcomplete" => "function (event, files, extra) { 

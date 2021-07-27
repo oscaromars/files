@@ -4,10 +4,12 @@ use yii\helpers\Url;
 use yii\helpers\Html;
 
 //print_r($respPerinteresado);
-//session_start();
-//$_SESSION['persona_ingresa'] = base64_decode($_GET['ids']);
+session_start();
+$_SESSION['persona_ingresa'] = base64_decode($_GET['ids']);
 
 ?>
+<?= Html::hiddenInput('txth_ftem_id', 0, ['id' => 'txth_ftem_id']); ?>
+<?= Html::hiddenInput('txth_errorFile', Yii::t("formulario", "The file extension is not valid or exceeds the maximum size in MB recommending him try again"), ['id' => 'txth_errorFile']); ?>
 
 <div class="col-md-12  col-xs-12 col-sm-12 col-lg-12">
     <div class="nav-tabs-custom">
@@ -49,6 +51,7 @@ use yii\helpers\Html;
                         "arr_pais" => $arr_pais,
                         "arr_provincia" => $arr_provincia,
                         "arr_pais_reside" => $arr_pais_reside,
+                        'arr_tipparentesco' => $arr_tipparentesco,
                     ]);
                     ?>
                 </form>
@@ -58,7 +61,7 @@ use yii\helpers\Html;
                     <?=
                     $this->render('_form_tab2', [
                         'tipos_institucion' => $tipos_institucion,
-                        'arr_pais_emp' => $arr_pais_emp,
+                        //'arr_pais_emp' => $arr_pais_emp,
                         'arr_prov_emp' => $arr_prov_emp,
                         'arr_ciu_emp' => $arr_ciu_emp,
                         'arr_categoria' => $arr_categoria,

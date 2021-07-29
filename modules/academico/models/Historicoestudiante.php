@@ -126,31 +126,34 @@ class Historicoestudiante extends \yii\db\ActiveRecord
                 $str_search .= " ea.eaca_id = :carrera  AND";
             }
         } 
-        $sql = "SELECT distinct
+        $sql = "SELECT distinct 
                     CONCAT(per.per_cedula,' - ',per.per_pri_nombre,' ',per.per_pri_apellido) estudiante,
-                    ea.eaca_nombre,
-                    mo.mod_nombre,
-                    CONCAT(md.made_semestre,'° Semestre') semestre,
+                    ma.maca_nombre as carrera, 
                     md.made_codigo_asignatura,
                     a.asi_nombre,
+                    mo.mod_nombre,
+                    CONCAT(md.made_semestre,'°Semestre') semestre,
                     n.pmac_nota,
                     e.enac_asig_estado,
                     CONCAT(s.saca_nombre,' - ', s.saca_anio) periodo,
                     b.baca_nombre
                     
                 from " . $con->dbname . ".malla_academico_estudiante pa 
+                inner join " . $con1->dbname . ".persona per on per.per_id=pa.per_id
+                inner join " . $con->dbname . ".estudiante es on es.per_id=per.per_id
+                inner join " . $con->dbname . ".estudiante_carrera_programa est on es.est_id=est.est_id
+                inner join " . $con->dbname . ".modalidad_estudio_unidad me on me.meun_id=est.meun_id
                 inner join " . $con->dbname . ".malla_academica_detalle md on md.made_id=pa.made_id
-                inner join " . $con->dbname . ".malla_unidad_modalidad mu on mu.maca_id=pa.maca_id
-                inner join " . $con->dbname . ".modalidad_estudio_unidad me on me.meun_id=mu.meun_id
+                inner join " . $con->dbname . ".malla_unidad_modalidad mu on mu.maca_id=pa.maca_id 
+                inner join " . $con->dbname . ".malla_academica ma on ma.maca_id=pa.maca_id
                 inner join " . $con->dbname . ".asignatura a on pa.asi_id=a.asi_id
                 inner join " . $con->dbname . ".estudio_academico ea on ea.eaca_id=me.eaca_id
-                inner join " . $con->dbname . ".historico_siga_prueba h on h.per_id=pa.per_id
-                inner join " . $con1->dbname . ".persona per on per.per_id=h.per_id
-                inner join " . $con->dbname . ".modalidad mo on mo.mod_id=h.modalidad
+                -- inner join " . $con->dbname . ".historico_siga_prueba h on h.per_id=pa.per_id
+                inner join " . $con->dbname . ".modalidad mo on mo.mod_id=me.mod_id
                 inner join " . $con->dbname . ".promedio_malla_academico n on pa.maes_id=n.maes_id
                 inner join " . $con->dbname . ".estado_nota_academico e on e.enac_id=n.enac_id
-                inner join " . $con->dbname . ".planificar_periodo_academico pp on pa.maes_id=pp.maes_id
-                left join " . $con->dbname . ".periodo_academico pe on pp.paca_id=pe.paca_id
+                -- left join " . $con->dbname . ".planificar_periodo_academico pp on pp.maes_id=pa.maes_id
+                left join " . $con->dbname . ".periodo_academico pe on n.paca_id=pe.paca_id
                 left join " . $con->dbname . ".semestre_academico s on s.saca_id=pe.saca_id
                 left join " . $con->dbname . ".bloque_academico b on b.baca_id=pe.baca_id
                 WHERE 
@@ -188,7 +191,7 @@ class Historicoestudiante extends \yii\db\ActiveRecord
                 'pageSize' => Yii::$app->params["pageSize"],
             ],
             'sort' => [
-                'attributes' => ["Cedula","Semestre","Codigo Asignatura", "Materia","Nota","Estado","Periodo","Bloque"],
+                'attributes' => ["Cedula","Carrera","Semestre","Codigo Asignatura", "Materia","Nota","Estado","Periodo","Bloque"],
             ],
         ]);
         
@@ -229,32 +232,38 @@ class Historicoestudiante extends \yii\db\ActiveRecord
         $con1 = \Yii::$app->db_asgard;
         
         
-        $sql = "SELECT distinct
-                    h.cedula,
-                    h.carrera,
-                    mo.mod_nombre,
-                    CONCAT(md.made_semestre,'° Semestre') semestre,
+        $sql = "SELECT distinct 
+                    per.per_cedula,
+                    CONCAT(per.per_cedula,' - ',per.per_pri_nombre,' ',per.per_pri_apellido) estudiante,
+                    ma.maca_nombre, 
                     md.made_codigo_asignatura,
                     a.asi_nombre,
+                    mo.mod_nombre,
+                    CONCAT(md.made_semestre,'° Semestre') semestre,
                     n.pmac_nota,
                     e.enac_asig_estado,
                     CONCAT(s.saca_nombre,' - ', s.saca_anio) periodo,
                     b.baca_nombre
                     
                 from " . $con->dbname . ".malla_academico_estudiante pa 
+                inner join " . $con1->dbname . ".persona per on per.per_id=pa.per_id
+                inner join " . $con->dbname . ".estudiante es on es.per_id=per.per_id
+                inner join " . $con->dbname . ".estudiante_carrera_programa est on es.est_id=est.est_id
+                inner join " . $con->dbname . ".modalidad_estudio_unidad me on me.meun_id=est.meun_id
                 inner join " . $con->dbname . ".malla_academica_detalle md on md.made_id=pa.made_id
-                inner join " . $con->dbname . ".malla_unidad_modalidad mu on mu.maca_id=pa.maca_id
-                inner join " . $con->dbname . ".modalidad_estudio_unidad me on me.meun_id=mu.meun_id
+                inner join " . $con->dbname . ".malla_unidad_modalidad mu on mu.maca_id=pa.maca_id 
+                inner join " . $con->dbname . ".malla_academica ma on ma.maca_id=pa.maca_id
                 inner join " . $con->dbname . ".asignatura a on pa.asi_id=a.asi_id
-                inner join " . $con->dbname . ".historico_siga_prueba h on h.per_id=pa.per_id
-                inner join " . $con1->dbname . ".persona per on per.per_id=h.per_id
-                inner join " . $con->dbname . ".modalidad mo on mo.mod_id=h.modalidad
+                inner join " . $con->dbname . ".estudio_academico ea on ea.eaca_id=me.eaca_id
+                -- inner join " . $con->dbname . ".historico_siga_prueba h on h.per_id=pa.per_id
+                inner join " . $con->dbname . ".modalidad mo on mo.mod_id=me.mod_id
                 inner join " . $con->dbname . ".promedio_malla_academico n on pa.maes_id=n.maes_id
                 inner join " . $con->dbname . ".estado_nota_academico e on e.enac_id=n.enac_id
-                inner join " . $con->dbname . ".planificar_periodo_academico pp on pa.maes_id=pp.maes_id
-                left join " . $con->dbname . ".periodo_academico pe on pp.paca_id=pe.paca_id
+                -- left join " . $con->dbname . ".planificar_periodo_academico pp on pp.maes_id=pa.maes_id
+                left join " . $con->dbname . ".periodo_academico pe on n.paca_id=pe.paca_id
                 left join " . $con->dbname . ".semestre_academico s on s.saca_id=pe.saca_id
                 left join " . $con->dbname . ".bloque_academico b on b.baca_id=pe.baca_id
+                
                 WHERE 
                 pa.per_id=:per_id
                 ORDER BY semestre";

@@ -1354,6 +1354,7 @@ class MatriculacionController extends \app\components\CController {
                         $bloques = $data["bloque"];
                         //print_r($data);die();
                         $horas   = $data["hora"];
+                        $paralelos = $data["paralelo"];
                         /*$bloque = $bloques[0]; // Tomar el primer bloque
                         $mitad = 1; // Empezar asumiendo que se toma 1 solo bloque
 
@@ -1393,6 +1394,7 @@ class MatriculacionController extends \app\components\CController {
                             $asignatura = $materia;
                             $bloque     = $bloques[$contMateria];
                             $hora       = $horas[$contMateria];
+                            $paralelo   = $paralelos[$contMateria];
                             foreach($dataMaterias as $key => $value){
                                 if(trim(strtolower($value['Asignatura'])) == trim(strtolower($materia))){
                                     $asignatura = $value['Asignatura'];
@@ -1441,7 +1443,8 @@ class MatriculacionController extends \app\components\CController {
                                 strval($creditos), 
                                 $costo, 
                                 strval($bloque), 
-                                strval($hora)
+                                strval($hora),
+                                strval($paralelo)
       
                             );
 

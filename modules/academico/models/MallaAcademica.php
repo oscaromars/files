@@ -394,9 +394,44 @@ class MallaAcademica extends \yii\db\ActiveRecord
     }
     
     
-    function consultarAsignaturas($rows,$gest,$semestre) {
+     function consultarAsignaturas($rows,$gest,$semestre,$modalidad) {
     $con = \Yii::$app->db_academico;
-    $activo="A";
+    $activo="A"; // $rows["mod_id"]
+    $per_id = $rows["per_id"];
+
+       $presql="
+       SELECT distinct
+max(md.made_semestre) as semestre,
+per.per_id
+from db_academico.malla_academico_estudiante pa
+inner join db_asgard.persona per on per.per_id=pa.per_id
+inner join db_academico.estudiante es on es.per_id=per.per_id
+inner join db_academico.estudiante_carrera_programa est on es.est_id=est.est_id
+inner join db_academico.modalidad_estudio_unidad me on me.meun_id=est.meun_id
+inner join db_academico.malla_academica_detalle md on md.made_id=pa.made_id
+inner join db_academico.malla_unidad_modalidad mu on mu.maca_id=pa.maca_id
+inner join db_academico.malla_academica ma on ma.maca_id=pa.maca_id
+inner join db_academico.asignatura a on pa.asi_id=a.asi_id
+inner join db_academico.estudio_academico ea on ea.eaca_id=me.eaca_id
+-- inner join db_academico.historico_siga_prueba h on h.per_id=pa.per_id
+inner join db_academico.modalidad mo on mo.mod_id=me.mod_id
+inner join db_academico.promedio_malla_academico n on pa.maes_id=n.maes_id
+inner join db_academico.estado_nota_academico e on e.enac_id=n.enac_id
+-- left join db_academico.planificar_periodo_academico pp on pp.maes_id=pa.maes_id
+left join db_academico.periodo_academico pe on n.paca_id=pe.paca_id
+left join db_academico.semestre_academico s on s.saca_id=pe.saca_id
+left join db_academico.bloque_academico b on b.baca_id=pe.baca_id
+WHERE
+per.per_id = pa.per_id
+AND per.per_id = :per_id
+AND e.enac_id = 1;
+       ";
+
+        $comando = $con->createCommand($presql);
+        $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
+        $currenter = $comando->queryOne();
+        $student_semester= $currenter["semestre"];
+       
 
 
         $sql = "select distinct  a.maca_id, a.asi_id, a.made_semestre, a.uest_id, a.nest_id, a.fmac_id, 
@@ -407,8 +442,10 @@ inner join db_academico.malla_unidad_modalidad b on b.maca_id = a.maca_id
 inner join db_academico.modalidad_estudio_unidad c on c.meun_id = b.meun_id
  inner join db_academico.asignatura d on d.asi_id = a.asi_id
                        where c.eaca_id =  " . $rows["eaca_id"] . "   
-                      and   c.mod_id =  " . $rows["mod_id"] . "   
+                      and   c.mod_id =  " . $modalidad . "   
                       and a.maca_id =  " . $rows["maca_id"] . "  
+                      and c.uaca_id = 1
+                      -- and a.made_semestre >= :semester
                             and a.made_estado = 1
                             and a.made_estado_logico = 1
                             and b.mumo_estado = 1
@@ -418,24 +455,72 @@ inner join db_academico.modalidad_estudio_unidad c on c.meun_id = b.meun_id
                             and d.asi_estado = 1
                             and d.asi_estado_logico = 1
                      ORDER BY a.made_semestre, a.made_asi_requisito ASC
-                     
-                     
                         ";
-                        
-                        $comando = $con->createCommand($sql);
-          $comando->bindParam(":activo", $activo, \PDO::PARAM_STR);
-          $comando->bindParam(":paca_id", $gest, \PDO::PARAM_INT);
+  
+
+   $comando = $con->createCommand($sql);
+         // $comando->bindParam(":activo", $activo, \PDO::PARAM_STR);
+         // $comando->bindParam(":paca_id", $gest, \PDO::PARAM_INT);
+         // $comando->bindParam(":semester", $student_semester, \PDO::PARAM_INT);
                $rows_in = $comando->queryAll();
+
+
+        $sql="
+                        SELECT distinct
+ md.maca_id, md.asi_id, md.made_semestre, md.uest_id, md.nest_id, md.fmac_id, 
+md.made_codigo_asignatura, md.made_asi_requisito, md.made_credito,
+me.uaca_id,me.mod_id, me.eaca_id, a.asi_nombre,
+CONCAT(per.per_cedula,' - ',per.per_pri_nombre,' ',per.per_pri_apellido) estudiante,
+ma.maca_nombre as carrera,
+md.made_codigo_asignatura,
+a.asi_nombre,
+mo.mod_nombre,
+CONCAT(md.made_semestre,'°Semestre') semestre,
+n.pmac_nota,
+e.enac_asig_estado,
+CONCAT(s.saca_nombre,' - ', s.saca_anio) periodo,
+b.baca_nombre,
+per.per_id,
+es.est_matricula
+from db_academico.malla_academico_estudiante pa
+inner join db_asgard.persona per on per.per_id=pa.per_id
+inner join db_academico.estudiante es on es.per_id=per.per_id
+inner join db_academico.estudiante_carrera_programa est on es.est_id=est.est_id
+inner join db_academico.modalidad_estudio_unidad me on me.meun_id=est.meun_id
+inner join db_academico.malla_academica_detalle md on md.made_id=pa.made_id
+inner join db_academico.malla_unidad_modalidad mu on mu.maca_id=pa.maca_id
+inner join db_academico.malla_academica ma on ma.maca_id=pa.maca_id
+inner join db_academico.asignatura a on pa.asi_id=a.asi_id
+inner join db_academico.estudio_academico ea on ea.eaca_id=me.eaca_id
+-- inner join db_academico.historico_siga_prueba h on h.per_id=pa.per_id
+inner join db_academico.modalidad mo on mo.mod_id=me.mod_id
+inner join db_academico.promedio_malla_academico n on pa.maes_id=n.maes_id
+inner join db_academico.estado_nota_academico e on e.enac_id=n.enac_id
+-- left join db_academico.planificar_periodo_academico pp on pp.maes_id=pa.maes_id
+left join db_academico.periodo_academico pe on n.paca_id=pe.paca_id
+left join db_academico.semestre_academico s on s.saca_id=pe.saca_id
+left join db_academico.bloque_academico b on b.baca_id=pe.baca_id
+WHERE
+per.per_id = pa.per_id
+AND per.per_id = :per_id
+AND md.made_semestre >= :semester
+ORDER BY semestre;
+
+        ";
+                        
+              /*  $comando = $con->createCommand($sql);
+          $comando->bindParam(":per_id", $per_id, \PDO::PARAM_STR);
+          $comando->bindParam(":semester", $student_semester, \PDO::PARAM_INT);
+               $rows_in = $comando->queryAll(); */
 
              $per_id =   $rows["per_id"];
              $est_id =   $rows["est_id"];
              $matricula =   $rows["matricula"];
              $creacion =   $rows["est_fecha_creacion"];
              $categoria =   $rows["est_categoria"];
-             $uaca_id =   $rows["uaca_id"];
-             $mod_id =   $rows["mod_id"];
+             $uaca_id =   1;
+             $mod_id =   $modalidad;
              $eaca_id =   $rows["eaca_id"];
-             $uaca_id =   $rows["uaca_id"];
              $uaca_nombre =   $rows["uaca_nombre"];
              $teac_id =   $rows["teac_id"];
              $eaca_nombre =   $rows["eaca_nombre"];
@@ -443,39 +528,8 @@ inner join db_academico.modalidad_estudio_unidad c on c.meun_id = b.meun_id
              $cedula =   $rows["per_cedula"];
              $estudiante =   $rows["estudiante"];
               $estado = '1';
-
-            /*
-             $geth="
-             SELECT max(hosd_grupo) as grupo from db_academico.horarios_semestre
-             WHERE saca_id = :semestre
-             AND mod_id = :mod_id
-             AND uaca_id = :uaca_id "
-                 ;
             
-            $comando = $con->createCommand($sql);
-            $comando->bindParam(":saca_id", $semestre, \PDO::PARAM_INT);
-            $comando->bindParam(":mod_id", $mod_id, \PDO::PARAM_INT);
-            $comando->bindParam(":uaca_id", $uaca_id, \PDO::PARAM_INT);
-            $gettedh = $comando->queryOne();
-
-             if ($gettedh == Null){
-
-             $puth = "
-             INSERT INTO db_academico.horarios_semestre
-             (saca_id, mod_id, uaca_id, hosd_grupo,hose_usuario_ingreso, hose_estado, hose_estado_logico)
-            VALUES ('" . $semestre . "', ". $rows["mod_id"] .",". $rows["uaca_id"] .",1,1, '" . $estado . "', '" . $estado . "')"
-            ;
-            
-               $comando = $con->createCommand($sql); 
-                     $puttedh = $comando->execute();
-            }
-            
-               
-            $grupo =$gettedh["grupo"];
-            if ($grupo == Null) { $grupo=1;} */
-
-            
-            //   1 . 1 GET CABECERA
+            //   1 . 1 GET 
 
 
              $geth="
@@ -488,13 +542,13 @@ inner join db_academico.modalidad_estudio_unidad c on c.meun_id = b.meun_id
             
             $comando = $con->createCommand($geth);
             $comando->bindParam(":semestre", $gest, \PDO::PARAM_INT);
-            $comando->bindParam(":mod_id", $mod_id, \PDO::PARAM_INT);
+            $comando->bindParam(":mod_id", $modalidad, \PDO::PARAM_INT);
             $comando->bindParam(":uaca_id", $uaca_id, \PDO::PARAM_INT);
             $hid = $comando->queryOne();
             $horario =$hid["hose_id"];
 
             
-            //   1  .  2  SET CABECERA
+            //   1  .  2  SET 
 
 
              if ($hid["hose_id"] == Null){
@@ -503,7 +557,7 @@ inner join db_academico.modalidad_estudio_unidad c on c.meun_id = b.meun_id
              $puth = "
              INSERT INTO db_academico.horarios_semestre
              (saca_id, mod_id, uaca_id,hose_usuario_ingreso, hose_estado, hose_estado_logico)
-            VALUES ('" . $gest . "', ". $rows["mod_id"] .",". $rows["uaca_id"] .",1, '" . $estado . "', '" . $estado . "')"
+            VALUES ('" . $gest . "','" . $modalidad . "','" . $uaca_id . "',1, '" . $estado . "', '" . $estado . "')"
             ;
             
                $comando = $con->createCommand($puth); 
@@ -520,7 +574,7 @@ inner join db_academico.modalidad_estudio_unidad c on c.meun_id = b.meun_id
             
             $comando = $con->createCommand($geth);
             $comando->bindParam(":semestre", $gest, \PDO::PARAM_INT);
-            $comando->bindParam(":mod_id", $mod_id, \PDO::PARAM_INT);
+            $comando->bindParam(":mod_id", $modalidad, \PDO::PARAM_INT);
             $comando->bindParam(":uaca_id", $uaca_id, \PDO::PARAM_INT);
             $hid = $comando->queryOne();
             $horario =$hid["hose_id"];
@@ -542,8 +596,6 @@ from db_academico.periodo_academico plac
          $comando->bindParam(":paca_id", $gest, \PDO::PARAM_INT);
                $paca_in = $comando->queryAll();
 
-        // $fecha_inicio = $rows_in[0]["paca_fecha_inicio"];
-          //      $fecha_fin = $rows_in[0]["paca_fecha_fin"];
                 $estacion = $gest;
                 $paca_id = $gest;
           for ($i = 0; $i < count($rows_in); $i++) {    
@@ -553,9 +605,7 @@ from db_academico.periodo_academico plac
                  $requisito = $rows_in[$i]["made_asi_requisito"]; 
                  $fecha_inicio = $paca_in[0]["paca_fecha_inicio"];
                  $fecha_fin = $paca_in[0]["paca_fecha_fin"];
-                 //$fecha_inicio = "2021-06-20 23:59:59";
-                 //$fecha_fin = "2021-09-20 23:59:59";
-                 
+                             
                   $sql = "
                  select  a.asi_id, c.enac_id, a.maes_id, a.per_id
  from db_academico.malla_academico_estudiante a
@@ -578,19 +628,6 @@ from db_academico.periodo_academico plac
                      $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
                      $comando->bindParam(":asignatura", $asignatura, \PDO::PARAM_INT);
                      $statusasi = $comando->queryOne();
-                   
-                   
-                          
-                 
-                 //    \app\models\Utilities::putMessageLogFile('automa statusasi '.$statusasi["enac_id"]);
-              
-                   //  \app\models\Utilities::putMessageLogFile('automa asiasi '.$statusasi["asi_id"]);
-                 
-                   //  \app\models\Utilities::putMessageLogFile('automa maessasi '.$statusasi["maes_id"]);
-                    
-                   //  \app\models\Utilities::putMessageLogFile('automa fullasi '.$statusasi);
-                     
-                 
                  
                  if ($requisito !=Null) {  
                  $sql = "
@@ -615,75 +652,20 @@ from db_academico.periodo_academico plac
                      $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
                      $comando->bindParam(":requisito", $requisito, \PDO::PARAM_INT);
                      $statuspre = $comando->queryOne();
-                     
                             
-               //   \app\models\Utilities::putMessageLogFile('automa statuspre '.$statuspre["enac_id"]);
-                  
-                //      \app\models\Utilities::putMessageLogFile('automa asipre '.$statuspre["asi_id"]);
-                  
-                 //     \app\models\Utilities::putMessageLogFile('automa maesspre '.$statuspre["maes_id"]);
-                   
-                   //      \app\models\Utilities::putMessageLogFile('automa fullpre '.$statuspre);
-            
-                     
-                   
                      }
-                     
-                     
-                   // DATOS TEMPORALES
-            
-                     
-                  // if ($statusasi["enac_id"]== 3)  {  
-                  // $mensaje = "statuspre ".$statuspre["enac_id"]." statusasi ".$statusasi["enac_id"];
-                  // mail('oscaromars@hotmail.com', 'enac_estado', $mensaje);
-                  //  }
-                  
-                   
-                    // if ($statusasi["maes_id"]){ 
                     
-                       if ($statusasi["enac_id"]==3 /*or $statusasi["enac_id"]==2 or $statusasi["enac_id"]==4 or $statusasi["enac_id"]==1 or $statusasi["enac_id"]==Null*/){ 
+         if ($statusasi["enac_id"]==3 or $statusasi["enac_id"]==2 or $statusasi["enac_id"] == Null){ 
                       $sstatusasi= $statusasi["enac_id"];  
-                      
+                       if ($statusasi["enac_id"] == Null){  
+                         $sstatusasi= 3;
+                       }
                       
                         if ($requisito !=Null){                  
                       $sstatuspre= $statuspre["enac_id"]; 
                       
                       
-                        if ($statuspre["enac_id"]==1 /* or $statuspre["enac_id"]==2 or $statuspre["enac_id"]==3 or $statuspre["enac_id"]==4 or $statuspre["enac_id"]==Null*/){ 
-                        
-                        /*    \app\models\Utilities::putMessageLogFile('CON PR ');
-                        \app\models\Utilities::putMessageLogFile('TIENE STATUS '.$sstatusasi);
-                         \app\models\Utilities::putMessageLogFile('TIENE MAES '.$statusasi["maes_id"]);
-                          \app\models\Utilities::putMessageLogFile('CODIGO '.$rows_in[$i]["made_codigo_asignatura"]);
-                           \app\models\Utilities::putMessageLogFile('NOMBRE '.$rows_in[$i]["asi_nombre"]);
-                               \app\models\Utilities::putMessageLogFile('======================================================= '); */
-                        
-                          if ($asi1 == Null)  { 
-                  
-                   $asi1 = $rows_in[$i]["made_codigo_asignatura"];
-                     $noasi1 = $rows_in[$i]["asi_nombre"];      }  
-                elseif ($asi2 == Null)  { 
-                    $asi2 = $rows_in[$i]["made_codigo_asignatura"];
-                     $noasi2 = $rows_in[$i]["asi_nombre"];       }                    
-                elseif ($asi3 == Null)  { 
-                    $asi3 = $rows_in[$i]["made_codigo_asignatura"];  
-                     $noasi3 = $rows_in[$i]["asi_nombre"];     }  
-                elseif ($asi4 == Null)  { 
-                    $asi4 = $rows_in[$i]["made_codigo_asignatura"]; 
-                     $noasi4 = $rows_in[$i]["asi_nombre"];     }  
-                elseif ($asi5 == Null)  { 
-                    $asi5 = $rows_in[$i]["made_codigo_asignatura"]; 
-                     $noasi5 = $rows_in[$i]["asi_nombre"];     }  
-                elseif ($asi6 == Null)  { 
-                    $asi6 = $rows_in[$i]["made_codigo_asignatura"];  
-                     $noasi6 = $rows_in[$i]["asi_nombre"];     } 
-                
-                elseif ($asi7 == Null)  { 
-                    $asi7 = $rows_in[$i]["made_codigo_asignatura"]; 
-                     $noasi7 = $rows_in[$i]["asi_nombre"];     }  
-                elseif ($asi8 == Null)  { 
-                    $asi8 = $rows_in[$i]["made_codigo_asignatura"];  
-                     $noasi8 = $rows_in[$i]["asi_nombre"];     }    
+                        if ($statuspre["enac_id"]==1 ){   
 
 
              if ($subjects[1][0] == Null)  {                   
@@ -728,52 +710,11 @@ from db_academico.periodo_academico plac
                     $subjects[8][3] = $rows_in[$i]["made_credito"];   }  
 
 
-
-
-
-                     
                         }
                          
                        
                            }else {      
                          
-                         
-                         
-                       /*   \app\models\Utilities::putMessageLogFile('SIN PR ');
-                        \app\models\Utilities::putMessageLogFile('TIENE STATUS '.$sstatusasi);
-                         \app\models\Utilities::putMessageLogFile('TIENE MAES '.$statusasi["maes_id"]);
-                          \app\models\Utilities::putMessageLogFile('CODIGO '.$rows_in[$i]["made_codigo_asignatura"]);
-                           \app\models\Utilities::putMessageLogFile('NOMBRE '.$rows_in[$i]["asi_nombre"]);
-                          \app\models\Utilities::putMessageLogFile('======================================================= '); */
-                        
-                        
-                          if ($asi1 == Null)  { 
-                  
-                   $asi1 = $rows_in[$i]["made_codigo_asignatura"];
-                     $noasi1 = $rows_in[$i]["asi_nombre"];      }  
-                elseif ($asi2 == Null)  { 
-                    $asi2 = $rows_in[$i]["made_codigo_asignatura"];
-                     $noasi2 = $rows_in[$i]["asi_nombre"];       }                    
-                elseif ($asi3 == Null)  { 
-                    $asi3 = $rows_in[$i]["made_codigo_asignatura"];  
-                     $noasi3 = $rows_in[$i]["asi_nombre"];     }  
-                elseif ($asi4 == Null)  { 
-                    $asi4 = $rows_in[$i]["made_codigo_asignatura"]; 
-                     $noasi4 = $rows_in[$i]["asi_nombre"];     }  
-                elseif ($asi5 == Null)  { 
-                    $asi5 = $rows_in[$i]["made_codigo_asignatura"]; 
-                     $noasi5 = $rows_in[$i]["asi_nombre"];     }  
-                elseif ($asi6 == Null)  { 
-                    $asi6 = $rows_in[$i]["made_codigo_asignatura"];  
-                     $noasi6 = $rows_in[$i]["asi_nombre"];     } 
-                elseif ($asi7 == Null)  { 
-                    $asi7 = $rows_in[$i]["made_codigo_asignatura"];  
-                     $noasi7 = $rows_in[$i]["asi_nombre"];     } 
-                elseif ($asi8 == Null)  { 
-                    $asi8 = $rows_in[$i]["made_codigo_asignatura"];  
-                    $noasi8 = $rows_in[$i]["asi_nombre"];     } 
-
-
 
                      if ($subjects[1][0] == Null)  {                   
                    $subjects[1][0] = $rows_in[$i]["made_codigo_asignatura"];
@@ -818,27 +759,14 @@ from db_academico.periodo_academico plac
 
                                
                     }
-                    
-                    
-           
-                       
-                         }       // }  
+                            
+                         }         
                          
-                         
-                   
-                       
-                       
-                       
-                   
-               
-              
-               
-                   
-                     
+
                         }  
        
                      $sql = "select pla_id from db_academico.planificacion 
-                      where mod_id = " . $mod_id . " 
+                      where mod_id = " . $modalidad . " 
                       and pla_estado = 1 and pla_estado_logico = 1 and saca_id = :periodo";  
                 
                    $comando = $con->createCommand($sql);
@@ -847,41 +775,26 @@ from db_academico.periodo_academico plac
                      
                      $estado=1;
                      
-                                 //if (count($rows_pla) == 0 ) {
                                if ($rows_pla["pla_id"] == 0)  {
                                  
                 
                 $sql = "INSERT INTO db_academico.planificacion (mod_id, per_id, pla_fecha_inicio, pla_fecha_fin, pla_periodo_academico, pla_estado, pla_estado_logico,saca_id)
-                        VALUES (". $rows["mod_id"] .", 1, '" . $fecha_inicio . "', '" . $fecha_fin . "', '" . $semestre . "', '" . $estado . "', '" . $estado . "','" . $estacion . "');";
+                        VALUES ('" . $modalidad . "', 1, '" . $fecha_inicio . "', '" . $fecha_fin . "', '" . $semestre . "', '" . $estado . "', '" . $estado . "','" . $estacion . "');";
                  $comando = $con->createCommand($sql); 
                      $rows_pla = $comando->execute();
               
                   } 
-                 $sql = "select pla_id from db_academico.planificacion where mod_id = " . $mod_id . " and pla_estado = 1 and pla_estado_logico = 1 and saca_id = :periodo ";
+                 $sql = "select pla_id from db_academico.planificacion where mod_id = " . $modalidad . " and pla_estado = 1 and pla_estado_logico = 1 and saca_id = :periodo ";
                   $comando = $con->createCommand($sql);
                    $comando->bindParam(":periodo", $estacion, \PDO::PARAM_STR);
                    $rows_pla = $comando->queryOne();
            
          
                      
-                          if ($asi1 != Null)  { 
-                      /*
-                      $sql = "INSERT INTO db_academico.planificacion_estudiante
-                    (pla_id, per_id, pes_jornada, pes_carrera, pes_dni, pes_nombres,pes_mat_b1_h1_cod, pes_mat_b1_h2_cod, pes_mat_b1_h3_cod, pes_mat_b1_h4_cod, pes_mat_b1_h5_cod,
-                     pes_mat_b1_h6_cod, pes_mat_b1_h1_nombre, pes_mat_b1_h2_nombre, pes_mat_b1_h3_nombre, pes_mat_b1_h4_nombre, pes_mat_b1_h5_nombre,
-                     pes_mat_b1_h6_nombre, pes_estado, pes_estado_logico)
-                    values (" . $rows_pla["pla_id"] ."," . $rows["per_id"] . ", '" . $rows["uaca_id"] . "', '" . $rows["eaca_nombre"] . "', '" . $rows["per_cedula"] . "', '" . $rows["estudiante"] . "', '" . $asi1 . "', '" . $asi2 . "', '" . $asi3 . "', '" . $asi4 . "', '" . $asi5 . "', '" . $asi6 . "', '" . $noasi1 . "', '" . $noasi2 . "', '" . $noasi3 . "', '" . $noasi4 . "', '" . $noasi5 . "', '" . $noasi6 . "', '" . $estado . "', '" . $estado ."')"; 
-                     $comando = $con->createCommand($sql);
-                     $rows_pes = $comando->execute();
-                     
-       
-                     
-                        */
-                    
+                          if ($subjects[1][0] != Null)  { 
+                                       
 
-
-
-                     switch ($rows["mod_id"]) {
+                     switch ($modalidad) {
                         case 1:
                       $jornadas = "Nocturna";
                         break;
@@ -896,17 +809,10 @@ from db_academico.periodo_academico plac
                      break;
                     }
                     
-                    if ($rows["mod_id"] > 2){
+                    if ($modalidad > 2){
                     
                     
-            //   1   .    3     ADD SUBJECTS TO SCHEDULE BY GROUP
-
-
-            \app\models\Utilities::putMessageLogFile('hose id again: '.$hid["hose_id"]); 
-            \app\models\Utilities::putMessageLogFile('made_codigo_asignatura: '.$subjects[1][0]);
-            \app\models\Utilities::putMessageLogFile('asi_nombre: '.$subjects[1][1]);
-            \app\models\Utilities::putMessageLogFile('asi_id: '.$subjects[1][2]);
-            \app\models\Utilities::putMessageLogFile('made_credito: '.$subjects[1][3]);
+            //   1   .    3    SCHEDULE 
     
 
                      $lasth="
@@ -979,10 +885,10 @@ from db_academico.periodo_academico plac
                     
                      for ($iter = 1; $iter <= 8; ++$iter){
 
-                    $codd = $subjects[$iter][0]; // ["made_codigo_asignatura"]
-                   $nomm = $subjects[$iter][1]; // ["asi_nombre"] 
-                   $iddd = $subjects[$iter][2]; // ["asi_id"]
-                   $cred = $subjects[$iter][3]; // ["made_credito"] 
+                    $codd = $subjects[$iter][0]; 
+                   $nomm = $subjects[$iter][1]; 
+                   $iddd = $subjects[$iter][2];
+                   $cred = $subjects[$iter][3]; 
 
 
                      $searcher = "
@@ -1004,14 +910,8 @@ from db_academico.periodo_academico plac
                    $getifasi = $comando->queryOne();
 
 
-
-
-
-
                        If ($subjects[$iter][2] !="" && $subjects[$iter][2]!=Null){
                             if ($getifasi["hose_id"] == Null){
-
- 
 
 
                     if ($hactual == 3){  
@@ -1029,7 +929,36 @@ from db_academico.periodo_academico plac
                   $comando = $con->createCommand($addsch); 
                   $rows_tosch = $comando->execute();
 
-        
+                   //GET hosd_id   - ADD WITH  paal_cantidad 1 
+
+
+               $searchhosd = "
+                   SELECT dahd.hosd_id, dahs.hose_id,dahd.hosd_grupo, dahd.hosd_bloque, dahd.hosd_hora, dahd.hosd_asi_id 
+                    FROM db_academico.horarios_semestre dahs
+                    INNER JOIN db_academico.horarios_semestre_detalle dahd
+                    ON dahs.hose_id = dahd.hose_id
+                     WHERE 
+                    dahd.hosd_asi_id = :iddd AND
+                    dahd.hosd_grupo = :hosd_grupo AND
+                    dahd.hosd_bloque = :hosd_bloque AND
+                     dahd.hosd_hora = :hosd_hora AND
+                    dahs.hose_id = :hose_id
+                    ";              
+
+                $comando = $con->createCommand($searchhosd);
+                   $comando->bindParam(":iddd", $iddd, \PDO::PARAM_INT);
+                   $comando->bindParam(":hosd_grupo", $gactual, \PDO::PARAM_INT);
+                   $comando->bindParam(":hosd_bloque", $bactual, \PDO::PARAM_INT);
+                   $comando->bindParam(":hosd_hora", $hactual, \PDO::PARAM_INT);
+                     $comando->bindParam(":hose_id", $hid["hose_id"], \PDO::PARAM_INT);
+                   $rows_tosch = $comando->queryOne();
+
+                     $addschpar = "
+            INSERT INTO db_academico.paralelos_alumno (hosd_id, paal_cantidad,paal_usuario_ingreso,paal_estado,paal_estado_logico)
+            VALUES ('" . $rows_tosch["hosd_id"] . "',0,1,'1','1')
+                        ";
+                $comando = $con->createCommand($addschpar); 
+                  $rows_tosch = $comando->execute();
 
 
                      }  }
@@ -1037,17 +966,16 @@ from db_academico.periodo_academico plac
 
 
 
- 
-
-
-                  //   1   .    4     GET SUBJECTS FOR PES
-
+                  //   1   .    4     PES
+               $mpph1 = 0; $mpph2 = 0; $mpph3 = 0; $mpph4 = 0;
+                $mpph5 = 0; $mpph6 = 0; $mpph7 = 0; $mpph8 = 0;
+                
               for ($iter = 1;$iter <= 8; ++$iter){
 
-                   $codd = $subjects[$iter][0]; // ["made_codigo_asignatura"]
-                   $nomm = $subjects[$iter][1]; // ["asi_nombre"] 
-                   $iddd = $subjects[$iter][2]; // ["asi_id"]
-                   $cred = $subjects[$iter][3]; // ["made_credito"] 
+                   $codd = $subjects[$iter][0]; 
+                   $nomm = $subjects[$iter][1]; 
+                   $iddd = $subjects[$iter][2]; 
+                   $cred = $subjects[$iter][3]; 
                    $horario= $hid["hose_id"];
                  
                    
@@ -1068,28 +996,80 @@ from db_academico.periodo_academico plac
                    $comando->bindParam(":mod_id", $mod_id, \PDO::PARAM_INT);
                    $comando->bindParam(":uaca_id", $uaca_id, \PDO::PARAM_INT);
                    $getifasi = $comando->queryOne();
-
-
-            \app\models\Utilities::putMessageLogFile('GRUPO: '.$getifasi["hosd_grupo"]);  
-            \app\models\Utilities::putMessageLogFile('BLOQUE: '.$getifasi["hosd_bloque"]);  
-            \app\models\Utilities::putMessageLogFile('HORA: '.$getifasi["hosd_hora"]);  
                    
-                   /*
-                   $getifasi["hosd_bloque"]; 
-                   $getifasi["hosd_hora"]; */
 
                    if ($getifasi["hose_id"] != Null){
+
+ 
+                    $getpaal= "select paal.paal_id, paal.hosd_id, paal.paal_cantidad from db_academico.paralelos_alumno AS paal
+                    inner join db_academico.horarios_semestre_detalle AS hosd
+                    on paal.hosd_id = hosd.hosd_id
+                    inner join db_academico.horarios_semestre AS hose
+                    on hose.hose_id = hosd.hose_id
+                    where hosd.hosd_asi_id = :iddd
+                    AND hose.mod_id = :mod_id
+                    AND hose.saca_id = :saca_id 
+                    AND hose.uaca_id = :uaca_id"
+                    ;
+                    $comando = $con->createCommand($getpaal);
+                   $comando->bindParam(":iddd", $iddd, \PDO::PARAM_INT);
+                   $comando->bindParam(":saca_id", $gest, \PDO::PARAM_INT);
+                   $comando->bindParam(":mod_id", $mod_id, \PDO::PARAM_INT);
+                   $comando->bindParam(":uaca_id", $uaca_id, \PDO::PARAM_INT);
+                   $getpaal = $comando->queryOne();
+
+
+                     // paal_id, hosd_id, paal_cantidad
+                                      
+                    $num_par =floor($getpaal["paal_cantidad"]/50+1); 
+                    \app\models\Utilities::putMessageLogFile('crude:'.$getpaal["paal_cantidad"]);
+                    \app\models\Utilities::putMessageLogFile('floor:'.$num_par);
+
+                  // by  $getifasi["hosd_hora"] and $getifasi["hosd_bloque"] ==> daho_id=============>
+                  
+                    if($getpaal["paal_cantidad"] == 0){
+                   
+                        // GET PACA
+                        // SET PAR -- obtain paca by saca $getifasi["hosd_bloque"] 1 2
+                        // GET PAR
+
+                    } else {
+          
+                      if(INT($getpaal["paal_cantidad"]/50) == $getpaal["paal_cantidad"] / 50){
+
+                      // GET MAX PAR
+                      // GET PACA
+                      // SET PAR
+                      // GET PAR
+
+
+                    } else {
+
+                    // GET MAX PAR
+
+                    }
+
+
+                    } 
+
+                    // update paal_cantidad
+                    
+
+
 
                   if ($getifasi["hosd_bloque"] == 1){
                     switch ($getifasi["hosd_hora"]) {
                         case 1:
                          $asih1 = $subjects[$iter][0]; $noasih1 = $subjects[$iter][1];
+                         $mpph1 = 0;  // daho_id = Null {{mod, daho_id, update par}} 
                         break;
                         case 2:
                     $asih2 = $subjects[$iter][0];$noasih2 = $subjects[$iter][1];
+                     $mpph2 = 0; // daho_id = Null {{mod, daho_id, update par}}
                          break;      
                         case 3:
                     $asih3 = $subjects[$iter][0];$noasih3 =$subjects[$iter][1];
+                     $mpph3 = 0; // daho_id = Null {{mod, daho_id, update par}}
                          break;                                    
                     }            
                    
@@ -1101,65 +1081,40 @@ from db_academico.periodo_academico plac
                     switch ($getifasi["hosd_hora"]) {
                         case 1:
                     $asih4 = $subjects[$iter][0]; $noasih4 = $subjects[$iter][1];
+                     $mpph4 = 0; // daho_id = Null {{mod, daho_id, update par}}
                         break;
                         case 2:
                    $asih5 = $subjects[$iter][0]; $noasih5 = $subjects[$iter][1];
+                    $mpph5 = 0; // daho_id = Null {{mod, daho_id, update par}}
                          break;      
                         case 3:
                     $asih6 = $subjects[$iter][0]; $noasih6 = $subjects[$iter][1];
+                    $mpph6 = 0; // daho_id = Null {{mod, daho_id, update par}}
                          break;                                    
                     }        }          
                    
                     }  
 
-
-
-                     }//endfor       
-
-            \app\models\Utilities::putMessageLogFile('asih1: '.$asih1);    
-            \app\models\Utilities::putMessageLogFile('asih2: '.$asih2);  
-            \app\models\Utilities::putMessageLogFile('asih3: '.$asih3);  
-            \app\models\Utilities::putMessageLogFile('asih4: '.$asih4);  
-            \app\models\Utilities::putMessageLogFile('asih5: '.$asih5);  
-            \app\models\Utilities::putMessageLogFile('asih6: '.$asih6);            
-
                     
+
+                     }//endfor       pes_mat_b1_h1_mpp
 
                      $sql = "INSERT INTO db_academico.planificacion_estudiante
                     (pla_id, per_id, pes_jornada,pes_cod_carrera, pes_carrera, pes_dni, pes_nombres,pes_mat_b1_h1_cod, pes_mat_b1_h2_cod, pes_mat_b1_h3_cod, pes_mat_b1_h4_cod, pes_mat_b2_h1_cod,
                      pes_mat_b2_h2_cod,pes_mat_b2_h3_cod,pes_mat_b2_h4_cod, pes_mat_b1_h1_nombre, pes_mat_b1_h2_nombre, pes_mat_b1_h3_nombre, pes_mat_b1_h4_nombre, pes_mat_b2_h1_nombre,  pes_mat_b2_h2_nombre, pes_mat_b2_h3_nombre, pes_mat_b2_h4_nombre, pes_mod_b1_h1,  pes_mod_b1_h2,  pes_mod_b1_h3,  pes_mod_b1_h4,  pes_mod_b2_h1,  pes_mod_b2_h2,  pes_mod_b2_h3, 
                         pes_mod_b2_h4, pes_jor_b1_h1,  pes_jor_b1_h2,  pes_jor_b1_h3,  pes_jor_b1_h4,  pes_jor_b2_h1,  pes_jor_b2_h2,  pes_jor_b2_h3, 
-                        pes_jor_b2_h4, pes_estado, pes_estado_logico)
-                    values (" . $rows_pla["pla_id"] ."," . $rows["per_id"] . ", '" . $rows["uaca_id"] . "','" . $rows["maca_codigo"] . "', '" . $rows["maca_nombre"] . "', '" . $rows["per_cedula"] . "', '" . $rows["estudiante"] . "', '" . $asih1 . "', '" . $asih2 . "', '" . $asih3 . "',Null, '" . $asih4 . "', '" . $asih5 . "', '" . $asih6 . "',Null, '" . $noasih1 . "', '" . $noasih2 . "', '" . $noasih3 . "',Null, '" . $noasih4 . "', '" . $noasih5 . "', '" . $noasih6 . "',Null,". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "', '" . $estado . "', '" . $estado ."')"; 
+                        pes_jor_b2_h4,pes_mat_b1_h1_mpp, pes_mat_b1_h2_mpp, pes_mat_b1_h3_mpp, pes_mat_b1_h4_mpp, pes_mat_b2_h1_mpp,
+                     pes_mat_b2_h2_mpp,pes_mat_b2_h3_mpp,pes_mat_b2_h4_mpp, pes_estado, pes_estado_logico)
+                    values (" . $rows_pla["pla_id"] ."," . $rows["per_id"] . ", '" . $rows["uaca_id"] . "','" . $rows["maca_codigo"] . "', '" . $rows["maca_nombre"] . "', '" . $rows["per_cedula"] . "', '" . $rows["estudiante"] . "', '" . $asih1 . "', '" . $asih2 . "', '" . $asih3 . "',Null, '" . $asih4 . "', '" . $asih5 . "', '" . $asih6 . "',Null, '" . $noasih1 . "', '" . $noasih2 . "', '" . $noasih3 . "',Null, '" . $noasih4 . "', '" . $noasih5 . "', '" . $noasih6 . "',Null,". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "','" . $mpph1 . "','" . $mpph2 . "','" . $mpph3 . "',Null,'" . $mpph4 . "','" . $mpph5 . "','" . $mpph6 . "',Null, '" . $estado . "', '" . $estado ."')"; 
                      $comando = $con->createCommand($sql);
                      $rows_pes = $comando->execute(); 
 
-                    /*
-
-
-                      $sql = "INSERT INTO db_academico.planificacion_estudiante
-                    (pla_id, per_id, pes_jornada,pes_cod_carrera, pes_carrera, pes_dni, pes_nombres,pes_mat_b1_h1_cod, pes_mat_b1_h2_cod, pes_mat_b1_h3_cod, pes_mat_b1_h4_cod, pes_mat_b2_h1_cod,
-                     pes_mat_b2_h2_cod,pes_mat_b2_h3_cod,pes_mat_b2_h4_cod, pes_mat_b1_h1_nombre, pes_mat_b1_h2_nombre, pes_mat_b1_h3_nombre, pes_mat_b1_h4_nombre, pes_mat_b2_h1_nombre,  pes_mat_b2_h2_nombre, pes_mat_b2_h3_nombre, pes_mat_b2_h4_nombre, pes_mod_b1_h1,  pes_mod_b1_h2,  pes_mod_b1_h3,  pes_mod_b1_h4,  pes_mod_b2_h1,  pes_mod_b2_h2,  pes_mod_b2_h3, 
-                        pes_mod_b2_h4, pes_jor_b1_h1,  pes_jor_b1_h2,  pes_jor_b1_h3,  pes_jor_b1_h4,  pes_jor_b2_h1,  pes_jor_b2_h2,  pes_jor_b2_h3, 
-                        pes_jor_b2_h4, pes_estado, pes_estado_logico)
-                    values (" . $rows_pla["pla_id"] ."," . $rows["per_id"] . ", '" . $rows["uaca_id"] . "','" . $rows["maca_codigo"] . "', '" . $rows["maca_nombre"] . "', '" . $rows["per_cedula"] . "', '" . $rows["estudiante"] . "', '" . $asi1 . "', '" . $asi2 . "', '" . $asi3 . "',Null, '" . $asi4 . "', '" . $asi5 . "', '" . $asi6 . "',Null, '" . $noasi1 . "', '" . $noasi2 . "', '" . $noasi3 . "',Null, '" . $noasi4 . "', '" . $noasi5 . "', '" . $noasi6 . "',Null,". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "', '" . $estado . "', '" . $estado ."')"; 
-                     $comando = $con->createCommand($sql);
-                     $rows_pes = $comando->execute(); 
-                    
-                     */
 
                     } Else {
 
 
                                
-            //   1   .    3     ADD SUBJECTS TO SCHEDULE BY GROUP
-
-                    \app\models\Utilities::putMessageLogFile('hose id again: '.$hid["hose_id"]); 
-            \app\models\Utilities::putMessageLogFile('made_codigo_asignatura: '.$subjects[1][0]);
-            \app\models\Utilities::putMessageLogFile('asi_nombre: '.$subjects[1][1]);
-            \app\models\Utilities::putMessageLogFile('asi_id: '.$subjects[1][2]);
-            \app\models\Utilities::putMessageLogFile('made_credito: '.$subjects[1][3]);
-    
+            //   1   .    3   SCHEDULE     
 
                      $lasth="
                     SELECT max(dahd.hosd_grupo) as g 
@@ -1226,15 +1181,16 @@ from db_academico.periodo_academico plac
                         { $bactual = 1 ; }      
                     if ($hactual == Null)   
                         { $hactual = 0 ; }       
+                     
                     
                                   
                     
                      for ($iter = 1; $iter <= 8; ++$iter){
 
-                    $codd = $subjects[$iter][0]; // ["made_codigo_asignatura"]
-                   $nomm = $subjects[$iter][1]; // ["asi_nombre"] 
-                   $iddd = $subjects[$iter][2]; // ["asi_id"]
-                   $cred = $subjects[$iter][3]; // ["made_credito"] 
+                    $codd = $subjects[$iter][0]; 
+                   $nomm = $subjects[$iter][1]; 
+                   $iddd = $subjects[$iter][2]; 
+                   $cred = $subjects[$iter][3]; 
 
 
                      $searcher = "
@@ -1251,19 +1207,13 @@ from db_academico.periodo_academico plac
                    $comando = $con->createCommand($searcher);
                    $comando->bindParam(":iddd", $iddd, \PDO::PARAM_INT);
                    $comando->bindParam(":saca_id", $gest, \PDO::PARAM_INT);
-                   $comando->bindParam(":mod_id", $mod_id, \PDO::PARAM_INT);
+                   $comando->bindParam(":mod_id", $modalidad, \PDO::PARAM_INT);
                    $comando->bindParam(":uaca_id", $uaca_id, \PDO::PARAM_INT);
                    $getifasi = $comando->queryOne();
 
 
-
-
-
-
                        If ($subjects[$iter][2] !="" && $subjects[$iter][2]!=Null){
                             if ($getifasi["hose_id"] == Null){
-
- 
 
 
                     if ($hactual == 4){  
@@ -1272,7 +1222,7 @@ from db_academico.periodo_academico plac
                      } Else {
                     $hactual++ ;
                      }   
-
+                  
 
                      $addsch = "
             INSERT INTO db_academico.horarios_semestre_detalle (hose_id, hosd_grupo, hosd_bloque, hosd_hora ,hosd_asi_id,hosd_usuario_ingreso,hosd_estado,hosd_estado_logico)
@@ -1281,7 +1231,39 @@ from db_academico.periodo_academico plac
                   $comando = $con->createCommand($addsch); 
                   $rows_tosch = $comando->execute();
 
-        
+
+
+             //GET hosd_id   - ADD WITH  paal_cantidad 1 
+
+
+               $searchhosd = "
+                   SELECT dahd.hosd_id, dahs.hose_id,dahd.hosd_grupo, dahd.hosd_bloque, dahd.hosd_hora, dahd.hosd_asi_id 
+                    FROM db_academico.horarios_semestre dahs
+                    INNER JOIN db_academico.horarios_semestre_detalle dahd
+                    ON dahs.hose_id = dahd.hose_id
+                     WHERE 
+                    dahd.hosd_asi_id = :iddd AND
+                    dahd.hosd_grupo = :hosd_grupo AND
+                    dahd.hosd_bloque = :hosd_bloque AND
+                     dahd.hosd_hora = :hosd_hora AND
+                    dahs.hose_id = :hose_id
+                    ";              
+
+                $comando = $con->createCommand($searchhosd);
+                   $comando->bindParam(":iddd", $iddd, \PDO::PARAM_INT);
+                   $comando->bindParam(":hosd_grupo", $gactual, \PDO::PARAM_INT);
+                   $comando->bindParam(":hosd_bloque", $bactual, \PDO::PARAM_INT);
+                   $comando->bindParam(":hosd_hora", $hactual, \PDO::PARAM_INT);
+                     $comando->bindParam(":hose_id", $hid["hose_id"], \PDO::PARAM_INT);
+                   $rows_tosch = $comando->queryOne();
+
+                     $addschpar = "
+            INSERT INTO db_academico.paralelos_alumno (hosd_id, paal_cantidad,paal_usuario_ingreso,paal_estado,paal_estado_logico)
+            VALUES ('" . $rows_tosch["hosd_id"] . "',0,1,'1','1')
+                        ";
+                $comando = $con->createCommand($addschpar); 
+                  $rows_tosch = $comando->execute();
+
 
 
                      }  }
@@ -1292,14 +1274,17 @@ from db_academico.periodo_academico plac
  
 
 
-                  //   1   .    4     GET SUBJECTS FOR PES
+                  //   1   .    4    PES
+
+                $mpph1 = 0; $mpph2 = 0; $mpph3 = 0; $mpph4 = 0;
+                $mpph5 = 0; $mpph6 = 0; $mpph7 = 0; $mpph8 = 0;
 
               for ($iter = 1;$iter <= 8; ++$iter){
 
-                   $codd = $subjects[$iter][0]; // ["made_codigo_asignatura"]
-                   $nomm = $subjects[$iter][1]; // ["asi_nombre"] 
-                   $iddd = $subjects[$iter][2]; // ["asi_id"]
-                   $cred = $subjects[$iter][3]; // ["made_credito"] 
+                   $codd = $subjects[$iter][0]; 
+                   $nomm = $subjects[$iter][1]; 
+                   $iddd = $subjects[$iter][2]; 
+                   $cred = $subjects[$iter][3]; 
                    $horario= $hid["hose_id"];
                  
                    
@@ -1319,32 +1304,28 @@ from db_academico.periodo_academico plac
                    $comando->bindParam(":saca_id", $gest, \PDO::PARAM_INT);
                    $comando->bindParam(":mod_id", $mod_id, \PDO::PARAM_INT);
                    $comando->bindParam(":uaca_id", $uaca_id, \PDO::PARAM_INT);
-                   $getifasi = $comando->queryOne();
-
-
-            \app\models\Utilities::putMessageLogFile('GRUPO: '.$getifasi["hosd_grupo"]);  
-            \app\models\Utilities::putMessageLogFile('BLOQUE: '.$getifasi["hosd_bloque"]);  
-            \app\models\Utilities::putMessageLogFile('HORA: '.$getifasi["hosd_hora"]);  
-                   
-                   /*
-                   $getifasi["hosd_bloque"]; 
-                   $getifasi["hosd_hora"]; */
+                   $getifasi = $comando->queryOne();                   
+              
 
                    if ($getifasi["hose_id"] != Null){
 
                   if ($getifasi["hosd_bloque"] == 1){
                     switch ($getifasi["hosd_hora"]) {
                         case 1:
-                         $asih1 = $subjects[$iter][0]; $noasih1 = $subjects[$iter][1];
+                    $asih1 = $subjects[$iter][0]; $noasih1 = $subjects[$iter][1];
+                    $mpph1 = 0; // daho_id = Null {{mod, daho_id, update par}}
                         break;
                         case 2:
                     $asih2 = $subjects[$iter][0];$noasih2 = $subjects[$iter][1];
+                    $mpph2 = 0; // daho_id = Null {{mod, daho_id, update par}}
                          break;      
                         case 3:
                     $asih3 = $subjects[$iter][0];$noasih3 =$subjects[$iter][1];
+                    $mpph3 = 0; // daho_id = Null {{mod, daho_id, update par}}
                          break;              
                         case 4:
                     $asih4 = $subjects[$iter][0];$noasih4 =$subjects[$iter][1];
+                    $mpph4 = 0; // daho_id = Null {{mod, daho_id, update par}}
                          break;                         
                     }            
                    
@@ -1356,15 +1337,19 @@ from db_academico.periodo_academico plac
                     switch ($getifasi["hosd_hora"]) {
                         case 1:
                     $asih5 = $subjects[$iter][0]; $noasih5 = $subjects[$iter][1];
+                    $mpph5 = 0; // daho_id = Null {{mod, daho_id, update par}}
                         break;
                         case 2:
-                   $asih6 = $subjects[$iter][0]; $noasih6 = $subjects[$iter][1];
+                    $asih6 = $subjects[$iter][0]; $noasih6 = $subjects[$iter][1];
+                    $mpph6 = 0; // daho_id = Null {{mod, daho_id, update par}}
                          break;      
                         case 3:
                     $asih7 = $subjects[$iter][0]; $noasih7 = $subjects[$iter][1];
+                    $mpph7 = 0; // daho_id = Null {{mod, daho_id, update par}}
                          break;    
                         case 4:
                     $asih8 = $subjects[$iter][0]; $noasih8 = $subjects[$iter][1];
+                    $mpph8 = 0; // daho_id = Null {{mod, daho_id, update par}}
                          break;  
 
                     }        }          
@@ -1380,22 +1365,12 @@ from db_academico.periodo_academico plac
                     (pla_id, per_id, pes_jornada,pes_cod_carrera, pes_carrera, pes_dni, pes_nombres,pes_mat_b1_h1_cod, pes_mat_b1_h2_cod, pes_mat_b1_h3_cod, pes_mat_b1_h4_cod, pes_mat_b2_h1_cod,
                      pes_mat_b2_h2_cod,pes_mat_b2_h3_cod,pes_mat_b2_h4_cod, pes_mat_b1_h1_nombre, pes_mat_b1_h2_nombre, pes_mat_b1_h3_nombre, pes_mat_b1_h4_nombre, pes_mat_b2_h1_nombre,  pes_mat_b2_h2_nombre, pes_mat_b2_h3_nombre, pes_mat_b2_h4_nombre, pes_mod_b1_h1,  pes_mod_b1_h2,  pes_mod_b1_h3,  pes_mod_b1_h4,  pes_mod_b2_h1,  pes_mod_b2_h2,  pes_mod_b2_h3, 
                         pes_mod_b2_h4, pes_jor_b1_h1,  pes_jor_b1_h2,  pes_jor_b1_h3,  pes_jor_b1_h4,  pes_jor_b2_h1,  pes_jor_b2_h2,  pes_jor_b2_h3, 
-                        pes_jor_b2_h4, pes_estado, pes_estado_logico)
-                    values (" . $rows_pla["pla_id"] ."," . $rows["per_id"] . ", '" . $rows["uaca_id"] . "','" . $rows["maca_codigo"] . "', '" . $rows["maca_nombre"] . "', '" . $rows["per_cedula"] . "', '" . $rows["estudiante"] . "', '" . $asih5 . "', '" . $asih5 . "', '" . $asih3 . "', '" . $asih4 . "', '" . $asih1 . "', '" . $asih2 . "', '" . $asih7 . "', '" . $asih8 . "', '" . $noasih5 . "', '" . $noasih6 . "', '" . $noasih3 . "', '" . $noasih4 . "', '" . $noasih1 . "', '" . $noasih2 . "', '" . $noasih7 . "', '" . $noasih8 . "',". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "', '" . $estado . "', '" . $estado ."')"; 
+                        pes_jor_b2_h4, pes_mat_b1_h1_mpp, pes_mat_b1_h2_mpp, pes_mat_b1_h3_mpp, pes_mat_b1_h4_mpp, pes_mat_b2_h1_mpp,
+                     pes_mat_b2_h2_mpp,pes_mat_b2_h3_mpp,pes_mat_b2_h4_mpp, pes_estado, pes_estado_logico)
+                    values (" . $rows_pla["pla_id"] ."," . $rows["per_id"] . ", '" . $rows["uaca_id"] . "','" . $rows["maca_codigo"] . "', '" . $rows["maca_nombre"] . "', '" . $rows["per_cedula"] . "', '" . $rows["estudiante"] . "', '" . $asih1 . "', '" . $asih2 . "', '" . $asih3 . "', '" . $asih7 . "', '" . $asih4 . "', '" . $asih5 . "', '" . $asih6 . "', '" . $asih8 . "', '" . $noasih1 . "', '" . $noasih2 . "', '" . $noasih3 . "', '" . $noasih7 . "', '" . $noasih4 . "', '" . $noasih5 . "', '" . $noasih6 . "', '" . $noasih8 . "',". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "','" . $mpph1 . "','" . $mpph2 . "','" . $mpph3 . "','" . $mpph7 . "','" . $mpph4 . "','" . $mpph5 . "','" . $mpph6 . "','" . $mpph8 . "', '" . $estado . "', '" . $estado ."')"; 
                      $comando = $con->createCommand($sql);
                      $rows_pes = $comando->execute(); 
 
-                    
-
-                    /*
-                     $sql = "INSERT INTO db_academico.planificacion_estudiante
-                    (pla_id, per_id, pes_jornada,pes_cod_carrera, pes_carrera, pes_dni, pes_nombres,pes_mat_b1_h1_cod, pes_mat_b1_h2_cod, pes_mat_b1_h3_cod, pes_mat_b1_h4_cod, pes_mat_b2_h1_cod,
-                     pes_mat_b2_h2_cod,pes_mat_b2_h3_cod,pes_mat_b2_h4_cod, pes_mat_b1_h1_nombre, pes_mat_b1_h2_nombre, pes_mat_b1_h3_nombre, pes_mat_b1_h4_nombre, pes_mat_b2_h1_nombre,  pes_mat_b2_h2_nombre, pes_mat_b2_h3_nombre, pes_mat_b2_h4_nombre, pes_mod_b1_h1,  pes_mod_b1_h2,  pes_mod_b1_h3,  pes_mod_b1_h4,  pes_mod_b2_h1,  pes_mod_b2_h2,  pes_mod_b2_h3, 
-                        pes_mod_b2_h4, pes_jor_b1_h1,  pes_jor_b1_h2,  pes_jor_b1_h3,  pes_jor_b1_h4,  pes_jor_b2_h1,  pes_jor_b2_h2,  pes_jor_b2_h3, 
-                        pes_jor_b2_h4, pes_estado, pes_estado_logico)
-                    values (" . $rows_pla["pla_id"] ."," . $rows["per_id"] . ", '" . $rows["uaca_id"] . "','" . $rows["maca_codigo"] . "', '" . $rows["maca_nombre"] . "', '" . $rows["per_cedula"] . "', '" . $rows["estudiante"] . "', '" . $asi1 . "', '" . $asi2 . "', '" . $asi3 . "', '" . $asi4 . "', '" . $asi5 . "', '" . $asi6 . "', '" . $asi7 . "', '" . $asi8 . "', '" . $noasi1 . "', '" . $noasi2 . "', '" . $noasi3 . "', '" . $noasi4 . "', '" . $noasi5 . "', '" . $noasi6 . "', '" . $noasi7 . "', '" . $noasi8 . "',". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "', '" . $estado . "', '" . $estado ."')"; 
-                     $comando = $con->createCommand($sql);
-                     $rows_pes = $comando->execute();  */
                     
                      }
                      
@@ -1413,12 +1388,6 @@ from db_academico.periodo_academico plac
                \app\models\Utilities::putMessageLogFile("Returning ".$ok); 
                
               return true; 
-               }
-                       
-     
-    
-    
-     
-    
+               }    
     
 }   }

@@ -64,68 +64,14 @@ if($modelCancelRon){
                 'header' => Academico::t("matriculacion", "Hour"),
                 'contentOptions' => ['class' => 'text-center'],
                 'headerOptions' => ['class' => 'text-center'],
-                'format' => 'html',
-                
-                'value' => function ($model) {
-
-                    if ($model['modalidad']=='1'){
-                        if ($model["Hour"] == 'H1')
-                            return '<span title="L-M-W :: 19:00-20:00">'.$model['Hour'].'</span>';
-                        else if ($model["Hour"] == 'H2')
-                            return '<span title="L-M-W :: 20:00-21:00">'.$model['Hour'].'</span>';
-                        else if ($model["Hour"] == 'H3')
-                            return '<span title="L-M-W :: 21:00-22:00">'.$model['Hour'].'</span>';
-                        else if ($model["Hour"] == 'H4')
-                            return '<span title="L-M-W :: 19:00-20:30">'.$model['Hour'].'</span>';
-                        else if ($model["Hour"] == 'H5')
-                            return '<span title="L-M-W :: 20:00-21:30">'.$model['Hour'].'</span>';
-                        else
-                            return '<span title="'.$model['Hour'].'">'.$model['Hour'].'</span>';
-                    } else if ($model['modalidad']=='2'){
-                        if ($model["Hour"] == 'H1')
-                            return '<span title="L-M-J :: 18:20-20:20">'.$model['Hour'].'</span>';
-                        else if ($model["Hour"] == 'H2')
-                            return '<span title="L-M-W :: 20:20-22:20">'.$model['Hour'].'</span>';
-                        else if ($model["Hour"] == 'H3')
-                            return '<span title="Mie - Vie :: 18:20-21:20">'.$model['Hour'].'</span>';
-                        else if ($model["Hour"] == 'H4')
-                            return '<span title="Vier :: 18:20-21:20">'.$model['Hour'].'</span>';
-                        else if ($model["Hour"] == 'H5')
-                            return '<span title="Sáb :: 07:15-09:15">'.$model['Hour'].'</span>';
-                        else
-                            return '<span title="">'.$model['Hour'].'</span>';
-                    }
-                    else if ($model['modalidad']=='3'){
-                        if ($model["Hour"] == 'H1')
-                            return '<span title="Sáb :: 07:15-10:15">'.$model['Hour'].'</span>';
-                        else if ($model["Hour"] == 'H2')
-                            return '<span title="Sáb :: 10:30-13:30">'.$model['Hour'].'</span>';
-                        else if ($model["Hour"] == 'H3')
-                            return '<span title="Sáb :: 14:30-17:30">'.$model['Hour'].'</span>';
-                        else if ($model["Hour"] == 'H4')
-                            return '<span title="">'.$model['Hour'].'</span>';
-                        else if ($model["Hour"] == 'H5')
-                            return '<span title="">'.$model['Hour'].'</span>';
-                        else
-                            return '<span title="">'.$model['Hour'].'</span>';
-                    }
-                    else if ($model['modalidad']=='4'){
-                        if ($model["Hour"] == 'H1')
-                            return '<span title="Sáb :: 08:15-10:15">'.$model['Hour'].'</span>';
-                        else if ($model["Hour"] == 'H2')
-                            return '<span title="Sáb :: 10:30-12:30">'.$model['Hour'].'</span>';
-                        else if ($model["Hour"] == 'H3')
-                            return '<span title="Sáb :: 13:30-15:30">'.$model['Hour'].'</span>';
-                        else if ($model["Hour"] == 'H4')
-                            return '<span title="">'.$model['Hour'].'</span>';
-                        else if ($model["Hour"] == 'H5')
-                            return '<span title="">'.$model['Hour'].'</span>';
-                        else
-                            return '<span title="">'.$model['Hour'].'</span>';
-                    }
-
-                },
-
+                'value' => 'Hour',
+            ],
+            [
+                'attribute' => 'Parallel',
+                'header' => Academico::t("matriculacion", "Paralelo"),
+                'contentOptions' => ['class' => 'text-center'],
+                'headerOptions' => ['class' => 'text-center'],
+                'value' => 'Parallel',
             ],
             [
                 'attribute' => 'Credit',

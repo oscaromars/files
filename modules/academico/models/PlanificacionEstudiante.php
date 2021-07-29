@@ -1506,7 +1506,7 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
            
         }
         
-        $sql2="SELECT 
+        $sql2="SELECT a.asi_id as id
                     CASE meu.mod_id
                     when 1 then 'ONLINE'
                     when 2 then 'PRESENCIAL'

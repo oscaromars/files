@@ -19,7 +19,7 @@ admision::registerTranslations();
         'showExport' => true,
         'fnExportEXCEL' => "exportExcel",
         'fnExportPDF' => "exportPdf",
-	'formatter' => ['class' => 'yii\i18n\Formatter','nullDisplay' => ''],
+        'formatter' => ['class' => 'yii\i18n\Formatter','nullDisplay' => ''],
         'dataProvider' => $model,
         'columns' => [
             
@@ -27,6 +27,11 @@ admision::registerTranslations();
                 'attribute' => 'Estudiante',
                 'header' => Yii::t("formulario", "Student"),
                 'value' => 'estudiante',
+            ],
+            [
+                'attribute' => 'Carrera',
+                'header' => Yii::t("formulario", "Carrera"),
+                'value' => 'carrera',
             ],
 
             [

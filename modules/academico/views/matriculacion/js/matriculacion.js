@@ -97,7 +97,7 @@ $(document).ready(function() {
                 //console.log($(this).parent().prev().prev().prev().prev().prev().text());
                 $txt_cost_materia = $(this).parent().prev().prev().text();
                 subtotal += parseFloat($txt_cost_materia.replace("$",""));
-                $txt_bloque = $(this).parent().prev().prev().prev().prev().prev().text();
+                $txt_bloque = $(this).parent().prev().prev().prev().prev().prev().prev().text();
                 $mitad=1;
                 if ($txt_bloque==bloque[0]){
                     //$mitad=2;
@@ -282,6 +282,7 @@ function registerSubject() {
     var materias = new Array();
     var codes    = new Array();
     var bloque   = new Array();
+    var paralelo = new Array();
     var hora     = new Array();
     var credits  = new Array();
     var costs    = new Array();
@@ -308,12 +309,13 @@ function registerSubject() {
         //console.log("-----------------");
         //console.log(this);
         if (this.checked &&  $(this).attr('disabled') != "disabled" ) {
-            materias[contador] = $(this).val();
-            codes[contador]    = $(this).attr('name');
-            bloque[contador]   = $(this).parent().prev().prev().prev().prev().prev().text();
-            hora[contador]     = $(this).parent().prev().prev().prev().prev().find('span').text();
-            credits[contador]  = $(this).parent().prev().prev().prev().text();
-            costs[contador]    = $(this).parent().prev().prev().text();
+            materias[contador]  = $(this).val();
+            codes[contador]     = $(this).attr('name');
+            bloque[contador]    = $(this).parent().prev().prev().prev().prev().prev().prev().text();
+            hora[contador]      = $(this).parent().prev().prev().prev().prev().prev().text();
+            paralelo[contador]  = $(this).parent().prev().prev().prev().prev().text();
+            credits[contador]   = $(this).parent().prev().prev().prev().text();
+            costs[contador]     = $(this).parent().prev().prev().text();
             contador += 1;
         }
     });   
@@ -326,6 +328,7 @@ function registerSubject() {
     arrParams.carrera = $('#frm_carrera').val();
     arrParams.pdf = 1;
     arrParams.codes = codes;
+    arrParams.paralelo = paralelo;
     arrParams.bloque = bloque;
     arrParams.hora = hora;
     arrParams.credits = credits;

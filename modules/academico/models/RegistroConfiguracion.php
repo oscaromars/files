@@ -13,6 +13,16 @@ use yii\base\Exception;
  * @property int $pla_id
  * @property string $rco_fecha_inicio
  * @property string $rco_fecha_fin
+ * @property string $rco_fecha_ini_aplicacion
+ * @property string $rco_fecha_fin_aplicacion
+ * @property string $rco_fecha_ini_registro
+ * @property string $rco_fecha_fin_registro
+ * @property string $rco_fecha_ini_periodoextra
+ * @property string $rco_fecha_fin_periodoextra
+ * @property string $rco_fecha_ini_clases
+ * @property string $rco_fecha_fin_clases
+ * @property string $rco_fecha_ini_examenes
+ * @property string $rco_fecha_fin_examenes  
  * @property int $rco_num_bloques
  * @property string $rco_estado
  * @property string $rco_fecha_creacion
@@ -64,6 +74,16 @@ class RegistroConfiguracion extends \yii\db\ActiveRecord
             'pla_id' => 'Pla ID',
             'rco_fecha_inicio' => 'Rco Fecha Inicio',
             'rco_fecha_fin' => 'Rco Fecha Fin',
+            'rco_fecha_ini_aplicacion' => 'Rco Fecha Inicio Aplicacion',
+            'rco_fecha_fin_aplicacion' => 'Rco Fecha Fin aplicacion',
+            'rco_fecha_ini_registro' => 'Rco Fecha Inicio registro',
+            'rco_fecha_fin_registro' => 'Rco Fecha Fin Registro',
+            'rco_fecha_ini_periodoextra' => 'Rco Fecha Inicio Periodoextra',
+            'rco_fecha_fin_periodoextra' => 'Rco Fecha Fin Periodoextra',
+            'rco_fecha_ini_clases' => 'Rco Fecha Inicio Clases',
+            'rco_fecha_fin_clases' => 'Rco Fecha Fin Clases',
+            'rco_fecha_ini_examenes' => 'Rco Fecha Inicio Examenes',
+            'rco_fecha_fin_examenes' => 'Rco Fecha Fin Examenes',
             'rco_num_bloques' => 'Num Bloques',
             'rco_estado' => 'Ron Estado',
             'rco_fecha_creacion' => 'Ron Fecha Creacion',
@@ -138,10 +158,10 @@ class RegistroConfiguracion extends \yii\db\ActiveRecord
         $con = \Yii::$app->db_facturacion;
         $estado = 1;
         \app\models\Utilities::putMessageLogFile('modelo...: '.$in.' cuota');
-        \app\modules\academico\controllers\RegistroController::putMessageLogFileCartera('modelo...: '.$in.' cuota');
+        //\app\modules\academico\controllers\RegistroController::putMessageLogFileCartera('modelo...: '.$in.' cuota');
         \app\models\Utilities::putMessageLogFile($est_id.'-'.$cedula.'-'.$secuencial.'-'.$forma_pago.'-'.$fecha.'-'.$in.'-'.$numero_cuota.'-'.
         $valor_cuota.'-'.$total.'-'.$id_user);
-        \app\modules\academico\controllers\RegistroController::putMessageLogFileCartera($est_id.'-'.$cedula.'-'.$secuencial.'-'.$forma_pago.'-'.$fecha.'-'.$in.'-'.$numero_cuota.'-'.
+        //\app\modules\academico\controllers\RegistroController::putMessageLogFileCartera($est_id.'-'.$cedula.'-'.$secuencial.'-'.$forma_pago.'-'.$fecha.'-'.$in.'-'.$numero_cuota.'-'.
         $valor_cuota.'-'.$total.'-'.$id_user);
         $trans = $con->getTransaction(); // se obtiene la transacción actual
         $fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
@@ -212,7 +232,7 @@ class RegistroConfiguracion extends \yii\db\ActiveRecord
         $comando->bindParam(":fecha_transaccion", $fecha_transaccion, \PDO::PARAM_STR);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
         
-        \app\modules\academico\controllers\RegistroController::putMessageLogFileCartera(' --------------------------------- SQL :'.$comando->getRawSql());
+        //\app\modules\academico\controllers\RegistroController::putMessageLogFileCartera(' --------------------------------- SQL :'.$comando->getRawSql());
         $resultData = $comando->execute();
         if ($trans !== null)
             $trans->commit();
@@ -481,7 +501,7 @@ class RegistroConfiguracion extends \yii\db\ActiveRecord
         $con = \Yii::$app->db_academico;
         $estado = 1;
         \app\models\Utilities::putMessageLogFile('registro adicional materia...: ');
-        \app\modules\academico\controllers\RegistroController::putMessageLogFileCartera('registro adicional materia...: '.$rpm_id.' - rama: '.$rama_id);
+        //\app\modules\academico\controllers\RegistroController::putMessageLogFileCartera('registro adicional materia...: '.$rpm_id.' - rama: '.$rama_id);
         $trans = $con->getTransaction(); // se obtiene la transacción actual
         $fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
         try {
@@ -497,13 +517,13 @@ class RegistroConfiguracion extends \yii\db\ActiveRecord
             if ($trans !== null){
                 $trans->commit();
             \app\models\Utilities::putMessageLogFile('rpm OK...: registro_adicional_materias COMMIT - OK');}
-            \app\modules\academico\controllers\RegistroController::putMessageLogFileCartera('rpm OK...: registro_adicional_materias COMMIT - OK');
+            //\app\modules\academico\controllers\RegistroController::putMessageLogFileCartera('rpm OK...: registro_adicional_materias COMMIT - OK');
             return $con->getLastInsertID($con->dbname . '.registro_adicional_materias');
         } catch (Exception $ex) {
             if ($trans !== null){
                 $trans->rollback();}
             \app\models\Utilities::putMessageLogFile('rpm KO...: - KO - '.$ex->getMessage());
-            \app\modules\academico\controllers\RegistroController::putMessageLogFileCartera('rpm KO...: - KO - '.$ex->getMessage());
+            //\app\modules\academico\controllers\RegistroController::putMessageLogFileCartera('rpm KO...: - KO - '.$ex->getMessage());
             return FALSE;
         }
     }
@@ -565,7 +585,274 @@ class RegistroConfiguracion extends \yii\db\ActiveRecord
         $comando->bindParam(":pfes_id", $pfes_id, \PDO::PARAM_INT);
         $comando->bindParam(":rama_id", $rama_id, \PDO::PARAM_INT);
         $resultData = $comando->execute();
-        \app\modules\academico\controllers\RegistroController::putMessageLogFileCartera('update pfes_id');
+        //\app\modules\academico\controllers\RegistroController::putMessageLogFileCartera('update pfes_id');
         return $resultData;
     }
+
+    public function updatePlanAnual($id, $fechaini, $fechafin, $fechaini1, $fechafin1,/* $fechaini2, $fechafin2,*/ $fechaini3, $fechafin3, $fechaini4, $fechafin4,  $fechaini5, $fechafin5 ) {
+        $con = \Yii::$app->db_academico;
+        $fecha = date(Yii::$app->params["dateTimeByDefault"]);
+        $trans = $con->getTransaction(); // se obtiene la transacción actual
+        if ($trans !== null) {
+            $trans = null; // si existe la transacción entonces no se crea una
+        } else {
+            $trans = $con->beginTransaction(); // si no existe la transacción entonces se crea una
+        }
+
+        $param_sql = "rco_estado";
+        $bdet_sql = "1";
+
+        $param_sql .= ", rco_estado_logico";
+        $bdet_sql .= ", 1";
+
+        $param_sql .= ", rco_num_bloques";
+        $bdet_sql .= ", 0";
+        
+        if (isset($fechaini)) {
+            $param_sql .= ", rco_fecha_inicio";
+            $bdet_sql .= ", :rco_fecha_inicio";
+        }
+        if (isset($fechafin)) {
+            $param_sql .= ", rco_fecha_fin";
+            $bdet_sql .= ", :rco_fecha_fin";
+        }
+
+        if (isset($fechaini1)) {
+            $param_sql .= ", rco_fecha_ini_aplicacion";
+            $bdet_sql .= ", :rco_fecha_ini_aplicacion";
+        }
+
+        if (isset($fechafin1)) {
+            $param_sql .= ", rco_fecha_fin_aplicacion";
+            $bdet_sql .= ", :rco_fecha_fin_aplicacion";
+        }
+
+
+        if (isset($fechaini3)) {
+            $param_sql .= ", rco_fecha_ini_periodoextra";
+            $bdet_sql .= ", :rco_fecha_ini_periodoextra";
+        }
+
+        if (isset($fechafin3)) {
+            $param_sql .= ", rco_fecha_fin_periodoextra";
+            $bdet_sql .= ", :rco_fecha_fin_periodoextra";
+        }
+
+        if (isset($fechaini4)) {
+            $param_sql .= ", rco_fecha_ini_clases";
+            $bdet_sql .= ", :rco_fecha_ini_clases";
+        }
+
+        if (isset($fechafin4)) {
+            $param_sql .= ", rco_fecha_fin_clases";
+            $bdet_sql .= ", :rco_fecha_fin_clases";
+        }
+
+        if (isset($fechaini5)) {
+            $param_sql .= ", rco_fecha_ini_examenes";
+            $bdet_sql .= ", :rco_fecha_ini_examenes";
+        }
+
+        if (isset($fechafin5)) {
+            $param_sql .= ", rco_fecha_fin_examenes";
+            $bdet_sql .= ", :rco_fecha_fin_examenes";
+        }     
+        
+        try {
+            \app\models\Utilities::putMessageLogFile('entro sdesdf...: ');
+              $sql = "UPDATE " . $con->dbname . ".registro_configuracion SET 
+              rco_fecha_inicio = :rco_fecha_inicio
+              rco_fecha_fin = :rco_fecha_fin
+              rco_fecha_ini_aplicacion = :rco_fecha_ini_aplicacion 
+              rco_fecha_fin_aplicacion = :rco_fecha_fin_aplicacion
+              rco_fecha_ini_periodoextra = :rco_fecha_ini_periodoextra
+              rco_fecha_fin_periodoextra = :rco_fecha_fin_periodoextra
+                rco_fecha_ini_clases = :rco_fecha_ini_clases
+              rco_fecha_fin_clases = :rco_fecha_fin_clases
+                rco_fecha_ini_examenes = :rco_fecha_ini_examenes
+              rco_fecha_fin_examenes = :rco_fecha_fin_examenes
+                 WHERE rco_id = :id";
+              
+              
+            // Hacer al query un comando
+            $comando = $con->createCommand($sql);            
+
+            // Ejecutar el comando del query
+            $result = $comando->execute();
+            //$sql = "INSERT INTO " . $con->dbname . ".registro_configuracion ($param_sql) VALUES($bdet_sql)";
+          //  $comando = $con->createCommand($sql);
+
+            if (isset($id)) {
+                $comando->bindParam(':id', $id, \PDO::PARAM_INT);
+            }
+            
+         
+            if ($fechaini != "" && $fechafin != "") {
+                $fecha_ini = $fechaini . " 00:00:00";
+                $fecha_fin = $fechafin . " 23:59:59";
+                $comando->bindParam(":rco_fecha_inicio", $fecha_ini, \PDO::PARAM_STR);
+                $comando->bindParam(":rco_fecha_fin", $fecha_fin, \PDO::PARAM_STR);
+    
+            }
+
+
+            if ($fechaini1 != "" && $fechafin1 != "") {
+                $fecha_ini1 = $fechaini1 . " 00:00:00";
+                $fecha_fin1 = $fechafin1 . " 23:59:59";
+                $comando->bindParam(":rco_fecha_ini_aplicacion", $fecha_ini1, \PDO::PARAM_STR);
+                $comando->bindParam(":rco_fecha_fin_aplicacion", $fecha_fin1, \PDO::PARAM_STR);
+    
+            }
+
+            if ($fechaini3 != "" && $fechafin3 != "") {
+                $fecha_ini3 = $fechaini3 . " 00:00:00";
+                $fecha_fin3 = $fechafin3 . " 23:59:59";
+                $comando->bindParam(":rco_fecha_ini_periodoextra", $fecha_ini3, \PDO::PARAM_STR);
+                $comando->bindParam(":rco_fecha_fin_periodoextra", $fecha_fin3, \PDO::PARAM_STR);
+    
+            }
+
+            if ($fechaini4 != "" && $fechafin4 != "") {
+                $fecha_ini4 = $fechaini4 . " 00:00:00";
+                $fecha_fin4 = $fechafin4 . " 23:59:59";
+                $comando->bindParam(":rco_fecha_ini_clases", $fecha_ini4, \PDO::PARAM_STR);
+                $comando->bindParam(":rco_fecha_fin_clases", $fecha_fin4, \PDO::PARAM_STR);
+    
+            }
+
+            if ($fechaini5 != "" && $fechafin5 != "") {
+                $fecha_ini5 = $fechaini5 . " 00:00:00";
+                $fecha_fin5 = $fechafin5 . " 23:59:59";
+                $comando->bindParam(":rco_fecha_ini_examenes", $fecha_ini5, \PDO::PARAM_STR);
+                $comando->bindParam(":rco_fecha_fin_examenes", $fecha_fin5, \PDO::PARAM_STR);
+    
+            }
+
+
+            $result = $comando->execute();
+            if ($trans !== null)
+                $trans->commit();
+            return TRUE;
+        } catch (Exception $ex) {
+            if ($trans !== null)
+                $trans->rollback();
+            return FALSE;
+        }
+    }  
+
+    public function insertarPlanAnual(
+        $pla_id,
+        $fechaini,
+        $fechafin,
+        $fechaini1,
+        $fechafin1,
+        /* $fechaini2, $fechafin2,*/ 
+        $fechaini3,
+        $fechafin3,
+        $fechaini4,
+        $fechafin4,
+        $fechaini5,
+        $fechafin5 
+    ) {
+        $con = \Yii::$app->db_academico;
+        $transaction=$con->beginTransaction(); 
+        $date = date(Yii::$app->params["dateTimeByDefault"]);
+        // se obtiene la transacción actual
+        if ($fechaini != "" && $fechafin != "") {
+            $fecha_ini = $fechaini . " 00:00:00";
+            $fecha_fin = $fechafin . " 23:59:59";
+        }
+
+
+        if ($fechaini1 != "" && $fechafin1 != "") {
+            $fecha_ini1 = $fechaini1 . " 00:00:00";
+            $fecha_fin1 = $fechafin1 . " 23:59:59";
+
+        }
+
+        /*
+        if ($fechaini2 != "" && $fechafin2 != "") {
+            $fecha_ini2 = $fechaini2 . " 00:00:00";
+            $fecha_fin2 = $fechafin2 . " 23:59:59";
+            $comando->bindParam(":rco_fecha_ini_registro", $fecha_ini2, \PDO::PARAM_STR);
+            $comando->bindParam(":rco_fecha_fin_registro", $fecha_fin2, \PDO::PARAM_STR);
+
+        }
+
+        */
+        if ($fechaini3 != "" && $fechafin3 != "") {
+            $fecha_ini3 = $fechaini3 . " 00:00:00";
+            $fecha_fin3 = $fechafin3 . " 23:59:59";
+        
+        }
+
+        if ($fechaini4 != "" && $fechafin4 != "") {
+            $fecha_ini4 = $fechaini4 . " 00:00:00";
+            $fecha_fin4 = $fechafin4 . " 23:59:59";
+        
+        }
+
+        if ($fechaini5 != "" && $fechafin5 != "") {
+            $fecha_ini5 = $fechaini5 . " 00:00:00";
+            $fecha_fin5 = $fechafin5 . " 23:59:59";
+        }    
+        
+        try {
+            \app\models\Utilities::putMessageLogFile('entro insert...: ');
+            $sql = "INSERT INTO " . $con->dbname . ".registro_configuracion 
+                (pla_id, 
+                rco_fecha_inicio, 
+                rco_fecha_fin, 
+                rco_fecha_ini_aplicacion,
+                rco_fecha_fin_aplicacion,
+                rco_fecha_ini_registro,
+                rco_fecha_fin_registro,
+                rco_fecha_ini_periodoextra,
+                rco_fecha_fin_periodoextra,
+                rco_fecha_ini_clases, 
+                rco_fecha_fin_clases,
+                rco_fecha_ini_examenes,
+                rco_fecha_fin_examenes, 
+                rco_num_bloques,
+                rco_estado, 
+                rco_fecha_creacion,
+                rco_usuario_modifica, 
+                rco_fecha_modificacion,
+                rco_estado_logico
+                ) VALUES(
+                    $pla_id, 
+                    '$fecha_ini', 
+                    '$fecha_fin',
+                    '$fecha_ini1',
+                    '$fecha_fin1',
+                    '$fecha_ini', 
+                    '$fecha_fin',
+                    '$fecha_ini3',
+                    '$fecha_fin3',
+                    '$fecha_ini4',
+                    '$fecha_fin4',
+                    '$fecha_ini5',
+                    '$fecha_fin5',
+                    0,
+                    1,
+                    '$date',
+                    Null,
+                    Null,
+                    1
+
+                )";
+            $comando = $con->createCommand($sql);
+            $comando->execute();
+            \app\models\Utilities::putMessageLogFile('insertRegConf: ' . $comando->getRawSql());
+
+            if ($transaction !== null)
+                $transaction->commit();
+            return TRUE;
+        } catch (Exception $ex) {
+            if ($transaction !== null)
+                $transaction->rollback();
+            return FALSE;
+        }
+    }
+
 }

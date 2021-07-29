@@ -55,6 +55,7 @@ return [
     'cookieSession' => 3600 * 24 * 30,
     //'cookieSession' => 3600,
     'logfile' => __DIR__ . '/../runtime/logs/pb.log',
+    'logfilecartera' => __DIR__ . '/../runtime/logs/cargacartera.log',
     'limitRow' => 10,
     'pageSize' => 20,
     'userWebServer' => getenv('APACHE_RUN_USER'),

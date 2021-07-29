@@ -64,7 +64,7 @@ class PlanificacionController extends \app\components\CController {
         ];
     }
 
-    public function actionIndex() {
+     public function actionIndex() {
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->get();
             $pla_periodo_academico = $data['pla_periodo_academico'];
@@ -144,7 +144,7 @@ mail('oscaromars@hotmail.com', 'Mi título', $mensaje);
 
  $con = \Yii::$app->db_academico;
  $sql = "
-                 select e.est_id, e.per_id, e.est_matricula, e.est_fecha_creacion, e.est_categoria, meu.uaca_id, meu.mod_id, meu.eaca_id, -- 
+                 select e.est_id, e.per_id, e.est_matricula, e.est_fecha_creacion, e.est_categoria, meu.uaca_id, meu.mod_id, meu.eaca_id, DATEDIFF(NOW(),e.est_fecha_creacion) as olderi, -- 
 u.uaca_id, u.uaca_nombre, ea.teac_id, ea.eaca_nombre, ea.eaca_codigo,
 per.per_cedula,  mumo.maca_id , maca.maca_codigo, maca.maca_nombre,
 concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_apellido, ' ', ifnull(per.per_seg_apellido,'')) estudiante
@@ -156,10 +156,9 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
    inner join db_academico.unidad_academica u on u.uaca_id = meu.uaca_id
    inner join db_academico.estudio_academico ea on ea.eaca_id = meu.eaca_id 
    inner join db_asgard.persona per on per.per_id = e.per_id
-   where e.per_id in (select b.per_id from db_academico.planificacion_estudiante b where
-    b.pla_id= ( select max(dap.pla_id) from db_academico.planificacion dap 
-    where meu.mod_id = dap.mod_id ))
+    where               e.est_matricula is not Null
                     and meu.mod_id = :modalidad
+                    and u.uaca_id = 1
                     and e.est_estado = 1
                     and e.est_estado_logico = 1
                     and c.ecpr_estado = 1
@@ -172,7 +171,14 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
                     and ea.eaca_estado_logico = 1
                     and per.per_estado = 1
                     and per.per_estado_logico = 1
-
+                    and 
+(e.per_id in (select b.per_id from db_academico.planificacion_estudiante b where
+b.pla_id= ( select max(dap.pla_id) from db_academico.planificacion dap 
+ where meu.mod_id = dap.mod_id ))) or (e.per_id in (
+select a.per_id from db_asgard.persona as a 
+inner join db_academico.estudiante b on a.per_id = b.per_id
+where DATEDIFF(NOW(),b.est_fecha_creacion) <=90 and
+DATEDIFF(NOW(),a.per_fecha_creacion) <=90))  
                 ";
 
  $comando = $con->createCommand($sql);
@@ -181,23 +187,23 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
                
                
                     
-                            
+                               $malla = new MallaAcademica();
                $allstudents= count($resultData);
+                \app\models\Utilities::putMessageLogFile("all: ".count($resultData)); 
+                 
+
+
                  if (count($resultData) > 0) {
-           // putMessageLogFile('Cantidad de registros:'.count($resultData));
-            for ($i = 0; $i < count($resultData); $i++) {                        
-                // consultar asignaturas_por_periodo programadas en abrirse.
-                   $malla = new MallaAcademica();
-    $centralprocess = $malla->consultarAsignaturas($resultData[$i],$periodo,$saca_nombre["semestre"]);   
-                     
-                    if ($centralprocess == 1) { $ok=1;  }        
-
+           
+            for ($i = 0; $i < count($resultData); $i++) {                       
+$centralprocess = $malla->consultarAsignaturas($resultData[$i],$periodo,$saca_nombre["semestre"],$modalidad);                 if ($centralprocess == 1) { $ok=1;  }        
                      \app\models\Utilities::putMessageLogFile("Received ".$centralprocess); 
-
             }
+
         }else{
-           // putMessageLogFile("No hay registros por insertar.");
+        
         }   
+
              
           if ($ok != 1)  {
         \Yii::$app->getSession()->setFlash('msg', 'No existen datos suficientes para generar la planificacion seleccionada');
@@ -212,10 +218,6 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
             \Yii::$app->getSession()->setFlash('msgok', 'Se ha generado con exito la planificacion');
          return $this->redirect(['index']);
      }
- 
-
- 
-
       public function actionDescargarples()  {    
       
         ini_set('memory_limit', '256M');
@@ -537,41 +539,58 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
             $data = Yii::$app->request->post();
             try {
                $pla_id = $data['pla_id'];
+               \app\models\Utilities::putMessageLogFile('pla..: '. $pla_id);
                 $finicio = $data['finicio'];
-                \app\models\Utilities::putMessageLogFile('entro..: ');
+                //\app\models\Utilities::putMessageLogFile('entro..: ');
                 \app\models\Utilities::putMessageLogFile('finicio..: '. $finicio);  
                 $ffin = $data['ffin'];
-
+                \app\models\Utilities::putMessageLogFile('ffin..: '. $ffin);
                 $finicio1 = $data['finicio1'];
+                \app\models\Utilities::putMessageLogFile('finicio1.: '. $finicio1);
                 $ffin1 = $data['ffin1'];
+                \app\models\Utilities::putMessageLogFile('ffin..: '. $ffin1);
 
              //   $finicio2 = $data['finicio2'];
              //   $ffin2 = $data['ffin2'];
 
                 $finicio3 = $data['finicio3'];
+                \app\models\Utilities::putMessageLogFile('finicio3.: '. $finicio3);
                 $ffin3 = $data['ffin3'];
-
+                \app\models\Utilities::putMessageLogFile('fin3.: '. $ffin3);
                 $finicio4 = $data['finicio4'];
+                \app\models\Utilities::putMessageLogFile('finicio4.: '. $finicio4);
                 $ffin4 = $data['ffin4'];
-
+                \app\models\Utilities::putMessageLogFile('fin4.: '. $ffin4);
                 $finicio5 = $data['finicio5'];
+                \app\models\Utilities::putMessageLogFile('finicio5.: '. $finicio5);
                 $ffin5 = $data['ffin5'];
+                \app\models\Utilities::putMessageLogFile('fin5.: '. $ffin5);
 
 
-                $bloque = $data['bloque'];
+                // $bloque = $data['bloque'];
                 $modelconf = new RegistroConfiguracion();
-                $inserta_planificacionanual = $modelconf->insertarPlanAnual($pla_id, $finicio, $ffin,$finicio1, $ffin1, /*$finicio2, $ffin2, */ $finicio3, $ffin3, $finicio4, $ffin4,$finicio5, $ffin5);
-
-
-                $message = array(
-                    'wtmessage' => Yii::t('notificaciones', 'Your information was successfully saved.'),
-                    'title' => Yii::t('jslang', 'Success'),
+                $inserta_planificacionanual = $modelconf->insertarPlanAnual(
+                    $pla_id, 
+                    strval($finicio), 
+                    strval($ffin),
+                    strval($finicio1), 
+                    strval($ffin1), /*$finicio2, $ffin2, */ 
+                    strval($finicio3), 
+                    strval($ffin3), 
+                    strval($finicio4), 
+                    strval($ffin4),
+                    strval($finicio5), 
+                    strval($ffin5)
                 );
-                if ($model->save()) {
-                    return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
-                } else {
-                    throw new Exception('Error registro no creado.');
+
+                if(!$inserta_planificacionanual){
+                    throw new Exception('Error al Registrar la línea de investigación');
                 }
+                $message = array(
+                    "wtmessage" => Yii::t('notificaciones', 'Your information was successfully saved.'),
+                    "title" => Yii::t('jslang', 'Success'),
+                );
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
             } catch (Exception $ex) {
                 $message = array(
                     'wtmessage' => Yii::t('notificaciones', 'Your information has not been saved. Please try again.'),
@@ -1179,6 +1198,7 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
                     //print_r('Error'); die();
                     $arrSearch['modalidad'] = $modalidad?$modalidad:0;
                     $arrSearch['periodo'] = $periodo?$periodo:0;
+                    $arrSearch['bloque'] = $bloque?$bloque:0;
                     $model_plan = $mod_periodo->consultarEstudiantePeriodo($arrSearch);
                     \app\models\Utilities::putMessageLogFile('todos...: ');
                     \app\models\Utilities::putMessageLogFile('modalidad y periodod '.$arrSearch['modalidad'] .'-'.$arrSearch['periodo'] );
@@ -1360,6 +1380,7 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
         $this->view->title = academico::t('Academico', 'Resumen de Planificación');
         // Titulo del reporte
         $arrHeader = array(
+            Yii::t('formulario', 'ID'),
             Yii::t('formulario', 'Modalidad'),
             Yii::t('formulario', 'Periodo'),
             Yii::t('formulario', 'Bloque'),
@@ -1404,6 +1425,7 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
         header('Cache-Control: max-age=0');
         $colPosition = array('C', 'D', 'E', 'F', 'G', 'H');
         $arrHeader = array(
+            Yii::t('formulario', 'ID'),
             Yii::t('formulario', 'Modalidad'),
             Yii::t('formulario', 'Periodo'),
             Yii::t('formulario', 'Bloque'),

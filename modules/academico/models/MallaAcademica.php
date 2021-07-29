@@ -394,7 +394,7 @@ class MallaAcademica extends \yii\db\ActiveRecord
     }
     
     
-     function consultarAsignaturas($rows,$gest,$semestre,$modalidad) {
+      function consultarAsignaturas($rows,$gest,$semestre,$modalidad) {
     $con = \Yii::$app->db_academico;
     $activo="A"; // $rows["mod_id"]
     $per_id = $rows["per_id"];
@@ -1027,34 +1027,78 @@ from db_academico.periodo_academico plac
 
                   // by  $getifasi["hosd_hora"] and $getifasi["hosd_bloque"] ==> daho_id=============>
                   
-                    if($getpaal["paal_cantidad"] == 0){
+                    if ($getifasi["hosd_bloque"]== 1){
+                     $block='B1'; }Else {   $block='B2'; }
+
+                        $getpaca = "
+                        select paca.paca_id from db_academico.semestre_academico as saca
+                            inner join db_academico.periodo_academico as paca
+                            on saca.saca_id = paca.saca_id
+                            inner join db_academico.bloque_academico as baca
+                            on paca.baca_id = baca.baca_id
+                            where baca.baca_nombre = :baca_id
+                            and saca.saca_id = :saca_id
+                            ";
+                         $comando = $con->createCommand($getpaca);
+                   $comando->bindParam(":baca_id", $block, \PDO::PARAM_STR);
+                   $comando->bindParam(":saca_id", $gest, \PDO::PARAM_INT);
+                   $getpaca = $comando->queryOne();
+                    $paca_id = $getpaca["paca_id"];
                    
-                        // GET PACA
-                        // SET PAR -- obtain paca by saca $getifasi["hosd_bloque"] 1 2
-                        // GET PAR
+
+                    if($getpaal["paal_cantidad"] == 0){
+                    
+                  $num_par = 1;
+                $setmpar= "
+                INSERT INTO db_academico.materia_paralelo_periodo (asi_id, mod_id, paca_id, daho_id, mpp_num_paralelo, mpp_usuario_ingreso, mpp_estado, mpp_estado_logico)
+                 VALUES ('231', '1', '14', '5', '1', '1', '1', '1') ";
+
+                    
+                $comando = $con->createCommand($setmpar); 
+                $setmpar = $comando->execute();
+
 
                     } else {
           
                       if(INT($getpaal["paal_cantidad"]/50) == $getpaal["paal_cantidad"] / 50){
+                       $num_par =floor($getpaal["paal_cantidad"]/50+1); 
+                     
+                  $setmpar= "
+                INSERT INTO db_academico.materia_paralelo_periodo (asi_id, mod_id, paca_id, daho_id, mpp_num_paralelo, mpp_usuario_ingreso, mpp_estado, mpp_estado_logico)
+                 VALUES ('231', '1', '14', '5', '1', '1', '1', '1') ";
 
-                      // GET MAX PAR
-                      // GET PACA
-                      // SET PAR
-                      // GET PAR
-
-
+                    
+                $comando = $con->createCommand($setmpar); 
+                $setmpar = $comando->execute();
+                        
+              
                     } else {
 
-                    // GET MAX PAR
-
+                              $num_par =floor($getpaal["paal_cantidad"]/50+1); 
                     }
 
 
                     } 
 
-                    // update paal_cantidad
-                    
 
+                $getmpar = "
+                select mpp_id, asi_id, mod_id, paca_id, daho_id, mpp_num_paralelo
+                from db_academico.materia_paralelo_periodo
+                where
+                asi_id= :asi_id AND
+                    mod_id = :mod_id AND
+                paca_id = :paca_id AND
+                mpp_num_paralelo = :paar"
+                  ;
+
+                 $comando = $con->createCommand($getmpar);
+                   $comando->bindParam(":asi_id", $iddd, \PDO::PARAM_INT);
+                   $comando->bindParam(":paca_id", $paca, \PDO::PARAM_INT);
+                   $comando->bindParam(":mod_id", $mod_id, \PDO::PARAM_INT);
+                   $comando->bindParam(":paar", $num_par, \PDO::PARAM_INT);
+                   $getmpar = $comando->queryOne();
+
+                    // update paal_cantidad
 
 
                   if ($getifasi["hosd_bloque"] == 1){
@@ -1095,9 +1139,11 @@ from db_academico.periodo_academico plac
                    
                     }  
 
+
+
                     
 
-                     }//endfor       pes_mat_b1_h1_mpp
+                     }//endfor       
 
                      $sql = "INSERT INTO db_academico.planificacion_estudiante
                     (pla_id, per_id, pes_jornada,pes_cod_carrera, pes_carrera, pes_dni, pes_nombres,pes_mat_b1_h1_cod, pes_mat_b1_h2_cod, pes_mat_b1_h3_cod, pes_mat_b1_h4_cod, pes_mat_b2_h1_cod,

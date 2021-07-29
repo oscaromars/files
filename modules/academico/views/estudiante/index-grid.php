@@ -36,8 +36,8 @@ PbGridView::widget([
             'header' => Yii::t("formulario", "Email"),
             'value' => 'correo',
         ],
-        [
-            'attribute' => 'Carrera',
+        /*[
+            'attribute' => 'Unidad',
             'header' => academico::t("Academico", "Academic unit"),
             'value' => 'undidad',
         ],
@@ -45,7 +45,7 @@ PbGridView::widget([
             'attribute' => 'Modalidad',
             'header' => academico::t("matriculacion", "Modality"),
             'value' => 'modalidad',
-        ],
+        ],*/
         [
             'class' => 'yii\grid\ActionColumn',
             'header' => academico::t("Academico", "Career/Program"),

@@ -443,6 +443,16 @@ function updateRegConf() {
     arrParams.pla_id = $('#cmb_per_acad').val();
     arrParams.finicio = $('#frm_fecha_ini').val();
     arrParams.ffin = $('#frm_fecha_fin').val();
+    arrParams.finicio1 = $('#frm_fecha_inip1').val();
+    arrParams.ffin1 = $('#frm_fecha_finp1').val();
+    //arrParams.finicio2 = $('#frm_fecha_inip2').val();
+    //arrParams.ffin2 = $('#frm_fecha_finp2').val();
+    arrParams.finicio3 = $('#frm_fecha_inip3').val();
+    arrParams.ffin3 = $('#frm_fecha_finp3').val();
+    arrParams.finicio4 = $('#frm_fecha_inip4').val();
+    arrParams.ffin4 = $('#frm_fecha_finp4').val();
+    arrParams.finicio5 = $('#frm_fecha_inip5').val();
+    arrParams.ffin5 = $('#frm_fecha_finp5').val();
     arrParams.bloque = $('#cmb_bloque').val();
     if ($('#frm_fecha_ini').val() > $('#frm_fecha_fin').val()) {
         var msg = objLang.The_initial_date_of_registry_cannot_be_greater_than_end_date_;
@@ -450,10 +460,10 @@ function updateRegConf() {
         return;
     }
     if (!validateForm()) {
-        requestHttpAjax(link, arrParams, function (response) {
+        requestHttpAjax(link, arrParams, function(response) {
             showAlert(response.status, response.label, response.message);
             if (response.status == "OK") {
-                setTimeout(function () {
+                setTimeout(function() {
                     window.location.href = $('#txth_base').val() + "/academico/planificacion/registerprocess";
                 }, 3000);
             }
@@ -467,6 +477,16 @@ function saveRegConf() {
     arrParams.pla_id = $('#cmb_per_acad').val();
     arrParams.finicio = $('#frm_fecha_ini').val();
     arrParams.ffin = $('#frm_fecha_fin').val();
+    arrParams.finicio1 = $('#frm_fecha_inip1').val();
+    arrParams.ffin1 = $('#frm_fecha_finp1').val();
+    //arrParams.finicio2 = $('#frm_fecha_inip2').val();
+    //arrParams.ffin2 = $('#frm_fecha_finp2').val();
+    arrParams.finicio3 = $('#frm_fecha_inip3').val();
+    arrParams.ffin3 = $('#frm_fecha_finp3').val();
+    arrParams.finicio4 = $('#frm_fecha_inip4').val();
+    arrParams.ffin4 = $('#frm_fecha_finp4').val();
+    arrParams.finicio5 = $('#frm_fecha_inip5').val();
+    arrParams.ffin5 = $('#frm_fecha_finp5').val();
     arrParams.bloque = $('#cmb_bloque').val();
     if ($('#frm_fecha_ini').val() > $('#frm_fecha_fin').val()) {
         var msg = objLang.The_initial_date_of_registry_cannot_be_greater_than_end_date_;
@@ -474,15 +494,41 @@ function saveRegConf() {
         return;
     }
     if (!validateForm()) {
-        requestHttpAjax(link, arrParams, function (response) {
+        requestHttpAjax(link, arrParams, function(response) {
             showAlert(response.status, response.label, response.message);
             if (response.status == "OK") {
-                setTimeout(function () {
+                setTimeout(function() {
                     window.location.href = $('#txth_base').val() + "/academico/planificacion/registerprocess";
                 }, 3000);
             }
         }, true);
     }
+}
+
+function guardarAnualPla() {
+        var link = $('#txth_base').val() + "/academico/planificacion/saveplananual";
+        var arrParams = new Object();
+        arrParams.periodoacad = $('#cmb_per_acad option:selected').val();
+        arrParams.fechaini1 = $('#txt_fecha_inip1').val();
+        arrParams.fechafin1 = $('#txt_fecha_finp1').val();
+        arrParams.fechaini2 = $('#txt_fecha_inip2').val();
+        arrParams.fechafin2 = $('#txt_fecha_finp2').val();
+        arrParams.fechaini3 = $('#txt_fecha_inip3').val();
+        arrParams.fechafin3 = $('#txt_fecha_finp3').val();
+        arrParams.fechaini4 = $('#txt_fecha_inip4').val();
+        arrParams.fechafin4 = $('#txt_fecha_finp4').val();
+        arrParams.fechaini5 = $('#txt_fecha_inip5').val();
+        arrParams.fechafin5 = $('#txt_fecha_finp5').val();
+      
+
+       if (!validateForm()) {
+            requestHttpAjax(link, arrParams, function (response) {
+                showAlert(response.status, response.label, response.message);
+                setTimeout(function () {
+                    window.location.href = $('#txth_base').val() + "/academico/asignaturasporperiodo/new";
+                }, 3000);
+            }, true);
+        }
 }
 
 function deleteItem(id) {
@@ -507,6 +553,9 @@ function actualizarGridPlanest() {
     arrParams.modalidad = modalidad;
     var periodo = $('#cmb_periodoacad option:selected').val();
     arrParams.periodo = periodo;
+    var bloque = $('#cmb_bloqueacad option:selected').val();
+    arrParams.bloque = bloque;
+
     arrParams.filtros = 1;
     //alert(modalidad+'-'+periodo+'-'+arrParams.filtros);
     //Buscar almenos una clase con el nombre para ejecutar
@@ -516,7 +565,7 @@ function actualizarGridPlanest() {
         setTimeout(function() {
             //windows.location.href = $('#txth_base').val() + "/academico/registro/index";    
             //hideLoadingPopup();
-            parent.window.location.href = link+'?modalidad='+modalidad+'&periodo='+periodo+'&PBgetFilter='+arrParams.filtros;
+            parent.window.location.href = link+'?modalidad='+modalidad+'&periodo='+periodo+'&bloque='+bloque+'&PBgetFilter='+arrParams.filtros;
             }, 1000);
     /* }
     try{

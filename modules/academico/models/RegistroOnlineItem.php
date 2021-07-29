@@ -16,6 +16,9 @@ use app\modules\academico\models\RegistroOnline;
  * @property string $roi_materia_nombre
  * @property string $roi_creditos
  * @property string $roi_costo
+ * @property string $roi_bloque
+ * @property string $roi_hora
+ * @property string $roi_paralelo
  * @property string $roi_estado
  * @property string $roi_fecha_creacion
  * @property string $roi_usuario_modifica
@@ -64,6 +67,9 @@ class RegistroOnlineItem extends \yii\db\ActiveRecord {
             'roi_materia_nombre' => 'Roi Materia Nombre',
             'roi_creditos' => 'Roi Creditos',
             'roi_costo' => 'Roi Costo',
+            'roi_bloque' => 'Roi Bloque',
+            'roi_hora' => 'Roi Hora',
+            'roi_paralelo' => 'Roi Paralelo',
             'roi_estado' => 'Roi Estado',
             'roi_fecha_creacion' => 'Roi Fecha Creacion',
             'roi_usuario_modifica' => 'Roi Usuario Modifica',
@@ -188,7 +194,8 @@ class RegistroOnlineItem extends \yii\db\ActiveRecord {
         $roi_creditos, 
         $roi_costo, 
         $roi_bloque, 
-        $roi_hora
+        $roi_hora,
+        $roi_paralelo
         
     ){
 
@@ -204,7 +211,8 @@ class RegistroOnlineItem extends \yii\db\ActiveRecord {
                 roi_creditos, 
                 roi_costo, 
                 roi_bloque, 
-                roi_hora, 
+                roi_hora,
+                roi_paralelo, 
                 roi_estado, 
                 roi_fecha_creacion, 
                 roi_usuario_modifica, 
@@ -219,6 +227,7 @@ class RegistroOnlineItem extends \yii\db\ActiveRecord {
                     $roi_costo, 
                     '$roi_bloque', 
                     '$roi_hora', 
+                    '$roi_paralelo', 
                     1, 
                     '$date', 
                     1, 

@@ -537,41 +537,58 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
             $data = Yii::$app->request->post();
             try {
                $pla_id = $data['pla_id'];
+               \app\models\Utilities::putMessageLogFile('pla..: '. $pla_id);
                 $finicio = $data['finicio'];
-                \app\models\Utilities::putMessageLogFile('entro..: ');
+                //\app\models\Utilities::putMessageLogFile('entro..: ');
                 \app\models\Utilities::putMessageLogFile('finicio..: '. $finicio);  
                 $ffin = $data['ffin'];
-
+                \app\models\Utilities::putMessageLogFile('ffin..: '. $ffin);
                 $finicio1 = $data['finicio1'];
+                \app\models\Utilities::putMessageLogFile('finicio1.: '. $finicio1);
                 $ffin1 = $data['ffin1'];
+                \app\models\Utilities::putMessageLogFile('ffin..: '. $ffin1);
 
              //   $finicio2 = $data['finicio2'];
              //   $ffin2 = $data['ffin2'];
 
                 $finicio3 = $data['finicio3'];
+                \app\models\Utilities::putMessageLogFile('finicio3.: '. $finicio3);
                 $ffin3 = $data['ffin3'];
-
+                \app\models\Utilities::putMessageLogFile('fin3.: '. $ffin3);
                 $finicio4 = $data['finicio4'];
+                \app\models\Utilities::putMessageLogFile('finicio4.: '. $finicio4);
                 $ffin4 = $data['ffin4'];
-
+                \app\models\Utilities::putMessageLogFile('fin4.: '. $ffin4);
                 $finicio5 = $data['finicio5'];
+                \app\models\Utilities::putMessageLogFile('finicio5.: '. $finicio5);
                 $ffin5 = $data['ffin5'];
+                \app\models\Utilities::putMessageLogFile('fin5.: '. $ffin5);
 
 
-                $bloque = $data['bloque'];
+                // $bloque = $data['bloque'];
                 $modelconf = new RegistroConfiguracion();
-                $inserta_planificacionanual = $modelconf->insertarPlanAnual($pla_id, $finicio, $ffin,$finicio1, $ffin1, /*$finicio2, $ffin2, */ $finicio3, $ffin3, $finicio4, $ffin4,$finicio5, $ffin5);
-
-
-                $message = array(
-                    'wtmessage' => Yii::t('notificaciones', 'Your information was successfully saved.'),
-                    'title' => Yii::t('jslang', 'Success'),
+                $inserta_planificacionanual = $modelconf->insertarPlanAnual(
+                    $pla_id, 
+                    strval($finicio), 
+                    strval($ffin),
+                    strval($finicio1), 
+                    strval($ffin1), /*$finicio2, $ffin2, */ 
+                    strval($finicio3), 
+                    strval($ffin3), 
+                    strval($finicio4), 
+                    strval($ffin4),
+                    strval($finicio5), 
+                    strval($ffin5)
                 );
-                if ($model->save()) {
-                    return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
-                } else {
-                    throw new Exception('Error registro no creado.');
+
+                if(!$inserta_planificacionanual){
+                    throw new Exception('Error al Registrar la línea de investigación');
                 }
+                $message = array(
+                    "wtmessage" => Yii::t('notificaciones', 'Your information was successfully saved.'),
+                    "title" => Yii::t('jslang', 'Success'),
+                );
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
             } catch (Exception $ex) {
                 $message = array(
                     'wtmessage' => Yii::t('notificaciones', 'Your information has not been saved. Please try again.'),

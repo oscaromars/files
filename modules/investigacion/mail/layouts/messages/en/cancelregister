@@ -1,0 +1,15 @@
+<strong>Hello [[user]],</strong>
+<br /><br />
+There has been a cancellation of the registration of subjects for the <strong>[[periodo]]</strong> of the following student:<br /><br />
+<strong>Name:</strong> [[nombres]]<br />
+<strong>SSN/Passport:</strong> [[dni]]
+<br /><br />
+If there are any errors please contact technical support.
+<br /><br />
+Thank you for your attention.
+<br /><br />
+<strong>Sincerely:</strong><br />
+<strong>Arq. José Bohórquez Zavala, MSc.</strong><br />
+<strong>Secretario General</strong><br />
+<strong>Universidad Tecnológica Empresarial de Guayaquil</strong><br />
+

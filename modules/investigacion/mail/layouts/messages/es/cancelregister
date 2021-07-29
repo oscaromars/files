@@ -1,0 +1,14 @@
+<strong>Hola [[user]],</strong>
+<br /><br />
+Se ha realizado una anulacion de registro de materias para el período académico <strong>[[periodo]]</strong> de la modalidad [[modalidad]] del siguiente Estudiante: <br /><br />
+<strong>Nombres:</strong> [[nombres]]<br />
+<strong>SSN/Pasaporte:</strong> [[dni]]
+<br /><br />
+Si hay algun error por favor comunicarse con departamento acádemico.
+<br /><br />
+Gracias por la atención prestada.
+<br /><br />
+<strong>Atentamente:</strong><br />
+<strong>Arq. José Bohórquez Zavala, MSc.</strong><br />
+<strong>Secretario General</strong><br />
+<strong>Universidad Tecnológica Empresarial de Guayaquil</strong><br />

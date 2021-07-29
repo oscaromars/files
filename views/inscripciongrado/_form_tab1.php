@@ -154,7 +154,7 @@ academico::registerTranslations();
                 <div class="form-group">
                     <label for="cmb_ciu_nac" class="col-sm-3 control-label"><?= Yii::t("formulario", "City of birth") ?> <span class="text-danger">*</span> </label>
                     <div class="col-sm-7">
-                        <?= Html::dropDownList("cmb_ciu_nac", $can_id_nacimiento, $arr_ciudad, ["class" => "form-control can_combo", "id" => "cmb_ciu_nac"]) ?>
+                        <?= Html::dropDownList("cmb_ciu_nac", $can_id_nacimiento, $arr_ciudad_nac, ["class" => "form-control can_combo", "id" => "cmb_ciu_nac"]) ?>
                     </div>
                 </div>
             </div>
@@ -183,7 +183,7 @@ academico::registerTranslations();
                 <div class="form-group">
                     <label for="cmb_nacionalidad" class="col-sm-3 control-label"><?= Yii::t("formulario", "Nacionalidad") ?><span class="text-danger">*</span></label>
                     <div class="col-sm-7">
-                        <input type="text" class="form-control PBvalidation keyupmce" id="cmb_nacionalidad" value="<?= $per_nacionalidad ?>" data-type="alfanumerico" data-keydown="true" placeholder="<?= Yii::t("formulario", "Nationality") ?>">
+                        <?= Html::dropDownList("cmb_nacionalidad", '', $arr_nacionalidad, ["class" => "form-control", "id" => "cmb_nacionalidad"]) ?>
                     </div>
                 </div>
             </div>

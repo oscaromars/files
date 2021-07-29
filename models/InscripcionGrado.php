@@ -3,6 +3,8 @@
 namespace app\models;
 
 use Yii;
+use yii\data\ArrayDataProvider;
+use app\models\Utilities;
 
 /**
  * This is the model class for table "inscripcion_grado".
@@ -377,5 +379,91 @@ class InscripcionGrado extends \yii\db\ActiveRecord
         //$comando->bindParam(":estado_precio", $estado_precio, \PDO::PARAM_STR);
         $resultData = $comando->queryOne();
         return $resultData;
+    }
+
+    function consultaRegistroAdmisiongrado($arrFiltro = array(), $reporte){
+        $con_inscripcion = \Yii::$app->db_inscripcion;
+        $con_asgard = \Yii::$app->db_asgard;
+        $con_academico = \Yii::$app->db_academico;
+        $estado = 1;
+
+        if (isset($arrFiltro) && count($arrFiltro) > 0) {
+            $str_search .= "(p.per_pri_nombre like :search OR ";
+            $str_search .= "p.per_seg_nombre like :search OR ";
+            $str_search .= "p.per_pri_apellido like :search OR ";
+            $str_search .= "p.per_seg_apellido like :search OR ";
+            $str_search .= "p.per_cedula like :search) AND ";
+
+            if ($arrFiltro['unidad'] != "" && $arrFiltro['unidad'] > 0) {
+                $str_search .= "igra.uaca_id = :unidad AND ";
+            }
+            if ($arrFiltro['carrera'] != "" && $arrFiltro['carrera'] > 0) {
+                $str_search .= "igra.eaca_id = :carrera AND ";
+            }
+            if ($arrFiltro['modalidad'] != "" && $arrFiltro['modalidad'] > 0) {
+                $str_search .= "igra.mod_id = :modalidad AND ";
+            }
+            if ($arrFiltro['periodo'] != "" && $arrFiltro['periodo'] > 0) {
+                $str_search .= "igra.paca_id = :periodo AND ";
+            }
+        }
+
+        $sql = "SELECT distinct per.per_id,
+                per.per_cedula as Cedula,
+                ifnull(CONCAT(ifnull(per.per_pri_apellido,''), ' ', ifnull(per.per_seg_apellido,''), ' ', ifnull(per.per_pri_nombre,''), ifnull(per.per_seg_nombre,'')), '') as estudiante,
+                CONCAT(baca.baca_nombre, ' ', saca.saca_nombre, ' ', saca.saca_anio) as periodo,
+                eaca.eaca_nombre as carrera,
+                moda.mod_nombre as modalidad
+                FROM " . $con_inscripcion->dbname . ".inscripcion_grado as igra
+                Inner Join " . $con_asgard->dbname . ".persona as per on per.per_cedula = igra.igra_cedula
+                Inner Join " . $con_academico->dbname . ".unidad_academica as uaca on uaca.uaca_id = igra.uaca_id
+                Inner Join " . $con_academico->dbname . ".estudio_academico as eaca on eaca.eaca_id = igra.eaca_id
+                Inner Join " . $con_academico->dbname . ".modalidad as moda on moda.mod_id = igra.mod_id
+                Inner Join " . $con_academico->dbname . ".periodo_academico as paca on paca.paca_id = igra.paca_id
+                Inner Join " . $con_academico->dbname . ".semestre_academico as saca on saca.saca_id = paca.saca_id
+                Inner Join " . $con_academico->dbname . ".bloque_academico as baca on baca.baca_id = paca.baca_id 
+                WHERE uaca.uaca_id = 1 and
+                igra.igra_estado = :estado and igra.igra_estado_logico = :estado and
+                per.per_estado = :estado and per.per_estado_logico = :estado and
+                uaca.uaca_estado = :estado and uaca.uaca_estado_logico = :estado and
+                eaca.eaca_estado = :estado and eaca.eaca_estado_logico = :estado and
+                moda.mod_estado = :estado and moda.mod_estado_logico = :estado and
+                paca.paca_estado = :estado and paca.paca_estado_logico = :estado";
+        $comando = $con_academico->createCommand($sql);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        if (isset($arrFiltro) && count($arrFiltro) > 0) {
+            $search_cond = "%" . $arrFiltro["search"] . "%";
+            $comando->bindParam(":search", $search_cond, \PDO::PARAM_STR);
+
+            if ($arrFiltro['unidad'] != "" && $arrFiltro['unidad'] > 0) {
+                $search_uni = $arrFiltro["unidad"];
+                $comando->bindParam(":unidad", $search_uni, \PDO::PARAM_INT);
+            }
+            if ($arrFiltro['carrera'] != "" && $arrFiltro['carrera'] > 0) {
+                $search_car = $arrFiltro["carrera"];
+                $comando->bindParam(":carrera", $search_car, \PDO::PARAM_INT);
+            }
+            if ($arrFiltro['modalidad'] != "" && $arrFiltro['modalidad'] > 0) {
+                $search_mod = $arrFiltro["modalidad"];
+                $comando->bindParam(":modalidad", $search_mod, \PDO::PARAM_INT);
+            }
+            if ($arrFiltro['periodo'] != "" && $arrFiltro['periodo'] > 0) {
+                $search_per = $arrFiltro["periodo"];
+                $comando->bindParam(":periodo", $search_per, \PDO::PARAM_INT);
+            }
+        }
+        $res = $comando->queryAll();
+        $dataProvider = new ArrayDataProvider([
+            'key' => 'Ids',
+            'allModels' => $res,
+            'pagination' => [
+                'pageSize' => Yii::$app->params["pageSize"],
+            ],
+            'sort' => [
+                'attributes' => ['Cedula', 'estudiante',"periodo","carrera","modalidad"],
+            ],
+        ]);
+
+        return $dataProvider;
     }
 }

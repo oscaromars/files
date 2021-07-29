@@ -1129,6 +1129,41 @@ class Persona extends \yii\db\ActiveRecord {
         //UPDATE (table name, column values, condition)        
     }
 
+    public function consultarUltimoPer_id() {
+        $con = \Yii::$app->db_asgard;
+        $estado = '1';
+        $sql = "
+                    SELECT lpad(ifnull(max(per_id),0)+1,7,'0') as ultimo
+                    FROM " . $con->dbname . ".persona 
+                    WHERE per_estado_logico=:estado AND per_estado=:estado";
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+
+        $resultData = $comando->queryOne();
+        if (empty($resultData))
+            return 0;
+        else {
+            return $resultData;
+        }
+    }
+    public function consultPer_id() {
+        $con = \Yii::$app->db_asgard;
+        $estado = '1';
+        $sql = "
+                    SELECT lpad(ifnull(max(per_id),0),7,' ') as ultimo
+                    FROM " . $con->dbname . ".persona 
+                    WHERE per_estado_logico=:estado AND per_estado=:estado";
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+
+        $resultData = $comando->queryOne();
+        if (empty($resultData))
+            return 0;
+        else {
+            return $resultData;
+        }
+    }
+
     /**
      * Function Insertar Datos de Inscripcion Grado
      * @author  Lisbeth Gonzalez <analista.desarrollo@uteg.edu.ec>
@@ -1161,7 +1196,10 @@ class Persona extends \yii\db\ActiveRecord {
         $command->bindParam(":per_domicilio_telefono", $per_domicilio_telefono, \PDO::PARAM_STR); 
         $command->bindParam(":per_correo", $per_correo, \PDO::PARAM_STR);
         $command->execute();
-        return $con->getLastInsertID();
+        \app\models\Utilities::putMessageLogFile('ultimo registro:  '.$id);
+        $id = $con->getLastInsertID();
+        //return $con->getLastInsertID();
+        return $id;
     }
 
     public function modificaPersonaInscripcionposgrado($per_dni, $primer_nombre, $segundo_nombre, $primer_apellido, $segundo_apellido, $can_id_nacimiento, $per_fecha_nacimiento, $per_nacionalidad, $eciv_id, $pai_id_domicilio, $pro_id_domicilio, $can_id_domicilio, $per_domicilio_ref, $per_celular, $per_domicilio_telefono, $per_correo) {

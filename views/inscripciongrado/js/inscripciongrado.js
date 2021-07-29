@@ -1,6 +1,8 @@
 
 $(document).ready(function () {
-
+    $('#btn_buscarData_aspirante').click(function () {
+        actualizarGridAspirante();
+    });
     $('#cmb_carrera').change(function () {
         var link = $('#txth_base').val() + "/inscripciongrado/index";
         var arrParams = new Object();
@@ -13,6 +15,22 @@ $(document).ready(function () {
             if (response.status == "OK") {
                 data = response.message;
                 setComboDataselect(data.modalidad, "cmb_modalidad", "Seleccionar");
+            }
+        }, true);
+    });
+
+    $('#cmb_carrera_asp').change(function () {
+        var link = $('#txth_base').val() + "/inscripciongrado/aspirantegrado";
+        var arrParams = new Object();
+        arrParams.uaca_id = $('#cmb_unidad_asp').val();
+        //arrParams.moda_id = $(this).val();
+        arrParams.carrera = $(this).val();
+        arrParams.empresa_id = 1;
+        arrParams.getmodalidades = true;
+        requestHttpAjax(link, arrParams, function (response) {
+            if (response.status == "OK") {
+                data = response.message;
+                setComboDataselect(data.modalidades, "cmb_modalidad_asp", "Seleccionar");
             }
         }, true);
     });
@@ -61,7 +79,6 @@ $(document).ready(function () {
             }
         }, true);
     });
-
     $('#cmb_tipo_dni').change(function () {
         if ($('#cmb_tipo_dni').val() != 0) {
             $('#txt_cedula').removeClass("PBvalidation");
@@ -76,24 +93,6 @@ $(document).ready(function () {
             $('#Divcedula').show();
         }
     });
-    /*$('#btn_buscarCedula').click(function () {
-        //buscarpersona('per_cedula');
-        var link = $('#txth_base').val() + "/inscripciongrado/index";
-        //var cedula = $('#txt_cedula').val();
-        var arrParams = new Object();
-        arrParams.per_cedula = $('#txt_cedula').val();
-        alert($('#txt_cedula').val());
-        if ($('#txt_cedula') != 0) {
-
-            $('#Divdatospersona').show();
-            
-        } else if ($('#txt_cedula') == 0)
-        {
-            $('#Divdatospersona').hide();
-        }
-    });*/
-
-    
     // tabs create
     $('#paso1next').click(function () {
         $("a[data-href='#paso1']").attr('data-toggle', 'none');
@@ -114,71 +113,10 @@ $(document).ready(function () {
         $("a[data-href='#paso1']").trigger("click");
     });
     
-    /*$('#paso1next').click(function () {
-        //Esta funcion se ejecita en el paso para realizar el primer guardado
-        //habilitarSecciones(); esta funcion era para certificado de votacion
-        //Si $('#txth_twin_id').val() == 0 quiere decir que no esta cargada
-        //el id de la tabla temporal
-        if ($('#txth_igra_id').val() == 0) {
-            //Si no existe el id en la tabla temporal lo crea
-            guardarInscripciongrado();
-        } else {
-            //Si existe el id procede a actualizar
-            guardarInscripciongrado1('Update', '1');
-        }
-    });*/
-    
     /*GUARDAR INFORMACION*/
 
     $('#btn_save_1').click(function () {
         guardarInscripcionGrado();
-        /*var link = $('#txth_base').val() + "/inscripciongrado/guardarinscripciongrado"; 
-        var arrParams = new Object();
-        arrParams.persona_id = $('#txth_ids').val();
-        arrParams.codigo = $('#txth_igra_id').val();
-        arrParams.ACCION = 'Fin';
-
-        arrParams.unidad = $('#cmb_unidad').val();
-        arrParams.carrera = $('#cmb_carrera').val();
-        arrParams.modalidad = $('#cmb_modalidad').val();
-        arrParams.periodo = $('#cmb_periodo').val();
-
-        //datos personales
-        arrParams.cedula = $('#txt_cedula').val();
-        arrParams.pasaporte = $('#txt_pasaporte').val();
-        arrParams.primer_nombre = $('#txt_primer_nombre').val();
-        arrParams.segundo_nombre = $('#txt_segundo_nombre').val();
-        arrParams.primer_apellido = $('#txt_primer_apellido').val();
-        arrParams.segundo_apellido = $('#txt_segundo_apellido').val();
-        arrParams.cuidad_nac = $('#cmb_ciu_nac').val();
-        arrParams.fecha_nac = $('#txt_fecha_nac').val();
-        arrParams.nacionalidad = $('#cmb_nacionalidad').val();
-        arrParams.estado_civil = $('#cmb_estado_civil').val();
-
-        //Datos Contacto
-        arrParams.pais = $('#cmb_pais').val();
-        arrParams.provincia = $('#cmb_provincia').val();
-        arrParams.canton = $('#cmb_ciudad').val();
-        arrParams.parroquia = $('#cmb_parroquia').val();
-        arrParams.dir_domicilio = $('#txt_domicilio').val();
-        arrParams.celular = $('#txt_celular').val();
-        arrParams.telefono = $('#txt_telefono').val();
-        arrParams.correo = $('#txt_correo').val();
-
-        //Datos en caso de emergencias
-        arrParams.dir_trabajo = $('#txt_direccion_trabajo').val();
-        arrParams.cont_emergencia = $('#txt_contacto_emergencia').val();
-        arrParams.parentesco = $('#cmb_parentesco').val();
-        arrParams.tel_emergencia = $('#txt_telefono_emergencia').val();
-        arrParams.dir_personacontacto = $('#txt_direccion_persona_contacto').val();
-
-        //alert(arrParams.persona_id);
-        if (!validateForm()) {
-            requestHttpAjax(link, arrParams, function (response) {
-                showAlert(response.status, response.label, response.message);
-               
-            }, true);
-        }*/
     });
 
     //Control del div de discapacidad
@@ -300,7 +238,7 @@ function guardarInscripcionGrado() {
         arrParams.segundo_nombre = $('#txt_segundo_nombre').val();
         arrParams.primer_apellido = $('#txt_primer_apellido').val();
         arrParams.segundo_apellido = $('#txt_segundo_apellido').val();
-        arrParams.cuidad_nac = $('#cmb_ciu_nac').val();
+        arrParams.cuidad_nac = $('#txt_ciu_nac').val();
         arrParams.fecha_nac = $('#txt_fecha_nac').val();
         arrParams.nacionalidad = $('#cmb_nacionalidad').val();
         arrParams.estado_civil = $('#cmb_estado_civil').val();
@@ -322,10 +260,6 @@ function guardarInscripcionGrado() {
         arrParams.tel_emergencia = $('#txt_telefono_emergencia').val();
         arrParams.dir_personacontacto = $('#txt_direccion_persona_contacto').val();
 
-        /*if (error == 0) {
-            guardarInscripcion('Update', '2');
-        }*/
-
         //TAB 2
         arrParams.igra_ruta_doc_titulo = ($('#txth_doc_titulo').val() != '') ? $('#txth_doc_titulo').val() : '';
         arrParams.igra_ruta_doc_dni = ($('#txth_doc_dni').val() != '') ? $('#txth_doc_dni').val() : '';
@@ -344,61 +278,14 @@ function guardarInscripcionGrado() {
             showAlert(response.status, response.label, response.message);
             //var message = response.message;                       
             if (response.status == "OK") {
-                /*var unidad = response.data.data.unidad;
-                    //Inicio ingreso informacion\
-                    $('#cmb_unidad').text(response.data.data.unidad);
-                    $('#cmb_carrera').text(response.data.data.carrera);
-                    $('#cmb_modalidad').text(response.data.data.modalidad);
-                    $('#cmb_periodo').text(response.data.data.periodo);
-                    //$('#lbl_ming_tx').text(response.data.data.metodo);
-                //return 1;*/
                 setTimeout(function() {
-                        window.location.href = $('#txth_base').val() + "/inscripciongrado/index";
+                        window.location.href = $('#txth_base').val() + "/inscripciongrado/aspirantegrado";
                     }, 3000);
             }
         }, true);
     }
 }
 
-function dataInscripcion(ID) {
-    var datArray = new Array();
-    var objDat = new Object();
-    objDat.igra_id = ID;
-
-    /*objDat.tipo_dni = $('#cmb_tipo_dni option:selected').val();
-    if (objDat.tipo_dni == 'CED') {
-        objDat.cedula = $('#txt_cedula').val();
-    } else {
-        objDat.cedula = $('#txt_pasaporte').val();
-    }
-    objDat.unidad = $('#cmb_unidad option:selected').val();
-    objDat.carrera = $('#cmb_carrera option:selected').val();
-    objDat.modalidad = $('#cmb_modalidad option:selected').val();
-    objDat.periodo = $('#cmb_periodo option:selected').val();
-    if (objDat.unidad == 1) {
-        //objDat.ming_id = null;
-    } else if (objDat.unidad_academica == 2) {
-        objDat.ming_id = $('#cmb_metodo_solicitud option:selected').val();
-    }*/
-
-    //TAB 2
-    objDat.igra_ruta_doc_titulo = ($('#txth_doc_titulo').val() != '') ? $('#txth_doc_titulo').val() : '';
-    objDat.igra_ruta_doc_dni = ($('#txth_doc_dni').val() != '') ? $('#txth_doc_dni').val() : '';
-    objDat.igra_ruta_doc_certvota = ($('#txth_doc_certvota').val() != '') ? $('#txth_doc_certvota').val() : '';
-    objDat.igra_ruta_doc_foto = ($('#txth_doc_foto').val() != '') ? $('#txth_doc_foto').val() : '';
-    objDat.igra_ruta_doc_comprobantepago = ($('#txth_doc_comprobantepago').val() != '') ? $('#txth_doc_comprobantepago').val() : '';
-    objDat.igra_ruta_doc_record = ($('#txth_doc_record').val() != '') ? $('#txth_doc_record').val() : '';
-    objDat.igra_ruta_doc_certificado = ($('#txth_doc_nosancion').val() != '') ? $('#txth_doc_nosancion').val() : '';
-    objDat.igra_ruta_doc_syllabus = ($('#txth_doc_syllabus').val() != '') ? $('#txth_doc_syllabus').val() : '';
-    objDat.igra_ruta_doc_homologacion = ($('#txth_doc_especievalorada').val() != '') ? $('#txth_doc_especievalorada').val() : '';
-    objDat.igra_mensaje1 = ($("#chk_mensaje1").prop("checked")) ? '1' : '0';
-    objDat.igra_mensaje2 = ($("#chk_mensaje2").prop("checked")) ? '1' : '0';
-    
-  
-    datArray[0] = objDat;
-    sessionStorage.dataInscripciones = JSON.stringify(datArray);
-    return datArray;
-}
 function camposnulos(campo) {
     if ($(campo).val() == "")
     {
@@ -408,4 +295,84 @@ function camposnulos(campo) {
         $(campo).addClass("PBvalidation");
     }
 }
+function actualizarGridAspirante() {
+    var search = $('#txt_buscarAspirante').val();
+    var periodo = $('#cmb_periodo_asp option:selected').val();
+    var unidad = $('#cmb_unidad_asp option:selected').val();
+    var carreras = $('#cmb_carrera_asp option:selected').val();
+    var modalidad = $('#cmb_modalidad_asp option:selected').val();
+    if (!$(".blockUI").length) {
+        showLoadingPopup();
+    $('#Tbg_Registro_aspirante').PbGridView('applyFilterData', {'search': search, 'periodo': periodo, 'unidad': unidad, 'carreras': carreras, 'modalidad': modalidad});
+        setTimeout(hideLoadingPopup, 2000);
+    }
+}
+function editaspirantegrado() {
+    var link = $('#txth_base').val() + "/inscripciongrado/edit" + "?id=" + $("#frm_per_id").val();
+    window.location = link;
+}
 
+function updateaspirantegrado() {
+    var link = $('#txth_base').val() + "//inscripciongrado/update";
+    var arrParams = new Object();
+    arrParams.per_id = $("#frm_per_id").val();
+    arrParams.pri_nombre = $('#txt_primer_nombre').val();
+    arrParams.seg_nombre = $('#txt_segundo_nombre').val();
+    arrParams.pri_apellido = $('#txt_primer_apellido').val();
+    arrParams.seg_apellido = $('#txt_segundo_apellido').val();
+    arrParams.cedula = $('#txt_cedula').val();
+    arrParams.ruc = $('#txt_ruc').val();
+    arrParams.pasaporte = $('#txt_pasaporte').val();
+    arrParams.correo = $('#txt_correo').val();
+
+    arrParams.pai_id = $('#cmb_pais').val();
+    arrParams.pro_id = $('#cmb_provincia').val();
+    arrParams.can_id = $('#cmb_canton').val();
+    arrParams.sector = $('#txt_sector').val();
+    arrParams.calle_pri = $('#txt_calle_pri').val();
+    arrParams.calle_sec = $('#txt_calle_sec').val();
+    arrParams.numeracion = $('#txt_numeracion').val();
+    arrParams.referencia = $('#txt_referencia').val();
+    arrParams.nacionalidad = $('#txt_nacionalidad').val();
+    arrParams.celular = $('#txt_cel').val();
+    arrParams.phone = $('#txt_phone').val();
+    arrParams.dedicacion = $('#cmb_dedicacion').val();
+    arrParams.pro_num_contrato = $('#txt_contrato').val();
+    arrParams.fecha_nacimiento = $('#txt_fecha_nacimiento').val();
+
+    arrParams.usuario = $('#txt_usuario').val();
+    arrParams.clave = $('#frm_clave').val();
+    arrParams.gru_id = $('#cmb_grupo').val();
+    arrParams.rol_id = $('#cmb_rol').val();
+    arrParams.emp_id = $('#cmb_empresa').val();
+    arrParams.foto = $('#txth_doc_foto').val() + ".jpg";
+
+    /** Session Storages **/
+    arrParams.grid_instruccion_list = (JSON.parse(sessionStorage.grid_instruccion_list)).data;
+    arrParams.grid_docencia_list = (JSON.parse(sessionStorage.grid_docencia_list)).data;
+    arrParams.grid_experiencia_list = (JSON.parse(sessionStorage.grid_experiencia_list)).data;
+    arrParams.grid_idioma_list = (JSON.parse(sessionStorage.grid_idioma_list)).data;
+    arrParams.grid_investigacion_list = (JSON.parse(sessionStorage.grid_investigacion_list)).data;
+    arrParams.grid_evento_list = (JSON.parse(sessionStorage.grid_evento_list)).data;
+    arrParams.grid_conferencia_list = (JSON.parse(sessionStorage.grid_conferencia_list)).data;
+    arrParams.grid_publicacion_list = (JSON.parse(sessionStorage.grid_publicacion_list)).data;
+    arrParams.grid_coordinacion_list = (JSON.parse(sessionStorage.grid_coordinacion_list)).data;
+    arrParams.grid_evaluacion_list = (JSON.parse(sessionStorage.grid_evaluacion_list)).data;
+    arrParams.grid_referencia_list = (JSON.parse(sessionStorage.grid_referencia_list)).data;
+
+
+    if (!validateForm()) {
+        //console.log(arrParams);
+        requestHttpAjax(link, arrParams, function(response) {
+            var btnacciones = new Array();
+            var accion1 = new Object();
+            accion1.id = "btnid1";
+            accion1.class = "clclass";
+            accion1.value = "Aceptar";
+            accion1.callback = "backtoList";
+            btnacciones[0] = accion1;
+            response.message.acciones = btnacciones;
+            showAlert(response.status, response.label, response.message);
+        }, true);
+    }
+}

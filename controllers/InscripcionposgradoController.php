@@ -16,11 +16,19 @@ use app\models\NivelIdioma;
 use app\models\Canton;
 use app\models\TipoDiscapacidad;
 use app\models\InscripcionPosgrado;
+use app\models\EstudianteInstruccion;
 use app\modules\admision\models\MetodoIngreso;
 use app\modules\admision\models\ConvenioEmpresa;
 use app\models\TipoInstitucionAca;
 use app\models\NivelInstruccion;
 use app\models\Persona;
+use app\models\Empresa;
+use app\models\EmpresaPersona;
+use app\models\Usuario;
+use app\models\UsuaGrolEper;
+use app\models\Grupo;
+use app\models\Rol;
+use app\models\GrupRol;
 use app\models\TipoParentesco;
 use app\models\PersonaContacto;
 use yii\helpers\ArrayHelper;
@@ -130,6 +138,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
     public function actionGuardarinscripcionposgrado() {
         $mod_persona = new Persona();
         $user_ingresa = Yii::$app->session->get("PB_iduser");
+
         if (Yii::$app->request->isAjax) {
             
             $data = Yii::$app->request->post();
@@ -141,6 +150,10 @@ class InscripcionposgradoController extends \yii\web\Controller {
                     return json_encode(['error' => Yii::t("notificaciones", "Error to process File {file}. Try again.", ['{file}' => basename($files['name'])])]);
                     return;
                 }
+                $mod_persona = new Persona();
+                $resp_persona = $mod_persona->consultarUltimoPer_id();
+                $persona = $resp_persona["ultimo"];
+                $per_id = intval( $persona );
                 //Recibe Parámetros
                 $files = $_FILES[key($_FILES)];
                 $arrIm = explode(".", basename($files['name']));
@@ -170,7 +183,11 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 $tipo_financiamiento = $data['tipo_financiamiento'];
                 $ming_id = $data['ming_id'];
 
-                $per_id = Yii::$app->session->get("PB_perid");
+                $mod_persona = new Persona();
+                $resp_persona = $mod_persona->consultarUltimoPer_id();
+                $persona = $resp_persona["ultimo"];
+                $per_id = intval( $persona );
+
                 $per_dni = $data['cedula'];
                 $inscriposgrado_id = $data["ipos_id"];
                 if (isset($data["ipos_ruta_doc_foto"]) && $data["ipos_ruta_doc_foto"] != "") {
@@ -309,6 +326,8 @@ class InscripcionposgradoController extends \yii\web\Controller {
                         throw new Exception('Error doc Especie valorada por homologación no renombrado.');
                 }
 
+
+
                 //FORM 1 datos personal   
             $per_dni = $data['cedula'];         
             $primer_nombre = $data["primer_nombre"];
@@ -374,7 +393,25 @@ class InscripcionposgradoController extends \yii\web\Controller {
 
             //Form2 Datos financiamiento
             $tipo_financiamiento = $data["tipo_financiamiento"];
-            
+
+            //archivos cargados
+            $ipos_ruta_doc_foto = $data['ipos_ruta_doc_foto'];
+            $ipos_ruta_doc_dni = $data['ipos_ruta_doc_dni'];
+            $ipos_ruta_doc_certvota = $data['ipos_ruta_doc_certvota'];
+            $ipos_ruta_doc_titulo = $data['ipos_ruta_doc_titulo'];
+            $ipos_ruta_doc_comprobantepago = $data['ipos_ruta_doc_comprobante'];
+            $ipos_ruta_doc_recordacademico = $data['ipos_ruta_doc_record1'];
+            $ipos_ruta_doc_senescyt = $data['ipos_ruta_doc_senescyt'];
+            $ipos_ruta_doc_hojadevida = $data['ipos_ruta_doc_hojavida'];
+            $ipos_ruta_doc_cartarecomendacion = $data['ipos_ruta_doc_cartarecomendacion'];
+            $ipos_ruta_doc_certificadolaboral = $data['ipos_ruta_doc_certificadolaboral'];
+            $ipos_ruta_doc_certificadoingles = $data['ipos_ruta_doc_certificadoingles'];
+            $ipos_ruta_doc_otrorecord = $data['ipos_ruta_doc_recordacademico'];
+            $ipos_ruta_doc_certificadonosancion = $data['ipos_ruta_doc_certnosancion'];
+            $ipos_ruta_doc_syllabus = $data['ipos_ruta_doc_syllabus'];
+            $ipos_ruta_doc_homologacion = $data['ipos_ruta_doc_homologacion'];
+            $ipos_mensaje1 = $data['ipos_mensaje1'];
+            $ipos_mensaje2 = $data['ipos_mensaje2'];
 
             $insc_persona = new Persona();
                 \app\models\Utilities::putMessageLogFile(' personauuuuuuuuuuuuuuuuuuuuuu:  '.$per_dni);
@@ -385,7 +422,56 @@ class InscripcionposgradoController extends \yii\web\Controller {
                     //if($resp_inscripcion == 0){ 
                         \app\models\Utilities::putMessageLogFile('datos a enviar:  '.$data);
                         \app\models\Utilities::putMessageLogFile('resultado de la inseercion:  '.$resul);
-                    $regPersona = $mod_persona->insertarPersonaInscripcionposgrado($per_dni, $primer_nombre, $segundo_nombre, $primer_apellido, $segundo_apellido, $can_id_nacimiento, $per_fecha_nacimiento, $per_nacionalidad, $eciv_id, $pai_id_domicilio, $pro_id_domicilio, $can_id_domicilio, $per_domicilio_ref, $per_celular, $per_domicilio_telefono, $per_correo);  
+
+                    $regPersona = $mod_persona->insertarPersonaInscripcionposgrado($per_dni, $primer_nombre, $segundo_nombre, $primer_apellido, $segundo_apellido, $can_id_nacimiento, $per_fecha_nacimiento, $per_nacionalidad, $eciv_id, $pai_id_domicilio, $pro_id_domicilio, $can_id_domicilio, $per_domicilio_ref, $per_celular, $per_domicilio_telefono, $per_correo);
+
+
+                    // creación de contacto
+                    $modpersonacontacto = new PersonaContacto();
+                    $mod_persona = new Persona();
+                    $resp_persona = $mod_persona->consultPer_id();
+                    $persona = $resp_persona["ultimo"];
+                    \app\models\Utilities::putMessageLogFile('traer el per_id:  '.$per_id);
+                    $per_id = intval( $persona );
+
+                    $resexistecontacto = $modpersonacontacto->consultaPersonaContacto($per_id);
+                    if ($resexistecontacto) {
+                        if ($pcon_nombre != $pcon_apellido) {
+                            $contacto = $pcon_nombre . " " . $pcon_apellido;
+                        } else {
+                            $contacto = $pcon_nombre;
+                        }
+                        $resp_modcontacto = $modpersonacontacto->modificarPersonacontacto($per_id, $tpar_id, $contacto, $pcon_telefono, $pcon_celular, $pcon_direccion);
+                    } else {
+                        if ($sincontacto != 1) {
+                            //Creación de persona de contacto.
+                            $modpersonacontacto->crearPersonaContacto($per_id, $tpar_id, $pcon_nombre . " " . $pcon_apellido, $pcon_telefono, $pcon_celular, $pcon_direccion);
+                        }
+                    }
+
+                    // creación de datos formacion profesional
+                    $modestinstruccion = new EstudianteInstruccion();
+                    $resexisteinstruccion = $modestinstruccion->consultarEstInstruccion($per_id);
+                    if ($resexistecontacto['existe_instruccion'] == 0) {
+                        //Creación de persona de contacto
+                        $resp_instruccion = $modestinstruccion->insertarEstudianteInstruccion($per_id, $titulo_ter, $universidad_tercer, $grado_tercer, $titulo_cuarto, $universidad_cuarto, $grado_cuarto);
+                    } else {   
+                        $resp_instruccion = $modestinstruccion->modificarEstudianteinstruccion($per_id, $titulo_ter, $universidad_tercer, $grado_tercer, $titulo_cuarto, $universidad_cuarto, $grado_cuarto);
+                    }
+
+                    
+                    // creación de datos laborales del aspirante o estudiante
+                    $mod_infolaboral = new InformacionLaboral();
+                    $resexisteinfo = $mod_infolaboral->consultarInfoLaboral($per_id);
+                    if ($resexisteinfo['existe_instruccion'] == 0) {
+                        //Creación de persona de contacto
+                        $resp_infolaboral = $mod_infolaboral->insertarInfoLaboral($per_id, $empresa, $cargo, $telefono_emp, $prov_emp, $ciu_emp, $parroquia, $direccion_emp, $añoingreso_emp, $correo_emp, $cat_ocupacional);
+                    } else {   
+                        $resp_infolaboral = $mod_infolaboral->modificarInfoLaboral($per_id, $empresa, $cargo, $telefono_emp, $prov_emp, $ciu_emp, $parroquia, $direccion_emp, $añoingreso_emp, $correo_emp, $cat_ocupacional);
+                    }
+
+
+
                 } else{
 
                     $resul = array();
@@ -412,29 +498,17 @@ class InscripcionposgradoController extends \yii\web\Controller {
                     }
                 }
                 
-                // creación de contacto
-                $modpersonacontacto = new PersonaContacto();
-                //Si existe registro en persona contacto se modifican los datos.
-                $resexistecontacto = $modpersonacontacto->consultaPersonaContacto($per_id);
-                if ($resexistecontacto) {
-                    if ($pcon_nombre != $pcon_apellido) {
-                        $contacto = $pcon_nombre . " " . $pcon_apellido;
-                    } else {
-                        $contacto = $pcon_nombre;
-                    }
-                    $resp_modcontacto = $modpersonacontacto->modificarPersonacontacto($per_id, $tpar_id, $contacto, $pcon_telefono, $pcon_celular, $pcon_direccion);
-                } else {
-                    if ($sincontacto != 1) {
-                        //Creación de persona de contacto.
-                        $modpersonacontacto->crearPersonaContacto($per_id, $tpar_id, $pcon_nombre . " " . $pcon_apellido, $pcon_telefono, $pcon_celular, $pcon_direccion);
-                    }
-                }
+                $mod_persona = new Persona();
                 $model = new InscripcionPosgrado();
-                \app\models\Utilities::putMessageLogFile('consultarrrrr personasssss:  '.$per_dni);
-                $resp_inscripcion = $model->consultarDatosInscripcionposgrado($per_dni);
+                $resp_persona = $mod_persona->consultPer_id();
+                $persona = $resp_persona["ultimo"];
+                $per_id = intval( $persona );
+                
+                \app\models\Utilities::putMessageLogFile('consultarrrrr personasssss:  '.$per_id);
+                $resp_inscripcion = $model->consultarDatosInscripcionposgrado($per_id);
                 \app\models\Utilities::putMessageLogFile(' personaxxxxxxxxxxx:  '.$resp_inscripcion['existe_inscripcionposgrado']);
                 if ($resp_inscripcion['existe_inscripcionposgrado'] == 0){ 
-                    $resul = $model->insertarDataInscripcionposgrado($unidad, $programa, $modalidad, $año, $per_dni, $tipo_financiamiento, $data);
+                    $resul = $model->insertarDataInscripcionposgrado($per_id, $unidad, $programa, $modalidad, $año, $per_dni, $tipo_financiamiento, $ipos_ruta_doc_foto, $ipos_ruta_doc_dni, $ipos_ruta_doc_certvota, $ipos_ruta_doc_titulo, $ipos_ruta_doc_comprobantepago, $ipos_ruta_doc_recordacademico, $ipos_ruta_doc_senescyt, $ipos_ruta_doc_hojadevida, $ipos_ruta_doc_cartarecomendacion, $ipos_ruta_doc_certificadolaboral, $ipos_ruta_doc_certificadoingles, $ipos_ruta_doc_otrorecord, $ipos_ruta_doc_certificadonosancion, $ipos_ruta_doc_syllabus, $ipos_ruta_doc_homologacion, $ipos_mensaje1, $ipos_mensaje2);
                     if ($resul) {
                             $exito=1;
                         }
@@ -466,6 +540,606 @@ class InscripcionposgradoController extends \yii\web\Controller {
                     "title" => Yii::t('jslang', 'Error'),
                 );
                 return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+            }
+        }
+    }
+
+    public function actionAspiranteposgrado() {
+        $per_id = @Yii::$app->session->get("PB_perid");
+        $model_posgrado = new InscripcionPosgrado();
+        $unidad_model = new UnidadAcademica();
+        $programa_model = new EstudioAcademico();
+        $moda_model = new Modalidad();
+        $data = Yii::$app->request->get();
+
+        if ($data['PBgetFilter']) {
+            $arrSearch["search"]      = $data['search'];
+            $arrSearch["año"]     = $data['año'];  
+            $arrSearch["unidad"]      = $data['unidad'];
+            $arrSearch["programa"]      = $data['programa'];
+            $arrSearch["modalidad"]   = $data['modalidad'];
+            $model = $model_posgrado->consultaRegistroAdmisionposgrado($arrSearch, 1);
+            return $this->render('_aspiranteposgradogrid', [
+                "model" => $model,
+            ]);
+
+        }else {
+            $model = $model_posgrado->consultaRegistroAdmisionposgrado(null, 1);
+        }
+
+        if (Yii::$app->request->isAjax) {
+            $data = Yii::$app->request->post();
+            if (isset($data["getprograma"])) {
+                $programa = $mod_programa->consultarCarreraxunidad($data["unidad"]);
+                $message = array("programa" => $programa);
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+            }
+            if (isset($data["getmodalidad"])) {
+                $modalidad = $mod_programa->consultarmodalidadxcarrera($data["programa"]);
+                $message = array("modalidad" => $modalidad);
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+            }
+        }
+        $arr_unidad = $unidad_model->consultarUnidadAcademicasEmpresa(1);
+        $arr_programa = $programa_model->consultarCarreraxunidad(2);
+        $arr_modalidad = $programa_model->consultarmodalidadxcarrera($arr_programa[0]["id"]);
+        return $this->render('aspiranteposgrado_index', [
+            'arr_unidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $arr_unidad), "id", "name"),
+            'arr_programa' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']], $arr_programa), 'id', 'name'),
+            'arr_modalidad' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']], $arr_modalidad), 'id', 'name'),
+            "model" => $model,
+        ]);
+    }
+
+    public function actionView() {
+        $data = Yii::$app->request->get();
+        if (isset($data['id'])) {
+
+            $id = $data['id']; // per_id
+            $per_cedula = $data['cedula'];
+
+            $persona_model = Persona::findOne($id);
+            $contacto_model = PersonaContacto::findOne($id);
+            $usuario_model = Usuario::findOne(["per_id" => $id, "usu_estado" => '1', "usu_estado_logico" => '1']);
+            $empresa_persona_model = EmpresaPersona::findOne(["per_id" => $id, "eper_estado" => '1', "eper_estado_logico" => '1']);
+
+            /* Validacion de acceso a vistas por usuario */
+            $user_ingresa = Yii::$app->session->get("PB_iduser");
+            $user_usermane = Yii::$app->session->get("PB_username");
+            $user_perId = Yii::$app->session->get("PB_perid");
+            $grupo_model = new Grupo();
+            $arr_grupos = $grupo_model->getAllGruposByUser($user_usermane);
+            if ($id != $user_perId) {
+                if (!in_array(['id' => '1'], $arr_grupos) && !in_array(['id' => '6'], $arr_grupos) && !in_array(['id' => '7'], $arr_grupos) && !in_array(['id' => '8'], $arr_grupos) && !in_array(['id' => '15'], $arr_grupos))
+                    return $this->redirect(['inscripciongrado/aspirantegrado']);
+            }
+
+            /**
+             * Inf. Personal
+             */
+            $arr_can = Canton::findAll(["pro_id" => $persona_model->pro_id_domicilio, "can_estado" => 1, "can_estado_logico" => 1]);
+            $arr_estado_civil = EstadoCivil::find()->select("eciv_id AS id, eciv_nombre AS value")->where(["eciv_estado_logico" => "1", "eciv_estado" => "1"])->asArray()->all();
+            $arr_pais = Pais::findAll(["pai_estado" => 1, "pai_estado_logico" => 1]);
+            $arr_pro = Provincia::findAll(["pai_id" => $persona_model->pai_id_domicilio, "pro_estado" => 1, "pro_estado_logico" => 1]);
+            $arr_can = Canton::findAll(["pro_id" => $persona_model->pro_id_domicilio, "can_estado" => 1, "can_estado_logico" => 1]);
+
+            $ViewFormTab1 = $this->renderPartial('ViewFormTab1', [
+                'arr_can' => (empty(ArrayHelper::map($arr_can, "can_id", "can_nombre"))) ? array(Yii::t("canton", "-- Select Canton --")) : (ArrayHelper::map($arr_can, "can_id", "can_nombre")),
+                "arr_estado_civil" => ArrayHelper::map($arr_estado_civil, "id", "value"),
+                'persona_model' => $persona_model,
+                'arr_pais' => (empty(ArrayHelper::map($arr_pais, "pai_id", "pai_nombre"))) ? array(Yii::t("pais", "-- Select Pais --")) : (ArrayHelper::map($arr_pais, "pai_id", "pai_nombre")),
+                'arr_pro' => (empty(ArrayHelper::map($arr_pro, "pro_id", "pro_nombre"))) ? array(Yii::t("provincia", "-- Select Provincia --")) : (ArrayHelper::map($arr_pro, "pro_id", "pro_nombre")),
+                'arr_can' => (empty(ArrayHelper::map($arr_can, "can_id", "can_nombre"))) ? array(Yii::t("canton", "-- Select Canton --")) : (ArrayHelper::map($arr_can, "can_id", "can_nombre")),
+            ]);
+
+            /**
+             * Inf. contacto
+             */
+            $arr_pais = Pais::findAll(["pai_estado" => 1, "pai_estado_logico" => 1]);
+            $arr_pro = Provincia::findAll(["pai_id" => $persona_model->pai_id_domicilio, "pro_estado" => 1, "pro_estado_logico" => 1]);
+            $arr_can = Canton::findAll(["pro_id" => $persona_model->pro_id_domicilio, "can_estado" => 1, "can_estado_logico" => 1]);
+
+            $ViewFormTab2 = $this->renderPartial('ViewFormTab2', [
+                'arr_pais' => (empty(ArrayHelper::map($arr_pais, "pai_id", "pai_nombre"))) ? array(Yii::t("pais", "-- Select Pais --")) : (ArrayHelper::map($arr_pais, "pai_id", "pai_nombre")),
+                'arr_pro' => (empty(ArrayHelper::map($arr_pro, "pro_id", "pro_nombre"))) ? array(Yii::t("provincia", "-- Select Provincia --")) : (ArrayHelper::map($arr_pro, "pro_id", "pro_nombre")),
+                'arr_can' => (empty(ArrayHelper::map($arr_can, "can_id", "can_nombre"))) ? array(Yii::t("canton", "-- Select Canton --")) : (ArrayHelper::map($arr_can, "can_id", "can_nombre")),
+                'persona_model' => $persona_model,
+            ]);
+
+            /**
+             * Inf. en caso de emergencia
+             */
+            $arr_tipparentesco = TipoParentesco::find()->select("tpar_id AS id, tpar_nombre AS value")->where(["tpar_estado_logico" => "1", "tpar_estado" => "1"])->asArray()->all();
+
+            $ViewFormTab3 = $this->renderPartial('ViewFormTab3', [
+                "arr_tipparentesco" => ArrayHelper::map($arr_tipparentesco, "id", "value"),
+                'persona_model' => $persona_model,
+                'contacto_model' => $contacto_model,
+
+            ]);
+
+
+            $items = [
+                [
+                    'label' => Yii::t('inscripciongrado', 'Info. Datos Personales'),
+                    'content' => $ViewFormTab1,
+                    'active' => true
+                ],
+                [
+                    'label' => Yii::t('inscripciongrado', 'Info. Datos de Contacto'),
+                    'content' => $ViewFormTab2,
+                ],
+                [
+                    'label' => Yii::t('inscripciongrado', 'Info. Datos en caso de Emergencia'),
+                    'content' => $ViewFormTab3,
+                ],
+            ];
+            return $this->render('view', ['items' => $items, 'persona_model' => $persona_model, 'contacto_model' => $contacto_model]);
+        }
+        return $this->redirect(['inscripciongrado/aspirantegrado']);
+    }
+
+    public function actionEdit() {
+
+        if (Yii::$app->request->isAjax) {
+            $data = Yii::$app->request->post();
+            if ($data["upload_file"]) {
+
+                if (empty($_FILES)) {
+                    return json_encode(['error' => Yii::t("notificaciones", "Error to process File. Try again.")]);
+                }
+                //Recibe Parámetros
+                $files = $_FILES[key($_FILES)];
+                $arrIm = explode(".", basename($files['name']));
+                $typeFile = strtolower($arrIm[count($arrIm) - 1]);
+                if (($typeFile == 'png') or ( $typeFile == 'jpg') or ( $typeFile == 'jpeg')) {
+                    $dirFileEnd = Yii::$app->params["documentFolder"] . "expediente/" . $data["name_file"] . "." . $typeFile;
+                    $status = Utilities::moveUploadFile($files['tmp_name'], $dirFileEnd);
+                    if ($status) {
+                        return true;
+                    } else {
+                        return json_encode(['error' => Yii::t("notificaciones", "Error to process File " . basename($files['name']) . ". Try again.")]);
+                    }
+                } else {
+                    return json_encode(['error' => Yii::t("notificaciones", "Error to process File " . basename($files['name']) . ". Try again.")]);
+                }
+            }
+        }
+        $data = Yii::$app->request->get();
+        if (isset($data['id'])) {
+            $id = $data['id'];
+
+            if (Yii::$app->request->isAjax) {
+                if (isset($data["pai_id"])) {
+                    $model = new Provincia();
+                    $arr_pro = $model->provinciabyPais($data["pai_id"]);
+
+                    list($firstpro) = $arr_pro;
+
+                    $arr_can = Canton::find()
+                                    ->select(["can_id as id", "can_nombre as name"])
+                                    ->andWhere(["can_estado" => 1, "can_estado_logico" => 1,
+                                        "pro_id" => $firstpro['id']])->asArray()->all();
+
+                    return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', ['arr_pro' => $arr_pro, 'arr_can' => $arr_can]);
+                } else if (isset($data["pro_id"])) {
+                    $arr_can = Canton::find()
+                                    ->select(["can_id as id", "can_nombre as name"])
+                                    ->andWhere(["can_estado" => 1, "can_estado_logico" => 1,
+                                        "pro_id" => $data["pro_id"]])->asArray()->all();
+
+                    return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $arr_can);
+                }
+            }
+
+            $persona_model = Persona::findOne($id);
+            Utilities::putMessageLogFile('id:' . $id);
+            $usuario_model = Usuario::findOne(["per_id" => $id, "usu_estado" => '1', "usu_estado_logico" => '1']);
+            $empresa_persona_model = EmpresaPersona::findOne(["per_id" => $id, "eper_estado" => '1', "eper_estado_logico" => '1']);
+            $email = (isset($persona_model->per_correo) && $persona_model->per_correo != "") ? ($persona_model->per_correo) : ($usuario_model->usu_user);
+
+            /* Validacion de acceso a vistas por usuario */
+            $user_ingresa = Yii::$app->session->get("PB_iduser");
+            $user_usermane = Yii::$app->session->get("PB_username");
+            $user_perId = Yii::$app->session->get("PB_perid");
+            $grupo_model = new Grupo();
+            $arr_grupos = $grupo_model->getAllGruposByUser($user_usermane);
+            if ($id != $user_perId) {
+                if (!in_array(['id' => '1'], $arr_grupos) && !in_array(['id' => '6'], $arr_grupos) && !in_array(['id' => '7'], $arr_grupos) && !in_array(['id' => '8'], $arr_grupos) && !in_array(['id' => '15'], $arr_grupos))
+                    return $this->redirect(['profesor/index']);
+            }
+
+            /**
+             * Inf. Basica
+             */
+            $arr_can = Canton::findAll(["pro_id" => $persona_model->pro_id_domicilio, "can_estado" => 1, "can_estado_logico" => 1]);
+            $arr_estado_civil = EstadoCivil::find()->select("eciv_id AS id, eciv_nombre AS value")->where(["eciv_estado_logico" => "1", "eciv_estado" => "1"])->asArray()->all();
+
+            $EditFormTab1 = $this->renderPartial('EditFormTab1', [
+                'arr_can' => (empty(ArrayHelper::map($arr_can, "can_id", "can_nombre"))) ? array(Yii::t("canton", "-- Select Canton --")) : (ArrayHelper::map($arr_can, "can_id", "can_nombre")),
+                "arr_estado_civil" => ArrayHelper::map($arr_estado_civil, "id", "value"),
+                'persona_model' => $persona_model,
+            ]);
+
+            /**
+             * Inf. contacto
+             */
+            $arr_pais = Pais::findAll(["pai_estado" => 1, "pai_estado_logico" => 1]);
+            Utilities::putMessageLogFile('pais:' . $persona_model->pai_id_domicilio);
+            $arr_pro = Provincia::findAll(["pai_id" => $persona_model->pai_id_domicilio, "pro_estado" => 1, "pro_estado_logico" => 1]);
+            $arr_can = Canton::findAll(["pro_id" => $persona_model->pro_id_domicilio, "can_estado" => 1, "can_estado_logico" => 1]);
+
+            $EditFormTab2 = $this->renderPartial('EditFormTab2', [
+                'arr_pais' => (empty(ArrayHelper::map($arr_pais, "pai_id", "pai_nombre"))) ? array(Yii::t("pais", "-- Select Pais --")) : (ArrayHelper::map($arr_pais, "pai_id", "pai_nombre")),
+                'arr_pro' => (empty(ArrayHelper::map($arr_pro, "pro_id", "pro_nombre"))) ? array(Yii::t("provincia", "-- Select Provincia --")) : (ArrayHelper::map($arr_pro, "pro_id", "pro_nombre")),
+                'arr_can' => (empty(ArrayHelper::map($arr_can, "can_id", "can_nombre"))) ? array(Yii::t("canton", "-- Select Canton --")) : (ArrayHelper::map($arr_can, "can_id", "can_nombre")),
+                'persona_model' => $persona_model,
+                'email' => $email,
+            ]);
+
+            /**
+             * Inf. caso de emergencia
+             */
+            $arr_tipparentesco = TipoParentesco::find()->select("tpar_id AS id, tpar_nombre AS value")->where(["tpar_estado_logico" => "1", "tpar_estado" => "1"])->asArray()->all();
+
+            $EditFormTab3 = $this->renderPartial('EditFormTab3', [
+                "arr_tipparentesco" => ArrayHelper::map($arr_tipparentesco, "id", "value"),
+                'persona_model' => $persona_model,
+                'contacto_model' => $contacto_model,
+            ]);
+
+
+            $items = [
+                [
+                    'label' => Yii::t('profesor', 'Info. Datos Personales'),
+                    'content' => $EditFormTab1,
+                    'active' => true
+                ],
+                [
+                    'label' => Yii::t('profesor', 'Info. Datos de contacto'),
+                    'content' => $EditFormTab2,
+                ],
+                [
+                    'label' => Yii::t('profesor', 'Info. Datos en caso de Emergencia'),
+                    'content' => $EditFormTab3,
+                ],
+            ];
+
+            return $this->render('edit', [
+                        'items' => $items, 
+                        'persona_model' => $persona_model, 
+                        'contacto_model' => $contacto_model,
+            ]);
+        }
+        return $this->redirect(['inscripciongrado/aspirantegrado']);
+    }
+    public function actionUpdate() {
+        if (Yii::$app->request->isAjax) {
+            $data = Yii::$app->request->post();
+            try {
+                $user_ingresa = Yii::$app->session->get("PB_iduser");
+                $per_id = $data["per_id"];
+
+                /* Validacion de acceso a vistas por usuario */
+                $user_ingresa = Yii::$app->session->get("PB_iduser");
+                $user_usermane = Yii::$app->session->get("PB_username");
+                $user_perId = Yii::$app->session->get("PB_perid");
+                $grupo_model = new Grupo();
+                $arr_grupos = $grupo_model->getAllGruposByUser($user_usermane);
+                if ($per_id != $user_perId) {
+                    // if (!in_array(['id' => '1'], $arr_grupos) && !in_array(['id' => '6'], $arr_grupos) && !in_array(['id' => '7'], $arr_grupos) && !in_array(['id' => '8'], $arr_grupos)  && !in_array(['id' => '15'], $arr_grupos))
+
+                    if (!in_array(['id' => '1'], $arr_grupos) && !in_array(['id' => '6'], $arr_grupos) && !in_array(['id' => '7'], $arr_grupos) && !in_array(['id' => '8'], $arr_grupos) && !in_array(['id' => '15'], $arr_grupos))
+                        return $this->redirect(['profesor/index']);
+                }
+
+                /**
+                 * Inf. Basica
+                 */
+
+                $cedula = $data["cedula"];
+                $pasaporte = $data["pasaporte"];
+                $pri_nombre = $data["pri_nombre"];
+                $seg_nombre = $data["seg_nombre"];
+                $pri_apellido = $data["pri_apellido"];
+                $seg_apellido = $data["seg_apellido"];
+                $can_id_nacimiento = $data["can_id"];
+                $fecha_nacimiento = $data["fecha_nacimiento"];
+                $correo = strtolower($data["correo"]);
+                $nacionalidad = $data["nacionalidad"];
+                $celular = $data["celular"];
+                $phone = $data["phone"];
+                $dedicacion = $data["dedicacion"];
+                $pro_num_contrato = $data["pro_num_contrato"];
+                $foto = $data['foto'];
+
+                /**
+                 * Inf. Domicilio
+                 */
+                $pai_id_domicilio = $data["pai_id"];
+                $pro_id_domicilio = $data["pro_id"];
+                $can_id_domicilio = $data["can_id"];
+                $sector = ucwords($data["sector"]);
+                $calle_pri = ucwords($data["calle_pri"]);
+                $calle_sec = ucwords($data["calle_sec"]);
+                $numeracion = ucwords($data["numeracion"]);
+                $referencia = ucwords($data["referencia"]);
+
+                /**
+                 * Inf. Cuenta
+                 */
+                $usuario = strtolower($data["usuario"]);
+                $clave = $data["clave"];
+                $gru_id = $data["gru_id"];
+                $rol_id = $data["rol_id"];
+                $emp_id = $data["emp_id"];
+
+                $persona_model = Persona::findOne($per_id);
+                $persona_model->per_pri_nombre = $pri_nombre;
+                $persona_model->per_seg_nombre = $seg_nombre;
+                $persona_model->per_pri_apellido = $pri_apellido;
+                $persona_model->per_seg_apellido = $seg_apellido;
+                $persona_model->per_cedula = $cedula;
+                if ($ruc != "") {
+                    $persona_model->per_ruc = $ruc;
+                }
+                if ($pasaporte != "") {
+                    $persona_model->per_pasaporte = $pasaporte;
+                }
+                $persona_model->per_correo = $correo;
+                $persona_model->per_nacionalidad = $nacionalidad;
+                $persona_model->per_celular = $celular;
+                $persona_model->per_domicilio_telefono = $phone;
+                $persona_model->per_fecha_nacimiento = $fecha_nacimiento;
+                $persona_model->pai_id_domicilio = $pai_id_domicilio;
+                $persona_model->pro_id_domicilio = $pro_id_domicilio;
+                $persona_model->can_id_domicilio = $can_id_domicilio;
+                $persona_model->per_domicilio_sector = $sector;
+                $persona_model->per_domicilio_cpri = $calle_pri;
+                $persona_model->per_domicilio_csec = $calle_sec;
+                $persona_model->per_domicilio_num = $numeracion;
+                $persona_model->per_domicilio_ref = $referencia;
+                $arr_file = explode($foto, '.jpg');
+                if (isset($arr_file[0]) && $arr_file[0] != "") {
+                    $oldFile = $this->folder_cv . '/' . $foto;
+                    $persona_model->per_foto = $this->folder_cv . '/' . $per_id . "_" . $foto;
+                    $urlBase = Yii::$app->basePath . Yii::$app->params["documentFolder"];
+                    rename($urlBase . $oldFile, $urlBase . $persona_model->per_foto);
+                }
+
+                /**
+                 * Inf. Session Storages
+                 */
+                $arr_instuccion = (isset($data["grid_instruccion_list"]) && $data["grid_instruccion_list"] != "") ? $data["grid_instruccion_list"] : NULL;
+                $arr_docencia = (isset($data["grid_docencia_list"]) && $data["grid_docencia_list"] != "") ? $data["grid_docencia_list"] : NULL;
+                $arr_experiencia = (isset($data["grid_experiencia_list"]) && $data["grid_experiencia_list"] != "") ? $data["grid_experiencia_list"] : NULL;
+                $arr_idioma = (isset($data["grid_idioma_list"]) && $data["grid_idioma_list"] != "") ? $data["grid_idioma_list"] : NULL;
+                $arr_investigacion = (isset($data["grid_investigacion_list"]) && $data["grid_investigacion_list"] != "") ? $data["grid_investigacion_list"] : NULL;
+                $arr_evento = (isset($data["grid_evento_list"]) && $data["grid_evento_list"] != "") ? $data["grid_evento_list"] : NULL;
+                $arr_conferencia = (isset($data["grid_conferencia_list"]) && $data["grid_conferencia_list"] != "") ? $data["grid_conferencia_list"] : NULL;
+                $arr_publicacion = (isset($data["grid_publicacion_list"]) && $data["grid_publicacion_list"] != "") ? $data["grid_publicacion_list"] : NULL;
+                $arr_coordinacion = (isset($data["grid_coordinacion_list"]) && $data["grid_coordinacion_list"] != "") ? $data["grid_coordinacion_list"] : NULL;
+                $arr_evaluacion = (isset($data["grid_evaluacion_list"]) && $data["grid_evaluacion_list"] != "") ? $data["grid_evaluacion_list"] : NULL;
+                $arr_referencia = (isset($data["grid_referencia_list"]) && $data["grid_referencia_list"] != "") ? $data["grid_referencia_list"] : NULL;
+
+                $message = array(
+                    "wtmessage" => Yii::t("notificaciones", "Your information was successfully saved."),
+                    "title" => Yii::t('jslang', 'Success'),
+                );
+
+                if ($persona_model->save()) {
+                    $usuario_model = Usuario::findOne(["per_id" => $per_id]);
+
+                    /** Se agregan Informacion de Expediente * */
+                    $profesor_model = Profesor::findOne(["per_id" => $per_id]);
+                    $profesor_model->ddoc_id = $dedicacion;
+                    $profesor_model->pro_num_contrato = $pro_num_contrato;
+                    $profesor_model->save();
+                    //ProfesorInstruccion::deleteAllInfo($profesor_model->pro_id);
+                    if (isset($arr_instuccion)) {
+                        foreach ($arr_instuccion as $key0 => $value0) {
+                            if ($value0[6] == "N") {
+                                $instruccion_model = new ProfesorInstruccion();
+                                $instruccion_model->nins_id = $value0[1];
+                                $instruccion_model->pins_institucion = ucwords($value0[2]);
+                                $instruccion_model->pins_especializacion = ucwords($value0[3]);
+                                $instruccion_model->pins_titulo = ucwords($value0[4]);
+                                $instruccion_model->pins_senescyt = strtoupper($value0[5]);
+                                $instruccion_model->pro_id = $profesor_model->pro_id;
+                                $instruccion_model->pins_estado = '1';
+                                $instruccion_model->pins_estado_logico = '1';
+                                $instruccion_model->pins_usuario_ingreso = $user_ingresa;
+                                $instruccion_model->save();
+                            }
+                        }
+                    }
+                    //ProfesorExpDoc::deleteAllInfo($profesor_model->pro_id);
+                    if (isset($arr_docencia)) {
+                        foreach ($arr_docencia as $key1 => $value1) {
+                            if ($value1[6] == "N") {
+                                $docencia_model = new ProfesorExpDoc();
+                                $docencia_model->ins_id = $value1[1];
+                                $docencia_model->pedo_fecha_inicio = $value1[2];
+                                $docencia_model->pedo_fecha_fin = $value1[3];
+                                $docencia_model->pedo_denominacion = ucwords($value1[4]);
+                                $docencia_model->pedo_asignaturas = ucwords($value1[5]);
+                                $docencia_model->pro_id = $profesor_model->pro_id;
+                                $docencia_model->pedo_estado = '1';
+                                $docencia_model->pedo_estado_logico = '1';
+                                $docencia_model->pedo_usuario_ingreso = $user_ingresa;
+                                $docencia_model->save();
+                            }
+                        }
+                    }
+                    //ProfesorExpProf::deleteAllInfo($profesor_model->pro_id);
+                    if (isset($arr_experiencia)) {
+                        foreach ($arr_experiencia as $key2 => $value2) {
+                            if ($value2[6] == "N") {
+                                $experiencia_model = new ProfesorExpProf();
+                                $experiencia_model->pepr_organizacion = ucwords($value2[1]);
+                                $experiencia_model->pepr_fecha_inicio = $value2[2];
+                                $experiencia_model->pepr_fecha_fin = $value2[3];
+                                $experiencia_model->pepr_denominacion = ucwords($value2[4]);
+                                $experiencia_model->pepr_funciones = ucwords($value2[5]);
+                                $experiencia_model->pro_id = $profesor_model->pro_id;
+                                $experiencia_model->pepr_estado = '1';
+                                $experiencia_model->pepr_estado_logico = '1';
+                                $experiencia_model->pepr_usuario_ingreso = $user_ingresa;
+                                $experiencia_model->save();
+                            }
+                        }
+                    }
+                    //ProfesorIdiomas::deleteAllInfo($profesor_model->pro_id);
+                    if (isset($arr_idioma)) {
+                        foreach ($arr_idioma as $key3 => $value3) {
+                            if ($value3[6] == "N") {
+                                $idiomas_model = new ProfesorIdiomas();
+                                $idiomas_model->idi_id = $value3[1];
+                                $idiomas_model->pidi_nivel_escrito = ucfirst($value3[2]);
+                                $idiomas_model->pidi_nivel_oral = ucfirst($value3[3]);
+                                $idiomas_model->pidi_certificado = ucfirst($value3[4]);
+                                $idiomas_model->pidi_institucion = ucwords($value3[5]);
+                                $idiomas_model->pro_id = $profesor_model->pro_id;
+                                $idiomas_model->pidi_estado = '1';
+                                $idiomas_model->pidi_estado_logico = '1';
+                                $idiomas_model->pidi_usuario_ingreso = $user_ingresa;
+                                $idiomas_model->save();
+                            }
+                        }
+                    }
+                    //ProfesorInvestigacion::deleteAllInfo($profesor_model->pro_id);
+                    if (isset($arr_investigacion)) {
+                        foreach ($arr_investigacion as $key4 => $value4) {
+                            if ($value4[7] == "N") {
+                                $investigacion_model = new ProfesorInvestigacion();
+                                $investigacion_model->pinv_proyecto = ucwords($value4[1]);
+                                $investigacion_model->pinv_ambito = ucwords($value4[2]);
+                                $investigacion_model->pinv_responsabilidad = ucwords($value4[3]);
+                                $investigacion_model->pinv_entidad = ucwords($value4[4]);
+                                $investigacion_model->pinv_anio = strtolower($value4[5]);
+                                $investigacion_model->pinv_duracion = strtolower($value4[6]);
+                                $investigacion_model->pro_id = $profesor_model->pro_id;
+                                $investigacion_model->pinv_estado = '1';
+                                $investigacion_model->pinv_estado_logico = '1';
+                                $investigacion_model->pinv_usuario_ingreso = $user_ingresa;
+                                $investigacion_model->save();
+                            }
+                        }
+                    }
+                    //ProfesorCapacitacion::deleteAllInfo($profesor_model->pro_id);
+                    if (isset($arr_evento)) {
+                        foreach ($arr_evento as $key5 => $value5) {
+                            if ($value5[6] == "N") {
+                                $capacitacion_model = new ProfesorCapacitacion();
+                                $capacitacion_model->pcap_tipo = strtolower($value5[4]);
+                                $capacitacion_model->pcap_evento = ucwords($value5[1]);
+                                $capacitacion_model->pcap_institucion = ucwords($value5[2]);
+                                $capacitacion_model->pcap_anio = strtolower($value5[3]);
+                                $capacitacion_model->pcap_duracion = strtolower($value5[5]);
+                                $capacitacion_model->pro_id = $profesor_model->pro_id;
+                                $capacitacion_model->pcap_estado = '1';
+                                $capacitacion_model->pcap_estado_logico = '1';
+                                $capacitacion_model->pcap_usuario_ingreso = $user_ingresa;
+                                $capacitacion_model->save();
+                            }
+                        }
+                    }
+                    //ProfesorConferencia::deleteAllInfo($profesor_model->pro_id);
+                    if (isset($arr_conferencia)) {
+                        foreach ($arr_conferencia as $key6 => $value6) {
+                            if ($value6[5] == "N") {
+                                $capacitacion_model = new ProfesorConferencia();
+                                $capacitacion_model->pcon_evento = ucwords($value6[1]);
+                                $capacitacion_model->pcon_institucion = ucwords($value6[2]);
+                                $capacitacion_model->pcon_anio = strtolower($value6[3]);
+                                $capacitacion_model->pcon_ponencia = ucwords($value6[4]);
+                                $capacitacion_model->pro_id = $profesor_model->pro_id;
+                                $capacitacion_model->pcon_estado = '1';
+                                $capacitacion_model->pcon_estado_logico = '1';
+                                $capacitacion_model->pcon_usuario_ingreso = $user_ingresa;
+                                $capacitacion_model->save();
+                            }
+                        }
+                    }
+                    //ProfesorCoordinacion::deleteAllInfo($profesor_model->pro_id);
+                    if (isset($arr_coordinacion)) {
+                        foreach ($arr_coordinacion as $key7 => $value7) {
+                            if ($value7[6] == "N") {
+                                $coordinacion_model = new ProfesorCoordinacion();
+                                $coordinacion_model->pcoo_alumno = ucwords($value7[1]);
+                                $coordinacion_model->pcoo_programa = ucwords($value7[2]);
+                                $coordinacion_model->pcoo_academico = ucwords($value7[3]);
+                                $coordinacion_model->ins_id = ($value7[4]);
+                                $coordinacion_model->pcoo_anio = strtolower($value7[5]);
+                                $coordinacion_model->pro_id = $profesor_model->pro_id;
+                                $coordinacion_model->pcoo_estado = '1';
+                                $coordinacion_model->pcoo_estado_logico = '1';
+                                $coordinacion_model->pcoo_usuario_ingreso = $user_ingresa;
+                                $coordinacion_model->save();
+                            }
+                        }
+                    }
+                    //ProfesorEvaluacion::deleteAllInfo($profesor_model->pro_id);
+                    if (isset($arr_evaluacion)) {
+                        foreach ($arr_evaluacion as $key8 => $value8) {
+                            if ($value8[4] == "N") {
+                                $evaluacion_model = new ProfesorEvaluacion();
+                                $evaluacion_model->peva_periodo = strtolower($value8[1]);
+                                $evaluacion_model->peva_institucion = ucwords($value8[2]);
+                                $evaluacion_model->peva_evaluacion = ucwords($value8[3]);
+                                $evaluacion_model->pro_id = $profesor_model->pro_id;
+                                $evaluacion_model->peva_estado = '1';
+                                $evaluacion_model->peva_estado_logico = '1';
+                                $evaluacion_model->peva_usuario_ingreso = $user_ingresa;
+                                $evaluacion_model->save();
+                            }
+                        }
+                    }
+                    //ProfesorPublicacion::deleteAllInfo($profesor_model->pro_id);
+                    if (isset($arr_publicacion)) {
+                        foreach ($arr_publicacion as $key9 => $value9) {
+                            if ($value9[6] == "N") {
+                                $publicacion_model = new ProfesorPublicacion();
+                                $publicacion_model->tpub_id = $value9[1];
+                                $publicacion_model->ppub_titulo = ucwords($value9[2]);
+                                $publicacion_model->ppub_editorial = ucwords($value9[3]);
+                                $publicacion_model->ppub_isbn = strtoupper($value9[4]);
+                                $publicacion_model->ppub_autoria = ucwords($value9[5]);
+                                $publicacion_model->pro_id = $profesor_model->pro_id;
+                                $publicacion_model->ppub_estado = '1';
+                                $publicacion_model->ppub_estado_logico = '1';
+                                $publicacion_model->ppub_usuario_ingreso = $user_ingresa;
+                                $publicacion_model->save();
+                            }
+                        }
+                    }
+                    //ProfesorReferencia::deleteAllInfo($profesor_model->pro_id);
+                    if (isset($arr_referencia)) {
+                        foreach ($arr_referencia as $key10 => $value10) {
+                            if ($value10[5] == "N") {
+                                $referencia_model = new ProfesorReferencia();
+                                $referencia_model->pref_contacto = ucwords($value10[1]);
+                                $referencia_model->pref_relacion_cargo = ucwords($value10[2]);
+                                $referencia_model->pref_organizacion = ucwords($value10[3]);
+                                $referencia_model->pref_numero = strtolower($value10[4]);
+                                $referencia_model->pro_id = $profesor_model->pro_id;
+                                $referencia_model->pref_estado = '1';
+                                $referencia_model->pref_estado_logico = '1';
+                                $referencia_model->pref_usuario_ingreso = $user_ingresa;
+                                $referencia_model->save();
+                            }
+                        }
+                    }
+                    return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+                } else {
+                    throw new Exception('Error SubModulo no creado.');
+                }
+            } catch (Exception $ex) {
+                $message = array(
+                    "wtmessage" => Yii::t('notificaciones', 'Your information has not been saved. Please try again.' . $ex->getMessage()),
+                    "title" => Yii::t('jslang', 'Error'),
+                );
+                return Utilities::ajaxResponse('NOOK', 'alert', Yii::t('jslang', 'Error'), 'true', $message);
             }
         }
     }

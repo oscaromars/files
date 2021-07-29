@@ -55,6 +55,7 @@ $_SESSION['persona_ingresa'] = base64_decode($_GET['ids']);*/
                         'per_nacionalidad' => $model['per_nacionalidad'],
                         'area' => $area['name'],
                         'per_pasaporte' => $model['per_pasaporte'],
+                        'arr_ciudad_nac' => $arr_ciudad_nac,
                         "arr_nacionalidad" => $arr_nacionalidad,
                         'eciv_id' => $model['eciv_id'],
                         "arr_estado_civil" => $arr_estado_civil,

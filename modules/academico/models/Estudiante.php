@@ -460,7 +460,7 @@ class Estudiante extends \yii\db\ActiveRecord {
     public function consultarEstudiante($arrFiltro = array(), $onlyData = false) {
         $con = \Yii::$app->db_academico;
         $con1 = \Yii::$app->db_asgard;
-        $status = 1;
+        //$status = 1;
         if (isset($arrFiltro) && count($arrFiltro) > 0) {
             if ($arrFiltro['search'] != "") {
                 $str_search .= "(pers.per_pri_nombre like :estudiante OR ";
@@ -534,14 +534,14 @@ class Estudiante extends \yii\db\ActiveRecord {
                 WHERE
                 $str_search
                 pers.per_id > 1000
-                AND estu.est_estado = :status
+                /*AND estu.est_estado = :status
                 AND estu.est_estado_logico = :status
                 AND ecpr.ecpr_estado = :status
-                AND ecpr.ecpr_estado_logico = :status
+                AND ecpr.ecpr_estado_logico = :status*/
                 /*ORDER BY estu.est_fecha_creacion DESC*/";
 
         $comando = $con->createCommand($sql);
-        $comando->bindParam(":status", $status, \PDO::PARAM_STR);
+        //$comando->bindParam(":status", $status, \PDO::PARAM_STR);
         if (isset($arrFiltro) && count($arrFiltro) > 0) {
             if ($arrFiltro['search'] != "") {
                 $search_cond = "%" . $arrFiltro["search"] . "%";

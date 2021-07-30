@@ -494,7 +494,8 @@ class Estudiante extends \yii\db\ActiveRecord {
         if ($onlyData == false) {
             $estid = "
                       pers.per_id as per_id,
-                      IFNULL(estu.est_id, '') as est_id,";
+                      IFNULL(estu.est_id, '') as est_id,
+                      IFNULL(sins.rsin_id, '') as rsin_id,";
         }
         $dataCurrentPlanificacion = Planificacion::getCurrentPeriodoAcademico();
         $inlist = "";
@@ -517,11 +518,17 @@ class Estudiante extends \yii\db\ActiveRecord {
                       IFNULL(unid.uaca_nombre, '') as undidad,
                       IFNULL(moda.mod_nombre, '') as modalidad,
                       IFNULL(esac.eaca_nombre, '') as carrera,
-                       CASE estu.est_estado
+                      /*CASE sins.rsin_id
+                            WHEN '1' THEN 'Pendiente'
+                            WHEN '2' THEN 'Aprobado'
+                            WHEN '4' THEN 'No Aprobado'
+                            ELSE 'Aprobado'
+                      END as estado_solicitud,*/
+                      CASE estu.est_estado
                             WHEN '0' THEN 'Inactivo'
                             WHEN '1' THEN 'Activo'
                             ELSE 'No estudiante'
-                       END as estado,
+                      END as estado,
                        r.ron_id as registroOnline
                 FROM  " . $con->dbname . ".estudiante estu
                 RIGHT JOIN " . $con1->dbname . ".persona pers ON pers.per_id = estu.per_id
@@ -533,7 +540,8 @@ class Estudiante extends \yii\db\ActiveRecord {
                 LEFT JOIN " . $con->dbname . ".registro_online r ON r.per_id = pers.per_id
                 LEFT JOIN " . $con->dbname . ".planificacion_estudiante pes ON pes.pes_id = r.pes_id AND pla_id IN ($inlist)
                 LEFT JOIN " . $con2->dbname . ".interesado inte ON inte.per_id = pers.per_id
-                LEFT JOIN " . $con2->dbname . ".solicitud_inscripcion sins on sins.int_id = inte.int_id
+                LEFT JOIN " . $con2->dbname . ".solicitud_inscripcion sins on sins.int_id = inte.int_id 
+                AND (sins.eaca_id = meun.eaca_id AND sins.uaca_id = meun.uaca_id AND sins.mod_id = meun.mod_id)
                 WHERE
                 $str_search
                 pers.per_id > 1000

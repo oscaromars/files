@@ -36,12 +36,12 @@ PbGridView::widget([
             'header' => Yii::t("formulario", "Email"),
             'value' => 'correo',
         ],
-        /*[
+        [
             'attribute' => 'Unidad',
             'header' => academico::t("Academico", "Academic unit"),
             'value' => 'undidad',
         ],
-        [
+        /*[
             'attribute' => 'Modalidad',
             'header' => academico::t("matriculacion", "Modality"),
             'value' => 'modalidad',
@@ -74,7 +74,29 @@ PbGridView::widget([
             'header' => Yii::t("formulario", 'Date Create'),
             'value' => 'fecha_creacion',
         ],
-        [
+        /*[
+            'attribute' => 'estadosolicitud',
+            'header' => Yii::t("formulario", 'id Solicitud'),
+            'value' => 'rsin_id',
+        ],*/
+        /*[
+            'attribute' => 'estadosolicitud',
+            'header' => Yii::t("formulario", 'Estado Solicitud'),
+            'contentOptions' => ['class' => 'text-center'],
+            'headerOptions' => ['class' => 'text-center'],
+            'format' => 'html',
+            'value' => function ($model) {
+                if ($model["rsin_id"] == 4)
+                    return '<small class="label label-danger">No Aprobado</small>';
+                else if ($model["rsin_id"] == 2)
+                    return '<small class="label label-success">Aprobado</small>';
+                else if ($model["rsin_id"] == 1)
+                    return '<small class="label label-warning">Pendiente</small>';
+                else
+                    return '<small class="label label-success">Aprobado</small>';
+            },
+        ],*/
+        /*[
             'attribute' => 'estado',
             'header' => Yii::t("formulario", 'Status'),
             'contentOptions' => ['class' => 'text-center'],
@@ -87,6 +109,25 @@ PbGridView::widget([
                     return '<small class="label label-success">Activo</small>';
                 else
                     return '<small class="label label-warning">No Estudiante</small>';
+            },
+        ],*/
+        [
+            'attribute' => 'estado',
+            'header' => Yii::t("formulario", 'Status'),
+            'contentOptions' => ['class' => 'text-center'],
+            'headerOptions' => ['class' => 'text-center'],
+            'format' => 'html',
+            'value' => function ($model) {
+                if ($model["estado"] == 'Inactivo')
+                    return '<small class="label label-danger">Inactivo</small>';
+                else if ($model["estado"] == 'Activo' && ($model["rsin_id"] == 2 || $model["rsin_id"] == ''))
+                    return '<small class="label label-success">Activo</small>';
+                else if ($model["estado"] == 'Activo' && ($model["rsin_id"] == 1))
+                    return '<small class="label label-warning">Por Revisar</small>';
+                else if ($model["estado"] == 'No estudiante')
+                    return '<small class="label label-warning">No Estudiante</small>';
+                else
+                    return '<small class="label label-success">Activo</small>';
             },
         ],
         [

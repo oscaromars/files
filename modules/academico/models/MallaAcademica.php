@@ -1021,7 +1021,7 @@ from db_academico.periodo_academico plac
 
                      // paal_id, hosd_id, paal_cantidad
                                       
-                    $num_par =floor($getpaal["paal_cantidad"]/50+1); 
+                    $num_par =floor(floatval($getpaal["paal_cantidad"]/50+1)); 
                     \app\models\Utilities::putMessageLogFile('crude:'.$getpaal["paal_cantidad"]);
                     \app\models\Utilities::putMessageLogFile('floor:'.$num_par);
 
@@ -1049,9 +1049,16 @@ from db_academico.periodo_academico plac
                     if($getpaal["paal_cantidad"] == 0){
                     
                   $num_par = 1;
+
+                  // get daho by
+                  //$getifasi["hosd_bloque"] 
+                  // $getifasi["hosd_hora"]) 
+                  //mod_id
+                  // add field daho to insert
+
                 $setmpar= "
-                INSERT INTO db_academico.materia_paralelo_periodo (asi_id, mod_id, paca_id, daho_id, mpp_num_paralelo, mpp_usuario_ingreso, mpp_estado, mpp_estado_logico)
-                 VALUES ('231', '1', '14', '5', '1', '1', '1', '1') ";
+                INSERT INTO db_academico.materia_paralelo_periodo (asi_id, mod_id, paca_id, mpp_num_paralelo, mpp_usuario_ingreso, mpp_estado, mpp_estado_logico)
+                 VALUES ('" . $iddd . "','" . $mod_id . "','" . $paca_id . "','" . $num_par . "', '1', '1', '1') ";
 
                     
                 $comando = $con->createCommand($setmpar); 
@@ -1060,12 +1067,12 @@ from db_academico.periodo_academico plac
 
                     } else {
           
-                      if(INT($getpaal["paal_cantidad"]/50) == $getpaal["paal_cantidad"] / 50){
-                       $num_par =floor($getpaal["paal_cantidad"]/50+1); 
+                      if(intval($getpaal["paal_cantidad"]/50) == $getpaal["paal_cantidad"] / 50){
+                        $num_par =floor(floatval($getpaal["paal_cantidad"]/50+1)); 
                      
-                  $setmpar= "
-                INSERT INTO db_academico.materia_paralelo_periodo (asi_id, mod_id, paca_id, daho_id, mpp_num_paralelo, mpp_usuario_ingreso, mpp_estado, mpp_estado_logico)
-                 VALUES ('231', '1', '14', '5', '1', '1', '1', '1') ";
+                 $setmpar= "
+                INSERT INTO db_academico.materia_paralelo_periodo (asi_id, mod_id, paca_id, mpp_num_paralelo, mpp_usuario_ingreso, mpp_estado, mpp_estado_logico)
+                 VALUES ('" . $iddd . "','" . $mod_id . "','" . $paca_id . "','" . $num_par . "', '1', '1', '1') ";
 
                     
                 $comando = $con->createCommand($setmpar); 
@@ -1074,7 +1081,7 @@ from db_academico.periodo_academico plac
               
                     } else {
 
-                              $num_par =floor($getpaal["paal_cantidad"]/50+1); 
+                              $num_par =floor(floatval($getpaal["paal_cantidad"]/50+1)); 
                     }
 
 
@@ -1093,27 +1100,34 @@ from db_academico.periodo_academico plac
 
                  $comando = $con->createCommand($getmpar);
                    $comando->bindParam(":asi_id", $iddd, \PDO::PARAM_INT);
-                   $comando->bindParam(":paca_id", $paca, \PDO::PARAM_INT);
+                   $comando->bindParam(":paca_id", $paca_id, \PDO::PARAM_INT);
                    $comando->bindParam(":mod_id", $mod_id, \PDO::PARAM_INT);
                    $comando->bindParam(":paar", $num_par, \PDO::PARAM_INT);
                    $getmpar = $comando->queryOne();
 
                     // update paal_cantidad
-
+                 
+                 $cantidadal = $getpaal["paal_cantidad"] + 1;  
+                $paal_id = $getpaal["paal_id"] ;  
+                $updatepaalcantidad = "
+                UPDATE db_academico.paralelos_alumno SET paal_cantidad = $cantidadal 
+                WHERE paal_id = $paal_id";
+                $comando = $con->createCommand($updatepaalcantidad);
+                $result = $comando->execute();
 
                   if ($getifasi["hosd_bloque"] == 1){
                     switch ($getifasi["hosd_hora"]) {
                         case 1:
                          $asih1 = $subjects[$iter][0]; $noasih1 = $subjects[$iter][1];
-                         $mpph1 = 0;  // daho_id = Null {{mod, daho_id, update par}} 
+                         $mpph1 =  $getmpar["mpp_id"];  // daho_id = Null {{mod, daho_id, update par}} 
                         break;
                         case 2:
                     $asih2 = $subjects[$iter][0];$noasih2 = $subjects[$iter][1];
-                     $mpph2 = 0; // daho_id = Null {{mod, daho_id, update par}}
+                     $mpph2 =  $getmpar["mpp_id"] ; // daho_id = Null {{mod, daho_id, update par}}
                          break;      
                         case 3:
                     $asih3 = $subjects[$iter][0];$noasih3 =$subjects[$iter][1];
-                     $mpph3 = 0; // daho_id = Null {{mod, daho_id, update par}}
+                     $mpph3 =  $getmpar["mpp_id"] ; // daho_id = Null {{mod, daho_id, update par}}
                          break;                                    
                     }            
                    
@@ -1125,15 +1139,15 @@ from db_academico.periodo_academico plac
                     switch ($getifasi["hosd_hora"]) {
                         case 1:
                     $asih4 = $subjects[$iter][0]; $noasih4 = $subjects[$iter][1];
-                     $mpph4 = 0; // daho_id = Null {{mod, daho_id, update par}}
+                     $mpph4 =  $getmpar["mpp_id"] ; // daho_id = Null {{mod, daho_id, update par}}
                         break;
                         case 2:
                    $asih5 = $subjects[$iter][0]; $noasih5 = $subjects[$iter][1];
-                    $mpph5 = 0; // daho_id = Null {{mod, daho_id, update par}}
+                    $mpph5 =  $getmpar["mpp_id"] ; // daho_id = Null {{mod, daho_id, update par}}
                          break;      
                         case 3:
                     $asih6 = $subjects[$iter][0]; $noasih6 = $subjects[$iter][1];
-                    $mpph6 = 0; // daho_id = Null {{mod, daho_id, update par}}
+                    $mpph6 =  $getmpar["mpp_id"] ; // daho_id = Null {{mod, daho_id, update par}}
                          break;                                    
                     }        }          
                    
@@ -1315,16 +1329,11 @@ from db_academico.periodo_academico plac
                      }  }
                  }  //END ITER
 
-
-
- 
-
-
                   //   1   .    4    PES
 
-                $mpph1 = 0; $mpph2 = 0; $mpph3 = 0; $mpph4 = 0;
+                 $mpph1 = 0; $mpph2 = 0; $mpph3 = 0; $mpph4 = 0;
                 $mpph5 = 0; $mpph6 = 0; $mpph7 = 0; $mpph8 = 0;
-
+                
               for ($iter = 1;$iter <= 8; ++$iter){
 
                    $codd = $subjects[$iter][0]; 
@@ -1350,29 +1359,148 @@ from db_academico.periodo_academico plac
                    $comando->bindParam(":saca_id", $gest, \PDO::PARAM_INT);
                    $comando->bindParam(":mod_id", $mod_id, \PDO::PARAM_INT);
                    $comando->bindParam(":uaca_id", $uaca_id, \PDO::PARAM_INT);
-                   $getifasi = $comando->queryOne();                   
-              
+                   $getifasi = $comando->queryOne();
+                   
 
                    if ($getifasi["hose_id"] != Null){
+
+ 
+                    $getpaal= "select paal.paal_id, paal.hosd_id, paal.paal_cantidad from db_academico.paralelos_alumno AS paal
+                    inner join db_academico.horarios_semestre_detalle AS hosd
+                    on paal.hosd_id = hosd.hosd_id
+                    inner join db_academico.horarios_semestre AS hose
+                    on hose.hose_id = hosd.hose_id
+                    where hosd.hosd_asi_id = :iddd
+                    AND hose.mod_id = :mod_id
+                    AND hose.saca_id = :saca_id 
+                    AND hose.uaca_id = :uaca_id"
+                    ;
+                    $comando = $con->createCommand($getpaal);
+                   $comando->bindParam(":iddd", $iddd, \PDO::PARAM_INT);
+                   $comando->bindParam(":saca_id", $gest, \PDO::PARAM_INT);
+                   $comando->bindParam(":mod_id", $mod_id, \PDO::PARAM_INT);
+                   $comando->bindParam(":uaca_id", $uaca_id, \PDO::PARAM_INT);
+                   $getpaal = $comando->queryOne();
+
+
+                     // paal_id, hosd_id, paal_cantidad
+                                      
+                     $num_par =floor(floatval($getpaal["paal_cantidad"]/50+1)); 
+                    \app\models\Utilities::putMessageLogFile('crude:'.$getpaal["paal_cantidad"]);
+                    \app\models\Utilities::putMessageLogFile('floor:'.$num_par);
+
+                  // by  $getifasi["hosd_hora"] and $getifasi["hosd_bloque"] ==> daho_id=============>
+                  
+                    if ($getifasi["hosd_bloque"]== 1){
+                     $block='B1'; }Else {   $block='B2'; }
+
+                        $getpaca = "
+                        select paca.paca_id from db_academico.semestre_academico as saca
+                            inner join db_academico.periodo_academico as paca
+                            on saca.saca_id = paca.saca_id
+                            inner join db_academico.bloque_academico as baca
+                            on paca.baca_id = baca.baca_id
+                            where baca.baca_nombre = :baca_id
+                            and saca.saca_id = :saca_id
+                            ";
+                         $comando = $con->createCommand($getpaca);
+                   $comando->bindParam(":baca_id", $block, \PDO::PARAM_STR);
+                   $comando->bindParam(":saca_id", $gest, \PDO::PARAM_INT);
+                   $getpaca = $comando->queryOne();
+                    $paca_id = $getpaca["paca_id"];
+                   
+
+                    if($getpaal["paal_cantidad"] == 0){
+                    
+                  $num_par = 1;
+
+                  // get daho by
+                  //$getifasi["hosd_bloque"] 
+                  // $getifasi["hosd_hora"]) 
+                  //mod_id
+                  // add field daho to insert
+
+                $setmpar= "
+                INSERT INTO db_academico.materia_paralelo_periodo (asi_id, mod_id, paca_id, mpp_num_paralelo, mpp_usuario_ingreso, mpp_estado, mpp_estado_logico)
+                 VALUES ('" . $iddd . "','" . $mod_id . "','" . $paca_id . "','" . $num_par . "', '1', '1', '1') ";
+
+                    
+                $comando = $con->createCommand($setmpar); 
+                $setmpar = $comando->execute();
+
+
+                    } else {
+          
+                      if(intval($getpaal["paal_cantidad"]/50) == $getpaal["paal_cantidad"] / 50){
+                       $num_par =floor(floatval($getpaal["paal_cantidad"]/50+1)); 
+                     
+                 $setmpar= "
+                INSERT INTO db_academico.materia_paralelo_periodo (asi_id, mod_id, paca_id, mpp_num_paralelo, mpp_usuario_ingreso, mpp_estado, mpp_estado_logico)
+                 VALUES ('" . $iddd . "','" . $mod_id . "','" . $paca_id . "','" . $num_par . "', '1', '1', '1') ";
+
+                    
+                $comando = $con->createCommand($setmpar); 
+                $setmpar = $comando->execute();
+                        
+              
+                    } else {
+
+                              $num_par =floor(floatval($getpaal["paal_cantidad"]/50+1)); 
+                    }
+
+
+                    } 
+
+
+                $getmpar = "
+                select mpp_id, asi_id, mod_id, paca_id, daho_id, mpp_num_paralelo
+                from db_academico.materia_paralelo_periodo
+                where
+                asi_id= :asi_id AND
+                    mod_id = :mod_id AND
+                paca_id = :paca_id AND
+                mpp_num_paralelo = :paar"
+                  ;
+
+                 $comando = $con->createCommand($getmpar);
+                   $comando->bindParam(":asi_id", $iddd, \PDO::PARAM_INT);
+                   $comando->bindParam(":paca_id", $paca_id, \PDO::PARAM_INT);
+                   $comando->bindParam(":mod_id", $mod_id, \PDO::PARAM_INT);
+                   $comando->bindParam(":paar", $num_par, \PDO::PARAM_INT);
+                   $getmpar = $comando->queryOne();
+
+                    // update paal_cantidad
+                
+                 $cantidadal = $getpaal["paal_cantidad"] + 1;  
+                $paal_id = $getpaal["paal_id"] ;  
+                $updatepaalcantidad = "
+                UPDATE db_academico.paralelos_alumno SET paal_cantidad = $cantidadal 
+                WHERE paal_id = $paal_id";
+                $comando = $con->createCommand($updatepaalcantidad);
+                $result = $comando->execute();
+
+                // TO FIX CALCULATE STUDENT BY PAR
+                // TO ADD TIMESTAMP TO MPP 
+
 
                   if ($getifasi["hosd_bloque"] == 1){
                     switch ($getifasi["hosd_hora"]) {
                         case 1:
-                    $asih1 = $subjects[$iter][0]; $noasih1 = $subjects[$iter][1];
-                    $mpph1 = 0; // daho_id = Null {{mod, daho_id, update par}}
+                         $asih1 = $subjects[$iter][0]; $noasih1 = $subjects[$iter][1];
+                         $mpph1 =  $getmpar["mpp_id"];  // daho_id = Null {{mod, daho_id, update par}} 
                         break;
                         case 2:
                     $asih2 = $subjects[$iter][0];$noasih2 = $subjects[$iter][1];
-                    $mpph2 = 0; // daho_id = Null {{mod, daho_id, update par}}
+                     $mpph2 =  $getmpar["mpp_id"] ; // daho_id = Null {{mod, daho_id, update par}}
                          break;      
                         case 3:
                     $asih3 = $subjects[$iter][0];$noasih3 =$subjects[$iter][1];
-                    $mpph3 = 0; // daho_id = Null {{mod, daho_id, update par}}
-                         break;              
+                     $mpph3 =  $getmpar["mpp_id"] ; // daho_id = Null {{mod, daho_id, update par}}
+                         break;    
                         case 4:
                     $asih4 = $subjects[$iter][0];$noasih4 =$subjects[$iter][1];
-                    $mpph4 = 0; // daho_id = Null {{mod, daho_id, update par}}
-                         break;                         
+                     $mpph4 =  $getmpar["mpp_id"] ; // daho_id = Null {{mod, daho_id, update par}}
+                         break;                                 
                     }            
                    
                     }  
@@ -1383,28 +1511,30 @@ from db_academico.periodo_academico plac
                     switch ($getifasi["hosd_hora"]) {
                         case 1:
                     $asih5 = $subjects[$iter][0]; $noasih5 = $subjects[$iter][1];
-                    $mpph5 = 0; // daho_id = Null {{mod, daho_id, update par}}
+                     $mpph5 =  $getmpar["mpp_id"] ; // daho_id = Null {{mod, daho_id, update par}}
                         break;
                         case 2:
-                    $asih6 = $subjects[$iter][0]; $noasih6 = $subjects[$iter][1];
-                    $mpph6 = 0; // daho_id = Null {{mod, daho_id, update par}}
+                   $asih6 = $subjects[$iter][0]; $noasih6 = $subjects[$iter][1];
+                    $mpph6 =  $getmpar["mpp_id"] ; // daho_id = Null {{mod, daho_id, update par}}
                          break;      
                         case 3:
                     $asih7 = $subjects[$iter][0]; $noasih7 = $subjects[$iter][1];
-                    $mpph7 = 0; // daho_id = Null {{mod, daho_id, update par}}
-                         break;    
-                        case 4:
-                    $asih8 = $subjects[$iter][0]; $noasih8 = $subjects[$iter][1];
-                    $mpph8 = 0; // daho_id = Null {{mod, daho_id, update par}}
-                         break;  
-
+                    $mpph7 =  $getmpar["mpp_id"] ; // daho_id = Null {{mod, daho_id, update par}}
+                         break;     
+                       case 4:
+                    $asih8 = $subjects[$iter][0];$noasih8 =$subjects[$iter][1];
+                     $mpph8 =  $getmpar["mpp_id"] ; // daho_id = Null {{mod, daho_id, update par}}
+                         break;                                 
                     }        }          
                    
                     }  
 
 
 
-                     }//endfor    
+                    
+
+                     }//endfor       
+
 
 
                             $sql = "INSERT INTO db_academico.planificacion_estudiante

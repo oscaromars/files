@@ -48,13 +48,13 @@ class CursoEducativaUnidad extends \yii\db\ActiveRecord
     /**
      * Function findIdentity
      * @author  Diana Lopez <dlopez@uteg.edu.ec>
-     * @param      
-     * @return  
+     * @param
+     * @return
      */
     public static function findIdentity($id) {
         return static::findOne($id);
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -106,16 +106,16 @@ class CursoEducativaUnidad extends \yii\db\ActiveRecord
      * @return
      */
     public function consultarUnidadEducativa($arrFiltro = array(), $reporte, $ids) {
-        $con = \Yii::$app->db_academico;        
+        $con = \Yii::$app->db_academico;
         $estado = 1;
         if ($ids == 1) {
             $campos = "
             cure.cedu_id,
             cure.ceuni_id,  ";
-        }    
+        }
         if (isset($arrFiltro) && count($arrFiltro) > 0) {
             $str_search .= "(cure.ceuni_descripcion_unidad like :search) AND ";
-   
+
             if ($arrFiltro['periodo'] != "" && $arrFiltro['periodo'] > 0) {
                 $str_search .= "cur.paca_id = :paca_id AND ";
             }
@@ -128,15 +128,15 @@ class CursoEducativaUnidad extends \yii\db\ActiveRecord
                 $str_search .= "cure.ceuni_fecha_inicio >= :fechain AND ";
                 $str_search .= "cure.ceuni_fecha_fin <= :fechafin AND ";
             }
-                    
+
         }
         $sql = "SELECT  $campos
-                        cur.cedu_asi_nombre,                         
+                        cur.cedu_asi_nombre,
                         cure.ceuni_codigo_unidad,
                         cure.ceuni_descripcion_unidad,
                         ifnull(DATE_FORMAT(cure.ceuni_fecha_inicio,'%Y-%m-%d'), '') as ceuni_fecha_inicio,
                         ifnull(DATE_FORMAT(cure.ceuni_fecha_fin,'%Y-%m-%d'), '') as ceuni_fecha_fin
-                FROM " . $con->dbname . ".curso_educativa_unidad cure 
+                FROM " . $con->dbname . ".curso_educativa_unidad cure
                 INNER JOIN " . $con->dbname . ".curso_educativa cur ON cur.cedu_id = cure.cedu_id
                 WHERE $str_search  cure.ceuni_estado = :estado
                 AND cure.ceuni_estado_logico = :estado";
@@ -146,12 +146,12 @@ class CursoEducativaUnidad extends \yii\db\ActiveRecord
         if (isset($arrFiltro) && count($arrFiltro) > 0) {
             $search_cond = "%" . $arrFiltro["search"] . "%";
             $comando->bindParam(":search", $search_cond, \PDO::PARAM_STR);
-            
+
             if ($arrFiltro['periodo'] != "" && $arrFiltro['periodo'] > 0) {
                 $periodo = $arrFiltro["periodo"];
                 $comando->bindParam(":paca_id", $periodo, \PDO::PARAM_INT);
             }
-            
+
             if ($arrFiltro['curso'] != "" && $arrFiltro['curso'] > 0) {
                 $curso = $arrFiltro["curso"];
                 $comando->bindParam(":cedu_id", $curso, \PDO::PARAM_INT);
@@ -164,12 +164,12 @@ class CursoEducativaUnidad extends \yii\db\ActiveRecord
                 $comando->bindParam(":fechain", $fechain, \PDO::PARAM_STR);
                 $comando->bindParam(":fechafin", $fechafin, \PDO::PARAM_STR);
             }
-                    
+
         }
         $resultData = $comando->queryAll();
 
         //\app\models\Utilities::putMessageLogFile('consultarUnidadEducativa: '.$comando->getRawSql());
-        
+
         $dataProvider = new ArrayDataProvider([
             'key' => 'id',
             'allModels' => $resultData,
@@ -194,17 +194,17 @@ class CursoEducativaUnidad extends \yii\db\ActiveRecord
      * @return
      */
     public function consultarUnidadEducativaxCeduid($cedu_id) {
-        $con = \Yii::$app->db_academico;        
+        $con = \Yii::$app->db_academico;
         $estado = 1;
 
         $sql = " SELECT cure.cedu_id,
                         cure.ceuni_id,
-                        cur.cedu_asi_nombre,                         
+                        cur.cedu_asi_nombre,
                         cure.ceuni_codigo_unidad,
                         cure.ceuni_descripcion_unidad,
                         DATE_FORMAT(cure.ceuni_fecha_inicio,'%Y-%m-%d') as ceuni_fecha_inicio,
-                        DATE_FORMAT(cure.ceuni_fecha_fin,'%Y-%m-%d') as ceuni_fecha_fin                   
-                   FROM " . $con->dbname . ".curso_educativa_unidad cure 
+                        DATE_FORMAT(cure.ceuni_fecha_fin,'%Y-%m-%d') as ceuni_fecha_fin
+                   FROM " . $con->dbname . ".curso_educativa_unidad cure
              INNER JOIN " . $con->dbname . ".curso_educativa cur ON cur.cedu_id = cure.cedu_id
                   WHERE cure.cedu_id      = :cedu_id
                     AND cure.ceuni_estado = :estado
@@ -218,7 +218,7 @@ class CursoEducativaUnidad extends \yii\db\ActiveRecord
         $resultData = $comando->queryAll();
 
         //\app\models\Utilities::putMessageLogFile('consultarUnidadEducativa: '.$comando->getRawSql());
-        
+
         $dataProvider = new ArrayDataProvider([
             'key' => 'id',
             'allModels' => $resultData,
@@ -239,26 +239,26 @@ class CursoEducativaUnidad extends \yii\db\ActiveRecord
     /**
      * Function Consultar si ya se ha cargado la informacion anteriormente en unidad educativa.
      * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>;
-     * @property       
-     * @return  
+     * @property
+     * @return
      */
     public function consultarunidadexiste($cedu_id, $ceuni_codigo_unidad, $ceuni_descripcion_unidad) {
-        $con = \Yii::$app->db_academico;     
-        $estado = 1;         
-       /*\app\models\Utilities::putMessageLogFile('entro 2 : ' .$cedu_id);  
-       \app\models\Utilities::putMessageLogFile('entro 3 : ' .$ceuni_codigo_unidad);  
-       \app\models\Utilities::putMessageLogFile('entro 4 : ' .$ceuni_descripcion_unidad); */ 
-        $sql = "SELECT  
-                        count(*) as existe_curso                       
-                        
-                FROM " . $con->dbname . ".curso_educativa_unidad                 
-                WHERE 
+        $con = \Yii::$app->db_academico;
+        $estado = 1;
+       /*\app\models\Utilities::putMessageLogFile('entro 2 : ' .$cedu_id);
+       \app\models\Utilities::putMessageLogFile('entro 3 : ' .$ceuni_codigo_unidad);
+       \app\models\Utilities::putMessageLogFile('entro 4 : ' .$ceuni_descripcion_unidad); */
+        $sql = "SELECT
+                        count(*) as existe_curso
+
+                FROM " . $con->dbname . ".curso_educativa_unidad
+                WHERE
                 cedu_id = :cedu_id AND
-                ceuni_codigo_unidad = :ceuni_codigo_unidad AND                
+                ceuni_codigo_unidad = :ceuni_codigo_unidad AND
                 ceuni_descripcion_unidad = :ceuni_descripcion_unidad AND
                 ceuni_estado = :estado AND
                 ceuni_estado_logico = :estado ";
-        //\app\models\Utilities::putMessageLogFile('entro: ' .$sql); 
+        //\app\models\Utilities::putMessageLogFile('entro: ' .$sql);
         $comando = $con->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
         $comando->bindParam(":cedu_id", $cedu_id, \PDO::PARAM_INT);
@@ -271,11 +271,11 @@ class CursoEducativaUnidad extends \yii\db\ActiveRecord
     /**
      * Function guardar unidad educativa
      * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
-     * @param   
+     * @param
      * @return  $resultData (Retornar el código de unidad).
      */
     public function insertarUnidadeducativa($cedu_id, $ceuni_codigo_unidad, $ceuni_descripcion_unidad, $ceuni_usuario_ingreso, $ceuni_fecha_inicio, $ceuni_fecha_fin) {
-        //\app\models\Utilities::putMessageLogFile('entro insercurso...: ' ); 
+        //\app\models\Utilities::putMessageLogFile('entro insercurso...: ' );
         $con = \Yii::$app->db_academico;
         $trans = $con->getTransaction(); // se obtiene la transacción actual
         if ($trans !== null) {
@@ -284,7 +284,7 @@ class CursoEducativaUnidad extends \yii\db\ActiveRecord
             $trans = $con->beginTransaction(); // si no existe la transacción entonces se crea una
         }
         $fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
-        
+
         $param_sql = "ceuni_estado_logico";
         $bsol_sql = "1";
 
@@ -293,7 +293,7 @@ class CursoEducativaUnidad extends \yii\db\ActiveRecord
         if (isset($cedu_id)) {
             $param_sql .= ", cedu_id";
             $bsol_sql .= ", :cedu_id";
-        }       
+        }
 
         if (isset($ceuni_codigo_unidad)) {
             $param_sql .= ", ceuni_codigo_unidad";
@@ -323,16 +323,16 @@ class CursoEducativaUnidad extends \yii\db\ActiveRecord
         if (isset($fecha_transaccion)) {
             $param_sql .= ",ceuni_fecha_creacion";
             $bsol_sql .= ", :ceuni_fecha_creacion";
-        }   
+        }
 
         try {
             $sql = "INSERT INTO " . $con->dbname . ".curso_educativa_unidad ($param_sql) VALUES($bsol_sql)";
             $comando = $con->createCommand($sql);
 
-            //\app\models\Utilities::putMessageLogFile('sql...: ' .$sql); 
+            //\app\models\Utilities::putMessageLogFile('sql...: ' .$sql);
             if (isset($cedu_id)) {
                 $comando->bindParam(':cedu_id', $cedu_id, \PDO::PARAM_INT);
-            }            
+            }
 
             if (isset($ceuni_codigo_unidad)) {
                 $comando->bindParam(':ceuni_codigo_unidad', $ceuni_codigo_unidad, \PDO::PARAM_INT);
@@ -357,7 +357,7 @@ class CursoEducativaUnidad extends \yii\db\ActiveRecord
             if (isset($fecha_transaccion)) {
                 $comando->bindParam(':ceuni_fecha_creacion', $fecha_transaccion, \PDO::PARAM_STR);
             }
-            
+
             $result = $comando->execute();
             if ($trans !== null)
                 $trans->commit();
@@ -372,31 +372,31 @@ class CursoEducativaUnidad extends \yii\db\ActiveRecord
     /**
      * Function Consultar datos x id en curso educativa.
      * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>;
-     * @property       
-     * @return  
+     * @property
+     * @return
      */
     public function consultarUnidadxid($ceuni_id) {
-        $con = \Yii::$app->db_academico;     
-        $estado = 1; 
-        $sql = "SELECT  
-                        ceu.cedu_id,     
-                        ced.paca_id,                                     
+        $con = \Yii::$app->db_academico;
+        $estado = 1;
+        $sql = "SELECT
+                        ceu.cedu_id,
+                        ced.paca_id,
                         ceu.ceuni_codigo_unidad,
                         ceu.ceuni_descripcion_unidad,
                         DATE_FORMAT(ceu.ceuni_fecha_inicio,'%Y-%m-%d') as ceuni_fecha_inicio,
                         DATE_FORMAT(ceu.ceuni_fecha_fin,'%Y-%m-%d') as ceuni_fecha_fin
-                        
-                FROM " . $con->dbname . ".curso_educativa_unidad ceu                 
+
+                FROM " . $con->dbname . ".curso_educativa_unidad ceu
                 INNER JOIN " . $con->dbname . ".curso_educativa ced ON ced.cedu_id = ceu.cedu_id
-                WHERE 
-                ceu.ceuni_id = :ceuni_id AND               
+                WHERE
+                ceu.ceuni_id = :ceuni_id AND
                 ceu.ceuni_estado = :estado AND
                 ceu.ceuni_estado_logico = :estado ";
 
         $comando = $con->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
-        $comando->bindParam(":ceuni_id", $ceuni_id, \PDO::PARAM_INT);  
-        $resultData = $comando->queryOne();      
+        $comando->bindParam(":ceuni_id", $ceuni_id, \PDO::PARAM_INT);
+        $resultData = $comando->queryOne();
         return $resultData;
     }
 
@@ -409,7 +409,7 @@ class CursoEducativaUnidad extends \yii\db\ActiveRecord
     public function modificarUnidadeducativa($ceuni_id, $cedu_id, $ceuni_codigo_unidad, $ceuni_descripcion_unidad, $ceuni_usuario_modifica, $ceuni_fecha_inicio, $ceuni_fecha_fin) {
         $fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
         $con = \Yii::$app->db_academico;
-        $estado = 1; 
+        $estado = 1;
         if ($trans !== null) {
             $trans = null; // si existe la transacción entonces no se crea una
         } else {
@@ -422,21 +422,21 @@ class CursoEducativaUnidad extends \yii\db\ActiveRecord
 
         try {
             $comando = $con->createCommand
-                    ("UPDATE " . $con->dbname . ".curso_educativa_unidad               
+                    ("UPDATE " . $con->dbname . ".curso_educativa_unidad
                       SET cedu_id = :cedu_id,
                           ceuni_codigo_unidad = :ceuni_codigo_unidad,
                           ceuni_descripcion_unidad = :ceuni_descripcion_unidad,
                           $actfecha
                           ceuni_usuario_modifica = :ceuni_usuario_modifica,
-                          ceuni_fecha_modificacion = :ceuni_fecha_modificacion                          
-                      WHERE 
+                          ceuni_fecha_modificacion = :ceuni_fecha_modificacion
+                      WHERE
                       ceuni_id = :ceuni_id AND
                       ceuni_estado = :estado AND
                       ceuni_estado_logico = :estado");
-            $comando->bindParam(":ceuni_id", $ceuni_id, \PDO::PARAM_INT);  
-            $comando->bindParam(":cedu_id", $cedu_id, \PDO::PARAM_INT);  
-            $comando->bindParam(":ceuni_codigo_unidad", $ceuni_codigo_unidad, \PDO::PARAM_INT); 
-            $comando->bindParam(":ceuni_descripcion_unidad", $ceuni_descripcion_unidad, \PDO::PARAM_STR);                    
+            $comando->bindParam(":ceuni_id", $ceuni_id, \PDO::PARAM_INT);
+            $comando->bindParam(":cedu_id", $cedu_id, \PDO::PARAM_INT);
+            $comando->bindParam(":ceuni_codigo_unidad", $ceuni_codigo_unidad, \PDO::PARAM_INT);
+            $comando->bindParam(":ceuni_descripcion_unidad", $ceuni_descripcion_unidad, \PDO::PARAM_STR);
             $comando->bindParam(":ceuni_usuario_modifica", $ceuni_usuario_modifica, \PDO::PARAM_INT);
             if (!empty($ceuni_fecha_inicio)) {
                 $comando->bindParam(':ceuni_fecha_inicio', $ceuni_fecha_inicio, \PDO::PARAM_STR);
@@ -467,7 +467,7 @@ class CursoEducativaUnidad extends \yii\db\ActiveRecord
     public function eliminarUnidad($ceuni_id, $ceuni_usuario_modifica, $ceuni_fecha_modificacion) {
         $estado = 0;
         $con = \Yii::$app->db_academico;
-        
+
         if ($trans !== null) {
             $trans = null; // si existe la transacción entonces no se crea una
         } else {
@@ -475,13 +475,13 @@ class CursoEducativaUnidad extends \yii\db\ActiveRecord
         }
         try {
             $comando = $con->createCommand
-                    ("UPDATE " . $con->dbname . ".curso_educativa_unidad               
+                    ("UPDATE " . $con->dbname . ".curso_educativa_unidad
                       SET ceuni_estado = :ceuni_estado,
                           ceuni_usuario_modifica = :ceuni_usuario_modifica,
-                          ceuni_fecha_modificacion = :ceuni_fecha_modificacion                          
-                      WHERE 
+                          ceuni_fecha_modificacion = :ceuni_fecha_modificacion
+                      WHERE
                       ceuni_id = :ceuni_id ");
-            $comando->bindParam(":ceuni_id", $ceuni_id, \PDO::PARAM_INT);          
+            $comando->bindParam(":ceuni_id", $ceuni_id, \PDO::PARAM_INT);
             $comando->bindParam(":ceuni_usuario_modifica", $ceuni_usuario_modifica, \PDO::PARAM_INT);
             $comando->bindParam(":ceuni_fecha_modificacion", $ceuni_fecha_modificacion, \PDO::PARAM_STR);
             $comando->bindParam(":ceuni_estado", $estado, \PDO::PARAM_STR);
@@ -510,7 +510,7 @@ class CursoEducativaUnidad extends \yii\db\ActiveRecord
             $trans = null; // si existe la transacción entonces no se crea una
         } else {
             $trans = $con->beginTransaction(); // si no existe la transacción entonces se crea una
-        }   
+        }
         if (strtolower(end($chk_ext)) == "xls" || strtolower(end($chk_ext)) == "xlsx") {
             //Creacion de PHPExcel object
             try {
@@ -521,8 +521,8 @@ class CursoEducativaUnidad extends \yii\db\ActiveRecord
 
                 foreach ($objPHPExcel->getWorksheetIterator() as $worksheet) {
                     $worksheetTitle = $worksheet->getTitle();
-                    $highestRow = $worksheet->getHighestRow(); // e.g. 10 
-                    $highestColumn = $worksheet->getHighestDataColumn(); // e.g 'F'                    
+                    $highestRow = $worksheet->getHighestRow(); // e.g. 10
+                    $highestColumn = $worksheet->getHighestDataColumn(); // e.g 'F'
                     $highestColumnIndex = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($highestColumn);
                     for ($row = 2; $row <= $highestRow; ++$row) {
                         $row_global = $row_global + 1;
@@ -530,7 +530,7 @@ class CursoEducativaUnidad extends \yii\db\ActiveRecord
                             $cell = $worksheet->getCellByColumnAndRow($col, $row);
                             $dataArr[$row_global][$col] = $cell->getValue();
                         }
-                    }                   
+                    }
                 }
                 $fila = 0;
                 foreach ($dataArr as $val) {
@@ -541,14 +541,14 @@ class CursoEducativaUnidad extends \yii\db\ActiveRecord
                         $val[4] = strval($val[4]);
                         $val[5] = strval($val[5]);
                         $cedu_id = $model_curso->consultarCursoexiste($val[1]);
-                        $fila++; 
+                        $fila++;
                         \app\models\Utilities::putMessageLogFile('cedu_id *** ...: ' .$val[1]);
                         if ($cedu_id['cedu_id'] > 0) {
                         $existe = $mod_educativa->consultarunidadeducativaexi($cedu_id['cedu_id'], $val[2], $val[3]);
                         \app\models\Utilities::putMessageLogFile('existe consulta ...: ' . $existe['existe_unidad']);
                         if ($existe['existe_unidad'] == 0) {
                         $save_documento = $this->saveDocumentoDB($val, $cedu_id['cedu_id']);
-                        if (!$save_documento) {                   
+                        if (!$save_documento) {
                             $arroout["status"] = FALSE;
                             $arroout["error"] = null;
                             $arroout["message"] = "Error al guardar el registro de la Fila => N°$fila Unidad => $val[3].";
@@ -559,11 +559,11 @@ class CursoEducativaUnidad extends \yii\db\ActiveRecord
                         }
                       }else{
                         $ingresadoant .= $val[1] . ", ";
-                      } 
+                      }
                     }
                     else{
                         $nocurso .= $val[1] . ", ";
-                    }                  
+                    }
                   }
                 }
                 //\app\models\Utilities::putMessageLogFile('anterio ...: ' . $ingresadoant);
@@ -594,26 +594,26 @@ class CursoEducativaUnidad extends \yii\db\ActiveRecord
     /**
      * Function Consultar si ya se ha cargado la informacion anteriormente en unidades educativa.
      * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>;
-     * @property       
-     * @return  
+     * @property
+     * @return
      */
     public function consultarunidadeducativaexi($cedu_id, $ceuni_codigo_unidad, $ceuni_descripcion_unidad) {
-        $con = \Yii::$app->db_academico;     
-        $estado = 1;         
-       /*\app\models\Utilities::putMessageLogFile('entro 2 : ' .$cedu_id);  
-       \app\models\Utilities::putMessageLogFile('entro 3 : ' .$ceuni_codigo_unidad);  
+        $con = \Yii::$app->db_academico;
+        $estado = 1;
+       /*\app\models\Utilities::putMessageLogFile('entro 2 : ' .$cedu_id);
+       \app\models\Utilities::putMessageLogFile('entro 3 : ' .$ceuni_codigo_unidad);
        \app\models\Utilities::putMessageLogFile('entro 4 : ' .$ceuni_descripcion_unidad);  */
-        $sql = "SELECT  
-                        count(*) as existe_unidad                       
-                        
-                FROM " . $con->dbname . ".curso_educativa_unidad                 
-                WHERE 
+        $sql = "SELECT
+                        count(*) as existe_unidad
+
+                FROM " . $con->dbname . ".curso_educativa_unidad
+                WHERE
                 cedu_id = :cedu_id AND
-                ceuni_codigo_unidad = :ceuni_codigo_unidad AND                
+                ceuni_codigo_unidad = :ceuni_codigo_unidad AND
                 ceuni_descripcion_unidad = :ceuni_descripcion_unidad AND
                 ceuni_estado = :estado AND
                 ceuni_estado_logico = :estado ";
-        // \app\models\Utilities::putMessageLogFile('entro: ' .$sql); 
+        // \app\models\Utilities::putMessageLogFile('entro: ' .$sql);
         $comando = $con->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
         $comando->bindParam(":cedu_id", $cedu_id, \PDO::PARAM_INT);
@@ -627,7 +627,7 @@ class CursoEducativaUnidad extends \yii\db\ActiveRecord
         $usu_id = Yii::$app->session->get("PB_iduser"); ;
         $fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
         $mod_educativaunidad = new CursoEducativaUnidad();
-    
+
         $mod_educativaunidad->cedu_id = $cedu_id;
         $mod_educativaunidad->ceuni_codigo_unidad = $val[2];
         $mod_educativaunidad->ceuni_descripcion_unidad = $val[3];
@@ -646,7 +646,7 @@ class CursoEducativaUnidad extends \yii\db\ActiveRecord
         \app\models\Utilities::putMessageLogFile('4: ' .$val[4]);
         \app\models\Utilities::putMessageLogFile('5: ' .$val[5]);
         \app\models\Utilities::putMessageLogFile('fecha: ' .$fecha_transaccion);
-        \app\models\Utilities::putMessageLogFile('usu_id: ' .$usu_id);  */      
+        \app\models\Utilities::putMessageLogFile('usu_id: ' .$usu_id);  */
 
         return $mod_educativaunidad->save();
     }
@@ -654,27 +654,27 @@ class CursoEducativaUnidad extends \yii\db\ActiveRecord
     /**
      * Function Consultar unidades por cedu_id.
      * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>;
-     * @property       
-     * @return  
+     * @property
+     * @return
      */
     public function consultarUnidadesxcursoid($cedu_id) {
-        $con = \Yii::$app->db_academico;      
+        $con = \Yii::$app->db_academico;
         $estado = 1;
 
-        $sql = "SELECT 
+        $sql = "SELECT
                      ceuni_id as id,
                      ceuni_descripcion_unidad as name
-                FROM " . $con->dbname . ".curso_educativa_unidad 
-                WHERE cedu_id = :cedu_id AND               
+                FROM " . $con->dbname . ".curso_educativa_unidad
+                WHERE cedu_id = :cedu_id AND
                 ceuni_estado = :estado AND
                 ceuni_estado_logico = :estado";
 
         $comando = $con->createCommand($sql);
         $comando->bindParam(":cedu_id", $cedu_id, \PDO::PARAM_INT);
-        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);        
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
         $resultData = $comando->queryAll();
         return $resultData;
     }
 
-    
+
 }

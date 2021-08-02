@@ -122,7 +122,7 @@ PbGridView::widget([
                     return '<small class="label label-danger">Inactivo</small>';
                 else if ($model["estado"] == 'Activo' && ($model["rsin_id"] == 2 || $model["rsin_id"] == ''))
                     return '<small class="label label-success">Activo</small>';
-                else if ($model["estado"] == 'Activo' && ($model["rsin_id"] == 1))
+                else if ($model["estado"] == 'Activo' && ($model["rsin_id"] == 1 || $model["rsin_id"] == 4))
                     return '<small class="label label-warning">Por Revisar</small>';
                 else if ($model["estado"] == 'No estudiante')
                     return '<small class="label label-warning">No Estudiante</small>';

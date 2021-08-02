@@ -394,7 +394,7 @@ class MallaAcademica extends \yii\db\ActiveRecord
     }
     
     
-      function consultarAsignaturas($rows,$gest,$semestre,$modalidad) {
+     function consultarAsignaturas($rows,$gest,$semestre,$modalidad) {
     $con = \Yii::$app->db_academico;
     $activo="A"; // $rows["mod_id"]
     $per_id = $rows["per_id"];
@@ -430,7 +430,20 @@ AND e.enac_id = 1;
         $comando = $con->createCommand($presql);
         $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
         $currenter = $comando->queryOne();
+        if ($currenter["semestre"] == Null){ 
+         $student_semester= 1;
+         $last_semester= 1;
+     } else {
+
+         if ($currenter["semestre"] < 9){  
+        $student_semester= $currenter["semestre"]+2;
+        $last_semester= $currenter["semestre"];
+            } else {
         $student_semester= $currenter["semestre"];
+        $last_semester= $currenter["semestre"];
+            }
+
+    }
        
 
 
@@ -445,7 +458,7 @@ inner join db_academico.modalidad_estudio_unidad c on c.meun_id = b.meun_id
                       and   c.mod_id =  " . $modalidad . "   
                       and a.maca_id =  " . $rows["maca_id"] . "  
                       and c.uaca_id = 1
-                      -- and a.made_semestre >= :semester
+                      and (a.made_semestre = :semester OR a.made_semestre = :lastsemester )
                             and a.made_estado = 1
                             and a.made_estado_logico = 1
                             and b.mumo_estado = 1
@@ -454,14 +467,15 @@ inner join db_academico.modalidad_estudio_unidad c on c.meun_id = b.meun_id
                             and c.meun_estado_logico = 1
                             and d.asi_estado = 1
                             and d.asi_estado_logico = 1
-                     ORDER BY a.made_semestre, a.made_asi_requisito ASC
+                     ORDER BY a.made_semestre, a.made_asi_requisito, a.maca_id ASC
                         ";
   
 
    $comando = $con->createCommand($sql);
          // $comando->bindParam(":activo", $activo, \PDO::PARAM_STR);
          // $comando->bindParam(":paca_id", $gest, \PDO::PARAM_INT);
-         // $comando->bindParam(":semester", $student_semester, \PDO::PARAM_INT);
+          $comando->bindParam(":semester", $student_semester, \PDO::PARAM_INT);
+          $comando->bindParam(":lastsemester", $last_semester, \PDO::PARAM_INT);
                $rows_in = $comando->queryAll();
 
 
@@ -1160,12 +1174,12 @@ from db_academico.periodo_academico plac
                      }//endfor       
 
                      $sql = "INSERT INTO db_academico.planificacion_estudiante
-                    (pla_id, per_id, pes_jornada,pes_cod_carrera, pes_carrera, pes_dni, pes_nombres,pes_mat_b1_h1_cod, pes_mat_b1_h2_cod, pes_mat_b1_h3_cod, pes_mat_b1_h4_cod, pes_mat_b2_h1_cod,
+                    (pla_id, per_id, pes_jornada,pes_cod_carrera, pes_carrera, pes_semestre, pes_dni, pes_nombres,pes_mat_b1_h1_cod, pes_mat_b1_h2_cod, pes_mat_b1_h3_cod, pes_mat_b1_h4_cod, pes_mat_b2_h1_cod,
                      pes_mat_b2_h2_cod,pes_mat_b2_h3_cod,pes_mat_b2_h4_cod, pes_mat_b1_h1_nombre, pes_mat_b1_h2_nombre, pes_mat_b1_h3_nombre, pes_mat_b1_h4_nombre, pes_mat_b2_h1_nombre,  pes_mat_b2_h2_nombre, pes_mat_b2_h3_nombre, pes_mat_b2_h4_nombre, pes_mod_b1_h1,  pes_mod_b1_h2,  pes_mod_b1_h3,  pes_mod_b1_h4,  pes_mod_b2_h1,  pes_mod_b2_h2,  pes_mod_b2_h3, 
                         pes_mod_b2_h4, pes_jor_b1_h1,  pes_jor_b1_h2,  pes_jor_b1_h3,  pes_jor_b1_h4,  pes_jor_b2_h1,  pes_jor_b2_h2,  pes_jor_b2_h3, 
                         pes_jor_b2_h4,pes_mat_b1_h1_mpp, pes_mat_b1_h2_mpp, pes_mat_b1_h3_mpp, pes_mat_b1_h4_mpp, pes_mat_b2_h1_mpp,
                      pes_mat_b2_h2_mpp,pes_mat_b2_h3_mpp,pes_mat_b2_h4_mpp, pes_estado, pes_estado_logico)
-                    values (" . $rows_pla["pla_id"] ."," . $rows["per_id"] . ", '" . $rows["uaca_id"] . "','" . $rows["maca_codigo"] . "', '" . $rows["maca_nombre"] . "', '" . $rows["per_cedula"] . "', '" . $rows["estudiante"] . "', '" . $asih1 . "', '" . $asih2 . "', '" . $asih3 . "',Null, '" . $asih4 . "', '" . $asih5 . "', '" . $asih6 . "',Null, '" . $noasih1 . "', '" . $noasih2 . "', '" . $noasih3 . "',Null, '" . $noasih4 . "', '" . $noasih5 . "', '" . $noasih6 . "',Null,". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "','" . $mpph1 . "','" . $mpph2 . "','" . $mpph3 . "',Null,'" . $mpph4 . "','" . $mpph5 . "','" . $mpph6 . "',Null, '" . $estado . "', '" . $estado ."')"; 
+                    values (" . $rows_pla["pla_id"] ."," . $rows["per_id"] . ", '" . $rows["uaca_id"] . "','" . $rows["maca_codigo"] . "', '" . $rows["maca_nombre"] . "','" . $student_semester . "', '" . $rows["per_cedula"] . "', '" . $rows["estudiante"] . "', '" . $asih1 . "', '" . $asih2 . "', '" . $asih3 . "',Null, '" . $asih4 . "', '" . $asih5 . "', '" . $asih6 . "',Null, '" . $noasih1 . "', '" . $noasih2 . "', '" . $noasih3 . "',Null, '" . $noasih4 . "', '" . $noasih5 . "', '" . $noasih6 . "',Null,". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "','" . $mpph1 . "','" . $mpph2 . "','" . $mpph3 . "',Null,'" . $mpph4 . "','" . $mpph5 . "','" . $mpph6 . "',Null, '" . $estado . "', '" . $estado ."')"; 
                      $comando = $con->createCommand($sql);
                      $rows_pes = $comando->execute(); 
 
@@ -1392,7 +1406,7 @@ from db_academico.periodo_academico plac
                   // by  $getifasi["hosd_hora"] and $getifasi["hosd_bloque"] ==> daho_id=============>
                   
                     if ($getifasi["hosd_bloque"]== 1){
-                     $block='B1'; }Else {   $block='B2'; }
+                     $block='B1'; } else {   $block='B2'; }
 
                         $getpaca = "
                         select paca.paca_id from db_academico.semestre_academico as saca
@@ -1420,9 +1434,35 @@ from db_academico.periodo_academico plac
                   //mod_id
                   // add field daho to insert
 
+
+                  if ($modalidad == 1){
+                    
+                  switch ($getifasi["hosd_hora"]) {
+                        case 1:
+                        $daho_id = 20; 
+                        break;
+                        case 2:
+                      $daho_id = 25; 
+                         break;      
+                        case 3:
+                      $daho_id = 30 ; 
+                         break;    
+                        case 4:
+                     $daho_id = 35; 
+                         break;                                       
+                    }    
+
+
+                 } Else {
+                      
+                                 $daho_id = 0 ; 
+
+                       }
+
+
                 $setmpar= "
-                INSERT INTO db_academico.materia_paralelo_periodo (asi_id, mod_id, paca_id, mpp_num_paralelo, mpp_usuario_ingreso, mpp_estado, mpp_estado_logico)
-                 VALUES ('" . $iddd . "','" . $mod_id . "','" . $paca_id . "','" . $num_par . "', '1', '1', '1') ";
+                INSERT INTO db_academico.materia_paralelo_periodo (asi_id, mod_id, paca_id,daho_id, mpp_num_paralelo, mpp_usuario_ingreso, mpp_estado, mpp_estado_logico)
+                 VALUES ('" . $iddd . "','" . $mod_id . "','" . $paca_id . "','" . $daho_id . "','" . $num_par . "', '1', '1', '1') ";
 
                     
                 $comando = $con->createCommand($setmpar); 
@@ -1433,10 +1473,90 @@ from db_academico.periodo_academico plac
           
                       if(intval($getpaal["paal_cantidad"]/50) == $getpaal["paal_cantidad"] / 50){
                        $num_par =floor(floatval($getpaal["paal_cantidad"]/50+1)); 
+
+
+            
+
+
+
+                    if ($modalidad == 1){
+
+                     if (($num_par % 2 ) == 0){
+
+              
+
+                 switch ($getifasi["hosd_hora"]) {
+                        case 1:
+                        $daho_id = 19; 
+                        break;
+                        case 2:
+                      $daho_id = 24; 
+                         break;      
+                        case 3:
+                      $daho_id = 29; 
+                         break;    
+                        case 4:
+                     $daho_id = 34; 
+                         break;                                 
+                    }            
+
+
+
+                }else {
+
+                 if (($num_par % 3) == 0){
+                
+
+                 switch ($getifasi["hosd_hora"]) {
+                        case 1:
+                        $daho_id = 18; 
+                        break;
+                        case 2:
+                      $daho_id = 23; 
+                         break;      
+                        case 3:
+                      $daho_id = 28; 
+                         break;    
+                        case 4:
+                      $daho_id = 33; 
+                         break;                                  
+                    }            
+
+
+                } else {
+
+                 switch ($getifasi["hosd_hora"]) {
+                        case 1:
+                        $daho_id = 20; 
+                        break;
+                        case 2:
+                      $daho_id = 25; 
+                         break;      
+                        case 3:
+                      $daho_id = 30 ; 
+                         break;    
+                        case 4:
+                     $daho_id = 35; 
+                         break;                                       
+                    }            
+
+                }
+                
+                   }
+
+
+                       } Else {
+                      
+                                 $daho_id = 0 ; 
+
+                       }
+
+
+
                      
                  $setmpar= "
-                INSERT INTO db_academico.materia_paralelo_periodo (asi_id, mod_id, paca_id, mpp_num_paralelo, mpp_usuario_ingreso, mpp_estado, mpp_estado_logico)
-                 VALUES ('" . $iddd . "','" . $mod_id . "','" . $paca_id . "','" . $num_par . "', '1', '1', '1') ";
+                INSERT INTO db_academico.materia_paralelo_periodo (asi_id, mod_id, paca_id,daho_id, mpp_num_paralelo, mpp_usuario_ingreso, mpp_estado, mpp_estado_logico)
+                 VALUES ('" . $iddd . "','" . $mod_id . "','" . $paca_id . "','" . $daho_id . "','" . $num_par . "', '1', '1', '1') ";
 
                     
                 $comando = $con->createCommand($setmpar); 
@@ -1538,16 +1658,17 @@ from db_academico.periodo_academico plac
 
 
                             $sql = "INSERT INTO db_academico.planificacion_estudiante
-                    (pla_id, per_id, pes_jornada,pes_cod_carrera, pes_carrera, pes_dni, pes_nombres,pes_mat_b1_h1_cod, pes_mat_b1_h2_cod, pes_mat_b1_h3_cod, pes_mat_b1_h4_cod, pes_mat_b2_h1_cod,
+                    (pla_id, per_id, pes_jornada,pes_cod_carrera, pes_carrera, pes_semestre, pes_dni, pes_nombres,pes_mat_b1_h1_cod, pes_mat_b1_h2_cod, pes_mat_b1_h3_cod, pes_mat_b1_h4_cod, pes_mat_b2_h1_cod,
                      pes_mat_b2_h2_cod,pes_mat_b2_h3_cod,pes_mat_b2_h4_cod, pes_mat_b1_h1_nombre, pes_mat_b1_h2_nombre, pes_mat_b1_h3_nombre, pes_mat_b1_h4_nombre, pes_mat_b2_h1_nombre,  pes_mat_b2_h2_nombre, pes_mat_b2_h3_nombre, pes_mat_b2_h4_nombre, pes_mod_b1_h1,  pes_mod_b1_h2,  pes_mod_b1_h3,  pes_mod_b1_h4,  pes_mod_b2_h1,  pes_mod_b2_h2,  pes_mod_b2_h3, 
                         pes_mod_b2_h4, pes_jor_b1_h1,  pes_jor_b1_h2,  pes_jor_b1_h3,  pes_jor_b1_h4,  pes_jor_b2_h1,  pes_jor_b2_h2,  pes_jor_b2_h3, 
                         pes_jor_b2_h4, pes_mat_b1_h1_mpp, pes_mat_b1_h2_mpp, pes_mat_b1_h3_mpp, pes_mat_b1_h4_mpp, pes_mat_b2_h1_mpp,
                      pes_mat_b2_h2_mpp,pes_mat_b2_h3_mpp,pes_mat_b2_h4_mpp, pes_estado, pes_estado_logico)
-                    values (" . $rows_pla["pla_id"] ."," . $rows["per_id"] . ", '" . $rows["uaca_id"] . "','" . $rows["maca_codigo"] . "', '" . $rows["maca_nombre"] . "', '" . $rows["per_cedula"] . "', '" . $rows["estudiante"] . "', '" . $asih1 . "', '" . $asih2 . "', '" . $asih3 . "', '" . $asih7 . "', '" . $asih4 . "', '" . $asih5 . "', '" . $asih6 . "', '" . $asih8 . "', '" . $noasih1 . "', '" . $noasih2 . "', '" . $noasih3 . "', '" . $noasih7 . "', '" . $noasih4 . "', '" . $noasih5 . "', '" . $noasih6 . "', '" . $noasih8 . "',". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "','" . $mpph1 . "','" . $mpph2 . "','" . $mpph3 . "','" . $mpph7 . "','" . $mpph4 . "','" . $mpph5 . "','" . $mpph6 . "','" . $mpph8 . "', '" . $estado . "', '" . $estado ."')"; 
+                    values (" . $rows_pla["pla_id"] ."," . $rows["per_id"] . ", '" . $rows["uaca_id"] . "','" . $rows["maca_codigo"] . "', '" . $rows["maca_nombre"] . "','" . $student_semester . "', '" . $rows["per_cedula"] . "', '" . $rows["estudiante"] . "', '" . $asih1 . "', '" . $asih2 . "', '" . $asih3 . "', '" . $asih7 . "', '" . $asih4 . "', '" . $asih5 . "', '" . $asih6 . "', '" . $asih8 . "', '" . $noasih1 . "', '" . $noasih2 . "', '" . $noasih3 . "', '" . $noasih7 . "', '" . $noasih4 . "', '" . $noasih5 . "', '" . $noasih6 . "', '" . $noasih8 . "',". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "','" . $mpph1 . "','" . $mpph2 . "','" . $mpph3 . "','" . $mpph7 . "','" . $mpph4 . "','" . $mpph5 . "','" . $mpph6 . "','" . $mpph8 . "', '" . $estado . "', '" . $estado ."')"; 
                      $comando = $con->createCommand($sql);
                      $rows_pes = $comando->execute(); 
 
                     
+
                      }
                      
                       }

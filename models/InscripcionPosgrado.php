@@ -225,19 +225,19 @@ class InscripcionPosgrado extends \yii\db\ActiveRecord
 
 
         $sql = "INSERT INTO " . $con->dbname . ".inscripcion_posgrado
-            (uaca_id,eaca_id,mod_id,ipos_año,ipos_cedula,ipos_tipo_financiamiento,ipos_metodo_ingreso,ipos_ruta_doc_foto,ipos_ruta_doc_dni, ipos_ruta_doc_certvota,ipos_ruta_doc_titulo,ipos_ruta_doc_comprobantepago,ipos_ruta_doc_recordacademico,ipos_ruta_doc_senescyt, ipos_ruta_doc_hojadevida,ipos_ruta_doc_cartarecomendacion,ipos_ruta_doc_certificadolaboral,ipos_ruta_doc_certificadoingles,ipos_ruta_doc_otrorecord,ipos_ruta_doc_certificadonosancion,ipos_ruta_doc_syllabus,ipos_ruta_doc_homologacion,ipos_mensaje1,ipos_mensaje2,ipos_estado,ipos_fecha_modificacion,ipos_estado_logico) VALUES
-            ($unidad, $programa, $modalidad, '$año', '$per_dni', '$tipo_financiamiento', $met_ing, '$ipos_ruta_doc_foto', '$ipos_ruta_doc_dni', '$ipos_ruta_doc_certvota', '$ipos_ruta_doc_titulo', '$ipos_ruta_doc_comprobantepago', '$ipos_ruta_doc_recordacademico', '$ipos_ruta_doc_senescyt', '$ipos_ruta_doc_hojadevida', '$ipos_ruta_doc_cartarecomendacion', '$ipos_ruta_doc_certificadolaboral', '$ipos_ruta_doc_certificadoingles', '$ipos_ruta_doc_otrorecord', '$ipos_ruta_doc_certificadonosancion', '$ipos_ruta_doc_syllabus', '$ipos_ruta_doc_homologacion', '$ipos_mensaje1', '$ipos_mensaje2', 1, CURRENT_TIMESTAMP(), 1)";
+            (per_id,uaca_id,eaca_id,mod_id,ipos_año,ipos_cedula,ipos_tipo_financiamiento,ipos_metodo_ingreso,ipos_ruta_doc_foto,ipos_ruta_doc_dni, ipos_ruta_doc_certvota,ipos_ruta_doc_titulo,ipos_ruta_doc_comprobantepago,ipos_ruta_doc_recordacademico,ipos_ruta_doc_senescyt, ipos_ruta_doc_hojadevida,ipos_ruta_doc_cartarecomendacion,ipos_ruta_doc_certificadolaboral,ipos_ruta_doc_certificadoingles,ipos_ruta_doc_otrorecord,ipos_ruta_doc_certificadonosancion,ipos_ruta_doc_syllabus,ipos_ruta_doc_homologacion,ipos_mensaje1,ipos_mensaje2,ipos_estado,ipos_fecha_modificacion,ipos_estado_logico) VALUES
+            ($per_id, $unidad, $programa, $modalidad, '$año', '$per_dni', '$tipo_financiamiento', $met_ing, '$ipos_ruta_doc_foto', '$ipos_ruta_doc_dni', '$ipos_ruta_doc_certvota', '$ipos_ruta_doc_titulo', '$ipos_ruta_doc_comprobantepago', '$ipos_ruta_doc_recordacademico', '$ipos_ruta_doc_senescyt', '$ipos_ruta_doc_hojadevida', '$ipos_ruta_doc_cartarecomendacion', '$ipos_ruta_doc_certificadolaboral', '$ipos_ruta_doc_certificadoingles', '$ipos_ruta_doc_otrorecord', '$ipos_ruta_doc_certificadonosancion', '$ipos_ruta_doc_syllabus', '$ipos_ruta_doc_homologacion', '$ipos_mensaje1', '$ipos_mensaje2', 1, CURRENT_TIMESTAMP(), 1)";
 
         
         $command = $con->createCommand($sql);
         $command->execute();
         return $con->getLastInsertID($con->dbname . '.inscripcion_posgrado');
-        
+
     }
 
     public function updateDataInscripcionposgrado($con, $data) {
         $sql = "UPDATE " . $con->dbname . ".inscripcion_posgrado 
-                SET uaca_id=:uaca_id,eaca_id=:eaca_id,mod_id=:mod_id,ipos_año=:ipos_año,ipos_cedula=:per_dni,ipos_tipo_finaciamiento=:ipos_tipo_finaciamiento,ipos_metodo_ingreso=:ipos_metodo_ingreso,ipos_ruta_doc_foto=:ipos_ruta_doc_foto, ipos_ruta_doc_dni=:ipos_ruta_doc_dni, ipos_ruta_doc_certvota=:ipos_ruta_doc_certvota,ipos_ruta_doc_titulo=:ipos_ruta_doc_titulo,ipos_ruta_doc_comprobantepago=:ipos_ruta_doc_comprobantepago,ipos_ruta_doc_recordacademico=:ipos_ruta_doc_recordacademico,ipos_ruta_doc_senescyt=:ipos_ruta_doc_senescyt, ipos_ruta_doc_hojadevida=:ipos_ruta_doc_hojadevida, ipos_ruta_doc_cartarecomendacion=:ipos_ruta_doc_cartarecomendacion, ipos_ruta_doc_certificadolaboral, ipos_ruta_doc_certificadoingles=:ipos_ruta_doc_certificadoingles, ipos_ruta_doc_otrorecord=:ipos_ruta_doc_otrorecord, ipos_ruta_doc_certificadonosancion=:ipos_ruta_doc_certificadonosancion,ipos_ruta_doc_syllabus=:ipos_ruta_doc_syllabus,ipos_ruta_doc_homologacion=:ipos_ruta_doc_homologacion,ipos_mensaje1=:ipos_mensaje1,ipos_mensaje2=:ipos_mensaje2,ipos_fecha_modificacion=CURRENT_TIMESTAMP() 
+                SET per_id=:per_id,uaca_id=:uaca_id,eaca_id=:eaca_id,mod_id=:mod_id,ipos_año=:ipos_año,ipos_cedula=:per_dni,ipos_tipo_finaciamiento=:ipos_tipo_finaciamiento,ipos_metodo_ingreso=:ipos_metodo_ingreso,ipos_ruta_doc_foto=:ipos_ruta_doc_foto, ipos_ruta_doc_dni=:ipos_ruta_doc_dni, ipos_ruta_doc_certvota=:ipos_ruta_doc_certvota,ipos_ruta_doc_titulo=:ipos_ruta_doc_titulo,ipos_ruta_doc_comprobantepago=:ipos_ruta_doc_comprobantepago,ipos_ruta_doc_recordacademico=:ipos_ruta_doc_recordacademico,ipos_ruta_doc_senescyt=:ipos_ruta_doc_senescyt, ipos_ruta_doc_hojadevida=:ipos_ruta_doc_hojadevida, ipos_ruta_doc_cartarecomendacion=:ipos_ruta_doc_cartarecomendacion, ipos_ruta_doc_certificadolaboral, ipos_ruta_doc_certificadoingles=:ipos_ruta_doc_certificadoingles, ipos_ruta_doc_otrorecord=:ipos_ruta_doc_otrorecord, ipos_ruta_doc_certificadonosancion=:ipos_ruta_doc_certificadonosancion,ipos_ruta_doc_syllabus=:ipos_ruta_doc_syllabus,ipos_ruta_doc_homologacion=:ipos_ruta_doc_homologacion,ipos_mensaje1=:ipos_mensaje1,ipos_mensaje2=:ipos_mensaje2,ipos_fecha_modificacion=CURRENT_TIMESTAMP() 
                  WHERE ipos_id =:ipos_id ";
         $met_ing = 0;
         if (empty($data['ming_id'])) {
@@ -246,9 +246,10 @@ class InscripcionPosgrado extends \yii\db\ActiveRecord
             $met_ing = $data['ming_id'];
         }
         $command = $con->createCommand($sql);
-        $command->bindParam(":uaca_id", $unidad, \PDO::PARAM_STR);
-        $command->bindParam(":eaca_id", $carrera, \PDO::PARAM_STR);
-        $command->bindParam(":mod_id", $modalidad, \PDO::PARAM_STR);
+        $command->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
+        $command->bindParam(":uaca_id", $unidad, \PDO::PARAM_INT);
+        $command->bindParam(":eaca_id", $carrera, \PDO::PARAM_INT);
+        $command->bindParam(":mod_id", $modalidad, \PDO::PARAM_INT);
         $command->bindParam(":año", $año, \PDO::PARAM_STR);
         $command->bindParam(":per_dni", $per_dni, \PDO::PARAM_STR);
         $command->bindParam(":tipo_finaciamiento", $tipo_financiamiento, \PDO::PARAM_STR);

@@ -117,7 +117,7 @@ class InformacionLaboral extends \yii\db\ActiveRecord
 
         $sql = "INSERT INTO " . $con->dbname . ".informacion_laboral
             (per_id, ilab_empresa, ilab_cargo, ilab_telefono_emp, ilab_prov_emp, ilab_ciu_emp, ilab_parroquia, ilab_direccion_emp, ilab_añoingreso_emp, ilab_correo_emp, ilab_cat_ocupacional, ilab_estado, ilab_fecha_modificacion, ilab_estado_logico) VALUES
-            ($per_id, $empresa, $cargo, $telefono_emp, $prov_emp, $ciu_emp, $parroquia, $direccion_emp, $añoingreso_emp, $correo_emp, $cat_ocupacional 1, CURRENT_TIMESTAMP(), 1)";
+            ($per_id, '$empresa', '$cargo', '$telefono_emp', $prov_emp, $ciu_emp, '$parroquia', '$direccion_emp', '$añoingreso_emp', '$correo_emp', '$cat_ocupacional', 1, CURRENT_TIMESTAMP(), 1)";
 
         
         $command = $con->createCommand($sql);
@@ -141,22 +141,22 @@ class InformacionLaboral extends \yii\db\ActiveRecord
             $comando = $con->createCommand
                     ("UPDATE " . $con->dbname . ".informacion_laboral             
                       SET 
-                        per_id, 
-                        ilab_empresa = :ilab_empresa, 
-                        ilab_cargo = :ilab_cargo, 
-                        ilab_telefono_emp = :ilab_telefono_emp, 
-                        ilab_prov_emp = :ilab_prov_emp, 
-                        ilab_ciu_emp = :ilab_ciu_emp, 
-                        ilab_parroquia = :ilab_parroquia, 
-                        ilab_direccion_emp = :ilab_direccion_emp, 
-                        ilab_añoingreso_emp = :ilab_añoingreso_emp, 
-                        ilab_correo_emp = :ilab_correo_emp, 
-                        ilab_cat_ocupacional = :ilab_cat_ocupacional,
+                        per_id =:per_id, 
+                        ilab_empresa =:ilab_empresa, 
+                        ilab_cargo =:ilab_cargo, 
+                        ilab_telefono_emp =:ilab_telefono_emp, 
+                        ilab_prov_emp =:ilab_prov_emp, 
+                        ilab_ciu_emp =:ilab_ciu_emp, 
+                        ilab_parroquia =:ilab_parroquia, 
+                        ilab_direccion_emp =:ilab_direccion_emp, 
+                        ilab_añoingreso_emp =:ilab_añoingreso_emp, 
+                        ilab_correo_emp =:ilab_correo_emp, 
+                        ilab_cat_ocupacional =:ilab_cat_ocupacional,
                         ilab_fecha_modificacion =:ilab_fecha_modificacion,
                       WHERE 
-                        per_id = :per_id AND
-                        ilab_estado = :estado AND
-                        ilab_estado_logico = :estado");
+                        per_id =:per_id AND
+                        ilab_estado =:estado AND
+                        ilab_estado_logico =:estado");
             $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
             $comando->bindParam(":ilab_empresa", $empresa, \PDO::PARAM_STR);
             $comando->bindParam(":ilab_cargo", $cargo, \PDO::PARAM_STR);

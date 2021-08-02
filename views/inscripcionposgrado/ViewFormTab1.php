@@ -9,7 +9,6 @@ use kartik\widgets\Select2;
 use yii\widgets\ActiveForm;
 use app\components\CFileInputAjax;
 use app\models\Persona;
-use app\modules\Academico\models\Profesor;
 
 ?>
 

@@ -6,9 +6,9 @@ use app\modules\academico\Module as academico;
 
 academico::registerTranslations();
 
-/*//print_r($model);
+//print_r($model);
 session_start();
-$_SESSION['persona_ingresa'] = base64_decode($_GET['ids']);*/
+$_SESSION['persona_ingresa'] = base64_decode($_GET['ids']);
 
 ?>
 <?= Html::hiddenInput('txth_ftem_id', 0, ['id' => 'txth_ftem_id']); ?>
@@ -37,7 +37,7 @@ $_SESSION['persona_ingresa'] = base64_decode($_GET['ids']);*/
                         'per_seg_nombre' => $model['per_seg_nombre'],
                         'per_pri_apellido' => $model['per_pri_apellido'],
                         'per_seg_apellido' => $model['per_seg_apellido'],
-                        'per_cedula' => $model['per_cedula'],
+                        'per_cedula' => $respPerinteresado['per_cedula'],
                         'per_genero' => $model['per_genero'],
                         'per_fecha_nacimiento' => $model['per_fecha_nacimiento'],
                         'etn_id' => $model['etn_id'],
@@ -54,7 +54,7 @@ $_SESSION['persona_ingresa'] = base64_decode($_GET['ids']);*/
                         'tipparent_dis' => $arr_tipparent_dis,
                         'per_nacionalidad' => $model['per_nacionalidad'],
                         'area' => $area['name'],
-                        'per_pasaporte' => $model['per_pasaporte'],
+                        'per_pasaporte' => $respPerinteresado['per_pasaporte'],
                         'arr_ciudad_nac' => $arr_ciudad_nac,
                         "arr_nacionalidad" => $arr_nacionalidad,
                         'eciv_id' => $model['eciv_id'],

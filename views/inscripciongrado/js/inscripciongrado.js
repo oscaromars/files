@@ -80,7 +80,7 @@ $(document).ready(function () {
         }, true);
     });
     $('#cmb_tipo_dni').change(function () {
-        if ($('#cmb_tipo_dni').val() != 0) {
+        if ($('#cmb_tipo_dni').val() == 'PASS') {
             $('#txt_cedula').removeClass("PBvalidation");
             $('#txt_pasaporte').addClass("PBvalidation");
             $('#Divpasaporte').show();
@@ -247,7 +247,7 @@ function guardarInscripcionGrado() {
         arrParams.pais = $('#cmb_pais').val();
         arrParams.provincia = $('#cmb_provincia').val();
         arrParams.canton = $('#cmb_ciudad').val();
-        arrParams.parroquia = $('#cmb_parroquia').val();
+        arrParams.parroquia = $('#txt_parroquia').val();
         arrParams.dir_domicilio = $('#txt_domicilio').val();
         arrParams.celular = $('#txt_celular').val();
         arrParams.telefono = $('#txt_telefono').val();

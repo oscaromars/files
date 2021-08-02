@@ -1027,13 +1027,13 @@ class Persona extends \yii\db\ActiveRecord {
      * @property integer        
      * @return  
      */
-    public function insertarPersonaInscripciongrado($per_pri_nombre, $per_seg_nombre, $per_pri_apellido, $per_seg_apellido, $per_dni, $eciv_id, $can_id_nacimiento, $per_fecha_nacimiento, $per_celular, $per_correo, $per_domicilio_csec, $per_domicilio_ref, $per_domicilio_telefono, $pai_id_domicilio, $pro_id_domicilio, $can_id_domicilio, $per_nacionalidad) {
+    public function insertarPersonaInscripciongrado($per_pri_nombre, $per_seg_nombre, $per_pri_apellido, $per_seg_apellido, $per_dni, $eciv_id, $can_id_nacimiento, $per_fecha_nacimiento, $per_celular, $per_correo, $per_domicilio_csec, $per_domicilio_ref, $per_domicilio_telefono, $pai_id_domicilio, $pro_id_domicilio, $can_id_domicilio, $per_nacionalidad, $per_trabajo_direccion) {
         //per_id
         //$per_cedula='99999999999';
         $con = \Yii::$app->db_asgard;
         $sql = "INSERT INTO " . $con->dbname . ".persona
             (per_pri_nombre,per_seg_nombre,per_pri_apellido,per_seg_apellido,per_cedula,eciv_id,can_id_nacimiento,per_fecha_nacimiento,per_celular,per_correo,per_domicilio_csec,per_domicilio_ref,per_domicilio_telefono,pai_id_domicilio,pro_id_domicilio,can_id_domicilio,per_nacionalidad,per_fecha_creacion,per_estado,per_estado_logico)VALUES
-            (:per_pri_nombre,:per_seg_nombre,:per_pri_apellido,:per_seg_apellido,:per_dni,:eciv_id,:can_id_nacimiento,:per_fecha_nacimiento,:per_celular,:per_correo,:per_domicilio_csec,:per_domicilio_ref,:per_domicilio_telefono,:pai_id_domicilio,:pro_id_domicilio,:can_id_domicilio,:per_nacionalidad,CURRENT_TIMESTAMP(),1,1) ";
+            (:per_pri_nombre,:per_seg_nombre,:per_pri_apellido,:per_seg_apellido,:per_dni,:eciv_id,:can_id_nacimiento,:per_fecha_nacimiento,:per_celular,:per_correo,:per_domicilio_csec,:per_domicilio_ref,:per_domicilio_telefono,:pai_id_domicilio,:pro_id_domicilio,:can_id_domicilio,:per_nacionalidad,:per_trabajo_direccion,CURRENT_TIMESTAMP(),1,1) ";
 
         $command = $con->createCommand($sql);
         $command->bindParam(":per_pri_nombre", $per_pri_nombre, \PDO::PARAM_STR);
@@ -1053,11 +1053,12 @@ class Persona extends \yii\db\ActiveRecord {
         $command->bindParam(":pro_id_domicilio", $pro_id_domicilio, \PDO::PARAM_STR);
         $command->bindParam(":can_id_domicilio", $can_id_domicilio, \PDO::PARAM_STR);
         $command->bindParam(":per_nacionalidad", $per_nacionalidad, \PDO::PARAM_STR);
+        $command->bindParam(":per_trabajo_direccion", $per_trabajo_direccion, \PDO::PARAM_STR);
         $command->execute();
         return $con->getLastInsertID();
     }
 
-    public function modificaPersonaInscripciongrado($per_pri_nombre, $per_seg_nombre, $per_pri_apellido, $per_seg_apellido, $per_dni, $eciv_id,  $can_id_nacimiento, $per_fecha_nacimiento, $per_celular, $per_correo, $per_domicilio_csec, $per_domicilio_ref, $per_domicilio_telefono, $pai_id_domicilio, $pro_id_domicilio, $can_id_domicilio, $per_nacionalidad) {
+    public function modificaPersonaInscripciongrado($per_pri_nombre, $per_seg_nombre, $per_pri_apellido, $per_seg_apellido, $per_dni, $eciv_id,  $can_id_nacimiento, $per_fecha_nacimiento, $per_celular, $per_correo, $per_domicilio_csec, $per_domicilio_ref, $per_domicilio_telefono, $pai_id_domicilio, $pro_id_domicilio, $can_id_domicilio, $per_nacionalidad, $per_trabajo_direccion) {
         $con = \Yii::$app->db_asgard;
         $usuario_modifica = @Yii::$app->session->get("PB_iduser");
         $trans = $con->getTransaction(); // se obtiene la transacción actual
@@ -1089,6 +1090,7 @@ class Persona extends \yii\db\ActiveRecord {
                         pro_id_domicilio = :pro_id_domicilio,
                         can_id_domicilio = :can_id_domicilio,
                         per_nacionalidad = :per_nacionalidad,
+                        per_trabajo_direccion = :per_trabajo_direccion,
                         per_fecha_modificacion = :per_fecha_modificacion,
                         per_usuario_modifica = :usuario_modifica
                       WHERE 
@@ -1114,6 +1116,7 @@ class Persona extends \yii\db\ActiveRecord {
             $comando->bindParam(":pro_id_domicilio", $pro_id_domicilio, \PDO::PARAM_INT);
             $comando->bindParam(":can_id_domicilio", $can_id_domicilio, \PDO::PARAM_INT);
             $comando->bindParam(":per_nacionalidad", ucwords(strtolower($per_nacionalidad)), \PDO::PARAM_STR);
+            $command->bindParam(":per_trabajo_direccion", $per_trabajo_direccion, \PDO::PARAM_STR);
             $comando->bindParam(":per_fecha_modificacion", $per_fecha_modificacion, \PDO::PARAM_STR);
             $comando->bindParam(":usuario_modifica", $usuario_modifica, \PDO::PARAM_INT);
             $response = $comando->execute();

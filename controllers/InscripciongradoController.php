@@ -123,26 +123,22 @@ class InscripciongradoController extends \yii\web\Controller {
         $user_ingresa = Yii::$app->session->get("PB_iduser");
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
-            //$accion = isset($data['ACCION']) ? $data['ACCION'] : "";
             $fecha_registro = date(Yii::$app->params["dateTimeByDefault"]);
-            /*if ($_SESSION['persona_ingresa'] != '') {// tomar el de parametro)
-                $per_id = $_SESSION['persona_ingresa'];
-            } else {
-                unset($_SESSION['persona_ingresa']);
-                $per_id = Yii::$app->session->get("PB_perid");
-            }*/
+            
             if ($data["upload_file"]) {
                 if (empty($_FILES)) {
                     return json_encode(['error' => Yii::t("notificaciones", "Error to process File {file}. Try again.", ['{file}' => basename($files['name'])])]);
                 }
+                $mod_persona = new Persona();
+                $resp_persona = $mod_persona->consultarUltimoPer_id();
+                $persona = $resp_persona["ultimo"];
+                $per_id = intval( $persona );
                 //Recibe Parámetros.
-                //$inscripgrado_id = $data["inscripgrado_id"];
-                $per_dni = $data['cedula'];
                 $files = $_FILES[key($_FILES)];
                 $arrIm = explode(".", basename($files['name']));
                 $typeFile = strtolower($arrIm[count($arrIm) - 1]);
                 if ($typeFile == 'pdf' || $typeFile == 'png' || $typeFile == 'jpg' || $typeFile == 'jpeg') {
-                $dirFileEnd = Yii::$app->params["documentFolder"] . "inscripciongrado/" . $per_dni . "/" . $data["name_file"] . "_per_" . $per_dni . "." . $typeFile;
+                $dirFileEnd = Yii::$app->params["documentFolder"] . "inscripciongrado/" . $per_id . "/" . $data["name_file"] . "_per_" . $per_id . "." . $typeFile;
                 $status = Utilities::moveUploadFile($files['tmp_name'], $dirFileEnd);
                     if ($status) {
                         return true;
@@ -163,22 +159,23 @@ class InscripciongradoController extends \yii\web\Controller {
             $timeSt = time();
             try {
 
-                
-                \app\models\Utilities::putMessageLogFile(' unidad:  '.$data['unidad']);
                 $unidad = $data['unidad'];
                 $carrera = $data['carrera'];
                 $modalidad = $data['modalidad'];
                 $periodo = $data['periodo'];
                 $ming_id = $data['ming_id'];
 
-                \app\models\Utilities::putMessageLogFile(' inscripcion grado:  '.$data["igra_id"]);
-                $per_id = Yii::$app->session->get("PB_perid");
+                $mod_persona = new Persona();
+                $resp_persona = $mod_persona->consultarUltimoPer_id();
+                $persona = $resp_persona["ultimo"];
+                $per_id = intval( $persona );
+
                 $per_dni = $data['cedula'];
                 $inscripgrado_id = $data["igra_id"];
                 if (isset($data["igra_ruta_doc_titulo"]) && $data["igra_ruta_doc_titulo"] != "") {
                     $arrIm = explode(".", basename($data["igra_ruta_doc_titulo"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                    $titulo_archivoOld = Yii::$app->params["documentFolder"] . "inscripciongrado/" . $per_dni . "/doc_titulo_per_" . $per_dni . "." . $typeFile;
+                    $titulo_archivoOld = Yii::$app->params["documentFolder"] . "inscripciongrado/" . $per_id . "/doc_titulo_per_" . $per_id . "." . $typeFile;
                     $titulo_archivo = InscripcionGrado::addLabelTimeDocumentos($inscripgrado_id, $titulo_archivoOld, $timeSt);
                     $data["igra_ruta_doc_titulo"] = $titulo_archivo;
                     if ($titulo_archivo === false)
@@ -187,7 +184,7 @@ class InscripciongradoController extends \yii\web\Controller {
                 if (isset($data["igra_ruta_doc_dni"]) && $data["igra_ruta_doc_dni"] != "") {
                     $arrIm = explode(".", basename($data["igra_ruta_doc_dni"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                    $dni_archivoOld = Yii::$app->params["documentFolder"] . "inscripciongrado/" . $per_dni . "/doc_dni_per_" . $per_dni . "." . $typeFile;
+                    $dni_archivoOld = Yii::$app->params["documentFolder"] . "inscripciongrado/" . $per_id . "/doc_dni_per_" . $per_id . "." . $typeFile;
                     $dni_archivo = InscripcionGrado::addLabelTimeDocumentos($inscripgrado_id, $dni_archivoOld, $timeSt);
                     $data["igra_ruta_doc_dni"] = $dni_archivo;
                     if ($dni_archivo === false)
@@ -196,7 +193,7 @@ class InscripciongradoController extends \yii\web\Controller {
                 if (isset($data["igra_ruta_doc_certvota"]) && $data["igra_ruta_doc_certvota"] != "") {
                     $arrIm = explode(".", basename($data["igra_ruta_doc_certvota"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                    $certvota_archivoOld = Yii::$app->params["documentFolder"] . "inscripciongrado/" . $per_dni . "/doc_certvota_per_" . $per_dni . "." . $typeFile;
+                    $certvota_archivoOld = Yii::$app->params["documentFolder"] . "inscripciongrado/" . $per_id . "/doc_certvota_per_" . $per_id . "." . $typeFile;
                     $certvota_archivo = InscripcionGrado::addLabelTimeDocumentos($inscripgrado_id, $certvota_archivoOld, $timeSt);
                     $data["igra_ruta_doc_certvota"] = $certvota_archivo;
                     if ($certvota_archivo === false)
@@ -205,7 +202,7 @@ class InscripciongradoController extends \yii\web\Controller {
                 if (isset($data["igra_ruta_doc_foto"]) && $data["igra_ruta_doc_foto"] != "") {
                     $arrIm = explode(".", basename($data["igra_ruta_doc_foto"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                    $foto_archivoOld = Yii::$app->params["documentFolder"] . "inscripciongrado/" . $per_dni . "/doc_foto_per_" . $per_dni . "." . $typeFile;
+                    $foto_archivoOld = Yii::$app->params["documentFolder"] . "inscripciongrado/" . $per_id . "/doc_foto_per_" . $per_id . "." . $typeFile;
                     $foto_archivo = InscripcionGrado::addLabelTimeDocumentos($inscripgrado_id, $foto_archivoOld, $timeSt);
                     $data["igra_ruta_doc_foto"] = $foto_archivo;
                     if ($foto_archivo === false)
@@ -214,7 +211,7 @@ class InscripciongradoController extends \yii\web\Controller {
                 if (isset($data["igra_ruta_doc_comprobantepago"]) && $data["igra_ruta_doc_comprobantepago"] != "") {
                     $arrIm = explode(".", basename($data["igra_ruta_doc_comprobantepago"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                    $comprobantepago_archivoOld = Yii::$app->params["documentFolder"] . "inscripciongrado/" . $per_dni . "/doc_comprobantepago_per_" . $per_dni . "." . $typeFile;
+                    $comprobantepago_archivoOld = Yii::$app->params["documentFolder"] . "inscripciongrado/" . $per_id . "/doc_comprobantepago_per_" . $per_id . "." . $typeFile;
                     $comprobantepago_archivo = InscripcionGrado::addLabelTimeDocumentos($inscripgrado_id, $comprobantepago_archivoOld, $timeSt);
                     $data["igra_ruta_doc_comprobantepago"] = $comprobantepago_archivo;
                     if ($comprobantepago_archivo === false)
@@ -224,7 +221,7 @@ class InscripciongradoController extends \yii\web\Controller {
                 if (isset($data["igra_ruta_doc_record"]) && $data["igra_ruta_doc_record"] != "") {
                     $arrIm = explode(".", basename($data["igra_ruta_doc_record"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                    $record_archivoOld = Yii::$app->params["documentFolder"] . "inscripciongrado/" . $per_dni . "/doc_record_per_" . $per_dni . "." . $typeFile;
+                    $record_archivoOld = Yii::$app->params["documentFolder"] . "inscripciongrado/" . $per_id . "/doc_record_per_" . $per_id . "." . $typeFile;
                     $record_archivo = InscripcionGrado::addLabelTimeDocumentos($inscripgrado_id, $record_archivoOld, $timeSt);
                     $data["igra_ruta_doc_record"] = $record_archivo;
                     if ($record_archivo === false)
@@ -233,7 +230,7 @@ class InscripciongradoController extends \yii\web\Controller {
                 if (isset($data["igra_ruta_doc_certificado"]) && $data["igra_ruta_doc_certificado"] != "") {
                     $arrIm = explode(".", basename($data["igra_ruta_doc_certificado"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                    $certificado_archivoOld = Yii::$app->params["documentFolder"] . "inscripciongrado/" . $per_dni . "/doc_certificado_per_" . $per_dni . "." . $typeFile;
+                    $certificado_archivoOld = Yii::$app->params["documentFolder"] . "inscripciongrado/" . $per_id . "/doc_certificado_per_" . $per_id . "." . $typeFile;
                     $certificado_archivo = InscripcionGrado::addLabelTimeDocumentos($inscripgrado_id, $certificado_archivoOld, $timeSt);
                     $data["igra_ruta_doc_certificado"] = $certificado_archivo;
                     if ($certificado_archivo === false)
@@ -242,7 +239,7 @@ class InscripciongradoController extends \yii\web\Controller {
                 if (isset($data["igra_ruta_doc_syllabus"]) && $data["igra_ruta_doc_syllabus"] != "") {
                     $arrIm = explode(".", basename($data["igra_ruta_doc_syllabus"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                    $syllabus_archivoOld = Yii::$app->params["documentFolder"] . "inscripciongrado/" . $per_dni . "/doc_syllabus_per_" . $per_dni . "." . $typeFile;
+                    $syllabus_archivoOld = Yii::$app->params["documentFolder"] . "inscripciongrado/" . $per_id . "/doc_syllabus_per_" . $per_id . "." . $typeFile;
                     $syllabus_archivo = InscripcionGrado::addLabelTimeDocumentos($inscripgrado_id, $syllabus_archivoOld, $timeSt);
                     $data["igra_ruta_doc_syllabus"] = $syllabus_archivo;
                     if ($syllabus_archivo === false)
@@ -251,10 +248,10 @@ class InscripciongradoController extends \yii\web\Controller {
                 if (isset($data["igra_ruta_doc_homologacion"]) && $data["igra_ruta_doc_homologacion"] != "") {
                     $arrIm = explode(".", basename($data["igra_ruta_doc_homologacion"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                    $homologacion_archivoOld = Yii::$app->params["documentFolder"] . "inscripciongrado/" . $per_dni . "/doc_homologacion_per_" . $per_dni . "." . $typeFile;
-                    $homologacion_archivo = InscripcionGrado::addLabelTimeDocumentos($inscripgrado_id, $syllabus_archivoOld, $timeSt);
-                    $data["igra_ruta_doc_homologacion"] = $syllabus_archivo;
-                    if ($syllabus_archivo === false)
+                    $homologacion_archivoOld = Yii::$app->params["documentFolder"] . "inscripciongrado/" . $per_id . "/doc_homologacion_per_" . $per_id . "." . $typeFile;
+                    $homologacion_archivo = InscripcionGrado::addLabelTimeDocumentos($inscripgrado_id, $homologacion_archivoOld, $timeSt);
+                    $data["igra_ruta_doc_homologacion"] = $homologacion_archivo;
+                    if ($homologacion_archivo === false)
                         throw new Exception('Error doc Especie valorada por homologación no renombrado.');
                 }
 
@@ -297,10 +294,8 @@ class InscripciongradoController extends \yii\web\Controller {
                     //if($resp_inscripcion == 0){ 
                         \app\models\Utilities::putMessageLogFile('datos a enviar:  '.$data);
                         \app\models\Utilities::putMessageLogFile('resultado de la inseercion:  '.$resul);
-                    $regPersona = $mod_persona->insertarPersonaInscripciongrado($per_pri_nombre, $per_seg_nombre, $per_pri_apellido, $per_seg_apellido, $per_dni, $eciv_id, $can_id_nacimiento, $per_fecha_nacimiento, $per_celular, $per_correo, $per_domicilio_csec, $per_domicilio_ref, $per_domicilio_telefono, $pai_id_domicilio, $pro_id_domicilio, $can_id_domicilio, $per_nacionalidad);  
-                    /*if ($regPersona) {
-                        $exito=1;
-                    }*/
+                    $regPersona = $mod_persona->insertarPersonaInscripciongrado($per_pri_nombre, $per_seg_nombre, $per_pri_apellido, $per_seg_apellido, $per_dni, $eciv_id, $can_id_nacimiento, $per_fecha_nacimiento, $per_celular, $per_correo, $per_domicilio_csec, $per_domicilio_ref, $per_domicilio_telefono, $pai_id_domicilio, $pro_id_domicilio, $can_id_domicilio, $per_nacionalidad,$per_trabajo_direccion);  
+                    
                 }else{
 
                     $resul = array();
@@ -323,33 +318,38 @@ class InscripciongradoController extends \yii\web\Controller {
                     //$resul = $model->actualizarInscripciongrado($data);
                     if ($resp_persona['existen'] == 1) {
                     // actualizacion de Persona
-                    $respPersona = $mod_persona->modificaPersonaInscripciongrado($per_pri_nombre, $per_seg_nombre, $per_pri_apellido, $per_seg_apellido, $per_dni, $eciv_id,  $can_id_nacimiento, $per_fecha_nacimiento, $per_correo, $per_domicilio_csec, $per_domicilio_ref, $per_celular, $per_domicilio_telefono, $pai_id_domicilio, $pro_id_domicilio, $can_id_domicilio, $per_nacionalidad);
+                    $respPersona = $mod_persona->modificaPersonaInscripciongrado($per_pri_nombre, $per_seg_nombre, $per_pri_apellido, $per_seg_apellido, $per_dni, $eciv_id,  $can_id_nacimiento, $per_fecha_nacimiento, $per_correo, $per_domicilio_csec, $per_domicilio_ref, $per_celular, $per_domicilio_telefono, $pai_id_domicilio, $pro_id_domicilio, $can_id_domicilio, $per_nacionalidad, $per_trabajo_direccion);
                     }
                 }
                 
                 // creación de contacto
-                $modpersonacontacto = new PersonaContacto();
-                //Si existe registro en persona contacto se modifican los datos.
-                $resexistecontacto = $modpersonacontacto->consultaPersonaContacto($per_id);
-                if ($resexistecontacto) {
-                    if ($pcon_nombre != $pcon_apellido) {
-                        $contacto = $pcon_nombre . " " . $pcon_apellido;
+                    $modpersonacontacto = new PersonaContacto();
+                    $mod_persona = new Persona();
+                    $resp_persona = $mod_persona->consultPer_id();
+                    $persona = $resp_persona["ultimo"];
+                    \app\models\Utilities::putMessageLogFile('traer el per_id:  '.$per_id);
+                    $per_id = intval( $persona );
+
+                    $resexistecontacto = $modpersonacontacto->consultaPersonaContacto($per_id);
+                    if ($resexistecontacto) {
+                        if ($pcon_nombre != $pcon_apellido) {
+                            $contacto = $pcon_nombre . " " . $pcon_apellido;
+                        } else {
+                            $contacto = $pcon_nombre;
+                        }
+                        $resp_modcontacto = $modpersonacontacto->modificarPersonacontacto($per_id, $tpar_id, $contacto, $pcon_telefono, $pcon_celular, $pcon_direccion);
                     } else {
-                        $contacto = $pcon_nombre;
+                        if ($sincontacto != 1) {
+                            //Creación de persona de contacto.
+                            $modpersonacontacto->crearPersonaContacto($per_id, $tpar_id, $pcon_nombre . " " . $pcon_apellido, $pcon_telefono, $pcon_celular, $pcon_direccion);
+                        }
                     }
-                    $resp_modcontacto = $modpersonacontacto->modificarPersonacontacto($per_id, $tpar_id, $contacto, $pcon_telefono, $pcon_celular, $pcon_direccion);
-                } else {
-                    if ($sincontacto != 1) {
-                        //Creación de persona de contacto.
-                        $modpersonacontacto->crearPersonaContacto($per_id, $tpar_id, $pcon_nombre . " " . $pcon_apellido, $pcon_telefono, $pcon_celular, $pcon_direccion);
-                    }
-                }
                 $model = new InscripcionGrado();
-                \app\models\Utilities::putMessageLogFile('consultarrrrr personasssss:  '.$per_dni);
-                $resp_inscripcion = $model->consultarDatosInscripciongrado($per_dni);
+                \app\models\Utilities::putMessageLogFile('consultarrrrr personasssss:  '.$per_id);
+                $resp_inscripcion = $model->consultarDatosInscripciongrado($per_id);
                 \app\models\Utilities::putMessageLogFile(' personaxxxxxxxxxxx:  '.$resp_inscripcion['existe_inscripcion']);
                 if ($resp_inscripcion['existe_inscripcion'] == 0){ 
-                    $resul = $model->insertarDataInscripciongrado($unidad, $carrera, $modalidad, $periodo, $per_dni, $data);
+                    $resul = $model->insertarDataInscripciongrado($per_id, $unidad, $carrera, $modalidad, $periodo, $per_dni, $data);
                     if ($resul) {
                             $exito=1;
                         }
@@ -391,8 +391,7 @@ class InscripciongradoController extends \yii\web\Controller {
         $model_grado = new InscripcionGrado();
         $unidad_model = new UnidadAcademica();
         $carrera_model = new EstudioAcademico();
-        $moda_model = new Modalidad();
-        $periodo_model = new PeriodoAcademico(); 
+        $moda_model = new Modalidad();        $periodo_model = new PeriodoAcademico(); 
         $data = Yii::$app->request->get();
 
         if ($data['PBgetFilter']) {
@@ -437,9 +436,9 @@ class InscripciongradoController extends \yii\web\Controller {
 
             $id = $data['id']; // per_id
             $per_cedula = $data['cedula'];
-
+            \app\models\Utilities::putMessageLogFile('ver el resultado del id:  '.$id);
             $persona_model = Persona::findOne($id);
-            $contacto_model = PersonaContacto::findOne($per_cedula);
+            
             $usuario_model = Usuario::findOne(["per_id" => $id, "usu_estado" => '1', "usu_estado_logico" => '1']);
             $empresa_persona_model = EmpresaPersona::findOne(["per_id" => $id, "eper_estado" => '1', "eper_estado_logico" => '1']);
 
@@ -483,6 +482,20 @@ class InscripciongradoController extends \yii\web\Controller {
             /**
              * Inf. en caso de emergencia
              */
+            $contacto_model = PersonaContacto::findOne(['per_id' => $persona_model->per_id]); // obtiene el pcon_id con el per_id
+            $arr_tipparentesco = TipoParentesco::find()->select("tpar_id AS id, tpar_nombre AS value")->where(["tpar_estado_logico" => "1", "tpar_estado" => "1"])->asArray()->all();
+
+            $ViewFormTab3 = $this->renderPartial('ViewFormTab3', [
+                "arr_tipparentesco" => ArrayHelper::map($arr_tipparentesco, "id", "value"),
+                'persona_model' => $persona_model,
+                'contacto_model' => $contacto_model,
+
+            ]);
+
+            /**
+             * Documentación
+             */
+            $contacto_model = PersonaContacto::findOne(['per_id' => $persona_model->per_id]); // obtiene el pcon_id con el per_id
             $arr_tipparentesco = TipoParentesco::find()->select("tpar_id AS id, tpar_nombre AS value")->where(["tpar_estado_logico" => "1", "tpar_estado" => "1"])->asArray()->all();
 
             $ViewFormTab3 = $this->renderPartial('ViewFormTab3', [
@@ -614,6 +627,7 @@ class InscripciongradoController extends \yii\web\Controller {
             /**
              * Inf. caso de emergencia
              */
+            $contacto_model = PersonaContacto::findOne(['per_id' => $persona_model->per_id]); // obtiene el pcon_id con el per_id
             $arr_tipparentesco = TipoParentesco::find()->select("tpar_id AS id, tpar_nombre AS value")->where(["tpar_estado_logico" => "1", "tpar_estado" => "1"])->asArray()->all();
 
             $EditFormTab3 = $this->renderPartial('EditFormTab3', [
@@ -787,7 +801,6 @@ class InscripciongradoController extends \yii\web\Controller {
                             }
                         }
                     }
-                    //ProfesorExpDoc::deleteAllInfo($profesor_model->pro_id);
                     if (isset($arr_docencia)) {
                         foreach ($arr_docencia as $key1 => $value1) {
                             if ($value1[6] == "N") {

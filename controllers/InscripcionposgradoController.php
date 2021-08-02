@@ -17,6 +17,11 @@ use app\models\Canton;
 use app\models\TipoDiscapacidad;
 use app\models\InscripcionPosgrado;
 use app\models\EstudianteInstruccion;
+use app\models\InformacionLaboral;
+use app\models\InfoDiscapacidadEst;
+use app\models\EstudianteIdiomas;
+use app\models\InfoDocenciaEstudiante;
+use app\models\InfoEstudianteInvestigacion;
 use app\modules\admision\models\MetodoIngreso;
 use app\modules\admision\models\ConvenioEmpresa;
 use app\models\TipoInstitucionAca;
@@ -381,13 +386,20 @@ class InscripcionposgradoController extends \yii\web\Controller {
             $idioma2 = $data["idioma2"];
             $nivel2 = $data["nivel2"];
 
+            $noidioma = '';
+            $otroidioma = $data["otroidioma"];
+            $otronivel = $data["otronivel"];
+
             //Form2 Datos adicionales
+            $discapacidad = $data["discapacidad"];
             $tipo_discap = $data["tipo_discap"];
             $porcentaje_discap = $data["porcentaje_discap"];
 
+            $docencias = $data["docencias"];
             $año_docencia = $data["año_docencia"];
             $area_docencia = $data["area_docencia"];
 
+            $investiga = $data["investiga"];
             $articulos = $data["articulos"];
             $area_investigacion = $data["area_investigacion"];
 
@@ -470,8 +482,70 @@ class InscripcionposgradoController extends \yii\web\Controller {
                         $resp_infolaboral = $mod_infolaboral->modificarInfoLaboral($per_id, $empresa, $cargo, $telefono_emp, $prov_emp, $ciu_emp, $parroquia, $direccion_emp, $añoingreso_emp, $correo_emp, $cat_ocupacional);
                     }
 
+                    // info Idiomas 
+                    //Idioma Ingles  
+                    $mod_idiomas = new EstudianteIdiomas();  
+                    $idioma = $idioma1;   
+                    if($idioma == 1){
+                        $resp_existe_idioma = $mod_idiomas->consultarInfoIdiomasEst($per_id, 1);
+                        if ($resp_existe_idioma['existe_idioma'] == 0) {
+                            $info_idioma = $mod_idiomas->insertarInfoIdiomaEst($per_id, $idioma1, $nivel1, $noidioma);
+                        } else {
+                            $info_idioma = $mod_idiomas->modificarInfoDiscapacidad($per_id, $idioma1, $nivel1, $noidioma);
+                        }
+                    }   
+                    $idiomas = $idioma2; 
+                    if($idiomas == 2){
+                        $resp_existe_idioma = $mod_idiomas->consultarInfoIdiomasEst($per_id, 2);
+                        if ($resp_existe_idioma['existe_idioma'] == 0) {
+                            $info_idioma = $mod_idiomas->insertarInfoIdiomaEst($per_id, $idioma2, $nivel2, $noidioma);
+                        } else {
+                            $info_idioma = $mod_idiomas->modificarInfoDiscapacidad($per_id, $idioma2, $nivel2, $noidioma);
+                        }
+                    }   
+                    if($idiomas == 3){
+                        $resp_existe_idioma = $mod_idiomas->consultarInfoIdiomasEst($per_id, 3);
+                        if ($resp_existe_idioma['existe_idioma'] == 0) {
+                            $info_idioma = $mod_idiomas->insertarInfoIdiomaEst($per_id, $idioma2, $otronivel, $otroidioma);
+                        } else {
+                            $info_idioma = $mod_idiomas->modificarInfoDiscapacidad($per_id, $idioma2, $otronivel, $otroidioma);
+                        }
+                    }        
+                    
+                    // info discapacidad   
+                    $mod_infodiscapacidad = new InfoDiscapacidadEst();                  
+                    $resp_existe_infodisc = $mod_infodiscapacidad->consultarInfoDiscapacidadest($per_id);
+                    if ($resp_existe_infodisc['existe_infodiscapacidad'] == 0 && $discapacidad == 1) {
+                        $info_discapacidad = $mod_infodiscapacidad->insertarInfoDiscapacidad($per_id, $tipo_discap, $porcentaje_discap);
+                    } else {
+                        if ($discapacidad == 1) {
+                            $info_discapacidad = $mod_infodiscapacidad->modificarInfoDiscapacidad($per_id, $tipo_discap, $porcentaje_discap);
+                        }
+                    }
 
+                    // info Docencia   
+                    $mod_infodocencia = new InfoDocenciaEstudiante();                  
+                    $resp_docencia = $mod_infodocencia->consultarInfoDocenciaEstudiante($per_id);
+                    if ($resp_docencia['existe_infodocente'] == 0 && $docencias == 1) {
+                        $info_docencia = $mod_infodocencia->insertarInfoDocenciaEst($per_id, $año_docencia, $area_docencia);
+                    } else {
+                        if ($docencias == 1) {
+                            $info_docencia = $mod_infodocencia->modificarInfoDocenciaEst($per_id, $año_docencia, $area_docencia);
+                        }
+                    }
 
+                    // info Investigacion   
+                    $mod_infoinvestigacion = new InfoEstudianteInvestigacion();                  
+                    $resp_investigacion = $mod_infoinvestigacion->consultarInfoEstudianteInvestigacion($per_id);
+                    if ($resp_existe_infodisc['existe_infodiscapacidad'] == 0 && $investiga == 1) {
+                        $info_investigacion = $mod_infoinvestigacion->insertarInfoEstInvestigacion($per_id, $articulos, $area_investigacion);
+                    } else {
+                        if ($investiga == 1) {
+                            $info_investigacion = $mod_infoinvestigacion->modificarInfoEstInvestigacion($per_id, $articulos, $area_investigacion);
+                        }
+                    }
+
+                        
                 } else{
 
                     $resul = array();

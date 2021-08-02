@@ -224,7 +224,7 @@ class InscripcionGrado extends \yii\db\ActiveRecord
         }
     }
 
-    public function insertarDataInscripciongrado($unidad, $carrera, $modalidad, $periodo, $per_dni, $data) {
+    public function insertarDataInscripciongrado($per_id, $unidad, $carrera, $modalidad, $periodo, $per_dni, $data) {
         $con = \Yii::$app->db_inscripcion;
         \app\models\Utilities::putMessageLogFile('datos de archivo cargados:' . $data['igra_ruta_doc_titulo']);
         \app\models\Utilities::putMessageLogFile('id de persona:' . $data);
@@ -241,8 +241,8 @@ class InscripcionGrado extends \yii\db\ActiveRecord
         $igra_mensaje2 = $data['igra_mensaje2'];
 
         $sql = "INSERT INTO " . $con->dbname . ".inscripcion_grado
-            (uaca_id, eaca_id, mod_id, paca_id, igra_cedula, igra_metodo_ingreso, igra_ruta_doc_titulo, igra_ruta_doc_dni, igra_ruta_doc_certvota, igra_ruta_doc_foto, igra_ruta_doc_comprobantepago, igra_ruta_doc_recordacademico, igra_ruta_doc_certificado, igra_ruta_doc_syllabus, igra_ruta_doc_homologacion, igra_mensaje1, igra_mensaje2, igra_estado, igra_fecha_modificacion, igra_estado_logico)VALUES
-            (:uaca_id, :eaca_id, :mod_id, :paca_id, :per_dni, :igra_metodo_ingreso, :igra_ruta_doc_titulo, :igra_ruta_doc_dni, :igra_ruta_doc_certvota, :igra_ruta_doc_foto, :igra_ruta_doc_comprobantepago, :igra_ruta_doc_record, :igra_ruta_doc_certificado, :igra_ruta_doc_syllabus, :igra_ruta_doc_homologacion, :igra_mensaje1, :igra_mensaje2, 1, CURRENT_TIMESTAMP(), 1)";
+            (per_id, uaca_id, eaca_id, mod_id, paca_id, igra_cedula, igra_metodo_ingreso, igra_ruta_doc_titulo, igra_ruta_doc_dni, igra_ruta_doc_certvota, igra_ruta_doc_foto, igra_ruta_doc_comprobantepago, igra_ruta_doc_recordacademico, igra_ruta_doc_certificado, igra_ruta_doc_syllabus, igra_ruta_doc_homologacion, igra_mensaje1, igra_mensaje2, igra_estado, igra_fecha_modificacion, igra_estado_logico)VALUES
+            (:per_id, :uaca_id, :eaca_id, :mod_id, :paca_id, :per_dni, :igra_metodo_ingreso, :igra_ruta_doc_titulo, :igra_ruta_doc_dni, :igra_ruta_doc_certvota, :igra_ruta_doc_foto, :igra_ruta_doc_comprobantepago, :igra_ruta_doc_record, :igra_ruta_doc_certificado, :igra_ruta_doc_syllabus, :igra_ruta_doc_homologacion, :igra_mensaje1, :igra_mensaje2, 1, CURRENT_TIMESTAMP(), 1)";
 
         $met_ing = 0;
         if (empty($data['ming_id'])) {
@@ -253,6 +253,7 @@ class InscripcionGrado extends \yii\db\ActiveRecord
         \app\models\Utilities::putMessageLogFile('identificacion:' . $data['cedula']);
         $command = $con->createCommand($sql);
         //$command->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
+        $command->bindParam(":per_id", $per_id, \PDO::PARAM_STR);
         $command->bindParam(":uaca_id", $unidad, \PDO::PARAM_STR);
         $command->bindParam(":eaca_id", $carrera, \PDO::PARAM_STR);
         $command->bindParam(":mod_id", $modalidad, \PDO::PARAM_STR);
@@ -276,7 +277,7 @@ class InscripcionGrado extends \yii\db\ActiveRecord
 
     public function updateDataInscripciongrado($con, $data) {
         $sql = "UPDATE " . $con->dbname . ".inscripcion_grado 
-                SET uaca_id=:uaca_id,eaca_id=:eaca_id,mod_id=:mod_id,paca_id=:paca_id, igra_cedula=:per_dni,
+                SET per_id=:per_id,uaca_id=:uaca_id,eaca_id=:eaca_id,mod_id=:mod_id,paca_id=:paca_id, igra_cedula=:per_dni,
                     igra_metodo_ingreso=:igra_metodo_ingreso,igra_ruta_doc_titulo=:igra_ruta_doc_titulo, igra_ruta_doc_dni=:igra_ruta_doc_dni, igra_ruta_doc_certvota=:igra_ruta_doc_certvota,igra_ruta_doc_foto=:igra_ruta_doc_foto,igra_ruta_doc_comprobantepago=:igra_ruta_doc_comprobantepago,igra_ruta_doc_recordacademico=:igra_ruta_doc_record,igra_ruta_doc_certificado=:igra_ruta_doc_certificado,igra_ruta_doc_syllabus=:igra_ruta_doc_syllabus,igra_ruta_doc_homologacion=:igra_ruta_doc_homologacion,igra_mensaje1=:igra_mensaje1,igra_mensaje2=:igra_mensaje2,igra_fecha_modificacion=CURRENT_TIMESTAMP() 
                  WHERE igra_id =:igra_id ";
         $met_ing = 0;
@@ -287,6 +288,7 @@ class InscripcionGrado extends \yii\db\ActiveRecord
         }
         $command = $con->createCommand($sql);
         $command->bindParam(":igra_id", $data['igra_id'], \PDO::PARAM_STR);
+        $command->bindParam(":per_id", $per_id, \PDO::PARAM_STR);
         $command->bindParam(":uaca_id", $data['unidad_academica'], \PDO::PARAM_STR);
         $command->bindParam(":eaca_id", $data['carrera'], \PDO::PARAM_STR);
         $command->bindParam(":mod_id", $data['modalidad'], \PDO::PARAM_STR);

@@ -23,4 +23,5 @@ use kartik\tabs\TabsX;
     </div>
 </div>
 <input type="hidden" id="frm_per_id" value="<?= $persona_model->per_id ?>">
+<input type="hidden" id="frm_pcon_id" value="<?= $contacto_model->pcon_id ?>">
 <input type="hidden" id="frm_pro_id" value="<?= $pro_id ?>">

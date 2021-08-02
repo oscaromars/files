@@ -34,6 +34,26 @@ $(document).ready(function () {
         }, true);
     });
 
+    $('#cmb_idioma2').change(function () {
+        var valor = $('#cmb_idioma2').val();
+        if (valor == 3) {
+            $('#cmb_nivelidioma2').removeClass("PBvalidation");
+            $('#txt_nombreidioma').addClass("PBvalidation");
+            $('#cmb_nivelotroidioma').addClass("PBvalidation");
+            $('#Divotroidioma').show();
+            $('#Divotronivelidioma').show();
+            $('#Dividiomas').hide();
+        } else if (valor == 2)
+        {
+            $('#txt_nombreidioma').removeClass("PBvalidation");
+            $('#cmb_nivelotroidioma').removeClass("PBvalidation");
+            $('#cmb_nivelidioma2').addClass("PBvalidation");
+            $('#Divotroidioma').hide();
+            $('#Divotronivelidioma').hide();
+            $('#Dividiomas').show();
+        }
+    });
+
     $('#cmb_tipo_dni').change(function () {
         if ($('#cmb_tipo_dni').val() == 'PASS') {
             $('#txt_cedula').removeClass("PBvalidation");
@@ -171,20 +191,26 @@ $(document).ready(function () {
     $('#signup-dis').change(function () {
         if ($('#signup-dis').val() == 1) {
             $('#discapacidad').css('display', 'block');
+            $("#cmb_tipo_discap").addClass("PBvalidation");
+            $("#txt_porc_discapacidad").addClass("PBvalidation");
             $("#signup-dis_no").prop("checked", "");
         } else {
             $('#discapacidad').css('display', 'none');
+            $("#cmb_tipo_discap").removeClass("PBvalidation");
+            $("#txt_porc_discapacidad").removeClass("PBvalidation");
         }
     });
 
     $('#signup-dis_no').change(function () {
         if ($('#signup-dis_no').val() == 2) {
             $('#discapacidad').css('display', 'none');
+            $("#cmb_tipo_discap").removeClass("PBvalidation");
+            $("#txt_porc_discapacidad").removeClass("PBvalidation");
             $("#signup-dis").prop("checked", "");
-            $("#cmb_tipo_discap").removeAttr("disabled");
-            $("#txt_porc_discapacidad").removeAttr("disabled");
         } else {
             $('#discapacidad').css('display', 'block');
+            $("#cmb_tipo_discap").addClass("PBvalidation");
+            $("#txt_porc_discapacidad").addClass("PBvalidation");
         }
     });
 
@@ -192,47 +218,59 @@ $(document).ready(function () {
     $('#signup-doc').change(function () {
         if ($('#signup-doc').val() == 1) {
             $('#docencia').css('display', 'block');
+            $("#txt_año_docencia").addClass("PBvalidation");
+            $("#txt_area_docencia").addClass("PBvalidation");
             $("#signup-doc_no").prop("checked", "");
-
         } else {
             $('#docencia').css('display', 'none');
+            $("#txt_año_docencia").removeClass("PBvalidation");
+            $("#txt_area_docencia").removeClass("PBvalidation");
         }
     });
 
     $('#signup-doc_no').change(function () {
         if ($('#signup-doc_no').val() == 2) {
             $('#docencia').css('display', 'none');
+            $("#txt_año_docencia").removeClass("PBvalidation");
+            $("#txt_area_docencia").removeClass("PBvalidation");
             $("#signup-doc").prop("checked", "");
         } else {
             $('#docencia').css('display', 'block');
+            $("#txt_año_docencia").addClass("PBvalidation");
+            $("#txt_area_docencia").addClass("PBvalidation");
         }
     });
     //Control del div de investigacion
     $('#signup-inv').change(function () {
         if ($('#signup-inv').val() == 1) {
             $('#investigacion').css('display', 'block');
+            $("#txt_articulos").addClass("PBvalidation");
+            $("#txt_area_investigacion").addClass("PBvalidation");
             $("#signup-inv_no").prop("checked", "");
         } else {
             $('#investigacion').css('display', 'none');
+            $("#txt_articulos").removeClass("PBvalidation");
+            $("#txt_area_investigacion").removeClass("PBvalidation");
         }
     });
 
     $('#signup-inv_no').change(function () {
         if ($('#signup-inv_no').val() == 2) {
             $('#investigacion').css('display', 'none');
+            $("#txt_articulos").removeClass("PBvalidation");
+            $("#txt_area_investigacion").removeClass("PBvalidation");
             $("#signup-inv").prop("checked", "");
         } else {
             $('#investigacion').css('display', 'block');
+            $("#txt_articulos").addClass("PBvalidation");
+            $("#txt_area_investigacion").addClass("PBvalidation");
         }
     });
 
     //control del div de financiamiento
 
     $("#paso3next").click(function () {  
-        //$('#tipoFinanciamiento').on('click', function () {
         var tipo_financiamiento = $("[name=signup]:checked").val();
-        //alert($("[name=signup]:checked").val());
-        //})
     });    
 
     //Control del div de homologacion
@@ -290,10 +328,6 @@ function guardarInscripcionPosgrado() {
     } else {
         arrParams.cedula = $('#txt_pasaporte').val();
     }
-    alert($('#cmb_unidadpos').val());
-    alert($('#cmb_programa').val());
-    alert($('#cmb_modalidadpos').val());
-    alert($('#txt_año').val());
     
     var error = 0;
     //var pais = $('#cmb_pais_dom').val();
@@ -382,6 +416,17 @@ function guardarInscripcionPosgrado() {
 
     arrParams.idioma2 = $('#cmb_idioma2').val();
     arrParams.nivel2 = $('#cmb_nivelidioma2').val();
+
+    arrParams.otroidioma = $('#txt_nombreidioma').val();
+    arrParams.otronivel = $('#cmb_nivelotroidioma').val();
+
+    arrParams.tipo_idioma = $('#cmb_idioma2 option:selected').val();
+    if (arrParams.tipo_idioma == 3) {
+        arrParams.otroidioma = $('#txt_nombreidioma').val();
+        arrParams.otronivel = $('#cmb_nivelotroidioma').val();
+    } else {
+        arrParams.nivel2 = $('#cmb_nivelidioma2').val();
+    }
 
     //Form2 Datos adicionales
     arrParams.discapacidades = $('input[name=signup-dis]:checked').val();

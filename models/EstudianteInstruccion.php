@@ -133,7 +133,7 @@ class EstudianteInstruccion extends \yii\db\ActiveRecord
 
         $sql = "INSERT INTO " . $con->dbname . ".estudiante_instruccion
             (per_id, eins_titulo3ernivel, eins_institucion3ernivel, eins_añogrado3ernivel, eins_titulo4tonivel, eins_institucion4tonivel, eins_añogrado4tonivel, eins_estado, eins_fecha_modificacion, eins_estado_logico) VALUES
-            ($per_id, $titulo_ter, $universidad_tercer, $grado_tercer, $titulo_cuarto, $universidad_cuarto, $grado_cuarto, 1, CURRENT_TIMESTAMP(), 1)";
+            ($per_id, '$titulo_ter', '$universidad_tercer', '$grado_tercer', '$titulo_cuarto', '$universidad_cuarto', '$grado_cuarto', 1, CURRENT_TIMESTAMP(), 1)";
 
         
         $command = $con->createCommand($sql);
@@ -157,18 +157,18 @@ class EstudianteInstruccion extends \yii\db\ActiveRecord
             $comando = $con->createCommand
                     ("UPDATE " . $con->dbname . ".estudiante_instruccion             
                       SET 
-                        eins_id = :eins_id,    
-                        eins_titulo3ernivel = :eins_titulo3ernivel,
-                        eins_institucion3ernivel = :eins_institucion3ernivel,
-                        eins_añogrado3ernivel = :eins_añogrado3ernivel,
-                        eins_titulo4tonivel = :eins_titulo4tonivel,
-                        eins_institucion4tonivel = :eins_institucion4tonivel,
-                        eins_añogrado4tonivel = :eins_añogrado4tonivel,                        
-                        eins_fecha_modificacion = :eins_fecha_modificacion
+                        eins_id =:eins_id,    
+                        eins_titulo3ernivel =:eins_titulo3ernivel,
+                        eins_institucion3ernivel =:eins_institucion3ernivel,
+                        eins_añogrado3ernivel =:eins_añogrado3ernivel,
+                        eins_titulo4tonivel =:eins_titulo4tonivel,
+                        eins_institucion4tonivel =:eins_institucion4tonivel,
+                        eins_añogrado4tonivel =:eins_añogrado4tonivel,                        
+                        eins_fecha_modificacion =:eins_fecha_modificacion
                       WHERE 
-                        per_id = :per_id AND
-                        eins_estado = :estado AND
-                        eins_estado_logico = :estado");
+                        per_id =:per_id AND
+                        eins_estado =:estado AND
+                        eins_estado_logico =:estado");
             $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
             $comando->bindParam(":eins_titulo3ernivel", $titulo_ter, \PDO::PARAM_STR);
             $comando->bindParam(":eins_institucion3ernivel", $universidad_tercer, \PDO::PARAM_STR);

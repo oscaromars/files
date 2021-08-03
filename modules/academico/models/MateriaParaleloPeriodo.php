@@ -101,4 +101,34 @@ public static function getNumparalelo(){
         $resultData = $comando->queryAll();
         return $resultData;
     }
+
+     public function getParalelosAlumnos($paca_id,$mod_id,$asi_id){
+        $con = \Yii::$app->db_academico;
+        $estado = 1;  
+
+        $sql = "select 
+                concat (mpp.mpp_num_paralelo, ' ', mpp.asi_id,'(',mpp.daho_id,')') as course,
+                mpp.mpp_id id, mpp.mpp_num_paralelo,mpp.daho_id, mpp.paca_id,
+                mpp.mod_id, mpp.asi_id
+                  from "
+                         . $con->dbname . ".materia_paralelo_periodo  as mpp
+                         inner join db_academico.planificacion_estudiante b 
+                on mpp.mpp_id in (b.pes_mat_b1_h1_mpp,b.pes_mat_b1_h2_mpp,b.pes_mat_b1_h3_mpp,
+                b.pes_mat_b1_h4_mpp,b.pes_mat_b1_h5_mpp,b.pes_mat_b1_h6_mpp,
+                b.pes_mat_b2_h1_mpp,b.pes_mat_b2_h2_mpp,b.pes_mat_b2_h3_mpp,
+                b.pes_mat_b2_h4_mpp,b.pes_mat_b2_h5_mpp,b.pes_mat_b2_h6_mpp)
+                         left join " . $con->dbname . ".distributivo_academico as dc on mpp.mpp_id= dc.mpp_id and mpp.asi_id =dc.asi_id and mpp.mod_id=dc.mod_id and mpp.paca_id=dc.paca_id                       
+                        where  dc.mpp_id is null and  mpp.asi_id =:asi_id
+                        and mpp.mod_id=:mod_id
+                        and mpp.paca_id=:paca_id
+                        and mpp_estado=:estado";
+ \app\models\Utilities::putMessageLogFile($sql); 
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $comando->bindParam(":asi_id", $asi_id, \PDO::PARAM_INT);
+        $comando->bindParam(":mod_id", $mod_id, \PDO::PARAM_INT);
+        $comando->bindParam(":paca_id", $paca_id, \PDO::PARAM_INT);
+        $resultData = $comando->queryAll();
+        return $resultData;
+    }
 }

@@ -122,7 +122,7 @@ class PlanificacionController extends \app\components\CController {
         //}
     }
 
-    public function actionGenerator($periodo,$modalidad) {
+   public function actionGenerator($periodo,$modalidad) {
     
      
     
@@ -181,6 +181,29 @@ where DATEDIFF(NOW(),b.est_fecha_creacion) <=90 and
 DATEDIFF(NOW(),a.per_fecha_creacion) <=90))  
                 ";
 
+                 $sql = "
+                 select e.est_id, e.per_id, e.est_matricula, e.est_fecha_creacion, e.est_categoria, meu.uaca_id, meu.mod_id, meu.eaca_id, DATEDIFF(NOW(),e.est_fecha_creacion) as olderi, -- 
+u.uaca_id, u.uaca_nombre, ea.teac_id, ea.eaca_nombre, ea.eaca_codigo,
+per.per_cedula,  mumo.maca_id , maca.maca_codigo, maca.maca_nombre,
+concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_apellido, ' ', ifnull(per.per_seg_apellido,'')) estudiante
+ from db_academico.estudiante e
+ inner join db_academico.estudiante_carrera_programa c on c.est_id = e.est_id
+  inner join db_academico.modalidad_estudio_unidad meu on meu.meun_id = c.meun_id  
+  inner join db_academico.malla_unidad_modalidad mumo on mumo.meun_id = meu.meun_id 
+   inner join db_academico.malla_academica maca on maca.maca_id = mumo.maca_id 
+   inner join db_academico.unidad_academica u on u.uaca_id = meu.uaca_id
+   inner join db_academico.estudio_academico ea on ea.eaca_id = meu.eaca_id 
+   inner join db_asgard.persona per on per.per_id = e.per_id
+    where          
+(e.per_id in (select b.per_id from db_academico.planificacion_estudiante b where
+b.pla_id= ( select max(dap.pla_id) from db_academico.planificacion dap 
+ where meu.mod_id = dap.mod_id ))) or (e.per_id in (
+select a.per_id from db_asgard.persona as a 
+inner join db_academico.estudiante b on a.per_id = b.per_id
+where DATEDIFF(NOW(),b.est_fecha_creacion) <=90 and
+DATEDIFF(NOW(),a.per_fecha_creacion) <=90))  
+                ";
+
  $comando = $con->createCommand($sql);
           $comando->bindParam(":modalidad", $modalidad, \PDO::PARAM_STR);
                $resultData = $comando->queryAll();
@@ -218,6 +241,7 @@ $centralprocess = $malla->consultarAsignaturas($resultData[$i],$periodo,$saca_no
             \Yii::$app->getSession()->setFlash('msgok', 'Se ha generado con exito la planificacion');
          return $this->redirect(['index']);
      }
+
       public function actionDescargarples()  {    
       
         ini_set('memory_limit', '256M');
@@ -226,11 +250,12 @@ $centralprocess = $malla->consultarAsignaturas($resultData[$i],$periodo,$saca_no
         header("Content-Type: $content_type");
         header('Content-Disposition: attachment;filename=' . $nombarch);
         header('Cache-Control: max-age=0');
-        $colPosition = array('C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K','L','M','N',);
+        $colPosition = array('B','C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K','L','M','N',);
         $arrHeader = array(
              Yii::t('formulario', 'DNI 1'),
             Yii::t('formulario', 'Student'),
             Yii::t('crm', 'Carrera'),
+             Yii::t('crm', 'Semestre'),
              Yii::t('formulario', 'Period'),
             Yii::t('formulario', 'Asignatura B1 H1'),
             Yii::t('formulario', 'Asignatura B1 H2'),
@@ -263,7 +288,6 @@ $centralprocess = $malla->consultarAsignaturas($resultData[$i],$periodo,$saca_no
          
         
     }
-
 
 
     public function actionUpload() {

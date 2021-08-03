@@ -2100,6 +2100,7 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
                     pers.per_cedula,
                     plae.pes_nombres,
                     plae.pes_carrera,
+                    plae.pes_semestre,
                     plan.pla_periodo_academico,
                     plae.pes_mat_b1_h1_nombre,
                     plae.pes_mat_b1_h2_nombre,

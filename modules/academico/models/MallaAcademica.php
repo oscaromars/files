@@ -430,7 +430,7 @@ AND e.enac_id = 1;
         $comando = $con->createCommand($presql);
         $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
         $currenter = $comando->queryOne();
-        if ($currenter["semestre"] == Null){ 
+      /*  if ($currenter["semestre"] == Null){ 
          $student_semester= 1;
          $last_semester= 1;
      } else {
@@ -443,7 +443,9 @@ AND e.enac_id = 1;
         $last_semester= $currenter["semestre"];
             }
 
-    }
+    }*/
+
+    $student_semester= $currenter["semestre"];
        
 
 
@@ -458,7 +460,8 @@ inner join db_academico.modalidad_estudio_unidad c on c.meun_id = b.meun_id
                       and   c.mod_id =  " . $modalidad . "   
                       and a.maca_id =  " . $rows["maca_id"] . "  
                       and c.uaca_id = 1
-                      and (a.made_semestre = :semester OR a.made_semestre = :lastsemester )
+                      and (a.made_semestre >= :semester)
+                    --  and (a.made_semestre = :semester OR a.made_semestre = :lastsemester )
                             and a.made_estado = 1
                             and a.made_estado_logico = 1
                             and b.mumo_estado = 1
@@ -475,7 +478,7 @@ inner join db_academico.modalidad_estudio_unidad c on c.meun_id = b.meun_id
          // $comando->bindParam(":activo", $activo, \PDO::PARAM_STR);
          // $comando->bindParam(":paca_id", $gest, \PDO::PARAM_INT);
           $comando->bindParam(":semester", $student_semester, \PDO::PARAM_INT);
-          $comando->bindParam(":lastsemester", $last_semester, \PDO::PARAM_INT);
+        //  $comando->bindParam(":lastsemester", $last_semester, \PDO::PARAM_INT);
                $rows_in = $comando->queryAll();
 
 
@@ -1479,7 +1482,7 @@ from db_academico.periodo_academico plac
 
             
 
-
+                   // $isprime= gmp_prob_prime($num_par); 1, 5, 7, 11, 13, 17, 19
 
                     if ($modalidad == 1){
 

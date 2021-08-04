@@ -2407,5 +2407,3 @@ daho_id BIGINT(20) NULL DEFAULT NULL AFTER paca_id;
 
 ALTER TABLE db_academico.planificacion_estudiante ADD 
 pes_semestre BIGINT(20) NULL DEFAULT NULL AFTER pes_carrera;
-
-

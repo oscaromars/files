@@ -394,7 +394,7 @@ class MallaAcademica extends \yii\db\ActiveRecord
     }
     
     
-     function consultarAsignaturas($rows,$gest,$semestre,$modalidad) {
+      function consultarAsignaturas($rows,$gest,$semestre,$modalidad) {
     $con = \Yii::$app->db_academico;
     $activo="A"; // $rows["mod_id"]
     $per_id = $rows["per_id"];
@@ -467,7 +467,7 @@ inner join db_academico.modalidad_estudio_unidad c on c.meun_id = b.meun_id
                             and c.meun_estado_logico = 1
                             and d.asi_estado = 1
                             and d.asi_estado_logico = 1
-                     ORDER BY a.made_semestre, a.made_asi_requisito, a.maca_id ASC
+                     ORDER BY a.maca_id, a.made_semestre, a.made_asi_requisito ASC
                         ";
   
 
@@ -669,7 +669,7 @@ from db_academico.periodo_academico plac
                             
                      }
                     
-         if ($statusasi["enac_id"]==3 or $statusasi["enac_id"]==2 or $statusasi["enac_id"] == Null){ 
+         if ($statusasi["enac_id"]==3 or $statusasi["enac_id"]==2 or $statusasi["enac_id"] == Null or $statusasi["enac_id"]==4 or $statusasi["enac_id"]==1 ){ 
                       $sstatusasi= $statusasi["enac_id"];  
                        if ($statusasi["enac_id"] == Null){  
                          $sstatusasi= 3;
@@ -679,7 +679,7 @@ from db_academico.periodo_academico plac
                       $sstatuspre= $statuspre["enac_id"]; 
                       
                       
-                        if ($statuspre["enac_id"]==1 ){   
+                        if ($statuspre["enac_id"]==1 or $statuspre["enac_id"]==4 or $statuspre["enac_id"]==2 or $statuspre["enac_id"]==3 ){   
 
 
              if ($subjects[1][0] == Null)  {                   
@@ -983,6 +983,7 @@ from db_academico.periodo_academico plac
                   //   1   .    4     PES
                $mpph1 = 0; $mpph2 = 0; $mpph3 = 0; $mpph4 = 0;
                 $mpph5 = 0; $mpph6 = 0; $mpph7 = 0; $mpph8 = 0;
+                  $mpph9 = 0; $mpph10 = 0; $mpph11 = 0; $mpph12 = 0;
                 
               for ($iter = 1;$iter <= 8; ++$iter){
 
@@ -1347,6 +1348,7 @@ from db_academico.periodo_academico plac
 
                  $mpph1 = 0; $mpph2 = 0; $mpph3 = 0; $mpph4 = 0;
                 $mpph5 = 0; $mpph6 = 0; $mpph7 = 0; $mpph8 = 0;
+                $mpph9 = 0; $mpph10 = 0; $mpph11 = 0; $mpph12 = 0;
                 
               for ($iter = 1;$iter <= 8; ++$iter){
 
@@ -1606,45 +1608,148 @@ from db_academico.periodo_academico plac
                   if ($getifasi["hosd_bloque"] == 1){
                     switch ($getifasi["hosd_hora"]) {
                         case 1:
+                    if ($asih1==Null){ 
                          $asih1 = $subjects[$iter][0]; $noasih1 = $subjects[$iter][1];
-                         $mpph1 =  $getmpar["mpp_id"];  // daho_id = Null {{mod, daho_id, update par}} 
-                        break;
+                         $mpph1 =  $getmpar["mpp_id"];   
+                         } Else{ 
+                     if ($asih9==Null){ 
+                    $asih9 = $subjects[$iter][0]; $noasih9 = $subjects[$iter][1];
+                    $mpph9 =  $getmpar["mpp_id"];   
+                 }
+                    Else {
+                 $asih10 = $subjects[$iter][0]; $noasih10 = $subjects[$iter][1];
+                    $mpph10 =  $getmpar["mpp_id"];   
+
+                    }
+                        }
+                    break;
                         case 2:
-                    $asih2 = $subjects[$iter][0];$noasih2 = $subjects[$iter][1];
-                     $mpph2 =  $getmpar["mpp_id"] ; // daho_id = Null {{mod, daho_id, update par}}
-                         break;      
+                    if ($asih2==Null){ 
+                         $asih2 = $subjects[$iter][0]; $noasih2 = $subjects[$iter][1];
+                         $mpph2 =  $getmpar["mpp_id"];   
+                         } Else{ 
+                     if ($asih9==Null){ 
+                    $asih9 = $subjects[$iter][0]; $noasih9 = $subjects[$iter][1];
+                    $mpph9 =  $getmpar["mpp_id"];   
+                 }
+                    Else {
+                 $asih10 = $subjects[$iter][0]; $noasih10 = $subjects[$iter][1];
+                    $mpph10 =  $getmpar["mpp_id"];   
+
+                    }
+                        }; 
+                         break; 
                         case 3:
-                    $asih3 = $subjects[$iter][0];$noasih3 =$subjects[$iter][1];
-                     $mpph3 =  $getmpar["mpp_id"] ; // daho_id = Null {{mod, daho_id, update par}}
-                         break;    
+                     if ($asih3==Null){ 
+                         $asih3 = $subjects[$iter][0]; $noasih3 = $subjects[$iter][1];
+                         $mpph3 =  $getmpar["mpp_id"];   
+                         } Else{ 
+                     if ($asih9==Null){ 
+                    $asih9 = $subjects[$iter][0]; $noasih9 = $subjects[$iter][1];
+                    $mpph9 =  $getmpar["mpp_id"];   
+                 }
+                    Else {
+                 $asih10 = $subjects[$iter][0]; $noasih10 = $subjects[$iter][1];
+                    $mpph10 =  $getmpar["mpp_id"];   
+
+                    }
+                        }
+                         break;   
                         case 4:
-                    $asih4 = $subjects[$iter][0];$noasih4 =$subjects[$iter][1];
-                     $mpph4 =  $getmpar["mpp_id"] ; // daho_id = Null {{mod, daho_id, update par}}
-                         break;                                 
+                    if ($asih4==Null){ 
+                         $asih4 = $subjects[$iter][0]; $noasih4 = $subjects[$iter][1];
+                         $mpph4 =  $getmpar["mpp_id"];   
+                         } Else{ 
+                     if ($asih9==Null){ 
+                    $asih9 = $subjects[$iter][0]; $noasih9 = $subjects[$iter][1];
+                    $mpph9 =  $getmpar["mpp_id"];   
+                 }
+                    Else {
+                 $asih10 = $subjects[$iter][0]; $noasih10 = $subjects[$iter][1];
+                    $mpph10 =  $getmpar["mpp_id"];   
+
+                    }
+                        }
+                         break;                         
                     }            
                    
                     }  
+
+
+                
+
+                
+
+
 
 
 
                   if ($getifasi["hosd_bloque"] == 2){
                     switch ($getifasi["hosd_hora"]) {
                         case 1:
-                    $asih5 = $subjects[$iter][0]; $noasih5 = $subjects[$iter][1];
-                     $mpph5 =  $getmpar["mpp_id"] ; // daho_id = Null {{mod, daho_id, update par}}
-                        break;
+                    if ($asih5==Null){ 
+                         $asih5 = $subjects[$iter][0]; $noasih5 = $subjects[$iter][1];
+                         $mpph5 =  $getmpar["mpp_id"];   
+                         } Else{ 
+                     if ($asih11==Null){ 
+                    $asih11 = $subjects[$iter][0]; $noasih11 = $subjects[$iter][1];
+                    $mpph11 =  $getmpar["mpp_id"];   
+                 }
+                    Else {
+                 $asih12 = $subjects[$iter][0]; $noasih12 = $subjects[$iter][1];
+                    $mpph12 =  $getmpar["mpp_id"];   
+
+                    }
+                        }; 
+                         break; 
                         case 2:
-                   $asih6 = $subjects[$iter][0]; $noasih6 = $subjects[$iter][1];
-                    $mpph6 =  $getmpar["mpp_id"] ; // daho_id = Null {{mod, daho_id, update par}}
-                         break;      
+                    if ($asih6==Null){ 
+                         $asih6 = $subjects[$iter][0]; $noasih6 = $subjects[$iter][1];
+                         $mpph6 =  $getmpar["mpp_id"];   
+                         } Else{ 
+                     if ($asih11==Null){ 
+                    $asih11 = $subjects[$iter][0]; $noasih11 = $subjects[$iter][1];
+                    $mpph11 =  $getmpar["mpp_id"];   
+                 }
+                    Else {
+                 $asih12 = $subjects[$iter][0]; $noasih12 = $subjects[$iter][1];
+                    $mpph12 =  $getmpar["mpp_id"];   
+
+                    }
+                        }; 
+                         break; 
                         case 3:
-                    $asih7 = $subjects[$iter][0]; $noasih7 = $subjects[$iter][1];
-                    $mpph7 =  $getmpar["mpp_id"] ; // daho_id = Null {{mod, daho_id, update par}}
-                         break;     
+                     if ($asih7==Null){ 
+                         $asih7 = $subjects[$iter][0]; $noasih7 = $subjects[$iter][1];
+                         $mpph7 =  $getmpar["mpp_id"];   
+                         } Else{ 
+                     if ($asih11==Null){ 
+                    $asih11 = $subjects[$iter][0]; $noasih11 = $subjects[$iter][1];
+                    $mpph11 =  $getmpar["mpp_id"];   
+                 }
+                    Else {
+                 $asih12 = $subjects[$iter][0]; $noasih12 = $subjects[$iter][1];
+                    $mpph12 =  $getmpar["mpp_id"];   
+
+                    }
+                        }; 
+                         break; 
                        case 4:
-                    $asih8 = $subjects[$iter][0];$noasih8 =$subjects[$iter][1];
-                     $mpph8 =  $getmpar["mpp_id"] ; // daho_id = Null {{mod, daho_id, update par}}
-                         break;                                 
+                    if ($asih8==Null){ 
+                         $asih8 = $subjects[$iter][0]; $noasih8 = $subjects[$iter][1];
+                         $mpph8 =  $getmpar["mpp_id"];   
+                         } Else{ 
+                     if ($asih11==Null){ 
+                    $asih11 = $subjects[$iter][0]; $noasih11 = $subjects[$iter][1];
+                    $mpph11 =  $getmpar["mpp_id"];   
+                 }
+                    Else {
+                 $asih12 = $subjects[$iter][0]; $noasih12 = $subjects[$iter][1];
+                    $mpph12 =  $getmpar["mpp_id"];   
+
+                    }
+                        }; 
+                         break;                          
                     }        }          
                    
                     }  
@@ -1664,8 +1769,21 @@ from db_academico.periodo_academico plac
                         pes_jor_b2_h4, pes_mat_b1_h1_mpp, pes_mat_b1_h2_mpp, pes_mat_b1_h3_mpp, pes_mat_b1_h4_mpp, pes_mat_b2_h1_mpp,
                      pes_mat_b2_h2_mpp,pes_mat_b2_h3_mpp,pes_mat_b2_h4_mpp, pes_estado, pes_estado_logico)
                     values (" . $rows_pla["pla_id"] ."," . $rows["per_id"] . ", '" . $rows["uaca_id"] . "','" . $rows["maca_codigo"] . "', '" . $rows["maca_nombre"] . "','" . $student_semester . "', '" . $rows["per_cedula"] . "', '" . $rows["estudiante"] . "', '" . $asih1 . "', '" . $asih2 . "', '" . $asih3 . "', '" . $asih7 . "', '" . $asih4 . "', '" . $asih5 . "', '" . $asih6 . "', '" . $asih8 . "', '" . $noasih1 . "', '" . $noasih2 . "', '" . $noasih3 . "', '" . $noasih7 . "', '" . $noasih4 . "', '" . $noasih5 . "', '" . $noasih6 . "', '" . $noasih8 . "',". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "','" . $mpph1 . "','" . $mpph2 . "','" . $mpph3 . "','" . $mpph7 . "','" . $mpph4 . "','" . $mpph5 . "','" . $mpph6 . "','" . $mpph8 . "', '" . $estado . "', '" . $estado ."')"; 
+
+
+
+                             $sql = "INSERT INTO db_academico.planificacion_estudiante
+                    (pla_id, per_id, pes_jornada,pes_cod_carrera, pes_carrera, pes_semestre, pes_dni, pes_nombres,pes_mat_b1_h1_cod, pes_mat_b1_h2_cod, pes_mat_b1_h3_cod, pes_mat_b1_h4_cod,pes_mat_b1_h5_cod,pes_mat_b1_h6_cod, pes_mat_b2_h1_cod,
+                     pes_mat_b2_h2_cod,pes_mat_b2_h3_cod,pes_mat_b2_h4_cod,pes_mat_b2_h5_cod,pes_mat_b2_h6_cod, pes_mat_b1_h1_nombre, pes_mat_b1_h2_nombre, pes_mat_b1_h3_nombre, pes_mat_b1_h4_nombre,pes_mat_b1_h5_nombre,pes_mat_b1_h6_nombre, pes_mat_b2_h1_nombre,  pes_mat_b2_h2_nombre, pes_mat_b2_h3_nombre, pes_mat_b2_h4_nombre,pes_mat_b2_h5_nombre,pes_mat_b2_h6_nombre, pes_mod_b1_h1,  pes_mod_b1_h2,  pes_mod_b1_h3,  pes_mod_b1_h4,pes_mod_b1_h5,pes_mod_b1_h6,  pes_mod_b2_h1,  pes_mod_b2_h2,  pes_mod_b2_h3, 
+                        pes_mod_b2_h4,pes_mod_b2_h5,pes_mod_b2_h6, pes_jor_b1_h1,  pes_jor_b1_h2,  pes_jor_b1_h3,  pes_jor_b1_h4,pes_jor_b1_h5,pes_jor_b1_h6,  pes_jor_b2_h1,  pes_jor_b2_h2,  pes_jor_b2_h3, 
+                        pes_jor_b2_h4,pes_jor_b2_h5, pes_jor_b2_h6, pes_mat_b1_h1_mpp, pes_mat_b1_h2_mpp, pes_mat_b1_h3_mpp, pes_mat_b1_h4_mpp,pes_mat_b1_h5_mpp, pes_mat_b1_h6_mpp, pes_mat_b2_h1_mpp,
+                     pes_mat_b2_h2_mpp,pes_mat_b2_h3_mpp,pes_mat_b2_h4_mpp,pes_mat_b2_h5_mpp,pes_mat_b2_h6_mpp, pes_estado, pes_estado_logico)
+                    values (" . $rows_pla["pla_id"] ."," . $rows["per_id"] . ", '" . $rows["uaca_id"] . "','" . $rows["maca_codigo"] . "', '" . $rows["maca_nombre"] . "','" . $student_semester . "', '" . $rows["per_cedula"] . "', '" . $rows["estudiante"] . "', '" . $asih4 . "', '" . $asih3 . "', '" . $asih2 . "', '" . $asih1 . "','" . $asih9 . "','" . $asih10 . "', '" . $asih8 . "', '" . $asih7 . "', '" . $asih6 . "', '" . $asih5 . "','" . $asih11 . "','" . $asih12 . "', '" . $noasih4 . "', '" . $noasih3 . "', '" . $noasih2 . "', '" . $noasih1 . "','" . $noasih9 . "','" . $noasih10 . "', '" . $noasih8 . "', '" . $noasih7 . "', '" . $noasih6 . "', '" . $noasih5 . "','" . $noasih11 . "','" . $noasih12 . "',". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "','" . $jornadas . "','" . $jornadas . "','" . $jornadas . "','" . $jornadas . "','" . $mpph4 . "','" . $mpph3 . "','" . $mpph2 . "','" . $mpph1 . "','" . $mpph9 . "','" . $mpph10 . "','" . $mpph8 . "','" . $mpph7 . "','" . $mpph6 . "','" . $mpph5 . "','" . $mpph11 . "','" . $mpph12 . "', '" . $estado . "', '" . $estado ."')"; 
+
+
                      $comando = $con->createCommand($sql);
                      $rows_pes = $comando->execute(); 
+
 
                     
 

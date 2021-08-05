@@ -18,12 +18,12 @@ financiero::registerTranslations();
 <?= Html::hiddenInput('txth_cemp_id', $personaData["cemp_id"], ['id' => 'txth_cemp_id']); ?>
 
 <form class="form-horizontal" enctype="multipart/form-data" id="formsolicitud">
-    <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12">
+    <!--<div class="col-md-12 col-sm-12 col-xs-12 col-lg-12">
         <h3><span id="lbl_solicitud"><?= Yii::t("solicitud_ins", "See Request") ?></span></h3>
     </div>        
     <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12">
         <h4><b><span id="lbl_Personeria"><?= Yii::t("formulario", "Attached Files") ?></span></b></h4>    
-    </div>
+    </div>-->
     <?php if ($personaData["uaca_id"] < 3) { ?>   
         <div class="col-md-6 doc_titulo cinteres">
             <div class="form-group">

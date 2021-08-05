@@ -498,7 +498,7 @@ class InscripciongradoController extends \yii\web\Controller {
             $contacto_model = PersonaContacto::findOne(['per_id' => $persona_model->per_id]); // obtiene el pcon_id con el per_id
             $arr_tipparentesco = TipoParentesco::find()->select("tpar_id AS id, tpar_nombre AS value")->where(["tpar_estado_logico" => "1", "tpar_estado" => "1"])->asArray()->all();
 
-            $ViewFormTab3 = $this->renderPartial('ViewFormTab3', [
+            $ViewFormTab4 = $this->renderPartial('ViewFormTab4', [
                 "arr_tipparentesco" => ArrayHelper::map($arr_tipparentesco, "id", "value"),
                 'persona_model' => $persona_model,
                 'contacto_model' => $contacto_model,
@@ -519,6 +519,10 @@ class InscripciongradoController extends \yii\web\Controller {
                 [
                     'label' => Academico::t('inscripciongrado', 'Info. Datos en caso de Emergencia'),
                     'content' => $ViewFormTab3,
+                ],
+                [
+                    'label' => Academico::t('inscripciongrado', 'Info. Documentación'),
+                    'content' => $ViewFormTab4,
                 ],
             ];
             return $this->render('view', ['items' => $items, 'persona_model' => $persona_model, 'contacto_model' => $contacto_model]);

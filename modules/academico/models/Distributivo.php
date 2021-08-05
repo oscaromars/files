@@ -821,7 +821,7 @@ class Distributivo extends \yii\db\ActiveRecord {
                     and diac.daca_estado = :estado
                     and asig.asi_estado_logico = :estado
                     and asig.asi_estado = :estado
-                    ORDER BY 1 asc";
+                    ORDER BY asig.asi_nombre asc";
 
         $comando = $con->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);

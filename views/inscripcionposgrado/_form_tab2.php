@@ -190,10 +190,26 @@ use yii\helpers\Url;
         </div>
     </div>
     <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">   
-        <div class="form-group">
+        <div class="form-group" id="Dividiomas">
             <label for="cmb_nivelidioma2" class="col-sm-3 control-label"><?= Yii::t("formulario", "Nivel Idioma") ?> <span class="text-danger">*</span> </label>
             <div class="col-lg-7">
                 <?= Html::dropDownList("cmb_nivelidioma2", 0, $arr_nivelidioma, ["class" => "form-control", "id" => "cmb_nivelidioma2"]) ?>
+            </div>
+        </div>
+    </div><br><br></br>
+    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+        <div style="display: none;" id="Divotroidioma">
+            <label for="txt_nombreidioma" class="col-sm-3 control-label"><?= Yii::t("formulario", "Nombre del Idioma") ?> <span class="text-danger">*</span></label>
+            <div class="col-sm-7">
+                <input type="text" maxlength="10" class="form-control PBvalidation keyupmce" id="txt_nombreidioma" data-type="alfanumerico" data-keydown="true" placeholder="<?= Yii::t("formulario", "Nombre del Idioma") ?>">
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+        <div style="display: none;" id="Divotronivelidioma">
+            <label for="cmb_nivelotroidioma" class="col-sm-3 control-label"><?= Yii::t("formulario", "Nivel Idioma") ?> <span class="text-danger">*</span> </label>
+            <div class="col-lg-7">
+                <?= Html::dropDownList("cmb_nivelotroidioma", 0, $arr_nivelidioma, ["class" => "form-control", "id" => "cmb_nivelotroidioma"]) ?>
             </div>
         </div>
     </div><br><br></br>
@@ -261,7 +277,7 @@ use yii\helpers\Url;
             <div class="form-group">
                 <label for="txt_area_docencia" class="col-sm-3 control-label keyupmce"><?= Yii::t("bienestar", "Área de Docencia") ?><span class="text-danger">*</span></label>
                 <div class="col-sm-7">
-                    <input type="text" class="form-control PBvalidation keyupmce" id="txt_area_docencia" data-type="number" data-keydown="true" placeholder="<?= Yii::t("bienestar", "Área de Docencia") ?>">
+                    <input type="text" class="form-control PBvalidation keyupmce" id="txt_area_docencia" data-type="alfanumerico" data-keydown="true" placeholder="<?= Yii::t("bienestar", "Área de Docencia") ?>">
                 </div>
             </div>
         </div>
@@ -294,7 +310,7 @@ use yii\helpers\Url;
             <div class="form-group">
                 <label for="txt_area_investigacion" class="col-sm-3 control-label keyupmce"><?= Yii::t("bienestar", "Área de Investigación") ?><span class="text-danger">*</span></label>
                 <div class="col-sm-7">
-                    <input type="text" class="form-control PBvalidation keyupmce" id="txt_area_investigacion" data-type="number" data-keydown="true" placeholder="<?= Yii::t("bienestar", "Área de Investigación") ?>">
+                    <input type="text" class="form-control PBvalidation keyupmce" id="txt_area_investigacion" data-type="alfanumerico" data-keydown="true" placeholder="<?= Yii::t("bienestar", "Área de Investigación") ?>">
                 </div>
             </div>
         </div>

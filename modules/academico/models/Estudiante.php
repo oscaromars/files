@@ -460,6 +460,7 @@ class Estudiante extends \yii\db\ActiveRecord {
     public function consultarEstudiante($arrFiltro = array(), $onlyData = false) {
         $con = \Yii::$app->db_academico;
         $con1 = \Yii::$app->db_asgard;
+        $con2 = \Yii::$app->db_captacion;
         //$status = 1;
         if (isset($arrFiltro) && count($arrFiltro) > 0) {
             if ($arrFiltro['search'] != "") {
@@ -493,7 +494,8 @@ class Estudiante extends \yii\db\ActiveRecord {
         if ($onlyData == false) {
             $estid = "
                       pers.per_id as per_id,
-                      IFNULL(estu.est_id, '') as est_id,";
+                      IFNULL(estu.est_id, '') as est_id,
+                      IFNULL(sins.rsin_id, '') as rsin_id,";
         }
         $dataCurrentPlanificacion = Planificacion::getCurrentPeriodoAcademico();
         $inlist = "";
@@ -506,9 +508,9 @@ class Estudiante extends \yii\db\ActiveRecord {
         }
         $sql = "SELECT distinct
                       $estid
-	           -- pers.per_id,
-                      concat(pers.per_pri_nombre, ' ', pers.per_pri_apellido) as nombres,
-                      pers.per_cedula as dni,
+	                  -- pers.per_id,
+                      -- concat(pers.per_pri_nombre, ' ', pers.per_pri_apellido) as nombres,
+                      ifnull(CONCAT(ifnull(pers.per_pri_nombre,' '), ' ', ifnull(pers.per_pri_apellido,' ')), '') as nombres,pers.per_cedula as dni,
                       pers.per_correo as correo,
                       IFNULL(estu.est_matricula, '') as matricula,
                       IFNULL(estu.est_categoria, '') as categoria,
@@ -516,12 +518,18 @@ class Estudiante extends \yii\db\ActiveRecord {
                       IFNULL(unid.uaca_nombre, '') as undidad,
                       IFNULL(moda.mod_nombre, '') as modalidad,
                       IFNULL(esac.eaca_nombre, '') as carrera,
+                      /*CASE sins.rsin_id
+                            WHEN '1' THEN 'Pendiente'
+                            WHEN '2' THEN 'Aprobado'
+                            WHEN '4' THEN 'No Aprobado'
+                            ELSE 'Aprobado'
+                      END as estado_solicitud,*/
                       CASE estu.est_estado
                             WHEN '0' THEN 'Inactivo'
                             WHEN '1' THEN 'Activo'
                             ELSE 'No estudiante'
                       END as estado,
-                      r.ron_id as registroOnline
+                       r.ron_id as registroOnline
                 FROM  " . $con->dbname . ".estudiante estu
                 RIGHT JOIN " . $con1->dbname . ".persona pers ON pers.per_id = estu.per_id
                 LEFT JOIN " . $con->dbname . ".estudiante_carrera_programa ecpr ON ecpr.est_id = estu.est_id
@@ -530,7 +538,10 @@ class Estudiante extends \yii\db\ActiveRecord {
                 LEFT JOIN " . $con->dbname . ".modalidad moda ON moda.mod_id = meun.mod_id
                 LEFT JOIN " . $con->dbname . ".estudio_academico esac ON esac.eaca_id = meun.eaca_id
                 LEFT JOIN " . $con->dbname . ".registro_online r ON r.per_id = pers.per_id
-                LEFT JOIN " . $con->dbname . ".planificacion_estudiante pes ON pes.pes_id = r.pes_id AND pla_id IN ($inlist)
+                -- LEFT JOIN " . $con->dbname . ".planificacion_estudiante pes ON pes.pes_id = r.pes_id AND pla_id IN ($inlist)
+                LEFT JOIN " . $con2->dbname . ".interesado inte ON inte.per_id = pers.per_id
+                LEFT JOIN " . $con2->dbname . ".solicitud_inscripcion sins on sins.int_id = inte.int_id 
+                AND (sins.eaca_id = meun.eaca_id AND sins.uaca_id = meun.uaca_id AND sins.mod_id = meun.mod_id)
                 WHERE
                 $str_search
                 pers.per_id > 1000

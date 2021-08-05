@@ -1,0 +1,147 @@
+<?php
+
+namespace app\models;
+
+use Yii;
+
+/**
+ * This is the model class for table "info_discapacidad_est".
+ *
+ * @property int $ides_id
+ * @property int $per_id
+ * @property int $tdis_id
+ * @property string $ides_porcentaje
+ * @property string $idis_estado
+ * @property string $idis_fecha_creacion
+ * @property string $idis_fecha_modificacion
+ * @property string $idis_estado_logico
+ */
+class InfoDiscapacidadEst extends \yii\db\ActiveRecord
+{
+    /**
+     * {@inheritdoc}
+     */
+    public static function tableName()
+    {
+        return 'info_discapacidad_est';
+    }
+
+    /**
+     * @return \yii\db\Connection the database connection used by this AR class.
+     */
+    public static function getDb()
+    {
+        return Yii::$app->get('db_inscripcion');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function rules()
+    {
+        return [
+            [['per_id', 'tdis_id', 'idis_estado', 'idis_estado_logico'], 'required'],
+            [['per_id', 'tdis_id'], 'integer'],
+            [['idis_fecha_creacion', 'idis_fecha_modificacion'], 'safe'],
+            [['ides_porcentaje'], 'string', 'max' => 3],
+            [['idis_estado', 'idis_estado_logico'], 'string', 'max' => 1],
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function attributeLabels()
+    {
+        return [
+            'ides_id' => 'Ides ID',
+            'per_id' => 'Per ID',
+            'tdis_id' => 'Tdis ID',
+            'ides_porcentaje' => 'Ides Porcentaje',
+            'idis_estado' => 'Idis Estado',
+            'idis_fecha_creacion' => 'Idis Fecha Creacion',
+            'idis_fecha_modificacion' => 'Idis Fecha Modificacion',
+            'idis_estado_logico' => 'Idis Estado Logico',
+        ];
+    }
+
+    /**
+     * Function consultaEstudianteinstruccion
+     * @author  Lisbeth Gonzalez <analista.desarrollo@uteg.edu.ec>
+     * @property integer $userid       
+     * @return  
+     */
+    public function consultarInfoDiscapacidadest($per_id) {
+        $con = \Yii::$app->db_inscripcion;
+        $estado = 1;
+
+        $sql = "
+                SELECT   
+                         count(*) as existe_infodiscapacidad
+                FROM " . $con->dbname . ".info_discapacidad_est 
+                WHERE per_id = :per_id AND 
+                     ides_estado = :estado AND
+                     ides_estado_logico = :estado";
+                     
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
+        //$comando->bindParam(":estado_precio", $estado_precio, \PDO::PARAM_STR);
+        $resultData = $comando->queryOne();
+        return $resultData;
+    }
+
+    public function insertarInfoDiscapacidad($per_id, $tipo_discap, $porcentaje_discap) {
+        $con = \Yii::$app->db_inscripcion;
+
+        $sql = "INSERT INTO " . $con->dbname . ".info_discapacidad_est
+            (per_id, tdis_id, ides_porcentaje, ides_estado, ides_fecha_modificacion, ides_estado_logico) VALUES
+            ($per_id, $tipo_discap, '$porcentaje_discap', 1, CURRENT_TIMESTAMP(), 1)";
+
+        
+        $command = $con->createCommand($sql);
+        $command->execute();
+        return $con->getLastInsertID($con->dbname . '.info_discapacidad_est');
+        
+    }
+
+    public function modificarInfoDiscapacidad($per_id, $tipo_discap, $porcentaje_discap) {
+        $con = \Yii::$app->db_inscripcion;
+        $ides_fecha_modificacion = date("Y-m-d H:i:s");
+        $estado='1';
+        
+        if ($trans !== null) {
+            $trans = null; // si existe la transacción entonces no se crea una
+        } else {
+            $trans = $con->beginTransaction(); // si no existe la transacción entonces se crea una
+        }
+        
+        try {
+            $comando = $con->createCommand
+                    ("UPDATE " . $con->dbname . ".info_discapacidad_est             
+                      SET 
+                        per_id =:per_id, 
+                        tdis_id =:tdis_id, 
+                        ides_porcentaje =:ides_porcentaje, 
+                        ides_fecha_modificacion =:ides_fecha_modificacion
+                      WHERE 
+                        per_id = :per_id AND
+                        ides_estado = :estado AND
+                        ides_estado_logico = :estado");
+            $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
+            $comando->bindParam(":tdis_id", $tipo_discap, \PDO::PARAM_INT);
+            $comando->bindParam(":ides_porcentaje", $porcentaje_discap, \PDO::PARAM_STR);
+            $comando->bindParam(":ides_fecha_modificacion", $ides_fecha_modificacion, \PDO::PARAM_STR);
+            $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+            $response = $comando->execute();
+            
+            if ($trans !== null)
+                $trans->commit();
+            return $response;
+        } catch (Exception $ex) {
+            if ($trans !== null)
+                $trans->rollback();
+            return FALSE;
+        }
+    }
+}

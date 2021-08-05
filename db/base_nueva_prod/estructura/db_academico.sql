@@ -2350,3 +2350,60 @@ create table if not exists `horarios_semestre_detalle` (
     foreign key (hose_id) references `horarios_semestre`(hose_id)
 );
 
+create table if not exists `paralelos_alumno` (
+  `paal_id` bigint(20) not null auto_increment primary key,
+  `hosd_id` bigint(20) not null,
+  -- `mpp_id` bigint(20) not null,  -- getout
+  `paal_cantidad` bigint(20) not null,
+  `paal_usuario_ingreso` bigint(20) not null,
+  `paal_usuario_modifica` bigint(20)  null,  
+  `paal_estado` varchar(1) not null,
+  `paal_fecha_creacion` timestamp not null default current_timestamp,
+  `paal_fecha_modificacion` timestamp null default null,
+  `paal_estado_logico` varchar(1) not null,
+    foreign key (hosd_id) references `horarios_semestre_detalle`(hosd_id)
+);
+
+-- MODIFICACIONES PARA GENERACION PARALELO
+
+ALTER TABLE db_academico.planificacion_estudiante ADD 
+pes_mat_b1_h1_mpp BIGINT(20) NULL DEFAULT NULL AFTER pes_mat_b1_h1_cod;
+
+ALTER TABLE db_academico.planificacion_estudiante ADD 
+pes_mat_b1_h2_mpp BIGINT(20) NULL DEFAULT NULL AFTER pes_mat_b1_h2_cod;
+
+ALTER TABLE db_academico.planificacion_estudiante ADD 
+pes_mat_b1_h3_mpp BIGINT(20) NULL DEFAULT NULL AFTER pes_mat_b1_h3_cod;
+
+ALTER TABLE db_academico.planificacion_estudiante ADD 
+pes_mat_b1_h4_mpp BIGINT(20) NULL DEFAULT NULL AFTER pes_mat_b1_h4_cod;
+
+ALTER TABLE db_academico.planificacion_estudiante ADD 
+pes_mat_b1_h5_mpp BIGINT(20) NULL DEFAULT NULL AFTER pes_mat_b1_h5_cod;
+
+ALTER TABLE db_academico.planificacion_estudiante ADD 
+pes_mat_b1_h6_mpp BIGINT(20) NULL DEFAULT NULL AFTER pes_mat_b1_h6_cod;
+
+ALTER TABLE db_academico.planificacion_estudiante ADD 
+pes_mat_b2_h1_mpp BIGINT(20) NULL DEFAULT NULL AFTER pes_mat_b2_h1_cod;
+
+ALTER TABLE db_academico.planificacion_estudiante ADD 
+pes_mat_b2_h2_mpp BIGINT(20) NULL DEFAULT NULL AFTER pes_mat_b2_h2_cod;
+
+ALTER TABLE db_academico.planificacion_estudiante ADD 
+pes_mat_b2_h3_mpp BIGINT(20) NULL DEFAULT NULL AFTER pes_mat_b2_h3_cod;
+
+ALTER TABLE db_academico.planificacion_estudiante ADD 
+pes_mat_b2_h4_mpp BIGINT(20) NULL DEFAULT NULL AFTER pes_mat_b2_h4_cod;
+
+ALTER TABLE db_academico.planificacion_estudiante ADD 
+pes_mat_b2_h5_mpp BIGINT(20) NULL DEFAULT NULL AFTER pes_mat_b2_h5_cod;
+
+ALTER TABLE db_academico.planificacion_estudiante ADD 
+pes_mat_b2_h6_mpp BIGINT(20) NULL DEFAULT NULL AFTER pes_mat_b2_h6_cod;
+
+ALTER TABLE db_academico.materia_paralelo_periodo ADD 
+daho_id BIGINT(20) NULL DEFAULT NULL AFTER paca_id;
+
+ALTER TABLE db_academico.planificacion_estudiante ADD 
+pes_semestre BIGINT(20) NULL DEFAULT NULL AFTER pes_carrera;

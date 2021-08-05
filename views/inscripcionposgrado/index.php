@@ -75,23 +75,6 @@ $_SESSION['persona_ingresa'] = base64_decode($_GET['ids']);
                         'tipparent_dis' => $arr_tipparent_dis,
                         'tipparent_enf' => $arr_tipparent_enf,
                         
-
-
-                        /*'paises_dom' => $arr_pais_dom,
-                        'provincias_dom' => $arr_prov_nac,
-                        'cantones_dom' => $arr_ciu_nac,
-                        'pai_id_domicilio' => $respPerinteresado['pai_id_domicilio'],
-                        'pro_id_domicilio' => $respPerinteresado['pro_id_domicilio'],
-                        'can_id_domicilio' => $respPerinteresado['can_id_domicilio'],
-                        'per_domicilio_telefono' => $respPerinteresado['per_domicilio_telefono'],
-                        'sector' => $respPerinteresado['sector'],
-                        'per_domicilio_cpri' => $respPerinteresado['per_domicilio_cpri'],
-                        'secundaria' => $respPerinteresado['secundaria'],
-                        'per_domicilio_num' => $respPerinteresado['per_domicilio_num'],
-                        'per_domicilio_ref' => $respPerinteresado['per_domicilio_ref'],
-                        'area_dom' => $area_dom['name'],
-                        'paises_nac' => $arr_pais_nac,
-                        'pai_id_nacimiento' => $respPerinteresado['pai_id_nacimiento'],*/
                     ]);
                     ?>                  
                 </form>

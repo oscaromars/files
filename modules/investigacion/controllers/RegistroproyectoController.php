@@ -15,6 +15,9 @@ use app\models\Rol;
 use app\models\GrupRol;
 use app\models\ExportFile;
 use app\models\Canton;
+use app\modules\investigacion\models\LineaInvestigacion;
+use app\modules\investigacion\models\Macroproyecto;
+use app\modules\investigacion\models\Proyectos;
 use app\modules\investigacion\models\RegistroProyecto;
 use app\modules\investigacion\models\RegsitroIntegrante;
 use app\modules\investigacion\models\RegistroPlanificacion;
@@ -27,6 +30,7 @@ use yii\data\ArrayDataProvider;
 use app\models\Utilities;
 use app\modules\academico\models\NivelInstruccion;
 use yii\base\Exception;
+use yii\helpers\Url;
 use app\modules\investigacion\Module as investigacion;
 
 investigacion::registerTranslations();
@@ -494,73 +498,83 @@ class RegistroproyectoController extends \app\components\CController {
 
         $_SESSION['JSLANG']['Must be Fill all information in fields with label *.'] = investigacion::t("registroproyecto", "Must be Fill all information in fields with label *.");
 
-        $arr_pais = Pais::findAll(["pai_estado" => 1, "pai_estado_logico" => 1]);
-        list($firstpais) = $arr_pais;
-
-        $arr_pro = Provincia::find()
-                        ->select(["pro_id", "pro_nombre"])
-                        ->andWhere(["pro_estado" => 1, "pro_estado_logico" => 1,
-                            "pai_id" => $firstpais->pai_id])->asArray()->all();
-
+        // invocacion de data por Ajax
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
-            if (isset($data["pai_id"])) {
-                $model = new Provincia();
-                $arr_pro = $model->provinciabyPais($data["pai_id"]);
 
-                list($firstpro) = $arr_pro;
 
-                $arr_can = Canton::find()
-                                ->select(["can_id as id", "can_nombre as name"])
-                                ->andWhere(["can_estado" => 1, "can_estado_logico" => 1,
-                                    "pro_id" => $firstpro['id']])->asArray()->all();
-
-                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', ['arr_pro' => $arr_pro, 'arr_can' => $arr_can]);
-            } else if (isset($data["pro_id"])) {
-                $arr_can = Canton::find()
-                                ->select(["can_id as id", "can_nombre as name"])
-                                ->andWhere(["can_estado" => 1, "can_estado_logico" => 1,
-                                    "pro_id" => $data["pro_id"]])->asArray()->all();
-
-                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $arr_can);
+            $per_id = Yii::$app->session->get("PB_perid");
+            if ($per_id > 1000) {
+                $per_id = base64_decode(Yii::$app->request->get('per_id', 0));
+                if($per_id == 0){
+                    return $this->render('index-out', [
+                        "message" => investigacion::t("lineainvestigacion", "Access denied"),
+                    ]);
+                }
             }
 
-            if ($data["upload_file"]) {
-                if (empty($_FILES)) {
-                    return json_encode(['error' => Yii::t("notificaciones", "Error to process File. Try again.")]);
+            try {
+                \app\models\Utilities::putMessageLogFile('per_id..: '. $per_id);
+                $proy_id = $data['proy_id'];
+                \app\models\Utilities::putMessageLogFile('proy_id..: '. $proy_id);  
+                $linv_id = $data['linv_id'];
+                \app\models\Utilities::putMessageLogFile('linv_id..: '. $linv_id);  
+                $mpro_id = $data['linv_id'];
+                \app\models\Utilities::putMessageLogFile('mpro_id..: '. $mpro_id);
+                $rpro_titulo  = $data['rpro_titulo'];
+                \app\models\Utilities::putMessageLogFile('titulo.: '. $rpro_titulo);
+                $rpro_resumen = $data['rpro_resumen'];
+                \app\models\Utilities::putMessageLogFile('resumen..: '. $rpro_resumen);
+                
+
+                // Insert registro de proyecto.
+                $model_regpro = new RegistroProyecto();
+                $inserta_regbsc = $model_regpro->insertarregistrobas(
+                    $per_id,
+                    $proy_id,
+                    $linv_id,
+                    $mpro_id,
+                    strval($rpro_titulo), 
+                    strval($rpro_resumen)
+                );
+
+                if(!$inserta_regbsc){
+                    throw new Exception('Error al Registrar la línea de investigación');
                 }
-                //Recibe Parámetros
-
-                $files = $_FILES[key($_FILES)];
-                $arrIm = explode(".", basename($files['name']));
-                $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-
-                if (($typeFile == 'jpg') or ( $typeFile == 'jpeg') or ( $typeFile == 'png')) {
-                    $dirFileEnd = Yii::$app->params["documentFolder"] . "expediente/" . $data["name_file"] . "." . $typeFile;
-                    $status = Utilities::moveUploadFile($files['tmp_name'], $dirFileEnd);
-                    //\app\models\Utilities::putMessageLogFile('pedro: ' .$typeFile);
-
-                    $this->renderPartial('NewFormTab1', [
-                        "typeFile" => $typeFile,
-                    ]);
-                    if ($status) {
-                        return true;
-                    } else {
-                        return json_encode(['error' => Yii::t("notificaciones", "Error to process File " . basename($files['name']) . ". Try again.")]);
-                    }
-                } else {
-                    return json_encode(['error' => Yii::t("notificaciones", "Error to process File " . basename($files['name']) . ". Try again.")]);
-                }
+                $message = array(
+                    "wtmessage" => Yii::t('notificaciones', 'Your information was successfully saved.'),
+                    "title" => Yii::t('jslang', 'Success'),
+                );
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+            } catch (Exception $ex) {
+                $message = array(
+                    'wtmessage' => Yii::t('notificaciones', 'Your information has not been saved. Please try again.'),
+                    'title' => Yii::t('jslang', 'Error'),
+                );
+                return Utilities::ajaxResponse('NOOK', 'alert', Yii::t('jslang', 'Error'), 'true', $message);
             }
         }
 
-        list($firstpro) = $arr_pro;
-
-        $dedicacionDocente = new \app\modules\academico\models\DedicacionDocente();
-        $model_dedicacion = $dedicacionDocente->getDedicacionDocente();
-        $NewFormTab1 = $this->renderPartial('NewFormTab1', ['model_dedicacion' => ArrayHelper::map(array_merge([["Id" => "0", "name" => Yii::t("formulario", "Select")]], $model_dedicacion), "Id", "name"),
+        // llamado de objeto
+        $model_regpro = new RegistroProyecto();
+        $model_linv   = new LineaInvestigacion();
+        $model_mpro   = new Macroproyecto();
+        $model_proy   = new Proyectos();
+        // llamado de funciones
+        $arr_linv = LineaInvestigacion::findAll(['linv_estado' => 1, 'linv_estado_logico' => 1]);
+        $arr_mpro = Macroproyecto::findAll(['linv_id'=>$arr_linv,'mpro_estado' => 1, 'mpro_estado_logico' => 1]);
+        $arr_proy = Proyectos::findAll(['proy_estado' => 1, 'proy_estado_logico' => 1]);
+        $model_dp = $model_regpro->consultaDataDirectoProy($per_id);
+        $model_di = $model_regpro->consultaDataDirectoInv();
+        
+        $NewFormTab1 = $this->renderPartial('NewFormTab1', [
+            'model_dp' =>$model_dp,
+            'model_di' =>$model_di,
+            'arr_linv' => ArrayHelper::map(array_merge([["linv_id" => "0", "linv_nombre_investigacion" => Yii::t("formulario", "Select")]], $arr_linv), "linv_id", "linv_nombre_investigacion"),
+            'arr_mpro' => ArrayHelper::map(array_merge([["mpro_id" => "0", "mpro_descripcion" => Yii::t("formulario", "Select")]], $arr_mpro), "mpro_id", "mpro_descripcion"),
+            'arr_proy' => ArrayHelper::map(array_merge([["proy_id" => "0", "proy_nombre" => Yii::t("formulario", "Select")]], $arr_proy), "proy_id", "proy_nombre"),
         ]);
-        $arr_can = Canton::find()
+        /*$arr_can = Canton::find()
                         ->select(["can_id", "can_nombre"])
                         ->andWhere(["can_estado" => 1, "can_estado_logico" => 1,
                             "pro_id" => $firstpro['pro_id']])->asArray()->all();
@@ -571,20 +585,24 @@ class RegistroproyectoController extends \app\components\CController {
             'arr_can' => (empty(ArrayHelper::map($arr_can, "can_id", "can_nombre"))) ? array(Yii::t("canton", "-- Select Canton --")) : (ArrayHelper::map($arr_can, "can_id", "can_nombre")),
         ]);
 
-        $arr_inst_level = NivelInstruccion::findAll(["nins_estado" => 1, "nins_estado_logico" => 1]);
+        */
+        $arr_tipins = TipoInstitucion::findAll(["tins_estado" => 1, "tins_estado_logico" => 1]);
 
         $NewFormTab4 = $this->renderPartial('NewFormTab4', [
-            'model' => new ArrayDataProvider(array()),
-            'arr_inst_level' => (empty(ArrayHelper::map($arr_inst_level, "nins_id", "nins_nombre"))) ? array(Academico::t("profesor", "-- Select Instruction Level --")) : (ArrayHelper::map($arr_inst_level, "nins_id", "nins_nombre")),
+            /*'model' => new ArrayDataProvider(array()),
+            'arr_linv' => ArrayHelper::map(array_merge([["linv_id" => "0", "linv_nombre_investigacion" => Yii::t("formulario", "Select")]], $arr_linv), "linv_id", "linv_nombre_investigacion"),*/
+            'model_dp' =>$model_dp,
+            'model_di' =>$model_di,
+            'arr_tipins' => ArrayHelper::map(array_merge([["tins_id" => "0", "tins_nombre" => Yii::t("formulario", "Select")]], $arr_tipins), "tins_id", "tins_nombre"),
         ]);
 
-        $proExpDoc = new ProfesorExpDoc();
-        $arr_profExDoc = $proExpDoc->getInstituciones();
+        $today          = date("Y-m-d H:i:s");
         $NewFormTab5 = $this->renderPartial('NewFormTab5', [
-            'model' => new ArrayDataProvider(array()),
-            'arr_inst' => (empty(ArrayHelper::map($arr_profExDoc, "id", "nombre"))) ? array(Academico::t("profesor", "-- Select Instruction Level --")) : (ArrayHelper::map($arr_profExDoc, "id", "nombre")),
+            'model_dp' =>$model_dp,
+            'model_di' =>$model_di,
+            'today' =>$today,
         ]);
-        $NewFormTab6 = $this->renderPartial('NewFormTab6', [
+        /*$NewFormTab6 = $this->renderPartial('NewFormTab6', [
             'model' => new ArrayDataProvider(array()),
         ]);
         $proIdiomas = new ProfesorIdiomas();
@@ -629,26 +647,36 @@ class RegistroproyectoController extends \app\components\CController {
 
         $NewFormTab14 = $this->renderPartial('NewFormTab14', [
             'model' => new ArrayDataProvider(array()),
-        ]);
+
+        ]);*/
 
         $items = [
             [
-                'label' => Academico::t('profesor', 'Basic Info.'),
+                'label' =>  investigacion::t('registroproyecto', '<img class="" src="/asgard/img/users/n1.png" alt="User Image"> Registro Formulario de Proyecto'),
                 'content' => $NewFormTab1,
-                'active' => true
+                'active' => true,
+                /*'options' => ['id' => 'registroproy'],
+                'linkOptions'=>['data-url'=>Url::to(['/asgard/site/asgard/investigacion/registroproyecto/new#registroproy'])],*/
+                
             ],
-            [
+            /*[
                 'label' => Academico::t('profesor', 'Address Info.'),
                 'content' => $NewFormTab2,
             ],
-            [
-                'label' => Academico::t('profesor', 'Instruction Level'),
+            */[
+                'label' => investigacion::t('registroproyecto', '<img class="" src="/asgard/img/users/n2.png" alt="User Image"> Registro de Integrantes'),
                 'content' => $NewFormTab4,
+                /*'options' => ['id' => 'registroint'],
+                'linkOptions'=>['data-url'=>Url::to(['/asgard/site/asgard/investigacion/registroproyecto/new#registroint'])],*/
+                
             ],
             [
-                'label' => Academico::t('profesor', 'Teaching Experience'),
+                'label' => investigacion::t('registroproyecto', ' <img class="" src="/asgard/img/users/n3.png" alt="User Image"> Registro Planificacion del Proyecto'),
                 'content' => $NewFormTab5,
-            ],
+                /*'options' => ['id' => 'registropla'],
+                'linkOptions'=>['data-url'=>Url::to(['/asgard/site/asgard/investigacion/registroproyecto/new#registropla'])],*/
+                
+            ],/*
             [
                 'label' => Academico::t('profesor', 'Professional Expirence'),
                 'content' => $NewFormTab6,
@@ -684,7 +712,8 @@ class RegistroproyectoController extends \app\components\CController {
             [
                 'label' => Academico::t('profesor', 'References'),
                 'content' => $NewFormTab14,
-            ],
+
+            ],*/
         ];
 
         return $this->render('new', ['items' => $items]);

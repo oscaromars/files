@@ -12,6 +12,26 @@ $(document).ready(function() {
             //  setComboData(response.message,"cmb_canton");
         }, true);
     });
+    $('input[type="checkbox"]').on('change', function() {
+       $(this).siblings('input[type="checkbox"]').prop('checked', false);
+       element  = document.getElementById("content");
+       element1 = document.getElementById("content1");
+       element2 = document.getElementById("content2");
+       element3 = document.getElementById("content3");
+       check2 = document.getElementById("chk_institucion2");
+       if (check2.checked) {
+            element.style.display  = 'block';
+            element1.style.display = 'block';
+            element2.style.display = 'block';
+            element3.style.display = 'block';
+        }
+        else {
+            element.style.display  = 'none';
+            element1.style.display = 'none';
+            element2.style.display = 'none';
+            element3.style.display = 'none';
+        }
+    });
 
     $("#cmb_provincia").change(function() {
         var link = $('#txth_base').val() + "/academico/profesor/new";
@@ -70,6 +90,29 @@ $(document).ready(function() {
     });
 
 });
+
+
+function registerForm(){
+    var arrParams = new Object();
+    var link = $('#txth_base').val() + "/investigacion/registroproyecto/new";
+    // variables 
+
+    arrParams.proy_id = $('#cmb_tipoproy option:selected').val();
+    arrParams.linv_id = $('#cmb_linea option:selected').val();
+    arrParams.mpro_id = $('#cmb_mpro option:selected').val();
+    arrParams.rpro_titulo = $('#txt_titulo').val();
+    arrParams.rpro_resumen = $('#txt_resumen').val();
+
+    requestHttpAjax(link, arrParams, function(response) {
+        showAlert(response.status, response.label, response.message);
+        setTimeout(function() {
+            location.reload();
+            //parent.window.location.href = $('#txth_base').val() + "/academico/matriculacion/index";
+        }, 2000);
+
+    }, true);
+}
+
 
 function searchModules(idbox, idgrid) {
     var arrParams = new Object();

@@ -133,7 +133,7 @@ class CursoEducativaDistributivo extends \yii\db\ActiveRecord
                     ua.uaca_nombre AS UnidadAcademica,
                     m.mod_nombre AS Modalidad,
                     ifnull(CONCAT(blq.baca_anio,' (',blq.baca_nombre,'-',sem.saca_nombre,')'),blq.baca_anio) AS Periodo,
-                    a.asi_nombre AS Asignatura,
+                    ifnull(CONCAT(a.asi_nombre,' - P',mpp.mpp_num_paralelo ), '') AS Asignatura,
                     CASE
                         WHEN dh.daho_jornada = 1 THEN '(M) Matutino'
                         WHEN dh.daho_jornada = 2 THEN '(N) Nocturno'
@@ -148,6 +148,7 @@ class CursoEducativaDistributivo extends \yii\db\ActiveRecord
                     INNER JOIN " . $con_academico->dbname . ".modalidad AS m ON da.mod_id = m.mod_id
                     INNER JOIN " . $con_academico->dbname . ".unidad_academica AS ua ON da.uaca_id = ua.uaca_id
                     INNER JOIN " . $con_academico->dbname . ".asignatura AS a ON da.asi_id = a.asi_id
+                    left JOIN " . $con_academico->dbname . ".materia_paralelo_periodo AS mpp ON mpp.mpp_id = da.mpp_id 
                     INNER JOIN " . $con_academico->dbname . ".periodo_academico AS pa ON da.paca_id = pa.paca_id
                     INNER JOIN " . $con_db->dbname . ".persona AS pe ON p.per_id = pe.per_id
                     LEFT JOIN " . $con_academico->dbname . ".semestre_academico sem  ON sem.saca_id = pa.saca_id 

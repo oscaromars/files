@@ -165,4 +165,48 @@ class Macroproyecto extends \yii\db\ActiveRecord
             return FALSE;
         }
     } 
+    public function updateNombreMacroproyecto($id, $nombre_investigacion) {
+        $con = \Yii::$app->db_investigacion;
+        $fecha = date(Yii::$app->params["dateTimeByDefault"]);
+        $estado = 1;
+        $trans = $con->getTransaction(); // se obtiene la transacción actual
+        if ($trans !== null) {
+            $trans = null; // si existe la transacción entonces no se crea una
+        } else {
+            $trans = $con->beginTransaction(); // si no existe la transacción entonces se crea una
+        }
+
+        try {
+            \app\models\Utilities::putMessageLogFile('entro sdesdf...: ');
+            $sql = "UPDATE " . $con->dbname . ".macroproyecto 
+                SET mpro_descripcion = :nombre_investigacion,
+                mpro_fecha_modificacion=:fecha
+                WHERE mpro_id = :id
+                AND mpro_estado = :estado
+                AND mpro_estado_logico = :estado";
+              
+              
+            // Hacer al query un comando
+            $comando = $con->createCommand($sql);            
+            if (isset($id)) {
+                $comando->bindParam(':id', $id, \PDO::PARAM_INT);
+            }
+            if (isset($nombre_investigacion)) {
+                $comando->bindParam(':nombre_investigacion', $nombre_investigacion, \PDO::PARAM_INT);
+            }
+            if (!empty((isset($fecha)))) {
+                $comando->bindParam(':fecha', $fecha, \PDO::PARAM_STR);
+            }
+            $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+            
+            $result = $comando->execute();
+            if ($trans !== null)
+                $trans->commit();
+            return TRUE;
+        } catch (Exception $ex) {
+            if ($trans !== null)
+                $trans->rollback();
+            return FALSE;
+        }
+    }  
 }

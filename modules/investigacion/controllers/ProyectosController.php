@@ -164,8 +164,8 @@ class ProyectosController extends \app\components\CController
             try {
                 $id = $data['id'];
                 $nombre_investigacion = $data['nombre_investigacion'];
-                $modellinv = new LineaInvestigacion();
-                $model = $modellinv->updateNombreLineaInv($id,$nombre_investigacion);
+                $modelproy = new Proyectos();
+                $model = $modelproy->updateNombreProy($id,$nombre_investigacion);
                 $message = array(
                     'wtmessage' => Yii::t('notificaciones', 'Your information was successfully saved.'),
                     'title' => Yii::t('jslang', 'Success'),

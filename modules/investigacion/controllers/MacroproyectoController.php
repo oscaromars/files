@@ -191,8 +191,8 @@ class MacroproyectoController extends \app\components\CController
             try {
                 $id = $data['id'];
                 $nombre_investigacion = $data['nombre_investigacion'];
-                $modellinv = new LineaInvestigacion();
-                $model = $modellinv->updateNombreLineaInv($id,$nombre_investigacion);
+                $modelpro = new Macroproyecto();
+                $model = $modelpro->updateNombreMacroproyecto($id,$nombre_investigacion);
                 $message = array(
                     'wtmessage' => Yii::t('notificaciones', 'Your information was successfully saved.'),
                     'title' => Yii::t('jslang', 'Success'),

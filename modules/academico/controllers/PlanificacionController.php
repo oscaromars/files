@@ -64,7 +64,7 @@ class PlanificacionController extends \app\components\CController {
         ];
     }
 
-     public function actionIndex() {
+        public function actionIndex() {
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->get();
             $pla_periodo_academico = $data['pla_periodo_academico'];
@@ -122,7 +122,7 @@ class PlanificacionController extends \app\components\CController {
         //}
     }
 
-   public function actionGenerator($periodo,$modalidad) {
+    public function actionGenerator($periodo,$modalidad) {
     
      
     
@@ -182,7 +182,7 @@ DATEDIFF(NOW(),a.per_fecha_creacion) <=90))
                 ";
 
                  $sql = "
-                 select e.est_id, e.per_id, e.est_matricula, e.est_fecha_creacion, e.est_categoria, meu.uaca_id, meu.mod_id, meu.eaca_id, DATEDIFF(NOW(),e.est_fecha_creacion) as olderi, -- 
+                 select distinct e.est_id, e.per_id, e.est_matricula, e.est_fecha_creacion, e.est_categoria, meu.uaca_id, meu.mod_id, meu.eaca_id, DATEDIFF(NOW(),e.est_fecha_creacion) as olderi, -- 
 u.uaca_id, u.uaca_nombre, ea.teac_id, ea.eaca_nombre, ea.eaca_codigo,
 per.per_cedula,  mumo.maca_id , maca.maca_codigo, maca.maca_nombre,
 concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_apellido, ' ', ifnull(per.per_seg_apellido,'')) estudiante
@@ -194,7 +194,18 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
    inner join db_academico.unidad_academica u on u.uaca_id = meu.uaca_id
    inner join db_academico.estudio_academico ea on ea.eaca_id = meu.eaca_id 
    inner join db_asgard.persona per on per.per_id = e.per_id
-    where          
+   inner join db_academico.malla_academico_estudiante malle on per.per_id = malle.per_id
+     where malle.maca_id = maca.maca_id  
+    AND  e.est_estado = 1 AND e.est_estado_logico = 1
+    AND  c.ecpr_estado = 1 AND c.ecpr_estado_logico = 1
+    AND  meu.meun_estado = 1 AND meu.meun_estado_logico = 1
+    AND  mumo.mumo_estado = 1 AND mumo.mumo_estado_logico = 1
+    AND  maca.maca_estado = 1 AND maca.maca_estado_logico = 1
+    AND  u.uaca_estado = 1 AND u.uaca_estado_logico = 1
+    AND  ea.eaca_estado = 1 AND ea.eaca_estado_logico = 1
+    AND  per.per_estado = 1 AND per.per_estado_logico = 1
+    AND  malle.maes_estado = 1 AND malle.maes_estado_logico = 1
+     AND
 (e.per_id in (select b.per_id from db_academico.planificacion_estudiante b where
 b.pla_id= ( select max(dap.pla_id) from db_academico.planificacion dap 
  where meu.mod_id = dap.mod_id ))) or (e.per_id in (
@@ -244,27 +255,43 @@ $centralprocess = $malla->consultarAsignaturas($resultData[$i],$periodo,$saca_no
 
       public function actionDescargarples()  {    
       
-        ini_set('memory_limit', '256M');
+        ini_set('memory_limit', '512M');
         $content_type = Utilities::mimeContentType('xls');
         $nombarch = 'Report-' . date('YmdHis') . '.xls';
         header("Content-Type: $content_type");
         header('Content-Disposition: attachment;filename=' . $nombarch);
         header('Cache-Control: max-age=0');
-        $colPosition = array('B','C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K','L','M','N',);
+    $colPosition = array('B','C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','AA','AB','AC','AD');
         $arrHeader = array(
              Yii::t('formulario', 'DNI 1'),
             Yii::t('formulario', 'Student'),
             Yii::t('crm', 'Carrera'),
              Yii::t('crm', 'Semestre'),
              Yii::t('formulario', 'Period'),
-            Yii::t('formulario', 'Asignatura B1 H1'),
-            Yii::t('formulario', 'Asignatura B1 H2'),
-            Yii::t('formulario', 'Asignatura B1 H3'),
-            Yii::t('formulario', 'Asignatura B1 H4'),
-            Yii::t('formulario', 'Asignatura B2 H1'),
-            Yii::t('formulario', 'Asignatura B2 H2'),
-            Yii::t('formulario', 'Asignatura B2 H3'),
-            Yii::t('formulario', 'Asignatura B2 H4'),
+            Yii::t('formulario', 'B1 Asignatura 1'),
+            Yii::t('formulario', 'Horario Paralelo 1'),
+            Yii::t('formulario', 'B1 Asignatura 2'),
+            Yii::t('formulario', 'Horario Paralelo 2'),
+            Yii::t('formulario', 'B1 Asignatura 3'),
+            Yii::t('formulario', 'Horario Paralelo 3'),
+            Yii::t('formulario', 'B1 Asignatura 4'),
+            Yii::t('formulario', 'Horario Paralelo 4'),
+            Yii::t('formulario', 'B1 Asignatura 5'),
+            Yii::t('formulario', 'Horario Paralelo 5'),
+            Yii::t('formulario', 'B1 Asignatura 6'),
+            Yii::t('formulario', 'Horario Paralelo 6'),
+            Yii::t('formulario', 'B2 Asignatura 1'),
+            Yii::t('formulario', 'Horario Paralelo 1'),
+            Yii::t('formulario', 'B2 Asignatura 2'),
+            Yii::t('formulario', 'Horario Paralelo 2'),
+            Yii::t('formulario', 'B2 Asignatura 3'),
+            Yii::t('formulario', 'Horario Paralelo 3'),
+            Yii::t('formulario', 'B2 Asignatura 4'),
+            Yii::t('formulario', 'Horario Paralelo 4'),
+            Yii::t('formulario', 'B2 Asignatura 5'),
+            Yii::t('formulario', 'Horario Paralelo 5'),
+            Yii::t('formulario', 'B2 Asignatura 6'),
+            Yii::t('formulario', 'Horario Paralelo 6'),
         );
         $mod_periodo = new PlanificacionEstudiante();
         $data = Yii::$app->request->get();
@@ -288,7 +315,6 @@ $centralprocess = $malla->consultarAsignaturas($resultData[$i],$periodo,$saca_no
          
         
     }
-
 
     public function actionUpload() {
         $usu_id = Yii::$app->session->get('PB_iduser');

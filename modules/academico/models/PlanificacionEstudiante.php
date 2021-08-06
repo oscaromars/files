@@ -2100,16 +2100,92 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
                     pers.per_cedula,
                     plae.pes_nombres,
                     plae.pes_carrera,
-                    plae.pes_semestre,
+                    CONCAT(plae.pes_semestre,'°Semestre') as semestre,
                     plan.pla_periodo_academico,
                     plae.pes_mat_b1_h1_nombre,
+                    (SELECT daho.daho_descripcion
+                    FROM db_academico.distributivo_academico_horario as daho
+INNER JOIN db_academico.materia_paralelo_periodo as mpp on mpp.daho_id = daho.daho_id
+INNER JOIN db_academico.planificacion_estudiante as pes on mpp.mpp_id = pes.pes_mat_b1_h1_mpp
+WHERE mpp.daho_id > 0  AND pes.per_id = plae.per_id
+AND pes.pla_id = :pla_id ) as daho1,
                     plae.pes_mat_b1_h2_nombre,
+                    (SELECT daho.daho_descripcion
+FROM db_academico.distributivo_academico_horario as daho
+INNER JOIN db_academico.materia_paralelo_periodo as mpp on mpp.daho_id = daho.daho_id
+INNER JOIN db_academico.planificacion_estudiante as pes on mpp.mpp_id = pes.pes_mat_b1_h2_mpp
+WHERE mpp.daho_id > 0  AND pes.per_id = plae.per_id
+AND pes.pla_id = :pla_id ) as daho2,
                     plae.pes_mat_b1_h3_nombre,
+                     (SELECT daho.daho_descripcion
+FROM db_academico.distributivo_academico_horario as daho
+INNER JOIN db_academico.materia_paralelo_periodo as mpp on mpp.daho_id = daho.daho_id
+INNER JOIN db_academico.planificacion_estudiante as pes on mpp.mpp_id = pes.pes_mat_b1_h3_mpp
+WHERE mpp.daho_id > 0  AND pes.per_id = plae.per_id
+AND pes.pla_id = :pla_id ) as daho3,
                     plae.pes_mat_b1_h4_nombre,
+                    (SELECT daho.daho_descripcion
+FROM db_academico.distributivo_academico_horario as daho
+INNER JOIN db_academico.materia_paralelo_periodo as mpp on mpp.daho_id = daho.daho_id
+INNER JOIN db_academico.planificacion_estudiante as pes on mpp.mpp_id = pes.pes_mat_b1_h4_mpp
+WHERE mpp.daho_id > 0  AND pes.per_id = plae.per_id
+AND pes.pla_id = :pla_id ) as daho4,
+                    plae.pes_mat_b1_h5_nombre,
+                    (SELECT daho.daho_descripcion
+FROM db_academico.distributivo_academico_horario as daho
+INNER JOIN db_academico.materia_paralelo_periodo as mpp on mpp.daho_id = daho.daho_id
+INNER JOIN db_academico.planificacion_estudiante as pes on mpp.mpp_id = pes.pes_mat_b1_h5_mpp
+WHERE mpp.daho_id > 0  AND pes.per_id = plae.per_id
+AND pes.pla_id = :pla_id ) as daho5,
+                    plae.pes_mat_b1_h6_nombre,
+                     (SELECT daho.daho_descripcion
+FROM db_academico.distributivo_academico_horario as daho
+INNER JOIN db_academico.materia_paralelo_periodo as mpp on mpp.daho_id = daho.daho_id
+INNER JOIN db_academico.planificacion_estudiante as pes on mpp.mpp_id = pes.pes_mat_b1_h6_mpp
+WHERE mpp.daho_id > 0  AND pes.per_id = plae.per_id
+AND pes.pla_id = :pla_id ) as daho6,
                     plae.pes_mat_b2_h1_nombre,
+                    (SELECT daho.daho_descripcion
+FROM db_academico.distributivo_academico_horario as daho
+INNER JOIN db_academico.materia_paralelo_periodo as mpp on mpp.daho_id = daho.daho_id
+INNER JOIN db_academico.planificacion_estudiante as pes on mpp.mpp_id = pes.pes_mat_b2_h1_mpp
+WHERE mpp.daho_id > 0  AND pes.per_id = plae.per_id
+AND pes.pla_id = :pla_id ) as daho7,
                     plae.pes_mat_b2_h2_nombre,
+                     (SELECT daho.daho_descripcion
+FROM db_academico.distributivo_academico_horario as daho
+INNER JOIN db_academico.materia_paralelo_periodo as mpp on mpp.daho_id = daho.daho_id
+INNER JOIN db_academico.planificacion_estudiante as pes on mpp.mpp_id = pes.pes_mat_b2_h2_mpp
+WHERE mpp.daho_id > 0  AND pes.per_id = plae.per_id
+AND pes.pla_id = :pla_id ) as daho8,
                     plae.pes_mat_b2_h3_nombre,
-                    plae.pes_mat_b2_h4_nombre                    
+                     (SELECT daho.daho_descripcion
+FROM db_academico.distributivo_academico_horario as daho
+INNER JOIN db_academico.materia_paralelo_periodo as mpp on mpp.daho_id = daho.daho_id
+INNER JOIN db_academico.planificacion_estudiante as pes on mpp.mpp_id = pes.pes_mat_b2_h3_mpp
+WHERE mpp.daho_id > 0  AND pes.per_id = plae.per_id
+AND pes.pla_id = :pla_id ) as daho9,
+                    plae.pes_mat_b2_h4_nombre,
+                     (SELECT daho.daho_descripcion
+FROM db_academico.distributivo_academico_horario as daho
+INNER JOIN db_academico.materia_paralelo_periodo as mpp on mpp.daho_id = daho.daho_id
+INNER JOIN db_academico.planificacion_estudiante as pes on mpp.mpp_id = pes.pes_mat_b2_h4_mpp
+WHERE mpp.daho_id > 0  AND pes.per_id = plae.per_id
+AND pes.pla_id = :pla_id ) as daho10,
+                    plae.pes_mat_b2_h5_nombre,
+                     (SELECT daho.daho_descripcion
+FROM db_academico.distributivo_academico_horario as daho
+INNER JOIN db_academico.materia_paralelo_periodo as mpp on mpp.daho_id = daho.daho_id
+INNER JOIN db_academico.planificacion_estudiante as pes on mpp.mpp_id = pes.pes_mat_b2_h5_mpp
+WHERE mpp.daho_id > 0  AND pes.per_id = plae.per_id
+AND pes.pla_id = :pla_id ) as daho11,
+                    plae.pes_mat_b2_h6_nombre,
+                     (SELECT daho.daho_descripcion
+FROM db_academico.distributivo_academico_horario as daho
+INNER JOIN db_academico.materia_paralelo_periodo as mpp on mpp.daho_id = daho.daho_id
+INNER JOIN db_academico.planificacion_estudiante as pes on mpp.mpp_id = pes.pes_mat_b2_h6_mpp
+WHERE mpp.daho_id > 0  AND pes.per_id = plae.per_id
+AND pes.pla_id = :pla_id ) as daho12                    
                 FROM " . $con->dbname . ".planificacion_estudiante plae
                 LEFT JOIN " . $con->dbname . ".planificacion plan ON plan.pla_id = plae.pla_id
                 INNER JOIN " . $con1->dbname . ".persona pers ON pers.per_id = plae.per_id
@@ -2123,6 +2199,7 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
                     -- AND
                     -- pers.per_estado = :estado AND
                     -- pers.per_estado_logico = :estado
+                    order by plae.pes_semestre, plae.pes_carrera ASC
                     ";
                     
          

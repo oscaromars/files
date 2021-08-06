@@ -394,14 +394,14 @@ class MallaAcademica extends \yii\db\ActiveRecord
     }
     
     
-      function consultarAsignaturas($rows,$gest,$semestre,$modalidad) {
+    function consultarAsignaturas($rows,$gest,$semestre,$modalidad) {
     $con = \Yii::$app->db_academico;
     $activo="A"; // $rows["mod_id"]
     $per_id = $rows["per_id"];
 
        $presql="
        SELECT distinct
-max(md.made_semestre) as semestre,
+min(md.made_semestre) as semestre,
 per.per_id
 from db_academico.malla_academico_estudiante pa
 inner join db_asgard.persona per on per.per_id=pa.per_id
@@ -424,7 +424,7 @@ left join db_academico.bloque_academico b on b.baca_id=pe.baca_id
 WHERE
 per.per_id = pa.per_id
 AND per.per_id = :per_id
-AND e.enac_id = 1;
+AND e.enac_id = 3;
        ";
 
         $comando = $con->createCommand($presql);
@@ -446,6 +446,9 @@ AND e.enac_id = 1;
     }*/
 
     $student_semester= $currenter["semestre"];
+    if ($currenter["semestre"] == Null){ 
+         $student_semester= 11;
+     }
        
 
 
@@ -460,8 +463,7 @@ inner join db_academico.modalidad_estudio_unidad c on c.meun_id = b.meun_id
                       and   c.mod_id =  " . $modalidad . "   
                       and a.maca_id =  " . $rows["maca_id"] . "  
                       and c.uaca_id = 1
-                      and (a.made_semestre >= :semester)
-                    --  and (a.made_semestre = :semester OR a.made_semestre = :lastsemester )
+                      and a.made_semestre >= :semester
                             and a.made_estado = 1
                             and a.made_estado_logico = 1
                             and b.mumo_estado = 1
@@ -519,6 +521,7 @@ left join db_academico.semestre_academico s on s.saca_id=pe.saca_id
 left join db_academico.bloque_academico b on b.baca_id=pe.baca_id
 WHERE
 per.per_id = pa.per_id
+ and md.maca_id =  " . $rows["maca_id"] . "  
 AND per.per_id = :per_id
 AND md.made_semestre >= :semester
 ORDER BY semestre;
@@ -1486,9 +1489,7 @@ from db_academico.periodo_academico plac
 
                     if ($modalidad == 1){
 
-                     if (($num_par % 2 ) == 0){
-
-              
+                     if (($num_par % 2 ) == 0){              
 
                  switch ($getifasi["hosd_hora"]) {
                         case 1:
@@ -1505,33 +1506,13 @@ from db_academico.periodo_academico plac
                          break;                                 
                     }            
 
+                 }
 
-
-                }else {
-
-                 if (($num_par % 3) == 0){
+                    if (($num_par % 3) == 0){
                 
 
                  switch ($getifasi["hosd_hora"]) {
-                        case 1:
-                        $daho_id = 18; 
-                        break;
-                        case 2:
-                      $daho_id = 23; 
-                         break;      
-                        case 3:
-                      $daho_id = 28; 
-                         break;    
-                        case 4:
-                      $daho_id = 33; 
-                         break;                                  
-                    }            
-
-
-                } else {
-
-                 switch ($getifasi["hosd_hora"]) {
-                        case 1:
+                         case 1:
                         $daho_id = 20; 
                         break;
                         case 2:
@@ -1542,12 +1523,35 @@ from db_academico.periodo_academico plac
                          break;    
                         case 4:
                      $daho_id = 35; 
-                         break;                                       
+                         break; 
+                                                        
                     }            
 
+
                 }
-                
-                   }
+
+                 if (($num_par % 3) != 0 && ($num_par % 2) != 0){
+                    switch ($getifasi["hosd_hora"]) {
+                         case 1:
+                        $daho_id = 18; 
+                        break;
+                        case 2:
+                      $daho_id = 23; 
+                         break;      
+                        case 3:
+                      $daho_id = 28; 
+                         break;    
+                        case 4:
+                      $daho_id = 33; 
+                         break;                                           
+                    }     
+
+                     }
+
+
+
+
+
 
 
                        } Else {
@@ -1615,7 +1619,25 @@ from db_academico.periodo_academico plac
                          $asih1 = $subjects[$iter][0]; $noasih1 = $subjects[$iter][1];
                          $mpph1 =  $getmpar["mpp_id"];   
                          } Else{ 
-                     if ($asih9==Null){ 
+
+                
+                 if ($asih2==Null){ 
+                    $asih2 = $subjects[$iter][0]; $noasih2 = $subjects[$iter][1];
+                    $mpph2 = $getmpar["mpp_id"];    }
+                    Else if ($asih3==Null){
+                 $asih3 = $subjects[$iter][0]; $noasih3 = $subjects[$iter][1];
+                    $mpph3 = $getmpar["mpp_id"];   }
+                    Else if ($asih4==Null){
+                     $asih4 = $subjects[$iter][0]; $noasih4 = $subjects[$iter][1];
+                    $mpph4 = $getmpar["mpp_id"];    }
+                     Else if ($asih9==Null){
+                 $asih9 = $subjects[$iter][0]; $noasih9 = $subjects[$iter][1];
+                    $mpph9 = $getmpar["mpp_id"];   }
+                     Else if ($asih10==Null){
+                 $asih10 = $subjects[$iter][0]; $noasih10 = $subjects[$iter][1];
+                    $mpph10 = $getmpar["mpp_id"];   }
+
+                 /*    if ($asih9==Null){ 
                     $asih9 = $subjects[$iter][0]; $noasih9 = $subjects[$iter][1];
                     $mpph9 =  $getmpar["mpp_id"];   
                  }
@@ -1623,7 +1645,8 @@ from db_academico.periodo_academico plac
                  $asih10 = $subjects[$iter][0]; $noasih10 = $subjects[$iter][1];
                     $mpph10 =  $getmpar["mpp_id"];   
 
-                    }
+                    } */
+                    
                         }
                     break;
                         case 2:
@@ -1631,7 +1654,26 @@ from db_academico.periodo_academico plac
                          $asih2 = $subjects[$iter][0]; $noasih2 = $subjects[$iter][1];
                          $mpph2 =  $getmpar["mpp_id"];   
                          } Else{ 
-                     if ($asih9==Null){ 
+                
+
+                 if ($asih1==Null){ 
+                    $asih1 = $subjects[$iter][0]; $noasih1 = $subjects[$iter][1];
+                    $mpph1 = $getmpar["mpp_id"];    }
+                    Else if ($asih3==Null){
+                 $asih3 = $subjects[$iter][0]; $noasih3 = $subjects[$iter][1];
+                    $mpph3 = $getmpar["mpp_id"];   }
+                    Else if ($asih4==Null){
+                     $asih4 = $subjects[$iter][0]; $noasih4 = $subjects[$iter][1];
+                    $mpph4 = $getmpar["mpp_id"];    }
+                     Else if ($asih9==Null){
+                 $asih9 = $subjects[$iter][0]; $noasih9 = $subjects[$iter][1];
+                    $mpph9 = $getmpar["mpp_id"];   }
+                     Else if ($asih10==Null){
+                 $asih10 = $subjects[$iter][0]; $noasih10 = $subjects[$iter][1];
+                    $mpph10 = $getmpar["mpp_id"];   }
+
+
+                 /*    if ($asih9==Null){ 
                     $asih9 = $subjects[$iter][0]; $noasih9 = $subjects[$iter][1];
                     $mpph9 =  $getmpar["mpp_id"];   
                  }
@@ -1639,7 +1681,10 @@ from db_academico.periodo_academico plac
                  $asih10 = $subjects[$iter][0]; $noasih10 = $subjects[$iter][1];
                     $mpph10 =  $getmpar["mpp_id"];   
 
-                    }
+                    } */
+
+
+
                         }; 
                          break; 
                         case 3:
@@ -1647,7 +1692,27 @@ from db_academico.periodo_academico plac
                          $asih3 = $subjects[$iter][0]; $noasih3 = $subjects[$iter][1];
                          $mpph3 =  $getmpar["mpp_id"];   
                          } Else{ 
-                     if ($asih9==Null){ 
+
+
+
+                if ($asih1==Null){ 
+                    $asih1 = $subjects[$iter][0]; $noasih1 = $subjects[$iter][1];
+                    $mpph1 = $getmpar["mpp_id"];    }
+                    Else if ($asih2==Null){
+                 $asih2 = $subjects[$iter][0]; $noasih2 = $subjects[$iter][1];
+                    $mpph2 = $getmpar["mpp_id"];   }
+                    Else if ($asih3==Null){
+                     $asih4 = $subjects[$iter][0]; $noasih4 = $subjects[$iter][1];
+                    $mpph4 = $getmpar["mpp_id"];    }
+                     Else if ($asih9==Null){
+                 $asih9 = $subjects[$iter][0]; $noasih9 = $subjects[$iter][1];
+                    $mpph9 = $getmpar["mpp_id"];   }
+                     Else if ($asih10==Null){
+                 $asih10 = $subjects[$iter][0]; $noasih10 = $subjects[$iter][1];
+                    $mpph10 = $getmpar["mpp_id"];   }
+
+
+                /*     if ($asih9==Null){ 
                     $asih9 = $subjects[$iter][0]; $noasih9 = $subjects[$iter][1];
                     $mpph9 =  $getmpar["mpp_id"];   
                  }
@@ -1655,7 +1720,9 @@ from db_academico.periodo_academico plac
                  $asih10 = $subjects[$iter][0]; $noasih10 = $subjects[$iter][1];
                     $mpph10 =  $getmpar["mpp_id"];   
 
-                    }
+                    } */
+
+
                         }
                          break;   
                         case 4:
@@ -1663,7 +1730,25 @@ from db_academico.periodo_academico plac
                          $asih4 = $subjects[$iter][0]; $noasih4 = $subjects[$iter][1];
                          $mpph4 =  $getmpar["mpp_id"];   
                          } Else{ 
-                     if ($asih9==Null){ 
+
+                
+                  if ($asih1==Null){ 
+                    $asih1 = $subjects[$iter][0]; $noasih1 = $subjects[$iter][1];
+                    $mpph1 = $getmpar["mpp_id"];    }
+                    Else if ($asih2==Null){
+                 $asih2 = $subjects[$iter][0]; $noasih2 = $subjects[$iter][1];
+                    $mpph2 = $getmpar["mpp_id"];   }
+                    Else if ($asih3==Null){
+                     $asih3 = $subjects[$iter][0]; $noasih3 = $subjects[$iter][1];
+                    $mpph3 = $getmpar["mpp_id"];    }
+                     Else if ($asih9==Null){
+                 $asih9 = $subjects[$iter][0]; $noasih9 = $subjects[$iter][1];
+                    $mpph9 = $getmpar["mpp_id"];   }
+                     Else if ($asih10==Null){
+                 $asih10 = $subjects[$iter][0]; $noasih10 = $subjects[$iter][1];
+                    $mpph10 = $getmpar["mpp_id"];   }
+                  
+                 /*    if ($asih9==Null){ 
                     $asih9 = $subjects[$iter][0]; $noasih9 = $subjects[$iter][1];
                     $mpph9 =  $getmpar["mpp_id"];   
                  }
@@ -1671,7 +1756,8 @@ from db_academico.periodo_academico plac
                  $asih10 = $subjects[$iter][0]; $noasih10 = $subjects[$iter][1];
                     $mpph10 =  $getmpar["mpp_id"];   
 
-                    }
+                    } */
+
                         }
                          break;                         
                     }            
@@ -1781,7 +1867,7 @@ from db_academico.periodo_academico plac
                         pes_mod_b2_h4,pes_mod_b2_h5,pes_mod_b2_h6, pes_jor_b1_h1,  pes_jor_b1_h2,  pes_jor_b1_h3,  pes_jor_b1_h4,pes_jor_b1_h5,pes_jor_b1_h6,  pes_jor_b2_h1,  pes_jor_b2_h2,  pes_jor_b2_h3, 
                         pes_jor_b2_h4,pes_jor_b2_h5, pes_jor_b2_h6, pes_mat_b1_h1_mpp, pes_mat_b1_h2_mpp, pes_mat_b1_h3_mpp, pes_mat_b1_h4_mpp,pes_mat_b1_h5_mpp, pes_mat_b1_h6_mpp, pes_mat_b2_h1_mpp,
                      pes_mat_b2_h2_mpp,pes_mat_b2_h3_mpp,pes_mat_b2_h4_mpp,pes_mat_b2_h5_mpp,pes_mat_b2_h6_mpp, pes_estado, pes_estado_logico)
-                    values (" . $rows_pla["pla_id"] ."," . $rows["per_id"] . ", '" . $rows["uaca_id"] . "','" . $rows["maca_codigo"] . "', '" . $rows["maca_nombre"] . "','" . $student_semester . "', '" . $rows["per_cedula"] . "', '" . $rows["estudiante"] . "', '" . $asih4 . "', '" . $asih3 . "', '" . $asih2 . "', '" . $asih1 . "','" . $asih9 . "','" . $asih10 . "', '" . $asih8 . "', '" . $asih7 . "', '" . $asih6 . "', '" . $asih5 . "','" . $asih11 . "','" . $asih12 . "', '" . $noasih4 . "', '" . $noasih3 . "', '" . $noasih2 . "', '" . $noasih1 . "','" . $noasih9 . "','" . $noasih10 . "', '" . $noasih8 . "', '" . $noasih7 . "', '" . $noasih6 . "', '" . $noasih5 . "','" . $noasih11 . "','" . $noasih12 . "',". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "','" . $jornadas . "','" . $jornadas . "','" . $jornadas . "','" . $jornadas . "','" . $mpph4 . "','" . $mpph3 . "','" . $mpph2 . "','" . $mpph1 . "','" . $mpph9 . "','" . $mpph10 . "','" . $mpph8 . "','" . $mpph7 . "','" . $mpph6 . "','" . $mpph5 . "','" . $mpph11 . "','" . $mpph12 . "', '" . $estado . "', '" . $estado ."')"; 
+                    values (" . $rows_pla["pla_id"] ."," . $rows["per_id"] . ", '" . $rows["uaca_id"] . "','" . $rows["maca_codigo"] . "', '" . $rows["maca_nombre"] . "','" . $student_semester . "', '" . $rows["per_cedula"] . "', '" . $rows["estudiante"] . "', '" . $asih1 . "', '" . $asih2 . "', '" . $asih3 . "', '" . $asih4 . "','" . $asih9 . "','" . $asih10 . "', '" . $asih5 . "', '" . $asih6 . "', '" . $asih7 . "', '" . $asih8 . "','" . $asih11 . "','" . $asih12 . "', '" . $noasih1 . "', '" . $noasih2 . "', '" . $noasih3 . "', '" . $noasih4 . "','" . $noasih9 . "','" . $noasih10 . "', '" . $noasih5 . "', '" . $noasih6 . "', '" . $noasih7 . "', '" . $noasih8 . "','" . $noasih11 . "','" . $noasih12 . "',". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "','" . $jornadas . "','" . $jornadas . "','" . $jornadas . "','" . $jornadas . "','" . $mpph1 . "','" . $mpph2 . "','" . $mpph3 . "','" . $mpph4 . "','" . $mpph9 . "','" . $mpph10 . "','" . $mpph5 . "','" . $mpph6 . "','" . $mpph7 . "','" . $mpph8 . "','" . $mpph11 . "','" . $mpph12 . "', '" . $estado . "', '" . $estado ."')"; 
 
 
                      $comando = $con->createCommand($sql);
@@ -1808,4 +1894,35 @@ from db_academico.periodo_academico plac
               return true; 
                }    
     
-}   }
+}   
+
+public function consultaParalelosxMateria($asi_id,$saca_id,$mod_id) {
+    $con = \Yii::$app->db_academico;
+    $estado = 1;
+    $sql = "SELECT mpp.mpp_id as id, concat('Paralelo ',mpp.mpp_num_paralelo) as nombre 
+            from db_academico.materia_paralelo_periodo mpp 
+            inner join db_academico.semestre_academico saca on saca.saca_id = $saca_id
+            inner join db_academico.periodo_academico paca on mpp.paca_id = paca.paca_id 
+            and paca.saca_id = saca.saca_id
+            inner join db_academico.planificacion pla on pla.saca_id = saca.saca_id
+            and pla.mod_id = mpp.mod_id
+            where mpp.asi_id = $asi_id and mpp.mod_id = $mod_id;";
+    $comando = $con->createCommand($sql);
+    \app\models\Utilities::putMessageLogFile('Consultar Paralelos: '.$comando->getRawSql());
+    $resultData = $comando->queryAll();
+    //\app\modules\academico\controllers\RegistroController::putMessageLogFileCartera('consultarModalidad: '.$comando->getRawSql());
+    $dataProvider = new ArrayDataProvider([
+        'key' => 'id',
+        'allModels' => $resultData,
+        'pagination' => [
+            'pageSize' => Yii::$app->params["pageSize"],
+        ],
+        'sort' => [
+            'attributes' => [],
+        ],
+    ]);
+    \app\models\Utilities::putMessageLogFile('Consultar Paralelos N: '.implode(",", $resultData));
+    return $dataProvider;
+}
+
+}

@@ -87,7 +87,7 @@ class InscripciongradoController extends \yii\web\Controller {
         $arr_nacionalidad = Pais::find()->select("pai_id AS id, pai_nacionalidad AS value")->where(["pai_estado_logico" => "1", "pai_estado" => "1"])->asArray()->all();
         $arr_estado_civil = EstadoCivil::find()->select("eciv_id AS id, eciv_nombre AS value")->where(["eciv_estado_logico" => "1", "eciv_estado" => "1"])->asArray()->all();
         $arr_pais = Pais::find()->select("pai_id AS id, pai_nombre AS value")->where(["pai_estado_logico" => "1", "pai_estado" => "1"])->asArray()->all();
-        $arr_provincia = Provincia::provinciaXPais($arr_nacionalidad[0]["id"]);
+        $arr_provincia = Provincia::provinciaXPais($arr_pais[0]["id"]);
         $arr_ciudad= Canton::cantonXProvincia($arr_provincia[0]["id"]);
         //$arr_malla = $mod_malla->consultarmallasxcarrera($arr_unidad[0]['id'], $arr_carrera[0]['id'], $arr_modalidad[0]['id']);
         $arr_tipparentesco = TipoParentesco::find()->select("tpar_id AS id, tpar_nombre AS value")->where(["tpar_estado_logico" => "1", "tpar_estado" => "1"])->asArray()->all();
@@ -262,7 +262,7 @@ class InscripciongradoController extends \yii\web\Controller {
                 $per_pri_nombre = $data["primer_nombre"];
                 $per_seg_nombre = $data["segundo_nombre"];
                 $per_pri_apellido = $data["primer_apellido"];
-                $per_seg_apellido = $data["segundo_nombre"];
+                $per_seg_apellido = $data["segundo_apellido"];
                 $can_id_nacimiento = $data["cuidad_nac"];
                 $per_fecha_nacimiento = $data["fecha_nac"];
                 $per_nacionalidad = $data["nacionalidad"]; 
@@ -434,6 +434,8 @@ class InscripciongradoController extends \yii\web\Controller {
         $data = Yii::$app->request->get();
         if (isset($data['id'])) {
 
+            $igra_id = base64_decode($_GET['ids']);
+
             $id = $data['id']; // per_id
             $per_cedula = $data['cedula'];
             \app\models\Utilities::putMessageLogFile('ver el resultado del id:  '.$id);
@@ -452,6 +454,27 @@ class InscripciongradoController extends \yii\web\Controller {
                 if (!in_array(['id' => '1'], $arr_grupos) && !in_array(['id' => '6'], $arr_grupos) && !in_array(['id' => '7'], $arr_grupos) && !in_array(['id' => '8'], $arr_grupos) && !in_array(['id' => '15'], $arr_grupos))
                     return $this->redirect(['inscripciongrado/aspirantegrado']);
             }
+
+            $mod_insgrado = new InscripcionGrado();
+            $documentos = $mod_insgrado->ObtenerdocumentosInscripcionGrado($id);
+            \app\models\Utilities::putMessageLogFile('ver el resultado del id:  '.$documentos['igra_ruta_doc_titulo']);
+            \app\models\Utilities::putMessageLogFile('ver el resultado del id:  '.$documentos['igra_ruta_doc_dni']);
+            \app\models\Utilities::putMessageLogFile('ver el resultado del id:  '.$documentos['igra_ruta_doc_certvota']);
+            \app\models\Utilities::putMessageLogFile('ver el resultado del id:  '.$documentos['igra_ruta_doc_foto']);
+            \app\models\Utilities::putMessageLogFile('ver el resultado del id:  '.$documentos['igra_ruta_doc_comprobantepago']);
+            \app\models\Utilities::putMessageLogFile('ver el resultado del id:  '.$documentos['igra_ruta_doc_recordacademico']);
+            \app\models\Utilities::putMessageLogFile('ver el resultado del id:  '.$documentos['igra_ruta_doc_certificado']);
+            \app\models\Utilities::putMessageLogFile('ver el resultado del id:  '.$documentos['igra_ruta_doc_syllabus']);
+            \app\models\Utilities::putMessageLogFile('ver el resultado del id:  '.$documentos['igra_ruta_doc_homologacion']);
+            /*$arch1 = $documentos['igra_ruta_doc_titulo'];
+            $arch2 = $documentos['igra_ruta_doc_dni'];
+            $arch3 = $documentos['igra_ruta_doc_certvota'];
+            $arch4 = $documentos['igra_ruta_doc_foto'];
+            $arch5 = $documentos['igra_ruta_doc_comprobantepago'];
+            $arch6 = $documentos['igra_ruta_doc_recordacademico'];
+            $arch7 = $documentos['igra_ruta_doc_certificado'];
+            $arch8 = $documentos['igra_ruta_doc_syllabus'];
+            $arch9 = $documentos['igra_ruta_doc_homologacion'];*/
 
             /**
              * Inf. Personal
@@ -500,6 +523,15 @@ class InscripciongradoController extends \yii\web\Controller {
 
             $ViewFormTab4 = $this->renderPartial('ViewFormTab4', [
                 "arr_tipparentesco" => ArrayHelper::map($arr_tipparentesco, "id", "value"),
+                "arch1" => $documentos['igra_ruta_doc_titulo'],
+                "arch2" => $documentos['igra_ruta_doc_dni'],
+                "arch3" => $documentos['igra_ruta_doc_certvota'],
+                "arch4" => $documentos['igra_ruta_doc_foto'],
+                "arch5" => $documentos['igra_ruta_doc_comprobantepago'],
+                "arch6" => $documentos['igra_ruta_doc_recordacademico'],
+                "arch7" => $documentos['igra_ruta_doc_certificado'],
+                "arch8" => $documentos['igra_ruta_doc_syllabus'],
+                "arch9" => $documentos['igra_ruta_doc_homologacion'],
                 'persona_model' => $persona_model,
                 'contacto_model' => $contacto_model,
 

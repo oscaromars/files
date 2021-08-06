@@ -1032,7 +1032,7 @@ class Persona extends \yii\db\ActiveRecord {
         //$per_cedula='99999999999';
         $con = \Yii::$app->db_asgard;
         $sql = "INSERT INTO " . $con->dbname . ".persona
-            (per_pri_nombre,per_seg_nombre,per_pri_apellido,per_seg_apellido,per_cedula,eciv_id,can_id_nacimiento,per_fecha_nacimiento,per_celular,per_correo,per_domicilio_csec,per_domicilio_ref,per_domicilio_telefono,pai_id_domicilio,pro_id_domicilio,can_id_domicilio,per_nacionalidad,per_fecha_creacion,per_estado,per_estado_logico)VALUES
+            (per_pri_nombre,per_seg_nombre,per_pri_apellido,per_seg_apellido,per_cedula,eciv_id,can_id_nacimiento,per_fecha_nacimiento,per_celular,per_correo,per_domicilio_csec,per_domicilio_ref,per_domicilio_telefono,pai_id_domicilio,pro_id_domicilio,can_id_domicilio,per_nacionalidad,per_trabajo_direccion,per_fecha_creacion,per_estado,per_estado_logico)VALUES
             (:per_pri_nombre,:per_seg_nombre,:per_pri_apellido,:per_seg_apellido,:per_dni,:eciv_id,:can_id_nacimiento,:per_fecha_nacimiento,:per_celular,:per_correo,:per_domicilio_csec,:per_domicilio_ref,:per_domicilio_telefono,:pai_id_domicilio,:pro_id_domicilio,:can_id_domicilio,:per_nacionalidad,:per_trabajo_direccion,CURRENT_TIMESTAMP(),1,1) ";
 
         $command = $con->createCommand($sql);

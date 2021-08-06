@@ -238,7 +238,7 @@ function guardarInscripcionGrado() {
         arrParams.segundo_nombre = $('#txt_segundo_nombre').val();
         arrParams.primer_apellido = $('#txt_primer_apellido').val();
         arrParams.segundo_apellido = $('#txt_segundo_apellido').val();
-        arrParams.cuidad_nac = $('#txt_ciu_nac').val();
+        arrParams.cuidad_nac = $('#cmb_ciu_nac').val();
         arrParams.fecha_nac = $('#txt_fecha_nac').val();
         arrParams.nacionalidad = $('#cmb_nacionalidad').val();
         arrParams.estado_civil = $('#cmb_estado_civil').val();

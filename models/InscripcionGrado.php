@@ -468,4 +468,30 @@ class InscripcionGrado extends \yii\db\ActiveRecord
 
         return $dataProvider;
     }
+
+    public function ObtenerdocumentosInscripcionGrado($per_id) {
+        $con = \Yii::$app->db_inscripcion;
+        $estado = 1;
+
+        $sql = "SELECT  per_id, 
+                igra_ruta_doc_titulo, 
+                igra_ruta_doc_dni, 
+                igra_ruta_doc_certvota, 
+                igra_ruta_doc_foto, 
+                igra_ruta_doc_comprobantepago, 
+                igra_ruta_doc_recordacademico, 
+                igra_ruta_doc_certificado, 
+                igra_ruta_doc_syllabus, 
+                igra_ruta_doc_homologacion
+                FROM " . $con->dbname . ".inscripcion_grado
+                WHERE per_id = :per_id AND
+                      igra_estado = :estado AND
+                      igra_estado_logico = :estado";
+
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
+        $resultData = $comando->queryOne();
+        return $resultData;
+    }
 }

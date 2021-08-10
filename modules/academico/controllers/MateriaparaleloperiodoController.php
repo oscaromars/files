@@ -48,9 +48,9 @@ class MateriaparaleloperiodoController extends \app\components\CController {
                     'dataProvider' => $dataProvider,
         ]);
     }
-    
-    
-    
+
+
+
     /**
      * Lists all SemestreAcademicoSearch models.
      * @return mixed
@@ -61,12 +61,11 @@ class MateriaparaleloperiodoController extends \app\components\CController {
 
         return $this->render('update', [
             'model' => $model,
-           
+
         ]);
     }
-    
-    
-      public function actionActualizar(){
+
+    public function actionActualizar(){
             \app\models\Utilities::putMessageLogFile("Actualizar MateriaparaleloperiodoController: ".$data['num_paralelos']);
         $usu_id = @Yii::$app->session->get("PB_iduser");
         $mes = 0;
@@ -94,7 +93,7 @@ class MateriaparaleloperiodoController extends \app\components\CController {
                         $mes++;
                     }
                 }
-            
+
 
             if ($mes != 0) {
                 $transaction->commit();
@@ -219,7 +218,7 @@ class MateriaparaleloperiodoController extends \app\components\CController {
             $model->load($params);
             // Save posted model attributes
             //if ($model->load($params) && $model->save()) {
-            //\app\models\Utilities::putMessageLogFile($params);   
+            //\app\models\Utilities::putMessageLogFile($params);
             // Pull the first value from the array (there should only be one)
             $value = reset($params)[$attrib];
 
@@ -261,6 +260,16 @@ class MateriaparaleloperiodoController extends \app\components\CController {
           // 'checkAccess' => function($action, $model) {}
           ]
           ]); */
+    }
+
+    public function actionUpdateschedule($mod_id,$paca_id,$asi_id)
+    {//asi_id', 'mod_id', 'paca_id','mpp_num_paralelo'
+       $model = MateriaParaleloPeriodo::find()->where(" asi_id=:asi_id and mod_id=:mod_id and paca_id=:paca_id ",[":asi_id"=>$asi_id,":mod_id"=>$mod_id,":paca_id"=>$paca_id])->orderBy("mpp_num_paralelo DESC")->one();
+
+        return $this->render('updateschedule', [
+            'model' => $model,
+
+        ]);
     }
 
 }

@@ -4,17 +4,13 @@ use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 use kartik\select2\Select2;
 use yii\helpers\ArrayHelper;
-
 $var = ArrayHelper::map(app\modules\academico\models\PeriodoAcademico::find()->where(['paca_estado' => 1,'paca_estado_logico' => 1,'paca_activo' => 'A'])->all(), 'paca_id',
                 function ($model) {
                      return $model->baca->baca_nombre . '-' . $model->sem->saca_nombre . '-' . $model->sem->saca_anio;
                    // return strtoupper($model->per->per_pri_apellido . ' ' . $model->per->per_seg_apellido . ' ' . $model->per->per_pri_nombre . ' ' . $model->per->per_seg_nombre);
                 });
 ?>
-
-
 <div class="semestreacademico-search">
-
     <?php
     $form = ActiveForm::begin([
                 'layout' => 'horizontal',
@@ -34,7 +30,6 @@ $var = ArrayHelper::map(app\modules\academico\models\PeriodoAcademico::find()->w
     ]);
     ?>
     <div class="form-group row">
-     
         <div class="col-sm-9">
              <?=
     $form->field($model, 'paca_id')->label('Período:')->widget(Select2::classname(), [
@@ -49,7 +44,6 @@ $var = ArrayHelper::map(app\modules\academico\models\PeriodoAcademico::find()->w
     ]);
     ?>
         </div>
-        
         <div class="col-sm-9">
             <?=
             $form->field($model, 'mod_id')->widget(Select2::classname(), [
@@ -64,18 +58,11 @@ $var = ArrayHelper::map(app\modules\academico\models\PeriodoAcademico::find()->w
             ]);
             ?>
         </div>
-
-
-
-
     </div>
-
     <div class="form-group">
         <div class="col-sm-offset-4">
 <?= Html::submitButton('Buscar', ['class' => 'btn btn-primary']) ?>
         </div>
     </div>
-
 <?php ActiveForm::end(); ?>
-
 </div>

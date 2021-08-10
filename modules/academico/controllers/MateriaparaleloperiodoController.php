@@ -263,13 +263,14 @@ class MateriaparaleloperiodoController extends \app\components\CController {
     }
 
     public function actionUpdateschedule($mod_id,$paca_id,$asi_id)
-    {//asi_id', 'mod_id', 'paca_id','mpp_num_paralelo'
-       $model = MateriaParaleloPeriodo::find()->where(" asi_id=:asi_id and mod_id=:mod_id and paca_id=:paca_id ",[":asi_id"=>$asi_id,":mod_id"=>$mod_id,":paca_id"=>$paca_id])->orderBy("mpp_num_paralelo DESC")->one();
-
+    {
+        $materiamodel = new MateriaParaleloPeriodo();
+        $model = MateriaParaleloPeriodo::find()->where(" asi_id=:asi_id and mod_id=:mod_id and paca_id=:paca_id ",[":asi_id"=>$asi_id,":mod_id"=>$mod_id,":paca_id"=>$paca_id])->orderBy("mpp_num_paralelo DESC")->one();
+        $paralelohorario = $materiamodel->consultaParalelosHorario($asi_id, $paca_id,$mod_id);
         return $this->render('updateschedule', [
-            'model' => $model,
-
-        ]);
-    }
+                'model' => $model,
+                'paralelohorario' => $paralelohorario,
+            ]);
+        }
 
 }

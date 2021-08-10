@@ -13,6 +13,7 @@ use yii\helpers\Html;
 
     <?= $this->render('_formupdateschedule', [
         'model' => $model,
+        'paralelohorario' => $paralelohorario,
     ]) ?>
 
 </div>

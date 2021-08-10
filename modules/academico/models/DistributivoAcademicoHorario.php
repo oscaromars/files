@@ -32,7 +32,7 @@ class DistributivoAcademicoHorario extends \yii\db\ActiveRecord
      */
     public static function tableName()
     {
-        $prueba="prueba de git"; 
+        $prueba="prueba de git";
         return 'distributivo_academico_horario';
     }
 
@@ -82,7 +82,7 @@ class DistributivoAcademicoHorario extends \yii\db\ActiveRecord
             'daho_estado_logico' => '',
         ];
     }
-    
+
     /**
      * @return \yii\db\ActiveQuery
      */
@@ -106,7 +106,7 @@ class DistributivoAcademicoHorario extends \yii\db\ActiveRecord
     {
         return $this->hasOne(EstudioAcademico::className(), ['eaca_id' => 'eaca_id']);
     }
-    
+
      /**
      * Gets query for [[Usuarios]].
      *
@@ -116,21 +116,21 @@ class DistributivoAcademicoHorario extends \yii\db\ActiveRecord
     {
         return $this->hasMany(DistributivoHorarioParalelo::className(), ['daho_id' => 'daho_id']);
     }
-    
+
     /**
-     * Function consulta las jornadas. 
+     * Function consulta las jornadas.
      * @author Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>;
      * @param
      * @return
      */
     public function consultarJornadahorario() {
         $con = \Yii::$app->db_academico;
-        $estado = 1;   
+        $estado = 1;
 
         $sql = "SELECT distinct daho_jornada as id,
-                  CASE daho_jornada  
-                    WHEN 1 THEN 'Matutino'  
-                    WHEN 2 THEN 'Nocturno'  
+                  CASE daho_jornada
+                    WHEN 1 THEN 'Matutino'
+                    WHEN 2 THEN 'Nocturno'
                     WHEN 3 THEN 'Semipresencial'
                     WHEN 4 THEN 'Distancia'
 		  END AS name
@@ -146,7 +146,7 @@ class DistributivoAcademicoHorario extends \yii\db\ActiveRecord
 
     public function consultarParaleloHorario($daho_id) {
         $con = \Yii::$app->db_academico;
-        $estado = 1;  
+        $estado = 1;
 
         $sql = "select dhpa_id id, dhpa_paralelo name
                 from " . $con->dbname . ".distributivo_horario_paralelo

@@ -60,29 +60,16 @@ for ($i = $model->mpp_num_paralelo+1; $i <= 20; $i++) {
                 'header' => academico::t("Academico", "Schedule"),
                 'value' => 'daho_descripcion',
             ],
-            /*[
+            [
                 'class' => 'yii\grid\ActionColumn',
                 'header' => Yii::t("formulario", "Actions"),
                 'template' => '{actualizar_horario}',
                 'buttons' => [
                     'actualizar_horario' => function ($url, $paralelohorario) {
-                          return Html::a('<span class="glyphicon glyphicon-edit"></span>', Url::to(['materiaparaleloperiodo/viewhorarios', 'popup' => "true", 'mpp_id' => $paralelohorario['mpp_id'], 'uaca_id' => 1, 'mod_id' => $paralelohorario['mod_id']]), ["class" => "pbpopup", "data-toggle" => "tooltip", "title" => "Ver Pagos", "data-pjax" => 0]);
+                          return Html::a('<span class="glyphicon glyphicon-edit"></span>', Url::to(['materiaparaleloperiodo/viewhorario', 'popup' => "true", 'mpp_id' => $paralelohorario['mpp_id'], 'uaca_id' => 1, 'mod_id' => $paralelohorario['mod_id']]), ["class" => "pbpopup", "data-toggle" => "tooltip", "title" => "Ver Pagos", "data-pjax" => 0]);
                     },
                 ],
-            ],*/
-            /* E TRABAJARA AQUI CON UN COMPO PARA MODIFICAR EL HORARIO */
-            /*[
-                'attribute' => 'horarios',
-                'header' => academico::t("Academico", "Schedules"),
-                'filterInputOptions' => [
-                    'class' => 'form-control',
-                    'prompt' => 'Select'
-                ],
-                'format' => 'raw',
-                'value'  => function ($model) {
-                    return Html::dropDownList('horarios', empty($model['daho_id'])?0:$model['daho_id'], ArrayHelper::map($model['horarios'] , "id", "name"), ["class" => "form-control", "daho_id" => "curso_".$model['daho_id'] ]);
-                    }
-            ],*/
+            ],
         ],
     ])
     ?>

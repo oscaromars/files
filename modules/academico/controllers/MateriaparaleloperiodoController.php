@@ -271,6 +271,18 @@ class MateriaparaleloperiodoController extends \app\components\CController {
                 'model' => $model,
                 'paralelohorario' => $paralelohorario,
             ]);
-        }
+     }
+
+    public function actionViewhorario(/*$mod_id,$paca_id,$asi_id*/)
+     {
+        // CONSULTAR HORARIOS ENVIANDO UACA_ID Y MOD_ID, SELECT EN PUNTO 2 del archivo
+        // nueva_tarea_04082021_al_11082021
+        // consultar informacioncion enviando el mpp_id, traer mod_id, paca_id, asi_id
+        $mpp_id = $_GET["mpp_id"];
+        return $this->render('viewhorario', [
+                 /*'model' => $model,
+                 'paralelohorario' => $paralelohorario,*/
+             ]);
+      }
 
 }

@@ -38,6 +38,7 @@ use app\models\TipoParentesco;
 use app\models\PersonaContacto;
 use yii\helpers\ArrayHelper;
 use app\models\EstadoCivil;
+use yii\data\ArrayDataProvider;
 
 class InscripcionposgradoController extends \yii\web\Controller {
 
@@ -665,6 +666,37 @@ class InscripcionposgradoController extends \yii\web\Controller {
         ]);
     }
 
+    public function actionDownload($route, $type) {
+        $grupo = new Grupo();
+        if (Yii::$app->session->get('PB_isuser')) {
+            $route = str_replace("../", "", $route);
+            if (preg_match("/^" . $this->folder_cv . "\//", $route)) {
+                $url_image = Yii::$app->basePath . "/uploads/" . $route;
+                $arrIm = explode(".", $url_image);
+                $typeImage = $arrIm[count($arrIm) - 1];
+                if (file_exists($url_image)) {
+                    if (strtolower($typeImage) == "pdf") {
+                        header('Pragma: public');
+                        header('Expires: 0');
+                        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+                        header('Cache-Control: private', false);
+                        header("Content-type: application/pdf");
+                        if ($type == "view") {
+                            header('Content-Disposition: inline; filename="cv_' . time() . '.pdf";');
+                        } else {
+                            header('Content-Disposition: attachment; filename="cv_' . time() . '.pdf";');
+                        }
+                        header('Content-Transfer-Encoding: binary');
+                        header('Content-Length: ' . filesize($url_image));
+                        readfile($url_image);
+                        //return file_get_contents($url_image);
+                    }
+                }
+            }
+        }
+        exit();
+    }
+
     public function actionView() {
         $data = Yii::$app->request->get();
         if (isset($data['id'])) {
@@ -707,30 +739,83 @@ class InscripcionposgradoController extends \yii\web\Controller {
             ]);
 
             /**
-             * Inf. contacto
+             * Inf. Profesional
              */
+            
+            $instruccion_model = EstudianteInstruccion::findOne(['per_id' => $persona_model->per_id]);
+            $laboral_model = InformacionLaboral::findOne(['per_id' => $persona_model->per_id]);
             $arr_pais = Pais::findAll(["pai_estado" => 1, "pai_estado_logico" => 1]);
-            $arr_pro = Provincia::findAll(["pai_id" => $persona_model->pai_id_domicilio, "pro_estado" => 1, "pro_estado_logico" => 1]);
-            $arr_can = Canton::findAll(["pro_id" => $persona_model->pro_id_domicilio, "can_estado" => 1, "can_estado_logico" => 1]);
+            $arr_pro = Provincia::findAll(["pai_id" => $laboral_model->ilab_prov_emp, "pro_estado" => 1, "pro_estado_logico" => 1]);
+            $arr_can = Canton::findAll(["pro_id" => $laboral_model->ilab_ciu_emp, "can_estado" => 1, "can_estado_logico" => 1]);
+            
 
             $ViewFormTab2 = $this->renderPartial('ViewFormTab2', [
                 'arr_pais' => (empty(ArrayHelper::map($arr_pais, "pai_id", "pai_nombre"))) ? array(Yii::t("pais", "-- Select Pais --")) : (ArrayHelper::map($arr_pais, "pai_id", "pai_nombre")),
                 'arr_pro' => (empty(ArrayHelper::map($arr_pro, "pro_id", "pro_nombre"))) ? array(Yii::t("provincia", "-- Select Provincia --")) : (ArrayHelper::map($arr_pro, "pro_id", "pro_nombre")),
                 'arr_can' => (empty(ArrayHelper::map($arr_can, "can_id", "can_nombre"))) ? array(Yii::t("canton", "-- Select Canton --")) : (ArrayHelper::map($arr_can, "can_id", "can_nombre")),
+                "arr_categoria" => array("1" => Yii::t("formulario", "Pública"), "2" => Yii::t("formulario", "Privada")),
                 'persona_model' => $persona_model,
+                'instruccion_model' => $instruccion_model,
+                'laboral_model' => $laboral_model,
             ]);
 
             /**
-             * Inf. en caso de emergencia
+             * Inf. Idiomas
              */
-            $arr_tipparentesco = TipoParentesco::find()->select("tpar_id AS id, tpar_nombre AS value")->where(["tpar_estado_logico" => "1", "tpar_estado" => "1"])->asArray()->all();
+            $idiomas = new EstudianteIdiomas();
+            $idioma_model = EstudianteIdiomas::findOne(['per_id' => $persona_model->per_id]);
+            $model = $idioma_model->getAllestudianteidiomasGrid($idioma_model->per_id);
 
             $ViewFormTab3 = $this->renderPartial('ViewFormTab3', [
+                'idioma_model' => $idioma_model,
+                'model' => $model,
+
+            ]);
+            /**
+             * Inf. Adicional
+             */
+            $discapacidades = new InfoDiscapacidadEst();
+            $discapacidad_model = InfoDiscapacidadEst::findOne(['per_id' => $persona_model->per_id]);
+            $model_dis = $discapacidades->getAllestudiantediscapacidadGrid($discapacidad_model->per_id);
+
+            $ViewFormTab4 = $this->renderPartial('ViewFormTab4', [
+                'discapacidad_model' => $discapacidad_model,
+                'model_dis' => $model_dis,
+
+            ]);
+
+            $docencia_model = InfoDocenciaEstudiante::findOne(['per_id' => $persona_model->per_id]);
+            $investigaciones_model = InfoEstudianteInvestigacion::findOne(['per_id' => $persona_model->per_id]);
+            $ipos_model = InscripcionPosgrado::findOne(['per_id' => $persona_model->per_id]);
+
+            $ViewFormTab5 = $this->renderPartial('ViewFormTab5', [
+                'docencia_model' => $docencia_model,
+                'investigaciones_model' => $investigaciones_model,
+                'ipos_model' => $ipos_model,
+
+            ]);  
+            /**
+             * Documentación
+             */
+            $contacto_model = PersonaContacto::findOne(['per_id' => $persona_model->per_id]); // obtiene el pcon_id con el per_id
+            $arr_tipparentesco = TipoParentesco::find()->select("tpar_id AS id, tpar_nombre AS value")->where(["tpar_estado_logico" => "1", "tpar_estado" => "1"])->asArray()->all();
+
+            $ViewFormTab6 = $this->renderPartial('ViewFormTab6', [
                 "arr_tipparentesco" => ArrayHelper::map($arr_tipparentesco, "id", "value"),
+                "arch1" => $documentos['igra_ruta_doc_titulo'],
+                "arch2" => $documentos['igra_ruta_doc_dni'],
+                "arch3" => $documentos['igra_ruta_doc_certvota'],
+                "arch4" => $documentos['igra_ruta_doc_foto'],
+                "arch5" => $documentos['igra_ruta_doc_comprobantepago'],
+                "arch6" => $documentos['igra_ruta_doc_recordacademico'],
+                "arch7" => $documentos['igra_ruta_doc_certificado'],
+                "arch8" => $documentos['igra_ruta_doc_syllabus'],
+                "arch9" => $documentos['igra_ruta_doc_homologacion'],
                 'persona_model' => $persona_model,
                 'contacto_model' => $contacto_model,
 
-            ]);
+            ]);          
+
 
 
             $items = [
@@ -740,12 +825,24 @@ class InscripcionposgradoController extends \yii\web\Controller {
                     'active' => true
                 ],
                 [
-                    'label' => Yii::t('inscripciongrado', 'Info. Datos de Contacto'),
+                    'label' => Yii::t('inscripciongrado', 'Info. Datos Profesionales'),
                     'content' => $ViewFormTab2,
                 ],
                 [
-                    'label' => Yii::t('inscripciongrado', 'Info. Datos en caso de Emergencia'),
+                    'label' => Yii::t('inscripciongrado', 'Info. Datos de Idiomas'),
                     'content' => $ViewFormTab3,
+                ],
+                [
+                    'label' => Yii::t('inscripciongrado', 'Info. Datos Discapacidad'),
+                    'content' => $ViewFormTab4,
+                ],
+                [
+                    'label' => Yii::t('inscripciongrado', 'Info. Datos Adicionales'),
+                    'content' => $ViewFormTab5,
+                ],
+                [
+                    'label' => Yii::t('inscripciongrado', 'Documentación'),
+                    'content' => $ViewFormTab6,
                 ],
             ];
             return $this->render('view', ['items' => $items, 'persona_model' => $persona_model, 'contacto_model' => $contacto_model]);
@@ -824,58 +921,132 @@ class InscripcionposgradoController extends \yii\web\Controller {
             }
 
             /**
-             * Inf. Basica
+             * Inf. Personal
              */
             $arr_can = Canton::findAll(["pro_id" => $persona_model->pro_id_domicilio, "can_estado" => 1, "can_estado_logico" => 1]);
             $arr_estado_civil = EstadoCivil::find()->select("eciv_id AS id, eciv_nombre AS value")->where(["eciv_estado_logico" => "1", "eciv_estado" => "1"])->asArray()->all();
+            $arr_pais = Pais::findAll(["pai_estado" => 1, "pai_estado_logico" => 1]);
+            $arr_pro = Provincia::findAll(["pai_id" => $persona_model->pai_id_domicilio, "pro_estado" => 1, "pro_estado_logico" => 1]);
+            $arr_can = Canton::findAll(["pro_id" => $persona_model->pro_id_domicilio, "can_estado" => 1, "can_estado_logico" => 1]);
 
             $EditFormTab1 = $this->renderPartial('EditFormTab1', [
                 'arr_can' => (empty(ArrayHelper::map($arr_can, "can_id", "can_nombre"))) ? array(Yii::t("canton", "-- Select Canton --")) : (ArrayHelper::map($arr_can, "can_id", "can_nombre")),
                 "arr_estado_civil" => ArrayHelper::map($arr_estado_civil, "id", "value"),
                 'persona_model' => $persona_model,
+                'arr_pais' => (empty(ArrayHelper::map($arr_pais, "pai_id", "pai_nombre"))) ? array(Yii::t("pais", "-- Select Pais --")) : (ArrayHelper::map($arr_pais, "pai_id", "pai_nombre")),
+                'arr_pro' => (empty(ArrayHelper::map($arr_pro, "pro_id", "pro_nombre"))) ? array(Yii::t("provincia", "-- Select Provincia --")) : (ArrayHelper::map($arr_pro, "pro_id", "pro_nombre")),
+                'arr_can' => (empty(ArrayHelper::map($arr_can, "can_id", "can_nombre"))) ? array(Yii::t("canton", "-- Select Canton --")) : (ArrayHelper::map($arr_can, "can_id", "can_nombre")),
             ]);
 
             /**
-             * Inf. contacto
+             * Inf. Profesional
              */
+            
+            $instruccion_model = EstudianteInstruccion::findOne(['per_id' => $persona_model->per_id]);
+            $laboral_model = InformacionLaboral::findOne(['per_id' => $persona_model->per_id]);
             $arr_pais = Pais::findAll(["pai_estado" => 1, "pai_estado_logico" => 1]);
-            Utilities::putMessageLogFile('pais:' . $persona_model->pai_id_domicilio);
-            $arr_pro = Provincia::findAll(["pai_id" => $persona_model->pai_id_domicilio, "pro_estado" => 1, "pro_estado_logico" => 1]);
-            $arr_can = Canton::findAll(["pro_id" => $persona_model->pro_id_domicilio, "can_estado" => 1, "can_estado_logico" => 1]);
+            $arr_pro = Provincia::findAll(["pai_id" => $laboral_model->ilab_prov_emp, "pro_estado" => 1, "pro_estado_logico" => 1]);
+            $arr_can = Canton::findAll(["pro_id" => $laboral_model->ilab_ciu_emp, "can_estado" => 1, "can_estado_logico" => 1]);
+            
 
             $EditFormTab2 = $this->renderPartial('EditFormTab2', [
                 'arr_pais' => (empty(ArrayHelper::map($arr_pais, "pai_id", "pai_nombre"))) ? array(Yii::t("pais", "-- Select Pais --")) : (ArrayHelper::map($arr_pais, "pai_id", "pai_nombre")),
                 'arr_pro' => (empty(ArrayHelper::map($arr_pro, "pro_id", "pro_nombre"))) ? array(Yii::t("provincia", "-- Select Provincia --")) : (ArrayHelper::map($arr_pro, "pro_id", "pro_nombre")),
                 'arr_can' => (empty(ArrayHelper::map($arr_can, "can_id", "can_nombre"))) ? array(Yii::t("canton", "-- Select Canton --")) : (ArrayHelper::map($arr_can, "can_id", "can_nombre")),
+                "arr_categoria" => array("1" => Yii::t("formulario", "Pública"), "2" => Yii::t("formulario", "Privada")),
                 'persona_model' => $persona_model,
-                'email' => $email,
+                'instruccion_model' => $instruccion_model,
+                'laboral_model' => $laboral_model,
             ]);
 
             /**
-             * Inf. caso de emergencia
+             * Inf. Idiomas
              */
-            $arr_tipparentesco = TipoParentesco::find()->select("tpar_id AS id, tpar_nombre AS value")->where(["tpar_estado_logico" => "1", "tpar_estado" => "1"])->asArray()->all();
+
+            $arr_idioma= Idioma::find()->select("idi_id AS id, idi_nombre AS value")->where(["idi_estado_logico" => "1", "idi_estado" => "1"])->asArray()->all();
+            $arr_nivelidioma= NivelIdioma::find()->select("nidi_id AS id, nidi_descripcion AS value")->where(["nidi_estado_logico" => "1", "nidi_estado" => "1"])->asArray()->all();
+            $idiomas = new EstudianteIdiomas();
+            $idioma_model = EstudianteIdiomas::findOne(['per_id' => $persona_model->per_id]);
+            $model = $idioma_model->getAllestudianteidiomasGrid($idioma_model->per_id);
 
             $EditFormTab3 = $this->renderPartial('EditFormTab3', [
+                "arr_idioma" => ArrayHelper::map($arr_idioma, "id", "value"),
+                "arr_nivelidioma" => ArrayHelper::map($arr_nivelidioma, "id", "value"),
+                'idioma_model' => $idioma_model,
+                'model' => $model,
+
+            ]);
+            /**
+             * Inf. Adicional
+             */
+            $discapacidades = new InfoDiscapacidadEst();
+            $discapacidad_model = InfoDiscapacidadEst::findOne(['per_id' => $persona_model->per_id]);
+            $model_dis = $discapacidades->getAllestudiantediscapacidadGrid($discapacidad_model->per_id);
+
+            $EditFormTab4 = $this->renderPartial('EditFormTab4', [
+                'discapacidad_model' => $discapacidad_model,
+                'model_dis' => $model_dis,
+
+            ]);
+
+            $docencia_model = InfoDocenciaEstudiante::findOne(['per_id' => $persona_model->per_id]);
+            $investigaciones_model = InfoEstudianteInvestigacion::findOne(['per_id' => $persona_model->per_id]);
+            $ipos_model = InscripcionPosgrado::findOne(['per_id' => $persona_model->per_id]);
+
+            $EditFormTab5 = $this->renderPartial('EditFormTab5', [
+                'docencia_model' => $docencia_model,
+                'investigaciones_model' => $investigaciones_model,
+                'ipos_model' => $ipos_model,
+
+            ]);  
+            /**
+             * Documentación
+             */
+            $contacto_model = PersonaContacto::findOne(['per_id' => $persona_model->per_id]); // obtiene el pcon_id con el per_id
+            $arr_tipparentesco = TipoParentesco::find()->select("tpar_id AS id, tpar_nombre AS value")->where(["tpar_estado_logico" => "1", "tpar_estado" => "1"])->asArray()->all();
+
+            $EditFormTab6 = $this->renderPartial('EditFormTab6', [
                 "arr_tipparentesco" => ArrayHelper::map($arr_tipparentesco, "id", "value"),
+                "arch1" => $documentos['igra_ruta_doc_titulo'],
+                "arch2" => $documentos['igra_ruta_doc_dni'],
+                "arch3" => $documentos['igra_ruta_doc_certvota'],
+                "arch4" => $documentos['igra_ruta_doc_foto'],
+                "arch5" => $documentos['igra_ruta_doc_comprobantepago'],
+                "arch6" => $documentos['igra_ruta_doc_recordacademico'],
+                "arch7" => $documentos['igra_ruta_doc_certificado'],
+                "arch8" => $documentos['igra_ruta_doc_syllabus'],
+                "arch9" => $documentos['igra_ruta_doc_homologacion'],
                 'persona_model' => $persona_model,
                 'contacto_model' => $contacto_model,
+
             ]);
 
 
             $items = [
                 [
-                    'label' => Yii::t('profesor', 'Info. Datos Personales'),
+                    'label' => Yii::t('formulario', 'Info. Datos Personales'),
                     'content' => $EditFormTab1,
                     'active' => true
                 ],
                 [
-                    'label' => Yii::t('profesor', 'Info. Datos de contacto'),
+                    'label' => Yii::t('formulario', 'Info. Datos Profesionales'),
                     'content' => $EditFormTab2,
                 ],
                 [
-                    'label' => Yii::t('profesor', 'Info. Datos en caso de Emergencia'),
+                    'label' => Yii::t('formulario', 'Info. Datos Idiomas'),
                     'content' => $EditFormTab3,
+                ],
+                [
+                    'label' => Yii::t('formulario', 'Info. Datos Discapacidad'),
+                    'content' => $EditFormTab4,
+                ],
+                [
+                    'label' => Yii::t('formulario', 'Info. Datos Adicionales'),
+                    'content' => $EditFormTab5,
+                ],
+                [
+                    'label' => Yii::t('formulario', 'Documentación'),
+                    'content' => $EditFormTab6,
                 ],
             ];
 

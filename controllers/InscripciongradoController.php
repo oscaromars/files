@@ -391,14 +391,20 @@ class InscripciongradoController extends \yii\web\Controller {
         $model_grado = new InscripcionGrado();
         $unidad_model = new UnidadAcademica();
         $carrera_model = new EstudioAcademico();
-        $moda_model = new Modalidad();        $periodo_model = new PeriodoAcademico(); 
+        $moda_model = new Modalidad();        
+        $periodo_model = new PeriodoAcademico(); 
         $data = Yii::$app->request->get();
 
         if ($data['PBgetFilter']) {
+            \app\models\Utilities::putMessageLogFile('busqueda por cedula:  '.$data['search']);
+            \app\models\Utilities::putMessageLogFile('periodooooo:  '.$data['periodo']);
+            \app\models\Utilities::putMessageLogFile('unidaddddd:  '.$data['unidad']);
+            \app\models\Utilities::putMessageLogFile('carreraaaa:  '.$data['carreras']);
+            \app\models\Utilities::putMessageLogFile('modalidadddd:  '.$data['modalidad']);
             $arrSearch["search"]      = $data['search'];
             $arrSearch["periodo"]     = $data['periodo'];  
             $arrSearch["unidad"]      = $data['unidad'];
-            $arrSearch["carrera"]      = $data['carrera'];
+            $arrSearch["carreras"]      = $data['carreras'];
             $arrSearch["modalidad"]   = $data['modalidad'];
             $model = $model_grado->consultaRegistroAdmisiongrado($arrSearch, 1);
             return $this->render('_aspirantegradogrid', [

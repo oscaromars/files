@@ -54,6 +54,26 @@ $(document).ready(function () {
         }
     });
 
+    $('#cmb_idioma2Edit').change(function () {
+        var valor = $('#cmb_idioma2Edit').val();
+        if (valor == 3) {
+            $('#cmb_nivelidioma2Edit').removeClass("PBvalidation");
+            $('#txt_nombreidiomaEdit').addClass("PBvalidation");
+            $('#cmb_nivelotroidiomaEdit').addClass("PBvalidation");
+            $('#Divotroidioma').show();
+            $('#Divotronivelidioma').show();
+            $('#Dividiomas').hide();
+        } else if (valor == 2)
+        {
+            $('#txt_nombreidiomaEdit').removeClass("PBvalidation");
+            $('#cmb_nivelotroidiomaEdit').removeClass("PBvalidation");
+            $('#cmb_nivelidioma2Edit').addClass("PBvalidation");
+            $('#Divotroidioma').hide();
+            $('#Divotronivelidioma').hide();
+            $('#Dividiomas').show();
+        }
+    });
+
     $('#cmb_tipo_dni').change(function () {
         if ($('#cmb_tipo_dni').val() == 'PASS') {
             $('#txt_cedula').removeClass("PBvalidation");
@@ -499,6 +519,14 @@ function camposnulos(campo) {
         $(campo).addClass("PBvalidation");
     }
 }
+
+function searchModules(idbox, idgrid) {
+    var arrParams = new Object();
+    arrParams.PBgetFilter = true;
+    arrParams.search = $("#" + idbox).val();
+    $("#" + idgrid).PbGridView("applyFilterData", arrParams);
+}
+
 function actualizarGridAspirantePosgrado(){
     var search = $('#txt_buscarAspirante').val();
     var año = $('#txt_año_pos option:selected').val();
@@ -580,4 +608,84 @@ function updateaspirantegrado() {
             showAlert(response.status, response.label, response.message);
         }, true);
     }
+}
+
+/** IDIOMAS **/
+function addIdioma() {
+    var idioma = $("#cmb_idioma2Edit :selected").val();
+    var nivelidioma = $("#cmb_nivelidioma2Edit :selected").text(); 
+
+    if (idioma == 3) {
+        var otroidioma = $('#txt_nombreidiomaEdit').val();
+        var otronivel = $('#cmb_nivelotroidiomaEdit').val();
+    } else {
+        nivelidioma = $('#cmb_nivelidioma2Edit').val();
+    }
+    /*if (escrito == "" || oral == "" || certificado == "" || institucion == "") {
+        fillDataAlert();
+        return;
+    }*/
+
+    var tb_item = new Array();
+    var tb_item2 = new Array();
+    var tb_acc = new Array();
+    tb_item[0] = 0;
+    tb_item[1] = idioma;
+    tb_item[2] = nivelidioma;
+    tb_item[3] = "N";
+    tb_item2[0] = 0;
+    tb_item2[1] = otroidioma;
+    tb_item2[2] = otronivel;
+    tb_item2[3] = "N";
+    //tb_acc[0] = {id: "borr", href: "", onclick:"", title: "Ver", class: "", tipo_accion: "view"};
+    tb_acc[0] = { id: "deleteN", href: "", onclick: "javascript:removeItemIdioma(this)", title: objLang.Delete, class: "", tipo_accion: "delete" };
+    var arrData = JSON.parse(sessionStorage.grid_idiomas_list);
+
+    if (arrData.data) {
+        var item = arrData.data;
+        tb_item[0] = item.length;
+        item.push(tb_item);
+        arrData.data = item;
+    } else {
+        var item = new Array();
+        tb_item[0] = 0;
+        item[0] = tb_item;
+        arrData.data = item;
+    }
+    if (arrData.label) {
+        var item2 = arrData.label;
+        tb_item2[0] = item2.length;
+        item2.push(tb_item2);
+        arrData.label = item2;
+    } else {
+        var item2 = new Array();
+        tb_item2[0] = 0;
+        item2[0] = tb_item2;
+        arrData.label = item2;
+    }
+    if (arrData.btnactions) {
+        var item3 = arrData.btnactions;
+        tb_acc[0].onclik = "javascript:removeItemIdioma(this)";
+        item3[item3.length] = tb_acc;
+        arrData.btnactions = item3;
+        // colocar codigo aqui para agregar acciones
+    } else {
+        var item3 = new Array();
+        item3[0] = tb_acc;
+        arrData.btnactions = item3;
+        // colocar codigo aqui para agregar acciones
+    }
+    sessionStorage.grid_idiomas_list = JSON.stringify(arrData);
+    addItemGridContent("grid_idiomas_list");
+
+    $("#cmb_idioma2Edit").val('');
+    $("#cmb_nivelidioma2Edit").val('');
+    $("#txt_nombreidiomaEdit").val('');
+    $("#cmb_nivelotroidiomaEdit").val('');
+}
+
+function removeItemIdioma(ref) {
+    var indice = $(ref).parent().parent().attr("data-key");
+    removeItemGridContent("grid_idiomas_list", indice);
+    removeItemsBase(indice,4);
 }

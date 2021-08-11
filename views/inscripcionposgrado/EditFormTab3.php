@@ -8,45 +8,101 @@ use kartik\date\DatePicker;
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 use app\components\CFileInputAjax;
+use app\widgets\PbGridView\PbGridView;
+use app\models\Utilities;
 ?>
 <form class="form-horizontal">
-    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12"> 
         <div class="form-group">
-            <label for="txt_per_trabajo_direccion" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("formulario", "Dirección de Trabajo") ?></label>
-            <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
-                <input type="text" class="form-control PBvalidation" id="txt_per_trabajo_direccion" value="<?= $persona_model->per_trabajo_direccion ?>" data-type="all" placeholder="<?= Yii::t("inscripcionposgrado", "Dirección de Trabajo")  ?>">
+            <label for="cmb_idioma2Edit" class="col-sm-3 control-label"><?= Yii::t("formulario", "Idioma") ?> <span class="text-danger">*</span> </label>
+            <div class="col-lg-7">
+                <?= Html::dropDownList("cmb_idioma2Edit", 0, $arr_idioma, ["class" => "form-control", "id" => "cmb_idioma2Edit"]) ?>
+            </div>
+        </div>
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">   
+        <div class="form-group" id="Dividiomas">
+            <label for="cmb_nivelidioma2Edit" class="col-sm-3 control-label"><?= Yii::t("formulario", "Nivel Idioma") ?> <span class="text-danger">*</span> </label>
+            <div class="col-lg-7">
+                <?= Html::dropDownList("cmb_nivelidioma2Edit", 0, $arr_nivelidioma, ["class" => "form-control", "id" => "cmb_nivelidioma2Edit"]) ?>
+            </div>
+        </div>
+    </div><br><br></br>
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div style="display: none;" id="Divotroidioma">
+            <label for="txt_nombreidiomaEdit" class="col-sm-3 control-label"><?= Yii::t("formulario", "Nombre del Idioma") ?> <span class="text-danger">*</span></label>
+            <div class="col-sm-7">
+                <input type="text" maxlength="10" class="form-control PBvalidation keyupmce" id="txt_nombreidiomaEdit" data-type="alfanumerico" data-keydown="true" placeholder="<?= Yii::t("formulario", "Nombre del Idioma") ?>">
             </div>
         </div>
     </div>
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-        <div class="form-group">
-            <label for="txt_contc_emergencias" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("formulario", "Contacto en caso de Emergencia") ?></label>
-            <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
-                <input type="text" class="form-control PBvalidation" id="txt_contc_emergencias" value="<?= $contacto_model->pcon_nombre ?>" data-type="all" placeholder="<?= Yii::t("inscripcionposgrado", "Nombre de Contacto en caso de Emergencia")  ?>">
+        <div style="display: none;" id="Divotronivelidioma">
+            <label for="cmb_nivelotroidiomaEdit" class="col-sm-3 control-label"><?= Yii::t("formulario", "Nivel Idioma") ?> <span class="text-danger">*</span> </label>
+            <div class="col-lg-7">
+                <?= Html::dropDownList("cmb_nivelotroidiomaEdit", 0, $arr_nivelidioma, ["class" => "form-control", "id" => "cmb_nivelotroidiomaEdit"]) ?>
             </div>
+        </div><br><br></br>
+    </div>
+    <div class="form-group">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 text-center">
+            <button type="button" class="btn btn-primary" onclick="javascript:addIdioma()"><?= Yii::t('formulario', 'Add') ?></button>
         </div>
     </div>
+
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-        <div class="form-group">
-            <label for="cmb_parentesco" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("inscripcionposgrado", "Parentesco") ?></label>
-            <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
-                <?= Html::dropDownList("cmb_parentesco", $contacto_model->tpar_id, $arr_tipparentesco, ["class" => "form-control", "id" => "cmb_parentesco"]) ?>
-            </div>
-        </div>
-    </div>
-    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-        <div class="form-group">
-            <label for="txt_cel" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("perfil", "Celular") ?></label>
-            <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
-                <input type="text" class="form-control PBvalidation" id="txt_cel" value="<?= $contacto_model->pcon_celular ?>" data-required="false" data-type="number"  placeholder="<?= Yii::t("perfil", "Celular")  ?>">
-            </div>
-        </div>
-    </div>
-    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-        <div class="form-group">
-            <label for="txt_direccion_cont" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("formulario", "Dirección de Persona en Caso de Emergencia") ?></label>
-            <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
-                <input type="text" class="form-control PBvalidation" id="txt_direccion_cont" value="<?= $contacto_model->pcon_direccion ?>" data-required="false" data-type="number"  placeholder="<?= Yii::t("formulario", "Dirección de Persona en Caso de Emergencia") ?>">
+        <div class="panel panel-secondary">
+            <div>
+            <?=
+                PbGridView::widget([
+                    'id' => 'grid_idiomas_list',
+                    'showExport' => false,
+                    //'fnExportEXCEL' => "exportExcel",
+                    //'fnExportPDF' => "exportPdf",
+                    'dataProvider' => $model,
+                    'pajax' => true,
+                    'columns' => [
+                        ['class' => 'yii\grid\SerialColumn', 'options' => ['width' => '10']],
+                        [
+                            'attribute' => 'idioma',
+                            'header' => Yii::t("inscripcionposgrado", "Idioma"),
+                            'value' => function($value){
+                                if(isset($value['idioma']) && $value['idioma'] != "" )
+                                    return $value['idioma'];
+                                return "";
+                            }
+                            /*'value' => function($value){
+                                if($value['idi'] == 3 ){
+                                    return $value['idioma'];
+                                }else if($value['idi'] != 3 ){
+                                    return $value['nombre_idioma'];
+                                }
+                            }*/
+                        ],
+                        [
+                            'attribute' => 'nivel_idioma',
+                            'header' => Yii::t("inscripcionposgrado", "Nivel de Idioma"),
+                            'value' => function($value){
+                                if(isset($value['nivel_idioma']) && $value['nivel_idioma'] != "" )
+                                    return $value['nivel_idioma'];
+                                return "";
+                            }
+                        ],
+                        [
+                            'class' => 'yii\grid\ActionColumn',
+                            //'header' => 'Action',
+                            'contentOptions' => ['style' => 'text-align: center;'],
+                            'headerOptions' => ['width' => '60'],
+                            'template' => '{delete}',
+                            'buttons' => [
+                                'delete' => function ($url, $model) {
+                                     return Html::a('<span class="'.Utilities::getIcon('remove').'"></span>', null, ['href' => 'javascript:', 'onclick' => 'javascript:removeItemIdioma(this);', "data-toggle" => "tooltip", "title" => Yii::t("accion","Delete")]);
+                                },
+                            ],
+                        ],
+                    ],
+                ])
+            ?>
             </div>
         </div>
     </div>

@@ -384,17 +384,22 @@ class InscripcionGrado extends \yii\db\ActiveRecord
     }
 
     function consultaRegistroAdmisiongrado($arrFiltro = array(), $reporte){
+        \app\models\Utilities::putMessageLogFile('cedula consulta:  '.$arrFiltro['search']);
+        \app\models\Utilities::putMessageLogFile('periodo consulta:  '.$arrFiltro['periodo']);
+            \app\models\Utilities::putMessageLogFile('unidad consulta:  '.$arrFiltro['unidad']);
+            \app\models\Utilities::putMessageLogFile('carrera consulta:  '.$arrFiltro['carreras']);
+            \app\models\Utilities::putMessageLogFile('modalidad consulta:  '.$arrFiltro['modalidad']);
         $con_inscripcion = \Yii::$app->db_inscripcion;
         $con_asgard = \Yii::$app->db_asgard;
         $con_academico = \Yii::$app->db_academico;
         $estado = 1;
 
         if (isset($arrFiltro) && count($arrFiltro) > 0) {
-            $str_search .= "(p.per_pri_nombre like :search OR ";
-            $str_search .= "p.per_seg_nombre like :search OR ";
-            $str_search .= "p.per_pri_apellido like :search OR ";
-            $str_search .= "p.per_seg_apellido like :search OR ";
-            $str_search .= "p.per_cedula like :search) AND ";
+            $str_search .= "(per.per_pri_nombre like :search OR ";
+            $str_search .= "per.per_seg_nombre like :search OR ";
+            $str_search .= "per.per_pri_apellido like :search OR ";
+            $str_search .= "per.per_seg_apellido like :search OR ";
+            $str_search .= "igra.per_cedula like :search) AND ";
 
             if ($arrFiltro['unidad'] != "" && $arrFiltro['unidad'] > 0) {
                 $str_search .= "igra.uaca_id = :unidad AND ";
@@ -441,9 +446,9 @@ class InscripcionGrado extends \yii\db\ActiveRecord
                 $search_uni = $arrFiltro["unidad"];
                 $comando->bindParam(":unidad", $search_uni, \PDO::PARAM_INT);
             }
-            if ($arrFiltro['carrera'] != "" && $arrFiltro['carrera'] > 0) {
-                $search_car = $arrFiltro["carrera"];
-                $comando->bindParam(":carrera", $search_car, \PDO::PARAM_INT);
+            if ($arrFiltro['carreras'] != "" && $arrFiltro['carreras'] > 0) {
+                $search_car = $arrFiltro["carreras"];
+                $comando->bindParam(":carreras", $search_car, \PDO::PARAM_INT);
             }
             if ($arrFiltro['modalidad'] != "" && $arrFiltro['modalidad'] > 0) {
                 $search_mod = $arrFiltro["modalidad"];
@@ -462,7 +467,7 @@ class InscripcionGrado extends \yii\db\ActiveRecord
                 'pageSize' => Yii::$app->params["pageSize"],
             ],
             'sort' => [
-                'attributes' => ['Cedula', 'estudiante',"periodo","carrera","modalidad"],
+                'attributes' => ["Cedula", "estudiante","periodo","carrera","modalidad"],
             ],
         ]);
 

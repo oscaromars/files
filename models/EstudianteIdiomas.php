@@ -3,6 +3,10 @@
 namespace app\models;
 
 use Yii;
+use yii\helpers\ArrayHelper;
+use yii\data\ArrayDataProvider;
+use app\models\Utilities;
+use yii\base\Exception;
 
 /**
  * This is the model class for table "estudiante_idiomas".
@@ -149,6 +153,40 @@ class EstudianteIdiomas extends \yii\db\ActiveRecord
                 $trans->rollback();
             return FALSE;
         }
+    }
+
+    public function getAllestudianteidiomasGrid($per_id, $onlyData=false){
+        \app\models\Utilities::putMessageLogFile('traer el per_id: ' .$per_id); 
+        $con_inscripcion = \Yii::$app->db_inscripcion;
+        $sql = "SELECT 
+                    eidi_id as Ids,
+                    eidi.per_id,
+                    eidi.idi_id as idi,
+                    idi.idi_nombre as nombre_idioma,
+                    nidi.nidi_descripcion as nivel_idioma,
+                    eidi.eidi_nombre_idioma as idioma
+                FROM db_inscripcion.estudiante_idiomas eidi
+                     inner join db_general.idioma idi on idi.idi_id = eidi.idi_id
+                     inner join db_general.nivel_idioma nidi on nidi.nidi_id = eidi.nidi_id
+                WHERE eidi.per_id = :per_id and
+                      eidi.eidi_estado_logico = 1 and 
+                      eidi.eidi_estado = 1";
+        $comando = $con_inscripcion->createCommand($sql);
+        $comando->bindParam(':per_id', $per_id, \PDO::PARAM_INT);
+        $res = $comando->queryAll();
+        if($onlyData)   return $res;
+        $dataProvider = new ArrayDataProvider([
+            'key' => 'Ids',
+            'allModels' => $res,
+            'pagination' => [
+                'pageSize' => Yii::$app->params["pageSize"],
+            ],
+            'sort' => [
+                'attributes' => ['idioma', 'nivel_idioma', 'nombre_idioma'],
+            ],
+        ]);
+
+        return $dataProvider;
     }
 
 

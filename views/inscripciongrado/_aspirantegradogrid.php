@@ -10,12 +10,12 @@ use app\modules\admision\Module as admision;
 admision::registerTranslations();
 academico::registerTranslations();
 ?>
-<?= Html::hiddenInput('txth_ids', '', ['id' => 'txth_ids']); ?>
+<!--<?= Html::hiddenInput('txth_ids', '', ['id' => 'txth_ids']); ?>-->
 <!--<div></br></div>-->
 <div>
     <?=
     PbGridView::widget([
-        'id' => 'Tbg_Registro_aspirante',
+        'id' => 'grid_registro_aspirante',
         'showExport' => true,
         'fnExportEXCEL' => "exportExcelEduregistro",
         //'fnExportPDF' => "exportPdfEduregistro",

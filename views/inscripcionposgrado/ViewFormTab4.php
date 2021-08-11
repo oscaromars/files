@@ -16,31 +16,29 @@ use app\widgets\PbGridView\PbGridView;
             <div>
             <?=
                 PbGridView::widget([
-                    'id' => 'grid_idiomas_list',
+                    'id' => 'grid_discapacidad_list',
                     'showExport' => false,
                     //'fnExportEXCEL' => "exportExcel",
                     //'fnExportPDF' => "exportPdf",
-                    'dataProvider' => $model,
+                    'dataProvider' => $model_dis,
                     'pajax' => true,
                     'columns' => [
                         ['class' => 'yii\grid\SerialColumn', 'options' => ['width' => '10']],
                         [
-                            'attribute' => 'idioma',
-                            'header' => Yii::t("inscripcionposgrado", "Idioma"),
+                            'attribute' => 'discapacidad',
+                            'header' => Yii::t("inscripcionposgrado", "Discapacidad"),
                             'value' => function($value){
-                                if($value['idi'] == 3 ){
-                                    return $value['idioma'];
-                                }else if($value['idi'] != 3 ){
-                                    return $value['nombre_idioma'];
-                                }
+                                if(isset($value['discapacidad']) && $value['discapacidad'] != "" )
+                                    return $value['discapacidad'];
+                                return "";
                             }
                         ],
                         [
-                            'attribute' => 'nivel_idioma',
-                            'header' => Yii::t("inscripcionposgrado", "Nivel de Idioma"),
+                            'attribute' => 'porcentaje',
+                            'header' => Yii::t("inscripcionposgrado", "Porcentaje de Discapacidad"),
                             'value' => function($value){
-                                if(isset($value['nivel_idioma']) && $value['nivel_idioma'] != "" )
-                                    return $value['nivel_idioma'];
+                                if(isset($value['porcentaje']) && $value['porcentaje'] != "" )
+                                    return $value['porcentaje'];
                                 return "";
                             }
                         ],
@@ -48,6 +46,6 @@ use app\widgets\PbGridView\PbGridView;
                 ])
             ?>
             </div>
-        </div>
+        </div><br><br></br>
     </div>
 </form>

@@ -1,6 +1,6 @@
 
 $(document).ready(function () {
-    $('#btn_buscarData_aspirante').click(function () {
+    $('#btn_buscarAspirante').click(function () {
         actualizarGridAspirante();
     });
     $('#cmb_carrera').change(function () {
@@ -301,9 +301,10 @@ function actualizarGridAspirante() {
     var unidad = $('#cmb_unidad_asp option:selected').val();
     var carreras = $('#cmb_carrera_asp option:selected').val();
     var modalidad = $('#cmb_modalidad_asp option:selected').val();
+
     if (!$(".blockUI").length) {
         showLoadingPopup();
-    $('#Tbg_Registro_aspirante').PbGridView('applyFilterData', {'search': search, 'periodo': periodo, 'unidad': unidad, 'carreras': carreras, 'modalidad': modalidad});
+    $('#grid_registro_aspirante').PbGridView('applyFilterData', {'search': search, 'periodo': periodo, 'unidad': unidad, 'carreras': carreras, 'modalidad': modalidad});
         setTimeout(hideLoadingPopup, 2000);
     }
 }

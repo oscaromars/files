@@ -3,6 +3,10 @@
 namespace app\models;
 
 use Yii;
+use yii\helpers\ArrayHelper;
+use yii\data\ArrayDataProvider;
+use app\models\Utilities;
+use yii\base\Exception;
 
 /**
  * This is the model class for table "info_discapacidad_est".
@@ -144,4 +148,38 @@ class InfoDiscapacidadEst extends \yii\db\ActiveRecord
             return FALSE;
         }
     }
+
+    public function getAllestudiantediscapacidadGrid($per_id, $onlyData=false){
+        \app\models\Utilities::putMessageLogFile('traer el per_id: ' .$per_id); 
+        $con_inscripcion = \Yii::$app->db_inscripcion;
+        $con_asgard = \Yii::$app->db_asgard;
+        $sql = "SELECT   
+                    ides_id as Ids,
+                    ides.per_id,
+                    ides.tdis_id as tdis,
+                    tdis.tdis_nombre as discapacidad,
+                    ides.ides_porcentaje as porcentaje
+                FROM " . $con_inscripcion->dbname . ".info_discapacidad_est ides
+                     inner join " . $con_asgard->dbname . ".tipo_discapacidad tdis on tdis.tdis_id = ides.tdis_id
+                WHERE ides.per_id = :per_id and
+                      ides.ides_estado_logico = 1 and 
+                      ides.ides_estado = 1";
+        $comando = $con_inscripcion->createCommand($sql);
+        $comando->bindParam(':per_id', $per_id, \PDO::PARAM_INT);
+        $res = $comando->queryAll();
+        if($onlyData)   return $res;
+        $dataProvider = new ArrayDataProvider([
+            'key' => 'Ids',
+            'allModels' => $res,
+            'pagination' => [
+                'pageSize' => Yii::$app->params["pageSize"],
+            ],
+            'sort' => [
+                'attributes' => ['discapacidad', 'porcentaje'],
+            ],
+        ]);
+
+        return $dataProvider;
+    }
+
 }

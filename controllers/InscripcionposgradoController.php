@@ -99,6 +99,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
         $arr_programa = $mod_programa->consultarCarreraxunidad(2);
         $arr_modalidad = $mod_programa->consultarmodalidadxcarrera($arr_programa[0]["id"]);
 
+        $arr_ciudad_nac= Canton::find()->select("can_id AS id, can_nombre AS value")->where(["can_estado_logico" => "1", "can_estado" => "1"])->asArray()->all();
         $arr_nacionalidad = Pais::find()->select("pai_id AS id, pai_nacionalidad AS value")->where(["pai_estado_logico" => "1", "pai_estado" => "1"])->asArray()->all();
         $arr_estado_civil = EstadoCivil::find()->select("eciv_id AS id, eciv_nombre AS value")->where(["eciv_estado_logico" => "1", "eciv_estado" => "1"])->asArray()->all();
         $arr_pais = Pais::find()->select("pai_id AS id, pai_nombre AS value")->where(["pai_estado_logico" => "1", "pai_estado" => "1"])->asArray()->all();
@@ -122,6 +123,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
             'arr_modalidad' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']], $arr_modalidad), 'id', 'name'),
             "tipos_dni" => array("CED" => Yii::t("formulario", "DNI Document"), "PASS" => Yii::t("formulario", "Passport")),
             "tipos_dni2" => array("CED" => Yii::t("formulario", "DNI Document1"), "PASS" => Yii::t("formulario", "Passport1")),
+            "arr_ciudad_nac" => ArrayHelper::map($arr_ciudad_nac, "id", "value"),
             "arr_nacionalidad" => ArrayHelper::map($arr_nacionalidad, "id", "value"),
             "arr_estado_civil" => ArrayHelper::map($arr_estado_civil, "id", "value"),
             "arr_pais" => ArrayHelper::map($arr_pais, "id", "value"),
@@ -344,7 +346,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
             $per_fecha_nacimiento = $data["fecha_nac"];
             $per_nacionalidad = $data["nacionalidad"]; 
             $eciv_id = $data["estado_civil"];
-            $pai_id_domicilio = $data["pais"];
+            $pai_id_domicilio = $data["nacionalidad"];
             $pro_id_domicilio = $data["provincia"];
             $can_id_domicilio = $data["canton"];
 
@@ -723,19 +725,20 @@ class InscripcionposgradoController extends \yii\web\Controller {
             /**
              * Inf. Personal
              */
-            $arr_can = Canton::findAll(["pro_id" => $persona_model->pro_id_domicilio, "can_estado" => 1, "can_estado_logico" => 1]);
+            $arr_ciudad_nac = Canton::findAll(["pro_id" => $persona_model->can_id_nacimiento, "can_estado" => 1, "can_estado_logico" => 1]);
             $arr_estado_civil = EstadoCivil::find()->select("eciv_id AS id, eciv_nombre AS value")->where(["eciv_estado_logico" => "1", "eciv_estado" => "1"])->asArray()->all();
             $arr_pais = Pais::findAll(["pai_estado" => 1, "pai_estado_logico" => 1]);
             $arr_pro = Provincia::findAll(["pai_id" => $persona_model->pai_id_domicilio, "pro_estado" => 1, "pro_estado_logico" => 1]);
             $arr_can = Canton::findAll(["pro_id" => $persona_model->pro_id_domicilio, "can_estado" => 1, "can_estado_logico" => 1]);
 
             $ViewFormTab1 = $this->renderPartial('ViewFormTab1', [
-                'arr_can' => (empty(ArrayHelper::map($arr_can, "can_id", "can_nombre"))) ? array(Yii::t("canton", "-- Select Canton --")) : (ArrayHelper::map($arr_can, "can_id", "can_nombre")),
+                'arr_ciudad_nac' => (empty(ArrayHelper::map($arr_ciudad_nac, "can_id", "can_nombre"))) ? array(Yii::t("canton", "-- Select Canton --")) : (ArrayHelper::map($arr_ciudad_nac, "can_id", "can_nombre")),
                 "arr_estado_civil" => ArrayHelper::map($arr_estado_civil, "id", "value"),
                 'persona_model' => $persona_model,
                 'arr_pais' => (empty(ArrayHelper::map($arr_pais, "pai_id", "pai_nombre"))) ? array(Yii::t("pais", "-- Select Pais --")) : (ArrayHelper::map($arr_pais, "pai_id", "pai_nombre")),
                 'arr_pro' => (empty(ArrayHelper::map($arr_pro, "pro_id", "pro_nombre"))) ? array(Yii::t("provincia", "-- Select Provincia --")) : (ArrayHelper::map($arr_pro, "pro_id", "pro_nombre")),
                 'arr_can' => (empty(ArrayHelper::map($arr_can, "can_id", "can_nombre"))) ? array(Yii::t("canton", "-- Select Canton --")) : (ArrayHelper::map($arr_can, "can_id", "can_nombre")),
+                'persona_model' => $persona_model,
             ]);
 
             /**
@@ -774,21 +777,16 @@ class InscripcionposgradoController extends \yii\web\Controller {
             /**
              * Inf. Adicional
              */
-            $discapacidades = new InfoDiscapacidadEst();
+
             $discapacidad_model = InfoDiscapacidadEst::findOne(['per_id' => $persona_model->per_id]);
-            $model_dis = $discapacidades->getAllestudiantediscapacidadGrid($discapacidad_model->per_id);
-
-            $ViewFormTab4 = $this->renderPartial('ViewFormTab4', [
-                'discapacidad_model' => $discapacidad_model,
-                'model_dis' => $model_dis,
-
-            ]);
-
             $docencia_model = InfoDocenciaEstudiante::findOne(['per_id' => $persona_model->per_id]);
             $investigaciones_model = InfoEstudianteInvestigacion::findOne(['per_id' => $persona_model->per_id]);
             $ipos_model = InscripcionPosgrado::findOne(['per_id' => $persona_model->per_id]);
+            $arr_tip_discap = TipoDiscapacidad::find()->select("tdis_id AS id, tdis_nombre AS value")->where(["tdis_estado_logico" => "1", "tdis_estado" => "1"])->asArray()->all();
 
             $ViewFormTab5 = $this->renderPartial('ViewFormTab5', [
+                "arr_tip_discap" => ArrayHelper::map(array_merge([["id" => "0", "value" => Yii::t("formulario", "-- Select --")]], $arr_tip_discap), "id", "value"),
+                'discapacidad_model' => $discapacidad_model,
                 'docencia_model' => $docencia_model,
                 'investigaciones_model' => $investigaciones_model,
                 'ipos_model' => $ipos_model,
@@ -799,20 +797,28 @@ class InscripcionposgradoController extends \yii\web\Controller {
              */
             $contacto_model = PersonaContacto::findOne(['per_id' => $persona_model->per_id]); // obtiene el pcon_id con el per_id
             $arr_tipparentesco = TipoParentesco::find()->select("tpar_id AS id, tpar_nombre AS value")->where(["tpar_estado_logico" => "1", "tpar_estado" => "1"])->asArray()->all();
-
+            $mod_insposgrado = new InscripcionPosgrado();
+            $documentos = $mod_insposgrado->ObtenerdocumentosInscripcionPosgrado($persona_model->per_id);
             $ViewFormTab6 = $this->renderPartial('ViewFormTab6', [
                 "arr_tipparentesco" => ArrayHelper::map($arr_tipparentesco, "id", "value"),
-                "arch1" => $documentos['igra_ruta_doc_titulo'],
-                "arch2" => $documentos['igra_ruta_doc_dni'],
-                "arch3" => $documentos['igra_ruta_doc_certvota'],
-                "arch4" => $documentos['igra_ruta_doc_foto'],
-                "arch5" => $documentos['igra_ruta_doc_comprobantepago'],
-                "arch6" => $documentos['igra_ruta_doc_recordacademico'],
-                "arch7" => $documentos['igra_ruta_doc_certificado'],
-                "arch8" => $documentos['igra_ruta_doc_syllabus'],
-                "arch9" => $documentos['igra_ruta_doc_homologacion'],
+                "arch1" => $documentos['ipos_ruta_doc_foto'],
+                "arch2" => $documentos['ipos_ruta_doc_dni'],
+                "arch3" => $documentos['ipos_ruta_doc_certvota'],
+                "arch4" => $documentos['ipos_ruta_doc_titulo'],
+                "arch5" => $documentos['ipos_ruta_doc_comprobantepago'],
+                "arch6" => $documentos['ipos_ruta_doc_recordacademico'],
+                "arch7" => $documentos['ipos_ruta_doc_senescyt'],
+                "arch8" => $documentos['ipos_ruta_doc_hojadevida'],
+                "arch9" => $documentos['ipos_ruta_doc_cartarecomendacion'],
+                "arch10" => $documentos['ipos_ruta_doc_certificadolaboral'],
+                "arch11" => $documentos['ipos_ruta_doc_certificadoingles'],
+                "arch12" => $documentos['ipos_ruta_doc_otrorecord'],
+                "arch13" => $documentos['ipos_ruta_doc_certificadonosancion'],
+                "arch14" => $documentos['ipos_ruta_doc_syllabus'],
+                "arch15" => $documentos['ipos_ruta_doc_homologacion'],
                 'persona_model' => $persona_model,
                 'contacto_model' => $contacto_model,
+                'documentos' => $documentos,
 
             ]);          
 
@@ -833,10 +839,6 @@ class InscripcionposgradoController extends \yii\web\Controller {
                     'content' => $ViewFormTab3,
                 ],
                 [
-                    'label' => Yii::t('inscripciongrado', 'Info. Datos Discapacidad'),
-                    'content' => $ViewFormTab4,
-                ],
-                [
                     'label' => Yii::t('inscripciongrado', 'Info. Datos Adicionales'),
                     'content' => $ViewFormTab5,
                 ],
@@ -853,26 +855,31 @@ class InscripcionposgradoController extends \yii\web\Controller {
     public function actionEdit() {
 
         if (Yii::$app->request->isAjax) {
+            
             $data = Yii::$app->request->post();
+            $fecha_registro = date(Yii::$app->params["dateTimeByDefault"]);
+            
+            //$per_id = 54;
             if ($data["upload_file"]) {
-
                 if (empty($_FILES)) {
-                    return json_encode(['error' => Yii::t("notificaciones", "Error to process File. Try again.")]);
+                    return json_encode(['error' => Yii::t("notificaciones", "Error to process File {file}. Try again.", ['{file}' => basename($files['name'])])]);
+                    return;
                 }
+                $mod_persona = new Persona();
+                $resp_persona = $mod_persona->consultarUltimoPer_id();
+                $persona = $resp_persona["ultimo"];
+                $per_id = intval( $persona );
                 //Recibe Parámetros
                 $files = $_FILES[key($_FILES)];
                 $arrIm = explode(".", basename($files['name']));
                 $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                if (($typeFile == 'png') or ( $typeFile == 'jpg') or ( $typeFile == 'jpeg')) {
-                    $dirFileEnd = Yii::$app->params["documentFolder"] . "expediente/" . $data["name_file"] . "." . $typeFile;
-                    $status = Utilities::moveUploadFile($files['tmp_name'], $dirFileEnd);
-                    if ($status) {
-                        return true;
-                    } else {
-                        return json_encode(['error' => Yii::t("notificaciones", "Error to process File " . basename($files['name']) . ". Try again.")]);
-                    }
+                $dirFileEnd = Yii::$app->params["documentFolder"] . "inscripcionposgrado/" . $per_id . "/" . $data["name_file"] . "_per_" . $per_id . "." . $typeFile;
+                $status = Utilities::moveUploadFile($files['tmp_name'], $dirFileEnd);
+                if ($status) {
+                    return true;
                 } else {
-                    return json_encode(['error' => Yii::t("notificaciones", "Error to process File " . basename($files['name']) . ". Try again.")]);
+                    return json_encode(['error' => Yii::t("notificaciones", "Error to process File {file}. Try again.", ['{file}' => basename($files['name'])])]);
+                    return;
                 }
             }
         }
@@ -979,21 +986,16 @@ class InscripcionposgradoController extends \yii\web\Controller {
             /**
              * Inf. Adicional
              */
-            $discapacidades = new InfoDiscapacidadEst();
+
             $discapacidad_model = InfoDiscapacidadEst::findOne(['per_id' => $persona_model->per_id]);
-            $model_dis = $discapacidades->getAllestudiantediscapacidadGrid($discapacidad_model->per_id);
-
-            $EditFormTab4 = $this->renderPartial('EditFormTab4', [
-                'discapacidad_model' => $discapacidad_model,
-                'model_dis' => $model_dis,
-
-            ]);
-
+            $arr_tip_discap = TipoDiscapacidad::find()->select("tdis_id AS id, tdis_nombre AS value")->where(["tdis_estado_logico" => "1", "tdis_estado" => "1"])->asArray()->all();
             $docencia_model = InfoDocenciaEstudiante::findOne(['per_id' => $persona_model->per_id]);
             $investigaciones_model = InfoEstudianteInvestigacion::findOne(['per_id' => $persona_model->per_id]);
             $ipos_model = InscripcionPosgrado::findOne(['per_id' => $persona_model->per_id]);
 
             $EditFormTab5 = $this->renderPartial('EditFormTab5', [
+                'discapacidad_model' => $discapacidad_model,
+                "arr_tip_discap" => ArrayHelper::map(array_merge([["id" => "0", "value" => Yii::t("formulario", "-- Select --")]], $arr_tip_discap), "id", "value"), //ArrayHelper::map($arr_tip_discap, "id", "value"),
                 'docencia_model' => $docencia_model,
                 'investigaciones_model' => $investigaciones_model,
                 'ipos_model' => $ipos_model,
@@ -1005,19 +1007,29 @@ class InscripcionposgradoController extends \yii\web\Controller {
             $contacto_model = PersonaContacto::findOne(['per_id' => $persona_model->per_id]); // obtiene el pcon_id con el per_id
             $arr_tipparentesco = TipoParentesco::find()->select("tpar_id AS id, tpar_nombre AS value")->where(["tpar_estado_logico" => "1", "tpar_estado" => "1"])->asArray()->all();
 
+            $mod_insposgrado = new InscripcionPosgrado();
+            $documentos = $mod_insposgrado->ObtenerdocumentosInscripcionPosgrado(['per_id' => $persona_model->per_id]);
+
             $EditFormTab6 = $this->renderPartial('EditFormTab6', [
                 "arr_tipparentesco" => ArrayHelper::map($arr_tipparentesco, "id", "value"),
-                "arch1" => $documentos['igra_ruta_doc_titulo'],
-                "arch2" => $documentos['igra_ruta_doc_dni'],
-                "arch3" => $documentos['igra_ruta_doc_certvota'],
-                "arch4" => $documentos['igra_ruta_doc_foto'],
-                "arch5" => $documentos['igra_ruta_doc_comprobantepago'],
-                "arch6" => $documentos['igra_ruta_doc_recordacademico'],
-                "arch7" => $documentos['igra_ruta_doc_certificado'],
-                "arch8" => $documentos['igra_ruta_doc_syllabus'],
-                "arch9" => $documentos['igra_ruta_doc_homologacion'],
+                "arch1" => $documentos['ipos_ruta_doc_foto'],
+                "arch2" => $documentos['ipos_ruta_doc_dni'],
+                "arch3" => $documentos['ipos_ruta_doc_certvota'],
+                "arch4" => $documentos['ipos_ruta_doc_titulo'],
+                "arch5" => $documentos['ipos_ruta_doc_comprobantepago'],
+                "arch6" => $documentos['ipos_ruta_doc_recordacademico'],
+                "arch7" => $documentos['ipos_ruta_doc_senescyt'],
+                "arch8" => $documentos['ipos_ruta_doc_hojadevida'],
+                "arch9" => $documentos['ipos_ruta_doc_cartarecomendacion'],
+                "arch10" => $documentos['ipos_ruta_doc_certificadolaboral'],
+                "arch11" => $documentos['ipos_ruta_doc_certificadoingles'],
+                "arch12" => $documentos['ipos_ruta_doc_otrorecord'],
+                "arch13" => $documentos['ipos_ruta_doc_certificadonosancion'],
+                "arch14" => $documentos['ipos_ruta_doc_syllabus'],
+                "arch15" => $documentos['ipos_ruta_doc_homologacion'],
                 'persona_model' => $persona_model,
                 'contacto_model' => $contacto_model,
+                'documentos' => $documentos,
 
             ]);
 
@@ -1036,10 +1048,10 @@ class InscripcionposgradoController extends \yii\web\Controller {
                     'label' => Yii::t('formulario', 'Info. Datos Idiomas'),
                     'content' => $EditFormTab3,
                 ],
-                [
+                /*[
                     'label' => Yii::t('formulario', 'Info. Datos Discapacidad'),
                     'content' => $EditFormTab4,
-                ],
+                ],*/
                 [
                     'label' => Yii::t('formulario', 'Info. Datos Adicionales'),
                     'content' => $EditFormTab5,

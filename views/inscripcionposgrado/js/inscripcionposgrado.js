@@ -546,7 +546,7 @@ function editaspirantegrado() {
 }
 
 function updateaspirantegrado() {
-    var link = $('#txth_base').val() + "//inscripcionposgrado/update";
+    var link = $('#txth_base').val() + "/inscripcionposgrado/update";
     var arrParams = new Object();
     arrParams.per_id = $("#frm_per_id").val();
     arrParams.pri_nombre = $('#txt_primer_nombre').val();
@@ -581,17 +581,8 @@ function updateaspirantegrado() {
     arrParams.foto = $('#txth_doc_foto').val() + ".jpg";
 
     /** Session Storages **/
-    arrParams.grid_instruccion_list = (JSON.parse(sessionStorage.grid_instruccion_list)).data;
-    arrParams.grid_docencia_list = (JSON.parse(sessionStorage.grid_docencia_list)).data;
-    arrParams.grid_experiencia_list = (JSON.parse(sessionStorage.grid_experiencia_list)).data;
-    arrParams.grid_idioma_list = (JSON.parse(sessionStorage.grid_idioma_list)).data;
-    arrParams.grid_investigacion_list = (JSON.parse(sessionStorage.grid_investigacion_list)).data;
-    arrParams.grid_evento_list = (JSON.parse(sessionStorage.grid_evento_list)).data;
-    arrParams.grid_conferencia_list = (JSON.parse(sessionStorage.grid_conferencia_list)).data;
-    arrParams.grid_publicacion_list = (JSON.parse(sessionStorage.grid_publicacion_list)).data;
-    arrParams.grid_coordinacion_list = (JSON.parse(sessionStorage.grid_coordinacion_list)).data;
-    arrParams.grid_evaluacion_list = (JSON.parse(sessionStorage.grid_evaluacion_list)).data;
-    arrParams.grid_referencia_list = (JSON.parse(sessionStorage.grid_referencia_list)).data;
+    arrParams.grid_idiomas_list = (JSON.parse(sessionStorage.grid_idioma_list)).data;
+    arrParams.grid_discapacidad_list = (JSON.parse(sessionStorage.grid_investigacion_list)).data;
 
 
     if (!validateForm()) {
@@ -637,10 +628,10 @@ function addIdioma() {
     tb_item2[1] = otroidioma;
     tb_item2[2] = otronivel;
     tb_item2[3] = "N";
+
     //tb_acc[0] = {id: "borr", href: "", onclick:"", title: "Ver", class: "", tipo_accion: "view"};
     tb_acc[0] = { id: "deleteN", href: "", onclick: "javascript:removeItemIdioma(this)", title: objLang.Delete, class: "", tipo_accion: "delete" };
     var arrData = JSON.parse(sessionStorage.grid_idiomas_list);
-
     if (arrData.data) {
         var item = arrData.data;
         tb_item[0] = item.length;
@@ -687,5 +678,5 @@ function addIdioma() {
 function removeItemIdioma(ref) {
     var indice = $(ref).parent().parent().attr("data-key");
     removeItemGridContent("grid_idiomas_list", indice);
-    removeItemsBase(indice,4);
+    removeItemsBase(indice,1);
 }

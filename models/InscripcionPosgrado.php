@@ -437,4 +437,37 @@ class InscripcionPosgrado extends \yii\db\ActiveRecord
 
         return $dataProvider;
     }
+
+    public function ObtenerdocumentosInscripcionPosgrado($per_id) {
+        \app\models\Utilities::putMessageLogFile('ver el resultado del id:  '.$per_id);
+        $con = \Yii::$app->db_inscripcion;
+        $estado = 1;
+
+        $sql = "SELECT  per_id, 
+                ipos_ruta_doc_foto, 
+                ipos_ruta_doc_dni, 
+                ipos_ruta_doc_certvota, 
+                ipos_ruta_doc_titulo, 
+                ipos_ruta_doc_comprobantepago, 
+                ipos_ruta_doc_recordacademico, 
+                ipos_ruta_doc_senescyt, 
+                ipos_ruta_doc_hojadevida, 
+                ipos_ruta_doc_cartarecomendacion, 
+                ipos_ruta_doc_certificadolaboral, 
+                ipos_ruta_doc_certificadoingles, 
+                ipos_ruta_doc_otrorecord, 
+                ipos_ruta_doc_certificadonosancion, 
+                ipos_ruta_doc_syllabus, 
+                ipos_ruta_doc_homologacion
+                FROM " . $con->dbname . ".inscripcion_posgrado
+                WHERE per_id = :per_id AND
+                      ipos_estado = :estado AND
+                      ipos_estado_logico = :estado";
+
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
+        $resultData = $comando->queryOne();
+        return $resultData;
+    }
 }

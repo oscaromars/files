@@ -1173,7 +1173,7 @@ class Persona extends \yii\db\ActiveRecord {
      * @property integer        
      * @return  
      */
-    public function insertarPersonaInscripcionposgrado($per_dni, $primer_nombre, $segundo_nombre, $primer_apellido, $segundo_apellido, $can_id_nacimiento, $per_fecha_nacimiento, $per_nacionalidad, $eciv_id, $pai_id_nacimiento, $pro_id_nacimiento, $can_id_nacimientos, $per_domicilio_ref, $per_celular, $per_domicilio_telefono, $per_correo) {
+    public function insertarPersonaInscripcionposgrado($per_dni, $primer_nombre, $segundo_nombre, $primer_apellido, $segundo_apellido, $can_id_nacimiento, $per_fecha_nacimiento, $per_nacionalidad, $eciv_id, $pai_id_domicilio, $pro_id_domicilio, $can_id_domicilio, $per_domicilio_ref, $per_celular, $per_domicilio_telefono, $per_correo) {
         //per_id
         //$per_cedula='99999999999';
         $con = \Yii::$app->db_asgard;

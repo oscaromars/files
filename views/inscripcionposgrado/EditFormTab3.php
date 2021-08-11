@@ -12,7 +12,6 @@ use app\widgets\PbGridView\PbGridView;
 use app\models\Utilities;
 ?>
 <form class="form-horizontal">
-    
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12"> 
         <div class="form-group">
             <label for="cmb_idioma2Edit" class="col-sm-3 control-label"><?= Yii::t("formulario", "Idioma") ?> <span class="text-danger">*</span> </label>
@@ -20,35 +19,33 @@ use app\models\Utilities;
                 <?= Html::dropDownList("cmb_idioma2Edit", 0, $arr_idioma, ["class" => "form-control", "id" => "cmb_idioma2Edit"]) ?>
             </div>
         </div>
-    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">   
+ 
         <div class="form-group" id="Dividiomas">
             <label for="cmb_nivelidioma2Edit" class="col-sm-3 control-label"><?= Yii::t("formulario", "Nivel Idioma") ?> <span class="text-danger">*</span> </label>
             <div class="col-lg-7">
                 <?= Html::dropDownList("cmb_nivelidioma2Edit", 0, $arr_nivelidioma, ["class" => "form-control", "id" => "cmb_nivelidioma2Edit"]) ?>
             </div>
         </div>
-    </div><br><br></br>
-    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+
         <div style="display: none;" id="Divotroidioma">
             <label for="txt_nombreidiomaEdit" class="col-sm-3 control-label"><?= Yii::t("formulario", "Nombre del Idioma") ?> <span class="text-danger">*</span></label>
             <div class="col-sm-7">
                 <input type="text" maxlength="10" class="form-control PBvalidation keyupmce" id="txt_nombreidiomaEdit" data-type="alfanumerico" data-keydown="true" placeholder="<?= Yii::t("formulario", "Nombre del Idioma") ?>">
             </div>
         </div>
-    </div>
-    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div style="display: none;" id="Divotronivelidioma">
             <label for="cmb_nivelotroidiomaEdit" class="col-sm-3 control-label"><?= Yii::t("formulario", "Nivel Idioma") ?> <span class="text-danger">*</span> </label>
             <div class="col-lg-7">
                 <?= Html::dropDownList("cmb_nivelotroidiomaEdit", 0, $arr_nivelidioma, ["class" => "form-control", "id" => "cmb_nivelotroidiomaEdit"]) ?>
             </div>
-        </div><br><br></br>
-    </div>
-    <div class="form-group">
-        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 text-center">
-            <button type="button" class="btn btn-primary" onclick="javascript:addIdioma()"><?= Yii::t('formulario', 'Add') ?></button>
+        </div>
+        <div class="form-group">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 text-center">
+                <button type="button" class="btn btn-primary" onclick="javascript:addIdioma()"><?= Yii::t('formulario', 'Add') ?></button>
+            </div>
         </div>
     </div>
+    
 
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="panel panel-secondary">
@@ -67,17 +64,12 @@ use app\models\Utilities;
                             'attribute' => 'idioma',
                             'header' => Yii::t("inscripcionposgrado", "Idioma"),
                             'value' => function($value){
-                                if(isset($value['idioma']) && $value['idioma'] != "" )
-                                    return $value['idioma'];
-                                return "";
-                            }
-                            /*'value' => function($value){
                                 if($value['idi'] == 3 ){
                                     return $value['idioma'];
                                 }else if($value['idi'] != 3 ){
                                     return $value['nombre_idioma'];
                                 }
-                            }*/
+                            }
                         ],
                         [
                             'attribute' => 'nivel_idioma',

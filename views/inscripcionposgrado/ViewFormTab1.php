@@ -63,9 +63,9 @@ use app\models\Persona;
     </div>
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
-            <label for="cmb_ciudad" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("inscripcionposgrado", "Ciudad de Nacimiento") ?></label>
+            <label for="cmb_ciudadView" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("inscripcionposgrado", "Ciudad de Nacimiento") ?></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
-                <?= Html::dropDownList("cmb_ciudad", $persona_model->can_id_nacimiento, $arr_can, ["class" => "form-control", "id" => "cmb_ciudad" , "disabled" => "disabled"]) ?>
+                <?= Html::dropDownList("cmb_ciudadView", $persona_model->can_id_nacimiento, $arr_ciudad_nac, ["class" => "form-control", "id" => "cmb_ciudadView" , "disabled" => "disabled"]) ?>
             </div>
         </div>
     </div>

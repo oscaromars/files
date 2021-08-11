@@ -526,6 +526,8 @@ class InscripciongradoController extends \yii\web\Controller {
              */
             $contacto_model = PersonaContacto::findOne(['per_id' => $persona_model->per_id]); // obtiene el pcon_id con el per_id
             $arr_tipparentesco = TipoParentesco::find()->select("tpar_id AS id, tpar_nombre AS value")->where(["tpar_estado_logico" => "1", "tpar_estado" => "1"])->asArray()->all();
+            $mod_insgrado = new InscripcionGrado();
+            $documentos = $mod_insgrado->ObtenerdocumentosInscripcionGrado(['per_id' => $persona_model->per_id]);
 
             $ViewFormTab4 = $this->renderPartial('ViewFormTab4', [
                 "arr_tipparentesco" => ArrayHelper::map($arr_tipparentesco, "id", "value"),
@@ -540,6 +542,7 @@ class InscripciongradoController extends \yii\web\Controller {
                 "arch9" => $documentos['igra_ruta_doc_homologacion'],
                 'persona_model' => $persona_model,
                 'contacto_model' => $contacto_model,
+                'documentos' => $documentos,
 
             ]);
 
@@ -678,20 +681,49 @@ class InscripciongradoController extends \yii\web\Controller {
                 'contacto_model' => $contacto_model,
             ]);
 
+            /**
+             * Documentación
+             */
+            $contacto_model = PersonaContacto::findOne(['per_id' => $persona_model->per_id]); // obtiene el pcon_id con el per_id
+            $arr_tipparentesco = TipoParentesco::find()->select("tpar_id AS id, tpar_nombre AS value")->where(["tpar_estado_logico" => "1", "tpar_estado" => "1"])->asArray()->all();
+            $mod_insgrado = new InscripcionGrado();
+            $documentos = $mod_insgrado->ObtenerdocumentosInscripcionGrado(['per_id' => $persona_model->per_id]);
+
+            $EditFormTab4 = $this->renderPartial('EditFormTab4', [
+                "arr_tipparentesco" => ArrayHelper::map($arr_tipparentesco, "id", "value"),
+                "arch1" => $documentos['igra_ruta_doc_titulo'],
+                "arch2" => $documentos['igra_ruta_doc_dni'],
+                "arch3" => $documentos['igra_ruta_doc_certvota'],
+                "arch4" => $documentos['igra_ruta_doc_foto'],
+                "arch5" => $documentos['igra_ruta_doc_comprobantepago'],
+                "arch6" => $documentos['igra_ruta_doc_recordacademico'],
+                "arch7" => $documentos['igra_ruta_doc_certificado'],
+                "arch8" => $documentos['igra_ruta_doc_syllabus'],
+                "arch9" => $documentos['igra_ruta_doc_homologacion'],
+                'persona_model' => $persona_model,
+                'contacto_model' => $contacto_model,
+                'documentos' => $documentos,
+
+            ]);
+
 
             $items = [
                 [
-                    'label' => Academico::t('profesor', 'Info. Datos Personales'),
+                    'label' => Academico::t('formulario', 'Info. Datos Personales'),
                     'content' => $EditFormTab1,
                     'active' => true
                 ],
                 [
-                    'label' => Academico::t('profesor', 'Info. Datos de contacto'),
+                    'label' => Academico::t('formulario', 'Info. Datos de contacto'),
                     'content' => $EditFormTab2,
                 ],
                 [
-                    'label' => Academico::t('profesor', 'Info. Datos en caso de Emergencia'),
+                    'label' => Academico::t('formulario', 'Info. Datos en caso de Emergencia'),
                     'content' => $EditFormTab3,
+                ],
+                [
+                    'label' => Academico::t('formulario', 'Documentos'),
+                    'content' => $EditFormTab4,
                 ],
             ];
 

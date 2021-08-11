@@ -63,6 +63,21 @@ class PlanificacionController extends \app\components\CController {
             '6' => Yii::t('formulario', 'Hora 6'),
         ];
     }
+    private function Modalidades() {
+        return [
+            '0' => Yii::t('formulario', 'Seleccionar'),
+            '1' => Yii::t('formulario', 'Online'),
+            '2' => Yii::t('formulario', 'Presencial'),
+            '3' => Yii::t('formulario', 'Semi Presencial'),
+            '4' => Yii::t('formulario', 'Distancia'),
+        ];
+    }
+
+    private function Paralelo(){
+        return [
+            '0' => Yii::t('formulario', 'Seleccionar'),
+        ];
+    }
 
         public function actionIndex() {
         if (Yii::$app->request->isAjax) {
@@ -1238,7 +1253,7 @@ $centralprocess = $malla->consultarAsignaturas($resultData[$i],$periodo,$saca_no
                     \app\models\Utilities::putMessageLogFile('modalidad y periodod '.$arrSearch['modalidad'] .'-'.$arrSearch['periodo'] );
                     \app\modules\academico\controllers\RegistroController::putMessageLogFileCartera('modalidad y periodod '.$arrSearch['modalidad'] .'-'.$arrSearch['periodo'] );
                     return $this->render('academicoestudiante', [
-                        'arr_modalidad' => ArrayHelper::map(array_merge([['id' => ($modalidad?$modalidad:"0"), 'name' => ($modalidad?$modalidad_data[$modalidad]:'Todas')]], $modalidad_data), 'id', 'name'),
+                        'arr_modalidad' => ArrayHelper::map(array_merge([['id' => ($modalidad), 'name' => ($modalidad)]], $modalidad_data), 'id', 'name'),
                         'arr_periodo' => ArrayHelper::map(array_merge([['id' => ($periodo?$periodo:"0"), 'name' => ($periodo?$arr_pla[$periodo]:'Todas')]], $arr_pla), 'id', 'name'),
                         'arr_bloque' => $this->Bloques($bloque),//ArrayHelper::map(array_merge([['id' => ($bloque?$bloque:"0"), 'name' => ($bloque?$this->Bloques()[$periodo]:'Todas')]], $this->Bloques()), 'id', 'name'),
                         'model' => $model_plan,
@@ -1255,7 +1270,7 @@ $centralprocess = $malla->consultarAsignaturas($resultData[$i],$periodo,$saca_no
                     \app\modules\academico\controllers\RegistroController::putMessageLogFileCartera('modalidad y periodod '.$arrSearch['modalidad'] .'-'.$arrSearch['periodo'] );
                     
                     return $this->render('academicoestudiante', [
-                        'arr_modalidad' => ArrayHelper::map(array_merge([['id' => ($modalidad?$modalidad:"0"), 'name' => ($modalidad?$modalidad_data[$modalidad]:'Todas')]], $modalidad_data), 'id', 'name'),
+                        'arr_modalidad' => ArrayHelper::map(array_merge([['id' => ($modalidad), 'name' => ($modalidad)]], $modalidad_data), 'id', 'name'),
                         'arr_periodo' => ArrayHelper::map(array_merge([['id' => ($periodo?$periodo:"0"), 'name' => ($periodo?$arr_pla[$periodo]:'Todas')]], $arr_pla), 'id', 'name'),
                         'arr_bloque' => $this->Bloques($bloque),//ArrayHelper::map(array_merge([['id' => ($bloque?$bloque:"0"), 'name' => ($bloque?$this->Bloques()[$periodo]:'Todas')]], $this->Bloques()), 'id', 'name'),
                         'model' => $model_plan,
@@ -1291,7 +1306,7 @@ $centralprocess = $malla->consultarAsignaturas($resultData[$i],$periodo,$saca_no
 
         return $this->render('academicoestudiante', [
                     
-                    'arr_modalidad' => ArrayHelper::map(array_merge([['id' => "0", 'name' => 'Todas']], $modalidad_data), 'id', 'name'),
+                    'arr_modalidad' => ArrayHelper::map(array_merge( $modalidad_data), 'id', 'name'),
                     'arr_bloque' => $this->Bloques(),
                     'arr_periodo' => ArrayHelper::map(array_merge([['id' => "0", 'name' => 'Todas']], $arr_pla), 'id', 'name'),
                     'model' => $model_plan,
@@ -1848,6 +1863,45 @@ inner join " . $con->dbname . ".malla_academica as b on a.pes_cod_carrera = b.ma
                     ]);
      }
 
+
+ public function actionAcademicoestudianteview() {
+        $pla_id = $_GET['pla_id'];
+        $per_id = $_GET['per_id'];
+        $saca_id = $_GET['periodo'];
+        $bloque = $_GET['bloque'];
+        $asi_id = $_GET['id'];
+        $modalidad = $_GET['modalidad'];
+        $periodo = $_GET['periodo'];
+        $materia = $_GET['materia'];
+        $mpp_id = $_GET['mpp_id'];
+        $arrSearch = [];
+        $arrSearch['bloque'] = $bloque;
+        $arrSearch['periodo'] = $periodo;
+        $arrSearch['asi_id'] = $asi_id;
+        $arrSearch['modalidad'] = $modalidad;
+        $arrSearch['mpp_id'] = $mpp_id;
+        $mod_periodo = new PlanificacionEstudiante();
+        $periodo = $mod_periodo->consultarPeriodoplanifica();
+        $uni_aca_model = new UnidadAcademica();
+        $modalidad_model = new Modalidad();
+        $modcanal = new Oportunidad();
+        $mod_jornada = new DistributivoAcademicoHorario();        
+        $unidad_acad_data = $uni_aca_model->consultarUnidadAcademicas();
+        
+        $jornada = $mod_jornada->consultarJornadahorario();
+        $model = $mod_periodo->consultarEstxMatPlan($arrSearch);
+        return $this->render('academicoestudianteview', [
+                    'arr_unidad' => ArrayHelper::map($unidad_acad_data, 'id', 'name'),
+                    'arr_modalidad' => $this->Modalidades(),//ArrayHelper::map($modalidad_data, 'id', 'name'),
+                    'arr_periodo' => ArrayHelper::map($periodo, 'id', 'name'),
+                    'arr_idcarrera' => $mod_carrera,
+                    'materia' => $materia,
+                    'periodo' => $saca_id,
+                    'id_modalidad' => $modalidad,
+                    'model_detalle' => $model,
+        ]);
+    }
+    
     public function actionNewplanificacion() {
         //$pla_id = $_GET['pla_id'];
         //$per_id = $_GET['per_id'];
@@ -1892,6 +1946,7 @@ inner join " . $con->dbname . ".malla_academica as b on a.pes_cod_carrera = b.ma
             $arrSearch['planificacion'] = $pla_id[0]["id"];
             $plan = $mod_periodo->getPlanificacionxPeriodo($periodoAcad,$per_id);
             $arrSearch['periodoAca'] = $data["periodo"];
+            $arrSearch['modalidad'] = $data['modalidad'];
             $arrSearch['saca_id'] = $saca_id;
             $model_plan = $mod_periodo->consultarDetalleplanificaaut($arrSearch,false);
             $carrera_activa = $mod_periodo->consultaracarreraxmallaaut($per_id);
@@ -1903,12 +1958,15 @@ inner join " . $con->dbname . ".malla_academica as b on a.pes_cod_carrera = b.ma
             $id_carrera = $carrera_activa['0']['id'];
             $id_pla = $pla_id[0]['id'];
             $id_modalidad = $modalidad_data[0]['id'];
-            
+            $perSelect = $data["periodo"]?$data["periodo"]:0;
+            \app\models\Utilities::putMessageLogFile('---------------------------------------------------------------');
+            \app\models\Utilities::putMessageLogFile('$perSelect: '.$perSelect);
+            \app\models\Utilities::putMessageLogFile('---------------------------------------------------------------');
               return $this->render('newplanificacion', [                 
                 'arr_unidad' => ArrayHelper::map($unidad_acad_data, 'id', 'name'),
                 //'arr_modalidad' => $id_modalidad,//ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']], $modalidad_data), 'id', 'name'),
-                'arr_malla' =>  ArrayHelper::map($mode_malla, 'id', 'name'),
-                'arr_periodo' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']], $periodo), 'id', 'name'),
+                'arr_malla' =>  ArrayHelper::map($mode_malla, 'id', 'name'),//($periodo?$arr_pla[$periodo]:'Todas')
+                'arr_periodo' => ArrayHelper::map(array_merge([['id' => ($perSelect),'name' =>  ($perSelect?$periodo[$perSelect]:'Seleccionar')]], $periodo), 'id', 'name'),
                 'arr_jornada' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']], $jornada), 'id', 'name'),
                 'arr_bloque' => $this->Bloques(),
                 'arr_hora' => $this->Horas(),
@@ -1924,6 +1982,8 @@ inner join " . $con->dbname . ".malla_academica as b on a.pes_cod_carrera = b.ma
                 'pla_id' => $id_pla,//ArrayHelper::map($pla_id, 'id', 'name'),
                 'per_id' => $per_id,
                 'existe' => $existe,
+                'perSelect' => $perSelect?$perSelect:0,
+                'arr_paralelo' => $this->Paralelo(),
                 
                 $this->renderPartial('procesoplanificacion-grid', [
                     'model' => $model_plan,
@@ -1966,11 +2026,15 @@ inner join " . $con->dbname . ".malla_academica as b on a.pes_cod_carrera = b.ma
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
             }
         }
+        $perSelect = $data["periodo"]?$data["periodo"]:0;
+        \app\models\Utilities::putMessageLogFile('---------------------------------------------------------------');
+        \app\models\Utilities::putMessageLogFile('$perSelect: '.$perSelect);
+        \app\models\Utilities::putMessageLogFile('---------------------------------------------------------------');
         return $this->render('newplanificacion', [                 
                     'arr_unidad' => ArrayHelper::map($unidad_acad_data, 'id', 'name'),
                     'arr_modalidad' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']], $modalidad_data), 'id', 'name'),
                     'arr_malla' =>  ArrayHelper::map($mode_malla, 'id', 'name'),
-                    'arr_periodo' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']], $periodo), 'id', 'name'),
+                    'arr_periodo' => ArrayHelper::map(array_merge([['id' => ($perSelect),'name' =>  ($perSelect?$periodo[$perSelect]:'Seleccionar')]], $periodo), 'id', 'name'),
                     'arr_jornada' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']], $jornada), 'id', 'name'),
                     'arr_bloque' => $this->Bloques(),
                     'arr_hora' => $this->Horas(),
@@ -1986,8 +2050,30 @@ inner join " . $con->dbname . ".malla_academica as b on a.pes_cod_carrera = b.ma
                     'pla_id' => $id_pla,//ArrayHelper::map($pla_id, 'id', 'name'),
                     'per_id' => $per_id,
                     'existe' => $existe,
+                    'perSelect' => $perSelect?$perSelect:0,
+                    'arr_paralelo' => $this->Paralelo(),
 
         ]);
     }
 
+    public function actionListarparalelos(){
+        if (Yii::$app->request->isAjax) {
+            $data = Yii::$app->request->post();
+            $asi_id = $data['asi_id'];
+            $saca_id = $data['saca_id'];
+            $mod_id = $data['mod_id'];
+            $mod_malla = new MallaAcademica();
+            $paralelos = $mod_malla->consultaParalelosxMateria($asi_id,$saca_id,$mod_id);
+            return json_encode($paralelos);
+        }
+    }
+    public function actionHorarioparalelos(){
+        if (Yii::$app->request->isAjax) {
+            $data = Yii::$app->request->post();
+            $mpp_id = $data['mpp_id'];
+            $mod_malla = new MallaAcademica();
+            $horario = $mod_malla->consultaHorarioxParalelo($mpp_id);
+            return json_encode($horario);
+        }
+    }
 }

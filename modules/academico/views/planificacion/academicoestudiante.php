@@ -1,6 +1,8 @@
 <?php
 
 use yii\helpers\Html;
+use yii\helpers\Url;
+use app\models\Utilities;
 use app\widgets\PbGridView\PbGridView;
 $this->title = Yii::t('app', 'Resumen de Planificacion');
 $this->params['breadcrumbs'][] = $this->title;
@@ -9,34 +11,39 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <div class="row">
    
-    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 form-group">
         <div class="form-group">
-             <label for="lbl_modalidad" class="col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= Yii::t("formulario", "Mode"); ?></label>
-            <div class="col-sm-3 col-md-3 col-xs-3 col-lg-3">
-                <?= Html::dropDownList("cmb_modalidadesacad", 0, $arr_modalidad, ["class" => "form-control", "id" => "cmb_modalidadesacad"]) ?>
-            </div> 
-            <label for="lbl_periodo" class="col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= Yii::t("formulario", "Period"); ?></label>
-            <div class="col-sm-3 col-md-3 col-xs-3 col-lg-3">
-                <?= Html::dropDownList("cmb_periodoacad", 0, $arr_periodo, ["class" => "form-control", "id" => "cmb_periodoacad"]) ?>
+            <div class="col-lg-6 col-md-6">
+                <label for="lbl_modalidad" class="col-lg-6 col-md-6 col-sm-12 col-xs-12 control-label"><?= Yii::t("formulario", "Mode"); ?></label>
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                    <?= Html::dropDownList("cmb_modalidadesacad", 0, $arr_modalidad, ["class" => "form-control", "id" => "cmb_modalidadesacad"]) ?>
+                </div> 
+            </div>
+            <div class="col-lg-6 col-md-6">
+                <label for="lbl_periodo" class="col-lg-6 col-md-6 col-sm-12 col-xs-12 control-label"><?= Yii::t("formulario", "Period"); ?></label>
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                    <?= Html::dropDownList("cmb_periodoacad", 0, $arr_periodo, ["class" => "form-control", "id" => "cmb_periodoacad"]) ?>
+                </div>                  
             </div>                  
         </div>        
-    </div>   <br>     
-    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">  
+    </div>     
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 form-group">  
         <div class="form-group">
-</br>
-            <label for="lbl_bloque" class="col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= Yii::t("formulario", "Bloque"); ?></label>
-            <div class="col-sm-3 col-md-3 col-xs-3 col-lg-3">
-                <?= Html::dropDownList("cmb_bloqueacad", 0, $arr_bloque, ["class" => "form-control", "id" => "cmb_bloqueacad"]) ?>
+            <div class="col-lg-6 col-md-6">
+                <label for="lbl_bloque"class="col-lg-6 col-md-6 col-sm-12 col-xs-12 control-label"><?= Yii::t("formulario", "Bloque"); ?></label>
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                    <?= Html::dropDownList("cmb_bloqueacad", 0, $arr_bloque, ["class" => "form-control", "id" => "cmb_bloqueacad"]) ?>
+                </div> 
             </div> 
-            <div class="col-sm-3"></div>                
-            <div class="col-sm-2">                
-            <a id="btn_buscarPlanestudiante" href="javascript:" class="btn btn-primary btn-block"> <?= Yii::t("formulario", "Search") ?></a>
+            <div class="col-lg-6 col-md-6">            
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12"  style="float:right">            
+                <a id="btn_buscarPlanestudiante" href="javascript:" class="btn btn-primary btn-block"> <?= Yii::t("formulario", "Search") ?></a>
+                </div>
+            </div>
         </div>
-        </div>
-        
     </div>
-</div></br>
-<div>        
+</div>
+<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 form-group">        
     <?=
     PbGridView::widget([
         'id' => 'PbPlanificaestudiante',
@@ -51,35 +58,41 @@ $this->params['breadcrumbs'][] = $this->title;
                 'value' => 'Materia',
             ],
             [
+                'attribute' => 'Paralelo',
+                'header' => Yii::t("formulario", "Paralelo"),
+                'value' => 'Paralelo',
+            ],
+            [
                 'attribute' => 'Cantidad',
                 'header' => Yii::t("formulario", "Cantidad"),
-                'value' => 'Cantidad',
+                'value' => 'total',
             ],
-            /*[
-                'attribute' => 'Modalidad',
-                'header' => Yii::t("formulario", "Modalidad"),
-                'value' => 'id_modalidad',
-            ],*/
-            /*
+            [
+                'attribute' => 'Bloque',
+                'header' => Yii::t("formulario", "Bloque"),
+                'value' => 'bloque',
+            ],
             [
                 'class' => 'yii\grid\ActionColumn',
-                'header' => 'Accion',
-                'contentOptions' => ['style' => 'text-align: center;'],
-                'headerOptions' => ['width' => '60'],
-                'template' => '{view} {delete}',
+                'contentOptions' => ['class' => 'text-center'],
+                'headerOptions' => ['class' => 'text-center'],
+                'header' => 'Acciones',
+                //'template' => '{view}{delete}{Approbe}{Download}{Reversar}',
+                'template' => '{view}',
+              //  'contentOptions' => ['class' => 'text-center'],
                 'buttons' => [
                     'view' => function ($url, $model) {
-                        return Html::a('<span class="' . Utilities::getIcon('view') . '"></span>', Url::to(['planificacion/view', 'pla_id' => $model['pla_id'], 'per_id' => $model['per_id']]), ["data-toggle" => "tooltip", "title" => Yii::t("accion", "View")]);
+                        return Html::a('<span class="' . Utilities::getIcon('view') . '"></span>', Url::to(['/academico/planificacion/academicoestudianteview', 
+                                                                                                            'id' => $model['id'],
+                                                                                                            'modalidad' => $model['mod_id'],
+                                                                                                            'periodo' => $model['saca_id'],
+                                                                                                            'bloque' => substr($model['bloque'],-1),
+                                                                                                            'materia' => $model['Materia'],
+                                                                                                            'mpp_id' => $model['mpp_id'],
+                                                                                                            ]));
                     },
-                    'delete' => function ($url, $model) {
-                    //if ($model['est_id'] > 1 && $model["estado"] == 'Activo') {
-                        return Html::a('<span class="glyphicon glyphicon-remove"></span>', "#", ['onclick' => "deleteplanestudiante(" . $model['pla_id'] . ", " . $model['per_id'] . ");", "data-toggle" => "tooltip", "title" => "Eliminar Planificación", "data-pjax" => 0]);
-                    //} else {
-                        return '<span class="glyphicon glyphicon glyphicon-remove"></span>';
-                    //}
-                }
                 ],
-            ],*/
+            ],
         ],
     ])
     ?>

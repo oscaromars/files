@@ -1924,5 +1924,30 @@ public function consultaParalelosxMateria($asi_id,$saca_id,$mod_id) {
     \app\models\Utilities::putMessageLogFile('Consultar Paralelos N: '.implode(",", $resultData));
     return $dataProvider;
 }
+public function consultaHorarioxParalelo($mpp_id) {
+    $con = \Yii::$app->db_academico;
+    $estado = 1;
+    $sql = "SELECT ifnull(mpp.mpp_id,'0') as id,
+            ifnull(daho.daho_descripcion,'Seleccionar') as nombre 
+            from db_academico.materia_paralelo_periodo mpp 
+            inner join db_academico.distributivo_academico_horario daho on daho.daho_id = mpp.daho_id
+            where mpp.mpp_id = $mpp_id;";
+    $comando = $con->createCommand($sql);
+    \app\models\Utilities::putMessageLogFile('Consultar Paralelos: '.$comando->getRawSql());
+    $resultData = $comando->queryAll();
+    //\app\modules\academico\controllers\RegistroController::putMessageLogFileCartera('consultarModalidad: '.$comando->getRawSql());
+    $dataProvider = new ArrayDataProvider([
+        'key' => 'id',
+        'allModels' => $resultData,
+        'pagination' => [
+            'pageSize' => Yii::$app->params["pageSize"],
+        ],
+        'sort' => [
+            'attributes' => [],
+        ],
+    ]);
+    \app\models\Utilities::putMessageLogFile('Consultar horario Paralelos N: '.implode(",", $resultData));
+    return $dataProvider;
+}
 
 }

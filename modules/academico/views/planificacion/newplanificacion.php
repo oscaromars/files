@@ -130,16 +130,26 @@ academico::registerTranslations();
         </div>
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 form-group">  
             <div class="col-lg-6 col-md-6">               
-                <label for="lbl_horaest" class="col-lg-3 col-md-3 col-sm-12 col-xs-12 control-label"><?= academico::t("Academico", "Hour"); ?> <span class="text-danger">*</span> </label>
-                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12" id="hora_cmb">
-                    <?= Html::dropDownList("cmb_horaest", 0, $arr_hora, ["class" => "form-control", "id" => "cmb_horaest","disabled" => "true"]) ?>
-                </div> 
+                    <label for="lbl_horaest" class="col-lg-3 col-md-3 col-sm-12 col-xs-12 control-label"><?= academico::t("Academico", "Hour"); ?> <span class="text-danger">*</span> </label>
+                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12" id="hora_cmb">
+                        <?= Html::dropDownList("cmb_horaest", 0, $arr_hora, ["class" => "form-control", "id" => "cmb_horaest"]) ?>
+                    </div> 
             </div>
             <div class="col-lg-6 col-md-6">               
                 <label for="lbl_paraleloest" class="col-lg-3 col-md-3 col-sm-12 col-xs-12 control-label"><?= academico::t("Academico", "Paralelo"); ?> <span class="text-danger">*</span> </label>
                 <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12" id="paralelo_cmb">
                     <?= Html::dropDownList("cmb_paraleloest", 0, $arr_paralelo, ["class" => "form-control", "id" => "cmb_paraleloest","disabled" => "true"]) ?>
                 </div> 
+            </div>
+        </div>
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 form-group">  
+            <div class="col-lg-6 col-md-6">               
+            </div> 
+            <div class="col-lg-6 col-md-6">               
+                    <label for="lbl_horario" class="col-lg-3 col-md-3 col-sm-12 col-xs-12 control-label"><?= academico::t("Academico", "Horario"); ?> <span class="text-danger">*</span> </label>
+                    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12" id="horario_cmb">
+                        <?= Html::dropDownList("cmb_horario", 0, $arr_hora, ["class" => "form-control", "id" => "cmb_horario","disabled" => "true"]) ?>
+                    </div> 
             </div>
         </div>
 
@@ -183,6 +193,11 @@ academico::registerTranslations();
                                 'attribute' => 'jornada',
                                 'header' => academico::t("Academico", "Working day"),
                                 'value' => 'pes_jornada',
+                            ],
+                            [
+                                'attribute' => 'hora',
+                                'header' => academico::t("Academico", "Hour"),
+                                'value' => 'Hora 1',
                             ],          
                             [
                                 'attribute' => 'bloque',
@@ -200,10 +215,9 @@ academico::registerTranslations();
                                 'value' => 'modalidad',
                             ],
                             [
-                                'attribute' => 'hora',
-                                'header' => academico::t("Academico", "Hour"),
+                                'attribute' => 'horario',
+                                'header' => academico::t("Academico", "Horario"),
                                 'value' => 'horario',
-                                //'value' => 'Hora 1',
                             ],
                             [
                                 'class' => 'yii\grid\ActionColumn',

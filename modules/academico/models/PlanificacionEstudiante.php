@@ -1207,51 +1207,38 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
     public function confirmarPlanificacionExistente($pla_id, $per_id, $periodo, $id) {
         $con = \Yii::$app->db_academico;
         $con2 = \Yii::$app->db_asgard;
-        $pes_usuario_modificacion = date(Yii::$app->params["dateTimeByDefault"]);
+        $fecha_modificacion= date(Yii::$app->params["dateTimeByDefault"]);
         $estado = 1;
    
         try {
             if($per_id == null){
                 $resultData = [];
             }else{
-                $sql = ("SELECT * from " . $con->dbname . ".planificacion_estudiante                                              
-                        WHERE 
-                        per_id = $per_id AND
-                        pes_estado = 1 AND
-                        pes_estado_logico = 1;");
+                $sql = ("SELECT * from " . $con->dbname . ".planificacion_estudiante pe
+                        inner join " . $con->dbname . ".planificacion pla on pla.saca_id = $periodo and pla.pla_id = pe.pla_id
+                        where pe.per_id = $per_id;");
                 $comando = $con->createCommand($sql);
                 $resultData = $comando->queryOne(); 
             }
             
             if($resultData == null){
-                $pla_periodo_academico = $periodo;
-                $saca_id = $id;
-                $sql2 = ("INSERT into " . $con->dbname . ".planificacion(per_id,mod_id,pla_estado,pla_estado_logico,pla_periodo_academico,saca_id)
-                    select distinct(est.per_id),meu.mod_id,1,1,'$pla_periodo_academico',$saca_id from db_academico.modalidad_estudio_unidad meu
-                    inner join " . $con->dbname . ".estudio_academico es on meu.eaca_id = es.eaca_id
-                    inner join " . $con->dbname . ".estudiante_carrera_programa ecp on ecp.meun_id = meu.meun_id
-                    inner join " . $con->dbname . ".estudiante est on est.est_id = ecp.est_id
-                    inner join " . $con->dbname . ".malla_unidad_modalidad muo on muo.meun_id = meu.meun_id
-                    inner join " . $con->dbname . ".malla_academica_detalle mad on mad.maca_id = muo.maca_id
-                    where est.per_id = $per_id;");
-                    $comando2 = $con->createCommand($sql2);
-                    $result2 = $comando2->execute();
-
                 $sql3 = 
-                    ("INSERT INTO " . $con->dbname . ".planificacion_estudiante(pes_cod_malla,pes_carrera,per_id,pes_dni,pes_nombres,pla_id,pes_estado,pes_estado_logico)
-                    select distinct(ma.maca_codigo),ma.maca_nombre,e.per_id, pe.per_cedula, 
-                    concat(pe.per_pri_nombre, ' ', pe.per_seg_nombre,' ', pe.per_pri_apellido, ' ',pe.per_seg_apellido) as nombres, 1 as pla_id, 1,1
-                    from " . $con->dbname . ".estudiante_carrera_programa ecp 
-                    inner join " . $con->dbname . ".modalidad_estudio_unidad meu on ecp.meun_id = meu.meun_id
-                    inner join " . $con->dbname . ".estudio_academico es on es.eaca_id = meu.eaca_id 
-                    inner join " . $con->dbname . ".estudiante e on e.est_id = ecp.est_id
-                    inner join " . $con->dbname . ".malla_academico_estudiante maes on maes.per_id = e.per_id 
-                    inner join " . $con->dbname . ".malla_academica ma on ma.maca_id = maes.maca_id
-                    inner join " . $con2->dbname . ".persona pe on pe.per_id = e.per_id
-                    where e.per_id = $per_id");
+                    ("INSERT INTO " . $con->dbname . ".planificacion_estudiante(pes_cod_malla,pes_carrera,per_id,pes_dni,pes_jornada,pes_nombres,pla_id,pes_estado,pes_estado_logico,pes_fecha_creacion)
+                    select distinct(ma.maca_codigo),ma.maca_nombre,e.per_id, pe.per_cedula, ecpr_jornada as jornada,
+                                        concat(pe.per_pri_nombre, ' ', pe.per_seg_nombre,' ', pe.per_pri_apellido, ' ',pe.per_seg_apellido) as nombres, pla.pla_id as pla_id, $estado,$estado,
+                                        $fecha_modificacion
+                                        from " . $con->dbname . ".estudiante_carrera_programa ecp 
+                                        inner join " . $con->dbname . ".modalidad_estudio_unidad meu on ecp.meun_id = meu.meun_id
+                                        inner join " . $con->dbname . ".estudio_academico es on es.eaca_id = meu.eaca_id 
+                                        inner join " . $con->dbname . ".estudiante e on e.est_id = ecp.est_id and  ecp.est_id = e.est_id
+                                        inner join " . $con->dbname . ".malla_academico_estudiante maes on maes.per_id = e.per_id 
+                                        inner join " . $con->dbname . ".malla_academica ma on ma.maca_id = maes.maca_id
+                                        inner join " . $con2->dbname . ".persona pe on pe.per_id = e.per_id
+                                        inner join " . $con->dbname . ".planificacion pla on pla.saca_id = $periodo and meu.mod_id = pla.mod_id
+                                        where e.per_id = $per_id;");
                     $comando3 = $con->createCommand($sql3);
                 $result3 = $comando3->execute();
-                $resultData = $resultData + $result2 + $result3;                
+                $resultData = $resultData  + $result3;                
                 return $resultData;
                 
             }else{

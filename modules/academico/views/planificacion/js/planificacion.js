@@ -59,9 +59,6 @@ $(document).ready(function () {
         var saca_id = $('#cmb_periodoest option:selected').val();
         console.log('asi_id: '+asi_id+' mod_id: '+mod_id+' saca_id: '+saca_id);
         if(asi_id != 0 && mod_id != 0 && saca_id != 0){
-            $('#cmb_paraleloest').prop("disabled",false); 
-            $("#cmb_paraleloest")[0].selectedIndex=0;
-            //alert('ok');
             listarParalelos();
         }
     });
@@ -71,9 +68,6 @@ $(document).ready(function () {
         var saca_id = $('#cmb_periodoest option:selected').val();
         console.log('asi_id: '+asi_id+' mod_id: '+mod_id+' saca_id: '+saca_id);
         if(asi_id != 0 && mod_id != 0 && saca_id != 0){
-            $('#cmb_paraleloest').prop("disabled",false); 
-            $("#cmb_paraleloest")[0].selectedIndex=0;
-            //alert('ok');
             listarParalelos();
         }
     });
@@ -83,9 +77,6 @@ $(document).ready(function () {
         var saca_id = $('#cmb_periodoest option:selected').val();
         console.log('asi_id: '+asi_id+' mod_id: '+mod_id+' saca_id: '+saca_id);
         if(asi_id != 0 && mod_id != 0 && saca_id != 0){
-            $('#cmb_paraleloest').prop("disabled",false); 
-            $("#cmb_paraleloest")[0].selectedIndex=0;
-            //alert('ok');
             listarParalelos();
         }
     });
@@ -1201,6 +1192,7 @@ function modificarplanificacionaut() {
     arrParams.nombreest = $('#cmb_buscarest').val();
     arrParams.pla_id = $('#txth_pla_id').val();
     arrParams.per_id = $('#txth_per_id').val();
+    arrParams.mpp_id = $('#cmb_paraleloest').val();
     //alert($('#txth_base').val()+':1-' + $('#cmb_jornadaest').val()+':2-'+$('#txt_carrera').val()+':3-'+$('#cmb_modalidadest').val()+':4-'+$('#cmb_periodoest').val()+':5-'+$('#cmb_buscarest').val()+':6-'+$('#txth_pla_id').val()+':7-'+$('#txth_per_id').val());
     //if ($('#cmb_jornadaest').val() != '0' && $('#txt_carrera').text() != 'Seleccionar' && $('#cmb_modalidadest').val() != '0' && /*$('#cmb_malladoest').val() != '0' &&*/ $('#cmb_periodoest').val() != '0' && $('#cmb_buscarest').val() > '0') {
     if (sessionStorage.dts_datosItemplan) {
@@ -1260,7 +1252,7 @@ function listarHorario(){
             var obj = JSON.parse(datos);
             var html = '';
             var id = 0;
-            alert(obj);
+           //alert(obj);
             $.each(obj.allModels, function( index, value ) {
                 var data = (value);                    
                 $.each(data, function( index2, value2 ) {
@@ -1272,70 +1264,72 @@ function listarHorario(){
                     }
                 });        
             });
-            $('#cmb_horaest').prop("disabled",true); 
-            $("#cmb_horaest").html(html);
-           alert(html);
+           $('#cmb_horario').prop("disabled",true); 
+           $("#cmb_horario").html(html);
+          // alert(html);
           }
     });
 }
 
 function listarParalelos(){
-    var link = $('#txth_base').val() + "/academico/planificacion/listarparalelos";
-    var asi_id = $('#cmb_asignaest option:selected').val();
-    var mod_id = $('#cmb_modalidadesth option:selected').val();
-    var saca_id = $('#cmb_periodoest option:selected').val();
-    data = new FormData();
-    data.append( 'accion' , "estudiante" );
-    data.append( 'asi_id' , asi_id );
-    data.append( 'mod_id', mod_id);
-    data.append( 'saca_id' , saca_id);
-    //alert(link);
-    //DBE
-    $.ajax({
-        data: data,
-        type: "POST",
-        dataType: "json",
-        cache      : false,
-        contentType: false,
-        processData: false,
-        async: false,
-        url: link,
-        success: function (data) {
-            var datos = JSON.stringify(data);
-            var obj = JSON.parse(datos);
-            var html = '<option value="0" selected="">Seleccionar</option>';
-            var id = 0;
-            var count = 0;
-            $.each(obj.allModels, function( index, value ) {
-                var data = (value);                    
-                $.each(data, function( index2, value2 ) {
-                    if(index2 == 'id'){
-                        id = value2;
-                    }
-                    if(index2 == 'nombre'){
-                        html = html + `<option value=${id} >${value2}</option>`;
-                        count++;
-                    }
-                });        
-            });
-            alert('cantidad: '+count);
-            $('#cmb_paraleloest').prop("disabled",false); 
-            $("#cmb_paraleloest").html(html);
-           // alert(html);
-          }
-    });
-    /*.done(function( qXHR ) {
-        /*if($('#cmb_modalidadesth option:selected').val() == 3 || $('#cmb_modalidadesth option:selected').val() == 4){
-            var html_texto = `<option value="0" selected="">Seleccionar</option>
-            <option value="${data.id}">${data.nombre}</option>
-            <option value="2">Hora 2</option>
-            <option value="3">Hora 3</option>`;
-        }
-        $("#cmb_paraleloest").html(html_texto);*/
-       // var datos = JSON.stringify(qXHR);
-        //alert('Datos: '+datos);
-        /*
-     });*/
+   var link = $('#txth_base').val() + "/academico/planificacion/listarparalelos";
+   var asi_id = $('#cmb_asignaest option:selected').val();
+   var mod_id = $('#cmb_modalidadesth option:selected').val();
+   var saca_id = $('#cmb_periodoest option:selected').val();
+   data = new FormData();
+   data.append( 'asi_id' , asi_id );
+   data.append( 'mod_id', mod_id);
+   data.append( 'saca_id' , saca_id);
+   //alert(link);
+   //DBE
+   $.ajax({
+       data: data,
+       type: "POST",
+       dataType: "json",
+       cache      : false,
+       contentType: false,
+       processData: false,
+       async: false,
+       url: link,
+       success: function (data) {
+           var datos = JSON.stringify(data);
+           var obj = JSON.parse(datos);
+           var html = '<option value="0" selected="">Seleccionar</option>';
+           var id = 0;
+           var count = 0;
+           //alert(obj);
+           $.each(obj.allModels, function( index, value ) {
+               var data = (value);                    
+               $.each(data, function( index2, value2 ) {
+                   if(index2 == 'id'){
+                       id = value2;
+                   }
+                   if(index2 == 'nombre'){
+                       html = html + `<option value=${id} >${value2}</option>`;
+                       count++;
+                   }
+               }); 
+           });
+           if(count>0){
+               $('#cmb_paraleloest').prop("disabled",false); 
+               $("#cmb_paraleloest")[0].selectedIndex=0;
+           }
+           $("#cmb_paraleloest").html(html);
+          // alert(html);
+         }
+   });
+   /*.done(function( qXHR ) {
+       /*if($('#cmb_modalidadesth option:selected').val() == 3 || $('#cmb_modalidadesth option:selected').val() == 4){
+           var html_texto = `<option value="0" selected="">Seleccionar</option>
+           <option value="${data.id}">${data.nombre}</option>
+           <option value="2">Hora 2</option>
+           <option value="3">Hora 3</option>`;
+       }
+       $("#cmb_paraleloest").html(html_texto);*/
+      // var datos = JSON.stringify(qXHR);
+       //alert('Datos: '+datos);
+       /*
+    });*/
 
    // window.location.href = $('#txth_base').val() + "/academico/planificacion/newplanificacion";
 }

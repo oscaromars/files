@@ -72,8 +72,12 @@ function updatehorario() {
      arrParams.asi_id = $("#txth_asi").val()
      arrParams.paca_id = $("#txth_paca").val();
      arrParams.mpp_num_paralelo = $("#mpp_num_paralelo").val();
+     if (arrParams.daho_id == '0') {
+        var mensaje = {wtmessage: "Horario : El campo no debe estar vacío.", title: "Error"};
+        showAlert("NO_OK", "error", mensaje);
 
-   requestHttpAjax(link, arrParams, function (response) {
+    } else {
+     requestHttpAjax(link, arrParams, function (response) {
         showAlert(response.status, response.label, response.message);
           if (response.status == "OK") {
                         setTimeout(function () {
@@ -82,5 +86,5 @@ function updatehorario() {
 
           }
     }, true);
-
+  }
 }

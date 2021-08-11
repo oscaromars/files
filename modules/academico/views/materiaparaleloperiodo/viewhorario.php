@@ -10,6 +10,10 @@ academico::registerTranslations();
 admision::registerTranslations();
 ?>
 <?= Html::hiddenInput('txth_ids', $paraleloperiodo[0]['mpp_id'], ['id' => 'txth_ids']); ?>
+<?= Html::hiddenInput('txth_mod', $paraleloperiodo[0]['mod_id'], ['id' => 'txth_mod']); ?>
+<?= Html::hiddenInput('txth_asi', $paraleloperiodo[0]['asi_id'], ['id' => 'txth_asi']); ?>
+<?= Html::hiddenInput('txth_paca', $paraleloperiodo[0]['paca_id'], ['id' => 'txth_paca']); ?>
+
 
 <form class="form-horizontal" enctype="multipart/form-data" >
     <div class="col-md-10 col-sm-10 col-xs-10 col-lg-10">

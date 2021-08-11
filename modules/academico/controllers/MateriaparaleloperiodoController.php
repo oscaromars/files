@@ -274,7 +274,7 @@ class MateriaparaleloperiodoController extends \app\components\CController {
             ]);
      }
 
-    public function actionViewhorario(/*$mod_id,$paca_id,$asi_id*/)
+    public function actionViewhorario()
      {
 
         $modhorarios = new DistributivoAcademicoHorario();
@@ -296,5 +296,46 @@ class MateriaparaleloperiodoController extends \app\components\CController {
                  'horarios' => ArrayHelper::map(array_merge([["id" => "0", "name" => "Seleccionar"]], $horarios), "id", "name"),
              ]);
       }
+
+      public function actionUpdatehorario() {
+        $materiamodel = new MateriaParaleloPeriodo();
+        $usu_autenticado = @Yii::$app->session->get("PB_iduser");
+        if (Yii::$app->request->isAjax) {
+            $data = Yii::$app->request->post();
+            $mpp_id = $data["mpp_id"];
+            $daho_id = $data["daho_id"];
+            $fecha = date(Yii::$app->params["dateTimeByDefault"]);
+            $con = \Yii::$app->db_academico;
+            $transaction = $con->beginTransaction();
+            try {
+                $resphorario = $materiamodel->modificarMateriaparalelo($mpp_id, $daho_id, $usu_autenticado, $fecha);
+                if ($resphorario) {
+                    $exito = '1';
+                }
+                if ($exito) {
+                    $transaction->commit();
+                    $message = array(
+                        "wtmessage" => Yii::t("notificaciones", "Se ha modificado el horario del paralelo."),
+                        "title" => Yii::t('jslang', 'Success'),
+                    );
+                    return Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), false, $message);
+                } else {
+                    $transaction->rollback();
+                    $message = array(
+                        "wtmessage" => Yii::t("notificaciones", "Error al modificar el paralelo. "),
+                        "title" => Yii::t('jslang', 'Error'),
+                    );
+                    return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+                }
+            } catch (Exception $ex) {
+                $transaction->rollback();
+                $message = array(
+                    "wtmessage" => Yii::t("notificaciones", "Error al realizar la acción. "),
+                    "title" => Yii::t('jslang', 'Success'),
+                );
+                return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+            }
+        }
+    }
 
 }

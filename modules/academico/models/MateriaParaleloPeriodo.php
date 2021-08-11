@@ -234,4 +234,47 @@ public static function getNumparalelo(){
             return $resultData;
 
     }
+
+    /**
+     * Function modifica materia paralelo perido por mpp_id.
+     * @author Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>;
+     * @param
+     * @return
+     */
+    public function modificarMateriaparalelo($mpp_id, $daho_id, $mpp_usuario_modifica, $mpp_fecha_modificacion) {
+
+        $con = \Yii::$app->db_academico;
+        \app\models\Utilities::putMessageLogFile('xxx '.$mpp_id);
+        \app\models\Utilities::putMessageLogFile('ccc '.$daho_id);
+        \app\models\Utilities::putMessageLogFile('sss '.$mpp_usuario_modifica);
+        \app\models\Utilities::putMessageLogFile('www '. $mpp_fecha_modificacion);
+        if ($trans !== null) {
+            $trans = null; // si existe la transacción entonces no se crea una
+        } else {
+            $trans = $con->beginTransaction(); // si no existe la transacción entonces se crea una
+        }
+        try {
+            $sql = "UPDATE " . $con->dbname . ".materia_paralelo_periodo
+                      SET daho_id = :daho_id,
+                          mpp_usuario_modifica = :mpp_usuario_modifica,
+                          mpp_fecha_modificacion = :mpp_fecha_modificacion
+                      WHERE
+                          mpp_id = :mpp_id ";
+            \app\models\Utilities::putMessageLogFile('sql '. $sql);
+            $comando = $con->createCommand($sql);
+            $comando->bindParam(":mpp_id", $mpp_id, \PDO::PARAM_INT);
+            $comando->bindParam(":daho_id", $daho_id, \PDO::PARAM_INT);
+            $comando->bindParam(":mpp_usuario_modifica", $mpp_usuario_modifica, \PDO::PARAM_INT);
+            $comando->bindParam(":mpp_fecha_modificacion", $mpp_fecha_modificacion, \PDO::PARAM_STR);
+            \app\models\Utilities::putMessageLogFile($sql);
+            $response = $comando->execute();
+            if ($trans !== null)
+                $trans->commit();
+            return $response;
+        } catch (Exception $ex) {
+            if ($trans !== null)
+                $trans->rollback();
+            return FALSE;
+        }
+    }
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace app\modules\academico\models;
 
 use yii\base\Exception;
@@ -6,9 +7,27 @@ use Yii;
 use yii\data\ArrayDataProvider;
 use app\models\Utilities;
 
-class MateriaParaleloPeriodo extends \app\modules\admision\components\CActiveRecord {
-
-     /**
+/**
+ * This is the model class for table "materia_paralelo_periodo".
+ *
+ * @property int $mpp_id
+ * @property int $asi_id
+ * @property int $mod_id
+ * @property int $paca_id
+ * @property int $daho_id
+ * @property int $mpp_num_paralelo
+ * @property int $mpp_usuario_ingreso
+ * @property int $mpp_usuario_modifica
+ * @property int $mpp_estado
+ * @property string $mpp_fecha_creacion
+ * @property string $mpp_fecha_modificacion
+ * @property string $mpp_estado_logico
+ *
+ * @property DistributivoAcademico[] $distributivoAcademicos
+ */
+class MateriaParaleloPeriodo extends \yii\db\ActiveRecord
+{
+    /**
      * {@inheritdoc}
      */
     public static function tableName() {
@@ -27,12 +46,10 @@ class MateriaParaleloPeriodo extends \app\modules\admision\components\CActiveRec
      */
     public function rules() {
         return [
-
-           [['asi_id', 'mod_id', 'paca_id','mpp_num_paralelo' ], 'integer'],
-            [['paca_id'], 'exist', 'skipOnError' => true, 'targetClass' => PeriodoAcademico::className(), 'targetAttribute' => ['paca_id' => 'paca_id']],
-            [['asi_id'], 'exist', 'skipOnError' => true, 'targetClass' => Asignatura::className(), 'targetAttribute' => ['asi_id' => 'asi_id']],
-            [['mod_id'], 'exist', 'skipOnError' => true, 'targetClass' => Modalidad::className(), 'targetAttribute' => ['mod_id' => 'mod_id']],
-            ];
+            [['asi_id', 'mod_id', 'paca_id', 'daho_id', 'mpp_num_paralelo', 'mpp_usuario_ingreso', 'mpp_usuario_modifica', 'mpp_estado'], 'integer'],
+            [['mpp_fecha_creacion', 'mpp_fecha_modificacion'], 'safe'],
+            [['mpp_estado_logico'], 'string', 'max' => 1],
+        ];
     }
 
 
@@ -150,10 +167,10 @@ public static function getNumparalelo(){
                     mpp.daho_id,
                     IFNULL(CONCAT('Paralelo',' ', mpp.mpp_num_paralelo),' ') AS mpp_num_paralelo,
                     IFNULL((SELECT daho.daho_descripcion
-                            FROM db_academico.distributivo_academico_horario daho
+                            FROM ". $con->dbname . ".distributivo_academico_horario daho
                             WHERE daho.daho_id = mpp.daho_id),'No Asignado') as daho_descripcion
-                    FROM db_academico.materia_paralelo_periodo mpp
-                    /* INNER JOIN db_academico.distributivo_academico_horario daho
+                    FROM ". $con->dbname . ".materia_paralelo_periodo mpp
+                    /* INNER JOIN ". $con->dbname . ".distributivo_academico_horario daho
                     ON daho.daho_id = mpp.daho_id */
                     WHERE mpp.asi_id = :asi_id AND
                         mpp.paca_id = :paca_id AND
@@ -183,5 +200,38 @@ public static function getNumparalelo(){
         } else {
             return $dataProvider;
         }
+    }
+
+    /**
+     * Function consultaParalelosHorarioxmpp_id
+     * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
+     * @property integer
+     * @return
+     */
+    public function consultaParalelosHorarioxmpp_id($mpp_id){
+        $con = \Yii::$app->db_academico;
+        //$estado = 1;
+
+        $sql = "SELECT
+                    mpp.mpp_id,
+                    mpp.asi_id,
+                    mpp.mod_id,
+                    mpp.paca_id,
+                    mpp.daho_id,
+                    mpp.mpp_num_paralelo,
+                    moda.mod_descripcion,
+                    asi.asi_nombre
+                    FROM ". $con->dbname . ".materia_paralelo_periodo mpp
+                    INNER JOIN ". $con->dbname . ".modalidad moda ON moda.mod_id = mpp.mod_id
+                    INNER JOIN ". $con->dbname . ".asignatura asi ON asi.asi_id = mpp.asi_id
+                    WHERE mpp.mpp_id = :mpp_id";
+
+        //\app\models\Utilities::putMessageLogFile($sql);
+        $comando = $con->createCommand($sql);
+        //$comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $comando->bindParam(":mpp_id", $mpp_id, \PDO::PARAM_INT);
+        $resultData = $comando->queryAll();
+            return $resultData;
+
     }
 }

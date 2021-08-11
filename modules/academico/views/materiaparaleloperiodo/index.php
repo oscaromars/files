@@ -46,7 +46,7 @@ GridView::widget([
         // [ 'class' => 'yii\grid\SerialColumn'],
         [
             'attribute' => 'mod_id',
-            'header' => academico::t("Academico", "Modalidad"),
+            'header' => academico::t("Academico", "Modality"),
             'value' => function ($model, $key, $index, $widget) {
                 return $model->mod->mod_nombre;
             },

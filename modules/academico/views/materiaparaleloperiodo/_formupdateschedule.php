@@ -66,7 +66,7 @@ for ($i = $model->mpp_num_paralelo+1; $i <= 20; $i++) {
                 'template' => '{actualizar_horario}',
                 'buttons' => [
                     'actualizar_horario' => function ($url, $paralelohorario) {
-                          return Html::a('<span class="glyphicon glyphicon-edit"></span>', Url::to(['materiaparaleloperiodo/viewhorario', 'popup' => "true", 'mpp_id' => $paralelohorario['mpp_id'], 'uaca_id' => 1, 'mod_id' => $paralelohorario['mod_id']]), ["class" => "pbpopup", "data-toggle" => "tooltip", "title" => "Ver Pagos", "data-pjax" => 0]);
+                          return Html::a('<span class="glyphicon glyphicon-edit"></span>', Url::to(['materiaparaleloperiodo/viewhorario', 'popup' => "true", 'mpp_id' => $paralelohorario['mpp_id'], 'uaca_id' => 1, 'mod_id' => $paralelohorario['mod_id']]), ["class" => "pbpopup", "data-toggle" => "tooltip", "title" => "Ver Horarios", "data-pjax" => 0]);
                     },
                 ],
             ],

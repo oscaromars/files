@@ -5,6 +5,7 @@ namespace app\modules\academico\controllers;
 use Yii;
 use app\modules\academico\models\MateriaParaleloPeriodoSearch;
 use app\modules\academico\models\MateriaParaleloPeriodo;
+use app\modules\academico\models\DistributivoAcademicoHorario;
 use app\modules\Academico\Module as Academico;
 use yii\helpers\ArrayHelper;
 use yii\data\ArrayDataProvider;
@@ -275,13 +276,24 @@ class MateriaparaleloperiodoController extends \app\components\CController {
 
     public function actionViewhorario(/*$mod_id,$paca_id,$asi_id*/)
      {
-        // CONSULTAR HORARIOS ENVIANDO UACA_ID Y MOD_ID, SELECT EN PUNTO 2 del archivo
-        // nueva_tarea_04082021_al_11082021
-        // consultar informacioncion enviando el mpp_id, traer mod_id, paca_id, asi_id
+
+        $modhorarios = new DistributivoAcademicoHorario();
+        $materiamodel = new MateriaParaleloPeriodo();
+
         $mpp_id = $_GET["mpp_id"];
+        $uaca_id = $_GET["uaca_id"];
+        $mod_id = $_GET["mod_id"];
+
+        // consultar informacion enviando el mpp_id,
+        $paraleloperiodo = $materiamodel->consultaParalelosHorarioxmpp_id($mpp_id);
+
+        // CONSULTAR HORARIOS ENVIANDO UACA_ID Y MOD_ID
+
+        $horarios = $modhorarios->consultaHorariosxuacaymod($uaca_id,$mod_id);
+
         return $this->render('viewhorario', [
-                 /*'model' => $model,
-                 'paralelohorario' => $paralelohorario,*/
+                 'paraleloperiodo' => $paraleloperiodo,
+                 'horarios' => ArrayHelper::map(array_merge([["id" => "0", "name" => "Seleccionar"]], $horarios), "id", "name"),
              ]);
       }
 

@@ -160,4 +160,31 @@ class DistributivoAcademicoHorario extends \yii\db\ActiveRecord
         $resultData = $comando->queryAll();
         return $resultData;
     }
+
+    /**
+     * Function consultaHorariosxuacaymod
+     * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
+     * @property integer
+     * @return
+     */
+
+    public function consultaHorariosxuacaymod($uaca_id, $mod_id) {
+        $con = \Yii::$app->db_academico;
+        $estado = 1;
+
+        $sql = "SELECT daho_id as id, daho_descripcion as name
+                    FROM " . $con->dbname . ".distributivo_academico_horario
+                    WHERE uaca_id = :uaca_id AND
+                          mod_id = :mod_id AND
+                          daho_estado = :estado AND
+                          daho_estado_logico = :estado;";
+
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $comando->bindParam(":uaca_id", $uaca_id, \PDO::PARAM_INT);
+        $comando->bindParam(":mod_id", $mod_id, \PDO::PARAM_INT);
+        $resultData = $comando->queryAll();
+        return $resultData;
+    }
+
 }

@@ -630,10 +630,15 @@ class InscripcionposgradoController extends \yii\web\Controller {
         $data = Yii::$app->request->get();
 
         if ($data['PBgetFilter']) {
-            $arrSearch["search"]      = $data['search'];
+            \app\models\Utilities::putMessageLogFile('busqueda por cedula:  '.$data['search']);
+            \app\models\Utilities::putMessageLogFile('año:  '.$data['año']);
+            \app\models\Utilities::putMessageLogFile('unidaddddd:  '.$data['unidad']);
+            \app\models\Utilities::putMessageLogFile('programaaaa:  '.$data['programa']);
+            \app\models\Utilities::putMessageLogFile('modalidadddd:  '.$data['modalidad']);
+            $arrSearch["search"]  = $data['search'];
             $arrSearch["año"]     = $data['año'];  
-            $arrSearch["unidad"]      = $data['unidad'];
-            $arrSearch["programa"]      = $data['programa'];
+            $arrSearch["unidad"]  = $data['unidad'];
+            $arrSearch["programa"] = $data['programa'];
             $arrSearch["modalidad"]   = $data['modalidad'];
             $model = $model_posgrado->consultaRegistroAdmisionposgrado($arrSearch, 1);
             return $this->render('_aspiranteposgradogrid', [
@@ -1399,5 +1404,44 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 return Utilities::ajaxResponse('NOOK', 'alert', Yii::t('jslang', 'Error'), 'true', $message);
             }
         }
+    }
+
+    public function actionExpexcelaspiranteposgrado() {
+        \app\models\Utilities::putMessageLogFile('accediendo a excel :  ');
+        //$per_id = @Yii::$app->session->get("PB_perid");
+        ini_set('memory_limit', '256M');
+        $content_type = Utilities::mimeContentType("xls");
+        $nombarch = "Report-" . date("YmdHis") . ".xls";
+        header("Content-Type: $content_type");
+        header("Content-Disposition: attachment;filename=" . $nombarch);
+        header('Cache-Control: max-age=0');
+        $colPosition = array("C", "D", "E", "F", "G", "H", "I", "J", "K", "L");
+        $arrHeader = array(
+            Yii::t("formulario", "Cedula"),
+            Yii::t("formulario", "Estudiante"),
+            Yii::t("formulario", "Año"),
+            Yii::t("formulario", "Programa"),
+            Yii::t("formulario", "Modalidad"),
+        );
+
+        $model_posgrado = new InscripcionPosgrado();
+        $data = Yii::$app->request->get();
+        $arrSearch["search"] = $data['search'];
+        $arrSearch["año"] = $data['año'];
+        $arrSearch["unidad"] = $data['unidad'];
+        $arrSearch["programa"] = $data['programa'];
+        $arrSearch["modalidad"] = $data['modalidad'];
+        $arrData = array();
+        if (empty($arrSearch)) {
+            $arrData = $model_posgrado->consultaRegistroAdmisionposgrado(array(), 0);
+        } else {
+            $arrData = $model_posgrado->consultaRegistroAdmisionposgrado($arrSearch, 0);
+        }
+        for ($i = 0; $i < count($arrData); $i++) { 
+            unset($arrData[$i]['per_id']);
+        }
+        $nameReport = academico::t("Academico", "Listado de Aspirantes de Grado");
+        Utilities::generarReporteXLS($nombarch, $nameReport, $arrHeader, $arrData, $colPosition);
+        exit;
     }
 }

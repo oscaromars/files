@@ -69,7 +69,11 @@ financiero::registerTranslations();
                 ?>
             </div>
         </div>
-    </div>        
+    </div>    
+
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">   
+        <h3><span id="lbl_Personeria"><?= Yii::t("formulario", "Documentos adicionales por homologación") ?></span></h3><br><br></br>
+    </div>     
 
     <div class="col-md-6  doc_recordacademico cinteres">
         <div class="form-group">

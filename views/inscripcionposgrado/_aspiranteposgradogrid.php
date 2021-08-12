@@ -17,7 +17,7 @@ academico::registerTranslations();
     PbGridView::widget([
         'id' => 'Tbg_Registro_posgrado',
         'showExport' => true,
-        'fnExportEXCEL' => "exportExcelEduregistro",
+        'fnExportEXCEL' => "exportExcelaspiranteposgrado",
         //'fnExportPDF' => "exportPdfEduregistro",
         'dataProvider' => $model,
         'pajax' => true,

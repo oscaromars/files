@@ -58,7 +58,6 @@ $(document).ready(function () {
                         }
                     }, true);
                 }
-
             }
         }, true);
         // actualizar codigo pais
@@ -295,6 +294,14 @@ function camposnulos(campo) {
         $(campo).addClass("PBvalidation");
     }
 }
+
+function searchModules(idbox, idgrid) {
+    var arrParams = new Object();
+    arrParams.PBgetFilter = true;
+    arrParams.search = $("#" + idbox).val();
+    $("#" + idgrid).PbGridView("applyFilterData", arrParams);
+}
+
 function actualizarGridAspirante() {
     var search = $('#txt_buscarAspirante').val();
     var periodo = $('#cmb_periodo_asp option:selected').val();
@@ -376,4 +383,13 @@ function updateaspirantegrado() {
             showAlert(response.status, response.label, response.message);
         }, true);
     }
+}
+
+function exportExcelaspirantegrado() {
+    var search = $('#txt_buscarAspirante').val();
+    var periodo = $('#cmb_periodo_asp option:selected').val();
+    var unidad = $('#cmb_unidad_asp option:selected').val();
+    var carreras = $('#cmb_carrera_asp option:selected').val();
+    var modalidad = $('#cmb_modalidad_asp option:selected').val();
+    window.location.href = $('#txth_base').val() + "/inscripciongrado/expexcelaspirantegrado?search=" + search + "&periodo=" + periodo + "&unidad=" + unidad + "&carreras=" + carreras + "&modalidad=" + modalidad;
 }

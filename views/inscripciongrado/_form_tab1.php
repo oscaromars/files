@@ -192,7 +192,7 @@ academico::registerTranslations();
             <div class="form-group">
                 <label for="cmb_pais" class="col-sm-3 control-label"><?= Yii::t("formulario", "Pais") ?><span class="text-danger">*</span></label>
                 <div class="col-sm-7">
-                    <?= Html::dropDownList("cmb_pais", $pai_id_domicilio, $arr_pais, ["class" => "form-control", "id" => "cmb_pais"]) ?>
+                    <?= Html::dropDownList("cmb_pais", '', $arr_pais, ["class" => "form-control", "id" => "cmb_pais"]) ?>
                 </div>
             </div>
         </div>
@@ -200,7 +200,7 @@ academico::registerTranslations();
             <div class="form-group">
                 <label for="cmb_provincia" class="col-sm-3 control-label"><?= Yii::t("formulario", "Provincia / Estado") ?><span class="text-danger">*</span></label>
                 <div class="col-sm-7">
-                    <?= Html::dropDownList("cmb_provincia", $pro_id_domicilio, $arr_provincia, ["class" => "form-control", "id" => "cmb_provincia"]) ?>
+                    <?= Html::dropDownList("cmb_provincia", 0, $arr_provincia, ["class" => "form-control", "id" => "cmb_provincia"]) ?>
                 </div>
             </div>
         </div>
@@ -210,7 +210,7 @@ academico::registerTranslations();
             <div class="form-group">
                 <label for="cmb_ciudad" class="col-sm-3 control-label"><?= Yii::t("formulario", "Ciudad"); ?> <span class="text-danger">*</span> </label>
                 <div class="col-sm-7">
-                    <?= Html::dropDownList("cmb_ciudad", $can_id_domicilio, $arr_ciudad, ["class" => "form-control", "id" => "cmb_ciudad"]) ?>
+                    <?= Html::dropDownList("cmb_ciudad", 0, $arr_ciudad, ["class" => "form-control", "id" => "cmb_ciudad"]) ?>
                 </div>
             </div>
         </div>

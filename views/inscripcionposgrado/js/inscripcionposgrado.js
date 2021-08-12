@@ -528,8 +528,8 @@ function searchModules(idbox, idgrid) {
 }
 
 function actualizarGridAspirantePosgrado(){
-    var search = $('#txt_buscarAspirante').val();
-    var año = $('#txt_año_pos option:selected').val();
+    var search = $('#txt_buscarAspiranteposgrado').val();
+    var año = $('#txt_año_pos').val();
     var unidad = $('#cmb_unidad_pos option:selected').val();
     var programa = $('#cmb_programa_pos option:selected').val();
     var modalidad = $('#cmb_modalidad_pos option:selected').val();
@@ -679,4 +679,13 @@ function removeItemIdioma(ref) {
     var indice = $(ref).parent().parent().attr("data-key");
     removeItemGridContent("grid_idiomas_list", indice);
     removeItemsBase(indice,1);
+}
+
+function exportExcelaspiranteposgrado() {
+    var search = $('#txt_buscarAspirante').val();
+    var año = $('#txt_año_pos').val();
+    var unidad = $('#cmb_unidad_pos option:selected').val();
+    var programa = $('#cmb_programa_pos option:selected').val();
+    var modalidad = $('#cmb_modalidad_pos option:selected').val();
+    window.location.href = $('#txth_base').val() + "/inscripcionposgrado/expexcelaspiranteposgrado?search=" + search + "&año=" + año + "&unidad=" + unidad + "&programa=" + programa + "&modalidad=" + modalidad;
 }

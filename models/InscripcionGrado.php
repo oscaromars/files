@@ -383,7 +383,7 @@ class InscripcionGrado extends \yii\db\ActiveRecord
         return $resultData;
     }
 
-    function consultaRegistroAdmisiongrado($arrFiltro = array(), $reporte){
+    public function consultaRegistroAdmisiongrado($arrFiltro = array(), $reporte){
         \app\models\Utilities::putMessageLogFile('cedula consulta:  '.$arrFiltro['search']);
         \app\models\Utilities::putMessageLogFile('periodo consulta:  '.$arrFiltro['periodo']);
             \app\models\Utilities::putMessageLogFile('unidad consulta:  '.$arrFiltro['unidad']);
@@ -395,17 +395,18 @@ class InscripcionGrado extends \yii\db\ActiveRecord
         $estado = 1;
 
         if (isset($arrFiltro) && count($arrFiltro) > 0) {
+            \app\models\Utilities::putMessageLogFile('consulta de datos:  '.$str_search);
             $str_search .= "(per.per_pri_nombre like :search OR ";
             $str_search .= "per.per_seg_nombre like :search OR ";
             $str_search .= "per.per_pri_apellido like :search OR ";
             $str_search .= "per.per_seg_apellido like :search OR ";
-            $str_search .= "igra.per_cedula like :search) AND ";
+            $str_search .= "igra.igra_cedula like :search) AND ";
 
             if ($arrFiltro['unidad'] != "" && $arrFiltro['unidad'] > 0) {
                 $str_search .= "igra.uaca_id = :unidad AND ";
             }
-            if ($arrFiltro['carrera'] != "" && $arrFiltro['carrera'] > 0) {
-                $str_search .= "igra.eaca_id = :carrera AND ";
+            if ($arrFiltro['carreras'] != "" && $arrFiltro['carreras'] > 0) {
+                $str_search .= "igra.eaca_id = :carreras AND ";
             }
             if ($arrFiltro['modalidad'] != "" && $arrFiltro['modalidad'] > 0) {
                 $str_search .= "igra.mod_id = :modalidad AND ";
@@ -415,9 +416,9 @@ class InscripcionGrado extends \yii\db\ActiveRecord
             }
         }
 
-        $sql = "SELECT distinct per.per_id,
+        $sql = "SELECT distinct per.per_id as per_id,
                 per.per_cedula as Cedula,
-                ifnull(CONCAT(ifnull(per.per_pri_apellido,''), ' ', ifnull(per.per_seg_apellido,''), ' ', ifnull(per.per_pri_nombre,''), ifnull(per.per_seg_nombre,'')), '') as estudiante,
+                ifnull(CONCAT(ifnull(per.per_pri_apellido,''), ' ', ifnull(per.per_seg_apellido,''), ' ', ifnull(per.per_pri_nombre,''), ' ', ifnull(per.per_seg_nombre,'')), '') as estudiante,
                 CONCAT(baca.baca_nombre, ' ', saca.saca_nombre, ' ', saca.saca_anio) as periodo,
                 eaca.eaca_nombre as carrera,
                 moda.mod_nombre as modalidad
@@ -429,7 +430,7 @@ class InscripcionGrado extends \yii\db\ActiveRecord
                 Inner Join " . $con_academico->dbname . ".periodo_academico as paca on paca.paca_id = igra.paca_id
                 Inner Join " . $con_academico->dbname . ".semestre_academico as saca on saca.saca_id = paca.saca_id
                 Inner Join " . $con_academico->dbname . ".bloque_academico as baca on baca.baca_id = paca.baca_id 
-                WHERE uaca.uaca_id = 1 and
+                WHERE $str_search
                 igra.igra_estado = :estado and igra.igra_estado_logico = :estado and
                 per.per_estado = :estado and per.per_estado_logico = :estado and
                 uaca.uaca_estado = :estado and uaca.uaca_estado_logico = :estado and
@@ -460,6 +461,7 @@ class InscripcionGrado extends \yii\db\ActiveRecord
             }
         }
         $res = $comando->queryAll();
+        \app\models\Utilities::putMessageLogFile('insertRegBasc: ' . $comando->getRawSql());
         $dataProvider = new ArrayDataProvider([
             'key' => 'Ids',
             'allModels' => $res,
@@ -471,7 +473,11 @@ class InscripcionGrado extends \yii\db\ActiveRecord
             ],
         ]);
 
-        return $dataProvider;
+        if ($reporte == 1) {
+            return $dataProvider;
+        } else {
+            return $res;
+        }
     }
 
     public function ObtenerdocumentosInscripcionGrado($per_id) {

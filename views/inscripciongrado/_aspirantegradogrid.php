@@ -17,10 +17,10 @@ academico::registerTranslations();
     PbGridView::widget([
         'id' => 'grid_registro_aspirante',
         'showExport' => true,
-        'fnExportEXCEL' => "exportExcelEduregistro",
+        'fnExportEXCEL' => "exportExcelaspirantegrado",
         //'fnExportPDF' => "exportPdfEduregistro",
         'dataProvider' => $model,
-        'pajax' => true,
+        //'pajax' => true,
         'columns' =>
         [   
             ['class' => 'yii\grid\SerialColumn', 'options' => ['width' => '10']],
@@ -54,12 +54,18 @@ academico::registerTranslations();
                 'header' => 'Action',
                 'contentOptions' => ['style' => 'text-align: center;'],
                 'headerOptions' => ['width' => '90'],
-                'template' => '{view}',
+                'template' => '{view}'/*{download}*/,
                 'buttons' => [
                     'view' => function ($url, $model) {
                         return Html::a('<span class="' . Utilities::getIcon('view') . '"></span>', Url::to(['inscripciongrado/view', 'id' => $model['per_id']]), ["data-toggle" => "tooltip", "title" => Yii::t("accion", "View")]);
                     },
-                    
+                    /*'download' => function ($url, $model) {
+                        //if ($model['perfil'] == 0) {
+                            //if($model['Cv'] != "")
+                            //return Html::a('<span class="'.Utilities::getIcon('download').'"></span>', 'javascript:', ["data-toggle" => "tooltip", "title" => Yii::t("accion","Download"), 'data-href' => Url::to(['profesor/download', 'route' => $model['Cv'], 'type' => 'down']), 'onclick' => 'downloadPdf(this)']);
+                            return Html::a('<span class="glyphicon glyphicon-download"></span>', Url::to(['/academico/profesor/curriculumpdf', 'ids' => $model['per_id']]), ["data-toggle" => "tooltip", "title" => "Descargar Curriculum", "data-pjax" => "0"]);
+                        //}
+                    },*/
                 ],
             ],
         ],

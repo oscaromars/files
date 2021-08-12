@@ -1204,7 +1204,7 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
         }
     }
 
-    public function confirmarPlanificacionExistente($pla_id, $per_id, $periodo, $id) {
+    public function confirmarPlanificacionExistente($per_id, $periodo) {
         $con = \Yii::$app->db_academico;
         $con2 = \Yii::$app->db_asgard;
         $fecha_modificacion= date(Yii::$app->params["dateTimeByDefault"]);
@@ -1213,12 +1213,14 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
         try {
             if($per_id == null){
                 $resultData = [];
+                \app\models\Utilities::putMessageLogFile('No Enviado');
             }else{
                 $sql = ("SELECT * from " . $con->dbname . ".planificacion_estudiante pe
                         inner join " . $con->dbname . ".planificacion pla on pla.saca_id = $periodo and pla.pla_id = pe.pla_id
                         where pe.per_id = $per_id;");
                 $comando = $con->createCommand($sql);
                 $resultData = $comando->queryOne(); 
+                \app\models\Utilities::putMessageLogFile('Encontrado');
             }
             
             if($resultData == null){
@@ -1226,7 +1228,7 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
                     ("INSERT INTO " . $con->dbname . ".planificacion_estudiante(pes_cod_malla,pes_carrera,per_id,pes_dni,pes_jornada,pes_nombres,pla_id,pes_estado,pes_estado_logico,pes_fecha_creacion)
                     select distinct(ma.maca_codigo),ma.maca_nombre,e.per_id, pe.per_cedula, ecpr_jornada as jornada,
                                         concat(pe.per_pri_nombre, ' ', pe.per_seg_nombre,' ', pe.per_pri_apellido, ' ',pe.per_seg_apellido) as nombres, pla.pla_id as pla_id, $estado,$estado,
-                                        $fecha_modificacion
+                                        '$fecha_modificacion'
                                         from " . $con->dbname . ".estudiante_carrera_programa ecp 
                                         inner join " . $con->dbname . ".modalidad_estudio_unidad meu on ecp.meun_id = meu.meun_id
                                         inner join " . $con->dbname . ".estudio_academico es on es.eaca_id = meu.eaca_id 
@@ -1238,15 +1240,17 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
                                         where e.per_id = $per_id;");
                     $comando3 = $con->createCommand($sql3);
                 $result3 = $comando3->execute();
-                $resultData = $resultData  + $result3;                
+                $resultData = $resultData  + $result3; 
+                \app\models\Utilities::putMessageLogFile('Insertado');               
                 return $resultData;
                 
             }else{
+                \app\models\Utilities::putMessageLogFile('No Insertado');
                 return $resultData;
             }
             
         } catch (Exception $ex) {
-            
+            \app\models\Utilities::putMessageLogFile($ex->getMessage());
             return $ex->getMessage();
         }
     }
@@ -2334,7 +2338,7 @@ AND pes.pla_id = :pla_id ) as daho12
         }else{
             $comando = $con->createCommand($sql);
             $resultData = $comando->queryall();
-            \app\models\Utilities::putMessageLogFile('query 1...: '.$sql);
+            //\app\models\Utilities::putMessageLogFile('query 1...: '.$sql);
 
             /*if ($arrFiltro['pla_id'] > 0) {
                 $modalidad = $arrFiltro["pla_id"];

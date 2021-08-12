@@ -1156,7 +1156,8 @@ $centralprocess = $malla->consultarAsignaturas($resultData[$i],$periodo,$saca_no
                         $codmateria  = "pes_mat_b" . $bloque . "_h" . $horario . "_cod = '" . $mat_cod . "', ";
                         $modmateria  = "pes_mod_b" . $bloque . "_h" . $horario . "= '" . $modalidades . "', ";                  
                         $jormateria  = "pes_jor_b" . $bloque . "_h" . $horario . "= '" . $arrplanedit[$i]['jornada'] . "', "; 
-                        $modificar .=  $codmateria . ' ' .  $modmateria . ' ' .  $jormateria;                    
+                        $mppmateria  = "pes_mat_b" . $bloque . "_h" . $horario . "_mpp = '" . $arrplanedit[$i]['mpp_id'] . "', "; 
+                        $modificar .=  $codmateria . ' ' .  $modmateria . ' ' .  $jormateria . ' ' . $mppmateria;                    
                     }   
                     \app\models\Utilities::putMessageLogFile('modificar..: '. $modificar);    
                     $resul = $mod_planifica->modificarDataPlanificacionestudiante($plan_id, $pers_id, $usu_autenticado, $modificar);
@@ -1939,12 +1940,12 @@ inner join " . $con->dbname . ".malla_academica as b on a.pes_cod_carrera = b.ma
         $session->set("plan_id",$plan);
         $session->set("per_ids",$per_id);
         Yii::$app->session->set('pla_id', $plan);
-        $existe = $mod_periodo->confirmarPlanificacionExistente($plan, $per_id,$periodo_activo[0]['name'],$periodo_activo[0]['id']);
+        $existe = $mod_periodo->confirmarPlanificacionExistente( $per_id,$periodoAcad);
         
         if ($data['estudiante'] != null) {
             $arrSearch['estudiante'] = $per_id;
             $arrSearch['planificacion'] = $pla_id[0]["id"];
-            $plan = $mod_periodo->getPlanificacionxPeriodo($periodoAcad,$per_id);
+            //$plan = $mod_periodo->getPlanificacionxPeriodo($periodoAcad,$per_id);
             $arrSearch['periodoAca'] = $data["periodo"];
             $arrSearch['modalidad'] = $data['modalidad'];
             $arrSearch['saca_id'] = $saca_id;

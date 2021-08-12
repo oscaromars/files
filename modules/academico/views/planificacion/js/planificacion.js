@@ -730,12 +730,13 @@ function accionmataut(plaid, perid, bloque, hora) {
     arrParams.per_id = perid;
     arrParams.bloque = bloque;
     arrParams.hora = hora;
+   arrParams.saca_id = $('#cmb_periodoest option:selected').val();
     if (!validateForm()) {
         requestHttpAjax(link, arrParams, function (response) {
             showAlert(response.status, response.label, response.message);
             if (!response.error) {
                 setTimeout(function () {
-                    window.location.href = $('#txth_base').val() + "/academico/planificacion/newplanificacion?pla_id=" + arrParams.pla_id + "&estudiante=" + arrParams.per_id;
+                   window.location.href = $('#txth_base').val() + "/academico/planificacion/newplanificacion?pla_id=" + arrParams.pla_id + "&estudiante=" + arrParams.per_id + '&periodo=' + arrParams.saca_id;
                 }, 1000);
             }
         }, true);
@@ -801,7 +802,7 @@ function agregarItems(opAccion) {
     //var nombre = $('#cmb_estandar_evi option:selected').text();
     //Verifica que tenga nombre producto y tenga foto
     //alert('add :1-' + $('#cmb_modalidadesth').val()+' :2-'+$('#cmb_bloqueest').val()+' :3-'+ $('#cmb_modalidadesth').val() +' :4-'+$('#cmb_horaest').val());
-    if ($('#cmb_asignaest').val() != '0' /*&& $('#cmb_jornadaest').val() != '0'*/ && $('#cmb_bloqueest').val() != '0' && $('#cmb_modalidadesth').val() != '0' && $('#cmb_horaest').val() != '0') {
+   if ($('#cmb_asignaest').val() != '0' && $('#cmb_paraleloest').val() != '0' && $('#cmb_bloqueest').val() != '0' && $('#cmb_modalidadesth').val() != '0' && $('#cmb_horaest').val() != '0') {
         /* var valor = $('#cmb_estandar_evi option:selected').text();*/
         if (opAccion != "edit") {
             //*********   AGREGAR ITEMS *********
@@ -816,6 +817,7 @@ function agregarItems(opAccion) {
                     var vasignatura = str.substring(0,n);// $('#cmb_asignaest option:selected').text();
                     var vbloque = $('#cmb_bloqueest option:selected').text();
                     var vhora = $('#cmb_horaest option:selected').text();
+                   var vmpp = $('#cmb_paraleloest option:selected').text();
                     var vBloque =  buscaDatoTabla(tGrid, vbloque, 'bloque');
                     var vHora =  buscaDatoTabla(tGrid, vhora, 'hora');
                     var vExiste = (sessionStorage.dts_datosItemplan).indexOf(vasignatura);
@@ -880,6 +882,7 @@ function objProducto(indice) {
     rowGrid.bloque = $('#cmb_bloqueest option:selected').text();
     rowGrid.modalidad = $('#cmb_modalidadesth option:selected').text();
     rowGrid.hora = $('#cmb_horaest option:selected').text();
+   rowGrid.mpp_id = $('#cmb_paraleloest option:selected').val();
     rowGrid.accion = "new";
     return rowGrid;
 }
@@ -896,6 +899,9 @@ function limpiarDetalle() {
     $('#cmb_bloqueest').val("0");
     $('#cmb_modalidadesth').val("0");
     $('#cmb_horaest').val("0");
+   $('#cmb_paraleloest').val("0");
+   $('#cmb_horario').val("0");
+   $('#cmb_paraleloest').prop("disabled",true); 
     //$('#txt_doc_archivo').fileinput('clear');
 
 }
@@ -915,6 +921,7 @@ function retornaFila(c, Grid, TbGtable, op) {
     //var RutaImagenAccion='ruta IMG'//$('#txth_rutaImg').val();
     var pla_id = $('#txth_pla_id').val();
     var per_id = $('#txth_per_id').val();
+   var mpp_id = $('#txth_per_id').val();;
     var strFila = "";
     strFila += '<td style="display:none; border:none;">' + Grid[c]['indice'] + '</td>';
     strFila += '<td style=" display:none; border:none;">' + pla_id + '</td>';
@@ -1252,6 +1259,7 @@ function listarHorario(){
             var obj = JSON.parse(datos);
             var html = '';
             var id = 0;
+           var count = 0;
            //alert(obj);
             $.each(obj.allModels, function( index, value ) {
                 var data = (value);                    
@@ -1261,11 +1269,14 @@ function listarHorario(){
                     }
                     if(index2 == 'nombre'){
                         html = html + `<option value=${id} >${value2}</option>`;
+                       count++;
                     }
                 });        
             });
+            if(count>0){
            $('#cmb_horario').prop("disabled",true); 
            $("#cmb_horario").html(html);
+            }
           // alert(html);
           }
     });

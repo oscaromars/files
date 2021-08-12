@@ -1946,7 +1946,7 @@ public function consultaHorarioxParalelo($mpp_id) {
             'attributes' => [],
         ],
     ]);
-    \app\models\Utilities::putMessageLogFile('Consultar horario Paralelos N: '.implode(",", $resultData));
+    \app\models\Utilities::putMessageLogFile('Consultar Paralelos N: '.implode(",", $resultData));
     return $dataProvider;
 }
 

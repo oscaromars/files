@@ -148,7 +148,7 @@ academico::registerTranslations();
             <div class="col-lg-6 col-md-6">               
                     <label for="lbl_horario" class="col-lg-3 col-md-3 col-sm-12 col-xs-12 control-label"><?= academico::t("Academico", "Horario"); ?> <span class="text-danger">*</span> </label>
                     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12" id="horario_cmb">
-                        <?= Html::dropDownList("cmb_horario", 0, $arr_hora, ["class" => "form-control", "id" => "cmb_horario","disabled" => "true"]) ?>
+                        <?= Html::dropDownList("cmb_horario", 0, $arr_paralelo, ["class" => "form-control", "id" => "cmb_horario","disabled" => "true"]) ?>
                     </div> 
             </div>
         </div>
@@ -254,6 +254,7 @@ academico::registerTranslations();
                             <tr>
                                 <th style="display:none; border:none;"><?= Yii::t("formulario", "pla_id") ?></th>
                                 <th style="display:none; border:none;"><?= Yii::t("formulario", "per_id") ?></th>
+                                <th style="display:none; border:none;"><?= Yii::t("formulario", "mpp_id") ?></th>
                                 <th style="width: 590px">
                                     <?= academico::t("","Academico", "Subject") ?></th>
                                 <th><?= academico::t("Academico", "Working day") ?></th>

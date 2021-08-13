@@ -51,7 +51,7 @@ use yii\helpers\ArrayHelper;
                 'buttons' => [
                     'refresh' => function ($url, $model) {
                          if ($model['estado'] ==Null) {
-                        return Html::a('<span style="margin-left: 2px;margin-right: 2px;" id="frm_hasplanning" value="1" class="glyphicon glyphicon-refresh"></span>', null, ["data-toggle" => "tooltip", "title" => "Alcance", "onclick" => "descargarPlanificacionestuno('" . $model['id'] . "')"]);}else {
+                        return Html::a('<span style="margin-left: 2px;margin-right: 2px;" id="frm_hasplanning" value="1" class="glyphicon glyphicon-refresh"></span>', null, ["data-toggle" => "tooltip", "title" => "Alcance", "onclick" => "update()"]);}else {
                             return Html::a('<span style="margin-left: 2px;margin-right: 2px;color:gray;objLang" id="frm_hasplanning" value="1" class="glyphicon glyphicon-ban-circle"></span>', null, ["data-toggle" => "tooltip", "title" => "Deshabilitado", "onclick" => "blocked('" . $model['id'] . "')"]);
 
                         }
@@ -67,7 +67,7 @@ use yii\helpers\ArrayHelper;
                 'buttons' => [
                     'close' => function ($url, $model) {
                           if ($model['estado'] ==Null) {
-                        return Html::a('<span style="margin-left: 2px;margin-right: 2px;" id="frm_hasplanning" value="1" class="glyphicon glyphicon-eject"></span>', null, ["data-toggle" => "tooltip", "title" => "Cerrar Proceso", "onclick" => "descargarPlanificacionestuno('" . $model['id'] . "')"]);}else {
+                        return Html::a('<span style="margin-left: 2px;margin-right: 2px;" id="frm_hasplanning" value="1" class="glyphicon glyphicon-eject"></span>', null, ["data-toggle" => "tooltip", "title" => "Cerrar Proceso", "onclick" => "closer('" . $model['id'] . "')"]);}else {
                              return Html::a('<span style="margin-left: 2px;margin-right: 2px;color:gray;objLang" id="frm_hasplanning" value="1" class="glyphicon glyphicon-ban-circle"></span>', null, ["data-toggle" => "tooltip", "title" => "Deshabilitado", "onclick" => "blocked('" . $model['id'] . "')"]);
 
 

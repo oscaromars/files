@@ -18,7 +18,14 @@ academico::registerTranslations();
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <p class="text-danger"> <?= Yii::t("formulario", "Fields with * are required") ?> </p>
     </div>
-    <div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12">
+        <div class="form-group">
+            <div class="col-sm-10 col-md-10 col-xs-10 col-lg-10">
+                <div style = "width: 500px;" class="alert alert-info"><span style="font-weight: bold"> Nota: </span> Si al señalar paralelo no muestra horario, es porque no ha sido asignado.</div>
+                </div>
+            </div>
+        </div>
+     <div class="row">
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <div class="form-group">
                 <label for="cmb_profesor" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= academico::t("Academico", "Teacher") ?><span class="text-danger">*</span></label>
@@ -88,13 +95,13 @@ academico::registerTranslations();
         <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12" id="bloque4" style="display: none">
             <div class="form-group">
                 <div id="bloque_p" style="display: none">
+                <label for="cmb_paralelo" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= Yii::t("formulario", "Paralelo") ?><span class="text-danger">*</span></label>
+                    <div class="col-sm-3 col-xs-3 col-md-3 col-lg-3">
+                        <?= Html::dropDownList("cmb_paralelo", 0, $arr_paralelo, ["class" => "form-control", "id" => "cmb_paralelo"]) ?>
+                    </div>
                     <label for="cmb_horario" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= Yii::t("formulario", "Schedule") ?><span class="text-danger">*</span></label>
                     <div class="col-sm-3 col-xs-3 col-md-3 col-lg-3">
                         <?= Html::dropDownList("cmb_horario", 0, $arr_horario, ["class" => "form-control", "id" => "cmb_horario"]) ?>
-                    </div>
-                    <label for="cmb_paralelo" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= Yii::t("formulario", "Paralelo") ?><span class="text-danger">*</span></label>
-                    <div class="col-sm-3 col-xs-3 col-md-3 col-lg-3">
-                        <?= Html::dropDownList("cmb_paralelo", 0, $arr_paralelo, ["class" => "form-control", "id" => "cmb_paralelo"]) ?>
                     </div>
                 </div>
             </div>
@@ -150,8 +157,8 @@ academico::registerTranslations();
                 </div>
             </div>
         </div>
-    </div>
-    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+     </div>
+     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
             <div class="box-body table-responsive no-padding">
                 <table  id="TbG_Data" class="table table-hover">

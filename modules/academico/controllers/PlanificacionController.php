@@ -83,8 +83,9 @@ private function Paralelo(){
             '0' => Yii::t('formulario', 'Seleccionar'),
         ];
     }
+        
 
-        public function actionIndex() {
+     public function actionIndex() {
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->get();
             $pla_periodo_academico = $data['pla_periodo_academico'];
@@ -216,6 +217,7 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
    inner join db_asgard.persona per on per.per_id = e.per_id
    inner join db_academico.malla_academico_estudiante malle on per.per_id = malle.per_id
      where malle.maca_id = maca.maca_id  
+        AND meu.mod_id = :modalidad
     AND  e.est_estado = 1 AND e.est_estado_logico = 1
     AND  c.ecpr_estado = 1 AND c.ecpr_estado_logico = 1
     AND  meu.meun_estado = 1 AND meu.meun_estado_logico = 1
@@ -230,9 +232,9 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
 b.pla_id= ( select max(dap.pla_id) from db_academico.planificacion dap 
  where meu.mod_id = dap.mod_id ))) or (e.per_id in (
 select a.per_id from db_asgard.persona as a 
-inner join db_academico.estudiante b on a.per_id = b.per_id
-where DATEDIFF(NOW(),b.est_fecha_creacion) <=90 and
-DATEDIFF(NOW(),a.per_fecha_creacion) <=90))  
+inner join db_academico.estudiante bas on a.per_id = bas.per_id
+where DATEDIFF(NOW(),bas.est_fecha_creacion) <=180 and
+DATEDIFF(NOW(),a.per_fecha_creacion) <=180))  
                 ";
 
  $comando = $con->createCommand($sql);
@@ -255,6 +257,9 @@ $centralprocess = $malla->consultarAsignaturas($resultData[$i],$periodo,$saca_no
             }
 
         }else{
+
+             \Yii::$app->getSession()->setFlash('msg', 'No existen mas estudiantes para la modalidad actual');
+         return $this->redirect(['index']);
         
         }   
 
@@ -273,6 +278,119 @@ $centralprocess = $malla->consultarAsignaturas($resultData[$i],$periodo,$saca_no
          return $this->redirect(['index']);
      }
 
+
+
+    
+
+     public function actionAddpes($periodo,$modalidad) {
+    
+     
+    
+
+                    $con = \Yii::$app->db_academico;
+                    $sql = "
+                            SELECT  
+                            CONCAT(saca_nombre,' ',saca_anio) as semestre
+                            FROM db_academico.semestre_academico where saca_id = :periodo
+                    ";
+                    $comando = $con->createCommand($sql);
+                    $comando->bindParam(":periodo", $periodo, \PDO::PARAM_STR);
+                    $saca_nombre = $comando->queryOne();
+               
+
+
+$mensaje = "periodo ".$periodo." modalidad ".$modalidad;
+mail('oscaromars@hotmail.com', 'Mi título', $mensaje);
+
+ $con = \Yii::$app->db_academico;
+
+                 $sql = "
+                 select distinct e.est_id, e.per_id, e.est_matricula, e.est_fecha_creacion, e.est_categoria, meu.uaca_id, meu.mod_id, meu.eaca_id, DATEDIFF(NOW(),e.est_fecha_creacion) as olderi, -- 
+u.uaca_id, u.uaca_nombre, ea.teac_id, ea.eaca_nombre, ea.eaca_codigo,
+per.per_cedula,  mumo.maca_id , maca.maca_codigo, maca.maca_nombre,
+concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_apellido, ' ', ifnull(per.per_seg_apellido,'')) estudiante
+ from db_academico.estudiante e
+ inner join db_academico.estudiante_carrera_programa c on c.est_id = e.est_id
+  inner join db_academico.modalidad_estudio_unidad meu on meu.meun_id = c.meun_id  
+  inner join db_academico.malla_unidad_modalidad mumo on mumo.meun_id = meu.meun_id 
+   inner join db_academico.malla_academica maca on maca.maca_id = mumo.maca_id 
+   inner join db_academico.unidad_academica u on u.uaca_id = meu.uaca_id
+   inner join db_academico.estudio_academico ea on ea.eaca_id = meu.eaca_id 
+   inner join db_asgard.persona per on per.per_id = e.per_id
+   inner join db_academico.malla_academico_estudiante malle on per.per_id = malle.per_id
+     where malle.maca_id = maca.maca_id  
+     AND meu.mod_id = :modalidad
+    AND  e.est_estado = 1 AND e.est_estado_logico = 1
+    AND  c.ecpr_estado = 1 AND c.ecpr_estado_logico = 1
+    AND  meu.meun_estado = 1 AND meu.meun_estado_logico = 1
+    AND  mumo.mumo_estado = 1 AND mumo.mumo_estado_logico = 1
+    AND  maca.maca_estado = 1 AND maca.maca_estado_logico = 1
+    AND  u.uaca_estado = 1 AND u.uaca_estado_logico = 1
+    AND  ea.eaca_estado = 1 AND ea.eaca_estado_logico = 1
+    AND  per.per_estado = 1 AND per.per_estado_logico = 1
+    AND  malle.maes_estado = 1 AND malle.maes_estado_logico = 1
+     AND
+(e.per_id not in (select b.per_id from db_academico.planificacion_estudiante b where
+b.pla_id= ( select max(dap.pla_id) from db_academico.planificacion dap 
+ where meu.mod_id = dap.mod_id ))) and (e.per_id in (
+select a.per_id from db_asgard.persona as a 
+inner join db_academico.estudiante bas on a.per_id = bas.per_id
+where DATEDIFF(NOW(),bas.est_fecha_creacion) <=180 and
+DATEDIFF(NOW(),a.per_fecha_creacion) <=180))  
+                ";
+
+ $comando = $con->createCommand($sql);
+          $comando->bindParam(":modalidad", $modalidad, \PDO::PARAM_STR);
+               $resultData = $comando->queryAll();
+               
+               
+                    
+                               $malla = new MallaAcademica();
+               $allstudents= count($resultData);
+                \app\models\Utilities::putMessageLogFile("all: ".count($resultData)); 
+                 
+
+
+                 if (count($resultData) > 0) {
+        \app\models\Utilities::putMessageLogFile("Received std ".count($resultData));
+           
+            for ($i = 0; $i < count($resultData); $i++) {    
+    \app\models\Utilities::putMessageLogFile("Received std ".$resultData[$i]['estudiante']);            $allpending =  $allpending.$resultData[$i]['estudiante'].', ';        
+$centralprocess = $malla->consultarAsignaturas($resultData[$i],$periodo,$saca_nombre["semestre"],$modalidad);                 if ($centralprocess == 1) { $ok=1;  }        
+                     \app\models\Utilities::putMessageLogFile("Received ".$centralprocess); 
+            }
+
+        }else{
+
+             \Yii::$app->getSession()->setFlash('msgne', 'No existen alumnos nuevos para la modalidad elegida');
+        
+         return $this->redirect(['index']);
+        
+        }   
+
+             
+          if ($ok != 1)  {
+            \Yii::$app->getSession()->setFlash('msg', 'No existen datos suficientes para generar la planificacion seleccionada');
+        // \Yii::$app->getSession()->setFlash('msg') ;
+         return $this->redirect(['index']);
+
+        }
+         //   return $resultData;
+         //  return $this->render('temporal', [
+           //         'resultData' => $centralprocess,
+             //          ]);
+            \Yii::$app->getSession()->setFlash('msgok', 'Se ha generado con exito la planificacion');
+         return $this->redirect(['index']);
+     }
+
+    public function actionCerrarplanaut($pla_id)  { 
+    
+    $mod_periodo = new PlanificacionEstudiante();
+     $arrData = $mod_periodo->cerrarPlanificacionAut($pla_id);
+     return $this->redirect(['index']);
+
+     }  
+
       public function actionDescargarples()  {    
       
         ini_set('memory_limit', '512M');
@@ -281,12 +399,11 @@ $centralprocess = $malla->consultarAsignaturas($resultData[$i],$periodo,$saca_no
         header("Content-Type: $content_type");
         header('Content-Disposition: attachment;filename=' . $nombarch);
         header('Cache-Control: max-age=0');
-    $colPosition = array('B','C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','AA','AB','AC','AD');
+    $colPosition = array('B','C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','AA','AB','AC');
         $arrHeader = array(
              Yii::t('formulario', 'DNI 1'),
             Yii::t('formulario', 'Student'),
             Yii::t('crm', 'Carrera'),
-             Yii::t('crm', 'Semestre'),
              Yii::t('formulario', 'Period'),
             Yii::t('formulario', 'B1 Asignatura 1'),
             Yii::t('formulario', 'Horario Paralelo 1'),
@@ -335,6 +452,7 @@ $centralprocess = $malla->consultarAsignaturas($resultData[$i],$periodo,$saca_no
          
         
     }
+
 
     public function actionUpload() {
         $usu_id = Yii::$app->session->get('PB_iduser');

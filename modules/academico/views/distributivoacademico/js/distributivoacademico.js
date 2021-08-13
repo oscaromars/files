@@ -20,7 +20,7 @@ $(document).ready(function () {
         }, false);
 
     });
-$('#cmb_periodo').change(function () { 
+$('#cmb_periodo').change(function () {
     if($('#cmb_periodo').val()!=0){
         document.getElementById("cmb_periodo").disabled = true;
     }
@@ -170,7 +170,7 @@ $('#cmb_periodo').change(function () {
                         //       }
                         //     }
                         //   }, false);
-                    }//                                   
+                    }//
                 }
             }, false);
         }
@@ -230,7 +230,7 @@ $('#cmb_periodo').change(function () {
                     }
                 }, true);
                 break;
-            
+
         }
 
         var arrParams = new Object();
@@ -256,12 +256,6 @@ $('#cmb_periodo').change(function () {
                 }
             }
         }, false);
-
-
-
-
-
-
     });
 
     $('#cmb_jornada').change(function () {
@@ -279,32 +273,27 @@ $('#cmb_periodo').change(function () {
             }
         }, true);
     }
-    
 
-         var arrParams = new Object();
+        // cambios para mostrar el horario del paralelo
+        var arrParams = new Object();
         arrParams.uaca_id = $('#cmb_unidad_dis').val();
         arrParams.mod_id = $('#cmb_modalidad').val();
         arrParams.jornada_id = $(this).val();
+        //arrParams.mpp_id = $('#cmb_paralelo').val();
+        //alert ('mpp_id' + arrParams.mpp_id);
         arrParams.gethorario = true;
         requestHttpAjax(link, arrParams, function(response) {
             if (response.status == "OK") {
                 data = response.message;
                 setComboDataselect(data.horario, "cmb_horario", "Todos");
+                //setComboData(data.horario, "cmb_horario");
             }
-        }, true);           
+        }, true);
      });
 
     $('#btn_buscarData_dist').click(function () {
         searchModules();
     });
-
-
-
-
-
-
-
-
 
     $('#cmb_programa').change(function () {
         var link = $('#txth_base').val() + "/academico/distributivoacademico/new";
@@ -315,6 +304,20 @@ $('#cmb_periodo').change(function () {
             if (response.status == "OK") {
                 data = response.message;
                 setComboDataselect(data.asignaturapos, "cmb_materia", "Todos");
+            }
+        }, true);
+    });
+    // cambios para mostrar el horario del paralelo
+    $('#cmb_paralelo').change(function () {
+        var link = $('#txth_base').val() + "/academico/distributivoacademico/new";
+        var arrParams = new Object();
+        arrParams.mpp_id = $('#cmb_paralelo').val();
+        arrParams.gethorario = true;
+        //alert ('mpp_id' + arrParams.mpp_id);
+        requestHttpAjax(link, arrParams, function (response) {
+            if (response.status == "OK") {
+                data = response.message;
+                setComboData(data.horario, "cmb_horario");
             }
         }, true);
     });
@@ -484,7 +487,7 @@ function save() {
                 requestHttpAjax(link, arrParams, function (response) {
                     showAlert(response.status, response.label, response.message);
                     if (response.status == "OK") {
-                        //loadSessionCampos('dts_asignacion_list', '', '', '');                               
+                        //loadSessionCampos('dts_asignacion_list', '', '', '');
                         sessionStorage.removeItem('dts_asignacion_list');
                         setTimeout(function () {
                             var link = $('#txth_base').val() + "/academico/distributivocabecera/index";
@@ -506,7 +509,7 @@ function save() {
 function eliminarItems(val, daca_id, TbGtable) {
     console.log('session', sessionStorage.dts_asignacion_list);
     var ids = "";
-    
+
     //var count=0;
     if (sessionStorage.dts_asignacion_list) {
         var Grid = JSON.parse(sessionStorage.dts_asignacion_list);
@@ -516,7 +519,7 @@ function eliminarItems(val, daca_id, TbGtable) {
                 if (ids == val) {
                     var array = findAndRemove(Grid, 'Id', val);
                     sessionStorage.dts_asignacion_list = JSON.stringify(array);
-                    //if (count==0){sessionStorage.removeItem('detalleGrid')} 
+                    //if (count==0){sessionStorage.removeItem('detalleGrid')}
                     $(this).remove();
                 }
             });
@@ -526,7 +529,7 @@ function eliminarItems(val, daca_id, TbGtable) {
         var arrParams = new Object();
         arrParams.id=val;
         arrParams.daca_id=daca_id;
-        
+
         var link = $('#txth_base').val() + "/academico/distributivoacademico/delete";
         requestHttpAjax(link, arrParams, function (response) {
          showAlert(response.status, response.label, response.message);
@@ -535,8 +538,8 @@ function eliminarItems(val, daca_id, TbGtable) {
                             var link1 = $('#txth_base').val() + "/academico/distributivoacademico/editcab/" + daca_id;
                             window.location = link1;
                         }, 1000);
-               
-             
+
+
             }
         }, true);
     }
@@ -576,7 +579,7 @@ function actualizar() {
                     showAlert(response.status, response.label, response.message);
                     //     console.log('ingresa5');
                     if (response.status == "OK") {
-                        //loadSessionCampos('dts_asignacion_list', '', '', '');   
+                        //loadSessionCampos('dts_asignacion_list', '', '', '');
                         //    console.log('ingresa6');
                         sessionStorage.removeItem('dts_asignacion_list');
                         setTimeout(function () {
@@ -713,7 +716,7 @@ function addAsignacion(opAccion) {
                 return;
             }
         }
-        //Recorrer el session storage para verificar validaciones.    
+        //Recorrer el session storage para verificar validaciones.
         var res = 0;
         res = validar(tasi_id, asi_id, hor_id, par_id, uni_id, mod_id, paca_id, jor_id, txt_horas_otros);
 
@@ -822,19 +825,19 @@ function validar(tasi_id, asi_id, hor_id, par_id, idUnidadAcademica, idModalidad
                         break;
 
                     case "3":
-                        if (arr_Grid1[i]['tasi_id'] == tasi_id) { //otros tipos de asignaciones                        
+                        if (arr_Grid1[i]['tasi_id'] == tasi_id) { //otros tipos de asignaciones
                             estado = 1;
                             console.log('3');
                         }
                         break;
                     case "4":
-                        if (arr_Grid1[i]['tasi_id'] == tasi_id) { //otros tipos de asignaciones                        
+                        if (arr_Grid1[i]['tasi_id'] == tasi_id) { //otros tipos de asignaciones
                             estado = 1;
                             console.log('4');
                         }
                         break;
                     case "6":
-                        if (arr_Grid1[i]['tasi_id'] == tasi_id) { //otros tipos de asignaciones                        
+                        if (arr_Grid1[i]['tasi_id'] == tasi_id) { //otros tipos de asignaciones
                             estado = 1;
                             console.log('4');
                         }
@@ -986,7 +989,7 @@ function addVariosItem(TbGtable, lista, i) {
 }
 
 function limpiarDetalle() {
-    //$('#cmb_unidad_dis option[value="0"]').attr("selected", true);    
+    //$('#cmb_unidad_dis option[value="0"]').attr("selected", true);
     document.getElementById("cmb_unidad_dis").value = 0;
     document.getElementById("cmb_modalidad").value = 0;
     //document.getElementById("cmb_periodo").value = 0;
@@ -1036,7 +1039,7 @@ function retornaFila(c, Grid, TbGtable, op) {
     strFila += '<td>' + Grid[c]['fecha_inicio'] + '</td>';
     strFila += '<td>' + Grid[c]['fecha_fin'] + '</td>';
     strFila += '<td>' + Grid[c]['txt_horas_otros'] + '</td>';
-    strFila += '<td class="text-center">';//¿Está seguro de eliminar este elemento?   
+    strFila += '<td class="text-center">';//¿Está seguro de eliminar este elemento?
     strFila += '<a onclick="eliminarItems(\'' + Grid[c]['indice'] + '\',0 ,\'' + TbGtable + '\')" ><span class="glyphicon glyphicon-trash"></span></a>';
     //<span class='glyphicon glyphicon-remove'></span>
     strFila += '</td>';

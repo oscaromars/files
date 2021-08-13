@@ -20,8 +20,15 @@ academico::registerTranslations();
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <p class="text-danger"> <?= Yii::t("formulario", "Fields with * are required") ?> </p>
     </div>
-    <input type="hidden" name="cmb_profesor" id="cmb_profesor" value="<?= $arr_cabecera["pro_id"] ?>"  />
-    <div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12">
+        <div class="form-group">
+            <div class="col-sm-10 col-md-10 col-xs-10 col-lg-10">
+                <div style = "width: 500px;" class="alert alert-info"><span style="font-weight: bold"> Nota: </span> Si al señalar paralelo no muestra horario, es porque no ha sido asignado.</div>
+                </div>
+            </div>
+        </div>
+     <input type="hidden" name="cmb_profesor" id="cmb_profesor" value="<?= $arr_cabecera["pro_id"] ?>"  />
+     <div class="row">
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <h3><label id="lbl_profesor"><?= Yii::t("formulario", "Data Teacher") ?></label></h3>
         </div>
@@ -64,7 +71,7 @@ academico::registerTranslations();
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <h3><label id="lbl_profesor"><?= Yii::t("formulario", "Asignación") ?></label></h3>
         </div>
-    </div>
+     </div>
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <div class="form-group">
                 <label for="cmb_tipo_asignacion" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= academico::t("Academico", "Tipo Asignación") ?><span class="text-danger">*</span></label>
@@ -177,8 +184,8 @@ academico::registerTranslations();
                 </div>
             </div>
         </div>
-    </div>
-    <div>
+     </div>
+     <div>
         <?=
         $this->render('view-grid-edit', [
             'arr_detalle' => $arr_detalle,

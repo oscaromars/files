@@ -18,7 +18,14 @@ academico::registerTranslations();
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <p class="text-danger"> <?= Yii::t("formulario", "Fields with * are required") ?> </p>
     </div>
-    <div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12">
+        <div class="form-group">
+            <div class="col-sm-10 col-md-10 col-xs-10 col-lg-10">
+                <div style = "width: 500px;" class="alert alert-info"><span style="font-weight: bold"> Nota: </span> Si al señalar paralelo no muestra horario, es porque no ha sido asignado.</div>
+                </div>
+            </div>
+        </div>
+     <div class="row">
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <div class="form-group">
                 <label for="cmb_profesor" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= academico::t("Academico", "Teacher") ?><span class="text-danger">*</span></label>
@@ -150,8 +157,8 @@ academico::registerTranslations();
                 </div>
             </div>
         </div>
-    </div>
-    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+     </div>
+     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
             <div class="box-body table-responsive no-padding">
                 <table  id="TbG_Data" class="table table-hover">

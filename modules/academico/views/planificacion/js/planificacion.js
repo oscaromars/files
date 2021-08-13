@@ -1123,7 +1123,7 @@ function exportExcelplanificacion() {
 function actualizarGridPlanestudiante(perSel) {
     var estudiante = $('#cmb_buscarest option:selected').val();
     var unidad = $('#cmb_unidadest option:selected').val();
-    var modalidad = $('#cmb_modalidadest option:selected').val();
+    var modalidad = $('#cmb_modalidadesth option:selected').val();
     //var carrera = $('#cmb_carreraest option:selected').text(); //$('#cmb_carreras option:selected').val();//$('#cmb_carreras option:selected').val();
     var carrera = $('#txt_carrera').val();
     //var malla = $('#cmb_mallaest option:selected').val();

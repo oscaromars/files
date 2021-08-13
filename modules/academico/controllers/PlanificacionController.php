@@ -63,6 +63,12 @@ class PlanificacionController extends \app\components\CController {
             '6' => Yii::t('formulario', 'Hora 6'),
         ];
     }
+
+private function Paralelo(){
+        return [
+            '0' => Yii::t('formulario', 'Seleccionar'),
+        ];
+    }
     private function Modalidades() {
         return [
             '0' => Yii::t('formulario', 'Seleccionar'),
@@ -72,8 +78,7 @@ class PlanificacionController extends \app\components\CController {
             '4' => Yii::t('formulario', 'Distancia'),
         ];
     }
-
-    private function Paralelo(){
+    private function Horario(){
         return [
             '0' => Yii::t('formulario', 'Seleccionar'),
         ];
@@ -1985,6 +1990,7 @@ inner join " . $con->dbname . ".malla_academica as b on a.pes_cod_carrera = b.ma
                 'existe' => $existe,
                 'perSelect' => $perSelect?$perSelect:0,
                 'arr_paralelo' => $this->Paralelo(),
+                'arr_horario' => $this->Horario(),
                 
                 $this->renderPartial('procesoplanificacion-grid', [
                     'model' => $model_plan,
@@ -2053,6 +2059,7 @@ inner join " . $con->dbname . ".malla_academica as b on a.pes_cod_carrera = b.ma
                     'existe' => $existe,
                     'perSelect' => $perSelect?$perSelect:0,
                     'arr_paralelo' => $this->Paralelo(),
+                    'arr_horario' => $this->Horario(),
 
         ]);
     }

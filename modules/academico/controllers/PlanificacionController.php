@@ -212,7 +212,7 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
    inner join db_asgard.persona per on per.per_id = e.per_id
    inner join db_academico.malla_academico_estudiante malle on per.per_id = malle.per_id
      where malle.maca_id = maca.maca_id  
-        AND meu.mod_id = 1
+        AND meu.mod_id = :modalidad
     AND  e.est_estado = 1 AND e.est_estado_logico = 1
     AND  c.ecpr_estado = 1 AND c.ecpr_estado_logico = 1
     AND  meu.meun_estado = 1 AND meu.meun_estado_logico = 1
@@ -227,8 +227,8 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
 b.pla_id= ( select max(dap.pla_id) from db_academico.planificacion dap 
  where meu.mod_id = dap.mod_id ))) or (e.per_id in (
 select a.per_id from db_asgard.persona as a 
-inner join db_academico.estudiante b on a.per_id = b.per_id
-where DATEDIFF(NOW(),b.est_fecha_creacion) <=180 and
+inner join db_academico.estudiante bas on a.per_id = bas.per_id
+where DATEDIFF(NOW(),bas.est_fecha_creacion) <=180 and
 DATEDIFF(NOW(),a.per_fecha_creacion) <=180))  
                 ";
 
@@ -314,7 +314,7 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
    inner join db_asgard.persona per on per.per_id = e.per_id
    inner join db_academico.malla_academico_estudiante malle on per.per_id = malle.per_id
      where malle.maca_id = maca.maca_id  
-     AND meu.mod_id = 1
+     AND meu.mod_id = :modalidad
     AND  e.est_estado = 1 AND e.est_estado_logico = 1
     AND  c.ecpr_estado = 1 AND c.ecpr_estado_logico = 1
     AND  meu.meun_estado = 1 AND meu.meun_estado_logico = 1
@@ -329,8 +329,8 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
 b.pla_id= ( select max(dap.pla_id) from db_academico.planificacion dap 
  where meu.mod_id = dap.mod_id ))) and (e.per_id in (
 select a.per_id from db_asgard.persona as a 
-inner join db_academico.estudiante b on a.per_id = b.per_id
-where DATEDIFF(NOW(),b.est_fecha_creacion) <=180 and
+inner join db_academico.estudiante bas on a.per_id = bas.per_id
+where DATEDIFF(NOW(),bas.est_fecha_creacion) <=180 and
 DATEDIFF(NOW(),a.per_fecha_creacion) <=180))  
                 ";
 

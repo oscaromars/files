@@ -3,6 +3,12 @@ $(document).ready(function () {
     $('#btn_buscarAspirante').click(function () {
         actualizarGridAspirante();
     });
+    $('#btn_editaraspirantegrado').click(function () {
+        editaspirantegrado();
+    });
+    $('#btn_actualizaraspirantegrado').click(function () {
+        updateaspirantegrado();
+    });
     $('#cmb_carrera').change(function () {
         var link = $('#txth_base').val() + "/inscripciongrado/index";
         var arrParams = new Object();
@@ -67,7 +73,7 @@ $(document).ready(function () {
     });
 
     $('#cmb_provincia').change(function () {
-        var link = $('#txth_base').val() + "inscripciongrado/index";
+        var link = $('#txth_base').val() + "/inscripciongrado/index";
         var arrParams = new Object();
         arrParams.prov_id = $(this).val();
         arrParams.getcantones = true;
@@ -78,6 +84,49 @@ $(document).ready(function () {
             }
         }, true);
     });
+
+    $('#cmb_paisEdit').change(function () {
+        var link = $('#txth_base').val() + "/inscripciongrado/edit";
+        var arrParams = new Object();
+        arrParams.pai_id = $(this).val();
+        arrParams.getprovincias = true;
+        arrParams.getarea = true;
+        requestHttpAjax(link, arrParams, function (response) {
+            if (response.status == "OK") {
+                data = response.message;
+                setComboData(data.provincias, "cmb_provinciaEdit");
+                var arrParams = new Object();
+                if (data.provincias.length > 0) {
+                    arrParams.prov_id = data.provincias[0].id;
+                    arrParams.getcantones = true;
+                    requestHttpAjax(link, arrParams, function (response) {
+                        if (response.status == "OK") {
+                            data = response.message;
+                            setComboData(data.cantones, "cmb_cantonEdit");
+                        }
+                    }, true);
+                }
+            }
+        }, true);
+        // actualizar codigo pais
+        $("#lbl_codeCountry").text($("#cmb_paisEdit option:selected").attr("data-code"));
+        $("#lbl_codeCountrycon").text($("#cmb_paisEdit option:selected").attr("data-code"));
+        $("#lbl_codeCountrycell").text($("#cmb_paisEdit option:selected").attr("data-code"));
+    });
+
+    $('#cmb_provinciaEdit').change(function () {
+        var link = $('#txth_base').val() + "/inscripciongrado/edit";
+        var arrParams = new Object();
+        arrParams.prov_id = $(this).val();
+        arrParams.getcantones = true;
+        requestHttpAjax(link, arrParams, function (response) {
+            if (response.status == "OK") {
+                data = response.message;
+                setComboData(data.cantones, "cmb_cantonEdit");
+            }
+        }, true);
+    });
+
     $('#cmb_tipo_dni').change(function () {
         if ($('#cmb_tipo_dni').val() == 'PASS') {
             $('#txt_cedula').removeClass("PBvalidation");
@@ -321,66 +370,59 @@ function editaspirantegrado() {
 }
 
 function updateaspirantegrado() {
-    var link = $('#txth_base').val() + "//inscripciongrado/update";
+    var ID = $('#txth_igra_id').val();
+    var link = $('#txth_base').val() + "/inscripciongrado/update";
     var arrParams = new Object();
     arrParams.per_id = $("#frm_per_id").val();
-    arrParams.pri_nombre = $('#txt_primer_nombre').val();
-    arrParams.seg_nombre = $('#txt_segundo_nombre').val();
-    arrParams.pri_apellido = $('#txt_primer_apellido').val();
-    arrParams.seg_apellido = $('#txt_segundo_apellido').val();
-    arrParams.cedula = $('#txt_cedula').val();
-    arrParams.ruc = $('#txt_ruc').val();
-    arrParams.pasaporte = $('#txt_pasaporte').val();
-    arrParams.correo = $('#txt_correo').val();
+    arrParams.cedula = $('#txt_cedulaEdit').val();
+    arrParams.pasaporte = $('#txt_pasaporteEdit').val();
+    arrParams.primer_nombre = $('#txt_primer_nombreEdit').val();
+    arrParams.segundo_nombre = $('#txt_segundo_nombreEdit').val();
+    arrParams.primer_apellido = $('#txt_primer_apellidoEdit').val();
+    arrParams.segundo_apellido = $('#txt_segundo_apellidoEdit').val();
+    arrParams.cuidad_nac = $('#cmb_ciudadEdit').val();
+    arrParams.fecha_nac = $('#txt_fecha_nacimientoEdit').val();
+    arrParams.nacionalidad = $('#txt_nacionalidadEdit').val();
+    arrParams.estado_civil = $('#cmb_estadocivilEdit').val();
 
-    arrParams.pai_id = $('#cmb_pais').val();
-    arrParams.pro_id = $('#cmb_provincia').val();
-    arrParams.can_id = $('#cmb_canton').val();
-    arrParams.sector = $('#txt_sector').val();
-    arrParams.calle_pri = $('#txt_calle_pri').val();
-    arrParams.calle_sec = $('#txt_calle_sec').val();
-    arrParams.numeracion = $('#txt_numeracion').val();
-    arrParams.referencia = $('#txt_referencia').val();
-    arrParams.nacionalidad = $('#txt_nacionalidad').val();
-    arrParams.celular = $('#txt_cel').val();
-    arrParams.phone = $('#txt_phone').val();
-    arrParams.dedicacion = $('#cmb_dedicacion').val();
-    arrParams.pro_num_contrato = $('#txt_contrato').val();
-    arrParams.fecha_nacimiento = $('#txt_fecha_nacimiento').val();
+    //Datos Contacto
+    arrParams.pais = $('#cmb_paisEdit').val();
+    arrParams.provincia = $('#cmb_provinciaEdit').val();
+    arrParams.canton = $('#cmb_cantonEdit').val();
+    arrParams.parroquia = $('#txt_parroquiaEdit').val();
+    arrParams.dir_domicilio = $('#txt_domicilioEdit').val();
+    arrParams.celular = $('#txt_celEdit').val();
+    arrParams.telefono = $('#txt_phoneEdit').val();
+    arrParams.correo = $('#txt_correoEdit').val();
 
-    arrParams.usuario = $('#txt_usuario').val();
-    arrParams.clave = $('#frm_clave').val();
-    arrParams.gru_id = $('#cmb_grupo').val();
-    arrParams.rol_id = $('#cmb_rol').val();
-    arrParams.emp_id = $('#cmb_empresa').val();
-    arrParams.foto = $('#txth_doc_foto').val() + ".jpg";
+    //Datos en caso de emergencias
+    arrParams.dir_trabajo = $('#txt_trabajo_direccionEdit').val();
+    arrParams.cont_emergencia = $('#txt_contc_emergenciasEdit').val();
+    arrParams.parentesco = $('#cmb_parentescoEdit').val();
+    arrParams.tel_emergencia = $('#txt_cel_contactoEdit').val();
+    arrParams.dir_personacontacto = $('#txt_direccion_contEdit').val();
 
-    /** Session Storages **/
-    arrParams.grid_instruccion_list = (JSON.parse(sessionStorage.grid_instruccion_list)).data;
-    arrParams.grid_docencia_list = (JSON.parse(sessionStorage.grid_docencia_list)).data;
-    arrParams.grid_experiencia_list = (JSON.parse(sessionStorage.grid_experiencia_list)).data;
-    arrParams.grid_idioma_list = (JSON.parse(sessionStorage.grid_idioma_list)).data;
-    arrParams.grid_investigacion_list = (JSON.parse(sessionStorage.grid_investigacion_list)).data;
-    arrParams.grid_evento_list = (JSON.parse(sessionStorage.grid_evento_list)).data;
-    arrParams.grid_conferencia_list = (JSON.parse(sessionStorage.grid_conferencia_list)).data;
-    arrParams.grid_publicacion_list = (JSON.parse(sessionStorage.grid_publicacion_list)).data;
-    arrParams.grid_coordinacion_list = (JSON.parse(sessionStorage.grid_coordinacion_list)).data;
-    arrParams.grid_evaluacion_list = (JSON.parse(sessionStorage.grid_evaluacion_list)).data;
-    arrParams.grid_referencia_list = (JSON.parse(sessionStorage.grid_referencia_list)).data;
-
+    //TAB 2
+    arrParams.igra_ruta_doc_titulo = $('#txth_doc_titulo').val();
+    arrParams.igra_ruta_doc_dni = $('#txth_doc_dni').val();
+    arrParams.igra_ruta_doc_certvota = $('#txth_doc_certvota').val();
+    arrParams.igra_ruta_doc_foto = $('#txth_doc_foto').val();
+    arrParams.igra_ruta_doc_comprobantepago = $('#txth_doc_comprobantepago').val();
+    arrParams.igra_ruta_doc_record = $('#txth_doc_record').val();
+    arrParams.igra_ruta_doc_certificado = $('#txth_doc_nosancion').val();
+    arrParams.igra_ruta_doc_syllabus = $('#txth_doc_syllabus').val();
+    arrParams.igra_ruta_doc_homologacion = $('#txth_doc_especievalorada').val();
+    alert($('#txth_doc_certvota').val());
 
     if (!validateForm()) {
-        //console.log(arrParams);
-        requestHttpAjax(link, arrParams, function(response) {
-            var btnacciones = new Array();
-            var accion1 = new Object();
-            accion1.id = "btnid1";
-            accion1.class = "clclass";
-            accion1.value = "Aceptar";
-            accion1.callback = "backtoList";
-            btnacciones[0] = accion1;
-            response.message.acciones = btnacciones;
+        requestHttpAjax(link, arrParams, function (response) { 
             showAlert(response.status, response.label, response.message);
+            //var message = response.message;                       
+            if (response.status == "OK") {
+                setTimeout(function() {
+                        window.location.href = $('#txth_base').val() + "/inscripciongrado/aspirantegrado";
+                    }, 5000);
+            }
         }, true);
     }
 }

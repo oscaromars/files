@@ -63,9 +63,9 @@ use app\models\Persona;
     </div>
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
-            <label for="cmb_ciudad" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("inscripcionposgrado", "Ciudad de Nacimiento") ?></label>
+            <label for="cmb_ciudadEdit" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("inscripcionposgrado", "Ciudad de Nacimiento") ?></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
-                <?= Html::dropDownList("cmb_ciudad", $persona_model->can_id_nacimiento, $arr_can, ["class" => "form-control", "id" => "cmb_ciudad"]) ?>
+                <?= Html::dropDownList("cmb_ciudadEdit", $persona_model->can_id_nacimiento, $arr_ciudad_nac, ["class" => "form-control", "id" => "cmb_ciudadEdit"]) ?>
             </div>
         </div>
     </div>
@@ -81,63 +81,63 @@ use app\models\Persona;
         <div class="form-group">
             <label for="frm_nacionalidad" class="col-lg-3 col-md-3 col-sm-3 col-xs-3 control-label"><?= Yii::t("perfil", "Nacionalidad") ?></label>
             <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9">
-                <input type="text" maxlength="50" class="form-control PBvalidation" id="frm_nacionalidad" value="<?= $persona_model->per_nacionalidad ?>" data-required="false" data-type="all" placeholder="<?= Yii::t("perfil", "Nacionalidad") ?>">
+                <?= Html::dropDownList("frm_nacionalidad", $persona_model->per_nacionalidad, $arr_nacionalidad, ["class" => "form-control", "id" => "frm_nacionalidad"]) ?>
             </div>
         </div>
     </div>
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
-            <label for="cmb_estadocivil" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("inscripcionposgrado", "Estado Civil") ?></label>
+            <label for="cmb_estadocivilEdit" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("inscripcionposgrado", "Estado Civil") ?></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
-                <?= Html::dropDownList("cmb_estadocivil", $persona_model->eciv_id, $arr_estado_civil, ["class" => "form-control", "id" => "cmb_estadocivil"]) ?>
+                <?= Html::dropDownList("cmb_estadocivilEdit", $persona_model->eciv_id, $arr_estado_civil, ["class" => "form-control", "id" => "cmb_estadocivilEdit"]) ?>
             </div>
         </div>
     </div>  
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
-            <label for="cmb_pais" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("inscripcionposgrado", "Pais") ?></label>
+            <label for="cmb_paisEdit" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("inscripcionposgrado", "Pais") ?></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
-                <?= Html::dropDownList("cmb_pais", $persona_model->pai_id_domicilio, $arr_pais, ["class" => "form-control", "id" => "cmb_pais"]) ?>
+                <?= Html::dropDownList("cmb_paisEdit", $persona_model->pai_id_domicilio, $arr_pais, ["class" => "form-control", "id" => "cmb_paisEdit"]) ?>
             </div>
         </div>
     </div>
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
-            <label for="cmb_provincia" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("inscripcionposgrado", "Provincia") ?></label>
+            <label for="cmb_provinciaEdit" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("inscripcionposgrado", "Provincia") ?></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
-                <?= Html::dropDownList("cmb_provincia", $persona_model->pro_id_domicilio, $arr_pro, ["class" => "form-control", "id" => "cmb_provincia"]) ?>
+                <?= Html::dropDownList("cmb_provinciaEdit", $persona_model->pro_id_domicilio, $arr_provincia, ["class" => "form-control", "id" => "cmb_provinciaEdit"]) ?>
             </div>
         </div>
     </div>
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
-            <label for="cmb_canton" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("inscripcionposgrado", "Cantón") ?></label>
+            <label for="cmb_cantonEdit" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("inscripcionposgrado", "Cantón") ?></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
-                <?= Html::dropDownList("cmb_canton", $persona_model->can_id_domicilio, $arr_can, ["class" => "form-control", "id" => "cmb_canton"]) ?>
+                <?= Html::dropDownList("cmb_cantonEdit", $persona_model->can_id_domicilio, $arr_ciudad, ["class" => "form-control", "id" => "cmb_cantonEdit"]) ?>
             </div>
         </div>
     </div>  
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
-            <label for="frm_per_domicilio_ref" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("formulario", "Dirección del domicilio") ?></label>
+            <label for="frm_per_domicilio_refEdit" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("formulario", "Dirección del domicilio") ?></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
-                <input type="text" class="form-control PBvalidation" id="frm_per_domicilio_ref" value="<?= $persona_model->per_domicilio_ref ?>" data-type="all" placeholder="<?= Yii::t("inscripcionposgrado", "Detallar la dirección de su domicilio")  ?>">
+                <input type="text" class="form-control PBvalidation" id="frm_per_domicilio_refEdit" value="<?= $persona_model->per_domicilio_ref ?>" data-type="all" placeholder="<?= Yii::t("inscripcionposgrado", "Detallar la dirección de su domicilio")  ?>">
             </div>
         </div>
     </div>
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
-            <label for="frm_cel" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("perfil", "Celular") ?></label>
+            <label for="frm_celEdit" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("perfil", "Celular") ?></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
-                <input type="text" class="form-control PBvalidation" id="frm_cel" value="<?= $persona_model->per_celular ?>" data-required="false" data-type="number"  placeholder="<?= Yii::t("perfil", "Celular")  ?>">
+                <input type="text" class="form-control PBvalidation" id="frm_celEdit" value="<?= $persona_model->per_celular ?>" data-required="false" data-type="number"  placeholder="<?= Yii::t("perfil", "Celular")  ?>">
             </div>
         </div>
     </div>
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
-            <label for="frm_phone" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("perfil", "Télefono") ?></label>
+            <label for="frm_phoneEdit" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("perfil", "Télefono") ?></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
-                <input type="text" class="form-control PBvalidation" id="frm_phone" value="<?= $persona_model->per_domicilio_telefono ?>" data-required="false" data-type="number"  placeholder="<?= Yii::t("perfil", "Télefono")  ?>">
+                <input type="text" class="form-control PBvalidation" id="frm_phoneEdit" value="<?= $persona_model->per_domicilio_telefono ?>" data-required="false" data-type="number"  placeholder="<?= Yii::t("perfil", "Télefono")  ?>">
             </div>
         </div>
     </div>
@@ -148,5 +148,29 @@ use app\models\Persona;
                 <input type="text" class="form-control PBvalidation" id="frm_per_correo" value="<?= $persona_model->per_correo ?>" data-type="alfa" placeholder="<?= Yii::t("inscripcionposgrado", "Correo")  ?>">
             </div>
         </div> 
+    </div>
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="form-group">
+            <label for="txt_contacto_emergenciaEdit" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("formulario", "En Caso de Emergencia") ?><span class="text-danger">*</span></label>
+            <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
+                <input type="text" class="form-control PBvalidation keyupmce" id="txt_contacto_emergenciaEdit" value="<?= $contacto_model->pcon_nombre ?>" data-type="alfa" data-keydown="true" placeholder="<?= Yii::t("formulario", "Persona por contactar en caso de Emergencia") ?>">
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="form-group">
+            <label for="cmb_parentescoEdit" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("formulario", "Tipo de Parentesco") ?><span class="text-danger">*</span></label>
+            <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
+                <?= Html::dropDownList("cmb_parentescoEdit", $contacto_model->tpar_id, $arr_tipparentesco, ["class" => "form-control", "id" => "cmb_parentescoEdit"]) ?>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="form-group">
+            <label for="txt_telefono_emergenciaEdit" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("formulario", "Phone")?><span class="text-danger">*</span></label> 
+            <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
+                <input type="text" class="form-control PBvalidation" data-required="false" id="txt_telefono_emergenciaEdit" value="<?= $contacto_model->pcon_celular ?>" data-type="number" data-keydown="true" placeholder="<?= Yii::t("formulario", "Teléfono de la persona de contacto en caso de emergencia ") ?>">
+            </div>
+        </div>
     </div>
 </form>

@@ -678,7 +678,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
         if (Yii::$app->session->get('PB_isuser')) {
             $route = str_replace("../", "", $route);
             if (preg_match("/^" . $this->folder_cv . "\//", $route)) {
-                $url_image = Yii::$app->basePath . "/uploads/" . $route;
+                $url_image = Yii::$app->basePath . "/uploads/inscripcionposgrado" . $route;
                 $arrIm = explode(".", $url_image);
                 $typeImage = $arrIm[count($arrIm) - 1];
                 if (file_exists($url_image)) {
@@ -712,7 +712,6 @@ class InscripcionposgradoController extends \yii\web\Controller {
             $per_cedula = $data['cedula'];
 
             $persona_model = Persona::findOne($id);
-            $contacto_model = PersonaContacto::findOne($id);
             $usuario_model = Usuario::findOne(["per_id" => $id, "usu_estado" => '1', "usu_estado_logico" => '1']);
             $empresa_persona_model = EmpresaPersona::findOne(["per_id" => $id, "eper_estado" => '1', "eper_estado_logico" => '1']);
 
@@ -730,20 +729,26 @@ class InscripcionposgradoController extends \yii\web\Controller {
             /**
              * Inf. Personal
              */
+            $contacto_model = PersonaContacto::findOne(['per_id' => $persona_model->per_id]); // obtiene el pcon_id con el per_id
             $arr_ciudad_nac = Canton::findAll(["pro_id" => $persona_model->can_id_nacimiento, "can_estado" => 1, "can_estado_logico" => 1]);
             $arr_estado_civil = EstadoCivil::find()->select("eciv_id AS id, eciv_nombre AS value")->where(["eciv_estado_logico" => "1", "eciv_estado" => "1"])->asArray()->all();
+            $arr_nacionalidad = Pais::find()->select("pai_id AS id, pai_nacionalidad AS value")->where(["pai_estado_logico" => "1", "pai_estado" => "1"])->asArray()->all();
             $arr_pais = Pais::findAll(["pai_estado" => 1, "pai_estado_logico" => 1]);
-            $arr_pro = Provincia::findAll(["pai_id" => $persona_model->pai_id_domicilio, "pro_estado" => 1, "pro_estado_logico" => 1]);
-            $arr_can = Canton::findAll(["pro_id" => $persona_model->pro_id_domicilio, "can_estado" => 1, "can_estado_logico" => 1]);
+            $arr_provincia = Provincia::provinciaXPais($arr_nacionalidad[0]["id"]);
+            $arr_ciudad= Canton::cantonXProvincia($arr_provincia[0]["id"]);
+            $arr_tipparentesco = TipoParentesco::find()->select("tpar_id AS id, tpar_nombre AS value")->where(["tpar_estado_logico" => "1", "tpar_estado" => "1"])->asArray()->all();
 
             $ViewFormTab1 = $this->renderPartial('ViewFormTab1', [
                 'arr_ciudad_nac' => (empty(ArrayHelper::map($arr_ciudad_nac, "can_id", "can_nombre"))) ? array(Yii::t("canton", "-- Select Canton --")) : (ArrayHelper::map($arr_ciudad_nac, "can_id", "can_nombre")),
                 "arr_estado_civil" => ArrayHelper::map($arr_estado_civil, "id", "value"),
                 'persona_model' => $persona_model,
+                "arr_nacionalidad" => ArrayHelper::map($arr_nacionalidad, "id", "value"),
                 'arr_pais' => (empty(ArrayHelper::map($arr_pais, "pai_id", "pai_nombre"))) ? array(Yii::t("pais", "-- Select Pais --")) : (ArrayHelper::map($arr_pais, "pai_id", "pai_nombre")),
-                'arr_pro' => (empty(ArrayHelper::map($arr_pro, "pro_id", "pro_nombre"))) ? array(Yii::t("provincia", "-- Select Provincia --")) : (ArrayHelper::map($arr_pro, "pro_id", "pro_nombre")),
-                'arr_can' => (empty(ArrayHelper::map($arr_can, "can_id", "can_nombre"))) ? array(Yii::t("canton", "-- Select Canton --")) : (ArrayHelper::map($arr_can, "can_id", "can_nombre")),
+                "arr_provincia" => ArrayHelper::map($arr_provincia, "id", "value"),
+                "arr_ciudad" => ArrayHelper::map($arr_ciudad, "id", "value"),
+                "arr_tipparentesco" => ArrayHelper::map($arr_tipparentesco, "id", "value"),
                 'persona_model' => $persona_model,
+                'contacto_model' => $contacto_model,
             ]);
 
             /**
@@ -753,14 +758,15 @@ class InscripcionposgradoController extends \yii\web\Controller {
             $instruccion_model = EstudianteInstruccion::findOne(['per_id' => $persona_model->per_id]);
             $laboral_model = InformacionLaboral::findOne(['per_id' => $persona_model->per_id]);
             $arr_pais = Pais::findAll(["pai_estado" => 1, "pai_estado_logico" => 1]);
-            $arr_pro = Provincia::findAll(["pai_id" => $laboral_model->ilab_prov_emp, "pro_estado" => 1, "pro_estado_logico" => 1]);
-            $arr_can = Canton::findAll(["pro_id" => $laboral_model->ilab_ciu_emp, "can_estado" => 1, "can_estado_logico" => 1]);
+            $arr_nacionalidad = Pais::find()->select("pai_id AS id, pai_nacionalidad AS value")->where(["pai_estado_logico" => "1", "pai_estado" => "1"])->asArray()->all();
+            $arr_prov_emp = Provincia::provinciaXPais($arr_nacionalidad[0]["id"]);
+            $arr_ciu_emp = Canton::cantonXProvincia($arr_prov_emp[0]["id"]);
             
 
             $ViewFormTab2 = $this->renderPartial('ViewFormTab2', [
                 'arr_pais' => (empty(ArrayHelper::map($arr_pais, "pai_id", "pai_nombre"))) ? array(Yii::t("pais", "-- Select Pais --")) : (ArrayHelper::map($arr_pais, "pai_id", "pai_nombre")),
-                'arr_pro' => (empty(ArrayHelper::map($arr_pro, "pro_id", "pro_nombre"))) ? array(Yii::t("provincia", "-- Select Provincia --")) : (ArrayHelper::map($arr_pro, "pro_id", "pro_nombre")),
-                'arr_can' => (empty(ArrayHelper::map($arr_can, "can_id", "can_nombre"))) ? array(Yii::t("canton", "-- Select Canton --")) : (ArrayHelper::map($arr_can, "can_id", "can_nombre")),
+                "arr_prov_emp" => ArrayHelper::map($arr_prov_emp, "id", "value"),
+                "arr_ciu_emp" => ArrayHelper::map($arr_ciu_emp, "id", "value"),
                 "arr_categoria" => array("1" => Yii::t("formulario", "Pública"), "2" => Yii::t("formulario", "Privada")),
                 'persona_model' => $persona_model,
                 'instruccion_model' => $instruccion_model,
@@ -935,19 +941,25 @@ class InscripcionposgradoController extends \yii\web\Controller {
             /**
              * Inf. Personal
              */
-            $arr_can = Canton::findAll(["pro_id" => $persona_model->pro_id_domicilio, "can_estado" => 1, "can_estado_logico" => 1]);
+            $contacto_model = PersonaContacto::findOne(['per_id' => $persona_model->per_id]); // obtiene el pcon_id con el per_id
+            $arr_ciudad_nac = Canton::findAll(["pro_id" => $persona_model->can_id_nacimiento, "can_estado" => 1, "can_estado_logico" => 1]);
             $arr_estado_civil = EstadoCivil::find()->select("eciv_id AS id, eciv_nombre AS value")->where(["eciv_estado_logico" => "1", "eciv_estado" => "1"])->asArray()->all();
+            $arr_nacionalidad = Pais::find()->select("pai_id AS id, pai_nacionalidad AS value")->where(["pai_estado_logico" => "1", "pai_estado" => "1"])->asArray()->all();
             $arr_pais = Pais::findAll(["pai_estado" => 1, "pai_estado_logico" => 1]);
-            $arr_pro = Provincia::findAll(["pai_id" => $persona_model->pai_id_domicilio, "pro_estado" => 1, "pro_estado_logico" => 1]);
-            $arr_can = Canton::findAll(["pro_id" => $persona_model->pro_id_domicilio, "can_estado" => 1, "can_estado_logico" => 1]);
+            $arr_provincia = Provincia::provinciaXPais($arr_nacionalidad[0]["id"]);
+            $arr_ciudad= Canton::cantonXProvincia($arr_provincia[0]["id"]);
+            $arr_tipparentesco = TipoParentesco::find()->select("tpar_id AS id, tpar_nombre AS value")->where(["tpar_estado_logico" => "1", "tpar_estado" => "1"])->asArray()->all();
 
             $EditFormTab1 = $this->renderPartial('EditFormTab1', [
-                'arr_can' => (empty(ArrayHelper::map($arr_can, "can_id", "can_nombre"))) ? array(Yii::t("canton", "-- Select Canton --")) : (ArrayHelper::map($arr_can, "can_id", "can_nombre")),
+                'arr_ciudad_nac' => (empty(ArrayHelper::map($arr_ciudad_nac, "can_id", "can_nombre"))) ? array(Yii::t("canton", "-- Select Canton --")) : (ArrayHelper::map($arr_ciudad_nac, "can_id", "can_nombre")),
                 "arr_estado_civil" => ArrayHelper::map($arr_estado_civil, "id", "value"),
-                'persona_model' => $persona_model,
+                "arr_nacionalidad" => ArrayHelper::map($arr_nacionalidad, "id", "value"),
                 'arr_pais' => (empty(ArrayHelper::map($arr_pais, "pai_id", "pai_nombre"))) ? array(Yii::t("pais", "-- Select Pais --")) : (ArrayHelper::map($arr_pais, "pai_id", "pai_nombre")),
-                'arr_pro' => (empty(ArrayHelper::map($arr_pro, "pro_id", "pro_nombre"))) ? array(Yii::t("provincia", "-- Select Provincia --")) : (ArrayHelper::map($arr_pro, "pro_id", "pro_nombre")),
-                'arr_can' => (empty(ArrayHelper::map($arr_can, "can_id", "can_nombre"))) ? array(Yii::t("canton", "-- Select Canton --")) : (ArrayHelper::map($arr_can, "can_id", "can_nombre")),
+                "arr_provincia" => ArrayHelper::map($arr_provincia, "id", "value"),
+                "arr_ciudad" => ArrayHelper::map($arr_ciudad, "id", "value"),
+                "arr_tipparentesco" => ArrayHelper::map($arr_tipparentesco, "id", "value"),
+                'persona_model' => $persona_model,
+                'contacto_model' => $contacto_model,
             ]);
 
             /**
@@ -957,14 +969,15 @@ class InscripcionposgradoController extends \yii\web\Controller {
             $instruccion_model = EstudianteInstruccion::findOne(['per_id' => $persona_model->per_id]);
             $laboral_model = InformacionLaboral::findOne(['per_id' => $persona_model->per_id]);
             $arr_pais = Pais::findAll(["pai_estado" => 1, "pai_estado_logico" => 1]);
-            $arr_pro = Provincia::findAll(["pai_id" => $laboral_model->ilab_prov_emp, "pro_estado" => 1, "pro_estado_logico" => 1]);
-            $arr_can = Canton::findAll(["pro_id" => $laboral_model->ilab_ciu_emp, "can_estado" => 1, "can_estado_logico" => 1]);
+            $arr_nacionalidad = Pais::find()->select("pai_id AS id, pai_nacionalidad AS value")->where(["pai_estado_logico" => "1", "pai_estado" => "1"])->asArray()->all();
+            $arr_prov_emp = Provincia::provinciaXPais($arr_nacionalidad[0]["id"]);
+            $arr_ciu_emp = Canton::cantonXProvincia($arr_prov_emp[0]["id"]);
             
 
             $EditFormTab2 = $this->renderPartial('EditFormTab2', [
                 'arr_pais' => (empty(ArrayHelper::map($arr_pais, "pai_id", "pai_nombre"))) ? array(Yii::t("pais", "-- Select Pais --")) : (ArrayHelper::map($arr_pais, "pai_id", "pai_nombre")),
-                'arr_pro' => (empty(ArrayHelper::map($arr_pro, "pro_id", "pro_nombre"))) ? array(Yii::t("provincia", "-- Select Provincia --")) : (ArrayHelper::map($arr_pro, "pro_id", "pro_nombre")),
-                'arr_can' => (empty(ArrayHelper::map($arr_can, "can_id", "can_nombre"))) ? array(Yii::t("canton", "-- Select Canton --")) : (ArrayHelper::map($arr_can, "can_id", "can_nombre")),
+                "arr_prov_emp" => ArrayHelper::map($arr_prov_emp, "id", "value"),
+                "arr_ciu_emp" => ArrayHelper::map($arr_ciu_emp, "id", "value"),
                 "arr_categoria" => array("1" => Yii::t("formulario", "Pública"), "2" => Yii::t("formulario", "Privada")),
                 'persona_model' => $persona_model,
                 'instruccion_model' => $instruccion_model,

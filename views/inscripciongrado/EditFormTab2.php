@@ -14,65 +14,65 @@ Academico::registerTranslations();
 <form class="form-horizontal">
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
-            <label for="cmb_pais" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Academico::t("profesor", "Country") ?></label>
+            <label for="cmb_paisEdit" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Academico::t("profesor", "Country") ?></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
-                <?= Html::dropDownList("cmb_pais", $persona_model->pai_id_domicilio, $arr_pais, ["class" => "form-control", "id" => "cmb_pais"]) ?>
+                <?= Html::dropDownList("cmb_paisEdit", $persona_model->pai_id_domicilio, $arr_pais, ["class" => "form-control", "id" => "cmb_paisEdit"]) ?>
             </div>
         </div>
     </div>
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
-            <label for="cmb_provincia" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Academico::t("profesor", "Province") ?></label>
+            <label for="cmb_provinciaEdit" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Academico::t("profesor", "Province") ?></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
-                <?= Html::dropDownList("cmb_provincia", $persona_model->pro_id_domicilio, $arr_pro, ["class" => "form-control", "id" => "cmb_provincia"]) ?>
+                <?= Html::dropDownList("cmb_provinciaEdit", $persona_model->pro_id_domicilio, $arr_pro, ["class" => "form-control", "id" => "cmb_provinciaEdit"]) ?>
             </div>
         </div>
     </div>
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
-            <label for="cmb_canton" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Academico::t("profesor", "Canton") ?></label>
+            <label for="cmb_cantonEdit" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Academico::t("profesor", "Canton") ?></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
-                <?= Html::dropDownList("cmb_canton", $persona_model->can_id_domicilio, $arr_can, ["class" => "form-control", "id" => "cmb_canton"]) ?>
+                <?= Html::dropDownList("cmb_cantonEdit", $persona_model->can_id_domicilio, $arr_can, ["class" => "form-control", "id" => "cmb_cantonEdit"]) ?>
             </div>
         </div>
     </div>
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
-            <label for="txt_per_domicilio_csec" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Academico::t("profesor", "Parroquia") ?><span class="text-danger">*</span></label>
+            <label for="txt_parroquiaEdit" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Academico::t("profesor", "Parroquia") ?><span class="text-danger">*</span></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
-                <input type="text" class="form-control PBvalidation" id="txt_per_domicilio_csec" value="<?= $persona_model->per_domicilio_csec ?>" data-type="all"  placeholder="<?= Academico::t("profesor", "Parroquia")  ?>">
+                <input type="text" class="form-control PBvalidation" id="txt_parroquiaEdit" value="<?= $persona_model->per_domicilio_csec ?>" data-type="all"  placeholder="<?= Academico::t("profesor", "Parroquia")  ?>">
             </div>
         </div>
     </div>
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
-            <label for="txt_per_domicilio_ref" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Academico::t("profesor", "Dirección del domicilio") ?><span class="text-danger">*</span></label>
+            <label for="txt_domicilioEdit" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Academico::t("profesor", "Dirección del domicilio") ?><span class="text-danger">*</span></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
-                <input type="text" class="form-control PBvalidation" id="txt_per_domicilio_ref" value="<?= $persona_model->per_domicilio_ref ?>" data-type="all"  placeholder="<?= Academico::t("profesor", "Detallar la dirección de su domicilio")  ?>">
+                <input type="text" class="form-control PBvalidation" id="txt_domicilioEdit" value="<?= $persona_model->per_domicilio_ref ?>" data-type="all"  placeholder="<?= Academico::t("profesor", "Detallar la dirección de su domicilio")  ?>">
             </div>
         </div>
     </div>
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
-            <label for="txt_cel" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("perfil", "CellPhone") ?></label>
+            <label for="txt_celEdit" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("perfil", "CellPhone") ?></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
-                <input type="text" class="form-control PBvalidation" id="txt_cel" value="<?= $persona_model->per_celular ?>" data-required="false" data-type="number"  placeholder="<?= Yii::t("perfil", "CellPhone") ?>">
+                <input type="text" class="form-control PBvalidation" id="txt_celEdit" value="<?= $persona_model->per_celular ?>" data-required="false" data-type="number"  placeholder="<?= Yii::t("perfil", "CellPhone") ?>">
             </div>
         </div>
     </div>
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
-            <label for="txt_phone" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("perfil", "Phone") ?></label>
+            <label for="txt_phoneEdit" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("perfil", "Phone") ?></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
-                <input type="text" class="form-control PBvalidation" id="txt_phone" value="<?= $persona_model->per_domicilio_telefono ?>" data-required="false" data-type="number"  placeholder="<?= Yii::t("perfil", "Phone") ?>">
+                <input type="text" class="form-control PBvalidation" id="txt_phoneEdit" value="<?= $persona_model->per_domicilio_telefono ?>" data-required="false" data-type="number"  placeholder="<?= Yii::t("perfil", "Phone") ?>">
             </div>
         </div>
     </div>
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
-            <label for="txt_correo" class="col-sm-3 control-label"><?= Academico::t("profesor", "Mail") ?><span class="text-danger">*</span></label>
+            <label for="txt_correoEdit" class="col-sm-3 control-label"><?= Academico::t("profesor", "Mail") ?><span class="text-danger">*</span></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
-                <input type="text" class="form-control PBvalidation" id="txt_correo" value="<?= $email ?>" data-type="email" placeholder="<?= Academico::t("profesor", "Mail") ?>">
+                <input type="text" class="form-control PBvalidation" id="txt_correoEdit" value="<?= $email ?>" data-type="email" placeholder="<?= Academico::t("profesor", "Mail") ?>">
             </div>
         </div> 
     </div>

@@ -142,11 +142,17 @@ class DistributivoacademicoController extends \app\components\CController {
                 $message = array("jornada" => $jornada);
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
             }
+            // AQUI CAMBIAR YA FILTRAR POR EL PARALELO SU HORARIO EN materia_paralelo_periodo (daho_id)
+            // El PARALELO YA TRAE EL MPP_ID, ENVIAR ESE Y FILTAR EL CURSO Q CORRESPONDE
+            // PARA GRADO
             if (isset($data["gethorario"])) {
-                $horario = $distributivo_model->getHorariosByUnidadAcad($data["uaca_id"], $data["mod_id"], $data['jornada_id']);
+                \app\models\Utilities::putMessageLogFile('controladormpp_id ' . $data["mpp_id"]);
+                //$horario = $distributivo_model->getHorariosByUnidadAcad($data["uaca_id"], $data["mod_id"], $data['jornada_id']);
+                $horario = $distributivo_model->getHorariosmppid($data["mpp_id"]);
                 $message = array("horario" => $horario);
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
             }
+            // fin if gethorario
             if (isset($data["getasignatura"])) {
                 $asignatura = $mod_asignatura->getAsignatura_x_bloque_x_planif($data["periodo_id"], $data["mod_id"]);
                 $message = array("asignatura" => $asignatura);

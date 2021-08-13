@@ -81,7 +81,7 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
         return $this->hasOne(Profesor::className(), ['pro_id' => 'pro_id']);
     }
 
-    
+
     /**
      * @return \yii\db\ActiveQuery
      */
@@ -145,17 +145,17 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
 
     public function buscarEstudiantesPosgrados($daca_id) {
         $con_academico = \Yii::$app->db_academico;
-        
+
         /*
                CODIGO DE PEDRO
-        $sql = "  SELECT dae.est_id 
-                    FROM db_academico.estudiante_carrera_programa as ecp 
+        $sql = "  SELECT dae.est_id
+                    FROM db_academico.estudiante_carrera_programa as ecp
               INNER JOIN db_academico.distributivo_academico as da
-                      ON ecp.meun_id = da.meun_id 
+                      ON ecp.meun_id = da.meun_id
                      and uaca_id = 2
                LEFT JOIN db_academico.distributivo_academico_estudiante as dae
                       ON dae.est_id = ecp.est_id
-                   where ecp.est_id is null 
+                   where ecp.est_id is null
                      and da.daca_id=".$id;
         */
         $sql = "  SELECT ecpr.est_id
@@ -171,34 +171,34 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
                LEFT JOIN db_academico.distributivo_academico_estudiante as daes
                       ON daes.est_id = ecpr.est_id
                      AND daes.daes_estado = 1 and daes.daes_estado_logico = 1
-               INNER JOIN db_academico.estudiante est 
+               INNER JOIN db_academico.estudiante est
                       ON est.est_id = ecpr.est_id
                      AND est.est_estado = 1 and est.est_estado_logico = 1
-              INNER JOIN db_asgard.persona per 
+              INNER JOIN db_asgard.persona per
                       ON per.per_id = est.per_id
                      AND per.per_estado = 1 and per.per_estado_logico = 1
                    where 1 = 1
                      and daca.daca_id = $daca_id";
-        
+
         $comando = $con_academico->createCommand($sql);
 
         \app\models\Utilities::putMessageLogFile($comando->getRawSql());
-        
+
         $res = $comando->queryAll();
         return $res;
     }//function buscarEstudiantesPosgrados
-    
+
     public function buscarEstudiantesMatriculados($id, $num_paralelo, $daca_id) {
         $con_academico = \Yii::$app->db_academico;
         $con_db = \Yii::$app->db;
-        
+
         /*
             CODIGO DE PEDRO
          $sql = " SELECT e.est_id as est_id, daes_id
                    FROM db_academico.registro_online as ron
 		inner join db_academico.registro_online_item as roi on roi.ron_id=ron.ron_id and roi_estado='1'
 		inner join db_asgard.persona as p on p.per_id = ron.per_id
-                inner join db_academico.registro_pago_matricula as pm on ron.per_id=pm.per_id 
+                inner join db_academico.registro_pago_matricula as pm on ron.per_id=pm.per_id
                 inner join db_academico.estudiante as e on e.per_id=p.per_id
                 inner join db_academico.planificacion_estudiante as pe on pe.pes_id=ron.pes_id
                 inner join db_academico.malla_academica_detalle as mad on  mad.made_codigo_asignatura=roi.roi_materia_cod
@@ -211,18 +211,18 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
         $sql = "SELECT est.est_id as est_id
                        ,daes.daes_id
                   FROM db_academico.registro_online as ron
-            inner join db_academico.registro_online_item as roi 
+            inner join db_academico.registro_online_item as roi
                     on roi.ron_id=ron.ron_id
                    and roi.roi_estado = 1 and roi.roi_estado_logico
-            inner join db_asgard.persona as per 
+            inner join db_asgard.persona as per
                     on per.per_id = ron.per_id
                    and per.per_estado = 1 and per.per_estado_logico
-            #inner join db_academico.registro_pago_matricula as rpm 
-                    #on rpm.per_id = ron.per_id  
+            #inner join db_academico.registro_pago_matricula as rpm
+                    #on rpm.per_id = ron.per_id
             inner join db_academico.estudiante as est
                     on est.per_id = per.per_id
                    and est.est_estado = 1 and est.est_estado_logico
-            inner join db_academico.planificacion_estudiante as pes 
+            inner join db_academico.planificacion_estudiante as pes
                     on pes.pes_id = ron.pes_id
                    and pes.per_id = per.per_id
                    and pes.pes_estado = 1 and pes.pes_estado_logico
@@ -235,9 +235,9 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
                    and daes.daes_estado = 1 and daes.daes_estado_logico
                  where 1=1
                    and made.asi_id = $id
-                   and ron.ron_estado = 1 
+                   and ron.ron_estado = 1
                    and ron.ron_estado_logico = 1";
-        
+
         $comando = $con_academico->createCommand($sql);
         $res = $comando->queryAll();
         \app\models\Utilities::putMessageLogFile($comando->getRawSql());
@@ -253,7 +253,7 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
                  from db_academico.registro_online as ron
 		inner join db_academico.registro_online_item as roi on roi.ron_id=ron.ron_id and roi_estado='1'
 		inner join db_asgard.persona as p on p.per_id = ron.per_id
-                inner join db_academico.registro_pago_matricula as pm on ron.per_id=pm.per_id 
+                inner join db_academico.registro_pago_matricula as pm on ron.per_id=pm.per_id
                 inner join db_academico.estudiante as e on e.per_id=p.per_id
                 inner join db_academico.planificacion_estudiante as pe on pe.pes_id=ron.pes_id
                 inner join db_academico.malla_academica_detalle as mad on  mad.made_codigo_asignatura=roi.roi_materia_cod
@@ -270,19 +270,19 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
                        ,daes.daca_id
                        ,made.asi_id
                   FROM db_academico.registro_online as ron
-            inner join db_academico.registro_online_item as roi 
+            inner join db_academico.registro_online_item as roi
                     on roi.ron_id=ron.ron_id
                    and roi.roi_estado = 1 and roi.roi_estado_logico = 1
-            inner join db_asgard.persona as per 
+            inner join db_asgard.persona as per
                     on per.per_id = ron.per_id
                    and per.per_estado = 1 and per.per_estado_logico = 1
-            /*inner join db_academico.registro_pago_matricula as rpm 
+            /*inner join db_academico.registro_pago_matricula as rpm
                     on rpm.per_id = ron.per_id  */
             inner join db_academico.estudiante as est
                     on est.per_id = per.per_id
                    /*and est.est_id = $est_id*/
                    and est.est_estado = 1 and est.est_estado_logico = 1
-            inner join db_academico.planificacion_estudiante as pes 
+            inner join db_academico.planificacion_estudiante as pes
                     on pes.pes_id = ron.pes_id
                    and pes.per_id = per.per_id
                    and pes.pes_estado = 1 and pes.pes_estado_logico = 1
@@ -294,35 +294,35 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
                     on daes.est_id = est.est_id
                    and daes.daca_id = $daca_id
                    and daes.daes_estado = 1 and daes.daes_estado_logico = 1
-            left join db_academico.distributivo_academico as daca 
+            left join db_academico.distributivo_academico as daca
                     on daca.daca_id = daes.daca_id
                    and daca.asi_id = made.asi_id
                    and daca.uaca_id = 1
                    and daca.daca_estado = 1 and daca.daca_estado_logico = 1
-            left join db_academico.materia_paralelo_periodo as mpp 
-                    on mpp.mpp_id = daca.mpp_id 
+            left join db_academico.materia_paralelo_periodo as mpp
+                    on mpp.mpp_id = daca.mpp_id
                    and mpp.mpp_num_paralelo = $num_paralelo
                    and mpp.mpp_estado = 1 and daca.daca_estado_logico = 1
                  where 1=1
                    /*and daes.est_id is null*/
                    and made.asi_id = $id
-                   and ron.ron_estado = 1 
+                   and ron.ron_estado = 1
                    and ron.ron_estado_logico = 1";
-        
+
         $comando = $con_academico->createCommand($sql);
         $res = $comando->queryAll();
          \app\models\Utilities::putMessageLogFile($comando->getRawSql());
         return $res;
     }// buscarEstudiantesAsignados
-    
+
      public function getParalelo($asi_id) {
         $con_academico = \Yii::$app->db_academico;
         $con_db = \Yii::$app->db;
         $sql = " select da.daca_id as id, mpp_num_paralelo as name from db_academico.distributivo_academico as da
                    inner join db_academico.materia_paralelo_periodo as mpp on mpp.mpp_id = da.mpp_id
                    where da.asi_id = ".$asi_id;
-        
-        
+
+
          $comando = $con_academico->createCommand($sql);
           $res = $comando->queryAll();
           return $res;
@@ -402,8 +402,8 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
         }
 
         /*
-        $sql = "SELECT 
-                    da.daca_id AS Id, 
+        $sql = "SELECT
+                    da.daca_id AS Id,
                     CONCAT(pe.per_pri_nombre, ' ', pe.per_pri_apellido) AS Nombres,
                     pe.per_cedula AS Cedula,
                     ua.uaca_nombre AS UnidadAcademica,
@@ -419,16 +419,16 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
                     END AS Jornada,
                     mpp.mpp_num_paralelo as mpp_num_paralelo,
                     dhp.dhpa_paralelo as dhpa_paralelo,
-                  (select count(dae.daca_id) from db_academico.distributivo_academico_estudiante  as dae where dae.daca_id =da.daca_id ) as total_est          
-                FROM 
-                    " . $con_academico->dbname . ".distributivo_academico AS da 
-                    INNER JOIN " . $con_academico->dbname . ".distributivo_cabecera dc on dc.dcab_id=da.dcab_id 
+                  (select count(dae.daca_id) from db_academico.distributivo_academico_estudiante  as dae where dae.daca_id =da.daca_id ) as total_est
+                FROM
+                    " . $con_academico->dbname . ".distributivo_academico AS da
+                    INNER JOIN " . $con_academico->dbname . ".distributivo_cabecera dc on dc.dcab_id=da.dcab_id
                     LEFT  JOIN " . $con_academico->dbname . ".distributivo_academico_horario AS dh ON da.daho_id = dh.daho_id
                     INNER JOIN " . $con_academico->dbname . ".profesor AS p ON da.pro_id = p.pro_id
-                    LEFT JOIN " . $con_academico->dbname . ".materia_paralelo_periodo as mpp 
+                    LEFT JOIN " . $con_academico->dbname . ".materia_paralelo_periodo as mpp
                            on mpp.mpp_id=da.mpp_id
                           and da.uaca_id = 1
-                    left JOIN db_academico.distributivo_horario_paralelo as dhp 
+                    left JOIN db_academico.distributivo_horario_paralelo as dhp
                              on dhp.daho_id = da.daho_id
                             and da.uaca_id = 2
                     INNER JOIN " . $con_academico->dbname . ".modalidad AS m ON da.mod_id = m.mod_id
@@ -436,32 +436,32 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
                     INNER JOIN " . $con_academico->dbname . ".asignatura AS a ON da.asi_id = a.asi_id
                     INNER JOIN " . $con_academico->dbname . ".periodo_academico AS pa ON da.paca_id = pa.paca_id
                     INNER JOIN " . $con_db->dbname        . ".persona AS pe ON p.per_id = pe.per_id
-                    LEFT  JOIN " . $con_academico->dbname . ".semestre_academico sem  ON sem.saca_id = pa.saca_id 
+                    LEFT  JOIN " . $con_academico->dbname . ".semestre_academico sem  ON sem.saca_id = pa.saca_id
                     LEFT  JOIN " . $con_academico->dbname . ".bloque_academico blq ON blq.baca_id = pa.baca_id
-                WHERE 
-                    $str_search 
-                    $str_modalidad 
+                WHERE
+                    $str_search
+                    $str_modalidad
                     $str_asignatura
                     $str_unidad
                     $str_periodo
                     $str_jornada
                     pa.paca_activo = 'A' AND
                     pa.paca_estado = :estado AND
-                    da.daca_estado_logico = :estado AND 
+                    da.daca_estado_logico = :estado AND
                     da.daca_estado = :estado AND
                     da.daca_estado = :estado AND
-                    p.pro_estado_logico = :estado AND 
+                    p.pro_estado_logico = :estado AND
                     p.pro_estado = :estado AND
-                    m.mod_estado_logico = :estado AND 
+                    m.mod_estado_logico = :estado AND
                     m.mod_estado = :estado AND
-                    ua.uaca_estado_logico = :estado AND 
+                    ua.uaca_estado_logico = :estado AND
                     ua.uaca_estado = :estado AND
                     pa.paca_estado_logico = :estado and
                     dcab_estado_revision=2
                     order by 4,2 asc";
         */
         $sql = "
-             SELECT daca.daca_id AS Id, 
+             SELECT daca.daca_id AS Id,
                     CONCAT(per.per_pri_nombre, ' ', per.per_pri_apellido) AS Nombres,
                     per.per_cedula AS Cedula,
                     uaca.uaca_nombre AS UnidadAcademica,
@@ -477,48 +477,48 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
                     END AS Jornada,
                     mpp.mpp_num_paralelo as mpp_num_paralelo,
                     dhpa.dhpa_paralelo as dhpa_paralelo,
-                    (select count(dae.daca_id) FROM db_academico.distributivo_academico_estudiante  as dae where dae.daca_id =daca.daca_id ) as total_est          
-               FROM db_academico.distributivo_academico AS daca 
-         INNER JOIN db_academico.distributivo_cabecera dcab 
+                    (select count(dae.daca_id) FROM db_academico.distributivo_academico_estudiante  as dae where dae.daca_id =daca.daca_id ) as total_est
+               FROM db_academico.distributivo_academico AS daca
+         INNER JOIN db_academico.distributivo_cabecera dcab
                  ON dcab.dcab_id = daca.dcab_id
                 AND dcab.dcab_estado_revision = 2
-                AND dcab.dcab_estado = 1 AND dcab.dcab_estado_logico = 1 
-          LEFT JOIN db_academico.distributivo_academico_horario AS daho 
-                 ON daho.daho_id = daca.daho_id 
+                AND dcab.dcab_estado = 1 AND dcab.dcab_estado_logico = 1
+          LEFT JOIN db_academico.distributivo_academico_horario AS daho
+                 ON daho.daho_id = daca.daho_id
                 #AND daho.uaca_id = daca.uaca_id AND daho.mod_id = daca.mod_id
                 AND daho.daho_estado = 1 and daho.daho_estado_logico = 1
-         INNER JOIN db_academico.profesor AS pro 
-                 ON pro.pro_id = daca.pro_id 
+         INNER JOIN db_academico.profesor AS pro
+                 ON pro.pro_id = daca.pro_id
                 AND pro.pro_estado = 1 and pro.pro_estado_logico = 1
-          LEFT JOIN db_academico.materia_paralelo_periodo as mpp 
+          LEFT JOIN db_academico.materia_paralelo_periodo as mpp
                  on mpp.mpp_id = daca.mpp_id
                 and daca.uaca_id = 1
                 AND mpp.mpp_estado = 1 and mpp.mpp_estado_logico = 1
-          left JOIN db_academico.distributivo_horario_paralelo as dhpa 
+          left JOIN db_academico.distributivo_horario_paralelo as dhpa
                  ON dhpa.dhpa_id = daca.dhpa_id
                 #ON dhpa.daho_id = daca.daho_id
                 AND daca.uaca_id = 2
                 AND dhpa.dhpa_estado = 1 and dhpa.dhpa_estado_logico = 1
-         INNER JOIN db_academico.modalidad AS m 
-                 ON m.mod_id = daca.mod_id 
+         INNER JOIN db_academico.modalidad AS m
+                 ON m.mod_id = daca.mod_id
                 AND m.mod_estado = 1 and m.mod_estado_logico = 1
-         INNER JOIN db_academico.unidad_academica AS uaca 
+         INNER JOIN db_academico.unidad_academica AS uaca
                  ON uaca.uaca_id = daca.uaca_id
                 AND uaca.uaca_estado = 1 and uaca.uaca_estado_logico = 1
-         INNER JOIN db_academico.asignatura AS asi 
-                 ON asi.asi_id = daca.asi_id 
-                AND asi.asi_estado = 1 and asi.asi_estado_logico = 1 
-         INNER JOIN db_academico.periodo_academico AS paca 
-                 ON paca.paca_id = daca.paca_id 
+         INNER JOIN db_academico.asignatura AS asi
+                 ON asi.asi_id = daca.asi_id
+                AND asi.asi_estado = 1 and asi.asi_estado_logico = 1
+         INNER JOIN db_academico.periodo_academico AS paca
+                 ON paca.paca_id = daca.paca_id
                 AND paca.paca_activo = 'A'
                 AND paca.paca_estado = 1 and paca.paca_estado_logico = 1
-         INNER JOIN db_asgard.persona AS per 
+         INNER JOIN db_asgard.persona AS per
                  ON per.per_id = pro.per_id
                 AND per.per_estado = 1 and per.per_estado_logico = 1
-          LEFT JOIN db_academico.semestre_academico saca  
-                 ON saca.saca_id = paca.saca_id 
+          LEFT JOIN db_academico.semestre_academico saca
+                 ON saca.saca_id = paca.saca_id
                 AND saca.saca_estado = 1 and saca.saca_estado_logico = 1
-          LEFT JOIN db_academico.bloque_academico baca 
+          LEFT JOIN db_academico.bloque_academico baca
                  ON baca.baca_id = paca.baca_id
                 AND baca.baca_estado = 1 AND baca.baca_estado_logico = 1
               WHERE $str_search 1 = 1
@@ -546,7 +546,7 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
         }
 
         if (isset($jornada) && $jornada > 0) {
-            $comando->bindParam(":jornada", $jornada, \PDO::PARAM_INT);            
+            $comando->bindParam(":jornada", $jornada, \PDO::PARAM_INT);
         }
 
         $res = $comando->queryAll();
@@ -602,8 +602,8 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
             $str_jornada = "dh.daho_jornada = :jornada AND ";
         }
 
-        $sql = "SELECT 
-                    da.daca_id AS Id, 
+        $sql = "SELECT
+                    da.daca_id AS Id,
                     CONCAT(pe.per_pri_nombre, ' ', pe.per_pri_apellido) AS Nombres,
                     pe.per_cedula AS Cedula,
                     ua.uaca_nombre AS UnidadAcademica,
@@ -618,10 +618,10 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
                         ELSE ''
                     END AS Jornada,
                     dhpa_paralelo,
-                  (select count(dae.daca_id) from db_academico.distributivo_academico_estudiante  as dae where dae.daca_id =da.daca_id ) as total_est          
-                FROM 
-                    " . $con_academico->dbname . ".distributivo_academico AS da 
-                    INNER JOIN " . $con_academico->dbname . ".distributivo_cabecera dc on dc.dcab_id=da.dcab_id 
+                  (select count(dae.daca_id) from db_academico.distributivo_academico_estudiante  as dae where dae.daca_id =da.daca_id ) as total_est
+                FROM
+                    " . $con_academico->dbname . ".distributivo_academico AS da
+                    INNER JOIN " . $con_academico->dbname . ".distributivo_cabecera dc on dc.dcab_id=da.dcab_id
                     LEFT  JOIN " . $con_academico->dbname . ".distributivo_academico_horario AS dh ON da.daho_id = dh.daho_id
                     INNER JOIN " . $con_academico->dbname . ".profesor AS p ON da.pro_id = p.pro_id
                     INNER JOIN " . $con_academico->dbname . ".distributivo_horario_paralelo as dhp on dhp.daho_id=da.daho_id
@@ -630,28 +630,28 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
                     INNER JOIN " . $con_academico->dbname . ".asignatura AS a ON da.asi_id = a.asi_id
                     INNER JOIN " . $con_academico->dbname . ".periodo_academico AS pa ON da.paca_id = pa.paca_id
                     INNER JOIN " . $con_db->dbname        . ".persona AS pe ON p.per_id = pe.per_id
-                    LEFT  JOIN " . $con_academico->dbname . ".semestre_academico sem  ON sem.saca_id = pa.saca_id 
+                    LEFT  JOIN " . $con_academico->dbname . ".semestre_academico sem  ON sem.saca_id = pa.saca_id
                     LEFT  JOIN " . $con_academico->dbname . ".bloque_academico blq ON blq.baca_id = pa.baca_id
-                WHERE 
-                    $str_search 
-                    $str_modalidad 
+                WHERE
+                    $str_search
+                    $str_modalidad
                     $str_asignatura
                     $str_unidad
                     $str_periodo
                     $str_jornada
                     pa.paca_activo = 'A' AND
                     pa.paca_estado = :estado AND
-                    da.daca_estado_logico = :estado AND 
+                    da.daca_estado_logico = :estado AND
                     da.daca_estado = :estado AND
                     da.daca_estado = :estado AND
-                    p.pro_estado_logico = :estado AND 
+                    p.pro_estado_logico = :estado AND
                     p.pro_estado = :estado AND
-                    m.mod_estado_logico = :estado AND 
+                    m.mod_estado_logico = :estado AND
                     m.mod_estado = :estado AND
-                    ua.uaca_estado_logico = :estado AND 
+                    ua.uaca_estado_logico = :estado AND
                     ua.uaca_estado = :estado AND
                     pa.paca_estado_logico = :estado  and
-                    da.uaca_id=2 and 
+                    da.uaca_id=2 and
                     dcab_estado_revision=2
                     order by 2 asc";
 
@@ -674,12 +674,12 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
         }
 
         if (isset($jornada) && $jornada > 0) {
-            $comando->bindParam(":jornada", $jornada, \PDO::PARAM_INT);            
+            $comando->bindParam(":jornada", $jornada, \PDO::PARAM_INT);
         }
 
         $res = $comando->queryAll();
 
-        
+
 
         if ($onlyData)
             return $res;
@@ -696,10 +696,10 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
 
         return $dataProvider;
     }
-    
-    
-    
-    
+
+
+
+
     public function getHorariosByUnidadAcad($uaca_id = null, $mod_id = null, $jornada_id = null) {
         $con_academico = \Yii::$app->db_academico;
         $str_condition = "";
@@ -712,11 +712,11 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
         if (isset($jornada_id) && $jornada_id > 0) {
             $str_condition .= "daho_jornada = ".$jornada_id." AND ";
         }
-        $sql = "SELECT 
+        $sql = "SELECT
                     daho_id as id,
                     daho_descripcion AS name
-                FROM 
-                    " . $con_academico->dbname . ".distributivo_academico_horario, (SELECT @row_number:=0) AS t 
+                FROM
+                    " . $con_academico->dbname . ".distributivo_academico_horario, (SELECT @row_number:=0) AS t
                 WHERE
                     $str_condition
                     daho_estado = 1 AND
@@ -726,7 +726,7 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
                 ORDER BY
                     daho_horario ASC";
         $comando = $con_academico->createCommand($sql);
-       
+
         $res = $comando->queryAll();
         return $res;
     }
@@ -740,7 +740,7 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
         if (isset($mod_id) && $mod_id > 0) {
             $str_condicion .= "mod_id = :mod_id AND ";
         }
-        $sql = "SELECT 
+        $sql = "SELECT
                     daho_jornada as id,
                     CASE
                         WHEN daho_jornada = 1 THEN '(M) Matutino'
@@ -749,7 +749,7 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
                         WHEN daho_jornada = 4 THEN '(D) Distancia'
                         ELSE ''
                     END AS name
-                FROM 
+                FROM
                     " . $con_academico->dbname . ".distributivo_academico_horario
                 WHERE
                     $str_condicion
@@ -759,7 +759,7 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
                     daho_jornada
                 ORDER BY
                     daho_jornada DESC";
-//\app\models\Utilities::putMessageLogFile($uaca_id.'**'.$mod_id); 
+//\app\models\Utilities::putMessageLogFile($uaca_id.'**'.$mod_id);
         $comando = $con_academico->createCommand($sql);
         if (isset($uaca_id) && $uaca_id > 0)
             $comando->bindParam(":uaca_id", $uaca_id, \PDO::PARAM_INT);
@@ -772,7 +772,7 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
     /**
      * Function Verifica si ya existe el mismo tipo de distributivo con el profesor.
      * @author  Grace Viteri <analistadesarrollo01@uteg.edu.ec>
-     * @param   
+     * @param
      * @return  $resultData (Retornar los datos).
      */
     public function existsDistribucionAcademico($pro_id, $tdis_id, $uaca_id, $asi_id, $paca_id, $horario, $paralelo) {
@@ -780,33 +780,33 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
         if ($tdis_id == 1) {
             \app\models\Utilities::putMessageLogFile('ingresa porque es docencia');
             $sql = "SELECT
-                    da.daca_id as id                    
-                FROM 
-                    " . $con_academico->dbname . ".distributivo_academico AS da                    
+                    da.daca_id as id
+                FROM
+                    " . $con_academico->dbname . ".distributivo_academico AS da
                 WHERE
-                    da.paca_id =:paca_id AND 
-                    da.pro_id =:pro_id AND 
-                    da.asi_id =:asi_id AND 
+                    da.paca_id =:paca_id AND
+                    da.pro_id =:pro_id AND
+                    da.asi_id =:asi_id AND
                     da.daho_id =:horario AND ";
 
             if ($uaca_id == 1) {
-                $sql .= "da.mpp_id = :dhpa_id AND                         
+                $sql .= "da.mpp_id = :dhpa_id AND
                         da.daca_estado = 1 AND
                         da.daca_estado_logico = 1;";
             } else {
-                $sql .= "da.mpp_id = :dhpa_id AND                          
+                $sql .= "da.mpp_id = :dhpa_id AND
                          da.daca_estado = 1 AND
                          da.daca_estado_logico = 1;";
             }
         } else { // Verificación de otros tipos de distributivo.
             $sql = "SELECT
                     da.daca_id as id
-                FROM 
-                    " . $con_academico->dbname . ".distributivo_academico AS da                    
+                FROM
+                    " . $con_academico->dbname . ".distributivo_academico AS da
                 WHERE
-                    da.paca_id =:paca_id AND 
-                    da.pro_id =:pro_id AND 
-                    da.tdis_id =:tdis_id AND 
+                    da.paca_id =:paca_id AND
+                    da.pro_id =:pro_id AND
+                    da.tdis_id =:tdis_id AND
                     da.daca_estado = 1 AND
                     da.daca_estado_logico = 1;";
         }
@@ -829,18 +829,18 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
 
     public function getDistribucionAcademicoHorario($uaca_id, $mod_id, $jornada, $horario) {
         $con_academico = \Yii::$app->db_academico;
-        $sql = "SELECT 
+        $sql = "SELECT
                     dah.daho_id as daho_id
-                FROM 
+                FROM
                     " . $con_academico->dbname . ".distributivo_academico_horario AS dah
                 WHERE
-                    dah.uaca_id =:uaca_id AND 
-                    dah.mod_id =:mod_id AND 
-                    dah.daho_horario =:horario AND 
+                    dah.uaca_id =:uaca_id AND
+                    dah.mod_id =:mod_id AND
+                    dah.daho_horario =:horario AND
                     dah.daho_jornada =:jornada AND
                     dah.daho_estado = 1 AND
                     dah.daho_estado_logico = 1
-                ORDER BY 
+                ORDER BY
                     dah.daho_id DESC";
         $comando = $con_academico->createCommand($sql);
         $comando->bindParam(":uaca_id", $uaca_id, \PDO::PARAM_INT);
@@ -854,9 +854,9 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
     public function getDistribAcadXprofesorXperiodo($periodo, $profesor) {
         $con_academico = \Yii::$app->db_academico;
         $estado = "1";
-        $sql = "SELECT  d.tdis_id as daca_tipo,                         
+        $sql = "SELECT  d.tdis_id as daca_tipo,
                         t.tdis_nombre as des_tipo,
-                        d.asi_id, a.asi_nombre, 
+                        d.asi_id, a.asi_nombre,
                         d.mod_id, m.mod_nombre,
                         d.uaca_id, u.uaca_nombre,
                         d.daho_id, h.daho_horario
@@ -896,7 +896,7 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
     /**
      * Function insertar datos distributivo académico
      * @author  Grace Viteri <analistadesarrollo01@uteg.edu.ec>
-     * @param   
+     * @param
      * @return  $resultData (Retornar los datos).
      */
     public function insertarDistributivoAcademico($i, $data, $pro_id, $paca_id, $id_cab) {
@@ -978,16 +978,16 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
         $con_db = \Yii::$app->db;
         $estado = "1";
 
-        $sql = "SELECT 
+        $sql = "SELECT
                     CONCAT(pe.per_pri_nombre, ' ', pe.per_pri_apellido) AS profesor,
-                    da.daca_id AS Id,                     
+                    da.daca_id AS Id,
                     ifnull(ua.uaca_nombre,'') AS UnidadAcademica,
                     ifnull(m.mod_nombre,'') AS Modalidad,
-                    ifnull(a.asi_nombre,'') AS Asignatura,                     
+                    ifnull(a.asi_nombre,'') AS Asignatura,
                     t.tdis_nombre AS tipo_asignacion,
                     ifnull(dh.daho_descripcion,'') as horario,
                     ifnull(t.tdis_id,0) idTipoAsignacion,
-                    ifnull(ua.uaca_id,0) idUnidadAcademica, 
+                    ifnull(ua.uaca_id,0) idUnidadAcademica,
                     ifnull(m.mod_id,0) idModalidad,
                     ifnull(da.paca_id,0) idPeriodo,
                     ifnull(dh.daho_jornada,0) idJornada ,
@@ -1004,22 +1004,22 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
                     END AS jornada,
                     ifnull(daca_num_estudiantes_online,0) nroEstudiantes,
                     replace(UUID(),'-','') indice
-                FROM 
-                    " . $con_academico->dbname . ".distributivo_academico AS da 
-                    INNER JOIN " . $con_academico->dbname . ".periodo_academico pc on da.paca_id  = pc.paca_id and  pc.paca_activo='A'    
-                    INNER JOIN " . $con_academico->dbname . ".profesor AS p ON da.pro_id = p.pro_id 
+                FROM
+                    " . $con_academico->dbname . ".distributivo_academico AS da
+                    INNER JOIN " . $con_academico->dbname . ".periodo_academico pc on da.paca_id  = pc.paca_id and  pc.paca_activo='A'
+                    INNER JOIN " . $con_academico->dbname . ".profesor AS p ON da.pro_id = p.pro_id
                     INNER JOIN " . $con_db->dbname . ".persona AS pe ON p.per_id = pe.per_id
-                    LEFT JOIN " . $con_academico->dbname . ".distributivo_academico_horario AS dh ON da.daho_id = dh.daho_id                    
+                    LEFT JOIN " . $con_academico->dbname . ".distributivo_academico_horario AS dh ON da.daho_id = dh.daho_id
                     LEFT JOIN " . $con_academico->dbname . ".modalidad AS m ON da.mod_id = m.mod_id
                     LEFT JOIN " . $con_academico->dbname . ".unidad_academica AS ua ON da.uaca_id = ua.uaca_id
-                    LEFT JOIN " . $con_academico->dbname . ".asignatura AS a ON da.asi_id = a.asi_id                    
+                    LEFT JOIN " . $con_academico->dbname . ".asignatura AS a ON da.asi_id = a.asi_id
                     INNER JOIN " . $con_academico->dbname . ".tipo_distributivo AS t ON da.tdis_id = t.tdis_id
-                WHERE       
-                    da.paca_id = :paca_id AND 
+                WHERE
+                    da.paca_id = :paca_id AND
                     da.pro_id = :pro_id AND
-                    da.daca_estado_logico = :estado AND 
-                    da.daca_estado = :estado AND                                        
-                    t.tdis_estado = :estado AND 
+                    da.daca_estado_logico = :estado AND
+                    da.daca_estado = :estado AND
+                    t.tdis_estado = :estado AND
                     t.tdis_estado_logico = :estado";
 
         $comando = $con_academico->createCommand($sql);
@@ -1049,47 +1049,47 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
         $con_db = \Yii::$app->db;
         $estado = "1";
 
-        $sql = "SELECT 
+        $sql = "SELECT
                     CONCAT(pe.per_pri_nombre, ' ', pe.per_pri_apellido) AS profesor,
-                    da.daca_id AS Id,  
+                    da.daca_id AS Id,
                      da.dcab_id ,
                     ifnull(ua.uaca_nombre,'') AS UnidadAcademica,
                     ifnull(m.mod_nombre,'') AS Modalidad,
-                    ifnull(a.asi_nombre,'') AS Asignatura,                     
+                    ifnull(a.asi_nombre,'') AS Asignatura,
                     t.tdis_nombre AS tipo_asignacion,
                     ifnull(dh.daho_descripcion,'') as horario,
                     ifnull(t.tdis_id,0) idTipoAsignacion,
-                    ifnull(ua.uaca_id,0) idUnidadAcademica, 
+                    ifnull(ua.uaca_id,0) idUnidadAcademica,
                     ifnull(m.mod_id,0) idModalidad,
                     ifnull(da.paca_id,0) idPeriodo,
                     ifnull(dh.daho_jornada,0) idJornada ,
                     ifnull(a.asi_id,0) idMateria,
                     ifnull(dh.daho_id,0)  idHorario,
                     ifnull(da.mpp_id,0) idParalelo,
-                    
+
                      case when m.mod_id=1 and da.tdis_id<> 7  then
-                    (case 
+                    (case
                          when (daca_num_estudiantes_online between 0 and 10) then  round(2  *pc.paca_semanas_periodo *(1.3))
 			 when (daca_num_estudiantes_online between 11 and 20) then round(3  *pc.paca_semanas_periodo *(1.3))
                          when (daca_num_estudiantes_online between 21 and 30) then round(4  *pc.paca_semanas_periodo *(1.3))
                          when (daca_num_estudiantes_online between 31 and 40) then round(5  *pc.paca_semanas_periodo *(1.3))
-                         when (daca_num_estudiantes_online >40) then round(7  *pc.paca_semanas_periodo *(1.3)) end) 
+                         when (daca_num_estudiantes_online >40) then round(7  *pc.paca_semanas_periodo *(1.3)) end)
                        else
-                        case when da.tdis_id=7 then tdis_num_semanas else (pc.paca_semanas_periodo * case  when dh.daho_total_horas is null then tdis_num_semanas else dh.daho_total_horas end) end 
+                        case when da.tdis_id=7 then tdis_num_semanas else (pc.paca_semanas_periodo * case  when dh.daho_total_horas is null then tdis_num_semanas else dh.daho_total_horas end) end
                         end as total_horas,
-				
+
 
                      case when m.mod_id=1 and da.tdis_id<> 7  then
-                    (case 
+                    (case
                          when (daca_num_estudiantes_online between 0 and 10)  then  round( 2  *(1.3))
 			 when (daca_num_estudiantes_online between 11 and 20) then  round( 3  *(1.3))
                          when (daca_num_estudiantes_online between 21 and 30) then  round( 4  *(1.3))
                          when (daca_num_estudiantes_online between 31 and 40) then  round( 5  *(1.3))
-                         when (daca_num_estudiantes_online >40) then round(7 *(1.3))  end) 
+                         when (daca_num_estudiantes_online >40) then round(7 *(1.3))  end)
                        else
-                          case when da.tdis_id=7  then round(tdis_num_semanas/paca_semanas_periodo) else ( case  when dh.daho_total_horas is null then tdis_num_semanas else dh.daho_total_horas end) end 
+                          case when da.tdis_id=7  then round(tdis_num_semanas/paca_semanas_periodo) else ( case  when dh.daho_total_horas is null then tdis_num_semanas else dh.daho_total_horas end) end
                         end as promedio,
-                        
+
                       CASE
                         WHEN daho_jornada = 1 THEN '(M) Matutino'
                         WHEN daho_jornada = 2 THEN '(N) Nocturno'
@@ -1099,21 +1099,21 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
                     END AS jornada,
                     ifnull(daca_num_estudiantes_online,0) nroEstudiantes,
                     replace(UUID(),'-','') indice
-                FROM 
-                    " . $con_academico->dbname . ".distributivo_academico AS da 
-                    INNER JOIN " . $con_academico->dbname . ".periodo_academico pc on da.paca_id  = pc.paca_id and  pc.paca_activo='A'    
-                    INNER JOIN " . $con_academico->dbname . ".profesor AS p ON da.pro_id = p.pro_id 
+                FROM
+                    " . $con_academico->dbname . ".distributivo_academico AS da
+                    INNER JOIN " . $con_academico->dbname . ".periodo_academico pc on da.paca_id  = pc.paca_id and  pc.paca_activo='A'
+                    INNER JOIN " . $con_academico->dbname . ".profesor AS p ON da.pro_id = p.pro_id
                     INNER JOIN " . $con_db->dbname . ".persona AS pe ON p.per_id = pe.per_id
-                    LEFT JOIN " . $con_academico->dbname . ".distributivo_academico_horario AS dh ON da.daho_id = dh.daho_id                    
+                    LEFT JOIN " . $con_academico->dbname . ".distributivo_academico_horario AS dh ON da.daho_id = dh.daho_id
                     LEFT JOIN " . $con_academico->dbname . ".modalidad AS m ON da.mod_id = m.mod_id
                     LEFT JOIN " . $con_academico->dbname . ".unidad_academica AS ua ON da.uaca_id = ua.uaca_id
-                    LEFT JOIN " . $con_academico->dbname . ".asignatura AS a ON da.asi_id = a.asi_id                    
+                    LEFT JOIN " . $con_academico->dbname . ".asignatura AS a ON da.asi_id = a.asi_id
                     INNER JOIN " . $con_academico->dbname . ".tipo_distributivo AS t ON da.tdis_id = t.tdis_id
-                WHERE       
-                    da.dcab_id = :dcab_id AND 
-                   da.daca_estado_logico = :estado AND 
-                    da.daca_estado = :estado AND                                        
-                    t.tdis_estado = :estado AND 
+                WHERE
+                    da.dcab_id = :dcab_id AND
+                   da.daca_estado_logico = :estado AND
+                    da.daca_estado = :estado AND
+                    t.tdis_estado = :estado AND
                     t.tdis_estado_logico = :estado
                    and  da.tdis_id<>6";
 
@@ -1143,17 +1143,17 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
         $con_db = \Yii::$app->db;
         $estado = "1";
 
-        $sql = "SELECT 
+        $sql = "SELECT
                     CONCAT(pe.per_pri_nombre, ' ', pe.per_pri_apellido) AS profesor,
-                    da.daca_id AS Id,  
+                    da.daca_id AS Id,
                      da.dcab_id ,
                     ifnull(ua.uaca_nombre,'') AS UnidadAcademica,
                     ifnull(m.mod_nombre,'') AS Modalidad,
-                    ifnull(a.asi_nombre,'') AS Asignatura,                     
+                    ifnull(a.asi_nombre,'') AS Asignatura,
                     t.tdis_nombre AS tipo_asignacion,
                     ifnull(dh.daho_descripcion,'') as horario,
                     ifnull(t.tdis_id,0) idTipoAsignacion,
-                    ifnull(ua.uaca_id,0) idUnidadAcademica, 
+                    ifnull(ua.uaca_id,0) idUnidadAcademica,
                     ifnull(m.mod_id,0) idModalidad,
                     ifnull(da.paca_id,0) idPeriodo,
                     ifnull(dh.daho_jornada,0) idJornada ,
@@ -1161,29 +1161,29 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
                     ifnull(dh.daho_id,0)  idHorario,
                     ifnull(da.mpp_id,0) idParalelo,
                     case when m.mod_id=1 and da.tdis_id =1 then
-                    (case 
+                    (case
                          when (daca_num_estudiantes_online between 0 and 10) then  round(2  *pc.paca_semanas_periodo *(1.3))
 			 when (daca_num_estudiantes_online between 11 and 20) then round(3  *pc.paca_semanas_periodo *(1.3))
                          when (daca_num_estudiantes_online between 21 and 30) then round(4  *pc.paca_semanas_periodo *(1.3))
                          when (daca_num_estudiantes_online between 31 and 40) then round(5  *pc.paca_semanas_periodo *(1.3))
-                         when (daca_num_estudiantes_online >40) then round(7  *pc.paca_semanas_periodo *(1.3)) end) 
+                         when (daca_num_estudiantes_online >40) then round(7  *pc.paca_semanas_periodo *(1.3)) end)
                        else
-                        case when da.tdis_id=7 then tdis_num_semanas else (pc.paca_semanas_periodo * case  when dh.daho_total_horas is null then tdis_num_semanas else dh.daho_total_horas end) end 
+                        case when da.tdis_id=7 then tdis_num_semanas else (pc.paca_semanas_periodo * case  when dh.daho_total_horas is null then tdis_num_semanas else dh.daho_total_horas end) end
                         end as total_horas,
-				
+
 
                      case when m.mod_id=1 and da.tdis_id =1 then
-                    (case 
+                    (case
                          when (daca_num_estudiantes_online between 0 and 10)  then  round( 2  *(1.3))
 			 when (daca_num_estudiantes_online between 11 and 20) then  round( 3  *(1.3))
                          when (daca_num_estudiantes_online between 21 and 30) then  round( 4  *(1.3))
                          when (daca_num_estudiantes_online between 31 and 40) then  round( 5  *(1.3))
-                         when (daca_num_estudiantes_online >40) then round(7 *(1.3))  end) 
+                         when (daca_num_estudiantes_online >40) then round(7 *(1.3))  end)
                        else
-                          case when da.tdis_id=7  then round(tdis_num_semanas/paca_semanas_periodo) else ( case  when dh.daho_total_horas is null then tdis_num_semanas else dh.daho_total_horas end) end 
+                          case when da.tdis_id=7  then round(tdis_num_semanas/paca_semanas_periodo) else ( case  when dh.daho_total_horas is null then tdis_num_semanas else dh.daho_total_horas end) end
                         end as promedio,
                         ifnull(mpp_num_paralelo,'') mpp_num_paralelo,
-                
+
                     CASE
                         WHEN daho_jornada = 1 THEN '(M) Matutino'
                         WHEN daho_jornada = 2 THEN '(N) Nocturno'
@@ -1196,22 +1196,22 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
                     ifnull(daca_fecha_fin_post,'') as fechaf,
                     ifnull(daca_horas_otras_actividades,0) nroHoras,
                     replace(UUID(),'-','') indice
-                FROM 
-                    " . $con_academico->dbname . ".distributivo_academico AS da 
-                    INNER JOIN " . $con_academico->dbname . ".periodo_academico pc on da.paca_id  = pc.paca_id and  pc.paca_activo='A'    
-                    INNER JOIN " . $con_academico->dbname . ".profesor AS p ON da.pro_id = p.pro_id 
+                FROM
+                    " . $con_academico->dbname . ".distributivo_academico AS da
+                    INNER JOIN " . $con_academico->dbname . ".periodo_academico pc on da.paca_id  = pc.paca_id and  pc.paca_activo='A'
+                    INNER JOIN " . $con_academico->dbname . ".profesor AS p ON da.pro_id = p.pro_id
                     INNER JOIN " . $con_db->dbname . ".persona AS pe ON p.per_id = pe.per_id
-                    LEFT JOIN " . $con_academico->dbname . ".materia_paralelo_periodo mpp on mpp.mpp_id =da.mpp_id                    
-                    LEFT JOIN " . $con_academico->dbname . ".distributivo_academico_horario AS dh ON da.daho_id = dh.daho_id                    
+                    LEFT JOIN " . $con_academico->dbname . ".materia_paralelo_periodo mpp on mpp.mpp_id =da.mpp_id
+                    LEFT JOIN " . $con_academico->dbname . ".distributivo_academico_horario AS dh ON da.daho_id = dh.daho_id
                     LEFT JOIN " . $con_academico->dbname . ".modalidad AS m ON da.mod_id = m.mod_id
                     LEFT JOIN " . $con_academico->dbname . ".unidad_academica AS ua ON da.uaca_id = ua.uaca_id
-                    LEFT JOIN " . $con_academico->dbname . ".asignatura AS a ON da.asi_id = a.asi_id                    
+                    LEFT JOIN " . $con_academico->dbname . ".asignatura AS a ON da.asi_id = a.asi_id
                     INNER JOIN " . $con_academico->dbname . ".tipo_distributivo AS t ON da.tdis_id = t.tdis_id
-                WHERE       
-                    da.dcab_id = :dcab_id AND 
-                   da.daca_estado_logico = :estado AND 
-                    da.daca_estado = :estado AND                                        
-                    t.tdis_estado = :estado AND 
+                WHERE
+                    da.dcab_id = :dcab_id AND
+                   da.daca_estado_logico = :estado AND
+                    da.daca_estado = :estado AND
+                    t.tdis_estado = :estado AND
                     t.tdis_estado_logico = :estado
                    and  da.tdis_id<>6";
 
@@ -1241,17 +1241,17 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
         $con_db = \Yii::$app->db;
         $estado = "1";
 
-        $sql = "SELECT 
+        $sql = "SELECT
                     CONCAT(pe.per_pri_nombre, ' ', pe.per_pri_apellido) AS profesor,
-                    da.daca_id AS Id,  
+                    da.daca_id AS Id,
                      da.dcab_id ,
                     ifnull(ua.uaca_nombre,'') AS UnidadAcademica,
                     ifnull(m.mod_nombre,'') AS Modalidad,
-                    ifnull(a.asi_nombre,'') AS Asignatura,                     
+                    ifnull(a.asi_nombre,'') AS Asignatura,
                     t.tdis_nombre AS tipo_asignacion,
                     ifnull(dh.daho_descripcion,'') as horario,
                     ifnull(t.tdis_id,0) idTipoAsignacion,
-                    ifnull(ua.uaca_id,0) idUnidadAcademica, 
+                    ifnull(ua.uaca_id,0) idUnidadAcademica,
                     ifnull(m.mod_id,0) idModalidad,
                     ifnull(da.paca_id,0) idPeriodo,
                     ifnull(dh.daho_jornada,0) idJornada ,
@@ -1259,31 +1259,31 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
                     ifnull(dh.daho_id,0)  idHorario,
                     ifnull(da.mpp_id,0) idParalelo,
                   case when m.mod_id=1 and da.tdis_id<> 7  then
-                    (case 
+                    (case
                          when (daca_num_estudiantes_online between 0 and 10) then  round(2  *pc.paca_semanas_periodo *(1.3))
 			 when (daca_num_estudiantes_online between 11 and 20) then round(3  *pc.paca_semanas_periodo *(1.3))
                          when (daca_num_estudiantes_online between 21 and 30) then round(4  *pc.paca_semanas_periodo *(1.3))
                          when (daca_num_estudiantes_online between 31 and 40) then round(5  *pc.paca_semanas_periodo *(1.3))
-                         when (daca_num_estudiantes_online >40) then round(7  *pc.paca_semanas_periodo *(1.3)) end) 
+                         when (daca_num_estudiantes_online >40) then round(7  *pc.paca_semanas_periodo *(1.3)) end)
                        else
-                        case when da.tdis_id=7 then tdis_num_semanas else (pc.paca_semanas_periodo * case  when dh.daho_total_horas is null then tdis_num_semanas else dh.daho_total_horas end) end 
+                        case when da.tdis_id=7 then tdis_num_semanas else (pc.paca_semanas_periodo * case  when dh.daho_total_horas is null then tdis_num_semanas else dh.daho_total_horas end) end
                         end as total_horas,
-				
+
 
                      case when m.mod_id=1 and da.tdis_id<> 7  then
-                    (case 
+                    (case
                          when (daca_num_estudiantes_online between 0 and 10)  then  round( 2  *(1.3))
 			 when (daca_num_estudiantes_online between 11 and 20) then  round( 3  *(1.3))
                          when (daca_num_estudiantes_online between 21 and 30) then  round( 4  *(1.3))
                          when (daca_num_estudiantes_online between 31 and 40) then  round( 5  *(1.3))
-                         when (daca_num_estudiantes_online >40) then round(7 *(1.3))  end) 
+                         when (daca_num_estudiantes_online >40) then round(7 *(1.3))  end)
                        else
-                          case when da.tdis_id=7  then round(tdis_num_semanas/paca_semanas_periodo) else ( case  when dh.daho_total_horas is null then tdis_num_semanas else dh.daho_total_horas end) end 
+                          case when da.tdis_id=7  then round(tdis_num_semanas/paca_semanas_periodo) else ( case  when dh.daho_total_horas is null then tdis_num_semanas else dh.daho_total_horas end) end
                         end as promedio,
-                        
+
                  --  case when da.tdis_id=7 then tdis_num_semanas else (pc.paca_semanas_periodo * case  when dh.daho_total_horas is null then tdis_num_semanas else dh.daho_total_horas end) end as total_horas,
                  -- case when da.tdis_id=7 then round(tdis_num_semanas/paca_semanas_periodo) else ( case  when dh.daho_total_horas is null then tdis_num_semanas else dh.daho_total_horas end) end as promedio,
-                    
+
                      CASE
                         WHEN daho_jornada = 1 THEN '(M) Matutino'
                         WHEN daho_jornada = 2 THEN '(N) Nocturno'
@@ -1296,21 +1296,21 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
                     ifnull(daca_fecha_fin_post,'') as fechaf,
                     ifnull(daca_horas_otras_actividades,0) nroHoras,
                     replace(UUID(),'-','') indice
-                FROM 
-                    " . $con_academico->dbname . ".distributivo_academico AS da 
-                    INNER JOIN " . $con_academico->dbname . ".periodo_academico pc on da.paca_id  = pc.paca_id and  pc.paca_activo='A'    
-                    INNER JOIN " . $con_academico->dbname . ".profesor AS p ON da.pro_id = p.pro_id 
+                FROM
+                    " . $con_academico->dbname . ".distributivo_academico AS da
+                    INNER JOIN " . $con_academico->dbname . ".periodo_academico pc on da.paca_id  = pc.paca_id and  pc.paca_activo='A'
+                    INNER JOIN " . $con_academico->dbname . ".profesor AS p ON da.pro_id = p.pro_id
                     INNER JOIN " . $con_db->dbname . ".persona AS pe ON p.per_id = pe.per_id
-                    LEFT JOIN " . $con_academico->dbname . ".distributivo_academico_horario AS dh ON da.daho_id = dh.daho_id                    
+                    LEFT JOIN " . $con_academico->dbname . ".distributivo_academico_horario AS dh ON da.daho_id = dh.daho_id
                     LEFT JOIN " . $con_academico->dbname . ".modalidad AS m ON da.mod_id = m.mod_id
                     LEFT JOIN " . $con_academico->dbname . ".unidad_academica AS ua ON da.uaca_id = ua.uaca_id
-                    LEFT JOIN " . $con_academico->dbname . ".asignatura AS a ON da.asi_id = a.asi_id                    
+                    LEFT JOIN " . $con_academico->dbname . ".asignatura AS a ON da.asi_id = a.asi_id
                     INNER JOIN " . $con_academico->dbname . ".tipo_distributivo AS t ON da.tdis_id = t.tdis_id
-                WHERE       
-                    da.dcab_id = :dcab_id AND 
-                   da.daca_estado_logico = :estado AND 
-                    da.daca_estado = :estado AND                                        
-                    t.tdis_estado = :estado AND 
+                WHERE
+                    da.dcab_id = :dcab_id AND
+                   da.daca_estado_logico = :estado AND
+                    da.daca_estado = :estado AND
+                    t.tdis_estado = :estado AND
                     t.tdis_estado_logico = :estado
                    and  da.tdis_id<>6";
 
@@ -1338,7 +1338,7 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
     /**
      * Function inactivar datos distributivo académico
      * @author  Grace Viteri <analistadesarrollo01@uteg.edu.ec>
-     * @param   
+     * @param
      * @return  $resultData (Retornar los datos).
      */
     public function inactivarDistributivoAcademico($pro_id, $paca_id) {
@@ -1348,12 +1348,12 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
         $fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
 
         $sql = "UPDATE " . $con->dbname . ".distributivo_academico
-                SET daca_fecha_modificacion = :fecha, 
-                    daca_usuario_modifica = :usuario, 
-                    daca_estado = '0', 
-                    daca_estado_logico = '0' 
+                SET daca_fecha_modificacion = :fecha,
+                    daca_usuario_modifica = :usuario,
+                    daca_estado = '0',
+                    daca_estado_logico = '0'
                 WHERE paca_id = :paca_id
-                     AND pro_id = :pro_id 
+                     AND pro_id = :pro_id
                      AND daca_estado = :estado
                      AND daca_estado = :estado";
 
@@ -1370,7 +1370,7 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
     /**
      * Function Verifica si ya existe el mismo tipo de distributivo en otro profesor.
      * @author  Grace Viteri <analistadesarrollo01@uteg.edu.ec>
-     * @param   
+     * @param
      * @return  $resultData (Retornar los datos).
      */
     public function existsDistribAcadOtroProf($uaca_id, $tasi_id, $asi_id, $paca_id, $horario, $paralelo) {
@@ -1381,18 +1381,18 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
         $sql = "Select daca_id,
                        concat(p.per_pri_apellido, ' ', ifnull(p.per_seg_apellido,''), ' ', p.per_pri_nombre, ' ', ifnull(p.per_seg_nombre,'')) as profesor,
                        a.asi_nombre as asignatura
-                from db_academico.distributivo_academico d 
-                    inner  join db_academico.profesor pr on pr.pro_id = d.pro_id 
+                from db_academico.distributivo_academico d
+                    inner  join db_academico.profesor pr on pr.pro_id = d.pro_id
                      inner join db_asgard.persona p on p.per_id = pr.per_id
                      inner join db_academico.asignatura a on a.asi_id = d.asi_id
                   where d.paca_id = " . $paca_id . " and d.asi_id =" . $asi_id .
                 " and d.tdis_id =" . $tasi_id . " and d.daho_id =" . $horario .
                 "  and pr.pro_estado = 1
-                      and pr.pro_estado_logico = 1  
-                      and p.per_estado = 1 
-                      and p.per_estado_logico = 1 
-                      and d.daca_estado = 1 
-                      and d.daca_estado_logico = 1  
+                      and pr.pro_estado_logico = 1
+                      and p.per_estado = 1
+                      and p.per_estado_logico = 1
+                      and d.daca_estado = 1
+                      and d.daca_estado_logico = 1
                       and d.mpp_id =" . $paralelo;
         if ($uaca_id == 1) {
 
@@ -1420,7 +1420,7 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
     /**
      * Function Verifica los programas de estudio por unidad y modalidad.
      * @author  Grace Viteri <analistadesarrollo01@uteg.edu.ec>
-     * @param   
+     * @param
      * @return  $resultData (Retornar los datos).
      */
     public function getModalidadEstudio($uaca_id, $mod_id) {
@@ -1432,8 +1432,8 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
         $sql = "SELECT a.meun_id id, b.eaca_nombre name
                 FROM db_academico.modalidad_estudio_unidad a
                 inner join db_academico.estudio_academico b   on b.eaca_id = a.eaca_id
-                WHERE a.uaca_id = $uaca_id 
-                      and a.mod_id = $mod_id 
+                WHERE a.uaca_id = $uaca_id
+                      and a.mod_id = $mod_id
                       and a.meun_estado = 1
                       and a.meun_estado_logico = 1";
 
@@ -1442,6 +1442,32 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
 //  $comando->bindParam(":mod_id", $mod_id, \PDO::PARAM_INT);
 //    $comando->bindParam("estado", $estado, \PDO::PARAM_STR);
 
+        $res = $comando->queryAll();
+        return $res;
+    }
+/**
+* Function getHorariosmppid
+* @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
+* @property integer
+* @return horario de un paralelo especifico
+ */
+    public function getHorariosmppid($mpp_id) {
+        $con_academico = \Yii::$app->db_academico;
+        $estado = 1;
+        $sql = "SELECT
+                    daho.daho_id as id,
+                    daho.daho_descripcion as name
+                FROM
+                    " . $con_academico->dbname . ".materia_paralelo_periodo mpp
+                INNER JOIN " . $con_academico->dbname . ".distributivo_academico_horario daho
+                ON daho.daho_id = mpp.daho_id
+                WHERE
+                    mpp.mpp_id = :mpp_id AND
+                    daho.daho_estado = :estado AND
+                    daho.daho_estado_logico = :estado";
+        $comando = $con_academico->createCommand($sql);
+        $comando->bindParam(":mpp_id", $mpp_id, \PDO::PARAM_INT);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_INT);
         $res = $comando->queryAll();
         return $res;
     }

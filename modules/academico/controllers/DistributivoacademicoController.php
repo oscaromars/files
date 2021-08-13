@@ -146,7 +146,7 @@ class DistributivoacademicoController extends \app\components\CController {
             // El PARALELO YA TRAE EL MPP_ID, ENVIAR ESE Y FILTAR EL CURSO Q CORRESPONDE
             // PARA GRADO
             if (isset($data["gethorario"])) {
-                \app\models\Utilities::putMessageLogFile('controladormpp_id ' . $data["mpp_id"]);
+                //\app\models\Utilities::putMessageLogFile('controladormpp_id ' . $data["mpp_id"]);
                 //$horario = $distributivo_model->getHorariosByUnidadAcad($data["uaca_id"], $data["mod_id"], $data['jornada_id']);
                 $horario = $distributivo_model->getHorariosmppid($data["mpp_id"]);
                 $message = array("horario" => $horario);
@@ -179,8 +179,8 @@ class DistributivoacademicoController extends \app\components\CController {
 
             if (isset($data["getparaleloposgrado"])) {
 
-                //$paralelos = $paralelo->getParalelosAsignatura($data["paca_id"],$data["mod_id"],$data["asig_id"]);
-                $paralelos =$mod_horario->consultarParaleloHorario($data["hora_id"]);
+                $paralelos = $paralelo->getParalelosAsignatura($data["paca_id"],$data["mod_id"],$data["asig_id"]);
+                //$paralelos =$mod_horario->consultarParaleloHorario($data["hora_id"]);
                 $message = array("paralelo" =>  $paralelos);
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
             }
@@ -196,7 +196,7 @@ class DistributivoacademicoController extends \app\components\CController {
         $model = $distributivo_model->getDistribAcadXprofesorXperiodo(0, 0);
         $arr_tipo_distributivo = $mod_tipo_distributivo->consultarTipoDistributivo(null);
         $arr_programa = $distributivo_model->getModalidadEstudio(2, 1);
-
+        $arr_paralelos = $paralelo->getParalelosAsignatura(0,0,0);
         return $this->render('new', [
                     'arr_profesor' => ArrayHelper::map(array_merge([["Id" => "0", "Nombres" => Yii::t("formulario", "Select")]], $arr_profesor), "Id", "Nombres"),
                     'arr_unidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $arr_unidad), "id", "name"),
@@ -206,7 +206,8 @@ class DistributivoacademicoController extends \app\components\CController {
                     'arr_jornada' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $arr_jornada), "id", "name"),
                     'arr_horario' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $arr_horario), "id", "name"),
                     'arr_tipo_asignacion' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $arr_tipo_distributivo), "id", "name"),
-                    'arr_paralelo' => $this->paralelo(),
+                    //'arr_paralelo' => $this->paralelo(),
+                    'arr_paralelo' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $arr_paralelos), "id", "name"),
                     'model' => $model,
                     'arr_periodoActual' => $arr_periodoActual,
                     'arr_programa' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $arr_programa), "id", "name"),

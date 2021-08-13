@@ -279,15 +279,12 @@ $('#cmb_periodo').change(function () {
         arrParams.uaca_id = $('#cmb_unidad_dis').val();
         arrParams.mod_id = $('#cmb_modalidad').val();
         arrParams.jornada_id = $(this).val();
-        //arrParams.mpp_id = $('#cmb_paralelo').val();
-        //alert ('mpp_id' + arrParams.mpp_id);
         arrParams.gethorario = true;
         requestHttpAjax(link, arrParams, function(response) {
             if (response.status == "OK") {
                 data = response.message;
                 setComboDataselect(data.horario, "cmb_horario", "Todos");
-                //setComboData(data.horario, "cmb_horario");
-            }
+               }
         }, true);
      });
 
@@ -313,7 +310,6 @@ $('#cmb_periodo').change(function () {
         var arrParams = new Object();
         arrParams.mpp_id = $('#cmb_paralelo').val();
         arrParams.gethorario = true;
-        //alert ('mpp_id' + arrParams.mpp_id);
         requestHttpAjax(link, arrParams, function (response) {
             if (response.status == "OK") {
                 data = response.message;
@@ -339,6 +335,20 @@ $('#cmb_materia').change(function () {
         arrParams.paca_id = $('#cmb_periodo').val();
         arrParams.mod_id = $('#cmb_modalidad').val();
         arrParams.getparalelo = true;
+        //arrParams.getparaleloposgrado = true;
+        requestHttpAjax(link, arrParams, function (response) {
+            if (response.status == "OK") {
+                data = response.message;
+                setComboDataselect(data.paralelo, "cmb_paralelo", "Todos");
+            }
+        });
+    }else{
+        var link = $('#txth_base').val() + "/academico/distributivoacademico/new";
+        var arrParams = new Object();
+        arrParams.asig_id = $('#cmb_materia').val();
+        arrParams.paca_id = $('#cmb_periodo').val();
+        arrParams.mod_id = $('#cmb_modalidad').val();
+        arrParams.getparaleloposgrado = true;
         requestHttpAjax(link, arrParams, function (response) {
             if (response.status == "OK") {
                 data = response.message;

@@ -103,6 +103,10 @@ $('#cmb_periodo').change(function () {
 
     $('#cmb_unidad_dis').change(function () {
         console.log("entro por change");
+        $('#cmb_paralelo').val('0');
+        $('#cmb_horario').val('0');
+        $('#cmb_jornada').val('0');
+
         var link = "";
         if ($('#txth_tipo').val() == 'new') {
             link = $('#txth_base').val() + "/academico/distributivoacademico/new";
@@ -313,7 +317,7 @@ $('#cmb_periodo').change(function () {
         requestHttpAjax(link, arrParams, function (response) {
             if (response.status == "OK") {
                 data = response.message;
-                setComboData(data.horario, "cmb_horario");
+                setComboDataselect(data.horario, "cmb_horario", "Todos");
             }
         }, true);
     });
@@ -328,6 +332,7 @@ $('#cmb_periodo').change(function () {
 });
 
 $('#cmb_materia').change(function () {
+    $('#cmb_horario').val('0');
     if ($('#cmb_unidad_dis').val() == 1) {
         var link = $('#txth_base').val() + "/academico/distributivoacademico/new";
         var arrParams = new Object();
@@ -358,7 +363,7 @@ $('#cmb_materia').change(function () {
     }
 });
 
-$('#cmb_horario').change(function () {
+/*$('#cmb_horario').change(function () {
     if ($('#cmb_unidad_dis').val() == 2) {
         var link = $('#txth_base').val() + "/academico/distributivoacademico/new";
         var arrParams = new Object();
@@ -371,7 +376,7 @@ $('#cmb_horario').change(function () {
             }
         });
     }
-});
+});*/
 
 // Recarga la Grid de Productos si Existe
 function recargarGridItem() {

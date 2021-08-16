@@ -15,10 +15,10 @@ use yii\base\Exception;
  * @property int $per_id
  * @property int $tdis_id
  * @property string $ides_porcentaje
- * @property string $idis_estado
- * @property string $idis_fecha_creacion
- * @property string $idis_fecha_modificacion
- * @property string $idis_estado_logico
+ * @property string $ides_estado
+ * @property string $ides_fecha_creacion
+ * @property string $ides_fecha_modificacion
+ * @property string $ides_estado_logico
  */
 class InfoDiscapacidadEst extends \yii\db\ActiveRecord
 {
@@ -44,11 +44,11 @@ class InfoDiscapacidadEst extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['per_id', 'tdis_id', 'idis_estado', 'idis_estado_logico'], 'required'],
+            [['per_id', 'tdis_id', 'ides_estado', 'ides_estado_logico'], 'required'],
             [['per_id', 'tdis_id'], 'integer'],
-            [['idis_fecha_creacion', 'idis_fecha_modificacion'], 'safe'],
+            [['ides_fecha_creacion', 'ides_fecha_modificacion'], 'safe'],
             [['ides_porcentaje'], 'string', 'max' => 3],
-            [['idis_estado', 'idis_estado_logico'], 'string', 'max' => 1],
+            [['ides_estado', 'ides_estado_logico'], 'string', 'max' => 1],
         ];
     }
 
@@ -62,10 +62,10 @@ class InfoDiscapacidadEst extends \yii\db\ActiveRecord
             'per_id' => 'Per ID',
             'tdis_id' => 'Tdis ID',
             'ides_porcentaje' => 'Ides Porcentaje',
-            'idis_estado' => 'Idis Estado',
-            'idis_fecha_creacion' => 'Idis Fecha Creacion',
-            'idis_fecha_modificacion' => 'Idis Fecha Modificacion',
-            'idis_estado_logico' => 'Idis Estado Logico',
+            'ides_estado' => 'Ides Estado',
+            'ides_fecha_creacion' => 'Ides Fecha Creacion',
+            'ides_fecha_modificacion' => 'Ides Fecha Modificacion',
+            'ides_estado_logico' => 'Ides Estado Logico',
         ];
     }
 

@@ -9,12 +9,12 @@ use Yii;
  *
  * @property int $eins_id
  * @property int $per_id
- * @property int $nins_id
- * @property string $eins_titulo
- * @property string $eins_institucion
- * @property string $eins_añogrado
- * @property int $eins_usuario_ingreso
- * @property int $eins_usuario_modifica
+ * @property string $eins_titulo3ernivel
+ * @property string $eins_institucion3ernivel
+ * @property string $eins_añogrado3ernivel
+ * @property string $eins_titulo4tonivel
+ * @property string $eins_institucion4tonivel
+ * @property string $eins_añogrado4tonivel
  * @property string $eins_estado
  * @property string $eins_fecha_creacion
  * @property string $eins_fecha_modificacion
@@ -44,12 +44,12 @@ class EstudianteInstruccion extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['per_id', 'nins_id', 'eins_titulo', 'eins_usuario_ingreso', 'eins_estado', 'eins_estado_logico'], 'required'],
-            [['per_id', 'nins_id', 'eins_usuario_ingreso', 'eins_usuario_modifica'], 'integer'],
+            [['per_id'], 'integer'],
+            [['eins_estado', 'eins_estado_logico'], 'required'],
             [['eins_fecha_creacion', 'eins_fecha_modificacion'], 'safe'],
-            [['eins_titulo'], 'string', 'max' => 200],
-            [['eins_institucion'], 'string', 'max' => 150],
-            [['eins_añogrado'], 'string', 'max' => 50],
+            [['eins_titulo3ernivel', 'eins_titulo4tonivel'], 'string', 'max' => 200],
+            [['eins_institucion3ernivel', 'eins_institucion4tonivel'], 'string', 'max' => 150],
+            [['eins_añogrado3ernivel', 'eins_añogrado4tonivel'], 'string', 'max' => 50],
             [['eins_estado', 'eins_estado_logico'], 'string', 'max' => 1],
         ];
     }
@@ -62,12 +62,12 @@ class EstudianteInstruccion extends \yii\db\ActiveRecord
         return [
             'eins_id' => 'Eins ID',
             'per_id' => 'Per ID',
-            'nins_id' => 'Nins ID',
-            'eins_titulo' => 'Eins Titulo',
-            'eins_institucion' => 'Eins Institucion',
-            'eins_añogrado' => 'Eins Añogrado',
-            'eins_usuario_ingreso' => 'Eins Usuario Ingreso',
-            'eins_usuario_modifica' => 'Eins Usuario Modifica',
+            'eins_titulo3ernivel' => 'Eins Titulo3ernivel',
+            'eins_institucion3ernivel' => 'Eins Institucion3ernivel',
+            'eins_añogrado3ernivel' => 'Eins Añogrado3ernivel',
+            'eins_titulo4tonivel' => 'Eins Titulo4tonivel',
+            'eins_institucion4tonivel' => 'Eins Institucion4tonivel',
+            'eins_añogrado4tonivel' => 'Eins Añogrado4tonivel',
             'eins_estado' => 'Eins Estado',
             'eins_fecha_creacion' => 'Eins Fecha Creacion',
             'eins_fecha_modificacion' => 'Eins Fecha Modificacion',
@@ -81,32 +81,7 @@ class EstudianteInstruccion extends \yii\db\ActiveRecord
      * @property integer $userid       
      * @return  
      */
-    public function consultaEstudianteinstruccion($per_id) {
-        $con = \Yii::$app->db_asgard;
-        $estado = '1';
-        $sql = "SELECT 
-                    eins_id as contacto_id,
-                    per_id as persona_id,
-                    pcon_nombre as nombre,
-                    tpar_id as parentesco,
-                    pcon_telefono as telefono,
-                    pcon_direccion as direccion,
-                    pcon_celular as celular 
-                    
-                FROM 
-                    " . $con->dbname . ". persona_contacto        
-                WHERE 
-                    per_id = :perid AND
-                    pcon_estado = :estado AND 
-                    pcon_estado_logico = :estado
-                LIMIT 1";
-        $comando = $con->createCommand($sql);
-        $comando->bindParam(":perid", $per_id, \PDO::PARAM_INT);
-        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
-
-        $resultData = $comando->queryOne();
-        return $resultData;
-    }
+   
 
     public function consultarEstInstruccion($per_id) {
         $con = \Yii::$app->db_inscripcion;
@@ -188,5 +163,5 @@ class EstudianteInstruccion extends \yii\db\ActiveRecord
                 $trans->rollback();
             return FALSE;
         }
-    }  
+    } 
 }

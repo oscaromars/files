@@ -553,145 +553,6 @@ function actualizarGridAspirantePosgrado(){
     }
 }
 
-function editaspiranteposgrado() {
-    var link = $('#txth_base').val() + "/inscripcionposgrado/edit" + "?id=" + $("#frm_per_id").val();
-    window.location = link;
-}
-
-function updateaspiranteposgrado() {
-    var ID = $('#txth_igra_id').val();
-    var link = $('#txth_base').val() + "/inscripcionposgrado/update";
-    var arrParams = new Object();
-    arrParams.per_id = $("#frm_per_id").val();
-    arrParams.cedula = $('#frm_per_cedula').val();
-    arrParams.pasaporte = $('#frm_per_pasaporte').val();
-    arrParams.primer_nombre = $('#frm_per_pri_nombre').val();
-    arrParams.segundo_nombre = $('#frm_per_seg_nombre').val();
-    arrParams.primer_apellido = $('#frm_per_pri_apellido').val();
-    arrParams.segundo_apellido = $('#frm_per_seg_apellido').val();
-    arrParams.cuidad_nac = $('#cmb_ciudadEdit').val();
-    arrParams.fecha_nac = $('#frm_fecha_nacimiento').val();
-    arrParams.nacionalidad = $('#frm_nacionalidad').val();
-    arrParams.estado_civil = $('#cmb_estadocivilEdit').val();
-    arrParams.pais = $('#cmb_paisEdit').val();
-    arrParams.provincia = $('#cmb_provinciaEdit').val();
-    arrParams.canton = $('#cmb_cantonEdit').val();
-
-    //Form 1 Datos Contacto
-    arrParams.dir_domicilio = $('#frm_per_domicilio_refEdit').val();
-    arrParams.celular = $('#frm_celEdit').val();
-    arrParams.telefono = $('#frm_phoneEdit').val();
-    arrParams.correo = $('#frm_per_correo').val();
-
-    //FORM 1 datos en caso de emergencias
-    arrParams.cont_emergencia = $('#txt_contacto_emergenciaEdit').val();
-    arrParams.parentesco = $('#cmb_parentescoEdit').val();
-    arrParams.tel_emergencia = $('#txt_telefono_emergenciaEdit').val(); 
-
-    //Form2 Datos formacion profesional
-    arrParams.titulo_tercer = $('#txt_titulo_3erNivelEdit').val();
-    arrParams.universidad_tercer = $('#txt_universidad1Edit').val();
-    arrParams.grado_tercer = $('#txt_año_grado1Edit').val();
-
-    arrParams.titulo_cuarto = $('#txt_titulo_4toNivelEdit').val();
-    arrParams.universidad_cuarto = $('#txt_universidad2Edit').val();
-    arrParams.grado_cuarto = $('#txt_año_grado2Edit').val();
-
-    //Form2 Datos laborales
-    arrParams.empresa = $('#txt_empresaEdit').val();
-    arrParams.cargo = $('#txt_cargoEdit').val();
-    arrParams.telefono_emp = $('#txt_telefono_empEdit').val();
-    arrParams.prov_emp = $('#cmb_provincia_empEdit').val();
-    arrParams.ciu_emp = $('#cmb_ciudad_empEdit').val();
-    arrParams.parroquia = $('#txt_parroquiaEdit').val();
-    arrParams.direccion_emp = $('#txt_direc_empEdit').val();
-    arrParams.añoingreso_emp = $('#txt_añoingreso_empEdit').val();
-    arrParams.correo_emp = $('#txt_correo_empEdit').val();
-    arrParams.cat_ocupacional = $('#txt_cat_ocupacionalEdit').val();
-
-    //Form2 Datos idiomas
-    /** Session Storages **/
-    //arrParams.grid_idiomas_list = (JSON.parse(sessionStorage.grid_idiomas_list)).data;
-    /*arrParams.idioma1 = $('#cmb_idioma1').val();
-    arrParams.nivel1 = $('#cmb_nivelidioma1').val();
-
-    arrParams.idioma2 = $('#cmb_idioma2').val();
-    arrParams.nivel2 = $('#cmb_nivelidioma2').val();
-
-    arrParams.otroidioma = $('#txt_nombreidioma').val();
-    arrParams.otronivel = $('#cmb_nivelotroidioma').val();
-
-    arrParams.tipo_idioma = $('#cmb_idioma2 option:selected').val();
-    if (arrParams.tipo_idioma == 3) {
-        arrParams.otroidioma = $('#txt_nombreidioma').val();
-        arrParams.otronivel = $('#cmb_nivelotroidioma').val();
-    } else {
-        arrParams.nivel2 = $('#cmb_nivelidioma2').val();
-    }*/
-
-    //Form2 Datos adicionales
-    //arrParams.discapacidades = $('input[name=signup-dis]:checked').val();
-    arrParams.tipo_discap = $('#cmb_tipo_discapEdit').val();
-    arrParams.porcentaje_discap = $('#txt_porc_discapacidadEdit').val();
-    //arrParams.discapacidad = "1";
-    /*if ($('input[name=signup-dis_no]:checked').val() == 2) {
-        $('#txt_porc_discapacidad').removeClass("PBvalidation");
-        arrParams.discapacidad = "0";
-    }*/
-    //arrParams.docencia = $('input[name=signup-doc]:checked').val();
-    arrParams.año_docencia = $('#txt_año_docenciaEdit').val();
-    arrParams.area_docencia = $('#txt_area_docenciaEdit').val();
-    //arrParams.docencias = "1";
-    /*if ($('input[name=signup-doc_no]:checked').val() == 2) {
-        $('#txt_area_docencia').removeClass("PBvalidation");
-        arrParams.docencias = "0";
-    }*/
-    //arrParams.investigacion = $('input[name=signup-inv]:checked').val();
-    arrParams.articulos = $('#txt_articulosEdit').val();
-    arrParams.area_investigacion = $('#txt_area_investigacionEdit').val();
-    /*arrParams.investiga = "1";
-    if ($('input[name=signup-inv_no]:checked').val() == 2) {
-        $('#txt_area_investigacion').removeClass("PBvalidation");
-        arrParams.investiga = "0";
-    }*/
-
-    //Form2 Datos financiamiento
-    arrParams.tipo_financiamiento = $("#txt_financiamientoEdit").val();
-    
-
-     //TAB 2
-    arrParams.ipos_ruta_doc_foto = $('#txth_doc_foto').val();
-    arrParams.ipos_ruta_doc_dni = $('#txth_doc_dni').val();
-    arrParams.ipos_ruta_doc_certvota = $('#txth_doc_certvota').val();
-    arrParams.ipos_ruta_doc_titulo = $('#txth_doc_titulo').val();
-    arrParams.ipos_ruta_doc_comprobante = $('#txth_doc_comprobante').val();
-    arrParams.ipos_ruta_doc_record1 = $('#txth_doc_record1').val();
-    arrParams.ipos_ruta_doc_senescyt = $('#txth_doc_senecyt').val();
-    arrParams.ipos_ruta_doc_hojavida = $('#txth_doc_hojavida').val();
-    arrParams.ipos_ruta_doc_cartarecomendacion = $('#txth_doc_cartarecomendacion').val();
-    arrParams.ipos_ruta_doc_certificadolaboral = $('#txth_doc_certificadolaboral').val();
-    arrParams.ipos_ruta_doc_certificadoingles = $('#txth_doc_certificadoingles').val();
-    arrParams.ipos_ruta_doc_recordacademico = $('#txth_doc_recordacad').val();
-    arrParams.ipos_ruta_doc_certnosancion = $('#txth_doc_nosancion').val();
-    arrParams.ipos_ruta_doc_syllabus = $('#txth_doc_syllabus').val();
-    arrParams.ipos_ruta_doc_homologacion = $('#txth_doc_especievalorada').val();
-
-    if (!validateForm()) {
-        //console.log(arrParams);
-        requestHttpAjax(link, arrParams, function(response) {
-            var btnacciones = new Array();
-            var accion1 = new Object();
-            accion1.id = "btnid1";
-            accion1.class = "clclass";
-            accion1.value = "Aceptar";
-            accion1.callback = "backtoList";
-            btnacciones[0] = accion1;
-            response.message.acciones = btnacciones;
-            showAlert(response.status, response.label, response.message);
-        }, true);
-    }
-}
-
 /** IDIOMAS **/
 function addIdioma() {
     var idioma = $("#cmb_idioma2Edit :selected").val();
@@ -757,6 +618,7 @@ function addIdioma() {
         arrData.btnactions = item3;
         // colocar codigo aqui para agregar acciones
     }
+
     sessionStorage.grid_idiomas_list = JSON.stringify(arrData);
     addItemGridContent("grid_idiomas_list");
 
@@ -770,6 +632,159 @@ function removeItemIdioma(ref) {
     var indice = $(ref).parent().parent().attr("data-key");
     removeItemGridContent("grid_idiomas_list", indice);
     removeItemsBase(indice,1);
+}
+
+function editaspiranteposgrado() {
+    var link = $('#txth_base').val() + "/inscripcionposgrado/edit" + "?id=" + $("#frm_per_id").val();
+    window.location = link;
+}
+
+function updateaspiranteposgrado() {
+    var ID = $('#txth_igra_id').val();
+    var link = $('#txth_base').val() + "/inscripcionposgrado/update";
+    var arrParams = new Object();
+    arrParams.per_id = $("#frm_per_id").val();
+    arrParams.cedula = $('#frm_per_cedula').val();
+    arrParams.pasaporte = $('#frm_per_pasaporte').val();
+    arrParams.primer_nombre = $('#frm_per_pri_nombre').val();
+    arrParams.segundo_nombre = $('#frm_per_seg_nombre').val();
+    arrParams.primer_apellido = $('#frm_per_pri_apellido').val();
+    arrParams.segundo_apellido = $('#frm_per_seg_apellido').val();
+    arrParams.cuidad_nac = $('#cmb_ciudadEdit').val();
+    arrParams.fecha_nac = $('#frm_fecha_nacimiento').val();
+    arrParams.nacionalidad = $('#frm_nacionalidad').val();
+    arrParams.estado_civil = $('#cmb_estadocivilEdit').val();
+    arrParams.pais = $('#cmb_paisEdit').val();
+    arrParams.provincia = $('#cmb_provinciaEdit').val();
+    arrParams.canton = $('#cmb_cantonEdit').val();
+
+    //Form 1 Datos Contacto
+    arrParams.dir_domicilio = $('#frm_per_domicilio_refEdit').val();
+    arrParams.celular = $('#frm_celEdit').val();
+    arrParams.telefono = $('#frm_phoneEdit').val();
+    arrParams.correo = $('#frm_per_correo').val();
+
+    //FORM 1 datos en caso de emergencias
+    arrParams.cont_emergencia = $('#txt_contacto_emergenciaEdit').val();
+    arrParams.parentesco = $('#cmb_parentescoEdit').val();
+    arrParams.tel_emergencia = $('#txt_telefono_emergenciaEdit').val(); 
+
+    //Form2 Datos formacion profesional
+    arrParams.titulo_tercer = $('#txt_titulo_3erNivelEdit').val();
+    arrParams.universidad_tercer = $('#txt_universidad1Edit').val();
+    arrParams.grado_tercer = $('#txt_año_grado1Edit').val();
+
+    arrParams.titulo_cuarto = $('#txt_titulo_4toNivelEdit').val();
+    arrParams.universidad_cuarto = $('#txt_universidad2Edit').val();
+    arrParams.grado_cuarto = $('#txt_año_grado2Edit').val();
+
+    //Form2 Datos laborales
+    arrParams.empresa = $('#txt_empresaEdit').val();
+    arrParams.cargo = $('#txt_cargoEdit').val();
+    arrParams.telefono_emp = $('#txt_telefono_empEdit').val();
+    arrParams.prov_emp = $('#cmb_provincia_empEdit').val();
+    arrParams.ciu_emp = $('#cmb_ciudad_empEdit').val();
+    arrParams.parroquia = $('#txt_parroquiaEdit').val();
+    arrParams.direccion_emp = $('#txt_direc_empEdit').val();
+    arrParams.añoingreso_emp = $('#txt_añoingreso_empEdit').val();
+    arrParams.correo_emp = $('#txt_correo_empEdit').val();
+    arrParams.cat_ocupacional = $('#txt_cat_ocupacionalEdit').val();
+
+    //Form2 Datos idiomas
+    /** Session Storages **/
+    //arrParams.grid_idiomas_list = (JSON.parse(sessionStorage.grid_idiomas_list)).data;
+    /*arrParams.idioma1 = $('#cmb_idioma1').val();
+    arrParams.nivel1 = $('#cmb_nivelidioma1').val();*/
+
+    /*arrParams.idioma2 = $('#cmb_idioma2Edit').val();
+    arrParams.nivel2 = $('#cmb_nivelidioma2Edit').val();
+
+    arrParams.otroidioma = $('#txt_nombreidiomaEdit').val();
+    arrParams.otronivel = $('#cmb_nivelotroidiomaEdit').val();
+
+    arrParams.tipo_idioma = $('#cmb_idioma2Edit option:selected').val();
+    if (arrParams.tipo_idioma == 3) {
+        arrParams.otroidioma = $('#txt_nombreidiomaEdit').val();
+        arrParams.otronivel = $('#cmb_nivelotroidiomaEdit').val();
+    } else {
+        if (arrParams.tipo_idioma == 1) {
+        arrParams.nivel2 = $('#cmb_nivelidioma2Edit').val();
+        }
+    }*/
+
+    //Form2 Datos adicionales
+    //arrParams.discapacidades = $('input[name=signup-dis]:checked').val();
+    arrParams.tipo_discap = $('#cmb_tipo_discapEdit').val();
+    arrParams.porcentaje_discap = $('#txt_porc_discapacidadEdit').val();
+    //arrParams.discapacidad = "1";
+    /*if ($('input[name=signup-dis_no]:checked').val() == 2) {
+        $('#txt_porc_discapacidad').removeClass("PBvalidation");
+        arrParams.discapacidad = "0";
+    }*/
+    //arrParams.docencia = $('input[name=signup-doc]:checked').val();
+    arrParams.año_docencia = $('#txt_año_docenciaEdit').val();
+    arrParams.area_docencia = $('#txt_area_docenciaEdit').val();
+    //arrParams.docencias = "1";
+    /*if ($('input[name=signup-doc_no]:checked').val() == 2) {
+        $('#txt_area_docencia').removeClass("PBvalidation");
+        arrParams.docencias = "0";
+    }*/
+    //arrParams.investigacion = $('input[name=signup-inv]:checked').val();
+    arrParams.articulos = $('#txt_articulosEdit').val();
+    arrParams.area_investigacion = $('#txt_area_investigacionEdit').val();
+    /*arrParams.investiga = "1";
+    if ($('input[name=signup-inv_no]:checked').val() == 2) {
+        $('#txt_area_investigacion').removeClass("PBvalidation");
+        arrParams.investiga = "0";
+    }*/
+
+    //Form2 Datos financiamiento
+    arrParams.tipo_financiamiento = $("#txt_financiamientoEdit").val();
+    
+
+     //TAB 2
+    arrParams.ipos_ruta_doc_foto = $('#txth_doc_foto').val();
+    arrParams.ipos_ruta_doc_dni = $('#txth_doc_dni').val();
+    arrParams.ipos_ruta_doc_certvota = $('#txth_doc_certvota').val();
+    arrParams.ipos_ruta_doc_titulo = $('#txth_doc_titulo').val();
+    arrParams.ipos_ruta_doc_comprobante = $('#txth_doc_comprobante').val();
+    arrParams.ipos_ruta_doc_record1 = $('#txth_doc_record1').val();
+    arrParams.ipos_ruta_doc_senescyt = $('#txth_doc_senecyt').val();
+    arrParams.ipos_ruta_doc_hojavida = $('#txth_doc_hojavida').val();
+    arrParams.ipos_ruta_doc_cartarecomendacion = $('#txth_doc_cartarecomendacion').val();
+    arrParams.ipos_ruta_doc_certificadolaboral = $('#txth_doc_certificadolaboral').val();
+    arrParams.ipos_ruta_doc_certificadoingles = $('#txth_doc_certificadoingles').val();
+    arrParams.ipos_ruta_doc_recordacademico = $('#txth_doc_recordacad').val();
+    arrParams.ipos_ruta_doc_certnosancion = $('#txth_doc_nosancion').val();
+    arrParams.ipos_ruta_doc_syllabus = $('#txth_doc_syllabus').val();
+    arrParams.ipos_ruta_doc_homologacion = $('#txth_doc_especievalorada').val();
+
+    /*if (!validateForm()) {
+        //console.log(arrParams);
+        requestHttpAjax(link, arrParams, function(response) {
+            var btnacciones = new Array();
+            var accion1 = new Object();
+            accion1.id = "btnid1";
+            accion1.class = "clclass";
+            accion1.value = "Aceptar";
+            accion1.callback = "backtoList";
+            btnacciones[0] = accion1;
+            //response.message.acciones = btnacciones;
+            showAlert(response.status, response.label, response.message);
+        }, true);
+    }*/
+
+    if (!validateForm()) {
+        requestHttpAjax(link, arrParams, function (response) { 
+            showAlert(response.status, response.label, response.message);
+            //var message = response.message;                       
+            if (response.status == "OK") {
+                setTimeout(function() {
+                        window.location.href = $('#txth_base').val() + "/inscripcionposgrado/aspiranteposgrado";
+                    }, 5000);
+            }
+        }, true);
+    }
 }
 
 function exportExcelaspiranteposgrado() {

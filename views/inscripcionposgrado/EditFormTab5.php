@@ -23,7 +23,7 @@ use app\widgets\PbGridView\PbGridView;
         <div class="form-group">
             <label for="txt_porc_discapacidadEdit" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("bienestar", "Percentage Disability") ?></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
-                <input type="text" class="form-control PBvalidation keyupmce" id="txt_porc_discapacidadEdit" value="<?= $discapacidad_model->ides_porcentaje ?>" data-type="alfanumerico" data-keydown="true" placeholder="<?= Yii::t("bienestar", "Percentage Disability") ?>">
+                <input type="text" class="form-control" id="txt_porc_discapacidadEdit" value="<?= $discapacidad_model->ides_porcentaje ?>" data-type="alfanumerico" data-keydown="true" placeholder="<?= Yii::t("bienestar", "Percentage Disability") ?>">
             </div>
         </div><br><br></br>
     </div>
@@ -31,7 +31,7 @@ use app\widgets\PbGridView\PbGridView;
         <div class="form-group">
             <label for="txt_año_docenciaEdit" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("inscripcionposgrado", "Años de Docencia") ?></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
-                <input type="text" class="form-control PBvalidation keyupmce" id="txt_año_docenciaEdit" value="<?= $docencia_model->ides_año_docencia ?>" data-type="alfanumerico" data-keydown="true" placeholder="<?= Yii::t("formulario", "Años de Docencia") ?>">
+                <input type="text" class="form-control" id="txt_año_docenciaEdit" value="<?= $docencia_model->ides_año_docencia ?>" data-type="alfanumerico" data-keydown="true" placeholder="<?= Yii::t("formulario", "Años de Docencia") ?>">
             </div>
         </div>
     </div>
@@ -39,7 +39,7 @@ use app\widgets\PbGridView\PbGridView;
         <div class="form-group">
             <label for="txt_area_docenciaEdit" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("inscripcionposgrado", "Área de Docencia") ?></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
-                <input type="text" class="form-control PBvalidation keyupmce" id="txt_area_docenciaEdit" value="<?= $docencia_model->ides_area_docencia ?>" data-type="alfanumerico" data-keydown="true" placeholder="<?= Yii::t("formulario", "Área de Docencia") ?>">
+                <input type="text" class="form-control" id="txt_area_docenciaEdit" value="<?= $docencia_model->ides_area_docencia ?>" data-type="alfanumerico" data-keydown="true" placeholder="<?= Yii::t("formulario", "Área de Docencia") ?>">
             </div>
         </div><br><br></br>
     </div>
@@ -47,7 +47,7 @@ use app\widgets\PbGridView\PbGridView;
         <div class="form-group">
             <label for="txt_articulosEdit" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("inscripcionposgrado", "Número de Árticulos Publicados") ?></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
-                <input type="text" class="form-control PBvalidation keyupmce" id="txt_articulosEdit" value="<?= $investigaciones_model->iein_articulos_investigacion ?>" data-type="alfanumerico" data-keydown="true" placeholder="<?= Yii::t("formulario", "Número de Árticulos Publicados") ?>">
+                <input type="text" class="form-control" id="txt_articulosEdit" value="<?= $investigaciones_model->iein_articulos_investigacion ?>" data-type="alfanumerico" data-keydown="true" placeholder="<?= Yii::t("formulario", "Número de Árticulos Publicados") ?>">
             </div>
         </div>
     </div>
@@ -55,7 +55,7 @@ use app\widgets\PbGridView\PbGridView;
         <div class="form-group">
             <label for="txt_area_investigacionEdit" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("inscripcionposgrado", "Área de Investigación") ?></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
-                <input type="text" class="form-control PBvalidation keyupmce" id="txt_area_investigacionEdit" value="<?= $investigaciones_model->iein_area_investigacion ?>" data-type="alfanumerico" data-keydown="true" placeholder="<?= Yii::t("formulario", "Área de Investigación") ?>">
+                <input type="text" class="form-control" id="txt_area_investigacionEdit" value="<?= $investigaciones_model->iein_area_investigacion ?>" data-type="alfanumerico" data-keydown="false" placeholder="<?= Yii::t("formulario", "Área de Investigación") ?>">
             </div>
         </div><br><br></br>
     </div>

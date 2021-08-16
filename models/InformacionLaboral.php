@@ -19,8 +19,6 @@ use Yii;
  * @property string $ilab_añoingreso_emp
  * @property string $ilab_correo_emp
  * @property string $ilab_cat_ocupacional
- * @property int $ilab_usuario_ingreso
- * @property int $ilab_usuario_modifica
  * @property string $ilab_estado
  * @property string $ilab_fecha_creacion
  * @property string $ilab_fecha_modificacion
@@ -50,8 +48,8 @@ class InformacionLaboral extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['per_id', 'ilab_empresa', 'ilab_prov_emp', 'ilab_usuario_ingreso', 'ilab_estado', 'ilab_estado_logico'], 'required'],
-            [['per_id', 'ilab_prov_emp', 'ilab_ciu_emp', 'ilab_usuario_ingreso', 'ilab_usuario_modifica'], 'integer'],
+            [['per_id', 'ilab_empresa', 'ilab_prov_emp', 'ilab_estado', 'ilab_estado_logico'], 'required'],
+            [['per_id', 'ilab_prov_emp', 'ilab_ciu_emp'], 'integer'],
             [['ilab_fecha_creacion', 'ilab_fecha_modificacion'], 'safe'],
             [['ilab_empresa', 'ilab_cargo', 'ilab_parroquia', 'ilab_direccion_emp', 'ilab_añoingreso_emp', 'ilab_correo_emp', 'ilab_cat_ocupacional'], 'string', 'max' => 200],
             [['ilab_telefono_emp'], 'string', 'max' => 10],
@@ -77,8 +75,6 @@ class InformacionLaboral extends \yii\db\ActiveRecord
             'ilab_añoingreso_emp' => 'Ilab Añoingreso Emp',
             'ilab_correo_emp' => 'Ilab Correo Emp',
             'ilab_cat_ocupacional' => 'Ilab Cat Ocupacional',
-            'ilab_usuario_ingreso' => 'Ilab Usuario Ingreso',
-            'ilab_usuario_modifica' => 'Ilab Usuario Modifica',
             'ilab_estado' => 'Ilab Estado',
             'ilab_fecha_creacion' => 'Ilab Fecha Creacion',
             'ilab_fecha_modificacion' => 'Ilab Fecha Modificacion',

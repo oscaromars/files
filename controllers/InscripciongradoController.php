@@ -897,6 +897,16 @@ class InscripciongradoController extends \yii\web\Controller {
                 $pcon_celular = $data["tel_emergencia"];
                 $pcon_direccion = $data["dir_personacontacto"];
 
+                $igra_ruta_doc_titulo = $data['igra_ruta_doc_titulo'];
+                $igra_ruta_doc_dni = $data['igra_ruta_doc_dni'];
+                $igra_ruta_doc_certvota = $data['igra_ruta_doc_certvota'];
+                $igra_ruta_doc_foto = $data['igra_ruta_doc_foto'];
+                $igra_ruta_doc_comprobantepago = $data['igra_ruta_doc_comprobantepago'];
+                $igra_ruta_doc_record = $data['igra_ruta_doc_record'];
+                $igra_ruta_doc_certificado = $data['igra_ruta_doc_certificado'];
+                $igra_ruta_doc_syllabus = $data['igra_ruta_doc_syllabus'];
+                $igra_ruta_doc_homologacion = $data['igra_ruta_doc_homologacion'];
+
                 $persona_model = Persona::findOne($per_id);
                 $persona_model->per_cedula = $per_dni;
                 $persona_model->per_pri_nombre = $per_pri_nombre;
@@ -924,28 +934,27 @@ class InscripciongradoController extends \yii\web\Controller {
                 $contacto_model->tpar_id = $tpar_id;
                 $contacto_model->pcon_celular = $pcon_celular;
                 $contacto_model->pcon_direccion = $pcon_direccion;
+                $contacto_model->save();
 
-                $mod_inscripciongrado = new InscripcionGrado();
-                 \app\models\Utilities::putMessageLogFile('personasssss:  '.$per_id);
-                $consultar_registro = $mod_inscripciongrado->consultarDatosInscripcionContinuagrado($per_id);
+                $igra_model = InscripcionGrado::findOne(['per_id' => $persona_model->per_id]);
+                $igra_model->igra_ruta_doc_titulo = $igra_ruta_doc_titulo;
+                $igra_model->igra_ruta_doc_certvota = $igra_ruta_doc_certvota;
+                $igra_model->igra_ruta_doc_foto = $igra_ruta_doc_foto;
+                $igra_model->igra_ruta_doc_comprobantepago = $igra_ruta_doc_comprobantepago;
+                $igra_model->igra_ruta_doc_recordacademico = $igra_ruta_doc_record;
+                $igra_model->igra_ruta_doc_certificado = $igra_ruta_doc_certificado;
+                $igra_model->igra_ruta_doc_syllabus = $igra_ruta_doc_syllabus;
+                $igra_model->igra_ruta_doc_homologacion = $igra_ruta_doc_homologacion;
+                $igra_model->save();                
 
-                $igra_id = $consultar_registro['igra_id'];
-                $unidad = $consultar_registro['uaca_id'];
-                $carrera = $consultar_registro['eaca_id'];
-                $modalidad = $consultar_registro['mod_id'];
-                $periodo = $consultar_registro['paca_id'];
-
-                
-                $editdocumentos = $mod_inscripciongrado->updateDataInscripciongrado($con, $per_id, $igra_id, $unidad, $carrera, $modalidad, $periodo, $per_dni, $data);
-                if ($editdocumentos) {
-                    $exito = 1;
-                }
-                if ($exito) {
-                    $transaction->commit();
                     $message = array(
                         "wtmessage" => Yii::t("notificaciones", "Se ha modificado los datos de el Aspirante."),
                         "title" => Yii::t('jslang', 'Success'),
                     );
+
+                    if ($persona_model->save()) {
+                    $usuario_model = Usuario::findOne(["per_id" => $per_id]);
+
                     return Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), false, $message);
                 } else {
                     $transaction->rollback();
@@ -955,11 +964,6 @@ class InscripciongradoController extends \yii\web\Controller {
                     );
                     return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
                 }
-
-                /*$message = array(
-                    "wtmessage" => Yii::t("notificaciones", "Your information was successfully saved."),
-                    "title" => Yii::t('jslang', 'Success'),
-                );*/
 
             } catch (Exception $ex) {
                 $message = array(
@@ -972,7 +976,6 @@ class InscripciongradoController extends \yii\web\Controller {
     }
 
     public function actionExpexcelaspirantegrado() {
-        \app\models\Utilities::putMessageLogFile('accediendo a excel :  ');
         //$per_id = @Yii::$app->session->get("PB_perid");
         ini_set('memory_limit', '256M');
         $content_type = Utilities::mimeContentType("xls");

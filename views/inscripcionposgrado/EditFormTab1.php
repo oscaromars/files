@@ -4,6 +4,7 @@
 use yii\helpers\Html;
 use yii\helpers\ArrayHelper;
 use kartik\file\FileInput;
+use kartik\date\DatePicker;
 use yii\helpers\Url;
 use kartik\widgets\Select2;
 use yii\widgets\ActiveForm;
@@ -17,7 +18,7 @@ use app\models\Persona;
         <div class="form-group">
             <label for="frm_per_cedula" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("inscripcionposgrado", "Cédula") ?></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
-                <input type="text" class="form-control PBvalidation" id="frm_per_cedula" value="<?= $persona_model->per_cedula ?>" data-type="alfa" placeholder="<?= Yii::t("inscripcionposgrado", "Cédula")  ?>">
+                <input type="text" class="form-control PBvalidation" id="frm_per_cedula" value="<?= $persona_model->per_cedula ?>" data-type="number" placeholder="<?= Yii::t("inscripcionposgrado", "Cédula")  ?>">
             </div>
         </div>
     </div>
@@ -25,7 +26,7 @@ use app\models\Persona;
         <div class="form-group">
             <label for="frm_per_pasaporte" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("inscripcionposgrado", "Pasaporte") ?></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
-                <input type="text" class="form-control PBvalidation" id="frm_per_pasaporte" value="<?= $persona_model->per_pasaporte ?>" data-type="alfa" placeholder="<?= Yii::t("inscripcionposgrado", "Pasaporte")  ?>">
+                <input type="text" class="form-control" id="frm_per_pasaporte" value="<?= $persona_model->per_pasaporte ?>" data-type="alfanumerico" placeholder="<?= Yii::t("inscripcionposgrado", "Pasaporte")  ?>">
             </div>
         </div>
     </div>
@@ -73,7 +74,18 @@ use app\models\Persona;
         <div class="form-group">
             <label for="frm_fecha_nacimiento" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("perfil", "Fecha de Nacimiento") ?></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
-                <input type="text" class="form-control PBvalidation" id="frm_fecha_nacimiento" value="<?= $persona_model->per_fecha_nacimiento ?>"  data-required="false" data-type="number"  placeholder="<?= Yii::t("perfil", "Fecha de Nacimiento")  ?>">
+                <?=
+                DatePicker::widget([
+                    'name' => 'frm_fecha_nacimiento',
+                    'value' => $persona_model->per_fecha_nacimiento,
+                    'type' => DatePicker::TYPE_INPUT,
+                    'options' => ["class" => "form-control PBvalidation keyupmce", "id" => "frm_fecha_nacimiento", "data-type" => "fecha", "data-keydown" => "true", "placeholder" => Yii::t("formulario", "Birth Date yyyy-mm-dd")],
+                    'pluginOptions' => [
+                        'autoclose' => true,
+                        'format' => Yii::$app->params["dateByDatePicker"],
+                    ]]
+                );
+                ?> 
             </div>
         </div>
     </div>
@@ -145,7 +157,7 @@ use app\models\Persona;
         <div class="form-group">
             <label for="frm_per_correo" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("inscripcionposgrado", "Correo") ?></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
-                <input type="text" class="form-control PBvalidation" id="frm_per_correo" value="<?= $persona_model->per_correo ?>" data-type="alfa" placeholder="<?= Yii::t("inscripcionposgrado", "Correo")  ?>">
+                <input type="text" class="form-control PBvalidation" id="frm_per_correo" value="<?= $persona_model->per_correo ?>" data-type="email" placeholder="<?= Yii::t("inscripcionposgrado", "Correo")  ?>">
             </div>
         </div> 
     </div>

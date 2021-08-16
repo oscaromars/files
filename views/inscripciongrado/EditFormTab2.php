@@ -72,7 +72,7 @@ Academico::registerTranslations();
         <div class="form-group">
             <label for="txt_correoEdit" class="col-sm-3 control-label"><?= Academico::t("profesor", "Mail") ?><span class="text-danger">*</span></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
-                <input type="text" class="form-control PBvalidation" id="txt_correoEdit" value="<?= $email ?>" data-type="email" placeholder="<?= Academico::t("profesor", "Mail") ?>">
+                <input type="text" class="form-control PBvalidation" id="txt_correoEdit" value="<?= $persona_model->per_correo ?>" data-type="email" placeholder="<?= Academico::t("profesor", "Mail") ?>">
             </div>
         </div> 
     </div>

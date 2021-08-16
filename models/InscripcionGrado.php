@@ -26,7 +26,6 @@ use app\models\Utilities;
  * @property string $igra_ruta_doc_syllabus
  * @property string $igra_ruta_doc_homologacion
  * @property string $igra_mensaje1
- * @property string $igra_tipo_pago
  * @property string $igra_mensaje2
  * @property string $igra_estado
  * @property string $igra_fecha_creacion
@@ -61,7 +60,7 @@ class InscripcionGrado extends \yii\db\ActiveRecord
             [['per_id', 'uaca_id', 'eaca_id', 'mod_id', 'paca_id', 'igra_metodo_ingreso'], 'integer'],
             [['igra_fecha_creacion', 'igra_fecha_modificacion'], 'safe'],
             [['igra_ruta_doc_titulo', 'igra_ruta_doc_dni', 'igra_ruta_doc_certvota', 'igra_ruta_doc_foto', 'igra_ruta_doc_comprobantepago', 'igra_ruta_doc_recordacademico', 'igra_ruta_doc_certificado', 'igra_ruta_doc_syllabus', 'igra_ruta_doc_homologacion'], 'string', 'max' => 200],
-            [['igra_mensaje1', 'igra_tipo_pago', 'igra_mensaje2', 'igra_estado', 'igra_estado_logico'], 'string', 'max' => 1],
+            [['igra_mensaje1', 'igra_mensaje2', 'igra_estado', 'igra_estado_logico'], 'string', 'max' => 1],
         ];
     }
 
@@ -88,7 +87,6 @@ class InscripcionGrado extends \yii\db\ActiveRecord
             'igra_ruta_doc_syllabus' => 'Igra Ruta Doc Syllabus',
             'igra_ruta_doc_homologacion' => 'Igra Ruta Doc Homologacion',
             'igra_mensaje1' => 'Igra Mensaje1',
-            'igra_tipo_pago' => 'Igra Tipo Pago',
             'igra_mensaje2' => 'Igra Mensaje2',
             'igra_estado' => 'Igra Estado',
             'igra_fecha_creacion' => 'Igra Fecha Creacion',

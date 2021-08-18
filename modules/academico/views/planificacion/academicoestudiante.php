@@ -73,6 +73,16 @@ $this->params['breadcrumbs'][] = $this->title;
                 'value' => 'bloque',
             ],
             [
+                'attribute' => 'Detalle',
+                'headerOptions' => ['class' => 'text-center'],
+                'format' => 'html',
+                'value'=>function ($model) {
+                    return ' <small class="label label-info left">'.$model['Periodo'].'</small>'
+                    .' <small class="label label-success left">'.$model['Modalidad'].'</small>'
+                    .' <small class="label label-default left">'.$model['horario'].'</small>';;
+                },
+            ],
+            [
                 'class' => 'yii\grid\ActionColumn',
                 'contentOptions' => ['class' => 'text-center'],
                 'headerOptions' => ['class' => 'text-center'],

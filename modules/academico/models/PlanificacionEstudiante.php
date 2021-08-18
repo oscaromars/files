@@ -1537,7 +1537,7 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
                             when mad.made_codigo_asignatura  in (pe.pes_mat_b2_h1_cod,pe.pes_mat_b2_h2_cod,pe.pes_mat_b2_h3_cod,
                                                                     pe.pes_mat_b2_h4_cod,pe.pes_mat_b2_h5_cod,pe.pes_mat_b2_h6_cod)
                             then 'Bloque 2' end as bloque,
-                    a.asi_nombre as Materia, ifnull(mpp.mpp_id,'0') as mpp_id,
+                    a.asi_nombre as Materia, ifnull(mpp.mpp_id,'0') as mpp_id,ifnull(daho.daho_descripcion ,'') as horario,
                     count(a.asi_id) as Cantidad
                     from  ". $con->dbname . ".planificacion_estudiante pe
                     inner join  ". $con->dbname . ".malla_academica_detalle mad on mad.made_codigo_asignatura in $filtro
@@ -1551,7 +1551,7 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
 																							pe.pes_mat_b2_h1_mpp,pe.pes_mat_b2_h2_mpp,pe.pes_mat_b2_h3_mpp,
 																							pe.pes_mat_b2_h4_mpp,pe.pes_mat_b2_h5_mpp,pe.pes_mat_b2_h6_mpp) 
 																		and mpp.asi_id = a.asi_id
-                    -- inner join  ". $con->dbname . ".malla_academica maca on pe.pes_cod_carrera = maca.maca_codigo
+                    inner join  ". $con->dbname . ".distributivo_academico_horario daho on daho.daho_id = mpp.daho_id
                     $str_search 
                     group by pe.per_id,mpp.mpp_id 
                     order by a.asi_id) as x group by x.mpp_id order by x.Materia;"; 

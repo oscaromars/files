@@ -5,13 +5,15 @@ use yii\helpers\Html;
 use app\widgets\PbGridView\PbGridView;
 use app\modules\academico\Module as academico;
 
-//print_r($arr_malla[0]['cod_asignatura']);
+//print_r($id_modalidad);
 academico::registerTranslations();
 ?>
 <?= Html::hiddenInput('txth_pla_id', $_GET['pla_id'], ['id' => 'txth_pla_id']); ?>
 <?= Html::hiddenInput('txth_per_id', $_GET['per_id'], ['id' => 'txth_per_id']); ?>
-<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-    <h4><span id="lbl_planear"><? academico::t("Academico", "Estudiantes por Materia Planificada") ?></span></h4>
+<div class="row">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 form-group">
+        <h4><span id="lbl_planear"><?= academico::t("Academico", "Estudiantes por Materia Planificada") ?></span></h4>
+    </div>
 </div>
 <form class="form-horizontal">
     <div class="row">
@@ -35,7 +37,7 @@ academico::registerTranslations();
     </div>
 </form>
 <div>      
-    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 form-group">
         <h4><span id="lbl_evaluar"><?= academico::t("Academico", "Student Planning Detail") ?></span></h4>
     </div>
     <?=
@@ -59,11 +61,11 @@ academico::registerTranslations();
                     return $model_detalle['cod_asignatura']  . ' - ' . $model_detalle['asignatura'];
                 },*/
             ],  
-            /*[
-                'attribute' => 'jornada',
-                'header' => academico::t("Academico", "Working day"),
-                'value' => 'jor_materia',
-            ],*/  
+            [
+                'attribute' => 'paralelo',
+                'header' => academico::t("Academico", "Paralelo"),
+                'value' => 'Paralelo',
+            ],
             [
                 'attribute' => 'bloque',
                 'header' => Yii::t("formulario", "Block"),

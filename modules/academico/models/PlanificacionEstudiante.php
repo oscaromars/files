@@ -1500,7 +1500,8 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
                     //\app\modules\academico\controllers\RegistroController::putMessageLogFileCartera('-------------------'. $str_search1 .'---------------------');
                 }
                 if ($arrFiltro['modalidad'] != 0) {
-                    $str_search2 .= " pla.mod_id = $mod_id and meu.mod_id = $mod_id";
+                    //$str_search2 .= " pla.mod_id = $mod_id and meu.mod_id = $mod_id";
+                    $str_search2 .= " pla.mod_id = $mod_id";
                     //\app\modules\academico\controllers\RegistroController::putMessageLogFileCartera('-------------------'. $str_search2 .'---------------------');
                 }
                 if(isset($where)){
@@ -1537,8 +1538,14 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
                             when mad.made_codigo_asignatura  in (pe.pes_mat_b2_h1_cod,pe.pes_mat_b2_h2_cod,pe.pes_mat_b2_h3_cod,
                                                                     pe.pes_mat_b2_h4_cod,pe.pes_mat_b2_h5_cod,pe.pes_mat_b2_h6_cod)
                             then 'Bloque 2' end as bloque,
-                    a.asi_nombre as Materia, ifnull(mpp.mpp_id,'0') as mpp_id,ifnull(daho.daho_descripcion ,'') as horario,
-                    count(a.asi_id) as Cantidad
+                    a.asi_nombre as Materia, ifnull(mpp.mpp_id,'0') as mpp_id,
+                    case daho.daho_id
+                    when '0' then ''
+                    when NULL then ''
+                    else ifnull(daho.daho_descripcion ,'') 
+                    end as horario,
+                    mpp.daho_id as daho_id,
+                    count(pe.per_id) as Cantidad
                     from  ". $con->dbname . ".planificacion_estudiante pe
                     inner join  ". $con->dbname . ".malla_academica_detalle mad on mad.made_codigo_asignatura in $filtro
                     inner join  ". $con->dbname . ".asignatura a on mad.asi_id = a.asi_id
@@ -1551,10 +1558,10 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
 																							pe.pes_mat_b2_h1_mpp,pe.pes_mat_b2_h2_mpp,pe.pes_mat_b2_h3_mpp,
 																							pe.pes_mat_b2_h4_mpp,pe.pes_mat_b2_h5_mpp,pe.pes_mat_b2_h6_mpp) 
 																		and mpp.asi_id = a.asi_id
-                    inner join  ". $con->dbname . ".distributivo_academico_horario daho on daho.daho_id = mpp.daho_id
+                    inner join  ". $con->dbname . ".distributivo_academico_horario daho on daho.daho_id = mpp.daho_id or ifnull(mpp.daho_id,0) = 0  
                     $str_search 
                     group by pe.per_id,mpp.mpp_id 
-                    order by a.asi_id) as x group by x.mpp_id order by x.Materia;"; 
+                    order by a.asi_id) as x group by x.mpp_id order by x.Materia,x.Paralelo,x.mod_id asc;"; 
         \app\models\Utilities::putMessageLogFile('consultarModalidad: '.$sql2);
         $comando = $con->createCommand($sql2);
         

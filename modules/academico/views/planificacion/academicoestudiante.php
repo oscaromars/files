@@ -16,13 +16,13 @@ $this->params['breadcrumbs'][] = $this->title;
             <div class="col-lg-6 col-md-6">
                 <label for="lbl_modalidad" class="col-lg-6 col-md-6 col-sm-12 col-xs-12 control-label"><?= Yii::t("formulario", "Mode"); ?></label>
                 <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                    <?= Html::dropDownList("cmb_modalidadesacad", 0, $arr_modalidad, ["class" => "form-control", "id" => "cmb_modalidadesacad"]) ?>
+                    <?= Html::dropDownList("cmb_modalidadesacad", $id_modalidad, $arr_modalidad, ["class" => "form-control", "id" => "cmb_modalidadesacad"]) ?>
                 </div> 
             </div>
             <div class="col-lg-6 col-md-6">
                 <label for="lbl_periodo" class="col-lg-6 col-md-6 col-sm-12 col-xs-12 control-label"><?= Yii::t("formulario", "Period"); ?></label>
                 <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                    <?= Html::dropDownList("cmb_periodoacad", 0, $arr_periodo, ["class" => "form-control", "id" => "cmb_periodoacad"]) ?>
+                    <?= Html::dropDownList("cmb_periodoacad", $id_periodo, $arr_periodo, ["class" => "form-control", "id" => "cmb_periodoacad"]) ?>
                 </div>                  
             </div>                  
         </div>        
@@ -32,7 +32,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <div class="col-lg-6 col-md-6">
                 <label for="lbl_bloque"class="col-lg-6 col-md-6 col-sm-12 col-xs-12 control-label"><?= Yii::t("formulario", "Bloque"); ?></label>
                 <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                    <?= Html::dropDownList("cmb_bloqueacad", 0, $arr_bloque, ["class" => "form-control", "id" => "cmb_bloqueacad"]) ?>
+                    <?= Html::dropDownList("cmb_bloqueacad", $id_bloque, $arr_bloque, ["class" => "form-control", "id" => "cmb_bloqueacad"]) ?>
                 </div> 
             </div> 
             <div class="col-lg-6 col-md-6">            
@@ -74,12 +74,17 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             [
                 'attribute' => 'Detalle',
-                'headerOptions' => ['class' => 'text-center'],
+                'header' => Yii::t("formulario", ""),
                 'format' => 'html',
                 'value'=>function ($model) {
-                    return ' <small class="label label-info left">'.$model['Periodo'].'</small>'
-                    .' <small class="label label-success left">'.$model['Modalidad'].'</small>'
-                    .' <small class="label label-default left">'.$model['horario'].'</small>';;
+                    if($model['daho_id'] != 0){
+                        $horario = ' <small class="label label-default left" style="text-align: right">'.$model['horario'].'</small>';
+                    }else {
+                        $horario = '';
+                    }
+                    return ' <small class="label label-info" style="text-align: right">'.$model['Periodo'].'</small>'
+                    .' <small class="label label-success left" style="text-align: right">'.$model['Modalidad'].'</small>'
+                    .$horario;;
                 },
             ],
             [

@@ -197,12 +197,12 @@ academico::registerTranslations();
                             [
                                 'attribute' => 'hora',
                                 'header' => academico::t("Academico", "Hour"),
-                                'value' => 'Hora 1',
+                                'value' => 'hora',
                             ],          
                             [
                                 'attribute' => 'bloque',
                                 'header' => Yii::t("formulario", "Block"),
-                                'value' => 'Bloque 1',
+                                'value' => 'bloque',
                             ],
                             [
                                 'attribute' => 'paralelo',

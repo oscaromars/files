@@ -901,7 +901,8 @@ function limpiarDetalle() {
    $('#cmb_horaest').val("0");
    $('#cmb_paraleloest').val("0");
    $('#cmb_horario').val("0");
-   //$('#txt_doc_archivo').fileinput('clear');
+   $('#cmb_paraleloest').prop("disabled",true); 
+    //$('#txt_doc_archivo').fileinput('clear');
 
 }
 
@@ -1120,7 +1121,6 @@ function exportExcelplanificacion() {
 
 
 function actualizarGridPlanestudiante(perSel) {
-<<<<<<< HEAD
     var estudiante = $('#cmb_buscarest option:selected').val();
     var unidad = $('#cmb_unidadest option:selected').val();
     var modalidad = $('#cmb_modalidadesth option:selected').val();
@@ -1143,30 +1143,6 @@ function actualizarGridPlanestudiante(perSel) {
         $("#cmb_periodoest")[0].selectedIndex=periodo;*/
         setTimeout(hideLoadingPopup(), 2000);
     }
-=======
-   var estudiante = $('#cmb_buscarest option:selected').val();
-   var unidad = $('#cmb_unidadest option:selected').val();
-   var modalidad = $('#cmb_modalidadest option:selected').val();
-   //var carrera = $('#cmb_carreraest option:selected').text(); //$('#cmb_carreras option:selected').val();//$('#cmb_carreras option:selected').val();
-   var carrera = $('#txt_carrera').val();
-   //var malla = $('#cmb_mallaest option:selected').val();
-   var malla = $('#txt_malla').val();
-   var per_id = estudiante;
-   var pla_id = $('#txth_pla_id').val();
-   var saca_id = $('#cmb_periodoest option:selected').val();
-
-   //Buscar almenos una clase con el nombre para ejecutar
-   //alert('OK3 : '+perSel);
-   if (!$(".blockUI").length) {
-       showLoadingPopup();
-       //$('#PbPlanificaestudiante').PbGridView('applyFilterData', { 'per_id': estudiante, 'unidad': unidad, 'modalidad': modalidad, 'carrera': carrera, 'periodo': periodo,'malla':malla });
-       window.location.href = $('#txth_base').val() + "/academico/planificacion/newplanificacion?estudiante=" + estudiante + '&unidad=' + unidad + '&modalidad=' + modalidad +'&malla=' + malla + "&carrera=" + carrera + "&periodo=" + perSel + "&per_id=" + per_id + "&pla_id=" + pla_id;
-       /*var perSel = $('#cmb_periodoest option:selected').val(); 
-       alert(perSel+'-'+periodo);
-       $("#cmb_periodoest")[0].selectedIndex=periodo;*/
-       setTimeout(hideLoadingPopup(), 2000);
-   }
->>>>>>> 525aa063c279449a02843f50a78747c627bed5e8
 }
 
 
@@ -1287,38 +1263,42 @@ function limpiarBuscador(){
 }
 
 function listarHorario(){
-   var link = $('#txth_base').val() + "/academico/planificacion/horarioparalelos";
-   var mpp_id = $('#cmb_paraleloest option:selected').val();
-   data = new FormData();
-   data.append( 'mpp_id' , mpp_id );
-   $.ajax({
-       data: data,
-       type: "POST",
-       dataType: "json",
-       cache      : false,
-       contentType: false,
-       processData: false,
-       async: false,
-       url: link,
-       success: function (data) {
-           var datos = JSON.stringify(data);
-           var obj = JSON.parse(datos);
-           var html = '';
-           var id = 0;
+    var link = $('#txth_base').val() + "/academico/planificacion/horarioparalelos";
+    var mpp_id = $('#cmb_paraleloest option:selected').val();
+    data = new FormData();
+    data.append( 'mpp_id' , mpp_id);
+    $.ajax({
+        data: data,
+        type: "POST",
+        dataType: "json",
+        cache      : false,
+        contentType: false,
+        processData: false,
+        async: false,
+        url: link,
+        success: function (data) {
+            var datos = JSON.stringify(data);
+            var obj = JSON.parse(datos);
+            var html = '';
+            var id = 0;
+           var count = 0;
            //alert(obj);
-           $.each(obj.allModels, function( index, value ) {
-               var data = (value);                    
-               $.each(data, function( index2, value2 ) {
-                   if(index2 == 'id'){
-                       id = value2;
-                   }
-                   if(index2 == 'nombre'){
-                       html = html + `<option value=${id} >${value2}</option>`;
-                   }
-               });        
-           });
+            $.each(obj.allModels, function( index, value ) {
+                var data = (value);                    
+                $.each(data, function( index2, value2 ) {
+                    if(index2 == 'id'){
+                        id = value2;
+                    }
+                    if(index2 == 'nombre'){
+                        html = html + `<option value=${id} >${value2}</option>`;
+                       count++;
+                    }
+                });        
+            });
+            if(count>0){
            $('#cmb_horario').prop("disabled",true); 
            $("#cmb_horario").html(html);
+            }
           // alert(html);
          }
    });
@@ -1384,9 +1364,5 @@ function listarParalelos(){
        /*
     });*/
 
-<<<<<<< HEAD
    // window.location.href = $('#txth_base').val() + "/academico/planificacion/newplanificacion";
-=======
-  // window.location.href = $('#txth_base').val() + "/academico/planificacion/newplanificacion";
->>>>>>> 525aa063c279449a02843f50a78747c627bed5e8
 }

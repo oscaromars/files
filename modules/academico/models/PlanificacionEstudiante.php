@@ -2349,7 +2349,7 @@ AND pes.pla_id = :pla_id ) as daho12
             $sql .= "SELECT pes_id as Ids, mpp.daho_id,
                             concat('Paralelo ',mpp.mpp_num_paralelo) as paralelo,
                             pes_jor_b1_h" . $i . " as jor_materia, pes_mat_b1_h" . $i . "_cod as cod_asignatura, asig.asi_nombre as asignatura, 
-                            CASE pes_jornada  
+                            CASE ples.pes_mod_b1_h" . $i . "  
                                 WHEN 'M' THEN 'Matutino'  
                                 WHEN 'N' THEN 'Nocturno'  
                                 WHEN 'S' THEN 'Semipresencial'
@@ -2358,6 +2358,7 @@ AND pes.pla_id = :pla_id ) as daho12
                                 WHEN '2' THEN 'Nocturno'  
                                 WHEN '3' THEN 'Semipresencial'
                                 WHEN '4' THEN 'Distancia'
+                                else ples.pes_mod_b1_h" . $i . "
 		                    END AS pes_jornada, 
                             'Bloque 1' as bloque, moda.mod_nombre as modalidad, 'Hora " . $i . "' as hora,
                             case mpp.daho_id
@@ -2386,7 +2387,7 @@ AND pes.pla_id = :pla_id ) as daho12
             $sql .= "SELECT pes_id as Ids, mpp.daho_id,
                             concat('Paralelo ',mpp.mpp_num_paralelo) as paralelo,
                             pes_jor_b2_h" . $j . " as jor_materia, pes_mat_b2_h" . $j . "_cod as cod_asignatura, asig.asi_nombre as asignatura, 
-                            CASE pes_jornada  
+                            CASE ples.pes_mod_b2_h" . $j . "  
                                 WHEN 'M' THEN 'Matutino'  
                                 WHEN 'N' THEN 'Nocturno'  
                                 WHEN 'S' THEN 'Semipresencial'
@@ -2395,6 +2396,7 @@ AND pes.pla_id = :pla_id ) as daho12
                                 WHEN '2' THEN 'Nocturno'  
                                 WHEN '3' THEN 'Semipresencial'
                                 WHEN '4' THEN 'Distancia'
+                                else ples.pes_mod_b2_h" . $j . " 
 		                    END AS pes_jornada, 
                             'Bloque 2' as bloque, moda.mod_nombre as modalidad, 'Hora " . $j . "' as hora,
                             case mpp.daho_id

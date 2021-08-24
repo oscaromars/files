@@ -723,19 +723,21 @@ function accionmat(plaid, perid, bloque, hora) {
    }
 }
 
-function accionmataut(plaid, perid, bloque, hora) {
+function accionmataut(plaid, perid, bloque, hora, saca_id) {
    var link = $('#txth_base').val() + "/academico/planificacion/deletematest";
    var arrParams = new Object();
    arrParams.pla_id = plaid;
    arrParams.per_id = perid;
    arrParams.bloque = bloque;
    arrParams.hora = hora;
+   arrParams.periodo = saca_id;
+   alert('Se va a eliminar :'.saca_id );
    if (!validateForm()) {
        requestHttpAjax(link, arrParams, function (response) {
            showAlert(response.status, response.label, response.message);
            if (!response.error) {
                setTimeout(function () {
-                   window.location.href = $('#txth_base').val() + "/academico/planificacion/newplanificacion?pla_id=" + arrParams.pla_id + "&estudiante=" + arrParams.per_id;
+                  window.location.href = $('#txth_base').val() + "/academico/planificacion/newplanificacion?pla_id=" + arrParams.pla_id + "&estudiante=" + arrParams.per_id + "&periodo="+arrParams.periodo;
                }, 1000);
            }
        }, true);

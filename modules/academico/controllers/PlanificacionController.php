@@ -1381,6 +1381,9 @@ $centralprocess = $malla->consultarAsignaturas($resultData[$i],$periodo,$saca_no
                         'arr_periodo' => ArrayHelper::map(array_merge([['id' => ($periodo?$periodo:"0"), 'name' => ($periodo?$arr_pla[$periodo]:'Todas')]], $arr_pla), 'id', 'name'),
                         'arr_bloque' => $this->Bloques($bloque),//ArrayHelper::map(array_merge([['id' => ($bloque?$bloque:"0"), 'name' => ($bloque?$this->Bloques()[$periodo]:'Todas')]], $this->Bloques()), 'id', 'name'),
                         'model' => $model_plan,
+                        'id_bloque' => $arrSearch['bloque'],
+                        'id_periodo' => $arrSearch['periodo'],
+                        'id_mod' => $arrSearch['modalidad'],
                     ]);
                     
                 }else{

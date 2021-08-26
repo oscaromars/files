@@ -617,7 +617,14 @@ class PagosController extends \app\components\CController {
                                                             if ($resp_estucarrera["idestcarrera"] == "") {
                                                                 //\app\models\Utilities::putMessageLogFile('entro 10: ');
                                                                 // Guardar en tabla estudiante_carrera_programa
+                                                                \app\models\Utilities::putMessageLogFile('meun_id: '.$resp_mestuni["meun_id"]);
+                                                                $maca_id = $mod_Estudiante->consultarEstMalla($resp_mestuni["meun_id"]);
+                                                                \app\models\Utilities::putMessageLogFile('maca_id: '.$maca_id['maca_id']);
                                                                 $resp_estudcarreprog = $mod_Estudiante->insertarEstcarreraprog($resp_alumno["est_id"], $resp_mestuni["meun_id"], $fecha, $usu_autenticado, $fecha);
+                                                                if ($maca_id) {
+                                                                    $resp_malla_academico_estudiante = $mod_Estudiante->insertMallaAcademicoEst($maca_id['maca_id'],$per_id);
+                                                                    $pmac_id=$mod_Estudiante->insertPromedioMallaAcademicoEst($per_id);
+                                                                }
                                                             }
                                                          }
                                                        }

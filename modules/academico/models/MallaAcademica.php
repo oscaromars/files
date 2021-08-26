@@ -674,7 +674,7 @@ from db_academico.periodo_academico plac
                             
                      }
                     
-         if ($statusasi["enac_id"]==3 or $statusasi["enac_id"]==2 ){ 
+         if ($statusasi["enac_id"]==3 or $statusasi["enac_id"]==2  or $statusasi["enac_id"]== Null ){ 
                       $sstatusasi= $statusasi["enac_id"];  
                        
                       

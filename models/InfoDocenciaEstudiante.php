@@ -146,4 +146,36 @@ class InfoDocenciaEstudiante extends \yii\db\ActiveRecord
             return FALSE;
         }
     }
+
+    public function getAllestudiantediscapacidadGrid($per_id, $onlyData=false){
+        \app\models\Utilities::putMessageLogFile('traer el per_id: ' .$per_id); 
+        $con_inscripcion = \Yii::$app->db_inscripcion;
+        $con_asgard = \Yii::$app->db_asgard;
+        $sql = "SELECT   ides_id, per_id, ides_año_docencia, ides_area_docencia,
+                    ides_id as Ids,
+                    per_id,
+                    ides_año_docencia as año_docencia,
+                    tdis_nombre as discapacidad,
+                    ides_area_docencia as area_docencia
+                FROM " . $con_inscripcion->dbname . ".info_docencia_estudiante 
+                WHERE ides.per_id = :per_id and
+                      ides.ides_estado_logico = 1 and 
+                      ides.ides_estado = 1";
+        $comando = $con_inscripcion->createCommand($sql);
+        $comando->bindParam(':per_id', $per_id, \PDO::PARAM_INT);
+        $res = $comando->queryAll();
+        if($onlyData)   return $res;
+        $dataProvider = new ArrayDataProvider([
+            'key' => 'Ids',
+            'allModels' => $res,
+            'pagination' => [
+                'pageSize' => Yii::$app->params["pageSize"],
+            ],
+            'sort' => [
+                'attributes' => ['discapacidad', 'porcentaje'],
+            ],
+        ]);
+
+        return $dataProvider;
+    }
 }

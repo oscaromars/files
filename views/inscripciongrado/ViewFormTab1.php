@@ -67,7 +67,7 @@ Academico::registerTranslations();
         <div class="form-group">
             <label for="cmb_ciudad" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Academico::t("profesor", "Ciudad de Nacimiento") ?></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
-                <?= Html::dropDownList("cmb_ciudad", $persona_model->can_id_nacimiento, $arr_can, ["class" => "form-control", "id" => "cmb_ciudad" , "disabled" => "disabled"]) ?>
+                <?= Html::dropDownList("cmb_ciudad", $persona_model->can_id_nacimiento, $arr_ciu_nac, ["class" => "form-control", "id" => "cmb_ciudad" , "disabled" => "disabled"]) ?>
             </div>
         </div>
     </div>
@@ -81,9 +81,9 @@ Academico::registerTranslations();
     </div>
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
-            <label for="frm_nacionalidad" class="col-lg-3 col-md-3 col-sm-3 col-xs-3 control-label"><?= Yii::t("perfil", "Nationality") ?></label>
+            <label for="cmb_nacionalidadView" class="col-lg-3 col-md-3 col-sm-3 col-xs-3 control-label"><?= Yii::t("perfil", "Nationality") ?></label>
             <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9">
-                <input type="text" maxlength="50" class="form-control PBvalidation" id="frm_nacionalidad" value="<?= $persona_model->per_nacionalidad ?>" disabled="disabled" data-required="false" data-type="all" placeholder="<?= Yii::t("perfil", "Nationality") ?>">
+                <?= Html::dropDownList("cmb_nacionalidadView", $persona_model->per_nacionalidad, $arr_nacionalidad, ["class" => "form-control", "id" => "cmb_nacionalidadView" , "disabled" => "disabled"]) ?>
             </div>
         </div>
     </div>

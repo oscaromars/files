@@ -6,15 +6,15 @@ use yii\base\Model;
 use Yii;
 
 
-/* 
+/*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
 class DistributivoAcademicoHorarioSearch extends DistributivoAcademicoHorario
 {
-    
-    
+
+
     /**
      * {@inheritdoc}
      */
@@ -25,7 +25,7 @@ class DistributivoAcademicoHorarioSearch extends DistributivoAcademicoHorario
             [['daho_descripcion'], 'string', 'max' => 1000],
         ];
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -34,9 +34,9 @@ class DistributivoAcademicoHorarioSearch extends DistributivoAcademicoHorario
         // bypass scenarios() implementation in the parent class
         return Model::scenarios();
     }
-    
-    
-    
+
+
+
     public function search($params)
     {
         $query = DistributivoAcademicoHorario::find();
@@ -48,8 +48,8 @@ class DistributivoAcademicoHorarioSearch extends DistributivoAcademicoHorario
         ]);
 
         $this->load($params);
-        
-         
+
+
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');
@@ -66,9 +66,9 @@ class DistributivoAcademicoHorarioSearch extends DistributivoAcademicoHorario
             'mod_id' => $this->mod_id,
             'eaca_id' => $this->eaca_id,
             'daho_jornada' => $this->daho_jornada,
-            
+
         ])->andFilterWhere(['like', 'daho_descripcion', $this->daho_descripcion]);
-        
+
 //        $query->andFilterWhere(['like', 'daho_descripcion', $this->daho_descripcion])
 //            ->andFilterWhere(['like', 'daho_jornada', $this->daho_jornada])
 //                ->andFilterWhere(['like', 'daho_jornada', $this->daho_jornada]);

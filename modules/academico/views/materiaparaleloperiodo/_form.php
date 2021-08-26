@@ -8,11 +8,8 @@ use kartik\grid\EditableColumn;
 use kartik\select2\Select2;
 use yii\helpers\ArrayHelper;
 ?>
-
 <?php echo $this->render('_searchnew', ['model' => $searchModel]); ?>
-   
 <?=
-
 GridView::widget([
     "id"=>'tbl_materias',
     'dataProvider' => $dataProvider,
@@ -20,7 +17,7 @@ GridView::widget([
     'pjax' => true,
     //  'autoXlFormat' => true,
     // 'striped' => false,
-    
+
     /* 'exportConfig' => [
       GridView::PDF => [
       'label' => 'PDF',
@@ -44,7 +41,7 @@ GridView::widget([
         [
             'attribute' => 'asi_id',
             'header' => academico::t("Academico", "Id"),
-            
+
         // 'group' => true,
         ],
         [
@@ -73,7 +70,6 @@ GridView::widget([
           'attribute' => 'mpp_num_paralelo',
           'label' => '# Paralelo',
           'vAlign' => 'middle',
-           
           'editableOptions' => function ($model, $key, $index) {
           $strValue    = $model->mpp_num_paralelo;
           $arrValue    = explode(',', $model->mpp_num_paralelo);
@@ -89,7 +85,6 @@ GridView::widget([
           ];
           }
           ],
-        
     ],
 ]);
   ?>

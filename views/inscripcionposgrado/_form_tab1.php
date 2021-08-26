@@ -136,7 +136,7 @@ if (!empty($per_cedula)) {
             <div class="form-group">
                 <label for="cmb_ciu_nac" class="col-sm-3 control-label"><?= Yii::t("formulario", "Lugar de Nacimiento") ?> <span class="text-danger">*</span> </label>
                 <div class="col-sm-7">
-                    <?= Html::dropDownList("cmb_ciu_nac", $can_id_nacimiento, $arr_ciudad, ["class" => "form-control can_combo", "id" => "cmb_ciu_nac"]) ?>
+                    <?= Html::dropDownList("cmb_ciu_nac", $can_id_nacimiento, $arr_ciudad_nac, ["class" => "form-control can_combo", "id" => "cmb_ciu_nac"]) ?>
                 </div>
             </div>
         </div>

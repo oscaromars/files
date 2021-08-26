@@ -5,6 +5,7 @@ namespace app\modules\academico\controllers;
 use Yii;
 use app\modules\academico\models\MateriaParaleloPeriodoSearch;
 use app\modules\academico\models\MateriaParaleloPeriodo;
+use app\modules\academico\models\DistributivoAcademicoHorario;
 use app\modules\Academico\Module as Academico;
 use yii\helpers\ArrayHelper;
 use yii\data\ArrayDataProvider;
@@ -48,9 +49,9 @@ class MateriaparaleloperiodoController extends \app\components\CController {
                     'dataProvider' => $dataProvider,
         ]);
     }
-    
-    
-    
+
+
+
     /**
      * Lists all SemestreAcademicoSearch models.
      * @return mixed
@@ -61,12 +62,11 @@ class MateriaparaleloperiodoController extends \app\components\CController {
 
         return $this->render('update', [
             'model' => $model,
-           
+
         ]);
     }
-    
-    
-      public function actionActualizar(){
+
+    public function actionActualizar(){
             \app\models\Utilities::putMessageLogFile("Actualizar MateriaparaleloperiodoController: ".$data['num_paralelos']);
         $usu_id = @Yii::$app->session->get("PB_iduser");
         $mes = 0;
@@ -94,7 +94,7 @@ class MateriaparaleloperiodoController extends \app\components\CController {
                         $mes++;
                     }
                 }
-            
+
 
             if ($mes != 0) {
                 $transaction->commit();
@@ -219,7 +219,7 @@ class MateriaparaleloperiodoController extends \app\components\CController {
             $model->load($params);
             // Save posted model attributes
             //if ($model->load($params) && $model->save()) {
-            //\app\models\Utilities::putMessageLogFile($params);   
+            //\app\models\Utilities::putMessageLogFile($params);
             // Pull the first value from the array (there should only be one)
             $value = reset($params)[$attrib];
 
@@ -261,6 +261,81 @@ class MateriaparaleloperiodoController extends \app\components\CController {
           // 'checkAccess' => function($action, $model) {}
           ]
           ]); */
+    }
+
+    public function actionUpdateschedule($mod_id,$paca_id,$asi_id)
+    {
+        $materiamodel = new MateriaParaleloPeriodo();
+        $model = MateriaParaleloPeriodo::find()->where(" asi_id=:asi_id and mod_id=:mod_id and paca_id=:paca_id ",[":asi_id"=>$asi_id,":mod_id"=>$mod_id,":paca_id"=>$paca_id])->orderBy("mpp_num_paralelo DESC")->one();
+        $paralelohorario = $materiamodel->consultaParalelosHorario($asi_id, $paca_id,$mod_id);
+        return $this->render('updateschedule', [
+                'model' => $model,
+                'paralelohorario' => $paralelohorario,
+            ]);
+     }
+
+    public function actionViewhorario()
+     {
+
+        $modhorarios = new DistributivoAcademicoHorario();
+        $materiamodel = new MateriaParaleloPeriodo();
+
+        $mpp_id = $_GET["mpp_id"];
+        $uaca_id = $_GET["uaca_id"];
+        $mod_id = $_GET["mod_id"];
+
+        // consultar informacion enviando el mpp_id,
+        $paraleloperiodo = $materiamodel->consultaParalelosHorarioxmpp_id($mpp_id);
+
+        // CONSULTAR HORARIOS ENVIANDO UACA_ID Y MOD_ID
+
+        $horarios = $modhorarios->consultaHorariosxuacaymod($uaca_id,$mod_id);
+
+        return $this->render('viewhorario', [
+                 'paraleloperiodo' => $paraleloperiodo,
+                 'horarios' => ArrayHelper::map(array_merge([["id" => "0", "name" => "Seleccionar"]], $horarios), "id", "name"),
+             ]);
+      }
+
+      public function actionUpdatehorario() {
+        $materiamodel = new MateriaParaleloPeriodo();
+        $usu_autenticado = @Yii::$app->session->get("PB_iduser");
+        if (Yii::$app->request->isAjax) {
+            $data = Yii::$app->request->post();
+            $mpp_id = $data["mpp_id"];
+            $daho_id = $data["daho_id"];
+            $fecha = date(Yii::$app->params["dateTimeByDefault"]);
+            $con = \Yii::$app->db_academico;
+            $transaction = $con->beginTransaction();
+            try {
+                $resphorario = $materiamodel->modificarMateriaparalelo($mpp_id, $daho_id, $usu_autenticado, $fecha);
+                if ($resphorario) {
+                    $exito = '1';
+                }
+                if ($exito) {
+                    $transaction->commit();
+                    $message = array(
+                        "wtmessage" => Yii::t("notificaciones", "Se ha modificado el horario del paralelo."),
+                        "title" => Yii::t('jslang', 'Success'),
+                    );
+                    return Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), false, $message);
+                } else {
+                    $transaction->rollback();
+                    $message = array(
+                        "wtmessage" => Yii::t("notificaciones", "Error al modificar el paralelo. "),
+                        "title" => Yii::t('jslang', 'Error'),
+                    );
+                    return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+                }
+            } catch (Exception $ex) {
+                $transaction->rollback();
+                $message = array(
+                    "wtmessage" => Yii::t("notificaciones", "Error al realizar la acción. "),
+                    "title" => Yii::t('jslang', 'Success'),
+                );
+                return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+            }
+        }
     }
 
 }

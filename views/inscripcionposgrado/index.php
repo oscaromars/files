@@ -34,6 +34,7 @@ $_SESSION['persona_ingresa'] = base64_decode($_GET['ids']);
                         'per_pri_apellido' => $respPerinteresado['per_pri_apellido'],
                         'per_seg_apellido' => $respPerinteresado['per_seg_apellido'],
                         'per_cedula' => $respPerinteresado['per_cedula'],
+                        'arr_ciudad_nac' => $arr_ciudad_nac,
                         'per_fecha_nacimiento' => $respPerinteresado['per_fecha_nacimiento'],
                         'pai_id_nacimiento' => $respPerinteresado['pai_id_nacimiento'],
                         'pro_id_nacimiento' => $respPerinteresado['pro_id_nacimiento'],

@@ -17,8 +17,18 @@ academico::registerTranslations();
 <h3>Período Académico: <span id="lbl_etiqueta"><?= $arr_periodoActual['nombre'] ?></span></h3>
 </br>
 <form class="form-horizontal">
-    <input type="hidden" name="cmb_profesor" id="cmb_profesor" value="<?= $arr_cabecera["pro_id"] ?>"  />
-    <div class="row">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <p class="text-danger"> <?= Yii::t("formulario", "Fields with * are required") ?> </p>
+    </div>
+    <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12">
+        <div class="form-group">
+            <div class="col-sm-10 col-md-10 col-xs-10 col-lg-10">
+                <div style = "width: 500px;" class="alert alert-info"><span style="font-weight: bold"> Nota: </span> Si al señalar paralelo no muestra horario, es porque no ha sido asignado.</div>
+                </div>
+            </div>
+        </div>
+     <input type="hidden" name="cmb_profesor" id="cmb_profesor" value="<?= $arr_cabecera["pro_id"] ?>"  />
+     <div class="row">
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <h3><label id="lbl_profesor"><?= Yii::t("formulario", "Data Teacher") ?></label></h3>
         </div>
@@ -40,7 +50,6 @@ academico::registerTranslations();
                 </div>
             </div>
         </div>
-
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <div class="col-md-6 col-sm-6 col-xs-6 col-lg-6">
                 <div class="form-group">
@@ -59,80 +68,70 @@ academico::registerTranslations();
                 </div>
             </div>
         </div>
-
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <h3><label id="lbl_profesor"><?= Yii::t("formulario", "Asignación") ?></label></h3>
         </div>
-
-    </div>
-
-   
+     </div>
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <div class="form-group">
-                <label for="cmb_tipo_asignacion" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= academico::t("Academico", "Tipo Asignación") ?></label>
+                <label for="cmb_tipo_asignacion" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= academico::t("Academico", "Tipo Asignación") ?><span class="text-danger">*</span></label>
                 <div class="col-sm-3 col-xs-3 col-md-3 col-lg-3">
                     <?= Html::dropDownList("cmb_tipo_asignacion", 0,  $arr_tipo_asignacion, ["class" => "form-control", "id" => "cmb_tipo_asignacion", "disabled" => "true"]) ?>
                 </div>
                 <div id="bloque1" style="display: none">
-                    <label for="cmb_unidad_dis" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= Yii::t("formulario", "Academic unit") ?></label>
+                    <label for="cmb_unidad_dis" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= Yii::t("formulario", "Academic unit") ?><span class="text-danger">*</span></label>
                     <div class="col-sm-3 col-xs-3 col-md-3 col-lg-3">
                         <?= Html::dropDownList("cmb_unidad_dis", 0, $arr_unidad, ["class" => "form-control", "id" => "cmb_unidad_dis"]) ?>
                     </div>
                 </div>
             </div>
         </div>
-    
      <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <div id="bloque_h_otros" style="display: none" class="form-group">
-                    <label for="txt_horas_otros" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= academico::t("distributivoacademico", "Número Horas") ?></label>
+                    <label for="txt_horas_otros" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= academico::t("distributivoacademico", "Número Horas") ?><span class="text-danger">*</span></label>
                     <div class="col-sm-3 col-xs-3 col-md-3 col-lg-3">
                         <input type="text" class="form-control keyupmce" value="" id="txt_horas_otros"  data-type="number" placeholder="<?= academico::t("distributivoacademico", "Número Horas") ?>">
-                    </div>   
-
+                    </div>
             </div>
-        </div> 
+        </div>
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <div class="form-group">
                 <div id="bloque2" style="display: none">
-                    <label for="cmb_modalidad" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= Yii::t("formulario", "Mode") ?></label>
+                    <label for="cmb_modalidad" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= Yii::t("formulario", "Mode") ?><span class="text-danger">*</span></label>
                     <div class="col-sm-3 col-xs-3 col-md-3 col-lg-3">
                         <?= Html::dropDownList("cmb_modalidad", 0, $arr_modalidad, ["class" => "form-control", "id" => "cmb_modalidad"]) ?>
                     </div>
                 </div>
-               
                 <div id="bloque6" style="display: none">
-                    <label for="cmb_programa" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= academico::t("Academico", "Career/Program") ?></label>
+                    <label for="cmb_programa" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= academico::t("Academico", "Career/Program") ?><span class="text-danger">*</span></label>
                     <div class="col-sm-3 col-xs-3 col-md-3 col-lg-3">
                         <?= Html::dropDownList("cmb_programa", 0,  $arr_programa, ["class" => "form-control", "id" => "cmb_programa"]) ?>
                     </div>
                 </div>
             </div>
         </div>
-
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" id="bloque3"  style="display: none" >
             <div class="form-group">
                 <div id="bloque_j" style="display: none">
-                <label for="cmb_jornada" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= academico::t("Academico", "Working day") ?></label>
+                <label for="cmb_jornada" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= academico::t("Academico", "Working day") ?><span class="text-danger">*</span></label>
                 <div class="col-sm-3 col-xs-3 col-md-3 col-lg-3">
                     <?= Html::dropDownList("cmb_jornada", 0, $arr_jornada, ["class" => "form-control", "id" => "cmb_jornada"]) ?>
                 </div>
                 </div>
-                  
-                <label for="cmb_materia" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= Yii::t("formulario", "Subject") ?></label>
+                <label for="cmb_materia" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= Yii::t("formulario", "Subject") ?><span class="text-danger">*</span></label>
                 <div class="col-sm-3 col-xs-3 col-md-3 col-lg-3">
                     <?= Html::dropDownList("cmb_materia", 0,  $arr_materias, ["class" => "form-control", "id" => "cmb_materia"]) ?>
                 </div>
-             
         </div>
         <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12" id="bloque4" style="display: none">
             <div class="form-group">
-                <label for="cmb_horario" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= Yii::t("formulario", "Schedule") ?></label>
-                <div class="col-sm-3 col-xs-3 col-md-3 col-lg-3">
-                    <?= Html::dropDownList("cmb_horario", 0, $arr_horario, ["class" => "form-control", "id" => "cmb_horario"]) ?>
-                </div>
-                <label for="cmb_paralelo" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= Yii::t("formulario", "Paralelo") ?></label>
+            <label for="cmb_paralelo" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= Yii::t("formulario", "Paralelo") ?><span class="text-danger">*</span></label>
                 <div class="col-sm-3 col-xs-3 col-md-3 col-lg-3">
                     <?= Html::dropDownList("cmb_paralelo", 0, $arr_paralelo, ["class" => "form-control", "id" => "cmb_paralelo"]) ?>
+                </div>
+                <label for="cmb_horario" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= Yii::t("formulario", "Schedule") ?><span class="text-danger">*</span></label>
+                <div class="col-sm-3 col-xs-3 col-md-3 col-lg-3">
+                    <?= Html::dropDownList("cmb_horario", 0, $arr_horario, ["class" => "form-control", "id" => "cmb_horario"]) ?>
                 </div>
             </div>
         </div>
@@ -142,7 +141,6 @@ academico::registerTranslations();
                 <div class="col-sm-3 col-xs-3 col-md-3 col-lg-3">
                     <input type="text" class="form-control keyupmce" value="" id="txt_num_estudiantes" data-type="number" placeholder="<?= academico::t("distributivoacademico", "Number of students") ?>">
                 </div>
-
             </div>
         </div>
          <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12"  id="bloque7" style="display: none">
@@ -178,7 +176,7 @@ academico::registerTranslations();
                     ?>
                 </div>
             </div>
-        </div> 
+        </div>
          <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12">
             <div class="form-group">
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 text-center">
@@ -186,25 +184,20 @@ academico::registerTranslations();
                 </div>
             </div>
         </div>
-    </div>
-
-    <div>
+     </div>
+     <div>
         <?=
         $this->render('view-grid-edit', [
             'arr_detalle' => $arr_detalle,
         ]);
         ?>
     </div>
-
 </form>
-
 <script>
-   
-
     document.getElementById("cmb_tipo_asignacion").disabled = false;
     sessionStorage.removeItem('dts_asignacion_list');
 
-    let detalleAsignacionSinFormato = <?= json_encode($arr_detalle) ?>    
+    let detalleAsignacionSinFormato = <?= json_encode($arr_detalle) ?>
 
     let detalleAsignacionConFormato = new Array();
     detalleAsignacionSinFormato.allModels.map(function(a) {
@@ -237,11 +230,8 @@ academico::registerTranslations();
             asignacion.hor_name = 'N/A';
             asignacion.num_estudiantes = 'N/A';
         }
-
         detalleAsignacionConFormato.push(asignacion);
     })
-
     sessionStorage.dts_asignacion_list = JSON.stringify(detalleAsignacionConFormato);
-
   //  console.log('session', sessionStorage.dts_asignacion_list);
 </script>

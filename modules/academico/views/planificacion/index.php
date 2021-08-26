@@ -15,6 +15,13 @@ use yii\helpers\ArrayHelper;
          <?= Yii::$app->session->getFlash('msg') ?>
     </div>
 <?php endif; ?> 
+<?php if (Yii::$app->session->hasFlash('msgne')): ?>
+    <div class="alert alert-warning alert-dismissable" >
+         <button aria-hidden="true" data-dismiss="alert" class="close" type="button"></button>
+         <h4><i class="icon fa fa-exclamation"></i>No hay alumnos nuevos</h4>
+         <?= Yii::$app->session->getFlash('msgne') ?>
+    </div>
+<?php endif; ?> 
 <?php if (Yii::$app->session->hasFlash('msgok')): ?>
     <div class="alert alert-success alert-dismissable" >
          <button aria-hidden="true" data-dismiss="alert" class="close" type="button"></button>

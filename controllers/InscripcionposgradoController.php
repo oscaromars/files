@@ -38,6 +38,7 @@ use app\models\TipoParentesco;
 use app\models\PersonaContacto;
 use yii\helpers\ArrayHelper;
 use app\models\EstadoCivil;
+use yii\data\ArrayDataProvider;
 
 class InscripcionposgradoController extends \yii\web\Controller {
 
@@ -98,6 +99,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
         $arr_programa = $mod_programa->consultarCarreraxunidad(2);
         $arr_modalidad = $mod_programa->consultarmodalidadxcarrera($arr_programa[0]["id"]);
 
+        $arr_ciudad_nac= Canton::find()->select("can_id AS id, can_nombre AS value")->where(["can_estado_logico" => "1", "can_estado" => "1"])->asArray()->all();
         $arr_nacionalidad = Pais::find()->select("pai_id AS id, pai_nacionalidad AS value")->where(["pai_estado_logico" => "1", "pai_estado" => "1"])->asArray()->all();
         $arr_estado_civil = EstadoCivil::find()->select("eciv_id AS id, eciv_nombre AS value")->where(["eciv_estado_logico" => "1", "eciv_estado" => "1"])->asArray()->all();
         $arr_pais = Pais::find()->select("pai_id AS id, pai_nombre AS value")->where(["pai_estado_logico" => "1", "pai_estado" => "1"])->asArray()->all();
@@ -121,6 +123,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
             'arr_modalidad' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']], $arr_modalidad), 'id', 'name'),
             "tipos_dni" => array("CED" => Yii::t("formulario", "DNI Document"), "PASS" => Yii::t("formulario", "Passport")),
             "tipos_dni2" => array("CED" => Yii::t("formulario", "DNI Document1"), "PASS" => Yii::t("formulario", "Passport1")),
+            "arr_ciudad_nac" => ArrayHelper::map($arr_ciudad_nac, "id", "value"),
             "arr_nacionalidad" => ArrayHelper::map($arr_nacionalidad, "id", "value"),
             "arr_estado_civil" => ArrayHelper::map($arr_estado_civil, "id", "value"),
             "arr_pais" => ArrayHelper::map($arr_pais, "id", "value"),
@@ -343,7 +346,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
             $per_fecha_nacimiento = $data["fecha_nac"];
             $per_nacionalidad = $data["nacionalidad"]; 
             $eciv_id = $data["estado_civil"];
-            $pai_id_domicilio = $data["pais"];
+            $pai_id_domicilio = $data["nacionalidad"];
             $pro_id_domicilio = $data["provincia"];
             $can_id_domicilio = $data["canton"];
 
@@ -627,10 +630,15 @@ class InscripcionposgradoController extends \yii\web\Controller {
         $data = Yii::$app->request->get();
 
         if ($data['PBgetFilter']) {
-            $arrSearch["search"]      = $data['search'];
+            \app\models\Utilities::putMessageLogFile('busqueda por cedula:  '.$data['search']);
+            \app\models\Utilities::putMessageLogFile('año:  '.$data['año']);
+            \app\models\Utilities::putMessageLogFile('unidaddddd:  '.$data['unidad']);
+            \app\models\Utilities::putMessageLogFile('programaaaa:  '.$data['programa']);
+            \app\models\Utilities::putMessageLogFile('modalidadddd:  '.$data['modalidad']);
+            $arrSearch["search"]  = $data['search'];
             $arrSearch["año"]     = $data['año'];  
-            $arrSearch["unidad"]      = $data['unidad'];
-            $arrSearch["programa"]      = $data['programa'];
+            $arrSearch["unidad"]  = $data['unidad'];
+            $arrSearch["programa"] = $data['programa'];
             $arrSearch["modalidad"]   = $data['modalidad'];
             $model = $model_posgrado->consultaRegistroAdmisionposgrado($arrSearch, 1);
             return $this->render('_aspiranteposgradogrid', [
@@ -665,6 +673,37 @@ class InscripcionposgradoController extends \yii\web\Controller {
         ]);
     }
 
+    public function actionDownload($route, $type) {
+        $grupo = new Grupo();
+        if (Yii::$app->session->get('PB_isuser')) {
+            $route = str_replace("../", "", $route);
+            if (preg_match("/^" . $this->folder_cv . "\//", $route)) {
+                $url_image = Yii::$app->basePath . "/uploads/inscripcionposgrado" . $route;
+                $arrIm = explode(".", $url_image);
+                $typeImage = $arrIm[count($arrIm) - 1];
+                if (file_exists($url_image)) {
+                    if (strtolower($typeImage) == "pdf") {
+                        header('Pragma: public');
+                        header('Expires: 0');
+                        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+                        header('Cache-Control: private', false);
+                        header("Content-type: application/pdf");
+                        if ($type == "view") {
+                            header('Content-Disposition: inline; filename="cv_' . time() . '.pdf";');
+                        } else {
+                            header('Content-Disposition: attachment; filename="cv_' . time() . '.pdf";');
+                        }
+                        header('Content-Transfer-Encoding: binary');
+                        header('Content-Length: ' . filesize($url_image));
+                        readfile($url_image);
+                        //return file_get_contents($url_image);
+                    }
+                }
+            }
+        }
+        exit();
+    }
+
     public function actionView() {
         $data = Yii::$app->request->get();
         if (isset($data['id'])) {
@@ -673,7 +712,6 @@ class InscripcionposgradoController extends \yii\web\Controller {
             $per_cedula = $data['cedula'];
 
             $persona_model = Persona::findOne($id);
-            $contacto_model = PersonaContacto::findOne($id);
             $usuario_model = Usuario::findOne(["per_id" => $id, "usu_estado" => '1', "usu_estado_logico" => '1']);
             $empresa_persona_model = EmpresaPersona::findOne(["per_id" => $id, "eper_estado" => '1', "eper_estado_logico" => '1']);
 
@@ -691,46 +729,110 @@ class InscripcionposgradoController extends \yii\web\Controller {
             /**
              * Inf. Personal
              */
-            $arr_can = Canton::findAll(["pro_id" => $persona_model->pro_id_domicilio, "can_estado" => 1, "can_estado_logico" => 1]);
+            $contacto_model = PersonaContacto::findOne(['per_id' => $persona_model->per_id]); // obtiene el pcon_id con el per_id
+            $arr_ciudad_nac = Canton::findAll(["pro_id" => $persona_model->can_id_nacimiento, "can_estado" => 1, "can_estado_logico" => 1]);
             $arr_estado_civil = EstadoCivil::find()->select("eciv_id AS id, eciv_nombre AS value")->where(["eciv_estado_logico" => "1", "eciv_estado" => "1"])->asArray()->all();
+            $arr_nacionalidad = Pais::find()->select("pai_id AS id, pai_nacionalidad AS value")->where(["pai_estado_logico" => "1", "pai_estado" => "1"])->asArray()->all();
             $arr_pais = Pais::findAll(["pai_estado" => 1, "pai_estado_logico" => 1]);
-            $arr_pro = Provincia::findAll(["pai_id" => $persona_model->pai_id_domicilio, "pro_estado" => 1, "pro_estado_logico" => 1]);
-            $arr_can = Canton::findAll(["pro_id" => $persona_model->pro_id_domicilio, "can_estado" => 1, "can_estado_logico" => 1]);
-
-            $ViewFormTab1 = $this->renderPartial('ViewFormTab1', [
-                'arr_can' => (empty(ArrayHelper::map($arr_can, "can_id", "can_nombre"))) ? array(Yii::t("canton", "-- Select Canton --")) : (ArrayHelper::map($arr_can, "can_id", "can_nombre")),
-                "arr_estado_civil" => ArrayHelper::map($arr_estado_civil, "id", "value"),
-                'persona_model' => $persona_model,
-                'arr_pais' => (empty(ArrayHelper::map($arr_pais, "pai_id", "pai_nombre"))) ? array(Yii::t("pais", "-- Select Pais --")) : (ArrayHelper::map($arr_pais, "pai_id", "pai_nombre")),
-                'arr_pro' => (empty(ArrayHelper::map($arr_pro, "pro_id", "pro_nombre"))) ? array(Yii::t("provincia", "-- Select Provincia --")) : (ArrayHelper::map($arr_pro, "pro_id", "pro_nombre")),
-                'arr_can' => (empty(ArrayHelper::map($arr_can, "can_id", "can_nombre"))) ? array(Yii::t("canton", "-- Select Canton --")) : (ArrayHelper::map($arr_can, "can_id", "can_nombre")),
-            ]);
-
-            /**
-             * Inf. contacto
-             */
-            $arr_pais = Pais::findAll(["pai_estado" => 1, "pai_estado_logico" => 1]);
-            $arr_pro = Provincia::findAll(["pai_id" => $persona_model->pai_id_domicilio, "pro_estado" => 1, "pro_estado_logico" => 1]);
-            $arr_can = Canton::findAll(["pro_id" => $persona_model->pro_id_domicilio, "can_estado" => 1, "can_estado_logico" => 1]);
-
-            $ViewFormTab2 = $this->renderPartial('ViewFormTab2', [
-                'arr_pais' => (empty(ArrayHelper::map($arr_pais, "pai_id", "pai_nombre"))) ? array(Yii::t("pais", "-- Select Pais --")) : (ArrayHelper::map($arr_pais, "pai_id", "pai_nombre")),
-                'arr_pro' => (empty(ArrayHelper::map($arr_pro, "pro_id", "pro_nombre"))) ? array(Yii::t("provincia", "-- Select Provincia --")) : (ArrayHelper::map($arr_pro, "pro_id", "pro_nombre")),
-                'arr_can' => (empty(ArrayHelper::map($arr_can, "can_id", "can_nombre"))) ? array(Yii::t("canton", "-- Select Canton --")) : (ArrayHelper::map($arr_can, "can_id", "can_nombre")),
-                'persona_model' => $persona_model,
-            ]);
-
-            /**
-             * Inf. en caso de emergencia
-             */
+            $arr_provincia = Provincia::provinciaXPais($arr_nacionalidad[0]["id"]);
+            $arr_ciudad= Canton::cantonXProvincia($arr_provincia[0]["id"]);
             $arr_tipparentesco = TipoParentesco::find()->select("tpar_id AS id, tpar_nombre AS value")->where(["tpar_estado_logico" => "1", "tpar_estado" => "1"])->asArray()->all();
 
-            $ViewFormTab3 = $this->renderPartial('ViewFormTab3', [
+            $ViewFormTab1 = $this->renderPartial('ViewFormTab1', [
+                'arr_ciudad_nac' => (empty(ArrayHelper::map($arr_ciudad_nac, "can_id", "can_nombre"))) ? array(Yii::t("canton", "-- Select Canton --")) : (ArrayHelper::map($arr_ciudad_nac, "can_id", "can_nombre")),
+                "arr_estado_civil" => ArrayHelper::map($arr_estado_civil, "id", "value"),
+                'persona_model' => $persona_model,
+                "arr_nacionalidad" => ArrayHelper::map($arr_nacionalidad, "id", "value"),
+                'arr_pais' => (empty(ArrayHelper::map($arr_pais, "pai_id", "pai_nombre"))) ? array(Yii::t("pais", "-- Select Pais --")) : (ArrayHelper::map($arr_pais, "pai_id", "pai_nombre")),
+                "arr_provincia" => ArrayHelper::map($arr_provincia, "id", "value"),
+                "arr_ciudad" => ArrayHelper::map($arr_ciudad, "id", "value"),
                 "arr_tipparentesco" => ArrayHelper::map($arr_tipparentesco, "id", "value"),
                 'persona_model' => $persona_model,
                 'contacto_model' => $contacto_model,
+            ]);
+
+            /**
+             * Inf. Profesional
+             */
+            
+            $instruccion_model = EstudianteInstruccion::findOne(['per_id' => $persona_model->per_id]);
+            $laboral_model = InformacionLaboral::findOne(['per_id' => $persona_model->per_id]);
+            $arr_pais = Pais::findAll(["pai_estado" => 1, "pai_estado_logico" => 1]);
+            $arr_nacionalidad = Pais::find()->select("pai_id AS id, pai_nacionalidad AS value")->where(["pai_estado_logico" => "1", "pai_estado" => "1"])->asArray()->all();
+            $arr_prov_emp = Provincia::provinciaXPais($arr_nacionalidad[0]["id"]);
+            $arr_ciu_emp = Canton::cantonXProvincia($arr_prov_emp[0]["id"]);
+            
+
+            $ViewFormTab2 = $this->renderPartial('ViewFormTab2', [
+                'arr_pais' => (empty(ArrayHelper::map($arr_pais, "pai_id", "pai_nombre"))) ? array(Yii::t("pais", "-- Select Pais --")) : (ArrayHelper::map($arr_pais, "pai_id", "pai_nombre")),
+                "arr_prov_emp" => ArrayHelper::map($arr_prov_emp, "id", "value"),
+                "arr_ciu_emp" => ArrayHelper::map($arr_ciu_emp, "id", "value"),
+                "arr_categoria" => array("1" => Yii::t("formulario", "Pública"), "2" => Yii::t("formulario", "Privada")),
+                'persona_model' => $persona_model,
+                'instruccion_model' => $instruccion_model,
+                'laboral_model' => $laboral_model,
+            ]);
+
+            /**
+             * Inf. Idiomas
+             */
+            $idiomas = new EstudianteIdiomas();
+            $idioma_model = EstudianteIdiomas::findOne(['per_id' => $persona_model->per_id]);
+            $model = $idioma_model->getAllestudianteidiomasGrid($idioma_model->per_id);
+
+            $ViewFormTab3 = $this->renderPartial('ViewFormTab3', [
+                'idioma_model' => $idioma_model,
+                'model' => $model,
 
             ]);
+            /**
+             * Inf. Adicional
+             */
+
+            $discapacidad_model = InfoDiscapacidadEst::findOne(['per_id' => $persona_model->per_id]);
+            $docencia_model = InfoDocenciaEstudiante::findOne(['per_id' => $persona_model->per_id]);
+            $investigaciones_model = InfoEstudianteInvestigacion::findOne(['per_id' => $persona_model->per_id]);
+            $ipos_model = InscripcionPosgrado::findOne(['per_id' => $persona_model->per_id]);
+            $arr_tip_discap = TipoDiscapacidad::find()->select("tdis_id AS id, tdis_nombre AS value")->where(["tdis_estado_logico" => "1", "tdis_estado" => "1"])->asArray()->all();
+
+            $ViewFormTab5 = $this->renderPartial('ViewFormTab5', [
+                "arr_tip_discap" => ArrayHelper::map(array_merge([["id" => "0", "value" => Yii::t("formulario", "-- Select --")]], $arr_tip_discap), "id", "value"),
+                'discapacidad_model' => $discapacidad_model,
+                'docencia_model' => $docencia_model,
+                'investigaciones_model' => $investigaciones_model,
+                'ipos_model' => $ipos_model,
+
+            ]);  
+            /**
+             * Documentación
+             */
+            $contacto_model = PersonaContacto::findOne(['per_id' => $persona_model->per_id]); // obtiene el pcon_id con el per_id
+            $arr_tipparentesco = TipoParentesco::find()->select("tpar_id AS id, tpar_nombre AS value")->where(["tpar_estado_logico" => "1", "tpar_estado" => "1"])->asArray()->all();
+            $mod_insposgrado = new InscripcionPosgrado();
+            $documentos = $mod_insposgrado->ObtenerdocumentosInscripcionPosgrado($persona_model->per_id);
+            $ViewFormTab6 = $this->renderPartial('ViewFormTab6', [
+                "arr_tipparentesco" => ArrayHelper::map($arr_tipparentesco, "id", "value"),
+                "arch1" => $documentos['ipos_ruta_doc_foto'],
+                "arch2" => $documentos['ipos_ruta_doc_dni'],
+                "arch3" => $documentos['ipos_ruta_doc_certvota'],
+                "arch4" => $documentos['ipos_ruta_doc_titulo'],
+                "arch5" => $documentos['ipos_ruta_doc_comprobantepago'],
+                "arch6" => $documentos['ipos_ruta_doc_recordacademico'],
+                "arch7" => $documentos['ipos_ruta_doc_senescyt'],
+                "arch8" => $documentos['ipos_ruta_doc_hojadevida'],
+                "arch9" => $documentos['ipos_ruta_doc_cartarecomendacion'],
+                "arch10" => $documentos['ipos_ruta_doc_certificadolaboral'],
+                "arch11" => $documentos['ipos_ruta_doc_certificadoingles'],
+                "arch12" => $documentos['ipos_ruta_doc_otrorecord'],
+                "arch13" => $documentos['ipos_ruta_doc_certificadonosancion'],
+                "arch14" => $documentos['ipos_ruta_doc_syllabus'],
+                "arch15" => $documentos['ipos_ruta_doc_homologacion'],
+                'persona_model' => $persona_model,
+                'contacto_model' => $contacto_model,
+                'documentos' => $documentos,
+
+            ]);          
+
 
 
             $items = [
@@ -740,12 +842,20 @@ class InscripcionposgradoController extends \yii\web\Controller {
                     'active' => true
                 ],
                 [
-                    'label' => Yii::t('inscripciongrado', 'Info. Datos de Contacto'),
+                    'label' => Yii::t('inscripciongrado', 'Info. Datos Profesionales'),
                     'content' => $ViewFormTab2,
                 ],
                 [
-                    'label' => Yii::t('inscripciongrado', 'Info. Datos en caso de Emergencia'),
+                    'label' => Yii::t('inscripciongrado', 'Info. Datos de Idiomas'),
                     'content' => $ViewFormTab3,
+                ],
+                [
+                    'label' => Yii::t('inscripciongrado', 'Info. Datos Adicionales'),
+                    'content' => $ViewFormTab5,
+                ],
+                [
+                    'label' => Yii::t('inscripciongrado', 'Documentación'),
+                    'content' => $ViewFormTab6,
                 ],
             ];
             return $this->render('view', ['items' => $items, 'persona_model' => $persona_model, 'contacto_model' => $contacto_model]);
@@ -756,26 +866,31 @@ class InscripcionposgradoController extends \yii\web\Controller {
     public function actionEdit() {
 
         if (Yii::$app->request->isAjax) {
+            
             $data = Yii::$app->request->post();
+            $fecha_registro = date(Yii::$app->params["dateTimeByDefault"]);
+            
+            //$per_id = 54;
             if ($data["upload_file"]) {
-
                 if (empty($_FILES)) {
-                    return json_encode(['error' => Yii::t("notificaciones", "Error to process File. Try again.")]);
+                    return json_encode(['error' => Yii::t("notificaciones", "Error to process File {file}. Try again.", ['{file}' => basename($files['name'])])]);
+                    return;
                 }
+                $mod_persona = new Persona();
+                $resp_persona = $mod_persona->consultarUltimoPer_id();
+                $persona = $resp_persona["ultimo"];
+                $per_id = intval( $persona );
                 //Recibe Parámetros
                 $files = $_FILES[key($_FILES)];
                 $arrIm = explode(".", basename($files['name']));
                 $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                if (($typeFile == 'png') or ( $typeFile == 'jpg') or ( $typeFile == 'jpeg')) {
-                    $dirFileEnd = Yii::$app->params["documentFolder"] . "expediente/" . $data["name_file"] . "." . $typeFile;
-                    $status = Utilities::moveUploadFile($files['tmp_name'], $dirFileEnd);
-                    if ($status) {
-                        return true;
-                    } else {
-                        return json_encode(['error' => Yii::t("notificaciones", "Error to process File " . basename($files['name']) . ". Try again.")]);
-                    }
+                $dirFileEnd = Yii::$app->params["documentFolder"] . "inscripcionposgrado/" . $per_id . "/" . $data["name_file"] . "_per_" . $per_id . "." . $typeFile;
+                $status = Utilities::moveUploadFile($files['tmp_name'], $dirFileEnd);
+                if ($status) {
+                    return true;
                 } else {
-                    return json_encode(['error' => Yii::t("notificaciones", "Error to process File " . basename($files['name']) . ". Try again.")]);
+                    return json_encode(['error' => Yii::t("notificaciones", "Error to process File {file}. Try again.", ['{file}' => basename($files['name'])])]);
+                    return;
                 }
             }
         }
@@ -824,58 +939,144 @@ class InscripcionposgradoController extends \yii\web\Controller {
             }
 
             /**
-             * Inf. Basica
+             * Inf. Personal
              */
-            $arr_can = Canton::findAll(["pro_id" => $persona_model->pro_id_domicilio, "can_estado" => 1, "can_estado_logico" => 1]);
+            $contacto_model = PersonaContacto::findOne(['per_id' => $persona_model->per_id]); // obtiene el pcon_id con el per_id
+            $arr_ciudad_nac = Canton::findAll(["pro_id" => $persona_model->can_id_nacimiento, "can_estado" => 1, "can_estado_logico" => 1]);
             $arr_estado_civil = EstadoCivil::find()->select("eciv_id AS id, eciv_nombre AS value")->where(["eciv_estado_logico" => "1", "eciv_estado" => "1"])->asArray()->all();
-
-            $EditFormTab1 = $this->renderPartial('EditFormTab1', [
-                'arr_can' => (empty(ArrayHelper::map($arr_can, "can_id", "can_nombre"))) ? array(Yii::t("canton", "-- Select Canton --")) : (ArrayHelper::map($arr_can, "can_id", "can_nombre")),
-                "arr_estado_civil" => ArrayHelper::map($arr_estado_civil, "id", "value"),
-                'persona_model' => $persona_model,
-            ]);
-
-            /**
-             * Inf. contacto
-             */
+            $arr_nacionalidad = Pais::find()->select("pai_id AS id, pai_nacionalidad AS value")->where(["pai_estado_logico" => "1", "pai_estado" => "1"])->asArray()->all();
             $arr_pais = Pais::findAll(["pai_estado" => 1, "pai_estado_logico" => 1]);
-            Utilities::putMessageLogFile('pais:' . $persona_model->pai_id_domicilio);
-            $arr_pro = Provincia::findAll(["pai_id" => $persona_model->pai_id_domicilio, "pro_estado" => 1, "pro_estado_logico" => 1]);
-            $arr_can = Canton::findAll(["pro_id" => $persona_model->pro_id_domicilio, "can_estado" => 1, "can_estado_logico" => 1]);
-
-            $EditFormTab2 = $this->renderPartial('EditFormTab2', [
-                'arr_pais' => (empty(ArrayHelper::map($arr_pais, "pai_id", "pai_nombre"))) ? array(Yii::t("pais", "-- Select Pais --")) : (ArrayHelper::map($arr_pais, "pai_id", "pai_nombre")),
-                'arr_pro' => (empty(ArrayHelper::map($arr_pro, "pro_id", "pro_nombre"))) ? array(Yii::t("provincia", "-- Select Provincia --")) : (ArrayHelper::map($arr_pro, "pro_id", "pro_nombre")),
-                'arr_can' => (empty(ArrayHelper::map($arr_can, "can_id", "can_nombre"))) ? array(Yii::t("canton", "-- Select Canton --")) : (ArrayHelper::map($arr_can, "can_id", "can_nombre")),
-                'persona_model' => $persona_model,
-                'email' => $email,
-            ]);
-
-            /**
-             * Inf. caso de emergencia
-             */
+            $arr_provincia = Provincia::provinciaXPais($arr_nacionalidad[0]["id"]);
+            $arr_ciudad= Canton::cantonXProvincia($arr_provincia[0]["id"]);
             $arr_tipparentesco = TipoParentesco::find()->select("tpar_id AS id, tpar_nombre AS value")->where(["tpar_estado_logico" => "1", "tpar_estado" => "1"])->asArray()->all();
 
-            $EditFormTab3 = $this->renderPartial('EditFormTab3', [
+            $EditFormTab1 = $this->renderPartial('EditFormTab1', [
+                'arr_ciudad_nac' => (empty(ArrayHelper::map($arr_ciudad_nac, "can_id", "can_nombre"))) ? array(Yii::t("canton", "-- Select Canton --")) : (ArrayHelper::map($arr_ciudad_nac, "can_id", "can_nombre")),
+                "arr_estado_civil" => ArrayHelper::map($arr_estado_civil, "id", "value"),
+                "arr_nacionalidad" => ArrayHelper::map($arr_nacionalidad, "id", "value"),
+                'arr_pais' => (empty(ArrayHelper::map($arr_pais, "pai_id", "pai_nombre"))) ? array(Yii::t("pais", "-- Select Pais --")) : (ArrayHelper::map($arr_pais, "pai_id", "pai_nombre")),
+                "arr_provincia" => ArrayHelper::map($arr_provincia, "id", "value"),
+                "arr_ciudad" => ArrayHelper::map($arr_ciudad, "id", "value"),
                 "arr_tipparentesco" => ArrayHelper::map($arr_tipparentesco, "id", "value"),
                 'persona_model' => $persona_model,
                 'contacto_model' => $contacto_model,
             ]);
 
+            /**
+             * Inf. Profesional
+             */
+            
+            $instruccion_model = EstudianteInstruccion::findOne(['per_id' => $persona_model->per_id]);
+            $laboral_model = InformacionLaboral::findOne(['per_id' => $persona_model->per_id]);
+            $arr_pais = Pais::findAll(["pai_estado" => 1, "pai_estado_logico" => 1]);
+            $arr_nacionalidad = Pais::find()->select("pai_id AS id, pai_nacionalidad AS value")->where(["pai_estado_logico" => "1", "pai_estado" => "1"])->asArray()->all();
+            $arr_prov_emp = Provincia::provinciaXPais($arr_nacionalidad[0]["id"]);
+            $arr_ciu_emp = Canton::cantonXProvincia($arr_prov_emp[0]["id"]);
+            
+
+            $EditFormTab2 = $this->renderPartial('EditFormTab2', [
+                'arr_pais' => (empty(ArrayHelper::map($arr_pais, "pai_id", "pai_nombre"))) ? array(Yii::t("pais", "-- Select Pais --")) : (ArrayHelper::map($arr_pais, "pai_id", "pai_nombre")),
+                "arr_prov_emp" => ArrayHelper::map($arr_prov_emp, "id", "value"),
+                "arr_ciu_emp" => ArrayHelper::map($arr_ciu_emp, "id", "value"),
+                "arr_categoria" => array("1" => Yii::t("formulario", "Pública"), "2" => Yii::t("formulario", "Privada")),
+                'persona_model' => $persona_model,
+                'instruccion_model' => $instruccion_model,
+                'laboral_model' => $laboral_model,
+            ]);
+
+            /**
+             * Inf. Idiomas
+             */
+
+            $arr_idioma= Idioma::find()->select("idi_id AS id, idi_nombre AS value")->where(["idi_estado_logico" => "1", "idi_estado" => "1"])->asArray()->all();
+            $arr_nivelidioma= NivelIdioma::find()->select("nidi_id AS id, nidi_descripcion AS value")->where(["nidi_estado_logico" => "1", "nidi_estado" => "1"])->asArray()->all();
+            $idiomas = new EstudianteIdiomas();
+            $idioma_model = EstudianteIdiomas::findOne(['per_id' => $persona_model->per_id]);
+            $model = $idioma_model->getAllestudianteidiomasGrid($idioma_model->per_id);
+
+            $EditFormTab3 = $this->renderPartial('EditFormTab3', [
+                "arr_idioma" => ArrayHelper::map($arr_idioma, "id", "value"),
+                "arr_nivelidioma" => ArrayHelper::map($arr_nivelidioma, "id", "value"),
+                'idioma_model' => $idioma_model,
+                'model' => $model,
+
+            ]);
+            /**
+             * Inf. Adicional
+             */
+
+            $discapacidad_model = InfoDiscapacidadEst::findOne(['per_id' => $persona_model->per_id]);
+            $arr_tip_discap = TipoDiscapacidad::find()->select("tdis_id AS id, tdis_nombre AS value")->where(["tdis_estado_logico" => "1", "tdis_estado" => "1"])->asArray()->all();
+            $docencia_model = InfoDocenciaEstudiante::findOne(['per_id' => $persona_model->per_id]);
+            $investigaciones_model = InfoEstudianteInvestigacion::findOne(['per_id' => $persona_model->per_id]);
+            $ipos_model = InscripcionPosgrado::findOne(['per_id' => $persona_model->per_id]);
+
+            $EditFormTab5 = $this->renderPartial('EditFormTab5', [
+                'discapacidad_model' => $discapacidad_model,
+                "arr_tip_discap" => ArrayHelper::map(array_merge([["id" => "0", "value" => Yii::t("formulario", "-- Select --")]], $arr_tip_discap), "id", "value"), //ArrayHelper::map($arr_tip_discap, "id", "value"),
+                'docencia_model' => $docencia_model,
+                'investigaciones_model' => $investigaciones_model,
+                'ipos_model' => $ipos_model,
+
+            ]);  
+            /**
+             * Documentación
+             */
+            $contacto_model = PersonaContacto::findOne(['per_id' => $persona_model->per_id]); // obtiene el pcon_id con el per_id
+            $arr_tipparentesco = TipoParentesco::find()->select("tpar_id AS id, tpar_nombre AS value")->where(["tpar_estado_logico" => "1", "tpar_estado" => "1"])->asArray()->all();
+
+            $mod_insposgrado = new InscripcionPosgrado();
+            $documentos = $mod_insposgrado->ObtenerdocumentosInscripcionPosgrado(['per_id' => $persona_model->per_id]);
+
+            $EditFormTab6 = $this->renderPartial('EditFormTab6', [
+                "arr_tipparentesco" => ArrayHelper::map($arr_tipparentesco, "id", "value"),
+                "arch1" => $documentos['ipos_ruta_doc_foto'],
+                "arch2" => $documentos['ipos_ruta_doc_dni'],
+                "arch3" => $documentos['ipos_ruta_doc_certvota'],
+                "arch4" => $documentos['ipos_ruta_doc_titulo'],
+                "arch5" => $documentos['ipos_ruta_doc_comprobantepago'],
+                "arch6" => $documentos['ipos_ruta_doc_recordacademico'],
+                "arch7" => $documentos['ipos_ruta_doc_senescyt'],
+                "arch8" => $documentos['ipos_ruta_doc_hojadevida'],
+                "arch9" => $documentos['ipos_ruta_doc_cartarecomendacion'],
+                "arch10" => $documentos['ipos_ruta_doc_certificadolaboral'],
+                "arch11" => $documentos['ipos_ruta_doc_certificadoingles'],
+                "arch12" => $documentos['ipos_ruta_doc_otrorecord'],
+                "arch13" => $documentos['ipos_ruta_doc_certificadonosancion'],
+                "arch14" => $documentos['ipos_ruta_doc_syllabus'],
+                "arch15" => $documentos['ipos_ruta_doc_homologacion'],
+                'persona_model' => $persona_model,
+                'contacto_model' => $contacto_model,
+                'documentos' => $documentos,
+
+            ]);
+
 
             $items = [
                 [
-                    'label' => Yii::t('profesor', 'Info. Datos Personales'),
+                    'label' => Yii::t('formulario', 'Info. Datos Personales'),
                     'content' => $EditFormTab1,
                     'active' => true
                 ],
                 [
-                    'label' => Yii::t('profesor', 'Info. Datos de contacto'),
+                    'label' => Yii::t('formulario', 'Info. Datos Profesionales'),
                     'content' => $EditFormTab2,
                 ],
                 [
-                    'label' => Yii::t('profesor', 'Info. Datos en caso de Emergencia'),
+                    'label' => Yii::t('formulario', 'Info. Datos Idiomas'),
                     'content' => $EditFormTab3,
+                ],
+                /*[
+                    'label' => Yii::t('formulario', 'Info. Datos Discapacidad'),
+                    'content' => $EditFormTab4,
+                ],*/
+                [
+                    'label' => Yii::t('formulario', 'Info. Datos Adicionales'),
+                    'content' => $EditFormTab5,
+                ],
+                [
+                    'label' => Yii::t('formulario', 'Documentación'),
+                    'content' => $EditFormTab6,
                 ],
             ];
 
@@ -890,6 +1091,38 @@ class InscripcionposgradoController extends \yii\web\Controller {
     public function actionUpdate() {
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
+            $per_id = $data["per_id"];
+            if ($data["upload_file"]) {
+                if (empty($_FILES)) {
+                    return json_encode(['error' => Yii::t("notificaciones", "Error to process File {file}. Try again.", ['{file}' => basename($files['name'])])]);
+                    return;
+                }
+                $per_id = $data["per_id"];
+                //Recibe Parámetros
+                $files = $_FILES[key($_FILES)];
+                $arrIm = explode(".", basename($files['name']));
+                $typeFile = strtolower($arrIm[count($arrIm) - 1]);
+                if ($typeFile == 'pdf' || $typeFile == 'png' || $typeFile == 'jpg' || $typeFile == 'jpeg') {
+                $dirFileEnd = Yii::$app->params["documentFolder"] . "inscripcionposgrado/" . $per_id . "/" . $data["name_file"] . "_per_" . $per_id . "." . $typeFile;
+                $status = Utilities::moveUploadFile($files['tmp_name'], $dirFileEnd);
+                if ($status) {
+                    return true;
+                } else {
+                    return json_encode(['error' => Yii::t("notificaciones", "Error to process File {file}. Try again.", ['{file}' => basename($files['name'])])]);
+                    //return;
+                    }
+                }else {
+                return json_encode(['error' => Yii::t("notificaciones", "Error to process File ". basename($files['name']) ." Solo formato imagenes pdf, jpg, png.")]);
+                }
+            } 
+
+            
+            $con = \Yii::$app->db;
+            $transaction = $con->beginTransaction();
+            $con1 = \Yii::$app->db_captacion;
+            $transaction1 = $con1->beginTransaction();
+            $timeSt = date(Yii::$app->params["dateByDefault"]);
+            
             try {
                 $user_ingresa = Yii::$app->session->get("PB_iduser");
                 $per_id = $data["per_id"];
@@ -900,313 +1133,400 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 $user_perId = Yii::$app->session->get("PB_perid");
                 $grupo_model = new Grupo();
                 $arr_grupos = $grupo_model->getAllGruposByUser($user_usermane);
-                if ($per_id != $user_perId) {
-                    // if (!in_array(['id' => '1'], $arr_grupos) && !in_array(['id' => '6'], $arr_grupos) && !in_array(['id' => '7'], $arr_grupos) && !in_array(['id' => '8'], $arr_grupos)  && !in_array(['id' => '15'], $arr_grupos))
+                
 
-                    if (!in_array(['id' => '1'], $arr_grupos) && !in_array(['id' => '6'], $arr_grupos) && !in_array(['id' => '7'], $arr_grupos) && !in_array(['id' => '8'], $arr_grupos) && !in_array(['id' => '15'], $arr_grupos))
-                        return $this->redirect(['profesor/index']);
+                $inscriposgrado_id = $data["ipos_id"];
+                if (isset($data["ipos_ruta_doc_foto"]) && $data["ipos_ruta_doc_foto"] != "") {
+                    $arrIm = explode(".", basename($data["ipos_ruta_doc_foto"]));
+                    $typeFile = strtolower($arrIm[count($arrIm) - 1]);
+                    $foto_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/" . $per_id . "/doc_foto_per_" . $per_id . "." . $typeFile;
+                    $foto_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $foto_archivoOld, $timeSt);
+                    $data["ipos_ruta_doc_foto"] = $foto_archivo;
+                    if ($foto_archivo === false)
+                        throw new Exception('Error doc Foto no renombrado.');
+                }
+                if (isset($data["ipos_ruta_doc_dni"]) && $data["ipos_ruta_doc_dni"] != "") {
+                    $arrIm = explode(".", basename($data["ipos_ruta_doc_dni"]));
+                    $typeFile = strtolower($arrIm[count($arrIm) - 1]);
+                    $dni_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/" . $per_id . "/doc_dni_per_" . $per_id . "." . $typeFile;
+                    $dni_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $dni_archivoOld, $timeSt);
+                    $data["ipos_ruta_doc_dni"] = $dni_archivo;
+                    if ($dni_archivo === false)
+                        throw new Exception('Error doc Dni no renombrado.');
+                }
+                if (isset($data["ipos_ruta_doc_certvota"]) && $data["ipos_ruta_doc_certvota"] != "") {
+                    $arrIm = explode(".", basename($data["ipos_ruta_doc_certvota"]));
+                    $typeFile = strtolower($arrIm[count($arrIm) - 1]);
+                    $certvota_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/" . $per_id . "/doc_certvota_per_" . $per_id . "." . $typeFile;
+                    $certvota_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $certvota_archivoOld, $timeSt);
+                    $data["ipos_ruta_doc_certvota"] = $certvota_archivo;
+                    if ($certvota_archivo === false)
+                        throw new Exception('Error doc certificado vot. no renombrado.');
+                }
+                if (isset($data["ipos_ruta_doc_titulo"]) && $data["ipos_ruta_doc_titulo"] != "") {
+                    $arrIm = explode(".", basename($data["ipos_ruta_doc_titulo"]));
+                    $typeFile = strtolower($arrIm[count($arrIm) - 1]);
+                    $titulo_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/" . $per_id . "/doc_titulo_per_" . $per_id . "." . $typeFile;
+                    $titulo_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $titulo_archivoOld, $timeSt);
+                    $data["ipos_ruta_doc_titulo"] = $titulo_archivo;
+                    if ($titulo_archivo === false)
+                        throw new Exception('Error doc Titulo no renombrado.');
+                }
+                if (isset($data["ipos_ruta_doc_comprobante"]) && $data["ipos_ruta_doc_comprobante"] != "") {
+                    $arrIm = explode(".", basename($data["ipos_ruta_doc_comprobante"]));
+                    $typeFile = strtolower($arrIm[count($arrIm) - 1]);
+                    $comprobantepago_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/" . $per_id . "/doc_comprobante_per_" . $per_id . "." . $typeFile;
+                    $comprobantepago_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $comprobantepago_archivoOld, $timeSt);
+                    $data["ipos_ruta_doc_comprobante"] = $comprobantepago_archivo;
+                    if ($comprobantepago_archivo === false)
+                        throw new Exception('Error doc Comprobante de pago de matrícula no renombrado.');
+                }
+                if (isset($data["ipos_ruta_doc_record1"]) && $data["ipos_ruta_doc_record1"] != "") {
+                    $arrIm = explode(".", basename($data["ipos_ruta_doc_record1"]));
+                    $typeFile = strtolower($arrIm[count($arrIm) - 1]);
+                    $record1_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/" . $per_id . "/doc_record_per_" . $per_id . "." . $typeFile;
+                    $record1_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $record1_archivoOld, $timeSt);
+                    $data["ipos_ruta_doc_record1"] = $record1_archivo;
+                    if ($record1_archivo === false)
+                        throw new Exception('Error doc Récord Académico no renombrado.');
+                } 
+                if (isset($data["ipos_ruta_doc_senescyt"]) && $data["ipos_ruta_doc_senescyt"] != "") {
+                    $arrIm = explode(".", basename($data["ipos_ruta_doc_senescyt"]));
+                    $typeFile = strtolower($arrIm[count($arrIm) - 1]);
+                    $senescyt_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/" . $per_id . "/doc_senescyt_per_" . $per_id . "." . $typeFile;
+                    $senescyt_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $senescyt_archivoOld, $timeSt);
+                    $data["ipos_ruta_doc_senescyt"] = $senescyt_archivo;
+                    if ($senescyt_archivo === false)
+                        throw new Exception('Error doc Senescyt no renombrado.');
+                }
+                if (isset($data["ipos_ruta_doc_hojavida"]) && $data["ipos_ruta_doc_hojavida"] != "") {
+                    $arrIm = explode(".", basename($data["ipos_ruta_doc_hojavida"]));
+                    $typeFile = strtolower($arrIm[count($arrIm) - 1]);
+                    $hojavida_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/" . $per_id . "/doc_hojavida_per_" . $per_id . "." . $typeFile;
+                    $hojavida_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $hojavida_archivoOld, $timeSt);
+                    $data["ipos_ruta_doc_hojavida"] = $hojavida_archivo;
+                    if ($hojavida_archivo === false)
+                        throw new Exception('Error doc Hoja de Vida no renombrado.');
+                }
+                if (isset($data["ipos_ruta_doc_cartarecomendacion"]) && $data["ipos_ruta_doc_cartarecomendacion"] != "") {
+                    $arrIm = explode(".", basename($data["ipos_ruta_doc_cartarecomendacion"]));
+                    $typeFile = strtolower($arrIm[count($arrIm) - 1]);
+                    $carta_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/" . $per_id . "/doc_cartarecomendacion_per_" . $per_id . "." . $typeFile;
+                    $carta_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $carta_archivoOld, $timeSt);
+                    $data["ipos_ruta_doc_cartarecomendacion"] = $carta_archivo;
+                    if ($carta_archivo === false)
+                        throw new Exception('Error doc Carta de Recomendación no renombrado.');
+                }
+                if (isset($data["ipos_ruta_doc_certificadolaboral"]) && $data["ipos_ruta_doc_certificadolaboral"] != "") {
+                    $arrIm = explode(".", basename($data["ipos_ruta_doc_certificadolaboral"]));
+                    $typeFile = strtolower($arrIm[count($arrIm) - 1]);
+                    $certlaboral_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/" . $per_id . "/doc_certlaboral_per_" . $per_id . "." . $typeFile;
+                    $certlaboral_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $certlaboral_archivoOld, $timeSt);
+                    $data["ipos_ruta_doc_certificadolaboral"] = $certlaboral_archivo;
+                    if ($certlaboral_archivo === false)
+                        throw new Exception('Error doc Certificado Laboral no renombrado.');
+                }
+                if (isset($data["ipos_ruta_doc_certificadoingles"]) && $data["ipos_ruta_doc_certificadoingles"] != "") {
+                    $arrIm = explode(".", basename($data["ipos_ruta_doc_certificadoingles"]));
+                    $typeFile = strtolower($arrIm[count($arrIm) - 1]);
+                    $certingles_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/" . $per_id . "/doc_certingles_per_" . $per_id . "." . $typeFile;
+                    $certingles_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $certingles_archivoOld, $timeSt);
+                    $data["ipos_ruta_doc_certificadoingles"] = $certingles_archivo;
+                    if ($certingles_archivo === false)
+                        throw new Exception('Error doc Certificado Ingles A2 no renombrado.');
+                }
+                if (isset($data["ipos_ruta_doc_recordacademico"]) && $data["ipos_ruta_doc_recordacademico"] != "") {
+                    $arrIm = explode(".", basename($data["ipos_ruta_doc_recordacademico"]));
+                    $typeFile = strtolower($arrIm[count($arrIm) - 1]);
+                    $recordacad_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/" . $per_id . "/doc_recordacad_per_" . $per_id . "." . $typeFile;
+                    $recordacad_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $recordacad_archivoOld, $timeSt);
+                    $data["ipos_ruta_doc_recordacademico"] = $recordacad_archivo;
+                    if ($recordacad_archivo === false)
+                        throw new Exception('Error doc Récord Académico no renombrado.');
+                }
+                if (isset($data["ipos_ruta_doc_certnosancion"]) && $data["ipos_ruta_doc_certnosancion"] != "") {
+                    $arrIm = explode(".", basename($data["ipos_ruta_doc_certnosancion"]));
+                    $typeFile = strtolower($arrIm[count($arrIm) - 1]);
+                    $certnosancion_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/" . $per_id . "/doc_certificado_per_" . $per_id . "." . $typeFile;
+                    $certnosancion_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $certnosancion_archivoOld, $timeSt);
+                    $data["ipos_ruta_doc_certnosancion"] = $certnosancion_archivo;
+                    if ($certnosancion_archivo === false)
+                        throw new Exception('Error doc Certificado No Sanción no renombrado.');
+                } 
+                if (isset($data["ipos_ruta_doc_syllabus"]) && $data["ipos_ruta_doc_syllabus"] != "") {
+                    $arrIm = explode(".", basename($data["ipos_ruta_doc_syllabus"]));
+                    $typeFile = strtolower($arrIm[count($arrIm) - 1]);
+                    $syllabus_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/" . $per_id . "/doc_syllabus_per_" . $per_id . "." . $typeFile;
+                    $syllabus_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $syllabus_archivoOld, $timeSt);
+                    $data["ipos_ruta_doc_syllabus"] = $syllabus_archivo;
+                    if ($syllabus_archivo === false)
+                        throw new Exception('Error doc Certificado No Sanción no renombrado.');
+                }
+                if (isset($data["ipos_ruta_doc_homologacion"]) && $data["ipos_ruta_doc_homologacion"] != "") {
+                    $arrIm = explode(".", basename($data["ipos_ruta_doc_homologacion"]));
+                    $typeFile = strtolower($arrIm[count($arrIm) - 1]);
+                    $homologacion_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/" . $per_id . "/doc_homologacion_per_" . $per_id . "." . $typeFile;
+                    $homologacion_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $homologacion_archivoOld, $timeSt);
+                    $data["ipos_ruta_doc_homologacion"] = $homologacion_archivo;
+                    if ($homologacion_archivo === false)
+                        throw new Exception('Error doc Especie valorada por homologación no renombrado.');
                 }
 
-                /**
-                 * Inf. Basica
-                 */
 
-                $cedula = $data["cedula"];
-                $pasaporte = $data["pasaporte"];
-                $pri_nombre = $data["pri_nombre"];
-                $seg_nombre = $data["seg_nombre"];
-                $pri_apellido = $data["pri_apellido"];
-                $seg_apellido = $data["seg_apellido"];
-                $can_id_nacimiento = $data["can_id"];
-                $fecha_nacimiento = $data["fecha_nacimiento"];
-                $correo = strtolower($data["correo"]);
-                $nacionalidad = $data["nacionalidad"];
-                $celular = $data["celular"];
-                $phone = $data["phone"];
-                $dedicacion = $data["dedicacion"];
-                $pro_num_contrato = $data["pro_num_contrato"];
-                $foto = $data['foto'];
 
-                /**
-                 * Inf. Domicilio
-                 */
-                $pai_id_domicilio = $data["pai_id"];
-                $pro_id_domicilio = $data["pro_id"];
-                $can_id_domicilio = $data["can_id"];
-                $sector = ucwords($data["sector"]);
-                $calle_pri = ucwords($data["calle_pri"]);
-                $calle_sec = ucwords($data["calle_sec"]);
-                $numeracion = ucwords($data["numeracion"]);
-                $referencia = ucwords($data["referencia"]);
+                //FORM 1 datos personal   
+            $per_dni = $data['cedula'];         
+            $primer_nombre = $data["primer_nombre"];
+            $segundo_nombre = $data["segundo_nombre"];
+            $primer_apellido = $data["primer_apellido"];
+            $segundo_apellido = $data["segundo_apellido"];
+            $can_id_nacimiento = $data["cuidad_nac"];
+            $per_fecha_nacimiento = $data["fecha_nac"];
+            $per_nacionalidad = $data["nacionalidad"]; 
+            $eciv_id = $data["estado_civil"];
+            $pai_id_domicilio = $data["nacionalidad"];
+            $pro_id_domicilio = $data["provincia"];
+            $can_id_domicilio = $data["canton"];
 
-                /**
-                 * Inf. Cuenta
-                 */
-                $usuario = strtolower($data["usuario"]);
-                $clave = $data["clave"];
-                $gru_id = $data["gru_id"];
-                $rol_id = $data["rol_id"];
-                $emp_id = $data["emp_id"];
+            //FORM 1 datos de Contacto
+            $per_domicilio_ref = $data["dir_domicilio"];
+            $per_celular = $data["celular"];
+            $per_domicilio_telefono = $data["telefono"];
+            $per_correo = $data["correo"];
+
+            //FORM 1 datos en caso de emergencias
+            $pcon_nombre = $data["cont_emergencia"];
+            $tpar_id = $data["parentesco"];
+            $pcon_celular = $data["tel_emergencia"];
+
+            //Form2 Datos formacion profesional
+            $titulo_ter = $data["titulo_tercer"];
+            $universidad_tercer = $data["universidad_tercer"];
+            $grado_tercer = $data["grado_tercer"];
+
+            $titulo_cuarto = $data["titulo_cuarto"];
+            $universidad_cuarto = $data["universidad_cuarto"];
+            $grado_cuarto = $data["grado_cuarto"];
+
+            //Form2 Datos laboral
+            $empresa = $data["empresa"];
+            $cargo = $data["cargo"];
+            $telefono_emp = $data["telefono_emp"];
+            $prov_emp = $data["prov_emp"];
+            $ciu_emp = $data["ciu_emp"];
+            $parroquia = $data["parroquia"];
+            $direccion_emp = $data["direccion_emp"];
+            $añoingreso_emp = $data["añoingreso_emp"];
+            $correo_emp = $data["correo_emp"];
+            $cat_ocupacional = $data["cat_ocupacional"];
+
+            //Form2 Datos idiomas
+            $idioma1 = $data["idioma1"];
+            $nivel1 = $data["nivel1"];
+
+            $idioma2 = $data["idioma2"];
+            $nivel2 = $data["nivel2"];
+
+            $noidioma = '';
+            $otroidioma = $data["otroidioma"];
+            $otronivel = $data["otronivel"];
+
+            //Form2 Datos adicionales
+            $discapacidad = $data["discapacidad"];
+            $tipo_discap = $data["tipo_discap"];
+            $porcentaje_discap = $data["porcentaje_discap"];
+
+            $docencias = $data["docencias"];
+            $año_docencia = $data["año_docencia"];
+            $area_docencia = $data["area_docencia"];
+
+            $investiga = $data["investiga"];
+            $articulos = $data["articulos"];
+            $area_investigacion = $data["area_investigacion"];
+
+            //Form2 Datos financiamiento
+            $tipo_financiamiento = $data["tipo_financiamiento"];
+
+            //archivos cargados
+            $ipos_ruta_doc_foto = $data['ipos_ruta_doc_foto'];
+            $ipos_ruta_doc_dni = $data['ipos_ruta_doc_dni'];
+            $ipos_ruta_doc_certvota = $data['ipos_ruta_doc_certvota'];
+            $ipos_ruta_doc_titulo = $data['ipos_ruta_doc_titulo'];
+            $ipos_ruta_doc_comprobantepago = $data['ipos_ruta_doc_comprobante'];
+            $ipos_ruta_doc_recordacademico = $data['ipos_ruta_doc_record1'];
+            $ipos_ruta_doc_senescyt = $data['ipos_ruta_doc_senescyt'];
+            $ipos_ruta_doc_hojadevida = $data['ipos_ruta_doc_hojavida'];
+            $ipos_ruta_doc_cartarecomendacion = $data['ipos_ruta_doc_cartarecomendacion'];
+            $ipos_ruta_doc_certificadolaboral = $data['ipos_ruta_doc_certificadolaboral'];
+            $ipos_ruta_doc_certificadoingles = $data['ipos_ruta_doc_certificadoingles'];
+            $ipos_ruta_doc_otrorecord = $data['ipos_ruta_doc_recordacademico'];
+            $ipos_ruta_doc_certificadonosancion = $data['ipos_ruta_doc_certnosancion'];
+            $ipos_ruta_doc_syllabus = $data['ipos_ruta_doc_syllabus'];
+            $ipos_ruta_doc_homologacion = $data['ipos_ruta_doc_homologacion'];
 
                 $persona_model = Persona::findOne($per_id);
-                $persona_model->per_pri_nombre = $pri_nombre;
-                $persona_model->per_seg_nombre = $seg_nombre;
-                $persona_model->per_pri_apellido = $pri_apellido;
-                $persona_model->per_seg_apellido = $seg_apellido;
-                $persona_model->per_cedula = $cedula;
-                if ($ruc != "") {
-                    $persona_model->per_ruc = $ruc;
-                }
+                $persona_model->per_cedula = $per_dni;
                 if ($pasaporte != "") {
                     $persona_model->per_pasaporte = $pasaporte;
                 }
-                $persona_model->per_correo = $correo;
-                $persona_model->per_nacionalidad = $nacionalidad;
-                $persona_model->per_celular = $celular;
-                $persona_model->per_domicilio_telefono = $phone;
-                $persona_model->per_fecha_nacimiento = $fecha_nacimiento;
+                $persona_model->per_pri_nombre = $primer_nombre;
+                $persona_model->per_seg_nombre = $segundo_nombre;
+                $persona_model->per_pri_apellido = $primer_apellido;
+                $persona_model->per_seg_apellido = $segundo_apellido;
+                $persona_model->can_id_domicilio = $can_id_domicilio;
+                $persona_model->per_fecha_nacimiento = $per_fecha_nacimiento;
+                $persona_model->per_nacionalidad = $per_nacionalidad;
+                $persona_model->eciv_id = $eciv_id;
                 $persona_model->pai_id_domicilio = $pai_id_domicilio;
                 $persona_model->pro_id_domicilio = $pro_id_domicilio;
                 $persona_model->can_id_domicilio = $can_id_domicilio;
-                $persona_model->per_domicilio_sector = $sector;
-                $persona_model->per_domicilio_cpri = $calle_pri;
-                $persona_model->per_domicilio_csec = $calle_sec;
-                $persona_model->per_domicilio_num = $numeracion;
-                $persona_model->per_domicilio_ref = $referencia;
-                $arr_file = explode($foto, '.jpg');
-                if (isset($arr_file[0]) && $arr_file[0] != "") {
-                    $oldFile = $this->folder_cv . '/' . $foto;
-                    $persona_model->per_foto = $this->folder_cv . '/' . $per_id . "_" . $foto;
-                    $urlBase = Yii::$app->basePath . Yii::$app->params["documentFolder"];
-                    rename($urlBase . $oldFile, $urlBase . $persona_model->per_foto);
+                $persona_model->per_domicilio_ref = $per_domicilio_ref;
+                $persona_model->per_celular = $per_celular;
+                $persona_model->per_domicilio_telefono = $per_domicilio_telefono;
+                $persona_model->per_correo = $per_correo;
+
+                $contacto_model = PersonaContacto::findOne($persona_model->per_id);
+                $contacto_model->pcon_nombre = $pcon_nombre;
+                $contacto_model->tpar_id = $tpar_id;
+                $contacto_model->pcon_celular = $pcon_celular;
+                $contacto_model->pcon_direccion = $pcon_direccion;
+                $contacto_model->save();
+
+                $instruccion_model = EstudianteInstruccion::findOne(['per_id' => $persona_model->per_id]);
+                $instruccion_model->eins_titulo3ernivel = $titulo_ter;
+                $instruccion_model->eins_institucion3ernivel = $universidad_tercer;
+                $instruccion_model->eins_añogrado3ernivel = $grado_tercer;
+                $instruccion_model->eins_titulo4tonivel = $titulo_cuarto;
+                $instruccion_model->eins_institucion4tonivel = $universidad_cuarto;
+                $instruccion_model->eins_añogrado4tonivel = $grado_cuarto;
+                $instruccion_model->save();
+
+                $laboral_model = InformacionLaboral::findOne(['per_id' => $persona_model->per_id]);
+                $laboral_model->ilab_empresa = $empresa;
+                $laboral_model->ilab_cargo = $cargo;
+                $laboral_model->ilab_telefono_emp = $telefono_emp;
+                $laboral_model->ilab_prov_emp = $prov_emp;
+                $laboral_model->ilab_ciu_emp = $ciu_emp;
+                $laboral_model->ilab_parroquia = $parroquia;
+                $laboral_model->ilab_direccion_emp = $direccion_emp;
+                $laboral_model->ilab_añoingreso_emp = $añoingreso_emp;
+                $laboral_model->ilab_correo_emp = $correo_emp;
+                $laboral_model->ilab_cat_ocupacional = $cat_ocupacional;
+                $laboral_model->save();
+
+
+                $mod_infodiscapacidad = new InfoDiscapacidadEst();                  
+                $resp_existe_infodisc = $mod_infodiscapacidad->consultarInfoDiscapacidadest($per_id);
+                if ($resp_existe_infodisc['existe_infodiscapacidad'] == 0) {
+                    $discapacidad_model = new InfoDiscapacidadEst();
+                    $discapacidad_model->per_id = $per_id;
+                    $discapacidad_model->tdis_id = $tipo_discap;
+                    $discapacidad_model->ides_porcentaje = $porcentaje_discap;
+                    $discapacidad_model->ides_estado = '1';
+                    $discapacidad_model->ides_estado_logico = '1';
+                    $discapacidad_model->save();
+                } else {
+                    $discapacidad_model = InfoDiscapacidadEst::findOne(['per_id' => $persona_model->per_id]);
+                    $discapacidad_model->tdis_id = $tipo_discap;
+                    $discapacidad_model->ides_porcentaje = $porcentaje_discap;
+                    $discapacidad_model->save();
                 }
+
+                // info Docencia   
+                $mod_infodocencia = new InfoDocenciaEstudiante();                  
+                $resp_docencia = $mod_infodocencia->consultarInfoDocenciaEstudiante($per_id);
+                if ($resp_docencia['existe_infodocente'] == 0) {
+                    $docencia_model = new InfoDocenciaEstudiante();
+                    $docencia_model->per_id = $per_id;
+                    $docencia_model->ides_año_docencia = $año_docencia;
+                    $docencia_model->ides_area_docencia = $area_docencia;
+                    $docencia_model->ides_estado = '1';
+                    $docencia_model->ides_estado_logico = '1';
+                    $docencia_model->save();
+                } else {
+                    $docencia_model = InfoDocenciaEstudiante::findOne(['per_id' => $persona_model->per_id]);
+                    $docencia_model->ides_año_docencia = $año_docencia;
+                    $docencia_model->ides_area_docencia = $area_docencia;
+                    $docencia_model->save();
+                }
+
+                // info Investigacion   
+                $mod_infoinvestigacion = new InfoEstudianteInvestigacion();                  
+                $resp_investigacion = $mod_infoinvestigacion->consultarInfoEstudianteInvestigacion($per_id);
+                if ($resp_existe_infodisc['existe_infodiscapacidad'] == 0) {
+                    $investigacion_model = new InfoEstudianteInvestigacion();
+                    $investigacion_model->per_id = $per_id;
+                    $investigacion_model->iein_articulos_investigacion = $articulos;
+                    $investigacion_model->iein_area_investigacion = $area_investigacion;
+                    $investigacion_model->iein_estado = '1';
+                    $investigacion_model->iein_estado_logico = '1';
+                    $investigacion_model->save();
+                } else {
+                    $investigacion_model = InfoEstudianteInvestigacion::findOne(['per_id' => $persona_model->per_id]);
+                    $investigacion_model->iein_articulos_investigacion = $articulos;
+                    $investigacion_model->iein_area_investigacion = $area_investigacion;
+                    $investigacion_model->save();
+                }
+
+                $ipos_model = InscripcionPosgrado::findOne(['per_id' => $persona_model->per_id]);
+                $ipos_model->ipos_tipo_financiamiento = $tipo_financiamiento;
+                $ipos_model->ipos_ruta_doc_foto = $ipos_ruta_doc_foto;
+                $ipos_model->ipos_ruta_doc_dni = $ipos_ruta_doc_dni;
+                $ipos_model->ipos_ruta_doc_certvota = $ipos_ruta_doc_certvota;
+                $ipos_model->ipos_ruta_doc_titulo = $ipos_ruta_doc_titulo;
+                $ipos_model->ipos_ruta_doc_comprobantepago = $ipos_ruta_doc_comprobantepago;
+                $ipos_model->ipos_ruta_doc_recordacademico = $ipos_ruta_doc_recordacademico;
+                $ipos_model->ipos_ruta_doc_senescyt = $ipos_ruta_doc_senescyt;
+                $ipos_model->ipos_ruta_doc_hojadevida = $ipos_ruta_doc_hojadevida;
+                $ipos_model->ipos_ruta_doc_cartarecomendacion = $ipos_ruta_doc_cartarecomendacion;
+                $ipos_model->ipos_ruta_doc_certificadolaboral = $ipos_ruta_doc_certificadolaboral;
+                $ipos_model->ipos_ruta_doc_certificadoingles = $ipos_ruta_doc_certificadoingles;
+                $ipos_model->ipos_ruta_doc_otrorecord = $ipos_ruta_doc_otrorecord;
+                $ipos_model->ipos_ruta_doc_certificadonosancion = $ipos_ruta_doc_certificadonosancion;
+                $ipos_model->ipos_ruta_doc_syllabus = $ipos_ruta_doc_syllabus;
+                $ipos_model->ipos_ruta_doc_homologacion = $ipos_ruta_doc_homologacion;
+                $ipos_model->save();
+                
 
                 /**
                  * Inf. Session Storages
                  */
-                $arr_instuccion = (isset($data["grid_instruccion_list"]) && $data["grid_instruccion_list"] != "") ? $data["grid_instruccion_list"] : NULL;
-                $arr_docencia = (isset($data["grid_docencia_list"]) && $data["grid_docencia_list"] != "") ? $data["grid_docencia_list"] : NULL;
-                $arr_experiencia = (isset($data["grid_experiencia_list"]) && $data["grid_experiencia_list"] != "") ? $data["grid_experiencia_list"] : NULL;
-                $arr_idioma = (isset($data["grid_idioma_list"]) && $data["grid_idioma_list"] != "") ? $data["grid_idioma_list"] : NULL;
-                $arr_investigacion = (isset($data["grid_investigacion_list"]) && $data["grid_investigacion_list"] != "") ? $data["grid_investigacion_list"] : NULL;
-                $arr_evento = (isset($data["grid_evento_list"]) && $data["grid_evento_list"] != "") ? $data["grid_evento_list"] : NULL;
-                $arr_conferencia = (isset($data["grid_conferencia_list"]) && $data["grid_conferencia_list"] != "") ? $data["grid_conferencia_list"] : NULL;
-                $arr_publicacion = (isset($data["grid_publicacion_list"]) && $data["grid_publicacion_list"] != "") ? $data["grid_publicacion_list"] : NULL;
-                $arr_coordinacion = (isset($data["grid_coordinacion_list"]) && $data["grid_coordinacion_list"] != "") ? $data["grid_coordinacion_list"] : NULL;
-                $arr_evaluacion = (isset($data["grid_evaluacion_list"]) && $data["grid_evaluacion_list"] != "") ? $data["grid_evaluacion_list"] : NULL;
-                $arr_referencia = (isset($data["grid_referencia_list"]) && $data["grid_referencia_list"] != "") ? $data["grid_referencia_list"] : NULL;
+                $arr_idioma = (isset($data["grid_idiomas_list"]) && $data["grid_idiomas_list"] != "") ? $data["grid_idiomas_list"] : NULL;
+                
 
                 $message = array(
-                    "wtmessage" => Yii::t("notificaciones", "Your information was successfully saved."),
+                    "wtmessage" => Yii::t("notificaciones", "Se ha modificado los datos del Aspirante de Posgrado."),
                     "title" => Yii::t('jslang', 'Success'),
                 );
 
                 if ($persona_model->save()) {
                     $usuario_model = Usuario::findOne(["per_id" => $per_id]);
 
-                    /** Se agregan Informacion de Expediente * */
-                    $profesor_model = Profesor::findOne(["per_id" => $per_id]);
-                    $profesor_model->ddoc_id = $dedicacion;
-                    $profesor_model->pro_num_contrato = $pro_num_contrato;
-                    $profesor_model->save();
-                    //ProfesorInstruccion::deleteAllInfo($profesor_model->pro_id);
-                    if (isset($arr_instuccion)) {
-                        foreach ($arr_instuccion as $key0 => $value0) {
-                            if ($value0[6] == "N") {
-                                $instruccion_model = new ProfesorInstruccion();
-                                $instruccion_model->nins_id = $value0[1];
-                                $instruccion_model->pins_institucion = ucwords($value0[2]);
-                                $instruccion_model->pins_especializacion = ucwords($value0[3]);
-                                $instruccion_model->pins_titulo = ucwords($value0[4]);
-                                $instruccion_model->pins_senescyt = strtoupper($value0[5]);
-                                $instruccion_model->pro_id = $profesor_model->pro_id;
-                                $instruccion_model->pins_estado = '1';
-                                $instruccion_model->pins_estado_logico = '1';
-                                $instruccion_model->pins_usuario_ingreso = $user_ingresa;
-                                $instruccion_model->save();
-                            }
-                        }
-                    }
-                    //ProfesorExpDoc::deleteAllInfo($profesor_model->pro_id);
-                    if (isset($arr_docencia)) {
-                        foreach ($arr_docencia as $key1 => $value1) {
-                            if ($value1[6] == "N") {
-                                $docencia_model = new ProfesorExpDoc();
-                                $docencia_model->ins_id = $value1[1];
-                                $docencia_model->pedo_fecha_inicio = $value1[2];
-                                $docencia_model->pedo_fecha_fin = $value1[3];
-                                $docencia_model->pedo_denominacion = ucwords($value1[4]);
-                                $docencia_model->pedo_asignaturas = ucwords($value1[5]);
-                                $docencia_model->pro_id = $profesor_model->pro_id;
-                                $docencia_model->pedo_estado = '1';
-                                $docencia_model->pedo_estado_logico = '1';
-                                $docencia_model->pedo_usuario_ingreso = $user_ingresa;
-                                $docencia_model->save();
-                            }
-                        }
-                    }
-                    //ProfesorExpProf::deleteAllInfo($profesor_model->pro_id);
-                    if (isset($arr_experiencia)) {
-                        foreach ($arr_experiencia as $key2 => $value2) {
-                            if ($value2[6] == "N") {
-                                $experiencia_model = new ProfesorExpProf();
-                                $experiencia_model->pepr_organizacion = ucwords($value2[1]);
-                                $experiencia_model->pepr_fecha_inicio = $value2[2];
-                                $experiencia_model->pepr_fecha_fin = $value2[3];
-                                $experiencia_model->pepr_denominacion = ucwords($value2[4]);
-                                $experiencia_model->pepr_funciones = ucwords($value2[5]);
-                                $experiencia_model->pro_id = $profesor_model->pro_id;
-                                $experiencia_model->pepr_estado = '1';
-                                $experiencia_model->pepr_estado_logico = '1';
-                                $experiencia_model->pepr_usuario_ingreso = $user_ingresa;
-                                $experiencia_model->save();
-                            }
-                        }
-                    }
-                    //ProfesorIdiomas::deleteAllInfo($profesor_model->pro_id);
+                    
                     if (isset($arr_idioma)) {
                         foreach ($arr_idioma as $key3 => $value3) {
-                            if ($value3[6] == "N") {
-                                $idiomas_model = new ProfesorIdiomas();
+                            if ($value3[4] == "N") {
+                                $idiomas_model = new EstudianteIdiomas();
                                 $idiomas_model->idi_id = $value3[1];
-                                $idiomas_model->pidi_nivel_escrito = ucfirst($value3[2]);
-                                $idiomas_model->pidi_nivel_oral = ucfirst($value3[3]);
-                                $idiomas_model->pidi_certificado = ucfirst($value3[4]);
-                                $idiomas_model->pidi_institucion = ucwords($value3[5]);
-                                $idiomas_model->pro_id = $profesor_model->pro_id;
-                                $idiomas_model->pidi_estado = '1';
-                                $idiomas_model->pidi_estado_logico = '1';
-                                $idiomas_model->pidi_usuario_ingreso = $user_ingresa;
+                                $idiomas_model->nidi_id = $value3[2];
+                                $idiomas_model->eidi_nombre_idioma = ($value3[3] || $value3[4]);
+                                $idiomas_model->per_id = $persona_model->per_id;
+                                $idiomas_model->eidi_estado = '1';
+                                $idiomas_model->eidi_estado_logico = '1';
                                 $idiomas_model->save();
                             }
                         }
                     }
-                    //ProfesorInvestigacion::deleteAllInfo($profesor_model->pro_id);
-                    if (isset($arr_investigacion)) {
-                        foreach ($arr_investigacion as $key4 => $value4) {
-                            if ($value4[7] == "N") {
-                                $investigacion_model = new ProfesorInvestigacion();
-                                $investigacion_model->pinv_proyecto = ucwords($value4[1]);
-                                $investigacion_model->pinv_ambito = ucwords($value4[2]);
-                                $investigacion_model->pinv_responsabilidad = ucwords($value4[3]);
-                                $investigacion_model->pinv_entidad = ucwords($value4[4]);
-                                $investigacion_model->pinv_anio = strtolower($value4[5]);
-                                $investigacion_model->pinv_duracion = strtolower($value4[6]);
-                                $investigacion_model->pro_id = $profesor_model->pro_id;
-                                $investigacion_model->pinv_estado = '1';
-                                $investigacion_model->pinv_estado_logico = '1';
-                                $investigacion_model->pinv_usuario_ingreso = $user_ingresa;
-                                $investigacion_model->save();
-                            }
-                        }
-                    }
-                    //ProfesorCapacitacion::deleteAllInfo($profesor_model->pro_id);
-                    if (isset($arr_evento)) {
-                        foreach ($arr_evento as $key5 => $value5) {
-                            if ($value5[6] == "N") {
-                                $capacitacion_model = new ProfesorCapacitacion();
-                                $capacitacion_model->pcap_tipo = strtolower($value5[4]);
-                                $capacitacion_model->pcap_evento = ucwords($value5[1]);
-                                $capacitacion_model->pcap_institucion = ucwords($value5[2]);
-                                $capacitacion_model->pcap_anio = strtolower($value5[3]);
-                                $capacitacion_model->pcap_duracion = strtolower($value5[5]);
-                                $capacitacion_model->pro_id = $profesor_model->pro_id;
-                                $capacitacion_model->pcap_estado = '1';
-                                $capacitacion_model->pcap_estado_logico = '1';
-                                $capacitacion_model->pcap_usuario_ingreso = $user_ingresa;
-                                $capacitacion_model->save();
-                            }
-                        }
-                    }
-                    //ProfesorConferencia::deleteAllInfo($profesor_model->pro_id);
-                    if (isset($arr_conferencia)) {
-                        foreach ($arr_conferencia as $key6 => $value6) {
-                            if ($value6[5] == "N") {
-                                $capacitacion_model = new ProfesorConferencia();
-                                $capacitacion_model->pcon_evento = ucwords($value6[1]);
-                                $capacitacion_model->pcon_institucion = ucwords($value6[2]);
-                                $capacitacion_model->pcon_anio = strtolower($value6[3]);
-                                $capacitacion_model->pcon_ponencia = ucwords($value6[4]);
-                                $capacitacion_model->pro_id = $profesor_model->pro_id;
-                                $capacitacion_model->pcon_estado = '1';
-                                $capacitacion_model->pcon_estado_logico = '1';
-                                $capacitacion_model->pcon_usuario_ingreso = $user_ingresa;
-                                $capacitacion_model->save();
-                            }
-                        }
-                    }
-                    //ProfesorCoordinacion::deleteAllInfo($profesor_model->pro_id);
-                    if (isset($arr_coordinacion)) {
-                        foreach ($arr_coordinacion as $key7 => $value7) {
-                            if ($value7[6] == "N") {
-                                $coordinacion_model = new ProfesorCoordinacion();
-                                $coordinacion_model->pcoo_alumno = ucwords($value7[1]);
-                                $coordinacion_model->pcoo_programa = ucwords($value7[2]);
-                                $coordinacion_model->pcoo_academico = ucwords($value7[3]);
-                                $coordinacion_model->ins_id = ($value7[4]);
-                                $coordinacion_model->pcoo_anio = strtolower($value7[5]);
-                                $coordinacion_model->pro_id = $profesor_model->pro_id;
-                                $coordinacion_model->pcoo_estado = '1';
-                                $coordinacion_model->pcoo_estado_logico = '1';
-                                $coordinacion_model->pcoo_usuario_ingreso = $user_ingresa;
-                                $coordinacion_model->save();
-                            }
-                        }
-                    }
-                    //ProfesorEvaluacion::deleteAllInfo($profesor_model->pro_id);
-                    if (isset($arr_evaluacion)) {
-                        foreach ($arr_evaluacion as $key8 => $value8) {
-                            if ($value8[4] == "N") {
-                                $evaluacion_model = new ProfesorEvaluacion();
-                                $evaluacion_model->peva_periodo = strtolower($value8[1]);
-                                $evaluacion_model->peva_institucion = ucwords($value8[2]);
-                                $evaluacion_model->peva_evaluacion = ucwords($value8[3]);
-                                $evaluacion_model->pro_id = $profesor_model->pro_id;
-                                $evaluacion_model->peva_estado = '1';
-                                $evaluacion_model->peva_estado_logico = '1';
-                                $evaluacion_model->peva_usuario_ingreso = $user_ingresa;
-                                $evaluacion_model->save();
-                            }
-                        }
-                    }
-                    //ProfesorPublicacion::deleteAllInfo($profesor_model->pro_id);
-                    if (isset($arr_publicacion)) {
-                        foreach ($arr_publicacion as $key9 => $value9) {
-                            if ($value9[6] == "N") {
-                                $publicacion_model = new ProfesorPublicacion();
-                                $publicacion_model->tpub_id = $value9[1];
-                                $publicacion_model->ppub_titulo = ucwords($value9[2]);
-                                $publicacion_model->ppub_editorial = ucwords($value9[3]);
-                                $publicacion_model->ppub_isbn = strtoupper($value9[4]);
-                                $publicacion_model->ppub_autoria = ucwords($value9[5]);
-                                $publicacion_model->pro_id = $profesor_model->pro_id;
-                                $publicacion_model->ppub_estado = '1';
-                                $publicacion_model->ppub_estado_logico = '1';
-                                $publicacion_model->ppub_usuario_ingreso = $user_ingresa;
-                                $publicacion_model->save();
-                            }
-                        }
-                    }
-                    //ProfesorReferencia::deleteAllInfo($profesor_model->pro_id);
-                    if (isset($arr_referencia)) {
-                        foreach ($arr_referencia as $key10 => $value10) {
-                            if ($value10[5] == "N") {
-                                $referencia_model = new ProfesorReferencia();
-                                $referencia_model->pref_contacto = ucwords($value10[1]);
-                                $referencia_model->pref_relacion_cargo = ucwords($value10[2]);
-                                $referencia_model->pref_organizacion = ucwords($value10[3]);
-                                $referencia_model->pref_numero = strtolower($value10[4]);
-                                $referencia_model->pro_id = $profesor_model->pro_id;
-                                $referencia_model->pref_estado = '1';
-                                $referencia_model->pref_estado_logico = '1';
-                                $referencia_model->pref_usuario_ingreso = $user_ingresa;
-                                $referencia_model->save();
-                            }
-                        }
-                    }
-                    return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+                    
+                    return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), false, $message);
+
                 } else {
-                    throw new Exception('Error SubModulo no creado.');
+                   $transaction->rollback();
+                    $message = array(
+                        "wtmessage" => Yii::t("notificaciones", "Error al modificar." . $mensaje),
+                        "title" => Yii::t('jslang', 'Error'),
+                    );
+                    return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
                 }
             } catch (Exception $ex) {
                 $message = array(
@@ -1216,5 +1536,44 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 return Utilities::ajaxResponse('NOOK', 'alert', Yii::t('jslang', 'Error'), 'true', $message);
             }
         }
+    }
+
+    public function actionExpexcelaspiranteposgrado() {
+        \app\models\Utilities::putMessageLogFile('accediendo a excel :  ');
+        //$per_id = @Yii::$app->session->get("PB_perid");
+        ini_set('memory_limit', '256M');
+        $content_type = Utilities::mimeContentType("xls");
+        $nombarch = "Report-" . date("YmdHis") . ".xls";
+        header("Content-Type: $content_type");
+        header("Content-Disposition: attachment;filename=" . $nombarch);
+        header('Cache-Control: max-age=0');
+        $colPosition = array("C", "D", "E", "F", "G", "H", "I", "J", "K", "L");
+        $arrHeader = array(
+            Yii::t("formulario", "Cedula"),
+            Yii::t("formulario", "Estudiante"),
+            Yii::t("formulario", "Año"),
+            Yii::t("formulario", "Programa"),
+            Yii::t("formulario", "Modalidad"),
+        );
+
+        $model_posgrado = new InscripcionPosgrado();
+        $data = Yii::$app->request->get();
+        $arrSearch["search"] = $data['search'];
+        $arrSearch["año"] = $data['año'];
+        $arrSearch["unidad"] = $data['unidad'];
+        $arrSearch["programa"] = $data['programa'];
+        $arrSearch["modalidad"] = $data['modalidad'];
+        $arrData = array();
+        if (empty($arrSearch)) {
+            $arrData = $model_posgrado->consultaRegistroAdmisionposgrado(array(), 0);
+        } else {
+            $arrData = $model_posgrado->consultaRegistroAdmisionposgrado($arrSearch, 0);
+        }
+        for ($i = 0; $i < count($arrData); $i++) { 
+            unset($arrData[$i]['per_id']);
+        }
+        $nameReport = academico::t("Academico", "Listado de Aspirantes de Grado");
+        Utilities::generarReporteXLS($nombarch, $nameReport, $arrHeader, $arrData, $colPosition);
+        exit;
     }
 }

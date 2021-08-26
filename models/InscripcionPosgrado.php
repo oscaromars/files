@@ -67,7 +67,7 @@ class InscripcionPosgrado extends \yii\db\ActiveRecord
             [['per_id', 'uaca_id', 'eaca_id', 'mod_id', 'ipos_metodo_ingreso'], 'integer'],
             [['ipos_fecha_creacion', 'ipos_fecha_modificacion'], 'safe'],
             [['ipos_año'], 'string', 'max' => 50],
-            [['ipos_tipo_finaciamiento', 'ipos_ruta_doc_foto', 'ipos_ruta_doc_dni', 'ipos_ruta_doc_certvota', 'ipos_ruta_doc_titulo', 'ipos_ruta_doc_comprobantepago', 'ipos_ruta_doc_recordacademico', 'ipos_ruta_doc_senescyt', 'ipos_ruta_doc_hojadevida', 'ipos_ruta_doc_cartarecomendacion', 'ipos_ruta_doc_certificadolaboral', 'ipos_ruta_doc_certificadoingles', 'ipos_ruta_doc_otrorecord', 'ipos_ruta_doc_certificadonosancion', 'ipos_ruta_doc_syllabus', 'ipos_ruta_doc_homologacion'], 'string', 'max' => 200],
+            [['ipos_tipo_financiamiento', 'ipos_ruta_doc_foto', 'ipos_ruta_doc_dni', 'ipos_ruta_doc_certvota', 'ipos_ruta_doc_titulo', 'ipos_ruta_doc_comprobantepago', 'ipos_ruta_doc_recordacademico', 'ipos_ruta_doc_senescyt', 'ipos_ruta_doc_hojadevida', 'ipos_ruta_doc_cartarecomendacion', 'ipos_ruta_doc_certificadolaboral', 'ipos_ruta_doc_certificadoingles', 'ipos_ruta_doc_otrorecord', 'ipos_ruta_doc_certificadonosancion', 'ipos_ruta_doc_syllabus', 'ipos_ruta_doc_homologacion'], 'string', 'max' => 200],
             [['ipos_mensaje1', 'ipos_mensaje2', 'ipos_estado', 'ipos_estado_logico'], 'string', 'max' => 1],
         ];
     }
@@ -84,7 +84,7 @@ class InscripcionPosgrado extends \yii\db\ActiveRecord
             'eaca_id' => 'Eaca ID',
             'mod_id' => 'Mod ID',
             'ipos_año' => 'Ipos Año',
-            'ipos_tipo_finaciamiento' => 'Ipos Tipo Finaciamiento',
+            'ipos_tipo_financiamiento' => 'Ipos Tipo Financiamiento',
             'ipos_metodo_ingreso' => 'Ipos Metodo Ingreso',
             'ipos_ruta_doc_foto' => 'Ipos Ruta Doc Foto',
             'ipos_ruta_doc_dni' => 'Ipos Ruta Doc Dni',
@@ -237,7 +237,7 @@ class InscripcionPosgrado extends \yii\db\ActiveRecord
 
     public function updateDataInscripcionposgrado($con, $data) {
         $sql = "UPDATE " . $con->dbname . ".inscripcion_posgrado 
-                SET per_id=:per_id,uaca_id=:uaca_id,eaca_id=:eaca_id,mod_id=:mod_id,ipos_año=:ipos_año,ipos_cedula=:per_dni,ipos_tipo_finaciamiento=:ipos_tipo_finaciamiento,ipos_metodo_ingreso=:ipos_metodo_ingreso,ipos_ruta_doc_foto=:ipos_ruta_doc_foto, ipos_ruta_doc_dni=:ipos_ruta_doc_dni, ipos_ruta_doc_certvota=:ipos_ruta_doc_certvota,ipos_ruta_doc_titulo=:ipos_ruta_doc_titulo,ipos_ruta_doc_comprobantepago=:ipos_ruta_doc_comprobantepago,ipos_ruta_doc_recordacademico=:ipos_ruta_doc_recordacademico,ipos_ruta_doc_senescyt=:ipos_ruta_doc_senescyt, ipos_ruta_doc_hojadevida=:ipos_ruta_doc_hojadevida, ipos_ruta_doc_cartarecomendacion=:ipos_ruta_doc_cartarecomendacion, ipos_ruta_doc_certificadolaboral, ipos_ruta_doc_certificadoingles=:ipos_ruta_doc_certificadoingles, ipos_ruta_doc_otrorecord=:ipos_ruta_doc_otrorecord, ipos_ruta_doc_certificadonosancion=:ipos_ruta_doc_certificadonosancion,ipos_ruta_doc_syllabus=:ipos_ruta_doc_syllabus,ipos_ruta_doc_homologacion=:ipos_ruta_doc_homologacion,ipos_mensaje1=:ipos_mensaje1,ipos_mensaje2=:ipos_mensaje2,ipos_fecha_modificacion=CURRENT_TIMESTAMP() 
+                SET per_id=:per_id,uaca_id=:uaca_id,eaca_id=:eaca_id,mod_id=:mod_id,ipos_año=:ipos_año,ipos_cedula=:per_dni,ipos_tipo_financiamiento=:ipos_tipo_financiamiento,ipos_metodo_ingreso=:ipos_metodo_ingreso,ipos_ruta_doc_foto=:ipos_ruta_doc_foto, ipos_ruta_doc_dni=:ipos_ruta_doc_dni, ipos_ruta_doc_certvota=:ipos_ruta_doc_certvota,ipos_ruta_doc_titulo=:ipos_ruta_doc_titulo,ipos_ruta_doc_comprobantepago=:ipos_ruta_doc_comprobantepago,ipos_ruta_doc_recordacademico=:ipos_ruta_doc_recordacademico,ipos_ruta_doc_senescyt=:ipos_ruta_doc_senescyt, ipos_ruta_doc_hojadevida=:ipos_ruta_doc_hojadevida, ipos_ruta_doc_cartarecomendacion=:ipos_ruta_doc_cartarecomendacion, ipos_ruta_doc_certificadolaboral, ipos_ruta_doc_certificadoingles=:ipos_ruta_doc_certificadoingles, ipos_ruta_doc_otrorecord=:ipos_ruta_doc_otrorecord, ipos_ruta_doc_certificadonosancion=:ipos_ruta_doc_certificadonosancion,ipos_ruta_doc_syllabus=:ipos_ruta_doc_syllabus,ipos_ruta_doc_homologacion=:ipos_ruta_doc_homologacion,ipos_mensaje1=:ipos_mensaje1,ipos_mensaje2=:ipos_mensaje2,ipos_fecha_modificacion=CURRENT_TIMESTAMP() 
                  WHERE ipos_id =:ipos_id ";
         $met_ing = 0;
         if (empty($data['ming_id'])) {
@@ -252,7 +252,7 @@ class InscripcionPosgrado extends \yii\db\ActiveRecord
         $command->bindParam(":mod_id", $modalidad, \PDO::PARAM_INT);
         $command->bindParam(":año", $año, \PDO::PARAM_STR);
         $command->bindParam(":per_dni", $per_dni, \PDO::PARAM_STR);
-        $command->bindParam(":tipo_finaciamiento", $tipo_financiamiento, \PDO::PARAM_STR);
+        $command->bindParam(":ipos_tipo_financiamiento", $tipo_financiamiento, \PDO::PARAM_STR);
         $command->bindParam(":ipos_metodo_ingreso", $met_ing, \PDO::PARAM_INT);
         $command->bindParam(":ipos_ruta_doc_foto", $ipos_ruta_doc_foto, \PDO::PARAM_STR);
         $command->bindParam(":ipos_ruta_doc_dni", $ipos_ruta_doc_dni, \PDO::PARAM_STR);
@@ -356,18 +356,24 @@ class InscripcionPosgrado extends \yii\db\ActiveRecord
         return $resultData;
     }
 
-    function consultaRegistroAdmisionposgrado($arrFiltro = array(), $reporte){
+    public function consultaRegistroAdmisionposgrado($arrFiltro = array(), $reporte){
+        \app\models\Utilities::putMessageLogFile('cedula consulta:  '.$arrFiltro['search']);
+        \app\models\Utilities::putMessageLogFile('año consulta:  '.$arrFiltro['año']);
+            \app\models\Utilities::putMessageLogFile('unidad consulta:  '.$arrFiltro['unidad']);
+            \app\models\Utilities::putMessageLogFile('programa consulta:  '.$arrFiltro['programa']);
+            \app\models\Utilities::putMessageLogFile('modalidad consulta:  '.$arrFiltro['modalidad']);
         $con_inscripcion = \Yii::$app->db_inscripcion;
         $con_asgard = \Yii::$app->db_asgard;
         $con_academico = \Yii::$app->db_academico;
         $estado = 1;
 
         if (isset($arrFiltro) && count($arrFiltro) > 0) {
-            $str_search .= "(p.per_pri_nombre like :search OR ";
-            $str_search .= "p.per_seg_nombre like :search OR ";
-            $str_search .= "p.per_pri_apellido like :search OR ";
-            $str_search .= "p.per_seg_apellido like :search OR ";
-            $str_search .= "p.per_cedula like :search) AND ";
+            $str_search .= "(per.per_pri_nombre like :search OR ";
+            $str_search .= "per.per_seg_nombre like :search OR ";
+            $str_search .= "per.per_pri_apellido like :search OR ";
+            $str_search .= "per.per_seg_apellido like :search OR ";
+            $str_search .= "ipos.ipos_cedula like :search) AND ";
+            $str_search .= "ipos.ipos_año like :año AND ";
 
             if ($arrFiltro['unidad'] != "" && $arrFiltro['unidad'] > 0) {
                 $str_search .= "ipos.uaca_id = :unidad AND ";
@@ -378,14 +384,14 @@ class InscripcionPosgrado extends \yii\db\ActiveRecord
             if ($arrFiltro['modalidad'] != "" && $arrFiltro['modalidad'] > 0) {
                 $str_search .= "ipos.mod_id = :modalidad AND ";
             }
-            if ($arrFiltro['año'] != "" && $arrFiltro['año'] > 0) {
+            /*if ($arrFiltro['año'] != "" && $arrFiltro['año'] > 0) {
                 $str_search .= "ipos.ipos_año = :año AND ";
-            }
+            }*/
         }
 
-        $sql = "SELECT distinct per.per_id,
+        $sql = "SELECT distinct per.per_id as per_id,
                 per.per_cedula as Cedula,
-                ifnull(CONCAT(ifnull(per.per_pri_apellido,''), ' ', ifnull(per.per_seg_apellido,''), ' ', ifnull(per.per_pri_nombre,''), ifnull(per.per_seg_nombre,'')), '') as estudiante,
+                ifnull(CONCAT(ifnull(per.per_pri_apellido,''), ' ', ifnull(per.per_seg_apellido,''), ' ', ifnull(per.per_pri_nombre,''), ' ', ifnull(per.per_seg_nombre,'')), '') as estudiante,
                 ipos.ipos_año as año,
                 eaca.eaca_nombre as programa,
                 moda.mod_nombre as modalidad
@@ -394,7 +400,7 @@ class InscripcionPosgrado extends \yii\db\ActiveRecord
                 Inner Join " . $con_academico->dbname . ".unidad_academica as uaca on uaca.uaca_id = ipos.uaca_id
                 Inner Join " . $con_academico->dbname . ".estudio_academico as eaca on eaca.eaca_id = ipos.eaca_id
                 Inner Join " . $con_academico->dbname . ".modalidad as moda on moda.mod_id = ipos.mod_id
-                WHERE uaca.uaca_id = 2 and
+                WHERE $str_search
                 ipos.ipos_estado = :estado and ipos.ipos_estado_logico = :estado and
                 per.per_estado = :estado and per.per_estado_logico = :estado and
                 uaca.uaca_estado = :estado and uaca.uaca_estado_logico = :estado and
@@ -405,6 +411,8 @@ class InscripcionPosgrado extends \yii\db\ActiveRecord
         if (isset($arrFiltro) && count($arrFiltro) > 0) {
             $search_cond = "%" . $arrFiltro["search"] . "%";
             $comando->bindParam(":search", $search_cond, \PDO::PARAM_STR);
+            $search_año= "%" . $arrFiltro["año"] . "%";
+            $comando->bindParam(":año", $search_año, \PDO::PARAM_STR);
 
             if ($arrFiltro['unidad'] != "" && $arrFiltro['unidad'] > 0) {
                 $search_uni = $arrFiltro["unidad"];
@@ -418,10 +426,10 @@ class InscripcionPosgrado extends \yii\db\ActiveRecord
                 $search_mod = $arrFiltro["modalidad"];
                 $comando->bindParam(":modalidad", $search_mod, \PDO::PARAM_INT);
             }
-            if ($arrFiltro['año'] != "" && $arrFiltro['año'] > 0) {
+            /*if ($arrFiltro['año'] != "" && $arrFiltro['año'] > 0) {
                 $search_año = $arrFiltro["año"];
                 $comando->bindParam(":año", $search_año, \PDO::PARAM_STR);
-            }
+            }*/
         }
         $res = $comando->queryAll();
         $dataProvider = new ArrayDataProvider([
@@ -435,6 +443,43 @@ class InscripcionPosgrado extends \yii\db\ActiveRecord
             ],
         ]);
 
-        return $dataProvider;
+        if ($reporte == 1) {
+            return $dataProvider;
+        } else {
+            return $res;
+        }
+    }
+
+    public function ObtenerdocumentosInscripcionPosgrado($per_id) {
+        \app\models\Utilities::putMessageLogFile('ver el resultado del id:  '.$per_id);
+        $con = \Yii::$app->db_inscripcion;
+        $estado = 1;
+
+        $sql = "SELECT  per_id, 
+                ipos_ruta_doc_foto, 
+                ipos_ruta_doc_dni, 
+                ipos_ruta_doc_certvota, 
+                ipos_ruta_doc_titulo, 
+                ipos_ruta_doc_comprobantepago, 
+                ipos_ruta_doc_recordacademico, 
+                ipos_ruta_doc_senescyt, 
+                ipos_ruta_doc_hojadevida, 
+                ipos_ruta_doc_cartarecomendacion, 
+                ipos_ruta_doc_certificadolaboral, 
+                ipos_ruta_doc_certificadoingles, 
+                ipos_ruta_doc_otrorecord, 
+                ipos_ruta_doc_certificadonosancion, 
+                ipos_ruta_doc_syllabus, 
+                ipos_ruta_doc_homologacion
+                FROM " . $con->dbname . ".inscripcion_posgrado
+                WHERE per_id = :per_id AND
+                      ipos_estado = :estado AND
+                      ipos_estado_logico = :estado";
+
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
+        $resultData = $comando->queryOne();
+        return $resultData;
     }
 }

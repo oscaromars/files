@@ -10,7 +10,13 @@ use yii\helpers\ArrayHelper;
 use kartik\tabs\TabsX;
 
 ?>
-
+<div class="col-md-12 col-sm-12 col-xs-12 col-lg-12">
+    <div class="pull-right"><!-- Carga de Acciones -->
+        <div class="btn-groups"> 
+            <button type="button" class="btn btn-default btnAccion" data-trigger="hover" onclick="updateaspirantegrado()"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;&nbsp;Actualizar</button>                    
+        </div>
+    </div>
+</div> 
 <div class="row">
     <div class="col-md-12">
         <?= 
@@ -23,4 +29,3 @@ use kartik\tabs\TabsX;
     </div>
 </div>
 <input type="hidden" id="frm_per_id" value="<?= $persona_model->per_id ?>">
-<input type="hidden" id="frm_pro_id" value="<?= $pro_id ?>">

@@ -195,16 +195,7 @@ mail('oscaromars@hotmail.com', 'Mi título', $mensaje);
      AND
 ((e.per_id in (select b.per_id from db_academico.planificacion_estudiante b where
 b.pla_id= ( select max(dap.pla_id) from db_academico.planificacion dap 
- where dap.mod_id = 1 ))) or 
- (e.per_id in (select b.per_id from db_academico.planificacion_estudiante b where
-b.pla_id= ( select max(dap.pla_id) from db_academico.planificacion dap 
- where dap.mod_id = 2 ))) or 
- (e.per_id in (select b.per_id from db_academico.planificacion_estudiante b where
-b.pla_id= ( select max(dap.pla_id) from db_academico.planificacion dap 
- where dap.mod_id = 3 ))) or 
- (e.per_id in (select b.per_id from db_academico.planificacion_estudiante b where
-b.pla_id= ( select max(dap.pla_id) from db_academico.planificacion dap 
- where dap.mod_id = 4 ))) or
+ where dap.mod_id = :modalidad ))) or 
 ((e.per_id in (
 select distinct a.per_id from db_asgard.persona as a 
 inner join db_academico.estudiante bas on a.per_id = bas.per_id

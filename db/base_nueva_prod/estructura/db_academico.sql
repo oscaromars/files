@@ -2407,3 +2407,64 @@ daho_id BIGINT(20) NULL DEFAULT NULL AFTER paca_id;
 
 ALTER TABLE db_academico.planificacion_estudiante ADD 
 pes_semestre BIGINT(20) NULL DEFAULT NULL AFTER pes_carrera;
+
+- --------------------------------------------------------
+--
+-- Estructura de tabla para la tabla `materias_siiga`
+--
+create table if not exists `materias_siiga` (
+  `masi_id` bigint(20) not null auto_increment primary key,
+  `pla_id` bigint(20) not null,
+  `asi_id` bigint(20) not null,
+  `mod_id` bigint(20) not null,
+  `maca_id` bigint(20) not null,
+  `uaca_id` bigint(20) not null,
+  `bloq_id` bigint(20) not null,
+  `siiga_paralelo` bigint(20) not null, --
+  `siiga_nalumnos` bigint(20) not null,
+  `siiga_materia` bigint(20) not null,
+  `siiga_modalidad` bigint(20) not null,
+  `siiga_docente` bigint(20) not null,
+  `siiga_periodolectivo` bigint(20) not null,
+  `masi_cantidad` bigint(20) not null,
+  `masi_usuario_ingreso` bigint(20) not null,
+  `masi_usuario_modifica` bigint(20)  null,
+  `masi_estado` varchar(1) not null,
+  `masi_fecha_creacion` timestamp not null default current_timestamp,
+  `masi_fecha_modificacion` timestamp null default null,
+  `masi_estado_logico` varchar(1) not null,
+);
+
+- --------------------------------------------------------
+--
+-- Estructura de tabla para la tabla `paralelos_siiga`
+--
+create table if not exists `paralelos_siiga` (
+  `masi_id` bigint(20) not null auto_increment primary key,
+  `pla_id` bigint(20) not null,
+  `asi_id` bigint(20) not null,
+  `mod_id` bigint(20) not null,
+  `maca_id` bigint(20) not null,
+  `uaca_id` bigint(20) not null,
+  `bloq_id` bigint(20) not null,
+  `mpp_id` bigint(20) not null,
+  `siiga_paralelo` bigint(20) not null, --
+  `siiga_nalumnos` bigint(20) not null,
+  `siiga_materia` bigint(20) not null,
+  `siiga_modalidad` bigint(20) not null,
+  `siiga_docente` bigint(20) not null,
+  `siiga_periodolectivo` bigint(20) not null,
+  `siiga_unidad` bigint(20) not null,
+  `siiga_periodo_nombre` varchar(64) not null,
+  `siiga_unidad_nombre` varchar(64) not null,
+  `siiga_categoria_nombre` varchar(64) not null,
+  `siiga_modalidad_nombre` varchar(64) not null,
+  `masi_cantidad` bigint(20) not null,
+  `masi_usuario_ingreso` bigint(20) not null,
+  `masi_usuario_modifica` bigint(20)  null,
+  `masi_estado` varchar(1) not null,
+  `masi_fecha_creacion` timestamp not null default current_timestamp,
+  `masi_fecha_modificacion` timestamp null default null,
+  `masi_estado_logico` varchar(1) not null,
+);
+ 

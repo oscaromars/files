@@ -358,10 +358,17 @@ create table if not exists `periodo_academico` (
   `paca_fecha_creacion` timestamp not null default current_timestamp,
   `paca_fecha_modificacion` timestamp null default null,
   `paca_estado_logico` varchar(1) not null,
+  `paca_semanas_periodo` bigint(20)  null,
+  `paca_semanas_inv_vinc_tuto` bigint(20)  null,
   foreign key (saca_id) references `semestre_academico`(saca_id),
   foreign key (baca_id) references `bloque_academico`(baca_id)
 );
 
+/*
+ALTER TABLE `db_academico`.`periodo_academico`
+ADD COLUMN `paca_semanas_inv_vinc_tuto` VARCHAR(45) NULL AFTER `paca_semanas_periodo`;
+
+*/
 -- --------------------------------------------------------
 -- Estructura de tabla para la tabla `estudiante`
 --

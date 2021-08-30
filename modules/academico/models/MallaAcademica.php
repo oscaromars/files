@@ -648,7 +648,7 @@ from db_academico.periodo_academico plac
                      $comando->bindParam(":asignatura", $asignatura, \PDO::PARAM_INT);
                      $statusasi = $comando->queryOne();
                  
-                 if ($requisito !=Null) {  
+                 if ($requisito !=Null) {    
                  $sql = "
                  select  a.asi_id, c.enac_id, a.maes_id, a.per_id
  from db_academico.malla_academico_estudiante a
@@ -671,66 +671,26 @@ from db_academico.periodo_academico plac
                      $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
                      $comando->bindParam(":requisito", $requisito, \PDO::PARAM_INT);
                      $statuspre = $comando->queryOne();
+
+
+                      if ($statuspre["enac_id"]==1 or $statuspre["enac_id"]==4 ){           
+                    $sstatuspre = True; 
+                    }    Else {     $sstatuspre = False;     }
                             
+                     } Else {
+                       $sstatuspre = True;  
+
                      }
                     
-         if ($statusasi["enac_id"]==3 or $statusasi["enac_id"]==2  or $statusasi["enac_id"]== Null ){ 
-                      $sstatusasi= $statusasi["enac_id"];  
+         
+
+                
+                    
+         if ($statusasi["enac_id"]==3 or $statusasi["enac_id"]==2 or $statusasi["enac_id"]== Null ){ 
+                      
                        
                       
-                        if ($requisito !=Null){                  
-                      $sstatuspre= $statuspre["enac_id"]; 
-                      
-                      
-                        if ($statuspre["enac_id"]==1 or $statuspre["enac_id"]==4 ){   
-
-
-             if ($subjects[1][0] == Null)  {                   
-                   $subjects[1][0] = $rows_in[$i]["made_codigo_asignatura"];
-                   $subjects[1][1] = $rows_in[$i]["asi_nombre"];    
-                   $subjects[1][2] = $rows_in[$i]["asi_id"]; 
-                    $subjects[1][3] = $rows_in[$i]["made_credito"];    }  
-                elseif ($subjects[2][0]== Null)  { 
-                    $subjects[2][0] = $rows_in[$i]["made_codigo_asignatura"];
-                    $subjects[2][1]  = $rows_in[$i]["asi_nombre"];   
-                    $subjects[2][2] = $rows_in[$i]["asi_id"]; 
-                    $subjects[2][3] = $rows_in[$i]["made_credito"];   }      
-                 elseif ($subjects[3][0]== Null)  { 
-                    $subjects[3][0] = $rows_in[$i]["made_codigo_asignatura"];
-                    $subjects[3][1]  = $rows_in[$i]["asi_nombre"];   
-                    $subjects[3][2] = $rows_in[$i]["asi_id"]; 
-                    $subjects[3][3] = $rows_in[$i]["made_credito"];   }  
-                 elseif ($subjects[4][0]== Null)  { 
-                    $subjects[4][0] = $rows_in[$i]["made_codigo_asignatura"];
-                    $subjects[4][1]  = $rows_in[$i]["asi_nombre"];   
-                    $subjects[4][2] = $rows_in[$i]["asi_id"]; 
-                    $subjects[4][3] = $rows_in[$i]["made_credito"];   } 
-                 elseif ($subjects[5][0]== Null)  { 
-                    $subjects[5][0] = $rows_in[$i]["made_codigo_asignatura"];
-                    $subjects[5][1]  = $rows_in[$i]["asi_nombre"];   
-                    $subjects[5][2] = $rows_in[$i]["asi_id"]; 
-                    $subjects[5][3] = $rows_in[$i]["made_credito"];   }  
-                 elseif ($subjects[6][0]== Null)  { 
-                    $subjects[6][0] = $rows_in[$i]["made_codigo_asignatura"];
-                    $subjects[6][1]  = $rows_in[$i]["asi_nombre"];   
-                    $subjects[6][2] = $rows_in[$i]["asi_id"]; 
-                    $subjects[6][3] = $rows_in[$i]["made_credito"];   } 
-                 elseif ($subjects[7][0]== Null)  { 
-                    $subjects[7][0] = $rows_in[$i]["made_codigo_asignatura"];
-                    $subjects[7][1]  = $rows_in[$i]["asi_nombre"];   
-                    $subjects[7][2] = $rows_in[$i]["asi_id"]; 
-                    $subjects[7][3] = $rows_in[$i]["made_credito"];   } 
-                 elseif ($subjects[8][0]== Null)  { 
-                    $subjects[8][0] = $rows_in[$i]["made_codigo_asignatura"];
-                    $subjects[8][1]  = $rows_in[$i]["asi_nombre"];   
-                    $subjects[8][2] = $rows_in[$i]["asi_id"]; 
-                    $subjects[8][3] = $rows_in[$i]["made_credito"];   }  
-
-
-                        }
-                         
-                       
-                           }else {      
+                        if ($sstatuspre = True){                     
                          
 
                      if ($subjects[1][0] == Null)  {                   

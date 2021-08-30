@@ -168,10 +168,10 @@ mail('oscaromars@hotmail.com', 'Mi título', $mensaje);
 
                  $sql = "
         select distinct 
-        meu.eaca_id, maca.maca_id ,e.per_id,meu.uaca_id,
-        maca.maca_codigo, maca.maca_nombre,per.per_cedula,meu.mod_id,
-        concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', 
-        per.per_pri_apellido, ' ', ifnull(per.per_seg_apellido,'')) estudiante
+            select distinct e.est_id, e.per_id, e.est_matricula, e.est_fecha_creacion, e.est_categoria, meu.uaca_id, meu.mod_id, meu.eaca_id, DATEDIFF(NOW(),e.est_fecha_creacion) as olderi, -- 
+u.uaca_id, u.uaca_nombre, ea.teac_id, ea.eaca_nombre, ea.eaca_codigo,
+per.per_cedula,  maca.maca_id , maca.maca_codigo, maca.maca_nombre,
+concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_apellido, ' ', ifnull(per.per_seg_apellido,'')) estudiante
  from db_academico.estudiante e
  inner join db_academico.estudiante_carrera_programa c on c.est_id = e.est_id
   inner join db_academico.modalidad_estudio_unidad meu on meu.meun_id = c.meun_id  

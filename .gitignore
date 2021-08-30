@@ -8,6 +8,10 @@ modules/academico/controllers/PlanificacionnewController.php
 modules/academico/controllers/PlanificacionxController.php
 modules/academico/controllers/ProfesorController.php_old
 modules/academico/controllers/RegistroControllerold.php
+modules/academico/models/CancelacionRegistroOnline0.php
+modules/academico/models/CancelacionRegistroOnline1.php
+modules/academico/models/MallaxAcademica.php
+
 # vim
 .*.sw[a-z]
 *.un~

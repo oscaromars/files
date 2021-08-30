@@ -167,7 +167,6 @@ mail('oscaromars@hotmail.com', 'Mi título', $mensaje);
   
 
                  $sql = "
-        select distinct 
             select distinct e.est_id, e.per_id, e.est_matricula, e.est_fecha_creacion, e.est_categoria, meu.uaca_id, meu.mod_id, meu.eaca_id, DATEDIFF(NOW(),e.est_fecha_creacion) as olderi, -- 
 u.uaca_id, u.uaca_nombre, ea.teac_id, ea.eaca_nombre, ea.eaca_codigo,
 per.per_cedula,  maca.maca_id , maca.maca_codigo, maca.maca_nombre,

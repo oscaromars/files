@@ -247,4 +247,70 @@ class DistributivoAcademicoEstudiante extends \yii\db\ActiveRecord {
 
         return $dataProvider;
     }  
+
+    /**
+     * Function consultarHorarioEstudiante
+     * @author  Luis Cajamarca  <analistadesarrollo04@uteg.edu.ec>
+     * @property integer $daes_id
+     * @return
+     */
+
+    public function insertarDaesEstudiante($paca_id) {
+        $con = \Yii::$app->db_academico;
+        $estado = "1";
+        $date = date(Yii::$app->params['dateTimeByDefault']);
+        $sql = "INSERT INTO db_academico.distributivo_academico_estudiante
+                (daca_id, est_id, daes_fecha_registro, daes_estado, daes_fecha_creacion, daes_fecha_modificacion, daes_estado_logico)
+                (SELECT distinct 
+                        daca.daca_id,
+                        est.est_id,
+                        '$date',
+                        1,
+                        '$date',
+                        Null,
+                        1
+                FROM
+                    (SELECT  pera.paca_id as id,
+                            ifnull(CONCAT(blq.baca_nombre,'-',sem.saca_nombre,' ',sem.saca_anio),'') as nombre,
+                            blq.baca_nombre as bloque
+                    FROM db_academico.periodo_academico pera
+                    inner join db_academico.semestre_academico sem  ON sem.saca_id = pera.saca_id
+                    inner join db_academico.bloque_academico blq ON blq.baca_id = pera.baca_id
+                    WHERE pera.paca_activo = 'A' AND
+                    now() >= pera.paca_fecha_inicio and pera.paca_fecha_fin<= now() and
+                    pera.paca_estado = 1 AND pera.paca_estado_logico = 1) as periodo,
+                db_academico.estudiante est
+                inner join db_academico.estudiante_carrera_programa ecp on est.est_id=ecp.est_id
+                inner join db_academico.modalidad_estudio_unidad meun on meun.meun_id=ecp.meun_id
+                inner join db_academico.registro_online ron on ron.per_id=est.per_id
+                inner join db_academico.registro_online_item roi on roi.ron_id=ron.ron_id
+                inner join db_academico.malla_academica_detalle made on made.made_codigo_asignatura=roi.roi_materia_cod
+                inner join db_academico.asignatura asi on asi.asi_id=made.asi_id
+                inner join db_academico.materia_paralelo_periodo mpp on mpp.asi_id=asi.asi_id  and mpp.mod_id=meun.mod_id and mpp.mpp_num_paralelo=roi.roi_paralelo
+                inner join db_academico.distributivo_academico daca on daca.asi_id=asi.asi_id and daca.mod_id=meun.mod_id and daca.mpp_id=mpp.mpp_id
+                left join db_academico.distributivo_academico_estudiante daes on daca.daca_id=daes.daca_id
+                where roi.roi_bloque=periodo.bloque and daes.daes_id IS NULL and periodo.id=:paca_id)";
+
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $comando->bindParam(":paca_id", $paca_id, \PDO::PARAM_INT);
+        $comando->execute();
+
+            \app\models\Utilities::putMessageLogFile('insertarDaesEstudiante: ' . $comando->getRawSql());
+
+            if ($transaction !== null){
+                $transaction->commit();
+            }
+
+            return true;
+
+        } catch (Exception $ex) {
+            if ($transaction !== null)
+                $transaction->rollback();
+            return FALSE;
+        }
+        
+    }
+
+    
 }

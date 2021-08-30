@@ -648,6 +648,61 @@ from db_academico.periodo_academico plac
                      $comando->bindParam(":asignatura", $asignatura, \PDO::PARAM_INT);
                      $statusasi = $comando->queryOne();
                  
+                  // GET REQUIREMENTS   
+                      $asignatura = $rows_in[$i]["asi_id"]; // already exist
+                      $malla      = $rows["maca_id"];
+
+                  $sql = "
+  select a.made_id, a.maca_id, a.asi_id,b.asi_requisito from db_academico.malla_academica_detalle a
+inner join db_academico.malla_academica_requisito b on a.made_id = b.made_id 
+where a.maca_id= :maca_id and asi_id = :asi_id                
+                ";
+                     $comando = $con->createCommand($sql);
+                     $comando->bindParam(":maca_id", $malla, \PDO::PARAM_INT);
+                     $comando->bindParam(":asi_id", $asignatura, \PDO::PARAM_INT);
+                     $prereq = $comando->queryAll();
+                    
+                    $valider = 0;
+                      if (count($prereq) > 0) {   
+                    
+                     for ($k = 0; $k < count($prereq); $i++) {    
+          
+                          $requisitos = $prereq[$k]["asi_requisito"];
+                     
+                     $sqlloop = "
+                 select  a.asi_id, c.enac_id, a.maes_id, a.per_id
+ from db_academico.malla_academico_estudiante a
+ left join db_academico.promedio_malla_academico b on a.maes_id = b.maes_id
+   left join db_academico.estado_nota_academico c on c.enac_id = b.enac_id   
+   inner join db_academico.asignatura d on a.asi_id = d.asi_id
+   where a.per_id = :per_id
+   and a.asi_id = :requisitos
+                       and a.maes_estado = 1
+                    and a.maes_estado_logico = 1
+                    -- and b.pmac_estado = 1
+                    -- and b.pmac_estado_logico = 1
+                    -- and c.enac_estado = 1
+                    -- and c.enac_estado_logico = 1
+                ";
+                
+                     $comando = $con->createCommand($sqlloop);
+                     $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
+                     $comando->bindParam(":requisitos", $requisitos, \PDO::PARAM_INT);
+                     $statuspre = $comando->queryOne();
+
+                         if ($statuspre["enac_id"]==1 or $statuspre["enac_id"]==4){ 
+
+                          $valider++;
+                      }
+                      
+           if (($valider-1) == $k ){ $sstatuspre = True;   } else {  $sstatuspre = False;  }
+
+                      }
+                     
+
+                      } else {
+
+                      
                  if ($requisito !=Null) {    
                  $sql = "
                  select  a.asi_id, c.enac_id, a.maes_id, a.per_id
@@ -677,13 +732,9 @@ from db_academico.periodo_academico plac
                     $sstatuspre = True; 
                     }    Else {     $sstatuspre = False;     }
                             
-                     } Else {
-                       $sstatuspre = True;  
+                     } Else {       $sstatuspre = True;      }
 
-                     }
-                    
-         
-
+                      } // line 652 - 676  -- GET STATUS REQUIREMENTS        
                 
                     
          if ($statusasi["enac_id"]==3 or $statusasi["enac_id"]==2 or $statusasi["enac_id"]== Null ){ 

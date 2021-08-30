@@ -3,7 +3,11 @@ runtime/*
 web/assets/*
 db/evaluaciondocente/*
 composer.lock
-
+modules/academico/controllers/EspeciesController19052021.php
+modules/academico/controllers/PlanificacionnewController.php
+modules/academico/controllers/PlanificacionxController.php
+modules/academico/controllers/ProfesorController.php_old
+modules/academico/controllers/RegistroControllerold.php
 # vim
 .*.sw[a-z]
 *.un~

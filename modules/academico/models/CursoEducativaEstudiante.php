@@ -385,21 +385,12 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
      * @param
      * @return  $resultData (Retornar el código).
      */
-    public function insertarEstudianteCursoEducativaUnidad($cedu_id, $est_id, $ceest_usuario_ingreso, &$tam) {
+    public function insertarEstudianteCursoEducativaUnidad($cedu_id, $est_id, $ceuni_id, $ceest_usuario_ingreso, $tam) {
         //\app\models\Utilities::putMessageLogFile('cedu_id...: ' . $cedu_id );
         //\app\models\Utilities::putMessageLogFile('est_id...: ' . $est_id );
         //\app\models\Utilities::putMessageLogFile('ceest_usuario_ingreso...: ' . $ceest_usuario_ingreso );
         $con = \Yii::$app->db_academico;
         $ceest_estado_bloqueo = 'B';
-        /*
-        $trans = $con->getTransaction(); // se obtiene la transacción actual
-        if ($trans !== null) {
-            $trans = null; // si existe la transacción entonces no se crea una
-        } else {
-            $trans = $con->beginTransaction(); // si no existe la transacción entonces se crea una
-        }*/
-        //$trans = $con->beginTransaction();
-
         $fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
 
         $mod_curso_unidad = CursoEducativaUnidad::find()->where(['cedu_id' => $cedu_id, 'ceuni_estado' => 1, 'ceuni_estado_logico' => 1])->asArray()->all();
@@ -443,12 +434,11 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
 
         try
         {
-            foreach ($mod_curso_unidad as $key => $value) {
+            //foreach ($mod_curso_unidad as $key => $value) {
                 $param_sql_cp = $param_sql;
                 $bsol_sql_cp  = $bsol_sql;
 
-                $ceuni_id = $value['ceuni_id'];
-
+                //$ceuni_id = $value['ceuni_id'];                
                 if (isset($ceuni_id)) {
                     $param_sql_cp .= ", ceuni_id";
                     $bsol_sql_cp  .= ", :ceuni_id";
@@ -491,7 +481,7 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
 
                 //if ($trans != null){ $trans->commit(); }
                 //$trans->commit();
-            }
+            //}
 
             return 1;
 
@@ -945,6 +935,19 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
     public function consultarCursoEducativaDistributivoPeriodoActual(){
         $con = Yii::$app->db_academico;
 
+        $sql = "SELECT DISTINCT daes.est_id, daca.daca_id, cedu.cedu_id, ceu.ceuni_id, paca.paca_id
+                FROM db_academico.curso_educativa_distributivo AS cedi
+                    INNER JOIN db_academico.curso_educativa AS cedu ON cedu.cedu_id = cedi.cedu_id
+                    INNER JOIN db_academico.periodo_academico AS paca ON paca.paca_id = cedu.paca_id
+                    INNER JOIN db_academico.distributivo_academico AS daca ON daca.daca_id = cedi.daca_id
+                    INNER JOIN db_academico.distributivo_academico_estudiante AS daes ON daes.daca_id = daca.daca_id
+                    INNER JOIN db_academico.curso_educativa_unidad AS ceu ON ceu.cedu_id = cedu.cedu_id
+                WHERE ((now() between paca.paca_fecha_inicio and paca.paca_fecha_fin) OR (now() < paca.paca_fecha_fin)) 
+                AND paca.paca_activo = 'A'
+                AND not exists (SELECT ceuni_id FROM db_academico.curso_educativa_estudiante AS cee 
+                                WHERE not cee.est_id = daes.est_id and cee.cedu_id = cedu.cedu_id and cee.ceuni_id = ceu.ceuni_id)";
+
+        /*
         $sql = "SELECT DISTINCT daes.est_id, daca.daca_id, cedu.cedu_id
                 FROM " . $con->dbname . ".curso_educativa_distributivo AS cedi
                 INNER JOIN " . $con->dbname . ".curso_educativa AS cedu ON cedu.cedu_id = cedi.cedu_id
@@ -952,6 +955,8 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
                 INNER JOIN " . $con->dbname . ".distributivo_academico AS daca ON daca.daca_id = cedi.daca_id
                 INNER JOIN " . $con->dbname . ".distributivo_academico_estudiante AS daes ON daes.daca_id = daca.daca_id
                 WHERE ((now() between paca.paca_fecha_inicio and paca.paca_fecha_fin) OR (now() < paca.paca_fecha_fin)) AND paca.paca_activo = 'A'";
+        */
+
 
         $comando = $con->createCommand($sql);
 

@@ -499,15 +499,14 @@ class DistributivocabeceraController extends \app\components\CController {
         $cabDist = $DistADO->consultarCabDistributivo($ids);
         $valores_promedio =$DistADO->promedio($ids);
         $promedio =$DistADO->Calcularpromedioajustado($valores_promedio[0]['total_hora_semana_docencia'], $valores_promedio[0]['total_hora_semana_tutoria'], $valores_promedio[0]['total_hora_semana_investigacion'], $valores_promedio[0]['total_hora_semana_vinculacion'], $valores_promedio[0]['preparacion_docencia'], $valores_promedio[0]['semanas_docencia'], $valores_promedio[0]['semanas_tutoria_vinulacion_investigacion']);
-        Utilities::putMessageLogFile('$promediocalculado ' . round($promedio));
-        Utilities::putMessageLogFile('$promediocalculado ' . round($promedio));
-        Utilities::putMessageLogFile('$promediocalculado ' . round($promedio));
-        Utilities::putMessageLogFile('$promediocalculado ' . round($promedio));
-        Utilities::putMessageLogFile('$promediocalculado ' . round($promedio));
-        Utilities::putMessageLogFile('$promediocalculado ' . round($promedio));
-        Utilities::putMessageLogFile('$promediocalculado ' . round($promedio));
-        Utilities::putMessageLogFile('$promediocalculado ' . round($promedio));
-                
+        Utilities::putMessageLogFile('$total_hora_semana_docencia ' . $valores_promedio[0]['total_hora_semana_docencia'] );
+        Utilities::putMessageLogFile('$total_hora_semana_tutoria ' . $valores_promedio[0]['total_hora_semana_tutoria']);
+        Utilities::putMessageLogFile('$total_hora_semana_investigacion ' . $valores_promedio[0]['total_hora_semana_investigacion'] );
+        Utilities::putMessageLogFile('$total_hora_semana_vinculacion ' . $valores_promedio[0]['total_hora_semana_vinculacion'] );
+        Utilities::putMessageLogFile('$preparacion_docencia ' . $valores_promedio[0]['preparacion_docencia'] );
+        Utilities::putMessageLogFile('$semanas_docencia ' . $valores_promedio[0]['semanas_docencia'] );
+        Utilities::putMessageLogFile('$semanas_tutoria_vinulacion_investigacion ' . $valores_promedio[0]['semanas_tutoria_vinulacion_investigacion']);
+
         $sumaHoras = $DistADO->sumatoriaHoras($ids);
         //    Utilities::putMessageLogFile('$cabDist ' . $cabDist);
 
@@ -515,7 +514,7 @@ class DistributivocabeceraController extends \app\components\CController {
         //  Utilities::putMessageLogFile('paca_id ' . $cabDist[0]['paca_id'].'-pro_id ' .$cabDist[0]['pro_id']);
         // Utilities::putMessageLogFile('total $detDist: ' . $detDist);
  //Recorre las horas para extraer sus dias y hora
-        
+
         //Utilities::putMessageLogFile($detDist[0]['daho_id']);
         setlocale(LC_TIME, 'es_CO.UTF-8');
         $FechaDia = strftime("%d de %B %G", strtotime(date("d-m-Y"))); //date("j F de Y");   

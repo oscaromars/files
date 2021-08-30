@@ -829,8 +829,9 @@ class DistributivoCabecera extends \yii\db\ActiveRecord {
                             pow($total_hora_semana_vinculacion,2) +
                             pow($preparacion_docencia,2));
         }
-           $promedio_ajustado =  sqrt(round($promedio/$semanas_tutoria_vinulacion_investigacion));
-
+         Utilities::putMessageLogFile('$promedio ' . $promedio );
+         $promedio_ajustado =  sqrt(round($promedio/$semanas_tutoria_vinulacion_investigacion));
+         Utilities::putMessageLogFile('$promedio_ajustado ' . $promedio_ajustado );
         return $promedio_ajustado;
     }
 

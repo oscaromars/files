@@ -808,4 +808,30 @@ class DistributivoCabecera extends \yii\db\ActiveRecord {
         return (float) $res[0]['total_horas'];
     }
 
+    /**
+     * Function Consulta el promedio ponderado en distributivo de materias
+     * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
+     * @property integer $csol_id
+     * @return
+     */
+    public function Calcularpromedioajustado($total_hora_semana_docencia, $total_hora_semana_tutoria, $total_hora_semana_investigacion, $total_hora_semana_vinculacion, $preparacion_docencia, $semanas_docencia, $semanas_tutoria_vinulacion_investigacion) {
+        for ($i=0;$i < $semanas_tutoria_vinulacion_investigacion; $i++){
+            if ($i < $semanas_docencia)
+            {
+             $horas_docencia = $total_hora_semana_docencia;
+            }else{
+              $horas_docencia = 0;
+            }
+            $promedio =  $promedio +
+                           (pow($total_hora_semana_docencia,2) +
+                            pow($total_hora_semana_tutoria,2) +
+                            pow($total_hora_semana_investigacion,2)+
+                            pow($total_hora_semana_vinculacion,2) +
+                            pow($preparacion_docencia,2));
+        }
+           $promedio_ajustado =  sqrt(round($promedio/$semanas_tutoria_vinulacion_investigacion));
+
+        return $promedio_ajustado;
+    }
+
 }

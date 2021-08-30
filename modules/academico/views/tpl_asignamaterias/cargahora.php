@@ -217,7 +217,7 @@
     <br><br>
     <div class="divCelda bold titleDetalle " style="text-align: center">
         
-        TOTAL, PROMEDIO HORAS SEMANALES: <h1><?php echo $promedio[0]['promedio'] ?></h1>
+        TOTAL, PROMEDIO HORAS SEMANALES: <h1><?php echo $promedio ?></h1>
     </div>
     <br><br>
     <br><br>

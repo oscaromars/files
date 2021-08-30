@@ -1,6 +1,6 @@
 <?php
 
-namespace app\modules\academico\controllers;
+namespace app\modules\academico\controllers; 
 
 use Yii;
 use app\models\Persona;
@@ -1757,8 +1757,7 @@ class UsuarioeducativaController extends \app\components\CController {
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
             }*/
         }
-        $mod_asignatura = $modelo_dist->consultarAsignaturaList();
-        // Asignatura::find()->where(['uaca_id'=>1,'asi_estado' => 1, 'asi_estado_logico' => 1])->asArray()->all();
+        $mod_asignatura = Asignatura::findAll(['asi_estado' => 1, 'asi_estado_logico' => 1]);
         $arr_unidad = $mod_unidad->consultarUnidadAcademicasEmpresa($emp_id);
         $arr_modalidad = $mod_modalidad->consultarModalidad($arr_unidad[0]["id"], 1);
         $arr_jornada = $modeljornada->getJornadasByUnidadAcad(0,0/*$arr_unidad[0]["id"], $arr_modalidad[0]["id"]*/);
@@ -1782,7 +1781,7 @@ class UsuarioeducativaController extends \app\components\CController {
      * @param
      * @return
      */
-    public function actionInsertarestudiantes(){
+    public function actionInsertarestudiantes(){ 
         $usu_id = Yii::$app->session->get('PB_iduser');
         $mod_cursoeduc = new CursoEducativaEstudiante();
         $ids = $mod_cursoeduc->consultarCursoEducativaDistributivoPeriodoActual();
@@ -1794,16 +1793,17 @@ class UsuarioeducativaController extends \app\components\CController {
             foreach ($ids as $key => $value) {
                 $est_id = $value['est_id'];
                 $cedu_id = $value['cedu_id'];
+                $ceuni_id = $value['ceuni_id'];
                 // $daca_id = $value['daca_id'];
 
-                $hasRegistro = CursoEducativaEstudiante::find()->where(['est_id' => $est_id, 'cedu_id' => $cedu_id])->asArray()->one();
+                $hasRegistro = CursoEducativaEstudiante::find()->where(['est_id' => $est_id, 'cedu_id' => $cedu_id, 'ceuni_id' => $ceuni_id])->asArray()->one();
                 // \app\models\Utilities::putMessageLogFile($hasRegistro);
                 // \app\models\Utilities::putMessageLogFile($hasRegistro);
                 if(isset($hasRegistro)){
                     $tam -= 1;
                 }
                 else{
-                    $insertID = $mod_cursoeduc->insertarEstudianteCursoEducativaUnidad($cedu_id, $est_id, $usu_id, $tam);
+                    $insertID = $mod_cursoeduc->insertarEstudianteCursoEducativaUnidad($cedu_id, $est_id, $ceuni_id, $usu_id, $tam);
                     // \app\models\Utilities::putMessageLogFile($insertID);
                 }
             }

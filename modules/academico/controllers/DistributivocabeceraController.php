@@ -497,7 +497,17 @@ class DistributivocabeceraController extends \app\components\CController {
 
         $DistADO = new DistributivoCabecera();
         $cabDist = $DistADO->consultarCabDistributivo($ids);
-        $promedio =$DistADO->promedio($ids);
+        $valores_promedio =$DistADO->promedio($ids);
+        $promedio =$DistADO->Calcularpromedioajustado($valores_promedio[0]['total_hora_semana_docencia'], $valores_promedio[0]['total_hora_semana_tutoria'], $valores_promedio[0]['total_hora_semana_investigacion'], $valores_promedio[0]['total_hora_semana_vinculacion'], $valores_promedio[0]['preparacion_docencia'], $valores_promedio[0]['semanas_docencia'], $valores_promedio[0]['semanas_tutoria_vinulacion_investigacion']);
+        Utilities::putMessageLogFile('$promediocalculado ' . round($promedio));
+        Utilities::putMessageLogFile('$promediocalculado ' . round($promedio));
+        Utilities::putMessageLogFile('$promediocalculado ' . round($promedio));
+        Utilities::putMessageLogFile('$promediocalculado ' . round($promedio));
+        Utilities::putMessageLogFile('$promediocalculado ' . round($promedio));
+        Utilities::putMessageLogFile('$promediocalculado ' . round($promedio));
+        Utilities::putMessageLogFile('$promediocalculado ' . round($promedio));
+        Utilities::putMessageLogFile('$promediocalculado ' . round($promedio));
+                
         $sumaHoras = $DistADO->sumatoriaHoras($ids);
         //    Utilities::putMessageLogFile('$cabDist ' . $cabDist);
 
@@ -561,7 +571,7 @@ class DistributivocabeceraController extends \app\components\CController {
                     'detDistDocenteAutor' => $detDistDocenteAutor,
                     'FechaDia' => $FechaDia,
                     'sumaHoras'=>$sumaHoras,
-                    'promedio'=>$promedio,
+                    'promedio'=>round($promedio),
                 ])
         );
 

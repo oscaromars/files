@@ -1229,9 +1229,9 @@ where a.maca_id= :maca_id and asi_id = :asi_id
 
             
                   $pla_api = $rows_pla["pla_id"];
-                  $asi_api = $subjects[$iter][0];
+                  $asi_api = $subjects[$iter][2];
                   $mod_api = $rows["mod_id"];
-                  $maca_api = $rows["maca_codigo"];
+                  $maca_api = $rows["maca_id"];
                   $uaca_api = $rows["uaca_id"];
                   $bloq_api = $getifasi["hosd_bloque"];
                   $mpp_api =  $getmpar["mpp_id"]; 
@@ -1243,7 +1243,7 @@ where a.maca_id= :maca_id and asi_id = :asi_id
                     AND mod_id = :mod_id
                     AND maca_id = :maca_id
                     AND uaca_id = :uaca_id
-                    AND bloq_id = bloq_id
+                    AND bloq_id = :bloq_id
                     ";
 
                    $comando = $con->createCommand($searchparsiiga);
@@ -2018,9 +2018,9 @@ where a.maca_id= :maca_id and asi_id = :asi_id
 
 
                   $pla_api = $rows_pla["pla_id"];
-                  $asi_api = $subjects[$iter][0];
+                  $asi_api = $subjects[$iter][2];
                   $mod_api = $rows["mod_id"];
-                  $maca_api = $rows["maca_codigo"];
+                  $maca_api = $rows["maca_id"];
                   $uaca_api = $rows["uaca_id"];
                   $bloq_api = $getifasi["hosd_bloque"];
                   $mpp_api =  $getmpar["mpp_id"]; 
@@ -2032,7 +2032,7 @@ where a.maca_id= :maca_id and asi_id = :asi_id
                     AND mod_id = :mod_id
                     AND maca_id = :maca_id
                     AND uaca_id = :uaca_id
-                    AND bloq_id = bloq_id
+                    AND bloq_id = :bloq_id
                     ";
 
                    $comando = $con->createCommand($searchparsiiga);

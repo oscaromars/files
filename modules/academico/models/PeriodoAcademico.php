@@ -20,13 +20,19 @@ use Yii;
  * @property string $paca_fecha_creacion
  * @property string $paca_fecha_modificacion
  * @property string $paca_estado_logico
+ * @property int $paca_semanas_periodo
+ * @property string $paca_semanas_inv_vinc_tuto
  *
+ * @property CabeceraAsistencia[] $cabeceraAsistencias
+ * @property CabeceraCalificacion[] $cabeceraCalificacions
+ * @property CursoEducativa[] $cursoEducativas
  * @property DistributivoAcademico[] $distributivoAcademicos
  * @property DistributivoCabecera[] $distributivoCabeceras
  * @property EstudiantePeriodoPago[] $estudiantePeriodoPagos
  * @property SemestreAcademico $saca
  * @property BloqueAcademico $baca
  * @property PlanificacionAcademicaMalla[] $planificacionAcademicaMallas
+ * @property ResumenCalificacion[] $resumenCalificacions
  */
 class PeriodoAcademico extends \yii\db\ActiveRecord
 {
@@ -52,17 +58,14 @@ class PeriodoAcademico extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['saca_id', 'baca_id', ], 'required'],
-            [['saca_id', 'baca_id', 'paca_usuario_ingreso', 'paca_usuario_modifica','paca_semanas_periodo'], 'integer'],
-              [['paca_fecha_inicio', 'paca_fecha_fin', 'paca_fecha_creacion', 'paca_fecha_modificacion'], 'safe'],
-            [['paca_activo','paca_estado','paca_estado_logico'], 'string', 'max' => 1],
-
+            [['saca_id', 'baca_id', 'paca_usuario_ingreso', 'paca_estado', 'paca_estado_logico'], 'required'],
+            [['saca_id', 'baca_id', 'paca_usuario_ingreso', 'paca_usuario_modifica', 'paca_semanas_periodo'], 'integer'],
+            [['paca_fecha_inicio', 'paca_fecha_fin', 'paca_fecha_creacion', 'paca_fecha_modificacion'], 'safe'],
+            [['paca_activo', 'paca_estado', 'paca_estado_logico'], 'string', 'max' => 1],
+            [['paca_semanas_inv_vinc_tuto'], 'string', 'max' => 45],
             [['saca_id'], 'exist', 'skipOnError' => true, 'targetClass' => SemestreAcademico::className(), 'targetAttribute' => ['saca_id' => 'saca_id']],
-            [['baca_id'], 'exist', 'skipOnError' => true, 'targetClass' => BloqueAcademico::className(), 'targetAttribute' => ['baca_id' => 'baca_id']],
         ];
     }
-
-
 
     /**
      * {@inheritdoc}
@@ -83,7 +86,32 @@ class PeriodoAcademico extends \yii\db\ActiveRecord
             'paca_fecha_modificacion' => '',
             'paca_estado_logico' => '',
             'paca_semanas_periodo'=> '# de Semana',
+            'paca_semanas_inv_vinc_tuto' => 'Paca Semanas Inv Vinc Tuto',
         ];
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCabeceraAsistencias()
+    {
+        return $this->hasMany(CabeceraAsistencia::className(), ['paca_id' => 'paca_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCabeceraCalificacions()
+    {
+        return $this->hasMany(CabeceraCalificacion::className(), ['paca_id' => 'paca_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCursoEducativas()
+    {
+        return $this->hasMany(CursoEducativa::className(), ['paca_id' => 'paca_id']);
     }
 
     /**
@@ -168,14 +196,9 @@ class PeriodoAcademico extends \yii\db\ActiveRecord
                \app\models\Utilities::putMessageLogFile("Sql: " . $sql);
         $command = $con->createCommand($sql);
 
-
        $id= $command->execute();
         return $id;
-
     }
-
-
-
     /**
      * Function consulta el período académico actual.
      * @author Grace Viteri <analistadesarrollo01@uteg.edu.ec>;
@@ -240,9 +263,9 @@ class PeriodoAcademico extends \yii\db\ActiveRecord
         $con = Yii::$app->db_academico;
         $estado = 1;
 
-        $sql = "SELECT 
-                paca.paca_id, 
-                paca.paca_id as id, 
+        $sql = "SELECT
+                paca.paca_id,
+                paca.paca_id as id,
                 ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca_anio),'') AS paca_nombre,
                 ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca_anio),'') AS nombre,
                 baca.baca_nombre
@@ -272,11 +295,11 @@ class PeriodoAcademico extends \yii\db\ActiveRecord
         $con = Yii::$app->db_academico;
         $estado = 1;
 
-        $sql = "SELECT 
+        $sql = "SELECT
                 paca.paca_id,
-                paca.paca_id as id, 
+                paca.paca_id as id,
                 ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca_anio),'') AS paca_nombre,
-                ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca_anio),'') AS nombre, 
+                ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca_anio),'') AS nombre,
                 baca.baca_nombre
                 FROM " . $con->dbname . ".semestre_academico AS saca
                 INNER JOIN " . $con->dbname . ".periodo_academico AS paca ON saca.saca_id = paca.saca_id
@@ -333,8 +356,6 @@ class PeriodoAcademico extends \yii\db\ActiveRecord
 
         return $dataProvider;
     }
-
-
      /**
      * Función para modularizar las siguientes 2 funciones. Si se le da el parámetro $per_id, usa WHERE. Si no, no.
      * @author Jorge Paladines <analista.desarrollo@uteg.edu.ec>;

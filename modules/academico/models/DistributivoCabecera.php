@@ -578,6 +578,7 @@ class DistributivoCabecera extends \yii\db\ActiveRecord {
         //   $con_db = \Yii::$app->db; //Conexin Asgard
         $con_asgard = \Yii::$app->db_asgard;
         $estado = 1;
+        $porcentaje_preparacion = 0.30;
         /*$sql = "select
         sum(case when td.tdis_id =1 then daho_total_horas else 0 end) +
         sum(case when td.tdis_id =2 then tdis_num_semanas else 0 end )+
@@ -595,7 +596,7 @@ class DistributivoCabecera extends \yii\db\ActiveRecord {
                 sum(case when td.tdis_id =2 then tdis_num_semanas else 0 end ) as total_hora_semana_tutoria,
                 sum(case when td.tdis_id =3 then tdis_num_semanas else 0 end) as total_hora_semana_investigacion,
                 sum(case when td.tdis_id =4 then tdis_num_semanas else 0 end) as total_hora_semana_vinculacion,
-                round(sum(case when td.tdis_id =1 then daho_total_horas else 0 end ) * 0.30)  as preparacion_docencia,
+                round(sum(case when td.tdis_id =1 then daho_total_horas else 0 end ) * :porcentaje_preparacion)  as preparacion_docencia,
                 pa.paca_semanas_periodo as semanas_docencia,
                 pa.paca_semanas_inv_vinc_tuto as semanas_tutoria_vinulacion_investigacion
         from " . $con->dbname . ".distributivo_academico da
@@ -609,6 +610,7 @@ class DistributivoCabecera extends \yii\db\ActiveRecord {
         $comando = $con->createCommand($sql);
         $comando->bindParam(":ids", $Ids, \PDO::PARAM_INT);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $comando->bindParam(":porcentaje_preparacion", $porcentaje_preparacion, \PDO::PARAM_STR);
         \app\models\Utilities::putMessageLogFile($sql);
         return $comando->queryAll();
     }
@@ -819,20 +821,31 @@ class DistributivoCabecera extends \yii\db\ActiveRecord {
             if ($i < $semanas_docencia)
             {
              $horas_docencia = $total_hora_semana_docencia;
+             $horas_preparacion = $preparacion_docencia;
             }else{
               $horas_docencia = 0;
+              $horas_preparacion = 0;
             }
-            $promedio =  $promedio +
-                           (pow($total_hora_semana_docencia,2) +
-                            pow($total_hora_semana_tutoria,2) +
-                            pow($total_hora_semana_investigacion,2)+
-                            pow($total_hora_semana_vinculacion,2) +
-                            pow($preparacion_docencia,2));
+            //Utilities::putMessageLogFile('$horas_docencia ' . $horas_docencia );
+            /* este borrar despues */
+               /*$numero =    pow($horas_docencia +
+                            $total_hora_semana_tutoria +
+                            $total_hora_semana_investigacion+
+                            $total_hora_semana_vinculacion +
+                            $horas_preparacion,2);*/
+            /* este borrar despues */
+            //Utilities::putMessageLogFile('$numero ' . $numero );
+            $promedio +=
+                            pow($horas_docencia +
+                            $total_hora_semana_tutoria +
+                            $total_hora_semana_investigacion +
+                            $total_hora_semana_vinculacion +
+                            $horas_preparacion,2);
         }
-         Utilities::putMessageLogFile('$promedio ' . $promedio );
+         //Utilities::putMessageLogFile('$promedio ' . $promedio );
          $promedio_ajustado =  sqrt(round($promedio/$semanas_tutoria_vinulacion_investigacion));
-         Utilities::putMessageLogFile('$promedio_ajustado ' . $promedio_ajustado );
-        return $promedio_ajustado;
+         //Utilities::putMessageLogFile('$promedio_ajustado ' . $promedio_ajustado );
+         return $promedio_ajustado;
     }
 
 }

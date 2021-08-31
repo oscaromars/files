@@ -7,36 +7,34 @@ use kartik\grid\GridView;
 use app\models\Utilities;
 use app\modules\academico\Module as academico;
 use app\modules\admision\Module as admision;
-
+//print_r($arr_detalle);
 admision::registerTranslations();
 academico::registerTranslations();
 ?>
 <div>
 
     <?=
-    GridView::widget([
+     GridView::widget([
         'id' => 'Tbg_DistribAca_Profesor',
         //'showExport' => true,
         //'fnExportEXCEL' => "exportExcel",
         //'fnExportPDF' => "exportPdf",
         'dataProvider' => $arr_detalle,
         //'pajax' => false,
-        'showPageSummary' => true,
+        //'showPageSummary' => true,
         'panel' => [
         'type' => 'primary',
         'heading' => ''
-         ], 
+         ],
         'toolbar' =>  [
         [
-            
+
         ],
-       
-       
-    ],
+     ],
         'columns' =>    [[
         'class' => 'kartik\grid\SerialColumn',
-        'pageSummary' => 'Total/Promedio Horas',
-        'pageSummaryOptions' => ['colspan' => 4],
+        //'pageSummary' => 'Total/Promedio Horas',
+        //'pageSummaryOptions' => ['colspan' => 4],
             ],
             [
                 'attribute' => 'Profesor',
@@ -73,7 +71,6 @@ academico::registerTranslations();
                 'header' => Yii::t("formulario", "# Estudiante"),
                 'value' => 'nroEstudiantes',
             ],
-            
             [
                 'attribute' => 'total_horas',
                 'header' => academico::t("Academico", "Total Horas"),
@@ -82,8 +79,8 @@ academico::registerTranslations();
             ],
             [
                 'attribute' => 'promedio',
-                'header' => academico::t("Academico", "Promedio"),
-                'value' => 'promedio',
+                'header' => academico::t("Academico", "Promedio Ajustado"),
+                'value' => 'promedioajustado',
                 'pageSummary' => true,
             ],
             ['class' => 'kartik\grid\FormulaColumn',
@@ -91,8 +88,11 @@ academico::registerTranslations();
                 'header' => academico::t("Academico", "Schedule"),
                 'value' => 'horario',
             ],
-            
         ],
-    ])
-    ?>
+     ])
+     ?>
+     <?php
+     /*if (!empty($arr_detalle['promedioajustado'])){ ?>
+     <tr><td class="" colspan="4" style="width:50px;">Total/Promedio Horas</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td><?php $arr_detalle['promedioajustado']?></td><td>&nbsp;</td></tr>
+    <?php }*/?>
 </div>

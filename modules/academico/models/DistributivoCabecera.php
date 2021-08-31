@@ -100,9 +100,9 @@ class DistributivoCabecera extends \yii\db\ActiveRecord {
     {
         return $this->hasMany(DistributivoAcademico::className(), ['dcab_id' => 'dcab_id']);
     }
-    
-    
-    
+
+
+
     public function getListadoDistributivoCab($search = NULL, $periodoAcademico = NULL, $estado_aprobacion = NULL, $asignacion = NULL, $profesor = NULL, $onlyData = false) {
         $con_academico = \Yii::$app->db_academico;
         $con_db = \Yii::$app->db;
@@ -134,10 +134,10 @@ class DistributivoCabecera extends \yii\db\ActiveRecord {
             $str_estado_probacion = "da.dcab_estado_revision = :estado_aprobacion AND ";
         }
         if (!$onlyData) {
-            $select = " distinct da.dcab_id AS Id, da.dcab_estado_revision as estado, 
+            $select = " distinct da.dcab_id AS Id, da.dcab_estado_revision as estado,
             CONCAT(pe.per_pri_nombre, ' ', pe.per_pri_apellido) AS Nombres,
-                    pe.per_cedula AS Cedula,                    
-                    ifnull(CONCAT(blq.baca_anio,' (',blq.baca_nombre,'-',sem.saca_nombre,')'),blq.baca_anio) AS Periodo,                    
+                    pe.per_cedula AS Cedula,
+                    ifnull(CONCAT(blq.baca_anio,' (',blq.baca_nombre,'-',sem.saca_nombre,')'),blq.baca_anio) AS Periodo,
                     CASE
                         WHEN da.dcab_estado_revision = 1 THEN 'Revisado'
                         WHEN da.dcab_estado_revision = 2 THEN 'Aprobado'
@@ -147,47 +147,47 @@ class DistributivoCabecera extends \yii\db\ActiveRecord {
         }
         if ($onlyData) {
             $select = "           CONCAT(pe.per_pri_nombre, ' ', pe.per_pri_apellido) AS Nombres,
-                    pe.per_cedula AS Cedula,                    
-                    ifnull(CONCAT(blq.baca_anio,' (',blq.baca_nombre,'-',sem.saca_nombre,')'),blq.baca_anio) AS Periodo,                    
+                    pe.per_cedula AS Cedula,
+                    ifnull(CONCAT(blq.baca_anio,' (',blq.baca_nombre,'-',sem.saca_nombre,')'),blq.baca_anio) AS Periodo,
                     CASE
                         WHEN da.dcab_estado_revision = 1 THEN 'Revisado'
                         WHEN da.dcab_estado_revision = 2 THEN 'Aprobado'
                         ELSE 'No Aprobado'
-                    END AS estadoRevision, 
+                    END AS estadoRevision,
                         tp.tdis_nombre Tipo_Asignacion, ua.uaca_nombre UnidadAcademica, mo.mod_descripcion Modalidad,
                         asi.asi_descripcion Asignatura, dh.daho_descripcion Horario, 0 as total_hora, 0 as promedio_hora ";
 
-            $select_adicional = " left join " . $con_academico->dbname . ".tipo_distributivo tp on tp.tdis_id = dc.tdis_id 
+            $select_adicional = " left join " . $con_academico->dbname . ".tipo_distributivo tp on tp.tdis_id = dc.tdis_id
                             left join " . $con_academico->dbname . ".unidad_academica ua on ua.uaca_id =  dc.uaca_id
                             left join " . $con_academico->dbname . ".modalidad mo on mo.mod_id = dc.mod_id
                             left join " . $con_academico->dbname . ".asignatura asi on asi.asi_id = dc.asi_id
                             left join " . $con_academico->dbname . ".distributivo_academico_horario dh on dh.daho_id = dc.daho_id ";
         }
-        $sql = "SELECT 
+        $sql = "SELECT
                     $select
-                    
-                   
-                FROM 
-                    " . $con_academico->dbname . ".distributivo_cabecera AS da    
+
+
+                FROM
+                    " . $con_academico->dbname . ".distributivo_cabecera AS da
                     INNER JOIN  " . $con_academico->dbname . ".distributivo_academico AS dc on dc.dcab_id=da.dcab_id
-                    INNER JOIN " . $con_academico->dbname . ".profesor AS p ON da.pro_id = p.pro_id                    
+                    INNER JOIN " . $con_academico->dbname . ".profesor AS p ON da.pro_id = p.pro_id
                     INNER JOIN " . $con_academico->dbname . ".periodo_academico AS pa ON da.paca_id = pa.paca_id
                     INNER JOIN " . $con_db->dbname . ".persona AS pe ON p.per_id = pe.per_id
-                    LEFT JOIN " . $con_academico->dbname . ".semestre_academico sem  ON sem.saca_id = pa.saca_id 
-                    LEFT JOIN " . $con_academico->dbname . ".bloque_academico blq ON blq.baca_id = pa.baca_id 
+                    LEFT JOIN " . $con_academico->dbname . ".semestre_academico sem  ON sem.saca_id = pa.saca_id
+                    LEFT JOIN " . $con_academico->dbname . ".bloque_academico blq ON blq.baca_id = pa.baca_id
                     $select_adicional
-                    WHERE 
-                    $str_search  
+                    WHERE
+                    $str_search
                     $str_profesor
-                    $str_periodo  
-                    $str_asignacion  
+                    $str_periodo
+                    $str_asignacion
                     $str_estado_probacion
                     pa.paca_activo = 'A' AND
                     pa.paca_estado = :estado AND
-                    da.dcab_estado_logico = :estado AND 
+                    da.dcab_estado_logico = :estado AND
                     da.dcab_estado = :estado AND
-                    p.pro_estado_logico = :estado AND 
-                    p.pro_estado = :estado AND                    
+                    p.pro_estado_logico = :estado AND
+                    p.pro_estado = :estado AND
                     pa.paca_estado_logico = :estado";
 
         \app\models\Utilities::putMessageLogFile('Script de disctributivo cab ' . $sql);
@@ -232,7 +232,7 @@ class DistributivoCabecera extends \yii\db\ActiveRecord {
     /**
      * Function insertar datos distributivo cabecera
      * @author  Grace Viteri <analistadesarrollo01@uteg.edu.ec>
-     * @param   
+     * @param
      * @return  $resultData (Retornar los datos).
      */
     public function insertarDistributivoCab($paca_id, $pro_id) {
@@ -263,19 +263,19 @@ class DistributivoCabecera extends \yii\db\ActiveRecord {
     /**
      * Function verifica si existe en distributivo cabecera
      * @author  Grace Viteri <analistadesarrollo01@uteg.edu.ec>
-     * @param   
+     * @param
      * @return  $resultData (Retornar los datos).
      */
     public function existeDistCabecera($paca_id, $pro_id) {
         $con_academico = \Yii::$app->db_academico;
-        $sql = "SELECT 
+        $sql = "SELECT
                     dc.dcab_id,
                     dc.dcab_estado_revision
-                FROM 
+                FROM
                     " . $con_academico->dbname . ".distributivo_cabecera AS dc
                 WHERE
-                    dc.paca_id =:paca_id AND 
-                    dc.pro_id =:pro_id AND                     
+                    dc.paca_id =:paca_id AND
+                    dc.pro_id =:pro_id AND
                     dc.dcab_estado = 1 AND
                     dc.dcab_estado_logico = 1";
 
@@ -296,10 +296,10 @@ class DistributivoCabecera extends \yii\db\ActiveRecord {
         $fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
 
         $sql = "UPDATE
-                    " . $con_academico->dbname . ".distributivo_academico 
-                    SET daca_fecha_modificacion = '" . $fecha_transaccion . "', 
-                    daca_usuario_modifica = '" . $usu_id . "', 
-                    daca_estado = '0', 
+                    " . $con_academico->dbname . ".distributivo_academico
+                    SET daca_fecha_modificacion = '" . $fecha_transaccion . "',
+                    daca_usuario_modifica = '" . $usu_id . "',
+                    daca_estado = '0',
                     daca_estado_logico = '0'
                 WHERE
                 pro_id = '" . $pro_id . "'";
@@ -311,20 +311,20 @@ class DistributivoCabecera extends \yii\db\ActiveRecord {
         $command->execute();
 
         $sql = "UPDATE
-                    " . $con_academico->dbname . ".distributivo_cabecera 
-                    SET dcab_fecha_modificacion = '" . $fecha_transaccion . "', 
-                    dcab_usuario_modifica = '" . $usu_id . "', 
-                    dcab_estado = '0', 
+                    " . $con_academico->dbname . ".distributivo_cabecera
+                    SET dcab_fecha_modificacion = '" . $fecha_transaccion . "',
+                    dcab_usuario_modifica = '" . $usu_id . "',
+                    dcab_estado = '0',
                     dcab_estado_logico = '0'
                 WHERE
-                dcab_id = '" . $id . "' AND                     
+                dcab_id = '" . $id . "' AND
                 dcab_estado = 1 AND
                 dcab_estado_logico = 1";
 
         \app\models\Utilities::putMessageLogFile($sql);
 
         $command = $con_academico->createCommand($sql);
-        // $command->bindParam(":id", $id, \PDO::PARAM_INT);                
+        // $command->bindParam(":id", $id, \PDO::PARAM_INT);
         // $command->bindParam(":fecha", $fecha_transaccion, \PDO::PARAM_STR);
         // $command->bindParam(":usuario", $usu_id, \PDO::PARAM_INT);
 
@@ -336,13 +336,13 @@ class DistributivoCabecera extends \yii\db\ActiveRecord {
     /**
      * Function obtiene datos de distributivo cabecera
      * @author  Grace Viteri <analistadesarrollo01@uteg.edu.ec>
-     * @param   
+     * @param
      * @return  $resultData (Retornar los datos).
      */
     public function obtenerDatosCabecera($cab_id) {
         $con_academico = \Yii::$app->db_academico;
         $con_asgard = \Yii::$app->db_asgard;
-        $sql = "SELECT 
+        $sql = "SELECT
                      dc.pro_id as pro_id, per.per_cedula,dcab_id,pa.paca_id ,
                     concat(per.per_pri_apellido, ' ', ifnull(per.per_seg_apellido,'')) apellidos,
                     concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,'')) nombres,
@@ -350,15 +350,15 @@ class DistributivoCabecera extends \yii\db\ActiveRecord {
                     ifnull(dc.dcab_estado_revision,0) estado,
                     dcab_observacion_revision observacion,
                     pr.ddoc_id as ddoc_id
-                FROM 
-                    " . $con_academico->dbname . ".distributivo_cabecera AS dc 
-                    inner join " . $con_academico->dbname . ".profesor pr   on pr.pro_id = dc.pro_id 
+                FROM
+                    " . $con_academico->dbname . ".distributivo_cabecera AS dc
+                    inner join " . $con_academico->dbname . ".profesor pr   on pr.pro_id = dc.pro_id
                     inner join " . $con_asgard->dbname . ".persona per on per.per_id = pr.per_id
                     inner join " . $con_academico->dbname . ".periodo_academico pa on pa.paca_id = dc.paca_id
                     inner join " . $con_academico->dbname . ".semestre_academico sa on sa.saca_id = pa.saca_id
                     inner join " . $con_academico->dbname . ".bloque_academico ba on ba.baca_id = pa.baca_id
                 WHERE
-                    dc.dcab_id= :dcab_id and          
+                    dc.dcab_id= :dcab_id and
                     dc.dcab_estado = 1 AND
                     dc.dcab_estado_logico = 1 AND
                     pr.pro_estado = 1 AND
@@ -376,29 +376,29 @@ class DistributivoCabecera extends \yii\db\ActiveRecord {
     /**
      * Function obtiene datos de distributivo cabecera
      * @author  Grace Viteri <analistadesarrollo01@uteg.edu.ec>
-     * @param   
+     * @param
      * @return  $resultData (Retornar los datos).
      */
     public function obtenerDatoCabecera($pro_id, $paca_id) {
         $con_academico = \Yii::$app->db_academico;
         $con_asgard = \Yii::$app->db_asgard;
-        $sql = "SELECT 
+        $sql = "SELECT
                      dc.dcab_id,dc.pro_id ,pa.paca_id, per.per_cedula,
                     concat(per.per_pri_apellido, ' ', ifnull(per.per_seg_apellido,'')) apellidos,
                     concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,'')) nombres,
                     ifnull(CONCAT(ba.baca_nombre,'-',sa.saca_nombre,' ',sa.saca_anio),'') as periodo,
                     ifnull(dc.dcab_estado_revision,0) estado,
                     dcab_observacion_revision observacion
-                FROM 
-                    " . $con_academico->dbname . ".distributivo_cabecera AS dc 
-                    inner join " . $con_academico->dbname . ".profesor pr   on pr.pro_id = dc.pro_id 
+                FROM
+                    " . $con_academico->dbname . ".distributivo_cabecera AS dc
+                    inner join " . $con_academico->dbname . ".profesor pr   on pr.pro_id = dc.pro_id
                     inner join " . $con_asgard->dbname . ".persona per on per.per_id = pr.per_id
                     inner join " . $con_academico->dbname . ".periodo_academico pa on pa.paca_id = dc.paca_id
                     inner join " . $con_academico->dbname . ".semestre_academico sa on sa.saca_id = pa.saca_id
                     inner join " . $con_academico->dbname . ".bloque_academico ba on ba.baca_id = pa.baca_id
                 WHERE
-                    pr.pro_id= :pro_id and  
-                    dc.paca_id= :paca_id and 
+                    pr.pro_id= :pro_id and
+                    dc.paca_id= :paca_id and
                     dc.dcab_estado = 1 AND
                     dc.dcab_estado_logico = 1 AND
                     pr.pro_estado = 1 AND
@@ -417,7 +417,7 @@ class DistributivoCabecera extends \yii\db\ActiveRecord {
     /**
      * Function inactivar datos distributivo cabecera
      * @author  Grace Viteri <analistadesarrollo01@uteg.edu.ec>
-     * @param   
+     * @param
      * @return  $resultData (Retornar los datos).
      */
     public function inactivarDistributivoCabecera($id) {
@@ -427,9 +427,9 @@ class DistributivoCabecera extends \yii\db\ActiveRecord {
         $fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
 
         $sql = "UPDATE " . $con->dbname . ".distributivo_cabecera
-                SET dcab_fecha_modificacion = :fecha, 
-                    dcab_usuario_modifica = :usuario, 
-                    dcab_estado = '0', 
+                SET dcab_fecha_modificacion = :fecha,
+                    dcab_usuario_modifica = :usuario,
+                    dcab_estado = '0',
                     dcab_estado_logico = '0'
                 WHERE dcab_id = :id
                       AND dcab_estado = :estado
@@ -447,7 +447,7 @@ class DistributivoCabecera extends \yii\db\ActiveRecord {
     /**
      * Function inactivar datos distributivo cabecera
      * @author  Grace Viteri <analistadesarrollo01@uteg.edu.ec>
-     * @param   
+     * @param
      * @return  $resultData (Retornar los datos).
      */
     public function revisarDistributivo($id, $resultado, $observacion) {
@@ -457,14 +457,14 @@ class DistributivoCabecera extends \yii\db\ActiveRecord {
         $usu_id = @Yii::$app->session->get("PB_iduser");
         $fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
         $OK = "Ok";
-        
+
         $sql = "UPDATE " . $con->dbname . ".distributivo_cabecera
-                SET dcab_estado_revision = :resultado,       
+                SET dcab_estado_revision = :resultado,
                     dcab_observacion_revision = :observacion,
                     dcab_fecha_revision = :fecha,
                     dcab_usuario_revision = :usuario,
-                    dcab_fecha_modificacion = :fecha, 
-                    dcab_usuario_modifica = :usuario                    
+                    dcab_fecha_modificacion = :fecha,
+                    dcab_usuario_modifica = :usuario
                 WHERE dcab_id = :id
                       AND dcab_estado = :estado
                       AND dcab_estado_logico = :estado";
@@ -492,12 +492,12 @@ class DistributivoCabecera extends \yii\db\ActiveRecord {
         $OK = "Ok";
 
         $sql = "UPDATE " . $con->dbname . ".distributivo_cabecera
-                SET dcab_estado_revision = :resultado,       
+                SET dcab_estado_revision = :resultado,
                     dcab_observacion_revision = :observacion,
                     dcab_fecha_revision = :fecha,
                     dcab_usuario_revision = :usuario,
-                    dcab_fecha_modificacion = :fecha, 
-                    dcab_usuario_modifica = :usuario                    
+                    dcab_fecha_modificacion = :fecha,
+                    dcab_usuario_modifica = :usuario
                 WHERE dcab_id = :id
                       AND dcab_estado = :estado
                       AND dcab_estado_logico = :estado";
@@ -516,7 +516,7 @@ class DistributivoCabecera extends \yii\db\ActiveRecord {
         $idtabla = $command->execute();
         return $idtabla;
     }
-    
+
     public function aprobarDistributivo($ids, $resultado, $observacion) {
         $con = \Yii::$app->db_academico;
         $estado = '1';
@@ -526,12 +526,12 @@ class DistributivoCabecera extends \yii\db\ActiveRecord {
         $idtabla =0;
         for($i=0;$i<sizeof($ids);$i++){
         $sql = "UPDATE " . $con->dbname . ".distributivo_cabecera
-                SET dcab_estado_revision = :resultado,       
+                SET dcab_estado_revision = :resultado,
                     dcab_observacion_revision = :observacion,
                     dcab_fecha_revision = :fecha,
                     dcab_usuario_revision = :usuario,
-                    dcab_fecha_modificacion = :fecha, 
-                    dcab_usuario_modifica = :usuario                    
+                    dcab_fecha_modificacion = :fecha,
+                    dcab_usuario_modifica = :usuario
                 WHERE dcab_id = :id
                       AND dcab_estado = :estado
                       AND dcab_estado_logico = :estado";
@@ -586,7 +586,7 @@ class DistributivoCabecera extends \yii\db\ActiveRecord {
         sum(case when td.tdis_id =7  then round(tdis_num_semanas/paca_semanas_periodo) else 0 end) as promedio
         from " . $con->dbname . ".distributivo_academico da
         inner join " . $con->dbname . ".distributivo_cabecera dc on da.dcab_id = dc.dcab_id
-        inner join " . $con->dbname . ".tipo_distributivo td on td.tdis_id=da.tdis_id 
+        inner join " . $con->dbname . ".tipo_distributivo td on td.tdis_id=da.tdis_id
         inner join " . $con->dbname . ".periodo_academico pa on pa.paca_id=da.paca_id
         left join " . $con->dbname . ".distributivo_academico_horario dah on dah.daho_id=da.daho_id "
                         . "where da.dcab_id=:ids and dc.dcab_estado_logico=1 and td.tdis_id not in(6) ";
@@ -611,7 +611,7 @@ class DistributivoCabecera extends \yii\db\ActiveRecord {
         $comando->bindParam(":ids", $Ids, \PDO::PARAM_INT);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
         $comando->bindParam(":porcentaje_preparacion", $porcentaje_preparacion, \PDO::PARAM_STR);
-        \app\models\Utilities::putMessageLogFile($sql);
+        //\app\models\Utilities::putMessageLogFile($sql);
         return $comando->queryAll();
     }
 
@@ -639,13 +639,13 @@ class DistributivoCabecera extends \yii\db\ActiveRecord {
     public function consultarDetDistributivo($id) {
         $con = \Yii::$app->db_academico;
 
-        $sql = "SELECT case when td.tdis_id=7 or td.tdis_id=6 or td.tdis_id=2 or td.tdis_id=3 or td.tdis_id=4 then tdis_nombre else B.asi_nombre end  as asi_nombre, 
+        $sql = "SELECT case when td.tdis_id=7 or td.tdis_id=6 or td.tdis_id=2 or td.tdis_id=3 or td.tdis_id=4 then tdis_nombre else B.asi_nombre end  as asi_nombre,
                     case when h.daho_descripcion is null then tdis_num_semanas else daho_descripcion end  AS HORAS,
                     C.uaca_nombre,D.mod_nombre,
                   case when td.tdis_id=6 then '' else (case when C.uaca_id =2 then DATE_FORMAT(daca_fecha_inicio_post,'%d/%m/%Y') else DATE_FORMAT(E.paca_fecha_inicio,'%d/%m/%Y') end) end as paca_fecha_inicio,
                     case when td.tdis_id=6 then '' else (  case when C.uaca_id =2 then DATE_FORMAT(daca_fecha_fin_post,'%d/%m/%Y') else DATE_FORMAT(E.paca_fecha_fin,'%d/%m/%Y') end ) end as paca_fecha_fin
                     FROM db_academico.distributivo_academico da
-		   inner join " . $con->dbname . ".tipo_distributivo td on td.tdis_id=da.tdis_id 
+		   inner join " . $con->dbname . ".tipo_distributivo td on td.tdis_id=da.tdis_id
                     inner join " . $con->dbname . ".distributivo_cabecera dc on da.dcab_id=dc.dcab_id
                     left JOIN " . $con->dbname . ".asignatura B ON da.asi_id=B.asi_id
                     left JOIN " . $con->dbname . ".unidad_academica C ON C.uaca_id=da.uaca_id
@@ -657,7 +657,7 @@ class DistributivoCabecera extends \yii\db\ActiveRecord {
 
         $comando = $con->createCommand($sql);
         $comando->bindParam(":dcab_id", $id, \PDO::PARAM_INT);
-      
+
         //  $res = $comando->queryOne();
         //\app\models\Utilities::putMessageLogFile( $res);
         //\app\models\Utilities::putMessageLogFile($ProId);
@@ -673,9 +673,9 @@ class DistributivoCabecera extends \yii\db\ActiveRecord {
                 FROM " . $con->dbname . ".distributivo_academico A
                 INNER JOIN " . $con->dbname . ".tipo_distributivo D ON D.tdis_id=A.tdis_id
                 INNER JOIN " . $con->dbname . ". periodo_academico E ON E.paca_id=A.paca_id
-                INNER JOIN " . $con->dbname . ".modalidad m ON m.mod_id=A.mod_id   
-                LEFT JOIN " . $con->dbname . ".unidad_academica C ON C.uaca_id=A.uaca_id     
-               WHERE A.paca_id = :paca_id AND A.pro_id = :pro_id 
+                INNER JOIN " . $con->dbname . ".modalidad m ON m.mod_id=A.mod_id
+                LEFT JOIN " . $con->dbname . ".unidad_academica C ON C.uaca_id=A.uaca_id
+               WHERE A.paca_id = :paca_id AND A.pro_id = :pro_id
                and A.daca_estado=1 and A.daca_estado_logico=1 ";
 
         $comando = $con->createCommand($sql);
@@ -696,7 +696,7 @@ class DistributivoCabecera extends \yii\db\ActiveRecord {
                     INNER JOIN " . $con->dbname . ".unidad_academica C ON C.uaca_id=A.uaca_id
                     INNER JOIN " . $con->dbname . ".modalidad D ON D.mod_id=A.mod_id
                     INNER JOIN " . $con->dbname . ".periodo_academico E ON E.paca_id=A.paca_id
-                    WHERE A.paca_id = :paca_id AND A.pro_id = :pro_id 
+                    WHERE A.paca_id = :paca_id AND A.pro_id = :pro_id
                 and A.daca_estado=1 and A.daca_estado_logico=1 ";
 
         $comando = $con->createCommand($sql);
@@ -736,9 +736,9 @@ class DistributivoCabecera extends \yii\db\ActiveRecord {
         $con = \Yii::$app->db_academico;
 
         $sql = "SELECT (h.daho_total_horas*D.paca_semanas_periodo) total_horas
-                    FROM  " . $con->dbname . ".distributivo_academico da 
+                    FROM  " . $con->dbname . ".distributivo_academico da
                     inner join  " . $con->dbname . ".distributivo_academico_horario h on h.daho_id = da.daho_id
-                    INNER JOIN " . $con->dbname . ".periodo_academico D ON  D.paca_id = da.paca_id and  D.paca_activo='A' 
+                    INNER JOIN " . $con->dbname . ".periodo_academico D ON  D.paca_id = da.paca_id and  D.paca_activo='A'
                     WHERE  da.daho_id = :daho_id ";
         $comando = $con->createCommand($sql);
         $comando->bindParam(":daho_id", $Ids, \PDO::PARAM_INT);

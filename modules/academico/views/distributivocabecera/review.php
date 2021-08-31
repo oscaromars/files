@@ -11,9 +11,9 @@ use app\modules\academico\Module as academico;
         <?=
         $this->render('review_search', [
           'arr_profesor'=> $arr_profesor,
-           'arr_periodo' => $mod_periodo,
-            'resCab' => $resCab,
-            'arr_estado' => $arr_estado,
+          'arr_periodo' => $mod_periodo,
+          'resCab' => $resCab,
+          'arr_estado' => $arr_estado,
           ]);
         ?>
     </form>

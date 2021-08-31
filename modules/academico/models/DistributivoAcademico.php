@@ -1140,6 +1140,7 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
 
     public function getListarReview($id, $onlyData = false) {
         $con_academico = \Yii::$app->db_academico;
+        $DistADO = new DistributivoCabecera();
         $con_db = \Yii::$app->db;
         $estado = "1";
 
@@ -1218,8 +1219,19 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
         $comando = $con_academico->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
         $comando->bindParam(":dcab_id", $id, \PDO::PARAM_INT);
-        Utilities::putMessageLogFile('sqlaaaaa:' . $sql);
+        //Utilities::putMessageLogFile('sqlaaaaa:' . $sql);
         $res = $comando->queryAll();
+
+        // calculando el promedio_ajustado
+        if (!empty($id)){
+            $valores_promedio =$DistADO->promedio($id);
+            $promedio =$DistADO->Calcularpromedioajustado($valores_promedio[0]['total_hora_semana_docencia'], $valores_promedio[0]['total_hora_semana_tutoria'], $valores_promedio[0]['total_hora_semana_investigacion'], $valores_promedio[0]['total_hora_semana_vinculacion'], $valores_promedio[0]['preparacion_docencia'], $valores_promedio[0]['semanas_docencia'], $valores_promedio[0]['semanas_tutoria_vinulacion_investigacion']);
+
+            foreach ($res as $key => $value) {
+                $value['promedioajustado'] = round($promedio);
+                $res[$key] =  $value;
+            }
+        }
         if ($onlyData)
             return $res;
         $dataProvider = new ArrayDataProvider([

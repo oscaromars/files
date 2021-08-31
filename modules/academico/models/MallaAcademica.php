@@ -1226,6 +1226,57 @@ where a.maca_id= :maca_id and asi_id = :asi_id
                 WHERE paal_id = $paal_id";
                 $comando = $con->createCommand($updatepaalcantidad);
                 $result = $comando->execute();  
+
+            
+                  $pla_api = $rows_pla["pla_id"];
+                  $asi_api = $subjects[$iter][0];
+                  $mod_api = $rows["mod_id"];
+                  $maca_api = $rows["maca_codigo"];
+                  $uaca_api = $rows["uaca_id"];
+                  $bloq_api = $getifasi["hosd_bloque"];
+                  $mpp_api =  $getmpar["mpp_id"]; 
+
+                $searchparsiiga = "
+                    SELECT  pasi_id  from db_academico.paralelos_siiga
+                    WHERE pla_id = :pla_id 
+                    AND asi_id = :asi_id
+                    AND mod_id = :mod_id
+                    AND maca_id = :maca_id
+                    AND uaca_id = :uaca_id
+                    AND bloq_id = bloq_id
+                    ";
+
+                   $comando = $con->createCommand($searchparsiiga);
+                   $comando->bindParam(":pla_id",   $pla_api, \PDO::PARAM_INT);
+                   $comando->bindParam(":asi_id",   $asi_api, \PDO::PARAM_INT);
+                   $comando->bindParam(":mod_id",   $mod_api, \PDO::PARAM_INT);
+                   $comando->bindParam(":maca_id", $maca_api, \PDO::PARAM_INT);
+                   $comando->bindParam(":uaca_id", $uaca_api, \PDO::PARAM_INT);
+                   $comando->bindParam(":bloq_id", $bloq_api, \PDO::PARAM_INT);
+                   $existparsiiga = $comando->queryOne();
+                
+
+                  if ($existparsiiga["pasi_id"] == Null) { 
+
+                $createpartemp =
+                "
+                INSERT INTO db_academico.paralelos_siiga
+    (pla_id,asi_id,mod_id,maca_id,uaca_id,bloq_id,mpp_id,siiga_paralelo,siiga_nalumnos,siiga_materia,siiga_modalidad,siiga_docente,siiga_periodolectivo,siiga_unidad,siiga_periodo_nombre,siiga_unidad_nombre,siiga_categoria_nombre,siiga_modalidad_nombre,pasi_cantidad,pasi_usuario_ingreso,pasi_estado,pasi_fecha_creacion,pasi_estado_logico)
+
+                VALUES 
+    ('" . $pla_api . "','" . $asi_api . "','" . $mod_api . "','" . $maca_api . "','" . $uaca_api . "','" . $bloq_api . "','" . $mpp_api . "', '1', '1','" . $asi_api . "','" . $mod_api . "','0','" . $pla_api . "','" . $uaca_api . "', 
+ 'periodo prueba', 'unidad siiga', 'categoria siiga', 'modalidad siiga', '0', '1', '1',
+ '2021-08-30 17:10:53', '1')
+                ";
+
+
+                  } Else {                              
+
+                    
+                   
+
+                                                      }
+
                  }            
                    
                     }  
@@ -1956,6 +2007,56 @@ where a.maca_id= :maca_id and asi_id = :asi_id
                 WHERE paal_id = $paal_id";
                 $comando = $con->createCommand($updatepaalcantidad);
                 $result = $comando->execute();
+
+
+                  $pla_api = $rows_pla["pla_id"];
+                  $asi_api = $subjects[$iter][0];
+                  $mod_api = $rows["mod_id"];
+                  $maca_api = $rows["maca_codigo"];
+                  $uaca_api = $rows["uaca_id"];
+                  $bloq_api = $getifasi["hosd_bloque"];
+                  $mpp_api =  $getmpar["mpp_id"]; 
+
+                $searchparsiiga = "
+                    SELECT  pasi_id  from db_academico.paralelos_siiga
+                    WHERE pla_id = :pla_id 
+                    AND asi_id = :asi_id
+                    AND mod_id = :mod_id
+                    AND maca_id = :maca_id
+                    AND uaca_id = :uaca_id
+                    AND bloq_id = bloq_id
+                    ";
+
+                   $comando = $con->createCommand($searchparsiiga);
+                   $comando->bindParam(":pla_id",   $pla_api, \PDO::PARAM_INT);
+                   $comando->bindParam(":asi_id",   $asi_api, \PDO::PARAM_INT);
+                   $comando->bindParam(":mod_id",   $mod_api, \PDO::PARAM_INT);
+                   $comando->bindParam(":maca_id", $maca_api, \PDO::PARAM_INT);
+                   $comando->bindParam(":uaca_id", $uaca_api, \PDO::PARAM_INT);
+                   $comando->bindParam(":bloq_id", $bloq_api, \PDO::PARAM_INT);
+                   $existparsiiga = $comando->queryOne();
+                
+
+                  if ($existparsiiga["pasi_id"] == Null) { 
+
+                $createpartemp =
+                "
+                INSERT INTO db_academico.paralelos_siiga
+    (pla_id,asi_id,mod_id,maca_id,uaca_id,bloq_id,mpp_id,siiga_paralelo,siiga_nalumnos,siiga_materia,siiga_modalidad,siiga_docente,siiga_periodolectivo,siiga_unidad,siiga_periodo_nombre,siiga_unidad_nombre,siiga_categoria_nombre,siiga_modalidad_nombre,pasi_cantidad,pasi_usuario_ingreso,pasi_estado,pasi_fecha_creacion,pasi_estado_logico)
+
+                VALUES 
+    ('" . $pla_api . "','" . $asi_api . "','" . $mod_api . "','" . $maca_api . "','" . $uaca_api . "','" . $bloq_api . "','" . $mpp_api . "', '1', '1','" . $asi_api . "','" . $mod_api . "','0','" . $pla_api . "','" . $uaca_api . "', 
+ 'periodo prueba', 'unidad siiga', 'categoria siiga', 'modalidad siiga', '0', '1', '1',
+ '2021-08-30 17:10:53', '1')
+                ";
+
+
+                  } Else {                              
+
+                    
+                   
+
+                                                      }
 
                      }   
 

@@ -31,19 +31,19 @@ if($resCab['estado']==1){
     ]);
     ?>
     <div class="form-group row">
-         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12"> 
+         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <h3><label id="lbl_profesor"><?= Yii::t("formulario", "Data Teacher") ?></label></h3>
         </div>
         <div class="col-sm-9">
             <label for="cmb_profesor" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= academico::t("Academico", "Teacher") ?></label>
-            <div class="col-sm-3 col-xs-3 col-md-3 col-lg-3">
+            <div class="col-sm-4 col-xs-4 col-md-4 col-lg-4">
                 <?= Html::dropDownList("cmb_profesor", $resCab['pro_id'], $arr_profesor, ["class" => "form-control", "id" => "cmb_profesor"]) ?>
 
-            </div> 
+            </div>
             <label for="cmb_periodo" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= Yii::t("formulario", "Period") ?></label>
-            <div class="col-sm-3 col-xs-3 col-md-3 col-lg-3">
+            <div class="col-sm-4 col-xs-4 col-md-4 col-lg-4">
                 <?= Html::dropDownList("cmb_periodo", $resCab['paca_id'], $arr_periodo, ["class" => "form-control", "id" => "cmb_periodo"]) ?>
-            </div>   
+            </div>
         </div>
 
 
@@ -51,14 +51,14 @@ if($resCab['estado']==1){
             <?= Html::submitButton('Buscar', ['class' => 'btn btn-primary']) ?>
         </div>
     </div>
-    <div class="form-group row"> 
-          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12"> 
+    <div class="form-group row">
+          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <h3><label id="lbl_profesor"><?= Yii::t("formulario", "Asignación") ?></label></h3>
         </div>
         <div class="col-sm-9">
 
             <label for="cmb_estado"  class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= Yii::t("formulario", "Review Status") ?></label>
-            <div class="col-sm-3 col-xs-3 col-md-3 col-lg-3">
+            <div class="col-sm-4 col-xs-4 col-md-4 col-lg-4">
                 <?php //Html::dropDownList("cmb_estado", $resCab['estado'], $arr_estado, ["class" => "form-control", "id" => "cmb_estado",'disabled' => $disable])
                 echo Select2::widget([
                         'id'=> 'cmb_estado',
@@ -72,12 +72,12 @@ if($resCab['estado']==1){
                                         3 => ['disabled' => true],
                                     ]
                  ],
-                        
+
                 ]);
-                
-                
+
+
                 ?>
-            </div> 
+            </div>
 
         </div>
 
@@ -85,7 +85,7 @@ if($resCab['estado']==1){
             <div class="form-group">
                 <label for="txt_detalle" class="col-sm-5 col-md-5 col-xs-5 col-lg-5 control-label" id="lbl_detalle"><?= Yii::t("formulario", "Observation") ?></label>
                 <div class="col-sm-7 col-md-7 col-xs-7 col-lg-7">
-                    <textarea  class="form-control keyupmce" id="txt_detalle" rows="5"></textarea>   
+                    <textarea  class="form-control keyupmce" id="txt_detalle" rows="5"></textarea>
                 </div>
             </div>
         </div>

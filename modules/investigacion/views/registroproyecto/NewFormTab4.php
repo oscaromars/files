@@ -156,24 +156,13 @@ $institution=0;
             </div>
             <div class="col-xs-4">
 
-                <a id="register_subject_btn" href="javascript:" class="btn btn-primary pull-right" onclick="registerSubject()" style="margin: 0px 5px; "><?= investigacion::t("registroproyecto", "Agregar Integrante") ?></a>
+                <a id="register_int_btn" href="javascript:" class="btn btn-primary pull-right" onclick="register_integrantes()" style="margin: 0px 5px; "><?= investigacion::t("registroproyecto", "Agregar Integrante") ?></a>
             </div>
             <div class="col-xs-2">
 
             </div>
         </div>
-        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-            <div class="col-xs-6">
-            </div>
-            <div class="col-xs-4">
-                
-               <a id="register_form_btn" href="javascript:" class="btn btn-success pull-right" onclick="registerInt()" style="margin: 0px 5px; display: block;"><?= investigacion::t("registroproyecto", "Siguiente") ?></a>
-
-            </div>
-            <div class="col-xs-2">
-
-            </div>
-        </div>
+       
 
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="">
@@ -222,6 +211,18 @@ $institution=0;
         ],
     ])
 ?> -->
+
+        </div>
+    </div>
+     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="col-xs-6">
+        </div>
+        <div class="col-xs-4">
+            
+           <a id="register_form_btn" href="javascript:" class="btn btn-success pull-right" onclick="registerInt()" style="margin: 0px 5px; display: block;"><?= investigacion::t("registroproyecto", "Siguiente") ?></a>
+
+        </div>
+        <div class="col-xs-2">
 
         </div>
     </div>

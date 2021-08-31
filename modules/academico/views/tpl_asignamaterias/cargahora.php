@@ -60,7 +60,7 @@
         border-bottom: 1px;
         border-width: 1px;
         border-bottom-style: solid;
-        
+
     }
 
     .divRow {
@@ -150,12 +150,12 @@
                         <td class="marcoCel normal"><?php echo $detDist[$fil]['paca_fecha_fin'] ?></td>
                     </tr>
             <?php
-               
+
             }
 
             ?>
 
-           
+
         </tbody>
     </table>
     <br><br>
@@ -182,7 +182,7 @@
             </tr>
 
 
-             
+
                 <tr class="fila">
                     <td class="marcoCel"><?php echo 'HORAS CARGA DOCENTE BLOQUE' ?></td>
                     <td class="marcoCel"><?php if (($sumaHoras[0]['total_docente'] == null)) {
@@ -211,13 +211,13 @@
                                                 echo $sumaHoras[0]['total_tutorias'];
                                             }  ?></td>
                 </tr>
-            
+
         </tbody>
     </table>
     <br><br>
     <div class="divCelda bold titleDetalle " style="text-align: center">
-        
-        TOTAL, PROMEDIO HORAS SEMANALES: <h1><?php echo $promedio[0]['promedio'] ?></h1>
+
+        TOTAL, PROMEDIO HORAS SEMANALES: <h1><?php echo $promedio ?></h1>
     </div>
     <br><br>
     <br><br>

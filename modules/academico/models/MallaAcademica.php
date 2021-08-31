@@ -393,7 +393,6 @@ class MallaAcademica extends \yii\db\ActiveRecord
         return $resultData;
     }
     
-    
     function consultarAsignaturas($rows,$gest,$semestre,$modalidad) {
     $con = \Yii::$app->db_academico;
     $activo="A"; // $rows["mod_id"]
@@ -471,7 +470,7 @@ inner join db_academico.modalidad_estudio_unidad c on c.meun_id = b.meun_id
                             and c.meun_estado_logico = 1
                             and d.asi_estado = 1
                             and d.asi_estado_logico = 1
-                     ORDER BY a.maca_id, a.made_semestre, a.made_asi_requisito ASC
+                     ORDER BY a.made_semestre ASC
                         ";
   
 
@@ -533,17 +532,17 @@ ORDER BY semestre;
                $rows_in = $comando->queryAll(); */
 
              $per_id =   $rows["per_id"];
-             $est_id =   $rows["est_id"];
-             $matricula =   $rows["matricula"];
-             $creacion =   $rows["est_fecha_creacion"];
-             $categoria =   $rows["est_categoria"];
+           //  $est_id =   $rows["est_id"];
+           //  $matricula =   $rows["matricula"];
+            // $creacion =   $rows["est_fecha_creacion"];
+           //  $categoria =   $rows["est_categoria"];
              $uaca_id =   1;
              $mod_id =   $modalidad;
              $eaca_id =   $rows["eaca_id"];
-             $uaca_nombre =   $rows["uaca_nombre"];
-             $teac_id =   $rows["teac_id"];
-             $eaca_nombre =   $rows["eaca_nombre"];
-             $eaca_codigo =   $rows["eaca_codigo"];
+           //  $uaca_nombre =   $rows["uaca_nombre"];
+            // $teac_id =   $rows["teac_id"];
+            // $eaca_nombre =   $rows["eaca_nombre"];
+            // $eaca_codigo =   $rows["eaca_codigo"];
              $cedula =   $rows["per_cedula"];
              $estudiante =   $rows["estudiante"];
               $estado = '1';
@@ -601,7 +600,7 @@ ORDER BY semestre;
             
             }
 
-             \app\models\Utilities::putMessageLogFile('hose id:'.$hid["hose_id"]);
+           //  \app\models\Utilities::putMessageLogFile('hose id:'.$hid["hose_id"]);
 
         if (count($rows_in) > 0) {   
           $subjects= array();
@@ -647,6 +646,64 @@ from db_academico.periodo_academico plac
                      $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
                      $comando->bindParam(":asignatura", $asignatura, \PDO::PARAM_INT);
                      $statusasi = $comando->queryOne();
+                    
+                    /*
+
+                     // GET REQUIREMENTS   
+                      $asignatura = $rows_in[$i]["asi_id"]; // already exist
+                      $malla      = $rows["maca_id"];
+
+                  $sql = "
+  select a.made_id, a.maca_id, a.asi_id,b.asi_requisito from db_academico.malla_academica_detalle a
+inner join db_academico.malla_academica_requisito b on a.made_id = b.made_id 
+where a.maca_id= :maca_id and asi_id = :asi_id                
+                ";
+                     $comando = $con->createCommand($sql);
+                     $comando->bindParam(":maca_id", $malla, \PDO::PARAM_INT);
+                     $comando->bindParam(":asi_id", $asignatura, \PDO::PARAM_INT);
+                     $prereq = $comando->queryAll();
+                    
+                    $valider = 0;
+                      if (count($prereq) > 0) {   
+                    
+                     for ($k = 0; $k < count($prereq); $i++) {    
+          
+                          $requisitos = $prereq[$k]["asi_requisito"];
+                     
+                     $sqlloop = "
+                 select  a.asi_id, c.enac_id, a.maes_id, a.per_id
+ from db_academico.malla_academico_estudiante a
+ left join db_academico.promedio_malla_academico b on a.maes_id = b.maes_id
+   left join db_academico.estado_nota_academico c on c.enac_id = b.enac_id   
+   inner join db_academico.asignatura d on a.asi_id = d.asi_id
+   where a.per_id = :per_id
+   and a.asi_id = :requisitos
+                       and a.maes_estado = 1
+                    and a.maes_estado_logico = 1
+                    -- and b.pmac_estado = 1
+                    -- and b.pmac_estado_logico = 1
+                    -- and c.enac_estado = 1
+                    -- and c.enac_estado_logico = 1
+                ";
+                
+                     $comando = $con->createCommand($sqlloop);
+                     $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
+                     $comando->bindParam(":requisitos", $requisitos, \PDO::PARAM_INT);
+                     $statuspre = $comando->queryOne();
+
+                         if ($statuspre["enac_id"]==1 or $statuspre["enac_id"]==4){ 
+
+                          $valider++;
+                      }
+                      
+           if (($valider-1) == $k ){ $sstatuspre = True;   } else {  $sstatuspre = False;  }
+
+                      }
+                     
+
+                      } // else {
+                      
+                */
                  
                  if ($requisito !=Null) {  
                  $sql = "
@@ -671,66 +728,25 @@ from db_academico.periodo_academico plac
                      $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
                      $comando->bindParam(":requisito", $requisito, \PDO::PARAM_INT);
                      $statuspre = $comando->queryOne();
+
+                       if ($statuspre["enac_id"]==1 or $statuspre["enac_id"]==4 ){   
+             
+                      $sstatuspre = True; 
+
+                      }    Else {     $sstatuspre = False;     }
                             
-                     }
+                     }     Else {     $sstatuspre = True;      }
+
+                 //     } // line 652 - 676  -- GET STATUS REQUIREMENTS
+
+
+                   
                     
-         if ($statusasi["enac_id"]==3 or $statusasi["enac_id"]==2 ){ 
-                      $sstatusasi= $statusasi["enac_id"];  
+         if ($statusasi["enac_id"]==3 or $statusasi["enac_id"]==2 or $statusasi["enac_id"]== Null ){ 
+                      
                        
                       
-                        if ($requisito !=Null){                  
-                      $sstatuspre= $statuspre["enac_id"]; 
-                      
-                      
-                        if ($statuspre["enac_id"]==1 or $statuspre["enac_id"]==4 ){   
-
-
-             if ($subjects[1][0] == Null)  {                   
-                   $subjects[1][0] = $rows_in[$i]["made_codigo_asignatura"];
-                   $subjects[1][1] = $rows_in[$i]["asi_nombre"];    
-                   $subjects[1][2] = $rows_in[$i]["asi_id"]; 
-                    $subjects[1][3] = $rows_in[$i]["made_credito"];    }  
-                elseif ($subjects[2][0]== Null)  { 
-                    $subjects[2][0] = $rows_in[$i]["made_codigo_asignatura"];
-                    $subjects[2][1]  = $rows_in[$i]["asi_nombre"];   
-                    $subjects[2][2] = $rows_in[$i]["asi_id"]; 
-                    $subjects[2][3] = $rows_in[$i]["made_credito"];   }      
-                 elseif ($subjects[3][0]== Null)  { 
-                    $subjects[3][0] = $rows_in[$i]["made_codigo_asignatura"];
-                    $subjects[3][1]  = $rows_in[$i]["asi_nombre"];   
-                    $subjects[3][2] = $rows_in[$i]["asi_id"]; 
-                    $subjects[3][3] = $rows_in[$i]["made_credito"];   }  
-                 elseif ($subjects[4][0]== Null)  { 
-                    $subjects[4][0] = $rows_in[$i]["made_codigo_asignatura"];
-                    $subjects[4][1]  = $rows_in[$i]["asi_nombre"];   
-                    $subjects[4][2] = $rows_in[$i]["asi_id"]; 
-                    $subjects[4][3] = $rows_in[$i]["made_credito"];   } 
-                 elseif ($subjects[5][0]== Null)  { 
-                    $subjects[5][0] = $rows_in[$i]["made_codigo_asignatura"];
-                    $subjects[5][1]  = $rows_in[$i]["asi_nombre"];   
-                    $subjects[5][2] = $rows_in[$i]["asi_id"]; 
-                    $subjects[5][3] = $rows_in[$i]["made_credito"];   }  
-                 elseif ($subjects[6][0]== Null)  { 
-                    $subjects[6][0] = $rows_in[$i]["made_codigo_asignatura"];
-                    $subjects[6][1]  = $rows_in[$i]["asi_nombre"];   
-                    $subjects[6][2] = $rows_in[$i]["asi_id"]; 
-                    $subjects[6][3] = $rows_in[$i]["made_credito"];   } 
-                 elseif ($subjects[7][0]== Null)  { 
-                    $subjects[7][0] = $rows_in[$i]["made_codigo_asignatura"];
-                    $subjects[7][1]  = $rows_in[$i]["asi_nombre"];   
-                    $subjects[7][2] = $rows_in[$i]["asi_id"]; 
-                    $subjects[7][3] = $rows_in[$i]["made_credito"];   } 
-                 elseif ($subjects[8][0]== Null)  { 
-                    $subjects[8][0] = $rows_in[$i]["made_codigo_asignatura"];
-                    $subjects[8][1]  = $rows_in[$i]["asi_nombre"];   
-                    $subjects[8][2] = $rows_in[$i]["asi_id"]; 
-                    $subjects[8][3] = $rows_in[$i]["made_credito"];   }  
-
-
-                        }
-                         
-                       
-                           }else {      
+                        if ($sstatuspre = True){                     
                          
 
                      if ($subjects[1][0] == Null)  {                   
@@ -1040,8 +1056,8 @@ from db_academico.periodo_academico plac
                      // paal_id, hosd_id, paal_cantidad
                                       
                     $num_par =floor(floatval($getpaal["paal_cantidad"]/50+1)); 
-                    \app\models\Utilities::putMessageLogFile('crude:'.$getpaal["paal_cantidad"]);
-                    \app\models\Utilities::putMessageLogFile('floor:'.$num_par);
+                  //  \app\models\Utilities::putMessageLogFile('crude:'.$getpaal["paal_cantidad"]);
+                  //  \app\models\Utilities::putMessageLogFile('floor:'.$num_par);
 
                   // by  $getifasi["hosd_hora"] and $getifasi["hosd_bloque"] ==> daho_id=============>
                   
@@ -1123,30 +1139,42 @@ from db_academico.periodo_academico plac
                    $comando->bindParam(":paar", $num_par, \PDO::PARAM_INT);
                    $getmpar = $comando->queryOne();
 
-                    // update paal_cantidad
-                 
-                 $cantidadal = $getpaal["paal_cantidad"] + 1;  
-                $paal_id = $getpaal["paal_id"] ;  
-                $updatepaalcantidad = "
-                UPDATE db_academico.paralelos_alumno SET paal_cantidad = $cantidadal 
-                WHERE paal_id = $paal_id";
-                $comando = $con->createCommand($updatepaalcantidad);
-                $result = $comando->execute();
 
                   if ($getifasi["hosd_bloque"] == 1){
                     switch ($getifasi["hosd_hora"]) {
                         case 1:
+                        if ($asih1==Null){ 
                          $asih1 = $subjects[$iter][0]; $noasih1 = $subjects[$iter][1];
-                         $mpph1 =  $getmpar["mpp_id"];  // daho_id = Null {{mod, daho_id, update par}} 
-                        break;
+                         $mpph1 =  $getmpar["mpp_id"];   
+                        $flagger = 1;
+                         }          
+                    Else{   
+                     $flagger = 2;
+                        }
+                    break;             
+
                         case 2:
-                    $asih2 = $subjects[$iter][0];$noasih2 = $subjects[$iter][1];
-                     $mpph2 =  $getmpar["mpp_id"] ; // daho_id = Null {{mod, daho_id, update par}}
-                         break;      
+                      if ($asih2==Null){ 
+                         $asih2 = $subjects[$iter][0]; $noasih2 = $subjects[$iter][1];
+                         $mpph2 =  $getmpar["mpp_id"];   
+                        $flagger = 1;
+                         }          
+                    Else{   
+                     $flagger = 2;
+                        }
+                    break;    
+
+
                         case 3:
-                    $asih3 = $subjects[$iter][0];$noasih3 =$subjects[$iter][1];
-                     $mpph3 =  $getmpar["mpp_id"] ; // daho_id = Null {{mod, daho_id, update par}}
-                         break;                                    
+                      if ($asih3==Null){ 
+                         $asih3 = $subjects[$iter][0]; $noasih3 = $subjects[$iter][1];
+                         $mpph3 =  $getmpar["mpp_id"];   
+                        $flagger = 1;
+                         }          
+                    Else{   
+                     $flagger = 2;
+                        }
+                    break;                                     
                     }            
                    
                     }  
@@ -1156,18 +1184,108 @@ from db_academico.periodo_academico plac
                   if ($getifasi["hosd_bloque"] == 2){
                     switch ($getifasi["hosd_hora"]) {
                         case 1:
-                    $asih4 = $subjects[$iter][0]; $noasih4 = $subjects[$iter][1];
-                     $mpph4 =  $getmpar["mpp_id"] ; // daho_id = Null {{mod, daho_id, update par}}
-                        break;
+                   if ($asih4==Null){ 
+                         $asih4 = $subjects[$iter][0]; $noasih4 = $subjects[$iter][1];
+                         $mpph4 =  $getmpar["mpp_id"];   
+                        $flagger = 1;
+                         }          
+                    Else{   
+                     $flagger = 2;
+                        }
+                    break; 
                         case 2:
-                   $asih5 = $subjects[$iter][0]; $noasih5 = $subjects[$iter][1];
-                    $mpph5 =  $getmpar["mpp_id"] ; // daho_id = Null {{mod, daho_id, update par}}
-                         break;      
+                    if ($asih5==Null){ 
+                         $asih5 = $subjects[$iter][0]; $noasih5 = $subjects[$iter][1];
+                         $mpph5 =  $getmpar["mpp_id"];   
+                        $flagger = 1;
+                         }          
+                    Else{   
+                     $flagger = 2;
+                        }
+                    break;      
                         case 3:
-                    $asih6 = $subjects[$iter][0]; $noasih6 = $subjects[$iter][1];
-                    $mpph6 =  $getmpar["mpp_id"] ; // daho_id = Null {{mod, daho_id, update par}}
-                         break;                                    
-                    }        }          
+                     if ($asih6==Null){ 
+                         $asih6 = $subjects[$iter][0]; $noasih6 = $subjects[$iter][1];
+                         $mpph6 =  $getmpar["mpp_id"];   
+                        $flagger = 1;
+                         }          
+                    Else{   
+                     $flagger = 2;
+                        }
+                    break;                                    
+                    }        }   
+
+                    // update paal_cantidad
+
+                   if ($flagger ==1)   {
+                 
+                 $cantidadal = $getpaal["paal_cantidad"] + 1;  
+                $paal_id = $getpaal["paal_id"] ;  
+                $updatepaalcantidad = "
+                UPDATE db_academico.paralelos_alumno SET paal_cantidad = $cantidadal 
+                WHERE paal_id = $paal_id";
+                $comando = $con->createCommand($updatepaalcantidad);
+                $result = $comando->execute();  
+
+            
+                  $pla_api = $rows_pla["pla_id"];
+                  $asi_api = $subjects[$iter][0];
+                  $mod_api = $rows["mod_id"];
+                  $maca_api = $rows["maca_codigo"];
+                  $uaca_api = $rows["uaca_id"];
+                  $bloq_api = $getifasi["hosd_bloque"];
+                  $mpp_api =  $getmpar["mpp_id"]; 
+
+                $searchparsiiga = "
+                    SELECT  pasi_id,pasi_cantidad  from db_academico.paralelos_siiga
+                    WHERE pla_id = :pla_id 
+                    AND asi_id = :asi_id
+                    AND mod_id = :mod_id
+                    AND maca_id = :maca_id
+                    AND uaca_id = :uaca_id
+                    AND bloq_id = bloq_id
+                    ";
+
+                   $comando = $con->createCommand($searchparsiiga);
+                   $comando->bindParam(":pla_id",   $pla_api, \PDO::PARAM_INT);
+                   $comando->bindParam(":asi_id",   $asi_api, \PDO::PARAM_INT);
+                   $comando->bindParam(":mod_id",   $mod_api, \PDO::PARAM_INT);
+                   $comando->bindParam(":maca_id", $maca_api, \PDO::PARAM_INT);
+                   $comando->bindParam(":uaca_id", $uaca_api, \PDO::PARAM_INT);
+                   $comando->bindParam(":bloq_id", $bloq_api, \PDO::PARAM_INT);
+                   $existparsiiga = $comando->queryOne();
+                
+
+                  if ($existparsiiga["pasi_id"] == Null) { 
+
+                $createpartemp =
+                "
+                 INSERT INTO db_academico.paralelos_siiga
+    (pla_id,asi_id,mod_id,maca_id,uaca_id,bloq_id,mpp_id,siiga_paralelo,pasi_cantidad,pasi_usuario_ingreso,pasi_estado,pasi_fecha_creacion,pasi_estado_logico)
+
+                VALUES 
+    ('" . $pla_api . "','" . $asi_api . "','" . $mod_api . "','" . $maca_api . "','" . $uaca_api . "','" . $bloq_api . "','" . $mpp_api . "','1','1','1', '1',
+ '2021-08-30 17:10:53', '1')
+                ";
+
+                $comando = $con->createCommand($createpartemp);
+                     $fillpars = $comando->execute(); 
+
+
+                  } Else {                              
+
+                $cantpasi = $existparsiiga["pasi_cantidad"] + 1;  
+                $pasi_id = $existparsiiga["pasi_id"] ;  
+                $updatepasicant = "
+                UPDATE db_academico.paralelos_siiga SET pasi_cantidad = $cantpasi 
+                WHERE pasi_id = $pasi_id";
+                $comando = $con->createCommand($updatepasicant);
+                $result = $comando->execute();  
+                   
+
+                                                      }
+
+                 }            
                    
                     }  
 
@@ -1421,8 +1539,8 @@ from db_academico.periodo_academico plac
                      // paal_id, hosd_id, paal_cantidad
                                       
                      $num_par =floor(floatval($getpaal["paal_cantidad"]/50+1)); 
-                    \app\models\Utilities::putMessageLogFile('crude:'.$getpaal["paal_cantidad"]);
-                    \app\models\Utilities::putMessageLogFile('floor:'.$num_par);
+                //    \app\models\Utilities::putMessageLogFile('crude:'.$getpaal["paal_cantidad"]);
+               //     \app\models\Utilities::putMessageLogFile('floor:'.$num_par);
 
                   // by  $getifasi["hosd_hora"] and $getifasi["hosd_bloque"] ==> daho_id=============>
                   
@@ -1687,15 +1805,7 @@ from db_academico.periodo_academico plac
                    $comando->bindParam(":paar", $num_par, \PDO::PARAM_INT);
                    $getmpar = $comando->queryOne();
 
-                    // update paal_cantidad
-                
-                 $cantidadal = $getpaal["paal_cantidad"] + 1;  
-                $paal_id = $getpaal["paal_id"] ;  
-                $updatepaalcantidad = "
-                UPDATE db_academico.paralelos_alumno SET paal_cantidad = $cantidadal 
-                WHERE paal_id = $paal_id";
-                $comando = $con->createCommand($updatepaalcantidad);
-                $result = $comando->execute();
+          
 
                 // TO FIX CALCULATE STUDENT BY PAR
                 // TO ADD TIMESTAMP TO MPP 
@@ -1705,86 +1815,101 @@ from db_academico.periodo_academico plac
                     switch ($getifasi["hosd_hora"]) {
                         case 1:
                     if ($asih1==Null){ 
-                         $asih1 = $subjects[$iter][0]; $noasih1 = $subjects[$iter][1];
-                         $mpph1 =  $getmpar["mpp_id"];   
-                         } Else{        
-                   if ($asih9==Null){ 
+                    $asih1 = $subjects[$iter][0]; $noasih1 = $subjects[$iter][1];
+                    $mpph1 =  $getmpar["mpp_id"];   
+                    $flagger = 1;
+                         }        
+                    Elseif ($asih9==Null){ 
                     $asih9 = $subjects[$iter][0]; $noasih9 = $subjects[$iter][1];
-                    $mpph9 =  $getmpar["mpp_id"];   
+                    $mpph9 =  $getmpar["mpp_id"]; 
+                    $flagger = 1;  
                  }
-                    Else {
-                 $asih10 = $subjects[$iter][0]; $noasih10 = $subjects[$iter][1];
+                    Elseif ($asih10==Null){ 
+                    $asih10 = $subjects[$iter][0]; $noasih10 = $subjects[$iter][1];
                     $mpph10 =  $getmpar["mpp_id"];   
+                    $flagger = 1;
+                    }     
+                    Else{   
 
-                    }                     
+                     $flagger = 2;
                         }
                     break;
+
+
                         case 2:
                     if ($asih2==Null){ 
-                         $asih2 = $subjects[$iter][0]; $noasih2 = $subjects[$iter][1];
-                         $mpph2 =  $getmpar["mpp_id"];   
-                         } Else{            
-
-                    if ($asih9==Null){ 
+                    $asih2 = $subjects[$iter][0]; $noasih2 = $subjects[$iter][1];
+                    $mpph2 =  $getmpar["mpp_id"]; 
+                    $flagger = 1;    
+                         }            
+                     Elseif ($asih9==Null){ 
                     $asih9 = $subjects[$iter][0]; $noasih9 = $subjects[$iter][1];
-                    $mpph9 =  $getmpar["mpp_id"];   
+                    $mpph9 =  $getmpar["mpp_id"]; 
+                    $flagger = 1;  
                  }
-                    Else {
-                 $asih10 = $subjects[$iter][0]; $noasih10 = $subjects[$iter][1];
+                    Elseif ($asih10==Null){ 
+                    $asih10 = $subjects[$iter][0]; $noasih10 = $subjects[$iter][1];
                     $mpph10 =  $getmpar["mpp_id"];   
+                    $flagger = 1;
+                    }     
+                    Else{   
 
-                    } 
-                                            }; 
-                         break; 
+                     $flagger = 2;
+                        }
+                    break;
+
+
+
                         case 3:
                      if ($asih3==Null){ 
-                         $asih3 = $subjects[$iter][0]; $noasih3 = $subjects[$iter][1];
-                         $mpph3 =  $getmpar["mpp_id"];   
-                         } Else{ 
-
-                   if ($asih9==Null){ 
+                        $asih3 = $subjects[$iter][0]; $noasih3 = $subjects[$iter][1];
+                        $mpph3 =  $getmpar["mpp_id"];   
+                        $flagger = 1;  
+                         }
+                     Elseif ($asih9==Null){ 
                     $asih9 = $subjects[$iter][0]; $noasih9 = $subjects[$iter][1];
-                    $mpph9 =  $getmpar["mpp_id"];   
+                    $mpph9 =  $getmpar["mpp_id"]; 
+                    $flagger = 1;  
                  }
-                    Else {
-                 $asih10 = $subjects[$iter][0]; $noasih10 = $subjects[$iter][1];
+                    Elseif ($asih10==Null){ 
+                    $asih10 = $subjects[$iter][0]; $noasih10 = $subjects[$iter][1];
                     $mpph10 =  $getmpar["mpp_id"];   
+                    $flagger = 1;
+                    }     
+                    Else{   
 
-                    } 
-
-
+                     $flagger = 2;
                         }
-                         break;   
+                    break; 
+
+
                         case 4:
                     if ($asih4==Null){ 
                          $asih4 = $subjects[$iter][0]; $noasih4 = $subjects[$iter][1];
                          $mpph4 =  $getmpar["mpp_id"];   
-                         } Else{ 
-
-                                  
-                     if ($asih9==Null){ 
+                        $flagger = 1;  
+                         }
+                    Elseif ($asih9==Null){ 
                     $asih9 = $subjects[$iter][0]; $noasih9 = $subjects[$iter][1];
-                    $mpph9 =  $getmpar["mpp_id"];   
+                    $mpph9 =  $getmpar["mpp_id"]; 
+                    $flagger = 1;  
                  }
-                    Else {
-                 $asih10 = $subjects[$iter][0]; $noasih10 = $subjects[$iter][1];
+                    Elseif ($asih10==Null){ 
+                    $asih10 = $subjects[$iter][0]; $noasih10 = $subjects[$iter][1];
                     $mpph10 =  $getmpar["mpp_id"];   
+                    $flagger = 1;
+                    }     
+                    Else{   
 
-                    } 
-
+                     $flagger = 2;
                         }
-                         break;                         
+                    break;
+   
+
+
                     }            
                    
                     }  
-
-
-                
-
-                
-
-
-
 
 
                   if ($getifasi["hosd_bloque"] == 2){
@@ -1793,87 +1918,171 @@ from db_academico.periodo_academico plac
                     if ($asih5==Null){ 
                          $asih5 = $subjects[$iter][0]; $noasih5 = $subjects[$iter][1];
                          $mpph5 =  $getmpar["mpp_id"];   
-                         } Else{ 
-                     if ($asih11==Null){ 
+                        $flagger = 1;
+                         }        
+                    Elseif ($asih11==Null){ 
                     $asih11 = $subjects[$iter][0]; $noasih11 = $subjects[$iter][1];
-                    $mpph11 =  $getmpar["mpp_id"];   
+                    $mpph11 =  $getmpar["mpp_id"]; 
+                    $flagger = 1;  
                  }
-                    Else {
-                 $asih12 = $subjects[$iter][0]; $noasih12 = $subjects[$iter][1];
+                    Elseif ($asih12=Null){ 
+                    $asih12 = $subjects[$iter][0]; $noasih12 = $subjects[$iter][1];
                     $mpph12 =  $getmpar["mpp_id"];   
+                    $flagger = 1;
+                    }     
+                    Else{   
 
-                    }
-                        }; 
-                         break; 
+                     $flagger = 2;
+                        }
+                    break;
+
+
                         case 2:
                     if ($asih6==Null){ 
                          $asih6 = $subjects[$iter][0]; $noasih6 = $subjects[$iter][1];
                          $mpph6 =  $getmpar["mpp_id"];   
-                         } Else{ 
-                     if ($asih11==Null){ 
+                            $flagger = 1;
+                         }        
+                    Elseif ($asih11==Null){ 
                     $asih11 = $subjects[$iter][0]; $noasih11 = $subjects[$iter][1];
-                    $mpph11 =  $getmpar["mpp_id"];   
+                    $mpph11 =  $getmpar["mpp_id"]; 
+                    $flagger = 1;  
                  }
-                    Else {
-                 $asih12 = $subjects[$iter][0]; $noasih12 = $subjects[$iter][1];
+                    Elseif ($asih12=Null){ 
+                    $asih12 = $subjects[$iter][0]; $noasih12 = $subjects[$iter][1];
                     $mpph12 =  $getmpar["mpp_id"];   
+                    $flagger = 1;
+                    }     
+                    Else{   
 
-                    }
-                        }; 
-                         break; 
+                     $flagger = 2;
+                        }
+                    break;
+
+
                         case 3:
                      if ($asih7==Null){ 
                          $asih7 = $subjects[$iter][0]; $noasih7 = $subjects[$iter][1];
                          $mpph7 =  $getmpar["mpp_id"];   
-                         } Else{ 
-                     if ($asih11==Null){ 
+                            $flagger = 1;
+                         }        
+                    Elseif ($asih11==Null){ 
                     $asih11 = $subjects[$iter][0]; $noasih11 = $subjects[$iter][1];
-                    $mpph11 =  $getmpar["mpp_id"];   
+                    $mpph11 =  $getmpar["mpp_id"]; 
+                    $flagger = 1;  
                  }
-                    Else {
-                 $asih12 = $subjects[$iter][0]; $noasih12 = $subjects[$iter][1];
+                    Elseif ($asih12=Null){ 
+                    $asih12 = $subjects[$iter][0]; $noasih12 = $subjects[$iter][1];
                     $mpph12 =  $getmpar["mpp_id"];   
+                    $flagger = 1;
+                    }     
+                    Else{   
 
-                    }
-                        }; 
-                         break; 
+                     $flagger = 2;
+                        }
+                    break;
+
                        case 4:
                     if ($asih8==Null){ 
                          $asih8 = $subjects[$iter][0]; $noasih8 = $subjects[$iter][1];
                          $mpph8 =  $getmpar["mpp_id"];   
-                         } Else{ 
-                     if ($asih11==Null){ 
+                            $flagger = 1;
+                         }        
+                    Elseif ($asih11==Null){ 
                     $asih11 = $subjects[$iter][0]; $noasih11 = $subjects[$iter][1];
-                    $mpph11 =  $getmpar["mpp_id"];   
+                    $mpph11 =  $getmpar["mpp_id"]; 
+                    $flagger = 1;  
                  }
-                    Else {
-                 $asih12 = $subjects[$iter][0]; $noasih12 = $subjects[$iter][1];
+                    Elseif ($asih12=Null){ 
+                    $asih12 = $subjects[$iter][0]; $noasih12 = $subjects[$iter][1];
                     $mpph12 =  $getmpar["mpp_id"];   
+                    $flagger = 1;
+                    }     
+                    Else{   
 
-                    }
-                        }; 
-                         break;                          
-                    }        }          
+                     $flagger = 2;
+                        }
+                    break;                       
+                    }        }    
+
+                // update paal_cantidad
+
+                if ($flagger ==1)   {
+                 $cantidadal = $getpaal["paal_cantidad"] + 1;  
+                $paal_id = $getpaal["paal_id"] ;  
+                $updatepaalcantidad = "
+                UPDATE db_academico.paralelos_alumno SET paal_cantidad = $cantidadal 
+                WHERE paal_id = $paal_id";
+                $comando = $con->createCommand($updatepaalcantidad);
+                $result = $comando->execute();
+
+
+                  $pla_api = $rows_pla["pla_id"];
+                  $asi_api = $subjects[$iter][0];
+                  $mod_api = $rows["mod_id"];
+                  $maca_api = $rows["maca_codigo"];
+                  $uaca_api = $rows["uaca_id"];
+                  $bloq_api = $getifasi["hosd_bloque"];
+                  $mpp_api =  $getmpar["mpp_id"]; 
+
+                $searchparsiiga = "
+                    SELECT  pasi_id,pasi_cantidad  from db_academico.paralelos_siiga
+                    WHERE pla_id = :pla_id 
+                    AND asi_id = :asi_id
+                    AND mod_id = :mod_id
+                    AND maca_id = :maca_id
+                    AND uaca_id = :uaca_id
+                    AND bloq_id = bloq_id
+                    ";
+
+                   $comando = $con->createCommand($searchparsiiga);
+                   $comando->bindParam(":pla_id",   $pla_api, \PDO::PARAM_INT);
+                   $comando->bindParam(":asi_id",   $asi_api, \PDO::PARAM_INT);
+                   $comando->bindParam(":mod_id",   $mod_api, \PDO::PARAM_INT);
+                   $comando->bindParam(":maca_id", $maca_api, \PDO::PARAM_INT);
+                   $comando->bindParam(":uaca_id", $uaca_api, \PDO::PARAM_INT);
+                   $comando->bindParam(":bloq_id", $bloq_api, \PDO::PARAM_INT);
+                   $existparsiiga = $comando->queryOne();
+                
+
+                  if ($existparsiiga["pasi_id"] == Null) { 
+
+                $createpartemp =
+                "
+                 INSERT INTO db_academico.paralelos_siiga
+    (pla_id,asi_id,mod_id,maca_id,uaca_id,bloq_id,mpp_id,siiga_paralelo,pasi_cantidad,pasi_usuario_ingreso,pasi_estado,pasi_fecha_creacion,pasi_estado_logico)
+
+                VALUES 
+    ('" . $pla_api . "','" . $asi_api . "','" . $mod_api . "','" . $maca_api . "','" . $uaca_api . "','" . $bloq_api . "','" . $mpp_api . "','1','1','1', '1',
+ '2021-08-30 17:10:53', '1')
+                ";
+    
+                 $comando = $con->createCommand($createpartemp);
+                 $fillpars = $comando->execute(); 
+
+                  } Else {                              
+
+                $cantpasi = $existparsiiga["pasi_cantidad"] + 1;  
+                $pasi_id = $existparsiiga["pasi_id"] ;  
+                $updatepasicant = "
+                UPDATE db_academico.paralelos_siiga SET pasi_cantidad = $cantpasi 
+                WHERE pasi_id = $pasi_id";
+                $comando = $con->createCommand($updatepasicant);
+                $result = $comando->execute();  
+                      
+                   
+
+                                                      }
+
+                     }   
+
                    
                     }  
-
-
-
                     
 
-                     }//endfor       
+                     }//endfor    
 
-
-
-                            $sql = "INSERT INTO db_academico.planificacion_estudiante
-                    (pla_id, per_id, pes_jornada,pes_cod_carrera, pes_carrera, pes_semestre, pes_dni, pes_nombres,pes_mat_b1_h1_cod, pes_mat_b1_h2_cod, pes_mat_b1_h3_cod, pes_mat_b1_h4_cod, pes_mat_b2_h1_cod,
-                     pes_mat_b2_h2_cod,pes_mat_b2_h3_cod,pes_mat_b2_h4_cod, pes_mat_b1_h1_nombre, pes_mat_b1_h2_nombre, pes_mat_b1_h3_nombre, pes_mat_b1_h4_nombre, pes_mat_b2_h1_nombre,  pes_mat_b2_h2_nombre, pes_mat_b2_h3_nombre, pes_mat_b2_h4_nombre, pes_mod_b1_h1,  pes_mod_b1_h2,  pes_mod_b1_h3,  pes_mod_b1_h4,  pes_mod_b2_h1,  pes_mod_b2_h2,  pes_mod_b2_h3, 
-                        pes_mod_b2_h4, pes_jor_b1_h1,  pes_jor_b1_h2,  pes_jor_b1_h3,  pes_jor_b1_h4,  pes_jor_b2_h1,  pes_jor_b2_h2,  pes_jor_b2_h3, 
-                        pes_jor_b2_h4, pes_mat_b1_h1_mpp, pes_mat_b1_h2_mpp, pes_mat_b1_h3_mpp, pes_mat_b1_h4_mpp, pes_mat_b2_h1_mpp,
-                     pes_mat_b2_h2_mpp,pes_mat_b2_h3_mpp,pes_mat_b2_h4_mpp, pes_estado, pes_estado_logico)
-                    values (" . $rows_pla["pla_id"] ."," . $rows["per_id"] . ", '" . $rows["uaca_id"] . "','" . $rows["maca_codigo"] . "', '" . $rows["maca_nombre"] . "','" . $student_semester . "', '" . $rows["per_cedula"] . "', '" . $rows["estudiante"] . "', '" . $asih1 . "', '" . $asih2 . "', '" . $asih3 . "', '" . $asih7 . "', '" . $asih4 . "', '" . $asih5 . "', '" . $asih6 . "', '" . $asih8 . "', '" . $noasih1 . "', '" . $noasih2 . "', '" . $noasih3 . "', '" . $noasih7 . "', '" . $noasih4 . "', '" . $noasih5 . "', '" . $noasih6 . "', '" . $noasih8 . "',". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",". $rows["mod_id"] .",  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "',  '" . $jornadas . "','" . $mpph1 . "','" . $mpph2 . "','" . $mpph3 . "','" . $mpph7 . "','" . $mpph4 . "','" . $mpph5 . "','" . $mpph6 . "','" . $mpph8 . "', '" . $estado . "', '" . $estado ."')"; 
-
-                
+        
                         $already = "
                         SELECT pes_id
                         FROM db_academico.planificacion_estudiante 
@@ -1918,7 +2127,7 @@ from db_academico.periodo_academico plac
                    $rows_plav = $comando->queryOne();
               
               if ($rows_plav) { $ok=1; 
-               \app\models\Utilities::putMessageLogFile("Returning ".$ok); 
+            //   \app\models\Utilities::putMessageLogFile("Returning ".$ok); 
                
               return true; 
                }    

@@ -101,6 +101,11 @@ $('#cmb_periodo').change(function () {
 
     });
 
+    // Activar asignación de estudiantes
+    $('#btn_asignar_estudiante').click(function() {
+        asignararEstudiantesConfirm();
+    });
+
     $('#cmb_unidad_dis').change(function () {
         console.log("entro por change");
         $('#cmb_paralelo').val('0');
@@ -1083,3 +1088,25 @@ function NewGuid() {
     return sGuid;
 }
 
+function insertarEst(){
+    $('#confirmModal').modal('toggle');
+}
+
+
+function asignararEstudiantesConfirm(){
+    // Sólo llama a la función del controlador}
+    var link = $('#txth_base').val() + "/academico/distributivoacademico/savedistestudiantes";
+    var arrParams = new Object();
+    arrParams.paca_id = $('#cmb_periodo option:selected').val();
+
+    if (!validateForm()) {
+        requestHttpAjax(link, arrParams, function(response) {
+            showAlert(response.status, response.label, response.message);
+            if (response.status == "OK") {
+                setTimeout(function() {
+                    window.location.href = $('#txth_base').val() + "/academico/distributivoacademico/index";
+                }, 3000);
+            }
+        }, true);
+    }
+}

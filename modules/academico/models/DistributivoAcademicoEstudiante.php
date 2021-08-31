@@ -2,8 +2,8 @@
 
 namespace app\modules\academico\models;
 
-use yii\data\ArrayDataProvider;
 use Yii;
+use yii\data\ArrayDataProvider;
 
 /**
  * This is the model class for table "distributivo_academico_estudiante".
@@ -22,63 +22,62 @@ use Yii;
  */
 class DistributivoAcademicoEstudiante extends \yii\db\ActiveRecord {
 
-    /**
-     * {@inheritdoc}
-     */
-    public static function tableName() {
-        return 'distributivo_academico_estudiante';
-    }
+	/**
+	 * {@inheritdoc}
+	 */
+	public static function tableName() {
+		return 'distributivo_academico_estudiante';
+	}
 
-    /**
-     * @return \yii\db\Connection the database connection used by this AR class.
-     */
-    public static function getDb() {
-        return Yii::$app->get('db_academico');
-    }
+	/**
+	 * @return \yii\db\Connection the database connection used by this AR class.
+	 */
+	public static function getDb() {
+		return Yii::$app->get('db_academico');
+	}
 
-    /**
-     * {@inheritdoc}
-     */
-    public function rules() {
-        return [
-            [['daca_id', 'est_id', 'daes_estado', 'daes_estado_logico'], 'required'],
-            [['daca_id', 'est_id'], 'integer'],
-            [['daes_fecha_creacion', 'daes_fecha_modificacion', 'daes_fecha_registro'], 'safe'],
-            [['daes_estado', 'daes_estado_logico'], 'string', 'max' => 1],
-            [['daca_id'], 'exist', 'skipOnError' => true, 'targetClass' => DistributivoAcademico::className(), 'targetAttribute' => ['daca_id' => 'daca_id']],
-            [['est_id'], 'exist', 'skipOnError' => true, 'targetClass' => Estudiante::className(), 'targetAttribute' => ['est_id' => 'est_id']],
-        ];
-    }
+	/**
+	 * {@inheritdoc}
+	 */
+	public function rules() {
+		return [
+			[['daca_id', 'est_id', 'daes_estado', 'daes_estado_logico'], 'required'],
+			[['daca_id', 'est_id'], 'integer'],
+			[['daes_fecha_creacion', 'daes_fecha_modificacion', 'daes_fecha_registro'], 'safe'],
+			[['daes_estado', 'daes_estado_logico'], 'string', 'max' => 1],
+			[['daca_id'], 'exist', 'skipOnError' => true, 'targetClass' => DistributivoAcademico::className(), 'targetAttribute' => ['daca_id' => 'daca_id']],
+			[['est_id'], 'exist', 'skipOnError' => true, 'targetClass' => Estudiante::className(), 'targetAttribute' => ['est_id' => 'est_id']],
+		];
+	}
 
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getEst() {
-        return $this->hasOne(Estudiante::className(), ['est_id' => 'est_id']);
-    }
+	/**
+	 * @return \yii\db\ActiveQuery
+	 */
+	public function getEst() {
+		return $this->hasOne(Estudiante::className(), ['est_id' => 'est_id']);
+	}
 
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getDaca() {
-        return $this->hasOne(DistributivoAcademico::className(), ['daca_id' => 'daca_id']);
-    }
+	/**
+	 * @return \yii\db\ActiveQuery
+	 */
+	public function getDaca() {
+		return $this->hasOne(DistributivoAcademico::className(), ['daca_id' => 'daca_id']);
+	}
 
-  
-    public function getListadoDistributivoEstudiante($daca_id, $search = null, $onlyData = false){
-        $con_academico = \Yii::$app->db_academico;
-        $con_db = \Yii::$app->db;
-        $search_cond = "%" . $search . "%";
-        $estado = "1";
-        $str_search = "";
+	public function getListadoDistributivoEstudiante($daca_id, $search = null, $onlyData = false) {
+		$con_academico = \Yii::$app->db_academico;
+		$con_db = \Yii::$app->db;
+		$search_cond = "%" . $search . "%";
+		$estado = "1";
+		$str_search = "";
 
-        if (isset($search) && $search != "") {
-            $str_search = "(pe.per_pri_nombre like :search OR ";
-            $str_search .= "pe.per_pri_apellido like :search OR ";
-            $str_search .= "pe.per_cedula like :search) AND ";
-        }
+		if (isset($search) && $search != "") {
+			$str_search = "(pe.per_pri_nombre like :search OR ";
+			$str_search .= "pe.per_pri_apellido like :search OR ";
+			$str_search .= "pe.per_cedula like :search) AND ";
+		}
 
-        $sql = "SELECT 
+		$sql = "SELECT
                     de.daes_id AS Id,
                     CONCAT(pe.per_pri_nombre, ' ', pe.per_pri_apellido) AS Nombres,
                     pe.per_cedula AS Cedula,
@@ -86,21 +85,21 @@ class DistributivoAcademicoEstudiante extends \yii\db\ActiveRecord {
                     ifnull(pe.per_celular, '') AS Telefono,
                     e.est_matricula AS Matricula,
                     ea.eaca_nombre AS Carrera
-                FROM 
-                    " . $con_academico->dbname . ".distributivo_academico AS da 
+                FROM
+                    " . $con_academico->dbname . ".distributivo_academico AS da
                     INNER JOIN " . $con_academico->dbname . ".distributivo_academico_estudiante AS de ON da.daca_id = de.daca_id
                     INNER JOIN " . $con_academico->dbname . ".estudiante AS e ON e.est_id = de.est_id
                     INNER JOIN " . $con_academico->dbname . ".estudiante_carrera_programa AS ec ON ec.est_id = e.est_id
                     INNER JOIN " . $con_academico->dbname . ".modalidad_estudio_unidad AS mu ON mu.meun_id = ec.meun_id
                     INNER JOIN " . $con_academico->dbname . ".estudio_academico AS ea ON ea.eaca_id = mu.eaca_id
                     INNER JOIN " . $con_db->dbname . ".persona AS pe ON e.per_id = pe.per_id
-                WHERE 
-                    $str_search 
-                    da.daca_id =:daca_id AND 
+                WHERE
+                    $str_search
+                    da.daca_id =:daca_id AND
                     da.daca_estado = :estado AND
-                    da.daca_estado_logico = :estado AND 
+                    da.daca_estado_logico = :estado AND
                     de.daes_estado = :estado AND
-                    de.daes_estado_logico = :estado AND 
+                    de.daes_estado_logico = :estado AND
                     e.est_estado = :estado AND
                     e.est_estado_logico = :estado AND
                     ec.ecpr_estado = :estado AND
@@ -112,58 +111,60 @@ class DistributivoAcademicoEstudiante extends \yii\db\ActiveRecord {
                     pe.per_estado = :estado AND
                     pe.per_estado_logico = :estado ";
 
-        $comando = $con_academico->createCommand($sql);
-        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
-        $comando->bindParam(":daca_id", $daca_id, \PDO::PARAM_INT);
-        if (isset($search) && $search != "") {
-            $comando->bindParam(":search", $search_cond, \PDO::PARAM_STR);
-        }
+		$comando = $con_academico->createCommand($sql);
+		$comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+		$comando->bindParam(":daca_id", $daca_id, \PDO::PARAM_INT);
+		if (isset($search) && $search != "") {
+			$comando->bindParam(":search", $search_cond, \PDO::PARAM_STR);
+		}
 
-        $res = $comando->queryAll();
-        if ($onlyData)
-            return $res;
-        $dataProvider = new ArrayDataProvider([
-            'key' => 'Id',
-            'allModels' => $res,
-            'pagination' => [
-                'pageSize' => Yii::$app->params["pageSize"],
-            ],
-            'sort' => [
-                'attributes' => ['Nombres', "Cedula", "Cedula", "Correo", "Carrera"],
-            ],
-        ]);
+		$res = $comando->queryAll();
+		if ($onlyData) {
+			return $res;
+		}
 
-        return $dataProvider;
-    }
+		$dataProvider = new ArrayDataProvider([
+			'key' => 'Id',
+			'allModels' => $res,
+			'pagination' => [
+				'pageSize' => Yii::$app->params["pageSize"],
+			],
+			'sort' => [
+				'attributes' => ['Nombres', "Cedula", "Cedula", "Correo", "Carrera"],
+			],
+		]);
 
-    public function getEstudiantesXUnidadAcademica($uaca_id, $search){
-        $con_academico = \Yii::$app->db_academico;
-        $con_db = \Yii::$app->db;
-        $search_cond = "%" . $search . "%";
-        $estado = "1";
-        $str_search = "";
+		return $dataProvider;
+	}
 
-        if (isset($search) && $search != "") {
-            $str_search = "(pe.per_pri_nombre like :search OR ";
-            $str_search .= "pe.per_pri_apellido like :search OR ";
-            $str_search .= "pe.per_cedula like :search) AND ";
-        }
+	public function getEstudiantesXUnidadAcademica($uaca_id, $search) {
+		$con_academico = \Yii::$app->db_academico;
+		$con_db = \Yii::$app->db;
+		$search_cond = "%" . $search . "%";
+		$estado = "1";
+		$str_search = "";
 
-        $sql = "SELECT 
+		if (isset($search) && $search != "") {
+			$str_search = "(pe.per_pri_nombre like :search OR ";
+			$str_search .= "pe.per_pri_apellido like :search OR ";
+			$str_search .= "pe.per_cedula like :search) AND ";
+		}
+
+		$sql = "SELECT
                     e.est_id AS id,
                     CONCAT(pe.per_pri_nombre, ' ', pe.per_pri_apellido, ' - ', pe.per_cedula) AS value,
                     CONCAT(pe.per_pri_nombre, ' ', pe.per_pri_apellido, ' - ', pe.per_cedula) AS label
-                FROM 
-                    " . $con_academico->dbname . ".estudiante AS e 
+                FROM
+                    " . $con_academico->dbname . ".estudiante AS e
                     INNER JOIN " . $con_academico->dbname . ".estudiante_carrera_programa AS ec ON ec.est_id = e.est_id
                     INNER JOIN " . $con_academico->dbname . ".modalidad_estudio_unidad AS mu ON mu.meun_id = ec.meun_id
                     INNER JOIN " . $con_academico->dbname . ".estudio_academico AS ea ON ea.eaca_id = mu.eaca_id
                     -- INNER JOIN " . $con_academico->dbname . ".promocion_programa AS pp ON pp.eaca_id = ea.eaca_id
                     INNER JOIN " . $con_academico->dbname . ".unidad_academica AS ua ON ua.uaca_id = mu.uaca_id
                     INNER JOIN " . $con_db->dbname . ".persona AS pe ON e.per_id = pe.per_id
-                WHERE 
-                    $str_search 
-                    ua.uaca_id =:uaca_id AND 
+                WHERE
+                    $str_search
+                    ua.uaca_id =:uaca_id AND
                     e.est_estado = :estado AND
                     e.est_estado_logico = :estado AND
                     ec.ecpr_estado = :estado AND
@@ -179,72 +180,140 @@ class DistributivoAcademicoEstudiante extends \yii\db\ActiveRecord {
                     pe.per_estado = :estado AND
                     pe.per_estado_logico = :estado ";
 
-        $comando = $con_academico->createCommand($sql);
-        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
-        $comando->bindParam(":uaca_id", $uaca_id, \PDO::PARAM_INT);
-        if (isset($search) && $search != "") {
-            $comando->bindParam(":search", $search_cond, \PDO::PARAM_STR);
-        }
+		$comando = $con_academico->createCommand($sql);
+		$comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+		$comando->bindParam(":uaca_id", $uaca_id, \PDO::PARAM_INT);
+		if (isset($search) && $search != "") {
+			$comando->bindParam(":search", $search_cond, \PDO::PARAM_STR);
+		}
 
-        $res = $comando->queryAll();
-        return $res;
-    }
-    /**
-     * Function consultarHorarioEstudiante
-     * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>    
-     * @property integer $userid
-     * @return  
-     */
+		$res = $comando->queryAll();
+		return $res;
+	}
+	/**
+	 * Function consultarHorarioEstudiante
+	 * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
+	 * @property integer $userid
+	 * @return
+	 */
 
-    public function consultarHorarioEstudiante($est_id){
-        $con = \Yii::$app->db_academico;
-        $con1 = \Yii::$app->db;        
-        $estado = "1";         
-        $sql = "SELECT 
-                    dae.daca_id, 
-                    dae.est_id, 
-                    dac.asi_id, 
-                    dac.pro_id, 
-                    CASE dac.daca_jornada  
-                        WHEN 1 THEN 'Matutino'  
-                        WHEN 2 THEN 'Nocturno'  
+	public function consultarHorarioEstudiante($est_id) {
+		$con = \Yii::$app->db_academico;
+		$con1 = \Yii::$app->db;
+		$estado = "1";
+		$sql = "SELECT
+                    dae.daca_id,
+                    dae.est_id,
+                    dac.asi_id,
+                    dac.pro_id,
+                    CASE dac.daca_jornada
+                        WHEN 1 THEN 'Matutino'
+                        WHEN 2 THEN 'Nocturno'
                         WHEN 3 THEN 'Semipresencial'
                         WHEN 4 THEN 'Distancia'
-                    END AS daca_jornada, 
+                    END AS daca_jornada,
                     dac.daca_horario,
-                    ifnull((SELECT ifnull(daho_descripcion,' ') 
-                    FROM " . $con->dbname . ".distributivo_academico_horario dah 
+                    ifnull((SELECT ifnull(daho_descripcion,' ')
+                    FROM " . $con->dbname . ".distributivo_academico_horario dah
                     WHERE dah.daho_id = dac.daho_id),'') as  daho_descripcion,
                     asig.asi_nombre as materia,
                     concat(pers.per_pri_nombre, ' ', pers.per_pri_apellido) as profesor
                 FROM  " . $con->dbname . ".distributivo_academico_estudiante dae
                 INNER JOIN " . $con->dbname . ".distributivo_academico dac ON dac.daca_id = dae.daca_id
-                INNER JOIN " . $con->dbname . ".periodo_academico pea ON pea.paca_id = dac.paca_id 
-                INNER JOIN " . $con->dbname . ".asignatura asig ON asig.asi_id = dac.asi_id 
-                INNER JOIN " . $con->dbname . ".profesor prof ON prof.pro_id = dac.pro_id 
-                INNER JOIN " . $con1->dbname . ".persona pers ON pers.per_id = prof.per_id 
+                INNER JOIN " . $con->dbname . ".periodo_academico pea ON pea.paca_id = dac.paca_id
+                INNER JOIN " . $con->dbname . ".asignatura asig ON asig.asi_id = dac.asi_id
+                INNER JOIN " . $con->dbname . ".profesor prof ON prof.pro_id = dac.pro_id
+                INNER JOIN " . $con1->dbname . ".persona pers ON pers.per_id = prof.per_id
                 WHERE  dae.est_id = :est_id AND
                 pea.paca_activo = 'A' AND
                 dae.daes_estado = :estado AND
                 dae.daes_estado_logico = :estado";
 
-        $comando = $con->createCommand($sql);
-        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
-        $comando->bindParam(":est_id", $est_id, \PDO::PARAM_INT);        
+		$comando = $con->createCommand($sql);
+		$comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+		$comando->bindParam(":est_id", $est_id, \PDO::PARAM_INT);
 
-        $res = $comando->queryAll();
-        //return $res;
-        $dataProvider = new ArrayDataProvider([
-            'key' => 'Id',
-            'allModels' => $res,
-            'pagination' => [
-                'pageSize' => Yii::$app->params["pageSize"],
-            ],
-            'sort' => [
-                //'attributes' => ['Nombres', "Cedula", "Cedula", "Correo", "Carrera"],
-            ],
-        ]);
+		$res = $comando->queryAll();
+		//return $res;
+		$dataProvider = new ArrayDataProvider([
+			'key' => 'Id',
+			'allModels' => $res,
+			'pagination' => [
+				'pageSize' => Yii::$app->params["pageSize"],
+			],
+			'sort' => [
+				//'attributes' => ['Nombres', "Cedula", "Cedula", "Correo", "Carrera"],
+			],
+		]);
 
-        return $dataProvider;
-    }  
+		return $dataProvider;
+	}
+
+	/**
+	 * Function consultarHorarioEstudiante
+	 * @author  Luis Cajamarca  <analistadesarrollo04@uteg.edu.ec>
+	 * @property integer $daes_id
+	 * @return
+	 */
+
+	public function insertarDaesEstudiante($paca_id) {
+		$con = \Yii::$app->db_academico;
+		$transaction = $con->beginTransaction();
+		$estado = "1";
+		$date = date(Yii::$app->params['dateTimeByDefault']);
+		try {
+			$sql = "INSERT INTO db_academico.distributivo_academico_estudiante
+                (daca_id, est_id, daes_fecha_registro, daes_estado, daes_fecha_creacion, daes_fecha_modificacion, daes_estado_logico)
+                (SELECT distinct
+                        daca.daca_id,
+                        est.est_id,
+                        '$date',
+                        1,
+                        '$date',
+                        Null,
+                        1
+                FROM
+                    (SELECT  pera.paca_id as id,
+                            ifnull(CONCAT(blq.baca_nombre,'-',sem.saca_nombre,' ',sem.saca_anio),'') as nombre,
+                            blq.baca_nombre as bloque
+                    FROM db_academico.periodo_academico pera
+                    inner join db_academico.semestre_academico sem  ON sem.saca_id = pera.saca_id
+                    inner join db_academico.bloque_academico blq ON blq.baca_id = pera.baca_id
+                    WHERE pera.paca_activo = 'A' AND
+                    now() >= pera.paca_fecha_inicio and pera.paca_fecha_fin<= now() and
+                    pera.paca_estado = 1 AND pera.paca_estado_logico = 1) as periodo,
+                db_academico.estudiante est
+                inner join db_academico.estudiante_carrera_programa ecp on est.est_id=ecp.est_id
+                inner join db_academico.modalidad_estudio_unidad meun on meun.meun_id=ecp.meun_id
+                inner join db_academico.registro_online ron on ron.per_id=est.per_id
+                inner join db_academico.registro_online_item roi on roi.ron_id=ron.ron_id
+                inner join db_academico.malla_academica_detalle made on made.made_codigo_asignatura=roi.roi_materia_cod
+                inner join db_academico.asignatura asi on asi.asi_id=made.asi_id
+                inner join db_academico.materia_paralelo_periodo mpp on mpp.asi_id=asi.asi_id  and mpp.mod_id=meun.mod_id and mpp.mpp_num_paralelo=roi.roi_paralelo
+                inner join db_academico.distributivo_academico daca on daca.asi_id=asi.asi_id and daca.mod_id=meun.mod_id and daca.mpp_id=mpp.mpp_id
+                left join db_academico.distributivo_academico_estudiante daes on daca.daca_id=daes.daca_id
+                where roi.roi_bloque=periodo.bloque and daes.daes_id IS NULL and periodo.id=:paca_id)";
+
+			$comando = $con->createCommand($sql);
+			$comando->bindParam(":paca_id", $paca_id, \PDO::PARAM_INT);
+			$comando->execute();
+
+			\app\models\Utilities::putMessageLogFile('insertarDaesEstudiante: ' . $comando->getRawSql());
+
+			if ($transaction !== null) {
+				$transaction->commit();
+			}
+
+			return true;
+
+		} catch (Exception $ex) {
+			if ($transaction !== null) {
+				$transaction->rollback();
+			}
+
+			return FALSE;
+		}
+
+	}
+
 }

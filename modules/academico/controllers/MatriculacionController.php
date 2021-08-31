@@ -1414,7 +1414,7 @@ class MatriculacionController extends \app\components\CController {
                                     */
                                 }
                             }//foreach
-
+                            $id_paralelo= MateriaParaleloPeriodo::findOne([""])
                             $registro_online_item_model = new RegistroOnlineItem();
 
                             /*$registro_online_item_model->ron_id = $ron_id;

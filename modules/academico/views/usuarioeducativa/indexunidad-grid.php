@@ -41,7 +41,7 @@ academico::registerTranslations();
             ],   
             [
                 'attribute' => 'codigo',
-                'header' => Yii::t("formulario", "Code"). ' '. Yii::t("formulario", "Unit"),
+                'header' => Yii::t("formulario", "Codsase"). ' '. Yii::t("formulario", "Unit"),
                 'value' => 'ceuni_codigo_unidad',
             ],           
             [

@@ -153,7 +153,7 @@ class Proyectos extends \yii\db\ActiveRecord
         }
     } 
 
-    public function updateNombreLineaInv($id, $nombre_investigacion) {
+    public function updateNombreProy($id, $nombre_investigacion) {
         $con = \Yii::$app->db_investigacion;
         $fecha = date(Yii::$app->params["dateTimeByDefault"]);
         $estado = 1;

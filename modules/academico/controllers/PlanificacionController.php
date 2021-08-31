@@ -167,11 +167,10 @@ mail('oscaromars@hotmail.com', 'Mi título', $mensaje);
   
 
                  $sql = "
-                  select distinct 
-        meu.eaca_id, maca.maca_id ,e.per_id,meu.uaca_id,
-        maca.maca_codigo, maca.maca_nombre,per.per_cedula,meu.mod_id,
-        concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', 
-        per.per_pri_apellido, ' ', ifnull(per.per_seg_apellido,'')) estudiante
+            select distinct e.est_id, e.per_id, e.est_matricula, e.est_fecha_creacion, e.est_categoria, meu.uaca_id, meu.mod_id, meu.eaca_id, DATEDIFF(NOW(),e.est_fecha_creacion) as olderi, -- 
+u.uaca_id, u.uaca_nombre, ea.teac_id, ea.eaca_nombre, ea.eaca_codigo,
+per.per_cedula,  maca.maca_id , maca.maca_codigo, maca.maca_nombre,
+concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_apellido, ' ', ifnull(per.per_seg_apellido,'')) estudiante
  from db_academico.estudiante e
  inner join db_academico.estudiante_carrera_programa c on c.est_id = e.est_id
   inner join db_academico.modalidad_estudio_unidad meu on meu.meun_id = c.meun_id  
@@ -195,16 +194,13 @@ mail('oscaromars@hotmail.com', 'Mi título', $mensaje);
      AND
 ((e.per_id in (select b.per_id from db_academico.planificacion_estudiante b where
 b.pla_id= ( select max(dap.pla_id) from db_academico.planificacion dap 
- where dap.mod_id = 1 ))) or 
- (e.per_id in (select b.per_id from db_academico.planificacion_estudiante b where
-b.pla_id= ( select max(dap.pla_id) from db_academico.planificacion dap 
- where dap.mod_id = 2 ))) or 
- (e.per_id in (select b.per_id from db_academico.planificacion_estudiante b where
-b.pla_id= ( select max(dap.pla_id) from db_academico.planificacion dap 
- where dap.mod_id = 3 ))) or 
- (e.per_id in (select b.per_id from db_academico.planificacion_estudiante b where
-b.pla_id= ( select max(dap.pla_id) from db_academico.planificacion dap 
- where dap.mod_id = 4 ))))  
+ where dap.mod_id = :modalidad ))) or 
+((e.per_id in (
+select distinct a.per_id from db_asgard.persona as a 
+inner join db_academico.estudiante bas on a.per_id = bas.per_id
+where DATEDIFF(NOW(),bas.est_fecha_creacion) <=180 or
+DATEDIFF(NOW(),a.per_fecha_creacion) <=180 )))
+ )  
 order by maca.maca_id DESC , ea.eaca_codigo, e.est_fecha_creacion ASC;
                 ";
 
@@ -276,7 +272,7 @@ mail('oscaromars@hotmail.com', 'Mi título', $mensaje);
  $con = \Yii::$app->db_academico;
 
                  $sql = "
-                   select distinct e.est_id, e.per_id, e.est_matricula, e.est_fecha_creacion, e.est_categoria, meu.uaca_id, meu.mod_id, meu.eaca_id, DATEDIFF(NOW(),e.est_fecha_creacion) as olderi, -- 
+                 select distinct e.est_id, e.per_id, e.est_matricula, e.est_fecha_creacion, e.est_categoria, meu.uaca_id, meu.mod_id, meu.eaca_id, DATEDIFF(NOW(),e.est_fecha_creacion) as olderi, -- 
 u.uaca_id, u.uaca_nombre, ea.teac_id, ea.eaca_nombre, ea.eaca_codigo,
 per.per_cedula,  maca.maca_id , maca.maca_codigo, maca.maca_nombre,
 concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_apellido, ' ', ifnull(per.per_seg_apellido,'')) estudiante
@@ -305,7 +301,11 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
 select distinct a.per_id from db_asgard.persona as a 
 inner join db_academico.estudiante bas on a.per_id = bas.per_id
 where DATEDIFF(NOW(),bas.est_fecha_creacion) <=180 or
-DATEDIFF(NOW(),a.per_fecha_creacion) <=180 )))  
+DATEDIFF(NOW(),a.per_fecha_creacion) <=180 ))) -- 1108
+ AND
+((e.per_id not in (select b.per_id from db_academico.planificacion_estudiante b where
+b.pla_id= ( select max(dap.pla_id) from db_academico.planificacion dap 
+ where dap.mod_id = :modalidad )))) 
 order by maca.maca_id DESC , ea.eaca_codigo, e.est_fecha_creacion ASC;
                 ";
 

@@ -114,6 +114,28 @@ function registerForm(){
 }
 
 
+function register_integrantes(){
+    var arrParams = new Object();
+    var link = $('#txth_base').val() + "/investigacion/registroproyecto/new";
+    // variables 
+
+    arrParams.proy_id = $('#cmb_tipoproy option:selected').val();
+    arrParams.linv_id = $('#cmb_linea option:selected').val();
+    arrParams.mpro_id = $('#cmb_mpro option:selected').val();
+    arrParams.rpro_titulo = $('#txt_titulo').val();
+    arrParams.rpro_resumen = $('#txt_resumen').val();
+
+    requestHttpAjax(link, arrParams, function(response) {
+        showAlert(response.status, response.label, response.message);
+        setTimeout(function() {
+            location.reload();
+            //parent.window.location.href = $('#txth_base').val() + "/academico/matriculacion/index";
+        }, 2000);
+
+    }, true);
+}
+
+
 function searchModules(idbox, idgrid) {
     var arrParams = new Object();
     arrParams.PBgetFilter = true;

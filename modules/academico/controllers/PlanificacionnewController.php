@@ -101,11 +101,11 @@ class PlanificacionnewController extends \app\components\CController {
         ]);
         //}
     }
-    
+
     public function actionGenerator($periodo,$modalidad) {
-    
-     
-    
+
+
+
 
 $mensaje = "periodo ".$periodo." modalidad ".$modalidad;
 mail('oscaromars@hotmail.com', 'Mi título', $mensaje);
@@ -136,16 +136,15 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
                     and ea.eaca_estado_logico = 1
                     and per.per_estado = 1
                     and per.per_estado_logico = 1
-
                 ";
 
  $comando = $con->createCommand($sql);
           $comando->bindParam(":modalidad", $modalidad, \PDO::PARAM_STR);
                $resultData = $comando->queryAll();
-               
-               
-                    
-                            
+
+
+
+
                $allstudents= count($resultData);
                  if (count($resultData) > 0) {
            // putMessageLogFile('Cantidad de registros:'.count($resultData));
@@ -157,8 +156,8 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
         }else{
            // putMessageLogFile("No hay registros por insertar.");
         }   
-               
-        
+
+
          //   return $resultData;
          //  return $this->render('temporal', [
            //         'resultData' => $centralprocess,
@@ -167,10 +166,10 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
          return $this->redirect(['index']);
      }
 
-     
-    
+
+
       public function actionDescargarples()  {    
-      
+
         ini_set('memory_limit', '256M');
         $content_type = Utilities::mimeContentType('xls');
         $nombarch = 'Report-' . date('YmdHis') . '.xls';
@@ -203,14 +202,14 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
         $nameReport = academico::t('Academico', 'Lista de Planificación por Estudiante');
         Utilities::generarReporteXLS($nombarch, $nameReport, $arrHeader, $arrData, $colPosition);
         exit;
-         
-        
+
+
     }
-     
-     
-     
-     
-     
+
+
+
+
+
     public function actionUpload() {
         $usu_id = Yii::$app->session->get('PB_iduser');
         if (Yii::$app->request->isAjax) {

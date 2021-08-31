@@ -861,4 +861,131 @@ class Estudiante extends \yii\db\ActiveRecord {
         return $resultData;
     }
 
+     /**
+     * Function Consultar malla del estudiante por medio de malla unidad modalidad
+     * @author  Luis Cajamarca <analistadesarrollo04@uteg.edu.ec>;
+     * @property       
+     * @return  
+     */
+    public function consultarEstMalla($meun_id) {
+        $con = \Yii::$app->db_academico;
+        $estado = 1;
+
+        $sql = "SELECT  
+                        MAX(maca_id) as maca_id                       
+                        
+                FROM " . $con->dbname . ".malla_unidad_modalidad                        
+                WHERE   meun_id in (:meun_id)                        
+                        AND mumo_estado = :estado
+                        AND mumo_estado_logico = :estado ";
+
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $comando->bindParam(":meun_id", $meun_id, \PDO::PARAM_INT);
+        $resultData = $comando->queryOne();
+        return $resultData;
+    }
+
+
+    /**
+     * Function guardar estudiante carrera programa
+     * @author  Luis Cajamarca <analistadesarrollo04@uteg.edu.ec>
+     * @param   $
+     * @return  $resultData (Insert Maes_id).
+     */
+    public function insertMallaAcademicoEst($maca_id,$per_id) {
+        $con = \Yii::$app->db_academico;
+        $transaction=$con->beginTransaction();
+        $date = date(Yii::$app->params['dateTimeByDefault']);
+        // se obtiene la transacción actual
+                  
+        try {
+            $sql = "INSERT INTO db_academico.malla_academico_estudiante 
+                (per_id, made_id, maca_id, asi_id, maes_usuario_ingreso, maes_usuario_modifica, maes_fecha_creacion, maes_fecha_modificacion, maes_estado, maes_estado_logico)
+                (SELECT 
+                    e.per_id as per_id, 
+                    made.made_id as made_id, 
+                    made.maca_id as maca_id, 
+                    made.asi_id as asi_id, 
+                    1, 
+                    Null, 
+                    '$date', 
+                    Null, 
+                    1, 
+                    1
+                FROM db_academico.estudiante e 
+                inner join db_academico.estudiante_carrera_programa  est on est.est_id=e.est_id
+                inner join db_academico.malla_unidad_modalidad mumo on mumo.meun_id=est.meun_id
+                inner join db_academico.malla_academica_detalle made on made.maca_id=mumo.maca_id
+                where e.per_id =:per_id and mumo.maca_id=:maca_id
+                Group by 1,2,3,4)";
+            $comando = $con->createCommand($sql);
+            $comando->bindParam(":per_id",  $per_id,  \PDO::PARAM_STR);
+            $comando->bindParam(":maca_id", $maca_id, \PDO::PARAM_STR);
+            $comando->execute();
+
+            \app\models\Utilities::putMessageLogFile('insertMallaAcademicoEst: ' . $comando->getRawSql());
+
+            if ($transaction !== null){
+                $transaction->commit();
+            }
+
+            return true;
+
+        } catch (Exception $ex) {
+            if ($transaction !== null)
+                $transaction->rollback();
+            return FALSE;
+        }
+        
+    }
+
+    /**
+     * Function guardar estudiante carrera programa
+     * @author  Luis Cajamarca <analistadesarrollo04@uteg.edu.ec>
+     * @param   $
+     * @return  $resultData (Insert Pmac_id).
+     */
+    public function insertPromedioMallaAcademicoEst($per_id) {
+        $con = \Yii::$app->db_academico;
+        $transaction=$con->beginTransaction();
+        $date = date(Yii::$app->params['dateTimeByDefault']);
+        // se obtiene la transacción actual
+                  
+        try {
+            $sql = "INSERT INTO db_academico.promedio_malla_academico 
+                (maes_id, enac_id, pmac_nota, paca_id, pmac_usuario_ingreso, pmac_usuario_modifica, pmac_fecha_creacion, pmac_fecha_modificacion, pmac_estado, pmac_estado_logico)
+                (SELECT 
+                    maes.maes_id,
+                    Null,
+                    Null,
+                    Null,
+                    1,
+                    Null,
+                    '$date', 
+                    Null,
+                    1,
+                    1 
+                FROM db_academico.malla_academico_estudiante maes
+                where maes.per_id=:per_id)";
+            $comando = $con->createCommand($sql);
+            $comando->bindParam(":per_id",  $per_id,  \PDO::PARAM_STR);
+            $comando->execute();
+
+            \app\models\Utilities::putMessageLogFile('insertPromedioMallaAcademicoEst: ' . $comando->getRawSql());
+
+            if ($transaction !== null){
+                $transaction->commit();
+            }
+
+            return true;
+
+        } catch (Exception $ex) {
+            if ($transaction !== null)
+                $transaction->rollback();
+            return FALSE;
+        }
+        
+    }
+    
 }

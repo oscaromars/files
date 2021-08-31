@@ -382,7 +382,7 @@ function updateaspirantegrado() {
     arrParams.segundo_apellido = $('#txt_segundo_apellidoEdit').val();
     arrParams.cuidad_nac = $('#cmb_ciudadEdit').val();
     arrParams.fecha_nac = $('#txt_fecha_nacimientoEdit').val();
-    arrParams.nacionalidad = $('#txt_nacionalidadEdit').val();
+    arrParams.nacionalidad = $('#cmb_nacionalidadEdit').val();
     arrParams.estado_civil = $('#cmb_estadocivilEdit').val();
 
     //Datos Contacto
@@ -412,7 +412,7 @@ function updateaspirantegrado() {
     arrParams.igra_ruta_doc_certificado = $('#txth_doc_nosancion').val();
     arrParams.igra_ruta_doc_syllabus = $('#txth_doc_syllabus').val();
     arrParams.igra_ruta_doc_homologacion = $('#txth_doc_especievalorada').val();
-    alert($('#txth_doc_certvota').val());
+    
 
     if (!validateForm()) {
         requestHttpAjax(link, arrParams, function (response) { 

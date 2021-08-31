@@ -8,7 +8,7 @@ use app\modules\financiero\Module as financiero;
 
 academico::registerTranslations();
 financiero::registerTranslations();
-//print_r($arr_condcurriculum);
+//print_r($arch1);
 ?>
 <?= Html::hiddenInput('txth_igra_id', base64_encode($igra_id), ['id' => 'txth_igra_id']); ?>
 <?= Html::hiddenInput('txth_per_id', base64_encode($per_id), ['id' => 'txth_per_id']); ?>

@@ -40,7 +40,7 @@ financiero::registerTranslations();
                         'uploadUrl' => Url::to(['/inscripcionposgrado/guardarinscripcionposgrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
-            return {"upload_file": true, "name_file": "doc_foto-' . @Yii::$app->session->get("PB_perid") . '-' . time() . '"};
+            return {"upload_file": true, "name_file": "doc_foto' . "_per_" . $per_id . '_' . date(Yii::$app->params["dateByDefault"]) . '"};
         }',
                     ],
                     'pluginEvents' => [
@@ -108,7 +108,7 @@ financiero::registerTranslations();
                         'uploadUrl' => Url::to(['/inscripcionposgrado/guardarinscripcionposgrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
-            return {"upload_file": true, "name_file": "doc_dni-' . @Yii::$app->session->get("PB_perid") . '-' . time() . '"};
+            return {"upload_file": true, "name_file": "doc_dni' . "_per_" . $per_id . '_' . date(Yii::$app->params["dateByDefault"]) . '"};
         }',
                     ],
                     'pluginEvents' => [
@@ -176,7 +176,7 @@ financiero::registerTranslations();
                         'uploadUrl' => Url::to(['/inscripcionposgrado/guardarinscripcionposgrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
-            return {"upload_file": true, "name_file": "doc_certvota-' . @Yii::$app->session->get("PB_perid") . '-' . time() . '"};
+            return {"upload_file": true, "name_file": "doc_certvota' . "_per_" . $per_id . '_' . date(Yii::$app->params["dateByDefault"]) . '"};
         }',
                     ],
                     'pluginEvents' => [
@@ -243,7 +243,7 @@ financiero::registerTranslations();
                         'uploadUrl' => Url::to(['/inscripcionposgrado/guardarinscripcionposgrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
-            return {"upload_file": true, "name_file": "doc_titulo-' . @Yii::$app->session->get("PB_perid") . '-' . time() . '"};
+            return {"upload_file": true, "name_file": "doc_titulo' . "_per_" . $per_id . '_' . date(Yii::$app->params["dateByDefault"]) . '"};
         }',
                     ],
                     'pluginEvents' => [
@@ -310,7 +310,7 @@ financiero::registerTranslations();
                         'uploadUrl' => Url::to(['/inscripcionposgrado/guardarinscripcionposgrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
-            return {"upload_file": true, "name_file": "doc_comprobante-' . @Yii::$app->session->get("PB_perid") . '-' . time() . '"};
+            return {"upload_file": true, "name_file": "doc_comprobante' . "_per_" . $per_id . '_' . date(Yii::$app->params["dateByDefault"]) . '"};
         }',
                     ],
                     'pluginEvents' => [
@@ -377,7 +377,7 @@ financiero::registerTranslations();
                         'uploadUrl' => Url::to(['/inscripcionposgrado/guardarinscripcionposgrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
-            return {"upload_file": true, "name_file": "doc_record1-' . @Yii::$app->session->get("PB_perid") . '-' . time() . '"};
+            return {"upload_file": true, "name_file": "doc_record1' . "_per_" . $per_id . '_' . date(Yii::$app->params["dateByDefault"]) . '"};
         }',
                     ],
                     'pluginEvents' => [
@@ -444,7 +444,7 @@ financiero::registerTranslations();
                         'uploadUrl' => Url::to(['/inscripcionposgrado/guardarinscripcionposgrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
-            return {"upload_file": true, "name_file": "doc_senescyt-' . @Yii::$app->session->get("PB_perid") . '-' . time() . '"};
+            return {"upload_file": true, "name_file": "doc_senescyt' . "_per_" . $per_id . '_' . date(Yii::$app->params["dateByDefault"]) . '"};
         }',
                     ],
                     'pluginEvents' => [
@@ -511,7 +511,7 @@ financiero::registerTranslations();
                         'uploadUrl' => Url::to(['/inscripcionposgrado/guardarinscripcionposgrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
-            return {"upload_file": true, "name_file": "doc_hojavida-' . @Yii::$app->session->get("PB_perid") . '-' . time() . '"};
+            return {"upload_file": true, "name_file": "doc_hojavida' . "_per_" . $per_id . '_' . date(Yii::$app->params["dateByDefault"]) . '"};
         }',
                     ],
                     'pluginEvents' => [
@@ -578,7 +578,7 @@ financiero::registerTranslations();
                         'uploadUrl' => Url::to(['/inscripcionposgrado/guardarinscripcionposgrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
-            return {"upload_file": true, "name_file": "doc_comprobante-' . @Yii::$app->session->get("PB_perid") . '-' . time() . '"};
+            return {"upload_file": true, "name_file": "doc_comprobante' . "_per_" . $per_id . '_' . date(Yii::$app->params["dateByDefault"]) . '"};
         }',
                     ],
                     'pluginEvents' => [
@@ -645,7 +645,7 @@ financiero::registerTranslations();
                         'uploadUrl' => Url::to(['/inscripcionposgrado/guardarinscripcionposgrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
-            return {"upload_file": true, "name_file": "doc_comprobante-' . @Yii::$app->session->get("PB_perid") . '-' . time() . '"};
+            return {"upload_file": true, "name_file": "doc_comprobante' . "_per_" . $per_id . '_' . date(Yii::$app->params["dateByDefault"]) . '"};
         }',
                     ],
                     'pluginEvents' => [
@@ -712,7 +712,7 @@ financiero::registerTranslations();
                         'uploadUrl' => Url::to(['/inscripcionposgrado/guardarinscripcionposgrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
-            return {"upload_file": true, "name_file": "doc_certificadoingles-' . @Yii::$app->session->get("PB_perid") . '-' . time() . '"};
+            return {"upload_file": true, "name_file": "doc_certificadoingles' . "_per_" . $per_id . '_' . date(Yii::$app->params["dateByDefault"]) . '"};
         }',
                     ],
                     'pluginEvents' => [
@@ -783,7 +783,7 @@ financiero::registerTranslations();
                         'uploadUrl' => Url::to(['/inscripcionposgrado/guardarinscripcionposgrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
-            return {"upload_file": true, "name_file": "doc_recordacad-' . @Yii::$app->session->get("PB_perid") . '-' . time() . '"};
+            return {"upload_file": true, "name_file": "doc_recordacad' . "_per_" . $per_id . '_' . date(Yii::$app->params["dateByDefault"]) . '"};
         }',
                     ],
                     'pluginEvents' => [
@@ -850,7 +850,7 @@ financiero::registerTranslations();
                         'uploadUrl' => Url::to(['/inscripcionposgrado/guardarinscripcionposgrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
-            return {"upload_file": true, "name_file": "doc_nosancion-' . @Yii::$app->session->get("PB_perid") . '-' . time() . '"};
+            return {"upload_file": true, "name_file": "doc_nosancion' . "_per_" . $per_id . '_' . date(Yii::$app->params["dateByDefault"]) . '"};
         }',
                     ],
                     'pluginEvents' => [
@@ -917,7 +917,7 @@ financiero::registerTranslations();
                         'uploadUrl' => Url::to(['/inscripcionposgrado/guardarinscripcionposgrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
-            return {"upload_file": true, "name_file": "doc_syllabus-' . @Yii::$app->session->get("PB_perid") . '-' . time() . '"};
+            return {"upload_file": true, "name_file": "doc_syllabus' . "_per_" . $per_id . '_' . date(Yii::$app->params["dateByDefault"]) . '"};
         }',
                     ],
                     'pluginEvents' => [
@@ -984,7 +984,7 @@ financiero::registerTranslations();
                         'uploadUrl' => Url::to(['/inscripcionposgrado/guardarinscripcionposgrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
-            return {"upload_file": true, "name_file": "doc_especievalorada-' . @Yii::$app->session->get("PB_perid") . '-' . time() . '"};
+            return {"upload_file": true, "name_file": "doc_especievalorada' . "_per_" . $per_id . '_' . date(Yii::$app->params["dateByDefault"]) . '"};
         }',
                     ],
                     'pluginEvents' => [

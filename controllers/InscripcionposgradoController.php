@@ -116,6 +116,10 @@ class InscripcionposgradoController extends \yii\web\Controller {
         $mod_conempresa = new ConvenioEmpresa();
         $arr_convempresa = $mod_conempresa->consultarConvenioEmpresa();
         $_SESSION['JSLANG']['Your information has not been saved. Please try again.'] = Yii::t('notificaciones', 'Your information has not been saved. Please try again.');
+        $mod_persona = new Persona();
+        $resp_persona = $mod_persona->consultarUltimoPer_id();
+        $persona = $resp_persona["ultimo"];
+        $per_id = intval( $persona );
         
         return $this->render('index', [
             'arr_unidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $arr_unidad), "id", "name"),
@@ -140,6 +144,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
             "arr_metodos" => ArrayHelper::map($arr_metodos, "id", "name"),
             "arr_convenio_empresa" => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Ninguna")]], $arr_convempresa), "id", "name"),
             "resp_datos" => $resp_datos,
+            "per_id" => $per_id,
         ]);
     }
 
@@ -166,7 +171,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 $files = $_FILES[key($_FILES)];
                 $arrIm = explode(".", basename($files['name']));
                 $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                $dirFileEnd = Yii::$app->params["documentFolder"] . "inscripcionposgrado/" . $per_id . "/" . $data["name_file"] . "_per_" . $per_id . "." . $typeFile;
+                $dirFileEnd = Yii::$app->params["documentFolder"] . "inscripcionposgrado/" . $per_id . "/" . $data["name_file"] . "." . $typeFile;
                 $status = Utilities::moveUploadFile($files['tmp_name'], $dirFileEnd);
                 if ($status) {
                     return true;
@@ -673,37 +678,6 @@ class InscripcionposgradoController extends \yii\web\Controller {
         ]);
     }
 
-    public function actionDownload($route, $type) {
-        $grupo = new Grupo();
-        if (Yii::$app->session->get('PB_isuser')) {
-            $route = str_replace("../", "", $route);
-            if (preg_match("/^" . $this->folder_cv . "\//", $route)) {
-                $url_image = Yii::$app->basePath . "/uploads/inscripcionposgrado" . $route;
-                $arrIm = explode(".", $url_image);
-                $typeImage = $arrIm[count($arrIm) - 1];
-                if (file_exists($url_image)) {
-                    if (strtolower($typeImage) == "pdf") {
-                        header('Pragma: public');
-                        header('Expires: 0');
-                        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-                        header('Cache-Control: private', false);
-                        header("Content-type: application/pdf");
-                        if ($type == "view") {
-                            header('Content-Disposition: inline; filename="cv_' . time() . '.pdf";');
-                        } else {
-                            header('Content-Disposition: attachment; filename="cv_' . time() . '.pdf";');
-                        }
-                        header('Content-Transfer-Encoding: binary');
-                        header('Content-Length: ' . filesize($url_image));
-                        readfile($url_image);
-                        //return file_get_contents($url_image);
-                    }
-                }
-            }
-        }
-        exit();
-    }
-
     public function actionView() {
         $data = Yii::$app->request->get();
         if (isset($data['id'])) {
@@ -723,7 +697,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
             $arr_grupos = $grupo_model->getAllGruposByUser($user_usermane);
             if ($id != $user_perId) {
                 if (!in_array(['id' => '1'], $arr_grupos) && !in_array(['id' => '6'], $arr_grupos) && !in_array(['id' => '7'], $arr_grupos) && !in_array(['id' => '8'], $arr_grupos) && !in_array(['id' => '15'], $arr_grupos))
-                    return $this->redirect(['inscripciongrado/aspirantegrado']);
+                    return $this->redirect(['inscripcionposgrado/aspiranteposgrado']);
             }
 
             /**
@@ -837,30 +811,31 @@ class InscripcionposgradoController extends \yii\web\Controller {
 
             $items = [
                 [
-                    'label' => Yii::t('inscripciongrado', 'Info. Datos Personales'),
+                    'label' => Yii::t('inscripcionposgrado', 'Info. Datos Personales'),
                     'content' => $ViewFormTab1,
                     'active' => true
                 ],
                 [
-                    'label' => Yii::t('inscripciongrado', 'Info. Datos Profesionales'),
+                    'label' => Yii::t('inscripcionposgrado', 'Info. Datos Profesionales'),
                     'content' => $ViewFormTab2,
                 ],
                 [
-                    'label' => Yii::t('inscripciongrado', 'Info. Datos de Idiomas'),
+                    'label' => Yii::t('inscripcionposgrado', 'Info. Datos de Idiomas'),
                     'content' => $ViewFormTab3,
                 ],
                 [
-                    'label' => Yii::t('inscripciongrado', 'Info. Datos Adicionales'),
+                    'label' => Yii::t('inscripcionposgrado', 'Info. Datos Adicionales'),
                     'content' => $ViewFormTab5,
                 ],
                 [
-                    'label' => Yii::t('inscripciongrado', 'Documentación'),
+                    'label' => Yii::t('inscripcionposgrado', 'Documentación'),
                     'content' => $ViewFormTab6,
                 ],
             ];
             return $this->render('view', ['items' => $items, 'persona_model' => $persona_model, 'contacto_model' => $contacto_model]);
         }
-        return $this->redirect(['inscripciongrado/aspirantegrado']);
+        return $this->redirect(['inscripcionposgrado/aspirantepos
+            grado']);
     }
 
     public function actionEdit() {
@@ -1086,9 +1061,10 @@ class InscripcionposgradoController extends \yii\web\Controller {
                         'contacto_model' => $contacto_model,
             ]);
         }
-        return $this->redirect(['inscripciongrado/aspirantegrado']);
+        return $this->redirect(['inscripcionposgrado/aspiranteposgrado']);
     }
     public function actionUpdate() {
+        $usuario = @Yii::$app->user->identity->usu_id;
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
             $per_id = $data["per_id"];
@@ -1103,7 +1079,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 $arrIm = explode(".", basename($files['name']));
                 $typeFile = strtolower($arrIm[count($arrIm) - 1]);
                 if ($typeFile == 'pdf' || $typeFile == 'png' || $typeFile == 'jpg' || $typeFile == 'jpeg') {
-                $dirFileEnd = Yii::$app->params["documentFolder"] . "inscripcionposgrado/" . $per_id . "/" . $data["name_file"] . "_per_" . $per_id . "." . $typeFile;
+                $dirFileEnd = Yii::$app->params["documentFolder"] . "inscripcionposgrado/" . $per_id . "/" . $data["name_file"] . "." . $typeFile;
                 $status = Utilities::moveUploadFile($files['tmp_name'], $dirFileEnd);
                 if ($status) {
                     return true;
@@ -1117,10 +1093,8 @@ class InscripcionposgradoController extends \yii\web\Controller {
             } 
 
             
-            $con = \Yii::$app->db;
+            $con = \Yii::$app->db_inscripcion;
             $transaction = $con->beginTransaction();
-            $con1 = \Yii::$app->db_captacion;
-            $transaction1 = $con1->beginTransaction();
             $timeSt = date(Yii::$app->params["dateByDefault"]);
             
             try {
@@ -1364,6 +1338,8 @@ class InscripcionposgradoController extends \yii\web\Controller {
             $ipos_ruta_doc_syllabus = $data['ipos_ruta_doc_syllabus'];
             $ipos_ruta_doc_homologacion = $data['ipos_ruta_doc_homologacion'];
 
+            $fecha_modificacion = date(Yii::$app->params["dateTimeByDefault"]);
+
                 $persona_model = Persona::findOne($per_id);
                 $persona_model->per_cedula = $per_dni;
                 if ($pasaporte != "") {
@@ -1384,13 +1360,16 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 $persona_model->per_celular = $per_celular;
                 $persona_model->per_domicilio_telefono = $per_domicilio_telefono;
                 $persona_model->per_correo = $per_correo;
+                $persona_model->per_usuario_modifica = $usuario;
+                $persona_model->per_fecha_modificacion = $fecha_modificacion;
+                $persona_model->update();
 
-                $contacto_model = PersonaContacto::findOne($persona_model->per_id);
+                /*$contacto_model = PersonaContacto::findOne(['per_id' => $persona_model->per_id]);
                 $contacto_model->pcon_nombre = $pcon_nombre;
                 $contacto_model->tpar_id = $tpar_id;
                 $contacto_model->pcon_celular = $pcon_celular;
                 $contacto_model->pcon_direccion = $pcon_direccion;
-                $contacto_model->save();
+                $contacto_model->update();*/
 
                 $instruccion_model = EstudianteInstruccion::findOne(['per_id' => $persona_model->per_id]);
                 $instruccion_model->eins_titulo3ernivel = $titulo_ter;
@@ -1399,7 +1378,8 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 $instruccion_model->eins_titulo4tonivel = $titulo_cuarto;
                 $instruccion_model->eins_institucion4tonivel = $universidad_cuarto;
                 $instruccion_model->eins_añogrado4tonivel = $grado_cuarto;
-                $instruccion_model->save();
+                $instruccion_model->eins_fecha_modificacion = $fecha_modificacion;
+                $instruccion_model->update();
 
                 $laboral_model = InformacionLaboral::findOne(['per_id' => $persona_model->per_id]);
                 $laboral_model->ilab_empresa = $empresa;
@@ -1412,7 +1392,8 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 $laboral_model->ilab_añoingreso_emp = $añoingreso_emp;
                 $laboral_model->ilab_correo_emp = $correo_emp;
                 $laboral_model->ilab_cat_ocupacional = $cat_ocupacional;
-                $laboral_model->save();
+                $laboral_model->ilab_fecha_modificacion = $fecha_modificacion;
+                $laboral_model->update();
 
 
                 $mod_infodiscapacidad = new InfoDiscapacidadEst();                  
@@ -1429,7 +1410,8 @@ class InscripcionposgradoController extends \yii\web\Controller {
                     $discapacidad_model = InfoDiscapacidadEst::findOne(['per_id' => $persona_model->per_id]);
                     $discapacidad_model->tdis_id = $tipo_discap;
                     $discapacidad_model->ides_porcentaje = $porcentaje_discap;
-                    $discapacidad_model->save();
+                    $discapacidad_model->ides_fecha_modificacion = $fecha_modificacion;
+                    $discapacidad_model->update();
                 }
 
                 // info Docencia   
@@ -1447,13 +1429,15 @@ class InscripcionposgradoController extends \yii\web\Controller {
                     $docencia_model = InfoDocenciaEstudiante::findOne(['per_id' => $persona_model->per_id]);
                     $docencia_model->ides_año_docencia = $año_docencia;
                     $docencia_model->ides_area_docencia = $area_docencia;
-                    $docencia_model->save();
+                    $docencia_model->ides_fecha_modificacion = $fecha_modificacion;
+                    $docencia_model->update();
                 }
 
                 // info Investigacion   
-                $mod_infoinvestigacion = new InfoEstudianteInvestigacion();                  
+                $mod_infoinvestigacion = new InfoEstudianteInvestigacion();       
+                \app\models\Utilities::putMessageLogFile('per_id:  '.$per_id);           
                 $resp_investigacion = $mod_infoinvestigacion->consultarInfoEstudianteInvestigacion($per_id);
-                if ($resp_existe_infodisc['existe_infodiscapacidad'] == 0) {
+                if ($resp_investigacion['existe_infoinvestigacion'] == 0) {
                     $investigacion_model = new InfoEstudianteInvestigacion();
                     $investigacion_model->per_id = $per_id;
                     $investigacion_model->iein_articulos_investigacion = $articulos;
@@ -1465,7 +1449,8 @@ class InscripcionposgradoController extends \yii\web\Controller {
                     $investigacion_model = InfoEstudianteInvestigacion::findOne(['per_id' => $persona_model->per_id]);
                     $investigacion_model->iein_articulos_investigacion = $articulos;
                     $investigacion_model->iein_area_investigacion = $area_investigacion;
-                    $investigacion_model->save();
+                    $investigacion_model->iein_fecha_modificacion = $fecha_modificacion;
+                    $investigacion_model->update();
                 }
 
                 $ipos_model = InscripcionPosgrado::findOne(['per_id' => $persona_model->per_id]);
@@ -1485,22 +1470,31 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 $ipos_model->ipos_ruta_doc_certificadonosancion = $ipos_ruta_doc_certificadonosancion;
                 $ipos_model->ipos_ruta_doc_syllabus = $ipos_ruta_doc_syllabus;
                 $ipos_model->ipos_ruta_doc_homologacion = $ipos_ruta_doc_homologacion;
-                $ipos_model->save();
+                $ipos_model->ipos_fecha_modificacion = $fecha_modificacion;
+                $ipos_model->update();
                 
 
-                /**
-                 * Inf. Session Storages
-                 */
-                $arr_idioma = (isset($data["grid_idiomas_list"]) && $data["grid_idiomas_list"] != "") ? $data["grid_idiomas_list"] : NULL;
-                
+                $mod_percontacto = new PersonaContacto();
+                $contacto = $mod_percontacto->modificarPersonacontacto($per_id, $tpar_id, $pcon_nombre, $pcon_celular, $pcon_celular, $pcon_direccion);
 
-                $message = array(
-                    "wtmessage" => Yii::t("notificaciones", "Se ha modificado los datos del Aspirante de Posgrado."),
-                    "title" => Yii::t('jslang', 'Success'),
-                );
+                /*$mod_inscripcionposgrado = new InscripcionPosgrado();
+                $gradoinscripcion = $mod_inscripcionposgrado->consultarDatosInscripcionContinuagrado($per_id);
 
-                if ($persona_model->save()) {
-                    $usuario_model = Usuario::findOne(["per_id" => $per_id]);
+                $inscripcionposgrado = $mod_inscripcionposgrado->updateDataInscripcionposgrado($con, $per_id, $per_dni, $igra_ruta_doc_titulo, $igra_ruta_doc_dni, $igra_ruta_doc_certvota, $igra_ruta_doc_foto, $igra_ruta_doc_comprobantepago, $igra_ruta_doc_record, $igra_ruta_doc_certificado, $igra_ruta_doc_syllabus, $igra_ruta_doc_homologacion);*/
+
+                if ($contacto) {
+                        $exito = 1;
+                    }
+                    if ($exito) {
+                        $transaction->commit();
+
+                    $message = array(
+                        "wtmessage" => Yii::t("notificaciones", "Se ha modificado los datos del Aspirante de Posgrado."),
+                        "title" => Yii::t('jslang', 'Success'),
+                    );
+
+                //if ($persona_model->update()) {
+                    /*$usuario_model = Usuario::findOne(["per_id" => $per_id]);
 
                     
                     if (isset($arr_idioma)) {
@@ -1516,7 +1510,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
                                 $idiomas_model->save();
                             }
                         }
-                    }
+                    }*/
                     
                     return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), false, $message);
 

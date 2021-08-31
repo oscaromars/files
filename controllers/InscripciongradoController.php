@@ -103,6 +103,10 @@ class InscripciongradoController extends \yii\web\Controller {
         $mod_conempresa = new ConvenioEmpresa();
         $arr_convempresa = $mod_conempresa->consultarConvenioEmpresa();
         $_SESSION['JSLANG']['Your information has not been saved. Please try again.'] = Yii::t('notificaciones', 'Your information has not been saved. Please try again.');
+        $mod_persona = new Persona();
+        $resp_persona = $mod_persona->consultarUltimoPer_id();
+        $persona = $resp_persona["ultimo"];
+        $per_id = intval( $persona );
 
         return $this->render('index', [
             "arr_unidad" => ArrayHelper::map($arr_unidad, "id", "name"),
@@ -122,6 +126,7 @@ class InscripciongradoController extends \yii\web\Controller {
             "arr_metodos" => ArrayHelper::map($arr_metodos, "id", "name"),
             "arr_convenio_empresa" => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Ninguna")]], $arr_convempresa), "id", "name"),
             "resp_datos" => $resp_datos,
+            "per_id" => $per_id,
         ]);
     }
 
@@ -145,7 +150,7 @@ class InscripciongradoController extends \yii\web\Controller {
                 $arrIm = explode(".", basename($files['name']));
                 $typeFile = strtolower($arrIm[count($arrIm) - 1]);
                 if ($typeFile == 'pdf' || $typeFile == 'png' || $typeFile == 'jpg' || $typeFile == 'jpeg') {
-                $dirFileEnd = Yii::$app->params["documentFolder"] . "inscripciongrado/" . $per_id . "/" . $data["name_file"] . "_per_" . $per_id . "." . $typeFile;
+                $dirFileEnd = Yii::$app->params["documentFolder"] . "inscripciongrado/" . $per_id . "/" . $data["name_file"] . "." . $typeFile;
                 $status = Utilities::moveUploadFile($files['tmp_name'], $dirFileEnd);
                     if ($status) {
                         return true;
@@ -742,6 +747,7 @@ class InscripciongradoController extends \yii\web\Controller {
         return $this->redirect(['inscripciongrado/aspirantegrado']);
     }
     public function actionUpdate() {
+        $usuario = @Yii::$app->user->identity->usu_id;
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
             $per_id = $data["per_id"];
@@ -755,7 +761,7 @@ class InscripciongradoController extends \yii\web\Controller {
                 $arrIm = explode(".", basename($files['name']));
                 $typeFile = strtolower($arrIm[count($arrIm) - 1]);
                 if ($typeFile == 'pdf' || $typeFile == 'png' || $typeFile == 'jpg' || $typeFile == 'jpeg') {
-                $dirFileEnd = Yii::$app->params["documentFolder"] . "inscripciongrado/" . $per_id . "/" . $data["name_file"] . "_per_" . $per_id . "." . $typeFile;
+                $dirFileEnd = Yii::$app->params["documentFolder"] . "inscripciongrado/" . $per_id . "/" . $data["name_file"] . "." . $typeFile;
                 $status = Utilities::moveUploadFile($files['tmp_name'], $dirFileEnd);
                     if ($status) {
                         return true;
@@ -907,6 +913,8 @@ class InscripciongradoController extends \yii\web\Controller {
                 $igra_ruta_doc_syllabus = $data['igra_ruta_doc_syllabus'];
                 $igra_ruta_doc_homologacion = $data['igra_ruta_doc_homologacion'];
 
+                $fecha_modificacion = date(Yii::$app->params["dateTimeByDefault"]);
+
                 $persona_model = Persona::findOne($per_id);
                 $persona_model->per_cedula = $per_dni;
                 $persona_model->per_pri_nombre = $per_pri_nombre;
@@ -928,16 +936,20 @@ class InscripciongradoController extends \yii\web\Controller {
                 $persona_model->per_domicilio_telefono = $per_domicilio_telefono;
                 $persona_model->per_correo = $per_correo;
                 $persona_model->per_trabajo_direccion = $per_trabajo_direccion;
-                
-                $contacto_model = PersonaContacto::findOne(['per_id' => $persona_model->per_id]);
-                $contacto_model->pcon_nombre = $pcon_nombre;
-                $contacto_model->tpar_id = $tpar_id;
-                $contacto_model->pcon_celular = $pcon_celular;
-                $contacto_model->pcon_direccion = $pcon_direccion;
-                $contacto_model->save();
+                $persona_model->per_usuario_modifica = $usuario;
+                $persona_model->per_fecha_modificacion = $fecha_modificacion;
+                $persona_model->update();
 
-                $igra_model = InscripcionGrado::findOne(['per_id' => $persona_model->per_id]);
+                $per_id = $data["per_id"];
+                /*\app\models\Utilities::putMessageLogFile('perssssssssss:  '.$per_id);
+                \app\models\Utilities::putMessageLogFile('parentesco:  '.$tpar_id);
+                \app\models\Utilities::putMessageLogFile('nombre contact:  '.$pcon_nombre);
+                \app\models\Utilities::putMessageLogFile('celeular contact:  '.$pcon_celular);
+                \app\models\Utilities::putMessageLogFile('direccion Contact:  '.$pcon_direccion);*/
+
+                /*$igra_model = InscripcionGrado::findOne(["per_id" => $persona_model->per_id]);
                 $igra_model->igra_ruta_doc_titulo = $igra_ruta_doc_titulo;
+                $igra_model->igra_ruta_doc_dni = $igra_ruta_doc_dni;
                 $igra_model->igra_ruta_doc_certvota = $igra_ruta_doc_certvota;
                 $igra_model->igra_ruta_doc_foto = $igra_ruta_doc_foto;
                 $igra_model->igra_ruta_doc_comprobantepago = $igra_ruta_doc_comprobantepago;
@@ -945,15 +957,45 @@ class InscripciongradoController extends \yii\web\Controller {
                 $igra_model->igra_ruta_doc_certificado = $igra_ruta_doc_certificado;
                 $igra_model->igra_ruta_doc_syllabus = $igra_ruta_doc_syllabus;
                 $igra_model->igra_ruta_doc_homologacion = $igra_ruta_doc_homologacion;
-                $igra_model->save();                
+                $igra_model->igra_fecha_modificacion = $fecha_modificacion;
+                $igra_model->update(); */
+                
+                $mod_percontacto = new PersonaContacto();
+                $contacto = $mod_percontacto->modificarPersonacontacto($per_id, $tpar_id, $pcon_nombre, $pcon_celular, $pcon_celular, $pcon_direccion);
 
-                    $message = array(
-                        "wtmessage" => Yii::t("notificaciones", "Se ha modificado los datos de el Aspirante."),
-                        "title" => Yii::t('jslang', 'Success'),
-                    );
+                $mod_inscripciongrado = new InscripcionGrado();
+                //$gradoinscripcion = $mod_inscripciongrado->consultarDatosInscripcionContinuagrado($per_id);
 
-                    if ($persona_model->save()) {
-                    $usuario_model = Usuario::findOne(["per_id" => $per_id]);
+                $gradoinscripcion = $mod_inscripciongrado->consultarDatosInscripciongrado($per_id);
+                if($gradoinscripcion['existe_inscripcion'] == 1){
+                    $inscripciongrado = $mod_inscripciongrado->updateDataInscripciongrado($con, $per_id, $per_dni, $igra_ruta_doc_titulo, $igra_ruta_doc_dni, $igra_ruta_doc_certvota, $igra_ruta_doc_foto, $igra_ruta_doc_comprobantepago, $igra_ruta_doc_record, $igra_ruta_doc_certificado, $igra_ruta_doc_syllabus, $igra_ruta_doc_homologacion);
+                }
+                
+
+
+                if ($contacto && $inscripciongrado) {
+                        $exito = 1;
+                    }
+                    if ($exito) {
+                        $transaction->commit();
+                            
+                        $message = array(
+                            "wtmessage" => Yii::t("notificaciones", "Se ha modificado los datos del Aspirante."),
+                            "title" => Yii::t('jslang', 'Success'),
+                        );
+
+                    //if ($persona_model->update()) {
+                    //$usuario_model = Usuario::findOne(["per_id" => $per_id]);
+                        
+                        /*$contacto_model = PersonaContacto::findOne(["per_id" => $persona_model->per_id]);
+                        $contacto_model->pcon_nombre = $pcon_nombre;
+                        $contacto_model->tpar_id = $tpar_id;
+                        $contacto_model->pcon_celular = $pcon_celular;
+                        $contacto_model->pcon_direccion = $pcon_direccion;
+                        $contacto_model->pcon_fecha_modificacion = $fecha_modificacion;
+                        $contacto_model->update();*/
+
+                        
 
                     return Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), false, $message);
                 } else {

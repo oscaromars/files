@@ -40,7 +40,7 @@ financiero::registerTranslations();
                         'uploadUrl' => Url::to(['/inscripciongrado/guardarinscripciongrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
-            return {"upload_file": true, "name_file": "doc_titulo-' . @Yii::$app->session->get("PB_perid") . '-' . time() . '"};
+            return {"upload_file": true, "name_file": "doc_titulo' . "_per_" . $per_id . '_' . date(Yii::$app->params["dateByDefault"]) . '"};
         }',
                     ],
                     'pluginEvents' => [
@@ -76,7 +76,7 @@ financiero::registerTranslations();
         <div class="col-md-3 col-sm-3 col-xs-3 col-lg-3">
             <div class="form-group"> 
                 <?php
-                if (!empty($arch1)) {
+                if (empty($arch1)) {
                     echo "<a href='" . Url::to(['/site/getimage', 'route' => "$arch1"]) . "' download='" . $arch1 . "' ><span class='glyphicon glyphicon-download-alt'></span>Descargar Imagen</a>";
                 }
                 ?>
@@ -107,7 +107,7 @@ financiero::registerTranslations();
                         'uploadUrl' => Url::to(['/inscripciongrado/guardarinscripciongrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
-            return {"upload_file": true, "name_file": "doc_dni-' . @Yii::$app->session->get("PB_perid") . '-' . time() . '"};
+            return {"upload_file": true, "name_file": "doc_dni' . "_per_" . $per_id . '_' . date(Yii::$app->params["dateByDefault"]) . '"};
         }',
                     ],
                     'pluginEvents' => [
@@ -143,7 +143,7 @@ financiero::registerTranslations();
         <div class="col-md-3 col-sm-3 col-xs-3 col-lg-3">
             <div class="form-group">               
                 <?php
-                if (!empty($arch2)) {
+                if (empty($arch2)) {
                     echo "<a href='" . Url::to(['/site/getimage', 'route' => "$arch2"]) . "' download='" . $arch2 . "' ><span class='glyphicon glyphicon-download-alt'></span>Descargar Imagen</a>";
                 }
                 ?>
@@ -151,7 +151,7 @@ financiero::registerTranslations();
         </div>
     </div> 
 
-    <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12" id="divCertvota" style="display: block"> 
+    <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12 doc_certvota cinteres"> 
         <div class="form-group">
             <label for="txth_doc_certvota" class="col-sm-3 col-md-3 col-xs-3 col-lg-3 control-label keyupmce"><?= Yii::t("formulario", "Voting Certificate") ?></label>
             <div class="col-sm-6 col-md-6 col-xs-6 col-lg-6">
@@ -174,7 +174,7 @@ financiero::registerTranslations();
                         'uploadUrl' => Url::to(['/inscripciongrado/guardarinscripciongrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
-            return {"upload_file": true, "name_file": "doc_certvota-' . @Yii::$app->session->get("PB_perid") . '-' . time() . '"};
+            return {"upload_file": true, "name_file": "doc_certvota' . "_per_" . $per_id . '_' . date(Yii::$app->params["dateByDefault"]) . '"};
         }',
                     ],
                     'pluginEvents' => [
@@ -210,7 +210,7 @@ financiero::registerTranslations();
         <div class="col-md-3 col-sm-3 col-xs-3 col-lg-3">
             <div class="form-group">               
                 <?php
-                if (!empty($arch3)) {
+                if (empty($arch3)) {
                     echo "<a href='" . Url::to(['/site/getimage', 'route' => "$arch3"]) . "' download='" . $arch3 . "' ><span class='glyphicon glyphicon-download-alt'></span>Descargar Imagen</a>";
                 }
                 ?>
@@ -241,7 +241,7 @@ financiero::registerTranslations();
                         'uploadUrl' => Url::to(['/inscripciongrado/guardarinscripciongrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
-            return {"upload_file": true, "name_file": "doc_foto-' . @Yii::$app->session->get("PB_perid") . '-' . time() . '"};
+            return {"upload_file": true, "name_file": "doc_foto' . "_per_" . $per_id . '_' . date(Yii::$app->params["dateByDefault"]) . '"};
         }',
                     ],
                     'pluginEvents' => [
@@ -277,7 +277,7 @@ financiero::registerTranslations();
         <div class="col-md-3 col-sm-3 col-xs-3 col-lg-3">
             <div class="form-group">              
                 <?php
-                if (!empty($arch4)) {
+                if (empty($arch4)) {
                     echo "<a href='" . Url::to(['/site/getimage', 'route' => "$arch4"]) . "' download='" . $arch4 . "' ><span class='glyphicon glyphicon-download-alt'></span>Descargar Imagen</a>";
                 }
                 ?>
@@ -308,7 +308,7 @@ financiero::registerTranslations();
                         'uploadUrl' => Url::to(['/inscripciongrado/guardarinscripciongrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
-            return {"upload_file": true, "name_file": "doc_comprobantepago-' . @Yii::$app->session->get("PB_perid") . '-' . time() . '"};
+            return {"upload_file": true, "name_file": "doc_comprobantepago' . "_per_" . $per_id . '_' . date(Yii::$app->params["dateByDefault"]) . '"};
         }',
                     ],
                     'pluginEvents' => [
@@ -344,7 +344,7 @@ financiero::registerTranslations();
         <div class="col-md-3 col-sm-3 col-xs-3 col-lg-3">
             <div class="form-group">              
                 <?php
-                if (!empty($arch5)) {
+                if (empty($arch5)) {
                     echo "<a href='" . Url::to(['/site/getimage', 'route' => "$arch5"]) . "' download='" . $arch5 . "' ><span class='glyphicon glyphicon-download-alt'></span>Descargar Imagen</a>";
                 }
                 ?>
@@ -379,7 +379,7 @@ financiero::registerTranslations();
                         'uploadUrl' => Url::to(['/inscripciongrado/guardarinscripciongrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
-            return {"upload_file": true, "name_file": "doc_record-' . @Yii::$app->session->get("PB_perid") . '-' . time() . '"};
+            return {"upload_file": true, "name_file": "doc_record' . "_per_" . $per_id . '_' . date(Yii::$app->params["dateByDefault"]) . '"};
         }',
                     ],
                     'pluginEvents' => [
@@ -415,7 +415,7 @@ financiero::registerTranslations();
         <div class="col-md-3 col-sm-3 col-xs-3 col-lg-3">
             <div class="form-group">             
                 <?php
-                if (!empty($arch6)) {
+                if (empty($arch6)) {
                     echo "<a href='" . Url::to(['/site/getimage', 'route' => "$arch6"]) . "' download='" . $arch6 . "' ><span class='glyphicon glyphicon-download-alt'></span>Descargar Imagen</a>";
                 }
                 ?>
@@ -446,7 +446,7 @@ financiero::registerTranslations();
                         'uploadUrl' => Url::to(['/inscripciongrado/guardarinscripciongrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
-            return {"upload_file": true, "name_file": "doc_nosancion-' . @Yii::$app->session->get("PB_perid") . '-' . time() . '"};
+            return {"upload_file": true, "name_file": "doc_nosancion' . "_per_" . $per_id . '_' . date(Yii::$app->params["dateByDefault"]) . '"};
         }',
                     ],
                     'pluginEvents' => [
@@ -482,7 +482,7 @@ financiero::registerTranslations();
         <div class="col-md-3 col-sm-3 col-xs-3 col-lg-3">
             <div class="form-group">               
                 <?php
-                if (!empty($arch7)) {
+                if (empty($arch7)) {
                     echo "<a href='" . Url::to(['/site/getimage', 'route' => "$arch7"]) . "' download='" . $arch7 . "' ><span class='glyphicon glyphicon-download-alt'></span>Descargar Imagen</a>";
                 }
                 ?>
@@ -513,7 +513,7 @@ financiero::registerTranslations();
                         'uploadUrl' => Url::to(['/inscripciongrado/guardarinscripciongrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
-            return {"upload_file": true, "name_file": "doc_syllabus-' . @Yii::$app->session->get("PB_perid") . '-' . time() . '"};
+            return {"upload_file": true, "name_file": "doc_syllabus' . "_per_" . $per_id . '_' . date(Yii::$app->params["dateByDefault"]) . '"};
         }',
                     ],
                     'pluginEvents' => [
@@ -549,7 +549,7 @@ financiero::registerTranslations();
         <div class="col-md-3 col-sm-3 col-xs-3 col-lg-3">
             <div class="form-group">             
                 <?php
-                if (!empty($arch8)) {
+                if (empty($arch8)) {
                     echo "<a href='" . Url::to(['/site/getimage', 'route' => "$arch8"]) . "' download='" . $arch8 . "' ><span class='glyphicon glyphicon-download-alt'></span>Descargar Pdf</a>";
                 }
                 ?>
@@ -580,7 +580,7 @@ financiero::registerTranslations();
                         'uploadUrl' => Url::to(['/inscripciongrado/guardarinscripciongrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
-            return {"upload_file": true, "name_file": "doc_especievalorada-' . @Yii::$app->session->get("PB_perid") . '-' . time() . '"};
+            return {"upload_file": true, "name_file": "doc_especievalorada' . "_per_" . $per_id . '_' . date(Yii::$app->params["dateByDefault"]) . '"};
         }',
                     ],
                     'pluginEvents' => [
@@ -616,7 +616,7 @@ financiero::registerTranslations();
         <div class="col-md-3 col-sm-3 col-xs-3 col-lg-3">
             <div class="form-group">               
                 <?php
-                if (!empty($arch9)) {
+                if (empty($arch9)) {
                     echo "<a href='" . Url::to(['/site/getimage', 'route' => "$arch9"]) . "' download='" . $arch9 . "' ><span class='glyphicon glyphicon-download-alt'></span>Descargar Imagen</a>";
                 }
                 ?>

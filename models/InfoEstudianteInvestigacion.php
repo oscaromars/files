@@ -72,6 +72,7 @@ class InfoEstudianteInvestigacion extends \yii\db\ActiveRecord
      * @return  
      */
     public function consultarInfoEstudianteInvestigacion($per_id) {
+        \app\models\Utilities::putMessageLogFile('personannnnnnnnnnn:  '.$per_id); 
         $con = \Yii::$app->db_inscripcion;
         $estado = 1;
 

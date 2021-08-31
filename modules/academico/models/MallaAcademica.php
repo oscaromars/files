@@ -1237,7 +1237,7 @@ where a.maca_id= :maca_id and asi_id = :asi_id
                   $mpp_api =  $getmpar["mpp_id"]; 
 
                 $searchparsiiga = "
-                    SELECT  pasi_id  from db_academico.paralelos_siiga
+                    SELECT  pasi_id,pasi_cantidad  from db_academico.paralelos_siiga
                     WHERE pla_id = :pla_id 
                     AND asi_id = :asi_id
                     AND mod_id = :mod_id
@@ -1274,7 +1274,13 @@ where a.maca_id= :maca_id and asi_id = :asi_id
 
                   } Else {                              
 
-                    
+                $cantpasi = $existparsiiga["pasi_cantidad"] + 1;  
+                $pasi_id = $existparsiiga["pasi_id"] ;  
+                $updatepasicant = "
+                UPDATE db_academico.paralelos_siiga SET pasi_cantidad = $cantpasi 
+                WHERE pasi_id = $pasi_id";
+                $comando = $con->createCommand($updatepasicant);
+                $result = $comando->execute();  
                    
 
                                                       }
@@ -2020,7 +2026,7 @@ where a.maca_id= :maca_id and asi_id = :asi_id
                   $mpp_api =  $getmpar["mpp_id"]; 
 
                 $searchparsiiga = "
-                    SELECT  pasi_id  from db_academico.paralelos_siiga
+                    SELECT  pasi_id,pasi_cantidad  from db_academico.paralelos_siiga
                     WHERE pla_id = :pla_id 
                     AND asi_id = :asi_id
                     AND mod_id = :mod_id
@@ -2056,7 +2062,14 @@ where a.maca_id= :maca_id and asi_id = :asi_id
 
                   } Else {                              
 
-                    
+                $cantpasi = $existparsiiga["pasi_cantidad"] + 1;  
+                $pasi_id = $existparsiiga["pasi_id"] ;  
+                $updatepasicant = "
+                UPDATE db_academico.paralelos_siiga SET pasi_cantidad = $cantpasi 
+                WHERE pasi_id = $pasi_id";
+                $comando = $con->createCommand($updatepasicant);
+                $result = $comando->execute();  
+                      
                    
 
                                                       }

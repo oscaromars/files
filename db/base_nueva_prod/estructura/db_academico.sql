@@ -2415,7 +2415,6 @@ daho_id BIGINT(20) NULL DEFAULT NULL AFTER paca_id;
 ALTER TABLE db_academico.planificacion_estudiante ADD 
 pes_semestre BIGINT(20) NULL DEFAULT NULL AFTER pes_carrera;
 
-
 -- --------------------------------------------------------
 --
 -- Estructura de tabla para la tabla `paralelos_siiga`
@@ -2436,6 +2435,7 @@ create table if not exists `paralelos_siiga` (
   `siiga_docente` bigint(20)  null,
   `siiga_periodolectivo` bigint(20) null,
   `siiga_unidad` bigint(20) null,
+  `siiga_categoria` bigint(20) null,
   `siiga_periodo_nombre` varchar(64)  null,
   `siiga_unidad_nombre` varchar(64)  null,
   `siiga_categoria_nombre` varchar(64)  null,

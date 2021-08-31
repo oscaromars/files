@@ -1260,14 +1260,16 @@ where a.maca_id= :maca_id and asi_id = :asi_id
 
                 $createpartemp =
                 "
-                INSERT INTO db_academico.paralelos_siiga
-    (pla_id,asi_id,mod_id,maca_id,uaca_id,bloq_id,mpp_id,siiga_paralelo,siiga_nalumnos,siiga_materia,siiga_modalidad,siiga_docente,siiga_periodolectivo,siiga_unidad,siiga_periodo_nombre,siiga_unidad_nombre,siiga_categoria_nombre,siiga_modalidad_nombre,pasi_cantidad,pasi_usuario_ingreso,pasi_estado,pasi_fecha_creacion,pasi_estado_logico)
+                 INSERT INTO db_academico.paralelos_siiga
+    (pla_id,asi_id,mod_id,maca_id,uaca_id,bloq_id,mpp_id,siiga_paralelo,pasi_cantidad,pasi_usuario_ingreso,pasi_estado,pasi_fecha_creacion,pasi_estado_logico)
 
                 VALUES 
-    ('" . $pla_api . "','" . $asi_api . "','" . $mod_api . "','" . $maca_api . "','" . $uaca_api . "','" . $bloq_api . "','" . $mpp_api . "', '1', '1','" . $asi_api . "','" . $mod_api . "','0','" . $pla_api . "','" . $uaca_api . "', 
- 'periodo prueba', 'unidad siiga', 'categoria siiga', 'modalidad siiga', '0', '1', '1',
+    ('" . $pla_api . "','" . $asi_api . "','" . $mod_api . "','" . $maca_api . "','" . $uaca_api . "','" . $bloq_api . "','" . $mpp_api . "','1','1','1', '1',
  '2021-08-30 17:10:53', '1')
                 ";
+
+                $comando = $con->createCommand($createpartemp);
+                     $fillpars = $comando->execute(); 
 
 
                   } Else {                              
@@ -2041,15 +2043,16 @@ where a.maca_id= :maca_id and asi_id = :asi_id
 
                 $createpartemp =
                 "
-                INSERT INTO db_academico.paralelos_siiga
-    (pla_id,asi_id,mod_id,maca_id,uaca_id,bloq_id,mpp_id,siiga_paralelo,siiga_nalumnos,siiga_materia,siiga_modalidad,siiga_docente,siiga_periodolectivo,siiga_unidad,siiga_periodo_nombre,siiga_unidad_nombre,siiga_categoria_nombre,siiga_modalidad_nombre,pasi_cantidad,pasi_usuario_ingreso,pasi_estado,pasi_fecha_creacion,pasi_estado_logico)
+                 INSERT INTO db_academico.paralelos_siiga
+    (pla_id,asi_id,mod_id,maca_id,uaca_id,bloq_id,mpp_id,siiga_paralelo,pasi_cantidad,pasi_usuario_ingreso,pasi_estado,pasi_fecha_creacion,pasi_estado_logico)
 
                 VALUES 
-    ('" . $pla_api . "','" . $asi_api . "','" . $mod_api . "','" . $maca_api . "','" . $uaca_api . "','" . $bloq_api . "','" . $mpp_api . "', '1', '1','" . $asi_api . "','" . $mod_api . "','0','" . $pla_api . "','" . $uaca_api . "', 
- 'periodo prueba', 'unidad siiga', 'categoria siiga', 'modalidad siiga', '0', '1', '1',
+    ('" . $pla_api . "','" . $asi_api . "','" . $mod_api . "','" . $maca_api . "','" . $uaca_api . "','" . $bloq_api . "','" . $mpp_api . "','1','1','1', '1',
  '2021-08-30 17:10:53', '1')
                 ";
-
+    
+                 $comando = $con->createCommand($createpartemp);
+                 $fillpars = $comando->execute(); 
 
                   } Else {                              
 

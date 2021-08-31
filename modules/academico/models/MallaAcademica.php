@@ -746,7 +746,7 @@ where a.maca_id= :maca_id and asi_id = :asi_id
                       
                        
                       
-                        if ($sstatuspre = True){                     
+                        if ($sstatuspre == True){                     
                          
 
                      if ($subjects[1][0] == Null)  {                   

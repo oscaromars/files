@@ -233,6 +233,8 @@ class DistributivocabeceraController extends \app\components\CController {
     public function actionReview() {
         $pro_id = 0;
         $paca_id = 0;
+        $promajustado = 0;
+        $DistADO = new DistributivoCabecera();
         $param = Yii::$app->request->queryParams;
         if ($param) {
             $pro_id = $param['cmb_profesor'];
@@ -248,13 +250,19 @@ class DistributivocabeceraController extends \app\components\CController {
         $arr_profesor = $mod_profesor->getProfesoresDistributivo();
         $resCab = $distributivo_cab->obtenerDatoCabecera($pro_id, $paca_id);
         $arr_distributivo = $distributivo_model->getListarReview($resCab['dcab_id']);
+        if(!empty($resCab['dcab_id']))
+        {
+            $valores_promedio =$DistADO->promedio($resCab['dcab_id']);
+            $promajustado = $DistADO->Calcularpromedioajustado($valores_promedio[0]['total_hora_semana_docencia'], $valores_promedio[0]['total_hora_semana_tutoria'], $valores_promedio[0]['total_hora_semana_investigacion'], $valores_promedio[0]['total_hora_semana_vinculacion'], $valores_promedio[0]['preparacion_docencia'], $valores_promedio[0]['semanas_docencia'], $valores_promedio[0]['semanas_tutoria_vinulacion_investigacion']);
+        }
         return $this->render('review',
-                        ['model' => $model, 
+                        ['model' => $model,
                          'arr_profesor' => ArrayHelper::map(array_merge([["Id" => "0", "Nombres" => Yii::t("formulario", "Select")]], $arr_profesor), "Id", "Nombres"),
                          'arr_detalle' => $arr_distributivo,
                          'resCab' => $resCab,
                          'mod_periodo' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Grid")]], $arr_periodo), "id", "name"),
                          'arr_estado' => $this->estados(),
+                         'promajustado' => $promajustado,
         ]);
     }
 

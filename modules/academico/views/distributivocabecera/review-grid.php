@@ -10,6 +10,7 @@ use app\modules\admision\Module as admision;
 //print_r($arr_detalle);
 admision::registerTranslations();
 academico::registerTranslations();
+//print_r(round($promajustado));
 ?>
 <div>
 
@@ -33,8 +34,8 @@ academico::registerTranslations();
      ],
         'columns' =>    [[
         'class' => 'kartik\grid\SerialColumn',
-        //'pageSummary' => 'Total/Promedio Horas',
-        //'pageSummaryOptions' => ['colspan' => 4],
+        'pageSummary' => 'Total/Promedio Ajustado',
+        'pageSummaryOptions' => ['colspan' => 4],
             ],
             [
                 'attribute' => 'Profesor',
@@ -75,13 +76,17 @@ academico::registerTranslations();
                 'attribute' => 'total_horas',
                 'header' => academico::t("Academico", "Total Horas"),
                 'value' => 'total_horas',
-                'pageSummary' => true,
+                //'pageSummary' => false,
             ],
             [
                 'attribute' => 'promedio',
-                'header' => academico::t("Academico", "Promedio Ajustado"),
-                'value' => 'promedioajustado',
-                'pageSummary' => true,
+                'header' => academico::t("Academico", "Promedio"),
+                'value' => 'promedio',
+                //'hidden' => false,
+                /*'value' => function($data){
+                    return (empty($data['promedioajustado'])?0:$data['promedioajustado'])/2;
+                },
+                'pageSummary' => true,*/
             ],
             ['class' => 'kartik\grid\FormulaColumn',
                 'attribute' => 'Horario',
@@ -92,7 +97,16 @@ academico::registerTranslations();
      ])
      ?>
      <?php
-     /*if (!empty($arr_detalle['promedioajustado'])){ ?>
-     <tr><td class="" colspan="4" style="width:50px;">Total/Promedio Horas</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td><?php $arr_detalle['promedioajustado']?></td><td>&nbsp;</td></tr>
-    <?php }*/?>
+     if (!empty($promajustado)){ ?>
+     <!-- <tr><td style="width:50px;"><h4><b>Total/Promedio Ajustado</b></h4></td><td></td><td></td><td></td><td></td><td></td><td><?php echo round($promajustado); ?></td></tr>-->
+     <table class="tg">
+        <thead>
+        <tr>
+            <td class="tg-0pky" colspan="2"><h4><b>Total/Promedio Ajustado</b></h4></td>
+            <td class="tg-0lax">&nbsp;&nbsp</td>
+            <td class="tg-0lax" colspan="2"><h4><?php echo round($promajustado); ?></h4></td>
+        </tr>
+    </thead>
+    </table>
+    <?php }?>
 </div>

@@ -23,6 +23,7 @@ use app\modules\academico\Module as academico;
     $this->render('review-grid', [
         'arr_detalle' => $arr_detalle,
         'resCab' => $resCab,
+        'promajustado' => $promajustado,
         ]);
     ?>
 </div>

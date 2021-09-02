@@ -75,6 +75,23 @@ use yii\helpers\ArrayHelper;
                     },
                 ],
             ],
+             [
+                'class' => 'yii\grid\ActionColumn',
+                'header' => 'Transferir',
+                'contentOptions' => ['style' => 'text-align: center;'],
+                'headerOptions' => ['width' => '60'],
+                'template' => '{close}',
+                'buttons' => [
+                    'close' => function ($url, $model) {
+                          if ($model['estado'] ==Null) {
+                        return Html::a('<span style="margin-left: 2px;margin-right: 2px;" id="frm_hasplanning" value="1" class="glyphicon glyphicon-transfer"></span>', null, ["data-toggle" => "tooltip", "title" => "Transferir a Siga", "onclick" => "transferirPlanificacion('" . $model['id'] . "')"]);}else {
+                             return Html::a('<span style="margin-left: 2px;margin-right: 2px;color:gray;objLang" id="frm_hasplanning" value="1" class="glyphicon glyphicon-ban-circle"></span>', null, ["data-toggle" => "tooltip", "title" => "Deshabilitado", "onclick" => "blocked('" . $model['id'] . "')"]);
+
+
+                        }
+                    },
+                ],
+            ],
         ],
     ])
 ?>

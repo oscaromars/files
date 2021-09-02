@@ -361,6 +361,17 @@ $centralprocess = $malla->consultarAsignaturas($resultData[$i],$periodo,$saca_no
 
      }  
 
+    public function actionTransferir($pla_id)  { 
+       /*mod_periodo = new PlanificacionEstudiante();
+        $allsubjects=  $mod_periodo->generateDatatotrasfer($pla_id);
+        if (count($allsubjects) > 0) {           
+        for ($i = 0; $i < count($allsubjects); $i++) {          
+$centralprocess = $malla->transfertosiga($i);                
+            }
+        }*/
+     return $this->redirect(['index']);
+     }  
+
       public function actionDescargarples()  {    
       
         ini_set('memory_limit', '512M');

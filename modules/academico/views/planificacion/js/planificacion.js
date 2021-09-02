@@ -1209,6 +1209,10 @@ function descargarPlanificacionestu(pla_id) {
    window.location.href = $('#txth_base').val() + "/academico/planificacion/descargarples?pla_id=" + pla_id;
 }
 
+function transferirPlanificacion(pla_id) {
+   window.location.href = $('#txth_base').val() + "/academico/planificacion/transferir?pla_id=" + pla_id;
+}
+
 
 function modificarplanificacionaut() {
    var arrParams = new Object();

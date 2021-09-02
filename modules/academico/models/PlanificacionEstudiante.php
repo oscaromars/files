@@ -274,6 +274,46 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
         return $res;
     }
 
+    /**
+     * Function obtener datos para programacion de materias siga
+     * @author   Oscar Sanchez <analistadesarrollo05@uteg.edu.ec>
+     * @property       
+     * @return  
+     */
+    public function generateDatatotrasfer($pla_id) {
+    $con = \Yii::$app->db_academico;        
+    $getallbymod = "
+        SELECT
+        concat(j.baca_anio,' ',j.baca_descripcion,' ',
+        SUBSTR(e.mod_nombre,1,3),' ',j.baca_nombre) as periodo_nombre,
+        concat('SEMESTRE ', j.baca_descripcion,' ',j.baca_anio,' ',
+        e.mod_nombre,' Bloque ',j.baca_nombre) as periodo_descripcion,
+        i.paca_fecha_inicio as periodo_inicio,i.paca_fecha_fin as periodo_fin,
+        j.baca_anio as periodo_anio,a.siiga_paralelo as paralelo,
+        a.pasi_cantidad as alumnos,f.sasi_id as materia_siga,
+        0 as modalidad_siga,0 as si_docente_siga, b.pla_id as periodo_lectivo_siga
+        FROM db_academico.paralelos_siiga a
+        INNER JOIN db_academico.planificacion b on a.pla_id = b.pla_id
+        INNER JOIN db_academico.asignatura c on a.asi_id = c.asi_id
+        INNER JOIN db_academico.malla_academica d on a.maca_id = d.maca_id
+        INNER JOIN db_academico.modalidad e on a.mod_id = e.mod_id
+        INNER JOIN db_academico.siga_malla_academica_detalle f 
+        on f.asi_id  =  a.asi_id and f.mod_id = a.mod_id
+        INNER JOIN db_academico.unidad_academica g on g.uaca_id = a.uaca_id
+        INNER JOIN db_academico.semestre_academico h on h.saca_id = b.saca_id
+        INNER JOIN db_academico.periodo_academico i on i.saca_id = h.saca_id
+        INNER JOIN db_academico.bloque_academico j on j.baca_id = i.baca_id 
+        WHERE a.pla_id = :pla_id
+        ";
+
+         $comando = $con->createCommand($getallbymod);
+            $comando->bindParam(":pla_id", $pla_id, \PDO::PARAM_INT);
+            $programacion_siga = $comando->queryAll(); 
+
+            return $programacion_siga ;
+
+        }
+
     public function processFile($fname, $pla_id) {
         $file = Yii::$app->basePath . Yii::$app->params['documentFolder'] . "planificacion/" . $fname;
         $fila = 0;

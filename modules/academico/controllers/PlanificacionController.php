@@ -361,16 +361,29 @@ $centralprocess = $malla->consultarAsignaturas($resultData[$i],$periodo,$saca_no
 
      }  
 
-    public function actionTransferir($pla_id)  { 
-       /*mod_periodo = new PlanificacionEstudiante();
+     public function actionTransferir($pla_id)  { 
+        $mod_periodo = new PlanificacionEstudiante();
+        $alldatato = array();
         $allsubjects=  $mod_periodo->generateDatatotrasfer($pla_id);
         if (count($allsubjects) > 0) {           
         for ($i = 0; $i < count($allsubjects); $i++) {          
-$centralprocess = $malla->transfertosiga($i);                
+        $alldatato[0] = $programacion_siga = [$i]['periodo_nombre'];   
+        $alldatato[1] = $programacion_siga = [$i]['periodo_descripcion'];   
+        $alldatato[2] = $programacion_siga = [$i]['periodo_inicio'];   
+        $alldatato[3] = $programacion_siga = [$i]['periodo_fin'];  
+        $alldatato[4] = $programacion_siga = [$i]['periodo_anio'];   
+        $alldatato[5] = $programacion_siga = [$i]['paralelo'];   
+        $alldatato[6] = $programacion_siga = [$i]['alumnos'];   
+        $alldatato[7] = $programacion_siga = [$i]['materia_siga']; 
+        $alldatato[8] = $programacion_siga = [$i]['modalidad_siga'];   
+        $alldatato[9] = $programacion_siga = [$i]['docente_siga'];   
+        $alldatato[10] = $programacion_siga = [$i]['periodo_lectivo_siga'];   
+        
             }
-        }*/
-     return $this->redirect(['index']);
-     }  
+        }
+      return $this->redirect(['index']);
+       
+     }    
 
       public function actionDescargarples()  {    
       

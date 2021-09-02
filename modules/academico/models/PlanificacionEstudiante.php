@@ -291,7 +291,7 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
         i.paca_fecha_inicio as periodo_inicio,i.paca_fecha_fin as periodo_fin,
         j.baca_anio as periodo_anio,a.siiga_paralelo as paralelo,
         a.pasi_cantidad as alumnos,f.sasi_id as materia_siga,
-        0 as modalidad_siga,0 as si_docente_siga, b.pla_id as periodo_lectivo_siga
+        0 as modalidad_siga,0 as docente_siga, b.pla_id as periodo_lectivo_siga
         FROM db_academico.paralelos_siiga a
         INNER JOIN db_academico.planificacion b on a.pla_id = b.pla_id
         INNER JOIN db_academico.asignatura c on a.asi_id = c.asi_id

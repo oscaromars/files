@@ -942,10 +942,13 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
                     INNER JOIN db_academico.distributivo_academico AS daca ON daca.daca_id = cedi.daca_id
                     INNER JOIN db_academico.distributivo_academico_estudiante AS daes ON daes.daca_id = daca.daca_id
                     INNER JOIN db_academico.curso_educativa_unidad AS ceu ON ceu.cedu_id = cedu.cedu_id
-                WHERE ((now() between paca.paca_fecha_inicio and paca.paca_fecha_fin) OR (now() < paca.paca_fecha_fin)) 
+                    left join db_academico.curso_educativa_estudiante cest on ceu.cedu_id=cest.cedu_id  and  daes.est_id=cest.est_id
+               WHERE
+               cest.ceest_id is null and
+               ((now() between paca.paca_fecha_inicio and paca.paca_fecha_fin) OR (now() < paca.paca_fecha_fin))
                 AND paca.paca_activo = 'A'
-                AND not exists (SELECT ceuni_id FROM db_academico.curso_educativa_estudiante AS cee 
-                                WHERE not cee.est_id = daes.est_id and cee.cedu_id = cedu.cedu_id and cee.ceuni_id = ceu.ceuni_id)";
+                /*AND not exists (SELECT ceuni_id FROM db_academico.curso_educativa_estudiante AS cee
+                                WHERE not cee.est_id = daes.est_id and cee.cedu_id = cedu.cedu_id and cee.ceuni_id = ceu.ceuni_id)*/";
 
         /*
         $sql = "SELECT DISTINCT daes.est_id, daca.daca_id, cedu.cedu_id

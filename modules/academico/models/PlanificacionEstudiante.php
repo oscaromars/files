@@ -306,6 +306,25 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
         WHERE a.pla_id = :pla_id
         ";
 
+         $getallbymod = "
+        SELECT DISTINCT  a.pasi_id,a.pla_id, a.asi_id,a.mod_id, a.maca_id, a.mpp_id, a.uaca_id,a.bloq_id, a.pasi_cantidad,f.smad_cod_legal, f.sasi_id
+        FROM db_academico.paralelos_siiga a
+        INNER JOIN db_academico.planificacion b ON a.pla_id = b.pla_id
+        INNER JOIN db_academico.asignatura c ON a.asi_id = c.asi_id
+        INNER JOIN db_academico.malla_academica d ON a.maca_id = d.maca_id
+        INNER JOIN db_academico.modalidad e ON a.mod_id = e.mod_id
+        INNER JOIN db_academico.siga_malla_academica_detalle f 
+        ON f.asi_id  =  a.asi_id AND f.maca_id = a.maca_id
+        INNER JOIN db_academico.unidad_academica g ON g.uaca_id = a.uaca_id
+        INNER JOIN db_academico.semestre_academico h ON h.saca_id = b.saca_id
+        INNER JOIN db_academico.periodo_academico i ON i.saca_id = h.saca_id
+        INNER JOIN db_academico.bloque_academico j ON j.baca_id = i.baca_id 
+        WHERE
+        a.pla_id = :pla_id AND 
+         a.pasi_estado = 1 AND
+         a.pasi_estado_logico = 1
+        ";
+
          $comando = $con->createCommand($getallbymod);
             $comando->bindParam(":pla_id", $pla_id, \PDO::PARAM_INT);
             $programacion_siga = $comando->queryAll(); 

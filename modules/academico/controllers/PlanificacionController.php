@@ -361,29 +361,37 @@ $centralprocess = $malla->consultarAsignaturas($resultData[$i],$periodo,$saca_no
 
      }  
 
-     public function actionTransferir($pla_id)  { 
+    public function actionTransferir($pla_id)  { 
         $mod_periodo = new PlanificacionEstudiante();
-        $alldatato = array();
+        $programacion_siga = array();
         $allsubjects=  $mod_periodo->generateDatatotrasfer($pla_id);
         if (count($allsubjects) > 0) {           
-        for ($i = 0; $i < count($allsubjects); $i++) {          
-        $alldatato[0] = $programacion_siga = [$i]['periodo_nombre'];   
-        $alldatato[1] = $programacion_siga = [$i]['periodo_descripcion'];   
-        $alldatato[2] = $programacion_siga = [$i]['periodo_inicio'];   
-        $alldatato[3] = $programacion_siga = [$i]['periodo_fin'];  
-        $alldatato[4] = $programacion_siga = [$i]['periodo_anio'];   
-        $alldatato[5] = $programacion_siga = [$i]['paralelo'];   
-        $alldatato[6] = $programacion_siga = [$i]['alumnos'];   
-        $alldatato[7] = $programacion_siga = [$i]['materia_siga']; 
-        $alldatato[8] = $programacion_siga = [$i]['modalidad_siga'];   
-        $alldatato[9] = $programacion_siga = [$i]['docente_siga'];   
-        $alldatato[10] = $programacion_siga = [$i]['periodo_lectivo_siga'];   
-        
+        for ($i = 0; $i < count($allsubjects); $i++) {  
+       $url = "https://acade.uteg.edu.ec/planificaciondesa/pass.php"; //--
+        $content = json_encode($allsubjects[$i]); //--
+        $curl = curl_init($url);  //--
+        curl_setopt($curl, CURLOPT_HEADER, false);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);   //--
+        curl_setopt($curl, CURLOPT_HTTPHEADER,  //--
+        array("Content-type: application/json"));
+        curl_setopt($curl, CURLOPT_POST, true);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $content); //-- 
+        $json_response = curl_exec($curl);  //--
+        $status = curl_getinfo($curl, CURLINFO_HTTP_CODE); //--
+        if ( $status != 200 ) {                
+        //die(" $content url $url status $status, response $json_response, curl_error " . curl_error($curl) . ", curl_errno " . curl_errno($curl));
+        die(" status $status content $content ");
+         }
+           $response = json_decode($json_response, true); //--
+              curl_close($curl);   //--
+
+
             }
         }
-      return $this->redirect(['index']);
        
-     }    
+          return $this->redirect(['index']);
+       
+     }   
 
       public function actionDescargarples()  {    
       

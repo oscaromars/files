@@ -50,7 +50,7 @@ use yii\helpers\ArrayHelper;
                 'template' => '{refresh} {approve} {deny}',
                 'buttons' => [
                     'refresh' => function ($url, $model) {
-                         if ($model['estado'] ==Null) {
+                         if ($model['estado'] == 1) {
                         return Html::a('<span style="margin-left: 2px;margin-right: 2px;" id="frm_hasplanning" value="1" class="glyphicon glyphicon-refresh"></span>', null, ["data-toggle" => "tooltip", "title" => "Alcance", "onclick" => "update()"]);}else {
                             return Html::a('<span style="margin-left: 2px;margin-right: 2px;color:gray;objLang" id="frm_hasplanning" value="1" class="glyphicon glyphicon-ban-circle"></span>', null, ["data-toggle" => "tooltip", "title" => "Deshabilitado", "onclick" => "blocked('" . $model['id'] . "')"]);
 
@@ -66,7 +66,7 @@ use yii\helpers\ArrayHelper;
                 'template' => '{close} {approve} {deny}',
                 'buttons' => [
                     'close' => function ($url, $model) {
-                          if ($model['estado'] ==Null) {
+                          if ($model['estado'] == 1) {
                         return Html::a('<span style="margin-left: 2px;margin-right: 2px;" id="frm_hasplanning" value="1" class="glyphicon glyphicon-eject"></span>', null, ["data-toggle" => "tooltip", "title" => "Cerrar Proceso", "onclick" => "closer('" . $model['id'] . "')"]);}else {
                              return Html::a('<span style="margin-left: 2px;margin-right: 2px;color:gray;objLang" id="frm_hasplanning" value="1" class="glyphicon glyphicon-ban-circle"></span>', null, ["data-toggle" => "tooltip", "title" => "Deshabilitado", "onclick" => "blocked('" . $model['id'] . "')"]);
 
@@ -83,7 +83,7 @@ use yii\helpers\ArrayHelper;
                 'template' => '{close}',
                 'buttons' => [
                     'close' => function ($url, $model) {
-                          if ($model['estado'] ==Null) {
+                          if ($model['estado'] == 1) {
                         return Html::a('<span style="margin-left: 2px;margin-right: 2px;" id="frm_hasplanning" value="1" class="glyphicon glyphicon-transfer"></span>', null, ["data-toggle" => "tooltip", "title" => "Transferir a Siga", "onclick" => "transferirPlanificacion('" . $model['id'] . "')"]);}else {
                              return Html::a('<span style="margin-left: 2px;margin-right: 2px;color:gray;objLang" id="frm_hasplanning" value="1" class="glyphicon glyphicon-ban-circle"></span>', null, ["data-toggle" => "tooltip", "title" => "Deshabilitado", "onclick" => "blocked('" . $model['id'] . "')"]);
 

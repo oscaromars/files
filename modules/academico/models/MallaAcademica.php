@@ -811,8 +811,8 @@ where a.maca_id= :maca_id and asi_id = :asi_id
                                if ($rows_pla["pla_id"] == 0)  {
                                  
                 
-                $sql = "INSERT INTO db_academico.planificacion (mod_id, per_id, pla_fecha_inicio, pla_fecha_fin, pla_periodo_academico, pla_estado, pla_estado_logico,saca_id)
-                        VALUES ('" . $modalidad . "', 1, '" . $fecha_inicio . "', '" . $fecha_fin . "', '" . $semestre . "', '" . $estado . "', '" . $estado . "','" . $estacion . "');";
+                $sql = "INSERT INTO db_academico.planificacion (mod_id, per_id, pla_fecha_inicio, pla_fecha_fin, pla_periodo_academico,pla_path, pla_estado, pla_estado_logico,saca_id)
+                        VALUES ('" . $modalidad . "', 1, '" . $fecha_inicio . "', '" . $fecha_fin . "', '" . $semestre . "',1, '" . $estado . "', '" . $estado . "','" . $estacion . "');";
                  $comando = $con->createCommand($sql); 
                      $rows_pla = $comando->execute();
               

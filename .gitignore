@@ -10,6 +10,10 @@ modules/academico/controllers/RegistroControllerold.php
 modules/academico/models/CancelacionRegistroOnline0.php
 modules/academico/models/CancelacionRegistroOnline1.php
 modules/academico/models/MallaxAcademica.php
+modules/academico/views/planificacion/index-gridold.php
+modules/academico/views/planificacion/indexold.php
+modules/academico/views/planificacion/indexa-grid.php
+modules/academico/views/planificacion/temporal.php
 
 # vim
 .*.sw[a-z]

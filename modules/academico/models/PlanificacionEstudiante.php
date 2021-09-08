@@ -307,7 +307,7 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
         ";
 
          $getallbymod = "
-        SELECT DISTINCT  a.pasi_id,a.pla_id, a.asi_id,a.mod_id, a.maca_id, a.mpp_id, a.uaca_id,a.bloq_id, a.pasi_cantidad,f.smad_cod_legal, f.sasi_id
+        SELECT DISTINCT  a.pasi_id,a.pla_id, a.asi_id,a.mod_id, a.maca_id, a.mpp_id, a.uaca_id,a.bloq_id, a.pasi_cantidad,f.smad_cod_legal, f.sasi_id, a.siiga_paralelo
         FROM db_academico.paralelos_siiga a
         INNER JOIN db_academico.planificacion b ON a.pla_id = b.pla_id
         INNER JOIN db_academico.asignatura c ON a.asi_id = c.asi_id

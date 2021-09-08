@@ -578,7 +578,7 @@ class DistributivoCabecera extends \yii\db\ActiveRecord {
         //   $con_db = \Yii::$app->db; //Conexin Asgard
         $con_asgard = \Yii::$app->db_asgard;
         $estado = 1;
-        $porcentaje_preparacion = 0.30;
+        //$porcentaje_preparacion = 0.30;
         /*$sql = "select
         sum(case when td.tdis_id =1 then daho_total_horas else 0 end) +
         sum(case when td.tdis_id =2 then tdis_num_semanas else 0 end )+
@@ -592,11 +592,22 @@ class DistributivoCabecera extends \yii\db\ActiveRecord {
                         . "where da.dcab_id=:ids and dc.dcab_estado_logico=1 and td.tdis_id not in(6) ";
         */
         $sql = "select
-                sum(case when td.tdis_id =1 then daho_total_horas else 0 end )  as total_hora_semana_docencia,
+                sum(case when moda.mod_id <> 1 and td.tdis_id =1 then daho_total_horas else 0 end )  as total_hora_semana_docencia_prese,
+                case when moda.mod_id=1 and td.tdis_id =1 then
+                    (case
+                        when (daca_num_estudiantes_online between 0 and 10) then  2
+                        when (daca_num_estudiantes_online between 11 and 20) then 3
+                        when (daca_num_estudiantes_online between 21 and 30) then 4
+                        when (daca_num_estudiantes_online between 31 and 40) then 5
+                        when (daca_num_estudiantes_online >40) then 7 end)
+                       /* else
+                        case when da.tdis_id=7  then round(tdis_num_semanas/paca_semanas_periodo) else ( case  when dah.daho_total_horas is null then tdis_num_semanas else dah.daho_total_horas end) end
+                        sum(case when td.tdis_id =1 then daho_total_horas else 0 end )*/
+                        end as total_hora_semana_docencia_online,
                 sum(case when td.tdis_id =2 then tdis_num_semanas else 0 end ) as total_hora_semana_tutoria,
                 sum(case when td.tdis_id =3 then tdis_num_semanas else 0 end) as total_hora_semana_investigacion,
                 sum(case when td.tdis_id =4 then tdis_num_semanas else 0 end) as total_hora_semana_vinculacion,
-                round(sum(case when td.tdis_id =1 then daho_total_horas else 0 end ) * :porcentaje_preparacion)  as preparacion_docencia,
+                -- round(sum(case when td.tdis_id =1 then daho_total_horas else 0 end ) * :porcentaje_preparacion)  as preparacion_docencia,
                 pa.paca_semanas_periodo as semanas_docencia,
                 pa.paca_semanas_inv_vinc_tuto as semanas_tutoria_vinulacion_investigacion
         from " . $con->dbname . ".distributivo_academico da
@@ -604,13 +615,15 @@ class DistributivoCabecera extends \yii\db\ActiveRecord {
         inner join " . $con->dbname . ".tipo_distributivo td on td.tdis_id=da.tdis_id
         inner join " . $con->dbname . ".periodo_academico pa on pa.paca_id=da.paca_id
         left join " . $con->dbname . ".distributivo_academico_horario dah on dah.daho_id=da.daho_id
-        where da.dcab_id=:ids and
+        left join " . $con->dbname . ".asignatura AS asi ON da.asi_id = asi.asi_id
+        left join " . $con->dbname . ".modalidad AS moda ON da.mod_id = moda.mod_id
+              where da.dcab_id=:ids and
               dc.dcab_estado_logico= :estado and
               td.tdis_id not in(6)";
         $comando = $con->createCommand($sql);
         $comando->bindParam(":ids", $Ids, \PDO::PARAM_INT);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
-        $comando->bindParam(":porcentaje_preparacion", $porcentaje_preparacion, \PDO::PARAM_STR);
+        //$comando->bindParam(":porcentaje_preparacion", $porcentaje_preparacion, \PDO::PARAM_STR);
         //\app\models\Utilities::putMessageLogFile($sql);
         return $comando->queryAll();
     }
@@ -843,7 +856,7 @@ class DistributivoCabecera extends \yii\db\ActiveRecord {
                             $horas_preparacion,2);
         }
          //Utilities::putMessageLogFile('$promedio ' . $promedio );
-         $promedio_ajustado =  sqrt(round($promedio/$semanas_tutoria_vinulacion_investigacion));
+         $promedio_ajustado =  sqrt(/*round(*/$promedio/$semanas_tutoria_vinulacion_investigacion)/*)*/;
          //Utilities::putMessageLogFile('$promedio_ajustado ' . $promedio_ajustado );
          return $promedio_ajustado;
     }

@@ -1235,6 +1235,7 @@ where a.maca_id= :maca_id and asi_id = :asi_id
                   $uaca_api = $rows["uaca_id"];
                   $bloq_api = $getifasi["hosd_bloque"];
                   $mpp_api =  $getmpar["mpp_id"]; 
+                  $mpp_num =  $getmpar["mpp_num_paralelo"]; 
 
                 $searchparsiiga = "
                     SELECT  pasi_id,pasi_cantidad  from db_academico.paralelos_siiga
@@ -1244,6 +1245,7 @@ where a.maca_id= :maca_id and asi_id = :asi_id
                     AND maca_id = :maca_id
                     AND uaca_id = :uaca_id
                     AND bloq_id = :bloq_id
+                    AND mpp_id = :mpp_id
                     ";
 
                    $comando = $con->createCommand($searchparsiiga);
@@ -1253,6 +1255,7 @@ where a.maca_id= :maca_id and asi_id = :asi_id
                    $comando->bindParam(":maca_id", $maca_api, \PDO::PARAM_INT);
                    $comando->bindParam(":uaca_id", $uaca_api, \PDO::PARAM_INT);
                    $comando->bindParam(":bloq_id", $bloq_api, \PDO::PARAM_INT);
+                   $comando->bindParam(":mpp_id",   $mpp_api, \PDO::PARAM_INT);
                    $existparsiiga = $comando->queryOne();
                 
 
@@ -1264,7 +1267,7 @@ where a.maca_id= :maca_id and asi_id = :asi_id
     (pla_id,asi_id,mod_id,maca_id,uaca_id,bloq_id,mpp_id,siiga_paralelo,pasi_cantidad,pasi_usuario_ingreso,pasi_estado,pasi_fecha_creacion,pasi_estado_logico)
 
                 VALUES 
-    ('" . $pla_api . "','" . $asi_api . "','" . $mod_api . "','" . $maca_api . "','" . $uaca_api . "','" . $bloq_api . "','" . $mpp_api . "','1','1','1', '1',
+    ('" . $pla_api . "','" . $asi_api . "','" . $mod_api . "','" . $maca_api . "','" . $uaca_api . "','" . $bloq_api . "','" . $mpp_api . "','" . $mpp_num . "','1','1', '1',
  '2021-08-30 17:10:53', '1')
                 ";
 
@@ -2024,6 +2027,7 @@ where a.maca_id= :maca_id and asi_id = :asi_id
                   $uaca_api = $rows["uaca_id"];
                   $bloq_api = $getifasi["hosd_bloque"];
                   $mpp_api =  $getmpar["mpp_id"]; 
+                  $mpp_num =  $getmpar["mpp_num_paralelo"]; 
 
                 $searchparsiiga = "
                     SELECT  pasi_id,pasi_cantidad  from db_academico.paralelos_siiga
@@ -2033,6 +2037,7 @@ where a.maca_id= :maca_id and asi_id = :asi_id
                     AND maca_id = :maca_id
                     AND uaca_id = :uaca_id
                     AND bloq_id = :bloq_id
+                    AND mpp_id = :mpp_id
                     ";
 
                    $comando = $con->createCommand($searchparsiiga);
@@ -2042,6 +2047,7 @@ where a.maca_id= :maca_id and asi_id = :asi_id
                    $comando->bindParam(":maca_id", $maca_api, \PDO::PARAM_INT);
                    $comando->bindParam(":uaca_id", $uaca_api, \PDO::PARAM_INT);
                    $comando->bindParam(":bloq_id", $bloq_api, \PDO::PARAM_INT);
+                   $comando->bindParam(":mpp_id",   $mpp_api, \PDO::PARAM_INT);
                    $existparsiiga = $comando->queryOne();
                 
 
@@ -2053,7 +2059,7 @@ where a.maca_id= :maca_id and asi_id = :asi_id
     (pla_id,asi_id,mod_id,maca_id,uaca_id,bloq_id,mpp_id,siiga_paralelo,pasi_cantidad,pasi_usuario_ingreso,pasi_estado,pasi_fecha_creacion,pasi_estado_logico)
 
                 VALUES 
-    ('" . $pla_api . "','" . $asi_api . "','" . $mod_api . "','" . $maca_api . "','" . $uaca_api . "','" . $bloq_api . "','" . $mpp_api . "','1','1','1', '1',
+    ('" . $pla_api . "','" . $asi_api . "','" . $mod_api . "','" . $maca_api . "','" . $uaca_api . "','" . $bloq_api . "','" . $mpp_api . "','" . $mpp_num . "','1','1', '1',
  '2021-08-30 17:10:53', '1')
                 ";
     

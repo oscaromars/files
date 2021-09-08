@@ -44,7 +44,7 @@ academico::registerTranslations();
                 'header' => Yii::t("formulario", "Mode"),
                 'value' => 'modalidad',
             ],            
-            [
+            /*[
                 'class' => 'yii\grid\ActionColumn',
                 'header' => Yii::t("formulario", "Subject"),
                 'template' => '{view}',
@@ -56,7 +56,7 @@ academico::registerTranslations();
                         return Html::a('<span>' . substr($model['asignatura'], 0, 20) . $texto . '</span>', "javascript:", ["data-toggle" => "tooltip", "title" => $model['asignatura']]);
                     },
                 ],
-            ],
+            ],*/
             [
                 'attribute' => 'DNI',
                 'header' => Yii::t("formulario", "DNI"),

@@ -593,7 +593,7 @@ class DistributivoCabecera extends \yii\db\ActiveRecord {
         */
         $sql = "select
                 sum(case when moda.mod_id <> 1 and td.tdis_id =1 then daho_total_horas else 0 end )  as total_hora_semana_docencia_prese,
-                case when moda.mod_id=1 and td.tdis_id =1 then
+                sum(case when moda.mod_id=1 and td.tdis_id =1 then
                     (case
                         when (daca_num_estudiantes_online between 0 and 10) then  2
                         when (daca_num_estudiantes_online between 11 and 20) then 3
@@ -603,7 +603,7 @@ class DistributivoCabecera extends \yii\db\ActiveRecord {
                        /* else
                         case when da.tdis_id=7  then round(tdis_num_semanas/paca_semanas_periodo) else ( case  when dah.daho_total_horas is null then tdis_num_semanas else dah.daho_total_horas end) end
                         sum(case when td.tdis_id =1 then daho_total_horas else 0 end )*/
-                        end as total_hora_semana_docencia_online,
+                        end) as total_hora_semana_docencia_online,
                 sum(case when td.tdis_id =2 then tdis_num_semanas else 0 end ) as total_hora_semana_tutoria,
                 sum(case when td.tdis_id =3 then tdis_num_semanas else 0 end) as total_hora_semana_investigacion,
                 sum(case when td.tdis_id =4 then tdis_num_semanas else 0 end) as total_hora_semana_vinculacion,

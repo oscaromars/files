@@ -1163,11 +1163,11 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
                     ifnull(da.mpp_id,0) idParalelo,
                     case when m.mod_id=1 and da.tdis_id =1 then
                     (case
-                         when (daca_num_estudiantes_online between 0 and 10) then  round(2  *pc.paca_semanas_periodo *(1.3))
-			             when (daca_num_estudiantes_online between 11 and 20) then round(3  *pc.paca_semanas_periodo *(1.3))
-                         when (daca_num_estudiantes_online between 21 and 30) then round(4  *pc.paca_semanas_periodo *(1.3))
-                         when (daca_num_estudiantes_online between 31 and 40) then round(5  *pc.paca_semanas_periodo *(1.3))
-                         when (daca_num_estudiantes_online >40) then round(7  *pc.paca_semanas_periodo *(1.3)) end)
+                         when (daca_num_estudiantes_online between 0 and 10) then  round(2  * pc.paca_semanas_periodo /**(1.3)*/)
+			 when (daca_num_estudiantes_online between 11 and 20) then round(3  *pc.paca_semanas_periodo /**(1.3)*/)
+                         when (daca_num_estudiantes_online between 21 and 30) then round(4  * pc.paca_semanas_periodo /**(1.3)*/)
+                         when (daca_num_estudiantes_online between 31 and 40) then round(5  * pc.paca_semanas_periodo /**(1.3)*/)
+                         when (daca_num_estudiantes_online >40) then round(7  * pc.paca_semanas_periodo /**(1.3)*/) end)
                        else
                         case when da.tdis_id=7 then tdis_num_semanas else (pc.paca_semanas_periodo * case  when dh.daho_total_horas is null then tdis_num_semanas else dh.daho_total_horas end) end
                         end as total_horas,
@@ -1175,11 +1175,11 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
 
                      case when m.mod_id=1 and da.tdis_id =1 then
                     (case
-                         when (daca_num_estudiantes_online between 0 and 10)  then  round( 2  *(1.3))
-			 when (daca_num_estudiantes_online between 11 and 20) then  round( 3  *(1.3))
-                         when (daca_num_estudiantes_online between 21 and 30) then  round( 4  *(1.3))
-                         when (daca_num_estudiantes_online between 31 and 40) then  round( 5  *(1.3))
-                         when (daca_num_estudiantes_online >40) then round(7 *(1.3))  end)
+                         when (daca_num_estudiantes_online between 0 and 10)  then 2 /*round( 2  *(1.3))*/
+			 when (daca_num_estudiantes_online between 11 and 20) then 3 /*round( 3  *(1.3))*/
+                         when (daca_num_estudiantes_online between 21 and 30) then 4 /*round( 4  *(1.3))*/
+                         when (daca_num_estudiantes_online between 31 and 40) then 5 /*round( 5  *(1.3))*/
+                         when (daca_num_estudiantes_online >40) then 7 /*round(7 *(1.3))*/  end)
                        else
                           case when da.tdis_id=7  then round(tdis_num_semanas/paca_semanas_periodo) else ( case  when dh.daho_total_horas is null then tdis_num_semanas else dh.daho_total_horas end) end
                         end as promedio,

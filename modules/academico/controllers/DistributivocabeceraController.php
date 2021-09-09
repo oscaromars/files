@@ -518,6 +518,7 @@ class DistributivocabeceraController extends \app\components\CController {
         $valores_promedio =$DistADO->promedio($ids);
         $valores_promedio[0]['preparacion_docencia'] = (( $valores_promedio[0]['total_hora_semana_docencia_prese'] + $valores_promedio[0]['total_hora_semana_docencia_online']) * 0.30);
         $valores_promedio[0]['total_hora_semana_docencia'] = $valores_promedio[0]['total_hora_semana_docencia_prese'] + $valores_promedio[0]['total_hora_semana_docencia_online'];
+        $horas_carga_docente_bloque = $valores_promedio[0]['semanas_docencia'] * $valores_promedio[0]['total_hora_semana_docencia'];
         $promedio = $DistADO->Calcularpromedioajustado($valores_promedio[0]['total_hora_semana_docencia'], $valores_promedio[0]['total_hora_semana_tutoria'], $valores_promedio[0]['total_hora_semana_investigacion'], $valores_promedio[0]['total_hora_semana_vinculacion'], $valores_promedio[0]['preparacion_docencia'], $valores_promedio[0]['semanas_docencia'], $valores_promedio[0]['semanas_tutoria_vinulacion_investigacion']);
         /*Utilities::putMessageLogFile('$total_hora_semana_docencia ' . $valores_promedio[0]['total_hora_semana_docencia'] );
         Utilities::putMessageLogFile('$total_hora_semana_tutoria ' . $valores_promedio[0]['total_hora_semana_tutoria']);
@@ -591,6 +592,7 @@ class DistributivocabeceraController extends \app\components\CController {
                     'FechaDia' => $FechaDia,
                     'sumaHoras'=>$sumaHoras,
                     'promedio'=>round($promedio),
+                    'horas_carga_docente_bloque' => $horas_carga_docente_bloque
                 ])
         );
 

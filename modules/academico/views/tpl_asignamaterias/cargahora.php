@@ -185,10 +185,11 @@
 
                 <tr class="fila">
                     <td class="marcoCel"><?php echo 'HORAS CARGA DOCENTE BLOQUE' ?></td>
-                    <td class="marcoCel"><?php if (($sumaHoras[0]['total_docente'] == null)) {
+                    <td class="marcoCel"><?php if ((/*$sumaHoras[0]['total_docente']*/ $horas_carga_docente_bloque == null)) {
                                                 echo 'N/A';
                                             } else {
-                                                echo $sumaHoras[0]['total_docente']+ $sumaHoras[0]['total_docente_author'];
+                                                //echo $sumaHoras[0]['total_docente']+ $sumaHoras[0]['total_docente_author'];
+                                                echo $horas_carga_docente_bloque;
                                             } ?></td>
                     <td class="marcoCel"><?php echo 'HORAS DE PREPARACION DOCENTE' ?></td>
                     <td class="marcoCel"><?php if (($sumaHoras[0]['total_docente'] == null) ) {

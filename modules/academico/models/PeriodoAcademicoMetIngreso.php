@@ -679,4 +679,32 @@ class PeriodoAcademicoMetIngreso extends  \app\modules\academico\components\CAct
         $resultData = $comando->queryAll();
         return $resultData;
     }
+
+    /**
+     * Function consulta los periodos academicos incluso con estado inactivo, para listarestudiantespago.
+     * @author Luis Cajamarca <analistadesarrollo04@uteg.edu.ec>;
+     * @param
+     * @return
+     */
+    public function consultarPeriodoActivos() {
+        $con = \Yii::$app->db_academico;
+        $estado = 1;
+
+        $sql = "SELECT  paca.paca_id as id,
+                    ifnull(CONCAT(blq.baca_nombre,'-',sem.saca_nombre,' ',sem.saca_anio),'') as nombre
+                    -- , blq.baca_nombre as bloque
+                FROM db_academico.periodo_academico paca
+                inner join db_academico.semestre_academico sem  ON sem.saca_id = paca.saca_id
+                inner join db_academico.bloque_academico blq ON blq.baca_id = paca.baca_id
+                WHERE paca.paca_activo = 'A' AND
+                    -- now() >= pera.paca_fecha_inicio and pera.paca_fecha_fin<= now() and
+                    paca.paca_estado = :estado AND paca.paca_estado_logico = :estado ";
+
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $resultData = $comando->queryAll();
+        return $resultData;
+    }
+
+    
 }

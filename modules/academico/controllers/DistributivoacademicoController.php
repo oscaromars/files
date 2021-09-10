@@ -69,7 +69,7 @@ class DistributivoacademicoController extends \app\components\CController {
             $periodo = (isset($data['periodo']) && $data['periodo'] > 0) ? $data['periodo'] : NULL;
             $materia = (isset($data['materia']) && $data['materia'] > 0) ? $data['materia'] : NULL;
             $jornada = (isset($data['jornada']) && $data['jornada'] > 0) ? $data['jornada'] : NULL;
-            
+
             $model = $distributivo_model->getListadoDistributivoGrado($search, $modalidad, $materia, $jornada, $unidad, $periodo);
             return $this->render('index-grid', [
                     "model" => $model,

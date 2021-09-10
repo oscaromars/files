@@ -513,7 +513,7 @@ class DistributivoAcademico extends \yii\db\ActiveRecord
                         ELSE ''
                     END AS Jornada,
                     mpp.mpp_num_paralelo as mpp_num_paralelo,
-                    dhpa.dhpa_paralelo as dhpa_paralelo,
+                    -- dhpa.dhpa_paralelo as dhpa_paralelo,
                     (select count(dae.daca_id) FROM db_academico.distributivo_academico_estudiante  as dae where dae.daca_id =daca.daca_id ) as total_est
                FROM db_academico.distributivo_academico AS daca
          INNER JOIN db_academico.distributivo_cabecera dcab
@@ -531,11 +531,11 @@ class DistributivoAcademico extends \yii\db\ActiveRecord
                  on mpp.mpp_id = daca.mpp_id
                 and daca.uaca_id = 1
                 AND mpp.mpp_estado = 1 and mpp.mpp_estado_logico = 1
-          left JOIN db_academico.distributivo_horario_paralelo as dhpa
+          /*left JOIN db_academico.distributivo_horario_paralelo as dhpa
                  ON dhpa.dhpa_id = daca.dhpa_id
                 #ON dhpa.daho_id = daca.daho_id
                 AND daca.uaca_id = 2
-                AND dhpa.dhpa_estado = 1 and dhpa.dhpa_estado_logico = 1
+                AND dhpa.dhpa_estado = 1 and dhpa.dhpa_estado_logico = 1*/
          INNER JOIN db_academico.modalidad AS m
                  ON m.mod_id = daca.mod_id
                 AND m.mod_estado = 1 and m.mod_estado_logico = 1

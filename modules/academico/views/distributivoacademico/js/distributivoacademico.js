@@ -111,7 +111,8 @@ $('#cmb_periodo').change(function () {
         $('#cmb_paralelo').val('0');
         $('#cmb_horario').val('0');
         $('#cmb_jornada').val('0');
-
+        $('#cmb_materia').val('0');
+        
         var link = "";
         if ($('#txth_tipo').val() == 'new') {
             link = $('#txth_base').val() + "/academico/distributivoacademico/new";
@@ -303,6 +304,9 @@ $('#cmb_periodo').change(function () {
 
     $('#cmb_programa').change(function () {
         var link = $('#txth_base').val() + "/academico/distributivoacademico/new";
+        document.getElementById("cmb_paralelo").value = 0;
+        document.getElementById("cmb_horario").value = 0;
+        document.getElementById("cmb_materia").value = 0;
         var arrParams = new Object();
         arrParams.meun_id = $('#cmb_programa').val();
         arrParams.getasignaturapos = true;
@@ -345,7 +349,7 @@ $('#cmb_materia').change(function () {
         arrParams.paca_id = $('#cmb_periodo').val();
         arrParams.mod_id = $('#cmb_modalidad').val();
         arrParams.getparalelo = true;
-        //arrParams.getparaleloposgrado = true;
+        arrParams.getparaleloposgrado = true;
         requestHttpAjax(link, arrParams, function (response) {
             if (response.status == "OK") {
                 data = response.message;
@@ -358,6 +362,7 @@ $('#cmb_materia').change(function () {
         arrParams.asig_id = $('#cmb_materia').val();
         arrParams.paca_id = $('#cmb_periodo').val();
         arrParams.mod_id = $('#cmb_modalidad').val();
+        arrParams.meun_id = $('#cmb_programa').val();
         arrParams.getparaleloposgrado = true;
         requestHttpAjax(link, arrParams, function (response) {
             if (response.status == "OK") {

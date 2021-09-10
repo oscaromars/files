@@ -395,4 +395,29 @@ class ParaleloPromocionPrograma extends \yii\db\ActiveRecord {
         }
     }
 
+    /**
+     * Function consulta todos los paralelos por programa.
+     * @author Giovanni Vergara <analistadesarrollo01@uteg.edu.ec>;
+     * @param
+     * @return
+     */
+    public function getParalelosprograma($meun_id) {
+        $con = \Yii::$app->db_academico;
+        $estado = 1;
+        $sql = "SELECT pppr.pppr_id as id,
+                CONCAT(ppro.ppro_codigo, ' / ', pppr.pppr_descripcion) as name
+                FROM " . $con->dbname . ".promocion_programa ppro
+                INNER JOIN " . $con->dbname . ".paralelo_promocion_programa pppr on pppr.ppro_id = ppro.ppro_id
+                INNER JOIN " . $con->dbname . ".modalidad_estudio_unidad meun on meun.eaca_id = ppro.eaca_id
+                WHERE meun.meun_id = :meun_id AND
+                      ppro.ppro_estado = :estado AND
+                      ppro.ppro_estado_logico = :estado";
+
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $comando->bindParam(":meun_id", $meun_id, \PDO::PARAM_INT);
+        $resultData = $comando->queryAll();
+        return $resultData;
+    }
+
 }

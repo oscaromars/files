@@ -128,7 +128,7 @@ class DistributivoacademicoController extends \app\components\CController {
         $arr_periodoActual = $mod_periodoActual->getPeriodoAcademicoActual();
         $mod_horario = new DistributivoAcademicoHorario();
         $paralelo = new MateriaParaleloPeriodo();
-
+		$mod_paraleloprograma = new ParaleloPromocionPrograma();
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
             if (isset($data["getmodalidad"])) {
@@ -184,9 +184,10 @@ class DistributivoacademicoController extends \app\components\CController {
 
             if (isset($data["getparaleloposgrado"])) {
 
-                $paralelos = $paralelo->getParalelosAsignatura($data["paca_id"],$data["mod_id"],$data["asig_id"]);
+                //$paralelos = $paralelo->getParalelosAsignatura($data["paca_id"],$data["mod_id"],$data["asig_id"]);
                 //$paralelos =$mod_horario->consultarParaleloHorario($data["hora_id"]);
-                $message = array("paralelo" =>  $paralelos);
+				$paralelos = $mod_paraleloprograma->getParalelosprograma($data["meun_id"]);
+				$message = array("paralelo" =>  $paralelos);
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
             }
         }

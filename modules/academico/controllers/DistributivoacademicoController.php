@@ -362,7 +362,9 @@ class DistributivoacademicoController extends \app\components\CController {
 
                                   $res = $model->save(); */
                                 // \app\models\Utilities::putMessageLogFile('model::' . $model->getErrors());
-                                $res = $distributivo_model->insertarDistributivoAcademico($i, $datos, $pro_id, $paca_id, $distributivo_cab->primaryKey);
+								// AQUI HACE EL INSERT GUARDA EL mpp_id del arreglo datos el campo par_id
+								// SE HACE DESDE EL MODELO
+								$res = $distributivo_model->insertarDistributivoAcademico($i, $datos, $pro_id, $paca_id, $distributivo_cab->primaryKey);
                                 if ($res) {
                                     $exito = '1';
                                 } else {

@@ -812,6 +812,9 @@ create table if not exists db_academico.`distributivo_horario_paralelo` (
 --
 create table if not exists `distributivo_academico` (
   `daca_id` bigint(20) not null auto_increment primary key,
+  `dcab_id` bigint(20) null,
+  `daca_fecha_inicio_post` DATE DEFAULT NULL,
+  `daca_fecha_fin_post` DATE DEFAULT NULL,
   `paca_id` bigint(20) null,
   `tdis_id` bigint(20) null, -- tipo_distributivo
   `asi_id` bigint(20) null,
@@ -819,8 +822,8 @@ create table if not exists `distributivo_academico` (
   `uaca_id` bigint(20) null,
   `mod_id` bigint(20) null,
   `daho_id` bigint(20) null, -- distributivo_academico_horario para sacar los dias
-  `dhpa_id` bigint(20) null, -- parelo segun horario
-  `daca_num_estudiantes_online` integer(3) null,
+  `daca_jornada` varchar(1) null,
+  `daca_horario` varchar(10) null,
   `daca_fecha_registro` timestamp null default null,
   `daca_usuario_ingreso` bigint(20) not null,
   `daca_usuario_modifica` bigint(20)  null,
@@ -828,16 +831,29 @@ create table if not exists `distributivo_academico` (
   `daca_fecha_creacion` timestamp not null default current_timestamp,
   `daca_fecha_modificacion` timestamp null default null,
   `daca_estado_logico` varchar(1) not null,
-  foreign key (pro_id) references `profesor`(pro_id),
+  `mpp_id` bigint(20) null,
+  `daca_num_estudiantes_online` integer(11) null,
+  `daca_horas_otras_actividades` integer(11) null,
+  `meun_id` bigint(20) null,
+  `pppr_id` bigint(20) null, -- parelo posgrado
+  -- foreign key (pro_id) references `profesor`(pro_id),
   foreign key (paca_id) references `periodo_academico`(paca_id),
   foreign key (asi_id) references `asignatura`(asi_id),
   foreign key (uaca_id) references `unidad_academica`(uaca_id),
   foreign key (mod_id) references `modalidad`(mod_id),
-  foreign key (daho_id) references `distributivo_academico_horario`(daho_id),
-  foreign key (tdis_id) references `tipo_distributivo`(tdis_id),
-  foreign key (dhpa_id) references `distributivo_horario_paralelo`(dhpa_id)
+  -- foreign key (mpp_id) references `materia_paralelo_periodo`(mpp_id), -- NO HAY SCRIPT DE ESTA TABLA EN ESTE ARCHIVO
+  -- foreign key (daho_id) references `distributivo_academico_horario`(daho_id),
+  -- foreign key (tdis_id) references `tipo_distributivo`(tdis_id),
+  foreign key (pppr_id) references `paralelo_promocion_programa`(pppr_id)
 );
 
+/*
+ALTER TABLE `db_academico`.`distributivo_academico`
+CHANGE COLUMN `dhpa_id` `pppr_id` BIGINT(20) NULL DEFAULT NULL ;
+
+ALTER TABLE  db_academico.distributivo_academico
+ADD FOREIGN KEY (pppr_id) REFERENCES `paralelo_promocion_programa`(pppr_id);
+*/
 -- --------------------------------------------------------
 --
 -- Estructura de tabla para la tabla `distributivo_horario`

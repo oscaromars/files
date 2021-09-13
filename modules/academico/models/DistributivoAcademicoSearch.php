@@ -229,7 +229,7 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
                       and a.meun_estado_logico = 1) as maestria,
                  m.mod_nombre as modalidad,
                 dah.daho_horario as hora,
-                CONCAT( 'G.',dhpa_grupo ,'.',dhpa_paralelo)  as paralelo,
+                CONCAT( pp.ppro_grupo,'.', ppr.pppr_descripcion) as paralelo,
                 IFNULL( CONCAT( da.daca_fecha_inicio_post,' al ' ,da.daca_fecha_fin_post ) ,'N/A')as dias,
                 da.daca_num_estudiantes_online as num_est,
                 'N/A' as aula,
@@ -248,7 +248,8 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
                 inner join " . $con_academico->dbname . ".modalidad m on m.mod_id =  da.mod_id
                 inner join " . $con_academico->dbname . ".profesor profesor on da.pro_id = profesor.pro_id 
                 inner join " . $con_db->dbname . ".persona persona on profesor.per_id = persona.per_id 
-                inner join " . $con_academico->dbname . ".distributivo_horario_paralelo dhp on dhp.dhpa_id = da.dhpa_id
+                inner join " . $con_academico->dbname . ".paralelo_promocion_programa ppr on ppr.pppr_id = da.pppr_id
+                inner join " . $con_academico->dbname . ".promocion_programa pp on pp.ppro_id = ppr.ppro_id         
                 inner join " . $con_academico->dbname . ".dedicacion_docente dd on dd.ddoc_id = profesor.ddoc_id  
                 left join " . $con_academico->dbname . ".asignatura asi on asi.asi_id = da.asi_id 
                 left join " . $con_academico->dbname . ".profesor_instruccion pi3 on pi3.pro_id = profesor.pro_id and pi3.nins_id =3 and pi3.pins_estado=1 and pi3.pins_estado_logico=1

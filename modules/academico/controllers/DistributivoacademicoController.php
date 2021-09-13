@@ -69,7 +69,7 @@ class DistributivoacademicoController extends \app\components\CController {
             $periodo = (isset($data['periodo']) && $data['periodo'] > 0) ? $data['periodo'] : NULL;
             $materia = (isset($data['materia']) && $data['materia'] > 0) ? $data['materia'] : NULL;
             $jornada = (isset($data['jornada']) && $data['jornada'] > 0) ? $data['jornada'] : NULL;
-            
+
             $model = $distributivo_model->getListadoDistributivoGrado($search, $modalidad, $materia, $jornada, $unidad, $periodo);
             return $this->render('index-grid', [
                     "model" => $model,
@@ -128,7 +128,7 @@ class DistributivoacademicoController extends \app\components\CController {
         $arr_periodoActual = $mod_periodoActual->getPeriodoAcademicoActual();
         $mod_horario = new DistributivoAcademicoHorario();
         $paralelo = new MateriaParaleloPeriodo();
-
+		$mod_paraleloprograma = new ParaleloPromocionPrograma();
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
             if (isset($data["getmodalidad"])) {
@@ -151,9 +151,20 @@ class DistributivoacademicoController extends \app\components\CController {
             // El PARALELO YA TRAE EL MPP_ID, ENVIAR ESE Y FILTAR EL CURSO Q CORRESPONDE
             // PARA GRADO
             if (isset($data["gethorario"])) {
-                //\app\models\Utilities::putMessageLogFile('controladormpp_id ' . $data["mpp_id"]);
                 //$horario = $distributivo_model->getHorariosByUnidadAcad($data["uaca_id"], $data["mod_id"], $data['jornada_id']);
+                // SI UNIDAD ACADEMICA ES 1 GRADO
+                if ($data["uaca_id"] == 1) {
                 $horario = $distributivo_model->getHorariosmppid($data["mpp_id"]);
+                }
+                //SI UNIDAD ACADEMICA ES 2 POSGRADO
+                elseif($data["uaca_id"] == 2) {
+                    //\app\models\Utilities::putMessageLogFile('uaca_id'. $data["uaca_id"]);
+                    //\app\models\Utilities::putMessageLogFile('meun_id'. $data["meun_id"]);
+                $horario = $mod_horario->consultaHorariosxuacaymeun($data["uaca_id"], $data["meun_id"]);
+                }else {
+                  \app\models\Utilities::putMessageLogFile('unidad academico no es grado ni posgrado');
+                }
+
                 $message = array("horario" => $horario);
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
             }
@@ -184,9 +195,10 @@ class DistributivoacademicoController extends \app\components\CController {
 
             if (isset($data["getparaleloposgrado"])) {
 
-                $paralelos = $paralelo->getParalelosAsignatura($data["paca_id"],$data["mod_id"],$data["asig_id"]);
+                //$paralelos = $paralelo->getParalelosAsignatura($data["paca_id"],$data["mod_id"],$data["asig_id"]);
                 //$paralelos =$mod_horario->consultarParaleloHorario($data["hora_id"]);
-                $message = array("paralelo" =>  $paralelos);
+				$paralelos = $mod_paraleloprograma->getParalelosprograma($data["meun_id"]);
+				$message = array("paralelo" =>  $paralelos);
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
             }
         }
@@ -220,10 +232,9 @@ class DistributivoacademicoController extends \app\components\CController {
     }
 
      public function actionParalelos() {
-        
+
     $paca_id = 27; $mod_id = 1; $asi_id = 480;
-   
-       $paralelo_model = new MateriaParaleloPeriodo();
+     $paralelo_model = new MateriaParaleloPeriodo();
      $model = $paralelo_model->getParalelosAlumnos($paca_id,$mod_id,$asi_id);
 
       $dataProvider = new ArrayDataProvider([
@@ -361,7 +372,9 @@ class DistributivoacademicoController extends \app\components\CController {
 
                                   $res = $model->save(); */
                                 // \app\models\Utilities::putMessageLogFile('model::' . $model->getErrors());
-                                $res = $distributivo_model->insertarDistributivoAcademico($i, $datos, $pro_id, $paca_id, $distributivo_cab->primaryKey);
+								// AQUI HACE EL INSERT GUARDA EL mpp_id del arreglo datos el campo par_id
+								// SE HACE DESDE EL MODELO
+								$res = $distributivo_model->insertarDistributivoAcademico($i, $datos, $pro_id, $paca_id, $distributivo_cab->primaryKey);
                                 if ($res) {
                                     $exito = '1';
                                 } else {
@@ -406,7 +419,7 @@ class DistributivoacademicoController extends \app\components\CController {
     }
 
     public function actionActualizar() {
-        \app\models\Utilities::putMessageLogFile('entra: ');
+        //\app\models\Utilities::putMessageLogFile('entra: ');
         $usu_id = @Yii::$app->session->get("PB_iduser");
         $fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
         $distributivo_model = new DistributivoAcademico();

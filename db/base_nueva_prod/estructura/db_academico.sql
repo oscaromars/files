@@ -662,6 +662,7 @@ create table if not exists `promocion_programa` (
  `ppro_id` bigint(20) not null auto_increment primary key,
  `ppro_anio` varchar(4) not null,
  `ppro_mes` varchar(02) not null,
+ `ppro_grupo` varchar(10) null,
  `ppro_codigo` varchar(20) not null,
  `uaca_id` bigint(20) not null,
  `mod_id` bigint(20) not null,

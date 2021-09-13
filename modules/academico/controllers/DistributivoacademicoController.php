@@ -151,9 +151,20 @@ class DistributivoacademicoController extends \app\components\CController {
             // El PARALELO YA TRAE EL MPP_ID, ENVIAR ESE Y FILTAR EL CURSO Q CORRESPONDE
             // PARA GRADO
             if (isset($data["gethorario"])) {
-                //\app\models\Utilities::putMessageLogFile('controladormpp_id ' . $data["mpp_id"]);
                 //$horario = $distributivo_model->getHorariosByUnidadAcad($data["uaca_id"], $data["mod_id"], $data['jornada_id']);
+                // SI UNIDAD ACADEMICA ES 1 GRADO
+                if ($data["uaca_id"] == 1) {
                 $horario = $distributivo_model->getHorariosmppid($data["mpp_id"]);
+                }
+                //SI UNIDAD ACADEMICA ES 2 POSGRADO
+                elseif($data["uaca_id"] == 2) {
+                    //\app\models\Utilities::putMessageLogFile('uaca_id'. $data["uaca_id"]);
+                    //\app\models\Utilities::putMessageLogFile('meun_id'. $data["meun_id"]);
+                $horario = $mod_horario->consultaHorariosxuacaymeun($data["uaca_id"], $data["meun_id"]);
+                }else {
+                  \app\models\Utilities::putMessageLogFile('unidad academico no es grado ni posgrado');
+                }
+
                 $message = array("horario" => $horario);
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
             }
@@ -221,10 +232,9 @@ class DistributivoacademicoController extends \app\components\CController {
     }
 
      public function actionParalelos() {
-        
+
     $paca_id = 27; $mod_id = 1; $asi_id = 480;
-   
-       $paralelo_model = new MateriaParaleloPeriodo();
+     $paralelo_model = new MateriaParaleloPeriodo();
      $model = $paralelo_model->getParalelosAlumnos($paca_id,$mod_id,$asi_id);
 
       $dataProvider = new ArrayDataProvider([

@@ -255,6 +255,7 @@ $('#cmb_periodo').change(function () {
                 if (data.jornada.length > 0) {
                     arrParams.uaca_id = $('#cmb_unidad_dis').val();
                     arrParams.mod_id = $('#cmb_modalidad').val();
+                    arrParams.meun_id = $('#cmb_programa').val();
                     arrParams.jornada_id = data.jornada[0].id;
                     arrParams.gethorario = true;
                     requestHttpAjax(link, arrParams, function (response) {
@@ -288,6 +289,7 @@ $('#cmb_periodo').change(function () {
         var arrParams = new Object();
         arrParams.uaca_id = $('#cmb_unidad_dis').val();
         arrParams.mod_id = $('#cmb_modalidad').val();
+        arrParams.meun_id = $('#cmb_programa').val();
         arrParams.jornada_id = $(this).val();
         arrParams.gethorario = true;
         requestHttpAjax(link, arrParams, function(response) {
@@ -321,7 +323,9 @@ $('#cmb_periodo').change(function () {
     $('#cmb_paralelo').change(function () {
         var link = $('#txth_base').val() + "/academico/distributivoacademico/new";
         var arrParams = new Object();
+        arrParams.uaca_id = $('#cmb_unidad_dis').val();
         arrParams.mpp_id = $('#cmb_paralelo').val();
+        arrParams.meun_id = $('#cmb_programa').val();
         arrParams.gethorario = true;
         requestHttpAjax(link, arrParams, function (response) {
             if (response.status == "OK") {

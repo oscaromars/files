@@ -172,7 +172,8 @@ class DistributivoAcademicoHorario extends \yii\db\ActiveRecord
         $con = \Yii::$app->db_academico;
         $estado = 1;
 
-        $sql = "SELECT daho_id as id, daho_descripcion as name
+        $sql = "SELECT daho_id as id,
+                       daho_descripcion as name
                     FROM " . $con->dbname . ".distributivo_academico_horario
                     WHERE uaca_id = :uaca_id AND
                           mod_id = :mod_id AND

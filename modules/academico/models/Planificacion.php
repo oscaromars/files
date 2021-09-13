@@ -149,22 +149,18 @@ class Planificacion extends \yii\db\ActiveRecord {
     
     public static function getPeriodosAcademico() {
         $con_academico = \Yii::$app->db_academico;
-      $sql = "select 
-                a.paca_id as pla_id,
-                concat(b.saca_nombre , ' ' , b.saca_anio, '(', c.baca_nombre, ')') as pla_periodo_academico
-                from  ". $con->dbname . ".periodo_academico a 
-                inner join ". $con->dbname . ".semestre_academico b on a.saca_id = b.saca_id
-                inner join db_academico.bloque_academico c on a.baca_id = c.baca_id
-                where a.paca_activo = 'A'
-                order by a.paca_id asc;";
-
-
-      $sql = "select distinct
+        
+       $sql = "select distinct
                 a.saca_id as pla_id,
                 concat(b.saca_nombre , ' ' , b.saca_anio ) as pla_periodo_academico
                 from  ". $con->dbname . ".periodo_academico a 
                 inner join ". $con->dbname . ".semestre_academico b on a.saca_id = b.saca_id
                 where a.paca_activo = 'A'
+                AND
+                ( select count(*) from db_academico.periodo_academico bb
+                 WHERE  
+                bb.saca_id = a.saca_id
+                 group by bb.saca_id) > 1 
                 order by a.paca_id asc;";  
 
         $comando = $con_academico->createCommand($sql);

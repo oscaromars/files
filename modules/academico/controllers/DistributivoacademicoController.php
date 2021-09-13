@@ -409,7 +409,7 @@ class DistributivoacademicoController extends \app\components\CController {
     }
 
     public function actionActualizar() {
-        \app\models\Utilities::putMessageLogFile('entra: ');
+        //\app\models\Utilities::putMessageLogFile('entra: ');
         $usu_id = @Yii::$app->session->get("PB_iduser");
         $fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
         $distributivo_model = new DistributivoAcademico();

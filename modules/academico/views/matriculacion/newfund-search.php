@@ -10,16 +10,24 @@ academico::registerTranslations();
  */
 ?>
 
+<div>
+    <h3><?=Academico::t("matriculacion", "Registro en Línea - Administrativo")?></h3>
+    </br>
+    <h4><?=Academico::t("matriculacion", "Listado de estudiante a matricular")?></h4>
+    </br>
+</div>
 
 <div class="row">
-
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-        <div class="form-group">
-            <label for="cmb_asignaturaespos" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?=academico::t("matriculacion", "Academic Period")?></label>
-            <div class="col-sm-3 col-xs-3 col-md-3 col-lg-3">
-                <?=Html::dropDownList("cmb_periodo", 0, $arr_periodo, ["class" => "form-control", "id" => "cmb_periodo"])?>
+        <div class="col-md-6 col-sm-6 col-xs-6 col-lg-6">
+            <div class="form-group">
+                <label for="cmb_planificacion" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?=academico::t("matriculacion", "Academic Period")?></label>
+                <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
+                    <?=Html::dropDownList("cmb_planificacion", 0, $arr_pla, ["class" => "form-control", "id" => "cmb_planificacion"])?>
+                </div>
             </div>
         </div>
+
     </div>
      <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">

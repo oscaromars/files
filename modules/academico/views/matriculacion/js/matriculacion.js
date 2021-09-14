@@ -21,6 +21,10 @@ $(document).ready(function() {
         }
     });
 
+    $('#btn_buscarEstudiantes').click(function () {
+        actualizarGridAbePeriodoAcademicoCreate();
+    });
+
     $('#cmb_periodo').change(function() {
         var link = $('#txth_base').val() + "/academico/matriculacion/newmetodoingreso";
         var arrParams = new Object();
@@ -178,6 +182,7 @@ $(document).ready(function() {
     });
 
     $('.chequeado').prop("checked",true);
+    
 
     showRegisterSubject();
 });
@@ -229,52 +234,92 @@ function searchModulesList(idbox, idgrid) {
 
 function registro() {
     var arrParams = new Object();
-    var link = $('#txth_base').val() + "/academico/matriculacion/registro";
-    var materias = '';
-    var num_min = $('#frm_num_min').val();
-    var num_max = $('#frm_num_max').val();
+    var per_id = $('#frm_per_id').val();
+    var link = $('#txth_base').val() + "/academico/matriculacion/registroadminindex?per_id="+per_id;
+    var materias = new Array();
+    var codes    = new Array();
+    var bloque   = new Array();
+    var paralelo = new Array();
+    var hora     = new Array();
+    var credits  = new Array();
+    var costs    = new Array();
     var contador = 0;
+
     $('#grid_registro_list input[type=checkbox]').each(function() {
-        if (this.checked) {
-            materias += $(this).val() + ',';
+        if (this.checked ) {
             contador += 1;
         }
     });
-    var message = {
-        "wtmessage": "Debe escoger como mínimo ",
-        "title": "Error"
+    
+    
+     var message = {
+        "wtmessage": objLang.You_must_choose_at_least_two,
+        "title": objLang.Error
     }
-    if (contador < num_min) {
-        message.wtmessage = message.wtmessage + num_min;
-        showAlert("NO_OK", "Error", message);
-    } else if (contador > num_max) {
-        message.wtmessage = message.wtmessage + num_max;
-        showAlert("NO_OK", "Error", message);
-    } else {
-        arrParams.pes_id = $('#frm_pes_id').val();
-        arrParams.per_id = $('#frm_per_id').val();
-        arrParams.modalidad = $('#frm_modalidad').val();
-        arrParams.carrera = $('#frm_carrera').val();
-        arrParams.arancel = $('#frm_cat_price').val();
-        arrParams.matricula = $('#frm_mat_cos').val();
-        arrParams.categoria = $('#frm_categoria').val();
-        arrParams.asociacion = $('#frm_asc_est').val();
-        arrParams.gastos = $('#frm_gas_adm').val();
-        arrParams.pdf = 1;
-        materias = materias.substring(0, materias.length - 1);
-        arrParams.materias = materias;
-        /* console.log(arrParams); */
-        requestHttpAjax(link, arrParams, function(response) {
-            showAlert(response.status, response.label, response.message);
-            if (response.status == 'OK')
-                setTimeout(function() {
-                    var params = (arrParams.per_id == 0) ? "" : "?per_id=" + base64_encode(arrParams.per_id)
-                    parent.window.location.href = $('#txth_base').val() + "/academico/matriculacion/index" + params;
-                }, 2000);
 
-        }, true);
+    if (contador < 2) {
+        message.wtmessage = message.wtmessage;
+        showAlert("NO_OK", "Error", message);
+        return;
     }
+
+    var contador = 0;
+    $('#grid_registro_list input[type=checkbox]').each(function() {
+        //console.log("-----------------");
+        //console.log(this);
+        if (this.checked &&  $(this).attr('disabled') != "disabled" ) {
+            materias[contador]  = $(this).val();
+            codes[contador]     = $(this).attr('name');
+            bloque[contador]    = $(this).parent().prev().prev().prev().prev().prev().prev().text();
+            hora[contador]      = $(this).parent().prev().prev().prev().prev().prev().text();
+            paralelo[contador]  = $(this).parent().prev().prev().prev().prev().text();
+            credits[contador]   = $(this).parent().prev().prev().prev().text();
+            costs[contador]     = $(this).parent().prev().prev().text();
+            contador += 1;
+        }
+    }); 
+
+    var message1 = {
+        "wtmessage1": objLang.You_must_choose_the_maximum_of_six,
+        "title": objLang.Error
+    }  
+
+    if(contador>6){
+        message1.wtmessage1 = message1.wtmessage1;
+        showAlert("NO_OK", "Error", message1);
+        return;
+    }
+
+    arrParams.pes_id = $('#frm_pes_id').val();
+    arrParams.ron_id = $('#frm_ron_id').val();
+    arrParams.per_id = $('#frm_per_id').val();
+    arrParams.registerSubject = 1;
+    arrParams.modalidad = $('#frm_modalidad').val();
+    arrParams.carrera = $('#frm_carrera').val();
+    arrParams.pdf = 1;
+    arrParams.codes = codes;
+    arrParams.paralelo = paralelo;
+    arrParams.bloque = bloque;
+    arrParams.hora = hora;
+    arrParams.credits = credits;
+    arrParams.costs = costs;
+    arrParams.materias = materias;
+
+    console.log(arrParams);
+
+    requestHttpAjax(link, arrParams, function(response) {
+        showAlert(response.status, response.label, response.message);
+        setTimeout(function() {
+        //   parent.window.location.href = $('#txth_base').val() + "/academico/matriculacion/registro" + $('#frm_per_id').val();
+        parent.window.location.href = $('#txth_base').val() + "/academico/matriculacion/registro" + "?uper_id=" + $("#frm_per_id").val();
+               // parent.window.location.href = $('#txth_base').val() + "/academico/matriculacion/fundacion";
+        }, 2000);
+
+    }, true);
+    
+    
 }
+
 
 function registerSubject() {
     var arrParams = new Object();
@@ -319,6 +364,17 @@ function registerSubject() {
             contador += 1;
         }
     });   
+
+    var message1 = {
+        "wtmessage1": objLang.You_must_choose_the_maximum_of_six,
+        "title": objLang.Error
+    }  
+
+    if(contador>6){
+        message1.wtmessage1 = message1.wtmessage1;
+        showAlert("NO_OK", "Error", message1);
+        return;
+    }
 
     arrParams.pes_id = $('#frm_pes_id').val();
     arrParams.ron_id = $('#frm_ron_id').val();
@@ -532,7 +588,7 @@ function continuarRegistro(){
 
     arrParams.seleccionados = selecteds.slice(0,-1);
     arrParams.noseleccionados = unselecteds.slice(0,-1);
-
+    arrParams.per_id = $('#frm_per_id').val();
     // console.log(arrParams);
 
     if (selecteds != '') {
@@ -556,4 +612,14 @@ function showRegisterSubject(){
             $("#register_subject_btn").show();
         }
     });
+}
+
+function actualizarGridAbePeriodoAcademicoCreate() {
+        var planificacion = $('#cmb_planificacion option:selected').val();
+        var admitido = $('#txt_buscarDataCreate').val();
+         if (!$(".blockUI").length) {
+            showLoadingPopup();
+            $('#Tbg_Abe_listado_create').PbGridView('applyFilterData', {'planificacion':planificacion,'admitido': admitido});
+            setTimeout(hideLoadingPopup, 2000);
+         }
 }

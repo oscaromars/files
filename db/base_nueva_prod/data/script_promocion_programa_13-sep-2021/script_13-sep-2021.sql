@@ -135,3 +135,8 @@ INSERT INTO db_academico.paralelo_promocion_programa (`pppr_id`,`ppro_id`,`pppr_
 INSERT INTO db_academico.paralelo_promocion_programa (`pppr_id`,`ppro_id`,`pppr_cupo`,`pppr_cupo_actual`,`pppr_descripcion`,`pppr_usuario_ingresa`,`pppr_estado`,`pppr_estado_logico`) VALUES (132,58,60,60,'P1',1,1,1);
 INSERT INTO db_academico.paralelo_promocion_programa (`pppr_id`,`ppro_id`,`pppr_cupo`,`pppr_cupo_actual`,`pppr_descripcion`,`pppr_usuario_ingresa`,`pppr_estado`,`pppr_estado_logico`) VALUES (133,59,60,60,'P1',1,1,1);
 INSERT INTO db_academico.paralelo_promocion_programa (`pppr_id`,`ppro_id`,`pppr_cupo`,`pppr_cupo_actual`,`pppr_descripcion`,`pppr_usuario_ingresa`,`pppr_estado`,`pppr_estado_logico`) VALUES (134,60,60,60,'P1',1,1,1);
+
+update db_academico.promocion_programa 
+set ppro_estado = 0,
+    ppro_estado_logico = 0
+where ppro_id between 1 and 8;

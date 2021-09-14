@@ -231,29 +231,7 @@ class DistributivoacademicoController extends \app\components\CController {
         ]);
     }
 
-     public function actionParalelos() {
-
-    $paca_id = 27; $mod_id = 1; $asi_id = 480;
-     $paralelo_model = new MateriaParaleloPeriodo();
-     $model = $paralelo_model->getParalelosAlumnos($paca_id,$mod_id,$asi_id);
-
-      $dataProvider = new ArrayDataProvider([
-            'key' => 'plaid',
-            'allModels' => $model,
-            'pagination' => [
-                'pageSize' => Yii::$app->params['pageSize'],
-            ],
-            'sort' => [
-                'attributes' => ['mpp_num_paralelo'],
-            ],
-        ]);
-
-   return $this->render('paralelo', [
-     'model' => $dataProvider,
- ]);
-         }
-
-
+    
     public function actionTest() {
 
         $searchModel = new \app\modules\academico\models\DistributivoAcademicoSearch();

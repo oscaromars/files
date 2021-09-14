@@ -24,7 +24,7 @@ class Reporte extends \yii\db\ActiveRecord {
      * @property       
      * @return  
      */
-    public function consultarActividadporOportunidad($data) {
+    public function consultarActividadporOportunidad($data) { 
         $con = \Yii::$app->db_crm;  
         
         $sql = "SELECT LPAD(B.opo_id,9,'0') opo_id,DATE(A.bact_fecha_registro) Fecha,G.emp_razon_social,

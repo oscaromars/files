@@ -199,7 +199,14 @@ class RegistroController extends \app\components\CController {
         $pes_id = $registroOnline->getPes_id($id);//$model[0]['pes_id'];
         $pes_id = $pes_id[0]['id'];
         $ron_id = $registroOnline->getRonId($id);
-
+        $modelCargaCartera = new RegistroConfiguracion();
+        $repetidos = $modelCargaCartera->getRegistrosDuplicados($ron_id[0]['id']);
+        \app\models\Utilities::putMessageLogFile($repetidos['repetidos']);
+        $isDuplicate = false;
+        if($repetidos['repetidos']){
+            $isDuplicate = false;
+            //die();
+        }
         //------------------Redireccionamiento-----------------------------
         ///academico/registro/inde
         $pagado = RegistroAdicionalMaterias::findOne($rama_id);
@@ -232,6 +239,7 @@ class RegistroController extends \app\components\CController {
         $model_pes = PlanificacionEstudiante::findOne($per_id);
         $planificacionEst = new PlanificacionEstudiante();
         $pla = $planificacionEst->getPla_id($per_id);
+        $cedula = $planificacionEst->getCedula($per_id);
         $pla_id = $pla[0]['id'];
         //$pla_id = base64_decode($idpla);
         $model_pla = Planificacion::findOne($pla_id);
@@ -269,23 +277,24 @@ class RegistroController extends \app\components\CController {
 
         // Si son dos cuotas
         if($cuotas == 2){ // Quiere decir que es semestre intensivo B1
-            $arr_vencimiento = FechasVencimientoPago::find()->where(['saca_id' => $saca_id, 'fvpa_bloque' => "B1", 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();
+            $arr_vencimiento = FechasVencimientoPago::find()->where(['fvpa_paca_id' => $saca_id, 'fvpa_bloque' => "B1", 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();
             // Va a retornar 3 cuotas, así que hay que quitar la primera
             array_shift($arr_vencimiento);
         }
         // Si son 3 cuotas
         else if($cuotas == 3){ // Considerar sólo el bloque escogido
-            $arr_vencimiento = FechasVencimientoPago::find()->where(['saca_id' => $saca_id, 'fvpa_bloque' => $bloque, 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();
+            $arr_vencimiento = FechasVencimientoPago::find()->where(['fvpa_paca_id' => $saca_id, 'fvpa_bloque' => $bloque, 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();
         }
         else if($cuotas == 5){
-            $arr_vencimiento = FechasVencimientoPago::find()->where(['saca_id' => $saca_id, 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();
+            $arr_vencimiento = FechasVencimientoPago::find()->where(['fvpa_paca_id' => $saca_id, 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();
             // Va a retornar 6 cuotas, así que hay que quitar la primera
-            array_shift($fechas_vencimiento);
+            array_shift($arr_vencimiento);
         }
         else{ // Si son 6 cuotas, se deben tomar las fechas de los dos bloques
-            $arr_vencimiento = FechasVencimientoPago::find()->where(['saca_id' => $saca_id, 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();
+            $arr_vencimiento = FechasVencimientoPago::find()->where(['fvpa_paca_id' => $saca_id, 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();
         }
-        $arr_vence = RegistroPagoMatricula::getFechasVencimiento2($periodo[0]['fecha_fin']);
+        $vencimiento = new RegistroPagoMatricula();
+        $arr_vence = $vencimiento->getFechasVencimiento3($saca_id);
         $registro_pago_matricula = new RegistroPagoMatricula();
         //$arr_vencimiento = $registro_pago_matricula->fechasVencimientoPeriodo($pla_id);
         //$cuotas = $registro_pago_matricula->getCuotasPeriodo($rama_id);
@@ -301,6 +310,8 @@ class RegistroController extends \app\components\CController {
             ],
         ]);
         $estudiante = $pla[0]['nombres'];
+        $rama = new RegistroAdicionalMaterias();
+        $materiasMatriculadas = $rama->materiasMatriculadas($ron_id[0]['id']);
         //$cuotas = ['0' => Academico::t('registro', '-- Select a number of installments --'), /*'2' => '2', '3' => '3', '4' => '4',*/ '5' => '5', '6' => '6'];
         //$cuotas = ['6' => '6'];
         return $this->render('new', [
@@ -321,7 +332,7 @@ class RegistroController extends \app\components\CController {
             'costoItem' => $costCarrera,//(number_format($arr_cost_mat['Costo'], 2, '.', ',')),
             'botonPagos' => Yii::$app->params["botonPagos"],
             'arr_vencimiento' => $arr_vencimiento,//$arr_vence,
-            'arr_ve' => $arr_vencimiento,
+            'arr_ve' => $arr_vence,
             'rama_id' => $rama_id,
             'model_pes' => $modelProCre[0]['pccr_costo_carrera'],
             'pes_id' => $pes_id,
@@ -332,6 +343,9 @@ class RegistroController extends \app\components\CController {
             'periodo_actual' =>$pla_periodo_academico,
             'bloque' => $bloque,
             'saca_id' => $saca_id,
+            'isDuplicate' => $isDuplicate,
+            'cedula' => $cedula['cedula'],
+            'roi' => $materiasMatriculadas['materias'],
         ]);
     }
 
@@ -2349,6 +2363,7 @@ class RegistroController extends \app\components\CController {
             $bloque     = $data['bloque'];
             $saca_id    = $data['saca_id'];
             $token      = $data['token'];
+            $rama    = $data['rama'];
             $con        = \Yii::$app->db_facturacion;
             $con2       = \Yii::$app->db_academico;
             //$transaction = $con->beginTransaction();
@@ -2370,7 +2385,7 @@ class RegistroController extends \app\components\CController {
                         $cedula = $persona->consultaPersonaId($per_id);
                         $estudiante = new Estudiante();
                         $est_id = $estudiante->getEstudiantexperid($per_id);
-                        //$repetidos = $modelCargaCartera->getRegistrosDuplicados($ron_id);
+                        $repetidos = $modelCargaCartera->getRegistrosDuplicados($ron_id);
                         $porcentaje = 100/$numcuotas;
                         if($numcuotas == 3 || $numcuotas == 6){
                             $porc_mayor = round($porcentaje, 2);
@@ -2380,28 +2395,30 @@ class RegistroController extends \app\components\CController {
                             $porc_menor = $porcentaje;    
                         }
                         if($numcuotas == 2){ // Quiere decir que es semestre intensivo B1
-                            $fechas_vencimiento = FechasVencimientoPago::find()->where(['saca_id' => $saca_id, 'fvpa_bloque' => "B1", 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();
+                            $fechas_vencimiento = FechasVencimientoPago::find()->where(['fvpa_paca_id' => $saca_id, 'fvpa_bloque' => "B1", 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();
                             // Va a retornar 3 cuotas, así que hay que quitar la útima
                             array_pop($fechas_vencimiento);
                         }
                         // Si son 3 cuotas
                         else if($numcuotas == 3){ // Considerar sólo el bloque escogido
-                            $fechas_vencimiento = FechasVencimientoPago::find()->where(['saca_id' => $saca_id, 'fvpa_bloque' => $bloque, 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();
+                            $fechas_vencimiento = FechasVencimientoPago::find()->where(['fvpa_paca_id' => $saca_id, 'fvpa_bloque' => $bloque, 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();
                         }
                         else if($numcuotas == 5){
-                            $fechas_vencimiento = FechasVencimientoPago::find()->where(['saca_id' => $saca_id, 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();
+                            $fechas_vencimiento = FechasVencimientoPago::find()->where(['fvpa_paca_id' => $saca_id, 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();
                             // Va a retornar 6 cuotas, así que hay que quitar la útima
                             array_pop($fechas_vencimiento);
                         }
                         else{ // Si son 6 cuotas, se deben tomar las fechas de los dos bloques
-                            $fechas_vencimiento = FechasVencimientoPago::find()->where(['saca_id' => $saca_id, 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();
+                            $fechas_vencimiento = FechasVencimientoPago::find()->where(['fvpa_paca_id' => $saca_id, 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();
                         }
                         
                         $datosRonPes= $modelCargaCartera->getRonPes($per_id);
                         $ron_id = $datosRonPes['ron_id'];
                         $pes_id = $datosRonPes['pes_id'];
                         //\app\models\Utilities::putMessageLogFile('log 0...'.$repetidos['repetidos']);
-                        //if($repetidos['repetidos']==0 ){ //If grid cuotas repetidos
+                        if(!($repetidos['repetidos']>0)){ 
+                            \app\models\Utilities::putMessageLogFile('Repetidos: == '.$repetidos['repetidos']); //If grid cuotas repetidos
+                        //print_r($repetidos);die();
                             \app\models\Utilities::putMessageLogFile('log 1...'.$est_id['est_id'].'-'.$ron_id.'-'. $secuencial['secuencial']);
                             $this->putMessageLogFileCartera('log 1...'.$est_id['est_id'].'-'.$ron_id.'-'. $secuencial['secuencial']);
                             //$registros_relacionados = $modelCargaCartera->registrarRelacionCartera($est_id['est_id'],$ron_id, $secuencial['secuencial']);
@@ -2411,8 +2428,10 @@ class RegistroController extends \app\components\CController {
                             $this->putMessageLogFileCartera('Ron: '.$ron_id.'- Per: '.$per_id);
                             $registroadicional = RegistroAdicionalMaterias::find()->where(["ron_id" => $ron_id,"per_id" => $per_id, "rpm_id" => NULL])->asArray()->one();
                             $rama_id = $registroadicional["rama_id"];
+                            $rama_id = $rama;
                             $rpm_id = $registro_pago_matricula;
                             \app\models\Utilities::putMessageLogFile('RPM_ID: '.$rpm_id.'- OK');
+                            \app\models\Utilities::putMessageLogFile('RAMA: '.$rama.'- OK');
                             $this->putMessageLogFileCartera('RPM_ID: '.$rpm_id.'- OK');
                             $updateAdicionalMateria = $modelCargaCartera->updateAdicionalMateria($rama_id, $rpm_id);
                             \app\models\Utilities::putMessageLogFile('log 2...rama_id'.$rama_id);
@@ -2420,14 +2439,16 @@ class RegistroController extends \app\components\CController {
                                 \app\models\Utilities::putMessageLogFile('controller N1...: '.$est_id['est_id'].'-'.$ron_id.'-'. $secuencial['secuencial']);
                                 $this->putMessageLogFileCartera('controller N1...: '.$est_id['est_id'].'-'.$ron_id.'-'. $secuencial['secuencial']);
                             for($in = 1; $in <= $numcuotas; $in++){
-                                $fechaCuotaActual = $fechas_vencimiento[$in-1]['fvpa_fecha_vencimiento'];//$modelCargaCartera->getCuotaActual($in);
-                                \app\models\Utilities::putMessageLogFile('lvencimiento '.$in.' - '.$fechaCuotaActual.' - '.$saca_id);
-                                $this->putMessageLogFileCartera('lvencimiento '.$in.' - '.$fechaCuotaActual.' - '.$saca_id);
-                                $registros_cuotas = $modelCargaCartera->registrarCargaCartera($est_id['est_id'],$cedula['per_cedula'], $secuencial['secuencial'], $forma_pago,$fechaCuotaActual,$in, $numcuotas, $valor_cuota, $total, $usuario,'N');
+                                $fechaCuotaActual = $modelCargaCartera->getCuotaActual($in,$saca_id);//$fechas_vencimiento[$in-1]['fvpa_fecha_vencimiento'];//$modelCargaCartera->getCuotaActual($in);
+                                \app\models\Utilities::putMessageLogFile('lvencimiento '.$in.' - '.$fechaCuotaActual['fecha'].' - '.$saca_id);
+                                $this->putMessageLogFileCartera('lvencimiento '.$in.' - '.$fechaCuotaActual['fecha'].' - '.$saca_id);
+                                $registros_cuotas = $modelCargaCartera->registrarCargaCartera($est_id['est_id'],$cedula['per_cedula'], $secuencial['secuencial'], $forma_pago,$fechaCuotaActual['fecha'],$in, $numcuotas, $valor_cuota, $total, $usuario,'N');
+                                $registroCuotasCartera = $modelCargaCartera->registrarCuotasFacturacionCartera($rama_id,$secuencial['secuencial'],$ron_id,$est_id['est_id']);
+                                //die();
                                 if($in==1){
-                                    $registro_online_cuota = $modelCargaCartera->registroOnlineCuota($ron_id, $rpm_id,$in,$fechaCuotaActual,$porc_menor,$total);
+                                    $registro_online_cuota = $modelCargaCartera->registroOnlineCuota($ron_id, $rpm_id,$in,$fechaCuotaActual['fecha'],$porc_menor,$total);
                                 }else{
-                                    $registro_online_cuota = $modelCargaCartera->registroOnlineCuota($ron_id, $rpm_id,$in,$fechaCuotaActual,$porc_mayor,$total);
+                                    $registro_online_cuota = $modelCargaCartera->registroOnlineCuota($ron_id, $rpm_id,$in,$fechaCuotaActual['fecha'],$porc_mayor,$total);
                                 }
                             }
                             $updatePendiete = $modelCargaCartera->updatePendiente($ron_id);
@@ -2439,6 +2460,15 @@ class RegistroController extends \app\components\CController {
                                 $this->putMessageLogFileCartera('controller 4...: '.$registros_cuotas);
                                 
                                 return Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), true, $message);
+                        }else{
+                            $message = array(
+                                "wtmessage" => Yii::t("notificaciones", "Ya existen registros de esta transacción."),
+                                "title" => Yii::t('jslang', 'Error'),
+                            );
+                            \app\models\Utilities::putMessageLogFile('Error Repetidos 4...: ');
+                            
+                            return Utilities::ajaxResponse('NO_KO', 'alert', Yii::t("jslang", "Error"), true, $message);
+                        }
                     } else{  
                             \app\models\Utilities::putMessageLogFile('Tipo de pago no es Credito Directo...: ');
                             $this->putMessageLogFileCartera('Tipo de pago no es Credito Directo...: ');
@@ -2462,21 +2492,21 @@ class RegistroController extends \app\components\CController {
                                 $porc_menor = $porcentaje;    
                             }
                             if($numcuotas == 2){ // Quiere decir que es semestre intensivo B1
-                                $fechas_vencimiento = FechasVencimientoPago::find()->where(['saca_id' => $saca_id, 'fvpa_bloque' => "B1", 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();
+                                $fechas_vencimiento = FechasVencimientoPago::find()->where(['fvpa_paca_id' => $saca_id, 'fvpa_bloque' => "B1", 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();
                                 // Va a retornar 3 cuotas, así que hay que quitar la útima
                                 array_pop($fechas_vencimiento);
                             }
                             // Si son 3 cuotas
                             else if($numcuotas == 3){ // Considerar sólo el bloque escogido
-                                $fechas_vencimiento = FechasVencimientoPago::find()->where(['saca_id' => $saca_id, 'fvpa_bloque' => $bloque, 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();
+                                $fechas_vencimiento = FechasVencimientoPago::find()->where(['fvpa_paca_id' => $saca_id, 'fvpa_bloque' => $bloque, 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();
                             }
                             else if($numcuotas == 5){
-                                $fechas_vencimiento = FechasVencimientoPago::find()->where(['saca_id' => $saca_id, 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();
+                                $fechas_vencimiento = FechasVencimientoPago::find()->where(['fvpa_paca_id' => $saca_id, 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();
                                 // Va a retornar 6 cuotas, así que hay que quitar la útima
                                 array_pop($fechas_vencimiento);
                             }
                             else{ // Si son 6 cuotas, se deben tomar las fechas de los dos bloques
-                                $fechas_vencimiento = FechasVencimientoPago::find()->where(['saca_id' => $saca_id, 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();
+                                $fechas_vencimiento = FechasVencimientoPago::find()->where(['fvpa_paca_id' => $saca_id, 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();
                             }
                             
                             $datosRonPes= $modelCargaCartera->getRonPes($per_id);
@@ -2495,6 +2525,8 @@ class RegistroController extends \app\components\CController {
                                 $rama_id = $registroadicional["rama_id"];
                                 $rpm_id = $registro_pago_matricula;
                                 \app\models\Utilities::putMessageLogFile('RPM_ID: '.$rpm_id.'- OK');
+                                \app\models\Utilities::putMessageLogFile('RAMA_ID: '.$rama_id.'- OK');
+                                \app\models\Utilities::putMessageLogFile('RAMA: '.$rama.'- OK');
                                 $this->putMessageLogFileCartera('RPM_ID: '.$rpm_id.'- OK');
                                 $rpm_id = $registro_pago_matricula;
                                 $updateAdicionalMateria = $modelCargaCartera->updateAdicionalMateria($rama_id, $rpm_id);
@@ -2901,7 +2933,7 @@ class RegistroController extends \app\components\CController {
                     "wtmessage" => Yii::t("notificaciones", "Error al grabar.".$ex->getMessage()),
                     "title" => Yii::t('jslang', 'Error'),
                 );
-                \app\models\Utilities::putMessageLogFile('ROLLBACK2');
+                \app\models\Utilities::putMessageLogFile('ROLLBACK2'.$ex->getMessage());
                 $this->putMessageLogFileCartera('ROLLBACK2');
                 return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
             }
@@ -2918,13 +2950,13 @@ class RegistroController extends \app\components\CController {
             $data = Yii::$app->request->post();            
             $per_id      = base64_decode($data['per_id']);
             $cuotas     = $data['cuotas'];
-            $rama_id  = ($data['rama']);
-            \app\models\Utilities::putMessageLogFile('rama_id: '.$rama_id);
+            $rama_id  = $data['rama'];
+            \app\models\Utilities::putMessageLogFile('pruebas rama_id: '.$rama_id);
             $matriculacion_model = new Matriculacion();          
             $modelPersona = Persona::find()->where(['per_id' => $per_id])->asArray()->one();
             $modelEstudiante = Estudiante::find()->where(['per_id' => $per_id])->asArray()->one();
             $modelCargaCartera = new RegistroConfiguracion();
-
+            $dataPlanificacion = 0;
 
             /*Cabecera*/
             $datos_planficacion = $matriculacion_model->getDataPlanStudent($per_id);    

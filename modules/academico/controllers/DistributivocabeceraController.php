@@ -256,6 +256,7 @@ class DistributivocabeceraController extends \app\components\CController {
             $valores_promedio[0]['preparacion_docencia'] = /*(( $valores_promedio[0]['total_hora_semana_docencia_prese'] + $valores_promedio[0]['total_hora_semana_docencia_online']) **/ 0.30/*)*/;
             $valores_promedio[0]['total_hora_semana_docencia'] = $valores_promedio[0]['total_hora_semana_docencia_prese'] + $valores_promedio[0]['total_hora_semana_docencia_online'];
             //$total_hora_semana_docenciaposgrado = $valores_promedio[0]['total_hora_semana_docencia_posgrado'];
+            \app\models\Utilities::putMessageLogFile('dcab_id: ' . $resCab['dcab_id']);
             \app\models\Utilities::putMessageLogFile('total_hora_semana_docencia_prese: ' . $valores_promedio[0]['total_hora_semana_docencia_prese']);
             \app\models\Utilities::putMessageLogFile('total_hora_semana_docencia_online: ' . $valores_promedio[0]['total_hora_semana_docencia_online']);
             \app\models\Utilities::putMessageLogFile('total_hora_semana_docencia: ' . $valores_promedio[0]['total_hora_semana_docencia']);

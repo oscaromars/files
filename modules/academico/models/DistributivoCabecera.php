@@ -607,7 +607,10 @@ class DistributivoCabecera extends \yii\db\ActiveRecord {
                     sum(case when td.tdis_id =4 then tdis_num_semanas else 0 end) as total_hora_semana_vinculacion,
                     pa.paca_semanas_periodo as semanas_docencia,
                     pa.paca_semanas_inv_vinc_tuto as semanas_tutoria_vinulacion_investigacion,
-                    ifnull(TRUNCATE(timestampdiff(day, da.daca_fecha_inicio_post, da.daca_fecha_fin_post)/7,0),'') as semanas_posgrado
+                    (select ifnull(TRUNCATE(timestampdiff(day, da.daca_fecha_inicio_post, da.daca_fecha_fin_post)/7,0),'')
+                        as semanas_posgrado
+                        FROM " . $con->dbname . ".distributivo_academico da
+                        WHERE da.uaca_id = 2 and da.dcab_id=:ids) as semanas_posgrado
         from " . $con->dbname . ".distributivo_academico da
         inner join " . $con->dbname . ".distributivo_cabecera dc on da.dcab_id = dc.dcab_id
         inner join " . $con->dbname . ".tipo_distributivo td on td.tdis_id=da.tdis_id
@@ -831,7 +834,7 @@ class DistributivoCabecera extends \yii\db\ActiveRecord {
         for ($i=0;$i < $semanas_tutoria_vinulacion_investigacion; $i++){
             if ($i < $semanas_docencia)
             {
-                if ($i < $semanas_posgrado)
+                if ($i < $semanas_posgrado && !empty($semanas_posgrado))
                 {
                     Utilities::putMessageLogFile('$total_hora_semana_docenciaposgrado x ' . $total_hora_semana_docenciaposgrado );
                     $horas_docencia = $total_hora_semana_docencia + $total_hora_semana_docenciaposgrado;

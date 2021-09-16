@@ -592,24 +592,22 @@ class DistributivoCabecera extends \yii\db\ActiveRecord {
                         . "where da.dcab_id=:ids and dc.dcab_estado_logico=1 and td.tdis_id not in(6) ";
         */
         $sql = "select
-                sum(case when moda.mod_id <> 1 and td.tdis_id =1 then daho_total_horas else 0 end )  as total_hora_semana_docencia_prese,
-                sum(case when moda.mod_id=1 and td.tdis_id =1 then
+                    sum(case when da.uaca_id = 1 and moda.mod_id <> 1 and td.tdis_id =1 then daho_total_horas else 0 end ) as total_hora_semana_docencia_prese,
+                    sum(case when da.uaca_id = 1 and moda.mod_id=1 and td.tdis_id =1 then
                     (case
-                        when (daca_num_estudiantes_online between 0 and 10) then  2
-                        when (daca_num_estudiantes_online between 11 and 20) then 3
-                        when (daca_num_estudiantes_online between 21 and 30) then 4
-                        when (daca_num_estudiantes_online between 31 and 40) then 5
-                        when (daca_num_estudiantes_online >40) then 7 end)
-                       /* else
-                        case when da.tdis_id=7  then round(tdis_num_semanas/paca_semanas_periodo) else ( case  when dah.daho_total_horas is null then tdis_num_semanas else dah.daho_total_horas end) end
-                        sum(case when td.tdis_id =1 then daho_total_horas else 0 end )*/
-                        end) as total_hora_semana_docencia_online,
-                sum(case when td.tdis_id =2 then tdis_num_semanas else 0 end ) as total_hora_semana_tutoria,
-                sum(case when td.tdis_id =3 then tdis_num_semanas else 0 end) as total_hora_semana_investigacion,
-                sum(case when td.tdis_id =4 then tdis_num_semanas else 0 end) as total_hora_semana_vinculacion,
-                -- round(sum(case when td.tdis_id =1 then daho_total_horas else 0 end ) * :porcentaje_preparacion)  as preparacion_docencia,
-                pa.paca_semanas_periodo as semanas_docencia,
-                pa.paca_semanas_inv_vinc_tuto as semanas_tutoria_vinulacion_investigacion
+                    when (daca_num_estudiantes_online between 0 and 10) then 2
+                    when (daca_num_estudiantes_online between 11 and 20) then 3
+                    when (daca_num_estudiantes_online between 21 and 30) then 4
+                    when (daca_num_estudiantes_online between 31 and 40) then 5
+                    when (daca_num_estudiantes_online >40) then 7 end)
+                    end) as total_hora_semana_docencia_online,
+                    sum(case when da.uaca_id = 2 and td.tdis_id =1 then daho_total_horas else 0 end ) as total_hora_semana_docencia_posgrado,
+                    sum(case when td.tdis_id =2 then tdis_num_semanas else 0 end ) as total_hora_semana_tutoria,
+                    sum(case when td.tdis_id =3 then tdis_num_semanas else 0 end) as total_hora_semana_investigacion,
+                    sum(case when td.tdis_id =4 then tdis_num_semanas else 0 end) as total_hora_semana_vinculacion,
+                    pa.paca_semanas_periodo as semanas_docencia,
+                    pa.paca_semanas_inv_vinc_tuto as semanas_tutoria_vinulacion_investigacion,
+                    ifnull(TRUNCATE(timestampdiff(day, da.daca_fecha_inicio_post, da.daca_fecha_fin_post)/7,0),'') as semanas_posgrado
         from " . $con->dbname . ".distributivo_academico da
         inner join " . $con->dbname . ".distributivo_cabecera dc on da.dcab_id = dc.dcab_id
         inner join " . $con->dbname . ".tipo_distributivo td on td.tdis_id=da.tdis_id
@@ -829,25 +827,36 @@ class DistributivoCabecera extends \yii\db\ActiveRecord {
      * @property integer $csol_id
      * @return
      */
-    public function Calcularpromedioajustado($total_hora_semana_docencia, $total_hora_semana_tutoria, $total_hora_semana_investigacion, $total_hora_semana_vinculacion, $preparacion_docencia, $semanas_docencia, $semanas_tutoria_vinulacion_investigacion) {
+    public function Calcularpromedioajustado($total_hora_semana_docenciaposgrado, $total_hora_semana_docencia, $total_hora_semana_tutoria, $total_hora_semana_investigacion, $total_hora_semana_vinculacion, $preparacion_docencia, $semanas_docencia, $semanas_tutoria_vinulacion_investigacion, $semanas_posgrado) {
         for ($i=0;$i < $semanas_tutoria_vinulacion_investigacion; $i++){
             if ($i < $semanas_docencia)
             {
-             $horas_docencia = $total_hora_semana_docencia;
-             $horas_preparacion = $preparacion_docencia;
+                if ($i < $semanas_posgrado)
+                {
+                    Utilities::putMessageLogFile('$total_hora_semana_docenciaposgrado x ' . $total_hora_semana_docenciaposgrado );
+                    $horas_docencia = $total_hora_semana_docencia + $total_hora_semana_docenciaposgrado;
+                    $horas_preparacion = round(($total_hora_semana_docenciaposgrado + $total_hora_semana_docencia) * $preparacion_docencia);
+                    Utilities::putMessageLogFile('$horas_docencia x ' . $horas_docencia );
+                }else{
+                    $horas_docencia = $total_hora_semana_docencia;
+                    $horas_preparacion = round($total_hora_semana_docencia * $preparacion_docencia);
+                    Utilities::putMessageLogFile('$horas_docencia y ' . $horas_docencia );
+                }
             }else{
               $horas_docencia = 0;
               $horas_preparacion = 0;
+              Utilities::putMessageLogFile('$horas_docencia z ' . $horas_docencia );
             }
-            //Utilities::putMessageLogFile('$horas_docencia ' . $horas_docencia );
+            Utilities::putMessageLogFile('$horas_docencia ' . $horas_docencia );
             /* este borrar despues */
-               /*$numero =    pow($horas_docencia +
+               $numero =    pow($horas_docencia +
                             $total_hora_semana_tutoria +
                             $total_hora_semana_investigacion+
                             $total_hora_semana_vinculacion +
-                            $horas_preparacion,2);*/
+                            $horas_preparacion,2);
             /* este borrar despues */
-            //Utilities::putMessageLogFile('$numero ' . $numero );
+            Utilities::putMessageLogFile('$numero ' . $numero );
+            Utilities::putMessageLogFile('$horas_preparacion ' . $horas_preparacion );
             $promedio +=
                             pow($horas_docencia +
                             $total_hora_semana_tutoria +
@@ -855,9 +864,9 @@ class DistributivoCabecera extends \yii\db\ActiveRecord {
                             $total_hora_semana_vinculacion +
                             $horas_preparacion,2);
         }
-         //Utilities::putMessageLogFile('$promedio ' . $promedio );
+         Utilities::putMessageLogFile('$promedio model ' . $promedio );
          $promedio_ajustado =  sqrt(/*round(*/$promedio/$semanas_tutoria_vinulacion_investigacion)/*)*/;
-         //Utilities::putMessageLogFile('$promedio_ajustado ' . $promedio_ajustado );
+         Utilities::putMessageLogFile('$promedio_ajustado model ' . $promedio_ajustado );
          return $promedio_ajustado;
     }
 

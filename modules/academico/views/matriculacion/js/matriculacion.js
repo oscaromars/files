@@ -403,6 +403,30 @@ function registerSubject() {
     }, true);
 }
 
+function deletereg(roi_id) {
+    var ron_id   = $('#frm_ron_id').val();
+    var link     = $('#txth_base').val() + "/academico/matriculacion/deletereg";
+    var arrParams = new Object();
+    arrParams.pes_id = $('#frm_pes_id').val();
+    arrParams.per_id = $('#frm_per_id').val();
+    arrParams.ron_id = $('#frm_ron_id').val();
+    arrParams.roi_id = roi_id;
+    arrParams.cancelSubject = 1;
+    arrParams.codes = 0;
+    arrParams.pdf   = 1;
+
+    console.log(arrParams);
+    //link += "&pdf=1&cancelSubject=1";
+    requestHttpAjax(link, arrParams, function(response) {
+        showAlert(response.status, response.label, response.message);
+        setTimeout(function() {
+            // location.reload();
+            parent.window.location.href = $('#txth_base').val() + "/academico/matriculacion/registro" + "?uper_id=" + $("#frm_per_id").val();
+        }, 3000);
+    }, true);
+}//function cancelSubject
+
+
 function exportPDF() {
     var ron_id = $('#frm_ron_id').val();
     /* console.log(ron_id); */

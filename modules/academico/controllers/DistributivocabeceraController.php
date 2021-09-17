@@ -521,15 +521,13 @@ class DistributivocabeceraController extends \app\components\CController {
         $cabDist = $DistADO->consultarCabDistributivo($ids);
         $valores_promedio =$DistADO->promedio($ids);
         $valores_promedio[0]['preparacion_docencia'] = /*(( $valores_promedio[0]['total_hora_semana_docencia_prese'] + $valores_promedio[0]['total_hora_semana_docencia_online']) **/ 0.30/*)*/;
-
-        //OJO AQUI CALCULAR BIEN LAS $horas_carga_docente_bloque, FALTA CONTEMPLAR POSGRADO
         $valores_promedio[0]['total_hora_semana_docencia'] = $valores_promedio[0]['total_hora_semana_docencia_prese'] + $valores_promedio[0]['total_hora_semana_docencia_online'];
-        $horas_carga_docente_bloque = $valores_promedio[0]['semanas_docencia'] * $valores_promedio[0]['total_hora_semana_docencia'];
+        $horas_carga_docente_bloque = ($valores_promedio[0]['semanas_docencia'] * $valores_promedio[0]['total_hora_semana_docencia']) + ($valores_promedio[0]['semanas_posgrado'] * $valores_promedio[0]['total_hora_semana_docencia_posgrado']);
         /********************************************************************************************************************************************************************************************* */
 
         //$total_hora_semana_docenciaposgrado = $valores_promedio[0]['total_hora_semana_docencia_posgrado'];
         $promedio = $DistADO->Calcularpromedioajustado($valores_promedio[0]['total_hora_semana_docencia_posgrado'], $valores_promedio[0]['total_hora_semana_docencia'], $valores_promedio[0]['total_hora_semana_tutoria'], $valores_promedio[0]['total_hora_semana_investigacion'], $valores_promedio[0]['total_hora_semana_vinculacion'], $valores_promedio[0]['preparacion_docencia'], $valores_promedio[0]['semanas_docencia'], $valores_promedio[0]['semanas_tutoria_vinulacion_investigacion'], $valores_promedio[0]['semanas_posgrado']);
-        Utilities::putMessageLogFile('$total_hora_semana_docencia ' . $valores_promedio[0]['total_hora_semana_docencia'] );
+        /*Utilities::putMessageLogFile('$total_hora_semana_docencia ' . $valores_promedio[0]['total_hora_semana_docencia'] );
         Utilities::putMessageLogFile('$total_hora_semana_tutoria ' . $valores_promedio[0]['total_hora_semana_tutoria']);
         Utilities::putMessageLogFile('$total_hora_semana_investigacion ' . $valores_promedio[0]['total_hora_semana_investigacion'] );
         Utilities::putMessageLogFile('$total_hora_semana_vinculacion ' . $valores_promedio[0]['total_hora_semana_vinculacion'] );
@@ -537,11 +535,9 @@ class DistributivocabeceraController extends \app\components\CController {
         Utilities::putMessageLogFile('$preparacion_docencia ' . $valores_promedio[0]['preparacion_docencia'] );
         Utilities::putMessageLogFile('$semanas_docencia ' . $valores_promedio[0]['semanas_docencia'] );
         Utilities::putMessageLogFile('$semanas_tutoria_vinulacion_investigacion ' . $valores_promedio[0]['semanas_tutoria_vinulacion_investigacion']);
-        Utilities::putMessageLogFile('$semanas_posgrado ' . $valores_promedio[0]['semanas_posgrado']);
-        //OJO AQUI CALCULAR BIEN LAS $HORAS DE PREPARACION DOCENTE, FALTA CONTEMPLAR POSGRADO
+        Utilities::putMessageLogFile('$semanas_posgrado ' . $valores_promedio[0]['semanas_posgrado']);*/
         $sumaHoras = $DistADO->sumatoriaHoras($ids);
-        /********************************************************************************************************************************************************************************************* */
-        //    Utilities::putMessageLogFile('$cabDist ' . $cabDist);
+        // Utilities::putMessageLogFile('$cabDist ' . $cabDist);
 
         $detDist = $DistADO->consultarDetDistributivo($ids);
         //  Utilities::putMessageLogFile('paca_id ' . $cabDist[0]['paca_id'].'-pro_id ' .$cabDist[0]['pro_id']);

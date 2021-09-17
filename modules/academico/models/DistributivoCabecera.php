@@ -555,7 +555,6 @@ class DistributivoCabecera extends \yii\db\ActiveRecord {
 
     public function sumatoriaHoras($id_ca) {
         $con = \Yii::$app->db_academico;
-        //OJO AQUI CALCULAR BIEN LAS $HORAS DE PREPARACION DOCENTE, FALTA CONTEMPLAR POSGRADO
         $sql = "
                     select
                     sum(case when td.tdis_id =1 then pa.paca_semanas_periodo*daho_total_horas end) as total_docente,

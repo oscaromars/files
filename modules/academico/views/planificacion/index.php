@@ -8,6 +8,13 @@ use app\models\Utilities;
 use yii\data\ArrayDataProvider;
 use yii\helpers\ArrayHelper;
 ?>
+<?php if (Yii::$app->session->hasFlash('is_transfer')): ?>
+    <div class="alert alert-success alert-dismissable" >
+         <button aria-hidden="true" data-dismiss="alert" class="close" type="button"></button>
+         <h4><i class="icon fa fa-check"></i>Se ha transferido exitosamente las asignaturas</h4>
+         <?= Yii::$app->session->getFlash('is_transfer') ?>
+    </div>
+<?php endif; ?> 
 <?php if (Yii::$app->session->hasFlash('msg')): ?>
     <div class="alert alert-warning alert-dismissable" >
          <button aria-hidden="true" data-dismiss="alert" class="close" type="button"></button>

@@ -155,7 +155,10 @@ class Planificacion extends \yii\db\ActiveRecord {
                 concat(b.saca_nombre , ' ' , b.saca_anio ) as pla_periodo_academico
                 from  ". $con->dbname . ".periodo_academico a 
                 inner join ". $con->dbname . ".semestre_academico b on a.saca_id = b.saca_id
+                left join db_academico.planificacion pl on pl.saca_id = b.saca_id -- R
                 where a.paca_activo = 'A'
+                AND   -- R
+                pl.pla_estado != 0  -- R
                 AND
                 ( select count(*) from db_academico.periodo_academico bb
                  WHERE  

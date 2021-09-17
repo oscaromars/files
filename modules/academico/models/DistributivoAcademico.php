@@ -1182,7 +1182,7 @@ class DistributivoAcademico extends \yii\db\ActiveRecord
         $sql = "SELECT
                     CONCAT(pe.per_pri_nombre, ' ', pe.per_pri_apellido) AS profesor,
                     da.daca_id AS Id,
-                     da.dcab_id ,
+                    da.dcab_id,
                     ifnull(ua.uaca_nombre,'') AS UnidadAcademica,
                     ifnull(m.mod_nombre,'') AS Modalidad,
                     ifnull(a.asi_nombre,'') AS Asignatura,
@@ -1198,26 +1198,34 @@ class DistributivoAcademico extends \yii\db\ActiveRecord
                     ifnull(da.mpp_id,0) idParalelo,
                     case when m.mod_id=1 and da.tdis_id =1 then
                     (case
-                         when (daca_num_estudiantes_online between 0 and 10) then  round(2  * pc.paca_semanas_periodo /**(1.3)*/)
-			 when (daca_num_estudiantes_online between 11 and 20) then round(3  *pc.paca_semanas_periodo /**(1.3)*/)
-                         when (daca_num_estudiantes_online between 21 and 30) then round(4  * pc.paca_semanas_periodo /**(1.3)*/)
-                         when (daca_num_estudiantes_online between 31 and 40) then round(5  * pc.paca_semanas_periodo /**(1.3)*/)
-                         when (daca_num_estudiantes_online >40) then round(7  * pc.paca_semanas_periodo /**(1.3)*/) end)
+                         when (da.uaca_id= 1 and daca_num_estudiantes_online between 0 and 10) then  round(2  * pc.paca_semanas_periodo /**(1.3)*/)
+			             when (da.uaca_id= 1 and daca_num_estudiantes_online between 11 and 20) then round(3  *pc.paca_semanas_periodo /**(1.3)*/)
+                         when (da.uaca_id= 1 and daca_num_estudiantes_online between 21 and 30) then round(4  * pc.paca_semanas_periodo /**(1.3)*/)
+                         when (da.uaca_id= 1 and daca_num_estudiantes_online between 31 and 40) then round(5  * pc.paca_semanas_periodo /**(1.3)*/)
+                         when (da.uaca_id= 1 and daca_num_estudiantes_online >40) then round(7  * pc.paca_semanas_periodo /**(1.3)*/)
+                         when (da.uaca_id= 2 ) then round((select ifnull(TRUNCATE(timestampdiff(day, das.daca_fecha_inicio_post, das.daca_fecha_fin_post)/7,0),'')
+                         FROM " . $con->dbname . ".distributivo_academico das
+                        WHERE das.uaca_id = 2 and das.dcab_id=da.dcab_id) * dh.daho_total_horas) -- OJO ESTE SI ESTA BIEN O NO EL CALCULO
+                         end)
                        else
                         case when da.tdis_id=7 then tdis_num_semanas else (pc.paca_semanas_periodo * case  when dh.daho_total_horas is null then tdis_num_semanas else dh.daho_total_horas end) end
-                        end as total_horas,
+                        end as total_horas, -- AQUI
 
 
                      case when m.mod_id=1 and da.tdis_id =1 then
                     (case
-                         when (daca_num_estudiantes_online between 0 and 10)  then 2 /*round( 2  *(1.3))*/
-			 when (daca_num_estudiantes_online between 11 and 20) then 3 /*round( 3  *(1.3))*/
-                         when (daca_num_estudiantes_online between 21 and 30) then 4 /*round( 4  *(1.3))*/
-                         when (daca_num_estudiantes_online between 31 and 40) then 5 /*round( 5  *(1.3))*/
-                         when (daca_num_estudiantes_online >40) then 7 /*round(7 *(1.3))*/  end)
+                         when (da.uaca_id= 1 and daca_num_estudiantes_online between 0 and 10)  then 2 /*round( 2  *(1.3))*/
+			             when (da.uaca_id= 1 and daca_num_estudiantes_online between 11 and 20) then 3 /*round( 3  *(1.3))*/
+                         when (da.uaca_id= 1 and daca_num_estudiantes_online between 21 and 30) then 4 /*round( 4  *(1.3))*/
+                         when (da.uaca_id= 1 and daca_num_estudiantes_online between 31 and 40) then 5 /*round( 5  *(1.3))*/
+                         when (da.uaca_id= 1 and daca_num_estudiantes_online >40) then 7 /*round(7 *(1.3))*/  
+                         when (da.uaca_id= 2 ) then ' '/*round(dh.daho_total_horas / (select ifnull(TRUNCATE(timestampdiff(day, das.daca_fecha_inicio_post, das.daca_fecha_fin_post)/7,0),'')
+                         FROM " . $con->dbname . ".distributivo_academico das
+                        WHERE das.uaca_id = 2 and das.dcab_id=da.dcab_id))*/ -- OJO ESTE SI ESTA BIEN O NO EL CALCULO
+                         end)
                        else
-                          case when da.tdis_id=7  then round(tdis_num_semanas/paca_semanas_periodo) else ( case  when dh.daho_total_horas is null then tdis_num_semanas else dh.daho_total_horas end) end
-                        end as promedio,
+                          case when da.tdis_id=7 then round(tdis_num_semanas/paca_semanas_periodo) else ( case  when dh.daho_total_horas is null then tdis_num_semanas else dh.daho_total_horas end) end
+                        end as promedio, -- AQUI
                         ifnull(mpp_num_paralelo,'') mpp_num_paralelo,
 
                     CASE
@@ -1260,7 +1268,9 @@ class DistributivoAcademico extends \yii\db\ActiveRecord
         // calculando el promedio_ajustado
         if (!empty($id)){
             $valores_promedio =$DistADO->promedio($id);
-            $promedio =$DistADO->Calcularpromedioajustado($valores_promedio[0]['total_hora_semana_docencia'], $valores_promedio[0]['total_hora_semana_tutoria'], $valores_promedio[0]['total_hora_semana_investigacion'], $valores_promedio[0]['total_hora_semana_vinculacion'], $valores_promedio[0]['preparacion_docencia'], $valores_promedio[0]['semanas_docencia'], $valores_promedio[0]['semanas_tutoria_vinulacion_investigacion']);
+            $valores_promedio[0]['preparacion_docencia'] = /*(( $valores_promedio[0]['total_hora_semana_docencia_prese'] + $valores_promedio[0]['total_hora_semana_docencia_online']) **/ 0.30/*)*/;
+            $total_hora_semana_docenciaposgrado = $valores_promedio[0]['total_hora_semana_docencia_posgrado'];
+            $promedio =$DistADO->Calcularpromedioajustado($total_hora_semana_docenciaposgrado, $valores_promedio[0]['total_hora_semana_docencia'], $valores_promedio[0]['total_hora_semana_tutoria'], $valores_promedio[0]['total_hora_semana_investigacion'], $valores_promedio[0]['total_hora_semana_vinculacion'], $valores_promedio[0]['preparacion_docencia'], $valores_promedio[0]['semanas_docencia'], $valores_promedio[0]['semanas_tutoria_vinulacion_investigacion'], $valores_promedio[0]['semanas_posgrado']);
 
             foreach ($res as $key => $value) {
                 $value['promedioajustado'] = round($promedio);

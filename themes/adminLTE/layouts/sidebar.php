@@ -72,7 +72,7 @@ use yii\helpers\Url;
                 <li style="float:left; width: 33.33333%; padding: 5px;">
                     <a href="javascript:;" data-skin="skin-blue" style="display: block; box-shadow: 0 0 3px rgba(0,0,0,0.4)" class="skinSet clearfix full-opacity-hover">
                         <div>
-                            <span style="display:block; width: 20%; float: left; height: 7px; background: #367fa9;"></span>
+                            <span style="display:block; width: 20%; float: left; height: 7px; background: #0061a3;"></span>
                             <span class="bg-light-blue" style="display:block; width: 80%; float: left; height: 7px;"></span>
                         </div>
                         <div>
@@ -150,7 +150,7 @@ use yii\helpers\Url;
                 <li style="float:left; width: 33.33333%; padding: 5px;">
                     <a href="javascript:;" data-skin="skin-blue-light" style="display: block; box-shadow: 0 0 3px rgba(0,0,0,0.4)" class="skinSet clearfix full-opacity-hover">
                         <div>
-                            <span style="display:block; width: 20%; float: left; height: 7px; background: #367fa9;"></span>
+                            <span style="display:block; width: 20%; float: left; height: 7px; background: #0061a3;"></span>
                             <span class="bg-light-blue" style="display:block; width: 80%; float: left; height: 7px;"></span>
                         </div>
                         <div>

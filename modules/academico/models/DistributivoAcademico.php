@@ -1272,7 +1272,7 @@ class DistributivoAcademico extends \yii\db\ActiveRecord
             $valores_promedio =$DistADO->promedio($id);
             $valores_promedio[0]['preparacion_docencia'] = /*(( $valores_promedio[0]['total_hora_semana_docencia_prese'] + $valores_promedio[0]['total_hora_semana_docencia_online']) **/ 0.30/*)*/;
             $total_hora_semana_docenciaposgrado = $valores_promedio[0]['total_hora_semana_docencia_posgrado'];
-        $promedio =$DistADO->Calcularpromedioajustado(/*$total_hora_semana_docenciaposgrado,*/ $valores_promedio[0]['total_hora_semana_docencia'], $valores_promedio[0]['total_hora_semana_tutoria'], $valores_promedio[0]['total_hora_semana_investigacion'], $valores_promedio[0]['total_hora_semana_vinculacion'], $valores_promedio[0]['preparacion_docencia'], $valores_promedio[0]['semanas_docencia'], $valores_promedio[0]['semanas_tutoria_vinulacion_investigacion']/*, $valores_promedio[0]['semanas_posgrado']*/);
+        $promedio =$DistADO->Calcularpromedioajustado($id, /*$total_hora_semana_docenciaposgrado,*/ $valores_promedio[0]['total_hora_semana_docencia'], $valores_promedio[0]['total_hora_semana_tutoria'], $valores_promedio[0]['total_hora_semana_investigacion'], $valores_promedio[0]['total_hora_semana_vinculacion'], $valores_promedio[0]['preparacion_docencia'], $valores_promedio[0]['semanas_docencia'], $valores_promedio[0]['semanas_tutoria_vinulacion_investigacion']/*, $valores_promedio[0]['semanas_posgrado']*/);
 
             foreach ($res as $key => $value) {
                 $value['promedioajustado'] = round($promedio);
@@ -1542,7 +1542,7 @@ public function getSemanahoraposgrado($dcab_id) {
     $estado = 1;
     $sql = "SELECT
                 case when da.uaca_id = 2 and td.tdis_id =1 then dah.daho_total_horas else 0 end  as total_hora_semana_docencia_posgrado,
-                TRUNCATE(timestampdiff(day, daca_fecha_inicio_post, daca_fecha_fin_post)/7,0) as semanas_pogrado,
+                TRUNCATE(timestampdiff(day, daca_fecha_inicio_post, daca_fecha_fin_post)/7,0) as semanas_posgrado,
                 da.daca_id,
                 da.dcab_id,
                 da.daca_fecha_inicio_post,
@@ -1558,7 +1558,8 @@ public function getSemanahoraposgrado($dcab_id) {
             where dcab_id = :dcab_id and
             da.uaca_id = 2 and
             da.daca_estado = :estado and
-            da.daca_estado_logico = :estado";
+            da.daca_estado_logico = :estado
+            order by semanas_posgrado desc";
     $comando = $con_academico->createCommand($sql);
     $comando->bindParam(":dcab_id", $dcab_id, \PDO::PARAM_INT);
     $comando->bindParam(":estado", $estado, \PDO::PARAM_INT);

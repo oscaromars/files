@@ -1,7 +1,7 @@
 <?php
 
 namespace app\modules\academico\models;
-
+use app\modules\academico\models\DistributivoAcademico;
 use app\models\Utilities;
 use yii\data\ArrayDataProvider;
 use Yii;
@@ -830,10 +830,15 @@ class DistributivoCabecera extends \yii\db\ActiveRecord {
      * @property integer $csol_id
      * @return
      */
-    public function Calcularpromedioajustado(/*$total_hora_semana_docenciaposgrado,*/ $total_hora_semana_docencia, $total_hora_semana_tutoria, $total_hora_semana_investigacion, $total_hora_semana_vinculacion, $preparacion_docencia, $semanas_docencia, $semanas_tutoria_vinulacion_investigacion/*, $semanas_posgrado*/) {
+    public function Calcularpromedioajustado($cabDist, /*$total_hora_semana_docenciaposgrado,*/ $total_hora_semana_docencia, $total_hora_semana_tutoria, $total_hora_semana_investigacion, $total_hora_semana_vinculacion, $preparacion_docencia, $semanas_docencia, $semanas_tutoria_vinulacion_investigacion/*, $semanas_posgrado*/) {
+        $model_distacade = new DistributivoAcademico();
+        $posgrado = $model_distacade->getSemanahoraposgrado($cabDist);
+        //Utilities::putMessageLogFile('$mayor valor ' . $posgrado[0]['semanas_posgrado'] );
+
         for ($i=0;$i < $semanas_tutoria_vinulacion_investigacion; $i++){
             if ($i < $semanas_docencia)
             {
+                
                 /*if ($i < $semanas_posgrado && !empty($semanas_posgrado))
                 {
                     //Utilities::putMessageLogFile('$total_hora_semana_docenciaposgrado x ' . $total_hora_semana_docenciaposgrado );

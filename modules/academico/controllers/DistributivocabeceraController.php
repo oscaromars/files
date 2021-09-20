@@ -267,7 +267,7 @@ class DistributivocabeceraController extends \app\components\CController {
             \app\models\Utilities::putMessageLogFile('semanas_docencia: ' . $valores_promedio[0]['semanas_docencia']);
             \app\models\Utilities::putMessageLogFile('semanas_tutoria_vinulacion_investigacion: ' . $valores_promedio[0]['semanas_tutoria_vinulacion_investigacion']);
             Utilities::putMessageLogFile('$semanas_posgrado ' . $valores_promedio[0]['semanas_posgrado']);
-        $promajustado = $DistADO->Calcularpromedioajustado(/*$valores_promedio[0]['total_hora_semana_docencia_posgrado'],*/ $valores_promedio[0]['total_hora_semana_docencia'], $valores_promedio[0]['total_hora_semana_tutoria'], $valores_promedio[0]['total_hora_semana_investigacion'], $valores_promedio[0]['total_hora_semana_vinculacion'], $valores_promedio[0]['preparacion_docencia'], $valores_promedio[0]['semanas_docencia'], $valores_promedio[0]['semanas_tutoria_vinulacion_investigacion']/*, $valores_promedio[0]['semanas_posgrado']*/);
+        $promajustado = $DistADO->Calcularpromedioajustado($resCab['dcab_id'], /*$valores_promedio[0]['total_hora_semana_docencia_posgrado'],*/ $valores_promedio[0]['total_hora_semana_docencia'], $valores_promedio[0]['total_hora_semana_tutoria'], $valores_promedio[0]['total_hora_semana_investigacion'], $valores_promedio[0]['total_hora_semana_vinculacion'], $valores_promedio[0]['preparacion_docencia'], $valores_promedio[0]['semanas_docencia'], $valores_promedio[0]['semanas_tutoria_vinulacion_investigacion']/*, $valores_promedio[0]['semanas_posgrado']*/);
         }
         return $this->render('review',
                         ['model' => $model,
@@ -526,7 +526,7 @@ class DistributivocabeceraController extends \app\components\CController {
         /********************************************************************************************************************************************************************************************* */
 
         //$total_hora_semana_docenciaposgrado = $valores_promedio[0]['total_hora_semana_docencia_posgrado'];
-        $promedio = $DistADO->Calcularpromedioajustado(/*$valores_promedio[0]['total_hora_semana_docencia_posgrado'],*/ $valores_promedio[0]['total_hora_semana_docencia'], $valores_promedio[0]['total_hora_semana_tutoria'], $valores_promedio[0]['total_hora_semana_investigacion'], $valores_promedio[0]['total_hora_semana_vinculacion'], $valores_promedio[0]['preparacion_docencia'], $valores_promedio[0]['semanas_docencia'], $valores_promedio[0]['semanas_tutoria_vinulacion_investigacion']/*, $valores_promedio[0]['semanas_posgrado']*/);
+        $promedio = $DistADO->Calcularpromedioajustado($cabDist, /*$valores_promedio[0]['total_hora_semana_docencia_posgrado'],*/ $valores_promedio[0]['total_hora_semana_docencia'], $valores_promedio[0]['total_hora_semana_tutoria'], $valores_promedio[0]['total_hora_semana_investigacion'], $valores_promedio[0]['total_hora_semana_vinculacion'], $valores_promedio[0]['preparacion_docencia'], $valores_promedio[0]['semanas_docencia'], $valores_promedio[0]['semanas_tutoria_vinulacion_investigacion']/*, $valores_promedio[0]['semanas_posgrado']*/);
         /*Utilities::putMessageLogFile('$total_hora_semana_docencia ' . $valores_promedio[0]['total_hora_semana_docencia'] );
         Utilities::putMessageLogFile('$total_hora_semana_tutoria ' . $valores_promedio[0]['total_hora_semana_tutoria']);
         Utilities::putMessageLogFile('$total_hora_semana_investigacion ' . $valores_promedio[0]['total_hora_semana_investigacion'] );
@@ -584,7 +584,7 @@ class DistributivocabeceraController extends \app\components\CController {
         }*/
 
 
-        $rep->orientation = "P"; // tipo de orientacion L => Horizontal, P => Vertical   
+        $rep->orientation = "P"; // tipo de orientacion L => Horizontal, P => Vertical
         $rep->createReportPdf(
                 $this->render('@modules/academico/views/tpl_asignamaterias/cargahora', [
                     'cabDist' => $cabDist,

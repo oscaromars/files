@@ -195,7 +195,7 @@
                     <td class="marcoCel"><?php if (($sumaHoras[0]['total_docente'] == null) ) {
                                                 echo 'N/A';
                                             } else {
-                                                echo /*$sumaHoras[0]['total_docente']*/horas_carga_docente_bloque * 0.30;
+                                                echo /*$sumaHoras[0]['total_docente']*/round($horas_carga_docente_bloque * 0.30);
                                             } ?></td>
                 </tr>
                 <tr class="fila">

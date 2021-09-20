@@ -11,10 +11,13 @@ financiero::registerTranslations();
 use app\assets\StripeAsset;
 StripeAsset::register($this);
 //print_r('arr: '.$arr_forma_pago);
-//print_r('Per_id: '.$id_en);
-//print_r($arr_ve);
+// print_r('mod_id: '.$modalidad);
+// print_r(':1 '.$modalidad);
+// print_r(':2 '.$id_flujo);
+// print_r(':3 '.$macs_id);
 //print_r('</br>');
-//print_r('cedula: '.$roi);
+//print_r($dataSiga);
+
 if ($isDuplicate) {
     echo "
     <style>
@@ -63,8 +66,24 @@ if ($isDuplicate) {
 <?= Html::hiddenInput('txt_saca_id', $saca_id, ['id' => 'txt_saca_id']); ?>
 <?= Html::hiddenInput('txt_bloque', $bloque, ['id' => 'txt_bloque']); ?>
 <?= Html::hiddenInput('txt_cedula', $cedula, ['id' => 'txt_cedula']); ?>
+<?= Html::hiddenInput('isDuplicate', $isDuplicate, ['id' => 'isDuplicate']); ?>
+<?= Html::hiddenInput('datasiga', $datasiga, ['id' => 'datasiga']); ?>
+<?= Html::hiddenInput('numregistros', $numregsitros, ['id' => 'numregistros']); ?>
 <?= Html::hiddenInput('frm_cuota', 0, ['id' => 'frm_cuota']); ?>
+<?= Html::hiddenInput('txt_mod_nombre', $modalidad, ['id' => 'txt_mod_nombre']); ?>
+<?= Html::hiddenInput('txt_flujo', $id_flujo, ['id' => 'txt_flujo']); ?>
+<?= Html::hiddenInput('txt_macs', $macs_id, ['id' => 'txt_macs']); ?>
+<?= Html::hiddenInput('txt_usuario', $usuario, ['id' => 'txt_usuario']); ?>
 
+<?php 
+    $registro = '';
+    for($i=0; $i < count($datasiga); $i++){
+        $registro .= $datasiga[$i]['detalle'].',';//explode(" ",$datasiga[$i]['detalle'])[0];        
+    }
+    echo "<input type='hidden' id='data_siga' value='".substr($registro,0,-1)."' />";
+    echo "<input type='hidden' id='num_reg' value='".count($datasiga)."' />";
+    //print_r(substr($registro,0,-1));
+?>
 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 form-group row">
     <h3><span id="lbl_registro_online"><?= academico::t("Academico", "Registro de pago en Línea") ?></span></h3>
 </div>
@@ -179,7 +198,7 @@ if ($isDuplicate) {
                 <h4><span><?= academico::t("registro", "Direct Credit") ?></span></h4>
             </div>
 
-            <div style="overflow: scroll; /*border: 1px solid;*/ margin-left: 0 !important;">
+            <div style=" /*border: 1px solid;*/ margin-left: 0 !important;">
                 <style>
                     .table > caption + thead > tr:first-child > th, .table > colgroup + thead > tr:first-child > th, .table > thead:first-child > tr:first-child > th, .table > caption + thead > tr:first-child > td, .table > colgroup + thead > tr:first-child > td, .table > thead:first-child > tr:first-child > td {
                     border-top: 0;
@@ -427,10 +446,11 @@ if ($isDuplicate) {
 <input type="hidden" id="frm_ini_cuota" value="<?= $costoItem ?>" />
 <input type="hidden" id="frm_num_cuota" value="1" />
 <input type="hidden" id="lbl_payment" value="<?= academico::t("registro", 'Payment #') ?>" />
-<input type="hidden" id="vencimiento_1" value="<?=explode(" ",$arr_ve[1]['fvpa_fecha_vencimiento'])[0] ?>" />
-<input type="hidden" id="vencimiento_2" value="<?=explode(" ",$arr_ve[2]['fvpa_fecha_vencimiento'])[0] ?>" />
-<input type="hidden" id="vencimiento_3" value="<?=explode(" ",$arr_ve[3]['fvpa_fecha_vencimiento'])[0] ?>" />
-<input type="hidden" id="vencimiento_4" value="<?=explode(" ",$arr_ve[4]['fvpa_fecha_vencimiento'])[0] ?>" />
-<input type="hidden" id="vencimiento_5" value="<?=explode(" ",$arr_ve[5]['fvpa_fecha_vencimiento'])[0] ?>" />
-<input type="hidden" id="vencimiento_6" value="<?=explode(" ",$arr_ve[6]['fvpa_fecha_vencimiento'])[0] ?>" />
+<input type="hidden" id="vencimiento_1" value="<?=explode(" ",$arr_ve[0]['fvpa_fecha_vencimiento'])[0] ?>" />
+<input type="hidden" id="vencimiento_2" value="<?=explode(" ",$arr_ve[1]['fvpa_fecha_vencimiento'])[0] ?>" />
+<input type="hidden" id="vencimiento_3" value="<?=explode(" ",$arr_ve[2]['fvpa_fecha_vencimiento'])[0] ?>" />
+<input type="hidden" id="vencimiento_4" value="<?=explode(" ",$arr_ve[3]['fvpa_fecha_vencimiento'])[0] ?>" />
+<input type="hidden" id="vencimiento_5" value="<?=explode(" ",$arr_ve[4]['fvpa_fecha_vencimiento'])[0] ?>" />
+<input type="hidden" id="vencimiento_6" value="<?=explode(" ",$arr_ve[5]['fvpa_fecha_vencimiento'])[0] ?>" />
+<input type="hidden" id="vencimiento_7" value="<?=explode(" ",$arr_ve[6]['fvpa_fecha_vencimiento'])[0] ?>" />
 

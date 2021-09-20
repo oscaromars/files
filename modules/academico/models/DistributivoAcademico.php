@@ -1203,9 +1203,9 @@ class DistributivoAcademico extends \yii\db\ActiveRecord
                          when (da.uaca_id= 1 and daca_num_estudiantes_online between 21 and 30) then round(4  * pc.paca_semanas_periodo /**(1.3)*/)
                          when (da.uaca_id= 1 and daca_num_estudiantes_online between 31 and 40) then round(5  * pc.paca_semanas_periodo /**(1.3)*/)
                          when (da.uaca_id= 1 and daca_num_estudiantes_online >40) then round(7  * pc.paca_semanas_periodo /**(1.3)*/)
-                         when (da.uaca_id= 2 ) then round((select ifnull(TRUNCATE(timestampdiff(day, das.daca_fecha_inicio_post, das.daca_fecha_fin_post)/7,0),'')
+                         /*when (da.uaca_id= 2 ) then round((select ifnull(TRUNCATE(timestampdiff(day, das.daca_fecha_inicio_post, das.daca_fecha_fin_post)/7,0),'')
                          FROM " . $con->dbname . ".distributivo_academico das
-                        WHERE das.uaca_id = 2 and das.dcab_id=da.dcab_id) * dh.daho_total_horas) -- OJO ESTE SI ESTA BIEN O NO EL CALCULO
+                        WHERE das.uaca_id = 2 and das.dcab_id=da.dcab_id) * dh.daho_total_horas)*/ -- OJO ESTE SI ESTA BIEN O NO EL CALCULO
                          end)
                        else
                         case when da.tdis_id=7 then tdis_num_semanas else (pc.paca_semanas_periodo * case  when dh.daho_total_horas is null then tdis_num_semanas else dh.daho_total_horas end) end
@@ -1218,8 +1218,8 @@ class DistributivoAcademico extends \yii\db\ActiveRecord
 			             when (da.uaca_id= 1 and daca_num_estudiantes_online between 11 and 20) then 3 /*round( 3  *(1.3))*/
                          when (da.uaca_id= 1 and daca_num_estudiantes_online between 21 and 30) then 4 /*round( 4  *(1.3))*/
                          when (da.uaca_id= 1 and daca_num_estudiantes_online between 31 and 40) then 5 /*round( 5  *(1.3))*/
-                         when (da.uaca_id= 1 and daca_num_estudiantes_online >40) then 7 /*round(7 *(1.3))*/  
-                         when (da.uaca_id= 2 ) then ' '/*round(dh.daho_total_horas / (select ifnull(TRUNCATE(timestampdiff(day, das.daca_fecha_inicio_post, das.daca_fecha_fin_post)/7,0),'')
+                         when (da.uaca_id= 1 and daca_num_estudiantes_online >40) then 7 /*round(7 *(1.3))*/
+                         /*when (da.uaca_id= 2 ) then ' '*//*round(dh.daho_total_horas / (select ifnull(TRUNCATE(timestampdiff(day, das.daca_fecha_inicio_post, das.daca_fecha_fin_post)/7,0),'')
                          FROM " . $con->dbname . ".distributivo_academico das
                         WHERE das.uaca_id = 2 and das.dcab_id=da.dcab_id))*/ -- OJO ESTE SI ESTA BIEN O NO EL CALCULO
                          end)
@@ -1253,11 +1253,13 @@ class DistributivoAcademico extends \yii\db\ActiveRecord
                     INNER JOIN " . $con_academico->dbname . ".tipo_distributivo AS t ON da.tdis_id = t.tdis_id
                 WHERE
                     da.dcab_id = :dcab_id AND
-                   da.daca_estado_logico = :estado AND
+                    da.daca_estado_logico = :estado AND
                     da.daca_estado = :estado AND
                     t.tdis_estado = :estado AND
-                    t.tdis_estado_logico = :estado
-                   and  da.tdis_id<>6";
+                    t.tdis_estado_logico = :estado AND
+                    da.daca_estado = :estado AND
+                    da.daca_estado_logico = :estado AND
+                    da.tdis_id<>6";
 
         $comando = $con_academico->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
@@ -1270,7 +1272,7 @@ class DistributivoAcademico extends \yii\db\ActiveRecord
             $valores_promedio =$DistADO->promedio($id);
             $valores_promedio[0]['preparacion_docencia'] = /*(( $valores_promedio[0]['total_hora_semana_docencia_prese'] + $valores_promedio[0]['total_hora_semana_docencia_online']) **/ 0.30/*)*/;
             $total_hora_semana_docenciaposgrado = $valores_promedio[0]['total_hora_semana_docencia_posgrado'];
-            $promedio =$DistADO->Calcularpromedioajustado($total_hora_semana_docenciaposgrado, $valores_promedio[0]['total_hora_semana_docencia'], $valores_promedio[0]['total_hora_semana_tutoria'], $valores_promedio[0]['total_hora_semana_investigacion'], $valores_promedio[0]['total_hora_semana_vinculacion'], $valores_promedio[0]['preparacion_docencia'], $valores_promedio[0]['semanas_docencia'], $valores_promedio[0]['semanas_tutoria_vinulacion_investigacion'], $valores_promedio[0]['semanas_posgrado']);
+        $promedio =$DistADO->Calcularpromedioajustado(/*$total_hora_semana_docenciaposgrado,*/ $valores_promedio[0]['total_hora_semana_docencia'], $valores_promedio[0]['total_hora_semana_tutoria'], $valores_promedio[0]['total_hora_semana_investigacion'], $valores_promedio[0]['total_hora_semana_vinculacion'], $valores_promedio[0]['preparacion_docencia'], $valores_promedio[0]['semanas_docencia'], $valores_promedio[0]['semanas_tutoria_vinulacion_investigacion']/*, $valores_promedio[0]['semanas_posgrado']*/);
 
             foreach ($res as $key => $value) {
                 $value['promedioajustado'] = round($promedio);
@@ -1528,5 +1530,40 @@ class DistributivoAcademico extends \yii\db\ActiveRecord
         $res = $comando->queryAll();
         return $res;
     }
+
+    /**
+* Function getSemanahoraposgrado
+* @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
+* @property integer
+* @return horario de un paralelo especifico
+ */
+public function getSemanahoraposgrado($dcab_id) {
+    $con_academico = \Yii::$app->db_academico;
+    $estado = 1;
+    $sql = "SELECT
+                case when da.uaca_id = 2 and td.tdis_id =1 then dah.daho_total_horas else 0 end  as total_hora_semana_docencia_posgrado,
+                TRUNCATE(timestampdiff(day, daca_fecha_inicio_post, daca_fecha_fin_post)/7,0) as semanas_pogrado,
+                da.daca_id,
+                da.dcab_id,
+                da.daca_fecha_inicio_post,
+                da.daca_fecha_fin_post,
+                da.paca_id,
+                da.asi_id,
+                da.pro_id,
+                da.mod_id,
+                da.daho_id
+            FROM db_academico.distributivo_academico da
+            inner join db_academico.tipo_distributivo td on td.tdis_id=da.tdis_id
+            left join db_academico.distributivo_academico_horario dah on dah.daho_id=da.daho_id
+            where dcab_id = :dcab_id and
+            da.uaca_id = 2 and
+            da.daca_estado = :estado and
+            da.daca_estado_logico = :estado";
+    $comando = $con_academico->createCommand($sql);
+    $comando->bindParam(":dcab_id", $dcab_id, \PDO::PARAM_INT);
+    $comando->bindParam(":estado", $estado, \PDO::PARAM_INT);
+    $res = $comando->queryAll();
+    return $res;
+}
 
 }

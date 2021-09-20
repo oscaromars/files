@@ -195,9 +195,9 @@ class RegistroOnline extends \yii\db\ActiveRecord
         $sql = "SELECT
                 pes_id as id
                 from " . $con->dbname . ".registro_online
-                where per_id = :per_id and ron_estado = 1 limit 0,1;";
-        
-        if($per_id == NULL){
+                where per_id = :per_id and ron_estado = 1 order by pes_id desc limit 0,1;";
+
+        if ($per_id == NULL) {
             $resultData = [];
         }else{
             $comando = $con->createCommand($sql);
@@ -239,9 +239,9 @@ class RegistroOnline extends \yii\db\ActiveRecord
         $sql = "SELECT
                 ron_id as id
                 from " . $con->dbname . ".registro_online
-                where per_id = :per_id and ron_estado = 1 limit 0,1;";
-        
-        if($per_id == NULL){
+                where per_id = :per_id and ron_estado = 1 order by ron_id desc limit 0,1;";
+
+        if ($per_id == NULL) {
             $resultData = [];
         }else{
             $comando = $con->createCommand($sql);

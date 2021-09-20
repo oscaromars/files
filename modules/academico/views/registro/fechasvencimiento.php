@@ -93,7 +93,7 @@ PbGridView::widget([
           //  'contentOptions' => ['class' => 'text-center'],
             'buttons' => [
                 'view' => function ($url, $model) {
-                    return Html::a('<span class="' . Utilities::getIcon('view') . '"></span>', Url::to(['distributivoacademico/view', 'id' => $model['Id']]), ["data-toggle" => "tooltip", "title" => Yii::t("accion", "View")]);
+                    return Html::a('<span class="' . Utilities::getIcon('view') . '"></span>', Url::to(['registro/fechasvencimiento-view', 'id' => $model['id']]), ["data-toggle" => "tooltip", "title" => Yii::t("accion", "View")]);
                 },
                 'delete' => function ($url, $model) {
                     if ($model['estado'] == 1 or $model['estado'] == 3) {

@@ -13,27 +13,29 @@ $styleBar = "";
 if($esEstu) $styleBar = "display: none;";
 //print_r($periodoAcademico);
 ?>
-<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-    <h4><span id="lbl_titulo"><?= academico::t("registro", "List Enrollment") ?></span></h4>
+<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 form-group row">
+    <h3><span id="lbl_registro_online"><?= academico::t("registro", "List Enrollment") ?></span></h3>
 </div>
-<br />
 <form class="form-horizontal">
-    
-    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-        <div class="form-group">
-            <label for="cmb_mod" class="col-lg-2 col-md-2 col-sm-2 col-xs-2 control-label"><?= academico::t("matriculacion", "Modality") ?></label>
-            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
-                <?php if($grupo_id==12) : ?>
-                    <?= Html::dropDownList("cmb_mod", 0, $modalidad, ["class" => "form-control", "id" => "cmb_mod"]) ?>
-                <?php else : ?>
-                    <?= Html::dropDownList("cmb_mod", 0, $modalidadT, ["class" => "form-control", "id" => "cmb_mod"]) ?>
-                <?php endif; ?>
-
-            </div>
-               
-            <label for="cmb_per_acad" class="col-lg-2 col-md-2 col-sm-2 col-xs-2 control-label"><?= academico::t("matriculacion", "Academic Period") ?></label>
-            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
-                <?= Html::dropDownList("cmb_per_acad", 0, $periodoAcademico, ["class" => "form-control", "id" => "cmb_per_acad",]) ?>
+    <div class="row">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 form-group">
+            <div class="form-group">
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">     
+                    <label for="cmb_mod" class="col-lg-4 col-md-4 col-sm-12 col-xs-12 control-label"><?= academico::t("matriculacion", "Modality") ?></label>
+                    <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+                        <?php if($grupo_id==12) : ?>
+                            <?= Html::dropDownList("cmb_mod", 0, $modalidad, ["class" => "form-control", "id" => "cmb_mod"]) ?>
+                        <?php else : ?>
+                            <?= Html::dropDownList("cmb_mod", 0, $modalidadT, ["class" => "form-control", "id" => "cmb_mod"]) ?>
+                        <?php endif; ?>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                    <label for="cmb_per_acad" class="col-lg-4 col-md-4 col-sm-12 col-xs-12 control-label"><?= academico::t("matriculacion", "Academic Period") ?></label>
+                    <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+                        <?= Html::dropDownList("cmb_per_acad", 0, $periodoAcademico, ["class" => "form-control", "id" => "cmb_per_acad",]) ?>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

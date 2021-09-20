@@ -123,14 +123,25 @@ if($modelCancelRon){
                 'header' => Academico::t("matriculacion", "Select"),
                 'contentOptions' => ['style' => 'text-align: center;'],
                 'headerOptions' => ['width' => '60'],
-                'template' => '{select}',
+                'template' => '{select}','{delete}'
                 'buttons' => [
                     'select' => function ($url, $model) {
                             if($model['Roi_id'] > 0)
                                 return Html::checkbox($model['Code'], false, ["value" => $model['Subject'], "disabled" => true, "class" => "chequeado" ]);
                             else 
                                 return Html::checkbox($model['Code'], false, ["value" => $model['Subject'], "class" => "byregister"]);
-                        },
+                    },
+                    'delete' => function ($url, $model) { 
+                        if($model['Admin']>0 and  $model['Admin']<1001){
+                            if($model['usuario'] < 1000 and $model['Roi_id']>0){                   
+                                 return Html::a('<span class="'.Utilities::getIcon('remove').'"></span>', null, ['href' => 'javascript:confirmDelete(\'deletereg\',[\'' . $model['Roi_id'] . '\']);', "data-toggle" => "tooltip", "title" => Yii::t("accion","Delete")]);                    
+                            }else{
+                                return Html::input(['type' => "hidden"]);
+                            }
+                        }else{
+                                return Html::input(['type' => "hidden"]);
+                        }
+                    },
                     /*
                     'select' => function ($url, $planificacion) use ($registredSuject, $cancelStatus, $modelCancelItem) {
                         if(isset($registredSuject)){

@@ -1154,6 +1154,7 @@ $dataValue[] = ['Id' => $con, 'Pago' => Academico::t('matriculacion',"Payment") 
 		$_SESSION['JSLANG']['You must choose_the maximum of six'] = Academico::t('matriculacion', 'You must choose_the maximum of six');
 
 		$per_id = $uper_id ? $uper_id : Yii::$app->session->get("PB_perid");
+		$usuario = Yii::$app->user->identity->usu_id;
 
 		if (Yii::$app->request->isAjax) {
 			$data = Yii::$app->request->post();
@@ -1175,7 +1176,7 @@ $dataValue[] = ['Id' => $con, 'Pago' => Academico::t('matriculacion',"Payment") 
 					$modModalidad = new Modalidad();
 					$mod_est = Estudiante::findOne(['per_id' => $per_id]);
 					$today = date("Y-m-d H:i:s");
-					$result_process = $matriculacion_model->checkToday($today, $per_id);
+					$result_process = $matriculacion_model->checkToday($today);
 					$rco_id = $result_process[0]['rco_id'];
 					$rco_num_bloques = $result_process[0]['rco_num_bloques'];
 					$pla_id = $result_process[0]['pla_id'];
@@ -1209,7 +1210,7 @@ $dataValue[] = ['Id' => $con, 'Pago' => Academico::t('matriculacion',"Payment") 
 
 					if ($ron_id == 0) {
 						$id = $registro_online_model->insertRegistroOnline(
-							$per_id, $pes_id, strval($numOrden), strval($modalidad), strval($carrera), strval($semestre), strval($mod_est->est_categoria), 0, 0, 0, $matricula['valor'], 1//CAMBIAR ESTE VALOR OJO!!!!!!!!!!!
+							$per_id, $pes_id, strval($numOrden), strval($modalidad), strval($carrera), strval($semestre), strval($mod_est->est_categoria), 0, 0, 0, $matricula['valor'], 1/*CAMBIAR ESTE VALOR OJO!!!!!!!!!!!*/, $usuario
 						);
 					} else {
 						$id = $ron_id;
@@ -1258,15 +1259,7 @@ $dataValue[] = ['Id' => $con, 'Pago' => Academico::t('matriculacion',"Payment") 
 							$registro_online_item_model = new RegistroOnlineItem();
 
 							$id_roi = $registro_online_item_model->insertRegistroOnlineItem(
-								$id,
-								strval($codMateria),
-								strval($asignatura),
-								strval($creditos),
-								$costo,
-								strval($bloque),
-								strval($hora),
-								strval($paralelo)
-
+								$id, strval($codMateria), strval($asignatura), strval($creditos), $costo, strval($bloque), strval($hora), strval($paralelo), $usuario
 							);
 
 							$rois_insertados[] = $id_roi;
@@ -1324,9 +1317,6 @@ $dataValue[] = ['Id' => $con, 'Pago' => Academico::t('matriculacion',"Payment") 
 							$modelPla = Planificacion::findOne($modelPlaEst->pla_id);
 							$resultIdPlanificacionEstudiante = $matriculacion_model->getIdPlanificacionEstudiante($per_id, $modelPla['pla_id']);
 							$pla_id = $resultIdPlanificacionEstudiante[0]['pla_id'];
-							$resultIdPlanificacionEstudiante = $matriculacion_model->getIdPlanificacionEstudiante($per_id, $modelPla['pla_id']);
-							$pla_id = $resultIdPlanificacionEstudiante[0]['pla_id'];
-							$pla_id = $resultIdPlanificacionEstudiante[0]['pla_id'];
 							$result_periodo = $matriculacion_model->checkPeriodo($pla_id);
 							$paca_id = $result_periodo[0]['paca_id'];
 							$registro_adicional_materias_model = new RegistroAdicionalMaterias();
@@ -1340,7 +1330,10 @@ $dataValue[] = ['Id' => $con, 'Pago' => Academico::t('matriculacion',"Payment") 
 									$roi_id['2']['roi_id'],
 									$roi_id['3']['roi_id'],
 									$roi_id['4']['roi_id'],
-									$roi_id['5']['roi_id']
+									$roi_id['5']['roi_id'],
+									$roi_id['6']['roi_id'],
+									$roi_id['7']['roi_id'],
+									$usuario
 
 								);
 							}
@@ -1350,7 +1343,7 @@ $dataValue[] = ['Id' => $con, 'Pago' => Academico::t('matriculacion',"Payment") 
 
 							if (isset($RegistroAdicionalMaterias)) {
 								$i = 0;
-								for ($x = 0; $x < 6; $x++) {
+								for ($x = 0; $x < 8; $x++) {
 									$roi_id_temp = $RegistroAdicionalMaterias['roi_id_' . ($x + 1)];
 									if ($roi_id_temp == NULL) {
 										break;
@@ -1372,8 +1365,6 @@ $dataValue[] = ['Id' => $con, 'Pago' => Academico::t('matriculacion',"Payment") 
 								$modelPla = Planificacion::findOne($modelPlaEst->pla_id);
 								$resultIdPlanificacionEstudiante = $matriculacion_model->getIdPlanificacionEstudiante($per_id, $modelPla['pla_id']);
 								$pla_id = $resultIdPlanificacionEstudiante[0]['pla_id'];
-								$resultIdPlanificacionEstudiante = $matriculacion_model->getIdPlanificacionEstudiante($per_id, $modelPla['pla_id']);
-								$pla_id = $resultIdPlanificacionEstudiante[0]['pla_id'];
 								$result_periodo = $matriculacion_model->checkPeriodo($pla_id);
 								$paca_id = $result_periodo[0]['paca_id'];
 
@@ -1384,7 +1375,10 @@ $dataValue[] = ['Id' => $con, 'Pago' => Academico::t('matriculacion',"Payment") 
 									isset($rois_insertados[2]) ? $rois_insertados[2] : NULL,
 									isset($rois_insertados[3]) ? $rois_insertados[3] : NULL,
 									isset($rois_insertados[4]) ? $rois_insertados[4] : NULL,
-									isset($rois_insertados[5]) ? $rois_insertados[5] : NULL
+									isset($rois_insertados[5]) ? $rois_insertados[5] : NULL,
+									isset($rois_insertados[6]) ? $rois_insertados[6] : NULL,
+									isset($rois_insertados[7]) ? $rois_insertados[7] : NULL,
+									$usuario
 								);
 
 								// \app\models\Utilities::putMessageLogFile('id_rama: ' . $id_rama);
@@ -2045,9 +2039,267 @@ $dataValue[] = ['Id' => $con, 'Pago' => Academico::t('matriculacion',"Payment") 
 			"bloque" => $bloque,
 			"saca_id" => $data_student['saca_id'],
 		]);
-		//}
+		
 
 	}
+
+
+	 public function actionDeletereg() {
+       
+        if (Yii::$app->request->isAjax) {
+            $data = Yii::$app->request->post();
+            try {
+              $roi_id = $data['roi_id'];
+              $ron_id = $data['ron_id'];
+              $pes_id = $data['pes_id'];
+              $per_id = $data['per_id'];
+              $matriculacion_model= new Matriculacion();
+              $modelRegOn= RegistroOnline::findOne(['ron_id'=>$ron_id,'per_id'=>$per_id,'pes_id'=>$pes_id,'ron_estado'=>1,'ron_estado_logico'=>1]);
+              $modelRegItem = RegistroOnlineItem::findAll(['ron_id' => $ron_id]);
+              $pla_id=PlanificacionEstudiante::Find()->where (['pes_id'=>$pes_id,'per_id'=>$per_id])->asArray()->one()['pla_id'];
+              $data_student = $matriculacion_model->getDataStudent($per_id, $pla_id, $pes_id);
+              $paca_id=$data_student['paca_id'];
+              $arr_sub_cancel=RegistroOnlineItem::find()->where(['roi_id' => $roi_id])->asArray()->one()['roi_materia_cod'];
+                $sumMatr = 0;
+                foreach ($modelRegItem as $key => $item) {
+                    if (($item->roi_id == $roi_id)) {
+                        $item->roi_estado = '0';
+                        $item->roi_estado_logico = '0';
+                        $item->roi_fecha_modificacion = $today;
+                        $item->roi_usuario_modifica = $usu_id;
+                        if (!$item->save()) {
+                            throw new Exception('Error to Update Online Item Register.');
+                        }
+
+                        //// Eliminar el roi_id de registro_adicional_materias ////
+                        // \app\models\Utilities::putMessageLogFile("---Eliminar el roi_id de registro_adicional_materias---");
+                        // Obtener el modelo de rama donde aún no se ha pagado
+                        $modelRama = RegistroAdicionalMaterias::findOne(['ron_id' => $ron_id, 'per_id' => $per_id, 'pla_id' => $pla_id, 'paca_id' => $paca_id, 'rama_estado' => 1, 'rama_estado_logico' => 1, 'rpm_id' => NULL]);
+                        \app\models\Utilities::putMessageLogFile("modelRama existe: " . isset($modelRama));
+                        // Validación por si acaso
+                        if (isset($modelRama)) {
+                            // Sacar los roi_ids que están presentes
+                            $arr_roi_ids = [
+                                $modelRama->roi_id_1,
+                                $modelRama->roi_id_2,
+                                $modelRama->roi_id_3,
+                                $modelRama->roi_id_4,
+                                $modelRama->roi_id_5,
+                                $modelRama->roi_id_6,
+                                $modelRama->roi_id_7,
+                                $modelRama->roi_id_8,
+                            ];
+
+                            \app\models\Utilities::putMessageLogFile("arr_roi_ids INICIO: " . print_r($arr_roi_ids, true));
+                            \app\models\Utilities::putMessageLogFile("item->roi_id: " . $item->roi_id);
+
+                            // Encontrar el roi_id igual y removerlo
+                            for ($i = 0; $i < count($arr_roi_ids); $i++) {
+                                // \app\models\Utilities::putMessageLogFile("COMPARACIÓN: " . ($item->roi_id == $arr_roi_ids[$i]));
+                                if (intval($item->roi_id) == intval($arr_roi_ids[$i])) {
+                                    unset($arr_roi_ids[$i]);
+                                    break;
+                                }
+                            }
+
+                            \app\models\Utilities::putMessageLogFile("arr_roi_ids DESPUÉS: " . print_r($arr_roi_ids, true));
+
+                            // Reordenar el arreglo
+                            $arr_roi_ids = array_values($arr_roi_ids);
+
+                            \app\models\Utilities::putMessageLogFile("arr_roi_ids FINAL: " . print_r($arr_roi_ids, true));
+
+                            // Remplazar los roi_ids del registro del modelo por este nuevo arreglo
+                            $modelRama->roi_id_1 = $arr_roi_ids[0];
+                            $modelRama->roi_id_2 = $arr_roi_ids[1];
+                            $modelRama->roi_id_3 = $arr_roi_ids[2];
+                            $modelRama->roi_id_4 = $arr_roi_ids[3];
+                            $modelRama->roi_id_5 = $arr_roi_ids[4];
+                            $modelRama->roi_id_6 = $arr_roi_ids[5];
+                            $modelRama->roi_id_7 = $arr_roi_ids[6];
+                            $modelRama->roi_id_8 = $arr_roi_ids[7];
+
+                            // Actualizar
+                            if (!$modelRama->save()) {
+                                throw new Exception('Error al actualizar los roi_ids de registro_adicional_materias');
+                            }
+
+                            //// Reducir los gatos administrativos en caso de que se eliminen materias del B2 quedando sólo de B1 ////
+
+                            // Tomar todas las transacciones realizadas. Pagadas y no pagadas
+                            $modelRama = RegistroAdicionalMaterias::findAll(['ron_id' => $ron_id, 'per_id' => $per_id, 'pla_id' => $pla_id, 'paca_id' => $paca_id, 'rama_estado' => 1, 'rama_estado_logico' => 1]);
+
+                            // \app\models\Utilities::putMessageLogFile("modelRama existe: " . isset($modelRama));
+
+                            // Separar en pagadas y no pagadas
+                            $pagadas = [];
+                            $no_pagadas = [];
+                            foreach ($modelRama as $key => $value) {
+                                if (isset($value['rpm_id'])) {
+                                    $pagadas[] = $value;
+                                } else {
+                                    $no_pagadas[] = $value;
+                                }
+                            }
+
+                            // \app\models\Utilities::putMessageLogFile("pagadas: " . print_r($modelRama, true));
+                            // \app\models\Utilities::putMessageLogFile("no_pagadas: " . print_r($modelRama, true));
+
+                            // Si no hay materias pagadas, calcular sólo básándose en las pendientes
+                            if (count($pagadas) <= 0) {
+                                // \app\models\Utilities::putMessageLogFile("---------NO Hay materias pagadas------------");
+
+                                // Sacar los roi_ids
+                                $bloques = [
+                                    RegistroOnlineItem::find()->where(['roi_id' => $no_pagadas[0]['roi_id_1']])->asArray()->one()['roi_bloque'],
+                                    RegistroOnlineItem::find()->where(['roi_id' => $no_pagadas[0]['roi_id_2']])->asArray()->one()['roi_bloque'],
+                                    RegistroOnlineItem::find()->where(['roi_id' => $no_pagadas[0]['roi_id_3']])->asArray()->one()['roi_bloque'],
+                                    RegistroOnlineItem::find()->where(['roi_id' => $no_pagadas[0]['roi_id_4']])->asArray()->one()['roi_bloque'],
+                                    RegistroOnlineItem::find()->where(['roi_id' => $no_pagadas[0]['roi_id_5']])->asArray()->one()['roi_bloque'],
+                                    RegistroOnlineItem::find()->where(['roi_id' => $no_pagadas[0]['roi_id_6']])->asArray()->one()['roi_bloque'],
+                                    RegistroOnlineItem::find()->where(['roi_id' => $no_pagadas[0]['roi_id_7']])->asArray()->one()['roi_bloque'],
+                                    RegistroOnlineItem::find()->where(['roi_id' => $no_pagadas[0]['roi_id_8']])->asArray()->one()['roi_bloque'],
+                                ];
+
+                                // \app\models\Utilities::putMessageLogFile("bloques: " . print_r($bloques, true));
+
+                                // Sacar el 1er bloque
+                                $bloque = $bloques[0];
+
+                                // \app\models\Utilities::putMessageLogFile("bloque: " . $bloque);
+
+                                // Obtener los gastos administrativos
+                                $gastos_administrativos_valor = GastoAdministrativo::find()->where(['mod_id' => $mod_id])->asArray()->one()['gadm_gastos_varios'];
+
+                                // \app\models\Utilities::putMessageLogFile("gastos_administrativos_valor INICIO: " . $gastos_administrativos_valor);
+
+                                foreach ($bloques as $key => $value) {
+                                    // Si se encuentran los bloques diferentes, los gastos son el doble
+                                    // \app\models\Utilities::putMessageLogFile("value != bloque: " . ($value != $bloque && isset($value)));
+                                    if ($value != $bloque && isset($value)) {
+                                        $gastos_administrativos_valor = $gastos_administrativos_valor * 2;
+                                        break;
+                                    }
+                                }
+
+                                // \app\models\Utilities::putMessageLogFile("gastos_administrativos_valor FIN: " . $gastos_administrativos_valor);
+
+                                // Guardar en los gastos y pendientes
+                                $modelRegOn->ron_valor_gastos_adm = $gastos_administrativos_valor;
+                                $modelRegOn->ron_valor_gastos_pendientes = $gastos_administrativos_valor;
+                            } else {
+                                // Si sí hay pagadas, comparar
+                                // \app\models\Utilities::putMessageLogFile("---------SÍ hay materias pagadas------------");
+                                // Lista de los bloques pagados
+                                $bloques_pagados = [];
+
+                                foreach ($pagadas as $key => $value) {
+                                    // Tomar todos los rois de los roi_ids, sean null o no
+                                    $roi_1 = RegistroOnlineItem::find()->where(['roi_id' => $value['roi_id_1']])->asArray()->one();
+                                    $roi_2 = RegistroOnlineItem::find()->where(['roi_id' => $value['roi_id_2']])->asArray()->one();
+                                    $roi_3 = RegistroOnlineItem::find()->where(['roi_id' => $value['roi_id_3']])->asArray()->one();
+                                    $roi_4 = RegistroOnlineItem::find()->where(['roi_id' => $value['roi_id_4']])->asArray()->one();
+                                    $roi_5 = RegistroOnlineItem::find()->where(['roi_id' => $value['roi_id_5']])->asArray()->one();
+                                    $roi_6 = RegistroOnlineItem::find()->where(['roi_id' => $value['roi_id_6']])->asArray()->one();
+                                    $roi_7 = RegistroOnlineItem::find()->where(['roi_id' => $value['roi_id_7']])->asArray()->one();
+                                    $roi_8 = RegistroOnlineItem::find()->where(['roi_id' => $value['roi_id_8']])->asArray()->one();
+
+                                    // Si se encontró roi, agregar su bloque a la lista de bloques pagados
+                                    if (isset($roi_1)) {$bloques_pagados[] = $roi_1['roi_bloque'];}
+                                    if (isset($roi_2)) {$bloques_pagados[] = $roi_2['roi_bloque'];}
+                                    if (isset($roi_3)) {$bloques_pagados[] = $roi_3['roi_bloque'];}
+                                    if (isset($roi_4)) {$bloques_pagados[] = $roi_4['roi_bloque'];}
+                                    if (isset($roi_5)) {$bloques_pagados[] = $roi_5['roi_bloque'];}
+                                    if (isset($roi_6)) {$bloques_pagados[] = $roi_6['roi_bloque'];}
+                                    if (isset($roi_7)) {$bloques_pagados[] = $roi_7['roi_bloque'];}
+                                    if (isset($roi_8)) {$bloques_pagados[] = $roi_8['roi_bloque'];}
+                                }
+
+                                // \app\models\Utilities::putMessageLogFile("bloques_pagados: " . print_r($bloques_pagados, true));
+
+                                // Tomar el primer bloque de la lista de bloques pagados
+                                $bloque_pagado = $bloques_pagados[0];
+                                // \app\models\Utilities::putMessageLogFile("bloque_pagado: " . $bloque_pagado);
+
+                                // Obtener los gastos administrativos, y considerarlos como los pendientes por defecto ($150)
+                                $gastos_administrativos_pendientes = GastoAdministrativo::find()->where(['mod_id' => $mod_id])->asArray()->one()['gadm_gastos_varios'];
+                                // \app\models\Utilities::putMessageLogFile("gastos_administrativos_pendientes INICIO: " . $gastos_administrativos_pendientes);
+
+                                foreach ($bloques_pagados as $key => $value) {
+                                    // Si se encuentran los bloques diferentes, los gastos pendientes son 0
+                                    // \app\models\Utilities::putMessageLogFile("value != bloque_pagado: " . ($value != $bloque_pagado));
+                                    if ($value != $bloque_pagado) {
+                                        $gastos_administrativos_pendientes = 0;
+                                        break;
+                                    }
+                                }
+
+                                // \app\models\Utilities::putMessageLogFile("gastos_administrativos_pendientes FIN: " . $gastos_administrativos_pendientes);
+
+                                // Si los gastos administrativos pendientes son 0, colocarlos en el modelo y hacer que los gastos admin sean 300
+                                if ($gastos_administrativos_pendientes <= 0) {
+                                    $modelRegOn->ron_valor_gastos_adm = GastoAdministrativo::find()->where(['mod_id' => $mod_id])->asArray()->one()['gadm_gastos_varios'] * 2;
+                                    $modelRegOn->ron_valor_gastos_pendientes = $gastos_administrativos_pendientes;
+                                }
+                                // Si no son 0, quiere decir que sólo hay pagadas materias de 1 bloque, por lo que hay que comparar si las pendientes de pago siguen siendo del mismo bloque para que no se le vuelva a cobrar, o del otro bloque para que sí se le cobre los gastos administrativos adicionales
+                                else {
+                                    // Sacar los roi_ids no pagados
+                                    $bloques_no_pagados = [
+                                        RegistroOnlineItem::find()->where(['roi_id' => $no_pagadas[0]['roi_id_1']])->asArray()->one()['roi_bloque'],
+                                        RegistroOnlineItem::find()->where(['roi_id' => $no_pagadas[0]['roi_id_2']])->asArray()->one()['roi_bloque'],
+                                        RegistroOnlineItem::find()->where(['roi_id' => $no_pagadas[0]['roi_id_3']])->asArray()->one()['roi_bloque'],
+                                        RegistroOnlineItem::find()->where(['roi_id' => $no_pagadas[0]['roi_id_4']])->asArray()->one()['roi_bloque'],
+                                        RegistroOnlineItem::find()->where(['roi_id' => $no_pagadas[0]['roi_id_5']])->asArray()->one()['roi_bloque'],
+                                        RegistroOnlineItem::find()->where(['roi_id' => $no_pagadas[0]['roi_id_6']])->asArray()->one()['roi_bloque'],
+                                        RegistroOnlineItem::find()->where(['roi_id' => $no_pagadas[0]['roi_id_7']])->asArray()->one()['roi_bloque'],
+                                        RegistroOnlineItem::find()->where(['roi_id' => $no_pagadas[0]['roi_id_8']])->asArray()->one()['roi_bloque'],
+                                    ];
+
+                                    // \app\models\Utilities::putMessageLogFile("bloques_no_pagados: " . print_r($bloques_no_pagados, true));
+
+                                    $gastos_administrativos_pendientes = 0;
+                                    foreach ($bloques_no_pagados as $key => $value) {
+                                        // Si se encuentra un bloque diferente a los ya pagados, hay valor pendiente de pago. Si todos son los mismos, no hay pendiente
+                                        // \app\models\Utilities::putMessageLogFile("value != bloque_pagado: " . ($value != $bloque_pagado && isset($value)));
+                                        if ($value != $bloque_pagado && isset($value)) {
+                                            $gastos_administrativos_pendientes = GastoAdministrativo::find()->where(['mod_id' => $mod_id])->asArray()->one()['gadm_gastos_varios'];
+                                            break;
+                                        }
+                                    }
+
+                                    // \app\models\Utilities::putMessageLogFile("gastos_administrativos_pendientes CORRECCION: " . $gastos_administrativos_pendientes);
+
+                                    // Si los gastos administrativos pendientes son 0, quiere decir que materias pagadas y no pagadas son del mismo bloque
+                                    if ($gastos_administrativos_pendientes <= 0) {
+                                        $modelRegOn->ron_valor_gastos_adm = GastoAdministrativo::find()->where(['mod_id' => $mod_id])->asArray()->one()['gadm_gastos_varios'];
+                                        $modelRegOn->ron_valor_gastos_pendientes = $gastos_administrativos_pendientes;
+                                    }
+                                    // SI no, son de distintos bloques
+                                    else {
+                                        $modelRegOn->ron_valor_gastos_adm = GastoAdministrativo::find()->where(['mod_id' => $mod_id])->asArray()->one()['gadm_gastos_varios'] * 2;
+                                        $modelRegOn->ron_valor_gastos_pendientes = $gastos_administrativos_pendientes;
+                                    }
+                                }
+                            }
+                        }
+                    } /*else
+                            $sumMatr += $item->roi_costo;*/
+                } // foreach
+                $message = array(
+                            "wtmessage" => Yii::t('notificaciones', 'Your information was successfully saved.'),
+                            "title" => Yii::t('jslang', 'Success'),
+                        );
+                        return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+
+            } catch (Exception $ex) {
+                $message = array(
+                    'wtmessage' => Yii::t('notificaciones', 'Your information has not been saved. Please try again.'),
+                    'title' => Yii::t('jslang', 'Error'),
+                );
+                return Utilities::ajaxResponse('NOOK', 'alert', Yii::t('jslang', 'Error'), 'true', $message);
+            }
+        }
+    } // end actionDeletereg
 
 	public function actionAnularregistro() {
 		$data = Yii::$app->request->get();
@@ -2171,17 +2423,18 @@ $dataValue[] = ['Id' => $con, 'Pago' => Academico::t('matriculacion',"Payment") 
 
 						//  }
 						$cantcuotasf = $facturas_pendientesnew[0]['Cantf'];
-
+						/*
 						\app\models\Utilities::putMessageLogFile('valor pendiente:' . $facturas_pendientesnew[0]['Costof']);
 						\app\models\Utilities::putMessageLogFile('cantidad cuotas:' . $cantcuotasf);
-
+						*/
 						$costcuotasf = $facturas_pendientesnew[0]['Costof'] - $tm;
-
+						/*
 						\app\models\Utilities::putMessageLogFile('costo cuotas:' . $costcuotasf);
 						\app\models\Utilities::putMessageLogFile('fpeid:' . $fpe_pendientesnew[0]['fpeid']);
 						\app\models\Utilities::putMessageLogFile('fpeid:' . $fpe_pendientesnew[1]['fpeid']);
 						\app\models\Utilities::putMessageLogFile('fpeid:' . $fpe_pendientesnew[2]['fpeid']);
 						\app\models\Utilities::putMessageLogFile('fpeid:' . $fpe_pendientesnew[3]['fpeid']);
+						*/
 						// for($i=0; $i<count($facturas_pendientesnew); $i++){
 						$i = 0;
 						foreach ($fpe_pendientesnew as $key => $value) {
@@ -2364,6 +2617,8 @@ $dataValue[] = ['Id' => $con, 'Pago' => Academico::t('matriculacion',"Payment") 
 										$modelRama->roi_id_4,
 										$modelRama->roi_id_5,
 										$modelRama->roi_id_6,
+										$modelRama->roi_id_7,
+										$modelRama->roi_id_8,
 									];
 
 									// \app\models\Utilities::putMessageLogFile("arr_roi_ids INICIO: " . print_r($arr_roi_ids, true));
@@ -2393,6 +2648,8 @@ $dataValue[] = ['Id' => $con, 'Pago' => Academico::t('matriculacion',"Payment") 
 									$modelRama->roi_id_4 = $arr_roi_ids[3];
 									$modelRama->roi_id_5 = $arr_roi_ids[4];
 									$modelRama->roi_id_6 = $arr_roi_ids[5];
+									$modelRama->roi_id_7 = $arr_roi_ids[6];
+									$modelRama->roi_id_8 = $arr_roi_ids[7];
 
 									// Actualizar
 									if (!$modelRama->save()) {
@@ -2432,6 +2689,8 @@ $dataValue[] = ['Id' => $con, 'Pago' => Academico::t('matriculacion',"Payment") 
 											RegistroOnlineItem::find()->where(['roi_id' => $no_pagadas[0]['roi_id_4']])->asArray()->one()['roi_bloque'],
 											RegistroOnlineItem::find()->where(['roi_id' => $no_pagadas[0]['roi_id_5']])->asArray()->one()['roi_bloque'],
 											RegistroOnlineItem::find()->where(['roi_id' => $no_pagadas[0]['roi_id_6']])->asArray()->one()['roi_bloque'],
+											RegistroOnlineItem::find()->where(['roi_id' => $no_pagadas[0]['roi_id_7']])->asArray()->one()['roi_bloque'],
+											RegistroOnlineItem::find()->where(['roi_id' => $no_pagadas[0]['roi_id_8']])->asArray()->one()['roi_bloque'],
 										];
 
 										// \app\models\Utilities::putMessageLogFile("bloques: " . print_r($bloques, true));
@@ -2474,6 +2733,8 @@ $dataValue[] = ['Id' => $con, 'Pago' => Academico::t('matriculacion',"Payment") 
 											$roi_4 = RegistroOnlineItem::find()->where(['roi_id' => $value['roi_id_4']])->asArray()->one();
 											$roi_5 = RegistroOnlineItem::find()->where(['roi_id' => $value['roi_id_5']])->asArray()->one();
 											$roi_6 = RegistroOnlineItem::find()->where(['roi_id' => $value['roi_id_6']])->asArray()->one();
+											$roi_7 = RegistroOnlineItem::find()->where(['roi_id' => $value['roi_id_7']])->asArray()->one();
+											$roi_8 = RegistroOnlineItem::find()->where(['roi_id' => $value['roi_id_8']])->asArray()->one();
 
 											// Si se encontró roi, agregar su bloque a la lista de bloques pagados
 											if (isset($roi_1)) {$bloques_pagados[] = $roi_1['roi_bloque'];}
@@ -2482,6 +2743,8 @@ $dataValue[] = ['Id' => $con, 'Pago' => Academico::t('matriculacion',"Payment") 
 											if (isset($roi_4)) {$bloques_pagados[] = $roi_4['roi_bloque'];}
 											if (isset($roi_5)) {$bloques_pagados[] = $roi_5['roi_bloque'];}
 											if (isset($roi_6)) {$bloques_pagados[] = $roi_6['roi_bloque'];}
+											if (isset($roi_7)) {$bloques_pagados[] = $roi_7['roi_bloque'];}
+											if (isset($roi_8)) {$bloques_pagados[] = $roi_8['roi_bloque'];}
 										}
 
 										// \app\models\Utilities::putMessageLogFile("bloques_pagados: " . print_r($bloques_pagados, true));
@@ -2520,6 +2783,8 @@ $dataValue[] = ['Id' => $con, 'Pago' => Academico::t('matriculacion',"Payment") 
 												RegistroOnlineItem::find()->where(['roi_id' => $no_pagadas[0]['roi_id_4']])->asArray()->one()['roi_bloque'],
 												RegistroOnlineItem::find()->where(['roi_id' => $no_pagadas[0]['roi_id_5']])->asArray()->one()['roi_bloque'],
 												RegistroOnlineItem::find()->where(['roi_id' => $no_pagadas[0]['roi_id_6']])->asArray()->one()['roi_bloque'],
+												RegistroOnlineItem::find()->where(['roi_id' => $no_pagadas[0]['roi_id_7']])->asArray()->one()['roi_bloque'],
+												RegistroOnlineItem::find()->where(['roi_id' => $no_pagadas[0]['roi_id_8']])->asArray()->one()['roi_bloque'],
 											];
 
 											// \app\models\Utilities::putMessageLogFile("bloques_no_pagados: " . print_r($bloques_no_pagados, true));
@@ -2560,6 +2825,7 @@ $dataValue[] = ['Id' => $con, 'Pago' => Academico::t('matriculacion',"Payment") 
 					//}
 
 				}
+				/* 
 				// envio de mail a colecturia del proceso de anulacion
 				$data_student = $matriculacion_model->getDataStudenbyRonId($ron_id);
 				$user_names_est = $modelPersona->per_pri_nombre . " " . $modelPersona->per_pri_apellido;
@@ -2614,9 +2880,9 @@ $dataValue[] = ['Id' => $con, 'Pago' => Academico::t('matriculacion',"Payment") 
 				$to = array(
 					"0" => $receiveMail,
 				);
-				/*$files = array(
+				// $files = array(
 					                                        "0" => Yii::$app->basePath . Yii::$app->params["documentFolder"] . "pagosmatricula/" . $data["file"],
-				*/
+				
 				$toest = $modelPersona->per_correo;
 				$files = array();
 				$files = array("0" => $tmp_path);
@@ -2640,6 +2906,7 @@ $dataValue[] = ['Id' => $con, 'Pago' => Academico::t('matriculacion',"Payment") 
 				Utilities::removeTemporalFile($tmp_path);
 				Yii::$app->session->setFlash('success', "<h4>" . academico::t('jslang', 'Exito') . "</h4>" . academico::t("registro", "The cancellation of the registration was successful."));
 			}
+			*/
 			if (isset($data['admin']) && $data['admin'] == '1') {
 				return $this->redirect('list');
 			}
@@ -2692,7 +2959,7 @@ $dataValue[] = ['Id' => $con, 'Pago' => Academico::t('matriculacion',"Payment") 
 	public function actionRegistroadminindex($per_id) {
 
 		$userperid = Yii::$app->session->get("PB_perid");
-
+		$usuario = @Yii::$app->user->identity->usu_id;
 		if (Yii::$app->request->isAjax) {
 			$data = Yii::$app->request->post();
 			/*if (Yii::$app->session->get("PB_perid") < 1000) {
@@ -2712,7 +2979,7 @@ $dataValue[] = ['Id' => $con, 'Pago' => Academico::t('matriculacion',"Payment") 
 					$modModalidad = new Modalidad();
 					$mod_est = Estudiante::findOne(['per_id' => $per_id]);
 					$today = date("Y-m-d H:i:s");
-					$result_process = $matriculacion_model->checkToday($today, $per_id);
+					$result_process = $matriculacion_model->checkToday($today);
 					$rco_id = $result_process[0]['rco_id'];
 					$rco_num_bloques = $result_process[0]['rco_num_bloques'];
 					$pla_id = $result_process[0]['pla_id'];
@@ -2746,8 +3013,8 @@ $dataValue[] = ['Id' => $con, 'Pago' => Academico::t('matriculacion',"Payment") 
 
 					if ($ron_id == 0) {
 						$id = $registro_online_model->insertRegistroOnline(
-							$per_id, $pes_id, strval($numOrden), strval($modalidad), strval($carrera), strval($semestre), strval($mod_est->est_categoria), 0, 0, 0, $matricula['valor'], 1
-						);
+	              $per_id, $pes_id, strval($numOrden), strval($modalidad), strval($carrera), strval($semestre), strval($mod_est->est_categoria), 0, 0, 0, $matricula['valor'], 1, $usuario
+	          );
 					} else {
 						$id = $ron_id;
 					}
@@ -2797,7 +3064,7 @@ $dataValue[] = ['Id' => $con, 'Pago' => Academico::t('matriculacion',"Payment") 
 							$registro_online_item_model = new RegistroOnlineItem();
 
 							$id_roi = $registro_online_item_model->insertRegistroOnlineItem(
-								$id, strval($codMateria), strval($asignatura), strval($creditos), $costo, strval($bloque), strval($hora), strval($paralelo)
+								$id, strval($codMateria), strval($asignatura), strval($creditos), $costo, strval($bloque), strval($hora), strval($paralelo), $usuario
 							);
 
 							$rois_insertados[] = $id_roi;
@@ -2859,14 +3126,11 @@ $dataValue[] = ['Id' => $con, 'Pago' => Academico::t('matriculacion',"Payment") 
 							$modelPla = Planificacion::findOne($modelPlaEst->pla_id);
 							$resultIdPlanificacionEstudiante = $matriculacion_model->getIdPlanificacionEstudiante($per_id, $modelPla['pla_id']);
 							$pla_id = $resultIdPlanificacionEstudiante[0]['pla_id'];
-							$resultIdPlanificacionEstudiante = $matriculacion_model->getIdPlanificacionEstudiante($per_id, $modelPla['pla_id']);
-							$pla_id = $resultIdPlanificacionEstudiante[0]['pla_id'];
-							$pla_id = $resultIdPlanificacionEstudiante[0]['pla_id'];
 							$result_periodo = $matriculacion_model->checkPeriodo($pla_id);
 							$paca_id = $result_periodo[0]['paca_id'];
-							//$paca_id=$modelPla['paca_id'];
 							$registro_adicional_materias_model = new RegistroAdicionalMaterias();
 							$RegistroAdd = RegistroAdicionalMaterias::find()->select("rpm_id")->where(["per_id" => $per_id, "ron_id" => $id])->asArray()->all();
+
 							if (empty($RegistroAdd['rpm_id'])) {
 								$id_rama = $registro_adicional_materias_model->insertRegistroAdicionalMaterias(
 									$id, $per_id, $pla_id, $paca_id,
@@ -2875,7 +3139,10 @@ $dataValue[] = ['Id' => $con, 'Pago' => Academico::t('matriculacion',"Payment") 
 									$roi_id['2']['roi_id'],
 									$roi_id['3']['roi_id'],
 									$roi_id['4']['roi_id'],
-									$roi_id['5']['roi_id']
+									$roi_id['5']['roi_id'],
+									$roi_id['6']['roi_id'],
+									$roi_id['7']['roi_id'],
+									$usuario
 
 								);
 							}
@@ -2884,7 +3151,7 @@ $dataValue[] = ['Id' => $con, 'Pago' => Academico::t('matriculacion',"Payment") 
 
 							if (isset($RegistroAdicionalMaterias)) {
 								$i = 0;
-								for ($x = 0; $x < 6; $x++) {
+								for ($x = 0; $x < 8; $x++) {
 									$roi_id_temp = $RegistroAdicionalMaterias['roi_id_' . ($x + 1)];
 									if ($roi_id_temp == NULL) {
 										break;
@@ -2906,11 +3173,8 @@ $dataValue[] = ['Id' => $con, 'Pago' => Academico::t('matriculacion',"Payment") 
 								$modelPla = Planificacion::findOne($modelPlaEst->pla_id);
 								$resultIdPlanificacionEstudiante = $matriculacion_model->getIdPlanificacionEstudiante($per_id, $modelPla['pla_id']);
 								$pla_id = $resultIdPlanificacionEstudiante[0]['pla_id'];
-								$resultIdPlanificacionEstudiante = $matriculacion_model->getIdPlanificacionEstudiante($per_id, $modelPla['pla_id']);
-								$pla_id = $resultIdPlanificacionEstudiante[0]['pla_id'];
 								$result_periodo = $matriculacion_model->checkPeriodo($pla_id);
 								$paca_id = $result_periodo[0]['paca_id'];
-								//$paca_id=$modelPla['paca_id'];
 
 								$id_rama = (new RegistroAdicionalMaterias())->insertRegistroAdicionalMaterias(
 									$id, $per_id, $pla_id, $paca_id,
@@ -2919,7 +3183,10 @@ $dataValue[] = ['Id' => $con, 'Pago' => Academico::t('matriculacion',"Payment") 
 									isset($rois_insertados[2]) ? $rois_insertados[2] : NULL,
 									isset($rois_insertados[3]) ? $rois_insertados[3] : NULL,
 									isset($rois_insertados[4]) ? $rois_insertados[4] : NULL,
-									isset($rois_insertados[5]) ? $rois_insertados[5] : NULL
+									isset($rois_insertados[5]) ? $rois_insertados[5] : NULL,
+									isset($rois_insertados[6]) ? $rois_insertados[6] : NULL,
+									isset($rois_insertados[7]) ? $rois_insertados[7] : NULL,
+									$usuario
 								);
 
 								if (!$id_rama) {

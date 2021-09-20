@@ -30,12 +30,18 @@ $(document).ready(function() {
                 txt_dir_fac != 0 ||
                 txt_tel_fac != 0 ||
                 txt_correo_fac != 0){*/
+                console.log('Estado duplicado: '+$('#isDuplicate').val());
                 if($('#cmb_fpago').val() == 1){
                     if(!validateForm()){
+                        enviarDatosFacturacion();
+                        iniciarEnvioSiga();
                         guardarCargarCartera();
                         //enviarPdf();
+                        //iniciarEnvioSiga();
                     }
                 }else{
+                    enviarDatosFacturacion();
+                    iniciarEnvioSiga();
                     guardarCargarCartera();
                 }    
                 
@@ -873,7 +879,8 @@ function enviarPdf(){
     arrParams.per_id = $('#txt_per_id').val();
     arrParams.cuotas = $('#txt_cuotas').val();
     arrParams.rama = $('#txt_rama').val();
-    //alert(arrParams.rama_id);
+    //alert(arrParams.rama);
+    //iniciarEnvioSiga();
     try{
         requestHttpAjax(link, arrParams, function(response) {
         var message = response.message;
@@ -892,7 +899,85 @@ function enviarPdf(){
     }
 }
 
+function iniciarEnvioSiga(){
+    var link = $('#txth_base').val() + "/academico/registro/detalleregistrosiga";
+    var arrParams       = new Object();
+    arrParams.rama      = $('#txt_rama').val();
+    arrParams.tpago     = $('#cmb_tpago').val();
 
+    var cedula  = $("#txt_cedula").val();
+    var ron_id  = $("#txt_ron_id").val();
+    var cuota  = $("#cmb_cuota").val();
+    var arr_materias = $('#data_siga').val();
+    var num_reg = $('#num_reg').val();
+    var mod = $('#txt_mod_nombre').val();
+    var flujo = $('#txt_flujo').val();
+    var macs_id = $('#txt_macs').val();
+    //alert("per_id: "+per_id+" - ron_id: "+ron_id);
+    var data;
+    var varios = 0;
+    if( mod == 1){if(cuota>3){valor = 50;}else{valor=40}}
+    else{if(cuota>3){valor = 60;varios=240;}else{valor=30;varios=120;}}
+    var virtuales = valor;
 
+    data = new FormData();
+    data.append( 'accion' , "registro" );
+    data.append( 'online' , mod);
+    data.append( 'cedula' , cedula );
+    data.append( 'ron_id', ron_id);
+    //data.append( 'mpp_id', mpp_id);
+    data.append( 'num_reg', num_reg);
+    data.append( 'arr_materias', arr_materias);
+    data.append( 'flujo', flujo);
+    data.append( 'macs_id', macs_id);
+    data.append( 'virtuales', virtuales);
+    data.append( 'varios', varios);
+    //alert('Si');
+    $.ajax({
+        data: data,
+        type: "POST",
+        //dataType: "json",
+        cache      : false,
+        contentType: false,
+        processData: false,
+        async: false,
+        url: "https://acade.uteg.edu.ec/registro_matriculacion_desa/post.php",
+        success: function (data) {
+            alert("Envío de registros exitoso");
+           // alert(html);
+          }
+    });
+}//function iniciarEnvioSiga+
 
+function enviarDatosFacturacion(){
+    var link = $('#txth_base').val() + "/academico/registro/datosfacturacion";
+    var arrParams = new Object();
 
+    arrParams.ron_id = $('#txt_ron_id').val();
+    arrParams.rama = $('#txt_rama').val();
+    arrParams.per_id = $('#txt_id_code').val();
+    
+    arrParams.cedula = $('#txt_dpre_ssn_id_fact').val();
+    arrParams.nombre = $('#txt_nombres_fac').val();
+    arrParams.apellidos = $('#txt_apellidos_fac').val();
+    arrParams.direccion = $('#txt_dir_fac').val();
+    arrParams.telefono = $('#txt_tel_fac').val();
+    arrParams.correo = $('#txt_correo_fac').val();
+    
+    //alert(arrParams.rama);
+    //iniciarEnvioSiga();
+    try{
+        requestHttpAjax(link, arrParams, function(response) {
+        var message = response.message;
+        if (response.status == "OK") {
+            showAlert(response.status, response.type, { "wtmessage": 'Datos de Facturacion: Su información se registro con éxito.', "title": response.label });
+            setTimeout(function() {
+            //windows.location.href = $('#txth_base').val() + "/academico/registro/index";
+            }, 1000);
+        } 
+        }, true);
+    }catch(err){
+        //alert( "wtmessage <p>+"+$err+"</p>");    
+        console.log("error: "+err)
+    }
+}

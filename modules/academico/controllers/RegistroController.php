@@ -3,6 +3,7 @@
 namespace app\modules\academico\controllers;
 
 use app\models\Canton;
+use app\models\DatosFacturacionRegistro;
 use app\models\EmpresaPersona;
 use Yii;
 use yii\helpers\ArrayHelper;
@@ -16,6 +17,7 @@ use app\models\Provincia;
 use app\models\UsuaGrolEper;
 use app\modules\academico\models\CancelacionRegistroOnline;
 use app\modules\academico\models\CancelacionRegistroOnlineItem;
+use app\modules\academico\models\DatosFacturacionRegistro as ModelsDatosFacturacionRegistro;
 use app\modules\academico\models\EnrolamientoAgreement;
 use app\modules\academico\models\Especies;
 use app\modules\academico\models\Estudiante;
@@ -197,10 +199,12 @@ class RegistroController extends \app\components\CController {
         $costo  = $data['costo'];
         $registroOnline = new RegistroOnline();
         $pes_id = $registroOnline->getPes_id($id);//$model[0]['pes_id'];
+        $pesid = $pes_id[0]['id'];
         $pes_id = $pes_id[0]['id'];
         $ron_id = $registroOnline->getRonId($id);
         $modelCargaCartera = new RegistroConfiguracion();
         $repetidos = $modelCargaCartera->getRegistrosDuplicados($ron_id[0]['id']);
+        
         \app\models\Utilities::putMessageLogFile($repetidos['repetidos']);
         $isDuplicate = false;
         if($repetidos['repetidos']){
@@ -243,9 +247,11 @@ class RegistroController extends \app\components\CController {
         $pla_id = $pla[0]['id'];
         //$pla_id = base64_decode($idpla);
         $model_pla = Planificacion::findOne($pla_id);
-        /*$planificacion = new Planificacion();
-        $paca_id = $planificacion->getPaca_id($per_id);
-        $paca_id = $paca_id[0]['id'];*/
+        
+        $pes_id = PlanificacionEstudiante::find()->where(['per_id' => $per_id,'pla_id' => $pla_id, 'pes_estado' => 1, 'pes_estado_logico' => 1])->asArray()->one();
+        $matriculacion_model = new Matriculacion();
+        $data_student = $matriculacion_model->getDataStudent($per_id, $pla[0]['id'], $pesid);
+        $id_flujo = $modelCargaCartera->getFlujoSiga($id,$data_student['mod_id']);
         
         
         $emp_id = Yii::$app->session->get("PB_idempresa");
@@ -277,21 +283,21 @@ class RegistroController extends \app\components\CController {
 
         // Si son dos cuotas
         if($cuotas == 2){ // Quiere decir que es semestre intensivo B1
-            $arr_vencimiento = FechasVencimientoPago::find()->where(['fvpa_paca_id' => $saca_id, 'fvpa_bloque' => "B1", 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();
+            $arr_vencimiento = FechasVencimientoPago::find()->where(['saca_id' => $saca_id, 'fvpa_bloque' => "B1", 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();
             // Va a retornar 3 cuotas, así que hay que quitar la primera
             array_shift($arr_vencimiento);
         }
         // Si son 3 cuotas
         else if($cuotas == 3){ // Considerar sólo el bloque escogido
-            $arr_vencimiento = FechasVencimientoPago::find()->where(['fvpa_paca_id' => $saca_id, 'fvpa_bloque' => $bloque, 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();
+            $arr_vencimiento = FechasVencimientoPago::find()->where(['saca_id' => $saca_id, 'fvpa_bloque' => $bloque, 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();
         }
         else if($cuotas == 5){
-            $arr_vencimiento = FechasVencimientoPago::find()->where(['fvpa_paca_id' => $saca_id, 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();
+            $arr_vencimiento = FechasVencimientoPago::find()->where(['saca_id' => $saca_id, 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();
             // Va a retornar 6 cuotas, así que hay que quitar la primera
             array_shift($arr_vencimiento);
         }
         else{ // Si son 6 cuotas, se deben tomar las fechas de los dos bloques
-            $arr_vencimiento = FechasVencimientoPago::find()->where(['fvpa_paca_id' => $saca_id, 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();
+            $arr_vencimiento = FechasVencimientoPago::find()->where(['saca_id' => $saca_id, 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();
         }
         $vencimiento = new RegistroPagoMatricula();
         $arr_vence = $vencimiento->getFechasVencimiento3($saca_id);
@@ -312,8 +318,15 @@ class RegistroController extends \app\components\CController {
         $estudiante = $pla[0]['nombres'];
         $rama = new RegistroAdicionalMaterias();
         $materiasMatriculadas = $rama->materiasMatriculadas($ron_id[0]['id']);
-        //$cuotas = ['0' => Academico::t('registro', '-- Select a number of installments --'), /*'2' => '2', '3' => '3', '4' => '4',*/ '5' => '5', '6' => '6'];
-        //$cuotas = ['6' => '6'];
+        $registro_configuracion = new RegistroConfiguracion();
+        $dataSiga = $registro_configuracion->detalleMateriasMatricula($ron_id[0]['id']);
+
+        $datosFacturacion = new ModelsDatosFacturacionRegistro();
+        $registroOne = $datosFacturacion->getDatosFacturacion($per_id);
+        if(count($registroOne) == 0){
+            $registroOne = $datosFacturacion->getDatosFacturacionPersona($per_id);
+        }
+        if($registroOne['rol']==37){$estudiante = TRUE;}else{$estudiante = FALSE;}
         return $this->render('new', [
             'model' => $model,
             'estudiante' => $estudiante,//$model_pes->pes_nombres,
@@ -335,7 +348,7 @@ class RegistroController extends \app\components\CController {
             'arr_ve' => $arr_vence,
             'rama_id' => $rama_id,
             'model_pes' => $modelProCre[0]['pccr_costo_carrera'],
-            'pes_id' => $pes_id,
+            'pes_id' => $pesid,
             'ron_id' => $ron_id[0]['id'],
             'costo' => $idtotal,
             'rama' => $rama_id,
@@ -346,6 +359,12 @@ class RegistroController extends \app\components\CController {
             'isDuplicate' => $isDuplicate,
             'cedula' => $cedula['cedula'],
             'roi' => $materiasMatriculadas['materias'],
+            'datasiga' => $dataSiga,
+            'modalidad' => $data_student['mod_id'],
+            'id_flujo' => $id_flujo['id'],
+            'macs_id' => $id_flujo['carrera'],
+            'datosFacturacion' => $registroOne,
+            'flagEst' => $estudiante,
         ]);
     }
 
@@ -2395,21 +2414,21 @@ class RegistroController extends \app\components\CController {
                             $porc_menor = $porcentaje;    
                         }
                         if($numcuotas == 2){ // Quiere decir que es semestre intensivo B1
-                            $fechas_vencimiento = FechasVencimientoPago::find()->where(['fvpa_paca_id' => $saca_id, 'fvpa_bloque' => "B1", 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();
+                            $fechas_vencimiento = FechasVencimientoPago::find()->where(['saca_id' => $saca_id, 'fvpa_bloque' => "B1", 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();
                             // Va a retornar 3 cuotas, así que hay que quitar la útima
                             array_pop($fechas_vencimiento);
                         }
                         // Si son 3 cuotas
                         else if($numcuotas == 3){ // Considerar sólo el bloque escogido
-                            $fechas_vencimiento = FechasVencimientoPago::find()->where(['fvpa_paca_id' => $saca_id, 'fvpa_bloque' => $bloque, 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();
+                            $fechas_vencimiento = FechasVencimientoPago::find()->where(['saca_id' => $saca_id, 'fvpa_bloque' => $bloque, 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();
                         }
                         else if($numcuotas == 5){
-                            $fechas_vencimiento = FechasVencimientoPago::find()->where(['fvpa_paca_id' => $saca_id, 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();
+                            $fechas_vencimiento = FechasVencimientoPago::find()->where(['saca_id' => $saca_id, 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();
                             // Va a retornar 6 cuotas, así que hay que quitar la útima
                             array_pop($fechas_vencimiento);
                         }
                         else{ // Si son 6 cuotas, se deben tomar las fechas de los dos bloques
-                            $fechas_vencimiento = FechasVencimientoPago::find()->where(['fvpa_paca_id' => $saca_id, 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();
+                            $fechas_vencimiento = FechasVencimientoPago::find()->where(['saca_id' => $saca_id, 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();
                         }
                         
                         $datosRonPes= $modelCargaCartera->getRonPes($per_id);
@@ -2492,21 +2511,21 @@ class RegistroController extends \app\components\CController {
                                 $porc_menor = $porcentaje;    
                             }
                             if($numcuotas == 2){ // Quiere decir que es semestre intensivo B1
-                                $fechas_vencimiento = FechasVencimientoPago::find()->where(['fvpa_paca_id' => $saca_id, 'fvpa_bloque' => "B1", 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();
+                                $fechas_vencimiento = FechasVencimientoPago::find()->where(['saca_id' => $saca_id, 'fvpa_bloque' => "B1", 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();
                                 // Va a retornar 3 cuotas, así que hay que quitar la útima
                                 array_pop($fechas_vencimiento);
                             }
                             // Si son 3 cuotas
                             else if($numcuotas == 3){ // Considerar sólo el bloque escogido
-                                $fechas_vencimiento = FechasVencimientoPago::find()->where(['fvpa_paca_id' => $saca_id, 'fvpa_bloque' => $bloque, 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();
+                                $fechas_vencimiento = FechasVencimientoPago::find()->where(['saca_id' => $saca_id, 'fvpa_bloque' => $bloque, 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();
                             }
                             else if($numcuotas == 5){
-                                $fechas_vencimiento = FechasVencimientoPago::find()->where(['fvpa_paca_id' => $saca_id, 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();
+                                $fechas_vencimiento = FechasVencimientoPago::find()->where(['saca_id' => $saca_id, 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();
                                 // Va a retornar 6 cuotas, así que hay que quitar la útima
                                 array_pop($fechas_vencimiento);
                             }
                             else{ // Si son 6 cuotas, se deben tomar las fechas de los dos bloques
-                                $fechas_vencimiento = FechasVencimientoPago::find()->where(['fvpa_paca_id' => $saca_id, 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();
+                                $fechas_vencimiento = FechasVencimientoPago::find()->where(['saca_id' => $saca_id, 'fvpa_estado' => 1, 'fvpa_estado_logico' => 1])->asArray()->all();
                             }
                             
                             $datosRonPes= $modelCargaCartera->getRonPes($per_id);
@@ -2956,7 +2975,7 @@ class RegistroController extends \app\components\CController {
             $modelPersona = Persona::find()->where(['per_id' => $per_id])->asArray()->one();
             $modelEstudiante = Estudiante::find()->where(['per_id' => $per_id])->asArray()->one();
             $modelCargaCartera = new RegistroConfiguracion();
-            $dataPlanificacion = 0;
+            $dataPlanificacion = [];
 
             /*Cabecera*/
             $datos_planficacion = $matriculacion_model->getDataPlanStudent($per_id);    
@@ -3333,6 +3352,50 @@ class RegistroController extends \app\components\CController {
         }
         return $this->render('subirpago', [
         ]);
+    }
+
+    public function actionDatosfacturacion(){
+        
+        try{
+            if (Yii::$app->request->isAjax) {
+                $data = Yii::$app->request->post();
+                $ron_id = $data['ron_id'];
+                $rama_id = $data['rama'];
+                $perid = $data['per_id'];
+                $cedula = $data['cedula'];
+                $nombre = $data['nombre'];
+                $apellidos = $data['apellidos'];
+                $direccion = $data['direccion'];
+                $telefono = $data['telefono'];
+                $correo = $data['correo'];
+                $usuario = Yii::$app->session->get("PB_iduser");
+                
+                $datosFacturacion = new ModelsDatosFacturacionRegistro();
+                $insertar = $datosFacturacion->insertDatosFacturacion($ron_id,$rama_id,$perid,$cedula,$nombre,$apellidos,$direccion,$telefono,$correo, $usuario);
+                if ($insertar) {
+                    $message = array(
+                        "wtmessage" => Yii::t("notificaciones", "Datos de Facturacion ingresados correctamente."),
+                        "title" => Yii::t('jslang', 'Success'),
+                    );
+                    return Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Success"), false, $message);
+                } else {
+                    $message = array(
+                        "wtmessage" => Yii::t("notificaciones", "Error al ingresar Datos de Facturacion."),
+                        "title" => Yii::t('jslang', 'Error'),
+                    );
+                    return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), true, $message);
+                }
+                return;
+                
+            }
+        }catch(Exception $e){
+            $message = array(
+                "wtmessage" => Yii::t("notificaciones", $e->getMessage()),
+                "title" => Yii::t('jslang', 'Error'),
+            );
+            \app\models\Utilities::putMessageLogFile('insertDatosFacturacion: error ' . $e->getMessage());
+            return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+        }
     }
 
 }

@@ -18,6 +18,30 @@ StripeAsset::register($this);
 
 Academico::registerTranslations();
 
+
+if ($validacion) {
+    echo "
+    <style>
+        .alert-danger {
+            color: #721c24 !important;
+            background-color: #f8d7da !important;
+            border-color: #f5c6cb !important;
+        }
+        .alert {
+            position: relative !important;
+            padding: .75rem 1.25rem !important;
+            margin-bottom: 1rem !important;
+            border: 1px solid transparent !important;
+            border-radius: .25rem !important;
+        }
+    </style>
+   ";
+    echo "<div class='col-lg-12 col-md-12 col-sm-12 col-xs-12 form-group' >";
+    echo "  <div class='col-lg-6 col-md-6 col-sm-12 col-xs-12 form-group alert alert-danger' role='alert' >";
+    echo   $mensaje ;
+    echo"   </div>";
+    echo "</div>";
+}
 ?>
 <style type="text/css">
     [data-tip] {

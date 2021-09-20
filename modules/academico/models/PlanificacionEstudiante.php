@@ -2545,7 +2545,7 @@ AND pes.pla_id = :pla_id ) as daho12
                 pla_id as id,
                 pes_nombres as nombres
                 from " . $con->dbname . ".planificacion_estudiante
-                where per_id = :per_id and pes_estado_logico = 1 limit 0,1;";
+                where per_id = :per_id and pes_estado_logico = 1 order by pla_id desc limit 0,1;";
         
         if($per_id == NULL){
             $resultData = [];
@@ -2553,6 +2553,24 @@ AND pes.pla_id = :pla_id ) as daho12
             $comando = $con->createCommand($sql);
             $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
             $resultData = $comando->queryAll();
+        }
+        return $resultData;
+    }
+    public function getCedula($per_id){
+        $con = \Yii::$app->db_asgard;
+
+        $sql = "SELECT
+                per_id as id,
+                per_cedula as cedula
+                from " . $con->dbname . ".persona
+                where per_id = :per_id and per_estado_logico = 1 limit 0,1;";
+        
+        if($per_id == NULL){
+            $resultData = [];
+        }else{
+            $comando = $con->createCommand($sql);
+            $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
+            $resultData = $comando->queryOne();
         }
         return $resultData;
     }

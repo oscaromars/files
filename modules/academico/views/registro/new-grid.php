@@ -20,7 +20,7 @@ PbGridView::widget([
     'summary' => '',
     'pajax' => false,
     'columns' => [
-        ['class' => 'yii\grid\SerialColumn', 'options' => ['width' => '10']],
+        ['class' => 'yii\grid\SerialColumn', 'options' => ['width' => '12']],
         [
             'attribute' => 'Pago',
             'header' => academico::t("registro", 'Payment'),

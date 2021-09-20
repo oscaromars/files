@@ -7,7 +7,13 @@ use app\models\Utilities;
 use app\modules\academico\Module as academico;
 academico::registerTranslations();
 ?>
-
+ <div style="/*border: 1px solid;*/ margin-left: 0 !important;">
+<style>
+	.table > caption + thead > tr:first-child > th, .table > colgroup + thead > tr:first-child > th, .table > thead:first-child > tr:first-child > th, .table > caption + thead > tr:first-child > td, .table > colgroup + thead > tr:first-child > td, .table > thead:first-child > tr:first-child > td {
+    border-top: 0;
+    vertical-align: top;
+	}
+</style>
 <?=
     PbGridView::widget([
         'id' => 'grid_registro_list',
@@ -47,3 +53,5 @@ academico::registerTranslations();
         </div>
     </div>
 </div> 
+
+ </div>

@@ -838,14 +838,18 @@ class DistributivoCabecera extends \yii\db\ActiveRecord {
         for ($i=0;$i < $semanas_tutoria_vinulacion_investigacion; $i++){
             if ($i < $semanas_docencia)
             {
-                
-                /*if ($i < $semanas_posgrado && !empty($semanas_posgrado))
-                {
-                    //Utilities::putMessageLogFile('$total_hora_semana_docenciaposgrado x ' . $total_hora_semana_docenciaposgrado );
-                    $horas_docencia = $total_hora_semana_docencia + $total_hora_semana_docenciaposgrado;
-                    $horas_preparacion = round(($total_hora_semana_docenciaposgrado + $total_hora_semana_docencia) * $preparacion_docencia);
-                   //Utilities::putMessageLogFile('$horas_docencia x ' . $horas_docencia );
-                }else{*/
+                //if (!empty($posgrado))
+                //{
+                    // for ($j=0;$j < $posgrado[0]['semanas_posgrado']; $j++){
+                    //if ($i < $posgrado[0]['semanas_posgrado'])
+                     //{
+                        //Utilities::putMessageLogFile('$total_hora_semana_docenciaposgrado x ' . $total_hora_semana_docenciaposgrado );
+                        //$horas_docencia = $total_hora_semana_docencia + $total_hora_semana_docenciaposgrado;
+                        //$horas_preparacion = round(($total_hora_semana_docenciaposgrado + $total_hora_semana_docencia) * $preparacion_docencia);
+                        //Utilities::putMessageLogFile('$horas_docencia x ' . $horas_docencia );
+                     //}
+                    //} //fin for j
+                //}
                     $horas_docencia = $total_hora_semana_docencia;
                     $horas_preparacion = round($total_hora_semana_docencia * $preparacion_docencia);
                     Utilities::putMessageLogFile('$horas_docencia y ' . $horas_docencia );

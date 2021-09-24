@@ -251,6 +251,7 @@ class DistributivocabeceraController extends \app\components\CController {
         $arr_distributivo = $distributivo_model->getListarReview($resCab['dcab_id']);
         if(!empty($resCab['dcab_id']))
         {
+            \app\models\Utilities::putMessageLogFile('dcab_id: ' . $resCab['dcab_id']);
             $valores_promedio =$DistADO->promedio($resCab['dcab_id']);
             $valores_promedio[0]['preparacion_docencia'] = /*(( $valores_promedio[0]['total_hora_semana_docencia_prese'] + $valores_promedio[0]['total_hora_semana_docencia_online']) **/ 0.30/*)*/;
             $valores_promedio[0]['total_hora_semana_docencia'] = $valores_promedio[0]['total_hora_semana_docencia_prese'] + $valores_promedio[0]['total_hora_semana_docencia_online'];

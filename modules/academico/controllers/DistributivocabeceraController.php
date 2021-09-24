@@ -516,16 +516,22 @@ class DistributivocabeceraController extends \app\components\CController {
         //$this->layout = false;
         $this->layout = '@modules/academico/views/tpl_asignamaterias/main';
         //$this->view->title = "Invoices";
-
+        $model_distacade = new DistributivoAcademico();
         $DistADO = new DistributivoCabecera();
         $cabDist = $DistADO->consultarCabDistributivo($ids);
         $valores_promedio =$DistADO->promedio($ids);
         $valores_promedio[0]['preparacion_docencia'] = /*(( $valores_promedio[0]['total_hora_semana_docencia_prese'] + $valores_promedio[0]['total_hora_semana_docencia_online']) **/ 0.30/*)*/;
         $valores_promedio[0]['total_hora_semana_docencia'] = $valores_promedio[0]['total_hora_semana_docencia_prese'] + $valores_promedio[0]['total_hora_semana_docencia_online'];
-        $horas_carga_docente_bloque = ($valores_promedio[0]['semanas_docencia'] * $valores_promedio[0]['total_hora_semana_docencia']) + ($valores_promedio[0]['semanas_posgrado'] * $valores_promedio[0]['total_hora_semana_docencia_posgrado']);
+        $horas_carga_docente_bloquegrado = ($valores_promedio[0]['semanas_docencia'] * $valores_promedio[0]['total_hora_semana_docencia']);
+        Utilities::putMessageLogFile('$horas_carga_docente_bloquegrado ' . $horas_carga_docente_bloquegrado);
         /********************************************************************************************************************************************************************************************* */
-
-        //$total_hora_semana_docenciaposgrado = $valores_promedio[0]['total_hora_semana_docencia_posgrado'];
+        $posgrado = $model_distacade->getSemanahoraposgrado($ids);
+        for ($i=0;$i < count($posgrado); $i++){
+          $horas_carga_docente_bloqueposgrado += ($posgrado[$i]['semanas_posgrado'] * $posgrado[$i]['total_hora_semana_docenciaposgrado']);
+        }
+        Utilities::putMessageLogFile('$horas_carga_docente_bloqueposgrado ' . $horas_carga_docente_bloqueposgrado);
+        $horas_carga_docente_bloque = $horas_carga_docente_bloquegrado + $horas_carga_docente_bloqueposgrado;
+        Utilities::putMessageLogFile('$horas_carga_docente_bloque ' . $horas_carga_docente_bloque);
         $promedio = $DistADO->Calcularpromedioajustado($ids, /*$valores_promedio[0]['total_hora_semana_docencia_posgrado'],*/ $valores_promedio[0]['total_hora_semana_docencia'], $valores_promedio[0]['total_hora_semana_tutoria'], $valores_promedio[0]['total_hora_semana_investigacion'], $valores_promedio[0]['total_hora_semana_vinculacion'], $valores_promedio[0]['preparacion_docencia'], $valores_promedio[0]['semanas_docencia'], $valores_promedio[0]['semanas_tutoria_vinulacion_investigacion']/*, $valores_promedio[0]['semanas_posgrado']*/);
         /*Utilities::putMessageLogFile('$total_hora_semana_docencia ' . $valores_promedio[0]['total_hora_semana_docencia'] );
         Utilities::putMessageLogFile('$total_hora_semana_tutoria ' . $valores_promedio[0]['total_hora_semana_tutoria']);

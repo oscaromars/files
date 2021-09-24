@@ -16,3 +16,7 @@ UPDATE `db_academico`.`semestre_academico` SET `saca_intensivo` = '1' WHERE (`sa
 UPDATE `db_academico`.`semestre_academico` SET `saca_intensivo` = '1' WHERE (`saca_id` = '10');-- Marzo (Intensivo)
 UPDATE `db_academico`.`semestre_academico` SET `saca_intensivo` = '1' WHERE (`saca_id` = '12'); -- Mayo  (Intensivo)
 
+ALTER TABLE `db_academico`.`fechas_vencimiento_pago` 
+CHANGE COLUMN `fvpa_paca_id` `saca_id` BIGINT(20) NULL DEFAULT NULL ;
+
+

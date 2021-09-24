@@ -98,7 +98,7 @@ $(document).ready(function() {
         
         $('#grid_registro_list > table > tbody > tr > td > input').each(function() {
             if ($(this).is(':checked')) {  
-                //console.log($(this).parent().prev().prev().prev().prev().prev().text());
+                console.log($(this).parent().prev().prev().prev().prev().prev().text());
                 $txt_cost_materia = $(this).parent().prev().prev().text();
                 subtotal += parseFloat($txt_cost_materia.replace("$",""));
                 $txt_bloque = $(this).parent().prev().prev().prev().prev().prev().prev().text();
@@ -403,6 +403,7 @@ function registerSubject() {
     }, true);
 }
 
+
 function deletereg(roi_id) {
     var ron_id   = $('#frm_ron_id').val();
     var link     = $('#txth_base').val() + "/academico/matriculacion/deletereg";
@@ -425,7 +426,6 @@ function deletereg(roi_id) {
         }, 3000);
     }, true);
 }//function cancelSubject
-
 
 function exportPDF() {
     var ron_id = $('#frm_ron_id').val();

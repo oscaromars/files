@@ -33,14 +33,14 @@ if ($modelCancelRon) {
 	.table > caption + thead > tr:first-child > th, .table > colgroup + thead > tr:first-child > th, .table > thead:first-child > tr:first-child > th, .table > caption + thead > tr:first-child > td, .table > colgroup + thead > tr:first-child > td, .table > thead:first-child > tr:first-child > td {
     border-top: 0;
     vertical-align: top;
-
+	
     -ms-overflow-style: none; /* for Internet Explorer, Edge */
     scrollbar-width: none; /* for Firefox */
 	}
 	.noBar{
 		-ms-overflow-style: none !important; /* for Internet Explorer, Edge */
   		scrollbar-width: none !important; /* for Firefox */
-  		overflow-x: scroll !important;
+  		overflow-x: scroll !important; 	
 	}
 	.nopBar::-webkit-scrollbar {
 		display: none !important; /* for Chrome, Safari, and Opera */
@@ -57,7 +57,7 @@ PbGridView::widget([
 	'formatter' => ['class' => 'yii\i18n\Formatter', 'nullDisplay' => ''],
 	'pajax' => true,
 	'columns' => [
-		['class' => 'yii\grid\SerialColumn', 'options' => ['width' => '10', 'border' => '1px solid !important']],
+		['class' => 'yii\grid\SerialColumn', 'options' => ['width' => '10','border' => '1px solid !important']],
 		[
 			'attribute' => 'Subject',
 			'header' => Academico::t("matriculacion", "Subject"),
@@ -149,11 +149,12 @@ PbGridView::widget([
 					}
 
 				},
+				
 
 			],
 		],
 
 	],
 ])
-?>
+?> 
 </div>

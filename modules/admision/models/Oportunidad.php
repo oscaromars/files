@@ -498,7 +498,11 @@ class Oportunidad extends \app\modules\admision\components\CActiveRecord {
                          inner join " . $con2->dbname . ".modalidad m on m.mod_id = o.mod_id
                          inner join " . $con->dbname . ".personal_admision pa on o.padm_id = pa.padm_id
                          inner join " . $con1->dbname . ".persona p on pa.per_id = p.per_id
-                    WHERE o.opo_estado = :estado
+                         WHERE  ";
+                         if (empty($arrFiltro)){
+             $sql.=          "date(o.opo_fecha_creacion) =  DATE(now()) and ";
+                         }
+             $sql.=             "o.opo_estado = :estado
                            and o.opo_estado_logico = :estado
                            and pg.pges_estado = :estado
                            and pg.pges_estado_logico = :estado

@@ -1,7 +1,7 @@
 <?php
 
 namespace app\modules\academico\models;
-
+use app\modules\academico\models\DistributivoAcademico;
 use app\models\Utilities;
 use yii\data\ArrayDataProvider;
 use Yii;
@@ -129,8 +129,7 @@ class DistributivoCabecera extends \yii\db\ActiveRecord {
         if (isset($asignacion) && $asignacion > 0) {
             $str_asignacion = "dc.tdis_id = :asignacion AND ";
         }
-
-        if (isset($estado_aprobacion) && $estado_aprobacion > 0) {
+        if (isset($estado_aprobacion) && $estado_aprobacion > -1) {
             $str_estado_probacion = "da.dcab_estado_revision = :estado_aprobacion AND ";
         }
         if (!$onlyData) {
@@ -830,21 +829,28 @@ class DistributivoCabecera extends \yii\db\ActiveRecord {
      * @property integer $csol_id
      * @return
      */
-    public function Calcularpromedioajustado(/*$total_hora_semana_docenciaposgrado,*/ $total_hora_semana_docencia, $total_hora_semana_tutoria, $total_hora_semana_investigacion, $total_hora_semana_vinculacion, $preparacion_docencia, $semanas_docencia, $semanas_tutoria_vinulacion_investigacion/*, $semanas_posgrado*/) {
+    public function Calcularpromedioajustado($cabDist, /*$total_hora_semana_docenciaposgrado,*/ $total_hora_semana_docencia, $total_hora_semana_tutoria, $total_hora_semana_investigacion, $total_hora_semana_vinculacion, $preparacion_docencia, $semanas_docencia, $semanas_tutoria_vinulacion_investigacion/*, $semanas_posgrado*/) {
+        $model_distacade = new DistributivoAcademico();
+        $posgrado = $model_distacade->getSemanahoraposgrado($cabDist);
+        Utilities::putMessageLogFile('$mayor valor ' . $posgrado[0]['semanas_posgrado'] );
+
         for ($i=0;$i < $semanas_tutoria_vinulacion_investigacion; $i++){
             if ($i < $semanas_docencia)
             {
-                /*if ($i < $semanas_posgrado && !empty($semanas_posgrado))
-                {
-                    //Utilities::putMessageLogFile('$total_hora_semana_docenciaposgrado x ' . $total_hora_semana_docenciaposgrado );
-                    $horas_docencia = $total_hora_semana_docencia + $total_hora_semana_docenciaposgrado;
-                    $horas_preparacion = round(($total_hora_semana_docenciaposgrado + $total_hora_semana_docencia) * $preparacion_docencia);
-                   //Utilities::putMessageLogFile('$horas_docencia x ' . $horas_docencia );
-                }else{*/
+                Utilities::putMessageLogFile('total lineas posgrado ' . count($posgrado));
+                if (!empty($posgrado) && $i < count($posgrado) /* && $i < $posgrado[$i]['semanas_posgrado']*/)
+                     {
+                       for ($j=0;$j < $posgrado[$i]['semanas_posgrado']; $j++){ // for aqui el maximo que sea $posgrado[$i]['semanas_posgrado']
+                        Utilities::putMessageLogFile('$total_hora_semana_docenciaposgrado x ' . $posgrado[$j]['total_hora_semana_docenciaposgrado']);
+                        $horas_docenciap = $total_hora_semana_docencia + ($posgrado[$j]['total_hora_semana_docenciaposgrado']* $posgrado[$j]['semanas_posgrado']);
+                        $horas_preparacionp = round(( $posgrado[$i]['total_hora_semana_docenciaposgrado'] + $total_hora_semana_docencia) * $preparacion_docencia);
+                        Utilities::putMessageLogFile('$horas_docencia x ' . $horas_docenciap );
+                       } //termina for
+                }else{
                     $horas_docencia = $total_hora_semana_docencia;
                     $horas_preparacion = round($total_hora_semana_docencia * $preparacion_docencia);
                     Utilities::putMessageLogFile('$horas_docencia y ' . $horas_docencia );
-                //}
+                   }
             }else{
               $horas_docencia = 0;
               $horas_preparacion = 0;
@@ -852,20 +858,20 @@ class DistributivoCabecera extends \yii\db\ActiveRecord {
             }
             Utilities::putMessageLogFile('$horas_docencia ' . $horas_docencia );
             /* este borrar despues */
-               $numero =    pow($horas_docencia +
+               $numero =    pow($horas_docencia + $horas_docenciap +
                             $total_hora_semana_tutoria +
                             $total_hora_semana_investigacion+
                             $total_hora_semana_vinculacion +
-                            $horas_preparacion,2);
+                            $horas_preparacion + $horas_preparacionp,2);
             /* este borrar despues */
             Utilities::putMessageLogFile('$numero ' . $numero );
             Utilities::putMessageLogFile('$horas_preparacion ' . $horas_preparacion );
             $promedio +=
-                            pow($horas_docencia +
+                            pow($horas_docencia + $horas_docenciap +
                             $total_hora_semana_tutoria +
                             $total_hora_semana_investigacion +
                             $total_hora_semana_vinculacion +
-                            $horas_preparacion,2);
+                            $horas_preparacion + $horas_preparacionp,2);
         }
          Utilities::putMessageLogFile('$promedio model ' . $promedio );
          $promedio_ajustado =  sqrt(/*round(*/$promedio/$semanas_tutoria_vinulacion_investigacion)/*)*/;

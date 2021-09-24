@@ -2466,3 +2466,23 @@ create table if not exists `paralelos_siiga` (
   `pasi_estado_logico` varchar(1) not null
 );
  
+-- --------------------------------------------------------
+-- 
+-- Estructura de tabla para la tabla `datos_facturacion_registro`
+-- --------------------------------------------------------
+create table if not exists `datos_facturacion_registro` (
+  `dfr_id` bigint(10) NOT NULL AUTO_INCREMENT,
+  `dfr_ron_id` bigint(10) DEFAULT NULL,
+  `dfr_rama_id` bigint(10) DEFAULT NULL,
+  `dfr_per_id` bigint(10) DEFAULT NULL,
+  `dfr_cedula` varchar(20) DEFAULT NULL,
+  `dfr_nombre` varchar(60) DEFAULT NULL,
+  `dfr_apellidos` varchar(60) DEFAULT NULL,
+  `dfr_direccion` varchar(100) DEFAULT NULL,
+  `dfr_telefono` varchar(20) DEFAULT NULL,
+  `dfr_correo` varchar(60) DEFAULT NULL,
+  `dfr_usuario_ingreso` bigint(10) DEFAULT NULL,
+  `dfr_estado_logico` varchar(1) DEFAULT NULL,
+  `dfr_fecha_creacion` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`dfr_id`)
+) 

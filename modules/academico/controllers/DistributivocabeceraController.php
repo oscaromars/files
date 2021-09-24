@@ -24,19 +24,18 @@ class DistributivocabeceraController extends \app\components\CController {
 
     private function estados() {
         return [
-            '0' => Yii::t("formulario", "Todos"),
+            '-1' => Yii::t("formulario", "Todos"),
             '1' => Yii::t("formulario", "Revisado"),
             '2' => Yii::t("formulario", "Aprobado"),
-            '3' => Yii::t("formulario", "No aprobado"),
+            '0' => Yii::t("formulario", "No aprobado"),
         ];
     }
-    
+
      private function estadoRevis() {
         return [
             '0' => Yii::t("formulario", "Selecionar"),
             '1' => Yii::t("formulario", "Revisado"),
-            
-            
+
         ];
     }
 
@@ -58,7 +57,7 @@ class DistributivocabeceraController extends \app\components\CController {
       public function actionAprobardistributivo() {
          $searchModel = new \app\modules\academico\models\DistributivoCabeceraSearch();
          $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-               
+
               return $this->render('aprobardistributivo', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
@@ -76,7 +75,7 @@ class DistributivocabeceraController extends \app\components\CController {
         if ($data['PBgetFilter']) {
             $search = $data['search'];
             $periodo = (isset($data['periodo']) && $data['periodo'] > 0) ? $data['periodo'] : NULL;
-            $estado = (isset($data['estado']) && $data['estado'] > 0) ? $data['estado'] : NULL;
+            $estado = (isset($data['estado']) && $data['estado'] > -1) ? $data['estado'] : NULL;
             $profesor = (isset($data['profesor']) && $data['profesor'] > 0) ? $data['profesor'] : NULL;
             $asignacion = (isset($data['asignacion']) && $data['asignacion'] > 0) ? $data['asignacion'] : NULL;
 
@@ -252,6 +251,7 @@ class DistributivocabeceraController extends \app\components\CController {
         $arr_distributivo = $distributivo_model->getListarReview($resCab['dcab_id']);
         if(!empty($resCab['dcab_id']))
         {
+            \app\models\Utilities::putMessageLogFile('dcab_id: ' . $resCab['dcab_id']);
             $valores_promedio =$DistADO->promedio($resCab['dcab_id']);
             $valores_promedio[0]['preparacion_docencia'] = /*(( $valores_promedio[0]['total_hora_semana_docencia_prese'] + $valores_promedio[0]['total_hora_semana_docencia_online']) **/ 0.30/*)*/;
             $valores_promedio[0]['total_hora_semana_docencia'] = $valores_promedio[0]['total_hora_semana_docencia_prese'] + $valores_promedio[0]['total_hora_semana_docencia_online'];
@@ -267,7 +267,7 @@ class DistributivocabeceraController extends \app\components\CController {
             \app\models\Utilities::putMessageLogFile('semanas_docencia: ' . $valores_promedio[0]['semanas_docencia']);
             \app\models\Utilities::putMessageLogFile('semanas_tutoria_vinulacion_investigacion: ' . $valores_promedio[0]['semanas_tutoria_vinulacion_investigacion']);
             Utilities::putMessageLogFile('$semanas_posgrado ' . $valores_promedio[0]['semanas_posgrado']);
-        $promajustado = $DistADO->Calcularpromedioajustado(/*$valores_promedio[0]['total_hora_semana_docencia_posgrado'],*/ $valores_promedio[0]['total_hora_semana_docencia'], $valores_promedio[0]['total_hora_semana_tutoria'], $valores_promedio[0]['total_hora_semana_investigacion'], $valores_promedio[0]['total_hora_semana_vinculacion'], $valores_promedio[0]['preparacion_docencia'], $valores_promedio[0]['semanas_docencia'], $valores_promedio[0]['semanas_tutoria_vinulacion_investigacion']/*, $valores_promedio[0]['semanas_posgrado']*/);
+        $promajustado = $DistADO->Calcularpromedioajustado($resCab['dcab_id'], /*$valores_promedio[0]['total_hora_semana_docencia_posgrado'],*/ $valores_promedio[0]['total_hora_semana_docencia'], $valores_promedio[0]['total_hora_semana_tutoria'], $valores_promedio[0]['total_hora_semana_investigacion'], $valores_promedio[0]['total_hora_semana_vinculacion'], $valores_promedio[0]['preparacion_docencia'], $valores_promedio[0]['semanas_docencia'], $valores_promedio[0]['semanas_tutoria_vinulacion_investigacion']/*, $valores_promedio[0]['semanas_posgrado']*/);
         }
         return $this->render('review',
                         ['model' => $model,
@@ -516,17 +516,23 @@ class DistributivocabeceraController extends \app\components\CController {
         //$this->layout = false;
         $this->layout = '@modules/academico/views/tpl_asignamaterias/main';
         //$this->view->title = "Invoices";
-
+        $model_distacade = new DistributivoAcademico();
         $DistADO = new DistributivoCabecera();
         $cabDist = $DistADO->consultarCabDistributivo($ids);
         $valores_promedio =$DistADO->promedio($ids);
         $valores_promedio[0]['preparacion_docencia'] = /*(( $valores_promedio[0]['total_hora_semana_docencia_prese'] + $valores_promedio[0]['total_hora_semana_docencia_online']) **/ 0.30/*)*/;
         $valores_promedio[0]['total_hora_semana_docencia'] = $valores_promedio[0]['total_hora_semana_docencia_prese'] + $valores_promedio[0]['total_hora_semana_docencia_online'];
-        $horas_carga_docente_bloque = ($valores_promedio[0]['semanas_docencia'] * $valores_promedio[0]['total_hora_semana_docencia']) + ($valores_promedio[0]['semanas_posgrado'] * $valores_promedio[0]['total_hora_semana_docencia_posgrado']);
+        $horas_carga_docente_bloquegrado = ($valores_promedio[0]['semanas_docencia'] * $valores_promedio[0]['total_hora_semana_docencia']);
+        Utilities::putMessageLogFile('$horas_carga_docente_bloquegrado ' . $horas_carga_docente_bloquegrado);
         /********************************************************************************************************************************************************************************************* */
-
-        //$total_hora_semana_docenciaposgrado = $valores_promedio[0]['total_hora_semana_docencia_posgrado'];
-        $promedio = $DistADO->Calcularpromedioajustado(/*$valores_promedio[0]['total_hora_semana_docencia_posgrado'],*/ $valores_promedio[0]['total_hora_semana_docencia'], $valores_promedio[0]['total_hora_semana_tutoria'], $valores_promedio[0]['total_hora_semana_investigacion'], $valores_promedio[0]['total_hora_semana_vinculacion'], $valores_promedio[0]['preparacion_docencia'], $valores_promedio[0]['semanas_docencia'], $valores_promedio[0]['semanas_tutoria_vinulacion_investigacion']/*, $valores_promedio[0]['semanas_posgrado']*/);
+        $posgrado = $model_distacade->getSemanahoraposgrado($ids);
+        for ($i=0;$i < count($posgrado); $i++){
+          $horas_carga_docente_bloqueposgrado += ($posgrado[$i]['semanas_posgrado'] * $posgrado[$i]['total_hora_semana_docenciaposgrado']);
+        }
+        Utilities::putMessageLogFile('$horas_carga_docente_bloqueposgrado ' . $horas_carga_docente_bloqueposgrado);
+        $horas_carga_docente_bloque = $horas_carga_docente_bloquegrado + $horas_carga_docente_bloqueposgrado;
+        Utilities::putMessageLogFile('$horas_carga_docente_bloque ' . $horas_carga_docente_bloque);
+        $promedio = $DistADO->Calcularpromedioajustado($ids, /*$valores_promedio[0]['total_hora_semana_docencia_posgrado'],*/ $valores_promedio[0]['total_hora_semana_docencia'], $valores_promedio[0]['total_hora_semana_tutoria'], $valores_promedio[0]['total_hora_semana_investigacion'], $valores_promedio[0]['total_hora_semana_vinculacion'], $valores_promedio[0]['preparacion_docencia'], $valores_promedio[0]['semanas_docencia'], $valores_promedio[0]['semanas_tutoria_vinulacion_investigacion']/*, $valores_promedio[0]['semanas_posgrado']*/);
         /*Utilities::putMessageLogFile('$total_hora_semana_docencia ' . $valores_promedio[0]['total_hora_semana_docencia'] );
         Utilities::putMessageLogFile('$total_hora_semana_tutoria ' . $valores_promedio[0]['total_hora_semana_tutoria']);
         Utilities::putMessageLogFile('$total_hora_semana_investigacion ' . $valores_promedio[0]['total_hora_semana_investigacion'] );
@@ -584,7 +590,7 @@ class DistributivocabeceraController extends \app\components\CController {
         }*/
 
 
-        $rep->orientation = "P"; // tipo de orientacion L => Horizontal, P => Vertical   
+        $rep->orientation = "P"; // tipo de orientacion L => Horizontal, P => Vertical
         $rep->createReportPdf(
                 $this->render('@modules/academico/views/tpl_asignamaterias/cargahora', [
                     'cabDist' => $cabDist,

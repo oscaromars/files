@@ -280,7 +280,146 @@ class PlanificacionEstudiante extends \yii\db\ActiveRecord
      * @property       
      * @return  
      */
-    public function generateDatatotrasfer($pla_id) {
+
+       public function generateDatatotrasfer($pla_id) {
+    $con = \Yii::$app->db_academico; 
+ switch ($pla_id) {
+                        case 35:
+                      $mod_id = 2;
+                        break;
+                        case 36:
+                    $mod_id = 4;
+                         break;
+                         case 37:
+                      $mod_id = 3;
+                     break;
+                       case 38:
+                    $mod_id = 1;
+                     break;
+                    }
+
+$procc="
+select mpp_id, mpp.mpp_num_paralelo,made.asi_id, made.maca_id, pes.pla_id, mpp.mod_id, 1 as uaca_id, mpp.paca_id 
+from db_academico.planificacion_estudiante pes
+inner join db_academico.malla_academica_detalle made on made.made_codigo_asignatura = pes.pes_mat_b1_h1_cod
+or made.made_codigo_asignatura = pes.pes_mat_b1_h2_cod or made.made_codigo_asignatura = pes.pes_mat_b1_h3_cod
+or made.made_codigo_asignatura = pes.pes_mat_b1_h4_cod or made.made_codigo_asignatura = pes.pes_mat_b1_h5_cod
+or made.made_codigo_asignatura = pes.pes_mat_b1_h6_cod or made.made_codigo_asignatura = pes.pes_mat_b2_h1_cod
+or made.made_codigo_asignatura = pes.pes_mat_b2_h2_cod or made.made_codigo_asignatura = pes.pes_mat_b2_h3_cod
+or made.made_codigo_asignatura = pes.pes_mat_b2_h4_cod or made.made_codigo_asignatura = pes.pes_mat_b2_h5_cod
+or made.made_codigo_asignatura = pes.pes_mat_b2_h6_cod
+inner join db_academico.materia_paralelo_periodo mpp on mpp.asi_id = made.asi_id and mpp.paca_id in (28,29) and mpp.mod_id = :mod_id
+ where pla_id = :pla_id;
+ ";
+
+ $comando = $con->createCommand($procc);
+ $comando->bindParam(":pla_id",   $pla_id, \PDO::PARAM_INT);
+  $comando->bindParam(":mod_id",   $mod_id, \PDO::PARAM_INT);
+   $pars = $comando->queryAll();
+
+
+  if (count($pars) > 0) {           
+        for ($i = 0; $i < count($pars); $i++) {  
+
+
+                  $pla_api = $pars[$i]["pla_id"]; 
+                  $asi_api = $pars[$i]["asi_id"]; 
+                  $mod_api = $pars[$i]["mod_id"]; 
+                  $maca_api = $pars[$i]["maca_id"]; 
+                  $uaca_api = $pars[$i]["uaca_id"]; 
+                  $mpp_api =  $pars[$i]["mpp_id"]; 
+                  $mpp_num =  $pars[$i]["mpp_num_paralelo"]; 
+                  if ($pars[$i]["paca_id"] == 28) {
+                    $bloq_api = 1; 
+                  } 
+                   if ($pars[$i]["paca_id"] == 29) {
+                    $bloq_api = 2; 
+                  } 
+                   
+ $searchparsiiga = "
+                    SELECT  pasi_id,pasi_cantidad  from db_academico.paralelos_siiga
+                    WHERE pla_id = :pla_id 
+                    AND asi_id = :asi_id
+                    AND mod_id = :mod_id
+                    AND maca_id = :maca_id
+                    AND uaca_id = :uaca_id
+                    AND bloq_id = :bloq_id
+                    AND mpp_id = :mpp_id
+                    ";
+
+                   $comando = $con->createCommand($searchparsiiga);
+                   $comando->bindParam(":pla_id",   $pla_api, \PDO::PARAM_INT);
+                   $comando->bindParam(":asi_id",   $asi_api, \PDO::PARAM_INT);
+                   $comando->bindParam(":mod_id",   $mod_api, \PDO::PARAM_INT);
+                   $comando->bindParam(":maca_id", $maca_api, \PDO::PARAM_INT);
+                   $comando->bindParam(":uaca_id", $uaca_api, \PDO::PARAM_INT);
+                   $comando->bindParam(":bloq_id", $bloq_api, \PDO::PARAM_INT);
+                   $comando->bindParam(":mpp_id",   $mpp_api, \PDO::PARAM_INT);
+                   $existparsiiga = $comando->queryOne();
+
+                      if ($existparsiiga["pasi_id"] == Null) { 
+
+                $createpartemp =
+                "
+                INSERT INTO db_academico.paralelos_siiga
+    (pla_id,asi_id,mod_id,maca_id,uaca_id,bloq_id,mpp_id,siiga_paralelo,pasi_cantidad,pasi_usuario_ingreso,pasi_estado,pasi_fecha_creacion,pasi_estado_logico)
+
+                VALUES 
+    ('" . $pla_api . "','" . $asi_api . "','" . $mod_api . "','" . $maca_api . "','" . $uaca_api . "','" . $bloq_api . "','" . $mpp_api . "','" . $mpp_num . "','1','1', '1',
+ '2021-08-30 17:10:53', '1')
+                ";
+
+                  $comando = $con->createCommand($createpartemp);
+                     $fillpars = $comando->execute(); 
+
+
+                  } Else {                              
+
+                    
+                $cantpasi = $existparsiiga["pasi_cantidad"] + 1;  
+                $pasi_id = $existparsiiga["pasi_id"] ;  
+                  if ( $cantpasi > 50) { $cantpasi = 50;}
+                $updatepasicant = "
+                UPDATE db_academico.paralelos_siiga SET pasi_cantidad = $cantpasi 
+                WHERE pasi_id = $pasi_id";
+                $comando = $con->createCommand($updatepasicant);
+                $result = $comando->execute();  
+                   
+
+                                                      }
+
+
+  }  }
+
+   $getallbymod = "
+        SELECT DISTINCT  a.pasi_id,a.pla_id, a.asi_id,a.mod_id, a.maca_id, a.mpp_id, a.uaca_id,a.bloq_id, a.pasi_cantidad,f.smad_cod_legal, f.sasi_id, a.siiga_paralelo
+        FROM db_academico.paralelos_siiga a
+        INNER JOIN db_academico.planificacion b ON a.pla_id = b.pla_id
+        INNER JOIN db_academico.asignatura c ON a.asi_id = c.asi_id
+        INNER JOIN db_academico.malla_academica d ON a.maca_id = d.maca_id
+        INNER JOIN db_academico.modalidad e ON a.mod_id = e.mod_id
+        INNER JOIN db_academico.siga_malla_academica_detalle f 
+        ON f.asi_id  =  a.asi_id AND f.maca_id = a.maca_id
+        INNER JOIN db_academico.unidad_academica g ON g.uaca_id = a.uaca_id
+        INNER JOIN db_academico.semestre_academico h ON h.saca_id = b.saca_id
+        INNER JOIN db_academico.periodo_academico i ON i.saca_id = h.saca_id
+        INNER JOIN db_academico.bloque_academico j ON j.baca_id = i.baca_id 
+        WHERE
+        a.pla_id = :pla_id AND 
+         a.pasi_estado = 1 AND
+         a.pasi_estado_logico = 1
+        ";
+
+         $comando = $con->createCommand($getallbymod);
+            $comando->bindParam(":pla_id", $pla_id, \PDO::PARAM_INT);
+            $programacion_siga = $comando->queryAll(); 
+
+            return $programacion_siga ;
+
+      }
+
+
+    public function generateDatatotrasferauto($pla_id) {
     $con = \Yii::$app->db_academico;        
     $getallbymod = "
         SELECT

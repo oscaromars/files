@@ -129,8 +129,7 @@ class DistributivoCabecera extends \yii\db\ActiveRecord {
         if (isset($asignacion) && $asignacion > 0) {
             $str_asignacion = "dc.tdis_id = :asignacion AND ";
         }
-
-        if (isset($estado_aprobacion) && $estado_aprobacion > 0) {
+        if (isset($estado_aprobacion) && $estado_aprobacion > -1) {
             $str_estado_probacion = "da.dcab_estado_revision = :estado_aprobacion AND ";
         }
         if (!$onlyData) {

@@ -24,19 +24,18 @@ class DistributivocabeceraController extends \app\components\CController {
 
     private function estados() {
         return [
-            '0' => Yii::t("formulario", "Todos"),
+            '-1' => Yii::t("formulario", "Todos"),
             '1' => Yii::t("formulario", "Revisado"),
             '2' => Yii::t("formulario", "Aprobado"),
-            '3' => Yii::t("formulario", "No aprobado"),
+            '0' => Yii::t("formulario", "No aprobado"),
         ];
     }
-    
+
      private function estadoRevis() {
         return [
             '0' => Yii::t("formulario", "Selecionar"),
             '1' => Yii::t("formulario", "Revisado"),
-            
-            
+
         ];
     }
 
@@ -58,7 +57,7 @@ class DistributivocabeceraController extends \app\components\CController {
       public function actionAprobardistributivo() {
          $searchModel = new \app\modules\academico\models\DistributivoCabeceraSearch();
          $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-               
+
               return $this->render('aprobardistributivo', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
@@ -76,7 +75,7 @@ class DistributivocabeceraController extends \app\components\CController {
         if ($data['PBgetFilter']) {
             $search = $data['search'];
             $periodo = (isset($data['periodo']) && $data['periodo'] > 0) ? $data['periodo'] : NULL;
-            $estado = (isset($data['estado']) && $data['estado'] > 0) ? $data['estado'] : NULL;
+            $estado = (isset($data['estado']) && $data['estado'] > -1) ? $data['estado'] : NULL;
             $profesor = (isset($data['profesor']) && $data['profesor'] > 0) ? $data['profesor'] : NULL;
             $asignacion = (isset($data['asignacion']) && $data['asignacion'] > 0) ? $data['asignacion'] : NULL;
 

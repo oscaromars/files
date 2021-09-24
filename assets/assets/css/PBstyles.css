@@ -163,14 +163,15 @@ div.modal>div.modal-dialog>div.modal-content>div.overlay>.fa {
 /* Estilos de ShowLoadingPopup */
 
 .blockUI {
-    //background-color: #FFFFFF !important;
+    background-color: #FFFFFF !important;
+     opacity: 0.1;
 }
 
 
 /* CSS para show loading popup ref: http://cssload.net/ */
 
 .circularG {
-    background-color: #009FCD !important;
+    background-color: #0061a3 !important;
 }
 
 #circularG {
@@ -343,7 +344,7 @@ div.modal>div.modal-dialog>div.modal-content>div.overlay>.fa {
 }
 
 .circleG {
-    background-color: #009FCD;
+    background-color: #0061a3;
     float: left;
     height: 17px;
     margin-left: 9px;

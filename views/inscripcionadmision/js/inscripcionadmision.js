@@ -697,7 +697,7 @@ function guardarInscripcion(accion, paso) {
                             var $val_item_1 = "";
                             if (mod_id == 2 || mod_id == 3) {
                                 //$('#lbl_fcur_tx').text("22 de octubre al 30 de noviembre");
-                                $('#val_item_1').text('$200');
+                                $('#val_item_1').text('200');
                                 $val_item_1 = '$200';
                             } else if (mod_id == 4) {
                                 $('#val_item_1').text('$115');

@@ -1,10 +1,10 @@
-/* 
+/*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
 /*
- * 
+ *
  * @returns {voids}
  * Created: Kleber Loayza(kloayza@uteg.edu.ec)
  * date: Oct/23/18
@@ -116,7 +116,7 @@ $(document).ready(function () {
          showAlert("NO_OK", "error", mensaje);
          }
          //alert($('#cmb_tipo_dni').val());
-         
+
          }*/
         //alert(error);
         if (error == 0) {
@@ -155,7 +155,7 @@ $(document).ready(function () {
                         var uaca_id = parseInt(response.data.data.uaca_id);
                         var mod_id = parseInt(response.data.data.mod_id);
                         var ming = parseInt(response.data.data.twin_metodo_ingreso);
-                        var sins_id = parseInt(response.data.dataext);                                               
+                        var sins_id = parseInt(response.data.dataext);
                         if ($('input[name=rdo_forma_pago_dinner]:checked').val() == 1) {
                             PagoDinners(sins_id);
                         } else {
@@ -435,7 +435,7 @@ $(document).ready(function () {
 //                    }
 //                }
 //            } else {  //examen
-//                //Online                    
+//                //Online
 //                $('#divRequisitosEXA').css('display', 'block');
 //                $('#divRequisitosCANO').css('display', 'none');
 //                $('#divRequisitosCANP').css('display', 'none');
@@ -445,7 +445,7 @@ $(document).ready(function () {
 //            }
             } else {  //Posgrado  Semipresencial
                 if (($('#cmb_modalidad_solicitud').val() == 3) || ($('#cmb_modalidad_solicitud').val() == 2)) {
-                    //Taller introductorio            
+                    //Taller introductorio
                     if ($('#cmb_metodo_solicitud').val() == 4) {
                         //Taller introductorio
                         //$('#divRequisitosPRP').css('display', 'block');
@@ -479,46 +479,46 @@ $(document).ready(function () {
     //Pago por stripe.-
     $('#rdo_forma_pago_otros').change(function () {
         if ($('#rdo_forma_pago_otros').val() == 2) {
-            $("#rdo_forma_pago_dinner").prop("checked", "");     
-            $("#rdo_forma_pago_deposito").prop("checked", "");    
-            $("#rdo_forma_pago_transferencia").prop("checked", "");  
+            $("#rdo_forma_pago_dinner").prop("checked", "");
+            $("#rdo_forma_pago_deposito").prop("checked", "");
+            $("#rdo_forma_pago_transferencia").prop("checked", "");
             $('#DivSubirPago').css('display', 'none');
             $('#DivSubirPagoBtn').css('display', 'none');
             $('#DivBoton').css('display', 'block');
         } else {
-            $("#rdo_forma_pago_otros").prop("checked", true);    
+            $("#rdo_forma_pago_otros").prop("checked", true);
             $('#DivBoton').css('display', 'none');
         }
     });
-    
+
     $('#rdo_forma_pago_deposito').change(function () {
         if ($('#rdo_forma_pago_deposito').val() == 3) {
-            $('#DivSubirPago').css('display', 'block'); 
-            $('#DivSubirPagoBtn').css('display', 'block');    
+            $('#DivSubirPago').css('display', 'block');
+            $('#DivSubirPagoBtn').css('display', 'block');
             $('#DivBoton').css('display', 'none');
-            $("#rdo_forma_pago_dinner").prop("checked", "");     
-            $("#rdo_forma_pago_otros").prop("checked", "");    
-            $("#rdo_forma_pago_transferencia").prop("checked", "");  
+            $("#rdo_forma_pago_dinner").prop("checked", "");
+            $("#rdo_forma_pago_otros").prop("checked", "");
+            $("#rdo_forma_pago_transferencia").prop("checked", "");
         } else {
             $('#DivSubirPago').css('display', 'none');
-            $('#DivSubirPagoBtn').css('display', 'none');             
-            $("#rdo_forma_pago_deposito").prop("checked", true);    
+            $('#DivSubirPagoBtn').css('display', 'none');
+            $("#rdo_forma_pago_deposito").prop("checked", true);
             $('#DivBoton').css('display', 'block');
         }
     });
-    
+
     $('#rdo_forma_pago_transferencia').change(function () {
         if ($('#rdo_forma_pago_transferencia').val() == 4) {
-            $('#DivSubirPago').css('display', 'block'); 
-            $('#DivSubirPagoBtn').css('display', 'block');   
+            $('#DivSubirPago').css('display', 'block');
+            $('#DivSubirPagoBtn').css('display', 'block');
             $('#DivBoton').css('display', 'none');
-            $("#rdo_forma_pago_dinner").prop("checked", "");     
-            $("#rdo_forma_pago_otros").prop("checked", "");    
-            $("#rdo_forma_pago_deposito").prop("checked", "");  
+            $("#rdo_forma_pago_dinner").prop("checked", "");
+            $("#rdo_forma_pago_otros").prop("checked", "");
+            $("#rdo_forma_pago_deposito").prop("checked", "");
         } else {
             $('#DivSubirPago').css('display', 'none');
-            $('#DivSubirPagoBtn').css('display', 'none');  
-            $("#rdo_forma_pago_transferencia").prop("checked", true); 
+            $('#DivSubirPagoBtn').css('display', 'none');
+            $("#rdo_forma_pago_transferencia").prop("checked", true);
             $('#DivBoton').css('display', 'block');
         }
     });
@@ -547,9 +547,9 @@ $(document).ready(function () {
             $('#txt_pasaporte_fac').removeClass("PBvalidation");
         }
     });
-    
+
     $('#sendInscripcionSubirPago').click(function () {
-        guardarInscripcionTemp('UpdateDepTrans');        
+        guardarInscripcionTemp('UpdateDepTrans');
         var link = $('#txth_base').val() + "/inscripcionadmision/saveinscripciontemp";
         var arrParams = new Object();
         arrParams.codigo = $('#txth_twin_id').val();
@@ -572,33 +572,33 @@ $(document).ready(function () {
         //Datos del pago.
         $('#txt_numtransaccion').addClass("PBvalidation");
         $('#txt_fecha_transaccion').addClass("PBvalidation");
-        
+
         arrParams.num_transaccion = $('#txt_numtransaccion').val();
         arrParams.observacion = $('#txt_observacion').val();
         arrParams.fecha_transaccion = $('#txt_fecha_transaccion').val();
         arrParams.doc_pago = $('#txth_doc_pago').val();
-        if ($("input[name='rdo_forma_pago_otros']:checked").val() == "2") {//($('#rdo_forma_pago_otros option:selected').val() == "2") {        
-            arrParams.forma_pago = 2;        
+        if ($("input[name='rdo_forma_pago_otros']:checked").val() == "2") {//($('#rdo_forma_pago_otros option:selected').val() == "2") {
+            arrParams.forma_pago = 2;
         } else if ($("input[name='rdo_forma_pago_deposito']:checked").val() == "3") { //rdo_forma_pago_deposito
             arrParams.forma_pago = 3;
         } else if  ($("input[name='rdo_forma_pago_transferencia']:checked").val() == "4") { //rdo_forma_pago_transferencia
             arrParams.forma_pago = 4;
         } else {
             arrParams.forma_pago = 1;
-        }         
+        }
         var error = 0;
         if ($('#txth_doc_pago').val() == "") {
             error++;
             var mensaje = {wtmessage: "Debe adjuntar documento de pago realizado.", title: "Información"};
             showAlert("NO_OK", "error", mensaje);
-        } else {                        
+        } else {
             if (!validateForm()) {
                 requestHttpAjax(link, arrParams, function (response) {
                     var message = response.message;
                     //console.log(response);
                     if (response.status == "OK") {
                         showAlert(response.status, response.label, response.message);
-                        setTimeout(function () {    
+                        setTimeout(function () {
                             parent.window.location.href = $('#txth_base').val() +"/inscripcionadmision/index";
                         }, 2000);
                     }
@@ -615,7 +615,7 @@ function guardarInscripcion(accion, paso) {
     var arrParams = new Object();
     arrParams.DATA_1 = dataInscripPart1(ID);
     arrParams.ACCION = accion;
-    if (!validateForm()) {       
+    if (!validateForm()) {
         requestHttpAjax(link, arrParams, function (response) {
             var message = response.message;
             //console.log(response);
@@ -674,13 +674,14 @@ function guardarInscripcion(accion, paso) {
                         $('#lbl_fcur_tx').text("15 abril del 2019");
                     } else if (uaca_id == 1) {
                         leyenda = 'El valor a cancelar por concepto de matriculación en la modalidad ' + response.data.data.modalidad + ' es:';
-                        if (mod_id == 1) {//online                                
-                            $('#val_item_1').text('$65');
+                        if (mod_id == 1) {//online
+                            $('#val_item_1').text('65');
                             $('#lbl_item_2').text("Plataforma: ");
-                            $('#val_item_2').text('$50');
-                            $('#lbl_valor_pagar_tx').text("$115");
+                            $('#val_item_2').text('0');
+                            //$('#val_item_2').text('50');
+                            $('#lbl_valor_pagar_tx').text("$65");
                             $('#lbl_item_3').text("Pago Mínimo: ");
-                            $('#val_item_3').text('$115');
+                            $('#val_item_3').text('$65');
                             // Habilitar los items.
                             $('#id_item_1').css('display', 'block');
                             $('#id_item_2').css('display', 'block');
@@ -690,21 +691,21 @@ function guardarInscripcion(accion, paso) {
 //                                $('#lbl_mcur_lb').text("Examenes a rendir");
 //                                $('#lbl_fcur_lb').text("Fecha de las pruebas:");
 //                                $('#lbl_valor_pagar_tx').text(response.data.data.precio);
-                            //$('#lbl_fcur_tx').text("En quince (15) días a partir del registro (un coordinador te contactará para brindarte mayor información)");                                
+                            //$('#lbl_fcur_tx').text("En quince (15) días a partir del registro (un coordinador te contactará para brindarte mayor información)");
                         } else if (mod_id == 2 || mod_id == 3 || mod_id == 4) {//presencial y semi presencial
                             //if (ming == 1) {// curso
                             var $val_item_1 = "";
                             if (mod_id == 2 || mod_id == 3) {
                                 //$('#lbl_fcur_tx').text("22 de octubre al 30 de noviembre");
-                                $('#val_item_1').text('$250');
-                                $val_item_1 = '$250';
+                                $('#val_item_1').text('$200');
+                                $val_item_1 = '$200';
                             } else if (mod_id == 4) {
                                 $('#val_item_1').text('$115');
                                 $val_item_1 = '$115';
                                 //$('#lbl_fcur_tx').text("20 de octubre al 8 de diciembre");
                             }
 //                                    $('#lbl_mcur_lb').text("Materias a cursar");
-//                                    $('#lbl_item_1').text("Curso de nivelación: ");                            
+//                                    $('#lbl_item_1').text("Curso de nivelación: ");
                             $('#val_item_1').text(response.data.data.precio);
                             $('#lbl_item_2').text("Plataforma: ");
                             $('#val_item_2').text('$0');
@@ -734,7 +735,7 @@ function guardarInscripcion(accion, paso) {
 
                     $('#lbl_leyenda_pago_tx').html(leyenda);
                     //fin ingreso informacion del tab 3
-                    $('#txth_twin_id').val(response.data.ids);//SE AGREGA AL FINAL                            
+                    $('#txth_twin_id').val(response.data.ids);//SE AGREGA AL FINAL
                     //paso2next();
                 }
 
@@ -782,18 +783,18 @@ function paso2next() {
     $('#txt_dir_fac').addClass("PBvalidation");
     $('#txt_apellidos_fac').addClass("PBvalidation");
     $('#txt_correo_fac').addClass("PBvalidation");
-    if ($("input[name='opt_tipo_DNI']:checked").val() == "1") {        
+    if ($("input[name='opt_tipo_DNI']:checked").val() == "1") {
         $('#txt_dni_fac').addClass("PBvalidation");
         $('#txt_ruc_fac').removeClass("PBvalidation");
         $('#txt_pasaporte_fac').removeClass("PBvalidation");
     } else if ($("input[name='opt_tipo_DNI']:checked").val() == "2") {
         $('#txt_pasaporte_fac').addClass("PBvalidation");
         $('#txt_ruc_fac').removeClass("PBvalidation");
-        $('#txt_dni_fac').removeClass("PBvalidation");        
-    } else {     
+        $('#txt_dni_fac').removeClass("PBvalidation");
+    } else {
         $('#txt_ruc_fac').addClass("PBvalidation");
         $('#txt_pasaporte_fac').removeClass("PBvalidation");
-        $('#txt_dni_fac').removeClass("PBvalidation");        
+        $('#txt_dni_fac').removeClass("PBvalidation");
     }
 }
 
@@ -834,16 +835,16 @@ function dataInscripPart1(ID) {
     objDat.ruta_doc_aceptacion = ($('#txth_doc_aceptacion').val() != '') ? $('#txth_doc_aceptacion').val() : '';
     objDat.cemp_id = $('#cmb_convenio_empresa option:selected').val();
     //TAB 3
-    objDat.ruta_doc_pago = ($('#txth_doc_pago').val() != '') ? $('#txth_doc_pago').val() : '';    
-    if ($("input[name='rdo_forma_pago_otros']:checked").val() == "2") {//($('#rdo_forma_pago_otros option:selected').val() == "2") {        
-        objDat.forma_pago = 2;        
+    objDat.ruta_doc_pago = ($('#txth_doc_pago').val() != '') ? $('#txth_doc_pago').val() : '';
+    if ($("input[name='rdo_forma_pago_otros']:checked").val() == "2") {//($('#rdo_forma_pago_otros option:selected').val() == "2") {
+        objDat.forma_pago = 2;
     } else if ($("input[name='rdo_forma_pago_deposito']:checked").val() == "3") { //rdo_forma_pago_deposito
         objDat.forma_pago = 3;
     } else if  ($("input[name='rdo_forma_pago_transferencia']:checked").val() == "4") { //rdo_forma_pago_transferencia
         objDat.forma_pago = 4;
     } else {
         objDat.forma_pago = 1;
-    }  
+    }
     datArray[0] = objDat;
     sessionStorage.dataInscrip_1 = JSON.stringify(datArray);
     return datArray;
@@ -871,7 +872,7 @@ function guardarInscripcionTemp(accion) {
     arrParams.DATA_1 = dataInscripPart1(ID);
     arrParams.ACCION = accion;
     if (!validateForm()) {
-        requestHttpAjax(link, arrParams, function (response) {                        
+        requestHttpAjax(link, arrParams, function (response) {
             if (response.status == "OK") {
                 return 1;
             }

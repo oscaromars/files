@@ -618,6 +618,8 @@ class DistributivoCabecera extends \yii\db\ActiveRecord {
         left join " . $con->dbname . ".asignatura AS asi ON da.asi_id = asi.asi_id
         left join " . $con->dbname . ".modalidad AS moda ON da.mod_id = moda.mod_id
               where da.dcab_id=:ids and
+              da.daca_estado= :estado and
+              da.daca_estado_logico= :estado and
               dc.dcab_estado_logico= :estado and
               td.tdis_id not in(6)";
         $comando = $con->createCommand($sql);

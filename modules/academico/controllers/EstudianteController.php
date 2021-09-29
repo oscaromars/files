@@ -39,7 +39,12 @@ class EstudianteController extends \app\components\CController {
             '6' => Yii::t("formulario", "F"),
             '7' => Yii::t("formulario", "G"),
             '8' => Yii::t("formulario", "H"),
-            '9' => Yii::t("formulario", "R"),
+            '9' => Yii::t("formulario", "K"),
+            '10' => Yii::t("formulario", "L"),
+            '11' => Yii::t("formulario", "M"),
+            '12' => Yii::t("formulario", "P"),
+            '13' => Yii::t("formulario", "Q"),
+            '14' => Yii::t("formulario", "R"),
         ];
     }
 

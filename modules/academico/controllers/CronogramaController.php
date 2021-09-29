@@ -140,10 +140,13 @@ class CronogramaController extends \app\components\CController {
     }
 
     public function actionDownload($route, $type) {
+        //\app\models\Utilities::putMessageLogFile('route 1: ' . $route);
         if (Yii::$app->session->get('PB_isuser')) {
             $route = str_replace("../", "", $route);
+            //\app\models\Utilities::putMessageLogFile('route 2: ' . $route);
             //if (preg_match("/^" . reglamentos . "\//", $route)) {
-                $url_image = Yii::$app->basePath . "/uploads/" . $route;
+                $url_image = Yii::$app->basePath . "/uploads/reglamentos/" . $route;
+                //\app\models\Utilities::putMessageLogFile('url_image: ' . $url_image);
                 $arrIm = explode(".", $url_image);
                 $typeImage = $arrIm[count($arrIm) - 1];
                 if (file_exists($url_image)) {

@@ -618,6 +618,8 @@ class DistributivoCabecera extends \yii\db\ActiveRecord {
         left join " . $con->dbname . ".asignatura AS asi ON da.asi_id = asi.asi_id
         left join " . $con->dbname . ".modalidad AS moda ON da.mod_id = moda.mod_id
               where da.dcab_id=:ids and
+              da.daca_estado= :estado and
+              da.daca_estado_logico= :estado and
               dc.dcab_estado_logico= :estado and
               td.tdis_id not in(6)";
         $comando = $con->createCommand($sql);
@@ -830,6 +832,7 @@ class DistributivoCabecera extends \yii\db\ActiveRecord {
      * @return
      */
     public function Calcularpromedioajustado($cabDist, /*$total_hora_semana_docenciaposgrado,*/ $total_hora_semana_docencia, $total_hora_semana_tutoria, $total_hora_semana_investigacion, $total_hora_semana_vinculacion, $preparacion_docencia, $semanas_docencia, $semanas_tutoria_vinulacion_investigacion/*, $semanas_posgrado*/) {
+        $dividir_promedio = 12;
         $model_distacade = new DistributivoAcademico();
         $posgrado = $model_distacade->getSemanahoraposgrado($cabDist);
         Utilities::putMessageLogFile('$mayor valor ' . $posgrado[0]['semanas_posgrado'] );
@@ -874,7 +877,7 @@ class DistributivoCabecera extends \yii\db\ActiveRecord {
                             $horas_preparacion + $horas_preparacionp,2);
         }
          Utilities::putMessageLogFile('$promedio model ' . $promedio );
-         $promedio_ajustado =  sqrt(/*round(*/$promedio/$semanas_tutoria_vinulacion_investigacion)/*)*/;
+         $promedio_ajustado =  sqrt(/*round(*/$promedio/$dividir_promedio)/*)*/;
          Utilities::putMessageLogFile('$promedio_ajustado model ' . $promedio_ajustado );
          return $promedio_ajustado;
     }

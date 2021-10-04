@@ -162,7 +162,7 @@ class RegistroConfiguracion extends \yii\db\ActiveRecord
         \app\models\Utilities::putMessageLogFile($est_id.'-'.$cedula.'-'.$secuencial.'-'.$forma_pago.'-'.$fecha.'-'.$in.'-'.$numero_cuota.'-'.
         $valor_cuota.'-'.$total.'-'.$id_user);
         //\app\modules\academico\controllers\RegistroController::putMessageLogFileCartera($est_id.'-'.$cedula.'-'.$secuencial.'-'.$forma_pago.'-'.$fecha.'-'.$in.'-'.$numero_cuota.'-'.
-        $valor_cuota.'-'.$total.'-'.$id_user);
+        //$valor_cuota.'-'.$total.'-'.$id_user);
         $trans = $con->getTransaction(); // se obtiene la transacción actual
         $fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
         if($in == 0){
@@ -209,7 +209,6 @@ class RegistroConfiguracion extends \yii\db\ActiveRecord
                 ccar_estado,
                 ccar_abono,
                 ccar_fecha_creacion,
-                ccar_fecha_modificacion,
                 ccar_estado_logico)
                 VALUES ( :est_id, 
                     'FE', :secuencial,
@@ -217,7 +216,7 @@ class RegistroConfiguracion extends \yii\db\ActiveRecord
                      '$forma_pago', 
                      :cuota, :fecha_transaccion, 
                     '$fecha', NULL,
-                    :valor_cuota, :total, NULL, NULL, NULL, NULL, NULL, :estadoCancelado, NULL, NULL, NULL, '$id_user', NULL,:estado,$abono, :fecha_transaccion, NULL ,:estado);";
+                    :valor_cuota, :total, NULL, NULL, NULL, NULL, NULL, :estadoCancelado, NULL, NULL, NULL, '$id_user', NULL,:estado,$abono, :fecha_transaccion ,:estado);";
 
         $comando = $con->createCommand($sql);
         $comando->bindParam(":est_id", $est_id, \PDO::PARAM_STR);
@@ -229,16 +228,15 @@ class RegistroConfiguracion extends \yii\db\ActiveRecord
         $comando->bindParam(":total", $total, \PDO::PARAM_STR);
         $comando->bindParam(":estadoCancelado", $estadoCancelado, \PDO::PARAM_STR);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
-        $comando->bindParam(":fecha_transaccion", $fecha_transaccion, \PDO::PARAM_STR);
-        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
         
-        //\app\modules\academico\controllers\RegistroController::putMessageLogFileCartera(' --------------------------------- SQL :'.$comando->getRawSql());
+        \app\models\Utilities::putMessageLogFile(' registrarCargaCartera :'.$comando->getRawSql());
         $resultData = $comando->execute();
         if ($trans !== null)
             $trans->commit();
-        //return $con->getLastInsertID($con->dbname . '.carga_cartera');
-        \app\models\Utilities::putMessageLogFile('ResultData Carga Cartera...: '.$resultData);
-        return $resultData;
+        
+        \app\models\Utilities::putMessageLogFile($con->getLastInsertID($con->dbname . '.carga_cartera').' - ResultData Carga Cartera...: '.$resultData);
+        return $con->getLastInsertID($con->dbname . '.carga_cartera');
+        //return $resultData;
         } catch (Exception $ex) {
             if ($trans !== null)
                 $trans->rollback();
@@ -260,16 +258,19 @@ class RegistroConfiguracion extends \yii\db\ActiveRecord
         return $resultData;
     }
     
-    public function getCuotaActual($in){
+    public function getCuotaActual($in, $saca_id){
         $con = \Yii::$app->db_academico;
         $estado = 1;
 
         $sql = "SELECT fvpa_fecha_vencimiento as 'fecha'
                 from " . $con->dbname . ".fechas_vencimiento_pago 
                 where fvpa_cuota = $in 
+                and saca_id = $saca_id
+                and fvpa_estado = 1
                 and fvpa_estado_logico = 1";
 
         $comando = $con->createCommand($sql);
+        \app\models\Utilities::putMessageLogFile('getCuotaActual: '.$comando->getRawSql());
         
         $resultData = $comando->queryOne();
 
@@ -295,7 +296,7 @@ class RegistroConfiguracion extends \yii\db\ActiveRecord
         $con = \Yii::$app->db_academico;
 
         $estado = 1;
-
+        try{
         $sql = "SELECT count(cfca_ron_id) as 'repetidos'
                 from " . $con->dbname . ".cuotas_facturacion_cartera 
                 where cfca_ron_id = $ron_id 
@@ -303,10 +304,15 @@ class RegistroConfiguracion extends \yii\db\ActiveRecord
                 and cfca_estado_logico = 1";
 
         $comando = $con->createCommand($sql);
+        \app\models\Utilities::putMessageLogFile('getRegistrosDuplicados: '.$comando->getRawSql());
         
         $resultData = $comando->queryOne();
 
         return $resultData;
+        }catch(Exception $ex){            
+            \app\models\Utilities::putMessageLogFile('modelo KO...: - KO - '.$ex->getMessage());
+            return 1;
+        }
     }
 
     public function registrarRelacionCartera($est_id,$ron_id,$secuencial){
@@ -506,12 +512,13 @@ class RegistroConfiguracion extends \yii\db\ActiveRecord
         $fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
         try {
             $sql=" UPDATE " . $con->dbname . ".registro_adicional_materias 
-                    SET rpm_id = :rpm_id
-                    WHERE rama_id = :rama_id;";
-            //\app\models\Utilities::putMessageLogFile('modelo Online Cuota FIN...: '.$sql);
+                    SET rpm_id = $rpm_id
+                    WHERE rama_id = $rama_id;";
             $comando = $con->createCommand($sql);
-            $comando->bindParam(":rpm_id", $rpm_id, \PDO::PARAM_INT);
-            $comando->bindParam(":rama_id", $rama_id, \PDO::PARAM_INT);
+            \app\models\Utilities::putMessageLogFile('updateAdicionalMateria: '.$comando->getRawSql());
+            \app\models\Utilities::putMessageLogFile('modelo Online Cuota FIN...: '.$sql);
+            //$comando->bindParam(":rpm_id", $rpm_id, \PDO::PARAM_INT);
+            // $comando->bindParam(":rama_id", $rama_id, \PDO::PARAM_INT);
             
             $resultData = $comando->execute();
             if ($trans !== null){
@@ -534,9 +541,26 @@ class RegistroConfiguracion extends \yii\db\ActiveRecord
         $sql = "SELECT pes.pes_id as 'pes_id', ro.ron_id as 'ron_id' 
                 FROM " . $con->dbname . ".planificacion_estudiante pes 
                 inner join " . $con->dbname . ".registro_online ro on ro.per_id = pes.per_id
+                inner join " . $con->dbname . ".registro_adicional_materias rama on rama.ron_id = ro.ron_id 
+                where pes.per_id = $per_id
+                and rama.rpm_id is NULL
+                and pes.pes_estado_logico = 1
+                and pes.pes_estado = 1 order by ro.ron_id desc limit 0,1";
+        $comando = $con->createCommand($sql);
+    
+        $resultData = $comando->queryOne();
+        \app\models\Utilities::putMessageLogFile('ron_id '.$resultData['ron_id'].' pes_id '.$resultData['pes_id']);
+        return $resultData;
+    }
+    public function getRonPesPdf($per_id){
+        $con = \Yii::$app->db_academico;
+
+        $sql = "SELECT pes.pes_id as 'pes_id', ro.ron_id as 'ron_id' 
+                FROM " . $con->dbname . ".planificacion_estudiante pes 
+                inner join " . $con->dbname . ".registro_online ro on ro.per_id = pes.per_id
                 where pes.per_id = $per_id
                 and pes.pes_estado_logico = 1
-                and pes.pes_estado = 1 limit 0,1";
+                and pes.pes_estado = 1 order by ro.ron_id desc limit 0,1";
         $comando = $con->createCommand($sql);
     
         $resultData = $comando->queryOne();
@@ -851,6 +875,102 @@ class RegistroConfiguracion extends \yii\db\ActiveRecord
         } catch (Exception $ex) {
             if ($transaction !== null)
                 $transaction->rollback();
+            return FALSE;
+        }
+    }
+
+    public function registrarCuotasFacturacionCartera($rama_id,$numDoc,$ron_id,$est_id){
+        $con = \Yii::$app->db_academico;
+        $estado = 1;
+        $trans = $con->getTransaction(); // se obtiene la transacción actual
+        $fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
+            
+        try {
+            $select=("select cc.ccar_id as 'id' from db_facturacion.carga_cartera cc where cc.ccar_numero_documento = '$numDoc' order by 1 desc limit 0,1;");
+            $comando = $con->createCommand($select);
+            \app\models\Utilities::putMessageLogFile('select creado: '.$comando->getRawSql());
+            $resultData = $comando->queryOne();
+            $ccar_id = $resultData['id'];
+            \app\models\Utilities::putMessageLogFile('select creado: '.$resultData['id']);
+
+        $sql="INSERT INTO " . $con->dbname . ".cuotas_facturacion_cartera 
+        (
+        cfca_rama_id,
+        cfca_numero_documento,
+        cfca_ron_id,
+        cfca_est_id,
+        cfca_ccar_id,
+        cfca_estado,
+        cfca_fecha_creacion,
+        cfca_estado_logico)
+        value($rama_id,'$numDoc',$ron_id,$est_id, 
+        $ccar_id,1,'$fecha_transaccion',1);";
+
+        $comando = $con->createCommand($sql);
+        \app\models\Utilities::putMessageLogFile('registrarCuotasFacturacionCartera: '.$comando->getRawSql());
+        $resultData = $comando->execute();
+        if ($trans !== null)
+            $trans->commit();
+        \app\models\Utilities::putMessageLogFile('ResultData Cuotas Cartera...: '.$resultData);
+        return $resultData;
+        } catch (Exception $ex) {
+            if ($trans !== null)
+                $trans->rollback();
+                \app\models\Utilities::putMessageLogFile('ResultData Error Cuotas Cartera...: '.$ex->getMessage());
+            return FALSE;
+        }
+    }
+    public function detalleMateriasMatricula($ron_id){
+        $con = \Yii::$app->db_academico;
+        
+        try {
+           
+            $sql="SELECT distinct concat(smad.sasi_id,'-',made.made_credito,'-',replace(pcc.pccr_costo_credito,'.','_')) as detalle 
+                from " . $con->dbname . ".registro_online_item roi 
+            inner join " . $con->dbname . ".planificacion_estudiante pes
+            inner join " . $con->dbname . ".planificacion pla on pes.pla_id = pla.pla_id and pla.pla_estado = 1 
+            inner join " . $con->dbname . ".registro_online ro on roi.ron_id = ro.ron_id and ro.per_id = pes.per_id and ro.ron_id = $ron_id
+            inner join " . $con->dbname . ".asignatura a on a.asi_id in (TRIM(LEADING '0' FROM substr(roi.roi_materia_cod,10,4)))
+            inner join " . $con->dbname . ".malla_academico_estudiante maca on maca.per_id = pes.per_id and maca.asi_id = a.asi_id
+            inner join " . $con->dbname . ".malla_academica_detalle made on made.maca_id = maca.maca_id and made.asi_id = a.asi_id
+            inner join " . $con->dbname . ".siga_malla_academica_detalle smad on smad.asi_id = a.asi_id and smad.asi_id = maca.asi_id and smad.maca_id = maca.maca_id
+            inner join " . $con->dbname . ".estudiante e on e.per_id = pes.per_id
+			inner join " . $con->dbname . ".malla_unidad_modalidad mum on mum.maca_id = maca.maca_id
+            inner join " . $con->dbname . ".modalidad_estudio_unidad meun on meun.meun_id = mum.meun_id
+            inner join " . $con->dbname . ".programa_costo_credito pcc on pcc.maca_id = maca.maca_id  and pcc.pccr_categoria = e.est_categoria and pcc.pccr_creditos = made.made_credito
+            and pcc.eaca_id = meun.eaca_id and pcc.mod_id = pla.mod_id";
+
+            $comando = $con->createCommand($sql);
+            \app\models\Utilities::putMessageLogFile('detalleMateriasMatricula: '.$comando->getRawSql());
+            $resultData = $comando->queryAll();
+            return $resultData;
+        } catch (Exception $ex) {
+            \app\models\Utilities::putMessageLogFile('detalleMateriasMatricula: '.$ex->getMessage());
+            return FALSE;
+        }
+    }
+    public function getFlujoSiga($per_id,$mod_id){
+        $con = \Yii::$app->db_academico;
+        
+        try {
+            if($mod_id == 1){ $tabla = 'sa_alumno_flujo_onl';}
+            else{ $tabla = 'sa_alumno_flujo_mod';}
+           
+            $sql="SELECT max(sa.id) as id, sm.macs_id as carrera FROM db_siga.$tabla sa
+                    inner join " . $con->dbname . ".siga_estudiante si on si.sest_id = sa.id_alumno and si.per_id = $per_id 
+                    inner join " . $con->dbname . ".siga_malla_academica sim on sim.macs_id = sa.id_flujo
+                    inner join " . $con->dbname . ".malla_academico_estudiante maca on maca.per_id = si.per_id
+                    inner join " . $con->dbname . ".siga_malla_academica sm on sm.maca_id = maca.maca_id
+                    group by sa.id_alumno
+                    having max(sa.id)
+                    order by 1 desc limit 0,1";
+
+            $comando = $con->createCommand($sql);
+            \app\models\Utilities::putMessageLogFile('getFlujoSiga: '.$comando->getRawSql());
+            $resultData = $comando->queryOne();
+            return $resultData;
+        } catch (Exception $ex) {
+            \app\models\Utilities::putMessageLogFile('getFlujoSiga: '.$ex->getMessage());
             return FALSE;
         }
     }

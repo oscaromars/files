@@ -57,8 +57,7 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
     {
         return Yii::$app->get('db_academico');
     }
-
-    /**
+/**
      * {@inheritdoc}
      */
     /*
@@ -151,12 +150,13 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
             SELECT rpm_id
             FROM " . $con_academico->dbname . ".registro_pago_matricula as rpm            
             WHERE rpm.per_id=:per_id
-            -- AND rpm.pla_id=:pla_id            
+            AND rpm.pla_id=:pla_id            
             AND rpm.rpm_estado=:estado
             AND rpm.rpm_estado_logico=:estado;
         ";
 
         $comando = $con_academico->createCommand($sql);
+        //\app\models\Utilities::putMessageLogFile('checkPagoEstudiante: ' . $comando->getRawSql());
         $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
         $comando->bindParam(":pla_id", $pla_id, \PDO::PARAM_INT);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);        
@@ -256,9 +256,9 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
                     ) AS mi ON mi.ron_id = r.ron_id
                     LEFT JOIN " . $con_academico->dbname . ".registro_pago_matricula AS reg on reg.per_id = pe.per_id 
                         and r.ron_id = reg.ron_id and reg.rpm_estado = 1 and reg.rpm_estado_logico =1 and reg.rpm_id = ram.rpm_id
-                    LEFT JOIN " . $con_academico->dbname . ".enrolamiento_agreement AS enr on enr.ron_id = r.ron_id 
-                        and reg.rpm_estado = 1 and reg.rpm_estado_logico =1 and enr.rpm_id = ram.rpm_id and enr.eagr_estado = 1 and enr.eagr_estado_logico = 1
-                    LEFT JOIN (
+                    "./*LEFT JOIN " . $con_academico->dbname . ".enrolamiento_agreement AS enr on enr.ron_id = r.ron_id 
+                        and reg.rpm_estado = 1 and reg.rpm_estado_logico =1 and enr.rpm_id = ram.rpm_id and enr.eagr_estado = 1 and enr.eagr_estado_logico = 1*/
+                    " LEFT JOIN (
                         SELECT
                             ro.ron_id as ron_id,
                             ro.rpm_id as rpm_id,
@@ -423,9 +423,9 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
                     ) AS mi ON mi.ron_id = r.ron_id
                     LEFT JOIN " . $con_academico->dbname . ".registro_pago_matricula AS reg on reg.per_id = pe.per_id 
                         and r.ron_id = reg.ron_id and reg.rpm_estado = 1 and reg.rpm_estado_logico =1 and reg.rpm_id = ram.rpm_id
-                    LEFT JOIN " . $con_academico->dbname . ".enrolamiento_agreement AS enr on enr.ron_id = r.ron_id 
+                    "./*LEFT JOIN " . $con_academico->dbname . ".enrolamiento_agreement AS enr on enr.ron_id = r.ron_id 
                         and reg.rpm_estado = 1 and reg.rpm_estado_logico =1 and enr.rpm_id = ram.rpm_id and enr.eagr_estado = 1 and enr.eagr_estado_logico = 1
-                    LEFT JOIN (
+                    */" LEFT JOIN (
                         SELECT
                             ro.ron_id as ron_id,
                             ro.rpm_id as rpm_id,
@@ -607,9 +607,9 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
                     ) AS mi ON mi.ron_id = r.ron_id
                     LEFT JOIN " . $con_academico->dbname . ".registro_pago_matricula AS reg on reg.per_id = pe.per_id 
                         and r.ron_id = reg.ron_id and reg.rpm_estado = 1 and reg.rpm_estado_logico =1 and reg.rpm_id = ram.rpm_id
-                    LEFT JOIN " . $con_academico->dbname . ".enrolamiento_agreement AS enr on enr.ron_id = r.ron_id 
+                    "./*LEFT JOIN " . $con_academico->dbname . ".enrolamiento_agreement AS enr on enr.ron_id = r.ron_id 
                         and reg.rpm_estado = 1 and reg.rpm_estado_logico =1 and enr.rpm_id = ram.rpm_id and enr.eagr_estado = 1 and enr.eagr_estado_logico = 1
-                    LEFT JOIN (
+                    */" LEFT JOIN (
                         SELECT
                             ro.ron_id as ron_id,
                             ro.rpm_id as rpm_id,
@@ -728,10 +728,11 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
                     p.pla_periodo_academico as Periodo,
                     p.pla_id as pla_id,
                     tmp.Cant as Cant,
-                    roc.roc_costo as Costo,   
+                    roc.roc_costo as Costo,
+                    reg.rpm_fecha_transaccion as Fecha,   
                     ifnull(rf.Refund, '0.00') as Refund,
                     tmp.Creditos as Creditos,
-                    ifnull(enr.ron_id,'0.00') as Enroll,
+                    '0.00' as Enroll,
                     ifnull(reg.rpm_estado_aprobacion,2) as Aprobacion,
                     ifnull(reg.rpm_estado_generado,0) as Estado
                 FROM " . $con_academico->dbname . ".planificacion_estudiante                AS pe
@@ -765,7 +766,9 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
                             rm.roi_id_3 = it.roi_id OR
                             rm.roi_id_4 = it.roi_id OR
                             rm.roi_id_5 = it.roi_id OR
-                            rm.roi_id_6 = it.roi_id
+                            rm.roi_id_6 = it.roi_id OR
+                            rm.roi_id_7 = it.roi_id OR
+                            rm.roi_id_8 = it.roi_id
                             )
                         WHERE
                             r.ron_estado = 1 AND r.ron_estado_logico = 1 AND
@@ -785,9 +788,9 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
                     ) AS mi ON mi.ron_id = r.ron_id
                     LEFT JOIN " . $con_academico->dbname . ".registro_pago_matricula AS reg on reg.per_id = per.per_id 
                         AND r.ron_id = reg.ron_id AND reg.rpm_estado = 1 AND reg.rpm_estado_logico = 1
-                    LEFT JOIN " . $con_academico->dbname . ".enrolamiento_agreement AS enr on enr.ron_id = r.ron_id 
+                    "./*LEFT JOIN " . $con_academico->dbname . ".enrolamiento_agreement AS enr on enr.ron_id = r.ron_id 
                         AND reg.rpm_estado = 1 AND reg.rpm_estado_logico = 1 AND enr.rpm_id = ram.rpm_id AND enr.eagr_estado = 1 AND enr.eagr_estado_logico = 1
-                    LEFT JOIN (
+                    */" LEFT JOIN (
                         SELECT
                             ro.ron_id as ron_id,
                             ro.rpm_id as rpm_id,
@@ -832,10 +835,11 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
                     p.pla_periodo_academico as Periodo,
                     p.pla_id as pla_id,
                     tmp.Cant as Cant,
-                    reg.rpm_total as Costo, 
+                    reg.rpm_total as Costo,
+                    reg.rpm_fecha_transaccion as Fecha, 
                     ifnull(rf.Refund, '0.00') as Refund,
                     tmp.Creditos as Creditos,
-                    ifnull(enr.ron_id,'0.00') as Enroll,
+                    '0.00' as Enroll,
                     ifnull(reg.rpm_estado_aprobacion,2) as Aprobacion,
                     ifnull(reg.rpm_estado_generado,0) as Estado
                 FROM " . $con_academico->dbname . ".planificacion_estudiante                AS pe
@@ -849,7 +853,7 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
                     INNER JOIN " . $con_academico->dbname . ".unidad_academica              AS ua ON me.uaca_id = ua.uaca_id
                     INNER JOIN " . $con_academico->dbname . ".modalidad                     AS mo ON mo.mod_id = me.mod_id
                     LEFT JOIN " . $con_academico->dbname . ".registro_adicional_materias    AS ram on ram.ron_id = r.ron_id
-                    
+                    INNER JOIN db_facturacion.detalle_pagos_factura                         AS dpfa on ram.pfes_id = dpfa.pfes_id
                     LEFT JOIN (
                         SELECT 
                             r.pes_id as pes_id,
@@ -868,7 +872,9 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
                             rm.roi_id_3 = it.roi_id OR
                             rm.roi_id_4 = it.roi_id OR
                             rm.roi_id_5 = it.roi_id OR
-                            rm.roi_id_6 = it.roi_id
+                            rm.roi_id_6 = it.roi_id OR
+                            rm.roi_id_7 = it.roi_id OR
+                            rm.roi_id_8 = it.roi_id
                             )
                         WHERE
                             r.ron_estado = 1 AND r.ron_estado_logico = 1 AND
@@ -888,9 +894,9 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
                     ) AS mi ON mi.ron_id = r.ron_id
                     LEFT JOIN " . $con_academico->dbname . ".registro_pago_matricula AS reg on reg.per_id = per.per_id 
                         AND r.ron_id = reg.ron_id AND reg.rpm_estado = 1 AND reg.rpm_estado_logico = 1
-                    LEFT JOIN " . $con_academico->dbname . ".enrolamiento_agreement AS enr on enr.ron_id = r.ron_id 
+                    "./*LEFT JOIN " . $con_academico->dbname . ".enrolamiento_agreement AS enr on enr.ron_id = r.ron_id 
                         AND reg.rpm_estado = 1 AND reg.rpm_estado_logico = 1 AND enr.rpm_id = ram.rpm_id AND enr.eagr_estado = 1 AND enr.eagr_estado_logico = 1
-                    LEFT JOIN (
+                    */" LEFT JOIN (
                         SELECT
                             ro.ron_id as ron_id,
                             ro.rpm_id as rpm_id,
@@ -910,6 +916,7 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
                     $str_search 
                     $condition
                     reg.rpm_id = ram.rpm_id AND
+                    dpfa.dpfa_estado_pago = 2 and dpfa.dpfa_estado_financiero = 'C' AND
                     pe.pes_estado = 1 AND pe.pes_estado_logico = 1 AND
                     p.pla_estado = 1 AND p.pla_estado_logico = 1 AND
                     per.per_estado = 1 AND per.per_estado_logico = 1 AND 
@@ -920,8 +927,11 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
                     tmp.Cant IS NOT NULL AND
                     tmp.Costo IS NOT NULL AND
                     tmp.costo_adm IS NOT NULL AND 
-                    ram.rpm_id IS NOT NULL AND 
-                    reg.rpm_tipo_pago = 2";
+                    ram.rpm_id IS NOT NULL AND
+                    dpfa.dpfa_estado = 1 and dpfa.dpfa_estado_logico = 1 AND 
+                    reg.rpm_tipo_pago = 2
+
+                order by fecha desc";
 
       
         $comando = $con_academico->createCommand($sql);
@@ -943,7 +953,7 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
                     'pageSize' => Yii::$app->params["pageSize"],
                 ],
                 'sort' => [
-                    'attributes' => ['Estudiante', 'Cedula',"Carrera","Modalidad","Periodo","Estado"],
+                    'attributes' => ['Estudiante', 'Cedula',"Carrera","Modalidad","Periodo","Estado","Fecha"],
                 ],
             ]);
 
@@ -1216,7 +1226,17 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
         \app\models\Utilities::putMessageLogFile('mensaje: ' .$comando->getRawSql());
         $comando->bindParam(":num_cuota",$num_cuota, \PDO::PARAM_STR);
         $comando->bindParam(":per_id",$per_id, \PDO::PARAM_INT);
-        $res = $comando->queryOne();
+        $res = $comando->queryAll();
+        return $res;
+    }
+    function getFechasVencimiento3($saca_id){
+        $con = \Yii::$app->db_academico;
+        
+        $sql = "select fvpa_cuota as id,fvpa_fecha_vencimiento from db_academico.fechas_vencimiento_pago where saca_id = $saca_id;";
+
+        $comando = $con->createCommand($sql);
+        \app\models\Utilities::putMessageLogFile('mensaje: ' .$comando->getRawSql());
+        $res = $comando->queryAll();
         return $res;
     }
 
@@ -1267,7 +1287,7 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
             $sql = "SELECT fvpa_fecha_vencimiento as fecha
                     from " . $con->dbname . ".fechas_vencimiento_pago 
                     WHERE fvpa_estado_logico = '1'
-                    and fvpa_paca_id = $pla_id
+                    and saca_id = $pla_id
                     and fvpa_cuota = $i;";
             $comando = $con->createCommand($sql);
             \app\models\Utilities::putMessageLogFile('mensaje: ' .$comando->getRawSql());
@@ -1340,7 +1360,7 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
 
 
          $comando = $con->createCommand($sql);
-         //\app\models\Utilities::putMessageLogFile('mensaje: ' .$comando->getRawSql());
+         \app\models\Utilities::putMessageLogFile('mensaje: ' .$comando->getRawSql());
          
          $resultData = $comando->queryOne();
  
@@ -1383,6 +1403,47 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
     \app\models\Utilities::putMessageLogFile('getPerfilSearchListPago: '.$comando->getRawSql());
     return $resultData;            
 
+    }
+
+    public function getFechasVencimientosPagos(){
+        $con = \Yii::$app->db_academico;
+        $sql = "SELECT distinct saca.saca_id as id,
+                concat(saca.saca_nombre,' - ', saca.saca_anio) as periodo, 
+                ifnull(saca.saca_intensivo,0) as 'int',
+                fvp.fvpa_fecha_vencimiento as fecha,
+                ifnull(fvpa_bloque,'-') as bloque,
+                case pla.mod_id
+                when 1 then 'ONLINE'
+                when 2 then 'PRESENCIAL'
+                when 3 then 'SEMIPRESENCIAL'
+                when 4 then 'DISTANCIA'
+                else '-'
+                end as modalidad
+                FROM " . $con->dbname . ".fechas_vencimiento_pago fvp
+                INNER JOIN " . $con->dbname . ".semestre_academico saca on fvp.saca_id = saca.saca_id
+                inner join " . $con->dbname . ".planificacion pla on pla.saca_id = saca.saca_id
+                WHERE fvpa_estado = 1
+                and fvpa_estado_logico = 1
+                and pla.pla_estado = 1
+                order by saca.saca_id,pla.mod_id,fvp.fvpa_fecha_vencimiento;";
+    
+        $comando = $con->createCommand($sql);
+        
+        $res = $comando->queryAll();
+        \app\models\Utilities::putMessageLogFile($comando->getRawSql());
+
+        //if($dataProvider){
+            $dataProvider = new ArrayDataProvider([
+                'key' => 'Id',
+                'allModels' => $res,
+                'pagination' => [
+                    'pageSize' => Yii::$app->params["pageSize"],
+                ],
+            ]);
+
+            return $dataProvider;
+        //}
+        //return $res;
     }
 }
 

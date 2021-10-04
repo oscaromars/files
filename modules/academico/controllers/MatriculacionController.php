@@ -1163,7 +1163,7 @@ class MatriculacionController extends \app\components\CController {
         $_SESSION['JSLANG']['You must choose at least two'] = Academico::t('matriculacion', 'You must choose at least two');
         $_SESSION['JSLANG']['You must choose at least subject'] = Academico::t('matriculacion', 'You must choose at least subjects');
         $_SESSION['JSLANG']['The number of subject that you can cancel is '] = Academico::t('matriculacion', 'The number of subject that you can cancel is ');
-        $_SESSION['JSLANG']['You must choose_the maximum of six'] = Academico::t('matriculacion', 'You must choose_the maximum of six');
+        $_SESSION['JSLANG']['You must choose the maximum of six'] = Academico::t('matriculacion', 'You must choose the maximum of six');
 
         $per_id = $uper_id ? $uper_id:Yii::$app->session->get("PB_perid");
         $usuario = @Yii::$app->user->identity->usu_id;
@@ -1451,7 +1451,7 @@ class MatriculacionController extends \app\components\CController {
                 $result_pago = RegistroPagoMatricula::checkPagoEstudiante($per_id, $pla_id_est);
                 
                 // if (count($result_pago) < 1) {
-                if (count($result_pago)<0) {
+                if (empty($result_pago)) {
                     // print_r($result_pago);
                     // print_r($per_id);
                     // die();
@@ -1645,7 +1645,7 @@ class MatriculacionController extends \app\components\CController {
                 $result_pago = RegistroPagoMatricula::checkPagoEstudiante($per_id, $pla_id_est);
                 
                 // if (count($result_pago) < 1) {
-                if (count($result_pago) < 0) {
+                if (empty($result_pago)) {
                     // print_r($result_pago);
                     // print_r($per_id);
                     // die();
@@ -1998,12 +1998,20 @@ class MatriculacionController extends \app\components\CController {
                 // \app\models\Utilities::putMessageLogFile($cuotas);
 
                 // Incluír los gastos administrativos
+                if ($data_student['mod_id'] == 1 ){
+                    $administrativos='GESTION DE ENTORNOS VIRTUALES';
+                    //print_r($administrativos);
+                }else{
+                    $administrativos = 'GASTOS ADMINISTRATIVOS';
+                    // print_r($administrativos);
+                }
+                 
                 $gastos_administrativos = $ron['ron_valor_gastos_pendientes'];
                 if($gastos_administrativos > 0){
                     $valor_total += $gastos_administrativos;
                     // Llenar con campos vacíos las olumnas que no tengan datos para que no aparezcan como "(no definido)"
                     $materias_data_arr[] = [
-                                            "Subject" => "Gastos Administrativos", 
+                                            "Subject" => $administrativos, 
                                             "Cost" => $gastos_administrativos,
                                             "Code" => "",
                                             "Block" => "",

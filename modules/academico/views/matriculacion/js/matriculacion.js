@@ -270,8 +270,8 @@ function registro() {
         if (this.checked &&  $(this).attr('disabled') != "disabled" ) {
             materias[contador]  = $(this).val();
             codes[contador]     = $(this).attr('name');
-            bloque[contador]    = $(this).parent().prev().prev().prev().prev().prev().prev().text();
-            hora[contador]      = $(this).parent().prev().prev().prev().prev().prev().text();
+            bloque[contador]    = $(this).parent().prev().prev().prev().prev().prev().text();
+            hora[contador]      = $(this).parent().prev().prev().prev().prev().prev().prev().text();
             paralelo[contador]  = $(this).parent().prev().prev().prev().prev().text();
             credits[contador]   = $(this).parent().prev().prev().prev().text();
             costs[contador]     = $(this).parent().prev().prev().text();

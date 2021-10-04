@@ -96,7 +96,7 @@ class DiplomaController extends \app\components\CController {
             $dates = '<H6>Dado '.$fecha. '</H6>';
             }else{
                 //if ($model->dip_id > 3514 && $model->dip_id < 3549) { //NUEVO
-                    $title = "El Departamento de Vinculación con la Sociedadconfiere el presente certificado a:";
+                    $title = "El Departamento de Vinculación con la Sociedad confiere el presente certificado a:";
                     $body  = '<H6>Por haber asistido al seminario:</H6>';
                     $body .= '<span><H6>'.$model->dip_programa.'</span></H6>';
                     $body .= '<H6>Dado en el marco del desarrollo de las actividades de Vinculación con la sociedad de UTEG-POSGRADO, dictado por las y los maestrantes de la Maestría en Mercadotecnia. Con una duración de '. $model->dip_horas .' horas técnico pedagógicas.';

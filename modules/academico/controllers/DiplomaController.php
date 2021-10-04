@@ -52,7 +52,7 @@ class DiplomaController extends \app\components\CController {
         $arr_carreras = array_merge($arr_carreras, array_column($carreras, 'dip_carrera'));
         $arr_modalidades = array_merge($arr_modalidades, array_column($modalidades, 'dip_modalidad'));
         $arr_programas = array_merge($arr_programas, array_column($programas, 'dip_programa'));
-        
+
         return $this->render('index', [
             'model' => $model->getAllDiplomasGrid(NULL),
             'arr_carreras' => $arr_carreras,
@@ -88,19 +88,30 @@ class DiplomaController extends \app\components\CController {
             $body .= $fecha;//'<span>desde el '.$desde.' hasta el '.$hasta.'</span>';
             $body .= ' con una duración de <span>'.$model->dip_horas.' horas pedagógicas.</span>';
            } else{
+            if ($model->dip_id > 49 && $model->dip_id < 3515) {
             $title = "OTORGA EL PRESENTE CERTIFICADO A:";
             $body  = '<H6>Por su participación en el seminario:</H6>';
             $body .= '<span><H6>'.$model->dip_programa.'</span></H6>';
-            $body .= '<H6>En el marco del desarrollo de las actividades de Vinculación con la sociedad de UTEG-POSGRADO, dictado por las y los maestrantes de la Maestría en Educación Online. Con una duración de '. $model->dip_horas .' horas de capacitación.'; 
+            $body .= '<H6>En el marco del desarrollo de las actividades de Vinculación con la sociedad de UTEG-POSGRADO, dictado por las y los maestrantes de la Maestría en Educación Online. Con una duración de '. $model->dip_horas .' horas de capacitación.';
             $dates = '<H6>Dado '.$fecha. '</H6>';
-          }    
+            }else{
+                //if ($model->dip_id > 3514 && $model->dip_id < 3549) { //NUEVO
+                    $title = "El Departamento de Vinculación con la Sociedad confiere el presente certificado a:";
+                    $body  = '<H6>Por haber asistido al seminario:</H6>';
+                    $body .= '<span><H6>'.$model->dip_programa.'</span></H6>';
+                    $body .= '<H6>Dado en el marco del desarrollo de las actividades de Vinculación con la sociedad de UTEG-POSGRADO, dictado por las y los maestrantes de la Maestría en Mercadotecnia. Con una duración de '. $model->dip_horas .' horas técnico pedagógicas.';
+                    $dates = '<H6>Dado '.$fecha. '</H6>';
+                // }
+            }
+
+          }
             $rep = new ExportFile();
             //$this->layout = false;
             if ($model->dip_id < 50) {
             $this->layout = '@modules/academico/views/diploma/tpl_main';
             }else{
-            $this->layout = '@modules/academico/views/diploma/tpl_vinculacion';   
-            }    
+            $this->layout = '@modules/academico/views/diploma/tpl_vinculacion';
+            }
             $rep->mgl = 0;
             $rep->mgr = 0;
             $rep->mgt = 0;
@@ -113,8 +124,8 @@ class DiplomaController extends \app\components\CController {
             $fontdata["blacksword"] = ['R' => 'Blacksword.ttf'];
             $fontdata["gothambold"] = ['R' => 'GothamBold.ttf'];
             $rep->fontdata = $fontdata;
-            
-            $rep->orientation = "L"; // tipo de orientacion L => Horizontal, P => Vertical   
+
+            $rep->orientation = "L"; // tipo de orientacion L => Horizontal, P => Vertical
             $rep->footer = FALSE;
             $rep->createReportPdf(
                     $this->render('@modules/academico/views/diploma/tpl_diploma', [

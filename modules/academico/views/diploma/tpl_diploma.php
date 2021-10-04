@@ -1,4 +1,4 @@
-<?php 
+<?php
     use \CodeItNow\BarcodeBundle\Utils\QrCode;
 
     $qrCode = new QrCode();
@@ -12,7 +12,7 @@
         //->setLabel(Yii::t("formulario", "Scan QR Code"))
         ->setLabelFontSize(16)
         ->setImageType(QrCode::IMAGE_TYPE_PNG);
-    
+
 ?>
 
 <div class="title">
@@ -29,10 +29,10 @@
 </div>
 <div class="body">
     <div class="bcontent">
-        <div class="bodyContent"><?= $body ?></div> 
-        <div class="bodyDates"><?= $dates ?></div>                
+        <div class="bodyContent"><?= $body ?></div>
+        <div class="bodyDates"><?= $dates ?></div>
     </div>
-    
+
 </div>
 <div class="qr">
     <?=  '<img class="imgQR" src="data:'.$qrCode->getContentType().';base64,'.$qrCode->generate().'" />'; ?>

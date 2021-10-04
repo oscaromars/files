@@ -4,7 +4,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <style>
-        
+
         body {
             line-height: 1;
             width: 1122px;
@@ -12,7 +12,7 @@
             background-image: url('data:image/png;base64,<?= base64_encode(file_get_contents(__DIR__ . "/img/dip_template.png")) ?>');
             background-repeat: no-repeat;
         }
-        
+
         html,
         body,
         div {
@@ -23,51 +23,51 @@
             font: inherit;
             vertical-align: baseline;
         }
-        
+
         #main {
             font-family: Arial, sans-serif;
         }
-        
+
         #container {
             height: 100%;
             position: relative;
         }
-        
+
         .bold {
             font-weight: bold;
         }
-        
+
         .clear {
             clear: both;
         }
-        
+
         .left {
             float: left;
         }
-        
+
         .col1 {
             width: 322px;
             height: 826px;
             position: relative;
         }
-        
+
         .col2 {
             width: 800px;
             height: 826px;
             position: relative;
         }
-        
+
         .title {
             height: 312px;
             position: relative;
             line-height: 30px;
         }
-        
+
         .name {
             height: 155px;
             position: relative;
         }
-        
+
         .body {
             height: 105px;
             position: relative;
@@ -77,7 +77,7 @@
             margin-right: 20px;
             margin-left: 20px;
         }
-        
+
         .titleContent {
             text-align: center;
             /*width: 800px;*/
@@ -86,7 +86,7 @@
             color: #575756FF;
             padding-top: 240px;
         }
-        
+
         .nameContent {
             text-align: center;
             /*width: 800px;*/
@@ -104,7 +104,7 @@
             color: #00548bff;
             padding-top: 60px; /*40px*/
         }
-        
+
         .bodyContent {
             text-align: center;
             /*width: 800px;*/

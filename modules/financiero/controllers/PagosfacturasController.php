@@ -22,6 +22,7 @@ use app\modules\academico\models\RegistroPagoMatricula;
 use app\modules\financiero\models\PagosFacturaEstudiante;
 use app\modules\academico\models\Matriculacion;
 use app\modules\financiero\models\CargaCartera;
+use app\modules\academico\models\PlanificacionEstudiante;
 use app\modules\financiero\models\Cruce;
 use app\modules\financiero\Module as financiero;
 use app\modules\admision\Module as admision;
@@ -1463,5 +1464,17 @@ class PagosfacturasController extends \app\components\CController {
             }
             return;
         }
+    }
+
+    public function actionIndex() {
+        //$dpfa_id = base64_decode($_GET["dpfa_id"]);
+        $mod_cartera = new CargaCartera();
+        $mod_periodo = new PlanificacionEstudiante();
+        $model = $mod_cartera->consultarCarteraEstudiantes();
+        $busquedalumno = $mod_periodo->busquedaEstudianteplanificacion();
+        return $this->render('index', [
+            'model' => $model,
+            'arr_alumno' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']], $busquedalumno), 'id', 'name'),
+        ]);
     }
 }

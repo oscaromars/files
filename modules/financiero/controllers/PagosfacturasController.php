@@ -1470,7 +1470,20 @@ class PagosfacturasController extends \app\components\CController {
         //$dpfa_id = base64_decode($_GET["dpfa_id"]);
         $mod_cartera = new CargaCartera();
         $mod_periodo = new PlanificacionEstudiante();
-        $model = $mod_cartera->consultarCarteraEstudiantes();
+        $data = Yii::$app->request->get();
+
+        if ($data['PBgetFilter']) {
+            $arrSearch["search"] = $data['search'];
+            $model = $mod_cartera->consultarCarteraEstudiantes($arrSearch);
+            return $this->render('index-grid', [
+                        "model" => $model,
+            ]);
+        } else {
+            $model = $mod_cartera->consultarCarteraEstudiantes(null);
+        }
+        if (Yii::$app->request->isAjax) {
+            $data = Yii::$app->request->post();
+        }
         $busquedalumno = $mod_periodo->busquedaEstudianteplanificacion();
         return $this->render('index', [
             'model' => $model,

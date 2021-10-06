@@ -629,58 +629,32 @@ class CargaCartera extends \yii\db\ActiveRecord
 
         $estado = 1;
         $str_search = "";
-        /*if (isset($arrFiltro) && count($arrFiltro) > 0) {
+        if (isset($arrFiltro) && count($arrFiltro) > 0) {
             if ($arrFiltro['search'] != "") {
-                $str_search .= "(pers.per_pri_nombre like :estudiante OR ";
-                $str_search .= "pers.per_pri_apellido like :estudiante OR ";
-                $str_search .= "pers.per_cedula like :estudiante )  AND ";
+                $str_search = "per.per_id = :per_id  AND ";
             }
-            if ($arrFiltro['f_inif'] != "" && $arrFiltro['f_finf'] != "") {
-                $str_search .= " ccar.ccar_fecha_factura BETWEEN :fec_inif AND :fec_finf AND ";
-            }
-            if ($arrFiltro['f_iniv'] != "" && $arrFiltro['f_finv'] != "") {
-                $str_search .= " ccar.ccar_fecha_vencepago BETWEEN :fec_iniv AND :fec_finv AND ";
-            }
-            if ($arrFiltro['estadopago'] != '0') {
-                $str_search .= "ccar.ccar_estado_cancela = :estadopago AND ";
-            }
-        }*/
-        $sql = "SELECT distinct
+        }
+        $sql = "SELECT DISTINCT
         ccar.ccar_documento_identidad,
         est.est_id,
-        CONCAT(per.per_pri_nombre, ' ', per.per_pri_apellido) as nombres,
+        CONCAT(per.per_pri_nombre, ' ', per.per_pri_apellido) AS nombres,
         per.per_correo,
-        ifnull(est.est_matricula,' ') as matricula
+        IFNULL(est.est_matricula,' ') AS matricula
         FROM " . $con2->dbname . ".carga_cartera ccar
         INNER JOIN " . $con->dbname . ".estudiante est on est.est_id = ccar.est_id
         INNER JOIN " . $con1->dbname . ".persona per on per.per_id = est.per_id
-        where est.est_estado = :estado and
+        WHERE
+        $str_search
+        est.est_estado = :estado AND
         est.est_estado_logico = :estado";
 
         $comando = $con->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
-        /*if (isset($arrFiltro) && count($arrFiltro) > 0) {
-            $fecha_inif = $arrFiltro["f_inif"] . " 00:00:00";
-            $fecha_finf = $arrFiltro["f_finf"] . " 23:59:59";
-            $fecha_iniv = $arrFiltro["f_iniv"] . " 00:00:00";
-            $fecha_finv = $arrFiltro["f_finv"] . " 23:59:59";
-            $search_cond = "%" . $arrFiltro["search"] . "%";
-            $estadopago = $arrFiltro['estadopago'];
-            if ($arrFiltro['f_inif'] != "" && $arrFiltro['f_finf'] != "") {
-                $comando->bindParam(":fec_inif", $fecha_inif, \PDO::PARAM_STR);
-                $comando->bindParam(":fec_finf", $fecha_finf, \PDO::PARAM_STR);
-            }
-            if ($arrFiltro['f_iniv'] != "" && $arrFiltro['f_finv'] != "") {
-                $comando->bindParam(":fec_iniv", $fecha_iniv, \PDO::PARAM_STR);
-                $comando->bindParam(":fec_finv", $fecha_finv, \PDO::PARAM_STR);
-            }
+        if (isset($arrFiltro) && count($arrFiltro) > 0) {
             if ($arrFiltro['search'] != "") {
-                $comando->bindParam(":estudiante", $search_cond, \PDO::PARAM_STR);
+                $comando->bindParam(":per_id", $arrFiltro["search"], \PDO::PARAM_INT);
             }
-            if ($arrFiltro['estadopago'] != '0') {
-                $comando->bindParam(":estadopago", $estadopago, \PDO::PARAM_STR);
-            }
-        }*/
+        }
         $resultData = $comando->queryAll();
         $dataProvider = new ArrayDataProvider([
             'key' => 'id',

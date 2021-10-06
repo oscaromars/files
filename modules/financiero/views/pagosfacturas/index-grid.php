@@ -15,7 +15,7 @@ academico::registerTranslations();
  <div>
     <?=
     PbGridView::widget([
-        'id' => 'Pbestudiantecartera',
+        'id' => 'TbG_Estcartera',
         'showExport' => false,
         'fnExportEXCEL' => "exportExcelestcartera",
         'fnExportPDF' => "exportPdfestcartera",

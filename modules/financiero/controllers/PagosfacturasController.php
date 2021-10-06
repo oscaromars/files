@@ -172,7 +172,12 @@ class PagosfacturasController extends \app\components\CController {
     }
 
     public function actionSubirpago() {
+        $perids = base64_decode($_GET["per_ids"]);
         $per_idsession = @Yii::$app->session->get("PB_perid");
+        //\app\models\Utilities::putMessageLogFile('perids...: ' . $perids);
+        if (!empty($perids)) {
+            $per_idsession = $perids;
+        }
         $especiesADO = new Especies();
         $mod_unidad = new UnidadAcademica();
         $mod_modalidad = new Modalidad();
@@ -413,8 +418,16 @@ class PagosfacturasController extends \app\components\CController {
     }
 
     public function actionSavepagopendiente() {
+        //DESCOMENTAR $perids AL PROBAR DESDE COLECTURIA LUEGO DE BOTONES
+        // obtener el per id del estudiante si esta autenticado colecturia
+        // $perids = base64_decode($_GET["per_ids"]);
         //Obtenemo el id de la persona
         $per_idsession = @Yii::$app->session->get("PB_perid");
+        //DESCOMENTAR IF AL PROBAR DESDE COLECTURIA LUEGO DE BOTONES
+        /*\app\models\Utilities::putMessageLogFile('perids...: ' . $perids);
+        if (!empty($perids)) {
+            $per_idsession = $perids;
+        }*/
         //Obtenemos la fecha de hoy y le damos formato
         $fecha = date(Yii::$app->params["dateTimeByDefault"]);
         //Revisamos si la peticion fue por ajax

@@ -47,19 +47,16 @@ academico::registerTranslations();
                 'header' => academico::t("Academico", "Enrollment Number"),
                 'value' => 'matricula',
             ],
-            //[
-            //    'class' => 'yii\grid\ActionColumn',
-            //    'header' => Yii::t("formulario", "Actions"),
-            //    'template' => '{view} {delete}',
-            //    'buttons' => [
-            //        'view' => function ($url, $model) {
-            //            return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', Url::to(['usuarioeducativa/viewusuario', 'uedu_id' => base64_encode($model["uedu_id"])]), ["data-toggle" => "tooltip", "title" => "Ver Usuario", "data-pjax" => 0]);
-            //        },
-            //        'delete' => function ($url, $model) {
-            //           return Html::a('<span class="glyphicon glyphicon-trash"></span>', "#", ['onclick' => "eliminarusuario(" . $model['uedu_id'] . ");", "data-toggle" => "tooltip", "title" => "Eliminar Usuario", "data-pjax" => 0]);
-            //         }
-            //    ],
-            //],
+            [
+                'class' => 'yii\grid\ActionColumn',
+                'header' => Yii::t("formulario", "Actions"),
+                'template' => '{view}',
+                'buttons' => [
+                    'view' => function ($url, $model) {
+                        return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', Url::to(['pagosfacturas/viewsaldo', 'per_ids' => base64_encode($model["per_id"])]), ["data-toggle" => "tooltip", "title" => "Pagos Facturas Estudiantes", "data-pjax" => 0]);
+                    },
+                ],
+            ],
         ],
     ])
     ?>

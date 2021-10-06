@@ -635,11 +635,13 @@ class CargaCartera extends \yii\db\ActiveRecord
             }
         }
         if ($onlyData == false) {
-            $est_id = "est.est_id, ";
+            $est_id = "est.est_id,";
+            $per_id = "per.per_id,";
         }
         $sql = "SELECT DISTINCT
         ccar.ccar_documento_identidad,
         $est_id
+        $per_id
         CONCAT(per.per_pri_nombre, ' ', per.per_pri_apellido) AS nombres,
         per.per_correo,
         IFNULL(est.est_matricula,' ') AS matricula

@@ -121,7 +121,12 @@ class PagosfacturasController extends \app\components\CController {
     }
 
     public function actionViewsaldo() {
+        $perids = base64_decode($_GET["per_ids"]);
         $per_idsession = @Yii::$app->session->get("PB_perid");
+        //\app\models\Utilities::putMessageLogFile('perids...: ' . $perids);
+        if (!empty($perids)) {
+            $per_idsession = $perids;
+        }
         $especiesADO = new Especies();
         $mod_unidad = new UnidadAcademica();
         $mod_modalidad = new Modalidad();

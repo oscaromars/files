@@ -630,13 +630,16 @@ class CargaCartera extends \yii\db\ActiveRecord
         $estado = 1;
         $str_search = "";
         if (isset($arrFiltro) && count($arrFiltro) > 0) {
-            if ($arrFiltro['search'] != "") {
+            if ($arrFiltro['search'] > 0) {
                 $str_search = "per.per_id = :per_id  AND ";
             }
         }
+        if ($onlyData == false) {
+            $est_id = "est.est_id, ";
+        }
         $sql = "SELECT DISTINCT
         ccar.ccar_documento_identidad,
-        est.est_id,
+        $est_id
         CONCAT(per.per_pri_nombre, ' ', per.per_pri_apellido) AS nombres,
         per.per_correo,
         IFNULL(est.est_matricula,' ') AS matricula
@@ -651,7 +654,7 @@ class CargaCartera extends \yii\db\ActiveRecord
         $comando = $con->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
         if (isset($arrFiltro) && count($arrFiltro) > 0) {
-            if ($arrFiltro['search'] != "") {
+            if ($arrFiltro['search'] > 0) {
                 $comando->bindParam(":per_id", $arrFiltro["search"], \PDO::PARAM_INT);
             }
         }

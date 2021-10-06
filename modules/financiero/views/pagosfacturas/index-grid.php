@@ -7,7 +7,7 @@ use app\widgets\PbGridView\PbGridView;
 use app\modules\admision\Module;
 use app\modules\academico\Module as academico;
 use app\modules\admision\Module as admision;
-
+//print_r($model);
 admision::registerTranslations();
 academico::registerTranslations();
 ?>
@@ -16,7 +16,7 @@ academico::registerTranslations();
     <?=
     PbGridView::widget([
         'id' => 'TbG_Estcartera',
-        'showExport' => false,
+        'showExport' => true,
         'fnExportEXCEL' => "exportExcelestcartera",
         'fnExportPDF' => "exportPdfestcartera",
         'tableOptions' => [

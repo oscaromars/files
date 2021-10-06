@@ -460,3 +460,13 @@ function actualizarGridEstCartera() {
         setTimeout(hideLoadingPopup, 2000);
     }
 }
+
+function exportExcelestcartera() {
+    var search = $('#cmb_buscarestcartera').val();
+    window.location.href = $('#txth_base').val() + "/financiero/pagosfacturas/expexcelestcartera?search=" + search;
+}
+
+function exportPdfestcartera() {
+    var search = $('#cmb_buscarestcartera').val();
+    window.location.href = $('#txth_base').val() + "/financiero/pagosfacturas/exppdfestcartera?pdf=1&search=" + search;
+}

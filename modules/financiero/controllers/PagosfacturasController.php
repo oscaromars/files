@@ -62,7 +62,7 @@ class PagosfacturasController extends \app\components\CController {
     private function estadoReverso() {
         return [
             '0' => Yii::t("formulario", "Seleccione"),
-            '1' => Yii::t("formulario", "Pendiente"),            
+            '1' => Yii::t("formulario", "Pendiente"),
         ];
     }
 
@@ -148,7 +148,7 @@ class PagosfacturasController extends \app\components\CController {
         ]);
     }
 
-    public function actionRevisar() { 
+    public function actionRevisar() {
         $dpfa_id = base64_decode($_GET["dpfa_id"]);
         $mod_pagos = new PagosFacturaEstudiante();
         $mod_unidad = new UnidadAcademica();
@@ -250,7 +250,7 @@ class PagosfacturasController extends \app\components\CController {
     public function actionSaverechazo() {
 
         Utilities::putMessageLogFile("saverechazo");
-                           
+
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
             $mod_pagos = new PagosFacturaEstudiante();
@@ -289,7 +289,7 @@ class PagosfacturasController extends \app\components\CController {
                             $cartera = $mod_pagos->buscarIdCartera($id);
                             $id_cartera = $cartera[0]['ccar_id'];
                         }
-                        
+
                         if ($respago) {
                             $transaction->commit();
                             $transaction1->commit();
@@ -336,25 +336,25 @@ class PagosfacturasController extends \app\components\CController {
                                 //Utilities::putMessageLogFile('entro_envio vorreo');
                                 //Utilities::putMessageLogFile('correo..' . $correo_estudiante);
                                 $body = Utilities::getMailMessage("pagoaprobado", array(
-                                            "[[user]]" => $user,   
+                                            "[[user]]" => $user,
                                             "[[factura]]" => $datos['dpfa_factura'],
                                                 ), Yii::$app->language, Yii::$app->basePath . "/modules/financiero");
                                                 Utilities::sendEmail($tituloMensaje, Yii::$app->params["adminEmail"], [$correo_estudiante => $user], $asunto, $body);
                             }
-                            
+
                             // actualizar estados y data en registro_pago_matricula
-                            $mod_pagosmat = new RegistroPagoMatricula();                          
-                            $data_planificacion_pago = Matriculacion::getPlanificacionPago($datos['per_id']);                            
+                            $mod_pagosmat = new RegistroPagoMatricula();
+                            $data_planificacion_pago = Matriculacion::getPlanificacionPago($datos['per_id']);
                             /*\app\models\Utilities::putMessageLogFile('pfes_concepto: ' . $datos['pfes_concepto']);
                             \app\models\Utilities::putMessageLogFile('per_id: ' . $datos['per_id']);
                             \app\models\Utilities::putMessageLogFile('pla_id: ' . $data_planificacion_pago['pla_id']);*/
                             if ($datos['pfes_concepto'] == "MA") {
-                                
+
                                 if ($resultado == "2") {
-                                    $rpm_estado_aprobacion = 1;     
+                                    $rpm_estado_aprobacion = 1;
                                 }else{
                                     $rpm_estado_aprobacion = 2;
-                                } 
+                                }
                                 \app\models\Utilities::putMessageLogFile('rpm_estado_aprobacion: ' . $rpm_estado_aprobacion);
                                 $regpagomatricula = $mod_pagosmat->Modificarregsitropagomatricula($datos['per_id'], $data_planificacion_pago['pla_id'], $rpm_estado_aprobacion);
 
@@ -417,11 +417,11 @@ class PagosfacturasController extends \app\components\CController {
             //Obtenemo la data enviada
             $data           = Yii::$app->request->post();
             //Preguntamos por la forma de pago
-            $name   = $data['nombres']; 
+            $name   = $data['nombres'];
             //Obtenemos su email ya que estos datos son solicitados por stripe
             $mod_usuario = Persona::find()->select("per_correo")->where(["per_id" => $data['per_id']])->asArray()->all();
-            $email       = $mod_usuario[0]['per_correo'];   
-            
+            $email       = $mod_usuario[0]['per_correo'];
+
             if($data["formapago"]==1){
                 //Si la forma de Pago es 1 significa que es por Tarjeta de credito
                 $statusMsg = '';
@@ -429,7 +429,7 @@ class PagosfacturasController extends \app\components\CController {
                 //Este token es enviada por la libreria de javascript de stripe
                 if(!empty($data['token'])){
                     //Obtenemos el token y tambien el nombre de la persona que esta cancelando
-                    $token  = $data['token']; 
+                    $token  = $data['token'];
 
                     /******************************************************************/
                     /********** Clave de Conexión de Stripe ***************************/
@@ -440,18 +440,18 @@ class PagosfacturasController extends \app\components\CController {
 
                     //Se hace invocacion a libreria de stripe que se encuentra en el vendor
                     \Stripe\Stripe::setApiKey($stripe['secret_key']);
-                     
-                    
+
+
                     $mensaje_error = '';
                     $mensaje_cod   = '';
-                    try {  
+                    try {
                         //Se crea el usuario para stripe
-                        $customer = \Stripe\Customer::create(array( 
-                            'email'   => $email, 
-                            'source'  => $token 
-                        )); 
-                    }catch(\Stripe\Exception\CardException $e) {  
-                        //$api_error = $e->getMessage();  
+                        $customer = \Stripe\Customer::create(array(
+                            'email'   => $email,
+                            'source'  => $token
+                        ));
+                    }catch(\Stripe\Exception\CardException $e) {
+                        //$api_error = $e->getMessage();
                         // Since it's a decline, \Stripe\Exception\CardException will be caught
                         /*
                         $mensaje = '';
@@ -511,26 +511,26 @@ class PagosfacturasController extends \app\components\CController {
                             "title" => Yii::t('jslang', 'Error'),
                         );
                         echo Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
-                        return; 
+                        return;
                     }//if
-                     
-                    //Si se creo el usuario y no hay error 
+
+                    //Si se creo el usuario y no hay error
                     //print_r($mensaje_cod);die();
-                    if(empty($mensaje_cod) && $customer){  
+                    if(empty($mensaje_cod) && $customer){
                         //El valor se multiplica por 100 para convertirlo a centavos
-                        $valor_inscripcion = $data['valor']; 
-                        $itemPriceCents    = ($valor_inscripcion*100); 
-                         
+                        $valor_inscripcion = $data['valor'];
+                        $itemPriceCents    = ($valor_inscripcion*100);
+
                         //Se crea el cobro
-                        try {  
-                            $charge = \Stripe\Charge::create(array( 
-                                'customer'    => $customer->id, 
-                                'amount'      => $itemPriceCents, 
-                                'currency'    => "usd", 
+                        try {
+                            $charge = \Stripe\Charge::create(array(
+                                'customer'    => $customer->id,
+                                'amount'      => $itemPriceCents,
+                                'currency'    => "usd",
                                 'description' => "Pago de Cuotas desde el sistema Asgard/UTEG"
-                            )); 
-                        }catch(Exception $e) {  
-                            $api_error = $e->getMessage();  
+                            ));
+                        }catch(Exception $e) {
+                            $api_error = $e->getMessage();
                             //return json_encode("GALO".$api_error);
                             $message = array(
                                 "wtmessage" => Yii::t("notificaciones", $mensaje_cod),
@@ -538,55 +538,55 @@ class PagosfacturasController extends \app\components\CController {
                             );
                             echo Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
                             return;
-                        } 
-                         
-                        //Si se creo el combo y no hubo error se devuelve el resultado de la transaccion
-                        if(empty($api_error) && $charge){ 
-                            //Cargamos los datos
-                            $chargeJson = $charge->jsonSerialize(); 
-                         
-                            // Check whether the charge is successful 
-                            if( $chargeJson['amount_refunded'] == 0 && 
-                                 empty($chargeJson['failure_code'])  && 
-                                 $chargeJson['paid'] == 1 && 
-                                 $chargeJson['captured'] == 1)
-                            {                                
-                                // Transaction details  
-                                $transactionID  = $chargeJson['balance_transaction']; 
-                                $paidAmount     = $chargeJson['amount']; 
-                                $paidAmount     = ($paidAmount/100); 
-                                $paidCurrency   = $chargeJson['currency']; 
-                                $payment_status = $chargeJson['status']; 
-                                //print_r($chargeJson); die();
-                                $tarjeta        = $chargeJson['payment_method_details']['card']['brand']; 
-                                $tipo           = $chargeJson['payment_method_details']['card']['funding']; 
-                                $digito         = $chargeJson['payment_method_details']['card']['last4']; 
-                                $recibo         = $chargeJson['receipt_url'];
-                                 
-                                // Si el pago fue correcto
-                                if($payment_status == 'succeeded'){ 
-                                    $ordStatus = 'success'; 
+                        }
 
-                                    //Estas variables es para indicar que como fue con tarjeta de una vez 
+                        //Si se creo el combo y no hubo error se devuelve el resultado de la transaccion
+                        if(empty($api_error) && $charge){
+                            //Cargamos los datos
+                            $chargeJson = $charge->jsonSerialize();
+
+                            // Check whether the charge is successful
+                            if( $chargeJson['amount_refunded'] == 0 &&
+                                 empty($chargeJson['failure_code'])  &&
+                                 $chargeJson['paid'] == 1 &&
+                                 $chargeJson['captured'] == 1)
+                            {
+                                // Transaction details
+                                $transactionID  = $chargeJson['balance_transaction'];
+                                $paidAmount     = $chargeJson['amount'];
+                                $paidAmount     = ($paidAmount/100);
+                                $paidCurrency   = $chargeJson['currency'];
+                                $payment_status = $chargeJson['status'];
+                                //print_r($chargeJson); die();
+                                $tarjeta        = $chargeJson['payment_method_details']['card']['brand'];
+                                $tipo           = $chargeJson['payment_method_details']['card']['funding'];
+                                $digito         = $chargeJson['payment_method_details']['card']['last4'];
+                                $recibo         = $chargeJson['receipt_url'];
+
+                                // Si el pago fue correcto
+                                if($payment_status == 'succeeded'){
+                                    $ordStatus = 'success';
+
+                                    //Estas variables es para indicar que como fue con tarjeta de una vez
                                     //se actualize y ya no salgan como pendientes
                                     $dpfa_estado_pago       = 2;
                                     $dpfa_estado_financiero = 'C';
 
                                     $certificado = $chargeJson['receipt_url'];
-                                }else{ 
-                                    $statusMsg = "Your Payment has Failed!"; 
-                                } 
-                            }else{ 
-                                $statusMsg = "Transaction has been failed!"; 
-                            } 
-                        }else{ 
-                            $statusMsg = "Charge creation failed! $mensaje_cod";  
-                        } 
-                    }else{  
-                        $statusMsg = "Invalid card details! bandera = $bandera";  
-                    } 
-                }else{ 
-                    $statusMsg = "Error on form submission."; 
+                                }else{
+                                    $statusMsg = "Your Payment has Failed!";
+                                }
+                            }else{
+                                $statusMsg = "Transaction has been failed!";
+                            }
+                        }else{
+                            $statusMsg = "Charge creation failed! $mensaje_cod";
+                        }
+                    }else{
+                        $statusMsg = "Invalid card details! bandera = $bandera";
+                    }
+                }else{
+                    $statusMsg = "Error on form submission.";
                 }
                 if($statusMsg != ''){
                     $message = array(
@@ -598,7 +598,7 @@ class PagosfacturasController extends \app\components\CController {
                 }
             }else{
                 $mod_fpago     = new FormaPago();
-                $arr_refBancos = $mod_fpago->consultarReferenciaBancos($data["referencia"],$data["banco"]);  
+                $arr_refBancos = $mod_fpago->consultarReferenciaBancos($data["referencia"],$data["banco"]);
 
                 if(!empty($arr_refBancos)) {
                     $message = array(
@@ -636,8 +636,8 @@ class PagosfacturasController extends \app\components\CController {
             }//fin del else
 
             $mod_pagos      = new PagosFacturaEstudiante();
-            $mod_estudiante = new Especies();           
-            
+            $mod_estudiante = new Especies();
+
             //En caso de ser pago por tarjeta entra por if o entra en else si es deposito o transferencia
             if($data["formapago"]==1){
                 $imagen   = $certificado;//"pago_online";
@@ -665,7 +665,7 @@ class PagosfacturasController extends \app\components\CController {
 
             try {
                 //Se obtiene el id del usuario.
-                $usuario = @Yii::$app->user->identity->usu_id;   
+                $usuario = @Yii::$app->user->identity->usu_id;
 
                 //gap
                 //Este codigo de revisar si existe la cuota lo dejo pendiente por el tema del ABONO
@@ -675,7 +675,7 @@ class PagosfacturasController extends \app\components\CController {
                 $y = 0;
                 foreach ($pagadose as $datose) {
                     //consultar la informacion seleccionada de cuota factura
-                    $parametros = explode(";", $pagadose[$y]);                   
+                    $parametros = explode(";", $pagadose[$y]);
                     $resp_consregistro = $mod_pagos->consultarExistepago($est_id, $parametros[0], $parametros[1]);
                     $cuota_pagada .= $parametros[1] . ', ' ;
                     $y++;
@@ -690,7 +690,7 @@ class PagosfacturasController extends \app\components\CController {
 
                     $tituloMensaje = Yii::t("interesado", "Pago Recibido UTEG");
                     $asunto        = Yii::t("interesado", "Pago Recibido UTEG");
-                    
+
                     /*
                     echo($data["valor"]);echo("********");
                     echo($data["valor_check"]);echo("********");
@@ -702,18 +702,18 @@ class PagosfacturasController extends \app\components\CController {
                         if($data["contador_cuotas"] == 1 || $data["contador_cuotas"] == $data["cuotas_check"]){
                             //if($fpag_id == 1){
                                 $mod_cruce = new Cruce();
-                                
+
                                 $resp_mod_cruce  = $mod_cruce->insertarCruce($est_id,  //si
                                                                              $pfes_id, //si
-                                                                             "", // 
-                                                                             $pfes_fecha_pago, 
-                                                                             $data["valor"] - $data["valor_check"], 
-                                                                             $data["valor"] - $data["valor_check"], 
-                                                                             "A", 
+                                                                             "", //
+                                                                             $pfes_fecha_pago,
+                                                                             $data["valor"] - $data["valor_check"],
+                                                                             $data["valor"] - $data["valor_check"],
+                                                                             "A",
                                                                              $usuario);
-                                
+
                             //}
-                        } 
+                        }
                     }
 
                     if($mod_id == 1){ //online
@@ -737,12 +737,12 @@ class PagosfacturasController extends \app\components\CController {
                     }
 
                     if($fpag_id == 1){
-                        $body = Utilities::getMailMessage("pagostripe", 
-                                                          array("[[user]]"     => $name, 
-                                                                "[[telefono]]" => $telefono), 
-                                                          Yii::$app->language);    
+                        $body = Utilities::getMailMessage("pagostripe",
+                                                          array("[[user]]"     => $name,
+                                                                "[[telefono]]" => $telefono),
+                                                          Yii::$app->language);
                         Utilities::sendEmail($tituloMensaje, Yii::$app->params["contactoEmail"], [$email => $name], $asunto, $body);
-                        $bodycolec = Utilities::getMailMessage("colecturiatc", 
+                        $bodycolec = Utilities::getMailMessage("colecturiatc",
                                                                array("[[ident]]"   => $data['txt_cedula'],
                                                                      "[[user]]"    => $name,
                                                                      "[[email]]"   => $email,
@@ -753,15 +753,15 @@ class PagosfacturasController extends \app\components\CController {
                                                                      "[[recibo]]"  => $recibo,),
                                                                Yii::$app->language);
                     }else{
-                        $body = Utilities::getMailMessage("pago", 
-                                                          array("[[user]]"     => $name, 
-                                                                "[[telefono]]" => $telefono), 
-                                                          Yii::$app->language);  
+                        $body = Utilities::getMailMessage("pago",
+                                                          array("[[user]]"     => $name,
+                                                                "[[telefono]]" => $telefono),
+                                                          Yii::$app->language);
                         Utilities::sendEmail($tituloMensaje, Yii::$app->params["contactoEmail"], [$email => $name], $asunto, $body);
                         $bodycolec = Utilities::getMailMessage("colecturia", array("[[user]]" => $name), Yii::$app->language);
                     }
-                    
-                   
+
+
                     Utilities::sendEmail($tituloMensaje, Yii::$app->params["colecturia"]     , [Yii::$app->params["supercolecturia"] => "Colecturia"], $asunto, $bodycolec);
                     Utilities::sendEmail($tituloMensaje, Yii::$app->params["supercolecturia"], [Yii::$app->params["colecturia"]      => "Supervisor Colecturia"], $asunto, $bodycolec);
 
@@ -773,7 +773,7 @@ class PagosfacturasController extends \app\components\CController {
                             //  consultar la informacion seleccionada de cuota factura
                             $parametro = explode(";", $pagados[$x]);
                             //$resp_consfactura = $mod_pagos->consultarPagospendientesp($personaData['per_cedula'], $parametro[0], $parametro[1]);
-                            // insertar el detalle  
+                            // insertar el detalle
                             //$resp_detpagofactura = $mod_pagos->insertarDetpagospendientes($resp_pagofactura, $resp_consfactura['tipofactura'], $resp_consfactura['factura'], $resp_consfactura['descripcion'], $parametro[2], $resp_consfactura['fecha'], $resp_consfactura['saldo'], $resp_consfactura['numcuota'], $resp_consfactura['valorcuota'], $resp_consfactura['fechavence'], $usuario);
 
                             //CODIGO TEMPORAL
@@ -783,22 +783,22 @@ class PagosfacturasController extends \app\components\CController {
                             \app\models\Utilities::putMessageLogFile('resp_consfactura ...: ' . print_r($resp_consfactura,true));
                             \app\models\Utilities::putMessageLogFile('valor_pagado ...: ' . print_r($valor_pagado,true));
                             //Pregunto si el valor pagado es mayor a cero
-                            if ($valor_pagado > 0) { 
+                            if ($valor_pagado > 0) {
                                 $cargo = CargaCartera::findOne($resp_consfactura['ccar_id']);
-                               
-                                $cuota = $resp_consfactura['ccar_valor_cuota']; 
-                                $abono = $resp_consfactura['abono']; 
-                                $saldo = $cuota - $abono; 
-                                
+
+                                $cuota = $resp_consfactura['ccar_valor_cuota'];
+                                $abono = $resp_consfactura['abono'];
+                                $saldo = $cuota - $abono;
+
                                 \app\models\Utilities::putMessageLogFile('cuota ...: ' . print_r($cuota,true));
                                 \app\models\Utilities::putMessageLogFile('abono ...: ' . print_r($abono,true));
                                 \app\models\Utilities::putMessageLogFile('saldo ...: ' . print_r($saldo,true));
 
                                 //si el valor pagado es mayor al saldo
-                                if ($valor_pagado >= $saldo ) { 
+                                if ($valor_pagado >= $saldo ) {
                                      \app\models\Utilities::putMessageLogFile('if ($valor_pagado >= $saldo )');
-                                    $cargo->ccar_abono = $cargo->ccar_abono + $saldo; 
-                                    $valor_pagado      = $valor_pagado - $saldo; 
+                                    $cargo->ccar_abono = $cargo->ccar_abono + $saldo;
+                                    $valor_pagado      = $valor_pagado - $saldo;
                                     \app\models\Utilities::putMessageLogFile('cargo->ccar_abono ...: ' . print_r($cargo->ccar_abono,true));
                                     \app\models\Utilities::putMessageLogFile('valor_pagado ...: ' . print_r($valor_pagado,true));
                                     //// ini gap - cambio solicitado para q ponga en estado cancelado...
@@ -806,17 +806,17 @@ class PagosfacturasController extends \app\components\CController {
                                     $valor_cuota_cancelada = $cuota - ($saldo + $abono);
 
                                     \app\models\Utilities::putMessageLogFile('valor_cuota_cancelada ...: ' . print_r($valor_cuota_cancelada,true));
-                               
+
                                     if($valor_cuota_cancelada <= 0)
-                                        $cargo->ccar_estado_cancela = 'C';                                      
+                                        $cargo->ccar_estado_cancela = 'C';
                                     /////////////////////
                                     /*if($fpag_id == 1){
                                         $valor_cuota_cancelada = $cuota - ($saldo + $abono);
 
                                         \app\models\Utilities::putMessageLogFile('valor_cuota_cancelada ...: ' . print_r($valor_cuota_cancelada,true));
-                                   
+
                                         if($valor_cuota_cancelada <= 0)
-                                            $cargo->ccar_estado_cancela = 'C';                                      
+                                            $cargo->ccar_estado_cancela = 'C';
                                     }//if
                                     */
 
@@ -829,54 +829,54 @@ class PagosfacturasController extends \app\components\CController {
                                     //if($cuota != $abono){
                                     $cargo->ccar_abono = $cargo->ccar_abono + $valor_pagado;
                                     $valor_pagado      = $valor_pagado - $cargo->ccar_abono;
-                                    
+
                                     //// ini gap - cambio solicitado para q ponga en estado cancelado...
                                     //// carga cartera cuando se haga transferencias o deposito
 
                                     if($cargo->ccar_abono == $cuota)
                                             $cargo->ccar_estado_cancela  = 'C';
-                                        
+
                                     /*
                                     if($fpag_id == 1){
                                         if($cargo->ccar_abono == $cuota)
                                             $cargo->ccar_estado_cancela  = 'C';
                                     }else{
                                         $cargo->ccar_estado_cancela     = 'N';
-                                        
+
                                     }
                                     */
                                     $cargo->ccar_fecha_modificacion = $fecha;
                                     $cargo->ccar_usu_modifica       = $usuario;
-                                    
+
                                 }//else
-                                
+
                                 if($valor_pagado < 0)
                                     $valor_pagado = 0;
 
-                                $cargo->save(); 
-                                
+                                $cargo->save();
+
                                 // insertar el detalle
                                 $descripciondet      = 'Cuota '. $resp_consfactura['cuota'] . '- Abono con el valor de ' .$cargo->ccar_abono ;
-                                $resp_detpagofactura = $mod_pagos->insertarDetpagospendientes($resp_pagofactura, 
-                                                                                              $resp_consfactura['ccar_tipo_documento'], 
-                                                                                              $resp_consfactura['NUM_NOF'], 
-                                                                                              $descripciondet, 
-                                                                                              $parametro[2], 
-                                                                                              $resp_consfactura['F_SUS_D'], 
-                                                                                              is_null($resp_consfactura['SALDO'])?0:round($resp_consfactura['SALDO'], 2), 
-                                                                                              $resp_consfactura['cuota'], 
-                                                                                              //$resp_consfactura['ccar_valor_cuota'], 
+                                $resp_detpagofactura = $mod_pagos->insertarDetpagospendientes($resp_pagofactura,
+                                                                                              $resp_consfactura['ccar_tipo_documento'],
+                                                                                              $resp_consfactura['NUM_NOF'],
+                                                                                              $descripciondet,
+                                                                                              $parametro[2],
+                                                                                              $resp_consfactura['F_SUS_D'],
+                                                                                              is_null($resp_consfactura['SALDO'])?0:round($resp_consfactura['SALDO'], 2),
+                                                                                              $resp_consfactura['cuota'],
+                                                                                              //$resp_consfactura['ccar_valor_cuota'],
                                                                                               $cargo->ccar_abono,
-                                                                                              $resp_consfactura['F_VEN_D'], 
-                                                                                              $dpfa_estado_pago, 
-                                                                                              $dpfa_estado_financiero, 
+                                                                                              $resp_consfactura['F_VEN_D'],
+                                                                                              $dpfa_estado_pago,
+                                                                                              $dpfa_estado_financiero,
                                                                                               $usuario);
                             }//if
-                            
-                            
+
+
                             /*
 
-                            if($data["formapago"]==6){    
+                            if($data["formapago"]==6){
                                 $cargo->ccar_estado_cancela = 'C';
                                 $cargo->ccar_fecha_modificacion = $fecha;
                                 $cargo->ccar_usu_modifica = $usuario;
@@ -888,7 +888,7 @@ class PagosfacturasController extends \app\components\CController {
 
                              \app\models\Utilities::putMessageLogFile('****************************************');
                         }
-                        
+
                         if ($resp_detpagofactura) {
                             $transaction->commit();
                             $message = array(
@@ -943,7 +943,7 @@ class PagosfacturasController extends \app\components\CController {
             Yii::t("formulario", "Paid form"),
             financiero::t("Pagos", "Amount Paid"),
             financiero::t("Pagos", "Bill"),
-            financiero::t("Pagos", "Monthly fee"),            
+            financiero::t("Pagos", "Monthly fee"),
             Yii::t("formulario", "Registration Date"),
             financiero::t("Pagos", "Pass"),
             Yii::t("formulario", "Review Status"),
@@ -984,7 +984,7 @@ class PagosfacturasController extends \app\components\CController {
             Yii::t("formulario", "Paid form"),
             financiero::t("Pagos", "Amount Paid"),
             financiero::t("Pagos", "Bill"),
-            financiero::t("Pagos", "Monthly fee"),            
+            financiero::t("Pagos", "Monthly fee"),
             Yii::t("formulario", "Registration Date"),
             financiero::t("Pagos", "Pass"),
             Yii::t("formulario", "Review Status"),
@@ -1010,7 +1010,7 @@ class PagosfacturasController extends \app\components\CController {
         }
 
         $this->view->title = financiero::t("Pagos", "List Payment Pending");
-        ; // Titulo del reporte                
+        ; // Titulo del reporte
         $report->orientation = "L"; // tipo de orientacion L => Horizontal, P => Vertical
         $report->createReportPdf(
                 $this->render('exportpdf', [
@@ -1022,7 +1022,7 @@ class PagosfacturasController extends \app\components\CController {
         return;
     }
 
-    public function actionUpdatepago() {        
+    public function actionUpdatepago() {
         $dpfa_id = base64_decode($_GET["dpfa_id"]);
         $per_idsession = @Yii::$app->session->get("PB_perid");
         $especiesADO = new Especies();
@@ -1041,7 +1041,7 @@ class PagosfacturasController extends \app\components\CController {
             $carrera = $modestudio->consultarCursoModalidad($personaData['uaca_id'], $personaData['mod_id']); // tomar id de impresa
         }
         $arr_forma_pago = $mod_fpago->consultarFormaPagosaldo();
-        // se debe capturar desde url borrar al hacer las pruebas       
+        // se debe capturar desde url borrar al hacer las pruebas
         $pagodetalle = $mod_pagos->consultarPago($dpfa_id);
         return $this->render('updatepago', [
                     'arr_persona' => $personaData,
@@ -1054,7 +1054,7 @@ class PagosfacturasController extends \app\components\CController {
     }
 
     public function actionModificarpagopendiente() {
-        //online que sube doc capturar asi el id de la persona 
+        //online que sube doc capturar asi el id de la persona
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
             $mod_pagos = new PagosFacturaEstudiante();
@@ -1136,41 +1136,41 @@ class PagosfacturasController extends \app\components\CController {
                     'arrObservacion' => array("0" => "Seleccione", "Archivo Ilegible" => "Archivo Ilegible", "Archivo no corresponde al pago" => "Archivo no corresponde al pago", "Archivo con Error" => "Archivo con Error", "Valor pagado no cubre factura" => "Valor pagado no cubre factura", "Archivo duplicado" => "Archivo duplicado"),
         ]);
     }//function actionConsultarevision
-    
+
     public function actionPagos() {
         $per_idsession = @Yii::$app->session->get("PB_perid");
-        $mod_pagos = new PagosFacturaEstudiante();        
+        $mod_pagos = new PagosFacturaEstudiante();
         if (Yii::$app->request->isAjax) {
-            $data = Yii::$app->request->post();            
+            $data = Yii::$app->request->post();
         }
         $data = Yii::$app->request->get();
-        if ($data['PBgetFilter']) {            
+        if ($data['PBgetFilter']) {
             $arrSearch["f_ini"] = $data['f_ini'];
-            $arrSearch["f_fin"] = $data['f_fin'];            
+            $arrSearch["f_fin"] = $data['f_fin'];
             $resp_pago = $mod_pagos->getPagosxestudiante($arrSearch, false, $per_idsession);
             return $this->renderPartial('_index-grid_pagosfacturas', [
                         "model" => $resp_pago,
             ]);
         }
-        $model = $mod_pagos->getPagosxestudiante(null, false, $per_idsession);        
+        $model = $mod_pagos->getPagosxestudiante(null, false, $per_idsession);
         return $this->render('index_pagosfacturas', [
-                    'model' => $model,                   
+                    'model' => $model,
         ]);
     }
-    
+
     public function actionDetallepagosfactura() {
         $factura = base64_decode($_GET["pfes_id"]);
         $per_id = @Yii::$app->session->get("PB_perid");
-        $mod_pagos = new PagosFacturaEstudiante();        
+        $mod_pagos = new PagosFacturaEstudiante();
         if (Yii::$app->request->isAjax) {
-            $data = Yii::$app->request->post();            
+            $data = Yii::$app->request->post();
         }
-        $data = Yii::$app->request->get();        
+        $data = Yii::$app->request->get();
         $dataEstudiante = $mod_pagos->consultarDatosestudiante($per_id);
-        $model = $mod_pagos->getPagosDetxestudiante(null, false, $factura);   
+        $model = $mod_pagos->getPagosDetxestudiante(null, false, $factura);
 
         return $this->render('index_pagos', [
-                    'model' => $model,     
+                    'model' => $model,
                     'data' => $dataEstudiante,
         ]);
     }
@@ -1199,7 +1199,7 @@ class PagosfacturasController extends \app\components\CController {
             $arrSearch["f_fin"] = $data['f_fin'];
             $arrSearch["unidad"] = $data['unidad'];
             $arrSearch["modalidad"] = $data['modalidad'];
-            $arrSearch["estadopago"] = $data['estadopago'];         
+            $arrSearch["estadopago"] = $data['estadopago'];
             $resp_pago = $mod_pagos->getPagosestudiante($arrSearch, false);
             return $this->renderPartial('_index-grid_pagofactura', [
                         "model" => $resp_pago,
@@ -1231,12 +1231,12 @@ class PagosfacturasController extends \app\components\CController {
             academico::t("Academico", "Academic unit"),
             academico::t("Academico", "Modality"),
             academico::t("Academico", "Career/Program"),
-            Yii::t("formulario", "Paid form"),            
+            Yii::t("formulario", "Paid form"),
             financiero::t("Pagos", "Monthly fee"),
             financiero::t("Pagos", "Bill"),
             financiero::t("Pagos", "Amount Paid"),
             Yii::t("formulario", "Registration Date"),
-            Yii::t("formulario", "Review Status"),           
+            Yii::t("formulario", "Review Status"),
             financiero::t("Pagos", "Payment id"),
         );
         $mod_pagos = new PagosFacturaEstudiante();
@@ -1246,7 +1246,7 @@ class PagosfacturasController extends \app\components\CController {
         $arrSearch["f_fin"] = $data['f_fin'];
         $arrSearch["unidad"] = $data['unidad'];
         $arrSearch["modalidad"] = $data['modalidad'];
-        $arrSearch["estadopago"] = $data['estadopago'];        
+        $arrSearch["estadopago"] = $data['estadopago'];
 
         $arrData = array();
         if (empty($arrSearch)) {
@@ -1267,12 +1267,12 @@ class PagosfacturasController extends \app\components\CController {
             academico::t("Academico", "Academic unit"),
             academico::t("Academico", "Modality"),
             academico::t("Academico", "Career/Program"),
-            Yii::t("formulario", "Paid form"),           
+            Yii::t("formulario", "Paid form"),
             financiero::t("Pagos", "Monthly fee"),
             financiero::t("Pagos", "Bill"),
             financiero::t("Pagos", "Amount Paid"),
             Yii::t("formulario", "Registration Date"),
-            Yii::t("formulario", "Review Status"),           
+            Yii::t("formulario", "Review Status"),
             financiero::t("Pagos", "Payment id"),
         );
         $mod_pagos = new PagosFacturaEstudiante();
@@ -1291,7 +1291,7 @@ class PagosfacturasController extends \app\components\CController {
         }
 
         $this->view->title = financiero::t("Pagos", "List Payment") . ' ' . financiero::t("Pagos", "Bill");
-        ; // Titulo del reporte                
+        ; // Titulo del reporte
         $report->orientation = "L"; // tipo de orientacion L => Horizontal, P => Vertical
         $report->createReportPdf(
                 $this->render('exportpdf', [
@@ -1316,7 +1316,7 @@ class PagosfacturasController extends \app\components\CController {
                     'model' => $model,
                     'arr_unidad' => ArrayHelper::map($arr_unidadac, "id", "name"),
                     'arr_modalidad' => ArrayHelper::map($arr_modalidad, "id", "name"),
-                    'arrEstados' => $this->estadoReverso(),                    
+                    'arrEstados' => $this->estadoReverso(),
         ]);
     }
 
@@ -1351,7 +1351,7 @@ class PagosfacturasController extends \app\components\CController {
                 $carga_archivo = $mod_cartera->CargarArchivocartera($data["archivo"]);
                 if ($carga_archivo['status']) {
                     \app\models\Utilities::putMessageLogFile('no estudiante controller...: ' . $arroout['noalumno']);
-                    if (!empty($carga_archivo['noalumno'])){                        
+                    if (!empty($carga_archivo['noalumno'])){
                     $noalumno = ' Se encontró las cédulas '. $carga_archivo['noalumno'] . ' que no pertencen a estudiantes por ende no se cargaron. ';
                     }
                     $message = array(
@@ -1367,7 +1367,7 @@ class PagosfacturasController extends \app\components\CController {
                     return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), true, $message);
                 }
                 return;
-            } catch (Exception $ex) {      
+            } catch (Exception $ex) {
                 $message = array(
                     'wtmessage' => Yii::t('notificaciones', 'Error al procesar el archivo.'),
                     'title' => Yii::t('jslang', 'Error'),
@@ -1400,13 +1400,13 @@ class PagosfacturasController extends \app\components\CController {
                 }
     }
 
-    public function actionReversarestado() {        
+    public function actionReversarestado() {
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
             $mod_pagos = new PagosFacturaEstudiante();
             $dfac_id = $data["dpfa_id"];
-            $estado_pago = $data["resultado"];     
-            $observacion = ucfirst(mb_strtolower($data['observacion'], 'UTF-8'));       
+            $estado_pago = $data["resultado"];
+            $observacion = ucfirst(mb_strtolower($data['observacion'], 'UTF-8'));
             $estado_financiero = null;
             $con = \Yii::$app->db_facturacion;
             $transaction = $con->beginTransaction();
@@ -1414,7 +1414,7 @@ class PagosfacturasController extends \app\components\CController {
                 $usuario = @Yii::$app->user->identity->usu_id;   //Se obtiene el id del usuario.
                 // enviar a modificar estados
                 $resp_pagofactura = $mod_pagos->grabaReverso($dfac_id, $estado_pago, $observacion);
-               if ($resp_pagofactura) { 
+               if ($resp_pagofactura) {
                     $fecha = date(Yii::$app->params["dateTimeByDefault"]);
                     $cartera = $mod_pagos->buscarIdCartera($dfac_id);
                     $id_cartera = $cartera[0]['ccar_id'];
@@ -1422,8 +1422,8 @@ class PagosfacturasController extends \app\components\CController {
                     $cargo->ccar_estado_cancela = 'N';
                     $cargo->ccar_fecha_modificacion = $fecha;
                     $cargo->ccar_usu_modifica = $usuario;
-                    $cargo->save(); 
-                    
+                    $cargo->save();
+
                 if ($cargo) {
                     $datos = $mod_pagos->consultarPago($dfac_id);
                     // \app\models\Utilities::putMessageLogFile('obsere: ' . $datos['dpfa_observacion_reverso']);
@@ -1431,21 +1431,21 @@ class PagosfacturasController extends \app\components\CController {
                     $tituloMensaje = 'Pagos en Línea';
                     $asunto = 'Pagos en Línea';
                     $body = Utilities::getMailMessage("pagoreversado", array(
-                    "[[user]]" =>  $datos['estudiante'],   
+                    "[[user]]" =>  $datos['estudiante'],
                     "[[factura]]" => $datos['dpfa_factura'],
                     "[[cuota]]" => $datos['dpfa_num_cuota'],
                     "[[valor]]" => $datos['valor_cuota'],
                     "[[observacion]]" => $observacion,
                     ), Yii::$app->language, Yii::$app->basePath . "/modules/financiero");
                     Utilities::sendEmail($tituloMensaje, Yii::$app->params["adminEmail"], [$correo_estudiante => $user], $asunto, $body);
-                } 
+                }
                     $transaction->commit();
                     $message = array(
                             "wtmessage" => Yii::t("notificaciones", "La infomación ha sido grabada. "),
                             "title" => Yii::t('jslang', 'Success'),
                         );
                     echo Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), false, $message);
-                    
+
                 } else {
                     $transaction->rollback();
                     $message = array(
@@ -1453,7 +1453,7 @@ class PagosfacturasController extends \app\components\CController {
                         "title" => Yii::t('jslang', 'Error'),
                     );
                     echo Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
-                }          
+                }
             } catch (Exception $ex) {
                 $transaction->rollback();
                 $message = array(
@@ -1490,4 +1490,63 @@ class PagosfacturasController extends \app\components\CController {
             'arr_alumno' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']], $busquedalumno), 'id', 'name'),
         ]);
     }
+    public function actionExpexcelestcartera() {
+        ini_set('memory_limit', '256M');
+        $content_type = Utilities::mimeContentType("xls");
+        $nombarch = "Report-" . date("YmdHis") . ".xls";
+        header("Content-Type: $content_type");
+        header("Content-Disposition: attachment;filename=" . $nombarch);
+        header('Cache-Control: max-age=0');
+        $colPosition = array("C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "L");
+        $arrHeader = array(
+            Yii::t("formulario", "DNI 1"),
+            Yii::t("formulario", "Names"),
+            Yii::t("formulario", "Email"),
+            academico::t("Academico", "Enrollment Number"),
+        );
+        $mod_cartera = new CargaCartera();
+        $data = Yii::$app->request->get();
+        $arrSearch["search"] = $data['search'];
+        $arrData = array();
+        if (empty($arrSearch)) {
+            $arrData = $mod_cartera->consultarCarteraEstudiantes(array(), true);
+        } else {
+            $arrData = $mod_cartera->consultarCarteraEstudiantes($arrSearch, true);
+        }
+        $nameReport = financiero::t("Pagos", "Estudiantes Pagos Cartera");
+        Utilities::generarReporteXLS($nombarch, $nameReport, $arrHeader, $arrData, $colPosition);
+        exit;
+    }
+
+    public function actionExppdfestcartera() {
+        $report = new ExportFile();
+        $arrHeader = array(
+            Yii::t("formulario", "DNI 1"),
+            Yii::t("formulario", "Names"),
+            Yii::t("formulario", "Email"),
+            academico::t("Academico", "Enrollment Number"),
+        );
+        $mod_cartera = new CargaCartera();
+        $data = Yii::$app->request->get();
+        $arrSearch["search"] = $data['search'];
+        $arrData = array();
+        if (empty($arrSearch)) {
+            $arrData = $mod_cartera->consultarCarteraEstudiantes(array(), true);
+        } else {
+            $arrData = $mod_cartera->consultarCarteraEstudiantes($arrSearch, true);
+        }
+
+        $this->view->title = financiero::t("Pagos", "Estudiantes Pagos Cartera");
+        ; // Titulo del reporte
+        $report->orientation = "L"; // tipo de orientacion L => Horizontal, P => Vertical
+        $report->createReportPdf(
+                $this->render('exportpdf', [
+                    'arr_head' => $arrHeader,
+                    'arr_body' => $arrData
+                ])
+        );
+        $report->mpdf->Output('Reporte_' . date("Ymdhis") . ".pdf", ExportFile::OUTPUT_TO_DOWNLOAD);
+        return;
+    }
+
 }

@@ -419,15 +419,8 @@ class PagosfacturasController extends \app\components\CController {
 
     public function actionSavepagopendiente() {
         //DESCOMENTAR $perids AL PROBAR DESDE COLECTURIA LUEGO DE BOTONES
-        // obtener el per id del estudiante si esta autenticado colecturia
-        // $perids = base64_decode($_GET["per_ids"]);
         //Obtenemo el id de la persona
-        $per_idsession = @Yii::$app->session->get("PB_perid");
-        //DESCOMENTAR IF AL PROBAR DESDE COLECTURIA LUEGO DE BOTONES
-        /*\app\models\Utilities::putMessageLogFile('perids...: ' . $perids);
-        if (!empty($perids)) {
-            $per_idsession = $perids;
-        }*/
+        $per_idsession = @Yii::$app->session->get("PB_perid");        
         //Obtenemos la fecha de hoy y le damos formato
         $fecha = date(Yii::$app->params["dateTimeByDefault"]);
         //Revisamos si la peticion fue por ajax
@@ -439,7 +432,13 @@ class PagosfacturasController extends \app\components\CController {
             //Obtenemos su email ya que estos datos son solicitados por stripe
             $mod_usuario = Persona::find()->select("per_correo")->where(["per_id" => $data['per_id']])->asArray()->all();
             $email       = $mod_usuario[0]['per_correo'];
-
+            //DESCOMENTAR IF AL PROBAR DESDE COLECTURIA LUEGO DE BOTONES
+            $perids = base64_decode($data['perisest']);
+            \app\models\Utilities::putMessageLogFile('perids en save...: ' . $perids);
+            if (!empty($perids)) {
+                $per_idsession = $perids;
+            }
+            \app\models\Utilities::putMessageLogFile('per_idsession en save...: ' . $per_idsession);
             if($data["formapago"]==1){
                 //Si la forma de Pago es 1 significa que es por Tarjeta de credito
                 $statusMsg = '';

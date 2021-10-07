@@ -27,6 +27,7 @@ academico::registerTranslations();
 
 <?= Html::hiddenInput('txth_idest', $arr_persona['est_id'], ['id' => 'txth_idest']); ?>
 <?= Html::hiddenInput('txth_per', @Yii::$app->session->get("PB_perid"), ['id' => 'txth_per']); ?>
+<?= Html::hiddenInput('txth_per_ids', $_GET["per_ids"], ['id' => 'txth_per_ids']); ?>
 <style type="text/css">
     [data-tip] {
         position:relative;
@@ -38,7 +39,7 @@ academico::registerTranslations();
         content:'';
         border-left: 5px solid transparent;
         border-right: 5px solid transparent;
-        border-bottom: 5px solid #1a1a1a;   
+        border-bottom: 5px solid #1a1a1a;
         position:absolute;
         top:-3px;
         left:35px;
@@ -74,10 +75,10 @@ academico::registerTranslations();
         display:block;
     }
 </style>
-<form class="form-horizontal" enctype="multipart/form-data" id="formsolicitud">   
+<form class="form-horizontal" enctype="multipart/form-data" id="formsolicitud">
     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
         <div class="form-row">
-            <h4><span id="lbl_general"><?= Pagos::t("Pagos", "Student Data") ?></span></h4> 
+            <h4><span id="lbl_general"><?= Pagos::t("Pagos", "Student Data") ?></span></h4>
         </div>
     </div>
     <div class='col-xs-12 col-sm-12 col-md-6 col-lg-6'>
@@ -95,10 +96,10 @@ academico::registerTranslations();
                 <input type="text" class="form-control keyupmce" value="<?php echo $arr_persona['per_cedula'] ?>" id="txt_cedula" data-type="alfa" disabled placeholder="<?= Yii::t("formulario", "DNI Document") ?>">
             </div>
         </div>
-    </div>    
+    </div>
     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
         <div class="form-row">
-            <h4><span id="lbl_general"><?= Pagos::t("Pagos", "Academic Data") ?></span></h4> 
+            <h4><span id="lbl_general"><?= Pagos::t("Pagos", "Academic Data") ?></span></h4>
         </div>
     </div>
     <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
@@ -107,7 +108,7 @@ academico::registerTranslations();
             <div class="col-xs-12 col-sm-12 col-md-7 col-lg-7">
                 <?= Html::dropDownList("cmb_ninteres", $arr_persona['uaca_id'], array_merge([Yii::t("formulario", "Select")], $arr_unidad), ["class" => "form-control", "id" => "cmb_ninteres", "disabled" => "true"]) ?>
             </div>
-        </div>  
+        </div>
     </div>
     <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6" id="divModalidad">
         <div class="form-group">
@@ -116,18 +117,18 @@ academico::registerTranslations();
                 <?= Html::dropDownList("cmb_modalidad", $arr_persona['mod_id'], array_merge([Yii::t("formulario", "Select")], $arr_modalidad), ["class" => "form-control", "id" => "cmb_modalidad", "disabled" => "true"]) ?>
             </div>
         </div>
-    </div>                             
+    </div>
     <div class='col-xs-12 col-sm-12 col-md-6 col-lg-6'>
         <div class="form-group">
             <label for="cmb_carrera" class="col-xs-12 col-sm-12 col-md-5 col-lg-5 control-label"><?= Especies::t("Academico", "Career/Program") ?></label>
             <div class="col-xs-12 col-sm-12 col-md-7 col-lg-7">
                 <?= Html::dropDownList("cmb_carrera", $arr_persona['eaca_id'], $arr_carrera, ["class" => "form-control", "id" => "cmb_carrera", "disabled" => "true"]) ?>
             </div>
-        </div>                                        
+        </div>
     </div>
     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
         <div class="form-row">
-            <h4><span id="lbl_general"><?= Pagos::t("Pagos", "Payment Data") ?></span></h4> 
+            <h4><span id="lbl_general"><?= Pagos::t("Pagos", "Payment Data") ?></span></h4>
         </div>
     </div>
     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
@@ -141,7 +142,7 @@ academico::registerTranslations();
                     <input type="text" class="form-control PBvalidation keyupmce" value="" id="txt_valor" data-type="dinero" placeholder="<?= Pagos::t("Pagos", "Value") ?>">
                     <input type="hidden" value="0" id="txt_valor_respaldo"/>
                 </div>
-            </div>                                        
+            </div>
         </div>
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 pago_documento">
             <div class="form-group">
@@ -149,7 +150,7 @@ academico::registerTranslations();
                 <div   class="col-xs-12 col-sm-12 col-md-7 col-lg-7">
                     <input type="number" class="form-control keyupmce" value="" id="txt_referencia" data-type="number" placeholder="<?= Pagos::t("Pagos", "Reference") ?>">
                 </div>
-            </div>  
+            </div>
         </div>
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 pago_documento">
             <div class="form-group">
@@ -163,10 +164,10 @@ academico::registerTranslations();
             <div class="form-group">
                 <label class="col-xs-12 col-sm-12 col-md-5 col-lg-5 control-label keyupmce" for="txt_observa" ><?= Yii::t("formulario", "Observation") ?></label>
                 <div   class="col-xs-12 col-sm-12 col-md-7 col-lg-7">
-                    <textarea  class="form-control keyupmce" id="txt_observa" rows="3"></textarea>                        
+                    <textarea  class="form-control keyupmce" id="txt_observa" rows="3"></textarea>
                 </div>
-            </div>   
-        </div>    
+            </div>
+        </div>
     </div>
     <div class='col-xs-12 col-sm-12 col-md-6 col-lg-6'>
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
@@ -221,17 +222,17 @@ academico::registerTranslations();
                                 'uploadExtraData' => 'javascript:function (previewId,index) {
                                     var name_pago= $("#txth_doc_pago").val();
                                     return {"upload_file": true, "name_file": name_pago};
-                                }', 
+                                }',
                             ],
                             'pluginEvents' => [
-                                "filebatchselected" => "function (event) {                        
+                                "filebatchselected" => "function (event) {
                                     function d2(n) {
                                         if(n<9) return '0'+n;
                                         return n;
                                     }
                                     today = new Date();
                                     var name_pago = 'pagoest_' + $('#txth_per').val() + '-' + today.getFullYear() + '-' + d2(parseInt(today.getMonth()+1)) + '-' + d2(today.getDate()) + ' ' + d2(today.getHours()) + ':' + d2(today.getMinutes()) + ':' + d2(today.getSeconds());
-                                    $('#txth_doc_pago').val(name_pago);                        
+                                    $('#txth_doc_pago').val(name_pago);
                                     $('#txt_doc_pago').fileinput('upload');
                                     var fileSent = $('#txt_doc_pago').val();
                                     var ext = fileSent.split('.');
@@ -240,9 +241,9 @@ academico::registerTranslations();
                                 "fileuploaderror" => "function (event, data, msg) {
                                     $(this).parent().parent().children().first().addClass('hide');
                                     $('#txth_doc_pago').val('');
-                                    //showAlert('NO_OK', 'error', {'wtmessage': objLang.Error_to_process_File__Try_again_, 'title': objLang.Error});   
+                                    //showAlert('NO_OK', 'error', {'wtmessage': objLang.Error_to_process_File__Try_again_, 'title': objLang.Error});
                                 }",
-                                "filebatchuploadcomplete" => "function (event, files, extra) { 
+                                "filebatchuploadcomplete" => "function (event, files, extra) {
                                     $(this).parent().parent().children().first().addClass('hide');
                                 }",
                                 "filebatchuploadsuccess" => "function (event, data, previewId, index) {
@@ -250,33 +251,33 @@ academico::registerTranslations();
                                     response = data.response, reader = data.reader;
                                     $(this).parent().parent().children().first().addClass('hide');
                                     var acciones = [{id: 'reloadpage', class: 'btn btn-primary', value: objLang.Accept, callback: 'reloadPage'}];
-                                    //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});  
+                                    //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});
                                 }",
                                 "fileuploaded" => "function (event, data, previewId, index) {
-                                    $(this).parent().parent().children().first().addClass('hide');        
+                                    $(this).parent().parent().children().first().addClass('hide');
                                     var acciones = [{id: 'reloadpage', class: 'btn btn-primary', value: objLang.Accept, callback: 'reloadPage'}];
-                                    //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});                              
+                                    //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});
                                 }",
                             ],
                         ]);
                     ?>
-                </div> 
+                </div>
             </div>
             <div class="form-row">
                     <div class="alert alert-info" style="margin-bottom: 1em;"><span style="font-weight: bold"> Nota: </span> Al subir archivo debe ser 800 KB máximo y tipo jpg, png o pdf.</div>
-                </div> 
+                </div>
             <div class="form-row">
-                <label class = "col-xs-10 col-sm-10 col-md-10 col-lg-10 control-label " for="txt_nombres_fac" id="lbl_nombre1" style="text-align: left"><?= Yii::t("formulario", "Acepta Condiciones Y Terminos. <br> Acepto que los documentos no han sido alterados o manipulados") ?><span class="text-danger">*</span></label>  
+                <label class = "col-xs-10 col-sm-10 col-md-10 col-lg-10 control-label " for="txt_nombres_fac" id="lbl_nombre1" style="text-align: left"><?= Yii::t("formulario", "Acepta Condiciones Y Terminos. <br> Acepto que los documentos no han sido alterados o manipulados") ?><span class="text-danger">*</span></label>
                 <input class = "col-xs-2 col-sm-2 col-md-2 col-lg-2 form-check-input checkAcepta" type="checkbox" value="1" id="checkAcepta">
             </div>
         </div>
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 " id="pago_stripe">
             <!------------------------------------------------------->
-            <!----- INI PAGO STRIPE --------------------------------->                
+            <!----- INI PAGO STRIPE --------------------------------->
             <!------------------------------------------------------->
             <style type="text/css">
                 #pago_stripe{
-                    display:none; 
+                    display:none;
                     background-color: lightblue;
                     border-radius:6px;
                     border: 1px gray solid;
@@ -306,7 +307,7 @@ academico::registerTranslations();
                 }
             </style>
 
-            
+
             <div class="col-xs-12 col-sm-12 col-md-2 col-lg-2" style=" display: flex; justify-content: center;">
                 <img src="https://www.uteg.edu.ec/wp-content/themes/UTEG4/images/055693c79f5990e523846b9f43c6779d_logouteg.png" alt="MBTU" style="border-radius:4px;height:40px;margin-top: 10px;margin-bottom: 10px;">
             </div>
@@ -314,8 +315,8 @@ academico::registerTranslations();
                 <div id="card-element"><!--Stripe.js injects the Card Element--></div>
             </div>
             <!------------------------------------------------------->
-            <!----- FIN PAGO STRIPE --------------------------------->                
-            <!------------------------------------------------------->      
+            <!----- FIN PAGO STRIPE --------------------------------->
+            <!------------------------------------------------------->
         </div>
     </div>
     <!--div class="col-md-12 col-sm-12 col-xs-12 col-lg-12" id="div_detalle"></div>
@@ -324,17 +325,17 @@ academico::registerTranslations();
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
             &nbsp;&nbsp;
         </div>
-    </div--> 
+    </div-->
 
     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
         <div class="form-row">
-            <h4><span id="lbl_general"><?= Pagos::t("Pagos", "Pending Invoices Data") ?></span></h4> 
+            <h4><span id="lbl_general"><?= Pagos::t("Pagos", "Pending Invoices Data") ?></span></h4>
         </div>
     </div>
     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
         <p class="text-danger"> <?= Pagos::t("Pagos", "Select the amounts to pay") ?> </p>
     </div>
-    <div class='col-md-12 col-sm-12 col-xs-12 col-lg-12'>        
+    <div class='col-md-12 col-sm-12 col-xs-12 col-lg-12'>
         <?=
         PbGridView::widget([
             'id' => 'TbgPagopendiente',
@@ -376,7 +377,7 @@ academico::registerTranslations();
                     'header' => Pagos::t("Pagos", "Balance"),
                     'value' => 'SALDO',
                 ],*/
-                
+
                 [
                     'attribute' => 'valor_cuota',
                     'contentOptions' => ['style' => 'text-align: center;'],
@@ -425,10 +426,10 @@ academico::registerTranslations();
             ],
         ])
         ?>
-    </div>   
-    <!-- <div class="row"> 
+    </div>
+    <!-- <div class="row">
         <div class="col-lg-11 col-md-11 col-sm-11 col-xs-11"></div>
-        <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1">&nbsp;&nbsp;  
+        <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1">&nbsp;&nbsp;
             <a id="btn_guardarpago" href="javascript:" class="btn btn-primary btn-block"> <?= Yii::t("formulario", "Save") ?> </a>
         </div>
     </div>-->
@@ -440,10 +441,10 @@ academico::registerTranslations();
         $('#TbgPagopendiente > table').DataTable({
             "dom": 't',
             responsive: true,
-            columnDefs: [   
-                { targets: 0, responsivePriority: 1},    
-                { targets: 3, responsivePriority: 2},    
-                { targets: 7, responsivePriority: 3},  
+            columnDefs: [
+                { targets: 0, responsivePriority: 1},
+                { targets: 3, responsivePriority: 2},
+                { targets: 7, responsivePriority: 3},
             ],
         });
     });

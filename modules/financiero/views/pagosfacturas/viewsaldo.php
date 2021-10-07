@@ -17,7 +17,8 @@ DatatableAsset::register($this);
 
 <?= Html::hiddenInput('txth_idest', $arr_persona['est_id'], ['id' => 'txth_idest']); ?>
 <?= Html::hiddenInput('txth_per', @Yii::$app->session->get("PB_perid"), ['id' => 'txth_per']); ?>
-<form class="form-horizontal" enctype="multipart/form-data" id="formsolicitud">  
+<?= Html::hiddenInput('txth_per_ids', $_GET["per_ids"], ['id' => 'txth_per_ids']); ?>
+<form class="form-horizontal" enctype="multipart/form-data" id="formsolicitud">
     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
         <div class="form-row">
             <h4><span id="lbl_general"><?= Pagos::t("Pagos", "Student Data") ?></span></h4> 
@@ -43,7 +44,7 @@ DatatableAsset::register($this);
         <div class="form-group">
             <label for="txt_matricula" class="col-xs-12 col-sm-12 col-md-5 col-lg-5 control-label" id="lbl_nombre1"><?= Yii::t("formulario", "Enrollment") ?></label>
             <div class="col-xs-12 col-sm-12 col-md-7 col-lg-7">
-                <input type="text" class="form-control keyupmce" value="<?php echo $arr_persona['est_matricula'] ?>" id="txt_nombres" disabled data-type="alfa" placeholder="<?= Yii::t("formulario", "First Name") ?>">
+                <input type="text" class="form-control keyupmce" value="<?php echo $arr_persona['est_matricula'] ?>" id="txt_nombres" disabled data-type="alfa" placeholder="<?= Yii::t("formulario", "Matrícula") ?>">
             </div>
         </div>
     </div>

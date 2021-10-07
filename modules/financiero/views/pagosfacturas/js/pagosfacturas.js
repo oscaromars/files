@@ -136,7 +136,8 @@ function guardarPagofactura() {
     arrParams.valor       = $('#txt_valor').val();
     arrParams.observacion = $('#txt_observa').val();
     arrParams.txt_cedula  = $('#txt_cedula ').val();
-
+    arrParams.perisest  =   $('#txth_per_ids').val();
+    //alert ('sdsd '+ arrParams.perisest);
     //Pregunto por el metodo de pago
     if (arrParams.formapago == 0) {
         var mensaje = {wtmessage: "Método Pago : El campo no debe estar vacío.", title: "Error"};
@@ -469,4 +470,9 @@ function exportExcelestcartera() {
 function exportPdfestcartera() {
     var search = $('#cmb_buscarestcartera').val();
     window.location.href = $('#txth_base').val() + "/financiero/pagosfacturas/exppdfestcartera?pdf=1&search=" + search;
+}
+
+function subirpago() {
+    var per_ids = $('#txth_per_ids').val();
+    window.location.href = $('#txth_base').val() + "/financiero/pagosfacturas/subirpago?per_ids=" + per_ids;
 }

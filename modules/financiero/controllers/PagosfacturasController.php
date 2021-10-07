@@ -420,7 +420,7 @@ class PagosfacturasController extends \app\components\CController {
     public function actionSavepagopendiente() {
         //DESCOMENTAR $perids AL PROBAR DESDE COLECTURIA LUEGO DE BOTONES
         //Obtenemo el id de la persona
-        $per_idsession = @Yii::$app->session->get("PB_perid");        
+        $per_idsession = @Yii::$app->session->get("PB_perid");
         //Obtenemos la fecha de hoy y le damos formato
         $fecha = date(Yii::$app->params["dateTimeByDefault"]);
         //Revisamos si la peticion fue por ajax

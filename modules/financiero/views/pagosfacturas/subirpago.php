@@ -24,9 +24,15 @@ academico::registerTranslations();
 
 
 ?>
-
+<?php
+ if (!empty($_GET["per_ids"])){
+     $perimagen = base64_decode($_GET["per_ids"]);
+}else{
+    $perimagen = @Yii::$app->session->get("PB_perid");
+}
+?>
 <?= Html::hiddenInput('txth_idest', $arr_persona['est_id'], ['id' => 'txth_idest']); ?>
-<?= Html::hiddenInput('txth_per', @Yii::$app->session->get("PB_perid"), ['id' => 'txth_per']); ?>
+<?= Html::hiddenInput('txth_per', $perimagen, ['id' => 'txth_per']); ?>
 <?= Html::hiddenInput('txth_per_ids', $_GET["per_ids"], ['id' => 'txth_per_ids']); ?>
 <style type="text/css">
     [data-tip] {
@@ -199,7 +205,7 @@ academico::registerTranslations();
             <div class="form-group">
                 <label class="col-xs-12 col-sm-12 col-md-5 col-lg-5 control-label  keyupmce" for="txth_doc_pago" id="txth_doc_titulo" name="txth_doc_pago"><?= Yii::t("formulario", "Attach document") ?><span class="text-danger"> * </span></label>
                 <div   class="col-xs-12 col-sm-12 col-md-7 col-lg-7">
-                    <?= Html::hiddenInput('txth_per', @Yii::$app->session->get("PB_perid"), ['id' => 'txth_per']); ?>
+                    <?= Html::hiddenInput('txth_per', $perimagen, ['id' => 'txth_per']); ?>
                     <?= Html::hiddenInput('txth_doc_pago', '', ['id' => 'txth_doc_pago']); ?>
                     <?php
                         echo CFileInputAjax::widget([

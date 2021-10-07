@@ -431,15 +431,15 @@ class PagosFacturaEstudiante extends \yii\db\ActiveRecord
         \app\models\Utilities::putMessageLogFile('pfes_fecha_pago...: ' . $pfes_fecha_pago);
         \app\models\Utilities::putMessageLogFile('pfes_observacion...: ' . $pfes_observacion);
         \app\models\Utilities::putMessageLogFile('pfes_archivo_pago...: ' . $pfes_archivo_pago);
-        \app\models\Utilities::putMessageLogFile('pfes_usu_ingreso...: ' . $pfes_usu_ingreso);*/
-
+        \app\models\Utilities::putMessageLogFile('pfes_usu_ingreso...: ' . $pfes_usu_ingreso);
+        */
         $con = \Yii::$app->db_facturacion;
-        /*$trans = $con->getTransaction(); // se obtiene la transacción actual
+        $trans = $con->getTransaction(); // se obtiene la transacción actual
         if ($trans !== null) {
             $trans = null; // si existe la transacción entonces no se crea una
-        } else {*/
+        } else {
             $trans = $con->beginTransaction(); // si no existe la transacción entonces se crea una
-        //}
+        }
         $fecha = date(Yii::$app->params["dateTimeByDefault"]);
         $param_sql = "pfes_estado";
         $bdet_sql = "1";
@@ -584,6 +584,20 @@ class PagosFacturaEstudiante extends \yii\db\ActiveRecord
      * @return dpfa_id
      */
     public function insertarDetpagospendientes($pfes_id, $dpfa_tipo_factura, $dpfa_factura, $dpfa_descripcion_factura, $dpfa_valor_factura, $dpfa_fecha_factura, $dpfa_saldo_factura, $dpfa_num_cuota, $dpfa_valor_cuota, $dpfa_fecha_vence_cuota, $dpfa_estado_pago, $dpfa_estado_financiero, $dpfa_usu_ingreso) {
+        /*\app\models\Utilities::putMessageLogFile('pfes_id '. $pfes_id);
+        \app\models\Utilities::putMessageLogFile('dpfa_tipo_factura '. $dpfa_tipo_factura);
+        \app\models\Utilities::putMessageLogFile('dpfa_factura '.$dpfa_factura);
+        \app\models\Utilities::putMessageLogFile('dpfa_descripcion_factura '. $dpfa_descripcion_factura);
+        \app\models\Utilities::putMessageLogFile('dpfa_valor_factura '. $dpfa_valor_factura);
+        \app\models\Utilities::putMessageLogFile('dpfa_fecha_factura '. $dpfa_fecha_factura);
+        \app\models\Utilities::putMessageLogFile('dpfa_saldo_factura '. $dpfa_saldo_factura);
+        \app\models\Utilities::putMessageLogFile('dpfa_num_cuota '. $dpfa_num_cuota);
+        \app\models\Utilities::putMessageLogFile('dpfa_valor_cuota '. $dpfa_valor_cuota);
+        \app\models\Utilities::putMessageLogFile('dpfa_fecha_vence_cuota '.$dpfa_fecha_vence_cuota);
+        \app\models\Utilities::putMessageLogFile('dpfa_estado_pago '.$dpfa_estado_pago);
+        \app\models\Utilities::putMessageLogFile('dpfa_estado_financiero '. $dpfa_estado_financiero);
+        \app\models\Utilities::putMessageLogFile('dpfa_usu_ingreso '. $dpfa_usu_ingreso);
+        */
         $con = \Yii::$app->db_facturacion;
         $trans = $con->getTransaction(); // se obtiene la transacción actual
         if ($trans !== null) {

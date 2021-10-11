@@ -300,6 +300,7 @@ class CargaCartera extends \yii\db\ActiveRecord
         $sql = "SELECT
                   (SELECT SUM(ccar.ccar_valor_cuota) FROM " . $con->dbname . ".carga_cartera ccar
                     WHERE ccar.ccar_documento_identidad= :cedula AND ccar.ccar_estado_cancela='N' AND ccar.ccar_tipo_documento='FE')  as total_deuda,
+                    ccar.ccar_id,
                     ccar.ccar_tipo_documento,
                     ccar.ccar_numero_documento as NUM_NOF,
                     ccar.ccar_documento_identidad,
@@ -684,6 +685,45 @@ class CargaCartera extends \yii\db\ActiveRecord
             return $resultData;
         } else {
             return $dataProvider;
+        }
+    }
+
+    /**
+     * Function eliminar el curso estados en 0.
+     * @author Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>;
+     * @param
+     * @return
+     */
+    public function eliminarCargaCartera($ccar_id, $ccar_usu_modifica, $ccar_fecha_modificacion) {
+        $estado = 0;
+        $con = \Yii::$app->db_facturacion;
+
+        if ($trans !== null) {
+            $trans = null; // si existe la transacción entonces no se crea una
+        } else {
+            $trans = $con->beginTransaction(); // si no existe la transacción entonces se crea una
+        }
+        try {
+            $comando = $con->createCommand
+                    ("UPDATE " . $con->dbname . ".carga_cartera
+                      SET ccar_estado = :estado,
+                          ccar_usu_modifica = :ccar_usu_modifica,
+                          ccar_fecha_modificacion = :ccar_fecha_modificacion,
+                          ccar_estado_logico = :estado
+                      WHERE
+                      ccar_id = :ccar_id ");
+            $comando->bindParam(":ccar_id", $ccar_id, \PDO::PARAM_INT);
+            $comando->bindParam(":ccar_usu_modifica", $ccar_usu_modifica, \PDO::PARAM_INT);
+            $comando->bindParam(":ccar_fecha_modificacion", $ccar_fecha_modificacion, \PDO::PARAM_STR);
+            $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+            $response = $comando->execute();
+            if ($trans !== null)
+                $trans->commit();
+            return $response;
+        } catch (Exception $ex) {
+            if ($trans !== null)
+                $trans->rollback();
+            return FALSE;
         }
     }
 }

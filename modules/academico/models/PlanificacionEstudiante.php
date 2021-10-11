@@ -1222,7 +1222,7 @@ inner join db_academico.materia_paralelo_periodo mpp on mpp.asi_id = made.asi_id
 
 
     /**
-     * Function busca los etudiantes para autocompletar en palnificacion. 
+     * Function busca los etudiantes para autocompletar en palnificacion.
      * @author Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>;
      * @param
      * @return
@@ -1230,9 +1230,9 @@ inner join db_academico.materia_paralelo_periodo mpp on mpp.asi_id = made.asi_id
     public function busquedaEstudianteplanificacion() {
         $con = \Yii::$app->db_academico;
         $estado = 1;
-        
+
         $sql = "SELECT est.per_id as id, concat(/*est.per_id, ' - ',*/ pers.per_cedula, ' - ', 
-                    ifnull(pers.per_pri_nombre, ' ') ,' ', 
+                    ifnull(pers.per_pri_nombre, ' ') ,' ',
                     ifnull(pers.per_pri_apellido,' ')) as name
                     FROM db_academico.estudiante est
                     JOIN db_asgard.persona pers ON pers.per_id = est.per_id
@@ -1250,9 +1250,9 @@ inner join db_academico.materia_paralelo_periodo mpp on mpp.asi_id = made.asi_id
     public function busquedaEstudianteplanificacionaut($per_id) {
         $con = \Yii::$app->db_academico;
         $estado = 1;
-        
-        $sql = "SELECT est.per_id as id, concat(pers.per_cedula, ' - ', 
-                    ifnull(pers.per_pri_nombre, ' ') ,' ', 
+
+        $sql = "SELECT est.per_id as id, concat(pers.per_cedula, ' - ',
+                    ifnull(pers.per_pri_nombre, ' ') ,' ',
                     ifnull(pers.per_pri_apellido,' ')) as name
                     FROM db_academico.estudiante est
                     JOIN db_asgard.persona pers ON pers.per_id = est.per_id

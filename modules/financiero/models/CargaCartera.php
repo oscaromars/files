@@ -668,7 +668,8 @@ class CargaCartera extends \yii\db\ActiveRecord
         WHERE
         $str_search
         est.est_estado = :estado AND
-        est.est_estado_logico = :estado";
+        est.est_estado_logico = :estado AND
+        ccar.ccar_estado_cancela = 'N'";
 
         $comando = $con->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);

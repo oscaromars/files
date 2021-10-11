@@ -296,6 +296,7 @@ class CargaCartera extends \yii\db\ActiveRecord
      */
     public static function getPagospendientexestcar($cedula, $onlyData = false) {
         $con = \Yii::$app->db_facturacion;
+        $estado = 1;
         $sql = "SELECT
                   (SELECT SUM(ccar.ccar_valor_cuota) FROM " . $con->dbname . ".carga_cartera ccar
                     WHERE ccar.ccar_documento_identidad= :cedula AND ccar.ccar_estado_cancela='N' AND ccar.ccar_tipo_documento='FE')  as total_deuda,
@@ -320,9 +321,14 @@ class CargaCartera extends \yii\db\ActiveRecord
                   ,ifnull(ccar_abono, '') as abono
                   ,ifnull(ROUND((ccar.ccar_valor_cuota - ccar_abono),2), '') as saldo
                 FROM " . $con->dbname . ".carga_cartera ccar
-                WHERE ccar.ccar_documento_identidad= :cedula AND ccar.ccar_estado_cancela='N' AND ccar.ccar_tipo_documento='FE'";
+                WHERE ccar.ccar_documento_identidad= :cedula AND
+                      ccar.ccar_estado_cancela='N' AND
+                      ccar.ccar_tipo_documento='FE' AND
+                      ccar.ccar_estado = :estado AND
+                      ccar.ccar_estado_logico = :estado";
         $comando = $con->createCommand($sql);
         $comando->bindParam(":cedula", $cedula, \PDO::PARAM_STR);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
 
         $resultData = $comando->queryAll();
         $dataProvider = new ArrayDataProvider([

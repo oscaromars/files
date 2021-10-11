@@ -137,7 +137,7 @@ function guardarPagofactura() {
     arrParams.observacion = $('#txt_observa').val();
     arrParams.txt_cedula  = $('#txt_cedula ').val();
     arrParams.perisest  =   $('#txth_per_ids').val();
-    //alert ('sdsd '+ arrParams.perisest);
+
     //Pregunto por el metodo de pago
     if (arrParams.formapago == 0) {
         var mensaje = {wtmessage: "Método Pago : El campo no debe estar vacío.", title: "Error"};
@@ -237,7 +237,12 @@ function guardarPagofactura() {
 
                 if(response.status == 'OK'){
                     setTimeout(function () {
-                        parent.window.location.href = $('#txth_base').val() + "/financiero/pagosfacturas/viewsaldo";
+                        //parent.window.location.href = $('#txth_base').val() + "/financiero/pagosfacturas/viewsaldo";
+                        if (arrParams.perisest === null || arrParams.perisest === '') {
+                            parent.window.location.href = $('#txth_base').val() + "/financiero/pagosfacturas/viewsaldo";
+                        }else{
+                            parent.window.location.href = $('#txth_base').val() + "/financiero/pagosfacturas/viewsaldo?per_ids=" + arrParams.perisest;
+                        }
                     }, 2000);
                 }
 
@@ -266,7 +271,12 @@ function guardarPagofactura() {
                             showAlert(response.status, response.label, response.message);
 
                             setTimeout(function () {
-                                parent.window.location.href = $('#txth_base').val() + "/financiero/pagosfacturas/viewsaldo";
+                                //parent.window.location.href = $('#txth_base').val() + "/financiero/pagosfacturas/viewsaldo";
+                                if (arrParams.perisest === null || arrParams.perisest === '') {
+                                    parent.window.location.href = $('#txth_base').val() + "/financiero/pagosfacturas/viewsaldo";
+                                }else{
+                                    parent.window.location.href = $('#txth_base').val() + "/financiero/pagosfacturas/viewsaldo?per_ids=" + arrParams.perisest;
+                                }
                             }, 2000);
 
                         }, true);

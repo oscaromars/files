@@ -138,6 +138,6 @@ Academico::registerTranslations();
                     'rama_id' => base64_encode($rama["rama_id"]),
                     'saca_id' => base64_encode($saca_id),
                     'bloque' => base64_encode($bloque),
-                ]) ?>" class="btn btn-primary pull-right" style="margin: 0px 5px;"><?= Academico::t("matriculacion", "Go to Pay") ?></a>
+                ]) ?>" class="btn btn-primary pull-right" style="margin: 0px 5px;"><?= Academico::t("matriculacion", "Continue") ?></a>
 
 <?php } ?>

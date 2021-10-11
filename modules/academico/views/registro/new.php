@@ -18,6 +18,8 @@ StripeAsset::register($this);
 //print_r('</br>');
 //print_r($dataSiga);
 
+$status = 'disabled';
+
 if ($isDuplicate) {
     echo "
     <style>
@@ -329,7 +331,7 @@ if ($isDuplicate) {
                         <label class="col-xs-12 col-sm-12 col-md-12 col-lg-3 control-label" for="txt_dpre_ssn_id_fact" id="lbl_nombre1"><?= Yii::t("formulario", "Cédula") ?><span class="text-danger">*</span></label>
                         <div   class="col-xs-12 col-sm-12 col-md-12 col-lg-9">
                             <?= Html::hiddenInput('txt_dpre_ssn_id_fact_aux', '', ['id' => 'txt_dpre_ssn_id_fact_aux']); ?>
-                            <input type="text" class="form-control PBvalidation keyupmce"   id="txt_dpre_ssn_id_fact" data-required="true" data-type="number" placeholder="<?= Yii::t("formulario", "Cedula") ?>" >
+                            <input <?=$status?> type="text" class="form-control PBvalidation keyupmce" value="<?= $datosFacturacion['cedula'] ?>"  id="txt_dpre_ssn_id_fact" data-required="true" data-type="number" placeholder="<?= Yii::t("formulario", "Cedula") ?>" >
                         </div>            
                     </div>            
                 </div>  
@@ -338,7 +340,7 @@ if ($isDuplicate) {
                         <label class="col-xs-12 col-sm-12 col-md-12 col-lg-3 control-label" for="txt_nombres_fac" id="lbl_nombre1"><?= Yii::t("formulario", "Name") ?><span class="text-danger">*</span></label>
                         <div   class="col-xs-12 col-sm-12 col-md-12 col-lg-9">
                             <?= Html::hiddenInput('txt_nombres_fac_aux', '', ['id' => 'txt_nombres_fac_aux']); ?>
-                            <input type="text" class="form-control PBvalidation keyupmce" value="" id="txt_nombres_fac" data-required="true" data-type="alfa" placeholder="<?= Yii::t("formulario", "First Name") ?>">
+                            <input <?=$status?> type="text" class="form-control PBvalidation keyupmce" value="<?= $datosFacturacion['nombre'] ?>" id="txt_nombres_fac" data-required="true" data-type="alfa" placeholder="<?= Yii::t("formulario", "First Name") ?>">
                         </div>            
                     </div>            
                 </div> 
@@ -347,7 +349,7 @@ if ($isDuplicate) {
                         <label class="col-xs-12 col-sm-12 col-md-12 col-lg-3 control-label" for="txt_apellidos_fac" id="lbl_apellido1"><?= Yii::t("formulario", "Last Names") ?><span class="text-danger">*</span></label>
                         <div   class="col-xs-12 col-sm-12 col-md-12 col-lg-9">
                             <?= Html::hiddenInput('txt_apellidos_fac_aux', '', ['id' => 'txt_apellidos_fac_aux']); ?>
-                            <input type="text" class="form-control PBvalidation keyupmce" value="" data-required="true" id="txt_apellidos_fac" data-type="alfa" placeholder="<?= Yii::t("formulario", "First Name") ?>">
+                            <input <?=$status?> type="text" class="form-control PBvalidation keyupmce" value="<?= $datosFacturacion['apellidos'] ?>" data-required="true" id="txt_apellidos_fac" data-type="alfa" placeholder="<?= Yii::t("formulario", "First Name") ?>">
                         </div>
                     </div>
                 </div>
@@ -356,7 +358,7 @@ if ($isDuplicate) {
                         <label class="col-xs-12 col-sm-12 col-md-12 col-lg-3 control-label" for="txt_dir_fac" id="lbl_dir_fac"><?= Yii::t("formulario", "Address") ?><span class="text-danger">*</span></label>
                         <div   class="col-xs-12 col-sm-12 col-md-12 col-lg-9">
                             <?= Html::hiddenInput('txt_dir_fac_aux', '', ['id' => 'txt_dir_fac_aux']); ?>
-                            <input type="text" class="form-control keyupmce PBvalidation" value="" data-required="true" id="txt_dir_fac" data-type="alfanumerico" placeholder="<?= Yii::t("formulario", "Address") ?>">
+                            <input <?=$status?> type="text" class="form-control keyupmce PBvalidation" value="<?= $datosFacturacion['direccion'] ?>" data-required="true" id="txt_dir_fac" data-type="alfanumerico" placeholder="<?= Yii::t("formulario", "Address") ?>">
                         </div> 
                     </div>  
                 </div>
@@ -365,7 +367,7 @@ if ($isDuplicate) {
                         <label class="col-xs-12 col-sm-12 col-md-12 col-lg-3 control-label" for="txt_tel_fac" id="lbl_apellido1"><?= Yii::t("formulario", "Phone") ?><span class="text-danger">*</span></label>
                         <div   class="col-xs-12 col-sm-12 col-md-12 col-lg-9">
                             <?= Html::hiddenInput('txt_tel_fac_aux', '', ['id' => 'txt_tel_fac_aux']); ?>
-                            <input type="text" class="form-control PBvalidation" value="" id="txt_tel_fac" data-type="number" data-keydown="true" placeholder="<?= Yii::t("formulario", "Phone") ?>">                        
+                            <input <?=$status?> type="text" class="form-control PBvalidation" value="<?= $datosFacturacion['telefono'] ?>" id="txt_tel_fac" data-type="number" data-keydown="true" placeholder="<?= Yii::t("formulario", "Phone") ?>">                        
                         </div>
                     </div>
                 </div>
@@ -374,7 +376,7 @@ if ($isDuplicate) {
                         <label class="col-xs-12 col-sm-12 col-md-12 col-lg-3 control-label" for="txt_correo_fac" ><?= Yii::t("formulario", "Email") ?><span class="text-danger">*</span> </label>
                         <div   class="col-xs-12 col-sm-12 col-md-12 col-lg-9">
                             <?= Html::hiddenInput('txt_correo_fac_aux', '', ['id' => 'txt_correo_fac_aux']); ?>
-                            <input type="text" class="form-control PBvalidation keyupmce" value="" data-required="true" id="txt_correo_fac" data-type="email" data-keydown="true" placeholder="<?= Yii::t("formulario", "Email") ?>">
+                            <input <?=$status?> type="text" class="form-control PBvalidation keyupmce" value="<?= $datosFacturacion['correo'] ?>" data-required="true" id="txt_correo_fac" data-type="email" data-keydown="true" placeholder="<?= Yii::t("formulario", "Email") ?>">
                         </div>
                     </div>
                 </div>

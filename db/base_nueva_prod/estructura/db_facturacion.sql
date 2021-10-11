@@ -840,3 +840,7 @@ create table db_facturacion.detalle_cruce(
   `dcru_estado_logico` varchar(1) not null,
    foreign key (cru_id) references `cruce`(cru_id)
   );
+
+ALTER TABLE `db_facturacion`.`detalle_pagos_factura` 
+ADD INDEX `index_pfes` (`pfes_id` ASC);
+;

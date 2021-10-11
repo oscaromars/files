@@ -6,6 +6,12 @@ use yii\helpers\Url;
 
 Academico::registerTranslations();
  
+/*
+if(empty($planificacion['Rama_id'])){
+    $planificacion['Rama_id']=0;
+}*/
+
+print_r($planificacion); 
 
 if ($isdrop) {
     echo "<div class='col-lg-12 col-md-12 col-sm-12 col-xs-12 form-group'>";

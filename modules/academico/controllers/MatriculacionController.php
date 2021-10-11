@@ -1998,12 +1998,20 @@ class MatriculacionController extends \app\components\CController {
                 // \app\models\Utilities::putMessageLogFile($cuotas);
 
                 // Incluír los gastos administrativos
+                if ($data_student['mod_id'] == 1 ){
+                    $administrativos='GESTION DE ENTORNOS VIRTUALES';
+                    //print_r($administrativos);
+                }else{
+                    $administrativos = 'GASTOS ADMINISTRATIVOS';
+                    // print_r($administrativos);
+                }
+                 
                 $gastos_administrativos = $ron['ron_valor_gastos_pendientes'];
                 if($gastos_administrativos > 0){
                     $valor_total += $gastos_administrativos;
                     // Llenar con campos vacíos las olumnas que no tengan datos para que no aparezcan como "(no definido)"
                     $materias_data_arr[] = [
-                                            "Subject" => "Gastos Administrativos", 
+                                            "Subject" => $administrativos, 
                                             "Cost" => $gastos_administrativos,
                                             "Code" => "",
                                             "Block" => "",

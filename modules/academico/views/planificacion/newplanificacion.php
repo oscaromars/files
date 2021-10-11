@@ -6,7 +6,6 @@ use app\models\Utilities;
 use app\modules\academico\Module as academico;
 use kartik\select2\Select2;
 academico::registerTranslations();
-//print_r('S:'.$perSelect);
 
 ?>
 
@@ -18,6 +17,7 @@ academico::registerTranslations();
 
 <?= Html::hiddenInput('txth_pla_id', $_SESSION['plan_id'], ['id' => 'txth_pla_id']); ?>
 <?= Html::hiddenInput('pla_id', $pla_id, ['id' => 'pla_id']); ?>
+<?= Html::hiddenInput('txt_periodo', $periodo, ['id' => 'txt_periodo']); ?>
 <?= Html::hiddenInput('txth_per_id', $per_id, ['id' => 'txth_per_id']); ?>
 <?= Html::hiddenInput('txt_malla', $arr_malla, ['id' => 'txt_malla']); ?>
 <?= Html::hiddenInput('txt_select', $perSelectSe, ['id' => 'txt_select']); ?>
@@ -226,7 +226,7 @@ academico::registerTranslations();
                                 'template' => '{delete}',
                                 'buttons' => [
                                     'delete' => function ($url, $model_detalle) {
-                                        return Html::a('<span class="' . Utilities::getIcon('remove') . '"></span>', null, ['href' => 'javascript:', 'onclick' => "deletematestudianteaut( " . $_SESSION['plan_id'] .",". $_SESSION['per_ids'] . ", " . substr($model_detalle['bloque'], -1) . ", " . substr($model_detalle['hora'], -1) . ");", "data-toggle" => "tooltip", "title" => Yii::t("accion", "Delete")]);
+                                        return Html::a('<span class="' . Utilities::getIcon('remove') . '"></span>', null, ['href' => 'javascript:', 'onclick' => "deletematestudianteaut( " . $_SESSION['plan_id'] .",". $_SESSION['per_ids'] . ", " . substr($model_detalle['bloque'], -1) . ", " . substr($model_detalle['hora'], -1) .", " . $model_detalle['saca_id'] . ");", "data-toggle" => "tooltip", "title" => Yii::t("accion", "Delete")]);
                                 
                                     },
                                 ],

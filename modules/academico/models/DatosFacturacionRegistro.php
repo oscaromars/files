@@ -135,15 +135,17 @@ class DatosFacturacionRegistro extends \yii\db\ActiveRecord
     {
         $con = \Yii::$app->db_asgard;
         $con2 = \Yii::$app->db_academico;
-        $sql = "SELECT uge.grol_id as rol, dfr.dfr_cedula as cedula,
+        $sql = "SELECT count(x.rol) as cnt,x.* from (
+                SELECT uge.grol_id as rol, dfr.dfr_cedula as cedula,
                 dfr.dfr_nombre as nombre, 
                 dfr.dfr_apellidos as apellidos,
                 dfr.dfr_direccion as direccion,
                 dfr.dfr_telefono as telefono,
                 dfr.dfr_correo as correo 
                 from " . $con2->dbname . ".datos_facturacion_registro dfr
-                inner join " . $con->dbname . ".usua_grol_eper uge on uge.eper_id = dfr.dfr_per_id 
-                and dfr.dfr_per_id = $per_id order by dfr.dfr_id desc limit 0,1;";
+                inner join " . $con->dbname . ".empresa_persona ep on ep.per_id = dfr.dfr_per_id
+                inner join " . $con->dbname . ".usua_grol_eper uge on uge.eper_id = ep.eper_id
+                and dfr.dfr_per_id = $per_id order by dfr.dfr_id desc limit 0,1  )as x;";
                 
         $comando = $con->createCommand($sql);
         $resultData = $comando->queryOne();

@@ -26,6 +26,14 @@ Else {
 
 
 $total=$costo['costo']+$costo['gastos']+$costo['asociacion'];
+
+if ($data_student['mod_id'] == 1 ){
+    $administrativos='GESTION DE ENTORNOS VIRTUALES';
+    print_r($administrativos);
+}else{
+    $administrativos = 'GASTOS ADMINISTRATIVOS';
+    print_r($administrativos);
+}
  
 
 ?>
@@ -160,7 +168,7 @@ $total=$costo['costo']+$costo['gastos']+$costo['asociacion'];
                     <td id="costMatr">$<?= isset($modelRonOn->ron_valor_matricula)?(number_format($modelRonOn->ron_valor_matricula, 2, '.', ',')):'0.00' ?></td>
                 </tr>
                 <tr>
-                    <th><?= academico::t('matriculacion','Administrative Expenses') ?></th>
+                    <th><?= academico::t('matriculacion',$administrativos) ?></th>
                     <td id="costAdmin">$<?= isset($costo['gastos'])?(number_format($costo['gastos'], 2, '.', ',')):'0.00' ?></td>
                 </tr>
                 <tr style='display: none;'>

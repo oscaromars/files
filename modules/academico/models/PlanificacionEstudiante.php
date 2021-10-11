@@ -1437,7 +1437,7 @@ inner join db_academico.materia_paralelo_periodo mpp on mpp.asi_id = made.asi_id
             
             if($resultData == null){
                 $sql3 = 
-                    ("INSERT INTO " . $con->dbname . ".planificacion_estudiante(pes_cod_malla,pes_carrera,per_id,pes_dni,pes_jornada,pes_nombres,pla_id,pes_estado,pes_estado_logico,pes_fecha_creacion)
+                    ("INSERT INTO " . $con->dbname . ".planificacion_estudiante(pes_cod_malla,pes_cod_carrera,per_id,pes_dni,pes_jornada,pes_nombres,pla_id,pes_estado,pes_estado_logico,pes_fecha_creacion)
                     select distinct(ma.maca_codigo),ma.maca_nombre,e.per_id, pe.per_cedula, ecpr_jornada as jornada,
                                         concat(pe.per_pri_nombre, ' ', pe.per_seg_nombre,' ', pe.per_pri_apellido, ' ',pe.per_seg_apellido) as nombres, pla.pla_id as pla_id, $estado,$estado,
                                         '$fecha_modificacion'
@@ -1644,6 +1644,7 @@ inner join db_academico.materia_paralelo_periodo mpp on mpp.asi_id = made.asi_id
         $con = \Yii::$app->db_academico;
         $con1 = \Yii::$app->db_asgard;
         $estado = 1;
+        // view: 0 = all, 1 = excel, 2 = pdf
         if (isset($arrFiltro) && count($arrFiltro) > 0) {
             \app\models\Utilities::putMessageLogFile('----------------------------------------Con Filtros');
             $pla_id = $arrFiltro['periodo']?$arrFiltro['periodo']:0;
@@ -1686,8 +1687,14 @@ inner join db_academico.materia_paralelo_periodo mpp on mpp.asi_id = made.asi_id
                 pe.pes_mat_b2_h6_cod)';
             }
 
+            $consulta = "x.*, count(x.per_id) as total";
             if($view == 1){
-                $str_campos_filtro = ' pla.saca_id,pla.mod_id,';
+                $consulta = "x.id, x.Modalidad, x.Periodo, x.bloque, x.Materia,count(x.per_id) as total";
+                // print_r($consulta);die();
+            }
+            if($view == 2){
+                $consulta = "x.id, x.Modalidad, x.Periodo, x.bloque, x.Materia,count(x.per_id) as total";
+                // print_r($consulta);die();
             }
 
             if(!strcmp($str_search, '' )){
@@ -1716,36 +1723,36 @@ inner join db_academico.materia_paralelo_periodo mpp on mpp.asi_id = made.asi_id
            
         }
         
-        $sql2="SELECT x.*, count(x.per_id) as total from 
-                (SELECT (pe.per_id),a.asi_id as id,  pla.saca_id,pla.mod_id,
-                            case pla.mod_id
-                            when 1 then 'ONLINE'
-                            when 2 then 'PRESENCIAL'
-                            WHEN 3 then 'SEMIPRESENCIAL'
-                            WHEN 4 then 'DISTANCIA'
-                            end as Modalidad,
-                            concat('Paralelo ',mpp.mpp_num_paralelo) as Paralelo,
-                            mad.made_codigo_asignatura,
-                            (select concat(saca.saca_nombre,'-',saca.saca_anio) 
-                                from db_academico.semestre_academico saca,
-                                db_academico.planificacion p 
-                                where p.pla_id = pe.pla_id
-                                and saca.saca_id = p.saca_id) as 'Periodo',
-                            case
-                            when mad.made_codigo_asignatura  in (pe.pes_mat_b1_h1_cod,pe.pes_mat_b1_h2_cod,pe.pes_mat_b1_h3_cod,
-                                                                pe.pes_mat_b1_h4_cod,pe.pes_mat_b1_h5_cod,pe.pes_mat_b1_h6_cod)
-                            then 'Bloque 1'
-                            when mad.made_codigo_asignatura  in (pe.pes_mat_b2_h1_cod,pe.pes_mat_b2_h2_cod,pe.pes_mat_b2_h3_cod,
-                                                                    pe.pes_mat_b2_h4_cod,pe.pes_mat_b2_h5_cod,pe.pes_mat_b2_h6_cod)
-                            then 'Bloque 2' end as bloque,
-                    a.asi_nombre as Materia, ifnull(mpp.mpp_id,'0') as mpp_id,
-                    case daho.daho_id
-                    when '0' then ''
-                    when NULL then ''
-                    else ifnull(daho.daho_descripcion ,'') 
-                    end as horario,
-                    mpp.daho_id as daho_id,
-                    count(pe.per_id) as Cantidad
+        $sql2="SELECT $consulta from 
+                ( SELECT (pe.per_id),a.asi_id as id,  pla.saca_id,pla.mod_id,
+                                case pla.mod_id
+                                when 1 then 'ONLINE'
+                                when 2 then 'PRESENCIAL'
+                                WHEN 3 then 'SEMIPRESENCIAL'
+                                WHEN 4 then 'DISTANCIA'
+                                end as Modalidad,
+                                concat('Paralelo ',mpp.mpp_num_paralelo) as Paralelo,
+                                mad.made_codigo_asignatura,
+                                (select concat(saca.saca_nombre,'-',saca.saca_anio) 
+                                    from db_academico.semestre_academico saca,
+                                    db_academico.planificacion p 
+                                    where p.pla_id = pe.pla_id
+                                    and saca.saca_id = p.saca_id) as 'Periodo',
+                                case
+                                when mad.made_codigo_asignatura  in (pe.pes_mat_b1_h1_cod,pe.pes_mat_b1_h2_cod,pe.pes_mat_b1_h3_cod,
+                                                                    pe.pes_mat_b1_h4_cod,pe.pes_mat_b1_h5_cod,pe.pes_mat_b1_h6_cod)
+                                then 'Bloque 1'
+                                when mad.made_codigo_asignatura  in (pe.pes_mat_b2_h1_cod,pe.pes_mat_b2_h2_cod,pe.pes_mat_b2_h3_cod,
+                                                                        pe.pes_mat_b2_h4_cod,pe.pes_mat_b2_h5_cod,pe.pes_mat_b2_h6_cod)
+                                then 'Bloque 2' end as bloque,
+                        a.asi_nombre as Materia, ifnull(mpp.mpp_id,'0') as mpp_id,
+                        case daho.daho_id
+                        when '0' then ''
+                        when NULL then ''
+                        else ifnull(daho.daho_descripcion ,'') 
+                        end as horario,
+                        mpp.daho_id as daho_id,
+                        count(pe.per_id) as Cantidad
                     from  ". $con->dbname . ".planificacion_estudiante pe
                     inner join  ". $con->dbname . ".malla_academica_detalle mad on mad.made_codigo_asignatura in $filtro
                     inner join  ". $con->dbname . ".asignatura a on mad.asi_id = a.asi_id

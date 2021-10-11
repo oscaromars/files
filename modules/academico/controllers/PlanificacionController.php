@@ -1583,12 +1583,11 @@ $centralprocess = $malla->consultarAsignaturas($resultData[$i],$periodo,$saca_no
         );
         $mod_periodo = new PlanificacionEstudiante();
         $data = Yii::$app->request->get();
-        $arrSearch['estudiante'] = $data['estudiante'];
         $arrSearch['unidad'] = $data['unidad'];
         $arrSearch['modalidad'] = $data['modalidad'];
-        $arrSearch['carrera'] = $data['carrera'];
         $arrSearch['periodo'] = $data['periodo'];
         $arrSearch['bloque'] = $data['bloque'];
+        $arrSearch['view'] = 2;
         $arrData = array();
         if (empty($arrSearch)) {
             $arrData = $mod_periodo->consultarEstudiantePeriodo(array(), true);
@@ -1628,12 +1627,11 @@ $centralprocess = $malla->consultarAsignaturas($resultData[$i],$periodo,$saca_no
         );
         $mod_periodo = new PlanificacionEstudiante();
         $data = Yii::$app->request->get();
-        $arrSearch['estudiante'] = $data['estudiante'];
-        //$arrSearch['unidad'] = $data['unidad'];
         $arrSearch['modalidad'] = $data['modalidad'];
         $arrSearch['carrera'] = $data['carrera'];
         $arrSearch['periodo'] = $data['periodo'];
         $arrSearch['bloque'] = $data['bloque'];
+        $arrSearch['view'] = 1;
         $arrData = array();
         if (empty($arrSearch)) {
             $arrData = $mod_periodo->consultarEstudiantePeriodo(array(), true);

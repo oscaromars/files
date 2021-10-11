@@ -187,14 +187,19 @@ DatatableAsset::register($this);
 
 <script type="text/javascript">
     $(document).ready(function() {
-
+        var persest  =   $('#txth_per_ids').val();
+        if (persest === null || persest === '') {
+            target = 5;
+         }else{
+            target = 7;
+            }
         $('#TbgPagopendiente > table').DataTable({
             "dom": 't',
             responsive: true,
             columnDefs: [
                 { targets: 0, responsivePriority: 1},
                 { targets: 3, responsivePriority: 2},
-                { targets: 4, responsivePriority: 3},
+                { targets: target, responsivePriority: 3},
             ],
         });
     });

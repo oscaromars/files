@@ -1574,5 +1574,45 @@ class PagosfacturasController extends \app\components\CController {
         $report->mpdf->Output('Reporte_' . date("Ymdhis") . ".pdf", ExportFile::OUTPUT_TO_DOWNLOAD);
         return;
     }
-
+    public function actionDeletecargacartera() {
+        $mod_cartera = new CargaCartera();
+        $usu_autenticado = @Yii::$app->session->get("PB_iduser");
+        if (Yii::$app->request->isAjax) {
+            $data = Yii::$app->request->post();
+            $ccar_id = $data["ccar_id"];
+            $fecha = date(Yii::$app->params["dateTimeByDefault"]);
+            $con = \Yii::$app->db_facturacion;
+            $transaction = $con->beginTransaction();
+            try {
+                //\app\models\Utilities::putMessageLogFile('cartera id..: ' . $ccar_id);
+                $resp_estado = $mod_cartera->eliminarCargaCartera($ccar_id, $usu_autenticado, $fecha);
+                if ($resp_estado) {
+                    $exito = '1';
+                }
+                if ($exito) {
+                    //Realizar accion
+                    $transaction->commit();
+                    $message = array(
+                        "wtmessage" => Yii::t("notificaciones", "Se ha eliminado el registro de cartera."),
+                        "title" => Yii::t('jslang', 'Success'),
+                    );
+                    return Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), false, $message);
+                } else {
+                    $transaction->rollback();
+                    $message = array(
+                        "wtmessage" => Yii::t("notificaciones", "Error al eliminar. "),
+                        "title" => Yii::t('jslang', 'Error'),
+                    );
+                    return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+                }
+            } catch (Exception $ex) {
+                $transaction->rollback();
+                $message = array(
+                    "wtmessage" => Yii::t("notificaciones", "Error al realizar la acción. "),
+                    "title" => Yii::t('jslang', 'Success'),
+                );
+                return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+            }
+        }
+    }
 }

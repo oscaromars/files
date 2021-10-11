@@ -486,3 +486,38 @@ function subirpago() {
     var per_ids = $('#txth_per_ids').val();
     window.location.href = $('#txth_base').val() + "/financiero/pagosfacturas/subirpago?per_ids=" + per_ids;
 }
+
+function eliminarpagcartera(id) {
+    var mensj = "¿Seguro desea eliminar el registro?";
+    var messagePB = new Object();
+    messagePB.wtmessage = mensj;
+    messagePB.title = "Eliminar";
+    var objAccept = new Object();
+    objAccept.id = "btnid2del";
+    objAccept.class = "btn-primary";
+    objAccept.value = "Aceptar";
+    objAccept.callback = 'accioncart';
+    var params = new Array(id, 0);
+    objAccept.paramCallback = params;
+    messagePB.acciones = new Array();
+    messagePB.acciones[0] = objAccept;
+    showAlert("warning", "warning", messagePB);
+}
+
+function accioncart(id, tmp) {
+    //alert ('id accion' + id);
+    var arrParams = new Object();
+    var link = $('#txth_base').val() + "/financiero/pagosfacturas/deletecargacartera";
+    arrParams.perisest  =   $('#txth_per_ids').val();
+    arrParams.ccar_id = id;
+    if (!validateForm()) {
+        requestHttpAjax(link, arrParams, function (response) {
+            showAlert(response.status, response.label, response.message);
+            if (!response.error) {
+                setTimeout(function () {
+                    window.location.href = $('#txth_base').val() + "/financiero/pagosfacturas/viewsaldo?per_ids=" + arrParams.perisest;
+                }, 3000);
+            }
+        }, true);
+    }
+}

@@ -217,5 +217,28 @@ class UsuaGrolEper extends \yii\db\ActiveRecord {
             return false;
         }
     }    
+    /**
+     * Function Consultar nombre de grupo de un usuario.
+     * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>;
+     * @property
+     * @return
+     */
+    public function consultarGruponame($usu_id) {
+        $con = \Yii::$app->db_asgard;
+        //$estado = 1;
 
+        $sql = "SELECT  ugep.ugep_id,
+                        grol.grol_id,
+                        gru.gru_nombre
+                    FROM db_asgard.usua_grol_eper ugep
+                    INNER JOIN	db_asgard.grup_rol grol ON grol.grol_id = ugep.grol_id
+                    INNER JOIN	db_asgard.grupo gru ON gru.gru_id = grol.gru_id
+                    WHERE ugep.usu_id = :usu_id ";
+
+        $comando = $con->createCommand($sql);
+        //$comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $comando->bindParam(":usu_id", $usu_id, \PDO::PARAM_STR);
+        $resultData = $comando->queryOne();
+        return $resultData;
+    }
 }

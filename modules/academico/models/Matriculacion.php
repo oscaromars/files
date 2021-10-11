@@ -488,9 +488,9 @@ class Matriculacion extends \yii\db\ActiveRecord {
                     inner join db_academico.modalidad mo on mo.mod_id=meu.mod_id
                     inner join db_academico.estudio_academico ea on ea.eaca_id= meu.eaca_id
                     inner join db_academico.unidad_academica ua on ua.uaca_id= meu.uaca_id
-                    WHERE per.per_id =:per_id
-            AND pla.pla_id =:pla_id
-            AND pes.pes_id =:pes_id
+                    WHERE per.per_id =$per_id
+            AND pla.pla_id =$pla_id
+            AND pes.pes_id =$pes_id
             AND pa.paca_activo='A'
             AND pla.pla_estado = 1 AND pla.pla_estado_logico = 1
             AND pa.paca_estado = 1 AND pa.paca_estado_logico = 1
@@ -505,9 +505,9 @@ class Matriculacion extends \yii\db\ActiveRecord {
                     
 
       $comando = $con_academico->createCommand($sql);
-        $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
-        $comando->bindParam(":pla_id", $pla_id, \PDO::PARAM_INT);
-        $comando->bindParam(":pes_id", $pes_id, \PDO::PARAM_INT);
+        //$comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
+        //$comando->bindParam(":pla_id", $pla_id, \PDO::PARAM_INT);
+        //$comando->bindParam(":pes_id", $pes_id, \PDO::PARAM_INT);
         $resultData = $comando->queryOne();
         //\app\models\Utilities::putMessageLogFile('selectEsquemaCalificacionUnidad: '.$comando->getRawSql());
         \app\models\Utilities::putMessageLogFile('getDataStudent: '.$comando->getRawSql());
@@ -531,7 +531,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
                 
         $sql = "
             SELECT pes.per_id,pes_dni, " . $str_bloques . "," . $str_mpp . "
-            FROM " . $con_academico->dbname . ".planificacion_estudiante as pes            
+            FROM " . $con_academico->dbname . ".planificacion_estudiantex as pes            
             WHERE pes.per_id =:per_id
             AND pes.pla_id =:pla_id;
         ";
@@ -565,7 +565,8 @@ class Matriculacion extends \yii\db\ActiveRecord {
         $sql = "
         SELECT
             -- a.asi_id,
-            DISTINCT a.asi_nombre AS Asignatura,
+            e.est_id,pla.pla_id, a.asi_nombre AS Asignatura,
+            ma.maca_id AS Malla,
             mad.made_codigo_asignatura AS MallaCodAsig,
             -- CONCAT(p.per_pri_nombre, ' ',p.per_pri_apellido) AS Estudiante,
             -- em.emp_nombre_comercial AS Empresa,
@@ -578,22 +579,21 @@ class Matriculacion extends \yii\db\ActiveRecord {
             max(rama.rpm_id) as rama_id,
             $adm as admin
         FROM 
-            " . $con_academico->dbname . ".estudiante AS e
-            INNER JOIN " . $con_academico->dbname . ".estudiante_carrera_programa AS ec ON e.est_id = ec.est_id
-            INNER JOIN " . $con_academico->dbname . ".modalidad_estudio_unidad AS me ON ec.meun_id = me.meun_id
-            INNER JOIN " . $con_academico->dbname . ".estudio_academico AS ea ON ea.eaca_id = me.eaca_id
-            INNER JOIN " . $con_academico->dbname . ".unidad_academica AS ua ON me.uaca_id = ua.uaca_id
-            INNER JOIN " . $con_academico->dbname . ".malla_unidad_modalidad AS mum ON mum.meun_id = me.meun_id
-            INNER JOIN " . $con_academico->dbname . ".tipo_estudio_academico AS tp ON tp.teac_id = ea.teac_id
-            INNER JOIN ".Yii::$app->db_asgard->dbname.".persona AS p ON p.per_id = e.per_id
-            INNER JOIN ".Yii::$app->db_asgard->dbname.".empresa AS em ON em.emp_id = me.emp_id
-            INNER JOIN " . $con_academico->dbname . ".planificacion_estudiante AS pes ON pes.pes_dni = p.per_cedula
-            INNER JOIN " . $con_academico->dbname . ".planificacion AS pla ON pla.pla_id = pes.pla_id
-            INNER JOIN " . $con_academico->dbname . ".malla_academica AS ma ON mum.maca_id = ma.maca_id  and pes.pes_cod_carrera = ma.maca_codigo
-            INNER JOIN " . $con_academico->dbname . ".malla_academica_detalle AS mad ON mad.maca_id = ma.maca_id
-            INNER JOIN " . $con_academico->dbname . ".asignatura AS a ON mad.asi_id = a.asi_id
-            -- INNER JOIN " . $con_academico->dbname . ".malla_unidad_modalidad AS mu ON mu.maca_id = ma.maca_id AND mu.meun_id = me.meun_id
-            LEFT JOIN " . $con_academico->dbname . ".programa_costo_credito AS pcc 
+            db_academico.estudiante AS e
+            INNER JOIN db_academico.estudiante_carrera_programa AS ec ON e.est_id = ec.est_id
+            INNER JOIN db_academico.modalidad_estudio_unidad AS me ON ec.meun_id = me.meun_id
+            INNER JOIN db_academico.estudio_academico AS ea ON ea.eaca_id = me.eaca_id
+            INNER JOIN db_academico.unidad_academica AS ua ON me.uaca_id = ua.uaca_id
+            -- INNER JOIN db_academico.malla_unidad_modalidad AS mum ON mum.meun_id = me.meun_id
+            -- INNER JOIN db_academico.tipo_estudio_academico AS tp ON tp.teac_id = ea.teac_id
+            INNER JOIN db_asgard.persona AS p ON p.per_id = e.per_id
+            -- INNER JOIN db_asgard.empresa AS em ON em.emp_id = me.emp_id
+            INNER JOIN db_academico.planificacion_estudiante AS pes ON pes.per_id=p.per_id
+            INNER JOIN db_academico.planificacion AS pla ON pla.pla_id = pes.pla_id
+            INNER JOIN db_academico.malla_academica AS ma ON pes.pes_cod_carrera = ma.maca_codigo 
+            INNER JOIN db_academico.malla_academica_detalle AS mad ON mad.maca_id = ma.maca_id
+            INNER JOIN db_academico.asignatura AS a ON mad.asi_id = a.asi_id
+            LEFT JOIN db_academico.programa_costo_credito AS pcc 
                 ON  me.mod_id = pcc.mod_id 
                 AND mad.made_credito = pcc.pccr_creditos
                 AND e.est_categoria=pcc.pccr_categoria
@@ -619,17 +619,65 @@ class Matriculacion extends \yii\db\ActiveRecord {
             -- mcc.mcco_estado = 1 AND mcc.mcco_estado_logico = 1 AND 
             pcc.pccr_estado =1 AND pcc.pccr_estado_logico = 1 AND 
             ea.eaca_estado = 1 AND  
-            tp.teac_estado = 1 AND tp.teac_estado_logico = 1 AND 
+            -- tp.teac_estado = 1 AND tp.teac_estado_logico = 1 AND 
             ma.maca_estado = 1 AND ma.maca_estado_logico = 1 AND 
             mad.made_estado = 1 AND mad.made_estado_logico = 1 AND
             ec.ecpr_estado = 1 AND ec.ecpr_estado_logico = 1 AND
             e.est_estado = 1 AND e.est_estado_logico = 1 AND
             p.per_estado = 1 AND p.per_estado_logico = 1 AND 
-            em.emp_estado = 1 AND em.emp_estado_logico = 1 AND
-            mum.mumo_estado =1 AND mum.mumo_estado_logico =1 AND
-            pes.pes_estado = 1 AND pes.pes_estado_logico = 1 and 
-            pla.pla_estado=1 AND pla.pla_estado_logico=1
+            -- em.emp_estado = 1 AND em.emp_estado_logico = 1 AND
+            -- mum.mumo_estado =1 AND mum.mumo_estado_logico =1 AND
+            pes.pes_estado=1 and pes.pes_estado_logico=1 and
+            pla.pla_estado=1 and pla.pla_estado_logico=1
             group by 1,2,3,4
+
+        UNION
+
+
+        SELECT e.est_id,pla.pla_id,
+            asi.asi_nombre AS Asignatura,
+            maca.maca_id as Malla,
+            made.made_codigo_asignatura AS MallaCodAsig,
+            -- CONCAT(p.per_pri_nombre, ' ',p.per_pri_apellido) AS Estudiante,
+            -- em.emp_nombre_comercial AS Empresa,
+            pla.mod_id as modalidad,
+            made.made_credito AS AsigCreditos,
+            pcc.pccr_costo_credito as CostoCredito ,
+            -- mcc.mcco_code AS ModCode
+            max(roi.roi_usuario_ingreso) as usuario,
+            max(roi.roi_id) as roi_id,
+            max(rama.rpm_id) as rama_id,
+            $adm as admin
+        from db_academico.planificacion_estudiante pes
+        inner join db_academico.planificacion pla on pla.pla_id=pes.pla_id
+        inner join db_academico.estudiante e on e.per_id =pes.per_id
+        inner join db_academico.malla_academica maca on maca.maca_id=97
+        inner join db_academico.malla_academica_detalle made on made.maca_id=maca.maca_id
+        inner join db_academico.asignatura asi on asi.asi_id=made.asi_id
+        LEFT JOIN db_academico.programa_costo_credito AS pcc 
+                    ON  pla.mod_id = pcc.mod_id 
+                    and e.est_categoria=pcc.pccr_categoria
+                    AND made.made_credito = pcc.pccr_creditos
+                    and pcc.eaca_id = 74
+                    and maca.maca_id = pcc.maca_id 
+        LEFT JOIN db_academico.registro_online as ron 
+                ON ron.per_id = pes.per_id
+                AND ron.pes_id = pes.pes_id 
+                AND ron.ron_estado =1 AND ron.ron_estado_logico = 1
+        LEFT JOIN db_academico.registro_online_item as roi 
+            ON roi.ron_id = ron.ron_id
+            AND roi.roi_materia_cod = made.made_codigo_asignatura
+            AND roi.roi_estado =1 AND roi.roi_estado_logico = 1
+        LEFT JOIN db_academico.registro_adicional_materias as rama
+            ON rama.ron_id=roi.ron_id
+            AND rama.rama_estado=1 and rama.rama_estado_logico=1
+            
+        where pla.mod_id in (2,3,4) and pes.per_id=:per_id AND
+            pes.pes_estado=1 and pes.pes_estado_logico=1 and
+            pla.pla_estado=1 and pla.pla_estado_logico=1
+            group by 1,2,3,4
+             ;
+
         ";
 
 
@@ -698,14 +746,15 @@ class Matriculacion extends \yii\db\ActiveRecord {
         $arrData = array();
         for ($j=1; $j <=2 ; $j++) { 
             for ($i=1; $i <=6; $i++) { 
-                if ($j==1) {
-                    $bloque ='B1';
-                }else{
-                    $bloque ='B2';
-                }
+                // bloque + hora 
+                //$bloque='B'.$j.'-H'.$i;
+                $bloque = 'B'.$j;
+                $hora = $i.'H';
+                
 
                 if (!is_null($dict['pes_mat_b'.$j.'_h'.$i.'_cod']) && trim($dict['pes_mat_b'.$j.'_h'.$i.'_cod']) != "") {
                     
+
                     foreach($dataCredits as $key => $value){
                         if($value['MallaCodAsig'] == trim($dict['pes_mat_b'.$j.'_h'.$i.'_cod'])){
                             $modalidad      = $value['modalidad'];
@@ -718,7 +767,37 @@ class Matriculacion extends \yii\db\ActiveRecord {
                     }
                     $mod_est =Estudiante::findOne(['per_id'=> trim($dict['per_id']),'est_estado'=>'1','est_estado_logico'=>'1']);
                     //MallaAcademicaDetalle
-                    $modMade = MallaAcademicaDetalle::findOne(['made_codigo_asignatura' => trim($dict['pes_mat_b'.$j.'_h'.$i.'_cod']), 'made_estado_logico' => '1', 'made_estado' => '1']);
+                    if ($i <= 5) {
+                        $modMade = MallaAcademicaDetalle::findOne(['made_codigo_asignatura' => trim($dict['pes_mat_b' . $j . '_h' . $i . '_cod']), 'made_estado_logico' => '1', 'made_estado' => '1']);
+                    } else {
+                        $modCodMalla = substr($dict['pes_mat_b' . $j . '_h6_cod'], 0, 8); // devuelve "Malla de Idioma"
+                        $modMalla = MallaAcademica::findOne(['maca_codigo'=>$modCodMalla,'maca_estado'=>1,'maca_estado_logico'=>1]);
+                        $modMade = MallaAcademicaDetalle::findOne(['maca_id' => $modMalla['maca_id'], 'made_codigo_asignatura' => trim($dict['pes_mat_b' . $j . '_h' . $i . '_cod']), 'made_estado_logico' => '1', 'made_estado' => '1']);
+                        $modProgCost = ProgramaCostoCredito::findOne(['maca_id' => $modMalla,'mod_id'=>$modalidad,'pccr_categoria'=>$mod_est['est_categoria'],'pccr_creditos'=>$modMade['made_credito'],'pccr_estado'=>1,'pccr_estado_logico'=>1]);
+                        $costoCredito = $modProgCost['pccr_costo_credito'];
+                        if($j==1){
+                            if($modMade['made_codigo_asignatura']=='CID-0097-0326-004'){
+                                $hora='1H';
+                            }else if($modMade['made_codigo_asignatura']=='CID-0097-0322-005'){
+                                $hora='3H';
+                            }else if($modMade['made_codigo_asignatura']=='CID-0097-0327-008'){
+                                $hora='2H';
+                            }else if($modMade['made_codigo_asignatura']=='CID-0097-0325-006'){
+                                $hora='5H';
+                            }
+                        }else{
+                            if($modMade['made_codigo_asignatura']=='CID-0097-0322-005'){
+                                $hora='1H';
+                            }else if($modMade['made_codigo_asignatura']=='CID-0097-0325-006'){
+                                $hora='3H';
+                            }else if($modMade['made_codigo_asignatura']=='CID-0097-0337-009'){
+                                $hora='2H';
+                            }else if($modMade['made_codigo_asignatura']=='CID-0097-0324-007'){
+                                $hora='5H';
+                            }
+                        }
+                        
+                    }
                     //Asignatura
                     $modAsig = Asignatura::findOne(['asi_id'=>$modMade['asi_id'],'asi_estado'=>'1','asi_estado_logico'=>'1']);
                     //MateriaParaleloPeriodo
@@ -734,7 +813,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
                         "Subject"       => $modAsig['asi_nombre'],//trim($dict['pes_mat_b1_h1_nombre']),
                         "Code"          => $modMade['made_codigo_asignatura'],
                         "Block"         => $bloque,
-                        "Hour"          => $modDaho['daho_descripcion'],
+                        "Hour"          => $hora,
                         "Parallel"      => $modMpp['mpp_num_paralelo'],
                         "Credit"        => $modMade['made_credito'],
                         "modalidad"     => $modalidad,
@@ -1121,6 +1200,8 @@ class Matriculacion extends \yii\db\ActiveRecord {
                                                                         or roi.roi_id = rama.roi_id_4
                                                                         or roi.roi_id = rama.roi_id_5
                                                                         or roi.roi_id = rama.roi_id_6
+                                                                        or roi.roi_id = rama.roi_id_7
+                                                                        or roi.roi_id = rama.roi_id_8
             WHERE roi.ron_id =:ron_id
             AND roi.roi_estado =:estado
             AND roi.roi_estado_logico =:estado

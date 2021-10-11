@@ -3,7 +3,7 @@
 namespace app\modules\academico\models;
 
 use Yii;
-use \yii\data\ArrayDataProvider;
+use yii\data\ArrayDataProvider;
 
 /**
  * This is the model class for table "registro_online_cuota".
@@ -229,8 +229,18 @@ public function recalcCuotas($ron_id){
         $comando->bindParam(":ron_id", $ron_id, \PDO::PARAM_INT);
         $resultData = $comando->queryAll();
         
-            return $resultData;   
+            return $resultData;
+        
+    
+
     }
+
+
+
+
+     
+
+
 
      //Acualiza valores de cuotas para rgistro online  de pago de matricula con tipo de'pago credito.
     public function updatecancelCuotas( 
@@ -285,7 +295,9 @@ public function recalcCuotas($ron_id){
             return FALSE;
         }
     }
-  
+
+
+   
     
     public function getcurrentCuotas($ron_id){
         $con = \Yii::$app->db_academico;
@@ -307,7 +319,9 @@ public function recalcCuotas($ron_id){
         $comando->bindParam(":ron_id", $ron_id, \PDO::PARAM_INT);
         $resultData = $comando->queryAll();
         
-            return $resultData;  
+            return $resultData;
+        
+    
 
     }
 
@@ -339,6 +353,8 @@ public function recalcCuotas($ron_id){
         return $resultData;
     }
 
+
+    
     public function getDataCuotasRegistroOnline($ron_id, $dataProvider = false)
     {
         $con_academico = \Yii::$app->db_academico;
@@ -374,5 +390,7 @@ public function recalcCuotas($ron_id){
             ],
         ]);
     }
+
+
 
 }

@@ -3,6 +3,7 @@
 namespace app\modules\financiero\models;
 use yii\data\ArrayDataProvider;
 use Yii;
+use app\models\UsuaGrolEper;
 use app\models\Utilities;
 use app\modules\academico\models\Estudiante;
 
@@ -138,7 +139,7 @@ class CargaCartera extends \yii\db\ActiveRecord
             $trans = null; // si existe la transacción entonces no se crea una
         } else {
             $trans = $con->beginTransaction(); // si no existe la transacción entonces se crea una
-        }   
+        }
         if (strtolower(end($chk_ext)) == "xls" || strtolower(end($chk_ext)) == "xlsx") {
             //Creacion de PHPExcel object
             try {
@@ -149,8 +150,8 @@ class CargaCartera extends \yii\db\ActiveRecord
 
                 foreach ($objPHPExcel->getWorksheetIterator() as $worksheet) {
                     $worksheetTitle = $worksheet->getTitle();
-                    $highestRow = $worksheet->getHighestRow(); // e.g. 10 
-                    $highestColumn = $worksheet->getHighestDataColumn(); // e.g 'F'                    
+                    $highestRow = $worksheet->getHighestRow(); // e.g. 10
+                    $highestColumn = $worksheet->getHighestDataColumn(); // e.g 'F'
                     $highestColumnIndex = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($highestColumn);
                     for ($row = 2; $row <= $highestRow; ++$row) {
                         $row_global = $row_global + 1;
@@ -158,7 +159,7 @@ class CargaCartera extends \yii\db\ActiveRecord
                             $cell = $worksheet->getCellByColumnAndRow($col, $row);
                             $dataArr[$row_global][$col] = $cell->getValue();
                         }
-                    }                   
+                    }
                 }
                 $fila = 0;
                 foreach ($dataArr as $val) {
@@ -166,12 +167,12 @@ class CargaCartera extends \yii\db\ActiveRecord
                     if (!is_null($val[2]) || $val[2]) {
                         $val[2] = strval($val[2]);
                         $est_id = $mod_estudiante->consultarEstidxdni($val[2]);
-                        $fila++;         
+                        $fila++;
                         if (!empty($est_id['est_id'])) {
                         $existe = $mod_cartera->consultarexistecartera($val[2], $val[4], $val[6]);
                             if ($existe['existe_cartera'] == 0) {
                         $save_documento = $this->saveDocumentoDB($val, $est_id['est_id']);
-                        if (!$save_documento) {                   
+                        if (!$save_documento) {
                             $arroout["status"] = FALSE;
                             $arroout["error"] = null;
                             $arroout["message"] = "Error al guardar el registro de la Fila => N°$fila Cedula => $val[2].";
@@ -224,7 +225,7 @@ class CargaCartera extends \yii\db\ActiveRecord
     public function saveDocumentoDB($val, $idestudiante) {
         $usu_id = Yii::$app->session->get('PB_iduser');
         $fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
-        $model_cargarch = new CargaCartera();        
+        $model_cargarch = new CargaCartera();
         $model_cargarch->est_id = $idestudiante;
         $model_cargarch->ccar_tipo_documento = $val[3];
         $model_cargarch->ccar_numero_documento = $val[4];
@@ -261,18 +262,18 @@ class CargaCartera extends \yii\db\ActiveRecord
     /**
      * Function Consultar si ya se ha cargado la informacion anteriormente en cartera.
      * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>;
-     * @property       
-     * @return  
+     * @property
+     * @return
      */
     public function consultarexistecartera($ccar_documento_identidad, $ccar_numero_documento, $ccar_num_cuota) {
-        $con = \Yii::$app->db_facturacion;     
+        $con = \Yii::$app->db_facturacion;
         $estado = 1;
 
-        $sql = "SELECT 	
-                        count(*) as existe_cartera                       
-                        
-                FROM " . $con->dbname . ".carga_cartera                 
-                WHERE 
+        $sql = "SELECT
+                        count(*) as existe_cartera
+
+                FROM " . $con->dbname . ".carga_cartera
+                WHERE
                 ccar_documento_identidad = :ccar_documento_identidad AND
                 ccar_numero_documento = :ccar_numero_documento AND
                 ccar_num_cuota = :ccar_num_cuota AND
@@ -292,39 +293,55 @@ class CargaCartera extends \yii\db\ActiveRecord
      * Function getPagospendientexestcar
      * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>;
      * @param
-     * @return 
+     * @return
      */
     public static function getPagospendientexestcar($cedula, $onlyData = false) {
         $con = \Yii::$app->db_facturacion;
-        $sql = "SELECT    
+        $usuario = @Yii::$app->user->identity->usu_id;   //Se obtiene el id del usuario.
+        $estado = 1;
+        $sql = "SELECT
                   (SELECT SUM(ccar.ccar_valor_cuota) FROM " . $con->dbname . ".carga_cartera ccar
                     WHERE ccar.ccar_documento_identidad= :cedula AND ccar.ccar_estado_cancela='N' AND ccar.ccar_tipo_documento='FE')  as total_deuda,
+                    ccar.ccar_id,
                     ccar.ccar_tipo_documento,
                     ccar.ccar_numero_documento as NUM_NOF,
                     ccar.ccar_documento_identidad,
                     ccar.ccar_forma_pago,
-                    ccar.ccar_num_cuota as NUM_DOC, 
+                    ccar.ccar_num_cuota as NUM_DOC,
                     -- SUBSTR(ccar.ccar_num_cuota,-3) as cantidad,
-                    CASE 
-                    WHEN ccar.ccar_num_cuota = ccar.ccar_numero_documento THEN '01'                    
+                    CASE
+                    WHEN ccar.ccar_num_cuota = ccar.ccar_numero_documento THEN '01'
                     ELSE SUBSTRING(ccar.ccar_num_cuota,-3)
                   END  as cantidad,
                     DATE_FORMAT(ccar.ccar_fecha_factura,'%Y-%m-%d') as F_SUS_D,
-                    DATE_FORMAT(ccar.ccar_fecha_vencepago,'%Y-%m-%d') as F_VEN_D,                  
+                    DATE_FORMAT(ccar.ccar_fecha_vencepago,'%Y-%m-%d') as F_VEN_D,
                     ccar.ccar_valor_cuota,
                  -- (ccar.VALOR_D-ccar.VALOR_C-ccar.VAL_DEV) SALDO,
-                  CASE 
-                    WHEN ccar.ccar_num_cuota = ccar.ccar_numero_documento THEN '01'                    
+                  CASE
+                    WHEN ccar.ccar_num_cuota = ccar.ccar_numero_documento THEN '01'
                     ELSE ccar.ccar_num_cuota
-                  END  as cuota   
+                  END  as cuota
                   ,ifnull(ccar_abono, '') as abono
-                  ,ifnull(ROUND((ccar.ccar_valor_cuota - ccar_abono),2), '') as saldo                                 
+                  ,ifnull(ROUND((ccar.ccar_valor_cuota - ccar_abono),2), '') as saldo
                 FROM " . $con->dbname . ".carga_cartera ccar
-                WHERE ccar.ccar_documento_identidad= :cedula AND ccar.ccar_estado_cancela='N' AND ccar.ccar_tipo_documento='FE'";
+                WHERE ccar.ccar_documento_identidad= :cedula AND
+                      ccar.ccar_estado_cancela='N' AND
+                      ccar.ccar_tipo_documento='FE' AND
+                      ccar.ccar_estado = :estado AND
+                      ccar.ccar_estado_logico = :estado";
         $comando = $con->createCommand($sql);
         $comando->bindParam(":cedula", $cedula, \PDO::PARAM_STR);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
 
         $resultData = $comando->queryAll();
+        $mod_grupo = new UsuaGrolEper();
+        $nombregrupo = $mod_grupo->consultarGruponame($usuario);
+
+        foreach ($resultData as $key => $value) {
+            $value['grupo'] = $nombregrupo['gru_nombre'];
+            $resultData[$key] =  $value;
+        }
+
         $dataProvider = new ArrayDataProvider([
             'key' => 'id',
             'allModels' => $resultData,
@@ -346,37 +363,37 @@ class CargaCartera extends \yii\db\ActiveRecord
     /**
      * Function Consulta las cuotas seleccionada al cargar imagenes de facturas pendientes de pago.
      * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
-     * @param   
-     * @return  
+     * @param
+     * @return
      */
     public function consultarPagospendientesp($cedula, $factura, $cuota) {
         $con = \Yii::$app->db_facturacion;
-        $sql = "SELECT    
+        $sql = "SELECT
                   (SELECT SUM(ccar.ccar_valor_cuota) FROM " . $con->dbname . ".carga_cartera ccar
                     WHERE ccar.ccar_documento_identidad= :cedula AND ccar.ccar_estado_cancela='N' AND ccar.ccar_tipo_documento='FE')  as total_deuda,
                     ccar.ccar_tipo_documento,
                     ccar.ccar_numero_documento as NUM_NOF,
                     ccar.ccar_documento_identidad,
                     ccar.ccar_forma_pago,
-                    ccar.ccar_num_cuota as NUM_DOC, 
+                    ccar.ccar_num_cuota as NUM_DOC,
                     -- SUBSTR(ccar.ccar_num_cuota,-3) as cantidad,
-                    CASE 
-                    WHEN ccar.ccar_num_cuota = ccar.ccar_numero_documento THEN '01'                    
+                    CASE
+                    WHEN ccar.ccar_num_cuota = ccar.ccar_numero_documento THEN '01'
                     ELSE SUBSTRING(ccar.ccar_num_cuota,-3)
                     END  as cantidad,
                     DATE_FORMAT(ccar.ccar_fecha_factura,'%Y-%m-%d') as F_SUS_D,
-                    DATE_FORMAT(ccar.ccar_fecha_vencepago,'%Y-%m-%d') as F_VEN_D,                  
+                    DATE_FORMAT(ccar.ccar_fecha_vencepago,'%Y-%m-%d') as F_VEN_D,
                     ccar.ccar_valor_cuota,
-                    CASE 
-                    WHEN ccar.ccar_num_cuota = ccar.ccar_numero_documento THEN (ccar.ccar_valor_factura - ccar.ccar_valor_cuota)                    
+                    CASE
+                    WHEN ccar.ccar_num_cuota = ccar.ccar_numero_documento THEN (ccar.ccar_valor_factura - ccar.ccar_valor_cuota)
                     ELSE (ccar.ccar_valor_factura - (SUBSTRING(ccar.ccar_num_cuota,1,3)) * ccar.ccar_valor_cuota)
-                    END  as SALDO, 
-                    CASE 
-                        WHEN ccar.ccar_num_cuota = ccar.ccar_numero_documento THEN '01'                    
+                    END  as SALDO,
+                    CASE
+                        WHEN ccar.ccar_num_cuota = ccar.ccar_numero_documento THEN '01'
                         ELSE SUBSTRING(ccar.ccar_num_cuota,1,3)
                     END  as cuota
-                    ,ccar_id        
-                    ,ccar_abono as abono                             
+                    ,ccar_id
+                    ,ccar_abono as abono
                 FROM " . $con->dbname . ".carga_cartera ccar
                 WHERE ccar.ccar_documento_identidad= :cedula AND ccar.ccar_num_cuota= :cuota AND ccar.ccar_numero_documento =:factura";
 
@@ -390,35 +407,35 @@ class CargaCartera extends \yii\db\ActiveRecord
 
     public function consultarPagospendientesPorFactura($cedula, $factura) {
         $con = \Yii::$app->db_facturacion;
-        $sql = "SELECT    
+        $sql = "SELECT
                   (SELECT SUM(ccar.ccar_valor_cuota) FROM " . $con->dbname . ".carga_cartera ccar
                     WHERE ccar.ccar_documento_identidad= :cedula AND ccar.ccar_estado_cancela='N' AND ccar.ccar_tipo_documento='FE')  as total_deuda,
                     ccar.ccar_tipo_documento,
                     ccar.ccar_numero_documento as NUM_NOF,
                     ccar.ccar_documento_identidad,
                     ccar.ccar_forma_pago,
-                    ccar.ccar_num_cuota as NUM_DOC, 
+                    ccar.ccar_num_cuota as NUM_DOC,
                     -- SUBSTR(ccar.ccar_num_cuota,-3) as cantidad,
-                    CASE 
-                    WHEN ccar.ccar_num_cuota = ccar.ccar_numero_documento THEN '01'                    
+                    CASE
+                    WHEN ccar.ccar_num_cuota = ccar.ccar_numero_documento THEN '01'
                     ELSE SUBSTRING(ccar.ccar_num_cuota,-3)
                     END  as cantidad,
                     DATE_FORMAT(ccar.ccar_fecha_factura,'%Y-%m-%d') as F_SUS_D,
-                    DATE_FORMAT(ccar.ccar_fecha_vencepago,'%Y-%m-%d') as F_VEN_D,                  
+                    DATE_FORMAT(ccar.ccar_fecha_vencepago,'%Y-%m-%d') as F_VEN_D,
                     ccar.ccar_valor_cuota,
-                    CASE 
-                    WHEN ccar.ccar_num_cuota = ccar.ccar_numero_documento THEN (ccar.ccar_valor_factura - ccar.ccar_valor_cuota)                    
+                    CASE
+                    WHEN ccar.ccar_num_cuota = ccar.ccar_numero_documento THEN (ccar.ccar_valor_factura - ccar.ccar_valor_cuota)
                     ELSE (ccar.ccar_valor_factura - (SUBSTRING(ccar.ccar_num_cuota,1,3)) * ccar.ccar_valor_cuota)
-                    END  as SALDO, 
-                    CASE 
-                        WHEN ccar.ccar_num_cuota = ccar.ccar_numero_documento THEN '01'                    
+                    END  as SALDO,
+                    CASE
+                        WHEN ccar.ccar_num_cuota = ccar.ccar_numero_documento THEN '01'
                         ELSE SUBSTRING(ccar.ccar_num_cuota,1,3)
                     END  as cuota
-                    ,ccar_id                                     
+                    ,ccar_id
                 FROM " . $con->dbname . ".carga_cartera ccar
-                WHERE ccar.ccar_documento_identidad= :cedula 
+                WHERE ccar.ccar_documento_identidad= :cedula
                   AND ccar.ccar_numero_documento =:factura
-                  AND ccar.ccar_num_cuota = :cuota 
+                  AND ccar.ccar_num_cuota = :cuota
                   AND ccar.ccar_estado_cancela != C";
 
 
@@ -433,20 +450,20 @@ class CargaCartera extends \yii\db\ActiveRecord
     /**
      * Function consultarAutorizadofechamayor
      * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
-     * @param   
-     * @return  
+     * @param
+     * @return
      */
     public function consultarAutorizadofechamayor($est_id) {
         $con = \Yii::$app->db_facturacion;
         $sql = "SELECT est_id, ccar_fecha_vencepago, 'Autorizado' as estado
-                FROM db_facturacion.carga_cartera 
-                WHERE est_id = :est_id AND 
-                      ccar_fecha_vencepago >= NOW() 
+                FROM db_facturacion.carga_cartera
+                WHERE est_id = :est_id AND
+                      ccar_fecha_vencepago >= NOW()
                 ORDER BY ccar_fecha_vencepago asc
                 LIMIT 1";
 
         $comando = $con->createCommand($sql);
-        $comando->bindParam(":est_id", $est_id, \PDO::PARAM_INT);       
+        $comando->bindParam(":est_id", $est_id, \PDO::PARAM_INT);
         $resultData = $comando->queryOne();
         return $resultData;
     }
@@ -454,14 +471,14 @@ class CargaCartera extends \yii\db\ActiveRecord
     /**
      * Function consultarAutorizadofechamenor
      * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
-     * @param   
-     * @return  
+     * @param
+     * @return
      */
     public function consultarAutorizadofechamenor($est_id) {
         $con = \Yii::$app->db_facturacion;
         $sql = "SELECT est_id, ccar_fecha_vencepago,
-                CASE WHEN mi.ccar_estado_cancela = 'C' 
-                     THEN 'Autorizado' 
+                CASE WHEN mi.ccar_estado_cancela = 'C'
+                     THEN 'Autorizado'
                      ELSE 'No Autorizado' END AS estado
                 FROM db_facturacion.carga_cartera mi
                 WHERE mi.est_id = :est_id AND
@@ -470,22 +487,22 @@ class CargaCartera extends \yii\db\ActiveRecord
                 LIMIT 1";
 
         $comando = $con->createCommand($sql);
-        $comando->bindParam(":est_id", $est_id, \PDO::PARAM_INT);       
+        $comando->bindParam(":est_id", $est_id, \PDO::PARAM_INT);
         $resultData = $comando->queryOne();
         return $resultData;
     }
 
-       /**
+    /**
      * Function consultarReportcartera
      * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>;
      * @param
-     * @return 
+     * @return
      */
     public static function consultarReportcartera($arrFiltro = array(), $onlyData = false) {
         $con = \Yii::$app->db_academico;
         $con1 = \Yii::$app->db_asgard;
         $con2 = \Yii::$app->db_facturacion;
-        
+
         $estado = 1;
         $str_search = "";
         if (isset($arrFiltro) && count($arrFiltro) > 0) {
@@ -499,49 +516,49 @@ class CargaCartera extends \yii\db\ActiveRecord
             }
             if ($arrFiltro['f_iniv'] != "" && $arrFiltro['f_finv'] != "") {
                 $str_search .= " ccar.ccar_fecha_vencepago BETWEEN :fec_iniv AND :fec_finv AND ";
-            }        
-            if ($arrFiltro['estadopago'] != '0') { 
+            }
+            if ($arrFiltro['estadopago'] != '0') {
                 $str_search .= "ccar.ccar_estado_cancela = :estadopago AND ";
-            }                   
-        }       
-        $sql = "SELECT 
+            }
+        }
+        $sql = "SELECT
                         ccar.ccar_documento_identidad,
-                        concat(pers.per_pri_nombre , ' ', per_pri_apellido) as nombres, 
+                        concat(pers.per_pri_nombre , ' ', per_pri_apellido) as nombres,
                         ccar.ccar_numero_documento,
                         ccar.ccar_num_cuota,
                         date_format(ccar.ccar_fecha_factura, '%Y-%m-%d') as fecha_factura,
                         date_format(ccar.ccar_fecha_vencepago, '%Y-%m-%d') as fecha_vencimiento,
                         ccar.ccar_valor_cuota,
                         ccar.ccar_valor_factura,
-                        CASE 
-                                    WHEN ccar.ccar_estado_cancela = 'C' THEN NULL 
-                                    WHEN ccar.ccar_estado_cancela = 'N' THEN ccar_abono						 
+                        CASE
+                                    WHEN ccar.ccar_estado_cancela = 'C' THEN NULL
+                                    WHEN ccar.ccar_estado_cancela = 'N' THEN ccar_abono
                                     END AS ccar_abono,
-                        CASE ccar.ccar_estado_cancela 
-                                            WHEN 'C' THEN 'Cancelado'  
-                                            WHEN 'N' THEN 'Pendiente' 
+                        CASE ccar.ccar_estado_cancela
+                                            WHEN 'C' THEN 'Cancelado'
+                                            WHEN 'N' THEN 'Pendiente'
                                         END AS estado_cuota,
-                        CASE 
+                        CASE
                                     WHEN ccar.ccar_forma_pago = 'EF' AND ccar.ccar_num_cuota = ccar.ccar_numero_documento AND ccar.ccar_estado_cancela = 'C' THEN (ccar.ccar_valor_factura - ccar.ccar_valor_cuota)
                                     WHEN ccar.ccar_forma_pago = 'EF' AND ccar.ccar_num_cuota = ccar.ccar_numero_documento AND ccar.ccar_estado_cancela = 'N' THEN ccar.ccar_valor_cuota - ccar.ccar_abono
                                     WHEN ccar.ccar_forma_pago = 'CR' AND ccar.ccar_estado_cancela = 'N' THEN ccar.ccar_valor_cuota - ccar.ccar_abono
                                     WHEN ccar.ccar_forma_pago = 'CR' AND ccar.ccar_estado_cancela = 'C' THEN ROUND((ccar.ccar_valor_factura - (SUBSTRING(ccar.ccar_num_cuota,1,3)) * ccar.ccar_valor_cuota),2)
                                     -- ELSE (ccar.ccar_valor_factura - (SUBSTRING(ccar.ccar_num_cuota,1,3)) * ccar.ccar_valor_cuota)
-                                    END AS saldo	
+                                    END AS saldo
                 FROM " . $con2->dbname . ".carga_cartera ccar
                 INNER JOIN " . $con->dbname . ".estudiante est ON est.est_id = ccar.est_id
                 INNER JOIN " . $con1->dbname . ".persona pers ON pers.per_id = est.per_id
                 WHERE $str_search ccar.ccar_estado=:estado AND ccar.ccar_estado_logico=:estado  ORDER BY ccar.ccar_fecha_factura DESC ";
 
-        $comando = $con->createCommand($sql);          
+        $comando = $con->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
         if (isset($arrFiltro) && count($arrFiltro) > 0) {
             $fecha_inif = $arrFiltro["f_inif"] . " 00:00:00";
             $fecha_finf = $arrFiltro["f_finf"] . " 23:59:59";
             $fecha_iniv = $arrFiltro["f_iniv"] . " 00:00:00";
             $fecha_finv = $arrFiltro["f_finv"] . " 23:59:59";
-            $search_cond = "%" . $arrFiltro["search"] . "%";          
-            $estadopago = $arrFiltro['estadopago'];            
+            $search_cond = "%" . $arrFiltro["search"] . "%";
+            $estadopago = $arrFiltro['estadopago'];
             if ($arrFiltro['f_inif'] != "" && $arrFiltro['f_finf'] != "") {
                 $comando->bindParam(":fec_inif", $fecha_inif, \PDO::PARAM_STR);
                 $comando->bindParam(":fec_finf", $fecha_finf, \PDO::PARAM_STR);
@@ -552,10 +569,10 @@ class CargaCartera extends \yii\db\ActiveRecord
             }
             if ($arrFiltro['search'] != "") {
                 $comando->bindParam(":estudiante", $search_cond, \PDO::PARAM_STR);
-            }   
+            }
             if ($arrFiltro['estadopago'] != '0') {
                 $comando->bindParam(":estadopago", $estadopago, \PDO::PARAM_STR);
-            }           
+            }
         }
         $resultData = $comando->queryAll();
         $dataProvider = new ArrayDataProvider([
@@ -581,38 +598,143 @@ class CargaCartera extends \yii\db\ActiveRecord
     /**
      * Function consultarEstudiantesautorizados
      * @author  Galo Aguirre <analistadesarrollo06@uteg.edu.ec>
-     * @param   
-     * @return  
+     * @param
+     * @return
      */
     public function consultarEstudiantesautorizados() {
         $con = \Yii::$app->db_facturacion;
-        $sql = "SELECT * 
+        $sql = "SELECT *
                   FROM (
                        SELECT est_id
                               ,ccar_fecha_vencepago
-                              ,CASE WHEN ccar_fecha_vencepago <= NOW() 
+                              ,CASE WHEN ccar_fecha_vencepago <= NOW()
                                     THEN ifnull((CASE WHEN ccar_estado_cancela = 'C'
                                                       THEN 'Autorizado'
-                                                      ELSE 'No Autorizado' 
+                                                      ELSE 'No Autorizado'
                                                  END),'No Autorizado')
-                                    WHEN ccar_fecha_vencepago >= NOW() 
+                                    WHEN ccar_fecha_vencepago >= NOW()
                                     THEN ifnull((CASE WHEN ccar_estado_cancela = 'N' or ccar_estado_cancela = 'C'
                                                       THEN 'Autorizado'
-                                                      ELSE 'No Autorizado' 
-                                                 END ),'No Autorizado')                      
+                                                      ELSE 'No Autorizado'
+                                                 END ),'No Autorizado')
                                     ELSE 'No Autorizado'
-                                    END as pago 
-                         FROM db_facturacion.carga_cartera 
+                                    END as pago
+                         FROM db_facturacion.carga_cartera
                         WHERE ccar_fecha_vencepago <= now()
-                          AND ccar_estado = 1 
+                          AND ccar_estado = 1
                           AND ccar_estado_logico = 1
                     ) estudiantes
                 WHERE pago = 'Autorizado'
              GROUP BY 1,2";
 
         $comando = $con->createCommand($sql);
-        //$comando->bindParam(":est_id", $est_id, \PDO::PARAM_INT);       
+        //$comando->bindParam(":est_id", $est_id, \PDO::PARAM_INT);
         $resultData = $comando->queryAll();
         return $resultData;
     }//function consultarEstudiantesautorizados
+
+    /**
+     * Function consultarReportcartera
+     * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>;
+     * @param
+     * @return
+     */
+    public static function consultarCarteraEstudiantes($arrFiltro = array(), $onlyData = false) {
+        $con = \Yii::$app->db_academico;
+        $con1 = \Yii::$app->db_asgard;
+        $con2 = \Yii::$app->db_facturacion;
+
+        $estado = 1;
+        $str_search = "";
+        if (isset($arrFiltro) && count($arrFiltro) > 0) {
+            if ($arrFiltro['search'] > 0) {
+                $str_search = "per.per_id = :per_id  AND ";
+            }
+        }
+        if ($onlyData == false) {
+            $est_id = "est.est_id,";
+            $per_id = "per.per_id,";
+        }
+        $sql = "SELECT DISTINCT
+        ccar.ccar_documento_identidad,
+        $est_id
+        $per_id
+        CONCAT(per.per_pri_nombre, ' ', per.per_pri_apellido) AS nombres,
+        per.per_correo,
+        IFNULL(est.est_matricula,' ') AS matricula
+        FROM " . $con2->dbname . ".carga_cartera ccar
+        INNER JOIN " . $con->dbname . ".estudiante est on est.est_id = ccar.est_id
+        INNER JOIN " . $con1->dbname . ".persona per on per.per_id = est.per_id
+        WHERE
+        $str_search
+        est.est_estado = :estado AND
+        est.est_estado_logico = :estado AND
+        ccar.ccar_estado_cancela = 'N'";
+
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        if (isset($arrFiltro) && count($arrFiltro) > 0) {
+            if ($arrFiltro['search'] > 0) {
+                $comando->bindParam(":per_id", $arrFiltro["search"], \PDO::PARAM_INT);
+            }
+        }
+        $resultData = $comando->queryAll();
+        $dataProvider = new ArrayDataProvider([
+            'key' => 'id',
+            'allModels' => $resultData,
+            'pagination' => [
+                'pageSize' => Yii::$app->params["pageSize"],
+            ],
+            'sort' => [
+                'attributes' => [
+                    'est_id',
+                    'ccar_documento_identidad',
+                ],
+            ],
+        ]);
+        if ($onlyData) {
+            return $resultData;
+        } else {
+            return $dataProvider;
+        }
+    }
+
+    /**
+     * Function eliminar el curso estados en 0.
+     * @author Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>;
+     * @param
+     * @return
+     */
+    public function eliminarCargaCartera($ccar_id, $ccar_usu_modifica, $ccar_fecha_modificacion) {
+        $estado = 0;
+        $con = \Yii::$app->db_facturacion;
+
+        if ($trans !== null) {
+            $trans = null; // si existe la transacción entonces no se crea una
+        } else {
+            $trans = $con->beginTransaction(); // si no existe la transacción entonces se crea una
+        }
+        try {
+            $comando = $con->createCommand
+                    ("UPDATE " . $con->dbname . ".carga_cartera
+                      SET ccar_estado = :estado,
+                          ccar_usu_modifica = :ccar_usu_modifica,
+                          ccar_fecha_modificacion = :ccar_fecha_modificacion,
+                          ccar_estado_logico = :estado
+                      WHERE
+                      ccar_id = :ccar_id ");
+            $comando->bindParam(":ccar_id", $ccar_id, \PDO::PARAM_INT);
+            $comando->bindParam(":ccar_usu_modifica", $ccar_usu_modifica, \PDO::PARAM_INT);
+            $comando->bindParam(":ccar_fecha_modificacion", $ccar_fecha_modificacion, \PDO::PARAM_STR);
+            $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+            $response = $comando->execute();
+            if ($trans !== null)
+                $trans->commit();
+            return $response;
+        } catch (Exception $ex) {
+            if ($trans !== null)
+                $trans->rollback();
+            return FALSE;
+        }
+    }
 }

@@ -3,6 +3,7 @@
 namespace app\modules\financiero\models;
 use yii\data\ArrayDataProvider;
 use Yii;
+use app\models\UsuaGrolEper;
 use app\models\Utilities;
 use app\modules\academico\models\Estudiante;
 
@@ -296,6 +297,7 @@ class CargaCartera extends \yii\db\ActiveRecord
      */
     public static function getPagospendientexestcar($cedula, $onlyData = false) {
         $con = \Yii::$app->db_facturacion;
+        $usuario = @Yii::$app->user->identity->usu_id;   //Se obtiene el id del usuario.
         $estado = 1;
         $sql = "SELECT
                   (SELECT SUM(ccar.ccar_valor_cuota) FROM " . $con->dbname . ".carga_cartera ccar
@@ -332,6 +334,14 @@ class CargaCartera extends \yii\db\ActiveRecord
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
 
         $resultData = $comando->queryAll();
+        $mod_grupo = new UsuaGrolEper();
+        $nombregrupo = $mod_grupo->consultarGruponame($usuario);
+
+        foreach ($resultData as $key => $value) {
+            $value['grupo'] = $nombregrupo['gru_nombre'];
+            $resultData[$key] =  $value;
+        }
+
         $dataProvider = new ArrayDataProvider([
             'key' => 'id',
             'allModels' => $resultData,

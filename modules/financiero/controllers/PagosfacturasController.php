@@ -9,6 +9,7 @@ use yii\web\UploadedFile;
 use app\models\ExportFile;
 use app\models\Persona;
 use app\models\Usuario;
+use app\models\UsuaGrolEper;
 use yii\helpers\Url;
 use yii\base\Exception;
 use yii\base\Security;
@@ -122,16 +123,22 @@ class PagosfacturasController extends \app\components\CController {
 
     public function actionViewsaldo() {
         $perids = base64_decode($_GET["per_ids"]);
+        $usuario = @Yii::$app->user->identity->usu_id;   //Se obtiene el id del usuario.
         $per_idsession = @Yii::$app->session->get("PB_perid");
         //\app\models\Utilities::putMessageLogFile('perids...: ' . $perids);
         if (!empty($perids)) {
             $per_idsession = $perids;
+            // Si se quiere obtener el usuario id del estudiante
+            /*$mod_persona = new Persona();
+            $data_persona = $mod_persona->consultaPersonaId($per_idsession);
+            $usuario = $data_persona['usu_id'];*/
         }
         $especiesADO = new Especies();
         $mod_unidad = new UnidadAcademica();
         $mod_modalidad = new Modalidad();
         $modestudio = new ModuloEstudio();
         $modcanal = new Oportunidad();
+        $mod_grupo = new UsuaGrolEper();
         //$mod_pagos = new PagosFacturaEstudiante();
         $mod_cartera = new CargaCartera();
         $personaData = $especiesADO->consultaDatosEstudiante($per_idsession);
@@ -144,12 +151,14 @@ class PagosfacturasController extends \app\components\CController {
         }
         //$pagospendientesea = $mod_pagos->getPagospendientexest($personaData['per_cedula'], false);
         $pagospendientesea = $mod_cartera->getPagospendientexestcar($personaData['per_cedula'], false);
+        $nombregrupo = $mod_grupo->consultarGruponame($usuario);
         return $this->render('viewsaldo', [
                     'arr_persona' => $personaData,
                     'arr_unidad' => ArrayHelper::map($arr_unidadac, "id", "name"),
                     'arr_modalidad' => ArrayHelper::map($arr_modalidad, "id", "name"),
                     'arr_carrera' => ArrayHelper::map($carrera, "id", "name"),
                     'model' => $pagospendientesea,
+                    'nombregrupo' => $nombregrupo,
         ]);
     }
 

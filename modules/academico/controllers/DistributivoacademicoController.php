@@ -64,7 +64,7 @@ class DistributivoacademicoController extends \app\components\CController {
 
         if ($data['PBgetFilter']) {
             $search = $data['search'];
-            $unidad = (isset($data['unidad']) && $data['unidad'] > 0) ? $data['unidad'] : NULL;
+            $unidad = $data['unidad'];
             $modalidad = (isset($data['modalidad']) && $data['modalidad'] > 0) ? $data['modalidad'] : NULL;
             $periodo = (isset($data['periodo']) && $data['periodo'] > 0) ? $data['periodo'] : NULL;
             $materia = (isset($data['materia']) && $data['materia'] > 0) ? $data['materia'] : NULL;

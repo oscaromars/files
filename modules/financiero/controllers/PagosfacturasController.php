@@ -916,12 +916,58 @@ class PagosfacturasController extends \app\components\CController {
                         }
 
                         if ($resp_detpagofactura) {
+                            // AQUI OBTENER EL VALOR QUE DEVUELVE $resp_detpagofactura GVZ SI ES COLECTURIA Y DEJAR YA REVISADO
+                            \app\models\Utilities::putMessageLogFile('resp_detpagofactura ' . $resp_detpagofactura);
+                            \app\models\Utilities::putMessageLogFile('perids dentro detpago ' . $perids);
                             $transaction->commit();
-                            $message = array(
+                            $mod_pagos = new PagosFacturaEstudiante();
+                            if (!empty($perids)) { // es usuario colecturia
+                            //Consultar los datos del pago
+                            \app\models\Utilities::putMessageLogFile('entre if detpago ' . $perids);
+                                $datos = $mod_pagos->consultarPago($resp_detpagofactura);
+                                $mod_id  = $datos['mod_id'];
+                                $nombres = $datos['estudiante'];
+                                $cedula  = $datos['identificacion'];
+                                $resultado = 2; // Aprobado
+                                $observacion = '';
+                                \app\models\Utilities::putMessageLogFile('datos ' . $datos['mod_id'] . ' '. $datos['estudiante'] . ' '.  $datos['identificacion']);
+                                $respago = $mod_pagos->grabarRechazo($resp_detpagofactura, $resultado, $observacion);
+                                \app\models\Utilities::putMessageLogFile('respago ' . $respago);
+                                $cartera = $mod_pagos->buscarIdCartera($resp_detpagofactura);
+                                $id_cartera = $cartera[0]['ccar_id'];
+                                \app\models\Utilities::putMessageLogFile('id_cartera ' . $cartera[0]['ccar_id']);
+                                if ($respago) {
+                                    \app\models\Utilities::putMessageLogFile('respago 2 ' . $respago);
+                                    $correo_estudiante = $datos['per_correo'];
+                                    $user = $datos['estudiante'];
+                                    $tituloMensaje = 'Pagos en Línea';
+                                    $asunto = 'Pagos en Línea';
+                                    $cargo = CargaCartera::findOne($id_cartera);
+                                    $cargo->ccar_estado_cancela = 'C';
+                                    $cargo->ccar_fecha_modificacion = $fecha;
+                                    $cargo->ccar_usu_modifica = $usuario;
+                                    $cargo->save();
+                                    $body = Utilities::getMailMessage("pagoaprobado", array(
+                                                                   "[[user]]" => $user,
+                                                                   "[[factura]]" => $datos['dpfa_factura'],
+                                                                       ), Yii::$app->language, Yii::$app->basePath . "/modules/financiero");
+                                                                       Utilities::sendEmail($tituloMensaje, Yii::$app->params["adminEmail"], [$correo_estudiante => $user], $asunto, $body);
+                                    $message = array(
+                                    "wtmessage" => Yii::t("notificaciones", "La infomación ha sido grabada. "),
+                                    "title" => Yii::t('jslang', 'Success'),
+                                    );
+                                }else {
+                                        $message = ["info" => Yii::t('exception', 'Error al grabar.')];
+                                        echo Utilities::ajaxResponse('NO_OK', 'alert', Yii::t('jslang', 'Error'), 'false', $message);
+                                      }
+                            }
+
+                                $message = array(
                                 "wtmessage" => Yii::t("notificaciones", "La infomación ha sido grabada. "),
                                 "title" => Yii::t('jslang', 'Success'),
-                            );
-                            echo Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), false, $message);
+                                 );
+                                echo Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), false, $message);
+
                         }//if
                     }else{
                         $transaction->rollback();

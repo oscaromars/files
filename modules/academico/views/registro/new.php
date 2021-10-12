@@ -37,14 +37,11 @@ if ($isDuplicate) {
         }
     </style>
    ";
-    echo "<div class='col-lg-12 col-md-12 col-sm-12 col-xs-12 form-group' >";
-    echo "  <div class='col-lg-6 col-md-6 col-sm-12 col-xs-12 form-group alert alert-danger' role='alert' >";
-    echo "  YA SE REGISTRAN PAGOS PARA ESTE PROCESO";
-    echo"   </div>";
+
     echo "  <div class='col-lg-6 col-md-6 col-sm-12 col-xs-12 form-group' style='right:10'>        
                 <div class='col-sm-10 col-md-10 col-xs-8 col-lg-10'></div>
                 <div class='col-sm-2 col-md-2 col-xs-4 col-lg-2'>                
-                    <a style='right:10' disabled='disabled' id='btn_modificarcargacartera' href='javascript:' class='btn btn-default btn-Action'> <i class='glyphicon glyphicon-floppy-disk'></i>&nbsp;&nbsp;  Guardar<?= Yii::t('formulario', '&nbsp;&nbsp; Guardar') ?></a>
+                    <a style='right:10' id='btn_modificarcargacartera' href='javascript:' class='btn btn-default btn-Action'> <i class='glyphicon glyphicon-floppy-disk'></i>&nbsp;&nbsp;  Guardar<?= Yii::t('formulario', '&nbsp;&nbsp; Guardar') ?></a>
                 </div>        
             </div> 
  

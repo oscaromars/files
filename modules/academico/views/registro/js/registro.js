@@ -853,6 +853,7 @@ function enviarPdf(){
     arrParams.per_id = $('#txt_per_id').val();
     arrParams.cuotas = $('#txt_cuotas').val();
     arrParams.rama = $('#txt_rama').val();
+    arrParams.modalidad = $('#txt_mod_nombre').val();
     //alert(arrParams.rama);
     //iniciarEnvioSiga();
     try{
@@ -945,7 +946,7 @@ function iniciarEnvioSiga(){
         async: false,
         url: "https://acade.uteg.edu.ec/registro_matriculacion_desa/rest.php",
         success: function (data) {
-            alert("Envío de registros exitoso");
+            //alert("Envío de registros exitoso");
         },
     });
     alert('Envío exitoso');
@@ -983,3 +984,12 @@ function enviarDatosFacturacion(){
         console.log("error: "+err)
     }
 }
+
+function exportExcel() {
+    var estudiante = $('#txt_buscarData').val();
+    var modalidad = $('#cmb_mod option:selected').val();
+    var periodo = $('#cmb_per_acad option:selected').val();
+    var f_ini = $('#txt_fecha_ini').val();
+    var f_fin = $('#txt_fecha_fin').val();
+    window.location.href = $('#txth_base').val() + "/academico/registro/exportexcel?estudiante=" + estudiante +  '&modalidad=' + modalidad + "&periodo=" + periodo + '&f_fin=' + f_fin + '&f_ini=' + f_ini;
+ }

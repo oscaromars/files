@@ -844,7 +844,9 @@ class DistributivoCabecera extends \yii\db\ActiveRecord {
                 if (!empty($posgrado) && $i < count($posgrado) /* && $i < $posgrado[$i]['semanas_posgrado']*/)
                      {
                        for ($j=0;$j < $posgrado[$i]['semanas_posgrado']; $j++){ // for aqui el maximo que sea $posgrado[$i]['semanas_posgrado']
-                        Utilities::putMessageLogFile('$total_hora_semana_docenciaposgrado x ' . $posgrado[$i]['total_hora_semana_docenciaposgrado']);
+                        Utilities::putMessageLogFile('$total_hora_semana_docenciaposgrado x ' . $posgrado[$j]['total_hora_semana_docenciaposgrado']);
+                        Utilities::putMessageLogFile('$total_hora_semana_docenciaposgrado xx ' . $posgrado[$i]['total_hora_semana_docenciaposgrado']);
+                        // verificar probando si es con $j o $i, verificar bien todo este if segun variable $i o $j
                         $horas_docenciap = $total_hora_semana_docencia + ($posgrado[$j]['total_hora_semana_docenciaposgrado']* $posgrado[$j]['semanas_posgrado']);
                         $horas_preparacionp = round(( $posgrado[$i]['total_hora_semana_docenciaposgrado'] + $total_hora_semana_docencia) * $preparacion_docencia);
                         Utilities::putMessageLogFile('$horas_docencia x ' . $horas_docenciap );

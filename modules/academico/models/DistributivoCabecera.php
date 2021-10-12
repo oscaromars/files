@@ -606,7 +606,7 @@ class DistributivoCabecera extends \yii\db\ActiveRecord {
                     sum(case when td.tdis_id =4 then tdis_num_semanas else 0 end) as total_hora_semana_vinculacion,
                     pa.paca_semanas_periodo as semanas_docencia,
                     pa.paca_semanas_inv_vinc_tuto as semanas_tutoria_vinulacion_investigacion/*,
-                    (select ifnull(TRUNCATE(timestampdiff(day, da.daca_fecha_inicio_post, da.daca_fecha_fin_post)/7,0),'')
+                    (select ifnull(ROUND(timestampdiff(day, da.daca_fecha_inicio_post, da.daca_fecha_fin_post)/7),'')
                         as semanas_posgrado
                         FROM " . $con->dbname . ".distributivo_academico da
                         WHERE da.uaca_id = 2 and da.dcab_id=:ids) as semanas_posgrado*/
@@ -844,7 +844,7 @@ class DistributivoCabecera extends \yii\db\ActiveRecord {
                 if (!empty($posgrado) && $i < count($posgrado) /* && $i < $posgrado[$i]['semanas_posgrado']*/)
                      {
                        for ($j=0;$j < $posgrado[$i]['semanas_posgrado']; $j++){ // for aqui el maximo que sea $posgrado[$i]['semanas_posgrado']
-                        Utilities::putMessageLogFile('$total_hora_semana_docenciaposgrado x ' . $posgrado[$j]['total_hora_semana_docenciaposgrado']);
+                        Utilities::putMessageLogFile('$total_hora_semana_docenciaposgrado x ' . $posgrado[$i]['total_hora_semana_docenciaposgrado']);
                         $horas_docenciap = $total_hora_semana_docencia + ($posgrado[$j]['total_hora_semana_docenciaposgrado']* $posgrado[$j]['semanas_posgrado']);
                         $horas_preparacionp = round(( $posgrado[$i]['total_hora_semana_docenciaposgrado'] + $total_hora_semana_docencia) * $preparacion_docencia);
                         Utilities::putMessageLogFile('$horas_docencia x ' . $horas_docenciap );

@@ -683,7 +683,7 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
 
     
 
-    function getAllListRegistryPaymentGrid($search = NULL, $isEstud, $mod_id = NULL, $estado = NULL, $periodo = NULL, $dataProvider = false, $per_id, $grupo_id){
+    function getAllListRegistryPaymentGrid($search = NULL, $isEstud, $mod_id = NULL, $estado = NULL, $periodo = NULL, $dataProvider = false, $per_id, $grupo_id, $fecha_ini = NULL, $fecha_fin = NULL){
         $con_academico = \Yii::$app->db_academico;
         $con = \Yii::$app->db;
          if ($per_id==Null) { $per_id = Yii::$app->session->get("PB_perid"); } 
@@ -701,6 +701,9 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
         }
         if(isset($estado) && $estado != "" && $estado != -1){
             $condition .= "reg.rpm_estado_generado = :estado AND ";
+        }
+        if($fecha_ini != "" && $fecha_fin != ""){
+            $condition .= "reg.rpm_fecha_transaccion between :fec_ini AND :fec_fin AND ";
         }
         \app\models\Utilities::putMessageLogFile('A1' .$periodo);
         if(isset($periodo) && $periodo != "" && $periodo != 0){
@@ -729,7 +732,8 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
                     p.pla_id as pla_id,
                     tmp.Cant as Cant,
                     roc.roc_costo as Costo,
-                    reg.rpm_fecha_transaccion as Fecha,   
+                    -- reg.rpm_fecha_transaccion as Fecha,  
+                    date_format(reg.rpm_fecha_transaccion, '%Y-%m-%d')  as Fecha,
                     ifnull(rf.Refund, '0.00') as Refund,
                     tmp.Creditos as Creditos,
                     '0.00' as Enroll,
@@ -836,7 +840,8 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
                     p.pla_id as pla_id,
                     tmp.Cant as Cant,
                     reg.rpm_total as Costo,
-                    reg.rpm_fecha_transaccion as Fecha, 
+                    -- reg.rpm_fecha_transaccion as Fecha, 
+                    date_format(reg.rpm_fecha_transaccion, '%Y-%m-%d')  as Fecha,                    
                     ifnull(rf.Refund, '0.00') as Refund,
                     tmp.Creditos as Creditos,
                     '0.00' as Enroll,
@@ -940,6 +945,10 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
         if(isset($mod_id) && $mod_id != "" && $mod_id != 0)  $comando->bindParam(":mod_id",$mod_id, \PDO::PARAM_INT);
         if(isset($estado) && $estado != "" && $estado != -1)  $comando->bindParam(":estado",$estado, \PDO::PARAM_INT);
         if(isset($periodo) && $periodo != "" && $periodo != 0) $comando->bindParam(":periodo",$periodo, \PDO::PARAM_STR);
+        if ($fecha_ini != "" && $fecha_fin != "") {
+            $comando->bindParam(":fec_ini", $fecha_ini, \PDO::PARAM_STR);
+            $comando->bindParam(":fec_fin", $fecha_fin, \PDO::PARAM_STR);
+        }
         if($isEstud)    $comando->bindParam(":per_id",$per_id, \PDO::PARAM_INT);
 
         $res = $comando->queryAll();

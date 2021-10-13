@@ -10,7 +10,8 @@ use app\widgets\PbGridView\PbGridView;
 academico::registerTranslations();
 
 $modelCancelItem = array();
-//print_r($planificacion);
+
+
 
 //print_r($data_student['mod_id']);die();
 
@@ -149,12 +150,14 @@ PbGridView::widget([
                                 return Html::checkbox($model['Code'], false, ["value" => $model['Subject'], "class" => "byregister"]);
                     },
                     'delete' => function ($url, $model) { 
-                        if($model['Admin']<1001 and empty($model['Rama_id'])){
-                            if($model['usuario'] < 1000 and $model['Roi_id']>0 ){                   
-                                 return Html::a('<span class="'.Utilities::getIcon('remove').'"></span>', null, ['href' => 'javascript:confirmDelete(\'deletereg\',[\'' . $model['Roi_id'] . '\']);', "data-toggle" => "tooltip", "title" => Yii::t("accion","Delete")]);
-                            } else{
-                                //return Html::label(['visible' => 'false',"style.display"=>"none"]);
-                            }
+                        if($model['Admin']<1001){
+                        	if(!isset($model['Rama_id'])){
+	                            if($model['usuario'] < 1000 and $model['Roi_id']>0 ){                   
+	                                 return Html::a('<span class="'.Utilities::getIcon('remove').'"></span>', null, ['href' => 'javascript:confirmDelete(\'deletereg\',[\'' . $model['Roi_id'] . '\']);', "data-toggle" => "tooltip", "title" => Yii::t("accion","Delete")]);
+	                            } else{
+	                                //return Html::label(['visible' => 'false',"style.display"=>"none"]);
+	                            }
+	                        }
                         } else{
                              //return Html::label(['visible' => 'false',"style.display"=>"none"]);  
                         }

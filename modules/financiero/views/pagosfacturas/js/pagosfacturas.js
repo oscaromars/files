@@ -1,4 +1,4 @@
-/* 
+/*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
@@ -23,7 +23,7 @@ $(document).ready(function () {
     });
     $('#btn_buscarpagoest').click(function () {
         actualizarGridPagoFactura();
-    });    
+    });
     $('#cmb_estado').change(function () {
         if ($('#cmb_estado').val() == 3)
         {
@@ -45,11 +45,15 @@ $(document).ready(function () {
         ReversarEstado();
     });
 
+    $('#btn_buscarEstudiantecartera').click(function () {
+        actualizarGridEstCartera();
+    });
+
     $('#cmb_unidad_facpago').change(function () {
         var link = $('#txth_base').val() + "/financiero/pagosfacturas/pagosfactura";
         var arrParams = new Object();
         //arrParams.unidada = $('#cmb_unidadbus').val();
-        arrParams.unidada = $(this).val();        
+        arrParams.unidada = $(this).val();
         arrParams.getmodalidad = true;
         requestHttpAjax(link, arrParams, function (response) {
             if (response.status == "OK") {
@@ -59,21 +63,21 @@ $(document).ready(function () {
         }, true);
     });
 
-    $('.pago_documento').hide(); 
+    $('.pago_documento').hide();
 
-    $("#cmb_formapago").on('change', function(){   
+    $("#cmb_formapago").on('change', function(){
         var opcion = $('#cmb_formapago').val();
 
         if(opcion==1){
             $('#txt_fechapago').removeClass('PBvalidation');
-            $('#pago_documento').hide(); 
-            $('.pago_documento').hide();           
+            $('#pago_documento').hide();
+            $('.pago_documento').hide();
 
             $('#pago_stripe').show();
         }else if(opcion==0){
             $('#txt_fechapago').removeClass('PBvalidation');
-            $('#pago_documento').hide(); 
-            $('.pago_documento').hide();           
+            $('#pago_documento').hide();
+            $('.pago_documento').hide();
 
             $('#pago_stripe').hide();
         }else{
@@ -88,11 +92,11 @@ $(document).ready(function () {
     $('#TbgPagopendiente input[type=checkbox]').click(function () {
         var valor = $("#txt_valor").val();
         var td    = $(this).parent().parent().find('td')[6];
-        if (this.checked) 
+        if (this.checked)
             valor     = parseFloat(valor)  + parseFloat($(td).html());
         else
             valor     = parseFloat(valor)  - parseFloat($(td).html());
-        
+
         if(valor < 0)
             valor = 0;
 
@@ -132,7 +136,8 @@ function guardarPagofactura() {
     arrParams.valor       = $('#txt_valor').val();
     arrParams.observacion = $('#txt_observa').val();
     arrParams.txt_cedula  = $('#txt_cedula ').val();
-    
+    arrParams.perisest  =   $('#txth_per_ids').val();
+
     //Pregunto por el metodo de pago
     if (arrParams.formapago == 0) {
         var mensaje = {wtmessage: "Método Pago : El campo no debe estar vacío.", title: "Error"};
@@ -167,7 +172,7 @@ function guardarPagofactura() {
 
     //Este segmento es para saber si ha elegido cuotas
     $('#TbgPagopendiente input[type=checkbox]').each(function () {
-        if (this.checked) 
+        if (this.checked)
             selected += $(this).val() + '*';
     });
 
@@ -190,11 +195,11 @@ function guardarPagofactura() {
         if (this.checked){
             valor_check = valor_check  + parseFloat($(td).html());
             cuotas_check++;
-        } 
+        }
 
         contador_cuotas++;
     });
-    
+
     console.log("valor_saldos "+valor_saldos);
     console.log("valor_check "+valor_check);
     console.log("contador_cuotas "+contador_cuotas);
@@ -210,7 +215,7 @@ function guardarPagofactura() {
             var mensaje = {wtmessage: "El valor pagado supero el valor de las cuotas seleccionadas.", title: "Error"};
             showAlert("NO_OK", "error", mensaje);
             return false;
-        } 
+        }
     }
 
     //Pregunto si es pago stripe
@@ -218,7 +223,7 @@ function guardarPagofactura() {
         //Si es por documentos cargo la fecha y el documento
         arrParams.fechapago = $('#txt_fechapago').val();
         arrParams.documento = $('#txth_doc_pago').val();
-               
+
         if (arrParams.documento.length == 0) {
             var mensaje = {wtmessage: "Adjuntar Documento  : El campo no debe estar vacío.", title: "Error"};
             showAlert("NO_OK", "error", mensaje);
@@ -229,13 +234,18 @@ function guardarPagofactura() {
             requestHttpAjax(link, arrParams, function (response) {
                 showAlert(response.status, response.label, response.message);
                 //console.log(response);
-                
+
                 if(response.status == 'OK'){
                     setTimeout(function () {
-                        parent.window.location.href = $('#txth_base').val() + "/financiero/pagosfacturas/viewsaldo";
+                        //parent.window.location.href = $('#txth_base').val() + "/financiero/pagosfacturas/viewsaldo";
+                        if (arrParams.perisest === null || arrParams.perisest === '') {
+                            parent.window.location.href = $('#txth_base').val() + "/financiero/pagosfacturas/viewsaldo";
+                        }else{
+                            parent.window.location.href = $('#txth_base').val() + "/financiero/pagosfacturas/viewsaldo?per_ids=" + arrParams.perisest;
+                        }
                     }, 2000);
                 }
-                
+
             }, true);
         }//if
     }else{
@@ -259,11 +269,16 @@ function guardarPagofactura() {
                               //paramCallback : ruta, //variable a ser llamada por la funcion anterior ej gotoPage(ruta)
                             }];
                             showAlert(response.status, response.label, response.message);
-    
+
                             setTimeout(function () {
-                                parent.window.location.href = $('#txth_base').val() + "/financiero/pagosfacturas/viewsaldo";
+                                //parent.window.location.href = $('#txth_base').val() + "/financiero/pagosfacturas/viewsaldo";
+                                if (arrParams.perisest === null || arrParams.perisest === '') {
+                                    parent.window.location.href = $('#txth_base').val() + "/financiero/pagosfacturas/viewsaldo";
+                                }else{
+                                    parent.window.location.href = $('#txth_base').val() + "/financiero/pagosfacturas/viewsaldo?per_ids=" + arrParams.perisest;
+                                }
                             }, 2000);
-                            
+
                         }, true);
                     }//if
                 }//else
@@ -283,7 +298,7 @@ function rechazarPago() {
     arrParams.resultado = $('#cmb_estado').val();
     arrParams.observacion = $('#cmb_observacion').val();
     arrParams.abono = $('#txt_valor_cuota').val();
-    
+
     if (!validateForm()) {
         requestHttpAjax(link, arrParams, function (response) {
             showAlert(response.status, response.label, response.message);
@@ -359,9 +374,9 @@ function modificarPagofactura() {
     }
 }
 
-function actualizarGridPagoFactura() {    
+function actualizarGridPagoFactura() {
     var f_ini = $('#txt_fecha_ini').val();
-    var f_fin = $('#txt_fecha_fin').val();    
+    var f_fin = $('#txt_fecha_fin').val();
     //Buscar almenos una clase con el nombre para ejecutar
     if (!$(".blockUI").length) {
         showLoadingPopup();
@@ -376,7 +391,7 @@ function actualizarGridPagofactura() {
     var f_fin = $('#txt_fecha_finpag').val();
     var unidad = $('#cmb_unidad_facpago').val();
     var modalidad = $('#cmb_modalidad_pagofac').val();
-    var estadopago = $('#cmb_estado_pagofac').val();   
+    var estadopago = $('#cmb_estado_pagofac').val();
     //Buscar almenos una clase con el nombre para ejecutar
     if (!$(".blockUI").length) {
         showLoadingPopup();
@@ -391,7 +406,7 @@ function exportExcelpagofactura() {
     var f_fin = $('#txt_fecha_finpag').val();
     var unidad = $('#cmb_unidad_facpago').val();
     var modalidad = $('#cmb_modalidad_pagofac').val();
-    var estadopago = $('#cmb_estado_pagofac').val();   
+    var estadopago = $('#cmb_estado_pagofac').val();
 
     window.location.href = $('#txth_base').val() + "/financiero/pagosfacturas/expexcelpagfactura?search=" + search + "&f_ini=" + f_ini + "&f_fin=" + f_fin + '&unidad=' + unidad + "&modalidad=" + modalidad + "&estadopago=" + estadopago;
 }
@@ -403,7 +418,7 @@ function exportPdfpagofactura() {
     var unidad = $('#cmb_unidad_facpago').val();
     var modalidad = $('#cmb_modalidad_pagofac').val();
     var estadopago = $('#cmb_estado_pagofac').val();
-    
+
     window.location.href = $('#txth_base').val() + "/financiero/pagosfacturas/exppdfpagfactura?pdf=1&search=" + search + "&f_ini=" + f_ini + "&f_fin=" + f_fin + '&unidad=' + unidad + "&modalidad=" + modalidad + "&estadopago=" + estadopago;
 }
 
@@ -426,10 +441,10 @@ function cargarCartera() {
 
 function ReversarEstado() {
     var arrParams = new Object();
-    var link = $('#txth_base').val() + "/financiero/pagosfacturas/reversarestado";  
+    var link = $('#txth_base').val() + "/financiero/pagosfacturas/reversarestado";
     arrParams.dpfa_id = $('#txth_dpfa_id').val();
     arrParams.resultado = $('#cmb_estadorev option:selected').val();
-    arrParams.observacion = $('#txt_observacion').val();    
+    arrParams.observacion = $('#txt_observacion').val();
     if (arrParams.resultado == '0') {
         var mensaje = {wtmessage: "Resultado : Debe seleccionar el resultado.", title: "Error"};
         showAlert("NO_OK", "error", mensaje);
@@ -443,5 +458,66 @@ function ReversarEstado() {
             }, 5000);
         }, true);
     }
- }   
+ }
+}
+
+function actualizarGridEstCartera() {
+    var search = $('#cmb_buscarestcartera').val();
+    //alert ('per_id ' + search);
+    //Buscar almenos una clase con el nombre para ejecutar
+    if (!$(".blockUI").length) {
+        showLoadingPopup();
+        $('#TbG_Estcartera').PbGridView('applyFilterData', {'search': search});
+        setTimeout(hideLoadingPopup, 2000);
+    }
+}
+
+function exportExcelestcartera() {
+    var search = $('#cmb_buscarestcartera').val();
+    window.location.href = $('#txth_base').val() + "/financiero/pagosfacturas/expexcelestcartera?search=" + search;
+}
+
+function exportPdfestcartera() {
+    var search = $('#cmb_buscarestcartera').val();
+    window.location.href = $('#txth_base').val() + "/financiero/pagosfacturas/exppdfestcartera?pdf=1&search=" + search;
+}
+
+function subirpago() {
+    var per_ids = $('#txth_per_ids').val();
+    window.location.href = $('#txth_base').val() + "/financiero/pagosfacturas/subirpago?per_ids=" + per_ids;
+}
+
+function eliminarpagcartera(id) {
+    var mensj = "¿Seguro desea eliminar el registro?";
+    var messagePB = new Object();
+    messagePB.wtmessage = mensj;
+    messagePB.title = "Eliminar";
+    var objAccept = new Object();
+    objAccept.id = "btnid2del";
+    objAccept.class = "btn-primary";
+    objAccept.value = "Aceptar";
+    objAccept.callback = 'accioncart';
+    var params = new Array(id, 0);
+    objAccept.paramCallback = params;
+    messagePB.acciones = new Array();
+    messagePB.acciones[0] = objAccept;
+    showAlert("warning", "warning", messagePB);
+}
+
+function accioncart(id, tmp) {
+    //alert ('id accion' + id);
+    var arrParams = new Object();
+    var link = $('#txth_base').val() + "/financiero/pagosfacturas/deletecargacartera";
+    arrParams.perisest  =   $('#txth_per_ids').val();
+    arrParams.ccar_id = id;
+    if (!validateForm()) {
+        requestHttpAjax(link, arrParams, function (response) {
+            showAlert(response.status, response.label, response.message);
+            if (!response.error) {
+                setTimeout(function () {
+                    window.location.href = $('#txth_base').val() + "/financiero/pagosfacturas/viewsaldo?per_ids=" + arrParams.perisest;
+                }, 3000);
+            }
+        }, true);
+    }
 }

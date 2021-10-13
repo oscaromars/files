@@ -171,13 +171,17 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 $files = $_FILES[key($_FILES)];
                 $arrIm = explode(".", basename($files['name']));
                 $typeFile = strtolower($arrIm[count($arrIm) - 1]);
+                if ($typeFile == 'pdf' || $typeFile == 'png' || $typeFile == 'jpg' || $typeFile == 'jpeg') {
                 $dirFileEnd = Yii::$app->params["documentFolder"] . "inscripcionposgrado/" . $per_id . "/" . $data["name_file"] . "." . $typeFile;
                 $status = Utilities::moveUploadFile($files['tmp_name'], $dirFileEnd);
-                if ($status) {
-                    return true;
-                } else {
-                    return json_encode(['error' => Yii::t("notificaciones", "Error to process File {file}. Try again.", ['{file}' => basename($files['name'])])]);
-                    return;
+                    if ($status) {
+                        return true;
+                    } else {
+                        return json_encode(['error' => Yii::t("notificaciones", "Error to process File {file}. Try again.", ['{file}' => basename($files['name'])])]);
+                        return;
+                    }
+                }else {
+                return json_encode(['error' => Yii::t("notificaciones", "Error to process File ". basename($files['name']) ." Solo formato imagenes pdf, jpg, png.")]);
                 }
             }
 
@@ -186,7 +190,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
             $transaction = $con->beginTransaction();
             $con1 = \Yii::$app->db_captacion;
             $transaction1 = $con1->beginTransaction();
-            $timeSt = time();
+            $timeSt = date(Yii::$app->params["dateByDefault"]);
             try {
 
                 $unidad = $data['unidad'];

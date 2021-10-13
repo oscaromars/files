@@ -70,7 +70,7 @@ class LoginForm extends Model {
                 $status = $usuario->validatePassword($this->password);
                 $status_activo = $usuario->usu_estado;
                 if ($status_activo == 1) { // si es usuario activo
-                    $status=true;
+                    //$status=true;
                     if ($status && isset($status)) {
                         //$usuario->init();
                         $emp_id = NULL;

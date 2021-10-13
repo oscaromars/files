@@ -1232,7 +1232,7 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
                          when (da.uaca_id= 1 and daca_num_estudiantes_online between 21 and 30) then round(4  * pc.paca_semanas_periodo /**(1.3)*/)
                          when (da.uaca_id= 1 and daca_num_estudiantes_online between 31 and 40) then round(5  * pc.paca_semanas_periodo /**(1.3)*/)
                          when (da.uaca_id= 1 and daca_num_estudiantes_online >40) then round(7  * pc.paca_semanas_periodo /**(1.3)*/)
-                         when (da.uaca_id= 2 and t.tdis_id =1 ) then ifnull(dh.daho_total_horas * TRUNCATE(timestampdiff(day, da.daca_fecha_inicio_post, da.daca_fecha_fin_post)/7,0),'')
+                         when (da.uaca_id= 2 and t.tdis_id =1 ) then ifnull(dh.daho_total_horas * ROUND(timestampdiff(day, da.daca_fecha_inicio_post, da.daca_fecha_fin_post)/7),'')
                         end)
                        else
                         case when da.tdis_id=7 then tdis_num_semanas else (pc.paca_semanas_periodo * case  when dh.daho_total_horas is null then tdis_num_semanas else dh.daho_total_horas end) end
@@ -1571,7 +1571,7 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
 		$estado = 1;
 		$sql = "SELECT
                 case when da.uaca_id = 2 and td.tdis_id =1 then dah.daho_total_horas else 0 end  as total_hora_semana_docenciaposgrado,
-                TRUNCATE(timestampdiff(day, daca_fecha_inicio_post, daca_fecha_fin_post)/7,0) as semanas_posgrado/*,
+                ROUND(timestampdiff(day, daca_fecha_inicio_post, daca_fecha_fin_post)/7) as semanas_posgrado/*,
                 da.daca_id,
                 da.dcab_id,
                 da.daca_fecha_inicio_post,

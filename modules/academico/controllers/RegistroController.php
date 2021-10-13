@@ -3390,9 +3390,57 @@ throw new Exception('Error to Save Payment Registry.');
 		\app\models\Utilities::putMessageLogFile('actionEnviosigamatricula: ');
 		\app\models\Utilities::putMessageLogFile($json_response);
 
-		\Yii::$app->getSession()->setFlash('is_transfer', 'Se ha registrado con exito en Siga');
-		return true; // " status". $status ."content". $content ;//$this->redirect(['index']);
-
-	}
+        \Yii::$app->getSession()->setFlash('is_transfer', 'Se ha registrado con exito en Siga');
+        return true;// " status". $status ."content". $content ;//$this->redirect(['index']); 
+       
+    }
+    
+    public function actionExportexcel($estudiante,$modalidad,$periodo,$f_ini,$f_fin) {
+        try{
+            ini_set('memory_limit', '1024M');
+            $content_type = Utilities::mimeContentType('xls');
+            $nombarch = 'Report-' . date('YmdHis') . '.xls';
+            header('Content-Type: '.$content_type);
+            header('Content-Disposition: attachment;filename=' . $nombarch);
+            header('Cache-Control: max-age=0');
+            $colPosition = array('C', 'D', 'E', 'F', 'G', 'H', 'I', 'J');
+            $arrHeader = array(
+                Yii::t('formulario', 'Estudiante'),
+                Yii::t('formulario', 'Periodo Academico'),
+                Yii::t('formulario', 'Fecha transacción'),
+                Yii::t('formulario', 'Modalidad'),
+                Yii::t('formulario', 'Materias'),
+                Yii::t('formulario', 'Costo'),
+                Yii::t('formulario', 'Reembolso'),
+                Yii::t('formulario', 'Estado'),
+            );
+            $model =  new RegistroConfiguracion();
+            //$data = Yii::$app->request->get();
+            $estudiante = $estudiante;
+            $modalidad = $modalidad;
+            $periodo = $periodo;
+            $f_ini = $f_ini;
+            $f_fin = $f_fin;
+            $arrData = array();
+            // if (empty($arrSearch)) {
+            //     $arrData = $model->consultarEstudiantematriculado($search = NULL, $isEstud=null, $mod_id = NULL, $estado = NULL, $periodo = NULL, $dataProvider = false, $per_id=null, $grupo_id=null);
+            // } else {
+                $arrData = $model->consultarEstudiantematriculado($estudiante  , $isEstud=null, $modalidad, $estado = NULL, $periodo, $dataProvider = false, $per_id=null, $grupo_id=null,true, $f_ini, $f_fin);
+            // }
+            // print_r($arrData);die();
+            $nameReport = academico::t('Academico', 'Lista de Estudiantes Matriculados');
+            Utilities::generarReporteXLS($nombarch, $nameReport, $arrHeader, $arrData, $colPosition);
+            exit;
+        }catch(Exception $e){
+            $message = array(
+                "wtmessage" => Yii::t("notificaciones", $e->getMessage()),
+                "title" => Yii::t('jslang', 'Error'),
+            );
+            \app\models\Utilities::putMessageLogFile('actionExportexcel: error ' . $e->getMessage());
+            print_r($message);die();
+            exit;
+        }
+    }
 
 }
+

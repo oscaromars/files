@@ -130,6 +130,140 @@ class InscripciongradoController extends \yii\web\Controller {
         ]);
     }
 
+    public function actionGuardarprimeraparte() {
+        $mod_persona = new Persona();
+        $user_ingresa = Yii::$app->session->get("PB_iduser");
+        if (Yii::$app->request->isAjax) {
+            $data = Yii::$app->request->post();
+            $fecha_registro = date(Yii::$app->params["dateTimeByDefault"]);
+        
+            $con = \Yii::$app->db;
+            $transaction = $con->beginTransaction();
+            $con1 = \Yii::$app->db_captacion;
+            $transaction1 = $con1->beginTransaction();
+        
+            try {
+
+                $mod_persona = new Persona();
+                $resp_persona = $mod_persona->consultarUltimoPer_id();
+                $persona = $resp_persona["ultimo"];
+                $per_id = intval( $persona );
+
+                //datos personales  
+                $per_dni = $data['cedula'];          
+                $per_pri_nombre = $data["primer_nombre"];
+                $per_seg_nombre = $data["segundo_nombre"];
+                $per_pri_apellido = $data["primer_apellido"];
+                $per_seg_apellido = $data["segundo_apellido"];
+                $can_id_nacimiento = $data["cuidad_nac"];
+                $per_fecha_nacimiento = $data["fecha_nac"];
+                $per_nacionalidad = $data["nacionalidad"]; 
+                $eciv_id = $data["estado_civil"];
+                
+                //datos contacto
+                $pai_id_domicilio = $data["pais"];
+                $pro_id_domicilio = $data["provincia"];
+                $can_id_domicilio = $data["canton"];
+                $per_domicilio_csec = $data["parroquia"];
+                $per_domicilio_ref = $data["dir_domicilio"];
+                $per_celular = $data["celular"];
+                $per_domicilio_telefono = $data["telefono"];
+                $per_correo = $data["correo"];
+
+                //datos en caso de emergencias
+                $per_trabajo_direccion = $data["dir_trabajo"];
+                $pcon_nombre = $data["cont_emergencia"];
+                $tpar_id = $data["parentesco"];
+                $pcon_celular = $data["tel_emergencia"];
+                $pcon_direccion = $data["dir_personacontacto"];
+
+                $insc_persona = new Persona();
+                $resp_persona = $insc_persona->ConsultaRegistroExiste( 0,$per_dni, $per_dni);
+                if ($resp_persona['existen'] == 0) {
+                    //Nuevo Registro
+                    $regPersona = $mod_persona->insertarPersonaInscripciongrado($per_pri_nombre, $per_seg_nombre, $per_pri_apellido, $per_seg_apellido, $per_dni, $eciv_id, $can_id_nacimiento, $per_fecha_nacimiento, $per_celular, $per_correo, $per_domicilio_csec, $per_domicilio_ref, $per_domicilio_telefono, $pai_id_domicilio, $pro_id_domicilio, $can_id_domicilio, $per_nacionalidad,$per_trabajo_direccion);  
+                    
+                }else{
+
+                    $resul = array();
+                    $error++;
+                    $error_message .= Yii::t("formulario", "The person already exists");    
+
+                    $message = array(
+                        "wtmessage" => Yii::t("formulario",  $error_message), //$error_message
+                        "title" => Yii::t('jslang', 'Bad Request'),
+                    );
+                    $resul["status"] = FALSE;
+                    $resul["error"] = null;
+                    $resul["message"] = $message;
+                    $resul["data"] = null;
+                    $resul["dataext"] = null;
+                
+
+                    //return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Error'), $error_message);
+                    return Utilities::ajaxResponse('ERROR_EXIST', 'alert', Yii::t('jslang', 'Error'), 'false', $message, $resul);   
+                    //$resul = $model->actualizarInscripciongrado($data);
+                    
+                }
+                //}
+                
+                // creación de contacto
+                $modpersonacontacto = new PersonaContacto();
+                $mod_persona = new Persona();
+                $resp_persona = $mod_persona->consultPer_id();
+                $persona = $resp_persona["ultimo"];
+                $per_id = intval( $persona );
+
+                $resexistecontacto = $modpersonacontacto->consultaPersonaContacto($per_id);
+                if ($resexistecontacto) {
+                    if ($pcon_nombre != $pcon_apellido) {
+                        $contacto = $pcon_nombre . " " . $pcon_apellido;
+                    } else {
+                        $contacto = $pcon_nombre;
+                    }
+                    $resp_modcontacto = $modpersonacontacto->modificarPersonacontacto($per_id, $tpar_id, $contacto, $pcon_telefono, $pcon_celular, $pcon_direccion);
+                } else {
+                    if ($sincontacto != 1) {
+                        //Creación de persona de contacto.
+                        $contactos = $modpersonacontacto->crearPersonaContacto($per_id, $tpar_id, $pcon_nombre . " " . $pcon_apellido, $pcon_telefono, $pcon_celular, $pcon_direccion);
+                    //}
+                //}
+                        if ($contactos) {
+                                $exito=1;
+                            }
+                        if($exito){ 
+                        \app\models\Utilities::putMessageLogFile('resultado es ok');
+                            //$_SESSION['persona_id'] =  $resul['per_id'];
+                            $transaction->commit();
+                            $message = array(
+                                "wtmessage" => Yii::t("formulario", "The information have been saved"),
+                                "title" => Yii::t('jslang', 'Success'),
+                            );
+                            return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);                                        
+                        }             
+                        
+                        //} 
+                        else {
+                            \app\models\Utilities::putMessageLogFile('resultado es NOok');
+                            $message = array(
+                                "wtmessage" => Yii::t("formulario", "The information have not been saved."),
+                                "title" => Yii::t('jslang', 'Success'),
+                            );
+                            return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t('jslang', 'Error'), 'false', $message, $resul);
+                        }
+                    }
+                }
+            } catch (Exception $ex) {
+                $transaction->rollback();                
+                $message = array(
+                    "wtmessage" => $ex->getMessage(),
+                    "title" => Yii::t('jslang', 'Error'),
+                );
+                return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+            }
+        }
+    }
+
     public function actionGuardarinscripciongrado() {
         $mod_persona = new Persona();
         $user_ingresa = Yii::$app->session->get("PB_iduser");

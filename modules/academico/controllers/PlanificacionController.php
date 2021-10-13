@@ -1583,12 +1583,11 @@ $centralprocess = $malla->consultarAsignaturas($resultData[$i],$periodo,$saca_no
         );
         $mod_periodo = new PlanificacionEstudiante();
         $data = Yii::$app->request->get();
-        $arrSearch['estudiante'] = $data['estudiante'];
         $arrSearch['unidad'] = $data['unidad'];
         $arrSearch['modalidad'] = $data['modalidad'];
-        $arrSearch['carrera'] = $data['carrera'];
         $arrSearch['periodo'] = $data['periodo'];
         $arrSearch['bloque'] = $data['bloque'];
+        $arrSearch['view'] = 2;
         $arrData = array();
         if (empty($arrSearch)) {
             $arrData = $mod_periodo->consultarEstudiantePeriodo(array(), true);
@@ -1628,12 +1627,11 @@ $centralprocess = $malla->consultarAsignaturas($resultData[$i],$periodo,$saca_no
         );
         $mod_periodo = new PlanificacionEstudiante();
         $data = Yii::$app->request->get();
-        $arrSearch['estudiante'] = $data['estudiante'];
-        //$arrSearch['unidad'] = $data['unidad'];
         $arrSearch['modalidad'] = $data['modalidad'];
         $arrSearch['carrera'] = $data['carrera'];
         $arrSearch['periodo'] = $data['periodo'];
         $arrSearch['bloque'] = $data['bloque'];
+        $arrSearch['view'] = 1;
         $arrData = array();
         if (empty($arrSearch)) {
             $arrData = $mod_periodo->consultarEstudiantePeriodo(array(), true);
@@ -2068,7 +2066,8 @@ inner join " . $con->dbname . ".malla_academica as b on a.pes_cod_carrera = b.ma
         $session->set("plan_id",$plan);
         $session->set("per_ids",$per_id);
         Yii::$app->session->set('pla_id', $plan);
-        $existe = $mod_periodo->confirmarPlanificacionExistente( $per_id,$periodoAcad);
+        $existe = $mod_periodo->confirmarPlanificacionExistente( $data['estudiante'],$data['periodo']);
+        //print_r($data['per_id'].'-'.$data['periodo']);die();
         
         if ($data['estudiante'] != null) {
             $arrSearch['estudiante'] = $per_id;
@@ -2076,7 +2075,7 @@ inner join " . $con->dbname . ".malla_academica as b on a.pes_cod_carrera = b.ma
             //$plan = $mod_periodo->getPlanificacionxPeriodo($periodoAcad,$per_id);
             $arrSearch['periodoAca'] = $data["periodo"];
             $arrSearch['modalidad'] = $data['modalidad'];
-            $arrSearch['saca_id'] = $saca_id;
+            $arrSearch['saca_id'] = $data["periodo"];;
             $model_plan = $mod_periodo->consultarDetalleplanificaaut($arrSearch,false);
             $carrera_activa = $mod_periodo->consultaracarreraxmallaaut($per_id);
             //$pla_id = $mod_periodo->consultaPlanificacionEstVigente($per_id);

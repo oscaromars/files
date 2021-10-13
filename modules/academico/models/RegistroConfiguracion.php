@@ -975,4 +975,273 @@ class RegistroConfiguracion extends \yii\db\ActiveRecord
         }
     }
 
+    public function consultarEstudiantematriculado($search = NULL, $isEstud=NULL, $mod_id = NULL, $estado = NULL, $periodo = NULL, $dataProvider = false, $per_id, $grupo_id,$onlyData = false, $f_ini = NULL, $f_fin = NULL){
+        $con_academico = \Yii::$app->db_academico;
+        $con = \Yii::$app->db;
+         if ($per_id==Null) { $per_id = Yii::$app->session->get("PB_perid"); } 
+        //$per_id = Yii::$app->session->get("PB_perid"); 
+        $search_cond = "%" . $search . "%";
+        $condition = "";
+        $str_search = "";
+
+        if (isset($search) && $search != "") {
+            $str_search = "(pe.pes_nombres like (%:search%) OR ";
+            $str_search .= "pe.pes_dni like (%:search%)) AND ";
+        }
+        if(isset($mod_id) && $mod_id != "" && $mod_id != 0){
+            $condition .= "me.mod_id = :mod_id AND ";
+        }
+        if(isset($estado) && $estado != "" && $estado != -1){
+            $condition .= "reg.rpm_estado_generado = :estado AND ";
+        }
+        \app\models\Utilities::putMessageLogFile('A1' .$periodo);
+        if(isset($periodo) && $periodo != "" && $periodo != 0){
+            //$periodo = "%" . $periodo . "%";
+            $condition .= "p.pla_id = :periodo AND ";
+            //$condition .= "p.pla_periodo_academico like :periodo AND ";
+        }
+        if($f_ini != "" && $f_fin != ""){
+            $condition .= " reg.rpm_fecha_transaccion between :fec_ini AND :fec_fin AND ";
+        }
+        if ($grupo_id == 12){
+            //\app\models\Utilities::putMessageLogFile('ENTRO getAllListRegistryPaymentGrid' .$isEstud);
+                \app\models\Utilities::putMessageLogFile('getAllListRegistryPaymentGrid' .$isEstud);
+                $condition .= "per.per_id = :per_id AND ";  
+        }
+        
+        
+        $sql = "SELECT distinct
+                    pe.pes_nombres                      as 'Estudiante',
+                    p.pla_periodo_academico             as 'Periodo Academico',
+                    date_format(reg.rpm_fecha_transaccion, '%Y-%m-%d')            as 'Fecha transacción',
+                    mo.mod_nombre                       as 'Modalidad',
+                    tmp.Cant                            as 'Materias',
+                    reg.rpm_total                       as 'Costo',
+                    ifnull(rf.Refund, '0.00')           as 'Reembolso',
+                    case ifnull(reg.rpm_estado_generado,0) 
+                    when 1 then 'Inscripcion Realizada'
+                    when 0 then 'Pendiente de Pago'
+                    end  as 'Estado'
+                FROM " . $con_academico->dbname . ".planificacion_estudiante                AS pe
+                    INNER JOIN " . $con_academico->dbname . ".planificacion                 AS p on p.pla_id = pe.pla_id
+                    INNER JOIN " . $con_academico->dbname . ".registro_online               AS r on r.pes_id = pe.pes_id
+                    INNER JOIN " . $con_academico->dbname . ".registro_online_cuota         AS roc on roc.ron_id = r.ron_id
+                    INNER JOIN " . $con->dbname . ".persona                                 AS per on per.per_id = pe.per_id
+                    INNER JOIN " . $con_academico->dbname . ".estudiante                    AS est on est.per_id = per.per_id
+                    INNER JOIN " . $con_academico->dbname . ".estudiante_carrera_programa   AS ec ON est.est_id = ec.est_id
+                    INNER JOIN " . $con_academico->dbname . ".modalidad_estudio_unidad      AS me ON ec.meun_id = me.meun_id
+                    INNER JOIN " . $con_academico->dbname . ".estudio_academico             AS ea ON ea.eaca_id = me.eaca_id
+                    INNER JOIN " . $con_academico->dbname . ".unidad_academica              AS ua ON me.uaca_id = ua.uaca_id
+                    INNER JOIN " . $con_academico->dbname . ".modalidad                     AS mo ON mo.mod_id = me.mod_id
+                    LEFT JOIN " . $con_academico->dbname . ".registro_adicional_materias    AS ram on ram.ron_id = r.ron_id
+                    
+                    LEFT JOIN (
+                        SELECT 
+                            r.pes_id as pes_id,
+                            rm.rama_id as rama_id,
+                            COUNT(*) as Cant,
+                            SUM(it.roi_costo) as Costo,
+                            r.ron_valor_gastos_adm as costo_adm, 
+                            SUM(it.roi_creditos) as Creditos
+                        FROM
+                            " . $con_academico->dbname . ".registro_online AS r
+                            INNER JOIN " . $con_academico->dbname . ".registro_online_item AS it ON it.ron_id = r.ron_id
+                            LEFT JOIN " . $con_academico->dbname . ".registro_adicional_materias AS rm ON rm.ron_id = r.ron_id 
+                            AND (
+                            rm.roi_id_1 = it.roi_id OR
+                            rm.roi_id_2 = it.roi_id OR
+                            rm.roi_id_3 = it.roi_id OR
+                            rm.roi_id_4 = it.roi_id OR
+                            rm.roi_id_5 = it.roi_id OR
+                            rm.roi_id_6 = it.roi_id OR
+                            rm.roi_id_7 = it.roi_id OR
+                            rm.roi_id_8 = it.roi_id
+                            )
+                        WHERE
+                            r.ron_estado = 1 AND r.ron_estado_logico = 1 AND
+                            it.roi_estado = 1 AND it.roi_estado_logico = 1 AND
+                            rm.rama_estado = 1 AND rm.rama_estado_logico = 1
+                        GROUP BY r.pes_id, rm.rama_id
+                    ) AS tmp ON tmp.rama_id = ram.rama_id 
+                    LEFT JOIN (
+                        SELECT 
+                            MIN(r.ron_id) as ron_id,
+                            r.per_id as per_id
+                        FROM
+                            " . $con_academico->dbname . ".registro_online AS r
+                        WHERE 
+                            r.ron_estado = 1 AND r.ron_estado_logico = 1
+                        GROUP BY per_id
+                    ) AS mi ON mi.ron_id = r.ron_id
+                    LEFT JOIN " . $con_academico->dbname . ".registro_pago_matricula AS reg on reg.per_id = per.per_id 
+                        AND r.ron_id = reg.ron_id AND reg.rpm_estado = 1 AND reg.rpm_estado_logico = 1
+                    "./*LEFT JOIN " . $con_academico->dbname . ".enrolamiento_agreement AS enr on enr.ron_id = r.ron_id 
+                        AND reg.rpm_estado = 1 AND reg.rpm_estado_logico = 1 AND enr.rpm_id = ram.rpm_id AND enr.eagr_estado = 1 AND enr.eagr_estado_logico = 1
+                    */" LEFT JOIN (
+                        SELECT
+                            ro.ron_id as ron_id,
+                            ro.rpm_id as rpm_id,
+                            SUM(ri.roi_costo) as Refund
+                        FROM
+                            " . $con_academico->dbname . ".cancelacion_registro_online_item AS it
+                            INNER JOIN " . $con_academico->dbname . ".cancelacion_registro_online AS ro ON it.cron_id = ro.cron_id
+                            INNER JOIN " . $con_academico->dbname . ".registro_online_item AS ri ON ri.roi_id = it.roi_id
+                        WHERE
+                            ro.cron_estado_cancelacion = 2 AND
+                            it.croi_estado = 1 AND it.croi_estado_logico = 1 AND
+                            ro.cron_estado = 1 AND ro.cron_estado_logico = 1 AND
+                            ri.roi_estado = 1 AND ri.roi_estado_logico = 1
+                        GROUP BY ro.ron_id, ro.rpm_id
+                    ) AS rf ON rf.ron_id = r.ron_id AND rf.rpm_id = reg.rpm_id
+                WHERE 
+                    $str_search 
+                    $condition
+                    roc.rpm_id = ram.rpm_id AND
+                    pe.pes_estado = 1 AND pe.pes_estado_logico = 1 AND
+                    p.pla_estado = 1 AND p.pla_estado_logico = 1 AND
+                    per.per_estado = 1 AND per.per_estado_logico = 1 AND 
+                    est.est_estado = 1 AND est.est_estado_logico = 1 AND
+                    r.ron_estado = 1 AND r.ron_estado_logico = 1 AND 
+                    roc.roc_estado = 1 AND roc.roc_estado_logico = 1 AND
+                    ram.rama_estado =1 and ram.rama_estado_logico = 1 AND
+                    tmp.Cant IS NOT NULL AND
+                    tmp.Costo IS NOT NULL AND
+                    tmp.costo_adm IS NOT NULL AND 
+                    ram.rpm_id IS NOT NULL AND 
+                    reg.rpm_tipo_pago = 3
+
+                UNION    
+
+                SELECT distinct
+                        pe.pes_nombres                      as 'Estudiante',
+                        p.pla_periodo_academico             as 'Periodo Academico',
+                        date_format(reg.rpm_fecha_transaccion, '%Y-%m-%d')            as 'Fecha transacción',
+                        mo.mod_nombre                       as 'Modalidad',
+                        tmp.Cant                            as 'Materias',
+                        reg.rpm_total                       as 'Costo',
+                        ifnull(rf.Refund, '0.00')           as 'Reembolso',
+                        ifnull(reg.rpm_estado_generado,0)   as 'Estado'
+                FROM " . $con_academico->dbname . ".planificacion_estudiante                AS pe
+                    INNER JOIN " . $con_academico->dbname . ".planificacion                 AS p on p.pla_id = pe.pla_id
+                    INNER JOIN " . $con_academico->dbname . ".registro_online               AS r on r.pes_id = pe.pes_id
+                    INNER JOIN " . $con->dbname . ".persona                                 AS per on per.per_id = pe.per_id
+                    INNER JOIN " . $con_academico->dbname . ".estudiante                    AS est on est.per_id = per.per_id
+                    INNER JOIN " . $con_academico->dbname . ".estudiante_carrera_programa   AS ec ON est.est_id = ec.est_id
+                    INNER JOIN " . $con_academico->dbname . ".modalidad_estudio_unidad      AS me ON ec.meun_id = me.meun_id
+                    INNER JOIN " . $con_academico->dbname . ".estudio_academico             AS ea ON ea.eaca_id = me.eaca_id
+                    INNER JOIN " . $con_academico->dbname . ".unidad_academica              AS ua ON me.uaca_id = ua.uaca_id
+                    INNER JOIN " . $con_academico->dbname . ".modalidad                     AS mo ON mo.mod_id = me.mod_id
+                    LEFT JOIN " . $con_academico->dbname . ".registro_adicional_materias    AS ram on ram.ron_id = r.ron_id
+                    INNER JOIN db_facturacion.detalle_pagos_factura                         AS dpfa on ram.pfes_id = dpfa.pfes_id
+                    LEFT JOIN (
+                        SELECT 
+                            r.pes_id as pes_id,
+                            rm.rama_id as rama_id,
+                            COUNT(*) as Cant,
+                            SUM(it.roi_costo) as Costo,
+                            r.ron_valor_gastos_adm as costo_adm, 
+                            SUM(it.roi_creditos) as Creditos
+                        FROM
+                            " . $con_academico->dbname . ".registro_online AS r
+                            INNER JOIN " . $con_academico->dbname . ".registro_online_item AS it ON it.ron_id = r.ron_id
+                            LEFT JOIN " . $con_academico->dbname . ".registro_adicional_materias AS rm ON rm.ron_id = r.ron_id 
+                            AND (
+                            rm.roi_id_1 = it.roi_id OR
+                            rm.roi_id_2 = it.roi_id OR
+                            rm.roi_id_3 = it.roi_id OR
+                            rm.roi_id_4 = it.roi_id OR
+                            rm.roi_id_5 = it.roi_id OR
+                            rm.roi_id_6 = it.roi_id OR
+                            rm.roi_id_7 = it.roi_id OR
+                            rm.roi_id_8 = it.roi_id
+                            )
+                        WHERE
+                            r.ron_estado = 1 AND r.ron_estado_logico = 1 AND
+                            it.roi_estado = 1 AND it.roi_estado_logico = 1 AND
+                            rm.rama_estado = 1 AND rm.rama_estado_logico = 1
+                        GROUP BY r.pes_id, rm.rama_id
+                    ) AS tmp ON tmp.rama_id = ram.rama_id 
+                    LEFT JOIN (
+                        SELECT 
+                            MIN(r.ron_id) as ron_id,
+                            r.per_id as per_id
+                        FROM
+                            " . $con_academico->dbname . ".registro_online AS r
+                        WHERE 
+                            r.ron_estado = 1 AND r.ron_estado_logico = 1
+                        GROUP BY per_id
+                    ) AS mi ON mi.ron_id = r.ron_id
+                    LEFT JOIN " . $con_academico->dbname . ".registro_pago_matricula AS reg on reg.per_id = per.per_id 
+                        AND r.ron_id = reg.ron_id AND reg.rpm_estado = 1 AND reg.rpm_estado_logico = 1
+                    "./*LEFT JOIN " . $con_academico->dbname . ".enrolamiento_agreement AS enr on enr.ron_id = r.ron_id 
+                        AND reg.rpm_estado = 1 AND reg.rpm_estado_logico = 1 AND enr.rpm_id = ram.rpm_id AND enr.eagr_estado = 1 AND enr.eagr_estado_logico = 1
+                    */" LEFT JOIN (
+                        SELECT
+                            ro.ron_id as ron_id,
+                            ro.rpm_id as rpm_id,
+                            SUM(ri.roi_costo) as Refund
+                        FROM
+                            " . $con_academico->dbname . ".cancelacion_registro_online_item AS it
+                            INNER JOIN " . $con_academico->dbname . ".cancelacion_registro_online AS ro ON it.cron_id = ro.cron_id
+                            INNER JOIN " . $con_academico->dbname . ".registro_online_item AS ri ON ri.roi_id = it.roi_id
+                        WHERE
+                            ro.cron_estado_cancelacion = 2 AND
+                            it.croi_estado = 1 AND it.croi_estado_logico = 1 AND
+                            ro.cron_estado = 1 AND ro.cron_estado_logico = 1 AND
+                            ri.roi_estado = 1 AND ri.roi_estado_logico = 1
+                        GROUP BY ro.ron_id, ro.rpm_id
+                    ) AS rf ON rf.ron_id = r.ron_id AND rf.rpm_id = reg.rpm_id
+                WHERE 
+                    $str_search 
+                    $condition
+                    reg.rpm_id = ram.rpm_id AND
+                    dpfa.dpfa_estado_pago = 2 and dpfa.dpfa_estado_financiero = 'C' AND
+                    pe.pes_estado = 1 AND pe.pes_estado_logico = 1 AND
+                    p.pla_estado = 1 AND p.pla_estado_logico = 1 AND
+                    per.per_estado = 1 AND per.per_estado_logico = 1 AND 
+                    est.est_estado = 1 AND est.est_estado_logico = 1 AND
+                    r.ron_estado = 1 AND r.ron_estado_logico = 1 AND 
+                    reg.rpm_estado = 1 AND reg.rpm_estado_logico = 1 AND
+                    ram.rama_estado =1 and ram.rama_estado_logico = 1 AND
+                    tmp.Cant IS NOT NULL AND
+                    tmp.Costo IS NOT NULL AND
+                    tmp.costo_adm IS NOT NULL AND 
+                    ram.rpm_id IS NOT NULL AND
+                    dpfa.dpfa_estado = 1 and dpfa.dpfa_estado_logico = 1 AND 
+                    reg.rpm_tipo_pago = 2
+
+                order by 'Fecha transacción' desc";
+
+      
+        $comando = $con_academico->createCommand($sql);
+        
+        if(isset($search) && $search != "")  $comando->bindParam(":search",$search_cond, \PDO::PARAM_STR);
+        if(isset($mod_id) && $mod_id != "" && $mod_id != 0)  $comando->bindParam(":mod_id",$mod_id, \PDO::PARAM_INT);
+        if(isset($estado) && $estado != "" && $estado != -1)  $comando->bindParam(":estado",$estado, \PDO::PARAM_INT);
+        if(isset($periodo) && $periodo != "" && $periodo != 0) $comando->bindParam(":periodo",$periodo, \PDO::PARAM_STR);
+        if($isEstud)    $comando->bindParam(":per_id",$per_id, \PDO::PARAM_INT);
+        if ($f_ini != "" && $f_fin != "") {
+            $comando->bindParam(":fec_ini", $f_ini, \PDO::PARAM_STR);
+            $comando->bindParam(":fec_fin", $f_fin, \PDO::PARAM_STR);
+        }
+        
+        $res = $comando->queryAll();
+        \app\models\Utilities::putMessageLogFile($comando->getRawSql());
+
+        if($dataProvider){
+            $dataProvider = new ArrayDataProvider([
+                'key' => 'Id',
+                'allModels' => $res,
+                'pagination' => [
+                    'pageSize' => Yii::$app->params["pageSize"],
+                ],
+                'sort' => [
+                    'attributes' => ['Estudiante', 'Cedula',"Carrera","Modalidad","Periodo","Estado","Fecha"],
+                ],
+            ]);
+
+            return $dataProvider;
+        }
+        return $res;
+    }
 }

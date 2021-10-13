@@ -9,50 +9,22 @@ $(document).ready(function() {
         searchModulesList();
     });
     $('#btn_modificarcargacartera').click(function() {
-        /*var txt_dpre_ssn_id_fact= $('#txt_dpre_ssn_id_fact').val()?$('#txt_dpre_ssn_id_fact').val():0;
-        var txt_nombres_fac     = $('#txt_nombres_fac').val()?$('#txt_nombres_fac').val():0;
-        var txt_apellidos_fac   = $('#txt_apellidos_fac').val()?$('#txt_apellidos_fac').val():0;
-        var txt_dir_fac         = $('#txt_dir_fac').val()?$('#txt_dir_fac').val():0;
-        var txt_tel_fac         = $('#txt_tel_fac').val()?$('#txt_tel_fac').val():0;
-        var txt_correo_fac      = $('#txt_correo_fac').val()?$('#txt_correo_fac').val():0;*/
-        /*alert(txt_dpre_ssn_id_fact+'-'+
-            txt_nombres_fac +'-'+
-            txt_apellidos_fac +'-'+
-            txt_dir_fac +'-'+
-            txt_tel_fac+'-'+
-            txt_correo_fac);*/
         var terminos = ($('#cmb_req').is(':checked')) ? 1 : 0;
         //alert(terminos);
         if(terminos != 0){
-            /*if (txt_dpre_ssn_id_fact != 0 ||
-                txt_nombres_fac != 0 ||
-                txt_apellidos_fac != 0 ||
-                txt_dir_fac != 0 ||
-                txt_tel_fac != 0 ||
-                txt_correo_fac != 0){*/
                 console.log('Estado duplicado: '+$('#isDuplicate').val());
                 if($('#cmb_fpago').val() == 1){
                     if(!validateForm()){
-                        enviarDatosFacturacion();
-                        iniciarEnvioSiga();
-                        guardarCargarCartera();
+                        //iniciarEnvioSiga();
+                     guardarCargarCartera();
                         //enviarPdf();
                         //iniciarEnvioSiga();
                     }
                 }else{
-                    enviarDatosFacturacion();
-                    iniciarEnvioSiga();
-                    guardarCargarCartera();
+                    //iniciarEnvioSiga();
+                   guardarCargarCartera();
                 }    
                 
-            /*}else if(( $('#cmb_tpago').val()=== 3)||( $('#cmb_fpago').val() === 1)){
-                var mensaje = {wtmessage: 'Se deben ingresar todos los campos de facturacion correspondientes', title: "Datos de Facturacion"};
-                showAlert("NO_OK", "error", mensaje);
-                return;
-            }else{
-                guardarCargarCartera();
-                enviarPdf();
-            }*/
         }else{
             showAlert('NO_OK', 'error', { "wtmessage": "Se deben aceptar los Términos y Condiciones", "title": 'Información' });
         }
@@ -554,13 +526,13 @@ function generarDataTable(cuotas, primerPago) {
         tb_item[2] = (i == 1) ? (per_one + '%') : (per_total + '%');
         tb_item[3] = '$ '+monto;//( i == 1) ? primerCuota: cuotageneral;//('$' + currencyFormat(parseFloat(primerPago))) : ('$' + currencyFormat(parseFloat(cuota)));
         tb_item[4] = $('#vencimiento_' + i).val();
-        tb_item[5] = "PENDING";//(i == 1) ? "TO CHECK" : "PENDING";
+        tb_item[5] = "PENDIENTE";//(i == 1) ? "TO CHECK" : "PENDING";
         tb_item2[0] = 0;
         tb_item2[1] = labelPay + i;
         tb_item2[2] = (i == 1) ? (per_one + '%') : (per_total + '%');
         tb_item2[3] = '$ '+monto;//( i == 1) ? primerCuota: cuotageneral;//(primerPago !== null && cuotas > 1 && i == 1) ? ('$' + currencyFormat(parseFloat(primerPago))) : ('$' + currencyFormat(parseFloat(cuota)));
         tb_item2[4] = $('#vencimiento_' + i).val();
-        tb_item2[5] = "PENDING";//(i == 1) ? "TO CHECK" : "PENDING";
+        tb_item2[5] = "PENDIENTE";//(i == 1) ? "TO CHECK" : "PENDING";
         if (arrData.data) {
             var item = arrData.data;
             tb_item[0] = item.length;
@@ -768,6 +740,8 @@ function confirmarDevolucion(id) {
     /************************************************************/
 
 function guardarCargarCartera(){
+    enviarDatosFacturacion();
+    iniciarEnvioSiga();
     var link = $('#txth_base').val() + "/academico/registro/modificarcargacartera";
     showLoadingPopup();
     var arrParams       = new Object();
@@ -879,6 +853,7 @@ function enviarPdf(){
     arrParams.per_id = $('#txt_per_id').val();
     arrParams.cuotas = $('#txt_cuotas').val();
     arrParams.rama = $('#txt_rama').val();
+    arrParams.modalidad = $('#txt_mod_nombre').val();
     //alert(arrParams.rama);
     //iniciarEnvioSiga();
     try{
@@ -900,7 +875,7 @@ function enviarPdf(){
 }
 
 function iniciarEnvioSiga(){
-    var link = $('#txth_base').val() + "/academico/registro/detalleregistrosiga";
+    var link = $('#txth_base').val() + "/academico/registro/enviosigamatricula";
     var arrParams       = new Object();
     arrParams.rama      = $('#txt_rama').val();
     arrParams.tpago     = $('#cmb_tpago').val();
@@ -920,18 +895,46 @@ function iniciarEnvioSiga(){
     else{if(cuota>3){valor = 60;varios=240;}else{valor=30;varios=120;}}
     var virtuales = valor;
 
+    var arrParams       = new Object();
+    arrParams.accion        = "registro";
+    arrParams.cedula        = mod;
+    arrParams.online        = cedula;
+    arrParams.ron_id        = ron_id;
+    arrParams.num_reg       = num_reg;
+    arrParams.arr_materias  = arr_materias;
+    arrParams.flujo         = flujo;
+    arrParams.macs_id       = macs_id;
+    arrParams.virtuales     = virtuales;
+    arrParams.varios        = varios;
+    arrParams.msg           = '';
+/*
+    setTimeout(function() {
+        requestHttpAjax(link, arrParams, function(response) {
+            var message = response.message;
+            if (response.status == "OK") {
+                setTimeout(function() {
+                    showAlert(response.status, response.type, { "wtmessage": message.info, "title": response.label });
+                    }, 1000);
+            } else {
+                //showAlert(response.status, response.type, { "wtmessage": message.info, "title": response.label });
+            }
+
+        }, true);
+
+     }, 1000);
+*/   
     data = new FormData();
     data.append( 'accion' , "registro" );
     data.append( 'online' , mod);
     data.append( 'cedula' , cedula );
     data.append( 'ron_id', ron_id);
-    //data.append( 'mpp_id', mpp_id);
     data.append( 'num_reg', num_reg);
     data.append( 'arr_materias', arr_materias);
     data.append( 'flujo', flujo);
     data.append( 'macs_id', macs_id);
     data.append( 'virtuales', virtuales);
     data.append( 'varios', varios);
+    data.append( 'msg' ,'');
     //alert('Si');
     $.ajax({
         data: data,
@@ -941,12 +944,12 @@ function iniciarEnvioSiga(){
         contentType: false,
         processData: false,
         async: false,
-        url: "https://acade.uteg.edu.ec/registro_matriculacion_desa/post.php",
+        url: "https://acade.uteg.edu.ec/registro_matriculacion_desa/rest.php",
         success: function (data) {
-            alert("Envío de registros exitoso");
-           // alert(html);
-          }
+            //alert("Envío de registros exitoso");
+        },
     });
+    alert('Envío exitoso');
 }//function iniciarEnvioSiga+
 
 function enviarDatosFacturacion(){
@@ -981,3 +984,12 @@ function enviarDatosFacturacion(){
         console.log("error: "+err)
     }
 }
+
+function exportExcel() {
+    var estudiante = $('#txt_buscarData').val();
+    var modalidad = $('#cmb_mod option:selected').val();
+    var periodo = $('#cmb_per_acad option:selected').val();
+    var f_ini = $('#txt_fecha_ini').val();
+    var f_fin = $('#txt_fecha_fin').val();
+    window.location.href = $('#txth_base').val() + "/academico/registro/exportexcel?estudiante=" + estudiante +  '&modalidad=' + modalidad + "&periodo=" + periodo + '&f_fin=' + f_fin + '&f_ini=' + f_ini;
+ }

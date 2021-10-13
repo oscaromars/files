@@ -2486,3 +2486,28 @@ create table if not exists `datos_facturacion_registro` (
   `dfr_fecha_creacion` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`dfr_id`)
 ) 
+
+ALTER TABLE `db_academico`.`registro_online` 
+ADD INDEX `index_per` (`per_id` ASC),
+ADD INDEX `index_pes` (`pes_id` ASC);
+;
+
+ALTER TABLE `db_academico`.`registro_adicional_materias` 
+ADD INDEX `index_per` (`per_id` ASC),
+ADD INDEX `index_pla` (`pla_id` ASC),
+ADD INDEX `index_paca` (`paca_id` ASC),
+ADD INDEX `index_rpm` (`rpm_id` ASC);
+;
+
+ALTER TABLE `db_academico`.`registro_pago_matricula` 
+ADD INDEX `index_per` (`per_id` ASC),
+ADD INDEX `index_ron` (`ron_id` ASC),
+ADD INDEX `index_fpag` (`fpag_id` ASC);
+;
+
+ALTER TABLE `db_academico`.`cancelacion_registro_online` 
+ADD INDEX `index_per` (`per_id` ASC),
+ADD INDEX `index_pla` (`pla_id` ASC),
+ADD INDEX `index_paca` (`paca_id` ASC),
+ADD INDEX `index_rpm` (`rpm_id` ASC);
+;

@@ -419,16 +419,29 @@ function setComboDataselect(arr_data, element_id, texto) {
 }
 
 function searchModules() {
-    var arrParams = new Object();
+    var search    = $("#txt_buscarData").val();
+    var unidad    = $('#cmb_unidad_dis_asignacion option:selected').val();
+    var periodo   = $('#cmb_periodo_asignacion option:selected').val();
+    var modalidad = $('#cmb_modalidad option:selected').val();
+    var materia   = $('#cmb_materia option:selected').val();
+    var jornada   = $('#cmb_jornada option:selected').val();
+    if (!$(".blockUI").length) {
+        showLoadingPopup();
+        $('#Tbg_Distributivo_Acagra').PbGridView('applyFilterData', {'search':search,'unidad': unidad,'periodo': periodo,'modalidad': modalidad,'materia': materia,'jornada': jornada});
+        setTimeout(hideLoadingPopup, 2000);
+    }
+    
+
+    /*var arrParams = new Object();
     arrParams.PBgetFilter = true;
     arrParams.search    = $("#txt_buscarData").val();
     arrParams.unidad    = $("#cmb_unidad_dis_asignacion").val();
     arrParams.periodo   = $("#cmb_periodo_asignacion").val();
-    arrParams.modalidad = $("#cmb_modalidad").val();
+    arrParams.modalidad = $("#cmb_modalidad1").val();
     arrParams.materia   = $("#cmb_materia").val();
     arrParams.jornada   = $("#cmb_jornada").val();
 
-    $("#Tbg_Distributivo_Acagra").PbGridView("applyFilterData", arrParams);
+    $("#Tbg_Distributivo_Acagra").PbGridView("applyFilterData", arrParams);*/
 }
 
 function showListStudents(id) {
@@ -627,34 +640,34 @@ function actualizar() {
 }
 
 function exportExcel() {
-    var search = $('#txt_buscarData').val();
-    var unidad = $('#cmb_unidad_dis').val();
-    var modalidad = $('#cmb_modalidad').val();
-    var periodo = $('#cmb_periodo').val();
-    var asignatura = $('#cmb_materia').val();
-    var jornada = $('#cmb_jornada').val();
+    var search    = $("#txt_buscarData").val();
+    var unidad    = $('#cmb_unidad_dis_asignacion option:selected').val();
+    var periodo   = $('#cmb_periodo_asignacion option:selected').val();
+    var modalidad = $('#cmb_modalidad option:selected').val();
+    var materia   = $('#cmb_materia option:selected').val();
+    var jornada   = $('#cmb_jornada option:selected').val();
     window.location.href = $('#txth_base').val() + "/academico/distributivoacademico/exportexcel?" +
             "search=" + search +
             "&unidad=" + unidad +
             "&modalidad=" + modalidad +
             "&periodo=" + periodo +
-            "&asignatura=" + asignatura +
+            "&asignatura=" + materia +
             "&jornada=" + jornada;
 }
 
 function exportPdf() {
-    var search = $('#txt_buscarData').val();
-    var unidad = $('#cmb_unidad_dis').val();
-    var modalidad = $('#cmb_modalidad').val();
-    var periodo = $('#cmb_periodo').val();
-    var asignatura = $('#cmb_materia').val();
-    var jornada = $('#cmb_jornada').val();
+    var search    = $("#txt_buscarData").val();
+    var unidad    = $('#cmb_unidad_dis_asignacion option:selected').val();
+    var periodo   = $('#cmb_periodo_asignacion option:selected').val();
+    var modalidad = $('#cmb_modalidad option:selected').val();
+    var materia   = $('#cmb_materia option:selected').val();
+    var jornada   = $('#cmb_jornada option:selected').val();
     window.location.href = $('#txth_base').val() + "/academico/distributivoacademico/exportpdf?pdf=1" +
             "&search=" + search +
             "&unidad=" + unidad +
             "&modalidad=" + modalidad +
             "&periodo=" + periodo +
-            "&asignatura=" + asignatura +
+            "&asignatura=" + materia +
             "&jornada=" + jornada;
 }
 

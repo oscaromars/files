@@ -250,7 +250,7 @@ class DistributivoAcademicoEstudiante extends \yii\db\ActiveRecord {
 	}
 
 	/**
-	 * Function consultarHorarioEstudiante
+	 * Function insertar Daes_id por medio del insert select del daca_id
 	 * @author  Luis Cajamarca  <analistadesarrollo04@uteg.edu.ec>
 	 * @property integer $daes_id
 	 * @return
@@ -261,38 +261,36 @@ class DistributivoAcademicoEstudiante extends \yii\db\ActiveRecord {
 		$transaction = $con->beginTransaction();
 		$estado = "1";
 		$date = date(Yii::$app->params['dateTimeByDefault']);
+
 		try {
 			$sql = "INSERT INTO db_academico.distributivo_academico_estudiante
                 (daca_id, est_id, daes_fecha_registro, daes_estado, daes_fecha_creacion, daes_fecha_modificacion, daes_estado_logico)
-                (SELECT distinct
-                        daca.daca_id,
-                        est.est_id,
-                        '$date',
-                        1,
-                        '$date',
-                        Null,
-                        1
+                (SELECT distinct daca.daca_id, est.est_id,'$date', 1,'$date', Null, 1
                 FROM
-                    (SELECT  pera.paca_id as id,
-                            ifnull(CONCAT(blq.baca_nombre,'-',sem.saca_nombre,' ',sem.saca_anio),'') as nombre,
-                            blq.baca_nombre as bloque
-                    FROM db_academico.periodo_academico pera
-                    inner join db_academico.semestre_academico sem  ON sem.saca_id = pera.saca_id
-                    inner join db_academico.bloque_academico blq ON blq.baca_id = pera.baca_id
-                    WHERE pera.paca_activo = 'A' AND
-                    now() >= pera.paca_fecha_inicio and pera.paca_fecha_fin<= now() and
-                    pera.paca_estado = 1 AND pera.paca_estado_logico = 1) as periodo,
+                    (SELECT  pera.paca_id as id, ifnull(CONCAT(blq.baca_nombre,'-',sem.saca_nombre,' ',sem.saca_anio),'') as nombre, blq.baca_nombre as bloque
+                        FROM db_academico.periodo_academico pera
+                        inner join db_academico.semestre_academico sem  ON sem.saca_id = pera.saca_id
+                        inner join db_academico.bloque_academico blq ON blq.baca_id = pera.baca_id
+                        WHERE pera.paca_activo = 'A' AND now() >= pera.paca_fecha_inicio AND now() <= pera.paca_fecha_fin AND
+                        pera.paca_estado = 1 AND pera.paca_estado_logico = 1) as periodo,
                 db_academico.estudiante est
-                inner join db_academico.estudiante_carrera_programa ecp on est.est_id=ecp.est_id
-                inner join db_academico.modalidad_estudio_unidad meun on meun.meun_id=ecp.meun_id
-                inner join db_academico.registro_online ron on ron.per_id=est.per_id
-                inner join db_academico.registro_online_item roi on roi.ron_id=ron.ron_id
-                inner join db_academico.malla_academica_detalle made on made.made_codigo_asignatura=roi.roi_materia_cod
-                inner join db_academico.asignatura asi on asi.asi_id=made.asi_id
-                inner join db_academico.materia_paralelo_periodo mpp on mpp.asi_id=asi.asi_id  and mpp.mod_id=meun.mod_id and mpp.mpp_num_paralelo=roi.roi_paralelo
-                inner join db_academico.distributivo_academico daca on daca.asi_id=asi.asi_id and daca.mod_id=meun.mod_id and daca.mpp_id=mpp.mpp_id
-                left join db_academico.distributivo_academico_estudiante daes on daca.daca_id=daes.daca_id
-                where roi.roi_bloque=periodo.bloque and daes.daes_id IS NULL and periodo.id=:paca_id)";
+                inner join db_academico.estudiante_carrera_programa ecp ON est.est_id=ecp.est_id
+                inner join db_academico.modalidad_estudio_unidad meun ON meun.meun_id=ecp.meun_id
+                inner join db_academico.registro_online ron ON ron.per_id=est.per_id
+                inner join db_academico.registro_online_item roi ON roi.ron_id=ron.ron_id
+                inner join db_academico.malla_academica_detalle made ON made.made_codigo_asignatura=roi.roi_materia_cod
+                inner join db_academico.asignatura asi ON asi.asi_id=made.asi_id
+                inner join db_academico.materia_paralelo_periodo mpp ON mpp.asi_id=asi.asi_id AND mpp.mod_id=meun.mod_id AND mpp.mpp_num_paralelo=roi.roi_paralelo
+                inner join db_academico.distributivo_academico daca ON daca.asi_id=asi.asi_id AND daca.mod_id=meun.mod_id AND daca.mpp_id=mpp.mpp_id
+                left join db_academico.distributivo_academico_estudiante daes on daca.daca_id = daes.daca_id
+                where roi.roi_bloque = periodo.bloque and daes.daes_id IS NULL and periodo.id = :paca_id
+                AND est.est_estado = 1   AND est.est_estado_logico = 1
+                AND meun.meun_estado = 1 AND meun.meun_estado_logico = 1
+                AND ron.ron_estado = 1   AND ron.ron_estado_logico = 1
+                AND roi.roi_estado = 1   AND roi.roi_estado_logico = 1
+                AND mpp.mpp_estado = 1   AND mpp.mpp_estado_logico = 1
+                AND daca.daca_estado = 1 AND daca.daca_estado_logico = 1
+            )";
 
 			$comando = $con->createCommand($sql);
 			$comando->bindParam(":paca_id", $paca_id, \PDO::PARAM_INT);
@@ -313,6 +311,65 @@ class DistributivoAcademicoEstudiante extends \yii\db\ActiveRecord {
 
 			return FALSE;
 		}
+
+	}
+
+	/**
+	 * Function consultar Daes_id por medio del select del daca_id
+	 * @author  Luis Cajamarca  <analistadesarrollo04@uteg.edu.ec>
+	 * @property integer $daes_id
+	 * @return
+	 */
+	public function consultarDaesEstudiante($paca_id) {
+		$con = \Yii::$app->db_academico;
+		$estado = "1";
+
+		$sql = "SELECT distinct daca.daca_id
+                FROM
+                    (SELECT  pera.paca_id as id,
+                            ifnull(CONCAT(blq.baca_nombre,'-',sem.saca_nombre,' ',sem.saca_anio),'') as nombre,
+                            blq.baca_nombre as bloque
+                    FROM db_academico.periodo_academico pera
+                    inner join db_academico.semestre_academico sem  ON sem.saca_id = pera.saca_id
+                    inner join db_academico.bloque_academico blq ON blq.baca_id = pera.baca_id
+                    WHERE pera.paca_activo = 'A' AND
+                    now() >= pera.paca_fecha_inicio and now() <= pera.paca_fecha_fin and
+                    pera.paca_estado = 1 AND pera.paca_estado_logico = 1) as periodo,
+                db_academico.estudiante est
+                inner join db_academico.estudiante_carrera_programa ecp
+                   ON est.est_id=ecp.est_id
+                  AND est.est_estado=1 AND est.est_estado_logico=1
+                inner join db_academico.modalidad_estudio_unidad meun
+                   ON meun.meun_id=ecp.meun_id
+                  AND meun.meun_estado=1 AND meun.meun_estado_logico=1
+                inner join db_academico.registro_online ron
+                   ON ron.per_id=est.per_id
+                  AND ron.ron_estado=1 AND ron.ron_estado_logico=1
+                inner join db_academico.registro_online_item roi
+                   ON roi.ron_id=ron.ron_id
+                  AND roi.roi_estado=1 AND roi.roi_estado_logico=1
+                inner join db_academico.malla_academica_detalle made
+                   ON made.made_codigo_asignatura=roi.roi_materia_cod
+                inner join db_academico.asignatura asi
+                   ON asi.asi_id=made.asi_id
+                inner join db_academico.materia_paralelo_periodo mpp
+                   ON mpp.asi_id=asi.asi_id
+                  AND mpp.mod_id=meun.mod_id
+                  AND mpp.mpp_num_paralelo=roi.roi_paralelo
+                  AND mpp.mpp_estado=1 AND mpp.mpp_estado_logico=1
+                inner join db_academico.distributivo_academico daca
+                   ON daca.asi_id=asi.asi_id
+                  AND daca.mod_id=meun.mod_id
+                  AND daca.mpp_id=mpp.mpp_id
+                  AND daca.daca_estado=1 AND daca.daca_estado_logico=1
+                left join db_academico.distributivo_academico_estudiante daes on daca.daca_id=daes.daca_id
+                where roi.roi_bloque=periodo.bloque and daes.daes_id IS NULL and periodo.id=:paca_id";
+
+		$comando = $con->createCommand($sql);
+		$comando->bindParam(":paca_id", $paca_id, \PDO::PARAM_INT);
+		\app\models\Utilities::putMessageLogFile($comando->getRawSql());
+		$res = $comando->queryOne();
+		return $res;
 
 	}
 

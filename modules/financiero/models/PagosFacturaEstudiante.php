@@ -156,7 +156,7 @@ class PagosFacturaEstudiante extends \yii\db\ActiveRecord
         if ($onlyData == false) {
             $fpag_id = "f.fpag_id, ";
         }
-        $sql = "SELECT
+        $sql = "SELECT distinct
                         p.per_cedula as identificacion,
                         concat(p.per_pri_nombre, ' ', p.per_pri_apellido, ' ', ifnull(p.per_seg_apellido,'')) as estudiante,
                         u.uaca_nombre as unidad,

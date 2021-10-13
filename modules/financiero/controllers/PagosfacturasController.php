@@ -345,13 +345,14 @@ class PagosfacturasController extends \app\components\CController {
                                 }
                                 Utilities::sendEmail($tituloMensaje, Yii::$app->params["adminEmail"], [$correo_estudiante => $user], $asunto, $body);
                             } else {
-                                if($datos['pfes_concepto'] == 'ME'){
+                                // Ya al subir la imagen pone el estado de cartera Cancelado
+                                /*if($datos['pfes_concepto'] == 'ME'){
                                     $cargo = CargaCartera::findOne($id_cartera);
                                     $cargo->ccar_estado_cancela = 'C';
                                     $cargo->ccar_fecha_modificacion = $fecha;
                                     $cargo->ccar_usu_modifica = $usuario;
                                     $cargo->save();
-                                }
+                                }*/
                                 //Utilities::putMessageLogFile('entro_envio vorreo');
                                 //Utilities::putMessageLogFile('correo..' . $correo_estudiante);
                                 $body = Utilities::getMailMessage("pagoaprobado", array(
@@ -882,7 +883,7 @@ class PagosfacturasController extends \app\components\CController {
                                 $cargo->save();
 
                                 // insertar el detalle
-                                $descripciondet      = 'Cuota '. $resp_consfactura['cuota'] . '- Abono con el valor de ' .$cargo->ccar_abono ;
+                                $descripciondet      = 'Cuota '. str_replace('/',' ',$resp_consfactura['cuota']) . '- Abono con el valor de ' .$cargo->ccar_abono ;
                                 $resp_detpagofactura = $mod_pagos->insertarDetpagospendientes($resp_pagofactura,
                                                                                               $resp_consfactura['ccar_tipo_documento'],
                                                                                               $resp_consfactura['NUM_NOF'],
@@ -890,7 +891,7 @@ class PagosfacturasController extends \app\components\CController {
                                                                                               $parametro[2],
                                                                                               $resp_consfactura['F_SUS_D'],
                                                                                               is_null($resp_consfactura['SALDO'])?0:round($resp_consfactura['SALDO'], 2),
-                                                                                              $resp_consfactura['cuota'],
+                                                                                              str_replace('/',' ',$resp_consfactura['cuota']),
                                                                                               //$resp_consfactura['ccar_valor_cuota'],
                                                                                               $cargo->ccar_abono,
                                                                                               $resp_consfactura['F_VEN_D'],
@@ -941,12 +942,7 @@ class PagosfacturasController extends \app\components\CController {
                                     $correo_estudiante = $datos['per_correo'];
                                     $user = $datos['estudiante'];
                                     $tituloMensaje = 'Pagos en Línea';
-                                    $asunto = 'Pagos en Línea';
-                                    $cargo = CargaCartera::findOne($id_cartera);
-                                    $cargo->ccar_estado_cancela = 'C';
-                                    $cargo->ccar_fecha_modificacion = $fecha;
-                                    $cargo->ccar_usu_modifica = $usuario;
-                                    $cargo->save();
+                                    $asunto = 'Pagos en Línea'; 
                                     $body = Utilities::getMailMessage("pagoaprobado", array(
                                                                    "[[user]]" => $user,
                                                                    "[[factura]]" => $datos['dpfa_factura'],

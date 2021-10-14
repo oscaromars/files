@@ -1162,4 +1162,109 @@ class PagosFacturaEstudiante extends \yii\db\ActiveRecord
 
         return $comando->queryOne();
     }
+
+    function traerestudianteautorizados($est_id) {
+        $con = \Yii::$app->db_facturacion;   
+        //Este query saca los estudiantes autorizados que existen en curso_educativa_estudiante
+        //en los periodos que esten activos.
+        $sql = "SELECT distinct ccar.est_id
+                      ,uedu.uedu_usuario
+                      ,ceest.ceest_codigo_evaluacion
+                      ,ceest.cedu_id
+                      ,cedu.cedu_asi_id
+                      ,cedu.cedu_asi_nombre
+                      #,paca.paca_id
+                      ,ceest.ceest_id
+                      ,ceest.ceest_estado_bloqueo
+                      ,case
+                        when ccar.ccar_fecha_vencepago <= NOW() then  ifnull((SELECT
+                                    CASE WHEN mi.ccar_estado_cancela = 'C'
+                                    THEN 'Autorizado'
+                                    ELSE 'No Autorizado' END AS pago
+                                    FROM db_facturacion.carga_cartera mi
+                                    WHERE mi.est_id = ccar.est_id and mi.ccar_fecha_vencepago <= NOW()
+                                    ORDER BY mi.ccar_fecha_vencepago desc
+                                    LIMIT 1),'No Autorizado')
+                        when ccar.ccar_fecha_vencepago >= NOW() then ifnull((SELECT
+                                    CASE WHEN mi.ccar_estado_cancela = 'N' or mi.ccar_estado_cancela = 'C'
+                                    THEN 'Autorizado'
+                                    ELSE 'No Autorizado' END AS pago
+                                    FROM db_facturacion.carga_cartera mi
+                                    WHERE mi.est_id = ccar.est_id and mi.ccar_fecha_vencepago >= NOW()
+                                    ORDER BY mi.ccar_fecha_vencepago asc
+                                    LIMIT 1),'No Autorizado')
+                        else 'No Autorizado'
+                        end as pago
+                  FROM db_academico.periodo_academico paca
+            INNER JOIN db_academico.curso_educativa cedu
+                    ON cedu.paca_id = cedu.paca_id
+                   AND cedu.cedu_estado = 1
+                   AND cedu.cedu_estado_logico = 1 
+            INNER JOIN db_academico.curso_educativa_estudiante ceest
+                    ON ceest.cedu_id = cedu.cedu_id
+                   AND ceest.ceest_estado = 1
+                   AND ceest.ceest_estado_logico = 1
+                   AND ceest.ceest_codigo_evaluacion is not null
+            INNER JOIN db_facturacion.carga_cartera ccar
+                    ON ccar.est_id = ceest.est_id 
+                   AND ccar.ccar_fecha_vencepago <= now()
+                   AND ccar.ccar_estado = 1 
+                   AND ccar.ccar_estado_logico = 1
+                   and ccar.est_id = $est_id
+            INNER JOIN db_academico.usuario_educativa uedu
+                    ON uedu.est_id = ceest.est_id
+                   AND uedu.uedu_estado = 1
+                   AND uedu.uedu_estado_logico = 1
+                 WHERE paca.paca_activo = 'A'
+                   AND paca.paca_estado = 1
+                   AND paca.paca_estado_logico = 1";
+
+        $comando = $con->createCommand($sql);
+        $resultData = $comando->queryAll();
+
+        return $resultData;
+    }//function traerestudiantesautorizados
+
+    function modificarEstadobloqueo($ceest_id, $ceest_estado_bloqueo, $ceest_usuario_modifica) {
+        $con = \Yii::$app->db_facturacion;
+
+        $sql = "UPDATE db_academico.curso_educativa_estudiante               
+                   SET ceest_estado_bloqueo     = '$ceest_estado_bloqueo',  
+                       ceest_usuario_modifica   = $ceest_usuario_modifica,
+                       ceest_fecha_modificacion = now()                          
+                 WHERE ceest_id            = $ceest_id
+                   AND ceest_estado        = 1 
+                   AND ceest_estado_logico = 1";
+
+        $comando  = $con->createCommand($sql); 
+        $response = $comando->execute();
+        return $response;
+    }//function modificarEstadobloqueo
+    
+    function registrarcambiohistorial($ceest_id, $ceeh_estado_pago, $ceeh_est_bloqueo_anterior, $ceeh_est_bloqueo, $unidad) {
+        $con = \Yii::$app->db_facturacion;
+
+        $sql = "INSERT INTO `db_academico`.`curso_educativa_estudiante_historial`
+                            (`ceest_id`,
+                            `ceeh_estado_pago`,
+                            `ceeh_est_bloqueo_anterior`,
+                            `ceeh_est_bloqueo`,
+                            `ceeh_unidad`,
+                            `ceeh_usuario_creacion`,
+                            `ceeh_estado`,
+                            `ceeh_fecha_creacion`,
+                            `ceeh_estado_logico`)
+                     VALUES($ceest_id,
+                            '$ceeh_estado_pago',
+                            '$ceeh_est_bloqueo_anterior',
+                            '$ceeh_est_bloqueo',
+                            '$unidad',
+                            1,
+                            1,
+                            now(),
+                            1)";
+        $comando  = $con->createCommand($sql); 
+        $response = $comando->execute();
+        return $response;
+    }//function modificarEstadobloqueo
 }

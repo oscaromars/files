@@ -958,6 +958,54 @@ class PagosfacturasController extends \app\components\CController {
                                       }
                             }
 
+                            /********** INI - CODIGO EDUCATIVA PARA DESPUES DEL PAGO ACTIVAR EL EXAMEN *************************/
+                            //Aqui trae al estudiante y sus codigos
+                            $estudiantes = $mod_pagos->traerestudianteautorizados($est_id);
+
+                            if (count($estudiantes) > 0) {
+                            
+                                $client = new \SoapClient("https://campusvirtual.uteg.edu.ec/soap/?wsdl=true", 
+                                                                  array("login" => "webservice", 
+                                                                  "password"    => "WxrrvTt8",
+                                                                  "trace"       => 1, "exceptions" => 0));
+
+                                $client->setCredentials("webservice", "WxrrvTt8","basic");
+
+                                //El siguiente for es para revisar estudiante a estudiante
+                                for ($i = 0; $i < count($estudiantes); $i++) {                        
+                                    
+                                    $est_id                  = $estudiantes[$i]['est_id'];
+                                    $uedu_usuario            = $estudiantes[$i]['uedu_usuario'];         
+                                    $cedu_id                 = $estudiantes[$i]['cedu_id'];
+                                    $id_grupo                = $estudiantes[$i]['cedu_asi_id']; 
+                                    $pago                    = $estudiantes[$i]['pago']; 
+                                    $ceest_id                = $estudiantes[$i]['ceest_id']; 
+                                    $ceest_estado_bloqueo    = $estudiantes[$i]['ceest_estado_bloqueo']; 
+                                    $ceest_codigo_evaluacion = $estudiantes[$i]['ceest_codigo_evaluacion'];
+                                    $unidad                  = $estudiantes[$i]['ceest_codigo_evaluacion'];
+
+                                    if($pago == 'Autorizado' && $ceest_codigo_evaluacion != ''){
+                                        $method = 'asignar_usuarios_alcance_prg_items';
+
+                                        $args   = Array('asignar_usuario_item' => Array('id_usuario'  => $uedu_usuario, 
+                                                                                        'id_prg_item' => $ceest_codigo_evaluacion));
+
+                                        $result = $client->__call( $method, Array( $args ) );
+
+                                        $mod_pagos->modificarEstadobloqueo($ceest_id, 'A', 1);
+                                        
+                                        if($ceest_estado_bloqueo == 'B')
+                                             $mod_pagos->registrarcambiohistorial($ceest_id, $pago, $ceest_estado_bloqueo, "A", $unidad);
+
+                                    }else{
+                                        $mod_pagos->modificarEstadobloqueo($ceest_id, 'B', 1);
+                                        if($ceest_estado_bloqueo == 'A')
+                                            $mod_pagos->registrarcambiohistorial($ceest_id, $pago, $ceest_estado_bloqueo, "B", '');
+                                    }              
+                                    //array_push($noactualizados,$est_id);
+                                }//for por estudiante
+                            }//if
+                            /********** FIN - CODIGO EDUCATIVA PARA DESPUES DEL PAGO ACTIVAR EL EXAMEN *************************/
                                 $message = array(
                                 "wtmessage" => Yii::t("notificaciones", "La infomación ha sido grabada. "),
                                 "title" => Yii::t('jslang', 'Success'),

@@ -163,11 +163,6 @@ $(document).ready(function () {
     
     /*GUARDAR INFORMACION*/
 
-    $('#paso1next').click(function () {
-
-        guardarPrimeraparte();
-    });
-
     $('#btn_save_1').click(function () {
         guardarInscripcionGrado();
     });
@@ -224,56 +219,6 @@ function setComboDataselect(arr_data, element_id, texto) {
     $("#" + element_id).html(option_arr);
 }
 
-function guardarPrimeraparte() {
-    var link = $('#txth_base').val() + "/inscripciongrado/guardarprimeraparte";
-    var arrParams = new Object();
-    arrParams.tipo_dni = $('#cmb_tipo_dni option:selected').val();
-    if (arrParams.tipo_dni == 'CED') {
-        arrParams.cedula = $('#txt_cedula').val();
-    } else {
-        arrParams.cedula = $('#txt_pasaporte').val();
-    }
-    //datos personales
-        arrParams.cedula = $('#txt_cedula').val();
-        arrParams.pasaporte = $('#txt_pasaporte').val();
-        arrParams.primer_nombre = $('#txt_primer_nombre').val();
-        arrParams.segundo_nombre = $('#txt_segundo_nombre').val();
-        arrParams.primer_apellido = $('#txt_primer_apellido').val();
-        arrParams.segundo_apellido = $('#txt_segundo_apellido').val();
-        arrParams.cuidad_nac = $('#cmb_ciu_nac').val();
-        arrParams.fecha_nac = $('#txt_fecha_nac').val();
-        arrParams.nacionalidad = $('#cmb_nacionalidad').val();
-        arrParams.estado_civil = $('#cmb_estado_civil').val();
-
-        //Datos Contacto
-        arrParams.pais = $('#cmb_pais').val();
-        arrParams.provincia = $('#cmb_provincia').val();
-        arrParams.canton = $('#cmb_ciudad').val();
-        arrParams.parroquia = $('#txt_parroquia').val();
-        arrParams.dir_domicilio = $('#txt_domicilio').val();
-        arrParams.celular = $('#txt_celular').val();
-        arrParams.telefono = $('#txt_telefono').val();
-        arrParams.correo = $('#txt_correo').val();
-
-        //Datos en caso de emergencias
-        arrParams.dir_trabajo = $('#txt_direccion_trabajo').val();
-        arrParams.cont_emergencia = $('#txt_contacto_emergencia').val();
-        arrParams.parentesco = $('#cmb_parentesco').val();
-        arrParams.tel_emergencia = $('#txt_telefono_emergencia').val();
-        arrParams.dir_personacontacto = $('#txt_direccion_persona_contacto').val();
-
-    if (!validateForm()) {
-        requestHttpAjax(link, arrParams, function (response) { 
-            showAlert(response.status, response.label, response.message);
-            //var message = response.message;                       
-            if (response.status == "OK") {
-                setTimeout(function() {
-                        window.location.href = $('#txth_base').val() + "/inscripciongrado/index";
-                    }, 3000);
-            }
-        }, true);
-    }
-}
 function guardarInscripcionGrado() {
     var ID = /*(accion == "Update") ? */$('#txth_igra_id').val()/* : 0*/;
     var link = $('#txth_base').val() + "/inscripciongrado/guardarinscripciongrado";

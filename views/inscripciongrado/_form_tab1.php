@@ -83,10 +83,10 @@ academico::registerTranslations();
                 <div class="col-sm-7">
                     <?= Html::dropDownList("cmb_tipo_dni", $tipodoc, $tipos_dni, ["class" => "form-control", "id" => "cmb_tipo_dni"]) ?>
                 </div>
-            </div>
+              </div>
         </div>
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-            <div id="Divcedula">
+            <div class="form-group" id="Divcedula">
                 <label for="txt_cedula" class="col-sm-3 control-label"><?= Yii::t("formulario", "Cédula/Pasaporte") ?> <span class="text-danger">*</span></label>
                 <div class="col-sm-7">
                     <input type="text" maxlength="10" class="form-control PBvalidation keyupmce" id="txt_cedula" data-type="number" data-keydown="true" placeholder="<?= Yii::t("formulario", "National identity document") ?>">

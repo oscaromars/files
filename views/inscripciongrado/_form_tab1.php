@@ -94,7 +94,7 @@ academico::registerTranslations();
             </div>
         </div>
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-            <div style="display: none;" id="Divpasaporte">
+            <div class="form-group" style="display: none;" id="Divpasaporte">
                 <label for="txt_pasaporte" class="col-sm-3 control-label"><?= Yii::t("formulario", "Cédula/Pasaporte") ?> <span class="text-danger">*</span></label>
                 <div class="col-sm-7">
                     <input type="text" maxlength="15" class="form-control keyupmce" id="txt_pasaporte" data-type="alfanumerico" data-keydown="true" placeholder="<?= Yii::t("formulario", "Passport") ?>">

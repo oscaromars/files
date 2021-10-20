@@ -220,7 +220,7 @@ function setComboDataselect(arr_data, element_id, texto) {
 }
 
 function guardarInscripcionGrado() {
-    var ID = /*(accion == "Update") ? */$('#txth_igra_id').val()/* : 0*/;
+    //var ID = /*(accion == "Update") ? */$('#txth_igra_id').val()/* : 0*/;
     var link = $('#txth_base').val() + "/inscripciongrado/guardarinscripciongrado";
     var arrParams = new Object();
     //arrParams.DATA_1 = dataInscripcion(ID);
@@ -237,15 +237,16 @@ function guardarInscripcionGrado() {
     }
     if (arrParams.tipo_dni == 'CED') {
         arrParams.cedula = $('#txt_cedula').val();
+        arrParams.pasaporte = '';
     } else {
         arrParams.cedula = $('#txt_pasaporte').val();
+        arrParams.pasaporte = $('#txt_pasaporte').val();
     }
+    //alert('cedula ' + arrParams.cedula);
+    //alert('pasaporte ' + arrParams.pasaporte);
     //arrParams.ACCION = accion;
-    //var error = 0;
-    //var pais = $('#cmb_pais_dom').val();
     //datos personales
-    arrParams.cedula = $('#txt_cedula').val();
-    arrParams.pasaporte = $('#txt_pasaporte').val();
+    //arrParams.pasaporte = $('#txt_pasaporte').val();
     arrParams.primer_nombre = $('#txt_primer_nombre').val();
     arrParams.segundo_nombre = $('#txt_segundo_nombre').val();
     arrParams.primer_apellido = $('#txt_primer_apellido').val();
@@ -287,59 +288,48 @@ function guardarInscripcionGrado() {
 
     if ($("#chk_mensaje1").prop("checked") && $("#chk_mensaje2").prop("checked"))
     {
-        //error = 0;
         if ($('#txth_doc_titulo').val() == "") {
-            //error++;
             var mensaje = {wtmessage: "Debe adjuntar título.", title: "Información"};
             showAlert("NO_OK", "error", mensaje);
         } else {
             if ($('#txth_doc_dni').val() == "") {
-                //error++;
                 var mensaje = {wtmessage: "Debe adjuntar documento de identidad.", title: "Información"};
                 showAlert("NO_OK", "error", mensaje);
             } else {
-                if ($('#cmb_tipo_dni').val() == "CED") {
+                //if ($('#cmb_tipo_dni').val() == "CED") {
                     if ($('#txth_doc_certvota').val() == "") {
-                        //error++;
                         var mensaje = {wtmessage: "Debe adjuntar certificado de votación.", title: "Información"};
                         showAlert("NO_OK", "error", mensaje);
                     } else {
                         if ($('#txth_doc_foto').val() == "") {
-                            //error++;
                             var mensaje = {wtmessage: "Debe adjuntar foto.", title: "Información"};
                             showAlert("NO_OK", "error", mensaje);
                         } else{
                             if ($('#txth_doc_comprobantepago').val() == "") {
-                                //error++;
                                 var mensaje = {wtmessage: "Debe adjuntar comprobante de pago.", title: "Información"};
                                 showAlert("NO_OK", "error", mensaje);
                             } else{
                                 if ($("#signup-hom").prop("checked") == true)
                                 {
                                     if ($('#txth_doc_record').val() == "") {
-                                        //error++;
                                         var mensaje = {wtmessage: "Debe adjuntar Record Académico.", title: "Información"};
                                         showAlert("NO_OK", "error", mensaje);
                                     } else{
                                         if ($('#txth_doc_nosancion').val() == "") {
-                                            //error++;
                                             var mensaje = {wtmessage: "Debe adjuntar Certificado no ser sancionado.", title: "Información"};
                                             showAlert("NO_OK", "error", mensaje);
                                         }else{
                                             if ($('#txth_doc_syllabus').val() == "") {
-                                                //error++;
                                                 var mensaje = {wtmessage: "Debe adjuntar Syllabus de materias aprobadas.", title: "Información"};
                                                 showAlert("NO_OK", "error", mensaje);
                                             }else{
                                                 if ($('#txth_doc_especievalorada').val() == "") {
-                                                    //error++;
                                                     var mensaje = {wtmessage: "Debe adjuntar Especie valorada.", title: "Información"};
                                                     showAlert("NO_OK", "error", mensaje);
                                                 }else{
                                                 if (!validateForm()) {
                                                     requestHttpAjax(link, arrParams, function (response) {
                                                         showAlert(response.status, response.label, response.message);
-                                                        //var message = response.message;
                                                         if (response.status == "OK") {
                                                             setTimeout(function() {
                                                                     window.location.href = $('#txth_base').val() + "/inscripciongrado/index";
@@ -356,7 +346,6 @@ function guardarInscripcionGrado() {
                                     if (!validateForm()) {
                                         requestHttpAjax(link, arrParams, function (response) {
                                             showAlert(response.status, response.label, response.message);
-                                            //var message = response.message;
                                             if (response.status == "OK") {
                                                 setTimeout(function() {
                                                         window.location.href = $('#txth_base').val() + "/inscripciongrado/index";
@@ -368,12 +357,11 @@ function guardarInscripcionGrado() {
                             }
                         }
                     }
-                }
+                //}
             }
         }
     } else {
         var mensaje = {wtmessage: "Debe Aceptar los términos de la Información.", title: "Exito"};
-        //error++;
         showAlert("NO_OK", "success", mensaje);
 
     }

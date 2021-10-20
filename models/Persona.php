@@ -711,8 +711,8 @@ class Persona extends \yii\db\ActiveRecord {
     /**
      * Function ConsultaRegistroExiste
      * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
-     * @property integer $pais       
-     * @return  
+     * @property integer $pais
+     * @return
      */
     public function ConsultaRegistroExiste($correo, $cedula, $pasaporte) {
         \app\models\Utilities::putMessageLogFile(' yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy:  '.$cedula);
@@ -734,15 +734,15 @@ class Persona extends \yii\db\ActiveRecord {
             }
             $filtro .= "per.per_cedula =:pasaporte ";
         }
-        $sql = "SELECT                     
-               count(*) as existen 
-               FROM " . $con->dbname . ".persona per                    
+        $sql = "SELECT
+               count(*) as existen
+               FROM " . $con->dbname . ".persona per
                WHERE";
         if (!empty($correo) || !empty($cedula) || !empty($pasaporte)) {
             $sql .= "($filtro) AND";
         }
         $sql .= " per.per_estado = :estado AND
-                    per.per_estado_logico=:estado";        
+                    per.per_estado_logico=:estado";
         $comando = $con->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
         if (!empty($correo)) {

@@ -10,17 +10,17 @@ use app\components\CFileInputAjax;
 use app\widgets\PbSearchBox\PbSearchBox;
 use app\modules\academico\Module as academico;
 use yii\web\Session;
-
+use kartik\select2\Select2;
 session_start();
 if (!empty($per_cedula)) {
-    $tipodoc = "CED";    
+    $tipodoc = "CED";
 } else {
     if (!empty($per_pasaporte)) {
-        $tipodoc = "PASS";    
+        $tipodoc = "PASS";
     }
     else{
-        $tipodoc = "CED";    
-    }   
+        $tipodoc = "CED";
+    }
 }
 
 academico::registerTranslations();
@@ -51,7 +51,7 @@ academico::registerTranslations();
                 <label for="lbl_carrera" class="col-sm-3 control-label"><?= Yii::t("crm", "Carrera"); ?> <span class="text-danger">*</span> </label>
                 <div class="col-sm-7">
                     <?= Html::dropDownList("cmb_carrera", 0, $arr_carrera, ["class" => "form-control", "id" => "cmb_carrera"]) ?>
-                </div> 
+                </div>
             </div>
         </div>
     </div>
@@ -61,7 +61,7 @@ academico::registerTranslations();
                 <label for="lbl_modalidad" class="col-sm-3 control-label"><?= Yii::t("formulario", "Mode"); ?> <span class="text-danger">*</span> </label>
                 <div class="col-sm-7">
                     <?= Html::dropDownList("cmb_modalidad", 0, $arr_modalidad, ["class" => "form-control", "id" => "cmb_modalidad"]) ?>
-                </div>  
+                </div>
             </div>
         </div>
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
@@ -71,11 +71,11 @@ academico::registerTranslations();
                     <?= Html::dropDownList("cmb_periodo", 0, $arr_periodo, ["class" => "form-control", "id" => "cmb_periodo"]) ?>
                 </div>
             </div>
-        </div><br><br></br>         
+        </div><br><br></br>
     </div>
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <h3><span id="lbl_Personeria"><?= Yii::t("formulario", "Data Personal") ?></span></h3>
-    </div><br><br></br>  
+    </div><br><br></br>
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
             <div class="form-group">
@@ -143,7 +143,20 @@ academico::registerTranslations();
             <div class="form-group">
                 <label for="cmb_ciu_nac" class="col-sm-3 control-label"><?= Yii::t("formulario", "City of birth") ?> <span class="text-danger">*</span> </label>
                 <div class="col-sm-7">
-                    <?= Html::dropDownList("cmb_ciu_nac", $can_id_nacimiento, $arr_ciudad_nac, ["class" => "form-control can_combo", "id" => "cmb_ciu_nac"]) ?>
+                    <!-- <= Html::dropDownList("cmb_ciu_nac", $can_id_nacimiento, $arr_ciudad_nac, ["class" => "form-control can_combo", "id" => "cmb_ciu_nac"]) ?>-->
+                    <?php
+                        echo Select2::widget([
+                        'name' => 'cmb_ciu_nac',
+                        'id' => 'cmb_ciu_nac',
+                        'value' => '0', // initial value
+                        'data' => $arr_ciudad_nac,
+                        'options' => ['placeholder' => 'Seleccionar'],
+                        'pluginOptions' => [
+                            'tags' => true,
+                            'tokenSeparators' => [',', ' '],
+                            'maximumInputLength' => 50
+                        ],
+                    ]); ?>
                 </div>
             </div>
         </div>
@@ -228,13 +241,14 @@ academico::registerTranslations();
             <div class="form-group">
                 <label for="txt_domicilio" class="col-sm-3 control-label"><?= Yii::t("formulario", "Dirección Domiciliaria") ?><span class="text-danger">*</span></label>
                 <div class="col-sm-7">
-                    <input type="text" class="form-control PBvalidation keyupmce" id="txt_domicilio" data-type="alfanumerico" data-keydown="true" placeholder="<?= Yii::t("formulario", "Detallar la dirección de su domicilio") ?>">
+                    <!-- <input type="text" class="form-control PBvalidation keyupmce" id="txt_domicilio" data-type="alfanumerico" data-keydown="true" placeholder="<= Yii::t("formulario", "Detallar la dirección de su domicilio") ?>">-->
+                    <textarea  class="form-control PBvalidation keyupmce" id="txt_domicilio" data-type="alfanumerico" data-keydown="true" rows="3"></textarea>
                 </div>
             </div>
         </div>
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
             <div class="form-group">
-                <label for="txt_celular" class="col-sm-3 control-label"><?= Yii::t("formulario", "CellPhone")?><span class="text-danger">*</span></label> 
+                <label for="txt_celular" class="col-sm-3 control-label"><?= Yii::t("formulario", "CellPhone")?><span class="text-danger">*</span></label>
                 <div class="col-sm-7">
                     <input type="text" class="form-control PBvalidation" data-required="false" id="txt_celular" data-type="number" data-keydown="true" placeholder="<?= Yii::t("formulario", "CellPhone") ?>">
                 </div>
@@ -244,7 +258,7 @@ academico::registerTranslations();
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
             <div class="form-group">
-                <label for="txt_telefono" class="col-sm-3 control-label"><?= Yii::t("formulario", "Phone") ?></label> 
+                <label for="txt_telefono" class="col-sm-3 control-label"><?= Yii::t("formulario", "Phone") ?></label>
                 <div class="col-sm-7">
                     <input type="text" class="form-control PBvalidation" data-required="false" id="txt_telefono" data-type="number" data-keydown="true" placeholder="<?= Yii::t("formulario", "Phone") ?>">
                 </div>
@@ -267,7 +281,8 @@ academico::registerTranslations();
             <div class="form-group">
                 <label for="txt_direccion_trabajo" class="col-sm-3 control-label"><?= Yii::t("formulario", "Dirección de Trabajo") ?><span class="text-danger">*</span></label>
                 <div class="col-sm-7">
-                    <input type="text" class="form-control PBvalidation keyupmce" id="txt_direccion_trabajo" data-type="alfa" data-keydown="true" placeholder="<?= Yii::t("formulario", "Donde trabaja actualmente") ?>">
+                    <!-- <input type="text" class="form-control PBvalidation keyupmce" id="txt_direccion_trabajo" data-type="alfa" data-keydown="true" placeholder="<= Yii::t("formulario", "Donde trabaja actualmente") ?>">-->
+                    <textarea  class="form-control PBvalidation keyupmce" id="txt_direccion_trabajo" data-type="alfanumerico" data-keydown="true" rows="3"></textarea>
                 </div>
             </div>
         </div>
@@ -291,7 +306,7 @@ academico::registerTranslations();
         </div>
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
             <div class="form-group">
-                <label for="txt_telefono_emergencia" class="col-sm-3 control-label"><?= Yii::t("formulario", "CellPhone")?><span class="text-danger">*</span></label> 
+                <label for="txt_telefono_emergencia" class="col-sm-3 control-label"><?= Yii::t("formulario", "CellPhone")?><span class="text-danger">*</span></label>
                 <div class="col-sm-7">
                     <input type="text" class="form-control PBvalidation" data-required="false" id="txt_telefono_emergencia" data-type="number" data-keydown="true" placeholder="<?= Yii::t("formulario", "Celular de la persona de contacto en caso de emergencia ") ?>">
                 </div>
@@ -303,14 +318,15 @@ academico::registerTranslations();
             <div class="form-group">
                 <label for="txt_direccion_persona_contacto" class="col-sm-3 control-label"><?= Yii::t("formulario", "Dirección de Persona en Caso de Emergencia") ?><span class="text-danger">*</span></label>
                 <div class="col-sm-7">
-                    <input type="text" class="form-control PBvalidation keyupmce" id="txt_direccion_persona_contacto" data-type="alfa" data-keydown="true" placeholder="<?= Yii::t("formulario", "Dirección de la Persona de Contacto en Caso de Emergencia") ?>">
+                    <!-- <input type="text" class="form-control PBvalidation keyupmce" id="txt_direccion_persona_contacto" data-type="alfa" data-keydown="true" placeholder="<= Yii::t("formulario", "Dirección de la Persona de Contacto en Caso de Emergencia") ?>">-->
+                    <textarea  class="form-control PBvalidation keyupmce" id="txt_direccion_persona_contacto" data-type="alfanumerico" data-keydown="true" rows="3"></textarea>
                 </div>
             </div>
         </div><br><br></br>
     </div>
-    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" id="divmetodocan" style="display: none">   
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" id="divmetodocan" style="display: none">
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-            <div class="form-group">           
+            <div class="form-group">
                 <label for="cmb_metodo_solicitud" class="col-sm-3 control-label keyupmce"><?= Yii::t("formulario", "Income Method") ?><span class="text-danger">*</span></label>
                 <div class="col-sm-7">
                     <?= Html::dropDownList("cmb_metodo_solicitud", 0, array_merge([Yii::t("formulario", "Select")], $arr_metodos), ["class" => "form-control", "id" => "cmb_metodo_solicitud"]) ?>
@@ -318,9 +334,7 @@ academico::registerTranslations();
             </div>
         </div>
     </div>
-  
-   
-    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">   
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="col-md-10"></div>
         <div class="col-md-2">
             <a id="paso1next" href="javascript:" class="btn btn-primary btn-block"><?php echo "Siguiente"; ?> </a>

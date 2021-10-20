@@ -160,7 +160,7 @@ $(document).ready(function () {
         $("a[data-href='#paso1']").attr('href', $("a[data-href='#paso1']").attr('data-href'));
         $("a[data-href='#paso1']").trigger("click");
     });
-    
+
     /*GUARDAR INFORMACION*/
 
     $('#btn_save_1').click(function () {
@@ -322,12 +322,12 @@ function guardarInscripcionGrado() {
         arrParams.igra_mensaje2 = ($("#chk_mensaje2").prop("checked")) ? '1' : '0';
 
     if (!validateForm()) {
-        requestHttpAjax(link, arrParams, function (response) { 
+        requestHttpAjax(link, arrParams, function (response) {
             showAlert(response.status, response.label, response.message);
-            //var message = response.message;                       
+            //var message = response.message;
             if (response.status == "OK") {
                 setTimeout(function() {
-                        window.location.href = $('#txth_base').val() + "/inscripciongrado/aspirantegrado";
+                        window.location.href = $('#txth_base').val() + "/inscripciongrado/index";
                     }, 3000);
             }
         }, true);
@@ -412,12 +412,12 @@ function updateaspirantegrado() {
     arrParams.igra_ruta_doc_certificado = $('#txth_doc_nosancion').val();
     arrParams.igra_ruta_doc_syllabus = $('#txth_doc_syllabus').val();
     arrParams.igra_ruta_doc_homologacion = $('#txth_doc_especievalorada').val();
-    
+
 
     if (!validateForm()) {
-        requestHttpAjax(link, arrParams, function (response) { 
+        requestHttpAjax(link, arrParams, function (response) {
             showAlert(response.status, response.label, response.message);
-            //var message = response.message;                       
+            //var message = response.message;
             if (response.status == "OK") {
                 setTimeout(function() {
                         window.location.href = $('#txth_base').val() + "/inscripciongrado/aspirantegrado";

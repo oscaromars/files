@@ -296,8 +296,9 @@ class InscripciongradoController extends \yii\web\Controller {
 
                 $insc_persona = new Persona();
                 $resp_persona = $insc_persona->ConsultaRegistroExiste( 0,$per_dni, $per_dni);
+                //$resp_persona = $insc_persona->consultaPeridxdni($per_id);
                 if ($resp_persona['existen'] == 0) {
-                    //Nuevo Registro // si existe no guardar actualizar la data
+                    //Nuevo Registro // si existe no guardar actualizar la data de persona se modifica
                     $regPersona = $mod_persona->insertarPersonaInscripciongrado($per_pri_nombre, $per_seg_nombre, $per_pri_apellido, $per_seg_apellido, $per_dni, $eciv_id, $can_id_nacimiento, $per_fecha_nacimiento, $per_celular, $per_correo, $per_domicilio_csec, $per_domicilio_ref, $per_domicilio_telefono, $pai_id_domicilio, $pro_id_domicilio, $can_id_domicilio, $per_nacionalidad,$per_trabajo_direccion);
 
                 }else{ //Aqui debe ser un mensaje que no existe la persona

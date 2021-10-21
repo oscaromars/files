@@ -47,7 +47,7 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
                 <input type="text" class="form-control PBvalidation" id="txt_primer_nombreEdit" value="<?= $persona_model->per_pri_nombre ?>" data-type="alfa"  placeholder="<?= Academico::t("profesor", "First Name") ?>">
             </div>
-        </div>  
+        </div>
     </div>
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
@@ -96,7 +96,7 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                         'format' => Yii::$app->params["dateByDatePicker"],
                     ]]
                 );
-                ?>  
+                ?>
             </div>
         </div>
     </div>
@@ -116,5 +116,5 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
             </div>
         </div>
     </div>
-                  
+
 </form>

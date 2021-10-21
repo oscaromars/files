@@ -150,6 +150,7 @@ $(document).ready(function () {
         $("a[data-href='#paso2']").attr('data-toggle', 'tab');
         $("a[data-href='#paso2']").attr('href', $("a[data-href='#paso2']").attr('data-href'));
         $("a[data-href='#paso2']").trigger("click");
+
     });
     $('#paso2back').click(function () {
         $("a[data-href='#paso2']").attr('data-toggle', 'none');

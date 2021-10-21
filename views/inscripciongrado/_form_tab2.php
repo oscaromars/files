@@ -5,7 +5,6 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use kartik\date\DatePicker;
 use app\components\CFileInputAjax;
-
 $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
           <div class="form-group">
           <div class="col-sm-10 col-md-10 col-xs-10 col-lg-10">
@@ -13,7 +12,9 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
           </div>
           </div>
           </div>';
+$cedula = $_GET['cedula'];
 ?>
+<?= Html::hiddenInput('txth_ced', $cedula, ['id' => 'txth_ced']); ?>
 <form class="form-horizontal">
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <h3><span id="lbl_documentos"><?= Yii::t("formulario", "Documentación") ?></span></h3>

@@ -1562,8 +1562,10 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
 	}
 
 	/**
-	 * Function getSemanahoraposgrado
+	 * Function getSemanahoraposgrado - Modificación en calcular las fechas de inicio y fin al momento de calcular el
+	 * promedio ajustado
 	 * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
+	 * @modify Luis Cajamarca <analista04>
 	 * @property integer
 	 * @return horario de un paralelo especifico
 	 */

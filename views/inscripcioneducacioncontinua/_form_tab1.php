@@ -15,7 +15,7 @@ use app\components\CFileInputAjax;
         <h3><span id="lbl_Personeria"><?= Yii::t("formulario", "Formulario de Inscripción") ?></span></h3>
     </div>
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-        <p class="text-danger"> <?= Yii::t("formulario", "Fields with * are required") ?> </p>        
+        <p class="text-danger"> <?= Yii::t("formulario", "Fields with * are required") ?> </p>
     </div>
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
@@ -64,9 +64,9 @@ use app\components\CFileInputAjax;
                 <input type="text" class="form-control PBvalidation" id="txt_correo" data-type="email" data-keydown="true" placeholder="<?= Yii::t("formulario", "Email") ?>">
             </div>
         </div>
-    </div>   
+    </div>
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-        <div class="form-group">            
+        <div class="form-group">
             <label for="cmb_pais_dom" class="col-lg-3 col-md-3 col-sm-3 col-xs-3 control-label"><?= Yii::t("formulario", "Country") ?> <span class="text-danger">*</span></label>
             <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9">
                 <?= Html::dropDownList("cmb_pais_dom", 1, $arr_pais_dom, ["class" => "form-control", "id" => "cmb_pais_dom"]) ?>
@@ -75,17 +75,17 @@ use app\components\CFileInputAjax;
     </div>
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
-            <label for="txt_celular" class="col-lg-3 col-md-3 col-sm-3 col-xs-3 control-label"><?= Yii::t("formulario", "CellPhone") ?> <span class="text-danger">*</span></label>		
-            <!--<div class="col-lg-3 col-md-3 col-sm-3 col-xs-3"> 
-                <input type="text" class="form-control" id="txt_codigoarea" data-type="number" value ="+593" disabled = "true " data-keydown="true">                
+            <label for="txt_celular" class="col-lg-3 col-md-3 col-sm-3 col-xs-3 control-label"><?= Yii::t("formulario", "CellPhone") ?> <span class="text-danger">*</span></label>
+            <!--<div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+                <input type="text" class="form-control" id="txt_codigoarea" data-type="number" value ="+593" disabled = "true " data-keydown="true">
             </div>-->
             <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9">
                 <input type="text" class="form-control PBvalidation" id="txt_celular" data-type="number" data-keydown="true" placeholder="<?= Yii::t("formulario", "CellPhone") ?>">
             </div>
         </div>
-    </div>        
+    </div>
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-        <div class="form-group">            
+        <div class="form-group">
             <label for="cmb_unidad_solicitud" class="col-lg-3 col-md-3 col-sm-3 col-xs-3 control-label"><?= Yii::t("formulario", "Academic unit") ?> <span class="text-danger">*</span></label>
             <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9">
                 <?= Html::dropDownList("cmb_unidad_solicitud", 0, $arr_ninteres, ["class" => "form-control", "id" => "cmb_unidad_solicitud", "disabled" => "true"]) ?>
@@ -93,7 +93,7 @@ use app\components\CFileInputAjax;
         </div>
     </div>
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-        <div class="form-group">            
+        <div class="form-group">
             <label for="cmb_modalidad_solicitud" class="col-lg-3 col-md-3 col-sm-3 col-xs-3 control-label"><?= Yii::t("formulario", "Mode") ?> <span class="text-danger">*</span></label>
             <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9">
                 <?= Html::dropDownList("cmb_modalidad_solicitud", 0, $arr_modalidad, ["class" => "form-control", "id" => "cmb_modalidad_solicitud", "disabled" => "true"]) ?>
@@ -101,34 +101,34 @@ use app\components\CFileInputAjax;
         </div>
     </div>
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-        <div class="form-group">            
+        <div class="form-group">
             <label for="cmb_carrera_solicitud" class="col-lg-3 col-md-3 col-sm-3 col-xs-3 control-label"><?= Yii::t("formulario", "Course") ?> <span class="text-danger">*</span></label>
             <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9">
                 <?= Html::dropDownList("cmb_carrera_solicitud", 0, $arr_carrerra1, ["class" => "form-control", "id" => "cmb_carrera_solicitud"]) ?>
             </div>
         </div>
     </div>
-    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" id="divmetodocan" style="display: none">   
-        <div class="form-group">            
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" id="divmetodocan" style="display: none">
+        <div class="form-group">
             <label for="cmb_metodo_solicitud" class="col-sm-3 col-md-3 col-xs-3 col-lg-3 control-label keyupmce"><?= Yii::t("formulario", "Income Method") ?><span class="text-danger">*</span></label>
             <div class="col-sm-9 col-md-9 col-xs-9 col-lg-9">
                 <?= Html::dropDownList("cmb_metodo_solicitud", 0, array_merge([Yii::t("formulario", "Select")], $arr_metodos), ["class" => "form-control", "id" => "cmb_metodo_solicitud"]) ?>
             </div>
         </div>
-    </div>  
+    </div>
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-        <div class="form-group">            
+        <div class="form-group">
             <label for="cmb_conuteg" class="col-lg-3 col-md-3 col-sm-3 col-xs-3 control-label"><?= Yii::t("formulario", "Knowledge how about UTEG") ?> <span class="text-danger">*</span></label>
             <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9">
                 <?= Html::dropDownList("cmb_conuteg", 0, $arr_conuteg, ["class" => "form-control", "id" => "cmb_conuteg"]) ?>
             </div>
         </div>
     </div>
-    <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">         
+    <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
         </br>
         </br>
-    </div>        
-    <div class="row"> 
+    </div>
+    <div class="row">
         <div class="col-lg-10 col-md-10 col-sm-10 col-xs-10"></div>
 
         <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">

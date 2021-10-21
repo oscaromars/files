@@ -74,6 +74,6 @@ Academico::registerTranslations();
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
                 <input type="text" class="form-control PBvalidation" id="frm_per_correo" value="<?= $persona_model->per_correo ?>" data-type="alfa" disabled="disabled" placeholder="<?= Academico::t("profesor", "Mail")  ?>">
             </div>
-        </div> 
+        </div>
     </div>
 </form>

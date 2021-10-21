@@ -626,6 +626,7 @@ return [
     "The information have not been saved" => "La informacion no ha sido guardada",
     "Thursday" => "Jueves",
     "Title" => "Título",
+    "Title/Degree Certificate" => 'Título/Acta Grado',
     "Title Obtained" => "Título Obtenido",
     "Title Project" => "Título Proyecto",
     "To register" => "Registrar",

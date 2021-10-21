@@ -248,8 +248,8 @@ class Persona extends \yii\db\ActiveRecord {
     /**
      * Function findIdentity
      * @author  Diana Lopez <dlopez@uteg.edu.ec>
-     * @param      
-     * @return  
+     * @param
+     * @return
      */
     public static function findIdentity($id) {
         return static::findOne($id);
@@ -258,13 +258,13 @@ class Persona extends \yii\db\ActiveRecord {
     /**
      * Function findByCondition
      * @author  Diana Lopez <dlopez@uteg.edu.ec>
-     * @param      
-     * @return  
+     * @param
+     * @return
      */
     public static function findByCondition($condition) {
         return parent::findByCondition($condition);
     }
-    
+
     /**
      * @return \yii\db\ActiveQuery
      */
@@ -276,11 +276,11 @@ class Persona extends \yii\db\ActiveRecord {
         $con = \Yii::$app->db;
 
         $sql = "SELECT
-                  P.per_pri_nombre AS P_Nombre, 
-                  P.per_pri_apellido AS P_Apellido 
-                
-                FROM " . $con->dbname . ".persona P 
-                WHERE 
+                  P.per_pri_nombre AS P_Nombre,
+                  P.per_pri_apellido AS P_Apellido
+
+                FROM " . $con->dbname . ".persona P
+                WHERE
                   P.per_estado_logico=:estado";
         $comando = $con->createCommand($sql);
         $estado = 1;
@@ -303,8 +303,8 @@ class Persona extends \yii\db\ActiveRecord {
     /**
      * Function consultaPersonaId
      * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
-     * @property integer $perid       
-     * @return  
+     * @property integer $perid
+     * @return
      */
     public function consultaPersonaId($perid) {
         $con = \Yii::$app->db_asgard;
@@ -314,152 +314,152 @@ class Persona extends \yii\db\ActiveRecord {
         $sql = "SELECT
                    usu.usu_id,
                    usu.usu_user,
-                   per.per_pri_nombre, 
-                   per.per_seg_nombre, 
-                   per.per_pri_apellido, 
-                   per.per_seg_apellido, 
-                   per.per_cedula, 
-                   per.per_genero, 
-                   per.etn_id,                
-                   (case when ifnull((select etn.etn_descripcion                                      
+                   per.per_pri_nombre,
+                   per.per_seg_nombre,
+                   per.per_pri_apellido,
+                   per.per_seg_apellido,
+                   per.per_cedula,
+                   per.per_genero,
+                   per.etn_id,
+                   (case when ifnull((select etn.etn_descripcion
                     from " . $con->dbname . ".etnia etn
                     where etn.etn_id = per.etn_id AND
                           etn.etn_estado = :estado AND
-                          etn.etn_estado_logico = :estado ),'') ='' then '' 
-                               else (select etn.etn_descripcion                                      
+                          etn.etn_estado_logico = :estado ),'') ='' then ''
+                               else (select etn.etn_descripcion
                     from " . $con->dbname . ".etnia etn
                     where etn.etn_id = per.etn_id AND
                           etn.etn_estado = :estado AND
                           etn.etn_estado_logico = :estado) end )as etn_descripcion,
-                           '' as etn_descripcion,    
-                   per.per_fecha_nacimiento, 
-                   can_id_nacimiento, 
-                   per.eciv_id, 
-                   (case when ifnull((select eci.eciv_nombre                                     
-                    from " . $con->dbname . ".estado_civil eci 
+                           '' as etn_descripcion,
+                   per.per_fecha_nacimiento,
+                   can_id_nacimiento,
+                   per.eciv_id,
+                   (case when ifnull((select eci.eciv_nombre
+                    from " . $con->dbname . ".estado_civil eci
                     where eci.eciv_id = per.eciv_id AND
                           eci.eciv_estado = :estado AND
-                          eci.eciv_estado_logico = :estado ),'') ='' then '' 
-                               else (select eci.eciv_nombre                                      
-                    from " . $con->dbname . ".estado_civil eci 
+                          eci.eciv_estado_logico = :estado ),'') ='' then ''
+                               else (select eci.eciv_nombre
+                    from " . $con->dbname . ".estado_civil eci
                     where eci.eciv_id = per.eciv_id  AND
                           eci.eciv_estado = :estado AND
                           eci.eciv_estado_logico = :estado ) end )as eciv_descripcion,
-                           '' as eciv_descripcion, 
-                   per.per_correo, 
-                   per.per_celular,                   
-                   per.tsan_id, 
-                   (case when ifnull((select tsa.tsan_nombre                                     
-                    from " . $con->dbname . ".tipo_sangre tsa 
+                           '' as eciv_descripcion,
+                   per.per_correo,
+                   per.per_celular,
+                   per.tsan_id,
+                   (case when ifnull((select tsa.tsan_nombre
+                    from " . $con->dbname . ".tipo_sangre tsa
                     where tsa.tsan_id = per.tsan_id AND
                           tsa.tsan_estado = :estado AND
-                          tsa.tsan_estado_logico = :estado ),'') ='' then '' 
-                               else (select tsa.tsan_nombre                                      
-                    from " . $con->dbname . ".tipo_sangre tsa 
+                          tsa.tsan_estado_logico = :estado ),'') ='' then ''
+                               else (select tsa.tsan_nombre
+                    from " . $con->dbname . ".tipo_sangre tsa
                     where tsa.tsan_id = per.tsan_id AND
                           tsa.tsan_estado = :estado AND
                           tsa.tsan_estado_logico = :estado ) end )as tsan_nombre,
                     '' as tsan_nombre,
-                    per.pai_id_domicilio, 
-                    per.pro_id_domicilio, 
-                    per.can_id_domicilio, 
-                    per.per_domicilio_telefono, 
-                    per.per_domicilio_csec as secundaria , 
-                    per.per_domicilio_cpri, 
-                    per.per_domicilio_sector as sector, 
-                    per.per_domicilio_num, 
-                    per.per_domicilio_ref, 
-                    per.pai_id_nacimiento, 
-                    per.pro_id_nacimiento, 
-                    per.can_id_nacimiento, 
+                    per.pai_id_domicilio,
+                    per.pro_id_domicilio,
+                    per.can_id_domicilio,
+                    per.per_domicilio_telefono,
+                    per.per_domicilio_csec as secundaria ,
+                    per.per_domicilio_cpri,
+                    per.per_domicilio_sector as sector,
+                    per.per_domicilio_num,
+                    per.per_domicilio_ref,
+                    per.pai_id_nacimiento,
+                    per.pro_id_nacimiento,
+                    per.can_id_nacimiento,
                     per.per_id,
                     per.per_nac_ecuatoriano,
                     per.per_nacionalidad,
                     per.per_pasaporte,
                     per.per_foto
-                   
-                FROM 
+
+                FROM
                    " . $con->dbname . ".usuario usu
-                   INNER JOIN " . $con->dbname . ".persona per ON per.per_id = usu.per_id                
-                   
-                WHERE 
+                   INNER JOIN " . $con->dbname . ".persona per ON per.per_id = usu.per_id
+
+                WHERE
                    usu.per_id = :perid  AND
                    usu.usu_estado = :estado AND
                    usu.usu_estado_logico = :estado AND
                    per.per_estado = :estado AND
                    per.per_estado_logico = :estado
                 UNION
-                SELECT 
+                SELECT
                    usu.usu_id,
                    usu.usu_user,
-                   per.per_pri_nombre, 
-                   per.per_seg_nombre, 
-                   per.per_pri_apellido, 
-                   per.per_seg_apellido, 
-                   per.per_cedula, 
-                   per.per_genero, 
-                   per.etn_id,                    
-                   (case when ifnull((select etn.etn_descripcion                                      
+                   per.per_pri_nombre,
+                   per.per_seg_nombre,
+                   per.per_pri_apellido,
+                   per.per_seg_apellido,
+                   per.per_cedula,
+                   per.per_genero,
+                   per.etn_id,
+                   (case when ifnull((select etn.etn_descripcion
                     from " . $con->dbname . ".etnia etn
                     where etn.etn_id = per.etn_id AND
                           etn.etn_estado = :estado AND
-                          etn.etn_estado_logico = :estado ),'') ='' then '' 
-                               else (select etn.etn_descripcion                                      
+                          etn.etn_estado_logico = :estado ),'') ='' then ''
+                               else (select etn.etn_descripcion
                     from " . $con->dbname . ".etnia etn
                     where etn.etn_id = per.etn_id AND
                           etn.etn_estado = :estado AND
                           etn.etn_estado_logico = :estado) end )as etn_descripcion,
-                           '' as etn_descripcion,    
-                   per.per_fecha_nacimiento, 
-                   can_id_nacimiento, 
-                   per.eciv_id, 
-                   (case when ifnull((select eci.eciv_nombre                                     
-                    from " . $con->dbname . ".estado_civil eci 
+                           '' as etn_descripcion,
+                   per.per_fecha_nacimiento,
+                   can_id_nacimiento,
+                   per.eciv_id,
+                   (case when ifnull((select eci.eciv_nombre
+                    from " . $con->dbname . ".estado_civil eci
                     where eci.eciv_id = per.eciv_id AND
                           eci.eciv_estado = :estado AND
-                          eci.eciv_estado_logico = :estado ),'') ='' then '' 
-                               else (select eci.eciv_nombre                                      
-                    from " . $con->dbname . ".estado_civil eci 
+                          eci.eciv_estado_logico = :estado ),'') ='' then ''
+                               else (select eci.eciv_nombre
+                    from " . $con->dbname . ".estado_civil eci
                     where eci.eciv_id = per.eciv_id  AND
                           eci.eciv_estado = :estado AND
                           eci.eciv_estado_logico = :estado ) end )as eciv_descripcion,
-                           '' as eciv_descripcion, 
-                   per.per_correo, 
-                   per.per_celular, 
-                   per.tsan_id, 
-                   (case when ifnull((select tsa.tsan_nombre                                     
-                    from " . $con->dbname . ".tipo_sangre tsa 
+                           '' as eciv_descripcion,
+                   per.per_correo,
+                   per.per_celular,
+                   per.tsan_id,
+                   (case when ifnull((select tsa.tsan_nombre
+                    from " . $con->dbname . ".tipo_sangre tsa
                     where tsa.tsan_id = per.tsan_id AND
                           tsa.tsan_estado = :estado AND
-                          tsa.tsan_estado_logico = :estado ),'') ='' then '' 
-                               else (select tsa.tsan_nombre                                      
-                    from " . $con->dbname . ".tipo_sangre tsa 
+                          tsa.tsan_estado_logico = :estado ),'') ='' then ''
+                               else (select tsa.tsan_nombre
+                    from " . $con->dbname . ".tipo_sangre tsa
                     where tsa.tsan_id = per.tsan_id AND
                           tsa.tsan_estado = :estado AND
                           tsa.tsan_estado_logico = :estado ) end )as tsan_nombre,
                     '' as tsan_nombre,
-                   per.pai_id_domicilio, 
-                   per.pro_id_domicilio, 
-                   per.can_id_domicilio, 
-                   per.per_domicilio_telefono, 
-                   per.per_domicilio_csec as secundaria , 
-                   per.per_domicilio_cpri, 
-                   per.per_domicilio_sector as sector, 
-                   per.per_domicilio_num, 
-                   per.per_domicilio_ref, 
-                   per.pai_id_nacimiento, 
-                   per.pro_id_nacimiento, 
-                   per.can_id_nacimiento, 
+                   per.pai_id_domicilio,
+                   per.pro_id_domicilio,
+                   per.can_id_domicilio,
+                   per.per_domicilio_telefono,
+                   per.per_domicilio_csec as secundaria ,
+                   per.per_domicilio_cpri,
+                   per.per_domicilio_sector as sector,
+                   per.per_domicilio_num,
+                   per.per_domicilio_ref,
+                   per.pai_id_nacimiento,
+                   per.pro_id_nacimiento,
+                   per.can_id_nacimiento,
                    per.per_id,
                    per.per_nac_ecuatoriano,
                    per.per_nacionalidad,
                    per.per_pasaporte,
                    per.per_foto
 
-                    FROM 
+                    FROM
                     " . $con->dbname . ".usuario usu
-                    INNER JOIN " . $con->dbname . ".persona per ON per.per_id = usu.per_id 
-                    WHERE 
+                    INNER JOIN " . $con->dbname . ".persona per ON per.per_id = usu.per_id
+                    WHERE
                     usu.per_id = :perid  AND
                     usu.usu_link_activo <> '' AND
                     usu.usu_estado = :estadoinactivo AND
@@ -480,7 +480,7 @@ class Persona extends \yii\db\ActiveRecord {
      * Function insertarPersona
      * @author  Kleber Loayza <analistadesarrollo03@uteg.edu.ec>
      * @property integer $userid
-     * @return  
+     * @return
      */
     public function insertarPersona($con, $parameters, $keys, $name_table) {
         $trans = $con->getTransaction();
@@ -512,8 +512,8 @@ class Persona extends \yii\db\ActiveRecord {
     /**
      * Function modificaPersona
      * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
-     * @property integer $userid       
-     * @return  
+     * @property integer $userid
+     * @return
      */
     public function modificaPersona($per_id, $per_pri_nombre, $per_seg_nombre, $per_pri_apellido, $per_seg_apellido, $etn_id, $eciv_id, $per_genero, $pai_id_nacimiento, $pro_id_nacimiento, $can_id_nacimiento, $per_fecha_nacimiento, $per_celular, $per_correo, $tsan_id, $per_domicilio_sector, $per_domicilio_cpri, $per_domicilio_csec, $per_domicilio_num, $per_domicilio_ref, $per_domicilio_telefono, $pai_id_domicilio, $pro_id_domicilio, $can_id_domicilio, $per_nac_ecuatoriano, $per_nacionalidad, $per_foto) {
         $con = \Yii::$app->db_asgard;
@@ -528,13 +528,13 @@ class Persona extends \yii\db\ActiveRecord {
         }
         try {
             $comando = $con->createCommand
-                    ("UPDATE " . $con->dbname . ".persona            
-                      SET 
+                    ("UPDATE " . $con->dbname . ".persona
+                      SET
                         per_pri_nombre = :per_pri_nombre,
                         per_seg_nombre = :per_seg_nombre,
                         per_pri_apellido = :per_pri_apellido,
                         per_seg_apellido = :per_seg_apellido,
-                        etn_id = :etn_id,                        
+                        etn_id = :etn_id,
                         eciv_id = :eciv_id,
                         per_genero = :per_genero,
                         pai_id_nacimiento = :pai_id_nacimiento,
@@ -558,8 +558,8 @@ class Persona extends \yii\db\ActiveRecord {
                         per_fecha_modificacion = :per_fecha_modificacion,
                         per_foto = :per_foto,
                         per_usuario_modifica = :usuario_modifica
-                      WHERE 
-                        per_id = :per_id AND 
+                      WHERE
+                        per_id = :per_id AND
                         per_estado = :estado AND
                         per_estado_logico = :estado");
 
@@ -603,14 +603,14 @@ class Persona extends \yii\db\ActiveRecord {
                 $trans->rollback();
             return FALSE;
         }
-        //UPDATE (table name, column values, condition)        
+        //UPDATE (table name, column values, condition)
     }
 
     /**
      * Function crearOtraEtnia
      * @author  Giovanni Vergara
-     * @property      
-     * @return  
+     * @property
+     * @return
      */
     public function crearOtraEtnia($per_id, $oetn_nombre) {
         $con = \Yii::$app->db_asgard;
@@ -659,19 +659,19 @@ class Persona extends \yii\db\ActiveRecord {
     /**
      * Function consultarOtraetnia
      * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
-     * @property integer $perid       
-     * @return  
+     * @property integer $perid
+     * @return
      */
     public function consultarOtraetnia($perid) {
         $con = \Yii::$app->db_asgard;
         $estado = 1;
-        $sql = "SELECT 
+        $sql = "SELECT
                    oetn_id,
                    per_id,
                    oetn_nombre
-                FROM 
-                   " . $con->dbname . ".otra_etnia  
-                WHERE 
+                FROM
+                   " . $con->dbname . ".otra_etnia
+                WHERE
                    per_id = :perid  AND
                    oetn_estado = :estado AND
                    oetn_estado_logico = :estado";
@@ -687,17 +687,17 @@ class Persona extends \yii\db\ActiveRecord {
     /**
      * Function consultaDatosRegion
      * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
-     * @property integer $pais       
-     * @return  
+     * @property integer $pais
+     * @return
      */
     public function consultaDatosRegion($pai_id) {
         $con = \Yii::$app->db_asgard;
         $estado = 1;
-        $sql = "SELECT                     
+        $sql = "SELECT
                 pai_nacionalidad,
                 pai_codigo_fono
-               FROM " . $con->dbname . ".pais                     
-               WHERE 
+               FROM " . $con->dbname . ".pais
+               WHERE
                     pai_id = :pai_id AND
                     pai_estado = :estado AND
                     pai_estado_logico=:estado";
@@ -711,8 +711,8 @@ class Persona extends \yii\db\ActiveRecord {
     /**
      * Function ConsultaRegistroExiste
      * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
-     * @property integer $pais       
-     * @return  
+     * @property integer $pais
+     * @return
      */
     public function ConsultaRegistroExiste($correo, $cedula, $pasaporte) {
         \app\models\Utilities::putMessageLogFile(' yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy:  '.$cedula);
@@ -734,15 +734,15 @@ class Persona extends \yii\db\ActiveRecord {
             }
             $filtro .= "per.per_cedula =:pasaporte ";
         }
-        $sql = "SELECT                     
-               count(*) as existen 
-               FROM " . $con->dbname . ".persona per                    
+        $sql = "SELECT
+               count(*) as existen
+               FROM " . $con->dbname . ".persona per
                WHERE";
         if (!empty($correo) || !empty($cedula) || !empty($pasaporte)) {
             $sql .= "($filtro) AND";
         }
         $sql .= " per.per_estado = :estado AND
-                    per.per_estado_logico=:estado";        
+                    per.per_estado_logico=:estado";
         $comando = $con->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
         if (!empty($correo)) {
@@ -761,8 +761,8 @@ class Persona extends \yii\db\ActiveRecord {
     /**
      * Function modificarOtraEtnia
      * @author  Grace Viteri
-     * @property      
-     * @return  
+     * @property
+     * @return
      */
     public function modificarOtraEtnia($per_id, $oetn_nombre, $estado_inactiva) {
         $con = \Yii::$app->db_asgard;
@@ -777,12 +777,12 @@ class Persona extends \yii\db\ActiveRecord {
 
         try {
             $comando = $con->createCommand
-                    ("UPDATE " . $con->dbname . ".otra_etnia           
-                      SET 
-                        oetn_nombre = :oetn_nombre,                        
+                    ("UPDATE " . $con->dbname . ".otra_etnia
+                      SET
+                        oetn_nombre = :oetn_nombre,
                         oetn_fecha_modificacion = :oetn_fecha_modificacion,
                         oetn_estado = :estado_inactiva
-                      WHERE 
+                      WHERE
                         per_id = :per_id AND
                         oetn_estado = :estado AND
                         oetn_estado_logico = :estado");
@@ -804,17 +804,17 @@ class Persona extends \yii\db\ActiveRecord {
     }
 
     /**
-     * Function consultarNacionalidad 
+     * Function consultarNacionalidad
      * @author  Grace Viteri
-     * @property      
-     * @return  
+     * @property
+     * @return
      */
     public function consultarNacionalidad($pai_id) {
         $con = \Yii::$app->db_asgard;
         $estado = 1;
 
         $sql = "SELECT  pai_nacionalidad as nacionalidad
-                 FROM pais                
+                 FROM pais
                  WHERE pai_id = :pai_id and
                        pai_estado = :estado AND
                        pai_estado_logico= :estado";
@@ -826,18 +826,18 @@ class Persona extends \yii\db\ActiveRecord {
     }
 
     /**
-     * Function consultarIdPersona 
+     * Function consultarIdPersona
      * @author  Kleber Loayza
-     * @property      
-     * @return  
+     * @property
+     * @return
      */
     public function consultarIdPersona($cedula = null, $pasaporte = null, $correo = null, $celular = null) {
         $con = \Yii::$app->db_asgard;
         $estado = 1;
         $sql = "
                 SELECT  ifnull(per_id,0) as per_id
-                FROM    persona as per           
-                 WHERE 
+                FROM    persona as per
+                 WHERE
                     (
                         (per_cedula='$cedula' and per_correo='$correo') or
                         (per_cedula='$cedula' and per_celular='$celular') or
@@ -859,8 +859,8 @@ class Persona extends \yii\db\ActiveRecord {
     /**
      * Function listadoUsuariosP
      * @author  Byron Villacreses <developer@uteg.edu.ec>
-     * @param      
-     * @return  
+     * @param
+     * @return
      */
     public function insertarDataPersona($con, $data) {
         //per_id
@@ -876,7 +876,7 @@ class Persona extends \yii\db\ActiveRecord {
         $command->bindParam(":per_pri_apellido", $data[0]['per_pri_apellido'], \PDO::PARAM_STR);
         $command->bindParam(":per_fecha_nacimiento", $data[0]['per_fecha_nacimiento'], \PDO::PARAM_STR);
         $command->bindParam(":per_celular", $data[0]['per_celular'], \PDO::PARAM_STR);
-        $command->bindParam(":per_cedula", $data[0]['per_cedula'], \PDO::PARAM_STR); //VALOR UNIQUE en la  base de Datos  
+        $command->bindParam(":per_cedula", $data[0]['per_cedula'], \PDO::PARAM_STR); //VALOR UNIQUE en la  base de Datos
         $command->bindParam(":per_genero", $data[0]['per_genero'], \PDO::PARAM_STR);
         $command->bindParam(":per_correo", $data[0]['per_correo'], \PDO::PARAM_STR);
         $command->execute();
@@ -886,8 +886,8 @@ class Persona extends \yii\db\ActiveRecord {
     /**
      * Function listadoUsuariosP
      * @author  Byron Villacreses <developer@uteg.edu.ec>
-     * @param      
-     * @return  
+     * @param
+     * @return
      */
     public function insertarDataCorreo($con, $data) {
         //ucor_id
@@ -901,28 +901,28 @@ class Persona extends \yii\db\ActiveRecord {
     }
 
     /**
-     * Function 
+     * Function
      * @author  Byron Villacreses <developer@uteg.edu.ec>
-     * @property integer car_id      
-     * @return  
+     * @property integer car_id
+     * @return
      */
     public function consultarTipoPersona($TextAlias) {
         $con = \Yii::$app->db_asgard;
-        $sql = "SELECT tper_id Ids 
-                    FROM " . $con->dbname . ".tipo_persona  
+        $sql = "SELECT tper_id Ids
+                    FROM " . $con->dbname . ".tipo_persona
                 WHERE tper_nombre=:tper_nombre AND tper_estado_logico=1 ";
         $comando = $con->createCommand($sql);
         $comando->bindParam(":tper_nombre", $TextAlias, \PDO::PARAM_STR);
         //return $comando->queryAll();
         $rawData = $comando->queryScalar();
         if ($rawData === false)
-            return 0; //en caso de que existe problema o no retorne nada tiene 1 por defecto 
+            return 0; //en caso de que existe problema o no retorne nada tiene 1 por defecto
         return $rawData;
     }
 
         /**
      * Funcion para verificar si una persona existe, no esta y si eliminada por cedula, pasaporte o ruc
-     * @author Emilio Moran 
+     * @author Emilio Moran
      */
 
     public static function VerificarPersonaExiste($cedula = null , $pasaporte = null, $ruc = null) {
@@ -930,14 +930,14 @@ class Persona extends \yii\db\ActiveRecord {
         $estado = 1;
         $sql = "
                 SELECT per_id, per_estado, per_estado_logico
-                FROM persona as per           
-                WHERE 
+                FROM persona as per
+                WHERE
                     (
-                        (per_cedula='$cedula' or per_pasaporte='$pasaporte' or per_ruc='$ruc')                        
+                        (per_cedula='$cedula' or per_pasaporte='$pasaporte' or per_ruc='$ruc')
                     )";
         $comando = $con->createCommand($sql);
         $resultData = $comando->queryOne();
-        if (empty($resultData['per_id'])){        
+        if (empty($resultData['per_id'])){
             return -1; //No se encuentra registrado
         } else if($resultData['per_estado_logico']=='0') {
             return 0;
@@ -948,7 +948,7 @@ class Persona extends \yii\db\ActiveRecord {
 
     /**
      * Funcion para obtener el per_id de una persona existente eliminada o no por cedula, pasaporte o ruc
-     * @author Emilio Moran 
+     * @author Emilio Moran
      */
 
     public static function ObtenerPersonabyCedulaPasaporteRuc($cedula = null , $pasaporte = null, $ruc = null) {
@@ -956,10 +956,10 @@ class Persona extends \yii\db\ActiveRecord {
         $estado = 1;
         $sql = "
                 SELECT per_id
-                FROM persona as per           
-                WHERE 
+                FROM persona as per
+                WHERE
                     (
-                        (per_cedula='$cedula' or per_pasaporte='$pasaporte' or per_ruc='$ruc')                        
+                        (per_cedula='$cedula' or per_pasaporte='$pasaporte' or per_ruc='$ruc')
                     )";
         $comando = $con->createCommand($sql);
         $resultData = $comando->queryOne();
@@ -972,7 +972,7 @@ class Persona extends \yii\db\ActiveRecord {
      */
 
     public static function getDNIbyTipoDoc($per_id, $type_doc) {
-        $con = \Yii::$app->db_asgard;        
+        $con = \Yii::$app->db_asgard;
         $dni = "per_cedula";
         if ($type_doc == "PASS") {
             $dni = "per_pasaporte";
@@ -996,21 +996,21 @@ class Persona extends \yii\db\ActiveRecord {
 /**
      * Function consultaDatosPersonaid
      * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
-     * @property integer        
-     * @return  
+     * @property integer
+     * @return
      */
     public function consultaDatosPersonaid($per_id) {
         $con = \Yii::$app->db_asgard;
         $estado = 1;
-        $sql = "SELECT   
+        $sql = "SELECT
                 per_pri_nombre,
                 per_seg_nombre,
                 per_pri_apellido,
-                per_seg_apellido,                  
+                per_seg_apellido,
                 per_correo,
                 per_cedula
-               FROM " . $con->dbname . ".persona                     
-               WHERE 
+               FROM " . $con->dbname . ".persona
+               WHERE
                     per_id = :per_id AND
                     per_estado = :estado AND
                     per_estado_logico=:estado";
@@ -1024,8 +1024,8 @@ class Persona extends \yii\db\ActiveRecord {
 /**
      * Function Insertar Datos de Inscripcion Grado
      * @author  Lisbeth Gonzalez <analista.desarrollo@uteg.edu.ec>
-     * @property integer        
-     * @return  
+     * @property integer
+     * @return
      */
     public function insertarPersonaInscripciongrado($per_pri_nombre, $per_seg_nombre, $per_pri_apellido, $per_seg_apellido, $per_dni, $eciv_id, $can_id_nacimiento, $per_fecha_nacimiento, $per_celular, $per_correo, $per_domicilio_csec, $per_domicilio_ref, $per_domicilio_telefono, $pai_id_domicilio, $pro_id_domicilio, $can_id_domicilio, $per_nacionalidad, $per_trabajo_direccion) {
         //per_id
@@ -1048,7 +1048,7 @@ class Persona extends \yii\db\ActiveRecord {
         $command->bindParam(":per_correo", $per_correo, \PDO::PARAM_STR);
         $command->bindParam(":per_domicilio_csec", $per_domicilio_csec, \PDO::PARAM_STR);
         $command->bindParam(":per_domicilio_ref", $per_domicilio_ref, \PDO::PARAM_STR);
-        $command->bindParam(":per_domicilio_telefono", $per_domicilio_telefono, \PDO::PARAM_STR); //VALOR UNIQUE en la  base de Datos  
+        $command->bindParam(":per_domicilio_telefono", $per_domicilio_telefono, \PDO::PARAM_STR); //VALOR UNIQUE en la  base de Datos
         $command->bindParam(":pai_id_domicilio", $pai_id_domicilio, \PDO::PARAM_STR);
         $command->bindParam(":pro_id_domicilio", $pro_id_domicilio, \PDO::PARAM_STR);
         $command->bindParam(":can_id_domicilio", $can_id_domicilio, \PDO::PARAM_STR);
@@ -1071,13 +1071,13 @@ class Persona extends \yii\db\ActiveRecord {
         }
         try {
             $comando = $con->createCommand
-                    ("UPDATE " . $con->dbname . ".persona            
-                      SET 
+                    ("UPDATE " . $con->dbname . ".persona
+                      SET
                         per_pri_nombre = :per_pri_nombre,
                         per_seg_nombre = :per_seg_nombre,
                         per_pri_apellido = :per_pri_apellido,
                         per_seg_apellido = :per_seg_apellido,
-                        per_cedula = :per_dni,                        
+                        per_cedula = :per_dni,
                         eciv_id = :eciv_id,
                         can_id_nacimiento = :can_id_nacimiento,
                         per_fecha_nacimiento = :per_fecha_nacimiento,
@@ -1093,8 +1093,8 @@ class Persona extends \yii\db\ActiveRecord {
                         per_trabajo_direccion = :per_trabajo_direccion,
                         per_fecha_modificacion = :per_fecha_modificacion,
                         per_usuario_modifica = :usuario_modifica
-                      WHERE 
-                        per_cedula = :per_dni AND 
+                      WHERE
+                        per_cedula = :per_dni AND
                         per_estado = :estado AND
                         per_estado_logico = :estado");
 
@@ -1129,7 +1129,7 @@ class Persona extends \yii\db\ActiveRecord {
                 $trans->rollback();
             return FALSE;
         }
-        //UPDATE (table name, column values, condition)        
+        //UPDATE (table name, column values, condition)
     }
 
     public function consultarUltimoPer_id() {
@@ -1137,7 +1137,7 @@ class Persona extends \yii\db\ActiveRecord {
         $estado = '1';
         $sql = "
                     SELECT lpad(ifnull(max(per_id),0)+1,7,'0') as ultimo
-                    FROM " . $con->dbname . ".persona 
+                    FROM " . $con->dbname . ".persona
                     WHERE per_estado_logico=:estado AND per_estado=:estado";
         $comando = $con->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
@@ -1154,7 +1154,7 @@ class Persona extends \yii\db\ActiveRecord {
         $estado = '1';
         $sql = "
                     SELECT lpad(ifnull(max(per_id),0),7,' ') as ultimo
-                    FROM " . $con->dbname . ".persona 
+                    FROM " . $con->dbname . ".persona
                     WHERE per_estado_logico=:estado AND per_estado=:estado";
         $comando = $con->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
@@ -1170,8 +1170,8 @@ class Persona extends \yii\db\ActiveRecord {
     /**
      * Function Insertar Datos de Inscripcion Grado
      * @author  Lisbeth Gonzalez <analista.desarrollo@uteg.edu.ec>
-     * @property integer        
-     * @return  
+     * @property integer
+     * @return
      */
     public function insertarPersonaInscripcionposgrado($per_dni, $primer_nombre, $segundo_nombre, $primer_apellido, $segundo_apellido, $can_id_nacimiento, $per_fecha_nacimiento, $per_nacionalidad, $eciv_id, $pai_id_domicilio, $pro_id_domicilio, $can_id_domicilio, $per_domicilio_ref, $per_celular, $per_domicilio_telefono, $per_correo) {
         //per_id
@@ -1196,7 +1196,7 @@ class Persona extends \yii\db\ActiveRecord {
         $command->bindParam(":can_id_domicilio", $can_id_domicilio, \PDO::PARAM_STR);
         $command->bindParam(":per_domicilio_ref", $per_domicilio_ref, \PDO::PARAM_STR);
         $command->bindParam(":per_celular", $per_celular, \PDO::PARAM_STR);
-        $command->bindParam(":per_domicilio_telefono", $per_domicilio_telefono, \PDO::PARAM_STR); 
+        $command->bindParam(":per_domicilio_telefono", $per_domicilio_telefono, \PDO::PARAM_STR);
         $command->bindParam(":per_correo", $per_correo, \PDO::PARAM_STR);
         $command->execute();
         \app\models\Utilities::putMessageLogFile('ultimo registro:  '.$id);
@@ -1218,16 +1218,16 @@ class Persona extends \yii\db\ActiveRecord {
         }
         try {
             $comando = $con->createCommand
-                    ("UPDATE " . $con->dbname . ".persona            
-                      SET 
+                    ("UPDATE " . $con->dbname . ".persona
+                      SET
                         per_cedula = :per_dni,
                         per_pri_nombre = :primer_nombre,
                         per_seg_nombre = :segundo_nombre,
                         per_pri_apellido = :primer_apellido,
-                        per_seg_apellido = :segundo_apellido, 
-                        can_id_nacimiento = :can_id_nacimiento, 
-                        per_fecha_nacimiento = :per_fecha_nacimiento,   
-                        per_nacionalidad = :per_nacionalidad,                   
+                        per_seg_apellido = :segundo_apellido,
+                        can_id_nacimiento = :can_id_nacimiento,
+                        per_fecha_nacimiento = :per_fecha_nacimiento,
+                        per_nacionalidad = :per_nacionalidad,
                         eciv_id = :eciv_id,
                         pai_id_domicilio = :pai_id_domicilio,
                         pro_id_domicilio = :pro_id_domicilio,
@@ -1238,8 +1238,8 @@ class Persona extends \yii\db\ActiveRecord {
                         per_correo = :per_correo,
                         per_fecha_modificacion = :per_fecha_modificacion,
                         per_usuario_modifica = :usuario_modifica
-                      WHERE 
-                        per_cedula = :per_dni AND 
+                      WHERE
+                        per_cedula = :per_dni AND
                         per_estado = :estado AND
                         per_estado_logico = :estado");
 
@@ -1258,7 +1258,7 @@ class Persona extends \yii\db\ActiveRecord {
             $command->bindParam(":can_id_domicilio", $can_id_domicilio, \PDO::PARAM_STR);
             $command->bindParam(":per_domicilio_ref", $per_domicilio_ref, \PDO::PARAM_STR);
             $command->bindParam(":per_celular", $per_celular, \PDO::PARAM_STR);
-            $command->bindParam(":per_domicilio_telefono", $per_domicilio_telefono, \PDO::PARAM_STR); 
+            $command->bindParam(":per_domicilio_telefono", $per_domicilio_telefono, \PDO::PARAM_STR);
             $command->bindParam(":per_correo", $per_correo, \PDO::PARAM_STR);
             $comando->bindParam(":per_fecha_modificacion", $per_fecha_modificacion, \PDO::PARAM_STR);
             $comando->bindParam(":usuario_modifica", $usuario_modifica, \PDO::PARAM_INT);
@@ -1272,8 +1272,28 @@ class Persona extends \yii\db\ActiveRecord {
                 $trans->rollback();
             return FALSE;
         }
-        //UPDATE (table name, column values, condition)        
+        //UPDATE (table name, column values, condition)
     }
-    
 
+    /* Function consultaDatosPersonaid
+     * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
+     * @property integer
+     * @return
+     */
+    public function consultaPeridxdni($per_cedula) {
+        $con = \Yii::$app->db_asgard;
+        $estado = 1;
+        $sql = "SELECT
+                per_id
+               FROM " . $con->dbname . ".persona
+               WHERE
+                    (per_cedula = :per_cedula or per_pasaporte = :per_cedula)AND
+                    per_estado = :estado AND
+                    per_estado_logico=:estado";
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $comando->bindParam(":per_cedula", $per_cedula, \PDO::PARAM_INT);
+        $resultData = $comando->queryOne();
+        return $resultData;
+    }
 }

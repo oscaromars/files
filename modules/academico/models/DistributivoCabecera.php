@@ -599,6 +599,13 @@ class DistributivoCabecera extends \yii\db\ActiveRecord {
                     when (daca_num_estudiantes_online between 31 and 40) then 5
                     when (daca_num_estudiantes_online >40) then 7 end)
                     end) as total_hora_semana_docencia_online,
+                    -- Postgrado
+                    sum(case when da.uaca_id = 2 and td.tdis_id =1 then dah.daho_total_horas else 0 end)  as total_hora_semana_docenciaposgrado,
+                    case when da.uaca_id = 2 and td.tdis_id =1 and da.mod_id=1 then ROUND(timestampdiff(day, da.daca_fecha_inicio_post, da.daca_fecha_fin_post)/7) else
+                    0 end as semana_posgrado,
+                        daca_fecha_inicio_post fecha_inicio,
+                    daca_fecha_fin_post fecha_fin,
+                    -- Fin Postgrado
                     -- sum(case when da.uaca_id = 2 and td.tdis_id =1 then daho_total_horas else 0 end ) as total_hora_semana_docencia_posgrado,
                     sum(case when td.tdis_id =2 then tdis_num_semanas else 0 end ) as total_hora_semana_tutoria,
                     sum(case when td.tdis_id =3 then tdis_num_semanas else 0 end) as total_hora_semana_investigacion,
@@ -620,7 +627,9 @@ class DistributivoCabecera extends \yii\db\ActiveRecord {
               da.daca_estado= :estado and
               da.daca_estado_logico= :estado and
               dc.dcab_estado_logico= :estado and
-              td.tdis_id not in(6)";
+              td.tdis_id not in(6)
+              Group by 4
+              order by semanas_posgrado ASC,fecha_inicio asc ;";
 		$comando = $con->createCommand($sql);
 		$comando->bindParam(":ids", $Ids, \PDO::PARAM_INT);
 		$comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
@@ -854,23 +863,24 @@ class DistributivoCabecera extends \yii\db\ActiveRecord {
 					Utilities::putMessageLogFile('$horas_preparacion y ' . $horas_preparacion);
 				}
 
-				if (!empty($posgrado) && $i < count($posgrado)) {
-					for ($j = 0; $j < $posgrado[$i]['semanas_posgrado']; $j++) {
-						// for aqui el maximo que sea $posgrado[$i]['semanas_posgrado']
-						Utilities::putMessageLogFile('$total_hora_semana_docenciaposgrado x ' . $posgrado[$j]['total_hora_semana_docenciaposgrado']);
-						Utilities::putMessageLogFile('$total_hora_semana_docenciaposgrado xx ' . $posgrado[$i]['total_hora_semana_docenciaposgrado']);
-						$horas_docenciap = /*$total_hora_semana_docencia +*/$posgrado[$j]['total_hora_semana_docenciaposgrado']/* * $posgrado[$j]['semanas_posgrado'])*/;
-						$horas_preparacionp = /*round(*//*(*/$posgrado[$i]['total_hora_semana_docenciaposgrado'] * $preparacion_docencia;
-						Utilities::putMessageLogFile('$horas_docenciap x ' . $horas_docenciap);
-						//$horas_docencia = $total_hora_semana_docencia;
-						//$horas_preparacion = /*round(*/$total_hora_semana_docencia * $preparacion_docencia/*)*/;
-						//Utilities::putMessageLogFile('$horas_docencia y ' . $horas_docencia );
-					} //termina for
-				} //else{
-				//$horas_docencia = $total_hora_semana_docencia;
-				//$horas_preparacion = /*round(*/$total_hora_semana_docencia * $preparacion_docencia/*)*/;
-				//Utilities::putMessageLogFile('$horas_docencia y ' . $horas_docencia );
-				//}
+				if (!empty($posgrado)) {
+
+					//for ($j=0; $j < $posgrado[$i]['semanas_posgrado']; $j++){ // for aqui el maximo que sea $posgrado[$i]['semanas_posgrado']
+					Utilities::putMessageLogFile('$total_hora_semana_docenciaposgrado x ' . $posgrado[$j]['suma_post']);
+					Utilities::putMessageLogFile('$total_hora_semana_docenciaposgrado xx ' . $posgrado[$i]['suma_post']);
+					$horas_docenciap = /*$total_hora_semana_docencia +*/$posgrado[$i]['suma_post']/* * $posgrado[$j]['semanas_posgrado'])*/;
+					$horas_preparacionp = /*round(*//*(*/$horas_docenciap * $preparacion_docencia;
+					Utilities::putMessageLogFile('$horas_docenciap x ' . $horas_docenciap);
+					Utilities::putMessageLogFile('$horas_preparacionp x ' . $horas_preparacionp);
+					//$horas_docencia = $total_hora_semana_docencia;
+					//$horas_preparacion = /*round(*/$total_hora_semana_docencia * $preparacion_docencia/*)*/;
+					//Utilities::putMessageLogFile('$horas_docencia y ' . $horas_docencia );
+					//} //termina for
+				} else {
+					$horas_docenciap = 0;
+					$horas_preparacionp = 0;
+					//Utilities::putMessageLogFile('$horas_docencia y ' . $horas_docencia );
+				}
 			} else {
 				$horas_docencia = 0;
 				$horas_docenciap = 0;

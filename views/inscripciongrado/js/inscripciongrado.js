@@ -328,7 +328,7 @@ function guardarInscripcionGrado() {
                                                     var mensaje = {wtmessage: "Debe adjuntar Especie valorada.", title: "Información"};
                                                     showAlert("NO_OK", "error", mensaje);
                                                 }else{
-                                                if (!validateForm()) {
+                                                /*if (!validateForm()) {
                                                     requestHttpAjax(link, arrParams, function (response) {
                                                         showAlert(response.status, response.label, response.message);
                                                         if (response.status == "OK") {
@@ -337,6 +337,26 @@ function guardarInscripcionGrado() {
                                                                 }, 3000);
                                                         }
                                                     }, true);
+                                                }*/
+                                                if (!validateForm()) {
+                                                    requestHttpAjax(link, arrParams, function(response) {
+                                                        //Ruta es la direccion que deseemos que el boton nos dirija al momento de dar click
+                                                        var ruta = [$('#txth_base').val() + "/inscripciongrado/index"];
+                                                        //acciones son las variables que debemos enviar para dibujar el o los botones en el modal
+                                                        var acciones = [{ id      : 'reloadpage',     //id que tendra el boton
+                                                                          class   : 'btn btn-primary',//La clase para poderle dar un estilo al boton
+                                                                          value   : 'Aceptar', //Este es el texto que tendra el boton//objLang.Accept,
+                                                                          callback: 'gotoPage', //funcion que debe ejecutar el boton
+                                                                          paramCallback : ruta, //variable a ser llamada por la funcion anterior ej gotoPage(ruta)
+                                                                       }];
+                                                        /*var cancelar = [{ callback: 'reloadPage', //funcion que debe ejecutar el boton
+                                                                       }];*/
+                                                        //Agregamos a nuestra variables message nuestras acciones
+                                                        response.message.acciones    = acciones;
+                                                        //response.message.closeaction = cancelar;
+                                                        //Dejamos que la funcion showAlert dibuje el modal
+                                                        showAlert(response.status, response.label, response.message);
+                                                    }, true);
                                                 }
                                                     }
                                             }
@@ -344,7 +364,7 @@ function guardarInscripcionGrado() {
                                     }
                                 }// cierra if si radio es si
                                 else{
-                                    if (!validateForm()) {
+                                    /*if (!validateForm()) {
                                         requestHttpAjax(link, arrParams, function (response) {
                                             showAlert(response.status, response.label, response.message);
                                             if (response.status == "OK") {
@@ -352,6 +372,26 @@ function guardarInscripcionGrado() {
                                                         window.location.href = $('#txth_base').val() + "/inscripciongrado/index";
                                                     }, 3000);
                                             }
+                                        }, true);
+                                    }*/
+                                    if (!validateForm()) {
+                                        requestHttpAjax(link, arrParams, function(response) {
+                                            //Ruta es la direccion que deseemos que el boton nos dirija al momento de dar click
+                                            var ruta = [$('#txth_base').val() + "/inscripciongrado/index"];
+                                            //acciones son las variables que debemos enviar para dibujar el o los botones en el modal
+                                            var acciones = [{ id      : 'reloadpage',     //id que tendra el boton
+                                                              class   : 'btn btn-primary',//La clase para poderle dar un estilo al boton
+                                                              value   : 'Aceptar', //Este es el texto que tendra el boton//objLang.Accept,
+                                                              callback: 'gotoPage', //funcion que debe ejecutar el boton
+                                                              paramCallback : ruta, //variable a ser llamada por la funcion anterior ej gotoPage(ruta)
+                                                           }];
+                                            /*var cancelar = [{ callback: 'reloadPage', //funcion que debe ejecutar el boton
+                                                           }];*/
+                                            //Agregamos a nuestra variables message nuestras acciones
+                                            response.message.acciones    = acciones;
+                                            //response.message.closeaction = cancelar;
+                                            //Dejamos que la funcion showAlert dibuje el modal
+                                            showAlert(response.status, response.label, response.message);
                                         }, true);
                                     }
                                 }

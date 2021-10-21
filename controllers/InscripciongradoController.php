@@ -193,7 +193,7 @@ class InscripciongradoController extends \yii\web\Controller {
                 Utilities::putMessageLogFile('ced_id para  el xx.. ' .$data['cedula'] );
                 $insc_persona = new Persona();
                 $resp_persona = $insc_persona->consultaPeridxdni($data['cedula']);
-                $per_id = $$resp_persona['per_id'];
+                $per_id = $resp_persona['per_id'];
                 Utilities::putMessageLogFile('per_id para  el 3.. ' . $resp_persona );
                 Utilities::putMessageLogFile('per_id para  el 4.. ' . $resp_persona['per_id']);
                 $per_dni = $data['cedula'];
@@ -326,10 +326,14 @@ class InscripciongradoController extends \yii\web\Controller {
                             "title" => Yii::t('jslang', 'Success'),
                         );
                         return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
-                    //Utilities::putMessageLogFile('encontro cedula y entro a actualizar persona');
                 }else{
 
                     //Aqui debe ser un mensaje que no existe la persona
+                    $message = array(
+                        "wtmessage" => Yii::t("formulario", "No se encuentra documento de identidad de la persona registrada como aspirante, no se puede actualizar la información"),
+                        "title" => Yii::t('jslang', 'Error'),
+                    );
+                    return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Error'), 'false', $message);
                 }
             } catch (Exception $ex) {
                 $transaction->rollback();

@@ -250,7 +250,7 @@ academico::registerTranslations();
             <div class="form-group">
                 <label for="txt_celular" class="col-sm-3 control-label"><?= Yii::t("formulario", "CellPhone")?><span class="text-danger">*</span></label>
                 <div class="col-sm-7">
-                    <input type="text" class="form-control PBvalidation" data-required="false" id="txt_celular" data-type="number" data-keydown="true" placeholder="<?= Yii::t("formulario", "CellPhone") ?>">
+                    <input type="text" class="form-control PBvalidation" id="txt_celular" data-type="number" data-keydown="true" placeholder="<?= Yii::t("formulario", "CellPhone") ?>">
                 </div>
             </div>
         </div>
@@ -308,7 +308,7 @@ academico::registerTranslations();
             <div class="form-group">
                 <label for="txt_telefono_emergencia" class="col-sm-3 control-label"><?= Yii::t("formulario", "CellPhone")?><span class="text-danger">*</span></label>
                 <div class="col-sm-7">
-                    <input type="text" class="form-control PBvalidation" data-required="false" id="txt_telefono_emergencia" data-type="number" data-keydown="true" placeholder="<?= Yii::t("formulario", "Celular de la persona de contacto en caso de emergencia ") ?>">
+                    <input type="text" class="form-control PBvalidation" id="txt_telefono_emergencia" data-type="number" data-keydown="true" placeholder="<?= Yii::t("formulario", "Celular de la persona de contacto en caso de emergencia ") ?>">
                 </div>
             </div>
         </div>

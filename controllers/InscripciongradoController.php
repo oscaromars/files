@@ -45,8 +45,8 @@ class InscripciongradoController extends \yii\web\Controller {
 
     public function actionIndex() {
         $this->layout = '@themes/' . \Yii::$app->getView()->theme->themeName . '/layouts/basic.php';
-        $per_id = Yii::$app->session->get("PB_perid");
-        $mod_persona = Persona::findIdentity($per_id);
+        //$per_id = Yii::$app->session->get("PB_perid");
+        //$mod_persona = Persona::findIdentity($per_id);
         $mod_unidad = new UnidadAcademica();
         $mod_carrera = new EstudioAcademico();
         $mod_modalidad = new Modalidad();
@@ -103,10 +103,10 @@ class InscripciongradoController extends \yii\web\Controller {
         $mod_conempresa = new ConvenioEmpresa();
         $arr_convempresa = $mod_conempresa->consultarConvenioEmpresa();
         $_SESSION['JSLANG']['Your information has not been saved. Please try again.'] = Yii::t('notificaciones', 'Your information has not been saved. Please try again.');
-        $mod_persona = new Persona();
+        /*$mod_persona = new Persona();
         $resp_persona = $mod_persona->consultarUltimoPer_id();
-        $persona = $resp_persona["ultimo"];
-        $per_id = intval( $persona );
+        $persona = $resp_persona["ultimo"];*/
+        //$per_id = intval( $persona );
 
         return $this->render('index', [
             "arr_unidad" => ArrayHelper::map($arr_unidad, "id", "name"),
@@ -126,7 +126,7 @@ class InscripciongradoController extends \yii\web\Controller {
             "arr_metodos" => ArrayHelper::map($arr_metodos, "id", "name"),
             "arr_convenio_empresa" => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Ninguna")]], $arr_convempresa), "id", "name"),
             "resp_datos" => $resp_datos,
-            "per_id" => $per_id,
+            //"per_id" => $per_id,
         ]);
     }
 
@@ -140,10 +140,18 @@ class InscripciongradoController extends \yii\web\Controller {
                 if (empty($_FILES)) {
                     return json_encode(['error' => Yii::t("notificaciones", "Error to process File {file}. Try again.", ['{file}' => basename($files['name'])])]);
                 }
-                $mod_persona = new Persona();
+                /**esto cambiar no se toma asi el per_id */
+                /*$mod_persona = new Persona();
                 $resp_persona = $mod_persona->consultarUltimoPer_id();
                 $persona = $resp_persona["ultimo"];
-                $per_id = intval( $persona );
+                $per_id = intval( $persona );*/
+                /**esto cambiar no se toma asi el per_id */
+                Utilities::putMessageLogFile('per_id para  el 0.. ' .$data['cedula'] );
+                $insc_persona = new Persona();
+                $resp_persona = $insc_persona->consultaPeridxdni($data['cedula']);
+                $per_id = $resp_persona['per_id'];
+                Utilities::putMessageLogFile('per_id para  el 2.. ' . $resp_persona['per_id']);
+                //if ($per_id > 0) {
                 //Recibe Parámetros.
                 $files = $_FILES[key($_FILES)];
                 $arrIm = explode(".", basename($files['name']));
@@ -159,7 +167,8 @@ class InscripciongradoController extends \yii\web\Controller {
                     }
                 }else {
                 return json_encode(['error' => Yii::t("notificaciones", "Error to process File ". basename($files['name']) ." Solo formato imagenes pdf, jpg, png.")]);
-                }
+                 }
+                //}
             }
 
             $con = \Yii::$app->db;
@@ -175,13 +184,22 @@ class InscripciongradoController extends \yii\web\Controller {
                 $modalidad = $data['modalidad'];
                 $periodo = $data['periodo'];
                 $ming_id = $data['ming_id'];
-
-                $mod_persona = new Persona();
+                /**esto cambiar no se toma asi el per_id */
+                /*$mod_persona = new Persona();
                 $resp_persona = $mod_persona->consultarUltimoPer_id();
                 $persona = $resp_persona["ultimo"];
-                $per_id = intval( $persona );
+                $per_id = intval( $persona );*/
+                /**esto cambiar no se toma asi el per_id */
+                Utilities::putMessageLogFile('ced_id para  el xx.. ' .$data['cedula'] );
+                $insc_persona = new Persona();
+                $resp_persona = $insc_persona->consultaPeridxdni($data['cedula']);
+                $per_id = $$resp_persona['per_id'];
+                Utilities::putMessageLogFile('per_id para  el 3.. ' . $resp_persona );
+                Utilities::putMessageLogFile('per_id para  el 4.. ' . $resp_persona['per_id']);
                 $per_dni = $data['cedula'];
                 Utilities::putMessageLogFile('aacedula o pasaporte.. ' . $per_dni );
+                Utilities::putMessageLogFile('per_id para imagenes titulo.. ' . $per_id );
+                //if ($per_id > 0) {
                 $inscripgrado_id = $data["igra_id"];
                 if (isset($data["igra_ruta_doc_titulo"]) && $data["igra_ruta_doc_titulo"] != "") {
                     $arrIm = explode(".", basename($data["igra_ruta_doc_titulo"]));
@@ -264,7 +282,8 @@ class InscripciongradoController extends \yii\web\Controller {
                     $data["igra_ruta_doc_homologacion"] = $homologacion_archivo;
                     if ($homologacion_archivo === false)
                         throw new Exception('Error doc Especie valorada por homologación no renombrado.');
-                }
+                 }
+                //}
                 Utilities::putMessageLogFile('cedula o pasaporte.. ' . $per_dni );
                 //datos personales
                 $per_dni = $data['cedula'];
@@ -295,86 +314,22 @@ class InscripciongradoController extends \yii\web\Controller {
                 $pcon_direccion = $data["dir_personacontacto"];
 
                 $insc_persona = new Persona();
-                $resp_persona = $insc_persona->ConsultaRegistroExiste( 0,$per_dni, $per_dni);
-                //$resp_persona = $insc_persona->consultaPeridxdni($per_id);
-                if ($resp_persona['existen'] == 0) {
+                //$resp_persona = $insc_persona->ConsultaRegistroExiste( 0,$per_dni, $per_dni);
+                $resp_persona = $insc_persona->consultaPeridxdni($per_dni);
+                if ($resp_persona['per_id'] > 0) {
                     //Nuevo Registro // si existe no guardar actualizar la data de persona se modifica
-                    $regPersona = $mod_persona->insertarPersonaInscripciongrado($per_pri_nombre, $per_seg_nombre, $per_pri_apellido, $per_seg_apellido, $per_dni, $eciv_id, $can_id_nacimiento, $per_fecha_nacimiento, $per_celular, $per_correo, $per_domicilio_csec, $per_domicilio_ref, $per_domicilio_telefono, $pai_id_domicilio, $pro_id_domicilio, $can_id_domicilio, $per_nacionalidad,$per_trabajo_direccion);
-
-                }else{ //Aqui debe ser un mensaje que no existe la persona
-
-                    $resul = array();
-                    $error++;
-                    $error_message .= Yii::t("formulario", "The person already exists");
-
-                    $message = array(
-                        "wtmessage" => Yii::t("formulario",  $error_message), //$error_message
-                        "title" => Yii::t('jslang', 'Bad Request'),
-                    );
-                    $resul["status"] = FALSE;
-                    $resul["error"] = null;
-                    $resul["message"] = $message;
-                    $resul["data"] = null;
-                    $resul["dataext"] = null;
-
-
-                    //return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Error'), $error_message);
-                    return Utilities::ajaxResponse('ERROR_EXIST', 'alert', Yii::t('jslang', 'Error'), 'false', $message, $resul);
-                    //$resul = $model->actualizarInscripciongrado($data);
-                    if ($resp_persona['existen'] == 1) {
-                    // actualizacion de Persona
-                    $respPersona = $mod_persona->modificaPersonaInscripciongrado($per_pri_nombre, $per_seg_nombre, $per_pri_apellido, $per_seg_apellido, $per_dni, $eciv_id,  $can_id_nacimiento, $per_fecha_nacimiento, $per_correo, $per_domicilio_csec, $per_domicilio_ref, $per_celular, $per_domicilio_telefono, $pai_id_domicilio, $pro_id_domicilio, $can_id_domicilio, $per_nacionalidad, $per_trabajo_direccion);
-                    }
-                }
-
-                // creación de contacto
-                    $modpersonacontacto = new PersonaContacto();
-                    $mod_persona = new Persona();
-                    $resp_persona = $mod_persona->consultPer_id();
-                    $persona = $resp_persona["ultimo"];
-                    $per_id = intval( $persona );
-
-                    $resexistecontacto = $modpersonacontacto->consultaPersonaContacto($per_id);
-                    if ($resexistecontacto) {
-                        if ($pcon_nombre != $pcon_apellido) {
-                            $contacto = $pcon_nombre . " " . $pcon_apellido;
-                        } else {
-                            $contacto = $pcon_nombre;
-                        }
-                        $resp_modcontacto = $modpersonacontacto->modificarPersonacontacto($per_id, $tpar_id, $contacto, $pcon_telefono, $pcon_celular, $pcon_direccion);
-                    } else {
-                        if ($sincontacto != 1) {
-                            //Creación de persona de contacto.
-                            $modpersonacontacto->crearPersonaContacto($per_id, $tpar_id, $pcon_nombre . " " . $pcon_apellido, $pcon_telefono, $pcon_celular, $pcon_direccion);
-                        }
-                    }
-                $model = new InscripcionGrado();
-                $resp_inscripcion = $model->consultarDatosInscripciongrado($per_id);
-                if ($resp_inscripcion['existe_inscripcion'] == 0){
-                    $resul = $model->insertarDataInscripciongrado($per_id, $unidad, $carrera, $modalidad, $periodo, $per_dni, $data);
-                    if ($resul) {
-                            $exito=1;
-                        }
-                    if($exito){
-                    \app\models\Utilities::putMessageLogFile('resultado es ok');
-                        //$_SESSION['persona_id'] =  $resul['per_id'];
-                        $transaction->commit();
+                    //$regPersona = $mod_persona->insertarPersonaInscripciongrado($per_pri_nombre, $per_seg_nombre, $per_pri_apellido, $per_seg_apellido, $per_dni, $eciv_id, $can_id_nacimiento, $per_fecha_nacimiento, $per_celular, $per_correo, $per_domicilio_csec, $per_domicilio_ref, $per_domicilio_telefono, $pai_id_domicilio, $pro_id_domicilio, $can_id_domicilio, $per_nacionalidad,$per_trabajo_direccion);
+                    $respPersona = $mod_persona->modificaPersonaInscripciongrado($per_pri_nombre, $per_seg_nombre, $per_pri_apellido, $per_seg_apellido, $per_dni, $eciv_id,  $can_id_nacimiento, $per_fecha_nacimiento, $per_celular, $per_correo, $per_domicilio_csec, $per_domicilio_ref, $per_domicilio_telefono, $pai_id_domicilio, $pro_id_domicilio, $can_id_domicilio, $per_nacionalidad, $per_trabajo_direccion);
+                    //$transaction->commit();
                         $message = array(
                             "wtmessage" => Yii::t("formulario", "The information have been saved"),
                             "title" => Yii::t('jslang', 'Success'),
                         );
                         return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
-                    }
+                    //Utilities::putMessageLogFile('encontro cedula y entro a actualizar persona');
+                }else{
 
-                    //}
-                    else {
-                        \app\models\Utilities::putMessageLogFile('resultado es NOok');
-                        $message = array(
-                            "wtmessage" => Yii::t("formulario", "The information have not been saved."),
-                            "title" => Yii::t('jslang', 'Success'),
-                        );
-                        return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t('jslang', 'Error'), 'false', $message, $resul);
-                    }
+                    //Aqui debe ser un mensaje que no existe la persona
                 }
             } catch (Exception $ex) {
                 $transaction->rollback();
@@ -386,8 +341,6 @@ class InscripciongradoController extends \yii\web\Controller {
             }
         }
     }
-
-
     public function actionAspirantegrado() {
         $per_id = @Yii::$app->session->get("PB_perid");
         $model_grado = new InscripcionGrado();

@@ -1028,8 +1028,7 @@ class Persona extends \yii\db\ActiveRecord {
      * @return
      */
     public function insertarPersonaInscripciongrado($per_pri_nombre, $per_seg_nombre, $per_pri_apellido, $per_seg_apellido, $per_dni, $eciv_id, $can_id_nacimiento, $per_fecha_nacimiento, $per_celular, $per_correo, $per_domicilio_csec, $per_domicilio_ref, $per_domicilio_telefono, $pai_id_domicilio, $pro_id_domicilio, $can_id_domicilio, $per_nacionalidad, $per_trabajo_direccion) {
-        //per_id
-        //$per_cedula='99999999999';
+        //AQUI
         $con = \Yii::$app->db_asgard;
         $sql = "INSERT INTO " . $con->dbname . ".persona
             (per_pri_nombre,per_seg_nombre,per_pri_apellido,per_seg_apellido,per_cedula,eciv_id,can_id_nacimiento,per_fecha_nacimiento,per_celular,per_correo,per_domicilio_csec,per_domicilio_ref,per_domicilio_telefono,pai_id_domicilio,pro_id_domicilio,can_id_domicilio,per_nacionalidad,per_trabajo_direccion,per_fecha_creacion,per_estado,per_estado_logico)VALUES
@@ -1041,23 +1040,28 @@ class Persona extends \yii\db\ActiveRecord {
         $command->bindParam(":per_pri_apellido", $per_pri_apellido, \PDO::PARAM_STR);
         $command->bindParam(":per_seg_apellido", $per_seg_apellido, \PDO::PARAM_STR);
         $command->bindParam(":per_dni", $per_dni, \PDO::PARAM_STR);
-        $command->bindParam(":eciv_id", $eciv_id, \PDO::PARAM_STR);
-        $command->bindParam(":can_id_nacimiento", $can_id_nacimiento, \PDO::PARAM_STR);
+        $command->bindParam(":eciv_id", $eciv_id, \PDO::PARAM_INT);
+        $command->bindParam(":can_id_nacimiento", $can_id_nacimiento, \PDO::PARAM_INT);
         $command->bindParam(":per_fecha_nacimiento", $per_fecha_nacimiento, \PDO::PARAM_STR);
         $command->bindParam(":per_celular", $per_celular, \PDO::PARAM_STR);
         $command->bindParam(":per_correo", $per_correo, \PDO::PARAM_STR);
         $command->bindParam(":per_domicilio_csec", $per_domicilio_csec, \PDO::PARAM_STR);
         $command->bindParam(":per_domicilio_ref", $per_domicilio_ref, \PDO::PARAM_STR);
         $command->bindParam(":per_domicilio_telefono", $per_domicilio_telefono, \PDO::PARAM_STR); //VALOR UNIQUE en la  base de Datos
-        $command->bindParam(":pai_id_domicilio", $pai_id_domicilio, \PDO::PARAM_STR);
-        $command->bindParam(":pro_id_domicilio", $pro_id_domicilio, \PDO::PARAM_STR);
-        $command->bindParam(":can_id_domicilio", $can_id_domicilio, \PDO::PARAM_STR);
-        $command->bindParam(":per_nacionalidad", $per_nacionalidad, \PDO::PARAM_STR);
+        $command->bindParam(":pai_id_domicilio", $pai_id_domicilio, \PDO::PARAM_INT);
+        $command->bindParam(":pro_id_domicilio", $pro_id_domicilio, \PDO::PARAM_INT);
+        $command->bindParam(":can_id_domicilio", $can_id_domicilio, \PDO::PARAM_INT);
+        $command->bindParam(":per_nacionalidad", $per_nacionalidad, \PDO::PARAM_INT);
         $command->bindParam(":per_trabajo_direccion", $per_trabajo_direccion, \PDO::PARAM_STR);
         $command->execute();
         return $con->getLastInsertID();
     }
-
+    /**
+     * Function Insertar Datos de Inscripcion Grado
+     * @author  Lisbeth Gonzalez <analista.desarrollo@uteg.edu.ec>
+     * @property integer
+     * @return
+     */
     public function modificaPersonaInscripciongrado($per_pri_nombre, $per_seg_nombre, $per_pri_apellido, $per_seg_apellido, $per_dni, $eciv_id,  $can_id_nacimiento, $per_fecha_nacimiento, $per_celular, $per_correo, $per_domicilio_csec, $per_domicilio_ref, $per_domicilio_telefono, $pai_id_domicilio, $pro_id_domicilio, $can_id_domicilio, $per_nacionalidad, $per_trabajo_direccion) {
         $con = \Yii::$app->db_asgard;
         $usuario_modifica = @Yii::$app->session->get("PB_iduser");
@@ -1116,7 +1120,7 @@ class Persona extends \yii\db\ActiveRecord {
             $comando->bindParam(":pro_id_domicilio", $pro_id_domicilio, \PDO::PARAM_INT);
             $comando->bindParam(":can_id_domicilio", $can_id_domicilio, \PDO::PARAM_INT);
             $comando->bindParam(":per_nacionalidad", ucwords(strtolower($per_nacionalidad)), \PDO::PARAM_STR);
-            $command->bindParam(":per_trabajo_direccion", $per_trabajo_direccion, \PDO::PARAM_STR);
+            $comando->bindParam(":per_trabajo_direccion", ucwords(strtolower($per_trabajo_direccion)), \PDO::PARAM_STR);
             $comando->bindParam(":per_fecha_modificacion", $per_fecha_modificacion, \PDO::PARAM_STR);
             $comando->bindParam(":usuario_modifica", $usuario_modifica, \PDO::PARAM_INT);
             $response = $comando->execute();

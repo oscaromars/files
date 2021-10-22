@@ -12,9 +12,8 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
           </div>
           </div>
           </div>';
-$cedula = $_GET['cedula'];
 ?>
-<?= Html::hiddenInput('txth_ced', $cedula, ['id' => 'txth_ced']); ?>
+<p>Cédula Obtenida: <input type="text" name="cedula" id="txt_cedula2" disabled></p>
 <form class="form-horizontal">
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <h3><span id="lbl_documentos"><?= Yii::t("formulario", "Documentación") ?></span></h3>

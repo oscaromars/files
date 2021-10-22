@@ -143,6 +143,11 @@ $(document).ready(function () {
     });
     // tabs create
     $('#paso1next').click(function () {
+        let lcedula = $("#txt_cedula").val();
+        localStorage.setItem("cedula", lcedula);
+        //window.location.href = '#';
+        let lcedulas =localStorage.getItem("cedula");
+        $("#txt_cedula2").val(lcedulas);
         $("a[data-href='#paso1']").attr('data-toggle', 'none');
         $("a[data-href='#paso1']").parent().attr('class', 'disabled');
         $("a[data-href='#paso1']").attr('data-href', $("a[href='#paso1']").attr('href'));

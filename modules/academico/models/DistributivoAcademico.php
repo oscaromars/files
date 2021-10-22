@@ -1562,8 +1562,7 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
 	}
 
 	/**
-	 * Function getSemanahoraposgrado - Modificación en calcular las fechas de inicio y fin al momento de calcular el
-	 * promedio ajustado
+	 * Function getSemanahoraposgrado - Modificación en calcular las fechas de inicio y fin al momento de calcular el promedio ajustado
 	 * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
 	 * @modify Luis Cajamarca <analista04>
 	 * @property integer
@@ -1573,22 +1572,22 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
 		$con_academico = \Yii::$app->db_academico;
 		$estado = 1;
 		$sql = "SELECT
-                case when da.uaca_id = 2 and td.tdis_id =1 then dah.daho_total_horas else 0 end  as total_hora_semana_docenciaposgrado,
-                ROUND(timestampdiff(day, daca_fecha_inicio_post, daca_fecha_fin_post)/7) as semanas_posgrado,
-                ROUND(timestampdiff(day, pa.paca_fecha_inicio, da.daca_fecha_inicio_post)/7) as fecha_inicio,
-                ROUND(timestampdiff(day, pa.paca_fecha_inicio, da.daca_fecha_fin_post)/7) as fecha_inicio,
-                pa.paca_semanas_periodo as semanas_docencia,
-				pa.paca_semanas_inv_vinc_tuto as semanas_tutoria_vinulacion_investigacion
-            FROM db_academico.distributivo_academico da
-            inner join db_academico.distributivo_cabecera dc on da.dcab_id = dc.dcab_id
-            inner join db_academico.tipo_distributivo td on td.tdis_id=da.tdis_id
-			inner join db_academico.periodo_academico pa on pa.paca_id=da.paca_id
-            left join db_academico.distributivo_academico_horario dah on dah.daho_id=da.daho_id
-            where dcab_id = :dcab_id and
-            da.uaca_id = 2 and
-            da.daca_estado = :estado and
-            da.daca_estado_logico = :estado
-            order by semanas_posgrado desc";
+	                case when da.uaca_id = 2 and td.tdis_id =1 then dah.daho_total_horas else 0 end  as total_hora_semana_docenciaposgrado,
+	                ROUND(timestampdiff(day, daca_fecha_inicio_post, daca_fecha_fin_post)/7) as semanas_posgrado,
+	                ROUND(timestampdiff(day, pa.paca_fecha_inicio, da.daca_fecha_inicio_post)/7)+1 as fecha_inicio,
+	                ROUND(timestampdiff(day, pa.paca_fecha_inicio, da.daca_fecha_fin_post)/7) as fecha_fin,
+	                pa.paca_semanas_periodo as semanas_docencia,
+	                pa.paca_semanas_inv_vinc_tuto as semanas_tutoria_vinulacion_investigacion
+	            FROM db_academico.distributivo_academico da
+	            inner join db_academico.distributivo_cabecera dc on da.dcab_id = dc.dcab_id
+	            inner join db_academico.tipo_distributivo td on td.tdis_id=da.tdis_id
+	            inner join db_academico.periodo_academico pa on pa.paca_id=da.paca_id
+	            left join db_academico.distributivo_academico_horario dah on dah.daho_id=da.daho_id
+	            where da.dcab_id = :dcab_id and
+	            da.uaca_id = 2 and
+	            da.daca_estado = :estado and
+	            da.daca_estado_logico = :estado
+	            order by total_hora_semana_docenciaposgrado desc";
 		$comando = $con_academico->createCommand($sql);
 		$comando->bindParam(":dcab_id", $dcab_id, \PDO::PARAM_INT);
 		$comando->bindParam(":estado", $estado, \PDO::PARAM_INT);

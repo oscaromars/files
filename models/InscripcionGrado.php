@@ -96,7 +96,7 @@ class InscripcionGrado extends \yii\db\ActiveRecord
     }
 
     /**
-     * Function addLabelTimeDocumentos renombra el documento agregando una varible de tiempo 
+     * Function addLabelTimeDocumentos renombra el documento agregando una varible de tiempo
      * @author  Developer Uteg <developer@uteg.edu.ec>
      * @param   int     $sins_id        Id de la solicitud
      * @param   string  $file           Uri del Archivo a modificar
@@ -126,10 +126,10 @@ class InscripcionGrado extends \yii\db\ActiveRecord
         $sql = "
                 SELECT  per_id
                 FROM " . $con->dbname . ".persona
-                WHERE per_cedula = :per_dni AND  
+                WHERE per_cedula = :per_dni AND
                      per_estado = :estado AND
                      per_estado_logico = :estado";
-                     
+
         \app\models\Utilities::putMessageLogFile('resultado del query: '.$comando->getRawSql());
         $comando = $con->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
@@ -149,10 +149,10 @@ class InscripcionGrado extends \yii\db\ActiveRecord
         $sql = "
                 SELECT  count(*) as per_id
                 FROM " . $con->dbname . ".inscripcion_grado
-                WHERE per_id = :per_id AND  
+                WHERE per_id = :per_id AND
                      igra_estado = :estado AND
                      igra_estado_logico = :estado";
-                     
+
         \app\models\Utilities::putMessageLogFile('resultado del query: '.$comando->getRawSql());
         $comando = $con->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
@@ -255,7 +255,7 @@ class InscripcionGrado extends \yii\db\ActiveRecord
 
         try {
             $command = $con->createCommand
-                    ("UPDATE " . $con->dbname . ".inscripcion_grado 
+                    ("UPDATE " . $con->dbname . ".inscripcion_grado
                         SET igra_cedula=:per_dni, igra_ruta_doc_titulo=:igra_ruta_doc_titulo, igra_ruta_doc_dni=:igra_ruta_doc_dni, igra_ruta_doc_certvota=:igra_ruta_doc_certvota,igra_ruta_doc_foto=:igra_ruta_doc_foto,igra_ruta_doc_comprobantepago=:igra_ruta_doc_comprobantepago,igra_ruta_doc_recordacademico=:igra_ruta_doc_record,igra_ruta_doc_certificado=:igra_ruta_doc_certificado,igra_ruta_doc_syllabus=:igra_ruta_doc_syllabus,igra_ruta_doc_homologacion=:igra_ruta_doc_homologacion,igra_fecha_modificacion=:igra_fecha_modificacion
                         WHERE per_id =:per_id");
             /*$met_ing = 0;
@@ -302,13 +302,13 @@ class InscripcionGrado extends \yii\db\ActiveRecord
         //$estado_precio = 'A';
 
         $sql = "
-                SELECT  
+                SELECT
                         count(*) as existe_inscripcion
-                FROM " . $con->dbname . ".inscripcion_grado 
-                WHERE per_id = :per_id AND  
+                FROM " . $con->dbname . ".inscripcion_grado
+                WHERE per_id = :per_id AND
                      igra_estado = :estado AND
                      igra_estado_logico = :estado";
-                     
+
         $comando = $con->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
         $comando->bindParam(":per_id", $per_id, \PDO::PARAM_STR);
@@ -329,10 +329,10 @@ class InscripcionGrado extends \yii\db\ActiveRecord
                         mod_id,
                         paca_id
                 FROM " . $con->dbname . ".inscripcion_grado
-                WHERE per_id = :per_id AND  
+                WHERE per_id = :per_id AND
                      igra_estado = :estado AND
                      igra_estado_logico = :estado";
-                     
+
         $comando = $con->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
         $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
@@ -380,7 +380,7 @@ class InscripcionGrado extends \yii\db\ActiveRecord
                 Inner Join " . $con_academico->dbname . ".modalidad as moda on moda.mod_id = igra.mod_id
                 Inner Join " . $con_academico->dbname . ".periodo_academico as paca on paca.paca_id = igra.paca_id
                 Inner Join " . $con_academico->dbname . ".semestre_academico as saca on saca.saca_id = paca.saca_id
-                Inner Join " . $con_academico->dbname . ".bloque_academico as baca on baca.baca_id = paca.baca_id 
+                Inner Join " . $con_academico->dbname . ".bloque_academico as baca on baca.baca_id = paca.baca_id
                 WHERE $str_search
                 igra.igra_estado = :estado and igra.igra_estado_logico = :estado and
                 per.per_estado = :estado and per.per_estado_logico = :estado and
@@ -435,15 +435,15 @@ class InscripcionGrado extends \yii\db\ActiveRecord
         $con = \Yii::$app->db_inscripcion;
         $estado = 1;
 
-        $sql = "SELECT  per_id, 
-                igra_ruta_doc_titulo, 
-                igra_ruta_doc_dni, 
-                igra_ruta_doc_certvota, 
-                igra_ruta_doc_foto, 
-                igra_ruta_doc_comprobantepago, 
-                igra_ruta_doc_recordacademico, 
-                igra_ruta_doc_certificado, 
-                igra_ruta_doc_syllabus, 
+        $sql = "SELECT  per_id,
+                igra_ruta_doc_titulo,
+                igra_ruta_doc_dni,
+                igra_ruta_doc_certvota,
+                igra_ruta_doc_foto,
+                igra_ruta_doc_comprobantepago,
+                igra_ruta_doc_recordacademico,
+                igra_ruta_doc_certificado,
+                igra_ruta_doc_syllabus,
                 igra_ruta_doc_homologacion
                 FROM " . $con->dbname . ".inscripcion_grado
                 WHERE per_id = :per_id AND
@@ -456,4 +456,5 @@ class InscripcionGrado extends \yii\db\ActiveRecord
         $resultData = $comando->queryOne();
         return $resultData;
     }
+
 }

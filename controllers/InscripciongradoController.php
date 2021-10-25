@@ -173,8 +173,8 @@ class InscripciongradoController extends \yii\web\Controller {
 
             $con = \Yii::$app->db;
             $transaction = $con->beginTransaction();
-            $con1 = \Yii::$app->db_captacion;
-            $transaction1 = $con1->beginTransaction();
+            //$con1 = \Yii::$app->db_captacion;
+            //$transaction1 = $con1->beginTransaction();
 
             $timeSt = date(Yii::$app->params["dateByDefault"]);
             try {
@@ -313,20 +313,54 @@ class InscripciongradoController extends \yii\web\Controller {
                 $pcon_celular = $data["tel_emergencia"];
                 $pcon_direccion = $data["dir_personacontacto"];
 
-                $insc_persona = new Persona();
+                //imagenes
+                $igra_ruta_doc_titulo = $data['igra_ruta_doc_titulo'];
+                $igra_ruta_doc_dni = $data['igra_ruta_doc_dni'];
+                $igra_ruta_doc_certvota = $data['igra_ruta_doc_certvota'];
+                $igra_ruta_doc_foto = $data['igra_ruta_doc_foto'];
+                $igra_ruta_doc_comprobantepago = $data['igra_ruta_doc_comprobantepago'];
+                $igra_ruta_doc_record = $data['igra_ruta_doc_record'];
+                $igra_ruta_doc_certificado = $data['igra_ruta_doc_certificado'];
+                $igra_ruta_doc_syllabus = $data['igra_ruta_doc_syllabus'];
+                $igra_ruta_doc_homologacion = $data['igra_ruta_doc_homologacion'];
+
+                //$insc_persona = new Persona();
                 //$resp_persona = $insc_persona->ConsultaRegistroExiste( 0,$per_dni, $per_dni);
-                $resp_persona = $insc_persona->consultaPeridxdni($per_dni);
-                if ($resp_persona['per_id'] > 0) {
+                //$resp_persona = $insc_persona->consultaPeridxdni($per_dni);
+                if ($per_id > 0) {
+                    $model = new InscripcionGrado();
                     //Nuevo Registro // si existe no guardar actualizar la data de persona se modifica
                     //$regPersona = $mod_persona->insertarPersonaInscripciongrado($per_pri_nombre, $per_seg_nombre, $per_pri_apellido, $per_seg_apellido, $per_dni, $eciv_id, $can_id_nacimiento, $per_fecha_nacimiento, $per_celular, $per_correo, $per_domicilio_csec, $per_domicilio_ref, $per_domicilio_telefono, $pai_id_domicilio, $pro_id_domicilio, $can_id_domicilio, $per_nacionalidad,$per_trabajo_direccion);
                     $respPersona = $mod_persona->modificaPersonaInscripciongrado($per_pri_nombre, $per_seg_nombre, $per_pri_apellido, $per_seg_apellido, $per_dni, $eciv_id,  $can_id_nacimiento, $per_fecha_nacimiento, $per_celular, $per_correo, $per_domicilio_csec, $per_domicilio_ref, $per_domicilio_telefono, $pai_id_domicilio, $pro_id_domicilio, $can_id_domicilio, $per_nacionalidad, $per_trabajo_direccion);
-                    //$transaction->commit();
+                    //consultar si existe  la persona en la tabla inscripcion_grado
+                    $resp_inscripcion = $model->consultarDatosInscripciongrado($per_id);
+                    //si existe modificar los datos
+                    if ($resp_inscripcion['existe_inscripcion'] > 0){
+                        // modificar la tabla
+                        $cone = \Yii::$app->db_inscripcion;
+                        $mod_inscripciongrado = new InscripcionGrado();
+                        $inscripciongrado = $mod_inscripciongrado->updateDataInscripciongrado($cone, $per_id, $per_dni, $igra_ruta_doc_titulo, $igra_ruta_doc_dni, $igra_ruta_doc_certvota, $igra_ruta_doc_foto, $igra_ruta_doc_comprobantepago, $igra_ruta_doc_record, $igra_ruta_doc_certificado, $igra_ruta_doc_syllabus, $igra_ruta_doc_homologacion);
+                        $exito=1;
+                    }else{ // caso contrario crear
+                        $resul = $model->insertarDataInscripciongrado($per_id, $unidad, $carrera, $modalidad, $periodo, $per_dni, $data);
+                        if ($resul) {
+                            $exito=1;
+                        }
+                    }
+                    if($exito){
                         $message = array(
                             "wtmessage" => Yii::t("formulario", "The information have been saved"),
                             "title" => Yii::t('jslang', 'Success'),
                         );
                         return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
-                }else{
+                    }else{
+                        $message = array(
+                            "wtmessage" => Yii::t("formulario", "The information have not been saved."),
+                            "title" => Yii::t('jslang', 'Success'),
+                        );
+                        return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t('jslang', 'Error'), 'false', $message, $resul);
+                    }
+                    }else{
 
                     //Aqui debe ser un mensaje que no existe la persona
                     $message = array(

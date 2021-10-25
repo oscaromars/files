@@ -50,7 +50,7 @@ academico::registerTranslations();
             <div class="form-group">
                 <label for="lbl_carrera" class="col-sm-3 control-label"><?= Yii::t("crm", "Carrera"); ?> <span class="text-danger">*</span> </label>
                 <div class="col-sm-7">
-                    <?= Html::dropDownList("cmb_carrera", 0, $arr_carrera, ["class" => "form-control", "id" => "cmb_carrera"]) ?>
+                    <?= Html::dropDownList("cmb_carrera", 0, $arr_carrera, ["class" => "form-control PBvalidation", "id" => "cmb_carrera"]) ?>
                 </div>
             </div>
         </div>
@@ -60,7 +60,7 @@ academico::registerTranslations();
             <div class="form-group">
                 <label for="lbl_modalidad" class="col-sm-3 control-label"><?= Yii::t("formulario", "Mode"); ?> <span class="text-danger">*</span> </label>
                 <div class="col-sm-7">
-                    <?= Html::dropDownList("cmb_modalidad", 0, $arr_modalidad, ["class" => "form-control", "id" => "cmb_modalidad"]) ?>
+                    <?= Html::dropDownList("cmb_modalidad", 0, $arr_modalidad, ["class" => "form-control PBvalidation", "id" => "cmb_modalidad"]) ?>
                 </div>
             </div>
         </div>
@@ -68,7 +68,7 @@ academico::registerTranslations();
             <div class="form-group">
                 <label for="lbl_periodo" class="col-sm-3 control-label"><?= Yii::t("formulario", "Period"); ?> <span class="text-danger">*</span> </label>
                 <div class="col-sm-7">
-                    <?= Html::dropDownList("cmb_periodo", 0, $arr_periodo, ["class" => "form-control", "id" => "cmb_periodo"]) ?>
+                    <?= Html::dropDownList("cmb_periodo", 0, $arr_periodo, ["class" => "form-control PBvalidation", "id" => "cmb_periodo"]) ?>
                 </div>
             </div>
         </div><br><br></br>

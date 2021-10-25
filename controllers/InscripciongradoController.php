@@ -902,15 +902,52 @@ class InscripciongradoController extends \yii\web\Controller {
                 $pcon_celular = ucwords(strtolower($data["tel_emergencia"]));
                 $pcon_direccion = ucwords(strtolower($data["dir_personacontacto"]));
 
-                $igra_ruta_doc_titulo = $data['igra_ruta_doc_titulo'];
-                $igra_ruta_doc_dni = $data['igra_ruta_doc_dni'];
-                $igra_ruta_doc_certvota = $data['igra_ruta_doc_certvota'];
-                $igra_ruta_doc_foto = $data['igra_ruta_doc_foto'];
-                $igra_ruta_doc_comprobantepago = $data['igra_ruta_doc_comprobantepago'];
-                $igra_ruta_doc_record = $data['igra_ruta_doc_record'];
-                $igra_ruta_doc_certificado = $data['igra_ruta_doc_certificado'];
-                $igra_ruta_doc_syllabus = $data['igra_ruta_doc_syllabus'];
-                $igra_ruta_doc_homologacion = $data['igra_ruta_doc_homologacion'];
+                // if estos data vienen null no hacer nada
+                if(empty($data['igra_ruta_doc_titulo'])){
+                    $igra_ruta_doc_titulo = null;
+                }else{
+                    $igra_ruta_doc_titulo = $data['igra_ruta_doc_titulo'];
+                }
+                if(empty($data['igra_ruta_doc_dni'])){
+                    $igra_ruta_doc_dni = null;
+                }else{
+                    $igra_ruta_doc_dni = $data['igra_ruta_doc_dni'];
+                }
+                if(empty($data['igra_ruta_doc_certvota'])){
+                    $igra_ruta_doc_certvota = null;
+                }else{
+                    $igra_ruta_doc_certvota = $data['igra_ruta_doc_certvota'];
+                }
+                if(empty($data['igra_ruta_doc_foto'])){
+                    $igra_ruta_doc_foto = null;
+                }else{
+                    $igra_ruta_doc_foto = $data['igra_ruta_doc_foto'];
+                }
+                if(empty($data['igra_ruta_doc_comprobantepago'])){
+                    $$igra_ruta_doc_comprobantepago = null;
+                }else{
+                    $igra_ruta_doc_comprobantepago = $data['igra_ruta_doc_comprobantepago'];
+                }
+                if(empty($data['igra_ruta_doc_record'])){
+                    $igra_ruta_doc_record = null;
+                }else{
+                    $igra_ruta_doc_record = $data['igra_ruta_doc_record'];
+                }
+                if(empty($data['igra_ruta_doc_certificado'])){
+                    $igra_ruta_doc_certificado = null;
+                }else{
+                    $igra_ruta_doc_certificado = $data['igra_ruta_doc_certificado'];
+                }
+                if(empty($data['igra_ruta_doc_syllabus'])){
+                    $igra_ruta_doc_syllabus = null;
+                }else{
+                    $igra_ruta_doc_syllabus = $data['igra_ruta_doc_syllabus'];
+                }
+                if(empty($data['igra_ruta_doc_homologacion'])){
+                    $igra_ruta_doc_homologacion = null;
+                }else{
+                    $igra_ruta_doc_homologacion = $data['igra_ruta_doc_homologacion'];
+                }
 
                 $fecha_modificacion = date(Yii::$app->params["dateTimeByDefault"]);
 

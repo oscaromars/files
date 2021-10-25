@@ -244,27 +244,46 @@ class InscripcionGrado extends \yii\db\ActiveRecord
     public function updateDataInscripciongrado($con, $per_id, $per_dni, $igra_ruta_doc_titulo, $igra_ruta_doc_dni, $igra_ruta_doc_certvota, $igra_ruta_doc_foto, $igra_ruta_doc_comprobantepago, $igra_ruta_doc_record, $igra_ruta_doc_certificado, $igra_ruta_doc_syllabus, $igra_ruta_doc_homologacion) {
         //\app\models\Utilities::putMessageLogFile('datos de archivo cargados:' . $data['igra_ruta_doc_certvota']);
         \app\models\Utilities::putMessageLogFile('igra_ruta_doc_certvota:  '.$igra_ruta_doc_certvota);
-
+        $imagenes = "";
         $fecha_modificacion = date(Yii::$app->params["dateTimeByDefault"]);
 
         if ($trans !== null) {
             $trans = null; // si existe la transacción entonces no se crea una
-        } else {
-            $trans = $con->beginTransaction(); // si no existe la transacción entonces se crea una
         }
-
+        if(!empty($igra_ruta_doc_titulo)){
+            $imagenes .= "igra_ruta_doc_titulo=:igra_ruta_doc_titulo,";
+        }
+        if(!empty($igra_ruta_doc_dni)){
+            $imagenes .= "igra_ruta_doc_dni=:igra_ruta_doc_dni,";
+        }
+        if(!empty($igra_ruta_doc_certvota)){
+            $imagenes .= "igra_ruta_doc_certvota=:igra_ruta_doc_certvota,";
+        }
+        if(!empty($igra_ruta_doc_foto)){
+           $imagenes .= "igra_ruta_doc_foto=:igra_ruta_doc_foto,";
+        }
+        if(!empty($igra_ruta_doc_comprobantepago)){
+           $imagenes .= "igra_ruta_doc_comprobantepago=:igra_ruta_doc_comprobantepago,";
+        }
+        if(!empty($igra_ruta_doc_record)){
+           $imagenes .= "igra_ruta_doc_recordacademico=:igra_ruta_doc_record,";
+        }
+        if(!empty($igra_ruta_doc_certificado)){
+           $imagenes .= "igra_ruta_doc_certificado=:igra_ruta_doc_certificado,";
+        }
+        if(!empty($igra_ruta_doc_syllabus)){
+            $imagenes .= "igra_ruta_doc_syllabus=:igra_ruta_doc_syllabus,";
+        }
+        if(!empty($igra_ruta_doc_homologacion)){
+           $imagenes .= "igra_ruta_doc_homologacion=:igra_ruta_doc_homologacion,";
+        }
         try {
             $command = $con->createCommand
                     ("UPDATE " . $con->dbname . ".inscripcion_grado
-                        SET igra_cedula=:per_dni, igra_ruta_doc_titulo=:igra_ruta_doc_titulo, igra_ruta_doc_dni=:igra_ruta_doc_dni, igra_ruta_doc_certvota=:igra_ruta_doc_certvota,igra_ruta_doc_foto=:igra_ruta_doc_foto,igra_ruta_doc_comprobantepago=:igra_ruta_doc_comprobantepago,igra_ruta_doc_recordacademico=:igra_ruta_doc_record,igra_ruta_doc_certificado=:igra_ruta_doc_certificado,igra_ruta_doc_syllabus=:igra_ruta_doc_syllabus,igra_ruta_doc_homologacion=:igra_ruta_doc_homologacion,igra_fecha_modificacion=:igra_fecha_modificacion
+                        SET igra_cedula=:per_dni,
+                        $imagenes
+                        igra_fecha_modificacion=:igra_fecha_modificacion
                         WHERE per_id =:per_id");
-            /*$met_ing = 0;
-            if (empty($data['ming_id'])) {
-                $met_ing = 0;
-            } else {
-                $met_ing = $data['ming_id'];
-            }*/
-            //$command = $con->createCommand($sql);
             //$command->bindParam(":igra_id", $igra_id, \PDO::PARAM_INT);
             $command->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
             //$command->bindParam(":uaca_id", $unidad, \PDO::PARAM_INT);
@@ -273,15 +292,35 @@ class InscripcionGrado extends \yii\db\ActiveRecord
             //$command->bindParam(":paca_id", $periodo, \PDO::PARAM_INT);
             $command->bindParam(":per_dni", $per_dni, \PDO::PARAM_STR);
             //$command->bindParam(":igra_metodo_ingreso", $met_ing, \PDO::PARAM_INT);
+            // si vienen nulos no agragrlos
+            if(!empty($igra_ruta_doc_titulo)){
             $command->bindParam(":igra_ruta_doc_titulo", $igra_ruta_doc_titulo, \PDO::PARAM_STR);
+            }
+            if(!empty($igra_ruta_doc_dni)){
             $command->bindParam(":igra_ruta_doc_dni", $igra_ruta_doc_dni, \PDO::PARAM_STR);
+            }
+            if(!empty($igra_ruta_doc_certvota)){
             $command->bindParam(":igra_ruta_doc_certvota", $igra_ruta_doc_certvota, \PDO::PARAM_STR);
+            }
+            if(!empty($igra_ruta_doc_foto)){
             $command->bindParam(":igra_ruta_doc_foto", $igra_ruta_doc_foto, \PDO::PARAM_STR);
+            }
+            if(!empty($igra_ruta_doc_comprobantepago)){
             $command->bindParam(":igra_ruta_doc_comprobantepago", $igra_ruta_doc_comprobantepago, \PDO::PARAM_STR);
-            $command->bindParam(":igra_ruta_doc_record", $igra_ruta_doc_record, \PDO::PARAM_STR);
-            $command->bindParam(":igra_ruta_doc_certificado", $igra_ruta_doc_certificado, \PDO::PARAM_STR);
-            $command->bindParam(":igra_ruta_doc_syllabus", $igra_ruta_doc_syllabus, \PDO::PARAM_STR);
-            $command->bindParam(":igra_ruta_doc_homologacion", $igra_ruta_doc_homologacion, \PDO::PARAM_STR);
+            }
+            if(!empty($igra_ruta_doc_record)){
+                $command->bindParam(":igra_ruta_doc_record", $igra_ruta_doc_record, \PDO::PARAM_STR);
+            }
+            if(!empty($igra_ruta_doc_certificado)){
+                $command->bindParam(":igra_ruta_doc_certificado", $igra_ruta_doc_certificado, \PDO::PARAM_STR);
+            }
+            if(!empty($igra_ruta_doc_syllabus)){
+                $command->bindParam(":igra_ruta_doc_syllabus", $igra_ruta_doc_syllabus, \PDO::PARAM_STR);
+            }
+            if(!empty($igra_ruta_doc_homologacion)){
+                $command->bindParam(":igra_ruta_doc_homologacion", $igra_ruta_doc_homologacion, \PDO::PARAM_STR);
+            }
+            // si vienen nulos no agragarlos
             $command->bindParam(":igra_fecha_modificacion", $fecha_modificacion, \PDO::PARAM_STR);
             $response = $command->execute();
 

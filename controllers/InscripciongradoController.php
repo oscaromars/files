@@ -889,10 +889,10 @@ class InscripciongradoController extends \yii\web\Controller {
 
                 //datos en caso de emergencias
                 $per_trabajo_direccion = $data["dir_trabajo"];
-                $pcon_nombre = $data["cont_emergencia"];
+                $pcon_nombre = ucwords(strtolower($data["cont_emergencia"]));
                 $tpar_id = $data["parentesco"];
-                $pcon_celular = $data["tel_emergencia"];
-                $pcon_direccion = $data["dir_personacontacto"];
+                $pcon_celular = ucwords(strtolower($data["tel_emergencia"]));
+                $pcon_direccion = ucwords(strtolower($data["dir_personacontacto"]));
 
                 $igra_ruta_doc_titulo = $data['igra_ruta_doc_titulo'];
                 $igra_ruta_doc_dni = $data['igra_ruta_doc_dni'];
@@ -908,10 +908,10 @@ class InscripciongradoController extends \yii\web\Controller {
 
                 $persona_model = Persona::findOne($per_id);
                 $persona_model->per_cedula = $per_dni;
-                $persona_model->per_pri_nombre = $per_pri_nombre;
-                $persona_model->per_seg_nombre = $per_seg_nombre;
-                $persona_model->per_pri_apellido = $per_pri_apellido;
-                $persona_model->per_seg_apellido = $per_seg_apellido;
+                $persona_model->per_pri_nombre =  ucwords(strtolower($per_pri_nombre));
+                $persona_model->per_seg_nombre = ucwords(strtolower($per_seg_nombre)) ;
+                $persona_model->per_pri_apellido = ucwords(strtolower($per_pri_apellido));
+                $persona_model->per_seg_apellido = ucwords(strtolower($per_seg_apellido));
                 $persona_model->can_id_nacimiento = $can_id_nacimiento;
                 $persona_model->per_fecha_nacimiento = $per_fecha_nacimiento;
                 $persona_model->per_nacionalidad = $per_nacionalidad;
@@ -921,12 +921,12 @@ class InscripciongradoController extends \yii\web\Controller {
                 $persona_model->pai_id_domicilio = $pai_id_domicilio;
                 $persona_model->pro_id_domicilio = $pro_id_domicilio;
                 $persona_model->can_id_domicilio = $can_id_domicilio;
-                $persona_model->per_domicilio_csec = $per_domicilio_csec;
-                $persona_model->per_domicilio_ref = $per_domicilio_ref;
+                $persona_model->per_domicilio_csec = ucwords(strtolower($per_domicilio_csec));
+                $persona_model->per_domicilio_ref = ucwords(strtolower($per_domicilio_ref));
                 $persona_model->per_celular = $per_celular;
                 $persona_model->per_domicilio_telefono = $per_domicilio_telefono;
-                $persona_model->per_correo = $per_correo;
-                $persona_model->per_trabajo_direccion = $per_trabajo_direccion;
+                $persona_model->per_correo = ucwords(strtolower($per_correo));
+                $persona_model->per_trabajo_direccion = ucwords(strtolower($per_trabajo_direccion));
                 $persona_model->per_usuario_modifica = $usuario;
                 $persona_model->per_fecha_modificacion = $fecha_modificacion;
                 $persona_model->update();

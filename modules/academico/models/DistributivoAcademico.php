@@ -268,7 +268,15 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
 		return $res;
 	} //function buscarEstudiantesMatriculados
 
-	public function buscarEstudiantesAsignados($id, $num_paralelo, $daca_id) {
+	/**
+	 * Function de busquedad de los estudiante en distributivoAcademicoEstudiante (Daes_id)
+	 * @author ?
+	 * @modify Luis Cajamarca <analista04>
+	 * @param
+	 * @return  $res (Retornar los datos).
+	 */
+
+	public function buscarEstudiantesAsignados($id/*, $num_paralelo*/, $daca_id) {
 		$con_academico = \Yii::$app->db_academico;
 		$con_db = \Yii::$app->db;
 		/*
@@ -288,50 +296,43 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
 			                " where  mad.asi_id=".$id;
 		*/
 
-		$sql = "SELECT est.est_id as est_id
-                       ,daes.daes_id
+		$sql = "SELECT distinct daes.daes_id as daes_id
+                       ,est.est_id as est_id
+                       ,daca.paca_id
+                      -- ,pes.pla_id
                        ,mpp.mpp_num_paralelo
                        ,daes.daca_id
                        ,made.asi_id
-                  FROM db_academico.registro_online as ron
-            inner join db_academico.registro_online_item as roi
-                    on roi.ron_id=ron.ron_id
-                   and roi.roi_estado = 1 and roi.roi_estado_logico = 1
-            inner join db_asgard.persona as per
-                    on per.per_id = ron.per_id
-                   and per.per_estado = 1 and per.per_estado_logico = 1
-            /*inner join db_academico.registro_pago_matricula as rpm
-                    on rpm.per_id = ron.per_id  */
+                  FROM db_academico.distributivo_academico_estudiante daes
+            Inner join db_academico.distributivo_academico as daca
+                    on daca.daca_id = daes.daca_id
             inner join db_academico.estudiante as est
-                    on est.per_id = per.per_id
+                    on est.est_id = daes.est_id
                    /*and est.est_id = $est_id*/
                    and est.est_estado = 1 and est.est_estado_logico = 1
-            inner join db_academico.planificacion_estudiante as pes
-                    on pes.pes_id = ron.pes_id
-                   and pes.per_id = per.per_id
-                   and pes.pes_estado = 1 and pes.pes_estado_logico = 1
+            inner join db_asgard.persona as per
+                    on per.per_id = est.per_id
+                   and per.per_estado = 1 and per.per_estado_logico = 1
             inner join db_academico.malla_academica_detalle as made
-                    on made.made_codigo_asignatura = roi.roi_materia_cod
+                    on daca.asi_id = made.asi_id
+                  -- and made.made_codigo_asignatura = roi.roi_materia_cod
                    and made.made_estado = 1 and made.made_estado_logico = 1
-            /*inner join db_academico.asignatura as asi on asi.asi_id = mad.asi_id*/
-            left join db_academico.distributivo_academico_estudiante as daes
-                    on daes.est_id = est.est_id
-                   and daes.daca_id = $daca_id
-                   and daes.daes_estado = 1 and daes.daes_estado_logico = 1
-            left join db_academico.distributivo_academico as daca
-                    on daca.daca_id = daes.daca_id
-                   and daca.asi_id = made.asi_id
-                   and daca.uaca_id = 1
-                   and daca.daca_estado = 1 and daca.daca_estado_logico = 1
-            left join db_academico.materia_paralelo_periodo as mpp
-                    on mpp.mpp_id = daca.mpp_id
-                   and mpp.mpp_num_paralelo = $num_paralelo
+            inner join db_academico.materia_paralelo_periodo as mpp
+                    on daca.mpp_id = mpp.mpp_id
+                  -- and mpp.mpp_num_paralelo = $num_paralelo
                    and mpp.mpp_estado = 1 and daca.daca_estado_logico = 1
+             left join db_academico.registro_online as ron
+                    on per.per_id = ron.per_id
+                   and ron.ron_estado = 1 and ron.ron_estado_logico = 1
+             left join db_academico.registro_online_item as roi
+                    on ron.ron_id = roi.ron_id
+                   and made.made_codigo_asignatura = roi.roi_materia_cod
+                   and roi.roi_estado = 1 and roi.roi_estado_logico = 1
+
                  where 1=1
-                   /*and daes.est_id is null*/
+                   and daca.daca_id = $daca_id
                    and made.asi_id = $id
-                   and ron.ron_estado = 1
-                   and ron.ron_estado_logico = 1";
+                   and daes.daes_estado = 1 and daes.daes_estado_logico = 1";
 
 		$comando = $con_academico->createCommand($sql);
 		$res = $comando->queryAll();
@@ -345,6 +346,39 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
 		$sql = " select da.daca_id as id, mpp_num_paralelo as name from db_academico.distributivo_academico as da
                    inner join db_academico.materia_paralelo_periodo as mpp on mpp.mpp_id = da.mpp_id
                    where da.asi_id = " . $asi_id;
+
+		$comando = $con_academico->createCommand($sql);
+		$res = $comando->queryAll();
+		return $res;
+	}
+
+	/**
+	 * Function de busquedad de los paralelos en distributivoAcademico (Daca_id), validado con el paca_id
+	 * id = Daca_id && name = Paralelo y Nombre del Docente.
+	 * @author ?
+	 * @modify Luis Cajamarca <analista04>
+	 * @param
+	 * @return  $res (Retornar los datos).
+	 */
+
+	public function getParaleloxPeriodo($asi_id, $paca_id) {
+		$con_academico = \Yii::$app->db_academico;
+		$con_db = \Yii::$app->db;
+		$sql = "SELECT da.daca_id as id,
+                CONCAT('P',mpp_num_paralelo, ' - ',upper(ifnull(trim(per.per_pri_nombre),'')),' ',upper(ifnull(trim(per.per_pri_apellido),''))) as name
+                      from db_academico.distributivo_academico as da
+                inner join db_academico.materia_paralelo_periodo as mpp
+                        on mpp.mpp_id = da.mpp_id
+                       and mpp.mpp_estado = 1 and mpp.mpp_estado_logico = 1
+                inner join db_academico.profesor pro
+                        on da.pro_id = pro.pro_id
+                       and pro.pro_estado = 1 and pro.pro_estado_logico = 1
+                inner join db_asgard.persona per
+                        on per.per_id=pro.per_id
+                       and per.per_estado = 1 and per.per_estado_logico = 1
+                where da.asi_id = $asi_id AND da.paca_id = $paca_id
+                and da.daca_estado = 1 and da.daca_estado_logico = 1
+                order by 2";
 
 		$comando = $con_academico->createCommand($sql);
 		$res = $comando->queryAll();

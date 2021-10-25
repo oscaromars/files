@@ -11,7 +11,9 @@ academico::registerTranslations();
 financiero::registerTranslations();
 //print_r($persona_model);
 //echo 'sdf. '. $arch1;
+$per_id = $persona_model->per_id;
 ?>
+
 <?= Html::hiddenInput('txth_igra_id', base64_encode($igra_id), ['id' => 'txth_igra_id']); ?>
 <?= Html::hiddenInput('txth_per_id', base64_encode($per_id), ['id' => 'txth_per_id']); ?>
 <?= Html::hiddenInput('txth_emp_id', base64_encode($emp_id), ['id' => 'txth_emp_id']); ?>

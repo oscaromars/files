@@ -1000,7 +1000,7 @@ class InscripciongradoController extends \yii\web\Controller {
                 } else {
                     $transaction->rollback();
                     $message = array(
-                        "wtmessage" => Yii::t("notificaciones", "Error al modificar." . $mensaje),
+                        "wtmessage" => Yii::t("notificaciones", "Error al modificar. No cuenta con una solicitud de inscripción" . $mensaje),
                         "title" => Yii::t('jslang', 'Error'),
                     );
                     return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);

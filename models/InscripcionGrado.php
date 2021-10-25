@@ -374,7 +374,7 @@ class InscripcionGrado extends \yii\db\ActiveRecord
                 eaca.eaca_nombre as carrera,
                 moda.mod_nombre as modalidad
                 FROM " . $con_inscripcion->dbname . ".inscripcion_grado as igra
-                Inner Join " . $con_asgard->dbname . ".persona as per on per.per_cedula = igra.igra_cedula
+                Inner Join " . $con_asgard->dbname . ".persona as per on per.per_id = igra.per_id
                 Inner Join " . $con_academico->dbname . ".unidad_academica as uaca on uaca.uaca_id = igra.uaca_id
                 Inner Join " . $con_academico->dbname . ".estudio_academico as eaca on eaca.eaca_id = igra.eaca_id
                 Inner Join " . $con_academico->dbname . ".modalidad as moda on moda.mod_id = igra.mod_id

@@ -697,7 +697,7 @@ class InscripciongradoController extends \yii\web\Controller {
             $contacto_model = PersonaContacto::findOne(['per_id' => $persona_model->per_id]); // obtiene el pcon_id con el per_id
             $arr_tipparentesco = TipoParentesco::find()->select("tpar_id AS id, tpar_nombre AS value")->where(["tpar_estado_logico" => "1", "tpar_estado" => "1"])->asArray()->all();
             $mod_insgrado = new InscripcionGrado();
-            $documentos = $mod_insgrado->ObtenerdocumentosInscripcionGrado(['per_id' => $persona_model->per_id]);
+            $documentos = $mod_insgrado->ObtenerdocumentosInscripcionGrado($persona_model['per_id']);
 
             $EditFormTab4 = $this->renderPartial('EditFormTab4', [
                 "arr_tipparentesco" => ArrayHelper::map($arr_tipparentesco, "id", "value"),

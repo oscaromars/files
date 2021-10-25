@@ -287,10 +287,10 @@ class InscripciongradoController extends \yii\web\Controller {
                 Utilities::putMessageLogFile('cedula o pasaporte.. ' . $per_dni );
                 //datos personales
                 $per_dni = $data['cedula'];
-                $per_pri_nombre = $data["primer_nombre"];
-                $per_seg_nombre = $data["segundo_nombre"];
-                $per_pri_apellido = $data["primer_apellido"];
-                $per_seg_apellido = $data["segundo_apellido"];
+                $per_pri_nombre = ucwords(strtolower($data["primer_nombre"]));
+                $per_seg_nombre = ucwords(strtolower($data["segundo_nombre"]));
+                $per_pri_apellido = ucwords(strtolower($data["primer_apellido"]));
+                $per_seg_apellido = ucwords(strtolower($data["segundo_apellido"]));
                 $can_id_nacimiento = $data["cuidad_nac"];
                 $per_fecha_nacimiento = $data["fecha_nac"];
                 $per_nacionalidad = $data["nacionalidad"];
@@ -300,18 +300,18 @@ class InscripciongradoController extends \yii\web\Controller {
                 $pai_id_domicilio = $data["pais"];
                 $pro_id_domicilio = $data["provincia"];
                 $can_id_domicilio = $data["canton"];
-                $per_domicilio_csec = $data["parroquia"];
-                $per_domicilio_ref = $data["dir_domicilio"];
+                $per_domicilio_csec = ucwords(strtolower($data["parroquia"]));
+                $per_domicilio_ref = ucwords(strtolower($data["dir_domicilio"]));
                 $per_celular = $data["celular"];
                 $per_domicilio_telefono = $data["telefono"];
-                $per_correo = $data["correo"];
+                $per_correo = ucwords(strtolower($data["correo"]));
 
                 //datos en caso de emergencias
-                $per_trabajo_direccion = $data["dir_trabajo"];
-                $pcon_nombre = $data["cont_emergencia"];
+                $per_trabajo_direccion = ucwords(strtolower($data["dir_trabajo"]));
+                $pcon_nombre = ucwords(strtolower($data["cont_emergencia"]));
                 $tpar_id = $data["parentesco"];
-                $pcon_celular = $data["tel_emergencia"];
-                $pcon_direccion = $data["dir_personacontacto"];
+                $pcon_celular = ucwords(strtolower($data["tel_emergencia"]));
+                $pcon_direccion = ucwords(strtolower($data["dir_personacontacto"]));
 
                 //imagenes
                 $igra_ruta_doc_titulo = $data['igra_ruta_doc_titulo'];
@@ -323,10 +323,6 @@ class InscripciongradoController extends \yii\web\Controller {
                 $igra_ruta_doc_certificado = $data['igra_ruta_doc_certificado'];
                 $igra_ruta_doc_syllabus = $data['igra_ruta_doc_syllabus'];
                 $igra_ruta_doc_homologacion = $data['igra_ruta_doc_homologacion'];
-
-                //$insc_persona = new Persona();
-                //$resp_persona = $insc_persona->ConsultaRegistroExiste( 0,$per_dni, $per_dni);
-                //$resp_persona = $insc_persona->consultaPeridxdni($per_dni);
                 if ($per_id > 0) {
                     $model = new InscripcionGrado();
                     //Nuevo Registro // si existe no guardar actualizar la data de persona se modifica
@@ -343,11 +339,23 @@ class InscripciongradoController extends \yii\web\Controller {
                         $exito=1;
                     }else{ // caso contrario crear
                         $resul = $model->insertarDataInscripciongrado($per_id, $unidad, $carrera, $modalidad, $periodo, $per_dni, $data);
-                        if ($resul) {
-                            $exito=1;
-                        }
                     }
+                        //consultar persona contacto
+                        $insc_personacont = new PersonaContacto();
+                        $exist_personacon = $insc_personacont->consultaPersonaContacto($per_id);
+                        // si existe modificar
+                        if ($exist_personacon['contacto_id'] > 0) {
+                            $modi_personacon = $insc_personacont->modificarPersonacontacto($per_id, $tpar_id, $pcon_nombre, null, $pcon_celular, $pcon_direccion);
+                        }
+                        // sino crear
+                        else{
+                            $crea_personacon = $insc_personacont->crearPersonaContacto($per_id, $tpar_id, $pcon_nombre, null, $pcon_celular, $pcon_direccion);
+                            //if($crea_personacon){
+                            $exito=1;
+                            //}
+                      }
                     if($exito){
+                        $transaction->commit();
                         $message = array(
                             "wtmessage" => Yii::t("formulario", "The information have been saved"),
                             "title" => Yii::t('jslang', 'Success'),

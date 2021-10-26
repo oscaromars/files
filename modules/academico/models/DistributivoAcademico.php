@@ -1270,6 +1270,7 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
                         end)
                        else
                         case
+                        when (da.uaca_id= 2 and t.tdis_id =1 ) then ifnull(dh.daho_total_horas * ROUND(timestampdiff(day, da.daca_fecha_inicio_post, da.daca_fecha_fin_post)/7),'')
                         when da.tdis_id=2 then tdis_num_semanas * pc.paca_semanas_inv_vinc_tuto
                         when da.tdis_id=3 then tdis_num_semanas * pc.paca_semanas_inv_vinc_tuto
                         when da.tdis_id=7 then tdis_num_semanas else (pc.paca_semanas_periodo * case  when dh.daho_total_horas is null then tdis_num_semanas else dh.daho_total_horas end) end

@@ -791,8 +791,9 @@ class PagosfacturasController extends \app\components\CController {
 
                     Utilities::sendEmail($tituloMensaje, Yii::$app->params["colecturia"]     , [Yii::$app->params["supercolecturia"] => "Colecturia"], $asunto, $bodycolec);
                     Utilities::sendEmail($tituloMensaje, Yii::$app->params["supercolecturia"], [Yii::$app->params["colecturia"]      => "Supervisor Colecturia"], $asunto, $bodycolec);
-
+		            \app\models\Utilities::putMessageLogFile('resp_pagofactura antes if ...: ' . $resp_pagofactura);
                     if ($resp_pagofactura) {
+		            \app\models\Utilities::putMessageLogFile('resp_pagofactura despues if entro...: ' . $resp_pagofactura);
                         // se graba el detalle
                         $pagados = explode("*", $pagado); //PAGADOS
                         $x = 0;
@@ -916,7 +917,7 @@ class PagosfacturasController extends \app\components\CController {
                              \app\models\Utilities::putMessageLogFile('****************************************');
                         }
 
-                        if ($resp_detpagofactura) {
+                        //if ($resp_detpagofactura) {
                             // AQUI OBTENER EL VALOR QUE DEVUELVE $resp_detpagofactura GVZ SI ES COLECTURIA Y DEJAR YA REVISADO
                             \app\models\Utilities::putMessageLogFile('resp_detpagofactura ' . $resp_detpagofactura);
                             \app\models\Utilities::putMessageLogFile('perids dentro detpago ' . $perids);
@@ -1012,7 +1013,7 @@ class PagosfacturasController extends \app\components\CController {
                                  );
                                 echo Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), false, $message);
 
-                        }//if
+                        //}//if
                     }else{
                         $transaction->rollback();
                         $message = array(

@@ -47,6 +47,7 @@ class InscripciongradoController extends \yii\web\Controller {
         $this->layout = '@themes/' . \Yii::$app->getView()->theme->themeName . '/layouts/basic.php';
         //$per_id = Yii::$app->session->get("PB_perid");
         //$mod_persona = Persona::findIdentity($per_id);
+        $mod_persona = new Persona();
         $mod_unidad = new UnidadAcademica();
         $mod_carrera = new EstudioAcademico();
         $mod_modalidad = new Modalidad();
@@ -60,24 +61,33 @@ class InscripciongradoController extends \yii\web\Controller {
 
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
+            Utilities::putMessageLogFile('cedula en change.. ' .$data['cedulacons'] );
+            if (isset($data["getcedula"])) {
+                $persids = $mod_persona->consultaPeridxdni($data['cedulacons']);
+                $message = array("persids" => $persids['per_id']);
+                Utilities::putMessageLogFile('per_id consultado.. ' .$persids['per_id'] );
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+                //return;
+            }
+
             if (isset($data["getprovincias"])) {
                 $provincias = Provincia::find()->select("pro_id AS id, pro_nombre AS name")->where(["pro_estado_logico" => "1", "pro_estado" => "1", "pai_id" => $data['pai_id']])->asArray()->all();
                 $message = array("provincias" => $provincias);
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
-                return;
+                //return;
             }
             if (isset($data["getcantones"])) {
                 $cantones = Canton::find()->select("can_id AS id, can_nombre AS name")->where(["can_estado_logico" => "1", "can_estado" => "1", "pro_id" => $data['prov_id']])->asArray()->all();
                 $message = array("cantones" => $cantones);
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
-                return;
+                //return;
             }
             if (isset($data["getarea"])) {
                 //obtener el codigo de area del pais en informacion personal
                 $area = $mod_pais->consultarCodigoArea($data["codarea"]);
                 $message = array("area" => $area);
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
-                return;
+                //return;
             }
             if (isset($data['getmodalidad'])) {
                 $modalidad = $mod_carrera->consultarmodalidadxcarrera($data['eaca_id']);
@@ -127,6 +137,7 @@ class InscripciongradoController extends \yii\web\Controller {
             "arr_convenio_empresa" => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Ninguna")]], $arr_convempresa), "id", "name"),
             "resp_datos" => $resp_datos,
             //"per_id" => $per_id,
+            "persids" => $persids,
         ]);
     }
 
@@ -157,7 +168,7 @@ class InscripciongradoController extends \yii\web\Controller {
                 $arrIm = explode(".", basename($files['name']));
                 $typeFile = strtolower($arrIm[count($arrIm) - 1]);
                 if ($typeFile == 'pdf' || $typeFile == 'png' || $typeFile == 'jpg' || $typeFile == 'jpeg') {
-                $dirFileEnd = Yii::$app->params["documentFolder"] . "inscripciongrado/" . $per_id . "/" . $data["name_file"] . "_per_" . $per_id . "." . $typeFile;
+                $dirFileEnd = Yii::$app->params["documentFolder"] . "inscripciongrado/" . $data["name_file"] . "_per_" . $per_id . "." . $typeFile;
                 $status = Utilities::moveUploadFile($files['tmp_name'], $dirFileEnd);
                     if ($status) {
                         return true;
@@ -204,7 +215,7 @@ class InscripciongradoController extends \yii\web\Controller {
                 if (isset($data["igra_ruta_doc_titulo"]) && $data["igra_ruta_doc_titulo"] != "") {
                     $arrIm = explode(".", basename($data["igra_ruta_doc_titulo"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                    $titulo_archivoOld = Yii::$app->params["documentFolder"] . "inscripciongrado/" . $per_id . "/doc_titulo_per_" . $per_id . "." . $typeFile;
+                    $titulo_archivoOld = Yii::$app->params["documentFolder"] . "inscripciongrado/doc_titulo_per_" . $per_id . "." . $typeFile;
                     $titulo_archivo = InscripcionGrado::addLabelTimeDocumentos($inscripgrado_id, $titulo_archivoOld, $timeSt);
                     $data["igra_ruta_doc_titulo"] = $titulo_archivo;
                     if ($titulo_archivo === false)
@@ -213,7 +224,7 @@ class InscripciongradoController extends \yii\web\Controller {
                 if (isset($data["igra_ruta_doc_dni"]) && $data["igra_ruta_doc_dni"] != "") {
                     $arrIm = explode(".", basename($data["igra_ruta_doc_dni"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                    $dni_archivoOld = Yii::$app->params["documentFolder"] . "inscripciongrado/" . $per_id . "/doc_dni_per_" . $per_id . "." . $typeFile;
+                    $dni_archivoOld = Yii::$app->params["documentFolder"] . "inscripciongrado/doc_dni_per_" . $per_id . "." . $typeFile;
                     $dni_archivo = InscripcionGrado::addLabelTimeDocumentos($inscripgrado_id, $dni_archivoOld, $timeSt);
                     $data["igra_ruta_doc_dni"] = $dni_archivo;
                     if ($dni_archivo === false)
@@ -222,7 +233,7 @@ class InscripciongradoController extends \yii\web\Controller {
                 if (isset($data["igra_ruta_doc_certvota"]) && $data["igra_ruta_doc_certvota"] != "") {
                     $arrIm = explode(".", basename($data["igra_ruta_doc_certvota"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                    $certvota_archivoOld = Yii::$app->params["documentFolder"] . "inscripciongrado/" . $per_id . "/doc_certvota_per_" . $per_id . "." . $typeFile;
+                    $certvota_archivoOld = Yii::$app->params["documentFolder"] . "inscripciongrado/doc_certvota_per_" . $per_id . "." . $typeFile;
                     $certvota_archivo = InscripcionGrado::addLabelTimeDocumentos($inscripgrado_id, $certvota_archivoOld, $timeSt);
                     $data["igra_ruta_doc_certvota"] = $certvota_archivo;
                     if ($certvota_archivo === false)
@@ -231,7 +242,7 @@ class InscripciongradoController extends \yii\web\Controller {
                 if (isset($data["igra_ruta_doc_foto"]) && $data["igra_ruta_doc_foto"] != "") {
                     $arrIm = explode(".", basename($data["igra_ruta_doc_foto"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                    $foto_archivoOld = Yii::$app->params["documentFolder"] . "inscripciongrado/" . $per_id . "/doc_foto_per_" . $per_id . "." . $typeFile;
+                    $foto_archivoOld = Yii::$app->params["documentFolder"] . "inscripciongrado/doc_foto_per_" . $per_id . "." . $typeFile;
                     $foto_archivo = InscripcionGrado::addLabelTimeDocumentos($inscripgrado_id, $foto_archivoOld, $timeSt);
                     $data["igra_ruta_doc_foto"] = $foto_archivo;
                     if ($foto_archivo === false)
@@ -240,7 +251,7 @@ class InscripciongradoController extends \yii\web\Controller {
                 if (isset($data["igra_ruta_doc_comprobantepago"]) && $data["igra_ruta_doc_comprobantepago"] != "") {
                     $arrIm = explode(".", basename($data["igra_ruta_doc_comprobantepago"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                    $comprobantepago_archivoOld = Yii::$app->params["documentFolder"] . "inscripciongrado/" . $per_id . "/doc_comprobantepago_per_" . $per_id . "." . $typeFile;
+                    $comprobantepago_archivoOld = Yii::$app->params["documentFolder"] . "inscripciongrado/doc_comprobantepago_per_" . $per_id . "." . $typeFile;
                     $comprobantepago_archivo = InscripcionGrado::addLabelTimeDocumentos($inscripgrado_id, $comprobantepago_archivoOld, $timeSt);
                     $data["igra_ruta_doc_comprobantepago"] = $comprobantepago_archivo;
                     if ($comprobantepago_archivo === false)
@@ -250,7 +261,7 @@ class InscripciongradoController extends \yii\web\Controller {
                 if (isset($data["igra_ruta_doc_record"]) && $data["igra_ruta_doc_record"] != "") {
                     $arrIm = explode(".", basename($data["igra_ruta_doc_record"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                    $record_archivoOld = Yii::$app->params["documentFolder"] . "inscripciongrado/" . $per_id . "/doc_record_per_" . $per_id . "." . $typeFile;
+                    $record_archivoOld = Yii::$app->params["documentFolder"] . "inscripciongrado/doc_record_per_" . $per_id . "." . $typeFile;
                     $record_archivo = InscripcionGrado::addLabelTimeDocumentos($inscripgrado_id, $record_archivoOld, $timeSt);
                     $data["igra_ruta_doc_record"] = $record_archivo;
                     if ($record_archivo === false)
@@ -259,7 +270,7 @@ class InscripciongradoController extends \yii\web\Controller {
                 if (isset($data["igra_ruta_doc_certificado"]) && $data["igra_ruta_doc_certificado"] != "") {
                     $arrIm = explode(".", basename($data["igra_ruta_doc_certificado"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                    $certificado_archivoOld = Yii::$app->params["documentFolder"] . "inscripciongrado/" . $per_id . "/doc_certificado_per_" . $per_id . "." . $typeFile;
+                    $certificado_archivoOld = Yii::$app->params["documentFolder"] . "inscripciongrado/doc_certificado_per_" . $per_id . "." . $typeFile;
                     $certificado_archivo = InscripcionGrado::addLabelTimeDocumentos($inscripgrado_id, $certificado_archivoOld, $timeSt);
                     $data["igra_ruta_doc_certificado"] = $certificado_archivo;
                     if ($certificado_archivo === false)
@@ -268,7 +279,7 @@ class InscripciongradoController extends \yii\web\Controller {
                 if (isset($data["igra_ruta_doc_syllabus"]) && $data["igra_ruta_doc_syllabus"] != "") {
                     $arrIm = explode(".", basename($data["igra_ruta_doc_syllabus"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                    $syllabus_archivoOld = Yii::$app->params["documentFolder"] . "inscripciongrado/" . $per_id . "/doc_syllabus_per_" . $per_id . "." . $typeFile;
+                    $syllabus_archivoOld = Yii::$app->params["documentFolder"] . "inscripciongrado/doc_syllabus_per_" . $per_id . "." . $typeFile;
                     $syllabus_archivo = InscripcionGrado::addLabelTimeDocumentos($inscripgrado_id, $syllabus_archivoOld, $timeSt);
                     $data["igra_ruta_doc_syllabus"] = $syllabus_archivo;
                     if ($syllabus_archivo === false)
@@ -277,7 +288,7 @@ class InscripciongradoController extends \yii\web\Controller {
                 if (isset($data["igra_ruta_doc_homologacion"]) && $data["igra_ruta_doc_homologacion"] != "") {
                     $arrIm = explode(".", basename($data["igra_ruta_doc_homologacion"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                    $homologacion_archivoOld = Yii::$app->params["documentFolder"] . "inscripciongrado/" . $per_id . "/doc_homologacion_per_" . $per_id . "." . $typeFile;
+                    $homologacion_archivoOld = Yii::$app->params["documentFolder"] . "inscripciongrado/doc_homologacion_per_" . $per_id . "." . $typeFile;
                     $homologacion_archivo = InscripcionGrado::addLabelTimeDocumentos($inscripgrado_id, $homologacion_archivoOld, $timeSt);
                     $data["igra_ruta_doc_homologacion"] = $homologacion_archivo;
                     if ($homologacion_archivo === false)
@@ -760,7 +771,7 @@ class InscripciongradoController extends \yii\web\Controller {
                 $arrIm = explode(".", basename($files['name']));
                 $typeFile = strtolower($arrIm[count($arrIm) - 1]);
                 if ($typeFile == 'pdf' || $typeFile == 'png' || $typeFile == 'jpg' || $typeFile == 'jpeg') {
-                $dirFileEnd = Yii::$app->params["documentFolder"] . "inscripciongrado/" . $per_id . "/" . $data["name_file"] . "." . $typeFile;
+                $dirFileEnd = Yii::$app->params["documentFolder"] . "inscripciongrado/" . $data["name_file"] . "." . $typeFile;
                 $status = Utilities::moveUploadFile($files['tmp_name'], $dirFileEnd);
                     if ($status) {
                         return true;
@@ -794,7 +805,7 @@ class InscripciongradoController extends \yii\web\Controller {
                 if (isset($data["igra_ruta_doc_titulo"]) && $data["igra_ruta_doc_titulo"] != "") {
                     $arrIm = explode(".", basename($data["igra_ruta_doc_titulo"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                    $titulo_archivoOld = Yii::$app->params["documentFolder"] . "inscripciongrado/" . $per_id . "/doc_titulo_per_" . $per_id . "." . $typeFile;
+                    $titulo_archivoOld = Yii::$app->params["documentFolder"] . "inscripciongrado/doc_titulo_per_" . $per_id . "." . $typeFile;
                     $titulo_archivo = InscripcionGrado::addLabelTimeDocumentos($inscripgrado_id, $titulo_archivoOld, $timeSt);
                     $data["igra_ruta_doc_titulo"] = $titulo_archivo;
                     if ($titulo_archivo === false)
@@ -803,7 +814,7 @@ class InscripciongradoController extends \yii\web\Controller {
                 if (isset($data["igra_ruta_doc_dni"]) && $data["igra_ruta_doc_dni"] != "") {
                     $arrIm = explode(".", basename($data["igra_ruta_doc_dni"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                    $dni_archivoOld = Yii::$app->params["documentFolder"] . "inscripciongrado/" . $per_id . "/doc_dni_per_" . $per_id . "." . $typeFile;
+                    $dni_archivoOld = Yii::$app->params["documentFolder"] . "inscripciongrado/doc_dni_per_" . $per_id . "." . $typeFile;
                     $dni_archivo = InscripcionGrado::addLabelTimeDocumentos($inscripgrado_id, $dni_archivoOld, $timeSt);
                     $data["igra_ruta_doc_dni"] = $dni_archivo;
                     if ($dni_archivo === false)
@@ -812,7 +823,7 @@ class InscripciongradoController extends \yii\web\Controller {
                 if (isset($data["igra_ruta_doc_certvota"]) && $data["igra_ruta_doc_certvota"] != "") {
                     $arrIm = explode(".", basename($data["igra_ruta_doc_certvota"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                    $certvota_archivoOld = Yii::$app->params["documentFolder"] . "inscripciongrado/" . $per_id . "/doc_certvota_per_" . $per_id . "." . $typeFile;
+                    $certvota_archivoOld = Yii::$app->params["documentFolder"] . "inscripciongrado/doc_certvota_per_" . $per_id . "." . $typeFile;
                     $certvota_archivo = InscripcionGrado::addLabelTimeDocumentos($inscripgrado_id, $certvota_archivoOld, $timeSt);
                     $data["igra_ruta_doc_certvota"] = $certvota_archivo;
                     if ($certvota_archivo === false)
@@ -821,7 +832,7 @@ class InscripciongradoController extends \yii\web\Controller {
                 if (isset($data["igra_ruta_doc_foto"]) && $data["igra_ruta_doc_foto"] != "") {
                     $arrIm = explode(".", basename($data["igra_ruta_doc_foto"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                    $foto_archivoOld = Yii::$app->params["documentFolder"] . "inscripciongrado/" . $per_id . "/doc_foto_per_" . $per_id . "." . $typeFile;
+                    $foto_archivoOld = Yii::$app->params["documentFolder"] . "inscripciongrado/doc_foto_per_" . $per_id . "." . $typeFile;
                     $foto_archivo = InscripcionGrado::addLabelTimeDocumentos($inscripgrado_id, $foto_archivoOld, $timeSt);
                     $data["igra_ruta_doc_foto"] = $foto_archivo;
                     if ($foto_archivo === false)
@@ -830,7 +841,7 @@ class InscripciongradoController extends \yii\web\Controller {
                 if (isset($data["igra_ruta_doc_comprobantepago"]) && $data["igra_ruta_doc_comprobantepago"] != "") {
                     $arrIm = explode(".", basename($data["igra_ruta_doc_comprobantepago"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                    $comprobantepago_archivoOld = Yii::$app->params["documentFolder"] . "inscripciongrado/" . $per_id . "/doc_comprobantepago_per_" . $per_id . "." . $typeFile;
+                    $comprobantepago_archivoOld = Yii::$app->params["documentFolder"] . "inscripciongrado/doc_comprobantepago_per_" . $per_id . "." . $typeFile;
                     $comprobantepago_archivo = InscripcionGrado::addLabelTimeDocumentos($inscripgrado_id, $comprobantepago_archivoOld, $timeSt);
                     $data["igra_ruta_doc_comprobantepago"] = $comprobantepago_archivo;
                     if ($comprobantepago_archivo === false)
@@ -840,7 +851,7 @@ class InscripciongradoController extends \yii\web\Controller {
                 if (isset($data["igra_ruta_doc_record"]) && $data["igra_ruta_doc_record"] != "") {
                     $arrIm = explode(".", basename($data["igra_ruta_doc_record"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                    $record_archivoOld = Yii::$app->params["documentFolder"] . "inscripciongrado/" . $per_id . "/doc_record_per_" . $per_id . "." . $typeFile;
+                    $record_archivoOld = Yii::$app->params["documentFolder"] . "inscripciongrado/doc_record_per_" . $per_id . "." . $typeFile;
                     $record_archivo = InscripcionGrado::addLabelTimeDocumentos($inscripgrado_id, $record_archivoOld, $timeSt);
                     $data["igra_ruta_doc_record"] = $record_archivo;
                     if ($record_archivo === false)
@@ -849,7 +860,7 @@ class InscripciongradoController extends \yii\web\Controller {
                 if (isset($data["igra_ruta_doc_certificado"]) && $data["igra_ruta_doc_certificado"] != "") {
                     $arrIm = explode(".", basename($data["igra_ruta_doc_certificado"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                    $certificado_archivoOld = Yii::$app->params["documentFolder"] . "inscripciongrado/" . $per_id . "/doc_certificado_per_" . $per_id . "." . $typeFile;
+                    $certificado_archivoOld = Yii::$app->params["documentFolder"] . "inscripciongrado/doc_certificado_per_" . $per_id . "." . $typeFile;
                     $certificado_archivo = InscripcionGrado::addLabelTimeDocumentos($inscripgrado_id, $certificado_archivoOld, $timeSt);
                     $data["igra_ruta_doc_certificado"] = $certificado_archivo;
                     if ($certificado_archivo === false)
@@ -858,7 +869,7 @@ class InscripciongradoController extends \yii\web\Controller {
                 if (isset($data["igra_ruta_doc_syllabus"]) && $data["igra_ruta_doc_syllabus"] != "") {
                     $arrIm = explode(".", basename($data["igra_ruta_doc_syllabus"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                    $syllabus_archivoOld = Yii::$app->params["documentFolder"] . "inscripciongrado/" . $per_id . "/doc_syllabus_per_" . $per_id . "." . $typeFile;
+                    $syllabus_archivoOld = Yii::$app->params["documentFolder"] . "inscripciongrado/doc_syllabus_per_" . $per_id . "." . $typeFile;
                     $syllabus_archivo = InscripcionGrado::addLabelTimeDocumentos($inscripgrado_id, $syllabus_archivoOld, $timeSt);
                     $data["igra_ruta_doc_syllabus"] = $syllabus_archivo;
                     if ($syllabus_archivo === false)
@@ -867,7 +878,7 @@ class InscripciongradoController extends \yii\web\Controller {
                 if (isset($data["igra_ruta_doc_homologacion"]) && $data["igra_ruta_doc_homologacion"] != "") {
                     $arrIm = explode(".", basename($data["igra_ruta_doc_homologacion"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                    $homologacion_archivoOld = Yii::$app->params["documentFolder"] . "inscripciongrado/" . $per_id . "/doc_homologacion_per_" . $per_id . "." . $typeFile;
+                    $homologacion_archivoOld = Yii::$app->params["documentFolder"] . "inscripciongrado/doc_homologacion_per_" . $per_id . "." . $typeFile;
                     $homologacion_archivo = InscripcionGrado::addLabelTimeDocumentos($inscripgrado_id, $homologacion_archivoOld, $timeSt);
                     $data["igra_ruta_doc_homologacion"] = $homologacion_archivo;
                     if ($homologacion_archivo === false)

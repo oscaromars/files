@@ -141,6 +141,28 @@ $(document).ready(function () {
             $('#Divcedula').show();
         }
     });
+
+    $("#txt_cedula").change(function(){
+        var link = $('#txth_base').val() + "/inscripciongrado/index";
+        var arrParams = new Object();
+        arrParams.cedulacons = $('#txt_cedula').val();
+        arrParams.getcedula = true;
+        requestHttpAjax(link, arrParams, function (response) {
+            if (response.status == "OK") {
+             data = response.message;
+             persids = data.persids;
+             if(persids == null){
+                var mensaje = {wtmessage: "La persona no esta regsitrado como aspirante, no se guardara la información", title: "Información"};
+                showAlert("NO_OK", "error", mensaje);
+                $("paso1next").attr('disabled',true);
+            }else{
+               $("paso1next").removeAttr('disabled');
+               $('#txth_personaid').val(persids);
+             }
+            }
+        }, true);
+
+      });
     // tabs create
     $('#paso1next').click(function () {
         let lcedula = $("#txt_cedula").val();

@@ -1,11 +1,8 @@
 <?php
 use app\models\Utilities;
-use app\models\ObjetoModulo;
 use app\modules\academico\Module as academico;
 use kartik\grid\GridView;
-use kartik\export\ExportMenu;
 use yii\helpers\Html;
-use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\RolSearch */
@@ -67,6 +64,11 @@ $formatter = \Yii::$app->formatter;
 		['attribute' => 'paca_fecha_fin',
 			'value' => function ($model, $key, $index, $widget) {
 				return Yii::$app->formatter->asDate($model->paca_fecha_fin, 'yyyy-MM-dd');
+			},
+		],
+		['attribute' => 'paca_fecha_cierre_fin',
+			'value' => function ($model, $key, $index, $widget) {
+				return Yii::$app->formatter->asDate($model->paca_fecha_cierre_fin, 'yyyy-MM-dd');
 			},
 		],
 

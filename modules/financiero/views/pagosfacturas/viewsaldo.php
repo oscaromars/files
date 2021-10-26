@@ -1,5 +1,4 @@
 <?php
-
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\helpers\ArrayHelper;
@@ -14,7 +13,15 @@ Pagos::registerTranslations();
 use app\assets\DatatableAsset;
 DatatableAsset::register($this);
 ?>
-
+<?php if($nombregrupo['gru_nombre'] == 'Super Admin' || $nombregrupo['gru_nombre'] == 'Colecturia'){ ?>
+<div class="col-md-12 col-sm-12 col-xs-12 col-lg-12">
+    <div class="pull-right">
+        <div class="btn-groups">
+            <button type="button" class="btn btn-default btnAccion" data-trigger="hover" onclick="subirpago()"><i class="glyphicon glyphicon-ok"></i>&nbsp;&nbsp;Subir Pago</button>
+        </div>
+    </div>
+</div>
+<?php } ?>
 <?= Html::hiddenInput('txth_idest', $arr_persona['est_id'], ['id' => 'txth_idest']); ?>
 <?= Html::hiddenInput('txth_per', @Yii::$app->session->get("PB_perid"), ['id' => 'txth_per']); ?>
 <?= Html::hiddenInput('txth_per_ids', $_GET["per_ids"], ['id' => 'txth_per_ids']); ?>

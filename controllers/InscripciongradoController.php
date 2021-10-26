@@ -697,7 +697,7 @@ class InscripciongradoController extends \yii\web\Controller {
             $contacto_model = PersonaContacto::findOne(['per_id' => $persona_model->per_id]); // obtiene el pcon_id con el per_id
             $arr_tipparentesco = TipoParentesco::find()->select("tpar_id AS id, tpar_nombre AS value")->where(["tpar_estado_logico" => "1", "tpar_estado" => "1"])->asArray()->all();
             $mod_insgrado = new InscripcionGrado();
-            $documentos = $mod_insgrado->ObtenerdocumentosInscripcionGrado(['per_id' => $persona_model->per_id]);
+            $documentos = $mod_insgrado->ObtenerdocumentosInscripcionGrado($persona_model['per_id']);
 
             $EditFormTab4 = $this->renderPartial('EditFormTab4', [
                 "arr_tipparentesco" => ArrayHelper::map($arr_tipparentesco, "id", "value"),
@@ -902,15 +902,52 @@ class InscripciongradoController extends \yii\web\Controller {
                 $pcon_celular = ucwords(strtolower($data["tel_emergencia"]));
                 $pcon_direccion = ucwords(strtolower($data["dir_personacontacto"]));
 
-                $igra_ruta_doc_titulo = $data['igra_ruta_doc_titulo'];
-                $igra_ruta_doc_dni = $data['igra_ruta_doc_dni'];
-                $igra_ruta_doc_certvota = $data['igra_ruta_doc_certvota'];
-                $igra_ruta_doc_foto = $data['igra_ruta_doc_foto'];
-                $igra_ruta_doc_comprobantepago = $data['igra_ruta_doc_comprobantepago'];
-                $igra_ruta_doc_record = $data['igra_ruta_doc_record'];
-                $igra_ruta_doc_certificado = $data['igra_ruta_doc_certificado'];
-                $igra_ruta_doc_syllabus = $data['igra_ruta_doc_syllabus'];
-                $igra_ruta_doc_homologacion = $data['igra_ruta_doc_homologacion'];
+                // if estos data vienen null no hacer nada
+                if(empty($data['igra_ruta_doc_titulo'])){
+                    $igra_ruta_doc_titulo = null;
+                }else{
+                    $igra_ruta_doc_titulo = $data['igra_ruta_doc_titulo'];
+                }
+                if(empty($data['igra_ruta_doc_dni'])){
+                    $igra_ruta_doc_dni = null;
+                }else{
+                    $igra_ruta_doc_dni = $data['igra_ruta_doc_dni'];
+                }
+                if(empty($data['igra_ruta_doc_certvota'])){
+                    $igra_ruta_doc_certvota = null;
+                }else{
+                    $igra_ruta_doc_certvota = $data['igra_ruta_doc_certvota'];
+                }
+                if(empty($data['igra_ruta_doc_foto'])){
+                    $igra_ruta_doc_foto = null;
+                }else{
+                    $igra_ruta_doc_foto = $data['igra_ruta_doc_foto'];
+                }
+                if(empty($data['igra_ruta_doc_comprobantepago'])){
+                    $$igra_ruta_doc_comprobantepago = null;
+                }else{
+                    $igra_ruta_doc_comprobantepago = $data['igra_ruta_doc_comprobantepago'];
+                }
+                if(empty($data['igra_ruta_doc_record'])){
+                    $igra_ruta_doc_record = null;
+                }else{
+                    $igra_ruta_doc_record = $data['igra_ruta_doc_record'];
+                }
+                if(empty($data['igra_ruta_doc_certificado'])){
+                    $igra_ruta_doc_certificado = null;
+                }else{
+                    $igra_ruta_doc_certificado = $data['igra_ruta_doc_certificado'];
+                }
+                if(empty($data['igra_ruta_doc_syllabus'])){
+                    $igra_ruta_doc_syllabus = null;
+                }else{
+                    $igra_ruta_doc_syllabus = $data['igra_ruta_doc_syllabus'];
+                }
+                if(empty($data['igra_ruta_doc_homologacion'])){
+                    $igra_ruta_doc_homologacion = null;
+                }else{
+                    $igra_ruta_doc_homologacion = $data['igra_ruta_doc_homologacion'];
+                }
 
                 $fecha_modificacion = date(Yii::$app->params["dateTimeByDefault"]);
 
@@ -1000,7 +1037,7 @@ class InscripciongradoController extends \yii\web\Controller {
                 } else {
                     $transaction->rollback();
                     $message = array(
-                        "wtmessage" => Yii::t("notificaciones", "Error al modificar." . $mensaje),
+                        "wtmessage" => Yii::t("notificaciones", "Error al modificar. No cuenta con una solicitud de inscripción" . $mensaje),
                         "title" => Yii::t('jslang', 'Error'),
                     );
                     return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);

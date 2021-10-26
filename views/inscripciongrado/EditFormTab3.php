@@ -22,7 +22,7 @@ Academico::registerTranslations();
     </div>
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
-            <label for="txt_contc_emergenciasEdit" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("formulario", "Contacto en caso de Emergencia") ?></label>
+            <label for="txt_contc_emergenciasEdit" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("formulario", "Contacto en caso de Emergencia") ?> <span class="text-danger">*</span> </label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
                 <input type="text" class="form-control PBvalidation" id="txt_contc_emergenciasEdit" value="<?= $contacto_model->pcon_nombre ?>" data-type="all" placeholder="<?= Academico::t("profesor", "Nombre de Contacto en caso de Emergencia")  ?>">
             </div>

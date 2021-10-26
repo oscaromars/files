@@ -68,7 +68,11 @@ $formatter = \Yii::$app->formatter;
 		],
 		['attribute' => 'paca_fecha_cierre_fin',
 			'value' => function ($model, $key, $index, $widget) {
-				return Yii::$app->formatter->asDate($model->paca_fecha_cierre_fin, 'yyyy-MM-dd');
+				if (isset($model->paca_fecha_cierre_fin)) {
+					return Yii::$app->formatter->asDate($model->paca_fecha_cierre_fin, 'yyyy-MM-dd');
+				} else {
+					return '';
+				}
 			},
 		],
 

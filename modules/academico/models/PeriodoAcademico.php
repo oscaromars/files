@@ -57,7 +57,7 @@ class PeriodoAcademico extends \yii\db\ActiveRecord {
 		return [
 			[['saca_id', 'baca_id', 'paca_usuario_ingreso', 'paca_estado', 'paca_estado_logico'], 'required'],
 			[['saca_id', 'baca_id', 'paca_usuario_ingreso', 'paca_usuario_modifica', 'paca_semanas_periodo'], 'integer'],
-			[['paca_fecha_inicio', 'paca_fecha_fin', 'paca_fecha_creacion', 'paca_fecha_modificacion'], 'safe'],
+			[['paca_fecha_inicio', 'paca_fecha_fin', 'paca_fecha_cierre_ini', 'paca_fecha_cierre_fin', 'paca_fecha_creacion', 'paca_fecha_modificacion'], 'safe'],
 			[['paca_activo', 'paca_estado', 'paca_estado_logico'], 'string', 'max' => 1],
 			[['paca_semanas_inv_vinc_tuto'], 'string', 'max' => 45],
 			[['saca_id'], 'exist', 'skipOnError' => true, 'targetClass' => SemestreAcademico::className(), 'targetAttribute' => ['saca_id' => 'saca_id']],
@@ -75,6 +75,8 @@ class PeriodoAcademico extends \yii\db\ActiveRecord {
 			'paca_activo' => 'Estado',
 			'paca_fecha_inicio' => 'Fecha Inicio',
 			'paca_fecha_fin' => 'Fecha Fin',
+			'paca_fecha_cierre_ini' => 'Fecha Cierre Inicio',
+			'paca_fecha_cierre_fin' => 'Fecha Cierre Fin',
 			'paca_usuario_ingreso' => '',
 			'paca_usuario_modifica' => '',
 			'paca_estado' => '',
@@ -155,8 +157,8 @@ class PeriodoAcademico extends \yii\db\ActiveRecord {
 
 	public function savePeriodo($model) {
 		$con = \Yii::$app->db_academico;
-		$sql = "INSERT INTO db_academico.periodo_academico (saca_id, baca_id, paca_activo, paca_fecha_inicio, paca_fecha_fin, paca_usuario_ingreso, paca_estado, paca_fecha_creacion,  paca_estado_logico, paca_semanas_periodo)
-              VALUES (" . $model->saca_id . "," . $model->baca_id . ",'" . $model->paca_activo . "','" . $model->paca_fecha_inicio . "','" . $model->paca_fecha_fin . "','" . $model->paca_usuario_ingreso . "','" . $model->paca_estado . "','" . $model->paca_fecha_creacion . "','" . $model->paca_estado_logico . "'," . $model->paca_semanas_periodo . ")";
+		$sql = "INSERT INTO db_academico.periodo_academico (saca_id, baca_id, paca_activo, paca_fecha_inicio, paca_fecha_fin, paca_fecha_cierre_ini, paca_fecha_cierre_fin, paca_usuario_ingreso, paca_estado, paca_fecha_creacion,  paca_estado_logico, paca_semanas_periodo)
+              VALUES (" . $model->saca_id . "," . $model->baca_id . ",'" . $model->paca_activo . "','" . $model->paca_fecha_inicio . "','" . $model->paca_fecha_fin . "','" . $model->paca_fecha_cierre_ini . "','" . $model->paca_fecha_cierre_fin . "','" . $model->paca_usuario_ingreso . "','" . $model->paca_estado . "','" . $model->paca_fecha_creacion . "','" . $model->paca_estado_logico . "'," . $model->paca_semanas_periodo . ")";
 		\app\models\Utilities::putMessageLogFile("Sql: " . $sql);
 		$command = $con->createCommand($sql);
 
@@ -174,6 +176,8 @@ class PeriodoAcademico extends \yii\db\ActiveRecord {
 		. " ,paca_activo='" . $model->paca_activo . "'"
 		. " ,paca_fecha_inicio='" . $model->paca_fecha_inicio . "'"
 		. " ,paca_fecha_fin='" . $model->paca_fecha_fin . "'"
+		. " ,paca_fecha_cierre_ini='" . $model->paca_fecha_cierre_ini . "'"
+		. " ,paca_fecha_cierre_fin='" . $model->paca_fecha_cierre_fin . "'"
 		. " ,paca_semanas_periodo=" . $model->paca_semanas_periodo
 		. " ,paca_fecha_modificacion='" . $model->paca_fecha_modificacion . "'"
 		. " ,paca_usuario_modifica='" . $model->paca_usuario_modifica . "'"

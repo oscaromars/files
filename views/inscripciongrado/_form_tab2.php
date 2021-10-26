@@ -1,6 +1,5 @@
 <?php
 /* @var $this yii\web\View */
-
 use yii\helpers\Html;
 use yii\helpers\Url;
 use kartik\date\DatePicker;
@@ -13,7 +12,8 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
           </div>
           </div>';
 ?>
-<p>Cédula Obtenida: <input type="text" name="cedula" id="txt_cedula2" disabled></p>
+<!-- <p>Cédula Obtenida: <input type="text" name="cedula" id="txt_cedula2" disabled></p>-->
+<?= Html::hiddenInput('txth_personaid', '', ['id' => 'txth_personaid']); ?>
 <form class="form-horizontal">
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <h3><span id="lbl_documentos"><?= Yii::t("formulario", "Documentación") ?></span></h3>

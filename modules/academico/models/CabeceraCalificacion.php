@@ -1098,8 +1098,9 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord {
             ) as data
             ,(SELECT @row_number:=0) AS t
             WHERE 1=1
-                  $str_search
-                  AND data.paca_activo
+                $str_search
+                and now()>=data.paca_fecha_inicio and now()<=data.paca_fecha_fin
+                and data.paca_activo='A'
             ";
 
 		$comando = $con->createCommand($sql);

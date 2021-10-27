@@ -337,6 +337,7 @@ function actualizarGridRegistro(dready = 0) {
     arrParams.materia   = $('#cmb_materia option:selected').val();  
     arrParams.parcial   = $('#cmb_parcial').val();
     arrParams.profesor  = $('#cmb_profesor_rc').val();
+    arrParams.per_id = $('#frm_per_id').val();
 
     //URL para actualizar el grid
     var link = $('#txth_base').val() + "/academico/calificacionregistrodocente/traermodelo";

@@ -253,7 +253,8 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 
 		//print_r($arr_grupos);die();
 
-		if (in_array(['id' => '6'], $arr_grupos) ||
+		if (in_array(['id' => '1'], $arr_grupos) ||
+			in_array(['id' => '6'], $arr_grupos) ||
 			in_array(['id' => '7'], $arr_grupos) ||
 			in_array(['id' => '8'], $arr_grupos)
 		) {
@@ -281,7 +282,9 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 			'arr_parcial' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $arr_parcialunidad), "id", "name"),
 			'pro_id' => $arr_profesor["Id"],
 			'model' => "",
-			'arr_profesor_all' => ArrayHelper::map($arr_profesor_all, "pro_id", "nombres"),
+			'arr_profesor_all' => ArrayHelper::map(array_merge($arr_profesor_all), "pro_id", "nombres"),
+			'arr_grupos' => $arr_grupos[0]['id'],
+			//'arr_profesor_all' => ArrayHelper::map($arr_profesor_all, "pro_id", "nombres"),
 			//'componente'        => $componenteuni,
 			//'campos'            => $campos,
 		]);
@@ -305,7 +308,7 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 			        return json_encode($model);
 		*/
 		$per_id = @Yii::$app->session->get("PB_perid");
-
+		$user_usermane = Yii::$app->session->get("PB_username");
 		$mod_calificacion = new CabeceraCalificacion();
 		$data = Yii::$app->request->post();
 
@@ -315,8 +318,9 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 		$arrSearch["materia"] = $data['materia'];
 		$arrSearch["parcial"] = $data['parcial'];
 		$arrSearch["profesor"] = $data['profesor'];
-		$arrSearch["paralelo"] = $data['paralelo'];
-
+		// $arrSearch["paralelo"] = $data['paralelo'];
+		$arrSearch["grupo"] = $data['grupo'];
+		\app\models\Utilities::putMessageLogFile('$data' . $data['grupo']);
 		$model = array();
 		$componentes = array();
 		$model['data'] = $mod_calificacion->getRegistroCalificaciones($arrSearch);

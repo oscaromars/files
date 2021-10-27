@@ -154,10 +154,35 @@ $(document).ready(function () {
              if(persids == null){
                 var mensaje = {wtmessage: "La persona no esta regsitrado como aspirante, no se guardara la información", title: "Información"};
                 showAlert("NO_OK", "error", mensaje);
-                $("paso1next").attr('disabled',true);
+                $('#txth_personaid').val('');
+                $('#Divboton').css('display', 'none');
             }else{
-               $("paso1next").removeAttr('disabled');
+
+               $('#Divboton').css('display', 'block');
                $('#txth_personaid').val(persids);
+             }
+            }
+        }, true);
+
+      });
+
+      $("#txt_pasaporte").change(function(){
+        var link = $('#txth_base').val() + "/inscripciongrado/index";
+        var arrParams = new Object();
+        arrParams.cedulacons = $('#txt_pasaporte').val();
+        arrParams.getcedula = true;
+        requestHttpAjax(link, arrParams, function (response) {
+            if (response.status == "OK") {
+             data = response.message;
+             persids = data.persids;
+             if(persids == null){
+                var mensaje = {wtmessage: "La persona no esta regsitrado como aspirante, no se guardara la información", title: "Información"};
+                showAlert("NO_OK", "error", mensaje);
+                $('#txth_personaid').val('');
+                $('#Divboton').css('display', 'none');
+            }else{
+                $('#Divboton').css('display', 'block');
+                $('#txth_personaid').val(persids);
              }
             }
         }, true);

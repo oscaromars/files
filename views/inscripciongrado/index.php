@@ -74,7 +74,6 @@ $_SESSION['persona_ingresa'] = base64_decode($_GET['ids']);
                     <?=
                     $this->render('_form_tab2', [
                         //'per_id' => $per_id,
-                        'persids' => $persids,
                         "arr_convenio_empresa" => $arr_convenio_empresa,
                     ]);
                     ?>

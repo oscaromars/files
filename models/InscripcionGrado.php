@@ -108,7 +108,7 @@ class InscripcionGrado extends \yii\db\ActiveRecord
         $typeFile = strtolower($arrIm[count($arrIm) - 1]);
         $baseFile = Yii::$app->basePath;
         $search = ".$typeFile";
-        $replace = "_$timeSt" . ".$typeFile";
+        $replace = "$timeSt" . ".$typeFile";
         $newFile = str_replace($search, $replace, $file);
         if (file_exists($baseFile . $file)) {
             if (rename($baseFile . $file, $baseFile . $newFile)) {

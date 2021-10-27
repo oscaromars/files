@@ -106,6 +106,22 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 				$message = array("asignatura" => $asignatura, "paralelo_clcf" => $paralelo_clcf);
 				return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
 			}
+
+			if (isset($data["getasignaturas_bus"])) {
+				$asignatura = $Asignatura_distri->getAsignaturaByProfesorDistributivo($data["paca_id"], $data['pro_id'], $data["uaca_id"], $data["mod_id"]);
+				$profesorup = $mod_profesor->getProfesoresEnAsignaturasByall($data["paca_id"], $data["uaca_id"], $data["mod_id"]);
+				$paralelo_clcf = [];
+				$message = array("asignatura" => $asignatura, "profesorup" => $profesorup);
+				return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+			}
+
+			if (isset($data["getasignaturas_uaca"])) {
+				$asignatura = $Asignatura_distri->getAsignaturaByProfesorDistributivo($data["paca_id"], $data['pro_id'], $data["uaca_id"], $data["mod_id"]);
+				$profesorup = $mod_profesor->getProfesoresEnAsignaturasByall($data["paca_id"], $data["uaca_id"], $data["mod_id"]);
+				$paralelo_clcf = [];
+				$message = array("asignatura" => $asignatura, "profesorup" => $profesorup);
+				return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+			}
 		}
 
 		$data = Yii::$app->request->get();

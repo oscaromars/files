@@ -1004,6 +1004,13 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord {
 			if ($arrFiltro['modalidad'] != "" && $arrFiltro['modalidad'] > 0) {
 				$str_search .= " AND data.mod_id = :mod_id  ";
 			}
+			if ($arrFiltro['grupo'] != "" && $arrFiltro['grupo'] > 0) {
+				if ($arrFiltro['grupo'] == 1) {
+					$str_search .= " AND now()>=data.paca_fecha_inicio and now()<=data.paca_fecha_cierre_fin ";
+				} else if ($arrFiltro['grupo'] >= 6 and $arrFiltro['grupo'] <= 8) {
+					$str_search .= " AND now()>=data.paca_fecha_inicio and now()<=data.paca_fecha_fin ";
+				}
+			}
 
 		}
 
@@ -1060,6 +1067,9 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord {
                         ,daca.mod_id  as mod_id
                         ,meun.uaca_id as uaca_id
                         ,paca.paca_activo
+                        ,paca.paca_fecha_inicio
+                        ,paca.paca_fecha_fin
+                        ,paca.paca_fecha_cierre_fin
                    FROM " . $con->dbname . ".distributivo_academico daca
              INNER JOIN " . $con->dbname . ".distributivo_academico_estudiante daes
                      ON daes.daca_id = daca.daca_id
@@ -1099,7 +1109,6 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord {
             ,(SELECT @row_number:=0) AS t
             WHERE 1=1
                 $str_search
-                and now()>=data.paca_fecha_inicio and now()<=data.paca_fecha_fin
                 and data.paca_activo='A'
             ";
 

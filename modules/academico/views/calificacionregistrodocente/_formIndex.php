@@ -1,7 +1,12 @@
 <?php
-
-use app\modules\academico\Module as academico;
+use yii\jui\AutoComplete;
+use yii\web\JsExpression;
 use yii\helpers\Html;
+use yii\helpers\Url;
+use kartik\date\DatePicker;
+use yii\helpers\ArrayHelper;
+use app\modules\academico\Module as academico;
+
 
 Academico::registerTranslations();
 /*

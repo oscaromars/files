@@ -751,7 +751,9 @@ class Asignatura extends \yii\db\ActiveRecord {
 
 	/**
 	 * Function consulta asiganturas ddel profesor, segun periodo, unidad, modalidad para consulta  de calificaciones
+	 * Modificación con respecto a la modalidad y grado, ya que, no se utilizaba
 	 * @author  Didimo Zamora <analistadesarrollo03@uteg.edu.ec>;
+	 * @modify Luis Cajamarca <analista04>
 	 * @property
 	 * @return
 	 */
@@ -761,8 +763,9 @@ class Asignatura extends \yii\db\ActiveRecord {
 		//inner join ". $con->dbname  .".unidad_academica uaca  on daca.uaca_id = uaca.uaca_id)
 		$sql = "SELECT distinct
                 daca.asi_id id,
-                asig.asi_descripcion  name
-                FROM " . $con1->dbname . ".persona per inner join " . $con->dbname . ".profesor pro on per.per_id = pro.per_id
+                asig.asi_nombre  name
+                FROM " . $con1->dbname . ".persona per
+                inner join " . $con->dbname . ".profesor pro on per.per_id = pro.per_id
                 inner join " . $con->dbname . ".distributivo_academico daca on daca.pro_id = pro.pro_id
                 inner join " . $con->dbname . ".asignatura asig on asig.asi_id = daca.asi_id
                 WHERE
@@ -779,11 +782,15 @@ class Asignatura extends \yii\db\ActiveRecord {
                     and asig.asi_estado_logico = 1
 
                     and pro.pro_id = :pro_id
-                    and daca.paca_id = :paca_id";
+                    and daca.paca_id = :paca_id
+                    and daca.mod_id = :mod_id
+                    and daca.uaca_id = :uaca_id";
 		//echo "Sentencia: ".$sql;
 		$comando = $con->createCommand($sql);
 		$comando->bindParam(":paca_id", $paca_id, \PDO::PARAM_INT);
 		$comando->bindParam(":pro_id", $pro_id, \PDO::PARAM_INT);
+		$comando->bindParam(":uaca_id", $uaca_id, \PDO::PARAM_INT);
+		$comando->bindParam(":mod_id", $mod_id, \PDO::PARAM_INT);
 
 		$resultData = $comando->queryAll();
 		return $resultData;

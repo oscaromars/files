@@ -12,3 +12,12 @@ ALTER TABLE distributivo_cabecera CONVERT TO CHARACTER SET utf8 COLLATE utf8_gen
 ALTER TABLE esquema_calificacion CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;
 ALTER TABLE esquema_calificacion_unidad CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;
 ALTER TABLE cabecera_calificacion CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;
+ALTER TABLE registro_adicional_materias CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;
+ALTER TABLE registro_configuracion CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;
+ALTER TABLE registro_online CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;
+ALTER TABLE registro_online_item CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;
+ALTER TABLE registro_online_cuota CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;
+ALTER TABLE registro_pago_matricula CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;
+ALTER TABLE resumen_calificacion CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;
+ALTER TABLE tipo_distributivo CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;
+ALTER TABLE usuario_educativa CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;

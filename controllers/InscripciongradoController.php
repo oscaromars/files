@@ -201,7 +201,8 @@ class InscripciongradoController extends \yii\web\Controller {
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
                     $titulo_archivoOld = Yii::$app->params["documentFolder"] . "inscripciongrado/doc_titulo_per_" . $per_id . "." . $typeFile;
                 $titulo_archivo = InscripcionGrado::addLabelTimeDocumentos($inscripgrado_id, $titulo_archivoOld, '' /*$timeSt*/);
-                    $data["igra_ruta_doc_titulo"] = $titulo_archivo;
+                Utilities::putMessageLogFile('titulo_archivo xXx.. ' .$titulo_archivo );
+                $data["igra_ruta_doc_titulo"] = $titulo_archivo;
                     if ($titulo_archivo === false)
                         throw new Exception('Error doc Titulo no renombrado.');
                 }
@@ -272,7 +273,7 @@ class InscripciongradoController extends \yii\web\Controller {
                 if (isset($data["igra_ruta_doc_homologacion"]) && $data["igra_ruta_doc_homologacion"] != "") {
                     $arrIm = explode(".", basename($data["igra_ruta_doc_homologacion"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                    $homologacion_archivoOld = Yii::$app->params["documentFolder"] . "inscripciongrado/doc_homologacion_per_" . $per_id . "." . $typeFile;
+                    $homologacion_archivoOld = Yii::$app->params["documentFolder"] . "inscripciongrado/doc_especievalorada_per_" . $per_id . "." . $typeFile;
                     $homologacion_archivo = InscripcionGrado::addLabelTimeDocumentos($inscripgrado_id, $homologacion_archivoOld, '' /*$timeSt*/);
                     $data["igra_ruta_doc_homologacion"] = $homologacion_archivo;
                     if ($homologacion_archivo === false)
@@ -318,6 +319,8 @@ class InscripciongradoController extends \yii\web\Controller {
                 $igra_ruta_doc_certificado = $data['igra_ruta_doc_certificado'];
                 $igra_ruta_doc_syllabus = $data['igra_ruta_doc_syllabus'];
                 $igra_ruta_doc_homologacion = $data['igra_ruta_doc_homologacion'];
+                //Utilities::putMessageLogFile('igra_ruta_doc_titulo xXx.. ' .$igra_ruta_doc_titulo );
+                //Utilities::putMessageLogFile('per_id xXx.. ' .$per_id );
                 if ($per_id > 0) {
                     $model = new InscripcionGrado();
                     //Nuevo Registro // si existe no guardar actualizar la data de persona se modifica
@@ -862,7 +865,7 @@ class InscripciongradoController extends \yii\web\Controller {
                 if (isset($data["igra_ruta_doc_homologacion"]) && $data["igra_ruta_doc_homologacion"] != "") {
                     $arrIm = explode(".", basename($data["igra_ruta_doc_homologacion"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                    $homologacion_archivoOld = Yii::$app->params["documentFolder"] . "inscripciongrado/doc_homologacion_per_" . $per_id . "." . $typeFile;
+                    $homologacion_archivoOld = Yii::$app->params["documentFolder"] . "inscripciongrado/doc_especievalorada_per_" . $per_id . "." . $typeFile;
                     $homologacion_archivo = InscripcionGrado::addLabelTimeDocumentos($inscripgrado_id, $homologacion_archivoOld, '' /*$timeSt*/);
                     $data["igra_ruta_doc_homologacion"] = $homologacion_archivo;
                     if ($homologacion_archivo === false)
@@ -972,24 +975,6 @@ class InscripciongradoController extends \yii\web\Controller {
                 $persona_model->update();
 
                 $per_id = $data["per_id"];
-                /*\app\models\Utilities::putMessageLogFile('perssssssssss:  '.$per_id);
-                \app\models\Utilities::putMessageLogFile('parentesco:  '.$tpar_id);
-                \app\models\Utilities::putMessageLogFile('nombre contact:  '.$pcon_nombre);
-                \app\models\Utilities::putMessageLogFile('celeular contact:  '.$pcon_celular);
-                \app\models\Utilities::putMessageLogFile('direccion Contact:  '.$pcon_direccion);*/
-
-                /*$igra_model = InscripcionGrado::findOne(["per_id" => $persona_model->per_id]);
-                $igra_model->igra_ruta_doc_titulo = $igra_ruta_doc_titulo;
-                $igra_model->igra_ruta_doc_dni = $igra_ruta_doc_dni;
-                $igra_model->igra_ruta_doc_certvota = $igra_ruta_doc_certvota;
-                $igra_model->igra_ruta_doc_foto = $igra_ruta_doc_foto;
-                $igra_model->igra_ruta_doc_comprobantepago = $igra_ruta_doc_comprobantepago;
-                $igra_model->igra_ruta_doc_recordacademico = $igra_ruta_doc_record;
-                $igra_model->igra_ruta_doc_certificado = $igra_ruta_doc_certificado;
-                $igra_model->igra_ruta_doc_syllabus = $igra_ruta_doc_syllabus;
-                $igra_model->igra_ruta_doc_homologacion = $igra_ruta_doc_homologacion;
-                $igra_model->igra_fecha_modificacion = $fecha_modificacion;
-                $igra_model->update(); */
 
                 $mod_percontacto = new PersonaContacto();
                 $contacto = $mod_percontacto->modificarPersonacontacto($per_id, $tpar_id, $pcon_nombre, $pcon_celular, $pcon_celular, $pcon_direccion);

@@ -43,7 +43,7 @@ $per_id = $persona_model->per_id;
                         'uploadUrl' => Url::to(['/inscripciongrado/guardarinscripciongrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
-            return {"upload_file": true, "name_file": "doc_titulo' . "_per_" . $per_id . '_' . date(Yii::$app->params["dateByDefault"]) . '"};
+            return {"upload_file": true, "name_file": "doc_titulo' . "_per_" . $per_id . '"};
         }',
                     ],
                     'pluginEvents' => [
@@ -110,7 +110,7 @@ $per_id = $persona_model->per_id;
                         'uploadUrl' => Url::to(['/inscripciongrado/guardarinscripciongrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
-            return {"upload_file": true, "name_file": "doc_dni' . "_per_" . $per_id . '_' . date(Yii::$app->params["dateByDefault"]) . '"};
+            return {"upload_file": true, "name_file": "doc_dni' . "_per_" . $per_id . '"};
         }',
                     ],
                     'pluginEvents' => [
@@ -177,7 +177,7 @@ $per_id = $persona_model->per_id;
                         'uploadUrl' => Url::to(['/inscripciongrado/guardarinscripciongrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
-            return {"upload_file": true, "name_file": "doc_certvota' . "_per_" . $per_id . '_' . date(Yii::$app->params["dateByDefault"]) . '"};
+            return {"upload_file": true, "name_file": "doc_certvota' . "_per_" . $per_id . '"};
         }',
                     ],
                     'pluginEvents' => [
@@ -244,7 +244,7 @@ $per_id = $persona_model->per_id;
                         'uploadUrl' => Url::to(['/inscripciongrado/guardarinscripciongrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
-            return {"upload_file": true, "name_file": "doc_foto' . "_per_" . $per_id . '_' . date(Yii::$app->params["dateByDefault"]) . '"};
+            return {"upload_file": true, "name_file": "doc_foto' . "_per_" . $per_id . '"};
         }',
                     ],
                     'pluginEvents' => [
@@ -311,7 +311,7 @@ $per_id = $persona_model->per_id;
                         'uploadUrl' => Url::to(['/inscripciongrado/guardarinscripciongrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
-            return {"upload_file": true, "name_file": "doc_comprobantepago' . "_per_" . $per_id . '_' . date(Yii::$app->params["dateByDefault"]) . '"};
+            return {"upload_file": true, "name_file": "doc_comprobantepago' . "_per_" . $per_id . '"};
         }',
                     ],
                     'pluginEvents' => [
@@ -382,7 +382,7 @@ $per_id = $persona_model->per_id;
                         'uploadUrl' => Url::to(['/inscripciongrado/guardarinscripciongrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
-            return {"upload_file": true, "name_file": "doc_record' . "_per_" . $per_id . '_' . date(Yii::$app->params["dateByDefault"]) . '"};
+            return {"upload_file": true, "name_file": "doc_record' . "_per_" . $per_id . '"};
         }',
                     ],
                     'pluginEvents' => [
@@ -449,7 +449,7 @@ $per_id = $persona_model->per_id;
                         'uploadUrl' => Url::to(['/inscripciongrado/guardarinscripciongrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
-            return {"upload_file": true, "name_file": "doc_nosancion' . "_per_" . $per_id . '_' . date(Yii::$app->params["dateByDefault"]) . '"};
+            return {"upload_file": true, "name_file": "doc_nosancion' . "_per_" . $per_id . '"};
         }',
                     ],
                     'pluginEvents' => [
@@ -516,7 +516,7 @@ $per_id = $persona_model->per_id;
                         'uploadUrl' => Url::to(['/inscripciongrado/guardarinscripciongrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
-            return {"upload_file": true, "name_file": "doc_syllabus' . "_per_" . $per_id . '_' . date(Yii::$app->params["dateByDefault"]) . '"};
+            return {"upload_file": true, "name_file": "doc_syllabus' . "_per_" . $per_id . '"};
         }',
                     ],
                     'pluginEvents' => [
@@ -583,7 +583,7 @@ $per_id = $persona_model->per_id;
                         'uploadUrl' => Url::to(['/inscripciongrado/guardarinscripciongrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
-            return {"upload_file": true, "name_file": "doc_especievalorada' . "_per_" . $per_id . '_' . date(Yii::$app->params["dateByDefault"]) . '"};
+            return {"upload_file": true, "name_file": "doc_especievalorada' . "_per_" . $per_id . '"};
         }',
                     ],
                     'pluginEvents' => [

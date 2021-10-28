@@ -7,11 +7,11 @@ use kartik\date\DatePicker;
 use yii\helpers\Url;
 ?>
 
-<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">   
+<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
     <h3><span id="lbl_Personeria"><?= Yii::t("formulario", "Datos Laborales") ?></span></h3>
 </div>
 
-<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">   
+<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
     <div class="form-group">
         <label for="txt_empresa" class="col-sm-5 control-label"><?= Yii::t("formulario", "Empresa, Centro o Institución") ?></label>
         <div class="col-sm-7">
@@ -19,7 +19,7 @@ use yii\helpers\Url;
         </div>
     </div>
 </div>
-<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">   
+<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
     <div class="form-group">
         <label for="txt_cargo" class="col-sm-5 control-label"><?= Yii::t("formulario", "Cargo que desempeña") ?></label>
         <div class="col-sm-7">
@@ -27,7 +27,7 @@ use yii\helpers\Url;
         </div>
     </div>
 </div>
-<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">   
+<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
     <div class="form-group">
         <label for="txt_cat_ocupacional" class="col-sm-5 control-label"><?= Yii::t("formulario", "Categoría Ocupacional") ?></label>
         <div class="col-sm-7">
@@ -35,7 +35,7 @@ use yii\helpers\Url;
         </div>
     </div>
 </div>
-<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">   
+<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
     <div class="form-group">
         <label for="txt_direc_emp" class="col-sm-5 control-label"><?= Yii::t("formulario", "Dirección donde Labora") ?></label>
         <div class="col-sm-7">
@@ -43,7 +43,7 @@ use yii\helpers\Url;
         </div>
     </div>
 </div>
-<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">   
+<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
     <div class="form-group">
         <label for="txt_telefono_emp" class="col-sm-5 control-label"><?= Yii::t("formulario", "Phone") ?></label>
         <div class="col-sm-7">
@@ -51,7 +51,7 @@ use yii\helpers\Url;
         </div>
     </div>
 </div>
-<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">   
+<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
     <div class="form-group">
         <label for="txt_correo_emp" class="col-sm-5 control-label"><?= Yii::t("formulario", "Correo Electrónico") ?></label>
         <div class="col-sm-7">
@@ -59,7 +59,7 @@ use yii\helpers\Url;
         </div>
     </div>
 </div>
-<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">   
+<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
     <div class="form-group">
         <label for="txt_fecha_ingreso" class="col-sm-5 control-label"><?= Yii::t("formulario", "Fecha de Ingreso") ?></label>
         <div class="col-sm-7">
@@ -79,7 +79,7 @@ use yii\helpers\Url;
     </div>
 </div>
 
-<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">   
+<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
     <div class="col-md-2">
         <a id="paso5back" href="javascript:" class="btn btn-primary btn-block"><span class="glyphicon glyphicon-menu-left"></span><?= Yii::t("formulario", "Back") ?> </a>
     </div>

@@ -87,7 +87,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 return;
             }
             if (isset($data["getarea"])) {
-                //obtener el codigo de area del pais en informacion personal                
+                //obtener el codigo de area del pais en informacion personal
                 $area = $mod_pais->consultarCodigoArea($data["codarea"]);
                 $message = array("area" => $area);
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
@@ -120,7 +120,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
         $resp_persona = $mod_persona->consultarUltimoPer_id();
         $persona = $resp_persona["ultimo"];
         $per_id = intval( $persona );
-        
+
         return $this->render('index', [
             'arr_unidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $arr_unidad), "id", "name"),
             'arr_programa' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']], $arr_programa), 'id', 'name'),
@@ -153,10 +153,10 @@ class InscripcionposgradoController extends \yii\web\Controller {
         $user_ingresa = Yii::$app->session->get("PB_iduser");
 
         if (Yii::$app->request->isAjax) {
-            
+
             $data = Yii::$app->request->post();
             $fecha_registro = date(Yii::$app->params["dateTimeByDefault"]);
-            
+
             //$per_id = 54;
             if ($data["upload_file"]) {
                 if (empty($_FILES)) {
@@ -185,7 +185,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 }
             }
 
-            
+
             $con = \Yii::$app->db;
             $transaction = $con->beginTransaction();
             $con1 = \Yii::$app->db_captacion;
@@ -260,7 +260,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
                     $data["ipos_ruta_doc_record1"] = $record1_archivo;
                     if ($record1_archivo === false)
                         throw new Exception('Error doc Récord Académico no renombrado.');
-                } 
+                }
                 if (isset($data["ipos_ruta_doc_senescyt"]) && $data["ipos_ruta_doc_senescyt"] != "") {
                     $arrIm = explode(".", basename($data["ipos_ruta_doc_senescyt"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
@@ -323,7 +323,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
                     $data["ipos_ruta_doc_certnosancion"] = $certnosancion_archivo;
                     if ($certnosancion_archivo === false)
                         throw new Exception('Error doc Certificado No Sanción no renombrado.');
-                } 
+                }
                 if (isset($data["ipos_ruta_doc_syllabus"]) && $data["ipos_ruta_doc_syllabus"] != "") {
                     $arrIm = explode(".", basename($data["ipos_ruta_doc_syllabus"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
@@ -345,15 +345,15 @@ class InscripcionposgradoController extends \yii\web\Controller {
 
 
 
-                //FORM 1 datos personal   
-            $per_dni = $data['cedula'];         
+                //FORM 1 datos personal
+            $per_dni = $data['cedula'];
             $primer_nombre = $data["primer_nombre"];
             $segundo_nombre = $data["segundo_nombre"];
             $primer_apellido = $data["primer_apellido"];
             $segundo_apellido = $data["segundo_apellido"];
             $can_id_nacimiento = $data["cuidad_nac"];
             $per_fecha_nacimiento = $data["fecha_nac"];
-            $per_nacionalidad = $data["nacionalidad"]; 
+            $per_nacionalidad = $data["nacionalidad"];
             $eciv_id = $data["estado_civil"];
             $pai_id_domicilio = $data["nacionalidad"];
             $pro_id_domicilio = $data["provincia"];
@@ -443,7 +443,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 if ($resp_persona['existen'] == 0) {
                     //Nuevo Registro
                     \app\models\Utilities::putMessageLogFile(' persona:  '.$resp_inscripcion);
-                    //if($resp_inscripcion == 0){ 
+                    //if($resp_inscripcion == 0){
                         \app\models\Utilities::putMessageLogFile('datos a enviar:  '.$data);
                         \app\models\Utilities::putMessageLogFile('resultado de la inseercion:  '.$resul);
 
@@ -479,25 +479,25 @@ class InscripcionposgradoController extends \yii\web\Controller {
                     if ($resexistecontacto['existe_instruccion'] == 0) {
                         //Creación de persona de contacto
                         $resp_instruccion = $modestinstruccion->insertarEstudianteInstruccion($per_id, $titulo_ter, $universidad_tercer, $grado_tercer, $titulo_cuarto, $universidad_cuarto, $grado_cuarto);
-                    } else {   
+                    } else {
                         $resp_instruccion = $modestinstruccion->modificarEstudianteinstruccion($per_id, $titulo_ter, $universidad_tercer, $grado_tercer, $titulo_cuarto, $universidad_cuarto, $grado_cuarto);
                     }
 
-                    
+
                     // creación de datos laborales del aspirante o estudiante
                     $mod_infolaboral = new InformacionLaboral();
                     $resexisteinfo = $mod_infolaboral->consultarInfoLaboral($per_id);
                     if ($resexisteinfo['existe_instruccion'] == 0) {
                         //Creación de persona de contacto
                         $resp_infolaboral = $mod_infolaboral->insertarInfoLaboral($per_id, $empresa, $cargo, $telefono_emp, $prov_emp, $ciu_emp, $parroquia, $direccion_emp, $añoingreso_emp, $correo_emp, $cat_ocupacional);
-                    } else {   
+                    } else {
                         $resp_infolaboral = $mod_infolaboral->modificarInfoLaboral($per_id, $empresa, $cargo, $telefono_emp, $prov_emp, $ciu_emp, $parroquia, $direccion_emp, $añoingreso_emp, $correo_emp, $cat_ocupacional);
                     }
 
-                    // info Idiomas 
-                    //Idioma Ingles  
-                    $mod_idiomas = new EstudianteIdiomas();  
-                    $idioma = $idioma1;   
+                    // info Idiomas
+                    //Idioma Ingles
+                    $mod_idiomas = new EstudianteIdiomas();
+                    $idioma = $idioma1;
                     if($idioma == 1){
                         $resp_existe_idioma = $mod_idiomas->consultarInfoIdiomasEst($per_id, 1);
                         if ($resp_existe_idioma['existe_idioma'] == 0) {
@@ -505,8 +505,8 @@ class InscripcionposgradoController extends \yii\web\Controller {
                         } else {
                             $info_idioma = $mod_idiomas->modificarInfoDiscapacidad($per_id, $idioma1, $nivel1, $noidioma);
                         }
-                    }   
-                    $idiomas = $idioma2; 
+                    }
+                    $idiomas = $idioma2;
                     if($idiomas == 2){
                         $resp_existe_idioma = $mod_idiomas->consultarInfoIdiomasEst($per_id, 2);
                         if ($resp_existe_idioma['existe_idioma'] == 0) {
@@ -514,7 +514,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
                         } else {
                             $info_idioma = $mod_idiomas->modificarInfoDiscapacidad($per_id, $idioma2, $nivel2, $noidioma);
                         }
-                    }   
+                    }
                     if($idiomas == 3){
                         $resp_existe_idioma = $mod_idiomas->consultarInfoIdiomasEst($per_id, 3);
                         if ($resp_existe_idioma['existe_idioma'] == 0) {
@@ -522,10 +522,10 @@ class InscripcionposgradoController extends \yii\web\Controller {
                         } else {
                             $info_idioma = $mod_idiomas->modificarInfoDiscapacidad($per_id, $idioma2, $otronivel, $otroidioma);
                         }
-                    }        
-                    
-                    // info discapacidad   
-                    $mod_infodiscapacidad = new InfoDiscapacidadEst();                  
+                    }
+
+                    // info discapacidad
+                    $mod_infodiscapacidad = new InfoDiscapacidadEst();
                     $resp_existe_infodisc = $mod_infodiscapacidad->consultarInfoDiscapacidadest($per_id);
                     if ($resp_existe_infodisc['existe_infodiscapacidad'] == 0 && $discapacidad == 1) {
                         $info_discapacidad = $mod_infodiscapacidad->insertarInfoDiscapacidad($per_id, $tipo_discap, $porcentaje_discap);
@@ -535,8 +535,8 @@ class InscripcionposgradoController extends \yii\web\Controller {
                         }
                     }
 
-                    // info Docencia   
-                    $mod_infodocencia = new InfoDocenciaEstudiante();                  
+                    // info Docencia
+                    $mod_infodocencia = new InfoDocenciaEstudiante();
                     $resp_docencia = $mod_infodocencia->consultarInfoDocenciaEstudiante($per_id);
                     if ($resp_docencia['existe_infodocente'] == 0 && $docencias == 1) {
                         $info_docencia = $mod_infodocencia->insertarInfoDocenciaEst($per_id, $año_docencia, $area_docencia);
@@ -546,8 +546,8 @@ class InscripcionposgradoController extends \yii\web\Controller {
                         }
                     }
 
-                    // info Investigacion   
-                    $mod_infoinvestigacion = new InfoEstudianteInvestigacion();                  
+                    // info Investigacion
+                    $mod_infoinvestigacion = new InfoEstudianteInvestigacion();
                     $resp_investigacion = $mod_infoinvestigacion->consultarInfoEstudianteInvestigacion($per_id);
                     if ($resp_existe_infodisc['existe_infodiscapacidad'] == 0 && $investiga == 1) {
                         $info_investigacion = $mod_infoinvestigacion->insertarInfoEstInvestigacion($per_id, $articulos, $area_investigacion);
@@ -557,12 +557,12 @@ class InscripcionposgradoController extends \yii\web\Controller {
                         }
                     }
 
-                        
+
                 } else{
 
                     $resul = array();
                     $error++;
-                    $error_message .= Yii::t("formulario", "The person already exists");    
+                    $error_message .= Yii::t("formulario", "The person already exists");
 
                     $message = array(
                         "wtmessage" => Yii::t("formulario",  $error_message), //$error_message
@@ -573,32 +573,32 @@ class InscripcionposgradoController extends \yii\web\Controller {
                     $resul["message"] = $message;
                     $resul["data"] = null;
                     $resul["dataext"] = null;
-                
+
 
                     //return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Error'), $error_message);
-                    return Utilities::ajaxResponse('ERROR_EXIST', 'alert', Yii::t('jslang', 'Error'), 'false', $message, $resul);   
+                    return Utilities::ajaxResponse('ERROR_EXIST', 'alert', Yii::t('jslang', 'Error'), 'false', $message, $resul);
                     //$resul = $model->actualizarInscripcionposgrado($data);
                     if ($resp_persona['existen'] == 1) {
                     // actualizacion de Persona
                     $respPersona = $mod_persona->modificaPersonaInscripcioposgrado($per_dni, $primer_nombre, $segundo_nombre, $primer_apellido, $segundo_apellido, $can_id_nacimiento, $per_fecha_nacimiento, $per_nacionalidad, $eciv_id, $pai_id_domicilio, $pro_id_domicilio, $can_id_domicilio, $per_domicilio_ref, $per_celular, $per_domicilio_telefono, $per_correo);
                     }
                 }
-                
+
                 $mod_persona = new Persona();
                 $model = new InscripcionPosgrado();
                 $resp_persona = $mod_persona->consultPer_id();
                 $persona = $resp_persona["ultimo"];
                 $per_id = intval( $persona );
-                
+
                 \app\models\Utilities::putMessageLogFile('consultarrrrr personasssss:  '.$per_id);
                 $resp_inscripcion = $model->consultarDatosInscripcionposgrado($per_id);
                 \app\models\Utilities::putMessageLogFile(' personaxxxxxxxxxxx:  '.$resp_inscripcion['existe_inscripcionposgrado']);
-                if ($resp_inscripcion['existe_inscripcionposgrado'] == 0){ 
+                if ($resp_inscripcion['existe_inscripcionposgrado'] == 0){
                     $resul = $model->insertarDataInscripcionposgrado($per_id, $unidad, $programa, $modalidad, $año, $per_dni, $tipo_financiamiento, $ipos_ruta_doc_foto, $ipos_ruta_doc_dni, $ipos_ruta_doc_certvota, $ipos_ruta_doc_titulo, $ipos_ruta_doc_comprobantepago, $ipos_ruta_doc_recordacademico, $ipos_ruta_doc_senescyt, $ipos_ruta_doc_hojadevida, $ipos_ruta_doc_cartarecomendacion, $ipos_ruta_doc_certificadolaboral, $ipos_ruta_doc_certificadoingles, $ipos_ruta_doc_otrorecord, $ipos_ruta_doc_certificadonosancion, $ipos_ruta_doc_syllabus, $ipos_ruta_doc_homologacion, $ipos_mensaje1, $ipos_mensaje2);
                     if ($resul) {
                             $exito=1;
                         }
-                    if($exito){ 
+                    if($exito){
                     \app\models\Utilities::putMessageLogFile('resultado es ok');
                         //$_SESSION['persona_id'] =  $resul['per_id'];
                         $transaction->commit();
@@ -606,10 +606,10 @@ class InscripcionposgradoController extends \yii\web\Controller {
                             "wtmessage" => Yii::t("formulario", "The information have been saved"),
                             "title" => Yii::t('jslang', 'Success'),
                         );
-                        return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);                                        
-                    }             
-                    
-                    //} 
+                        return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+                    }
+
+                    //}
                     else {
                         \app\models\Utilities::putMessageLogFile('resultado es NOok');
                         $message = array(
@@ -620,7 +620,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
                     }
                 }
             } catch (Exception $ex) {
-                $transaction->rollback();                
+                $transaction->rollback();
                 $message = array(
                     "wtmessage" => $ex->getMessage(),
                     "title" => Yii::t('jslang', 'Error'),
@@ -645,7 +645,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
             \app\models\Utilities::putMessageLogFile('programaaaa:  '.$data['programa']);
             \app\models\Utilities::putMessageLogFile('modalidadddd:  '.$data['modalidad']);
             $arrSearch["search"]  = $data['search'];
-            $arrSearch["año"]     = $data['año'];  
+            $arrSearch["año"]     = $data['año'];
             $arrSearch["unidad"]  = $data['unidad'];
             $arrSearch["programa"] = $data['programa'];
             $arrSearch["modalidad"]   = $data['modalidad'];
@@ -732,14 +732,14 @@ class InscripcionposgradoController extends \yii\web\Controller {
             /**
              * Inf. Profesional
              */
-            
+
             $instruccion_model = EstudianteInstruccion::findOne(['per_id' => $persona_model->per_id]);
             $laboral_model = InformacionLaboral::findOne(['per_id' => $persona_model->per_id]);
             $arr_pais = Pais::findAll(["pai_estado" => 1, "pai_estado_logico" => 1]);
             $arr_nacionalidad = Pais::find()->select("pai_id AS id, pai_nacionalidad AS value")->where(["pai_estado_logico" => "1", "pai_estado" => "1"])->asArray()->all();
             $arr_prov_emp = Provincia::provinciaXPais($arr_nacionalidad[0]["id"]);
             $arr_ciu_emp = Canton::cantonXProvincia($arr_prov_emp[0]["id"]);
-            
+
 
             $ViewFormTab2 = $this->renderPartial('ViewFormTab2', [
                 'arr_pais' => (empty(ArrayHelper::map($arr_pais, "pai_id", "pai_nombre"))) ? array(Yii::t("pais", "-- Select Pais --")) : (ArrayHelper::map($arr_pais, "pai_id", "pai_nombre")),
@@ -780,7 +780,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 'investigaciones_model' => $investigaciones_model,
                 'ipos_model' => $ipos_model,
 
-            ]);  
+            ]);
             /**
              * Documentación
              */
@@ -809,7 +809,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 'contacto_model' => $contacto_model,
                 'documentos' => $documentos,
 
-            ]);          
+            ]);
 
 
 
@@ -845,10 +845,10 @@ class InscripcionposgradoController extends \yii\web\Controller {
     public function actionEdit() {
 
         if (Yii::$app->request->isAjax) {
-            
+
             $data = Yii::$app->request->post();
             $fecha_registro = date(Yii::$app->params["dateTimeByDefault"]);
-            
+
             //$per_id = 54;
             if ($data["upload_file"]) {
                 if (empty($_FILES)) {
@@ -944,14 +944,14 @@ class InscripcionposgradoController extends \yii\web\Controller {
             /**
              * Inf. Profesional
              */
-            
+
             $instruccion_model = EstudianteInstruccion::findOne(['per_id' => $persona_model->per_id]);
             $laboral_model = InformacionLaboral::findOne(['per_id' => $persona_model->per_id]);
             $arr_pais = Pais::findAll(["pai_estado" => 1, "pai_estado_logico" => 1]);
             $arr_nacionalidad = Pais::find()->select("pai_id AS id, pai_nacionalidad AS value")->where(["pai_estado_logico" => "1", "pai_estado" => "1"])->asArray()->all();
             $arr_prov_emp = Provincia::provinciaXPais($arr_nacionalidad[0]["id"]);
             $arr_ciu_emp = Canton::cantonXProvincia($arr_prov_emp[0]["id"]);
-            
+
 
             $EditFormTab2 = $this->renderPartial('EditFormTab2', [
                 'arr_pais' => (empty(ArrayHelper::map($arr_pais, "pai_id", "pai_nombre"))) ? array(Yii::t("pais", "-- Select Pais --")) : (ArrayHelper::map($arr_pais, "pai_id", "pai_nombre")),
@@ -997,7 +997,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 'investigaciones_model' => $investigaciones_model,
                 'ipos_model' => $ipos_model,
 
-            ]);  
+            ]);
             /**
              * Documentación
              */
@@ -1060,8 +1060,8 @@ class InscripcionposgradoController extends \yii\web\Controller {
             ];
 
             return $this->render('edit', [
-                        'items' => $items, 
-                        'persona_model' => $persona_model, 
+                        'items' => $items,
+                        'persona_model' => $persona_model,
                         'contacto_model' => $contacto_model,
             ]);
         }
@@ -1094,13 +1094,13 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 }else {
                 return json_encode(['error' => Yii::t("notificaciones", "Error to process File ". basename($files['name']) ." Solo formato imagenes pdf, jpg, png.")]);
                 }
-            } 
+            }
 
-            
+
             $con = \Yii::$app->db_inscripcion;
             $transaction = $con->beginTransaction();
             $timeSt = date(Yii::$app->params["dateByDefault"]);
-            
+
             try {
                 $user_ingresa = Yii::$app->session->get("PB_iduser");
                 $per_id = $data["per_id"];
@@ -1111,7 +1111,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 $user_perId = Yii::$app->session->get("PB_perid");
                 $grupo_model = new Grupo();
                 $arr_grupos = $grupo_model->getAllGruposByUser($user_usermane);
-                
+
 
                 $inscriposgrado_id = $data["ipos_id"];
                 if (isset($data["ipos_ruta_doc_foto"]) && $data["ipos_ruta_doc_foto"] != "") {
@@ -1167,7 +1167,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
                     $data["ipos_ruta_doc_record1"] = $record1_archivo;
                     if ($record1_archivo === false)
                         throw new Exception('Error doc Récord Académico no renombrado.');
-                } 
+                }
                 if (isset($data["ipos_ruta_doc_senescyt"]) && $data["ipos_ruta_doc_senescyt"] != "") {
                     $arrIm = explode(".", basename($data["ipos_ruta_doc_senescyt"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
@@ -1230,7 +1230,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
                     $data["ipos_ruta_doc_certnosancion"] = $certnosancion_archivo;
                     if ($certnosancion_archivo === false)
                         throw new Exception('Error doc Certificado No Sanción no renombrado.');
-                } 
+                }
                 if (isset($data["ipos_ruta_doc_syllabus"]) && $data["ipos_ruta_doc_syllabus"] != "") {
                     $arrIm = explode(".", basename($data["ipos_ruta_doc_syllabus"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
@@ -1252,15 +1252,15 @@ class InscripcionposgradoController extends \yii\web\Controller {
 
 
 
-                //FORM 1 datos personal   
-            $per_dni = $data['cedula'];         
+                //FORM 1 datos personal
+            $per_dni = $data['cedula'];
             $primer_nombre = $data["primer_nombre"];
             $segundo_nombre = $data["segundo_nombre"];
             $primer_apellido = $data["primer_apellido"];
             $segundo_apellido = $data["segundo_apellido"];
             $can_id_nacimiento = $data["cuidad_nac"];
             $per_fecha_nacimiento = $data["fecha_nac"];
-            $per_nacionalidad = $data["nacionalidad"]; 
+            $per_nacionalidad = $data["nacionalidad"];
             $eciv_id = $data["estado_civil"];
             $pai_id_domicilio = $data["nacionalidad"];
             $pro_id_domicilio = $data["provincia"];
@@ -1400,7 +1400,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 $laboral_model->update();
 
 
-                $mod_infodiscapacidad = new InfoDiscapacidadEst();                  
+                $mod_infodiscapacidad = new InfoDiscapacidadEst();
                 $resp_existe_infodisc = $mod_infodiscapacidad->consultarInfoDiscapacidadest($per_id);
                 if ($resp_existe_infodisc['existe_infodiscapacidad'] == 0) {
                     $discapacidad_model = new InfoDiscapacidadEst();
@@ -1418,8 +1418,8 @@ class InscripcionposgradoController extends \yii\web\Controller {
                     $discapacidad_model->update();
                 }
 
-                // info Docencia   
-                $mod_infodocencia = new InfoDocenciaEstudiante();                  
+                // info Docencia
+                $mod_infodocencia = new InfoDocenciaEstudiante();
                 $resp_docencia = $mod_infodocencia->consultarInfoDocenciaEstudiante($per_id);
                 if ($resp_docencia['existe_infodocente'] == 0) {
                     $docencia_model = new InfoDocenciaEstudiante();
@@ -1437,9 +1437,9 @@ class InscripcionposgradoController extends \yii\web\Controller {
                     $docencia_model->update();
                 }
 
-                // info Investigacion   
-                $mod_infoinvestigacion = new InfoEstudianteInvestigacion();       
-                \app\models\Utilities::putMessageLogFile('per_id:  '.$per_id);           
+                // info Investigacion
+                $mod_infoinvestigacion = new InfoEstudianteInvestigacion();
+                \app\models\Utilities::putMessageLogFile('per_id:  '.$per_id);
                 $resp_investigacion = $mod_infoinvestigacion->consultarInfoEstudianteInvestigacion($per_id);
                 if ($resp_investigacion['existe_infoinvestigacion'] == 0) {
                     $investigacion_model = new InfoEstudianteInvestigacion();
@@ -1476,7 +1476,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 $ipos_model->ipos_ruta_doc_homologacion = $ipos_ruta_doc_homologacion;
                 $ipos_model->ipos_fecha_modificacion = $fecha_modificacion;
                 $ipos_model->update();
-                
+
 
                 $mod_percontacto = new PersonaContacto();
                 $contacto = $mod_percontacto->modificarPersonacontacto($per_id, $tpar_id, $pcon_nombre, $pcon_celular, $pcon_celular, $pcon_direccion);
@@ -1500,7 +1500,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 //if ($persona_model->update()) {
                     /*$usuario_model = Usuario::findOne(["per_id" => $per_id]);
 
-                    
+
                     if (isset($arr_idioma)) {
                         foreach ($arr_idioma as $key3 => $value3) {
                             if ($value3[4] == "N") {
@@ -1515,7 +1515,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
                             }
                         }
                     }*/
-                    
+
                     return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), false, $message);
 
                 } else {
@@ -1567,7 +1567,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
         } else {
             $arrData = $model_posgrado->consultaRegistroAdmisionposgrado($arrSearch, 0);
         }
-        for ($i = 0; $i < count($arrData); $i++) { 
+        for ($i = 0; $i < count($arrData); $i++) {
             unset($arrData[$i]['per_id']);
         }
         $nameReport = academico::t("Academico", "Listado de Aspirantes de Grado");

@@ -18,7 +18,7 @@ $(document).ready(function () {
             }
         }, true);
     });
-    
+
     $('#cmb_programa_pos').change(function () {
         var link = $('#txth_base').val() + "/inscripcionposgrado/index";
         var arrParams = new Object();
@@ -213,7 +213,7 @@ $(document).ready(function () {
         $("a[data-href='#paso3']").attr('href', $("a[data-href='#paso3']").attr('data-href'));
         $("a[data-href='#paso3']").trigger("click");
     });
-    
+
     /*GUARDAR INFORMACION*/
 
     $('#btn_guardar').click(function () {
@@ -302,9 +302,9 @@ $(document).ready(function () {
 
     //control del div de financiamiento
 
-    $("#paso3next").click(function () {  
+    $("#paso3next").click(function () {
         var tipo_financiamiento = $("[name=signup]:checked").val();
-    });    
+    });
 
     //Control del div de homologacion
     $('#signup-hom').change(function () {
@@ -361,7 +361,7 @@ function guardarInscripcionPosgrado() {
     } else {
         arrParams.cedula = $('#txt_pasaporte').val();
     }
-    
+
     var error = 0;
     //var pais = $('#cmb_pais_dom').val();
     if ($("#chk_mensaje1").prop("checked") && $("#chk_mensaje2").prop("checked")) {
@@ -420,7 +420,7 @@ function guardarInscripcionPosgrado() {
     //FORM 1 datos en caso de emergencias
     arrParams.cont_emergencia = $('#txt_contacto_emergencia').val();
     arrParams.parentesco = $('#cmb_parentesco').val();
-    arrParams.tel_emergencia = $('#txt_telefono_emergencia').val(); 
+    arrParams.tel_emergencia = $('#txt_telefono_emergencia').val();
 
     //Form2 Datos formacion profesional
     arrParams.titulo_tercer = $('#txt_titulo_3erNivel').val();
@@ -489,7 +489,7 @@ function guardarInscripcionPosgrado() {
 
     //Form2 Datos financiamiento
     arrParams.tipo_financiamiento = $("[name=signup]:checked").val();
-    
+
 
      //TAB 2
     arrParams.ipos_ruta_doc_foto = ($('#txth_doc_foto').val() != '') ? $('#txth_doc_foto').val() : '';
@@ -511,12 +511,12 @@ function guardarInscripcionPosgrado() {
     arrParams.ipos_mensaje2 = ($("#chk_mensaje2").prop("checked")) ? '1' : '0';
 
     if (!validateForm()) {
-        requestHttpAjax(link, arrParams, function (response) { 
+        requestHttpAjax(link, arrParams, function (response) {
             showAlert(response.status, response.label, response.message);
-            //var message = response.message;                       
+            //var message = response.message;
             if (response.status == "OK") {
                 setTimeout(function() {
-                        window.location.href = $('#txth_base').val() + "/inscripcionposgrado/aspiranteposgrado";
+                        window.location.href = $('#txth_base').val() + "/inscripcionposgrado/index";
                     }, 3000);
             }
         }, true);
@@ -556,7 +556,7 @@ function actualizarGridAspirantePosgrado(){
 /** IDIOMAS **/
 function addIdioma() {
     var idioma = $("#cmb_idioma2Edit :selected").val();
-    var nivelidioma = $("#cmb_nivelidioma2Edit :selected").text(); 
+    var nivelidioma = $("#cmb_nivelidioma2Edit :selected").text();
 
     if (idioma == 3) {
         var otroidioma = $('#txt_nombreidiomaEdit').val();
@@ -667,7 +667,7 @@ function updateaspiranteposgrado() {
     //FORM 1 datos en caso de emergencias
     arrParams.cont_emergencia = $('#txt_contacto_emergenciaEdit').val();
     arrParams.parentesco = $('#cmb_parentescoEdit').val();
-    arrParams.tel_emergencia = $('#txt_telefono_emergenciaEdit').val(); 
+    arrParams.tel_emergencia = $('#txt_telefono_emergenciaEdit').val();
 
     //Form2 Datos formacion profesional
     arrParams.titulo_tercer = $('#txt_titulo_3erNivelEdit').val();
@@ -740,7 +740,7 @@ function updateaspiranteposgrado() {
 
     //Form2 Datos financiamiento
     arrParams.tipo_financiamiento = $("#txt_financiamientoEdit").val();
-    
+
 
      //TAB 2
     arrParams.ipos_ruta_doc_foto = $('#txth_doc_foto').val();
@@ -775,9 +775,9 @@ function updateaspiranteposgrado() {
     }*/
 
     if (!validateForm()) {
-        requestHttpAjax(link, arrParams, function (response) { 
+        requestHttpAjax(link, arrParams, function (response) {
             showAlert(response.status, response.label, response.message);
-            //var message = response.message;                       
+            //var message = response.message;
             if (response.status == "OK") {
                 setTimeout(function() {
                         window.location.href = $('#txth_base').val() + "/inscripcionposgrado/aspiranteposgrado";

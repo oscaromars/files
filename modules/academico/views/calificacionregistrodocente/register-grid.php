@@ -14,8 +14,9 @@ use app\modules\academico\Module as academico;
 
 use app\assets\DatatableAsset;
 DatatableAsset::register($this);
-
 academico::registerTranslations();
+//$isreg = array($model{'isreg'});
+//var_dump($isreg);
 ?>
 
 
@@ -25,6 +26,11 @@ academico::registerTranslations();
         <div class="bounce2"></div>
         <div class="bounce3"></div>
     </div>
+    <br>
+    <div class='col-lg-12 col-md-12 col-sm-12 col-xs-12 form-group' id="periodocalif">
+    </div>
+    
+    
     <div class="container" style="width:auto;" id="tablacontenedor">
         <table id="gridResumen" class="display compact responsive nowrap" style="width:100%">
             <thead id="html_thead">

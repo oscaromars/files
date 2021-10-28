@@ -311,6 +311,33 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord {
 	}
 
 	/**
+	 * Retorna el rango de fechas del cierre del periodo dependiendo del grupo de usuarios
+	 * @author  Luis Cajamarca <analista04>
+	 * @param
+	 * @return
+	 */
+	public function getPeriodoCalificaciones($grupos, $paca_id) {
+		$con = Yii::$app->db_academico;
+
+		if ($grupo == 1) {
+			$fecha_cierre = "paca.paca_fecha_cierre_fin as fin";
+			$str_search = " now() >= paca.paca_fecha_inicio and now()<= paca.paca_fecha_cierre_fin and ";
+		} elseif ($grupo >= 6 and $grupo <= 8) {
+			$fecha_cierre = "paca.paca_fecha_fin as fin";
+			$str_search = " now() >= paca.paca_fecha_inicio and now()<= paca.paca_fecha_fin and ";
+		}
+
+		$sql = "SELECT paca.paca_fecha_inicio, " . $fecha_cierre . "
+                FROM db_academico.periodo_academico as paca
+                WHERE " . $str_search . " paca.paca_id = " . $paca_id;
+
+		$comando = $con->createCommand($sql);
+		$resultData = $comando->queryOne();
+
+		return $resultData;
+	}
+
+	/**
 	 * Insertar en la tabla cabecera_calificacion
 	 * @author  Jorge Paladines <analista.desarrollo@uteg.edu.ec>
 	 * @param
@@ -970,7 +997,9 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord {
 
 	/**
 	 * Function Obtiene informacion de estudiante segun profesor, unidad, asug etc.
+	 * Modificación, se implemento rango de fechas para cada periodo academico para los diferentes grupos
 	 * @author  Galo Aguirre <analistadesarrollo06@uteg.edu.ec>
+	 * @modify Luis Cajamarca <analista04>
 	 * @param
 	 * @return  $resultData (Retornar los datos).
 	 */

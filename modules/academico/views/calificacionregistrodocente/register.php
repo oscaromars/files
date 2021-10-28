@@ -4,6 +4,18 @@ use app\modules\academico\Module as academico;
 use yii\helpers\Html;
 academico::registerTranslations();
 //echo(print_r($arr_periodos));
+
+if ($isreg) {
+	echo "</br>";
+	echo "<div class='col-lg-12 col-md-12 col-sm-12 col-xs-12 form-group'>";
+	echo "<b style='color:green'>REGISTRO DE CALIFICACIONES ESTARÁ ABIERTO HASTA " . $isreg[0]["fin"] . "</b>";
+	echo "</div>";
+} Else {
+	echo "</br>";
+	echo "<div class='col-lg-12 col-md-12 col-sm-12 col-xs-12 form-group'>";
+	echo "<b style='color:red'>EL PERIODO DE CALIFICACIONES ESTÁ CERRADO</b>";
+	echo "</div>";
+}
 ?>
 <?=Html::hiddenInput('txth_proid', $pro_id, ['id' => 'txth_proid']);?>
 <input type="hidden" id="frm_arr_grupo" value="<?=$arr_grupos?>">
@@ -34,6 +46,7 @@ $this->render('register-grid', [
 	'componente' => $componente,
 	'campos' => $campos,
 	'unidad' => $unidad,
+	'isreg' => $isreg,
 ]);
 ?>
  <div>

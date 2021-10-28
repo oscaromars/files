@@ -337,7 +337,7 @@ function actualizarGridRegistro(dready = 0) {
     arrParams.materia   = $('#cmb_materia option:selected').val();  
     arrParams.parcial   = $('#cmb_parcial').val();
     arrParams.profesor  = $('#cmb_profesor_rc').val();
-    arrParams.per_id = $('#frm_per_id').val();
+    arrParams.grupo     = $('#frm_arr_grupos').val();
 
     //URL para actualizar el grid
     var link = $('#txth_base').val() + "/academico/calificacionregistrodocente/traermodelo";
@@ -347,7 +347,22 @@ function actualizarGridRegistro(dready = 0) {
         //console.log(response);
         //Esta es la funcion en el controlador que actualizara las notas
         var url_editor = $('#txth_base').val() + "/academico/calificacionregistrodocente/actualizarnota";
-
+        var isreg = response['isreg'];
+        if (isreg){
+            var mens = document.createElement('b');
+            //agrego la clase
+            //mens.css('color', 'green');
+            var contenedor = document.getElementById('periodocalif');
+            contenedor.innerHTML = "<b style='color:green'>REGISTRO DE CALIFICACIONES ESTARÁ ABIERTO HASTA "+isreg['fin']+ "</b>";
+            //contenedor.appendChild(mens);
+        }else{
+            var mens = document.createElement('b');
+            //agrego la clase
+            //mens.css('color', 'green');
+            var contenedor = document.getElementById('periodocalif');
+            contenedor.innerHTML = "<b style='color:red'>EL PERIODO DE CALIFICACIONES ESTÁ CERRADO</b>";
+            //contenedor.appendChild(mens);
+        }
         //Armamos el componente editor, aqui el indicamos que campos del grid son editables
         editor = new $.fn.dataTable.Editor( {
             ajax:  url_editor,

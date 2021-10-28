@@ -231,7 +231,7 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 
 		if (Yii::$app->request->isAjax) {
 			$data = Yii::$app->request->post();
-
+			$periodo = $data['paca_id'];
 			if (isset($data["getparcial"])) {
 				$parcial = $mod_periodo->getParcialUnidad($data["uaca_id"]);
 				$message = array("parcial" => $parcial);
@@ -245,7 +245,6 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 		}
 
 		$arr_periodos = $mod_periodo->consultarPeriodosActivos();
-
 		$arr_ninteres = $mod_unidad->consultarUnidadAcademicasEmpresa(1);
 		$arr_modalidad = $mod_modalidad->consultarModalidad($arr_ninteres[0]["id"], 1);
 		$arr_parcialunidad = $mod_periodo->getParcialUnidad($arr_ninteres[0]["id"]);
@@ -284,6 +283,7 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 			'model' => "",
 			'arr_profesor_all' => ArrayHelper::map(array_merge($arr_profesor_all), "pro_id", "nombres"),
 			'arr_grupos' => $arr_grupos[0]['id'],
+			'isreg' => $isreg,
 			//'arr_profesor_all' => ArrayHelper::map($arr_profesor_all, "pro_id", "nombres"),
 			//'componente'        => $componenteuni,
 			//'campos'            => $campos,
@@ -320,7 +320,8 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 		$arrSearch["profesor"] = $data['profesor'];
 		// $arrSearch["paralelo"] = $data['paralelo'];
 		$arrSearch["grupo"] = $data['grupo'];
-		\app\models\Utilities::putMessageLogFile('$data' . $data['grupo']);
+		$isreg = $mod_calificacion->getPeriodoCalificaciones($arrSearch["grupo"], $arrSearch["periodo"]);
+		\app\models\Utilities::putMessageLogFile('$isreg: ' . print_r($isreg, true));
 		$model = array();
 		$componentes = array();
 		$model['data'] = $mod_calificacion->getRegistroCalificaciones($arrSearch);
@@ -329,7 +330,9 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 		foreach ($componentes_temp as $key => $value) {
 			$componentes[$value['nombre']] = array('id' => $value['id'], 'notamax' => $value['notamax']);
 		}
+		$model['isreg'] = $isreg;
 		$model['componentes'] = $componentes;
+		\app\models\Utilities::putMessageLogFile('$model: ' . print_r($model['isreg'], true));
 		return json_encode($model);
 	} //function actionTraerModelo
 

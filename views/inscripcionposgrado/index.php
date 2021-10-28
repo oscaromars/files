@@ -75,9 +75,9 @@ $_SESSION['persona_ingresa'] = base64_decode($_GET['ids']);
                         'tipo_discap_fam' => $arr_tip_discap_fam,
                         'tipparent_dis' => $arr_tipparent_dis,
                         'tipparent_enf' => $arr_tipparent_enf,
-                        
+
                     ]);
-                    ?>                  
+                    ?>
                 </form>
             </div><!-- /.tab-pane -->
             <div class="tab-pane" id="paso3">
@@ -86,7 +86,7 @@ $_SESSION['persona_ingresa'] = base64_decode($_GET['ids']);
                     $this->render('_form_tab3', [
                         'tipo_financiamiento' => $tipo_financiamiento,
                     ]);
-                    ?>              
+                    ?>
                 </form>
             </div><!-- /.tab-pane -->
             <div class="tab-pane" id="paso4">
@@ -96,7 +96,7 @@ $_SESSION['persona_ingresa'] = base64_decode($_GET['ids']);
                         'per_id' => $per_id,
                         "arr_convenio_empresa" => $arr_convenio_empresa,
                     ]);
-                    ?>               
+                    ?>
                 </form>
             </div><!-- /.tab-pane -->
         </div><!-- /.tab-content -->

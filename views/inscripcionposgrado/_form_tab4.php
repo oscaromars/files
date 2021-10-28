@@ -12,21 +12,21 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
           </div>
           </div>';
 ?>
-<form class="form-horizontal"> 
+<form class="form-horizontal">
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <h3><span id="lbl_datos4"><?= Yii::t("formulario", "Documentación") ?></span></h3>
     </div><br><br></br>
     <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
         <?php echo $leyenda; ?>
     </div>
-    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" id="convenio" style="display: none">   
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" id="convenio" style="display: none">
         <div class="form-group">
             <label for="cmb_convenio_empresa" class="col-lg-2 col-md-2 col-sm-2 col-xs-2 control-label keyupmce"><?= Yii::t("formulario", "Empresa Convenio") ?> <span class="text-danger">*</span></label>
             <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
                 <?= Html::dropDownList("cmb_convenio_empresa", 0, $arr_convenio_empresa, ["class" => "form-control", "id" => "cmb_convenio_empresa"]) ?>
             </div>
         </div>
-    </div>    
+    </div>
     <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12 doc_foto cinteres">
         <div class="form-group">
             <label for="txth_doc_foto" class="col-sm-2 col-md-2 col-xs-2 col-lg-2 control-label keyupmce"><?= Yii::t("formulario", "Foto") ?></label>
@@ -61,9 +61,9 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                         "fileuploaderror" => "function (event, data, msg) {
         $(this).parent().parent().children().first().addClass('hide');
         $('#txth_doc_adj_disi').val('');
-        //showAlert('NO_OK', 'error', {'wtmessage': objLang.Error_to_process_File__Try_again_, 'title': objLang.Error});   
+        //showAlert('NO_OK', 'error', {'wtmessage': objLang.Error_to_process_File__Try_again_, 'title': objLang.Error});
     }",
-                        "filebatchuploadcomplete" => "function (event, files, extra) { 
+                        "filebatchuploadcomplete" => "function (event, files, extra) {
         $(this).parent().parent().children().first().addClass('hide');
     }",
                         "filebatchuploadsuccess" => "function (event, data, previewId, index) {
@@ -71,12 +71,12 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
         response = data.response, reader = data.reader;
         $(this).parent().parent().children().first().addClass('hide');
         var acciones = [{id: 'reloadpage', class: 'btn btn-primary', value: objLang.Accept, callback: 'reloadPage'}];
-        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});  
+        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});
     }",
                         "fileuploaded" => "function (event, data, previewId, index) {
         $(this).parent().parent().children().first().addClass('hide');
         var acciones = [{id: 'reloadpage', class: 'btn btn-primary', value: objLang.Accept, callback: 'reloadPage'}];
-        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});                              
+        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});
     }",
                     ],
                 ]);
@@ -84,7 +84,7 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
             </div>
         </div>
     </div>
-    <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12 doc_dni cinteres">  
+    <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12 doc_dni cinteres">
         <div class="form-group">
             <label for="txth_doc_dni" class="col-sm-2 col-md-2 col-xs-2 col-lg-2 control-label keyupmce"><?= Yii::t("formulario", "Cédula o Pasaporte") ?></label>
             <div class="col-sm-6 col-md-6 col-xs-6 col-lg-6">
@@ -118,9 +118,9 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                         "fileuploaderror" => "function (event, data, msg) {
         $(this).parent().parent().children().first().addClass('hide');
         $('#txth_doc_dni').val('');
-        //showAlert('NO_OK', 'error', {'wtmessage': objLang.Error_to_process_File__Try_again_, 'title': objLang.Error});   
+        //showAlert('NO_OK', 'error', {'wtmessage': objLang.Error_to_process_File__Try_again_, 'title': objLang.Error});
     }",
-                        "filebatchuploadcomplete" => "function (event, files, extra) { 
+                        "filebatchuploadcomplete" => "function (event, files, extra) {
         $(this).parent().parent().children().first().addClass('hide');
     }",
                         "filebatchuploadsuccess" => "function (event, data, previewId, index) {
@@ -128,12 +128,12 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
         response = data.response, reader = data.reader;
         $(this).parent().parent().children().first().addClass('hide');
         var acciones = [{id: 'reloadpage', class: 'btn btn-primary', value: objLang.Accept, callback: 'reloadPage'}];
-        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});  
+        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});
     }",
                         "fileuploaded" => "function (event, data, previewId, index) {
         $(this).parent().parent().children().first().addClass('hide');
         var acciones = [{id: 'reloadpage', class: 'btn btn-primary', value: objLang.Accept, callback: 'reloadPage'}];
-        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});                              
+        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});
     }",
                     ],
                 ]);
@@ -141,7 +141,7 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
             </div>
         </div>
     </div>
-    <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12" id="divCertvota" style="display: block"> 
+    <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12" id="divCertvota" style="display: block">
         <div class="form-group">
             <label for="txth_doc_certvota" class="col-sm-2 col-md-2 col-xs-2 col-lg-2 control-label keyupmce"><?= Yii::t("formulario", "Voting Certificate") ?></label>
             <div class="col-sm-6 col-md-6 col-xs-6 col-lg-6">
@@ -175,9 +175,9 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                         "fileuploaderror" => "function (event, data, msg) {
         $(this).parent().parent().children().first().addClass('hide');
         $('#txth_doc_certvota').val('');
-        //showAlert('NO_OK', 'error', {'wtmessage': objLang.Error_to_process_File__Try_again_, 'title': objLang.Error});   
+        //showAlert('NO_OK', 'error', {'wtmessage': objLang.Error_to_process_File__Try_again_, 'title': objLang.Error});
     }",
-                        "filebatchuploadcomplete" => "function (event, files, extra) { 
+                        "filebatchuploadcomplete" => "function (event, files, extra) {
         $(this).parent().parent().children().first().addClass('hide');
     }",
                         "filebatchuploadsuccess" => "function (event, data, previewId, index) {
@@ -185,12 +185,12 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
         response = data.response, reader = data.reader;
         $(this).parent().parent().children().first().addClass('hide');
         var acciones = [{id: 'reloadpage', class: 'btn btn-primary', value: objLang.Accept, callback: 'reloadPage'}];
-        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});  
+        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});
     }",
                         "fileuploaded" => "function (event, data, previewId, index) {
         $(this).parent().parent().children().first().addClass('hide');
         var acciones = [{id: 'reloadpage', class: 'btn btn-primary', value: objLang.Accept, callback: 'reloadPage'}];
-        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});                              
+        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});
     }",
                     ],
                 ]);
@@ -232,9 +232,9 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                         "fileuploaderror" => "function (event, data, msg) {
         $(this).parent().parent().children().first().addClass('hide');
         $('#txth_doc_titulo').val('');
-        //showAlert('NO_OK', 'error', {'wtmessage': objLang.Error_to_process_File__Try_again_, 'title': objLang.Error});   
+        //showAlert('NO_OK', 'error', {'wtmessage': objLang.Error_to_process_File__Try_again_, 'title': objLang.Error});
     }",
-                        "filebatchuploadcomplete" => "function (event, files, extra) { 
+                        "filebatchuploadcomplete" => "function (event, files, extra) {
         $(this).parent().parent().children().first().addClass('hide');
     }",
                         "filebatchuploadsuccess" => "function (event, data, previewId, index) {
@@ -242,20 +242,20 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
         response = data.response, reader = data.reader;
         $(this).parent().parent().children().first().addClass('hide');
         var acciones = [{id: 'reloadpage', class: 'btn btn-primary', value: objLang.Accept, callback: 'reloadPage'}];
-        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});  
+        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});
     }",
                         "fileuploaded" => "function (event, data, previewId, index) {
         $(this).parent().parent().children().first().addClass('hide');
         var acciones = [{id: 'reloadpage', class: 'btn btn-primary', value: objLang.Accept, callback: 'reloadPage'}];
-        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});                              
+        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});
     }",
                     ],
                 ]);
                 ?>
             </div>
-        </div>        
+        </div>
     </div>
-    <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12 doc_comprobante"> 
+    <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12 doc_comprobante">
         <div class="form-group">
             <label for="txth_doc_comprobante" class="col-sm-2 col-md-2 col-xs-2 col-lg-2 control-label keyupmce"><?= Yii::t("formulario", "Comprobante de depósito o transferencia de pago de Matrícula") ?></label>
             <div class="col-sm-6 col-md-6 col-xs-6 col-lg-6">
@@ -289,9 +289,9 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                         "fileuploaderror" => "function (event, data, msg) {
         $(this).parent().parent().children().first().addClass('hide');
         $('#txth_doc_comprobante').val('');
-        //showAlert('NO_OK', 'error', {'wtmessage': objLang.Error_to_process_File__Try_again_, 'title': objLang.Error});   
+        //showAlert('NO_OK', 'error', {'wtmessage': objLang.Error_to_process_File__Try_again_, 'title': objLang.Error});
     }",
-                        "filebatchuploadcomplete" => "function (event, files, extra) { 
+                        "filebatchuploadcomplete" => "function (event, files, extra) {
         $(this).parent().parent().children().first().addClass('hide');
     }",
                         "filebatchuploadsuccess" => "function (event, data, previewId, index) {
@@ -299,12 +299,12 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
         response = data.response, reader = data.reader;
         $(this).parent().parent().children().first().addClass('hide');
         var acciones = [{id: 'reloadpage', class: 'btn btn-primary', value: objLang.Accept, callback: 'reloadPage'}];
-        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});  
+        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});
     }",
                         "fileuploaded" => "function (event, data, previewId, index) {
         $(this).parent().parent().children().first().addClass('hide');
         var acciones = [{id: 'reloadpage', class: 'btn btn-primary', value: objLang.Accept, callback: 'reloadPage'}];
-        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});                              
+        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});
     }",
                     ],
                 ]);
@@ -312,7 +312,7 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
             </div>
         </div>
     </div>
-    <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12 doc_record1 cinteres"> 
+    <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12 doc_record1 cinteres">
         <div class="form-group">
             <label for="txth_doc_record1" class="col-sm-2 col-md-2 col-xs-2 col-lg-2 control-label keyupmce"><?= Yii::t("formulario", "Récord Académico Actualizado") ?></label>
             <div class="col-sm-6 col-md-6 col-xs-6 col-lg-6">
@@ -346,9 +346,9 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                         "fileuploaderror" => "function (event, data, msg) {
         $(this).parent().parent().children().first().addClass('hide');
         $('#txth_doc_record1').val('');
-        //showAlert('NO_OK', 'error', {'wtmessage': objLang.Error_to_process_File__Try_again_, 'title': objLang.Error});   
+        //showAlert('NO_OK', 'error', {'wtmessage': objLang.Error_to_process_File__Try_again_, 'title': objLang.Error});
     }",
-                        "filebatchuploadcomplete" => "function (event, files, extra) { 
+                        "filebatchuploadcomplete" => "function (event, files, extra) {
         $(this).parent().parent().children().first().addClass('hide');
     }",
                         "filebatchuploadsuccess" => "function (event, data, previewId, index) {
@@ -356,12 +356,12 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
         response = data.response, reader = data.reader;
         $(this).parent().parent().children().first().addClass('hide');
         var acciones = [{id: 'reloadpage', class: 'btn btn-primary', value: objLang.Accept, callback: 'reloadPage'}];
-        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});  
+        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});
     }",
                         "fileuploaded" => "function (event, data, previewId, index) {
         $(this).parent().parent().children().first().addClass('hide');
         var acciones = [{id: 'reloadpage', class: 'btn btn-primary', value: objLang.Accept, callback: 'reloadPage'}];
-        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});                              
+        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});
     }",
                     ],
                 ]);
@@ -369,7 +369,7 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
             </div>
         </div>
     </div>
-    <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12 doc_senescyt"> 
+    <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12 doc_senescyt">
         <div class="form-group">
             <label for="txth_doc_senecyt" class="col-sm-2 col-md-2 col-xs-2 col-lg-2 control-label keyupmce"><?= Yii::t("formulario", "Registro de Senescyt") ?></label>
             <div class="col-sm-6 col-md-6 col-xs-6 col-lg-6">
@@ -403,9 +403,9 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                         "fileuploaderror" => "function (event, data, msg) {
         $(this).parent().parent().children().first().addClass('hide');
         $('#txth_doc_senecyt').val('');
-        //showAlert('NO_OK', 'error', {'wtmessage': objLang.Error_to_process_File__Try_again_, 'title': objLang.Error});   
+        //showAlert('NO_OK', 'error', {'wtmessage': objLang.Error_to_process_File__Try_again_, 'title': objLang.Error});
     }",
-                        "filebatchuploadcomplete" => "function (event, files, extra) { 
+                        "filebatchuploadcomplete" => "function (event, files, extra) {
         $(this).parent().parent().children().first().addClass('hide');
     }",
                         "filebatchuploadsuccess" => "function (event, data, previewId, index) {
@@ -413,12 +413,12 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
         response = data.response, reader = data.reader;
         $(this).parent().parent().children().first().addClass('hide');
         var acciones = [{id: 'reloadpage', class: 'btn btn-primary', value: objLang.Accept, callback: 'reloadPage'}];
-        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});  
+        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});
     }",
                         "fileuploaded" => "function (event, data, previewId, index) {
         $(this).parent().parent().children().first().addClass('hide');
         var acciones = [{id: 'reloadpage', class: 'btn btn-primary', value: objLang.Accept, callback: 'reloadPage'}];
-        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});                              
+        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});
     }",
                     ],
                 ]);
@@ -461,9 +461,9 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                         "fileuploaderror" => "function (event, data, msg) {
         $(this).parent().parent().children().first().addClass('hide');
         $('#txth_doc_hojavida').val('');
-        //showAlert('NO_OK', 'error', {'wtmessage': objLang.Error_to_process_File__Try_again_, 'title': objLang.Error});   
+        //showAlert('NO_OK', 'error', {'wtmessage': objLang.Error_to_process_File__Try_again_, 'title': objLang.Error});
     }",
-                        "filebatchuploadcomplete" => "function (event, files, extra) { 
+                        "filebatchuploadcomplete" => "function (event, files, extra) {
         $(this).parent().parent().children().first().addClass('hide');
     }",
                         "filebatchuploadsuccess" => "function (event, data, previewId, index) {
@@ -471,12 +471,12 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
         response = data.response, reader = data.reader;
         $(this).parent().parent().children().first().addClass('hide');
         var acciones = [{id: 'reloadpage', class: 'btn btn-primary', value: objLang.Accept, callback: 'reloadPage'}];
-        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});  
+        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});
     }",
                         "fileuploaded" => "function (event, data, previewId, index) {
         $(this).parent().parent().children().first().addClass('hide');
         var acciones = [{id: 'reloadpage', class: 'btn btn-primary', value: objLang.Accept, callback: 'reloadPage'}];
-        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});                              
+        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});
     }",
                     ],
                 ]);
@@ -485,7 +485,7 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
         </div>
     </div>
 
-    <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12 doc_cartarecomendacion cinteres"> 
+    <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12 doc_cartarecomendacion cinteres">
         <div class="form-group">
             <label for="txth_doc_cartarecomendacion" class="col-sm-2 col-md-2 col-xs-2 col-lg-2 control-label keyupmce"><?= Yii::t("formulario", "Carta de Recomendación") ?></label>
             <div class="col-sm-6 col-md-6 col-xs-6 col-lg-6">
@@ -519,9 +519,9 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                         "fileuploaderror" => "function (event, data, msg) {
         $(this).parent().parent().children().first().addClass('hide');
         $('#txth_doc_cartarecomendacion').val('');
-        //showAlert('NO_OK', 'error', {'wtmessage': objLang.Error_to_process_File__Try_again_, 'title': objLang.Error});   
+        //showAlert('NO_OK', 'error', {'wtmessage': objLang.Error_to_process_File__Try_again_, 'title': objLang.Error});
     }",
-                        "filebatchuploadcomplete" => "function (event, files, extra) { 
+                        "filebatchuploadcomplete" => "function (event, files, extra) {
         $(this).parent().parent().children().first().addClass('hide');
     }",
                         "filebatchuploadsuccess" => "function (event, data, previewId, index) {
@@ -529,12 +529,12 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
         response = data.response, reader = data.reader;
         $(this).parent().parent().children().first().addClass('hide');
         var acciones = [{id: 'reloadpage', class: 'btn btn-primary', value: objLang.Accept, callback: 'reloadPage'}];
-        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});  
+        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});
     }",
                         "fileuploaded" => "function (event, data, previewId, index) {
         $(this).parent().parent().children().first().addClass('hide');
         var acciones = [{id: 'reloadpage', class: 'btn btn-primary', value: objLang.Accept, callback: 'reloadPage'}];
-        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});                              
+        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});
     }",
                     ],
                 ]);
@@ -542,7 +542,7 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
             </div>
         </div>
     </div>
-    <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12 doc_comprobante"> 
+    <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12 doc_comprobante">
         <div class="form-group">
             <label for="txth_doc_certificadolaboral" class="col-sm-2 col-md-2 col-xs-2 col-lg-2 control-label keyupmce"><?= Yii::t("formulario", "Certificado Laboral") ?></label>
             <div class="col-sm-6 col-md-6 col-xs-6 col-lg-6">
@@ -576,9 +576,9 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                         "fileuploaderror" => "function (event, data, msg) {
         $(this).parent().parent().children().first().addClass('hide');
         $('#txth_doc_certificadolaboral').val('');
-        //showAlert('NO_OK', 'error', {'wtmessage': objLang.Error_to_process_File__Try_again_, 'title': objLang.Error});   
+        //showAlert('NO_OK', 'error', {'wtmessage': objLang.Error_to_process_File__Try_again_, 'title': objLang.Error});
     }",
-                        "filebatchuploadcomplete" => "function (event, files, extra) { 
+                        "filebatchuploadcomplete" => "function (event, files, extra) {
         $(this).parent().parent().children().first().addClass('hide');
     }",
                         "filebatchuploadsuccess" => "function (event, data, previewId, index) {
@@ -586,12 +586,12 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
         response = data.response, reader = data.reader;
         $(this).parent().parent().children().first().addClass('hide');
         var acciones = [{id: 'reloadpage', class: 'btn btn-primary', value: objLang.Accept, callback: 'reloadPage'}];
-        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});  
+        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});
     }",
                         "fileuploaded" => "function (event, data, previewId, index) {
         $(this).parent().parent().children().first().addClass('hide');
         var acciones = [{id: 'reloadpage', class: 'btn btn-primary', value: objLang.Accept, callback: 'reloadPage'}];
-        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});                              
+        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});
     }",
                     ],
                 ]);
@@ -599,7 +599,7 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
             </div>
         </div>
     </div>
-    <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12 doc_certificadoingles cinteres"> 
+    <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12 doc_certificadoingles cinteres">
         <div class="form-group">
             <label for="txth_doc_certificadoingles" class="col-sm-2 col-md-2 col-xs-2 col-lg-2 control-label keyupmce"><?= Yii::t("formulario", "Certificado de Suficiencia en Inglés Nivel A2") ?></label>
             <div class="col-sm-6 col-md-6 col-xs-6 col-lg-6">
@@ -633,9 +633,9 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                         "fileuploaderror" => "function (event, data, msg) {
         $(this).parent().parent().children().first().addClass('hide');
         $('#txth_doc_certificadoingles').val('');
-        //showAlert('NO_OK', 'error', {'wtmessage': objLang.Error_to_process_File__Try_again_, 'title': objLang.Error});   
+        //showAlert('NO_OK', 'error', {'wtmessage': objLang.Error_to_process_File__Try_again_, 'title': objLang.Error});
     }",
-                        "filebatchuploadcomplete" => "function (event, files, extra) { 
+                        "filebatchuploadcomplete" => "function (event, files, extra) {
         $(this).parent().parent().children().first().addClass('hide');
     }",
                         "filebatchuploadsuccess" => "function (event, data, previewId, index) {
@@ -643,12 +643,12 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
         response = data.response, reader = data.reader;
         $(this).parent().parent().children().first().addClass('hide');
         var acciones = [{id: 'reloadpage', class: 'btn btn-primary', value: objLang.Accept, callback: 'reloadPage'}];
-        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});  
+        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});
     }",
                         "fileuploaded" => "function (event, data, previewId, index) {
         $(this).parent().parent().children().first().addClass('hide');
         var acciones = [{id: 'reloadpage', class: 'btn btn-primary', value: objLang.Accept, callback: 'reloadPage'}];
-        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});                              
+        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});
     }",
                     ],
                 ]);
@@ -656,45 +656,45 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
             </div>
         </div>
     </div>
-    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">  
-        <div class="form-group">                       
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="form-group">
             <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2" style="text-align: right;">
                 <input type="checkbox" id="chk_mensaje1" data-type="alfa" data-keydown="true" placeholder="" >
             </div>
             <label for="chk_mensaje1" class="col-lg-6 col-md-6 col-sm-6 col-xs-6"><?= Yii::t("formulario", "Expreso que la información declarada y documentos cargados son válidos y legales.") ?> </label>
         </div>
     </div>
-    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">  
-        <div class="form-group">                      
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="form-group">
             <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2" style="text-align: right;">
-                <input type="checkbox" id="chk_mensaje2" data-type="alfa" data-keydown="true" placeholder="" >   
+                <input type="checkbox" id="chk_mensaje2" data-type="alfa" data-keydown="true" placeholder="" >
             </div>
             <label for="chk_mensaje2" class="col-lg-6 col-md-6 col-sm-6 col-xs-6"><?= Yii::t("formulario", "Acepto y me comprometo a respetar y cumplir lo estipulado en los reglamentos internos de la universidad con respecto a la admisión y procesos estudiantiles.") ?> </label>
         </div>
     </div>
-    <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">         
+    <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
         </br>
         </br>
-    </div> 
-    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">  
+    </div>
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
             <label for="txt_homologacion" class="col-sm-5 control-label"><?= Yii::t("bienestar", "Homologación") ?><span class="text-danger">*</span></label>
             <div class="col-sm-7">
-                <label>                
-                    <input type="radio" name="signup-hom" id="signup-hom" value="1" checked> Si<br>                   
+                <label>
+                    <input type="radio" name="signup-hom" id="signup-hom" value="1" checked> Si<br>
                 </label>
-                <label>            
+                <label>
                     <input type="radio" name="signup-hom_no" id="signup-hom_no" value="2" > No<br>
                 </label>
             </div>
         </div>
     </div>
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 doc_recordacad cinteres">
-        <div id="homologacion" style="display: block;"> 
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">   
+        <div id="homologacion" style="display: block;">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <h3><span id="lbl_Personeria"><?= Yii::t("formulario", "Documentos adicionales por homologación") ?></span></h3>
-            </div><br><br></br> 
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">   
+            </div><br><br></br>
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <div class="form-group">
                     <label for="txth_doc_recordacad" class="col-sm-2 col-md-2 col-xs-2 col-lg-2 control-label keyupmce"><?= Yii::t("formulario", "Récord Académico") ?></label>
                     <div class="col-sm-6 col-md-6 col-xs-6 col-lg-6">
@@ -728,9 +728,9 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                                 "fileuploaderror" => "function (event, data, msg) {
                 $(this).parent().parent().children().first().addClass('hide');
                 $('#txth_doc_recordacad').val('');
-                //showAlert('NO_OK', 'error', {'wtmessage': objLang.Error_to_process_File__Try_again_, 'title': objLang.Error});   
+                //showAlert('NO_OK', 'error', {'wtmessage': objLang.Error_to_process_File__Try_again_, 'title': objLang.Error});
             }",
-                                "filebatchuploadcomplete" => "function (event, files, extra) { 
+                                "filebatchuploadcomplete" => "function (event, files, extra) {
                 $(this).parent().parent().children().first().addClass('hide');
             }",
                                 "filebatchuploadsuccess" => "function (event, data, previewId, index) {
@@ -738,12 +738,12 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                 response = data.response, reader = data.reader;
                 $(this).parent().parent().children().first().addClass('hide');
                 var acciones = [{id: 'reloadpage', class: 'btn btn-primary', value: objLang.Accept, callback: 'reloadPage'}];
-                //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});  
+                //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});
             }",
                                 "fileuploaded" => "function (event, data, previewId, index) {
                 $(this).parent().parent().children().first().addClass('hide');
                 var acciones = [{id: 'reloadpage', class: 'btn btn-primary', value: objLang.Accept, callback: 'reloadPage'}];
-                //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});                              
+                //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});
             }",
                             ],
                         ]);
@@ -751,7 +751,7 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                     </div>
                 </div>
             </div>
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 doc_nosancion">   
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 doc_nosancion">
                 <div class="form-group">
                     <label for="txth_doc_nosancion" class="col-sm-2 col-md-2 col-xs-2 col-lg-2 control-label keyupmce"><?= Yii::t("formulario", "Certificado de no haber sido sancionado (firma y sello original)") ?></label>
                     <div class="col-sm-6 col-md-6 col-xs-6 col-lg-6">
@@ -785,9 +785,9 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                                 "fileuploaderror" => "function (event, data, msg) {
                 $(this).parent().parent().children().first().addClass('hide');
                 $('#txth_doc_nosancion').val('');
-                //showAlert('NO_OK', 'error', {'wtmessage': objLang.Error_to_process_File__Try_again_, 'title': objLang.Error});   
+                //showAlert('NO_OK', 'error', {'wtmessage': objLang.Error_to_process_File__Try_again_, 'title': objLang.Error});
             }",
-                                "filebatchuploadcomplete" => "function (event, files, extra) { 
+                                "filebatchuploadcomplete" => "function (event, files, extra) {
                 $(this).parent().parent().children().first().addClass('hide');
             }",
                                 "filebatchuploadsuccess" => "function (event, data, previewId, index) {
@@ -795,12 +795,12 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                 response = data.response, reader = data.reader;
                 $(this).parent().parent().children().first().addClass('hide');
                 var acciones = [{id: 'reloadpage', class: 'btn btn-primary', value: objLang.Accept, callback: 'reloadPage'}];
-                //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});  
+                //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});
             }",
                                 "fileuploaded" => "function (event, data, previewId, index) {
                 $(this).parent().parent().children().first().addClass('hide');
                 var acciones = [{id: 'reloadpage', class: 'btn btn-primary', value: objLang.Accept, callback: 'reloadPage'}];
-                //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});                              
+                //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});
             }",
                             ],
                         ]);
@@ -808,7 +808,7 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                     </div>
                 </div>
             </div>
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 doc_syllabus">   
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 doc_syllabus">
                 <div class="form-group">
                     <label for="txth_doc_syllabus" class="col-sm-2 col-md-2 col-xs-2 col-lg-2 control-label keyupmce"><?= Yii::t("formulario", "Syllabus de materias aprobadas (Firma y sellos originales)") ?></label>
                     <div class="col-sm-6 col-md-6 col-xs-6 col-lg-6">
@@ -842,9 +842,9 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                                 "fileuploaderror" => "function (event, data, msg) {
                 $(this).parent().parent().children().first().addClass('hide');
                 $('#txth_doc_syllabus').val('');
-                //showAlert('NO_OK', 'error', {'wtmessage': objLang.Error_to_process_File__Try_again_, 'title': objLang.Error});   
+                //showAlert('NO_OK', 'error', {'wtmessage': objLang.Error_to_process_File__Try_again_, 'title': objLang.Error});
             }",
-                                "filebatchuploadcomplete" => "function (event, files, extra) { 
+                                "filebatchuploadcomplete" => "function (event, files, extra) {
                 $(this).parent().parent().children().first().addClass('hide');
             }",
                                 "filebatchuploadsuccess" => "function (event, data, previewId, index) {
@@ -852,12 +852,12 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                 response = data.response, reader = data.reader;
                 $(this).parent().parent().children().first().addClass('hide');
                 var acciones = [{id: 'reloadpage', class: 'btn btn-primary', value: objLang.Accept, callback: 'reloadPage'}];
-                //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});  
+                //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});
             }",
                                 "fileuploaded" => "function (event, data, previewId, index) {
                 $(this).parent().parent().children().first().addClass('hide');
                 var acciones = [{id: 'reloadpage', class: 'btn btn-primary', value: objLang.Accept, callback: 'reloadPage'}];
-                //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});                              
+                //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});
             }",
                             ],
                         ]);
@@ -865,7 +865,7 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                     </div>
                 </div>
             </div>
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 doc_especievalorada">   
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 doc_especievalorada">
                 <div class="form-group">
                     <label for="txth_doc_especievalorada" class="col-sm-2 col-md-2 col-xs-2 col-lg-2 control-label keyupmce"><?= Yii::t("formulario", "Especie valorada por homologación") ?></label>
                     <div class="col-sm-6 col-md-6 col-xs-6 col-lg-6">
@@ -899,9 +899,9 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                                 "fileuploaderror" => "function (event, data, msg) {
                 $(this).parent().parent().children().first().addClass('hide');
                 $('#txth_doc_especievalorada').val('');
-                //showAlert('NO_OK', 'error', {'wtmessage': objLang.Error_to_process_File__Try_again_, 'title': objLang.Error});   
+                //showAlert('NO_OK', 'error', {'wtmessage': objLang.Error_to_process_File__Try_again_, 'title': objLang.Error});
             }",
-                                "filebatchuploadcomplete" => "function (event, files, extra) { 
+                                "filebatchuploadcomplete" => "function (event, files, extra) {
                 $(this).parent().parent().children().first().addClass('hide');
             }",
                                 "filebatchuploadsuccess" => "function (event, data, previewId, index) {
@@ -909,12 +909,12 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                 response = data.response, reader = data.reader;
                 $(this).parent().parent().children().first().addClass('hide');
                 var acciones = [{id: 'reloadpage', class: 'btn btn-primary', value: objLang.Accept, callback: 'reloadPage'}];
-                //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});  
+                //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});
             }",
                                 "fileuploaded" => "function (event, data, previewId, index) {
                 $(this).parent().parent().children().first().addClass('hide');
                 var acciones = [{id: 'reloadpage', class: 'btn btn-primary', value: objLang.Accept, callback: 'reloadPage'}];
-                //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});                              
+                //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});
             }",
                             ],
                         ]);
@@ -925,7 +925,7 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
         </div><br><br></br>
     </div>
 
-    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">   
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="col-md-2">
             <a id="paso4back" href="javascript:" class="btn btn-primary btn-block"><span class="glyphicon glyphicon-menu-left"></span><?= Yii::t("formulario", "Back") ?> </a>
         </div>

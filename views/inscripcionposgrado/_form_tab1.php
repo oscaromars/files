@@ -9,14 +9,14 @@ use yii\web\Session;
 
 session_start();
 if (!empty($per_cedula)) {
-    $tipodoc = "CED";    
+    $tipodoc = "CED";
 } else {
     if (!empty($per_pasaporte)) {
-        $tipodoc = "PASS";    
+        $tipodoc = "PASS";
     }
     else{
-        $tipodoc = "CED";    
-    }   
+        $tipodoc = "CED";
+    }
 }
 
 
@@ -36,7 +36,7 @@ if (!empty($per_cedula)) {
                 <label for="cmb_unidadpos" class="col-sm-3 control-label"><?= Yii::t("formulario", "Academic unit") ?></label>
                 <div class="col-sm-7">
                     <?= Html::dropDownList("cmb_unidadpos", 2,  $arr_unidad , ["class" => "form-control", "id" => "cmb_unidadpos", "disabled" => "true"]) ?>
-                </div>       
+                </div>
             </div>
         </div>
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
@@ -44,7 +44,7 @@ if (!empty($per_cedula)) {
                 <label for="cmb_programa" class="col-sm-3 control-label"><?= Yii::t("formulario", "Program") ?><span class="text-danger">*</span></label>
                 <div class="col-sm-7">
                     <?= Html::dropDownList("cmb_programa", 0,  $arr_programa , ["class" => "form-control", "id" => "cmb_programa"]) ?>
-                </div>       
+                </div>
             </div>
         </div>
     </div>
@@ -54,21 +54,21 @@ if (!empty($per_cedula)) {
                 <label for="cmb_modalidadpos" class="col-sm-3 control-label"><?= Yii::t("formulario", "Mode") ?><span class="text-danger">*</span></label>
                 <div class="col-sm-7">
                     <?= Html::dropDownList("cmb_modalidadpos", 0,  $arr_modalidad , ["class" => "form-control", "id" => "cmb_modalidadpos"]) ?>
-                </div>       
+                </div>
             </div>
         </div>
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
             <div class="form-group">
                 <label for="txt_año" class="col-sm-3 control-label"><?= Yii::t("formulario", "Año") ?><span class="text-danger">*</span></label>
                 <div class="col-sm-7">
-                    <input type="text" class="form-control keyupmce" id="txt_año" data-type="alfanumerico" data-keydown="true" placeholder="<?= Yii::t("formulario", "Año") ?>">
-                </div>       
+                    <input type="text" class="form-control PBvalidation keyupmce" id="txt_año" data-type="number" data-keydown="true" placeholder="<?= Yii::t("formulario", "Año") ?>">
+                </div>
             </div>
         </div><br><br></br>
     </div>
-    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">   
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <h3><span id="lbl_Personeria"><?= Yii::t("formulario", "Data Personal") ?></span></h3>
-    </div><br><br></br>  
+    </div><br><br></br>
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
             <div class="form-group">
@@ -100,8 +100,8 @@ if (!empty($per_cedula)) {
             <div class="form-group">
                 <label for="txt_primer_nombre" class="col-sm-3 control-label"> <?= Yii::t("formulario", "First Name") ?> <span class="text-danger">*</span></label>
                 <div class="col-sm-7">
-                    <input type="text" class="form-control PBvalidation keyupmce" id="txt_primer_nombre" data-type="alfa" data-keydown="true" placeholder="<?= Yii::t("formulario", "First Name") ?>"> 
-                </div>        
+                    <input type="text" class="form-control PBvalidation keyupmce" id="txt_primer_nombre" data-type="alfa" data-keydown="true" placeholder="<?= Yii::t("formulario", "First Name") ?>">
+                </div>
             </div>
         </div>
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
@@ -195,10 +195,10 @@ if (!empty($per_cedula)) {
             </div>
         </div><br><br></br>
     </div>
-    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">   
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <h3><span id="lbl_Personeria"><?= Yii::t("formulario", "Data Contact") ?></span></h3>
     </div>
-    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">    
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
             <div class="form-group">
                 <label for="txt_domicilio" class="col-sm-3 control-label"><?= Yii::t("formulario", "Dirección Domiciliaria") ?><span class="text-danger">*</span></label>
@@ -209,17 +209,17 @@ if (!empty($per_cedula)) {
         </div>
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
             <div class="form-group">
-                <label for="txt_celular" class="col-sm-3 control-label"><?= Yii::t("formulario", "CellPhone") ?> <span class="text-danger">*</span> </label>        
+                <label for="txt_celular" class="col-sm-3 control-label"><?= Yii::t("formulario", "CellPhone") ?> <span class="text-danger">*</span> </label>
                 <div class="col-sm-7">
-                    <input type="text" class="form-control PBvalidation" data-required="false" id="txt_celular" data-type="number" data-keydown="true" placeholder="<?= Yii::t("formulario", "CellPhone") ?>">
+                    <input type="text" class="form-control PBvalidation" id="txt_celular" data-type="number" data-keydown="true" placeholder="<?= Yii::t("formulario", "CellPhone") ?>">
                 </div>
             </div>
         </div>
     </div>
-    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">    
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
             <div class="form-group">
-                <label for="txt_telefono" class="col-sm-3 control-label"><?= Yii::t("formulario", "Phone") ?></label> 
+                <label for="txt_telefono" class="col-sm-3 control-label"><?= Yii::t("formulario", "Phone") ?></label>
                 <div class="col-sm-7">
                     <input type="text" class="form-control PBvalidation" data-required="false" id="txt_telefono" data-type="number" data-keydown="true" placeholder="<?= Yii::t("formulario", "Phone") ?>">
                 </div>
@@ -234,10 +234,10 @@ if (!empty($per_cedula)) {
             </div>
         </div><br><br></br>
     </div>
-    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">   
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <h3><span id="lbl_Personeria"><?= Yii::t("formulario", "Datos en Caso de Emergencia") ?></span></h3>
     </div>
-    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">    
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
             <div class="form-group">
                 <label for="txt_contacto_emergencia" class="col-sm-3 control-label"><?= Yii::t("formulario", "En Caso de Emergencia") ?><span class="text-danger">*</span></label>
@@ -255,17 +255,17 @@ if (!empty($per_cedula)) {
             </div>
         </div>
     </div>
-    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">    
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
             <div class="form-group">
-                <label for="txt_telefono_emergencia" class="col-sm-3 control-label"><?= Yii::t("formulario", "Phone")?><span class="text-danger">*</span></label> 
+                <label for="txt_telefono_emergencia" class="col-sm-3 control-label"><?= Yii::t("formulario", "Phone")?><span class="text-danger">*</span></label>
                 <div class="col-sm-7">
-                    <input type="text" class="form-control PBvalidation" data-required="false" id="txt_telefono_emergencia" data-type="number" data-keydown="true" placeholder="<?= Yii::t("formulario", "Teléfono de la persona de contacto en caso de emergencia ") ?>">
+                    <input type="text" class="form-control PBvalidation" id="txt_telefono_emergencia" data-type="number" data-keydown="true" placeholder="<?= Yii::t("formulario", "Teléfono de la persona de contacto en caso de emergencia ") ?>">
                 </div>
             </div>
         </div><br><br></br><br></br>
-    </div>    
-    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">   
+    </div>
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="col-md-10"></div>
         <div class="col-md-2">
             <a id="paso1next" href="javascript:" class="btn btn-primary btn-block"> <?= Yii::t("formulario", "Next") ?> <span class="glyphicon glyphicon-menu-right"></span></a>

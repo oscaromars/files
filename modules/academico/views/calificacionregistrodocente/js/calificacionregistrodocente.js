@@ -84,6 +84,10 @@ $(document).ready(function () {
         searchCalificacionEstudiantes();
     });
 
+     $('#btn_buscarEducativa').click(function() {    
+        searchEducativa();
+    });
+
      $('#cmb_profesor_clfc').change(function () {
         var link = $('#txth_base').val() + "/academico/calificacionregistrodocente/index";
         var arrParams = new Object();
@@ -301,6 +305,40 @@ function searchCalificacionEstudiantes() {
     }
 }
 
+function searchEducativa() {
+      periodo = $("#cmb_periodo_all").val();
+    unidad = $("#cmb_unidad_all").val();
+    modalidad = $("#cmb_modalidad_all").val();
+
+window.location.href = $('#txth_base').val() + "/academico/calificacionregistrodocente/educativa?paca="+periodo+"&unidad="+unidad+"&modalidad="+modalidad;
+ 
+   
+}
+
+function activateCron(cronid) {
+  modalidades = $("#txth_modalidades").val();
+  // currente = $(this).val();
+  // currente = $("input").val();
+
+ //var elem = document.getElementById('F2').value;
+ //alert( element );
+  currente = $("#F2").val();
+  idf= "#F"+cronid;
+  currente=$(idf).val();
+
+ if (currente == undefined  ||  currente == '') {
+
+
+ showAlert('NO_OK', 'error', {"wtmessage": 'Seleccione la fecha a ejecutarse!', "title": 'Información'});
+
+ 
+}else { 
+
+
+
+window.location.href = $('#txth_base').val() + "/academico/calificacionregistrodocente/activacron?cronid="+cronid+"&fecha="+currente+"&moda="+modalidades;
+   }
+}
 
 function downloadDataClfc() {
 

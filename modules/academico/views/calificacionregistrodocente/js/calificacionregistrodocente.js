@@ -324,7 +324,7 @@ function activateCron(cronid) {
  //alert( element );
   currente = $("#F2").val();
   idf= "#F"+cronid;
-  currente=$(idf).val();;
+  currente=$(idf).val();
 
  if (currente == undefined  ||  currente == '') {
 

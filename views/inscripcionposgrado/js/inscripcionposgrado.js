@@ -340,7 +340,7 @@ function setComboDataselect(arr_data, element_id, texto) {
 }
 
 function guardarInscripcionPosgrado() {
-    var ID = /*(accion == "UpdateDepTrans") ?*/$('#txth_ipos_id').val()/* : 0*/;
+    //var ID = /*(accion == "UpdateDepTrans") ?*/$('#txth_ipos_id').val()/* : 0*/;
     var link = $('#txth_base').val() + "/inscripcionposgrado/guardarinscripcionposgrado";
     var arrParams = new Object();
     //arrParams.DATA_1 = dataInscripcion(ID);
@@ -362,40 +362,34 @@ function guardarInscripcionPosgrado() {
         arrParams.cedula = $('#txt_pasaporte').val();
     }
 
-    var error = 0;
+    //var error = 0;
     //var pais = $('#cmb_pais_dom').val();
-    if ($("#chk_mensaje1").prop("checked") && $("#chk_mensaje2").prop("checked")) {
-        error = 0;
-    } else {
-        var mensaje = {wtmessage: "Debe Aceptar los términos de la Información.", title: "Exito"};
-        error++;
-        showAlert("NO_OK", "success", mensaje);
-    }
-    if ($('#txth_doc_titulo').val() == "") {
-        error++;
+
+    /*if ($('#txth_doc_titulo').val() == "") {
+        //error++;
         var mensaje = {wtmessage: "Debe adjuntar título.", title: "Información"};
         showAlert("NO_OK", "error", mensaje);
     } else {
         if ($('#txth_doc_dni').val() == "") {
-            error++;
+            //error++;
             var mensaje = {wtmessage: "Debe adjuntar documento de identidad.", title: "Información"};
             showAlert("NO_OK", "error", mensaje);
         } else {
             if ($('#cmb_tipo_dni').val() == "CED") {
                 if ($('#txth_doc_certvota').val() == "") {
-                    error++;
+                    //error++;
                     var mensaje = {wtmessage: "Debe adjuntar certificado de votación.", title: "Información"};
                     showAlert("NO_OK", "error", mensaje);
                 } else {
                     if ($('#txth_doc_foto').val() == "") {
-                        error++;
+                        //error++;
                         var mensaje = {wtmessage: "Debe adjuntar foto.", title: "Información"};
                         showAlert("NO_OK", "error", mensaje);
                     }
                 }
             }
         }
-    }
+    }*/
     //FORM 1 datos personal
     arrParams.cedula = $('#txt_cedula').val();
     arrParams.pasaporte = $('#txt_pasaporte').val();
@@ -510,16 +504,25 @@ function guardarInscripcionPosgrado() {
     arrParams.ipos_mensaje1 = ($("#chk_mensaje1").prop("checked")) ? '1' : '0';
     arrParams.ipos_mensaje2 = ($("#chk_mensaje2").prop("checked")) ? '1' : '0';
 
-    if (!validateForm()) {
-        requestHttpAjax(link, arrParams, function (response) {
-            showAlert(response.status, response.label, response.message);
-            //var message = response.message;
-            if (response.status == "OK") {
-                setTimeout(function() {
-                        window.location.href = $('#txth_base').val() + "/inscripcionposgrado/index";
-                    }, 3000);
-            }
-        }, true);
+    if ($("#chk_mensaje1").prop("checked") && $("#chk_mensaje2").prop("checked")) {
+        //error = 0;
+        // AQUI TODO EL CODIGO
+        if (!validateForm()) {
+            requestHttpAjax(link, arrParams, function (response) {
+                showAlert(response.status, response.label, response.message);
+                //var message = response.message;
+                if (response.status == "OK") {
+                    setTimeout(function() {
+                            window.location.href = $('#txth_base').val() + "/inscripcionposgrado/index";
+                        }, 3000);
+                }
+            }, true);
+        }
+
+    } else {
+        var mensaje = {wtmessage: "Debe Aceptar los términos de la Información.", title: "Información"};
+        //error++;
+        showAlert("NO_OK", "success", mensaje);
     }
 }
 

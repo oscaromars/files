@@ -454,7 +454,7 @@ function guardarInscripcionGrado() {
             }
         }
     } else {
-        var mensaje = {wtmessage: "Debe Aceptar los términos de la Información.", title: "Exito"};
+        var mensaje = {wtmessage: "Debe Aceptar los términos de la Información.", title: "Información"};
         showAlert("NO_OK", "success", mensaje);
 
     }

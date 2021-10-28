@@ -1556,4 +1556,101 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 		$report->mpdf->Output('Acta_' . date("Ymdhis") . ".pdf", ExportFile::OUTPUT_TO_DOWNLOAD);
 		return;
 	}
+
+	    public function actionActivacron(){
+            $datacron = Yii::$app->request->get();
+//var_dump($datacron["fecha"]); 
+//var_dump($datacron["cronid"]); 
+$data3=($datacron["moda"]); 
+$data2=($datacron["fecha"]); 
+$data1=($datacron["cronid"]); 
+        $cabeceraCalificacion = new CabeceraCalificacion();
+        $cronactive = $cabeceraCalificacion->activateCron($data1,$data2);
+         //var_dump($cronactive);
+ 
+   return $this->redirect(['educativa', 'paca' => $cronactive['croe_paca_id'],'unidad' => $cronactive['croe_uaca_id'],
+    'modalidad' => $data3 ]);
+
+
+
+         }
+
+       public function actionEducativa(){
+         $grupo_model    = new Grupo();
+        $cabeceraCalificacion = new CabeceraCalificacion();
+ $user_usermane = Yii::$app->session->get("PB_username");
+//$user_usermane = 'carlos.carrera@mbtu.us';//Yii::$app->session->get("PB_username");
+ $arr_grupos = $grupo_model->getAllGruposByUser($user_usermane);
+ 
+ /*
+ if ( in_array(['id' => '6'], $arr_grupos) ||
+             in_array(['id' => '7'], $arr_grupos) ||
+             in_array(['id' => '8'], $arr_grupos)
+        ){  */
+          
+     
+    $mod_periodos    = new PeriodoAcademico(); 
+     $mod_unidad     = new UnidadAcademica();
+    $mod_modalidad  = new Modalidad();
+    //$mod_crones  = new CronEducativa();
+    $arr_periodos = $mod_periodos->consultarPeriodosActivos();
+    $arr_ninteres = $mod_unidad->consultarUnidadAcademicasEmpresa(1);
+    $arr_modalidad = $mod_modalidad->consultarModalidad($arr_ninteres[0]["id"], 1);
+
+     $data = Yii::$app->request->get();
+
+       if ($data = Yii::$app->request->get()){ 
+   $cabeceraCalificacion = new CabeceraCalificacion();
+$arr_crones = $cabeceraCalificacion->getallmods($data['paca'], $data['unidad'], $data['modalidad']);
+$modalidades = $data['modalidad'];
+//var_dump($arr_crones);
+//return $this->redirect('index');
+
+/*
+    ["croe_id"]=> string(1) "1" 
+    ["croe_mod_id"]=> string(1) "1" 
+    ["croe_paca_id"]=> string(2) "15" 
+    ["croe_uaca_id"]=> string(1) "1" 
+    ["croe_fecha_ejecucion"]=> string(19) "2021-10-20 09:49:02" 
+    ["croe_exec"]=> string(1) "1" */
+
+     $dataProvider = new ArrayDataProvider([
+            'key' => 'croe_id',
+            'allModels' => $arr_crones,
+            'pagination' => [
+                'pageSize' => Yii::$app->params["pageSize"],
+            ],
+            'sort' => [
+                'attributes' => [
+                ],
+            ],
+        ]);
+
+ return $this->render('educativa', [
+                    'model' => $dataProvider,        
+                    'modeldata' => $arr_crones,             
+                    'arr_periodos' => ArrayHelper::map(array_merge($arr_periodos), "id", "nombre"),
+                    'arr_unidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Todos")]], $arr_ninteres), "id", "name"),
+                    'arr_modalidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Todos")]], $arr_modalidad), "id", "name"),
+                    'modalidades' => $modalidades,  
+
+        ]);
+
+}  Else { $arr_crones = Array();}
+
+
+  return $this->render('educativa', [
+                    'model' => $arr_crones,                    
+                    'arr_periodos' => ArrayHelper::map(array_merge($arr_periodos), "id", "nombre"),
+                    'arr_unidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Todos")]], $arr_ninteres), "id", "name"),
+                    'arr_modalidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Todos")]], $arr_modalidad), "id", "name"),
+        ]);
+
+/*
+} else {
+
+      return $this->redirect('index');
+} */
+}
+
 }

@@ -1658,4 +1658,119 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord {
 		return $resultData;
 	}
 
+	 public function activateCron($cron_id, $fecha){   
+
+$con = \Yii::$app->db_academico;
+$getsearch=
+"
+SELECT 
+croe_id, croe_mod_id, croe_paca_id, croe_uaca_id, croe_fecha_ejecucion, croe_exec
+FROM db_academico.cron_estudiantes_educativa
+WHERE croe_id = :cronid
+";
+
+$comando = $con->createCommand($getsearch);  
+$comando->bindParam(":cronid", $cron_id, \PDO::PARAM_INT);
+$datasearcher = $comando->queryOne();
+
+
+/*
+$datasearcher['croe_paca_id'];
+$datasearcher['croe_uaca_id'];
+$datasearcher['croe_mod_id'];
+*/
+$con = \Yii::$app->db_academico;
+$updater = "
+UPDATE db_academico.cron_estudiantes_educativa 
+SET croe_fecha_ejecucion = :fecha,
+croe_exec = '1' 
+WHERE croe_id = :cron_id";
+
+$comando = $con->createCommand($updater);
+$comando->bindParam(":fecha", $fecha, \PDO::PARAM_STR);
+$comando->bindParam(":cron_id", $cron_id, \PDO::PARAM_INT);
+$result = $comando->execute();  
+
+return $datasearcher ;
+
+ }
+
+
+ function getallmods($paca_id, $uaca_id,$mod_id) {   
+ $con = \Yii::$app->db_academico;
+
+if ($uaca_id < 2){
+    $newuaca_id=1;
+FOR ($loopmod = 1;$loopmod < 5 ; $loopmod++)
+{
+
+$sqlmod =" SELECT 
+croe_id, croe_mod_id, croe_paca_id, croe_uaca_id, croe_fecha_ejecucion, croe_exec
+ FROM db_academico.cron_estudiantes_educativa
+ Where  croe_paca_id = $paca_id
+ AND croe_uaca_id = $newuaca_id
+ AND croe_mod_id = $loopmod
+";
+
+ $comando = $con->createCommand($sqlmod);    
+        $resultallData = $comando->queryOne();
+
+if ($resultallData['croe_mod_id'] == Null ) 
+     {
+
+  $sql = 
+  "INSERT INTO " . $con->dbname . ".cron_estudiantes_educativa (croe_mod_id, croe_paca_id, croe_uaca_id, croe_exec, croe_usuario_ingreso, croe_estado, croe_fecha_creacion, croe_estado_logico) 
+  VALUES($loopmod, $paca_id, $newuaca_id, '2', '1','1',now(),'1')";
+
+     $comando = $con->createCommand($sql);
+     $result = $comando->execute();
+
+    }
+
+}   }
+
+$con = \Yii::$app->db_academico;
+          $str_search = ""; 
+    if ($paca_id != "" && $paca_id > 0) {
+            $str_search .= " AND croe_paca_id  = :croe_paca_id  ";
+        }
+    if ($uaca_id != "" && $uaca_id > 0) {
+            $str_search .= " AND croe_uaca_id  = :croe_uaca_id ";
+        }
+     if ($mod_id != "" && $mod_id > 0) {
+            $str_search .= " AND croe_mod_id  = :croe_mod_id ";
+        }
+  
+
+$sqlmod =" SELECT 
+croe.croe_id, croe.croe_mod_id, croe.croe_paca_id, croe.croe_uaca_id, croe.croe_fecha_ejecucion,
+croe.croe_exec,ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca_anio),'') AS paca_nombre
+ FROM db_academico.cron_estudiantes_educativa as croe
+ INNER JOIN db_academico.periodo_academico as paca ON paca.paca_id = croe.croe_paca_id 
+ INNER JOIN db_academico.semestre_academico as saca ON saca.saca_id = paca.saca_id
+ INNER JOIN db_academico.bloque_academico as baca ON baca.baca_id = paca.baca_id
+ Where  1 = 1 
+ $str_search
+"
+ ;
+ $comando = $con->createCommand($sqlmod);    
+
+      if ( $paca_id != "" && $paca_id  > 0) {
+      
+            $comando->bindParam(":croe_paca_id", $paca_id , \PDO::PARAM_INT);
+        }
+        if ( $uaca_id != "" && $uaca_id  > 0) {
+      
+            $comando->bindParam(":croe_uaca_id", $uaca_id , \PDO::PARAM_INT);
+        }
+        if ( $mod_id != "" && $mod_id  > 0) {
+      
+            $comando->bindParam(":croe_mod_id", $mod_id , \PDO::PARAM_INT);
+        }
+        $resultData = $comando->queryAll();
+
+
+        return $resultData;
+   }
+
 }

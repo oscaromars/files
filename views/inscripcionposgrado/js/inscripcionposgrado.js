@@ -36,6 +36,7 @@ $(document).ready(function () {
 
     $('#cmb_idioma2').change(function () {
         var valor = $('#cmb_idioma2').val();
+        //alert ('assd. ' + valor);
         if (valor == 3) {
             $('#cmb_nivelidioma2').removeClass("PBvalidation");
             $('#txt_nombreidioma').addClass("PBvalidation");
@@ -43,7 +44,7 @@ $(document).ready(function () {
             $('#Divotroidioma').show();
             $('#Divotronivelidioma').show();
             $('#Dividiomas').hide();
-        } else if (valor == 2)
+        } else /*if (valor == 2)*/
         {
             $('#txt_nombreidioma').removeClass("PBvalidation");
             $('#cmb_nivelotroidioma').removeClass("PBvalidation");
@@ -425,8 +426,10 @@ function guardarInscripcionPosgrado() {
     if (arrParams.tipo_idioma == 3) {
         arrParams.otroidioma = $('#txt_nombreidioma').val();
         arrParams.otronivel = $('#cmb_nivelotroidioma').val();
+        $('#txt_nombreidioma').addClass("PBvalidation");
     } else {
         arrParams.nivel2 = $('#cmb_nivelidioma2').val();
+        $('#txt_nombreidioma').removeClass("PBvalidation");
     }
 
     //Form2 Datos adicionales

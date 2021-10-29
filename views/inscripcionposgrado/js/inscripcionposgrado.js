@@ -406,8 +406,10 @@ function guardarInscripcionPosgrado() {
     }
     if (arrParams.tipo_dni == 'CED') {
         arrParams.cedula = $('#txt_cedula').val();
+        arrParams.pasaporte = '';
     } else {
         arrParams.cedula = $('#txt_pasaporte').val();
+        arrParams.pasaporte = $('#txt_pasaporte').val();
     }
 
     //var pais = $('#cmb_pais_dom').val();

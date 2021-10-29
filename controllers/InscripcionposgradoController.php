@@ -170,16 +170,15 @@ class InscripcionposgradoController extends \yii\web\Controller {
                     return json_encode(['error' => Yii::t("notificaciones", "Error to process File {file}. Try again.", ['{file}' => basename($files['name'])])]);
                     return;
                 }
-                $mod_persona = new Persona();
-                $resp_persona = $mod_persona->consultarUltimoPer_id();
-                $persona = $resp_persona["ultimo"];
-                $per_id = intval( $persona );
+                $insc_persona = new Persona();
+                $resp_persona = $insc_persona->consultaPeridxdni($data['cedula']);
+                $per_id = $resp_persona['per_id'];
                 //Recibe Parámetros
                 $files = $_FILES[key($_FILES)];
                 $arrIm = explode(".", basename($files['name']));
                 $typeFile = strtolower($arrIm[count($arrIm) - 1]);
                 if ($typeFile == 'pdf' || $typeFile == 'png' || $typeFile == 'jpg' || $typeFile == 'jpeg') {
-                $dirFileEnd = Yii::$app->params["documentFolder"] . "inscripcionposgrado/" . $per_id . "/" . $data["name_file"] . "." . $typeFile;
+                $dirFileEnd = Yii::$app->params["documentFolder"] . "inscripcionposgrado/" . $data["name_file"] . "." . $typeFile;
                 $status = Utilities::moveUploadFile($files['tmp_name'], $dirFileEnd);
                     if ($status) {
                         return true;
@@ -207,18 +206,16 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 $tipo_financiamiento = $data['tipo_financiamiento'];
                 $ming_id = $data['ming_id'];
 
-                $mod_persona = new Persona();
-                $resp_persona = $mod_persona->consultarUltimoPer_id();
-                $persona = $resp_persona["ultimo"];
-                $per_id = intval( $persona );
-
+                $insc_persona = new Persona();
+                $resp_persona = $insc_persona->consultaPeridxdni($data['cedula']);
+                $per_id = $resp_persona['per_id'];
                 $per_dni = $data['cedula'];
                 $inscriposgrado_id = $data["ipos_id"];
                 if (isset($data["ipos_ruta_doc_foto"]) && $data["ipos_ruta_doc_foto"] != "") {
                     $arrIm = explode(".", basename($data["ipos_ruta_doc_foto"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                    $foto_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/" . $per_id . "/doc_foto_per_" . $per_id . "." . $typeFile;
-                    $foto_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $foto_archivoOld, $timeSt);
+                    $foto_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/doc_foto_per_" . $per_id . "." . $typeFile;
+                    $foto_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $foto_archivoOld, '' /*$timeSt*/);
                     $data["ipos_ruta_doc_foto"] = $foto_archivo;
                     if ($foto_archivo === false)
                         throw new Exception('Error doc Foto no renombrado.');
@@ -226,8 +223,8 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 if (isset($data["ipos_ruta_doc_dni"]) && $data["ipos_ruta_doc_dni"] != "") {
                     $arrIm = explode(".", basename($data["ipos_ruta_doc_dni"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                    $dni_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/" . $per_id . "/doc_dni_per_" . $per_id . "." . $typeFile;
-                    $dni_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $dni_archivoOld, $timeSt);
+                    $dni_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/doc_dni_per_" . $per_id . "." . $typeFile;
+                    $dni_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $dni_archivoOld, '' /*$timeSt*/);
                     $data["ipos_ruta_doc_dni"] = $dni_archivo;
                     if ($dni_archivo === false)
                         throw new Exception('Error doc Dni no renombrado.');
@@ -235,8 +232,8 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 if (isset($data["ipos_ruta_doc_certvota"]) && $data["ipos_ruta_doc_certvota"] != "") {
                     $arrIm = explode(".", basename($data["ipos_ruta_doc_certvota"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                    $certvota_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/" . $per_id . "/doc_certvota_per_" . $per_id . "." . $typeFile;
-                    $certvota_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $certvota_archivoOld, $timeSt);
+                    $certvota_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/doc_certvota_per_" . $per_id . "." . $typeFile;
+                    $certvota_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $certvota_archivoOld, '' /*$timeSt*/);
                     $data["ipos_ruta_doc_certvota"] = $certvota_archivo;
                     if ($certvota_archivo === false)
                         throw new Exception('Error doc certificado vot. no renombrado.');
@@ -244,8 +241,8 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 if (isset($data["ipos_ruta_doc_titulo"]) && $data["ipos_ruta_doc_titulo"] != "") {
                     $arrIm = explode(".", basename($data["ipos_ruta_doc_titulo"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                    $titulo_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/" . $per_id . "/doc_titulo_per_" . $per_id . "." . $typeFile;
-                    $titulo_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $titulo_archivoOld, $timeSt);
+                    $titulo_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/doc_titulo_per_" . $per_id . "." . $typeFile;
+                    $titulo_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $titulo_archivoOld, '' /*$timeSt*/);
                     $data["ipos_ruta_doc_titulo"] = $titulo_archivo;
                     if ($titulo_archivo === false)
                         throw new Exception('Error doc Titulo no renombrado.');
@@ -253,8 +250,8 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 if (isset($data["ipos_ruta_doc_comprobante"]) && $data["ipos_ruta_doc_comprobante"] != "") {
                     $arrIm = explode(".", basename($data["ipos_ruta_doc_comprobante"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                    $comprobantepago_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/" . $per_id . "/doc_comprobante_per_" . $per_id . "." . $typeFile;
-                    $comprobantepago_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $comprobantepago_archivoOld, $timeSt);
+                    $comprobantepago_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/doc_comprobante_per_" . $per_id . "." . $typeFile;
+                    $comprobantepago_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $comprobantepago_archivoOld, '' /*$timeSt*/);
                     $data["ipos_ruta_doc_comprobante"] = $comprobantepago_archivo;
                     if ($comprobantepago_archivo === false)
                         throw new Exception('Error doc Comprobante de pago de matrícula no renombrado.');
@@ -262,8 +259,8 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 if (isset($data["ipos_ruta_doc_record1"]) && $data["ipos_ruta_doc_record1"] != "") {
                     $arrIm = explode(".", basename($data["ipos_ruta_doc_record1"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                    $record1_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/" . $per_id . "/doc_record_per_" . $per_id . "." . $typeFile;
-                    $record1_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $record1_archivoOld, $timeSt);
+                    $record1_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/doc_record_per_" . $per_id . "." . $typeFile;
+                    $record1_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $record1_archivoOld, '' /*$timeSt*/);
                     $data["ipos_ruta_doc_record1"] = $record1_archivo;
                     if ($record1_archivo === false)
                         throw new Exception('Error doc Récord Académico no renombrado.');
@@ -271,8 +268,8 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 if (isset($data["ipos_ruta_doc_senescyt"]) && $data["ipos_ruta_doc_senescyt"] != "") {
                     $arrIm = explode(".", basename($data["ipos_ruta_doc_senescyt"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                    $senescyt_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/" . $per_id . "/doc_senescyt_per_" . $per_id . "." . $typeFile;
-                    $senescyt_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $senescyt_archivoOld, $timeSt);
+                    $senescyt_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/doc_senescyt_per_" . $per_id . "." . $typeFile;
+                    $senescyt_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $senescyt_archivoOld, '' /*$timeSt*/);
                     $data["ipos_ruta_doc_senescyt"] = $senescyt_archivo;
                     if ($senescyt_archivo === false)
                         throw new Exception('Error doc Senescyt no renombrado.');
@@ -280,8 +277,8 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 if (isset($data["ipos_ruta_doc_hojavida"]) && $data["ipos_ruta_doc_hojavida"] != "") {
                     $arrIm = explode(".", basename($data["ipos_ruta_doc_hojavida"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                    $hojavida_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/" . $per_id . "/doc_hojavida_per_" . $per_id . "." . $typeFile;
-                    $hojavida_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $hojavida_archivoOld, $timeSt);
+                    $hojavida_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/doc_hojavida_per_" . $per_id . "." . $typeFile;
+                    $hojavida_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $hojavida_archivoOld, '' /*$timeSt*/);
                     $data["ipos_ruta_doc_hojavida"] = $hojavida_archivo;
                     if ($hojavida_archivo === false)
                         throw new Exception('Error doc Hoja de Vida no renombrado.');
@@ -289,8 +286,8 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 if (isset($data["ipos_ruta_doc_cartarecomendacion"]) && $data["ipos_ruta_doc_cartarecomendacion"] != "") {
                     $arrIm = explode(".", basename($data["ipos_ruta_doc_cartarecomendacion"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                    $carta_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/" . $per_id . "/doc_cartarecomendacion_per_" . $per_id . "." . $typeFile;
-                    $carta_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $carta_archivoOld, $timeSt);
+                    $carta_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/doc_cartarecomendacion_per_" . $per_id . "." . $typeFile;
+                    $carta_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $carta_archivoOld, '' /*$timeSt*/);
                     $data["ipos_ruta_doc_cartarecomendacion"] = $carta_archivo;
                     if ($carta_archivo === false)
                         throw new Exception('Error doc Carta de Recomendación no renombrado.');
@@ -298,8 +295,8 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 if (isset($data["ipos_ruta_doc_certificadolaboral"]) && $data["ipos_ruta_doc_certificadolaboral"] != "") {
                     $arrIm = explode(".", basename($data["ipos_ruta_doc_certificadolaboral"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                    $certlaboral_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/" . $per_id . "/doc_certlaboral_per_" . $per_id . "." . $typeFile;
-                    $certlaboral_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $certlaboral_archivoOld, $timeSt);
+                    $certlaboral_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/doc_certlaboral_per_" . $per_id . "." . $typeFile;
+                    $certlaboral_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $certlaboral_archivoOld, '' /*$timeSt*/);
                     $data["ipos_ruta_doc_certificadolaboral"] = $certlaboral_archivo;
                     if ($certlaboral_archivo === false)
                         throw new Exception('Error doc Certificado Laboral no renombrado.');
@@ -307,8 +304,8 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 if (isset($data["ipos_ruta_doc_certificadoingles"]) && $data["ipos_ruta_doc_certificadoingles"] != "") {
                     $arrIm = explode(".", basename($data["ipos_ruta_doc_certificadoingles"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                    $certingles_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/" . $per_id . "/doc_certingles_per_" . $per_id . "." . $typeFile;
-                    $certingles_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $certingles_archivoOld, $timeSt);
+                    $certingles_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/doc_certingles_per_" . $per_id . "." . $typeFile;
+                    $certingles_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $certingles_archivoOld, '' /*$timeSt*/);
                     $data["ipos_ruta_doc_certificadoingles"] = $certingles_archivo;
                     if ($certingles_archivo === false)
                         throw new Exception('Error doc Certificado Ingles A2 no renombrado.');
@@ -316,8 +313,8 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 if (isset($data["ipos_ruta_doc_recordacademico"]) && $data["ipos_ruta_doc_recordacademico"] != "") {
                     $arrIm = explode(".", basename($data["ipos_ruta_doc_recordacademico"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                    $recordacad_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/" . $per_id . "/doc_recordacad_per_" . $per_id . "." . $typeFile;
-                    $recordacad_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $recordacad_archivoOld, $timeSt);
+                    $recordacad_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/doc_recordacad_per_" . $per_id . "." . $typeFile;
+                    $recordacad_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $recordacad_archivoOld, '' /*$timeSt*/);
                     $data["ipos_ruta_doc_recordacademico"] = $recordacad_archivo;
                     if ($recordacad_archivo === false)
                         throw new Exception('Error doc Récord Académico no renombrado.');
@@ -325,8 +322,8 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 if (isset($data["ipos_ruta_doc_certnosancion"]) && $data["ipos_ruta_doc_certnosancion"] != "") {
                     $arrIm = explode(".", basename($data["ipos_ruta_doc_certnosancion"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                    $certnosancion_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/" . $per_id . "/doc_certificado_per_" . $per_id . "." . $typeFile;
-                    $certnosancion_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $certnosancion_archivoOld, $timeSt);
+                    $certnosancion_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/doc_certificado_per_" . $per_id . "." . $typeFile;
+                    $certnosancion_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $certnosancion_archivoOld, '' /*$timeSt*/);
                     $data["ipos_ruta_doc_certnosancion"] = $certnosancion_archivo;
                     if ($certnosancion_archivo === false)
                         throw new Exception('Error doc Certificado No Sanción no renombrado.');
@@ -334,8 +331,8 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 if (isset($data["ipos_ruta_doc_syllabus"]) && $data["ipos_ruta_doc_syllabus"] != "") {
                     $arrIm = explode(".", basename($data["ipos_ruta_doc_syllabus"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                    $syllabus_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/" . $per_id . "/doc_syllabus_per_" . $per_id . "." . $typeFile;
-                    $syllabus_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $syllabus_archivoOld, $timeSt);
+                    $syllabus_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/doc_syllabus_per_" . $per_id . "." . $typeFile;
+                    $syllabus_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $syllabus_archivoOld, '' /*$timeSt*/);
                     $data["ipos_ruta_doc_syllabus"] = $syllabus_archivo;
                     if ($syllabus_archivo === false)
                         throw new Exception('Error doc Certificado No Sanción no renombrado.');
@@ -343,8 +340,8 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 if (isset($data["ipos_ruta_doc_homologacion"]) && $data["ipos_ruta_doc_homologacion"] != "") {
                     $arrIm = explode(".", basename($data["ipos_ruta_doc_homologacion"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                    $homologacion_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/" . $per_id . "/doc_homologacion_per_" . $per_id . "." . $typeFile;
-                    $homologacion_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $homologacion_archivoOld, $timeSt);
+                    $homologacion_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/doc_homologacion_per_" . $per_id . "." . $typeFile;
+                    $homologacion_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $homologacion_archivoOld, '' /*$timeSt*/);
                     $data["ipos_ruta_doc_homologacion"] = $homologacion_archivo;
                     if ($homologacion_archivo === false)
                         throw new Exception('Error doc Especie valorada por homologación no renombrado.');
@@ -354,10 +351,10 @@ class InscripcionposgradoController extends \yii\web\Controller {
 
                 //FORM 1 datos personal
             $per_dni = $data['cedula'];
-            $primer_nombre = $data["primer_nombre"];
-            $segundo_nombre = $data["segundo_nombre"];
-            $primer_apellido = $data["primer_apellido"];
-            $segundo_apellido = $data["segundo_apellido"];
+            $primer_nombre = ucwords(strtolower($data["primer_nombre"]));
+            $segundo_nombre = ucwords(strtolower($data["segundo_nombre"]));
+            $primer_apellido = ucwords(strtolower($data["primer_apellido"]));
+            $segundo_apellido = ucwords(strtolower($data["segundo_apellido"]));
             $can_id_nacimiento = $data["cuidad_nac"];
             $per_fecha_nacimiento = $data["fecha_nac"];
             $per_nacionalidad = $data["nacionalidad"];
@@ -367,35 +364,35 @@ class InscripcionposgradoController extends \yii\web\Controller {
             $can_id_domicilio = $data["canton"];
 
             //FORM 1 datos de Contacto
-            $per_domicilio_ref = $data["dir_domicilio"];
+            $per_domicilio_ref = ucwords(strtolower($data["dir_domicilio"]));
             $per_celular = $data["celular"];
             $per_domicilio_telefono = $data["telefono"];
-            $per_correo = $data["correo"];
+            $per_correo = ucwords(strtolower($data["correo"]));
 
             //FORM 1 datos en caso de emergencias
-            $pcon_nombre = $data["cont_emergencia"];
+            $pcon_nombre = ucwords(strtolower($data["cont_emergencia"]));
             $tpar_id = $data["parentesco"];
             $pcon_celular = $data["tel_emergencia"];
 
             //Form2 Datos formacion profesional
-            $titulo_ter = $data["titulo_tercer"];
-            $universidad_tercer = $data["universidad_tercer"];
-            $grado_tercer = $data["grado_tercer"];
+            $titulo_ter = ucwords(strtolower($data["titulo_tercer"]));
+            $universidad_tercer = ucwords(strtolower($data["universidad_tercer"]));
+            $grado_tercer = ucwords(strtolower($data["grado_tercer"]));
 
-            $titulo_cuarto = $data["titulo_cuarto"];
-            $universidad_cuarto = $data["universidad_cuarto"];
-            $grado_cuarto = $data["grado_cuarto"];
+            $titulo_cuarto = ucwords(strtolower($data["titulo_cuarto"]));
+            $universidad_cuarto = ucwords(strtolower($data["universidad_cuarto"]));
+            $grado_cuarto = ucwords(strtolower($data["grado_cuarto"]));
 
             //Form2 Datos laboral
-            $empresa = $data["empresa"];
-            $cargo = $data["cargo"];
+            $empresa = ucwords(strtolower($data["empresa"]));
+            $cargo = ucwords(strtolower($data["cargo"]));
             $telefono_emp = $data["telefono_emp"];
             $prov_emp = $data["prov_emp"];
             $ciu_emp = $data["ciu_emp"];
-            $parroquia = $data["parroquia"];
-            $direccion_emp = $data["direccion_emp"];
+            $parroquia = ucwords(strtolower($data["parroquia"]));
+            $direccion_emp = ucwords(strtolower($data["direccion_emp"]));
             $añoingreso_emp = $data["añoingreso_emp"];
-            $correo_emp = $data["correo_emp"];
+            $correo_emp = ucwords(strtolower($data["correo_emp"]));
             $cat_ocupacional = $data["cat_ocupacional"];
 
             //Form2 Datos idiomas
@@ -406,7 +403,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
             $nivel2 = $data["nivel2"];
 
             $noidioma = '';
-            $otroidioma = $data["otroidioma"];
+            $otroidioma = ucwords(strtolower($data["otroidioma"]));
             $otronivel = $data["otronivel"];
 
             //Form2 Datos adicionales
@@ -416,11 +413,11 @@ class InscripcionposgradoController extends \yii\web\Controller {
 
             $docencias = $data["docencias"];
             $año_docencia = $data["año_docencia"];
-            $area_docencia = $data["area_docencia"];
+            $area_docencia = ucwords(strtolower($data["area_docencia"]));
 
             $investiga = $data["investiga"];
             $articulos = $data["articulos"];
-            $area_investigacion = $data["area_investigacion"];
+            $area_investigacion = ucwords(strtolower($data["area_investigacion"]));
 
             //Form2 Datos financiamiento
             $tipo_financiamiento = $data["tipo_financiamiento"];
@@ -1090,7 +1087,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 $arrIm = explode(".", basename($files['name']));
                 $typeFile = strtolower($arrIm[count($arrIm) - 1]);
                 if ($typeFile == 'pdf' || $typeFile == 'png' || $typeFile == 'jpg' || $typeFile == 'jpeg') {
-                $dirFileEnd = Yii::$app->params["documentFolder"] . "inscripcionposgrado/" . $per_id . "/" . $data["name_file"] . "." . $typeFile;
+                $dirFileEnd = Yii::$app->params["documentFolder"] . "inscripcionposgrado/" . $data["name_file"] . "." . $typeFile;
                 $status = Utilities::moveUploadFile($files['tmp_name'], $dirFileEnd);
                 if ($status) {
                     return true;
@@ -1124,8 +1121,8 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 if (isset($data["ipos_ruta_doc_foto"]) && $data["ipos_ruta_doc_foto"] != "") {
                     $arrIm = explode(".", basename($data["ipos_ruta_doc_foto"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                    $foto_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/" . $per_id . "/doc_foto_per_" . $per_id . "." . $typeFile;
-                    $foto_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $foto_archivoOld, $timeSt);
+                    $foto_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/doc_foto_per_" . $per_id . "." . $typeFile;
+                    $foto_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $foto_archivoOld, '' /*$timeSt*/);
                     $data["ipos_ruta_doc_foto"] = $foto_archivo;
                     if ($foto_archivo === false)
                         throw new Exception('Error doc Foto no renombrado.');
@@ -1133,8 +1130,8 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 if (isset($data["ipos_ruta_doc_dni"]) && $data["ipos_ruta_doc_dni"] != "") {
                     $arrIm = explode(".", basename($data["ipos_ruta_doc_dni"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                    $dni_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/" . $per_id . "/doc_dni_per_" . $per_id . "." . $typeFile;
-                    $dni_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $dni_archivoOld, $timeSt);
+                    $dni_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/doc_dni_per_" . $per_id . "." . $typeFile;
+                    $dni_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $dni_archivoOld, '' /*$timeSt*/);
                     $data["ipos_ruta_doc_dni"] = $dni_archivo;
                     if ($dni_archivo === false)
                         throw new Exception('Error doc Dni no renombrado.');
@@ -1142,8 +1139,8 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 if (isset($data["ipos_ruta_doc_certvota"]) && $data["ipos_ruta_doc_certvota"] != "") {
                     $arrIm = explode(".", basename($data["ipos_ruta_doc_certvota"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                    $certvota_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/" . $per_id . "/doc_certvota_per_" . $per_id . "." . $typeFile;
-                    $certvota_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $certvota_archivoOld, $timeSt);
+                    $certvota_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/doc_certvota_per_" . $per_id . "." . $typeFile;
+                    $certvota_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $certvota_archivoOld, '' /*$timeSt*/);
                     $data["ipos_ruta_doc_certvota"] = $certvota_archivo;
                     if ($certvota_archivo === false)
                         throw new Exception('Error doc certificado vot. no renombrado.');
@@ -1151,8 +1148,8 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 if (isset($data["ipos_ruta_doc_titulo"]) && $data["ipos_ruta_doc_titulo"] != "") {
                     $arrIm = explode(".", basename($data["ipos_ruta_doc_titulo"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                    $titulo_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/" . $per_id . "/doc_titulo_per_" . $per_id . "." . $typeFile;
-                    $titulo_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $titulo_archivoOld, $timeSt);
+                    $titulo_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/doc_titulo_per_" . $per_id . "." . $typeFile;
+                    $titulo_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $titulo_archivoOld, '' /*$timeSt*/);
                     $data["ipos_ruta_doc_titulo"] = $titulo_archivo;
                     if ($titulo_archivo === false)
                         throw new Exception('Error doc Titulo no renombrado.');
@@ -1160,8 +1157,8 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 if (isset($data["ipos_ruta_doc_comprobante"]) && $data["ipos_ruta_doc_comprobante"] != "") {
                     $arrIm = explode(".", basename($data["ipos_ruta_doc_comprobante"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                    $comprobantepago_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/" . $per_id . "/doc_comprobante_per_" . $per_id . "." . $typeFile;
-                    $comprobantepago_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $comprobantepago_archivoOld, $timeSt);
+                    $comprobantepago_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/doc_comprobante_per_" . $per_id . "." . $typeFile;
+                    $comprobantepago_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $comprobantepago_archivoOld, '' /*$timeSt*/);
                     $data["ipos_ruta_doc_comprobante"] = $comprobantepago_archivo;
                     if ($comprobantepago_archivo === false)
                         throw new Exception('Error doc Comprobante de pago de matrícula no renombrado.');
@@ -1169,8 +1166,8 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 if (isset($data["ipos_ruta_doc_record1"]) && $data["ipos_ruta_doc_record1"] != "") {
                     $arrIm = explode(".", basename($data["ipos_ruta_doc_record1"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                    $record1_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/" . $per_id . "/doc_record_per_" . $per_id . "." . $typeFile;
-                    $record1_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $record1_archivoOld, $timeSt);
+                    $record1_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/doc_record_per_" . $per_id . "." . $typeFile;
+                    $record1_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $record1_archivoOld, '' /*$timeSt*/);
                     $data["ipos_ruta_doc_record1"] = $record1_archivo;
                     if ($record1_archivo === false)
                         throw new Exception('Error doc Récord Académico no renombrado.');
@@ -1178,8 +1175,8 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 if (isset($data["ipos_ruta_doc_senescyt"]) && $data["ipos_ruta_doc_senescyt"] != "") {
                     $arrIm = explode(".", basename($data["ipos_ruta_doc_senescyt"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                    $senescyt_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/" . $per_id . "/doc_senescyt_per_" . $per_id . "." . $typeFile;
-                    $senescyt_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $senescyt_archivoOld, $timeSt);
+                    $senescyt_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/doc_senescyt_per_" . $per_id . "." . $typeFile;
+                    $senescyt_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $senescyt_archivoOld, '' /*$timeSt*/);
                     $data["ipos_ruta_doc_senescyt"] = $senescyt_archivo;
                     if ($senescyt_archivo === false)
                         throw new Exception('Error doc Senescyt no renombrado.');
@@ -1187,8 +1184,8 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 if (isset($data["ipos_ruta_doc_hojavida"]) && $data["ipos_ruta_doc_hojavida"] != "") {
                     $arrIm = explode(".", basename($data["ipos_ruta_doc_hojavida"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                    $hojavida_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/" . $per_id . "/doc_hojavida_per_" . $per_id . "." . $typeFile;
-                    $hojavida_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $hojavida_archivoOld, $timeSt);
+                    $hojavida_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/doc_hojavida_per_" . $per_id . "." . $typeFile;
+                    $hojavida_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $hojavida_archivoOld, '' /*$timeSt*/);
                     $data["ipos_ruta_doc_hojavida"] = $hojavida_archivo;
                     if ($hojavida_archivo === false)
                         throw new Exception('Error doc Hoja de Vida no renombrado.');
@@ -1196,8 +1193,8 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 if (isset($data["ipos_ruta_doc_cartarecomendacion"]) && $data["ipos_ruta_doc_cartarecomendacion"] != "") {
                     $arrIm = explode(".", basename($data["ipos_ruta_doc_cartarecomendacion"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                    $carta_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/" . $per_id . "/doc_cartarecomendacion_per_" . $per_id . "." . $typeFile;
-                    $carta_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $carta_archivoOld, $timeSt);
+                    $carta_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/doc_cartarecomendacion_per_" . $per_id . "." . $typeFile;
+                    $carta_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $carta_archivoOld, '' /*$timeSt*/);
                     $data["ipos_ruta_doc_cartarecomendacion"] = $carta_archivo;
                     if ($carta_archivo === false)
                         throw new Exception('Error doc Carta de Recomendación no renombrado.');
@@ -1205,8 +1202,8 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 if (isset($data["ipos_ruta_doc_certificadolaboral"]) && $data["ipos_ruta_doc_certificadolaboral"] != "") {
                     $arrIm = explode(".", basename($data["ipos_ruta_doc_certificadolaboral"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                    $certlaboral_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/" . $per_id . "/doc_certlaboral_per_" . $per_id . "." . $typeFile;
-                    $certlaboral_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $certlaboral_archivoOld, $timeSt);
+                    $certlaboral_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/doc_certlaboral_per_" . $per_id . "." . $typeFile;
+                    $certlaboral_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $certlaboral_archivoOld, '' /*$timeSt*/);
                     $data["ipos_ruta_doc_certificadolaboral"] = $certlaboral_archivo;
                     if ($certlaboral_archivo === false)
                         throw new Exception('Error doc Certificado Laboral no renombrado.');
@@ -1214,8 +1211,8 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 if (isset($data["ipos_ruta_doc_certificadoingles"]) && $data["ipos_ruta_doc_certificadoingles"] != "") {
                     $arrIm = explode(".", basename($data["ipos_ruta_doc_certificadoingles"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                    $certingles_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/" . $per_id . "/doc_certingles_per_" . $per_id . "." . $typeFile;
-                    $certingles_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $certingles_archivoOld, $timeSt);
+                    $certingles_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/doc_certingles_per_" . $per_id . "." . $typeFile;
+                    $certingles_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $certingles_archivoOld, '' /*$timeSt*/);
                     $data["ipos_ruta_doc_certificadoingles"] = $certingles_archivo;
                     if ($certingles_archivo === false)
                         throw new Exception('Error doc Certificado Ingles A2 no renombrado.');
@@ -1223,8 +1220,8 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 if (isset($data["ipos_ruta_doc_recordacademico"]) && $data["ipos_ruta_doc_recordacademico"] != "") {
                     $arrIm = explode(".", basename($data["ipos_ruta_doc_recordacademico"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                    $recordacad_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/" . $per_id . "/doc_recordacad_per_" . $per_id . "." . $typeFile;
-                    $recordacad_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $recordacad_archivoOld, $timeSt);
+                    $recordacad_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/doc_recordacad_per_" . $per_id . "." . $typeFile;
+                    $recordacad_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $recordacad_archivoOld, '' /*$timeSt*/);
                     $data["ipos_ruta_doc_recordacademico"] = $recordacad_archivo;
                     if ($recordacad_archivo === false)
                         throw new Exception('Error doc Récord Académico no renombrado.');
@@ -1232,8 +1229,8 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 if (isset($data["ipos_ruta_doc_certnosancion"]) && $data["ipos_ruta_doc_certnosancion"] != "") {
                     $arrIm = explode(".", basename($data["ipos_ruta_doc_certnosancion"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                    $certnosancion_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/" . $per_id . "/doc_certificado_per_" . $per_id . "." . $typeFile;
-                    $certnosancion_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $certnosancion_archivoOld, $timeSt);
+                    $certnosancion_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/doc_certificado_per_" . $per_id . "." . $typeFile;
+                    $certnosancion_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $certnosancion_archivoOld, '' /*$timeSt*/);
                     $data["ipos_ruta_doc_certnosancion"] = $certnosancion_archivo;
                     if ($certnosancion_archivo === false)
                         throw new Exception('Error doc Certificado No Sanción no renombrado.');
@@ -1241,8 +1238,8 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 if (isset($data["ipos_ruta_doc_syllabus"]) && $data["ipos_ruta_doc_syllabus"] != "") {
                     $arrIm = explode(".", basename($data["ipos_ruta_doc_syllabus"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                    $syllabus_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/" . $per_id . "/doc_syllabus_per_" . $per_id . "." . $typeFile;
-                    $syllabus_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $syllabus_archivoOld, $timeSt);
+                    $syllabus_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/doc_syllabus_per_" . $per_id . "." . $typeFile;
+                    $syllabus_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $syllabus_archivoOld, '' /*$timeSt*/);
                     $data["ipos_ruta_doc_syllabus"] = $syllabus_archivo;
                     if ($syllabus_archivo === false)
                         throw new Exception('Error doc Certificado No Sanción no renombrado.');
@@ -1250,8 +1247,8 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 if (isset($data["ipos_ruta_doc_homologacion"]) && $data["ipos_ruta_doc_homologacion"] != "") {
                     $arrIm = explode(".", basename($data["ipos_ruta_doc_homologacion"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                    $homologacion_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/" . $per_id . "/doc_homologacion_per_" . $per_id . "." . $typeFile;
-                    $homologacion_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $homologacion_archivoOld, $timeSt);
+                    $homologacion_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/doc_homologacion_per_" . $per_id . "." . $typeFile;
+                    $homologacion_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $homologacion_archivoOld, '' /*$timeSt*/);
                     $data["ipos_ruta_doc_homologacion"] = $homologacion_archivo;
                     if ($homologacion_archivo === false)
                         throw new Exception('Error doc Especie valorada por homologación no renombrado.');
@@ -1261,10 +1258,10 @@ class InscripcionposgradoController extends \yii\web\Controller {
 
                 //FORM 1 datos personal
             $per_dni = $data['cedula'];
-            $primer_nombre = $data["primer_nombre"];
-            $segundo_nombre = $data["segundo_nombre"];
-            $primer_apellido = $data["primer_apellido"];
-            $segundo_apellido = $data["segundo_apellido"];
+            $primer_nombre = ucwords(strtolower($data["primer_nombre"]));
+            $segundo_nombre = ucwords(strtolower($data["segundo_nombre"]));
+            $primer_apellido = ucwords(strtolower($data["primer_apellido"]));
+            $segundo_apellido = ucwords(strtolower($data["segundo_apellido"]));
             $can_id_nacimiento = $data["cuidad_nac"];
             $per_fecha_nacimiento = $data["fecha_nac"];
             $per_nacionalidad = $data["nacionalidad"];
@@ -1274,36 +1271,36 @@ class InscripcionposgradoController extends \yii\web\Controller {
             $can_id_domicilio = $data["canton"];
 
             //FORM 1 datos de Contacto
-            $per_domicilio_ref = $data["dir_domicilio"];
+            $per_domicilio_ref = ucwords(strtolower($data["dir_domicilio"]));
             $per_celular = $data["celular"];
             $per_domicilio_telefono = $data["telefono"];
-            $per_correo = $data["correo"];
+            $per_correo = ucwords(strtolower($data["correo"]));
 
             //FORM 1 datos en caso de emergencias
-            $pcon_nombre = $data["cont_emergencia"];
+            $pcon_nombre = ucwords(strtolower($data["cont_emergencia"]));
             $tpar_id = $data["parentesco"];
             $pcon_celular = $data["tel_emergencia"];
 
             //Form2 Datos formacion profesional
-            $titulo_ter = $data["titulo_tercer"];
-            $universidad_tercer = $data["universidad_tercer"];
-            $grado_tercer = $data["grado_tercer"];
+            $titulo_ter = ucwords(strtolower($data["titulo_tercer"]));
+            $universidad_tercer = ucwords(strtolower($data["universidad_tercer"]));
+            $grado_tercer = ucwords(strtolower($data["grado_tercer"]));
 
-            $titulo_cuarto = $data["titulo_cuarto"];
-            $universidad_cuarto = $data["universidad_cuarto"];
-            $grado_cuarto = $data["grado_cuarto"];
+            $titulo_cuarto = ucwords(strtolower($data["titulo_cuarto"]));
+            $universidad_cuarto = ucwords(strtolower($data["universidad_cuarto"]));
+            $grado_cuarto = ucwords(strtolower($data["grado_cuarto"]));
 
             //Form2 Datos laboral
-            $empresa = $data["empresa"];
-            $cargo = $data["cargo"];
+            $empresa = ucwords(strtolower($data["empresa"]));
+            $cargo = ucwords(strtolower($data["cargo"]));
             $telefono_emp = $data["telefono_emp"];
             $prov_emp = $data["prov_emp"];
             $ciu_emp = $data["ciu_emp"];
-            $parroquia = $data["parroquia"];
-            $direccion_emp = $data["direccion_emp"];
+            $parroquia = ucwords(strtolower($data["parroquia"]));
+            $direccion_emp = ucwords(strtolower($data["direccion_emp"]));
             $añoingreso_emp = $data["añoingreso_emp"];
-            $correo_emp = $data["correo_emp"];
-            $cat_ocupacional = $data["cat_ocupacional"];
+            $correo_emp = ucwords(strtolower($data["correo_emp"]));
+            $cat_ocupacional = ucwords(strtolower($data["cat_ocupacional"]));
 
             //Form2 Datos idiomas
             $idioma1 = $data["idioma1"];
@@ -1313,7 +1310,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
             $nivel2 = $data["nivel2"];
 
             $noidioma = '';
-            $otroidioma = $data["otroidioma"];
+            $otroidioma = ucwords(strtolower($data["otroidioma"]));
             $otronivel = $data["otronivel"];
 
             //Form2 Datos adicionales
@@ -1323,11 +1320,11 @@ class InscripcionposgradoController extends \yii\web\Controller {
 
             $docencias = $data["docencias"];
             $año_docencia = $data["año_docencia"];
-            $area_docencia = $data["area_docencia"];
+            $area_docencia = ucwords(strtolower($data["area_docencia"]));
 
             $investiga = $data["investiga"];
             $articulos = $data["articulos"];
-            $area_investigacion = $data["area_investigacion"];
+            $area_investigacion = ucwords(strtolower($data["area_investigacion"]));
 
             //Form2 Datos financiamiento
             $tipo_financiamiento = $data["tipo_financiamiento"];

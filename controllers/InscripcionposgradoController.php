@@ -351,10 +351,10 @@ class InscripcionposgradoController extends \yii\web\Controller {
 
                 //FORM 1 datos personal
             $per_dni = $data['cedula'];
-            $primer_nombre = $data["primer_nombre"];
-            $segundo_nombre = $data["segundo_nombre"];
-            $primer_apellido = $data["primer_apellido"];
-            $segundo_apellido = $data["segundo_apellido"];
+            $primer_nombre = ucwords(strtolower($data["primer_nombre"]));
+            $segundo_nombre = ucwords(strtolower($data["segundo_nombre"]));
+            $primer_apellido = ucwords(strtolower($data["primer_apellido"]));
+            $segundo_apellido = ucwords(strtolower($data["segundo_apellido"]));
             $can_id_nacimiento = $data["cuidad_nac"];
             $per_fecha_nacimiento = $data["fecha_nac"];
             $per_nacionalidad = $data["nacionalidad"];
@@ -364,35 +364,35 @@ class InscripcionposgradoController extends \yii\web\Controller {
             $can_id_domicilio = $data["canton"];
 
             //FORM 1 datos de Contacto
-            $per_domicilio_ref = $data["dir_domicilio"];
+            $per_domicilio_ref = ucwords(strtolower($data["dir_domicilio"]));
             $per_celular = $data["celular"];
             $per_domicilio_telefono = $data["telefono"];
-            $per_correo = $data["correo"];
+            $per_correo = ucwords(strtolower($data["correo"]));
 
             //FORM 1 datos en caso de emergencias
-            $pcon_nombre = $data["cont_emergencia"];
+            $pcon_nombre = ucwords(strtolower($data["cont_emergencia"]));
             $tpar_id = $data["parentesco"];
             $pcon_celular = $data["tel_emergencia"];
 
             //Form2 Datos formacion profesional
-            $titulo_ter = $data["titulo_tercer"];
-            $universidad_tercer = $data["universidad_tercer"];
-            $grado_tercer = $data["grado_tercer"];
+            $titulo_ter = ucwords(strtolower($data["titulo_tercer"]));
+            $universidad_tercer = ucwords(strtolower($data["universidad_tercer"]));
+            $grado_tercer = ucwords(strtolower($data["grado_tercer"]));
 
-            $titulo_cuarto = $data["titulo_cuarto"];
-            $universidad_cuarto = $data["universidad_cuarto"];
-            $grado_cuarto = $data["grado_cuarto"];
+            $titulo_cuarto = ucwords(strtolower($data["titulo_cuarto"]));
+            $universidad_cuarto = ucwords(strtolower($data["universidad_cuarto"]));
+            $grado_cuarto = ucwords(strtolower($data["grado_cuarto"]));
 
             //Form2 Datos laboral
-            $empresa = $data["empresa"];
-            $cargo = $data["cargo"];
+            $empresa = ucwords(strtolower($data["empresa"]));
+            $cargo = ucwords(strtolower($data["cargo"]));
             $telefono_emp = $data["telefono_emp"];
             $prov_emp = $data["prov_emp"];
             $ciu_emp = $data["ciu_emp"];
-            $parroquia = $data["parroquia"];
-            $direccion_emp = $data["direccion_emp"];
+            $parroquia = ucwords(strtolower($data["parroquia"]));
+            $direccion_emp = ucwords(strtolower($data["direccion_emp"]));
             $añoingreso_emp = $data["añoingreso_emp"];
-            $correo_emp = $data["correo_emp"];
+            $correo_emp = ucwords(strtolower($data["correo_emp"]));
             $cat_ocupacional = $data["cat_ocupacional"];
 
             //Form2 Datos idiomas
@@ -403,7 +403,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
             $nivel2 = $data["nivel2"];
 
             $noidioma = '';
-            $otroidioma = $data["otroidioma"];
+            $otroidioma = ucwords(strtolower($data["otroidioma"]));
             $otronivel = $data["otronivel"];
 
             //Form2 Datos adicionales
@@ -413,11 +413,11 @@ class InscripcionposgradoController extends \yii\web\Controller {
 
             $docencias = $data["docencias"];
             $año_docencia = $data["año_docencia"];
-            $area_docencia = $data["area_docencia"];
+            $area_docencia = ucwords(strtolower($data["area_docencia"]));
 
             $investiga = $data["investiga"];
             $articulos = $data["articulos"];
-            $area_investigacion = $data["area_investigacion"];
+            $area_investigacion = ucwords(strtolower($data["area_investigacion"]));
 
             //Form2 Datos financiamiento
             $tipo_financiamiento = $data["tipo_financiamiento"];
@@ -1258,10 +1258,10 @@ class InscripcionposgradoController extends \yii\web\Controller {
 
                 //FORM 1 datos personal
             $per_dni = $data['cedula'];
-            $primer_nombre = $data["primer_nombre"];
-            $segundo_nombre = $data["segundo_nombre"];
-            $primer_apellido = $data["primer_apellido"];
-            $segundo_apellido = $data["segundo_apellido"];
+            $primer_nombre = ucwords(strtolower($data["primer_nombre"]));
+            $segundo_nombre = ucwords(strtolower($data["segundo_nombre"]));
+            $primer_apellido = ucwords(strtolower($data["primer_apellido"]));
+            $segundo_apellido = ucwords(strtolower($data["segundo_apellido"]));
             $can_id_nacimiento = $data["cuidad_nac"];
             $per_fecha_nacimiento = $data["fecha_nac"];
             $per_nacionalidad = $data["nacionalidad"];
@@ -1271,36 +1271,36 @@ class InscripcionposgradoController extends \yii\web\Controller {
             $can_id_domicilio = $data["canton"];
 
             //FORM 1 datos de Contacto
-            $per_domicilio_ref = $data["dir_domicilio"];
+            $per_domicilio_ref = ucwords(strtolower($data["dir_domicilio"]));
             $per_celular = $data["celular"];
             $per_domicilio_telefono = $data["telefono"];
-            $per_correo = $data["correo"];
+            $per_correo = ucwords(strtolower($data["correo"]));
 
             //FORM 1 datos en caso de emergencias
-            $pcon_nombre = $data["cont_emergencia"];
+            $pcon_nombre = ucwords(strtolower($data["cont_emergencia"]));
             $tpar_id = $data["parentesco"];
             $pcon_celular = $data["tel_emergencia"];
 
             //Form2 Datos formacion profesional
-            $titulo_ter = $data["titulo_tercer"];
-            $universidad_tercer = $data["universidad_tercer"];
-            $grado_tercer = $data["grado_tercer"];
+            $titulo_ter = ucwords(strtolower($data["titulo_tercer"]));
+            $universidad_tercer = ucwords(strtolower($data["universidad_tercer"]));
+            $grado_tercer = ucwords(strtolower($data["grado_tercer"]));
 
-            $titulo_cuarto = $data["titulo_cuarto"];
-            $universidad_cuarto = $data["universidad_cuarto"];
-            $grado_cuarto = $data["grado_cuarto"];
+            $titulo_cuarto = ucwords(strtolower($data["titulo_cuarto"]));
+            $universidad_cuarto = ucwords(strtolower($data["universidad_cuarto"]));
+            $grado_cuarto = ucwords(strtolower($data["grado_cuarto"]));
 
             //Form2 Datos laboral
-            $empresa = $data["empresa"];
-            $cargo = $data["cargo"];
+            $empresa = ucwords(strtolower($data["empresa"]));
+            $cargo = ucwords(strtolower($data["cargo"]));
             $telefono_emp = $data["telefono_emp"];
             $prov_emp = $data["prov_emp"];
             $ciu_emp = $data["ciu_emp"];
-            $parroquia = $data["parroquia"];
-            $direccion_emp = $data["direccion_emp"];
+            $parroquia = ucwords(strtolower($data["parroquia"]));
+            $direccion_emp = ucwords(strtolower($data["direccion_emp"]));
             $añoingreso_emp = $data["añoingreso_emp"];
-            $correo_emp = $data["correo_emp"];
-            $cat_ocupacional = $data["cat_ocupacional"];
+            $correo_emp = ucwords(strtolower($data["correo_emp"]));
+            $cat_ocupacional = ucwords(strtolower($data["cat_ocupacional"]));
 
             //Form2 Datos idiomas
             $idioma1 = $data["idioma1"];
@@ -1310,7 +1310,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
             $nivel2 = $data["nivel2"];
 
             $noidioma = '';
-            $otroidioma = $data["otroidioma"];
+            $otroidioma = ucwords(strtolower($data["otroidioma"]));
             $otronivel = $data["otronivel"];
 
             //Form2 Datos adicionales
@@ -1320,11 +1320,11 @@ class InscripcionposgradoController extends \yii\web\Controller {
 
             $docencias = $data["docencias"];
             $año_docencia = $data["año_docencia"];
-            $area_docencia = $data["area_docencia"];
+            $area_docencia = ucwords(strtolower($data["area_docencia"]));
 
             $investiga = $data["investiga"];
             $articulos = $data["articulos"];
-            $area_investigacion = $data["area_investigacion"];
+            $area_investigacion = ucwords(strtolower($data["area_investigacion"]));
 
             //Form2 Datos financiamiento
             $tipo_financiamiento = $data["tipo_financiamiento"];

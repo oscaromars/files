@@ -874,10 +874,10 @@ class InscripciongradoController extends \yii\web\Controller {
 
                 //datos personales
                 $per_dni = $data['cedula'];
-                $per_pri_nombre = $data["primer_nombre"];
-                $per_seg_nombre = $data["segundo_nombre"];
-                $per_pri_apellido = $data["primer_apellido"];
-                $per_seg_apellido = $data["segundo_apellido"];
+                $per_pri_nombre = ucwords(strtolower($data["primer_nombre"]));
+                $per_seg_nombre = ucwords(strtolower($data["segundo_nombre"]));
+                $per_pri_apellido = ucwords(strtolower($data["primer_apellido"]));
+                $per_seg_apellido = ucwords(strtolower($data["segundo_apellido"]));
                 $can_id_nacimiento = $data["cuidad_nac"];
                 $per_fecha_nacimiento = $data["fecha_nac"];
                 $per_nacionalidad = $data["nacionalidad"];
@@ -887,14 +887,14 @@ class InscripciongradoController extends \yii\web\Controller {
                 $pai_id_domicilio = $data["pais"];
                 $pro_id_domicilio = $data["provincia"];
                 $can_id_domicilio = $data["canton"];
-                $per_domicilio_csec = $data["parroquia"];
-                $per_domicilio_ref = $data["dir_domicilio"];
+                $per_domicilio_csec = ucwords(strtolower($data["parroquia"]));
+                $per_domicilio_ref = ucwords(strtolower($data["dir_domicilio"]));
                 $per_celular = $data["celular"];
                 $per_domicilio_telefono = $data["telefono"];
-                $per_correo = $data["correo"];
+                $per_correo = ucwords(strtolower($data["correo"]));
 
                 //datos en caso de emergencias
-                $per_trabajo_direccion = $data["dir_trabajo"];
+                $per_trabajo_direccion = ucwords(strtolower($data["dir_trabajo"]));
                 $pcon_nombre = ucwords(strtolower($data["cont_emergencia"]));
                 $tpar_id = $data["parentesco"];
                 $pcon_celular = ucwords(strtolower($data["tel_emergencia"]));

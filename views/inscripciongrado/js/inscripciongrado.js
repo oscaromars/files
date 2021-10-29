@@ -152,7 +152,7 @@ $(document).ready(function () {
              data = response.message;
              persids = data.persids;
              if(persids == null){
-                var mensaje = {wtmessage: "La persona no esta regsitrado como aspirante, no se guardara la información", title: "Información"};
+                var mensaje = {wtmessage: "La persona no esta registrado como aspirante, no se guardara la información", title: "Información"};
                 showAlert("NO_OK", "error", mensaje);
                 $('#txth_personaid').val('');
                 $('#Divboton').css('display', 'none');
@@ -176,7 +176,7 @@ $(document).ready(function () {
              data = response.message;
              persids = data.persids;
              if(persids == null){
-                var mensaje = {wtmessage: "La persona no esta regsitrado como aspirante, no se guardara la información", title: "Información"};
+                var mensaje = {wtmessage: "La persona no esta vs como aspirante, no se guardara la información", title: "Información"};
                 showAlert("NO_OK", "error", mensaje);
                 $('#txth_personaid').val('');
                 $('#Divboton').css('display', 'none');

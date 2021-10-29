@@ -50,14 +50,22 @@ class InscripcionposgradoController extends \yii\web\Controller {
     public function actionIndex() {
         $this->layout = '@themes/' . \Yii::$app->getView()->theme->themeName . '/layouts/basic.php';
         $per_id = Yii::$app->session->get("PB_perid");
-        $mod_persona = Persona::findIdentity($per_id);
-
+        //$mod_persona = Persona::findIdentity($per_id);
+        $mod_persona = new Persona();
         $mod_unidad = new UnidadAcademica();
         $mod_modalidad = new Modalidad();
         $mod_programa = new EstudioAcademico();
 
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
+            Utilities::putMessageLogFile('cedula en change posg.. ' .$data['cedulacons'] );
+            if (isset($data["getcedula"])) {
+                $persids = $mod_persona->consultaPeridxdni($data['cedulacons']);
+                $message = array("persids" => $persids['per_id']);
+                Utilities::putMessageLogFile('per_id consultado pos.. ' .$persids['per_id'] );
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+                //return;
+            }
             if (isset($data["getprograma"])) {
                 $programa = $mod_programa->consultarCarreraxunidad($data["unidad"]);
                 $message = array("programa" => $programa);
@@ -116,10 +124,9 @@ class InscripcionposgradoController extends \yii\web\Controller {
         $mod_conempresa = new ConvenioEmpresa();
         $arr_convempresa = $mod_conempresa->consultarConvenioEmpresa();
         $_SESSION['JSLANG']['Your information has not been saved. Please try again.'] = Yii::t('notificaciones', 'Your information has not been saved. Please try again.');
-        $mod_persona = new Persona();
-        $resp_persona = $mod_persona->consultarUltimoPer_id();
+        /*$resp_persona = $mod_persona->consultarUltimoPer_id();
         $persona = $resp_persona["ultimo"];
-        $per_id = intval( $persona );
+        $per_id = intval( $persona );*/
 
         return $this->render('index', [
             'arr_unidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $arr_unidad), "id", "name"),
@@ -144,7 +151,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
             "arr_metodos" => ArrayHelper::map($arr_metodos, "id", "name"),
             "arr_convenio_empresa" => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Ninguna")]], $arr_convempresa), "id", "name"),
             "resp_datos" => $resp_datos,
-            "per_id" => $per_id,
+            //"per_id" => $per_id,
         ]);
     }
 

@@ -110,7 +110,6 @@ class ComposerStaticInitf285fe9957bad1e329ae97a6417e73ab
             'kartik\\tabs\\' => 12,
             'kartik\\select2\\' => 15,
             'kartik\\popover\\' => 15,
-            'kartik\\detail\\' => 15,
             'kartik\\plugins\\tabs\\' => 20,
             'kartik\\plugins\\popover\\' => 23,
             'kartik\\plugins\\fileinput\\' => 25,
@@ -123,7 +122,6 @@ class ComposerStaticInitf285fe9957bad1e329ae97a6417e73ab
             'kartik\\date\\' => 12,
             'kartik\\bs4dropdown\\' => 19,
             'kartik\\base\\' => 12,
-            
         ),
         'h' => 
         array (
@@ -157,7 +155,6 @@ class ComposerStaticInitf285fe9957bad1e329ae97a6417e73ab
             'Symfony\\Component\\CssSelector\\' => 30,
             'Symfony\\Component\\Console\\' => 26,
             'Symfony\\Component\\BrowserKit\\' => 29,
-            'Stripe\\' => 7,
         ),
         'P' => 
         array (
@@ -261,10 +258,6 @@ class ComposerStaticInitf285fe9957bad1e329ae97a6417e73ab
         'kartik\\tabs\\' => 
         array (
             0 => __DIR__ . '/..' . '/kartik-v/yii2-tabs-x/src',
-        ),
-        'kartik\\detail\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/kartik-v/yii2-detail-view/src',
         ),
         'kartik\\select2\\' => 
         array (

@@ -526,6 +526,41 @@ function guardarInscripcionPosgrado() {
                                                             var mensaje = {wtmessage: "Debe adjuntar Certificado Suficiencia Ingles.", title: "Información"};
                                                             showAlert("NO_OK", "error", mensaje);
                                                         } else{
+                                 if ($("#signup-hom").prop("checked") == true)
+                                {
+                                    if ($('#txth_doc_recordacad').val() == "") {
+                                        var mensaje = {wtmessage: "Debe adjuntar Record Académico.", title: "Información"};
+                                        showAlert("NO_OK", "error", mensaje);
+                                    } else{
+                                        if ($('#txth_doc_nosancion').val() == "") {
+                                            var mensaje = {wtmessage: "Debe adjuntar Certificado no ser sancionado.", title: "Información"};
+                                            showAlert("NO_OK", "error", mensaje);
+                                        }else{
+                                            if ($('#txth_doc_syllabus').val() == "") {
+                                                var mensaje = {wtmessage: "Debe adjuntar Syllabus de materias aprobadas.", title: "Información"};
+                                                showAlert("NO_OK", "error", mensaje);
+                                            }else{
+                                                if ($('#txth_doc_especievalorada').val() == "") {
+                                                    var mensaje = {wtmessage: "Debe adjuntar Especie valorada.", title: "Información"};
+                                                    showAlert("NO_OK", "error", mensaje);
+                                                }else{
+                                                if (!validateForm()) {
+                                                    requestHttpAjax(link, arrParams, function (response) {
+                                                        showAlert(response.status, response.label, response.message);
+                                                        if (response.status == "OK") {
+                                                            setTimeout(function() {
+                                                                    window.location.href = $('#txth_base').val() + "/inscripciongrado/index";
+                                                                }, 3000);
+                                                        }
+                                                    }, true);
+                                                }
+                                               }
+                                            }
+                                            }
+                                    }
+                                }// cierra if si radio es si
+                                else{
+
                                                                 if (!validateForm()) {
                                                                                 requestHttpAjax(link, arrParams, function (response) {
                                                                                     showAlert(response.status, response.label, response.message);
@@ -537,6 +572,8 @@ function guardarInscripcionPosgrado() {
                                                                                     }
                                                                                 }, true);
                                                                             }
+
+                                                            }
                                                               }
                                                             }
                                                       }

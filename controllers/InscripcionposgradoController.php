@@ -451,8 +451,10 @@ class InscripcionposgradoController extends \yii\web\Controller {
                     // modificar la tabla
                     $cone = \Yii::$app->db_inscripcion;
                     $mod_inscripcionposgrado = new InscripcionPosgrado();
-                    $inscripcionposgrado = $mod_inscripcionposgrado->updateDataInscripcionposgrado($cone, $per_id, $per_dni, $igra_ruta_doc_titulo, $igra_ruta_doc_dni, $igra_ruta_doc_certvota, $igra_ruta_doc_foto, $igra_ruta_doc_comprobantepago, $igra_ruta_doc_record, $igra_ruta_doc_certificado, $igra_ruta_doc_syllabus, $igra_ruta_doc_homologacion);
+                    $inscripcionposgrado = $mod_inscripcionposgrado->updateDataInscripcionposgrado($cone, $per_id, $unidad, $programa, $modalidad, $año, $ipos_cedula, $tipo_financiamiento, $ming_id, $ipos_ruta_doc_foto, $ipos_ruta_doc_dni, $ipos_ruta_doc_certvota, $ipos_ruta_doc_titulo, $ipos_ruta_doc_comprobantepago, $ipos_ruta_doc_recordacademico, $ipos_ruta_doc_senescyt, $ipos_ruta_doc_hojadevida, $ipos_ruta_doc_cartarecomendacion, $ipos_ruta_doc_certificadolaboral, $ipos_ruta_doc_certificadoingles, $ipos_ruta_doc_otrorecord, $ipos_ruta_doc_certificadonosancion, $ipos_ruta_doc_syllabus, $ipos_ruta_doc_homologacion, $ipos_mensaje1, $ipos_mensaje2);
                     $exito=1;
+                }else{ // caso contrario crear
+                    $resul = $model->insertarDataInscripcionposgrado($per_id, $unidad, $carrera, $modalidad, $periodo, $per_dni, $data);
                 }
               } else{
 

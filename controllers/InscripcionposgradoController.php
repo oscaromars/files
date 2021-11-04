@@ -455,7 +455,120 @@ class InscripcionposgradoController extends \yii\web\Controller {
                     $exito=1;
                 }else{ // caso contrario crear
                     $resul = $model->insertarDataInscripcionposgrado($per_id, $unidad, $carrera, $modalidad, $periodo, $per_dni, $data);
-                }
+                    // creación de contacto
+                   }
+                    $modpersonacontacto = new PersonaContacto();
+                    $mod_persona = new Persona();
+
+                    //consultar persona contacto
+                    $insc_personacont = new PersonaContacto();
+                    $exist_personacon = $insc_personacont->consultaPersonaContacto($per_id);
+                    // si existe modificar
+                    if ($exist_personacon['contacto_id'] > 0) {
+                       $modi_personacon = $insc_personacont->modificarPersonacontacto($per_id, $tpar_id, $pcon_nombre, null, $pcon_celular, null);
+                    }
+                    // sino crear
+                    else{
+                        $crea_personacon = $insc_personacont->crearPersonaContacto($per_id, $tpar_id, $pcon_nombre, null, $pcon_celular, null);
+                        //if($crea_personacon){
+                        $exito=1;
+                        //}
+                  }
+                    // creación de datos formacion profesional
+                    $modestinstruccion = new EstudianteInstruccion();
+                    $resexisteinstruccion = $modestinstruccion->consultarEstInstruccion($per_id);
+                    if ($resexistecontacto['existe_instruccion'] == 0) {
+                        //Creación de persona de contacto
+                        $resp_instruccion = $modestinstruccion->insertarEstudianteInstruccion($per_id, $titulo_ter, $universidad_tercer, $grado_tercer, $titulo_cuarto, $universidad_cuarto, $grado_cuarto);
+                    } else {
+                        $resp_instruccion = $modestinstruccion->modificarEstudianteinstruccion($per_id, $titulo_ter, $universidad_tercer, $grado_tercer, $titulo_cuarto, $universidad_cuarto, $grado_cuarto);
+                    }
+                    // creación de datos laborales del aspirante o estudiante
+                    $mod_infolaboral = new InformacionLaboral();
+                    $resexisteinfo = $mod_infolaboral->consultarInfoLaboral($per_id);
+                    if ($resexisteinfo['existe_instruccion'] == 0) {
+                        //Creación de persona de contacto
+                        $resp_infolaboral = $mod_infolaboral->insertarInfoLaboral($per_id, $empresa, $cargo, $telefono_emp, $prov_emp, $ciu_emp, $parroquia, $direccion_emp, $añoingreso_emp, $correo_emp, $cat_ocupacional);
+                    } else {
+                        $resp_infolaboral = $mod_infolaboral->modificarInfoLaboral($per_id, $empresa, $cargo, $telefono_emp, $prov_emp, $ciu_emp, $parroquia, $direccion_emp, $añoingreso_emp, $correo_emp, $cat_ocupacional);
+                    }
+
+                    // info Idiomas
+                    //Idioma Ingles
+                    $mod_idiomas = new EstudianteIdiomas();
+                    $idioma = $idioma1;
+                    if($idioma == 1){
+                        $resp_existe_idioma = $mod_idiomas->consultarInfoIdiomasEst($per_id, 1);
+                        if ($resp_existe_idioma['existe_idioma'] == 0) {
+                            $info_idioma = $mod_idiomas->insertarInfoIdiomaEst($per_id, $idioma1, $nivel1, $noidioma);
+                        } else {
+                            $info_idioma = $mod_idiomas->modificarInfoDiscapacidad($per_id, $idioma1, $nivel1, $noidioma);
+                        }
+                    }
+                    $idiomas = $idioma2;
+                    if($idiomas == 2){
+                        $resp_existe_idioma = $mod_idiomas->consultarInfoIdiomasEst($per_id, 2);
+                        if ($resp_existe_idioma['existe_idioma'] == 0) {
+                            $info_idioma = $mod_idiomas->insertarInfoIdiomaEst($per_id, $idioma2, $nivel2, $noidioma);
+                        } else {
+                            $info_idioma = $mod_idiomas->modificarInfoDiscapacidad($per_id, $idioma2, $nivel2, $noidioma);
+                        }
+                    }
+                    if($idiomas == 3){
+                        $resp_existe_idioma = $mod_idiomas->consultarInfoIdiomasEst($per_id, 3);
+                        if ($resp_existe_idioma['existe_idioma'] == 0) {
+                            $info_idioma = $mod_idiomas->insertarInfoIdiomaEst($per_id, $idioma2, $otronivel, $otroidioma);
+                        } else {
+                            $info_idioma = $mod_idiomas->modificarInfoDiscapacidad($per_id, $idioma2, $otronivel, $otroidioma);
+                        }
+                    }
+
+                    // info discapacidad
+                    $mod_infodiscapacidad = new InfoDiscapacidadEst();
+                    $resp_existe_infodisc = $mod_infodiscapacidad->consultarInfoDiscapacidadest($per_id);
+                    if ($resp_existe_infodisc['existe_infodiscapacidad'] == 0 && $discapacidad == 1) {
+                        $info_discapacidad = $mod_infodiscapacidad->insertarInfoDiscapacidad($per_id, $tipo_discap, $porcentaje_discap);
+                    } else {
+                        if ($discapacidad == 1) {
+                            $info_discapacidad = $mod_infodiscapacidad->modificarInfoDiscapacidad($per_id, $tipo_discap, $porcentaje_discap);
+                        }
+                    }
+
+                    // info Docencia
+                    $mod_infodocencia = new InfoDocenciaEstudiante();
+                    $resp_docencia = $mod_infodocencia->consultarInfoDocenciaEstudiante($per_id);
+                    if ($resp_docencia['existe_infodocente'] == 0 && $docencias == 1) {
+                        $info_docencia = $mod_infodocencia->insertarInfoDocenciaEst($per_id, $año_docencia, $area_docencia);
+                    } else {
+                        if ($docencias == 1) {
+                            $info_docencia = $mod_infodocencia->modificarInfoDocenciaEst($per_id, $año_docencia, $area_docencia);
+                        }
+                    }
+
+                    // info Investigacion
+                    $mod_infoinvestigacion = new InfoEstudianteInvestigacion();
+                    $resp_investigacion = $mod_infoinvestigacion->consultarInfoEstudianteInvestigacion($per_id);
+                    if ($resp_existe_infodisc['existe_infodiscapacidad'] == 0 && $investiga == 1) {
+                        $info_investigacion = $mod_infoinvestigacion->insertarInfoEstInvestigacion($per_id, $articulos, $area_investigacion);
+                    } else {
+                        if ($investiga == 1) {
+                            $info_investigacion = $mod_infoinvestigacion->modificarInfoEstInvestigacion($per_id, $articulos, $area_investigacion);
+                        }
+                    }
+                    if($exito){
+                        $transaction->commit();
+                        $message = array(
+                            "wtmessage" => Yii::t("formulario", "The information have been saved"),
+                            "title" => Yii::t('jslang', 'Success'),
+                        );
+                        return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+                    }else{
+                        $message = array(
+                            "wtmessage" => Yii::t("formulario", "The information have not been saved."),
+                            "title" => Yii::t('jslang', 'Success'),
+                        );
+                        return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t('jslang', 'Error'), 'false', $message, $resul);
+                    }
               } else{
 
                 //Aqui debe ser un mensaje que no existe la persona

@@ -323,8 +323,7 @@ class InscripciongradoController extends \yii\web\Controller {
                 //Utilities::putMessageLogFile('per_id xXx.. ' .$per_id );
                 if ($per_id > 0) {
                     $model = new InscripcionGrado();
-                    //Nuevo Registro // si existe no guardar actualizar la data de persona se modifica
-                    //$regPersona = $mod_persona->insertarPersonaInscripciongrado($per_pri_nombre, $per_seg_nombre, $per_pri_apellido, $per_seg_apellido, $per_dni, $eciv_id, $can_id_nacimiento, $per_fecha_nacimiento, $per_celular, $per_correo, $per_domicilio_csec, $per_domicilio_ref, $per_domicilio_telefono, $pai_id_domicilio, $pro_id_domicilio, $can_id_domicilio, $per_nacionalidad,$per_trabajo_direccion);
+                    // persona ya exite se actualizan datos
                     $respPersona = $mod_persona->modificaPersonaInscripciongrado($per_pri_nombre, $per_seg_nombre, $per_pri_apellido, $per_seg_apellido, $per_dni, $eciv_id,  $can_id_nacimiento, $per_fecha_nacimiento, $per_celular, $per_correo, $per_domicilio_csec, $per_domicilio_ref, $per_domicilio_telefono, $pai_id_domicilio, $pro_id_domicilio, $can_id_domicilio, $per_nacionalidad, $per_trabajo_direccion);
                     //consultar si existe  la persona en la tabla inscripcion_grado
                     $resp_inscripcion = $model->consultarDatosInscripciongrado($per_id);

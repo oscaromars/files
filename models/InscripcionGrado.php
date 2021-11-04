@@ -338,8 +338,6 @@ class InscripcionGrado extends \yii\db\ActiveRecord
     public function consultarDatosInscripciongrado($per_id) {
         $con = \Yii::$app->db_inscripcion;
         $estado = 1;
-        //$estado_precio = 'A';
-
         $sql = "
                 SELECT
                         count(*) as existe_inscripcion
@@ -351,7 +349,6 @@ class InscripcionGrado extends \yii\db\ActiveRecord
         $comando = $con->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
         $comando->bindParam(":per_id", $per_id, \PDO::PARAM_STR);
-        //$comando->bindParam(":estado_precio", $estado_precio, \PDO::PARAM_STR);
         $resultData = $comando->queryOne();
         return $resultData;
     }

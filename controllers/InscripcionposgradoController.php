@@ -349,7 +349,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
 
 
 
-                //FORM 1 datos personal
+            //FORM 1 datos personal
             $per_dni = $data['cedula'];
             $primer_nombre = ucwords(strtolower($data["primer_nombre"]));
             $segundo_nombre = ucwords(strtolower($data["segundo_nombre"]));
@@ -440,189 +440,29 @@ class InscripcionposgradoController extends \yii\web\Controller {
             $ipos_ruta_doc_homologacion = $data['ipos_ruta_doc_homologacion'];
             $ipos_mensaje1 = $data['ipos_mensaje1'];
             $ipos_mensaje2 = $data['ipos_mensaje2'];
-
-            $insc_persona = new Persona();
-                \app\models\Utilities::putMessageLogFile(' personauuuuuuuuuuuuuuuuuuuuuu:  '.$per_dni);
-                $resp_persona = $insc_persona->ConsultaRegistroExiste( 0,$per_dni, $per_dni);
-                if ($resp_persona['existen'] == 0) {
-                    //Nuevo Registro
-                    \app\models\Utilities::putMessageLogFile(' persona:  '.$resp_inscripcion);
-                    //if($resp_inscripcion == 0){
-                        \app\models\Utilities::putMessageLogFile('datos a enviar:  '.$data);
-                        \app\models\Utilities::putMessageLogFile('resultado de la inseercion:  '.$resul);
-
-                    $regPersona = $mod_persona->insertarPersonaInscripcionposgrado($per_dni, $primer_nombre, $segundo_nombre, $primer_apellido, $segundo_apellido, $can_id_nacimiento, $per_fecha_nacimiento, $per_nacionalidad, $eciv_id, $pai_id_domicilio, $pro_id_domicilio, $can_id_domicilio, $per_domicilio_ref, $per_celular, $per_domicilio_telefono, $per_correo);
-
-
-                    // creación de contacto
-                    $modpersonacontacto = new PersonaContacto();
-                    $mod_persona = new Persona();
-                    $resp_persona = $mod_persona->consultPer_id();
-                    $persona = $resp_persona["ultimo"];
-                    \app\models\Utilities::putMessageLogFile('traer el per_id:  '.$per_id);
-                    $per_id = intval( $persona );
-
-                    $resexistecontacto = $modpersonacontacto->consultaPersonaContacto($per_id);
-                    if ($resexistecontacto) {
-                        if ($pcon_nombre != $pcon_apellido) {
-                            $contacto = $pcon_nombre . " " . $pcon_apellido;
-                        } else {
-                            $contacto = $pcon_nombre;
-                        }
-                        $resp_modcontacto = $modpersonacontacto->modificarPersonacontacto($per_id, $tpar_id, $contacto, $pcon_telefono, $pcon_celular, $pcon_direccion);
-                    } else {
-                        if ($sincontacto != 1) {
-                            //Creación de persona de contacto.
-                            $modpersonacontacto->crearPersonaContacto($per_id, $tpar_id, $pcon_nombre . " " . $pcon_apellido, $pcon_telefono, $pcon_celular, $pcon_direccion);
-                        }
-                    }
-
-                    // creación de datos formacion profesional
-                    $modestinstruccion = new EstudianteInstruccion();
-                    $resexisteinstruccion = $modestinstruccion->consultarEstInstruccion($per_id);
-                    if ($resexistecontacto['existe_instruccion'] == 0) {
-                        //Creación de persona de contacto
-                        $resp_instruccion = $modestinstruccion->insertarEstudianteInstruccion($per_id, $titulo_ter, $universidad_tercer, $grado_tercer, $titulo_cuarto, $universidad_cuarto, $grado_cuarto);
-                    } else {
-                        $resp_instruccion = $modestinstruccion->modificarEstudianteinstruccion($per_id, $titulo_ter, $universidad_tercer, $grado_tercer, $titulo_cuarto, $universidad_cuarto, $grado_cuarto);
-                    }
-
-
-                    // creación de datos laborales del aspirante o estudiante
-                    $mod_infolaboral = new InformacionLaboral();
-                    $resexisteinfo = $mod_infolaboral->consultarInfoLaboral($per_id);
-                    if ($resexisteinfo['existe_instruccion'] == 0) {
-                        //Creación de persona de contacto
-                        $resp_infolaboral = $mod_infolaboral->insertarInfoLaboral($per_id, $empresa, $cargo, $telefono_emp, $prov_emp, $ciu_emp, $parroquia, $direccion_emp, $añoingreso_emp, $correo_emp, $cat_ocupacional);
-                    } else {
-                        $resp_infolaboral = $mod_infolaboral->modificarInfoLaboral($per_id, $empresa, $cargo, $telefono_emp, $prov_emp, $ciu_emp, $parroquia, $direccion_emp, $añoingreso_emp, $correo_emp, $cat_ocupacional);
-                    }
-
-                    // info Idiomas
-                    //Idioma Ingles
-                    $mod_idiomas = new EstudianteIdiomas();
-                    $idioma = $idioma1;
-                    if($idioma == 1){
-                        $resp_existe_idioma = $mod_idiomas->consultarInfoIdiomasEst($per_id, 1);
-                        if ($resp_existe_idioma['existe_idioma'] == 0) {
-                            $info_idioma = $mod_idiomas->insertarInfoIdiomaEst($per_id, $idioma1, $nivel1, $noidioma);
-                        } else {
-                            $info_idioma = $mod_idiomas->modificarInfoDiscapacidad($per_id, $idioma1, $nivel1, $noidioma);
-                        }
-                    }
-                    $idiomas = $idioma2;
-                    if($idiomas == 2){
-                        $resp_existe_idioma = $mod_idiomas->consultarInfoIdiomasEst($per_id, 2);
-                        if ($resp_existe_idioma['existe_idioma'] == 0) {
-                            $info_idioma = $mod_idiomas->insertarInfoIdiomaEst($per_id, $idioma2, $nivel2, $noidioma);
-                        } else {
-                            $info_idioma = $mod_idiomas->modificarInfoDiscapacidad($per_id, $idioma2, $nivel2, $noidioma);
-                        }
-                    }
-                    if($idiomas == 3){
-                        $resp_existe_idioma = $mod_idiomas->consultarInfoIdiomasEst($per_id, 3);
-                        if ($resp_existe_idioma['existe_idioma'] == 0) {
-                            $info_idioma = $mod_idiomas->insertarInfoIdiomaEst($per_id, $idioma2, $otronivel, $otroidioma);
-                        } else {
-                            $info_idioma = $mod_idiomas->modificarInfoDiscapacidad($per_id, $idioma2, $otronivel, $otroidioma);
-                        }
-                    }
-
-                    // info discapacidad
-                    $mod_infodiscapacidad = new InfoDiscapacidadEst();
-                    $resp_existe_infodisc = $mod_infodiscapacidad->consultarInfoDiscapacidadest($per_id);
-                    if ($resp_existe_infodisc['existe_infodiscapacidad'] == 0 && $discapacidad == 1) {
-                        $info_discapacidad = $mod_infodiscapacidad->insertarInfoDiscapacidad($per_id, $tipo_discap, $porcentaje_discap);
-                    } else {
-                        if ($discapacidad == 1) {
-                            $info_discapacidad = $mod_infodiscapacidad->modificarInfoDiscapacidad($per_id, $tipo_discap, $porcentaje_discap);
-                        }
-                    }
-
-                    // info Docencia
-                    $mod_infodocencia = new InfoDocenciaEstudiante();
-                    $resp_docencia = $mod_infodocencia->consultarInfoDocenciaEstudiante($per_id);
-                    if ($resp_docencia['existe_infodocente'] == 0 && $docencias == 1) {
-                        $info_docencia = $mod_infodocencia->insertarInfoDocenciaEst($per_id, $año_docencia, $area_docencia);
-                    } else {
-                        if ($docencias == 1) {
-                            $info_docencia = $mod_infodocencia->modificarInfoDocenciaEst($per_id, $año_docencia, $area_docencia);
-                        }
-                    }
-
-                    // info Investigacion
-                    $mod_infoinvestigacion = new InfoEstudianteInvestigacion();
-                    $resp_investigacion = $mod_infoinvestigacion->consultarInfoEstudianteInvestigacion($per_id);
-                    if ($resp_existe_infodisc['existe_infodiscapacidad'] == 0 && $investiga == 1) {
-                        $info_investigacion = $mod_infoinvestigacion->insertarInfoEstInvestigacion($per_id, $articulos, $area_investigacion);
-                    } else {
-                        if ($investiga == 1) {
-                            $info_investigacion = $mod_infoinvestigacion->modificarInfoEstInvestigacion($per_id, $articulos, $area_investigacion);
-                        }
-                    }
-
-
-                } else{
-
-                    $resul = array();
-                    $error++;
-                    $error_message .= Yii::t("formulario", "The person already exists");
-
-                    $message = array(
-                        "wtmessage" => Yii::t("formulario",  $error_message), //$error_message
-                        "title" => Yii::t('jslang', 'Bad Request'),
-                    );
-                    $resul["status"] = FALSE;
-                    $resul["error"] = null;
-                    $resul["message"] = $message;
-                    $resul["data"] = null;
-                    $resul["dataext"] = null;
-
-
-                    //return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Error'), $error_message);
-                    return Utilities::ajaxResponse('ERROR_EXIST', 'alert', Yii::t('jslang', 'Error'), 'false', $message, $resul);
-                    //$resul = $model->actualizarInscripcionposgrado($data);
-                    if ($resp_persona['existen'] == 1) {
-                    // actualizacion de Persona
-                    $respPersona = $mod_persona->modificaPersonaInscripcioposgrado($per_dni, $primer_nombre, $segundo_nombre, $primer_apellido, $segundo_apellido, $can_id_nacimiento, $per_fecha_nacimiento, $per_nacionalidad, $eciv_id, $pai_id_domicilio, $pro_id_domicilio, $can_id_domicilio, $per_domicilio_ref, $per_celular, $per_domicilio_telefono, $per_correo);
-                    }
-                }
-
-                $mod_persona = new Persona();
+            if ($per_id > 0) {
                 $model = new InscripcionPosgrado();
-                $resp_persona = $mod_persona->consultPer_id();
-                $persona = $resp_persona["ultimo"];
-                $per_id = intval( $persona );
-
-                \app\models\Utilities::putMessageLogFile('consultarrrrr personasssss:  '.$per_id);
+                // persona ya exite se actualizan datos
+                $respPersona = $mod_persona->modificaPersonaInscripciongrado($primer_nombre, $segundo_nombre, $primer_apellido, $segundo_apellido, $per_dni, $eciv_id,  $can_id_nacimiento, $per_fecha_nacimiento, $per_celular, $per_correo, $per_domicilio_csec, $per_domicilio_ref, $per_domicilio_telefono, $pai_id_domicilio, $pro_id_domicilio, $can_id_domicilio, $per_nacionalidad, $per_trabajo_direccion);
+                //consultar si existe  la persona en la tabla inscripcion_grado
                 $resp_inscripcion = $model->consultarDatosInscripcionposgrado($per_id);
-                \app\models\Utilities::putMessageLogFile(' personaxxxxxxxxxxx:  '.$resp_inscripcion['existe_inscripcionposgrado']);
-                if ($resp_inscripcion['existe_inscripcionposgrado'] == 0){
-                    $resul = $model->insertarDataInscripcionposgrado($per_id, $unidad, $programa, $modalidad, $año, $per_dni, $tipo_financiamiento, $ipos_ruta_doc_foto, $ipos_ruta_doc_dni, $ipos_ruta_doc_certvota, $ipos_ruta_doc_titulo, $ipos_ruta_doc_comprobantepago, $ipos_ruta_doc_recordacademico, $ipos_ruta_doc_senescyt, $ipos_ruta_doc_hojadevida, $ipos_ruta_doc_cartarecomendacion, $ipos_ruta_doc_certificadolaboral, $ipos_ruta_doc_certificadoingles, $ipos_ruta_doc_otrorecord, $ipos_ruta_doc_certificadonosancion, $ipos_ruta_doc_syllabus, $ipos_ruta_doc_homologacion, $ipos_mensaje1, $ipos_mensaje2);
-                    if ($resul) {
-                            $exito=1;
-                        }
-                    if($exito){
-                    \app\models\Utilities::putMessageLogFile('resultado es ok');
-                        //$_SESSION['persona_id'] =  $resul['per_id'];
-                        $transaction->commit();
-                        $message = array(
-                            "wtmessage" => Yii::t("formulario", "The information have been saved"),
-                            "title" => Yii::t('jslang', 'Success'),
-                        );
-                        return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
-                    }
-
-                    //}
-                    else {
-                        \app\models\Utilities::putMessageLogFile('resultado es NOok');
-                        $message = array(
-                            "wtmessage" => Yii::t("formulario", "The information have not been saved."),
-                            "title" => Yii::t('jslang', 'Success'),
-                        );
-                        return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t('jslang', 'Error'), 'false', $message, $resul);
-                    }
+                //si existe modificar los datos
+                if ($resp_inscripcion['existe_inscripcionposgrado'] > 0) {
+                    // modificar la tabla
+                    $cone = \Yii::$app->db_inscripcion;
+                    $mod_inscripcionposgrado = new InscripcionPosgrado();
+                    $inscripcionposgrado = $mod_inscripcionposgrado->updateDataInscripcionposgrado($cone, $per_id, $per_dni, $igra_ruta_doc_titulo, $igra_ruta_doc_dni, $igra_ruta_doc_certvota, $igra_ruta_doc_foto, $igra_ruta_doc_comprobantepago, $igra_ruta_doc_record, $igra_ruta_doc_certificado, $igra_ruta_doc_syllabus, $igra_ruta_doc_homologacion);
+                    $exito=1;
                 }
+              } else{
+
+                //Aqui debe ser un mensaje que no existe la persona
+                $message = array(
+                    "wtmessage" => Yii::t("formulario", "No se encuentra documento de identidad de la persona registrada como aspirante, no se puede actualizar la información"),
+                    "title" => Yii::t('jslang', 'Error'),
+                );
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Error'), 'false', $message);
+             }
             } catch (Exception $ex) {
                 $transaction->rollback();
                 $message = array(

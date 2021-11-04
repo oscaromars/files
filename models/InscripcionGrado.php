@@ -242,8 +242,7 @@ class InscripcionGrado extends \yii\db\ActiveRecord
     }
 
     public function updateDataInscripciongrado($con, $per_id, $per_dni, $igra_ruta_doc_titulo, $igra_ruta_doc_dni, $igra_ruta_doc_certvota, $igra_ruta_doc_foto, $igra_ruta_doc_comprobantepago, $igra_ruta_doc_record, $igra_ruta_doc_certificado, $igra_ruta_doc_syllabus, $igra_ruta_doc_homologacion) {
-        //\app\models\Utilities::putMessageLogFile('datos de archivo cargados:' . $data['igra_ruta_doc_certvota']);
-        \app\models\Utilities::putMessageLogFile('igra_ruta_doc_certvota:  '.$igra_ruta_doc_certvota);
+        //\app\models\Utilities::putMessageLogFile('igra_ruta_doc_certvota:  '.$igra_ruta_doc_certvota);
         $imagenes = "";
         $fecha_modificacion = date(Yii::$app->params["dateTimeByDefault"]);
 

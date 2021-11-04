@@ -235,7 +235,7 @@ class InscripcionPosgrado extends \yii\db\ActiveRecord
 
     }
 
-    public function updateDataInscripcionposgrado($con, $data) {
+    /*public function updateDataInscripcionposgrado($con, $data) {
         $sql = "UPDATE " . $con->dbname . ".inscripcion_posgrado
                 SET per_id=:per_id,uaca_id=:uaca_id,eaca_id=:eaca_id,mod_id=:mod_id,ipos_año=:ipos_año,ipos_cedula=:per_dni,ipos_tipo_financiamiento=:ipos_tipo_financiamiento,ipos_metodo_ingreso=:ipos_metodo_ingreso,ipos_ruta_doc_foto=:ipos_ruta_doc_foto, ipos_ruta_doc_dni=:ipos_ruta_doc_dni, ipos_ruta_doc_certvota=:ipos_ruta_doc_certvota,ipos_ruta_doc_titulo=:ipos_ruta_doc_titulo,ipos_ruta_doc_comprobantepago=:ipos_ruta_doc_comprobantepago,ipos_ruta_doc_recordacademico=:ipos_ruta_doc_recordacademico,ipos_ruta_doc_senescyt=:ipos_ruta_doc_senescyt, ipos_ruta_doc_hojadevida=:ipos_ruta_doc_hojadevida, ipos_ruta_doc_cartarecomendacion=:ipos_ruta_doc_cartarecomendacion, ipos_ruta_doc_certificadolaboral, ipos_ruta_doc_certificadoingles=:ipos_ruta_doc_certificadoingles, ipos_ruta_doc_otrorecord=:ipos_ruta_doc_otrorecord, ipos_ruta_doc_certificadonosancion=:ipos_ruta_doc_certificadonosancion,ipos_ruta_doc_syllabus=:ipos_ruta_doc_syllabus,ipos_ruta_doc_homologacion=:ipos_ruta_doc_homologacion,ipos_mensaje1=:ipos_mensaje1,ipos_mensaje2=:ipos_mensaje2,ipos_fecha_modificacion=CURRENT_TIMESTAMP()
                  WHERE ipos_id =:ipos_id ";
@@ -275,8 +275,158 @@ class InscripcionPosgrado extends \yii\db\ActiveRecord
 
         return $data['ipos_id'];
 
-    }
+    }*/
 
+    public function updateDataInscripcionposgrado($con, $per_id, $uaca_id, $eaca_id, $mod_id, $ipos_año, $ipos_cedula, $ipos_tipo_finaciamiento, $ipos_metodo_ingreso, $ipos_ruta_doc_foto, $ipos_ruta_doc_dni, $ipos_ruta_doc_certvota, $ipos_ruta_doc_titulo, $ipos_ruta_doc_comprobantepago, $ipos_ruta_doc_recordacademico, $ipos_ruta_doc_senescyt, $ipos_ruta_doc_hojadevida, $ipos_ruta_doc_cartarecomendacion, $ipos_ruta_doc_certificadolaboral, $ipos_ruta_doc_certificadoingles, $ipos_ruta_doc_otrorecord, $ipos_ruta_doc_certificadonosancion, $ipos_ruta_doc_syllabus, $ipos_ruta_doc_homologacion, $ipos_mensaje1, $ipos_mensaje2) {
+        //\app\models\Utilities::putMessageLogFile('igra_ruta_doc_certvota:  '.$igra_ruta_doc_certvota);
+        $imagenes = "";
+        $fecha_modificacion = date(Yii::$app->params["dateTimeByDefault"]);
+        $met_ing = 0;
+        if (empty($data['ming_id'])) {
+            $met_ing = 0;
+        } else {
+            $met_ing = $data['ming_id'];
+        }
+        if ($trans !== null) {
+            $trans = null; // si existe la transacción entonces no se crea una
+        }
+        if(!empty($ipos_ruta_doc_foto)){
+            $imagenes .= "ipos_ruta_doc_foto=:ipos_ruta_doc_foto,";
+        }
+        if(!empty($ipos_ruta_doc_dni)){
+            $imagenes .= "ipos_ruta_doc_dni=:ipos_ruta_doc_dni,";
+        }
+        if(!empty($ipos_ruta_doc_certvota)){
+            $imagenes .= "ipos_ruta_doc_certvota=:ipos_ruta_doc_certvota,";
+        }
+        if(!empty($ipos_ruta_doc_titulo)){
+           $imagenes .= "ipos_ruta_doc_titulo=:ipos_ruta_doc_titulo,";
+        }
+        if(!empty($ipos_ruta_doc_comprobantepago)){
+           $imagenes .= "ipos_ruta_doc_comprobantepago=:ipos_ruta_doc_comprobantepago,";
+        }
+        if(!empty($ipos_ruta_doc_recordacademico)){
+           $imagenes .= "ipos_ruta_doc_recordacademico=:ipos_ruta_doc_recordacademico,";
+        }
+        if(!empty($ipos_ruta_doc_senescyt)){
+           $imagenes .= "ipos_ruta_doc_senescyt=:ipos_ruta_doc_senescyt,";
+        }
+        if(!empty($ipos_ruta_doc_hojadevida)){
+            $imagenes .= "ipos_ruta_doc_hojadevida=:ipos_ruta_doc_hojadevida,";
+        }
+        if(!empty($ipos_ruta_doc_cartarecomendacion)){
+           $imagenes .= "ipos_ruta_doc_cartarecomendacion=:ipos_ruta_doc_cartarecomendacion,";
+        }
+        if(!empty($ipos_ruta_doc_certificadolaboral)){
+            $imagenes .= "ipos_ruta_doc_certificadolaboral=:ipos_ruta_doc_certificadolaboral,";
+        }
+        if(!empty($ipos_ruta_doc_certificadoingles)){
+            $imagenes .= "ipos_ruta_doc_certificadoingles=:ipos_ruta_doc_certificadoingles,";
+        }
+        if(!empty($ipos_ruta_doc_otrorecord)){
+            $imagenes .= "ipos_ruta_doc_otrorecord=:ipos_ruta_doc_otrorecords,";
+        }
+        if(!empty($ipos_ruta_doc_certificadonosancion)){
+           $imagenes .= "ipos_ruta_doc_certificadonosancion=:ipos_ruta_doc_certificadonosancion,";
+        }
+        if(!empty($ipos_ruta_doc_syllabus)){
+           $imagenes .= "ipos_ruta_doc_syllabus=:ipos_ruta_doc_syllabus,";
+        }
+        if(!empty($ipos_ruta_doc_homologacion)){
+           $imagenes .= "ipos_ruta_doc_homologacion=:ipos_ruta_doc_homologacion,";
+        }
+        if(!empty($ipos_mensaje1)){
+           $imagenes .= "ipos_mensaje1=:ipos_mensaje1,";
+        }
+        if(!empty($ipos_mensaje2)){
+            $imagenes .= "ipos_mensaje2=:ipos_mensaje2,";
+        }
+        try {
+            $command = $con->createCommand
+                    ("UPDATE " . $con->dbname . ".inscripcion_posgrado
+                        SET ipos_cedula=:ipos_cedula,
+                        uaca_id=:uaca_id,
+                        eaca_id=:eaca_id,
+                        mod_id=:mod_id,
+                        ipos_año=:ipos_año,
+                        ipos_tipo_finaciamiento=:ipos_tipo_finaciamiento,
+                        $imagenes
+                        ipos_fecha_modificacion=:ipos_fecha_modificacion
+                        WHERE per_id =:per_id");
+
+            $command->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
+            $command->bindParam(":uaca_id", $uaca_id, \PDO::PARAM_INT);
+            $command->bindParam(":eaca_id", $eaca_id, \PDO::PARAM_INT);
+            $command->bindParam(":mod_id", $mod_id, \PDO::PARAM_INT);
+            $command->bindParam(":ipos_cedula", $ipos_cedula, \PDO::PARAM_STR);
+            $command->bindParam(":ipos_año", $ipos_año, \PDO::PARAM_STR);
+            $command->bindParam(":ipos_metodo_ingreso", $met_ing, \PDO::PARAM_INT);
+            $command->bindParam(":ipos_tipo_finaciamiento", $ipos_tipo_finaciamiento, \PDO::PARAM_STR);
+                // si vienen nulos no agragrlos
+                if(!empty($ipos_ruta_doc_foto)){
+                $command->bindParam(":ipos_ruta_doc_foto", $ipos_ruta_doc_foto, \PDO::PARAM_STR);
+                }
+                if(!empty($ipos_ruta_doc_dni)){
+                $command->bindParam(":ipos_ruta_doc_dni", $ipos_ruta_doc_dni, \PDO::PARAM_STR);
+                }
+                if(!empty($ipos_ruta_doc_certvota)){
+                $command->bindParam(":ipos_ruta_doc_certvota", $ipos_ruta_doc_certvota, \PDO::PARAM_STR);
+                }
+                if(!empty($ipos_ruta_doc_titulo)){
+                $command->bindParam(":ipos_ruta_doc_titulo", $ipos_ruta_doc_titulo, \PDO::PARAM_STR);
+                }
+                if(!empty($ipos_ruta_doc_comprobantepago)){
+                $command->bindParam(":ipos_ruta_doc_comprobantepago", $ipos_ruta_doc_comprobantepago, \PDO::PARAM_STR);
+                }
+                if(!empty($ipos_ruta_doc_recordacademico)){
+                    $command->bindParam(":ipos_ruta_doc_recordacademico", $ipos_ruta_doc_recordacademico, \PDO::PARAM_STR);
+                }
+                if(!empty($ipos_ruta_doc_senescyt)){
+                    $command->bindParam(":ipos_ruta_doc_senescyt", $ipos_ruta_doc_senescyt, \PDO::PARAM_STR);
+                }
+                if(!empty($ipos_ruta_doc_hojadevida)){
+                    $command->bindParam(":ipos_ruta_doc_hojadevida", $ipos_ruta_doc_hojadevida, \PDO::PARAM_STR);
+                }
+                if(!empty($ipos_ruta_doc_cartarecomendacion)){
+                    $command->bindParam(":ipos_ruta_doc_cartarecomendacion", $ipos_ruta_doc_cartarecomendacion, \PDO::PARAM_STR);
+                }
+                if(!empty($ipos_ruta_doc_certificadolaboral)){
+                    $command->bindParam(":ipos_ruta_doc_certificadolaboral", $ipos_ruta_doc_certificadolaboral, \PDO::PARAM_STR);
+                }
+                if(!empty($ipos_ruta_doc_certificadoingles)){
+                    $command->bindParam(":ipos_ruta_doc_certificadoingles", $ipos_ruta_doc_certificadoingles, \PDO::PARAM_STR);
+                }
+                if(!empty($ipos_ruta_doc_otrorecord)){
+                    $command->bindParam(":ipos_ruta_doc_otrorecord", $ipos_ruta_doc_otrorecord, \PDO::PARAM_STR);
+                }
+                if(!empty($ipos_ruta_doc_certificadonosancion)){
+                    $command->bindParam(":ipos_ruta_doc_certificadonosancion", $ipos_ruta_doc_certificadonosancion, \PDO::PARAM_STR);
+                }
+                if(!empty($ipos_ruta_doc_syllabus)){
+                    $command->bindParam(":ipos_ruta_doc_syllabus", $ipos_ruta_doc_syllabus, \PDO::PARAM_STR);
+                }
+                if(!empty($ipos_ruta_doc_homologacion)){
+                    $command->bindParam(":ipos_ruta_doc_homologacion", $ipos_ruta_doc_homologacion, \PDO::PARAM_STR);
+                }
+                if(!empty($ipos_mensaje1)){
+                    $command->bindParam(":ipos_mensaje1", $ipos_mensaje1, \PDO::PARAM_STR);
+                }
+                if(!empty($ipos_mensaje2)){
+                    $command->bindParam(":ipos_mensaje2", $ipos_mensaje2, \PDO::PARAM_STR);
+                }
+            // si vienen nulos no agragarlos
+            $command->bindParam(":ipos_fecha_modificacion", $fecha_modificacion, \PDO::PARAM_STR);
+            $response = $command->execute();
+
+        if ($trans !== null)
+                $trans->commit();
+            return $response;
+        } catch (Exception $ex) {
+            if ($trans !== null)
+                $trans->rollback();
+            return FALSE;
+        }
+    }
 
     public function consultarDatosInscripcionposgrado($per_id) {
         $con = \Yii::$app->db_inscripcion;

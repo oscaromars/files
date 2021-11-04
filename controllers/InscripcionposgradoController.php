@@ -200,8 +200,10 @@ class InscripcionposgradoController extends \yii\web\Controller {
             try {
 
                 $unidad = $data['unidad'];
+                \app\models\Utilities::putMessageLogFile('unidad: ' . $data['unidad']);
                 $programa = $data['programa'];
                 $modalidad = $data['modalidad'];
+                \app\models\Utilities::putMessageLogFile('programa: ' . $data['programa']);
                 $año = $data['año'];
                 $tipo_financiamiento = $data['tipo_financiamiento'];
                 $ming_id = $data['ming_id'];
@@ -451,14 +453,14 @@ class InscripcionposgradoController extends \yii\web\Controller {
                     // modificar la tabla
                     $cone = \Yii::$app->db_inscripcion;
                     $mod_inscripcionposgrado = new InscripcionPosgrado();
-                    $inscripcionposgrado = $mod_inscripcionposgrado->updateDataInscripcionposgrado($cone, $per_id, $unidad, $programa, $modalidad, $año, $ipos_cedula, $tipo_financiamiento, $ming_id, $ipos_ruta_doc_foto, $ipos_ruta_doc_dni, $ipos_ruta_doc_certvota, $ipos_ruta_doc_titulo, $ipos_ruta_doc_comprobantepago, $ipos_ruta_doc_recordacademico, $ipos_ruta_doc_senescyt, $ipos_ruta_doc_hojadevida, $ipos_ruta_doc_cartarecomendacion, $ipos_ruta_doc_certificadolaboral, $ipos_ruta_doc_certificadoingles, $ipos_ruta_doc_otrorecord, $ipos_ruta_doc_certificadonosancion, $ipos_ruta_doc_syllabus, $ipos_ruta_doc_homologacion, $ipos_mensaje1, $ipos_mensaje2);
+                    $inscripcionposgrado = $mod_inscripcionposgrado->updateDataInscripcionposgrado($cone, $per_id, $data['unidad'], $data['programa'], $modalidad, $año, $per_dni, $tipo_financiamiento, $ming_id, $ipos_ruta_doc_foto, $ipos_ruta_doc_dni, $ipos_ruta_doc_certvota, $ipos_ruta_doc_titulo, $ipos_ruta_doc_comprobantepago, $ipos_ruta_doc_recordacademico, $ipos_ruta_doc_senescyt, $ipos_ruta_doc_hojadevida, $ipos_ruta_doc_cartarecomendacion, $ipos_ruta_doc_certificadolaboral, $ipos_ruta_doc_certificadoingles, $ipos_ruta_doc_otrorecord, $ipos_ruta_doc_certificadonosancion, $ipos_ruta_doc_syllabus, $ipos_ruta_doc_homologacion, $ipos_mensaje1, $ipos_mensaje2);
                     $exito=1;
                 }else{ // caso contrario crear
-                    $resul = $model->insertarDataInscripcionposgrado($per_id, $unidad, $carrera, $modalidad, $periodo, $per_dni, $data);
+                    $resul = $model->insertarDataInscripcionposgrado($per_id, $data['unidad'], $data['programa'], $modalidad, $año, $per_dni, $tipo_financiamiento, $data);
                     // creación de contacto
                    }
-                    $modpersonacontacto = new PersonaContacto();
-                    $mod_persona = new Persona();
+                    /*$modpersonacontacto = new PersonaContacto();
+                    $mod_persona = new Persona();*/
 
                     //consultar persona contacto
                     $insc_personacont = new PersonaContacto();
@@ -492,10 +494,10 @@ class InscripcionposgradoController extends \yii\web\Controller {
                     } else {
                         $resp_infolaboral = $mod_infolaboral->modificarInfoLaboral($per_id, $empresa, $cargo, $telefono_emp, $prov_emp, $ciu_emp, $parroquia, $direccion_emp, $añoingreso_emp, $correo_emp, $cat_ocupacional);
                     }
-
+                    /* OJO REVISAR ESTO QUE NO MODIFICA */
                     // info Idiomas
                     //Idioma Ingles
-                    $mod_idiomas = new EstudianteIdiomas();
+                    /*$mod_idiomas = new EstudianteIdiomas();
                     $idioma = $idioma1;
                     if($idioma == 1){
                         $resp_existe_idioma = $mod_idiomas->consultarInfoIdiomasEst($per_id, 1);
@@ -532,7 +534,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
                         if ($discapacidad == 1) {
                             $info_discapacidad = $mod_infodiscapacidad->modificarInfoDiscapacidad($per_id, $tipo_discap, $porcentaje_discap);
                         }
-                    }
+                    }*/
 
                     // info Docencia
                     $mod_infodocencia = new InfoDocenciaEstudiante();
@@ -1337,10 +1339,10 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 $instruccion_model = EstudianteInstruccion::findOne(['per_id' => $persona_model->per_id]);
                 $instruccion_model->eins_titulo3ernivel = $titulo_ter;
                 $instruccion_model->eins_institucion3ernivel = $universidad_tercer;
-                $instruccion_model->eins_añogrado3ernivel = $grado_tercer;
+                $instruccion_model->eins_aniogrado3ernivel = $grado_tercer;
                 $instruccion_model->eins_titulo4tonivel = $titulo_cuarto;
                 $instruccion_model->eins_institucion4tonivel = $universidad_cuarto;
-                $instruccion_model->eins_añogrado4tonivel = $grado_cuarto;
+                $instruccion_model->eins_aniogrado4tonivel = $grado_cuarto;
                 $instruccion_model->eins_fecha_modificacion = $fecha_modificacion;
                 $instruccion_model->update();
 
@@ -1352,7 +1354,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 $laboral_model->ilab_ciu_emp = $ciu_emp;
                 $laboral_model->ilab_parroquia = $parroquia;
                 $laboral_model->ilab_direccion_emp = $direccion_emp;
-                $laboral_model->ilab_añoingreso_emp = $añoingreso_emp;
+                $laboral_model->ilab_anioingreso_emp = $añoingreso_emp;
                 $laboral_model->ilab_correo_emp = $correo_emp;
                 $laboral_model->ilab_cat_ocupacional = $cat_ocupacional;
                 $laboral_model->ilab_fecha_modificacion = $fecha_modificacion;
@@ -1383,14 +1385,14 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 if ($resp_docencia['existe_infodocente'] == 0) {
                     $docencia_model = new InfoDocenciaEstudiante();
                     $docencia_model->per_id = $per_id;
-                    $docencia_model->ides_año_docencia = $año_docencia;
+                    $docencia_model->ides_anio_docencia = $año_docencia;
                     $docencia_model->ides_area_docencia = $area_docencia;
                     $docencia_model->ides_estado = '1';
                     $docencia_model->ides_estado_logico = '1';
                     $docencia_model->save();
                 } else {
                     $docencia_model = InfoDocenciaEstudiante::findOne(['per_id' => $persona_model->per_id]);
-                    $docencia_model->ides_año_docencia = $año_docencia;
+                    $docencia_model->ides_anio_docencia = $año_docencia;
                     $docencia_model->ides_area_docencia = $area_docencia;
                     $docencia_model->ides_fecha_modificacion = $fecha_modificacion;
                     $docencia_model->update();

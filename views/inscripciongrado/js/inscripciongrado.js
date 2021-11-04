@@ -496,7 +496,7 @@ function editaspirantegrado() {
 }
 
 function updateaspirantegrado() {
-    var ID = $('#txth_igra_id').val();
+    //var ID = $('#txth_igra_id').val();
     var link = $('#txth_base').val() + "/inscripciongrado/update";
     var arrParams = new Object();
     arrParams.per_id = $("#frm_per_id").val();

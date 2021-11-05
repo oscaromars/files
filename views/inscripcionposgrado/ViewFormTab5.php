@@ -31,7 +31,7 @@ use app\widgets\PbGridView\PbGridView;
         <div class="form-group">
             <label for="txt_año_docenciaView" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("inscripcionposgrado", "Años de Docencia") ?></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
-                <input type="text" class="form-control PBvalidation keyupmce" id="txt_año_docenciaView" value="<?= $docencia_model->ides_año_docencia ?>" data-type="alfanumerico" disabled="disabled" data-keydown="true" placeholder="<?= Yii::t("formulario", "Años de Docencia") ?>">
+                <input type="text" class="form-control PBvalidation keyupmce" id="txt_año_docenciaView" value="<?= $docencia_model->ides_anio_docencia ?>" data-type="alfanumerico" disabled="disabled" data-keydown="true" placeholder="<?= Yii::t("formulario", "Años de Docencia") ?>">
             </div>
         </div>
     </div>

@@ -502,7 +502,7 @@ class InscripciongradoController extends \yii\web\Controller {
             $arr_tipparentesco = TipoParentesco::find()->select("tpar_id AS id, tpar_nombre AS value")->where(["tpar_estado_logico" => "1", "tpar_estado" => "1"])->asArray()->all();
             $mod_insgrado = new InscripcionGrado();
             $documentos = $mod_insgrado->ObtenerdocumentosInscripcionGrado($persona_model->per_id);
-            \app\models\Utilities::putMessageLogFile('ver el resultado del id:  '.$documentos['igra_ruta_doc_titulo']);
+            /*\app\models\Utilities::putMessageLogFile('ver el resultado del id:  '.$documentos['igra_ruta_doc_titulo']);
             \app\models\Utilities::putMessageLogFile('ver el resultado del id:  '.$documentos['igra_ruta_doc_dni']);
             \app\models\Utilities::putMessageLogFile('ver el resultado del id:  '.$documentos['igra_ruta_doc_certvota']);
             \app\models\Utilities::putMessageLogFile('ver el resultado del id:  '.$documentos['igra_ruta_doc_foto']);
@@ -511,7 +511,7 @@ class InscripciongradoController extends \yii\web\Controller {
             \app\models\Utilities::putMessageLogFile('ver el resultado del id:  '.$documentos['igra_ruta_doc_certificado']);
             \app\models\Utilities::putMessageLogFile('ver el resultado del id:  '.$documentos['igra_ruta_doc_syllabus']);
             \app\models\Utilities::putMessageLogFile('ver el resultado del id:  '.$documentos['igra_ruta_doc_homologacion']);
-
+            */
             $ViewFormTab4 = $this->renderPartial('ViewFormTab4', [
                 "arr_tipparentesco" => ArrayHelper::map($arr_tipparentesco, "id", "value"),
                 "arch1" => $documentos['igra_ruta_doc_titulo'],

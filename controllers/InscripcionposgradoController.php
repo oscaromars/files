@@ -459,21 +459,19 @@ class InscripcionposgradoController extends \yii\web\Controller {
                     $resul = $model->insertarDataInscripcionposgrado($per_id, $data['unidad'], $data['programa'], $modalidad, $año, $per_dni, $tipo_financiamiento, $data);
                     // creación de contacto
                    }
-                    /*$modpersonacontacto = new PersonaContacto();
-                    $mod_persona = new Persona();*/
-
                     //consultar persona contacto
                     $insc_personacont = new PersonaContacto();
                     $exist_personacon = $insc_personacont->consultaPersonaContacto($per_id);
                     // si existe modificar
                     if ($exist_personacon['contacto_id'] > 0) {
                        $modi_personacon = $insc_personacont->modificarPersonacontacto($per_id, $tpar_id, $pcon_nombre, null, $pcon_celular, null);
+                       //$exito=1;
                     }
                     // sino crear
                     else{
                         $crea_personacon = $insc_personacont->crearPersonaContacto($per_id, $tpar_id, $pcon_nombre, null, $pcon_celular, null);
                         //if($crea_personacon){
-                        $exito=1;
+                        //$exito=1;
                         //}
                   }
                     // creación de datos formacion profesional
@@ -494,17 +492,16 @@ class InscripcionposgradoController extends \yii\web\Controller {
                     } else {
                         $resp_infolaboral = $mod_infolaboral->modificarInfoLaboral($per_id, $empresa, $cargo, $telefono_emp, $prov_emp, $ciu_emp, $parroquia, $direccion_emp, $añoingreso_emp, $correo_emp, $cat_ocupacional);
                     }
-                    /* OJO REVISAR ESTO QUE NO MODIFICA */
                     // info Idiomas
                     //Idioma Ingles
-                    /*$mod_idiomas = new EstudianteIdiomas();
+                    $mod_idiomas = new EstudianteIdiomas();
                     $idioma = $idioma1;
                     if($idioma == 1){
                         $resp_existe_idioma = $mod_idiomas->consultarInfoIdiomasEst($per_id, 1);
                         if ($resp_existe_idioma['existe_idioma'] == 0) {
                             $info_idioma = $mod_idiomas->insertarInfoIdiomaEst($per_id, $idioma1, $nivel1, $noidioma);
                         } else {
-                            $info_idioma = $mod_idiomas->modificarInfoDiscapacidad($per_id, $idioma1, $nivel1, $noidioma);
+                            $info_idioma = $mod_idiomas->modificarInfoIdiomaEst($per_id, $idioma1, $nivel1, $noidioma);
                         }
                     }
                     $idiomas = $idioma2;
@@ -513,7 +510,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
                         if ($resp_existe_idioma['existe_idioma'] == 0) {
                             $info_idioma = $mod_idiomas->insertarInfoIdiomaEst($per_id, $idioma2, $nivel2, $noidioma);
                         } else {
-                            $info_idioma = $mod_idiomas->modificarInfoDiscapacidad($per_id, $idioma2, $nivel2, $noidioma);
+                            $info_idioma = $mod_idiomas->modificarInfoIdiomaEst($per_id, $idioma2, $nivel2, $noidioma);
                         }
                     }
                     if($idiomas == 3){
@@ -521,7 +518,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
                         if ($resp_existe_idioma['existe_idioma'] == 0) {
                             $info_idioma = $mod_idiomas->insertarInfoIdiomaEst($per_id, $idioma2, $otronivel, $otroidioma);
                         } else {
-                            $info_idioma = $mod_idiomas->modificarInfoDiscapacidad($per_id, $idioma2, $otronivel, $otroidioma);
+                            $info_idioma = $mod_idiomas->modificarInfoIdiomaEst($per_id, $idioma2, $otronivel, $otroidioma);
                         }
                     }
 
@@ -534,7 +531,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
                         if ($discapacidad == 1) {
                             $info_discapacidad = $mod_infodiscapacidad->modificarInfoDiscapacidad($per_id, $tipo_discap, $porcentaje_discap);
                         }
-                    }*/
+                    }
 
                     // info Docencia
                     $mod_infodocencia = new InfoDocenciaEstudiante();
@@ -557,20 +554,20 @@ class InscripcionposgradoController extends \yii\web\Controller {
                             $info_investigacion = $mod_infoinvestigacion->modificarInfoEstInvestigacion($per_id, $articulos, $area_investigacion);
                         }
                     }
-                    if($exito){
+                    //if($exito){
                         $transaction->commit();
                         $message = array(
-                            "wtmessage" => Yii::t("formulario", "The information have been saved"),
+                            "wtmessage" => Yii::t("formulario", "Tu informacion se ha guardado"),
                             "title" => Yii::t('jslang', 'Success'),
                         );
                         return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
-                    }else{
+                    /*}else{
                         $message = array(
-                            "wtmessage" => Yii::t("formulario", "The information have not been saved."),
+                            "wtmessage" => Yii::t("formulario", "Tu información no se ha guardado."),
                             "title" => Yii::t('jslang', 'Success'),
                         );
                         return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t('jslang', 'Error'), 'false', $message, $resul);
-                    }
+                    }*/
               } else{
 
                 //Aqui debe ser un mensaje que no existe la persona

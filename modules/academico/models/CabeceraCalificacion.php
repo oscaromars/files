@@ -1222,19 +1222,24 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord {
                         estudiante.pro_id,
                         estudiante.asi_id,
                         estudiante.asi_nombre,
-                        IFNULL(A.PARCIAL_I,'NN') parcial_1,
-                        IFNULL(B.PARCIAL_II,'NN') parcial_2,
-                        IFNULL(C.SUPLETORIO,'NN') supletorio,
+                        IFNULL(A.PARCIAL_I,'0') parcial_1,
+                        IFNULL(B.PARCIAL_II,'0') parcial_2,
+                        IFNULL(C.SUPLETORIO,'0') supletorio,
                         CASE
                         WHEN estudiante.uaca_id = 3 THEN
-                             IFNULL(A.PARCIAL_I,'NN')
+                             IFNULL(A.PARCIAL_I,'0')
                         ELSE
-                            ROUND((IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2,2)
+                            (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2
                         END AS promedio_final,
-                        IFNULL(D.ASISTENCIA_PARCIAL_I,'NN') asistencia_parcial_1,
-                        IFNULL(E.ASISTENCIA_PARCIAL_II,'NN') asistencia_parcial_2,
+                        case
+                        when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 >=14.50 then 'Aprobado'
+                        when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 >=1 and (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 < 14.50 then 'Reprobado'
+                        when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 = 0 then 'Pendiente'
+                        end as estado,
+                        IFNULL(D.ASISTENCIA_PARCIAL_I,'0') asistencia_parcial_1,
+                        IFNULL(E.ASISTENCIA_PARCIAL_II,'0') asistencia_parcial_2,
                         ((coalesce(D.ASISTENCIA_PARCIAL_I, 0) + coalesce(E.ASISTENCIA_PARCIAL_II, 0)) / 2) as asistencia_final
-                 FROM
+                 FROM 
                     (
                         SELECT DISTINCT
                                estudiante.est_id,
@@ -1801,5 +1806,68 @@ croe.croe_exec,ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca
 
         return $resultData;
    }
+
+
+   /**
+     * Actualizar el promedio de la tabla de promedio de malla academico
+     * @author  Luis Cajamarca <analista04>
+     * @param
+     * @return
+     */
+    public function updatepromedio(($maes_id,$paca_id)) {
+        $con = Yii::$app->db_academico;
+        $transaccion = $con->beginTransaction();
+
+        try {
+            $sql = "update db_academico.promedio_malla_academico pm, (
+                        select distinct 
+                            pmac.maes_id, 
+                            pmac.paca_id,
+                            (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 AS promedio,
+                            case 
+                                when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 >=14.50 then 1
+                                when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 >=1 and (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 < 14.50 then 2
+                                when  (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 = 0 then 3
+                            end as estado
+                        from db_academico.promedio_malla_academico pmac
+                        inner join db_academico.malla_academico_estudiante maes on maes.maes_id=pmac.maes_id
+                        inner join db_academico.estudiante est on est.per_id=maes.per_id
+                        inner join db_academico.cabecera_calificacion ccal on est.est_id=ccal.est_id
+                        left join 
+                            (SELECT clfc.ccal_id, clfc.paca_id, clfc.est_id, clfc.asi_id,ecun.uaca_id,clfc.pro_id,clfc.ccal_calificacion AS PARCIAL_I 
+                                FROM db_academico.cabecera_calificacion clfc
+                             INNER JOIN db_academico.esquema_calificacion_unidad ecun ON ecun.ecun_id = clfc.ecun_id
+                             INNER JOIN db_academico.esquema_calificacion ecal ON ecal.ecal_id = ecun.ecal_id
+                             WHERE   ecal.ecal_id = 1 AND clfc.ccal_estado = 1 AND clfc.ccal_estado_logico = 1
+                            ) A on est.est_id=A.est_id and pmac.paca_id=A.paca_id and maes.asi_id=A.asi_id
+                        left join 
+                            (SELECT clfc.ccal_id, clfc.paca_id, clfc.est_id, clfc.asi_id,ecun.uaca_id,clfc.pro_id,clfc.ccal_calificacion AS PARCIAL_II 
+                                FROM db_academico.cabecera_calificacion clfc
+                             INNER JOIN db_academico.esquema_calificacion_unidad ecun ON ecun.ecun_id = clfc.ecun_id
+                             INNER JOIN db_academico.esquema_calificacion ecal ON ecal.ecal_id = ecun.ecal_id
+                             WHERE   ecal.ecal_id = 2 AND clfc.ccal_estado = 1 AND clfc.ccal_estado_logico = 1
+                            ) B on est.est_id=B.est_id and pmac.paca_id=B.paca_id and maes.asi_id=B.asi_id
+                        where pmac.maes_id =$maes_id and pmac.paca_id=$paca_id
+                    ) pmac
+                set pm.pmac_nota=pmac.promedio,
+                    pm.enac_id= pmac.estado,
+                    pm.pmac_fecha_modificacion=now()
+                where pm.maes_id=pmac.maes_id";
+
+            $comando = $con->createCommand($sql);
+            $result = $comando->execute();
+
+            if ($transaccion !== null) {
+                $transaccion->commit();
+            }
+
+            return 1;
+        } catch (Exception $ex) {
+            if ($transaccion !== null) {
+                $transaccion->rollback();
+            }
+            return 0;
+        }
+    } //function updatepromedio
 
 }

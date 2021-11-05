@@ -387,19 +387,13 @@ function actualizarGridRegistro(dready = 0) {
         var url_editor = $('#txth_base').val() + "/academico/calificacionregistrodocente/actualizarnota";
         var isreg = response['isreg'];
         if (isreg){
-            var mens = document.createElement('b');
-            //agrego la clase
-            //mens.css('color', 'green');
             var contenedor = document.getElementById('periodocalif');
             contenedor.innerHTML = "<b style='color:green'>REGISTRO DE CALIFICACIONES ESTARÁ ABIERTO HASTA "+isreg['fin']+ "</b>";
-            //contenedor.appendChild(mens);
+            var bandera_edi = 1;
         }else{
-            var mens = document.createElement('b');
-            //agrego la clase
-            //mens.css('color', 'green');
             var contenedor = document.getElementById('periodocalif');
             contenedor.innerHTML = "<b style='color:red'>EL PERIODO DE CALIFICACIONES ESTÁ CERRADO</b>";
-            //contenedor.appendChild(mens);
+            var bandera_edi = 0;
         }
         //Armamos el componente editor, aqui el indicamos que campos del grid son editables
         editor = new $.fn.dataTable.Editor( {

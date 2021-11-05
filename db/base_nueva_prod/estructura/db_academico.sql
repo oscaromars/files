@@ -2485,7 +2485,7 @@ create table if not exists `datos_facturacion_registro` (
   `dfr_estado_logico` varchar(1) DEFAULT NULL,
   `dfr_fecha_creacion` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`dfr_id`)
-) 
+) ;
 
 ALTER TABLE `db_academico`.`registro_online` 
 ADD INDEX `index_per` (`per_id` ASC),
@@ -2511,3 +2511,20 @@ ADD INDEX `index_pla` (`pla_id` ASC),
 ADD INDEX `index_paca` (`paca_id` ASC),
 ADD INDEX `index_rpm` (`rpm_id` ASC);
 ;
+
+
+/*-- tabla que registra las veces que el docente registra las notas, por si hay equivocacipón del docente poder registrar las notas --*/
+CREATE TABLE `registro_bitacora_nota` (
+  `rbno_id` bigint(20) NOT NULL AUTO_INCREMENT primary key,
+  `dcal_id` bigint(20) NOT NULL,
+  `rbno_nota_anterior` double DEFAULT NULL,
+  `rbno_nota_actual` double DEFAULT NULL,
+  `rbno_usuario_creacion` bigint(20) NOT NULL,
+  `rbno_usuario_modificacion` bigint(20) DEFAULT NULL,
+  `rbno_estado` varchar(1) NOT NULL,
+  `rbno_fecha_creacion` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `rbno_fecha_modificacion` timestamp NULL DEFAULT NULL,
+  `rbno_estado_logico` varchar(1) NOT NULL,
+  KEY `dcal_id` (`dcal_id`),
+  CONSTRAINT `registro_bitacora_nota_ibfk_1` FOREIGN KEY (`dcal_id`) REFERENCES `detalle_calificacion` (`dcal_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8

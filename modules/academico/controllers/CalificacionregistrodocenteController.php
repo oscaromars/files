@@ -11,6 +11,7 @@ use app\modules\academico\models\Asignatura;
 use app\modules\academico\models\CabeceraCalificacion;
 use app\modules\academico\models\ComponenteUnidad;
 use app\modules\academico\models\DistributivoAcademico;
+use app\modules\academico\models\MallaAcademicoEstudiante;
 use app\modules\academico\models\Estudiante;
 use app\modules\academico\models\EstudianteCarreraPrograma;
 use app\modules\academico\models\EstudioAcademico;
@@ -366,18 +367,20 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 					$key != 'mod_id' &&
 					$key != 'uaca_id') {
 					if ($value != '') {
+                        $valida=2;
+                        $insertID = $mod_calificacion->insertarRBNO($ccal_id, $key, $value,$valida);
 						$mod_calificacion->actualizarDetalleCalificacionporcomponente($ccal_id, $key, $value);
 
 						if (!(is_null($value)) && $value != '') {
 							$valor[$key] = $value;
 							$total = $total + $value;
 							//\app\models\Utilities::putMessageLogFile($value);
-						}
+						}// fin if
 
-					}
-				}
+					}// fin if
+				}// fin if
 //if
-			}
+			}// fin foreach
 		} else {
 			$paca_id = $data['data'][$row_id]['paca_id'];
 			$est_id = $data['data'][$row_id]['est_id'];
@@ -390,7 +393,7 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 			$total = 0;
 
 			$ccal_id = $mod_calificacion->crearCabeceraCalificacionporcomponente($paca_id, $est_id, $pro_id, $asi_id, $ecal_id, $uaca_id);
-
+            
 			$valor["ccal_id"] = $ccal_id;
 
 			foreach ($data['data'][$row_id] as $key => $value) {
@@ -405,6 +408,10 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 					$key != 'mod_id' &&
 					$key != 'uaca_id') {
 					$mod_calificacion->crearDetalleCalificacionporcomponente($ccal_id, $key, $value, $uaca_id, $mod_id, $ecal_id);
+                    if(!empty($value)){
+                        $valida=1;
+                        $insertID = $mod_calificacion->insertarRBNO($ccal_id, $key, $value,$valida);
+                    }
 
 					if (!(is_null($value)) && $value != '') {
 						$valor[$key] = $value;
@@ -417,7 +424,12 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 
 		//Solucion temporal, debe revisarse porq suma 1 de mas en la iteraccion
 		//$total--;
-		$mod_calificacion->actualizarDetalleCalificacion2($ccal_id, $total);
+		$total_promedio = $mod_calificacion->actualizarDetalleCalificacion2($ccal_id, $total);
+        if($total_promedio){
+            $est_id = Estudiante::findOne(['est_id'=>$est_id,'est_estado'=>1,'est_estado_logico'=>1])
+            $maes_id = MallaAcademicoEstudiante::findOne(['per_id'=>$est_id['per_id'],'paca_id'=>$paca_id,'asi_id'=>$asi_id,'maes_estado'=>1,'maes_estado_logico'=>1]);
+            $promedio = $mod_calificacion->updatepromedio($maes_id['maes_id'],$paca_id);
+        }
 
 		header('Content-Type: application/json');
 

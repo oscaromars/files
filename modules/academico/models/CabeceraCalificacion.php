@@ -1816,11 +1816,6 @@ croe.croe_exec,ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca
 
         return $resultData;
    }
-
-
-
-
-
    /**
      * Actualizar el promedio de la tabla de promedio de malla academico
      * @author  Luis Cajamarca <analista04>
@@ -1883,7 +1878,60 @@ croe.croe_exec,ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca
         }
     } //function updatepromedio
 
+    /**
+     * Function insertar Rbno_id por medio del insert select del ccal
+     * @author  Luis Cajamarca  <analistadesarrollo04@uteg.edu.ec>
+     * @property integer $daes_id
+     * @return
+     */
+    public function insertarRBNO($ccal_id, $key, $value,$valida) {
+        $con = \Yii::$app->db_academico;
+        $transaction = $con->beginTransaction();
+        $estado = "1";
+        $date = date(Yii::$app->params['dateTimeByDefault']);
+        $usu_id = @Yii::$app->session->get("PB_iduser");
+        try {
+            if($valida==1){
+                $query_select = "SELECT dc1.dcal_id, 0, ifnull(dc1.dcal_calificacion,0), $usu_id, 1, $date, 1 
+                                from db_academico.detalle_calificacion dc1
+                                inner join db_academico.componente_unidad cu1 on dc1.cuni_id = cu1.cuni_id
+                                inner join db_academico.componente com1 on cu1.com_id = com1.com_id
+                               where dc1.ccal_id = $ccal_id
+                                 and com1.com_nombre = '$key'";
+            }else{
+                $query_select = "SELECT dc1.dcal_id, ifnull(dc1.dcal_calificacion,0), $value, $usu_id, 1, $date, 1 
+                                from db_academico.detalle_calificacion dc1
+                                inner join db_academico.componente_unidad cu1 on dc1.cuni_id = cu1.cuni_id
+                                inner join db_academico.componente com1 on cu1.com_id = com1.com_id
+                               where dc1.ccal_id = $ccal_id
+                                 and com1.com_nombre = '$key'";
+            }
 
+            $sql = "INSERT INTO db_academico.registro_bitacora_nota
+                    (dcal_id, rbno_nota_anterior, rbno_nota_actual, rbno_usuario_creacion, rbno_estado, rbno_fecha_creacion, rbno_estado_logico)
+                ($query_select)";
+
+            $comando = $con->createCommand($sql);
+            $comando->bindParam(":paca_id", $paca_id, \PDO::PARAM_INT);
+            $comando->execute();
+
+            \app\models\Utilities::putMessageLogFile('insertarDaesEstudiante: ' . $comando->getRawSql());
+
+            if ($transaction !== null) {
+                $transaction->commit();
+            }
+
+            return true;
+
+        } catch (Exception $ex) {
+            if ($transaction !== null) {
+                $transaction->rollback();
+            }
+
+            return FALSE;
+        }
+
+    }
 
 
 }

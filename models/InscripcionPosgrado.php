@@ -448,7 +448,7 @@ class InscripcionPosgrado extends \yii\db\ActiveRecord
         return $resultData;
     }
 
-    public function consultarDatosInscripcionContinuaposgrado($ipos_id) {
+    public function consultarDatosInscripcionContinuaposgrado($per_id) {
         $con = \Yii::$app->db_inscripcion;
         $con3 = \Yii::$app->db_captacion;
         $con2 = \Yii::$app->db_asgard;
@@ -489,7 +489,7 @@ class InscripcionPosgrado extends \yii\db\ActiveRecord
                      inner join " . $con1->dbname . ".modalidad m on m.mod_id = ipos.mod_id
                      inner join " . $con1->dbname . ".estudio_academico ea on ea.eaca_id = ipos.eaca_id
                      left join " . $con3->dbname . ".metodo_ingreso mi on mi.ming_id = ipos.ipos_metodo_ingreso
-                WHERE ipos.ipos_id = :ipos_id AND
+                WHERE ipos.per_id = :per_id AND
                      ua.uaca_estado = :estado AND
                      ua.uaca_estado_logico = :estado AND
                      m.mod_estado = :estado AND
@@ -499,7 +499,7 @@ class InscripcionPosgrado extends \yii\db\ActiveRecord
 
         $comando = $con->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
-        $comando->bindParam(":ipos_id", $ipos_id, \PDO::PARAM_INT);
+        $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
         //$comando->bindParam(":estado_precio", $estado_precio, \PDO::PARAM_STR);
         $resultData = $comando->queryOne();
         return $resultData;

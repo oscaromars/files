@@ -63,7 +63,7 @@ use app\widgets\PbGridView\PbGridView;
         <div class="form-group">
             <label for="txt_financiamientoEdit" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("inscripcionposgrado", "Tipo de Financiamiento") ?></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
-                <input type="text" class="form-control PBvalidation keyupmce" id="txt_financiamientoEdit" value="<?= $ipos_model->ipos_tipo_financiamiento ?>" data-type="alfanumerico" data-keydown="true" placeholder="<?= Yii::t("formulario", "Tipo de Financiamiento") ?>">
+                <input type="text" class="form-control PBvalidation keyupmce" disabled = "true" id="txt_financiamientoEdit" value="<?= $ipos_model->ipos_tipo_financiamiento ?>" data-type="alfanumerico" data-keydown="true" placeholder="<?= Yii::t("formulario", "Tipo de Financiamiento") ?>">
             </div>
         </div>
     </div>

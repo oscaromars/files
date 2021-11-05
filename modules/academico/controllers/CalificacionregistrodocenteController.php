@@ -1572,7 +1572,7 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 		return;
 	}
 
-	    public function actionActivacron(){
+    public function actionActivacron(){
             $datacron = Yii::$app->request->get();
 //var_dump($datacron["fecha"]); 
 //var_dump($datacron["cronid"]); 
@@ -1583,15 +1583,13 @@ $data1=($datacron["cronid"]);
         $cronactive = $cabeceraCalificacion->activateCron($data1,$data2);
          //var_dump($cronactive);
  
-   return $this->redirect(['educativa', 'paca' => $cronactive['croe_paca_id'],'unidad' => $cronactive['croe_uaca_id'],
-    'modalidad' => $data3 ]);
-
-
+    return $this->redirect(['educativa', 'paca' => $cronactive['croe_paca_id'],'unidad' => $cronactive['croe_uaca_id'],'modalidad' => $data3,'parcial' => $cronactive['croe_parcial'] ]);
 
          }
 
        public function actionEducativa(){
          $grupo_model    = new Grupo();
+         $arr_parcial = array(0 => '[ Elija Parcial ]',1 => 'Parcial 1',2 => 'Parcial 2',3 => 'Notas Finales');
         $cabeceraCalificacion = new CabeceraCalificacion();
  $user_usermane = Yii::$app->session->get("PB_username");
 //$user_usermane = 'carlos.carrera@mbtu.us';//Yii::$app->session->get("PB_username");
@@ -1616,7 +1614,7 @@ $data1=($datacron["cronid"]);
 
        if ($data = Yii::$app->request->get()){ 
    $cabeceraCalificacion = new CabeceraCalificacion();
-$arr_crones = $cabeceraCalificacion->getallmods($data['paca'], $data['unidad'], $data['modalidad']);
+$arr_crones = $cabeceraCalificacion->getallmods($data['paca'], $data['unidad'], $data['modalidad'], $data['parcial']);
 $modalidades = $data['modalidad'];
 //var_dump($arr_crones);
 //return $this->redirect('index');
@@ -1648,6 +1646,7 @@ $modalidades = $data['modalidad'];
                     'arr_unidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Todos")]], $arr_ninteres), "id", "name"),
                     'arr_modalidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Todos")]], $arr_modalidad), "id", "name"),
                     'modalidades' => $modalidades,  
+                    'arr_parcial' => $arr_parcial,  
 
         ]);
 
@@ -1659,6 +1658,7 @@ $modalidades = $data['modalidad'];
                     'arr_periodos' => ArrayHelper::map(array_merge($arr_periodos), "id", "nombre"),
                     'arr_unidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Todos")]], $arr_ninteres), "id", "name"),
                     'arr_modalidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Todos")]], $arr_modalidad), "id", "name"),
+                    'arr_parcial' => $arr_parcial,  
         ]);
 
 /*

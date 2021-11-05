@@ -675,11 +675,11 @@ class InscripcionposgradoController extends \yii\web\Controller {
             $arr_tipparentesco = TipoParentesco::find()->select("tpar_id AS id, tpar_nombre AS value")->where(["tpar_estado_logico" => "1", "tpar_estado" => "1"])->asArray()->all();
 
             $ViewFormTab1 = $this->renderPartial('ViewFormTab1', [
-                'arr_ciudad_nac' => (empty(ArrayHelper::map($arr_ciudad_nac, "can_id", "can_nombre"))) ? array(Yii::t("canton", "-- Select Canton --")) : (ArrayHelper::map($arr_ciudad_nac, "can_id", "can_nombre")),
+                'arr_ciudad_nac' => (empty(ArrayHelper::map($arr_ciudad_nac, "can_id", "can_nombre"))) ? array(Yii::t("canton", "Seleccionar")) : (ArrayHelper::map($arr_ciudad_nac, "can_id", "can_nombre")),
                 "arr_estado_civil" => ArrayHelper::map($arr_estado_civil, "id", "value"),
                 'persona_model' => $persona_model,
                 "arr_nacionalidad" => ArrayHelper::map($arr_nacionalidad, "id", "value"),
-                'arr_pais' => (empty(ArrayHelper::map($arr_pais, "pai_id", "pai_nombre"))) ? array(Yii::t("pais", "-- Select Pais --")) : (ArrayHelper::map($arr_pais, "pai_id", "pai_nombre")),
+                'arr_pais' => (empty(ArrayHelper::map($arr_pais, "pai_id", "pai_nombre"))) ? array(Yii::t("pais", "Seleccionar")) : (ArrayHelper::map($arr_pais, "pai_id", "pai_nombre")),
                 "arr_provincia" => ArrayHelper::map($arr_provincia, "id", "value"),
                 "arr_ciudad" => ArrayHelper::map($arr_ciudad, "id", "value"),
                 "arr_tipparentesco" => ArrayHelper::map($arr_tipparentesco, "id", "value"),
@@ -700,7 +700,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
 
 
             $ViewFormTab2 = $this->renderPartial('ViewFormTab2', [
-                'arr_pais' => (empty(ArrayHelper::map($arr_pais, "pai_id", "pai_nombre"))) ? array(Yii::t("pais", "-- Select Pais --")) : (ArrayHelper::map($arr_pais, "pai_id", "pai_nombre")),
+                'arr_pais' => (empty(ArrayHelper::map($arr_pais, "pai_id", "pai_nombre"))) ? array(Yii::t("pais", "Seleccionar")) : (ArrayHelper::map($arr_pais, "pai_id", "pai_nombre")),
                 "arr_prov_emp" => ArrayHelper::map($arr_prov_emp, "id", "value"),
                 "arr_ciu_emp" => ArrayHelper::map($arr_ciu_emp, "id", "value"),
                 "arr_categoria" => array("1" => Yii::t("formulario", "Pública"), "2" => Yii::t("formulario", "Privada")),
@@ -732,7 +732,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
             $arr_tip_discap = TipoDiscapacidad::find()->select("tdis_id AS id, tdis_nombre AS value")->where(["tdis_estado_logico" => "1", "tdis_estado" => "1"])->asArray()->all();
 
             $ViewFormTab5 = $this->renderPartial('ViewFormTab5', [
-                "arr_tip_discap" => ArrayHelper::map(array_merge([["id" => "0", "value" => Yii::t("formulario", "-- Select --")]], $arr_tip_discap), "id", "value"),
+                "arr_tip_discap" => ArrayHelper::map(array_merge([["id" => "0", "value" => Yii::t("formulario", "Seleccionar")]], $arr_tip_discap), "id", "value"),
                 'discapacidad_model' => $discapacidad_model,
                 'docencia_model' => $docencia_model,
                 'investigaciones_model' => $investigaciones_model,
@@ -888,10 +888,10 @@ class InscripcionposgradoController extends \yii\web\Controller {
             $arr_tipparentesco = TipoParentesco::find()->select("tpar_id AS id, tpar_nombre AS value")->where(["tpar_estado_logico" => "1", "tpar_estado" => "1"])->asArray()->all();
 
             $EditFormTab1 = $this->renderPartial('EditFormTab1', [
-                'arr_ciudad_nac' => (empty(ArrayHelper::map($arr_ciudad_nac, "can_id", "can_nombre"))) ? array(Yii::t("canton", "-- Select Canton --")) : (ArrayHelper::map($arr_ciudad_nac, "can_id", "can_nombre")),
+                'arr_ciudad_nac' => (empty(ArrayHelper::map($arr_ciudad_nac, "can_id", "can_nombre"))) ? array(Yii::t("canton", "Seleccionar")) : (ArrayHelper::map($arr_ciudad_nac, "can_id", "can_nombre")),
                 "arr_estado_civil" => ArrayHelper::map($arr_estado_civil, "id", "value"),
                 "arr_nacionalidad" => ArrayHelper::map($arr_nacionalidad, "id", "value"),
-                'arr_pais' => (empty(ArrayHelper::map($arr_pais, "pai_id", "pai_nombre"))) ? array(Yii::t("pais", "-- Select Pais --")) : (ArrayHelper::map($arr_pais, "pai_id", "pai_nombre")),
+                'arr_pais' => (empty(ArrayHelper::map($arr_pais, "pai_id", "pai_nombre"))) ? array(Yii::t("pais", "Seleccionar")) : (ArrayHelper::map($arr_pais, "pai_id", "pai_nombre")),
                 "arr_provincia" => ArrayHelper::map($arr_provincia, "id", "value"),
                 "arr_ciudad" => ArrayHelper::map($arr_ciudad, "id", "value"),
                 "arr_tipparentesco" => ArrayHelper::map($arr_tipparentesco, "id", "value"),
@@ -912,7 +912,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
 
 
             $EditFormTab2 = $this->renderPartial('EditFormTab2', [
-                'arr_pais' => (empty(ArrayHelper::map($arr_pais, "pai_id", "pai_nombre"))) ? array(Yii::t("pais", "-- Select Pais --")) : (ArrayHelper::map($arr_pais, "pai_id", "pai_nombre")),
+                'arr_pais' => (empty(ArrayHelper::map($arr_pais, "pai_id", "pai_nombre"))) ? array(Yii::t("pais", "Seleccionar")) : (ArrayHelper::map($arr_pais, "pai_id", "pai_nombre")),
                 "arr_prov_emp" => ArrayHelper::map($arr_prov_emp, "id", "value"),
                 "arr_ciu_emp" => ArrayHelper::map($arr_ciu_emp, "id", "value"),
                 "arr_categoria" => array("1" => Yii::t("formulario", "Pública"), "2" => Yii::t("formulario", "Privada")),
@@ -950,7 +950,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
 
             $EditFormTab5 = $this->renderPartial('EditFormTab5', [
                 'discapacidad_model' => $discapacidad_model,
-                "arr_tip_discap" => ArrayHelper::map(array_merge([["id" => "0", "value" => Yii::t("formulario", "-- Select --")]], $arr_tip_discap), "id", "value"), //ArrayHelper::map($arr_tip_discap, "id", "value"),
+                "arr_tip_discap" => ArrayHelper::map(array_merge([["id" => "0", "value" => Yii::t("formulario", "Seleccionar")]], $arr_tip_discap), "id", "value"), //ArrayHelper::map($arr_tip_discap, "id", "value"),
                 'docencia_model' => $docencia_model,
                 'investigaciones_model' => $investigaciones_model,
                 'ipos_model' => $ipos_model,
@@ -1201,7 +1201,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 if (isset($data["ipos_ruta_doc_homologacion"]) && $data["ipos_ruta_doc_homologacion"] != "") {
                     $arrIm = explode(".", basename($data["ipos_ruta_doc_homologacion"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                    $homologacion_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/doc_homologacion_per_" . $per_id . "." . $typeFile;
+                    $homologacion_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/doc_especievalorada_per_" . $per_id . "." . $typeFile;
                     $homologacion_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $homologacion_archivoOld, '' /*$timeSt*/);
                     $data["ipos_ruta_doc_homologacion"] = $homologacion_archivo;
                     if ($homologacion_archivo === false)
@@ -1210,7 +1210,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
 
 
 
-                //FORM 1 datos personal
+            //FORM 1 datos personal
             $per_dni = $data['cedula'];
             $primer_nombre = ucwords(strtolower($data["primer_nombre"]));
             $segundo_nombre = ucwords(strtolower($data["segundo_nombre"]));
@@ -1281,7 +1281,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
             $area_investigacion = ucwords(strtolower($data["area_investigacion"]));
 
             //Form2 Datos financiamiento
-            $tipo_financiamiento = $data["tipo_financiamiento"];
+            $tipo_financiamiento = ucwords(strtolower($data["tipo_financiamiento"]));
 
             //archivos cargados
             $ipos_ruta_doc_foto = $data['ipos_ruta_doc_foto'];
@@ -1299,7 +1299,6 @@ class InscripcionposgradoController extends \yii\web\Controller {
             $ipos_ruta_doc_certificadonosancion = $data['ipos_ruta_doc_certnosancion'];
             $ipos_ruta_doc_syllabus = $data['ipos_ruta_doc_syllabus'];
             $ipos_ruta_doc_homologacion = $data['ipos_ruta_doc_homologacion'];
-
             $fecha_modificacion = date(Yii::$app->params["dateTimeByDefault"]);
 
                 $persona_model = Persona::findOne($per_id);
@@ -1416,22 +1415,55 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 }
 
                 $ipos_model = InscripcionPosgrado::findOne(['per_id' => $persona_model->per_id]);
+                $ipos_model->ipos_cedula = $per_dni;
                 $ipos_model->ipos_tipo_financiamiento = $tipo_financiamiento;
-                $ipos_model->ipos_ruta_doc_foto = $ipos_ruta_doc_foto;
-                $ipos_model->ipos_ruta_doc_dni = $ipos_ruta_doc_dni;
-                $ipos_model->ipos_ruta_doc_certvota = $ipos_ruta_doc_certvota;
-                $ipos_model->ipos_ruta_doc_titulo = $ipos_ruta_doc_titulo;
-                $ipos_model->ipos_ruta_doc_comprobantepago = $ipos_ruta_doc_comprobantepago;
-                $ipos_model->ipos_ruta_doc_recordacademico = $ipos_ruta_doc_recordacademico;
-                $ipos_model->ipos_ruta_doc_senescyt = $ipos_ruta_doc_senescyt;
-                $ipos_model->ipos_ruta_doc_hojadevida = $ipos_ruta_doc_hojadevida;
-                $ipos_model->ipos_ruta_doc_cartarecomendacion = $ipos_ruta_doc_cartarecomendacion;
-                $ipos_model->ipos_ruta_doc_certificadolaboral = $ipos_ruta_doc_certificadolaboral;
-                $ipos_model->ipos_ruta_doc_certificadoingles = $ipos_ruta_doc_certificadoingles;
-                $ipos_model->ipos_ruta_doc_otrorecord = $ipos_ruta_doc_otrorecord;
-                $ipos_model->ipos_ruta_doc_certificadonosancion = $ipos_ruta_doc_certificadonosancion;
-                $ipos_model->ipos_ruta_doc_syllabus = $ipos_ruta_doc_syllabus;
-                $ipos_model->ipos_ruta_doc_homologacion = $ipos_ruta_doc_homologacion;
+                // SI SON NULOS NO ACTUALIZAR
+                if(!empty($ipos_ruta_doc_foto)){
+                    $ipos_model->ipos_ruta_doc_foto = $ipos_ruta_doc_foto;
+                }
+                if(!empty($ipos_ruta_doc_dni)){
+                    $ipos_model->ipos_ruta_doc_dni = $ipos_ruta_doc_dni;
+                }
+                if(!empty($ipos_ruta_doc_certvota)){
+                    $ipos_model->ipos_ruta_doc_certvota = $ipos_ruta_doc_certvota;
+                }
+                if(!empty($ipos_ruta_doc_titulo)){
+                    $ipos_model->ipos_ruta_doc_titulo = $ipos_ruta_doc_titulo;
+                }
+                if(!empty($ipos_ruta_doc_comprobantepago)){
+                    $ipos_model->ipos_ruta_doc_comprobantepago = $ipos_ruta_doc_comprobantepago;
+                }
+                if(!empty($ipos_ruta_doc_recordacademico)){
+                    $ipos_model->ipos_ruta_doc_recordacademico = $ipos_ruta_doc_recordacademico;
+                }
+                if(!empty($ipos_ruta_doc_senescyt)){
+                    $ipos_model->ipos_ruta_doc_senescyt = $ipos_ruta_doc_senescyt;
+                }
+                if(!empty($ipos_ruta_doc_hojadevida)){
+                    $ipos_model->ipos_ruta_doc_hojadevida = $ipos_ruta_doc_hojadevida;
+                }
+                if(!empty($ipos_ruta_doc_cartarecomendacion)){
+                    $ipos_model->ipos_ruta_doc_cartarecomendacion = $ipos_ruta_doc_cartarecomendacion;;
+                }
+                if(!empty($ipos_ruta_doc_certificadolaboral)){
+                    $ipos_model->ipos_ruta_doc_certificadolaboral = $ipos_ruta_doc_certificadolaboral;
+                }
+                if(!empty($ipos_ruta_doc_certificadoingles)){
+                    $ipos_model->ipos_ruta_doc_certificadoingles = $ipos_ruta_doc_certificadoingles;
+                }
+                if(!empty($ipos_ruta_doc_otrorecord)){
+                    $ipos_model->ipos_ruta_doc_otrorecord = $ipos_ruta_doc_otrorecord;
+                }
+                if(!empty($ipos_ruta_doc_certificadonosancion)){
+                    $ipos_model->ipos_ruta_doc_certificadonosancion = $ipos_ruta_doc_certificadonosancion;
+                }
+                if(!empty($ipos_ruta_doc_syllabus)){
+                    $ipos_model->ipos_ruta_doc_syllabus = $ipos_ruta_doc_syllabus;
+                }
+                if(!empty($ipos_ruta_doc_homologacion)){
+                    $ipos_model->ipos_ruta_doc_homologacion = $ipos_ruta_doc_homologacion;
+                }
+                // OJO SI SON NULOS NO ACTUALIZAR DEJAR COMO ESTABA
                 $ipos_model->ipos_fecha_modificacion = $fecha_modificacion;
                 $ipos_model->update();
 
@@ -1439,12 +1471,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 $mod_percontacto = new PersonaContacto();
                 $contacto = $mod_percontacto->modificarPersonacontacto($per_id, $tpar_id, $pcon_nombre, $pcon_celular, $pcon_celular, $pcon_direccion);
 
-                /*$mod_inscripcionposgrado = new InscripcionPosgrado();
-                $gradoinscripcion = $mod_inscripcionposgrado->consultarDatosInscripcionContinuagrado($per_id);
-
-                $inscripcionposgrado = $mod_inscripcionposgrado->updateDataInscripcionposgrado($con, $per_id, $per_dni, $igra_ruta_doc_titulo, $igra_ruta_doc_dni, $igra_ruta_doc_certvota, $igra_ruta_doc_foto, $igra_ruta_doc_comprobantepago, $igra_ruta_doc_record, $igra_ruta_doc_certificado, $igra_ruta_doc_syllabus, $igra_ruta_doc_homologacion);*/
-
-                if ($contacto) {
+               if ($contacto) {
                         $exito = 1;
                     }
                     if ($exito) {

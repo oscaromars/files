@@ -10,6 +10,7 @@ use app\modules\financiero\Module as financiero;
 academico::registerTranslations();
 financiero::registerTranslations();
 //print_r($arr_condcurriculum);
+$per_id = $persona_model->per_id;
 ?>
 <?= Html::hiddenInput('txth_igra_id', base64_encode($igra_id), ['id' => 'txth_igra_id']); ?>
 <?= Html::hiddenInput('txth_per_id', base64_encode($per_id), ['id' => 'txth_per_id']); ?>
@@ -40,7 +41,7 @@ financiero::registerTranslations();
                         'uploadUrl' => Url::to(['/inscripcionposgrado/guardarinscripcionposgrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
-            return {"upload_file": true, "name_file": "doc_foto' . "_per_" . $per_id . '_' . date(Yii::$app->params["dateByDefault"]) . '"};
+                        return {"upload_file": true, "name_file": "doc_foto' . "_per_" . $per_id . '"};
         }',
                     ],
                     'pluginEvents' => [
@@ -51,9 +52,9 @@ financiero::registerTranslations();
                         "fileuploaderror" => "function (event, data, msg) {
         $(this).parent().parent().children().first().addClass('hide');
         $('#txth_doc_adj_disi').val('');
-        //showAlert('NO_OK', 'error', {'wtmessage': objLang.Error_to_process_File__Try_again_, 'title': objLang.Error});   
+        //showAlert('NO_OK', 'error', {'wtmessage': objLang.Error_to_process_File__Try_again_, 'title': objLang.Error});
     }",
-                        "filebatchuploadcomplete" => "function (event, files, extra) { 
+                        "filebatchuploadcomplete" => "function (event, files, extra) {
         $(this).parent().parent().children().first().addClass('hide');
     }",
                         "filebatchuploadsuccess" => "function (event, data, previewId, index) {
@@ -61,20 +62,20 @@ financiero::registerTranslations();
         response = data.response, reader = data.reader;
         $(this).parent().parent().children().first().addClass('hide');
         var acciones = [{id: 'reloadpage', class: 'btn btn-primary', value: objLang.Accept, callback: 'reloadPage'}];
-        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});  
+        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});
     }",
                         "fileuploaded" => "function (event, data, previewId, index) {
         $(this).parent().parent().children().first().addClass('hide');
         var acciones = [{id: 'reloadpage', class: 'btn btn-primary', value: objLang.Accept, callback: 'reloadPage'}];
-        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});                              
+        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});
     }",
                     ],
                 ]);
                 ?>
             </div>
-          
-            <div class="col-md-3 col-sm-3 col-xs-3 col-lg-3"> 
-                <div class="form-group">          
+
+            <div class="col-md-3 col-sm-3 col-xs-3 col-lg-3">
+                <div class="form-group">
                     <?php
                         if (!empty($arch1)) {
                             echo "<a href='" . Url::to(['/site/getimage', 'route' => "$arch1"]) . "' download='" . $arch1 . "' ><span class='glyphicon glyphicon-download-alt'></span>Descargar Imagen</a>";
@@ -83,9 +84,9 @@ financiero::registerTranslations();
                 </div>
             </div>
         </div>
-    </div> 
+    </div>
 
-    <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12 doc_dni">  
+    <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12 doc_dni">
         <div class="form-group">
             <label for="txth_doc_dni" class="col-sm-3 col-md-3 col-xs-3 col-lg-3 control-label keyupmce"><?= Yii::t("formulario", "Cédula o Pasaporte") ?></label>
             <div class="col-sm-6 col-md-6 col-xs-6 col-lg-6">
@@ -108,7 +109,7 @@ financiero::registerTranslations();
                         'uploadUrl' => Url::to(['/inscripcionposgrado/guardarinscripcionposgrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
-            return {"upload_file": true, "name_file": "doc_dni' . "_per_" . $per_id . '_' . date(Yii::$app->params["dateByDefault"]) . '"};
+                        return {"upload_file": true, "name_file": "doc_dni' . "_per_" . $per_id . '"};
         }',
                     ],
                     'pluginEvents' => [
@@ -119,9 +120,9 @@ financiero::registerTranslations();
                         "fileuploaderror" => "function (event, data, msg) {
         $(this).parent().parent().children().first().addClass('hide');
         $('#txth_doc_dni').val('');
-        //showAlert('NO_OK', 'error', {'wtmessage': objLang.Error_to_process_File__Try_again_, 'title': objLang.Error});   
+        //showAlert('NO_OK', 'error', {'wtmessage': objLang.Error_to_process_File__Try_again_, 'title': objLang.Error});
     }",
-                        "filebatchuploadcomplete" => "function (event, files, extra) { 
+                        "filebatchuploadcomplete" => "function (event, files, extra) {
         $(this).parent().parent().children().first().addClass('hide');
     }",
                         "filebatchuploadsuccess" => "function (event, data, previewId, index) {
@@ -129,12 +130,12 @@ financiero::registerTranslations();
         response = data.response, reader = data.reader;
         $(this).parent().parent().children().first().addClass('hide');
         var acciones = [{id: 'reloadpage', class: 'btn btn-primary', value: objLang.Accept, callback: 'reloadPage'}];
-        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});  
+        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});
     }",
                         "fileuploaded" => "function (event, data, previewId, index) {
         $(this).parent().parent().children().first().addClass('hide');
         var acciones = [{id: 'reloadpage', class: 'btn btn-primary', value: objLang.Accept, callback: 'reloadPage'}];
-        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});                              
+        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});
     }",
                     ],
                 ]);
@@ -143,17 +144,17 @@ financiero::registerTranslations();
         </div>
 
         <div class="col-md-3 col-sm-3 col-xs-3 col-lg-3">
-            <div class="form-group">              
+            <div class="form-group">
                 <?php
                 if (!empty($arch2)) {
                     echo "<a href='" . Url::to(['/site/getimage', 'route' => "$arch2"]) . "' download='" . $arch2 . "' ><span class='glyphicon glyphicon-download-alt'></span>Descargar Imagen</a>";
                 }
                 ?>
             </div>
-        </div> 
+        </div>
     </div>
 
-    <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12"> 
+    <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
         <div class="form-group">
             <label for="txth_doc_certvota" class="col-sm-3 col-md-3 col-xs-3 col-lg-3 control-label keyupmce"><?= Yii::t("formulario", "Voting Certificate") ?></label>
             <div class="col-sm-6 col-md-6 col-xs-6 col-lg-6">
@@ -176,7 +177,7 @@ financiero::registerTranslations();
                         'uploadUrl' => Url::to(['/inscripcionposgrado/guardarinscripcionposgrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
-            return {"upload_file": true, "name_file": "doc_certvota' . "_per_" . $per_id . '_' . date(Yii::$app->params["dateByDefault"]) . '"};
+                        return {"upload_file": true, "name_file": "doc_certvota' . "_per_" . $per_id . '"};
         }',
                     ],
                     'pluginEvents' => [
@@ -187,9 +188,9 @@ financiero::registerTranslations();
                         "fileuploaderror" => "function (event, data, msg) {
         $(this).parent().parent().children().first().addClass('hide');
         $('#txth_doc_certvota').val('');
-        //showAlert('NO_OK', 'error', {'wtmessage': objLang.Error_to_process_File__Try_again_, 'title': objLang.Error});   
+        //showAlert('NO_OK', 'error', {'wtmessage': objLang.Error_to_process_File__Try_again_, 'title': objLang.Error});
     }",
-                        "filebatchuploadcomplete" => "function (event, files, extra) { 
+                        "filebatchuploadcomplete" => "function (event, files, extra) {
         $(this).parent().parent().children().first().addClass('hide');
     }",
                         "filebatchuploadsuccess" => "function (event, data, previewId, index) {
@@ -197,12 +198,12 @@ financiero::registerTranslations();
         response = data.response, reader = data.reader;
         $(this).parent().parent().children().first().addClass('hide');
         var acciones = [{id: 'reloadpage', class: 'btn btn-primary', value: objLang.Accept, callback: 'reloadPage'}];
-        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});  
+        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});
     }",
                         "fileuploaded" => "function (event, data, previewId, index) {
         $(this).parent().parent().children().first().addClass('hide');
         var acciones = [{id: 'reloadpage', class: 'btn btn-primary', value: objLang.Accept, callback: 'reloadPage'}];
-        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});                              
+        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});
     }",
                     ],
                 ]);
@@ -210,15 +211,15 @@ financiero::registerTranslations();
             </div>
         </div>
         <div class="col-md-3 col-sm-3 col-xs-3 col-lg-3">
-            <div class="form-group">              
+            <div class="form-group">
                 <?php
                 if (!empty($arch3)) {
                     echo "<a href='" . Url::to(['/site/getimage', 'route' => "$arch3"]) . "' download='" . $arch3 . "' ><span class='glyphicon glyphicon-download-alt'></span>Descargar Imagen</a>";
                 }
                 ?>
             </div>
-        </div> 
-    </div>     
+        </div>
+    </div>
 
     <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12 doc_titulo">
         <div class="form-group">
@@ -243,7 +244,7 @@ financiero::registerTranslations();
                         'uploadUrl' => Url::to(['/inscripcionposgrado/guardarinscripcionposgrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
-            return {"upload_file": true, "name_file": "doc_titulo' . "_per_" . $per_id . '_' . date(Yii::$app->params["dateByDefault"]) . '"};
+                        return {"upload_file": true, "name_file": "doc_titulo' . "_per_" . $per_id . '"};
         }',
                     ],
                     'pluginEvents' => [
@@ -254,9 +255,9 @@ financiero::registerTranslations();
                         "fileuploaderror" => "function (event, data, msg) {
         $(this).parent().parent().children().first().addClass('hide');
         $('#txth_doc_titulo').val('');
-        //showAlert('NO_OK', 'error', {'wtmessage': objLang.Error_to_process_File__Try_again_, 'title': objLang.Error});   
+        //showAlert('NO_OK', 'error', {'wtmessage': objLang.Error_to_process_File__Try_again_, 'title': objLang.Error});
     }",
-                        "filebatchuploadcomplete" => "function (event, files, extra) { 
+                        "filebatchuploadcomplete" => "function (event, files, extra) {
         $(this).parent().parent().children().first().addClass('hide');
     }",
                         "filebatchuploadsuccess" => "function (event, data, previewId, index) {
@@ -264,12 +265,12 @@ financiero::registerTranslations();
         response = data.response, reader = data.reader;
         $(this).parent().parent().children().first().addClass('hide');
         var acciones = [{id: 'reloadpage', class: 'btn btn-primary', value: objLang.Accept, callback: 'reloadPage'}];
-        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});  
+        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});
     }",
                         "fileuploaded" => "function (event, data, previewId, index) {
         $(this).parent().parent().children().first().addClass('hide');
         var acciones = [{id: 'reloadpage', class: 'btn btn-primary', value: objLang.Accept, callback: 'reloadPage'}];
-        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});                              
+        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});
     }",
                     ],
                 ]);
@@ -287,7 +288,7 @@ financiero::registerTranslations();
         </div>
     </div>
 
-    <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12 doc_comprobante"> 
+    <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12 doc_comprobante">
         <div class="form-group">
             <label for="txth_doc_comprobante" class="col-sm-3 col-md-3 col-xs-3 col-lg-3 control-label keyupmce"><?= Yii::t("formulario", "Comprobante de depósito o transferencia de pago de Matrícula") ?></label>
             <div class="col-sm-6 col-md-6 col-xs-6 col-lg-6">
@@ -310,7 +311,7 @@ financiero::registerTranslations();
                         'uploadUrl' => Url::to(['/inscripcionposgrado/guardarinscripcionposgrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
-            return {"upload_file": true, "name_file": "doc_comprobante' . "_per_" . $per_id . '_' . date(Yii::$app->params["dateByDefault"]) . '"};
+                        return {"upload_file": true, "name_file": "doc_comprobante' . "_per_" . $per_id . '"};
         }',
                     ],
                     'pluginEvents' => [
@@ -321,9 +322,9 @@ financiero::registerTranslations();
                         "fileuploaderror" => "function (event, data, msg) {
         $(this).parent().parent().children().first().addClass('hide');
         $('#txth_doc_comprobante').val('');
-        //showAlert('NO_OK', 'error', {'wtmessage': objLang.Error_to_process_File__Try_again_, 'title': objLang.Error});   
+        //showAlert('NO_OK', 'error', {'wtmessage': objLang.Error_to_process_File__Try_again_, 'title': objLang.Error});
     }",
-                        "filebatchuploadcomplete" => "function (event, files, extra) { 
+                        "filebatchuploadcomplete" => "function (event, files, extra) {
         $(this).parent().parent().children().first().addClass('hide');
     }",
                         "filebatchuploadsuccess" => "function (event, data, previewId, index) {
@@ -331,12 +332,12 @@ financiero::registerTranslations();
         response = data.response, reader = data.reader;
         $(this).parent().parent().children().first().addClass('hide');
         var acciones = [{id: 'reloadpage', class: 'btn btn-primary', value: objLang.Accept, callback: 'reloadPage'}];
-        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});  
+        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});
     }",
                         "fileuploaded" => "function (event, data, previewId, index) {
         $(this).parent().parent().children().first().addClass('hide');
         var acciones = [{id: 'reloadpage', class: 'btn btn-primary', value: objLang.Accept, callback: 'reloadPage'}];
-        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});                              
+        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});
     }",
                     ],
                 ]);
@@ -344,17 +345,17 @@ financiero::registerTranslations();
             </div>
         </div>
         <div class="col-md-3 col-sm-3 col-xs-3 col-lg-3">
-            <div class="form-group">               
+            <div class="form-group">
                 <?php
                 if (!empty($arch5)) {
                     echo "<a href='" . Url::to(['/site/getimage', 'route' => "$arch5"]) . "' download='" . $arch5 . "' ><span class='glyphicon glyphicon-download-alt'></span>Descargar Imagen</a>";
                 }
                 ?>
             </div>
-        </div>        
+        </div>
     </div>
 
-    <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12 doc_record1"> 
+    <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12 doc_record1">
         <div class="form-group">
             <label for="txth_doc_record1" class="col-sm-3 col-md-3 col-xs-3 col-lg-3 control-label keyupmce"><?= Yii::t("formulario", "Récord Académico Actualizado") ?></label>
             <div class="col-sm-6 col-md-6 col-xs-6 col-lg-6">
@@ -377,7 +378,7 @@ financiero::registerTranslations();
                         'uploadUrl' => Url::to(['/inscripcionposgrado/guardarinscripcionposgrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
-            return {"upload_file": true, "name_file": "doc_record1' . "_per_" . $per_id . '_' . date(Yii::$app->params["dateByDefault"]) . '"};
+                        return {"upload_file": true, "name_file": "doc_record1' . "_per_" . $per_id . '"};
         }',
                     ],
                     'pluginEvents' => [
@@ -388,9 +389,9 @@ financiero::registerTranslations();
                         "fileuploaderror" => "function (event, data, msg) {
         $(this).parent().parent().children().first().addClass('hide');
         $('#txth_doc_record1').val('');
-        //showAlert('NO_OK', 'error', {'wtmessage': objLang.Error_to_process_File__Try_again_, 'title': objLang.Error});   
+        //showAlert('NO_OK', 'error', {'wtmessage': objLang.Error_to_process_File__Try_again_, 'title': objLang.Error});
     }",
-                        "filebatchuploadcomplete" => "function (event, files, extra) { 
+                        "filebatchuploadcomplete" => "function (event, files, extra) {
         $(this).parent().parent().children().first().addClass('hide');
     }",
                         "filebatchuploadsuccess" => "function (event, data, previewId, index) {
@@ -398,12 +399,12 @@ financiero::registerTranslations();
         response = data.response, reader = data.reader;
         $(this).parent().parent().children().first().addClass('hide');
         var acciones = [{id: 'reloadpage', class: 'btn btn-primary', value: objLang.Accept, callback: 'reloadPage'}];
-        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});  
+        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});
     }",
                         "fileuploaded" => "function (event, data, previewId, index) {
         $(this).parent().parent().children().first().addClass('hide');
         var acciones = [{id: 'reloadpage', class: 'btn btn-primary', value: objLang.Accept, callback: 'reloadPage'}];
-        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});                              
+        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});
     }",
                     ],
                 ]);
@@ -411,7 +412,7 @@ financiero::registerTranslations();
             </div>
         </div>
         <div class="col-md-3 col-sm-3 col-xs-3 col-lg-3">
-            <div class="form-group">              
+            <div class="form-group">
                 <?php
                 if (!empty($arch6)) {
                     echo "<a href='" . Url::to(['/site/getimage', 'route' => "$arch6"]) . "' download='" . $arch6 . "' ><span class='glyphicon glyphicon-download-alt'></span>Descargar Pdf</a>";
@@ -421,7 +422,7 @@ financiero::registerTranslations();
         </div>
     </div>
 
-    <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12 doc_senescyt"> 
+    <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12 doc_senescyt">
         <div class="form-group">
             <label for="txth_doc_senecyt" class="col-sm-3 col-md-3 col-xs-3 col-lg-3 control-label keyupmce"><?= Yii::t("formulario", "Registro de Senescyt") ?></label>
             <div class="col-sm-6 col-md-6 col-xs-6 col-lg-6">
@@ -444,7 +445,7 @@ financiero::registerTranslations();
                         'uploadUrl' => Url::to(['/inscripcionposgrado/guardarinscripcionposgrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
-            return {"upload_file": true, "name_file": "doc_senescyt' . "_per_" . $per_id . '_' . date(Yii::$app->params["dateByDefault"]) . '"};
+                        return {"upload_file": true, "name_file": "doc_senescyt' . "_per_" . $per_id . '"};
         }',
                     ],
                     'pluginEvents' => [
@@ -455,9 +456,9 @@ financiero::registerTranslations();
                         "fileuploaderror" => "function (event, data, msg) {
         $(this).parent().parent().children().first().addClass('hide');
         $('#txth_doc_senecyt').val('');
-        //showAlert('NO_OK', 'error', {'wtmessage': objLang.Error_to_process_File__Try_again_, 'title': objLang.Error});   
+        //showAlert('NO_OK', 'error', {'wtmessage': objLang.Error_to_process_File__Try_again_, 'title': objLang.Error});
     }",
-                        "filebatchuploadcomplete" => "function (event, files, extra) { 
+                        "filebatchuploadcomplete" => "function (event, files, extra) {
         $(this).parent().parent().children().first().addClass('hide');
     }",
                         "filebatchuploadsuccess" => "function (event, data, previewId, index) {
@@ -465,20 +466,20 @@ financiero::registerTranslations();
         response = data.response, reader = data.reader;
         $(this).parent().parent().children().first().addClass('hide');
         var acciones = [{id: 'reloadpage', class: 'btn btn-primary', value: objLang.Accept, callback: 'reloadPage'}];
-        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});  
+        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});
     }",
                         "fileuploaded" => "function (event, data, previewId, index) {
         $(this).parent().parent().children().first().addClass('hide');
         var acciones = [{id: 'reloadpage', class: 'btn btn-primary', value: objLang.Accept, callback: 'reloadPage'}];
-        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});                              
+        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});
     }",
                     ],
                 ]);
                 ?>
             </div>
-        </div>    
+        </div>
         <div class="col-md-3 col-sm-3 col-xs-3 col-lg-3">
-            <div class="form-group">               
+            <div class="form-group">
                 <?php
                 if (!empty($arch7)) {
                     echo "<a href='" . Url::to(['/site/getimage', 'route' => "$arch7"]) . "' download='" . $arch7 . "' ><span class='glyphicon glyphicon-download-alt'></span>Descargar Pdf</a>";
@@ -511,7 +512,7 @@ financiero::registerTranslations();
                         'uploadUrl' => Url::to(['/inscripcionposgrado/guardarinscripcionposgrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
-            return {"upload_file": true, "name_file": "doc_hojavida' . "_per_" . $per_id . '_' . date(Yii::$app->params["dateByDefault"]) . '"};
+                        return {"upload_file": true, "name_file": "doc_hojavida' . "_per_" . $per_id . '"};
         }',
                     ],
                     'pluginEvents' => [
@@ -522,9 +523,9 @@ financiero::registerTranslations();
                         "fileuploaderror" => "function (event, data, msg) {
         $(this).parent().parent().children().first().addClass('hide');
         $('#txth_doc_hojavida').val('');
-        //showAlert('NO_OK', 'error', {'wtmessage': objLang.Error_to_process_File__Try_again_, 'title': objLang.Error});   
+        //showAlert('NO_OK', 'error', {'wtmessage': objLang.Error_to_process_File__Try_again_, 'title': objLang.Error});
     }",
-                        "filebatchuploadcomplete" => "function (event, files, extra) { 
+                        "filebatchuploadcomplete" => "function (event, files, extra) {
         $(this).parent().parent().children().first().addClass('hide');
     }",
                         "filebatchuploadsuccess" => "function (event, data, previewId, index) {
@@ -532,12 +533,12 @@ financiero::registerTranslations();
         response = data.response, reader = data.reader;
         $(this).parent().parent().children().first().addClass('hide');
         var acciones = [{id: 'reloadpage', class: 'btn btn-primary', value: objLang.Accept, callback: 'reloadPage'}];
-        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});  
+        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});
     }",
                         "fileuploaded" => "function (event, data, previewId, index) {
         $(this).parent().parent().children().first().addClass('hide');
         var acciones = [{id: 'reloadpage', class: 'btn btn-primary', value: objLang.Accept, callback: 'reloadPage'}];
-        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});                              
+        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});
     }",
                     ],
                 ]);
@@ -545,7 +546,7 @@ financiero::registerTranslations();
             </div>
         </div>
         <div class="col-md-3 col-sm-3 col-xs-3 col-lg-3">
-            <div class="form-group">              
+            <div class="form-group">
                 <?php
                 if (!empty($arch8)) {
                     echo "<a href='" . Url::to(['/site/getimage', 'route' => "$arch8"]) . "' download='" . $arch8 . "' ><span class='glyphicon glyphicon-download-alt'></span>Descargar Pdf</a>";
@@ -555,7 +556,7 @@ financiero::registerTranslations();
         </div>
     </div>
 
-    <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12 doc_cartarecomendacion cinteres"> 
+    <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12 doc_cartarecomendacion cinteres">
         <div class="form-group">
             <label for="txth_doc_cartarecomendacion" class="col-sm-3 col-md-3 col-xs-3 col-lg-3 control-label keyupmce"><?= Yii::t("formulario", "Carta de Recomendación") ?></label>
             <div class="col-sm-6 col-md-6 col-xs-6 col-lg-6">
@@ -578,7 +579,7 @@ financiero::registerTranslations();
                         'uploadUrl' => Url::to(['/inscripcionposgrado/guardarinscripcionposgrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
-            return {"upload_file": true, "name_file": "doc_comprobante' . "_per_" . $per_id . '_' . date(Yii::$app->params["dateByDefault"]) . '"};
+                        return {"upload_file": true, "name_file": "doc_comprobante' . "_per_" . $per_id . '"};
         }',
                     ],
                     'pluginEvents' => [
@@ -589,9 +590,9 @@ financiero::registerTranslations();
                         "fileuploaderror" => "function (event, data, msg) {
         $(this).parent().parent().children().first().addClass('hide');
         $('#txth_doc_cartarecomendacion').val('');
-        //showAlert('NO_OK', 'error', {'wtmessage': objLang.Error_to_process_File__Try_again_, 'title': objLang.Error});   
+        //showAlert('NO_OK', 'error', {'wtmessage': objLang.Error_to_process_File__Try_again_, 'title': objLang.Error});
     }",
-                        "filebatchuploadcomplete" => "function (event, files, extra) { 
+                        "filebatchuploadcomplete" => "function (event, files, extra) {
         $(this).parent().parent().children().first().addClass('hide');
     }",
                         "filebatchuploadsuccess" => "function (event, data, previewId, index) {
@@ -599,12 +600,12 @@ financiero::registerTranslations();
         response = data.response, reader = data.reader;
         $(this).parent().parent().children().first().addClass('hide');
         var acciones = [{id: 'reloadpage', class: 'btn btn-primary', value: objLang.Accept, callback: 'reloadPage'}];
-        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});  
+        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});
     }",
                         "fileuploaded" => "function (event, data, previewId, index) {
         $(this).parent().parent().children().first().addClass('hide');
         var acciones = [{id: 'reloadpage', class: 'btn btn-primary', value: objLang.Accept, callback: 'reloadPage'}];
-        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});                              
+        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});
     }",
                     ],
                 ]);
@@ -612,7 +613,7 @@ financiero::registerTranslations();
             </div>
         </div>
         <div class="col-md-3 col-sm-3 col-xs-3 col-lg-3">
-            <div class="form-group">             
+            <div class="form-group">
                 <?php
                 if (!empty($arch9)) {
                     echo "<a href='" . Url::to(['/site/getimage', 'route' => "$arch9"]) . "' download='" . $arch9 . "' ><span class='glyphicon glyphicon-download-alt'></span>Descargar Pdf</a>";
@@ -622,7 +623,7 @@ financiero::registerTranslations();
         </div>
     </div>
 
-    <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12 doc_certificadolaboral"> 
+    <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12 doc_certificadolaboral">
         <div class="form-group">
             <label for="txth_doc_certificadolaboral" class="col-sm-3 col-md-3 col-xs-3 col-lg-3 control-label keyupmce"><?= Yii::t("formulario", "Certificado Laboral") ?></label>
             <div class="col-sm-6 col-md-6 col-xs-6 col-lg-6">
@@ -645,7 +646,7 @@ financiero::registerTranslations();
                         'uploadUrl' => Url::to(['/inscripcionposgrado/guardarinscripcionposgrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
-            return {"upload_file": true, "name_file": "doc_comprobante' . "_per_" . $per_id . '_' . date(Yii::$app->params["dateByDefault"]) . '"};
+                        return {"upload_file": true, "name_file": "doc_comprobante' . "_per_" . $per_id . '"};
         }',
                     ],
                     'pluginEvents' => [
@@ -656,9 +657,9 @@ financiero::registerTranslations();
                         "fileuploaderror" => "function (event, data, msg) {
         $(this).parent().parent().children().first().addClass('hide');
         $('#txth_doc_certificadolaboral').val('');
-        //showAlert('NO_OK', 'error', {'wtmessage': objLang.Error_to_process_File__Try_again_, 'title': objLang.Error});   
+        //showAlert('NO_OK', 'error', {'wtmessage': objLang.Error_to_process_File__Try_again_, 'title': objLang.Error});
     }",
-                        "filebatchuploadcomplete" => "function (event, files, extra) { 
+                        "filebatchuploadcomplete" => "function (event, files, extra) {
         $(this).parent().parent().children().first().addClass('hide');
     }",
                         "filebatchuploadsuccess" => "function (event, data, previewId, index) {
@@ -666,12 +667,12 @@ financiero::registerTranslations();
         response = data.response, reader = data.reader;
         $(this).parent().parent().children().first().addClass('hide');
         var acciones = [{id: 'reloadpage', class: 'btn btn-primary', value: objLang.Accept, callback: 'reloadPage'}];
-        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});  
+        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});
     }",
                         "fileuploaded" => "function (event, data, previewId, index) {
         $(this).parent().parent().children().first().addClass('hide');
         var acciones = [{id: 'reloadpage', class: 'btn btn-primary', value: objLang.Accept, callback: 'reloadPage'}];
-        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});                              
+        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});
     }",
                     ],
                 ]);
@@ -679,7 +680,7 @@ financiero::registerTranslations();
             </div>
         </div>
         <div class="col-md-3 col-sm-3 col-xs-3 col-lg-3">
-            <div class="form-group">               
+            <div class="form-group">
                 <?php
                 if (!empty($arch10)) {
                     echo "<a href='" . Url::to(['/site/getimage', 'route' => "$arch10"]) . "' download='" . $arch10 . "' ><span class='glyphicon glyphicon-download-alt'></span>Descargar Pdf</a>";
@@ -689,7 +690,7 @@ financiero::registerTranslations();
         </div>
     </div>
 
-    <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12 doc_certificadoingles cinteres"> 
+    <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12 doc_certificadoingles cinteres">
         <div class="form-group">
             <label for="txth_doc_certificadoingles" class="col-sm-3 col-md-3 col-xs-3 col-lg-3 control-label keyupmce"><?= Yii::t("formulario", "Certificado de Suficiencia en Inglés Nivel A2") ?></label>
             <div class="col-sm-6 col-md-6 col-xs-6 col-lg-6">
@@ -712,7 +713,7 @@ financiero::registerTranslations();
                         'uploadUrl' => Url::to(['/inscripcionposgrado/guardarinscripcionposgrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
-            return {"upload_file": true, "name_file": "doc_certificadoingles' . "_per_" . $per_id . '_' . date(Yii::$app->params["dateByDefault"]) . '"};
+                        return {"upload_file": true, "name_file": "doc_certificadoingles' . "_per_" . $per_id . '"};
         }',
                     ],
                     'pluginEvents' => [
@@ -723,9 +724,9 @@ financiero::registerTranslations();
                         "fileuploaderror" => "function (event, data, msg) {
         $(this).parent().parent().children().first().addClass('hide');
         $('#txth_doc_certificadoingles').val('');
-        //showAlert('NO_OK', 'error', {'wtmessage': objLang.Error_to_process_File__Try_again_, 'title': objLang.Error});   
+        //showAlert('NO_OK', 'error', {'wtmessage': objLang.Error_to_process_File__Try_again_, 'title': objLang.Error});
     }",
-                        "filebatchuploadcomplete" => "function (event, files, extra) { 
+                        "filebatchuploadcomplete" => "function (event, files, extra) {
         $(this).parent().parent().children().first().addClass('hide');
     }",
                         "filebatchuploadsuccess" => "function (event, data, previewId, index) {
@@ -733,12 +734,12 @@ financiero::registerTranslations();
         response = data.response, reader = data.reader;
         $(this).parent().parent().children().first().addClass('hide');
         var acciones = [{id: 'reloadpage', class: 'btn btn-primary', value: objLang.Accept, callback: 'reloadPage'}];
-        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});  
+        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});
     }",
                         "fileuploaded" => "function (event, data, previewId, index) {
         $(this).parent().parent().children().first().addClass('hide');
         var acciones = [{id: 'reloadpage', class: 'btn btn-primary', value: objLang.Accept, callback: 'reloadPage'}];
-        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});                              
+        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});
     }",
                     ],
                 ]);
@@ -746,7 +747,7 @@ financiero::registerTranslations();
             </div>
         </div>
         <div class="col-md-3 col-sm-3 col-xs-3 col-lg-3">
-            <div class="form-group">              
+            <div class="form-group">
                 <?php
                 if (!empty($arch11)) {
                     echo "<a href='" . Url::to(['/site/getimage', 'route' => "$arch11"]) . "' download='" . $arch11 . "' ><span class='glyphicon glyphicon-download-alt'></span>Descargar Pdf</a>";
@@ -756,11 +757,11 @@ financiero::registerTranslations();
         </div>
     </div>
 
-    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">   
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <h3><span id="lbl_Personeria"><?= Yii::t("formulario", "Documentos adicionales por homologación") ?></span></h3><br><br></br>
     </div>
 
-    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">   
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
             <label for="txth_doc_recordacad" class="col-sm-3 col-md-3 col-xs-3 col-lg-3 control-label keyupmce"><?= Yii::t("formulario", "Récord Académico") ?></label>
             <div class="col-sm-6 col-md-6 col-xs-6 col-lg-6">
@@ -783,7 +784,7 @@ financiero::registerTranslations();
                         'uploadUrl' => Url::to(['/inscripcionposgrado/guardarinscripcionposgrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
-            return {"upload_file": true, "name_file": "doc_recordacad' . "_per_" . $per_id . '_' . date(Yii::$app->params["dateByDefault"]) . '"};
+                        return {"upload_file": true, "name_file": "doc_recordacad' . "_per_" . $per_id . '"};
         }',
                     ],
                     'pluginEvents' => [
@@ -794,9 +795,9 @@ financiero::registerTranslations();
                         "fileuploaderror" => "function (event, data, msg) {
         $(this).parent().parent().children().first().addClass('hide');
         $('#txth_doc_recordacad').val('');
-        //showAlert('NO_OK', 'error', {'wtmessage': objLang.Error_to_process_File__Try_again_, 'title': objLang.Error});   
+        //showAlert('NO_OK', 'error', {'wtmessage': objLang.Error_to_process_File__Try_again_, 'title': objLang.Error});
     }",
-                        "filebatchuploadcomplete" => "function (event, files, extra) { 
+                        "filebatchuploadcomplete" => "function (event, files, extra) {
         $(this).parent().parent().children().first().addClass('hide');
     }",
                         "filebatchuploadsuccess" => "function (event, data, previewId, index) {
@@ -804,12 +805,12 @@ financiero::registerTranslations();
         response = data.response, reader = data.reader;
         $(this).parent().parent().children().first().addClass('hide');
         var acciones = [{id: 'reloadpage', class: 'btn btn-primary', value: objLang.Accept, callback: 'reloadPage'}];
-        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});  
+        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});
     }",
                         "fileuploaded" => "function (event, data, previewId, index) {
         $(this).parent().parent().children().first().addClass('hide');
         var acciones = [{id: 'reloadpage', class: 'btn btn-primary', value: objLang.Accept, callback: 'reloadPage'}];
-        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});                              
+        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});
     }",
                     ],
                 ]);
@@ -817,7 +818,7 @@ financiero::registerTranslations();
             </div>
         </div>
         <div class="col-md-3 col-sm-3 col-xs-3 col-lg-3">
-            <div class="form-group">               
+            <div class="form-group">
                 <?php
                 if (!empty($arch12)) {
                     echo "<a href='" . Url::to(['/site/getimage', 'route' => "$arch12"]) . "' download='" . $arch12 . "' ><span class='glyphicon glyphicon-download-alt'></span>Descargar Pdf</a>";
@@ -827,7 +828,7 @@ financiero::registerTranslations();
         </div>
     </div>
 
-    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 doc_nosancion">   
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 doc_nosancion">
         <div class="form-group">
             <label for="txth_doc_nosancion" class="col-sm-3 col-md-3 col-xs-3 col-lg-3 control-label keyupmce"><?= Yii::t("formulario", "Certificado de no haber sido sancionado (firma y sello original)") ?></label>
             <div class="col-sm-6 col-md-6 col-xs-6 col-lg-6">
@@ -850,7 +851,7 @@ financiero::registerTranslations();
                         'uploadUrl' => Url::to(['/inscripcionposgrado/guardarinscripcionposgrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
-            return {"upload_file": true, "name_file": "doc_nosancion' . "_per_" . $per_id . '_' . date(Yii::$app->params["dateByDefault"]) . '"};
+                        return {"upload_file": true, "name_file": "doc_nosancion' . "_per_" . $per_id . '"};
         }',
                     ],
                     'pluginEvents' => [
@@ -861,9 +862,9 @@ financiero::registerTranslations();
                         "fileuploaderror" => "function (event, data, msg) {
         $(this).parent().parent().children().first().addClass('hide');
         $('#txth_doc_nosancion').val('');
-        //showAlert('NO_OK', 'error', {'wtmessage': objLang.Error_to_process_File__Try_again_, 'title': objLang.Error});   
+        //showAlert('NO_OK', 'error', {'wtmessage': objLang.Error_to_process_File__Try_again_, 'title': objLang.Error});
     }",
-                        "filebatchuploadcomplete" => "function (event, files, extra) { 
+                        "filebatchuploadcomplete" => "function (event, files, extra) {
         $(this).parent().parent().children().first().addClass('hide');
     }",
                         "filebatchuploadsuccess" => "function (event, data, previewId, index) {
@@ -871,12 +872,12 @@ financiero::registerTranslations();
         response = data.response, reader = data.reader;
         $(this).parent().parent().children().first().addClass('hide');
         var acciones = [{id: 'reloadpage', class: 'btn btn-primary', value: objLang.Accept, callback: 'reloadPage'}];
-        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});  
+        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});
     }",
                         "fileuploaded" => "function (event, data, previewId, index) {
         $(this).parent().parent().children().first().addClass('hide');
         var acciones = [{id: 'reloadpage', class: 'btn btn-primary', value: objLang.Accept, callback: 'reloadPage'}];
-        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});                              
+        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});
     }",
                     ],
                 ]);
@@ -884,7 +885,7 @@ financiero::registerTranslations();
             </div>
         </div>
         <div class="col-md-3 col-sm-3 col-xs-3 col-lg-3">
-            <div class="form-group">               
+            <div class="form-group">
                 <?php
                 if (!empty($arch13)) {
                     echo "<a href='" . Url::to(['/site/getimage', 'route' => "$arch13"]) . "' download='" . $arch13 . "' ><span class='glyphicon glyphicon-download-alt'></span>Descargar Pdf</a>";
@@ -894,7 +895,7 @@ financiero::registerTranslations();
         </div>
     </div>
 
-    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 doc_syllabus">   
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 doc_syllabus">
         <div class="form-group">
             <label for="txth_doc_syllabus" class="col-sm-3 col-md-3 col-xs-3 col-lg-3 control-label keyupmce"><?= Yii::t("formulario", "Syllabus de materias aprobadas (Firma y sellos originales)") ?></label>
             <div class="col-sm-6 col-md-6 col-xs-6 col-lg-6">
@@ -917,7 +918,7 @@ financiero::registerTranslations();
                         'uploadUrl' => Url::to(['/inscripcionposgrado/guardarinscripcionposgrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
-            return {"upload_file": true, "name_file": "doc_syllabus' . "_per_" . $per_id . '_' . date(Yii::$app->params["dateByDefault"]) . '"};
+                        return {"upload_file": true, "name_file": "doc_syllabus' . "_per_" . $per_id . '"};
         }',
                     ],
                     'pluginEvents' => [
@@ -928,9 +929,9 @@ financiero::registerTranslations();
                         "fileuploaderror" => "function (event, data, msg) {
         $(this).parent().parent().children().first().addClass('hide');
         $('#txth_doc_syllabus').val('');
-        //showAlert('NO_OK', 'error', {'wtmessage': objLang.Error_to_process_File__Try_again_, 'title': objLang.Error});   
+        //showAlert('NO_OK', 'error', {'wtmessage': objLang.Error_to_process_File__Try_again_, 'title': objLang.Error});
     }",
-                        "filebatchuploadcomplete" => "function (event, files, extra) { 
+                        "filebatchuploadcomplete" => "function (event, files, extra) {
         $(this).parent().parent().children().first().addClass('hide');
     }",
                         "filebatchuploadsuccess" => "function (event, data, previewId, index) {
@@ -938,12 +939,12 @@ financiero::registerTranslations();
         response = data.response, reader = data.reader;
         $(this).parent().parent().children().first().addClass('hide');
         var acciones = [{id: 'reloadpage', class: 'btn btn-primary', value: objLang.Accept, callback: 'reloadPage'}];
-        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});  
+        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});
     }",
                         "fileuploaded" => "function (event, data, previewId, index) {
         $(this).parent().parent().children().first().addClass('hide');
         var acciones = [{id: 'reloadpage', class: 'btn btn-primary', value: objLang.Accept, callback: 'reloadPage'}];
-        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});                              
+        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});
     }",
                     ],
                 ]);
@@ -951,17 +952,17 @@ financiero::registerTranslations();
             </div>
         </div>
         <div class="col-md-3 col-sm-3 col-xs-3 col-lg-3">
-            <div class="form-group">                
+            <div class="form-group">
                 <?php
                 if (!empty($arch14)) {
                     echo "<a href='" . Url::to(['/site/getimage', 'route' => "$arch14"]) . "' download='" . $arch14 . "' ><span class='glyphicon glyphicon-download-alt'></span>Descargar Pdf</a>";
                 }
                 ?>
             </div>
-        </div> 
+        </div>
     </div>
 
-    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 doc_especievalorada">   
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 doc_especievalorada">
         <div class="form-group">
             <label for="txth_doc_especievalorada" class="col-sm-3 col-md-3 col-xs-3 col-lg-3 control-label keyupmce"><?= Yii::t("formulario", "Especie valorada por homologación") ?></label>
             <div class="col-sm-6 col-md-6 col-xs-6 col-lg-6">
@@ -984,7 +985,7 @@ financiero::registerTranslations();
                         'uploadUrl' => Url::to(['/inscripcionposgrado/guardarinscripcionposgrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
-            return {"upload_file": true, "name_file": "doc_especievalorada' . "_per_" . $per_id . '_' . date(Yii::$app->params["dateByDefault"]) . '"};
+                        return {"upload_file": true, "name_file": "doc_especievalorada' . "_per_" . $per_id . '"};
         }',
                     ],
                     'pluginEvents' => [
@@ -995,9 +996,9 @@ financiero::registerTranslations();
                         "fileuploaderror" => "function (event, data, msg) {
         $(this).parent().parent().children().first().addClass('hide');
         $('#txth_doc_especievalorada').val('');
-        //showAlert('NO_OK', 'error', {'wtmessage': objLang.Error_to_process_File__Try_again_, 'title': objLang.Error});   
+        //showAlert('NO_OK', 'error', {'wtmessage': objLang.Error_to_process_File__Try_again_, 'title': objLang.Error});
     }",
-                        "filebatchuploadcomplete" => "function (event, files, extra) { 
+                        "filebatchuploadcomplete" => "function (event, files, extra) {
         $(this).parent().parent().children().first().addClass('hide');
     }",
                         "filebatchuploadsuccess" => "function (event, data, previewId, index) {
@@ -1005,12 +1006,12 @@ financiero::registerTranslations();
         response = data.response, reader = data.reader;
         $(this).parent().parent().children().first().addClass('hide');
         var acciones = [{id: 'reloadpage', class: 'btn btn-primary', value: objLang.Accept, callback: 'reloadPage'}];
-        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});  
+        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});
     }",
                         "fileuploaded" => "function (event, data, previewId, index) {
         $(this).parent().parent().children().first().addClass('hide');
         var acciones = [{id: 'reloadpage', class: 'btn btn-primary', value: objLang.Accept, callback: 'reloadPage'}];
-        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});                              
+        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});
     }",
                     ],
                 ]);
@@ -1018,14 +1019,14 @@ financiero::registerTranslations();
             </div>
         </div>
         <div class="col-md-3 col-sm-3 col-xs-3 col-lg-3">
-            <div class="form-group">              
+            <div class="form-group">
                 <?php
                 if (!empty($arch15)) {
                     echo "<a href='" . Url::to(['/site/getimage', 'route' => "$arch15"]) . "' download='" . $arch15 . "' ><span class='glyphicon glyphicon-download-alt'></span>Descargar Pdf</a>";
                 }
                 ?>
             </div>
-        </div>  
+        </div>
     </div>
-     
+
 </form>

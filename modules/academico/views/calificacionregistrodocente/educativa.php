@@ -16,6 +16,7 @@ academico::registerTranslations();
             'arr_periodos' => $arr_periodos,
             'arr_unidad' => $arr_unidad,
             'arr_modalidad' => $arr_modalidad,
+            'arr_parcial' => $arr_parcial,
         ]);
         ?>
     </form>

@@ -1210,7 +1210,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
 
 
 
-                //FORM 1 datos personal
+            //FORM 1 datos personal
             $per_dni = $data['cedula'];
             $primer_nombre = ucwords(strtolower($data["primer_nombre"]));
             $segundo_nombre = ucwords(strtolower($data["segundo_nombre"]));
@@ -1416,6 +1416,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 }
 
                 $ipos_model = InscripcionPosgrado::findOne(['per_id' => $persona_model->per_id]);
+                $ipos_model->ipos_cedula = $per_dni;
                 $ipos_model->ipos_tipo_financiamiento = $tipo_financiamiento;
                 $ipos_model->ipos_ruta_doc_foto = $ipos_ruta_doc_foto;
                 $ipos_model->ipos_ruta_doc_dni = $ipos_ruta_doc_dni;
@@ -1439,12 +1440,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 $mod_percontacto = new PersonaContacto();
                 $contacto = $mod_percontacto->modificarPersonacontacto($per_id, $tpar_id, $pcon_nombre, $pcon_celular, $pcon_celular, $pcon_direccion);
 
-                /*$mod_inscripcionposgrado = new InscripcionPosgrado();
-                $gradoinscripcion = $mod_inscripcionposgrado->consultarDatosInscripcionContinuagrado($per_id);
-
-                $inscripcionposgrado = $mod_inscripcionposgrado->updateDataInscripcionposgrado($con, $per_id, $per_dni, $igra_ruta_doc_titulo, $igra_ruta_doc_dni, $igra_ruta_doc_certvota, $igra_ruta_doc_foto, $igra_ruta_doc_comprobantepago, $igra_ruta_doc_record, $igra_ruta_doc_certificado, $igra_ruta_doc_syllabus, $igra_ruta_doc_homologacion);*/
-
-                if ($contacto) {
+               if ($contacto) {
                         $exito = 1;
                     }
                     if ($exito) {

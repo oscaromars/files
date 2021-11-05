@@ -1201,7 +1201,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 if (isset($data["ipos_ruta_doc_homologacion"]) && $data["ipos_ruta_doc_homologacion"] != "") {
                     $arrIm = explode(".", basename($data["ipos_ruta_doc_homologacion"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                    $homologacion_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/doc_homologacion_per_" . $per_id . "." . $typeFile;
+                    $homologacion_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/doc_especievalorada_per_" . $per_id . "." . $typeFile;
                     $homologacion_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $homologacion_archivoOld, '' /*$timeSt*/);
                     $data["ipos_ruta_doc_homologacion"] = $homologacion_archivo;
                     if ($homologacion_archivo === false)

@@ -744,3 +744,21 @@ CREATE TABLE IF NOT EXISTS `empresa_correo` (
   `ecor_estado_logico` varchar(1) DEFAULT NULL,
   FOREIGN KEY (emp_id) REFERENCES `empresa`(emp_id)
 ) ;
+
+
+-- --------------------------------------------------------
+--
+-- Estructura de tabla para la tabla `log_errores`
+-- 
+CREATE TABLE db_asgard.`log_errores` (
+  `loge_id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `nombre_modulo` varchar(250) DEFAULT NULL,
+  `titulo_error` varchar(300) DEFAULT NULL,
+  `mensaje_error_1` mediumtext,
+  `datos` mediumtext,
+  `loge_estado` varchar(1) NOT NULL,
+  `loge_fecha_creacion` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `loge_fecha_actualizacion` timestamp NULL DEFAULT NULL,
+  `loge_estado_logico` varchar(1) NOT NULL,
+  PRIMARY KEY (`loge_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;

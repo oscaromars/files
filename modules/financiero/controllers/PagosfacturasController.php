@@ -963,25 +963,29 @@ class PagosfacturasController extends \app\components\CController {
                             //Aqui trae al estudiante y sus codigos
                             $estudiantes = $mod_pagos->traerestudianteautorizados($est_id);
 
-                            //print_r($estudiantes);
-
                             if (count($estudiantes) > 0) {
-                            //if (true) {
                                 $clientWS = Utilities::getWseducativa();
 
                                 if($clientWS != 0){
-                                    //El siguiente for es para revisar estudiante a estudiante
-                                    for ($i = 0; $i < count($estudiantes); $i++) { 
+                                    //El siguiente for es para revisar examen uno a uno
+                                    for ($i = 0; $i < count($estudiantes); $i++) {
                                         $est_id                  = $estudiantes[$i]['est_id'];
-                                        $uedu_usuario            = $estudiantes[$i]['uedu_usuario'];         
+                                        //Usuario Educativa
+                                        $uedu_usuario            = $estudiantes[$i]['uedu_usuario'];
+                                        //Curso Educativa
                                         $cedu_id                 = $estudiantes[$i]['cedu_id'];
+                                        //Materia
                                         $id_grupo                = $estudiantes[$i]['cedu_asi_id']; 
+                                        //Estado si esta autorizado o no en cartera
                                         $pago                    = $estudiantes[$i]['pago']; 
+                                        //Curso Educativa Estudiante
                                         $ceest_id                = $estudiantes[$i]['ceest_id']; 
                                         $ceest_estado_bloqueo    = $estudiantes[$i]['ceest_estado_bloqueo']; 
                                         $ceest_codigo_evaluacion = $estudiantes[$i]['ceest_codigo_evaluacion'];
                                         $unidad                  = $estudiantes[$i]['ceest_codigo_evaluacion'];
 
+                                        //Si el estudiante esta autorizado en cartera y tiene evaluacion procedo con la activacion
+                                        //a travez del web service
                                         if($pago == 'Autorizado' && $ceest_codigo_evaluacion != ''){
                                             $method = 'asignar_usuarios_alcance_prg_items';
 

@@ -9,9 +9,11 @@
 $(document).ready(function () {
     $("#txt_valor").val(0);
 
+    /*
     $('#btn_guardarpago').click(function () {
         guardarPagofactura();
     });
+    */
     $('#btn_grabar_rechazo').click(function () {
         rechazarPago();
     });
@@ -218,6 +220,9 @@ function guardarPagofactura() {
         }
     }
 
+    //Codigo para carga de loading popup
+    showLoadingPopup();
+
     //Pregunto si es pago stripe
     if($('#cmb_formapago').val() != 1 ){
         //Si es por documentos cargo la fecha y el documento
@@ -234,6 +239,8 @@ function guardarPagofactura() {
             requestHttpAjax(link, arrParams, function (response) {
                 showAlert(response.status, response.label, response.message);
                 //console.log(response);
+
+                hideLoadingPopup;
 
                 if(response.status == 'OK'){
                     setTimeout(function () {
@@ -265,6 +272,8 @@ function guardarPagofactura() {
                         requestHttpAjax(link, arrParams, function (response) {
                             response.message.closeaction = cancelar;
 
+                            hideLoadingPopup;
+                            
                             var cancelar = [{ callback: '', //funcion que debe ejecutar el boton
                               //paramCallback : ruta, //variable a ser llamada por la funcion anterior ej gotoPage(ruta)
                             }];

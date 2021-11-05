@@ -34,7 +34,7 @@ use PhpOffice\PhpWord\SimpleType\DocProtect;
 use PhpOffice\PhpWord\TemplateProcessor;
 use PhpOffice\PhpWord\Shared\Converter;
 
-
+use app\models\Log_errores;
 
 /**
  * Description of Utilities
@@ -1031,16 +1031,71 @@ class Utilities {
      * @author Galo Aguirre
      */
     public static function getWseducativa(){
-        
-        $client = new \SoapClient(Yii::$app->params["url"], 
-                                  array("login"    => Yii::$app->params["wsLogin"], 
-                                        "password" => Yii::$app->params["wsPassword"],
-                                        "trace"    => 1, "exceptions" => 0));
+        $contextOptions = array(
+            'ssl' => array(
+            'verify_peer' => false,
+            'verify_peer_name' => false,
+            'allow_self_signed' => true
+        ));
 
-        $client->setCredentials(Yii::$app->params["wsLogin"],
-                                Yii::$app->params["wsPassword"],
-                                "basic");
+        $sslContext = stream_context_create($contextOptions);
 
+        $client = 0;
+
+        $params =  array(
+            "login"    => Yii::$app->params["wsLogin"], 
+            "password" => Yii::$app->params["wsPassword"],
+            'trace' => 1,
+            'exceptions' => true,
+            'cache_wsdl' => WSDL_CACHE_NONE,
+            'soap_version'=>SOAP_1_1,
+            'stream_context' => $sslContext
+            );
+
+        try {
+            $client = new \SoapClient( Yii::$app->params["url"], $params );
+        } catch (\Exception $e) {
+            Self::logerror("getWseducativa",
+                            "Error de Conexion",
+                            $e->getMessage(),
+                            $e->getCode());
+            //var_dump(libxml_get_last_error());
+            //var_dump($proxy);
+             $client = 0;
+        } catch (\SoapFault $e) { // \
+            Self::logerror("getWseducativa",
+                            "Error de Conexion",
+                            $e->getMessage(),
+                            $e->getCode());
+            //var_dump(libxml_get_last_error());
+            //var_dump($proxy);
+             $client = 0;
+        }
         return $client;
     }//function getWseducativa
+
+    /**
+     * Realiza el ingreso de errores a la tabla de log
+     * Esta funcion se puede llamar a travez del modelo utilitites
+     * @access public
+     * @author Galo Aguirre
+     */
+    public static function logerror($nombremodulo,$tituloerror,$mensajerror,$datos){
+        //$con_asgard = \Yii::$app->db_asgard;
+
+        $mod_log = new Log_errores;
+        $mod_log->nombre_modulo      = $nombremodulo;   
+        $mod_log->titulo_error       = $tituloerror; 
+        $mod_log->mensaje_error_1    = $mensajerror;  
+        $mod_log->datos              = $datos;
+        $mod_log->loge_estado        = "1";
+        $mod_log->loge_estado_logico = "1";
+        $mod_log->save();
+
+        $message = array(
+            "wtmessage"     => "Registro realizado",
+            "title"         => "Log Errores",
+        );
+        return json_encode($message);
+    }//function lorerrores
 }

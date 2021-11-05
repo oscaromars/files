@@ -36,6 +36,7 @@ $(document).ready(function () {
 
     $('#cmb_idioma2').change(function () {
         var valor = $('#cmb_idioma2').val();
+        //alert ('assd. ' + valor);
         if (valor == 3) {
             $('#cmb_nivelidioma2').removeClass("PBvalidation");
             $('#txt_nombreidioma').addClass("PBvalidation");
@@ -43,7 +44,7 @@ $(document).ready(function () {
             $('#Divotroidioma').show();
             $('#Divotronivelidioma').show();
             $('#Dividiomas').hide();
-        } else if (valor == 2)
+        } else /*if (valor == 2)*/
         {
             $('#txt_nombreidioma').removeClass("PBvalidation");
             $('#cmb_nivelotroidioma').removeClass("PBvalidation");
@@ -157,6 +158,53 @@ $(document).ready(function () {
             }
         }, true);
     });
+
+    $("#txt_cedula").change(function(){
+        var link = $('#txth_base').val() + "/inscripcionposgrado/index";
+        var arrParams = new Object();
+        arrParams.cedulacons = $('#txt_cedula').val();
+        arrParams.getcedula = true;
+        requestHttpAjax(link, arrParams, function (response) {
+            if (response.status == "OK") {
+             data = response.message;
+             persids = data.persids;
+             if(persids == null){
+                var mensaje = {wtmessage: "La persona no esta registrado como aspirante, no se guardara la información", title: "Información"};
+                showAlert("NO_OK", "error", mensaje);
+                $('#txth_personaid').val('');
+                $('#Divboton').css('display', 'none');
+            }else{
+
+               $('#Divboton').css('display', 'block');
+               $('#txth_personaid').val(persids);
+             }
+            }
+        }, true);
+
+      });
+
+      $("#txt_pasaporte").change(function(){
+        var link = $('#txth_base').val() + "/inscripcionposgrado/index";
+        var arrParams = new Object();
+        arrParams.cedulacons = $('#txt_pasaporte').val();
+        arrParams.getcedula = true;
+        requestHttpAjax(link, arrParams, function (response) {
+            if (response.status == "OK") {
+             data = response.message;
+             persids = data.persids;
+             if(persids == null){
+                var mensaje = {wtmessage: "La persona no esta registrado como aspirante, no se guardara la información", title: "Información"};
+                showAlert("NO_OK", "error", mensaje);
+                $('#txth_personaid').val('');
+                $('#Divboton').css('display', 'none');
+            }else{
+                $('#Divboton').css('display', 'block');
+                $('#txth_personaid').val(persids);
+             }
+            }
+        }, true);
+
+      });
 
     // tabs create
     $('#paso1next').click(function () {
@@ -358,8 +406,10 @@ function guardarInscripcionPosgrado() {
     }
     if (arrParams.tipo_dni == 'CED') {
         arrParams.cedula = $('#txt_cedula').val();
+        arrParams.pasaporte = '';
     } else {
         arrParams.cedula = $('#txt_pasaporte').val();
+        arrParams.pasaporte = $('#txt_pasaporte').val();
     }
 
     //var pais = $('#cmb_pais_dom').val();
@@ -425,8 +475,10 @@ function guardarInscripcionPosgrado() {
     if (arrParams.tipo_idioma == 3) {
         arrParams.otroidioma = $('#txt_nombreidioma').val();
         arrParams.otronivel = $('#cmb_nivelotroidioma').val();
+        $('#txt_nombreidioma').addClass("PBvalidation");
     } else {
         arrParams.nivel2 = $('#cmb_nivelidioma2').val();
+        $('#txt_nombreidioma').removeClass("PBvalidation");
     }
 
     //Form2 Datos adicionales
@@ -490,7 +542,7 @@ function guardarInscripcionPosgrado() {
             } else {
                 /*if ($('#cmb_tipo_dni').val() == "CED")
                   {*/
-                    if ($('#txth_doc_certvota').val() == "") {
+                    if ($('#txth_doc_certvota').val() == "" && $('#cmb_nacionalidad').val() == 1) {
                         var mensaje = {wtmessage: "Debe adjuntar certificado de votación.", title: "Información"};
                         showAlert("NO_OK", "error", mensaje);
                     } else {
@@ -526,6 +578,41 @@ function guardarInscripcionPosgrado() {
                                                             var mensaje = {wtmessage: "Debe adjuntar Certificado Suficiencia Ingles.", title: "Información"};
                                                             showAlert("NO_OK", "error", mensaje);
                                                         } else{
+                                 if ($("#signup-hom").prop("checked") == true)
+                                {
+                                    if ($('#txth_doc_recordacad').val() == "") {
+                                        var mensaje = {wtmessage: "Debe adjuntar Record Académico.", title: "Información"};
+                                        showAlert("NO_OK", "error", mensaje);
+                                    } else{
+                                        if ($('#txth_doc_nosancion').val() == "") {
+                                            var mensaje = {wtmessage: "Debe adjuntar Certificado no ser sancionado.", title: "Información"};
+                                            showAlert("NO_OK", "error", mensaje);
+                                        }else{
+                                            if ($('#txth_doc_syllabus').val() == "") {
+                                                var mensaje = {wtmessage: "Debe adjuntar Syllabus de materias aprobadas.", title: "Información"};
+                                                showAlert("NO_OK", "error", mensaje);
+                                            }else{
+                                                if ($('#txth_doc_especievalorada').val() == "") {
+                                                    var mensaje = {wtmessage: "Debe adjuntar Especie valorada.", title: "Información"};
+                                                    showAlert("NO_OK", "error", mensaje);
+                                                }else{
+                                                if (!validateForm()) {
+                                                    requestHttpAjax(link, arrParams, function (response) {
+                                                        showAlert(response.status, response.label, response.message);
+                                                        if (response.status == "OK") {
+                                                            setTimeout(function() {
+                                                                    window.location.href = $('#txth_base').val() + "/inscripciongrado/index";
+                                                                }, 3000);
+                                                        }
+                                                    }, true);
+                                                }
+                                               }
+                                            }
+                                            }
+                                    }
+                                }// cierra if si radio es si
+                                else{
+
                                                                 if (!validateForm()) {
                                                                                 requestHttpAjax(link, arrParams, function (response) {
                                                                                     showAlert(response.status, response.label, response.message);
@@ -537,6 +624,8 @@ function guardarInscripcionPosgrado() {
                                                                                     }
                                                                                 }, true);
                                                                             }
+
+                                                            }
                                                               }
                                                             }
                                                       }

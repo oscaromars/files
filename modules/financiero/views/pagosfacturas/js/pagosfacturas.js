@@ -9,9 +9,11 @@
 $(document).ready(function () {
     $("#txt_valor").val(0);
 
+    /*
     $('#btn_guardarpago').click(function () {
         guardarPagofactura();
     });
+    */
     $('#btn_grabar_rechazo').click(function () {
         rechazarPago();
     });
@@ -218,6 +220,11 @@ function guardarPagofactura() {
         }
     }
 
+    //Codigo para carga de loading popup
+    showLoadingPopup();
+    $(".btnAccion").prop("disabled",true);
+
+
     //Pregunto si es pago stripe
     if($('#cmb_formapago').val() != 1 ){
         //Si es por documentos cargo la fecha y el documento
@@ -227,6 +234,7 @@ function guardarPagofactura() {
         if (arrParams.documento.length == 0) {
             var mensaje = {wtmessage: "Adjuntar Documento  : El campo no debe estar vacío.", title: "Error"};
             showAlert("NO_OK", "error", mensaje);
+            $(".btnAccion").prop("disabled",false);
             return false;
         }
 
@@ -234,6 +242,9 @@ function guardarPagofactura() {
             requestHttpAjax(link, arrParams, function (response) {
                 showAlert(response.status, response.label, response.message);
                 //console.log(response);
+
+                hideLoadingPopup;
+                $(".btnAccion").prop("disabled",false);
 
                 if(response.status == 'OK'){
                     setTimeout(function () {
@@ -258,12 +269,16 @@ function guardarPagofactura() {
 
                     var mensaje = {wtmessage: '<p>'+result.error.message+'</p>', title: "Error"};
                     showAlert("NO_OK", "error", mensaje);
+                    $(".btnAccion").prop("disabled",false);
                     return false;
                 } else {
                     arrParams.token = result.token.id;
                     if (!validateForm()) {
                         requestHttpAjax(link, arrParams, function (response) {
                             response.message.closeaction = cancelar;
+
+                            hideLoadingPopup;
+                            $(".btnAccion").prop("disabled",false);
 
                             var cancelar = [{ callback: '', //funcion que debe ejecutar el boton
                               //paramCallback : ruta, //variable a ser llamada por la funcion anterior ej gotoPage(ruta)
@@ -286,6 +301,7 @@ function guardarPagofactura() {
         }catch(err){
             var mensaje = {wtmessage: err+" ///catch", title: "Error"};
             showAlert("NO_OK", "error1", mensaje);
+            $(".btnAccion").prop("disabled",false);
             return false;
         }
     }//else

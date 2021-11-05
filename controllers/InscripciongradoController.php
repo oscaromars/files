@@ -168,8 +168,8 @@ class InscripciongradoController extends \yii\web\Controller {
                     }
                 }else {
                 return json_encode(['error' => Yii::t("notificaciones", "Error to process File ". basename($files['name']) ." Solo formato imagenes pdf, jpg, png.")]);
-                 }
-                //}
+                 //}
+                }
             }
 
             $con = \Yii::$app->db;
@@ -323,8 +323,7 @@ class InscripciongradoController extends \yii\web\Controller {
                 //Utilities::putMessageLogFile('per_id xXx.. ' .$per_id );
                 if ($per_id > 0) {
                     $model = new InscripcionGrado();
-                    //Nuevo Registro // si existe no guardar actualizar la data de persona se modifica
-                    //$regPersona = $mod_persona->insertarPersonaInscripciongrado($per_pri_nombre, $per_seg_nombre, $per_pri_apellido, $per_seg_apellido, $per_dni, $eciv_id, $can_id_nacimiento, $per_fecha_nacimiento, $per_celular, $per_correo, $per_domicilio_csec, $per_domicilio_ref, $per_domicilio_telefono, $pai_id_domicilio, $pro_id_domicilio, $can_id_domicilio, $per_nacionalidad,$per_trabajo_direccion);
+                    // persona ya exite se actualizan datos
                     $respPersona = $mod_persona->modificaPersonaInscripciongrado($per_pri_nombre, $per_seg_nombre, $per_pri_apellido, $per_seg_apellido, $per_dni, $eciv_id,  $can_id_nacimiento, $per_fecha_nacimiento, $per_celular, $per_correo, $per_domicilio_csec, $per_domicilio_ref, $per_domicilio_telefono, $pai_id_domicilio, $pro_id_domicilio, $can_id_domicilio, $per_nacionalidad, $per_trabajo_direccion);
                     //consultar si existe  la persona en la tabla inscripcion_grado
                     $resp_inscripcion = $model->consultarDatosInscripciongrado($per_id);
@@ -503,7 +502,7 @@ class InscripciongradoController extends \yii\web\Controller {
             $arr_tipparentesco = TipoParentesco::find()->select("tpar_id AS id, tpar_nombre AS value")->where(["tpar_estado_logico" => "1", "tpar_estado" => "1"])->asArray()->all();
             $mod_insgrado = new InscripcionGrado();
             $documentos = $mod_insgrado->ObtenerdocumentosInscripcionGrado($persona_model->per_id);
-            \app\models\Utilities::putMessageLogFile('ver el resultado del id:  '.$documentos['igra_ruta_doc_titulo']);
+            /*\app\models\Utilities::putMessageLogFile('ver el resultado del id:  '.$documentos['igra_ruta_doc_titulo']);
             \app\models\Utilities::putMessageLogFile('ver el resultado del id:  '.$documentos['igra_ruta_doc_dni']);
             \app\models\Utilities::putMessageLogFile('ver el resultado del id:  '.$documentos['igra_ruta_doc_certvota']);
             \app\models\Utilities::putMessageLogFile('ver el resultado del id:  '.$documentos['igra_ruta_doc_foto']);
@@ -512,7 +511,7 @@ class InscripciongradoController extends \yii\web\Controller {
             \app\models\Utilities::putMessageLogFile('ver el resultado del id:  '.$documentos['igra_ruta_doc_certificado']);
             \app\models\Utilities::putMessageLogFile('ver el resultado del id:  '.$documentos['igra_ruta_doc_syllabus']);
             \app\models\Utilities::putMessageLogFile('ver el resultado del id:  '.$documentos['igra_ruta_doc_homologacion']);
-
+            */
             $ViewFormTab4 = $this->renderPartial('ViewFormTab4', [
                 "arr_tipparentesco" => ArrayHelper::map($arr_tipparentesco, "id", "value"),
                 "arch1" => $documentos['igra_ruta_doc_titulo'],
@@ -874,10 +873,10 @@ class InscripciongradoController extends \yii\web\Controller {
 
                 //datos personales
                 $per_dni = $data['cedula'];
-                $per_pri_nombre = $data["primer_nombre"];
-                $per_seg_nombre = $data["segundo_nombre"];
-                $per_pri_apellido = $data["primer_apellido"];
-                $per_seg_apellido = $data["segundo_apellido"];
+                $per_pri_nombre = ucwords(strtolower($data["primer_nombre"]));
+                $per_seg_nombre = ucwords(strtolower($data["segundo_nombre"]));
+                $per_pri_apellido = ucwords(strtolower($data["primer_apellido"]));
+                $per_seg_apellido = ucwords(strtolower($data["segundo_apellido"]));
                 $can_id_nacimiento = $data["cuidad_nac"];
                 $per_fecha_nacimiento = $data["fecha_nac"];
                 $per_nacionalidad = $data["nacionalidad"];
@@ -887,14 +886,14 @@ class InscripciongradoController extends \yii\web\Controller {
                 $pai_id_domicilio = $data["pais"];
                 $pro_id_domicilio = $data["provincia"];
                 $can_id_domicilio = $data["canton"];
-                $per_domicilio_csec = $data["parroquia"];
-                $per_domicilio_ref = $data["dir_domicilio"];
+                $per_domicilio_csec = ucwords(strtolower($data["parroquia"]));
+                $per_domicilio_ref = ucwords(strtolower($data["dir_domicilio"]));
                 $per_celular = $data["celular"];
                 $per_domicilio_telefono = $data["telefono"];
-                $per_correo = $data["correo"];
+                $per_correo = ucwords(strtolower($data["correo"]));
 
                 //datos en caso de emergencias
-                $per_trabajo_direccion = $data["dir_trabajo"];
+                $per_trabajo_direccion = ucwords(strtolower($data["dir_trabajo"]));
                 $pcon_nombre = ucwords(strtolower($data["cont_emergencia"]));
                 $tpar_id = $data["parentesco"];
                 $pcon_celular = ucwords(strtolower($data["tel_emergencia"]));

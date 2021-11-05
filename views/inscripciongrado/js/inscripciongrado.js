@@ -152,7 +152,7 @@ $(document).ready(function () {
              data = response.message;
              persids = data.persids;
              if(persids == null){
-                var mensaje = {wtmessage: "La persona no esta regsitrado como aspirante, no se guardara la información", title: "Información"};
+                var mensaje = {wtmessage: "La persona no esta registrado como aspirante, no se guardara la información", title: "Información"};
                 showAlert("NO_OK", "error", mensaje);
                 $('#txth_personaid').val('');
                 $('#Divboton').css('display', 'none');
@@ -176,7 +176,7 @@ $(document).ready(function () {
              data = response.message;
              persids = data.persids;
              if(persids == null){
-                var mensaje = {wtmessage: "La persona no esta regsitrado como aspirante, no se guardara la información", title: "Información"};
+                var mensaje = {wtmessage: "La persona no esta vs como aspirante, no se guardara la información", title: "Información"};
                 showAlert("NO_OK", "error", mensaje);
                 $('#txth_personaid').val('');
                 $('#Divboton').css('display', 'none');
@@ -350,7 +350,7 @@ function guardarInscripcionGrado() {
                 showAlert("NO_OK", "error", mensaje);
             } else {
                 //if ($('#cmb_tipo_dni').val() == "CED") {
-                    if ($('#txth_doc_certvota').val() == "") {
+                    if ($('#txth_doc_certvota').val() == "" && $('#cmb_nacionalidad').val()) {
                         var mensaje = {wtmessage: "Debe adjuntar certificado de votación.", title: "Información"};
                         showAlert("NO_OK", "error", mensaje);
                     } else {
@@ -496,7 +496,7 @@ function editaspirantegrado() {
 }
 
 function updateaspirantegrado() {
-    var ID = $('#txth_igra_id').val();
+    //var ID = $('#txth_igra_id').val();
     var link = $('#txth_base').val() + "/inscripciongrado/update";
     var arrParams = new Object();
     arrParams.per_id = $("#frm_per_id").val();

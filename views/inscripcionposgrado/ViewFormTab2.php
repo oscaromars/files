@@ -33,7 +33,7 @@ use app\components\CFileInputAjax;
         <div class="form-group">
             <label for="txt_año_grado1View" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("inscripcionposgrado", "Año de Graduación Tercer Nivel") ?></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
-                <input type="text" class="form-control PBvalidation keyupmce" id="txt_año_grado1View" value="<?= $instruccion_model->eins_añogrado3ernivel ?>" data-type="alfanumerico" disabled="disabled" data-keydown="true" placeholder="<?= Yii::t("formulario", "Año de Graduación Tercer Nivel") ?>">
+                <input type="text" class="form-control PBvalidation keyupmce" id="txt_año_grado1View" value="<?= $instruccion_model->eins_aniogrado3ernivel ?>" data-type="alfanumerico" disabled="disabled" data-keydown="true" placeholder="<?= Yii::t("formulario", "Año de Graduación Tercer Nivel") ?>">
             </div>
         </div>
     </div>
@@ -58,7 +58,7 @@ use app\components\CFileInputAjax;
         <div class="form-group">
             <label for="txt_año_grado2View" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("inscripcionposgrado", "Año de Graduación Cuarto Nivel") ?></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
-                <input type="text" class="form-control PBvalidation keyupmce" id="txt_año_grado2View" value="<?= $instruccion_model->eins_añogrado4tonivel ?>" data-type="alfanumerico" disabled="disabled" data-keydown="true" placeholder="<?= Yii::t("formulario", "Año de Graduación Cuarto Nivel") ?>">
+                <input type="text" class="form-control PBvalidation keyupmce" id="txt_año_grado2View" value="<?= $instruccion_model->eins_aniogrado4tonivel ?>" data-type="alfanumerico" disabled="disabled" data-keydown="true" placeholder="<?= Yii::t("formulario", "Año de Graduación Cuarto Nivel") ?>">
             </div>
         </div>
     </div>
@@ -124,7 +124,7 @@ use app\components\CFileInputAjax;
         <div class="form-group">
             <label for="txt_añoingreso_empView" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("inscripcionposgrado", "Año de Ingreso") ?></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
-                <input type="text" class="form-control PBvalidation keyupmce" id="txt_añoingreso_empView" value="<?= $laboral_model->ilab_añoingreso_emp ?>" data-type="alfanumerico" disabled="disabled" data-keydown="true" placeholder="<?= Yii::t("formulario", "Año de Ingreso") ?>">
+                <input type="text" class="form-control PBvalidation keyupmce" id="txt_añoingreso_empView" value="<?= $laboral_model->ilab_anioingreso_emp ?>" data-type="alfanumerico" disabled="disabled" data-keydown="true" placeholder="<?= Yii::t("formulario", "Año de Ingreso") ?>">
             </div>
         </div>
     </div>

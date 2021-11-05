@@ -74,22 +74,22 @@ class EstudianteIdiomas extends \yii\db\ActiveRecord
     /**
      * Function consultaEstudianteinstruccion
      * @author  Lisbeth Gonzalez <analista.desarrollo@uteg.edu.ec>
-     * @property integer $userid       
-     * @return  
+     * @property integer $userid
+     * @return
      */
     public function consultarInfoIdiomasEst($per_id, $idi_id) {
         $con = \Yii::$app->db_inscripcion;
         $estado = 1;
 
         $sql = "
-                SELECT   
+                SELECT
                          count(*) as existe_idioma
-                FROM " . $con->dbname . ".estudiante_idiomas 
-                WHERE per_id = :per_id AND 
-                      idi_id = :idi_id AND 
+                FROM " . $con->dbname . ".estudiante_idiomas
+                WHERE per_id = :per_id AND
+                      idi_id = :idi_id AND
                       eidi_estado = :estado AND
                       eidi_estado_logico = :estado";
-                     
+
         $comando = $con->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
         $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
@@ -106,34 +106,34 @@ class EstudianteIdiomas extends \yii\db\ActiveRecord
             (per_id, idi_id, nidi_id, eidi_nombre_idioma, eidi_estado, eidi_fecha_modificacion, eidi_estado_logico) VALUES
             ($per_id, $idi_id, $nidi_id, '$eidi_nombre_idioma', 1, CURRENT_TIMESTAMP(), 1)";
 
-        
+
         $command = $con->createCommand($sql);
         $command->execute();
         return $con->getLastInsertID($con->dbname . '.estudiante_idiomas');
-        
+
     }
 
     public function modificarInfoIdiomaEst($per_id, $idi_id, $nidi_id, $eidi_nombre_idioma) {
         $con = \Yii::$app->db_inscripcion;
         $eidi_fecha_modificacion = date("Y-m-d H:i:s");
         $estado='1';
-        
+
         if ($trans !== null) {
             $trans = null; // si existe la transacción entonces no se crea una
         } else {
             $trans = $con->beginTransaction(); // si no existe la transacción entonces se crea una
         }
-        
+
         try {
             $comando = $con->createCommand
-                    ("UPDATE " . $con->dbname . ".estudiante_idiomas             
-                      SET 
-                        per_id =:per_id, 
-                        idi_id =:idi_id, 
+                    ("UPDATE " . $con->dbname . ".estudiante_idiomas
+                      SET
+                        per_id =:per_id,
+                        idi_id =:idi_id,
                         nidi_id =:nidi_id,
-                        eidi_nombre_idioma =:eidi_nombre_idioma, 
+                        eidi_nombre_idioma =:eidi_nombre_idioma,
                         eidi_fecha_modificacion =:eidi_fecha_modificacion
-                      WHERE 
+                      WHERE
                         per_id = :per_id AND
                         eidi_estado = :estado AND
                         eidi_estado_logico = :estado");
@@ -144,7 +144,7 @@ class EstudianteIdiomas extends \yii\db\ActiveRecord
             $comando->bindParam(":eidi_fecha_modificacion", $eidi_fecha_modificacion, \PDO::PARAM_STR);
             $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
             $response = $comando->execute();
-            
+
             if ($trans !== null)
                 $trans->commit();
             return $response;
@@ -156,9 +156,9 @@ class EstudianteIdiomas extends \yii\db\ActiveRecord
     }
 
     public function getAllestudianteidiomasGrid($per_id, $onlyData=false){
-        \app\models\Utilities::putMessageLogFile('traer el per_id: ' .$per_id); 
+        \app\models\Utilities::putMessageLogFile('traer el per_id: ' .$per_id);
         $con_inscripcion = \Yii::$app->db_inscripcion;
-        $sql = "SELECT 
+        $sql = "SELECT
                     eidi_id as Ids,
                     eidi.per_id,
                     eidi.idi_id as idi,
@@ -169,7 +169,7 @@ class EstudianteIdiomas extends \yii\db\ActiveRecord
                      inner join db_general.idioma idi on idi.idi_id = eidi.idi_id
                      inner join db_general.nivel_idioma nidi on nidi.nidi_id = eidi.nidi_id
                 WHERE eidi.per_id = :per_id and
-                      eidi.eidi_estado_logico = 1 and 
+                      eidi.eidi_estado_logico = 1 and
                       eidi.eidi_estado = 1";
         $comando = $con_inscripcion->createCommand($sql);
         $comando->bindParam(':per_id', $per_id, \PDO::PARAM_INT);

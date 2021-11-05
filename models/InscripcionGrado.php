@@ -192,8 +192,9 @@ class InscripcionGrado extends \yii\db\ActiveRecord
 
     public function insertarDataInscripciongrado($per_id, $unidad, $carrera, $modalidad, $periodo, $per_dni, $data) {
         $con = \Yii::$app->db_inscripcion;
-        \app\models\Utilities::putMessageLogFile('datos de archivo cargados:' . $data['igra_ruta_doc_titulo']);
-        \app\models\Utilities::putMessageLogFile('id de persona:' . $data);
+        //\app\models\Utilities::putMessageLogFile('datos de archivo cargados:' . $data['igra_ruta_doc_titulo']);
+        //\app\models\Utilities::putMessageLogFile('id de persona:' . $data);
+
         $igra_ruta_doc_titulo = $data['igra_ruta_doc_titulo'];
         $igra_ruta_doc_dni = $data['igra_ruta_doc_dni'];
         $igra_ruta_doc_certvota = $data['igra_ruta_doc_certvota'];
@@ -207,7 +208,7 @@ class InscripcionGrado extends \yii\db\ActiveRecord
         $igra_mensaje2 = $data['igra_mensaje2'];
 
         $sql = "INSERT INTO " . $con->dbname . ".inscripcion_grado
-            (per_id, uaca_id, eaca_id, mod_id, paca_id, igra_cedula, igra_metodo_ingreso, igra_ruta_doc_titulo, igra_ruta_doc_dni, igra_ruta_doc_certvota, igra_ruta_doc_foto, igra_ruta_doc_comprobantepago, igra_ruta_doc_recordacademico, igra_ruta_doc_certificado, igra_ruta_doc_syllabus, igra_ruta_doc_homologacion, igra_mensaje1, igra_mensaje2, igra_estado, igra_fecha_modificacion, igra_estado_logico)VALUES
+            (per_id, uaca_id, eaca_id, mod_id, paca_id, igra_cedula, igra_metodo_ingreso, igra_ruta_doc_titulo, igra_ruta_doc_dni, igra_ruta_doc_certvota, igra_ruta_doc_foto, igra_ruta_doc_comprobantepago, igra_ruta_doc_recordacademico, igra_ruta_doc_certificado, igra_ruta_doc_syllabus, igra_ruta_doc_homologacion, igra_mensaje1, igra_mensaje2, igra_estado, igra_fecha_creacion, igra_estado_logico)VALUES
             (:per_id, :uaca_id, :eaca_id, :mod_id, :paca_id, :per_dni, :igra_metodo_ingreso, :igra_ruta_doc_titulo, :igra_ruta_doc_dni, :igra_ruta_doc_certvota, :igra_ruta_doc_foto, :igra_ruta_doc_comprobantepago, :igra_ruta_doc_record, :igra_ruta_doc_certificado, :igra_ruta_doc_syllabus, :igra_ruta_doc_homologacion, :igra_mensaje1, :igra_mensaje2, 1, CURRENT_TIMESTAMP(), 1)";
 
         $met_ing = 0;
@@ -242,8 +243,7 @@ class InscripcionGrado extends \yii\db\ActiveRecord
     }
 
     public function updateDataInscripciongrado($con, $per_id, $per_dni, $igra_ruta_doc_titulo, $igra_ruta_doc_dni, $igra_ruta_doc_certvota, $igra_ruta_doc_foto, $igra_ruta_doc_comprobantepago, $igra_ruta_doc_record, $igra_ruta_doc_certificado, $igra_ruta_doc_syllabus, $igra_ruta_doc_homologacion) {
-        //\app\models\Utilities::putMessageLogFile('datos de archivo cargados:' . $data['igra_ruta_doc_certvota']);
-        \app\models\Utilities::putMessageLogFile('igra_ruta_doc_certvota:  '.$igra_ruta_doc_certvota);
+        //\app\models\Utilities::putMessageLogFile('igra_ruta_doc_certvota:  '.$igra_ruta_doc_certvota);
         $imagenes = "";
         $fecha_modificacion = date(Yii::$app->params["dateTimeByDefault"]);
 
@@ -338,8 +338,6 @@ class InscripcionGrado extends \yii\db\ActiveRecord
     public function consultarDatosInscripciongrado($per_id) {
         $con = \Yii::$app->db_inscripcion;
         $estado = 1;
-        //$estado_precio = 'A';
-
         $sql = "
                 SELECT
                         count(*) as existe_inscripcion
@@ -351,7 +349,6 @@ class InscripcionGrado extends \yii\db\ActiveRecord
         $comando = $con->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
         $comando->bindParam(":per_id", $per_id, \PDO::PARAM_STR);
-        //$comando->bindParam(":estado_precio", $estado_precio, \PDO::PARAM_STR);
         $resultData = $comando->queryOne();
         return $resultData;
     }

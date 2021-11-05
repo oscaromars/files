@@ -11,10 +11,10 @@ use Yii;
  * @property int $per_id
  * @property string $eins_titulo3ernivel
  * @property string $eins_institucion3ernivel
- * @property string $eins_añogrado3ernivel
+ * @property string $eins_aniogrado3ernivel
  * @property string $eins_titulo4tonivel
  * @property string $eins_institucion4tonivel
- * @property string $eins_añogrado4tonivel
+ * @property string $eins_aniogrado4tonivel
  * @property string $eins_estado
  * @property string $eins_fecha_creacion
  * @property string $eins_fecha_modificacion
@@ -49,7 +49,7 @@ class EstudianteInstruccion extends \yii\db\ActiveRecord
             [['eins_fecha_creacion', 'eins_fecha_modificacion'], 'safe'],
             [['eins_titulo3ernivel', 'eins_titulo4tonivel'], 'string', 'max' => 200],
             [['eins_institucion3ernivel', 'eins_institucion4tonivel'], 'string', 'max' => 150],
-            [['eins_añogrado3ernivel', 'eins_añogrado4tonivel'], 'string', 'max' => 50],
+            [['eins_aniogrado3ernivel', 'eins_aniogrado4tonivel'], 'string', 'max' => 50],
             [['eins_estado', 'eins_estado_logico'], 'string', 'max' => 1],
         ];
     }
@@ -64,10 +64,10 @@ class EstudianteInstruccion extends \yii\db\ActiveRecord
             'per_id' => 'Per ID',
             'eins_titulo3ernivel' => 'Eins Titulo3ernivel',
             'eins_institucion3ernivel' => 'Eins Institucion3ernivel',
-            'eins_añogrado3ernivel' => 'Eins Añogrado3ernivel',
+            'eins_aniogrado3ernivel' => 'Eins Aniogrado3ernivel',
             'eins_titulo4tonivel' => 'Eins Titulo4tonivel',
             'eins_institucion4tonivel' => 'Eins Institucion4tonivel',
-            'eins_añogrado4tonivel' => 'Eins Añogrado4tonivel',
+            'eins_aniogrado4tonivel' => 'Eins Aniogrado4tonivel',
             'eins_estado' => 'Eins Estado',
             'eins_fecha_creacion' => 'Eins Fecha Creacion',
             'eins_fecha_modificacion' => 'Eins Fecha Modificacion',
@@ -78,23 +78,23 @@ class EstudianteInstruccion extends \yii\db\ActiveRecord
     /**
      * Function consultaEstudianteinstruccion
      * @author  Lisbeth Gonzalez <analista.desarrollo@uteg.edu.ec>
-     * @property integer $userid       
-     * @return  
+     * @property integer $userid
+     * @return
      */
-   
+
 
     public function consultarEstInstruccion($per_id) {
         $con = \Yii::$app->db_inscripcion;
         $estado = 1;
 
         $sql = "
-                SELECT   
+                SELECT
                          count(*) as existe_instruccion
-                FROM " . $con->dbname . ".estudiante_instruccion 
-                WHERE per_id = :per_id AND 
+                FROM " . $con->dbname . ".estudiante_instruccion
+                WHERE per_id = :per_id AND
                      eins_estado = :estado AND
                      eins_estado_logico = :estado";
-                     
+
         $comando = $con->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
         $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
@@ -107,54 +107,54 @@ class EstudianteInstruccion extends \yii\db\ActiveRecord
         $con = \Yii::$app->db_inscripcion;
 
         $sql = "INSERT INTO " . $con->dbname . ".estudiante_instruccion
-            (per_id, eins_titulo3ernivel, eins_institucion3ernivel, eins_añogrado3ernivel, eins_titulo4tonivel, eins_institucion4tonivel, eins_añogrado4tonivel, eins_estado, eins_fecha_modificacion, eins_estado_logico) VALUES
+            (per_id, eins_titulo3ernivel, eins_institucion3ernivel, eins_aniogrado3ernivel, eins_titulo4tonivel, eins_institucion4tonivel, eins_aniogrado4tonivel, eins_estado, eins_fecha_modificacion, eins_estado_logico) VALUES
             ($per_id, '$titulo_ter', '$universidad_tercer', '$grado_tercer', '$titulo_cuarto', '$universidad_cuarto', '$grado_cuarto', 1, CURRENT_TIMESTAMP(), 1)";
 
-        
+
         $command = $con->createCommand($sql);
         $command->execute();
         return $con->getLastInsertID($con->dbname . '.estudiante_instruccion');
-        
+
     }
 
     public function modificarEstudianteinstruccion($per_id, $titulo_ter, $universidad_tercer, $grado_tercer, $titulo_cuarto, $universidad_cuarto, $grado_cuarto) {
         $con = \Yii::$app->db_inscripcion;
         $eins_fecha_modificacion = date("Y-m-d H:i:s");
         $estado='1';
-        
+
         if ($trans !== null) {
             $trans = null; // si existe la transacción entonces no se crea una
         } else {
             $trans = $con->beginTransaction(); // si no existe la transacción entonces se crea una
         }
-        
+
         try {
             $comando = $con->createCommand
-                    ("UPDATE " . $con->dbname . ".estudiante_instruccion             
-                      SET 
-                        eins_id =:eins_id,    
+                    ("UPDATE " . $con->dbname . ".estudiante_instruccion
+                      SET
+                        eins_id =:eins_id,
                         eins_titulo3ernivel =:eins_titulo3ernivel,
                         eins_institucion3ernivel =:eins_institucion3ernivel,
-                        eins_añogrado3ernivel =:eins_añogrado3ernivel,
+                        eins_aniogrado3ernivel =:eins_añogrado3ernivel,
                         eins_titulo4tonivel =:eins_titulo4tonivel,
                         eins_institucion4tonivel =:eins_institucion4tonivel,
-                        eins_añogrado4tonivel =:eins_añogrado4tonivel,                        
+                        eins_aniogrado4tonivel =:eins_aniogrado4tonivel,
                         eins_fecha_modificacion =:eins_fecha_modificacion
-                      WHERE 
+                      WHERE
                         per_id =:per_id AND
                         eins_estado =:estado AND
                         eins_estado_logico =:estado");
             $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
             $comando->bindParam(":eins_titulo3ernivel", $titulo_ter, \PDO::PARAM_STR);
             $comando->bindParam(":eins_institucion3ernivel", $universidad_tercer, \PDO::PARAM_STR);
-            $comando->bindParam(":eins_añogrado3ernivel", $grado_tercer, \PDO::PARAM_STR);
+            $comando->bindParam(":eins_aninogrado3ernivel", $grado_tercer, \PDO::PARAM_STR);
             $comando->bindParam(":eins_titulo4tonivel", $titulo_cuarto, \PDO::PARAM_STR);
             $comando->bindParam(":eins_institucion4tonivel", $universidad_cuarto, \PDO::PARAM_STR);
-            $comando->bindParam(":eins_añogrado4tonivel", $grado_cuarto, \PDO::PARAM_STR);
+            $comando->bindParam(":eins_aniogrado4tonivel", $grado_cuarto, \PDO::PARAM_STR);
             $comando->bindParam(":eins_fecha_modificacion", $eins_fecha_modificacion, \PDO::PARAM_STR);
             $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
             $response = $comando->execute();
-            
+
             if ($trans !== null)
                 $trans->commit();
             return $response;
@@ -163,5 +163,5 @@ class EstudianteInstruccion extends \yii\db\ActiveRecord
                 $trans->rollback();
             return FALSE;
         }
-    } 
+    }
 }

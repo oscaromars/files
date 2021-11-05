@@ -97,7 +97,7 @@ return [
 
 	/************************************************************************/
 	/***** Valores para Conexion al WS ****************/
-	'url' => "https://campusvirtual.uteg.edu.ec/soap/?wsdl=true",
+	'url' => "https://campusvirtual1.uteg.edu.ec/soap/?wsdl=true",
 	'wsLogin' => "webservice",
 	'wsPassword' => "WxrrvTt8",
 	/************************************************************************/

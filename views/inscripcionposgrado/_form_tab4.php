@@ -12,6 +12,7 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
           </div>
           </div>';
 ?>
+<?= Html::hiddenInput('txth_personaid', '', ['id' => 'txth_personaid']); ?>
 <form class="form-horizontal">
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <h3><span id="lbl_datos4"><?= Yii::t("formulario", "Documentación") ?></span></h3>
@@ -50,7 +51,8 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                         'uploadUrl' => Url::to(['/inscripcionposgrado/guardarinscripcionposgrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
-            return {"upload_file": true, "name_file": "doc_foto' . "_per_" . $per_id . '_' . date(Yii::$app->params["dateByDefault"]) . '"};
+                        var personaid = $("#txth_personaid").val();
+                        return {"upload_file": true, "name_file": "doc_foto_per_" + personaid};
         }',
                     ],
                     'pluginEvents' => [
@@ -107,7 +109,8 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                         'uploadUrl' => Url::to(['/inscripcionposgrado/guardarinscripcionposgrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
-            return {"upload_file": true, "name_file": "doc_dni' . "_per_" . $per_id . '_' . date(Yii::$app->params["dateByDefault"]) . '"};
+                        var personaid = $("#txth_personaid").val();
+                        return {"upload_file": true, "name_file": "doc_dni_per_" + personaid};
         }',
                     ],
                     'pluginEvents' => [
@@ -164,7 +167,8 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                         'uploadUrl' => Url::to(['/inscripcionposgrado/guardarinscripcionposgrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
-            return {"upload_file": true, "name_file": "doc_certvota' . "_per_" . $per_id . '_' . date(Yii::$app->params["dateByDefault"]) . '"};
+                        var personaid = $("#txth_personaid").val();
+                        return {"upload_file": true, "name_file": "doc_certvota_per_" + personaid};
         }',
                     ],
                     'pluginEvents' => [
@@ -221,7 +225,8 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                         'uploadUrl' => Url::to(['/inscripcionposgrado/guardarinscripcionposgrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
-            return {"upload_file": true, "name_file": "doc_titulo' . "_per_" . $per_id . '_' . date(Yii::$app->params["dateByDefault"]) . '"};
+                        var personaid = $("#txth_personaid").val();
+                        return {"upload_file": true, "name_file": "doc_titulo_per_" + personaid};
         }',
                     ],
                     'pluginEvents' => [
@@ -278,7 +283,8 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                         'uploadUrl' => Url::to(['/inscripcionposgrado/guardarinscripcionposgrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
-            return {"upload_file": true, "name_file": "doc_comprobante' . "_per_" . $per_id . '_' . date(Yii::$app->params["dateByDefault"]) . '"};
+                        var personaid = $("#txth_personaid").val();
+                        return {"upload_file": true, "name_file": "doc_comprobante_per_" + personaid};
         }',
                     ],
                     'pluginEvents' => [
@@ -335,7 +341,8 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                         'uploadUrl' => Url::to(['/inscripcionposgrado/guardarinscripcionposgrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
-            return {"upload_file": true, "name_file": "doc_record1' . "_per_" . $per_id . '_' . date(Yii::$app->params["dateByDefault"]) . '"};
+                        var personaid = $("#txth_personaid").val();
+                        return {"upload_file": true, "name_file": "doc_record1_per_" + personaid};
         }',
                     ],
                     'pluginEvents' => [
@@ -392,7 +399,8 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                         'uploadUrl' => Url::to(['/inscripcionposgrado/guardarinscripcionposgrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
-            return {"upload_file": true, "name_file": "doc_senescyt' . "_per_" . $per_id . '_' . date(Yii::$app->params["dateByDefault"]) . '"};
+                        var personaid = $("#txth_personaid").val();
+                        return {"upload_file": true, "name_file": "doc_senescyt_per_" + personaid};
         }',
                     ],
                     'pluginEvents' => [
@@ -450,7 +458,8 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                         'uploadUrl' => Url::to(['/inscripcionposgrado/guardarinscripcionposgrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
-            return {"upload_file": true, "name_file": "doc_hojavida' . "_per_" . $per_id . '_' . date(Yii::$app->params["dateByDefault"]) . '"};
+                        var personaid = $("#txth_personaid").val();
+                        return {"upload_file": true, "name_file": "doc_hojavida_per_" + personaid};
         }',
                     ],
                     'pluginEvents' => [
@@ -508,7 +517,8 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                         'uploadUrl' => Url::to(['/inscripcionposgrado/guardarinscripcionposgrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
-            return {"upload_file": true, "name_file": "doc_comprobante' . "_per_" . $per_id . '_' . date(Yii::$app->params["dateByDefault"]) . '"};
+                        var personaid = $("#txth_personaid").val();
+                        return {"upload_file": true, "name_file": "doc_comprobante_per_" + personaid};
         }',
                     ],
                     'pluginEvents' => [
@@ -565,7 +575,8 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                         'uploadUrl' => Url::to(['/inscripcionposgrado/guardarinscripcionposgrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
-            return {"upload_file": true, "name_file": "doc_comprobante' . "_per_" . $per_id . '_' . date(Yii::$app->params["dateByDefault"]) . '"};
+                        var personaid = $("#txth_personaid").val();
+                        return {"upload_file": true, "name_file": "doc_comprobante_per_" + personaid};
         }',
                     ],
                     'pluginEvents' => [
@@ -622,7 +633,8 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                         'uploadUrl' => Url::to(['/inscripcionposgrado/guardarinscripcionposgrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
-            return {"upload_file": true, "name_file": "doc_certificadoingles' . "_per_" . $per_id . '_' . date(Yii::$app->params["dateByDefault"]) . '"};
+                        var personaid = $("#txth_personaid").val();
+                        return {"upload_file": true, "name_file": "doc_certificadoingles_per_" + personaid};
         }',
                     ],
                     'pluginEvents' => [
@@ -717,7 +729,8 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                                 'uploadUrl' => Url::to(['/inscripcionposgrado/guardarinscripcionposgrado']),
                                 'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                                 'uploadExtraData' => 'javascript:function (previewId,index) {
-                    return {"upload_file": true, "name_file": "doc_recordacad' . "_per_" . $per_id . '_' . date(Yii::$app->params["dateByDefault"]) . '"};
+                                var personaid = $("#txth_personaid").val();
+                                return {"upload_file": true, "name_file": "doc_recordacad_per_" + personaid};
                 }',
                             ],
                             'pluginEvents' => [
@@ -774,7 +787,8 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                                 'uploadUrl' => Url::to(['/inscripcionposgrado/guardarinscripcionposgrado']),
                                 'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                                 'uploadExtraData' => 'javascript:function (previewId,index) {
-                    return {"upload_file": true, "name_file": "doc_nosancion' . "_per_" . $per_id . '_' . date(Yii::$app->params["dateByDefault"]) . '"};
+                                var personaid = $("#txth_personaid").val();
+                                return {"upload_file": true, "name_file": "doc_nosancion_per_" + personaid};
                 }',
                             ],
                             'pluginEvents' => [
@@ -831,7 +845,8 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                                 'uploadUrl' => Url::to(['/inscripcionposgrado/guardarinscripcionposgrado']),
                                 'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                                 'uploadExtraData' => 'javascript:function (previewId,index) {
-                    return {"upload_file": true, "name_file": "doc_syllabus' . "_per_" . $per_id . '_' . date(Yii::$app->params["dateByDefault"]) . '"};
+                                var personaid = $("#txth_personaid").val();
+                                return {"upload_file": true, "name_file": "doc_syllabus_per_" + personaid};
                 }',
                             ],
                             'pluginEvents' => [
@@ -888,7 +903,8 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                                 'uploadUrl' => Url::to(['/inscripcionposgrado/guardarinscripcionposgrado']),
                                 'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                                 'uploadExtraData' => 'javascript:function (previewId,index) {
-                    return {"upload_file": true, "name_file": "doc_especievalorada' . "_per_" . $per_id . '_' . date(Yii::$app->params["dateByDefault"]) . '"};
+                                var personaid = $("#txth_personaid").val();
+                                return {"upload_file": true, "name_file": "doc_especievalorada_per_" + personaid};
                 }',
                             ],
                             'pluginEvents' => [

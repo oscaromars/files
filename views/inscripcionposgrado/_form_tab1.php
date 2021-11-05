@@ -79,7 +79,7 @@ if (!empty($per_cedula)) {
             </div>
         </div>
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-            <div id="Divcedula">
+            <div class="form-group" id="Divcedula">
                 <label for="txt_cedula" class="col-sm-3 control-label"><?= Yii::t("formulario", "Cédula/Pasaporte") ?> <span class="text-danger">*</span></label>
                 <div class="col-sm-7">
                     <input type="text" maxlength="10" class="form-control PBvalidation keyupmce" id="txt_cedula" data-type="number" data-keydown="true" placeholder="<?= Yii::t("formulario", "National identity document") ?>">
@@ -87,7 +87,7 @@ if (!empty($per_cedula)) {
             </div>
         </div>
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-            <div style="display: none;" id="Divpasaporte">
+            <div class="form-group" style="display: none;" id="Divpasaporte">
                 <label for="txt_pasaporte" class="col-sm-3 control-label"><?= Yii::t("formulario", "Cédula/Pasaporte") ?> <span class="text-danger">*</span></label>
                 <div class="col-sm-7">
                     <input type="text" maxlength="15" class="form-control keyupmce" id="txt_pasaporte" data-type="alfanumerico" data-keydown="true" placeholder="<?= Yii::t("formulario", "Passport") ?>">
@@ -267,7 +267,7 @@ if (!empty($per_cedula)) {
     </div>
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="col-md-10"></div>
-        <div class="col-md-2">
+        <div class="col-md-2" style="display: none;" id="Divboton">
             <a id="paso1next" href="javascript:" class="btn btn-primary btn-block"> <?= Yii::t("formulario", "Next") ?> <span class="glyphicon glyphicon-menu-right"></span></a>
         </div>
     </div>

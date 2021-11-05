@@ -2513,6 +2513,7 @@ ADD INDEX `index_rpm` (`rpm_id` ASC);
 ;
 
 
+
 /*-- tabla que registra las veces que el docente registra las notas, por si hay equivocacipón del docente poder registrar las notas --*/
 CREATE TABLE `registro_bitacora_nota` (
   `rbno_id` bigint(20) NOT NULL AUTO_INCREMENT primary key,
@@ -2528,3 +2529,35 @@ CREATE TABLE `registro_bitacora_nota` (
   KEY `dcal_id` (`dcal_id`),
   CONSTRAINT `registro_bitacora_nota_ibfk_1` FOREIGN KEY (`dcal_id`) REFERENCES `detalle_calificacion` (`dcal_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8
+
+-- --------------------------------------------------------
+-- 
+-- Estructura de tabla para la tabla `temp_impagos_educativa`
+-- --------------------------------------------------------
+
+create table if not exists `temp_impagos_educativa` (
+  `temp_usuedu` bigint(20) not null auto_increment primary key,
+  `temp_usuario_ingreso` bigint(20) not null,
+  `temp_fecha_creacion` timestamp not null default current_timestamp
+);
+
+-- --------------------------------------------------------
+-- 
+-- Estructura de tabla para la tabla `cron_estudiantes_educativa`
+-- --------------------------------------------------------
+
+create table if not exists `cron_estudiantes_educativa` (
+  `croe_id` bigint(20) not null auto_increment primary key,
+  `croe_mod_id` bigint(20)  not null,  
+  `croe_paca_id` bigint(20)  not null, 
+  `croe_uaca_id` bigint(20)  not null, 
+  `croe_fecha_ejecucion` timestamp null default null,
+  `croe_exec` varchar(1) not null,
+  `croe_usuario_ingreso` bigint(20) not null,
+  `croe_usuario_modifica` bigint(20)  null,
+  `croe_estado` varchar(1) not null,
+  `croe_fecha_creacion` timestamp not null default current_timestamp,
+  `croe_fecha_modificacion` timestamp null default null,
+  `croe_estado_logico` varchar(1) not null
+);
+

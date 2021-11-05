@@ -542,7 +542,7 @@ function guardarInscripcionPosgrado() {
             } else {
                 /*if ($('#cmb_tipo_dni').val() == "CED")
                   {*/
-                    if ($('#txth_doc_certvota').val() == "") {
+                    if ($('#txth_doc_certvota').val() == "" && $('#cmb_nacionalidad').val() == 1) {
                         var mensaje = {wtmessage: "Debe adjuntar certificado de votación.", title: "Información"};
                         showAlert("NO_OK", "error", mensaje);
                     } else {

@@ -336,7 +336,7 @@ academico::registerTranslations();
     </div>
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="col-md-10"></div>
-        <div class="col-md-2"  style="display: block;" id="Divboton">
+        <div class="col-md-2"  style="display: none;" id="Divboton">
             <a id="paso1next" href="javascript:" class="btn btn-primary btn-block"><?php echo "Siguiente"; ?> </a>
         </div>
     </div>

@@ -267,7 +267,7 @@ if (!empty($per_cedula)) {
     </div>
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="col-md-10"></div>
-        <div class="col-md-2" style="display: block;" id="Divboton">
+        <div class="col-md-2" style="display: none;" id="Divboton">
             <a id="paso1next" href="javascript:" class="btn btn-primary btn-block"> <?= Yii::t("formulario", "Next") ?> <span class="glyphicon glyphicon-menu-right"></span></a>
         </div>
     </div>

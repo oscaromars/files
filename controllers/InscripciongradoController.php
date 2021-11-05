@@ -168,8 +168,8 @@ class InscripciongradoController extends \yii\web\Controller {
                     }
                 }else {
                 return json_encode(['error' => Yii::t("notificaciones", "Error to process File ". basename($files['name']) ." Solo formato imagenes pdf, jpg, png.")]);
-                 }
-                //}
+                 //}
+                }
             }
 
             $con = \Yii::$app->db;

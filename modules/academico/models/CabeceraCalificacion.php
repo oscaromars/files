@@ -1692,13 +1692,13 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord {
 		return $resultData;
 	}
 
-	 public function activateCron($cron_id, $fecha){   
+public function activateCron($cron_id, $fecha){   
 
 $con = \Yii::$app->db_academico;
 $getsearch=
 "
 SELECT 
-croe_id, croe_mod_id, croe_paca_id, croe_uaca_id, croe_fecha_ejecucion, croe_exec
+croe_id, croe_mod_id, croe_paca_id, croe_uaca_id,croe_parcial, croe_fecha_ejecucion, croe_exec
 FROM db_academico.cron_estudiantes_educativa
 WHERE croe_id = :cronid
 ";
@@ -1730,7 +1730,7 @@ return $datasearcher ;
  }
 
 
- function getallmods($paca_id, $uaca_id,$mod_id) {   
+ function getallmods($paca_id, $uaca_id,$mod_id,$parcial_id) {   
  $con = \Yii::$app->db_academico;
 
 if ($uaca_id < 2){
@@ -1739,11 +1739,12 @@ FOR ($loopmod = 1;$loopmod < 5 ; $loopmod++)
 {
 
 $sqlmod =" SELECT 
-croe_id, croe_mod_id, croe_paca_id, croe_uaca_id, croe_fecha_ejecucion, croe_exec
+croe_id, croe_mod_id, croe_paca_id, croe_uaca_id,croe_parcial, croe_fecha_ejecucion, croe_exec
  FROM db_academico.cron_estudiantes_educativa
  Where  croe_paca_id = $paca_id
  AND croe_uaca_id = $newuaca_id
  AND croe_mod_id = $loopmod
+ AND croe_parcial = $parcial_id
 ";
 
  $comando = $con->createCommand($sqlmod);    
@@ -1753,8 +1754,8 @@ if ($resultallData['croe_mod_id'] == Null )
      {
 
   $sql = 
-  "INSERT INTO " . $con->dbname . ".cron_estudiantes_educativa (croe_mod_id, croe_paca_id, croe_uaca_id, croe_exec, croe_usuario_ingreso, croe_estado, croe_fecha_creacion, croe_estado_logico) 
-  VALUES($loopmod, $paca_id, $newuaca_id, '2', '1','1',now(),'1')";
+  "INSERT INTO " . $con->dbname . ".cron_estudiantes_educativa (croe_mod_id, croe_paca_id, croe_uaca_id,croe_parcial, croe_exec, croe_usuario_ingreso, croe_estado, croe_fecha_creacion, croe_estado_logico) 
+  VALUES($loopmod, $paca_id, $newuaca_id,$parcial_id, '2', '1','1',now(),'1')";
 
      $comando = $con->createCommand($sql);
      $result = $comando->execute();
@@ -1771,13 +1772,16 @@ $con = \Yii::$app->db_academico;
     if ($uaca_id != "" && $uaca_id > 0) {
             $str_search .= " AND croe_uaca_id  = :croe_uaca_id ";
         }
-     if ($mod_id != "" && $mod_id > 0) {
+    if ($mod_id != "" && $mod_id > 0) {
             $str_search .= " AND croe_mod_id  = :croe_mod_id ";
+        }
+    if ($parcial_id != "" && $parcial_id > 0) {
+            $str_search .= " AND croe_parcial  = :croe_parcial_id ";
         }
   
 
 $sqlmod =" SELECT 
-croe.croe_id, croe.croe_mod_id, croe.croe_paca_id, croe.croe_uaca_id, croe.croe_fecha_ejecucion,
+croe.croe_id, croe.croe_mod_id, croe.croe_paca_id, croe.croe_uaca_id,croe.croe_parcial, croe.croe_fecha_ejecucion,
 croe.croe_exec,ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca_anio),'') AS paca_nombre
  FROM db_academico.cron_estudiantes_educativa as croe
  INNER JOIN db_academico.periodo_academico as paca ON paca.paca_id = croe.croe_paca_id 
@@ -1801,11 +1805,20 @@ croe.croe_exec,ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca
       
             $comando->bindParam(":croe_mod_id", $mod_id , \PDO::PARAM_INT);
         }
+
+         if ( $parcial_id != "" && $parcial_id  > 0) {
+      
+            $comando->bindParam(":croe_parcial_id", $parcial_id , \PDO::PARAM_INT);
+        }
+
         $resultData = $comando->queryAll();
 
 
         return $resultData;
    }
+
+
+
 
 
    /**
@@ -1869,5 +1882,8 @@ croe.croe_exec,ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca
             return 0;
         }
     } //function updatepromedio
+
+
+
 
 }

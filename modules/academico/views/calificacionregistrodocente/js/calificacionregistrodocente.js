@@ -309,10 +309,18 @@ function searchEducativa() {
       periodo = $("#cmb_periodo_all").val();
     unidad = $("#cmb_unidad_all").val();
     modalidad = $("#cmb_modalidad_all").val();
+    parcial = $("#cmb_parcial_all").val();
 
-window.location.href = $('#txth_base').val() + "/academico/calificacionregistrodocente/educativa?paca="+periodo+"&unidad="+unidad+"&modalidad="+modalidad;
+ if (parcial == 0) {
+
+ showAlert('NO_OK', 'error', {"wtmessage": 'Elija Parcial', "title": 'Información'});
+
+ } else {
+
+window.location.href = $('#txth_base').val() + "/academico/calificacionregistrodocente/educativa?paca="+periodo+"&unidad="+unidad+"&modalidad="+modalidad+"&parcial="+parcial;
  
-   
+  }
+ 
 }
 
 function activateCron(cronid) {

@@ -66,13 +66,27 @@ PbGridView::widget([
                 },                
         ],
         [
+                'attribute' => 'Parcial',
+                'header' => Yii::t("Academico", "Parcial"),
+                'options' => ['width' => '160'],
+                'format' => 'html',
+                'value' => function ($model) {
+                    if ($model["croe_parcial"] == 1)
+                        return 'Parcial 1';                    
+                    if ($model["croe_parcial"] == 2)                        
+                        return 'Parcial 2';
+                    if ($model["croe_parcial"] == 3)                        
+                        return 'Notas Finales';
+                },                
+        ],
+        [
                 'attribute' => 'Ejecucion',
                 'header' => Yii::t("Academico", "Estado"),
                 'options' => ['width' => '160'],
                 'format' => 'html',
                 'value' => function ($model) {
                     if ($model["croe_exec"] == 0)
-                        return '<small class="label label-primary">&nbsp;&nbsp;&nbsp;Finalizado</small>';
+                        return '<small style="color:#aa0000;">&nbsp;&nbsp;&nbsp;Transferido</small>';
                     if ($model["croe_exec"] == 1)                        
                         return '<small class="label label-primary">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Activo&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</small>';
                      if ($model["croe_exec"] == 2)               
@@ -92,7 +106,7 @@ PbGridView::widget([
                    return DateTimePicker::widget([
                     'name' => 'datetime_10',
                      'value' => '',
-                    'type' => DatePicker::TYPE_COMPONENT_PREPEND, //TYPE_COMPONENT_PREPEND TYPE_INPUT
+                    'type' => DatePicker::TYPE_INPUT, //TYPE_COMPONENT_PREPEND TYPE_INPUT
                     'options' => ["class" => "form-control PBvalidation",'placeholder' => 'elija fecha...','id' => 'F'.$model["croe_id"] ],
                     'convertFormat' => true,
                     'pluginOptions' => [
@@ -102,8 +116,9 @@ PbGridView::widget([
     ]
 ]);
                         } else {
-
-                            return $model["croe_fecha_ejecucion"];
+                             if ($model["croe_exec"] == 0)
+                        return '<small style="color:#aa0000;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.$model["croe_fecha_ejecucion"];
+                            return '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.$model["croe_fecha_ejecucion"];
                         }
                     },
                     
@@ -117,11 +132,15 @@ PbGridView::widget([
                 'buttons' => [
                     'activa' => function ($url, $model) {
                         if ($model["croe_exec"] == 2 ) {
+                             return "<a href='javascript:activateCron(".$model['croe_id'].")' class='glyphicon glyphicon-plus-sign' ></a>";
                             return "<a href='javascript:activateCron(".$model['croe_id'].")' class='glyphicon glyphicon-plus-sign' >" . academico::t("registro", "&nbsp;Grabar") . "</a>";
 
                             return Html::a('<span class="glyphicon glyphicon-plus"></span>', Url::to(['/academico/calificacionregistrodocente/index', 'sids' => base64_encode($model['sins_id']), 'adm' => base64_encode($model['adm_id'])]), ["data-toggle" => "tooltip", "title" => "Activar", "data-pjax" => 0]);
                         } else {
-                            return '<span class="glyphicon glyphicon-ok"></span>';
+                             if ($model["croe_exec"] == 0)
+                            return '<span style="color:#aa0000;" class="glyphicon glyphicon-saved"></span>'; 
+                             if ($model["croe_exec"] == 1)
+                            return '<span class="glyphicon glyphicon-time"></span>';
                         }
                     },
                     

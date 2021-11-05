@@ -7,7 +7,6 @@ use yii\helpers\Url;
 use kartik\date\DatePicker;
 use yii\helpers\ArrayHelper;
 use app\modules\academico\Module as academico;
-
 Academico::registerTranslations();
 ?>
  <div class="col-md-12 col-xs-12 col-lg-12 col-sm-12">
@@ -29,7 +28,11 @@ Academico::registerTranslations();
         <div class="form-group"> 
             <label for="cmb_modalidad_all" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= academico::t("Academico", "Modality") ?></label>
             <div class="col-sm-3 col-xs-3 col-md-3 col-lg-3">
-                    <?= Html::dropDownList("cmb_modalidad_all", 1,$arr_modalidad, ["class" => "form-control", "id" => "cmb_modalidad_all"]) ?>
+                    <?= Html::dropDownList("cmb_modalidad_all", 0,$arr_modalidad, ["class" => "form-control", "id" => "cmb_modalidad_all"]) ?>
+            </div>
+             <label for="cmb_parcial_all" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= academico::t("Academico", "Partial") ?></label>
+            <div class="col-sm-3 col-xs-3 col-md-3 col-lg-3">
+                    <?= Html::dropDownList("cmb_parcial_all", 0,$arr_parcial, ["class" => "form-control", "id" => "cmb_parcial_all"]) ?>
             </div>
            
         </div>

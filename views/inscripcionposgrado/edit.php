@@ -12,14 +12,14 @@ use kartik\tabs\TabsX;
 ?>
 <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12">
     <div class="pull-right"><!-- Carga de Acciones -->
-        <div class="btn-groups"> 
-            <button type="button" class="btn btn-default btnAccion" data-trigger="hover" onclick="updateaspiranteposgrado()"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;&nbsp;Actualizar</button>                    
+        <div class="btn-groups">
+            <button type="button" class="btn btn-default btnAccion" data-trigger="hover" onclick="updateaspiranteposgrado()"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;&nbsp;Actualizar</button>
         </div>
     </div>
-</div> 
+</div>
 <div class="row">
     <div class="col-md-12">
-        <?= 
+        <?=
             TabsX::widget([
                 'items'=>$items,
                 'position'=>TabsX::POS_LEFT,

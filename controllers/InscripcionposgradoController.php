@@ -675,11 +675,11 @@ class InscripcionposgradoController extends \yii\web\Controller {
             $arr_tipparentesco = TipoParentesco::find()->select("tpar_id AS id, tpar_nombre AS value")->where(["tpar_estado_logico" => "1", "tpar_estado" => "1"])->asArray()->all();
 
             $ViewFormTab1 = $this->renderPartial('ViewFormTab1', [
-                'arr_ciudad_nac' => (empty(ArrayHelper::map($arr_ciudad_nac, "can_id", "can_nombre"))) ? array(Yii::t("canton", "-- Select Canton --")) : (ArrayHelper::map($arr_ciudad_nac, "can_id", "can_nombre")),
+                'arr_ciudad_nac' => (empty(ArrayHelper::map($arr_ciudad_nac, "can_id", "can_nombre"))) ? array(Yii::t("canton", "Seleccionar")) : (ArrayHelper::map($arr_ciudad_nac, "can_id", "can_nombre")),
                 "arr_estado_civil" => ArrayHelper::map($arr_estado_civil, "id", "value"),
                 'persona_model' => $persona_model,
                 "arr_nacionalidad" => ArrayHelper::map($arr_nacionalidad, "id", "value"),
-                'arr_pais' => (empty(ArrayHelper::map($arr_pais, "pai_id", "pai_nombre"))) ? array(Yii::t("pais", "-- Select Pais --")) : (ArrayHelper::map($arr_pais, "pai_id", "pai_nombre")),
+                'arr_pais' => (empty(ArrayHelper::map($arr_pais, "pai_id", "pai_nombre"))) ? array(Yii::t("pais", "Seleccionar")) : (ArrayHelper::map($arr_pais, "pai_id", "pai_nombre")),
                 "arr_provincia" => ArrayHelper::map($arr_provincia, "id", "value"),
                 "arr_ciudad" => ArrayHelper::map($arr_ciudad, "id", "value"),
                 "arr_tipparentesco" => ArrayHelper::map($arr_tipparentesco, "id", "value"),
@@ -700,7 +700,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
 
 
             $ViewFormTab2 = $this->renderPartial('ViewFormTab2', [
-                'arr_pais' => (empty(ArrayHelper::map($arr_pais, "pai_id", "pai_nombre"))) ? array(Yii::t("pais", "-- Select Pais --")) : (ArrayHelper::map($arr_pais, "pai_id", "pai_nombre")),
+                'arr_pais' => (empty(ArrayHelper::map($arr_pais, "pai_id", "pai_nombre"))) ? array(Yii::t("pais", "Seleccionar")) : (ArrayHelper::map($arr_pais, "pai_id", "pai_nombre")),
                 "arr_prov_emp" => ArrayHelper::map($arr_prov_emp, "id", "value"),
                 "arr_ciu_emp" => ArrayHelper::map($arr_ciu_emp, "id", "value"),
                 "arr_categoria" => array("1" => Yii::t("formulario", "Pública"), "2" => Yii::t("formulario", "Privada")),
@@ -732,7 +732,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
             $arr_tip_discap = TipoDiscapacidad::find()->select("tdis_id AS id, tdis_nombre AS value")->where(["tdis_estado_logico" => "1", "tdis_estado" => "1"])->asArray()->all();
 
             $ViewFormTab5 = $this->renderPartial('ViewFormTab5', [
-                "arr_tip_discap" => ArrayHelper::map(array_merge([["id" => "0", "value" => Yii::t("formulario", "-- Select --")]], $arr_tip_discap), "id", "value"),
+                "arr_tip_discap" => ArrayHelper::map(array_merge([["id" => "0", "value" => Yii::t("formulario", "Seleccionar")]], $arr_tip_discap), "id", "value"),
                 'discapacidad_model' => $discapacidad_model,
                 'docencia_model' => $docencia_model,
                 'investigaciones_model' => $investigaciones_model,
@@ -888,10 +888,10 @@ class InscripcionposgradoController extends \yii\web\Controller {
             $arr_tipparentesco = TipoParentesco::find()->select("tpar_id AS id, tpar_nombre AS value")->where(["tpar_estado_logico" => "1", "tpar_estado" => "1"])->asArray()->all();
 
             $EditFormTab1 = $this->renderPartial('EditFormTab1', [
-                'arr_ciudad_nac' => (empty(ArrayHelper::map($arr_ciudad_nac, "can_id", "can_nombre"))) ? array(Yii::t("canton", "-- Select Canton --")) : (ArrayHelper::map($arr_ciudad_nac, "can_id", "can_nombre")),
+                'arr_ciudad_nac' => (empty(ArrayHelper::map($arr_ciudad_nac, "can_id", "can_nombre"))) ? array(Yii::t("canton", "Seleccionar")) : (ArrayHelper::map($arr_ciudad_nac, "can_id", "can_nombre")),
                 "arr_estado_civil" => ArrayHelper::map($arr_estado_civil, "id", "value"),
                 "arr_nacionalidad" => ArrayHelper::map($arr_nacionalidad, "id", "value"),
-                'arr_pais' => (empty(ArrayHelper::map($arr_pais, "pai_id", "pai_nombre"))) ? array(Yii::t("pais", "-- Select Pais --")) : (ArrayHelper::map($arr_pais, "pai_id", "pai_nombre")),
+                'arr_pais' => (empty(ArrayHelper::map($arr_pais, "pai_id", "pai_nombre"))) ? array(Yii::t("pais", "Seleccionar")) : (ArrayHelper::map($arr_pais, "pai_id", "pai_nombre")),
                 "arr_provincia" => ArrayHelper::map($arr_provincia, "id", "value"),
                 "arr_ciudad" => ArrayHelper::map($arr_ciudad, "id", "value"),
                 "arr_tipparentesco" => ArrayHelper::map($arr_tipparentesco, "id", "value"),
@@ -912,7 +912,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
 
 
             $EditFormTab2 = $this->renderPartial('EditFormTab2', [
-                'arr_pais' => (empty(ArrayHelper::map($arr_pais, "pai_id", "pai_nombre"))) ? array(Yii::t("pais", "-- Select Pais --")) : (ArrayHelper::map($arr_pais, "pai_id", "pai_nombre")),
+                'arr_pais' => (empty(ArrayHelper::map($arr_pais, "pai_id", "pai_nombre"))) ? array(Yii::t("pais", "Seleccionar")) : (ArrayHelper::map($arr_pais, "pai_id", "pai_nombre")),
                 "arr_prov_emp" => ArrayHelper::map($arr_prov_emp, "id", "value"),
                 "arr_ciu_emp" => ArrayHelper::map($arr_ciu_emp, "id", "value"),
                 "arr_categoria" => array("1" => Yii::t("formulario", "Pública"), "2" => Yii::t("formulario", "Privada")),
@@ -950,7 +950,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
 
             $EditFormTab5 = $this->renderPartial('EditFormTab5', [
                 'discapacidad_model' => $discapacidad_model,
-                "arr_tip_discap" => ArrayHelper::map(array_merge([["id" => "0", "value" => Yii::t("formulario", "-- Select --")]], $arr_tip_discap), "id", "value"), //ArrayHelper::map($arr_tip_discap, "id", "value"),
+                "arr_tip_discap" => ArrayHelper::map(array_merge([["id" => "0", "value" => Yii::t("formulario", "Seleccionar")]], $arr_tip_discap), "id", "value"), //ArrayHelper::map($arr_tip_discap, "id", "value"),
                 'docencia_model' => $docencia_model,
                 'investigaciones_model' => $investigaciones_model,
                 'ipos_model' => $ipos_model,
@@ -1281,7 +1281,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
             $area_investigacion = ucwords(strtolower($data["area_investigacion"]));
 
             //Form2 Datos financiamiento
-            $tipo_financiamiento = $data["tipo_financiamiento"];
+            $tipo_financiamiento = ucwords(strtolower($data["tipo_financiamiento"]));
 
             //archivos cargados
             $ipos_ruta_doc_foto = $data['ipos_ruta_doc_foto'];

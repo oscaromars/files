@@ -1299,7 +1299,6 @@ class InscripcionposgradoController extends \yii\web\Controller {
             $ipos_ruta_doc_certificadonosancion = $data['ipos_ruta_doc_certnosancion'];
             $ipos_ruta_doc_syllabus = $data['ipos_ruta_doc_syllabus'];
             $ipos_ruta_doc_homologacion = $data['ipos_ruta_doc_homologacion'];
-
             $fecha_modificacion = date(Yii::$app->params["dateTimeByDefault"]);
 
                 $persona_model = Persona::findOne($per_id);
@@ -1418,21 +1417,53 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 $ipos_model = InscripcionPosgrado::findOne(['per_id' => $persona_model->per_id]);
                 $ipos_model->ipos_cedula = $per_dni;
                 $ipos_model->ipos_tipo_financiamiento = $tipo_financiamiento;
-                $ipos_model->ipos_ruta_doc_foto = $ipos_ruta_doc_foto;
-                $ipos_model->ipos_ruta_doc_dni = $ipos_ruta_doc_dni;
-                $ipos_model->ipos_ruta_doc_certvota = $ipos_ruta_doc_certvota;
-                $ipos_model->ipos_ruta_doc_titulo = $ipos_ruta_doc_titulo;
-                $ipos_model->ipos_ruta_doc_comprobantepago = $ipos_ruta_doc_comprobantepago;
-                $ipos_model->ipos_ruta_doc_recordacademico = $ipos_ruta_doc_recordacademico;
-                $ipos_model->ipos_ruta_doc_senescyt = $ipos_ruta_doc_senescyt;
-                $ipos_model->ipos_ruta_doc_hojadevida = $ipos_ruta_doc_hojadevida;
-                $ipos_model->ipos_ruta_doc_cartarecomendacion = $ipos_ruta_doc_cartarecomendacion;
-                $ipos_model->ipos_ruta_doc_certificadolaboral = $ipos_ruta_doc_certificadolaboral;
-                $ipos_model->ipos_ruta_doc_certificadoingles = $ipos_ruta_doc_certificadoingles;
-                $ipos_model->ipos_ruta_doc_otrorecord = $ipos_ruta_doc_otrorecord;
-                $ipos_model->ipos_ruta_doc_certificadonosancion = $ipos_ruta_doc_certificadonosancion;
-                $ipos_model->ipos_ruta_doc_syllabus = $ipos_ruta_doc_syllabus;
-                $ipos_model->ipos_ruta_doc_homologacion = $ipos_ruta_doc_homologacion;
+                // SI SON NULOS NO ACTUALIZAR
+                if(!empty($ipos_ruta_doc_foto)){
+                    $ipos_model->ipos_ruta_doc_foto = $ipos_ruta_doc_foto;
+                }
+                if(!empty($ipos_ruta_doc_dni)){
+                    $ipos_model->ipos_ruta_doc_dni = $ipos_ruta_doc_dni;
+                }
+                if(!empty($ipos_ruta_doc_certvota)){
+                    $ipos_model->ipos_ruta_doc_certvota = $ipos_ruta_doc_certvota;
+                }
+                if(!empty($ipos_ruta_doc_titulo)){
+                    $ipos_model->ipos_ruta_doc_titulo = $ipos_ruta_doc_titulo;
+                }
+                if(!empty($ipos_ruta_doc_comprobantepago)){
+                    $ipos_model->ipos_ruta_doc_comprobantepago = $ipos_ruta_doc_comprobantepago;
+                }
+                if(!empty($ipos_ruta_doc_recordacademico)){
+                    $ipos_model->ipos_ruta_doc_recordacademico = $ipos_ruta_doc_recordacademico;
+                }
+                if(!empty($ipos_ruta_doc_senescyt)){
+                    $ipos_model->ipos_ruta_doc_senescyt = $ipos_ruta_doc_senescyt;
+                }
+                if(!empty($ipos_ruta_doc_hojadevida)){
+                    $ipos_model->ipos_ruta_doc_hojadevida = $ipos_ruta_doc_hojadevida;
+                }
+                if(!empty($ipos_ruta_doc_cartarecomendacion)){
+                    $ipos_model->ipos_ruta_doc_cartarecomendacion = $ipos_ruta_doc_cartarecomendacion;;
+                }
+                if(!empty($ipos_ruta_doc_certificadolaboral)){
+                    $ipos_model->ipos_ruta_doc_certificadolaboral = $ipos_ruta_doc_certificadolaboral;
+                }
+                if(!empty($ipos_ruta_doc_certificadoingles)){
+                    $ipos_model->ipos_ruta_doc_certificadoingles = $ipos_ruta_doc_certificadoingles;
+                }
+                if(!empty($ipos_ruta_doc_otrorecord)){
+                    $ipos_model->ipos_ruta_doc_otrorecord = $ipos_ruta_doc_otrorecord;
+                }
+                if(!empty($ipos_ruta_doc_certificadonosancion)){
+                    $ipos_model->ipos_ruta_doc_certificadonosancion = $ipos_ruta_doc_certificadonosancion;
+                }
+                if(!empty($ipos_ruta_doc_syllabus)){
+                    $ipos_model->ipos_ruta_doc_syllabus = $ipos_ruta_doc_syllabus;
+                }
+                if(!empty($ipos_ruta_doc_homologacion)){
+                    $ipos_model->ipos_ruta_doc_homologacion = $ipos_ruta_doc_homologacion;
+                }
+                // OJO SI SON NULOS NO ACTUALIZAR DEJAR COMO ESTABA
                 $ipos_model->ipos_fecha_modificacion = $fecha_modificacion;
                 $ipos_model->update();
 

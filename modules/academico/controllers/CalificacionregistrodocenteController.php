@@ -327,7 +327,7 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 		$componentes = array();
 		$model['data'] = $mod_calificacion->getRegistroCalificaciones($arrSearch);
 
-		$componentes_temp = $mod_calificacion->getComponenteUnidadarr($arrSearch["unidad"], $arrSearch["modalidad"]);
+		$componentes_temp = $mod_calificacion->getComponenteUnidadarr($arrSearch["unidad"], $arrSearch["modalidad"],$arrSearch["parcial"]);
 		foreach ($componentes_temp as $key => $value) {
 			$componentes[$value['nombre']] = array('id' => $value['id'], 'notamax' => $value['notamax']);
 		}

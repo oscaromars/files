@@ -834,7 +834,6 @@ class InscripcionposgradoController extends \yii\web\Controller {
         $data = Yii::$app->request->get();
         if (isset($data['id'])) {
             $id = $data['id'];
-
             if (Yii::$app->request->isAjax) {
                 if (isset($data["pai_id"])) {
                     $model = new Provincia();

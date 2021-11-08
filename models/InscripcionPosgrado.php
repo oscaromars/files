@@ -506,11 +506,11 @@ class InscripcionPosgrado extends \yii\db\ActiveRecord
     }
 
     public function consultaRegistroAdmisionposgrado($arrFiltro = array(), $reporte){
-        \app\models\Utilities::putMessageLogFile('cedula consulta:  '.$arrFiltro['search']);
+        /*\app\models\Utilities::putMessageLogFile('cedula consulta:  '.$arrFiltro['search']);
         \app\models\Utilities::putMessageLogFile('año consulta:  '.$arrFiltro['año']);
-            \app\models\Utilities::putMessageLogFile('unidad consulta:  '.$arrFiltro['unidad']);
-            \app\models\Utilities::putMessageLogFile('programa consulta:  '.$arrFiltro['programa']);
-            \app\models\Utilities::putMessageLogFile('modalidad consulta:  '.$arrFiltro['modalidad']);
+        \app\models\Utilities::putMessageLogFile('unidad consulta:  '.$arrFiltro['unidad']);
+        \app\models\Utilities::putMessageLogFile('programa consulta:  '.$arrFiltro['programa']);
+        \app\models\Utilities::putMessageLogFile('modalidad consulta:  '.$arrFiltro['modalidad']);*/
         $con_inscripcion = \Yii::$app->db_inscripcion;
         $con_asgard = \Yii::$app->db_asgard;
         $con_academico = \Yii::$app->db_academico;
@@ -522,7 +522,6 @@ class InscripcionPosgrado extends \yii\db\ActiveRecord
             $str_search .= "per.per_pri_apellido like :search OR ";
             $str_search .= "per.per_seg_apellido like :search OR ";
             $str_search .= "ipos.ipos_cedula like :search) AND ";
-            $str_search .= "ipos.ipos_anio like :año AND ";
 
             if ($arrFiltro['unidad'] != "" && $arrFiltro['unidad'] > 0) {
                 $str_search .= "ipos.uaca_id = :unidad AND ";
@@ -533,9 +532,9 @@ class InscripcionPosgrado extends \yii\db\ActiveRecord
             if ($arrFiltro['modalidad'] != "" && $arrFiltro['modalidad'] > 0) {
                 $str_search .= "ipos.mod_id = :modalidad AND ";
             }
-            /*if ($arrFiltro['año'] != "" && $arrFiltro['año'] > 0) {
-                $str_search .= "ipos.ipos_año = :año AND ";
-            }*/
+            if ($arrFiltro['año'] != "" && $arrFiltro['año'] > 0) {
+                $str_search .= "ipos.ipos_anio = :año AND ";
+            }
         }
 
         $sql = "SELECT distinct per.per_id as per_id,
@@ -560,8 +559,6 @@ class InscripcionPosgrado extends \yii\db\ActiveRecord
         if (isset($arrFiltro) && count($arrFiltro) > 0) {
             $search_cond = "%" . $arrFiltro["search"] . "%";
             $comando->bindParam(":search", $search_cond, \PDO::PARAM_STR);
-            $search_año= "%" . $arrFiltro["año"] . "%";
-            $comando->bindParam(":año", $search_año, \PDO::PARAM_STR);
 
             if ($arrFiltro['unidad'] != "" && $arrFiltro['unidad'] > 0) {
                 $search_uni = $arrFiltro["unidad"];
@@ -575,10 +572,10 @@ class InscripcionPosgrado extends \yii\db\ActiveRecord
                 $search_mod = $arrFiltro["modalidad"];
                 $comando->bindParam(":modalidad", $search_mod, \PDO::PARAM_INT);
             }
-            /*if ($arrFiltro['año'] != "" && $arrFiltro['año'] > 0) {
+            if ($arrFiltro['año'] != "" && $arrFiltro['año'] > 0) {
                 $search_año = $arrFiltro["año"];
                 $comando->bindParam(":año", $search_año, \PDO::PARAM_STR);
-            }*/
+            }
         }
         $res = $comando->queryAll();
         $dataProvider = new ArrayDataProvider([
@@ -600,7 +597,7 @@ class InscripcionPosgrado extends \yii\db\ActiveRecord
     }
 
     public function ObtenerdocumentosInscripcionPosgrado($per_id) {
-        \app\models\Utilities::putMessageLogFile('ver el resultado del id:  '.$per_id);
+        //\app\models\Utilities::putMessageLogFile('ver el resultado del id:  '.$per_id);
         $con = \Yii::$app->db_inscripcion;
         $estado = 1;
 

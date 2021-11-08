@@ -146,15 +146,58 @@ $(document).ready(function () {
         }, true);
     });
 
-    $('#cmb_prov_emp').change(function () {
-        var link = $('#txth_base').val() + "/inscripcionposgrado/index";
+    $('#cmb_paisEdit').change(function () {
+        var link = $('#txth_base').val() + "/inscripciongrado/edit";
+        var arrParams = new Object();
+        arrParams.pai_id = $(this).val();
+        arrParams.getprovincias = true;
+        arrParams.getarea = true;
+        requestHttpAjax(link, arrParams, function (response) {
+            if (response.status == "OK") {
+                data = response.message;
+                setComboData(data.provincias, "cmb_provinciaEdit");
+                var arrParams = new Object();
+                if (data.provincias.length > 0) {
+                    arrParams.prov_id = data.provincias[0].id;
+                    arrParams.getcantones = true;
+                    requestHttpAjax(link, arrParams, function (response) {
+                        if (response.status == "OK") {
+                            data = response.message;
+                            setComboData(data.cantones, "cmb_cantonEdit");
+                        }
+                    }, true);
+                }
+            }
+        }, true);
+        // actualizar codigo pais
+        $("#lbl_codeCountry").text($("#cmb_paisEdit option:selected").attr("data-code"));
+        $("#lbl_codeCountrycon").text($("#cmb_paisEdit option:selected").attr("data-code"));
+        $("#lbl_codeCountrycell").text($("#cmb_paisEdit option:selected").attr("data-code"));
+    });
+
+    $('#cmb_provinciaEdit').change(function () {
+        var link = $('#txth_base').val() + "/inscripciongrado/edit";
         var arrParams = new Object();
         arrParams.prov_id = $(this).val();
         arrParams.getcantones = true;
         requestHttpAjax(link, arrParams, function (response) {
             if (response.status == "OK") {
                 data = response.message;
-                setComboData(data.cantones, "cmb_ciu_emp");
+                setComboData(data.cantones, "cmb_cantonEdit");
+            }
+        }, true);
+    });
+
+    $('#cmb_provincia_empEdit').change(function () {
+        var link = $('#txth_base').val() + "/inscripciongrado/edit";
+        var arrParams = new Object();
+        arrParams.pai_id = 1;
+        arrParams.prov_id = $(this).val();
+        arrParams.getcantones = true;
+        requestHttpAjax(link, arrParams, function (response) {
+            if (response.status == "OK") {
+                data = response.message;
+                setComboData(data.cantones, "cmb_ciudad_empEdit");
             }
         }, true);
     });

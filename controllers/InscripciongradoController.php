@@ -729,7 +729,7 @@ class InscripciongradoController extends \yii\web\Controller {
                     'content' => $EditFormTab3,
                 ],
                 [
-                    'label' => Academico::t('formulario', 'Documentos'),
+                    'label' => Academico::t('formulario', 'Info. Documentos'),
                     'content' => $EditFormTab4,
                 ],
             ];

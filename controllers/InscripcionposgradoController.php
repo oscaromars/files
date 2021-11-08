@@ -670,20 +670,20 @@ class InscripcionposgradoController extends \yii\web\Controller {
             $arr_estado_civil = EstadoCivil::find()->select("eciv_id AS id, eciv_nombre AS value")->where(["eciv_estado_logico" => "1", "eciv_estado" => "1"])->asArray()->all();
             $arr_nacionalidad = Pais::find()->select("pai_id AS id, pai_nacionalidad AS value")->where(["pai_estado_logico" => "1", "pai_estado" => "1"])->asArray()->all();
             $arr_pais = Pais::findAll(["pai_estado" => 1, "pai_estado_logico" => 1]);
-            $arr_provincia = Provincia::provinciaXPais($arr_nacionalidad[0]["id"]);
-            $arr_ciudad= Canton::cantonXProvincia($arr_provincia[0]["id"]);
+            $arr_provincia = Provincia::provinciaXPais($persona_model["pai_id_domicilio"]);
+            $arr_ciudad= Canton::cantonXProvincia($persona_model["pro_id_domicilio"]);
             $arr_tipparentesco = TipoParentesco::find()->select("tpar_id AS id, tpar_nombre AS value")->where(["tpar_estado_logico" => "1", "tpar_estado" => "1"])->asArray()->all();
 
             $ViewFormTab1 = $this->renderPartial('ViewFormTab1', [
                 'arr_ciudad_nac' => (empty(ArrayHelper::map($arr_ciudad_nac, "can_id", "can_nombre"))) ? array(Yii::t("canton", "Seleccionar")) : (ArrayHelper::map($arr_ciudad_nac, "can_id", "can_nombre")),
-                "arr_estado_civil" => ArrayHelper::map($arr_estado_civil, "id", "value"),
+                'arr_estado_civil' => ArrayHelper::map($arr_estado_civil, "id", "value"),
                 'persona_model' => $persona_model,
-                "arr_nacionalidad" => ArrayHelper::map($arr_nacionalidad, "id", "value"),
+                'arr_nacionalidad' => ArrayHelper::map($arr_nacionalidad, "id", "value"),
                 'arr_pais' => (empty(ArrayHelper::map($arr_pais, "pai_id", "pai_nombre"))) ? array(Yii::t("pais", "Seleccionar")) : (ArrayHelper::map($arr_pais, "pai_id", "pai_nombre")),
-                "arr_provincia" => ArrayHelper::map($arr_provincia, "id", "value"),
-                "arr_ciudad" => ArrayHelper::map($arr_ciudad, "id", "value"),
-                "arr_tipparentesco" => ArrayHelper::map($arr_tipparentesco, "id", "value"),
-                'persona_model' => $persona_model,
+                'arr_provincia' => ArrayHelper::map($arr_provincia, "id", "value"),
+                'arr_ciudad' => ArrayHelper::map($arr_ciudad, "id", "value"),
+                'arr_tipparentesco' => ArrayHelper::map($arr_tipparentesco, "id", "value"),
+                //'persona_model' => $persona_model,
                 'contacto_model' => $contacto_model,
             ]);
 
@@ -882,8 +882,8 @@ class InscripcionposgradoController extends \yii\web\Controller {
             $arr_estado_civil = EstadoCivil::find()->select("eciv_id AS id, eciv_nombre AS value")->where(["eciv_estado_logico" => "1", "eciv_estado" => "1"])->asArray()->all();
             $arr_nacionalidad = Pais::find()->select("pai_id AS id, pai_nacionalidad AS value")->where(["pai_estado_logico" => "1", "pai_estado" => "1"])->asArray()->all();
             $arr_pais = Pais::findAll(["pai_estado" => 1, "pai_estado_logico" => 1]);
-            $arr_provincia = Provincia::provinciaXPais($arr_nacionalidad[0]["id"]);
-            $arr_ciudad= Canton::cantonXProvincia($arr_provincia[0]["id"]);
+            $arr_provincia = Provincia::provinciaXPais($persona_model["pai_id_domicilio"]);
+            $arr_ciudad= Canton::cantonXProvincia($persona_model["pro_id_domicilio"]);
             $arr_tipparentesco = TipoParentesco::find()->select("tpar_id AS id, tpar_nombre AS value")->where(["tpar_estado_logico" => "1", "tpar_estado" => "1"])->asArray()->all();
 
             $EditFormTab1 = $this->renderPartial('EditFormTab1', [
@@ -1219,7 +1219,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
             $per_fecha_nacimiento = $data["fecha_nac"];
             $per_nacionalidad = $data["nacionalidad"];
             $eciv_id = $data["estado_civil"];
-            $pai_id_domicilio = $data["nacionalidad"];
+            $pai_id_domicilio = $data["pais"];
             $pro_id_domicilio = $data["provincia"];
             $can_id_domicilio = $data["canton"];
 

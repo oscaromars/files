@@ -9,7 +9,7 @@ use kartik\widgets\Select2;
 use yii\widgets\ActiveForm;
 use app\components\CFileInputAjax;
 use app\models\Persona;
-
+//print_r($persona_model);
 ?>
 
 <form class="form-horizontal">
@@ -92,12 +92,12 @@ use app\models\Persona;
                 <?= Html::dropDownList("cmb_estadocivil", $persona_model->eciv_id, $arr_estado_civil, ["class" => "form-control", "id" => "cmb_estadocivil" , "disabled" => "disabled"]) ?>
             </div>
         </div>
-    </div>  
+    </div>
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
             <label for="cmb_pais" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("inscripcionposgrado", "Pais") ?></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
-                <?= Html::dropDownList("cmb_pais", $persona_model->pai_id_domicilio, $arr_pais, ["class" => "form-control", "id" => "cmb_pais", "disabled" => "disabled"]) ?>
+                <?= Html::dropDownList("cmb_pais", $persona_model["pai_id_domicilio"], $arr_pais, ["class" => "form-control", "id" => "cmb_pais", "disabled" => "disabled"]) ?>
             </div>
         </div>
     </div>
@@ -105,7 +105,7 @@ use app\models\Persona;
         <div class="form-group">
             <label for="cmb_provincia" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("inscripcionposgrado", "Provincia") ?></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
-                <?= Html::dropDownList("cmb_provincia", $persona_model->pro_id_domicilio, $arr_provincia, ["class" => "form-control", "id" => "cmb_provincia" , "disabled" => "disabled"]) ?>
+                <?= Html::dropDownList("cmb_provincia", $persona_model["pro_id_domicilio"], $arr_provincia, ["class" => "form-control", "id" => "cmb_provincia" , "disabled" => "disabled"]) ?>
             </div>
         </div>
     </div>
@@ -113,10 +113,10 @@ use app\models\Persona;
         <div class="form-group">
             <label for="cmb_canton" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("inscripcionposgrado", "Cantón") ?></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
-                <?= Html::dropDownList("cmb_canton", $persona_model->can_id_domicilio, $arr_ciudad, ["class" => "form-control", "id" => "cmb_canton" , "disabled" => "disabled"]) ?>
+                <?= Html::dropDownList("cmb_canton", $persona_model["can_id_domicilio"], $arr_ciudad, ["class" => "form-control", "id" => "cmb_canton" , "disabled" => "disabled"]) ?>
             </div>
         </div>
-    </div>  
+    </div>
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
             <label for="frm_per_domicilio_ref" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("formulario", "Dirección del domicilio") ?></label>

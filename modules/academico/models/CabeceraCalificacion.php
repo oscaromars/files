@@ -176,7 +176,7 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord {
                     ON comp.com_id = coun.com_id
                  WHERE coun.uaca_id = :uaca_id
                    AND coun.mod_id = :mod_id
-                   AND coun.coun.ecal_id= :parcial
+                   AND coun.ecal_id= :parcial
                    AND coun.cuni_estado = :estado
                    AND coun.cuni_estado_logico = :estado";
 
@@ -1037,9 +1037,9 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord {
 				$str_search .= " AND data.mod_id = :mod_id  ";
 			}
 			if ($arrFiltro['grupo'] != "" && $arrFiltro['grupo'] > 0) {
-				if ($arrFiltro['grupo'] == 1) {
-					$str_search .= " AND now()>=data.paca_fecha_inicio and now()<=data.paca_fecha_cierre_fin ";
-				} else if ($arrFiltro['grupo'] >= 6 and $arrFiltro['grupo'] <= 8) {
+				/*if ($arrFiltro['grupo'] == 1) {
+					                    $str_search .= " AND now()>=data.paca_fecha_inicio and now()<=data.paca_fecha_cierre_fin ";
+				*/if ($arrFiltro['grupo'] >= 6 and $arrFiltro['grupo'] <= 8) {
 					$str_search .= " AND now()>=data.paca_fecha_inicio and now()<=data.paca_fecha_fin ";
 				}
 			}
@@ -1194,6 +1194,8 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord {
 		$con = \Yii::$app->db_academico;
 		$con1 = \Yii::$app->db_asgard;
 		$estado = 1;
+		$parcialI = "IFNULL(A.PARCIAL_I,0)";
+		$parcialII = "IFNULL(B.PARCIAL_II,0)";
 
 		if ($paca_id != "" && $paca_id > 0) {
 			$str_search .= " daca.paca_id  = :paca_id AND ";
@@ -1232,7 +1234,15 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord {
                         WHEN estudiante.uaca_id = 3 THEN
                              IFNULL(A.PARCIAL_I,'0')
                         ELSE
-                            (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2
+                        case
+                        when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 >=14.50 then
+                             (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2
+                        when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 <=14.50 then
+                            case
+                            when IFNULL(A.PARCIAL_I,0) >= IFNULL(B.PARCIAL_II,0) then
+                               (IFNULL(A.PARCIAL_I,0) + IFNULL(C.SUPLETORIO,0))/2
+                            when IFNULL(A.PARCIAL_I,0) <= IFNULL(B.PARCIAL_II,0) then
+                               (IFNULL(B.PARCIAL_II,0) + IFNULL(C.SUPLETORIO,0))/2
                         END AS promedio_final,
                         case
                         when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 >=14.50 then 'Aprobado'

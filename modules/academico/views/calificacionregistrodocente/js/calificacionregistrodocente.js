@@ -497,7 +497,7 @@ function actualizarGridRegistro(dready = 0) {
               break;
             }
             //console.log(componentes);
-            if(action == 'edit'){
+            if(action == 'edit' && bandera_edi==1){
                 $.each(o.data[indice], function( index, value ) {
                     if(componentes[index]){
                         if(value < 0 || value > parseInt(componentes[index]['notamax'])){
@@ -506,7 +506,10 @@ function actualizarGridRegistro(dready = 0) {
                         }//if
                     }//if
                 });
-            }//if
+            }else{
+                alertify.error("El cierre academico finalizo");
+                bandera = 1;
+            }
 
             if(bandera == 1) return false;
         });

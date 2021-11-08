@@ -11,10 +11,10 @@ use app\modules\academico\models\Asignatura;
 use app\modules\academico\models\CabeceraCalificacion;
 use app\modules\academico\models\ComponenteUnidad;
 use app\modules\academico\models\DistributivoAcademico;
-use app\modules\academico\models\MallaAcademicoEstudiante;
 use app\modules\academico\models\Estudiante;
 use app\modules\academico\models\EstudianteCarreraPrograma;
 use app\modules\academico\models\EstudioAcademico;
+use app\modules\academico\models\MallaAcademicoEstudiante;
 use app\modules\academico\models\Modalidad;
 use app\modules\academico\models\ModalidadEstudioUnidad;
 use app\modules\academico\models\PeriodoAcademico;
@@ -327,7 +327,7 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 		$componentes = array();
 		$model['data'] = $mod_calificacion->getRegistroCalificaciones($arrSearch);
 
-		$componentes_temp = $mod_calificacion->getComponenteUnidadarr($arrSearch["unidad"], $arrSearch["modalidad"],$arrSearch["parcial"]);
+		$componentes_temp = $mod_calificacion->getComponenteUnidadarr($arrSearch["unidad"], $arrSearch["modalidad"], $arrSearch["parcial"]);
 		foreach ($componentes_temp as $key => $value) {
 			$componentes[$value['nombre']] = array('id' => $value['id'], 'notamax' => $value['notamax']);
 		}
@@ -367,20 +367,20 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 					$key != 'mod_id' &&
 					$key != 'uaca_id') {
 					if ($value != '') {
-                        $valida=2;
-                        $insertID = $mod_calificacion->insertarRBNO($ccal_id, $key, $value,$valida);
+						$valida = 2;
+						$insertID = $mod_calificacion->insertarRBNO($ccal_id, $key, $value, $valida);
 						$mod_calificacion->actualizarDetalleCalificacionporcomponente($ccal_id, $key, $value);
 
 						if (!(is_null($value)) && $value != '') {
 							$valor[$key] = $value;
 							$total = $total + $value;
 							//\app\models\Utilities::putMessageLogFile($value);
-						}// fin if
+						} // fin if
 
-					}// fin if
-				}// fin if
-//if
-			}// fin foreach
+					} // fin if
+				} // fin if
+				//if
+			} // fin foreach
 		} else {
 			$paca_id = $data['data'][$row_id]['paca_id'];
 			$est_id = $data['data'][$row_id]['est_id'];
@@ -393,7 +393,7 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 			$total = 0;
 
 			$ccal_id = $mod_calificacion->crearCabeceraCalificacionporcomponente($paca_id, $est_id, $pro_id, $asi_id, $ecal_id, $uaca_id);
-            
+
 			$valor["ccal_id"] = $ccal_id;
 
 			foreach ($data['data'][$row_id] as $key => $value) {
@@ -408,10 +408,10 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 					$key != 'mod_id' &&
 					$key != 'uaca_id') {
 					$mod_calificacion->crearDetalleCalificacionporcomponente($ccal_id, $key, $value, $uaca_id, $mod_id, $ecal_id);
-                    if(!empty($value)){
-                        $valida=1;
-                        $insertID = $mod_calificacion->insertarRBNO($ccal_id, $key, $value,$valida);
-                    }
+					if (!empty($value)) {
+						$valida = 1;
+						$insertID = $mod_calificacion->insertarRBNO($ccal_id, $key, $value, $valida);
+					}
 
 					if (!(is_null($value)) && $value != '') {
 						$valor[$key] = $value;
@@ -425,11 +425,17 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 		//Solucion temporal, debe revisarse porq suma 1 de mas en la iteraccion
 		//$total--;
 		$total_promedio = $mod_calificacion->actualizarDetalleCalificacion2($ccal_id, $total);
-        if($total_promedio){
-            $est_id = Estudiante::findOne(['est_id'=>$est_id,'est_estado'=>1,'est_estado_logico'=>1])
-            $maes_id = MallaAcademicoEstudiante::findOne(['per_id'=>$est_id['per_id'],'paca_id'=>$paca_id,'asi_id'=>$asi_id,'maes_estado'=>1,'maes_estado_logico'=>1]);
-            $promedio = $mod_calificacion->updatepromedio($maes_id['maes_id'],$paca_id);
-        }
+		if ($total_promedio) {
+			$ccalEst = CabeceraCalificacion::findOne(['ccal_id' => $ccal_id, 'ccal_estado' => 1, 'ccal_estado_logico' => 1]);
+			$est_id = Estudiante::findOne(['est_id' => $ccalEst['est_id'], 'est_estado' => 1, 'est_estado_logico' => 1]);
+			//Utilities::putMessageLogFile('est_id1 ' .$est_id['est_id']);
+			//Utilities::putMessageLogFile('per_id ' .$est_id['per_id']);
+			//Utilities::putMessageLogFile('paca_id ' .$ccalEst['paca_id']);
+			//Utilities::putMessageLogFile('asi_id ' .$ccalEst['asi_id']);
+			$maes_id = MallaAcademicoEstudiante::findOne(['per_id' => $est_id['per_id'], 'asi_id' => $ccalEst['asi_id'], 'maes_estado' => 1, 'maes_estado_logico' => 1]);
+			//Utilities::putMessageLogFile('maes_id ' .$maes_id['maes_id']);
+			$promedio = $mod_calificacion->updatepromedio($maes_id['maes_id'], $ccalEst['paca_id']);
+		}
 
 		header('Content-Type: application/json');
 
@@ -1572,100 +1578,98 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 		return;
 	}
 
-    public function actionActivacron(){
-            $datacron = Yii::$app->request->get();
-//var_dump($datacron["fecha"]); 
-//var_dump($datacron["cronid"]); 
-$data3=($datacron["moda"]); 
-$data2=($datacron["fecha"]); 
-$data1=($datacron["cronid"]); 
-        $cabeceraCalificacion = new CabeceraCalificacion();
-        $cronactive = $cabeceraCalificacion->activateCron($data1,$data2);
-         //var_dump($cronactive);
- 
-    return $this->redirect(['educativa', 'paca' => $cronactive['croe_paca_id'],'unidad' => $cronactive['croe_uaca_id'],'modalidad' => $data3,'parcial' => $cronactive['croe_parcial'] ]);
+	public function actionActivacron() {
+		$datacron = Yii::$app->request->get();
+//var_dump($datacron["fecha"]);
+		//var_dump($datacron["cronid"]);
+		$data3 = ($datacron["moda"]);
+		$data2 = ($datacron["fecha"]);
+		$data1 = ($datacron["cronid"]);
+		$cabeceraCalificacion = new CabeceraCalificacion();
+		$cronactive = $cabeceraCalificacion->activateCron($data1, $data2);
+		//var_dump($cronactive);
 
-         }
+		return $this->redirect(['educativa', 'paca' => $cronactive['croe_paca_id'], 'unidad' => $cronactive['croe_uaca_id'], 'modalidad' => $data3, 'parcial' => $cronactive['croe_parcial']]);
 
-       public function actionEducativa(){
-         $grupo_model    = new Grupo();
-         $arr_parcial = array(0 => '[ Elija Parcial ]',1 => 'Parcial 1',2 => 'Parcial 2',3 => 'Notas Finales');
-        $cabeceraCalificacion = new CabeceraCalificacion();
- $user_usermane = Yii::$app->session->get("PB_username");
+	}
+
+	public function actionEducativa() {
+		$grupo_model = new Grupo();
+		$arr_parcial = array(0 => '[ Elija Parcial ]', 1 => 'Parcial 1', 2 => 'Parcial 2', 3 => 'Notas Finales');
+		$cabeceraCalificacion = new CabeceraCalificacion();
+		$user_usermane = Yii::$app->session->get("PB_username");
 //$user_usermane = 'carlos.carrera@mbtu.us';//Yii::$app->session->get("PB_username");
- $arr_grupos = $grupo_model->getAllGruposByUser($user_usermane);
- 
- /*
- if ( in_array(['id' => '6'], $arr_grupos) ||
-             in_array(['id' => '7'], $arr_grupos) ||
-             in_array(['id' => '8'], $arr_grupos)
-        ){  */
-          
-     
-    $mod_periodos    = new PeriodoAcademico(); 
-     $mod_unidad     = new UnidadAcademica();
-    $mod_modalidad  = new Modalidad();
-    //$mod_crones  = new CronEducativa();
-    $arr_periodos = $mod_periodos->consultarPeriodosActivos();
-    $arr_ninteres = $mod_unidad->consultarUnidadAcademicasEmpresa(1);
-    $arr_modalidad = $mod_modalidad->consultarModalidad($arr_ninteres[0]["id"], 1);
+		$arr_grupos = $grupo_model->getAllGruposByUser($user_usermane);
 
-     $data = Yii::$app->request->get();
+		/*
+			 if ( in_array(['id' => '6'], $arr_grupos) ||
+			             in_array(['id' => '7'], $arr_grupos) ||
+			             in_array(['id' => '8'], $arr_grupos)
+		*/
 
-       if ($data = Yii::$app->request->get()){ 
-   $cabeceraCalificacion = new CabeceraCalificacion();
-$arr_crones = $cabeceraCalificacion->getallmods($data['paca'], $data['unidad'], $data['modalidad'], $data['parcial']);
-$modalidades = $data['modalidad'];
+		$mod_periodos = new PeriodoAcademico();
+		$mod_unidad = new UnidadAcademica();
+		$mod_modalidad = new Modalidad();
+		//$mod_crones  = new CronEducativa();
+		$arr_periodos = $mod_periodos->consultarPeriodosActivos();
+		$arr_ninteres = $mod_unidad->consultarUnidadAcademicasEmpresa(1);
+		$arr_modalidad = $mod_modalidad->consultarModalidad($arr_ninteres[0]["id"], 1);
+
+		$data = Yii::$app->request->get();
+
+		if ($data = Yii::$app->request->get()) {
+			$cabeceraCalificacion = new CabeceraCalificacion();
+			$arr_crones = $cabeceraCalificacion->getallmods($data['paca'], $data['unidad'], $data['modalidad'], $data['parcial']);
+			$modalidades = $data['modalidad'];
 //var_dump($arr_crones);
-//return $this->redirect('index');
+			//return $this->redirect('index');
 
 /*
-    ["croe_id"]=> string(1) "1" 
-    ["croe_mod_id"]=> string(1) "1" 
-    ["croe_paca_id"]=> string(2) "15" 
-    ["croe_uaca_id"]=> string(1) "1" 
-    ["croe_fecha_ejecucion"]=> string(19) "2021-10-20 09:49:02" 
-    ["croe_exec"]=> string(1) "1" */
+["croe_id"]=> string(1) "1"
+["croe_mod_id"]=> string(1) "1"
+["croe_paca_id"]=> string(2) "15"
+["croe_uaca_id"]=> string(1) "1"
+["croe_fecha_ejecucion"]=> string(19) "2021-10-20 09:49:02"
+["croe_exec"]=> string(1) "1" */
 
-     $dataProvider = new ArrayDataProvider([
-            'key' => 'croe_id',
-            'allModels' => $arr_crones,
-            'pagination' => [
-                'pageSize' => Yii::$app->params["pageSize"],
-            ],
-            'sort' => [
-                'attributes' => [
-                ],
-            ],
-        ]);
+			$dataProvider = new ArrayDataProvider([
+				'key' => 'croe_id',
+				'allModels' => $arr_crones,
+				'pagination' => [
+					'pageSize' => Yii::$app->params["pageSize"],
+				],
+				'sort' => [
+					'attributes' => [
+					],
+				],
+			]);
 
- return $this->render('educativa', [
-                    'model' => $dataProvider,        
-                    'modeldata' => $arr_crones,             
-                    'arr_periodos' => ArrayHelper::map(array_merge($arr_periodos), "id", "nombre"),
-                    'arr_unidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Todos")]], $arr_ninteres), "id", "name"),
-                    'arr_modalidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Todos")]], $arr_modalidad), "id", "name"),
-                    'modalidades' => $modalidades,  
-                    'arr_parcial' => $arr_parcial,  
+			return $this->render('educativa', [
+				'model' => $dataProvider,
+				'modeldata' => $arr_crones,
+				'arr_periodos' => ArrayHelper::map(array_merge($arr_periodos), "id", "nombre"),
+				'arr_unidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Todos")]], $arr_ninteres), "id", "name"),
+				'arr_modalidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Todos")]], $arr_modalidad), "id", "name"),
+				'modalidades' => $modalidades,
+				'arr_parcial' => $arr_parcial,
 
-        ]);
+			]);
 
-}  Else { $arr_crones = Array();}
+		} Else { $arr_crones = Array();}
 
-
-  return $this->render('educativa', [
-                    'model' => $arr_crones,                    
-                    'arr_periodos' => ArrayHelper::map(array_merge($arr_periodos), "id", "nombre"),
-                    'arr_unidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Todos")]], $arr_ninteres), "id", "name"),
-                    'arr_modalidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Todos")]], $arr_modalidad), "id", "name"),
-                    'arr_parcial' => $arr_parcial,  
-        ]);
+		return $this->render('educativa', [
+			'model' => $arr_crones,
+			'arr_periodos' => ArrayHelper::map(array_merge($arr_periodos), "id", "nombre"),
+			'arr_unidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Todos")]], $arr_ninteres), "id", "name"),
+			'arr_modalidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Todos")]], $arr_modalidad), "id", "name"),
+			'arr_parcial' => $arr_parcial,
+		]);
 
 /*
 } else {
 
-      return $this->redirect('index');
+return $this->redirect('index');
 } */
-}
+	}
 
 }

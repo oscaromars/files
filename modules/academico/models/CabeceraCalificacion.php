@@ -1194,8 +1194,6 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord {
 		$con = \Yii::$app->db_academico;
 		$con1 = \Yii::$app->db_asgard;
 		$estado = 1;
-		$parcialI = "IFNULL(A.PARCIAL_I,0)";
-		$parcialII = "IFNULL(B.PARCIAL_II,0)";
 
 		if ($paca_id != "" && $paca_id > 0) {
 			$str_search .= " daca.paca_id  = :paca_id AND ";
@@ -1234,17 +1232,20 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord {
                         WHEN estudiante.uaca_id = 3 THEN
                              IFNULL(A.PARCIAL_I,'0')
                         ELSE
-                        case
-                        when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 >=14.50 then
-                             (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2
-                        when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 <=14.50 then
                             case
-                            when IFNULL(A.PARCIAL_I,0) >= IFNULL(B.PARCIAL_II,0) then
-                               (IFNULL(A.PARCIAL_I,0) + IFNULL(C.SUPLETORIO,0))/2
-                            when IFNULL(A.PARCIAL_I,0) <= IFNULL(B.PARCIAL_II,0) then
-                               (IFNULL(B.PARCIAL_II,0) + IFNULL(C.SUPLETORIO,0))/2
+                            when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 >=14.50 then (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2
+                            when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 <=14.50 then
+                                case
+                                when IFNULL(C.SUPLETORIO,0) > 0 then
+                                    case
+                                        when IFNULL(A.PARCIAL_I,0) >= IFNULL(B.PARCIAL_II,0) then (IFNULL(A.PARCIAL_I,0) + IFNULL(C.SUPLETORIO,0))/2
+                                        when IFNULL(A.PARCIAL_I,0) <= IFNULL(B.PARCIAL_II,0) then (IFNULL(B.PARCIAL_II,0) + IFNULL(C.SUPLETORIO,0))/2
+                                    end
+                                else
+                                    (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2
+                                end
+                            end
                         END AS promedio_final,
-                        case
                         when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 >=14.50 then 'Aprobado'
                         when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 >=1 and (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 < 14.50 then 'Reprobado'
                         when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 = 0 then 'Pendiente'
@@ -1831,14 +1832,33 @@ croe.croe_exec,ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca
 	 */
 	public function updatepromedio($maes_id, $paca_id) {
 		$con = Yii::$app->db_academico;
-		$transaccion = $con->beginTransaction();
 		$usu_id = @Yii::$app->session->get("PB_iduser");
+		$date = date(Yii::$app->params['dateTimeByDefault']);
+		$transaccion = $con->getTransaction(); // se obtiene la transacción actual
+		if ($trans !== null) {
+			$trans = null; // si existe la transacción entonces no se crea una
+		} else {
+			$trans = $con->beginTransaction(); // si no existe la transacción entonces se crea una
+		}
 		try {
-			$sql = "update db_academico.promedio_malla_academico pm, (
+			$sql = "UPDATE db_academico.promedio_malla_academico pm, (
                         select distinct
                             pmac.maes_id,
                             pmac.paca_id,
-                            (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 AS promedio,
+
+                            case
+                            when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 >=14.50 then (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2
+                            when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 <=14.50 then
+                                case
+                                when IFNULL(C.SUPLETORIO,0) > 0 then
+                                    case
+                                        when IFNULL(A.PARCIAL_I,0) >= IFNULL(B.PARCIAL_II,0) then (IFNULL(A.PARCIAL_I,0) + IFNULL(C.SUPLETORIO,0))/2
+                                        when IFNULL(A.PARCIAL_I,0) <= IFNULL(B.PARCIAL_II,0) then (IFNULL(B.PARCIAL_II,0) + IFNULL(C.SUPLETORIO,0))/2
+                                    end
+                                else
+                                    (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2
+                                end
+                            end as promedio,
                             case
                                 when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 >=14.50 then 1
                                 when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 >=1 and (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 < 14.50 then 2
@@ -1862,34 +1882,42 @@ croe.croe_exec,ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca
                              INNER JOIN db_academico.esquema_calificacion ecal ON ecal.ecal_id = ecun.ecal_id
                              WHERE   ecal.ecal_id = 2 AND clfc.ccal_estado = 1 AND clfc.ccal_estado_logico = 1
                             ) B on est.est_id=B.est_id and pmac.paca_id=B.paca_id and maes.asi_id=B.asi_id
-                        where pmac.maes_id =$maes_id and pmac.paca_id=$paca_id
+                        LEFT JOIN
+                            (SELECT DISTINCT clfc.ccal_id, clfc.paca_id, clfc.est_id, clfc.asi_id,ecun.uaca_id,clfc.pro_id,ecal.ecal_descripcion  ,clfc.ccal_calificacion AS SUPLETORIO
+                            FROM db_academico.cabecera_calificacion clfc
+                            INNER JOIN db_academico.esquema_calificacion_unidad ecun ON ecun.ecun_id = clfc.ecun_id
+                            INNER JOIN db_academico.esquema_calificacion ecal ON ecal.ecal_id = ecun.ecal_id
+                            WHERE ecal.ecal_id = 3 AND clfc.ccal_estado = 1 AND clfc.ccal_estado_logico = 1
+                            ) C on est.est_id=C.est_id and pmac.paca_id=C.paca_id and maes.asi_id=C.asi_id
+                        where pmac.maes_id =$maes_id and pmac.paca_id= $paca_id
                     ) pmac
                 set pm.pmac_nota = pmac.promedio,
                     pm.enac_id = pmac.estado,
-                    pm.pmac_fecha_modificacion = now(),
+                    pm.pmac_fecha_modificacion = '$date',
                     pm.pmac_usuario_ingreso = $usu_id
-                where pm.maes_id = pmac.maes_id";
+                where pm.maes_id=pmac.maes_id";
 
 			$comando = $con->createCommand($sql);
 			$result = $comando->execute();
+			//\app\models\Utilities::putMessageLogFile('updatepromedio: ' . $comando->getRawSql());
 
 			if ($transaccion !== null) {
 				$transaccion->commit();
 			}
 
-			return 1;
+			return TRUE;
 		} catch (Exception $ex) {
 			if ($transaccion !== null) {
 				$transaccion->rollback();
 			}
-			return 0;
+			return FALSE;
 		}
 	} //function updatepromedio
 
 	/**
 	 * Function insertar Rbno_id por medio del insert select del ccal
 	 * @author  Luis Cajamarca  <analistadesarrollo04@uteg.edu.ec>
-	 * @property integer $daes_id
+	 * @property integer $Rbno_id
 	 * @return
 	 */
 	public function insertarRBNO($ccal_id, $key, $value, $valida) {
@@ -1900,30 +1928,30 @@ croe.croe_exec,ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca
 		$usu_id = @Yii::$app->session->get("PB_iduser");
 		try {
 			if ($valida == 1) {
-				$query_select = "SELECT dc1.dcal_id, 0, ifnull(dc1.dcal_calificacion,0), $usu_id, 1, $date, 1
-                                from db_academico.detalle_calificacion dc1
-                                inner join db_academico.componente_unidad cu1 on dc1.cuni_id = cu1.cuni_id
-                                inner join db_academico.componente com1 on cu1.com_id = com1.com_id
-                               where dc1.ccal_id = $ccal_id
-                                 and com1.com_nombre = '$key'";
-			} else {
-				$query_select = "SELECT dc1.dcal_id, ifnull(dc1.dcal_calificacion,0), $value, $usu_id, 1, $date, 1
-                                from db_academico.detalle_calificacion dc1
-                                inner join db_academico.componente_unidad cu1 on dc1.cuni_id = cu1.cuni_id
-                                inner join db_academico.componente com1 on cu1.com_id = com1.com_id
-                               where dc1.ccal_id = $ccal_id
-                                 and com1.com_nombre = '$key'";
-			}
-
-			$sql = "INSERT INTO db_academico.registro_bitacora_nota
+				$sql = "INSERT INTO db_academico.registro_bitacora_nota
                     (dcal_id, rbno_nota_anterior, rbno_nota_actual, rbno_usuario_creacion, rbno_estado, rbno_fecha_creacion, rbno_estado_logico)
-                ($query_select)";
+                    (SELECT dc1.dcal_id, 0, ifnull(dc1.dcal_calificacion,0), $usu_id, 1, '$date', 1
+                    from db_academico.detalle_calificacion dc1
+                    inner join db_academico.componente_unidad cu1 on dc1.cuni_id = cu1.cuni_id
+                    inner join db_academico.componente com1 on cu1.com_id = com1.com_id
+                    where dc1.ccal_id = $ccal_id
+                    and com1.com_nombre = '$key')";
+			} else {
+				$sql = "INSERT INTO db_academico.registro_bitacora_nota
+                    (dcal_id, rbno_nota_anterior, rbno_nota_actual, rbno_usuario_creacion, rbno_estado, rbno_fecha_creacion, rbno_estado_logico)
+                    (SELECT dc1.dcal_id, ifnull(dc1.dcal_calificacion,0), $value, $usu_id, 1, '$date', 1
+                    from db_academico.detalle_calificacion dc1
+                    inner join db_academico.componente_unidad cu1 on dc1.cuni_id = cu1.cuni_id
+                    inner join db_academico.componente com1 on cu1.com_id = com1.com_id
+                    where dc1.ccal_id = $ccal_id
+                    and com1.com_nombre = '$key')";
+			}
 
 			$comando = $con->createCommand($sql);
 			$comando->bindParam(":paca_id", $paca_id, \PDO::PARAM_INT);
 			$comando->execute();
 
-			\app\models\Utilities::putMessageLogFile('insertarDaesEstudiante: ' . $comando->getRawSql());
+			\app\models\Utilities::putMessageLogFile('insertarRBNO: ' . $comando->getRawSql());
 
 			if ($transaction !== null) {
 				$transaction->commit();

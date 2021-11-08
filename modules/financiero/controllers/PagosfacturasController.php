@@ -363,11 +363,11 @@ class PagosfacturasController extends \app\components\CController {
                             }
 
                             // actualizar estados y data en registro_pago_matricula
-                            $mod_pagosmat = new RegistroPagoMatricula();
-                            $data_planificacion_pago = Matriculacion::getPlanificacionPago($datos['per_id']);
-                            /*\app\models\Utilities::putMessageLogFile('pfes_concepto: ' . $datos['pfes_concepto']);
-                            \app\models\Utilities::putMessageLogFile('per_id: ' . $datos['per_id']);
-                            \app\models\Utilities::putMessageLogFile('pla_id: ' . $data_planificacion_pago['pla_id']);*/
+                            $mod_pagosmat = new RegistroPagoMatricula();                          
+                            $data_planificacion_pago = Matriculacion::getPlanificacionPago($datos['per_id']);                            
+                            /*//\app\models\Utilities::putMessageLogFile('pfes_concepto: ' . $datos['pfes_concepto']);
+                            //\app\models\Utilities::putMessageLogFile('per_id: ' . $datos['per_id']);
+                            //\app\models\Utilities::putMessageLogFile('pla_id: ' . $data_planificacion_pago['pla_id']);*/
                             if ($datos['pfes_concepto'] == "MA") {
 
                                 if ($resultado == "2") {
@@ -375,7 +375,7 @@ class PagosfacturasController extends \app\components\CController {
                                 }else{
                                     $rpm_estado_aprobacion = 2;
                                 }
-                                \app\models\Utilities::putMessageLogFile('rpm_estado_aprobacion: ' . $rpm_estado_aprobacion);
+                                //\app\models\Utilities::putMessageLogFile('rpm_estado_aprobacion: ' . $rpm_estado_aprobacion);
                                 $regpagomatricula = $mod_pagosmat->Modificarregsitropagomatricula($datos['per_id'], $data_planificacion_pago['pla_id'], $rpm_estado_aprobacion);
 
                                 $bodypmatricula = Utilities::getMailMessage("pagoMatriculaDecano", array("[[user]]" => $nombres, "[[cedula]]" => $cedula ), Yii::$app->language);
@@ -467,7 +467,6 @@ class PagosfacturasController extends \app\components\CController {
 
                     //Se hace invocacion a libreria de stripe que se encuentra en el vendor
                     \Stripe\Stripe::setApiKey($stripe['secret_key']);
-
 
                     $mensaje_error = '';
                     $mensaje_cod   = '';
@@ -762,38 +761,43 @@ class PagosfacturasController extends \app\components\CController {
                         //Utilities::sendEmail($tituloMensaje, Yii::$app->params["colecturia"], [Yii::$app->params["decanogradosemi"] => "Decanato SemiPresencial"], $asunto, $bodypmatricula);
                         //Utilities::sendEmail($tituloMensaje, Yii::$app->params["colecturia"], [Yii::$app->params["secretariasemi"]  => "Secretaria SemiPresencial"], $asunto, $bodypmatricula);
                     }
+                    $errorCorreo = '';
+                    try{
+                        if($fpag_id == 1){
+                            $body = Utilities::getMailMessage("pagostripe", 
+                                                              array("[[user]]"     => $name, 
+                                                                    "[[telefono]]" => $telefono), 
+                                                              Yii::$app->language);    
+                            Utilities::sendEmail($tituloMensaje, Yii::$app->params["contactoEmail"], [$email => $name], $asunto, $body);
+                            $bodycolec = Utilities::getMailMessage("colecturiatc", 
+                                                                   array("[[ident]]"   => $data['txt_cedula'],
+                                                                         "[[user]]"    => $name,
+                                                                         "[[email]]"   => $email,
+                                                                         "[[valor]]"   => $paidAmount,
+                                                                         "[[tarjeta]]" => $tarjeta,
+                                                                         "[[tipo]]"    => $tipo,
+                                                                         "[[digitos]]" => $digito,
+                                                                         "[[recibo]]"  => $recibo,),
+                                                                   Yii::$app->language);
+                        }else{
+                            $body = Utilities::getMailMessage("pago", 
+                                                              array("[[user]]"     => $name, 
+                                                                    "[[telefono]]" => $telefono), 
+                                                              Yii::$app->language);  
+                            Utilities::sendEmail($tituloMensaje, Yii::$app->params["contactoEmail"], [$email => $name], $asunto, $body);
+                            $bodycolec = Utilities::getMailMessage("colecturia", array("[[user]]" => $name), Yii::$app->language);
+                        }
+                        
+                       
+                        Utilities::sendEmail($tituloMensaje, Yii::$app->params["colecturia"]     , [Yii::$app->params["supercolecturia"] => "Colecturia"], $asunto, $bodycolec);
+                        Utilities::sendEmail($tituloMensaje, Yii::$app->params["supercolecturia"], [Yii::$app->params["colecturia"]      => "Supervisor Colecturia"], $asunto, $bodycolec);
 
-                    if($fpag_id == 1){
-                        $body = Utilities::getMailMessage("pagostripe",
-                                                          array("[[user]]"     => $name,
-                                                                "[[telefono]]" => $telefono),
-                                                          Yii::$app->language);
-                        Utilities::sendEmail($tituloMensaje, Yii::$app->params["contactoEmail"], [$email => $name], $asunto, $body);
-                        $bodycolec = Utilities::getMailMessage("colecturiatc",
-                                                               array("[[ident]]"   => $data['txt_cedula'],
-                                                                     "[[user]]"    => $name,
-                                                                     "[[email]]"   => $email,
-                                                                     "[[valor]]"   => $paidAmount,
-                                                                     "[[tarjeta]]" => $tarjeta,
-                                                                     "[[tipo]]"    => $tipo,
-                                                                     "[[digitos]]" => $digito,
-                                                                     "[[recibo]]"  => $recibo,),
-                                                               Yii::$app->language);
-                    }else{
-                        $body = Utilities::getMailMessage("pago",
-                                                          array("[[user]]"     => $name,
-                                                                "[[telefono]]" => $telefono),
-                                                          Yii::$app->language);
-                        Utilities::sendEmail($tituloMensaje, Yii::$app->params["contactoEmail"], [$email => $name], $asunto, $body);
-                        $bodycolec = Utilities::getMailMessage("colecturia", array("[[user]]" => $name), Yii::$app->language);
+                    }catch (Exception $ex2) {
+                        $errorCorreo = $ex2;
                     }
-
-
-                    Utilities::sendEmail($tituloMensaje, Yii::$app->params["colecturia"]     , [Yii::$app->params["supercolecturia"] => "Colecturia"], $asunto, $bodycolec);
-                    Utilities::sendEmail($tituloMensaje, Yii::$app->params["supercolecturia"], [Yii::$app->params["colecturia"]      => "Supervisor Colecturia"], $asunto, $bodycolec);
-		            \app\models\Utilities::putMessageLogFile('resp_pagofactura antes if ...: ' . $resp_pagofactura);
+                    
                     if ($resp_pagofactura) {
-		            \app\models\Utilities::putMessageLogFile('resp_pagofactura despues if entro...: ' . $resp_pagofactura);
+                    
                         // se graba el detalle
                         $pagados = explode("*", $pagado); //PAGADOS
                         $x = 0;
@@ -808,8 +812,8 @@ class PagosfacturasController extends \app\components\CController {
                             //$mod_ccartera     = new CargaCartera();
                             $resp_consfactura = $mod_ccartera->consultarPagospendientesp($personaData['per_cedula'], $parametro[0], $parametro[1]);
 
-                            \app\models\Utilities::putMessageLogFile('resp_consfactura ...: ' . print_r($resp_consfactura,true));
-                            \app\models\Utilities::putMessageLogFile('valor_pagado ...: ' . print_r($valor_pagado,true));
+                            //\app\models\Utilities::putMessageLogFile('resp_consfactura ...: ' . print_r($resp_consfactura,true));
+                            //\app\models\Utilities::putMessageLogFile('valor_pagado ...: ' . print_r($valor_pagado,true));
                             //Pregunto si el valor pagado es mayor a cero
                             if ($valor_pagado > 0) {
                                 $cargo = CargaCartera::findOne($resp_consfactura['ccar_id']);
@@ -818,30 +822,30 @@ class PagosfacturasController extends \app\components\CController {
                                 $abono = $resp_consfactura['abono'];
                                 $saldo = $cuota - $abono;
 
-                                \app\models\Utilities::putMessageLogFile('cuota ...: ' . print_r($cuota,true));
-                                \app\models\Utilities::putMessageLogFile('abono ...: ' . print_r($abono,true));
-                                \app\models\Utilities::putMessageLogFile('saldo ...: ' . print_r($saldo,true));
+                                //\app\models\Utilities::putMessageLogFile('cuota ...: ' . print_r($cuota,true));
+                                //\app\models\Utilities::putMessageLogFile('abono ...: ' . print_r($abono,true));
+                                //\app\models\Utilities::putMessageLogFile('saldo ...: ' . print_r($saldo,true));
 
                                 //si el valor pagado es mayor al saldo
                                 if ($valor_pagado >= $saldo ) {
-                                     \app\models\Utilities::putMessageLogFile('if ($valor_pagado >= $saldo )');
+                                     //\app\models\Utilities::putMessageLogFile('if ($valor_pagado >= $saldo )');
                                     $cargo->ccar_abono = $cargo->ccar_abono + $saldo;
                                     $valor_pagado      = $valor_pagado - $saldo;
-                                    \app\models\Utilities::putMessageLogFile('cargo->ccar_abono ...: ' . print_r($cargo->ccar_abono,true));
-                                    \app\models\Utilities::putMessageLogFile('valor_pagado ...: ' . print_r($valor_pagado,true));
+                                    //\app\models\Utilities::putMessageLogFile('cargo->ccar_abono ...: ' . print_r($cargo->ccar_abono,true));
+                                    //\app\models\Utilities::putMessageLogFile('valor_pagado ...: ' . print_r($valor_pagado,true));
                                     //// ini gap - cambio solicitado para q ponga en estado cancelado...
                                     //// carga cartera cuando se haga transferencias o deposito
                                     $valor_cuota_cancelada = $cuota - ($saldo + $abono);
 
-                                    \app\models\Utilities::putMessageLogFile('valor_cuota_cancelada ...: ' . print_r($valor_cuota_cancelada,true));
-
+                                    //\app\models\Utilities::putMessageLogFile('valor_cuota_cancelada ...: ' . print_r($valor_cuota_cancelada,true));
+      
                                     if($valor_cuota_cancelada <= 0)
                                         $cargo->ccar_estado_cancela = 'C';
                                     /////////////////////
                                     /*if($fpag_id == 1){
                                         $valor_cuota_cancelada = $cuota - ($saldo + $abono);
 
-                                        \app\models\Utilities::putMessageLogFile('valor_cuota_cancelada ...: ' . print_r($valor_cuota_cancelada,true));
+                                        //\app\models\Utilities::putMessageLogFile('valor_cuota_cancelada ...: ' . print_r($valor_cuota_cancelada,true));
 
                                         if($valor_cuota_cancelada <= 0)
                                             $cargo->ccar_estado_cancela = 'C';
@@ -851,9 +855,9 @@ class PagosfacturasController extends \app\components\CController {
                                     $cargo->ccar_fecha_modificacion = $fecha;
                                     $cargo->ccar_usu_modifica       = $usuario;
                                 }else {
-                                    \app\models\Utilities::putMessageLogFile('else');
-                                    \app\models\Utilities::putMessageLogFile('cargo->ccar_abono ...: ' . print_r($cargo->ccar_abono,true));
-                                    \app\models\Utilities::putMessageLogFile('valor_pagado...: ' . print_r($valor_pagado,true));
+                                    //\app\models\Utilities::putMessageLogFile('else');
+                                    //\app\models\Utilities::putMessageLogFile('cargo->ccar_abono ...: ' . print_r($cargo->ccar_abono,true));
+                                    //\app\models\Utilities::putMessageLogFile('valor_pagado...: ' . print_r($valor_pagado,true));
                                     //if($cuota != $abono){
                                     $cargo->ccar_abono = $cargo->ccar_abono + $valor_pagado;
                                     $valor_pagado      = $valor_pagado - $cargo->ccar_abono;
@@ -914,7 +918,7 @@ class PagosfacturasController extends \app\components\CController {
 
                             $x++;
 
-                             \app\models\Utilities::putMessageLogFile('****************************************');
+                             //\app\models\Utilities::putMessageLogFile('****************************************');
                         }
 
                         //if ($resp_detpagofactura) {
@@ -1012,6 +1016,7 @@ class PagosfacturasController extends \app\components\CController {
                                         "title" => Yii::t('jslang', 'Success'),
                                     );
                                     echo Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), false, $message);
+                                    return;
                                 }
                                 //Si no entra por el if hubo error 
                                 //de conexion con el webservice, 
@@ -1030,6 +1035,8 @@ class PagosfacturasController extends \app\components\CController {
                         $message = array(
                             "wtmessage" => Yii::t("notificaciones", "Error al grabar pago factura 1." . $mensaje),
                             "title" => Yii::t('jslang', 'Error'),
+                            "error" => $resp_pagofactura,
+                            "errorCorreo" => $errorCorreo
                         );
                         echo Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
                     }
@@ -1475,10 +1482,10 @@ class PagosfacturasController extends \app\components\CController {
             if ($data["procesar_file"]) {
                 try {
                 ini_set('memory_limit', '256M');
-                \app\models\Utilities::putMessageLogFile('Files ...: ' . $data["archivo"]);
+                //\app\models\Utilities::putMessageLogFile('Files ...: ' . $data["archivo"]);
                 $carga_archivo = $mod_cartera->CargarArchivocartera($data["archivo"]);
                 if ($carga_archivo['status']) {
-                    \app\models\Utilities::putMessageLogFile('no estudiante controller...: ' . $arroout['noalumno']);
+                    //\app\models\Utilities::putMessageLogFile('no estudiante controller...: ' . $arroout['noalumno']);
                     if (!empty($carga_archivo['noalumno'])){
                     $noalumno = ' Se encontró las cédulas '. $carga_archivo['noalumno'] . ' que no pertencen a estudiantes por ende no se cargaron. ';
                     }

@@ -152,19 +152,21 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord {
 	 * Function Consultar los componentes por unidad academicas
 	 * y devuelve un arreglo
 	 * @author  Galo Aguirre <analistadesarrollo06@uteg.edu.ec>
+	 * @modify Luis Cajamarca <analita04>
 	 * @param
 	 * @return  $resultData (Retornar los datos).
 	 */
-	public function getComponenteUnidadarr($uaca_id = 1, $mod_id = 1) {
+	public function getComponenteUnidadarr($uaca_id, $mod_id, $parcial) {
 		$con_academico = Yii::$app->db_academico;
 		$estado = "1";
 
 		$str_parcial = "";
-
-		// Si se está buscando Grado y a la vez Online, para evitar problemas, se busca el ecal_id 1 que es el 1er Parcial, y este tiene los componentes iguales que el 2do Parcial
-		if ($uaca_id == 1 && $mod_id == 1) {
-			$str_parcial = "AND coun.ecal_id = 1 ";
-		}
+		/* Corrección de codigo, la consulta determinaba sin parcial, por lo que, no determinaba de manera correcta para otras modalidades.
+			// Si se está buscando Grado y a la vez Online, para evitar problemas, se busca el ecal_id 1 que es el 1er Parcial, y este tiene los componentes iguales que el 2do Parcial
+			if ($uaca_id == 1 && $mod_id == 1) {
+				$str_parcial = "AND coun.ecal_id = 1 ";
+			}
+		*/
 
 		$sql = "SELECT coun.cuni_id as id,
                        com_nombre as nombre
@@ -174,13 +176,14 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord {
                     ON comp.com_id = coun.com_id
                  WHERE coun.uaca_id = :uaca_id
                    AND coun.mod_id = :mod_id
-                   $str_parcial
+                   AND coun.coun.ecal_id= :parcial
                    AND coun.cuni_estado = :estado
                    AND coun.cuni_estado_logico = :estado";
 
 		$comando = $con_academico->createCommand($sql);
 		$comando->bindParam(":uaca_id", $uaca_id, \PDO::PARAM_INT);
 		$comando->bindParam(":mod_id", $mod_id, \PDO::PARAM_INT);
+		$comando->bindParam(":parcial", $parcial, \PDO::PARAM_INT);
 		$comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
 
 		$res = $comando->queryAll();
@@ -1011,7 +1014,7 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord {
 
 		// \app\models\Utilities::putMessageLogFile($arrFiltro);
 
-		$arr_componentes = $this->getComponenteUnidadarr($arrFiltro['unidad'], $arrFiltro['modalidad']);
+		$arr_componentes = $this->getComponenteUnidadarr($arrFiltro['unidad'], $arrFiltro['modalidad'], $arrFiltro['parcial']);
 
 		if (isset($arrFiltro) && count($arrFiltro) > 0) {
 
@@ -1239,7 +1242,7 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord {
                         IFNULL(D.ASISTENCIA_PARCIAL_I,'0') asistencia_parcial_1,
                         IFNULL(E.ASISTENCIA_PARCIAL_II,'0') asistencia_parcial_2,
                         ((coalesce(D.ASISTENCIA_PARCIAL_I, 0) + coalesce(E.ASISTENCIA_PARCIAL_II, 0)) / 2) as asistencia_final
-                 FROM 
+                 FROM
                     (
                         SELECT DISTINCT
                                estudiante.est_id,
@@ -1692,53 +1695,50 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord {
 		return $resultData;
 	}
 
-public function activateCron($cron_id, $fecha){   
+	public function activateCron($cron_id, $fecha) {
 
-$con = \Yii::$app->db_academico;
-$getsearch=
-"
-SELECT 
+		$con = \Yii::$app->db_academico;
+		$getsearch =
+			"
+SELECT
 croe_id, croe_mod_id, croe_paca_id, croe_uaca_id,croe_parcial, croe_fecha_ejecucion, croe_exec
 FROM db_academico.cron_estudiantes_educativa
 WHERE croe_id = :cronid
 ";
 
-$comando = $con->createCommand($getsearch);  
-$comando->bindParam(":cronid", $cron_id, \PDO::PARAM_INT);
-$datasearcher = $comando->queryOne();
-
+		$comando = $con->createCommand($getsearch);
+		$comando->bindParam(":cronid", $cron_id, \PDO::PARAM_INT);
+		$datasearcher = $comando->queryOne();
 
 /*
 $datasearcher['croe_paca_id'];
 $datasearcher['croe_uaca_id'];
 $datasearcher['croe_mod_id'];
-*/
-$con = \Yii::$app->db_academico;
-$updater = "
-UPDATE db_academico.cron_estudiantes_educativa 
+ */
+		$con = \Yii::$app->db_academico;
+		$updater = "
+UPDATE db_academico.cron_estudiantes_educativa
 SET croe_fecha_ejecucion = :fecha,
-croe_exec = '1' 
+croe_exec = '1'
 WHERE croe_id = :cron_id";
 
-$comando = $con->createCommand($updater);
-$comando->bindParam(":fecha", $fecha, \PDO::PARAM_STR);
-$comando->bindParam(":cron_id", $cron_id, \PDO::PARAM_INT);
-$result = $comando->execute();  
+		$comando = $con->createCommand($updater);
+		$comando->bindParam(":fecha", $fecha, \PDO::PARAM_STR);
+		$comando->bindParam(":cron_id", $cron_id, \PDO::PARAM_INT);
+		$result = $comando->execute();
 
-return $datasearcher ;
+		return $datasearcher;
 
- }
+	}
 
+	function getallmods($paca_id, $uaca_id, $mod_id, $parcial_id) {
+		$con = \Yii::$app->db_academico;
 
- function getallmods($paca_id, $uaca_id,$mod_id,$parcial_id) {   
- $con = \Yii::$app->db_academico;
+		if ($uaca_id < 2) {
+			$newuaca_id = 1;
+			FOR ($loopmod = 1; $loopmod < 5; $loopmod++) {
 
-if ($uaca_id < 2){
-    $newuaca_id=1;
-FOR ($loopmod = 1;$loopmod < 5 ; $loopmod++)
-{
-
-$sqlmod =" SELECT 
+				$sqlmod = " SELECT
 croe_id, croe_mod_id, croe_paca_id, croe_uaca_id,croe_parcial, croe_fecha_ejecucion, croe_exec
  FROM db_academico.cron_estudiantes_educativa
  Where  croe_paca_id = $paca_id
@@ -1747,92 +1747,89 @@ croe_id, croe_mod_id, croe_paca_id, croe_uaca_id,croe_parcial, croe_fecha_ejecuc
  AND croe_parcial = $parcial_id
 ";
 
- $comando = $con->createCommand($sqlmod);    
-        $resultallData = $comando->queryOne();
+				$comando = $con->createCommand($sqlmod);
+				$resultallData = $comando->queryOne();
 
-if ($resultallData['croe_mod_id'] == Null ) 
-     {
+				if ($resultallData['croe_mod_id'] == Null) {
 
-  $sql = 
-  "INSERT INTO " . $con->dbname . ".cron_estudiantes_educativa (croe_mod_id, croe_paca_id, croe_uaca_id,croe_parcial, croe_exec, croe_usuario_ingreso, croe_estado, croe_fecha_creacion, croe_estado_logico) 
+					$sql =
+					"INSERT INTO " . $con->dbname . ".cron_estudiantes_educativa (croe_mod_id, croe_paca_id, croe_uaca_id,croe_parcial, croe_exec, croe_usuario_ingreso, croe_estado, croe_fecha_creacion, croe_estado_logico)
   VALUES($loopmod, $paca_id, $newuaca_id,$parcial_id, '2', '1','1',now(),'1')";
 
-     $comando = $con->createCommand($sql);
-     $result = $comando->execute();
+					$comando = $con->createCommand($sql);
+					$result = $comando->execute();
 
-    }
+				}
 
-}   }
+			}}
 
-$con = \Yii::$app->db_academico;
-          $str_search = ""; 
-    if ($paca_id != "" && $paca_id > 0) {
-            $str_search .= " AND croe_paca_id  = :croe_paca_id  ";
-        }
-    if ($uaca_id != "" && $uaca_id > 0) {
-            $str_search .= " AND croe_uaca_id  = :croe_uaca_id ";
-        }
-    if ($mod_id != "" && $mod_id > 0) {
-            $str_search .= " AND croe_mod_id  = :croe_mod_id ";
-        }
-    if ($parcial_id != "" && $parcial_id > 0) {
-            $str_search .= " AND croe_parcial  = :croe_parcial_id ";
-        }
-  
+		$con = \Yii::$app->db_academico;
+		$str_search = "";
+		if ($paca_id != "" && $paca_id > 0) {
+			$str_search .= " AND croe_paca_id  = :croe_paca_id  ";
+		}
+		if ($uaca_id != "" && $uaca_id > 0) {
+			$str_search .= " AND croe_uaca_id  = :croe_uaca_id ";
+		}
+		if ($mod_id != "" && $mod_id > 0) {
+			$str_search .= " AND croe_mod_id  = :croe_mod_id ";
+		}
+		if ($parcial_id != "" && $parcial_id > 0) {
+			$str_search .= " AND croe_parcial  = :croe_parcial_id ";
+		}
 
-$sqlmod =" SELECT 
+		$sqlmod = " SELECT
 croe.croe_id, croe.croe_mod_id, croe.croe_paca_id, croe.croe_uaca_id,croe.croe_parcial, croe.croe_fecha_ejecucion,
 croe.croe_exec,ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca_anio),'') AS paca_nombre
  FROM db_academico.cron_estudiantes_educativa as croe
- INNER JOIN db_academico.periodo_academico as paca ON paca.paca_id = croe.croe_paca_id 
+ INNER JOIN db_academico.periodo_academico as paca ON paca.paca_id = croe.croe_paca_id
  INNER JOIN db_academico.semestre_academico as saca ON saca.saca_id = paca.saca_id
  INNER JOIN db_academico.bloque_academico as baca ON baca.baca_id = paca.baca_id
- Where  1 = 1 
+ Where  1 = 1
  $str_search
 "
- ;
- $comando = $con->createCommand($sqlmod);    
+		;
+		$comando = $con->createCommand($sqlmod);
 
-      if ( $paca_id != "" && $paca_id  > 0) {
-      
-            $comando->bindParam(":croe_paca_id", $paca_id , \PDO::PARAM_INT);
-        }
-        if ( $uaca_id != "" && $uaca_id  > 0) {
-      
-            $comando->bindParam(":croe_uaca_id", $uaca_id , \PDO::PARAM_INT);
-        }
-        if ( $mod_id != "" && $mod_id  > 0) {
-      
-            $comando->bindParam(":croe_mod_id", $mod_id , \PDO::PARAM_INT);
-        }
+		if ($paca_id != "" && $paca_id > 0) {
 
-         if ( $parcial_id != "" && $parcial_id  > 0) {
-      
-            $comando->bindParam(":croe_parcial_id", $parcial_id , \PDO::PARAM_INT);
-        }
+			$comando->bindParam(":croe_paca_id", $paca_id, \PDO::PARAM_INT);
+		}
+		if ($uaca_id != "" && $uaca_id > 0) {
 
-        $resultData = $comando->queryAll();
+			$comando->bindParam(":croe_uaca_id", $uaca_id, \PDO::PARAM_INT);
+		}
+		if ($mod_id != "" && $mod_id > 0) {
 
+			$comando->bindParam(":croe_mod_id", $mod_id, \PDO::PARAM_INT);
+		}
 
-        return $resultData;
-   }
-   /**
-     * Actualizar el promedio de la tabla de promedio de malla academico
-     * @author  Luis Cajamarca <analista04>
-     * @param
-     * @return
-     */
-    public function updatepromedio(($maes_id,$paca_id)) {
-        $con = Yii::$app->db_academico;
-        $transaccion = $con->beginTransaction();
+		if ($parcial_id != "" && $parcial_id > 0) {
 
-        try {
-            $sql = "update db_academico.promedio_malla_academico pm, (
-                        select distinct 
-                            pmac.maes_id, 
+			$comando->bindParam(":croe_parcial_id", $parcial_id, \PDO::PARAM_INT);
+		}
+
+		$resultData = $comando->queryAll();
+
+		return $resultData;
+	}
+	/**
+	 * Actualizar el promedio de la tabla de promedio de malla academico
+	 * @author  Luis Cajamarca <analista04>
+	 * @param
+	 * @return
+	 */
+	public function updatepromedio($maes_id, $paca_id) {
+		$con = Yii::$app->db_academico;
+		$transaccion = $con->beginTransaction();
+		$usu_id = @Yii::$app->session->get("PB_iduser");
+		try {
+			$sql = "update db_academico.promedio_malla_academico pm, (
+                        select distinct
+                            pmac.maes_id,
                             pmac.paca_id,
                             (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 AS promedio,
-                            case 
+                            case
                                 when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 >=14.50 then 1
                                 when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 >=1 and (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 < 14.50 then 2
                                 when  (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 = 0 then 3
@@ -1841,15 +1838,15 @@ croe.croe_exec,ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca
                         inner join db_academico.malla_academico_estudiante maes on maes.maes_id=pmac.maes_id
                         inner join db_academico.estudiante est on est.per_id=maes.per_id
                         inner join db_academico.cabecera_calificacion ccal on est.est_id=ccal.est_id
-                        left join 
-                            (SELECT clfc.ccal_id, clfc.paca_id, clfc.est_id, clfc.asi_id,ecun.uaca_id,clfc.pro_id,clfc.ccal_calificacion AS PARCIAL_I 
+                        left join
+                            (SELECT clfc.ccal_id, clfc.paca_id, clfc.est_id, clfc.asi_id,ecun.uaca_id,clfc.pro_id,clfc.ccal_calificacion AS PARCIAL_I
                                 FROM db_academico.cabecera_calificacion clfc
                              INNER JOIN db_academico.esquema_calificacion_unidad ecun ON ecun.ecun_id = clfc.ecun_id
                              INNER JOIN db_academico.esquema_calificacion ecal ON ecal.ecal_id = ecun.ecal_id
                              WHERE   ecal.ecal_id = 1 AND clfc.ccal_estado = 1 AND clfc.ccal_estado_logico = 1
                             ) A on est.est_id=A.est_id and pmac.paca_id=A.paca_id and maes.asi_id=A.asi_id
-                        left join 
-                            (SELECT clfc.ccal_id, clfc.paca_id, clfc.est_id, clfc.asi_id,ecun.uaca_id,clfc.pro_id,clfc.ccal_calificacion AS PARCIAL_II 
+                        left join
+                            (SELECT clfc.ccal_id, clfc.paca_id, clfc.est_id, clfc.asi_id,ecun.uaca_id,clfc.pro_id,clfc.ccal_calificacion AS PARCIAL_II
                                 FROM db_academico.cabecera_calificacion clfc
                              INNER JOIN db_academico.esquema_calificacion_unidad ecun ON ecun.ecun_id = clfc.ecun_id
                              INNER JOIN db_academico.esquema_calificacion ecal ON ecal.ecal_id = ecun.ecal_id
@@ -1857,81 +1854,81 @@ croe.croe_exec,ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca
                             ) B on est.est_id=B.est_id and pmac.paca_id=B.paca_id and maes.asi_id=B.asi_id
                         where pmac.maes_id =$maes_id and pmac.paca_id=$paca_id
                     ) pmac
-                set pm.pmac_nota=pmac.promedio,
-                    pm.enac_id= pmac.estado,
-                    pm.pmac_fecha_modificacion=now()
-                where pm.maes_id=pmac.maes_id";
+                set pm.pmac_nota = pmac.promedio,
+                    pm.enac_id = pmac.estado,
+                    pm.pmac_fecha_modificacion = now(),
+                    pm.pmac_usuario_ingreso = $usu_id
+                where pm.maes_id = pmac.maes_id";
 
-            $comando = $con->createCommand($sql);
-            $result = $comando->execute();
+			$comando = $con->createCommand($sql);
+			$result = $comando->execute();
 
-            if ($transaccion !== null) {
-                $transaccion->commit();
-            }
+			if ($transaccion !== null) {
+				$transaccion->commit();
+			}
 
-            return 1;
-        } catch (Exception $ex) {
-            if ($transaccion !== null) {
-                $transaccion->rollback();
-            }
-            return 0;
-        }
-    } //function updatepromedio
+			return 1;
+		} catch (Exception $ex) {
+			if ($transaccion !== null) {
+				$transaccion->rollback();
+			}
+			return 0;
+		}
+	} //function updatepromedio
 
-    /**
-     * Function insertar Rbno_id por medio del insert select del ccal
-     * @author  Luis Cajamarca  <analistadesarrollo04@uteg.edu.ec>
-     * @property integer $daes_id
-     * @return
-     */
-    public function insertarRBNO($ccal_id, $key, $value,$valida) {
-        $con = \Yii::$app->db_academico;
-        $transaction = $con->beginTransaction();
-        $estado = "1";
-        $date = date(Yii::$app->params['dateTimeByDefault']);
-        $usu_id = @Yii::$app->session->get("PB_iduser");
-        try {
-            if($valida==1){
-                $query_select = "SELECT dc1.dcal_id, 0, ifnull(dc1.dcal_calificacion,0), $usu_id, 1, $date, 1 
+	/**
+	 * Function insertar Rbno_id por medio del insert select del ccal
+	 * @author  Luis Cajamarca  <analistadesarrollo04@uteg.edu.ec>
+	 * @property integer $daes_id
+	 * @return
+	 */
+	public function insertarRBNO($ccal_id, $key, $value, $valida) {
+		$con = \Yii::$app->db_academico;
+		$transaction = $con->beginTransaction();
+		$estado = "1";
+		$date = date(Yii::$app->params['dateTimeByDefault']);
+		$usu_id = @Yii::$app->session->get("PB_iduser");
+		try {
+			if ($valida == 1) {
+				$query_select = "SELECT dc1.dcal_id, 0, ifnull(dc1.dcal_calificacion,0), $usu_id, 1, $date, 1
                                 from db_academico.detalle_calificacion dc1
                                 inner join db_academico.componente_unidad cu1 on dc1.cuni_id = cu1.cuni_id
                                 inner join db_academico.componente com1 on cu1.com_id = com1.com_id
                                where dc1.ccal_id = $ccal_id
                                  and com1.com_nombre = '$key'";
-            }else{
-                $query_select = "SELECT dc1.dcal_id, ifnull(dc1.dcal_calificacion,0), $value, $usu_id, 1, $date, 1 
+			} else {
+				$query_select = "SELECT dc1.dcal_id, ifnull(dc1.dcal_calificacion,0), $value, $usu_id, 1, $date, 1
                                 from db_academico.detalle_calificacion dc1
                                 inner join db_academico.componente_unidad cu1 on dc1.cuni_id = cu1.cuni_id
                                 inner join db_academico.componente com1 on cu1.com_id = com1.com_id
                                where dc1.ccal_id = $ccal_id
                                  and com1.com_nombre = '$key'";
-            }
+			}
 
-            $sql = "INSERT INTO db_academico.registro_bitacora_nota
+			$sql = "INSERT INTO db_academico.registro_bitacora_nota
                     (dcal_id, rbno_nota_anterior, rbno_nota_actual, rbno_usuario_creacion, rbno_estado, rbno_fecha_creacion, rbno_estado_logico)
                 ($query_select)";
 
-            $comando = $con->createCommand($sql);
-            $comando->bindParam(":paca_id", $paca_id, \PDO::PARAM_INT);
-            $comando->execute();
+			$comando = $con->createCommand($sql);
+			$comando->bindParam(":paca_id", $paca_id, \PDO::PARAM_INT);
+			$comando->execute();
 
-            \app\models\Utilities::putMessageLogFile('insertarDaesEstudiante: ' . $comando->getRawSql());
+			\app\models\Utilities::putMessageLogFile('insertarDaesEstudiante: ' . $comando->getRawSql());
 
-            if ($transaction !== null) {
-                $transaction->commit();
-            }
+			if ($transaction !== null) {
+				$transaction->commit();
+			}
 
-            return true;
+			return true;
 
-        } catch (Exception $ex) {
-            if ($transaction !== null) {
-                $transaction->rollback();
-            }
+		} catch (Exception $ex) {
+			if ($transaction !== null) {
+				$transaction->rollback();
+			}
 
-            return FALSE;
-        }
+			return FALSE;
+		}
 
-    }
-
+	}
 
 }

@@ -695,9 +695,8 @@ class InscripcionposgradoController extends \yii\web\Controller {
             $laboral_model = InformacionLaboral::findOne(['per_id' => $persona_model->per_id]);
             $arr_pais = Pais::findAll(["pai_estado" => 1, "pai_estado_logico" => 1]);
             $arr_nacionalidad = Pais::find()->select("pai_id AS id, pai_nacionalidad AS value")->where(["pai_estado_logico" => "1", "pai_estado" => "1"])->asArray()->all();
-            $arr_prov_emp = Provincia::provinciaXPais($arr_nacionalidad[0]["id"]);
-            $arr_ciu_emp = Canton::cantonXProvincia($arr_prov_emp[0]["id"]);
-
+            $arr_prov_emp = Provincia::provinciaXPais(1);
+            $arr_ciu_emp = Canton::cantonXProvincia($laboral_model['ilab_prov_emp']);
 
             $ViewFormTab2 = $this->renderPartial('ViewFormTab2', [
                 'arr_pais' => (empty(ArrayHelper::map($arr_pais, "pai_id", "pai_nombre"))) ? array(Yii::t("pais", "Seleccionar")) : (ArrayHelper::map($arr_pais, "pai_id", "pai_nombre")),
@@ -869,7 +868,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
             $user_perId = Yii::$app->session->get("PB_perid");
             $grupo_model = new Grupo();
             $arr_grupos = $grupo_model->getAllGruposByUser($user_usermane);
-            if ($id != $user_perId) {
+            /*if ($id != $user_perId) {
                 if (!in_array(['id' => '1'], $arr_grupos) && !in_array(['id' => '6'], $arr_grupos) && !in_array(['id' => '7'], $arr_grupos) && !in_array(['id' => '8'], $arr_grupos) && !in_array(['id' => '15'], $arr_grupos))
                     return $this->redirect(['profesor/index']);
             }
@@ -906,8 +905,8 @@ class InscripcionposgradoController extends \yii\web\Controller {
             $laboral_model = InformacionLaboral::findOne(['per_id' => $persona_model->per_id]);
             $arr_pais = Pais::findAll(["pai_estado" => 1, "pai_estado_logico" => 1]);
             $arr_nacionalidad = Pais::find()->select("pai_id AS id, pai_nacionalidad AS value")->where(["pai_estado_logico" => "1", "pai_estado" => "1"])->asArray()->all();
-            $arr_prov_emp = Provincia::provinciaXPais($arr_nacionalidad[0]["id"]);
-            $arr_ciu_emp = Canton::cantonXProvincia($arr_prov_emp[0]["id"]);
+            $arr_prov_emp = Provincia::provinciaXPais(1);
+            $arr_ciu_emp = Canton::cantonXProvincia($laboral_model['ilab_prov_emp']);
 
 
             $EditFormTab2 = $this->renderPartial('EditFormTab2', [

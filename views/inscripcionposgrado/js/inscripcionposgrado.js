@@ -146,19 +146,6 @@ $(document).ready(function () {
         }, true);
     });
 
-    $('#cmb_prov_emp').change(function () {
-        var link = $('#txth_base').val() + "/inscripcionposgrado/index";
-        var arrParams = new Object();
-        arrParams.prov_id = $(this).val();
-        arrParams.getcantones = true;
-        requestHttpAjax(link, arrParams, function (response) {
-            if (response.status == "OK") {
-                data = response.message;
-                setComboData(data.cantones, "cmb_ciu_emp");
-            }
-        }, true);
-    });
-
     $('#cmb_paisEdit').change(function () {
         var link = $('#txth_base').val() + "/inscripciongrado/edit";
         var arrParams = new Object();
@@ -197,6 +184,20 @@ $(document).ready(function () {
             if (response.status == "OK") {
                 data = response.message;
                 setComboData(data.cantones, "cmb_cantonEdit");
+            }
+        }, true);
+    });
+
+    $('#cmb_provincia_empEdit').change(function () {
+        var link = $('#txth_base').val() + "/inscripciongrado/edit";
+        var arrParams = new Object();
+        arrParams.pai_id = 1;
+        arrParams.prov_id = $(this).val();
+        arrParams.getcantones = true;
+        requestHttpAjax(link, arrParams, function (response) {
+            if (response.status == "OK") {
+                data = response.message;
+                setComboData(data.cantones, "cmb_ciudad_empEdit");
             }
         }, true);
     });

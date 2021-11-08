@@ -58,11 +58,11 @@ class InscripcionposgradoController extends \yii\web\Controller {
 
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
-            Utilities::putMessageLogFile('cedula en change posg.. ' .$data['cedulacons'] );
+            //Utilities::putMessageLogFile('cedula en change posg.. ' .$data['cedulacons'] );
             if (isset($data["getcedula"])) {
                 $persids = $mod_persona->consultaPeridxdni($data['cedulacons']);
                 $message = array("persids" => $persids['per_id']);
-                Utilities::putMessageLogFile('per_id consultado pos.. ' .$persids['per_id'] );
+                //Utilities::putMessageLogFile('per_id consultado pos.. ' .$persids['per_id'] );
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
                 //return;
             }
@@ -597,11 +597,11 @@ class InscripcionposgradoController extends \yii\web\Controller {
         $data = Yii::$app->request->get();
 
         if ($data['PBgetFilter']) {
-            \app\models\Utilities::putMessageLogFile('busqueda por cedula:  '.$data['search']);
+            /*\app\models\Utilities::putMessageLogFile('busqueda por cedula:  '.$data['search']);
             \app\models\Utilities::putMessageLogFile('año:  '.$data['año']);
             \app\models\Utilities::putMessageLogFile('unidaddddd:  '.$data['unidad']);
             \app\models\Utilities::putMessageLogFile('programaaaa:  '.$data['programa']);
-            \app\models\Utilities::putMessageLogFile('modalidadddd:  '.$data['modalidad']);
+            \app\models\Utilities::putMessageLogFile('modalidadddd:  '.$data['modalidad']);*/
             $arrSearch["search"]  = $data['search'];
             $arrSearch["año"]     = $data['año'];
             $arrSearch["unidad"]  = $data['unidad'];

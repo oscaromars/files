@@ -600,7 +600,7 @@ class InscripcionPosgrado extends \yii\db\ActiveRecord
     }
 
     public function ObtenerdocumentosInscripcionPosgrado($per_id) {
-        \app\models\Utilities::putMessageLogFile('ver el resultado del id:  '.$per_id);
+        //\app\models\Utilities::putMessageLogFile('ver el resultado del id:  '.$per_id);
         $con = \Yii::$app->db_inscripcion;
         $estado = 1;
 

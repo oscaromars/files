@@ -790,7 +790,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
                     'content' => $ViewFormTab5,
                 ],
                 [
-                    'label' => Yii::t('inscripcionposgrado', 'Documentación'),
+                    'label' => Yii::t('inscripcionposgrado', 'Info. Documentación'),
                     'content' => $ViewFormTab6,
                 ],
             ];
@@ -963,7 +963,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
             $arr_tipparentesco = TipoParentesco::find()->select("tpar_id AS id, tpar_nombre AS value")->where(["tpar_estado_logico" => "1", "tpar_estado" => "1"])->asArray()->all();
 
             $mod_insposgrado = new InscripcionPosgrado();
-            $documentos = $mod_insposgrado->ObtenerdocumentosInscripcionPosgrado(['per_id' => $persona_model->per_id]);
+            $documentos = $mod_insposgrado->ObtenerdocumentosInscripcionPosgrado($persona_model->per_id);
 
             $EditFormTab6 = $this->renderPartial('EditFormTab6', [
                 "arr_tipparentesco" => ArrayHelper::map($arr_tipparentesco, "id", "value"),
@@ -1012,7 +1012,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
                     'content' => $EditFormTab5,
                 ],
                 [
-                    'label' => Yii::t('formulario', 'Documentación'),
+                    'label' => Yii::t('formulario', 'Info. Documentación'),
                     'content' => $EditFormTab6,
                 ],
             ];

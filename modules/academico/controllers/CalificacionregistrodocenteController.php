@@ -329,7 +329,7 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 
 		$componentes_temp = $mod_calificacion->getComponenteUnidadarr($arrSearch["unidad"], $arrSearch["modalidad"], $arrSearch["parcial"]);
 		foreach ($componentes_temp as $key => $value) {
-			$componentes[$value['nombre']] = array('id' => $value['id'], 'notamax' => $value['notamax']);
+			$componentes[$value['nombre']] = array('id' => $value['id'], 'nombre' => $value['nombre'], 'notamax' => $value['notamax']);
 		}
 		$model['isreg'] = $isreg;
 		$model['componentes'] = $componentes;

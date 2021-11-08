@@ -497,18 +497,16 @@ function actualizarGridRegistro(dready = 0) {
               break;
             }
             //console.log(componentes);
-            if(action == 'edit' && bandera_edi==1){
+            if(action == 'edit' ){
                 $.each(o.data[indice], function( index, value ) {
                     if(componentes[index]){
                         if(value < 0 || value > parseInt(componentes[index]['notamax'])){
-                            alertify.error("El cambio no se ha registrado, los valores del componente Asíncrona debe estar entre 0 a "+componentes[index]['notamax']);
+                            alertify.error("El cambio no se ha registrado, los valores del componente "+componentes[index]['nombre']+" debe estar entre 0 a "+componentes[index]['notamax']);
                             bandera = 1;
                         }//if
-                    }//if
+                    }//if    
+                
                 });
-            }else{
-                alertify.error("El cierre academico finalizo");
-                bandera = 1;
             }
 
             if(bandera == 1) return false;

@@ -73,7 +73,6 @@ $per_id = $persona_model->per_id;
                 ]);
                 ?>
             </div>
-
             <div class="col-md-3 col-sm-3 col-xs-3 col-lg-3">
                 <div class="form-group">
                     <?php
@@ -85,7 +84,6 @@ $per_id = $persona_model->per_id;
             </div>
         </div>
     </div>
-
     <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12 doc_dni">
         <div class="form-group">
             <label for="txth_doc_dni" class="col-sm-3 col-md-3 col-xs-3 col-lg-3 control-label keyupmce"><?= Yii::t("formulario", "Cédula o Pasaporte") ?></label>
@@ -378,7 +376,7 @@ $per_id = $persona_model->per_id;
                         'uploadUrl' => Url::to(['/inscripcionposgrado/guardarinscripcionposgrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
-                        return {"upload_file": true, "name_file": "doc_record1' . "_per_" . $per_id . '"};
+                        return {"upload_file": true, "name_file": "doc_record' . "_per_" . $per_id . '"};
         }',
                     ],
                     'pluginEvents' => [
@@ -579,7 +577,7 @@ $per_id = $persona_model->per_id;
                         'uploadUrl' => Url::to(['/inscripcionposgrado/guardarinscripcionposgrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
-                        return {"upload_file": true, "name_file": "doc_comprobante' . "_per_" . $per_id . '"};
+                        return {"upload_file": true, "name_file": "doc_cartarecomendacion' . "_per_" . $per_id . '"};
         }',
                     ],
                     'pluginEvents' => [
@@ -646,7 +644,7 @@ $per_id = $persona_model->per_id;
                         'uploadUrl' => Url::to(['/inscripcionposgrado/guardarinscripcionposgrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
-                        return {"upload_file": true, "name_file": "doc_comprobante' . "_per_" . $per_id . '"};
+                        return {"upload_file": true, "name_file": "doc_certlaboral' . "_per_" . $per_id . '"};
         }',
                     ],
                     'pluginEvents' => [
@@ -713,7 +711,7 @@ $per_id = $persona_model->per_id;
                         'uploadUrl' => Url::to(['/inscripcionposgrado/guardarinscripcionposgrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
-                        return {"upload_file": true, "name_file": "doc_certificadoingles' . "_per_" . $per_id . '"};
+                        return {"upload_file": true, "name_file": "doc_certingles' . "_per_" . $per_id . '"};
         }',
                     ],
                     'pluginEvents' => [
@@ -784,7 +782,7 @@ $per_id = $persona_model->per_id;
                         'uploadUrl' => Url::to(['/inscripcionposgrado/guardarinscripcionposgrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
-                        return {"upload_file": true, "name_file": "doc_recordacad' . "_per_" . $per_id . '"};
+                        return {"upload_file": true, "name_file": "doc_record' . "_per_" . $per_id . '"};
         }',
                     ],
                     'pluginEvents' => [
@@ -851,7 +849,7 @@ $per_id = $persona_model->per_id;
                         'uploadUrl' => Url::to(['/inscripcionposgrado/guardarinscripcionposgrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
-                        return {"upload_file": true, "name_file": "doc_nosancion' . "_per_" . $per_id . '"};
+                        return {"upload_file": true, "name_file": "doc_certificado' . "_per_" . $per_id . '"};
         }',
                     ],
                     'pluginEvents' => [

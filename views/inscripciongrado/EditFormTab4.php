@@ -449,7 +449,7 @@ $per_id = $persona_model->per_id;
                         'uploadUrl' => Url::to(['/inscripciongrado/guardarinscripciongrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
-            return {"upload_file": true, "name_file": "doc_nosancion' . "_per_" . $per_id . '"};
+            return {"upload_file": true, "name_file": "doc_certificado' . "_per_" . $per_id . '"};
         }',
                     ],
                     'pluginEvents' => [

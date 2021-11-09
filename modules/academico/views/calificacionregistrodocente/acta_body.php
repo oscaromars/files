@@ -1,11 +1,12 @@
 <?php
-	//$periodoAcad;
-	//$lblTotalCost = "TOTAL COSTO";
-	if($costoProgCarrera_est != $costoCarrera_est)
-		$lblTotalCost .= " PERIODO" . strtoupper($periodoAcad);
+//$periodoAcad;
+//$lblTotalCost = "TOTAL COSTO";
+if ($costoProgCarrera_est != $costoCarrera_est) {
+	$lblTotalCost .= " PERIODO" . strtoupper($periodoAcad);
+}
 
-	// \app\models\Utilities::putMessageLogFile($model);
- ?>
+// \app\models\Utilities::putMessageLogFile($model);
+?>
 <style>
     .bold{
         font-weight: bold;
@@ -13,7 +14,7 @@
     .blue{
         color:#000000 !important;
     }
-    .tabla {       
+    .tabla {
         color:#000000 !important;
         width: 400px;
         /*width: 100%;*/
@@ -24,7 +25,7 @@
         padding: 0.3em;
         caption-side: bottom;
         margin: 0 auto;
-    }  
+    }
     .signature {
 		border: 0;
 		border-bottom: 1px solid #000;
@@ -60,27 +61,27 @@
     </div>
      <div style="text-align: center">
         <br><br>
-        
+
         <p><span class="bold">REPORTE DE CALIFICACIONES</span></p>
         <br><br><br>
     </div>
     <div>
     	<table class="default">
-		 
+
 		  <tr class="tr">
 		  	<td colspan="5" class="td"><span class="bold">FACULTAD:</span><br>  </td>
 		  </tr>
 		  <tr class="tr">
 			<td colspan="2" class="aleft td"><span class="bold">CURSO:</span></td>
-		    <td colspan="3" class="aleft td">    <?= $model[0]['asi_nombre'] ?>   </td>
+		    <td colspan="3" class="aleft td">    <?=$model[0]['asi_nombre']?>   </td>
 		  </tr>
 		  <tr class="tr">
 		    <td colspan="2" class="aleft td"><span class="bold">PERIODO:</span></td>
-		    <td colspan="3" class="aleft td">    <?= $model[0]['paca_nombre'] ?>   </td>
+		    <td colspan="3" class="aleft td">    <?=$model[0]['paca_nombre']?>   </td>
 		  </tr>
 		  <tr class="tr">
 		    <td colspan="2" class="aleft td"><span class="bold">DOCENTE:</span></td>
-		    <td id="docente_seccion_acta" colspan="3" class="aleft td"> <?= $profesor_data[0]['name'] . " - " . $profesor_data[0]['cedula'] ?>   </td>
+		    <td id="docente_seccion_acta" colspan="3" class="aleft td"> <?=$profesor_data[0]['name'] . " - " . $profesor_data[0]['cedula']?>   </td>
 		  </tr>
 
 		</table>
@@ -95,27 +96,29 @@
 					<td  class="td"><span class="bold">PARCIAL 2</span></td>
 					<td  class="td"><span class="bold">SUPLETORIO</span></td>
 					<td  class="td"><span class="bold">PUNTAJE FINAL</span></td>
+					<td  class="td"><span class="bold">ESTADO</span></td>
                 </tr>
-			   
+
 		  </thead>
 			<tbody>
 
-                <?php 
-                $i=0;
-                foreach($model as $key => $value){ 
-                	$i++;
-                          
-            	echo "<tr style='border: 1px solid #002060;'>
-            			<td style='text-align: center'>". $i."</td>
-            			<td style='text-align: center'>".  $value['Nombres_completos']."</td>
-            			<td style='text-align: center'>".  $value['parcial_1']."</td>
-            			<td style='text-align: center'>".  $value['parcial_2'] ."</td>
-            			<td style='text-align: center'>".  $value['supletorio'] ."</td>
-            			<td style='text-align: center'>".  $value['promedio_final']."</td> 
+                <?php
+$i = 0;
+foreach ($model as $key => $value) {
+	$i++;
+
+	echo "<tr style='border: 1px solid #002060;'>
+            			<td style='text-align: center'>" . $i . "</td>
+            			<td style='text-align: center'>" . $value['Nombres_completos'] . "</td>
+            			<td style='text-align: center'>" . $value['parcial_1'] . "</td>
+            			<td style='text-align: center'>" . $value['parcial_2'] . "</td>
+            			<td style='text-align: center'>" . $value['supletorio'] . "</td>
+            			<td style='text-align: center'>" . $value['promedio_final'] . "</td>
+            			<td style='text-align: center'>" . $value['estado'] . "</td>
             			</tr>";
-                           
-                  } ?>
-               
+
+}?>
+
 			</tbody>
 		</table>
 		<br><br>

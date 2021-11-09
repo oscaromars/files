@@ -57,20 +57,32 @@ if ($k == -1) { $v3 = Null; } else { $v3 = '['; $v3 .= $k; $v3 .= ']'; }
 return $alld;
 
 }
-    getconfig();
+    GLOBAL $dsn, $dbuser, $dbpass, $dbname;
+    $con = new \PDO($dsn, $dbuser, $dbpass);
+    $isrunning = "Select * from db_academico.cron_estudiantes_educativa
+    WHERE croe_exec = '3';";
+     $comando = $con->prepare($isrunning);
+    $comando->execute();
+    $running = $comando->fetchAll(\PDO::FETCH_ASSOC);
+    if (isset($running)){ die; } else {  getconfig(); }
+   
+
+
    function getconfig() {
     GLOBAL $dsn, $dbuser, $dbpass, $dbname;
     $con = new \PDO($dsn, $dbuser, $dbpass);
-    getinpagos();
+//getInpagos();  /* ------------------------------     ?      ---------------------------------*/
    $configura=
-   "SELECT croe_id, croe_mod_id, croe_paca_id, croe_uaca_id,
+   "SELECT croe_id, croe_mod_id, croe_paca_id, croe_uaca_id
     FROM db_academico.cron_estudiantes_educativa
-    WHERE now() >= croe_fecha_ejecucion SELECT
+    WHERE now() >= croe_fecha_ejecucion 
     AND croe_exec = '1' 
     ;";
     $comando = $con->prepare($configura);
     $comando->execute();
     $confi = $comando->fetchAll(\PDO::FETCH_ASSOC);
+
+
    for ($f = 0; $f < count($confi); $f++) {
    putMessageLogFile(' '.$confi[$f]['mod_id'].' '.$confi[$f]['paca_id'].' '.$confi[$f]['uaca_id']);
    running($confi[$f]['croe_id']);
@@ -108,6 +120,47 @@ function inactiva($croneducativa) {
     return true;
     }
 
+      function getallgroups($mod_id, $paca_id, $uaca_id) {    
+
+  GLOBAL $dsn, $dbuser, $dbpass, $dbname;
+           $con = new \PDO($dsn, $dbuser, $dbpass);
+
+$qusersandgroups = 
+"SELECT cedist.daca_id, ceduct.cedu_asi_id, 
+daca.uaca_id, daca.paca_id, daca.mod_id, daca.mpp_id, 
+daca.pro_id, daca.asi_id, daes.est_id,
+usuedu.uedu_usuario, usuedu.per_id, person.per_cedula
+FROM db_academico.curso_educativa_distributivo cedist
+INNER JOIN db_academico.curso_educativa as ceduct on cedist.cedu_id = ceduct.cedu_id
+INNER JOIN db_academico.distributivo_academico as daca on cedist.daca_id = daca.daca_id
+INNER JOIN db_academico.distributivo_academico_estudiante as daes on daes.daca_id = daca.daca_id
+INNER JOIN db_academico.usuario_educativa as usuedu on usuedu.est_id = daes.est_id
+INNER JOIN db_academico.estudiante as estu on  estu.est_id = daes.est_id
+INNER JOIN db_asgard.persona as person on  estu.per_id = person.per_id
+WHERE daca.mod_id = $mod_id
+AND daca.paca_id = $paca_id
+AND daca.uaca_id = $uaca_id
+;";
+
+$qusersandgroups = // --------------------------------------------------------------------DEV  !!!!
+"SELECT cedist.daca_id, ceduct.cedu_asi_id, 
+daca.uaca_id, daca.paca_id, daca.mod_id, daca.mpp_id, 
+daca.pro_id, daca.asi_id, daes.est_id,
+usuedu.uedu_usuario, usuedu.per_id, person.per_cedula
+FROM db_academico.curso_educativa_distributivo cedist
+INNER JOIN db_academico.curso_educativa as ceduct on cedist.cedu_id = ceduct.cedu_id
+INNER JOIN db_academico.distributivo_academico as daca on cedist.daca_id = daca.daca_id
+INNER JOIN db_academico.distributivo_academico_estudiante as daes on daes.daca_id = daca.daca_id
+INNER JOIN db_academico.usuario_educativa as usuedu on usuedu.est_id = daes.est_id
+INNER JOIN db_academico.estudiante as estu on  estu.est_id = daes.est_id
+INNER JOIN db_asgard.persona as person on  estu.per_id = person.per_id;";
+
+ $comando = $con->prepare($sql);
+        $comando->execute();
+    return $comando->fetchAll(\PDO::FETCH_ASSOC);
+
+   }
+
        function getgrades($mod_id, $paca_id, $uaca_id) {
        try {
 
@@ -134,6 +187,7 @@ function inactiva($croneducativa) {
             $est_id = $groups[$i]['est_id'];
             $uedu_usuario = $groups[$i]['uedu_usuario'];
             $per_id = $groups[$i]['per_id'];
+            $ced_id = $groups[$i]['per_cedula'];
 
             } elseif (isset($groups['daca_id'])) {
 
@@ -148,6 +202,7 @@ function inactiva($croneducativa) {
             $est_id = $groups['est_id'];
             $uedu_usuario = $groups['uedu_usuario'];
             $per_id = $groups['per_id'];
+            $ced_id = $groups['per_cedula'];
 
             }
 
@@ -181,9 +236,9 @@ function inactiva($croneducativa) {
             $response = $client->__call( $method, Array( $args ) );
 
 
-              $isauth= traerestudiantesautorizados($uedu_usuario);  
+              $isauth= getPagopend($ced_id);  
 
- if ($isauth['uedu_usuario'] == $uedu_usuario)  {    
+ if ($isauth)  {    
 
  if (isset($response->categorias)) { 
 
@@ -198,19 +253,149 @@ function inactiva($croneducativa) {
             $arraydata3 = array();
             $grades=0;
 
+if (isset($arraycat[0]['id_categoria'])) { 
+for ($i = 0; $i < count($arrayl2); $i++) {
 
-}}
+
+   
+    if (isset($arraycat[$i]['calificaciones']['notas'][0]['id_nota'])) { 
+         $arrayl4 = array_column($arraycat[$i]['calificaciones']['notas'], 'id_nota'); 
+              for ($k = 0; $k < count($arrayl4); $k++) {
+                  $allcode =getallcode($i,-1,$k);     
+                    eval ($allcode);
+                    $grades++;
+              }
+    }  else {
+                if (isset($arraycat[$i]['calificaciones']['notas'])) {
+                $allcode =getallcode($i,-1,-1);     
+                eval ($allcode);
+                $grades++;
+                }           
+
+            }
+
+    if (isset($arraycat[$i]['calificaciones'][0]['notas'] )) { 
+    $arrayl3 = array_column($arraycat[$i]['calificaciones'], 'id_calificacion'); // --DEBUG!!!! 
+    for ($j = 0; $j < count($arrayl3); $j++) {
 
 
-        }
+            if (isset($arraycat[$i]['calificaciones'][$j]['notas'][0]['id_nota'])) {
+                 $arrayl4 = array_column($arraycat[$i]['calificaciones'][$j]['notas'], 'id_nota'); 
+                     for ($k = 0; $k < count($arrayl4); $k++) {
+                         $allcode =getallcode($i,$j,$k);     
+                         eval ($allcode);
+                          $grades++;
+                     }
+             } else {
+
+                        if (isset($arraycat[$i]['calificaciones'][$j]['notas'])) {
+                        $allcode =getallcode($i,$j,-1);     
+                        eval ($allcode);
+                $grades++;
+                         }
+                    } 
+    }  
 
     }
+
+} 
+
+}
+
+ if (isset($arraycat['id_categoria'])) { 
+   
+if (isset($arraycat['calificaciones']['notas'][0]['id_nota'])) {
+$arrayl4 = array_column($arraycat['calificaciones']['notas'], 'id_nota'); 
+for ($k = 0; $k < count($arrayl4); $k++) {
+
+
+$allcode =getallcode(-1,-1,$k);     
+eval ($allcode);
+$grades++;
+
+}} else {
+
+if (isset($arraycat['calificaciones']['notas'])) {
+
+$allcode =getallcode(-1,-1,-1);     
+eval ($allcode);
+$grades++;
+
+
+}
+
+
+}
+
+ if (isset($arraycat['calificaciones'][0]['notas'])) { 
+    $arrayl3 = array_column($arraycat['calificaciones'], 'id_calificacion');  
+
+ for ($j = 0; $j < count($arrayl3); $j++) {
+if (isset($arraycat['calificaciones'][$j]['notas'][0]['id_nota'])) {
+$arrayl4 = array_column($arraycat['calificaciones'][$j]['notas'], 'id_nota'); 
+for ($k = 0; $k < count($arrayl4); $k++) {
+
+$allcode =getallcode(-1,$j,$k);     
+eval ($allcode);
+$grades++;
+
+
+}} else {
+
+if (isset($arraycat['calificaciones'][$j]['notas'])) {
+
+$allcode =getallcode(-1,$j,-1);     
+eval ($allcode);
+$grades++;
+
+}
+
+
+}
+    } }
+
+ } 
+
+}
+         /* -------- PROCESAR ARRAYS DE CALIFICACIONES -------- 
+
+         
+         1. extract grades
+         2. process grades
+         3. save grades 
+         --------------------------------------------------- */
+
+} else {// isauth
+        
+          /* -------- PENDIENTES IMPAGOS  --------------------- 
+
+         
+         1. select / save
+
+         --------------------------------------------------- */
+
+       
+       }
+
+        }//for
+
+        /* -------- MATRIZ TEMPORAL DE CALIFICACIONES -------- 
+
+         0. temporal raw save
+
+         --------------------------------------------------- */
+
+
+    }//if
 
  }  catch (PDOException $e) {
            putMessageLogFile('Error: ' . $e->getMessage());
            exit; }
+
+
     
 }
+
 
  function getparamcategoria($elemento) {
 $datacategorias = array();
@@ -307,29 +492,69 @@ function getparamitem($elemento) {
  }
 
 
-   function getPago($usuedu)  { 
-        $url = "https://acade.uteg.edu.ec/planificaciondesa/grades.php"; //--
-        $content = json_encode($usuedu); //--
-        $curl = curl_init($url);  //--
+   function getPagopend($cedusuedu)  { 
+
+         $ceduladni['cedula']=$cedusuedu;        
+        $url = "https://acade.uteg.edu.ec/planificaciondesa/grades.php"; 
+        $content = json_encode($ceduladni); 
+        $curl = curl_init($url);  
         curl_setopt($curl, CURLOPT_HEADER, false);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);   //--
-        curl_setopt($curl, CURLOPT_HTTPHEADER,  //--
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);   
+        curl_setopt($curl, CURLOPT_HTTPHEADER,  
         array("Content-type: application/json"));
         curl_setopt($curl, CURLOPT_POST, true);
-        curl_setopt($curl, CURLOPT_POSTFIELDS, $content); //-- 
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $content); 
         $json_response = curl_exec($curl);  //--
-        $status = curl_getinfo($curl, CURLINFO_HTTP_CODE); //--
+        $status = curl_getinfo($curl, CURLINFO_HTTP_CODE); 
         if ( $status != 200 ) {                
-        //die(" $content url $url status $status, response $json_response, curl_error " . curl_error($curl) . ", curl_errno " . curl_errno($curl));
-        die(" status $status content $content ");
+        die(" status $status content $content "); 
          }
-           $response = json_decode($json_response, true); //--
-              curl_close($curl);   //--
+        $html = curl_multi_getcontent($curl); 
+        $response = json_decode($json_response, true); //--
+        print_r(" status $status content $content $response $html  "); 
+        curl_close($curl);   
 
-        if ($response == 1){
+
+       //  %saldo%
+         $allresponse = explode('":"', $html);
+         if (isset($allresponse[1])) {
+         $saldos = explode('"', $allresponse[1]);
+         print_r('SALDO ==> '.$saldos[0]);
+
+         } else {
+        
+        print_r('SALDO ==> 0.00');
+
+         }
+         
+
+        if ($saldos == 0){
          return True;
-        }elseif ($response == 0) {
+        }else {
            return False;
         }
        
      }  
+
+
+      function getInpagos() {
+     GLOBAL $dsn, $dbuser, $dbpass, $dbname;
+    $con = new \PDO($dsn, $dbuser, $dbpass);
+     $sqlq ="select * from db_academico.temp_impagos_educativa;";
+    $comando = $con->prepare($sqlq);
+    $comando->execute();
+    $pendientes = $comando->fetchAll(\PDO::FETCH_ASSOC);
+
+        if (count($pendientes) > 0) {
+
+               for ($i = 0; $i < count($pendientes); $i++) {  
+
+
+               }
+
+        }
+
+
+
+}
+

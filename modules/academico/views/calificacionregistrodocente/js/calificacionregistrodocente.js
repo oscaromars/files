@@ -313,7 +313,7 @@ function searchEducativa() {
 
  if (parcial == 0) {
 
- showAlert('NO_OK', 'error', {"wtmessage": 'Elija Parcial', "title": 'Información'});
+ showAlert('FALSE', 'success', {"wtmessage": 'Elija Parcial', "title": 'Información'});
 
  } else {
 
@@ -337,7 +337,7 @@ function activateCron(cronid) {
  if (currente == undefined  ||  currente == '') {
 
 
- showAlert('NO_OK', 'error', {"wtmessage": 'Seleccione la fecha a ejecutarse!', "title": 'Información'});
+ showAlert('FALSE', 'success', {"wtmessage": 'Seleccione la fecha a ejecutarse!', "title": 'Información'});
 
  
 }else { 

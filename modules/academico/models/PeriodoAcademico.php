@@ -307,6 +307,46 @@ class PeriodoAcademico extends \yii\db\ActiveRecord {
 		return $resultData;
 	}
 
+
+	/**
+     * Consultar los períodos académicos activos regulares con dos bloques academicos
+     * @author Oscar <analistadesarrollo05@uteg.edu.ec>;
+     * @param
+     * @return
+     */
+    public function consultarPeriodosActivosmalla() {
+        $con = Yii::$app->db_academico;
+        $estado = 1;
+
+        $sql = "SELECT
+                paca.paca_id,
+                paca.paca_id as id,
+                ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca_anio),'') AS paca_nombre,
+                ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca_anio),'') AS nombre,
+                baca.baca_nombre
+                FROM " . $con->dbname . ".semestre_academico AS saca
+                INNER JOIN " . $con->dbname . ".periodo_academico AS paca ON saca.saca_id = paca.saca_id
+                INNER JOIN " . $con->dbname . ".bloque_academico AS baca ON baca.baca_id = paca.baca_id
+                WHERE
+                paca.paca_activo = 'A' AND
+                paca.paca_estado = 1 AND
+                paca.paca_estado_logico = 1 AND
+                saca.saca_estado = 1 AND
+                saca.saca_estado_logico = 1 AND
+                baca.baca_estado = 1 AND
+                baca.baca_estado_logico = 1
+                 AND
+                ( select count(*) from db_academico.periodo_academico bb
+                 WHERE  
+                bb.saca_id = saca.saca_id
+                 group by bb.saca_id) > 1 
+                ";
+
+        $comando = $con->createCommand($sql);
+        $resultData = $comando->queryAll();
+        return $resultData;
+    }
+
 	/**
 	 * Mostrará un solo período académico basado en el per_id
 	 * @author Jorge Paladines <analista.desarrollo@uteg.edu.ec>;

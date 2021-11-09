@@ -1095,8 +1095,8 @@ class Persona extends \yii\db\ActiveRecord {
                         can_id_domicilio = :can_id_domicilio,
                         per_nacionalidad = :per_nacionalidad,
                         per_trabajo_direccion = :per_trabajo_direccion,
-                        per_fecha_modificacion = :per_fecha_modificacion,
-                        per_usuario_modifica = :usuario_modifica
+                        per_fecha_modificacion = :per_fecha_modificacion -- ,
+                        -- per_usuario_modifica = :usuario_modifica
                       WHERE
                         per_cedula = :per_dni AND
                         per_estado = :estado AND
@@ -1107,7 +1107,7 @@ class Persona extends \yii\db\ActiveRecord {
             $comando->bindParam(":per_seg_nombre", ucwords(strtolower($per_seg_nombre)), \PDO::PARAM_STR);
             $comando->bindParam(":per_pri_apellido", ucwords(strtolower($per_pri_apellido)), \PDO::PARAM_STR);
             $comando->bindParam(":per_seg_apellido", ucwords(strtolower($per_seg_apellido)), \PDO::PARAM_STR);
-            $comando->bindParam(":per_dni", $per_dni, \PDO::PARAM_INT);
+            $comando->bindParam(":per_dni", $per_dni, \PDO::PARAM_STR);
             $comando->bindParam(":eciv_id", $eciv_id, \PDO::PARAM_INT);
             $comando->bindParam(":can_id_nacimiento", $can_id_nacimiento, \PDO::PARAM_INT);
             $comando->bindParam(":per_fecha_nacimiento", $per_fecha_nacimiento, \PDO::PARAM_STR);
@@ -1122,7 +1122,7 @@ class Persona extends \yii\db\ActiveRecord {
             $comando->bindParam(":per_nacionalidad", ucwords(strtolower($per_nacionalidad)), \PDO::PARAM_STR);
             $comando->bindParam(":per_trabajo_direccion", ucwords(strtolower($per_trabajo_direccion)), \PDO::PARAM_STR);
             $comando->bindParam(":per_fecha_modificacion", $per_fecha_modificacion, \PDO::PARAM_STR);
-            $comando->bindParam(":usuario_modifica", $usuario_modifica, \PDO::PARAM_INT);
+            //$comando->bindParam(":usuario_modifica", $usuario_modifica, \PDO::PARAM_INT);
             $response = $comando->execute();
 
             if ($trans !== null)

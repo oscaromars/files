@@ -342,7 +342,7 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
                         var personaid = $("#txth_personaid").val();
-                        return {"upload_file": true, "name_file": "doc_record1_per_" + personaid};
+                        return {"upload_file": true, "name_file": "doc_record_per_" + personaid};
         }',
                     ],
                     'pluginEvents' => [
@@ -518,7 +518,7 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
                         var personaid = $("#txth_personaid").val();
-                        return {"upload_file": true, "name_file": "doc_comprobante_per_" + personaid};
+                        return {"upload_file": true, "name_file": "doc_cartarecomendacion_per_" + personaid};
         }',
                     ],
                     'pluginEvents' => [
@@ -576,7 +576,7 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
                         var personaid = $("#txth_personaid").val();
-                        return {"upload_file": true, "name_file": "doc_comprobante_per_" + personaid};
+                        return {"upload_file": true, "name_file": "doc_certlaboral_per_" + personaid};
         }',
                     ],
                     'pluginEvents' => [
@@ -634,7 +634,7 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
                         var personaid = $("#txth_personaid").val();
-                        return {"upload_file": true, "name_file": "doc_certificadoingles_per_" + personaid};
+                        return {"upload_file": true, "name_file": "doc_certingles_per_" + personaid};
         }',
                     ],
                     'pluginEvents' => [
@@ -730,7 +730,7 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                                 'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                                 'uploadExtraData' => 'javascript:function (previewId,index) {
                                 var personaid = $("#txth_personaid").val();
-                                return {"upload_file": true, "name_file": "doc_recordacad_per_" + personaid};
+                                return {"upload_file": true, "name_file": "doc_record_per_" + personaid};
                 }',
                             ],
                             'pluginEvents' => [
@@ -788,7 +788,7 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                                 'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                                 'uploadExtraData' => 'javascript:function (previewId,index) {
                                 var personaid = $("#txth_personaid").val();
-                                return {"upload_file": true, "name_file": "doc_nosancion_per_" + personaid};
+                                return {"upload_file": true, "name_file": "doc_certificado_per_" + personaid};
                 }',
                             ],
                             'pluginEvents' => [

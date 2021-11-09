@@ -1611,7 +1611,7 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 		$mod_unidad = new UnidadAcademica();
 		$mod_modalidad = new Modalidad();
 		//$mod_crones  = new CronEducativa();
-		$arr_periodos = $mod_periodos->consultarPeriodosActivos();
+		$arr_periodos = $mod_periodos->consultarPeriodosActivosmalla();
 		$arr_ninteres = $mod_unidad->consultarUnidadAcademicasEmpresa(1);
 		$arr_modalidad = $mod_modalidad->consultarModalidad($arr_ninteres[0]["id"], 1);
 

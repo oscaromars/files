@@ -86,7 +86,7 @@ PbGridView::widget([
                 'format' => 'html',
                 'value' => function ($model) {
                     if ($model["croe_exec"] == 0)
-                        return '<small style="color:#aa0000;">&nbsp;&nbsp;&nbsp;Transferido</small>';
+                        return '<small style="color:#aa0000;"><b>&nbsp;Transferido</b></small>';
                     if ($model["croe_exec"] == 1)                        
                         return '<small class="label label-primary">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Activo&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</small>';
                      if ($model["croe_exec"] == 2)               
@@ -98,6 +98,7 @@ PbGridView::widget([
                 'class' => 'yii\grid\ActionColumn',
                 'header' => Yii::t("formulario", "Fecha de Ejecución"),
                 'options' => ['width' => '160','height' => '60'],
+                'contentOptions' => ['style' => 'height: 32px;'],
                 'template' => '{activa}', //
                 'buttons' => [
                     'activa' => function ($url, $model) {
@@ -117,7 +118,7 @@ PbGridView::widget([
 ]);
                         } else {
                              if ($model["croe_exec"] == 0)
-                        return '<small style="color:#aa0000;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.$model["croe_fecha_ejecucion"];
+                        return '<small><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.$model["croe_fecha_ejecucion"].'</b></small>';
                             return '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.$model["croe_fecha_ejecucion"];
                         }
                     },
@@ -128,6 +129,8 @@ PbGridView::widget([
                 'class' => 'yii\grid\ActionColumn',
                 'header' => Yii::t("formulario", "Actions"),
                 'options' => ['width' => '160'],
+                'headerOptions' => ['style' => 'text-align: center;color:#000000'],
+                'contentOptions' => ['style' => 'text-align: center;'],
                 'template' => '{activa}', //
                 'buttons' => [
                     'activa' => function ($url, $model) {
@@ -138,7 +141,7 @@ PbGridView::widget([
                             return Html::a('<span class="glyphicon glyphicon-plus"></span>', Url::to(['/academico/calificacionregistrodocente/index', 'sids' => base64_encode($model['sins_id']), 'adm' => base64_encode($model['adm_id'])]), ["data-toggle" => "tooltip", "title" => "Activar", "data-pjax" => 0]);
                         } else {
                              if ($model["croe_exec"] == 0)
-                            return '<span style="color:#aa0000;" class="glyphicon glyphicon-saved"></span>'; 
+                            return '<span class="glyphicon glyphicon-saved"></span>'; 
                              if ($model["croe_exec"] == 1)
                             return '<span class="glyphicon glyphicon-time"></span>';
                         }

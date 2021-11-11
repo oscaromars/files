@@ -218,7 +218,8 @@ function exportExcelinscritosreporte() {
 }
 
 function exportExceldistributivoposgrado() {
+    var periodo =  $('#distributivoacademicosearch-paca_id').val();
     var tipo_asignacion =  $('#distributivoacademicosearch-tdis_id').val();
     var modalidad =  $('#distributivoacademicosearch-mod_id').val();
-    window.location.href = $('#txth_base').val() + "/reportes/expexceldistributivoposgrado?&tipo_asignacion=" + tipo_asignacion + "&modalidad=" + modalidad;
+    window.location.href = $('#txth_base').val() + "/reportes/expexceldistributivoposgrado?&tipo_asignacion="+ periodo + tipo_asignacion + "&modalidad=" + modalidad;
 }

@@ -1269,10 +1269,19 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
                          when (da.uaca_id= 2 and t.tdis_id =1 ) then ifnull(dh.daho_total_horas * ROUND(timestampdiff(day, da.daca_fecha_inicio_post, da.daca_fecha_fin_post)/7),'')
                         end)
                        else
+
                         case
-                        when (da.uaca_id= 2 and t.tdis_id =1 ) then ifnull(dh.daho_total_horas * ROUND(timestampdiff(day, da.daca_fecha_inicio_post, da.daca_fecha_fin_post)/7),'')
-                        when da.tdis_id=2 then tdis_num_semanas * pc.paca_semanas_inv_vinc_tuto
-                        when da.tdis_id=3 then tdis_num_semanas * pc.paca_semanas_inv_vinc_tuto
+		                when (da.uaca_id= 2 and td.tdis_id =1 and m.mod_id=1) then
+			                case when m.mod_id=1 then
+			                    case
+			                        when (da.daca_num_estudiantes_online between 0 and 49) then round( 4 * ROUND(timestampdiff(day, da.daca_fecha_inicio_post, da.daca_fecha_fin_post)/7))
+			                        when (da.daca_num_estudiantes_online >=50) then round( 6 * ROUND(timestampdiff(day, da.daca_fecha_inicio_post, da.daca_fecha_fin_post)/7))
+			                    end
+			                else ifnull(dah.daho_total_horas * ROUND(timestampdiff(day, da.daca_fecha_inicio_post, da.daca_fecha_fin_post)/7),'')
+			                end
+
+		                when da.tdis_id=2 then td.tdis_num_semanas * pc.paca_semanas_inv_vinc_tuto
+		                when da.tdis_id=3 then td.tdis_num_semanas * pc.paca_semanas_inv_vinc_tuto
                         when da.tdis_id=7 then tdis_num_semanas else (pc.paca_semanas_periodo * case  when dh.daho_total_horas is null then tdis_num_semanas else dh.daho_total_horas end) end
                         end as total_horas, -- AQUI
 
@@ -1336,7 +1345,6 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
 			$valores_promedio[0]['preparacion_docencia'] = /*(( $valores_promedio[0]['total_hora_semana_docencia_prese'] + $valores_promedio[0]['total_hora_semana_docencia_online']) **/0.30/*)*/;
 			$total_hora_semana_docenciaposgrado = $valores_promedio[0]['total_hora_semana_docencia_posgrado'];
 			$promedio = $DistADO->Calcularpromedioajustado($id, /*$total_hora_semana_docenciaposgrado,*/ $valores_promedio[0]['total_hora_semana_docencia'], $valores_promedio[0]['total_hora_semana_tutoria'], $valores_promedio[0]['total_hora_semana_investigacion'], $valores_promedio[0]['total_hora_semana_vinculacion'], $valores_promedio[0]['preparacion_docencia'], $valores_promedio[0]['semanas_docencia'], $valores_promedio[0]['semanas_tutoria_vinulacion_investigacion']/*, $valores_promedio[0]['semanas_posgrado']*/);
-			//$promedio = $DistADO->Calcularpromedioaj($res);
 
 			foreach ($res as $key => $value) {
 				$value['promedioajustado'] = round($promedio);
@@ -1346,20 +1354,6 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
 		if ($onlyData) {
 			return $res;
 		}
-
-		$dataProvider = new ArrayDataProvider([
-			'key' => 'Id',
-			'allModels' => $res,
-			'pagination' => [
-				'pageSize' => Yii::$app->params["pageSize"],
-			],
-			'sort' => [
-				'attributes' => ['Nombres', "Cedula", "UnidadAcademica", "Modalidad", "Periodo", "Asignatura"],
-			],
-		]);
-
-		return $dataProvider;
-	}
 
 	public function getListarDistribProf($id, $onlyData = false) {
 		$con_academico = \Yii::$app->db_academico;
@@ -1610,7 +1604,12 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
 		$con_academico = \Yii::$app->db_academico;
 		$estado = 1;
 		$sql = "SELECT
-	                case when da.uaca_id = 2 and td.tdis_id =1 then dah.daho_total_horas else 0 end  as total_hora_semana_docenciaposgrado,
+	                case when m.mod_id = 1 then
+	                    case
+		                    when da.uaca_id = 2 and td.tdis_id =1 and daca_num_estudiantes_online between 0 and 49 then 4 
+		                    when da.uaca_id = 2 and td.tdis_id =1 and daca_num_estudiantes_online >=50 then 6 
+	                    end
+                    else dah.daho_total_horas end  as total_hora_semana_docenciaposgrado,
 	                ROUND(timestampdiff(day, daca_fecha_inicio_post, daca_fecha_fin_post)/7) as semanas_posgrado,
 	                ROUND(timestampdiff(day, pa.paca_fecha_inicio, da.daca_fecha_inicio_post)/7)+1 as fecha_inicio,
 	                ROUND(timestampdiff(day, pa.paca_fecha_inicio, da.daca_fecha_fin_post)/7) as fecha_fin,

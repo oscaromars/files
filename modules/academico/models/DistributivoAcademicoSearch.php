@@ -376,7 +376,7 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
                         when da.tdis_id=7 then td.tdis_num_semanas else (pc.paca_semanas_periodo * case  when dah.daho_total_horas is null then td.tdis_num_semanas else dah.daho_total_horas end) end
                      end as total_horas_dictar,
                 m.mod_nombre as modalidad,
-                'N/A' as aula,
+
                 (select made_credito
                     from db_academico.malla_academica_detalle mad
                     inner join db_academico.malla_unidad_modalidad mum on mad.maca_id=mum.maca_id
@@ -1409,7 +1409,7 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
 			],
 			'sort' => [
 				'attributes' => ['
-                '],
+                ', ],
 			],
 		]);
 

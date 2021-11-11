@@ -413,6 +413,7 @@ class ReportesController extends CController {
 		$params = Yii::$app->request->queryParams;
 		$res = $searchModel->getListadoDistributivoBloqueDocente($params, true, 2);
 		$rep = new ExportFile();
+		$this->view->title = academico::t("Academico", "Reporte Distributivo"); // Titulo del reporte
 
 		$rep->orientation = "P"; // tipo de orientacion L => Horizontal, P => Vertical
 		$rep->createReportPdf(
@@ -420,7 +421,7 @@ class ReportesController extends CController {
 		// get your HTML raw content without any layouts or scripts
 
 		// return the pdf output as per the destination setting
-		$rep->mpdf->Output("Distributivo_Academic.pdf", ExportFile::OUTPUT_TO_DOWNLOAD);
+		$rep->mpdf->Output('Reporte_distributivo_' . date("Ymdhis") . ".pdf", ExportFile::OUTPUT_TO_DOWNLOAD);
 	}
 
 	public function actionReportematrizdistributivo() {
@@ -578,7 +579,7 @@ class ReportesController extends CController {
 
 	public function actionExppdfdistributivoposgrado() {
 		$report = new ExportFile();
-		$this->view->title = academico::t("Academico", "Reporte academico de materias"); // Titulo del reporte
+		$this->view->title = academico::t("Academico", "Reporte Distributivo Posgrado"); // Titulo del reporte
 		$arr_head = array(
 			Yii::t("formulario", "Profesor"),
 			Yii::t("formulario", "3er. Nivel"),
@@ -608,7 +609,7 @@ class ReportesController extends CController {
 			$arr_body = $searchModel->getListadoDistributivoPosgradosexcel($arrSearch, true);
 		}
 
-		$report->orientation = "L"; // tipo de orientacion L => Horizontal, P => Vertical
+		$report->orientation = "P"; // tipo de orientacion L => Horizontal, P => Vertical
 		$report->createReportPdf(
 			$this->render('exportpospdf', [
 				'arr_head' => $arr_head,

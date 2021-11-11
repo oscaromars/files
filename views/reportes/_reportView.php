@@ -60,7 +60,7 @@
         border-bottom: 1px;
         border-width: 1px;
         border-bottom-style: solid;
-        
+
     }
 
     .divRow {
@@ -99,18 +99,12 @@
 <div>
 
     <div class="bold" style="text-align: center">
-       Distributivo Académico 
+       <p><span class="bold">Distributivo Académico</span></p>
+        <br><br>
     </div>
     <br><br>
-    <div class="divTable">
-        <div class="divRow">
-           
-            <div class="divCell bold" style="width:9%;"><?php echo app\modules\fe_edoc\Module::t("fe", "FECHA") ?>:</div>
-            <div class="divCell" style="width:35%;"><?php echo date("Y-m-d H:i:s"); ?></div>
-        </div>
-    </div>
-    <br><br>
-    
+
+
 <table style="width:100%" class="divTabla">
         <tbody>
             <tr class="divRow">
@@ -148,8 +142,8 @@
             </tr>
 
             <?php
-            for ($fil = 0; $fil < sizeof($res); $fil++) {
-                     ?>
+for ($fil = 0; $fil < sizeof($res); $fil++) {
+	?>
                     <tr class="fila">
                         <td class="marcoCel normal"><?php echo $res[$fil]['docente'] ?></td>
                         <td class="marcoCel normal"><?php echo $res[$fil]['no_cedula'] ?></td>
@@ -163,12 +157,12 @@
                         <td class="marcoCel normal"><?php echo $res[$fil]['promedio'] ?></td>
                     </tr>
             <?php
-               
-            }
 
-            ?>
+}
 
-           
+?>
+
+
         </tbody>
     </table>
-</div> 
+</div>

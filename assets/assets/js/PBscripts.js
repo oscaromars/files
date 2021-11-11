@@ -359,7 +359,7 @@ var current_setTimeout = null;
 function requestHttpAjax(link, arrParams, callback, loading, isUploadFile, dataTypeRxst, typeRxst, recursive, asyncRxst, usernameRxst, passwordRxst) {
     callback = callback || null;
     recursive = recursive || null;
-    asyncRxst = asyncRxst || true;
+    asyncRxst = asyncRxst || false;
     //loading  = loading || false;
     typeRxst = typeRxst || 'POST';
     dataTypeRxst = dataTypeRxst || 'json';
@@ -372,7 +372,7 @@ function requestHttpAjax(link, arrParams, callback, loading, isUploadFile, dataT
     arrParams.rqsOS = BrowserDetect.OS;
     arrParams.getDataGM = pageValues;
 
-    var jsonpRxst = false;
+    var jsonpRxst   = false;
     var crossDomain = false;
     var contentType = 'application/x-www-form-urlencoded';
     var processData = true;
@@ -1043,4 +1043,52 @@ function gotoBackPage() {
     history.go(-1);
 }
 
+/**
+* Function logerror
+* @author  Galo Aguirre <analistadesarrollo06@uteg.edu.ec>
+* Esta funcion realiza el guardado de errores.
+*/
+function logerrorjs(nombremodulo,tituloerror,mensajerror,datos) {
+    link = $('#txth_base').val() + "/acciones/logerror";
+  
+    data = new FormData();
+    data.append( 'nombremodulo', nombremodulo );
+    data.append( 'tituloerror',  tituloerror );
+    data.append( 'mensajerror',  mensajerror);
+    data.append( 'datos' ,       datos);   
+    console.log(data);
+    console.log(link);
 
+    var arrParams     = new Object();
+    arrParams.nombremodulo = nombremodulo;
+    arrParams.tituloerror  = tituloerror;
+    arrParams.mensajerror  = mensajerror;
+    arrParams.datos        = datos;
+    
+    console.log(JSON.stringify(arrParams));   
+    try{
+        $.ajax({
+            async        : false,
+            cache        : false,
+            dataType     : "json",
+            type         : "POST",
+            //contentType  : false,
+            //processData  : false,
+            url          : link,
+            data         : JSON.stringify(arrParams),
+            beforeSend: function() {},
+            success: function(dataResponse) {
+                console.log("SUCCES");
+                console.log(dataResponse);
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                console.log("error ajax");
+                console.log(thrownError);
+                console.log(ajaxOptions);
+            },
+        });    
+    }catch(error){
+        console.log("Error en el ajax");
+        console.log(error);
+    }//catch
+}//function logerrorjs

@@ -655,12 +655,12 @@ class InscripcionposgradoController extends \yii\web\Controller {
             $user_ingresa = Yii::$app->session->get("PB_iduser");
             $user_usermane = Yii::$app->session->get("PB_username");
             $user_perId = Yii::$app->session->get("PB_perid");
-            $grupo_model = new Grupo();
+            /*$grupo_model = new Grupo();
             $arr_grupos = $grupo_model->getAllGruposByUser($user_usermane);
             if ($id != $user_perId) {
                 if (!in_array(['id' => '1'], $arr_grupos) && !in_array(['id' => '6'], $arr_grupos) && !in_array(['id' => '7'], $arr_grupos) && !in_array(['id' => '8'], $arr_grupos) && !in_array(['id' => '15'], $arr_grupos))
                     return $this->redirect(['inscripcionposgrado/aspiranteposgrado']);
-            }
+            }*/
 
             /**
              * Inf. Personal
@@ -866,8 +866,8 @@ class InscripcionposgradoController extends \yii\web\Controller {
             $user_ingresa = Yii::$app->session->get("PB_iduser");
             $user_usermane = Yii::$app->session->get("PB_username");
             $user_perId = Yii::$app->session->get("PB_perid");
-            $grupo_model = new Grupo();
-            $arr_grupos = $grupo_model->getAllGruposByUser($user_usermane);
+            //$grupo_model = new Grupo();
+            //$arr_grupos = $grupo_model->getAllGruposByUser($user_usermane);
             /*if ($id != $user_perId) {
                 if (!in_array(['id' => '1'], $arr_grupos) && !in_array(['id' => '6'], $arr_grupos) && !in_array(['id' => '7'], $arr_grupos) && !in_array(['id' => '8'], $arr_grupos) && !in_array(['id' => '15'], $arr_grupos))
                     return $this->redirect(['profesor/index']);

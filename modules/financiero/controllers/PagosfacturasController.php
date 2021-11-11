@@ -764,12 +764,12 @@ class PagosfacturasController extends \app\components\CController {
                     $errorCorreo = '';
                     try{
                         if($fpag_id == 1){
-                            $body = Utilities::getMailMessage("pagostripe", 
-                                                              array("[[user]]"     => $name, 
-                                                                    "[[telefono]]" => $telefono), 
-                                                              Yii::$app->language);    
+                            $body = Utilities::getMailMessage("pagostripe",
+                                                              array("[[user]]"     => $name,
+                                                                    "[[telefono]]" => $telefono),
+                                                              Yii::$app->language);
                             Utilities::sendEmail($tituloMensaje, Yii::$app->params["contactoEmail"], [$email => $name], $asunto, $body);
-                            $bodycolec = Utilities::getMailMessage("colecturiatc", 
+                            $bodycolec = Utilities::getMailMessage("colecturiatc",
                                                                    array("[[ident]]"   => $data['txt_cedula'],
                                                                          "[[user]]"    => $name,
                                                                          "[[email]]"   => $email,
@@ -780,24 +780,23 @@ class PagosfacturasController extends \app\components\CController {
                                                                          "[[recibo]]"  => $recibo,),
                                                                    Yii::$app->language);
                         }else{
-                            $body = Utilities::getMailMessage("pago", 
-                                                              array("[[user]]"     => $name, 
-                                                                    "[[telefono]]" => $telefono), 
-                                                              Yii::$app->language);  
+                            $body = Utilities::getMailMessage("pago",
+                                                              array("[[user]]"     => $name,
+                                                                    "[[telefono]]" => $telefono),
+                                                              Yii::$app->language);
                             Utilities::sendEmail($tituloMensaje, Yii::$app->params["contactoEmail"], [$email => $name], $asunto, $body);
                             $bodycolec = Utilities::getMailMessage("colecturia", array("[[user]]" => $name), Yii::$app->language);
                         }
-                        
-                       
+
                         Utilities::sendEmail($tituloMensaje, Yii::$app->params["colecturia"]     , [Yii::$app->params["supercolecturia"] => "Colecturia"], $asunto, $bodycolec);
                         Utilities::sendEmail($tituloMensaje, Yii::$app->params["supercolecturia"], [Yii::$app->params["colecturia"]      => "Supervisor Colecturia"], $asunto, $bodycolec);
 
                     }catch (Exception $ex2) {
                         $errorCorreo = $ex2;
                     }
-                    
+
                     if ($resp_pagofactura) {
-                    
+
                         // se graba el detalle
                         $pagados = explode("*", $pagado); //PAGADOS
                         $x = 0;
@@ -838,7 +837,7 @@ class PagosfacturasController extends \app\components\CController {
                                     $valor_cuota_cancelada = $cuota - ($saldo + $abono);
 
                                     //\app\models\Utilities::putMessageLogFile('valor_cuota_cancelada ...: ' . print_r($valor_cuota_cancelada,true));
-      
+
                                     if($valor_cuota_cancelada <= 0)
                                         $cargo->ccar_estado_cancela = 'C';
                                     /////////////////////
@@ -886,7 +885,22 @@ class PagosfacturasController extends \app\components\CController {
                                     $valor_pagado = 0;
 
                                 $cargo->save();
+                                // SI ES USUARIO COLECTURIA DEBE GUARDAR ESTADO COMO 'C', SI EL PAGO
+                                // DE LA CUOTA ES COMPLETO
+                                if (!empty($perids)) {
+                                    if($cargo->ccar_abono == $cuota){
 
+                                        $dpfa_estado_pago = 2;
+                                        $dpfa_estado_financiero = 'C';
+
+                                    }else{
+                                            $dpfa_estado_pago = 1;
+                                            $dpfa_estado_financiero = 'N';
+                                        }
+                                }else{
+                                $dpfa_estado_pago       = 1;
+                                $dpfa_estado_financiero = 'N';
+                                }
                                 // insertar el detalle
                                 $descripciondet      = 'Cuota '. str_replace('/',' ',$resp_consfactura['cuota']) . '- Abono con el valor de ' .$cargo->ccar_abono ;
                                 $resp_detpagofactura = $mod_pagos->insertarDetpagospendientes($resp_pagofactura,
@@ -936,18 +950,16 @@ class PagosfacturasController extends \app\components\CController {
                                 $cedula  = $datos['identificacion'];
                                 $resultado = 2; // Aprobado
                                 $observacion = '';
-                                \app\models\Utilities::putMessageLogFile('datos ' . $datos['mod_id'] . ' '. $datos['estudiante'] . ' '.  $datos['identificacion']);
-                                $respago = $mod_pagos->grabarRechazo($resp_detpagofactura, $resultado, $observacion);
-                                \app\models\Utilities::putMessageLogFile('respago ' . $respago);
+                                //\app\models\Utilities::putMessageLogFile('datos ' . $datos['mod_id'] . ' '. $datos['estudiante'] . ' '.  $datos['identificacion']);
                                 $cartera = $mod_pagos->buscarIdCartera($resp_detpagofactura);
                                 $id_cartera = $cartera[0]['ccar_id'];
-                                \app\models\Utilities::putMessageLogFile('id_cartera ' . $cartera[0]['ccar_id']);
-                                if ($respago) {
-                                    \app\models\Utilities::putMessageLogFile('respago 2 ' . $respago);
+                                //\app\models\Utilities::putMessageLogFile('id_cartera ' . $cartera[0]['ccar_id']);
+                                //if ($respago) {
+                                    //\app\models\Utilities::putMessageLogFile('respago 2 ' . $respago);
                                     $correo_estudiante = $datos['per_correo'];
                                     $user = $datos['estudiante'];
                                     $tituloMensaje = 'Pagos en Línea';
-                                    $asunto = 'Pagos en Línea'; 
+                                    $asunto = 'Pagos en Línea';
                                     $body = Utilities::getMailMessage("pagoaprobado", array(
                                                                    "[[user]]" => $user,
                                                                    "[[factura]]" => $datos['dpfa_factura'],
@@ -957,10 +969,10 @@ class PagosfacturasController extends \app\components\CController {
                                     "wtmessage" => Yii::t("notificaciones", "La infomación ha sido grabada. "),
                                     "title" => Yii::t('jslang', 'Success'),
                                     );
-                                }else {
+                                /*}else {
                                         $message = ["info" => Yii::t('exception', 'Error al grabar.')];
                                         echo Utilities::ajaxResponse('NO_OK', 'alert', Yii::t('jslang', 'Error'), 'false', $message);
-                                      }
+                                      }*/
                             }
 
                             /********** INI - CODIGO EDUCATIVA PARA DESPUES DEL PAGO ACTIVAR EL EXAMEN *************************/
@@ -999,7 +1011,7 @@ class PagosfacturasController extends \app\components\CController {
                                             $result = $client->__call( $method, Array( $args ) );
 
                                             $mod_pagos->modificarEstadobloqueo($ceest_id, 'A', 1);
-                                            
+
                                             if($ceest_estado_bloqueo == 'B')
                                                  $mod_pagos->registrarcambiohistorial($ceest_id, $pago, $ceest_estado_bloqueo, "A", $unidad);
 
@@ -1007,7 +1019,7 @@ class PagosfacturasController extends \app\components\CController {
                                             $mod_pagos->modificarEstadobloqueo($ceest_id, 'B', 1);
                                             if($ceest_estado_bloqueo == 'A')
                                                 $mod_pagos->registrarcambiohistorial($ceest_id, $pago, $ceest_estado_bloqueo, "B", '');
-                                        }              
+                                        }
                                         //array_push($noactualizados,$est_id);
                                     }//for por estudiante
                                 }else{
@@ -1018,8 +1030,8 @@ class PagosfacturasController extends \app\components\CController {
                                     echo Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), false, $message);
                                     return;
                                 }
-                                //Si no entra por el if hubo error 
-                                //de conexion con el webservice, 
+                                //Si no entra por el if hubo error
+                                //de conexion con el webservice,
                                 //revisar la tabla de log de errores.
                             }//if
                             /********** FIN - CODIGO EDUCATIVA PARA DESPUES DEL PAGO ACTIVAR EL EXAMEN *************************/

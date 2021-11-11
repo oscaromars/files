@@ -109,7 +109,7 @@ use app\models\Persona;
         <div class="form-group">
             <label for="cmb_paisEdit" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("inscripcionposgrado", "Pais") ?></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
-                <?= Html::dropDownList("cmb_paisEdit", $persona_model->pai_id_domicilio, $arr_pais, ["class" => "form-control", "id" => "cmb_paisEdit"]) ?>
+                <?= Html::dropDownList("cmb_paisEdit", $persona_model["pai_id_domicilio"], $arr_pais, ["class" => "form-control", "id" => "cmb_paisEdit"]) ?>
             </div>
         </div>
     </div>
@@ -117,7 +117,7 @@ use app\models\Persona;
         <div class="form-group">
             <label for="cmb_provinciaEdit" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("inscripcionposgrado", "Provincia") ?></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
-                <?= Html::dropDownList("cmb_provinciaEdit", $persona_model->pro_id_domicilio, $arr_provincia, ["class" => "form-control", "id" => "cmb_provinciaEdit"]) ?>
+                <?= Html::dropDownList("cmb_provinciaEdit", $persona_model["pro_id_domicilio"], $arr_provincia, ["class" => "form-control", "id" => "cmb_provinciaEdit"]) ?>
             </div>
         </div>
     </div>
@@ -125,7 +125,7 @@ use app\models\Persona;
         <div class="form-group">
             <label for="cmb_cantonEdit" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("inscripcionposgrado", "Cantón") ?></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
-                <?= Html::dropDownList("cmb_cantonEdit", $persona_model->can_id_domicilio, $arr_ciudad, ["class" => "form-control", "id" => "cmb_cantonEdit"]) ?>
+                <?= Html::dropDownList("cmb_cantonEdit", $persona_model["can_id_domicilio"], $arr_ciudad, ["class" => "form-control", "id" => "cmb_cantonEdit"]) ?>
             </div>
         </div>
     </div>

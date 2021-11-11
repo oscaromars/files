@@ -58,11 +58,11 @@ class InscripcionposgradoController extends \yii\web\Controller {
 
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
-            Utilities::putMessageLogFile('cedula en change posg.. ' .$data['cedulacons'] );
+            //Utilities::putMessageLogFile('cedula en change posg.. ' .$data['cedulacons'] );
             if (isset($data["getcedula"])) {
                 $persids = $mod_persona->consultaPeridxdni($data['cedulacons']);
                 $message = array("persids" => $persids['per_id']);
-                Utilities::putMessageLogFile('per_id consultado pos.. ' .$persids['per_id'] );
+                //Utilities::putMessageLogFile('per_id consultado pos.. ' .$persids['per_id'] );
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
                 //return;
             }
@@ -597,11 +597,11 @@ class InscripcionposgradoController extends \yii\web\Controller {
         $data = Yii::$app->request->get();
 
         if ($data['PBgetFilter']) {
-            \app\models\Utilities::putMessageLogFile('busqueda por cedula:  '.$data['search']);
+            /*\app\models\Utilities::putMessageLogFile('busqueda por cedula:  '.$data['search']);
             \app\models\Utilities::putMessageLogFile('año:  '.$data['año']);
             \app\models\Utilities::putMessageLogFile('unidaddddd:  '.$data['unidad']);
             \app\models\Utilities::putMessageLogFile('programaaaa:  '.$data['programa']);
-            \app\models\Utilities::putMessageLogFile('modalidadddd:  '.$data['modalidad']);
+            \app\models\Utilities::putMessageLogFile('modalidadddd:  '.$data['modalidad']);*/
             $arrSearch["search"]  = $data['search'];
             $arrSearch["año"]     = $data['año'];
             $arrSearch["unidad"]  = $data['unidad'];
@@ -655,12 +655,12 @@ class InscripcionposgradoController extends \yii\web\Controller {
             $user_ingresa = Yii::$app->session->get("PB_iduser");
             $user_usermane = Yii::$app->session->get("PB_username");
             $user_perId = Yii::$app->session->get("PB_perid");
-            $grupo_model = new Grupo();
+            /*$grupo_model = new Grupo();
             $arr_grupos = $grupo_model->getAllGruposByUser($user_usermane);
             if ($id != $user_perId) {
                 if (!in_array(['id' => '1'], $arr_grupos) && !in_array(['id' => '6'], $arr_grupos) && !in_array(['id' => '7'], $arr_grupos) && !in_array(['id' => '8'], $arr_grupos) && !in_array(['id' => '15'], $arr_grupos))
                     return $this->redirect(['inscripcionposgrado/aspiranteposgrado']);
-            }
+            }*/
 
             /**
              * Inf. Personal
@@ -670,20 +670,20 @@ class InscripcionposgradoController extends \yii\web\Controller {
             $arr_estado_civil = EstadoCivil::find()->select("eciv_id AS id, eciv_nombre AS value")->where(["eciv_estado_logico" => "1", "eciv_estado" => "1"])->asArray()->all();
             $arr_nacionalidad = Pais::find()->select("pai_id AS id, pai_nacionalidad AS value")->where(["pai_estado_logico" => "1", "pai_estado" => "1"])->asArray()->all();
             $arr_pais = Pais::findAll(["pai_estado" => 1, "pai_estado_logico" => 1]);
-            $arr_provincia = Provincia::provinciaXPais($arr_nacionalidad[0]["id"]);
-            $arr_ciudad= Canton::cantonXProvincia($arr_provincia[0]["id"]);
+            $arr_provincia = Provincia::provinciaXPais($persona_model["pai_id_domicilio"]);
+            $arr_ciudad= Canton::cantonXProvincia($persona_model["pro_id_domicilio"]);
             $arr_tipparentesco = TipoParentesco::find()->select("tpar_id AS id, tpar_nombre AS value")->where(["tpar_estado_logico" => "1", "tpar_estado" => "1"])->asArray()->all();
 
             $ViewFormTab1 = $this->renderPartial('ViewFormTab1', [
                 'arr_ciudad_nac' => (empty(ArrayHelper::map($arr_ciudad_nac, "can_id", "can_nombre"))) ? array(Yii::t("canton", "Seleccionar")) : (ArrayHelper::map($arr_ciudad_nac, "can_id", "can_nombre")),
-                "arr_estado_civil" => ArrayHelper::map($arr_estado_civil, "id", "value"),
+                'arr_estado_civil' => ArrayHelper::map($arr_estado_civil, "id", "value"),
                 'persona_model' => $persona_model,
-                "arr_nacionalidad" => ArrayHelper::map($arr_nacionalidad, "id", "value"),
+                'arr_nacionalidad' => ArrayHelper::map($arr_nacionalidad, "id", "value"),
                 'arr_pais' => (empty(ArrayHelper::map($arr_pais, "pai_id", "pai_nombre"))) ? array(Yii::t("pais", "Seleccionar")) : (ArrayHelper::map($arr_pais, "pai_id", "pai_nombre")),
-                "arr_provincia" => ArrayHelper::map($arr_provincia, "id", "value"),
-                "arr_ciudad" => ArrayHelper::map($arr_ciudad, "id", "value"),
-                "arr_tipparentesco" => ArrayHelper::map($arr_tipparentesco, "id", "value"),
-                'persona_model' => $persona_model,
+                'arr_provincia' => ArrayHelper::map($arr_provincia, "id", "value"),
+                'arr_ciudad' => ArrayHelper::map($arr_ciudad, "id", "value"),
+                'arr_tipparentesco' => ArrayHelper::map($arr_tipparentesco, "id", "value"),
+                //'persona_model' => $persona_model,
                 'contacto_model' => $contacto_model,
             ]);
 
@@ -695,9 +695,8 @@ class InscripcionposgradoController extends \yii\web\Controller {
             $laboral_model = InformacionLaboral::findOne(['per_id' => $persona_model->per_id]);
             $arr_pais = Pais::findAll(["pai_estado" => 1, "pai_estado_logico" => 1]);
             $arr_nacionalidad = Pais::find()->select("pai_id AS id, pai_nacionalidad AS value")->where(["pai_estado_logico" => "1", "pai_estado" => "1"])->asArray()->all();
-            $arr_prov_emp = Provincia::provinciaXPais($arr_nacionalidad[0]["id"]);
-            $arr_ciu_emp = Canton::cantonXProvincia($arr_prov_emp[0]["id"]);
-
+            $arr_prov_emp = Provincia::provinciaXPais(1);
+            $arr_ciu_emp = Canton::cantonXProvincia($laboral_model['ilab_prov_emp']);
 
             $ViewFormTab2 = $this->renderPartial('ViewFormTab2', [
                 'arr_pais' => (empty(ArrayHelper::map($arr_pais, "pai_id", "pai_nombre"))) ? array(Yii::t("pais", "Seleccionar")) : (ArrayHelper::map($arr_pais, "pai_id", "pai_nombre")),
@@ -790,7 +789,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
                     'content' => $ViewFormTab5,
                 ],
                 [
-                    'label' => Yii::t('inscripcionposgrado', 'Documentación'),
+                    'label' => Yii::t('inscripcionposgrado', 'Info. Documentación'),
                     'content' => $ViewFormTab6,
                 ],
             ];
@@ -834,7 +833,6 @@ class InscripcionposgradoController extends \yii\web\Controller {
         $data = Yii::$app->request->get();
         if (isset($data['id'])) {
             $id = $data['id'];
-
             if (Yii::$app->request->isAjax) {
                 if (isset($data["pai_id"])) {
                     $model = new Provincia();
@@ -868,9 +866,9 @@ class InscripcionposgradoController extends \yii\web\Controller {
             $user_ingresa = Yii::$app->session->get("PB_iduser");
             $user_usermane = Yii::$app->session->get("PB_username");
             $user_perId = Yii::$app->session->get("PB_perid");
-            $grupo_model = new Grupo();
-            $arr_grupos = $grupo_model->getAllGruposByUser($user_usermane);
-            if ($id != $user_perId) {
+            //$grupo_model = new Grupo();
+            //$arr_grupos = $grupo_model->getAllGruposByUser($user_usermane);
+            /*if ($id != $user_perId) {
                 if (!in_array(['id' => '1'], $arr_grupos) && !in_array(['id' => '6'], $arr_grupos) && !in_array(['id' => '7'], $arr_grupos) && !in_array(['id' => '8'], $arr_grupos) && !in_array(['id' => '15'], $arr_grupos))
                     return $this->redirect(['profesor/index']);
             }
@@ -883,8 +881,8 @@ class InscripcionposgradoController extends \yii\web\Controller {
             $arr_estado_civil = EstadoCivil::find()->select("eciv_id AS id, eciv_nombre AS value")->where(["eciv_estado_logico" => "1", "eciv_estado" => "1"])->asArray()->all();
             $arr_nacionalidad = Pais::find()->select("pai_id AS id, pai_nacionalidad AS value")->where(["pai_estado_logico" => "1", "pai_estado" => "1"])->asArray()->all();
             $arr_pais = Pais::findAll(["pai_estado" => 1, "pai_estado_logico" => 1]);
-            $arr_provincia = Provincia::provinciaXPais($arr_nacionalidad[0]["id"]);
-            $arr_ciudad= Canton::cantonXProvincia($arr_provincia[0]["id"]);
+            $arr_provincia = Provincia::provinciaXPais($persona_model["pai_id_domicilio"]);
+            $arr_ciudad= Canton::cantonXProvincia($persona_model["pro_id_domicilio"]);
             $arr_tipparentesco = TipoParentesco::find()->select("tpar_id AS id, tpar_nombre AS value")->where(["tpar_estado_logico" => "1", "tpar_estado" => "1"])->asArray()->all();
 
             $EditFormTab1 = $this->renderPartial('EditFormTab1', [
@@ -907,8 +905,8 @@ class InscripcionposgradoController extends \yii\web\Controller {
             $laboral_model = InformacionLaboral::findOne(['per_id' => $persona_model->per_id]);
             $arr_pais = Pais::findAll(["pai_estado" => 1, "pai_estado_logico" => 1]);
             $arr_nacionalidad = Pais::find()->select("pai_id AS id, pai_nacionalidad AS value")->where(["pai_estado_logico" => "1", "pai_estado" => "1"])->asArray()->all();
-            $arr_prov_emp = Provincia::provinciaXPais($arr_nacionalidad[0]["id"]);
-            $arr_ciu_emp = Canton::cantonXProvincia($arr_prov_emp[0]["id"]);
+            $arr_prov_emp = Provincia::provinciaXPais(1);
+            $arr_ciu_emp = Canton::cantonXProvincia($laboral_model['ilab_prov_emp']);
 
 
             $EditFormTab2 = $this->renderPartial('EditFormTab2', [
@@ -963,7 +961,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
             $arr_tipparentesco = TipoParentesco::find()->select("tpar_id AS id, tpar_nombre AS value")->where(["tpar_estado_logico" => "1", "tpar_estado" => "1"])->asArray()->all();
 
             $mod_insposgrado = new InscripcionPosgrado();
-            $documentos = $mod_insposgrado->ObtenerdocumentosInscripcionPosgrado(['per_id' => $persona_model->per_id]);
+            $documentos = $mod_insposgrado->ObtenerdocumentosInscripcionPosgrado($persona_model->per_id);
 
             $EditFormTab6 = $this->renderPartial('EditFormTab6', [
                 "arr_tipparentesco" => ArrayHelper::map($arr_tipparentesco, "id", "value"),
@@ -1012,7 +1010,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
                     'content' => $EditFormTab5,
                 ],
                 [
-                    'label' => Yii::t('formulario', 'Documentación'),
+                    'label' => Yii::t('formulario', 'Info. Documentación'),
                     'content' => $EditFormTab6,
                 ],
             ];
@@ -1220,7 +1218,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
             $per_fecha_nacimiento = $data["fecha_nac"];
             $per_nacionalidad = $data["nacionalidad"];
             $eciv_id = $data["estado_civil"];
-            $pai_id_domicilio = $data["nacionalidad"];
+            $pai_id_domicilio = $data["pais"];
             $pro_id_domicilio = $data["provincia"];
             $can_id_domicilio = $data["canton"];
 

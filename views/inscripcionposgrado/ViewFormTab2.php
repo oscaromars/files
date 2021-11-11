@@ -10,7 +10,7 @@ use yii\helpers\Url;
 use app\models\Utilities;
 use yii\widgets\ActiveForm;
 use app\components\CFileInputAjax;
-
+//print_r($laboral_model);
 ?>
 <form class="form-horizontal">
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -92,7 +92,7 @@ use app\components\CFileInputAjax;
         <div class="form-group">
             <label for="cmb_provincia_empView" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("inscripcionposgrado", "Provincia") ?></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
-                <?= Html::dropDownList("cmb_provincia_empView", $laboral_model->ilab_prov_emp, $arr_prov_emp, ["class" => "form-control", "id" => "cmb_provincia_empView" , "disabled" => "disabled"]) ?>
+                <?= Html::dropDownList("cmb_provincia_empView", $laboral_model['ilab_prov_emp'] , $arr_prov_emp, ["class" => "form-control", "id" => "cmb_provincia_empView" , "disabled" => "disabled"]) ?>
             </div>
         </div>
     </div>
@@ -100,7 +100,7 @@ use app\components\CFileInputAjax;
         <div class="form-group">
             <label for="cmb_canton" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("inscripcionposgrado", "Cantón") ?></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
-                <?= Html::dropDownList("cmb_canton", $laboral_model->ilab_ciu_emp, $arr_ciu_emp, ["class" => "form-control", "id" => "cmb_canton" , "disabled" => "disabled"]) ?>
+                <?= Html::dropDownList("cmb_canton", $laboral_model['ilab_ciu_emp'], $arr_ciu_emp, ["class" => "form-control", "id" => "cmb_canton" , "disabled" => "disabled"]) ?>
             </div>
         </div>
     </div>

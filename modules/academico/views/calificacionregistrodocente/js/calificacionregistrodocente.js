@@ -313,7 +313,7 @@ function searchEducativa() {
 
  if (parcial == 0) {
 
- showAlert('NO_OK', 'error', {"wtmessage": 'Elija Parcial', "title": 'Información'});
+ showAlert('FALSE', 'success', {"wtmessage": 'Elija Parcial', "title": 'Información'});
 
  } else {
 
@@ -337,7 +337,7 @@ function activateCron(cronid) {
  if (currente == undefined  ||  currente == '') {
 
 
- showAlert('NO_OK', 'error', {"wtmessage": 'Seleccione la fecha a ejecutarse!', "title": 'Información'});
+ showAlert('FALSE', 'success', {"wtmessage": 'Seleccione la fecha a ejecutarse!', "title": 'Información'});
 
  
 }else { 
@@ -497,16 +497,17 @@ function actualizarGridRegistro(dready = 0) {
               break;
             }
             //console.log(componentes);
-            if(action == 'edit'){
+            if(action == 'edit' ){
                 $.each(o.data[indice], function( index, value ) {
                     if(componentes[index]){
                         if(value < 0 || value > parseInt(componentes[index]['notamax'])){
-                            alertify.error("El cambio no se ha registrado, los valores del componente Asíncrona debe estar entre 0 a "+componentes[index]['notamax']);
+                            alertify.error("El cambio no se ha registrado, los valores del componente "+componentes[index]['nombre']+" debe estar entre 0 a "+componentes[index]['notamax']);
                             bandera = 1;
                         }//if
-                    }//if
+                    }//if    
+                
                 });
-            }//if
+            }
 
             if(bandera == 1) return false;
         });

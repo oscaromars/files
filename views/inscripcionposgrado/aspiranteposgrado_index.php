@@ -8,7 +8,7 @@ use app\modules\academico\Module as academico;
 <div>
     <form class="form-horizontal">
         <?=
-        $this->render('aspiranteposgrado_search', [ 
+        $this->render('aspiranteposgrado_search', [
             'arr_unidad' => $arr_unidad,
             'arr_programa' => $arr_programa,
             'arr_modalidad' => $arr_modalidad,

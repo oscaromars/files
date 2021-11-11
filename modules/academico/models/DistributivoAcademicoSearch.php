@@ -465,8 +465,52 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
                     where dd.ddoc_id = profesor.ddoc_id),' ') as tiempo_dedicacion,
                 IFNULL( asi_nombre,'N/A' )as materia,
                 tdis_nombre,
-                case when td.tdis_id=7 then tdis_num_semanas else (pc.paca_semanas_periodo * case  when dah.daho_total_horas is null then tdis_num_semanas else dah.daho_total_horas end) end as total_horas_dictar,
-                 case when da.tdis_id=7 then round(tdis_num_semanas/paca_semanas_periodo) else ( case  when dah.daho_total_horas is null then tdis_num_semanas else dah.daho_total_horas end) end as promedio
+
+                /* Validación de código con respecto al cálculo de las horas con la cantidad de estudiante
+                   considerar reverso si no hay que realizar el cálculo con la cantidad de estudiante */
+
+                case when m.mod_id=1 and da.tdis_id =1 then
+                    (case
+                         when (da.uaca_id= 1 and da.daca_num_estudiantes_online between 0 and 10) then  round(2  * pc.paca_semanas_periodo /**(1.3)*/)
+                         when (da.uaca_id= 1 and da.daca_num_estudiantes_online between 11 and 20) then round(3  * pc.paca_semanas_periodo /**(1.3)*/)
+                         when (da.uaca_id= 1 and da.daca_num_estudiantes_online between 21 and 30) then round(4  * pc.paca_semanas_periodo /**(1.3)*/)
+                         when (da.uaca_id= 1 and da.daca_num_estudiantes_online between 31 and 40) then round(5  * pc.paca_semanas_periodo /**(1.3)*/)
+                         when (da.uaca_id= 1 and da.daca_num_estudiantes_online >40) then round(7  * pc.paca_semanas_periodo /**(1.3)*/)
+                         when (da.uaca_id= 2 and td.tdis_id =1 ) then
+                            case when (da.daca_num_estudiantes_online between 0 and 49) then round( 4 * ROUND(timestampdiff(day, da.daca_fecha_inicio_post, da.daca_fecha_fin_post)/7))
+                                 when (da.daca_num_estudiantes_online >=50) then round( 6 * ROUND(timestampdiff(day, da.daca_fecha_inicio_post, da.daca_fecha_fin_post)/7))
+                            end
+                     end)
+                     else
+                        case
+                        when da.uaca_id=2 and td.tdis_id=1 and m.mod_id>=2 then ifnull(dah.daho_total_horas * ROUND(timestampdiff(day, da.daca_fecha_inicio_post, da.daca_fecha_fin_post)/7),'')
+                        when da.tdis_id=2 then td.tdis_num_semanas * pc.paca_semanas_inv_vinc_tuto
+                        when da.tdis_id=3 then td.tdis_num_semanas * pc.paca_semanas_inv_vinc_tuto
+                        when da.tdis_id=7 then td.tdis_num_semanas else (pc.paca_semanas_periodo * case  when dah.daho_total_horas is null then td.tdis_num_semanas else dah.daho_total_horas end) end
+                     end  as total_horas_dictar,
+                  case when m.mod_id=1 and da.tdis_id =1 then
+                    (case
+                         when (da.uaca_id= 1 and da.daca_num_estudiantes_online between 0 and 10)  then 2 /*round( 2  *(1.3))*/
+                         when (da.uaca_id= 1 and da.daca_num_estudiantes_online between 11 and 20) then 3 /*round( 3  *(1.3))*/
+                         when (da.uaca_id= 1 and da.daca_num_estudiantes_online between 21 and 30) then 4 /*round( 4  *(1.3))*/
+                         when (da.uaca_id= 1 and da.daca_num_estudiantes_online between 31 and 40) then 5 /*round( 5  *(1.3))*/
+                         when (da.uaca_id= 1 and da.daca_num_estudiantes_online >40) then 7 /*round(7 *(1.3))*/
+                         when (da.uaca_id= 2 and td.tdis_id =1 ) then
+                            case when (da.daca_num_estudiantes_online between 0 and 49) then 4
+                                 when (da.daca_num_estudiantes_online >=50) then 6
+                            end
+                     end)
+                     else
+                        case
+                        when da.uaca_id=2 and td.tdis_id=1 and m.mod_id>=2 then dah.daho_total_horas
+                        when da.tdis_id=2 then td.tdis_num_semanas
+                        when da.tdis_id=3 then td.tdis_num_semanas
+                        when da.tdis_id=7 then round(td.tdis_num_semanas/paca_semanas_periodo) else ( case  when dah.daho_total_horas is null then td.tdis_num_semanas else dah.daho_total_horas end) end
+                      end as promedio
+                /* -------------------------------------------- */
+
+                /*case when td.tdis_id=7 then tdis_num_semanas else (pc.paca_semanas_periodo * case  when dah.daho_total_horas is null then tdis_num_semanas else dah.daho_total_horas end) end as total_horas_dictar,
+                 case when da.tdis_id=7 then round(tdis_num_semanas/paca_semanas_periodo) else ( case  when dah.daho_total_horas is null then tdis_num_semanas else dah.daho_total_horas end) end as promedio*/
                 from " . $con_academico->dbname . ".distributivo_academico da
                 inner join " . $con_academico->dbname . ".distributivo_cabecera dc on da.dcab_id=dc.dcab_id
                 inner join " . $con_academico->dbname . ".profesor profesor on da.pro_id = profesor.pro_id
@@ -1365,7 +1409,7 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
 			],
 			'sort' => [
 				'attributes' => ['
-                ', ],
+                '],
 			],
 		]);
 

@@ -416,6 +416,53 @@ $(document).ready(function () {
         }
     });
 
+    //Control del div de discapacidad
+    $('#laborals-si').change(function () {
+        if ($('#laborals-si').val() == 1) {
+            $('#Divlaboral').css('display', 'block');
+            $("#laborals-no").prop("checked", "");
+            $("#txt_empresa").addClass("PBvalidation");
+            $("#txt_cargo").addClass("PBvalidation");
+            $("#txt_telefono_emp").addClass("PBvalidation");
+            $("#txt_parroquia").addClass("PBvalidation");
+            $("#txt_direc_emp").addClass("PBvalidation");
+            $("#txt_añoingreso_emp").addClass("PBvalidation");
+            $("#txt_correo_emp").addClass("PBvalidation");
+        } else {
+            $('#Divlaboral').css('display', 'none');
+            $("#txt_empresa").removeClass("PBvalidation");
+            $("#txt_cargo").removeClass("PBvalidation");
+            $("#txt_telefono_emp").removeClass("PBvalidation");
+            $("#txt_parroquia").removeClass("PBvalidation");
+            $("#txt_direc_emp").removeClass("PBvalidation");
+            $("#txt_añoingreso_emp").removeClass("PBvalidation");
+            $("#txt_correo_emp").removeClass("PBvalidation");
+        }
+    });
+
+    $('#laborals-no').change(function () {
+        if ($('#laborals-no').val() == 2) {
+            $('#Divlaboral').css('display', 'none');
+            $("#txt_empresa").removeClass("PBvalidation");
+            $("#txt_cargo").removeClass("PBvalidation");
+            $("#txt_telefono_emp").removeClass("PBvalidation");
+            $("#txt_parroquia").removeClass("PBvalidation");
+            $("#txt_direc_emp").removeClass("PBvalidation");
+            $("#txt_añoingreso_emp").removeClass("PBvalidation");
+            $("#txt_correo_emp").removeClass("PBvalidation");
+            $("#laborals-si").prop("checked", "");
+        } else {
+            $('#Divlaboral').css('display', 'block');
+            $("#txt_empresa").addClass("PBvalidation");
+            $("#txt_cargo").addClass("PBvalidation");
+            $("#txt_telefono_emp").addClass("PBvalidation");
+            $("#txt_parroquia").addClass("PBvalidation");
+            $("#txt_direc_emp").addClass("PBvalidation");
+            $("#txt_añoingreso_emp").addClass("PBvalidation");
+            $("#txt_correo_emp").addClass("PBvalidation");
+        }
+    });
+
 });
 
 function setComboDataselect(arr_data, element_id, texto) {

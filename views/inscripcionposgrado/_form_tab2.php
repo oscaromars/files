@@ -69,6 +69,21 @@ use yii\helpers\Url;
 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
     <h3><span id="lbl_Personeria"><?= Yii::t("formulario", "Datos Laborales") ?></span></h3><br></br>
 </div>
+<!-- empieza datos laborales-->
+<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    <div class="form-group">
+        <label for="txt_laborable" class="col-sm-5 control-label"><?= Yii::t("formulario", "¿Se encuentra laborando actualmente?") ?><span class="text-danger">*</span></label>
+        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+            <label>
+                <input type="radio" name="laborals-si" id="laborals-si" value="1" checked> Si<br>
+            </label>
+            <label>
+                <input type="radio" name="laborals-no" id="laborals-no" value="2" > No<br>
+            </label>
+        </div>
+    </div>
+</div>
+<div style="display: block;" id="Divlaboral">
 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
     <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
         <div class="form-group">
@@ -159,6 +174,7 @@ use yii\helpers\Url;
         </div>
     </div><br><br></br>
 </div>
+</div><!-- fin empieza datos laborales-->
 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
     <h3><span id="lbl_Personeria"><?= Yii::t("formulario", "Habilidades de Idiomas") ?></span></h3>
 </div>

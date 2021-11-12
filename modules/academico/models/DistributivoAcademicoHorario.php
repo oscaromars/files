@@ -69,9 +69,9 @@ class DistributivoAcademicoHorario extends \yii\db\ActiveRecord
     {
         return [
             'daho_id' => 'Id',
-            'uaca_id' => 'Unidad Academica',
-            'mod_id' => 'Modadilidad',
-            'eaca_id' => 'Estudio Academico',
+            'uaca_id' => 'Unidad Académica',
+            'mod_id' => 'Modalidad',
+            'eaca_id' => 'Estudio Académico',
             'daho_jornada' => 'Jornada',
             'daho_descripcion' => 'Descripción',
             'daho_horario' => 'Horario',

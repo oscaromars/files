@@ -14,7 +14,7 @@ Academico::registerTranslations();
 <form class="form-horizontal">
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
-            <label for="txt_trabajo_direccionEdit" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("formulario", "Dirección de Trabajo") ?></label>
+            <label for="txt_trabajo_direccionEdit" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("formulario", "Dirección de Trabajo") ?><span class="text-danger">*</span></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
                 <input type="text" class="form-control PBvalidation" id="txt_trabajo_direccionEdit" value="<?= $persona_model->per_trabajo_direccion ?>" data-type="all" placeholder="<?= Academico::t("profesor", "Dirección de Trabajo")  ?>">
             </div>
@@ -38,7 +38,7 @@ Academico::registerTranslations();
     </div>
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
-            <label for="txt_cel_contactoEdit" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("perfil", "CellPhone") ?></label>
+            <label for="txt_cel_contactoEdit" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("perfil", "CellPhone") ?><span class="text-danger">*</span></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
                 <input type="text" class="form-control PBvalidation" id="txt_cel_contactoEdit" value="<?= $contacto_model->pcon_celular ?>" data-required="false" data-type="number"  placeholder="<?= Yii::t("perfil", "CellPhone")  ?>">
             </div>
@@ -46,7 +46,7 @@ Academico::registerTranslations();
     </div>
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
-            <label for="txt_direccion_contEdit" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("formulario", "Dirección de Persona en Caso de Emergencia") ?></label>
+            <label for="txt_direccion_contEdit" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("formulario", "Dirección de Persona en Caso de Emergencia") ?><span class="text-danger">*</span></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
                 <input type="text" class="form-control PBvalidation" id="txt_direccion_contEdit" value="<?= $contacto_model->pcon_direccion ?>" data-required="false" data-type="alfanumerico"  placeholder="<?= Yii::t("formulario", "Dirección de Persona en Caso de Emergencia") ?>">
             </div>

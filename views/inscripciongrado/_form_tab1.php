@@ -32,11 +32,9 @@ academico::registerTranslations();
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <h3><span id="lbl_Personeria"><?= Yii::t("formulario", "Formulario de Inscripción Grado") ?></span></h3>
     </div>
-
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <p class="text-danger"> <?= Yii::t("formulario", "Fields with * are required") ?> </p>
     </div>
-
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
             <div class="form-group">
@@ -113,9 +111,9 @@ academico::registerTranslations();
         </div>
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
             <div class="form-group">
-                <label for="txt_segundo_nombre" class="col-sm-3 control-label"><?= Yii::t("formulario", "Middle Name") ?><span class="text-danger">*</span></label>
+                <label for="txt_segundo_nombre" class="col-sm-3 control-label"><?= Yii::t("formulario", "Middle Name") ?></label>
                 <div class="col-sm-7">
-                    <input type="text" class="form-control PBvalidation keyupmce" id="txt_segundo_nombre" data-type="alfa" data-keydown="true" placeholder="<?= Yii::t("formulario", "Middle Name") ?>">
+                    <input type="text" class="form-control keyupmce" id="txt_segundo_nombre" data-type="alfa" data-keydown="true" placeholder="<?= Yii::t("formulario", "Middle Name") ?>">
                 </div>
             </div>
         </div>

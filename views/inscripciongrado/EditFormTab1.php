@@ -37,7 +37,7 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
         <div class="form-group">
             <label for="txt_pasaporteEdit" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Academico::t("profesor", "Passport") ?></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
-                <input type="text" class="form-control PBvalidation" id="txt_pasaporteEdit" value="<?= $persona_model->per_pasaporte ?>" data-required="false" data-type="alfanumerico"  placeholder="<?= Academico::t("profesor", "Passport") ?>">
+                <input type="text" class="form-control" id="txt_pasaporteEdit" value="<?= $persona_model->per_pasaporte ?>" data-required="false" data-type="alfanumerico"  placeholder="<?= Academico::t("profesor", "Passport") ?>">
             </div>
         </div>
     </div>
@@ -53,7 +53,7 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
         <div class="form-group">
             <label for="txt_segundo_nombreEdit" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Academico::t("profesor", "Second Name") ?></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
-                <input type="text" class="form-control PBvalidations " id="txt_segundo_nombreEdit" value="<?= $persona_model->per_seg_nombre ?>" data-type="alfa"  placeholder="<?= Academico::t("profesor", "Second Name") ?>">
+                <input type="text" class="form-control" id="txt_segundo_nombreEdit" value="<?= $persona_model->per_seg_nombre ?>" data-type="alfa"  placeholder="<?= Academico::t("profesor", "Second Name") ?>">
             </div>
         </div>
     </div>
@@ -67,9 +67,9 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
     </div>
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
-            <label for="txt_segundo_apellidoEdit" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Academico::t("profesor", "Second Surname") ?></label>
+            <label for="txt_segundo_apellidoEdit" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Academico::t("profesor", "Second Surname") ?><span class="text-danger">*</span></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
-                <input type="text" class="form-control PBvalidations " id="txt_segundo_apellidoEdit" value="<?= $persona_model->per_seg_apellido ?>" data-type="alfa"  placeholder="<?= Academico::t("profesor", "Second Surname") ?>">
+                <input type="text" class="form-control PBvalidation " id="txt_segundo_apellidoEdit" value="<?= $persona_model->per_seg_apellido ?>" data-type="alfa"  placeholder="<?= Academico::t("profesor", "Second Surname") ?>">
             </div>
         </div>
     </div>

@@ -67,7 +67,7 @@ use app\components\CFileInputAjax;
         <div class="form-group">
             <label for="txt_empresaEdit" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("inscripcionposgrado", "Empresa, Centro o Institución") ?></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
-                <input type="text" class="form-control PBvalidation keyupmce" id="txt_empresaEdit" value="<?= $laboral_model->ilab_empresa ?>" data-type="alfanumerico" data-keydown="true" placeholder="<?= Yii::t("formulario", "Empresa, Centro o Institución") ?>">
+                <input type="text" class="form-control keyupmce" id="txt_empresaEdit" value="<?= $laboral_model->ilab_empresa ?>" data-type="alfanumerico" data-keydown="true" placeholder="<?= Yii::t("formulario", "Empresa, Centro o Institución") ?>">
             </div>
         </div>
     </div>
@@ -75,7 +75,7 @@ use app\components\CFileInputAjax;
         <div class="form-group">
             <label for="txt_cargoEdit" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("inscripcionposgrado", "Cargo que desempeña") ?></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
-                <input type="text" class="form-control PBvalidation keyupmce" id="txt_cargoEdit" value="<?= $laboral_model->ilab_cargo ?>" data-type="alfanumerico" data-keydown="true" placeholder="<?= Yii::t("formulario", "Cargo que desempeña") ?>">
+                <input type="text" class="form-control keyupmce" id="txt_cargoEdit" value="<?= $laboral_model->ilab_cargo ?>" data-type="alfanumerico" data-keydown="true" placeholder="<?= Yii::t("formulario", "Cargo que desempeña") ?>">
             </div>
         </div>
     </div>
@@ -83,7 +83,7 @@ use app\components\CFileInputAjax;
         <div class="form-group">
             <label for="txt_telefono_empEdit" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("inscripcionposgrado", "Télefono de la empresa") ?></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
-                <input type="text" class="form-control PBvalidation keyupmce" id="txt_telefono_empEdit" value="<?= $laboral_model->ilab_telefono_emp ?>" data-type="number" data-keydown="true" placeholder="<?= Yii::t("formulario", "Télefono de la empresa") ?>">
+                <input type="text" class="form-control keyupmce" id="txt_telefono_empEdit" value="<?= $laboral_model->ilab_telefono_emp ?>" data-type="number" data-keydown="true" placeholder="<?= Yii::t("formulario", "Télefono de la empresa") ?>">
             </div>
         </div>
     </div>
@@ -108,7 +108,7 @@ use app\components\CFileInputAjax;
         <div class="form-group">
             <label for="txt_parroquiaEdit" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("inscripcionposgrado", "Parroquia") ?></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
-                <input type="text" class="form-control PBvalidation keyupmce" id="txt_parroquiaEdit" value="<?= $laboral_model->ilab_parroquia ?>" data-type="alfanumerico" data-keydown="true" placeholder="<?= Yii::t("formulario", "Parroquia") ?>">
+                <input type="text" class="form-control keyupmce" id="txt_parroquiaEdit" value="<?= $laboral_model->ilab_parroquia ?>" data-type="alfanumerico" data-keydown="true" placeholder="<?= Yii::t("formulario", "Parroquia") ?>">
             </div>
         </div>
     </div>
@@ -116,7 +116,7 @@ use app\components\CFileInputAjax;
         <div class="form-group">
             <label for="txt_direc_empEdit" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("inscripcionposgrado", "Dirección donde Labora") ?></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
-                <input type="text" class="form-control PBvalidation keyupmce" id="txt_direc_empEdit" value="<?= $laboral_model->ilab_direccion_emp ?>" data-type="alfa" data-keydown="true" placeholder="<?= Yii::t("formulario", "Dirección donde Labora") ?>">
+                <input type="text" class="form-control keyupmce" id="txt_direc_empEdit" value="<?= $laboral_model->ilab_direccion_emp ?>" data-type="alfa" data-keydown="true" placeholder="<?= Yii::t("formulario", "Dirección donde Labora") ?>">
             </div>
         </div>
     </div>
@@ -124,7 +124,7 @@ use app\components\CFileInputAjax;
         <div class="form-group">
             <label for="txt_añoingreso_empEdit" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("inscripcionposgrado", "Año de Ingreso") ?></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
-                <input type="text" class="form-control PBvalidation keyupmce" id="txt_añoingreso_empEdit" value="<?= $laboral_model->ilab_anioingreso_emp ?>" data-type="alfanumerico" data-keydown="true" placeholder="<?= Yii::t("formulario", "Año de Ingreso") ?>">
+                <input type="text" class="form-control keyupmce" id="txt_añoingreso_empEdit" value="<?= $laboral_model->ilab_anioingreso_emp ?>" data-type="alfanumerico" data-keydown="true" placeholder="<?= Yii::t("formulario", "Año de Ingreso") ?>">
             </div>
         </div>
     </div>
@@ -132,7 +132,7 @@ use app\components\CFileInputAjax;
         <div class="form-group">
             <label for="txt_correo_empEdit" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("inscripcionposgrado", "Correo de la Empresa") ?></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
-                <input type="text" class="form-control PBvalidation keyupmce" id="txt_correo_empEdit" value="<?= $laboral_model->ilab_correo_emp ?>" data-type="email" data-keydown="true" placeholder="<?= Yii::t("formulario", "Correo de la Empresa") ?>">
+                <input type="text" class="form-control keyupmce" id="txt_correo_empEdit" value="<?= $laboral_model->ilab_correo_emp ?>" data-type="email" data-keydown="true" placeholder="<?= Yii::t("formulario", "Correo de la Empresa") ?>">
             </div>
         </div>
     </div>

@@ -415,7 +415,7 @@ class ReportesController extends CController {
 		$rep = new ExportFile();
 		$this->view->title = academico::t("Academico", "Reporte Distributivo"); // Titulo del reporte
 
-		$rep->orientation = "P"; // tipo de orientacion L => Horizontal, P => Vertical
+		$rep->orientation = "L"; // tipo de orientacion L => Horizontal, P => Vertical
 		$rep->createReportPdf(
 			$this->render('_reportView', ['res' => $res]));
 		// get your HTML raw content without any layouts or scripts
@@ -592,7 +592,9 @@ class ReportesController extends CController {
 			Yii::t("formulario", "No. Estudiantes"),
 			Yii::t("formulario", "Total Horas a dictar"),
 			Yii::t("formulario", "Modalidad"),
+			Yii::t("formulario", "Aula"),
 			Yii::t("formulario", "Total crédito"),
+			Yii::t("formulario", "Promedio"),
 		);
 		$searchModel = new DistributivoAcademicoSearch();
 		$data = Yii::$app->request->get();
@@ -609,7 +611,7 @@ class ReportesController extends CController {
 			$arr_body = $searchModel->getListadoDistributivoPosgradosexcel($arrSearch, true);
 		}
 
-		$report->orientation = "P"; // tipo de orientacion L => Horizontal, P => Vertical
+		$report->orientation = "L"; // tipo de orientacion L => Horizontal, P => Vertical
 		$report->createReportPdf(
 			$this->render('exportpospdf', [
 				'arr_head' => $arr_head,

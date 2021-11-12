@@ -17,6 +17,9 @@ use kartik\tabs\TabsX;
         </div>
     </div>
 </div>
+<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    <p class="text-danger"> <?= Yii::t("formulario", "Fields with * are required") ?> </p>
+</div>
 <div class="row">
     <div class="col-md-12">
         <?=

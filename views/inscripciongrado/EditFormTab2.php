@@ -54,7 +54,7 @@ Academico::registerTranslations();
     </div>
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
-            <label for="txt_celEdit" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("perfil", "CellPhone") ?></label>
+            <label for="txt_celEdit" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("perfil", "CellPhone") ?><span class="text-danger">*</span></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
                 <input type="text" class="form-control PBvalidation" id="txt_celEdit" value="<?= $persona_model->per_celular ?>" data-required="false" data-type="number"  placeholder="<?= Yii::t("perfil", "CellPhone") ?>">
             </div>
@@ -64,7 +64,7 @@ Academico::registerTranslations();
         <div class="form-group">
             <label for="txt_phoneEdit" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("perfil", "Phone") ?></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
-                <input type="text" class="form-control PBvalidation" id="txt_phoneEdit" value="<?= $persona_model->per_domicilio_telefono ?>" data-required="false" data-type="number"  placeholder="<?= Yii::t("perfil", "Phone") ?>">
+                <input type="text" class="form-control" id="txt_phoneEdit" value="<?= $persona_model->per_domicilio_telefono ?>" data-required="false" data-type="number"  placeholder="<?= Yii::t("perfil", "Phone") ?>">
             </div>
         </div>
     </div>

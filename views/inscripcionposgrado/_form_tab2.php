@@ -41,9 +41,9 @@ use yii\helpers\Url;
 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
     <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
         <div class="form-group">
-            <label for="txt_titulo_4toNivel" class="col-sm-3 control-label"><?= Yii::t("formulario", "Título de Cuarto Nivel") ?><span class="text-danger">*</span></label>
+            <label for="txt_titulo_4toNivel" class="col-sm-3 control-label"><?= Yii::t("formulario", "Título de Cuarto Nivel") ?></label>
             <div class="col-sm-7">
-                <input type="text" class="form-control PBvalidation keyupmce" id="txt_titulo_4toNivel" data-type="alfanumerico" data-keydown="true" placeholder="<?= Yii::t("formulario", "Título de Cuarto Nivel") ?>">
+                <input type="text" class="form-control keyupmce" id="txt_titulo_4toNivel" data-type="alfanumerico" data-keydown="true" placeholder="<?= Yii::t("formulario", "Título de Cuarto Nivel") ?>">
             </div>
         </div>
     </div>
@@ -51,17 +51,17 @@ use yii\helpers\Url;
 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
     <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
         <div class="form-group">
-            <label for="txt_universidad2" class="col-sm-3 control-label"><?= Yii::t("formulario", "Universidad") ?><span class="text-danger">*</span></label>
+            <label for="txt_universidad2" class="col-sm-3 control-label"><?= Yii::t("formulario", "Universidad") ?></label>
             <div class="col-sm-7">
-                <input type="text" class="form-control PBvalidation keyupmce" id="txt_universidad2" data-type="alfanumerico" data-keydown="true" placeholder="<?= Yii::t("formulario", "Nombre de la Universidad") ?>">
+                <input type="text" class="form-control keyupmce" id="txt_universidad2" data-type="alfanumerico" data-keydown="true" placeholder="<?= Yii::t("formulario", "Nombre de la Universidad") ?>">
             </div>
         </div>
     </div>
     <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
         <div class="form-group">
-            <label for="txt_año_grado2" class="col-sm-3 control-label"><?= Yii::t("formulario", "Año de Graduación") ?> <span class="text-danger">*</span> </label>
+            <label for="txt_año_grado2" class="col-sm-3 control-label"><?= Yii::t("formulario", "Año de Graduación") ?></label>
             <div class="col-sm-7">
-                <input type="text" class="form-control PBvalidation keyupmce" id="txt_año_grado2" data-type="alfanumerico" data-keydown="true" placeholder="<?= Yii::t("formulario", "Año de Graduación") ?>">
+                <input type="text" class="form-control keyupmce" id="txt_año_grado2" data-type="alfanumerico" data-keydown="true" placeholder="<?= Yii::t("formulario", "Año de Graduación") ?>">
             </div>
         </div>
     </div><br><br></br>

@@ -15,7 +15,7 @@ use app\components\CFileInputAjax;
 <form class="form-horizontal">
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
-            <label for="txt_titulo_3erNivelEdit" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("inscripcionposgrado", "Título de Tercer Nivel") ?></label>
+            <label for="txt_titulo_3erNivelEdit" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("inscripcionposgrado", "Título de Tercer Nivel") ?><span class="text-danger">*</span></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
                 <input type="text" class="form-control PBvalidation keyupmce" id="txt_titulo_3erNivelEdit" value="<?= $instruccion_model->eins_titulo3ernivel ?>" data-type="alfanumerico" data-keydown="true" placeholder="<?= Yii::t("formulario", "Título de Tercer Nivel") ?>">
             </div>
@@ -23,7 +23,7 @@ use app\components\CFileInputAjax;
     </div>
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
-            <label for="txt_universidad1Edit" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("inscripcionposgrado", "Universidad Tercer Nivel") ?></label>
+            <label for="txt_universidad1Edit" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("inscripcionposgrado", "Universidad Tercer Nivel") ?><span class="text-danger">*</span></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
                 <input type="text" class="form-control PBvalidation keyupmce" id="txt_universidad1Edit" value="<?= $instruccion_model->eins_institucion3ernivel ?>" data-type="alfanumerico" data-keydown="true" placeholder="<?= Yii::t("formulario", "Universidad Tercer Nivel") ?>">
             </div>
@@ -31,7 +31,7 @@ use app\components\CFileInputAjax;
     </div>
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
-            <label for="txt_año_grado1Edit" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("inscripcionposgrado", "Año de Graduación Tercer Nivel") ?></label>
+            <label for="txt_año_grado1Edit" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("inscripcionposgrado", "Año de Graduación Tercer Nivel") ?><span class="text-danger">*</span></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
                 <input type="text" class="form-control PBvalidation keyupmce" id="txt_año_grado1Edit" value="<?= $instruccion_model->eins_aniogrado3ernivel ?>" data-type="alfanumerico" data-keydown="true" placeholder="<?= Yii::t("formulario", "Año de Graduación Tercer Nivel") ?>">
             </div>
@@ -42,7 +42,7 @@ use app\components\CFileInputAjax;
         <div class="form-group">
             <label for="txt_titulo_4toNivelEdit" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("inscripcionposgrado", "Título de Cuarto Nivel") ?></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
-                <input type="text" class="form-control PBvalidation keyupmce" id="txt_titulo_4toNivelEdit" value="<?= $instruccion_model->eins_titulo4tonivel ?>" data-type="alfanumerico" data-keydown="true" placeholder="<?= Yii::t("formulario", "Título de Cuarto Nivel") ?>">
+                <input type="text" class="form-control keyupmce" id="txt_titulo_4toNivelEdit" value="<?= $instruccion_model->eins_titulo4tonivel ?>" data-type="alfanumerico" data-keydown="true" placeholder="<?= Yii::t("formulario", "Título de Cuarto Nivel") ?>">
             </div>
         </div>
     </div>
@@ -50,7 +50,7 @@ use app\components\CFileInputAjax;
         <div class="form-group">
             <label for="txt_universidad2Edit" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("inscripcionposgrado", "Universidad Cuarto Nivel") ?></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
-                <input type="text" class="form-control PBvalidation keyupmce" id="txt_universidad2Edit" value="<?= $instruccion_model->eins_institucion4tonivel ?>" data-type="alfanumerico" data-keydown="true" placeholder="<?= Yii::t("formulario", "Universidad Cuarto Nivel") ?>">
+                <input type="text" class="form-control keyupmce" id="txt_universidad2Edit" value="<?= $instruccion_model->eins_institucion4tonivel ?>" data-type="alfanumerico" data-keydown="true" placeholder="<?= Yii::t("formulario", "Universidad Cuarto Nivel") ?>">
             </div>
         </div>
     </div>
@@ -58,7 +58,7 @@ use app\components\CFileInputAjax;
         <div class="form-group">
             <label for="txt_año_grado2Edit" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("inscripcionposgrado", "Año de Graduación Cuarto Nivel") ?></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
-                <input type="text" class="form-control PBvalidation keyupmce" id="txt_año_grado2Edit" value="<?= $instruccion_model->eins_aniogrado4tonivel ?>" data-type="alfanumerico" data-keydown="true" placeholder="<?= Yii::t("formulario", "Año de Graduación Cuarto Nivel") ?>">
+                <input type="text" class="form-control keyupmce" id="txt_año_grado2Edit" value="<?= $instruccion_model->eins_aniogrado4tonivel ?>" data-type="alfanumerico" data-keydown="true" placeholder="<?= Yii::t("formulario", "Año de Graduación Cuarto Nivel") ?>">
             </div>
         </div>
     </div>

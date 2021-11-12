@@ -16,7 +16,7 @@ use app\models\Persona;
 <form class="form-horizontal">
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
-            <label for="frm_per_cedula" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("inscripcionposgrado", "Cédula") ?></label>
+            <label for="frm_per_cedula" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("inscripcionposgrado", "Cédula") ?><span class="text-danger">*</span></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
                 <input type="text" class="form-control PBvalidation" id="frm_per_cedula" value="<?= $persona_model->per_cedula ?>" data-type="number" placeholder="<?= Yii::t("inscripcionposgrado", "Cédula")  ?>">
             </div>
@@ -32,7 +32,7 @@ use app\models\Persona;
     </div>
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
-            <label for="frm_per_pri_nombre" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("inscripcionposgrado", "Primer Nombre") ?></label>
+            <label for="frm_per_pri_nombre" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("inscripcionposgrado", "Primer Nombre") ?><span class="text-danger">*</span></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
                 <input type="text" class="form-control keyupmce PBvalidation" id="frm_per_pri_nombre" value="<?= $persona_model->per_pri_nombre ?>" data-type="all" placeholder="<?= Yii::t("inscripcionposgrado", "Primer Nombre")  ?>">
             </div>
@@ -42,13 +42,13 @@ use app\models\Persona;
         <div class="form-group">
             <label for="frm_per_seg_nombre" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("inscripcionposgrado", "Segundo Nombre") ?></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
-                <input type="text" class="form-control keyupmce PBvalidation" id="frm_per_seg_nombre" value="<?= $persona_model->per_seg_nombre ?>" data-type="alfa" placeholder="<?=Yii::t("inscripcionposgrado", "Segundo Nombre")  ?>">
+                <input type="text" class="form-control keyupmce" id="frm_per_seg_nombre" value="<?= $persona_model->per_seg_nombre ?>" data-type="alfa" placeholder="<?=Yii::t("inscripcionposgrado", "Segundo Nombre")  ?>">
             </div>
         </div>
     </div>
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
-            <label for="frm_per_pri_apellido" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("inscripcionposgrado", "Primer Apellido") ?></label>
+            <label for="frm_per_pri_apellido" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("inscripcionposgrado", "Primer Apellido") ?><span class="text-danger">*</span></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
                 <input type="text" class="form-control keyupmce PBvalidation" id="frm_per_pri_apellido" value="<?= $persona_model->per_pri_apellido ?>" data-type="alfa" placeholder="<?= Yii::t("inscripcionposgrado", "Primer Apellido")  ?>">
             </div>
@@ -56,7 +56,7 @@ use app\models\Persona;
     </div>
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
-            <label for="frm_per_seg_apellido" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("inscripcionposgrado", "Segundo Apellido") ?></label>
+            <label for="frm_per_seg_apellido" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("inscripcionposgrado", "Segundo Apellido") ?><span class="text-danger">*</span></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
                 <input type="text" class="form-control keyupmce PBvalidation" id="frm_per_seg_apellido" value="<?= $persona_model->per_seg_apellido ?>" data-type="alfa" placeholder="<?= Yii::t("inscripcionposgrado", "Segundo Apellido")  ?>">
             </div>
@@ -64,7 +64,7 @@ use app\models\Persona;
     </div>
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
-            <label for="cmb_ciudadEdit" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("inscripcionposgrado", "Ciudad de Nacimiento") ?></label>
+            <label for="cmb_ciudadEdit" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("inscripcionposgrado", "Ciudad de Nacimiento") ?><span class="text-danger">*</span></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
                 <?= Html::dropDownList("cmb_ciudadEdit", $persona_model->can_id_nacimiento, $arr_ciudad_nac, ["class" => "form-control", "id" => "cmb_ciudadEdit"]) ?>
             </div>
@@ -72,7 +72,7 @@ use app\models\Persona;
     </div>
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
-            <label for="frm_fecha_nacimiento" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("perfil", "Fecha de Nacimiento") ?></label>
+            <label for="frm_fecha_nacimiento" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("perfil", "Fecha de Nacimiento") ?><span class="text-danger">*</span></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
                 <?=
                 DatePicker::widget([
@@ -131,7 +131,7 @@ use app\models\Persona;
     </div>
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
-            <label for="frm_per_domicilio_refEdit" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("formulario", "Dirección del domicilio") ?></label>
+            <label for="frm_per_domicilio_refEdit" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("formulario", "Dirección del domicilio") ?><span class="text-danger">*</span></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
                 <input type="text" class="form-control keyupmce PBvalidation" id="frm_per_domicilio_refEdit" value="<?= $persona_model->per_domicilio_ref ?>" data-type="all" placeholder="<?= Yii::t("inscripcionposgrado", "Detallar la dirección de su domicilio")  ?>">
             </div>
@@ -139,7 +139,7 @@ use app\models\Persona;
     </div>
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
-            <label for="frm_celEdit" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("perfil", "Celular") ?></label>
+            <label for="frm_celEdit" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("perfil", "Celular") ?><span class="text-danger">*</span></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
                 <input type="text" class="form-control keyupmce PBvalidation" id="frm_celEdit" value="<?= $persona_model->per_celular ?>" data-required="false" data-type="number"  placeholder="<?= Yii::t("perfil", "Celular")  ?>">
             </div>
@@ -149,13 +149,13 @@ use app\models\Persona;
         <div class="form-group">
             <label for="frm_phoneEdit" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("perfil", "Télefono") ?></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
-                <input type="text" class="form-control keyupmce PBvalidation" id="frm_phoneEdit" value="<?= $persona_model->per_domicilio_telefono ?>" data-required="false" data-type="number"  placeholder="<?= Yii::t("perfil", "Télefono")  ?>">
+                <input type="text" class="form-control keyupmce" id="frm_phoneEdit" value="<?= $persona_model->per_domicilio_telefono ?>" data-required="false" data-type="number"  placeholder="<?= Yii::t("perfil", "Télefono")  ?>">
             </div>
         </div>
     </div>
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
-            <label for="frm_per_correo" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("inscripcionposgrado", "Correo") ?></label>
+            <label for="frm_per_correo" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("inscripcionposgrado", "Correo") ?><span class="text-danger">*</span></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
                 <input type="text" class="form-control keyupmce PBvalidation" id="frm_per_correo" value="<?= $persona_model->per_correo ?>" data-type="email" placeholder="<?= Yii::t("inscripcionposgrado", "Correo")  ?>">
             </div>

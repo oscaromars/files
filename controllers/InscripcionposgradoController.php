@@ -486,7 +486,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
                     // creación de datos laborales del aspirante o estudiante
                     $mod_infolaboral = new InformacionLaboral();
                     $resexisteinfo = $mod_infolaboral->consultarInfoLaboral($per_id);
-                    if ($resexisteinfo['existe_instruccion'] == 0) {
+                    if ($resexisteinfo['existe_infolaboral'] == 0) {
                         //Creación de persona de contacto
                         $resp_infolaboral = $mod_infolaboral->insertarInfoLaboral($per_id, $empresa, $cargo, $telefono_emp, $prov_emp, $ciu_emp, $parroquia, $direccion_emp, $añoingreso_emp, $correo_emp, $cat_ocupacional);
                     } else {

@@ -146,15 +146,14 @@ class InscripciongradoController extends \yii\web\Controller {
                 $files = $_FILES[key($_FILES)];
                 $arrIm = explode(".", basename($files['name']));
                 $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                if ($typeFile == 'pdf' || $typeFile == 'png' || $typeFile == 'jpg' || $typeFile == 'jpeg') {
+                if ($typeFile == 'pdf' /*|| $typeFile == 'png' || $typeFile == 'jpg' || $typeFile == 'jpeg'*/) {
                 $dirFileEnd = Yii::$app->params["documentFolder"] . "inscripciongrado/" . $data["name_file"] . "." . $typeFile;
                 $status = Utilities::moveUploadFile($files['tmp_name'], $dirFileEnd);
                     if ($status) {
                         return true;
                     } else {
                         return json_encode(['error' => Yii::t("notificaciones", "Error to process File {file}. Try again.", ['{file}' => basename($files['name'])])]);
-                        //return;
-                    }
+                       }
                 }else {
                 return json_encode(['error' => Yii::t("notificaciones", "Error to process File ". basename($files['name']) ." Solo formato imagenes pdf, jpg, png.")]);
                  //}
@@ -163,8 +162,6 @@ class InscripciongradoController extends \yii\web\Controller {
 
             $con = \Yii::$app->db;
             $transaction = $con->beginTransaction();
-            //$con1 = \Yii::$app->db_captacion;
-            //$transaction1 = $con1->beginTransaction();
 
             $timeSt = date(Yii::$app->params["dateByDefault"]);
             try {
@@ -174,15 +171,10 @@ class InscripciongradoController extends \yii\web\Controller {
                 $modalidad = $data['modalidad'];
                 $periodo = $data['periodo'];
                 $ming_id = $data['ming_id'];
-                //Utilities::putMessageLogFile('ced_id para  el xx.. ' .$data['cedula'] );
                 $insc_persona = new Persona();
                 $resp_persona = $insc_persona->consultaPeridxdni($data['cedula']);
                 $per_id = $resp_persona['per_id'];
-                //Utilities::putMessageLogFile('per_id para  el 3.. ' . $resp_persona );
-                Utilities::putMessageLogFile('per_id para  el 4.. ' . $resp_persona['per_id']);
                 $per_dni = $data['cedula'];
-                //Utilities::putMessageLogFile('aacedula o pasaporte.. ' . $per_dni );
-                //Utilities::putMessageLogFile('per_id para imagenes titulo.. ' . $per_id );
                 //if ($per_id > 0) {
                 $inscripgrado_id = $data["igra_id"];
                 if (isset($data["igra_ruta_doc_titulo"]) && $data["igra_ruta_doc_titulo"] != "") {
@@ -308,8 +300,6 @@ class InscripciongradoController extends \yii\web\Controller {
                 $igra_ruta_doc_certificado = $data['igra_ruta_doc_certificado'];
                 $igra_ruta_doc_syllabus = $data['igra_ruta_doc_syllabus'];
                 $igra_ruta_doc_homologacion = $data['igra_ruta_doc_homologacion'];
-                //Utilities::putMessageLogFile('igra_ruta_doc_titulo xXx.. ' .$igra_ruta_doc_titulo );
-                //Utilities::putMessageLogFile('per_id xXx.. ' .$per_id );
                 if ($per_id > 0) {
                     $model = new InscripcionGrado();
                     // persona ya exite se actualizan datos
@@ -745,7 +735,7 @@ class InscripciongradoController extends \yii\web\Controller {
                 $files = $_FILES[key($_FILES)];
                 $arrIm = explode(".", basename($files['name']));
                 $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                if ($typeFile == 'pdf' || $typeFile == 'png' || $typeFile == 'jpg' || $typeFile == 'jpeg') {
+                if ($typeFile == 'pdf' /*|| $typeFile == 'png' || $typeFile == 'jpg' || $typeFile == 'jpeg'*/) {
                 $dirFileEnd = Yii::$app->params["documentFolder"] . "inscripciongrado/" . $data["name_file"] . "." . $typeFile;
                 $status = Utilities::moveUploadFile($files['tmp_name'], $dirFileEnd);
                     if ($status) {

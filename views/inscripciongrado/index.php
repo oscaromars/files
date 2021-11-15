@@ -6,7 +6,6 @@ use app\modules\academico\Module as academico;
 
 academico::registerTranslations();
 
-//print_r($model);
 session_start();
 $_SESSION['persona_ingresa'] = base64_decode($_GET['ids']);
 
@@ -62,7 +61,6 @@ $_SESSION['persona_ingresa'] = base64_decode($_GET['ids']);
                         "arr_pais" => $arr_pais,
                         "arr_provincia" => $arr_provincia,
                         "arr_ciudad" => $arr_ciudad,
-                        //"arr_malla" => $arr_malla,
                         'arr_tipparentesco' => $arr_tipparentesco,
                         "arr_metodos" => $arr_metodos,
                     ]);
@@ -73,7 +71,6 @@ $_SESSION['persona_ingresa'] = base64_decode($_GET['ids']);
                 <form class="form-horizontal">
                     <?=
                     $this->render('_form_tab2', [
-                        //'per_id' => $per_id,
                         "arr_convenio_empresa" => $arr_convenio_empresa,
                     ]);
                     ?>

@@ -14,9 +14,9 @@ Academico::registerTranslations();
 <form class="form-horizontal">
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
-            <label for="txt_trabajo_direccionEdit" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("formulario", "Dirección de Trabajo") ?><span class="text-danger">*</span></label>
+            <label for="txt_trabajo_direccionEdit" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("formulario", "Dirección de Trabajo") ?></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
-                <input type="text" class="form-control PBvalidation" id="txt_trabajo_direccionEdit" value="<?= $persona_model->per_trabajo_direccion ?>" data-type="all" placeholder="<?= Academico::t("profesor", "Dirección de Trabajo")  ?>">
+                <input type="text" class="form-control" id="txt_trabajo_direccionEdit" value="<?= $persona_model->per_trabajo_direccion ?>" data-type="all" placeholder="<?= Academico::t("profesor", "Dirección de Trabajo")  ?>">
             </div>
         </div>
     </div>

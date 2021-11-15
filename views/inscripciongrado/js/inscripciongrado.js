@@ -9,21 +9,6 @@ $(document).ready(function () {
     $('#btn_actualizaraspirantegrado').click(function () {
         updateaspirantegrado();
     });
-    /*$('#cmb_carrera').change(function () {
-        var link = $('#txth_base').val() + "/inscripciongrado/index";
-        var arrParams = new Object();
-        arrParams.uaca_id = $('#cmb_unidad').val();
-        //arrParams.moda_id = $(this).val();
-        arrParams.eaca_id = $(this).val();
-        arrParams.empresa_id = 1;
-        arrParams.getmodalidad = true;
-        requestHttpAjax(link, arrParams, function (response) {
-            if (response.status == "OK") {
-                data = response.message;
-                setComboDataselect(data.modalidad, "cmb_modalidad", "Seleccionar");
-            }
-        }, true);
-    });*/
     $('#cmb_modalidad').change(function() {
         var link = $('#txth_base').val() + "/inscripciongrado/index";
         var arrParams = new Object();

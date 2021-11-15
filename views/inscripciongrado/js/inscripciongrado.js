@@ -9,7 +9,7 @@ $(document).ready(function () {
     $('#btn_actualizaraspirantegrado').click(function () {
         updateaspirantegrado();
     });
-    $('#cmb_carrera').change(function () {
+    /*$('#cmb_carrera').change(function () {
         var link = $('#txth_base').val() + "/inscripciongrado/index";
         var arrParams = new Object();
         arrParams.uaca_id = $('#cmb_unidad').val();
@@ -23,8 +23,20 @@ $(document).ready(function () {
                 setComboDataselect(data.modalidad, "cmb_modalidad", "Seleccionar");
             }
         }, true);
+    });*/
+    $('#cmb_modalidad').change(function() {
+        var link = $('#txth_base').val() + "/inscripciongrado/index";
+        var arrParams = new Object();
+        arrParams.unidada = $('#cmb_unidad').val();
+        arrParams.moda_id = $(this).val();
+        arrParams.getcarrera = true;
+        requestHttpAjax(link, arrParams, function(response) {
+            if (response.status == "OK") {
+                data = response.message;
+                setComboDataselect(data.carrera, "cmb_carrera", "Seleccionar");
+            }
+        }, true);
     });
-
     $('#cmb_carrera_asp').change(function () {
         var link = $('#txth_base').val() + "/inscripciongrado/aspirantegrado";
         var arrParams = new Object();

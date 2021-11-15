@@ -9,9 +9,14 @@ use app\modules\financiero\Module as financiero;
 
 academico::registerTranslations();
 financiero::registerTranslations();
-//print_r($persona_model);
-//echo 'sdf. '. $arch1;
 $per_id = $persona_model->per_id;
+$leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
+          <div class="form-group">
+          <div class="col-sm-10 col-md-10 col-xs-10 col-lg-10">
+          <div style = "width: 450px;" class="alert alert-info"><span style="font-weight: bold"> Nota: </span> Al subir archivo debe ser 800 KB máximo y tipo pdf.</div>
+          </div>
+          </div>
+          </div>';
 ?>
 
 <?= Html::hiddenInput('txth_igra_id', base64_encode($igra_id), ['id' => 'txth_igra_id']); ?>
@@ -20,6 +25,9 @@ $per_id = $persona_model->per_id;
 <?= Html::hiddenInput('txth_cemp_id', $personaData["cemp_id"], ['id' => 'txth_cemp_id']); ?>
 
 <form class="form-horizontal" enctype="multipart/form-data" id="formsolicitud">
+<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
+        <?php echo $leyenda; ?>
+    </div>
      <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12 doc_titulo cinteres">
         <div class="form-group">
             <label for="txth_doc_titulo" class="col-sm-3 col-lg-3 col-md-3 col-xs-3 control-label keyupmce"><?= Yii::t("formulario", "Title") ?></label>

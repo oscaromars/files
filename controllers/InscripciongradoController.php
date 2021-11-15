@@ -14,6 +14,7 @@ use app\models\UsuaGrolEper;
 use app\models\Grupo;
 use app\models\Rol;
 use app\models\GrupRol;
+use app\modules\admision\models\Oportunidad;
 use app\modules\academico\models\UnidadAcademica;
 use app\modules\academico\models\EstudioAcademico;
 use app\modules\academico\models\Modalidad;
@@ -45,18 +46,17 @@ class InscripciongradoController extends \yii\web\Controller {
 
     public function actionIndex() {
         $this->layout = '@themes/' . \Yii::$app->getView()->theme->themeName . '/layouts/basic.php';
-        //$per_id = Yii::$app->session->get("PB_perid");
-        //$mod_persona = Persona::findIdentity($per_id);
         $mod_persona = new Persona();
         $mod_unidad = new UnidadAcademica();
         $mod_carrera = new EstudioAcademico();
         $mod_modalidad = new Modalidad();
         $mod_periodo = new PeriodoAcademico();
         $mod_malla = new MallaAcademica();
-
+        $modcanal = new Oportunidad();
+        $emp_id = 1;
         $arr_unidad = $mod_unidad->consultarUnidadAcademicas();
-        $arr_carrera = $mod_carrera->consultarCarreraxunidad($arr_unidad[0]['id']);
-        $arr_modalidad = $mod_carrera->consultarmodalidadxcarrera($arr_carrera[0]['id']);
+        $arr_modalidad = $mod_modalidad->consultarModalidad($arr_unidad[0]['id'],  $emp_id);
+        $arr_carrera = $modcanal->consultarCarreraModalidad($arr_unidad[0]['id'], $arr_modalidad[0]["id"]);
         $arr_periodo = $mod_periodo->consultarPeriodosActivos();
 
         if (Yii::$app->request->isAjax) {
@@ -67,38 +67,34 @@ class InscripciongradoController extends \yii\web\Controller {
                 $message = array("persids" => $persids['per_id']);
                 Utilities::putMessageLogFile('per_id consultado.. ' .$persids['per_id'] );
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
-                //return;
             }
 
             if (isset($data["getprovincias"])) {
                 $provincias = Provincia::find()->select("pro_id AS id, pro_nombre AS name")->where(["pro_estado_logico" => "1", "pro_estado" => "1", "pai_id" => $data['pai_id']])->asArray()->all();
                 $message = array("provincias" => $provincias);
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
-                //return;
             }
             if (isset($data["getcantones"])) {
                 $cantones = Canton::find()->select("can_id AS id, can_nombre AS name")->where(["can_estado_logico" => "1", "can_estado" => "1", "pro_id" => $data['prov_id']])->asArray()->all();
                 $message = array("cantones" => $cantones);
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
-                //return;
             }
             if (isset($data["getarea"])) {
                 //obtener el codigo de area del pais en informacion personal
                 $area = $mod_pais->consultarCodigoArea($data["codarea"]);
                 $message = array("area" => $area);
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
-                //return;
             }
             if (isset($data['getmodalidad'])) {
-                $modalidad = $mod_carrera->consultarmodalidadxcarrera($data['eaca_id']);
+                $modalidad = $mod_modalidad->consultarModalidad($arr_unidad[0]['id'],  $emp_id);
                 $message = array('modalidad' => $modalidad);
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
             }
-            /*if (isset($data['getmalla'])) {
-                $mallaca = $mod_malla->consultarmallasxcarrera($data['uaca_id'], $data['moda_id'], $data['eaca_id']);
-                $message = array('mallaca' => $mallaca);
+            if (isset($data["getcarrera"])) {
+                $carrera = $modcanal->consultarCarreraModalidad($data["unidada"], $data["moda_id"]);
+                $message = array("carrera" => $carrera);
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
-            }*/
+            }
         }
         $arr_ciudad_nac= Canton::find()->select("can_id AS id, can_nombre AS value")->where(["can_estado_logico" => "1", "can_estado" => "1"])->asArray()->all();
         $arr_nacionalidad = Pais::find()->select("pai_id AS id, pai_nacionalidad AS value")->where(["pai_estado_logico" => "1", "pai_estado" => "1"])->asArray()->all();
@@ -106,17 +102,12 @@ class InscripciongradoController extends \yii\web\Controller {
         $arr_pais = Pais::find()->select("pai_id AS id, pai_nombre AS value")->where(["pai_estado_logico" => "1", "pai_estado" => "1"])->asArray()->all();
         $arr_provincia = Provincia::provinciaXPais($arr_pais[0]["id"]);
         $arr_ciudad= Canton::cantonXProvincia($arr_provincia[0]["id"]);
-        //$arr_malla = $mod_malla->consultarmallasxcarrera($arr_unidad[0]['id'], $arr_carrera[0]['id'], $arr_modalidad[0]['id']);
         $arr_tipparentesco = TipoParentesco::find()->select("tpar_id AS id, tpar_nombre AS value")->where(["tpar_estado_logico" => "1", "tpar_estado" => "1"])->asArray()->all();
         $mod_metodo = new MetodoIngreso();
         $arr_metodos = $mod_metodo->consultarMetodoUnidadAca_2($arr_unidad[0]["id"]);
         $mod_conempresa = new ConvenioEmpresa();
         $arr_convempresa = $mod_conempresa->consultarConvenioEmpresa();
         $_SESSION['JSLANG']['Your information has not been saved. Please try again.'] = Yii::t('notificaciones', 'Your information has not been saved. Please try again.');
-        /*$mod_persona = new Persona();
-        $resp_persona = $mod_persona->consultarUltimoPer_id();
-        $persona = $resp_persona["ultimo"];*/
-        //$per_id = intval( $persona );
         return $this->render('index', [
             "arr_unidad" => ArrayHelper::map($arr_unidad, "id", "name"),
             'arr_carrera' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']], $arr_carrera), 'id', 'name'),
@@ -130,12 +121,10 @@ class InscripciongradoController extends \yii\web\Controller {
             "arr_pais" => ArrayHelper::map($arr_pais, "id", "value"),
             "arr_provincia" => ArrayHelper::map($arr_provincia, "id", "value"),
             "arr_ciudad" => ArrayHelper::map($arr_ciudad, "id", "value"),
-            //'arr_malla' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']], $arr_malla), 'id', 'name'),
             "arr_tipparentesco" => ArrayHelper::map($arr_tipparentesco, "id", "value"),
             "arr_metodos" => ArrayHelper::map($arr_metodos, "id", "name"),
             "arr_convenio_empresa" => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Ninguna")]], $arr_convempresa), "id", "name"),
             "resp_datos" => $resp_datos,
-            //"per_id" => $per_id,
         ]);
     }
 
@@ -157,15 +146,14 @@ class InscripciongradoController extends \yii\web\Controller {
                 $files = $_FILES[key($_FILES)];
                 $arrIm = explode(".", basename($files['name']));
                 $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                if ($typeFile == 'pdf' || $typeFile == 'png' || $typeFile == 'jpg' || $typeFile == 'jpeg') {
+                if ($typeFile == 'pdf' /*|| $typeFile == 'png' || $typeFile == 'jpg' || $typeFile == 'jpeg'*/) {
                 $dirFileEnd = Yii::$app->params["documentFolder"] . "inscripciongrado/" . $data["name_file"] . "." . $typeFile;
                 $status = Utilities::moveUploadFile($files['tmp_name'], $dirFileEnd);
                     if ($status) {
                         return true;
                     } else {
                         return json_encode(['error' => Yii::t("notificaciones", "Error to process File {file}. Try again.", ['{file}' => basename($files['name'])])]);
-                        //return;
-                    }
+                       }
                 }else {
                 return json_encode(['error' => Yii::t("notificaciones", "Error to process File ". basename($files['name']) ." Solo formato imagenes pdf, jpg, png.")]);
                  //}
@@ -174,8 +162,6 @@ class InscripciongradoController extends \yii\web\Controller {
 
             $con = \Yii::$app->db;
             $transaction = $con->beginTransaction();
-            //$con1 = \Yii::$app->db_captacion;
-            //$transaction1 = $con1->beginTransaction();
 
             $timeSt = date(Yii::$app->params["dateByDefault"]);
             try {
@@ -185,15 +171,10 @@ class InscripciongradoController extends \yii\web\Controller {
                 $modalidad = $data['modalidad'];
                 $periodo = $data['periodo'];
                 $ming_id = $data['ming_id'];
-                //Utilities::putMessageLogFile('ced_id para  el xx.. ' .$data['cedula'] );
                 $insc_persona = new Persona();
                 $resp_persona = $insc_persona->consultaPeridxdni($data['cedula']);
                 $per_id = $resp_persona['per_id'];
-                //Utilities::putMessageLogFile('per_id para  el 3.. ' . $resp_persona );
-                Utilities::putMessageLogFile('per_id para  el 4.. ' . $resp_persona['per_id']);
                 $per_dni = $data['cedula'];
-                //Utilities::putMessageLogFile('aacedula o pasaporte.. ' . $per_dni );
-                //Utilities::putMessageLogFile('per_id para imagenes titulo.. ' . $per_id );
                 //if ($per_id > 0) {
                 $inscripgrado_id = $data["igra_id"];
                 if (isset($data["igra_ruta_doc_titulo"]) && $data["igra_ruta_doc_titulo"] != "") {
@@ -319,8 +300,6 @@ class InscripciongradoController extends \yii\web\Controller {
                 $igra_ruta_doc_certificado = $data['igra_ruta_doc_certificado'];
                 $igra_ruta_doc_syllabus = $data['igra_ruta_doc_syllabus'];
                 $igra_ruta_doc_homologacion = $data['igra_ruta_doc_homologacion'];
-                //Utilities::putMessageLogFile('igra_ruta_doc_titulo xXx.. ' .$igra_ruta_doc_titulo );
-                //Utilities::putMessageLogFile('per_id xXx.. ' .$per_id );
                 if ($per_id > 0) {
                     $model = new InscripcionGrado();
                     // persona ya exite se actualizan datos
@@ -756,7 +735,7 @@ class InscripciongradoController extends \yii\web\Controller {
                 $files = $_FILES[key($_FILES)];
                 $arrIm = explode(".", basename($files['name']));
                 $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                if ($typeFile == 'pdf' || $typeFile == 'png' || $typeFile == 'jpg' || $typeFile == 'jpeg') {
+                if ($typeFile == 'pdf' /*|| $typeFile == 'png' || $typeFile == 'jpg' || $typeFile == 'jpeg'*/) {
                 $dirFileEnd = Yii::$app->params["documentFolder"] . "inscripciongrado/" . $data["name_file"] . "." . $typeFile;
                 $status = Utilities::moveUploadFile($files['tmp_name'], $dirFileEnd);
                     if ($status) {

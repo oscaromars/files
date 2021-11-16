@@ -787,14 +787,18 @@ return $dataitems;
          }
          
 
-        if ($saldos == 0){
+       if (isset($saldos[0])){
+        if ($saldos[0] == 0){
          return True;
         }else {
            return False;
         }
+        } else
+        {
+          return True;  
+        }
         
-       
-         //return True;
+        
      }  
 
 

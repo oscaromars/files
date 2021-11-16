@@ -2045,10 +2045,15 @@ croe.croe_exec,ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca
          }
          
 
-        if ($saldos == 0){
+          if (isset($saldos[0])){
+        if ($saldos[0] == 0){
          return True;
         }else {
            return False;
+        }
+        } else
+        {
+          return True;  
         }
   
      }  

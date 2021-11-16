@@ -65,13 +65,13 @@ return $alld;
     $comando->execute();
     $running = $comando->fetchAll(\PDO::FETCH_ASSOC);
     if (count($running) >= 1 ){ die; } else { getconfig(); }
-  // 
+  
 
 
    function getconfig() {
     GLOBAL $dsn, $dbuser, $dbpass, $dbname;
     $con = new \PDO($dsn, $dbuser, $dbpass);
-//getInpagos();  /* ------------------------------     ?      ---------------------------------*/
+
    $configura=
    "SELECT croe_id, croe_mod_id, croe_paca_id, croe_uaca_id,croe_parcial
     FROM db_academico.cron_estudiantes_educativa
@@ -149,25 +149,6 @@ AND daca.paca_id = $paca_id
 AND daca.uaca_id = $uaca_id
 ;";
 
-$qusersandgroups = // --------------------------------------------------------------------DEV  !!!!
-"SELECT cedist.daca_id, ceduct.cedu_asi_id, 
-daca.uaca_id, daca.paca_id, daca.mod_id, daca.mpp_id, 
-daca.pro_id, daca.asi_id, daes.est_id,
-usuedu.uedu_usuario, usuedu.per_id, person.per_cedula
-FROM db_academico.curso_educativa_distributivo cedist
-INNER JOIN db_academico.curso_educativa as ceduct on cedist.cedu_id = ceduct.cedu_id
-INNER JOIN db_academico.distributivo_academico as daca on cedist.daca_id = daca.daca_id
-INNER JOIN db_academico.distributivo_academico_estudiante as daes on daes.daca_id = daca.daca_id
-INNER JOIN db_academico.usuario_educativa as usuedu on usuedu.est_id = daes.est_id
-INNER JOIN db_academico.estudiante as estu on  estu.est_id = daes.est_id
-INNER JOIN db_asgard.persona as person on  estu.per_id = person.per_id
-WHERE daca.mod_id = 1
-AND daca.paca_id = 15  -- 16
-AND daca.uaca_id = 1
-AND uedu_usuario = '1312603499'
-AND cedu_asi_id = '3235'
-;";
-
  $comando = $con->prepare($qusersandgroups);
         $comando->execute();
     return $comando->fetchAll(\PDO::FETCH_ASSOC);
@@ -241,10 +222,7 @@ AND cedu_asi_id = '3235'
                           "basic");
 
           $method = 'obtener_notas_calificaciones'; 
-         /*$args = Array(
-                 'id_grupo' =>3235, 
-                 'id_usuario' =>'1312603499',
-                );*/
+       
           $args = Array(
                  'id_grupo' =>$cedu_asi_id, 
                  'id_usuario' =>$uedu_usuario,
@@ -252,7 +230,10 @@ AND cedu_asi_id = '3235'
 
 
             $response = $client->__call( $method, Array( $args ) );
-
+      putMessageLogFile("cedu_asi_id:  ");
+ putMessageLogFile($cedu_asi_id);
+        putMessageLogFile("uedu_usuario:  ");
+ putMessageLogFile($uedu_usuario);
 
               $isauth= getPagopend($ced_id);  
 
@@ -377,30 +358,12 @@ $grades++;
 
 print_r("==============fin if response");
 
-/*
-for ($i=0; $i<9 ; $i++){
-
- if (isset($arraydata1[$i])) { print_r($arraydata1[$i]); }
-
- if (isset($arraydata2[$i])) { print_r($arraydata2[$i]); }
-
- if (isset($arraydata3[$i])) { print_r($arraydata3[$i]); }
-
-
-  
-} */
-
-
-// EVALUACION
-// TALLER    == AUTONOMA
-//EXAMEN
-
 if (count($arraydata3) > 0) {           
 
 
 $componentes = getescalas($uaca_id,$mod_id,$parciales);
 $cabeceras = getcabeceras($est_id,$asi_id,$paca_id,$parciales);
-if ($cabeceras == Null){
+if ($cabeceras == Null){ 
 $cabeceras = putcabeceras($est_id,$asi_id,$paca_id,$parciales,$pro_id);
 $cabeceras = getcabeceras($est_id,$asi_id,$paca_id,$parciales);
 }
@@ -412,72 +375,155 @@ for ($it = 0; $it < count($arraydata3); $it++) {
  $data02= getparamitem($arraydata2[$it]['nombre']); //  $dataitems['evaluacion']; $dataitems['examen']; $dataitems['taller'];
  $data03= getnota($arraydata3[$it]['nota']); //  $grade;
 
-print_r("==============CATEGORIA ");
-print_r($data01);
-print_r("==============ITEM ");
-print_r($data02);
-print_r("==============NOTA  ");
-print_r($data03);
+if (isset($semanaexa1)) {} else {
 
+ if(isset($data02['examen']) ) { 
+$semanaexa1 = $data01['semana'];
+if ($semanaexa1 == 5 AND $parciales == 1){ 
+
+         $comp_examen1 = $data03; 
+          $comp_cuni_id = 6;
+          print_r("parcial 1 examen::>");
+           print_r($comp_examen1);
+
+           $dcalificacion = $comp_examen1;
+          $detalles = getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id);
+      if ($detalles == Null) {
+$detalles = putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id ,$dcalificacion); 
+}else {
+if ($detalles[0]['dcal_usuario_creacion'] == '1' AND $detalles[0]['dcal_calificacion'] < $dcalificacion ){
+$detallesup = updatedetalles($detalles[0]['dcal_id'],$dcalificacion); 
+}
+}
+}
+}   
+}
+
+
+if (isset($semanaexa2)) {} else {
+
+ if(isset($data02['examen']) ) { 
+$semanaexa2 = $data01['semana'];
+if ($semanaexa2 == 10 AND $parciales == 2){ 
+
+         $comp_examen2 = $data03; 
+          $comp_cuni_id = 6;
+          print_r("parcial 2 examen::>");
+           print_r($comp_examen2);
+
+           $dcalificacion = $comp_examen2;
+          $detalles = getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id);
+      if ($detalles == Null) {
+$detalles = putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id ,$dcalificacion); 
+}else {
+if ($detalles[0]['dcal_usuario_creacion'] == '1' AND $detalles[0]['dcal_calificacion'] < $dcalificacion ){
+$detallesup = updatedetalles($detalles[0]['dcal_id'],$dcalificacion); 
+}
+}
+}
+}   
+}
+
+
+
+ if(isset($data01['parcial'])) {
+        $comp_evaluacion1 = 0;
+    $comp_autonoma1 = 0;
+    $comp_examen1 = 0;
 if ($parciales == 1 AND $data01['parcial']==1) {
-    $comp_evaluacion = 0;
-    $comp_autonoma = 0;
-    $comp_examen = 0;
+
 
 for ($il = 0; $il < count($componentes); $il++) {
 
 
-    if ($componentes[$il]['com_id']== 3 AND $data02['evaluacion'] == 1) {    //COMP_EVALUACION ol
+    if ($componentes[$il]['com_id']== 3 AND isset($data02['evaluacion'])) {    //COMP_EVALUACION ol
 
-    $comp_evaluacion = $comp_evaluacion + $data03; 
+    $comp_evaluacion1 = $comp_evaluacion1 + $data03; 
+    $comp_cuni_id = $componentes[$il]['cuni_id'];
 
     }
 
-     if ($componentes[$il]['com_id']== 4 AND $data02['taller'] == 1) {    //COMP_AUTONOMA ol
+     if ($componentes[$il]['com_id']== 4 AND isset($data02['taller'])) {    //COMP_AUTONOMA ol
         
-     $comp_autonoma = $comp_autonoma + $data03; 
+     $comp_autonoma1 = $comp_autonoma1 + $data03; 
+     $comp_cuni_id = $componentes[$il]['cuni_id'];
 
     }
 
 
 
 }
-if ( $comp_evaluacion > 0 ){
-$dcalificacion = $comp_evaluacion;
-$detalles = putdetalles($cabeceras['ccal_id'],$componentes[$il]['cuni_id'],$dcalificacion); 
+if ( $comp_evaluacion1 > 0 ){
+$dcalificacion = $comp_evaluacion1;
+$detalles = getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id);
+if ($detalles == Null) {
+$detalles = putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id ,$dcalificacion); 
+}else {
+if ($detalles[0]['dcal_usuario_creacion'] == '1' AND $detalles[0]['dcal_fecha_modificacion'] ==Null){
+$dcalificacion = $dcalificacion + $detalles[0]['dcal_calificacion'];
+$detallesup = updatedetalles($detalles[0]['dcal_id'],$dcalificacion); 
+}
+}
 } 
-if ( $comp_autonoma > 0 ){
-$dcalificacion = $comp_autonoma;
-$detalles = putdetalles($cabeceras['ccal_id'],$componentes[$il]['cuni_id'],$dcalificacion); 
+
+
+if ( $comp_autonoma1 > 0 ){
+$dcalificacion = $comp_autonoma1;
+$detalles = getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id); 
+if ($detalles == Null) {
+$detalles = putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id ,$dcalificacion); 
+}else {
+if ($detalles[0]['dcal_usuario_creacion'] == 1 AND $detalles[0]['dcal_fecha_modificacion'] ==Null){
+$dcalificacion = $dcalificacion + $detalles[0]['dcal_calificacion'];
+$detallesup = updatedetalles($detalles[0]['dcal_id'],$dcalificacion); 
+}
+}
 } 
+
+if ( $comp_autonoma1 > 0 ){
+$dcalificacion = $comp_autonoma1;
+$detalles = getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id); 
+if ($detalles == Null) {
+$detalles = putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id ,$dcalificacion); 
+}else {
+if ($detalles[0]['dcal_usuario_creacion'] == 1 AND $detalles[0]['dcal_fecha_modificacion'] ==Null){
+$dcalificacion = $dcalificacion + $detalles[0]['dcal_calificacion'];
+$detallesup = updatedetalles($detalles[0]['dcal_id'],$dcalificacion); 
+}
+}
+} 
+
 }
 
-
+ $comp_evaluacion2 = 0;
+ $comp_autonoma2 = 0;
+ $comp_examen2 = 0;
 if ($parciales == 2 AND $data01['parcial']==2) {
-    $comp_evaluacion = 0;
-    $comp_autonoma = 0;
-    $comp_examen = 0;
+   
 
 for ($il = 0; $il < count($componentes); $il++) {
 
 
-    if ($componentes[$il]['com_id']== 3 AND $data02['evaluacion'] == 1) {    //COMP_EVALUACION ol
+    if ($componentes[$il]['com_id']== 3 AND isset($data02['evaluacion'] )) {    //COMP_EVALUACION ol
 
-     $comp_evaluacion = $comp_evaluacion + $data03; 
-
-    }
-
-     if ($componentes[$il]['com_id']== 4 AND $data02['taller'] == 1 ) {    //COMP_AUTONOMA ol
-        
-         $comp_autonoma = $comp_autonoma + $data03; 
+     $comp_evaluacion2 = $comp_evaluacion2 + $data03;  
+      $comp_cuni_id = $componentes[$il]['cuni_id'];
 
     }
 
-      if ($componentes[$il]['com_id']== 6 AND $data02['examen'] == 1 ) {    //COMP_EXAMEN ol
+     if ($componentes[$il]['com_id']== 4 AND isset($data02['taller'] )) {    //COMP_AUTONOMA ol
         
-         if ($data03 > $comp_examen){
+         $comp_autonoma2 = $comp_autonoma2 + $data03; 
+          $comp_cuni_id = $componentes[$il]['cuni_id'];
 
-         $comp_examen = $data03; 
+    }
+
+      if ($componentes[$il]['com_id']== 6 AND isset($data02['examen'] )) {    //COMP_EXAMEN ol
+        
+         if ($data03 > $comp_examen2){
+
+         $comp_examen2 = $data03; 
+          $comp_cuni_id = $componentes[$il]['cuni_id'];
         
         }
 
@@ -486,45 +532,85 @@ for ($il = 0; $il < count($componentes); $il++) {
 
 
 }
-if ( $comp_evaluacion > 0 ){
-$dcalificacion = $comp_evaluacion;
-$detalles = putdetalles($cabeceras['ccal_id'],$componentes[$il]['cuni_id'],$dcalificacion); 
+if ( $comp_evaluacion2 > 0 ){
+$dcalificacion = $comp_evaluacion2;
+$detalles = getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id);
+if ($detalles == Null) {
+$detalles = putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id ,$dcalificacion); 
+}else {
+if ($detalles[0]['dcal_usuario_creacion'] == 1 AND $detalles[0]['dcal_fecha_modificacion'] ==Null){
+$dcalificacion = $dcalificacion + $detalles[0]['dcal_calificacion'];
+$detallesup = updatedetalles($detalles[0]['dcal_id'],$dcalificacion);  
+}
+}
 } 
-if ( $comp_autonoma > 0 ){
-$dcalificacion = $comp_autonoma;
-$detalles = putdetalles($cabeceras['ccal_id'],$componentes[$il]['cuni_id'],$dcalificacion); 
-}  
+
+
+if ( $comp_autonoma2 > 0 ){
+$dcalificacion = $comp_autonoma2;
+$detalles = getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id); 
+if ($detalles == Null) {
+$detalles = putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id ,$dcalificacion); 
+}else {
+if ($detalles[0]['dcal_usuario_creacion'] == 1 AND $detalles[0]['dcal_fecha_modificacion'] ==Null){
+$dcalificacion = $dcalificacion + $detalles[0]['dcal_calificacion'];
+$detallesup = updatedetalles($detalles[0]['dcal_id'],$dcalificacion); 
+}
+}
+} 
+
 }
 
+ $comp_examen3 = 0;
+ $comp_supletorio3 = 0;
 if ($parciales == 3 AND $data01['parcial']==3) {
-    $comp_examen = 0;
-    $comp_supletorio = 0;
+   
 
 for ($il = 0; $il < count($componentes); $il++) {
 
 
-    if ($componentes[$il]['com_id']== 6 AND $data02['supletorio'] == 1) {    //COMP_EXAMEN O SUPLETORIO ol
+    if ($componentes[$il]['com_id']== 6 AND isset($data02['supletorio'])) {    //COMP_EXAMEN O SUPLETORIO ol
         
-        if ($data03 > $comp_supletorio){
+        if ($data03 > $comp_supletorio3){
 
-         $comp_supletorio = $data03; 
+         $comp_supletorio3 = $data03; 
+          $comp_cuni_id = $componentes[$il]['cuni_id'];
         
         }
     }
 
     }
 //GRABAR DETALLES
-if ( $comp_supletorio > 0 ){
-$dcalificacion = $comp_supletorio;
-$detalles = putdetalles($cabeceras['ccal_id'],$componentes[$il]['cuni_id'],$dcalificacion); 
-} 
-if ( $comp_examen > 0 ){
-$dcalificacion = $comp_examen;
-//$detalles = putdetalles($cabeceras['ccal_id'],$componentes[$il]['cuni_id'],$dcalificacion); 
+if ( $comp_supletorio3 > 0 ){
+$dcalificacion = $comp_supletorio3;
+$detalles = getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id);
+if ($detalles == Null) {
+$detalles = putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id ,$dcalificacion); 
+}else {
+if ($detalles[0]['dcal_usuario_creacion'] == 1 AND $detalles[0]['dcal_fecha_modificacion'] ==Null){
+$dcalificacion = $dcalificacion + $detalles[0]['dcal_calificacion'];
+$detallesup = updatedetalles($detalles[0]['dcal_id'],$dcalificacion); 
+}
+}
 } 
 
 
-}  
+if ( $comp_examen3 > 0 ){
+$dcalificacion = $comp_examen3;
+$detalles = getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id); 
+if ($detalles == Null) {
+$detalles = putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id ,$dcalificacion); 
+}else {
+if ($detalles[0]['dcal_usuario_creacion'] == 1 AND $detalles[0]['dcal_fecha_modificacion'] ==Null){
+$dcalificacion = $dcalificacion + $detalles[0]['dcal_calificacion'];
+$detallesup = updatedetalles($detalles[0]['dcal_id'],$dcalificacion); 
+}
+}
+} 
+
+
+
+}                 }  //if data01 parcial
 
 
 
@@ -537,55 +623,22 @@ $dcalificacion = $comp_examen;
 
 
 
-/*
--- Get Componente by mod 1 Asincrona 2 Sincrona 3 Evaluacion 4 Autonoma, 6 Examen
-SELECT cuni.cuni_id, cuni.com_id,comp.com_nombre, cuni.cuni_calificacion FROM db_academico.componente_unidad as cuni
-inner join db_academico.componente as comp
-on comp.com_id = cuni.com_id
-where uaca_id = 1 AND mod_id = 1 AND ecal_id = 1 ;
-
--- Get grades from Array by mod (and parcial)
-
--- Get cabeceras by parcial (select or create)
-INSERT INTO `db_academico`.`cabecera_calificacion` 
-(`ccal_id`, `paca_id`, `est_id`, `pro_id`, `asi_id`, `ecun_id`, `ccal_calificacion`, 
-`ccal_estado`, `ccal_fecha_creacion`, `ccal_estado_logico`) 
-VALUES ('21', '32', '3181', '192', '479', '3', '13', '1',
- '2021-11-08 17:29:34', '1');
-
-SELECT ccal_id,ccal_calificacion FROM db_academico.cabecera_calificacion 
-where 
-est_id= 3181 AND
-asi_id= 479 AND
-paca_id=15 AND 
-ecun_id = 1
-;
--- Get detalle (select or create)
-INSERT INTO `db_academico`.`detalle_calificacion`
- (`dcal_id`, `ccal_id`, `cuni_id`, `dcal_calificacion`, `dcal_usuario_creacion`, 
- `dcal_estado`, `dcal_fecha_creacion`, `dcal_estado_logico`) 
- VALUES ('53', '21', '11', '13', '1', '1', '2021-11-08 17:29:34', '1');
-
-SELECT dcal_id, ccal_id,cuni_id,dcal_calificacion FROM db_academico.detalle_calificacion where ccal_id = 18; -- SUM 12
-
-*/
+ 
 
 } 
        
 print_r("///fin is auth");
 
 
- return true; 
+ //return true; 
 } else {// isauth
         
-         putInpagos($uedu_usuario,$ced_id);
-
-        return false; 
+     
        }
 
         }//for
 
-        /* - MATRIZ TEMPORAL DE CALIFICACIONES - */
+
  
     }//if
 
@@ -735,9 +788,9 @@ return $dataitems;
          
 
         if ($saldos == 0){
-         return False;
+         return True;
         }else {
-           return True;
+           return False;
         }
         
        
@@ -773,6 +826,109 @@ return true;
 
 }
 
+
+
+function getescalas($uaca_id,$mod_id,$ecal_id){
+ GLOBAL $dsn, $dbuser, $dbpass, $dbname;
+$con = new \PDO($dsn, $dbuser, $dbpass);
+$sql="
+SELECT cuni.cuni_id, cuni.com_id,comp.com_nombre, cuni.cuni_calificacion 
+FROM db_academico.componente_unidad as cuni
+inner join db_academico.componente as comp
+on comp.com_id = cuni.com_id
+where uaca_id = $uaca_id AND mod_id = $mod_id AND ecal_id = $ecal_id 
+";
+ $comando = $con->prepare($sql);
+ $comando->execute();
+ $escalas = $comando->fetchAll(\PDO::FETCH_ASSOC);
+return $escalas;
+
+}
+
+
+function getcabeceras($est_id,$asi_id,$paca_id,$parciales){
+ GLOBAL $dsn, $dbuser, $dbpass, $dbname;
+$con = new \PDO($dsn, $dbuser, $dbpass);
+$sql="
+SELECT ccal_id,ccal_calificacion FROM db_academico.cabecera_calificacion 
+where 
+est_id= $est_id AND
+asi_id= $asi_id AND
+paca_id= $paca_id AND 
+ecun_id = $parciales
+";
+ $comando = $con->prepare($sql);
+ $comando->execute();
+ $cabeceras = $comando->fetchAll(\PDO::FETCH_ASSOC);
+return $cabeceras;
+
+}
+
+function putcabeceras($est_id,$asi_id,$paca_id,$parciales,$pro_id){
+GLOBAL $dsn, $dbuser, $dbpass, $dbname;
+$con = new \PDO($dsn, $dbuser, $dbpass);
+$sql="
+INSERT INTO db_academico.cabecera_calificacion 
+(paca_id, est_id, pro_id, asi_id, ecun_id, 
+ccal_estado, ccal_estado_logico) 
+VALUES ( $paca_id, $est_id, $pro_id, $asi_id, $parciales, '1', '1');
+";
+ $comando = $con->prepare($sql);
+ $comando->execute();
+ $cabeceras = $comando->fetchAll(\PDO::FETCH_ASSOC);
+return $cabeceras;
+
+}
+
+function getdetalles($ccal_id,$cuni_id){
+ GLOBAL $dsn, $dbuser, $dbpass, $dbname;
+$con = new \PDO($dsn, $dbuser, $dbpass);
+$sql="
+SELECT dcal_id, ccal_id,cuni_id,dcal_calificacion,
+dcal_usuario_creacion,dcal_fecha_modificacion
+FROM db_academico.detalle_calificacion 
+WHERE ccal_id = $ccal_id AND cuni_id = $cuni_id ; 
+";
+ $comando = $con->prepare($sql);
+ $comando->execute();
+ $detalles = $comando->fetchAll(\PDO::FETCH_ASSOC);
+return $detalles;
+
+}
+
+function putdetalles($ccal_id,$cuni_id,$dcalificacion){
+GLOBAL $dsn, $dbuser, $dbpass, $dbname;
+$con = new \PDO($dsn, $dbuser, $dbpass);
+$sql="
+INSERT INTO db_academico.detalle_calificacion
+(ccal_id,cuni_id,dcal_calificacion,dcal_usuario_creacion,dcal_estado,dcal_estado_logico)
+VALUES ($ccal_id,$cuni_id,$dcalificacion, '1', '1', '1')
+";
+ $comando = $con->prepare($sql);
+ $comando->execute();
+ $detalles = $comando->fetchAll(\PDO::FETCH_ASSOC);
+return $detalles;
+
+
+}
+
+function updatedetalles($dcal_id,$dcalificacion){
+ GLOBAL $dsn, $dbuser, $dbpass, $dbname;
+$con = new \PDO($dsn, $dbuser, $dbpass);
+$sql="
+UPDATE db_academico.detalle_calificacion
+ SET dcal_calificacion = $dcalificacion,
+ dcal_fecha_modificacion = now()  
+ WHERE dcal_id = $dcal_id;
+";
+ $comando = $con->prepare($sql);
+ $comando->execute();
+ $detalles = $comando->fetchAll(\PDO::FETCH_ASSOC);
+return $detalles;
+
+}
+
+
       function getInpagos() {
      GLOBAL $dsn, $dbuser, $dbpass, $dbname;
     $con = new \PDO($dsn, $dbuser, $dbpass);
@@ -793,55 +949,4 @@ return true;
 
 
 }
-/*
-
-
-(
-    [parcial] => 1
-    [semana] => 02
-    [evaluacion] => 1
-    NOTA  2
-(
-    [parcial] => 1
-    [semana] => 02
-    [taller] => 01
-    NOTA  3
-(
-    [parcial] => 2
-    [semana] => 07
-    [evaluacion] => 1
-    NOTA  0.5
-
-(
-    [parcial] => 2
-    [semana] => 07
-    [taller] => 03
-    NOTA  3
-
-(
-    [parcial] => 1
-    [semana] => 04
-    [evaluacion] => 1
-    NOTA  1
-(
-    [parcial] => 1
-    [semana] => 04
-    [taller] => 02
-    NOTA  2.8
-(
-    [parcial] => 2
-    [semana] => 09
-    [evaluacion] => 1
-    NOTA  0.75
-(
-    [parcial] => 2
-    [semana] => 09
-    [taller] => 04
-    NOTA  3
-(
-    [semana] => 10
-    [examen] => 1
-    NOTA  6.8
-
-
-    */
+ 

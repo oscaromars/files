@@ -2004,8 +2004,12 @@ croe.croe_exec,ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca
 
 	}
 
-
-	     function getPagopend($cedusuedu)  { 
+/**
+	 * Function obtener saldo deuda estudiantes (True es saldo cero)
+	 * @author  <analistadesarrollo05@uteg.edu.ec>
+	 * @return
+	 */
+	public function getPagopend($cedusuedu)  { 
 
          $ceduladni['cedula']=$cedusuedu;        
         $url = "https://acade.uteg.edu.ec/planificaciondesa/grades.php"; 

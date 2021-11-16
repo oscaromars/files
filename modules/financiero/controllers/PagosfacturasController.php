@@ -894,8 +894,13 @@ class PagosfacturasController extends \app\components\CController {
                                         $dpfa_estado_financiero = 'C';
 
                                     }else{
-                                            $dpfa_estado_pago = 1;
-                                            $dpfa_estado_financiero = 'N';
+                                            // Si los es abono queda pendiente
+                                            //$dpfa_estado_pago = 1;
+                                            //$dpfa_estado_financiero = 'N';
+                                            //Martes 19/11/2021 se pidio aunque sea abono este
+                                            // estados revisión y financiero, aprobado y cancelado
+                                            $dpfa_estado_pago = 2;
+                                            $dpfa_estado_financiero = 'C';
                                         }
                                 }else{
                                 $dpfa_estado_pago       = 1;

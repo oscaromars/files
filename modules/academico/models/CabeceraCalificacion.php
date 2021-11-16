@@ -2004,4 +2004,49 @@ croe.croe_exec,ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca
 
 	}
 
+
+	     function getPagopend($cedusuedu)  { 
+
+         $ceduladni['cedula']=$cedusuedu;        
+        $url = "https://acade.uteg.edu.ec/planificaciondesa/grades.php"; 
+        $content = json_encode($ceduladni); 
+        $curl = curl_init($url);  
+        curl_setopt($curl, CURLOPT_HEADER, false);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);   
+        curl_setopt($curl, CURLOPT_HTTPHEADER,  
+        array("Content-type: application/json"));
+        curl_setopt($curl, CURLOPT_POST, true);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $content); 
+        $json_response = curl_exec($curl);  //--
+        $status = curl_getinfo($curl, CURLINFO_HTTP_CODE); 
+        if ( $status != 200 ) {                
+        die(" status $status content $content "); 
+         }
+        $html = curl_multi_getcontent($curl); 
+        $response = json_decode($json_response, true); //--
+        print_r(" status $status content $content $response $html  "); 
+        curl_close($curl);   
+
+
+       //  %saldo%
+         $allresponse = explode('":"', $html);
+         if (isset($allresponse[1])) {
+         $saldos = explode('"', $allresponse[1]);
+         print_r('SALDO ==> '.$saldos[0]);
+
+         } else {
+        
+        print_r('SALDO ==> 0.00');
+
+         }
+         
+
+        if ($saldos == 0){
+         return True;
+        }else {
+           return False;
+        }
+  
+     }  
+
 }

@@ -932,6 +932,134 @@ return $detalles;
 
 }
 
+function getmaespaca($ccal_id){
+ GLOBAL $dsn, $dbuser, $dbpass, $dbname;
+$con = new \PDO($dsn, $dbuser, $dbpass);
+$sql="
+SELECT cali.paca_id, maes.maes_id from db_academico.cabecera_calificacion as cali
+INNER JOIN db_academico.estudiante as estu on estu.est_id = cali.est_id
+INNER JOIN db_academico.malla_academico_estudiante as maes ON maes.per_id = estu.per_id 
+AND maes.asi_id = cali.asi_id
+WHERE cali.ccal_id = 1
+AND cali.ccal_estado = 1
+AND cali.ccal_estado_logico= 1
+AND estu.est_estado = 1
+AND estu.est_estado_logico= 1
+AND maes.maes_estado = 1
+AND maes.maes_estado_logico = 1
+";
+ $comando = $con->prepare($sql);
+ $comando->execute();
+ $maes = $comando->fetchAll(\PDO::FETCH_ASSOC);
+return $maes;
+
+}
+
+
+    function updatepromedio($maes_id, $paca_id) {
+
+        GLOBAL $dsn, $dbuser, $dbpass, $dbname;
+        $con = new \PDO($dsn, $dbuser, $dbpass);
+        $usu_id =1;
+        $transaccion = $con->getTransaction(); // se obtiene la transacción actual
+        if ($trans !== null) {
+            $trans = null; // si existe la transacción entonces no se crea una
+        } else {
+            $trans = $con->beginTransaction(); // si no existe la transacción entonces se crea una
+        }
+        try {
+            $sql = "UPDATE db_academico.promedio_malla_academico pm, (
+                        select distinct
+                            pmac.maes_id,
+                            pmac.paca_id,
+                            
+                            case
+                            when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 >=14.50 then (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2
+                            when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 <=14.49 then 
+                                case
+                                when IFNULL(C.SUPLETORIO,0) > 0 then
+                                    case
+                                        when IFNULL(A.PARCIAL_I,0) >= IFNULL(B.PARCIAL_II,0) then (IFNULL(A.PARCIAL_I,0) + IFNULL(C.SUPLETORIO,0))/2
+                                        when IFNULL(A.PARCIAL_I,0) <= IFNULL(B.PARCIAL_II,0) then (IFNULL(B.PARCIAL_II,0) + IFNULL(C.SUPLETORIO,0))/2
+                                    end
+                                else
+                                    (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2
+                                end
+                            end as promedio,
+                            case
+                            when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 >=14.50 then '1'
+                            when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 >=1 and (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 <= 14.49 then 
+                                case
+                                when IFNULL(C.SUPLETORIO,0) > 0 then
+                                    case
+                                        when IFNULL(A.PARCIAL_I,0) >= IFNULL(B.PARCIAL_II,0) then 
+                                        case 
+                                            when (IFNULL(A.PARCIAL_I,0) + IFNULL(C.SUPLETORIO,0))/2 >= 14.50 then '1'
+                                            when (IFNULL(A.PARCIAL_I,0) + IFNULL(C.SUPLETORIO,0))/2 >= 1 and (IFNULL(A.PARCIAL_I,0) + IFNULL(C.SUPLETORIO,0))/2 < 14.49 then '2'
+                                        end
+                                        when IFNULL(A.PARCIAL_I,0) <= IFNULL(B.PARCIAL_II,0) then 
+                                        case 
+                                            when (IFNULL(B.PARCIAL_II,0) + IFNULL(C.SUPLETORIO,0))/2 >= 14.50 then '1'
+                                            when (IFNULL(B.PARCIAL_II,0) + IFNULL(C.SUPLETORIO,0))/2 >= 1 and (IFNULL(B.PARCIAL_II,0) + IFNULL(C.SUPLETORIO,0))/2 < 14.49 then '2'
+                                        end
+                                    end
+                                else 
+                                    case when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 < 14.50 then '2' end
+                                end
+                            when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 = 0 then '3'
+                            end as estado
+                        from db_academico.promedio_malla_academico pmac
+                        inner join db_academico.malla_academico_estudiante maes on maes.maes_id=pmac.maes_id
+                        inner join db_academico.estudiante est on est.per_id=maes.per_id
+                        inner join db_academico.cabecera_calificacion ccal on est.est_id=ccal.est_id
+                        left join
+                            (SELECT clfc.ccal_id, clfc.paca_id, clfc.est_id, clfc.asi_id,ecun.uaca_id,clfc.pro_id,clfc.ccal_calificacion AS PARCIAL_I
+                                FROM db_academico.cabecera_calificacion clfc
+                             INNER JOIN db_academico.esquema_calificacion_unidad ecun ON ecun.ecun_id = clfc.ecun_id
+                             INNER JOIN db_academico.esquema_calificacion ecal ON ecal.ecal_id = ecun.ecal_id
+                             WHERE   ecal.ecal_id = 1 AND clfc.ccal_estado = 1 AND clfc.ccal_estado_logico = 1
+                            ) A on est.est_id=A.est_id and pmac.paca_id=A.paca_id and maes.asi_id=A.asi_id
+                        left join
+                            (SELECT clfc.ccal_id, clfc.paca_id, clfc.est_id, clfc.asi_id,ecun.uaca_id,clfc.pro_id,clfc.ccal_calificacion AS PARCIAL_II
+                                FROM db_academico.cabecera_calificacion clfc
+                             INNER JOIN db_academico.esquema_calificacion_unidad ecun ON ecun.ecun_id = clfc.ecun_id
+                             INNER JOIN db_academico.esquema_calificacion ecal ON ecal.ecal_id = ecun.ecal_id
+                             WHERE   ecal.ecal_id = 2 AND clfc.ccal_estado = 1 AND clfc.ccal_estado_logico = 1
+                            ) B on est.est_id=B.est_id and pmac.paca_id=B.paca_id and maes.asi_id=B.asi_id
+                        LEFT JOIN
+                            (SELECT DISTINCT clfc.ccal_id, clfc.paca_id, clfc.est_id, clfc.asi_id,ecun.uaca_id,clfc.pro_id,ecal.ecal_descripcion  ,clfc.ccal_calificacion AS SUPLETORIO 
+                            FROM db_academico.cabecera_calificacion clfc
+                            INNER JOIN db_academico.esquema_calificacion_unidad ecun ON ecun.ecun_id = clfc.ecun_id
+                            INNER JOIN db_academico.esquema_calificacion ecal ON ecal.ecal_id = ecun.ecal_id
+                            WHERE ecal.ecal_id = 3 AND clfc.ccal_estado = 1 AND clfc.ccal_estado_logico = 1
+                            ) C on est.est_id=C.est_id and pmac.paca_id=C.paca_id and maes.asi_id=C.asi_id
+                        where pmac.maes_id =$maes_id and pmac.paca_id= $paca_id
+                    ) pmac
+                set pm.pmac_nota = pmac.promedio,
+                    pm.enac_id = pmac.estado,
+                    pm.pmac_fecha_modificacion = now(),
+                    pm.pmac_usuario_ingreso = $usu_id
+                where pm.maes_id=pmac.maes_id";
+
+                 $comando = $con->prepare($sql);
+                 $comando->execute();
+                 $result = $comando->fetchAll(\PDO::FETCH_ASSOC);
+
+            \app\models\Utilities::putMessageLogFile('updatepromedio: ' . $comando->getRawSql());
+
+            if ($transaccion !== null) {
+                $transaccion->commit();
+            }
+
+            return TRUE;
+        } catch (Exception $ex) {
+            if ($transaccion !== null) {
+                $transaccion->rollback();
+            }
+            return FALSE;
+        }
+        
+    } 
 
       function getInpagos() {
      GLOBAL $dsn, $dbuser, $dbpass, $dbname;

@@ -46,18 +46,20 @@ academico::registerTranslations();
                 'value' => 'modalidad',
             ],
             [
-                'class' => 'yii\grid\ActionColumn',
+                //'class' => 'yii\grid\ActionColumn',
+                'attribute' => 'programa',
                 'header' => Yii::t("formulario", "Program"),
-                'template' => '{view}',
+                'value' => 'programa',
+                /*'template' => '{view}',
                 'buttons' => [
                     'view' => function ($url, $model) {
-                        return Html::a('<span>' . substr($model['programa'], 0, 15) . '...</span>', Url::to(['#']), ["data-toggle" => "tooltip", "title" => $model['programa']]);
+                        return Html::a('<span>' . substr($model['programa'], 0, 35) . '...</span>', Url::to(['#']), ["data-toggle" => "tooltip", "title" => $model['programa']]);
                     },
-                ],
+                ],*/
             ],
             [
                 'attribute' => 'paralelo',
-                'header' => academico::t("Academico", "Parallel"),
+                'header' => academico::t("Academico", "Parallels"),
                 'value' => 'paralelo',
             ],
             [

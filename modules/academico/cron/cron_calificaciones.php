@@ -1,4 +1,4 @@
-  <?
+<?php
    $logFile   = dirname(__FILE__) . "/../../../runtime/logs/webservice.log";
    $dataDB   = include_once(dirname(__FILE__) . "/../config/mod.php");
    $dbname   = 'db_academico';
@@ -64,16 +64,16 @@ return $alld;
      $comando = $con->prepare($isrunning);
     $comando->execute();
     $running = $comando->fetchAll(\PDO::FETCH_ASSOC);
-    if (isset($running)){ die; } else {  getconfig(); }
-   
+    if (count($running) >= 1 ){ die; } else { getconfig(); }
+  
 
 
    function getconfig() {
     GLOBAL $dsn, $dbuser, $dbpass, $dbname;
     $con = new \PDO($dsn, $dbuser, $dbpass);
-//getInpagos();  /* ------------------------------     ?      ---------------------------------*/
+
    $configura=
-   "SELECT croe_id, croe_mod_id, croe_paca_id, croe_uaca_id
+   "SELECT croe_id, croe_mod_id, croe_paca_id, croe_uaca_id,croe_parcial
     FROM db_academico.cron_estudiantes_educativa
     WHERE now() >= croe_fecha_ejecucion 
     AND croe_exec = '1' 
@@ -82,13 +82,20 @@ return $alld;
     $comando->execute();
     $confi = $comando->fetchAll(\PDO::FETCH_ASSOC);
 
-
+    if (count($confi) >= 1 ) {
    for ($f = 0; $f < count($confi); $f++) {
-   putMessageLogFile(' '.$confi[$f]['mod_id'].' '.$confi[$f]['paca_id'].' '.$confi[$f]['uaca_id']);
+   var_dump($confi[$f]["croe_mod_id"]);
+   var_dump($confi[$f]["croe_paca_id"]);
+   var_dump($confi[$f]["croe_uaca_id"]);
+   var_dump($confi[$f]["croe_parcial"]);
+
    running($confi[$f]['croe_id']);
-   getgrades($confi[$f]['croe_mod_id'],$confi[$f]['croe_paca_id'],$confi[$f]['croe_uaca_id']);
+   getgrades($confi[$f]['croe_mod_id'],$confi[$f]['croe_paca_id'],$confi[$f]['croe_uaca_id'],$confi[$f]['croe_parcial']);
    inactiva($confi[$f]['croe_id']);
-   }}
+  
+          }
+     }
+}
 
 function running($croneducativa) {
     GLOBAL $dsn, $dbuser, $dbpass, $dbname;
@@ -142,41 +149,28 @@ AND daca.paca_id = $paca_id
 AND daca.uaca_id = $uaca_id
 ;";
 
-$qusersandgroups = // --------------------------------------------------------------------DEV  !!!!
-"SELECT cedist.daca_id, ceduct.cedu_asi_id, 
-daca.uaca_id, daca.paca_id, daca.mod_id, daca.mpp_id, 
-daca.pro_id, daca.asi_id, daes.est_id,
-usuedu.uedu_usuario, usuedu.per_id, person.per_cedula
-FROM db_academico.curso_educativa_distributivo cedist
-INNER JOIN db_academico.curso_educativa as ceduct on cedist.cedu_id = ceduct.cedu_id
-INNER JOIN db_academico.distributivo_academico as daca on cedist.daca_id = daca.daca_id
-INNER JOIN db_academico.distributivo_academico_estudiante as daes on daes.daca_id = daca.daca_id
-INNER JOIN db_academico.usuario_educativa as usuedu on usuedu.est_id = daes.est_id
-INNER JOIN db_academico.estudiante as estu on  estu.est_id = daes.est_id
-INNER JOIN db_asgard.persona as person on  estu.per_id = person.per_id;";
-
- $comando = $con->prepare($sql);
+ $comando = $con->prepare($qusersandgroups);
         $comando->execute();
     return $comando->fetchAll(\PDO::FETCH_ASSOC);
 
    }
 
-       function getgrades($mod_id, $paca_id, $uaca_id) {
+       function getgrades($mod_id, $paca_id, $uaca_id,$parciales) {
        try {
 
           GLOBAL $dsn, $dbuser, $dbpass, $dbname;
            $pdo = new \PDO($dsn, $dbuser, $dbpass);
            $groups = getallgroups($mod_id, $paca_id, $uaca_id); 
+           //
 
-
-             if (count($groups) > 0) {
+             if (count($groups) > 0) { var_dump($groups); 
 
                for ($i = 0; $i < count($groups); $i++) {  
                
 
             if (isset($groups[$i]['daca_id'])) {
 
-             $daca_id = $groups[$i]['daca_id'];
+            $daca_id = $groups[$i]['daca_id'];
             $cedu_asi_id = $groups[$i]['cedu_asi_id']; 
             $uaca_id = $groups[$i]['uaca_id'];
             $paca_id = $groups[$i]['paca_id'];
@@ -228,13 +222,18 @@ INNER JOIN db_asgard.persona as person on  estu.per_id = person.per_id;";
                           "basic");
 
           $method = 'obtener_notas_calificaciones'; 
+       
           $args = Array(
                  'id_grupo' =>$cedu_asi_id, 
                  'id_usuario' =>$uedu_usuario,
                 );
 
-            $response = $client->__call( $method, Array( $args ) );
 
+            $response = $client->__call( $method, Array( $args ) );
+      putMessageLogFile("cedu_asi_id:  ");
+ putMessageLogFile($cedu_asi_id);
+        putMessageLogFile("uedu_usuario:  ");
+ putMessageLogFile($uedu_usuario);
 
               $isauth= getPagopend($ced_id);  
 
@@ -262,13 +261,13 @@ for ($i = 0; $i < count($arrayl2); $i++) {
          $arrayl4 = array_column($arraycat[$i]['calificaciones']['notas'], 'id_nota'); 
               for ($k = 0; $k < count($arrayl4); $k++) {
                   $allcode =getallcode($i,-1,$k);     
-                    eval ($allcode);
+                    eval ($allcode);var_dump($allcode);print_r($arraydata3[$i]);
                     $grades++;
               }
     }  else {
                 if (isset($arraycat[$i]['calificaciones']['notas'])) {
                 $allcode =getallcode($i,-1,-1);     
-                eval ($allcode);
+                eval ($allcode);var_dump($allcode);print_r($arraydata3[$i]);
                 $grades++;
                 }           
 
@@ -283,14 +282,14 @@ for ($i = 0; $i < count($arrayl2); $i++) {
                  $arrayl4 = array_column($arraycat[$i]['calificaciones'][$j]['notas'], 'id_nota'); 
                      for ($k = 0; $k < count($arrayl4); $k++) {
                          $allcode =getallcode($i,$j,$k);     
-                         eval ($allcode);
+                         eval ($allcode);var_dump($allcode);print_r($arraydata3[$i]);
                           $grades++;
                      }
              } else {
 
                         if (isset($arraycat[$i]['calificaciones'][$j]['notas'])) {
                         $allcode =getallcode($i,$j,-1);     
-                        eval ($allcode);
+                        eval ($allcode);var_dump($allcode);print_r($arraydata3[$i]);
                 $grades++;
                          }
                     } 
@@ -310,7 +309,7 @@ for ($k = 0; $k < count($arrayl4); $k++) {
 
 
 $allcode =getallcode(-1,-1,$k);     
-eval ($allcode);
+eval ($allcode);var_dump($allcode);print_r($arraydata3[$i]);
 $grades++;
 
 }} else {
@@ -318,7 +317,7 @@ $grades++;
 if (isset($arraycat['calificaciones']['notas'])) {
 
 $allcode =getallcode(-1,-1,-1);     
-eval ($allcode);
+eval ($allcode);var_dump($allcode);print_r($arraydata3[$i]);
 $grades++;
 
 
@@ -336,7 +335,7 @@ $arrayl4 = array_column($arraycat['calificaciones'][$j]['notas'], 'id_nota');
 for ($k = 0; $k < count($arrayl4); $k++) {
 
 $allcode =getallcode(-1,$j,$k);     
-eval ($allcode);
+eval ($allcode);var_dump($allcode);print_r($arraydata3[$i]);
 $grades++;
 
 
@@ -345,7 +344,7 @@ $grades++;
 if (isset($arraycat['calificaciones'][$j]['notas'])) {
 
 $allcode =getallcode(-1,$j,-1);     
-eval ($allcode);
+eval ($allcode);var_dump($allcode);print_r($arraydata3[$i]);
 $grades++;
 
 }
@@ -356,41 +355,298 @@ $grades++;
 
  } 
 
+
+print_r("==============fin if response");
+
+if (count($arraydata3) > 0) {           
+
+
+$componentes = getescalas($uaca_id,$mod_id,$parciales);
+$cabeceras = getcabeceras($est_id,$asi_id,$paca_id,$parciales);
+if ($cabeceras == Null){ 
+$cabeceras = putcabeceras($est_id,$asi_id,$paca_id,$parciales,$pro_id);
+$cabeceras = getcabeceras($est_id,$asi_id,$paca_id,$parciales);
 }
-         /* -------- PROCESAR ARRAYS DE CALIFICACIONES -------- 
 
-         
-         1. extract grades
-         2. process grades
-         3. save grades 
-         --------------------------------------------------- */
 
+for ($it = 0; $it < count($arraydata3); $it++) {
+
+ $data01= getparamcategoria($arraydata1[$it]['nombre']); // $datacategorias['parcial']; $datacategorias['unidad']; 
+ $data02= getparamitem($arraydata2[$it]['nombre']); //  $dataitems['evaluacion']; $dataitems['examen']; $dataitems['taller'];
+ $data03= getnota($arraydata3[$it]['nota']); //  $grade;
+
+if (isset($semanaexa1)) {} else {
+
+ if(isset($data02['examen']) ) { 
+$semanaexa1 = $data01['semana'];
+if ($semanaexa1 == 5 AND $parciales == 1){ 
+
+         $comp_examen1 = $data03; 
+          $comp_cuni_id = 6;
+          print_r("parcial 1 examen::>");
+           print_r($comp_examen1);
+
+           $dcalificacion = $comp_examen1;
+          $detalles = getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id);
+      if ($detalles == Null) {
+$detalles = putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id ,$dcalificacion); 
+}else {
+if ($detalles[0]['dcal_usuario_creacion'] == '1' AND $detalles[0]['dcal_calificacion'] < $dcalificacion ){
+$detallesup = updatedetalles($detalles[0]['dcal_id'],$dcalificacion); 
+}
+}
+}
+}   
+}
+
+
+if (isset($semanaexa2)) {} else {
+
+ if(isset($data02['examen']) ) { 
+$semanaexa2 = $data01['semana'];
+if ($semanaexa2 == 10 AND $parciales == 2){ 
+
+         $comp_examen2 = $data03; 
+          $comp_cuni_id = 6;
+          print_r("parcial 2 examen::>");
+           print_r($comp_examen2);
+
+           $dcalificacion = $comp_examen2;
+          $detalles = getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id);
+      if ($detalles == Null) {
+$detalles = putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id ,$dcalificacion); 
+}else {
+if ($detalles[0]['dcal_usuario_creacion'] == '1' AND $detalles[0]['dcal_calificacion'] < $dcalificacion ){
+$detallesup = updatedetalles($detalles[0]['dcal_id'],$dcalificacion); 
+}
+}
+}
+}   
+}
+
+
+
+ if(isset($data01['parcial'])) {
+        $comp_evaluacion1 = 0;
+    $comp_autonoma1 = 0;
+    $comp_examen1 = 0;
+if ($parciales == 1 AND $data01['parcial']==1) {
+
+
+for ($il = 0; $il < count($componentes); $il++) {
+
+
+    if ($componentes[$il]['com_id']== 3 AND isset($data02['evaluacion'])) {    //COMP_EVALUACION ol
+
+    $comp_evaluacion1 = $comp_evaluacion1 + $data03; 
+    $comp_cuni_id = $componentes[$il]['cuni_id'];
+
+    }
+
+     if ($componentes[$il]['com_id']== 4 AND isset($data02['taller'])) {    //COMP_AUTONOMA ol
+        
+     $comp_autonoma1 = $comp_autonoma1 + $data03; 
+     $comp_cuni_id = $componentes[$il]['cuni_id'];
+
+    }
+
+
+
+}
+if ( $comp_evaluacion1 > 0 ){
+$dcalificacion = $comp_evaluacion1;
+$detalles = getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id);
+if ($detalles == Null) {
+$detalles = putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id ,$dcalificacion); 
+}else {
+if ($detalles[0]['dcal_usuario_creacion'] == '1' AND $detalles[0]['dcal_fecha_modificacion'] ==Null){
+$dcalificacion = $dcalificacion + $detalles[0]['dcal_calificacion'];
+$detallesup = updatedetalles($detalles[0]['dcal_id'],$dcalificacion); 
+}
+}
+} 
+
+
+if ( $comp_autonoma1 > 0 ){
+$dcalificacion = $comp_autonoma1;
+$detalles = getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id); 
+if ($detalles == Null) {
+$detalles = putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id ,$dcalificacion); 
+}else {
+if ($detalles[0]['dcal_usuario_creacion'] == 1 AND $detalles[0]['dcal_fecha_modificacion'] ==Null){
+$dcalificacion = $dcalificacion + $detalles[0]['dcal_calificacion'];
+$detallesup = updatedetalles($detalles[0]['dcal_id'],$dcalificacion); 
+}
+}
+} 
+
+if ( $comp_autonoma1 > 0 ){
+$dcalificacion = $comp_autonoma1;
+$detalles = getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id); 
+if ($detalles == Null) {
+$detalles = putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id ,$dcalificacion); 
+}else {
+if ($detalles[0]['dcal_usuario_creacion'] == 1 AND $detalles[0]['dcal_fecha_modificacion'] ==Null){
+$dcalificacion = $dcalificacion + $detalles[0]['dcal_calificacion'];
+$detallesup = updatedetalles($detalles[0]['dcal_id'],$dcalificacion); 
+}
+}
+} 
+
+}
+
+ $comp_evaluacion2 = 0;
+ $comp_autonoma2 = 0;
+ $comp_examen2 = 0;
+if ($parciales == 2 AND $data01['parcial']==2) {
+   
+
+for ($il = 0; $il < count($componentes); $il++) {
+
+
+    if ($componentes[$il]['com_id']== 3 AND isset($data02['evaluacion'] )) {    //COMP_EVALUACION ol
+
+     $comp_evaluacion2 = $comp_evaluacion2 + $data03;  
+      $comp_cuni_id = $componentes[$il]['cuni_id'];
+
+    }
+
+     if ($componentes[$il]['com_id']== 4 AND isset($data02['taller'] )) {    //COMP_AUTONOMA ol
+        
+         $comp_autonoma2 = $comp_autonoma2 + $data03; 
+          $comp_cuni_id = $componentes[$il]['cuni_id'];
+
+    }
+
+      if ($componentes[$il]['com_id']== 6 AND isset($data02['examen'] )) {    //COMP_EXAMEN ol
+        
+         if ($data03 > $comp_examen2){
+
+         $comp_examen2 = $data03; 
+          $comp_cuni_id = $componentes[$il]['cuni_id'];
+        
+        }
+
+    }
+
+
+
+}
+if ( $comp_evaluacion2 > 0 ){
+$dcalificacion = $comp_evaluacion2;
+$detalles = getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id);
+if ($detalles == Null) {
+$detalles = putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id ,$dcalificacion); 
+}else {
+if ($detalles[0]['dcal_usuario_creacion'] == 1 AND $detalles[0]['dcal_fecha_modificacion'] ==Null){
+$dcalificacion = $dcalificacion + $detalles[0]['dcal_calificacion'];
+$detallesup = updatedetalles($detalles[0]['dcal_id'],$dcalificacion);  
+}
+}
+} 
+
+
+if ( $comp_autonoma2 > 0 ){
+$dcalificacion = $comp_autonoma2;
+$detalles = getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id); 
+if ($detalles == Null) {
+$detalles = putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id ,$dcalificacion); 
+}else {
+if ($detalles[0]['dcal_usuario_creacion'] == 1 AND $detalles[0]['dcal_fecha_modificacion'] ==Null){
+$dcalificacion = $dcalificacion + $detalles[0]['dcal_calificacion'];
+$detallesup = updatedetalles($detalles[0]['dcal_id'],$dcalificacion); 
+}
+}
+} 
+
+}
+
+ $comp_examen3 = 0;
+ $comp_supletorio3 = 0;
+if ($parciales == 3 AND $data01['parcial']==3) {
+   
+
+for ($il = 0; $il < count($componentes); $il++) {
+
+
+    if ($componentes[$il]['com_id']== 6 AND isset($data02['supletorio'])) {    //COMP_EXAMEN O SUPLETORIO ol
+        
+        if ($data03 > $comp_supletorio3){
+
+         $comp_supletorio3 = $data03; 
+          $comp_cuni_id = $componentes[$il]['cuni_id'];
+        
+        }
+    }
+
+    }
+//GRABAR DETALLES
+if ( $comp_supletorio3 > 0 ){
+$dcalificacion = $comp_supletorio3;
+$detalles = getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id);
+if ($detalles == Null) {
+$detalles = putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id ,$dcalificacion); 
+}else {
+if ($detalles[0]['dcal_usuario_creacion'] == 1 AND $detalles[0]['dcal_fecha_modificacion'] ==Null){
+$dcalificacion = $dcalificacion + $detalles[0]['dcal_calificacion'];
+$detallesup = updatedetalles($detalles[0]['dcal_id'],$dcalificacion); 
+}
+}
+} 
+
+
+if ( $comp_examen3 > 0 ){
+$dcalificacion = $comp_examen3;
+$detalles = getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id); 
+if ($detalles == Null) {
+$detalles = putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id ,$dcalificacion); 
+}else {
+if ($detalles[0]['dcal_usuario_creacion'] == 1 AND $detalles[0]['dcal_fecha_modificacion'] ==Null){
+$dcalificacion = $dcalificacion + $detalles[0]['dcal_calificacion'];
+$detallesup = updatedetalles($detalles[0]['dcal_id'],$dcalificacion); 
+}
+}
+} 
+
+
+
+}                 }  //if data01 parcial
+
+
+
+
+}
+
+
+
+        }// FIN GRABAR NOTAS OPT- UPDATE CABECERA
+
+
+
+ 
+
+} 
+       
+print_r("///fin is auth");
+
+
+ //return true; 
 } else {// isauth
         
-          /* -------- PENDIENTES IMPAGOS  --------------------- 
-
-         
-         1. select / save
-
-         --------------------------------------------------- */
-
-       
+     
        }
 
         }//for
 
-        /* -------- MATRIZ TEMPORAL DE CALIFICACIONES -------- 
 
-         0. temporal raw save
-
-         --------------------------------------------------- */
-
-
+ 
     }//if
 
  }  catch (PDOException $e) {
            putMessageLogFile('Error: ' . $e->getMessage());
            exit; }
+
+          
 
 
     
@@ -444,6 +700,7 @@ $nexter =  0;
 
  } 
 
+return $datacategorias;
  }
 
 
@@ -451,6 +708,7 @@ $nexter =  0;
 $notas = explode("/", $elemento);
 $withouter = str_replace(chr(44), chr(46), $notas[0]);
 $grade = $withouter*1;  
+return $grade;
  }
 
 
@@ -489,6 +747,7 @@ function getparamitem($elemento) {
 
  }  
 
+return $dataitems;
  }
 
 
@@ -528,14 +787,279 @@ function getparamitem($elemento) {
          }
          
 
-        if ($saldos == 0){
+       if (isset($saldos[0])){
+        if ($saldos[0] == 0){
          return True;
         }else {
            return False;
         }
-       
+        } else
+        {
+          return True;  
+        }
+        
+        
      }  
 
+
+     function putInpagos($usuario,$cedula) {
+     GLOBAL $dsn, $dbuser, $dbpass, $dbname;
+    $con = new \PDO($dsn, $dbuser, $dbpass);
+     $sqlq ="select * from db_academico.temp_impagos_educativa
+    WHERE temp_usuedu = $usuario AND temp_cedula = $cedula";
+    $comando = $con->prepare($sqlq);
+    $comando->execute();
+    $pendientes = $comando->fetchAll(\PDO::FETCH_ASSOC);
+
+        if (count($pendientes) > 0) {
+
+        } else {
+
+    $sql="
+    INSERT INTO db_academico.temp_impagos_educativa 
+    (temp_usuedu, temp_cedula, temp_usuario_ingreso) 
+    VALUES ($usuario, $cedula, '1');
+    ";
+     $comando = $con->prepare($sqlq);
+    $comando->execute();
+    $pendientes = $comando->fetchAll(\PDO::FETCH_ASSOC);
+
+        }
+
+return true;
+
+}
+
+
+
+function getescalas($uaca_id,$mod_id,$ecal_id){
+ GLOBAL $dsn, $dbuser, $dbpass, $dbname;
+$con = new \PDO($dsn, $dbuser, $dbpass);
+$sql="
+SELECT cuni.cuni_id, cuni.com_id,comp.com_nombre, cuni.cuni_calificacion 
+FROM db_academico.componente_unidad as cuni
+inner join db_academico.componente as comp
+on comp.com_id = cuni.com_id
+where uaca_id = $uaca_id AND mod_id = $mod_id AND ecal_id = $ecal_id 
+";
+ $comando = $con->prepare($sql);
+ $comando->execute();
+ $escalas = $comando->fetchAll(\PDO::FETCH_ASSOC);
+return $escalas;
+
+}
+
+
+function getcabeceras($est_id,$asi_id,$paca_id,$parciales){
+ GLOBAL $dsn, $dbuser, $dbpass, $dbname;
+$con = new \PDO($dsn, $dbuser, $dbpass);
+$sql="
+SELECT ccal_id,ccal_calificacion FROM db_academico.cabecera_calificacion 
+where 
+est_id= $est_id AND
+asi_id= $asi_id AND
+paca_id= $paca_id AND 
+ecun_id = $parciales
+";
+ $comando = $con->prepare($sql);
+ $comando->execute();
+ $cabeceras = $comando->fetchAll(\PDO::FETCH_ASSOC);
+return $cabeceras;
+
+}
+
+function putcabeceras($est_id,$asi_id,$paca_id,$parciales,$pro_id){
+GLOBAL $dsn, $dbuser, $dbpass, $dbname;
+$con = new \PDO($dsn, $dbuser, $dbpass);
+$sql="
+INSERT INTO db_academico.cabecera_calificacion 
+(paca_id, est_id, pro_id, asi_id, ecun_id, 
+ccal_estado, ccal_estado_logico) 
+VALUES ( $paca_id, $est_id, $pro_id, $asi_id, $parciales, '1', '1');
+";
+ $comando = $con->prepare($sql);
+ $comando->execute();
+ $cabeceras = $comando->fetchAll(\PDO::FETCH_ASSOC);
+return $cabeceras;
+
+}
+
+function getdetalles($ccal_id,$cuni_id){
+ GLOBAL $dsn, $dbuser, $dbpass, $dbname;
+$con = new \PDO($dsn, $dbuser, $dbpass);
+$sql="
+SELECT dcal_id, ccal_id,cuni_id,dcal_calificacion,
+dcal_usuario_creacion,dcal_fecha_modificacion
+FROM db_academico.detalle_calificacion 
+WHERE ccal_id = $ccal_id AND cuni_id = $cuni_id ; 
+";
+ $comando = $con->prepare($sql);
+ $comando->execute();
+ $detalles = $comando->fetchAll(\PDO::FETCH_ASSOC);
+return $detalles;
+
+}
+
+function putdetalles($ccal_id,$cuni_id,$dcalificacion){
+GLOBAL $dsn, $dbuser, $dbpass, $dbname;
+$con = new \PDO($dsn, $dbuser, $dbpass);
+$sql="
+INSERT INTO db_academico.detalle_calificacion
+(ccal_id,cuni_id,dcal_calificacion,dcal_usuario_creacion,dcal_estado,dcal_estado_logico)
+VALUES ($ccal_id,$cuni_id,$dcalificacion, '1', '1', '1')
+";
+ $comando = $con->prepare($sql);
+ $comando->execute();
+ $detalles = $comando->fetchAll(\PDO::FETCH_ASSOC);
+return $detalles;
+
+
+}
+
+function updatedetalles($dcal_id,$dcalificacion){
+ GLOBAL $dsn, $dbuser, $dbpass, $dbname;
+$con = new \PDO($dsn, $dbuser, $dbpass);
+$sql="
+UPDATE db_academico.detalle_calificacion
+ SET dcal_calificacion = $dcalificacion,
+ dcal_fecha_modificacion = now()  
+ WHERE dcal_id = $dcal_id;
+";
+ $comando = $con->prepare($sql);
+ $comando->execute();
+ $detalles = $comando->fetchAll(\PDO::FETCH_ASSOC);
+return $detalles;
+
+}
+
+function getmaespaca($ccal_id){
+ GLOBAL $dsn, $dbuser, $dbpass, $dbname;
+$con = new \PDO($dsn, $dbuser, $dbpass);
+$sql="
+SELECT cali.paca_id, maes.maes_id from db_academico.cabecera_calificacion as cali
+INNER JOIN db_academico.estudiante as estu on estu.est_id = cali.est_id
+INNER JOIN db_academico.malla_academico_estudiante as maes ON maes.per_id = estu.per_id 
+AND maes.asi_id = cali.asi_id
+WHERE cali.ccal_id = 1
+AND cali.ccal_estado = 1
+AND cali.ccal_estado_logico= 1
+AND estu.est_estado = 1
+AND estu.est_estado_logico= 1
+AND maes.maes_estado = 1
+AND maes.maes_estado_logico = 1
+";
+ $comando = $con->prepare($sql);
+ $comando->execute();
+ $maes = $comando->fetchAll(\PDO::FETCH_ASSOC);
+return $maes;
+
+}
+
+
+    function updatepromedio($maes_id, $paca_id) {
+
+        GLOBAL $dsn, $dbuser, $dbpass, $dbname;
+        $con = new \PDO($dsn, $dbuser, $dbpass);
+        $usu_id =1;
+        $transaccion = $con->getTransaction(); // se obtiene la transacción actual
+        if ($trans !== null) {
+            $trans = null; // si existe la transacción entonces no se crea una
+        } else {
+            $trans = $con->beginTransaction(); // si no existe la transacción entonces se crea una
+        }
+        try {
+            $sql = "UPDATE db_academico.promedio_malla_academico pm, (
+                        select distinct
+                            pmac.maes_id,
+                            pmac.paca_id,
+                            
+                            case
+                            when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 >=14.50 then (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2
+                            when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 <=14.49 then 
+                                case
+                                when IFNULL(C.SUPLETORIO,0) > 0 then
+                                    case
+                                        when IFNULL(A.PARCIAL_I,0) >= IFNULL(B.PARCIAL_II,0) then (IFNULL(A.PARCIAL_I,0) + IFNULL(C.SUPLETORIO,0))/2
+                                        when IFNULL(A.PARCIAL_I,0) <= IFNULL(B.PARCIAL_II,0) then (IFNULL(B.PARCIAL_II,0) + IFNULL(C.SUPLETORIO,0))/2
+                                    end
+                                else
+                                    (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2
+                                end
+                            end as promedio,
+                            case
+                            when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 >=14.50 then '1'
+                            when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 >=1 and (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 <= 14.49 then 
+                                case
+                                when IFNULL(C.SUPLETORIO,0) > 0 then
+                                    case
+                                        when IFNULL(A.PARCIAL_I,0) >= IFNULL(B.PARCIAL_II,0) then 
+                                        case 
+                                            when (IFNULL(A.PARCIAL_I,0) + IFNULL(C.SUPLETORIO,0))/2 >= 14.50 then '1'
+                                            when (IFNULL(A.PARCIAL_I,0) + IFNULL(C.SUPLETORIO,0))/2 >= 1 and (IFNULL(A.PARCIAL_I,0) + IFNULL(C.SUPLETORIO,0))/2 < 14.49 then '2'
+                                        end
+                                        when IFNULL(A.PARCIAL_I,0) <= IFNULL(B.PARCIAL_II,0) then 
+                                        case 
+                                            when (IFNULL(B.PARCIAL_II,0) + IFNULL(C.SUPLETORIO,0))/2 >= 14.50 then '1'
+                                            when (IFNULL(B.PARCIAL_II,0) + IFNULL(C.SUPLETORIO,0))/2 >= 1 and (IFNULL(B.PARCIAL_II,0) + IFNULL(C.SUPLETORIO,0))/2 < 14.49 then '2'
+                                        end
+                                    end
+                                else 
+                                    case when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 < 14.50 then '2' end
+                                end
+                            when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 = 0 then '3'
+                            end as estado
+                        from db_academico.promedio_malla_academico pmac
+                        inner join db_academico.malla_academico_estudiante maes on maes.maes_id=pmac.maes_id
+                        inner join db_academico.estudiante est on est.per_id=maes.per_id
+                        inner join db_academico.cabecera_calificacion ccal on est.est_id=ccal.est_id
+                        left join
+                            (SELECT clfc.ccal_id, clfc.paca_id, clfc.est_id, clfc.asi_id,ecun.uaca_id,clfc.pro_id,clfc.ccal_calificacion AS PARCIAL_I
+                                FROM db_academico.cabecera_calificacion clfc
+                             INNER JOIN db_academico.esquema_calificacion_unidad ecun ON ecun.ecun_id = clfc.ecun_id
+                             INNER JOIN db_academico.esquema_calificacion ecal ON ecal.ecal_id = ecun.ecal_id
+                             WHERE   ecal.ecal_id = 1 AND clfc.ccal_estado = 1 AND clfc.ccal_estado_logico = 1
+                            ) A on est.est_id=A.est_id and pmac.paca_id=A.paca_id and maes.asi_id=A.asi_id
+                        left join
+                            (SELECT clfc.ccal_id, clfc.paca_id, clfc.est_id, clfc.asi_id,ecun.uaca_id,clfc.pro_id,clfc.ccal_calificacion AS PARCIAL_II
+                                FROM db_academico.cabecera_calificacion clfc
+                             INNER JOIN db_academico.esquema_calificacion_unidad ecun ON ecun.ecun_id = clfc.ecun_id
+                             INNER JOIN db_academico.esquema_calificacion ecal ON ecal.ecal_id = ecun.ecal_id
+                             WHERE   ecal.ecal_id = 2 AND clfc.ccal_estado = 1 AND clfc.ccal_estado_logico = 1
+                            ) B on est.est_id=B.est_id and pmac.paca_id=B.paca_id and maes.asi_id=B.asi_id
+                        LEFT JOIN
+                            (SELECT DISTINCT clfc.ccal_id, clfc.paca_id, clfc.est_id, clfc.asi_id,ecun.uaca_id,clfc.pro_id,ecal.ecal_descripcion  ,clfc.ccal_calificacion AS SUPLETORIO 
+                            FROM db_academico.cabecera_calificacion clfc
+                            INNER JOIN db_academico.esquema_calificacion_unidad ecun ON ecun.ecun_id = clfc.ecun_id
+                            INNER JOIN db_academico.esquema_calificacion ecal ON ecal.ecal_id = ecun.ecal_id
+                            WHERE ecal.ecal_id = 3 AND clfc.ccal_estado = 1 AND clfc.ccal_estado_logico = 1
+                            ) C on est.est_id=C.est_id and pmac.paca_id=C.paca_id and maes.asi_id=C.asi_id
+                        where pmac.maes_id =$maes_id and pmac.paca_id= $paca_id
+                    ) pmac
+                set pm.pmac_nota = pmac.promedio,
+                    pm.enac_id = pmac.estado,
+                    pm.pmac_fecha_modificacion = now(),
+                    pm.pmac_usuario_ingreso = $usu_id
+                where pm.maes_id=pmac.maes_id";
+
+                 $comando = $con->prepare($sql);
+                 $comando->execute();
+                 $result = $comando->fetchAll(\PDO::FETCH_ASSOC);
+
+            \app\models\Utilities::putMessageLogFile('updatepromedio: ' . $comando->getRawSql());
+
+            if ($transaccion !== null) {
+                $transaccion->commit();
+            }
+
+            return TRUE;
+        } catch (Exception $ex) {
+            if ($transaccion !== null) {
+                $transaccion->rollback();
+            }
+            return FALSE;
+        }
+        
+    } 
 
       function getInpagos() {
      GLOBAL $dsn, $dbuser, $dbpass, $dbname;
@@ -557,4 +1081,4 @@ function getparamitem($elemento) {
 
 
 }
-
+ 

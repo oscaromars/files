@@ -67,14 +67,22 @@ aspirante::registerTranslations();
         </div> 
         <div class="col-md-6 col-sm-6 col-xs-6 col-lg-6">
             <div class="form-group">
+                <label for="txt_grupo" class="col-sm-4 control-label" id="lbl_grupo"><?= academico::t("Academico", "Group") ?><span class="text-danger">*</span></label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control PBvalidation" value="<?= $data_promo['ppro_grupo'] ?>" id="txt_grupo" data-type="alfanumerico" data-keydown="true" disabled = "true" placeholder="<?= Yii::t("academico", "Grupo") ?>">
+                </div>
+            </div>
+        </div>                
+    </div> 
+    <div class='col-md-12 col-sm-12 col-xs-12 col-lg-12'>   
+        <div class="col-md-6 col-sm-6 col-xs-6 col-lg-6">
+            <div class="form-group">
                 <label for="txt_paralelo" class="col-sm-4 control-label" id="lbl_paralelo"><?= academico::t("Academico", "Parallel") ?><span class="text-danger">*</span></label>
                 <div class="col-sm-8">
                     <input type="text" class="form-control PBvalidation" value="<?= $data_promo['ppro_num_paralelo'] ?>" id="txt_paralelo" data-type="number" data-keydown="true" disabled = "true" placeholder="<?= Yii::t("academico", "Parallel") ?>">
                 </div>
             </div>
-        </div>
-    </div> 
-    <div class='col-md-12 col-sm-12 col-xs-12 col-lg-12'>      
+        </div>   
         <div class="col-md-6 col-sm-6 col-xs-6 col-lg-6">
             <div class="form-group">
                 <label for="txt_cupo" class="col-sm-4 control-label" id="lbl_cupo"><?= academico::t("Academico", "Quota") ?><span class="text-danger">*</span></label>

@@ -11,6 +11,7 @@ use yii\data\ArrayDataProvider;
  * @property int $ppro_id
  * @property string $ppro_anio
  * @property string $ppro_mes
+ * @property string $ppro_grupo
  * @property string $ppro_codigo
  * @property int $uaca_id
  * @property int $mod_id
@@ -24,38 +25,42 @@ use yii\data\ArrayDataProvider;
  * @property string $ppro_fecha_modificacion
  * @property string $ppro_estado_logico
  *
- * @property MatriculacionProgramaInscrito[] $matriculacionProgramaInscritos
  * @property ParaleloPromocionPrograma[] $paraleloPromocionProgramas
+ * @property PlanificacionAcademicaMalla[] $planificacionAcademicaMallas
  * @property UnidadAcademica $uaca
  * @property Modalidad $mod
  * @property EstudioAcademico $eaca
  */
-class PromocionPrograma extends \yii\db\ActiveRecord {
-
+class PromocionPrograma extends \yii\db\ActiveRecord
+{
     /**
      * {@inheritdoc}
      */
-    public static function tableName() {
+    public static function tableName()
+    {
         return 'promocion_programa';
     }
 
     /**
      * @return \yii\db\Connection the database connection used by this AR class.
      */
-    public static function getDb() {
+    public static function getDb()
+    {
         return Yii::$app->get('db_academico');
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rules() {
+    public function rules()
+    {
         return [
             [['ppro_anio', 'ppro_mes', 'ppro_codigo', 'uaca_id', 'mod_id', 'eaca_id', 'ppro_num_paralelo', 'ppro_cupo', 'ppro_estado', 'ppro_estado_logico'], 'required'],
             [['uaca_id', 'mod_id', 'eaca_id', 'ppro_num_paralelo', 'ppro_cupo', 'ppro_usuario_ingresa', 'ppro_usuario_modifica'], 'integer'],
             [['ppro_fecha_creacion', 'ppro_fecha_modificacion'], 'safe'],
             [['ppro_anio'], 'string', 'max' => 4],
             [['ppro_mes'], 'string', 'max' => 2],
+            [['ppro_grupo'], 'string', 'max' => 10],
             [['ppro_codigo'], 'string', 'max' => 20],
             [['ppro_estado', 'ppro_estado_logico'], 'string', 'max' => 1],
             [['uaca_id'], 'exist', 'skipOnError' => true, 'targetClass' => UnidadAcademica::className(), 'targetAttribute' => ['uaca_id' => 'uaca_id']],
@@ -67,11 +72,13 @@ class PromocionPrograma extends \yii\db\ActiveRecord {
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return [
             'ppro_id' => 'Ppro ID',
             'ppro_anio' => 'Ppro Anio',
             'ppro_mes' => 'Ppro Mes',
+            'ppro_grupo' => 'Ppro Grupo',
             'ppro_codigo' => 'Ppro Codigo',
             'uaca_id' => 'Uaca ID',
             'mod_id' => 'Mod ID',
@@ -90,35 +97,40 @@ class PromocionPrograma extends \yii\db\ActiveRecord {
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getMatriculacionProgramaInscritos() {
-        return $this->hasMany(MatriculacionProgramaInscrito::className(), ['ppro_id' => 'ppro_id']);
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getParaleloPromocionProgramas() {
+    public function getParaleloPromocionProgramas()
+    {
         return $this->hasMany(ParaleloPromocionPrograma::className(), ['ppro_id' => 'ppro_id']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getUaca() {
+    public function getPlanificacionAcademicaMallas()
+    {
+        return $this->hasMany(PlanificacionAcademicaMalla::className(), ['ppro_id' => 'ppro_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getUaca()
+    {
         return $this->hasOne(UnidadAcademica::className(), ['uaca_id' => 'uaca_id']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getMod() {
+    public function getMod()
+    {
         return $this->hasOne(Modalidad::className(), ['mod_id' => 'mod_id']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getEaca() {
+    public function getEaca()
+    {
         return $this->hasOne(EstudioAcademico::className(), ['eaca_id' => 'eaca_id']);
     }
 
@@ -290,7 +302,7 @@ class PromocionPrograma extends \yii\db\ActiveRecord {
      * @param   
      * @return  $resultData (Retornar el código de promocion).
      */
-    public function insertarPromocion($ppro_anio, $ppro_mes, $ppro_codigo, $uaca_id, $mod_id, $eaca_id, $ppro_num_paralelo, $ppro_cupo, $ppro_usuario_ingresa, $ppro_fecha_creacion) {
+    public function insertarPromocion($ppro_anio, $ppro_mes, $ppro_codigo, $uaca_id, $mod_id, $eaca_id, $ppro_num_paralelo, $ppro_cupo, $grupo, $ppro_usuario_ingresa, $ppro_fecha_creacion) {
 
         $con = \Yii::$app->db_academico;
         $trans = $con->getTransaction(); // se obtiene la transacción actual
@@ -340,6 +352,10 @@ class PromocionPrograma extends \yii\db\ActiveRecord {
             $param_sql .= ", ppro_cupo";
             $bsol_sql .= ", :ppro_cupo";
         }
+        if (isset($grupo)) {
+            $param_sql .= ", ppro_grupo";
+            $bsol_sql .= ", :ppro_grupo";
+        }
         if (isset($ppro_usuario_ingresa)) {
             $param_sql .= ", ppro_usuario_ingresa";
             $bsol_sql .= ", :ppro_usuario_ingresa";
@@ -379,6 +395,9 @@ class PromocionPrograma extends \yii\db\ActiveRecord {
 
             if (isset($ppro_cupo))
                 $comando->bindParam(':ppro_cupo', $ppro_cupo, \PDO::PARAM_INT);
+
+            if (isset($grupo))
+                $comando->bindParam(':ppro_grupo', $grupo, \PDO::PARAM_STR);
 
             if (isset($ppro_usuario_ingresa))
                 $comando->bindParam(':ppro_usuario_ingresa', $ppro_usuario_ingresa, \PDO::PARAM_INT);
@@ -510,7 +529,8 @@ class PromocionPrograma extends \yii\db\ActiveRecord {
                             WHEN  10 THEN 'Octubre'
                             WHEN  11 THEN 'Noviembre'
                             WHEN  12 THEN 'Diciembre' 
-                        ELSE ' ' END as nombre_mes
+                        ELSE ' ' END as nombre_mes,
+                        ppro.ppro_grupo as ppro_grupo
                 FROM " . $con->dbname . ".promocion_programa ppro
                     INNER JOIN " . $con->dbname . ".unidad_academica uaca ON uaca.uaca_id =  ppro.uaca_id
                     INNER JOIN " . $con->dbname . ".modalidad moda ON moda.mod_id =  ppro.mod_id
@@ -650,6 +670,40 @@ class PromocionPrograma extends \yii\db\ActiveRecord {
         $comando = $con->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);        
         $resultData = $comando->queryAll();
+        return $resultData;
+    }
+
+    /**
+     * Function consultar si existe ya el programa con los mismo datos antes de guardar, que no sea la
+     * que se está actualizando.
+     * @author  Grace Viteri <analistadesarrollo01@uteg.edu.ec>
+     * @param   
+     * @return  $resultData (Retornar el id de promocion).
+     */
+    public function consultarPromocionExisteMod($ppro_anio, $ppro_mes, $uaca_id, $mod_id, $eaca_id, $ppro_id) {
+        $con = \Yii::$app->db_academico;
+        $estado = 1;
+
+        $sql = "SELECT ppro_id 
+                   FROM " . $con->dbname . ".promocion_programa 
+                   WHERE ppro_anio = :ppro_anio 
+                        AND ppro_mes = :ppro_mes 
+                        AND uaca_id = :uaca_id
+                        AND mod_id = :mod_id 
+                        AND eaca_id = :eaca_id 
+                        AND ppro_id != :ppro_id
+                        AND ppro_estado = :estado
+                        AND ppro_estado_logico = :estado";
+
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $comando->bindParam(":ppro_anio", $ppro_anio, \PDO::PARAM_INT);
+        $comando->bindParam(":ppro_mes", $ppro_mes, \PDO::PARAM_INT);
+        $comando->bindParam(":uaca_id", $uaca_id, \PDO::PARAM_INT);
+        $comando->bindParam(":mod_id", $mod_id, \PDO::PARAM_INT);
+        $comando->bindParam(":eaca_id", $eaca_id, \PDO::PARAM_INT);
+        $comando->bindParam(":ppro_id", $ppro_id, \PDO::PARAM_INT);
+        $resultData = $comando->queryOne();
         return $resultData;
     }
 

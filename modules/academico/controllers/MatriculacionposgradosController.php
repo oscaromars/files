@@ -228,6 +228,8 @@ class MatriculacionposgradosController extends \app\components\CController {
             $programa = $data["programa"];
             $paralelo = $data["paralelo"];
             $cupo = $data["cupo"];
+            $grupo = strtoupper($data["grupo"]);
+            $modalidadText = $data["modalidadText"];
             if ($mes > 0 && $mes < 10) {
                 $meses = '0' . $mes;
             }
@@ -239,12 +241,13 @@ class MatriculacionposgradosController extends \app\components\CController {
                 $mod_Matriculacion = new PromocionPrograma();
                 $resp_consPromocion = $mod_Matriculacion->consultarPromocion($anio, $mes, $unidad, $modalidad, $programa);
                 $resp_consCodprograma = $mod_Matriculacion->consultarCodigoestudioaca($programa);
-                $codigo = $resp_consCodprograma["eaca_codigo"] . $anio . $meses;
-                \app\models\Utilities::putMessageLogFile('sddfbb: ' . $resp_consCodprograma["eaca_codigo"]);
+                $codigo = $resp_consCodprograma["eaca_codigo"] . "-". substr($modalidadText,0,1) . "-". $anio . "-". $grupo;
+                \app\models\Utilities::putMessageLogFile('codigo: ' . $codigo);
+             
                 if (!$resp_consPromocion) {
                     $fecha = date(Yii::$app->params["dateTimeByDefault"]);
                     //Buscar el código de planificación académica según el periodo, unidad, modalidad y carrera.
-                    $resp_promocion = $mod_Matriculacion->insertarPromocion($anio, $mes, $codigo, $unidad, $modalidad, $programa, $paralelo, $cupo, $usu_id, $fecha);
+                    $resp_promocion = $mod_Matriculacion->insertarPromocion($anio, $mes, $codigo, $unidad, $modalidad, $programa, $paralelo, $cupo, $grupo, $usu_id, $fecha);
                     if ($resp_promocion) {
                         for ($i = 1; $i <= $paralelo; $i++) {
                             $descripcion = strtoupper(substr($data["nombreprograma"], 0, 3)) . '-Paralelo ' . $i;
@@ -255,7 +258,7 @@ class MatriculacionposgradosController extends \app\components\CController {
                         }
                     }
                 } else {
-                    $mensaje = "¡Ya existe promoción con ese información.!";
+                    $mensaje = "¡Ya existe promoción con esa información.!";
                 }
                 if ($exito) {
                     $transaction->commit();
@@ -378,6 +381,8 @@ class MatriculacionposgradosController extends \app\components\CController {
             $unidad = $data["unidad"];
             $modalidad = $data["modalidad"];
             $programa = $data["programa"];
+            $grupo = strtoupper($data["grupo"]);
+            $modalidadText = $data["modalidadText"];
             if ($mes > 0 && $mes < 10) {
                 $meses = '0' . $mes;
             }
@@ -386,16 +391,17 @@ class MatriculacionposgradosController extends \app\components\CController {
             try {
                 $mod_programa = new PromocionPrograma();
                 $resp_consCodprograma = $mod_programa->consultarCodigoestudioaca($programa);
-                $codigo = $resp_consCodprograma["eaca_codigo"] . $anio . $meses;
+                //$codigo = $resp_consCodprograma["eaca_codigo"] . $anio . $meses;
+                $codigo = $resp_consCodprograma["eaca_codigo"] . "-". substr($modalidadText,0,1) . "-". $anio . "-". $grupo;
                 $keys_act = [
                     'ppro_anio', 'ppro_mes', 'ppro_codigo', 'uaca_id', 'mod_id'
-                    , 'eaca_id', 'ppro_usuario_modifica', 'ppro_fecha_modificacion'
+                    , 'eaca_id', 'ppro_grupo', 'ppro_usuario_modifica', 'ppro_fecha_modificacion'
                 ];
                 $values_act = [
                     $anio, $mes, $codigo, $unidad, $modalidad,
-                    $programa, $usu_id, $fecha_modifica
+                    $programa, $grupo, $usu_id, $fecha_modifica
                 ];
-                $resp_consPromocion = $mod_programa->consultarPromocion($anio, $mes, $unidad, $modalidad, $programa);
+                $resp_consPromocion = $mod_programa->consultarPromocionExisteMod($anio, $mes, $unidad, $modalidad, $programa, $programa_id);
                 if (!$resp_consPromocion) {
                     $respPrograma = $mod_programa->actualizarPromocion($con, $programa_id, $values_act, $keys_act, 'promocion_programa');
                 } else {

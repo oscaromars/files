@@ -15,7 +15,7 @@ use app\modules\academico\Module as academico;
 <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12 ">
     <div class="col-md-7 col-sm-7 col-xs-7 col-lg-7">
         <div class="form-group">
-            <h4><span id="lbl_general"><?= Yii::t("formulario", "Data Para") ?></span></h4> 
+           <!-- <h4><span id="lbl_general"><?= Yii::t("formulario", "Data Para") ?></span></h4> -->
         </div>
     </div>
     <div class='col-md-12 col-sm-12 col-xs-12 col-lg-12'>

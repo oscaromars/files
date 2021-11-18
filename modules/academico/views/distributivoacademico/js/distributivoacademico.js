@@ -310,7 +310,7 @@ $('#cmb_periodo').change(function () {
         document.getElementById("cmb_horario").value = 0;
         document.getElementById("cmb_materia").value = 0;
         var arrParams = new Object();
-        arrParams.meun_id = $('#cmb_programa').val();
+        arrParams.maca_id = $('#cmb_programa').val();
         arrParams.getasignaturapos = true;
         requestHttpAjax(link, arrParams, function (response) {
             if (response.status == "OK") {

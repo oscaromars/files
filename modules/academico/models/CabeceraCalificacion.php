@@ -1234,7 +1234,7 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord {
                         ELSE
                             case
                             when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 >=14.50 then (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2
-                            when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 <=14.50 then
+                            when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 <14.50 then
                                 case
                                 when IFNULL(C.SUPLETORIO,0) > 0 then
                                     case
@@ -1270,13 +1270,18 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord {
                         end as estado,
                         IFNULL(D.ASISTENCIA_PARCIAL_I,'0') asistencia_parcial_1,
                         IFNULL(E.ASISTENCIA_PARCIAL_II,'0') asistencia_parcial_2,
-                        ((coalesce(D.ASISTENCIA_PARCIAL_I, 0) + coalesce(E.ASISTENCIA_PARCIAL_II, 0)) / 2) as asistencia_final
+                        ((coalesce(D.ASISTENCIA_PARCIAL_I, 0) + coalesce(E.ASISTENCIA_PARCIAL_II, 0)) / 2) as asistencia_final,
+                        case
+                            when ((coalesce(D.ASISTENCIA_PARCIAL_I, 0) + coalesce(E.ASISTENCIA_PARCIAL_II, 0)) / 2) >= 75 then 'Aprobado'
+                            when ((coalesce(D.ASISTENCIA_PARCIAL_I, 0) + coalesce(E.ASISTENCIA_PARCIAL_II, 0)) / 2) >= 1 and ((coalesce(D.ASISTENCIA_PARCIAL_I, 0) + coalesce(E.ASISTENCIA_PARCIAL_II, 0)) / 2) < 75 then 'Reprobado'
+                            when ((coalesce(D.ASISTENCIA_PARCIAL_I, 0) + coalesce(E.ASISTENCIA_PARCIAL_II, 0)) / 2) = 0 then'Pendiente'
+                        end as estado_asist
                  FROM
                     (
                         SELECT DISTINCT
                                estudiante.est_id,
                                estudiante.est_matricula,
-                               concat(persona.per_pri_nombre,' ',persona.per_pri_apellido) as Nombres_completos,
+                               concat(persona.per_pri_apellido,' ',persona.per_pri_nombre) as Nombres_completos,
                                ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca_anio),'') AS paca_nombre,
                                paca.paca_id,
                                daca.pro_id,
@@ -1358,7 +1363,7 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord {
                                                      AND estudiante.uaca_id = C.uaca_id
                             LEFT JOIN
                                   (
-                                    SELECT  casi.casi_id, casi.paca_id, casi.est_id,casi.asi_id,esquema_calificacion_unidad.uaca_id,casi.pro_id, casi.casi_porc_total as ASISTENCIA_PARCIAL_I
+                                    SELECT  casi.casi_id, casi.paca_id, casi.est_id,casi.asi_id,esquema_calificacion_unidad.uaca_id,casi.pro_id, casi.casi_porc_total*100 as ASISTENCIA_PARCIAL_I
                                         FROM db_academico.cabecera_asistencia casi
                                         INNER JOIN db_academico.asistencia_esquema_unidad aeun_id_asistencia ON aeun_id_asistencia.aeun_id = casi.aeun_id
                                         INNER JOIN db_academico.esquema_calificacion_unidad esquema_calificacion_unidad ON esquema_calificacion_unidad.ecun_id = aeun_id_asistencia.ecun_id
@@ -1371,7 +1376,7 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord {
                                                     AND estudiante.uaca_id = D.uaca_id
                             LEFT JOIN
                                   (
-                                    SELECT  casi.casi_id, casi.paca_id, casi.est_id,casi.asi_id,esquema_calificacion_unidad.uaca_id,casi.pro_id, casi.casi_porc_total as ASISTENCIA_PARCIAL_II
+                                    SELECT  casi.casi_id, casi.paca_id, casi.est_id,casi.asi_id,esquema_calificacion_unidad.uaca_id,casi.pro_id, casi.casi_porc_total*100 as ASISTENCIA_PARCIAL_II
                                         FROM db_academico.cabecera_asistencia casi
                                         INNER JOIN db_academico.asistencia_esquema_unidad aeun_id_asistencia ON aeun_id_asistencia.aeun_id = casi.aeun_id
                                         INNER JOIN db_academico.esquema_calificacion_unidad esquema_calificacion_unidad ON esquema_calificacion_unidad.ecun_id = aeun_id_asistencia.ecun_id
@@ -1381,7 +1386,9 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord {
                                   ) E ON  estudiante.est_id = E.est_id  AND estudiante.paca_id = E.paca_id
                                                    AND estudiante.pro_id  = E.pro_id
                                                    AND estudiante.asi_id = E.asi_id
-                                                    AND estudiante.uaca_id = E.uaca_id";
+                                                    AND estudiante.uaca_id = E.uaca_id
+                            Order By Nombres_completos asc
+                                                ";
 
 		$comando = $con->createCommand($sql);
 

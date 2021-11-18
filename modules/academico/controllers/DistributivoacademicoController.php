@@ -159,7 +159,7 @@ class DistributivoacademicoController extends \app\components\CController {
 				elseif ($data["uaca_id"] == 2) {
 					//\app\models\Utilities::putMessageLogFile('uaca_id'. $data["uaca_id"]);
 					//\app\models\Utilities::putMessageLogFile('meun_id'. $data["meun_id"]);
-					$horario = $mod_horario->consultaHorariosxuacaymeun($data["uaca_id"], $data["meun_id"]);
+					$horario = $mod_horario->consultaHorariosxuacaymeun($data["uaca_id"], $data["maca_id"]);
 				} else {
 					\app\models\Utilities::putMessageLogFile('unidad academico no es grado ni posgrado');
 				}
@@ -174,7 +174,7 @@ class DistributivoacademicoController extends \app\components\CController {
 				return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
 			}
 			if (isset($data["getasignaturapos"])) {
-				$asignatura = $mod_asignatura->getAsignaturaPosgrado($data["meun_id"]);
+				$asignatura = $mod_asignatura->getAsignaturaPosgrado($data["maca_id"]);
 				$message = array("asignaturapos" => $asignatura);
 				return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
 			}
@@ -592,7 +592,7 @@ class DistributivoacademicoController extends \app\components\CController {
 				return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
 			}
 			if (isset($data["getasignaturapos"])) {
-				$asignatura = $mod_asignatura->getAsignaturaPosgrado($data["meun_id"]);
+				$asignatura = $mod_asignatura->getAsignaturaPosgrado($data["maca_id"]);
 				$message = array("asignaturapos" => $asignatura);
 				return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
 			}

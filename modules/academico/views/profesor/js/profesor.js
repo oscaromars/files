@@ -69,6 +69,31 @@ $(document).ready(function() {
         $('#txt_usuario').val($(this).val());
     });
 
+    $('input[type="checkbox"]').on('change', function() {
+       $(this).siblings('input[type="checkbox"]').prop('checked', false);
+       element  = document.getElementById("nac_extr");
+       element1 = document.getElementById("ruc");
+       element2 = document.getElementById("passport");
+       check1 = document.getElementById("chk_nacionalidad1");
+       check2 = document.getElementById("chk_nacionalidad2");
+       if (check2.checked) {
+            element.style.display  = 'block';
+            element1.style.display = 'none';
+            element2.style.display = 'none';
+            
+        }else if(check1.checked){
+            element.style.display  = 'none';
+            element1.style.display = 'block';
+            element2.style.display = 'block';
+            
+        }else{
+            element.style.display  = 'none';
+            element1.style.display = 'none';
+            element2.style.display = 'none';
+        }
+    });
+
+
 });
 
 function searchModules(idbox, idgrid) {

@@ -91,6 +91,46 @@ $(document).ready(function() {
 
 });
 
+function showContent(){
+
+    var fecha_inicio = new Date(document.getElementById("txt_doc_from").value); 
+    console.log(fecha_inicio);
+    var fecha_fin = new Date(document.getElementById("txt_doc_to").value);
+      
+    if (fecha_fin > fecha_inicio)
+        {
+            // calculo de días
+            var timeDiff = Math.abs((fecha_fin.getTime() - fecha_inicio.getTime())/1000);
+            var diffDays = Math.ceil(timeDiff / (60 * 60 * 24));
+            // calculo de semanas
+            var diffsemana = Math.ceil(timeDiff / (60 * 60 * 24 * 7));
+            // calculo de años
+            var numberOfYears =fecha_fin.getFullYear() - fecha_inicio.getFullYear();
+            fecha_fin.setFullYear(fecha_inicio.getFullYear);
+            if (fecha_inicio < fecha_fin){
+                --numberOfYears;
+            }
+            // calculo de meses
+            var numberOfMonths = Math.ceil(timeDiff / (60 * 60 * 24 * 7 * 4));
+            var meses = numberOfMonths-1;
+            // presentar los dias, semanas, meses y años 
+            $("#txt_conteo").text(diffDays + ' Días, '+diffsemana+' Semanas, '+meses+' Mes, '+numberOfYears+' Años.');        
+    }
+    else if (fecha_fin != null && fecha_fin <= fecha_inicio) {
+        alert("La fecha final de la promoción debe ser mayor a la fecha inicial");
+        document.getElementById("txt_conteo").value = 0;
+    }
+
+    element = document.getElementById("contenidopla");
+    check2  = document.getElementById("txt_doc_to");
+    if (check2.click) {
+        element.style.display  = 'block';
+    }
+    else {
+        element.style.display  = 'none';
+        
+    }
+}
 
 function registerForm(){
     var arrParams = new Object();

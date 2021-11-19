@@ -7,6 +7,7 @@ use \yii\data\ActiveDataProvider;
 use \yii\data\ArrayDataProvider;
 use app\models\Utilities;
 use \yii\db\Query;
+use yii\base\Exception;
 use app\modules\academico\models\PeriodoAcademico;
 /**
  * This is the model class for table "db_academico.cabecera_asistencia".
@@ -271,13 +272,26 @@ class CabeceraAsistencia extends \yii\db\ActiveRecord
         } 
 
         $sql = "  SELECT (@row_number:=@row_number + 1) AS row_num
-                         ,data.matricula
                          ,data.nombre
+                         ,data.matricula
                          ,data.materia
-                         ,sum(data.u1) as u1
-                    --   ,sum(data.u2) as u2
-                    --   ,sum(data.u3) as u3
-                         ,sum(data.u4) as u2
+                        ";
+        
+                        if ($arrFiltro['parcial'] == 1){
+            $sql .= "     ,sum(data.u1) as u1
+
+                             ";   
+        }
+
+         if ($arrFiltro['parcial'] == 1){
+            $sql .= "     ,sum(data.u4) as u2
+
+                             ";   
+        }
+
+
+
+         $sql .= "
                          ,data.paca_id
                          ,data.est_id
                          ,data.pro_id
@@ -289,7 +303,7 @@ class CabeceraAsistencia extends \yii\db\ActiveRecord
                     FROM (
                   SELECT est.est_id
                         ,est.est_matricula as matricula
-                        ,concat(per.per_pri_nombre,' ',per.per_pri_apellido) as nombre
+                        ,concat(per.per_pri_apellido,' ',per.per_pri_nombre) as nombre
                         ,coalesce(casi.casi_id,0) as casi_id
                       ,(SELECT ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca_anio),'') AS value
                             FROM " . $con->dbname . ".semestre_academico AS saca
@@ -311,19 +325,19 @@ class CabeceraAsistencia extends \yii\db\ActiveRecord
                         ,asi.uaca_id  as uaca_id
                         ,(select dasi.dasi_cantidad from " . $con->dbname . ".detalle_asistencia dasi 
                            where dasi.casi_id = casi.casi_id
-                             and ecun.ecal_id = 1
+                             -- and ecun.ecal_id = 1
                              and dasi.dasi_tipo = 'u1') as u1
                         ,(select dasi.dasi_cantidad from " . $con->dbname . ".detalle_asistencia dasi 
                            where dasi.casi_id = casi.casi_id
-                             and ecun.ecal_id = 1
+                             -- and ecun.ecal_id = 1
                              and dasi.dasi_tipo = 'u2') as u2
                         ,(select dasi.dasi_cantidad from " . $con->dbname . ".detalle_asistencia dasi 
                             where dasi.casi_id = casi.casi_id
-                            and ecun.ecal_id = 2
+                            -- and ecun.ecal_id = 2
                             and dasi.dasi_tipo = 'u1') as u3
                         ,(select dasi.dasi_cantidad from " . $con->dbname . ".detalle_asistencia dasi 
                             where dasi.casi_id = casi.casi_id
-                            and ecun.ecal_id = 2
+                            -- and ecun.ecal_id = 2
                             and dasi.dasi_tipo = 'u2') as u4
                         , daca.mod_id
                         , daes.daes_id
@@ -343,7 +357,7 @@ class CabeceraAsistencia extends \yii\db\ActiveRecord
                     AND casi.casi_estado = :estado
                     AND casi.casi_estado_logico = :estado
               LEFT JOIN " . $con->dbname . ".asistencia_esquema_unidad aeun   ON aeun.aeun_id = casi.aeun_id
-              LEFT JOIN " . $con->dbname . ".esquema_calificacion_unidad ecun ON ecun.ecun_id = aeun.ecun_id 
+              -- LEFT JOIN " . $con->dbname . ".esquema_calificacion_unidad ecun ON ecun.ecun_id = aeun.ecun_id 
               LEFT JOIN " . $con->dbname . ".asignatura asi                   ON asi.asi_id = daca.asi_id
             order by 3 asc
             ) as data 
@@ -426,100 +440,103 @@ class CabeceraAsistencia extends \yii\db\ActiveRecord
      * @return  
      */
     public function ActualizarNotaAsistencia($data/*, $unidad*/){
-        $con    = \Yii::$app->db_academico;
-        $estado = '1';
-        $usu_id = @Yii::$app->session->get("PB_iduser");
+        try{
+            $con    = \Yii::$app->db_academico;
+            $estado = '1';
+            $usu_id = @Yii::$app->session->get("PB_iduser");
+            $fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
 
-        \app\models\Utilities::putMessageLogFile(print_r($data,true));
-        /*
-        if($unidad == 1){
-            $aeun_id_u1_u2 = 1;
-            $aeun_id_u3_u4 = 2;
-        }
-        if($unidad == 2){
-            $aeun_id_u1_u2 = 3;
-            $aeun_id_u3_u4 = 4;
-        }
-        if($unidad == 3){
-            $aeun_id_u1_u2 = 5;
-            $aeun_id_u3_u4 = 6;
-        } */
+            \app\models\Utilities::putMessageLogFile(print_r($data,true));
+            /*
+            if($unidad == 1){
+                $aeun_id_u1_u2 = 1;
+                $aeun_id_u3_u4 = 2;
+            }
+            if($unidad == 2){
+                $aeun_id_u1_u2 = 3;
+                $aeun_id_u3_u4 = 4;
+            }
+            if($unidad == 3){
+                $aeun_id_u1_u2 = 5;
+                $aeun_id_u3_u4 = 6;
+            } */
 
+            
+            if($data['uaca_id'] == 1){
+                $aeun_id_u1_u2 = 1;
+                $aeun_id_u3_u4 = 2;
+            }
+            if($data['uaca_id'] == 2){
+                $aeun_id_u1_u2 = 1;
+                $aeun_id_u3_u4 = 2;
+            }
+            /*if($data['uaca_id'] == 3){
+                $aeun_id_u1_u2 = 5;
+                $aeun_id_u3_u4 = 6;
+            }*/
+            //////////////////////////////////////////////////////
+            //PRIMERO PREGUNTAMOS SI TIENE CABECERA PARA U1 Y U2//
+            //////////////////////////////////////////////////////
+            $sql = "SELECT casi.casi_id, casi.aeun_id, ecun.ecal_id
+                    FROM db_academico.cabecera_asistencia casi
+                        ,db_academico.asistencia_esquema_unidad aeun
+                        ,db_academico.esquema_calificacion_unidad ecun
+                    WHERE casi.aeun_id = aeun.aeun_id
+                    and aeun.ecun_id = ecun.ecun_id
+                    and casi.paca_id = ".$data['paca_id']."
+                    and casi.est_id  = ".$data['est_id']."
+                    and casi.pro_id  = ".$data['pro_id']."
+                    and casi.asi_id  = ".$data['asi_id']."
+                    and ecun.ecal_id = 1";
         
-         if($data['uaca_id'] == 1){
-            $aeun_id_u1_u2 = 1;
-            $aeun_id_u3_u4 = 2;
-        }
-        if($data['uaca_id'] == 2){
-            $aeun_id_u1_u2 = 1;
-            $aeun_id_u3_u4 = 2;
-        }
-        /*if($data['uaca_id'] == 3){
-            $aeun_id_u1_u2 = 5;
-            $aeun_id_u3_u4 = 6;
-        }*/
-        //////////////////////////////////////////////////////
-        //PRIMERO PREGUNTAMOS SI TIENE CABECERA PARA U1 Y U2//
-        //////////////////////////////////////////////////////
-        $sql = "SELECT casi.casi_id, casi.aeun_id, ecun.ecal_id
-                  FROM db_academico.cabecera_asistencia casi
-                       ,asistencia_esquema_unidad aeun
-                       ,esquema_calificacion_unidad ecun
-                 WHERE casi.aeun_id = aeun.aeun_id
-                   and aeun.ecun_id = ecun.ecun_id
-                   and casi.paca_id = ".$data['paca_id']."
-                   and casi.est_id  = ".$data['est_id']."
-                   and casi.pro_id  = ".$data['pro_id']."
-                   and casi.asi_id  = ".$data['asi_id']."
-                   and ecun.ecal_id = 1";
-    
-        $command  = $con->createCommand($sql);
-        $res_casi = $command->queryOne();
+            $command  = $con->createCommand($sql);
+            $res_casi = $command->queryOne();
 
-        \app\models\Utilities::putMessageLogFile('cabecera u1 y u2: ' .$command->getRawSql());
+            \app\models\Utilities::putMessageLogFile('cabecera u1 y u2: ' .$command->getRawSql());
 
-        //PREGUNTO SI EXISTE EL REGSITRO
-        if(empty($res_casi['casi_id'])){
-            //por if true quiere decir q no existo, aqui debo crear primero la cabecera
-            $sql = "INSERT INTO db_academico.cabecera_asistencia
-                        (
-                        `paca_id`,
-                        `est_id`,
-                        `pro_id`,
-                        `asi_id`,
-                        `aeun_id`,
-                        `casi_cant_total`,
-                        `casi_porc_total`,
-                        `casi_estado`,
-                        `casi_fecha_creacion`,
-                        `casi_estado_logico`)
-                        VALUES
-                        (
-                        ".$data['paca_id'].",
-                        ".$data['est_id'].",
-                        ".$data['pro_id'].",
-                        ".$data['asi_id'].",
-                        $aeun_id_u1_u2,
-                        null,
-                        null,
-                        1,
-                        now(),
-                        1)";
-            $command = $con->createCommand($sql);
-            $result  = $command->execute();
-            $casi_id = $con->getLastInsertID($con->dbname . '.cabecera_asistencia');
+            //PREGUNTO SI EXISTE EL REGSITRO
+            if(empty($res_casi['casi_id'])){
+                //por if true quiere decir q no existo, aqui debo crear primero la cabecera
+                $sql = "INSERT INTO db_academico.cabecera_asistencia
+                            (
+                            `paca_id`,
+                            `est_id`,
+                            `pro_id`,
+                            `asi_id`,
+                            `aeun_id`,
+                            `casi_cant_total`,
+                            `casi_porc_total`,
+                            `casi_estado`,
+                            `casi_fecha_creacion`,
+                            `casi_estado_logico`)
+                            VALUES
+                            (
+                            ".$data['paca_id'].",
+                            ".$data['est_id'].",
+                            ".$data['pro_id'].",
+                            ".$data['asi_id'].",
+                            $aeun_id_u1_u2,
+                            null,
+                            null,
+                            1,
+                            '$fecha_transaccion',
+                            1)";
+                $command = $con->createCommand($sql);
+                $result  = $command->execute();
+                $casi_id = $con->getLastInsertID($con->dbname . '.cabecera_asistencia');
 
-            //\app\models\Utilities::putMessageLogFile("control de errores");
-            //\app\models\Utilities::putMessageLogFile("ultimo id: ".$casi_id);
-        }else
-            $casi_id = $res_casi['casi_id'];
-        ///////////////////////////////////////////////////////////////////
-        //YA CON LA CABECERA VAMOS A VERIFICAR QUE TENGA DETALLE PARA U1 //
-        ///////////////////////////////////////////////////////////////////
-        $sql = "SELECT dasi.dasi_id, dasi.casi_id
-                  FROM db_academico.detalle_asistencia dasi
-                 WHERE dasi.casi_id   = $casi_id 
-                   AND dasi.dasi_tipo = 'u1'";
+                //\app\models\Utilities::putMessageLogFile("control de errores");
+                //\app\models\Utilities::putMessageLogFile("ultimo id: ".$casi_id);
+            }else{
+                $casi_id = $res_casi['casi_id'];
+            }
+            ///////////////////////////////////////////////////////////////////
+            //YA CON LA CABECERA VAMOS A VERIFICAR QUE TENGA DETALLE PARA U1 //
+            ///////////////////////////////////////////////////////////////////
+            $sql = "SELECT dasi.dasi_id, dasi.casi_id
+                    FROM db_academico.detalle_asistencia dasi
+                    WHERE dasi.casi_id   = $casi_id 
+                    AND dasi.dasi_tipo = 'u1'";
 
         $command = $con->createCommand($sql);
         $res_u1  = $command->queryOne();
@@ -528,32 +545,32 @@ class CabeceraAsistencia extends \yii\db\ActiveRecord
 
         //\app\models\Utilities::putMessageLogFile(print_r($res_u1,true));
 
-        //Pregunto si existe el detalle U1
-        if(empty($res_u1)){
-            $u1      = $data['u1'];
-            $sql = "INSERT INTO db_academico.detalle_asistencia
-                                (`casi_id`,
-                                `dasi_cantidad`,
-                                `dasi_tipo`,
-                                `dasi_usuario_creacion`,
-                                `dasi_estado`,
-                                `dasi_fecha_creacion`,
-                                `dasi_estado_logico`)
-                                VALUES
-                                ($casi_id,
-                                 $u1,
-                                 'u1',
-                                 $usu_id,
-                                 $estado,
-                                 now(),
-                                 1)";
-        }else{
-            $dasi_id = $res_u1['dasi_id'];
-            $u1      = $data['u1'];
-            $sql = "UPDATE db_academico.detalle_asistencia 
-                       set dasi_cantidad = $u1
-                     WHERE dasi_id = $dasi_id";
-        }
+            //Pregunto si existe el detalle U1
+            if(empty($res_u1)){
+                $u1      = $data['u1'];
+                $sql = "INSERT INTO db_academico.detalle_asistencia
+                                    (`casi_id`,
+                                    `dasi_cantidad`,
+                                    `dasi_tipo`,
+                                    `dasi_usuario_creacion`,
+                                    `dasi_estado`,
+                                    `dasi_fecha_creacion`,
+                                    `dasi_estado_logico`)
+                                    VALUES
+                                    ($casi_id,
+                                    $u1,
+                                    'u1',
+                                    $usu_id,
+                                    $estado,
+                                    '$fecha_transaccion',
+                                    1)";
+            }else{
+                $dasi_id = $res_u1['dasi_id'];
+                $u1      = $data['u1'];
+                $sql = "UPDATE db_academico.detalle_asistencia 
+                        set dasi_cantidad = $u1
+                        WHERE dasi_id = $dasi_id";
+            }
 
        
 
@@ -598,98 +615,102 @@ class CabeceraAsistencia extends \yii\db\ActiveRecord
         $command  = $con->createCommand($sql);
         $res_casi = $command->queryOne();
 
-        //PREGUNTO SI EXISTE EL REGSITRO
-        if(empty($res_casi)){
-            //por if true quiere decir q no existo, aqui debo crear primero la cabecera
-            $sql = "INSERT INTO db_academico.cabecera_asistencia
-                        (
-                        `paca_id`,
-                        `est_id`,
-                        `pro_id`,
-                        `asi_id`,
-                        `aeun_id`,
-                        `casi_cant_total`,
-                        `casi_porc_total`,
-                        `casi_estado`,
-                        `casi_fecha_creacion`,
-                        `casi_estado_logico`)
-                        VALUES
-                        (
-                        ".$data['paca_id'].",
-                        ".$data['est_id'].",
-                        ".$data['pro_id'].",
-                        ".$data['asi_id'].",
-                        $aeun_id_u3_u4,
-                        null,
-                        null,
-                        1,
-                        now(),
-                        1)";
-            $command = $con->createCommand($sql);
-            $result  = $command->execute();
-            $casi_id = $con->getLastInsertID($con->dbname . '.cabecera_asistencia');
+            //PREGUNTO SI EXISTE EL REGSITRO
+            if(empty($res_casi)){
+                //por if true quiere decir q no existo, aqui debo crear primero la cabecera
+                $sql = "INSERT INTO db_academico.cabecera_asistencia
+                            (
+                            `paca_id`,
+                            `est_id`,
+                            `pro_id`,
+                            `asi_id`,
+                            `aeun_id`,
+                            `casi_cant_total`,
+                            `casi_porc_total`,
+                            `casi_estado`,
+                            `casi_fecha_creacion`,
+                            `casi_estado_logico`)
+                            VALUES
+                            (
+                            ".$data['paca_id'].",
+                            ".$data['est_id'].",
+                            ".$data['pro_id'].",
+                            ".$data['asi_id'].",
+                            $aeun_id_u3_u4,
+                            null,
+                            null,
+                            1,
+                            '$fecha_transaccion',
+                            1)";
+                $command = $con->createCommand($sql);
+                $result  = $command->execute();
+                $casi_id = $con->getLastInsertID($con->dbname . '.cabecera_asistencia');
 
-            //\app\models\Utilities::putMessageLogFile("ultimo id: ".$casi_id);
-        }else
-            $casi_id = $res_casi['casi_id'];
-        ///////////////////////////////////////////////////////////////////
-        //YA CON LA CABECERA VAMOS A VERIFICAR QUE TENGA DETALLE PARA U1 //
-        ///////////////////////////////////////////////////////////////////
-        $sql = "SELECT dasi.dasi_id, dasi.casi_id
-                  FROM db_academico.detalle_asistencia dasi
-                 WHERE dasi.casi_id   = $casi_id 
-                   AND dasi.dasi_tipo = 'u2'";
+                //\app\models\Utilities::putMessageLogFile("ultimo id: ".$casi_id);
+            }else{
+                $casi_id = $res_casi['casi_id'];}
+                ///////////////////////////////////////////////////////////////////
+                //YA CON LA CABECERA VAMOS A VERIFICAR QUE TENGA DETALLE PARA U2 //
+                ///////////////////////////////////////////////////////////////////
+                $sql = "SELECT dasi.dasi_id, dasi.casi_id
+                        FROM db_academico.detalle_asistencia dasi
+                        WHERE dasi.casi_id   = $casi_id 
+                        AND dasi.dasi_tipo = 'u2'";
 
         $command = $con->createCommand($sql);
         $res_u3  = $command->queryOne();
 
-        //Pregunto si existe el detalle U1
-        if(empty($res_u3)){
-            $u3      = $data['u2'];
-            $sql = "INSERT INTO db_academico.detalle_asistencia
-                                (`casi_id`,
-                                `dasi_cantidad`,
-                                `dasi_tipo`,
-                                `dasi_usuario_creacion`,
-                                `dasi_estado`,
-                                `dasi_fecha_creacion`,
-                                `dasi_estado_logico`)
-                                VALUES
-                                ($casi_id,
-                                 $u3,
-                                 'u2',
-                                 $usu_id,
-                                 $estado,
-                                 now(),
-                                 1)";
-        }else{
-            $dasi_id = $res_u3['dasi_id'];
-            $u3      = $data['u2'];
-            $sql = "UPDATE db_academico.detalle_asistencia 
-                       set dasi_cantidad = $u3
-                     WHERE dasi_id = $dasi_id";
-        }
-
-        if($u3 != ''){
-            $command = $con->createCommand($sql);
-            $result  = $command->execute();
-        }     
-        
-          //Actualizamos la cabecera con los nuevos valores
-        $sql = "UPDATE db_academico.cabecera_asistencia
-                   SET casi_cant_total = (SELECT sum(dasi_cantidad) as casi_cant_total
-                                            FROM db_academico.detalle_asistencia 
-                                           where casi_id = $casi_id),
-                       casi_porc_total = (SELECT round ((sum(dasi_cantidad) / 0.3),2) as casi_porc_total
-                                            FROM db_academico.detalle_asistencia 
-                                           where casi_id = $casi_id)
-                WHERE casi_id = $casi_id
-        ";
+            //Pregunto si existe el detalle U1
+            if(empty($res_u3)){
+                $u3      = $data['u2'];
+                $sql = "INSERT INTO db_academico.detalle_asistencia
+                                            (`casi_id`,
+                                            `dasi_cantidad`,
+                                            `dasi_tipo`,
+                                            `dasi_usuario_creacion`,
+                                            `dasi_estado`,
+                                            `dasi_fecha_creacion`,
+                                            `dasi_estado_logico`)
+                                            VALUES
+                                            ($casi_id,
+                                            $u3,
+                                            'u2',
+                                            $usu_id,
+                                            $estado,
+                                            '$fecha_transaccion',
+                                            1)";
+                    }else{
+                        $dasi_id = $res_u3['dasi_id'];
+                        $u3      = $data['u2'];
+                        $sql = "UPDATE db_academico.detalle_asistencia 
+                                set dasi_cantidad = $u3
+                                WHERE dasi_id = $dasi_id";
+                    }
+                    
+                    if($u3 != ''){
+                        $command = $con->createCommand($sql);
+                        $result  = $command->execute();
+                    }     
+                    
+                    //Actualizamos la cabecera con los nuevos valores
+                    $sql = "UPDATE db_academico.cabecera_asistencia
+                            SET casi_cant_total = (SELECT sum(dasi_cantidad) as casi_cant_total
+                                                        FROM db_academico.detalle_asistencia 
+                                                    where casi_id = $casi_id),
+                                casi_porc_total = (SELECT round ((sum(dasi_cantidad) / 0.3),2) as casi_porc_total
+                                                        FROM db_academico.detalle_asistencia 
+                                                    where casi_id = $casi_id)
+                            WHERE casi_id = $casi_id
+                    ";
 
         $command = $con->createCommand($sql);
         $result  = $command->execute();
         
         return true;
+    }catch(Exception $e){
+        \app\models\Utilities::putMessageLogFile("Error al actualizar: " . $e->getMessage());
+        return false;
+        }
     }//
 
     /**
@@ -938,8 +959,8 @@ class CabeceraAsistencia extends \yii\db\ActiveRecord
         //////////////////////////////////////////////////////
         $sql = "SELECT casi.casi_id, casi.aeun_id, ecun.ecal_id
                   FROM db_academico.cabecera_asistencia casi
-                       ,asistencia_esquema_unidad aeun
-                       ,esquema_calificacion_unidad ecun
+                       ,db_academico.asistencia_esquema_unidad aeun
+                       ,db_academico.esquema_calificacion_unidad ecun
                  WHERE casi.aeun_id = aeun.aeun_id
                    and aeun.ecun_id = ecun.ecun_id
                    and casi.paca_id = ".$data['paca_id']."
@@ -1903,5 +1924,299 @@ class CabeceraAsistencia extends \yii\db\ActiveRecord
         \app\models\Utilities::putMessageLogFile('Crear Detalle: '.$command->getRawSql());
         return $idtabla;
     }//function actualizarDetalleCalificacionporid
-    
+ 
+    /**
+     * Function consulta cabecera_asistencia por medio de 4 IDs
+     * @author Diego Betancourt <analistadesarrollo08@uteg.edu.ec>;
+     * @param
+     * @return
+     */
+    public function consultarAlumnosxSesion($arrFiltro){
+        $con = Yii::$app->db_academico;
+        $str_search = "";
+
+        if (isset($arrFiltro) && count($arrFiltro) > 0) {
+
+            if ($arrFiltro['periodo'] != "" && $arrFiltro['periodo'] > 0) {
+                $str_search .= " AND daca.paca_id = :paca_id  ";
+            }
+            if ($arrFiltro['materia'] != "" && $arrFiltro['materia'] > 0) {
+                $str_search .= " AND daca.asi_id = :asi_id  ";
+            }
+            if ($arrFiltro['profesor'] != "" && $arrFiltro['profesor'] > 0) {
+                $str_search .= " AND daca.pro_id = :pro_id  ";
+            }
+            if ($arrFiltro['unidad'] != "" && $arrFiltro['unidad'] > 0) {
+                $str_search .= " AND daca.uaca_id = :uaca_id  ";
+            }
+            
+            if ($arrFiltro['modalidad'] != "" && $arrFiltro['modalidad'] > 0) {
+                $str_search .= " AND daca.mod_id = :mod_id  ";
+            } 
+            $sesion = $arrFiltro['sesion']; 
+            $parcial = $arrFiltro['parcial'];
+               
+        } 
+        $sql = "SELECT x.* from(
+                SELECT per.per_id as id, est.est_matricula as matricula, 
+                replace(concat(ifnull(per.per_pri_apellido,''),' ',ifnull(per.per_pri_nombre,'')),'',null) as nombre,
+                daca.paca_id as paca_id
+                                        ,asi.asi_nombre as materia
+                                        ,daca.asi_id  as asi_id
+                                        ,daca.pro_id  as pro_id
+                                        ,asi.uaca_id  as uaca_id
+                                        , daca.mod_id as mod_id
+                                        , est.est_id as est_id
+                                        ,daho.daho_id as daho_id
+                                        ,ifnull($sesion,0) as sesion
+                                        ,ifnull($parcial,1) as parcial
+                                        ,'checked' as stado
+                FROM db_academico.distributivo_academico daca
+                            INNER JOIN db_academico.distributivo_academico_estudiante daes  ON daes.daca_id = daca.daca_id
+                            INNER JOIN db_academico.distributivo_academico_horario daho on daho.daho_id = daca.daho_id
+                            LEFT JOIN db_academico.estudiante est                          ON est.est_id = daes.est_id
+                                    AND est.est_estado = '1' AND est.est_estado_logico = '1'
+                            inner join db_academico.detalle_asistencia_clases dac on daca.asi_id = dac.asi_id
+                            and daca.paca_id = dac.paca_id and daca.mod_id = dac.mod_id and est.est_id = dac.est_id
+                            and dac.pro_id = dac.pro_id and  daca.daho_id = dac.daho_id
+                            INNER JOIN db_asgard.persona per                             ON per.per_id   = est.per_id
+                            inner JOIN db_academico.asignatura asi                   ON asi.asi_id = daca.asi_id
+                            where 1=1 
+                                $str_search 
+                union 
+
+                SELECT per.per_id as id, est.est_matricula as matricula, 
+                replace(concat(ifnull(per.per_pri_apellido,''),' ',ifnull(per.per_pri_nombre,'')),'',null) as nombre,
+                daca.paca_id as paca_id
+                                        ,asi.asi_nombre as materia
+                                        ,daca.asi_id  as asi_id
+                                        ,daca.pro_id  as pro_id
+                                        ,asi.uaca_id  as uaca_id
+                                        , daca.mod_id as mod_id
+                                        , est.est_id as est_id
+                                        ,daho.daho_id as daho_id
+                                        ,ifnull($sesion,0) as sesion
+                                        ,ifnull($parcial,1) as parcial
+                                        ,'' as stado
+                FROM db_academico.distributivo_academico daca
+                            INNER JOIN db_academico.distributivo_academico_estudiante daes  ON daes.daca_id = daca.daca_id
+                            INNER JOIN db_academico.distributivo_academico_horario daho on daho.daho_id = daca.daho_id
+                            LEFT JOIN db_academico.estudiante est                          ON est.est_id = daes.est_id
+                            AND est.est_estado = '1' AND est.est_estado_logico = '1'
+                            left join db_academico.detalle_asistencia_clases dac on daca.asi_id = dac.asi_id
+                            and daca.paca_id = dac.paca_id and daca.mod_id = dac.mod_id and est.est_id = dac.est_id
+                            and dac.pro_id = dac.pro_id and  daca.daho_id = dac.daho_id
+                            INNER JOIN db_asgard.persona per                             ON per.per_id   = est.per_id
+                            inner JOIN db_academico.asignatura asi                   ON asi.asi_id = daca.asi_id
+                            where 1=1 
+                                $str_search ) as x
+                            order by x.nombre asc";
+
+        $comando = $con->createCommand($sql);
+
+        if (isset($arrFiltro) && count($arrFiltro) > 0) {
+         
+            if ($arrFiltro['periodo'] != "" && $arrFiltro['periodo'] > 0) {
+                $periodo = $arrFiltro["periodo"];
+                $comando->bindParam(":paca_id", $periodo, \PDO::PARAM_INT);
+            }
+            if ($arrFiltro['unidad'] != "" && $arrFiltro['unidad'] > 0) {
+                $unidad = $arrFiltro["unidad"];
+                $comando->bindParam(":uaca_id", $unidad, \PDO::PARAM_INT);
+            }
+            
+            if ($arrFiltro['modalidad'] != "" && $arrFiltro['modalidad'] > 0) {
+                $modalidad = $arrFiltro["modalidad"];
+                $comando->bindParam(":mod_id", $modalidad, \PDO::PARAM_INT);
+            }  
+            
+            if ($arrFiltro['materia'] != "" && $arrFiltro['materia'] > 0) {
+                $materia = $arrFiltro["materia"];
+                $comando->bindParam(":asi_id", $materia, \PDO::PARAM_INT);
+            }
+
+            if ($arrFiltro['profesor'] != "" && $arrFiltro['profesor'] > 0) {
+                $profesor = $arrFiltro["profesor"];
+                $comando->bindParam(":pro_id", $profesor, \PDO::PARAM_INT);
+            }
+        }
+
+        $resultData = $comando->queryAll();
+        \app\models\Utilities::putMessageLogFile('consultarAlumnosxSesion: '.$comando->getRawSql());
+        $dataProvider = new ArrayDataProvider([
+            'key' => 'id',
+            'allModels' => $resultData,
+            'pagination' => [
+                'pageSize' => Yii::$app->params["pageSize"],
+            ],
+        ]);
+
+        return $resultData;
+        // return $dataProvider;
+    }
+
+    public function consultarAsistenciaInicialFinal($rmtm_id) {
+        $con = \Yii::$app->db_academico;
+        $estado = 1;
+
+        $sql = "SELECT count(rmtm_id)
+            FROM " . $con->dbname . ".detalle_asistencia_clases 
+            WHERE rmtm_id = $rmtm_id
+            AND deac_hora_fin_clase is not null
+            AND deac_minutos_retiro is not null
+            AND deac_estado = $estado  
+            AND deac_hora_fin_clase is not null;"; 
+
+        $comando = $con->createCommand($sql);
+        // $comando->bindParam(":estado", $estado, \PDO::PARAM_INT);      
+        $resultData = $comando->queryOne();
+        return $resultData;
+    }
+
+    public function consultarExisteCabecera($paca_id,$est_id,$pro_id,$asi_id,$parcial) {
+        $con = \Yii::$app->db_academico;
+        $estado = 1;
+
+        $sql = "SELECT count(casi_id) as cant from db_academico.cabecera_asistencia 
+                where paca_id = $paca_id and est_id = $est_id and pro_id = $pro_id and asi_id = $asi_id
+                and casi_estado = $estado and aeun_id = $parcial and casi_estado_logico = $estado;"; 
+
+        $comando = $con->createCommand($sql);
+        // $comando->bindParam(":estado", $estado, \PDO::PARAM_INT);      
+        $resultData = $comando->queryOne();
+        return $resultData;
+    }
+
+    public function consultarIdCabecera($paca_id,$est_id,$pro_id,$asi_id,$parcial) {
+        $con = \Yii::$app->db_academico;
+        $estado = 1;
+
+        $sql = "SELECT casi_id from db_academico.cabecera_asistencia 
+                where paca_id = $paca_id and est_id = $est_id and pro_id = $pro_id and asi_id = $asi_id
+                and aeun_id = $parcial and casi_estado = $estado and casi_estado_logico = $estado;"; 
+
+        $comando = $con->createCommand($sql);
+        // $comando->bindParam(":estado", $estado, \PDO::PARAM_INT);      
+        $resultData = $comando->queryOne();
+        return $resultData;
+    }
+
+    public function crearIdCabecera($paca_id,$est_id,$pro_id,$asi_id,$parcial,$porcentaje) {
+        $con    = \Yii::$app->db_academico;
+        $transaccion = $con->beginTransaction();
+        $fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
+        //$usu_id = @Yii::$app->session->get("PB_iduser");
+        
+        //$com_nombre = array_key_first($value);    
+        $sql = "INSERT INTO " . $con->dbname . ".cabecera_asistencia
+                            (
+                              `paca_id`,
+                              `est_id`,
+                              `pro_id`,
+                              `asi_id`,
+                              `aeun_id`,
+                              `casi_porc_total`,
+                              `casi_estado`,
+                              `casi_fecha_creacion`,
+                              `casi_estado_logico`
+                            )
+                     VALUES(
+                              $paca_id,
+                              $est_id,
+                              $pro_id,
+                              $asi_id,
+                              $parcial,
+                              $porcentaje,
+                              1,
+                              '$fecha_transaccion',
+                              1
+                )";
+        
+        $command = $con->createCommand($sql);
+        //$command->bindParam(":daca_id", $daca_id, \PDO::PARAM_INT);             
+        //$command->bindParam(":fecha", $fecha_transaccion, \PDO::PARAM_STR);
+        $idtabla= $command->execute();  
+
+        $idtable = $con->getLastInsertID($con->dbname . '.cabecera_calificacion');
+
+        $transaccion->commit();
+
+        \app\models\Utilities::putMessageLogFile('crearIdCabecera: '.$command->getRawSql());
+        return $idtable;
+    }
+    public function actualizarAsistenciaCabecera($casi_id,$porcentaje) {
+        $con    = \Yii::$app->db_academico;
+        $transaccion = $con->beginTransaction();
+        $fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
+        //$usu_id = @Yii::$app->session->get("PB_iduser");
+        
+        //$com_nombre = array_key_first($value);    
+        $sql = "UPDATE " . $con->dbname . ".cabecera_asistencia
+                set casi_porc_total = truncate((casi_porc_total + $porcentaje),2),
+                casi_fecha_modificacion = '$fecha_transaccion'
+                WHERE  casi_id = $casi_id and casi_estado = 1;";
+        
+        $command = $con->createCommand($sql);
+        //$command->bindParam(":daca_id", $daca_id, \PDO::PARAM_INT);             
+        //$command->bindParam(":fecha", $fecha_transaccion, \PDO::PARAM_STR);
+        $resultData= $command->execute();  
+
+        $transaccion->commit();
+
+        \app\models\Utilities::putMessageLogFile('actualizarAsistenciaCabecera: '.$command->getRawSql());
+        return $idtable;
+    }
+
+    public function consultarIdDetalle($casi_id) {
+        $con = \Yii::$app->db_academico;
+        $estado = 1;
+
+        $sql = "SELECT count(casi_id) from db_academico.detalle_asistencia 
+                where casi_id = $casi_id and dasi_estado = $estado and dasi_estado_logico = $estado;"; 
+
+        $comando = $con->createCommand($sql);
+        // $comando->bindParam(":estado", $estado, \PDO::PARAM_INT);      
+        $resultData = $comando->queryOne();
+        return $resultData;
+    }
+
+    public function crearIdDetalle($casi_id,$dasi_tipo,$cantidad) {
+        $con    = \Yii::$app->db_academico;
+        $transaccion = $con->beginTransaction();
+        $fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
+        $usu_id = @Yii::$app->session->get("PB_iduser");
+        
+        //$com_nombre = array_key_first($value);    
+        $sql = "INSERT INTO " . $con->dbname . ".detalle_asistencia
+                            (
+                              `casi_id`,
+                              `dasi_tipo`,
+                              `dasi_cantidad`,
+                              `dasi_usuario_creacion`,
+                              `dasi_estado`,
+                              `dasi_fecha_creacion`,
+                              `dasi_estado_logico`
+                            )
+                     VALUES(
+                              $casi_id,
+                              concat('p',$dasi_tipo),
+                              $cantidad,
+                              $usu_id,
+                              1,
+                              '$fecha_transaccion',
+                              1
+                )";
+        
+        $command = $con->createCommand($sql);
+        //$command->bindParam(":daca_id", $daca_id, \PDO::PARAM_INT);             
+        //$command->bindParam(":fecha", $fecha_transaccion, \PDO::PARAM_STR);
+        $idtabla= $command->execute();  
+
+        $idtable = $con->getLastInsertID($con->dbname . '.cabecera_calificacion');
+
+        $transaccion->commit();
+
+        \app\models\Utilities::putMessageLogFile('crearIdCabecera: '.$command->getRawSql());
+        return $idtable;
+    }
 }

@@ -1,8 +1,20 @@
-  $(document).ready(function () {
+ $(document).ready(function () {
     $('#btn_guardarasistencia').click(function() {
        cargarDocumentoAsistencia();
     });
     
+    $('#cmb_periodo').change(function(){
+        listarAsignaturas();
+    });
+    $('#cmb_materia').change(function(){
+        listarParalelos();
+    });
+    $('#cmb_parcial').change(function(){
+        listarSesiones();
+    });
+    // $('#grid_marcacion_list').change(function(){
+    //     crearInputs();
+    // });
     //$('#cmb_unidad').change(function () {       
     //    $('#cmb_profesor_asis').change();
     //});
@@ -111,6 +123,43 @@
      
     $('#btn_buscarDataregistro').click(function() {
         actualizarGridRegistro(0);
+    });
+    $('#btn_buscarDataregistroM').click(function() {
+        actualizarGridMarcacion();
+        // crearInputs();
+        //actualizarGridRegistro(0);
+    });
+    $('#btn_crearAsistencia').click(function() {
+        crearAsistencias();
+    });
+    // $('#checkAll').click(function() {
+    //     var cant = $('#cantidad_registros').val();
+    //     alert(cant);
+    //     // if($(this).is(":checked")){
+    //     if($(this).prop('checked')){
+    //         for($i = 1; $i < cant; $i++){
+    //             $( "#entrada_".$i ).prop( "checked", true );
+    //         }
+    //     }else{
+    //         for($i = 1; $i < cant; $i++){
+    //             $( "#entrada_".$i ).prop( "checked", true );
+    //         }
+    //     }
+    // });
+    $('#checkAll').click(function () {    
+        $('input:checkbox').prop('checked', this.checked);  
+        if($(this).prop("checked") == true){
+            console.log("Checkbox is checked.");
+            var texto = "Deseleccionar todos los estudiantes";
+        }
+        else if($(this).prop("checked") == false){
+            console.log("Checkbox is unchecked.");
+            var texto = "Seleccionar todos los estudiantes";
+        }  
+        // texto.replace("Seleccionar", "Deseleccionar");
+        // alert($('#text_seleccion').text());
+        // alert($('input:checkbox').prop('checked', this.checked));
+        $('#text_seleccion').html('<label id="text_seleccion" class="form-check-label" for="checkAll">'+texto+'</label>');
     });
 });
 
@@ -1474,4 +1523,306 @@ function actualizarGridRegistrodin(dready = 0) {
         //} if
         $('.dataTables_length').addClass('bs-select');
     }, true);
+}
+
+function actualizarGridMarcacion() {
+    var link = $('#txth_base').val() + "/academico/asistenciaregistrodocente/marcarasistencia";
+    var arrParams = new Object();
+    periodo   = $('#cmb_periodo option:selected').val();
+    uaca_id   = $('#cmb_unidad option:selected').val();
+    modalidad = $('#cmb_modalidad option:selected').val();  
+    materia   = $('#cmb_materia option:selected').val();  
+    profesor  = $('#cmb_profesor_asis').val();
+    sesion    = $('#cmb_sesion option:selected').val();
+    // tabla  = $('#grid_marcacion_list').html();
+    // alert(tabla);
+
+    console.log(arrParams);
+ 
+    filtros = 1;
+
+        showLoadingPopup();
+        setTimeout(function() {
+            //windows.location.href = $('#txth_base').val() + "/academico/registro/index";    
+            parent.window.location.href = link+'?modalidad='+modalidad+'&periodo='+periodo+'&uaca_id='+uaca_id+'&profesor='+profesor+'&materia='+materia+'&sesion='+sesion+'&PBgetFilter='+filtros;
+            hideLoadingPopup();
+            }, 1000);
+        // setTimeout(function() {
+        //     let tabla  = $('#grid_marcacion_list').html();
+        //     //tabla.replace('<td name="txt_m_"></td>',
+        //     tabla.replace('txt_m_',
+        //                 //'<td><input type="text"  class="form-control" value="" spellcheck="false" data-ms-editor="true" ></td>');
+        //                 'txt_m_2');
+        //     $('#grid_marcacion_list').html(tabla);
+        // }, 4000);
+        // alert(tabla);
+        
+    }
+    
+    // function crearInputs(){
+        
+//         // setTimeout(function() {
+//             tabla  = $('#grid_marcacion_list').html();
+//             tabla.replace('<td name="txt_m_"></td>',
+//             // tabla.replace('txt_m_',
+//                         '<td><input type="text"  class="form-control" value="" spellcheck="false" data-ms-editor="true" ></td>');
+//                         // 'txt_m_2');
+//             $('#grid_marcacion_list').html(tabla);
+//         // }, 1000);
+//         alert(tabla);
+// }
+
+function listarSesiones(){
+    var link = $('#txth_base').val() + "/academico/asistenciaregistrodocente/listarsesiones";
+    var asi_id = $('#cmb_materia option:selected').val();
+    var paca_id = $('#cmb_periodo option:selected').val();
+    var pro_id = $('#cmb_profesor_asis option:selected').val();
+    var paralelo = $('#cmb_parcial option:selected').val();
+    data = new FormData();
+    data.append( 'paca_id' , paca_id );
+    data.append( 'pro_id', pro_id);
+    data.append( 'asi_id', asi_id);
+    data.append( 'paralelo', paralelo);
+    //alert(link);
+    //DBE
+    $.ajax({
+        data: data,
+        type: "POST",
+        dataType: "json",
+        cache      : false,
+        contentType: false,
+        processData: false,
+        async: false,
+        url: link,
+        success: function (data) {
+            var datos = JSON.stringify(data);
+            var obj = JSON.parse(datos);
+            var html = '<option value="0" selected="">Seleccionar</option>';
+            var id = 0;
+            var count = 0;
+            //alert(obj);
+            $.each(obj.allModels, function( index, value ) {
+                var data = (value);                    
+                $.each(data, function( index2, value2 ) {
+                    if(index2 == 'id'){
+                        id = value2;
+                    }
+                    if(index2 == 'nombre'){
+                        html = html + `<option value=${id} >${value2}</option>`;
+                        count++;
+                    }
+                }); 
+            });
+            if(count>0){
+                $('#cmb_sesion').prop("disabled",false); 
+                $("#cmb_sesion")[0].selectedIndex=0;
+            }
+            $("#cmb_sesion").html(html);
+            // alert(html);
+        }
+    });
+}
+function listarAsignaturas(){
+    var link = $('#txth_base').val() + "/academico/asistenciaregistrodocente/listarasignaturas";
+    var paca_id = $('#cmb_periodo option:selected').val();
+    var pro_id = $('#cmb_profesor_asis option:selected').val();
+    data = new FormData();
+    data.append( 'paca_id' , paca_id );
+    data.append( 'pro_id', pro_id);
+    //alert(link);
+    //DBE
+    $.ajax({
+        data: data,
+        type: "POST",
+        dataType: "json",
+        cache      : false,
+        contentType: false,
+        processData: false,
+        async: false,
+        url: link,
+        success: function (data) {
+            var datos = JSON.stringify(data);
+            var obj = JSON.parse(datos);
+            var html = '<option value="0" selected="">Seleccionar</option>';
+            var id = 0;
+            var count = 0;
+            //alert(obj);
+            $.each(obj.allModels, function( index, value ) {
+                var data = (value);                    
+                $.each(data, function( index2, value2 ) {
+                    if(index2 == 'id'){
+                        id = value2;
+                    }
+                    if(index2 == 'nombre'){
+                        html = html + `<option value=${id} >${value2}</option>`;
+                        count++;
+                    }
+                }); 
+            });
+            if(count>0){
+                $('#cmb_materia').prop("disabled",false); 
+                $("#cmb_materia")[0].selectedIndex=0;
+            }
+            $("#cmb_materia").html(html);
+            //  alert(html);
+        }
+    });
+}
+
+
+function listarParalelos(){
+    var link = $('#txth_base').val() + "/academico/asistenciaregistrodocente/listarparalelos";
+    var asi_id = $('#cmb_materia option:selected').val();
+    var mod_id = $('#cmb_modalidad option:selected').val();
+    var paca_id = $('#cmb_periodo option:selected').val();
+    var pro_id = $('#cmb_profesor_asis option:selected').val();
+    data = new FormData();
+    data.append( 'asi_id' , asi_id );
+    data.append( 'mod_id', mod_id);
+    data.append( 'paca_id' , paca_id);
+    data.append( 'pro_id' , pro_id);
+    //alert(link);
+    //DBE
+    $.ajax({
+        data: data,
+        type: "POST",
+        dataType: "json",
+        cache      : false,
+        contentType: false,
+        processData: false,
+        async: false,
+        url: link,
+        success: function (data) {
+            var datos = JSON.stringify(data);
+            var obj = JSON.parse(datos);
+            var html = '<option value="0" selected="">Seleccionar</option>';
+            var id = 0;
+            var count = 0;
+            //alert(obj);
+            $.each(obj.allModels, function( index, value ) {
+                var data = (value);                    
+                $.each(data, function( index2, value2 ) {
+                    if(index2 == 'id'){
+                        id = value2;
+                    }
+                    if(index2 == 'nombre'){
+                        html = html + `<option value=${id} >${value2}</option>`;
+                        count++;
+                    }
+                }); 
+            });
+            
+            if(count>0){
+               $('#cmb_parcial').prop("disabled",false); 
+               $("#cmb_parcial")[0].selectedIndex=0;
+            }else{
+               $('#cmb_parcial').prop("disabled",true); 
+           }
+            $("#cmb_parcial").html(html);
+            // alert(html);
+        }
+    });
+}
+function crearAsistencias(){
+    var count = $('#cantidad_registros').val();
+    //alert('Asistencias Creadas '+count);
+    var link = $('#txth_base').val() + "/academico/asistenciaregistrodocente/registrarasistencia";
+    var contenido = '';
+    var pro = $('#cmb_profesor_asis option:selected').val();
+    var paca = $('#txth_periodo').val();
+    var materia =$('#txth_materia').val();
+    var sesion =$('#txth_sesion').val();
+    var unidad =$('#txth_unidad').val();
+    // if($('#cmb_sesion option:selected').val() != 0){
+        for($i = 1; $i <= count; $i++){
+            var id = $('#id_'+$i).text();
+            var asi_id = $('#asi_id_'+$i).text();
+            var paca_id = $('#paca_id_'+$i).text();
+            var mod_id = $('#mod_id_'+$i).text();
+            var pro_id = $('#pro_id_'+$i).text();
+            var est_id = $('#est_id_'+$i).text();
+            var daho_id = $('#daho_id_'+$i).text();
+            var rmtm_id = $('#rmtm_id'+$i).text();
+            var parcial = $('#parcial_'+$i).text();
+            var atraso = $('#entrada_'+$i).val();
+            var retiro = $('#salida_'+$i).val();
+            var check = $('#entrada_'+$i).prop('checked', this.checked); 
+            // var ch = $('#entrada_'+$i+'::checked').length();
+            $('#txt_inicio_'+$i).each(function () {    
+                $('#txt_inicio_'+$i+':checkbox').prop('checked', this.checked);  
+                if($(this).prop("checked") == true){
+                    console.log("Checkbox_"+$i+" is checked.");
+                    contenido = contenido+'per_id: '+id+'-'+asi_id+'-'+paca_id+'-'+mod_id+'-'+pro_id+'-'+est_id+'-'+daho_id+'-'+rmtm_id+'-'+atraso+'-'+retiro+'-'+parcial+',';
+                }
+                else if($(this).prop("checked") == false){
+                    console.log("Checkbox is unchecked.");
+                }  
+            });
+            
+        }
+    // }else{
+    //     alert('Escoja una sesion para continuar.');
+    // }
+    contenido = contenido.slice(0, -1);
+    alert('Listado '+contenido);
+    var arrParams = new Object();
+    arrParams.contenido = contenido;
+    arrParams.profesor = pro;
+    arrParams.periodo = paca;
+    arrParams.materia = materia;
+    arrParams.sesion = sesion;
+    arrParams.unidad = unidad;
+    arrParams.sesion = $('#cmb_sesion option:selected').val();
+
+
+        arrParams.DATAS = sessionStorage.dts_datosItemplan
+        requestHttpAjax(link, arrParams, function (response) {
+            var message = response.message;
+            if (response.status == "OK") {
+                showAlert(response.status, response.type, { "wtmessage": message.info, "title": response.label });
+                setTimeout(function () {
+                    //parent.window.location.href = $('#txth_base').val() + "/academico/asistenciaregistrodocente/registrarasistencia";
+                }, 4000);
+            } else {
+                showAlert(response.status, response.type, { "wtmessage": message.info, "title": response.label });
+            }
+        }, true);
+        
+        
+    // $.ajax({
+    //     data: data,
+    //     type: "POST",
+    //     dataType: "json",
+    //     cache      : false,
+    //     contentType: false,
+    //     processData: false,
+    //     async: false,
+    //     url: link,
+    //     success: function (data) {
+    //         var datos = JSON.stringify(data);
+    //         var obj = JSON.parse(datos);
+    //         var html = '<option value="0" selected="">Seleccionar</option>';
+    //         var id = 0;
+    //         var count = 0;
+    //         //alert(obj);
+    //         $.each(obj.allModels, function( index, value ) {
+    //             var data = (value);                    
+    //             $.each(data, function( index2, value2 ) {
+    //                 if(index2 == 'id'){
+    //                     id = value2;
+    //                 }
+    //                 if(index2 == 'nombre'){
+    //                     html = html + `<option value=${id} >${value2}</option>`;
+    //                     count++;
+    //                 }
+    //             }); 
+    //         });
+    //         if(count>0){
+    //             $('#cmb_materia').prop("disabled",false); 
+    //             $("#cmb_materia")[0].selectedIndex=0;
+    //         }
+    //         $("#cmb_materia").html(html);
+    //         //  alert(html);
+    //     }
+    // });
 }

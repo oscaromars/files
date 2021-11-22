@@ -1256,13 +1256,26 @@ class AsistenciaregistrodocenteController extends \app\components\CController {
         $sems = $horasasignatura['paca_semanas_periodo'];
         $hours = $horasasignatura['daho_total_horas'];
 
-       /*  if ($data['modalidad'] == 1) {
+         if ($data['modalidad'] == 1) {
          $sems = $horasasignatura['paca_semanas_periodo'];  $sems =2;
            $hours = $horasasignatura['daho_total_horas'];   $hours = 30;
-        }Else {*/
+        }
+
+         if ($data['modalidad'] == 2) {
          $sems = $horasasignatura['paca_semanas_periodo'];  $sems =10;
          $hours = $horasasignatura['daho_total_horas'];   $hours = 6;
-       // } 
+       } 
+
+        if ($data['parcial'] == 1) {
+         $sems = $sems /2;
+        
+                } 
+
+         if ($data['parcial'] == 2) {
+         $sems = $sems /2;
+        
+                } 
+
 
          
          \app\models\Utilities::putMessageLogFile('SEMANAS '.$horasasignatura['paca_semanas_periodo']);  
@@ -1272,6 +1285,10 @@ class AsistenciaregistrodocenteController extends \app\components\CController {
         $model['data']        = $model_cabasistencia->getAsistenciadin($arrSearch);    
 
         for ($x = 0; $x< $sems; ++$x) {
+            $xx = $x+1;
+            if ($data['parcial'] == 2) {
+         $xx = $xx + $sems;
+                } 
              $nombre ='s'.$x;
             $componentes[$nombre] = array(
                 'id'=> 's'.$x ,

@@ -1711,14 +1711,14 @@ function listarParalelos(){
                     }
                 }); 
             });
-            
+            /*
             if(count>0){
                $('#cmb_parcial').prop("disabled",false); 
                $("#cmb_parcial")[0].selectedIndex=0;
             }else{
                $('#cmb_parcial').prop("disabled",true); 
            }
-            $("#cmb_parcial").html(html);
+            $("#cmb_parcial").html(html);*/
             // alert(html);
         }
     });

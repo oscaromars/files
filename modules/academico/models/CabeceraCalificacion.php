@@ -322,17 +322,18 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord {
 	public function getPeriodoCalificaciones($grupos, $paca_id) {
 		$con = Yii::$app->db_academico;
 
-		if ($grupo == 1) {
-			$fecha_cierre = "paca.paca_fecha_cierre_fin as fin";
-			$str_search = " now() >= paca.paca_fecha_inicio and now()<= paca.paca_fecha_cierre_fin and ";
-		} elseif ($grupo >= 6 and $grupo <= 8) {
+		if ($grupos == 1) {
+			$fecha_cierre = "case when IFNULL(paca.paca_fecha_cierre_fin,0) = 0 then paca.paca_fecha_fin else paca.paca_fecha_cierre_fin end as fin";
+			$str_search = " now() >= paca.paca_fecha_inicio and now()<= case when IFNULL(paca.paca_fecha_cierre_fin,0) = 0 then paca.paca_fecha_fin else paca.paca_fecha_cierre_fin end AND ";
+		} elseif ($grupos >= 6 and $grupo <= 8) {
 			$fecha_cierre = "paca.paca_fecha_fin as fin";
-			$str_search = " now() >= paca.paca_fecha_inicio and now()<= paca.paca_fecha_fin and ";
+			$str_search = " now() >= paca.paca_fecha_inicio and now()<= paca.paca_fecha_fin AND ";
 		}
 
-		$sql = "SELECT paca.paca_fecha_inicio, " . $fecha_cierre . "
+		$sql = "SELECT paca.paca_fecha_inicio as inicio,  $fecha_cierre
                 FROM db_academico.periodo_academico as paca
-                WHERE " . $str_search . " paca.paca_id = " . $paca_id;
+                WHERE  $str_search
+                paca.paca_id =  $paca_id";
 
 		$comando = $con->createCommand($sql);
 		$resultData = $comando->queryOne();
@@ -1048,9 +1049,9 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord {
 
 		$sql = "SELECT (@row_number:=@row_number + 1) AS row_num,  data.*
                   FROM (
-                 SELECT est.est_id
-                        ,est.est_matricula as matricula
-                        ,concat(per.per_pri_nombre,' ',per.per_pri_apellido) as nombre
+                 SELECT daes.est_id
+                        ,ifnull(est.est_matricula,'') as matricula
+                        ,concat(per.per_pri_apellido,' ',per.per_pri_nombre) as nombre
                         ,CASE WHEN ecun.ecal_id = 1 THEN'Parcial I'
                               WHEN ecun.ecal_id = 2 THEN'Parcial II'
                               WHEN ecun.ecal_id = 3 THEN'Supletorio'
@@ -1136,12 +1137,12 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord {
                     AND clfc.asi_id  = asi.asi_id
                     AND clfc.ecun_id = ecun.ecun_id
                   WHERE ecun.ecal_id = 1 or ecun.ecal_id = 2 or ecun.ecal_id = 3
-               ORDER BY 3,4 LIMIT 5000
+
             ) as data
             ,(SELECT @row_number:=0) AS t
             WHERE 1=1
-                $str_search
-                and data.paca_activo='A'
+                  $str_search
+            Order by data.nombre asc
             ";
 
 		$comando = $con->createCommand($sql);
@@ -2012,57 +2013,54 @@ croe.croe_exec,ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca
 	}
 
 /**
-	 * Function obtener saldo deuda estudiantes (True es saldo cero)
-	 * @author  <analistadesarrollo05@uteg.edu.ec>
-	 * @return
-	 */
-	public function getPagopend($cedusuedu)  { 
+ * Function obtener saldo deuda estudiantes (True es saldo cero)
+ * @author  <analistadesarrollo05@uteg.edu.ec>
+ * @return
+ */
+	public function getPagopend($cedusuedu) {
 
-         $ceduladni['cedula']=$cedusuedu;        
-        $url = "https://acade.uteg.edu.ec/planificaciondesa/grades.php"; 
-        $content = json_encode($ceduladni); 
-        $curl = curl_init($url);  
-        curl_setopt($curl, CURLOPT_HEADER, false);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);   
-        curl_setopt($curl, CURLOPT_HTTPHEADER,  
-        array("Content-type: application/json"));
-        curl_setopt($curl, CURLOPT_POST, true);
-        curl_setopt($curl, CURLOPT_POSTFIELDS, $content); 
-        $json_response = curl_exec($curl);  //--
-        $status = curl_getinfo($curl, CURLINFO_HTTP_CODE); 
-        if ( $status != 200 ) {                
-        die(" status $status content $content "); 
-         }
-        $html = curl_multi_getcontent($curl); 
-        $response = json_decode($json_response, true); //--
-        print_r(" status $status content $content $response $html  "); 
-        curl_close($curl);   
+		$ceduladni['cedula'] = $cedusuedu;
+		$url = "https://acade.uteg.edu.ec/planificaciondesa/grades.php";
+		$content = json_encode($ceduladni);
+		$curl = curl_init($url);
+		curl_setopt($curl, CURLOPT_HEADER, false);
+		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($curl, CURLOPT_HTTPHEADER,
+			array("Content-type: application/json"));
+		curl_setopt($curl, CURLOPT_POST, true);
+		curl_setopt($curl, CURLOPT_POSTFIELDS, $content);
+		$json_response = curl_exec($curl); //--
+		$status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+		if ($status != 200) {
+			die(" status $status content $content ");
+		}
+		$html = curl_multi_getcontent($curl);
+		$response = json_decode($json_response, true); //--
+		print_r(" status $status content $content $response $html  ");
+		curl_close($curl);
 
+		//  %saldo%
+		$allresponse = explode('":"', $html);
+		if (isset($allresponse[1])) {
+			$saldos = explode('"', $allresponse[1]);
+			print_r('SALDO ==> ' . $saldos[0]);
 
-       //  %saldo%
-         $allresponse = explode('":"', $html);
-         if (isset($allresponse[1])) {
-         $saldos = explode('"', $allresponse[1]);
-         print_r('SALDO ==> '.$saldos[0]);
+		} else {
 
-         } else {
-        
-        print_r('SALDO ==> 0.00');
+			print_r('SALDO ==> 0.00');
 
-         }
-         
+		}
 
-          if (isset($saldos[0])){
-        if ($saldos[0] == 0){
-         return True;
-        }else {
-           return False;
-        }
-        } else
-        {
-          return True;  
-        }
-  
-     }  
+		if (isset($saldos[0])) {
+			if ($saldos[0] == 0) {
+				return True;
+			} else {
+				return False;
+			}
+		} else {
+			return True;
+		}
+
+	}
 
 }

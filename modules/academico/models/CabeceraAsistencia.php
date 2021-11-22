@@ -1691,13 +1691,30 @@ class CabeceraAsistencia extends \yii\db\ActiveRecord
           }
         
 
-           $sql .= "  
+          if ($nombre == 'u1') {
+
+ $sql .= "  
             
             ,(select dasi.dasi_cantidad from " . $con->dbname . ".detalle_asistencia dasi 
                               where dasi.casi_id = casi.casi_id
                              and dasi.dasi_tipo = '".$nombre."') as '".$nombre."'
 
             ";
+
+        }
+
+          if ($nombre == 'u2') {
+            
+ $sql .= "  
+            
+            ,(select dasi.dasi_cantidad from " . $con->dbname . ".detalle_asistencia dasi 
+                              where dasi.casi_id = casi.casi_id + 1
+                             and dasi.dasi_tipo = '".$nombre."') as '".$nombre."'
+
+            ";
+
+        }
+          
 
             }
         //////////////////////////////////////////////////////////////////////////////////

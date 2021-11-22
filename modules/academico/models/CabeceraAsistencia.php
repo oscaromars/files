@@ -275,9 +275,12 @@ class CabeceraAsistencia extends \yii\db\ActiveRecord
                          ,data.nombre
                          ,data.matricula
                          ,data.materia
+                         ,sum(data.u1) as u1
+                         ,sum(data.u4) as u2
+
                         ";
         
-                        if ($arrFiltro['parcial'] == 1){
+                     /*   if ($arrFiltro['parcial'] == 1){
             $sql .= "     ,sum(data.u1) as u1
 
                              ";   
@@ -287,7 +290,7 @@ class CabeceraAsistencia extends \yii\db\ActiveRecord
             $sql .= "     ,sum(data.u4) as u2
 
                              ";   
-        }
+        }*/
 
 
 

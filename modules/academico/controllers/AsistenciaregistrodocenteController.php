@@ -1285,22 +1285,22 @@ class AsistenciaregistrodocenteController extends \app\components\CController {
         $model['data']        = $model_cabasistencia->getAsistenciadin($arrSearch);   
          
   for ($x = 0; $x< $sems; ++$x) {
-            $xx = $x+1;
+            $xx = $x+1;if ($x==9){ $xx = 0;}
             if ($data['parcial'] == 2) {
          $xx = $xx + $sems;
                 } 
-             $nombre ='s'.$x;
-   if ($data['modalidad'] == 1){  $nombre ='P'.$x; }
+             $nombre ='s'.$xx;
+   if ($data['modalidad'] == 1){  $nombre ='u'.$xx; }
 
             $componentes[$nombre] = array(
-                'id'=> 's'.$x ,
+                'id'=> 's'.$xx ,
                 'notamax'=>$hours,
             );
 
              if ($data['modalidad'] == 1){ 
 
          $componentes[$nombre] = array(
-                'id'=> 'P'.$x ,
+                'id'=> 'u'.$xx ,
                 'notamax'=>$hours,
             );
 

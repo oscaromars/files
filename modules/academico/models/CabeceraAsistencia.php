@@ -1671,19 +1671,20 @@ class CabeceraAsistencia extends \yii\db\ActiveRecord
 
  
               //////////////////////////////////////////////////////////////////////////////////
-       for ($x = 0; $x< $sems; ++$x) {
-             $nombre ='s'.$x;
-              if ($arrFiltro['modalidad'] == 1){  $nombre ='P'.$x; 
+             for ($x = 0; $x< $sems; ++$x) {
+             $xx = $x+1; if ($x==9){ $xx = 0;}
+             $nombre ='s'.$xx;
+              if ($arrFiltro['modalidad'] == 1){  $nombre ='u'.$xx; 
 
           }
             $componentes[$nombre] = array(
-                'id'=> 's'.$x ,
+                'id'=> 's'.$xx ,
                 'notamax'=>$hours,
             );
          if ($arrFiltro['modalidad'] == 1){ 
 
          $componentes[$nombre] = array(
-                'id'=> 'P'.$x ,
+                'id'=> 'u'.$xx ,
                 'notamax'=>$hours,
             );
 

@@ -1282,18 +1282,30 @@ class AsistenciaregistrodocenteController extends \app\components\CController {
          \app\models\Utilities::putMessageLogFile('HORAS '.$horasasignatura['daho_total_horas']); 
         $model       = array();
         $componentes = array();
-        $model['data']        = $model_cabasistencia->getAsistenciadin($arrSearch);    
-
-        for ($x = 0; $x< $sems; ++$x) {
+        $model['data']        = $model_cabasistencia->getAsistenciadin($arrSearch);   
+         
+  for ($x = 0; $x< $sems; ++$x) {
             $xx = $x+1;
             if ($data['parcial'] == 2) {
          $xx = $xx + $sems;
                 } 
              $nombre ='s'.$x;
+   if ($data['modalidad'] == 1){  $nombre ='P'.$x; }
+
             $componentes[$nombre] = array(
                 'id'=> 's'.$x ,
                 'notamax'=>$hours,
             );
+
+             if ($data['modalidad'] == 1){ 
+
+         $componentes[$nombre] = array(
+                'id'=> 'P'.$x ,
+                'notamax'=>$hours,
+            );
+
+          }
+
             }
            \app\models\Utilities::putMessageLogFile('resultado es ok'.$componentes["s0"]["id"]);
         $model['componentes'] = $componentes;       

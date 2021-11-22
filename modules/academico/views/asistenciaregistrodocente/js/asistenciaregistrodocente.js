@@ -1153,8 +1153,22 @@ function actualizarGridRegistrodin(dready = 0) {
 ////////////////////////////////////////////////////////////////////////////////////////
 
 
+ if (arrParams.modalidad == 1) {
+
         //Esta es la funcion en el controlador que actualizara las notas
-        var url_editor = $('#txth_base').val() + "/academico/asistenciaregistrodocente/actualizarnotaasistenciadin";
+        var url_editor = $('#txth_base').val() + "/academico/asistenciaregistrodocente/actualizarnotaasistencia";
+
+}
+
+
+ if (arrParams.modalidad != 1) {
+
+        //Esta es la funcion en el controlador que actualizara las notas
+        var url_editor = $('#txth_base').val() + "/academico/asistenciaregistrodocente/actualizarnotaasistenciasemanal";
+
+}
+
+
 
         //Armamos el componente editor, aqui el indicamos que campos del grid son editables
         editor = new $.fn.dataTable.Editor( {

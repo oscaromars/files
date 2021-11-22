@@ -1613,6 +1613,15 @@ class CabeceraAsistencia extends \yii\db\ActiveRecord
         $horasasignatura = $modelpaca->getHorasmaxAsistenciaxest($daes[0]['daes_id']);
         $sems = $horasasignatura['paca_semanas_periodo'];  $sems =10;
         $hours = $horasasignatura['daho_total_horas'];   $hours = 6;
+        if ($arrFiltro['modalidad'] == 1){
+     $sems =2; $hours = 30;
+  }
+
+       if ($arrFiltro['modalidad'] == 2){
+     $sems =10; $hours = 6;
+  }
+
+
 /////////////////////////////////////////////////////////////////////////////////////////
 
         if (isset($arrFiltro) && count($arrFiltro) > 0) {
@@ -1662,12 +1671,24 @@ class CabeceraAsistencia extends \yii\db\ActiveRecord
 
  
               //////////////////////////////////////////////////////////////////////////////////
-         for ($x = 0; $x< $sems; ++$x) {
-             $nombre ='s'.$x;
+             for ($x = 0; $x< $sems; ++$x) {
+             $xx = $x+1; if ($x==9){ $xx = 0;}
+             $nombre ='s'.$xx;
+              if ($arrFiltro['modalidad'] == 1){  $nombre ='u'.$xx; 
+
+          }
             $componentes[$nombre] = array(
-                'id'=> 's'.$x ,
+                'id'=> 's'.$xx ,
                 'notamax'=>$hours,
             );
+         if ($arrFiltro['modalidad'] == 1){ 
+
+         $componentes[$nombre] = array(
+                'id'=> 'u'.$xx ,
+                'notamax'=>$hours,
+            );
+
+          }
         
 
            $sql .= "  

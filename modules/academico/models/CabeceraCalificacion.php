@@ -1191,7 +1191,7 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord {
 	 * @return
 	 *  Consulta dal calificaciones de los estudiantes pot Docente y Priodo academico y  asignatura
 	 */
-	public function consultaCalificacionRegistroDocenteAllSearch($uaca_id, $paca_id, $asi_id, $pro_id, $mod_id, $onlyData = false) {
+	public function consultaCalificacionRegistroDocenteAllSearch($uaca_id, $paca_id, $asi_id, $pro_id, $mod_id, $est, $onlyData = false) {
 		$con = \Yii::$app->db_academico;
 		$con1 = \Yii::$app->db_asgard;
 		$estado = 1;
@@ -1216,6 +1216,10 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord {
 
 		if ($mod_id != "" && $mod_id > 0) {
 			$str_search .= " meun.mod_id  = :mod_id AND ";
+		}
+
+		if ($est != "" && $est > 0) {
+			$str_search .= " estudiante.est_id  = $est AND ";
 		}
 
 		$sql = "SELECT DISTINCT

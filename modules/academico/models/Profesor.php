@@ -407,7 +407,7 @@ class Profesor extends \yii\db\ActiveRecord {
                        ,pro.pro_id
                        ,per.per_cedula
                        ,per.per_correo
-                       ,CONCAT(per.per_pri_nombre, ' ', per.per_pri_apellido) AS nombres
+                       ,CONCAT(per.per_pri_apellido, ' ', per.per_pri_nombre) AS nombres
                   FROM " . $con_asgard->dbname . ".persona as per
             INNER JOIN " . $con_academico->dbname . ".profesor AS pro ON pro.per_id = per.per_id
             INNER JOIN " . $con_academico->dbname . ".distributivo_academico AS daca ON daca.pro_id = pro.pro_id

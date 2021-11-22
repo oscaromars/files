@@ -95,8 +95,9 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 
 			if (isset($data["getasignaturas_prof_periodo"])) {
 				$asignatura = $Asignatura_distri->getAsignaturaByProfesorDistributivo($data["paca_id"], $data['pro_id'], $data["uaca_id"], $data["mod_id"]);
+				$profesorup = $mod_profesor->getProfesoresEnAsignaturasByall($data["paca_id"], $data["uaca_id"], $data["mod_id"]);
 				$paralelo_clcf = [];
-				$message = array("asignatura" => $asignatura, "paralelo_clcf" => $paralelo_clcf);
+				$message = array("asignatura" => $asignatura, "profesorup" => $profesorup);
 				return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
 			}
 
@@ -185,7 +186,7 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 			'arr_modalidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Todos")]], $arr_modalidad), "id", "name"),
 			// 'arr_carrerra1' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $arr_carrerra1), "id", "name"),
 			'arr_estados' => $this->estados(),
-			'arr_profesor_all' => ArrayHelper::map(array_merge($arr_profesor_all), "pro_id", "nombres"),
+			'arr_profesor_all' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Todos")]], $arr_profesor_all), "id", "name"),
 		]); //
 	} //function actionIndex
 
@@ -238,6 +239,29 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 				$message = array("parcial" => $parcial);
 				return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
 			}
+
+			if (isset($data["getasignaturas_prof_periodo_reg"])) {
+				$asignatura = $Asignatura_distri->getAsignaturaByProfesorDistributivo($data["paca_id"], $data['pro_id'], $data["uaca_id"], $data["mod_id"]);
+				$profesorreg = $mod_profesor->getProfesoresEnAsignaturasByall($data["paca_id"], $data["uaca_id"], $data["mod_id"]);
+				$paralelo_clcf = [];
+				$message = array("asignatura" => $asignatura, "profesorreg" => $profesorreg);
+				return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+			}
+
+			if (isset($data["getasignaturas_uaca_reg"])) {
+				$asignatura = $Asignatura_distri->getAsignaturaByProfesorDistributivo($data["paca_id"], $data['pro_id'], $data["uaca_id"], $data["mod_id"]);
+				$profesorreg = $mod_profesor->getProfesoresEnAsignaturasByall($data["paca_id"], $data["uaca_id"], $data["mod_id"]);
+				$message = array("asignatura" => $asignatura, "profesorreg" => $profesorreg);
+				return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+			}
+
+			if (isset($data["getasignaturas_bus_reg"])) {
+				$asignatura = $Asignatura_distri->getAsignaturaByProfesorDistributivo($data["paca_id"], $data['pro_id'], $data["uaca_id"], $data["mod_id"]);
+				$profesorreg = $mod_profesor->getProfesoresEnAsignaturasByall($data["paca_id"], $data["uaca_id"], $data["mod_id"]);
+				$message = array("asignatura" => $asignatura, "profesorreg" => $profesorreg);
+				return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+			}
+
 			if (isset($data["getmateria"])) {
 				$materia = $Asignatura_distri->getAsignaturasBy($data["pro_id"], $data["uaca_id"], $data["paca_id"]);
 				$message = array("materia" => $materia);
@@ -274,15 +298,15 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 		}
 
 		return $this->render('register', [
-			'arr_periodos' => ArrayHelper::map($arr_periodos, "id", "nombre"),
+			'arr_periodos' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $arr_periodos), "id", "name"),
 			//'arr_ninteres'      => ArrayHelper::map(array_merge([["id" => "", "name" => Yii::t("formulario", "All")]], $arr_ninteres), "id", "name"),
-			'arr_ninteres' => ArrayHelper::map($arr_ninteres, "id", "name"),
-			'arr_modalidad' => ArrayHelper::map($arr_modalidad, "id", "name"),
+			'arr_ninteres' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $arr_ninteres), "id", "name"),
+			'arr_modalidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $arr_modalidad), "id", "name"),
 			'arr_asignatura' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $asignatura), "id", "name"),
 			'arr_parcial' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $arr_parcialunidad), "id", "name"),
 			'pro_id' => $arr_profesor["Id"],
 			'model' => "",
-			'arr_profesor_all' => ArrayHelper::map(array_merge($arr_profesor_all), "pro_id", "nombres"),
+			'arr_profesor_all' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $arr_profesor_all), "id", "name"),
 			'arr_grupos' => $arr_grupos[0]['id'],
 			'isreg' => $isreg,
 			//'arr_profesor_all' => ArrayHelper::map($arr_profesor_all, "pro_id", "nombres"),

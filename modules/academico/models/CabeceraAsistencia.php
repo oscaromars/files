@@ -1540,19 +1540,19 @@ class CabeceraAsistencia extends \yii\db\ActiveRecord
         }   
         
              ///////////////////////////////////////////////////////////////////
-        //YA CON LA CABECERA VAMOS A VERIFICAR QUE TENGA DETALLE PARA S0 //
+        //YA CON LA CABECERA VAMOS A VERIFICAR QUE TENGA DETALLE PARA S10 //
         ///////////////////////////////////////////////////////////////////
         $sql = "SELECT dasi.dasi_id, dasi.casi_id
                   FROM db_academico.detalle_asistencia dasi
                  WHERE dasi.casi_id   = $casi_id 
-                   AND dasi.dasi_tipo = 's0'";
+                   AND dasi.dasi_tipo = 's10'";
 
         $command = $con->createCommand($sql);
-        $res_s0  = $command->queryOne();
+        $res_s10  = $command->queryOne();
 
         //Pregunto si existe el detalle U1
-        if(empty($res_s0)){
-            $s0      = $data['s0'];
+        if(empty($res_s10)){
+            $s10      = $data['s10'];
             $sql = "INSERT INTO db_academico.detalle_asistencia
                                 (`casi_id`,
                      --            `ecal_id`,
@@ -1565,21 +1565,21 @@ class CabeceraAsistencia extends \yii\db\ActiveRecord
                                 VALUES
                                 ($casi_id,
                       --           2,
-                                 $s0,
-                                 's0',
+                                 $s10,
+                                 's10',
                                  $usu_id,
                                  $estado,
                                  now(),
                                  1)";
         }else{
-            $dasi_id = $res_s0['dasi_id'];
-            $s0      = $data['s0'];
+            $dasi_id = $res_s10['dasi_id'];
+            $s10      = $data['s10'];
             $sql = "UPDATE db_academico.detalle_asistencia 
-                       set dasi_cantidad = $s0
+                       set dasi_cantidad = $s10
                      WHERE dasi_id = $dasi_id";
         }
 
-        if($s0 != ''){
+        if($s10 != ''){
             $command = $con->createCommand($sql);
             $result  = $command->execute();
         }   
@@ -1643,7 +1643,7 @@ class CabeceraAsistencia extends \yii\db\ActiveRecord
                          ,sum(data.s7) as s7
                          ,sum(data.s8) as s8
                          ,sum(data.s9) as s9
-                         ,sum(data.s0) as s0
+                         ,sum(data.s10) as s10
                         ";
 
 
@@ -1737,7 +1737,7 @@ class CabeceraAsistencia extends \yii\db\ActiveRecord
                         ,(select dasi.dasi_cantidad from " . $con->dbname . ".detalle_asistencia dasi 
                             where dasi.casi_id = casi.casi_id
                             -- and ecun.ecal_id = 2
-                            and dasi.dasi_tipo = 's0') as s0
+                            and dasi.dasi_tipo = 's10') as s10
 
 
                         , daca.mod_id

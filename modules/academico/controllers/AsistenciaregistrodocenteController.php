@@ -814,7 +814,7 @@ class AsistenciaregistrodocenteController extends \app\components\CController {
         $valor["s7"]       = $data['data'][$row_id]['s7'];
         $valor["s8"]       = $data['data'][$row_id]['s8'];
         $valor["s9"]       = $data['data'][$row_id]['s9'];
-        $valor["s0"]       = $data['data'][$row_id]['s0'];
+        $valor["s10"]       = $data['data'][$row_id]['s10'];
 
         //print_r($data); die();
 
@@ -1285,15 +1285,16 @@ class AsistenciaregistrodocenteController extends \app\components\CController {
         $model['data']        = $model_cabasistencia->getAsistenciadin($arrSearch);   
          
   for ($x = 0; $x< $sems; ++$x) {
-            $xx = $x+1;if ($x==9){ $xx = 0;}
+            $xy= $x+1;
+            $xx = $x+1;
             if ($data['parcial'] == 2) {
-         $xx = $xx + $sems;
+         $xx = $xx + $sems; $xy = $xy + $sems;
                 } 
-             $nombre ='s'.$xx;
+             $nombre ='s'.$xy;
    if ($data['modalidad'] == 1){  $nombre ='u'.$xx; }
 
             $componentes[$nombre] = array(
-                'id'=> 's'.$xx ,
+                'id'=> 's'.$xy ,
                 'notamax'=>$hours,
             );
 

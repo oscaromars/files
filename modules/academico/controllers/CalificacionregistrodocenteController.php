@@ -234,6 +234,7 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 		if (Yii::$app->request->isAjax) {
 			$data = Yii::$app->request->post();
 			$periodo = $data['paca_id'];
+
 			if (isset($data["getparcial"])) {
 				$parcial = $mod_periodo->getParcialUnidad($data["uaca_id"]);
 				$message = array("parcial" => $parcial);
@@ -263,7 +264,7 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 			}
 
 			if (isset($data["getmateria"])) {
-				$materia = $Asignatura_distri->getAsignaturasBy($data["pro_id"], $data["uaca_id"], $data["paca_id"]);
+				$materia = $Asignatura_distri->getAsignaturaByProfesorDistributivo($data["paca_id"], $data['pro_id'], $data["uaca_id"], $data["mod_id"]);
 				$message = array("materia" => $materia);
 				return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
 			}
@@ -1569,7 +1570,7 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 		/* return Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), false, $ron_id); */
 
 		//$arr_estudiante = $cabeceraCalificacion->consultaCalificacionRegistroDocenteSearch($unidad,$periodo,$materia,$profesor);
-		$arr_estudiante = $cabeceraCalificacion->consultaCalificacionRegistroDocenteAllSearch($unidad, $periodo, $materia, $profesor, $modalidad, true);
+		$arr_estudiante = $cabeceraCalificacion->consultaCalificacionRegistroDocenteAllSearch($unidad, $periodo, $materia, $profesor, $modalidad, null, true);
 
 		// \app\models\Utilities::putMessageLogFile('arr_estudiante: ' . print_r($arr_estudiante, true));
 

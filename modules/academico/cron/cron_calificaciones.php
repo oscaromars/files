@@ -225,6 +225,7 @@ GLOBAL $dsn, $dbuser, $dbpass, $dbname;
       
  if (isset($response->categorias)) { 
                
+            $isdata = isset($response->categorias);  
                  var_dump($response);
                  var_dump($isauth);                
 
@@ -576,6 +577,20 @@ updatecabeceras($cabeceras[0]['ccal_id']);
 
         }  }  // END IS AUTH AND GET CATEGORIES (UNA VEZ POR ITEM)
 
+        if ($isauth AND $isdata) {} else {
+GLOBAL $dsn, $dbuser, $dbpass, $dbname;
+$con = new \PDO($dsn, $dbuser, $dbpass);
+$logg="
+INSERT INTO db_academico.temp_estudiantes_noprocesados 
+(daca_id,cedu_asi_id,uaca_id,paca_id,mod_id,pro_id,asi_id,est_id,per_id,uedu_usuario,per_cedula,isauth,isdata,teno_usuario_ingreso,teno_estado,teno_estado_logico)
+VALUES ($daca_id,$cedu_asi_id,$uaca_id,$paca_id,$mod_id,$pro_id,$asi_id,$est_id,$per_id,$uedu_usuario,$ced_id,$isauth,$isdata,'1','1','1');
+";
+ $comando = $con->prepare($logg);
+ $comando->execute();
+ $logsaver = $comando->fetchAll(\PDO::FETCH_ASSOC);
+
+}
+
           $countar++;
 
 
@@ -891,6 +906,19 @@ return $detalles;
 
 }
 
+function putbitacora($dcal_id,$dcalificacion){
+GLOBAL $dsn, $dbuser, $dbpass, $dbname;
+$con = new \PDO($dsn, $dbuser, $dbpass);
+$sql="
+INSERT INTO db_academico.registro_bitacora_nota
+(dcal_id, rbno_nota_anterior, rbno_nota_actual, rbno_usuario_creacion, rbno_estado, 
+rbno_estado_logico) VALUES ($dcal_id, '0',$dcalificacion, '1', '1', '1');
+";
+ $comando = $con->prepare($sql);
+ $comando->execute();
+ $bitacora = $comando->fetchAll(\PDO::FETCH_ASSOC);
+return $bitacora;
+}
 
 function getmaespaca($ccal_id){
  GLOBAL $dsn, $dbuser, $dbpass, $dbname;

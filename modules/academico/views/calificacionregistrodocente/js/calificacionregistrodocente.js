@@ -122,7 +122,7 @@ $(document).ready(function () {
         }, true);
     });
 
-        $('#cmb_periodo_clfc').change(function () {
+    $('#cmb_periodo_clfc').change(function () {
         var link = $('#txth_base').val() + "/academico/calificacionregistrodocente/index";
         var arrParams = new Object();
         arrParams.paca_id = $(this).val();
@@ -131,15 +131,15 @@ $(document).ready(function () {
         arrParams.pro_id = $('#cmb_profesor_clfc').val();
         arrParams.getasignaturas_prof_periodo = true;
         requestHttpAjax(link, arrParams, function (response) {
-                if (response.status == "OK") {
-                    data = response.message;
-                    setComboDataselect(data.asignatura, "cmb_materiabus", "Seleccionar");
-                    setComboDataselectpro(data.profesorup, "cmb_profesor_clfc","Todos");
-                }
-            }, true);
-        });
+            if (response.status == "OK") {
+                data = response.message;
+                setComboDataselect(data.asignatura, "cmb_materiabus", "Seleccionar");
+                setComboDataselectpro(data.profesorup, "cmb_profesor_clfc","Todos");
+            }
+        }, true);
+    });
 
-      $('#cmb_modalidad').change(function () {
+    $('#cmb_modalidad').change(function () {
         var link = $('#txth_base').val() + "/academico/calificacionregistrodocente/index";
         var arrParams = new Object();
         arrParams.paca_id = $('#cmb_periodo_clfc').val();
@@ -156,22 +156,71 @@ $(document).ready(function () {
         }, true);
     });
 
-    $('#cmb_unidad').change(function () { 
-        $('#cmb_profesor_rc').change();
+    $('#cmb_periodo_rc').change(function () {
+        var link = $('#txth_base').val() + "/academico/calificacionregistrodocente/registro";
+        var arrParams = new Object();
+        arrParams.paca_id = $(this).val();
+        arrParams.uaca_id = $('#cmb_unidad_rc').val();
+        arrParams.mod_id = $('#cmb_modalidad_rc').val();
+        arrParams.pro_id = $('#cmb_profesor_rc').val();
+        arrParams.getasignaturas_prof_periodo_reg = true;
+        requestHttpAjax(link, arrParams, function (response) {
+            if (response.status == "OK") {
+                data = response.message;
+                setComboDataselect(data.asignatura, "cmb_materia","Todos");
+                setComboDataselectpro(data.profesorreg, "cmb_profesor_rc","Todos");
+            }
+        }, true);
     });
+
+    $('#cmb_modalidad_rc').change(function () {
+        var link = $('#txth_base').val() + "/academico/calificacionregistrodocente/registro";
+        var arrParams = new Object();
+        arrParams.paca_id = $('#cmb_periodo_rc').val();
+        arrParams.uaca_id = $('#cmb_unidad_rc').val();
+        arrParams.mod_id = $(this).val();
+        arrParams.pro_id = $('#cmb_profesor_rc').val();
+        arrParams.getasignaturas_bus_reg = true;
+        requestHttpAjax(link, arrParams, function (response) {
+            if (response.status == "OK") {
+                data = response.message;
+                setComboDataselect(data.asignatura, "cmb_materia","Todos");
+                setComboDataselectpro(data.profesorreg, "cmb_profesor_rc","Todos");
+            }
+        }, true);
+    });
+
+    $('#cmb_unidad_rc').change(function () { 
+        var link = $('#txth_base').val() + "/academico/calificacionregistrodocente/registro";
+        var arrParams = new Object();
+        arrParams.paca_id = $('#cmb_periodo_rc').val();
+        arrParams.uaca_id = $(this).val();
+        arrParams.mod_id = $('#cmb_modalidad_rc').val();
+        arrParams.pro_id =  $('#cmb_profesor_rc').val();
+        arrParams.getasignaturas_uaca_reg = true;
+        requestHttpAjax(link, arrParams, function (response) {
+            if (response.status == "OK") {
+                data = response.message;
+                 setComboDataselect(data.asignatura, "cmb_materia","Todos");
+                 setComboDataselectpro(data.profesorreg, "cmb_profesor_rc","Todos");
+            }
+        }, true);
+    });
+
 
     $('#cmb_profesor_rc').change(function () {
         var link = $('#txth_base').val() + "/academico/calificacionregistrodocente/registro";
         var arrParams = new Object();
         arrParams.pro_id  = $(this).val();
-        arrParams.uaca_id = $('#cmb_unidad').val();
-        arrParams.mod_id  = $('#cmb_modalidad').val();
-        arrParams.paca_id = $('#cmb_periodo').val();
+        arrParams.uaca_id = $('#cmb_unidad_rc').val();
+        arrParams.mod_id  = $('#cmb_modalidad_rc').val();
+        arrParams.paca_id = $('#cmb_periodo_rc').val();
         arrParams.getmateria = true;
         requestHttpAjax(link, arrParams, function (response) {
             if (response.status == "OK") {
                 data = response.message;
                 setComboDataselect(data.materia, "cmb_materia","Todos");
+
             }
         }, true);
     });

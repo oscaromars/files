@@ -1,24 +1,32 @@
 <?php
 
-use yii\jui\AutoComplete;
-use yii\web\JsExpression;
-use yii\helpers\Html;
-use yii\helpers\Url;
-use kartik\date\DatePicker;
-use yii\helpers\ArrayHelper;
 use app\modules\academico\Module as academico;
-
+use kartik\select2\Select2;
+use yii\helpers\Html;
 Academico::registerTranslations();
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+
+$leyendarc = '<div class="col-md-12 col-sm-12 col-xs-12 col-lg-12">
+                <div class="form-group">
+                    <div class="col-sm-10 col-md-10 col-xs-10 col-lg-10">
+                        <div style = "width: 650px;" class="alert alert-info alert-dismissible"><span style="font-weight: bold"> Nota: </span> Los estados designa al estudiante si ha pasado la materia, ya sea, en asistencia y academico</div>
+                    </div>
+                </div>
+            </div>';
+
 ?>
-
-
+<style>
+    .select2-container--krajee .select2-selection--single .select2-selection__arrow {
+    height: 98% !important;
+}
+</style>
  <div class="col-md-12 col-xs-12 col-lg-12 col-sm-12">
-
+       <br>
 
 
 
@@ -31,7 +39,28 @@ Academico::registerTranslations();
 
 
 <div class="row">
-    <div class="col-md-12 col-xs-12 col-lg-12 col-sm-12"><br><br>
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 ">
+            <label for="txt_buscarest" class="col-lg-2 col-md-2 col-sm-12 col-xs-12 control-label"><?=Yii::t("formulario", "Student")?>  </label>
+            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12" >
+                    <?php
+echo Select2::widget([
+	'name' => 'cmb_buscarest',
+	'id' => 'cmb_buscarest',
+	'value' => $arr_initial, // initial value
+	'data' => $arr_alumno,
+	'options' => ['placeholder' => 'Seleccionar'],
+	'pluginOptions' => [
+		'tags' => true,
+		'tokenSeparators' => [',', ' '],
+		'maximumInputLength' => 50,
+	],
+]); ?>
+            </div>
+            <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12">
+                <a id="btn_limpiarbuscador" href="javascript:" class="btn btn-default btn-block"> <?=Yii::t("formulario", "Limpiar busqueda")?></a>
+            </div>
+        </div>
+    <div class="col-md-12 col-xs-12 col-lg-12 col-sm-12"> <br>
         <div class="form-group">
             <label for="cmb_periodo_clfc" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?=academico::t("Academico", "Period")?></label>
             <div class="col-sm-3 col-xs-3 col-md-3 col-lg-3">
@@ -92,4 +121,5 @@ Academico::registerTranslations();
     </div>
 </div>
 
+<?php echo $leyendarc; ?>
 

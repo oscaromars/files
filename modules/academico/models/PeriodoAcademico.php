@@ -158,7 +158,16 @@ class PeriodoAcademico extends \yii\db\ActiveRecord {
 	public function savePeriodo($model) {
 		$con = \Yii::$app->db_academico;
 		$sql = "INSERT INTO db_academico.periodo_academico (saca_id, baca_id, paca_activo, paca_fecha_inicio, paca_fecha_fin, paca_fecha_cierre_ini, paca_fecha_cierre_fin, paca_usuario_ingreso, paca_estado, paca_fecha_creacion,  paca_estado_logico, paca_semanas_periodo)
-              VALUES (" . $model->saca_id . "," . $model->baca_id . ",'" . $model->paca_activo . "','" . $model->paca_fecha_inicio . "','" . $model->paca_fecha_fin . "','" . $model->paca_fecha_cierre_ini . "','" . $model->paca_fecha_cierre_fin . "','" . $model->paca_usuario_ingreso . "','" . $model->paca_estado . "','" . $model->paca_fecha_creacion . "','" . $model->paca_estado_logico . "'," . $model->paca_semanas_periodo . ")";
+              VALUES (" . $model->saca_id . ",
+              		" . $model->baca_id . ",
+              		'" . $model->paca_activo . "',
+              		'" . $model->paca_fecha_inicio . "',
+              		'" . $model->paca_fecha_fin . "',
+              		'" . $model->paca_fecha_cierre_ini . "', case when '" . $model->paca_activo . "' = 'C' then now() else
+              		'" . $model->paca_fecha_cierre_fin . "' end,
+              		'" . $model->paca_usuario_ingreso . "',
+              		'" . $model->paca_estado . "',
+              		'" . $model->paca_fecha_creacion . "','" . $model->paca_estado_logico . "'," . $model->paca_semanas_periodo . ")";
 		\app\models\Utilities::putMessageLogFile("Sql: " . $sql);
 		$command = $con->createCommand($sql);
 
@@ -177,7 +186,7 @@ class PeriodoAcademico extends \yii\db\ActiveRecord {
 		. " ,paca_fecha_inicio='" . $model->paca_fecha_inicio . "'"
 		. " ,paca_fecha_fin='" . $model->paca_fecha_fin . "'"
 		. " ,paca_fecha_cierre_ini='" . $model->paca_fecha_cierre_ini . "'"
-		. " ,paca_fecha_cierre_fin='" . $model->paca_fecha_cierre_fin . "'"
+		. " ,paca_fecha_cierre_fin= case when '" . $model->paca_activo . "' = 'C' then now() else '" . $model->paca_fecha_cierre_fin . "' end"
 		. " ,paca_semanas_periodo=" . $model->paca_semanas_periodo
 		. " ,paca_fecha_modificacion='" . $model->paca_fecha_modificacion . "'"
 		. " ,paca_usuario_modifica='" . $model->paca_usuario_modifica . "'"
@@ -307,18 +316,17 @@ class PeriodoAcademico extends \yii\db\ActiveRecord {
 		return $resultData;
 	}
 
-
 	/**
-     * Consultar los períodos académicos activos regulares con dos bloques academicos
-     * @author Oscar <analistadesarrollo05@uteg.edu.ec>;
-     * @param
-     * @return
-     */
-    public function consultarPeriodosActivosmalla() {
-        $con = Yii::$app->db_academico;
-        $estado = 1;
+	 * Consultar los períodos académicos activos regulares con dos bloques academicos
+	 * @author Oscar <analistadesarrollo05@uteg.edu.ec>;
+	 * @param
+	 * @return
+	 */
+	public function consultarPeriodosActivosmalla() {
+		$con = Yii::$app->db_academico;
+		$estado = 1;
 
-        $sql = "SELECT
+		$sql = "SELECT
                 paca.paca_id,
                 paca.paca_id as id,
                 ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca_anio),'') AS paca_nombre,
@@ -328,7 +336,8 @@ class PeriodoAcademico extends \yii\db\ActiveRecord {
                 INNER JOIN " . $con->dbname . ".periodo_academico AS paca ON saca.saca_id = paca.saca_id
                 INNER JOIN " . $con->dbname . ".bloque_academico AS baca ON baca.baca_id = paca.baca_id
                 WHERE
-                paca.paca_activo = 'A' AND
+                -- paca.paca_fecha_cierre_fin > now() AND
+                (paca.paca_activo = 'A' OR paca.paca_activo = 'C')  AND
                 paca.paca_estado = 1 AND
                 paca.paca_estado_logico = 1 AND
                 saca.saca_estado = 1 AND
@@ -337,15 +346,20 @@ class PeriodoAcademico extends \yii\db\ActiveRecord {
                 baca.baca_estado_logico = 1
                  AND
                 ( select count(*) from db_academico.periodo_academico bb
-                 WHERE  
+                 WHERE
                 bb.saca_id = saca.saca_id
+<<<<<<< HEAD
+                 group by bb.saca_id) > 1
+=======
                  group by bb.saca_id) > 1 
+                ORDER BY paca.paca_id ASC;
+>>>>>>> 8e666eda8a613f2cf7c362c2f64bfde781f91f4c
                 ";
 
-        $comando = $con->createCommand($sql);
-        $resultData = $comando->queryAll();
-        return $resultData;
-    }
+		$comando = $con->createCommand($sql);
+		$resultData = $comando->queryAll();
+		return $resultData;
+	}
 
 	/**
 	 * Mostrará un solo período académico basado en el per_id

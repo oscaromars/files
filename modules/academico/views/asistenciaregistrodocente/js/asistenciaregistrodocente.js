@@ -3,13 +3,13 @@
        cargarDocumentoAsistencia();
     });
     
-    $('#cmb_periodo').change(function(){
+    $('#cmb_periodo_m').change(function(){
         listarAsignaturas();
     });
-    $('#cmb_materia').change(function(){
+    $('#cmb_materia_m').change(function(){
         listarParalelos();
     });
-    $('#cmb_parcial').change(function(){
+    $('#cmb_paralelo_m').change(function(){
         listarSesiones();
     });
     // $('#grid_marcacion_list').change(function(){
@@ -1588,10 +1588,10 @@ function actualizarGridMarcacion() {
 
 function listarSesiones(){
     var link = $('#txth_base').val() + "/academico/asistenciaregistrodocente/listarsesiones";
-    var asi_id = $('#cmb_materia option:selected').val();
-    var paca_id = $('#cmb_periodo option:selected').val();
-    var pro_id = $('#cmb_profesor_asis option:selected').val();
-    var paralelo = $('#cmb_parcial option:selected').val();
+    var asi_id = $('#cmb_materia_m option:selected').val();
+    var paca_id = $('#cmb_periodo_m option:selected').val();
+    var pro_id = $('#cmb_profesor_m option:selected').val();
+    var paralelo = $('#cmb_parcial_m option:selected').val();
     data = new FormData();
     data.append( 'paca_id' , paca_id );
     data.append( 'pro_id', pro_id);
@@ -1628,18 +1628,18 @@ function listarSesiones(){
                 }); 
             });
             if(count>0){
-                $('#cmb_sesion').prop("disabled",false); 
-                $("#cmb_sesion")[0].selectedIndex=0;
+                $('#cmb_sesion_m').prop("disabled",false); 
+                $("#cmb_sesion_m")[0].selectedIndex=0;
             }
-            $("#cmb_sesion").html(html);
+            $("#cmb_sesion_m").html(html);
             // alert(html);
         }
     });
 }
 function listarAsignaturas(){
     var link = $('#txth_base').val() + "/academico/asistenciaregistrodocente/listarasignaturas";
-    var paca_id = $('#cmb_periodo option:selected').val();
-    var pro_id = $('#cmb_profesor_asis option:selected').val();
+    var paca_id = $('#cmb_periodo_m option:selected').val();
+    var pro_id = $('#cmb_profesor_m option:selected').val();
     data = new FormData();
     data.append( 'paca_id' , paca_id );
     data.append( 'pro_id', pro_id);
@@ -1674,10 +1674,10 @@ function listarAsignaturas(){
                 }); 
             });
             if(count>0){
-                $('#cmb_materia').prop("disabled",false); 
-                $("#cmb_materia")[0].selectedIndex=0;
+                $('#cmb_materia_m').prop("disabled",false); 
+                $("#cmb_materia_m")[0].selectedIndex=0;
             }
-            $("#cmb_materia").html(html);
+            $("#cmb_materia_m").html(html);
             //  alert(html);
         }
     });
@@ -1686,10 +1686,10 @@ function listarAsignaturas(){
 
 function listarParalelos(){
     var link = $('#txth_base').val() + "/academico/asistenciaregistrodocente/listarparalelos";
-    var asi_id = $('#cmb_materia option:selected').val();
-    var mod_id = $('#cmb_modalidad option:selected').val();
-    var paca_id = $('#cmb_periodo option:selected').val();
-    var pro_id = $('#cmb_profesor_asis option:selected').val();
+    var asi_id = $('#cmb_materia_m option:selected').val();
+    var mod_id = $('#cmb_modalidad_m option:selected').val();
+    var paca_id = $('#cmb_periodo_m option:selected').val();
+    var pro_id = $('#cmb_profesor_m option:selected').val();
     data = new FormData();
     data.append( 'asi_id' , asi_id );
     data.append( 'mod_id', mod_id);
@@ -1727,12 +1727,12 @@ function listarParalelos(){
             });
             
             if(count>0){
-               $('#cmb_paralelo').prop("disabled",false); 
-               $("#cmb_paralelo")[0].selectedIndex=0;
+               $('#cmb_paralelo_m').prop("disabled",false); 
+               $("#cmb_paralelo_m")[0].selectedIndex=0;
             }else{
-               $('#cmb_paralelo').prop("disabled",true); 
+               $('#cmb_paralelo_m').prop("disabled",true); 
            }
-            $("#cmb_paralelo").html(html);
+            $("#cmb_paralelo_m").html(html);
             // alert(html);
         }
     });

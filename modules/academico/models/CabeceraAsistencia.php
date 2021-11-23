@@ -1601,28 +1601,11 @@ class CabeceraAsistencia extends \yii\db\ActiveRecord
         return true;
     }//actualizarnotaasistenciasemanal
     
-        public function getAsistenciadin($arrFiltro){
+  public function getAsistenciadin($arrFiltro){
         $con        = \Yii::$app->db_academico; 
         $con1       = \Yii::$app->db_asgard; 
         $str_search = "";
         $estado     = "1";
-
- ////////////////////////////////////////////////////////////////////////////////////////
-        $modelpaca = new PeriodoAcademico();
-        $daes = $modelpaca->getDaesbyperiodo($paca_id, $asi_id, $pro_id);
-        $horasasignatura = $modelpaca->getHorasmaxAsistenciaxest($daes[0]['daes_id']);
-        $sems = $horasasignatura['paca_semanas_periodo'];  $sems =10;
-        $hours = $horasasignatura['daho_total_horas'];   $hours = 6;
-        if ($arrFiltro['modalidad'] == 1){
-     $sems =2; $hours = 30;
-  }
-
-       if ($arrFiltro['modalidad'] == 2){
-     $sems =10; $hours = 6;
-  }
-
-
-/////////////////////////////////////////////////////////////////////////////////////////
 
         if (isset($arrFiltro) && count($arrFiltro) > 0) {
 
@@ -1645,12 +1628,50 @@ class CabeceraAsistencia extends \yii\db\ActiveRecord
             
                
         } 
-        $sql = "  SELECT (@row_number:=@row_number + 1) AS row_num,  data.*
-                            FROM (
+
+
+         $sql = "  SELECT (@row_number:=@row_number + 1) AS row_num
+                         ,data.nombre
+                         ,data.matricula
+                         ,data.materia
+                         ,sum(data.s1) as s1
+                         ,sum(data.s2) as s2
+                         ,sum(data.s3) as s3
+                         ,sum(data.s4) as s4
+                         ,sum(data.s5) as s5
+                         ,sum(data.s6) as s6
+                         ,sum(data.s7) as s7
+                         ,sum(data.s8) as s8
+                         ,sum(data.s9) as s9
+                         ,sum(data.s0) as s0
+                        ";
+
+
+         if ($arrFiltro['modalidad'] == 1) {      
+        $sql = "  SELECT (@row_number:=@row_number + 1) AS row_num
+                         ,data.nombre
+                         ,data.matricula
+                         ,data.materia
+                         ,sum(data.u1) as u1
+                         ,sum(data.u2) as u2
+                        ";
+
+   }
+
+         $sql .= "
+                         ,data.paca_id
+                         ,data.est_id
+                         ,data.pro_id
+                         ,data.asi_id 
+                         ,data.uaca_id 
+                         ,data.mod_id 
+                         ,data.daes_id 
+                         ,data.daho_total_horas
+                    FROM (
                   SELECT est.est_id
                         ,est.est_matricula as matricula
-                        ,concat(per.per_pri_nombre,' ',per.per_pri_apellido) as nombre
-                       -- ,coalesce(casi.casi_id,0) as casi_id
+                        ,concat(per.per_pri_apellido,' ',per.per_pri_nombre) as nombre
+                        ,coalesce(casi.casi_id,0) as casi_id
                       ,(SELECT ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca_anio),'') AS value
                             FROM " . $con->dbname . ".semestre_academico AS saca
                             INNER JOIN " . $con->dbname . ".periodo_academico AS paca ON saca.saca_id = paca.saca_id
@@ -1665,66 +1686,60 @@ class CabeceraAsistencia extends \yii\db\ActiveRecord
                             baca.baca_estado = 1 AND
                             baca.baca_estado_logico = 1) as periodo 
                         ,(SELECT asi.asi_descripcion FROM " . $con->dbname . ".asignatura asi WHERE asi.asi_id = daca.asi_id) as materia
-                       ";
-
-
-
- 
-              //////////////////////////////////////////////////////////////////////////////////
-             for ($x = 0; $x< $sems; ++$x) {
-             $xx = $x+1; if ($x==9){ $xx = 0;}
-             $nombre ='s'.$xx;
-              if ($arrFiltro['modalidad'] == 1){  $nombre ='u'.$xx; 
-
-          }
-            $componentes[$nombre] = array(
-                'id'=> 's'.$xx ,
-                'notamax'=>$hours,
-            );
-         if ($arrFiltro['modalidad'] == 1){ 
-
-         $componentes[$nombre] = array(
-                'id'=> 'u'.$xx ,
-                'notamax'=>$hours,
-            );
-
-          }
-        
-
-          if ($nombre == 'u1') {
-
- $sql .= "  
-            
-            ,(select dasi.dasi_cantidad from " . $con->dbname . ".detalle_asistencia dasi 
-                              where dasi.casi_id = casi.casi_id
-                             and dasi.dasi_tipo = '".$nombre."') as '".$nombre."'
-
-            ";
-
-        }
-
-          if ($nombre == 'u2') {
-            
- $sql .= "  
-            
-            ,(select dasi.dasi_cantidad from " . $con->dbname . ".detalle_asistencia dasi 
-                              where dasi.casi_id = casi.casi_id + 1
-                             and dasi.dasi_tipo = '".$nombre."') as '".$nombre."'
-
-            ";
-
-        }
-          
-
-            }
-        //////////////////////////////////////////////////////////////////////////////////
-
-
-            $sql .= "
                         ,daca.paca_id as paca_id
                         ,daca.asi_id  as asi_id
                         ,daca.pro_id  as pro_id
                         ,asi.uaca_id  as uaca_id
+                        ,(select dasi.dasi_cantidad from " . $con->dbname . ".detalle_asistencia dasi 
+                           where dasi.casi_id = casi.casi_id
+                             -- and ecun.ecal_id = 1
+                             and dasi.dasi_tipo = 'u1') as u1
+                        ,(select dasi.dasi_cantidad from " . $con->dbname . ".detalle_asistencia dasi 
+                           where dasi.casi_id = casi.casi_id
+                             -- and ecun.ecal_id = 1
+                             and dasi.dasi_tipo = 'u2') as u2
+                        ,(select dasi.dasi_cantidad from " . $con->dbname . ".detalle_asistencia dasi 
+                            where dasi.casi_id = casi.casi_id
+                            -- and ecun.ecal_id = 2
+                            and dasi.dasi_tipo = 's1') as s1
+                        ,(select dasi.dasi_cantidad from " . $con->dbname . ".detalle_asistencia dasi 
+                            where dasi.casi_id = casi.casi_id
+                            -- and ecun.ecal_id = 2
+                            and dasi.dasi_tipo = 's2') as s2
+                          ,(select dasi.dasi_cantidad from " . $con->dbname . ".detalle_asistencia dasi 
+                            where dasi.casi_id = casi.casi_id
+                            -- and ecun.ecal_id = 2
+                            and dasi.dasi_tipo = 's3') as s3
+                          ,(select dasi.dasi_cantidad from " . $con->dbname . ".detalle_asistencia dasi 
+                            where dasi.casi_id = casi.casi_id
+                            -- and ecun.ecal_id = 2
+                            and dasi.dasi_tipo = 's4') as s4
+                          ,(select dasi.dasi_cantidad from " . $con->dbname . ".detalle_asistencia dasi 
+                            where dasi.casi_id = casi.casi_id
+                            -- and ecun.ecal_id = 2
+                            and dasi.dasi_tipo = 's5') as s5
+                          ,(select dasi.dasi_cantidad from " . $con->dbname . ".detalle_asistencia dasi 
+                            where dasi.casi_id = casi.casi_id
+                            -- and ecun.ecal_id = 2
+                            and dasi.dasi_tipo = 's6') as s6
+                          ,(select dasi.dasi_cantidad from " . $con->dbname . ".detalle_asistencia dasi 
+                            where dasi.casi_id = casi.casi_id
+                            -- and ecun.ecal_id = 2
+                            and dasi.dasi_tipo = 's7') as s7
+                          ,(select dasi.dasi_cantidad from " . $con->dbname . ".detalle_asistencia dasi 
+                            where dasi.casi_id = casi.casi_id
+                            -- and ecun.ecal_id = 2
+                            and dasi.dasi_tipo = 's8') as s8
+                        ,(select dasi.dasi_cantidad from " . $con->dbname . ".detalle_asistencia dasi 
+                            where dasi.casi_id = casi.casi_id
+                            -- and ecun.ecal_id = 2
+                            and dasi.dasi_tipo = 's9') as s9
+                        ,(select dasi.dasi_cantidad from " . $con->dbname . ".detalle_asistencia dasi 
+                            where dasi.casi_id = casi.casi_id
+                            -- and ecun.ecal_id = 2
+                            and dasi.dasi_tipo = 's0') as s0
+
+
                         , daca.mod_id
                         , daes.daes_id
                         ,daho.daho_total_horas
@@ -1743,7 +1758,7 @@ class CabeceraAsistencia extends \yii\db\ActiveRecord
                     AND casi.casi_estado = :estado
                     AND casi.casi_estado_logico = :estado
               LEFT JOIN " . $con->dbname . ".asistencia_esquema_unidad aeun   ON aeun.aeun_id = casi.aeun_id
-              LEFT JOIN " . $con->dbname . ".esquema_calificacion_unidad ecun ON ecun.ecun_id = aeun.ecun_id 
+              -- LEFT JOIN " . $con->dbname . ".esquema_calificacion_unidad ecun ON ecun.ecun_id = aeun.ecun_id 
               LEFT JOIN " . $con->dbname . ".asignatura asi                   ON asi.asi_id = daca.asi_id
             order by 3 asc
             ) as data 
@@ -1753,9 +1768,6 @@ class CabeceraAsistencia extends \yii\db\ActiveRecord
         group by matricula, nombre, est_id, pro_id, materia, asi_id
          ORDER BY nombre ASC
         ";
-
-
-      
 
         $comando = $con->createCommand($sql);
 
@@ -1792,10 +1804,10 @@ class CabeceraAsistencia extends \yii\db\ActiveRecord
         }
 
         $res = $comando->queryAll();
-
         \app\models\Utilities::putMessageLogFile('getAsistencia: ' .$comando->getRawSql());
         return $res;
     }//function getAsistenciadin
+
 
 
 

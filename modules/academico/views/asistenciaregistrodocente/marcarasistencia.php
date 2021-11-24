@@ -51,58 +51,58 @@ academico::registerTranslations();
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding-bottom: 30px;">
         <div class='col-xs-12 col-sm-12 col-md-6 col-lg-6'>
             <div class="form-group">                 
-                <label for="cmb_periodo" class="col-xs-12 col-sm-12 col-md-5 col-lg-5 control-label ubicar"><?= academico::t("Academico", "Period") ?></label>
+                <label for="cmb_periodo_m" class="col-xs-12 col-sm-12 col-md-5 col-lg-5 control-label ubicar"><?= academico::t("Academico", "Period") ?></label>
                 <div class="col-xs-12 col-sm-12 col-md-7 col-lg-7">  
-                        <?= Html::dropDownList("cmb_periodo",0,$arr_periodoActual, ["class" => "form-control", "id" => "cmb_periodo"]) ?>              
+                        <?= Html::dropDownList("cmb_periodo_m",0,$arr_periodoActual, ["class" => "form-control", "id" => "cmb_periodo_m"]) ?>              
                 </div>
             </div>
         </div>
         <div class='col-xs-12 col-sm-12 col-md-6 col-lg-6'>
             <div class="form-group"> 
-                <label for="cmb_profesor_asis" class="col-xs-12 col-sm-12 col-md-5 col-lg-5 control-label ubicar"><?= academico::t("Academico", "Teacher") ?></label>
+                <label for="cmb_profesor_m" class="col-xs-12 col-sm-12 col-md-5 col-lg-5 control-label ubicar"><?= academico::t("Academico", "Teacher") ?></label>
                 <div class="col-xs-12 col-sm-12 col-md-7 col-lg-7">
-                        <?= Html::dropDownList("cmb_profesor_asis", 0,$arr_profesor_all, ["class" => "form-control", "id" => "cmb_profesor_asis","disabled"=>"true"]) ?>
+                        <?= Html::dropDownList("cmb_profesor_m", 0,$arr_profesor_all, ["class" => "form-control", "id" => "cmb_profesor_m","disabled"=>"true"]) ?>
                 </div>
             </div>
         </div>
         <div class='col-xs-12 col-sm-12 col-md-6 col-lg-6'>
             <div class="form-group"> 
-                <label for="cmb_modalidad" class="col-xs-12 col-sm-12 col-md-5 col-lg-5 control-label ubicar"><?= academico::t("Academico", "Modality") ?></label>
+                <label for="cmb_modalidad_m" class="col-xs-12 col-sm-12 col-md-5 col-lg-5 control-label ubicar"><?= academico::t("Academico", "Modality") ?></label>
                 <div class="col-xs-12 col-sm-12 col-md-7 col-lg-7">
-                        <?= Html::dropDownList("cmb_modalidad", 0,$arr_modalidad, ["class" => "form-control", "id" => "cmb_modalidad"]) ?>
+                        <?= Html::dropDownList("cmb_modalidad_m", $modalidad,$arr_modalidad, ["class" => "form-control", "id" => "cmb_modalidad_m"]) ?>
                 </div>
             </div>
         </div>
         <div class='col-xs-12 col-sm-12 col-md-6 col-lg-6'>
             <div class="form-group">                 
-                <label for="cmb_unidad" class="col-xs-12 col-sm-12 col-md-5 col-lg-5 control-label ubicar"><?= Yii::t("formulario", "Academic unit") ?></label>
+                <label for="cmb_unidad_m" class="col-xs-12 col-sm-12 col-md-5 col-lg-5 control-label ubicar"><?= Yii::t("formulario", "Academic unit") ?></label>
                 <div class="col-xs-12 col-sm-12 col-md-7 col-lg-7">
-                        <?= Html::dropDownList("cmb_unidad_est", 0, $arr_ninteres,["class" => "form-control", "id" => "cmb_unidad_est"]) ?>
+                        <?= Html::dropDownList("cmb_unidad_m", 0, $arr_ninteres,["class" => "form-control", "id" => "cmb_unidad_m"]) ?>
                 </div>
             </div>
         </div>
         <div class='col-xs-12 col-sm-12 col-md-6 col-lg-6'>
             <div class="form-group"> 
-                <label for="cmb_materia" class="col-xs-12 col-sm-12 col-md-5 col-lg-5 control-label ubicar">
+                <label for="cmb_materia_m" class="col-xs-12 col-sm-12 col-md-5 col-lg-5 control-label ubicar">
                     <?= Yii::t("formulario", "Subject") ?></label>
                 <div class="col-xs-12 col-sm-12 col-md-7 col-lg-7">
-                        <?= Html::dropDownList("cmb_materia", 0,$arr_asignatura,["class" => "form-control", "id" => "cmb_materia","disabled" => "true"]) ?>
+                        <?= Html::dropDownList("cmb_materia_m", 0,$arr_asignatura,["class" => "form-control", "id" => "cmb_materia_m","disabled" => "true"]) ?>
                 </div>
             </div>
         </div>
         <div class='col-xs-12 col-sm-12 col-md-6 col-lg-6'>
             <div class="form-group"> 
-                <label for="cmb_parcial" class="col-xs-12 col-sm-12 col-md-5 col-lg-5 control-label ubicar"><?= academico::t("Academico", "Paralelo") ?></label>
+                <label for="cmb_paralelo_m" class="col-xs-12 col-sm-12 col-md-5 col-lg-5 control-label ubicar"><?= academico::t("Academico", "Paralelo") ?></label>
                 <div class="col-xs-12 col-sm-12 col-md-7 col-lg-7">
-                        <?= Html::dropDownList("cmb_parcial", 0,$arr_paralelo, ["class" => "form-control", "id" => "cmb_parcial","disabled"=> "true"]) ?>
+                        <?= Html::dropDownList("cmb_paralelo_m", 0,$arr_paralelo, ["class" => "form-control", "id" => "cmb_paralelo_m","disabled"=> "true"]) ?>
                 </div>
             </div>
         </div>
         <div class='col-xs-12 col-sm-12 col-md-6 col-lg-6'>
             <div class="form-group">                 
-                <label for="cmb_sesion" class="col-xs-12 col-sm-12 col-md-5 col-lg-5 control-label ubicar"><?= Yii::t("formulario", "Sesión") ?></label>
+                <label for="cmb_sesion_m" class="col-xs-12 col-sm-12 col-md-5 col-lg-5 control-label ubicar"><?= Yii::t("formulario", "Sesión") ?></label>
                 <div class="col-xs-12 col-sm-12 col-md-7 col-lg-7">
-                        <?= Html::dropDownList("cmb_sesion", 0, $arr_sesion,["class" => "form-control", "id" => "cmb_sesion", "disabled" => "true"]) ?>
+                        <?= Html::dropDownList("cmb_sesion_m", 0, $arr_sesion,["class" => "form-control", "id" => "cmb_sesion_m", "disabled" => "true"]) ?>
                 </div>
             </div>
         </div>

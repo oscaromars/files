@@ -59,13 +59,31 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
     </div>
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
-            <label for="txt_cedula" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Academico::t("profesor", "Identification Card") ?><span class="text-danger">*</span></label>
-            <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
-                <input type="text" class="form-control PBvalidation" id="txt_cedula" value="<?= $persona_model->per_cedula ?>" data-type=""  placeholder="<?= Academico::t("profesor", "Identification Card") ?>">
+            <label for="frm_caracteristica" class="col-lg-3 col-md-3 col-sm-3 col-xs-3 control-label"><?=Academico::t("profesor", "Nacionalidad")?></label>
+            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+                <?php if ($persona_model->per_nac_ecuatoriano == 1) { ?>
+                    <input type="checkbox" id="chk_nacionalidad1" value="Ecuatoriano"  checked>
+                    <label id="chk_nac" class="control-label" name="<?php echo $tip_nacionalidad['ECU'] ?>">  <?php echo $tip_nacionalidad['ECU'] ?></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <input type="checkbox" id="chk_nacionalidad2" value="Extranjero" >
+                    <label id="chk_nac" class="control-label" name="<?php echo $tip_nacionalidad['EXT'] ?>">  <?php echo $tip_nacionalidad['EXT'] ?></label>
+                <?php } else { ?>
+                    <input type="checkbox" id="chk_nacionalidad1" value="Ecuatoriano" >
+                    <label id="chk_nac" class="control-label" name="<?php echo $tip_nacionalidad['ECU'] ?>">  <?php echo $tip_nacionalidad['ECU'] ?></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <input type="checkbox" id="chk_nacionalidad2" value="Extranjero" checked >
+                    <label id="chk_nac" class="control-label" name="<?php echo $tip_nacionalidad['EXT'] ?>">  <?php echo $tip_nacionalidad['EXT'] ?></label>
+                <?php } ?>
             </div>
         </div>
     </div>
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="form-group">
+            <label for="txt_cedula" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Academico::t("profesor", "Identification Card") ?><span class="text-danger">*</span></label>
+            <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
+                <input type="text" class="form-control PBvalidation" id="txt_cedula" value="<?= $persona_model->per_cedula ?>" data-type="cedula"  placeholder="<?= Academico::t("profesor", "Identification Card") ?>">
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" id="ruc">
         <div class="form-group">
             <label for="txt_ruc" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Academico::t("profesor", "Ruc") ?></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
@@ -73,7 +91,7 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
             </div>
         </div>
     </div>
-    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" id="passport">
         <div class="form-group">
             <label for="txt_pasaporte" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Academico::t("profesor", "Passport") ?></label>
             <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
@@ -81,7 +99,7 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
             </div>
         </div>
     </div>
-    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" id="nac_extr">
         <div class="form-group">
             <label for="txt_nacionalidad" class="col-lg-3 col-md-3 col-sm-3 col-xs-3 control-label"><?= Yii::t("perfil", "Nationality") ?></label>
             <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9">

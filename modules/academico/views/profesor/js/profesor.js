@@ -80,19 +80,18 @@ $(document).ready(function() {
             element.style.display  = 'block';
             element1.style.display = 'none';
             element2.style.display = 'none';
-            
+            $('#txt_cedula').removeClass("PBvalidation");
         }else if(check1.checked){
             element.style.display  = 'none';
             element1.style.display = 'block';
             element2.style.display = 'block';
-            
+            $('#txt_cedula').addClass("PBvalidation");
         }else{
             element.style.display  = 'none';
             element1.style.display = 'none';
             element2.style.display = 'none';
         }
     });
-
 
 });
 
@@ -156,6 +155,13 @@ function update() {
     arrParams.grid_evaluacion_list = (JSON.parse(sessionStorage.grid_evaluacion_list)).data;
     arrParams.grid_referencia_list = (JSON.parse(sessionStorage.grid_referencia_list)).data;
 
+    check1 = document.getElementById("chk_nacionalidad1");
+    if (check1.checked) {
+        arrParams.per_nac = 1;
+        arrParams.nacionalidad = "Ecuatoriana";
+    } else {
+        arrParams.per_nac = 0;
+    }
 
     if (!validateForm()) {
         //console.log(arrParams);
@@ -176,7 +182,7 @@ function update() {
 function test() {
     console.log("foto: " + $('#txth_doc_foto').val());
     console.log("extfoto: " + $('#txth_doc_cv').val());
-      console.log("cmb_dedicacion: " + $('#cmb_dedicacion').val());
+    console.log("cmb_dedicacion: " + $('#cmb_dedicacion').val());
 }
 function save() {
     var link = $('#txth_base').val() + "/academico/profesor/save";
@@ -188,7 +194,7 @@ function save() {
     arrParams.cedula = $('#txt_cedula').val();
     arrParams.ruc = $('#txt_ruc').val();
     arrParams.pasaporte = $('#txt_pasaporte').val();
-    arrParams.correo = $('#txt_correo').val();
+    arrParams.correo = $('#txt_correo').val(); 
 
     arrParams.pai_id = $('#cmb_pais').val();
     arrParams.pro_id = $('#cmb_provincia').val();
@@ -212,7 +218,7 @@ function save() {
     arrParams.emp_id = $('#cmb_empresa').val();
     //arrParams.foto = $('#txth_doc_foto').val() + ".jpg";
     arrParams.foto = $('#txth_doc_foto').val();
-    arrParams.extfoto = $('#txth_doc_cv').val() ;
+    arrParams.extfoto = $('#txth_doc_foto').val();
     console.log("foto: " + arrParams.foto);
     console.log("extfoto: " + $('#txth_doc_cv').val());
     /** Session Storages **/
@@ -228,11 +234,22 @@ function save() {
     arrParams.grid_evaluacion_list = (JSON.parse(sessionStorage.grid_evaluacion_list)).data;
     arrParams.grid_referencia_list = (JSON.parse(sessionStorage.grid_referencia_list)).data;
 
+    check1 = document.getElementById("chk_nacionalidad1");
+    if (check1.checked) {
+        arrParams.per_nac = 1;
+        arrParams.nacionalidad = "Ecuatoriana";
+    } else {
+        arrParams.per_nac = 0;
+    }
+
     if (!validateForm()) {
         //console.log(arrParams);
         requestHttpAjax(link, arrParams, function(response) {
             console.log(response.message);
             showAlert(response.status, response.label, response.message);
+            setTimeout(function () {
+                window.location.href = $('#txth_base').val() + "/academico/profesor/index";
+            }, 5000);
         }, true);
     }
 }

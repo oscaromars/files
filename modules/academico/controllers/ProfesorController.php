@@ -33,6 +33,9 @@ use Yii;
 use yii\base\Exception;
 use yii\data\ArrayDataProvider;
 use yii\helpers\ArrayHelper;
+use kartik\file\FileInput;
+use kartik\date\DatePicker;
+use kartik\select2\Select2;
 
 Academico::registerTranslations();
 
@@ -108,6 +111,7 @@ class ProfesorController extends \app\components\CController {
 			$ViewFormTab1 = $this->renderPartial('ViewFormTab1', [
 				'arr_dedic' => (empty(ArrayHelper::map($arr_dedic, "ddoc_id", "ddoc_nombre"))) ? array(Yii::t("dedicacion", "-- Select Dedicación --")) : (ArrayHelper::map($arr_dedic, "ddoc_id", "ddoc_nombre")),
 				'persona_model' => $persona_model,
+				'tip_nacionalidad' => array("ECU" => Yii::t("formulario", "Ecuatoriano"), "EXT" => Yii::t("formulario", "Extranjero"))
 			]);
 
 			/**
@@ -322,7 +326,6 @@ class ProfesorController extends \app\components\CController {
 				if (!in_array(['id' => '1'], $arr_grupos) && !in_array(['id' => '6'], $arr_grupos) && !in_array(['id' => '7'], $arr_grupos) && !in_array(['id' => '8'], $arr_grupos) && !in_array(['id' => '15'], $arr_grupos)) {
 					return $this->redirect(['profesor/index']);
 				}
-
 			}
 
 			/**
@@ -333,6 +336,7 @@ class ProfesorController extends \app\components\CController {
 			$EditFormTab1 = $this->renderPartial('EditFormTab1', ['arr_dedic' => (empty(ArrayHelper::map($arr_dedic, "ddoc_id", "ddoc_nombre"))) ? array(Yii::t("dedicacion", "-- Select Dedicación --")) : (ArrayHelper::map($arr_dedic, "ddoc_id", "ddoc_nombre")),
 				'persona_model' => $persona_model,
 				'email' => $email,
+				'tip_nacionalidad' => array("ECU" => Yii::t("formulario", "Ecuatoriano"), "EXT" => Yii::t("formulario", "Extranjero"))
 			]);
 
 			/**
@@ -727,6 +731,7 @@ class ProfesorController extends \app\components\CController {
 				$fecha_nacimiento = $data["fecha_nacimiento"];
 				$foto = $data['foto'];
 				$extfoto = $data['extfoto'];
+				$per_nac = $data['per_nac'];
 
 				/**
 				 * Inf. Domicilio
@@ -799,6 +804,7 @@ class ProfesorController extends \app\components\CController {
 					$persona_model->per_domicilio_telefono = $phone;
 					$persona_model->per_celular = $celular;
 					$persona_model->per_fecha_nacimiento = $fecha_nacimiento;
+					$persona_model->per_nac_ecuatoriano = $per_nac;
 
 					$arr_file = explode($foto, '.jpg');
 					if (isset($arr_file[0]) && $arr_file[0] != "") {
@@ -825,6 +831,7 @@ class ProfesorController extends \app\components\CController {
 					$persona_model->per_domicilio_ref = $referencia;
 					$persona_model->per_estado = '1';
 					$persona_model->per_estado_logico = '1';
+					$persona_model->per_usuario_ingresa = $user_ingresa;
 
 					if ($persona_model->save()) {
 						$profesor_model = new Profesor();
@@ -1078,6 +1085,8 @@ class ProfesorController extends \app\components\CController {
 					$persona_model->per_domicilio_ref = $referencia;
 					$persona_model->per_estado = '1';
 					$persona_model->per_estado_logico = '1';
+					$persona_model->per_nac_ecuatoriano = $per_nac;
+					$persona_model->per_usuario_ingresa = $user_ingresa;
 					\app\models\Utilities::putMessageLogFile('1');
 					if ($persona_model->save()) {
 						\app\models\Utilities::putMessageLogFile('2');
@@ -1404,7 +1413,7 @@ class ProfesorController extends \app\components\CController {
 				$pro_num_contrato = $data["pro_num_contrato"];
 				$fecha_nacimiento = $data["fecha_nacimiento"];
 				$foto = $data['foto'];
-
+				$per_nac = $data['per_nac'];
 				/**
 				 * Inf. Domicilio
 				 */
@@ -1451,6 +1460,9 @@ class ProfesorController extends \app\components\CController {
 				$persona_model->per_domicilio_csec = $calle_sec;
 				$persona_model->per_domicilio_num = $numeracion;
 				$persona_model->per_domicilio_ref = $referencia;
+				$persona_model->per_nac_ecuatoriano = $per_nac;
+				$persona_model->per_usuario_modifica = $user_ingresa;
+
 				$arr_file = explode($foto, '.jpg');
 				if (isset($arr_file[0]) && $arr_file[0] != "") {
 					$oldFile = $this->folder_cv . '/' . $foto;
@@ -1705,7 +1717,7 @@ class ProfesorController extends \app\components\CController {
 				$persona_model = Persona::findOne($per_id);
 				$persona_model->per_estado_logico = '0';
 				$persona_model->per_fecha_modificacion = date(Yii::$app->params["dateTimeByDefault"]);
-
+				
 				/* Validacion de acceso a vistas por usuario */
 				$user_ingresa = Yii::$app->session->get("PB_iduser");
 				$user_usermane = Yii::$app->session->get("PB_username");
@@ -1720,6 +1732,7 @@ class ProfesorController extends \app\components\CController {
 					"wtmessage" => Yii::t("notificaciones", "Your information was successfully saved."),
 					"title" => Yii::t('jslang', 'Success'),
 				);
+				$persona_model->per_usuario_modifica = $user_ingresa;
 				if ($persona_model->update() !== false) {
 					$profesor_model = Profesor::findOne(["per_id" => $per_id]);
 					$profesor_model->pro_estado_logico = '0';

@@ -41,16 +41,16 @@ INSERT INTO `actividad_evaluacion` (`aeva_id`, `aeva_descripcion`, `aeva_nombre`
 
 
 -- Data de calificaciones 
-INSERT INTO `componente` (`com_id`, `com_nombre`, `com_descripcion`, `com_estado`, `com_estado_logico`) VALUES
-(1, 'Asíncrona', 'Asíncrona', '1', '1'),
-(2, 'Síncrona', 'Síncrona', '1', '1'),
-(3, 'Cuestionarios', 'Cuestionarios', '1', '1'),
-(4, 'Autónoma', 'Autónoma', '1', '1'),
-(5, 'Evaluación', 'Evaluación', '1', '1'),
-(6, 'Examen', 'Examen', '1', '1'),
-(7, 'Talleres', 'Talleres', '1', '1'),
-(8, 'Deberes', 'Deberes', '1', '1'),
-(9, 'Aporte', 'Aporte', '1', '1');
+INSERT INTO `db_academico`.`componente` (`com_id`, `com_nombre`, `com_descripcion`, `com_estado`, `com_fecha_creacion`, `com_estado_logico`) VALUES ('1', 'Asíncrona', 'Asíncrona', '1', '2021-11-18 14:40:05', '1');
+INSERT INTO `db_academico`.`componente` (`com_id`, `com_nombre`, `com_descripcion`, `com_estado`, `com_fecha_creacion`, `com_estado_logico`) VALUES ('2', 'Síncrona', 'Síncrona', '1', '2021-11-18 14:40:05', '1');
+INSERT INTO `db_academico`.`componente` (`com_id`, `com_nombre`, `com_descripcion`, `com_estado`, `com_fecha_creacion`, `com_estado_logico`) VALUES ('3', 'Evaluación', 'Evaluación', '1', '2021-11-18 14:40:05', '1');
+INSERT INTO `db_academico`.`componente` (`com_id`, `com_nombre`, `com_descripcion`, `com_estado`, `com_fecha_creacion`, `com_estado_logico`) VALUES ('4', 'Autónoma', 'Autónoma', '1', '2021-11-18 14:40:05', '1');
+INSERT INTO `db_academico`.`componente` (`com_id`, `com_nombre`, `com_descripcion`, `com_estado`, `com_fecha_creacion`, `com_estado_logico`) VALUES ('5', 'Evaluación en línea', 'Evaluación en línea', '1', '2021-11-18 14:40:05', '1');
+INSERT INTO `db_academico`.`componente` (`com_id`, `com_nombre`, `com_descripcion`, `com_estado`, `com_fecha_creacion`, `com_estado_logico`) VALUES ('6', 'Examen', 'Examen', '1', '2021-11-18 14:40:05', '1');
+INSERT INTO `db_academico`.`componente` (`com_id`, `com_nombre`, `com_descripcion`, `com_estado`, `com_fecha_creacion`, `com_estado_logico`) VALUES ('7', 'Talleres', 'Talleres', '1', '2021-11-18 14:40:05', '1');
+INSERT INTO `db_academico`.`componente` (`com_id`, `com_nombre`, `com_descripcion`, `com_estado`, `com_fecha_creacion`, `com_estado_logico`) VALUES ('8', 'Deberes', 'Deberes', '1', '2021-11-18 14:40:05', '1');
+INSERT INTO `db_academico`.`componente` (`com_id`, `com_nombre`, `com_descripcion`, `com_estado`, `com_fecha_creacion`, `com_estado_logico`) VALUES ('9', 'Aporte', 'Aporte', '1', '2021-11-18 14:40:05', '1');
+
 
 /*
 INSERT INTO `actividad` (`act_id`, `act_nombre`, `act_descripcion`, `act_estado`, `act_estado_logico`) VALUES
@@ -102,48 +102,65 @@ INSERT INTO `asistencia_esquema_unidad` (`aeun_id`, `ecun_id`, `aeun_cantidad`, 
 (3, 4, 100, '1', '1'),
 (4, 5, 100, '1', '1');
 
-
-INSERT INTO `componente_unidad` (`cuni_id`, `com_id`, `uaca_id`, `mod_id`, `ecal_id` , `cuni_calificacion`, `cuni_estado`, `cuni_estado_logico`) VALUES
--- Grado online
+-- Modificación LC
+-- Grado Online -- 
 -- Parcial 1
-(1, 1, 1, 1, 1, 2, '1', '1'),
-(2, 2, 1, 1, 1, 2, '1', '1'),
-(3, 3, 1, 1, 1, 4, '1', '1'),
-(4, 4, 1, 1, 1, 6, '1', '1'),
-(5, 5, 1, 1, 1, 6, '1', '1'),
+INSERT INTO `db_academico`.`componente_unidad` (`cuni_id`, `com_id`, `uaca_id`, `mod_id`, `ecal_id`, `cuni_calificacion`, `cuni_estado`, `cuni_fecha_creacion`, `cuni_estado_logico`) VALUES ('1', '1', '1', '1', '1', '2', '1', '2021-11-18 14:40:24', '1');
+INSERT INTO `db_academico`.`componente_unidad` (`cuni_id`, `com_id`, `uaca_id`, `mod_id`, `ecal_id`, `cuni_calificacion`, `cuni_estado`, `cuni_fecha_creacion`, `cuni_estado_logico`) VALUES ('2', '2', '1', '1', '1', '2', '1', '2021-11-18 14:40:24', '1');
+INSERT INTO `db_academico`.`componente_unidad` (`cuni_id`, `com_id`, `uaca_id`, `mod_id`, `ecal_id`, `cuni_calificacion`, `cuni_estado`, `cuni_fecha_creacion`, `cuni_estado_logico`) VALUES ('3', '3', '1', '1', '1', '4', '1', '2021-11-18 14:40:24', '1');
+INSERT INTO `db_academico`.`componente_unidad` (`cuni_id`, `com_id`, `uaca_id`, `mod_id`, `ecal_id`, `cuni_calificacion`, `cuni_estado`, `cuni_fecha_creacion`, `cuni_estado_logico`) VALUES ('4', '4', '1', '1', '1', '6', '1', '2021-11-18 14:40:24', '1');
+INSERT INTO `db_academico`.`componente_unidad` (`cuni_id`, `com_id`, `uaca_id`, `mod_id`, `ecal_id`, `cuni_calificacion`, `cuni_estado`, `cuni_fecha_creacion`, `cuni_estado_logico`) VALUES ('5', '6', '1', '1', '1', '6', '1', '2021-11-18 14:40:24', '1');
 -- Parcial 2
-(6, 1, 1, 1, 2, 2, '1', '1'),
-(7, 2, 1, 1, 2, 2, '1', '1'),
-(8, 3, 1, 1, 2, 2, '1', '1'),
-(9, 4, 1, 1, 2, 6, '1', '1'),
-(10, 5, 1, 1, 2, 8, '1', '1'),
-
--- Grado presencial
-(11, 8, 1, 2, NULL, 4, '1', '1'),
-(12, 9, 1, 2, NULL, 4, '1', '1'),
-(13, 6, 1, 2, NULL, 12, '1', '1'),
-
--- Grado semipresencial
-(14, 8, 1, 3, NULL, 4, '1', '1'),
-(15, 9, 1, 3, NULL, 4, '1', '1'),
-(16, 6, 1, 3, NULL, 12, '1', '1'),
-
--- Grado distancia
-(17, 1, 1, 4, NULL, 6, '1', '1'),
-(18, 2, 1, 4, NULL, 4, '1', '1'),
-(19, 5, 1, 4, NULL, 4, '1', '1'),
-(20, 6, 1, 4, NULL, 6, '1', '1'),
-
--- Posgrado online
-(21, 4, 2, 1, NULL, 5, '1', '1'),
-(22, 5, 2, 1, NULL, 1, '1', '1'),
-(23, 1, 2, 1, NULL, 1, '1', '1'),
-(24, 6, 2, 1, NULL, 3, '1', '1'),
-
--- Posgrado presencial
-(25, 7, 2, 2, NULL, 4, '1', '1'),
-(26, 8, 2, 2, NULL, 3, '1', '1'),
-(27, 6, 2, 2, NULL, 3, '1', '1');
+INSERT INTO `db_academico`.`componente_unidad` (`cuni_id`, `com_id`, `uaca_id`, `mod_id`, `ecal_id`, `cuni_calificacion`, `cuni_estado`, `cuni_fecha_creacion`, `cuni_estado_logico`) VALUES ('6', '1', '1', '1', '2', '2', '1', '2021-11-18 14:40:24', '1');
+INSERT INTO `db_academico`.`componente_unidad` (`cuni_id`, `com_id`, `uaca_id`, `mod_id`, `ecal_id`, `cuni_calificacion`, `cuni_estado`, `cuni_fecha_creacion`, `cuni_estado_logico`) VALUES ('7', '2', '1', '1', '2', '2', '1', '2021-11-18 14:40:24', '1');
+INSERT INTO `db_academico`.`componente_unidad` (`cuni_id`, `com_id`, `uaca_id`, `mod_id`, `ecal_id`, `cuni_calificacion`, `cuni_estado`, `cuni_fecha_creacion`, `cuni_estado_logico`) VALUES ('8', '3', '1', '1', '2', '2', '1', '2021-11-18 14:40:24', '1');
+INSERT INTO `db_academico`.`componente_unidad` (`cuni_id`, `com_id`, `uaca_id`, `mod_id`, `ecal_id`, `cuni_calificacion`, `cuni_estado`, `cuni_fecha_creacion`, `cuni_estado_logico`) VALUES ('9', '4', '1', '1', '2', '6', '1', '2021-11-18 14:40:24', '1');
+INSERT INTO `db_academico`.`componente_unidad` (`cuni_id`, `com_id`, `uaca_id`, `mod_id`, `ecal_id`, `cuni_calificacion`, `cuni_estado`, `cuni_fecha_creacion`, `cuni_estado_logico`) VALUES ('10', '6', '1', '1', '2', '8', '1', '2021-11-18 14:40:24', '1');
+-- Suspenso
+INSERT INTO `db_academico`.`componente_unidad` (`cuni_id`, `com_id`, `uaca_id`, `mod_id`, `ecal_id`, `cuni_calificacion`, `cuni_estado`, `cuni_fecha_creacion`, `cuni_estado_logico`) VALUES ('11', '6', '1', '1', '3', '20', '1', '2021-10-19 16:49:32', '1');
+-- Grado Presencial
+-- Parcial 1
+INSERT INTO `db_academico`.`componente_unidad` (`cuni_id`, `com_id`, `uaca_id`, `mod_id`, `ecal_id`, `cuni_calificacion`, `cuni_estado`, `cuni_fecha_creacion`, `cuni_estado_logico`) VALUES ('12', '7', '1', '2', '1', '4', '1', '2021-10-19 16:49:32', '1');
+INSERT INTO `db_academico`.`componente_unidad` (`cuni_id`, `com_id`, `uaca_id`, `mod_id`, `ecal_id`, `cuni_calificacion`, `cuni_estado`, `cuni_fecha_creacion`, `cuni_estado_logico`) VALUES ('13', '9', '1', '2', '1', '4', '1', '2021-10-19 16:49:32', '1');
+INSERT INTO `db_academico`.`componente_unidad` (`cuni_id`, `com_id`, `uaca_id`, `mod_id`, `ecal_id`, `cuni_calificacion`, `cuni_estado`, `cuni_fecha_creacion`, `cuni_estado_logico`) VALUES ('14', '6', '1', '2', '1', '12', '1', '2021-10-19 16:49:32', '1');
+-- Parcial 2
+INSERT INTO `db_academico`.`componente_unidad` (`cuni_id`, `com_id`, `uaca_id`, `mod_id`, `ecal_id`, `cuni_calificacion`, `cuni_estado`, `cuni_fecha_creacion`, `cuni_estado_logico`) VALUES ('15', '7', '1', '2', '2', '4', '1', '2021-10-19 16:49:32', '1');
+INSERT INTO `db_academico`.`componente_unidad` (`cuni_id`, `com_id`, `uaca_id`, `mod_id`, `ecal_id`, `cuni_calificacion`, `cuni_estado`, `cuni_fecha_creacion`, `cuni_estado_logico`) VALUES ('16', '9', '1', '2', '2', '4', '1', '2021-10-19 16:49:32', '1');
+INSERT INTO `db_academico`.`componente_unidad` (`cuni_id`, `com_id`, `uaca_id`, `mod_id`, `ecal_id`, `cuni_calificacion`, `cuni_estado`, `cuni_fecha_creacion`, `cuni_estado_logico`) VALUES ('17', '6', '1', '2', '2', '12', '1', '2021-10-19 16:49:32', '1');
+-- Suspenso
+INSERT INTO `db_academico`.`componente_unidad` (`cuni_id`, `com_id`, `uaca_id`, `mod_id`, `ecal_id`, `cuni_calificacion`, `cuni_estado`, `cuni_fecha_creacion`, `cuni_estado_logico`) VALUES ('18', '6', '1', '2', '3', '20', '1', '2021-10-19 16:49:32', '1');
+-- Grado Semipresencial
+-- Parcial 1
+INSERT INTO `db_academico`.`componente_unidad` (`cuni_id`, `com_id`, `uaca_id`, `mod_id`, `ecal_id`, `cuni_calificacion`, `cuni_estado`, `cuni_fecha_creacion`, `cuni_estado_logico`) VALUES ('19', '7', '1', '3', '1', '4', '1', '2021-10-19 16:49:32', '1');
+INSERT INTO `db_academico`.`componente_unidad` (`cuni_id`, `com_id`, `uaca_id`, `mod_id`, `ecal_id`, `cuni_calificacion`, `cuni_estado`, `cuni_fecha_creacion`, `cuni_estado_logico`) VALUES ('20', '9', '1', '3', '1', '4', '1', '2021-10-19 16:49:32', '1');
+INSERT INTO `db_academico`.`componente_unidad` (`cuni_id`, `com_id`, `uaca_id`, `mod_id`, `ecal_id`, `cuni_calificacion`, `cuni_estado`, `cuni_fecha_creacion`, `cuni_estado_logico`) VALUES ('21', '6', '1', '3', '1', '12', '1', '2021-10-19 16:49:32', '1');
+-- Parcial 2
+INSERT INTO `db_academico`.`componente_unidad` (`cuni_id`, `com_id`, `uaca_id`, `mod_id`, `ecal_id`, `cuni_calificacion`, `cuni_estado`, `cuni_fecha_creacion`, `cuni_estado_logico`) VALUES ('22', '7', '1', '3', '2', '4', '1', '2021-10-19 16:49:32', '1');
+INSERT INTO `db_academico`.`componente_unidad` (`cuni_id`, `com_id`, `uaca_id`, `mod_id`, `ecal_id`, `cuni_calificacion`, `cuni_estado`, `cuni_fecha_creacion`, `cuni_estado_logico`) VALUES ('23', '9', '1', '3', '2', '4', '1', '2021-10-19 16:49:32', '1');
+INSERT INTO `db_academico`.`componente_unidad` (`cuni_id`, `com_id`, `uaca_id`, `mod_id`, `ecal_id`, `cuni_calificacion`, `cuni_estado`, `cuni_fecha_creacion`, `cuni_estado_logico`) VALUES ('24', '6', '1', '3', '2', '12', '1', '2021-10-19 16:49:32', '1');
+-- Suspenso
+INSERT INTO `db_academico`.`componente_unidad` (`cuni_id`, `com_id`, `uaca_id`, `mod_id`, `ecal_id`, `cuni_calificacion`, `cuni_estado`, `cuni_fecha_creacion`, `cuni_estado_logico`) VALUES ('25', '6', '1', '3', '3', '20', '1', '2021-10-19 16:49:32', '1');
+-- Grado Distancia
+-- Parcial 1
+INSERT INTO `db_academico`.`componente_unidad` (`cuni_id`, `com_id`, `uaca_id`, `mod_id`, `ecal_id`, `cuni_calificacion`, `cuni_estado`, `cuni_fecha_creacion`, `cuni_estado_logico`) VALUES ('26', '1', '1', '4', '1', '6', '1', '2021-10-19 16:49:32', '1');
+INSERT INTO `db_academico`.`componente_unidad` (`cuni_id`, `com_id`, `uaca_id`, `mod_id`, `ecal_id`, `cuni_calificacion`, `cuni_estado`, `cuni_fecha_creacion`, `cuni_estado_logico`) VALUES ('27', '2', '1', '4', '1', '4', '1', '2021-10-19 16:49:32', '1');
+INSERT INTO `db_academico`.`componente_unidad` (`cuni_id`, `com_id`, `uaca_id`, `mod_id`, `ecal_id`, `cuni_calificacion`, `cuni_estado`, `cuni_fecha_creacion`, `cuni_estado_logico`) VALUES ('28', '5', '1', '4', '1', '4', '1', '2021-10-19 16:49:32', '1');
+INSERT INTO `db_academico`.`componente_unidad` (`cuni_id`, `com_id`, `uaca_id`, `mod_id`, `ecal_id`, `cuni_calificacion`, `cuni_estado`, `cuni_fecha_creacion`, `cuni_estado_logico`) VALUES ('29', '6', '1', '4', '1', '6', '1', '2021-10-19 16:49:32', '1');
+-- Parcial 2
+INSERT INTO `db_academico`.`componente_unidad` (`cuni_id`, `com_id`, `uaca_id`, `mod_id`, `ecal_id`, `cuni_calificacion`, `cuni_estado`, `cuni_fecha_creacion`, `cuni_estado_logico`) VALUES ('30', '1', '1', '4', '2', '6', '1', '2021-10-19 16:49:32', '1');
+INSERT INTO `db_academico`.`componente_unidad` (`cuni_id`, `com_id`, `uaca_id`, `mod_id`, `ecal_id`, `cuni_calificacion`, `cuni_estado`, `cuni_fecha_creacion`, `cuni_estado_logico`) VALUES ('31', '2', '1', '4', '2', '4', '1', '2021-10-19 16:49:32', '1');
+INSERT INTO `db_academico`.`componente_unidad` (`cuni_id`, `com_id`, `uaca_id`, `mod_id`, `ecal_id`, `cuni_calificacion`, `cuni_estado`, `cuni_fecha_creacion`, `cuni_estado_logico`) VALUES ('32', '5', '1', '4', '2', '4', '1', '2021-10-19 16:49:32', '1');
+INSERT INTO `db_academico`.`componente_unidad` (`cuni_id`, `com_id`, `uaca_id`, `mod_id`, `ecal_id`, `cuni_calificacion`, `cuni_estado`, `cuni_fecha_creacion`, `cuni_estado_logico`) VALUES ('33', '6', '1', '4', '2', '6', '1', '2021-10-19 16:49:32', '1');
+-- Suspenso
+INSERT INTO `db_academico`.`componente_unidad` (`cuni_id`, `com_id`, `uaca_id`, `mod_id`, `ecal_id`, `cuni_calificacion`, `cuni_estado`, `cuni_fecha_creacion`, `cuni_estado_logico`) VALUES ('34', '6', '1', '4', '3', '20', '1', '2021-10-19 16:49:32', '1');
+-- Posgrado -- Falta definir las calificaciones
+INSERT INTO `db_academico`.`componente_unidad` (`cuni_id`, `com_id`, `uaca_id`, `mod_id`, `cuni_calificacion`, `cuni_estado`, `cuni_fecha_creacion`, `cuni_estado_logico`) VALUES ('35', '4', '2', '1', '5', '1', '2021-10-19 16:49:32', '1');
+INSERT INTO `db_academico`.`componente_unidad` (`cuni_id`, `com_id`, `uaca_id`, `mod_id`, `cuni_calificacion`, `cuni_estado`, `cuni_fecha_creacion`, `cuni_estado_logico`) VALUES ('36', '5', '2', '1', '1', '1', '2021-10-19 16:49:32', '1');
+INSERT INTO `db_academico`.`componente_unidad` (`cuni_id`, `com_id`, `uaca_id`, `mod_id`, `cuni_calificacion`, `cuni_estado`, `cuni_fecha_creacion`, `cuni_estado_logico`) VALUES ('37', '1', '2', '1', '1', '1', '2021-10-19 16:49:32', '1');
+INSERT INTO `db_academico`.`componente_unidad` (`cuni_id`, `com_id`, `uaca_id`, `mod_id`, `cuni_calificacion`, `cuni_estado`, `cuni_fecha_creacion`, `cuni_estado_logico`) VALUES ('38', '6', '2', '1', '3', '1', '2021-10-19 16:49:32', '1');
+INSERT INTO `db_academico`.`componente_unidad` (`cuni_id`, `com_id`, `uaca_id`, `mod_id`, `cuni_calificacion`, `cuni_estado`, `cuni_fecha_creacion`, `cuni_estado_logico`) VALUES ('39', '7', '2', '2', '4', '1', '2021-10-19 16:49:32', '1');
+INSERT INTO `db_academico`.`componente_unidad` (`cuni_id`, `com_id`, `uaca_id`, `mod_id`, `cuni_calificacion`, `cuni_estado`, `cuni_fecha_creacion`, `cuni_estado_logico`) VALUES ('40', '8', '2', '2', '3', '1', '2021-10-19 16:49:32', '1');
+INSERT INTO `db_academico`.`componente_unidad` (`cuni_id`, `com_id`, `uaca_id`, `mod_id`, `cuni_calificacion`, `cuni_estado`, `cuni_fecha_creacion`, `cuni_estado_logico`) VALUES ('41', '6', '2', '2', '3', '1', '2021-10-19 16:49:32', '1');
 
 -- -- ------------------------ ------------------------------
 --

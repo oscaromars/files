@@ -1271,7 +1271,7 @@ function actualizarGridRegistrodin(dready = 0) {
                 $.each(o.data[indice], function( index, value ) {
                     if(componentes[index]){
                         if(value < 0 || value > parseInt(componentes[index]['notamax'])){
-                            alertify.error("El cambio no se ha registrado, los valores del componente Asíncrona debe estar entre 0 a "+componentes[index]['notamax']);
+                            alertify.error("El cambio no se ha registrado, los valores deben estar entre 0 a "+componentes[index]['notamax']);
                             bandera = 1;
                         }//if
                     }//if

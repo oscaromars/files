@@ -1074,7 +1074,9 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord {
                         ,asi.asi_id
                         ,asi.asi_descripcion as materia
                         ,coalesce(clfc.ccal_id,0) as ccal_id
-                        ,'Paralelo 1' as paralelo
+                        ,case when daca.uaca_id= 1 then CONCAT('P-',ifnull(mpp.mpp_num_paralelo,''))
+                        	 when daca.uaca_id= 2 then ifnull(pp.ppro_grupo,'')
+                    	end as paralelo
         ";
 
 		foreach ($arr_componentes as $key => $value) {
@@ -1111,6 +1113,12 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord {
              INNER JOIN " . $con->dbname . ".periodo_academico paca
                      ON daca.paca_id = paca.paca_id
                     AND paca.paca_estado = 1 AND paca.paca_estado_logico = 1
+              LEFT JOIN " . $con->dbname . ".materia_paralelo_periodo mpp
+              		 ON mpp.mpp_id = daca.mpp_id
+              LEFT JOIN " . $con->dbname . ".paralelo_promocion_programa pppr
+              		 on pppr.pppr_id = daca.pppr_id
+              LEFT JOIN " . $con->dbname . ".promocion_programa pp
+              		 ON pp.ppro_id = pppr.ppro_id
               LEFT JOIN " . $con->dbname . ".estudiante est
                      ON est.est_id   = daes.est_id
                     AND est.est_estado = 1 AND est.est_estado_logico = 1

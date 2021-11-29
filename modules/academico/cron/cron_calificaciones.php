@@ -591,9 +591,9 @@ $bt= putbitacora($detalles[0]['dcal_id'],$dcalificacion);
 
 
 updatecabeceras($cabeceras[0]['ccal_id']); 
-if ($maes_id != null){ 
+/*if ($maes_id != null){ 
 updatepromedio($maes_id, $paca_id);
-}
+}*/
 
         }  }  // END IS AUTH AND GET CATEGORIES (UNA VEZ POR ITEM)
 
@@ -611,7 +611,7 @@ VALUES ($daca_id,$cedu_asi_id,$uaca_id,$paca_id,$mod_id,$pro_id,$asi_id,$est_id,
 
 
 
-          $countar++;
+          $countar++; unset($semanaexa1); unset($semanaexa2);
           print_r('( '.$countar. ' )');
 
 
@@ -1070,5 +1070,4 @@ return $maes;
             return FALSE;
         }
         
-    } 
-
+    }

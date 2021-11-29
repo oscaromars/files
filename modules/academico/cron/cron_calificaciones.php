@@ -591,9 +591,9 @@ $bt= putbitacora($detalles[0]['dcal_id'],$dcalificacion);
 
 
 updatecabeceras($cabeceras[0]['ccal_id']); 
-/*if ($maes_id != null){ 
+if ($maes_id != null){ 
 updatepromedio($maes_id, $paca_id);
-}*/
+}
 
         }  }  // END IS AUTH AND GET CATEGORIES (UNA VEZ POR ITEM)
 
@@ -972,12 +972,12 @@ return $maes;
         GLOBAL $dsn, $dbuser, $dbpass, $dbname;
         $con = new \PDO($dsn, $dbuser, $dbpass);
         $usu_id =1;
-        $transaccion = $con->getTransaction(); // se obtiene la transacción actual
+      /*  $transaccion = $con->getTransaction(); // se obtiene la transacción actual
         if ($trans !== null) {
             $trans = null; // si existe la transacción entonces no se crea una
         } else {
             $trans = $con->beginTransaction(); // si no existe la transacción entonces se crea una
-        }
+        }*/
         try {
             $sql = "UPDATE db_academico.promedio_malla_academico pm, (
                         select distinct
@@ -1056,17 +1056,17 @@ return $maes;
                  $comando->execute();
                  $result = $comando->fetchAll(\PDO::FETCH_ASSOC);
 
-            \app\models\Utilities::putMessageLogFile('updatepromedio: ' . $comando->getRawSql());
+          //  \app\models\Utilities::putMessageLogFile('updatepromedio: ' . $comando->getRawSql());
 
-            if ($transaccion !== null) {
+           /* if ($transaccion !== null) {
                 $transaccion->commit();
-            }
+            }*/
 
             return TRUE;
         } catch (Exception $ex) {
-            if ($transaccion !== null) {
+           /* if ($transaccion !== null) {
                 $transaccion->rollback();
-            }
+            }*/
             return FALSE;
         }
         

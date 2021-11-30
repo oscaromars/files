@@ -408,6 +408,31 @@ class InscripciongradoController extends \yii\web\Controller {
         ]);
     }
 
+  public function actionRegisterpdf() {
+
+        try {
+            $ids = isset($_GET['ids']) ? base64_decode($_GET['ids']) : NULL;
+            $rep = new ExportFile();
+             $this->layout = 'register';
+          
+            $rep->orientation = "P"; 
+
+            $rep->createReportPdf(
+                    $this->render('register', [
+                        'cabFact' => $cabFact,
+                        'carrera' => $carrera,
+                        'facultaded' => $facultaded,
+                    ])
+            );
+
+            $rep->mpdf->Output('INSCRIPCION_' . $codigo . ".pdf", ExportFile::OUTPUT_TO_DOWNLOAD);
+         
+        } catch (Exception $e) {
+            echo $e->getMessage();
+        }
+
+    }
+    
     public function actionView() {
         $data = Yii::$app->request->get();
         if (isset($data['id'])) {

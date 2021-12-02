@@ -8,21 +8,10 @@
  *
  * NOTE: this file must be saved in UTF-8 encoding.
  */
-(function (factory) {
-    'use strict';
-    if (typeof define === 'function' && define.amd) {
-        define(['jquery'], factory);
-    } else if (typeof module === 'object' && typeof module.exports === 'object') {
-        factory(require('jquery'));
-    } else {
-        factory(window.jQuery);
-    }
-}(function ($) {
+(function ($) {
     "use strict";
 
     $.fn.fileinputLocales['kr'] = {
-        sizeUnits: ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'], 
-        bitRateUnits: ['B/s', 'KB/s', 'MB/s', 'GB/s', 'TB/s', 'PB/s', 'EB/s', 'ZB/s', 'YB/s'],
         fileSingle: '파일',
         filePlural: '파일들',
         browseLabel: '찾아보기 &hellip;',
@@ -120,4 +109,4 @@
             close: '세부 정보 닫기'
         }
     };
-}));
+})(window.jQuery);

@@ -61,7 +61,7 @@ class InscripciongradoController extends \yii\web\Controller {
 
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
-            Utilities::putMessageLogFile('cedula en change.. ' .$data['cedulacons'] );
+            //Utilities::putMessageLogFile('cedula en change.. ' .$data['cedulacons'] );
             if (isset($data["getcedula"])) {
                 $persids = $mod_persona->consultaPeridxdni($data['cedulacons']);
                 $message = array("persids" => $persids['per_id']);
@@ -261,7 +261,7 @@ class InscripciongradoController extends \yii\web\Controller {
                         throw new Exception('Error doc Especie valorada por homologación no renombrado.');
                  }
                 //}
-                Utilities::putMessageLogFile('cedula o pasaporte.. ' . $per_dni );
+                //Utilities::putMessageLogFile('cedula o pasaporte.. ' . $per_dni );
                 //datos personales
                 $per_dni = $data['cedula'];
                 $per_pri_nombre = ucwords(strtolower($data["primer_nombre"]));
@@ -414,8 +414,8 @@ class InscripciongradoController extends \yii\web\Controller {
             $ids = isset($_GET['ids']) ? base64_decode($_GET['ids']) : NULL;
             $rep = new ExportFile();
              $this->layout = 'register';
-          
-            $rep->orientation = "P"; 
+
+            $rep->orientation = "P";
 
             $rep->createReportPdf(
                     $this->render('register', [
@@ -426,13 +426,13 @@ class InscripciongradoController extends \yii\web\Controller {
             );
 
             $rep->mpdf->Output('INSCRIPCION_' . $codigo . ".pdf", ExportFile::OUTPUT_TO_DOWNLOAD);
-         
+
         } catch (Exception $e) {
             echo $e->getMessage();
         }
 
     }
-    
+
     public function actionView() {
         $data = Yii::$app->request->get();
         if (isset($data['id'])) {

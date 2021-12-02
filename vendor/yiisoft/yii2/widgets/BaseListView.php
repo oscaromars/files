@@ -227,18 +227,14 @@ abstract class BaseListView extends Widget
             }
         }
 
-        if ($summaryContent === '') {
-            return '';
-        }
-
-        return Html::tag($tag, Yii::$app->getI18n()->format($summaryContent, [
+        return Yii::$app->getI18n()->format($summaryContent, [
             'begin' => $begin,
             'end' => $end,
             'count' => $count,
             'totalCount' => $totalCount,
             'page' => $page,
             'pageCount' => $pageCount,
-        ], Yii::$app->language), $summaryOptions);
+        ], Yii::$app->language);
     }
 
     /**

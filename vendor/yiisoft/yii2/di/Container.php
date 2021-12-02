@@ -524,10 +524,7 @@ class Container extends Component
 
                 if (PHP_VERSION_ID >= 80000) {
                     $c = $param->getType();
-                    $isClass = false;
-                    if ($c instanceof ReflectionNamedType) {
-                        $isClass = !$c->isBuiltin();
-                    }
+                    $isClass = $c !== null && !$param->getType()->isBuiltin();
                 } else {
                     try {
                         $c = $param->getClass();

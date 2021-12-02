@@ -8,21 +8,10 @@
  *
  * NOTE: this file must be saved in UTF-8 encoding.
  */
-(function (factory) {
-    'use strict';
-    if (typeof define === 'function' && define.amd) {
-        define(['jquery'], factory);
-    } else if (typeof module === 'object' && typeof module.exports === 'object') {
-        factory(require('jquery'));
-    } else {
-        factory(window.jQuery);
-    }
-}(function ($) {
+(function ($) {
     "use strict";
 
     $.fn.fileinputLocales['pt'] = {
-        sizeUnits: ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'], 
-        bitRateUnits: ['B/s', 'KB/s', 'MB/s', 'GB/s', 'TB/s', 'PB/s', 'EB/s', 'ZB/s', 'YB/s'],
         fileSingle: 'ficheiro',
         filePlural: 'ficheiros',
         browseLabel: 'Procurar &hellip;',
@@ -77,7 +66,6 @@
         msgLoading: 'A enviar ficheiro {index} de {files} &hellip;',
         msgProgress: 'A enviar ficheiro {index} de {files} - {name} - {percent}% completo.',
         msgSelected: '{n} {files} selecionados',
-        msgProcessing: 'Processing ...',
         msgFoldersNotAllowed: 'Arrastar e largar ficheiros apenas. {n} pasta(s) ignoradas.',
         msgImageWidthSmall: 'Largura da imagem "{name}" deve ser pelo menos {size} px.',
         msgImageHeightSmall: 'Altura da imagem "{name}" deve ser pelo menos {size} px.',
@@ -121,4 +109,4 @@
             close: 'Fechar pré-visualização detalhada'
         }
     };
-}));
+})(window.jQuery);

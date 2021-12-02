@@ -191,7 +191,6 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 }
             }
 
-
             $con = \Yii::$app->db;
             $transaction = $con->beginTransaction();
             $con1 = \Yii::$app->db_captacion;
@@ -348,8 +347,6 @@ class InscripcionposgradoController extends \yii\web\Controller {
                     if ($homologacion_archivo === false)
                         throw new Exception('Error doc Especie valorada por homologación no renombrado.');
                 }
-
-
 
             //FORM 1 datos personal
             $per_dni = $data['cedula'];
@@ -768,8 +765,6 @@ class InscripcionposgradoController extends \yii\web\Controller {
 
             ]);
 
-
-
             $items = [
                 [
                     'label' => Yii::t('inscripcionposgrado', 'Info. Datos Personales'),
@@ -908,7 +903,6 @@ class InscripcionposgradoController extends \yii\web\Controller {
             $arr_prov_emp = Provincia::provinciaXPais(1);
             $arr_ciu_emp = Canton::cantonXProvincia($laboral_model['ilab_prov_emp']);
 
-
             $EditFormTab2 = $this->renderPartial('EditFormTab2', [
                 'arr_pais' => (empty(ArrayHelper::map($arr_pais, "pai_id", "pai_nombre"))) ? array(Yii::t("pais", "Seleccionar")) : (ArrayHelper::map($arr_pais, "pai_id", "pai_nombre")),
                 "arr_prov_emp" => ArrayHelper::map($arr_prov_emp, "id", "value"),
@@ -986,7 +980,6 @@ class InscripcionposgradoController extends \yii\web\Controller {
 
             ]);
 
-
             $items = [
                 [
                     'label' => Yii::t('formulario', 'Info. Datos Personales'),
@@ -1052,7 +1045,6 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 }
             }
 
-
             $con = \Yii::$app->db_inscripcion;
             $transaction = $con->beginTransaction();
             $timeSt = date(Yii::$app->params["dateByDefault"]);
@@ -1067,7 +1059,6 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 $user_perId = Yii::$app->session->get("PB_perid");
                 $grupo_model = new Grupo();
                 $arr_grupos = $grupo_model->getAllGruposByUser($user_usermane);
-
 
                 $inscriposgrado_id = $data["ipos_id"];
                 if (isset($data["ipos_ruta_doc_foto"]) && $data["ipos_ruta_doc_foto"] != "") {
@@ -1205,8 +1196,6 @@ class InscripcionposgradoController extends \yii\web\Controller {
                     if ($homologacion_archivo === false)
                         throw new Exception('Error doc Especie valorada por homologación no renombrado.');
                 }
-
-
 
             //FORM 1 datos personal
             $per_dni = $data['cedula'];
@@ -1520,7 +1509,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
     }
 
     public function actionExpexcelaspiranteposgrado() {
-        \app\models\Utilities::putMessageLogFile('accediendo a excel :  ');
+        //\app\models\Utilities::putMessageLogFile('accediendo a excel :  ');
         //$per_id = @Yii::$app->session->get("PB_perid");
         ini_set('memory_limit', '256M');
         $content_type = Utilities::mimeContentType("xls");

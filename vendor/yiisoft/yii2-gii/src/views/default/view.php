@@ -27,14 +27,8 @@ foreach ($generator->templates as $name => $path) {
 
     <?php $form = ActiveForm::begin([
         'id' => "$id-generator",
-        'successCssClass' => 'is-valid',
-        'errorCssClass' => 'is-invalid',
-        'validationStateOn' => ActiveForm::VALIDATION_STATE_ON_INPUT,
-        'fieldConfig' => [
-            'class' => ActiveField::className(),
-            'hintOptions' => ['tag' => 'small', 'class' => 'form-text text-muted'],
-            'errorOptions' => ['class' => 'invalid-feedback']
-        ],
+        'successCssClass' => '',
+        'fieldConfig' => ['class' => ActiveField::className()],
     ]); ?>
         <div class="row">
             <div class="col-lg-8 col-md-10" id="form-fields">
@@ -42,11 +36,11 @@ foreach ($generator->templates as $name => $path) {
                     'generator' => $generator,
                     'form' => $form,
                 ]) ?>
-                <?= $form->field($generator, 'template')
-                    ->sticky()
-                    ->hint('Please select which set of the templates should be used to generated the code.')
+                <?= $form->field($generator, 'template')->sticky()
                     ->label('Code Template')
-                    ->dropDownList($templates) ?>
+                    ->dropDownList($templates)->hint('
+                        Please select which set of the templates should be used to generated the code.
+                ') ?>
                 <div class="form-group">
                     <?= Html::submitButton('Preview', ['name' => 'preview', 'class' => 'btn btn-primary']) ?>
 

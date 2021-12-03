@@ -151,7 +151,7 @@
 FECHA DE REGISTRO: </h1>
         </p>
     </div>
-   <br><br>
+   <br>
 <div class="divCeldap" style="text-align: center">
     </div> 
 <br>
@@ -164,9 +164,9 @@ completamente firmada y acompañada de todos los documentos solicitados.
    <br><br>
    <div  style="text-justify: auto">
         <p><h3>
-    <b>CARRERA:</b><br><br>
+    <b>PROGRAMA DE:</b><br><br>
     <b>MODALIDAD:</b><br><br>
-    <b>PERIODO:</b></h3>
+    <b>AÑO:</b></h3>
   </p>
     </div>
 <br>
@@ -179,14 +179,16 @@ completamente firmada y acompañada de todos los documentos solicitados.
  <table class="abnormal">
         <tbody>
 <tr>
-                <td class="marcoCel1 bold" >TIPO DE IDENTIFICACIÓN:<br><br>
-                NÚMERO DE IDENTIFICACIÓN:<br><br>
+                <td class="marcoCel1 bold" >
+                CI / PASAPORTE:<br><br>
                 NOMBRES:<br><br>
                 APELLIDOS:<br><br>
                 LUGAR DE NACIMIENTO:<br><br>
                 FECHA DE NACIMIENTO:<br><br>
                 NACIONALIDAD:<br><br>
                 ESTADO CIVIL:<br><br>
+                PROVINCIA:<br><br>
+                CANTON:<br><br>
                 </td>
                 <td class="marcoCel3" style='font-family:helvetica'>
                 &nbsp;<?php echo $persona_model['per_cedula'] ?><br><br>
@@ -233,7 +235,7 @@ completamente firmada y acompañada de todos los documentos solicitados.
 <br><br>
 <div  style="text-justify: auto">
         <p>
-      <b>DIRECCIÓN DE TRABAJO:</b> &nbsp;<?php echo $persona_model['per_trabajo_direccion'] ?><br><br>
+      <b>CORREO ELECTRÓNICO:</b> &nbsp;<?php echo $persona_model['per_trabajo_direccion'] ?><br><br>
       <b>PERSONA POR CONTACTAR EN CASO DE EMERGENCIA:</b> &nbsp;<?php echo $persona_model['per_correo'] ?><br><br>
      <b>TIPO DE PARENTESCO:</b> &nbsp;<br><br>
    <b>TELÉFONO DE LA PERSONA A CONTACTAR EN CASO DE EMERGENCIA:</b> &nbsp;<br><br>
@@ -241,18 +243,82 @@ completamente firmada y acompañada de todos los documentos solicitados.
 
   </p>
     </div>
-
-
+<br>
 <div class="divCeldag bold titleDetalle " style="text-align: center">
 
-    4. DATOS ACADÉMICOS
+    4. FORMACION PROFESIONAL 
 
     </div>
 <br><br>
 <div  style="text-justify: auto">
         <p>
-      <b>MALLA CURRICULAR:</b><br><br>
-      <b>CATEGORIA:</b><br><br>
+      <b>TÍTULO DE TERCER NIVEL:</b> &nbsp;<br><br>
+      <b>UNIVERSIDAD:</b> &nbsp;<br><br>
+     <b>AÑO DE GRADUACIÓN:</b> &nbsp;<br><br>
+   <b>TÍTULO DE CUARTO NIVEL:</b> &nbsp;<br><br>
+    <b>UNIVERSIDAD:</b> &nbsp;<br><br>
+  <b> AÑO DE GRADUACIÓN:</b> &nbsp;<br><br>
+  </p>
+    </div>
+    <br>
+
+
+    <div class="divCeldag bold titleDetalle " style="text-align: center">
+
+    5. DATOS LABORALES 
+
+    </div>
+<br><br>
+<div  style="text-justify: auto">
+        <p>
+      <b>EMPRESA:</b> &nbsp;<br><br>
+      <b>CARGO:</b> &nbsp;<br><br>
+     <b>TELÉFONOS</b> &nbsp;<br><br>
+   <b>DIRECCIÓN</b> &nbsp;<br>
+   (provincia, cantón, parroquia, dirección exacta)<br><br>
+    <b>AÑO DE INGRESO:</b> &nbsp;<br><br>
+  <b> AÑO DE GRADUACIÓN:</b> &nbsp;<br><br>
+    <b> CORREO ELECTRÓNICO:</b> &nbsp;<br><br>
+      <b> CATEGORÍA OCUPACIONAL:</b> &nbsp;<br><br>
+  </p>
+    </div>
+    <br><br>
+
+  <div class="divCeldag bold titleDetalle " style="text-align: center">
+
+    6. HABILIDADES EN EL LENGUAJE 
+
+    </div>
+    <br><br>
+ <div class="divCeldag bold titleDetalle " style="text-align: center">
+
+    7. OTRA INFORMACION 
+
+    </div>
+<br><br>
+<div  style="text-justify: auto">
+        <p>
+      <b>DISCAPACIDAD:</b> &nbsp;<br><br>
+       <b>TIPO DE DISCAPACIDAD:</b> &nbsp;<br><br>
+      <b>PORCENTAJE DE DISCAPACIDAD:</b> &nbsp;<br><br>
+     <b>DOCENCIA:</b> &nbsp;<br><br>
+   <b>AÑOS DE DOCENCIA:</b> &nbsp;<br><br>
+    <b>ÁREA DE DOCENCIA:</b> &nbsp;<br><br>
+  <b> INVESTIGACIÓN:</b> &nbsp;<br><br>
+    <b>NÚMERO DE ÁRTICULOS PUBLICADOS:</b> &nbsp;<br><br>
+      <b>ÁREA DE INVESTIGACIÓN:</b> &nbsp;<br><br>
+  </p>
+    </div>
+    <br><br>
+
+<div class="divCeldag bold titleDetalle " style="text-align: center">
+
+    8. FINANCIAMIENTO
+
+    </div>
+<br><br>
+<div  style="text-justify: auto">
+        <p>
       <b>FINANCIAMIENTO:</b><br><br>
   </p>
     </div>
@@ -296,14 +362,14 @@ echo "<input type='checkbox' name='pcu'  checked  value='1' />" ;
 echo "<input type='checkbox' name='pcu'  value='1' />" ;
 }
 ?></td>
-                <td class="marcoCel">Beca</td>
+                <td class="marcoCel">Pago al contado</td>
             </tr>
         </tbody>
     </table>
 <pagebreak />
  <div class="divCeldag bold titleDetalle " style="text-align: center">
 
-      5. DOCUMENTACIÓN (este punto corresponde al área de admisiones) NO LLENAR
+      9. DOCUMENTACIÓN (este punto corresponde al área de admisiones) NO LLENAR
 
     </div>
 <br><br>

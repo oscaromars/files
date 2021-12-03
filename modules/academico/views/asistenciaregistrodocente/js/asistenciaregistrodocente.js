@@ -1460,7 +1460,7 @@ function actualizarGridRegistrodin(dready = 0) {
                 {  extend: 'edit', editor: editor  },
                 /*{  extend: 'remove', editor: editor  },*/
             ],
-            "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+            "lengthMenu": [[-1, 10, 25, 60], ["All", 10, 25, 60]],
             orderable  : false,
             //"bDestroy" : true,
             destroy    : true,

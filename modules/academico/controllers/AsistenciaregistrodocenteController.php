@@ -1267,7 +1267,7 @@ class AsistenciaregistrodocenteController extends \app\components\CController {
            $hours = $horasasignatura['daho_total_horas'];   $hours = 24;
         }
 
-         if ($data['modalidad'] == 2) {
+         if ($data['modalidad'] > 1) {
          $sems = $horasasignatura['paca_semanas_periodo'];  $sems =10;
          $hours = $horasasignatura['daho_total_horas'];   $hours = 6;
        } 

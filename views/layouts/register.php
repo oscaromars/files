@@ -22,6 +22,7 @@
                     font-size: 100%;
                     font: inherit;
                     vertical-align: baseline;
+                    z-index:9999;
                 }
                 article, aside, details, figcaption, figure, 
                 footer, header, hgroup, menu, nav, section {
@@ -87,6 +88,47 @@
                     margin: 30px 0px 30px 0px;
                     width: 200px;
                 }
+
+                 .imgr{
+                    margin: 30px 0px 30px 0px;
+                    width: 300px;
+                }
+                  .imgl{
+                    margin: 15px 0px 15px 0px;
+                    width: 300px;
+                }
+
+                  .imgb{
+                    margin: 15px 0px 15px 0px;
+                    width: 100px;
+                }
+
+                  .markone{
+                   position: absolute;
+                   top:96px;
+                   right: 0px;
+                }
+
+                  .marktwo{
+                   position: absolute;
+                   top:0px;
+                   left: 0px;
+                }
+
+                  .markback{
+                   position: absolute;
+                   bottom:0px;
+                   left: 0px;
+                   z-index:1;
+                }
+
+                    .markbackp{
+                   position: fixed;
+                   bottom:0px;
+                   left: 0px;
+                   z-index:1;
+                }
+
                 .tcolr_num_aut {
                     width: 100%;                      
                     color: #000000;
@@ -97,14 +139,24 @@
             </style>
     </head>
     <body>
+    <div class="markone">
+               <?php echo yii\helpers\Html::img(
+                                    Yii::$app->basePath . "/themes/" . Yii::$app->view->theme->themeName . "/assets/img/logos/back2png.png", 
+                                    array("class" => "imgr", "alt" => Yii::$app->params["copyright"])); ?>
+
+        </div> 
+    <div class="marktwo">
+               <?php echo yii\helpers\Html::img(
+                                    Yii::$app->basePath . "/themes/" . Yii::$app->view->theme->themeName . "/assets/img/logos/backpng.png", 
+                                    array("class" => "imgl", "alt" => Yii::$app->params["copyright"])); ?>
+
+        </div> 
+
         <div id="main">
             <div id="container">
                 <div>
                     <div class="div_modInfo">                            
                         <div class="logo_cab"> 
-                             <?php echo yii\helpers\Html::img(
-                                    Yii::$app->basePath . "/themes/" . Yii::$app->view->theme->themeName . "/assets/img/logos/logo_" . Yii::$app->session->get('PB_idempresa') . ".png", 
-                                    array("class" => "", "alt" => Yii::$app->params["copyright"])); ?>
                         </div>
                     </div>
                     <div class="div_modInfo">
@@ -117,5 +169,6 @@
                 <?php echo $content; ?>                  
             </div>
         </div>
+        
     </body>
 </html>

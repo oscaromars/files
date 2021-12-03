@@ -54,18 +54,15 @@ academico::registerTranslations();
                 'header' => 'Action',
                 'contentOptions' => ['style' => 'text-align: center;'],
                 'headerOptions' => ['width' => '90'],
-                'template' => '{view}'/*{download}*/,
+                'template' => '{view} {download}',
                 'buttons' => [
                     'view' => function ($url, $model) {
-                        return Html::a('<span class="' . Utilities::getIcon('view') . '"></span>', Url::to(['inscripciongrado/view', 'id' => $model['per_id']]), ["data-toggle" => "tooltip", "title" => Yii::t("accion", "View")]);
+                        return Html::a('<span class="' . Utilities::getIcon('view') . '"></span>', Url::to(['/inscripciongrado/view', 'id' => $model['per_id']]), ["data-toggle" => "tooltip", "title" => Yii::t("accion", "View")]);
                     },
-                    /*'download' => function ($url, $model) {
-                        //if ($model['perfil'] == 0) {
-                            //if($model['Cv'] != "")
-                            //return Html::a('<span class="'.Utilities::getIcon('download').'"></span>', 'javascript:', ["data-toggle" => "tooltip", "title" => Yii::t("accion","Download"), 'data-href' => Url::to(['profesor/download', 'route' => $model['Cv'], 'type' => 'down']), 'onclick' => 'downloadPdf(this)']);
-                            return Html::a('<span class="glyphicon glyphicon-download"></span>', Url::to(['/academico/profesor/curriculumpdf', 'ids' => $model['per_id']]), ["data-toggle" => "tooltip", "title" => "Descargar Curriculum", "data-pjax" => "0"]);
+                    'download' => function ($url, $model) {
+                        return Html::a('<span class="glyphicon glyphicon-download-alt"></span>', Url::to(['/inscripciongrado/registerpdf', 'ids' => $model['per_id']]), ["data-toggle" => "tooltip", "title" => "Descargar Inscripcion", "data-pjax" => "0"]);
                         //}
-                    },*/
+                    },
                 ],
             ],
         ],

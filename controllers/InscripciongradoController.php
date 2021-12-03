@@ -408,25 +408,26 @@ class InscripciongradoController extends \yii\web\Controller {
         ]);
     }
 
-  public function actionRegisterpdf() {
+
+    public function actionRegisterpdf() {
 
         try {
             $ids = isset($_GET['ids']) ? base64_decode($_GET['ids']) : NULL;
+            $ids = $_GET['ids'];
+            $persona_model = Persona::findOne($ids);
             $rep = new ExportFile();
              $this->layout = 'register';
-
-            $rep->orientation = "P";
+          
+            $rep->orientation = "P"; 
 
             $rep->createReportPdf(
                     $this->render('register', [
-                        'cabFact' => $cabFact,
-                        'carrera' => $carrera,
-                        'facultaded' => $facultaded,
+                     'persona_model' => $persona_model,
                     ])
             );
 
-            $rep->mpdf->Output('INSCRIPCION_' . $codigo . ".pdf", ExportFile::OUTPUT_TO_DOWNLOAD);
-
+            $rep->mpdf->Output('INSCRIPCION_' . $ids . ".pdf", ExportFile::OUTPUT_TO_DOWNLOAD);
+         
         } catch (Exception $e) {
             echo $e->getMessage();
         }

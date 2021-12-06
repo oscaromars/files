@@ -1074,4 +1074,10 @@ class InscripciongradoController extends \yii\web\Controller {
         Utilities::generarReporteXLS($nombarch, $nameReport, $arrHeader, $arrData, $colPosition);
         exit;
     }
+
+    public function actionTerminogrado() {
+        $this->layout = '@themes/' . \Yii::$app->getView()->theme->themeName . '/layouts/terminos.php';
+        return $this->render('terminogrado', [
+        ]);
+    }
 }

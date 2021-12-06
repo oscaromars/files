@@ -1,5 +1,6 @@
 
 $(document).ready(function () {
+    
     $('#btn_buscarAspirante').click(function () {
         actualizarGridAspirante();
     });

@@ -1,6 +1,7 @@
 <?php
 /* @var $this yii\web\View */
 use yii\helpers\Html;
+use yii\bootstrap\Modal;
 use yii\helpers\Url;
 use kartik\date\DatePicker;
 use app\components\CFileInputAjax;
@@ -12,6 +13,11 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
           </div>
           </div>';
 ?>
+<script type="text/javascript">
+    function popUp(URL) {
+        window.open(URL, 'Nombre de la ventana', 'toolbar=0,scrollbars=0,location=0,statusbar=0,menubar=0,resizable=1,width=300,height=200,left = 390,top = 50');
+    }
+    </script>
 <!-- <p>Cédula Obtenida: <input type="text" name="cedula" id="txt_cedula2" disabled></p>-->
 <?= Html::hiddenInput('txth_personaid', '', ['id' => 'txth_personaid']); ?>
 <form class="form-horizontal">
@@ -337,6 +343,13 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
             <label for="chk_mensaje2" class="col-lg-6 col-md-6 col-sm-6 col-xs-6"><?= Yii::t("formulario", "Acepto y me comprometo a respetar y cumplir lo estipulado en los reglamentos internos de la universidad con respecto a la admisión y procesos estudiantiles.") ?> </label>
         </div>
     </div>
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="form-group">
+            <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2" style="text-align: right;">
+            </div>
+            <?= Html::a(Yii::t("formulario", "Leer términos y condiciones de adquisición de servicio educativo"), Url::to(['inscripciongrado/terminogrado', 'popup' => "true"]), ["class" => "pbpopup", "data-toggle" => "tooltip", "title" => "Términos", "data-pjax" => 0]); ?>
+        </div>
+    </div>
     <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
         </br>
         </br>
@@ -593,7 +606,6 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
             </div>
         </div><br><br></br>
     </div>
-
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="col-md-2">
             <a id="paso2back" href="javascript:" class="btn btn-primary btn-block"><span class="glyphicon glyphicon-menu-left"></span><?= Yii::t("formulario", "Back") ?> </a>

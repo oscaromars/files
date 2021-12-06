@@ -199,6 +199,7 @@ class InscripcionGrado extends \yii\db\ActiveRecord
         //\app\models\Utilities::putMessageLogFile('datos de archivo cargados:' . $data['igra_ruta_doc_titulo']);
         //\app\models\Utilities::putMessageLogFile('id de persona:' . $data);
 
+        $igra_ruta_documento = $data['igra_ruta_doc_documento'];
         $igra_ruta_doc_titulo = $data['igra_ruta_doc_titulo'];
         $igra_ruta_doc_dni = $data['igra_ruta_doc_dni'];
         $igra_ruta_doc_certvota = $data['igra_ruta_doc_certvota'];
@@ -212,8 +213,8 @@ class InscripcionGrado extends \yii\db\ActiveRecord
         $igra_mensaje2 = $data['igra_mensaje2'];
 
         $sql = "INSERT INTO " . $con->dbname . ".inscripcion_grado
-            (per_id, uaca_id, eaca_id, mod_id, paca_id, igra_cedula, igra_metodo_ingreso, igra_ruta_doc_titulo, igra_ruta_doc_dni, igra_ruta_doc_certvota, igra_ruta_doc_foto, igra_ruta_doc_comprobantepago, igra_ruta_doc_recordacademico, igra_ruta_doc_certificado, igra_ruta_doc_syllabus, igra_ruta_doc_homologacion, igra_mensaje1, igra_mensaje2, igra_estado, igra_fecha_creacion, igra_estado_logico)VALUES
-            (:per_id, :uaca_id, :eaca_id, :mod_id, :paca_id, :per_dni, :igra_metodo_ingreso, :igra_ruta_doc_titulo, :igra_ruta_doc_dni, :igra_ruta_doc_certvota, :igra_ruta_doc_foto, :igra_ruta_doc_comprobantepago, :igra_ruta_doc_record, :igra_ruta_doc_certificado, :igra_ruta_doc_syllabus, :igra_ruta_doc_homologacion, :igra_mensaje1, :igra_mensaje2, 1, CURRENT_TIMESTAMP(), 1)";
+            (per_id, uaca_id, eaca_id, mod_id, paca_id, igra_cedula, igra_metodo_ingreso, igra_ruta_documento, igra_ruta_doc_titulo, igra_ruta_doc_dni, igra_ruta_doc_certvota, igra_ruta_doc_foto, igra_ruta_doc_comprobantepago, igra_ruta_doc_recordacademico, igra_ruta_doc_certificado, igra_ruta_doc_syllabus, igra_ruta_doc_homologacion, igra_mensaje1, igra_mensaje2, igra_estado, igra_fecha_creacion, igra_estado_logico)VALUES
+            (:per_id, :uaca_id, :eaca_id, :mod_id, :paca_id, :per_dni, :igra_metodo_ingreso, :igra_ruta_documento, :igra_ruta_doc_titulo, :igra_ruta_doc_dni, :igra_ruta_doc_certvota, :igra_ruta_doc_foto, :igra_ruta_doc_comprobantepago, :igra_ruta_doc_record, :igra_ruta_doc_certificado, :igra_ruta_doc_syllabus, :igra_ruta_doc_homologacion, :igra_mensaje1, :igra_mensaje2, 1, CURRENT_TIMESTAMP(), 1)";
 
         $met_ing = 0;
         if (empty($data['ming_id'])) {
@@ -231,6 +232,7 @@ class InscripcionGrado extends \yii\db\ActiveRecord
         $command->bindParam(":paca_id", $periodo, \PDO::PARAM_STR);
         $command->bindParam(":per_dni", $per_dni, \PDO::PARAM_STR);
         $command->bindParam(":igra_metodo_ingreso", $met_ing, \PDO::PARAM_INT);
+        $command->bindParam(":igra_ruta_documento", $igra_ruta_documento, \PDO::PARAM_STR);
         $command->bindParam(":igra_ruta_doc_titulo", $igra_ruta_doc_titulo, \PDO::PARAM_STR);
         $command->bindParam(":igra_ruta_doc_dni", $igra_ruta_doc_dni, \PDO::PARAM_STR);
         $command->bindParam(":igra_ruta_doc_certvota", $igra_ruta_doc_certvota, \PDO::PARAM_STR);
@@ -246,13 +248,16 @@ class InscripcionGrado extends \yii\db\ActiveRecord
         return $con->getLastInsertID();
     }
 
-    public function updateDataInscripciongrado($con, $per_id, $per_dni, $igra_ruta_doc_titulo, $igra_ruta_doc_dni, $igra_ruta_doc_certvota, $igra_ruta_doc_foto, $igra_ruta_doc_comprobantepago, $igra_ruta_doc_record, $igra_ruta_doc_certificado, $igra_ruta_doc_syllabus, $igra_ruta_doc_homologacion) {
+    public function updateDataInscripciongrado($con, $per_id, $per_dni, $igra_ruta_documento, $igra_ruta_doc_titulo, $igra_ruta_doc_dni, $igra_ruta_doc_certvota, $igra_ruta_doc_foto, $igra_ruta_doc_comprobantepago, $igra_ruta_doc_record, $igra_ruta_doc_certificado, $igra_ruta_doc_syllabus, $igra_ruta_doc_homologacion) {
         //\app\models\Utilities::putMessageLogFile('igra_ruta_doc_certvota:  '.$igra_ruta_doc_certvota);
         $imagenes = "";
         $fecha_modificacion = date(Yii::$app->params["dateTimeByDefault"]);
 
         if ($trans !== null) {
             $trans = null; // si existe la transacción entonces no se crea una
+        }
+        if(!empty($igra_ruta_documento)){
+            $imagenes .= "igra_ruta_documento=:igra_ruta_documento,";
         }
         if(!empty($igra_ruta_doc_titulo)){
             $imagenes .= "igra_ruta_doc_titulo=:igra_ruta_doc_titulo,";
@@ -297,6 +302,9 @@ class InscripcionGrado extends \yii\db\ActiveRecord
             $command->bindParam(":per_dni", $per_dni, \PDO::PARAM_STR);
             //$command->bindParam(":igra_metodo_ingreso", $met_ing, \PDO::PARAM_INT);
             // si vienen nulos no agragrlos
+            if(!empty($igra_ruta_documento)){
+                $command->bindParam(":igra_ruta_documento", $igra_ruta_documento, \PDO::PARAM_STR);
+                }
             if(!empty($igra_ruta_doc_titulo)){
             $command->bindParam(":igra_ruta_doc_titulo", $igra_ruta_doc_titulo, \PDO::PARAM_STR);
             }

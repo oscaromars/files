@@ -177,12 +177,21 @@ class InscripciongradoController extends \yii\web\Controller {
                 $per_dni = $data['cedula'];
                 //if ($per_id > 0) {
                 $inscripgrado_id = $data["igra_id"];
+                if (isset($data["igra_ruta_doc_documento"]) && $data["igra_ruta_doc_documento"] != "") {
+                    $arrIm = explode(".", basename($data["igra_ruta_doc_documento"]));
+                    $typeFile = strtolower($arrIm[count($arrIm) - 1]);
+                    $titulo_documentoOld = Yii::$app->params["documentFolder"] . "inscripciongrado/doc_documento_per_" . $per_id . "." . $typeFile;
+                    $titulo_documento = InscripcionGrado::addLabelTimeDocumentos($inscripgrado_id, $titulo_documentoOld, '' /*$timeSt*/);
+                    $data["igra_ruta_doc_documento"] = $titulo_documento;
+                    if ($titulo_documento === false)
+                        throw new Exception('Error Documento no renombrado.');
+                }
                 if (isset($data["igra_ruta_doc_titulo"]) && $data["igra_ruta_doc_titulo"] != "") {
                     $arrIm = explode(".", basename($data["igra_ruta_doc_titulo"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
                     $titulo_archivoOld = Yii::$app->params["documentFolder"] . "inscripciongrado/doc_titulo_per_" . $per_id . "." . $typeFile;
                 $titulo_archivo = InscripcionGrado::addLabelTimeDocumentos($inscripgrado_id, $titulo_archivoOld, '' /*$timeSt*/);
-                Utilities::putMessageLogFile('titulo_archivo xXx.. ' .$titulo_archivo );
+                //Utilities::putMessageLogFile('titulo_archivo xXx.. ' .$titulo_archivo );
                 $data["igra_ruta_doc_titulo"] = $titulo_archivo;
                     if ($titulo_archivo === false)
                         throw new Exception('Error doc Titulo no renombrado.');
@@ -291,6 +300,7 @@ class InscripciongradoController extends \yii\web\Controller {
                 $pcon_direccion = ucwords(strtolower($data["dir_personacontacto"]));
 
                 //imagenes
+                $igra_ruta_doc_documento = $data['igra_ruta_doc_documento'];
                 $igra_ruta_doc_titulo = $data['igra_ruta_doc_titulo'];
                 $igra_ruta_doc_dni = $data['igra_ruta_doc_dni'];
                 $igra_ruta_doc_certvota = $data['igra_ruta_doc_certvota'];
@@ -311,7 +321,7 @@ class InscripciongradoController extends \yii\web\Controller {
                         // modificar la tabla
                         $cone = \Yii::$app->db_inscripcion;
                         $mod_inscripciongrado = new InscripcionGrado();
-                        $inscripciongrado = $mod_inscripciongrado->updateDataInscripciongrado($cone, $per_id, $per_dni, $igra_ruta_doc_titulo, $igra_ruta_doc_dni, $igra_ruta_doc_certvota, $igra_ruta_doc_foto, $igra_ruta_doc_comprobantepago, $igra_ruta_doc_record, $igra_ruta_doc_certificado, $igra_ruta_doc_syllabus, $igra_ruta_doc_homologacion);
+                        $inscripciongrado = $mod_inscripciongrado->updateDataInscripciongrado($cone, $per_id, $per_dni, $igra_ruta_doc_documento, $igra_ruta_doc_titulo, $igra_ruta_doc_dni, $igra_ruta_doc_certvota, $igra_ruta_doc_foto, $igra_ruta_doc_comprobantepago, $igra_ruta_doc_record, $igra_ruta_doc_certificado, $igra_ruta_doc_syllabus, $igra_ruta_doc_homologacion);
                         $exito=1;
                     }else{ // caso contrario crear
                         $resul = $model->insertarDataInscripciongrado($per_id, $unidad, $carrera, $modalidad, $periodo, $per_dni, $data);
@@ -905,6 +915,11 @@ class InscripciongradoController extends \yii\web\Controller {
                 $pcon_direccion = ucwords(strtolower($data["dir_personacontacto"]));
 
                 // if estos data vienen null no hacer nada
+                if(empty($data['igra_ruta_doc_documento'])){
+                    $igra_ruta_doc_documento = null;
+                }else{
+                    $igra_ruta_doc_documento = $data['igra_ruta_doc_documento'];
+                }
                 if(empty($data['igra_ruta_doc_titulo'])){
                     $igra_ruta_doc_titulo = null;
                 }else{
@@ -988,7 +1003,7 @@ class InscripciongradoController extends \yii\web\Controller {
 
                 $gradoinscripcion = $mod_inscripciongrado->consultarDatosInscripciongrado($per_id);
                 if($gradoinscripcion['existe_inscripcion'] == 1){
-                    $inscripciongrado = $mod_inscripciongrado->updateDataInscripciongrado($con, $per_id, $per_dni, $igra_ruta_doc_titulo, $igra_ruta_doc_dni, $igra_ruta_doc_certvota, $igra_ruta_doc_foto, $igra_ruta_doc_comprobantepago, $igra_ruta_doc_record, $igra_ruta_doc_certificado, $igra_ruta_doc_syllabus, $igra_ruta_doc_homologacion);
+                    $inscripciongrado = $mod_inscripciongrado->updateDataInscripciongrado($con, $per_id, $per_dni, $igra_ruta_doc_documento, $igra_ruta_doc_titulo, $igra_ruta_doc_dni, $igra_ruta_doc_certvota, $igra_ruta_doc_foto, $igra_ruta_doc_comprobantepago, $igra_ruta_doc_record, $igra_ruta_doc_certificado, $igra_ruta_doc_syllabus, $igra_ruta_doc_homologacion);
                 }
 
 

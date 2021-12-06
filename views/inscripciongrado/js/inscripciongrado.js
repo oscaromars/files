@@ -325,6 +325,7 @@ function guardarInscripcionGrado() {
     arrParams.dir_personacontacto = $('#txt_direccion_persona_contacto').val();
 
     //TAB 2
+    arrParams.igra_ruta_doc_documento = ($('#txth_doc_documento').val() != '') ? $('#txth_doc_documento').val() : '';
     arrParams.igra_ruta_doc_titulo = ($('#txth_doc_titulo').val() != '') ? $('#txth_doc_titulo').val() : '';
     arrParams.igra_ruta_doc_dni = ($('#txth_doc_dni').val() != '') ? $('#txth_doc_dni').val() : '';
     arrParams.igra_ruta_doc_certvota = ($('#txth_doc_certvota').val() != '') ? $('#txth_doc_certvota').val() : '';
@@ -339,6 +340,10 @@ function guardarInscripcionGrado() {
 
     if ($("#chk_mensaje1").prop("checked") && $("#chk_mensaje2").prop("checked"))
     {
+        if ($('#txth_doc_documento').val() == "") {
+            var mensaje = {wtmessage: "Debe adjuntar Documentos.", title: "Información"};
+            showAlert("NO_OK", "error", mensaje);
+        } else {
         /*if ($('#txth_doc_titulo').val() == "") {
             var mensaje = {wtmessage: "Debe adjuntar título.", title: "Información"};
             showAlert("NO_OK", "error", mensaje);
@@ -451,6 +456,7 @@ function guardarInscripcionGrado() {
                 //}
             //}//else txth_doc_dni
         //}//else txth_doc_titulo
+        }//else txth_doc_documento
     } else {
         var mensaje = {wtmessage: "Debe Aceptar los términos de la Información.", title: "Información"};
         showAlert("NO_OK", "success", mensaje);
@@ -527,6 +533,7 @@ function updateaspirantegrado() {
     arrParams.dir_personacontacto = $('#txt_direccion_contEdit').val();
 
     //TAB 2
+    arrParams.igra_ruta_doc_documento = $('#txth_doc_documento').val();
     arrParams.igra_ruta_doc_titulo = $('#txth_doc_titulo').val();
     arrParams.igra_ruta_doc_dni = $('#txth_doc_dni').val();
     arrParams.igra_ruta_doc_certvota = $('#txth_doc_certvota').val();

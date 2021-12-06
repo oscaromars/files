@@ -199,7 +199,6 @@ class InscripcionGrado extends \yii\db\ActiveRecord
         //\app\models\Utilities::putMessageLogFile('datos de archivo cargados:' . $data['igra_ruta_doc_titulo']);
         //\app\models\Utilities::putMessageLogFile('id de persona:' . $data);
         $igra_ruta_documento = $data['igra_ruta_doc_documento'];
-        $igra_ruta_documento = $data['igra_ruta_doc_documento'];
         $igra_ruta_doc_titulo = $data['igra_ruta_doc_titulo'];
         $igra_ruta_doc_dni = $data['igra_ruta_doc_dni'];
         $igra_ruta_doc_certvota = $data['igra_ruta_doc_certvota'];

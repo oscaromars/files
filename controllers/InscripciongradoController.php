@@ -437,7 +437,7 @@ class InscripciongradoController extends \yii\web\Controller {
             );
 
             $rep->mpdf->Output('INSCRIPCION_' . $ids . ".pdf", ExportFile::OUTPUT_TO_DOWNLOAD);
-         
+
         } catch (Exception $e) {
             echo $e->getMessage();
         }
@@ -538,6 +538,7 @@ class InscripciongradoController extends \yii\web\Controller {
                 "arch7" => $documentos['igra_ruta_doc_certificado'],
                 "arch8" => $documentos['igra_ruta_doc_syllabus'],
                 "arch9" => $documentos['igra_ruta_doc_homologacion'],
+                "arch10" => $documentos['igra_ruta_documento'],
                 'persona_model' => $persona_model,
                 'contacto_model' => $contacto_model,
                 'documentos' => $documentos,
@@ -722,6 +723,7 @@ class InscripciongradoController extends \yii\web\Controller {
                 "arch7" => $documentos['igra_ruta_doc_certificado'],
                 "arch8" => $documentos['igra_ruta_doc_syllabus'],
                 "arch9" => $documentos['igra_ruta_doc_homologacion'],
+                "arch10" =>$documentos['igra_ruta_documento'],
                 'persona_model' => $persona_model,
                 'contacto_model' => $contacto_model,
                 'documentos' => $documentos,
@@ -803,6 +805,15 @@ class InscripciongradoController extends \yii\web\Controller {
 
 
                 $inscripgrado_id = $data["igra_id"];
+                if (isset($data["igra_ruta_doc_documento"]) && $data["igra_ruta_doc_documento"] != "") {
+                    $arrIm = explode(".", basename($data["igra_ruta_doc_documento"]));
+                    $typeFile = strtolower($arrIm[count($arrIm) - 1]);
+                    $titulo_documentoOld = Yii::$app->params["documentFolder"] . "inscripciongrado/doc_documento_per_" . $per_id . "." . $typeFile;
+                    $titulo_documento = InscripcionGrado::addLabelTimeDocumentos($inscripgrado_id, $titulo_documentoOld, '' /*$timeSt*/);
+                    $data["igra_ruta_doc_documento"] = $titulo_documento;
+                    if ($titulo_documento === false)
+                        throw new Exception('Error Documneto no renombrado.');
+                }
                 if (isset($data["igra_ruta_doc_titulo"]) && $data["igra_ruta_doc_titulo"] != "") {
                     $arrIm = explode(".", basename($data["igra_ruta_doc_titulo"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);

@@ -229,7 +229,7 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
                         var personaid = $("#txth_personaid").val();
-                        return {"upload_file": true, "name_file": "doc_certvota_" + personaid};
+                        return {"upload_file": true, "name_file": "doc_certvota_per_" + personaid};
         }',
                     ],
                     'pluginEvents' => [
@@ -287,7 +287,7 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
                         var personaid = $("#txth_personaid").val();
-                        return {"upload_file": true, "name_file": "doc_foto_" + personaid};
+                        return {"upload_file": true, "name_file": "doc_foto_per_" + personaid};
         }',
                     ],
                     'pluginEvents' => [
@@ -345,7 +345,7 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
                         var personaid = $("#txth_personaid").val();
-                        return {"upload_file": true, "name_file": "doc_comprobantepago_" + personaid};
+                        return {"upload_file": true, "name_file": "doc_comprobantepago_per_" + personaid};
         }',
                     ],
                     'pluginEvents' => [
@@ -448,7 +448,7 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                                 'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                                 'uploadExtraData' => 'javascript:function (previewId,index) {
                                 var personaid = $("#txth_personaid").val();
-                                return {"upload_file": true, "name_file": "doc_record_" + personaid};
+                                return {"upload_file": true, "name_file": "doc_record_per_" + personaid};
                 }',
                             ],
                             'pluginEvents' => [
@@ -506,7 +506,7 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                                 'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                                 'uploadExtraData' => 'javascript:function (previewId,index) {
                                 var personaid = $("#txth_personaid").val();
-                                return {"upload_file": true, "name_file": "doc_certificado_" + personaid};
+                                return {"upload_file": true, "name_file": "doc_certificado_per_" + personaid};
                 }',
                             ],
                             'pluginEvents' => [
@@ -564,7 +564,7 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                                 'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                                 'uploadExtraData' => 'javascript:function (previewId,index) {
                                 var personaid = $("#txth_personaid").val();
-                                return {"upload_file": true, "name_file": "doc_syllabus_" + personaid};
+                                return {"upload_file": true, "name_file": "doc_syllabus_per_" + personaid};
                 }',
                             ],
                             'pluginEvents' => [
@@ -622,7 +622,7 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                                 'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                                 'uploadExtraData' => 'javascript:function (previewId,index) {
                                 var personaid = $("#txth_personaid").val();
-                                return {"upload_file": true, "name_file": "doc_especievalorada_" + personaid};
+                                return {"upload_file": true, "name_file": "doc_especievalorada_per_" + personaid};
                 }',
                             ],
                             'pluginEvents' => [

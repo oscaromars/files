@@ -484,6 +484,7 @@ class InscripcionGrado extends \yii\db\ActiveRecord
         $estado = 1;
 
         $sql = "SELECT  per_id,
+                igra_ruta_documento,
                 igra_ruta_doc_titulo,
                 igra_ruta_doc_dni,
                 igra_ruta_doc_certvota,

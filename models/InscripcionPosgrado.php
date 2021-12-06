@@ -628,4 +628,73 @@ class InscripcionPosgrado extends \yii\db\ActiveRecord
         $resultData = $comando->queryOne();
         return $resultData;
     }
+
+
+    public function consultarPdf($per_id) {
+        $con = \Yii::$app->db_inscripcion;
+        $estado = 1;$uaca = 2;
+        \app\models\Utilities::putMessageLogFile('entro con per_id : ' .$per_id);
+        $sql = "
+SELECT distinct
+ipos.ipos_fecha_creacion as registro,
+ipos.ipos_anio as anio,
+eaca.eaca_nombre as programa,
+moda.mod_nombre as modalidad,
+ ipos.ipos_ruta_doc_foto,
+per.per_cedula as cedula,
+per.per_pasaporte as pasaporte,
+ifnull(CONCAT(ifnull(per.per_pri_nombre,''), ' ', ifnull(per.per_seg_nombre,'')), '') as nombres,
+ifnull(CONCAT(ifnull(per.per_pri_apellido,''), ' ', ifnull(per.per_seg_apellido,'')), '') as apellidos,
+-- lugar de nacimiento
+per.per_fecha_nacimiento,
+pais.pai_nombre,
+esta.eciv_nombre,
+ifnull(CONCAT(ifnull(per.per_domicilio_sector,''), ' ', ifnull(per.per_domicilio_cpri,''),' ',
+ifnull(per.per_domicilio_csec,''),' ',ifnull(per.per_domicilio_num,''),' '
+,ifnull(per.per_domicilio_ref,''),' '
+), '') as domicilio,
+per_celular,
+per_domicilio_telefono,
+per_correo,
+ifnull(CONCAT(ifnull(per.per_trabajo_direccion,''), ' ', ifnull(per.per_trabajo_nombre,''),' '), '') as trabajo,
+contac.pcon_nombre, 
+parente.tpar_nombre, 
+contac.pcon_telefono, 
+contac.pcon_direccion,
+mallagen.maca_nombre,
+ifnull(estud.est_categoria,'No definida') as categoria
+FROM db_inscripcion.inscripcion_posgrado as ipos
+Inner Join db_asgard.persona as per on per.per_id = ipos.per_id
+Inner Join db_asgard.pais as pais on pais.pai_id = per.per_nacionalidad
+Inner Join db_asgard.estado_civil as esta on esta.eciv_id = per.eciv_id
+Inner join db_academico.estudiante as estud on per.per_id = estud.per_id
+Inner Join db_academico.unidad_academica as uaca on uaca.uaca_id = ipos.uaca_id
+Inner Join db_academico.estudio_academico as eaca on eaca.eaca_id = ipos.eaca_id
+Inner Join db_academico.modalidad as moda on moda.mod_id = ipos.mod_id
+Inner Join db_asgard.persona_contacto as contac on contac.per_id = ipos.per_id
+Inner Join db_asgard.tipo_parentesco as parente on parente.tpar_id = contac.tpar_id
+Inner Join db_academico.malla_academico_estudiante as mallaes ON mallaes.per_id =  ipos.per_id
+Inner Join db_academico.malla_academica as mallagen ON mallagen.maca_id =  mallaes.maca_id
+WHERE 
+ipos.uaca_id = :uaca_id AND
+ipos.per_id = :per_id AND
+ ipos.ipos_estado = :estado and ipos.ipos_estado_logico = :estado and
+per.per_estado = :estado and per.per_estado_logico = :estado and
+uaca.uaca_estado = :estado and uaca.uaca_estado_logico = :estado and
+eaca.eaca_estado = :estado and eaca.eaca_estado_logico = :estado and
+moda.mod_estado = :estado and moda.mod_estado_logico = :estado
+               ";
+
+
+        \app\models\Utilities::putMessageLogFile('resultado del query: '.$comando->getRawSql());
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
+        $comando->bindParam(":uaca_id", $uaca_id, \PDO::PARAM_INT);
+        $resultData = $comando->queryOne();
+        return $resultData;
+    }
+
+
+
 }

@@ -339,19 +339,19 @@ function guardarInscripcionGrado() {
 
     if ($("#chk_mensaje1").prop("checked") && $("#chk_mensaje2").prop("checked"))
     {
-        if ($('#txth_doc_titulo').val() == "") {
+        /*if ($('#txth_doc_titulo').val() == "") {
             var mensaje = {wtmessage: "Debe adjuntar título.", title: "Información"};
             showAlert("NO_OK", "error", mensaje);
-        } else {
-            if ($('#txth_doc_dni').val() == "") {
+        } else {*/
+            /*if ($('#txth_doc_dni').val() == "") {
                 var mensaje = {wtmessage: "Debe adjuntar documento de identidad.", title: "Información"};
                 showAlert("NO_OK", "error", mensaje);
-            } else {
+            } else {*/
                 //if ($('#cmb_tipo_dni').val() == "CED") {
-                    if ($('#txth_doc_certvota').val() == "" && $('#cmb_nacionalidad').val()) {
+                    /*if ($('#txth_doc_certvota').val() == "" && $('#cmb_nacionalidad').val()) {
                         var mensaje = {wtmessage: "Debe adjuntar certificado de votación.", title: "Información"};
-                        showAlert("NO_OK", "error", mensaje);
-                    } else {
+                        showAlert("NO_OK", "error", mensaje);*/
+                    //} else {
                         if ($('#txth_doc_foto').val() == "") {
                             var mensaje = {wtmessage: "Debe adjuntar foto.", title: "Información"};
                             showAlert("NO_OK", "error", mensaje);
@@ -447,10 +447,10 @@ function guardarInscripcionGrado() {
                                 }
                             }
                         }
-                    }
+                    //} //else txth_doc_certvota
                 //}
-            }
-        }
+            //}//else txth_doc_dni
+        //}//else txth_doc_titulo
     } else {
         var mensaje = {wtmessage: "Debe Aceptar los términos de la Información.", title: "Información"};
         showAlert("NO_OK", "success", mensaje);

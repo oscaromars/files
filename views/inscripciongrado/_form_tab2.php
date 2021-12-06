@@ -13,11 +13,6 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
           </div>
           </div>';
 ?>
-<script type="text/javascript">
-    function popUp(URL) {
-        window.open(URL, 'Nombre de la ventana', 'toolbar=0,scrollbars=0,location=0,statusbar=0,menubar=0,resizable=1,width=300,height=200,left = 390,top = 50');
-    }
-    </script>
 <!-- <p>Cédula Obtenida: <input type="text" name="cedula" id="txt_cedula2" disabled></p>-->
 <?= Html::hiddenInput('txth_personaid', '', ['id' => 'txth_personaid']); ?>
 <form class="form-horizontal">
@@ -35,8 +30,7 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
             </div>
         </div>
     </div>
-
-    <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12 doc_titulo cinteres">
+    <!-- <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12 doc_titulo cinteres">
         <div class="form-group">
             <label for="txth_doc_titulo" class="col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label keyupmce"><?= Yii::t("formulario", "Title/Degree Certificate") ?></label>
             <div class="col-sm-6 col-md-6 col-xs-6 col-lg-6">
@@ -93,8 +87,8 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                 ?>
             </div>
         </div>
-    </div>
-    <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12 doc_dni cinteres">
+    </div>-->
+    <!-- <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12 doc_dni cinteres">
         <div class="form-group">
             <label for="txth_doc_dni" class="col-sm-2 col-md-2 col-xs-2 col-lg-2 control-label keyupmce"><?= Yii::t("formulario", "Identification document") ?></label>
             <div class="col-sm-6 col-md-6 col-xs-6 col-lg-6">
@@ -151,9 +145,9 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                 ?>
             </div>
         </div>
-    </div>
+    </div>-->
 
-    <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12" id="divCertvota" style="display: block">
+    <!-- <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12" id="divCertvota" style="display: block">
         <div class="form-group">
             <label for="txth_doc_certvota" class="col-sm-2 col-md-2 col-xs-2 col-lg-2 control-label keyupmce"><?= Yii::t("formulario", "Voting Certificate") ?></label>
             <div class="col-sm-6 col-md-6 col-xs-6 col-lg-6">
@@ -210,7 +204,7 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                 ?>
             </div>
         </div>
-    </div>
+    </div>-->
     <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12 doc_foto cinteres">
         <div class="form-group">
             <label for="txth_doc_foto" class="col-sm-2 col-md-2 col-xs-2 col-lg-2 control-label keyupmce"><?= Yii::t("formulario", "Foto") ?></label>

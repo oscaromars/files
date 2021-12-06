@@ -15,7 +15,9 @@ use app\models\Utilities;
  * @property int $eaca_id
  * @property int $mod_id
  * @property int $paca_id
+ * @property string $igra_cedula
  * @property int $igra_metodo_ingreso
+ * @property string $igra_ruta_documento
  * @property string $igra_ruta_doc_titulo
  * @property string $igra_ruta_doc_dni
  * @property string $igra_ruta_doc_certvota
@@ -56,10 +58,11 @@ class InscripcionGrado extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['per_id', 'uaca_id', 'eaca_id', 'mod_id', 'paca_id', 'igra_estado', 'igra_estado_logico'], 'required'],
             [['per_id', 'uaca_id', 'eaca_id', 'mod_id', 'paca_id', 'igra_metodo_ingreso'], 'integer'],
+            [['uaca_id', 'eaca_id', 'mod_id', 'paca_id', 'igra_cedula', 'igra_estado', 'igra_estado_logico'], 'required'],
             [['igra_fecha_creacion', 'igra_fecha_modificacion'], 'safe'],
-            [['igra_ruta_doc_titulo', 'igra_ruta_doc_dni', 'igra_ruta_doc_certvota', 'igra_ruta_doc_foto', 'igra_ruta_doc_comprobantepago', 'igra_ruta_doc_recordacademico', 'igra_ruta_doc_certificado', 'igra_ruta_doc_syllabus', 'igra_ruta_doc_homologacion'], 'string', 'max' => 200],
+            [['igra_cedula'], 'string', 'max' => 15],
+            [['igra_ruta_documento', 'igra_ruta_doc_titulo', 'igra_ruta_doc_dni', 'igra_ruta_doc_certvota', 'igra_ruta_doc_foto', 'igra_ruta_doc_comprobantepago', 'igra_ruta_doc_recordacademico', 'igra_ruta_doc_certificado', 'igra_ruta_doc_syllabus', 'igra_ruta_doc_homologacion'], 'string', 'max' => 200],
             [['igra_mensaje1', 'igra_mensaje2', 'igra_estado', 'igra_estado_logico'], 'string', 'max' => 1],
         ];
     }
@@ -76,7 +79,9 @@ class InscripcionGrado extends \yii\db\ActiveRecord
             'eaca_id' => 'Eaca ID',
             'mod_id' => 'Mod ID',
             'paca_id' => 'Paca ID',
+            'igra_cedula' => 'Igra Cedula',
             'igra_metodo_ingreso' => 'Igra Metodo Ingreso',
+            'igra_ruta_documento' => 'Igra Ruta Documento',
             'igra_ruta_doc_titulo' => 'Igra Ruta Doc Titulo',
             'igra_ruta_doc_dni' => 'Igra Ruta Doc Dni',
             'igra_ruta_doc_certvota' => 'Igra Ruta Doc Certvota',
@@ -94,7 +99,6 @@ class InscripcionGrado extends \yii\db\ActiveRecord
             'igra_estado_logico' => 'Igra Estado Logico',
         ];
     }
-
     /**
      * Function addLabelTimeDocumentos renombra el documento agregando una varible de tiempo
      * @author  Developer Uteg <developer@uteg.edu.ec>
@@ -492,5 +496,4 @@ class InscripcionGrado extends \yii\db\ActiveRecord
         $resultData = $comando->queryOne();
         return $resultData;
     }
-
 }

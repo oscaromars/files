@@ -20,6 +20,7 @@ CREATE TABLE `inscripcion_grado` (
   `paca_id` bigint NOT NULL,
   `igra_cedula` varchar(15) NOT NULL,
   `igra_metodo_ingreso` bigint DEFAULT NULL,
+  `igra_ruta_documento` varchar(200) DEFAULT NULL,
   `igra_ruta_doc_titulo` varchar(200) DEFAULT NULL,
   `igra_ruta_doc_dni` varchar(200) DEFAULT NULL,
   `igra_ruta_doc_certvota` varchar(200) DEFAULT NULL,
@@ -37,7 +38,12 @@ CREATE TABLE `inscripcion_grado` (
   `igra_estado_logico` varchar(1) NOT NULL,
   PRIMARY KEY (`igra_id`)
 );
+/*
+ALTER TABLE `db_inscripcion`.`inscripcion_grado`
+ADD COLUMN `igra_ruta_documento` VARCHAR(200) NULL DEFAULT
+NULL AFTER `igra_metodo_ingreso`;
 
+*/
 CREATE TABLE `inscripcion_posgrado` (
   `ipos_id` bigint NOT NULL AUTO_INCREMENT,
   `per_id` bigint NOT NULL,

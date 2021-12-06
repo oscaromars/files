@@ -87,6 +87,11 @@ $directoryAsset = $assetsAdminLTE->baseUrl;
             <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
         <![endif]-->
         <?php Menu::generateJSLang("messages", Yii::$app->language); ?>
+         <style>       
+        .imgl{
+                   width:20%;
+                }
+       </style>
     </head>
     <body class="hold-transition skin-blue sidebar-mini body-system">
         <?php $this->beginBody() ?>
@@ -96,6 +101,12 @@ $directoryAsset = $assetsAdminLTE->baseUrl;
                 <!-- Main content -->
                 <section class="content">
                     <div class="box">
+                          <div class="marktwo">
+               <?php echo yii\helpers\Html::img(
+                                    "/asgard/web/img/users/backpng.png", 
+                                    array("class" => "imgl", "alt" => Yii::$app->params["copyright"])); ?>
+
+        </div> 
                         <div class="box-body">
                             <?= $content ?>
                         </div>

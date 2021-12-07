@@ -1,6 +1,6 @@
 
 $(document).ready(function () {
-    
+
     $('#btn_buscarAspirante').click(function () {
         actualizarGridAspirante();
     });
@@ -335,6 +335,10 @@ function guardarInscripcionGrado() {
     arrParams.parentesco = $('#cmb_parentesco').val();
     arrParams.tel_emergencia = $('#txt_telefono_emergencia').val();
     arrParams.dir_personacontacto = $('#txt_direccion_persona_contacto').val();
+
+    //Datos de financiamiento
+    arrParams.financiamiento = $('#cmb_tipofinanciamiento').val();
+    arrParams.instituto = $('#txt_instituto').val();
 
     //TAB 2
     arrParams.igra_ruta_doc_documento = ($('#txth_doc_documento').val() != '') ? $('#txth_doc_documento').val() : '';

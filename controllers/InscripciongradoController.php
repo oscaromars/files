@@ -421,10 +421,11 @@ class InscripciongradoController extends \yii\web\Controller {
 
     public function actionRegisterpdf() {
 
-        try {
+         try {
             $ids = isset($_GET['ids']) ? base64_decode($_GET['ids']) : NULL;
             $ids = $_GET['ids'];
-            $persona_model = Persona::findOne($ids);
+            $mod_insgrado = new InscripcionGrado();
+            $persona_model = $mod_insgrado->consultarPdf($ids);
             $rep = new ExportFile();
              $this->layout = 'register';
           
@@ -437,10 +438,11 @@ class InscripciongradoController extends \yii\web\Controller {
             );
 
             $rep->mpdf->Output('INSCRIPCION_' . $ids . ".pdf", ExportFile::OUTPUT_TO_DOWNLOAD);
-
+         
         } catch (Exception $e) {
             echo $e->getMessage();
         }
+
 
     }
 

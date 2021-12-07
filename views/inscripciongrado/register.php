@@ -147,8 +147,8 @@
     <br><br> <br><br>
 
 <div style="text-justify: auto">
-    <p style='font-family:helvetica'><h1>
-FECHA DE REGISTRO: </h1>
+    <p style='font-family:helvetica'>
+<b>FECHA DE REGISTRO:</b>  &nbsp;<?php echo $persona_model['registro'] ?>
         </p>
     </div>
    <br><br>
@@ -163,10 +163,10 @@ completamente firmada y acompañada de todos los documentos solicitados.
     </div>
    <br><br>
    <div  style="text-justify: auto">
-        <p><h3>
-    <b>CARRERA:</b><br><br>
-    <b>MODALIDAD:</b><br><br>
-    <b>PERIODO:</b></h3>
+        <p>
+    <b>CARRERA:</b>&nbsp;<?php echo $persona_model['carrera'] ?><br><br>
+    <b>MODALIDAD:</b>&nbsp;<?php echo $persona_model['modalidad'] ?><br><br>
+    <b>PERIODO:</b>&nbsp;<?php echo $persona_model['periodo'] ?>
   </p>
     </div>
 <br>
@@ -189,20 +189,24 @@ completamente firmada y acompañada de todos los documentos solicitados.
                 ESTADO CIVIL:<br><br>
                 </td>
                 <td class="marcoCel3" style='font-family:helvetica'>
-                &nbsp;<?php echo $persona_model['per_cedula'] ?><br><br>
-                &nbsp;<?php echo $persona_model['per_cedula'] ?><br><br>
-                &nbsp;<?php echo $persona_model['per_pri_nombre'] ?><br><br>
-                &nbsp;<?php echo $persona_model['per_pri_apellido'] ?><br><br>
-                &nbsp;<?php echo $persona_model['can_id_nacimiento'] ?><br><br>
+                 &nbsp;<?php if ($persona_model['cedula'] != Null) {
+                   echo "Cédula";  } else {echo "Pasaporte";  }            
+                 ?> <br><br>
+                 <?php if ($persona_model['cedula'] != Null) {
+                   echo $persona_model['cedula'];  } else {echo $persona_model['pasaporte'];  }            
+                 ?> <br><br>
+                &nbsp;<?php echo $persona_model['nombres'] ?><br><br>
+                &nbsp;<?php echo $persona_model['apellidos'] ?><br><br>
+                &nbsp;<?php echo $persona_model['pai_nombre'] ?><br><br>
                 &nbsp;<?php echo $persona_model['per_fecha_nacimiento'] ?><br><br>
-                &nbsp;<?php echo $persona_model['per_nacionalidad'] ?><br><br>
-                &nbsp;<?php echo $persona_model['per_pri_nombre'] ?><br><br>
+                &nbsp;<?php echo $persona_model['pai_nombre'] ?><br><br>
+                &nbsp;<?php echo $persona_model['eciv_nombre'] ?><br><br>
                 </td>
                 <td class="marcoCel3">
                 </td>
                   <td class="marcoCel3">
                      <?php echo yii\helpers\Html::img(
-                                    Yii::$app->basePath . "/uploads/Silueta-opc-4.png", 
+                                    Yii::$app->basePath . $persona_model['igra_ruta_doc_foto'] , 
                                     array("class" => "credpic", "alt" => Yii::$app->params["copyright"])); ?>
                 </td>
             </tr>
@@ -218,7 +222,7 @@ completamente firmada y acompañada de todos los documentos solicitados.
 <br><br>
 <div  style="text-justify: auto">
         <p>
-      <b>DIRECCIÓN DOMICILIARIA:</b> &nbsp;<?php echo $persona_model['pai_id_domicilio'] ?><br><br>
+      <b>DIRECCIÓN DOMICILIARIA:</b> &nbsp;<?php echo $persona_model['domicilio'] ?><br><br>
       <b>CELULAR:</b> &nbsp;<?php echo $persona_model['per_celular'] ?><br><br>
       <b>TELÉFONO ADICIONAL:</b> &nbsp;<?php echo $persona_model['per_domicilio_telefono'] ?><br><br>
     <b>CORREO ELECTRÓNICO:</b>&nbsp;<?php echo $persona_model['per_correo'] ?><br><br>
@@ -233,11 +237,11 @@ completamente firmada y acompañada de todos los documentos solicitados.
 <br><br>
 <div  style="text-justify: auto">
         <p>
-      <b>DIRECCIÓN DE TRABAJO:</b> &nbsp;<?php echo $persona_model['per_trabajo_direccion'] ?><br><br>
-      <b>PERSONA POR CONTACTAR EN CASO DE EMERGENCIA:</b> &nbsp;<?php echo $persona_model['per_correo'] ?><br><br>
-     <b>TIPO DE PARENTESCO:</b> &nbsp;<br><br>
-   <b>TELÉFONO DE LA PERSONA A CONTACTAR EN CASO DE EMERGENCIA:</b> &nbsp;<br><br>
-    <b>DIRECCIÓN DE LA PERSONA A CONTACTAR EN CASO DE EMERGENCIA:</b> &nbsp;<br><br>
+      <b>DIRECCIÓN DE TRABAJO:</b> &nbsp;<?php echo $persona_model['trabajo'] ?><br><br>
+      <b>PERSONA POR CONTACTAR EN CASO DE EMERGENCIA:</b> &nbsp;<?php echo $persona_model['pcon_nombre'] ?><br><br>
+     <b>TIPO DE PARENTESCO:</b> &nbsp;<?php echo $persona_model['tpar_nombre'] ?><br><br>
+   <b>TELÉFONO DE LA PERSONA A CONTACTAR EN CASO DE EMERGENCIA:</b> &nbsp;<?php echo $persona_model['pcon_telefono'] ?><br><br>
+    <b>DIRECCIÓN DE LA PERSONA A CONTACTAR EN CASO DE EMERGENCIA:</b> &nbsp;<?php echo $persona_model['pcon_direccion'] ?><br><br>
 
   </p>
     </div>
@@ -251,8 +255,8 @@ completamente firmada y acompañada de todos los documentos solicitados.
 <br><br>
 <div  style="text-justify: auto">
         <p>
-      <b>MALLA CURRICULAR:</b><br><br>
-      <b>CATEGORIA:</b><br><br>
+      <b>MALLA CURRICULAR:</b>&nbsp;<?php echo $persona_model['maca_nombre'] ?><br><br>
+      <b>CATEGORIA:</b>&nbsp;<?php echo $persona_model['categoria'] ?><br><br>
       <b>FINANCIAMIENTO:</b><br><br>
   </p>
     </div>

@@ -508,13 +508,11 @@ class InscripcionGrado extends \yii\db\ActiveRecord
 
 
     public function consultarPdf($per_id) {
-        $con = \Yii::$app->db_inscripcion;
-        $con_asgard = \Yii::$app->db_asgard;
-        $con_academico = \Yii::$app->db_academico;
+             $con = \Yii::$app->db_inscripcion;
         $estado = 1;
         \app\models\Utilities::putMessageLogFile('entro con per_id : ' .$per_id);
         $sql = "
-        SELECT distinct
+       SELECT distinct
 igra.igra_fecha_creacion as registro,
 eaca.eaca_nombre as carrera,
 moda.mod_nombre as modalidad,
@@ -529,7 +527,7 @@ per.per_fecha_nacimiento,
 pais.pai_nombre,
 esta.eciv_nombre,
 ifnull(CONCAT(ifnull(per.per_domicilio_sector,''), ' ', ifnull(per.per_domicilio_cpri,''),' ',
-ifnull(per.per_domicilio_num,''),' ',ifnull(per.per_domicilio_csec,''),' '
+ifnull(per.per_domicilio_csec,''),' ',ifnull(per.per_domicilio_num,''),' '
 ,ifnull(per.per_domicilio_ref,''),' '
 ), '') as domicilio,
 per_celular,
@@ -542,39 +540,38 @@ contac.pcon_telefono,
 contac.pcon_direccion,
 mallagen.maca_nombre,
 ifnull(estud.est_categoria,'No definida') as categoria
-FROM " . $con->dbname . ".inscripcion_grado as igra
-Inner Join " . $con_asgard->dbname . ".persona as per on per.per_id = igra.per_id
-Inner Join " . $con_asgard->dbname . ".pais as pais on pais.pai_id = per.per_nacionalidad
-Inner Join " . $con_asgard->dbname . ".db_asgard.estado_civil as esta on esta.eciv_id = per.eciv_id
-Inner join " . $con_academico->dbname . ".estudiante as estud on per.per_id = estud.per_id
-Inner Join " . $con_academico->dbname . ".unidad_academica as uaca on uaca.uaca_id = igra.uaca_id
-Inner Join " . $con_academico->dbname . ".estudio_academico as eaca on eaca.eaca_id = igra.eaca_id
-Inner Join " . $con_academico->dbname . ".modalidad as moda on moda.mod_id = igra.mod_id
-Inner Join " . $con_academico->dbname . ".periodo_academico as paca on paca.paca_id = igra.paca_id
-Inner Join " . $con_academico->dbname . ".semestre_academico as saca on saca.saca_id = paca.saca_id
-Inner Join " . $con_academico->dbname . ".bloque_academico as baca on baca.baca_id = paca.baca_id
-Inner Join " . $con_asgard->dbname . ".persona_contacto as contac on contac.per_id = igra.per_id
-Inner Join " . $con_asgard->dbname . ".tipo_parentesco as parente on parente.tpar_id = contac.tpar_id
-Inner Join " . $con_academico->dbname . ".malla_academico_estudiante as mallaes ON mallaes.per_id =  igra.per_id
-Inner Join " . $con_academico->dbname . ".malla_academica as mallagen ON mallagen.maca_id =  mallaes.maca_id
+FROM db_inscripcion.inscripcion_grado as igra
+Inner Join db_asgard.persona as per on per.per_id = igra.per_id
+Inner Join db_asgard.pais as pais on pais.pai_id = per.per_nacionalidad
+Inner Join db_asgard.estado_civil as esta on esta.eciv_id = per.eciv_id
+Inner join db_academico.estudiante as estud on per.per_id = estud.per_id
+Inner Join db_academico.unidad_academica as uaca on uaca.uaca_id = igra.uaca_id
+Inner Join db_academico.estudio_academico as eaca on eaca.eaca_id = igra.eaca_id
+Inner Join db_academico.modalidad as moda on moda.mod_id = igra.mod_id
+Inner Join db_academico.periodo_academico as paca on paca.paca_id = igra.paca_id
+Inner Join db_academico.semestre_academico as saca on saca.saca_id = paca.saca_id
+Inner Join db_academico.bloque_academico as baca on baca.baca_id = paca.baca_id
+Inner Join db_asgard.persona_contacto as contac on contac.per_id = igra.per_id
+Inner Join db_asgard.tipo_parentesco as parente on parente.tpar_id = contac.tpar_id
+Inner Join db_academico.malla_academico_estudiante as mallaes ON mallaes.per_id =  igra.per_id
+Inner Join db_academico.malla_academica as mallagen ON mallagen.maca_id =  mallaes.maca_id
 WHERE 
-igra.uaca_id = :estado AND
+igra.uaca_id = '1' AND
 igra.per_id = :per_id AND
 igra.igra_estado = :estado and igra.igra_estado_logico = :estado and
 per.per_estado = :estado and per.per_estado_logico = :estado and
 uaca.uaca_estado = :estado and uaca.uaca_estado_logico = :estado and
 eaca.eaca_estado = :estado and eaca.eaca_estado_logico = :estado and
 moda.mod_estado = :estado and moda.mod_estado_logico = :estado and
-paca.paca_estado = :estado and paca.paca_estado_logico = :estado and
-mallaes.maes_estado = :estado and mallaes.maes_estado_logico = :estado and
-mallagen.maca_estado = :estado and mallagen.maca_estado_logico = :estado 
+paca.paca_estado = :estado and paca.paca_estado_logico = :estado
                ";
 
-        \app\models\Utilities::putMessageLogFile('resultado del query: '.$comando->getRawSql());
+      
         $comando = $con->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
         $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
         $resultData = $comando->queryOne();
+
         return $resultData;
     }
 

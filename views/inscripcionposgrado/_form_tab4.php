@@ -684,6 +684,12 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
             <label for="chk_mensaje2" class="col-lg-6 col-md-6 col-sm-6 col-xs-6"><?= Yii::t("formulario", "Acepto y me comprometo a respetar y cumplir lo estipulado en los reglamentos internos de la universidad con respecto a la admisión y procesos estudiantiles.") ?> </label>
         </div>
     </div>
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="form-group">
+            <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2" style="text-align: right;"></div>
+            <label for="terminos" class="col-lg-6 col-md-6 col-sm-6 col-xs-6"><?= Html::a(Yii::t("formulario", "Leer términos y condiciones de adquisición de servicio educativo"), Url::to(['inscripcionposgrado/terminoposgrado', 'popup' => "true"]), ["class" => "pbpopup", "data-toggle" => "tooltip", "title" => "Términos", "data-pjax" => 0]); ?> </label>
+        </div>
+    </div>
     <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
         </br>
         </br>

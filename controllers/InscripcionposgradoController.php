@@ -1572,4 +1572,9 @@ class InscripcionposgradoController extends \yii\web\Controller {
         Utilities::generarReporteXLS($nombarch, $nameReport, $arrHeader, $arrData, $colPosition);
         exit;
     }
+    public function actionTerminoposgrado() {
+        $this->layout = '@themes/' . \Yii::$app->getView()->theme->themeName . '/layouts/terminospos.php';
+        return $this->render('terminoposgrado', [
+        ]);
+    }
 }

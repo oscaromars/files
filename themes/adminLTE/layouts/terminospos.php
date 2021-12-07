@@ -65,6 +65,10 @@ $this->title = $this->params["siteName"];
                materias del semestre, cualquier materia se tomará como adicional y se dividirá entre el número de cuotas que faltan para terminar el
                bloque o semestre.</p>
             <p style="text-align: justify;">Los datos arriba declarados tienen carácter de DECLARACIÓN JURADA, aceptando en su totalidad las condiciones establecidas.</p>
+            <p style="text-align: justify;">La Universidad se reserva el derecho de apertura, aplazamiento o suspensión de los cursos en caso de no contar con el número
+               mínimo de inscriptos. Se deberá realizar el pago de matrícula antes del inicio de este.</p>
+            <p style="text-align: justify;">A partir de la recepción de la presente inscripción, el alumno se compromete a realizar el pago de sus cuotas, a excepción que con
+               anticipación solicite la baja con carácter voluntario, quedando así obligado al pago de las cuotas vencidas a la fecha de dicha solicitud.</p>
             </div>
         </div><!-- /.login-box -->
 

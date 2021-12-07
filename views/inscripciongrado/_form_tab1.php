@@ -321,6 +321,27 @@ academico::registerTranslations();
             </div>
         </div><br><br></br>
     </div>
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <h3><span id="lbl_documentos"><?= Yii::t("formulario", "Financiamiento") ?></span></h3>
+    </div>
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+            <div class="form-group">
+                <label for="cmb_tipofinanciamiento" class="col-sm-3 control-label"><?= Yii::t("formulario", "Tipo Financiamiento"); ?></label>
+                <div class="col-sm-7">
+                    <?= Html::dropDownList("cmb_tipofinanciamiento", 0, $arr_financiamiento, ["class" => "form-control", "id" => "cmb_tipofinanciamiento"]) ?>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6" id="divinstituto" style="display: b">
+            <div class="form-group">
+                <label for="txt_instituto" class="col-sm-3 control-label"><?= Yii::t("formulario", "Institución Beca") ?><span class="text-danger"> *  </span></label>
+                <div class="col-sm-7">
+                    <input type="text" class="form-control PBvalidation keyupmce" id="txt_instituto" data-type="alfanumerico" data-keydown="true" placeholder="<?= Yii::t("formulario", "Institución Beca") ?>">
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" id="divmetodocan" style="display: none">
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
             <div class="form-group">

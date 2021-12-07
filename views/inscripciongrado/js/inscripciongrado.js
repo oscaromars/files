@@ -256,6 +256,18 @@ $(document).ready(function () {
         }
     });
 
+    $('#cmb_tipofinanciamiento').change(function () {
+        if ($('#cmb_tipofinanciamiento').val() == '3') {
+            $('#txt_instituto').addClass("PBvalidation");
+            $('#divinstituto').show();
+        } else
+        {
+            $('#txt_instituto').val('');
+            $('#txt_instituto').removeClass("PBvalidation");
+            $('#divinstituto').hide();
+        }
+    });
+
 });
 
 function setComboDataselect(arr_data, element_id, texto) {

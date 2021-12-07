@@ -333,7 +333,7 @@ academico::registerTranslations();
                 </div>
             </div>
         </div>
-        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6" id="divinstituto" style="display: b">
+        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6" id="divinstituto" style="display: none">
             <div class="form-group">
                 <label for="txt_instituto" class="col-sm-3 control-label"><?= Yii::t("formulario", "Institución Beca") ?><span class="text-danger"> *  </span></label>
                 <div class="col-sm-7">

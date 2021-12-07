@@ -16,6 +16,8 @@ use app\models\Utilities;
  * @property int $mod_id
  * @property int $paca_id
  * @property string $igra_cedula
+ * @property int $igra_financiamiento
+ * @property string $igra_institucion_beca
  * @property int $igra_metodo_ingreso
  * @property string $igra_ruta_documento
  * @property string $igra_ruta_doc_titulo
@@ -58,11 +60,11 @@ class InscripcionGrado extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['per_id', 'uaca_id', 'eaca_id', 'mod_id', 'paca_id', 'igra_metodo_ingreso'], 'integer'],
-            [['uaca_id', 'eaca_id', 'mod_id', 'paca_id', 'igra_cedula', 'igra_estado', 'igra_estado_logico'], 'required'],
+            [['per_id', 'uaca_id', 'eaca_id', 'mod_id', 'paca_id', 'igra_financiamiento', 'igra_metodo_ingreso'], 'integer'],
+            [['uaca_id', 'eaca_id', 'mod_id', 'paca_id', 'igra_cedula', 'igra_financiamiento', 'igra_estado', 'igra_estado_logico'], 'required'],
             [['igra_fecha_creacion', 'igra_fecha_modificacion'], 'safe'],
             [['igra_cedula'], 'string', 'max' => 15],
-            [['igra_ruta_documento', 'igra_ruta_doc_titulo', 'igra_ruta_doc_dni', 'igra_ruta_doc_certvota', 'igra_ruta_doc_foto', 'igra_ruta_doc_comprobantepago', 'igra_ruta_doc_recordacademico', 'igra_ruta_doc_certificado', 'igra_ruta_doc_syllabus', 'igra_ruta_doc_homologacion'], 'string', 'max' => 200],
+            [['igra_institucion_beca', 'igra_ruta_documento', 'igra_ruta_doc_titulo', 'igra_ruta_doc_dni', 'igra_ruta_doc_certvota', 'igra_ruta_doc_foto', 'igra_ruta_doc_comprobantepago', 'igra_ruta_doc_recordacademico', 'igra_ruta_doc_certificado', 'igra_ruta_doc_syllabus', 'igra_ruta_doc_homologacion'], 'string', 'max' => 200],
             [['igra_mensaje1', 'igra_mensaje2', 'igra_estado', 'igra_estado_logico'], 'string', 'max' => 1],
         ];
     }
@@ -80,6 +82,8 @@ class InscripcionGrado extends \yii\db\ActiveRecord
             'mod_id' => 'Mod ID',
             'paca_id' => 'Paca ID',
             'igra_cedula' => 'Igra Cedula',
+            'igra_financiamiento' => 'Igra Financiamiento',
+            'igra_institucion_beca' => 'Igra Institucion Beca',
             'igra_metodo_ingreso' => 'Igra Metodo Ingreso',
             'igra_ruta_documento' => 'Igra Ruta Documento',
             'igra_ruta_doc_titulo' => 'Igra Ruta Doc Titulo',
@@ -508,65 +512,65 @@ class InscripcionGrado extends \yii\db\ActiveRecord
 
 
     public function consultarPdf($per_id) {
-             $con = \Yii::$app->db_inscripcion;
+        $con = \Yii::$app->db_inscripcion;
         $estado = 1;
         \app\models\Utilities::putMessageLogFile('entro con per_id : ' .$per_id);
         $sql = "
        SELECT distinct
-igra.igra_fecha_creacion as registro,
-eaca.eaca_nombre as carrera,
-moda.mod_nombre as modalidad,
-CONCAT(baca.baca_nombre, ' ', saca.saca_nombre, ' ', saca.saca_anio) as periodo,
-igra.igra_ruta_doc_foto,
-per.per_cedula as cedula,
-per.per_pasaporte as pasaporte,
-ifnull(CONCAT(ifnull(per.per_pri_nombre,''), ' ', ifnull(per.per_seg_nombre,'')), '') as nombres,
-ifnull(CONCAT(ifnull(per.per_pri_apellido,''), ' ', ifnull(per.per_seg_apellido,'')), '') as apellidos,
--- lugar de nacimiento
-per.per_fecha_nacimiento,
-pais.pai_nombre,
-esta.eciv_nombre,
-ifnull(CONCAT(ifnull(per.per_domicilio_sector,''), ' ', ifnull(per.per_domicilio_cpri,''),' ',
-ifnull(per.per_domicilio_csec,''),' ',ifnull(per.per_domicilio_num,''),' '
-,ifnull(per.per_domicilio_ref,''),' '
-), '') as domicilio,
-per_celular,
-per_domicilio_telefono,
-per_correo,
-ifnull(CONCAT(ifnull(per.per_trabajo_direccion,''), ' ', ifnull(per.per_trabajo_nombre,''),' '), '') as trabajo,
-contac.pcon_nombre, 
-parente.tpar_nombre, 
-contac.pcon_telefono, 
-contac.pcon_direccion,
-mallagen.maca_nombre,
-ifnull(estud.est_categoria,'No definida') as categoria
-FROM db_inscripcion.inscripcion_grado as igra
-Inner Join db_asgard.persona as per on per.per_id = igra.per_id
-Inner Join db_asgard.pais as pais on pais.pai_id = per.per_nacionalidad
-Inner Join db_asgard.estado_civil as esta on esta.eciv_id = per.eciv_id
-Inner join db_academico.estudiante as estud on per.per_id = estud.per_id
-Inner Join db_academico.unidad_academica as uaca on uaca.uaca_id = igra.uaca_id
-Inner Join db_academico.estudio_academico as eaca on eaca.eaca_id = igra.eaca_id
-Inner Join db_academico.modalidad as moda on moda.mod_id = igra.mod_id
-Inner Join db_academico.periodo_academico as paca on paca.paca_id = igra.paca_id
-Inner Join db_academico.semestre_academico as saca on saca.saca_id = paca.saca_id
-Inner Join db_academico.bloque_academico as baca on baca.baca_id = paca.baca_id
-Inner Join db_asgard.persona_contacto as contac on contac.per_id = igra.per_id
-Inner Join db_asgard.tipo_parentesco as parente on parente.tpar_id = contac.tpar_id
-Inner Join db_academico.malla_academico_estudiante as mallaes ON mallaes.per_id =  igra.per_id
-Inner Join db_academico.malla_academica as mallagen ON mallagen.maca_id =  mallaes.maca_id
-WHERE 
-igra.uaca_id = '1' AND
-igra.per_id = :per_id AND
-igra.igra_estado = :estado and igra.igra_estado_logico = :estado and
-per.per_estado = :estado and per.per_estado_logico = :estado and
-uaca.uaca_estado = :estado and uaca.uaca_estado_logico = :estado and
-eaca.eaca_estado = :estado and eaca.eaca_estado_logico = :estado and
-moda.mod_estado = :estado and moda.mod_estado_logico = :estado and
-paca.paca_estado = :estado and paca.paca_estado_logico = :estado
-               ";
+        igra.igra_fecha_creacion as registro,
+        eaca.eaca_nombre as carrera,
+        moda.mod_nombre as modalidad,
+        CONCAT(baca.baca_nombre, ' ', saca.saca_nombre, ' ', saca.saca_anio) as periodo,
+        igra.igra_ruta_doc_foto,
+        per.per_cedula as cedula,
+        per.per_pasaporte as pasaporte,
+        ifnull(CONCAT(ifnull(per.per_pri_nombre,''), ' ', ifnull(per.per_seg_nombre,'')), '') as nombres,
+        ifnull(CONCAT(ifnull(per.per_pri_apellido,''), ' ', ifnull(per.per_seg_apellido,'')), '') as apellidos,
+        -- lugar de nacimiento
+        per.per_fecha_nacimiento,
+        pais.pai_nombre,
+        esta.eciv_nombre,
+        ifnull(CONCAT(ifnull(per.per_domicilio_sector,''), ' ', ifnull(per.per_domicilio_cpri,''),' ',
+        ifnull(per.per_domicilio_csec,''),' ',ifnull(per.per_domicilio_num,''),' '
+        ,ifnull(per.per_domicilio_ref,''),' '
+        ), '') as domicilio,
+        per_celular,
+        per_domicilio_telefono,
+        per_correo,
+        ifnull(CONCAT(ifnull(per.per_trabajo_direccion,''), ' ', ifnull(per.per_trabajo_nombre,''),' '), '') as trabajo,
+        contac.pcon_nombre,
+        parente.tpar_nombre,
+        contac.pcon_telefono,
+        contac.pcon_direccion,
+        mallagen.maca_nombre,
+        ifnull(estud.est_categoria,'No definida') as categoria
+        FROM db_inscripcion.inscripcion_grado as igra
+        Inner Join db_asgard.persona as per on per.per_id = igra.per_id
+        Inner Join db_asgard.pais as pais on pais.pai_id = per.per_nacionalidad
+        Inner Join db_asgard.estado_civil as esta on esta.eciv_id = per.eciv_id
+        Inner join db_academico.estudiante as estud on per.per_id = estud.per_id
+        Inner Join db_academico.unidad_academica as uaca on uaca.uaca_id = igra.uaca_id
+        Inner Join db_academico.estudio_academico as eaca on eaca.eaca_id = igra.eaca_id
+        Inner Join db_academico.modalidad as moda on moda.mod_id = igra.mod_id
+        Inner Join db_academico.periodo_academico as paca on paca.paca_id = igra.paca_id
+        Inner Join db_academico.semestre_academico as saca on saca.saca_id = paca.saca_id
+        Inner Join db_academico.bloque_academico as baca on baca.baca_id = paca.baca_id
+        Inner Join db_asgard.persona_contacto as contac on contac.per_id = igra.per_id
+        Inner Join db_asgard.tipo_parentesco as parente on parente.tpar_id = contac.tpar_id
+        Inner Join db_academico.malla_academico_estudiante as mallaes ON mallaes.per_id =  igra.per_id
+        Inner Join db_academico.malla_academica as mallagen ON mallagen.maca_id =  mallaes.maca_id
+        WHERE
+        igra.uaca_id = '1' AND
+        igra.per_id = :per_id AND
+        igra.igra_estado = :estado and igra.igra_estado_logico = :estado and
+        per.per_estado = :estado and per.per_estado_logico = :estado and
+        uaca.uaca_estado = :estado and uaca.uaca_estado_logico = :estado and
+        eaca.eaca_estado = :estado and eaca.eaca_estado_logico = :estado and
+        moda.mod_estado = :estado and moda.mod_estado_logico = :estado and
+        paca.paca_estado = :estado and paca.paca_estado_logico = :estado
+                    ";
 
-      
+
         $comando = $con->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
         $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
@@ -574,7 +578,4 @@ paca.paca_estado = :estado and paca.paca_estado_logico = :estado
 
         return $resultData;
     }
-
-
-
 }

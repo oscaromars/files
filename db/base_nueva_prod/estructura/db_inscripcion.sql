@@ -19,6 +19,8 @@ CREATE TABLE `inscripcion_grado` (
   `mod_id` bigint NOT NULL,
   `paca_id` bigint NOT NULL,
   `igra_cedula` varchar(15) NOT NULL,
+  `igra_financiamiento` bigint NOT NULL, -- 1 credito directo, 2 credito bancario, 3 beca
+  `igra_institucion_beca` varchar(200) DEFAULT NULL,
   `igra_metodo_ingreso` bigint DEFAULT NULL,
   `igra_ruta_documento` varchar(200) DEFAULT NULL,
   `igra_ruta_doc_titulo` varchar(200) DEFAULT NULL,
@@ -40,9 +42,14 @@ CREATE TABLE `inscripcion_grado` (
 );
 /*
 ALTER TABLE `db_inscripcion`.`inscripcion_grado`
+ADD COLUMN `igra_financiamiento` BIGINT(20) NOT NULL AFTER `igra_cedula`;
+
+ALTER TABLE `db_inscripcion`.`inscripcion_grado`
+ADD COLUMN `igra_institucion_beca` VARCHAR(200) NULL AFTER `igra_financiamiento`;
+
+ALTER TABLE `db_inscripcion`.`inscripcion_grado`
 ADD COLUMN `igra_ruta_documento` VARCHAR(200) NULL DEFAULT
 NULL AFTER `igra_metodo_ingreso`;
-
 */
 CREATE TABLE `inscripcion_posgrado` (
   `ipos_id` bigint NOT NULL AUTO_INCREMENT,

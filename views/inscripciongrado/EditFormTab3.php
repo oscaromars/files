@@ -52,4 +52,28 @@ Academico::registerTranslations();
             </div>
         </div>
     </div>
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="form-group">
+            <label for="cmb_financiamientoEdit" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Academico::t("profesor", "Tipo Financiamiento") ?></label>
+            <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
+                <?= Html::dropDownList("cmb_financiamientoEdit", $datos_financiamiento->igra_financiamiento, $arr_financiamiento, ["class" => "form-control", "id" => "cmb_financiamientoEdit"]) ?>
+            </div>
+        </div>
+    </div>
+    <?php
+      if ($datos_financiamiento->igra_financiamiento == 3)
+      {
+        $bloqueo = "block";
+      }else{
+        $bloqueo = "none";
+      }
+    ?>
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" id="divinstitutoEdit" style="display: <?php echo $bloqueo;?>">
+        <div class="form-group">
+            <label for="txt_institutoEdit" class="col-lg-3 col-md-3 col-xs-3 col-sm-3 control-label"><?= Yii::t("formulario", "Institución Beca") ?><span class="text-danger">*</span></label>
+            <div class="col-lg-9 col-md-9 col-xs-9 col-sm-9">
+                <input type="text" class="form-control" id="txt_institutoEdit" value= "<?= $datos_financiamiento->igra_institucion_beca ?>"" data-type="all" placeholder="<?= Academico::t("profesor", "Institución Beca")  ?>">
+            </div>
+        </div>
+    </div>
 </form>

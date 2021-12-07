@@ -441,8 +441,8 @@ class InscripciongradoController extends \yii\web\Controller {
             $persona_model = $mod_insgrado->consultarPdf($ids);
             $rep = new ExportFile();
              $this->layout = 'register';
-          
-            $rep->orientation = "P"; 
+
+            $rep->orientation = "P";
 
             $rep->createReportPdf(
                     $this->render('register', [
@@ -451,7 +451,7 @@ class InscripciongradoController extends \yii\web\Controller {
             );
 
             $rep->mpdf->Output('INSCRIPCION_' . $ids . ".pdf", ExportFile::OUTPUT_TO_DOWNLOAD);
-         
+
         } catch (Exception $e) {
             echo $e->getMessage();
         }
@@ -516,13 +516,15 @@ class InscripciongradoController extends \yii\web\Controller {
              * Inf. en caso de emergencia
              */
             $contacto_model = PersonaContacto::findOne(['per_id' => $persona_model->per_id]); // obtiene el pcon_id con el per_id
+            $financia = InscripcionGrado::findOne(['per_id' => $persona_model->per_id]);
             $arr_tipparentesco = TipoParentesco::find()->select("tpar_id AS id, tpar_nombre AS value")->where(["tpar_estado_logico" => "1", "tpar_estado" => "1"])->asArray()->all();
 
             $ViewFormTab3 = $this->renderPartial('ViewFormTab3', [
-                "arr_tipparentesco" => ArrayHelper::map($arr_tipparentesco, "id", "value"),
+                'arr_tipparentesco' => ArrayHelper::map($arr_tipparentesco, "id", "value"),
                 'persona_model' => $persona_model,
                 'contacto_model' => $contacto_model,
-
+                'arr_financiamiento' => $this->financiamiento(),
+                'datos_financiamiento' => $financia,
             ]);
 
             /**
@@ -532,16 +534,6 @@ class InscripciongradoController extends \yii\web\Controller {
             $arr_tipparentesco = TipoParentesco::find()->select("tpar_id AS id, tpar_nombre AS value")->where(["tpar_estado_logico" => "1", "tpar_estado" => "1"])->asArray()->all();
             $mod_insgrado = new InscripcionGrado();
             $documentos = $mod_insgrado->ObtenerdocumentosInscripcionGrado($persona_model->per_id);
-            /*\app\models\Utilities::putMessageLogFile('ver el resultado del id:  '.$documentos['igra_ruta_doc_titulo']);
-            \app\models\Utilities::putMessageLogFile('ver el resultado del id:  '.$documentos['igra_ruta_doc_dni']);
-            \app\models\Utilities::putMessageLogFile('ver el resultado del id:  '.$documentos['igra_ruta_doc_certvota']);
-            \app\models\Utilities::putMessageLogFile('ver el resultado del id:  '.$documentos['igra_ruta_doc_foto']);
-            \app\models\Utilities::putMessageLogFile('ver el resultado del id:  '.$documentos['igra_ruta_doc_comprobantepago']);
-            \app\models\Utilities::putMessageLogFile('ver el resultado del id:  '.$documentos['igra_ruta_doc_recordacademico']);
-            \app\models\Utilities::putMessageLogFile('ver el resultado del id:  '.$documentos['igra_ruta_doc_certificado']);
-            \app\models\Utilities::putMessageLogFile('ver el resultado del id:  '.$documentos['igra_ruta_doc_syllabus']);
-            \app\models\Utilities::putMessageLogFile('ver el resultado del id:  '.$documentos['igra_ruta_doc_homologacion']);
-            */
             $ViewFormTab4 = $this->renderPartial('ViewFormTab4', [
                 "arr_tipparentesco" => ArrayHelper::map($arr_tipparentesco, "id", "value"),
                 "arch1" => $documentos['igra_ruta_doc_titulo'],
@@ -572,7 +564,7 @@ class InscripciongradoController extends \yii\web\Controller {
                     'content' => $ViewFormTab2,
                 ],
                 [
-                    'label' => Academico::t('inscripciongrado', 'Info. Datos en caso de Emergencia'),
+                    'label' => Academico::t('inscripciongrado', 'Info. Datos en caso de Emergencia y Financiamiento'),
                     'content' => $ViewFormTab3,
                 ],
                 [
@@ -711,12 +703,15 @@ class InscripciongradoController extends \yii\web\Controller {
              * Inf. caso de emergencia
              */
             $contacto_model = PersonaContacto::findOne(['per_id' => $persona_model->per_id]); // obtiene el pcon_id con el per_id
+            $financia = InscripcionGrado::findOne(['per_id' => $persona_model->per_id]);
             $arr_tipparentesco = TipoParentesco::find()->select("tpar_id AS id, tpar_nombre AS value")->where(["tpar_estado_logico" => "1", "tpar_estado" => "1"])->asArray()->all();
 
             $EditFormTab3 = $this->renderPartial('EditFormTab3', [
                 "arr_tipparentesco" => ArrayHelper::map($arr_tipparentesco, "id", "value"),
                 'persona_model' => $persona_model,
                 'contacto_model' => $contacto_model,
+                'arr_financiamiento' => $this->financiamiento(),
+                'datos_financiamiento' => $financia,
             ]);
 
             /**
@@ -757,7 +752,7 @@ class InscripciongradoController extends \yii\web\Controller {
                     'content' => $EditFormTab2,
                 ],
                 [
-                    'label' => Academico::t('formulario', 'Info. Datos en caso de Emergencia'),
+                    'label' => Academico::t('formulario', 'Info. Datos en caso de Emergencia y Financiamiento'),
                     'content' => $EditFormTab3,
                 ],
                 [

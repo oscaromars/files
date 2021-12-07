@@ -268,6 +268,18 @@ $(document).ready(function () {
         }
     });
 
+    $('#cmb_financiamientoEdit').change(function () {
+        if ($('#cmb_financiamientoEdit').val() == '3') {
+            $('#txt_institutoEdit').addClass("PBvalidation");
+            $('#divinstitutoEdit').show();
+        } else
+        {
+            $('#txt_institutoEdit').val('');
+            $('#txt_institutoEdit').removeClass("PBvalidation");
+            $('#divinstitutoEdit').hide();
+        }
+    });
+
 });
 
 function setComboDataselect(arr_data, element_id, texto) {
@@ -546,7 +558,11 @@ function updateaspirantegrado() {
     arrParams.cont_emergencia = $('#txt_contc_emergenciasEdit').val();
     arrParams.parentesco = $('#cmb_parentescoEdit').val();
     arrParams.tel_emergencia = $('#txt_cel_contactoEdit').val();
-    arrParams.dir_personacontacto = $('#txt_direccion_contEdit').val();
+    arrParams.dir_personacontacto = $('#txt_institutoEdit').val();
+
+    //Datos de financiamiento
+    arrParams.financiamiento = $('#cmb_financiamientoEdit').val();
+    arrParams.instituto = $('#txt_institutoEdit').val();
 
     //TAB 2
     arrParams.igra_ruta_doc_documento = $('#txth_doc_documento').val();

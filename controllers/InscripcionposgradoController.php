@@ -212,6 +212,15 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 $per_id = $resp_persona['per_id'];
                 $per_dni = $data['cedula'];
                 $inscriposgrado_id = $data["ipos_id"];
+                if (isset($data["ipos_ruta_documento"]) && $data["ipos_ruta_documento"] != "") {
+                    $arrIm = explode(".", basename($data["ipos_ruta_documento"]));
+                    $typeFile = strtolower($arrIm[count($arrIm) - 1]);
+                    $titulo_documentoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/doc_documento_per_" . $per_id . "." . $typeFile;
+                    $titulo_documento = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $titulo_documentoOld, '' /*$timeSt*/);
+                    $data["ipos_ruta_documento"] = $titulo_documento;
+                    if ($titulo_documento === false)
+                        throw new Exception('Error Documento no renombrado.');
+                }
                 if (isset($data["ipos_ruta_doc_foto"]) && $data["ipos_ruta_doc_foto"] != "") {
                     $arrIm = explode(".", basename($data["ipos_ruta_doc_foto"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
@@ -423,6 +432,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
             $tipo_financiamiento = $data["tipo_financiamiento"];
 
             //archivos cargados
+            $ipos_ruta_documento = $data['ipos_ruta_documento'];
             $ipos_ruta_doc_foto = $data['ipos_ruta_doc_foto'];
             $ipos_ruta_doc_dni = $data['ipos_ruta_doc_dni'];
             $ipos_ruta_doc_certvota = $data['ipos_ruta_doc_certvota'];
@@ -451,7 +461,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
                     // modificar la tabla
                     $cone = \Yii::$app->db_inscripcion;
                     $mod_inscripcionposgrado = new InscripcionPosgrado();
-                    $inscripcionposgrado = $mod_inscripcionposgrado->updateDataInscripcionposgrado($cone, $per_id, $data['unidad'], $data['programa'], $modalidad, $año, $per_dni, $tipo_financiamiento, $ming_id, $ipos_ruta_doc_foto, $ipos_ruta_doc_dni, $ipos_ruta_doc_certvota, $ipos_ruta_doc_titulo, $ipos_ruta_doc_comprobantepago, $ipos_ruta_doc_recordacademico, $ipos_ruta_doc_senescyt, $ipos_ruta_doc_hojadevida, $ipos_ruta_doc_cartarecomendacion, $ipos_ruta_doc_certificadolaboral, $ipos_ruta_doc_certificadoingles, $ipos_ruta_doc_otrorecord, $ipos_ruta_doc_certificadonosancion, $ipos_ruta_doc_syllabus, $ipos_ruta_doc_homologacion, $ipos_mensaje1, $ipos_mensaje2);
+                    $inscripcionposgrado = $mod_inscripcionposgrado->updateDataInscripcionposgrado($cone, $per_id, $data['unidad'], $data['programa'], $modalidad, $año, $per_dni, $tipo_financiamiento, $ming_id, $ipos_ruta_documento, $ipos_ruta_doc_foto, $ipos_ruta_doc_dni, $ipos_ruta_doc_certvota, $ipos_ruta_doc_titulo, $ipos_ruta_doc_comprobantepago, $ipos_ruta_doc_recordacademico, $ipos_ruta_doc_senescyt, $ipos_ruta_doc_hojadevida, $ipos_ruta_doc_cartarecomendacion, $ipos_ruta_doc_certificadolaboral, $ipos_ruta_doc_certificadoingles, $ipos_ruta_doc_otrorecord, $ipos_ruta_doc_certificadonosancion, $ipos_ruta_doc_syllabus, $ipos_ruta_doc_homologacion, $ipos_mensaje1, $ipos_mensaje2);
                     $exito=1;
                 }else{ // caso contrario crear
                     $resul = $model->insertarDataInscripcionposgrado($per_id, $data['unidad'], $data['programa'], $modalidad, $año, $per_dni, $tipo_financiamiento, $data);

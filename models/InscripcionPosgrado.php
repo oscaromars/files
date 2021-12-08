@@ -282,7 +282,7 @@ class InscripcionPosgrado extends \yii\db\ActiveRecord
 
     }
 
-    public function updateDataInscripcionposgrado($con, $per_id, $uaca_id, $eaca_id, $mod_id, $ipos_año, $ipos_cedula, $ipos_tipo_finaciamiento, $ipos_metodo_ingreso, $ipos_ruta_doc_foto, $ipos_ruta_doc_dni, $ipos_ruta_doc_certvota, $ipos_ruta_doc_titulo, $ipos_ruta_doc_comprobantepago, $ipos_ruta_doc_recordacademico, $ipos_ruta_doc_senescyt, $ipos_ruta_doc_hojadevida, $ipos_ruta_doc_cartarecomendacion, $ipos_ruta_doc_certificadolaboral, $ipos_ruta_doc_certificadoingles, $ipos_ruta_doc_otrorecord, $ipos_ruta_doc_certificadonosancion, $ipos_ruta_doc_syllabus, $ipos_ruta_doc_homologacion, $ipos_mensaje1, $ipos_mensaje2) {
+    public function updateDataInscripcionposgrado($con, $per_id, $uaca_id, $eaca_id, $mod_id, $ipos_año, $ipos_cedula, $ipos_tipo_finaciamiento, $ipos_metodo_ingreso, $ipos_ruta_documento, $ipos_ruta_doc_foto, $ipos_ruta_doc_dni, $ipos_ruta_doc_certvota, $ipos_ruta_doc_titulo, $ipos_ruta_doc_comprobantepago, $ipos_ruta_doc_recordacademico, $ipos_ruta_doc_senescyt, $ipos_ruta_doc_hojadevida, $ipos_ruta_doc_cartarecomendacion, $ipos_ruta_doc_certificadolaboral, $ipos_ruta_doc_certificadoingles, $ipos_ruta_doc_otrorecord, $ipos_ruta_doc_certificadonosancion, $ipos_ruta_doc_syllabus, $ipos_ruta_doc_homologacion, $ipos_mensaje1, $ipos_mensaje2) {
 
         $imagenes = "";
         $fecha_modificacion = date(Yii::$app->params["dateTimeByDefault"]);
@@ -294,6 +294,9 @@ class InscripcionPosgrado extends \yii\db\ActiveRecord
         }*/
         if ($trans !== null) {
             $trans = null; // si existe la transacción entonces no se crea una
+        }
+        if(!empty($ipos_ruta_documento)){
+            $imagenes .= "ipos_ruta_documento=:ipos_ruta_documento,";
         }
         if(!empty($ipos_ruta_doc_foto)){
             $imagenes .= "ipos_ruta_doc_foto=:ipos_ruta_doc_foto,";
@@ -368,6 +371,9 @@ class InscripcionPosgrado extends \yii\db\ActiveRecord
             //$command->bindParam(":ipos_metodo_ingreso", $met_ing, \PDO::PARAM_INT);
             $command->bindParam(":ipos_tipo_finaciamiento", $ipos_tipo_finaciamiento, \PDO::PARAM_STR);
                 // si vienen nulos no agragrlos
+                if(!empty($ipos_ruta_documento)){
+                $command->bindParam(":ipos_ruta_documento", $ipos_ruta_documento, \PDO::PARAM_STR);
+                }
                 if(!empty($ipos_ruta_doc_foto)){
                 $command->bindParam(":ipos_ruta_doc_foto", $ipos_ruta_doc_foto, \PDO::PARAM_STR);
                 }

@@ -176,7 +176,7 @@ completamente firmada y acompañada de todos los documentos solicitados.
   </p>
     </div>
 <br>
-<div class="divCeldag bold titleDetalle " style="text-align: center">
+<div class="divCeldag bold titleDetalle " style="text-align: center;color:#0055aa;">
 
 1. DATOS PERSONALES
 
@@ -220,7 +220,7 @@ completamente firmada y acompañada de todos los documentos solicitados.
         </tbody>
     </table>
     <br><br>
-<div class="divCeldag bold titleDetalle " style="text-align: center">
+<div class="divCeldag bold titleDetalle " style="text-align: center;color:#0055aa;">
 
 2. DATOS DE CONTACTO
 
@@ -235,7 +235,7 @@ completamente firmada y acompañada de todos los documentos solicitados.
   </p>
     </div>
 
-<div class="divCeldag bold titleDetalle " style="text-align: center">
+<div class="divCeldag bold titleDetalle " style="text-align: center;color:#0055aa;">
 
 3. DATOS EN CASO DE EMERGENCIA
 
@@ -253,7 +253,7 @@ completamente firmada y acompañada de todos los documentos solicitados.
     </div>
 
 
-<div class="divCeldag bold titleDetalle " style="text-align: center">
+<div class="divCeldag bold titleDetalle " style="text-align: center;color:#0055aa;">
 
     4. DATOS ACADÉMICOS
 
@@ -261,16 +261,16 @@ completamente firmada y acompañada de todos los documentos solicitados.
 <br><br>
 <div  style="text-justify: auto">
         <p>
-      <b>MALLA CURRICULAR:</b>&nbsp;<?php echo $persona_model['codigo'].' '.$persona_model['malla']?>
-<?php 
+      <b>MALLA CURRICULAR:</b>&nbsp;<?php echo $persona_model['codigo'].' '.$persona_model['malla'].'    '?>
+<?php /*
 If ($persona_model['mallacorresp'] != $persona_model['maca_id'])
 { 
-echo ' (Con registros en '. $persona_model['maca_nombre'].' )';
-} ?>
+echo ' <b style="color:#aa0000;">*(Con registros en '. $persona_model['maca_nombre'].' )</b>';
+}*/ ?>
     
 
       <br><br>
-      <b>CATEGORIA:</b>&nbsp;<?php echo $persona_model['categoria'] ?><br><br>
+      <b>CATEGORIA:</b>&nbsp;<?php echo ' <b style="color:#aa0000;">'.$persona_model['categoria'].'</b>' ?><br><br>
       <b>FINANCIAMIENTO:</b><br><br>
   </p>
     </div>
@@ -324,7 +324,7 @@ echo '( '.$persona_model['igra_institucion_beca'].' )';
         </tbody>
     </table>
 <pagebreak />
- <div class="divCeldag bold titleDetalle " style="text-align: center">
+ <div class="divCeldag bold titleDetalle " style="text-align: center;color:#0055aa;">
 
       5. DOCUMENTACIÓN (este punto corresponde al área de admisiones) NO LLENAR
 
@@ -487,7 +487,7 @@ echo '( '.$persona_model['igra_institucion_beca'].' )';
     </table>
 <br><br>
  
-    <div class="divCeldag bold titleDetalle " style="text-align: center">
+    <div class="divCeldag bold titleDetalle " style="text-align: center;color:#0055aa;">
 
       TÉRMINOS Y CONDICIONES DE ADQUISICIÓN DE SERVICIO EDUCATIVO
 
@@ -502,8 +502,8 @@ Guayaquil. Por favor, lea el siguiente acuerdo con detenimiento pues, constituye
 <br><br>
  <div  style="text-justify: auto">
         <p>
-      <b>DOCUMENTACION</b><br>
-      <b>Marca con un check</b>
+      <b style="color:#0055aa;">DOCUMENTACION</b><br>
+      <b >Marca con un check</b>
   </p>
     </div>
  <div class="blue">
@@ -572,7 +572,7 @@ devolución de estos en un plazo máximo de 6 meses, a partir de la fecha de ent
 
 <div  style="text-justify: auto">
         <p>
-      <b>PAGOS, AUTORIZACIÓN, REEMBOLSOS Y TERMINACIÓN</b><br>
+      <b style="color:#0055aa;">PAGOS, AUTORIZACIÓN, REEMBOLSOS Y TERMINACIÓN</b><br>
       <b>Marca con un check</b>
   </p>
     </div>

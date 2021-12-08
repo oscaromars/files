@@ -318,7 +318,7 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                         'uploadUrl' => Url::to(['/inscripciongrado/guardarinscripciongrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
-            return {"upload_file": true, "name_file": "doc_foto' . "_per_" . $per_id . '"};
+            return {"upload_foto": true, "name_file": "doc_foto' . "_per_" . $per_id . '"};
         }',
                     ],
                     'pluginEvents' => [

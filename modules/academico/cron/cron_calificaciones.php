@@ -195,7 +195,7 @@ GLOBAL $dsn, $dbuser, $dbpass, $dbname;
             $maes_id = $groups[$m]['maes_id'];
 
 
-
+     try {
           $wsdl = 'https://campusvirtual.uteg.edu.ec/soap/?wsdl=true';
          
          $client = new \SoapClient($wsdl, [
@@ -216,6 +216,12 @@ GLOBAL $dsn, $dbuser, $dbpass, $dbname;
          $client->setCredentials("webservice", 
                           "WxrrvTt8",
                           "basic");
+
+          }    catch (PDOException $e) {
+           putMessageLogFile('Error conexion Educativa: ' . $e->getMessage());
+           putMessageLogFile('cedu_asi_id: ' .$cedu_asi_id );
+           putMessageLogFile('uedu_usuario: ' .$uedu_usuario );
+              }
 
           $method = 'obtener_notas_calificaciones'; 
        

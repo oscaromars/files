@@ -140,6 +140,12 @@
     .titleDetalle {
         text-align: center;
     }
+    .credpic {
+        height: 220px;
+        position:relative;
+        top: -25px;
+    }
+
 </style>
    <br><br><br>
      <br><br><br>
@@ -151,7 +157,7 @@
 <b>FECHA DE REGISTRO:</b>  &nbsp;<?php echo $persona_model['registro'] ?>
         </p>
     </div>
-   <br><br>
+   <br>
 <div class="divCeldap" style="text-align: center">
     </div> 
 <br>
@@ -192,7 +198,7 @@ completamente firmada y acompañada de todos los documentos solicitados.
                  &nbsp;<?php if ($persona_model['cedula'] != Null) {
                    echo "Cédula";  } else {echo "Pasaporte";  }            
                  ?> <br><br>
-                 <?php if ($persona_model['cedula'] != Null) {
+                 &nbsp;<?php if ($persona_model['cedula'] != Null) {
                    echo $persona_model['cedula'];  } else {echo $persona_model['pasaporte'];  }            
                  ?> <br><br>
                 &nbsp;<?php echo $persona_model['nombres'] ?><br><br>
@@ -265,41 +271,45 @@ completamente firmada y acompañada de todos los documentos solicitados.
         <tbody>
             <tr>
               <td class="marcoCel"><?php 
-$fieldvalue =1;
-If($fieldvalue==1)
+If ($persona_model['igra_financiamiento'] == 1)
 { 
-echo "<input type='checkbox' name='pcu'  checked  value='1' />" ;
+echo "<input type='checkbox' style='width:140%; height:140%' name='f'  checked='checked'  value='1' />" ;
 }else
 {
-echo "<input type='checkbox' name='pcu'  value='1' />" ;
+echo "<input type='checkbox' name='f'  value='1' />" ;
 }
 ?></td>
                 <td class="marcoCel">Crédito Directo </td>
             </tr>
             <tr>
                 <td class="marcoCel"><?php 
-$fieldvalue =1;
-If($fieldvalue==1)
+If ($persona_model['igra_financiamiento'] == 2)
 { 
-echo "<input type='checkbox' style='width:140%; height:140%' name='pcu'  checked='checked'  value='1' />" ;
+echo "<input type='checkbox' style='width:140%; height:140%' name='f'  checked='checked'  value='2' />" ;
 }else
 {
-echo "<input type='checkbox' name='pcu'  value='1' />" ;
+echo "<input type='checkbox' name='f'  value='1' />" ;
 }
 ?></td>
                 <td class="marcoCel">Crédito Bancario</td>
             </tr>
  <tr>
                 <td class="marcoCel"><?php 
-$fieldvalue =1;
-If($fieldvalue==1)
+If ($persona_model['igra_financiamiento'] == 3)
 { 
-echo "<input type='checkbox' name='pcu'  checked  value='1' />" ;
+echo "<input type='checkbox' style='width:140%; height:140%' name='f'  checked='checked'  value='3' />" ;
 }else
 {
-echo "<input type='checkbox' name='pcu'  value='1' />" ;
+echo "<input type='checkbox' name='f'  value='1' />" ;
 }
-?></td>
+?>
+<?php 
+If ($persona_model['igra_financiamiento'] == 3)
+{ 
+echo $persona_model['igra_institucion_beca']; 
+}
+?>  
+</td>
                 <td class="marcoCel">Beca</td>
             </tr>
         </tbody>
@@ -319,42 +329,74 @@ echo "<input type='checkbox' name='pcu'  value='1' />" ;
                     <span>Documentos Básicos</span>
                 </td>
                 <td class="divCelda bold titleDetalle">
+                    <span>Recibido</span>
+                </td>
+                <td class="divCelda bold titleDetalle">
                     <span>Si</span>
                 </td>
                 <td class="divCelda bold titleDetalle">
                     <span>No</span>
                 </td>
-                <td class="divCelda bold titleDetalle">
+                <td class="divCelda bold titleDetalle"  style="width:30%">
                     <span>Observación</span>
                 </td>
             </tr>
                 <tr class="fila">
                     <td class="marcoCel">Copia de cédula a color</td>
-                    <td class="marcoCel">&nbsp;&nbsp;&nbsp;&nbsp;&#10004;</td>
+                    <td class="marcoCel">
+                         <?php if ($persona_model['igra_ruta_documento'] != Null) {
+                   ?> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#10004;  <?php 
+
+                    } else { }            
+                 ?>
+                </td>
+                    <td class="marcoCel"></td>
                     <td class="marcoCel"></td>
                     <td class="marcoCel"></td>
                 </tr>
                   <tr class="fila">
                     <td class="marcoCel">Copia de certificado de votación a color</td>
-                    <td class="marcoCel">&nbsp;&nbsp;&nbsp;&nbsp;&#10004;</td>
+                    <td class="marcoCel">
+                         <?php if ($persona_model['igra_ruta_documento'] != Null) {
+                   ?> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#10004;  <?php 
+
+                    } else { }            
+                 ?>
+                </td>
+                    <td class="marcoCel"></td>
                     <td class="marcoCel"></td>
                     <td class="marcoCel"></td>
                 </tr>
                   <tr class="fila">
                     <td class="marcoCel">Copia a color de título bachiller notarizada</td>
-                    <td class="marcoCel">&nbsp;&nbsp;&nbsp;&nbsp;&#10004;</td>
+                    <td class="marcoCel">
+                         <?php if ($persona_model['igra_ruta_documento'] != Null) {
+                   ?> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#10004;  <?php 
+
+                    } else { }            
+                 ?>
+                </td>
+                    <td class="marcoCel"></td>
                     <td class="marcoCel"></td>
                     <td class="marcoCel"></td>
                 </tr>         
                  <tr class="fila">
                     <td class="marcoCel">Formulario de inscripción</td>
-                    <td class="marcoCel">&nbsp;&nbsp;&nbsp;&nbsp;&#10004;</td>
+                    <td class="marcoCel">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#10004;</td>
+                    <td class="marcoCel"></td>
                     <td class="marcoCel"></td>
                     <td class="marcoCel"></td>
                 </tr>
                   <tr class="fila">
                     <td class="marcoCel">Comprobante de depósito o transferencia de pago de matrícula</td>
-                    <td class="marcoCel">&nbsp;&nbsp;&nbsp;&nbsp;&#10004;</td>
+                   <td class="marcoCel">
+                         <?php if ($persona_model['igra_ruta_doc_comprobantepago'] != Null) {
+                   ?> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#10004;  <?php 
+
+                    } else { }            
+                 ?>
+                </td>
+                    <td class="marcoCel"></td>
                     <td class="marcoCel"></td>
                     <td class="marcoCel"></td>
                 </tr>
@@ -367,37 +409,68 @@ echo "<input type='checkbox' name='pcu'  value='1' />" ;
                 <td class="divCelda bold titleDetalle  ">
                     <span>Documentos adicionales por homologación</span>
                 </td>
+                 <td class="divCelda bold titleDetalle">
+                    <span>Recibido</span>
+                </td>
                 <td class="divCelda bold titleDetalle">
                     <span>Si</span>
                 </td>
                 <td class="divCelda bold titleDetalle">
                     <span>No</span>
                 </td>
-                <td class="divCelda bold titleDetalle">
+                <td class="divCelda bold titleDetalle" style="width:30%">
                     <span>Observación</span>
                 </td>
             </tr>
                 <tr class="fila">
                     <td class="marcoCel">Récord académico</td>
-                    <td class="marcoCel">&nbsp;&nbsp;&nbsp;&nbsp;&#10004;</td>
+                     <td class="marcoCel">
+                         <?php if ($persona_model['igra_ruta_doc_recordacademico'] != Null) {
+                   ?> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#10004;  <?php 
+
+                    } else { }            
+                 ?>
+                </td>
+                    <td class="marcoCel"></td>
                     <td class="marcoCel"></td>
                     <td class="marcoCel"></td>
                 </tr>
                   <tr class="fila">
                     <td class="marcoCel">Certificado de no haber sido sancionado (firma y sello original)</td>
-                    <td class="marcoCel">&nbsp;&nbsp;&nbsp;&nbsp;&#10004;</td>
+                     <td class="marcoCel">
+                         <?php if ($persona_model['igra_ruta_doc_certificado'] != Null) {
+                   ?> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#10004;  <?php 
+
+                    } else { }            
+                 ?>
+                </td>
+                    <td class="marcoCel"></td>
                     <td class="marcoCel"></td>
                     <td class="marcoCel"></td>
                 </tr>
                   <tr class="fila">
                     <td class="marcoCel">Syllabus de materias aprobadas (firma y sello original)</td>
-                    <td class="marcoCel">&nbsp;&nbsp;&nbsp;&nbsp;&#10004;</td>
+                 <td class="marcoCel">
+                         <?php if ($persona_model['igra_ruta_doc_syllabus'] != Null) {
+                   ?> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#10004;  <?php 
+
+                    } else { }            
+                 ?>
+                </td>
+                    <td class="marcoCel"></td>
                     <td class="marcoCel"></td>
                     <td class="marcoCel"></td>
                 </tr>         
                  <tr class="fila">
                     <td class="marcoCel">Especie valorada por homologación</td>
-                    <td class="marcoCel">&nbsp;&nbsp;&nbsp;&nbsp;&#10004;</td>
+                    <td class="marcoCel">
+                         <?php if ($persona_model['igra_ruta_doc_homologacion'] != Null) {
+                   ?> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#10004;  <?php 
+
+                    } else { }            
+                 ?>
+                </td>
+                    <td class="marcoCel"></td>
                     <td class="marcoCel"></td>
                     <td class="marcoCel"></td>
                 </tr>
@@ -438,13 +511,12 @@ Guayaquil. Por favor, lea el siguiente acuerdo con detenimiento pues, constituye
          <tbody>
             <tr>
               <td class="marcoCel"><?php 
-$fieldvalue =1;
-If($fieldvalue==1)
+If ($persona_model['igra_financiamiento'] == 1)
 { 
-echo "<input type='checkbox' name='pcu'  checked  value='1' />" ;
+echo "<input type='checkbox' name='f'  checked  value='1' />" ;
 }else
 {
-echo "<input type='checkbox' name='pcu'  value='1' />" ;
+echo "<input type='checkbox' name='f'  value='1' />" ;
 }
 ?></td>
                 <td class="marcoCel"><b>Sobre la entrega de documentos:</b> La documentación requerida para iniciar el semestre será entregada al área de Admisiones, como
@@ -452,13 +524,12 @@ fecha máxima al quinto día hábil de haber realizado la inscripción, bajo las
             </tr>
             <tr>
                 <td class="marcoCel"><?php 
-$fieldvalue =1;
-If($fieldvalue==1)
+If ($persona_model['igra_financiamiento'] == 2)
 { 
-echo "<input type='checkbox' name='pcu'  checked  value='1' />" ;
+echo "<input type='checkbox' name='f'  checked  value='1' />" ;
 }else
 {
-echo "<input type='checkbox' name='pcu'  value='1' />" ;
+echo "<input type='checkbox' name='f'  value='1' />" ;
 }
 ?></td>
                 <td class="marcoCel"><b>Sobre la devolución de documentos:</b> en caso de que la documentación entregada sea copias, estas no me serán devueltas bajo ningún
@@ -466,15 +537,21 @@ concepto.</td>
             </tr>
  <tr>
                 <td class="marcoCel"><?php 
-$fieldvalue =1;
-If($fieldvalue==1)
+If ($persona_model['igra_financiamiento'] == 3)
 { 
 echo "<input type='checkbox' name='pcu'  checked  value='1' />" ;
 }else
 {
 echo "<input type='checkbox' name='pcu'  value='1' />" ;
 }
-?></td>
+?>
+<?php 
+If ($persona_model['igra_financiamiento'] ==3)
+{ 
+echo $persona_model['igra_institucion_beca'] ;
+} ?>
+    
+</td>
                 <td class="marcoCel"><b>Sobre la devolución de documentos:</b> en caso de que la documentación entregada sean documentos originales, podré solicitar la
 devolución de estos en un plazo máximo de 6 meses, a partir de la fecha de entrega de los documentos.</td>
             </tr>

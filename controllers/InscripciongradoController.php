@@ -181,7 +181,7 @@ class InscripciongradoController extends \yii\web\Controller {
                 $files = $_FILES[key($_FILES)];
                 $arrIm = explode(".", basename($files['name']));
                 $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                if ($typeFile == 'pdf' /*|| $typeFile == 'png' || $typeFile == 'jpg' || $typeFile == 'jpeg'*/) {
+                if ($typeFile == 'png' || $typeFile == 'jpg' || $typeFile == 'jpeg') {
                 $dirFileEnd = Yii::$app->params["documentFolder"] . "inscripciongrado/" . $data["name_file"] . "." . $typeFile;
                 $status = Utilities::moveUploadFile($files['tmp_name'], $dirFileEnd);
                     if ($status) {
@@ -637,7 +637,7 @@ class InscripciongradoController extends \yii\web\Controller {
                 $files = $_FILES[key($_FILES)];
                 $arrIm = explode(".", basename($files['name']));
                 $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                if (($typeFile == 'png') or ( $typeFile == 'jpg') or ( $typeFile == 'jpeg')) {
+            if ($typeFile == 'pdf' /*|| $typeFile == 'png' || $typeFile == 'jpg' || $typeFile == 'jpeg'*/) {
                     $dirFileEnd = Yii::$app->params["documentFolder"] . "expediente/" . $data["name_file"] . "." . $typeFile;
                     $status = Utilities::moveUploadFile($files['tmp_name'], $dirFileEnd);
                     if ($status) {
@@ -854,7 +854,7 @@ class InscripciongradoController extends \yii\web\Controller {
                 $files = $_FILES[key($_FILES)];
                 $arrIm = explode(".", basename($files['name']));
                 $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                if ($typeFile == 'pdf' /*|| $typeFile == 'png' || $typeFile == 'jpg' || $typeFile == 'jpeg'*/) {
+                if ($typeFile == 'png' || $typeFile == 'jpg' || $typeFile == 'jpeg') {
                 $dirFileEnd = Yii::$app->params["documentFolder"] . "inscripciongrado/" . $data["name_file"] . "." . $typeFile;
                 $status = Utilities::moveUploadFile($files['tmp_name'], $dirFileEnd);
                     if ($status) {

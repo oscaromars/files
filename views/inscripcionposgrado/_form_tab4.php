@@ -86,7 +86,7 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
             </div>
         </div>
     </div>
-    <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12 doc_dni cinteres">
+    <!--- <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12 doc_dni cinteres">
         <div class="form-group">
             <label for="txth_doc_dni" class="col-sm-2 col-md-2 col-xs-2 col-lg-2 control-label keyupmce"><?= Yii::t("formulario", "Cédula o Pasaporte") ?></label>
             <div class="col-sm-6 col-md-6 col-xs-6 col-lg-6">
@@ -143,8 +143,8 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                 ?>
             </div>
         </div>
-    </div>
-    <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12" id="divCertvota" style="display: block">
+    </div>-->
+    <!-- <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12" id="divCertvota" style="display: block">
         <div class="form-group">
             <label for="txth_doc_certvota" class="col-sm-2 col-md-2 col-xs-2 col-lg-2 control-label keyupmce"><?= Yii::t("formulario", "Voting Certificate") ?></label>
             <div class="col-sm-6 col-md-6 col-xs-6 col-lg-6">
@@ -201,8 +201,8 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                 ?>
             </div>
         </div>
-    </div>
-    <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12 doc_titulo cinteres">
+    </div>-->
+    <!--<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12 doc_titulo cinteres">
         <div class="form-group">
             <label for="txth_doc_titulo" class="col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label keyupmce"><?= Yii::t("formulario", "Título Tercer Nivel o Acta de Grado notarizada") ?></label>
             <div class="col-sm-6 col-md-6 col-xs-6 col-lg-6">
@@ -259,7 +259,7 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                 ?>
             </div>
         </div>
-    </div>
+    </div>-->
     <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12 doc_comprobante">
         <div class="form-group">
             <label for="txth_doc_comprobante" class="col-sm-2 col-md-2 col-xs-2 col-lg-2 control-label keyupmce"><?= Yii::t("formulario", "Comprobante de depósito o transferencia de pago de Matrícula") ?></label>
@@ -318,7 +318,7 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
             </div>
         </div>
     </div>
-    <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12 doc_record1 cinteres">
+    <!-- <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12 doc_record1 cinteres">
         <div class="form-group">
             <label for="txth_doc_record1" class="col-sm-2 col-md-2 col-xs-2 col-lg-2 control-label keyupmce"><?= Yii::t("formulario", "Récord Académico Actualizado") ?></label>
             <div class="col-sm-6 col-md-6 col-xs-6 col-lg-6">
@@ -667,7 +667,7 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                 ?>
             </div>
         </div>
-    </div>
+    </div>-->
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
             <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2" style="text-align: right;">

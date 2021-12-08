@@ -680,107 +680,104 @@ function guardarInscripcionPosgrado() {
         var mensaje = {wtmessage: "Debe adjuntar foto.", title: "Información"};
         showAlert("NO_OK", "error", mensaje);
     } else {
-            if ($('#txth_doc_dni').val() == "") {
+            /*if ($('#txth_doc_dni').val() == "") {
                 var mensaje = {wtmessage: "Debe adjuntar documento de identidad.", title: "Información"};
                 showAlert("NO_OK", "error", mensaje);
-            } else {
-                /*if ($('#cmb_tipo_dni').val() == "CED")
-                  {*/
-                    if ($('#txth_doc_certvota').val() == "" && $('#cmb_nacionalidad').val() == 1) {
+            } else {*/
+                    /*if ($('#txth_doc_certvota').val() == "" && $('#cmb_nacionalidad').val() == 1) {
                         var mensaje = {wtmessage: "Debe adjuntar certificado de votación.", title: "Información"};
                         showAlert("NO_OK", "error", mensaje);
-                    } else {
-                        if ($('#txth_doc_titulo').val() == "") {
+                    } else {*/
+                        /*if ($('#txth_doc_titulo').val() == "") {
                             var mensaje = {wtmessage: "Debe adjuntar Título o Acta.", title: "Información"};
                             showAlert("NO_OK", "error", mensaje);
-                        } else{
+                        } else{*/
                             if ($('#txth_doc_comprobante').val() == "") {
                                 var mensaje = {wtmessage: "Debe adjuntar Comprobante.", title: "Información"};
                                 showAlert("NO_OK", "error", mensaje);
                             } else{
-                                if ($('#txth_doc_record1').val() == "") {
+                                /*if ($('#txth_doc_record1').val() == "") {
                                     var mensaje = {wtmessage: "Debe adjuntar Record Académico.", title: "Información"};
                                     showAlert("NO_OK", "error", mensaje);
-                                } else{
-                                    if ($('#txth_doc_senecyt').val() == "") {
+                                } else{*/
+                                    /*if ($('#txth_doc_senecyt').val() == "") {
                                         var mensaje = {wtmessage: "Debe adjuntar Registro Senescyt.", title: "Información"};
                                         showAlert("NO_OK", "error", mensaje);
-                                    } else{
-                                        if ($('#txth_doc_hojavida').val() == "") {
+                                    } else{*/
+                                        /*if ($('#txth_doc_hojavida').val() == "") {
                                             var mensaje = {wtmessage: "Debe adjuntar Hoja de Vida.", title: "Información"};
                                             showAlert("NO_OK", "error", mensaje);
-                                        } else{
-                                                if ($('#txth_doc_cartarecomendacion').val() == "") {
+                                        } else{*/
+                                                /*if ($('#txth_doc_cartarecomendacion').val() == "") {
                                                     var mensaje = {wtmessage: "Debe adjuntar Carta de Recomendación.", title: "Información"};
                                                     showAlert("NO_OK", "error", mensaje);
-                                                } else{
-                                                    if ($('#txth_doc_certificadolaboral').val() == "") {
+                                                } else{*/
+                                                    /*if ($('#txth_doc_certificadolaboral').val() == "") {
                                                         var mensaje = {wtmessage: "Debe adjuntar Certificado Laboral.", title: "Información"};
                                                         showAlert("NO_OK", "error", mensaje);
-                                                    } else{
-                                                        if ($('#txth_doc_certificadoingles').val() == "") {
+                                                    } else{*/
+                                                        /*if ($('#txth_doc_certificadoingles').val() == "") {
                                                             var mensaje = {wtmessage: "Debe adjuntar Certificado Suficiencia Ingles.", title: "Información"};
                                                             showAlert("NO_OK", "error", mensaje);
-                                                        } else{
-                                 if ($("#signup-hom").prop("checked") == true)
-                                {
-                                    if ($('#txth_doc_recordacad').val() == "") {
-                                        var mensaje = {wtmessage: "Debe adjuntar Record Académico.", title: "Información"};
-                                        showAlert("NO_OK", "error", mensaje);
-                                    } else{
-                                        if ($('#txth_doc_nosancion').val() == "") {
-                                            var mensaje = {wtmessage: "Debe adjuntar Certificado no ser sancionado.", title: "Información"};
-                                            showAlert("NO_OK", "error", mensaje);
-                                        }else{
-                                            if ($('#txth_doc_syllabus').val() == "") {
-                                                var mensaje = {wtmessage: "Debe adjuntar Syllabus de materias aprobadas.", title: "Información"};
-                                                showAlert("NO_OK", "error", mensaje);
-                                            }else{
-                                                if ($('#txth_doc_especievalorada').val() == "") {
-                                                    var mensaje = {wtmessage: "Debe adjuntar Especie valorada.", title: "Información"};
-                                                    showAlert("NO_OK", "error", mensaje);
-                                                }else{
-                                                if (!validateForm()) {
-                                                    requestHttpAjax(link, arrParams, function (response) {
-                                                        showAlert(response.status, response.label, response.message);
-                                                        if (response.status == "OK") {
-                                                            setTimeout(function() {
-                                                                    window.location.href = $('#txth_base').val() + "/inscripciongrado/index";
-                                                                }, 3000);
-                                                        }
-                                                    }, true);
-                                                }
-                                               }
-                                            }
-                                            }
-                                    }
-                                }// cierra if si radio es si
-                                else{
-
+                                                        } else{*/
+                                                        if ($("#signup-hom").prop("checked") == true)
+                                                        {
+                                                            if ($('#txth_doc_recordacad').val() == "") {
+                                                                var mensaje = {wtmessage: "Debe adjuntar Record Académico.", title: "Información"};
+                                                                showAlert("NO_OK", "error", mensaje);
+                                                            } else{
+                                                                if ($('#txth_doc_nosancion').val() == "") {
+                                                                    var mensaje = {wtmessage: "Debe adjuntar Certificado no ser sancionado.", title: "Información"};
+                                                                    showAlert("NO_OK", "error", mensaje);
+                                                                }else{
+                                                                    if ($('#txth_doc_syllabus').val() == "") {
+                                                                        var mensaje = {wtmessage: "Debe adjuntar Syllabus de materias aprobadas.", title: "Información"};
+                                                                        showAlert("NO_OK", "error", mensaje);
+                                                            }else{
+                                                                if ($('#txth_doc_especievalorada').val() == "") {
+                                                                    var mensaje = {wtmessage: "Debe adjuntar Especie valorada.", title: "Información"};
+                                                                    showAlert("NO_OK", "error", mensaje);
+                                                                }else{
                                                                 if (!validateForm()) {
-                                                                                requestHttpAjax(link, arrParams, function (response) {
-                                                                                    showAlert(response.status, response.label, response.message);
-                                                                                    //var message = response.message;
-                                                                                    if (response.status == "OK") {
-                                                                                        setTimeout(function() {
-                                                                                                window.location.href = $('#txth_base').val() + "/inscripcionposgrado/index";
-                                                                                            }, 3000);
-                                                                                    }
-                                                                                }, true);
-                                                                            }
-
-                                                            }
+                                                                    requestHttpAjax(link, arrParams, function (response) {
+                                                                        showAlert(response.status, response.label, response.message);
+                                                                        if (response.status == "OK") {
+                                                                            setTimeout(function() {
+                                                                                    window.location.href = $('#txth_base').val() + "/inscripciongrado/index";
+                                                                                }, 3000);
+                                                                        }
+                                                                    }, true);
+                                                                }
                                                               }
                                                             }
-                                                      }
-                                              }
-                                            }
-                                     }
+                                                            }
+                                                     }
+                                                }// cierra if si radio es si
+                                                else{
+
+                                                                                if (!validateForm()) {
+                                                                                                requestHttpAjax(link, arrParams, function (response) {
+                                                                                                    showAlert(response.status, response.label, response.message);
+                                                                                                    //var message = response.message;
+                                                                                                    if (response.status == "OK") {
+                                                                                                        setTimeout(function() {
+                                                                                                                window.location.href = $('#txth_base').val() + "/inscripcionposgrado/index";
+                                                                                                            }, 3000);
+                                                                                                    }
+                                                                                                }, true);
+                                                                                            }
+
+                                                            }
+                                                              // } // else certificado ingles
+                                                            // } // else certificado laboral
+                                                      //} // else carta
+                                              // } // else hoja de vida
+                                            // } // else senecyt
+                                     // } // else record
                                 }
-                        }
-                    }
-                /*}*/
-            }
+                        // } // else titulo
+                    // }// else certificado de votacion
+            // } // else DNI
         }
     } else {
         var mensaje = {wtmessage: "Debe Aceptar los términos de la Información.", title: "Información"};

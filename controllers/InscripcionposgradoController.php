@@ -358,7 +358,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
             $per_fecha_nacimiento = $data["fecha_nac"];
             $per_nacionalidad = $data["nacionalidad"];
             $eciv_id = $data["estado_civil"];
-            $pai_id_domicilio = $data["nacionalidad"];
+            $pai_id_domicilio = $data["pais"];
             $pro_id_domicilio = $data["provincia"];
             $can_id_domicilio = $data["canton"];
 

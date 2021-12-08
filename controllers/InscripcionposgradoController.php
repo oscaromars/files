@@ -386,6 +386,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
             $empresa = ucwords(strtolower($data["empresa"]));
             $cargo = ucwords(strtolower($data["cargo"]));
             $telefono_emp = $data["telefono_emp"];
+            $pais_emp = $data["pais_emp"];
             $prov_emp = $data["prov_emp"];
             $ciu_emp = $data["ciu_emp"];
             $parroquia = ucwords(strtolower($data["parroquia"]));
@@ -485,9 +486,9 @@ class InscripcionposgradoController extends \yii\web\Controller {
                     $resexisteinfo = $mod_infolaboral->consultarInfoLaboral($per_id);
                     if ($resexisteinfo['existe_infolaboral'] == 0) {
                         //Creación de persona de contacto
-                        $resp_infolaboral = $mod_infolaboral->insertarInfoLaboral($per_id, $empresa, $cargo, $telefono_emp, $prov_emp, $ciu_emp, $parroquia, $direccion_emp, $añoingreso_emp, $correo_emp, $cat_ocupacional);
+                        $resp_infolaboral = $mod_infolaboral->insertarInfoLaboral($per_id, $empresa, $cargo, $telefono_emp, $pais_emp, $prov_emp, $ciu_emp, $parroquia, $direccion_emp, $añoingreso_emp, $correo_emp, $cat_ocupacional);
                     } else {
-                        $resp_infolaboral = $mod_infolaboral->modificarInfoLaboral($per_id, $empresa, $cargo, $telefono_emp, $prov_emp, $ciu_emp, $parroquia, $direccion_emp, $añoingreso_emp, $correo_emp, $cat_ocupacional);
+                        $resp_infolaboral = $mod_infolaboral->modificarInfoLaboral($per_id, $empresa, $cargo, $telefono_emp, $pais_emp, $prov_emp, $ciu_emp, $parroquia, $direccion_emp, $añoingreso_emp, $correo_emp, $cat_ocupacional);
                     }
                     // info Idiomas
                     //Idioma Ingles
@@ -1261,6 +1262,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
             $empresa = ucwords(strtolower($data["empresa"]));
             $cargo = ucwords(strtolower($data["cargo"]));
             $telefono_emp = $data["telefono_emp"];
+            $pais_emp = $data["pais_emp"];
             $prov_emp = $data["prov_emp"];
             $ciu_emp = $data["ciu_emp"];
             $parroquia = ucwords(strtolower($data["parroquia"]));
@@ -1359,6 +1361,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 $laboral_model->ilab_empresa = $empresa;
                 $laboral_model->ilab_cargo = $cargo;
                 $laboral_model->ilab_telefono_emp = $telefono_emp;
+                $laboral_model->ilab_pais_emp = $pais_emp;
                 $laboral_model->ilab_prov_emp = $prov_emp;
                 $laboral_model->ilab_ciu_emp = $ciu_emp;
                 $laboral_model->ilab_parroquia = $parroquia;

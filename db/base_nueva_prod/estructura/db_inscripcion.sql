@@ -91,6 +91,7 @@ CREATE TABLE `informacion_laboral` (
   `ilab_empresa` varchar(200) DEFAULT NULL,
   `ilab_cargo` varchar(200) DEFAULT NULL,
   `ilab_telefono_emp` varchar(10) DEFAULT NULL,
+  `ilab_pais_emp` bigint DEFAULT NULL,
   `ilab_prov_emp` bigint DEFAULT NULL,
   `ilab_ciu_emp` bigint DEFAULT NULL,
   `ilab_parroquia` varchar(200) DEFAULT NULL,
@@ -104,7 +105,10 @@ CREATE TABLE `informacion_laboral` (
   `ilab_estado_logico` varchar(1) NOT NULL,
   PRIMARY KEY (`ilab_id`)
 );
-
+/*
+ ALTER TABLE `db_inscripcion`.`informacion_laboral`
+ ADD COLUMN `ilab_pais_emp` BIGINT(20) NULL DEFAULT NULL AFTER `ilab_telefono_emp`;
+*/
 CREATE TABLE `info_estudiante_investigacion` (
   `iein_id` bigint NOT NULL AUTO_INCREMENT,
   `per_id` bigint NOT NULL,

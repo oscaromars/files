@@ -120,7 +120,7 @@ $(document).ready(function () {
         $("#lbl_codeCountrycell").text($("#cmb_nacionalidad option:selected").attr("data-code"));
     });
 
-    /* codigo de area en datos personales*/
+    /* codigo de pais en datos personales*/
 
     $('#cmb_pais').change(function () {
         var link = $('#txth_base').val() + "/inscripcionposgrado/index";
@@ -156,6 +156,32 @@ $(document).ready(function () {
             if (response.status == "OK") {
                 data = response.message;
                 setComboData(data.cantones, "cmb_ciudad");
+            }
+        }, true);
+    });
+
+    /* codigo de pais en datos laborales*/
+    $('#cmb_pais_emp').change(function () {
+        var link = $('#txth_base').val() + "/inscripcionposgrado/index";
+        var arrParams = new Object();
+        arrParams.pai_id = $(this).val();
+        arrParams.getprovincias = true;
+        arrParams.getarea = true;
+        requestHttpAjax(link, arrParams, function (response) {
+            if (response.status == "OK") {
+                data = response.message;
+                setComboData(data.provincias, "cmb_prov_emp");
+                var arrParams = new Object();
+                if (data.provincias.length > 0) {
+                    arrParams.prov_id = data.provincias[0].id;
+                    arrParams.getcantones = true;
+                    requestHttpAjax(link, arrParams, function (response) {
+                        if (response.status == "OK") {
+                            data = response.message;
+                            setComboData(data.cantones, "cmb_ciu_emp");
+                        }
+                    }, true);
+                }
             }
         }, true);
     });
@@ -570,6 +596,7 @@ function guardarInscripcionPosgrado() {
     arrParams.empresa = $('#txt_empresa').val();
     arrParams.cargo = $('#txt_cargo').val();
     arrParams.telefono_emp = $('#txt_telefono_emp').val();
+    arrParams.pais_emp = $('#cmb_pais_emp').val();
     arrParams.prov_emp = $('#cmb_prov_emp').val();
     arrParams.ciu_emp = $('#cmb_ciu_emp').val();
     arrParams.parroquia = $('#txt_parroquia').val();

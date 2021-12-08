@@ -656,6 +656,7 @@ function guardarInscripcionPosgrado() {
 
 
      //TAB 2
+    arrParams.ipos_ruta_documento = ($('#txth_doc_documento').val() != '') ? $('#txth_doc_documento').val() : '';
     arrParams.ipos_ruta_doc_foto = ($('#txth_doc_foto').val() != '') ? $('#txth_doc_foto').val() : '';
     arrParams.ipos_ruta_doc_dni = ($('#txth_doc_dni').val() != '') ? $('#txth_doc_dni').val() : '';
     arrParams.ipos_ruta_doc_certvota = ($('#txth_doc_certvota').val() != '') ? $('#txth_doc_certvota').val() : '';
@@ -680,6 +681,10 @@ function guardarInscripcionPosgrado() {
         var mensaje = {wtmessage: "Debe adjuntar foto.", title: "Información"};
         showAlert("NO_OK", "error", mensaje);
     } else {
+           if ($('#txth_doc_documento').val() == "") {
+                var mensaje = {wtmessage: "Debe adjuntar documentos.", title: "Información"};
+                showAlert("NO_OK", "error", mensaje);
+            } else {
             /*if ($('#txth_doc_dni').val() == "") {
                 var mensaje = {wtmessage: "Debe adjuntar documento de identidad.", title: "Información"};
                 showAlert("NO_OK", "error", mensaje);
@@ -777,7 +782,8 @@ function guardarInscripcionPosgrado() {
                                 }
                         // } // else titulo
                     // }// else certificado de votacion
-            // } // else DNI
+                     } // else Documentos general
+                // } // else DNI
         }
     } else {
         var mensaje = {wtmessage: "Debe Aceptar los términos de la Información.", title: "Información"};

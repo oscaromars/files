@@ -120,6 +120,33 @@ $(document).ready(function () {
         $("#lbl_codeCountrycell").text($("#cmb_nacionalidad option:selected").attr("data-code"));
     });
 
+    /* codigo de area en datos personales*/
+
+    $('#cmb_pais').change(function () {
+        var link = $('#txth_base').val() + "/inscripcionposgrado/index";
+        var arrParams = new Object();
+        arrParams.pai_id = $(this).val();
+        arrParams.getprovincias = true;
+        arrParams.getarea = true;
+        requestHttpAjax(link, arrParams, function (response) {
+            if (response.status == "OK") {
+                data = response.message;
+                setComboData(data.provincias, "cmb_provincia");
+                var arrParams = new Object();
+                if (data.provincias.length > 0) {
+                    arrParams.prov_id = data.provincias[0].id;
+                    arrParams.getcantones = true;
+                    requestHttpAjax(link, arrParams, function (response) {
+                        if (response.status == "OK") {
+                            data = response.message;
+                            setComboData(data.cantones, "cmb_ciudad");
+                        }
+                    }, true);
+                }
+            }
+        }, true);
+    });
+
     $('#cmb_provincia').change(function () {
         var link = $('#txth_base').val() + "/inscripcionposgrado/index";
         var arrParams = new Object();

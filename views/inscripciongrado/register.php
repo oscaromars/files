@@ -261,7 +261,7 @@ completamente firmada y acompañada de todos los documentos solicitados.
 <br><br>
 <div  style="text-justify: auto">
         <p>
-      <b>MALLA CURRICULAR:</b>&nbsp;<?php echo $persona_model['codigo'].' '.$persona_model['carrera']?>
+      <b>MALLA CURRICULAR:</b>&nbsp;<?php echo $persona_model['codigo'].' '.$persona_model['malla']?>
 <?php 
 If ($persona_model['mallacorresp'] != $persona_model['maca_id'])
 { 

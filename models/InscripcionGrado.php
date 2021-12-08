@@ -527,7 +527,18 @@ class InscripcionGrado extends \yii\db\ActiveRecord
        SELECT distinct
 max(maca.maca_id) as mallacorresp, --
 maca.maca_codigo as codigo, --
-concat(maca.maca_codigo, ' ', maca.maca_nombre) as malla, --
+(SELECT max(maca.maca_id) FROM db_academico.modalidad_estudio_unidad meun
+inner join  db_academico.malla_unidad_modalidad mumo on meun.meun_id = mumo.meun_id
+inner join db_academico.malla_academica maca on maca.maca_id = mumo.maca_id
+where meun.eaca_id = igra.eaca_id
+and meun.uaca_id = igra.uaca_id
+and meun.mod_id = igra.mod_id
+and meun.meun_estado = 1 
+and meun.meun_estado_logico = 1
+and mumo.mumo_estado = 1 
+and mumo.mumo_estado_logico = 1
+and maca.maca_estado = 1 
+and maca.maca_estado_logico = 1)) as malla,
 igra.igra_fecha_creacion as registro,
 eaca.eaca_nombre as carrera,
 moda.mod_nombre as modalidad,

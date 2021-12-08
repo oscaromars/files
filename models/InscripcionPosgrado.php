@@ -15,8 +15,10 @@ use app\models\Utilities;
  * @property int $eaca_id
  * @property int $mod_id
  * @property string $ipos_anio
- * @property string $ipos_tipo_finaciamiento
+ * @property string $ipos_cedula
+ * @property string $ipos_tipo_financiamiento
  * @property int $ipos_metodo_ingreso
+ * @property string $ipos_ruta_documento
  * @property string $ipos_ruta_doc_foto
  * @property string $ipos_ruta_doc_dni
  * @property string $ipos_ruta_doc_certvota
@@ -66,8 +68,8 @@ class InscripcionPosgrado extends \yii\db\ActiveRecord
             [['per_id', 'uaca_id', 'eaca_id', 'mod_id', 'ipos_estado', 'ipos_estado_logico'], 'required'],
             [['per_id', 'uaca_id', 'eaca_id', 'mod_id', 'ipos_metodo_ingreso'], 'integer'],
             [['ipos_fecha_creacion', 'ipos_fecha_modificacion'], 'safe'],
-            [['ipos_anio'], 'string', 'max' => 50],
-            [['ipos_tipo_financiamiento', 'ipos_ruta_doc_foto', 'ipos_ruta_doc_dni', 'ipos_ruta_doc_certvota', 'ipos_ruta_doc_titulo', 'ipos_ruta_doc_comprobantepago', 'ipos_ruta_doc_recordacademico', 'ipos_ruta_doc_senescyt', 'ipos_ruta_doc_hojadevida', 'ipos_ruta_doc_cartarecomendacion', 'ipos_ruta_doc_certificadolaboral', 'ipos_ruta_doc_certificadoingles', 'ipos_ruta_doc_otrorecord', 'ipos_ruta_doc_certificadonosancion', 'ipos_ruta_doc_syllabus', 'ipos_ruta_doc_homologacion'], 'string', 'max' => 200],
+            [['ipos_anio', 'ipos_cedula'], 'string', 'max' => 50],
+            [['ipos_tipo_financiamiento', 'ipos_ruta_documento', 'ipos_ruta_doc_foto', 'ipos_ruta_doc_dni', 'ipos_ruta_doc_certvota', 'ipos_ruta_doc_titulo', 'ipos_ruta_doc_comprobantepago', 'ipos_ruta_doc_recordacademico', 'ipos_ruta_doc_senescyt', 'ipos_ruta_doc_hojadevida', 'ipos_ruta_doc_cartarecomendacion', 'ipos_ruta_doc_certificadolaboral', 'ipos_ruta_doc_certificadoingles', 'ipos_ruta_doc_otrorecord', 'ipos_ruta_doc_certificadonosancion', 'ipos_ruta_doc_syllabus', 'ipos_ruta_doc_homologacion'], 'string', 'max' => 200],
             [['ipos_mensaje1', 'ipos_mensaje2', 'ipos_estado', 'ipos_estado_logico'], 'string', 'max' => 1],
         ];
     }
@@ -84,8 +86,10 @@ class InscripcionPosgrado extends \yii\db\ActiveRecord
             'eaca_id' => 'Eaca ID',
             'mod_id' => 'Mod ID',
             'ipos_anio' => 'Ipos Anio',
+            'ipos_cedula' => 'Ipos Cedula',
             'ipos_tipo_financiamiento' => 'Ipos Tipo Financiamiento',
             'ipos_metodo_ingreso' => 'Ipos Metodo Ingreso',
+            'ipos_ruta_documento' => 'Ipos Ruta Documento',
             'ipos_ruta_doc_foto' => 'Ipos Ruta Doc Foto',
             'ipos_ruta_doc_dni' => 'Ipos Ruta Doc Dni',
             'ipos_ruta_doc_certvota' => 'Ipos Ruta Doc Certvota',
@@ -109,7 +113,6 @@ class InscripcionPosgrado extends \yii\db\ActiveRecord
             'ipos_estado_logico' => 'Ipos Estado Logico',
         ];
     }
-
     /**
      * Function addLabelTimeDocumentos renombra el documento agregando una varible de tiempo
      * @author  Developer Uteg <developer@uteg.edu.ec>
@@ -506,11 +509,6 @@ class InscripcionPosgrado extends \yii\db\ActiveRecord
     }
 
     public function consultaRegistroAdmisionposgrado($arrFiltro = array(), $reporte){
-        /*\app\models\Utilities::putMessageLogFile('cedula consulta:  '.$arrFiltro['search']);
-        \app\models\Utilities::putMessageLogFile('año consulta:  '.$arrFiltro['año']);
-        \app\models\Utilities::putMessageLogFile('unidad consulta:  '.$arrFiltro['unidad']);
-        \app\models\Utilities::putMessageLogFile('programa consulta:  '.$arrFiltro['programa']);
-        \app\models\Utilities::putMessageLogFile('modalidad consulta:  '.$arrFiltro['modalidad']);*/
         $con_inscripcion = \Yii::$app->db_inscripcion;
         $con_asgard = \Yii::$app->db_asgard;
         $con_academico = \Yii::$app->db_academico;
@@ -635,54 +633,54 @@ class InscripcionPosgrado extends \yii\db\ActiveRecord
         $estado = 1;$uaca = 2;
         \app\models\Utilities::putMessageLogFile('entro con per_id : ' .$per_id);
         $sql = "
-SELECT distinct
-ipos.ipos_fecha_creacion as registro,
-ipos.ipos_anio as anio,
-eaca.eaca_nombre as programa,
-moda.mod_nombre as modalidad,
- ipos.ipos_ruta_doc_foto,
-per.per_cedula as cedula,
-per.per_pasaporte as pasaporte,
-ifnull(CONCAT(ifnull(per.per_pri_nombre,''), ' ', ifnull(per.per_seg_nombre,'')), '') as nombres,
-ifnull(CONCAT(ifnull(per.per_pri_apellido,''), ' ', ifnull(per.per_seg_apellido,'')), '') as apellidos,
--- lugar de nacimiento
-per.per_fecha_nacimiento,
-pais.pai_nombre,
-esta.eciv_nombre,
-ifnull(CONCAT(ifnull(per.per_domicilio_sector,''), ' ', ifnull(per.per_domicilio_cpri,''),' ',
-ifnull(per.per_domicilio_csec,''),' ',ifnull(per.per_domicilio_num,''),' '
-,ifnull(per.per_domicilio_ref,''),' '
-), '') as domicilio,
-per_celular,
-per_domicilio_telefono,
-per_correo,
-ifnull(CONCAT(ifnull(per.per_trabajo_direccion,''), ' ', ifnull(per.per_trabajo_nombre,''),' '), '') as trabajo,
-contac.pcon_nombre, 
-parente.tpar_nombre, 
-contac.pcon_telefono, 
-contac.pcon_direccion,
-mallagen.maca_nombre,
-ifnull(estud.est_categoria,'No definida') as categoria
-FROM db_inscripcion.inscripcion_posgrado as ipos
-Inner Join db_asgard.persona as per on per.per_id = ipos.per_id
-Inner Join db_asgard.pais as pais on pais.pai_id = per.per_nacionalidad
-Inner Join db_asgard.estado_civil as esta on esta.eciv_id = per.eciv_id
-Inner join db_academico.estudiante as estud on per.per_id = estud.per_id
-Inner Join db_academico.unidad_academica as uaca on uaca.uaca_id = ipos.uaca_id
-Inner Join db_academico.estudio_academico as eaca on eaca.eaca_id = ipos.eaca_id
-Inner Join db_academico.modalidad as moda on moda.mod_id = ipos.mod_id
-Inner Join db_asgard.persona_contacto as contac on contac.per_id = ipos.per_id
-Inner Join db_asgard.tipo_parentesco as parente on parente.tpar_id = contac.tpar_id
-Inner Join db_academico.malla_academico_estudiante as mallaes ON mallaes.per_id =  ipos.per_id
-Inner Join db_academico.malla_academica as mallagen ON mallagen.maca_id =  mallaes.maca_id
-WHERE 
-ipos.uaca_id = :uaca_id AND
-ipos.per_id = :per_id AND
- ipos.ipos_estado = :estado and ipos.ipos_estado_logico = :estado and
-per.per_estado = :estado and per.per_estado_logico = :estado and
-uaca.uaca_estado = :estado and uaca.uaca_estado_logico = :estado and
-eaca.eaca_estado = :estado and eaca.eaca_estado_logico = :estado and
-moda.mod_estado = :estado and moda.mod_estado_logico = :estado
+                SELECT distinct
+                ipos.ipos_fecha_creacion as registro,
+                ipos.ipos_anio as anio,
+                eaca.eaca_nombre as programa,
+                moda.mod_nombre as modalidad,
+                ipos.ipos_ruta_doc_foto,
+                per.per_cedula as cedula,
+                per.per_pasaporte as pasaporte,
+                ifnull(CONCAT(ifnull(per.per_pri_nombre,''), ' ', ifnull(per.per_seg_nombre,'')), '') as nombres,
+                ifnull(CONCAT(ifnull(per.per_pri_apellido,''), ' ', ifnull(per.per_seg_apellido,'')), '') as apellidos,
+                -- lugar de nacimiento
+                per.per_fecha_nacimiento,
+                pais.pai_nombre,
+                esta.eciv_nombre,
+                ifnull(CONCAT(ifnull(per.per_domicilio_sector,''), ' ', ifnull(per.per_domicilio_cpri,''),' ',
+                ifnull(per.per_domicilio_csec,''),' ',ifnull(per.per_domicilio_num,''),' '
+                ,ifnull(per.per_domicilio_ref,''),' '
+                ), '') as domicilio,
+                per_celular,
+                per_domicilio_telefono,
+                per_correo,
+                ifnull(CONCAT(ifnull(per.per_trabajo_direccion,''), ' ', ifnull(per.per_trabajo_nombre,''),' '), '') as trabajo,
+                contac.pcon_nombre,
+                parente.tpar_nombre,
+                contac.pcon_telefono,
+                contac.pcon_direccion,
+                mallagen.maca_nombre,
+                ifnull(estud.est_categoria,'No definida') as categoria
+                FROM db_inscripcion.inscripcion_posgrado as ipos
+                Inner Join db_asgard.persona as per on per.per_id = ipos.per_id
+                Inner Join db_asgard.pais as pais on pais.pai_id = per.per_nacionalidad
+                Inner Join db_asgard.estado_civil as esta on esta.eciv_id = per.eciv_id
+                Inner join db_academico.estudiante as estud on per.per_id = estud.per_id
+                Inner Join db_academico.unidad_academica as uaca on uaca.uaca_id = ipos.uaca_id
+                Inner Join db_academico.estudio_academico as eaca on eaca.eaca_id = ipos.eaca_id
+                Inner Join db_academico.modalidad as moda on moda.mod_id = ipos.mod_id
+                Inner Join db_asgard.persona_contacto as contac on contac.per_id = ipos.per_id
+                Inner Join db_asgard.tipo_parentesco as parente on parente.tpar_id = contac.tpar_id
+                Inner Join db_academico.malla_academico_estudiante as mallaes ON mallaes.per_id =  ipos.per_id
+                Inner Join db_academico.malla_academica as mallagen ON mallagen.maca_id =  mallaes.maca_id
+                WHERE
+                ipos.uaca_id = :uaca_id AND
+                ipos.per_id = :per_id AND
+                ipos.ipos_estado = :estado and ipos.ipos_estado_logico = :estado and
+                per.per_estado = :estado and per.per_estado_logico = :estado and
+                uaca.uaca_estado = :estado and uaca.uaca_estado_logico = :estado and
+                eaca.eaca_estado = :estado and eaca.eaca_estado_logico = :estado and
+                moda.mod_estado = :estado and moda.mod_estado_logico = :estado
                ";
 
 
@@ -694,7 +692,4 @@ moda.mod_estado = :estado and moda.mod_estado_logico = :estado
         $resultData = $comando->queryOne();
         return $resultData;
     }
-
-
-
 }

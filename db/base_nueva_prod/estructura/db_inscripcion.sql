@@ -61,6 +61,7 @@ CREATE TABLE `inscripcion_posgrado` (
   `ipos_cedula` varchar(50) DEFAULT NULL,
   `ipos_tipo_financiamiento` varchar(200) DEFAULT NULL,
   `ipos_metodo_ingreso` bigint DEFAULT NULL,
+  `ipos_ruta_documento` varchar(200) DEFAULT NULL,
   `ipos_ruta_doc_foto` varchar(200) DEFAULT NULL,
   `ipos_ruta_doc_dni` varchar(200) DEFAULT NULL,
   `ipos_ruta_doc_certvota` varchar(200) DEFAULT NULL,
@@ -84,7 +85,10 @@ CREATE TABLE `inscripcion_posgrado` (
   `ipos_estado_logico` varchar(1) NOT NULL,
   PRIMARY KEY (`ipos_id`)
 );
-
+/*
+ ALTER TABLE `db_inscripcion`.`inscripcion_posgrado`
+ ADD COLUMN `ipos_ruta_documento` VARCHAR(200) NULL DEFAULT NULL AFTER `ipos_metodo_ingreso`;
+*/
 CREATE TABLE `informacion_laboral` (
   `ilab_id` bigint NOT NULL AUTO_INCREMENT,
   `per_id` bigint DEFAULT NULL,

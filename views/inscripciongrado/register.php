@@ -261,7 +261,15 @@ completamente firmada y acompañada de todos los documentos solicitados.
 <br><br>
 <div  style="text-justify: auto">
         <p>
-      <b>MALLA CURRICULAR:</b>&nbsp;<?php echo $persona_model['maca_nombre'] ?><br><br>
+      <b>MALLA CURRICULAR:</b>&nbsp;<?php echo $persona_model['codigo'].' '.$persona_model['carrera']?>
+<?php 
+If ($persona_model['mallacorresp'] != $persona_model['maca_id'])
+{ 
+echo ' (Con registros en '. $persona_model['maca_nombre'].' )';
+} ?>
+    
+
+      <br><br>
       <b>CATEGORIA:</b>&nbsp;<?php echo $persona_model['categoria'] ?><br><br>
       <b>FINANCIAMIENTO:</b><br><br>
   </p>
@@ -303,14 +311,15 @@ echo "<input type='checkbox' style='width:140%; height:140%' name='f'  checked='
 echo "<input type='checkbox' name='f'  value='1' />" ;
 }
 ?>
-<?php 
+</td>
+                <td class="marcoCel">Beca&nbsp;
+            <?php 
 If ($persona_model['igra_financiamiento'] == 3)
 { 
-echo $persona_model['igra_institucion_beca']; 
+echo '( '.$persona_model['igra_institucion_beca'].' )'; 
 }
 ?>  
-</td>
-                <td class="marcoCel">Beca</td>
+                </td>
             </tr>
         </tbody>
     </table>
@@ -329,7 +338,7 @@ echo $persona_model['igra_institucion_beca'];
                     <span>Documentos Básicos</span>
                 </td>
                 <td class="divCelda bold titleDetalle">
-                    <span>Recibido</span>
+                    <span>Digital</span>
                 </td>
                 <td class="divCelda bold titleDetalle">
                     <span>Si</span>
@@ -345,7 +354,7 @@ echo $persona_model['igra_institucion_beca'];
                     <td class="marcoCel">Copia de cédula a color</td>
                     <td class="marcoCel">
                          <?php if ($persona_model['igra_ruta_documento'] != Null) {
-                   ?> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#10004;  <?php 
+                   ?> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#10004;  <?php 
 
                     } else { }            
                  ?>
@@ -358,7 +367,7 @@ echo $persona_model['igra_institucion_beca'];
                     <td class="marcoCel">Copia de certificado de votación a color</td>
                     <td class="marcoCel">
                          <?php if ($persona_model['igra_ruta_documento'] != Null) {
-                   ?> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#10004;  <?php 
+                   ?> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#10004;  <?php 
 
                     } else { }            
                  ?>
@@ -371,7 +380,7 @@ echo $persona_model['igra_institucion_beca'];
                     <td class="marcoCel">Copia a color de título bachiller notarizada</td>
                     <td class="marcoCel">
                          <?php if ($persona_model['igra_ruta_documento'] != Null) {
-                   ?> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#10004;  <?php 
+                   ?> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#10004;  <?php 
 
                     } else { }            
                  ?>
@@ -382,7 +391,7 @@ echo $persona_model['igra_institucion_beca'];
                 </tr>         
                  <tr class="fila">
                     <td class="marcoCel">Formulario de inscripción</td>
-                    <td class="marcoCel">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#10004;</td>
+                    <td class="marcoCel">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#10004;</td>
                     <td class="marcoCel"></td>
                     <td class="marcoCel"></td>
                     <td class="marcoCel"></td>
@@ -391,7 +400,7 @@ echo $persona_model['igra_institucion_beca'];
                     <td class="marcoCel">Comprobante de depósito o transferencia de pago de matrícula</td>
                    <td class="marcoCel">
                          <?php if ($persona_model['igra_ruta_doc_comprobantepago'] != Null) {
-                   ?> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#10004;  <?php 
+                   ?> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#10004;  <?php 
 
                     } else { }            
                  ?>
@@ -410,7 +419,7 @@ echo $persona_model['igra_institucion_beca'];
                     <span>Documentos adicionales por homologación</span>
                 </td>
                  <td class="divCelda bold titleDetalle">
-                    <span>Recibido</span>
+                    <span>Digital</span>
                 </td>
                 <td class="divCelda bold titleDetalle">
                     <span>Si</span>
@@ -426,7 +435,7 @@ echo $persona_model['igra_institucion_beca'];
                     <td class="marcoCel">Récord académico</td>
                      <td class="marcoCel">
                          <?php if ($persona_model['igra_ruta_doc_recordacademico'] != Null) {
-                   ?> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#10004;  <?php 
+                   ?> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#10004;  <?php 
 
                     } else { }            
                  ?>
@@ -439,7 +448,7 @@ echo $persona_model['igra_institucion_beca'];
                     <td class="marcoCel">Certificado de no haber sido sancionado (firma y sello original)</td>
                      <td class="marcoCel">
                          <?php if ($persona_model['igra_ruta_doc_certificado'] != Null) {
-                   ?> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#10004;  <?php 
+                   ?> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#10004;  <?php 
 
                     } else { }            
                  ?>
@@ -452,7 +461,7 @@ echo $persona_model['igra_institucion_beca'];
                     <td class="marcoCel">Syllabus de materias aprobadas (firma y sello original)</td>
                  <td class="marcoCel">
                          <?php if ($persona_model['igra_ruta_doc_syllabus'] != Null) {
-                   ?> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#10004;  <?php 
+                   ?> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#10004;  <?php 
 
                     } else { }            
                  ?>
@@ -465,7 +474,7 @@ echo $persona_model['igra_institucion_beca'];
                     <td class="marcoCel">Especie valorada por homologación</td>
                     <td class="marcoCel">
                          <?php if ($persona_model['igra_ruta_doc_homologacion'] != Null) {
-                   ?> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#10004;  <?php 
+                   ?> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#10004;  <?php 
 
                     } else { }            
                  ?>

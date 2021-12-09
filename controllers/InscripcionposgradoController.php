@@ -191,6 +191,32 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 }
             }
 
+                   if ($data["upload_foto"]) {
+                if (empty($_FILES)) {
+                    return json_encode(['error' => Yii::t("notificaciones", "Error to process File {file}. Try again.", ['{file}' => basename($files['name'])])]);
+                    return;
+                }
+                $insc_persona = new Persona();
+                $resp_persona = $insc_persona->consultaPeridxdni($data['cedula']);
+                $per_id = $resp_persona['per_id'];
+                //Recibe Parámetros
+                $files = $_FILES[key($_FILES)];
+                $arrIm = explode(".", basename($files['name']));
+                $typeFile = strtolower($arrIm[count($arrIm) - 1]);
+                if ($typeFile == 'pdf' || $typeFile == 'png' || $typeFile == 'jpg' || $typeFile == 'jpeg') {
+                $dirFileEnd = Yii::$app->params["documentFolder"] . "inscripcionposgrado/" . $data["name_file"] . "." . $typeFile;
+                $status = Utilities::moveUploadFile($files['tmp_name'], $dirFileEnd);
+                    if ($status) {
+                        return true;
+                    } else {
+                        return json_encode(['error' => Yii::t("notificaciones", "Error to process File {file}. Try again.", ['{file}' => basename($files['name'])])]);
+                        return;
+                    }
+                }else {
+                return json_encode(['error' => Yii::t("notificaciones", "Error to process File ". basename($files['name']) ." Solo formato imagenes jpg, png.")]);
+                }
+            }
+
             $con = \Yii::$app->db;
             $transaction = $con->beginTransaction();
             $con1 = \Yii::$app->db_captacion;
@@ -654,7 +680,8 @@ class InscripcionposgradoController extends \yii\web\Controller {
         try {
             $ids = isset($_GET['ids']) ? base64_decode($_GET['ids']) : NULL;
             $ids = $_GET['ids'];
-            $persona_model = Persona::findOne($ids);
+            $mod_inspgrado = new InscripcionPosgrado();
+            $persona_model = $mod_inspgrado->consultarPdf($ids);
             $rep = new ExportFile();
              $this->layout = 'registerp';
 
@@ -841,6 +868,29 @@ class InscripcionposgradoController extends \yii\web\Controller {
 
             //$per_id = 54;
             if ($data["upload_file"]) {
+                if (empty($_FILES)) {
+                    return json_encode(['error' => Yii::t("notificaciones", "Error to process File {file}. Try again.", ['{file}' => basename($files['name'])])]);
+                    return;
+                }
+                $mod_persona = new Persona();
+                $resp_persona = $mod_persona->consultarUltimoPer_id();
+                $persona = $resp_persona["ultimo"];
+                $per_id = intval( $persona );
+                //Recibe Parámetros
+                $files = $_FILES[key($_FILES)];
+                $arrIm = explode(".", basename($files['name']));
+                $typeFile = strtolower($arrIm[count($arrIm) - 1]);
+                $dirFileEnd = Yii::$app->params["documentFolder"] . "inscripcionposgrado/" . $per_id . "/" . $data["name_file"] . "_per_" . $per_id . "." . $typeFile;
+                $status = Utilities::moveUploadFile($files['tmp_name'], $dirFileEnd);
+                if ($status) {
+                    return true;
+                } else {
+                    return json_encode(['error' => Yii::t("notificaciones", "Error to process File {file}. Try again.", ['{file}' => basename($files['name'])])]);
+                    return;
+                }
+            }
+
+                 if ($data["upload_foto"]) {
                 if (empty($_FILES)) {
                     return json_encode(['error' => Yii::t("notificaciones", "Error to process File {file}. Try again.", ['{file}' => basename($files['name'])])]);
                     return;
@@ -1081,6 +1131,30 @@ class InscripcionposgradoController extends \yii\web\Controller {
                     }
                 }else {
                 return json_encode(['error' => Yii::t("notificaciones", "Error to process File ". basename($files['name']) ." Solo formato imagenes pdf, jpg, png.")]);
+                }
+            }
+
+              if ($data["upload_foto"]) {
+                if (empty($_FILES)) {
+                    return json_encode(['error' => Yii::t("notificaciones", "Error to process File {file}. Try again.", ['{file}' => basename($files['name'])])]);
+                    return;
+                }
+                $per_id = $data["per_id"];
+                //Recibe Parámetros
+                $files = $_FILES[key($_FILES)];
+                $arrIm = explode(".", basename($files['name']));
+                $typeFile = strtolower($arrIm[count($arrIm) - 1]);
+                if ($typeFile == 'pdf' || $typeFile == 'png' || $typeFile == 'jpg' || $typeFile == 'jpeg') {
+                $dirFileEnd = Yii::$app->params["documentFolder"] . "inscripcionposgrado/" . $data["name_file"] . "." . $typeFile;
+                $status = Utilities::moveUploadFile($files['tmp_name'], $dirFileEnd);
+                if ($status) {
+                    return true;
+                } else {
+                    return json_encode(['error' => Yii::t("notificaciones", "Error to process File {file}. Try again.", ['{file}' => basename($files['name'])])]);
+                    //return;
+                    }
+                }else {
+                return json_encode(['error' => Yii::t("notificaciones", "Error to process File ". basename($files['name']) ." Solo formato imagenes jpg, png.")]);
                 }
             }
 

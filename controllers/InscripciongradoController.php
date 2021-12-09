@@ -190,7 +190,7 @@ class InscripciongradoController extends \yii\web\Controller {
                         return json_encode(['error' => Yii::t("notificaciones", "Error to process File {file}. Try again.", ['{file}' => basename($files['name'])])]);
                        }
                 }else {
-                return json_encode(['error' => Yii::t("notificaciones", "Error to process File ". basename($files['name']) ." Solo formato imagenes pdf, jpg, png.")]);
+                return json_encode(['error' => Yii::t("notificaciones", "Error to process File ". basename($files['name']) ." Solo formato imagenes jpg, png.")]);
                  //}
                 }
             }
@@ -476,7 +476,7 @@ class InscripciongradoController extends \yii\web\Controller {
                     ])
             );
 
-            $rep->mpdf->Output('INSCRIPCION_' . $ids . ".pdf", ExportFile::OUTPUT_TO_DOWNLOAD);
+            $rep->mpdf->Output('INSCRIPCION_PG' . $ids . ".pdf", ExportFile::OUTPUT_TO_DOWNLOAD);
 
         } catch (Exception $e) {
             echo $e->getMessage();
@@ -864,7 +864,7 @@ class InscripciongradoController extends \yii\web\Controller {
                         //return;
                     }
                 }else {
-                return json_encode(['error' => Yii::t("notificaciones", "Error to process File ". basename($files['name']) ." Solo formato imagenes pdf, jpg, png.")]);
+                return json_encode(['error' => Yii::t("notificaciones", "Error to process File ". basename($files['name']) ." Solo formato imagenes jpg, png.")]);
                 }
             }
 

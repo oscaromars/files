@@ -1100,6 +1100,15 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 $arr_grupos = $grupo_model->getAllGruposByUser($user_usermane);
 
                 $inscriposgrado_id = $data["ipos_id"];
+                if (isset($data["ipos_ruta_documento"]) && $data["ipos_ruta_documento"] != "") {
+                    $arrIm = explode(".", basename($data["ipos_ruta_documento"]));
+                    $typeFile = strtolower($arrIm[count($arrIm) - 1]);
+                    $documento_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/doc_documento_per_" . $per_id . "." . $typeFile;
+                    $documento_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $documento_archivoOld, '' /*$timeSt*/);
+                    $data["ipos_ruta_documento"] = $foto_archivo;
+                    if ($documento_archivo === false)
+                        throw new Exception('Error doc Foto no renombrado.');
+                }
                 if (isset($data["ipos_ruta_doc_foto"]) && $data["ipos_ruta_doc_foto"] != "") {
                     $arrIm = explode(".", basename($data["ipos_ruta_doc_foto"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
@@ -1311,6 +1320,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
             $tipo_financiamiento = ucwords(strtolower($data["tipo_financiamiento"]));
 
             //archivos cargados
+            $ipos_ruta_documento = $data['ipos_ruta_documento'];
             $ipos_ruta_doc_foto = $data['ipos_ruta_doc_foto'];
             $ipos_ruta_doc_dni = $data['ipos_ruta_doc_dni'];
             $ipos_ruta_doc_certvota = $data['ipos_ruta_doc_certvota'];
@@ -1446,6 +1456,9 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 $ipos_model->ipos_cedula = $per_dni;
                 $ipos_model->ipos_tipo_financiamiento = $tipo_financiamiento;
                 // SI SON NULOS NO ACTUALIZAR
+                if(!empty($ipos_ruta_documento)){
+                    $ipos_model->ipos_ruta_documento = $ipos_ruta_documento;
+                }
                 if(!empty($ipos_ruta_doc_foto)){
                     $ipos_model->ipos_ruta_doc_foto = $ipos_ruta_doc_foto;
                 }

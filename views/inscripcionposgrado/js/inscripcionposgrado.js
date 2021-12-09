@@ -1034,6 +1034,7 @@ function updateaspiranteposgrado() {
 
 
      //TAB 2
+    arrParams.ipos_ruta_documento = $('#txth_doc_documento').val();
     arrParams.ipos_ruta_doc_foto = $('#txth_doc_foto').val();
     arrParams.ipos_ruta_doc_dni = $('#txth_doc_dni').val();
     arrParams.ipos_ruta_doc_certvota = $('#txth_doc_certvota').val();

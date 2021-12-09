@@ -636,57 +636,101 @@ class InscripcionPosgrado extends \yii\db\ActiveRecord
 
     public function consultarPdf($per_id) {
         $con = \Yii::$app->db_inscripcion;
-        $estado = 1;$uaca = 2;
+        $estado = 1;
         \app\models\Utilities::putMessageLogFile('entro con per_id : ' .$per_id);
         $sql = "
-                SELECT distinct
-                ipos.ipos_fecha_creacion as registro,
-                ipos.ipos_anio as anio,
-                eaca.eaca_nombre as programa,
-                moda.mod_nombre as modalidad,
-                ipos.ipos_ruta_doc_foto,
-                per.per_cedula as cedula,
-                per.per_pasaporte as pasaporte,
-                ifnull(CONCAT(ifnull(per.per_pri_nombre,''), ' ', ifnull(per.per_seg_nombre,'')), '') as nombres,
-                ifnull(CONCAT(ifnull(per.per_pri_apellido,''), ' ', ifnull(per.per_seg_apellido,'')), '') as apellidos,
-                -- lugar de nacimiento
-                per.per_fecha_nacimiento,
-                pais.pai_nombre,
-                esta.eciv_nombre,
-                ifnull(CONCAT(ifnull(per.per_domicilio_sector,''), ' ', ifnull(per.per_domicilio_cpri,''),' ',
-                ifnull(per.per_domicilio_csec,''),' ',ifnull(per.per_domicilio_num,''),' '
-                ,ifnull(per.per_domicilio_ref,''),' '
-                ), '') as domicilio,
-                per_celular,
-                per_domicilio_telefono,
-                per_correo,
-                ifnull(CONCAT(ifnull(per.per_trabajo_direccion,''), ' ', ifnull(per.per_trabajo_nombre,''),' '), '') as trabajo,
-                contac.pcon_nombre,
-                parente.tpar_nombre,
-                contac.pcon_telefono,
-                contac.pcon_direccion,
-                mallagen.maca_nombre,
-                ifnull(estud.est_categoria,'No definida') as categoria
-                FROM db_inscripcion.inscripcion_posgrado as ipos
-                Inner Join db_asgard.persona as per on per.per_id = ipos.per_id
-                Inner Join db_asgard.pais as pais on pais.pai_id = per.per_nacionalidad
-                Inner Join db_asgard.estado_civil as esta on esta.eciv_id = per.eciv_id
-                Inner join db_academico.estudiante as estud on per.per_id = estud.per_id
-                Inner Join db_academico.unidad_academica as uaca on uaca.uaca_id = ipos.uaca_id
-                Inner Join db_academico.estudio_academico as eaca on eaca.eaca_id = ipos.eaca_id
-                Inner Join db_academico.modalidad as moda on moda.mod_id = ipos.mod_id
-                Inner Join db_asgard.persona_contacto as contac on contac.per_id = ipos.per_id
-                Inner Join db_asgard.tipo_parentesco as parente on parente.tpar_id = contac.tpar_id
-                Inner Join db_academico.malla_academico_estudiante as mallaes ON mallaes.per_id =  ipos.per_id
-                Inner Join db_academico.malla_academica as mallagen ON mallagen.maca_id =  mallaes.maca_id
-                WHERE
-                ipos.uaca_id = :uaca_id AND
-                ipos.per_id = :per_id AND
-                ipos.ipos_estado = :estado and ipos.ipos_estado_logico = :estado and
-                per.per_estado = :estado and per.per_estado_logico = :estado and
-                uaca.uaca_estado = :estado and uaca.uaca_estado_logico = :estado and
-                eaca.eaca_estado = :estado and eaca.eaca_estado_logico = :estado and
-                moda.mod_estado = :estado and moda.mod_estado_logico = :estado
+        SELECT distinct
+ ipos.ipos_fecha_creacion as registro,
+eaca.eaca_nombre as programa,
+moda.mod_nombre as modalidad,
+ipos.ipos_anio as anio,
+per.per_cedula as cedula,
+per.per_pasaporte as pasaporte,
+ifnull(CONCAT(ifnull(per.per_pri_nombre,''), ' ', ifnull(per.per_seg_nombre,'')), '') as nombres,
+ifnull(CONCAT(ifnull(per.per_pri_apellido,''), ' ', ifnull(per.per_seg_apellido,'')), '') as apellidos,
+pais.pai_nombre,
+per.per_fecha_nacimiento,
+per.per_nacionalidad,
+esta.eciv_nombre,
+provi.pro_nombre,
+canton.can_nombre,
+ ipos.ipos_ruta_doc_foto,
+ifnull(CONCAT(ifnull(per.per_domicilio_sector,''), ' ', ifnull(per.per_domicilio_cpri,''),' ',
+ifnull(per.per_domicilio_csec,''),' ',ifnull(per.per_domicilio_num,''),' '
+,ifnull(per.per_domicilio_ref,''),' '
+), '') as domicilio,
+per_celular,
+per_domicilio_telefono,
+per_correo,
+contac.pcon_nombre, 
+parente.tpar_nombre, 
+contac.pcon_telefono,
+acad.eins_titulo3ernivel,
+acad.eins_institucion3ernivel,
+acad.eins_aniogrado3ernivel,
+acad.eins_titulo4tonivel,
+acad.eins_institucion4tonivel,
+acad.eins_aniogrado4tonivel,
+labo.ilab_empresa, 
+labo.ilab_cargo,
+labo.ilab_telefono_emp,
+concat( labo.ilab_prov_emp,' - ',labo.ilab_ciu_emp,' ',labo.ilab_direccion_emp, ' (parroquia ',labo.ilab_parroquia,' )') as dirempresa,
+labo.ilab_anioingreso_emp,
+labo.ilab_correo_emp,
+labo.ilab_cat_ocupacional,
+langu.idi_nombre,
+nivel.nidi_descripcion,
+disc.ipdi_discapacidad,
+tdis.tdis_nombre,
+disc.ipdi_porcentaje,
+expd.ides_anio_docencia, 
+expd.ides_area_docencia,
+iein.iein_articulos_investigacion, 
+iein.iein_area_investigacion,
+ipos.ipos_tipo_financiamiento,
+ipos.ipos_ruta_documento,
+ipos.ipos_ruta_doc_comprobantepago,
+ipos.ipos_ruta_doc_recordacademico, 
+ipos.ipos_ruta_doc_certificadonosancion,
+ipos.ipos_ruta_doc_syllabus,
+ipos.ipos_ruta_doc_homologacion,
+ifnull(estud.est_categoria,'No definida') as categoria
+FROM db_inscripcion.inscripcion_posgrado as ipos
+Inner Join db_asgard.persona as per on per.per_id = ipos.per_id
+Inner Join db_asgard.pais as pais on pais.pai_id = per.per_nacionalidad
+Inner Join db_asgard.estado_civil as esta on esta.eciv_id = per.eciv_id
+Inner Join db_asgard.provincia as provi on provi.pro_id = per.pro_id_nacimiento
+Inner Join db_asgard.canton as canton on canton.can_id = per.can_id_nacimiento
+Inner Join db_inscripcion.estudiante_instruccion as acad on acad.per_id = ipos.per_id
+Inner Join db_inscripcion.informacion_laboral  as labo on labo.per_id = ipos.per_id
+Inner Join db_inscripcion.estudiante_idiomas  as idiom on idiom.per_id = ipos.per_id
+Inner Join db_asgard.idioma  as langu on langu.idi_id = idiom.idi_id
+Inner Join db_general.nivel_idioma as nivel on nivel.nidi_id = idiom.nidi_id
+Inner Join db_general.info_per_discapacidad as disc on disc.per_id = ipos.per_id
+Inner Join db_asgard.tipo_discapacidad as tdis on tdis.tdis_id = disc.tdis_id
+Inner Join db_inscripcion.info_docencia_estudiante as expd on expd.per_id = ipos.per_id
+Inner Join db_inscripcion.info_estudiante_investigacion as iein on iein.per_id = ipos.per_id
+Inner join db_academico.estudiante as estud on per.per_id = estud.per_id
+Inner Join db_academico.unidad_academica as uaca on uaca.uaca_id = ipos.uaca_id
+Inner Join db_academico.estudio_academico as eaca on eaca.eaca_id = ipos.eaca_id
+Inner Join db_academico.modalidad_estudio_unidad as meun on meun.eaca_id = ipos.eaca_id -- 
+inner join  db_academico.malla_unidad_modalidad mumo on meun.meun_id = mumo.meun_id -- 
+Inner Join db_academico.modalidad as moda on moda.mod_id = ipos.mod_id
+Inner Join db_asgard.persona_contacto as contac on contac.per_id = ipos.per_id
+Inner Join db_asgard.tipo_parentesco as parente on parente.tpar_id = contac.tpar_id
+Inner Join db_academico.malla_academico_estudiante as mallaes ON mallaes.per_id =  ipos.per_id
+Inner Join db_academico.malla_academica as mallagen ON mallagen.maca_id =  mallaes.maca_id
+WHERE 
+ipos.uaca_id = meun.uaca_id AND
+ipos.mod_id = meun.mod_id AND
+ipos.per_id = 10161 AND
+ ipos.ipos_estado = :estado and ipos.ipos_estado_logico = :estado and
+per.per_estado = :estado and per.per_estado_logico = :estado and
+uaca.uaca_estado = :estado and uaca.uaca_estado_logico = :estado and
+eaca.eaca_estado = :estado and eaca.eaca_estado_logico = :estado and
+moda.mod_estado = :estado and moda.mod_estado_logico = :estado and
+meun.meun_estado = :estado and meun.meun_estado_logico = :estado  and   
+mumo.mumo_estado = :estado and mumo.mumo_estado_logico = :estado  
                ";
 
 
@@ -694,7 +738,6 @@ class InscripcionPosgrado extends \yii\db\ActiveRecord
         $comando = $con->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
         $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
-        $comando->bindParam(":uaca_id", $uaca_id, \PDO::PARAM_INT);
         $resultData = $comando->queryOne();
         return $resultData;
     }

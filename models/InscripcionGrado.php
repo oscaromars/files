@@ -603,9 +603,9 @@ uaca.uaca_estado = :estado and uaca.uaca_estado_logico = :estado and
 eaca.eaca_estado = :estado and eaca.eaca_estado_logico = :estado and
 moda.mod_estado = :estado and moda.mod_estado_logico = :estado and
 paca.paca_estado = :estado and paca.paca_estado_logico = :estado and
-meun.meun_estado = 1 and meun.meun_estado_logico = 1  and   --
-mumo.mumo_estado = 1 and mumo.mumo_estado_logico = 1  and   --
-maca.maca_estado = 1 and maca.maca_estado_logico = 1     --
+meun.meun_estado = :estado and meun.meun_estado_logico = :estado  and   --
+mumo.mumo_estado = :estado and mumo.mumo_estado_logico = :estado  and   --
+maca.maca_estado = :estado and maca.maca_estado_logico = :estado     --
                     ";
 
 

@@ -11,6 +11,13 @@ academico::registerTranslations();
 financiero::registerTranslations();
 //print_r($arr_condcurriculum);
 $per_id = $persona_model->per_id;
+$leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
+          <div class="form-group">
+          <div class="col-sm-10 col-md-10 col-xs-10 col-lg-10">
+          <div style = "width: 540px;" class="alert alert-info"><span style="font-weight: bold"> Nota: </span> Al subir archivo debe ser 800 KB máximo, en formato pdf, excepto foto que es jpg.</div>
+          </div>
+          </div>
+          </div>';
 ?>
 <?= Html::hiddenInput('txth_igra_id', base64_encode($igra_id), ['id' => 'txth_igra_id']); ?>
 <?= Html::hiddenInput('txth_per_id', base64_encode($per_id), ['id' => 'txth_per_id']); ?>
@@ -18,7 +25,10 @@ $per_id = $persona_model->per_id;
 <?= Html::hiddenInput('txth_cemp_id', $personaData["cemp_id"], ['id' => 'txth_cemp_id']); ?>
 
 <form class="form-horizontal" enctype="multipart/form-data" id="formsolicitud">
-<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 doc_documento">
+<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 ">
+<?php echo $leyenda; ?>
+</div>
+    <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12 doc_documento">
         <div class="form-group">
             <label for="txth_doc_documento" class="col-lg-3 col-md-3 col-sm-3 col-xs-3 control-label"><?= Yii::t("formulario", "Documento") ?></label>
             <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">

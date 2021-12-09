@@ -7,7 +7,7 @@ use yii\helpers\Url;
 $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
           <div class="form-group">
           <div class="col-sm-10 col-md-10 col-xs-10 col-lg-10">
-          <div style = "width: 450px;" class="alert alert-info"><span style="font-weight: bold"> Nota: </span> Al subir archivo debe ser 800 KB máximo y tipo pdf.</div>
+          <div style = "width: 540px;" class="alert alert-info"><span style="font-weight: bold"> Nota: </span> Al subir archivo debe ser 800 KB máximo, en formato pdf excepto foto que es jpg.</div>
           </div>
           </div>
           </div>';

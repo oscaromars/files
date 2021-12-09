@@ -140,6 +140,12 @@
     .titleDetalle {
         text-align: center;
     }
+
+     .credpic {
+        height: 220px;
+        position:relative;
+        top: -25px;
+    }
 </style>
    <br><br><br>
      <br><br><br>

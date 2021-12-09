@@ -191,7 +191,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 }
             }
 
-                   if ($data["upload_foto"]) {
+                 if ($data["upload_foto"]) {
                 if (empty($_FILES)) {
                     return json_encode(['error' => Yii::t("notificaciones", "Error to process File {file}. Try again.", ['{file}' => basename($files['name'])])]);
                     return;
@@ -880,7 +880,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 $files = $_FILES[key($_FILES)];
                 $arrIm = explode(".", basename($files['name']));
                 $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                if ($typeFile == 'pdf' || $typeFile == 'png' || $typeFile == 'jpg' || $typeFile == 'jpeg') {
+                /*if ($typeFile == 'pdf' || $typeFile == 'png' || $typeFile == 'jpg' || $typeFile == 'jpeg') {
                 $dirFileEnd = Yii::$app->params["documentFolder"] . "inscripcionposgrado/" . $per_id . "/" . $data["name_file"] . "_per_" . $per_id . "." . $typeFile;
                 $status = Utilities::moveUploadFile($files['tmp_name'], $dirFileEnd);
                 if ($status) {
@@ -903,7 +903,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 //Recibe Parámetros
                 $files = $_FILES[key($_FILES)];
                 $arrIm = explode(".", basename($files['name']));
-                $typeFile = strtolower($arrIm[count($arrIm) - 1]);
+                $typeFile = strtolower($arrIm[count($arrIm) - 1]);*/
                 $dirFileEnd = Yii::$app->params["documentFolder"] . "inscripcionposgrado/" . $per_id . "/" . $data["name_file"] . "_per_" . $per_id . "." . $typeFile;
                 $status = Utilities::moveUploadFile($files['tmp_name'], $dirFileEnd);
                 if ($status) {
@@ -1135,7 +1135,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 }
             }
 
-              if ($data["upload_foto"]) {
+              /*if ($data["upload_foto"]) {
                 if (empty($_FILES)) {
                     return json_encode(['error' => Yii::t("notificaciones", "Error to process File {file}. Try again.", ['{file}' => basename($files['name'])])]);
                     return;
@@ -1157,7 +1157,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 }else {
                 return json_encode(['error' => Yii::t("notificaciones", "Error to process File ". basename($files['name']) ." Solo formato imagenes jpg, png.")]);
                 }
-            }
+            }*/
 
             $con = \Yii::$app->db_inscripcion;
             $transaction = $con->beginTransaction();
@@ -1179,10 +1179,10 @@ class InscripcionposgradoController extends \yii\web\Controller {
                     $arrIm = explode(".", basename($data["ipos_ruta_documento"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
                     $documento_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/doc_documento_per_" . $per_id . "." . $typeFile;
-                    $documento_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $documento_archivoOld, '' /*$timeSt*/);
+                    $documento_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $documento_archivoOld, '' );
                     $data["ipos_ruta_documento"] = $foto_archivo;
                     if ($documento_archivo === false)
-                        throw new Exception('Error doc Foto no renombrado.');
+                        throw new Exception('Error documnet no renombrado.');
                 }
                 if (isset($data["ipos_ruta_doc_foto"]) && $data["ipos_ruta_doc_foto"] != "") {
                     $arrIm = explode(".", basename($data["ipos_ruta_doc_foto"]));
@@ -1531,7 +1531,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 $ipos_model->ipos_cedula = $per_dni;
                 $ipos_model->ipos_tipo_financiamiento = $tipo_financiamiento;
                 // SI SON NULOS NO ACTUALIZAR
-                if(!empty($ipos_ruta_documento)){
+		        if(!empty($ipos_ruta_documento)){
                     $ipos_model->ipos_ruta_documento = $ipos_ruta_documento;
                 }
                 if(!empty($ipos_ruta_doc_foto)){
@@ -1627,7 +1627,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
                     );
                     return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
                 }
-            } catch (Exception $ex) {
+              } catch (Exception $ex) {
                 $message = array(
                     "wtmessage" => Yii::t('notificaciones', 'Your information has not been saved. Please try again.' . $ex->getMessage()),
                     "title" => Yii::t('jslang', 'Error'),

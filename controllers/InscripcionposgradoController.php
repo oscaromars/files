@@ -880,22 +880,24 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 $files = $_FILES[key($_FILES)];
                 $arrIm = explode(".", basename($files['name']));
                 $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                /*if ($typeFile == 'pdf' || $typeFile == 'png' || $typeFile == 'jpg' || $typeFile == 'jpeg') {
+                /***** */
+                if ($typeFile == 'pdf' || $typeFile == 'png' || $typeFile == 'jpg' || $typeFile == 'jpeg') {
                 $dirFileEnd = Yii::$app->params["documentFolder"] . "inscripcionposgrado/" . $per_id . "/" . $data["name_file"] . "_per_" . $per_id . "." . $typeFile;
                 $status = Utilities::moveUploadFile($files['tmp_name'], $dirFileEnd);
                 if ($status) {
                     return true;
                 } else {
                     return json_encode(['error' => Yii::t("notificaciones", "Error to process File {file}. Try again.", ['{file}' => basename($files['name'])])]);
-                    return;
+                    //return;
                 }
             }
 
-                 if ($data["upload_foto"]) {
+              /*   if ($data["upload_foto"]) {
                 if (empty($_FILES)) {
                     return json_encode(['error' => Yii::t("notificaciones", "Error to process File {file}. Try again.", ['{file}' => basename($files['name'])])]);
-                    return;
+                    //return;
                 }
+            //}
                 $mod_persona = new Persona();
                 $resp_persona = $mod_persona->consultarUltimoPer_id();
                 $persona = $resp_persona["ultimo"];
@@ -903,7 +905,8 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 //Recibe Parámetros
                 $files = $_FILES[key($_FILES)];
                 $arrIm = explode(".", basename($files['name']));
-                $typeFile = strtolower($arrIm[count($arrIm) - 1]);*/
+                $typeFile = strtolower($arrIm[count($arrIm) - 1]);
+                /********/
                 $dirFileEnd = Yii::$app->params["documentFolder"] . "inscripcionposgrado/" . $per_id . "/" . $data["name_file"] . "_per_" . $per_id . "." . $typeFile;
                 $status = Utilities::moveUploadFile($files['tmp_name'], $dirFileEnd);
                 if ($status) {

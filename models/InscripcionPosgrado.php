@@ -606,6 +606,7 @@ class InscripcionPosgrado extends \yii\db\ActiveRecord
         $estado = 1;
 
         $sql = "SELECT  per_id,
+                ipos_ruta_documento,
                 ipos_ruta_doc_foto,
                 ipos_ruta_doc_dni,
                 ipos_ruta_doc_certvota,

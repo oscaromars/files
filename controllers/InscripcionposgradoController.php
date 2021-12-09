@@ -796,9 +796,10 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 "arch13" => $documentos['ipos_ruta_doc_certificadonosancion'],
                 "arch14" => $documentos['ipos_ruta_doc_syllabus'],
                 "arch15" => $documentos['ipos_ruta_doc_homologacion'],
-                'persona_model' => $persona_model,
-                'contacto_model' => $contacto_model,
-                'documentos' => $documentos,
+                "arch16" => $documentos['ipos_ruta_documento'],
+                "persona_model" => $persona_model,
+                "contacto_model" => $contacto_model,
+                "documentos" => $documentos,
 
             ]);
 
@@ -1011,6 +1012,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 "arch13" => $documentos['ipos_ruta_doc_certificadonosancion'],
                 "arch14" => $documentos['ipos_ruta_doc_syllabus'],
                 "arch15" => $documentos['ipos_ruta_doc_homologacion'],
+                "arch16" => $documentos['ipos_ruta_documento'],
                 'persona_model' => $persona_model,
                 'contacto_model' => $contacto_model,
                 'documentos' => $documentos,

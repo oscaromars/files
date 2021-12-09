@@ -622,10 +622,10 @@ Guayaquil. Por favor, lea el siguiente acuerdo con detenimiento pues, constituye
          <tbody>
             <tr>
               <td class="marcoCel"><?php 
-$fieldvalue =1;
+
 If($fieldvalue==1)
 { 
-echo "<input type='checkbox' name='f'  checked  value='1' />" ;
+echo "<input type='checkbox' style='width:140%; height:140%' name='f'  checked='checked'  value='1' />" ;
 }else
 {
 echo "<input type='checkbox' name='f'  value='1' />" ;
@@ -636,10 +636,10 @@ fecha máxima al quinto día hábil de haber realizado la inscripción, bajo las
             </tr>
             <tr>
                 <td class="marcoCel"><?php 
-$fieldvalue =1;
+
 If($fieldvalue==1)
 { 
-echo "<input type='checkbox' name='f'  checked  value='1' />" ;
+echo "<input type='checkbox' style='width:140%; height:140%' name='f'  checked='checked'  value='1' />" ;
 }else
 {
 echo "<input type='checkbox' name='f'  value='1' />" ;
@@ -650,10 +650,10 @@ concepto.</td>
             </tr>
  <tr>
                 <td class="marcoCel"><?php 
-$fieldvalue =1;
+
 If($fieldvalue==1)
 { 
-echo "<input type='checkbox' name='f'  checked  value='1' />" ;
+echo "<input type='checkbox' style='width:140%; height:140%' name='f'  checked='checked'  value='1' />" ;
 }else
 {
 echo "<input type='checkbox' name='f'  value='1' />" ;
@@ -685,10 +685,10 @@ devolución de estos en un plazo máximo de 6 meses, a partir de la fecha de ent
         <tbody>
             <tr>
               <td class="marcoCel"><?php 
-$fieldvalue =1;
+
 If($fieldvalue==1)
 { 
-echo "<input type='checkbox' name='f'  checked  value='1' />" ;
+echo "<input type='checkbox' style='width:140%; height:140%' name='f'  checked='checked'  value='1' />" ;
 }else
 {
 echo "<input type='checkbox' name='f'  value='1' />" ;
@@ -701,10 +701,10 @@ Universidad y sus centros de cobro autorizados.</td>
             </tr>
             <tr>
                 <td class="marcoCel"><?php 
-$fieldvalue =1;
+
 If($fieldvalue==1)
 { 
-echo "<input type='checkbox' name='f'  checked  value='1' />" ;
+echo "<input type='checkbox' style='width:140%; height:140%' name='f'  checked='checked'  value='1' />" ;
 }else
 {
 echo "<input type='checkbox' name='f'  value='1' />" ;
@@ -717,10 +717,10 @@ el bloque o semestre.</td>
             </tr>
      <tr>
               <td class="marcoCel"><?php 
-$fieldvalue =1;
+
 If($fieldvalue==1)
 { 
-echo "<input type='checkbox' name='f'  checked  value='1' />" ;
+echo "<input type='checkbox' style='width:140%; height:140%' name='f'  checked='checked'  value='1' />" ;
 }else
 {
 echo "<input type='checkbox' name='f'  value='1' />" ;
@@ -730,10 +730,10 @@ echo "<input type='checkbox' name='f'  value='1' />" ;
             </tr>
      <tr>
               <td class="marcoCel"><?php 
-$fieldvalue =1;
+
 If($fieldvalue==1)
 { 
-echo "<input type='checkbox' name='f'  checked  value='1' />" ;
+echo "<input type='checkbox' style='width:140%; height:140%' name='f'  checked='checked'  value='1' />" ;
 }else
 {
 echo "<input type='checkbox' name='f'  value='1' />" ;
@@ -744,10 +744,10 @@ mínimo de inscriptos. Se deberá realizar el pago de matrícula antes del inici
             </tr>
  <tr>
                 <td class="marcoCel"><?php 
-$fieldvalue =1;
+
 If($fieldvalue==1)
 { 
-echo "<input type='checkbox' name='f'  checked  value='1' />" ;
+echo "<input type='checkbox' style='width:140%; height:140%' name='f'  checked='checked'  value='1' />" ;
 }else
 {
 echo "<input type='checkbox' name='f'  value='1' />" ;

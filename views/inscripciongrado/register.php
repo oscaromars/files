@@ -522,7 +522,7 @@ Guayaquil. Por favor, lea el siguiente acuerdo con detenimiento pues, constituye
               <td class="marcoCel"><?php 
 If ($persona_model['igra_financiamiento'] == 1)
 { 
-echo "<input type='checkbox' name='f'  checked  value='1' />" ;
+echo "<input type='checkbox' style='width:140%; height:140%' name='f'  checked='checked'  value='1' />" ;
 }else
 {
 echo "<input type='checkbox' name='f'  value='1' />" ;
@@ -535,7 +535,7 @@ fecha máxima al quinto día hábil de haber realizado la inscripción, bajo las
                 <td class="marcoCel"><?php 
 If ($persona_model['igra_financiamiento'] == 2)
 { 
-echo "<input type='checkbox' name='f'  checked  value='1' />" ;
+echo "<input type='checkbox' style='width:140%; height:140%' name='f'  checked='checked'  value='1' />" ;
 }else
 {
 echo "<input type='checkbox' name='f'  value='1' />" ;
@@ -548,7 +548,7 @@ concepto.</td>
                 <td class="marcoCel"><?php 
 If ($persona_model['igra_financiamiento'] == 3)
 { 
-echo "<input type='checkbox' name='pcu'  checked  value='1' />" ;
+echo "<input type='checkbox' style='width:140%; height:140%' name='f'  checked='checked'  value='1' />" ;
 }else
 {
 echo "<input type='checkbox' name='pcu'  value='1' />" ;
@@ -590,13 +590,12 @@ devolución de estos en un plazo máximo de 6 meses, a partir de la fecha de ent
         <tbody>
             <tr>
               <td class="marcoCel"><?php 
-$fieldvalue =1;
 If($fieldvalue==1)
 { 
-echo "<input type='checkbox' name='pcu'  checked  value='1' />" ;
+echo "<input type='checkbox' style='width:140%; height:140%' name='f'  checked='checked'  value='1' />" ;
 }else
 {
-echo "<input type='checkbox' name='pcu'  value='1' />" ;
+echo "<input type='checkbox' name='f'  value='1' />" ;
 }
 ?></td>
                 <td class="marcoCel">Ningún importe es reembolsable, si paga en cuotas mensuales, todos los importes se adeudan por adelantado, no son reembolsables
@@ -606,13 +605,12 @@ Universidad y sus centros de cobro autorizados.</td>
             </tr>
             <tr>
                 <td class="marcoCel"><?php 
-$fieldvalue =1;
 If($fieldvalue==1)
 { 
-echo "<input type='checkbox' name='pcu'  checked  value='1' />" ;
+echo "<input type='checkbox' style='width:140%; height:140%' name='f'  checked='checked'  value='1' />" ;
 }else
 {
-echo "<input type='checkbox' name='pcu'  value='1' />" ;
+echo "<input type='checkbox' name='f'  value='1' />" ;
 }
 ?></td>
                 <td class="marcoCel">Ud. garantiza que legalmente es el titular del referido instrumento de pago y que está autorizado para realizar el pago del Precio de
@@ -622,13 +620,12 @@ bloque o semestre.</td>
             </tr>
  <tr>
                 <td class="marcoCel"><?php 
-$fieldvalue =1;
 If($fieldvalue==1)
 { 
-echo "<input type='checkbox' name='pcu'  checked  value='1' />" ;
+echo "<input type='checkbox' style='width:140%; height:140%' name='f'  checked='checked'  value='1' />" ;
 }else
 {
-echo "<input type='checkbox' name='pcu'  value='1' />" ;
+echo "<input type='checkbox' name='f'  value='1' />" ;
 }
 ?></td>
                 <td class="marcoCel">Los datos arriba declarados tienen carácter de DECLARACIÓN JURADA, aceptando en su totalidad las condiciones establecidas.</td>

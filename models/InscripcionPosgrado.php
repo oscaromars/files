@@ -723,7 +723,7 @@ Inner Join db_academico.malla_academica as mallagen ON mallagen.maca_id =  malla
 WHERE 
 ipos.uaca_id = meun.uaca_id AND
 ipos.mod_id = meun.mod_id AND
-ipos.per_id = 10161 AND
+ipos.per_id = :per_id AND
  ipos.ipos_estado = :estado and ipos.ipos_estado_logico = :estado and
 per.per_estado = :estado and per.per_estado_logico = :estado and
 uaca.uaca_estado = :estado and uaca.uaca_estado_logico = :estado and

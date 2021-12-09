@@ -680,8 +680,8 @@ class InscripcionposgradoController extends \yii\web\Controller {
         try {
             $ids = isset($_GET['ids']) ? base64_decode($_GET['ids']) : NULL;
             $ids = $_GET['ids'];
-            $mod_insgrado = new InscripcionGrado();
-            $persona_model = $mod_insgrado->consultarPdf($ids);
+            $mod_inspgrado = new InscripcionPosgrado();
+            $persona_model = $mod_inspgrado->consultarPdf($ids);
             $rep = new ExportFile();
              $this->layout = 'registerp';
 

@@ -188,7 +188,7 @@ completamente firmada y acompañada de todos los documentos solicitados.
                 NACIONALIDAD:<br><br>
                 ESTADO CIVIL:<br><br>
                 PROVINCIA:<br><br>
-                CANTON:<br><br>
+                CANTON:<br>
                 </td>
                 <td class="marcoCel3" style='font-family:helvetica'>
                 &nbsp;<?php echo $persona_model['per_cedula'] ?><br><br>
@@ -198,7 +198,7 @@ completamente firmada y acompañada de todos los documentos solicitados.
                 &nbsp;<?php echo $persona_model['can_id_nacimiento'] ?><br><br>
                 &nbsp;<?php echo $persona_model['per_fecha_nacimiento'] ?><br><br>
                 &nbsp;<?php echo $persona_model['per_nacionalidad'] ?><br><br>
-                &nbsp;<?php echo $persona_model['per_pri_nombre'] ?><br><br>
+                &nbsp;<?php echo $persona_model['per_pri_nombre'] ?><br>
                 </td>
                 <td class="marcoCel3">
                 </td>
@@ -212,7 +212,7 @@ completamente firmada y acompañada de todos los documentos solicitados.
         </tbody>
     </table>
     <br><br>
-<div class="divCeldag bold titleDetalle " style="text-align: center">
+<div class="divCeldag bold titleDetalle " style="text-align: center;">
 
 2. DATOS DE CONTACTO
 
@@ -239,7 +239,7 @@ completamente firmada y acompañada de todos los documentos solicitados.
       <b>PERSONA POR CONTACTAR EN CASO DE EMERGENCIA:</b> &nbsp;<?php echo $persona_model['per_correo'] ?><br><br>
      <b>TIPO DE PARENTESCO:</b> &nbsp;<br><br>
    <b>TELÉFONO DE LA PERSONA A CONTACTAR EN CASO DE EMERGENCIA:</b> &nbsp;<br><br>
-    <b>DIRECCIÓN DE LA PERSONA A CONTACTAR EN CASO DE EMERGENCIA:</b> &nbsp;<br><br>
+
 
   </p>
     </div>
@@ -254,7 +254,9 @@ completamente firmada y acompañada de todos los documentos solicitados.
         <p>
       <b>TÍTULO DE TERCER NIVEL:</b> &nbsp;<br><br>
       <b>UNIVERSIDAD:</b> &nbsp;<br><br>
-     <b>AÑO DE GRADUACIÓN:</b> &nbsp;<br><br>
+     <b>AÑO DE GRADUACIÓN:</b> &nbsp;<br><br>   
+        <p class="blue" style='text-align:left'>__________________________________</p>
+<br>
    <b>TÍTULO DE CUARTO NIVEL:</b> &nbsp;<br><br>
     <b>UNIVERSIDAD:</b> &nbsp;<br><br>
   <b> AÑO DE GRADUACIÓN:</b> &nbsp;<br><br>
@@ -264,7 +266,6 @@ completamente firmada y acompañada de todos los documentos solicitados.
 
 
     <div class="divCeldag bold titleDetalle " style="text-align: center">
-
     5. DATOS LABORALES 
 
     </div>
@@ -277,12 +278,11 @@ completamente firmada y acompañada de todos los documentos solicitados.
    <b>DIRECCIÓN</b> &nbsp;<br>
    (provincia, cantón, parroquia, dirección exacta)<br><br>
     <b>AÑO DE INGRESO:</b> &nbsp;<br><br>
-  <b> AÑO DE GRADUACIÓN:</b> &nbsp;<br><br>
     <b> CORREO ELECTRÓNICO:</b> &nbsp;<br><br>
       <b> CATEGORÍA OCUPACIONAL:</b> &nbsp;<br><br>
   </p>
     </div>
-    <br><br>
+    <br>
 
   <div class="divCeldag bold titleDetalle " style="text-align: center">
 
@@ -290,6 +290,14 @@ completamente firmada y acompañada de todos los documentos solicitados.
 
     </div>
     <br><br>
+<div  style="text-justify: auto">
+        <p>
+      <b>IDIOMA:</b> &nbsp;<br><br>
+      <b>NIVEL:</b> &nbsp;<br><br> 
+  </p>
+    </div>
+    <br>
+
  <div class="divCeldag bold titleDetalle " style="text-align: center">
 
     7. OTRA INFORMACION 
@@ -301,15 +309,19 @@ completamente firmada y acompañada de todos los documentos solicitados.
       <b>DISCAPACIDAD:</b> &nbsp;<br><br>
        <b>TIPO DE DISCAPACIDAD:</b> &nbsp;<br><br>
       <b>PORCENTAJE DE DISCAPACIDAD:</b> &nbsp;<br><br>
+        <p class="blue" style='text-align:left'>__________________________________</p>
+<br>
      <b>DOCENCIA:</b> &nbsp;<br><br>
    <b>AÑOS DE DOCENCIA:</b> &nbsp;<br><br>
     <b>ÁREA DE DOCENCIA:</b> &nbsp;<br><br>
+      <p class="blue" style='text-align:left'>__________________________________</p>
+<br>
   <b> INVESTIGACIÓN:</b> &nbsp;<br><br>
     <b>NÚMERO DE ÁRTICULOS PUBLICADOS:</b> &nbsp;<br><br>
       <b>ÁREA DE INVESTIGACIÓN:</b> &nbsp;<br><br>
   </p>
     </div>
-    <br><br>
+    <br>
 
 <div class="divCeldag bold titleDetalle " style="text-align: center">
 
@@ -330,23 +342,23 @@ completamente firmada y acompañada de todos los documentos solicitados.
 $fieldvalue =1;
 If($fieldvalue==1)
 { 
-echo "<input type='checkbox' name='pcu'  checked  value='1' />" ;
+echo "<input type='checkbox' name='f'  checked  value='1' />" ;
 }else
 {
-echo "<input type='checkbox' name='pcu'  value='1' />" ;
+echo "<input type='checkbox' name='f'  value='1' />" ;
 }
 ?></td>
-                <td class="marcoCel">Crédito Directo </td>
+                <td class="marcoCel">Crédito Directo<br> </td>
             </tr>
             <tr>
                 <td class="marcoCel"><?php 
 $fieldvalue =1;
 If($fieldvalue==1)
 { 
-echo "<input type='checkbox' style='width:140%; height:140%' name='pcu'  checked='checked'  value='1' />" ;
+echo "<input type='checkbox' style='width:140%; height:140%' name='f'  checked='checked'  value='1' />" ;
 }else
 {
-echo "<input type='checkbox' name='pcu'  value='1' />" ;
+echo "<input type='checkbox' name='f'  value='1' />" ;
 }
 ?></td>
                 <td class="marcoCel">Crédito Bancario</td>
@@ -356,24 +368,21 @@ echo "<input type='checkbox' name='pcu'  value='1' />" ;
 $fieldvalue =1;
 If($fieldvalue==1)
 { 
-echo "<input type='checkbox' name='pcu'  checked  value='1' />" ;
+echo "<input type='checkbox' name='f'  checked  value='1' />" ;
 }else
 {
-echo "<input type='checkbox' name='pcu'  value='1' />" ;
+echo "<input type='checkbox' name='f'  value='1' />" ;
 }
 ?></td>
                 <td class="marcoCel">Pago al contado</td>
             </tr>
         </tbody>
     </table>
-<pagebreak />
- <div class="divCeldag bold titleDetalle " style="text-align: center">
-
-      9. DOCUMENTACIÓN (este punto corresponde al área de admisiones) NO LLENAR
-
-    </div>
+<br>
+<div style="text-align: center;background-color:#cccccc;height:32px;"><br>
+<b>9. DOCUMENTACIÓN (este punto corresponde al área de admisiones) NO LLENAR </b>
+</div>
 <br><br>
-
 <table style="width:100%" class="divTabla">
         <tbody>
             <tr>
@@ -391,7 +400,7 @@ echo "<input type='checkbox' name='pcu'  value='1' />" ;
                 </td>
             </tr>
                 <tr class="fila">
-                    <td class="marcoCel">Copia de cédula a color</td>
+                    <td class="marcoCel">Copia de cédula o pasaporte a color</td>
                     <td class="marcoCel">&nbsp;&nbsp;&nbsp;&nbsp;&#10004;</td>
                     <td class="marcoCel"></td>
                     <td class="marcoCel"></td>
@@ -403,7 +412,7 @@ echo "<input type='checkbox' name='pcu'  value='1' />" ;
                     <td class="marcoCel"></td>
                 </tr>
                   <tr class="fila">
-                    <td class="marcoCel">Copia a color de título bachiller notarizada</td>
+                    <td class="marcoCel">Copia a color de título de tercer nivel de grado notarizada</td>
                     <td class="marcoCel">&nbsp;&nbsp;&nbsp;&nbsp;&#10004;</td>
                     <td class="marcoCel"></td>
                     <td class="marcoCel"></td>
@@ -420,9 +429,35 @@ echo "<input type='checkbox' name='pcu'  value='1' />" ;
                     <td class="marcoCel"></td>
                     <td class="marcoCel"></td>
                 </tr>
+                  <tr class="fila">
+                    <td class="marcoCel">Registro de Senescyt a color</td>
+                    <td class="marcoCel">&nbsp;&nbsp;&nbsp;&nbsp;&#10004;</td>
+                    <td class="marcoCel"></td>
+                    <td class="marcoCel"></td>
+                </tr>
+                  <tr class="fila">
+                    <td class="marcoCel">Hoja de vida a color</td>
+                    <td class="marcoCel">&nbsp;&nbsp;&nbsp;&nbsp;&#10004;</td>
+                    <td class="marcoCel"></td>
+                    <td class="marcoCel"></td>
+                </tr>
+                  <tr class="fila">
+                    <td class="marcoCel">Certificado laboral</td>
+                    <td class="marcoCel">&nbsp;&nbsp;&nbsp;&nbsp;&#10004;</td>
+                    <td class="marcoCel"></td>
+                    <td class="marcoCel"></td>
+                </tr>
+                  <tr class="fila">
+                    <td class="marcoCel">Certificado de suficiencia en inglés</td>
+                    <td class="marcoCel">&nbsp;&nbsp;&nbsp;&nbsp;&#10004;</td>
+                    <td class="marcoCel"></td>
+                    <td class="marcoCel"></td>
+                </tr>
         </tbody>
     </table>
-  <br><br>
+
+<pagebreak />
+<br><br>
     <table style="width:100%" class="divTabla">
         <tbody>
             <tr>
@@ -465,9 +500,9 @@ echo "<input type='checkbox' name='pcu'  value='1' />" ;
                 </tr>
         </tbody>
     </table>
-<br><br>
+<br><br><br><br>
  
-    <div class="divCeldag bold titleDetalle " style="text-align: center">
+    <div class="divCeldag bold titleDetalle " style="text-align: center;color:#0055aa;">
 
       TÉRMINOS Y CONDICIONES DE ADQUISICIÓN DE SERVICIO EDUCATIVO
 
@@ -482,14 +517,14 @@ Guayaquil. Por favor, lea el siguiente acuerdo con detenimiento pues, constituye
 <br><br>
  <div  style="text-justify: auto">
         <p>
-      <b>DOCUMENTACION</b><br>
+      <b style="color:#0055aa;">DOCUMENTACION</b><br>
       <b>Marca con un check</b>
   </p>
     </div>
  <div class="blue">
         <p style='text-align:left'>__________________________________</p>
     </div>  
-<br><br>
+<br><br><br>
  <div  style="text-justify: auto">
         <p>
       <b>Conozco y acepto los siguientes términos:</b>
@@ -503,10 +538,10 @@ Guayaquil. Por favor, lea el siguiente acuerdo con detenimiento pues, constituye
 $fieldvalue =1;
 If($fieldvalue==1)
 { 
-echo "<input type='checkbox' name='pcu'  checked  value='1' />" ;
+echo "<input type='checkbox' name='f'  checked  value='1' />" ;
 }else
 {
-echo "<input type='checkbox' name='pcu'  value='1' />" ;
+echo "<input type='checkbox' name='f'  value='1' />" ;
 }
 ?></td>
                 <td class="marcoCel"><b>Sobre la entrega de documentos:</b> La documentación requerida para iniciar el semestre será entregada al área de Admisiones, como
@@ -517,10 +552,10 @@ fecha máxima al quinto día hábil de haber realizado la inscripción, bajo las
 $fieldvalue =1;
 If($fieldvalue==1)
 { 
-echo "<input type='checkbox' name='pcu'  checked  value='1' />" ;
+echo "<input type='checkbox' name='f'  checked  value='1' />" ;
 }else
 {
-echo "<input type='checkbox' name='pcu'  value='1' />" ;
+echo "<input type='checkbox' name='f'  value='1' />" ;
 }
 ?></td>
                 <td class="marcoCel"><b>Sobre la devolución de documentos:</b> en caso de que la documentación entregada sea copias, estas no me serán devueltas bajo ningún
@@ -531,10 +566,10 @@ concepto.</td>
 $fieldvalue =1;
 If($fieldvalue==1)
 { 
-echo "<input type='checkbox' name='pcu'  checked  value='1' />" ;
+echo "<input type='checkbox' name='f'  checked  value='1' />" ;
 }else
 {
-echo "<input type='checkbox' name='pcu'  value='1' />" ;
+echo "<input type='checkbox' name='f'  value='1' />" ;
 }
 ?></td>
                 <td class="marcoCel"><b>Sobre la devolución de documentos:</b> en caso de que la documentación entregada sean documentos originales, podré solicitar la
@@ -543,19 +578,16 @@ devolución de estos en un plazo máximo de 6 meses, a partir de la fecha de ent
         </tbody>
     </table>
     <br><br>
-
-
-
 <div  style="text-justify: auto">
         <p>
-      <b>PAGOS, AUTORIZACIÓN, REEMBOLSOS Y TERMINACIÓN</b><br>
+     <b style="color:#0055aa;">PAGOS, AUTORIZACIÓN, REEMBOLSOS Y TERMINACIÓN</b><br>
       <b>Marca con un check</b>
   </p>
     </div>
  <div class="blue">
         <p style='text-align:left'>__________________________________</p>
     </div>  
-<br><br>
+<br><br><br>
  <div  style="text-justify: auto">
         <p>
       <b>Acepto los siguientes términos:</b>
@@ -569,10 +601,10 @@ devolución de estos en un plazo máximo de 6 meses, a partir de la fecha de ent
 $fieldvalue =1;
 If($fieldvalue==1)
 { 
-echo "<input type='checkbox' name='pcu'  checked  value='1' />" ;
+echo "<input type='checkbox' name='f'  checked  value='1' />" ;
 }else
 {
-echo "<input type='checkbox' name='pcu'  value='1' />" ;
+echo "<input type='checkbox' name='f'  value='1' />" ;
 }
 ?></td>
                 <td class="marcoCel">Ningún importe es reembolsable, si paga en cuotas mensuales, todos los importes se adeudan por adelantado, no son reembolsables
@@ -585,43 +617,68 @@ Universidad y sus centros de cobro autorizados.</td>
 $fieldvalue =1;
 If($fieldvalue==1)
 { 
-echo "<input type='checkbox' name='pcu'  checked  value='1' />" ;
+echo "<input type='checkbox' name='f'  checked  value='1' />" ;
 }else
 {
-echo "<input type='checkbox' name='pcu'  value='1' />" ;
+echo "<input type='checkbox' name='f'  value='1' />" ;
 }
 ?></td>
                 <td class="marcoCel">Ud. garantiza que legalmente es el titular del referido instrumento de pago y que está autorizado para realizar el pago del Precio de
 Adquisición de Servicio y también para crear este compromiso de pago con la Universidad. Una vez que el alumno ha registrado sus
-materias del semestre, cualquier materia se tomará como adicional y se dividirá entre el número de cuotas que faltan para terminar el
-bloque o semestre.</td>
+materias del semestre, cualquier materia se tomará como adicional y se dividirá entre el número de cuotas que faltan para terminar
+el bloque o semestre.</td>
+            </tr>
+     <tr>
+              <td class="marcoCel"><?php 
+$fieldvalue =1;
+If($fieldvalue==1)
+{ 
+echo "<input type='checkbox' name='f'  checked  value='1' />" ;
+}else
+{
+echo "<input type='checkbox' name='f'  value='1' />" ;
+}
+?></td>
+                <td class="marcoCel">Los datos arriba declarados tienen carácter de DECLARACIÓN JURADA, aceptando en su totalidad las condiciones establecidas.</td>
+            </tr>
+     <tr>
+              <td class="marcoCel"><?php 
+$fieldvalue =1;
+If($fieldvalue==1)
+{ 
+echo "<input type='checkbox' name='f'  checked  value='1' />" ;
+}else
+{
+echo "<input type='checkbox' name='f'  value='1' />" ;
+}
+?></td>
+                <td class="marcoCel">La Universidad se reserva el derecho de apertura, aplazamiento o suspensión de los cursos en caso de no contar con el número
+mínimo de inscriptos. Se deberá realizar el pago de matrícula antes del inicio de este.</td>
             </tr>
  <tr>
                 <td class="marcoCel"><?php 
 $fieldvalue =1;
 If($fieldvalue==1)
 { 
-echo "<input type='checkbox' name='pcu'  checked  value='1' />" ;
+echo "<input type='checkbox' name='f'  checked  value='1' />" ;
 }else
 {
-echo "<input type='checkbox' name='pcu'  value='1' />" ;
+echo "<input type='checkbox' name='f'  value='1' />" ;
 }
 ?></td>
-                <td class="marcoCel">Los datos arriba declarados tienen carácter de DECLARACIÓN JURADA, aceptando en su totalidad las condiciones establecidas.</td>
+                <td class="marcoCel">A partir de la recepción de la presente inscripción, el alumno se compromete a realizar el pago de sus cuotas, a excepción que con
+anticipación solicite la baja con carácter voluntario, quedando así obligado al pago de las cuotas vencidas a la fecha de dicha solicitud.</td>
             </tr>
         </tbody>
     </table>
     <br><br>
-
-
-
  <div style="text-justify: auto">
         <p>
   La información registrada en el presente formulario es para USO INTERNO, exclusivo de la Universidad Tecnológica Empresarial de
 Guayaquil, garantizando la confidencialidad de los datos y soportes suministrados.
         </p>
     </div>
-   <br>
+   <br><br><br><br>
      
  <table class="abnormal">
         <tbody>

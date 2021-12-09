@@ -241,6 +241,31 @@ $(document).ready(function () {
         }, true);
     });
 
+    $('#cmb_pais_empEdit').change(function () {
+        var link = $('#txth_base').val() + "/inscripciongrado/edit";
+        var arrParams = new Object();
+        arrParams.pai_id = $(this).val();
+        arrParams.getprovincias = true;
+        arrParams.getarea = true;
+        requestHttpAjax(link, arrParams, function (response) {
+            if (response.status == "OK") {
+                data = response.message;
+                setComboData(data.provincias, "cmb_provincia_empEdit");
+                var arrParams = new Object();
+                if (data.provincias.length > 0) {
+                    arrParams.prov_id = data.provincias[0].id;
+                    arrParams.getcantones = true;
+                    requestHttpAjax(link, arrParams, function (response) {
+                        if (response.status == "OK") {
+                            data = response.message;
+                            setComboData(data.cantones, "cmb_ciudad_empEdit");
+                        }
+                    }, true);
+                }
+            }
+        }, true);
+    });
+
     $('#cmb_provincia_empEdit').change(function () {
         var link = $('#txth_base').val() + "/inscripciongrado/edit";
         var arrParams = new Object();
@@ -947,6 +972,7 @@ function updateaspiranteposgrado() {
     arrParams.empresa = $('#txt_empresaEdit').val();
     arrParams.cargo = $('#txt_cargoEdit').val();
     arrParams.telefono_emp = $('#txt_telefono_empEdit').val();
+    arrParams.pais_emp = $('#cmb_pais_empEdit').val();
     arrParams.prov_emp = $('#cmb_provincia_empEdit').val();
     arrParams.ciu_emp = $('#cmb_ciudad_empEdit').val();
     arrParams.parroquia = $('#txt_parroquiaEdit').val();

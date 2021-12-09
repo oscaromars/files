@@ -657,8 +657,8 @@ class InscripcionposgradoController extends \yii\web\Controller {
             $persona_model = Persona::findOne($ids);
             $rep = new ExportFile();
              $this->layout = 'registerp';
-            
-            $rep->orientation = "P"; 
+
+            $rep->orientation = "P";
 
             $rep->createReportPdf(
                     $this->render('registerp', [
@@ -667,13 +667,13 @@ class InscripcionposgradoController extends \yii\web\Controller {
             );
 
             $rep->mpdf->Output('INSCRIPCION_PG' . $ids . ".pdf", ExportFile::OUTPUT_TO_DOWNLOAD);
-         
+
         } catch (Exception $e) {
             echo $e->getMessage();
         }
 
     }
-    
+
     public function actionView() {
         $data = Yii::$app->request->get();
         if (isset($data['id'])) {
@@ -729,7 +729,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
             $laboral_model = InformacionLaboral::findOne(['per_id' => $persona_model->per_id]);
             $arr_pais = Pais::findAll(["pai_estado" => 1, "pai_estado_logico" => 1]);
             $arr_nacionalidad = Pais::find()->select("pai_id AS id, pai_nacionalidad AS value")->where(["pai_estado_logico" => "1", "pai_estado" => "1"])->asArray()->all();
-            $arr_prov_emp = Provincia::provinciaXPais(1);
+            $arr_prov_emp = Provincia::provinciaXPais($laboral_model['ilab_pais_emp']);
             $arr_ciu_emp = Canton::cantonXProvincia($laboral_model['ilab_prov_emp']);
 
             $ViewFormTab2 = $this->renderPartial('ViewFormTab2', [
@@ -937,7 +937,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
             $laboral_model = InformacionLaboral::findOne(['per_id' => $persona_model->per_id]);
             $arr_pais = Pais::findAll(["pai_estado" => 1, "pai_estado_logico" => 1]);
             $arr_nacionalidad = Pais::find()->select("pai_id AS id, pai_nacionalidad AS value")->where(["pai_estado_logico" => "1", "pai_estado" => "1"])->asArray()->all();
-            $arr_prov_emp = Provincia::provinciaXPais(1);
+            $arr_prov_emp = Provincia::provinciaXPais($laboral_model['ilab_pais_emp']);
             $arr_ciu_emp = Canton::cantonXProvincia($laboral_model['ilab_prov_emp']);
 
             $EditFormTab2 = $this->renderPartial('EditFormTab2', [

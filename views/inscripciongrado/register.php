@@ -176,7 +176,7 @@ completamente firmada y acompañada de todos los documentos solicitados.
   </p>
     </div>
 <br>
-<div class="divCeldag bold titleDetalle " style="text-align: center;color:#0055aa;">
+<div class="divCeldag bold titleDetalle " style="text-align: center;color:#000000;">
 
 1. DATOS PERSONALES
 
@@ -220,7 +220,7 @@ completamente firmada y acompañada de todos los documentos solicitados.
         </tbody>
     </table>
     <br><br>
-<div class="divCeldag bold titleDetalle " style="text-align: center;color:#0055aa;">
+<div class="divCeldag bold titleDetalle " style="text-align: center;color:#000000;">
 
 2. DATOS DE CONTACTO
 
@@ -235,7 +235,7 @@ completamente firmada y acompañada de todos los documentos solicitados.
   </p>
     </div>
 
-<div class="divCeldag bold titleDetalle " style="text-align: center;color:#0055aa;">
+<div class="divCeldag bold titleDetalle " style="text-align: center;color:#000000;">
 
 3. DATOS EN CASO DE EMERGENCIA
 
@@ -253,7 +253,7 @@ completamente firmada y acompañada de todos los documentos solicitados.
     </div>
 
 
-<div class="divCeldag bold titleDetalle " style="text-align: center;color:#0055aa;">
+<div class="divCeldag bold titleDetalle " style="text-align: center;color:#000000;">
 
     4. DATOS ACADÉMICOS
 
@@ -324,7 +324,7 @@ echo '( '.$persona_model['igra_institucion_beca'].' )';
         </tbody>
     </table>
 <pagebreak />
- <div class="divCeldag bold titleDetalle " style="text-align: center;color:#0055aa;">
+ <div class="divCeldag bold titleDetalle " style="text-align: center;color:#000000;">
 
       5. DOCUMENTACIÓN (este punto corresponde al área de admisiones) NO LLENAR
 

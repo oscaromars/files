@@ -892,7 +892,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
             }
              }
 
-                  if ($data["upload_file"]) {
+                  if ($data["upload_foto"]) {
                 if (empty($_FILES)) {
                     return json_encode(['error' => Yii::t("notificaciones", "Error to process File {file}. Try again.", ['{file}' => basename($files['name'])])]);
                     return;

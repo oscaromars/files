@@ -219,7 +219,7 @@ class InscripcionGrado extends \yii\db\ActiveRecord
 
         $sql = "INSERT INTO " . $con->dbname . ".inscripcion_grado
             (per_id, uaca_id, eaca_id, mod_id, paca_id, igra_cedula, igra_financiamiento, igra_institucion_beca, igra_metodo_ingreso, igra_ruta_documento, igra_ruta_doc_titulo, igra_ruta_doc_dni, igra_ruta_doc_certvota, igra_ruta_doc_foto, igra_ruta_doc_comprobantepago, igra_ruta_doc_recordacademico, igra_ruta_doc_certificado, igra_ruta_doc_syllabus, igra_ruta_doc_homologacion, igra_mensaje1, igra_mensaje2, igra_estado, igra_fecha_creacion, igra_estado_logico)VALUES
-            (:per_id, :uaca_id, :eaca_id, :mod_id, :paca_id, :per_dni, :igra_metodo_ingreso, :igra_ruta_documento, :igra_ruta_doc_titulo, :igra_ruta_doc_dni, :igra_ruta_doc_certvota, :igra_ruta_doc_foto, :igra_ruta_doc_comprobantepago, :igra_ruta_doc_record, :igra_ruta_doc_certificado, :igra_ruta_doc_syllabus, :igra_ruta_doc_homologacion, :igra_mensaje1, :igra_mensaje2, 1, CURRENT_TIMESTAMP(), 1)";
+            (:per_id, :uaca_id, :eaca_id, :mod_id, :paca_id, :per_dni, :igra_financiamiento, :igra_institucion_beca, :igra_metodo_ingreso, :igra_ruta_documento, :igra_ruta_doc_titulo, :igra_ruta_doc_dni, :igra_ruta_doc_certvota, :igra_ruta_doc_foto, :igra_ruta_doc_comprobantepago, :igra_ruta_doc_record, :igra_ruta_doc_certificado, :igra_ruta_doc_syllabus, :igra_ruta_doc_homologacion, :igra_mensaje1, :igra_mensaje2, 1, CURRENT_TIMESTAMP(), 1)";
 
         $met_ing = 0;
         if (empty($data['ming_id'])) {
@@ -230,12 +230,11 @@ class InscripcionGrado extends \yii\db\ActiveRecord
         \app\models\Utilities::putMessageLogFile('identificacion:' . $data['cedula']);
         $command = $con->createCommand($sql);
         //$command->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
-        $command->bindParam(":per_id", $per_id, \PDO::PARAM_STR);
-        $command->bindParam(":uaca_id", $unidad, \PDO::PARAM_STR);
-        $command->bindParam(":eaca_id", $carrera, \PDO::PARAM_STR);
-        $command->bindParam(":mod_id", $modalidad, \PDO::PARAM_STR);
-        $command->bindParam(":paca_id", $periodo, \PDO::PARAM_STR);
-        $command->bindParam(":per_dni", $per_dni, \PDO::PARAM_STR);
+        $command->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
+        $command->bindParam(":uaca_id", $unidad, \PDO::PARAM_INT);
+        $command->bindParam(":eaca_id", $carrera, \PDO::PARAM_INT);
+        $command->bindParam(":mod_id", $modalidad, \PDO::PARAM_INT);
+        $command->bindParam(":paca_id", $periodo, \PDO::PARAM_INT);
         $command->bindParam(":igra_metodo_ingreso", $met_ing, \PDO::PARAM_INT);
         $command->bindParam(":igra_financiamiento", $igra_financiamiento, \PDO::PARAM_INT);
         $command->bindParam(":igra_institucion_beca", $igra_institucion_beca, \PDO::PARAM_STR);

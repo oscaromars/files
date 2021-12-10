@@ -3,8 +3,8 @@
 /**
  * @package   yii2-krajee-base
  * @author    Kartik Visweswaran <kartikv2@gmail.com>
- * @copyright Copyright &copy; Kartik Visweswaran, Krajee.com, 2014 - 2021
- * @version   3.0.1
+ * @copyright Copyright &copy; Kartik Visweswaran, Krajee.com, 2014 - 2019
+ * @version   2.0.5
  */
 
 namespace kartik\base;
@@ -240,6 +240,7 @@ class Config
      * @param object $object the called object instance
      *
      * @return string
+     * @throws \ReflectionException
      */
     public static function getCurrentDir($object)
     {
@@ -274,6 +275,7 @@ class Config
      */
     public static function initModule($class)
     {
+        /** @noinspection PhpUndefinedFieldInspection */
         $m = $class::MODULE;
         $module = $m ? static::getModule($m) : null;
         if ($module === null || !$module instanceof $class) {

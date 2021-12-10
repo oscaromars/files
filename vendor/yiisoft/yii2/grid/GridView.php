@@ -148,14 +148,14 @@ class GridView extends BaseListView
      *
      * ```php
      * [
-     *     ['class' => SerialColumn::class],
+     *     ['class' => SerialColumn::className()],
      *     [
-     *         'class' => DataColumn::class, // this line is optional
+     *         'class' => DataColumn::className(), // this line is optional
      *         'attribute' => 'name',
      *         'format' => 'text',
      *         'label' => 'Name',
      *     ],
-     *     ['class' => CheckboxColumn::class],
+     *     ['class' => CheckboxColumn::className()],
      * ]
      * ```
      *
@@ -359,7 +359,7 @@ class GridView extends BaseListView
 
         $tableFooter = false;
         $tableFooterAfterBody = false;
-
+        
         if ($this->showFooter) {
             if ($this->placeFooterAfterBody) {
                 $tableFooterAfterBody = $this->renderTableFooter();

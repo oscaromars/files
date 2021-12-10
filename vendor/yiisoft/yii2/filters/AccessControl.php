@@ -31,7 +31,7 @@ use yii\web\User;
  * {
  *     return [
  *         'access' => [
- *             'class' => \yii\filters\AccessControl::class,
+ *             'class' => \yii\filters\AccessControl::className(),
  *             'only' => ['create', 'update'],
  *             'rules' => [
  *                 // deny all POST requests

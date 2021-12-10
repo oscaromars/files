@@ -45,7 +45,7 @@ use yii\web\NotFoundHttpException;
  *     {
  *         return [
  *             'hostControl' => [
- *                 'class' => HostControl::class,
+ *                 'class' => HostControl::className(),
  *                 'allowedHosts' => [
  *                     'example.com',
  *                     '*.example.com',

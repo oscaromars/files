@@ -43,13 +43,6 @@ namespace yii\web;
  * }
  * ```
  *
- * In some situations not all of these methods are required to be implemented.
- * For example, if your application is a pure stateless RESTful application,
- * you would only need to implement [[yii\web\IdentityInterface::findIdentityByAccessToken()|findIdentityByAccessToken()]]
- * and [[yii\web\IdentityInterface::getId()|getId()]] while leaving all other methods with an empty body.
- * Or if your application uses session only authentication, you would need to implement all the methods
- * except [[yii\web\IdentityInterface::findIdentityByAccessToken()|findIdentityByAccessToken()]].
- *
  * @author Qiang Xue <qiang.xue@gmail.com>
  * @since 2.0
  */
@@ -89,12 +82,13 @@ interface IdentityInterface
      *
      * The space of such keys should be big enough to defeat potential identity attacks.
      *
-     * The returned key is used to validate session and auto-login (if [[User::enableAutoLogin]] is enabled).
+     * This is required if [[User::enableAutoLogin]] is enabled. The returned key will be stored on the
+     * client side as a cookie and will be used to authenticate user even if PHP session has been expired.
      *
      * Make sure to invalidate earlier issued authKeys when you implement force user logout, password change and
      * other scenarios, that require forceful access revocation for old sessions.
      *
-     * @return string|null a key that is used to check the validity of a given identity ID.
+     * @return string a key that is used to check the validity of a given identity ID.
      * @see validateAuthKey()
      */
     public function getAuthKey();
@@ -102,8 +96,9 @@ interface IdentityInterface
     /**
      * Validates the given auth key.
      *
+     * This is required if [[User::enableAutoLogin]] is enabled.
      * @param string $authKey the given auth key
-     * @return bool|null whether the given auth key is valid.
+     * @return bool whether the given auth key is valid.
      * @see getAuthKey()
      */
     public function validateAuthKey($authKey);

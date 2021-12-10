@@ -15,7 +15,11 @@ use app\models\Utilities;
  * @property int $eaca_id
  * @property int $mod_id
  * @property int $paca_id
+ * @property string $igra_cedula
+ * @property int $igra_financiamiento
+ * @property string $igra_institucion_beca
  * @property int $igra_metodo_ingreso
+ * @property string $igra_ruta_documento
  * @property string $igra_ruta_doc_titulo
  * @property string $igra_ruta_doc_dni
  * @property string $igra_ruta_doc_certvota
@@ -56,10 +60,11 @@ class InscripcionGrado extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['per_id', 'uaca_id', 'eaca_id', 'mod_id', 'paca_id', 'igra_estado', 'igra_estado_logico'], 'required'],
-            [['per_id', 'uaca_id', 'eaca_id', 'mod_id', 'paca_id', 'igra_metodo_ingreso'], 'integer'],
+            [['per_id', 'uaca_id', 'eaca_id', 'mod_id', 'paca_id', 'igra_financiamiento', 'igra_metodo_ingreso'], 'integer'],
+            [['uaca_id', 'eaca_id', 'mod_id', 'paca_id', 'igra_cedula', 'igra_financiamiento', 'igra_estado', 'igra_estado_logico'], 'required'],
             [['igra_fecha_creacion', 'igra_fecha_modificacion'], 'safe'],
-            [['igra_ruta_doc_titulo', 'igra_ruta_doc_dni', 'igra_ruta_doc_certvota', 'igra_ruta_doc_foto', 'igra_ruta_doc_comprobantepago', 'igra_ruta_doc_recordacademico', 'igra_ruta_doc_certificado', 'igra_ruta_doc_syllabus', 'igra_ruta_doc_homologacion'], 'string', 'max' => 200],
+            [['igra_cedula'], 'string', 'max' => 15],
+            [['igra_institucion_beca', 'igra_ruta_documento', 'igra_ruta_doc_titulo', 'igra_ruta_doc_dni', 'igra_ruta_doc_certvota', 'igra_ruta_doc_foto', 'igra_ruta_doc_comprobantepago', 'igra_ruta_doc_recordacademico', 'igra_ruta_doc_certificado', 'igra_ruta_doc_syllabus', 'igra_ruta_doc_homologacion'], 'string', 'max' => 200],
             [['igra_mensaje1', 'igra_mensaje2', 'igra_estado', 'igra_estado_logico'], 'string', 'max' => 1],
         ];
     }
@@ -76,7 +81,11 @@ class InscripcionGrado extends \yii\db\ActiveRecord
             'eaca_id' => 'Eaca ID',
             'mod_id' => 'Mod ID',
             'paca_id' => 'Paca ID',
+            'igra_cedula' => 'Igra Cedula',
+            'igra_financiamiento' => 'Igra Financiamiento',
+            'igra_institucion_beca' => 'Igra Institucion Beca',
             'igra_metodo_ingreso' => 'Igra Metodo Ingreso',
+            'igra_ruta_documento' => 'Igra Ruta Documento',
             'igra_ruta_doc_titulo' => 'Igra Ruta Doc Titulo',
             'igra_ruta_doc_dni' => 'Igra Ruta Doc Dni',
             'igra_ruta_doc_certvota' => 'Igra Ruta Doc Certvota',
@@ -94,7 +103,6 @@ class InscripcionGrado extends \yii\db\ActiveRecord
             'igra_estado_logico' => 'Igra Estado Logico',
         ];
     }
-
     /**
      * Function addLabelTimeDocumentos renombra el documento agregando una varible de tiempo
      * @author  Developer Uteg <developer@uteg.edu.ec>
@@ -194,7 +202,9 @@ class InscripcionGrado extends \yii\db\ActiveRecord
         $con = \Yii::$app->db_inscripcion;
         //\app\models\Utilities::putMessageLogFile('datos de archivo cargados:' . $data['igra_ruta_doc_titulo']);
         //\app\models\Utilities::putMessageLogFile('id de persona:' . $data);
-
+        $igra_financiamiento = $data["financiamiento"];
+        $igra_institucion_beca = ucwords(strtolower($data["instituto"]));
+        $igra_ruta_documento = $data['igra_ruta_doc_documento'];
         $igra_ruta_doc_titulo = $data['igra_ruta_doc_titulo'];
         $igra_ruta_doc_dni = $data['igra_ruta_doc_dni'];
         $igra_ruta_doc_certvota = $data['igra_ruta_doc_certvota'];
@@ -208,8 +218,8 @@ class InscripcionGrado extends \yii\db\ActiveRecord
         $igra_mensaje2 = $data['igra_mensaje2'];
 
         $sql = "INSERT INTO " . $con->dbname . ".inscripcion_grado
-            (per_id, uaca_id, eaca_id, mod_id, paca_id, igra_cedula, igra_metodo_ingreso, igra_ruta_doc_titulo, igra_ruta_doc_dni, igra_ruta_doc_certvota, igra_ruta_doc_foto, igra_ruta_doc_comprobantepago, igra_ruta_doc_recordacademico, igra_ruta_doc_certificado, igra_ruta_doc_syllabus, igra_ruta_doc_homologacion, igra_mensaje1, igra_mensaje2, igra_estado, igra_fecha_creacion, igra_estado_logico)VALUES
-            (:per_id, :uaca_id, :eaca_id, :mod_id, :paca_id, :per_dni, :igra_metodo_ingreso, :igra_ruta_doc_titulo, :igra_ruta_doc_dni, :igra_ruta_doc_certvota, :igra_ruta_doc_foto, :igra_ruta_doc_comprobantepago, :igra_ruta_doc_record, :igra_ruta_doc_certificado, :igra_ruta_doc_syllabus, :igra_ruta_doc_homologacion, :igra_mensaje1, :igra_mensaje2, 1, CURRENT_TIMESTAMP(), 1)";
+            (per_id, uaca_id, eaca_id, mod_id, paca_id, igra_cedula, igra_financiamiento, igra_institucion_beca, igra_metodo_ingreso, igra_ruta_documento, igra_ruta_doc_titulo, igra_ruta_doc_dni, igra_ruta_doc_certvota, igra_ruta_doc_foto, igra_ruta_doc_comprobantepago, igra_ruta_doc_recordacademico, igra_ruta_doc_certificado, igra_ruta_doc_syllabus, igra_ruta_doc_homologacion, igra_mensaje1, igra_mensaje2, igra_estado, igra_fecha_creacion, igra_estado_logico)VALUES
+            (:per_id, :uaca_id, :eaca_id, :mod_id, :paca_id, :per_dni, :igra_metodo_ingreso, :igra_ruta_documento, :igra_ruta_doc_titulo, :igra_ruta_doc_dni, :igra_ruta_doc_certvota, :igra_ruta_doc_foto, :igra_ruta_doc_comprobantepago, :igra_ruta_doc_record, :igra_ruta_doc_certificado, :igra_ruta_doc_syllabus, :igra_ruta_doc_homologacion, :igra_mensaje1, :igra_mensaje2, 1, CURRENT_TIMESTAMP(), 1)";
 
         $met_ing = 0;
         if (empty($data['ming_id'])) {
@@ -227,6 +237,9 @@ class InscripcionGrado extends \yii\db\ActiveRecord
         $command->bindParam(":paca_id", $periodo, \PDO::PARAM_STR);
         $command->bindParam(":per_dni", $per_dni, \PDO::PARAM_STR);
         $command->bindParam(":igra_metodo_ingreso", $met_ing, \PDO::PARAM_INT);
+        $command->bindParam(":igra_financiamiento", $igra_financiamiento, \PDO::PARAM_INT);
+        $command->bindParam(":igra_institucion_beca", $igra_institucion_beca, \PDO::PARAM_STR);
+        $command->bindParam(":igra_ruta_documento", $igra_ruta_documento, \PDO::PARAM_STR);
         $command->bindParam(":igra_ruta_doc_titulo", $igra_ruta_doc_titulo, \PDO::PARAM_STR);
         $command->bindParam(":igra_ruta_doc_dni", $igra_ruta_doc_dni, \PDO::PARAM_STR);
         $command->bindParam(":igra_ruta_doc_certvota", $igra_ruta_doc_certvota, \PDO::PARAM_STR);
@@ -242,13 +255,17 @@ class InscripcionGrado extends \yii\db\ActiveRecord
         return $con->getLastInsertID();
     }
 
-    public function updateDataInscripciongrado($con, $per_id, $per_dni, $igra_ruta_doc_titulo, $igra_ruta_doc_dni, $igra_ruta_doc_certvota, $igra_ruta_doc_foto, $igra_ruta_doc_comprobantepago, $igra_ruta_doc_record, $igra_ruta_doc_certificado, $igra_ruta_doc_syllabus, $igra_ruta_doc_homologacion) {
+    public function updateDataInscripciongrado($con, $per_id, $per_dni, $igra_financiamiento, $igra_institucion_beca, $igra_ruta_documento, $igra_ruta_doc_titulo, $igra_ruta_doc_dni, $igra_ruta_doc_certvota, $igra_ruta_doc_foto, $igra_ruta_doc_comprobantepago, $igra_ruta_doc_record, $igra_ruta_doc_certificado, $igra_ruta_doc_syllabus, $igra_ruta_doc_homologacion) {
         //\app\models\Utilities::putMessageLogFile('igra_ruta_doc_certvota:  '.$igra_ruta_doc_certvota);
         $imagenes = "";
         $fecha_modificacion = date(Yii::$app->params["dateTimeByDefault"]);
 
         if ($trans !== null) {
             $trans = null; // si existe la transacción entonces no se crea una
+        }
+
+        if(!empty($igra_ruta_documento)){
+            $imagenes .= "igra_ruta_documento=:igra_ruta_documento,";
         }
         if(!empty($igra_ruta_doc_titulo)){
             $imagenes .= "igra_ruta_doc_titulo=:igra_ruta_doc_titulo,";
@@ -281,6 +298,8 @@ class InscripcionGrado extends \yii\db\ActiveRecord
             $command = $con->createCommand
                     ("UPDATE " . $con->dbname . ".inscripcion_grado
                         SET igra_cedula=:per_dni,
+                        igra_financiamiento=:igra_financiamiento,
+                        igra_institucion_beca=:igra_institucion_beca,
                         $imagenes
                         igra_fecha_modificacion=:igra_fecha_modificacion
                         WHERE per_id =:per_id");
@@ -291,8 +310,13 @@ class InscripcionGrado extends \yii\db\ActiveRecord
             //$command->bindParam(":mod_id", $modalidad, \PDO::PARAM_INT);
             //$command->bindParam(":paca_id", $periodo, \PDO::PARAM_INT);
             $command->bindParam(":per_dni", $per_dni, \PDO::PARAM_STR);
+            $command->bindParam(":igra_financiamiento", $igra_financiamiento, \PDO::PARAM_INT);
+            $command->bindParam(":igra_institucion_beca", $igra_institucion_beca, \PDO::PARAM_STR);
             //$command->bindParam(":igra_metodo_ingreso", $met_ing, \PDO::PARAM_INT);
             // si vienen nulos no agragrlos
+             if(!empty($igra_ruta_documento)){
+                $command->bindParam(":igra_ruta_documento", $igra_ruta_documento, \PDO::PARAM_STR);
+                }
             if(!empty($igra_ruta_doc_titulo)){
             $command->bindParam(":igra_ruta_doc_titulo", $igra_ruta_doc_titulo, \PDO::PARAM_STR);
             }
@@ -421,8 +445,8 @@ class InscripcionGrado extends \yii\db\ActiveRecord
                 igra.igra_estado = :estado and igra.igra_estado_logico = :estado and
                 per.per_estado = :estado and per.per_estado_logico = :estado and
                 uaca.uaca_estado = :estado and uaca.uaca_estado_logico = :estado and
-                eaca.eaca_estado = :estado and eaca.eaca_estado_logico = :estado and
-                moda.mod_estado = :estado and moda.mod_estado_logico = :estado and
+                -- eaca.eaca_estado = :estado and eaca.eaca_estado_logico = :estado and
+                -- moda.mod_estado = :estado and moda.mod_estado_logico = :estado and
                 paca.paca_estado = :estado and paca.paca_estado_logico = :estado";
         $comando = $con_academico->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
@@ -472,6 +496,7 @@ class InscripcionGrado extends \yii\db\ActiveRecord
         $estado = 1;
 
         $sql = "SELECT  per_id,
+                igra_ruta_documento,
                 igra_ruta_doc_titulo,
                 igra_ruta_doc_dni,
                 igra_ruta_doc_certvota,
@@ -493,4 +518,102 @@ class InscripcionGrado extends \yii\db\ActiveRecord
         return $resultData;
     }
 
+
+    public function consultarPdf($per_id) {
+        $con = \Yii::$app->db_inscripcion;
+        $estado = 1;
+        \app\models\Utilities::putMessageLogFile('entro con per_id : ' .$per_id);
+        $sql = "
+       SELECT distinct
+max(maca.maca_id) as mallacorresp, --
+maca.maca_codigo as codigo, --
+(SELECT max(maca.maca_id) FROM db_academico.modalidad_estudio_unidad meun
+inner join  db_academico.malla_unidad_modalidad mumo on meun.meun_id = mumo.meun_id
+inner join db_academico.malla_academica maca on maca.maca_id = mumo.maca_id
+where meun.eaca_id = igra.eaca_id
+and meun.uaca_id = igra.uaca_id
+and meun.mod_id = igra.mod_id
+and meun.meun_estado = 1 
+and meun.meun_estado_logico = 1
+and mumo.mumo_estado = 1 
+and mumo.mumo_estado_logico = 1
+and maca.maca_estado = 1 
+and maca.maca_estado_logico = 1)) as malla,
+igra.igra_fecha_creacion as registro,
+eaca.eaca_nombre as carrera,
+moda.mod_nombre as modalidad,
+CONCAT(baca.baca_nombre, ' ', saca.saca_nombre, ' ', saca.saca_anio) as periodo,
+igra.igra_ruta_documento,
+igra.igra_ruta_doc_comprobantepago,
+igra.igra_ruta_doc_recordacademico,
+igra.igra_ruta_doc_certificado,
+igra.igra_ruta_doc_syllabus,
+igra.igra_ruta_doc_homologacion,
+igra.igra_financiamiento,
+igra.igra_institucion_beca,
+igra.igra_ruta_doc_foto,
+per.per_cedula as cedula,
+per.per_pasaporte as pasaporte,
+ifnull(CONCAT(ifnull(per.per_pri_nombre,''), ' ', ifnull(per.per_seg_nombre,'')), '') as nombres,
+ifnull(CONCAT(ifnull(per.per_pri_apellido,''), ' ', ifnull(per.per_seg_apellido,'')), '') as apellidos,
+-- lugar de nacimiento
+per.per_fecha_nacimiento,
+pais.pai_nombre,
+esta.eciv_nombre,
+ifnull(CONCAT(ifnull(per.per_domicilio_sector,''), ' ', ifnull(per.per_domicilio_cpri,''),' ',
+ifnull(per.per_domicilio_csec,''),' ',ifnull(per.per_domicilio_num,''),' '
+,ifnull(per.per_domicilio_ref,''),' '
+), '') as domicilio,
+per_celular,
+per_domicilio_telefono,
+per_correo,
+ifnull(CONCAT(ifnull(per.per_trabajo_direccion,''), ' ', ifnull(per.per_trabajo_nombre,''),' '), '') as trabajo,
+contac.pcon_nombre, 
+parente.tpar_nombre, 
+contac.pcon_telefono, 
+contac.pcon_direccion,
+mallagen.maca_id,
+mallagen.maca_nombre,
+ifnull(estud.est_categoria,'No definida') as categoria
+FROM db_inscripcion.inscripcion_grado as igra
+Inner Join db_asgard.persona as per on per.per_id = igra.per_id
+Inner Join db_asgard.pais as pais on pais.pai_id = per.per_nacionalidad
+Inner Join db_asgard.estado_civil as esta on esta.eciv_id = per.eciv_id
+Inner join db_academico.estudiante as estud on per.per_id = estud.per_id
+Inner Join db_academico.unidad_academica as uaca on uaca.uaca_id = igra.uaca_id
+Inner Join db_academico.estudio_academico as eaca on eaca.eaca_id = igra.eaca_id
+Inner Join db_academico.modalidad_estudio_unidad as meun on meun.eaca_id = igra.eaca_id -- 
+inner join  db_academico.malla_unidad_modalidad mumo on meun.meun_id = mumo.meun_id -- 
+inner join db_academico.malla_academica maca on maca.maca_id = mumo.maca_id --
+Inner Join db_academico.modalidad as moda on moda.mod_id = igra.mod_id
+Inner Join db_academico.periodo_academico as paca on paca.paca_id = igra.paca_id
+Inner Join db_academico.semestre_academico as saca on saca.saca_id = paca.saca_id
+Inner Join db_academico.bloque_academico as baca on baca.baca_id = paca.baca_id
+Inner Join db_asgard.persona_contacto as contac on contac.per_id = igra.per_id
+Inner Join db_asgard.tipo_parentesco as parente on parente.tpar_id = contac.tpar_id
+Inner Join db_academico.malla_academico_estudiante as mallaes ON mallaes.per_id =  igra.per_id
+Inner Join db_academico.malla_academica as mallagen ON mallagen.maca_id =  mallaes.maca_id
+WHERE 
+igra.uaca_id = meun.uaca_id AND --
+igra.mod_id = meun.mod_id AND
+igra.per_id = :per_id AND
+igra.igra_estado = :estado and igra.igra_estado_logico = :estado and
+per.per_estado = :estado and per.per_estado_logico = :estado and
+uaca.uaca_estado = :estado and uaca.uaca_estado_logico = :estado and
+eaca.eaca_estado = :estado and eaca.eaca_estado_logico = :estado and
+moda.mod_estado = :estado and moda.mod_estado_logico = :estado and
+paca.paca_estado = :estado and paca.paca_estado_logico = :estado and
+meun.meun_estado = :estado and meun.meun_estado_logico = :estado  and   --
+mumo.mumo_estado = :estado and mumo.mumo_estado_logico = :estado  and   --
+maca.maca_estado = :estado and maca.maca_estado_logico = :estado     --
+                    ";
+
+
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
+        $resultData = $comando->queryOne();
+
+        return $resultData;
+    }
 }

@@ -54,16 +54,18 @@ class InConditionBuilder implements ExpressionBuilderInterface
         if (is_array($column)) {
             if (count($column) > 1) {
                 return $this->buildCompositeInCondition($operator, $column, $values, $params);
+            } else {
+                $column = reset($column);
             }
-            $column = reset($column);
         }
 
         if ($column instanceof \Traversable) {
             if (iterator_count($column) > 1) {
                 return $this->buildCompositeInCondition($operator, $column, $values, $params);
+            } else {
+                $column->rewind();
+                $column = $column->current();
             }
-            $column->rewind();
-            $column = $column->current();
         }
 
         if (is_array($values)) {
@@ -72,8 +74,6 @@ class InConditionBuilder implements ExpressionBuilderInterface
             $rawValues = $this->getRawValuesFromTraversableObject($values);
         }
 
-        $nullCondition = null;
-        $nullConditionOperator = null;
         if (isset($rawValues) && in_array(null, $rawValues, true)) {
             $nullCondition = $this->getNullCondition($operator, $column);
             $nullConditionOperator = $operator === 'IN' ? 'OR' : 'AND';
@@ -81,7 +81,7 @@ class InConditionBuilder implements ExpressionBuilderInterface
 
         $sqlValues = $this->buildValues($expression, $values, $params);
         if (empty($sqlValues)) {
-            if ($nullCondition === null) {
+            if (!isset($nullCondition)) {
                 return $operator === 'IN' ? '0=1' : '';
             }
             return $nullCondition;
@@ -97,9 +97,7 @@ class InConditionBuilder implements ExpressionBuilderInterface
             $sql = $column . $operator . reset($sqlValues);
         }
 
-        return $nullCondition !== null && $nullConditionOperator !== null
-            ? sprintf('%s %s %s', $sql, $nullConditionOperator, $nullCondition)
-            : $sql;
+        return isset($nullCondition) ? sprintf('%s %s %s', $sql, $nullConditionOperator, $nullCondition) : $sql;
     }
 
     /**

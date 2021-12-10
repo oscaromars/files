@@ -45,8 +45,8 @@ use yii\helpers\ArrayHelper;
  *
  * Note: Multilevel dropdowns beyond Level 1 are not supported in Bootstrap 3.
  *
- * @see https://getbootstrap.com/docs/3.3/components/#dropdowns
- * @see https://getbootstrap.com/docs/3.3/components/#nav
+ * @see http://getbootstrap.com/components/#dropdowns
+ * @see http://getbootstrap.com/components/#nav
  *
  * @author Antonio Ramirez <amigo.cobos@gmail.com>
  * @since 2.0

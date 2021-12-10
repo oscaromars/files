@@ -63,6 +63,7 @@ $_SESSION['persona_ingresa'] = base64_decode($_GET['ids']);
                         "arr_ciudad" => $arr_ciudad,
                         'arr_tipparentesco' => $arr_tipparentesco,
                         "arr_metodos" => $arr_metodos,
+                        "arr_financiamiento" => $arr_financiamiento,
                     ]);
                     ?>
                 </form>

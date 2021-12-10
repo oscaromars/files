@@ -33,7 +33,7 @@ class JsonParser implements RequestParserInterface
      */
     public $asArray = true;
     /**
-     * @var bool whether to throw a [[BadRequestHttpException]] if the body is invalid JSON
+     * @var bool whether to throw a [[BadRequestHttpException]] if the body is invalid json
      */
     public $throwException = true;
 
@@ -42,16 +42,11 @@ class JsonParser implements RequestParserInterface
      * Parses a HTTP request body.
      * @param string $rawBody the raw HTTP request body.
      * @param string $contentType the content type specified for the request body.
-     * @return array|\stdClass parameters parsed from the request body
+     * @return array parameters parsed from the request body
      * @throws BadRequestHttpException if the body contains invalid json and [[throwException]] is `true`.
      */
     public function parse($rawBody, $contentType)
     {
-        // converts JSONP to JSON
-        if (strpos($contentType, 'application/javascript') !== false) {
-            $rawBody = preg_filter('/(^[^{]+|[^}]+$)/', '', $rawBody);
-        }
-
         try {
             $parameters = Json::decode($rawBody, $this->asArray);
             return $parameters === null ? [] : $parameters;

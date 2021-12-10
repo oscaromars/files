@@ -8,21 +8,10 @@
  *
  * NOTE: this file must be saved in UTF-8 encoding.
  */
-(function (factory) {
-    'use strict';
-    if (typeof define === 'function' && define.amd) {
-        define(['jquery'], factory);
-    } else if (typeof module === 'object' && typeof module.exports === 'object') {
-        factory(require('jquery'));
-    } else {
-        factory(window.jQuery);
-    }
-}(function ($) {
+(function ($) {
     "use strict";
 
     $.fn.fileinputLocales['ca'] = {
-        sizeUnits: ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'], 
-        bitRateUnits: ['B/s', 'KB/s', 'MB/s', 'GB/s', 'TB/s', 'PB/s', 'EB/s', 'ZB/s', 'YB/s'],
         fileSingle: 'arxiu',
         filePlural: 'arxius',
         browseLabel: 'Examinar &hellip;',
@@ -77,7 +66,6 @@
         msgLoading: 'Pujant fitxer {index} de {files} &hellip;',
         msgProgress: 'Pujant fitxer {index} de {files} - {name} - {percent}% completat.',
         msgSelected: '{n} {files} seleccionat(s)',
-        msgProcessing: 'Processing ...',
         msgFoldersNotAllowed: 'Arrossegueu i deixeu anar únicament arxius. Omesa(es) {n} carpeta(es).',
         msgImageWidthSmall: 'L\'ample de la imatge "{name}" ha de ser almenys {size} px.',
         msgImageHeightSmall: 'L\'alçada de la imatge "{name}" ha de ser almenys {size} px.',
@@ -121,4 +109,4 @@
             close: 'Tancar detalls'
         }
     };
-}));
+})(window.jQuery);

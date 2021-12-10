@@ -114,8 +114,8 @@ class PersonaContacto extends \yii\db\ActiveRecord {
     /**
      * Function crearPersonaContacto
      * @author  Diana López
-     * @property      
-     * @return  
+     * @property
+     * @return
      */
     public function crearPersonaContacto($per_id, $tpar_id, $pcon_nombre, $pcon_telefono, $pcon_celular, $pcon_direccion) {
         $con = \Yii::$app->db_asgard;

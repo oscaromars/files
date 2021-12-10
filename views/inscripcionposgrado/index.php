@@ -62,7 +62,7 @@ $_SESSION['persona_ingresa'] = base64_decode($_GET['ids']);
                     <?=
                     $this->render('_form_tab2', [
                         'tipos_institucion' => $tipos_institucion,
-                        //'arr_pais_emp' => $arr_pais_emp,
+                        'arr_pais_emp' => $arr_pais,
                         'arr_prov_emp' => $arr_prov_emp,
                         'arr_ciu_emp' => $arr_ciu_emp,
                         'arr_categoria' => $arr_categoria,

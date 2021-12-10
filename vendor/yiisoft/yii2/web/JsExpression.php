@@ -10,9 +10,9 @@ namespace yii\web;
 use yii\base\BaseObject;
 
 /**
- * `JsExpression` marks a string as a JavaScript expression.
+ * JsExpression marks a string as a JavaScript expression.
  *
- * When using [[\yii\helpers\Json::encode()]] or [[\yii\helpers\Json::htmlEncode()]] to encode a value, `JsExpression` objects
+ * When using [[\yii\helpers\Json::encode()]] or [[\yii\helpers\Json::htmlEncode()]] to encode a value, JsonExpression objects
  * will be specially handled and encoded as a JavaScript expression instead of a string.
  *
  * @author Qiang Xue <qiang.xue@gmail.com>
@@ -43,6 +43,6 @@ class JsExpression extends BaseObject
      */
     public function __toString()
     {
-        return (string) $this->expression;
+        return $this->expression;
     }
 }

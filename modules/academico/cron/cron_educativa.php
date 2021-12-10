@@ -46,10 +46,22 @@
 	            
 	            putMessageLogFile('Cantidad de Estudiantes:'.count($estudiantes));
 	            
-	            $client = new \SoapClient("https://campusvirtual.uteg.edu.ec/soap/?wsdl=true", 
-                                                  array("login" => "webservice", 
-                                                  "password"    => "WxrrvTt8",
-                                                  "trace"       => 1, "exceptions" => 0));
+	    $wsdl = 'https://campusvirtual.uteg.edu.ec/soap/?wsdl=true';
+         
+         $client = new \SoapClient($wsdl, [
+         "soap_version" => SOAP_1_1,
+         "login"    => "webservice", 
+         "password" => "WxrrvTt8",
+            "trace"    => 1,
+         "exceptions" => 0,
+         "cache_wsdl" => WSDL_CACHE_NONE,
+         "stream_context" => stream_context_create(
+         [
+         'ssl' => [
+         'verify_peer' => false,
+         'verify_peer_name' => true,
+         'allow_self_signed' => true,
+         ]])]);
 
                 $client->setCredentials("webservice", "WxrrvTt8","basic");
 

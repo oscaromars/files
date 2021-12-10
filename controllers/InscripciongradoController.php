@@ -44,6 +44,14 @@ class InscripciongradoController extends \yii\web\Controller {
         return parent::init();
     }
 
+    private function financiamiento() {
+        return [
+            '1' => Yii::t("formulario", "Crédito directo"),
+            '2' => Yii::t("formulario", "Crédito bancario"),
+            '3' => Yii::t("formulario", "Beca"),
+        ];
+    }
+
     public function actionIndex() {
         $this->layout = '@themes/' . \Yii::$app->getView()->theme->themeName . '/layouts/basic.php';
         $mod_persona = new Persona();
@@ -61,7 +69,7 @@ class InscripciongradoController extends \yii\web\Controller {
 
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
-            Utilities::putMessageLogFile('cedula en change.. ' .$data['cedulacons'] );
+            //Utilities::putMessageLogFile('cedula en change.. ' .$data['cedulacons'] );
             if (isset($data["getcedula"])) {
                 $persids = $mod_persona->consultaPeridxdni($data['cedulacons']);
                 $message = array("persids" => $persids['per_id']);
@@ -110,9 +118,9 @@ class InscripciongradoController extends \yii\web\Controller {
         $_SESSION['JSLANG']['Your information has not been saved. Please try again.'] = Yii::t('notificaciones', 'Your information has not been saved. Please try again.');
         return $this->render('index', [
             "arr_unidad" => ArrayHelper::map($arr_unidad, "id", "name"),
-            'arr_carrera' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']], $arr_carrera), 'id', 'name'),
-            'arr_modalidad' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']], $arr_modalidad), 'id', 'name'),
-            'arr_periodo' => ArrayHelper::map(array_merge([['id' => '0', 'paca_nombre' => 'Seleccionar']], $arr_periodo), 'id', 'paca_nombre'),
+            "arr_carrera" => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']], $arr_carrera), 'id', 'name'),
+            "arr_modalidad" => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']], $arr_modalidad), 'id', 'name'),
+            "arr_periodo" => ArrayHelper::map(array_merge([['id' => '0', 'paca_nombre' => 'Seleccionar']], $arr_periodo), 'id', 'paca_nombre'),
             "tipos_dni" => array("CED" => Yii::t("formulario", "DNI Document"), "PASS" => Yii::t("formulario", "Passport")),
             "tipos_dni2" => array("CED" => Yii::t("formulario", "DNI Document1"), "PASS" => Yii::t("formulario", "Passport1")),
             "arr_ciudad_nac" => ArrayHelper::map($arr_ciudad_nac, "id", "value"),
@@ -125,6 +133,7 @@ class InscripciongradoController extends \yii\web\Controller {
             "arr_metodos" => ArrayHelper::map($arr_metodos, "id", "name"),
             "arr_convenio_empresa" => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Ninguna")]], $arr_convempresa), "id", "name"),
             "resp_datos" => $resp_datos,
+            "arr_financiamiento" => $this->financiamiento(),
         ]);
     }
 
@@ -160,6 +169,32 @@ class InscripciongradoController extends \yii\web\Controller {
                 }
             }
 
+               if ($data["upload_foto"]) {
+                if (empty($_FILES)) {
+                    return json_encode(['error' => Yii::t("notificaciones", "Error to process File {file}. Try again.", ['{file}' => basename($files['name'])])]);
+                }
+                $insc_persona = new Persona();
+                $resp_persona = $insc_persona->consultaPeridxdni($data['cedula']);
+                $per_id = $resp_persona['per_id'];
+                //if ($per_id > 0) {
+                //Recibe Parámetros.
+                $files = $_FILES[key($_FILES)];
+                $arrIm = explode(".", basename($files['name']));
+                $typeFile = strtolower($arrIm[count($arrIm) - 1]);
+                if ($typeFile == 'png' || $typeFile == 'jpg' || $typeFile == 'jpeg') {
+                $dirFileEnd = Yii::$app->params["documentFolder"] . "inscripciongrado/" . $data["name_file"] . "." . $typeFile;
+                $status = Utilities::moveUploadFile($files['tmp_name'], $dirFileEnd);
+                    if ($status) {
+                        return true;
+                    } else {
+                        return json_encode(['error' => Yii::t("notificaciones", "Error to process File {file}. Try again.", ['{file}' => basename($files['name'])])]);
+                       }
+                }else {
+                return json_encode(['error' => Yii::t("notificaciones", "Error to process File ". basename($files['name']) ." Solo formato imagenes jpg, png.")]);
+                 //}
+                }
+            }
+
             $con = \Yii::$app->db;
             $transaction = $con->beginTransaction();
 
@@ -177,12 +212,21 @@ class InscripciongradoController extends \yii\web\Controller {
                 $per_dni = $data['cedula'];
                 //if ($per_id > 0) {
                 $inscripgrado_id = $data["igra_id"];
+                if (isset($data["igra_ruta_doc_documento"]) && $data["igra_ruta_doc_documento"] != "") {
+                    $arrIm = explode(".", basename($data["igra_ruta_doc_documento"]));
+                    $typeFile = strtolower($arrIm[count($arrIm) - 1]);
+                    $titulo_documentoOld = Yii::$app->params["documentFolder"] . "inscripciongrado/doc_documento_per_" . $per_id . "." . $typeFile;
+                    $titulo_documento = InscripcionGrado::addLabelTimeDocumentos($inscripgrado_id, $titulo_documentoOld, '' /*$timeSt*/);
+                    $data["igra_ruta_doc_documento"] = $titulo_documento;
+                    if ($titulo_documento === false)
+                        throw new Exception('Error Documento no renombrado.');
+                }
                 if (isset($data["igra_ruta_doc_titulo"]) && $data["igra_ruta_doc_titulo"] != "") {
                     $arrIm = explode(".", basename($data["igra_ruta_doc_titulo"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
                     $titulo_archivoOld = Yii::$app->params["documentFolder"] . "inscripciongrado/doc_titulo_per_" . $per_id . "." . $typeFile;
                 $titulo_archivo = InscripcionGrado::addLabelTimeDocumentos($inscripgrado_id, $titulo_archivoOld, '' /*$timeSt*/);
-                Utilities::putMessageLogFile('titulo_archivo xXx.. ' .$titulo_archivo );
+                //Utilities::putMessageLogFile('titulo_archivo xXx.. ' .$titulo_archivo );
                 $data["igra_ruta_doc_titulo"] = $titulo_archivo;
                     if ($titulo_archivo === false)
                         throw new Exception('Error doc Titulo no renombrado.');
@@ -261,7 +305,7 @@ class InscripciongradoController extends \yii\web\Controller {
                         throw new Exception('Error doc Especie valorada por homologación no renombrado.');
                  }
                 //}
-                Utilities::putMessageLogFile('cedula o pasaporte.. ' . $per_dni );
+                //Utilities::putMessageLogFile('cedula o pasaporte.. ' . $per_dni );
                 //datos personales
                 $per_dni = $data['cedula'];
                 $per_pri_nombre = ucwords(strtolower($data["primer_nombre"]));
@@ -290,7 +334,12 @@ class InscripciongradoController extends \yii\web\Controller {
                 $pcon_celular = ucwords(strtolower($data["tel_emergencia"]));
                 $pcon_direccion = ucwords(strtolower($data["dir_personacontacto"]));
 
+                //Datos de financiamiento
+                $tfinanciamiento = $data["financiamiento"];
+                $instituto_beca = ucwords(strtolower($data["instituto"]));
+
                 //imagenes
+                $igra_ruta_doc_documento = $data['igra_ruta_doc_documento'];
                 $igra_ruta_doc_titulo = $data['igra_ruta_doc_titulo'];
                 $igra_ruta_doc_dni = $data['igra_ruta_doc_dni'];
                 $igra_ruta_doc_certvota = $data['igra_ruta_doc_certvota'];
@@ -311,7 +360,7 @@ class InscripciongradoController extends \yii\web\Controller {
                         // modificar la tabla
                         $cone = \Yii::$app->db_inscripcion;
                         $mod_inscripciongrado = new InscripcionGrado();
-                        $inscripciongrado = $mod_inscripciongrado->updateDataInscripciongrado($cone, $per_id, $per_dni, $igra_ruta_doc_titulo, $igra_ruta_doc_dni, $igra_ruta_doc_certvota, $igra_ruta_doc_foto, $igra_ruta_doc_comprobantepago, $igra_ruta_doc_record, $igra_ruta_doc_certificado, $igra_ruta_doc_syllabus, $igra_ruta_doc_homologacion);
+                        $inscripciongrado = $mod_inscripciongrado->updateDataInscripciongrado($cone, $per_id, $per_dni, $tfinanciamiento, $instituto_beca, $igra_ruta_doc_documento, $igra_ruta_doc_titulo, $igra_ruta_doc_dni, $igra_ruta_doc_certvota, $igra_ruta_doc_foto, $igra_ruta_doc_comprobantepago, $igra_ruta_doc_record, $igra_ruta_doc_certificado, $igra_ruta_doc_syllabus, $igra_ruta_doc_homologacion);
                         $exito=1;
                     }else{ // caso contrario crear
                         $resul = $model->insertarDataInscripciongrado($per_id, $unidad, $carrera, $modalidad, $periodo, $per_dni, $data);
@@ -408,6 +457,34 @@ class InscripciongradoController extends \yii\web\Controller {
         ]);
     }
 
+
+    public function actionRegisterpdf() {
+
+         try {
+            $ids = isset($_GET['ids']) ? base64_decode($_GET['ids']) : NULL;
+            $ids = $_GET['ids'];
+            $mod_insgrado = new InscripcionGrado();
+            $persona_model = $mod_insgrado->consultarPdf($ids);
+            $rep = new ExportFile();
+             $this->layout = 'register';
+
+            $rep->orientation = "P";
+
+            $rep->createReportPdf(
+                    $this->render('register', [
+                     'persona_model' => $persona_model,
+                    ])
+            );
+
+            $rep->mpdf->Output('INSCRIPCION_PG' . $ids . ".pdf", ExportFile::OUTPUT_TO_DOWNLOAD);
+
+        } catch (Exception $e) {
+            echo $e->getMessage();
+        }
+
+
+    }
+
     public function actionView() {
         $data = Yii::$app->request->get();
         if (isset($data['id'])) {
@@ -465,13 +542,15 @@ class InscripciongradoController extends \yii\web\Controller {
              * Inf. en caso de emergencia
              */
             $contacto_model = PersonaContacto::findOne(['per_id' => $persona_model->per_id]); // obtiene el pcon_id con el per_id
+            $financia = InscripcionGrado::findOne(['per_id' => $persona_model->per_id]);
             $arr_tipparentesco = TipoParentesco::find()->select("tpar_id AS id, tpar_nombre AS value")->where(["tpar_estado_logico" => "1", "tpar_estado" => "1"])->asArray()->all();
 
             $ViewFormTab3 = $this->renderPartial('ViewFormTab3', [
-                "arr_tipparentesco" => ArrayHelper::map($arr_tipparentesco, "id", "value"),
+                'arr_tipparentesco' => ArrayHelper::map($arr_tipparentesco, "id", "value"),
                 'persona_model' => $persona_model,
                 'contacto_model' => $contacto_model,
-
+                'arr_financiamiento' => $this->financiamiento(),
+                'datos_financiamiento' => $financia,
             ]);
 
             /**
@@ -481,16 +560,6 @@ class InscripciongradoController extends \yii\web\Controller {
             $arr_tipparentesco = TipoParentesco::find()->select("tpar_id AS id, tpar_nombre AS value")->where(["tpar_estado_logico" => "1", "tpar_estado" => "1"])->asArray()->all();
             $mod_insgrado = new InscripcionGrado();
             $documentos = $mod_insgrado->ObtenerdocumentosInscripcionGrado($persona_model->per_id);
-            /*\app\models\Utilities::putMessageLogFile('ver el resultado del id:  '.$documentos['igra_ruta_doc_titulo']);
-            \app\models\Utilities::putMessageLogFile('ver el resultado del id:  '.$documentos['igra_ruta_doc_dni']);
-            \app\models\Utilities::putMessageLogFile('ver el resultado del id:  '.$documentos['igra_ruta_doc_certvota']);
-            \app\models\Utilities::putMessageLogFile('ver el resultado del id:  '.$documentos['igra_ruta_doc_foto']);
-            \app\models\Utilities::putMessageLogFile('ver el resultado del id:  '.$documentos['igra_ruta_doc_comprobantepago']);
-            \app\models\Utilities::putMessageLogFile('ver el resultado del id:  '.$documentos['igra_ruta_doc_recordacademico']);
-            \app\models\Utilities::putMessageLogFile('ver el resultado del id:  '.$documentos['igra_ruta_doc_certificado']);
-            \app\models\Utilities::putMessageLogFile('ver el resultado del id:  '.$documentos['igra_ruta_doc_syllabus']);
-            \app\models\Utilities::putMessageLogFile('ver el resultado del id:  '.$documentos['igra_ruta_doc_homologacion']);
-            */
             $ViewFormTab4 = $this->renderPartial('ViewFormTab4', [
                 "arr_tipparentesco" => ArrayHelper::map($arr_tipparentesco, "id", "value"),
                 "arch1" => $documentos['igra_ruta_doc_titulo'],
@@ -502,6 +571,7 @@ class InscripciongradoController extends \yii\web\Controller {
                 "arch7" => $documentos['igra_ruta_doc_certificado'],
                 "arch8" => $documentos['igra_ruta_doc_syllabus'],
                 "arch9" => $documentos['igra_ruta_doc_homologacion'],
+                "arch10" => $documentos['igra_ruta_documento'],
                 'persona_model' => $persona_model,
                 'contacto_model' => $contacto_model,
                 'documentos' => $documentos,
@@ -520,7 +590,7 @@ class InscripciongradoController extends \yii\web\Controller {
                     'content' => $ViewFormTab2,
                 ],
                 [
-                    'label' => Academico::t('inscripciongrado', 'Info. Datos en caso de Emergencia'),
+                    'label' => Academico::t('inscripciongrado', 'Info. Datos en caso de Emergencia y Financiamiento'),
                     'content' => $ViewFormTab3,
                 ],
                 [
@@ -559,6 +629,28 @@ class InscripciongradoController extends \yii\web\Controller {
             }
 
             if ($data["upload_file"]) {
+
+                if (empty($_FILES)) {
+                    return json_encode(['error' => Yii::t("notificaciones", "Error to process File. Try again.")]);
+                }
+                //Recibe Parámetros
+                $files = $_FILES[key($_FILES)];
+                $arrIm = explode(".", basename($files['name']));
+                $typeFile = strtolower($arrIm[count($arrIm) - 1]);
+            if ($typeFile == 'pdf' /*|| $typeFile == 'png' || $typeFile == 'jpg' || $typeFile == 'jpeg'*/) {
+                    $dirFileEnd = Yii::$app->params["documentFolder"] . "expediente/" . $data["name_file"] . "." . $typeFile;
+                    $status = Utilities::moveUploadFile($files['tmp_name'], $dirFileEnd);
+                    if ($status) {
+                        return true;
+                    } else {
+                        return json_encode(['error' => Yii::t("notificaciones", "Error to process File " . basename($files['name']) . ". Try again.")]);
+                    }
+                } else {
+                    return json_encode(['error' => Yii::t("notificaciones", "Error to process File " . basename($files['name']) . ". Try again.")]);
+                }
+            }
+
+                  if ($data["upload_foto"]) {
 
                 if (empty($_FILES)) {
                     return json_encode(['error' => Yii::t("notificaciones", "Error to process File. Try again.")]);
@@ -659,12 +751,15 @@ class InscripciongradoController extends \yii\web\Controller {
              * Inf. caso de emergencia
              */
             $contacto_model = PersonaContacto::findOne(['per_id' => $persona_model->per_id]); // obtiene el pcon_id con el per_id
+            $financia = InscripcionGrado::findOne(['per_id' => $persona_model->per_id]);
             $arr_tipparentesco = TipoParentesco::find()->select("tpar_id AS id, tpar_nombre AS value")->where(["tpar_estado_logico" => "1", "tpar_estado" => "1"])->asArray()->all();
 
             $EditFormTab3 = $this->renderPartial('EditFormTab3', [
                 "arr_tipparentesco" => ArrayHelper::map($arr_tipparentesco, "id", "value"),
                 'persona_model' => $persona_model,
                 'contacto_model' => $contacto_model,
+                'arr_financiamiento' => $this->financiamiento(),
+                'datos_financiamiento' => $financia,
             ]);
 
             /**
@@ -686,6 +781,7 @@ class InscripciongradoController extends \yii\web\Controller {
                 "arch7" => $documentos['igra_ruta_doc_certificado'],
                 "arch8" => $documentos['igra_ruta_doc_syllabus'],
                 "arch9" => $documentos['igra_ruta_doc_homologacion'],
+                "arch10" =>$documentos['igra_ruta_documento'],
                 'persona_model' => $persona_model,
                 'contacto_model' => $contacto_model,
                 'documentos' => $documentos,
@@ -704,7 +800,7 @@ class InscripciongradoController extends \yii\web\Controller {
                     'content' => $EditFormTab2,
                 ],
                 [
-                    'label' => Academico::t('formulario', 'Info. Datos en caso de Emergencia'),
+                    'label' => Academico::t('formulario', 'Info. Datos en caso de Emergencia y Financiamiento'),
                     'content' => $EditFormTab3,
                 ],
                 [
@@ -749,6 +845,29 @@ class InscripciongradoController extends \yii\web\Controller {
                 }
             }
 
+              if ($data["upload_foto"]) {
+                if (empty($_FILES)) {
+                    return json_encode(['error' => Yii::t("notificaciones", "Error to process File {file}. Try again.", ['{file}' => basename($files['name'])])]);
+                }
+                $per_id = $data["per_id"];
+                //Recibe Parámetros.
+                $files = $_FILES[key($_FILES)];
+                $arrIm = explode(".", basename($files['name']));
+                $typeFile = strtolower($arrIm[count($arrIm) - 1]);
+                if ($typeFile == 'png' || $typeFile == 'jpg' || $typeFile == 'jpeg') {
+                $dirFileEnd = Yii::$app->params["documentFolder"] . "inscripciongrado/" . $data["name_file"] . "." . $typeFile;
+                $status = Utilities::moveUploadFile($files['tmp_name'], $dirFileEnd);
+                    if ($status) {
+                        return true;
+                    } else {
+                        return json_encode(['error' => Yii::t("notificaciones", "Error to process File {file}. Try again.", ['{file}' => basename($files['name'])])]);
+                        //return;
+                    }
+                }else {
+                return json_encode(['error' => Yii::t("notificaciones", "Error to process File ". basename($files['name']) ." Solo formato imagenes jpg, png.")]);
+                }
+            }
+
             $con = \Yii::$app->db_inscripcion;
             $transaction = $con->beginTransaction();
             //$timeSt = time();
@@ -767,6 +886,15 @@ class InscripciongradoController extends \yii\web\Controller {
 
 
                 $inscripgrado_id = $data["igra_id"];
+                if (isset($data["igra_ruta_doc_documento"]) && $data["igra_ruta_doc_documento"] != "") {
+                    $arrIm = explode(".", basename($data["igra_ruta_doc_documento"]));
+                    $typeFile = strtolower($arrIm[count($arrIm) - 1]);
+                    $titulo_documentoOld = Yii::$app->params["documentFolder"] . "inscripciongrado/doc_documento_per_" . $per_id . "." . $typeFile;
+                    $titulo_documento = InscripcionGrado::addLabelTimeDocumentos($inscripgrado_id, $titulo_documentoOld, '' /*$timeSt*/);
+                    $data["igra_ruta_doc_documento"] = $titulo_documento;
+                    if ($titulo_documento === false)
+                        throw new Exception('Error Documneto no renombrado.');
+                }
                 if (isset($data["igra_ruta_doc_titulo"]) && $data["igra_ruta_doc_titulo"] != "") {
                     $arrIm = explode(".", basename($data["igra_ruta_doc_titulo"]));
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
@@ -878,7 +1006,16 @@ class InscripciongradoController extends \yii\web\Controller {
                 $pcon_celular = ucwords(strtolower($data["tel_emergencia"]));
                 $pcon_direccion = ucwords(strtolower($data["dir_personacontacto"]));
 
+                //Datos de financiamiento
+                $tfinanciamiento = $data["financiamiento"];
+                $instituto_beca = ucwords(strtolower($data["instituto"]));
+
                 // if estos data vienen null no hacer nada
+                if(empty($data['igra_ruta_doc_documento'])){
+                    $igra_ruta_doc_documento = null;
+                }else{
+                    $igra_ruta_doc_documento = $data['igra_ruta_doc_documento'];
+                }
                 if(empty($data['igra_ruta_doc_titulo'])){
                     $igra_ruta_doc_titulo = null;
                 }else{
@@ -962,7 +1099,7 @@ class InscripciongradoController extends \yii\web\Controller {
 
                 $gradoinscripcion = $mod_inscripciongrado->consultarDatosInscripciongrado($per_id);
                 if($gradoinscripcion['existe_inscripcion'] == 1){
-                    $inscripciongrado = $mod_inscripciongrado->updateDataInscripciongrado($con, $per_id, $per_dni, $igra_ruta_doc_titulo, $igra_ruta_doc_dni, $igra_ruta_doc_certvota, $igra_ruta_doc_foto, $igra_ruta_doc_comprobantepago, $igra_ruta_doc_record, $igra_ruta_doc_certificado, $igra_ruta_doc_syllabus, $igra_ruta_doc_homologacion);
+                    $inscripciongrado = $mod_inscripciongrado->updateDataInscripciongrado($con, $per_id, $per_dni, $tfinanciamiento, $instituto_beca, $igra_ruta_doc_documento, $igra_ruta_doc_titulo, $igra_ruta_doc_dni, $igra_ruta_doc_certvota, $igra_ruta_doc_foto, $igra_ruta_doc_comprobantepago, $igra_ruta_doc_record, $igra_ruta_doc_certificado, $igra_ruta_doc_syllabus, $igra_ruta_doc_homologacion);
                 }
 
 
@@ -1047,5 +1184,11 @@ class InscripciongradoController extends \yii\web\Controller {
         $nameReport = academico::t("Academico", "Listado de Aspirantes de Grado");
         Utilities::generarReporteXLS($nombarch, $nameReport, $arrHeader, $arrData, $colPosition);
         exit;
+    }
+
+    public function actionTerminogrado() {
+        $this->layout = '@themes/' . \Yii::$app->getView()->theme->themeName . '/layouts/terminos.php';
+        return $this->render('terminogrado', [
+        ]);
     }
 }

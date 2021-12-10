@@ -30,7 +30,7 @@ use yii\di\Instance;
  * {
  *     return [
  *         [
- *             'class' => CacheableWidgetBehavior::class,
+ *             'class' => CacheableWidgetBehavior::className(),
  *             'cacheDuration' => 0,
  *             'cacheDependency' => [
  *                 'class' => 'yii\caching\DbDependency',

@@ -1182,7 +1182,13 @@ class AsistenciaregistrodocenteController extends \app\components\CController {
                 $materia = $Asignatura_distri->getAsignaturaRegistro($data["pro_id"], $data["uaca_id"], $data["mod_id"], $data["paca_id"]);
                 $message = array("materia" => $materia);
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
-            }        
+            }    
+               if (isset($data["getasignaturas_bus_reg"])) {
+               // $asignatura = $Asignatura_distri->getAsignaturaByProfesorDistributivo($data["paca_id"], $data['pro_id'], $data["uaca_id"], $data["mod_id"]);
+                $profesorreg = $mod_profesor->getProfesoresEnAsignaturasByall($data["paca_id"], $data["uaca_id"], $data["mod_id"]);
+                $message = array("asignatura" => $asignatura, "profesorreg" => $profesorreg);
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+            }     
         }//if
 
          $arr_grupos        = $grupo_model->getAllGruposByUser($user_usermane);
@@ -1206,7 +1212,7 @@ class AsistenciaregistrodocenteController extends \app\components\CController {
         $arr_estudiante    = $mod_estudiante->consultarEstudiante();        
         $arr_parcialunidad = $mod_periodoActual->getTodosParciales();
         $arr_componente    = $mod_calificacion->getComponenteUnidad($arr_ninteres[0]["id"]);
-        $componenteuni     = $mod_calificacion->getComponente($arr_componente[0]["id"], $arr_componente[0]["columna"], $arr_componente[0]["nombre"], $arr_ninteres[0]["id"]);
+        //$componenteuni     = $mod_calificacion->getComponente($arr_componente[0]["id"], $arr_componente[0]["columna"], $arr_componente[0]["nombre"], $arr_ninteres[0]["id"]);
         
         $asignatura = $Asignatura_distri->getAsignaturaRegistro($arr_profesor_all[0]['pro_id'],$arr_ninteres[0]["id"],1,$arr_periodoActual[0]["id"]);
          
@@ -1258,10 +1264,10 @@ class AsistenciaregistrodocenteController extends \app\components\CController {
 
          if ($data['modalidad'] == 1) {
          $sems = $horasasignatura['paca_semanas_periodo'];  $sems =2;
-           $hours = $horasasignatura['daho_total_horas'];   $hours = 30;
+           $hours = $horasasignatura['daho_total_horas'];   $hours = 24;
         }
 
-         if ($data['modalidad'] == 2) {
+         if ($data['modalidad'] > 1) {
          $sems = $horasasignatura['paca_semanas_periodo'];  $sems =10;
          $hours = $horasasignatura['daho_total_horas'];   $hours = 6;
        } 

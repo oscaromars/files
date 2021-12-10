@@ -178,6 +178,14 @@ if (!empty($per_cedula)) {
         </div>
     </div>
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+            <div class="form-group">
+                <label for="cmb_pais" class="col-sm-3 control-label"><?= Yii::t("formulario", "País") ?><span class="text-danger">*</span></label>
+                <div class="col-sm-7">
+                    <?= Html::dropDownList("cmb_pais", 0, $arr_pais, ["class" => "form-control", "id" => "cmb_pais"]) ?>
+                </div>
+            </div>
+        </div>
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
             <div class="form-group">
                 <label for="cmb_provincia" class="col-sm-3 control-label"><?= Yii::t("formulario", "Provincia / Estado") ?><span class="text-danger">*</span></label>
@@ -186,6 +194,8 @@ if (!empty($per_cedula)) {
                 </div>
             </div>
         </div>
+    </div>
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
             <div class="form-group">
                 <label for="cmb_ciudad" class="col-sm-3 control-label"><?= Yii::t("formulario", "Cantón"); ?> <span class="text-danger">*</span> </label>

@@ -301,9 +301,11 @@ class MigrateController extends BaseMigrateController
 
         // First drop all foreign keys,
         foreach ($schemas as $schema) {
-            foreach ($schema->foreignKeys as $name => $foreignKey) {
-                $db->createCommand()->dropForeignKey($name, $schema->name)->execute();
-                $this->stdout("Foreign key $name dropped.\n");
+            if ($schema->foreignKeys) {
+                foreach ($schema->foreignKeys as $name => $foreignKey) {
+                    $db->createCommand()->dropForeignKey($name, $schema->name)->execute();
+                    $this->stdout("Foreign key $name dropped.\n");
+                }
             }
         }
 
@@ -578,10 +580,10 @@ class MigrateController extends BaseMigrateController
      */
     protected function splitFieldIntoChunks($field)
     {
-        $originalDefaultValue = null;
-        $defaultValue = null;
+        $hasDoubleQuotes = false;
         preg_match_all('/defaultValue\(["\'].*?:?.*?["\']\)/', $field, $matches, PREG_SET_ORDER, 0);
         if (isset($matches[0][0])) {
+            $hasDoubleQuotes = true;
             $originalDefaultValue = $matches[0][0];
             $defaultValue = str_replace(':', '{{colon}}', $originalDefaultValue);
             $field = str_replace($originalDefaultValue, $defaultValue, $field);
@@ -589,7 +591,7 @@ class MigrateController extends BaseMigrateController
 
         $chunks = preg_split('/\s?:\s?/', $field);
 
-        if (is_array($chunks) && $defaultValue !== null && $originalDefaultValue !== null) {
+        if (is_array($chunks) && $hasDoubleQuotes) {
             foreach ($chunks as $key => $chunk) {
                 $chunks[$key] = str_replace($defaultValue, $originalDefaultValue, $chunk);
             }

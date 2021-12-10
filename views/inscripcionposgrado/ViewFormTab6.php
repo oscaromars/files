@@ -16,6 +16,16 @@ financiero::registerTranslations();
 <?= Html::hiddenInput('txth_cemp_id', $personaData["cemp_id"], ['id' => 'txth_cemp_id']); ?>
 
 <form class="form-horizontal" enctype="multipart/form-data" id="formsolicitud">
+    <div class="col-md-6  doc_documento">
+        <div class="form-group">
+            <label for="txth_doc_documento" class="col-sm-4  control-label keyupmce"><?= Yii::t("formulario", "Document") ?></label>
+            <div class="col-sm-7 ">
+                <?php
+                echo "<a href='" . Url::to(['/site/getimage', 'route' => "$arch16"]) . "' download='" . $arch16 . "' ><span class='glyphicon glyphicon-download-alt'></span>Descargar Documentos</a>"
+                ?>
+            </div>
+        </div>
+    </div>
     <div class="col-md-6  doc_foto">
         <div class="form-group">
             <label for="txth_doc_foto" class="col-sm-4  control-label keyupmce"><?= Yii::t("formulario", "Photo") ?></label>
@@ -26,8 +36,7 @@ financiero::registerTranslations();
             </div>
         </div>
     </div>
-
-    <div class="col-md-6  doc_dni">
+    <!-- <div class="col-md-6  doc_dni">
         <div class="form-group">
             <label for="txth_doc_dni" class="col-sm-4  control-label keyupmce"><?= Yii::t("formulario", "DNI") ?></label>
             <div class="col-sm-7 ">
@@ -36,9 +45,8 @@ financiero::registerTranslations();
                 ?>
             </div>
         </div>
-    </div>
-
-    <div class="col-md-6  doc_certvota">
+    </div>-->
+    <!-- <div class="col-md-6  doc_certvota">
         <div class="form-group">
             <label for="txth_doc_certvota" class="col-sm-4  control-label keyupmce"><?= Yii::t("formulario", "Voting Certificate") ?></label>
             <div class="col-sm-7 ">
@@ -47,9 +55,8 @@ financiero::registerTranslations();
                 ?>
             </div>
         </div>
-    </div>
-
-     <div class="col-md-6 doc_titulo">
+    </div>-->
+    <!-- <div class="col-md-6 doc_titulo">
         <div class="form-group">
             <label for="txth_doc_titulo" class="col-sm-4 control-label keyupmce"><?= Yii::t("formulario", "Title") ?></label>
             <div class="col-sm-7 ">
@@ -58,8 +65,7 @@ financiero::registerTranslations();
                 ?>
             </div>
         </div>
-    </div>
-
+    </div>-->
     <div class="col-md-6  doc_comprobantepago">
         <div class="form-group">
             <label for="txth_doc_comprobantepago" class="col-sm-4  control-label keyupmce"><?= Yii::t("formulario", "Comprobante de Pago") ?></label>
@@ -70,8 +76,7 @@ financiero::registerTranslations();
             </div>
         </div>
     </div>
-
-    <div class="col-md-6  doc_recordacademico">
+    <!-- <div class="col-md-6  doc_recordacademico">
         <div class="form-group">
             <label for="txth_doc_record1" class="col-sm-4 control-label keyupmce"><?= Yii::t("formulario", "Record Académico") ?></label>
             <div class="col-sm-7 ">
@@ -80,9 +85,8 @@ financiero::registerTranslations();
                 ?>
             </div>
         </div>
-    </div>
-
-    <div class="col-md-6  doc_senecyt">
+    </div>-->
+    <!-- <div class="col-md-6  doc_senecyt">
         <div class="form-group">
             <label for="txth_doc_senecyt" class="col-sm-4 control-label keyupmce"><?= Yii::t("formulario", "Senescyt") ?></label>
             <div class="col-sm-7 ">
@@ -91,8 +95,8 @@ financiero::registerTranslations();
                 ?>
             </div>
         </div>
-    </div>
-    <div class="col-md-6  doc_hoja_vida">
+    </div>-->
+    <!-- <div class="col-md-6  doc_hoja_vida">
         <div class="form-group">
             <label for="txth_doc_hojavida" class="col-sm-4 control-label keyupmce"><?= Yii::t("formulario", "Hoja de Vida") ?></label>
             <div class="col-sm-7 ">
@@ -101,9 +105,8 @@ financiero::registerTranslations();
                 ?>
             </div>
         </div>
-    </div>
-
-    <div class="col-md-6  doc_cartarecomendacion">
+    </div>-->
+    <!-- <div class="col-md-6  doc_cartarecomendacion">
         <div class="form-group">
             <label for="txth_doc_cartarecomendacion" class="col-sm-4 control-label keyupmce"><?= Yii::t("formulario", "Carta de Recomendación") ?></label>
             <div class="col-sm-7 ">
@@ -112,8 +115,8 @@ financiero::registerTranslations();
                 ?>
             </div>
         </div>
-    </div>
-    <div class="col-md-6  doc_certificadolaboral">
+    </div> -->
+    <!-- <div class="col-md-6  doc_certificadolaboral">
         <div class="form-group">
             <label for="txth_doc_certificadolaboral" class="col-sm-4 control-label keyupmce"><?= Yii::t("formulario", "Certificado Laboral") ?></label>
             <div class="col-sm-7 ">
@@ -122,9 +125,8 @@ financiero::registerTranslations();
                 ?>
             </div>
         </div>
-    </div>
-
-    <div class="col-md-6  doc_certificadoingles">
+    </div> -->
+    <!-- <div class="col-md-6  doc_certificadoingles">
         <div class="form-group">
             <label for="txth_doc_certificadoingles" class="col-sm-4 control-label keyupmce"><?= Yii::t("formulario", "Certificado Inglés") ?></label>
             <div class="col-sm-7 ">
@@ -133,12 +135,10 @@ financiero::registerTranslations();
                 ?>
             </div>
         </div><br><br></br>
-    </div>
-
+    </div>-->
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <h3><span id="lbl_Personeria"><?= Yii::t("formulario", "Documentos adicionales por homologación") ?></span></h3><br><br></br>
     </div>
-
     <div class="col-md-6  doc_recordacad">
         <div class="form-group">
             <label for="txth_doc_recordacad" class="col-sm-4 control-label keyupmce"><?= Yii::t("formulario", "Record Académico") ?></label>
@@ -149,7 +149,6 @@ financiero::registerTranslations();
             </div>
         </div>
     </div>
-
     <div class="col-md-6  doc_nosancion">
         <div class="form-group">
             <label for="txth_doc_nosancion" class="col-sm-4 control-label keyupmce"><?= admision::t("Solicitudes", "Certificado No Sanción") ?></label>
@@ -160,7 +159,6 @@ financiero::registerTranslations();
             </div>
         </div>
     </div>
-
     <div class="col-md-6  doc_syllabus">
         <div class="form-group">
             <label for="txth_doc_syllabus" class="col-sm-4 control-label keyupmce"><?= financiero::t("Syllabus", "Syllabus") ?></label>
@@ -171,7 +169,6 @@ financiero::registerTranslations();
             </div>
         </div>
     </div>
-
     <div class="col-md-6  doc_homologacion">
         <div class="form-group">
             <label for="txth_doc_homologacion" class="col-sm-4 control-label keyupmce"><?= Yii::t("formulario", "Especie valorada por Homologación") ?></label>
@@ -182,5 +179,4 @@ financiero::registerTranslations();
             </div>
         </div>
     </div>
-
 </form>

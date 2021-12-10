@@ -29,7 +29,7 @@ use yii\validators\UniqueValidator;
  * {
  *     return [
  *         [
- *             'class' => SluggableBehavior::class,
+ *             'class' => SluggableBehavior::className(),
  *             'attribute' => 'title',
  *             // 'slugAttribute' => 'slug',
  *         ],
@@ -50,7 +50,7 @@ use yii\validators\UniqueValidator;
  * {
  *     return [
  *         [
- *             'class' => SluggableBehavior::class,
+ *             'class' => SluggableBehavior::className(),
  *             'slugAttribute' => 'alias',
  *         ],
  *     ];

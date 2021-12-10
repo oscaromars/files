@@ -16,7 +16,7 @@ financiero::registerTranslations();
 <?= Html::hiddenInput('txth_cemp_id', $personaData["cemp_id"], ['id' => 'txth_cemp_id']); ?>
 
 <form class="form-horizontal" enctype="multipart/form-data" id="formsolicitud">
-    <div class="col-md-6 doc_titulo cinteres">
+    <!-- <div class="col-md-6 doc_titulo cinteres">
         <div class="form-group">
             <label for="txth_doc_titulo" class="col-sm-4 control-label keyupmce"><?= Yii::t("formulario", "Title") ?></label>
             <div class="col-sm-7 ">
@@ -25,9 +25,9 @@ financiero::registerTranslations();
                 ?>
             </div>
         </div>
-    </div>
+    </div>-->
 
-    <div class="col-md-6  doc_dni cinteres">
+    <!-- <div class="col-md-6  doc_dni cinteres">
         <div class="form-group">
             <label for="txth_doc_dni" class="col-sm-4  control-label keyupmce"><?= Yii::t("formulario", "DNI") ?></label>
             <div class="col-sm-7 ">
@@ -36,9 +36,9 @@ financiero::registerTranslations();
                 ?>
             </div>
         </div>
-    </div>
+    </div>-->
 
-    <div class="col-md-6  doc_certvota cinteres">
+    <!-- <div class="col-md-6  doc_certvota cinteres">
         <div class="form-group">
             <label for="txth_doc_certvota" class="col-sm-4  control-label keyupmce"><?= Yii::t("formulario", "Voting Certificate") ?></label>
             <div class="col-sm-7 ">
@@ -47,7 +47,7 @@ financiero::registerTranslations();
                 ?>
             </div>
         </div>
-    </div>
+    </div>-->
 
     <div class="col-md-6  doc_foto cinteres">
         <div class="form-group">
@@ -71,6 +71,16 @@ financiero::registerTranslations();
         </div>
     </div>
 
+    <div class="col-md-6 doc_documento cinteres">
+        <div class="form-group">
+            <label for="txth_documento" class="col-sm-4 control-label keyupmce"><?= Yii::t("formulario", "Título/DNI/Certificado Votación") ?></label>
+            <div class="col-sm-7 ">
+            <?php
+                echo "<a href='" . Url::to(['/site/getimage', 'route' => "$arch10"]) . "' download='" . $arch10 . "' ><span class='glyphicon glyphicon-download-alt'></span>Descargar Imagen</a>"
+                ?>
+            </div>
+        </div>
+    </div>
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <h3><span id="lbl_Personeria"><?= Yii::t("formulario", "Documentos adicionales por homologación") ?></span></h3><br><br></br>
     </div>

@@ -132,9 +132,9 @@ function inactiva($croneducativa) {
 
   GLOBAL $dsn, $dbuser, $dbpass, $dbname;
            $con = new \PDO($dsn, $dbuser, $dbpass);
-
+           
 $qusersandgroups = 
-"SELECT cedist.daca_id, ceduct.cedu_asi_id, 
+"SELECT macaes.maes_id,tempo.isdata ,tempo.isauth, cabec.ccal_id, cedist.daca_id, ceduct.cedu_asi_id, 
 daca.uaca_id, daca.paca_id, daca.mod_id, daca.mpp_id, 
 daca.pro_id, daca.asi_id, daes.est_id,
 usuedu.uedu_usuario, usuedu.per_id, person.per_cedula
@@ -145,22 +145,8 @@ INNER JOIN db_academico.distributivo_academico_estudiante as daes on daes.daca_i
 INNER JOIN db_academico.usuario_educativa as usuedu on usuedu.est_id = daes.est_id
 INNER JOIN db_academico.estudiante as estu on  estu.est_id = daes.est_id
 INNER JOIN db_asgard.persona as person on  estu.per_id = person.per_id
-WHERE daca.mod_id = $mod_id
-AND daca.paca_id = $paca_id
-AND daca.uaca_id = $uaca_id
-;";
-$qusersandgroups = 
-"SELECT tempo.isdata ,tempo.isauth, cabec.ccal_id, cedist.daca_id, ceduct.cedu_asi_id, 
-daca.uaca_id, daca.paca_id, daca.mod_id, daca.mpp_id, 
-daca.pro_id, daca.asi_id, daes.est_id,
-usuedu.uedu_usuario, usuedu.per_id, person.per_cedula
-FROM db_academico.curso_educativa_distributivo cedist
-INNER JOIN db_academico.curso_educativa as ceduct on cedist.cedu_id = ceduct.cedu_id
-INNER JOIN db_academico.distributivo_academico as daca on cedist.daca_id = daca.daca_id
-INNER JOIN db_academico.distributivo_academico_estudiante as daes on daes.daca_id = daca.daca_id
-INNER JOIN db_academico.usuario_educativa as usuedu on usuedu.est_id = daes.est_id
-INNER JOIN db_academico.estudiante as estu on  estu.est_id = daes.est_id
-INNER JOIN db_asgard.persona as person on  estu.per_id = person.per_id
+LEFT JOIN db_academico.malla_academico_estudiante macaes 
+ON macaes.per_id = usuedu.per_id AND macaes.asi_id = daca.asi_id
 LEFT JOIN db_academico.cabecera_calificacion as cabec on  cabec.est_id = daes.est_id
 AND cabec.asi_id = daca.asi_id
 LEFT JOIN db_academico.temp_estudiantes_noprocesados as tempo on  tempo.est_id = daes.est_id
@@ -206,9 +192,10 @@ GLOBAL $dsn, $dbuser, $dbpass, $dbname;
             $uedu_usuario = $groups[$m]['uedu_usuario'];
             $per_id = $groups[$m]['per_id'];
             $ced_id = $groups[$m]['per_cedula'];
+            $maes_id = $groups[$m]['maes_id'];
 
 
-
+     try {
           $wsdl = 'https://campusvirtual.uteg.edu.ec/soap/?wsdl=true';
          
          $client = new \SoapClient($wsdl, [
@@ -230,6 +217,12 @@ GLOBAL $dsn, $dbuser, $dbpass, $dbname;
                           "WxrrvTt8",
                           "basic");
 
+          }    catch (PDOException $e) {
+           putMessageLogFile('Error conexion Educativa: ' . $e->getMessage());
+           putMessageLogFile('cedu_asi_id: ' .$cedu_asi_id );
+           putMessageLogFile('uedu_usuario: ' .$uedu_usuario );
+              }
+
           $method = 'obtener_notas_calificaciones'; 
        
           $args = Array(
@@ -247,7 +240,8 @@ GLOBAL $dsn, $dbuser, $dbpass, $dbname;
            putMessageLogFile('uedu_usuario: ' .$uedu_usuario );
               }
 
-              $isauth= getPagopend($ced_id); 
+              //$isauth= getPagopend($ced_id); 
+               $isauth = isset($response); 
               $isdata = isset($response->categorias); 
               print_r(' isauth:');
               var_dump($isauth);
@@ -415,7 +409,7 @@ if ($semanaexa1 <= 5 AND $parciales == 1){
 
          $comp_examen1 = (float)$data03; 
           $comp_cuni_id = 5;
-          print_r("parcial 1 examen::>");
+          print_r("parcial 1 examen ES ");
            print_r($comp_examen1);
 
            $dcalificacion = (float)$comp_examen1;
@@ -425,6 +419,7 @@ $detalles = putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id ,$dcalificacion);
 }else {
 if ($detalles[0]['dcal_usuario_creacion'] == '1' AND $detalles[0]['dcal_calificacion'] < $dcalificacion ){
 $detallesup = updatedetalles($detalles[0]['dcal_id'],$dcalificacion); 
+$bt= putbitacora($detalles[0]['dcal_id'],$dcalificacion);
 }
 }
 }
@@ -440,7 +435,7 @@ if ($semanaexa2 >= 6 AND $parciales == 2){
 
          $comp_examen2 = (float)$data03; 
           $comp_cuni_id = 10;
-          print_r("parcial 2 examen::>");
+          print_r("parcial 2 examen ES ");
            print_r($comp_examen2);
 
            $dcalificacion = (float)$comp_examen2;
@@ -450,6 +445,7 @@ $detalles = putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id ,$dcalificacion);
 }else {
 if ($detalles[0]['dcal_usuario_creacion'] == '1' AND $detalles[0]['dcal_calificacion'] < $dcalificacion ){
 $detallesup = updatedetalles($detalles[0]['dcal_id'],$dcalificacion); 
+$bt= putbitacora($detalles[0]['dcal_id'],$dcalificacion);
 }
 }
 }
@@ -460,8 +456,8 @@ $detallesup = updatedetalles($detalles[0]['dcal_id'],$dcalificacion);
 
 
 if ($parciales == 1 AND $data01['parcial']==1) {
-print_r("======= Inicia proceso parcial 1 ===========");
-print_r(count($componentes));
+//print_r("======= Inicia proceso parcial 1 ===========");
+//print_r(count($componentes));
 for ($il = 0; $il < count($componentes); $il++) {
 /*print_r("componente: ");
 print_r($componentes[$il]['com_id']);
@@ -474,16 +470,16 @@ print_r($data03);*/
 
     $comp_evaluacion1 = (float)$comp_evaluacion1 + (float)$data03; 
     $comp_cuni_id = $componentes[$il]['cuni_id'];
-       print_r("comp_evaluacion1 ==============>>>  ");
+       print_r("comp_evaluacion1 ES  ");
       print_r($comp_evaluacion1);
 
     }
 
      if ($componentes[$il]['com_id']== 4 AND isset($data02['taller'])) {    //COMP_AUTONOMA ol
         
-     $comp_autonoma1 = $comp_autonoma1(float) + (float)$data03; 
+     $comp_autonoma1 = (float)$comp_autonoma1+ (float)$data03;print_r("SUMADO:"); 
      $comp_cuni_id = $componentes[$il]['cuni_id'];
-    print_r("comp_autonoma1 ==============>>>  ");
+    print_r("comp_autonoma1 ES ");
       print_r($comp_autonoma1);
 
     }
@@ -500,20 +496,7 @@ $detalles = putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id ,$dcalificacion);
 if ($detalles[0]['dcal_usuario_creacion'] == '1' AND $detalles[0]['dcal_fecha_modificacion'] ==Null){
 $dcalificacion = $dcalificacion + $detalles[0]['dcal_calificacion'];
 $detallesup = updatedetalles($detalles[0]['dcal_id'],$dcalificacion); 
-}
-}
-} 
-
-
-if ( $comp_autonoma1 > 0 ){
-$dcalificacion = (float)$comp_autonoma1;
-$detalles = getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id); 
-if ($detalles == Null) {
-$detalles = putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id ,$dcalificacion); 
-}else {
-if ($detalles[0]['dcal_usuario_creacion'] == 1 AND $detalles[0]['dcal_fecha_modificacion'] ==Null){
-$dcalificacion = $dcalificacion + $detalles[0]['dcal_calificacion'];
-$detallesup = updatedetalles($detalles[0]['dcal_id'],$dcalificacion); 
+$bt= putbitacora($detalles[0]['dcal_id'],$dcalificacion);
 }
 }
 } 
@@ -527,10 +510,12 @@ $detalles = putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id ,$dcalificacion);
 if ($detalles[0]['dcal_usuario_creacion'] == 1 AND $detalles[0]['dcal_fecha_modificacion'] ==Null){
 $dcalificacion = $dcalificacion + $detalles[0]['dcal_calificacion'];
 $detallesup = updatedetalles($detalles[0]['dcal_id'],$dcalificacion); 
+$bt= putbitacora($detalles[0]['dcal_id'],$dcalificacion);
 }
 }
 } 
-print_r("======= Fin proceso parcial 1 ===========");
+
+//print_r("======= Fin proceso parcial 1 ===========");
 }
 
 
@@ -577,6 +562,7 @@ $detalles = putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id ,$dcalificacion);
 if ($detalles[0]['dcal_usuario_creacion'] == 1 AND $detalles[0]['dcal_fecha_modificacion'] ==Null){
 $dcalificacion = $dcalificacion + $detalles[0]['dcal_calificacion'];
 $detallesup = updatedetalles($detalles[0]['dcal_id'],$dcalificacion);  
+$bt= putbitacora($detalles[0]['dcal_id'],$dcalificacion);
 }
 }
 } 
@@ -591,6 +577,7 @@ $detalles = putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id ,$dcalificacion);
 if ($detalles[0]['dcal_usuario_creacion'] == 1 AND $detalles[0]['dcal_fecha_modificacion'] ==Null){
 $dcalificacion = $dcalificacion + $detalles[0]['dcal_calificacion'];
 $detallesup = updatedetalles($detalles[0]['dcal_id'],$dcalificacion); 
+$bt= putbitacora($detalles[0]['dcal_id'],$dcalificacion);
 }
 }
 } 
@@ -610,6 +597,9 @@ $detallesup = updatedetalles($detalles[0]['dcal_id'],$dcalificacion);
 
 
 updatecabeceras($cabeceras[0]['ccal_id']); 
+if ($maes_id != null){ 
+updatepromedio($maes_id, $paca_id);
+}
 
         }  }  // END IS AUTH AND GET CATEGORIES (UNA VEZ POR ITEM)
 
@@ -627,7 +617,7 @@ VALUES ($daca_id,$cedu_asi_id,$uaca_id,$paca_id,$mod_id,$pro_id,$asi_id,$est_id,
 
 
 
-          $countar++;
+          $countar++; unset($semanaexa1); unset($semanaexa2);
           print_r('( '.$countar. ' )');
 
 
@@ -988,12 +978,12 @@ return $maes;
         GLOBAL $dsn, $dbuser, $dbpass, $dbname;
         $con = new \PDO($dsn, $dbuser, $dbpass);
         $usu_id =1;
-        $transaccion = $con->getTransaction(); // se obtiene la transacción actual
+      /*  $transaccion = $con->getTransaction(); // se obtiene la transacción actual
         if ($trans !== null) {
             $trans = null; // si existe la transacción entonces no se crea una
         } else {
             $trans = $con->beginTransaction(); // si no existe la transacción entonces se crea una
-        }
+        }*/
         try {
             $sql = "UPDATE db_academico.promedio_malla_academico pm, (
                         select distinct
@@ -1072,19 +1062,18 @@ return $maes;
                  $comando->execute();
                  $result = $comando->fetchAll(\PDO::FETCH_ASSOC);
 
-            \app\models\Utilities::putMessageLogFile('updatepromedio: ' . $comando->getRawSql());
+          //  \app\models\Utilities::putMessageLogFile('updatepromedio: ' . $comando->getRawSql());
 
-            if ($transaccion !== null) {
+           /* if ($transaccion !== null) {
                 $transaccion->commit();
-            }
+            }*/
 
             return TRUE;
         } catch (Exception $ex) {
-            if ($transaccion !== null) {
+           /* if ($transaccion !== null) {
                 $transaccion->rollback();
-            }
+            }*/
             return FALSE;
         }
         
-    } 
-
+    }

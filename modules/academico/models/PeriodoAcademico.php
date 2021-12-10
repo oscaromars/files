@@ -348,12 +348,9 @@ class PeriodoAcademico extends \yii\db\ActiveRecord {
                 ( select count(*) from db_academico.periodo_academico bb
                  WHERE
                 bb.saca_id = saca.saca_id
-<<<<<<< HEAD
                  group by bb.saca_id) > 1
-=======
                  group by bb.saca_id) > 1 
                 ORDER BY paca.paca_id ASC;
->>>>>>> 8e666eda8a613f2cf7c362c2f64bfde781f91f4c
                 ";
 
 		$comando = $con->createCommand($sql);

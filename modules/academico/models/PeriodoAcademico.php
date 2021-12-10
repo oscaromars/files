@@ -349,7 +349,6 @@ class PeriodoAcademico extends \yii\db\ActiveRecord {
                  WHERE
                 bb.saca_id = saca.saca_id
                  group by bb.saca_id) > 1
-                 group by bb.saca_id) > 1 
                 ORDER BY paca.paca_id ASC;
                 ";
 

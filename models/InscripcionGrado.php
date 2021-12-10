@@ -254,13 +254,29 @@ class InscripcionGrado extends \yii\db\ActiveRecord
         return $con->getLastInsertID();
     }
 
-    public function updateDataInscripciongrado($con, $per_id, $per_dni, $igra_financiamiento, $igra_institucion_beca, $igra_ruta_documento, $igra_ruta_doc_titulo, $igra_ruta_doc_dni, $igra_ruta_doc_certvota, $igra_ruta_doc_foto, $igra_ruta_doc_comprobantepago, $igra_ruta_doc_record, $igra_ruta_doc_certificado, $igra_ruta_doc_syllabus, $igra_ruta_doc_homologacion) {
+    public function updateDataInscripciongrado($con, $per_id, $unidad , $modalidad , $carrera, $periodo, $per_dni, $igra_financiamiento, $igra_institucion_beca, $igra_ruta_documento, $igra_ruta_doc_titulo, $igra_ruta_doc_dni, $igra_ruta_doc_certvota, $igra_ruta_doc_foto, $igra_ruta_doc_comprobantepago, $igra_ruta_doc_record, $igra_ruta_doc_certificado, $igra_ruta_doc_syllabus, $igra_ruta_doc_homologacion) {
         //\app\models\Utilities::putMessageLogFile('igra_ruta_doc_certvota:  '.$igra_ruta_doc_certvota);
         $imagenes = "";
         $fecha_modificacion = date(Yii::$app->params["dateTimeByDefault"]);
 
         if ($trans !== null) {
             $trans = null; // si existe la transacción entonces no se crea una
+        }
+
+        if(!empty($unidad)){
+            $academico .= "uaca_id=:uaca_id,";
+        }
+
+        if(!empty($modalidad)){
+            $academico .= "eaca_id=:eaca_id,";
+        }
+
+        if(!empty($carrera)){
+            $imagenes .= "eaca_id=:eaca_id,";
+        }
+
+        if(!empty($periodo)){
+            $imagenes .= "paca_id=:paca_id,";
         }
 
         if(!empty($igra_ruta_documento)){
@@ -303,16 +319,25 @@ class InscripcionGrado extends \yii\db\ActiveRecord
                         igra_fecha_modificacion=:igra_fecha_modificacion
                         WHERE per_id =:per_id");
             //$command->bindParam(":igra_id", $igra_id, \PDO::PARAM_INT);
+            // si vienen nulos no agregarlos
             $command->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
-            //$command->bindParam(":uaca_id", $unidad, \PDO::PARAM_INT);
-            //$command->bindParam(":eaca_id", $carrera, \PDO::PARAM_INT);
-            //$command->bindParam(":mod_id", $modalidad, \PDO::PARAM_INT);
-            //$command->bindParam(":paca_id", $periodo, \PDO::PARAM_INT);
+            if(!empty($unidad)){
+             $command->bindParam(":uaca_id", $unidad, \PDO::PARAM_INT);
+            }
+            if(!empty($carrera)){
+             $command->bindParam(":eaca_id", $carrera, \PDO::PARAM_INT);
+            }
+            if(!empty($modalidad)){
+              $command->bindParam(":mod_id", $modalidad, \PDO::PARAM_INT);
+            }
+            if(!empty($periodo)){
+              $command->bindParam(":paca_id", $periodo, \PDO::PARAM_INT);
+            }
             $command->bindParam(":per_dni", $per_dni, \PDO::PARAM_STR);
             $command->bindParam(":igra_financiamiento", $igra_financiamiento, \PDO::PARAM_INT);
             $command->bindParam(":igra_institucion_beca", $igra_institucion_beca, \PDO::PARAM_STR);
             //$command->bindParam(":igra_metodo_ingreso", $met_ing, \PDO::PARAM_INT);
-            // si vienen nulos no agragrlos
+            // si vienen nulos no agregarlos
              if(!empty($igra_ruta_documento)){
                 $command->bindParam(":igra_ruta_documento", $igra_ruta_documento, \PDO::PARAM_STR);
                 }

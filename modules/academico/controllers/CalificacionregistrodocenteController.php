@@ -75,6 +75,7 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 		$cabeceraCalificacion = new CabeceraCalificacion();
 		$mod_periodos = new PeriodoAcademico();
 		$per_id = Yii::$app->session->get("PB_perid");
+		$emp_id = @Yii::$app->session->get("PB_idempresa");
 		//$user_usermane = 'carlos.carrera@mbtu.us';//Yii::$app->session->get("PB_username");
 		$user_usermane = Yii::$app->session->get("PB_username");
 
@@ -118,10 +119,11 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 			}
 
 			if (isset($data["getasignaturas_uaca"])) {
+				$modalidad = $mod_modalidad->consultarModalidad($data["uaca_id"], $emp_id);
 				$asignatura = $Asignatura_distri->getAsignaturaByProfesorDistributivo($data["paca_id"], $data['pro_id'], $data["uaca_id"], $data["mod_id"]);
 				$profesorup = $mod_profesor->getProfesoresEnAsignaturasByall($data["paca_id"], $data["uaca_id"], $data["mod_id"]);
 				$paralelo_clcf = [];
-				$message = array("asignatura" => $asignatura, "profesorup" => $profesorup);
+				$message = array("modalidad" => $modalidad, "asignatura" => $asignatura, "profesorup" => $profesorup);
 				return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
 			}
 		}
@@ -216,7 +218,7 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 
 	public function actionRegistro() {
 		$per_id = @Yii::$app->session->get("PB_perid");
-
+		$emp_id = @Yii::$app->session->get("PB_idempresa");
 		$user_usermane = Yii::$app->session->get("PB_username");
 
 		$mod_programa = new EstudioAcademico();
@@ -250,9 +252,11 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 			}
 
 			if (isset($data["getasignaturas_uaca_reg"])) {
+
+				$modalidad = $mod_modalidad->consultarModalidad($data["uaca_id"], $emp_id);
 				$asignatura = $Asignatura_distri->getAsignaturaByProfesorDistributivo($data["paca_id"], $data['pro_id'], $data["uaca_id"], $data["mod_id"]);
 				$profesorreg = $mod_profesor->getProfesoresEnAsignaturasByall($data["paca_id"], $data["uaca_id"], $data["mod_id"]);
-				$message = array("asignatura" => $asignatura, "profesorreg" => $profesorreg);
+				$message = array("modalidad" => $modalidad, "asignatura" => $asignatura, "profesorreg" => $profesorreg);
 				return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
 			}
 

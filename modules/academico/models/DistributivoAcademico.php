@@ -1016,20 +1016,12 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
 		$num_estudiantes = "null";
 
 		if ($data[$i]->programa) {
-			//$maca_id = $data[$i]->programa;
-			$meun = ModalidadEstudioUnidad::find()
-				->select(['meun_id'])
-				->join('INNER JOIN', 'malla_unidad_modalidad as mumo', 'mumo.meun_id = modalidad_estudio_unidad.meun_id')
-				->where(['mumo.maca_id' => $data[$i]->programa, 'modalidad_estudio_unidad.mod_id' => $data[$i]->mod_id
-						'modalidad_estudio_unidad.uaca_id' => $data[$i]->uni_id, 
-						'mumo.mumo_estado' => 1, 'mumo.mumo_estado_logico' => 1
-						'modalidad_estudio_unidad.meun_estado'=>1,'modalidad_estudio_unidad.meun_estado_logico'=>1
-						])
-				->asArray()
-				->all();
-			$meun_id = $meun['meun_id'];	
-			\app\models\Utilities::putMessageLogFile('meun_id: '.$meun_id);
-		}
+            //$meun_id = $data[$i]->programa;
+            $mumo_id = MallaUnidadModalidad::findOne(['maca_id'=>$data[$i]->programa,'mumo_estado'=>1,'mumo_estado_logico'=>1]);
+            $meun    = ModalidadEstudioUnidad::findOne(['meun_id'=>$mumo_id['meun_id'],'mod_id'=>$data[$i]->mod_id,'uaca_id'=>$data[$i]->uni_id,'meun_estado'=>1,'meun_estado_logico'=>1]);
+            $meun_id= $meun['meun_id'];
+            
+        }
 		if ($data[$i]->fecha_inicio && $data[$i]->fecha_inicio != 'N/A') {
 			$fecha_inicio = "'" . $data[$i]->fecha_inicio . "'";
 		}

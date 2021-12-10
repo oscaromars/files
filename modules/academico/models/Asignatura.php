@@ -520,7 +520,7 @@ class Asignatura extends \yii\db\ActiveRecord {
 	 * @param
 	 * @return  $resultData (Retornar las asignaturas por planificación y modalidad).
 	 */
-	public function getAsignaturaPosgrado($meun_id) {
+	public function getAsignaturaPosgrado($maca_id) {
 		$con = \Yii::$app->db_academico;
 		$estado = 1;
 
@@ -528,7 +528,7 @@ class Asignatura extends \yii\db\ActiveRecord {
                     FROM db_academico.malla_academica_detalle a
                     inner join db_academico.malla_unidad_modalidad b  on b.maca_id = a.maca_id
                     INNER JOIN db_academico.asignatura c on c.asi_id = a.asi_id
-                    WHERE b.meun_id = $meun_id
+                    WHERE b.maca_id = $maca_id
                           and b.mumo_estado = 1
                           and b.mumo_estado_logico = 1
                           and a.made_estado = 1
@@ -537,7 +537,7 @@ class Asignatura extends \yii\db\ActiveRecord {
 
 		$comando = $con->createCommand($sql);
 		// $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
-		$comando->bindParam(":meun_id", $meun_id, \PDO::PARAM_INT);
+		$comando->bindParam(":maca_id", $maca_id, \PDO::PARAM_INT);
 		$resultData = $comando->queryAll();
 		return $resultData;
 	}
@@ -761,6 +761,23 @@ class Asignatura extends \yii\db\ActiveRecord {
 		$con = \Yii::$app->db_academico;
 		$con1 = \Yii::$app->db_asgard;
 		//inner join ". $con->dbname  .".unidad_academica uaca  on daca.uaca_id = uaca.uaca_id)
+
+		if ($paca_id != "" && $paca_id > 0) {
+			$str_search .= " daca.paca_id  = :paca_id AND ";
+		}
+
+		if ($uaca_id != "" && $uaca_id > 0) {
+			$str_search .= " daca.uaca_id =  :uaca_id AND ";
+		}
+
+		if ($mod_id != "" && $mod_id > 0) {
+			$str_search .= " daca.mod_id =  :mod_id AND ";
+		}
+
+		if ($pro_id != "" && $pro_id > 0) {
+			$str_search .= " pro.pro_id =  :pro_id AND ";
+		}
+
 		$sql = "SELECT distinct
                 daca.asi_id id,
                 asig.asi_nombre  name
@@ -768,7 +785,7 @@ class Asignatura extends \yii\db\ActiveRecord {
                 inner join " . $con->dbname . ".profesor pro on per.per_id = pro.per_id
                 inner join " . $con->dbname . ".distributivo_academico daca on daca.pro_id = pro.pro_id
                 inner join " . $con->dbname . ".asignatura asig on asig.asi_id = daca.asi_id
-                WHERE
+                WHERE " . $str_search . "
                     per.per_estado = 1
                     and per.per_estado_logico = 1
 
@@ -780,17 +797,21 @@ class Asignatura extends \yii\db\ActiveRecord {
 
                     and asig.asi_estado = 1
                     and asig.asi_estado_logico = 1
-
-                    and pro.pro_id = :pro_id
-                    and daca.paca_id = :paca_id
-                    and daca.mod_id = :mod_id
-                    and daca.uaca_id = :uaca_id";
+                    ";
 		//echo "Sentencia: ".$sql;
 		$comando = $con->createCommand($sql);
-		$comando->bindParam(":paca_id", $paca_id, \PDO::PARAM_INT);
-		$comando->bindParam(":pro_id", $pro_id, \PDO::PARAM_INT);
-		$comando->bindParam(":uaca_id", $uaca_id, \PDO::PARAM_INT);
-		$comando->bindParam(":mod_id", $mod_id, \PDO::PARAM_INT);
+		if ($paca_id != "" && $paca_id > 0) {
+			$comando->bindParam(":paca_id", $paca_id, \PDO::PARAM_INT);
+		}
+		if ($uaca_id != "" && $uaca_id > 0) {
+			$comando->bindParam(":uaca_id", $uaca_id, \PDO::PARAM_INT);
+		}
+		if ($mod_id != "" && $mod_id > 0) {
+			$comando->bindParam(":mod_id", $mod_id, \PDO::PARAM_INT);
+		}
+		if ($pro_id != "" && $pro_id > 0) {
+			$comando->bindParam(":pro_id", $pro_id, \PDO::PARAM_INT);
+		}
 
 		$resultData = $comando->queryAll();
 		return $resultData;

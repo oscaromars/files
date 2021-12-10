@@ -159,6 +159,7 @@ $('#cmb_periodo').change(function () {
                     if (data.modalidad.length > 0) {
                         let mod_id = data.modalidad[0].id;
                         arrParams.uaca_id = $('#cmb_unidad_dis').val();
+                        console.log("change");
                         arrParams.mod_id = mod_id;
                         arrParams.getjornada = true;
                         // requestHttpAjax(link, arrParams, function(response) {
@@ -189,6 +190,20 @@ $('#cmb_periodo').change(function () {
 
 
 
+    });
+
+    $('#cmb_unidad_dis_asignacion').change(function () {
+        var link = $('#txth_base').val() + "/academico/distributivoacademico/index";
+        var arrParams = new Object();
+        arrParams.uaca_id = $(this).val();
+        arrParams.getmodalidad = true;
+        requestHttpAjax(link, arrParams, function (response) {
+            if (response.status == "OK") {
+                data = response.message;
+                 setComboDataselect(data.modalidad, "cmb_modalidad","Todos");
+                
+            }
+        }, true);
     });
 
     $('#cmb_modalidad').change(function () {

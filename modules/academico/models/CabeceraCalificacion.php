@@ -328,6 +328,9 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord {
 		} elseif ($grupos >= 6 and $grupo <= 8) {
 			$fecha_cierre = "paca.paca_fecha_fin as fin";
 			$str_search = " now() >= paca.paca_fecha_inicio and now()<= paca.paca_fecha_fin AND ";
+		} else {
+			$fecha_cierre = "paca.paca_fecha_fin as fin";
+			$str_search = " now() >= paca.paca_fecha_inicio and now()<= paca.paca_fecha_fin AND ";
 		}
 
 		$sql = "SELECT paca.paca_fecha_inicio as inicio,  $fecha_cierre
@@ -1049,12 +1052,13 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord {
 
 		$sql = "SELECT (@row_number:=@row_number + 1) AS row_num,  data.*
                   FROM (
-                 SELECT daes.est_id
+                 SELECT distinct daes.est_id
                         ,ifnull(est.est_matricula,'') as matricula
-                        ,concat(per.per_pri_apellido,' ',per.per_pri_nombre) as nombre
-                        ,CASE WHEN ecun.ecal_id = 1 THEN'Parcial I'
-                              WHEN ecun.ecal_id = 2 THEN'Parcial II'
-                              WHEN ecun.ecal_id = 3 THEN'Supletorio'
+                        ,concat(ifnull(trim(per.per_pri_apellido),''),' ',ifnull(trim(per.per_seg_apellido),''),' ',ifnull(trim(per.per_pri_nombre),'')) as nombre
+                        ,CASE WHEN ecun.ecal_id = 1 THEN 'Parcial I'
+                              WHEN ecun.ecal_id = 2 THEN 'Parcial II'
+                              WHEN ecun.ecal_id = 3 THEN 'Supletorio'
+                              WHEN ecun.ecal_id = 4 THEN 'Mejoramiento'
                         END as nparcial
                         ,ecun.ecal_id as ecal_id
                         ,(  SELECT ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca_anio),'') AS paca_nombre
@@ -1247,40 +1251,70 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord {
                         ELSE
                             case
                             when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 >=14.50 then (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2
-                            when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 <14.50 then
+                            when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 > 0 and (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 < 14.50 then
                                 case
                                 when IFNULL(C.SUPLETORIO,0) > 0 then
-                                    case
+                                    (((IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2)+IFNULL(C.SUPLETORIO,0))/2
+                                    /*case
                                         when IFNULL(A.PARCIAL_I,0) >= IFNULL(B.PARCIAL_II,0) then (IFNULL(A.PARCIAL_I,0) + IFNULL(C.SUPLETORIO,0))/2
                                         when IFNULL(A.PARCIAL_I,0) <= IFNULL(B.PARCIAL_II,0) then (IFNULL(B.PARCIAL_II,0) + IFNULL(C.SUPLETORIO,0))/2
-                                    end
+                                    end*/
                                 else
                                     (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2
                                 end
                             end
                         END AS promedio_final,
+
                         case
-                        when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 >=14.50 then 'Aprobado'
-                        when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 >=1 and (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 <= 14.49 then
-                            case
-                            when IFNULL(C.SUPLETORIO,0) > 0 then
-                                case
-                                    when IFNULL(A.PARCIAL_I,0) >= IFNULL(B.PARCIAL_II,0) then
+                        when ((coalesce(D.ASISTENCIA_PARCIAL_I, 0) + coalesce(E.ASISTENCIA_PARCIAL_II, 0)) / 2) >= 75 then
+
+	                        case
+	                        when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 >=14.50 then 'Aprobado'
+	                        when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 >=1 and (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 <= 14.49 then
+	                            case
+	                            when IFNULL(C.SUPLETORIO,0) > 0 then
+
                                     case
-                                        when (IFNULL(A.PARCIAL_I,0) + IFNULL(C.SUPLETORIO,0))/2 >= 14.50 then 'Aprobado'
-                                        when (IFNULL(A.PARCIAL_I,0) + IFNULL(C.SUPLETORIO,0))/2 >= 1 and (IFNULL(A.PARCIAL_I,0) + IFNULL(C.SUPLETORIO,0))/2 < 14.49 then 'Reprobado'
+                                        when (((IFNULL(A.PARCIAL_I,0) + IFNULL(C.SUPLETORIO,0))/2)+IFNULL(C.SUPLETORIO,0))/2 >= 14.50 then 'Aprobado'
+                                        when (((IFNULL(A.PARCIAL_I,0) + IFNULL(C.SUPLETORIO,0))/2)+IFNULL(C.SUPLETORIO,0))/2 > 0 and (((IFNULL(A.PARCIAL_I,0) + IFNULL(C.SUPLETORIO,0))/2)+IFNULL(C.SUPLETORIO,0))/2 < 14.50 then 'Reprobado'
                                     end
-                                    when IFNULL(A.PARCIAL_I,0) <= IFNULL(B.PARCIAL_II,0) then
-                                    case
-                                        when (IFNULL(B.PARCIAL_II,0) + IFNULL(C.SUPLETORIO,0))/2 >= 14.50 then 'Aprobado'
-                                        when (IFNULL(B.PARCIAL_II,0) + IFNULL(C.SUPLETORIO,0))/2 >= 1 and (IFNULL(B.PARCIAL_II,0) + IFNULL(C.SUPLETORIO,0))/2 < 14.49 then 'Reprobado'
-                                    end
-                                end
-                            else
-                                case when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 < 14.50 then 'Reprobado' end
-                            end
-                        when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 = 0 then 'Pendiente'
-                        end as estado,
+
+	                            else
+	                                case when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 < 14.50 then 'Reprobado' end
+	                            end
+	                        when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 = 0 then 'Pendiente'
+	                        end
+	                    when ((coalesce(D.ASISTENCIA_PARCIAL_I, 0) + coalesce(E.ASISTENCIA_PARCIAL_II, 0)) / 2) > 0 and ((coalesce(D.ASISTENCIA_PARCIAL_I, 0) + coalesce(E.ASISTENCIA_PARCIAL_II, 0)) / 2) < 75 then
+	                    	case
+	                        when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 >=14.50 then 'Reprobado'
+	                        when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 >=1 and (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 <= 14.49 then 'Reprobado'
+	                        end
+
+	                    end as estado_academico,
+	                        /*case
+	                        when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 >=14.50 then 'Aprobado'
+	                        when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 >=1 and (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 <= 14.49 then
+	                            case
+	                            when IFNULL(C.SUPLETORIO,0) > 0 then
+	                                case
+	                                    when IFNULL(A.PARCIAL_I,0) >= IFNULL(B.PARCIAL_II,0) then
+	                                    case
+	                                        when (IFNULL(A.PARCIAL_I,0) + IFNULL(C.SUPLETORIO,0))/2 >= 14.50 then 'Aprobado'
+	                                        when (IFNULL(A.PARCIAL_I,0) + IFNULL(C.SUPLETORIO,0))/2 >= 1 and (IFNULL(A.PARCIAL_I,0) + IFNULL(C.SUPLETORIO,0))/2 < 14.49 then 'Reprobado'
+	                                    end
+	                                    when IFNULL(A.PARCIAL_I,0) <= IFNULL(B.PARCIAL_II,0) then
+	                                    case
+	                                        when (IFNULL(B.PARCIAL_II,0) + IFNULL(C.SUPLETORIO,0))/2 >= 14.50 then 'Aprobado'
+	                                        when (IFNULL(B.PARCIAL_II,0) + IFNULL(C.SUPLETORIO,0))/2 >= 1 and (IFNULL(B.PARCIAL_II,0) + IFNULL(C.SUPLETORIO,0))/2 < 14.49 then 'Reprobado'
+	                                    end
+	                                end
+	                            else
+	                                case when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 < 14.50 then 'Reprobado' end
+	                            end
+	                        when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 = 0 then 'Pendiente'
+	                        end as estado_academico,*/
+
+
                         IFNULL(D.ASISTENCIA_PARCIAL_I,'0') asistencia_parcial_1,
                         IFNULL(E.ASISTENCIA_PARCIAL_II,'0') asistencia_parcial_2,
                         ((coalesce(D.ASISTENCIA_PARCIAL_I, 0) + coalesce(E.ASISTENCIA_PARCIAL_II, 0)) / 2) as asistencia_final,
@@ -1294,7 +1328,7 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord {
                         SELECT DISTINCT
                                estudiante.est_id,
                                estudiante.est_matricula,
-                               concat(persona.per_pri_apellido,' ',persona.per_pri_nombre) as Nombres_completos,
+                               concat(ifnull(trim(persona.per_pri_apellido),''),' ',ifnull(trim(persona.per_seg_apellido),''),' ',ifnull(trim(persona.per_pri_nombre),'')) as Nombres_completos,
                                ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca_anio),'') AS paca_nombre,
                                paca.paca_id,
                                daca.pro_id,
@@ -1485,7 +1519,17 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord {
 
 		if ($per_id != "" && $per_id > 0) {
 			//$str_perfil_user .= " persona.per_id = :per_id AND";
-			$str_perfil_user .= " persona.per_id = " . $per_id . " AND"; //GALO
+			$str_perfil_user .= " persona.per_id = " . $per_id . " AND "; //GALO
+		}
+
+		$per_cedula = Persona::findOne(['per_id' => $per_id, 'per_estado' => 1, 'per_estado_logico' => 1]);
+		$validacion = this . getPagopend($per_cedula['per_cedula']);
+		if ($validación == 1) {
+			$str_val = " 1 as validacion, ";
+			$str_paca_val = " paca.paca_fecha_inicio >= now() AND paca.paca_fecha_inicio <= now() AND ";
+		} else {
+			$str_val = " 2 as validacion, ";
+
 		}
 
 		$sql = "SELECT DISTINCT
@@ -1497,19 +1541,65 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord {
                 estudiante.pro_id,
                 estudiante.profesor,
                 estudiante.asi_id,
+                " . $str_val . "
                 estudiante.asi_nombre as materia,
-                IFNULL(A.PARCIAL_I,'NN') parcial_1,
-                IFNULL(B.PARCIAL_II,'NN') parcial_2,
-                IFNULL(C.SUPLETORIO,'NN') supletorio,
+                IFNULL(A.PARCIAL_I,'0') parcial_1,
+                IFNULL(B.PARCIAL_II,'0') parcial_2,
+                IFNULL(C.SUPLETORIO,'0') supletorio,
                 CASE
-                WHEN estudiante.uaca_id = 3 THEN
-                     IFNULL(A.PARCIAL_I,'NN')
-                ELSE
-                    ROUND((IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2,2)
-                END AS promedio_final,
-                IFNULL(D.ASISTENCIA_PARCIAL_I,'NN') asistencia_parcial_1,
-                IFNULL(E.ASISTENCIA_PARCIAL_II,'NN') asistencia_parcial_2,
-                ((coalesce(D.ASISTENCIA_PARCIAL_I, 0) + coalesce(E.ASISTENCIA_PARCIAL_II, 0)) / 2) as asistencia_final
+                        WHEN estudiante.uaca_id = 3 THEN
+                             IFNULL(A.PARCIAL_I,'0')
+                        ELSE
+                            case
+                            when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 >=14.50 then (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2
+                            when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 > 0 and (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 < 14.50 then
+                                case
+                                when IFNULL(C.SUPLETORIO,0) > 0 then
+                                    (((IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2)+IFNULL(C.SUPLETORIO,0))/2
+                                    /*case
+                                        when IFNULL(A.PARCIAL_I,0) >= IFNULL(B.PARCIAL_II,0) then (IFNULL(A.PARCIAL_I,0) + IFNULL(C.SUPLETORIO,0))/2
+                                        when IFNULL(A.PARCIAL_I,0) <= IFNULL(B.PARCIAL_II,0) then (IFNULL(B.PARCIAL_II,0) + IFNULL(C.SUPLETORIO,0))/2
+                                    end*/
+                                else
+                                    (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2
+                                end
+                            end
+                        END AS promedio_final,
+                        case
+                            when ((coalesce(D.ASISTENCIA_PARCIAL_I, 0) + coalesce(E.ASISTENCIA_PARCIAL_II, 0)) / 2) >= 75 then
+
+                                case
+                                    when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 >=14.50 then 'Aprobado'
+                                    when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 > 0 and (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 < 14.50 then
+                                        case
+                                            when IFNULL(C.SUPLETORIO,0) > 0 then
+
+                                                case
+                                                    when (((IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2)+IFNULL(C.SUPLETORIO,0))/2 >= 14.50 then 'Aprobado'
+                                                    when (((IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2)+IFNULL(C.SUPLETORIO,0))/2 > 0 and (((IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2)+IFNULL(C.SUPLETORIO,0))/2 < 14.50 then 'Reprobado'
+                                                end
+
+                                        else
+                                            case when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 < 14.50 then 'Reprobado' end
+                                        end
+                                    when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 = 0 then 'Pendiente'
+                                end
+                            when ((coalesce(D.ASISTENCIA_PARCIAL_I, 0) + coalesce(E.ASISTENCIA_PARCIAL_II, 0)) / 2) > 0 and ((coalesce(D.ASISTENCIA_PARCIAL_I, 0) + coalesce(E.ASISTENCIA_PARCIAL_II, 0)) / 2) < 75 then
+                                case
+                                when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 >=14.50 then 'Reprobado'
+                                when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 >0 and (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 < 14.50 then 'Reprobado'
+                                end
+
+                        end as estado_academico,
+
+                IFNULL(D.ASISTENCIA_PARCIAL_I,'0') asistencia_parcial_1,
+                IFNULL(E.ASISTENCIA_PARCIAL_II,'0') asistencia_parcial_2,
+                ((coalesce(D.ASISTENCIA_PARCIAL_I, 0) + coalesce(E.ASISTENCIA_PARCIAL_II, 0)) / 2) as asistencia_final,
+                case
+                            when ((coalesce(D.ASISTENCIA_PARCIAL_I, 0) + coalesce(E.ASISTENCIA_PARCIAL_II, 0)) / 2) >= 75 then 'Aprobado'
+                            when ((coalesce(D.ASISTENCIA_PARCIAL_I, 0) + coalesce(E.ASISTENCIA_PARCIAL_II, 0)) / 2) >= 1 and ((coalesce(D.ASISTENCIA_PARCIAL_I, 0) + coalesce(E.ASISTENCIA_PARCIAL_II, 0)) / 2) < 75 then 'Reprobado'
+                            when ((coalesce(D.ASISTENCIA_PARCIAL_I, 0) + coalesce(E.ASISTENCIA_PARCIAL_II, 0)) / 2) = 0 then'Pendiente'
+                        end as estado_asist
                 FROM
                     (
                     SELECT DISTINCT
@@ -1527,43 +1617,31 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord {
                     FROM " . $con->dbname . ".estudiante AS estudiante
                     INNER JOIN " . $con1->dbname . ".persona AS persona ON persona.per_id = estudiante.per_id
                     INNER JOIN " . $con->dbname . ".distributivo_academico_estudiante AS daca_est ON daca_est.est_id = estudiante.est_id
-                    LEFT JOIN " . $con->dbname . ".distributivo_academico AS daca on daca_est.daca_id = daca.daca_id
+                    INNER JOIN " . $con->dbname . ".distributivo_academico AS daca on daca_est.daca_id = daca.daca_id
                     INNER JOIN " . $con->dbname . ".asignatura AS asi ON asi.asi_id = daca.asi_id
-                    LEFT JOIN " . $con->dbname . ".profesor AS pro ON pro.pro_id = daca.pro_id
+                    INNER JOIN " . $con->dbname . ".profesor AS pro ON pro.pro_id = daca.pro_id
                     LEFT JOIN " . $con1->dbname . ".persona AS profesor ON profesor.per_id = pro.per_id
                     INNER JOIN " . $con->dbname . ".estudiante_carrera_programa AS ecpr ON ecpr.est_id = estudiante.est_id
                     INNER JOIN " . $con->dbname . ".modalidad_estudio_unidad AS meun ON meun.meun_id = ecpr.meun_id
-                    INNER JOIN " . $con->dbname . ".semestre_academico AS saca
-                    INNER JOIN " . $con->dbname . ".periodo_academico AS paca ON saca.saca_id = paca.saca_id
+                    INNER JOIN " . $con->dbname . ".periodo_academico AS paca ON paca.daca_id = paca.paca_id
+                    INNER JOIN " . $con->dbname . ".semestre_academico AS saca ON  saca.saca_id = paca.saca_id
                     INNER JOIN " . $con->dbname . ".bloque_academico AS baca ON baca.baca_id = paca.baca_id
                     WHERE
                     $str_search
                     $str_perfil_user
-                    meun.uaca_id = asi.uaca_id
-                    AND paca.paca_activo = 'A'
+                    paca.paca_activo = 'A'
                     -- AND estudiante.est_activo = 1
-                    AND estudiante.est_estado = 1
-                    AND estudiante.est_estado_logico = 1
-                    AND persona.per_estado = 1
-                    AND persona.per_estado_logico = 1
-                    AND ((daca.daca_estado = 1 AND daca.daca_estado_logico = 1) OR daca.daca_id IS NULL)
-                    AND ((pro.pro_estado = 1 AND pro.pro_estado_logico = 1) OR pro.pro_id IS NULL)
-                    AND ((profesor.per_estado = 1 AND profesor.per_estado_logico = 1) OR profesor.per_id IS NULL)
-                    AND daca_est.daes_estado = 1
-                    AND daca_est.daes_estado_logico = 1
-                    AND asi.asi_estado = 1
-                    AND asi.asi_estado_logico = 1
-                    AND ecpr.ecpr_estado = 1
-                    AND ecpr.ecpr_estado_logico = 1
-                    AND meun.meun_estado= 1
-                    AND meun.meun_estado_logico = 1
-                    AND paca.paca_activo = 'A'
-                    AND paca.paca_estado = 1
-                    AND paca.paca_estado_logico = 1
-                    AND saca.saca_estado = 1
-                    AND saca.saca_estado_logico = 1
-                    AND baca.baca_estado = 1
-                    AND baca.baca_estado_logico = 1
+                    AND estudiante.est_estado = 1 AND estudiante.est_estado_logico = 1
+                    AND persona.per_estado = 1 AND persona.per_estado_logico = 1
+                    AND daca.daca_estado = 1 AND daca.daca_estado_logico = 1
+                    AND pro.pro_estado = 1 AND pro.pro_estado_logico = 1
+                    AND daca_est.daes_estado = 1 AND daca_est.daes_estado_logico = 1
+                    AND asi.asi_estado = 1 AND asi.asi_estado_logico = 1
+                    AND ecpr.ecpr_estado = 1 AND ecpr.ecpr_estado_logico = 1
+                    AND meun.meun_estado= 1 AND meun.meun_estado_logico = 1
+                    AND paca.paca_estado = 1 AND paca.paca_estado_logico = 1
+                    AND saca.saca_estado = 1 AND saca.saca_estado_logico = 1
+                    AND baca.baca_estado = 1 AND baca.baca_estado_logico = 1
                     ) estudiante
                 LEFT JOIN
                 (
@@ -1948,6 +2026,7 @@ croe.croe_exec,ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca
                     ) pmac
                 set pm.pmac_nota = pmac.promedio,
                     pm.enac_id = pmac.estado,
+                    pm.paca_id = $paca_id,
                     pm.pmac_fecha_modificacion = '$date',
                     pm.pmac_usuario_ingreso = $usu_id
                 where pm.maes_id=pmac.maes_id";
@@ -2065,12 +2144,12 @@ croe.croe_exec,ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca
 
 		if (isset($saldos[0])) {
 			if ($saldos[0] == 0) {
-				return True;
+				return 1;
 			} else {
-				return False;
+				return 2;
 			}
 		} else {
-			return True;
+			return 3;
 		}
 
 	}

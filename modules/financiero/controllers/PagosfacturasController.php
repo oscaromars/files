@@ -902,10 +902,10 @@ class PagosfacturasController extends \app\components\CController {
                                             $dpfa_estado_pago = 2;
                                             $dpfa_estado_financiero = 'C';
                                         }
-                                }else{
+                                } /*else{
                                 $dpfa_estado_pago       = 1;
                                 $dpfa_estado_financiero = 'N';
-                                }
+                                }*/
                                 // insertar el detalle
                                 $descripciondet      = 'Cuota '. str_replace('/',' ',$resp_consfactura['cuota']) . '- Abono con el valor de ' .$cargo->ccar_abono ;
                                 $resp_detpagofactura = $mod_pagos->insertarDetpagospendientes($resp_pagofactura,

@@ -116,6 +116,7 @@ $(document).ready(function () {
         requestHttpAjax(link, arrParams, function (response) {
             if (response.status == "OK") {
                 data = response.message;
+                 setComboDataselect(data.modalidad, "cmb_modalidad","Todos");
                  setComboDataselect(data.asignatura, "cmb_materiabus","Todos");
                  setComboDataselectpro(data.profesorup, "cmb_profesor_clfc","Todos");
             }
@@ -201,6 +202,7 @@ $(document).ready(function () {
         requestHttpAjax(link, arrParams, function (response) {
             if (response.status == "OK") {
                 data = response.message;
+                 setComboDataselect(data.modalidad, "cmb_modalidad_rc","Todos");
                  setComboDataselect(data.asignatura, "cmb_materia","Todos");
                  setComboDataselectpro(data.profesorreg, "cmb_profesor_rc","Todos");
             }

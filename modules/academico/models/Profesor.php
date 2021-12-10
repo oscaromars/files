@@ -419,7 +419,7 @@ class Profesor extends \yii\db\ActiveRecord {
                    pro.pro_estado   = 1 AND pro.pro_estado_logico   = 1 AND
                    daca.daca_estado = 1 AND daca.daca_estado_logico = 1 AND
                    dcab.dcab_estado = 1 AND dcab.dcab_estado_logico = 1
-              ORDER BY nombres DESC";
+              ORDER BY nombres asc";
 
 		$comando = $con_academico->createCommand($sql);
 

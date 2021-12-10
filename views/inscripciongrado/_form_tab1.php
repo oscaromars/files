@@ -337,7 +337,7 @@ academico::registerTranslations();
             <div class="form-group">
                 <label for="txt_instituto" class="col-sm-3 control-label"><?= Yii::t("formulario", "Institución Beca") ?><span class="text-danger"> *  </span></label>
                 <div class="col-sm-7">
-                    <input type="text" class="form-control PBvalidation keyupmce" id="txt_instituto" data-type="alfanumerico" data-keydown="true" placeholder="<?= Yii::t("formulario", "Institución Beca") ?>">
+                    <input type="text" class="form-control keyupmce" id="txt_instituto" data-type="alfanumerico" data-keydown="true" placeholder="<?= Yii::t("formulario", "Institución Beca") ?>">
                 </div>
             </div>
         </div>

@@ -651,7 +651,7 @@ ifnull(CONCAT(ifnull(per.per_pri_nombre,''), ' ', ifnull(per.per_seg_nombre,''))
 ifnull(CONCAT(ifnull(per.per_pri_apellido,''), ' ', ifnull(per.per_seg_apellido,'')), '') as apellidos,
 pais.pai_nombre,
 per.per_fecha_nacimiento,
-per.per_nacionalidad,
+pais.pai_nacionalidad,
 esta.eciv_nombre,
  provi.pro_nombre,
 canton.can_nombre,
@@ -692,7 +692,17 @@ Left Join db_asgard.idioma  as langu on langu.idi_id = idiom.idi_id
 left Join db_general.nivel_idioma as nivel on nivel.nidi_id = idiom.nidi_id
 where idiom.per_id =  ipos.per_id
 and idiom.idi_id = 1) AS nidi1_descripcion,
--- disc.ipdi_discapacidad,
+(select  langu.idi_nombre 
+FROM db_inscripcion.estudiante_idiomas  as idiom 
+Left Join db_asgard.idioma  as langu on langu.idi_id = idiom.idi_id
+where idiom.per_id = ipos.per_id
+and idiom.idi_id = 2) AS idi_nombre,
+(select  nivel.nidi_descripcion 
+FROM db_inscripcion.estudiante_idiomas  as idiom 
+Left Join db_asgard.idioma  as langu on langu.idi_id = idiom.idi_id
+left Join db_general.nivel_idioma as nivel on nivel.nidi_id = idiom.nidi_id
+where idiom.per_id =  ipos.per_id
+and idiom.idi_id = 2) AS nidi_descripcion,
  tdis.tdis_nombre,
  disc.ides_porcentaje,
 expd.ides_anio_docencia, 
@@ -709,10 +719,10 @@ ipos.ipos_ruta_doc_homologacion,
 ifnull(estud.est_categoria,'No definida') as categoria
 FROM db_inscripcion.inscripcion_posgrado as ipos
 Inner Join db_asgard.persona as per on per.per_id = ipos.per_id
-Inner Join db_asgard.pais as pais on pais.pai_id = per.per_nacionalidad
-Inner Join db_asgard.estado_civil as esta on esta.eciv_id = per.eciv_id
-Inner Join db_asgard.provincia as provi on provi.pro_id = per.pro_id_nacimiento
-Inner Join db_asgard.canton as canton on canton.can_id = per.can_id_nacimiento
+Left Join db_asgard.pais as pais on pais.pai_id = per.per_nacionalidad
+Left Join db_asgard.estado_civil as esta on esta.eciv_id = per.eciv_id
+Left Join db_asgard.provincia as provi on provi.pro_id = per.pro_id_nacimiento
+Left Join db_asgard.canton as canton on canton.can_id = per.can_id_nacimiento
 Inner Join db_inscripcion.estudiante_instruccion as acad on acad.per_id = ipos.per_id
 Inner Join db_inscripcion.informacion_laboral  as labo on labo.per_id = ipos.per_id
 left Join db_inscripcion.estudiante_idiomas  as idiom on idiom.per_id = ipos.per_id
@@ -720,30 +730,21 @@ left Join db_asgard.idioma  as langu on langu.idi_id = idiom.idi_id
 left Join db_general.nivel_idioma as nivel on nivel.nidi_id = idiom.nidi_id
 left Join db_inscripcion.info_discapacidad_est as disc on disc.per_id = ipos.per_id
 left Join db_asgard.tipo_discapacidad as tdis on tdis.tdis_id = disc.tdis_id
-Inner Join db_inscripcion.info_docencia_estudiante as expd on expd.per_id = ipos.per_id
-Inner Join db_inscripcion.info_estudiante_investigacion as iein on iein.per_id = ipos.per_id
-Inner join db_academico.estudiante as estud on per.per_id = estud.per_id
-Inner Join db_academico.unidad_academica as uaca on uaca.uaca_id = ipos.uaca_id
-Inner Join db_academico.estudio_academico as eaca on eaca.eaca_id = ipos.eaca_id
-Inner Join db_academico.modalidad_estudio_unidad as meun on meun.eaca_id = ipos.eaca_id -- 
-inner join  db_academico.malla_unidad_modalidad mumo on meun.meun_id = mumo.meun_id -- 
+ Left Join db_inscripcion.info_docencia_estudiante as expd on expd.per_id = ipos.per_id
+ Left Join db_inscripcion.info_estudiante_investigacion as iein on iein.per_id = ipos.per_id
+ Inner join db_academico.estudiante as estud on per.per_id = estud.per_id
+ Inner Join db_academico.unidad_academica as uaca on uaca.uaca_id = ipos.uaca_id
+ Inner Join db_academico.estudio_academico as eaca on eaca.eaca_id = ipos.eaca_id
 Inner Join db_academico.modalidad as moda on moda.mod_id = ipos.mod_id
 Inner Join db_asgard.persona_contacto as contac on contac.per_id = ipos.per_id
 Inner Join db_asgard.tipo_parentesco as parente on parente.tpar_id = contac.tpar_id
-Inner Join db_academico.malla_academico_estudiante as mallaes ON mallaes.per_id =  ipos.per_id
-Inner Join db_academico.malla_academica as mallagen ON mallagen.maca_id =  mallaes.maca_id
 WHERE 
-langu.idi_id = 2 AND
-ipos.uaca_id = meun.uaca_id AND
-ipos.mod_id = meun.mod_id AND
 ipos.per_id = :per_id AND
  ipos.ipos_estado = :estado and ipos.ipos_estado_logico = :estado and
 per.per_estado = :estado and per.per_estado_logico = :estado and
 uaca.uaca_estado = :estado and uaca.uaca_estado_logico = :estado and
 eaca.eaca_estado = :estado and eaca.eaca_estado_logico = :estado and
-moda.mod_estado = :estado and moda.mod_estado_logico = :estado and
-meun.meun_estado = :estado and meun.meun_estado_logico = :estado  and   
-mumo.mumo_estado = :estado and mumo.mumo_estado_logico = :estado  
+moda.mod_estado = :estado and moda.mod_estado_logico = :estado  
                ";
 
 

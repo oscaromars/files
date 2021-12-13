@@ -683,23 +683,23 @@ labo.ilab_cat_ocupacional,
  nivel.nidi_descripcion,
  (select  langu.idi_nombre 
 FROM db_inscripcion.estudiante_idiomas  as idiom 
-Left Join db_asgard.idioma  as langu on langu.idi_id = idiom.idi_id
+Left Join db_general.idioma  as langu on langu.idi_id = idiom.idi_id
 where idiom.per_id = ipos.per_id
 and idiom.idi_id = 1) AS idi1_nombre,
 (select  nivel.nidi_descripcion 
 FROM db_inscripcion.estudiante_idiomas  as idiom 
-Left Join db_asgard.idioma  as langu on langu.idi_id = idiom.idi_id
+Left Join db_general.idioma  as langu on langu.idi_id = idiom.idi_id
 left Join db_general.nivel_idioma as nivel on nivel.nidi_id = idiom.nidi_id
 where idiom.per_id =  ipos.per_id
 and idiom.idi_id = 1) AS nidi1_descripcion,
 (select  langu.idi_nombre 
 FROM db_inscripcion.estudiante_idiomas  as idiom 
-Left Join db_asgard.idioma  as langu on langu.idi_id = idiom.idi_id
+Left Join db_general.idioma  as langu on langu.idi_id = idiom.idi_id
 where idiom.per_id = ipos.per_id
 and idiom.idi_id = 2) AS idi_nombre,
 (select  nivel.nidi_descripcion 
 FROM db_inscripcion.estudiante_idiomas  as idiom 
-Left Join db_asgard.idioma  as langu on langu.idi_id = idiom.idi_id
+Left Join db_general.idioma  as langu on langu.idi_id = idiom.idi_id
 left Join db_general.nivel_idioma as nivel on nivel.nidi_id = idiom.nidi_id
 where idiom.per_id =  ipos.per_id
 and idiom.idi_id = 2) AS nidi_descripcion,
@@ -726,7 +726,7 @@ Left Join db_asgard.canton as canton on canton.can_id = per.can_id_nacimiento
 Inner Join db_inscripcion.estudiante_instruccion as acad on acad.per_id = ipos.per_id
 Inner Join db_inscripcion.informacion_laboral  as labo on labo.per_id = ipos.per_id
 left Join db_inscripcion.estudiante_idiomas  as idiom on idiom.per_id = ipos.per_id
-left Join db_asgard.idioma  as langu on langu.idi_id = idiom.idi_id
+left Join db_general.idioma  as langu on langu.idi_id = idiom.idi_id
 left Join db_general.nivel_idioma as nivel on nivel.nidi_id = idiom.nidi_id
 left Join db_inscripcion.info_discapacidad_est as disc on disc.per_id = ipos.per_id
 left Join db_asgard.tipo_discapacidad as tdis on tdis.tdis_id = disc.tdis_id

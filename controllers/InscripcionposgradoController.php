@@ -31,6 +31,7 @@ use app\modules\admision\models\MetodoIngreso;
 use Yii;
 use yii\base\Exception;
 use yii\helpers\ArrayHelper;
+use app\models\ExportFile;
 
 class InscripcionposgradoController extends \yii\web\Controller {
 

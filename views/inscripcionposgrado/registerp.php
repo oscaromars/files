@@ -247,7 +247,7 @@ completamente firmada y acompañada de todos los documentos solicitados.
         <p>
       <b>PERSONA POR CONTACTAR EN CASO DE EMERGENCIA:</b> &nbsp;<?php echo $persona_model['pcon_nombre'] ?><br><br>
      <b>TIPO DE PARENTESCO:</b>&nbsp;<?php echo $persona_model['tpar_nombre'] ?><br><br>
-   <b>TELÉFONO DE LA PERSONA A CONTACTAR EN CASO DE EMERGENCIA:</b>&nbsp;<?php echo $persona_model['pcon_telefono'] ?><br><br>
+   <b>TELÉFONO DE LA PERSONA A CONTACTAR EN CASO DE EMERGENCIA:</b>&nbsp;<?php echo $persona_model['pcon_celular'] ?><br><br>
 
 
   </p>
@@ -271,7 +271,7 @@ completamente firmada y acompañada de todos los documentos solicitados.
   <b> AÑO DE GRADUACIÓN:</b> &nbsp;<?php echo $persona_model['eins_aniogrado4tonivel'] ?><br><br>
   </p>
     </div>
-    <br>
+    <pagebreak />
     <div class="divCeldag bold titleDetalle " style="text-align: center">
     5. DATOS LABORALES 
 
@@ -286,7 +286,18 @@ completamente firmada y acompañada de todos los documentos solicitados.
    (provincia, cantón, parroquia, dirección exacta)<br><br>
     <b>AÑO DE INGRESO:</b> &nbsp;<?php echo $persona_model['ilab_anioingreso_emp'] ?><br><br>
     <b> CORREO ELECTRÓNICO:</b> &nbsp;<?php echo $persona_model['ilab_correo_emp'] ?><br><br>
-      <b> CATEGORÍA OCUPACIONAL:</b> &nbsp;<?php echo $persona_model['ilab_cat_ocupacional'] ?><br><br>
+      <b> CATEGORÍA OCUPACIONAL:</b> &nbsp;<?php 
+
+    if ($persona_model['ilab_cat_ocupacional'] == 1 ){
+      echo "Empresa Pública"; 
+    }
+     if ($persona_model['ilab_cat_ocupacional'] == 2 ){
+      echo "Empresa Privada"; 
+    }
+
+
+
+  ?><br><br>
   </p>
     </div>
     <br>
@@ -296,12 +307,30 @@ completamente firmada y acompañada de todos los documentos solicitados.
 
     </div>
     <br><br>
-<div  style="text-justify: auto">
-        <p>
-      <b>IDIOMA:</b> &nbsp;<?php echo $persona_model['idi_nombre'] ?><br><br>
-      <b>NIVEL:</b> &nbsp;<?php echo $persona_model['nidi_descripcion'] ?><br><br> 
-  </p>
-    </div>
+ <table class="abnormal">
+        <tbody>
+<tr>
+              <td class="marcoCel"> 
+  <b>IDIOMA:</b> &nbsp;<?php echo $persona_model['idi1_nombre'] ?><br><br>
+              </td>
+                <td class="marcoCel"> 
+<b>IDIOMA:</b> &nbsp;<?php echo $persona_model['idi_nombre'] ?><br><br>
+                </td>
+            </tr>
+                  
+<tr>
+              <td class="marcoCel"> 
+       <b>NIVEL:</b> &nbsp;<?php echo $persona_model['nidi1_descripcion'] ?><br><br> 
+             </td>
+                <td class="marcoCel"> 
+     <b>NIVEL:</b> &nbsp;<?php echo $persona_model['nidi_descripcion'] ?><br><br> 
+                </td>
+            </tr>
+
+
+        </tbody>
+    </table>
+
     <br>
 
  <div class="divCeldag bold titleDetalle " style="text-align: center">
@@ -312,22 +341,24 @@ completamente firmada y acompañada de todos los documentos solicitados.
 <br><br>
 <div  style="text-justify: auto">
         <p>
-      <b>DISCAPACIDAD:</b> &nbsp;<?php echo $persona_model['ipdi_discapacidad'] ?><br><br>
+      <b>DISCAPACIDAD</b> &nbsp;<?php echo $persona_model['ipdi_discapacidad'] ?><br><br>
        <b>TIPO DE DISCAPACIDAD:</b> &nbsp;<?php echo $persona_model['tdis_nombre'] ?><br><br>
-      <b>PORCENTAJE DE DISCAPACIDAD:</b> &nbsp;<?php echo $persona_model['ipdi_porcentaje'] ?><br><br>
+      <b>PORCENTAJE DE DISCAPACIDAD:</b> &nbsp;<?php echo $persona_model['ides_porcentaje'].'%'; ?><br><br>
         <p class="blue" style='text-align:left'>__________________________________</p>
 <br>
      <b>DOCENCIA</b> &nbsp;<br><br>
-   <b>AÑOS DE DOCENCIA:</b> &nbsp;<?php echo $persona_model['ides_anio_docencia'] ?><br><br>
+   <b>AÑOS DE DOCENCIA:</b> &nbsp;<?php echo $persona_model['ides_anio_docencia'].' años';  ?><br><br>
     <b>ÁREA DE DOCENCIA:</b> &nbsp;<?php echo $persona_model['ides_area_docencia'] ?><br><br>
       <p class="blue" style='text-align:left'>__________________________________</p>
 <br>
   <b> INVESTIGACIÓN</b> &nbsp;<br><br>
-    <b>NÚMERO DE ÁRTICULOS PUBLICADOS:</b> &nbsp;<?php echo $persona_model['iein_articulos_investigacion'] ?><br><br>
+    <b>NÚMERO DE ÁRTICULOS PUBLICADOS:</b> &nbsp;<?php echo $persona_model['iein_articulos_investigacion'].' artículos';  ?><br><br>
       <b>ÁREA DE INVESTIGACIÓN:</b> &nbsp;<?php echo $persona_model['iein_area_investigacion'] ?><br><br>
   </p>
     </div>
     <br>
+
+
 
 <div class="divCeldag bold titleDetalle " style="text-align: center">
 
@@ -345,7 +376,7 @@ completamente firmada y acompañada de todos los documentos solicitados.
         <tbody>
 <tr>
               <td class="marcoCel"><?php 
-If ($persona_model['igra_financiamiento'] == 1)
+If ($persona_model['ipos_tipo_financiamiento'] == 'Crédito Directo')
 { 
 echo "<input type='checkbox' style='width:140%; height:140%' name='f'  checked='checked'  value='1' />" ;
 }else
@@ -357,7 +388,7 @@ echo "<input type='checkbox' name='f'  value='1' />" ;
             </tr>
                   <tr>
                 <td class="marcoCel"><?php 
-If ($persona_model['igra_financiamiento'] == 2)
+If ($persona_model['ipos_tipo_financiamiento'] == 'Crédito Bancario')
 { 
 echo "<input type='checkbox' style='width:140%; height:140%' name='f'  checked='checked'  value='2' />" ;
 }else
@@ -369,7 +400,7 @@ echo "<input type='checkbox' name='f'  value='1' />" ;
             </tr>
  <tr>
                 <td class="marcoCel"><?php 
-If ($persona_model['igra_financiamiento'] == 3)
+If ($persona_model['ipos_tipo_financiamiento'] == 'Pago al Contado')
 { 
 echo "<input type='checkbox' style='width:140%; height:140%' name='f'  checked='checked'  value='3' />" ;
 }else
@@ -383,6 +414,8 @@ echo "<input type='checkbox' name='f'  value='1' />" ;
         </tbody>
     </table>
 <br>
+
+
 <div style="text-align: center;background-color:#cccccc;height:32px;"><br>
 <b>9. DOCUMENTACIÓN (este punto corresponde al área de admisiones) NO LLENAR </b>
 </div>
@@ -390,21 +423,21 @@ echo "<input type='checkbox' name='f'  value='1' />" ;
 <table style="width:100%" class="divTabla">
         <tbody>
             <tr>
-                <td class="divCelda bold titleDetalle  ">
+                <td class=" bold titleDetalle  ">
                     <span>Documentos Básicos</span>
                 </td>
-                 <td class="divCelda bold titleDetalle">
-                    <span>Digital</span> </td>
-                <td class="divCelda bold titleDetalle">
+                 <td class=" bold titleDetalle">
+                <span>Digital</span> </td>
+                <td class=" bold titleDetalle">
                     <span>Si</span>
                 </td>
-                <td class="divCelda bold titleDetalle">
+                <td class=" bold titleDetalle">
                     <span>No</span>
                 </td>
-                <td class="divCelda bold titleDetalle">
+                 <td class=" bold titleDetalle"  style="width:30%;">
                     <span>Observación</span>
                 </td>
-            </tr>
+            </tr><br><br>
                 <tr class="fila">
                     <td class="marcoCel">Copia de cédula o pasaporte a color</td>
                     <td class="marcoCel">
@@ -524,21 +557,21 @@ echo "<input type='checkbox' name='f'  value='1' />" ;
     <table style="width:100%" class="divTabla">
         <tbody>
             <tr>
-                <td class="divCelda bold titleDetalle  ">
+                <td class=" bold titleDetalle  ">
                     <span>Documentos adicionales por homologación</span>
                 </td>
-                 <td class="divCelda bold titleDetalle">
+                 <td class=" bold titleDetalle">
                     <span>Digital</span> </td>
-                <td class="divCelda bold titleDetalle">
+                <td class=" bold titleDetalle">
                     <span>Si</span>
                 </td>
-                <td class="divCelda bold titleDetalle">
+                <td class=" bold titleDetalle">
                     <span>No</span>
                 </td>
-                <td class="divCelda bold titleDetalle">
+                 <td class=" bold titleDetalle"  style="width:30%">
                     <span>Observación</span>
                 </td>
-            </tr>
+            </tr><br><br>
                 <tr class="fila">
                     <td class="marcoCel">Récord académico</td>
                      <td class="marcoCel">

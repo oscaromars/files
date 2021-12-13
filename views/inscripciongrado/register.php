@@ -520,7 +520,7 @@ Guayaquil. Por favor, lea el siguiente acuerdo con detenimiento pues, constituye
          <tbody>
             <tr>
               <td class="marcoCel"><?php 
-If ($persona_model['igra_financiamiento'] == 1)
+$fieldvalue= 1; If($fieldvalue==1)
 { 
 echo "<input type='checkbox' style='width:140%; height:140%' name='f'  checked='checked'  value='1' />" ;
 }else
@@ -533,7 +533,7 @@ fecha máxima al quinto día hábil de haber realizado la inscripción, bajo las
             </tr>
             <tr>
                 <td class="marcoCel"><?php 
-If ($persona_model['igra_financiamiento'] == 2)
+$fieldvalue= 1; If($fieldvalue==1)
 { 
 echo "<input type='checkbox' style='width:140%; height:140%' name='f'  checked='checked'  value='1' />" ;
 }else
@@ -546,20 +546,14 @@ concepto.</td>
             </tr>
  <tr>
                 <td class="marcoCel"><?php 
-If ($persona_model['igra_financiamiento'] == 3)
+$fieldvalue= 1; If($fieldvalue==1)
 { 
 echo "<input type='checkbox' style='width:140%; height:140%' name='f'  checked='checked'  value='1' />" ;
 }else
 {
 echo "<input type='checkbox' name='pcu'  value='1' />" ;
 }
-?>
-<?php 
-If ($persona_model['igra_financiamiento'] ==3)
-{ 
-echo $persona_model['igra_institucion_beca'] ;
-} ?>
-    
+?>   
 </td>
                 <td class="marcoCel"><b>Sobre la devolución de documentos:</b> en caso de que la documentación entregada sean documentos originales, podré solicitar la
 devolución de estos en un plazo máximo de 6 meses, a partir de la fecha de entrega de los documentos.</td>
@@ -590,7 +584,7 @@ devolución de estos en un plazo máximo de 6 meses, a partir de la fecha de ent
         <tbody>
             <tr>
               <td class="marcoCel"><?php 
-If($fieldvalue==1)
+$fieldvalue= 1; If($fieldvalue==1)
 { 
 echo "<input type='checkbox' style='width:140%; height:140%' name='f'  checked='checked'  value='1' />" ;
 }else
@@ -605,7 +599,7 @@ Universidad y sus centros de cobro autorizados.</td>
             </tr>
             <tr>
                 <td class="marcoCel"><?php 
-If($fieldvalue==1)
+$fieldvalue= 1; If($fieldvalue==1)
 { 
 echo "<input type='checkbox' style='width:140%; height:140%' name='f'  checked='checked'  value='1' />" ;
 }else
@@ -620,7 +614,7 @@ bloque o semestre.</td>
             </tr>
  <tr>
                 <td class="marcoCel"><?php 
-If($fieldvalue==1)
+$fieldvalue= 1; If($fieldvalue==1)
 { 
 echo "<input type='checkbox' style='width:140%; height:140%' name='f'  checked='checked'  value='1' />" ;
 }else

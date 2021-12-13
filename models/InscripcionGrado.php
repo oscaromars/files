@@ -553,6 +553,7 @@ class InscripcionGrado extends \yii\db\ActiveRecord
        SELECT distinct
 max(maca.maca_id) as mallacorresp, --
 maca.maca_codigo as codigo, --
+(select maca_nombre from db_academico.malla_academica where maca_id =
 (SELECT max(maca.maca_id) FROM db_academico.modalidad_estudio_unidad meun
 inner join  db_academico.malla_unidad_modalidad mumo on meun.meun_id = mumo.meun_id
 inner join db_academico.malla_academica maca on maca.maca_id = mumo.maca_id

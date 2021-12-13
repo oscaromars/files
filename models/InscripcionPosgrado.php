@@ -640,7 +640,7 @@ class InscripcionPosgrado extends \yii\db\ActiveRecord
         $estado = 1;
         \app\models\Utilities::putMessageLogFile('entro con per_id : ' .$per_id);
         $sql = "
-        SELECT distinct
+SELECT distinct
  ipos.ipos_fecha_creacion as registro,
 eaca.eaca_nombre as programa,
 moda.mod_nombre as modalidad,
@@ -653,7 +653,7 @@ pais.pai_nombre,
 per.per_fecha_nacimiento,
 per.per_nacionalidad,
 esta.eciv_nombre,
-provi.pro_nombre,
+ provi.pro_nombre,
 canton.can_nombre,
  ipos.ipos_ruta_doc_foto,
 ifnull(CONCAT(ifnull(per.per_domicilio_sector,''), ' ', ifnull(per.per_domicilio_cpri,''),' ',
@@ -665,7 +665,7 @@ per_domicilio_telefono,
 per_correo,
 contac.pcon_nombre, 
 parente.tpar_nombre, 
-contac.pcon_telefono,
+contac.pcon_celular,
 acad.eins_titulo3ernivel,
 acad.eins_institucion3ernivel,
 acad.eins_aniogrado3ernivel,
@@ -675,15 +675,26 @@ acad.eins_aniogrado4tonivel,
 labo.ilab_empresa, 
 labo.ilab_cargo,
 labo.ilab_telefono_emp,
-concat( labo.ilab_prov_emp,' - ',labo.ilab_ciu_emp,' ',labo.ilab_direccion_emp, ' (parroquia ',labo.ilab_parroquia,' )') as dirempresa,
+concat( labo.ilab_direccion_emp, ' (parroquia ',labo.ilab_parroquia,' )') as dirempresa,
 labo.ilab_anioingreso_emp,
 labo.ilab_correo_emp,
 labo.ilab_cat_ocupacional,
-langu.idi_nombre,
-nivel.nidi_descripcion,
-disc.ipdi_discapacidad,
-tdis.tdis_nombre,
-disc.ipdi_porcentaje,
+ langu.idi_nombre,
+ nivel.nidi_descripcion,
+ (select  langu.idi_nombre 
+FROM db_inscripcion.estudiante_idiomas  as idiom 
+Left Join db_asgard.idioma  as langu on langu.idi_id = idiom.idi_id
+where idiom.per_id = ipos.per_id
+and idiom.idi_id = 1) AS idi1_nombre,
+(select  nivel.nidi_descripcion 
+FROM db_inscripcion.estudiante_idiomas  as idiom 
+Left Join db_asgard.idioma  as langu on langu.idi_id = idiom.idi_id
+left Join db_general.nivel_idioma as nivel on nivel.nidi_id = idiom.nidi_id
+where idiom.per_id =  ipos.per_id
+and idiom.idi_id = 1) AS nidi1_descripcion,
+-- disc.ipdi_discapacidad,
+ tdis.tdis_nombre,
+ disc.ides_porcentaje,
 expd.ides_anio_docencia, 
 expd.ides_area_docencia,
 iein.iein_articulos_investigacion, 
@@ -704,11 +715,11 @@ Inner Join db_asgard.provincia as provi on provi.pro_id = per.pro_id_nacimiento
 Inner Join db_asgard.canton as canton on canton.can_id = per.can_id_nacimiento
 Inner Join db_inscripcion.estudiante_instruccion as acad on acad.per_id = ipos.per_id
 Inner Join db_inscripcion.informacion_laboral  as labo on labo.per_id = ipos.per_id
-Inner Join db_inscripcion.estudiante_idiomas  as idiom on idiom.per_id = ipos.per_id
-Inner Join db_asgard.idioma  as langu on langu.idi_id = idiom.idi_id
-Inner Join db_general.nivel_idioma as nivel on nivel.nidi_id = idiom.nidi_id
-Inner Join db_general.info_per_discapacidad as disc on disc.per_id = ipos.per_id
-Inner Join db_asgard.tipo_discapacidad as tdis on tdis.tdis_id = disc.tdis_id
+left Join db_inscripcion.estudiante_idiomas  as idiom on idiom.per_id = ipos.per_id
+left Join db_asgard.idioma  as langu on langu.idi_id = idiom.idi_id
+left Join db_general.nivel_idioma as nivel on nivel.nidi_id = idiom.nidi_id
+left Join db_inscripcion.info_discapacidad_est as disc on disc.per_id = ipos.per_id
+left Join db_asgard.tipo_discapacidad as tdis on tdis.tdis_id = disc.tdis_id
 Inner Join db_inscripcion.info_docencia_estudiante as expd on expd.per_id = ipos.per_id
 Inner Join db_inscripcion.info_estudiante_investigacion as iein on iein.per_id = ipos.per_id
 Inner join db_academico.estudiante as estud on per.per_id = estud.per_id
@@ -722,6 +733,7 @@ Inner Join db_asgard.tipo_parentesco as parente on parente.tpar_id = contac.tpar
 Inner Join db_academico.malla_academico_estudiante as mallaes ON mallaes.per_id =  ipos.per_id
 Inner Join db_academico.malla_academica as mallagen ON mallagen.maca_id =  mallaes.maca_id
 WHERE 
+langu.idi_id = 2 AND
 ipos.uaca_id = meun.uaca_id AND
 ipos.mod_id = meun.mod_id AND
 ipos.per_id = :per_id AND

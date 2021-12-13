@@ -369,7 +369,7 @@ class InscripciongradoController extends \yii\web\Controller {
                         $inscripciongrado = $mod_inscripciongrado->updateDataInscripciongrado($cone, $per_id, $uaca_id , $mod_id , $eaca_id, $paca_id, $per_dni, $tfinanciamiento, $instituto_beca, $igra_ruta_doc_documento, $igra_ruta_doc_titulo, $igra_ruta_doc_dni, $igra_ruta_doc_certvota, $igra_ruta_doc_foto, $igra_ruta_doc_comprobantepago, $igra_ruta_doc_record, $igra_ruta_doc_certificado, $igra_ruta_doc_syllabus, $igra_ruta_doc_homologacion);
                         $exito=1;
                     }else{ // caso contrario crear
-                        $resul = $model->insertarDataInscripciongrado($per_id, $unidad, $carrera, $modalidad, $periodo, $per_dni, $data);
+                        $resul = $model->insertarDataInscripciongrado($per_id, $uaca_id, $eaca_id, $mod_id, $paca_id, $per_dni, $data);
                     }
                         //consultar persona contacto
                         $insc_personacont = new PersonaContacto();

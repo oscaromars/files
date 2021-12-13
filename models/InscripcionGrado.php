@@ -235,6 +235,7 @@ class InscripcionGrado extends \yii\db\ActiveRecord
         $command->bindParam(":eaca_id", $carrera, \PDO::PARAM_INT);
         $command->bindParam(":mod_id", $modalidad, \PDO::PARAM_INT);
         $command->bindParam(":paca_id", $periodo, \PDO::PARAM_INT);
+        $command->bindParam(":per_dni", $per_dni, \PDO::PARAM_STR);
         $command->bindParam(":igra_metodo_ingreso", $met_ing, \PDO::PARAM_INT);
         $command->bindParam(":igra_financiamiento", $igra_financiamiento, \PDO::PARAM_INT);
         $command->bindParam(":igra_institucion_beca", $igra_institucion_beca, \PDO::PARAM_STR);
@@ -272,11 +273,11 @@ class InscripcionGrado extends \yii\db\ActiveRecord
         }
 
         if(!empty($carrera)){
-            $imagenes .= "eaca_id=:eaca_id,";
+            $academico .= "eaca_id=:eaca_id,";
         }
 
         if(!empty($periodo)){
-            $imagenes .= "paca_id=:paca_id,";
+            $academico .= "paca_id=:paca_id,";
         }
 
         if(!empty($igra_ruta_documento)){
@@ -316,6 +317,7 @@ class InscripcionGrado extends \yii\db\ActiveRecord
                         igra_financiamiento=:igra_financiamiento,
                         igra_institucion_beca=:igra_institucion_beca,
                         $imagenes
+                        $academico
                         igra_fecha_modificacion=:igra_fecha_modificacion
                         WHERE per_id =:per_id");
             //$command->bindParam(":igra_id", $igra_id, \PDO::PARAM_INT);

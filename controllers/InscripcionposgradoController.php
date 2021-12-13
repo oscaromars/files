@@ -98,12 +98,11 @@ class InscripcionposgradoController extends \yii\web\Controller {
         $arr_unidad = $mod_unidad->consultarUnidadAcademicasEmpresa(1);
         $arr_programa = $mod_programa->consultarCarreraxunidad(2);
         $arr_modalidad = $mod_programa->consultarmodalidadxcarrera($arr_programa[0]["id"]);
-
         $arr_ciudad_nac= Canton::find()->select("can_id AS id, can_nombre AS value")->where(["can_estado_logico" => "1", "can_estado" => "1"])->asArray()->all();
         $arr_nacionalidad = Pais::find()->select("pai_id AS id, pai_nacionalidad AS value")->where(["pai_estado_logico" => "1", "pai_estado" => "1"])->asArray()->all();
         $arr_estado_civil = EstadoCivil::find()->select("eciv_id AS id, eciv_nombre AS value")->where(["eciv_estado_logico" => "1", "eciv_estado" => "1"])->asArray()->all();
         $arr_pais = Pais::find()->select("pai_id AS id, pai_nombre AS value")->where(["pai_estado_logico" => "1", "pai_estado" => "1"])->asArray()->all();
-        $arr_provincia = Provincia::provinciaXPais($arr_nacionalidad[0]["id"]);
+        $arr_provincia = Provincia::provinciaXPais($arr_pais[0]["id"]);
         $arr_ciudad= Canton::cantonXProvincia($arr_provincia[0]["id"]);
         $arr_idioma= Idioma::find()->select("idi_id AS id, idi_nombre AS value")->where(["idi_estado_logico" => "1", "idi_estado" => "1"])->asArray()->all();
         $arr_nivelidioma= NivelIdioma::find()->select("nidi_id AS id, nidi_descripcion AS value")->where(["nidi_estado_logico" => "1", "nidi_estado" => "1"])->asArray()->all();
@@ -719,7 +718,8 @@ class InscripcionposgradoController extends \yii\web\Controller {
              * Inf. Personal
              */
             $contacto_model = PersonaContacto::findOne(['per_id' => $persona_model->per_id]); // obtiene el pcon_id con el per_id
-            $arr_ciudad_nac = Canton::findAll(["pro_id" => $persona_model->can_id_nacimiento, "can_estado" => 1, "can_estado_logico" => 1]);
+            $arr_ciudad_nac= Canton::find()->select("can_id AS id, can_nombre AS value")->where(["can_estado_logico" => "1", "can_estado" => "1"])->asArray()->all();
+            //$arr_ciudad_nac = Canton::findAll(["pro_id" => $persona_model->can_id_nacimiento, "can_estado" => 1, "can_estado_logico" => 1]);
             $arr_estado_civil = EstadoCivil::find()->select("eciv_id AS id, eciv_nombre AS value")->where(["eciv_estado_logico" => "1", "eciv_estado" => "1"])->asArray()->all();
             $arr_nacionalidad = Pais::find()->select("pai_id AS id, pai_nacionalidad AS value")->where(["pai_estado_logico" => "1", "pai_estado" => "1"])->asArray()->all();
             $arr_pais = Pais::findAll(["pai_estado" => 1, "pai_estado_logico" => 1]);
@@ -728,7 +728,8 @@ class InscripcionposgradoController extends \yii\web\Controller {
             $arr_tipparentesco = TipoParentesco::find()->select("tpar_id AS id, tpar_nombre AS value")->where(["tpar_estado_logico" => "1", "tpar_estado" => "1"])->asArray()->all();
 
             $ViewFormTab1 = $this->renderPartial('ViewFormTab1', [
-                'arr_ciudad_nac' => (empty(ArrayHelper::map($arr_ciudad_nac, "can_id", "can_nombre"))) ? array(Yii::t("canton", "Seleccionar")) : (ArrayHelper::map($arr_ciudad_nac, "can_id", "can_nombre")),
+                'arr_ciudad_nac' => ArrayHelper::map($arr_ciudad_nac, "id", "value"),
+                //'arr_ciudad_nac' => (empty(ArrayHelper::map($arr_ciudad_nac, "can_id", "can_nombre"))) ? array(Yii::t("canton", "Seleccionar")) : (ArrayHelper::map($arr_ciudad_nac, "can_id", "can_nombre")),
                 'arr_estado_civil' => ArrayHelper::map($arr_estado_civil, "id", "value"),
                 'persona_model' => $persona_model,
                 'arr_nacionalidad' => ArrayHelper::map($arr_nacionalidad, "id", "value"),
@@ -908,7 +909,6 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 }
             }
              }
-           
         }
 
 
@@ -959,7 +959,8 @@ class InscripcionposgradoController extends \yii\web\Controller {
              * Inf. Personal
              */
             $contacto_model = PersonaContacto::findOne(['per_id' => $persona_model->per_id]); // obtiene el pcon_id con el per_id
-            $arr_ciudad_nac = Canton::findAll(["pro_id" => $persona_model->can_id_nacimiento, "can_estado" => 1, "can_estado_logico" => 1]);
+            $arr_ciudad_nac= Canton::find()->select("can_id AS id, can_nombre AS value")->where(["can_estado_logico" => "1", "can_estado" => "1"])->asArray()->all();
+            // $arr_ciudad_nac = Canton::findAll(["pro_id" => $persona_model->can_id_nacimiento, "can_estado" => 1, "can_estado_logico" => 1]);
             $arr_estado_civil = EstadoCivil::find()->select("eciv_id AS id, eciv_nombre AS value")->where(["eciv_estado_logico" => "1", "eciv_estado" => "1"])->asArray()->all();
             $arr_nacionalidad = Pais::find()->select("pai_id AS id, pai_nacionalidad AS value")->where(["pai_estado_logico" => "1", "pai_estado" => "1"])->asArray()->all();
             $arr_pais = Pais::findAll(["pai_estado" => 1, "pai_estado_logico" => 1]);
@@ -968,7 +969,8 @@ class InscripcionposgradoController extends \yii\web\Controller {
             $arr_tipparentesco = TipoParentesco::find()->select("tpar_id AS id, tpar_nombre AS value")->where(["tpar_estado_logico" => "1", "tpar_estado" => "1"])->asArray()->all();
 
             $EditFormTab1 = $this->renderPartial('EditFormTab1', [
-                'arr_ciudad_nac' => (empty(ArrayHelper::map($arr_ciudad_nac, "can_id", "can_nombre"))) ? array(Yii::t("canton", "Seleccionar")) : (ArrayHelper::map($arr_ciudad_nac, "can_id", "can_nombre")),
+                'arr_ciudad_nac' => ArrayHelper::map($arr_ciudad_nac, "id", "value"),
+                //'arr_ciudad_nac' => (empty(ArrayHelper::map($arr_ciudad_nac, "can_id", "can_nombre"))) ? array(Yii::t("canton", "Seleccionar")) : (ArrayHelper::map($arr_ciudad_nac, "can_id", "can_nombre")),
                 "arr_estado_civil" => ArrayHelper::map($arr_estado_civil, "id", "value"),
                 "arr_nacionalidad" => ArrayHelper::map($arr_nacionalidad, "id", "value"),
                 'arr_pais' => (empty(ArrayHelper::map($arr_pais, "pai_id", "pai_nombre"))) ? array(Yii::t("pais", "Seleccionar")) : (ArrayHelper::map($arr_pais, "pai_id", "pai_nombre")),

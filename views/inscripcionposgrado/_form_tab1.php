@@ -6,7 +6,8 @@ use kartik\file\FileInput;
 use kartik\date\DatePicker;
 use yii\helpers\Url;
 use yii\web\Session;
-
+use kartik\select2\Select2;
+use app\widgets\PbSearchBox\PbSearchBox;
 session_start();
 if (!empty($per_cedula)) {
     $tipodoc = "CED";
@@ -136,7 +137,20 @@ if (!empty($per_cedula)) {
             <div class="form-group">
                 <label for="cmb_ciu_nac" class="col-sm-3 control-label"><?= Yii::t("formulario", "Lugar de Nacimiento") ?> <span class="text-danger">*</span> </label>
                 <div class="col-sm-7">
-                    <?= Html::dropDownList("cmb_ciu_nac", $can_id_nacimiento, $arr_ciudad_nac, ["class" => "form-control can_combo", "id" => "cmb_ciu_nac"]) ?>
+                    <!-- = Html::dropDownList("cmb_ciu_nac", $can_id_nacimiento, $arr_ciudad_nac, ["class" => "form-control can_combo", "id" => "cmb_ciu_nac"]) ?>-->
+                    <?php
+                        echo Select2::widget([
+                        'name' => 'cmb_ciu_nac',
+                        'id' => 'cmb_ciu_nac',
+                        'value' => '0', // initial value
+                        'data' => $arr_ciudad_nac,
+                        'options' => ['placeholder' => 'Seleccionar'],
+                        'pluginOptions' => [
+                            'tags' => true,
+                            'tokenSeparators' => [',', ' '],
+                            'maximumInputLength' => 50
+                        ],
+                    ]); ?>
                 </div>
             </div>
         </div>

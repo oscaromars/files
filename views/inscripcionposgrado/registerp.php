@@ -310,21 +310,29 @@ completamente firmada y acompañada de todos los documentos solicitados.
  <table class="abnormal">
         <tbody>
 <tr>
+        <?php if (isset($persona_model['idi1_nombre'])) { ?>
               <td class="marcoCel"> 
   <b>IDIOMA:</b> &nbsp;<?php echo $persona_model['idi1_nombre'] ?><br><br>
               </td>
+               <?php } ?>   
+      <?php if (isset($persona_model['idi_nombre'])) { ?>
                 <td class="marcoCel"> 
 <b>IDIOMA:</b> &nbsp;<?php echo $persona_model['idi_nombre'] ?><br><br>
                 </td>
+                  <?php } ?>  
             </tr>
                   
 <tr>
+        <?php if (isset($persona_model['idi1_nombre'])) { ?>
               <td class="marcoCel"> 
        <b>NIVEL:</b> &nbsp;<?php echo $persona_model['nidi1_descripcion'] ?><br><br> 
              </td>
+              <?php } ?>   
+      <?php if (isset($persona_model['idi_nombre'])) { ?>
                 <td class="marcoCel"> 
      <b>NIVEL:</b> &nbsp;<?php echo $persona_model['nidi_descripcion'] ?><br><br> 
                 </td>
+                  <?php } ?>  
             </tr>
 
 

@@ -255,7 +255,7 @@ class InscripcionGrado extends \yii\db\ActiveRecord
         return $con->getLastInsertID();
     }
 
-    public function updateDataInscripciongrado($con, $per_id, $unidad , $modalidad , $carrera, $periodo, $per_dni, $igra_financiamiento, $igra_institucion_beca, $igra_ruta_documento, $igra_ruta_doc_titulo, $igra_ruta_doc_dni, $igra_ruta_doc_certvota, $igra_ruta_doc_foto, $igra_ruta_doc_comprobantepago, $igra_ruta_doc_record, $igra_ruta_doc_certificado, $igra_ruta_doc_syllabus, $igra_ruta_doc_homologacion) {
+    public function updateDataInscripciongrado($con, $per_id, $unidad , $carrera, $modalidad , $periodo, $per_dni, $igra_financiamiento, $igra_institucion_beca, $igra_ruta_documento, $igra_ruta_doc_titulo, $igra_ruta_doc_dni, $igra_ruta_doc_certvota, $igra_ruta_doc_foto, $igra_ruta_doc_comprobantepago, $igra_ruta_doc_record, $igra_ruta_doc_certificado, $igra_ruta_doc_syllabus, $igra_ruta_doc_homologacion) {
         //\app\models\Utilities::putMessageLogFile('igra_ruta_doc_certvota:  '.$igra_ruta_doc_certvota);
         $imagenes = "";
         $fecha_modificacion = date(Yii::$app->params["dateTimeByDefault"]);

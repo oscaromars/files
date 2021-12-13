@@ -308,8 +308,8 @@ class InscripciongradoController extends \yii\web\Controller {
                 //Utilities::putMessageLogFile('cedula o pasaporte.. ' . $per_dni );
                 //datos academicos
                 $uaca_id = $data['unidad'];
-                $mod_id = $data['carrera'];
-                $eaca_id = $data['modalidad'];
+                $eaca_id = $data['carrera'];
+                $mod_id = $data['modalidad'];
                 $paca_id = $data['periodo'];
 
                 //datos personales
@@ -366,7 +366,7 @@ class InscripciongradoController extends \yii\web\Controller {
                         // modificar la tabla
                         $cone = \Yii::$app->db_inscripcion;
                         $mod_inscripciongrado = new InscripcionGrado();
-                        $inscripciongrado = $mod_inscripciongrado->updateDataInscripciongrado($cone, $per_id, $uaca_id , $mod_id , $eaca_id, $paca_id, $per_dni, $tfinanciamiento, $instituto_beca, $igra_ruta_doc_documento, $igra_ruta_doc_titulo, $igra_ruta_doc_dni, $igra_ruta_doc_certvota, $igra_ruta_doc_foto, $igra_ruta_doc_comprobantepago, $igra_ruta_doc_record, $igra_ruta_doc_certificado, $igra_ruta_doc_syllabus, $igra_ruta_doc_homologacion);
+                        $inscripciongrado = $mod_inscripciongrado->updateDataInscripciongrado($cone, $per_id, $uaca_id , $eaca_id, $mod_id , $paca_id, $per_dni, $tfinanciamiento, $instituto_beca, $igra_ruta_doc_documento, $igra_ruta_doc_titulo, $igra_ruta_doc_dni, $igra_ruta_doc_certvota, $igra_ruta_doc_foto, $igra_ruta_doc_comprobantepago, $igra_ruta_doc_record, $igra_ruta_doc_certificado, $igra_ruta_doc_syllabus, $igra_ruta_doc_homologacion);
                         $exito=1;
                     }else{ // caso contrario crear
                         $resul = $model->insertarDataInscripciongrado($per_id, $uaca_id, $eaca_id, $mod_id, $paca_id, $per_dni, $data);
@@ -985,8 +985,8 @@ class InscripciongradoController extends \yii\web\Controller {
                 }
                 //datos academicos
                 $uaca_id = null /*$data['unidad']*/;
-                $mod_id = null /*$data['carrera']*/;
-                $eaca_id = null /*$data['modalidad']*/;
+                $mod_id = null /*$data['modalidad']*/;
+                $eaca_id = null /*$data['carrera']*/;
                 $paca_id = null /*$data['periodo']*/;
 
                 //datos personales
@@ -1110,7 +1110,7 @@ class InscripciongradoController extends \yii\web\Controller {
 
                 $gradoinscripcion = $mod_inscripciongrado->consultarDatosInscripciongrado($per_id);
                 if($gradoinscripcion['existe_inscripcion'] == 1){
-                    $inscripciongrado = $mod_inscripciongrado->updateDataInscripciongrado($con, $per_id, $uaca_id , $mod_id , $eaca_id, $paca_id, $per_dni, $tfinanciamiento, $instituto_beca, $igra_ruta_doc_documento, $igra_ruta_doc_titulo, $igra_ruta_doc_dni, $igra_ruta_doc_certvota, $igra_ruta_doc_foto, $igra_ruta_doc_comprobantepago, $igra_ruta_doc_record, $igra_ruta_doc_certificado, $igra_ruta_doc_syllabus, $igra_ruta_doc_homologacion);
+                    $inscripciongrado = $mod_inscripciongrado->updateDataInscripciongrado($con, $per_id, $uaca_id , $eaca_id, $mod_id ,  $paca_id, $per_dni, $tfinanciamiento, $instituto_beca, $igra_ruta_doc_documento, $igra_ruta_doc_titulo, $igra_ruta_doc_dni, $igra_ruta_doc_certvota, $igra_ruta_doc_foto, $igra_ruta_doc_comprobantepago, $igra_ruta_doc_record, $igra_ruta_doc_certificado, $igra_ruta_doc_syllabus, $igra_ruta_doc_homologacion);
                 }
 
 

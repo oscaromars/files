@@ -289,9 +289,12 @@ class PeriodoAcademico extends \yii\db\ActiveRecord {
 	 * @param
 	 * @return
 	 */
-	public function consultarPeriodosActivos() {
+	public function consultarPeriodosActivos($futures=Null) {
 		$con = Yii::$app->db_academico;
 		$estado = 1;
+   if ($futures !=Null) { 
+  $futures= "paca.paca_fecha_inicio > now() AND";
+} 
 
 		$sql = "SELECT
                 paca.paca_id,
@@ -302,7 +305,7 @@ class PeriodoAcademico extends \yii\db\ActiveRecord {
                 FROM " . $con->dbname . ".semestre_academico AS saca
                 INNER JOIN " . $con->dbname . ".periodo_academico AS paca ON saca.saca_id = paca.saca_id
                 INNER JOIN " . $con->dbname . ".bloque_academico AS baca ON baca.baca_id = paca.baca_id
-                WHERE
+                WHERE $futures
                 paca.paca_activo = 'A' AND
                 paca.paca_estado = 1 AND
                 paca.paca_estado_logico = 1 AND

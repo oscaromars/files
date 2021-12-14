@@ -65,7 +65,7 @@ class InscripciongradoController extends \yii\web\Controller {
         $arr_unidad = $mod_unidad->consultarUnidadAcademicas();
         $arr_modalidad = $mod_modalidad->consultarModalidad($arr_unidad[0]['id'],  $emp_id);
         $arr_carrera = $modcanal->consultarCarreraModalidad($arr_unidad[0]['id'], $arr_modalidad[0]["id"]);
-        $arr_periodo = $mod_periodo->consultarPeriodosActivos();
+        $arr_periodo = $mod_periodo->consultarPeriodosActivos(1);
 
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
@@ -453,7 +453,7 @@ class InscripciongradoController extends \yii\web\Controller {
         $arr_unidad = $unidad_model->consultarUnidadAcademicas();
         $arr_carrera = $carrera_model->consultarCarreraxunidad($arr_unidad[0]['id']);
         $arr_modalidad = $carrera_model->consultarmodalidadxcarrera($arr_carrera[0]['id']);
-        $arr_periodo = $periodo_model->consultarPeriodosActivos();
+        $arr_periodo = $periodo_model->consultarPeriodosActivos(1);
         return $this->render('aspirantegrado_index', [
             "arr_unidad" => ArrayHelper::map($arr_unidad, "id", "name"),
             'arr_carrera' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']], $arr_carrera), 'id', 'name'),

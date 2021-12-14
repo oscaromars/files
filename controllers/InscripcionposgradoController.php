@@ -1014,6 +1014,9 @@ class InscripcionposgradoController extends \yii\web\Controller {
             $idiomas = new EstudianteIdiomas();
             $idioma_model = EstudianteIdiomas::findOne(['per_id' => $persona_model->per_id]);
             $idioma_modelf = EstudianteIdiomas::find()->where(['per_id' => $persona_model->per_id, 'idi_id' => 2])->all();
+             if ($idioma_modelf == Null) {
+            $idioma_modelf = EstudianteIdiomas::find()->where(['per_id' => $persona_model->per_id, 'idi_id' => 3])->all();
+            } 
             $model = $idioma_model->getAllestudianteidiomasGrid($idioma_model->per_id);
 
             $EditFormTab3 = $this->renderPartial('EditFormTab3', [

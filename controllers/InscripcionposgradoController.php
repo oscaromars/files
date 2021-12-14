@@ -524,7 +524,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
                     //Idioma Ingles
                     $mod_idiomas = new EstudianteIdiomas();
                     $idioma = $idioma1;
-                    if($idioma == 1){
+                    if($idioma == 1 && $idioma1 > 0){
                         $resp_existe_idioma = $mod_idiomas->consultarInfoIdiomasEst($per_id, 1);
                         if ($resp_existe_idioma['existe_idioma'] == 0) {
                             $info_idioma = $mod_idiomas->insertarInfoIdiomaEst($per_id, $idioma1, $nivel1, $noidioma);
@@ -533,7 +533,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
                         }
                     }
                     $idiomas = $idioma2;
-                    if($idiomas == 2){
+                    if($idiomas == 2 && $idioma2 > 0){
                         $resp_existe_idioma = $mod_idiomas->consultarInfoIdiomasEst($per_id, 2);
                         if ($resp_existe_idioma['existe_idioma'] == 0) {
                             $info_idioma = $mod_idiomas->insertarInfoIdiomaEst($per_id, $idioma2, $nivel2, $noidioma);
@@ -541,7 +541,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
                             $info_idioma = $mod_idiomas->modificarInfoIdiomaEst($per_id, $idioma2, $nivel2, $noidioma);
                         }
                     }
-                    if($idiomas == 3){
+                    if($idiomas == 3 && $idioma2 > 0){
                         $resp_existe_idioma = $mod_idiomas->consultarInfoIdiomasEst($per_id, 3);
                         if ($resp_existe_idioma['existe_idioma'] == 0) {
                             $info_idioma = $mod_idiomas->insertarInfoIdiomaEst($per_id, $idioma2, $otronivel, $otroidioma);
@@ -1018,8 +1018,10 @@ class InscripcionposgradoController extends \yii\web\Controller {
             $EditFormTab3 = $this->renderPartial('EditFormTab3', [
                 "arr_idioma" => ArrayHelper::map($arr_idioma, "id", "value"),
                 "arr_nivelidioma" => ArrayHelper::map($arr_nivelidioma, "id", "value"),
-                'idioma_model' => $idioma_model,
-                'model' => $model,
+                "idioma_model" => $idioma_model,
+                "arr_idioma2" => ArrayHelper::map(array_merge([["id" => "0", "value" => Yii::t("formulario", "Select")]], $arr_idioma), "id", "value"),
+                "arr_nivelidioma2" => ArrayHelper::map(array_merge([["id" => "0", "value" => Yii::t("formulario", "Select")]], $arr_nivelidioma), "id", "value"),
+                "model" => $model,
 
             ]);
             /**

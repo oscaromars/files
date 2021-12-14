@@ -219,7 +219,7 @@ use yii\helpers\Url;
         <div class="form-group" id="Dividiomas">
             <label for="cmb_nivelidioma2" class="col-sm-3 control-label"><?= Yii::t("formulario", "Nivel Idioma") ?></label>
             <div class="col-lg-7">
-                <?= Html::dropDownList("cmb_nivelidioma2", 0, $arr_nivelidioma, ["class" => "form-control", "id" => "cmb_nivelidioma2"]) ?>
+                <?= Html::dropDownList("cmb_nivelidioma2", 0, $arr_nivelidioma2, ["class" => "form-control", "id" => "cmb_nivelidioma2"]) ?>
             </div>
         </div>
     </div><br><br></br>

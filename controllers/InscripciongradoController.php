@@ -453,7 +453,7 @@ class InscripciongradoController extends \yii\web\Controller {
         $arr_unidad = $unidad_model->consultarUnidadAcademicas();
         $arr_carrera = $carrera_model->consultarCarreraxunidad($arr_unidad[0]['id']);
         $arr_modalidad = $carrera_model->consultarmodalidadxcarrera($arr_carrera[0]['id']);
-        $arr_periodo = $periodo_model->consultarPeriodosActivos(1);
+        $arr_periodo = $periodo_model->consultarPeriodosActivos();
         return $this->render('aspirantegrado_index', [
             "arr_unidad" => ArrayHelper::map($arr_unidad, "id", "name"),
             'arr_carrera' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']], $arr_carrera), 'id', 'name'),

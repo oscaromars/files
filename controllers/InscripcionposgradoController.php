@@ -1013,6 +1013,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
             $arr_nivelidioma= NivelIdioma::find()->select("nidi_id AS id, nidi_descripcion AS value")->where(["nidi_estado_logico" => "1", "nidi_estado" => "1"])->asArray()->all();
             $idiomas = new EstudianteIdiomas();
             $idioma_model = EstudianteIdiomas::findOne(['per_id' => $persona_model->per_id]);
+            $idioma_modelf = EstudianteIdiomas::find()->where(['per_id' => $persona_model->per_id, 'idi_id' => 2])->all();
             $model = $idioma_model->getAllestudianteidiomasGrid($idioma_model->per_id);
 
             $EditFormTab3 = $this->renderPartial('EditFormTab3', [
@@ -1021,6 +1022,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 "idioma_model" => $idioma_model,
                 "arr_idioma2" => ArrayHelper::map(array_merge([["id" => "0", "value" => Yii::t("formulario", "Select")]], $arr_idioma), "id", "value"),
                 "arr_nivelidioma2" => ArrayHelper::map(array_merge([["id" => "0", "value" => Yii::t("formulario", "Select")]], $arr_nivelidioma), "id", "value"),
+                'idioma_modelf' => $idioma_modelf,
                 "model" => $model,
 
             ]);

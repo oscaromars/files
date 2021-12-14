@@ -28,7 +28,7 @@ use app\models\Utilities;
             </div>
         </div>
     </div>
-
+  <?php   if ($idioma_modelf != Null) {  ?>
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
             <label for="cmb_idioma2" class="col-sm-3 control-label"><?= Yii::t("formulario", "Idioma 2") ?></label>
@@ -45,6 +45,8 @@ use app\models\Utilities;
             </div>
         </div>
     </div>
+      <?php  } ?>
+
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group" style="display: none;" id="Divotroidioma">
             <label for="txt_nombreidioma" class="col-sm-3 control-label"><?= Yii::t("formulario", "Nombre del Idioma") ?> <span class="text-danger">*</span></label>

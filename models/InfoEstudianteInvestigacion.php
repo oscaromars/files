@@ -110,32 +110,32 @@ class InfoEstudianteInvestigacion extends \yii\db\ActiveRecord
         $con = \Yii::$app->db_inscripcion;
         $iein_fecha_modificacion = date("Y-m-d H:i:s");
         $estado='1';
-        
+
         if ($trans !== null) {
             $trans = null; // si existe la transacción entonces no se crea una
         } else {
             $trans = $con->beginTransaction(); // si no existe la transacción entonces se crea una
         }
-        
+
         try {
             $comando = $con->createCommand
-                    ("UPDATE " . $con->dbname . ".info_estudiante_investigacion             
-                      SET 
-                        per_id =:per_id, 
-                        iein_articulos_investigacion =:iein_articulos_investigacion, 
+                    ("UPDATE " . $con->dbname . ".info_estudiante_investigacion
+                      SET
+                        per_id =:per_id,
+                        iein_articulos_investigacion =:iein_articulos_investigacion,
                         iein_area_investigacion =:iein_area_investigacion,
                         iein_fecha_modificacion =:iein_fecha_modificacion
-                      WHERE 
+                      WHERE
                         per_id = :per_id AND
                         iein_estado = :estado AND
                         iein_estado_logico = :estado");
             $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
             $comando->bindParam(":iein_articulos_investigacion", $articulos, \PDO::PARAM_STR);
-            $comando->bindParam(":iein_area_investigacion", $area_docencia, \PDO::PARAM_STR);
-            $comando->bindParam(":iein_fecha_modificacion", $area_investigacion, \PDO::PARAM_STR);
+            $comando->bindParam(":iein_area_investigacion", $area_investigacion, \PDO::PARAM_STR);
+            $comando->bindParam(":iein_fecha_modificacion", $iein_fecha_modificacion, \PDO::PARAM_STR);
             $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
             $response = $comando->execute();
-            
+
             if ($trans !== null)
                 $trans->commit();
             return $response;

@@ -414,7 +414,6 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                 ]);
                 ?>
             </div>
-        </div>
         <div class="col-md-3 col-sm-3 col-xs-3 col-lg-3">
             <div class="form-group">
                 <?php
@@ -425,6 +424,7 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
             </div>
         </div>
     </div>
+</div>
     <!-- <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12 doc_record1">
         <div class="form-group">
             <label for="txth_doc_record1" class="col-sm-3 col-md-3 col-xs-3 col-lg-3 control-label keyupmce"><?= Yii::t("formulario", "Récord Académico Actualizado") ?></label>

@@ -536,8 +536,8 @@ class InscripcionPosgrado extends \yii\db\ActiveRecord
             if ($arrFiltro['modalidad'] != "" && $arrFiltro['modalidad'] > 0) {
                 $str_search .= "ipos.mod_id = :modalidad AND ";
             }
-            if ($arrFiltro['año'] != "" && $arrFiltro['año'] > 0) {
-                $str_search .= "ipos.ipos_anio = :año AND ";
+            if ($arrFiltro['año'] != "" ) {
+                $str_search .= "ipos.ipos_anio = :anio AND ";
             }
         }
 
@@ -576,14 +576,14 @@ class InscripcionPosgrado extends \yii\db\ActiveRecord
                 $search_mod = $arrFiltro["modalidad"];
                 $comando->bindParam(":modalidad", $search_mod, \PDO::PARAM_INT);
             }
-            if ($arrFiltro['año'] != "" && $arrFiltro['año'] > 0) {
+            if ($arrFiltro['año'] != "") {
                 $search_año = $arrFiltro["año"];
-                $comando->bindParam(":año", $search_año, \PDO::PARAM_STR);
+                $comando->bindParam(":anio", $search_año, \PDO::PARAM_STR);
             }
         }
         $res = $comando->queryAll();
         $dataProvider = new ArrayDataProvider([
-            'key' => 'Ids',
+            'key' => 'per_id',
             'allModels' => $res,
             'pagination' => [
                 'pageSize' => Yii::$app->params["pageSize"],

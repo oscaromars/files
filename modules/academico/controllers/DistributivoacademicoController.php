@@ -122,7 +122,7 @@ class DistributivoacademicoController extends \app\components\CController {
 		$mod_asignatura = new Asignatura();
 		$mod_profesor = new Profesor();
 		$distributivo_model = new DistributivoAcademico();
-		$mod_periodoActual = new PeriodoAcademico();
+		$mod_periodoActual = new PeriodoAcademicoMetIngreso();
 		$mod_tipo_distributivo = new TipoDistributivo();
 		$arr_periodoActual = $mod_periodoActual->getPeriodoAcademicoActual();
 		$mod_horario = new DistributivoAcademicoHorario();
@@ -136,8 +136,8 @@ class DistributivoacademicoController extends \app\components\CController {
 				return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
 			}
 			if (isset($data["getperiodo"])) {
-				$mod_periodoActual = new PeriodoAcademico();
-				$periodo = $mod_periodoActual->getPeriodoAcademico();
+				// $mod_periodoActual = new PeriodoAcademico();
+				$periodo = $mod_periodoActual->consultarPeriodoAcademico();
 				$message = array("periodo" => $periodo);
 				return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
 			}
@@ -196,7 +196,7 @@ class DistributivoacademicoController extends \app\components\CController {
 
 				//$paralelos = $paralelo->getParalelosAsignatura($data["paca_id"],$data["mod_id"],$data["asig_id"]);
 				//$paralelos =$mod_horario->consultarParaleloHorario($data["hora_id"]);
-				$paralelos = $mod_paraleloprograma->getParalelosprograma($data["meun_id"]);
+				$paralelos = $mod_paraleloprograma->getParalelosprograma($data["maca_id"]);
 				$message = array("paralelo" => $paralelos);
 				return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
 			}
@@ -205,7 +205,7 @@ class DistributivoacademicoController extends \app\components\CController {
 		$arr_profesor = $mod_profesor->getProfesores();
 		$arr_unidad = $mod_unidad->consultarUnidadAcademicasEmpresa($emp_id);
 		$arr_modalidad = $mod_modalidad->consultarModalidad($arr_unidad[0]["id"], $emp_id);
-		$arr_periodo = $mod_periodoActual->getPeriodoAcademico();
+		$arr_periodo = $mod_periodoActual->consultarPeriodoAcademico();
 		$arr_jornada = $distributivo_model->getJornadasByUnidadAcad($arr_unidad[0]["id"], $arr_modalidad[0]["id"]);
 		$arr_asignatura = $mod_asignatura->getAsignatura_x_bloque_x_planif(0, 0);
 		$arr_horario = $distributivo_model->getHorariosByUnidadAcad($arr_unidad[0]["id"], $arr_modalidad[0]["id"], $arr_jornada[0]["id"]);

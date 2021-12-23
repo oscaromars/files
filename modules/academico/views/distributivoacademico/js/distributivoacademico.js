@@ -107,19 +107,13 @@ $('#cmb_periodo').change(function () {
     });
 
     $('#cmb_unidad_dis').change(function () {
-        console.log("entro por change");
         $('#cmb_paralelo').val('0');
         $('#cmb_horario').val('0');
         $('#cmb_jornada').val('0');
         $('#cmb_materia').val('0');
         
-        var link = "";
-        if ($('#txth_tipo').val() == 'new') {
-            link = $('#txth_base').val() + "/academico/distributivoacademico/new";
-        } else {
-            link = $('#txth_base').val() + "/academico/distributivoacademico/editcab";
-        }
-
+        var link = $('#txth_base').val() + "/academico/distributivoacademico/new";
+        
         switch ($('#cmb_unidad_dis').val()) {
             case "1":
                 if ($('#cmb_tipo_asignacion').val() != 2) {
@@ -146,20 +140,19 @@ $('#cmb_periodo').change(function () {
                 break;
 
         }
-        var arrParams = new Object();
-        arrParams.uaca_id = $(this).val();
-        if ($('#cmb_tipo_asignacion').val() != 1) {
-
+        //if ($('#cmb_tipo_asignacion').val() > 0) {
+            var arrParams = new Object();
+            arrParams.uaca_id = $(this).val();
             arrParams.getmodalidad = true;
             requestHttpAjax(link, arrParams, function (response) {
-                if (response.status == "OK") {
-                    data = response.message;
-                    setComboDataselect(data.modalidad, "cmb_modalidad", "Todos");
-                    var arrParams = new Object();
+            if (response.status == "OK") {
+                data = response.message;
+                 setComboDataselect(data.modalidad, "cmb_modalidad","Todos");
+                    /*var arrParams = new Object();
                     if (data.modalidad.length > 0) {
                         let mod_id = data.modalidad[0].id;
-                        arrParams.uaca_id = $('#cmb_unidad_dis').val();
                         console.log("change");
+                        arrParams.uaca_id = $('#cmb_unidad_dis').val();
                         arrParams.mod_id = mod_id;
                         arrParams.getjornada = true;
                         // requestHttpAjax(link, arrParams, function(response) {
@@ -181,14 +174,10 @@ $('#cmb_periodo').change(function () {
                         //       }
                         //     }
                         //   }, false);
-                    }//
+                    }//*/
                 }
-            }, false);
-        }
-
-
-
-
+            }, true);
+        //}
 
     });
 

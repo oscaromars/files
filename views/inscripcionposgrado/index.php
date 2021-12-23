@@ -68,9 +68,10 @@ $_SESSION['persona_ingresa'] = base64_decode($_GET['ids']);
                         'arr_categoria' => $arr_categoria,
                         'arr_idioma' => $arr_idioma,
                         'arr_nivelidioma' => $arr_nivelidioma,
+                        'arr_idioma2' => $arr_idioma2,
+                        'arr_nivelidioma2' => $arr_nivelidioma2,
                         //'arr_discapacidad' => $arr_discapacidad,
                         'arr_tip_discap' => $arr_tip_discap,
-
                         'graduacion' => $graduacion,
                         'tipo_discap_fam' => $arr_tip_discap_fam,
                         'tipparent_dis' => $arr_tipparent_dis,

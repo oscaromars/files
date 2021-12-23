@@ -31,6 +31,7 @@ use app\modules\admision\models\MetodoIngreso;
 use Yii;
 use yii\base\Exception;
 use yii\helpers\ArrayHelper;
+use app\models\ExportFile;
 
 class InscripcionposgradoController extends \yii\web\Controller {
 
@@ -98,12 +99,11 @@ class InscripcionposgradoController extends \yii\web\Controller {
         $arr_unidad = $mod_unidad->consultarUnidadAcademicasEmpresa(1);
         $arr_programa = $mod_programa->consultarCarreraxunidad(2);
         $arr_modalidad = $mod_programa->consultarmodalidadxcarrera($arr_programa[0]["id"]);
-
         $arr_ciudad_nac= Canton::find()->select("can_id AS id, can_nombre AS value")->where(["can_estado_logico" => "1", "can_estado" => "1"])->asArray()->all();
         $arr_nacionalidad = Pais::find()->select("pai_id AS id, pai_nacionalidad AS value")->where(["pai_estado_logico" => "1", "pai_estado" => "1"])->asArray()->all();
         $arr_estado_civil = EstadoCivil::find()->select("eciv_id AS id, eciv_nombre AS value")->where(["eciv_estado_logico" => "1", "eciv_estado" => "1"])->asArray()->all();
         $arr_pais = Pais::find()->select("pai_id AS id, pai_nombre AS value")->where(["pai_estado_logico" => "1", "pai_estado" => "1"])->asArray()->all();
-        $arr_provincia = Provincia::provinciaXPais($arr_nacionalidad[0]["id"]);
+        $arr_provincia = Provincia::provinciaXPais($arr_pais[0]["id"]);
         $arr_ciudad= Canton::cantonXProvincia($arr_provincia[0]["id"]);
         $arr_idioma= Idioma::find()->select("idi_id AS id, idi_nombre AS value")->where(["idi_estado_logico" => "1", "idi_estado" => "1"])->asArray()->all();
         $arr_nivelidioma= NivelIdioma::find()->select("nidi_id AS id, nidi_descripcion AS value")->where(["nidi_estado_logico" => "1", "nidi_estado" => "1"])->asArray()->all();
@@ -137,7 +137,9 @@ class InscripcionposgradoController extends \yii\web\Controller {
             "arr_prov_emp" => ArrayHelper::map($arr_prov_emp, "id", "value"),
             "arr_ciu_emp" => ArrayHelper::map($arr_ciu_emp, "id", "value"),
             "arr_idioma" => ArrayHelper::map($arr_idioma, "id", "value"),
+            "arr_idioma2" => ArrayHelper::map(array_merge([["id" => "0", "value" => Yii::t("formulario", "Select")]], $arr_idioma), "id", "value"),
             "arr_nivelidioma" => ArrayHelper::map($arr_nivelidioma, "id", "value"),
+            "arr_nivelidioma2" => ArrayHelper::map(array_merge([["id" => "0", "value" => Yii::t("formulario", "Select")]], $arr_nivelidioma), "id", "value"),
             "arr_tip_discap" => ArrayHelper::map($arr_tip_discap, "id", "value"),
             "arr_tipparentesco" => ArrayHelper::map($arr_tipparentesco, "id", "value"),
             "arr_metodos" => ArrayHelper::map($arr_metodos, "id", "name"),
@@ -169,7 +171,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 $files = $_FILES[key($_FILES)];
                 $arrIm = explode(".", basename($files['name']));
                 $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                if ($typeFile == 'pdf' || $typeFile == 'png' || $typeFile == 'jpg' || $typeFile == 'jpeg') {
+                if ($typeFile == 'pdf' /*|| $typeFile == 'png' || $typeFile == 'jpg' || $typeFile == 'jpeg'*/) {
                 $dirFileEnd = Yii::$app->params["documentFolder"] . "inscripcionposgrado/" . $data["name_file"] . "." . $typeFile;
                 $status = Utilities::moveUploadFile($files['tmp_name'], $dirFileEnd);
                     if ($status) {
@@ -522,7 +524,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
                     //Idioma Ingles
                     $mod_idiomas = new EstudianteIdiomas();
                     $idioma = $idioma1;
-                    if($idioma == 1){
+                    if($idioma == 1 && $idioma1 > 0){
                         $resp_existe_idioma = $mod_idiomas->consultarInfoIdiomasEst($per_id, 1);
                         if ($resp_existe_idioma['existe_idioma'] == 0) {
                             $info_idioma = $mod_idiomas->insertarInfoIdiomaEst($per_id, $idioma1, $nivel1, $noidioma);
@@ -531,7 +533,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
                         }
                     }
                     $idiomas = $idioma2;
-                    if($idiomas == 2){
+                    if($idiomas == 2 && $idioma2 > 0){
                         $resp_existe_idioma = $mod_idiomas->consultarInfoIdiomasEst($per_id, 2);
                         if ($resp_existe_idioma['existe_idioma'] == 0) {
                             $info_idioma = $mod_idiomas->insertarInfoIdiomaEst($per_id, $idioma2, $nivel2, $noidioma);
@@ -539,7 +541,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
                             $info_idioma = $mod_idiomas->modificarInfoIdiomaEst($per_id, $idioma2, $nivel2, $noidioma);
                         }
                     }
-                    if($idiomas == 3){
+                    if($idiomas == 3 && $idioma2 > 0){
                         $resp_existe_idioma = $mod_idiomas->consultarInfoIdiomasEst($per_id, 3);
                         if ($resp_existe_idioma['existe_idioma'] == 0) {
                             $info_idioma = $mod_idiomas->insertarInfoIdiomaEst($per_id, $idioma2, $otronivel, $otroidioma);
@@ -719,7 +721,8 @@ class InscripcionposgradoController extends \yii\web\Controller {
              * Inf. Personal
              */
             $contacto_model = PersonaContacto::findOne(['per_id' => $persona_model->per_id]); // obtiene el pcon_id con el per_id
-            $arr_ciudad_nac = Canton::findAll(["pro_id" => $persona_model->can_id_nacimiento, "can_estado" => 1, "can_estado_logico" => 1]);
+            $arr_ciudad_nac= Canton::find()->select("can_id AS id, can_nombre AS value")->where(["can_estado_logico" => "1", "can_estado" => "1"])->asArray()->all();
+            //$arr_ciudad_nac = Canton::findAll(["pro_id" => $persona_model->can_id_nacimiento, "can_estado" => 1, "can_estado_logico" => 1]);
             $arr_estado_civil = EstadoCivil::find()->select("eciv_id AS id, eciv_nombre AS value")->where(["eciv_estado_logico" => "1", "eciv_estado" => "1"])->asArray()->all();
             $arr_nacionalidad = Pais::find()->select("pai_id AS id, pai_nacionalidad AS value")->where(["pai_estado_logico" => "1", "pai_estado" => "1"])->asArray()->all();
             $arr_pais = Pais::findAll(["pai_estado" => 1, "pai_estado_logico" => 1]);
@@ -728,7 +731,8 @@ class InscripcionposgradoController extends \yii\web\Controller {
             $arr_tipparentesco = TipoParentesco::find()->select("tpar_id AS id, tpar_nombre AS value")->where(["tpar_estado_logico" => "1", "tpar_estado" => "1"])->asArray()->all();
 
             $ViewFormTab1 = $this->renderPartial('ViewFormTab1', [
-                'arr_ciudad_nac' => (empty(ArrayHelper::map($arr_ciudad_nac, "can_id", "can_nombre"))) ? array(Yii::t("canton", "Seleccionar")) : (ArrayHelper::map($arr_ciudad_nac, "can_id", "can_nombre")),
+                'arr_ciudad_nac' => ArrayHelper::map($arr_ciudad_nac, "id", "value"),
+                //'arr_ciudad_nac' => (empty(ArrayHelper::map($arr_ciudad_nac, "can_id", "can_nombre"))) ? array(Yii::t("canton", "Seleccionar")) : (ArrayHelper::map($arr_ciudad_nac, "can_id", "can_nombre")),
                 'arr_estado_civil' => ArrayHelper::map($arr_estado_civil, "id", "value"),
                 'persona_model' => $persona_model,
                 'arr_nacionalidad' => ArrayHelper::map($arr_nacionalidad, "id", "value"),
@@ -872,7 +876,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 $files = $_FILES[key($_FILES)];
                 $arrIm = explode(".", basename($files['name']));
                 $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                  if ($typeFile == 'pdf' || $typeFile == 'png' || $typeFile == 'jpg' || $typeFile == 'jpeg') {
+                if ($typeFile == 'pdf' /*|| $typeFile == 'png' || $typeFile == 'jpg' || $typeFile == 'jpeg'*/) {
                 $dirFileEnd = Yii::$app->params["documentFolder"] . "inscripcionposgrado/" . $per_id . "/" . $data["name_file"] . "_per_" . $per_id . "." . $typeFile;
                 $status = Utilities::moveUploadFile($files['tmp_name'], $dirFileEnd);
                 if ($status) {
@@ -908,7 +912,6 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 }
             }
              }
-           
         }
 
 
@@ -959,7 +962,8 @@ class InscripcionposgradoController extends \yii\web\Controller {
              * Inf. Personal
              */
             $contacto_model = PersonaContacto::findOne(['per_id' => $persona_model->per_id]); // obtiene el pcon_id con el per_id
-            $arr_ciudad_nac = Canton::findAll(["pro_id" => $persona_model->can_id_nacimiento, "can_estado" => 1, "can_estado_logico" => 1]);
+            $arr_ciudad_nac= Canton::find()->select("can_id AS id, can_nombre AS value")->where(["can_estado_logico" => "1", "can_estado" => "1"])->asArray()->all();
+            // $arr_ciudad_nac = Canton::findAll(["pro_id" => $persona_model->can_id_nacimiento, "can_estado" => 1, "can_estado_logico" => 1]);
             $arr_estado_civil = EstadoCivil::find()->select("eciv_id AS id, eciv_nombre AS value")->where(["eciv_estado_logico" => "1", "eciv_estado" => "1"])->asArray()->all();
             $arr_nacionalidad = Pais::find()->select("pai_id AS id, pai_nacionalidad AS value")->where(["pai_estado_logico" => "1", "pai_estado" => "1"])->asArray()->all();
             $arr_pais = Pais::findAll(["pai_estado" => 1, "pai_estado_logico" => 1]);
@@ -968,7 +972,8 @@ class InscripcionposgradoController extends \yii\web\Controller {
             $arr_tipparentesco = TipoParentesco::find()->select("tpar_id AS id, tpar_nombre AS value")->where(["tpar_estado_logico" => "1", "tpar_estado" => "1"])->asArray()->all();
 
             $EditFormTab1 = $this->renderPartial('EditFormTab1', [
-                'arr_ciudad_nac' => (empty(ArrayHelper::map($arr_ciudad_nac, "can_id", "can_nombre"))) ? array(Yii::t("canton", "Seleccionar")) : (ArrayHelper::map($arr_ciudad_nac, "can_id", "can_nombre")),
+                'arr_ciudad_nac' => ArrayHelper::map($arr_ciudad_nac, "id", "value"),
+                //'arr_ciudad_nac' => (empty(ArrayHelper::map($arr_ciudad_nac, "can_id", "can_nombre"))) ? array(Yii::t("canton", "Seleccionar")) : (ArrayHelper::map($arr_ciudad_nac, "can_id", "can_nombre")),
                 "arr_estado_civil" => ArrayHelper::map($arr_estado_civil, "id", "value"),
                 "arr_nacionalidad" => ArrayHelper::map($arr_nacionalidad, "id", "value"),
                 'arr_pais' => (empty(ArrayHelper::map($arr_pais, "pai_id", "pai_nombre"))) ? array(Yii::t("pais", "Seleccionar")) : (ArrayHelper::map($arr_pais, "pai_id", "pai_nombre")),
@@ -1008,13 +1013,20 @@ class InscripcionposgradoController extends \yii\web\Controller {
             $arr_nivelidioma= NivelIdioma::find()->select("nidi_id AS id, nidi_descripcion AS value")->where(["nidi_estado_logico" => "1", "nidi_estado" => "1"])->asArray()->all();
             $idiomas = new EstudianteIdiomas();
             $idioma_model = EstudianteIdiomas::findOne(['per_id' => $persona_model->per_id]);
+            $idioma_modelf = EstudianteIdiomas::find()->where(['per_id' => $persona_model->per_id, 'idi_id' => 2])->all();
+             if ($idioma_modelf == Null) {
+            $idioma_modelf = EstudianteIdiomas::find()->where(['per_id' => $persona_model->per_id, 'idi_id' => 3])->all();
+            } 
             $model = $idioma_model->getAllestudianteidiomasGrid($idioma_model->per_id);
 
             $EditFormTab3 = $this->renderPartial('EditFormTab3', [
                 "arr_idioma" => ArrayHelper::map($arr_idioma, "id", "value"),
                 "arr_nivelidioma" => ArrayHelper::map($arr_nivelidioma, "id", "value"),
-                'idioma_model' => $idioma_model,
-                'model' => $model,
+                "idioma_model" => $idioma_model,
+                "arr_idioma2" => ArrayHelper::map(array_merge([["id" => "0", "value" => Yii::t("formulario", "Select")]], $arr_idioma), "id", "value"),
+                "arr_nivelidioma2" => ArrayHelper::map(array_merge([["id" => "0", "value" => Yii::t("formulario", "Select")]], $arr_nivelidioma), "id", "value"),
+                'idioma_modelf' => $idioma_modelf,
+                "model" => $model,
 
             ]);
             /**
@@ -1119,7 +1131,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
                 $files = $_FILES[key($_FILES)];
                 $arrIm = explode(".", basename($files['name']));
                 $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-                if ($typeFile == 'pdf' || $typeFile == 'png' || $typeFile == 'jpg' || $typeFile == 'jpeg') {
+                if ($typeFile == 'pdf' /*|| $typeFile == 'png' || $typeFile == 'jpg' || $typeFile == 'jpeg'*/) {
                 $dirFileEnd = Yii::$app->params["documentFolder"] . "inscripcionposgrado/" . $data["name_file"] . "." . $typeFile;
                 $status = Utilities::moveUploadFile($files['tmp_name'], $dirFileEnd);
                 if ($status) {

@@ -140,7 +140,7 @@ class Planificacion extends \yii\db\ActiveRecord {
 	}
 
 	public static function getPeriodosAcademico() {
-		$con = \Yii::$app->db_academico;
+		$con_academico = \Yii::$app->db_academico;
 
 		$sql = "select distinct
                 a.saca_id as pla_id,

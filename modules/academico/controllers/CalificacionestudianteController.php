@@ -114,10 +114,10 @@ class CalificacionestudianteController extends \app\components\CController {
 			// $arrSearch["per_id"] = $per_id;
 
 			$arr_estudiante = $cabeceraCalificacion->consultaCalificacionRegistroDocenteAllStudentSearch($arrSearch, $per_id, false);
-            $validacion = $arr_estudiante[0]['validacion'];
+			$validacion = $arr_estudiante[0]['validacion'];
 			return $this->renderPartial('index-grid', [
 				"model" => $arr_estudiante,
-                "validacion" => $validacion,
+				"validacion" => $validacion,
 			]);
 		}
 
@@ -144,11 +144,10 @@ class CalificacionestudianteController extends \app\components\CController {
 
 			$arr_estudiante = $cabeceraCalificacion->consultaCalificacionRegistroDocenteAllStudentSearch($arrSearch, $per_id, false);
 		}
-            
 
 		return $this->render('index', [
 			'model' => $arr_estudiante,
-            'validacion' => $validacion,
+			'validacion' => $validacion,
 			'arr_asignatura' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $asignatura), "id", "name"),
 			'arr_periodoActual' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $arr_periodoActual), "id", "name"),
 			'arr_ninteres' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $arr_ninteres), "id", "name"),
@@ -180,7 +179,7 @@ class CalificacionestudianteController extends \app\components\CController {
 		$dataEstudiante = $mod_estudiante->consultarDatosPersona($est_id);
 		$dataProfesor = $mod_profesor->getProfesoresDist($pro_id);
 		$uaca_id = $mod_estudiante->getEstudiantexestid($est_id)['unidad'];
-        /* Considerar encontrar la modalidad del estudiante, ya que, no existe relación verificar con estudiante carrera o por el daca*/
+		/* Considerar encontrar la modalidad del estudiante, ya que, no existe relación verificar con estudiante carrera o por el daca*/
 		$arr_modalidad = $mod_modalidad->consultarModalidadxEstudiante($uaca_id, $est_id);
 		//\app\models\Utilities::putMessageLogFile('modalidad: ' . print_r($arr_modalidad,true));
 
@@ -206,16 +205,15 @@ class CalificacionestudianteController extends \app\components\CController {
 			$promedio = $value['promedio'];
 			$promedio_total += $promedio;
 		}
-        if($supletorio > 0){
-            if($notas_estudiante[0]['promedio']>$notas_estudiante[1]['promedio']){
-                $promedio_final= ($notas_estudiante[1]['promedio'] + $supletorio)/2;
-            }else{
-                $promedio_final= ($notas_estudiante[0]['promedio'] + $supletorio)/2;
-            }
-        }else{
-            $promedio_final = $promedio_total / count($notas_estudiante_array);
-        }
-		
+		if ($supletorio > 0) {
+			if ($notas_estudiante[0]['promedio'] > $notas_estudiante[1]['promedio']) {
+				$promedio_final = ($notas_estudiante[1]['promedio'] + $supletorio) / 2;
+			} else {
+				$promedio_final = ($notas_estudiante[0]['promedio'] + $supletorio) / 2;
+			}
+		} else {
+			$promedio_final = $promedio_total / count($notas_estudiante_array);
+		}
 
 		// \app\models\Utilities::putMessageLogFile($notas_estudiante);
 

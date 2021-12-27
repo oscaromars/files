@@ -89,7 +89,7 @@ class CalificacionestudianteController extends \app\components\CController {
 		$arr_grupos = $grupo_model->getAllGruposByUser($user_usermane);
 		$arr_periodoActual = $mod_periodoActual->consultarPeriodoAcademico();
 		$arr_ninteres = $mod_unidad->consultarUnidadAcademicaDelEstudiante($resp_estudianteid["est_id"]);
-		$arr_modalidad = consultarModalidadxEstudiante($arr_ninteres, $resp_estudianteid["est_id"]);
+		$arr_modalidad = $mod_modalidad->consultarModalidadxEstudiante($arr_ninteres, $resp_estudianteid["est_id"]);
 		$arr_carrera = $modcanal->consultarCarreraModalidadEstudiante($resp_estudianteid["est_id"], $arr_ninteres[0]["id"], $arr_modalidad[0]["id"]);
 		$perfil_user = $arr_grupos[0]["id"];
 		Utilities::putMessageLogFile("LINEA 108  perfil_user: " . $perfil_user);
@@ -182,7 +182,7 @@ class CalificacionestudianteController extends \app\components\CController {
 		$uaca_id = $mod_estudiante->getEstudiantexestid($est_id)['unidad'];
         /* Considerar encontrar la modalidad del estudiante, ya que, no existe relación verificar con estudiante carrera o por el daca*/
 		$arr_modalidad = $mod_modalidad->consultarModalidadxEstudiante($uaca_id, $est_id);
-		\app\models\Utilities::putMessageLogFile('modalidad: ' . print_r($arr_modalidad,true);
+		//\app\models\Utilities::putMessageLogFile('modalidad: ' . print_r($arr_modalidad,true));
 
 		$nombres = $dataEstudiante['nombres'];
 		$matricula = $dataEstudiante['matricula'];

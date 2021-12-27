@@ -354,7 +354,7 @@ class DistributivoAcademico extends \yii\db\ActiveRecord
                     on ron.ron_id = roi.ron_id
                    and made.made_codigo_asignatura = roi.roi_materia_cod
                    and roi.roi_estado = 1 and roi.roi_estado_logico = 1
-             
+
                  where daca.daca_id = $daca_id
                    and made.asi_id = $id
                    and daes.daes_estado = 1 and daes.daes_estado_logico = 1";
@@ -390,16 +390,16 @@ class DistributivoAcademico extends \yii\db\ActiveRecord
     public function getParaleloxPeriodo($asi_id, $paca_id) {
         $con_academico = \Yii::$app->db_academico;
         $con_db = \Yii::$app->db;
-        $sql = "SELECT da.daca_id as id, 
+        $sql = "SELECT da.daca_id as id,
                 CONCAT('P',mpp_num_paralelo, ' - ',upper(ifnull(trim(per.per_pri_nombre),'')),' ',upper(ifnull(trim(per.per_pri_apellido),''))) as name
                       from db_academico.distributivo_academico as da
-                inner join db_academico.materia_paralelo_periodo as mpp 
+                inner join db_academico.materia_paralelo_periodo as mpp
                         on mpp.mpp_id = da.mpp_id
                        and mpp.mpp_estado = 1 and mpp.mpp_estado_logico = 1
                 inner join db_academico.profesor pro
                         on da.pro_id = pro.pro_id
                        and pro.pro_estado = 1 and pro.pro_estado_logico = 1
-                inner join db_asgard.persona per 
+                inner join db_asgard.persona per
                         on per.per_id=pro.per_id
                        and per.per_estado = 1 and per.per_estado_logico = 1
                 where da.asi_id = $asi_id AND da.paca_id = $paca_id
@@ -1036,7 +1036,7 @@ class DistributivoAcademico extends \yii\db\ActiveRecord
             $mumo_id = MallaUnidadModalidad::findOne(['maca_id'=>$data[$i]->programa,'mumo_estado'=>1,'mumo_estado_logico'=>1]);
             $meun    = ModalidadEstudioUnidad::findOne(['meun_id'=>$mumo_id['meun_id'],'mod_id'=>$data[$i]->mod_id,'uaca_id'=>$data[$i]->uni_id,'meun_estado'=>1,'meun_estado_logico'=>1]);
             $meun_id= $meun['meun_id'];
-            
+
         }
         if ($data[$i]->fecha_inicio && $data[$i]->fecha_inicio != 'N/A') {
             $fecha_inicio = "'" . $data[$i]->fecha_inicio . "'";
@@ -1190,13 +1190,13 @@ class DistributivoAcademico extends \yii\db\ActiveRecord
                          when (da.uaca_id= 1 and daca_num_estudiantes_online between 21 and 30) then round(4  * pc.paca_semanas_periodo /**(1.3)*/)
                          when (da.uaca_id= 1 and daca_num_estudiantes_online between 31 and 40) then round(5  * pc.paca_semanas_periodo /**(1.3)*/)
                          when (da.uaca_id= 1 and daca_num_estudiantes_online >40) then round(7  * pc.paca_semanas_periodo /**(1.3)*/)
-                         when (da.uaca_id= 2 and t.tdis_id =1 ) then 
+                         when (da.uaca_id= 2 and t.tdis_id =1 ) then
                             case when (da.daca_num_estudiantes_online between 0 and 49) then round( 4 * ROUND(timestampdiff(day, da.daca_fecha_inicio_post, da.daca_fecha_fin_post)/7))
                                  when (da.daca_num_estudiantes_online >=50) then round( 6 * ROUND(timestampdiff(day, da.daca_fecha_inicio_post, da.daca_fecha_fin_post)/7))
                             end
                      end)
                      else
-                        case 
+                        case
                         when da.uaca_id=2 and t.tdis_id=1 and m.mod_id>=2 then ifnull(dh.daho_total_horas * ROUND(timestampdiff(day, da.daca_fecha_inicio_post, da.daca_fecha_fin_post)/7),'')
                         when da.tdis_id=2 then t.tdis_num_semanas * pc.paca_semanas_inv_vinc_tuto
                         when da.tdis_id=3 then t.tdis_num_semanas * pc.paca_semanas_inv_vinc_tuto
@@ -1209,16 +1209,16 @@ class DistributivoAcademico extends \yii\db\ActiveRecord
                          when (da.uaca_id= 1 and daca_num_estudiantes_online between 21 and 30) then 4 /*round( 4  *(1.3))*/
                          when (da.uaca_id= 1 and daca_num_estudiantes_online between 31 and 40) then 5 /*round( 5  *(1.3))*/
                          when (da.uaca_id= 1 and daca_num_estudiantes_online >40) then 7 /*round(7 *(1.3))*/
-                         when (da.uaca_id= 2 and t.tdis_id =1 ) then 
+                         when (da.uaca_id= 2 and t.tdis_id =1 ) then
                             case when (da.daca_num_estudiantes_online between 0 and 49) then 4
                                  when (da.daca_num_estudiantes_online >=50) then 6
                             end
                      end)
                      else
-                        case 
-                        when da.uaca_id=2 and t.tdis_id=1 and m.mod_id>=2 then dh.daho_total_horas 
-                        when da.tdis_id=2 then t.tdis_num_semanas 
-                        when da.tdis_id=3 then t.tdis_num_semanas 
+                        case
+                        when da.uaca_id=2 and t.tdis_id=1 and m.mod_id>=2 then dh.daho_total_horas
+                        when da.tdis_id=2 then t.tdis_num_semanas
+                        when da.tdis_id=3 then t.tdis_num_semanas
                         when da.tdis_id=7 then round(tdis_num_semanas/paca_semanas_periodo) else ( case  when dh.daho_total_horas is null then tdis_num_semanas else dh.daho_total_horas end) end
                       end as promedio, -- AQUI
 
@@ -1300,13 +1300,13 @@ class DistributivoAcademico extends \yii\db\ActiveRecord
                          when (da.uaca_id= 1 and daca_num_estudiantes_online between 21 and 30) then round(4  * pc.paca_semanas_periodo /**(1.3)*/)
                          when (da.uaca_id= 1 and daca_num_estudiantes_online between 31 and 40) then round(5  * pc.paca_semanas_periodo /**(1.3)*/)
                          when (da.uaca_id= 1 and daca_num_estudiantes_online >40) then round(7  * pc.paca_semanas_periodo /**(1.3)*/)
-                         when (da.uaca_id= 2 and t.tdis_id =1 ) then 
+                         when (da.uaca_id= 2 and t.tdis_id =1 ) then
                             case when (da.daca_num_estudiantes_online between 0 and 49) then round( 4 * ROUND(timestampdiff(day, da.daca_fecha_inicio_post, da.daca_fecha_fin_post)/7))
                                  when (da.daca_num_estudiantes_online >=50) then round( 6 * ROUND(timestampdiff(day, da.daca_fecha_inicio_post, da.daca_fecha_fin_post)/7))
                             end
                      end)
                      else
-                        case 
+                        case
                         when da.uaca_id=2 and t.tdis_id=1 and m.mod_id>=2 then ifnull(dh.daho_total_horas * ROUND(timestampdiff(day, da.daca_fecha_inicio_post, da.daca_fecha_fin_post)/7),'')
                         when da.tdis_id=2 then t.tdis_num_semanas * pc.paca_semanas_inv_vinc_tuto
                         when da.tdis_id=3 then t.tdis_num_semanas * pc.paca_semanas_inv_vinc_tuto
@@ -1319,20 +1319,20 @@ class DistributivoAcademico extends \yii\db\ActiveRecord
                          when (da.uaca_id= 1 and daca_num_estudiantes_online between 21 and 30) then 4 /*round( 4  *(1.3))*/
                          when (da.uaca_id= 1 and daca_num_estudiantes_online between 31 and 40) then 5 /*round( 5  *(1.3))*/
                          when (da.uaca_id= 1 and daca_num_estudiantes_online >40) then 7 /*round(7 *(1.3))*/
-                         when (da.uaca_id= 2 and t.tdis_id =1 ) then 
+                         when (da.uaca_id= 2 and t.tdis_id =1 ) then
                             case when (da.daca_num_estudiantes_online between 0 and 49) then 4
                                  when (da.daca_num_estudiantes_online >=50) then 6
                             end
                      end)
                      else
-                        case 
-                        when da.uaca_id=2 and t.tdis_id=1 and m.mod_id>=2 then dh.daho_total_horas 
-                        when da.tdis_id=2 then t.tdis_num_semanas 
-                        when da.tdis_id=3 then t.tdis_num_semanas 
+                        case
+                        when da.uaca_id=2 and t.tdis_id=1 and m.mod_id>=2 then dh.daho_total_horas
+                        when da.tdis_id=2 then t.tdis_num_semanas
+                        when da.tdis_id=3 then t.tdis_num_semanas
                         when da.tdis_id=7 then round(tdis_num_semanas/paca_semanas_periodo) else ( case  when dh.daho_total_horas is null then tdis_num_semanas else dh.daho_total_horas end) end
                       end as promedio, -- AQUI
-                    case when da.uaca_id= 1 then ifnull(mpp.mpp_num_paralelo,'') 
-                         when da.uaca_id= 2 then ifnull(pp.ppro_grupo,'') 
+                    case when da.uaca_id= 1 then ifnull(mpp.mpp_num_paralelo,'')
+                         when da.uaca_id= 2 then ifnull(pp.ppro_grupo,'')
                     end as mpp_num_paralelo,
 
                     CASE
@@ -1355,7 +1355,7 @@ class DistributivoAcademico extends \yii\db\ActiveRecord
                     LEFT JOIN " . $con_academico->dbname . ".materia_paralelo_periodo mpp on mpp.mpp_id =da.mpp_id
                     LEFT JOIN " . $con_academico->dbname . ".distributivo_academico_horario AS dh ON da.daho_id = dh.daho_id
                     LEFT JOIN " . $con_academico->dbname . ".paralelo_promocion_programa pppr on pppr.pppr_id=da.pppr_id
-                    LEFT JOIN " . $con_academico->dbname . ".promocion_programa pp on pp.ppro_id = pppr.ppro_id 
+                    LEFT JOIN " . $con_academico->dbname . ".promocion_programa pp on pp.ppro_id = pppr.ppro_id
                     LEFT JOIN " . $con_academico->dbname . ".modalidad AS m ON da.mod_id = m.mod_id
                     LEFT JOIN " . $con_academico->dbname . ".unidad_academica AS ua ON da.uaca_id = ua.uaca_id
                     LEFT JOIN " . $con_academico->dbname . ".asignatura AS a ON da.asi_id = a.asi_id
@@ -1638,7 +1638,7 @@ class DistributivoAcademico extends \yii\db\ActiveRecord
         $res = $comando->queryAll();
         return $res;
     }
-    
+
 /**
 * Function getHorariosmppid
 * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
@@ -1669,7 +1669,7 @@ class DistributivoAcademico extends \yii\db\ActiveRecord
 /**
  * Function getSemanahoraposgrado - Modificación en calcular las fechas de inicio y fin al momento de calcular el promedio ajustado
  * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
- * @modify Luis Cajamarca <analista04>  
+ * @modify Luis Cajamarca <analista04>
  * @property integer
  * @return horario de un paralelo especifico
  */
@@ -1679,8 +1679,8 @@ public function getSemanahoraposgrado($dcab_id) {
     $sql = "SELECT
                 case when m.mod_id = 1 then
                         case
-                            when da.uaca_id = 2 and td.tdis_id =1 and daca_num_estudiantes_online between 0 and 49 then 4 
-                            when da.uaca_id = 2 and td.tdis_id =1 and daca_num_estudiantes_online >=50 then 6 
+                            when da.uaca_id = 2 and td.tdis_id =1 and daca_num_estudiantes_online between 0 and 49 then 4
+                            when da.uaca_id = 2 and td.tdis_id =1 and daca_num_estudiantes_online >=50 then 6
                         end
                     else dah.daho_total_horas end  as total_hora_semana_docenciaposgrado,
                 ROUND(timestampdiff(day, daca_fecha_inicio_post, daca_fecha_fin_post)/7) as semanas_posgrado,

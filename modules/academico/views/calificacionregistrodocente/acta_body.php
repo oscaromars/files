@@ -5,6 +5,7 @@ if ($costoProgCarrera_est != $costoCarrera_est) {
 	$lblTotalCost .= " PERIODO" . strtoupper($periodoAcad);
 }
 
+//print_r($model);die();
 // \app\models\Utilities::putMessageLogFile($model);
 ?>
 <style>
@@ -73,15 +74,15 @@ if ($costoProgCarrera_est != $costoCarrera_est) {
 		  </tr>
 		  <tr class="tr">
 			<td colspan="2" class="aleft td"><span class="bold">CURSO:</span></td>
-		    <td colspan="3" class="aleft td">    <?=$model[0]['asi_nombre']?>   </td>
+		    <td colspan="3" class="aleft td">    <?php echo $model[0]['asi_nombre'] ?>   </td>
 		  </tr>
 		  <tr class="tr">
 		    <td colspan="2" class="aleft td"><span class="bold">PERIODO:</span></td>
-		    <td colspan="3" class="aleft td">    <?=$model[0]['paca_nombre']?>   </td>
+		    <td colspan="3" class="aleft td">    <?php echo $model[0]['paca_nombre'] ?>   </td>
 		  </tr>
 		  <tr class="tr">
 		    <td colspan="2" class="aleft td"><span class="bold">DOCENTE:</span></td>
-		    <td id="docente_seccion_acta" colspan="3" class="aleft td"> <?=$profesor_data[0]['name'] . " - " . $profesor_data[0]['cedula']?>   </td>
+		    <td id="docente_seccion_acta" colspan="3" class="aleft td"> <?php echo $profesor_data[0]['name'] . " - " . $profesor_data[0]['cedula'] ?>   </td>
 		  </tr>
 
 		</table>
@@ -114,7 +115,7 @@ foreach ($model as $key => $value) {
             			<td style='text-align: center'>" . $value['parcial_2'] . "</td>
             			<td style='text-align: center'>" . $value['supletorio'] . "</td>
             			<td style='text-align: center'>" . $value['promedio_final'] . "</td>
-            			<td style='text-align: center'>" . $value['estado'] . "</td>
+            			<td style='text-align: center'>" . $value['estado_academico'] . "</td>
             			</tr>";
 
 }?>

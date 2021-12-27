@@ -6,6 +6,7 @@ use app\widgets\PbGridView\PbGridView;
 use yii\helpers\Html;
 use yii\helpers\Url;
 academico::registerTranslations();
+print_r($model, true);
 ?>
 
 <?=
@@ -14,7 +15,7 @@ academico::registerTranslations();
 
 PbGridView::widget([
 	'id' => 'Tbg_Calificaciones',
-	'showExport' => true,
+	//'showExport' => true,
 	//'fnExportEXCEL' => "exportExcel",
 	//'fnExportPDF' => "exportPdf",
 	'tableOptions' => [
@@ -24,6 +25,7 @@ PbGridView::widget([
 		'class' => 'table-responsive',
 	],
 	'dataProvider' => $model,
+	'formatter' => ['class' => 'yii\i18n\Formatter', 'nullDisplay' => ''],
 	'pajax' => true,
 	'columns' => [
 		['class' => 'yii\grid\SerialColumn', 'options' => ['width' => '10']],
@@ -55,27 +57,71 @@ PbGridView::widget([
 		[
 			'attribute' => 'PartialI',
 			'header' => academico::t("Academico", "Parcial I"),
+			'contentOptions' => ['class' => 'text-center'],
+			'headerOptions' => ['class' => 'text-center'],
 			'value' => 'parcial_1',
 		],
 		[
 			'attribute' => 'PartialII',
 			'header' => academico::t("Academico", "Parcial II"),
+			'contentOptions' => ['class' => 'text-center'],
+			'headerOptions' => ['class' => 'text-center'],
 			'value' => 'parcial_2',
 		],
 		[
 			'attribute' => 'Supletorio',
 			'header' => academico::t("Academico", "Supletorio"),
+			'contentOptions' => ['class' => 'text-center'],
+			'headerOptions' => ['class' => 'text-center'],
 			'value' => 'supletorio',
 		],
 		[
 			'attribute' => 'PromedioFinal',
 			'header' => academico::t("formulario", "Promedio Final"),
+			'contentOptions' => ['class' => 'text-center'],
+			'headerOptions' => ['class' => 'text-center'],
 			'value' => 'promedio_final',
 		],
+		/*[
+			            'attribute' => 'Estado',
+			            'header' => Yii::t("formulario", 'Estado Acad.'),
+			            'contentOptions' => ['class' => 'text-center'],
+			            'headerOptions' => ['class' => 'text-center'],
+			            'format' => 'html',
+			            'value' => function ($model) {
+			                if ($model["estado"] == 'Aprobado')
+			                    return '<small class="label label-success">Aprobado</small>';
+			                else if ($model["estado"] == 'Reprobado')
+			                    return '<small class="label label-danger">Reprobado</small>';
+			                else
+			                    return '<small class="label label-warning">Pendiente</small>';
+			            },
+		*/
 		[
 			'attribute' => 'AsistenciaFinal',
 			'header' => academico::t("Academico", "Asistencia Final"),
-			'value' => 'asistencia_final',
+			'contentOptions' => ['class' => 'text-center'],
+			'headerOptions' => ['class' => 'text-center'],
+			'value' => function ($model) {
+				return number_format($model['asistencia_final'], 2) . '%';
+			},
+		],
+		[
+			'attribute' => 'Estado Académico',
+			'header' => Yii::t("formulario", 'Estado Académico'),
+			'contentOptions' => ['class' => 'text-center'],
+			'headerOptions' => ['class' => 'text-center'],
+			'format' => 'html',
+			'value' => function ($model) {
+				if ($model["estado_academico"] == 'Aprobado') {
+					return '<small class="label label-success">Aprobado</small>';
+				} else if ($model["estado_academico"] == 'Reprobado') {
+					return '<small class="label label-danger">Reprobado</small>';
+				} else {
+					return '<small class="label label-warning">Pendiente</small>';
+				}
+
+			},
 		],
 		[
 			'class' => 'yii\grid\ActionColumn',

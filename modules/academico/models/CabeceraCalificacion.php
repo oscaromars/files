@@ -3,6 +3,7 @@
 namespace app\modules\academico\models;
 use app\models\Utilities;
 use Yii;
+use yii\base\Exception;
 use \yii\data\ArrayDataProvider;
 
 /**
@@ -162,10 +163,10 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord {
 
 		$str_parcial = "";
 		/* Corrección de codigo, la consulta determinaba sin parcial, por lo que, no determinaba de manera correcta para otras modalidades.
-			// Si se está buscando Grado y a la vez Online, para evitar problemas, se busca el ecal_id 1 que es el 1er Parcial, y este tiene los componentes iguales que el 2do Parcial
-			if ($uaca_id == 1 && $mod_id == 1) {
-				$str_parcial = "AND coun.ecal_id = 1 ";
-			}
+			            // Si se está buscando Grado y a la vez Online, para evitar problemas, se busca el ecal_id 1 que es el 1er Parcial, y este tiene los componentes iguales que el 2do Parcial
+			            if ($uaca_id == 1 && $mod_id == 1) {
+			                $str_parcial = "AND coun.ecal_id = 1 ";
+			            }
 		*/
 
 		$sql = "SELECT coun.cuni_id as id,
@@ -1078,9 +1079,9 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord {
                         ,asi.asi_id
                         ,asi.asi_descripcion as materia
                         ,coalesce(clfc.ccal_id,0) as ccal_id
-                        ,case when daca.uaca_id= 1 then CONCAT('P-',ifnull(mpp.mpp_num_paralelo,''))
-                        	 when daca.uaca_id= 2 then ifnull(pp.ppro_grupo,'')
-                    	end as paralelo
+                        ,case when daca.uaca_id= 1 then CONCAT('P - ',ifnull(mpp.mpp_num_paralelo,''))
+                             when daca.uaca_id= 2 then ifnull(pp.ppro_grupo,'')
+                        end as paralelo
         ";
 
 		foreach ($arr_componentes as $key => $value) {
@@ -1118,11 +1119,14 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord {
                      ON daca.paca_id = paca.paca_id
                     AND paca.paca_estado = 1 AND paca.paca_estado_logico = 1
               LEFT JOIN " . $con->dbname . ".materia_paralelo_periodo mpp
-              		 ON mpp.mpp_id = daca.mpp_id
+                     ON mpp.mpp_id = daca.mpp_id
+                    AND mpp.mpp_estado = 1 AND mpp.mpp_estado_logico = 1
               LEFT JOIN " . $con->dbname . ".paralelo_promocion_programa pppr
-              		 on pppr.pppr_id = daca.pppr_id
+                     on pppr.pppr_id = daca.pppr_id
+                    AND pppr.pppr_estado = 1 AND pppr.pppr_estado_logico = 1
               LEFT JOIN " . $con->dbname . ".promocion_programa pp
-              		 ON pp.ppro_id = pppr.ppro_id
+                     ON pp.ppro_id = pppr.ppro_id
+                    AND pp.ppro_estado = 1 AND pp.ppro_estado_logico = 1
               LEFT JOIN " . $con->dbname . ".estudiante est
                      ON est.est_id   = daes.est_id
                     AND est.est_estado = 1 AND est.est_estado_logico = 1
@@ -1148,7 +1152,7 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord {
                     AND clfc.paca_id = daca.paca_id
                     AND clfc.asi_id  = asi.asi_id
                     AND clfc.ecun_id = ecun.ecun_id
-                  WHERE ecun.ecal_id = 1 or ecun.ecal_id = 2 or ecun.ecal_id = 3
+                  WHERE ecun.ecal_id = 1 or ecun.ecal_id = 2 or ecun.ecal_id = 3 or ecun.ecal_id = 4
 
             ) as data
             ,(SELECT @row_number:=0) AS t
@@ -1203,7 +1207,7 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord {
 	 * @return
 	 *  Consulta dal calificaciones de los estudiantes pot Docente y Priodo academico y  asignatura
 	 */
-	public function consultaCalificacionRegistroDocenteAllSearch($uaca_id, $paca_id, $asi_id, $pro_id, $mod_id, $est, $onlyData = false) {
+	public function consultaCalificacionRegistroDocenteAllSearch($uaca_id, $paca_id, $asi_id, $pro_id, $mod_id, $est = null, $onlyData = false) {
 		$con = \Yii::$app->db_academico;
 		$con1 = \Yii::$app->db_asgard;
 		$estado = 1;
@@ -1227,7 +1231,7 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord {
 		}
 
 		if ($mod_id != "" && $mod_id > 0) {
-			$str_search .= " meun.mod_id  = :mod_id AND ";
+			$str_search .= " daca.mod_id  = :mod_id AND ";
 		}
 
 		if ($est != "" && $est > 0) {
@@ -1245,75 +1249,69 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord {
                         IFNULL(A.PARCIAL_I,'0') parcial_1,
                         IFNULL(B.PARCIAL_II,'0') parcial_2,
                         IFNULL(C.SUPLETORIO,'0') supletorio,
+                        IFNULL(F.MEJORAMIENTO,'0') mejoramiento,
                         CASE
                         WHEN estudiante.uaca_id = 3 THEN
                              IFNULL(A.PARCIAL_I,'0')
                         ELSE
                             case
-                            when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 >=14.50 then (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2
+                            when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 >=14.50 then
+                                case when IFNULL(F.MEJORAMIENTO,0) > 0 then
+                                    case
+                                        when IFNULL(A.PARCIAL_I,0) >= IFNULL(B.PARCIAL_II,0) then (IFNULL(A.PARCIAL_I,0) + IFNULL(F.MEJORAMIENTO,0))/2
+                                        when IFNULL(A.PARCIAL_I,0) <= IFNULL(B.PARCIAL_II,0) then (IFNULL(B.PARCIAL_II,0) + IFNULL(F.MEJORAMIENTO,0))/2
+                                    end
+                                else (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2
+                                end
                             when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 > 0 and (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 < 14.50 then
                                 case
                                 when IFNULL(C.SUPLETORIO,0) > 0 then
                                     (((IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2)+IFNULL(C.SUPLETORIO,0))/2
-                                    /*case
-                                        when IFNULL(A.PARCIAL_I,0) >= IFNULL(B.PARCIAL_II,0) then (IFNULL(A.PARCIAL_I,0) + IFNULL(C.SUPLETORIO,0))/2
-                                        when IFNULL(A.PARCIAL_I,0) <= IFNULL(B.PARCIAL_II,0) then (IFNULL(B.PARCIAL_II,0) + IFNULL(C.SUPLETORIO,0))/2
-                                    end*/
                                 else
                                     (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2
                                 end
                             end
                         END AS promedio_final,
-
                         case
-                        when ((coalesce(D.ASISTENCIA_PARCIAL_I, 0) + coalesce(E.ASISTENCIA_PARCIAL_II, 0)) / 2) >= 75 then
+                            when ((coalesce(D.ASISTENCIA_PARCIAL_I, 0) + coalesce(E.ASISTENCIA_PARCIAL_II, 0)) / 2) >= 75 then
 
-	                        case
-	                        when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 >=14.50 then 'Aprobado'
-	                        when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 >=1 and (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 <= 14.49 then
-	                            case
-	                            when IFNULL(C.SUPLETORIO,0) > 0 then
+                                case
+                                    when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 >=14.50 then
+                                        case when IFNULL(F.MEJORAMIENTO,0) > 0 then
+                                            case
+                                                when IFNULL(A.PARCIAL_I,0) >= IFNULL(B.PARCIAL_II,0) then
+                                                case
+                                                    when (IFNULL(A.PARCIAL_I,0) + IFNULL(F.MEJORAMIENTO,0))/2 >= 14.50 then 'Aprobado'
+                                                end
+                                                when IFNULL(A.PARCIAL_I,0) <= IFNULL(B.PARCIAL_II,0) then
+                                                case
+                                                    when (IFNULL(B.PARCIAL_II,0) + IFNULL(F.MEJORAMIENTO,0))/2 >= 14.50 then 'Aprobado'
+                                                end
+                                            end
+                                        else 'Aprobado'
+                                        end
+                                    when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 > 0 and (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 < 14.50 then
+                                        case
+                                            when IFNULL(C.SUPLETORIO,0) > 0 then
 
-                                    case
-                                        when (((IFNULL(A.PARCIAL_I,0) + IFNULL(C.SUPLETORIO,0))/2)+IFNULL(C.SUPLETORIO,0))/2 >= 14.50 then 'Aprobado'
-                                        when (((IFNULL(A.PARCIAL_I,0) + IFNULL(C.SUPLETORIO,0))/2)+IFNULL(C.SUPLETORIO,0))/2 > 0 and (((IFNULL(A.PARCIAL_I,0) + IFNULL(C.SUPLETORIO,0))/2)+IFNULL(C.SUPLETORIO,0))/2 < 14.50 then 'Reprobado'
-                                    end
+                                                case
+                                                    when (((IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2)+IFNULL(C.SUPLETORIO,0))/2 >= 14.50 then 'Aprobado'
+                                                    when (((IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2)+IFNULL(C.SUPLETORIO,0))/2 > 0 and (((IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2)+IFNULL(C.SUPLETORIO,0))/2 < 14.50 then 'Reprobado'
+                                                end
 
-	                            else
-	                                case when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 < 14.50 then 'Reprobado' end
-	                            end
-	                        when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 = 0 then 'Pendiente'
-	                        end
-	                    when ((coalesce(D.ASISTENCIA_PARCIAL_I, 0) + coalesce(E.ASISTENCIA_PARCIAL_II, 0)) / 2) > 0 and ((coalesce(D.ASISTENCIA_PARCIAL_I, 0) + coalesce(E.ASISTENCIA_PARCIAL_II, 0)) / 2) < 75 then
-	                    	case
-	                        when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 >=14.50 then 'Reprobado'
-	                        when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 >=1 and (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 <= 14.49 then 'Reprobado'
-	                        end
+                                        else
+                                            case when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 < 14.50 then 'Reprobado' end
+                                        end
+                                    when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 = 0 then 'Pendiente'
+                                end
+                            when ((coalesce(D.ASISTENCIA_PARCIAL_I, 0) + coalesce(E.ASISTENCIA_PARCIAL_II, 0)) / 2) > 0 and ((coalesce(D.ASISTENCIA_PARCIAL_I, 0) + coalesce(E.ASISTENCIA_PARCIAL_II, 0)) / 2) < 75 then
+                                case
+                                when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 >=14.50 then 'Reprobado'
+                                when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 >0 and (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 < 14.50 then 'Reprobado'
+                                end
+                            else 'Pendiente'
 
-	                    end as estado_academico,
-	                        /*case
-	                        when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 >=14.50 then 'Aprobado'
-	                        when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 >=1 and (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 <= 14.49 then
-	                            case
-	                            when IFNULL(C.SUPLETORIO,0) > 0 then
-	                                case
-	                                    when IFNULL(A.PARCIAL_I,0) >= IFNULL(B.PARCIAL_II,0) then
-	                                    case
-	                                        when (IFNULL(A.PARCIAL_I,0) + IFNULL(C.SUPLETORIO,0))/2 >= 14.50 then 'Aprobado'
-	                                        when (IFNULL(A.PARCIAL_I,0) + IFNULL(C.SUPLETORIO,0))/2 >= 1 and (IFNULL(A.PARCIAL_I,0) + IFNULL(C.SUPLETORIO,0))/2 < 14.49 then 'Reprobado'
-	                                    end
-	                                    when IFNULL(A.PARCIAL_I,0) <= IFNULL(B.PARCIAL_II,0) then
-	                                    case
-	                                        when (IFNULL(B.PARCIAL_II,0) + IFNULL(C.SUPLETORIO,0))/2 >= 14.50 then 'Aprobado'
-	                                        when (IFNULL(B.PARCIAL_II,0) + IFNULL(C.SUPLETORIO,0))/2 >= 1 and (IFNULL(B.PARCIAL_II,0) + IFNULL(C.SUPLETORIO,0))/2 < 14.49 then 'Reprobado'
-	                                    end
-	                                end
-	                            else
-	                                case when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 < 14.50 then 'Reprobado' end
-	                            end
-	                        when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 = 0 then 'Pendiente'
-	                        end as estado_academico,*/
-
+                        end as estado_academico,
 
                         IFNULL(D.ASISTENCIA_PARCIAL_I,'0') asistencia_parcial_1,
                         IFNULL(E.ASISTENCIA_PARCIAL_II,'0') asistencia_parcial_2,
@@ -1326,7 +1324,7 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord {
                  FROM
                     (
                         SELECT DISTINCT
-                               estudiante.est_id,
+                               daca_est.est_id,
                                estudiante.est_matricula,
                                concat(ifnull(trim(persona.per_pri_apellido),''),' ',ifnull(trim(persona.per_seg_apellido),''),' ',ifnull(trim(persona.per_pri_nombre),'')) as Nombres_completos,
                                ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca_anio),'') AS paca_nombre,
@@ -1339,8 +1337,8 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord {
                             LEFT JOIN db_academico.cabecera_calificacion clfc ON estudiante.est_id =  clfc.est_id
                             LEFT JOIN db_academico.esquema_calificacion_unidad ecun ON ecun.ecun_id = clfc.ecun_id
                             INNER JOIN db_asgard.persona persona ON persona.per_id = estudiante.per_id
-                            LEFT JOIN db_academico.distributivo_academico_estudiante daca_est ON daca_est.est_id = estudiante.est_id
-                            LEFT JOIN db_academico.distributivo_academico daca ON daca.daca_id = daca_est.daca_id
+                            INNER JOIN db_academico.distributivo_academico_estudiante daca_est ON daca_est.est_id = estudiante.est_id
+                            INNER JOIN db_academico.distributivo_academico daca ON daca.daca_id = daca_est.daca_id
                             LEFT JOIN db_academico.asignatura asignatura ON asignatura.asi_id = daca.asi_id
                             INNER JOIN db_academico.estudiante_carrera_programa AS ecpr ON ecpr.est_id = estudiante.est_id
                             INNER JOIN db_academico.modalidad_estudio_unidad AS meun ON meun.meun_id = ecpr.meun_id
@@ -1349,8 +1347,8 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord {
                             INNER JOIN db_academico.bloque_academico AS baca ON baca.baca_id = paca.baca_id
                         WHERE
                             $str_search
-                            meun.uaca_id = asignatura.uaca_id
-                            AND paca.paca_activo = 'A'
+                            /*meun.uaca_id = asignatura.uaca_id
+                            AND */paca.paca_activo = 'A'
                             AND persona.per_estado= 1
                             AND persona.per_estado_logico = 1
                             AND daca.daca_estado = 1
@@ -1372,42 +1370,40 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord {
                         ) estudiante
                             LEFT JOIN
                               (
-                                SELECT clfc.ccal_id, clfc.paca_id, clfc.est_id, clfc.asi_id,ecun.uaca_id,clfc.pro_id,clfc.ccal_calificacion AS PARCIAL_I FROM
-                                        db_academico.cabecera_calificacion clfc
-                                 INNER JOIN db_academico.esquema_calificacion_unidad ecun ON ecun.ecun_id = clfc.ecun_id
-                                 INNER JOIN db_academico.esquema_calificacion ecal ON ecal.ecal_id = ecun.ecal_id
-                                 WHERE   ecal.ecal_id = 1 AND clfc.ccal_estado = 1 AND clfc.ccal_estado_logico = 1
-                               ) A  on  estudiante.est_id = A.est_id
+                                SELECT clfc.ccal_id, clfc.paca_id, clfc.est_id, clfc.asi_id,ecun.uaca_id,clfc.pro_id,clfc.ccal_calificacion AS PARCIAL_I
+                                FROM db_academico.cabecera_calificacion clfc
+                                INNER JOIN db_academico.esquema_calificacion_unidad ecun ON ecun.ecun_id = clfc.ecun_id
+                                INNER JOIN db_academico.esquema_calificacion ecal ON ecal.ecal_id = ecun.ecal_id
+                                WHERE ecal.ecal_id = 1 AND clfc.ccal_estado = 1 AND clfc.ccal_estado_logico = 1
+                              ) A  on  estudiante.est_id = A.est_id
                                                AND estudiante.paca_id = A.paca_id
                                                AND estudiante.pro_id  = A.pro_id
-                                               AND estudiante.asi_id = A.asi_id
+                                               AND estudiante.asi_id  = A.asi_id
                                                AND estudiante.uaca_id = A.uaca_id
                             LEFT JOIN
                                   (
-                                    SELECT clfc.ccal_id, clfc.paca_id, clfc.est_id, clfc.asi_id,ecun.uaca_id,clfc.pro_id,ecal.ecal_descripcion  ,clfc.ccal_calificacion AS PARCIAL_II FROM
-                                            db_academico.cabecera_calificacion clfc
+                                    SELECT clfc.ccal_id, clfc.paca_id, clfc.est_id, clfc.asi_id,ecun.uaca_id,clfc.pro_id,ecal.ecal_descripcion  ,clfc.ccal_calificacion AS PARCIAL_II
+                                    FROM db_academico.cabecera_calificacion clfc
                                     INNER JOIN db_academico.esquema_calificacion_unidad ecun ON ecun.ecun_id = clfc.ecun_id
                                     INNER JOIN db_academico.esquema_calificacion ecal ON ecal.ecal_id = ecun.ecal_id
-                                    WHERE   ecal.ecal_id = 2
-                                    AND clfc.ccal_estado = 1 AND clfc.ccal_estado_logico = 1
-                                    ) B  ON estudiante.est_id = B.est_id
-                                                    AND estudiante.paca_id = B.paca_id
-                                                   AND estudiante.pro_id  = B.pro_id
-                                                   AND estudiante.asi_id = B.asi_id
-                                                    AND estudiante.uaca_id = B.uaca_id
+                                    WHERE ecal.ecal_id = 2 AND clfc.ccal_estado = 1 AND clfc.ccal_estado_logico = 1
+                                  ) B  ON estudiante.est_id = B.est_id
+                                                AND estudiante.paca_id = B.paca_id
+                                                AND estudiante.pro_id  = B.pro_id
+                                                AND estudiante.asi_id  = B.asi_id
+                                                AND estudiante.uaca_id = B.uaca_id
                             LEFT JOIN
                                   (
-                                    SELECT clfc.ccal_id, clfc.paca_id, clfc.est_id, clfc.asi_id,ecun.uaca_id,clfc.pro_id,ecal.ecal_descripcion  ,clfc.ccal_calificacion AS SUPLETORIO FROM
-                                            db_academico.cabecera_calificacion clfc
+                                    SELECT clfc.ccal_id, clfc.paca_id, clfc.est_id, clfc.asi_id,ecun.uaca_id,clfc.pro_id,ecal.ecal_descripcion  ,clfc.ccal_calificacion AS SUPLETORIO
+                                    FROM db_academico.cabecera_calificacion clfc
                                     INNER JOIN db_academico.esquema_calificacion_unidad ecun ON ecun.ecun_id = clfc.ecun_id
                                     INNER JOIN db_academico.esquema_calificacion ecal ON ecal.ecal_id = ecun.ecal_id
-                                    WHERE   ecal.ecal_id = 3
-                                    AND clfc.ccal_estado = 1 AND clfc.ccal_estado_logico = 1
-                                    ) C ON estudiante.est_id = C.est_id
-                                                    AND estudiante.paca_id = C.paca_id
-                                                    AND estudiante.pro_id  = C.pro_id
-                                                    AND estudiante.asi_id = C.asi_id
-                                                     AND estudiante.uaca_id = C.uaca_id
+                                    WHERE ecal.ecal_id = 3 AND clfc.ccal_estado = 1 AND clfc.ccal_estado_logico = 1
+                                  ) C ON estudiante.est_id = C.est_id
+                                                AND estudiante.paca_id = C.paca_id
+                                                AND estudiante.pro_id  = C.pro_id
+                                                AND estudiante.asi_id  = C.asi_id
+                                                AND estudiante.uaca_id = C.uaca_id
                             LEFT JOIN
                                   (
                                     SELECT  casi.casi_id, casi.paca_id, casi.est_id,casi.asi_id,esquema_calificacion_unidad.uaca_id,casi.pro_id, casi.casi_porc_total*100 as ASISTENCIA_PARCIAL_I
@@ -1418,9 +1414,9 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord {
                                   WHERE esquema_calificacion_asistencia.ecal_id = 1
                                   AND casi.casi_estado = 1 AND casi.casi_estado_logico = 1
                                   ) D ON  estudiante.est_id = D.est_id  AND estudiante.paca_id = D.paca_id
-                                                   AND estudiante.pro_id  = D.pro_id
-                                                   AND estudiante.asi_id = D.asi_id
-                                                    AND estudiante.uaca_id = D.uaca_id
+                                                AND estudiante.pro_id  = D.pro_id
+                                                AND estudiante.asi_id  = D.asi_id
+                                                AND estudiante.uaca_id = D.uaca_id
                             LEFT JOIN
                                   (
                                     SELECT  casi.casi_id, casi.paca_id, casi.est_id,casi.asi_id,esquema_calificacion_unidad.uaca_id,casi.pro_id, casi.casi_porc_total*100 as ASISTENCIA_PARCIAL_II
@@ -1431,9 +1427,21 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord {
                                   WHERE esquema_calificacion_asistencia.ecal_id = 2
                                   AND casi.casi_estado = 1 AND casi.casi_estado_logico = 1
                                   ) E ON  estudiante.est_id = E.est_id  AND estudiante.paca_id = E.paca_id
-                                                   AND estudiante.pro_id  = E.pro_id
-                                                   AND estudiante.asi_id = E.asi_id
-                                                    AND estudiante.uaca_id = E.uaca_id
+                                                AND estudiante.pro_id  = E.pro_id
+                                                AND estudiante.asi_id  = E.asi_id
+                                                AND estudiante.uaca_id = E.uaca_id
+                            LEFT JOIN
+                              (
+                                SELECT clfc.ccal_id, clfc.paca_id, clfc.est_id, clfc.asi_id,ecun.uaca_id,clfc.pro_id,clfc.ccal_calificacion AS MEJORAMIENTO FROM
+                                        db_academico.cabecera_calificacion clfc
+                                 INNER JOIN db_academico.esquema_calificacion_unidad ecun ON ecun.ecun_id = clfc.ecun_id
+                                 INNER JOIN db_academico.esquema_calificacion ecal ON ecal.ecal_id = ecun.ecal_id
+                                 WHERE   ecal.ecal_id = 4 AND clfc.ccal_estado = 1 AND clfc.ccal_estado_logico = 1
+                               ) F  on  estudiante.est_id = F.est_id
+                                               AND estudiante.paca_id = F.paca_id
+                                               AND estudiante.pro_id  = F.pro_id
+                                               AND estudiante.asi_id  = F.asi_id
+                                               AND estudiante.uaca_id = F.uaca_id
                             Order By Nombres_completos asc
                                                 ";
 
@@ -1522,16 +1530,6 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord {
 			$str_perfil_user .= " persona.per_id = " . $per_id . " AND "; //GALO
 		}
 
-		$per_cedula = Persona::findOne(['per_id' => $per_id, 'per_estado' => 1, 'per_estado_logico' => 1]);
-		$validacion = this . getPagopend($per_cedula['per_cedula']);
-		if ($validación == 1) {
-			$str_val = " 1 as validacion, ";
-			$str_paca_val = " paca.paca_fecha_inicio >= now() AND paca.paca_fecha_inicio <= now() AND ";
-		} else {
-			$str_val = " 2 as validacion, ";
-
-		}
-
 		$sql = "SELECT DISTINCT
                 estudiante.est_id,
                 estudiante.est_matricula,
@@ -1541,7 +1539,6 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord {
                 estudiante.pro_id,
                 estudiante.profesor,
                 estudiante.asi_id,
-                " . $str_val . "
                 estudiante.asi_nombre as materia,
                 IFNULL(A.PARCIAL_I,'0') parcial_1,
                 IFNULL(B.PARCIAL_II,'0') parcial_2,
@@ -1560,37 +1557,58 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord {
                                         when IFNULL(A.PARCIAL_I,0) >= IFNULL(B.PARCIAL_II,0) then (IFNULL(A.PARCIAL_I,0) + IFNULL(C.SUPLETORIO,0))/2
                                         when IFNULL(A.PARCIAL_I,0) <= IFNULL(B.PARCIAL_II,0) then (IFNULL(B.PARCIAL_II,0) + IFNULL(C.SUPLETORIO,0))/2
                                     end*/
-                                else
-                                    (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2
+                                else (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2
                                 end
                             end
                         END AS promedio_final,
                         case
-                            when ((coalesce(D.ASISTENCIA_PARCIAL_I, 0) + coalesce(E.ASISTENCIA_PARCIAL_II, 0)) / 2) >= 75 then
+                        when ((coalesce(D.ASISTENCIA_PARCIAL_I, 0) + coalesce(E.ASISTENCIA_PARCIAL_II, 0)) / 2) >= 75 then
 
+                            case
+                            when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 >=14.50 then 'Aprobado'
+                            when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 >=1 and (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 <= 14.49 then
                                 case
-                                    when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 >=14.50 then 'Aprobado'
-                                    when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 > 0 and (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 < 14.50 then
-                                        case
-                                            when IFNULL(C.SUPLETORIO,0) > 0 then
+                                when IFNULL(C.SUPLETORIO,0) > 0 then
 
-                                                case
-                                                    when (((IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2)+IFNULL(C.SUPLETORIO,0))/2 >= 14.50 then 'Aprobado'
-                                                    when (((IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2)+IFNULL(C.SUPLETORIO,0))/2 > 0 and (((IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2)+IFNULL(C.SUPLETORIO,0))/2 < 14.50 then 'Reprobado'
-                                                end
+                                    case
+                                        when (((IFNULL(A.PARCIAL_I,0) + IFNULL(C.SUPLETORIO,0))/2)+IFNULL(C.SUPLETORIO,0))/2 >= 14.50 then 'Aprobado'
+                                        when (((IFNULL(A.PARCIAL_I,0) + IFNULL(C.SUPLETORIO,0))/2)+IFNULL(C.SUPLETORIO,0))/2 > 0 and (((IFNULL(A.PARCIAL_I,0) + IFNULL(C.SUPLETORIO,0))/2)+IFNULL(C.SUPLETORIO,0))/2 < 14.50 then 'Reprobado'
+                                    end
 
-                                        else
-                                            case when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 < 14.50 then 'Reprobado' end
-                                        end
-                                    when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 = 0 then 'Pendiente'
+                                else
+                                    case when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 < 14.50 then 'Reprobado' end
                                 end
-                            when ((coalesce(D.ASISTENCIA_PARCIAL_I, 0) + coalesce(E.ASISTENCIA_PARCIAL_II, 0)) / 2) > 0 and ((coalesce(D.ASISTENCIA_PARCIAL_I, 0) + coalesce(E.ASISTENCIA_PARCIAL_II, 0)) / 2) < 75 then
-                                case
-                                when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 >=14.50 then 'Reprobado'
-                                when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 >0 and (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 < 14.50 then 'Reprobado'
-                                end
+                            when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 = 0 then 'Pendiente'
+                            end
+                        when ((coalesce(D.ASISTENCIA_PARCIAL_I, 0) + coalesce(E.ASISTENCIA_PARCIAL_II, 0)) / 2) > 0 and ((coalesce(D.ASISTENCIA_PARCIAL_I, 0) + coalesce(E.ASISTENCIA_PARCIAL_II, 0)) / 2) < 75 then
+                            case
+                            when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 >=14.50 then 'Reprobado'
+                            when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 >=1 and (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 <= 14.49 then 'Reprobado'
+                            end
 
                         end as estado_academico,
+                            /*case
+                            when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 >=14.50 then 'Aprobado'
+                            when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 >=1 and (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 <= 14.49 then
+                                case
+                                when IFNULL(C.SUPLETORIO,0) > 0 then
+                                    case
+                                        when IFNULL(A.PARCIAL_I,0) >= IFNULL(B.PARCIAL_II,0) then
+                                        case
+                                            when (IFNULL(A.PARCIAL_I,0) + IFNULL(C.SUPLETORIO,0))/2 >= 14.50 then 'Aprobado'
+                                            when (IFNULL(A.PARCIAL_I,0) + IFNULL(C.SUPLETORIO,0))/2 >= 1 and (IFNULL(A.PARCIAL_I,0) + IFNULL(C.SUPLETORIO,0))/2 < 14.49 then 'Reprobado'
+                                        end
+                                        when IFNULL(A.PARCIAL_I,0) <= IFNULL(B.PARCIAL_II,0) then
+                                        case
+                                            when (IFNULL(B.PARCIAL_II,0) + IFNULL(C.SUPLETORIO,0))/2 >= 14.50 then 'Aprobado'
+                                            when (IFNULL(B.PARCIAL_II,0) + IFNULL(C.SUPLETORIO,0))/2 >= 1 and (IFNULL(B.PARCIAL_II,0) + IFNULL(C.SUPLETORIO,0))/2 < 14.49 then 'Reprobado'
+                                        end
+                                    end
+                                else
+                                    case when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 < 14.50 then 'Reprobado' end
+                                end
+                            when (IFNULL(A.PARCIAL_I,0) + IFNULL(B.PARCIAL_II,0))/2 = 0 then 'Pendiente'
+                            end as estado_academico,*/
 
                 IFNULL(D.ASISTENCIA_PARCIAL_I,'0') asistencia_parcial_1,
                 IFNULL(E.ASISTENCIA_PARCIAL_II,'0') asistencia_parcial_2,
@@ -1623,13 +1641,13 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord {
                     LEFT JOIN " . $con1->dbname . ".persona AS profesor ON profesor.per_id = pro.per_id
                     INNER JOIN " . $con->dbname . ".estudiante_carrera_programa AS ecpr ON ecpr.est_id = estudiante.est_id
                     INNER JOIN " . $con->dbname . ".modalidad_estudio_unidad AS meun ON meun.meun_id = ecpr.meun_id
-                    INNER JOIN " . $con->dbname . ".periodo_academico AS paca ON paca.daca_id = paca.paca_id
-                    INNER JOIN " . $con->dbname . ".semestre_academico AS saca ON  saca.saca_id = paca.saca_id
+                    INNER JOIN " . $con->dbname . ".periodo_academico AS paca ON daca.paca_id = paca.paca_id
+                    INNER JOIN " . $con->dbname . ".semestre_academico AS saca ON saca.saca_id = paca.saca_id
                     INNER JOIN " . $con->dbname . ".bloque_academico AS baca ON baca.baca_id = paca.baca_id
                     WHERE
                     $str_search
                     $str_perfil_user
-                    paca.paca_activo = 'A'
+                     paca.paca_activo = 'A'
                     -- AND estudiante.est_activo = 1
                     AND estudiante.est_estado = 1 AND estudiante.est_estado_logico = 1
                     AND persona.per_estado = 1 AND persona.per_estado_logico = 1
@@ -1684,7 +1702,7 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord {
                     AND estudiante.uaca_id = C.uaca_id
                 LEFT JOIN
                 (
-                    SELECT DISTINCT casi.casi_id, casi.paca_id, casi.est_id,casi.asi_id,esquema_calificacion_unidad.uaca_id,casi.pro_id, casi.casi_porc_total as ASISTENCIA_PARCIAL_I
+                    SELECT DISTINCT casi.casi_id, casi.paca_id, casi.est_id,casi.asi_id,esquema_calificacion_unidad.uaca_id,casi.pro_id, casi.casi_porc_total*100 as ASISTENCIA_PARCIAL_I
                     FROM " . $con->dbname . ".cabecera_asistencia casi
                     INNER JOIN " . $con->dbname . ".asistencia_esquema_unidad aeun_id_asistencia ON aeun_id_asistencia.aeun_id = casi.aeun_id
                     INNER JOIN " . $con->dbname . ".esquema_calificacion_unidad esquema_calificacion_unidad ON esquema_calificacion_unidad.ecun_id = aeun_id_asistencia.ecun_id
@@ -1697,7 +1715,7 @@ class CabeceraCalificacion extends \yii\db\ActiveRecord {
                 AND estudiante.uaca_id = D.uaca_id
                 LEFT JOIN
                 (
-                    SELECT DISTINCT casi.casi_id, casi.paca_id, casi.est_id,casi.asi_id,esquema_calificacion_unidad.uaca_id,casi.pro_id, casi.casi_porc_total as ASISTENCIA_PARCIAL_II
+                    SELECT DISTINCT casi.casi_id, casi.paca_id, casi.est_id,casi.asi_id,esquema_calificacion_unidad.uaca_id,casi.pro_id, casi.casi_porc_total*100 as ASISTENCIA_PARCIAL_II
                     FROM " . $con->dbname . ".cabecera_asistencia casi
                     INNER JOIN " . $con->dbname . ".asistencia_esquema_unidad aeun_id_asistencia ON aeun_id_asistencia.aeun_id = casi.aeun_id
                     INNER JOIN " . $con->dbname . ".esquema_calificacion_unidad esquema_calificacion_unidad ON esquema_calificacion_unidad.ecun_id = aeun_id_asistencia.ecun_id
@@ -1940,12 +1958,13 @@ croe.croe_exec,ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca
 
 		return $resultData;
 	}
-	/**
-	 * Actualizar el promedio de la tabla de promedio de malla academico
-	 * @author  Luis Cajamarca <analista04>
-	 * @param
-	 * @return
-	 */
+
+/**
+ * Actualizar el promedio de la tabla de promedio de malla academico
+ * @author  Luis Cajamarca <analista04>
+ * @param
+ * @return
+ */
 	public function updatepromedio($maes_id, $paca_id) {
 		$con = Yii::$app->db_academico;
 		$usu_id = @Yii::$app->session->get("PB_iduser");
@@ -2026,7 +2045,6 @@ croe.croe_exec,ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca
                     ) pmac
                 set pm.pmac_nota = pmac.promedio,
                     pm.enac_id = pmac.estado,
-                    pm.paca_id = $paca_id,
                     pm.pmac_fecha_modificacion = '$date',
                     pm.pmac_usuario_ingreso = $usu_id
                 where pm.maes_id=pmac.maes_id";
@@ -2051,7 +2069,7 @@ croe.croe_exec,ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca
 	/**
 	 * Function insertar Rbno_id por medio del insert select del ccal
 	 * @author  Luis Cajamarca  <analistadesarrollo04@uteg.edu.ec>
-	 * @property integer $Rbno_id
+	 * @property integer $daes_id
 	 * @return
 	 */
 	public function insertarRBNO($ccal_id, $key, $value, $valida) {
@@ -2103,12 +2121,7 @@ croe.croe_exec,ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca
 
 	}
 
-/**
- * Function obtener saldo deuda estudiantes (True es saldo cero)
- * @author  <analistadesarrollo05@uteg.edu.ec>
- * @return
- */
-	public function getPagopend($cedusuedu) {
+	function getPagopend($cedusuedu) {
 
 		$ceduladni['cedula'] = $cedusuedu;
 		$url = "https://acade.uteg.edu.ec/planificaciondesa/grades.php";
@@ -2142,16 +2155,32 @@ croe.croe_exec,ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca
 
 		}
 
-		if (isset($saldos[0])) {
-			if ($saldos[0] == 0) {
-				return 1;
-			} else {
-				return 2;
-			}
+		if ($saldos == 0) {
+			return True;
 		} else {
-			return 3;
+			return False;
 		}
 
+	}
+
+	public function busquedaEstudiantes() {
+		$con = \Yii::$app->db_academico;
+		$estado = 1;
+
+		$sql = "SELECT est.est_id as id, concat(/*est.per_id, ' - ',*/ pers.per_cedula, ' - ',
+                    ifnull(pers.per_pri_nombre, ' ') ,' ',
+                    ifnull(pers.per_pri_apellido,' ')) as name
+                    FROM db_academico.estudiante est
+                    JOIN db_asgard.persona pers ON pers.per_id = est.per_id
+                WHERE pers.per_estado = :estado AND
+                      pers.per_estado_logico = :estado AND
+                      est.est_estado = :estado AND
+                      est.est_estado_logico = :estado;";
+
+		$comando = $con->createCommand($sql);
+		$comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+		$resultData = $comando->queryAll();
+		return $resultData;
 	}
 
 }

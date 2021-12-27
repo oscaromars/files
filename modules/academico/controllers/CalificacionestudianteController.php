@@ -73,7 +73,7 @@ class CalificacionestudianteController extends \app\components\CController {
 		if (Yii::$app->request->isAjax) {
 			$data = Yii::$app->request->post();
 			if (isset($data["getmodalidad"])) {
-				$modalidad = $mod_modalidad->consultarModalidad($data["nint_id"], 1);
+				$modalidad = $mod_modalidad->consultarModalidadxEstudiante($data["nint_id"], $resp_estudianteid["est_id"]);
 				$message = array("modalidad" => $modalidad);
 				return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
 			}
@@ -114,10 +114,8 @@ class CalificacionestudianteController extends \app\components\CController {
 			// $arrSearch["per_id"] = $per_id;
 
 			$arr_estudiante = $cabeceraCalificacion->consultaCalificacionRegistroDocenteAllStudentSearch($arrSearch, $per_id, false);
-			$validacion = $arr_estudiante[0]['validacion'];
 			return $this->renderPartial('index-grid', [
 				"model" => $arr_estudiante,
-				"validacion" => $validacion,
 			]);
 		}
 
@@ -147,12 +145,11 @@ class CalificacionestudianteController extends \app\components\CController {
 
 		return $this->render('index', [
 			'model' => $arr_estudiante,
-			'validacion' => $validacion,
-			'arr_asignatura' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $asignatura), "id", "name"),
-			'arr_periodoActual' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $arr_periodoActual), "id", "name"),
-			'arr_ninteres' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $arr_ninteres), "id", "name"),
-			'arr_modalidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $arr_modalidad), "id", "name"),
-			'arr_carrera' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $arr_carrera), "id", "name"),
+			'arr_asignatura' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $asignatura), "id", "name"),
+			'arr_periodoActual' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $arr_periodoActual), "id", "name"),
+			'arr_ninteres' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $arr_ninteres), "id", "name"),
+			'arr_modalidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $arr_modalidad), "id", "name"),
+			'arr_carrera' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $arr_carrera), "id", "name"),
 			'arr_estados' => $this->estados(),
 			'arr_profesor_all' => ArrayHelper::map(array_merge($arr_profesor_all), "pro_id", "nombres"),
 		]);
@@ -179,9 +176,8 @@ class CalificacionestudianteController extends \app\components\CController {
 		$dataEstudiante = $mod_estudiante->consultarDatosPersona($est_id);
 		$dataProfesor = $mod_profesor->getProfesoresDist($pro_id);
 		$uaca_id = $mod_estudiante->getEstudiantexestid($est_id)['unidad'];
-		/* Considerar encontrar la modalidad del estudiante, ya que, no existe relación verificar con estudiante carrera o por el daca*/
 		$arr_modalidad = $mod_modalidad->consultarModalidadxEstudiante($uaca_id, $est_id);
-		//\app\models\Utilities::putMessageLogFile('modalidad: ' . print_r($arr_modalidad,true));
+		\app\models\Utilities::putMessageLogFile('modalidad: ' . print_r($arr_modalidad, true));
 
 		$nombres = $dataEstudiante['nombres'];
 		$matricula = $dataEstudiante['matricula'];
@@ -205,14 +201,18 @@ class CalificacionestudianteController extends \app\components\CController {
 			$promedio = $value['promedio'];
 			$promedio_total += $promedio;
 		}
+		// Se determina el promedio de asistencias para evaluar si aprueba por asistencia o reprueba
+		$promedio_asistencia = ($notas_estudiante_array[0]['asistencia'] + $notas_estudiante_array[1]['asistencia']) / 2;
 		if ($supletorio > 0) {
-			if ($notas_estudiante[0]['promedio'] > $notas_estudiante[1]['promedio']) {
-				$promedio_final = ($notas_estudiante[1]['promedio'] + $supletorio) / 2;
-			} else {
-				$promedio_final = ($notas_estudiante[0]['promedio'] + $supletorio) / 2;
-			}
+			$promedio_final = ((($notas_estudiante_array[0]['promedio'] + $notas_estudiante_array[1]['promedio']) / 2) + $supletorio) / 2;
 		} else {
 			$promedio_final = $promedio_total / count($notas_estudiante_array);
+		}
+
+		if ($promedio_final >= 14.50 && $promedio_asistencia >= 75) {
+			$estado = 'Aprobado';
+		} else {
+			$estado = 'Reprobado';
 		}
 
 		// \app\models\Utilities::putMessageLogFile($notas_estudiante);
@@ -227,6 +227,7 @@ class CalificacionestudianteController extends \app\components\CController {
 			'asignatura' => $asignatura,
 			'periodo' => $periodo,
 			'promedio_final' => $promedio_final,
+			'estado' => $estado,
 			'programa' => $programa,
 			'supletorio' => $supletorio,
 		]);

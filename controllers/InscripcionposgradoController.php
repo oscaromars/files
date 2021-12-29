@@ -28,10 +28,13 @@ use app\modules\academico\models\Modalidad;
 use app\modules\academico\models\UnidadAcademica;
 use app\modules\admision\models\ConvenioEmpresa;
 use app\modules\admision\models\MetodoIngreso;
+use app\modules\academico\Module as academico;
 use Yii;
 use yii\base\Exception;
 use yii\helpers\ArrayHelper;
 use app\models\ExportFile;
+
+academico::registerTranslations();
 
 class InscripcionposgradoController extends \yii\web\Controller {
 
@@ -1681,7 +1684,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
         for ($i = 0; $i < count($arrData); $i++) {
             unset($arrData[$i]['per_id']);
         }
-        $nameReport = academico::t("Academico", "Listado de Aspirantes de Grado");
+        $nameReport = academico::t("Academico", "Listado de Aspirantes de Posgrado");
         Utilities::generarReporteXLS($nombarch, $nameReport, $arrHeader, $arrData, $colPosition);
         exit;
     }

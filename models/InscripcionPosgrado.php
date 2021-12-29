@@ -744,11 +744,11 @@ ipos.per_id = :per_id AND
 per.per_estado = :estado and per.per_estado_logico = :estado and
 uaca.uaca_estado = :estado and uaca.uaca_estado_logico = :estado and
 eaca.eaca_estado = :estado and eaca.eaca_estado_logico = :estado and
-moda.mod_estado = :estado and moda.mod_estado_logico = :estado  
+moda.mod_estado = :estado and moda.mod_estado_logico = :estado 
                ";
 
 
-        \app\models\Utilities::putMessageLogFile('resultado del query: '.$comando->getRawSql());
+       // \app\models\Utilities::putMessageLogFile('resultado del query: '.$comando->getRawSql());
         $comando = $con->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
         $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);

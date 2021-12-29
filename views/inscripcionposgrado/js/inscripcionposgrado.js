@@ -1065,7 +1065,7 @@ function updateaspiranteposgrado() {
 }
 
 function exportExcelaspiranteposgrado() {
-    var search = $('#txt_buscarAspirante').val();
+    var search = $('#txt_buscarAspiranteposgrado').val();
     var año = $('#txt_año_pos').val();
     var unidad = $('#cmb_unidad_pos option:selected').val();
     var programa = $('#cmb_programa_pos option:selected').val();

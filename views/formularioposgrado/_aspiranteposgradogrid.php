@@ -57,10 +57,10 @@ academico::registerTranslations();
                 'template' => '{view} {download}',
                 'buttons' => [
                     'view' => function ($url, $model) {
-                        return Html::a('<span class="' . Utilities::getIcon('view') . '"></span>', Url::to(['inscripcionposgrado/view', 'id' => $model['per_id']]), ["data-toggle" => "tooltip", "title" => Yii::t("accion", "View")]);
+                        return Html::a('<span class="' . Utilities::getIcon('view') . '"></span>', Url::to(['formularioposgrado/view', 'id' => $model['per_id']]), ["data-toggle" => "tooltip", "title" => Yii::t("accion", "View")]);
                     },
                      'download' => function ($url, $model) {
-                        return Html::a('<span class="glyphicon glyphicon-download-alt"></span>', Url::to(['/inscripcionposgrado/registerpdf', 'ids' => $model['per_id']]), ["data-toggle" => "tooltip", "title" => "Descargar Inscripcion", "data-pjax" => "0"]);
+                        return Html::a('<span class="glyphicon glyphicon-download-alt"></span>', Url::to(['/formularioposgrado/registerpdf', 'ids' => $model['per_id']]), ["data-toggle" => "tooltip", "title" => "Descargar Inscripcion", "data-pjax" => "0"]);
                         //}
                     },
 

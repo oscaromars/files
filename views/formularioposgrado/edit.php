@@ -10,13 +10,7 @@ use yii\helpers\ArrayHelper;
 use kartik\tabs\TabsX;
 
 ?>
-<div class="col-md-12 col-sm-12 col-xs-12 col-lg-12">
-    <div class="pull-right"><!-- Carga de Acciones -->
-        <div class="btn-groups">
-            <button type="button" class="btn btn-default btnAccion" data-trigger="hover" onclick="updateaspiranteposgrado()"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;&nbsp;Actualizar</button>
-        </div>
-    </div>
-</div>
+
 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
     <p class="text-danger"> <?= Yii::t("formulario", "Fields with * are required") ?> </p>
 </div>

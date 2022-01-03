@@ -21,6 +21,7 @@
         border: 1px solid #0000;
         padding: 1mm;
         width: 25%;
+        font-size: 10pt;
     }
 
     .marcoCel3 {
@@ -30,6 +31,7 @@
         padding: 1mm;
         width: 25%;
         color:#000011;
+         font-size: 10pt;
     }
     .bold {
         font-weight: bold;

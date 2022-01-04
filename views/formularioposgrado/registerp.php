@@ -207,7 +207,7 @@ completamente firmada y acompañada de todos los documentos solicitados.
                 &nbsp;<?php echo $persona_model['apellidos'] ?><br><br>
                 &nbsp;<?php echo $persona_model['pai_nombre'] ?><br><br>
                 &nbsp;<?php echo $persona_model['per_fecha_nacimiento'] ?><br><br>
-                &nbsp;<?php echo $persona_model['per_nacionalidad'] ?><br><br>
+                &nbsp;<?php echo $persona_model['pai_nacionalidad'] ?><br><br>
                 &nbsp;<?php echo $persona_model['eciv_nombre'] ?><br><br>
                 &nbsp;<?php echo $persona_model['pro_nombre'] ?><br><br>
                 &nbsp;<?php echo $persona_model['can_nombre'] ?><br>
@@ -410,7 +410,7 @@ echo "<input type='checkbox' name='f'  value='1' />" ;
             </tr>
  <tr>
                 <td class="marcoCel"><?php 
-If ($persona_model['ipos_tipo_financiamiento'] == 'Pago al Contado')
+If ($persona_model['ipos_tipo_financiamiento'] == 'Pago Al Contado')
 { 
 echo "<input type='checkbox' style='width:140%; height:140%' name='f'  checked='checked'  value='3' />" ;
 }else

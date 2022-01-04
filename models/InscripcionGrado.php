@@ -594,7 +594,7 @@ ifnull(per.per_domicilio_csec,''),' ',ifnull(per.per_domicilio_num,''),' '
 per_celular,
 per_domicilio_telefono,
 per_correo,
-ifnull(CONCAT(ifnull(per.per_trabajo_direccion,''), ' ', ifnull(per.per_trabajo_nombre,''),' '), '') as trabajo,
+per.per_trabajo_direccion as trabajo,
 contac.pcon_nombre, 
 parente.tpar_nombre, 
 contac.pcon_telefono, 

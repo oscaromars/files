@@ -18,15 +18,15 @@ $gridColumns =['eaca_nombre','teac.teac_nombre','eaca_descripcion','eaca_alias_r
 
     <div style="float: right;">
 
-       
+
     </div>
-   
+
     <?php echo $this->render('_search', ['model' => $searchModel]); ?>
-<?php echo 
+<?php echo
     GridView::widget([
         'dataProvider' => $dataProvider,
         'pjax' => true,
-        
+
         'export' => [
             'showConfirmAlert' => false,
             'target' => GridView::TARGET_BLANK,
@@ -97,14 +97,14 @@ $gridColumns =['eaca_nombre','teac.teac_nombre','eaca_descripcion','eaca_alias_r
                     else
                         return '<small class="label label-danger">'.academico::t("asignatura", "Disabled").'</small>';
                 },
-            ],           
+            ],
             ['class' => 'yii\grid\ActionColumn',
                 'template' => '{update} {create} {delete}',
                 'buttons' => [
                     'delete' => function ($url, $model) {
                         $mod_est = new EstudioAcademico();
                         $result = $mod_est->consultarEstudioAcademicoEnUso($model->eaca_id);
-                        if(empty($result)){
+                        if(empty($result) && $model->eaca_estado == '1'){
                             return Html::a('<span class="glyphicon glyphicon-remove"></span>', null, ['href' =>  "javascript:confirmDelete('deleteItem', [ '" . $model->eaca_id . "' ]);", "data-toggle" => "tooltip", "title" => Yii::t("formulario", "Delete")]);
                         }
                         else{

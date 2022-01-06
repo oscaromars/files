@@ -3,6 +3,7 @@
 namespace app\modules\academico\controllers;
 
 use Yii;
+use app\models\Utilities;
 use app\modules\academico\models\EstudioAcademicoSearch;
 use app\modules\academico\models\EstudioAcademico;
 use app\modules\Academico\Module as Academico;
@@ -32,7 +33,7 @@ class EstudioacademicoController extends \app\components\CController {
             ],
         ];
     }
-    
+
     /**
      * Lists all Rol models.
      * @return mixed
@@ -87,7 +88,7 @@ class EstudioacademicoController extends \app\components\CController {
         return $this->render('update', ['model' => $model,]);
     }
 
-    
+
     /**
      * Deletes an existing Rol model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
@@ -108,7 +109,7 @@ class EstudioacademicoController extends \app\components\CController {
         return $this->redirect(['index']);
     }
 
-    
+
     /**
      * Finds the Notas model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
@@ -122,6 +123,37 @@ class EstudioacademicoController extends \app\components\CController {
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    public function actionDeletestudio() {
+        $usu_autenticado = @Yii::$app->session->get("PB_iduser");
+        if (Yii::$app->request->isAjax) {
+            $data = Yii::$app->request->post();
+            try {
+                $estudioaca_model = new EstudioAcademico();
+                $estudioaca_model = EstudioAcademico::findOne($data["id"]);
+                $estudioaca_model->eaca_usuario_modifica = $usu_autenticado;
+                $estudioaca_model->eaca_estado = "0";
+                $estudioaca_model->eaca_estado_logico = "0";
+                $estudioaca_model->eaca_fecha_modificacion = date(Yii::$app->params["dateTimeByDefault"]);
+
+                $message = array(
+                    "wtmessage" => Yii::t("notificaciones", "Se ha actualizado el Estudio Académico."),
+                    "title" => Yii::t('jslang', 'Success'),
+                );
+                if ($estudioaca_model->save()) {
+                    return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+                } else {
+                    throw new Exception('Error Estudio Académico no ha sido actializado.');
+                }
+            } catch (Exception $ex) {
+                $message = array(
+                    "wtmessage" => Yii::t('notificaciones', 'Error al Actualizar. Please try again.'),
+                    "title" => Yii::t('jslang', 'Error'),
+                );
+                return Utilities::ajaxResponse('NOOK', 'alert', Yii::t('jslang', 'Error'), 'true', $message);
+            }
+        }
     }
 
 }

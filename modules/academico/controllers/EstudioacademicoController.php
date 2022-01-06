@@ -156,4 +156,40 @@ class EstudioacademicoController extends \app\components\CController {
         }
     }
 
+    public function actionSavestudioacademico() {
+        $usu_autenticado = @Yii::$app->session->get("PB_iduser");
+        if (Yii::$app->request->isAjax) {
+            $data = Yii::$app->request->post();
+            try {
+
+                $estudioacad_model = new EstudioAcademico();
+                $estudioacad_model->teac_id = $data["teac_id"];
+                $estudioacad_model->eaca_nombre = $data["eaca_nombre"];
+                $estudioacad_model->eaca_descripcion = $data["eaca_descripcion"];
+                $estudioacad_model->eaca_alias_resumen = $data["eaca_alias_resumen"];
+                $estudioacad_model->eaca_alias = $data["eaca_alias"];
+                $estudioacad_model->eaca_estado = $data["estado"];
+                $estudioacad_model->eaca_usuario_ingreso = $usu_autenticado;
+                $estudioacad_model->eaca_estado_logico = "1";
+                $estudioacad_model->eaca_fecha_creacion = date(Yii::$app->params["dateTimeByDefault"]);
+
+                $message = array(
+                    "wtmessage" => Yii::t("notificaciones", "Your information was successfully saved."),
+                    "title" => Yii::t('jslang', 'Success'),
+                );
+                if ($estudioacad_model->save()) {
+                    return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+                } else {
+                    throw new Exception('Error Estudio Académico no creado.');
+                }
+            } catch (Exception $ex) {
+                $message = array(
+                    "wtmessage" => Yii::t('notificaciones', 'Your information has not been saved. Please try again.'),
+                    "title" => Yii::t('jslang', 'Error'),
+                );
+                return Utilities::ajaxResponse('NOOK', 'alert', Yii::t('jslang', 'Error'), 'true', $message);
+            }
+        }
+    }
+
 }

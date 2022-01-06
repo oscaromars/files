@@ -12,9 +12,7 @@ $this->params['breadcrumbs'][] = 'Update';
 ?>
 <div class="rol-update">
 
-   
-
-    <?= $this->render('_form', [
+   <?= $this->render('_form', [
         'model' => $model,
     ]) ?>
 

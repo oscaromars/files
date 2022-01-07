@@ -620,6 +620,7 @@ $trans2->commit();
 
 	public function updatePlanAnual($id, $fechaini, $fechafin, $fechaini1, $fechafin1, /* $fechaini2, $fechafin2,*/ $fechaini3, $fechafin3, $fechaini4, $fechafin4, $fechaini5, $fechafin5) {
 		$con = \Yii::$app->db_academico;
+		$usu_id = @Yii::$app->session->get("PB_iduser");
 		$fecha = date(Yii::$app->params["dateTimeByDefault"]);
 		$trans = $con->getTransaction(); // se obtiene la transacción actual
 		if ($trans !== null) {
@@ -641,6 +642,7 @@ $trans2->commit();
                 rco_fecha_fin_clases = :rco_fecha_fin_clases,
                 rco_fecha_ini_examenes = :rco_fecha_ini_examenes,
                 rco_fecha_fin_examenes = :rco_fecha_fin_examenes,
+                rco_usuario_modifica   = $usu_id,
                 rco_fecha_modificacion = $fecha
                 WHERE rco_id = :id and rco_estado = 1 and rco_estado_logico = 1";
 

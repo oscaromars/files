@@ -192,4 +192,39 @@ class EstudioacademicoController extends \app\components\CController {
         }
     }
 
+    public function actionUpdatestudioacademico() {
+        $usu_autenticado = @Yii::$app->session->get("PB_iduser");
+        if (Yii::$app->request->isAjax) {
+            $data = Yii::$app->request->post();
+            try {
+                $estudioacad_model = new EstudioAcademico();
+                $estudioacad_model = EstudioAcademico::findOne($data["id"]);
+                $estudioacad_model->teac_id = $data["teac_id"];
+                $estudioacad_model->eaca_nombre = $data["eaca_nombre"];
+                $estudioacad_model->eaca_descripcion = $data["eaca_descripcion"];
+                $estudioacad_model->eaca_alias_resumen = $data["eaca_alias_resumen"];
+                $estudioacad_model->eaca_alias = $data["eaca_alias"];
+                $estudioacad_model->eaca_estado = $data["estado"];
+                $estudioacad_model->eaca_usuario_modifica = $usu_autenticado;
+                $estudioacad_model->eaca_estado_logico = "1";
+                $estudioacad_model->eaca_fecha_modificacion = date(Yii::$app->params["dateTimeByDefault"]);
+
+                $message = array(
+                    "wtmessage" => Yii::t("notificaciones", "Se ha actualizado el Estudio Académico."),
+                    "title" => Yii::t('jslang', 'Success'),
+                );
+                if ($estudioacad_model->save()) {
+                    return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+                } else {
+                    throw new Exception('Error Estudio Académico no ha sido actializado.');
+                }
+            } catch (Exception $ex) {
+                $message = array(
+                    "wtmessage" => Yii::t('notificaciones', 'Error al Actualizar. Please try again.'),
+                    "title" => Yii::t('jslang', 'Error'),
+                );
+                return Utilities::ajaxResponse('NOOK', 'alert', Yii::t('jslang', 'Error'), 'true', $message);
+            }
+        }
+    }
 }

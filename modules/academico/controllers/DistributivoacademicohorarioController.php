@@ -135,7 +135,7 @@ class DistributivoacademicohorarioController extends \app\components\CController
                 $disthorario_model->daho_horario = $data["horario"];
                 $disthorario_model->daho_total_horas = $data["totalhora"];
                 $disthorario_model->daho_estado_logico = "1";
-                $disthorario_model->daho_fecha_creacion = date(Yii::$app->params["dateTimeByDefault"]);
+                $disthorario_model->daho_fecha_modificacion = date(Yii::$app->params["dateTimeByDefault"]);
 
                 $message = array(
                     "wtmessage" => Yii::t("notificaciones", "Se ha actualizado el Semestre Académico."),

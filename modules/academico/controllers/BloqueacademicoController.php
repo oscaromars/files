@@ -2,6 +2,7 @@
 
 namespace app\modules\academico\controllers;
 
+use app\models\Utilities;
 use app\modules\academico\models\BloqueAcademico;
 use app\modules\academico\models\BloqueAcademicoSearch;
 use app\modules\Academico\Module as Academico;
@@ -170,25 +171,27 @@ class BloqueacademicoController extends \app\components\CController {
 		}
 	}
 
-	public function actionUpdateBloque() {
+	public function actionUpdatebloque() {
 		if (Yii::$app->request->isAjax) {
 			$data = Yii::$app->request->post();
+			$usu_id = @Yii::$app->session->get("PB_iduser");
 			try {
 				$bloque_model = new BloqueAcademico();
 				$bloque_model = BloqueAcademico::findOne($data["id"]);
-				$bloque_model->baca_nombre = $data["unidad"];
-				$bloque_model->baca_descripcion = $data["modalidad"];
-				$bloque_model->baca_anio = $data["estudio"];
+				$bloque_model->baca_id = $data["id"];
+				$bloque_model->baca_nombre = $data["baca_nombre"];
+				$bloque_model->baca_descripcion = $data["baca_descripcion"];
+				$bloque_model->baca_anio = $data["baca_anio"];
 				$bloque_model->baca_usuario_modifica = $usu_id;
 				$bloque_model->baca_estado = "1";
 				$bloque_model->baca_fecha_modificacion = date(Yii::$app->params["dateTimeByDefault"]);
 				$bloque_model->baca_estado_logico = "1";
 
 				$message = array(
-					"wtmessage" => Yii::t("notificaciones", "Se ha actualizado el Semestre Académico."),
+					"wtmessage" => Yii::t("notificaciones", "Se ha actualizado el Bloque Académico."),
 					"title" => Yii::t('jslang', 'Success'),
 				);
-				if ($bloque_model->save()) {
+				if ($bloque_model->update() !== false) {
 					return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
 				} else {
 					throw new Exception('Error Bloque Académico no ha sido actializado.');
@@ -202,5 +205,4 @@ class BloqueacademicoController extends \app\components\CController {
 			}
 		}
 	}
-
 }

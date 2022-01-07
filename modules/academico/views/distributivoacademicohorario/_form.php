@@ -120,11 +120,11 @@ if ($model->daho_id == null) {//Ingresa un nuevo
             <?= $form->field($model, 'daho_total_horas')->textInput(['style' => 'width:300px']) ?>
 
         </div>
-        <div class="form-group">
+        <!-- <div class="form-group">
             <div class="col-sm-offset-4">
                 <?= Html::submitButton('Guardar', ['class' => 'btn btn-success']) ?>
             </div>
-        </div>
+        </div>-->
 
       
         <?= $form->field($model, 'daho_estado_logico')->hiddenInput() ?>

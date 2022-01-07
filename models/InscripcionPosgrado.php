@@ -721,8 +721,8 @@ FROM db_inscripcion.inscripcion_posgrado as ipos
 Inner Join db_asgard.persona as per on per.per_id = ipos.per_id
 Left Join db_asgard.pais as pais on pais.pai_id = per.per_nacionalidad
 Left Join db_asgard.estado_civil as esta on esta.eciv_id = per.eciv_id
-Left Join db_asgard.provincia as provi on provi.pro_id = per.pro_id_nacimiento
-Left Join db_asgard.canton as canton on canton.can_id = per.can_id_nacimiento
+Left Join db_asgard.provincia as provi on provi.pro_id = per.pro_id_domicilio
+Left Join db_asgard.canton as canton on canton.can_id = per.can_id_domicilio
 Inner Join db_inscripcion.estudiante_instruccion as acad on acad.per_id = ipos.per_id
 Inner Join db_inscripcion.informacion_laboral  as labo on labo.per_id = ipos.per_id
 left Join db_inscripcion.estudiante_idiomas  as idiom on idiom.per_id = ipos.per_id
@@ -744,11 +744,11 @@ ipos.per_id = :per_id AND
 per.per_estado = :estado and per.per_estado_logico = :estado and
 uaca.uaca_estado = :estado and uaca.uaca_estado_logico = :estado and
 eaca.eaca_estado = :estado and eaca.eaca_estado_logico = :estado and
-moda.mod_estado = :estado and moda.mod_estado_logico = :estado  
+moda.mod_estado = :estado and moda.mod_estado_logico = :estado 
                ";
 
 
-        \app\models\Utilities::putMessageLogFile('resultado del query: '.$comando->getRawSql());
+       // \app\models\Utilities::putMessageLogFile('resultado del query: '.$comando->getRawSql());
         $comando = $con->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
         $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);

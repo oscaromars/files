@@ -5,7 +5,7 @@ $(document).ready(function () {
     });
 
     $('#cmb_programa').change(function () {
-        var link = $('#txth_base').val() + "/inscripcionposgrado/index";
+        var link = $('#txth_base').val() + "/formularioposgrado/index";
         var arrParams = new Object();
         arrParams.unidad = $('#cmb_unidadpos').val();
         arrParams.programa = $(this).val();
@@ -20,7 +20,7 @@ $(document).ready(function () {
     });
 
     $('#cmb_programa_pos').change(function () {
-        var link = $('#txth_base').val() + "/inscripcionposgrado/index";
+        var link = $('#txth_base').val() + "/formularioposgrado/index";
         var arrParams = new Object();
         arrParams.unidad = $('#cmb_unidad_pos').val();
         arrParams.programa = $(this).val();
@@ -91,7 +91,7 @@ $(document).ready(function () {
     });
 
     $('#cmb_nacionalidad').change(function () {
-        var link = $('#txth_base').val() + "/inscripcionposgrado/index";
+        var link = $('#txth_base').val() + "/formularioposgrado/index";
         var arrParams = new Object();
         arrParams.pai_id = $(this).val();
         arrParams.getprovincias = true;
@@ -123,7 +123,7 @@ $(document).ready(function () {
     /* codigo de pais en datos personales*/
 
     $('#cmb_pais').change(function () {
-        var link = $('#txth_base').val() + "/inscripcionposgrado/index";
+        var link = $('#txth_base').val() + "/formularioposgrado/index";
         var arrParams = new Object();
         arrParams.pai_id = $(this).val();
         arrParams.getprovincias = true;
@@ -148,7 +148,7 @@ $(document).ready(function () {
     });
 
     $('#cmb_provincia').change(function () {
-        var link = $('#txth_base').val() + "/inscripcionposgrado/index";
+        var link = $('#txth_base').val() + "/formularioposgrado/index";
         var arrParams = new Object();
         arrParams.prov_id = $(this).val();
         arrParams.getcantones = true;
@@ -162,7 +162,7 @@ $(document).ready(function () {
 
     /* codigo de pais en datos laborales*/
     $('#cmb_pais_emp').change(function () {
-        var link = $('#txth_base').val() + "/inscripcionposgrado/index";
+        var link = $('#txth_base').val() + "/formularioposgrado/index";
         var arrParams = new Object();
         arrParams.pai_id = $(this).val();
         arrParams.getprovincias = true;
@@ -187,7 +187,7 @@ $(document).ready(function () {
     });
 
     $('#cmb_prov_emp').change(function () {
-        var link = $('#txth_base').val() + "/inscripcionposgrado/index";
+        var link = $('#txth_base').val() + "/formularioposgrado/index";
         var arrParams = new Object();
         arrParams.prov_id = $(this).val();
         arrParams.getcantones = true;
@@ -200,7 +200,7 @@ $(document).ready(function () {
     });
 
     $('#cmb_paisEdit').change(function () {
-        var link = $('#txth_base').val() + "/inscripciongrado/edit";
+        var link = $('#txth_base').val() + "/formularioposgrado/edit";
         var arrParams = new Object();
         arrParams.pai_id = $(this).val();
         arrParams.getprovincias = true;
@@ -229,7 +229,7 @@ $(document).ready(function () {
     });
 
     $('#cmb_provinciaEdit').change(function () {
-        var link = $('#txth_base').val() + "/inscripciongrado/edit";
+        var link = $('#txth_base').val() + "/formularioposgrado/edit";
         var arrParams = new Object();
         arrParams.prov_id = $(this).val();
         arrParams.getcantones = true;
@@ -242,7 +242,7 @@ $(document).ready(function () {
     });
 
     $('#cmb_pais_empEdit').change(function () {
-        var link = $('#txth_base').val() + "/inscripciongrado/edit";
+        var link = $('#txth_base').val() + "/formularioposgrado/edit";
         var arrParams = new Object();
         arrParams.pai_id = $(this).val();
         arrParams.getprovincias = true;
@@ -267,7 +267,7 @@ $(document).ready(function () {
     });
 
     $('#cmb_provincia_empEdit').change(function () {
-        var link = $('#txth_base').val() + "/inscripciongrado/edit";
+        var link = $('#txth_base').val() + "/formularioposgrado/edit";
         var arrParams = new Object();
         arrParams.pai_id = 1;
         arrParams.prov_id = $(this).val();
@@ -281,7 +281,7 @@ $(document).ready(function () {
     });
 
     $("#txt_cedula").change(function(){
-        var link = $('#txth_base').val() + "/inscripcionposgrado/index";
+        var link = $('#txth_base').val() + "/formularioposgrado/index";
         var arrParams = new Object();
         arrParams.cedulacons = $('#txt_cedula').val();
         arrParams.getcedula = true;
@@ -305,7 +305,7 @@ $(document).ready(function () {
       });
 
       $("#txt_pasaporte").change(function(){
-        var link = $('#txth_base').val() + "/inscripcionposgrado/index";
+        var link = $('#txth_base').val() + "/formularioposgrado/index";
         var arrParams = new Object();
         arrParams.cedulacons = $('#txt_pasaporte').val();
         arrParams.getcedula = true;
@@ -555,268 +555,6 @@ function setComboDataselect(arr_data, element_id, texto) {
     $("#" + element_id).html(option_arr);
 }
 
-function guardarInscripcionPosgrado() {
-    //var ID = /*(accion == "UpdateDepTrans") ?*/$('#txth_ipos_id').val()/* : 0*/;
-    var link = $('#txth_base').val() + "/inscripcionposgrado/guardarinscripcionposgrado";
-    var arrParams = new Object();
-    //arrParams.DATA_1 = dataInscripcion(ID);
-    arrParams.ipos_id = $('#txth_ipos_id').val();
-    arrParams.unidad = $('#cmb_unidadpos').val();
-    arrParams.programa = $('#cmb_programa').val();
-    arrParams.modalidad = $('#cmb_modalidadpos').val();
-    arrParams.año = $('#txt_año').val();
-    arrParams.tipo_dni = $('#cmb_tipo_dni option:selected').val();
-    //arrParams.ACCION = accion;
-    if (arrParams.unidad == 2) {
-        //objDat.ming_id = null;
-    } else if (arrParams.unidad_academica == 1) {
-        arrParams.ming_id = $('#cmb_metodo_solicitud option:selected').val();
-    }
-    if (arrParams.tipo_dni == 'CED') {
-        arrParams.cedula = $('#txt_cedula').val();
-        arrParams.pasaporte = '';
-    } else {
-        arrParams.cedula = $('#txt_pasaporte').val();
-        arrParams.pasaporte = $('#txt_pasaporte').val();
-    }
-
-    //var pais = $('#cmb_pais_dom').val();
-
-    //FORM 1 datos personal
-    arrParams.cedula = $('#txt_cedula').val();
-    arrParams.pasaporte = $('#txt_pasaporte').val();
-    arrParams.primer_nombre = $('#txt_primer_nombre').val();
-    arrParams.segundo_nombre = $('#txt_segundo_nombre').val();
-    arrParams.primer_apellido = $('#txt_primer_apellido').val();
-    arrParams.segundo_apellido = $('#txt_segundo_apellido').val();
-    arrParams.cuidad_nac = $('#cmb_ciu_nac').val();
-    arrParams.fecha_nac = $('#txt_fecha_nac').val();
-    arrParams.nacionalidad = $('#cmb_nacionalidad').val();
-    arrParams.estado_civil = $('#cmb_estado_civil').val();
-    arrParams.pais = $('#cmb_pais').val();
-    arrParams.provincia = $('#cmb_provincia').val();
-    arrParams.canton = $('#cmb_ciudad').val();
-
-    //Form 1 Datos Contacto
-    arrParams.dir_domicilio = $('#txt_domicilio').val();
-    arrParams.celular = $('#txt_celular').val();
-    arrParams.telefono = $('#txt_telefono').val();
-    arrParams.correo = $('#txt_correo').val();
-
-    //FORM 1 datos en caso de emergencias
-    arrParams.cont_emergencia = $('#txt_contacto_emergencia').val();
-    arrParams.parentesco = $('#cmb_parentesco').val();
-    arrParams.tel_emergencia = $('#txt_telefono_emergencia').val();
-
-    //Form2 Datos formacion profesional
-    arrParams.titulo_tercer = $('#txt_titulo_3erNivel').val();
-    arrParams.universidad_tercer = $('#txt_universidad1').val();
-    arrParams.grado_tercer = $('#txt_año_grado1').val();
-
-    arrParams.titulo_cuarto = $('#txt_titulo_4toNivel').val();
-    arrParams.universidad_cuarto = $('#txt_universidad2').val();
-    arrParams.grado_cuarto = $('#txt_año_grado2').val();
-
-    //Form2 Datos laborales
-    arrParams.empresa = $('#txt_empresa').val();
-    arrParams.cargo = $('#txt_cargo').val();
-    arrParams.telefono_emp = $('#txt_telefono_emp').val();
-    arrParams.pais_emp = $('#cmb_pais_emp').val();
-    arrParams.prov_emp = $('#cmb_prov_emp').val();
-    arrParams.ciu_emp = $('#cmb_ciu_emp').val();
-    arrParams.parroquia = $('#txt_parroquia').val();
-    arrParams.direccion_emp = $('#txt_direc_emp').val();
-    arrParams.añoingreso_emp = $('#txt_añoingreso_emp').val();
-    arrParams.correo_emp = $('#txt_correo_emp').val();
-    arrParams.cat_ocupacional = $('#txt_cat_ocupacional').val();
-
-    //Form2 Datos idiomas
-    arrParams.idioma1 = $('#cmb_idioma1').val();
-    arrParams.nivel1 = $('#cmb_nivelidioma1').val();
-
-    arrParams.idioma2 = $('#cmb_idioma2').val();
-    arrParams.nivel2 = $('#cmb_nivelidioma2').val();
-
-    arrParams.otroidioma = $('#txt_nombreidioma').val();
-    arrParams.otronivel = $('#cmb_nivelotroidioma').val();
-
-    arrParams.tipo_idioma = $('#cmb_idioma2 option:selected').val();
-    if (arrParams.tipo_idioma == 3) {
-        arrParams.otroidioma = $('#txt_nombreidioma').val();
-        arrParams.otronivel = $('#cmb_nivelotroidioma').val();
-        $('#txt_nombreidioma').addClass("PBvalidation");
-    } else {
-        arrParams.nivel2 = $('#cmb_nivelidioma2').val();
-        $('#txt_nombreidioma').removeClass("PBvalidation");
-    }
-
-    //Form2 Datos adicionales
-    arrParams.discapacidades = $('input[name=signup-dis]:checked').val();
-    arrParams.tipo_discap = $('#cmb_tipo_discap').val();
-    arrParams.porcentaje_discap = $('#txt_porc_discapacidad').val();
-    arrParams.discapacidad = "1";
-    if ($('input[name=signup-dis_no]:checked').val() == 2) {
-        $('#txt_porc_discapacidad').removeClass("PBvalidation");
-        arrParams.discapacidad = "0";
-    }
-    arrParams.docencia = $('input[name=signup-doc]:checked').val();
-    arrParams.año_docencia = $('#txt_año_docencia').val();
-    arrParams.area_docencia = $('#txt_area_docencia').val();
-    arrParams.docencias = "1";
-    if ($('input[name=signup-doc_no]:checked').val() == 2) {
-        $('#txt_area_docencia').removeClass("PBvalidation");
-        arrParams.docencias = "0";
-    }
-    arrParams.investigacion = $('input[name=signup-inv]:checked').val();
-    arrParams.articulos = $('#txt_articulos').val();
-    arrParams.area_investigacion = $('#txt_area_investigacion').val();
-    arrParams.investiga = "1";
-    if ($('input[name=signup-inv_no]:checked').val() == 2) {
-        $('#txt_area_investigacion').removeClass("PBvalidation");
-        arrParams.investiga = "0";
-    }
-
-    //Form2 Datos financiamiento
-    arrParams.tipo_financiamiento = $("[name=signup]:checked").val();
-
-
-     //TAB 2
-    arrParams.ipos_ruta_documento = ($('#txth_doc_documento').val() != '') ? $('#txth_doc_documento').val() : '';
-    arrParams.ipos_ruta_doc_foto = ($('#txth_doc_foto').val() != '') ? $('#txth_doc_foto').val() : '';
-    arrParams.ipos_ruta_doc_dni = ($('#txth_doc_dni').val() != '') ? $('#txth_doc_dni').val() : '';
-    arrParams.ipos_ruta_doc_certvota = ($('#txth_doc_certvota').val() != '') ? $('#txth_doc_certvota').val() : '';
-    arrParams.ipos_ruta_doc_titulo = ($('#txth_doc_titulo').val() != '') ? $('#txth_doc_titulo').val() : '';
-    arrParams.ipos_ruta_doc_comprobante = ($('#txth_doc_comprobante').val() != '') ? $('#txth_doc_comprobante').val() : '';
-    arrParams.ipos_ruta_doc_record1 = ($('#txth_doc_record1').val() != '') ? $('#txth_doc_record1').val() : '';
-    arrParams.ipos_ruta_doc_senescyt = ($('#txth_doc_senecyt').val() != '') ? $('#txth_doc_senecyt').val() : '';
-    arrParams.ipos_ruta_doc_hojavida = ($('#txth_doc_hojavida').val() != '') ? $('#txth_doc_hojavida').val() : '';
-    arrParams.ipos_ruta_doc_cartarecomendacion = ($('#txth_doc_cartarecomendacion').val() != '') ? $('#txth_doc_cartarecomendacion').val() : '';
-    arrParams.ipos_ruta_doc_certificadolaboral = ($('#txth_doc_certificadolaboral').val() != '') ? $('#txth_doc_certificadolaboral').val() : '';
-    arrParams.ipos_ruta_doc_certificadoingles = ($('#txth_doc_certificadoingles').val() != '') ? $('#txth_doc_certificadoingles').val() : '';
-    arrParams.ipos_ruta_doc_recordacademico = ($('#txth_doc_recordacad').val() != '') ? $('#txth_doc_recordacad').val() : '';
-    arrParams.ipos_ruta_doc_certnosancion = ($('#txth_doc_nosancion').val() != '') ? $('#txth_doc_nosancion').val() : '';
-    arrParams.ipos_ruta_doc_syllabus = ($('#txth_doc_syllabus').val() != '') ? $('#txth_doc_syllabus').val() : '';
-    arrParams.ipos_ruta_doc_homologacion = ($('#txth_doc_especievalorada').val() != '') ? $('#txth_doc_especievalorada').val() : '';
-    arrParams.ipos_mensaje1 = ($("#chk_mensaje1").prop("checked")) ? '1' : '0';
-    arrParams.ipos_mensaje2 = ($("#chk_mensaje2").prop("checked")) ? '1' : '0';
-
-    if ($("#chk_mensaje1").prop("checked") && $("#chk_mensaje2").prop("checked")) {
-        //error = 0;
-        if ($('#txth_doc_foto').val() == "") {
-        var mensaje = {wtmessage: "Debe adjuntar foto.", title: "Información"};
-        showAlert("NO_OK", "error", mensaje);
-    } else {
-           if ($('#txth_doc_documento').val() == "") {
-                var mensaje = {wtmessage: "Debe adjuntar documentos.", title: "Información"};
-                showAlert("NO_OK", "error", mensaje);
-            } else {
-            /*if ($('#txth_doc_dni').val() == "") {
-                var mensaje = {wtmessage: "Debe adjuntar documento de identidad.", title: "Información"};
-                showAlert("NO_OK", "error", mensaje);
-            } else {*/
-                    /*if ($('#txth_doc_certvota').val() == "" && $('#cmb_nacionalidad').val() == 1) {
-                        var mensaje = {wtmessage: "Debe adjuntar certificado de votación.", title: "Información"};
-                        showAlert("NO_OK", "error", mensaje);
-                    } else {*/
-                        /*if ($('#txth_doc_titulo').val() == "") {
-                            var mensaje = {wtmessage: "Debe adjuntar Título o Acta.", title: "Información"};
-                            showAlert("NO_OK", "error", mensaje);
-                        } else{*/
-                            if ($('#txth_doc_comprobante').val() == "") {
-                                var mensaje = {wtmessage: "Debe adjuntar Comprobante.", title: "Información"};
-                                showAlert("NO_OK", "error", mensaje);
-                            } else{
-                                /*if ($('#txth_doc_record1').val() == "") {
-                                    var mensaje = {wtmessage: "Debe adjuntar Record Académico.", title: "Información"};
-                                    showAlert("NO_OK", "error", mensaje);
-                                } else{*/
-                                    /*if ($('#txth_doc_senecyt').val() == "") {
-                                        var mensaje = {wtmessage: "Debe adjuntar Registro Senescyt.", title: "Información"};
-                                        showAlert("NO_OK", "error", mensaje);
-                                    } else{*/
-                                        /*if ($('#txth_doc_hojavida').val() == "") {
-                                            var mensaje = {wtmessage: "Debe adjuntar Hoja de Vida.", title: "Información"};
-                                            showAlert("NO_OK", "error", mensaje);
-                                        } else{*/
-                                                /*if ($('#txth_doc_cartarecomendacion').val() == "") {
-                                                    var mensaje = {wtmessage: "Debe adjuntar Carta de Recomendación.", title: "Información"};
-                                                    showAlert("NO_OK", "error", mensaje);
-                                                } else{*/
-                                                    /*if ($('#txth_doc_certificadolaboral').val() == "") {
-                                                        var mensaje = {wtmessage: "Debe adjuntar Certificado Laboral.", title: "Información"};
-                                                        showAlert("NO_OK", "error", mensaje);
-                                                    } else{*/
-                                                        /*if ($('#txth_doc_certificadoingles').val() == "") {
-                                                            var mensaje = {wtmessage: "Debe adjuntar Certificado Suficiencia Ingles.", title: "Información"};
-                                                            showAlert("NO_OK", "error", mensaje);
-                                                        } else{*/
-                                                        if ($("#signup-hom").prop("checked") == true)
-                                                        {
-                                                            if ($('#txth_doc_recordacad').val() == "") {
-                                                                var mensaje = {wtmessage: "Debe adjuntar Record Académico.", title: "Información"};
-                                                                showAlert("NO_OK", "error", mensaje);
-                                                            } else{
-                                                                if ($('#txth_doc_nosancion').val() == "") {
-                                                                    var mensaje = {wtmessage: "Debe adjuntar Certificado no ser sancionado.", title: "Información"};
-                                                                    showAlert("NO_OK", "error", mensaje);
-                                                                }else{
-                                                                    if ($('#txth_doc_syllabus').val() == "") {
-                                                                        var mensaje = {wtmessage: "Debe adjuntar Syllabus de materias aprobadas.", title: "Información"};
-                                                                        showAlert("NO_OK", "error", mensaje);
-                                                            }else{
-                                                                if ($('#txth_doc_especievalorada').val() == "") {
-                                                                    var mensaje = {wtmessage: "Debe adjuntar Especie valorada.", title: "Información"};
-                                                                    showAlert("NO_OK", "error", mensaje);
-                                                                }else{
-                                                                if (!validateForm()) {
-                                                                    requestHttpAjax(link, arrParams, function (response) {
-                                                                        showAlert(response.status, response.label, response.message);
-                                                                        if (response.status == "OK") {
-                                                                            setTimeout(function() {
-                                                                                    window.location.href = $('#txth_base').val() + "/inscripciongrado/index";
-                                                                                }, 3000);
-                                                                        }
-                                                                    }, true);
-                                                                }
-                                                              }
-                                                            }
-                                                            }
-                                                     }
-                                                }// cierra if si radio es si
-                                                else{
-
-                                                                                if (!validateForm()) {
-                                                                                                requestHttpAjax(link, arrParams, function (response) {
-                                                                                                    showAlert(response.status, response.label, response.message);
-                                                                                                    //var message = response.message;
-                                                                                                    if (response.status == "OK") {
-                                                                                                        setTimeout(function() {
-                                                                                                                window.location.href = $('#txth_base').val() + "/inscripcionposgrado/index";
-                                                                                                            }, 3000);
-                                                                                                    }
-                                                                                                }, true);
-                                                                                            }
-
-                                                            }
-                                                              // } // else certificado ingles
-                                                            // } // else certificado laboral
-                                                      //} // else carta
-                                              // } // else hoja de vida
-                                            // } // else senecyt
-                                     // } // else record
-                                }
-                        // } // else titulo
-                    // }// else certificado de votacion
-                     } // else Documentos general
-                // } // else DNI
-        }
-    } else {
-        var mensaje = {wtmessage: "Debe Aceptar los términos de la Información.", title: "Información"};
-        //error++;
-        showAlert("NO_OK", "success", mensaje);
-    }
-}
-
 function camposnulos(campo) {
     if ($(campo).val() == "")
     {
@@ -925,13 +663,13 @@ function removeItemIdioma(ref) {
 }
 
 function editaspiranteposgrado() {
-    var link = $('#txth_base').val() + "/inscripcionposgrado/edit" + "?id=" + $("#frm_per_id").val();
+    var link = $('#txth_base').val() + "/formularioposgrado/edit" + "?id=" + $("#frm_per_id").val();
     window.location = link;
 }
 
 function updateaspiranteposgrado() {
     //var ID = $('#txth_igra_id').val();
-    var link = $('#txth_base').val() + "/inscripcionposgrado/update";
+    var link = $('#txth_base').val() + "/formularioposgrado/update";
     var arrParams = new Object();
     arrParams.per_id = $("#frm_per_id").val();
     arrParams.cedula = $('#frm_per_cedula').val();
@@ -1057,7 +795,7 @@ function updateaspiranteposgrado() {
             //var message = response.message;
             if (response.status == "OK") {
                 setTimeout(function() {
-                        window.location.href = $('#txth_base').val() + "/inscripcionposgrado/aspiranteposgrado";
+                        window.location.href = $('#txth_base').val() + "/formularioposgrado/aspiranteposgrado";
                     }, 5000);
             }
         }, true);
@@ -1070,5 +808,5 @@ function exportExcelaspiranteposgrado() {
     var unidad = $('#cmb_unidad_pos option:selected').val();
     var programa = $('#cmb_programa_pos option:selected').val();
     var modalidad = $('#cmb_modalidad_pos option:selected').val();
-    window.location.href = $('#txth_base').val() + "/inscripcionposgrado/expexcelaspiranteposgrado?search=" + search + "&año=" + año + "&unidad=" + unidad + "&programa=" + programa + "&modalidad=" + modalidad;
+    window.location.href = $('#txth_base').val() + "/formularioposgrado/expexcelaspiranteposgrado?search=" + search + "&año=" + año + "&unidad=" + unidad + "&programa=" + programa + "&modalidad=" + modalidad;
 }

@@ -10,7 +10,7 @@ use app\modules\academico\models\TipoEstudioAcademico;
 /* @var $this yii\web\View */
 /* @var $model frontend\models\Notas */
 /* @var $form yii\widgets\ActiveForm */
-if ($model->eaca_id == null) {//Ingresa un nuevo   
+if ($model->eaca_id == null) {//Ingresa un nuevo
     $model->eaca_estado = '1';
     $model->eaca_estado_logico = '1';
     $model->eaca_usuario_ingreso = Yii::$app->session->get("PB_iduser");
@@ -58,7 +58,7 @@ $form->field($model, 'teac_id')->widget(Select2::classname(), [
 
 <?= $form->field($model, 'eaca_alias_resumen')->textInput(['style'=>'width:300px']) ?>
 <?= $form->field($model, 'eaca_alias')->textInput(['style'=>'width:300px']) ?>
- 
+
             <?=
             $form->field($model, 'eaca_estado')->widget(Select2::classname(), [
                 'data' => ['1' => "Activo", '0' => "Inactivo"],
@@ -70,13 +70,13 @@ $form->field($model, 'teac_id')->widget(Select2::classname(), [
                 ],
             ]);
             ?>
-        
+
 
 <div class="form-group">
-    <div class="col-sm-offset-4">
+    <!-- <div class="col-sm-offset-4">
 
 <?= Html::submitButton('Guardar', ['class' => 'btn btn-success']) ?>
-    </div>
+    </div>-->
 </div>
 
 <?= $form->field($model, 'eaca_usuario_ingreso')->hiddenInput() ?>

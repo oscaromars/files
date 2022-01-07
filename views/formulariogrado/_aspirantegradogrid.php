@@ -10,17 +10,17 @@ use app\modules\admision\Module as admision;
 admision::registerTranslations();
 academico::registerTranslations();
 ?>
-<?= Html::hiddenInput('txth_ids', '', ['id' => 'txth_ids']); ?>
+<!--<?= Html::hiddenInput('txth_ids', '', ['id' => 'txth_ids']); ?>-->
 <!--<div></br></div>-->
 <div>
     <?=
     PbGridView::widget([
-        'id' => 'Tbg_Registro_posgrado',
+        'id' => 'grid_registro_aspirante',
         'showExport' => true,
-        'fnExportEXCEL' => "exportExcelaspiranteposgrado",
+        'fnExportEXCEL' => "exportExcelaspirantegrado",
         //'fnExportPDF' => "exportPdfEduregistro",
         'dataProvider' => $model,
-        'pajax' => true,
+        //'pajax' => true,
         'columns' =>
         [   
             ['class' => 'yii\grid\SerialColumn', 'options' => ['width' => '10']],
@@ -35,14 +35,14 @@ academico::registerTranslations();
                 'value' => 'estudiante',
             ],     
             [
-                'attribute' => 'año',
-                'header' => Yii::t("formulario", "Año"),
-                'value' => 'año',
+                'attribute' => 'periodo',
+                'header' => Yii::t("formulario", "Period"),
+                'value' => 'periodo',
             ],
             [
-                'attribute' => 'programa',
-                'header' => academico::t("Academico", "Programa"),
-                'value' => 'programa',
+                'attribute' => 'carrera',
+                'header' => academico::t("Academico", "Carrera"),
+                'value' => 'carrera',
             ],
             [
                 'attribute' => 'modalidad',
@@ -57,14 +57,12 @@ academico::registerTranslations();
                 'template' => '{view} {download}',
                 'buttons' => [
                     'view' => function ($url, $model) {
-                        return Html::a('<span class="' . Utilities::getIcon('view') . '"></span>', Url::to(['inscripcionposgrado/view', 'id' => $model['per_id']]), ["data-toggle" => "tooltip", "title" => Yii::t("accion", "View")]);
+                        return Html::a('<span class="' . Utilities::getIcon('view') . '"></span>', Url::to(['/formulariogrado/view', 'id' => $model['per_id']]), ["data-toggle" => "tooltip", "title" => Yii::t("accion", "View")]);
                     },
-                     'download' => function ($url, $model) {
-                        return Html::a('<span class="glyphicon glyphicon-download-alt"></span>', Url::to(['/inscripcionposgrado/registerpdf', 'ids' => $model['per_id']]), ["data-toggle" => "tooltip", "title" => "Descargar Inscripcion", "data-pjax" => "0"]);
+                    'download' => function ($url, $model) {
+                        return Html::a('<span class="glyphicon glyphicon-download-alt"></span>', Url::to(['/formulariogrado/registerpdf', 'ids' => $model['per_id']]), ["data-toggle" => "tooltip", "title" => "Descargar Inscripcion", "data-pjax" => "0"]);
                         //}
                     },
-
-                    
                 ],
             ],
         ],

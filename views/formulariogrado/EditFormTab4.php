@@ -48,7 +48,7 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                         'browseClass' => 'btn btn-primary btn-block',
                         'browseIcon' => '<i class="fa fa-folder-open"></i> ',
                         'browseLabel' => "Subir Archivo",
-                        'uploadUrl' => Url::to(['/inscripciongrado/guardarinscripciongrado']),
+                        'uploadUrl' => Url::to(['/formulariogrado/guardarinscripciongrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
             return {"upload_file": true, "name_file": "doc_documento' . "_per_" . $per_id . '"};
@@ -116,7 +116,7 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                         'browseClass' => 'btn btn-primary btn-block',
                         'browseIcon' => '<i class="fa fa-folder-open"></i> ',
                         'browseLabel' => "Subir Archivo",
-                        'uploadUrl' => Url::to(['/inscripciongrado/guardarinscripciongrado']),
+                        'uploadUrl' => Url::to(['/formulariogrado/guardarinscripciongrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
             return {"upload_file": true, "name_file": "doc_titulo' . "_per_" . $per_id . '"};
@@ -185,7 +185,7 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                         'browseClass' => 'btn btn-primary btn-block',
                         'browseIcon' => '<i class="fa fa-folder-open"></i> ',
                         'browseLabel' => "Subir Archivo",
-                        'uploadUrl' => Url::to(['/inscripciongrado/guardarinscripciongrado']),
+                        'uploadUrl' => Url::to(['/formulariogrado/guardarinscripciongrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
             return {"upload_file": true, "name_file": "doc_dni' . "_per_" . $per_id . '"};
@@ -254,7 +254,7 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                         'browseClass' => 'btn btn-primary btn-block',
                         'browseIcon' => '<i class="fa fa-folder-open"></i> ',
                         'browseLabel' => "Subir Archivo",
-                        'uploadUrl' => Url::to(['/inscripciongrado/guardarinscripciongrado']),
+                        'uploadUrl' => Url::to(['/formulariogrado/guardarinscripciongrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
             return {"upload_file": true, "name_file": "doc_certvota' . "_per_" . $per_id . '"};
@@ -323,7 +323,7 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                         'browseClass' => 'btn btn-primary btn-block',
                         'browseIcon' => '<i class="fa fa-folder-open"></i> ',
                         'browseLabel' => "Subir Archivo",
-                        'uploadUrl' => Url::to(['/inscripciongrado/guardarinscripciongrado']),
+                        'uploadUrl' => Url::to(['/formulariogrado/guardarinscripciongrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
             return {"upload_foto": true, "name_file": "doc_foto' . "_per_" . $per_id . '"};
@@ -392,7 +392,7 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                         'browseClass' => 'btn btn-primary btn-block',
                         'browseIcon' => '<i class="fa fa-folder-open"></i> ',
                         'browseLabel' => "Subir Archivo",
-                        'uploadUrl' => Url::to(['/inscripciongrado/guardarinscripciongrado']),
+                        'uploadUrl' => Url::to(['/formulariogrado/guardarinscripciongrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
             return {"upload_file": true, "name_file": "doc_comprobantepago' . "_per_" . $per_id . '"};
@@ -465,7 +465,7 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                         'browseClass' => 'btn btn-primary btn-block',
                         'browseIcon' => '<i class="fa fa-folder-open"></i> ',
                         'browseLabel' => "Subir Archivo",
-                        'uploadUrl' => Url::to(['/inscripciongrado/guardarinscripciongrado']),
+                        'uploadUrl' => Url::to(['/formulariogrado/guardarinscripciongrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
             return {"upload_file": true, "name_file": "doc_record' . "_per_" . $per_id . '"};
@@ -534,7 +534,7 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                         'browseClass' => 'btn btn-primary btn-block',
                         'browseIcon' => '<i class="fa fa-folder-open"></i> ',
                         'browseLabel' => "Subir Archivo",
-                        'uploadUrl' => Url::to(['/inscripciongrado/guardarinscripciongrado']),
+                        'uploadUrl' => Url::to(['/formulariogrado/guardarinscripciongrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
             return {"upload_file": true, "name_file": "doc_certificado' . "_per_" . $per_id . '"};
@@ -603,7 +603,7 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                         'browseClass' => 'btn btn-primary btn-block',
                         'browseIcon' => '<i class="fa fa-folder-open"></i> ',
                         'browseLabel' => "Subir Archivo",
-                        'uploadUrl' => Url::to(['/inscripciongrado/guardarinscripciongrado']),
+                        'uploadUrl' => Url::to(['/formulariogrado/guardarinscripciongrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
             return {"upload_file": true, "name_file": "doc_syllabus' . "_per_" . $per_id . '"};
@@ -672,7 +672,7 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                         'browseClass' => 'btn btn-primary btn-block',
                         'browseIcon' => '<i class="fa fa-folder-open"></i> ',
                         'browseLabel' => "Subir Archivo",
-                        'uploadUrl' => Url::to(['/inscripciongrado/guardarinscripciongrado']),
+                        'uploadUrl' => Url::to(['/formulariogrado/guardarinscripciongrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
             return {"upload_file": true, "name_file": "doc_especievalorada' . "_per_" . $per_id . '"};

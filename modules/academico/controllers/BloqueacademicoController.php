@@ -143,11 +143,11 @@ class BloqueacademicoController extends \app\components\CController {
 			try {
 
 				$bloque_model = new BloqueAcademico();
-				$bloque_model->baca_nombre = $data["unidad"];
-				$bloque_model->baca_descripcion = $data["modalidad"];
-				$bloque_model->baca_anio = $data["estudio"];
+				$bloque_model->baca_nombre = $data["baca_nombre"];
+				$bloque_model->baca_descripcion = $data["baca_descripcion"];
+				$bloque_model->baca_anio = $data["baca_anio"];
 				$bloque_model->baca_usuario_ingreso = $usu_id;
-				$bloque_model->baca_estado = $data["estado"];
+				$bloque_model->baca_estado = "1";
 				$bloque_model->baca_fecha_creacion = date(Yii::$app->params["dateTimeByDefault"]);
 				$bloque_model->baca_estado_logico = "1";
 
@@ -174,11 +174,13 @@ class BloqueacademicoController extends \app\components\CController {
 		if (Yii::$app->request->isAjax) {
 			$data = Yii::$app->request->post();
 			try {
+				$bloque_model = new BloqueAcademico();
+				$bloque_model = BloqueAcademico::findOne($data["id"]);
 				$bloque_model->baca_nombre = $data["unidad"];
 				$bloque_model->baca_descripcion = $data["modalidad"];
 				$bloque_model->baca_anio = $data["estudio"];
 				$bloque_model->baca_usuario_modifica = $usu_id;
-				$bloque_model->baca_estado = $data["estado"];
+				$bloque_model->baca_estado = "1";
 				$bloque_model->baca_fecha_modificacion = date(Yii::$app->params["dateTimeByDefault"]);
 				$bloque_model->baca_estado_logico = "1";
 
@@ -186,7 +188,7 @@ class BloqueacademicoController extends \app\components\CController {
 					"wtmessage" => Yii::t("notificaciones", "Se ha actualizado el Semestre Académico."),
 					"title" => Yii::t('jslang', 'Success'),
 				);
-				if ($disthorario_model->save()) {
+				if ($bloque_model->save()) {
 					return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
 				} else {
 					throw new Exception('Error Bloque Académico no ha sido actializado.');

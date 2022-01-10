@@ -6,9 +6,6 @@ use app\modules\academico\models\PeriodoAcademico;
 use app\modules\academico\models\PeriodoAcademicoSearch;
 use app\modules\Academico\Module as Academico;
 use Yii;
-use yii\helpers\Html;
-use yii\helpers\Url;
-
 use yii\filters\VerbFilter;
 
 Academico::registerTranslations();
@@ -128,6 +125,92 @@ class PeriodoacademicoController extends \app\components\CController {
 		}
 
 		throw new NotFoundHttpException('The requested page does not exist.');
+	}
+
+	public function actionSaveperiodo() {
+		if (Yii::$app->request->isAjax) {
+			$data = Yii::$app->request->post();
+			$usu_id = @Yii::$app->session->get("PB_iduser");
+			try {
+
+				$periodo_model = new PeriodoAcademico();
+				$periodo_model->saca_id = $data["saca_id"];
+				$periodo_model->baca_id = $data["baca_id"];
+				$periodo_model->paca_activo = $data["paca_activo"];
+				$periodo_model->paca_fecha_inicio = $data["paca_fecha_inicio"];
+				$periodo_model->paca_fecha_fin = $data["paca_fecha_fin"];
+				$periodo_model->paca_fecha_cierre_ini = $data["paca_fecha_cierre_ini"];
+				if ($data["paca_activo"] != "C") {
+					$periodo_model->paca_fecha_cierre_fin = $data["paca_fecha_cierre_fin"];
+				} else {
+					$periodo_model->paca_fecha_cierre_fin = date(Yii::$app->params["dateTimeByDefault"]);
+				}
+				$periodo_model->paca_semanas_periodo = $data["paca_semanas_periodo"];
+				$periodo_model->paca_semanas_inv_vinc_tuto = $data["paca_semanas_inv_vinc_tuto"];
+				$periodo_model->paca_usuario_ingreso = $usu_id;
+				$periodo_model->paca_estado = "1";
+				$periodo_model->paca_fecha_creacion = date(Yii::$app->params["dateTimeByDefault"]);
+				$periodo_model->paca_estado_logico = "1";
+
+				$message = array(
+					"wtmessage" => Yii::t("notificaciones", "Your information was successfully saved."),
+					"title" => Yii::t('jslang', 'Success'),
+				);
+				if ($periodo_model->save()) {
+					return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+				} else {
+					throw new Exception('Error Bloque Académico no creado.');
+				}
+			} catch (Exception $ex) {
+				$message = array(
+					"wtmessage" => Yii::t('notificaciones', 'Your information has not been saved. Please try again.'),
+					"title" => Yii::t('jslang', 'Error'),
+				);
+				return Utilities::ajaxResponse('NOOK', 'alert', Yii::t('jslang', 'Error'), 'true', $message);
+			}
+		}
+	}
+
+	public function actionUpdateperiodo() {
+		if (Yii::$app->request->isAjax) {
+			$data = Yii::$app->request->post();
+			$usu_id = @Yii::$app->session->get("PB_iduser");
+			try {
+				$periodo_model = new PeriodoAcademico();
+				$periodo_model = PeriodoAcademico::findOne(['paca_id' => $data['id'], 'paca_estado' => 1, 'paca_estado_logico' => 1]);
+				$periodo_model->saca_id = $data["saca_id"];
+				$periodo_model->baca_id = $data["baca_id"];
+				$periodo_model->paca_activo = $data["paca_activo"];
+				$periodo_model->paca_fecha_inicio = $data["paca_fecha_inicio"];
+				$periodo_model->paca_fecha_fin = $data["paca_fecha_fin"];
+				$periodo_model->paca_fecha_cierre_ini = $data["paca_fecha_cierre_ini"];
+				if ($data["paca_activo"] != "C") {
+					$periodo_model->paca_fecha_cierre_fin = $data["paca_fecha_cierre_fin"];
+				} else {
+					$periodo_model->paca_fecha_cierre_fin = date(Yii::$app->params["dateTimeByDefault"]);
+				}
+				$periodo_model->paca_semanas_periodo = $data["paca_semanas_periodo"];
+				$periodo_model->paca_semanas_inv_vinc_tuto = $data["paca_semanas_inv_vinc_tuto"];
+				$periodo_model->paca_usuario_modifica = $usu_id;
+				$periodo_model->paca_fecha_modificacion = date(Yii::$app->params["dateTimeByDefault"]);
+
+				$message = array(
+					"wtmessage" => Yii::t("notificaciones", "Se ha actualizado el Bloque Académico."),
+					"title" => Yii::t('jslang', 'Success'),
+				);
+				if ($bloque_model->update() !== false) {
+					return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+				} else {
+					throw new Exception('Error Bloque Académico no ha sido actializado.');
+				}
+			} catch (Exception $ex) {
+				$message = array(
+					"wtmessage" => Yii::t('notificaciones', 'Error al Actualizar. Please try again.'),
+					"title" => Yii::t('jslang', 'Error'),
+				);
+				return Utilities::ajaxResponse('NOOK', 'alert', Yii::t('jslang', 'Error'), 'true', $message);
+			}
+		}
 	}
 
 }

@@ -177,15 +177,12 @@ class BloqueacademicoController extends \app\components\CController {
 			$usu_id = @Yii::$app->session->get("PB_iduser");
 			try {
 				$bloque_model = new BloqueAcademico();
-				$bloque_model = BloqueAcademico::findOne($data["id"]);
-				$bloque_model->baca_id = $data["id"];
+				$bloque_model = BloqueAcademico::findOne(['baca_id' => $data['id'], 'baca_estado' => 1, 'baca_estado_logico' => 1]);
 				$bloque_model->baca_nombre = $data["baca_nombre"];
 				$bloque_model->baca_descripcion = $data["baca_descripcion"];
 				$bloque_model->baca_anio = $data["baca_anio"];
 				$bloque_model->baca_usuario_modifica = $usu_id;
-				$bloque_model->baca_estado = "1";
 				$bloque_model->baca_fecha_modificacion = date(Yii::$app->params["dateTimeByDefault"]);
-				$bloque_model->baca_estado_logico = "1";
 
 				$message = array(
 					"wtmessage" => Yii::t("notificaciones", "Se ha actualizado el Bloque Académico."),

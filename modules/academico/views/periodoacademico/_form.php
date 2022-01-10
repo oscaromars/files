@@ -100,7 +100,7 @@ $form->field($model, 'paca_fecha_cierre_fin')->widget(DatePicker::className(), [
 ?>
 
     <?=$form->field($model, 'paca_semanas_periodo')->textInput(['maxlength' => true, 'style' => 'width:300px'])?>
-
+    <?=$form->field($model, 'paca_semanas_inv_vinc_tuto')->textInput(['maxlength' => true, 'style' => 'width:300px'])?>
 
      <?=
 $form->field($model, 'paca_activo')->widget(Select2::classname(), [

@@ -40,3 +40,17 @@ function updatebloque() {
         }, true);
     }
 }
+
+function eliminarbloque(id) {
+    var link = $('#txth_base').val() + "/academico/bloqueacademico/eliminarbloque";
+    var arrParams = new Object();
+    arrParams.id = id;
+    requestHttpAjax(link, arrParams, function(response) {
+        if (response.status == "OK") {
+            window.location.href = $('#txth_base').val() + "/academico/bloqueacademico/index";
+        }
+        setTimeout(function() {
+            showAlert(response.status, response.label, response.message);
+        }, 1000);
+    }, true);
+}

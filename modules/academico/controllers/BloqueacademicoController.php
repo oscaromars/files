@@ -202,4 +202,35 @@ class BloqueacademicoController extends \app\components\CController {
 			}
 		}
 	}
+
+	public function actionEliminarbloque() {
+		if (Yii::$app->request->isAjax) {
+			$usu_id = @Yii::$app->session->get("PB_iduser");
+			$data = Yii::$app->request->post();
+			try {
+				$bloque_model = new BloqueAcademico();
+				$bloque_model = BloqueAcademico::findOne($data['id']);
+				$bloque_model->baca_usuario_modifica = $usu_id;
+				$bloque_model->baca_estado = "0";
+				$bloque_model->baca_estado_logico = "0";
+				$bloque_model->baca_fecha_modificacion = date(Yii::$app->params["dateTimeByDefault"]);
+
+				$message = array(
+					"wtmessage" => Yii::t("notificaciones", "Se ha eliminado el Bloque Académico."),
+					"title" => Yii::t('jslang', 'Success'),
+				);
+				if ($bloque_model->update() !== false) {
+					return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+				} else {
+					throw new Exception('Error Bloque Académico no ha sido eliminado.');
+				}
+			} catch (Exception $ex) {
+				$message = array(
+					"wtmessage" => Yii::t('notificaciones', 'Error al Actualizar. Please try again.'),
+					"title" => Yii::t('jslang', 'Error'),
+				);
+				return Utilities::ajaxResponse('NOOK', 'alert', Yii::t('jslang', 'Error'), 'true', $message);
+			}
+		}
+	}
 }

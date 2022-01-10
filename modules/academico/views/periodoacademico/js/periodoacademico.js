@@ -20,7 +20,7 @@ function saveperiodoaca() {
             showAlert(response.status, response.label, response.message);
             if (response.status == "OK") {
                 setTimeout(function() {
-                    window.location.href = $('#txth_base').val() + "/academico/bloqueacademico/index";
+                    window.location.href = $('#txth_base').val() + "/academico/periodoacademico/index";
                     }, 3000);
             }
         }, true);
@@ -46,7 +46,7 @@ function updateperiodoaca() {
             showAlert(response.status, response.label, response.message);
             if (response.status == "OK") {
                 setTimeout(function() {
-                    window.location.href = $('#txth_base').val() + "/academico/bloqueacademico/index";
+                    window.location.href = $('#txth_base').val() + "/academico/periodoacademico/index";
                     }, 3000);
             }
         }, true);

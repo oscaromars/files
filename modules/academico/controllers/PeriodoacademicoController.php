@@ -2,6 +2,7 @@
 
 namespace app\modules\academico\controllers;
 
+use app\models\Utilities;
 use app\modules\academico\models\PeriodoAcademico;
 use app\modules\academico\models\PeriodoAcademicoSearch;
 use app\modules\Academico\Module as Academico;
@@ -198,7 +199,7 @@ class PeriodoacademicoController extends \app\components\CController {
 					"wtmessage" => Yii::t("notificaciones", "Se ha actualizado el Bloque Académico."),
 					"title" => Yii::t('jslang', 'Success'),
 				);
-				if ($bloque_model->update() !== false) {
+				if ($periodo_model->update() !== false) {
 					return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
 				} else {
 					throw new Exception('Error Bloque Académico no ha sido actializado.');

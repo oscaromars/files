@@ -117,9 +117,9 @@ $form->field($model, 'paca_activo')->widget(Select2::classname(), [
 
 
     <div class="form-group">
-        <div class="col-sm-offset-4">
-<?=Html::submitButton('Guardar', ['class' => 'btn btn-success'])?>
-        </div>
+        <!--<div class="col-sm-offset-4">
+			<?=Html::submitButton('Guardar', ['class' => 'btn btn-success'])?>
+        </div>-->
     </div>
 </div>
 <?=$form->field($model, 'paca_usuario_ingreso')->hiddenInput()?>

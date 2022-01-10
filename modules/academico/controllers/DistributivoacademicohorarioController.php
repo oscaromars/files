@@ -24,7 +24,7 @@ class DistributivoacademicohorarioController extends \app\components\CController
                             'dataProvider' => $dataProvider,
         ]);
     }
-    
+
     /**
      * Updates an existing Notas model.
      * If update is successful, the browser will be redirected to the 'view' page.

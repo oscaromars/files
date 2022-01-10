@@ -8,7 +8,7 @@ use yii\helpers\Html;
 
 ?>
 <div class="notas-create">
-    
+
     <?= $this->render('_form', [
         'model' => $model,
     ]) ?>

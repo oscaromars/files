@@ -103,8 +103,8 @@ $gridColumns =['eaca_nombre','teac.teac_nombre','eaca_descripcion','eaca_alias_r
                 'buttons' => [
                     'delete' => function ($url, $model) {
                         $mod_est = new EstudioAcademico();
-                        $result = $mod_est->consultarEstudioAcademicoEnUso($model->eaca_id);
-                        if(empty($result) && $model->eaca_estado == '1'){
+                        //$result = $mod_est->consultarEstudioAcademicoEnUso($model->eaca_id);
+                        if(/*empty($result) && */ $model->eaca_estado == '1'){
                             return Html::a('<span class="glyphicon glyphicon-remove"></span>', null, ['href' =>  "javascript:confirmDelete('deleteItem', [ '" . $model->eaca_id . "' ]);", "data-toggle" => "tooltip", "title" => Yii::t("formulario", "Delete")]);
                         }
                         else{

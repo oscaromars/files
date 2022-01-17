@@ -1971,14 +1971,14 @@ class Solicitudinscripcion extends \yii\db\ActiveRecord {
         $estado = 1;
         $fecha_modificacion = date(Yii::$app->params["dateTimeByDefault"]);
 
-        $trans = $con->getTransaction(); // se obtiene la transacción actual.
+        /*$trans = $con->getTransaction(); // se obtiene la transacción actual.
         if ($trans !== null) {
             $trans = null; // si existe la transacción entonces no se crea una.
         } else {
             $trans = $con->beginTransaction(); // si no existe la transacción entonces se crea una.
-        }
+        }*/
 
-        try {
+        //try {
         $comando = $con->createCommand
                 ("UPDATE " . $con->dbname . ".solicitud_inscripcion
                 SET sins_fecha_modificacion = :sins_fecha_modificacion,
@@ -1999,14 +1999,14 @@ class Solicitudinscripcion extends \yii\db\ActiveRecord {
         $comando->bindParam(":sins_fecha_modificacion", $fecha_modificacion, \PDO::PARAM_STR);
 
         $response = $comando->execute();
-        if ($trans !== null)
-                $trans->commit();
+        /*if ($trans !== null)
+                $trans->commit();*/
         return $response;
-     } catch (Exception $ex) {
+     /*} catch (Exception $ex) {
         if ($trans !== null) {
             $trans->rollback();
         }
         return 0;
-      }
+      }*/
     }
 }

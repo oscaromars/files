@@ -26,7 +26,7 @@ use Yii;
  * @property OrdenPago $opag
  * @property RegistroPago[] $registroPagos
  */
-class DesglosePago extends \app\modules\financiero\components\CActiveRecord 
+class DesglosePago extends \app\modules\financiero\components\CActiveRecord
 {
     /**
      * {@inheritdoc}
@@ -96,5 +96,42 @@ class DesglosePago extends \app\modules\financiero\components\CActiveRecord
     public function getRegistroPagos()
     {
         return $this->hasMany(RegistroPago::className(), ['dpag_id' => 'dpag_id']);
+    }
+
+    /**
+     * Function actualizaDesglosepago (Actualiza tabla desglose pago.
+     * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
+     * @param
+     * @return
+     */
+    public function actualizaDesglosepago($opag_id, $dpag_estado_pago, $ite_id, $dpag_subtotal, $dpag_total, $dpag_usu_modifica) {
+        $con = \Yii::$app->db_facturacion;
+        $estado = 1;
+        $dpag_fecha_modificacion = date(Yii::$app->params["dateTimeByDefault"]);
+
+        $comando = $con->createCommand
+                ("UPDATE " . $con->dbname . ".orden_pago
+                SET
+                    ite_id = :ite_id,
+                    dpag_subtotal = :dpag_subtotal,
+                    dpag_total = :dpag_total,
+                    dpag_fecha_modificacion = :dpag_fecha_modificacion,
+                    dpag_usu_modifica = :dpag_usu_modifica
+                WHERE opag_id = :opag_id AND
+                      dpag_estado_pago = :dpag_estado_pago
+                      dpag_estado =:estado AND
+                      dpag_estado_logico = :estado");
+
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $comando->bindParam(":opag_id", $opag_id, \PDO::PARAM_INT);
+        $comando->bindParam(":dpag_estado_pago", $dpag_estado_pago, \PDO::PARAM_STR);
+        $comando->bindParam(":ite_id", $ite_id, \PDO::PARAM_INT);
+        $comando->bindParam(":dpag_subtotal", $dpag_subtotal, \PDO::PARAM_STR);
+        $comando->bindParam(":dpag_total", $dpag_total, \PDO::PARAM_STR);
+        $comando->bindParam(":dpag_fecha_modificacion", $dpag_fecha_modificacion, \PDO::PARAM_STR);
+        $comando->bindParam(":dpag_usu_modifica", $dpag_usu_modifica, \PDO::PARAM_STR);
+        $response = $comando->execute();
+
+        return $response;
     }
 }

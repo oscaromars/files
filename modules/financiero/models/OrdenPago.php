@@ -2529,7 +2529,7 @@ class OrdenPago extends \app\modules\financiero\components\CActiveRecord {
 
     /**
      * Function actualizaOrdenpagoadmision (Actualiza el total de una orden segun su solicitud.
-     * @author  Grace Viteri <analistadesarrollo02@uteg.edu.ec>
+     * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
      * @param
      * @return
      */

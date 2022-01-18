@@ -2035,12 +2035,21 @@ class Solicitudinscripcion extends \yii\db\ActiveRecord {
                     orp.opag_subtotal,
                     orp.opag_total,
                     orp.opag_estado_pago,
+                    desg.ite_id,
                     desg.dpag_subtotal,
                     desg.dpag_total,
-                    desg.dpag_estado_pago
+                    desg.dpag_estado_pago,
+                    sdfa.sdfa_nombres,
+                    sdfa.sdfa_apellidos,
+                    sdfa.sdfa_tipo_dni,
+                    sdfa.sdfa_dni,
+                    sdfa.sdfa_direccion,
+                    sdfa.sdfa_telefono,
+                    sdfa.sdfa_correo
                     FROM " . $con->dbname . ".solicitud_inscripcion sins
                     INNER JOIN " . $con1->dbname . ".orden_pago orp ON orp.sins_id = sins.sins_id
                     INNER JOIN " . $con1->dbname . ".desglose_pago desg ON desg.opag_id = orp.opag_id
+                    INNER JOIN " . $con->dbname . ".solicitud_datos_factura sdfa ON sdfa.sins_id = sins.sins_id
                     WHERE
                     sins.sins_id = :sins_id AND
                     sins.sins_estado = :estado AND
@@ -2048,7 +2057,9 @@ class Solicitudinscripcion extends \yii\db\ActiveRecord {
                     orp.opag_estado = :estado AND
                     orp.opag_estado_logico = :estado AND
                     desg.dpag_estado = :estado AND
-                    desg.dpag_estado_logico = :estado ";
+                    desg.dpag_estado_logico = :estado AND
+                    sdfa.sdfa_estado = :estado AND
+                    sdfa.sdfa_estado_logico = :estado ";
 
         $comando = $con->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);

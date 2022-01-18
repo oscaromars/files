@@ -1771,6 +1771,7 @@ class SolicitudesController extends \app\components\CController {
         $mod_metodo = new MetodoIngreso();
         $empresa_mod = new Empresa();
         $per_id = base64_decode($_GET['per_id']);
+        $sins_id = base64_decode($_GET['id_sol']);
         Yii::$app->session->set('persona_solicita', base64_encode($_GET['ids']));
         $mod_carrera = new EstudioAcademico();
         $mod_unidad = new UnidadAcademica();
@@ -1879,13 +1880,15 @@ class SolicitudesController extends \app\components\CController {
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
             }
         }
+        // Datos especificos Solicitud y Facturas
+        $resp_solicitudesp = $mod_solins->Consultarsolicitudxid($sins_id);
         $arr_unidadac = $mod_unidad->consultarUnidadAcademicas();
-        $arr_modalidad = $mod_modalidad->consultarModalidad(1, 1);
-        $arr_metodos = $mod_metodo->consultarMetodoIngNivelInt($arr_unidadac[0]["id"]);
-        $arr_carrera = $modcanal->consultarCarreraModalidad(1, 1);
+        $arr_modalidad = $mod_modalidad->consultarModalidad($resp_solicitudesp['uaca_id'], $resp_solicitudesp['emp_id']);
+        $arr_metodos = $mod_metodo->consultarMetodoIngNivelInt($resp_solicitudesp['uaca_id']);
+        $arr_carrera = $modcanal->consultarCarreraModalidad($resp_solicitudesp['uaca_id'], $resp_solicitudesp['mod_id']);
         //Descuentos y precios.
-        $resp_item = $modItemMetNivel->consultarXitemPrecio(1, 1, 1, 2, 1);
-        $arr_descuento = $modDescuento->consultarDesctoxitem($resp_item["ite_id"]);
+        $resp_item = $modItemMetNivel->consultaritemsol($resp_solicitudesp['uaca_id'], $resp_solicitudesp['mod_id'], $resp_solicitudesp['ite_id']);
+        $arr_descuento = $modDescuento->consultarDesctoxitem($resp_solicitudesp['ite_id']);
         $arr_convempresa = $mod_conempresa->consultarConvenioEmpresa();
         return $this->render('viewsolicitud', [
                     "arr_unidad" => ArrayHelper::map($arr_unidadac, "id", "name"),
@@ -1894,11 +1897,12 @@ class SolicitudesController extends \app\components\CController {
                     "arr_carrera" => ArrayHelper::map($arr_carrera, "id", "name"),
                     "arr_modalidad" => ArrayHelper::map($arr_modalidad, "id", "name"),
                     "arr_descuento" => ArrayHelper::map($arr_descuento, "id", "name"),
-                    "arr_item" => ArrayHelper::map(array_merge(["id" => "0", "name" => "Seleccionar"], $resp_item), "id", "name"), //ArrayHelper::map($resp_item, "id", "name"),
+                    "arr_item" => ArrayHelper::map($resp_item, "id", "name"),
                     "int_id" => $inte_id,
                     "per_id" => $per_id,
                     "arr_empresa" => ArrayHelper::map($empresa, "id", "value"),
                     "arr_convenio_empresa" => ArrayHelper::map($arr_convempresa, "id", "name"),
+                    "arr_solicitudesp" => $resp_solicitudesp,
         ]);
     }
 }

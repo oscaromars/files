@@ -1766,5 +1766,139 @@ class SolicitudesController extends \app\components\CController {
                     "arr_item" => ArrayHelper::map(array_merge(["id" => "0", "name" => "Seleccionar"], $resp_item), "id", "name"),
         ]);
     }
+    public function actionViewsolicitud() {
+        $emp_id = @Yii::$app->session->get("PB_idempresa");
+        $mod_metodo = new MetodoIngreso();
+        $empresa_mod = new Empresa();
+        $per_id = base64_decode($_GET['per_id']);
+        Yii::$app->session->set('persona_solicita', base64_encode($_GET['ids']));
+        $mod_carrera = new EstudioAcademico();
+        $mod_unidad = new UnidadAcademica();
+        $persona_model = new Persona();
+        $mod_modalidad = new Modalidad();
+        $modcanal = new Oportunidad();
+        $modestudio = new ModuloEstudio();
+        $modItemMetNivel = new ItemMetodoUnidad();
+        $modDescuento = new DetalleDescuentoItem();
+        $modUnidad = new UnidadAcademica();
+        $dataPersona = $persona_model->consultaPersonaId($per_id);
+        $modInteresado = new Interesado();
+        $inte_id = $modInteresado->consultarIdinteresado($per_id);
+        $empresa = $empresa_mod->getAllEmpresa();
+        $mod_solins = new SolicitudInscripcion();
+        $mod_conempresa = new ConvenioEmpresa();
+        if (Yii::$app->request->isAjax) {
+            $data = Yii::$app->request->post();
+            if (isset($data["getuacademias"])) {
+                //$data_u_acad = $mod_unidad->consultarUnidadAcademicasEmpresa($data["empresa_id"]);
+                $data_u_acad->consultarUnidadAcademicas();
+                $message = array("unidad_academica" => $data_u_acad);
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+            }
+            if (isset($data["getmodalidad"])) {
+                if ($data["nint_id"] == 1 or $data["nint_id"] == 2) {
+                    $modalidad = $mod_modalidad->consultarModalidad($data["nint_id"], $data["empresa_id"]);
+                } else {
+                    $modalidad = $modestudio->consultarModalidadModestudio();
+                }
+                $message = array("modalidad" => $modalidad);
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+            }
+            if (isset($data["getmetodo"])) {
+                $metodos = $mod_metodo->consultarMetodoIngNivelInt($data['nint_id']);
+                $message = array("metodos" => $metodos);
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+            }
+            if (isset($data["getcarrera"])) {
+                if ($data["unidada"] == 1 or $data["unidada"] == 2) {
+                    $carrera = $modcanal->consultarCarreraModalidad($data["unidada"], $data["moda_id"]);
+                } else {
+                    $carrera = $modestudio->consultarCursoModalidad($data["unidada"], $data["moda_id"]);
+                }
+                $message = array("carrera" => $carrera);
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+            }
+            if (isset($data["getdescuento"])) {
+                if (($data["unidada"] == 1) or ($data["unidada"] == 2)) {
+                    $resItems = $modItemMetNivel->consultarXitemMetniv($data["unidada"], $data["moda_id"], $data["metodo"], $data["empresa_id"], $data["carrera_id"]);
+                    $descuentos = $modDescuento->consultarDesctoxitem($resItems["ite_id"]);
+                } else {
+                    //\app\models\Utilities::putMessageLogFile('item:'. $data["ite_id"]);
+                    $descuentos = $modDescuento->consultarDescuentoXitemUnidad($data["unidada"], $data["moda_id"], $data["ite_id"]);
+                }
+                $message = array("descuento" => $descuentos);
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
 
+            }
+            if (isset($data["getitem"])) {
+                if ($data["empresa_id"] != 1) {
+                    $metodo = 0;
+                } else {
+                    if ($data["unidada"] != 1) {
+                        $metodo = $data["metodo"];
+                    } else {
+                        $metodo = 0;
+                    }
+                }
+                $resItem = $modItemMetNivel->consultarXitemPrecio($data["unidada"], $data["moda_id"], $metodo, $data["carrera_id"], $data["empresa_id"]);
+                $message = array("items" => $resItem);
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+            }
+            if (isset($data["getprecio"])) {
+                $resp_precio = $mod_solins->ObtenerPrecioXitem($data["ite_id"]);
+                $message = array("precio" => $resp_precio["precio"]);
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+            }
+            if (isset($data["getpreciodescuento"])) {
+                $resp_precio = $mod_solins->ObtenerPrecioXitem($data["ite_id"]);
+                if ($data["descuento_id"] > 0) {
+                    $respDescuento = $modDescuento->consultarValdctoItem($data["descuento_id"]);
+                    if ($resp_precio["precio"] == 0) {
+                        $precioDescuento = 0;
+                    } else {
+                        if ($respDescuento["ddit_tipo_beneficio"] == 'P') {
+                            $descuento = ($resp_precio["precio"] * $respDescuento["ddit_porcentaje"]) / 100;
+                        } else {
+                            $descuento = $respDescuento["ddit_valor"];
+                        }
+                        $precioDescuento = $resp_precio["precio"] - $descuento;
+                    }
+                } else {
+                    $precioDescuento = 0;
+                }
+                $message = array("preciodescuento" => $precioDescuento);
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+            }
+            if (isset($data["gethabilita"])) {
+                if ($data["ite_id"] == 155 or $data["ite_id"] == 156 or $data["ite_id"] == 157 or $data["ite_id"] == 10) {
+                    $habilita = '1';
+                } else {
+                    $habilita = '0';
+                };
+                $message = array("habilita" => $habilita);
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+            }
+        }
+        $arr_unidadac = $mod_unidad->consultarUnidadAcademicas();
+        $arr_modalidad = $mod_modalidad->consultarModalidad(1, 1);
+        $arr_metodos = $mod_metodo->consultarMetodoIngNivelInt($arr_unidadac[0]["id"]);
+        $arr_carrera = $modcanal->consultarCarreraModalidad(1, 1);
+        //Descuentos y precios.
+        $resp_item = $modItemMetNivel->consultarXitemPrecio(1, 1, 1, 2, 1);
+        $arr_descuento = $modDescuento->consultarDesctoxitem($resp_item["ite_id"]);
+        $arr_convempresa = $mod_conempresa->consultarConvenioEmpresa();
+        return $this->render('viewsolicitud', [
+                    "arr_unidad" => ArrayHelper::map($arr_unidadac, "id", "name"),
+                    "arr_metodos" => ArrayHelper::map($arr_metodos, "id", "name"),
+                    "arr_persona" => $dataPersona,
+                    "arr_carrera" => ArrayHelper::map($arr_carrera, "id", "name"),
+                    "arr_modalidad" => ArrayHelper::map($arr_modalidad, "id", "name"),
+                    "arr_descuento" => ArrayHelper::map($arr_descuento, "id", "name"),
+                    "arr_item" => ArrayHelper::map(array_merge(["id" => "0", "name" => "Seleccionar"], $resp_item), "id", "name"), //ArrayHelper::map($resp_item, "id", "name"),
+                    "int_id" => $inte_id,
+                    "per_id" => $per_id,
+                    "arr_empresa" => ArrayHelper::map($empresa, "id", "value"),
+                    "arr_convenio_empresa" => ArrayHelper::map($arr_convempresa, "id", "name"),
+        ]);
+    }
 }

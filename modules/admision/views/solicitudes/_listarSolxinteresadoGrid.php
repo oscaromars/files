@@ -76,7 +76,7 @@ PbGridView::widget([
                     $mod_ordpago = new OrdenPago;
                     $result = $mod_ordpago->consultarImagenpagoexiste($model['opag_id']);
                     if ($result['existe_imagen'] == 0 && $model['estado_pago'] != 'Pagado') { // Aqui si la solicitud esta pendiente  y no ha subido pago
-                        return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', Url::to(['/admision/solicitudes/subirdocumentos', 'id_sol' => base64_encode($model['sins_id'])]), ["data-toggle" => "tooltip", "title" => "Ver Solicitud", "data-pjax" => 0]);
+                        return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', Url::to(['/admision/solicitudes/viewsolicitud', 'id_sol' => base64_encode($model['sins_id']), 'per_id' => base64_encode($model['per_id'])]), ["data-toggle" => "tooltip", "title" => "Ver Solicitud", "data-pjax" => 0]);
                     } else {
                         return '<span class="glyphicon glyphicon-eye-open"></span>';
                     }

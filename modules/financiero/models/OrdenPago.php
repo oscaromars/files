@@ -2561,4 +2561,31 @@ class OrdenPago extends \app\modules\financiero\components\CActiveRecord {
 
         return $response;
     }
+
+    /**
+     * Function consultarImagenpagoexiste
+     * @author  Giovanni Vergara <analista.desarrollo02@uteg.edu.ec>
+     * @property integer
+     * @return
+     */
+
+
+    public function consultarImagenpagoexiste($opag_id) {
+        $con = \Yii::$app->db_facturacion;
+        $estado = 1;
+
+        $sql = "
+                SELECT
+                         count(*) as existe_imagen
+                FROM " . $con->dbname . ".info_carga_prepago
+                WHERE opag_id = :opag_id AND
+                     icpr_estado = :estado AND
+                     icpr_estado_logico = :estado";
+
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $comando->bindParam(":opag_id", $opag_id, \PDO::PARAM_INT);
+        $resultData = $comando->queryOne();
+        return $resultData;
+    }
 }

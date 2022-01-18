@@ -362,6 +362,7 @@ class Solicitudinscripcion extends \yii\db\ActiveRecord {
         }
         $sql = "
                     SELECT
+                        op.opag_id,
                         lpad(ifnull(sins.num_solicitud,sins.sins_id),9,'0') as num_solicitud,
                         sins.sins_id,
                         sins.sins_fecha_solicitud as fecha_solicitud,

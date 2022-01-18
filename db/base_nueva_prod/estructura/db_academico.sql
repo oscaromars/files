@@ -2561,3 +2561,20 @@ create table if not exists `cron_estudiantes_educativa` (
   `croe_estado_logico` varchar(1) not null
 );
 
+--
+-- Estructura de tabla para la tabla `materias_periodo_modalidad`   
+--
+create table if not exists `materias_periodo_modalidad` (
+`mpmo_id` bigint(20) not null auto_increment primary key,
+`saca_id` bigint(20) not null,
+`mod_id` bigint(20) not null,
+`asi_id` bigint(20) null, 
+`mpmo_bloque` Integer null default null,
+`mpmo_activo` boolean null default 0,
+`mpmo_usuario_ingreso` bigint(20) not null,
+`mpmo_usuario_modifica` bigint(20) null,
+`mpmo_estado` varchar(1) not null,
+`mpmo_fecha_creacion`  timestamp not null default current_timestamp,
+`mpmo_fecha_modificacion` timestamp null default null,
+`mpmo_estado_logico` varchar(1) not null
+);

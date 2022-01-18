@@ -2010,4 +2010,49 @@ class Solicitudinscripcion extends \yii\db\ActiveRecord {
         return 0;
       }*/
     }
+    /**
+     * Function Consultarsolicitudxid
+     * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
+     * @param
+     * @return  $resultData
+     */
+    public function Consultarsolicitudxid($sins_id) {
+        $con = \Yii::$app->db_captacion;
+        $con1 = \Yii::$app->db_facturacion;
+        $estado = 1;
+
+        $sql = "SELECT
+                    sins.sins_id,
+                    sins.int_id,
+                    sins.uaca_id,
+                    sins.mod_id,
+                    sins.eaca_id,
+                    sins.mest_id,
+                    sins.emp_id,
+                    sins.rsin_id, -- res_sol_inscripcion
+                    orp.opag_id,
+                    orp.opag_subtotal,
+                    orp.opag_total,
+                    orp.opag_estado_pago,
+                    desg.dpag_subtotal,
+                    desg.dpag_total,
+                    desg.dpag_estado_pago
+                    FROM " . $con->dbname . ".solicitud_inscripcion sins
+                    INNER JOIN " . $con1->dbname . ".orden_pago orp ON orp.sins_id = sins.sins_id
+                    INNER JOIN " . $con1->dbname . ".desglose_pago desg ON desg.opag_id = orp.opag_id
+                    WHERE
+                    sins.sins_id = :sins_id AND
+                    sins.sins_estado = :estado AND
+                    sins.sins_estado_logico = :estado AND
+                    orp.opag_estado = :estado AND
+                    orp.opag_estado_logico = :estado AND
+                    desg.dpag_estado = :estado AND
+                    desg.dpag_estado_logico = :estado ";
+
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $comando->bindParam(":sins_id", $sins_id, \PDO::PARAM_STR);
+        $resultData = $comando->queryOne();
+        return $resultData;
+    }
 }

@@ -1444,3 +1444,9 @@ function Approve() {
         }, true);
     }
 }
+
+function editsolicitudadmi() {
+    var id_sol = $('#txth_sins_id').val();
+    var per_id = $('#txth_ids').val();
+    window.location.href = $('#txth_base').val() + "/admision/solicitudes/editsolicitud?id_sol=" + id_sol + "&per_id=" + per_id;
+}

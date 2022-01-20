@@ -105,6 +105,7 @@ class DesglosePago extends \app\modules\financiero\components\CActiveRecord
      * @return
      */
     public function actualizaDesglosepago($opag_id, $ite_id, $dpag_subtotal, $dpag_total, $dpag_usu_modifica) {
+
         $con = \Yii::$app->db_facturacion;
         $estado = 1;
         $dpag_fecha_modificacion = date(Yii::$app->params["dateTimeByDefault"]);

@@ -2542,7 +2542,6 @@ class OrdenPago extends \app\modules\financiero\components\CActiveRecord {
                 ("UPDATE " . $con->dbname . ".orden_pago
                 SET opag_subtotal = :opag_subtotal,
                     opag_total = :opag_total,
-                    opag_fecha_pago_total = :opag_fecha_pago_total,
                     opag_fecha_modificacion = :opag_fecha_modificacion,
                     opag_usu_modifica = :opag_usu_modifica
                 WHERE sins_id = :sins_id AND

@@ -1969,23 +1969,9 @@ class Solicitudinscripcion extends \yii\db\ActiveRecord {
      * @return
      */
     public function actualizaSolicitudInscripcion($sins_id, $uaca_id, $mod_id, $eaca_id, $sins_usuario_modifica) {
-        \app\models\Utilities::putMessageLogFile('$sins_id mod:' . $sins_id);
-        \app\models\Utilities::putMessageLogFile('$uaca_id mod:' . $uaca_id);
-        \app\models\Utilities::putMessageLogFile('$mod_id mod:' . $mod_id);
-        \app\models\Utilities::putMessageLogFile('$eaca_id mod:' . $eaca_id);
-        \app\models\Utilities::putMessageLogFile('$sins_usuario_modifica mod:' . $sins_usuario_modifica);
         $con = \Yii::$app->db_captacion;
         $estado = 1;
         $fecha_modificacion = date(Yii::$app->params["dateTimeByDefault"]);
-
-        /*$trans = $con->getTransaction(); // se obtiene la transacción actual.
-        if ($trans !== null) {
-            $trans = null; // si existe la transacción entonces no se crea una.
-        } else {
-            $trans = $con->beginTransaction(); // si no existe la transacción entonces se crea una.
-        }*/
-
-        //try {
         $comando = $con->createCommand
                 ("UPDATE " . $con->dbname . ".solicitud_inscripcion
                 SET sins_fecha_modificacion = :sins_fecha_modificacion,
@@ -2006,15 +1992,7 @@ class Solicitudinscripcion extends \yii\db\ActiveRecord {
         $comando->bindParam(":sins_fecha_modificacion", $fecha_modificacion, \PDO::PARAM_STR);
 
         $response = $comando->execute();
-        /*if ($trans !== null)
-                $trans->commit();*/
         return $response;
-     /*} catch (Exception $ex) {
-        if ($trans !== null) {
-            $trans->rollback();
-        }
-        return 0;
-      }*/
     }
     /**
      * Function Consultarsolicitudxid

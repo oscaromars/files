@@ -662,10 +662,10 @@ class SolicitudesController extends \app\components\CController {
                 // modifica solicitud
                 $respsolins = $mod_solins->actualizaSolicitudInscripcion($sins_id, $uaca_id, $mod_id, $eaca_id, $usuario);
                 if ($respsolins) { // modifica orden
-                    //$resporden = $mod_ordenpago->actualizaOrdenpagoadmision($sins_id, $opag_subtotal, $opag_total, $usuario);
-                    //if ($resporden) { // modifica desglose pago
-                     //$respdesglose = $mod_desglose->actualizaDesglosepago($opag_id, $ite_id, $opag_subtotal, $opag_total, $usuario);
-                     //if ($respdesglose) {
+                    $resporden = $mod_ordenpago->actualizaOrdenpagoadmision($sins_id, $opag_subtotal, $opag_total, $usuario);
+                    if ($resporden) { // modifica desglose pago
+                     $respdesglose = $mod_desglose->actualizaDesglosepago($opag_id, $ite_id, $opag_subtotal, $opag_total, $usuario);
+                     if ($respdesglose) {
                         $transaction->commit();
                         $transaction1->commit();
                         $message = array(
@@ -673,7 +673,7 @@ class SolicitudesController extends \app\components\CController {
                             "title" => Yii::t('jslang', 'Success'),
                     );
                      return Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), false, $message);
-                     /*}else {
+                     }else {
                         $transaction->rollback();
                         $transaction1->rollback();
                         $message = array(
@@ -690,7 +690,7 @@ class SolicitudesController extends \app\components\CController {
                             "title" => Yii::t('jslang', 'Bad Request'),
                         );
                         return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Bad Request"), false, $message);
-                    }*/
+                    }
                 } else {
                     $transaction->rollback();
                     $transaction1->rollback();

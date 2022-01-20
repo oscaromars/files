@@ -10,7 +10,7 @@ use app\modules\academico\Module as aspirante;
 academico::registerTranslations();
 financiero::registerTranslations();
 aspirante::registerTranslations();
-//print_r($arr_carrera);
+//print_r($arr_solicitudesp);
 $tipodoc = '';
 if (!empty($personalData['per_cedula'])) {
     $tipodoc = "Cédula";
@@ -34,13 +34,14 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
 ?>
 <?= Html::hiddenInput('txth_ids', base64_encode($per_id), ['id' => 'txth_ids']); ?>
 <?= Html::hiddenInput('txth_sins_id', /*base64_decode(*/$_GET['id_sol']/*)*/, ['id' => 'txth_sins_id']); ?>
+<?= Html::hiddenInput('txth_opag_id', /*base64_decode(*/$_GET['opag_id']/*)*/, ['id' => 'txth_opag_id']); ?>
 <?= Html::hiddenInput('txth_nac', base64_encode($_GET['nac']), ['id' => 'txth_nac']); ?>
 <?= Html::hiddenInput('txth_extranjero', $arr_persona['nacionalidad'], ['id' => 'txth_extranjero']); ?>
 <?= Html::hiddenInput('txth_intId', base64_encode($int_id), ['id' => 'txth_intId']); ?>
 <form class="form-horizontal" enctype="multipart/form-data" id="formsolicitud">
-    <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
+    <!-- <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
         <h3><span id="lbl_solicitud"><?= admision::t("Solicitudes", "View Application for Registration") ?></span></h3>
-    </div>
+    </div>-->
     <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12">
         <div class="col-md-7 col-sm-7 col-xs-7 col-lg-7">
             <div class="form-group">

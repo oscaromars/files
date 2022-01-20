@@ -21,6 +21,7 @@ use app\modules\financiero\models\DetalleDescuentoItem;
 use app\modules\academico\models\UnidadAcademica;
 use app\modules\admision\models\SolicitudinsDocumento;
 use app\modules\financiero\models\OrdenPago;
+use app\modules\financiero\models\DesglosePago;
 use app\modules\admision\models\Interesado;
 use app\modules\admision\models\DocumentoAdjuntar;
 use app\modules\admision\Module as admision;
@@ -630,8 +631,86 @@ class SolicitudesController extends \app\components\CController {
         }
     }
 
-    public function actionUpdate() {
+    public function actionUpdatesolicitudadmi() {
+        $mod_solins = new SolicitudInscripcion();
+        $mod_ordenpago = new OrdenPago();
+        $mod_desglose = new DesglosePago();
+        if (Yii::$app->request->isAjax) {
+            $data = Yii::$app->request->post();
+            $usuario = @Yii::$app->user->identity->usu_id;
+            /* Datos Solicitud*/
+            $sins_id = base64_decode($data["sins_id"]);
+            $uaca_id = $data["ninteres"];
+            $mod_id = $data["mod_id"];
+            $mest_id = null;
+            $eaca_id = $data["carrera"];
+            /* Datos Orden pago */
+            // al parecer el precio es un codigo difernete por ahor
+            // lo que tiene la caja de texto se actualiza, luego hay que
+            // revisar esa logica
+            $opag_subtotal = $data["precio"];
+            $opag_total = $data["precio"];
+            /* Datos desglose pago $opag_subtotal y $opag_total*/
+            $opag_id = base64_decode($data["opag_id"]);
+            $ite_id = $data["ite_id"];
 
+            $con = \Yii::$app->db_captacion;
+            $con1 = \Yii::$app->db_facturacion;
+            $transaction = $con->beginTransaction();
+            $transaction1 = $con1->beginTransaction();
+            try {
+                // modifica solicitud
+                $respsolins = $mod_solins->actualizaSolicitudInscripcion($sins_id, $uaca_id, $mod_id, $eaca_id, $usuario);
+                if ($respsolins) { // modiifca orden
+                    $resporden = $mod_ordenpago->actualizaOrdenpagoadmision($sins_id, $opag_subtotal, $opag_total, $usuario);
+                    if ($resporden) { // modifica desglose pago
+                     $respdesglose = $mod_desglose->actualizaDesglosepago($opag_id, $ite_id, $opag_subtotal, $opag_total, $usuario);
+                     if ($respdesglose) {
+                      $transaction->commit();
+                        $transaction1->commit();
+                        $message = array(
+                            "wtmessage" => Yii::t("notificaciones", "La información ha sido modificada. "),
+                            "title" => Yii::t('jslang', 'Success'),
+                    );
+                     return Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), false, $message);
+                     }else {
+                        $transaction->rollback();
+                        $transaction1->rollback();
+                        $message = array(
+                            "wtmessage" => Yii::t("notificaciones", "Error al modificar desglsoe pago." . $mensaje),
+                            "title" => Yii::t('jslang', 'Bad Request'),
+                        );
+                        return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Bad Request"), false, $message);
+                    }
+                    } else {
+                        $transaction->rollback();
+                        $transaction1->rollback();
+                        $message = array(
+                            "wtmessage" => Yii::t("notificaciones", "Error al modificar orden de pago." . $mensaje),
+                            "title" => Yii::t('jslang', 'Bad Request'),
+                        );
+                        return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Bad Request"), false, $message);
+                    }
+                } else {
+                    $transaction->rollback();
+                    $transaction1->rollback();
+                    $message = array(
+                        "wtmessage" => Yii::t("notificaciones", "Error al modificar solicitud de inscripcion." . $mensaje),
+                        "title" => Yii::t('jslang', 'Bad Request'),
+                    );
+                    return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Bad Request"), false, $message);
+                }
+
+            } catch (Exception $ex) {
+                $transaction->rollback();
+                $message = array(
+                    "wtmessage" => Yii::t("notificaciones", "Error al modificar." . $mensaje),
+                    "title" => Yii::t('jslang', 'Bad Request'),
+                );
+                return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Bad Request"), false, $message);
+            }
+            return;
+        }
     }
 
     public function actionSubirdocumentos() {
@@ -1963,7 +2042,6 @@ class SolicitudesController extends \app\components\CController {
                     $resItems = $modItemMetNivel->consultarXitemMetniv($data["unidada"], $data["moda_id"], $data["metodo"], $data["empresa_id"], $data["carrera_id"]);
                     $descuentos = $modDescuento->consultarDesctoxitem($resItems["ite_id"]);
                 } else {
-                    //\app\models\Utilities::putMessageLogFile('item:'. $data["ite_id"]);
                     $descuentos = $modDescuento->consultarDescuentoXitemUnidad($data["unidada"], $data["moda_id"], $data["ite_id"]);
                 }
                 $message = array("descuento" => $descuentos);

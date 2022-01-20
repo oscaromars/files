@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 use app\modules\admision\Module as admision;
 use app\modules\academico\Module as aspirante;
-
+//print_r ($model);
 aspirante::registerTranslations();
 
 $tipodoc='';

@@ -641,7 +641,7 @@ class SolicitudesController extends \app\components\CController {
             /* Datos Solicitud*/
             $sins_id = base64_decode($data["sins_id"]);
             $uaca_id = $data["ninteres"];
-            $mod_id = $data["mod_id"];
+            $mod_id = $data["modalidad"];
             $mest_id = null;
             $eaca_id = $data["carrera"];
             /* Datos Orden pago */
@@ -661,12 +661,12 @@ class SolicitudesController extends \app\components\CController {
             try {
                 // modifica solicitud
                 $respsolins = $mod_solins->actualizaSolicitudInscripcion($sins_id, $uaca_id, $mod_id, $eaca_id, $usuario);
-                if ($respsolins) { // modiifca orden
+                if ($respsolins) { // modifica orden
                     $resporden = $mod_ordenpago->actualizaOrdenpagoadmision($sins_id, $opag_subtotal, $opag_total, $usuario);
                     if ($resporden) { // modifica desglose pago
                      $respdesglose = $mod_desglose->actualizaDesglosepago($opag_id, $ite_id, $opag_subtotal, $opag_total, $usuario);
                      if ($respdesglose) {
-                      $transaction->commit();
+                        $transaction->commit();
                         $transaction1->commit();
                         $message = array(
                             "wtmessage" => Yii::t("notificaciones", "La información ha sido modificada. "),
@@ -700,7 +700,6 @@ class SolicitudesController extends \app\components\CController {
                     );
                     return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Bad Request"), false, $message);
                 }
-
             } catch (Exception $ex) {
                 $transaction->rollback();
                 $message = array(

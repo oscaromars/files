@@ -1357,7 +1357,7 @@ class Solicitudinscripcion extends \yii\db\ActiveRecord {
      * @param   string  $dataTelefono   Telefono de la persona a Facturar
      * @return  $resultData (Retorna true si se realizo la operacion o false si fue error).
      */
-    public function crearDatosFacturaSolicitud($sins_id, $dataNombres, $dataApellidos, $dataTipDNI, $dataDNI, $dataDireccion, $dataTelefono, $dataCorreo = null) {
+    public function crearDatosFacturaSolicitud($sins_id, $dataNombres, $dataApellidos, $dataTipDNI, $dataDNI, $dataDireccion, $dataTelefono, $dataCorreo/* = null */) {
         $con = \Yii::$app->db_captacion;
         $estado = 1;
         $tipo = ((self::$arr_DNI[$dataTipDNI]) ? self::$arr_DNI[$dataTipDNI] : self::$arr_DNI["3"]);

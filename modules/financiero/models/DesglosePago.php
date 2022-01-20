@@ -104,13 +104,13 @@ class DesglosePago extends \app\modules\financiero\components\CActiveRecord
      * @param
      * @return
      */
-    public function actualizaDesglosepago($opag_id, $dpag_estado_pago, $ite_id, $dpag_subtotal, $dpag_total, $dpag_usu_modifica) {
+    public function actualizaDesglosepago($opag_id, $ite_id, $dpag_subtotal, $dpag_total, $dpag_usu_modifica) {
         $con = \Yii::$app->db_facturacion;
         $estado = 1;
         $dpag_fecha_modificacion = date(Yii::$app->params["dateTimeByDefault"]);
 
         $comando = $con->createCommand
-                ("UPDATE " . $con->dbname . ".orden_pago
+                ("UPDATE " . $con->dbname . ".desglose_pago
                 SET
                     ite_id = :ite_id,
                     dpag_subtotal = :dpag_subtotal,
@@ -118,13 +118,11 @@ class DesglosePago extends \app\modules\financiero\components\CActiveRecord
                     dpag_fecha_modificacion = :dpag_fecha_modificacion,
                     dpag_usu_modifica = :dpag_usu_modifica
                 WHERE opag_id = :opag_id AND
-                      dpag_estado_pago = :dpag_estado_pago
                       dpag_estado =:estado AND
                       dpag_estado_logico = :estado");
 
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
         $comando->bindParam(":opag_id", $opag_id, \PDO::PARAM_INT);
-        $comando->bindParam(":dpag_estado_pago", $dpag_estado_pago, \PDO::PARAM_STR);
         $comando->bindParam(":ite_id", $ite_id, \PDO::PARAM_INT);
         $comando->bindParam(":dpag_subtotal", $dpag_subtotal, \PDO::PARAM_STR);
         $comando->bindParam(":dpag_total", $dpag_total, \PDO::PARAM_STR);

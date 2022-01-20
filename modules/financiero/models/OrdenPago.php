@@ -2533,7 +2533,7 @@ class OrdenPago extends \app\modules\financiero\components\CActiveRecord {
      * @param
      * @return
      */
-    public function actualizaOrdenpagoadmision($sins_id, $opag_estado_pago, $opag_subtotal, $opag_total, $opag_usu_modifica) {
+    public function actualizaOrdenpagoadmision($sins_id, $opag_subtotal, $opag_total, $opag_usu_modifica) {
         $con = \Yii::$app->db_facturacion;
         $estado = 1;
         $opag_fecha_modificacion = date(Yii::$app->params["dateTimeByDefault"]);
@@ -2546,13 +2546,11 @@ class OrdenPago extends \app\modules\financiero\components\CActiveRecord {
                     opag_fecha_modificacion = :opag_fecha_modificacion,
                     opag_usu_modifica = :opag_usu_modifica
                 WHERE sins_id = :sins_id AND
-                      opag_estado_pago = :opag_estado_pago
                       opag_estado =:estado AND
                       opag_estado_logico = :estado");
 
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
         $comando->bindParam(":sins_id", $sins_id, \PDO::PARAM_INT);
-        $comando->bindParam(":opag_estado_pago", $opag_estado_pago, \PDO::PARAM_STR);
         $comando->bindParam(":opag_subtotal", $opag_subtotal, \PDO::PARAM_STR);
         $comando->bindParam(":opag_total", $opag_total, \PDO::PARAM_STR);
         $comando->bindParam(":opag_fecha_modificacion", $opag_fecha_modificacion, \PDO::PARAM_STR);

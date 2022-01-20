@@ -226,7 +226,10 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
                  m.mod_nombre as modalidad,
                 dah.daho_horario as hora,
                 CONCAT( pp.ppro_grupo,'.', ppr.pppr_descripcion) as paralelo,
-                pame.pame_mes as periodo_mensualizado,
+                case 
+                    when da.uaca_id = 1 then ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca_anio),'')
+                    when da.uaca_id = 2 then CONCAT(ifnull(baca.baca_nombre,''),'-',ifnull(saca.saca_nombre,''),' ',ifnull(saca.saca_anio,''),' (',ifnull(pame.pame_mes,''),')')
+                end AS periodo_mensualizado,
                 IFNULL( CONCAT( da.daca_fecha_inicio_post,' al ' ,da.daca_fecha_fin_post ) ,'N/A')as dias,
                 da.daca_num_estudiantes_online as num_est,
                 'N/A' as aula,
@@ -277,6 +280,8 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
                 left join " . $con_academico->dbname . ".profesor_instruccion pi3 on pi3.pro_id = profesor.pro_id and pi3.nins_id =3 and pi3.pins_estado=1 and pi3.pins_estado_logico=1
                 left join " . $con_academico->dbname . ".profesor_instruccion pi4 on pi4.pro_id = profesor.pro_id and pi4.nins_id =4 and pi4.pins_estado=1 and pi4.pins_estado_logico=1
                 INNER JOIN " . $con_academico->dbname . ".periodo_academico pc on da.paca_id  = pc.paca_id and  pc.paca_activo='A'
+                INNER JOIN " . $con_academico->dbname . ".semestre_academico saca on saca.saca_id = pc.saca_id
+                INNER JOIN " . $con_academico->dbname . ".bloque_academico baca on baca.baca_id = pc.baca_id
                 INNER JOIN " . $con_academico->dbname . ".periodo_academico_mensualizado pame on pame.pame_id  = da.pame_id 
                 INNER JOIN " . $con_academico->dbname . ".tipo_distributivo td on td.tdis_id  = da.tdis_id
                 LEFT JOIN " . $con_academico->dbname . ".distributivo_academico_horario dah on dah.daho_id  = da.daho_id
@@ -375,7 +380,6 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
                       and a.meun_estado_logico = 1) as maestria,
                 CONCAT( pp.ppro_grupo,'.', ppr.pppr_descripcion) as paralelo,
                 IFNULL( asi_nombre,'N/A' ) as materia,
-                pame.pame_mes as periodo_mensualizado,
                 IFNULL( CONCAT( da.daca_fecha_inicio_post,' al ' ,da.daca_fecha_fin_post ) ,'N/A') as dias,
                 dah.daho_horario as hora,
                 da.daca_num_estudiantes_online as num_est,
@@ -443,7 +447,7 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
                 'pageSize' => Yii::$app->params["pageSize"],
             ],
             'sort' => [
-                'attributes' => ['docente', 'titulo_tercel_nivel', 'titulo_cuarto_nivel', 'maestria', 'paralelo', 'materia', 'periodo_mensualizado', 'dias', 'hora', 'num_est', 'total_horas_dictar', 'modalidad', 'credito'],
+                'attributes' => ['docente', 'titulo_tercel_nivel', 'titulo_cuarto_nivel', 'maestria', 'paralelo', 'materia', 'dias', 'hora', 'num_est', 'total_horas_dictar', 'modalidad', 'credito'],
             ],
         ]);
 

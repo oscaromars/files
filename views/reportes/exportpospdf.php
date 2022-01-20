@@ -45,7 +45,7 @@
         <br>
     </div>
     <div style="text-align: center">
-        <p><span class="bold"><?php echo strtoupper($baca['baca_descripcion']).' '.$baca['baca_anio'].' '.'('. $pame['pame_mes'].')'?> </span></p>
+        <p><span class="bold"><?php echo strtoupper($baca['baca_descripcion']).' '.$baca['baca_anio'].' '.'('. strtoupper($pame['pame_mes']).')'?> </span></p>
         <br><br>
     </div>
     
@@ -60,7 +60,6 @@
                 <td class="td"><span class="bold">Maestría</span></td>
                 <td class="td"><span class="bold">Grupo Paralelo</span></td>
                 <td class="td"><span class="bold">Materias</span></td>
-                <td class="td"><span class="bold">Periodo Mensualizado</span></td>
                 <td class="td"><span class="bold">Días</span></td>
                 <td class="td"><span class="bold">Hora</span></td>
                 <td class="td"><span class="bold">Estudiantes</span></td>
@@ -80,7 +79,6 @@
                           <td class='td' style='text-align: center;'>".$value2['maestria']."</td>
                           <td class='td' style='text-align: center;'>".$value2['paralelo']."</td>
                           <td class='td' style='text-align: center;'>".$value2['materia']."</td>
-                          <td class='td' style='text-align: center;'>".$value2['periodo_mensualizado']."</td>
                           <td class='td' style='text-align: center;'>".$value2['dias']."</td>
                           <td class='td' style='text-align: center;'>".$value2['hora']."</td>
                           <td class='td' style='text-align: center;'>".$value2['num_est']."</td>

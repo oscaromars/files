@@ -78,7 +78,7 @@ $form->field($model, 'mod_id')->label('Modalidad:')->widget(Select2::classname()
 
 	<?=
 $form->field($model, 'pame_id')->label('Mes:')->widget(Select2::classname(), [
-	'data' => ArrayHelper::map(app\modules\academico\models\PeriodoAcademicoMensualizado::find()->where(['pame_estado_logico' => '1', 'pame_estado' => '1'])->all(), 'pame_id', 'pame_descripcion'),
+	'data' => ArrayHelper::map(app\modules\academico\models\PeriodoAcademicoMensualizado::find()->where(['pame_estado_logico' => '1', 'pame_estado' => '1'])->all(), 'pame_id', 'pame_mes'),
 	// 'data' => $var,
 	'size' => Select2::MEDIUM,
 	'options' => ['placeholder' => 'Seleccione Mes ...', 'multiple' => false],

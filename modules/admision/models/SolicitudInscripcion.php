@@ -1969,6 +1969,11 @@ class Solicitudinscripcion extends \yii\db\ActiveRecord {
      * @return
      */
     public function actualizaSolicitudInscripcion($sins_id, $uaca_id, $mod_id, $eaca_id, $sins_usuario_modifica) {
+        \app\models\Utilities::putMessageLogFile('$sins_id mod:' . $sins_id);
+        \app\models\Utilities::putMessageLogFile('$uaca_id mod:' . $uaca_id);
+        \app\models\Utilities::putMessageLogFile('$mod_id mod:' . $mod_id);
+        \app\models\Utilities::putMessageLogFile('$eaca_id mod:' . $eaca_id);
+        \app\models\Utilities::putMessageLogFile('$sins_usuario_modifica mod:' . $sins_usuario_modifica);
         $con = \Yii::$app->db_captacion;
         $estado = 1;
         $fecha_modificacion = date(Yii::$app->params["dateTimeByDefault"]);
@@ -1986,7 +1991,7 @@ class Solicitudinscripcion extends \yii\db\ActiveRecord {
                 SET sins_fecha_modificacion = :sins_fecha_modificacion,
                     uaca_id = :uaca_id,
                     mod_id = :mod_id,
-                    eaca_id = :eaca_id
+                    eaca_id = :eaca_id,
                     sins_usuario_modifica = :sins_usuario_modifica
                 WHERE sins_id = :sins_id AND
                       sins_estado =:estado AND

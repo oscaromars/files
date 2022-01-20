@@ -2570,8 +2570,8 @@ create table if not exists `materias_periodo_modalidad` (
 `mod_id` bigint(20) not null,
 `asi_id` bigint(20) null, 
 `mpmo_bloque` Integer null default null,
-`mpmo_activo` boolean null default 0,
-`mpmo_usuario_ingreso` bigint(20) not null,
+`mpmo_activo` varchar(1) null default null,
+`mpmo_usuario_ingreso` bigint(20) not null
 `mpmo_usuario_modifica` bigint(20) null,
 `mpmo_estado` varchar(1) not null,
 `mpmo_fecha_creacion`  timestamp not null default current_timestamp,

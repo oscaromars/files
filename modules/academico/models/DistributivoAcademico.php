@@ -16,6 +16,7 @@ use app\modules\academico\models\MallaUnidadModalidad;
  * @property string $daca_fecha_inicio_post
  * @property string $daca_fecha_fin_post
  * @property int $paca_id
+ * @property int $pame_id
  * @property int $tdis_id
  * @property int $asi_id
  * @property int $pro_id
@@ -38,6 +39,7 @@ use app\modules\academico\models\MallaUnidadModalidad;
  * @property int $pppr_id
  *
  * @property CursoEducativaDistributivo[] $cursoEducativaDistributivos
+ * @property Profesor $pro
  * @property PeriodoAcademico $paca
  * @property Asignatura $asi
  * @property UnidadAcademica $uaca
@@ -70,9 +72,9 @@ class DistributivoAcademico extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['paca_id', 'tdis_id', 'asi_id', 'pro_id', 'uaca_id', 'mod_id', 'daho_id', 'mpp_id', 'daca_num_estudiantes_online', 'daca_usuario_ingreso', 'daca_usuario_modifica'], 'integer'],
-            // [['asi_id', 'pro_id', 'uaca_id', 'mod_id', 'daca_jornada', 'daca_horario', 'daca_usuario_ingreso', 'daca_estado', 'daca_estado_logico'], 'required'],
-            [['daca_fecha_registro', 'daca_fecha_creacion', 'daca_fecha_modificacion'], 'safe'],
+            [['dcab_id', 'paca_id', 'pame_id', 'tdis_id', 'asi_id', 'pro_id', 'uaca_id', 'mod_id', 'daho_id', 'daca_usuario_ingreso', 'daca_usuario_modifica', 'mpp_id', 'daca_num_estudiantes_online', 'daca_horas_otras_actividades', 'meun_id', 'pppr_id'], 'integer'],
+            [['daca_fecha_inicio_post', 'daca_fecha_fin_post', 'daca_fecha_registro', 'daca_fecha_creacion', 'daca_fecha_modificacion'], 'safe'],
+            [['pro_id', 'daca_usuario_ingreso', 'daca_estado', 'daca_estado_logico'], 'required'],
             [['daca_jornada', 'daca_estado', 'daca_estado_logico'], 'string', 'max' => 1],
             [['daca_horario'], 'string', 'max' => 10],
             [['pro_id'], 'exist', 'skipOnError' => true, 'targetClass' => Profesor::className(), 'targetAttribute' => ['pro_id' => 'pro_id']],
@@ -80,12 +82,9 @@ class DistributivoAcademico extends \yii\db\ActiveRecord
             [['asi_id'], 'exist', 'skipOnError' => true, 'targetClass' => Asignatura::className(), 'targetAttribute' => ['asi_id' => 'asi_id']],
             [['uaca_id'], 'exist', 'skipOnError' => true, 'targetClass' => UnidadAcademica::className(), 'targetAttribute' => ['uaca_id' => 'uaca_id']],
             [['mod_id'], 'exist', 'skipOnError' => true, 'targetClass' => Modalidad::className(), 'targetAttribute' => ['mod_id' => 'mod_id']],
-            [['tdis_id'], 'exist', 'skipOnError' => true, 'targetClass' => TipoDistributivo::className(), 'targetAttribute' => ['tdis_id' => 'tdis_id']],
-            [['dcab_id'], 'exist', 'skipOnError' => true, 'targetClass' => DistributivoCabecera::className(), 'targetAttribute' => ['dcab_id' => 'dcab_id']],
             [['mpp_id'], 'exist', 'skipOnError' => true, 'targetClass' => MateriaParaleloPeriodo::className(), 'targetAttribute' => ['mpp_id' => 'mpp_id']],
-            [['dhpa_id'], 'exist', 'skipOnError' => true, 'targetClass' => DistributivoHorarioParalelo::className(), 'targetAttribute' => ['dhpa_id' => 'dhpa_id']],
-
-            ];
+            [['pppr_id'], 'exist', 'skipOnError' => true, 'targetClass' => ParaleloPromocionPrograma::className(), 'targetAttribute' => ['pppr_id' => 'pppr_id']],
+        ];
     }
 
     /**
@@ -99,6 +98,7 @@ class DistributivoAcademico extends \yii\db\ActiveRecord
             'daca_fecha_inicio_post' => 'Daca Fecha Inicio Post',
             'daca_fecha_fin_post' => 'Daca Fecha Fin Post',
             'paca_id' => 'Paca ID',
+            'pame_id' => 'Pame ID',
             'tdis_id' => 'Tdis ID',
             'asi_id' => 'Asi ID',
             'pro_id' => 'Pro ID',
@@ -133,7 +133,8 @@ class DistributivoAcademico extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getPro() {
+    public function getPro()
+    {
         return $this->hasOne(Profesor::className(), ['pro_id' => 'pro_id']);
     }
 
@@ -246,13 +247,13 @@ class DistributivoAcademico extends \yii\db\ActiveRecord
             CODIGO DE PEDRO
          $sql = " SELECT e.est_id as est_id, daes_id
                    FROM db_academico.registro_online as ron
-		inner join db_academico.registro_online_item as roi on roi.ron_id=ron.ron_id and roi_estado='1'
-		inner join db_asgard.persona as p on p.per_id = ron.per_id
+        inner join db_academico.registro_online_item as roi on roi.ron_id=ron.ron_id and roi_estado='1'
+        inner join db_asgard.persona as p on p.per_id = ron.per_id
                 inner join db_academico.registro_pago_matricula as pm on ron.per_id=pm.per_id
                 inner join db_academico.estudiante as e on e.per_id=p.per_id
                 inner join db_academico.planificacion_estudiante as pe on pe.pes_id=ron.pes_id
                 inner join db_academico.malla_academica_detalle as mad on  mad.made_codigo_asignatura=roi.roi_materia_cod
-		inner join db_academico.asignatura as a on a.asi_id = mad.asi_id
+        inner join db_academico.asignatura as a on a.asi_id = mad.asi_id
                 left join db_academico.distributivo_academico_estudiante as dae on dae.est_id = e.est_id
                  where 1=1
                    and dae.est_id is null
@@ -309,13 +310,13 @@ class DistributivoAcademico extends \yii\db\ActiveRecord
             CODIGO DE PEDRO
         $sql = " select e.est_id as est_id, daes_id
                  from db_academico.registro_online as ron
-		inner join db_academico.registro_online_item as roi on roi.ron_id=ron.ron_id and roi_estado='1'
-		inner join db_asgard.persona as p on p.per_id = ron.per_id
+        inner join db_academico.registro_online_item as roi on roi.ron_id=ron.ron_id and roi_estado='1'
+        inner join db_asgard.persona as p on p.per_id = ron.per_id
                 inner join db_academico.registro_pago_matricula as pm on ron.per_id=pm.per_id
                 inner join db_academico.estudiante as e on e.per_id=p.per_id
                 inner join db_academico.planificacion_estudiante as pe on pe.pes_id=ron.pes_id
                 inner join db_academico.malla_academica_detalle as mad on  mad.made_codigo_asignatura=roi.roi_materia_cod
-		inner join db_academico.asignatura as a on a.asi_id = mad.asi_id
+        inner join db_academico.asignatura as a on a.asi_id = mad.asi_id
                 inner join db_academico.distributivo_academico_estudiante as dae on dae.est_id = e.est_id
                 inner join db_academico.distributivo_academico as da on dae.daca_id = da.daca_id
                 inner join db_academico.materia_paralelo_periodo as mpp on mpp.mpp_id =da.mpp_id and mpp.mpp_num_paralelo=".$num_paralelo.
@@ -1381,7 +1382,7 @@ class DistributivoAcademico extends \yii\db\ActiveRecord
             $valores_promedio =$DistADO->promedio($id);
             $valores_promedio[0]['preparacion_docencia'] = /*(( $valores_promedio[0]['total_hora_semana_docencia_prese'] + $valores_promedio[0]['total_hora_semana_docencia_online']) **/ 0.30/*)*/;
             $total_hora_semana_docenciaposgrado = $valores_promedio[0]['total_hora_semana_docencia_posgrado'];
-	    $promedio =$DistADO->Calcularpromedioajustado($id, /*$total_hora_semana_docenciaposgrado,*/ $valores_promedio[0]['total_hora_semana_docencia'], $valores_promedio[0]['total_hora_semana_tutoria'], $valores_promedio[0]['total_hora_semana_investigacion'], $valores_promedio[0]['total_hora_semana_vinculacion'], $valores_promedio[0]['preparacion_docencia'], $valores_promedio[0]['semanas_docencia'], $valores_promedio[0]['semanas_tutoria_vinulacion_investigacion']/*, $valores_promedio[0]['semanas_posgrado']*/);
+        $promedio =$DistADO->Calcularpromedioajustado($id, /*$total_hora_semana_docenciaposgrado,*/ $valores_promedio[0]['total_hora_semana_docencia'], $valores_promedio[0]['total_hora_semana_tutoria'], $valores_promedio[0]['total_hora_semana_investigacion'], $valores_promedio[0]['total_hora_semana_vinculacion'], $valores_promedio[0]['preparacion_docencia'], $valores_promedio[0]['semanas_docencia'], $valores_promedio[0]['semanas_tutoria_vinulacion_investigacion']/*, $valores_promedio[0]['semanas_posgrado']*/);
 
             foreach ($res as $key => $value) {
                 $value['promedioajustado'] = round($promedio);
@@ -1429,7 +1430,7 @@ class DistributivoAcademico extends \yii\db\ActiveRecord
                   case when m.mod_id=1 and da.tdis_id<> 7  then
                     (case
                          when (daca_num_estudiantes_online between 0 and 10) then  round(2  *pc.paca_semanas_periodo *(1.3))
-			 when (daca_num_estudiantes_online between 11 and 20) then round(3  *pc.paca_semanas_periodo *(1.3))
+             when (daca_num_estudiantes_online between 11 and 20) then round(3  *pc.paca_semanas_periodo *(1.3))
                          when (daca_num_estudiantes_online between 21 and 30) then round(4  *pc.paca_semanas_periodo *(1.3))
                          when (daca_num_estudiantes_online between 31 and 40) then round(5  *pc.paca_semanas_periodo *(1.3))
                          when (daca_num_estudiantes_online >40) then round(7  *pc.paca_semanas_periodo *(1.3)) end)
@@ -1441,7 +1442,7 @@ class DistributivoAcademico extends \yii\db\ActiveRecord
                      case when m.mod_id=1 and da.tdis_id<> 7  then
                     (case
                          when (daca_num_estudiantes_online between 0 and 10)  then  round( 2  *(1.3))
-			 when (daca_num_estudiantes_online between 11 and 20) then  round( 3  *(1.3))
+             when (daca_num_estudiantes_online between 11 and 20) then  round( 3  *(1.3))
                          when (daca_num_estudiantes_online between 21 and 30) then  round( 4  *(1.3))
                          when (daca_num_estudiantes_online between 31 and 40) then  round( 5  *(1.3))
                          when (daca_num_estudiantes_online >40) then round(7 *(1.3))  end)

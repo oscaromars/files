@@ -386,6 +386,13 @@ class InscripciongradoController extends \yii\web\Controller {
                             //}
                       }
                     if($exito){
+                        //AQUI SE NECEITA ENVIAR EL CORREO A ADMISONES QUE ALGUIEN INGRESO
+                        /* obterner las variables de nombres, unidad y dni */
+                        $nombre_completo = $per_pri_nombre .' '.$per_seg_nombre. ' '. $per_pri_apellido .' '.$per_seg_apellido;
+                        $tituloMensaje = Yii::t("interesado", "UTEG - Inscripción Grado");
+                        $asunto = Yii::t("interesado", "UTEG - Inscripción Grado");
+                                          $bodyadmision = Utilities::getMailMessage("Requestregistration", array("[[nombres]]" => $nombre_completo, "[[dni]]" => $per_dni, "[[unidad]]" => $uaca_id), Yii::$app->language);
+                                          Utilities::sendEmail($tituloMensaje, Yii::$app->params["adminEmail"], [Yii::$app->params["admisionespri"] => "Jefe"], $asunto, $bodyadmision);
                         $transaction->commit();
                         $message = array(
                             "wtmessage" => Yii::t("formulario", "The information have been saved"),

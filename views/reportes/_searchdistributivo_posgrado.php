@@ -4,6 +4,7 @@ use kartik\select2\Select2;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
+use kartik\date\DatePicker;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\UsuarioSearch */
@@ -75,12 +76,23 @@ $form->field($model, 'mod_id')->label('Modalidad:')->widget(Select2::classname()
 ]);
 ?>
 
-
+	<?=
+$form->field($model, 'pame_id')->label('Mes:')->widget(Select2::classname(), [
+	'data' => ArrayHelper::map(app\modules\academico\models\PeriodoAcademicoMensualizado::find()->where(['pame_estado_logico' => '1', 'pame_estado' => '1'])->all(), 'pame_id', 'pame_mes'),
+	// 'data' => $var,
+	'size' => Select2::MEDIUM,
+	'options' => ['placeholder' => 'Seleccione Mes ...', 'multiple' => false],
+	'pluginOptions' => [
+		'allowClear' => true,
+		'width' => '295px',
+	],
+]);
+?>
 
 
     <div class="form-group">
         <div class="col-sm-offset-4">
-<?=Html::submitButton('Buscar', ['class' => 'btn btn-primary'])?>
+<?=Html::submitButton('Buscar', ['class' => 'btn btn-primary', 'id' => 'btn_buscar'])?>
                </div>
     </div>
 

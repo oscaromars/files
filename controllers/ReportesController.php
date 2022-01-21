@@ -12,6 +12,8 @@ use app\modules\academico\models\EstudioAcademico;
 use app\modules\academico\models\MallaAcademica;
 use app\modules\academico\models\Modalidad;
 use app\modules\academico\models\PeriodoAcademico;
+use app\modules\academico\models\BloqueAcademico;
+use app\modules\academico\models\PeriodoAcademicoMensualizado;
 use app\modules\academico\models\PlanificacionEstudiante;
 use app\modules\academico\models\PlanificacionSearch;
 use app\modules\academico\models\UnidadAcademica;
@@ -549,7 +551,6 @@ class ReportesController extends CController {
 			Yii::t("formulario", "No. Estudiantes"),
 			Yii::t("formulario", "Total Horas a dictar"),
 			Yii::t("formulario", "Modalidad"),
-			Yii::t("formulario", "Aula"),
 			Yii::t("formulario", "Total crédito"),
 		);
 		$searchModel = new DistributivoAcademicoSearch();
@@ -559,6 +560,7 @@ class ReportesController extends CController {
 			$arrSearch["periodo"] = $data['periodo'];
 			$arrSearch["tipo_asignacion"] = $data['tipo_asignacion'];
 			$arrSearch["modalidad"] = $data['modalidad'];
+			$arrSearch["mes"] = $data['mes'];
 		}
 		$arrData = array();
 		if (empty($arrSearch)) {
@@ -603,6 +605,7 @@ class ReportesController extends CController {
 			$arrSearch["periodo"] = $data['periodo'];
 			$arrSearch["tipo_asignacion"] = $data['tipo_asignacion'];
 			$arrSearch["modalidad"] = $data['modalidad'];
+			$arrSearch["mes"] = $data['mes'];
 		}
 
 		if (empty($arrSearch)) {
@@ -610,12 +613,16 @@ class ReportesController extends CController {
 		} else {
 			$arr_body = $searchModel->getListadoDistributivoPosgradosexcel($arrSearch, true);
 		}
-
+		$paca = PeriodoAcademico::findOne(['paca_id'=>$arrSearch['periodo'],'paca_estado'=>1,'paca_estado_logico'=>1]);
+        $baca = BloqueAcademico::findOne(['baca_id'=>$paca['baca_id'],'baca_estado'=>1,'baca_estado_logico'=>1]);
+        $pame = PeriodoAcademicoMensualizado::findOne(['pame_id'=>$arrSearch['mes'],'pame_estado'=>1,'pame_estado_logico'=>1]);
 		$report->orientation = "L"; // tipo de orientacion L => Horizontal, P => Vertical
 		$report->createReportPdf(
 			$this->render('exportpospdf', [
 				'arr_head' => $arr_head,
 				'arr_body' => $arr_body,
+				'baca' => $baca,
+				'pame' => $pame,
 			])
 		);
 		$report->mpdf->Output('Reporte_distributivo_posgrado_' . date("Ymdhis") . ".pdf", ExportFile::OUTPUT_TO_DOWNLOAD);

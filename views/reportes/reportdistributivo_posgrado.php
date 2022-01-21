@@ -19,7 +19,7 @@ use app\widgets\PbGridView\PbGridView;
       <?=
 
 PbGridView::widget([
-	'id' => 'Tbg_ReporteDistributivo Posgrado',
+	'id' => 'Tbg_ReporteDistributivo_Posgrado',
 	'showExport' => true,
 	'fnExportEXCEL' => "exportExceldistributivoposgrado",
 	'fnExportPDF' => "exportPDFdistributivoposgrado",
@@ -64,6 +64,13 @@ PbGridView::widget([
 			'value' => 'materia',
 
 		],
+		[
+            'attribute' => 'periodo_mensualizado',
+            'header' => academico::t("Academico", "Periodo Mensualizado"),
+            'value' => 'periodo_mensualizado',
+            //'group' => true, // enable grouping
+        
+        ],
 		[
 			'attribute' => 'dias',
 			'header' => academico::t("Academico", "Días"),

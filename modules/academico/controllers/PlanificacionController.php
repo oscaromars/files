@@ -2142,8 +2142,10 @@ inner join " . $con->dbname . ".malla_academica as b on a.pes_cod_carrera = b.ma
 		]);
 	}
 
-	         public function actionCargarmaterias($modalidad) { 
-    
+	         public function actionCargarmaterias() { 
+ 
+ for ($c = 1; $c <= 4; $c++) {  
+ $modalidad = $c;   
  $con = \Yii::$app->db_academico;
  
 $sql = "
@@ -2205,7 +2207,10 @@ $centralprocess = $malla->cargarAsignaturas($resultData[$i],$modalidad);
 
         } 
 
-         return true;
+         } 
+
+           \Yii::$app->getSession()->setFlash('msgok', 'Se ha cargado las asignaturas exitosamente!');
+         return $this->redirect(['index']);
      }
 
 	public function actionListarparalelos() {

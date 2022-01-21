@@ -1154,7 +1154,7 @@ where a.maca_id= :maca_id and asi_id = :asi_id
                    $getmpar = $comando->queryOne();
 
 
-                  if ($getifasi["hosd_bloque"] == 1){
+                   if ($subjects[$iter][4] == 1){
                     switch ($getifasi["hosd_hora"]) {
                         case 1:
                         if ($asih1==Null){ 
@@ -1195,7 +1195,7 @@ where a.maca_id= :maca_id and asi_id = :asi_id
 
 
 
-                  if ($getifasi["hosd_bloque"] == 2){
+                   if ($subjects[$iter][4] == 2){
                     switch ($getifasi["hosd_hora"]) {
                         case 1:
                    if ($asih4==Null){ 
@@ -1830,7 +1830,7 @@ where a.maca_id= :maca_id and asi_id = :asi_id
                 // TO ADD TIMESTAMP TO MPP 
 
 
-                  if ($getifasi["hosd_bloque"] == 1){
+                   if ($subjects[$iter][4] == 1){
                     switch ($getifasi["hosd_hora"]) {
                         case 1:
                     if ($asih1==Null){ 
@@ -1931,7 +1931,7 @@ where a.maca_id= :maca_id and asi_id = :asi_id
                     }  
 
 
-                  if ($getifasi["hosd_bloque"] == 2){
+                   if ($subjects[$iter][4] == 2){
                     switch ($getifasi["hosd_hora"]) {
                         case 1:
                     if ($asih5==Null){ 

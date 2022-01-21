@@ -388,9 +388,7 @@ class InscripciongradoController extends \yii\web\Controller {
                             //}
                       }
                     if($exito){
-                        //AQUI SE NECEITA ENVIAR EL CORREO A ADMISONES QUE ALGUIEN INGRESO
-                        /* obterner las variables de nombres, unidad y dni */
-                        //consultar nombre unidad academica con  id
+                        //Envio de correo a admisones
                         $mod_unidad = new UnidadAcademica();
                         $unidad_nombre = $mod_unidad->consultarNombreunidad($uaca_id);
                         $nombre_completo = $per_pri_nombre .' '.$per_seg_nombre. ' '. $per_pri_apellido .' '.$per_seg_apellido;

@@ -23,6 +23,7 @@ use app\models\TipoDiscapacidad;
 use app\models\TipoParentesco;
 use app\models\Usuario;
 use app\models\Utilities;
+use yii\base\Security;
 use app\modules\academico\models\EstudioAcademico;
 use app\modules\academico\models\Modalidad;
 use app\modules\academico\models\UnidadAcademica;
@@ -30,6 +31,7 @@ use app\modules\admision\models\ConvenioEmpresa;
 use app\modules\admision\models\MetodoIngreso;
 use app\modules\academico\Module as academico;
 use Yii;
+use yii\helpers\Url;
 use yii\base\Exception;
 use yii\helpers\ArrayHelper;
 use app\models\ExportFile;
@@ -222,10 +224,8 @@ class InscripcionposgradoController extends \yii\web\Controller {
             try {
 
                 $unidad = $data['unidad'];
-                \app\models\Utilities::putMessageLogFile('unidad: ' . $data['unidad']);
                 $programa = $data['programa'];
                 $modalidad = $data['modalidad'];
-                \app\models\Utilities::putMessageLogFile('programa: ' . $data['programa']);
                 $año = $data['año'];
                 $tipo_financiamiento = $data['tipo_financiamiento'];
                 $ming_id = $data['ming_id'];
@@ -586,6 +586,17 @@ class InscripcionposgradoController extends \yii\web\Controller {
                         }
                     }
                     //if($exito){
+                        //Envio de correo a admisones
+                        $mod_unidad = new UnidadAcademica();
+                        $unidad_nombre = $mod_unidad->consultarNombreunidad($unidad);
+                        $nombre_completo = $primer_nombre .' '.$segundo_nombre. ' '. $primer_apellido .' '.$segundo_apellido;
+                        Utilities::putMessageLogFile('cc xXx.. ' .$nombre_completo );
+                        Utilities::putMessageLogFile('ttt xXx.. ' .$unidad_nombre["nombre_unidad"] );
+                        Utilities::putMessageLogFile('sss xXx.. ' .$per_dni );
+                        $tituloMensaje = Yii::t("interesado", "UTEG - Inscripción Posgrado");
+                        $asunto = Yii::t("interesado", "UTEG - Inscripción Posgrado");
+                        $bodyadmision = Utilities::getMailMessage("Requestregistration", array("[[nombres]]" => $nombre_completo, "[[dni]]" => $per_dni, "[[unidad]]" => $unidad_nombre["nombre_unidad"]), Yii::$app->language);
+                        Utilities::sendEmail($tituloMensaje, Yii::$app->params["adminEmail"], [Yii::$app->params["admisionespri"] => "Jefe"], $asunto, $bodyadmision);
                         $transaction->commit();
                         $message = array(
                             "wtmessage" => Yii::t("formulario", "Tu informacion se ha guardado"),
@@ -607,7 +618,7 @@ class InscripcionposgradoController extends \yii\web\Controller {
                     "title" => Yii::t('jslang', 'Error'),
                 );
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Error'), 'false', $message);
-             }
+                }
             } catch (Exception $ex) {
                 $transaction->rollback();
                 $message = array(

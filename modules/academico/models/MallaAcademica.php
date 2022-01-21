@@ -392,6 +392,72 @@ class MallaAcademica extends \yii\db\ActiveRecord
         $resultData = $comando->queryOne();
         return $resultData;
     }
+
+         function cargarAsignaturas($rows,$$modalidad) {
+    $con = \Yii::$app->db_academico;
+     $activo="A";
+
+     $sql = "select distinct  
+a.asi_id, a.made_credito, c.uaca_id,c.mod_id
+from db_academico.malla_academica_detalle a
+inner join db_academico.malla_unidad_modalidad b on b.maca_id = a.maca_id 
+inner join db_academico.modalidad_estudio_unidad c on c.meun_id = b.meun_id
+inner join db_academico.asignatura d on d.asi_id = a.asi_id
+                       where c.eaca_id =  " . $rows["eaca_id"] . "   
+                      and   c.mod_id =  " . $modalidad . "   
+                      and a.maca_id =  " . $rows["maca_id"] . "  
+                      and c.uaca_id = 1
+                            and a.made_estado = 1
+                            and a.made_estado_logico = 1
+                            and b.mumo_estado = 1
+                            and b.mumo_estado_logico = 1
+                            and c.meun_estado = 1
+                            and c.meun_estado_logico = 1
+                            and d.asi_estado = 1
+                            and d.asi_estado_logico = 1
+                     ORDER BY a.made_semestre ASC
+                        ";
+   $comando = $con->createCommand($sql);
+   $rows_asi = $comando->queryAll();
+
+  
+
+    if (count($rows_asi) > 0) {   
+        
+     for ($im = 0; $im < count($rows_asi); $im++) {   
+        
+         $asiid = $rows_asi[$im]["asi_id"];
+         $modid = $rows_asi[$im]["mod_id"];
+         $sacaid = 0 ; $estado = 1;
+
+         $sql = "select asi_id from db_academico.materias_periodo_modalidad
+          where asi_id =:asiid and saca_id = 0 and mod_id = :modid;                 
+                        ";
+
+         $comando = $con->createCommand($sql);
+         $comando->bindParam(":asiid", $asiid, \PDO::PARAM_INT);
+         $comando->bindParam(":modid", $modid, \PDO::PARAM_INT);
+               $ismat_in = $comando->queryOne();
+
+          if ($ismat_in['asi_id'] ) == Null) {  
+
+
+           $sqladd = "
+             INSERT INTO db_academico.materias_periodo_modalidad
+             (saca_id, mod_id, asi_id, mpmo_usuario_ingreso, mpmo_estado, mpmo_estado_logico)
+            VALUES ('" . $sacaid . "','" . $modid . "','" . $asiid . "',1, '" . $estado . "', '" . $estado . "')"
+            ;
+            
+               $comando = $con->createCommand($sqladd); 
+                     $putasig = $comando->execute();
+
+                                                 }
+
+           }
+        }
+              return true;
+     }
+     
     
     function consultarAsignaturas($rows,$gest,$semestre,$modalidad) {
     $con = \Yii::$app->db_academico;

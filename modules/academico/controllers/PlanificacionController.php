@@ -2142,24 +2142,8 @@ inner join " . $con->dbname . ".malla_academica as b on a.pes_cod_carrera = b.ma
 		]);
 	}
 
-	   public function actionCargarmaterias($periodo,$modalidad) { 
+	         public function actionCargarmaterias($modalidad) { 
     
-
-                    $con = \Yii::$app->db_academico;
-                    $sql = "
-                            SELECT  
-                            CONCAT(saca_nombre,' ',saca_anio) as semestre
-                            FROM db_academico.semestre_academico where saca_id = :periodo
-                    ";
-                    $comando = $con->createCommand($sql);
-                    $comando->bindParam(":periodo", $periodo, \PDO::PARAM_STR);
-                    $saca_nombre = $comando->queryOne();
-               
-
-
-$mensaje = "periodo ".$periodo." modalidad ".$modalidad;
-mail('oscaromars@hotmail.com', 'Mi título', $mensaje);
-
  $con = \Yii::$app->db_academico;
  
 $sql = "
@@ -2216,7 +2200,7 @@ order by maca.maca_id DESC , ea.eaca_codigo, e.est_fecha_creacion ASC;
                  if (count($resultData) > 0) {
            
             for ($i = 0; $i < count($resultData); $i++) {                       
-$centralprocess = $malla->cargarAsignaturas($resultData[$i],$periodo,$saca_nombre["semestre"],$modalidad);                  
+$centralprocess = $malla->cargarAsignaturas($resultData[$i],$modalidad);                  
             }
 
         } 

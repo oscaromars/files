@@ -2569,6 +2569,7 @@ create table if not exists `materias_periodo_modalidad` (
 `saca_id` bigint(20) not null,
 `mod_id` bigint(20) not null,
 `asi_id` bigint(20) null, 
+`mpmo_nestudiantes` bigint(20) null default null,
 `mpmo_bloque` Integer null default null,
 `mpmo_activo` varchar(1) null default null,
 `mpmo_usuario_ingreso` bigint(20) not null,

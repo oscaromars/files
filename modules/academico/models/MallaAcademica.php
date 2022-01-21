@@ -393,7 +393,7 @@ class MallaAcademica extends \yii\db\ActiveRecord
         return $resultData;
     }
 
-         function cargarAsignaturas($rows,$$modalidad) {
+         function cargarAsignaturas($rows,$modalidad) {
     $con = \Yii::$app->db_academico;
      $activo="A";
 
@@ -439,7 +439,7 @@ inner join db_academico.asignatura d on d.asi_id = a.asi_id
          $comando->bindParam(":modid", $modid, \PDO::PARAM_INT);
                $ismat_in = $comando->queryOne();
 
-          if ($ismat_in['asi_id'] ) == Null) {  
+          if ($ismat_in['asi_id'] == Null) {  
 
 
            $sqladd = "

@@ -311,7 +311,7 @@ class PeriodoAcademicoMetIngreso extends \app\modules\academico\components\CActi
 	public function listarParalelos($pmin_id) {
 		$con = \Yii::$app->db_academico;
 		$estado = 1;
-		$sql = "SELECT 	par.par_nombre nombre,
+		$sql = "SELECT  par.par_nombre nombre,
                         par.par_descripcion descripcion,
                         par.par_num_cupo cupo
                 FROM " . $con->dbname . ".paralelo par

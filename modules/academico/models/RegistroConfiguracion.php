@@ -629,22 +629,80 @@ $trans2->commit();
 			$trans = $con->beginTransaction(); // si no existe la transacción entonces se crea una
 		}
 
+		$param_sql = "rco_estado";
+		$bdet_sql = "1";
+
+		$param_sql .= ", rco_estado_logico";
+		$bdet_sql .= ", 1";
+
+		$param_sql .= ", rco_num_bloques";
+		$bdet_sql .= ", 0";
+
+		if (isset($fechaini)) {
+			$param_sql .= ", rco_fecha_inicio";
+			$bdet_sql .= ", :rco_fecha_inicio";
+		}
+		if (isset($fechafin)) {
+			$param_sql .= ", rco_fecha_fin";
+			$bdet_sql .= ", :rco_fecha_fin";
+		}
+
+		if (isset($fechaini1)) {
+			$param_sql .= ", rco_fecha_ini_aplicacion";
+			$bdet_sql .= ", :rco_fecha_ini_aplicacion";
+		}
+
+		if (isset($fechafin1)) {
+			$param_sql .= ", rco_fecha_fin_aplicacion";
+			$bdet_sql .= ", :rco_fecha_fin_aplicacion";
+		}
+
+		if (isset($fechaini3)) {
+			$param_sql .= ", rco_fecha_ini_periodoextra";
+			$bdet_sql .= ", :rco_fecha_ini_periodoextra";
+		}
+
+		if (isset($fechafin3)) {
+			$param_sql .= ", rco_fecha_fin_periodoextra";
+			$bdet_sql .= ", :rco_fecha_fin_periodoextra";
+		}
+
+		if (isset($fechaini4)) {
+			$param_sql .= ", rco_fecha_ini_clases";
+			$bdet_sql .= ", :rco_fecha_ini_clases";
+		}
+
+		if (isset($fechafin4)) {
+			$param_sql .= ", rco_fecha_fin_clases";
+			$bdet_sql .= ", :rco_fecha_fin_clases";
+		}
+
+		if (isset($fechaini5)) {
+			$param_sql .= ", rco_fecha_ini_examenes";
+			$bdet_sql .= ", :rco_fecha_ini_examenes";
+		}
+
+		if (isset($fechafin5)) {
+			$param_sql .= ", rco_fecha_fin_examenes";
+			$bdet_sql .= ", :rco_fecha_fin_examenes";
+		}
+
 		try {
 			\app\models\Utilities::putMessageLogFile('entro sdesdf...: ');
-			$sql = "UPDATE " . $con->dbname . ".registro_configuracion
-            SET rco_fecha_inicio = :rco_fecha_inicio,
-                rco_fecha_fin    = :rco_fecha_fin,
-                rco_fecha_ini_aplicacion = :rco_fecha_ini_aplicacion,
-                rco_fecha_fin_aplicacion = :rco_fecha_fin_aplicacion,
-                rco_fecha_ini_periodoextra = :rco_fecha_ini_periodoextra,
-                rco_fecha_fin_periodoextra = :rco_fecha_fin_periodoextra,
-                rco_fecha_ini_clases = :rco_fecha_ini_clases,
-                rco_fecha_fin_clases = :rco_fecha_fin_clases,
-                rco_fecha_ini_examenes = :rco_fecha_ini_examenes,
-                rco_fecha_fin_examenes = :rco_fecha_fin_examenes,
-                rco_usuario_modifica   = $usu_id,
-                rco_fecha_modificacion = $fecha
-                WHERE rco_id = :id and rco_estado = 1 and rco_estado_logico = 1";
+			$sql = "UPDATE " . $con->dbname . ".registro_configuracion SET
+              rco_fecha_inicio = :rco_fecha_inicio,
+              rco_fecha_fin = :rco_fecha_fin,
+              rco_fecha_ini_aplicacion = :rco_fecha_ini_aplicacion,
+              rco_fecha_fin_aplicacion = :rco_fecha_fin_aplicacion,
+              rco_fecha_ini_periodoextra = :rco_fecha_ini_periodoextra,
+              rco_fecha_fin_periodoextra = :rco_fecha_fin_periodoextra,
+              rco_fecha_ini_clases = :rco_fecha_ini_clases,
+              rco_fecha_fin_clases = :rco_fecha_fin_clases,
+              rco_fecha_ini_examenes = :rco_fecha_ini_examenes,
+              co_fecha_fin_examenes = :rco_fecha_fin_examenes,
+              rco_usuario_modifica   = $usu_id,
+              rco_fecha_modificacion = $fecha
+              WHERE rco_id = :id and rco_estado = 1 and rco_estado_logico = 1";
 
 			// Hacer al query un comando
 			$comando = $con->createCommand($sql);
@@ -693,7 +751,7 @@ $trans2->commit();
 
 			}
 
-			$result = $comando->execute();
+			$comando->execute();
 
 			if ($trans !== null) {
 				$trans->commit();

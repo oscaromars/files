@@ -55,14 +55,15 @@ class DistributivocabeceraController extends \app\components\CController {
 	}
 
 	public function actionAprobardistributivo() {
-		$searchModel = new \app\modules\academico\models\DistributivoCabeceraSearch();
-		$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-
+		$searchModel = new DistributivoCabeceraSearch();
+		// $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+		$dataProvider = $searchModel->consultarDistributivoRevision($params = Yii::$app->request->queryParams, false, 1);
 		return $this->render('aprobardistributivo', [
 			'searchModel' => $searchModel,
 			'dataProvider' => $dataProvider,
 		]);
 	}
+
 	public function actionIndex() {
 		$per_id = @Yii::$app->session->get("PB_perid");
 		$model = NULL;

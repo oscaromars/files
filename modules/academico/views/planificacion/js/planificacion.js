@@ -1148,6 +1148,11 @@ function actualizarGridPlanestudiante(perSel) {
 }
 
 
+function load() {
+  showLoadingPopup();
+  window.location.href = $('#txth_base').val() + "/academico/planificacion/cargarmaterias";
+
+}
 
 function generate() {
     var haspla = $('#frm_hasplanning').val(); 

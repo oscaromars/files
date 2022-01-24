@@ -28,7 +28,7 @@
         padding: 10px;
         text-align: center;
     }
-    
+
 </style>
 
 <div>
@@ -45,11 +45,10 @@
         <br>
     </div>
     <div style="text-align: center">
-        <p><span class="bold"><?php echo strtoupper($baca['baca_descripcion']).' '.$baca['baca_anio'] . ' ('. strtoupper($pame['pame_descripcion']).')'?> </span></p>
-        
+        <p><span class="bold"><?php echo strtoupper($baca['baca_descripcion']) . ' ' . $baca['baca_anio'] . ' (' . strtoupper($pame['pame_descripcion']) . ')' ?> </span></p>
         <br><br>
     </div>
-    
+
 
 
     <table >
@@ -61,7 +60,6 @@
                 <td class="td"><span class="bold">Maestría</span></td>
                 <td class="td"><span class="bold">Grupo Paralelo</span></td>
                 <td class="td"><span class="bold">Materias</span></td>
-                <td class="td"><span class="bold">Periodo Mensualizado</span></td>
                 <td class="td"><span class="bold">Días</span></td>
                 <td class="td"><span class="bold">Hora</span></td>
                 <td class="td"><span class="bold">Estudiantes</span></td>
@@ -73,26 +71,25 @@
         </thead>
         <tbody>
             <?php
-            foreach ($arr_body as $key2 => $value2) {
-            	echo "<tr style='border: 0.5px solid #FFFFFF;'>";
-            		echo "<td class='td' style='text-align: center;'>".$value2['docente']."</td>
-                          <td class='td' style='text-align: center;'>".$value2['titulo_tercel_nivel']."</td>
-                          <td class='td' style='text-align: center;'>".$value2['titulo_cuarto_nivel']."</td>
-                          <td class='td' style='text-align: center;'>".$value2['maestria']."</td>
-                          <td class='td' style='text-align: center;'>".$value2['paralelo']."</td>
-                          <td class='td' style='text-align: center;'>".$value2['materia']."</td>
-                          <td class='td' style='text-align: center;'>".$value2['periodo_mensualizado']."</td>
-                          <td class='td' style='text-align: center;'>".$value2['dias']."</td>
-                          <td class='td' style='text-align: center;'>".$value2['hora']."</td>
-                          <td class='td' style='text-align: center;'>".$value2['num_est']."</td>
-                          <td class='td' style='text-align: center;'>".$value2['total_horas_dictar']."</td>
-                          <td class='td' style='text-align: center;'>".$value2['modalidad']."</td>
-                          <td class='td' style='text-align: center;'>".$value2['credito']."</td>";
+foreach ($arr_body as $key2 => $value2) {
 
-            	
-            	echo "</tr>";
-            }
-            ?>
+	echo "<tr style='border: 0.5px solid #FFFFFF;'>";
+	echo "<td class='td' style='text-align: center;'>" . $value2['docente'] . "</td>
+                          <td class='td' style='text-align: center;'>" . $value2['titulo_tercel_nivel'] . "</td>
+                          <td class='td' style='text-align: center;'>" . $value2['titulo_cuarto_nivel'] . "</td>
+                          <td class='td' style='text-align: center;'>" . $value2['maestria'] . "</td>
+                          <td class='td' style='text-align: center;'>" . $value2['paralelo'] . "</td>
+                          <td class='td' style='text-align: center;'>" . $value2['materia'] . "</td>
+                          <td class='td' style='text-align: center;'>" . $value2['dias'] . "</td>
+                          <td class='td' style='text-align: center;'>" . $value2['hora'] . "</td>
+                          <td class='td' style='text-align: center;'>" . $value2['num_est'] . "</td>
+                          <td class='td' style='text-align: center;'>" . $value2['total_horas_dictar'] . "</td>
+                          <td class='td' style='text-align: center;'>" . $value2['modalidad'] . "</td>
+                          <td class='td' style='text-align: center;'>" . $value2['credito'] . "</td>";
+
+	echo "</tr>";
+}
+?>
         </tbody>
         <!--<tfoot>
             <tr><td></td></tr>
@@ -109,7 +106,7 @@
                 <td style="text-align: center"><span class="bold">Revisado por:</span></td>
                 <td style="text-align: center"><span class="bold">Revisado por:</span></td>
                 <td style="text-align: center"><span class="bold">Aprobado por:</span></td>
-                
+
             </tr>
 
         </thead>
@@ -140,7 +137,7 @@
                     <div style="text-align: center">
                         <p><span class="bold">DECANA DE POSGRADO</span></p>
                     </div>
-                    
+
                 </td>
                 <td style='text-align: center;'>
                     <div style="text-align: center">

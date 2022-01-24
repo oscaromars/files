@@ -5,6 +5,8 @@ namespace app\controllers;
 use Yii;
 use app\models\Utilities;
 use yii\helpers\ArrayHelper;
+use yii\base\Security;
+use yii\helpers\Url;
 use yii\base\Exception;
 use app\models\Persona;
 use app\models\Empresa;
@@ -386,6 +388,14 @@ class InscripciongradoController extends \yii\web\Controller {
                             //}
                       }
                     if($exito){
+                        //Envio de correo a admisones
+                        $mod_unidad = new UnidadAcademica();
+                        $unidad_nombre = $mod_unidad->consultarNombreunidad($uaca_id);
+                        $nombre_completo = $per_pri_nombre .' '.$per_seg_nombre. ' '. $per_pri_apellido .' '.$per_seg_apellido;
+                        $tituloMensaje = Yii::t("interesado", "UTEG - Inscripción Grado");
+                        $asunto = Yii::t("interesado", "UTEG - Inscripción Grado");
+                        $bodyadmision = Utilities::getMailMessage("Requestregistration", array("[[nombres]]" => $nombre_completo, "[[dni]]" => $per_dni, "[[unidad]]" => $unidad_nombre["nombre_unidad"]), Yii::$app->language);
+                        Utilities::sendEmail($tituloMensaje, Yii::$app->params["adminEmail"], [Yii::$app->params["admisionespri"] => "Jefe"], $asunto, $bodyadmision);
                         $transaction->commit();
                         $message = array(
                             "wtmessage" => Yii::t("formulario", "The information have been saved"),

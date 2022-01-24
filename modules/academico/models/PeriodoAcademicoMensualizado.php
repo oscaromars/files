@@ -22,6 +22,7 @@ use Yii;
  * @property PeriodoAcademico $paca
  * @property UnidadAcademica $uaca
  */
+
 class PeriodoAcademicoMensualizado extends \yii\db\ActiveRecord {
 	/**
 	 * {@inheritdoc}

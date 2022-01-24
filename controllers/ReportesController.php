@@ -618,6 +618,7 @@ class ReportesController extends CController {
 		} else {
 			$arr_body = $searchModel->getListadoDistributivoPosgradosexcel($arrSearch, true);
 		}
+
 		$paca = PeriodoAcademico::findOne(['paca_id' => $arrSearch['periodo'], 'paca_estado' => 1, 'paca_estado_logico' => 1]);
 		$baca = BloqueAcademico::findOne(['baca_id' => $paca['baca_id'], 'baca_estado' => 1, 'baca_estado_logico' => 1]);
 		$pame = PeriodoAcademicoMensualizado::findOne(['pame_id' => $arrSearch['mes'], 'pame_estado' => 1, 'pame_estado_logico' => 1]);

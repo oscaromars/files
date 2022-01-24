@@ -293,7 +293,7 @@ class EstudioAcademico extends \app\modules\admision\components\CActiveRecord {
      * @return
      */
     public function consultarmodalidadxcarrera($eaca_id) {
-        \app\models\Utilities::putMessageLogFile('carrera modelo 111..: '. $data['eaca_id']);
+        //\app\models\Utilities::putMessageLogFile('carrera modelo 111..: '. $data['eaca_id']);
         $con = \Yii::$app->db_academico;
         $estado = 1;
         $sql = "SELECT

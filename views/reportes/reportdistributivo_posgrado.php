@@ -65,6 +65,7 @@ PbGridView::widget([
 
 		],
 		[
+
 			'attribute' => 'periodo_mensualizado',
 			'header' => academico::t("Academico", "Periodo Mensualizado"),
 			'value' => 'periodo_mensualizado',

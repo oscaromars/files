@@ -9,11 +9,13 @@
 use yii\helpers\Html;
 use yii\helpers\Url;
 use app\widgets\PbGridView\PbGridView;
+use app\modules\financiero\models\OrdenPago;
 use app\modules\admision\Module as admision;
 use app\modules\academico\Module as academico;
 use app\modules\financiero\Module as financiero;
 academico::registerTranslations();
 financiero::registerTranslations();
+
 ?>
 <?=
 
@@ -68,8 +70,17 @@ PbGridView::widget([
         [
             'class' => 'yii\grid\ActionColumn',
             'header' => Yii::t("formulario", "Actions"),
-            'template' => '{payments} {upload}', //
+            'template' => '{view} {payments} {upload}', //
             'buttons' => [
+                'view' => function ($url, $model) {
+                    $mod_ordpago = new OrdenPago;
+                    $result = $mod_ordpago->consultarImagenpagoexiste($model['opag_id']);
+                    if ($result['existe_imagen'] == 0 && $model['estado_pago'] != 'Pagado') { // Aqui si la solicitud esta pendiente  y no ha subido pago
+                        return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', Url::to(['/admision/solicitudes/viewsolicitud', 'id_sol' => base64_encode($model['sins_id']), 'per_id' => base64_encode($model['per_id']), 'opag_id' => base64_encode($model['opag_id'])]), ["data-toggle" => "tooltip", "title" => "Ver Solicitud", "data-pjax" => 0]);
+                    } else {
+                        return '<span class="glyphicon glyphicon-eye-open"></span>';
+                    }
+                },
                 'payments' => function ($url, $model) {
                     return Html::a('<span class="glyphicon glyphicon-usd"></span>', Url::to(['/financiero/pagos/listarpagosolicitud', 'id_sol' => base64_encode($model['sins_id']), 'per_id' => $_GET['perid']]), ["data-toggle" => "tooltip", "title" => "Pago de Solicitud", "data-pjax" => 0]);
                 },
@@ -83,7 +94,7 @@ PbGridView::widget([
                     } else {
                         return '<span class="glyphicon glyphicon-folder-open"></span>';
                     }
-                },                
+                },
             ],
         ],
     ],

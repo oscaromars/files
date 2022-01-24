@@ -19,6 +19,7 @@ class DistributivoAcademicoSearch extends DistributivoAcademico {
 
 	public function rules() {
 		return [
+
 			[['paca_id', 'pame_id', 'tdis_id', 'asi_id', 'uaca_id', 'pro_id', 'mod_id', 'daho_id', 'daca_num_estudiantes_online', 'daca_usuario_ingreso', 'daca_usuario_modifica'], 'integer'],
 		];
 	}
@@ -327,7 +328,9 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
 		//Utilities::putMessageLogFile('sql:' . $sql);
 		$comando = $con_academico->createCommand($sql);
 		$res = $comando->queryAll();
+
 		\app\models\Utilities::putMessageLogFile('DistributivoPosgrado: ' . $comando->getRawSql());
+
 		if ($onlyData) {
 			return $res;
 		}
@@ -347,6 +350,7 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
 	}
 
 	public function getListadoDistributivoPosgradosexcel($arrFiltro = NULL, $onlyData = false) {
+
 		$con_academico = \Yii::$app->db_academico;
 		$con_db = \Yii::$app->db;
 
@@ -1407,7 +1411,7 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
 			],
 			'sort' => [
 				'attributes' => ['
-                ', ],
+                '],
 			],
 		]);
 

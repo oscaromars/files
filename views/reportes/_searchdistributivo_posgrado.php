@@ -75,7 +75,8 @@ $form->field($model, 'mod_id')->label('Modalidad:')->widget(Select2::classname()
 ]);
 ?>
 
-    <?=
+
+	<?=
 $form->field($model, 'pame_id')->label('Mes:')->widget(Select2::classname(), [
 	'data' => ArrayHelper::map(app\modules\academico\models\PeriodoAcademicoMensualizado::find()->where(['pame_estado_logico' => '1', 'pame_estado' => '1'])->all(), 'pame_id', 'pame_mes'),
 	// 'data' => $var,
@@ -87,9 +88,6 @@ $form->field($model, 'pame_id')->label('Mes:')->widget(Select2::classname(), [
 	],
 ]);
 ?>
-
-
-
 
     <div class="form-group">
         <div class="col-sm-offset-4">

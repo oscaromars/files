@@ -1968,7 +1968,7 @@ class Solicitudinscripcion extends \yii\db\ActiveRecord {
      * @param
      * @return
      */
-    public function actualizaSolicitudInscripcion($sins_id, $uaca_id, $mod_id, $eaca_id, $sins_usuario_modifica) {
+    public function actualizaSolicitudInscripcion($sins_id, $uaca_id, $mod_id, $eaca_id, $sins_beca, $sins_usuario_modifica) {
         $con = \Yii::$app->db_captacion;
         $estado = 1;
         $fecha_modificacion = date(Yii::$app->params["dateTimeByDefault"]);
@@ -1978,6 +1978,7 @@ class Solicitudinscripcion extends \yii\db\ActiveRecord {
                     uaca_id = :uaca_id,
                     mod_id = :mod_id,
                     eaca_id = :eaca_id,
+                    sins_beca = :sins_beca,
                     sins_usuario_modifica = :sins_usuario_modifica
                 WHERE sins_id = :sins_id AND
                       sins_estado =:estado AND
@@ -1988,6 +1989,7 @@ class Solicitudinscripcion extends \yii\db\ActiveRecord {
         $comando->bindParam(":uaca_id", $uaca_id, \PDO::PARAM_INT);
         $comando->bindParam(":mod_id", $mod_id, \PDO::PARAM_INT);
         $comando->bindParam(":eaca_id", $eaca_id, \PDO::PARAM_INT);
+        $comando->bindParam(":sins_beca", $sins_beca, \PDO::PARAM_STR);
         $comando->bindParam(":sins_usuario_modifica", $sins_usuario_modifica, \PDO::PARAM_INT);
         $comando->bindParam(":sins_fecha_modificacion", $fecha_modificacion, \PDO::PARAM_STR);
 

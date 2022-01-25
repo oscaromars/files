@@ -645,26 +645,95 @@ class SolicitudesController extends \app\components\CController {
             $mest_id = null;
             $eaca_id = $data["carrera"];
             /* Datos Orden pago */
-            // al parecer el precio es un codigo difernete por ahor
-            // lo que tiene la caja de texto se actualiza, luego hay que
-            // revisar esa logica
-            $opag_subtotal = $data["precio"];
-            $opag_total = $data["precio"];
             /* Datos desglose pago $opag_subtotal y $opag_total*/
             $opag_id = base64_decode($data["opag_id"]);
             $ite_id = $data["ite_id"];
-
             $con = \Yii::$app->db_captacion;
             $con1 = \Yii::$app->db_facturacion;
             $transaction = $con->beginTransaction();
             $transaction1 = $con1->beginTransaction();
-            try {
+            try
+            {
+                /*beca y descuento*/
+                    $beca = $data["beca"];
+                    $descuento = $data["descuento_id"];
+                    $marca_desc = $data["marcadescuento"];
+                    $convenio = $data["cemp_id"];
+                    // precio
+                    $precioGrado = $data["precio"];
+                    //$opag_subtotal = $data["precio"];
+                    //$opag_total = $data["precio"];
+                    if ($marca_desc == '1' && $marca_desc == '0') {
+                        $valida = 1;
+                    }
+                    $errorprecio = 1;
+                    if ($beca == "1") {
+                        $precio = 0;
+                    }else {
+                        $beca = null;
+                        $resp_precio = $mod_solins->ObtenerPrecioXitem($ite_id);
+                        if ($resp_precio) {
+                            if ($uaca_id < 3) { //GViteri: para grado y posgrado los items que corresponden a inscripción, está abierto la caja de texto hasta un valor tope.
+                                if ($uaca_id == 1) {
+                                    $ming_id = null;
+                                }
+                                if ($ite_id == 155 or $ite_id == 156 or $ite_id == 157 or $ite_id == 10) {
+                                    $resp_precios_maximos = $mod_solins->ValidarPrecioXitem($ite_id);
+                                    if ($resp_precios_maximos) {
+                                        if ($precioGrado > $resp_precios_maximos["precio_mat"] or $precioGrado < $resp_precios_maximos["precio_ins"]) {
+                                            $mensaje = 'El precio digitado debe estar entre ' . $resp_precios_maximos["precio_ins"] . ' y ' . $resp_precios_maximos["precio_mat"];
+                                            $errorprecio = 0;
+                                        }
+                                    }
+                                    $precio = $precioGrado;
+                                } else {
+                                    $precio = $resp_precio['precio'];
+                                }
+                            } else {
+                                $precio = $resp_precio['precio'];
+                            }
+                        } else {
+                            $mensaje = 'No existe registrado ningún precio para la unidad, modalidad y método de ingreso seleccionada.';
+                            $errorprecio = 0;
+                        }
+                    }
+                /** */
+                if ($errorprecio != 0) {
                 // modifica solicitud
-                $respsolins = $mod_solins->actualizaSolicitudInscripcion($sins_id, $uaca_id, $mod_id, $eaca_id, $usuario);
+                $respsolins = $mod_solins->actualizaSolicitudInscripcion($sins_id, $uaca_id, $mod_id, $eaca_id, $beca, $usuario);
                 if ($respsolins) { // modifica orden
-                    $resporden = $mod_ordenpago->actualizaOrdenpagoadmision($sins_id, $opag_subtotal, $opag_total, $usuario);
+                    //Se verifica si seleccionó descuento.
+                    $val_descuento = 0;
+                    if (!empty($descuento)) {
+                        $modDescuento = new DetalleDescuentoItem();
+                        $respDescuento = $modDescuento->consultarValdctoItem($descuento);
+                        if ($respDescuento) {
+                            if ($precio == 0) {
+                                $val_descuento = 0;
+                            } else {
+                                if ($respDescuento["ddit_tipo_beneficio"] == 'P') {
+                                    $val_descuento = ($precio * ($respDescuento["ddit_porcentaje"])) / 100;
+                                } else {
+                                    $val_descuento = $respDescuento["ddit_valor"];
+                                }
+                                //Insertar solicitud descuento
+                                if ($val_descuento > 0) {
+                                    //consultar solicitud de descuento
+                                    // si existe modificar
+                                    // sino existe crear
+                                    $resp_SolicDcto = $mod_ordenpago->insertarSolicDscto($id_sins, $descuento, $precio, $respDescuento["ddit_porcentaje"], $respDescuento["ddit_valor"]);
+                                }
+                            }
+                        }
+                    }
+                    // si al modificar solicitud viene sin descuento
+                    // volver a consultar en  solicitud_descuento y si existe inactivar estados 0
+
+                    $val_total = $precio - $val_descuento;
+                    $resporden = $mod_ordenpago->actualizaOrdenpagoadmision($sins_id, $val_total, $val_total, $usuario);
+
                     if ($resporden) { // modifica desglose pago
-                     $respdesglose = $mod_desglose->actualizaDesglosepago($opag_id, $ite_id, $opag_subtotal, $opag_total, $usuario);
+                     $respdesglose = $mod_desglose->actualizaDesglosepago($opag_id, $ite_id, $val_total, $val_total, $usuario);
                      if ($respdesglose) {
                         $transaction->commit();
                         $transaction1->commit();
@@ -681,7 +750,7 @@ class SolicitudesController extends \app\components\CController {
                             "title" => Yii::t('jslang', 'Bad Request'),
                         );
                         return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Bad Request"), false, $message);
-                    }
+                     }
                     } else {
                         $transaction->rollback();
                         $transaction1->rollback();
@@ -700,6 +769,15 @@ class SolicitudesController extends \app\components\CController {
                     );
                     return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Bad Request"), false, $message);
                 }
+            }
+            /** */
+            else {
+                $message = array(
+                    "wtmessage" => Yii::t("notificaciones", "Error al modificar solicitud de inscripcion, por precio." . $mensaje),
+                    "title" => Yii::t('jslang', 'Bad Request'),
+                );
+                return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Bad Request"), false, $message);
+            }
             } catch (Exception $ex) {
                 $transaction->rollback();
                 $message = array(

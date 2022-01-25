@@ -2063,9 +2063,11 @@ class Solicitudinscripcion extends \yii\db\ActiveRecord {
         //$estado = 1;
 
         $sql = "SELECT
-                    sdes_id
+                    sdes_id,
+                    ddit_id
+                FROM " . $con->dbname . ".solicitud_descuento
                 WHERE
-                    sins.sins_id = :sins_id ";
+                    sins_id = :sins_id ";
 
         $comando = $con->createCommand($sql);
         //$comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
@@ -2099,5 +2101,36 @@ class Solicitudinscripcion extends \yii\db\ActiveRecord {
 
         $response = $comando->execute();
         return $response;
+    }
+
+    /**
+     * Function Consultarsolicitudescuentoitem
+     * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
+     * @param
+     * @return  $resultData
+     */
+    public function Consultarsolicitudescuentoitem($sins_id) {
+        $con = \Yii::$app->db_facturacion;
+        $estado = 1;
+
+        $sql = "SELECT
+                    sdes.sdes_id,
+                    sdes.ddit_id,
+                    desi.dite_id,
+                    desi.ddit_porcentaje
+                FROM " . $con->dbname . ".solicitud_descuento sdes
+                INNER JOIN " . $con->dbname . ".detalle_descuento_item desi ON desi.ddit_id = sdes.ddit_id
+                WHERE
+                    sdes.sins_id = :sins_id AND
+                    sdes.sdes_estado = :estado AND
+                    sdes.sdes_estado_logico = :estado AND
+                    desi.ddit_estado = :estado AND
+                    desi.ddit_estado_logico = :estado";
+
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $comando->bindParam(":sins_id", $sins_id, \PDO::PARAM_INT);
+        $resultData = $comando->queryOne();
+        return $resultData;
     }
 }

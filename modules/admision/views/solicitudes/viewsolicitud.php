@@ -10,7 +10,7 @@ use app\modules\academico\Module as aspirante;
 academico::registerTranslations();
 financiero::registerTranslations();
 aspirante::registerTranslations();
-//print_r($arr_solicitudesp);
+//print_r($tiene_desct);
 $tipodoc = '';
 if (!empty($personalData['per_cedula'])) {
     $tipodoc = "Cédula";

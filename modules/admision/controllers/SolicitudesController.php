@@ -1937,6 +1937,7 @@ class SolicitudesController extends \app\components\CController {
         $emp_id = @Yii::$app->session->get("PB_idempresa");
         $mod_metodo = new MetodoIngreso();
         $empresa_mod = new Empresa();
+        $tiendesct = '0';
         $per_id = base64_decode($_GET['per_id']);
         $sins_id = base64_decode($_GET['id_sol']);
         Yii::$app->session->set('persona_solicita', base64_encode($_GET['ids']));
@@ -2057,6 +2058,16 @@ class SolicitudesController extends \app\components\CController {
         $resp_item = $modItemMetNivel->consultaritemsol($resp_solicitudesp['uaca_id'], $resp_solicitudesp['mod_id'], $resp_solicitudesp['ite_id']);
         $arr_descuento = $modDescuento->consultarDesctoxitem($resp_solicitudesp['ite_id']);
         $arr_convempresa = $mod_conempresa->consultarConvenioEmpresa();
+        $resp_solicitudescuento = $mod_solins->Consultarsolicitudescuento($sins_id);
+        if (!empty($resp_solicitudescuento['sdes_id'])) {
+            // tiene descuento
+            // consultar los item de descuento
+            
+            $tiendesct = '1';
+        }else{
+            // no tiene descuento
+            $tiendesct = '0';
+        }
         return $this->render('viewsolicitud', [
                     "arr_unidad" => ArrayHelper::map($arr_unidadac, "id", "name"),
                     "arr_metodos" => ArrayHelper::map($arr_metodos, "id", "name"),
@@ -2070,6 +2081,7 @@ class SolicitudesController extends \app\components\CController {
                     "arr_empresa" => ArrayHelper::map($empresa, "id", "value"),
                     "arr_convenio_empresa" => ArrayHelper::map($arr_convempresa, "id", "name"),
                     "arr_solicitudesp" => $resp_solicitudesp,
+                    "tiene_desct" => $tiendesct,
         ]);
     }
     public function actionEditsolicitud() {

@@ -2142,7 +2142,7 @@ inner join " . $con->dbname . ".malla_academica as b on a.pes_cod_carrera = b.ma
 		]);
 	}
 
-	         public function actionCargarmaterias() { 
+	         public function actionCargarmaterias($periodo) { 
  
  for ($c = 1; $c <= 4; $c++) {  
  $modalidad = $c;   
@@ -2202,7 +2202,7 @@ order by maca.maca_id DESC , ea.eaca_codigo, e.est_fecha_creacion ASC;
                  if (count($resultData) > 0) {
            
             for ($i = 0; $i < count($resultData); $i++) {                       
-$centralprocess = $malla->cargarAsignaturas($resultData[$i],$modalidad);                  
+$centralprocess = $malla->cargarAsignaturas($resultData[$i],$modalidad,$periodo);                  
             }
 
         } 

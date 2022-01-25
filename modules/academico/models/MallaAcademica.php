@@ -393,7 +393,7 @@ class MallaAcademica extends \yii\db\ActiveRecord
         return $resultData;
     }
 
-         function cargarAsignaturas($rows,$modalidad) {
+         function cargarAsignaturas($rows,$modalidad,$periodo) {
     $con = \Yii::$app->db_academico;
      $activo="A";
 
@@ -428,30 +428,41 @@ inner join db_academico.asignatura d on d.asi_id = a.asi_id
         
          $asiid = $rows_asi[$im]["asi_id"];
          $modid = $rows_asi[$im]["mod_id"];
-         $sacaid = 0 ; $estado = 1;
+         $eacaid = $rows_asi[$im]["eaca_id"];
+         $macaid = $rows_asi[$im]["maca_id"];
 
-         $sql = "select asi_id from db_academico.materias_periodo_modalidad
-          where asi_id =:asiid and saca_id = 0 and mod_id = :modid;                 
+         $sacaid = $periodo ; $estado = 1;
+
+         $sql = "select mpmo_id, mpmo_nestudiantes from db_academico.materias_periodo_modalidad
+          where asi_id =:asiid  and eaca_id =:eacaid  and saca_id = 0 and mod_id = :modid;                 
                         ";
 
          $comando = $con->createCommand($sql);
          $comando->bindParam(":asiid", $asiid, \PDO::PARAM_INT);
          $comando->bindParam(":modid", $modid, \PDO::PARAM_INT);
+         $comando->bindParam(":eacaid", $eacaid, \PDO::PARAM_INT);
                $ismat_in = $comando->queryOne();
 
-          if ($ismat_in['asi_id'] == Null) {  
+          if ($ismat_in['mpmo_id'] == Null) {  
 
 
            $sqladd = "
              INSERT INTO db_academico.materias_periodo_modalidad
-             (saca_id, mod_id, asi_id, mpmo_usuario_ingreso, mpmo_estado, mpmo_estado_logico)
-            VALUES ('" . $sacaid . "','" . $modid . "','" . $asiid . "',1, '" . $estado . "', '" . $estado . "')"
+             (saca_id, mod_id, asi_id, mpmo_nestudiantes, eaca_id, mpmo_usuario_ingreso, mpmo_estado, mpmo_estado_logico)
+            VALUES ('" . $sacaid . "','" . $modid . "','" . $asiid . "',1,'" . $eacaid . "',1, '" . $estado . "', '" . $estado . "')"
             ;
             
                $comando = $con->createCommand($sqladd); 
                      $putasig = $comando->execute();
 
-                                                 }
+                                                 } else  {   
+                $allst=  $ismat_in['mpmo_nestudiantes'] + 1 ;
+                $mpmo_id=  $ismat_in['mpmo_id'];
+                $updt= "UPDATE db_academico.materias_periodo_modalidad SET mpmo_nestudiantes = $allst 
+                WHERE mpmo_id = $mpmo_id";
+                $comando = $con->createCommand($updt);
+                $result = $comando->execute();  
+                                                  }
 
            }
         }
@@ -1393,7 +1404,7 @@ where a.maca_id= :maca_id and asi_id = :asi_id
                         if ($isin["pes_id"] == Null){
 
                      $sql = "INSERT INTO db_academico.planificacion_estudiante
-                    (pla_id, per_id, pes_jornada,pes_cod_carrera, pes_carrera, pes_semestre, pes_dni, pes_nombres,pes_mat_b1_h1_cod, pes_mat_b1_h2_cod, pes_mat_b1_h3_cod, pes_mat_b1_h4_cod, pes_mat_b2_h1_cod,
+                    (pla_id, per_id, pes_jornada,pes_cod_carrera, pes_carrera, pes_semestre, pes_dni, pes_nombres,pes_mat_b1_h1_cod, pes_mat_b1_h2_cod, pes_mat_b1_h3_cod, pes_mat_b2_h1_cod,
                      pes_mat_b2_h2_cod,pes_mat_b2_h3_cod,pes_mat_b2_h4_cod, pes_mat_b1_h1_nombre, pes_mat_b1_h2_nombre, pes_mat_b1_h3_nombre, pes_mat_b1_h4_nombre, pes_mat_b2_h1_nombre,  pes_mat_b2_h2_nombre, pes_mat_b2_h3_nombre, pes_mat_b2_h4_nombre, pes_mod_b1_h1,  pes_mod_b1_h2,  pes_mod_b1_h3,  pes_mod_b1_h4,  pes_mod_b2_h1,  pes_mod_b2_h2,  pes_mod_b2_h3, 
                         pes_mod_b2_h4, pes_jor_b1_h1,  pes_jor_b1_h2,  pes_jor_b1_h3,  pes_jor_b1_h4,  pes_jor_b2_h1,  pes_jor_b2_h2,  pes_jor_b2_h3, 
                         pes_jor_b2_h4,pes_mat_b1_h1_mpp, pes_mat_b1_h2_mpp, pes_mat_b1_h3_mpp, pes_mat_b1_h4_mpp, pes_mat_b2_h1_mpp,

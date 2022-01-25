@@ -2585,4 +2585,37 @@ class OrdenPago extends \app\modules\financiero\components\CActiveRecord {
         $resultData = $comando->queryOne();
         return $resultData;
     }
+
+    /**
+     * Function modificarSolicDscto
+     * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
+     * @param
+     * @return
+     */
+    public function modificarSolicDscto($sins_id, $ddit_id, $sdes_precio, $sdes_porcentaje, $sdes_valor) {
+        $con = \Yii::$app->db_facturacion;
+        $estado = 1;
+        $fecha_modificacion = date(Yii::$app->params["dateTimeByDefault"]);
+        $comando = $con->createCommand
+                ("UPDATE " . $con->dbname . ".solicitud_descuento
+                SET sdes_fecha_modificacion = :sdes_fecha_modificacion,
+                    ddit_id = :ddit_id,
+                    sdes_precio = :sdes_precio,
+                    sdes_porcentaje = :sdes_porcentaje,
+                    sdes_valor = :sdes_valor,
+                    sdes_estado = :estado,
+                    sdes_estado_logico = :estado
+                WHERE sins_id = :sins_id ");
+
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $comando->bindParam(":sins_id", $sins_id, \PDO::PARAM_INT);
+        $comando->bindParam(":ddit_id", $ddit_id, \PDO::PARAM_INT);
+        $comando->bindParam(":sdes_precio", $sdes_precio, \PDO::PARAM_STR);
+        $comando->bindParam(":sdes_porcentaje", $sdes_porcentaje, \PDO::PARAM_STR);
+        $comando->bindParam(":sdes_valor", $sdes_valor, \PDO::PARAM_STR);
+        $comando->bindParam(":sdes_fecha_modificacion", $fecha_modificacion, \PDO::PARAM_STR);
+
+        $response = $comando->execute();
+        return $response;
+    }
 }

@@ -721,7 +721,7 @@ class SolicitudesController extends \app\components\CController {
                                     $resp_solicitudescuento = $mod_solins->Consultarsolicitudescuento($sins_id);
                                     if (!empty($resp_solicitudescuento['sdes_id'])) {
                                     // si existe modificar
-                                    //
+                                    $resp_SolicDcto = $mod_ordenpago->modificarSolicDscto($sins_id, $descuento, $precio, $respDescuento["ddit_porcentaje"], $respDescuento["ddit_valor"]);
                                     }else {
                                     // sino existe crear
                                     $resp_SolicDcto = $mod_ordenpago->insertarSolicDscto($sins_id, $descuento, $precio, $respDescuento["ddit_porcentaje"], $respDescuento["ddit_valor"]);
@@ -733,6 +733,11 @@ class SolicitudesController extends \app\components\CController {
                     // si al modificar solicitud viene sin descuento
                     if (empty($descuento)) {
                         // volver a consultar en  solicitud_descuento y si existe inactivar estados 0
+                        $resp_solicitudescuento = $mod_solins->Consultarsolicitudescuento($sins_id);
+                        if (!empty($resp_solicitudescuento['sdes_id'])) {
+                            // si existe modificar inactivar estados
+                            $resp_solicitudesactivar = $mod_solins->Desactivarsolicitudescuento($sins_id);
+                            }
                     }
 
                     $val_total = $precio - $val_descuento;

@@ -1149,8 +1149,19 @@ function actualizarGridPlanestudiante(perSel) {
 
 
 function load() {
-  showLoadingPopup();
-  window.location.href = $('#txth_base').val() + "/academico/planificacion/cargarmaterias";
+  var periodo = $('#cmb_per_academico option:selected').val();
+
+  if (periodo == 0) {
+
+showAlert('NO_OK', 'error', {"wtmessage": 'Seleccione el periodo', "title": 'Información'});
+
+
+   } else {
+
+    showLoadingPopup();
+   window.location.href = $('#txth_base').val() + "/academico/planificacion/cargarmaterias?periodo=" + periodo + '&modalidad=' + modalidad;
+
+}
 
 }
 

@@ -1159,7 +1159,7 @@ showAlert('NO_OK', 'error', {"wtmessage": 'Seleccione el periodo', "title": 'Inf
    } else {
 
     showLoadingPopup();
-   window.location.href = $('#txth_base').val() + "/academico/planificacion/cargarmaterias?periodo=" + periodo + '&modalidad=' + modalidad;
+   window.location.href = $('#txth_base').val() + "/academico/planificacion/cargarmaterias?periodo=" + periodo;
 
 }
 

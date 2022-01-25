@@ -398,7 +398,7 @@ class MallaAcademica extends \yii\db\ActiveRecord
      $activo="A";
 
      $sql = "select distinct  
-a.asi_id, a.made_credito, c.uaca_id,c.mod_id
+a.asi_id, a.made_credito, c.uaca_id,c.mod_id, c.eaca_id, a.maca_id
 from db_academico.malla_academica_detalle a
 inner join db_academico.malla_unidad_modalidad b on b.maca_id = a.maca_id 
 inner join db_academico.modalidad_estudio_unidad c on c.meun_id = b.meun_id
@@ -434,13 +434,14 @@ inner join db_academico.asignatura d on d.asi_id = a.asi_id
          $sacaid = $periodo ; $estado = 1;
 
          $sql = "select mpmo_id, mpmo_nestudiantes from db_academico.materias_periodo_modalidad
-          where asi_id =:asiid  and eaca_id =:eacaid  and saca_id = 0 and mod_id = :modid;                 
+          where asi_id =:asiid  and eaca_id =:eacaid  and saca_id =:sacaid and mod_id = :modid;                 
                         ";
 
          $comando = $con->createCommand($sql);
-         $comando->bindParam(":asiid", $asiid, \PDO::PARAM_INT);
-         $comando->bindParam(":modid", $modid, \PDO::PARAM_INT);
+         $comando->bindParam(":asiid", $asiid, \PDO::PARAM_INT);    
          $comando->bindParam(":eacaid", $eacaid, \PDO::PARAM_INT);
+         $comando->bindParam(":sacaid", $periodo, \PDO::PARAM_INT);
+         $comando->bindParam(":modid", $modid, \PDO::PARAM_INT);
                $ismat_in = $comando->queryOne();
 
           if ($ismat_in['mpmo_id'] == Null) {  

@@ -2062,8 +2062,14 @@ class SolicitudesController extends \app\components\CController {
         if (!empty($resp_solicitudescuento['sdes_id'])) {
             // tiene descuento
             // consultar los item de descuento
-            
-            $tiendesct = '1';
+            $resp_solicitudescitem = $mod_solins->Consultarsolicitudescuentoitem($sins_id);
+            if (!empty($resp_solicitudescuento['sdes_id'])) {
+                $tiendesct = '1';
+                $precio_dect = ($resp_solicitudesp['opag_total'] * $resp_solicitudescuento['ddit_porcentaje']) / 100;
+            }else{
+                // no tiene descuento
+                $tiendesct = '0';
+            }
         }else{
             // no tiene descuento
             $tiendesct = '0';
@@ -2082,6 +2088,8 @@ class SolicitudesController extends \app\components\CController {
                     "arr_convenio_empresa" => ArrayHelper::map($arr_convempresa, "id", "name"),
                     "arr_solicitudesp" => $resp_solicitudesp,
                     "tiene_desct" => $tiendesct,
+                    "precio_dect" => $precio_dect,
+                    "resp_solicitudescuento" => $resp_solicitudescuento,
         ]);
     }
     public function actionEditsolicitud() {

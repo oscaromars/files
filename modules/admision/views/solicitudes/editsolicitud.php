@@ -159,8 +159,8 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
         <div class="form-group">
             <label for="txt_declararbeca" class="col-sm-5 control-label"><?= admision::t("Solicitudes", "Apply Cala Foundation scholarship") ?></label>
             <div class="col-sm-7">
-                <label><input type="radio" name="opt_declara_si" disabled id="opt_declara_si" value="1"><b>Si</b></label>
-                <label><input type="radio" name="opt_declara_no" disabled  id="opt_declara_no" value="2" checked><b>No</b></label>
+                <label><input type="radio" name="opt_declara_si" id="opt_declara_si" value="1"><b>Si</b></label>
+                <label><input type="radio" name="opt_declara_no" id="opt_declara_no" value="2" checked><b>No</b></label>
             </div>
         </div>
     </div>
@@ -168,8 +168,8 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
         <div class="form-group">
             <label for="txt_declararDescuento" class="col-sm-5 control-label"><?= financiero::t("Pagos", "Apply Discount") ?></label>
             <div class="col-sm-7">
-                <label><input type="radio" name="opt_declara_Dctosi" disabled id="opt_declara_Dctosi" value="1"><b>Si</b></label>
-                <label><input type="radio" name="opt_declara_Dctono" disabled id="opt_declara_Dctono" value="2" checked><b>No</b></label>
+                <label><input type="radio" name="opt_declara_Dctosi" id="opt_declara_Dctosi" value="1"><b>Si</b></label>
+                <label><input type="radio" name="opt_declara_Dctono" id="opt_declara_Dctono" value="2" checked><b>No</b></label>
             </div>
         </div>
     </div>
@@ -179,7 +179,7 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
             <div class="form-group">
                 <label for="cmb_descuento" class="col-sm-5 col-md-5 col-xs-5 col-lg-5 control-label keyupmce"><?= financiero::t("Pagos", "Discount") ?></label>
                 <div class="col-sm-7 col-md-7 col-xs-7 col-lg-7">
-                    <?= Html::dropDownList("cmb_descuento", 0, array_merge([Yii::t("formulario", "Select")], $arr_descuento), ["class" => "form-control", "id" => "cmb_descuento", "disabled" => "true"]) ?>
+                    <?= Html::dropDownList("cmb_descuento", 0, /*array_merge([Yii::t("formulario", "Select")],*/ $arr_descuento/*)*/, ["class" => "form-control", "id" => "cmb_descuento"]) ?>
                 </div>
             </div>
         </div>
@@ -187,7 +187,7 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
             <div class="form-group">
                 <label for="txt_precio_item2" class="col-sm-5 col-md-5 col-xs-5 col-lg-5 control-label" id="lbl_nombre1"><?= financiero::t("Pagos", "Price with discount") ?></label>
                 <div class="col-sm-7 col-md-7 col-xs-7 col-lg-7">
-                    <input type="text" class="form-control keyupmce" value="0" id="txt_precio_item2" disabled data-type="alfa" align="rigth" placeholder="<?= financiero::t("Pagos", "Price") ?>">
+                    <input type="text" class="form-control keyupmce" value="0" id="txt_precio_item2" data-type="alfa" align="rigth" placeholder="<?= financiero::t("Pagos", "Price") ?>">
                 </div>
             </div>
         </div>

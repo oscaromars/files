@@ -710,9 +710,21 @@ $(document).ready(function () {
 
     //Control del div de Descuentos.
     $('#opt_declara_Dctosi').change(function () {
+        var link = $('#txth_base').val() + "/admision/solicitudes/new";
         if ($('#opt_declara_Dctosi').val() == 1) {
             $('#divDescuento').css('display', 'block');
             $("#opt_declara_Dctono").prop("checked", "");
+            //Precio con descuento.
+            var arrParams = new Object();
+            arrParams.descuento_id = $('#cmb_descuento').val();
+            arrParams.ite_id = $('#cmb_item').val();
+            arrParams.getpreciodescuento = true;
+            requestHttpAjax(link, arrParams, function (response) {
+                if (response.status == "OK") {
+                    data = response.message;
+                    $('#txt_precio_item2').val(data.preciodescuento);
+                }
+            }, true);
         } else {
             $('#divDescuento').css('display', 'none');
         }
@@ -941,6 +953,8 @@ $(document).ready(function () {
         arrParams.descuento_id = $('#cmb_descuento').val();
         arrParams.ite_id = $('#cmb_item').val();
         arrParams.getpreciodescuento = true;
+        /*alert('ite_id 5 ' + arrParams.ite_id);
+        alert('descuento_id 5 ' + arrParams.descuento_id);*/
         requestHttpAjax(link, arrParams, function (response) {
             if (response.status == "OK") {
                 data = response.message;

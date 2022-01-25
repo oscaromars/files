@@ -2048,7 +2048,28 @@ class Solicitudinscripcion extends \yii\db\ActiveRecord {
 
         $comando = $con->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
-        $comando->bindParam(":sins_id", $sins_id, \PDO::PARAM_STR);
+        $comando->bindParam(":sins_id", $sins_id, \PDO::PARAM_INT);
+        $resultData = $comando->queryOne();
+        return $resultData;
+    }
+    /**
+     * Function Consultarsolicitudescuento
+     * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
+     * @param
+     * @return  $resultData
+     */
+    public function Consultarsolicitudescuento($sins_id) {
+        $con = \Yii::$app->db_facturacion;
+        //$estado = 1;
+
+        $sql = "SELECT
+                    sdes_id
+                WHERE
+                    sins.sins_id = :sins_id ";
+
+        $comando = $con->createCommand($sql);
+        //$comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $comando->bindParam(":sins_id", $sins_id, \PDO::PARAM_INT);
         $resultData = $comando->queryOne();
         return $resultData;
     }

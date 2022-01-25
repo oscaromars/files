@@ -661,11 +661,9 @@ class SolicitudesController extends \app\components\CController {
                     $convenio = $data["cemp_id"];
                     // precio
                     $precioGrado = $data["precio"];
-                    //$opag_subtotal = $data["precio"];
-                    //$opag_total = $data["precio"];
-                    if ($marca_desc == '1' && $marca_desc == '0') {
+                    /*if ($marca_desc == '1' && $marca_desc == '0') {
                         $valida = 1;
-                    }
+                    }*/
                     $errorprecio = 1;
                     if ($beca == "1") {
                         $precio = 0;
@@ -719,15 +717,23 @@ class SolicitudesController extends \app\components\CController {
                                 //Insertar solicitud descuento
                                 if ($val_descuento > 0) {
                                     //consultar solicitud de descuento
+                                    //$resp_solicitudesp['uaca_id']
+                                    $resp_solicitudescuento = $mod_solins->Consultarsolicitudescuento($sins_id);
+                                    if (!empty($resp_solicitudescuento['sdes_id'])) {
                                     // si existe modificar
+                                    //
+                                    }else {
                                     // sino existe crear
-                                    $resp_SolicDcto = $mod_ordenpago->insertarSolicDscto($id_sins, $descuento, $precio, $respDescuento["ddit_porcentaje"], $respDescuento["ddit_valor"]);
+                                    $resp_SolicDcto = $mod_ordenpago->insertarSolicDscto($sins_id, $descuento, $precio, $respDescuento["ddit_porcentaje"], $respDescuento["ddit_valor"]);
+                                    }
                                 }
                             }
                         }
                     }
                     // si al modificar solicitud viene sin descuento
-                    // volver a consultar en  solicitud_descuento y si existe inactivar estados 0
+                    if (empty($descuento)) {
+                        // volver a consultar en  solicitud_descuento y si existe inactivar estados 0
+                    }
 
                     $val_total = $precio - $val_descuento;
                     $resporden = $mod_ordenpago->actualizaOrdenpagoadmision($sins_id, $val_total, $val_total, $usuario);

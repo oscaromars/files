@@ -171,10 +171,12 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
    inner join db_academico.malla_academica maca on maca.maca_id = mumo.maca_id
    inner join db_academico.unidad_academica u on u.uaca_id = meu.uaca_id
    inner join db_academico.estudio_academico ea on ea.eaca_id = meu.eaca_id
+   inner join db_academico.materias_periodo_modalidad mpmo on mpmo.eaca_id = meu.eaca_id and mpmo.mod_id = meu.mod_id 
    inner join db_asgard.persona per on per.per_id = e.per_id
    left join db_academico.malla_academico_estudiante malle on per.per_id = malle.per_id
      where  malle.maca_id = maca.maca_id  AND
-         meu.mod_id = :modalidad
+         meu.mod_id = :modalidad and meu.uaca_id = 1 and mpmo.saca_id = :periodo and mpmo.mpmo_activo = 'A'
+    AND  mpmo.mpmo_estado = 1 AND mpmo.mpmo_estado_logico = 1
     AND  e.est_estado = 1 AND e.est_estado_logico = 1
     AND  c.ecpr_estado = 1 AND c.ecpr_estado_logico = 1
     AND  meu.meun_estado = 1 AND meu.meun_estado_logico = 1
@@ -199,6 +201,7 @@ order by maca.maca_id DESC , ea.eaca_codigo, e.est_fecha_creacion ASC;
 
 		$comando = $con->createCommand($sql);
 		$comando->bindParam(":modalidad", $modalidad, \PDO::PARAM_STR);
+		$comando->bindParam(":periodo", $periodo, \PDO::PARAM_STR);
 		$resultData = $comando->queryAll();
 
 		$malla = new MallaAcademica();

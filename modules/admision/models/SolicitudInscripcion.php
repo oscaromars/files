@@ -2083,22 +2083,20 @@ class Solicitudinscripcion extends \yii\db\ActiveRecord {
      * @param
      * @return
      */
-    public function Desactivarsolicitudescuento($sins_id, $sins_usuario_modifica) {
-        $con = \Yii::$app->db_captacion;
+    public function Desactivarsolicitudescuento($sins_id) {
+        $con = \Yii::$app->db_facturacion;
         $estado = 0;
         $fecha_modificacion = date(Yii::$app->params["dateTimeByDefault"]);
         $comando = $con->createCommand
-                ("UPDATE " . $con->dbname . ".solicitud_inscripcion
-                SET sins_fecha_modificacion = :sins_fecha_modificacion,
-                    sins_estado = :estado,
-                    sins_estado_logico = :estado,
-                    sins_usuario_modifica = :sins_usuario_modifica
+                ("UPDATE " . $con->dbname . ".solicitud_descuento
+                SET sdes_fecha_modificacion = :sdes_fecha_modificacion,
+                    sdes_estado = :estado,
+                    sdes_estado_logico = :estado
                 WHERE sins_id = :sins_id ");
 
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
         $comando->bindParam(":sins_id", $sins_id, \PDO::PARAM_INT);
-        $comando->bindParam(":sins_usuario_modifica", $sins_usuario_modifica, \PDO::PARAM_INT);
-        $comando->bindParam(":sins_fecha_modificacion", $fecha_modificacion, \PDO::PARAM_STR);
+        $comando->bindParam(":sdes_fecha_modificacion", $fecha_modificacion, \PDO::PARAM_STR);
 
         $response = $comando->execute();
         return $response;

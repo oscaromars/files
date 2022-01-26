@@ -2069,15 +2069,16 @@ class SolicitudesController extends \app\components\CController {
             $resp_solicitudescitem = $mod_solins->Consultarsolicitudescuentoitem($sins_id);
             if (!empty($resp_solicitudescitem['sdes_id'])) {
                 $tiendesct = '1';
-                //$precio_dect = ($resp_solicitudesp['opag_total'] * $resp_solicitudescitem['ddit_porcentaje']) / 100;
-                $precio_dect = (($resp_solicitudescitem['ddit_porcentaje'] / 100) * 100) + $resp_solicitudesp['opag_total'];
+                $precio_dect = $mod_solins->ObtenerPrecioXitem($resp_solicitudesp["ite_id"]);
             }else{
                 // no tiene descuento
                 $tiendesct = '0';
+                $precio_dect = $resp_solicitudesp['opag_total'];
             }
         }else{
             // no tiene descuento
             $tiendesct = '0';
+            $precio_dect = $resp_solicitudesp['opag_total'];
         }
         return $this->render('viewsolicitud', [
                     "arr_unidad" => ArrayHelper::map($arr_unidadac, "id", "name"),
@@ -2228,14 +2229,16 @@ class SolicitudesController extends \app\components\CController {
             $resp_solicitudescitem = $mod_solins->Consultarsolicitudescuentoitem($sins_id);
             if (!empty($resp_solicitudescitem['sdes_id'])) {
                 $tiendesct = '1';
-                $precio_dect = (($resp_solicitudescitem['ddit_porcentaje'] / 100) * 100) + $resp_solicitudesp['opag_total'];
+                $precio_dect = $mod_solins->ObtenerPrecioXitem($resp_solicitudesp["ite_id"]);
             }else{
                 // no tiene descuento
                 $tiendesct = '0';
+                $precio_dect = $resp_solicitudesp['opag_total'];
             }
         }else{
             // no tiene descuento
             $tiendesct = '0';
+            $precio_dect = $resp_solicitudesp['opag_total'];
         }
         return $this->render('editsolicitud', [
                     "arr_unidad" => ArrayHelper::map($arr_unidadac, "id", "name"),

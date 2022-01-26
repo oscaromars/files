@@ -403,10 +403,14 @@ from db_academico.malla_academica_detalle a
 inner join db_academico.malla_unidad_modalidad b on b.maca_id = a.maca_id 
 inner join db_academico.modalidad_estudio_unidad c on c.meun_id = b.meun_id
 inner join db_academico.asignatura d on d.asi_id = a.asi_id
+inner join db_academico.malla_academico_estudiante maes on maes.asi_id = a.asi_id and maes.per_id = " . $rows["per_id"] . " 
+left join db_academico.promedio_malla_academico pmac on maes.maes_id = pmac.maes_id
+left join db_academico.estado_nota_academico enac on enac.enac_id = pmac.enac_id 
                        where c.eaca_id =  " . $rows["eaca_id"] . "   
                       and   c.mod_id =  " . $modalidad . "   
                       and a.maca_id =  " . $rows["maca_id"] . "  
                       and c.uaca_id = 1
+                      and pmac.enac_id in (2,3,Null)
                             and a.made_estado = 1
                             and a.made_estado_logico = 1
                             and b.mumo_estado = 1
@@ -415,6 +419,12 @@ inner join db_academico.asignatura d on d.asi_id = a.asi_id
                             and c.meun_estado_logico = 1
                             and d.asi_estado = 1
                             and d.asi_estado_logico = 1
+                            and maes.maes_estado = 1
+                            and maes.maes_estado_logico = 1
+                            and pmac.pmac_estado = 1
+                            and pmac.pmac_estado_logico = 1
+                            and enac.enac_estado = 1
+                            and enac.enac_estado_logico = 1
                      ORDER BY a.made_semestre ASC
                         ";
    $comando = $con->createCommand($sql);
@@ -425,6 +435,7 @@ inner join db_academico.asignatura d on d.asi_id = a.asi_id
     if (count($rows_asi) > 0) {   
         
      for ($im = 0; $im < count($rows_asi); $im++) {   
+        if ($im < 8) {  
         
          $asiid = $rows_asi[$im]["asi_id"];
          $modid = $rows_asi[$im]["mod_id"];
@@ -465,7 +476,7 @@ inner join db_academico.asignatura d on d.asi_id = a.asi_id
                 $result = $comando->execute();  
                                                   }
 
-           }
+           }}
         }
               return true;
      }

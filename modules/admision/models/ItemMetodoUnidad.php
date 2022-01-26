@@ -142,7 +142,7 @@ class ItemMetodoUnidad extends \yii\db\ActiveRecord
                             . "join " . $con->dbname . ".item i on imu.ite_id = i.ite_id
                     WHERE imu.uaca_id = :nint_id
                           and mod_id = :mod_id
-                          and ifnull(ming_id,0) = :ming_id
+                          -- and ifnull(ming_id,0) = :ming_id
                           and imni_estado = :estado
                           and imni_estado_logico = :estado
                           and i.ite_estado = :estado

@@ -97,7 +97,7 @@ class DetalleDescuentoItem extends \app\modules\financiero\components\CActiveRec
     /**
      * Function consultarDesctoxitem
      * @author  Grace Viteri <analistadesarrollo01@uteg.edu.ec>
-     * @param   
+     * @param
      * @return  $resultData (Para obtener el id del item, filtrando por nivel de interés,
      *                       modalidad y método de ingreso.)
      */

@@ -1902,7 +1902,7 @@ class OrdenPago extends \app\modules\financiero\components\CActiveRecord {
         $con = \Yii::$app->db_facturacion;
         $estado = 1;
 
-        $sql = "SELECT opag.opag_id, opag_estado_pago, dpag_id
+        $sql = "SELECT opag.opag_id, opag_estado_pago, dpag_id, ite_id
                 FROM " . $con->dbname . ".orden_pago opag INNER JOIN " . $con->dbname . ".desglose_pago dpag
                     ON dpag.opag_id = opag.opag_id
                 WHERE  opag.sins_id = :sins_id AND

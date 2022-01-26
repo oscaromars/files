@@ -1956,6 +1956,7 @@ class SolicitudesController extends \app\components\CController {
         $empresa = $empresa_mod->getAllEmpresa();
         $mod_solins = new SolicitudInscripcion();
         $mod_conempresa = new ConvenioEmpresa();
+        //$mod_ordenpago = new OrdenPago();
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
             if (isset($data["getuacademias"])) {
@@ -2055,8 +2056,11 @@ class SolicitudesController extends \app\components\CController {
         $arr_metodos = $mod_metodo->consultarMetodoIngNivelInt($resp_solicitudesp['uaca_id']);
         $arr_carrera = $modcanal->consultarCarreraModalidad($resp_solicitudesp['uaca_id'], $resp_solicitudesp['mod_id']);
         //Descuentos y precios.
-        $resp_item = $modItemMetNivel->consultaritemsol($resp_solicitudesp['uaca_id'], $resp_solicitudesp['mod_id'], $resp_solicitudesp['ite_id']);
-        $arr_descuento = $modDescuento->consultarDesctoxitem($resp_solicitudesp['ite_id']);
+        //$resp_item = $modItemMetNivel->consultaritemsol($resp_solicitudesp['uaca_id'], $resp_solicitudesp['mod_id'], $resp_solicitudesp['ite_id']);
+        //$arr_descuento = $modDescuento->consultarDesctoxitem($resp_solicitudesp['ite_id']);
+        //$resp_pago = $mod_ordenpago->consultaOrdenPago($sins_id);
+        $resp_item = $modItemMetNivel->consultarXitemPrecio($resp_solicitudesp['uaca_id'], $resp_solicitudesp['mod_id'], $resp_solicitudesp['ming_id'], $resp_solicitudesp['eaca_id']);
+        $arr_descuento = $modDescuento->consultarDesctoxitem($resp_solicitudesp["ite_id"]);
         $arr_convempresa = $mod_conempresa->consultarConvenioEmpresa();
         $resp_solicitudescuento = $mod_solins->Consultarsolicitudescuento($sins_id);
         if (!empty($resp_solicitudescuento['sdes_id'])) {
@@ -2065,7 +2069,8 @@ class SolicitudesController extends \app\components\CController {
             $resp_solicitudescitem = $mod_solins->Consultarsolicitudescuentoitem($sins_id);
             if (!empty($resp_solicitudescitem['sdes_id'])) {
                 $tiendesct = '1';
-                $precio_dect = ($resp_solicitudesp['opag_total'] * $resp_solicitudescitem['ddit_porcentaje']) / 100;
+                //$precio_dect = ($resp_solicitudesp['opag_total'] * $resp_solicitudescitem['ddit_porcentaje']) / 100;
+                $precio_dect = (($resp_solicitudescitem['ddit_porcentaje'] / 100) * 100) + $resp_solicitudesp['opag_total'];
             }else{
                 // no tiene descuento
                 $tiendesct = '0';
@@ -2223,7 +2228,7 @@ class SolicitudesController extends \app\components\CController {
             $resp_solicitudescitem = $mod_solins->Consultarsolicitudescuentoitem($sins_id);
             if (!empty($resp_solicitudescitem['sdes_id'])) {
                 $tiendesct = '1';
-                $precio_dect = ($resp_solicitudesp['opag_total'] * $resp_solicitudescitem['ddit_porcentaje']) / 100;
+                $precio_dect = (($resp_solicitudescitem['ddit_porcentaje'] / 100) * 100) + $resp_solicitudesp['opag_total'];
             }else{
                 // no tiene descuento
                 $tiendesct = '0';

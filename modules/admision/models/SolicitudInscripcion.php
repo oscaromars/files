@@ -2014,6 +2014,7 @@ class Solicitudinscripcion extends \yii\db\ActiveRecord {
                     sins.mod_id,
                     sins.eaca_id,
                     sins.mest_id,
+                    sins.ming_id,
                     sins.emp_id,
                     sins.rsin_id, -- res_sol_inscripcion
                     orp.opag_id,

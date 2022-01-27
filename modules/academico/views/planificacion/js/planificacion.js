@@ -1216,6 +1216,38 @@ showAlert('NO_OK', 'error', {"wtmessage": 'Seleccione una modalidad', "title": '
 }
 
 
+function regenerate() {
+    var haspla = $('#frm_hasplanning').val(); 
+   var periodo = $('#cmb_per_academico option:selected').val();
+   var modalidad = $('#cmb_modalidad option:selected').val();
+   
+   
+
+   if (haspla == undefined) {
+
+ // showAlert('NO_OK', 'error','wtmessage'); 
+ showAlert('NO_OK', 'error', {"wtmessage": 'Aun no se ha generado planificacion para la modalidad elegida', "title": 'Información'});
+
+ 
+} else {
+
+if (modalidad == 0) {
+
+showAlert('NO_OK', 'error', {"wtmessage": 'Seleccione una modalidad', "title": 'Información'});
+
+
+   } else {
+
+    showLoadingPopup();
+   window.location.href = $('#txth_base').val() + "/academico/planificacion/generator?periodo=" + periodo + '&modalidad=' + modalidad + '&haspla=' + haspla;
+
+}
+
+}
+}
+
+
+
 function closer(pla_id) {
    window.location.href = $('#txth_base').val() + "/academico/planificacion/cerrarplanaut?pla_id=" + pla_id;
 }

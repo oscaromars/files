@@ -1527,3 +1527,39 @@ function updatesolicitudadmi() {
         }, true);
     }
 }
+
+function anularsolicitud(sins_id, opag_id) {
+    var mensj = "¿Seguro desea anular la solicitud de inscripción?";
+    var messagePB = new Object();
+    messagePB.wtmessage = mensj;
+    messagePB.title = "Anular";
+    var objAccept = new Object();
+    objAccept.id = "btnid2del";
+    objAccept.class = "btn-primary";
+    objAccept.value = "Aceptar";
+    objAccept.callback = 'accionanusol';
+    var params = new Array(sins_id, opag_id);
+    objAccept.paramCallback = params;
+    messagePB.acciones = new Array();
+    messagePB.acciones[0] = objAccept;
+    showAlert("warning", "warning", messagePB);
+}
+
+function accionanusol(sins_id, opag_id) {
+    alert ('sins_id accion' + sins_id);
+    alert ('opag_id accion' + opag_id);
+    var link = $('#txth_base').val() + "/admision/solicitudes/anularsolicitud";
+    var arrParams = new Object();
+    arrParams.sins_id = sins_id;
+    arrParams.opag_id = opag_id;
+    if (!validateForm()) {
+        requestHttpAjax(link, arrParams, function (response) {
+            showAlert(response.status, response.label, response.message);
+            if (!response.error) {
+                setTimeout(function () {
+                    window.location.href = $('#txth_base').val() + "/admision/interesados/index";
+                }, 3000);
+            }
+        }, true);
+    }
+}

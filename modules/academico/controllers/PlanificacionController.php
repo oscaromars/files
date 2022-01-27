@@ -213,6 +213,7 @@ order by maca.maca_id DESC , ea.eaca_codigo, e.est_fecha_creacion ASC;
 
 			for ($i = 0; $i < count($resultData); $i++) {
 				$centralprocess = $malla->consultarAsignaturas($resultData[$i], $periodo, $saca_nombre["semestre"], $modalidad);if ($centralprocess == 1) {$ok = 1;}
+				$postprocess = $malla->marcarAsignaturas($resultData[$i]["mpmo_id"],1);
 				\app\models\Utilities::putMessageLogFile("Received " . $centralprocess);
 			}
 

@@ -393,6 +393,19 @@ class MallaAcademica extends \yii\db\ActiveRecord
         return $resultData;
     }
 
+
+    
+         function marcarAsignaturas($mpmo_id,$procesado) {
+    $con = \Yii::$app->db_academico;
+    $marcasi= "UPDATE db_academico.materias_periodo_modalidad SET mpmo_procesado = $procesado 
+    WHERE mpmo_id = $mpmo_id";
+    $comando = $con->createCommand($marcasi);
+    $result = $comando->execute();  
+     return true;
+
+
+}
+
          function cargarAsignaturas($rows,$modalidad,$periodo) {
     $con = \Yii::$app->db_academico;
      $activo="A";

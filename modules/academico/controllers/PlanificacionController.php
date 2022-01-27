@@ -163,7 +163,7 @@ class PlanificacionController extends \app\components\CController {
             select distinct e.est_id, e.per_id, e.est_matricula, e.est_fecha_creacion, e.est_categoria, meu.uaca_id, meu.mod_id, meu.eaca_id, DATEDIFF(NOW(),e.est_fecha_creacion) as olderi, --
 u.uaca_id, u.uaca_nombre, ea.teac_id, ea.eaca_nombre, ea.eaca_codigo,
 per.per_cedula,  maca.maca_id , maca.maca_codigo, maca.maca_nombre,
-concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_apellido, ' ', ifnull(per.per_seg_apellido,'')) estudiante, mpmo.mpmo_id
+concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_apellido, ' ', ifnull(per.per_seg_apellido,'')) estudiante
  from db_academico.estudiante e
  inner join db_academico.estudiante_carrera_programa c on c.est_id = e.est_id
   inner join db_academico.modalidad_estudio_unidad meu on meu.meun_id = c.meun_id
@@ -176,7 +176,7 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
    left join db_academico.malla_academico_estudiante malle on per.per_id = malle.per_id
      where  malle.maca_id = maca.maca_id  AND
          meu.mod_id = :modalidad and meu.uaca_id = 1 and mpmo.saca_id = :periodo and mpmo.mpmo_activo = 'A'
-          and mpmo.mpmo_procesado not in (0,1) 
+          and mpmo.mpmo_procesado is Null
     AND  mpmo.mpmo_estado = 1 AND mpmo.mpmo_estado_logico = 1
     AND  e.est_estado = 1 AND e.est_estado_logico = 1
     AND  c.ecpr_estado = 1 AND c.ecpr_estado_logico = 1
@@ -209,11 +209,19 @@ order by maca.maca_id DESC , ea.eaca_codigo, e.est_fecha_creacion ASC;
 		$allstudents = count($resultData);
 		\app\models\Utilities::putMessageLogFile("all: " . count($resultData));
 
+		   if (count($resultData) > 0) { 
+        $preprocess = $malla->traerActivas($periodo,$modalidad); 
+        if (count($preprocess) > 0) {  
+             for ($ix = 0; $ix < count($resultData); $ix++) {  
+$postprocess = $malla->marcarAsignaturas($preprocess[$ix]["mpmo_id"],1); 
+
+     }    }     }
+
 		if (count($resultData) > 0) {
 
 			for ($i = 0; $i < count($resultData); $i++) {
 				$centralprocess = $malla->consultarAsignaturas($resultData[$i], $periodo, $saca_nombre["semestre"], $modalidad);if ($centralprocess == 1) {$ok = 1;}
-				$postprocess = $malla->marcarAsignaturas($resultData[$i]["mpmo_id"],1);
+		
 				\app\models\Utilities::putMessageLogFile("Received " . $centralprocess);
 			}
 
@@ -259,7 +267,7 @@ order by maca.maca_id DESC , ea.eaca_codigo, e.est_fecha_creacion ASC;
                  select distinct e.est_id, e.per_id, e.est_matricula, e.est_fecha_creacion, e.est_categoria, meu.uaca_id, meu.mod_id, meu.eaca_id, DATEDIFF(NOW(),e.est_fecha_creacion) as olderi, --
 u.uaca_id, u.uaca_nombre, ea.teac_id, ea.eaca_nombre, ea.eaca_codigo,
 per.per_cedula,  maca.maca_id , maca.maca_codigo, maca.maca_nombre,
-concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_apellido, ' ', ifnull(per.per_seg_apellido,'')) estudiante, mpmo.mpmo_id
+concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_apellido, ' ', ifnull(per.per_seg_apellido,'')) estudiante
  from db_academico.estudiante e
  inner join db_academico.estudiante_carrera_programa c on c.est_id = e.est_id
   inner join db_academico.modalidad_estudio_unidad meu on meu.meun_id = c.meun_id
@@ -271,8 +279,7 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
    inner join db_asgard.persona per on per.per_id = e.per_id
     left join db_academico.malla_academico_estudiante malle on per.per_id = malle.per_id
      where   malle.maca_id = maca.maca_id  AND
-         meu.mod_id = :modalidad and meu.uaca_id = 1 and mpmo.saca_id = :periodo and mpmo.mpmo_activo = 'A'
-    and mpmo.mpmo_procesado not in (2,3) 
+         meu.mod_id = :modalidad and meu.uaca_id = 1 and mpmo.saca_id = :periodo and mpmo.mpmo_activo = 'A
     AND  mpmo.mpmo_estado = 1 AND mpmo.mpmo_estado_logico = 1
     AND  e.est_estado = 1 AND e.est_estado_logico = 1
     AND  c.ecpr_estado = 1 AND c.ecpr_estado_logico = 1

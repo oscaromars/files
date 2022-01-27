@@ -394,7 +394,7 @@ class MallaAcademica extends \yii\db\ActiveRecord
     }
 
 
-public function actionTraeractivas($periodo, $modalidad) {
+public function traerActivas($periodo, $modalidad) {
         $con = \Yii::$app->db_academico;
         $mactivas = "
             select mpmo.mpmo_id
@@ -410,7 +410,7 @@ public function actionTraeractivas($periodo, $modalidad) {
    left join db_academico.malla_academico_estudiante malle on per.per_id = malle.per_id
      where  malle.maca_id = maca.maca_id  AND
          meu.mod_id = :modalidad and meu.uaca_id = 1 and mpmo.saca_id = :periodo and mpmo.mpmo_activo = 'A'
-          and mpmo.mpmo_procesado not in (0,1) 
+          and mpmo.mpmo_procesado is Null
     AND  mpmo.mpmo_estado = 1 AND mpmo.mpmo_estado_logico = 1
     AND  e.est_estado = 1 AND e.est_estado_logico = 1
     AND  c.ecpr_estado = 1 AND c.ecpr_estado_logico = 1

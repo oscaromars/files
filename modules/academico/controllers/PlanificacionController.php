@@ -176,6 +176,8 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
    left join db_academico.malla_academico_estudiante malle on per.per_id = malle.per_id
      where  malle.maca_id = maca.maca_id  AND
          meu.mod_id = :modalidad and meu.uaca_id = 1 and mpmo.saca_id = :periodo and mpmo.mpmo_activo = 'A'
+          and mpmo.mpmo_procesado not in (0,1) 
+    and mpmo.mpmo_activo = Null
     AND  mpmo.mpmo_estado = 1 AND mpmo.mpmo_estado_logico = 1
     AND  e.est_estado = 1 AND e.est_estado_logico = 1
     AND  c.ecpr_estado = 1 AND c.ecpr_estado_logico = 1
@@ -270,6 +272,7 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
     left join db_academico.malla_academico_estudiante malle on per.per_id = malle.per_id
      where   malle.maca_id = maca.maca_id  AND
          meu.mod_id = :modalidad and meu.uaca_id = 1 and mpmo.saca_id = :periodo and mpmo.mpmo_activo = 'A'
+    and mpmo.mpmo_procesado not in (2,3) 
     AND  mpmo.mpmo_estado = 1 AND mpmo.mpmo_estado_logico = 1
     AND  e.est_estado = 1 AND e.est_estado_logico = 1
     AND  c.ecpr_estado = 1 AND c.ecpr_estado_logico = 1

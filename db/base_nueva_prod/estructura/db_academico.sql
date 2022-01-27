@@ -2573,6 +2573,7 @@ create table if not exists `materias_periodo_modalidad` (
 `eaca_id` bigint(20) not null,
 `mpmo_bloque` integer null default null,
 `mpmo_activo` varchar(1) null default null,
+`mpmo_procesado` integer null default null,
 `mpmo_usuario_ingreso` bigint(20) not null,
 `mpmo_usuario_modifica` bigint(20) null,
 `mpmo_estado` varchar(1) not null,

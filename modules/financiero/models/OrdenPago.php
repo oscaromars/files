@@ -2618,4 +2618,30 @@ class OrdenPago extends \app\modules\financiero\components\CActiveRecord {
         $response = $comando->execute();
         return $response;
     }
+    /**
+     * Function Desactivarordenpago
+     * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
+     * @param
+     * @return
+     */
+    public function Desactivarordenpago($opag_id, $opag_usu_modifica) {
+        $con = \Yii::$app->db_facturacion;
+        $estado = 0;
+        $fecha_modificacion = date(Yii::$app->params["dateTimeByDefault"]);
+        $comando = $con->createCommand
+                ("UPDATE " . $con->dbname . ".orden_pago
+                SET opag_fecha_modificacion = :opag_fecha_modificacion,
+                    opag_estado = :estado,
+                    opag_estado_logico = :estado,
+                    opag_usu_modifica = :opag_usu_modifica
+                WHERE opag_id = :opag_id ");
+
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $comando->bindParam(":opag_id", $opag_id, \PDO::PARAM_INT);
+        $comando->bindParam(":opag_usu_modifica", $opag_usu_modifica, \PDO::PARAM_INT);
+        $comando->bindParam(":opag_fecha_modificacion", $fecha_modificacion, \PDO::PARAM_STR);
+
+        $response = $comando->execute();
+        return $response;
+    }
 }

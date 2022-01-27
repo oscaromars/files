@@ -15,7 +15,7 @@ use app\modules\academico\Module as academico;
 use app\modules\financiero\Module as financiero;
 academico::registerTranslations();
 financiero::registerTranslations();
-
+//print_r($model);
 ?>
 <?=
 
@@ -70,7 +70,7 @@ PbGridView::widget([
         [
             'class' => 'yii\grid\ActionColumn',
             'header' => Yii::t("formulario", "Actions"),
-            'template' => '{view} {payments} {upload}', //
+            'template' => '{view} {cancel} {payments} {upload}', //
             'buttons' => [
                 'view' => function ($url, $model) {
                     $mod_ordpago = new OrdenPago;
@@ -79,6 +79,16 @@ PbGridView::widget([
                         return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', Url::to(['/admision/solicitudes/viewsolicitud', 'id_sol' => base64_encode($model['sins_id']), 'per_id' => base64_encode($model['per_id']), 'opag_id' => base64_encode($model['opag_id'])]), ["data-toggle" => "tooltip", "title" => "Ver Solicitud", "data-pjax" => 0]);
                     } else {
                         return '<span class="glyphicon glyphicon-eye-open"></span>';
+                    }
+                },
+                'cancel' => function ($url, $model) {
+                    //$mod_ordpago = new OrdenPago;
+                    //$result = $mod_ordpago->consultarImagenpagoexiste($model['opag_id']);
+                    if ($model['estado'] == 'Pendiente' && $model['estado_pago'] == 'Pagado') { // Aqui si la solicitud esta pendiente  y no ha subido pago
+                        //return Html::a('<span class="glyphicon glyphicon-trash"></span>', Url::to(['/admision/solicitudes/viewsolicitud', 'id_sol' => base64_encode($model['sins_id']), 'per_id' => base64_encode($model['per_id']), 'opag_id' => base64_encode($model['opag_id'])]), ["data-toggle" => "tooltip", "title" => "Anular Solicitud", "data-pjax" => 0]);
+                          return Html::a('<span class="glyphicon glyphicon-trash"></span>', "#", ['onclick' => "anularsolicitud(" . $model['sins_id'] . ",". $model['per_id'] .",". $model['opag_id'] .");", "data-toggle" => "tooltip", "title" => "Anular Solicitud", "data-pjax" => 0]);
+                    } else {
+                        return '<span class="glyphicon glyphicon-trash"></span>';
                     }
                 },
                 'payments' => function ($url, $model) {

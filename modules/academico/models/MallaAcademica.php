@@ -459,7 +459,7 @@ order by maca.maca_id DESC , ea.eaca_codigo, e.est_fecha_creacion ASC;
      $activo="A";
 
      $sql = "select distinct  
-a.asi_id, a.made_credito, c.uaca_id,c.mod_id, c.eaca_id, a.maca_id
+a.asi_id, a.made_credito, c.uaca_id,c.mod_id, c.eaca_id, a.maca_id,a.made_asi_requisito
 from db_academico.malla_academica_detalle a
 inner join db_academico.malla_unidad_modalidad b on b.maca_id = a.maca_id 
 inner join db_academico.modalidad_estudio_unidad c on c.meun_id = b.meun_id
@@ -491,12 +491,55 @@ left join db_academico.estado_nota_academico enac on enac.enac_id = pmac.enac_id
    $comando = $con->createCommand($sql);
    $rows_asi = $comando->queryAll();
 
+
+
+
   
 
-    if (count($rows_asi) > 0) {   
+    if (count($rows_asi) > 0) {    $cn= 0;
         
-     for ($im = 0; $im < count($rows_asi); $im++) {   
-        if ($im < 6) {  
+     for ($im = 0; $im < count($rows_asi); $im++) {  
+
+         $requisito = $rows_asi[$im]["made_asi_requisito"]; 
+         $persona = $rows["per_id"];
+
+            if ($requisito !=Null) {  
+                 $sql = "
+                 select  a.asi_id, c.enac_id, a.maes_id, a.per_id
+ from db_academico.malla_academico_estudiante a
+ left join db_academico.promedio_malla_academico b on a.maes_id = b.maes_id
+   left join db_academico.estado_nota_academico c on c.enac_id = b.enac_id   
+   inner join db_academico.asignatura d on a.asi_id = d.asi_id
+   where a.per_id = :per_id
+   and a.asi_id = :requisito
+                       and a.maes_estado = 1
+                    and a.maes_estado_logico = 1
+                    -- and b.pmac_estado = 1
+                    -- and b.pmac_estado_logico = 1
+                    -- and c.enac_estado = 1
+                    -- and c.enac_estado_logico = 1
+                     
+
+                ";
+                
+                     $comando = $con->createCommand($sql);
+                     $comando->bindParam(":per_id", $persona, \PDO::PARAM_INT);
+                     $comando->bindParam(":requisito", $requisito, \PDO::PARAM_INT);
+                     $statuspre = $comando->queryOne();
+
+                       if ($statuspre["enac_id"]==1 or $statuspre["enac_id"]==4 ){   
+             
+                       $sstatuspre = True; 
+
+                      }    Else {     $sstatuspre = False;     }
+                            
+                     }      Else {     $sstatuspre = True;     }
+
+
+
+         if ($sstatuspre = True) {  $cn++;
+
+           if ($cn < 9) {
         
          $asiid = $rows_asi[$im]["asi_id"];
          $modid = $rows_asi[$im]["mod_id"];
@@ -537,7 +580,7 @@ left join db_academico.estado_nota_academico enac on enac.enac_id = pmac.enac_id
                 $result = $comando->execute();  
                                                   }
 
-           }}
+           }}}
         }
               return true;
      }

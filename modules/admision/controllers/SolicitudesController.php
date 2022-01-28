@@ -2258,4 +2258,88 @@ class SolicitudesController extends \app\components\CController {
                     "resp_solicitudescuento" => $resp_solicitudescuento,
         ]);
     }
+    public function actionAnularsolicitud() {
+        $mod_solins = new Solicitudinscripcion();
+        $mod_ordenpago = new OrdenPago();
+        $nodescuento = '0';
+		$usu_autenticado = @Yii::$app->session->get("PB_iduser");
+		if (Yii::$app->request->isAjax) {
+			$data = Yii::$app->request->post();
+            $sins_id = $data["sins_id"];
+            $opag_id = $data["opag_id"];
+            $con = \Yii::$app->db_captacion;
+            $con1 = \Yii::$app->db_facturacion;
+            $transaction = $con->beginTransaction();
+            $transaction1 = $con->beginTransaction();
+			try {
+                $resp_solicitudesactivar = $mod_solins->Desactivarsolicitudinscripcion($sins_id, $usu_autenticado);
+				if ($resp_solicitudesactivar) {
+                    // 1ero consultar si la solicitud tiene descuento
+                    $cons_solicitudesct = $mod_solins->Consultarsolicitudescuentoitem($sins_id);
+                    if (!empty($cons_solicitudesct['sdes_id'])) {
+                        $resp_solicitudesct = $mod_solins->Desactivarsolicitudescuento($sins_id);
+                    }else{
+                     // no hay descuento, pase a la otra tabla
+                     $nodescuento = '1';
+                    }
+                    if ($resp_solicitudesct || $nodescuento == '1') {
+                        //Realizar accion
+                        $resp_opago = $mod_ordenpago->Desactivarordenpago($opag_id, $usu_autenticado);
+                        if ($resp_opago) {
+                            //Realizar accion
+                            $resp_despago = $mod_ordenpago->Desactivardesglosepago($opag_id, $usu_autenticado);
+                            if ($resp_despago) {
+                                //Guardar todo
+                                $transaction->commit();
+                                $transaction1->commit();
+					            $message = array(
+                                "wtmessage" => Yii::t("notificaciones", "Se ha anulado la solicitu de inscripcion."),
+                                "title" => Yii::t('jslang', 'Success'),
+					);
+					return Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), false, $message);
+                            } else {
+                                $transaction->rollback();
+                                $transaction1->rollback();
+                                $message = array(
+                                    "wtmessage" => Yii::t("notificaciones", "Error al anular desglose pago. "),
+                                    "title" => Yii::t('jslang', 'Error'),
+                                );
+                                return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+                            }
+                        } else {
+                            $transaction->rollback();
+                            $transaction1->rollback();
+                            $message = array(
+                                "wtmessage" => Yii::t("notificaciones", "Error al anular orden de pago. "),
+                                "title" => Yii::t('jslang', 'Error'),
+                            );
+                            return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+                        }
+                    } else {
+                        $transaction->rollback();
+                        $transaction1->rollback();
+                        $message = array(
+                            "wtmessage" => Yii::t("notificaciones", "Error al anular solicitud de descuento. "),
+                            "title" => Yii::t('jslang', 'Error'),
+                        );
+                        return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+                    }
+				}else {
+					$transaction->rollback();
+					$message = array(
+						"wtmessage" => Yii::t("notificaciones", "Error al anular inscripción. "),
+						"title" => Yii::t('jslang', 'Error'),
+					);
+					return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+				}
+			} catch (Exception $ex) {
+				$transaction->rollback();
+				$message = array(
+					"wtmessage" => Yii::t("notificaciones", "Error al anular solicitud. "),
+					"title" => Yii::t('jslang', 'Success'),
+				);
+				return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+			}
+		}
+	}
 }

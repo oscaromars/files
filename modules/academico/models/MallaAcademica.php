@@ -496,7 +496,7 @@ left join db_academico.estado_nota_academico enac on enac.enac_id = pmac.enac_id
     if (count($rows_asi) > 0) {   
         
      for ($im = 0; $im < count($rows_asi); $im++) {   
-        if ($im < 8) {  
+        if ($im < 6) {  
         
          $asiid = $rows_asi[$im]["asi_id"];
          $modid = $rows_asi[$im]["mod_id"];

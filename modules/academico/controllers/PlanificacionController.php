@@ -759,7 +759,7 @@ $centralprocess = $malla->consultarAsignaturas($resultData[$i],$periodo,$saca_no
 
                 // $bloque = $data['bloque'];
                 $modelconf = new RegistroConfiguracion();
-                $inserta_planificacionanual = $modelconf->insertarPlanAnual(
+                $inserta_planificacionanual = $modelconf->insertarPlanAnual( 
                     $pla_id, 
                     strval($finicio), 
                     strval($ffin),

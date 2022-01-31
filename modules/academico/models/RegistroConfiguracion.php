@@ -770,7 +770,6 @@ class RegistroConfiguracion extends \yii\db\ActiveRecord
         $fechafin,
         $fechaini1,
         $fechafin1,
-        /* $fechaini2, $fechafin2,*/ 
         $fechaini3,
         $fechafin3,
         $fechaini4,
@@ -794,16 +793,6 @@ class RegistroConfiguracion extends \yii\db\ActiveRecord
 
         }
 
-        /*
-        if ($fechaini2 != "" && $fechafin2 != "") {
-            $fecha_ini2 = $fechaini2 . " 00:00:00";
-            $fecha_fin2 = $fechafin2 . " 23:59:59";
-            $comando->bindParam(":rco_fecha_ini_registro", $fecha_ini2, \PDO::PARAM_STR);
-            $comando->bindParam(":rco_fecha_fin_registro", $fecha_fin2, \PDO::PARAM_STR);
-
-        }
-
-        */
         if ($fechaini3 != "" && $fechafin3 != "") {
             $fecha_ini3 = $fechaini3 . " 00:00:00";
             $fecha_fin3 = $fechafin3 . " 23:59:59";

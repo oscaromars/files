@@ -196,6 +196,7 @@ class DistributivoacademicoController extends \app\components\CController {
 
 				//$paralelos = $paralelo->getParalelosAsignatura($data["paca_id"],$data["mod_id"],$data["asig_id"]);
 				//$paralelos =$mod_horario->consultarParaleloHorario($data["hora_id"]);
+				\app\models\Utilities::putMessageLogFile('meun_id:'.data["meun_id"]);
 				$paralelos = $mod_paraleloprograma->getParalelosprograma($data["meun_id"]);
 				$message = array("paralelo" => $paralelos);
 				return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);

@@ -362,6 +362,8 @@ class Solicitudinscripcion extends \yii\db\ActiveRecord {
         }
         $sql = "
                     SELECT
+                        inte.per_id,
+                        op.opag_id,
                         lpad(ifnull(sins.num_solicitud,sins.sins_id),9,'0') as num_solicitud,
                         sins.sins_id,
                         sins.sins_fecha_solicitud as fecha_solicitud,
@@ -1355,7 +1357,7 @@ class Solicitudinscripcion extends \yii\db\ActiveRecord {
      * @param   string  $dataTelefono   Telefono de la persona a Facturar
      * @return  $resultData (Retorna true si se realizo la operacion o false si fue error).
      */
-    public function crearDatosFacturaSolicitud($sins_id, $dataNombres, $dataApellidos, $dataTipDNI, $dataDNI, $dataDireccion, $dataTelefono, $dataCorreo = null) {
+    public function crearDatosFacturaSolicitud($sins_id, $dataNombres, $dataApellidos, $dataTipDNI, $dataDNI, $dataDireccion, $dataTelefono, $dataCorreo/* = null */) {
         $con = \Yii::$app->db_captacion;
         $estado = 1;
         $tipo = ((self::$arr_DNI[$dataTipDNI]) ? self::$arr_DNI[$dataTipDNI] : self::$arr_DNI["3"]);
@@ -1958,5 +1960,203 @@ class Solicitudinscripcion extends \yii\db\ActiveRecord {
         $comando->bindParam(":num_solicitud", $num_solicitud, \PDO::PARAM_STR);
         $resultData = $comando->queryOne();
         return $resultData;
+    }
+
+    /**
+     * Function actualizaSolicitudInscripcion (Actualiza unidad, carrera y modalidad)
+     * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
+     * @param
+     * @return
+     */
+    public function actualizaSolicitudInscripcion($sins_id, $uaca_id, $mod_id, $eaca_id, $sins_beca, $sins_usuario_modifica) {
+        $con = \Yii::$app->db_captacion;
+        $estado = 1;
+        $fecha_modificacion = date(Yii::$app->params["dateTimeByDefault"]);
+        $comando = $con->createCommand
+                ("UPDATE " . $con->dbname . ".solicitud_inscripcion
+                SET sins_fecha_modificacion = :sins_fecha_modificacion,
+                    uaca_id = :uaca_id,
+                    mod_id = :mod_id,
+                    eaca_id = :eaca_id,
+                    sins_beca = :sins_beca,
+                    sins_usuario_modifica = :sins_usuario_modifica
+                WHERE sins_id = :sins_id AND
+                      sins_estado =:estado AND
+                      sins_estado_logico = :estado");
+
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $comando->bindParam(":sins_id", $sins_id, \PDO::PARAM_INT);
+        $comando->bindParam(":uaca_id", $uaca_id, \PDO::PARAM_INT);
+        $comando->bindParam(":mod_id", $mod_id, \PDO::PARAM_INT);
+        $comando->bindParam(":eaca_id", $eaca_id, \PDO::PARAM_INT);
+        $comando->bindParam(":sins_beca", $sins_beca, \PDO::PARAM_STR);
+        $comando->bindParam(":sins_usuario_modifica", $sins_usuario_modifica, \PDO::PARAM_INT);
+        $comando->bindParam(":sins_fecha_modificacion", $fecha_modificacion, \PDO::PARAM_STR);
+
+        $response = $comando->execute();
+        return $response;
+    }
+    /**
+     * Function Consultarsolicitudxid
+     * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
+     * @param
+     * @return  $resultData
+     */
+    public function Consultarsolicitudxid($sins_id) {
+        $con = \Yii::$app->db_captacion;
+        $con1 = \Yii::$app->db_facturacion;
+        $estado = 1;
+
+        $sql = "SELECT
+                    sins.sins_id,
+                    sins.int_id,
+                    sins.uaca_id,
+                    sins.mod_id,
+                    sins.eaca_id,
+                    sins.mest_id,
+                    sins.ming_id,
+                    sins.emp_id,
+                    sins.rsin_id, -- res_sol_inscripcion
+                    orp.opag_id,
+                    orp.opag_subtotal,
+                    orp.opag_total,
+                    orp.opag_estado_pago,
+                    desg.ite_id,
+                    desg.dpag_subtotal,
+                    desg.dpag_total,
+                    desg.dpag_estado_pago,
+                    sdfa.sdfa_nombres,
+                    sdfa.sdfa_apellidos,
+                    sdfa.sdfa_tipo_dni,
+                    sdfa.sdfa_dni,
+                    sdfa.sdfa_direccion,
+                    sdfa.sdfa_telefono,
+                    sdfa.sdfa_correo
+                    FROM " . $con->dbname . ".solicitud_inscripcion sins
+                    INNER JOIN " . $con1->dbname . ".orden_pago orp ON orp.sins_id = sins.sins_id
+                    INNER JOIN " . $con1->dbname . ".desglose_pago desg ON desg.opag_id = orp.opag_id
+                    INNER JOIN " . $con->dbname . ".solicitud_datos_factura sdfa ON sdfa.sins_id = sins.sins_id
+                    WHERE
+                    sins.sins_id = :sins_id AND
+                    sins.sins_estado = :estado AND
+                    sins.sins_estado_logico = :estado AND
+                    orp.opag_estado = :estado AND
+                    orp.opag_estado_logico = :estado AND
+                    desg.dpag_estado = :estado AND
+                    desg.dpag_estado_logico = :estado AND
+                    sdfa.sdfa_estado = :estado AND
+                    sdfa.sdfa_estado_logico = :estado ";
+
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $comando->bindParam(":sins_id", $sins_id, \PDO::PARAM_INT);
+        $resultData = $comando->queryOne();
+        return $resultData;
+    }
+    /**
+     * Function Consultarsolicitudescuento
+     * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
+     * @param
+     * @return  $resultData
+     */
+    public function Consultarsolicitudescuento($sins_id) {
+        $con = \Yii::$app->db_facturacion;
+        //$estado = 1;
+
+        $sql = "SELECT
+                    sdes_id,
+                    ddit_id
+                FROM " . $con->dbname . ".solicitud_descuento
+                WHERE
+                    sins_id = :sins_id ";
+
+        $comando = $con->createCommand($sql);
+        //$comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $comando->bindParam(":sins_id", $sins_id, \PDO::PARAM_INT);
+        $resultData = $comando->queryOne();
+        return $resultData;
+    }
+
+    /**
+     * Function Desactivarsolicitudescuento
+     * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
+     * @param
+     * @return
+     */
+    public function Desactivarsolicitudescuento($sins_id) {
+        $con = \Yii::$app->db_facturacion;
+        $estado = 0;
+        $fecha_modificacion = date(Yii::$app->params["dateTimeByDefault"]);
+        $comando = $con->createCommand
+                ("UPDATE " . $con->dbname . ".solicitud_descuento
+                SET sdes_fecha_modificacion = :sdes_fecha_modificacion,
+                    sdes_estado = :estado,
+                    sdes_estado_logico = :estado
+                WHERE sins_id = :sins_id ");
+
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $comando->bindParam(":sins_id", $sins_id, \PDO::PARAM_INT);
+        $comando->bindParam(":sdes_fecha_modificacion", $fecha_modificacion, \PDO::PARAM_STR);
+
+        $response = $comando->execute();
+        return $response;
+    }
+
+    /**
+     * Function Consultarsolicitudescuentoitem
+     * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
+     * @param
+     * @return  $resultData
+     */
+    public function Consultarsolicitudescuentoitem($sins_id) {
+        $con = \Yii::$app->db_facturacion;
+        $estado = 1;
+
+        $sql = "SELECT
+                    sdes.sdes_id,
+                    sdes.ddit_id,
+                    desi.dite_id,
+                    desi.ddit_porcentaje
+                FROM " . $con->dbname . ".solicitud_descuento sdes
+                INNER JOIN " . $con->dbname . ".detalle_descuento_item desi ON desi.ddit_id = sdes.ddit_id
+                WHERE
+                    sdes.sins_id = :sins_id AND
+                    sdes.sdes_estado = :estado AND
+                    sdes.sdes_estado_logico = :estado AND
+                    desi.ddit_estado = :estado AND
+                    desi.ddit_estado_logico = :estado";
+
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $comando->bindParam(":sins_id", $sins_id, \PDO::PARAM_INT);
+        $resultData = $comando->queryOne();
+        return $resultData;
+    }
+
+    /**
+     * Function Desactivarsolicitudinscripcion
+     * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
+     * @param
+     * @return
+     */
+    public function Desactivarsolicitudinscripcion($sins_id, $sins_usuario_modifica) {
+        $con = \Yii::$app->db_captacion;
+        $estado = 0;
+        $fecha_modificacion = date(Yii::$app->params["dateTimeByDefault"]);
+        $comando = $con->createCommand
+                ("UPDATE " . $con->dbname . ".solicitud_inscripcion
+                SET sins_fecha_modificacion = :sins_fecha_modificacion,
+                    sins_estado = :estado,
+                    sins_estado_logico = :estado,
+                    sins_usuario_modifica = :sins_usuario_modifica
+                WHERE sins_id = :sins_id ");
+
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $comando->bindParam(":sins_id", $sins_id, \PDO::PARAM_INT);
+        $comando->bindParam(":sins_usuario_modifica", $sins_usuario_modifica, \PDO::PARAM_INT);
+        $comando->bindParam(":sins_fecha_modificacion", $fecha_modificacion, \PDO::PARAM_STR);
+
+        $response = $comando->execute();
+        return $response;
     }
 }

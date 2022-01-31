@@ -21,6 +21,7 @@ use app\modules\financiero\models\DetalleDescuentoItem;
 use app\modules\academico\models\UnidadAcademica;
 use app\modules\admision\models\SolicitudinsDocumento;
 use app\modules\financiero\models\OrdenPago;
+use app\modules\financiero\models\DesglosePago;
 use app\modules\admision\models\Interesado;
 use app\modules\admision\models\DocumentoAdjuntar;
 use app\modules\admision\Module as admision;
@@ -630,8 +631,174 @@ class SolicitudesController extends \app\components\CController {
         }
     }
 
-    public function actionUpdate() {
+    public function actionUpdatesolicitudadmi() {
+        $mod_solins = new SolicitudInscripcion();
+        $mod_ordenpago = new OrdenPago();
+        $mod_desglose = new DesglosePago();
+        if (Yii::$app->request->isAjax) {
+            $data = Yii::$app->request->post();
+            $usuario = @Yii::$app->user->identity->usu_id;
+            /* Datos Solicitud*/
+            $sins_id = base64_decode($data["sins_id"]);
+            $uaca_id = $data["ninteres"];
+            $mod_id = $data["modalidad"];
+            $mest_id = null;
+            $eaca_id = $data["carrera"];
+            /* Datos Orden pago */
+            /* Datos desglose pago $opag_subtotal y $opag_total*/
+            $opag_id = base64_decode($data["opag_id"]);
+            $ite_id = $data["ite_id"];
+            $con = \Yii::$app->db_captacion;
+            $con1 = \Yii::$app->db_facturacion;
+            $transaction = $con->beginTransaction();
+            $transaction1 = $con1->beginTransaction();
+            try
+            {
+                /*beca y descuento*/
+                    $beca = $data["beca"];
+                    $descuento = $data["descuento_id"];
+                    $marca_desc = $data["marcadescuento"];
+                    $convenio = $data["cemp_id"];
+                    // precio
+                    $precioGrado = $data["precio"];
+                    /*if ($marca_desc == '1' && $marca_desc == '0') {
+                        $valida = 1;
+                    }*/
+                    $errorprecio = 1;
+                    if ($beca == "1") {
+                        $precio = 0;
+                    }else {
+                        $beca = null;
+                        $resp_precio = $mod_solins->ObtenerPrecioXitem($ite_id);
+                        if ($resp_precio) {
+                            if ($uaca_id < 3) { //GViteri: para grado y posgrado los items que corresponden a inscripción, está abierto la caja de texto hasta un valor tope.
+                                if ($uaca_id == 1) {
+                                    $ming_id = null;
+                                }
+                                if ($ite_id == 155 or $ite_id == 156 or $ite_id == 157 or $ite_id == 10) {
+                                    $resp_precios_maximos = $mod_solins->ValidarPrecioXitem($ite_id);
+                                    if ($resp_precios_maximos) {
+                                        if ($precioGrado > $resp_precios_maximos["precio_mat"] or $precioGrado < $resp_precios_maximos["precio_ins"]) {
+                                            $mensaje = 'El precio digitado debe estar entre ' . $resp_precios_maximos["precio_ins"] . ' y ' . $resp_precios_maximos["precio_mat"];
+                                            $errorprecio = 0;
+                                        }
+                                    }
+                                    $precio = $precioGrado;
+                                } else {
+                                    $precio = $resp_precio['precio'];
+                                }
+                            } else {
+                                $precio = $resp_precio['precio'];
+                            }
+                        } else {
+                            $mensaje = 'No existe registrado ningún precio para la unidad, modalidad y método de ingreso seleccionada.';
+                            $errorprecio = 0;
+                        }
+                    }
+                /** */
+                if ($errorprecio != 0) {
+                // modifica solicitud
+                $respsolins = $mod_solins->actualizaSolicitudInscripcion($sins_id, $uaca_id, $mod_id, $eaca_id, $beca, $usuario);
+                if ($respsolins) { // modifica orden
+                    //Se verifica si seleccionó descuento.
+                    $val_descuento = 0;
+                    if (!empty($descuento)) {
+                        $modDescuento = new DetalleDescuentoItem();
+                        $respDescuento = $modDescuento->consultarValdctoItem($descuento);
+                        if ($respDescuento) {
+                            if ($precio == 0) {
+                                $val_descuento = 0;
+                            } else {
+                                if ($respDescuento["ddit_tipo_beneficio"] == 'P') {
+                                    $val_descuento = ($precio * ($respDescuento["ddit_porcentaje"])) / 100;
+                                } else {
+                                    $val_descuento = $respDescuento["ddit_valor"];
+                                }
+                                //Insertar solicitud descuento
+                                if ($val_descuento > 0) {
+                                    //consultar solicitud de descuento
+                                    //$resp_solicitudesp['uaca_id']
+                                    $resp_solicitudescuento = $mod_solins->Consultarsolicitudescuento($sins_id);
+                                    if (!empty($resp_solicitudescuento['sdes_id'])) {
+                                    // si existe modificar
+                                    $resp_SolicDcto = $mod_ordenpago->modificarSolicDscto($sins_id, $descuento, $precio, $respDescuento["ddit_porcentaje"], $respDescuento["ddit_valor"]);
+                                    }else {
+                                    // sino existe crear
+                                    $resp_SolicDcto = $mod_ordenpago->insertarSolicDscto($sins_id, $descuento, $precio, $respDescuento["ddit_porcentaje"], $respDescuento["ddit_valor"]);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    // si al modificar solicitud viene sin descuento
+                    if (empty($descuento)) {
+                        // volver a consultar en  solicitud_descuento y si existe inactivar estados 0
+                        $resp_solicitudescuento = $mod_solins->Consultarsolicitudescuento($sins_id);
+                        if (!empty($resp_solicitudescuento['sdes_id'])) {
+                            // si existe modificar inactivar estados
+                            $resp_solicitudesactivar = $mod_solins->Desactivarsolicitudescuento($sins_id);
+                            }
+                    }
 
+                    $val_total = $precio - $val_descuento;
+                    $resporden = $mod_ordenpago->actualizaOrdenpagoadmision($sins_id, $val_total, $val_total, $usuario);
+
+                    if ($resporden) { // modifica desglose pago
+                     $respdesglose = $mod_desglose->actualizaDesglosepago($opag_id, $ite_id, $val_total, $val_total, $usuario);
+                     if ($respdesglose) {
+                        $transaction->commit();
+                        $transaction1->commit();
+                        $message = array(
+                            "wtmessage" => Yii::t("notificaciones", "La información ha sido modificada. "),
+                            "title" => Yii::t('jslang', 'Success'),
+                    );
+                     return Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), false, $message);
+                     }else {
+                        $transaction->rollback();
+                        $transaction1->rollback();
+                        $message = array(
+                            "wtmessage" => Yii::t("notificaciones", "Error al modificar desglsoe pago." . $mensaje),
+                            "title" => Yii::t('jslang', 'Bad Request'),
+                        );
+                        return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Bad Request"), false, $message);
+                     }
+                    } else {
+                        $transaction->rollback();
+                        $transaction1->rollback();
+                        $message = array(
+                            "wtmessage" => Yii::t("notificaciones", "Error al modificar orden de pago." . $mensaje),
+                            "title" => Yii::t('jslang', 'Bad Request'),
+                        );
+                        return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Bad Request"), false, $message);
+                    }
+                } else {
+                    $transaction->rollback();
+                    $transaction1->rollback();
+                    $message = array(
+                        "wtmessage" => Yii::t("notificaciones", "Error al modificar solicitud de inscripcion." . $mensaje),
+                        "title" => Yii::t('jslang', 'Bad Request'),
+                    );
+                    return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Bad Request"), false, $message);
+                }
+            }
+            /** */
+            else {
+                $message = array(
+                    "wtmessage" => Yii::t("notificaciones", "Error al modificar solicitud de inscripcion, por precio." . $mensaje),
+                    "title" => Yii::t('jslang', 'Bad Request'),
+                );
+                return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Bad Request"), false, $message);
+            }
+            } catch (Exception $ex) {
+                $transaction->rollback();
+                $message = array(
+                    "wtmessage" => Yii::t("notificaciones", "Error al modificar." . $mensaje),
+                    "title" => Yii::t('jslang', 'Bad Request'),
+                );
+                return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Bad Request"), false, $message);
+            }
+            return;
+        }
     }
 
     public function actionSubirdocumentos() {
@@ -1766,5 +1933,420 @@ class SolicitudesController extends \app\components\CController {
                     "arr_item" => ArrayHelper::map(array_merge(["id" => "0", "name" => "Seleccionar"], $resp_item), "id", "name"),
         ]);
     }
+    public function actionViewsolicitud() {
+        $emp_id = @Yii::$app->session->get("PB_idempresa");
+        $mod_metodo = new MetodoIngreso();
+        $empresa_mod = new Empresa();
+        $tiendesct = '0';
+        $per_id = base64_decode($_GET['per_id']);
+        $sins_id = base64_decode($_GET['id_sol']);
+        Yii::$app->session->set('persona_solicita', base64_encode($_GET['ids']));
+        $mod_carrera = new EstudioAcademico();
+        $mod_unidad = new UnidadAcademica();
+        $persona_model = new Persona();
+        $mod_modalidad = new Modalidad();
+        $modcanal = new Oportunidad();
+        $modestudio = new ModuloEstudio();
+        $modItemMetNivel = new ItemMetodoUnidad();
+        $modDescuento = new DetalleDescuentoItem();
+        $modUnidad = new UnidadAcademica();
+        $dataPersona = $persona_model->consultaPersonaId($per_id);
+        $modInteresado = new Interesado();
+        $inte_id = $modInteresado->consultarIdinteresado($per_id);
+        $empresa = $empresa_mod->getAllEmpresa();
+        $mod_solins = new SolicitudInscripcion();
+        $mod_conempresa = new ConvenioEmpresa();
+        //$mod_ordenpago = new OrdenPago();
+        if (Yii::$app->request->isAjax) {
+            $data = Yii::$app->request->post();
+            if (isset($data["getuacademias"])) {
+                //$data_u_acad = $mod_unidad->consultarUnidadAcademicasEmpresa($data["empresa_id"]);
+                $data_u_acad->consultarUnidadAcademicas();
+                $message = array("unidad_academica" => $data_u_acad);
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+            }
+            if (isset($data["getmodalidad"])) {
+                if ($data["nint_id"] == 1 or $data["nint_id"] == 2) {
+                    $modalidad = $mod_modalidad->consultarModalidad($data["nint_id"], $data["empresa_id"]);
+                } else {
+                    $modalidad = $modestudio->consultarModalidadModestudio();
+                }
+                $message = array("modalidad" => $modalidad);
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+            }
+            if (isset($data["getmetodo"])) {
+                $metodos = $mod_metodo->consultarMetodoIngNivelInt($data['nint_id']);
+                $message = array("metodos" => $metodos);
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+            }
+            if (isset($data["getcarrera"])) {
+                if ($data["unidada"] == 1 or $data["unidada"] == 2) {
+                    $carrera = $modcanal->consultarCarreraModalidad($data["unidada"], $data["moda_id"]);
+                } else {
+                    $carrera = $modestudio->consultarCursoModalidad($data["unidada"], $data["moda_id"]);
+                }
+                $message = array("carrera" => $carrera);
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+            }
+            if (isset($data["getdescuento"])) {
+                if (($data["unidada"] == 1) or ($data["unidada"] == 2)) {
+                    $resItems = $modItemMetNivel->consultarXitemMetniv($data["unidada"], $data["moda_id"], $data["metodo"], $data["empresa_id"], $data["carrera_id"]);
+                    $descuentos = $modDescuento->consultarDesctoxitem($resItems["ite_id"]);
+                } else {
+                    //\app\models\Utilities::putMessageLogFile('item:'. $data["ite_id"]);
+                    $descuentos = $modDescuento->consultarDescuentoXitemUnidad($data["unidada"], $data["moda_id"], $data["ite_id"]);
+                }
+                $message = array("descuento" => $descuentos);
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
 
+            }
+            if (isset($data["getitem"])) {
+                if ($data["empresa_id"] != 1) {
+                    $metodo = 0;
+                } else {
+                    if ($data["unidada"] != 1) {
+                        $metodo = $data["metodo"];
+                    } else {
+                        $metodo = 0;
+                    }
+                }
+                $resItem = $modItemMetNivel->consultarXitemPrecio($data["unidada"], $data["moda_id"], $metodo, $data["carrera_id"], $data["empresa_id"]);
+                $message = array("items" => $resItem);
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+            }
+            if (isset($data["getprecio"])) {
+                $resp_precio = $mod_solins->ObtenerPrecioXitem($data["ite_id"]);
+                $message = array("precio" => $resp_precio["precio"]);
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+            }
+            if (isset($data["getpreciodescuento"])) {
+                $resp_precio = $mod_solins->ObtenerPrecioXitem($data["ite_id"]);
+                if ($data["descuento_id"] > 0) {
+                    $respDescuento = $modDescuento->consultarValdctoItem($data["descuento_id"]);
+                    if ($resp_precio["precio"] == 0) {
+                        $precioDescuento = 0;
+                    } else {
+                        if ($respDescuento["ddit_tipo_beneficio"] == 'P') {
+                            $descuento = ($resp_precio["precio"] * $respDescuento["ddit_porcentaje"]) / 100;
+                        } else {
+                            $descuento = $respDescuento["ddit_valor"];
+                        }
+                        $precioDescuento = $resp_precio["precio"] - $descuento;
+                    }
+                } else {
+                    $precioDescuento = 0;
+                }
+                $message = array("preciodescuento" => $precioDescuento);
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+            }
+            if (isset($data["gethabilita"])) {
+                if ($data["ite_id"] == 155 or $data["ite_id"] == 156 or $data["ite_id"] == 157 or $data["ite_id"] == 10) {
+                    $habilita = '1';
+                } else {
+                    $habilita = '0';
+                };
+                $message = array("habilita" => $habilita);
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+            }
+        }
+        // Datos especificos Solicitud y Facturas
+        $resp_solicitudesp = $mod_solins->Consultarsolicitudxid($sins_id);
+        $arr_unidadac = $mod_unidad->consultarUnidadAcademicas();
+        $arr_modalidad = $mod_modalidad->consultarModalidad($resp_solicitudesp['uaca_id'], $resp_solicitudesp['emp_id']);
+        $arr_metodos = $mod_metodo->consultarMetodoIngNivelInt($resp_solicitudesp['uaca_id']);
+        $arr_carrera = $modcanal->consultarCarreraModalidad($resp_solicitudesp['uaca_id'], $resp_solicitudesp['mod_id']);
+        //Descuentos y precios.
+        //$resp_item = $modItemMetNivel->consultaritemsol($resp_solicitudesp['uaca_id'], $resp_solicitudesp['mod_id'], $resp_solicitudesp['ite_id']);
+        //$arr_descuento = $modDescuento->consultarDesctoxitem($resp_solicitudesp['ite_id']);
+        //$resp_pago = $mod_ordenpago->consultaOrdenPago($sins_id);
+        $resp_item = $modItemMetNivel->consultarXitemPrecio($resp_solicitudesp['uaca_id'], $resp_solicitudesp['mod_id'], $resp_solicitudesp['ming_id'], $resp_solicitudesp['eaca_id']);
+        $arr_descuento = $modDescuento->consultarDesctoxitem($resp_solicitudesp["ite_id"]);
+        $arr_convempresa = $mod_conempresa->consultarConvenioEmpresa();
+        $resp_solicitudescuento = $mod_solins->Consultarsolicitudescuento($sins_id);
+        if (!empty($resp_solicitudescuento['sdes_id'])) {
+            // tiene descuento
+            // consultar los item de descuento
+            $resp_solicitudescitem = $mod_solins->Consultarsolicitudescuentoitem($sins_id);
+            if (!empty($resp_solicitudescitem['sdes_id'])) {
+                $tiendesct = '1';
+                $precio_dect = $mod_solins->ObtenerPrecioXitem($resp_solicitudesp["ite_id"]);
+            }else{
+                // no tiene descuento
+                $tiendesct = '0';
+                $precio_dect = $resp_solicitudesp['opag_total'];
+            }
+        }else{
+            // no tiene descuento
+            $tiendesct = '0';
+            $precio_dect = $resp_solicitudesp['opag_total'];
+        }
+        return $this->render('viewsolicitud', [
+                    "arr_unidad" => ArrayHelper::map($arr_unidadac, "id", "name"),
+                    "arr_metodos" => ArrayHelper::map($arr_metodos, "id", "name"),
+                    "arr_persona" => $dataPersona,
+                    "arr_carrera" => ArrayHelper::map($arr_carrera, "id", "name"),
+                    "arr_modalidad" => ArrayHelper::map($arr_modalidad, "id", "name"),
+                    "arr_descuento" => ArrayHelper::map($arr_descuento, "id", "name"),
+                    "arr_item" => ArrayHelper::map($resp_item, "id", "name"),
+                    "int_id" => $inte_id,
+                    "per_id" => $per_id,
+                    "arr_empresa" => ArrayHelper::map($empresa, "id", "value"),
+                    "arr_convenio_empresa" => ArrayHelper::map($arr_convempresa, "id", "name"),
+                    "arr_solicitudesp" => $resp_solicitudesp,
+                    "tiene_desct" => $tiendesct,
+                    "precio_dect" => $precio_dect,
+                    "resp_solicitudescuento" => $resp_solicitudescuento,
+        ]);
+    }
+    public function actionEditsolicitud() {
+        $emp_id = @Yii::$app->session->get("PB_idempresa");
+        $mod_metodo = new MetodoIngreso();
+        $empresa_mod = new Empresa();
+        $tiendesct = '0';
+        $per_id = base64_decode($_GET['per_id']);
+        $sins_id = base64_decode($_GET['id_sol']);
+        Yii::$app->session->set('persona_solicita', base64_encode($_GET['ids']));
+        $mod_carrera = new EstudioAcademico();
+        $mod_unidad = new UnidadAcademica();
+        $persona_model = new Persona();
+        $mod_modalidad = new Modalidad();
+        $modcanal = new Oportunidad();
+        $modestudio = new ModuloEstudio();
+        $modItemMetNivel = new ItemMetodoUnidad();
+        $modDescuento = new DetalleDescuentoItem();
+        $modUnidad = new UnidadAcademica();
+        $dataPersona = $persona_model->consultaPersonaId($per_id);
+        $modInteresado = new Interesado();
+        $inte_id = $modInteresado->consultarIdinteresado($per_id);
+        $empresa = $empresa_mod->getAllEmpresa();
+        $mod_solins = new SolicitudInscripcion();
+        $mod_conempresa = new ConvenioEmpresa();
+        if (Yii::$app->request->isAjax) {
+            $data = Yii::$app->request->post();
+            if (isset($data["getuacademias"])) {
+                //$data_u_acad = $mod_unidad->consultarUnidadAcademicasEmpresa($data["empresa_id"]);
+                $data_u_acad->consultarUnidadAcademicas();
+                $message = array("unidad_academica" => $data_u_acad);
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+            }
+            if (isset($data["getmodalidad"])) {
+                if ($data["nint_id"] == 1 or $data["nint_id"] == 2) {
+                    $modalidad = $mod_modalidad->consultarModalidad($data["nint_id"], $data["empresa_id"]);
+                } else {
+                    $modalidad = $modestudio->consultarModalidadModestudio();
+                }
+                $message = array("modalidad" => $modalidad);
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+            }
+            if (isset($data["getmetodo"])) {
+                $metodos = $mod_metodo->consultarMetodoIngNivelInt($data['nint_id']);
+                $message = array("metodos" => $metodos);
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+            }
+            if (isset($data["getcarrera"])) {
+                if ($data["unidada"] == 1 or $data["unidada"] == 2) {
+                    $carrera = $modcanal->consultarCarreraModalidad($data["unidada"], $data["moda_id"]);
+                } else {
+                    $carrera = $modestudio->consultarCursoModalidad($data["unidada"], $data["moda_id"]);
+                }
+                $message = array("carrera" => $carrera);
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+            }
+            if (isset($data["getdescuento"])) {
+                if (($data["unidada"] == 1) or ($data["unidada"] == 2)) {
+                    $resItems = $modItemMetNivel->consultarXitemMetniv($data["unidada"], $data["moda_id"], $data["metodo"], $data["empresa_id"], $data["carrera_id"]);
+                    $descuentos = $modDescuento->consultarDesctoxitem($resItems["ite_id"]);
+                } else {
+                    $descuentos = $modDescuento->consultarDescuentoXitemUnidad($data["unidada"], $data["moda_id"], $data["ite_id"]);
+                }
+                $message = array("descuento" => $descuentos);
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+
+            }
+            if (isset($data["getitem"])) {
+                if ($data["empresa_id"] != 1) {
+                    $metodo = 0;
+                } else {
+                    if ($data["unidada"] != 1) {
+                        $metodo = $data["metodo"];
+                    } else {
+                        $metodo = 0;
+                    }
+                }
+                $resItem = $modItemMetNivel->consultarXitemPrecio($data["unidada"], $data["moda_id"], $metodo, $data["carrera_id"], $data["empresa_id"]);
+                $message = array("items" => $resItem);
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+            }
+            if (isset($data["getprecio"])) {
+                $resp_precio = $mod_solins->ObtenerPrecioXitem($data["ite_id"]);
+                $message = array("precio" => $resp_precio["precio"]);
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+            }
+            if (isset($data["getpreciodescuento"])) {
+                $resp_precio = $mod_solins->ObtenerPrecioXitem($data["ite_id"]);
+                if ($data["descuento_id"] > 0) {
+                    $respDescuento = $modDescuento->consultarValdctoItem($data["descuento_id"]);
+                    if ($resp_precio["precio"] == 0) {
+                        $precioDescuento = 0;
+                    } else {
+                        if ($respDescuento["ddit_tipo_beneficio"] == 'P') {
+                            $descuento = ($resp_precio["precio"] * $respDescuento["ddit_porcentaje"]) / 100;
+                        } else {
+                            $descuento = $respDescuento["ddit_valor"];
+                        }
+                        $precioDescuento = $resp_precio["precio"] - $descuento;
+                    }
+                } else {
+                    $precioDescuento = 0;
+                }
+                $message = array("preciodescuento" => $precioDescuento);
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+            }
+            if (isset($data["gethabilita"])) {
+                if ($data["ite_id"] == 155 or $data["ite_id"] == 156 or $data["ite_id"] == 157 or $data["ite_id"] == 10) {
+                    $habilita = '1';
+                } else {
+                    $habilita = '0';
+                };
+                $message = array("habilita" => $habilita);
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+            }
+        }
+        // Datos especificos Solicitud y Facturas
+        $resp_solicitudesp = $mod_solins->Consultarsolicitudxid($sins_id);
+        $arr_unidadac = $mod_unidad->consultarUnidadAcademicas();
+        $arr_modalidad = $mod_modalidad->consultarModalidad($resp_solicitudesp['uaca_id'], $resp_solicitudesp['emp_id']);
+        $arr_metodos = $mod_metodo->consultarMetodoIngNivelInt($resp_solicitudesp['uaca_id']);
+        $arr_carrera = $modcanal->consultarCarreraModalidad($resp_solicitudesp['uaca_id'], $resp_solicitudesp['mod_id']);
+        //Descuentos y precios.
+        $resp_item = $modItemMetNivel->consultaritemsol($resp_solicitudesp['uaca_id'], $resp_solicitudesp['mod_id'], $resp_solicitudesp['ite_id']);
+        $arr_descuento = $modDescuento->consultarDesctoxitem($resp_solicitudesp['ite_id']);
+        $arr_convempresa = $mod_conempresa->consultarConvenioEmpresa();
+        $resp_solicitudescuento = $mod_solins->Consultarsolicitudescuento($sins_id);
+        if (!empty($resp_solicitudescuento['sdes_id'])) {
+            // tiene descuento
+            // consultar los item de descuento
+            $resp_solicitudescitem = $mod_solins->Consultarsolicitudescuentoitem($sins_id);
+            if (!empty($resp_solicitudescitem['sdes_id'])) {
+                $tiendesct = '1';
+                $precio_dect = $mod_solins->ObtenerPrecioXitem($resp_solicitudesp["ite_id"]);
+            }else{
+                // no tiene descuento
+                $tiendesct = '0';
+                $precio_dect = $resp_solicitudesp['opag_total'];
+            }
+        }else{
+            // no tiene descuento
+            $tiendesct = '0';
+            $precio_dect = $resp_solicitudesp['opag_total'];
+        }
+        return $this->render('editsolicitud', [
+                    "arr_unidad" => ArrayHelper::map($arr_unidadac, "id", "name"),
+                    "arr_metodos" => ArrayHelper::map($arr_metodos, "id", "name"),
+                    "arr_persona" => $dataPersona,
+                    "arr_carrera" => ArrayHelper::map($arr_carrera, "id", "name"),
+                    "arr_modalidad" => ArrayHelper::map($arr_modalidad, "id", "name"),
+                    "arr_descuento" => ArrayHelper::map($arr_descuento, "id", "name"),
+                    "arr_item" => ArrayHelper::map($resp_item, "id", "name"),
+                    "int_id" => $inte_id,
+                    "per_id" => $per_id,
+                    "arr_empresa" => ArrayHelper::map($empresa, "id", "value"),
+                    "arr_convenio_empresa" => ArrayHelper::map($arr_convempresa, "id", "name"),
+                    "arr_solicitudesp" => $resp_solicitudesp,
+                    "tiene_desct" => $tiendesct,
+                    "precio_dect" => $precio_dect,
+                    "resp_solicitudescuento" => $resp_solicitudescuento,
+        ]);
+    }
+    public function actionAnularsolicitud() {
+        $mod_solins = new Solicitudinscripcion();
+        $mod_ordenpago = new OrdenPago();
+        $nodescuento = '0';
+		$usu_autenticado = @Yii::$app->session->get("PB_iduser");
+		if (Yii::$app->request->isAjax) {
+			$data = Yii::$app->request->post();
+            $sins_id = $data["sins_id"];
+            $opag_id = $data["opag_id"];
+            $con = \Yii::$app->db_captacion;
+            $con1 = \Yii::$app->db_facturacion;
+            $transaction = $con->beginTransaction();
+            $transaction1 = $con->beginTransaction();
+            try {
+                $resp_solicitudesactivar = $mod_solins->Desactivarsolicitudinscripcion($sins_id, $usu_autenticado);
+				if ($resp_solicitudesactivar) {
+                    \app\models\Utilities::putMessageLogFile('entro 1: ');
+                    // 1ero consultar si la solicitud tiene descuento
+                    $cons_solicitudesct = $mod_solins->Consultarsolicitudescuentoitem($sins_id);
+                    if (!empty($cons_solicitudesct['sdes_id'])) {
+                        $resp_solicitudesct = $mod_solins->Desactivarsolicitudescuento($sins_id);
+                        if (resp_solicitudesct) {
+                            $nodescuento = '1';
+                        }else{
+                            // no hay descuento, pase a la otra tabla
+                            $nodescuento = '1';
+                           }
+                    }else{
+                     // no hay descuento, pase a la otra tabla
+                     $nodescuento = '1';
+                    }
+                    if ($nodescuento == '1') {
+                        //Realizar accion
+                        $resp_opago = $mod_ordenpago->Desactivarordenpago($opag_id, $usu_autenticado);
+                        if ($resp_opago) {
+                            //Realizar accion
+                            $resp_despago = $mod_ordenpago->Desactivardesglosepago($opag_id, $usu_autenticado);
+                            if ($resp_despago) {
+                                //Guardar todo
+                                $transaction->commit();
+                                $transaction1->commit();
+					            $message = array(
+                                "wtmessage" => Yii::t("notificaciones", "Se ha anulado la solicitu de inscripcion."),
+                                "title" => Yii::t('jslang', 'Success'),
+                            );
+                            return Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), false, $message);
+                                    } else {
+                                        $transaction->rollback();
+                                        $transaction1->rollback();
+                                        $message = array(
+                                            "wtmessage" => Yii::t("notificaciones", "Error al anular desglose pago. "),
+                                            "title" => Yii::t('jslang', 'Error'),
+                                        );
+                                        return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+                                    }
+                        } else {
+                            $transaction->rollback();
+                            $transaction1->rollback();
+                            $message = array(
+                                "wtmessage" => Yii::t("notificaciones", "Error al anular orden de pago. "),
+                                "title" => Yii::t('jslang', 'Error'),
+                            );
+                            return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+                        }
+                    } else {
+                        $transaction->rollback();
+                        $transaction1->rollback();
+                        $message = array(
+                            "wtmessage" => Yii::t("notificaciones", "Error al anular solicitud de descuento. "),
+                            "title" => Yii::t('jslang', 'Error'),
+                        );
+                        return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+                    }
+				}else {
+					$transaction->rollback();
+					$message = array(
+						"wtmessage" => Yii::t("notificaciones", "Error al anular inscripción. "),
+						"title" => Yii::t('jslang', 'Error'),
+					);
+					return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+				}
+			} catch (Exception $ex) {
+				$transaction->rollback();
+				$message = array(
+					"wtmessage" => Yii::t("notificaciones", "Error al anular solicitud. "),
+					"title" => Yii::t('jslang', 'Success'),
+				);
+				return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+			}
+		}
+	}
 }

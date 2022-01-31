@@ -43,12 +43,12 @@ trait FixtureTrait
      * ```php
      * [
      *     // anonymous fixture
-     *     PostFixture::class,
+     *     PostFixture::className(),
      *     // "users" fixture
-     *     'users' => UserFixture::class,
+     *     'users' => UserFixture::className(),
      *     // "cache" fixture with configuration
      *     'cache' => [
-     *          'class' => CacheFixture::class,
+     *          'class' => CacheFixture::className(),
      *          'host' => 'xxx',
      *     ],
      * ]

@@ -53,6 +53,9 @@ function update() {
     if (!validateForm()) {        
         requestHttpAjax(link, arrParams, function(response) {
             showAlert(response.status, response.label, response.message);
+            setTimeout(function() {
+               window.location.href = $('#txth_base').val() + "/academico/asignatura/index";
+           }, 3000);
         }, true);
     }
 }
@@ -69,6 +72,9 @@ function save() {
     if (!validateForm()) {
         requestHttpAjax(link, arrParams, function(response) {
             showAlert(response.status, response.label, response.message);
+            setTimeout(function() {
+               window.location.href = $('#txth_base').val() + "/academico/asignatura/index";
+           }, 3000);
         }, true);
     }
 }

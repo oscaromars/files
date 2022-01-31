@@ -36,7 +36,7 @@ $form = ActiveForm::begin([
 ]);
 ?>
 
-     <?=
+    <?=
 $form->field($model, 'paca_id')->label('Período:')->widget(Select2::classname(), [
 	//  'data' => ArrayHelper::map(app\modules\academico\models\PeriodoAcademico::find()->all(), 'paca_id', 'sem.saca_nombre'),
 	'data' => $var,
@@ -76,12 +76,23 @@ $form->field($model, 'mod_id')->label('Modalidad:')->widget(Select2::classname()
 ?>
 
 
-
+	<?=
+$form->field($model, 'pame_id')->label('Mes:')->widget(Select2::classname(), [
+	'data' => ArrayHelper::map(app\modules\academico\models\PeriodoAcademicoMensualizado::find()->where(['pame_estado_logico' => '1', 'pame_estado' => '1'])->all(), 'pame_id', 'pame_mes'),
+	// 'data' => $var,
+	'size' => Select2::MEDIUM,
+	'options' => ['placeholder' => 'Seleccione Mes ...', 'multiple' => false],
+	'pluginOptions' => [
+		'allowClear' => true,
+		'width' => '295px',
+	],
+]);
+?>
 
     <div class="form-group">
         <div class="col-sm-offset-4">
-<?=Html::submitButton('Buscar', ['class' => 'btn btn-primary'])?>
-               </div>
+            <?=Html::submitButton('Buscar', ['class' => 'btn btn-primary', 'id' => 'btn_buscar'])?>
+        </div>
     </div>
 
 <?php ActiveForm::end();?>

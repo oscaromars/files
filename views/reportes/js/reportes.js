@@ -123,6 +123,7 @@ function buscarDatapromedios() {
     }
 }
 
+
 function exportAgendamiento(){
     buscarActividades("1");//Reporte de Oportunidad x Actividad
 }
@@ -221,13 +222,16 @@ function exportExceldistributivoposgrado() {
     var periodo =  $('#distributivoacademicosearch-paca_id').val();
     var tipo_asignacion =  $('#distributivoacademicosearch-tdis_id').val();
     var modalidad =  $('#distributivoacademicosearch-mod_id').val();
-    window.location.href = $('#txth_base').val() + "/reportes/expexceldistributivoposgrado?&tipo_asignacion="+ periodo + tipo_asignacion + "&modalidad=" + modalidad;
+    var mes =  $('#distributivoacademicosearch-pame_id').val();
+    window.location.href = $('#txth_base').val() + "/reportes/expexceldistributivoposgrado?&periodo="+ periodo + "&tipo_asignacion=" + tipo_asignacion + "&modalidad=" + modalidad + "&mes=" + mes;
 }
+
 function exportPDFdistributivoposgrado() {
     var periodo =  $('#distributivoacademicosearch-paca_id').val();
     var tipo_asignacion =  $('#distributivoacademicosearch-tdis_id').val();
     var modalidad =  $('#distributivoacademicosearch-mod_id').val();
-    window.location.href = $('#txth_base').val() + "/reportes/exppdfdistributivoposgrado?pdf=1&tipo_asignacion=" + tipo_asignacion + "&modalidad=" + modalidad +"&periodo="+periodo;
+    var mes =  $('#distributivoacademicosearch-pame_id').val();
+    window.location.href = $('#txth_base').val() + "/reportes/exppdfdistributivoposgrado?pdf=1&periodo="+ periodo + "&tipo_asignacion=" + tipo_asignacion + "&modalidad=" + modalidad + "&mes=" + mes;
 }
 
 function exportPDFdistributivo() {

@@ -93,6 +93,23 @@
         }, true);
     });
 
+        $('#cmb_modalidad').change(function () {
+        var link = $('#txth_base').val() + "/academico/asistenciaregistrodocente/registrodin";
+        var arrParams = new Object();
+        arrParams.paca_id = $('#cmb_periodo').val();
+        arrParams.uaca_id = $('#cmb_unidad').val();
+        arrParams.mod_id = $(this).val();
+        arrParams.pro_id = $('#cmb_profesor_asis').val();
+        arrParams.getasignaturas_bus_reg = true;
+        requestHttpAjax(link, arrParams, function (response) {
+            if (response.status == "OK") {
+                data = response.message;
+               // setComboDataselect(data.asignatura, "cmb_materia","Todos");
+                setComboDataselectpro(data.profesorreg, "cmb_profesor_asis","Todos");
+            }
+        }, true);
+    });
+
     //$('#cmb_profesor_asis').change();
     /*
     $('#cmb_profesor_rc').change(function () {
@@ -181,6 +198,18 @@ function setComboDataselectpro(arr_data, element_id, texto) {
     for (var i = 0; i < arr_data.length; i++) {
         var id = arr_data[i].pro_id;
         var value = arr_data[i].nombres;
+
+        option_arr += "<option value='" + id + "'>" + value + "</option>";
+    }
+    $("#" + element_id).html(option_arr);
+}
+
+function setComboDataselectpar(arr_data, element_id, texto) {
+    var option_arr = "";
+    option_arr += "<option value= '0'>" + texto + "</option>";
+    for (var i = 0; i < arr_data.length; i++) {
+        var id = arr_data[i].id;
+        var value = arr_data[i].name;
 
         option_arr += "<option value='" + id + "'>" + value + "</option>";
     }
@@ -483,7 +512,7 @@ function actualizarGridRegistro(dready = 0) {
 
         editor.on('submitComplete', function (e, json, data, action) {
             if(action == 'edit'){
-                alertify.success('Registro editado con exito');
+                alertify.success('Registrado con exito');
             }//if
         });
 
@@ -957,7 +986,7 @@ function actualizarGridRegistrosemanal(dready = 0) {
 
         editor.on('submitComplete', function (e, json, data, action) {
             if(action == 'edit'){
-                alertify.success('Registro editado con exito');
+                alertify.success('Registrado con exito');
             }//if
         });
 
@@ -1271,7 +1300,7 @@ function actualizarGridRegistrodin(dready = 0) {
                 $.each(o.data[indice], function( index, value ) {
                     if(componentes[index]){
                         if(value < 0 || value > parseInt(componentes[index]['notamax'])){
-                            alertify.error("El cambio no se ha registrado, los valores del componente Asíncrona debe estar entre 0 a "+componentes[index]['notamax']);
+                            alertify.error("El cambio no se ha registrado, los valores deben estar entre 0 a "+componentes[index]['notamax']);
                             bandera = 1;
                         }//if
                     }//if
@@ -1283,7 +1312,7 @@ function actualizarGridRegistrodin(dready = 0) {
 
         editor.on('submitComplete', function (e, json, data, action) {
             if(action == 'edit'){
-                alertify.success('Registro editado con exito');
+                alertify.success('Registrado con exito');
             }//if
             //actualizarGridRegistro(0);
         });
@@ -1431,7 +1460,7 @@ function actualizarGridRegistrodin(dready = 0) {
                 {  extend: 'edit', editor: editor  },
                 /*{  extend: 'remove', editor: editor  },*/
             ],
-            "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+            "lengthMenu": [[-1, 10, 25, 60], ["All", 10, 25, 60]],
             orderable  : false,
             //"bDestroy" : true,
             destroy    : true,

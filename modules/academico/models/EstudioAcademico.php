@@ -101,14 +101,14 @@ class EstudioAcademico extends \app\modules\admision\components\CActiveRecord {
     public function obtenerCarreraXFacu($nint_id) {
         $con = \Yii::$app->db_academico;
         $estado = 1;
-        $sql = "SELECT 
+        $sql = "SELECT
                     car.car_id AS id,
-                    car.car_nombre AS value  
+                    car.car_nombre AS value
                FROM " . $con->dbname . ".modalidad_carrera_nivel mcn
                     INNER JOIN " . $con->dbname . ".carrera as car on car.car_id = mcn.car_id
                WHERE  car.car_estado_logico = :estado AND
                     car.car_estado = :estado AND
-                    car.car_estado_logico=:estado AND 
+                    car.car_estado_logico=:estado AND
                     mcn.mcni_estado=:estado AND
                     mcn.mcni_estado_logico=:estado AND
                     mcn.mod_id=:nint_id
@@ -123,10 +123,10 @@ class EstudioAcademico extends \app\modules\admision\components\CActiveRecord {
     public function obtenerNombreCarrera($carrera_id) {
         $con = \Yii::$app->db_academico;
         $estado = 1;
-        $sql = "SELECT                     
-                    car.car_nombre 
-               FROM " . $con->dbname . ".carrera car                    
-               WHERE car.car_id = :carrera_id AND 
+        $sql = "SELECT
+                    car.car_nombre
+               FROM " . $con->dbname . ".carrera car
+               WHERE car.car_id = :carrera_id AND
                     car.car_estado = :estado AND
                     car.car_estado_logico=:estado";
         $comando = $con->createCommand($sql);
@@ -141,10 +141,10 @@ class EstudioAcademico extends \app\modules\admision\components\CActiveRecord {
         $estado = 1;
 
 
-        $sql = "SELECT  acon_id as id, 
-                        acon_nombre as area_conocimiento                  
+        $sql = "SELECT  acon_id as id,
+                        acon_nombre as area_conocimiento
                 FROM "
-                . $con->dbname . ".area_conocimiento 
+                . $con->dbname . ".area_conocimiento
                 WHERE   acon_estado = :estado AND
                         acon_estado_logico = :estado
                 ORDER BY area_conocimiento asc";
@@ -172,21 +172,21 @@ class EstudioAcademico extends \app\modules\admision\components\CActiveRecord {
 
     /**
      * Function obtener Facultad segun nivel interes estudio
-     * @author  
-     * @property       
-     * @return  
+     * @author
+     * @property
+     * @return
      */
     public function obtenerFacultad($nivelinteres) {
         $con = \Yii::$app->db_academico;
         $estado = 1;
-        $sql = "SELECT 
+        $sql = "SELECT
                     fact.fac_id as id,
                     fact.fac_nombre as name
-                FROM 
-                    " . $con->dbname . ".facultad as fact            
-                WHERE   
+                FROM
+                    " . $con->dbname . ".facultad as fact
+                WHERE
                     fact.nint_id=:nivelinteres AND
-                    fact.fac_estado_logico=:estado AND 
+                    fact.fac_estado_logico=:estado AND
                     fact.fac_estado=:estado
                 ORDER BY name asc";
         $comando = $con->createCommand($sql);
@@ -197,18 +197,18 @@ class EstudioAcademico extends \app\modules\admision\components\CActiveRecord {
     }
 
     /**
-     * Function obtener consultarCarrera 
+     * Function obtener consultarCarrera
      * @author      Grace Viteri <analistadesarrollo01@uteg.edu.ec>
-     * @property       
-     * @return  
+     * @property
+     * @return
      */
     public function consultarCarrera() {
         $con = \Yii::$app->db_academico;
         $estado = 1;
-        $sql = "SELECT 
+        $sql = "SELECT
                     eac.eaca_id AS id,
-                    eac.eaca_nombre AS value  
-               FROM " . $con->dbname . ".estudio_academico eac                    
+                    eac.eaca_nombre AS value
+               FROM " . $con->dbname . ".estudio_academico eac
                WHERE  eac.eaca_estado_logico = :estado AND
                       eac.eaca_estado = :estado
                ORDER BY 2 ";
@@ -221,32 +221,32 @@ class EstudioAcademico extends \app\modules\admision\components\CActiveRecord {
     /** Se debe cambiar esta funcion que regrese el codigo de area ***ojo***
      * Function consultarIdsCarrera
      * @author  Byron Villacreses <developer@uteg.edu.ec>
-     * @property integer car_id      
-     * @return  
+     * @property integer car_id
+     * @return
      */
     public static function consultarIdsEstudioAca($TextAlias) {
         $con = \Yii::$app->db_academico;
-        $sql = "SELECT eaca_id Ids 
-                    FROM " . $con->dbname . ".estudio_academico  
+        $sql = "SELECT eaca_id Ids
+                    FROM " . $con->dbname . ".estudio_academico
                 WHERE eaca_estado=1 AND eaca_alias=:eaca_alias ";
         $comando = $con->createCommand($sql);
         $comando->bindParam(":eaca_alias", $TextAlias, \PDO::PARAM_STR);
         //return $comando->queryAll();
         $rawData = $comando->queryScalar();
         if ($rawData === false)
-            return 0; //en caso de que existe problema o no retorne nada tiene 1 por defecto 
+            return 0; //en caso de que existe problema o no retorne nada tiene 1 por defecto
         return $rawData;
     }
 
     /** Se debe cambiar esta funcion que regrese el codigo de area ***ojo***
      * Function consultarIdsCarrera
      * @author  Byron Villacreses <developer@uteg.edu.ec>
-     * @property integer car_id      
-     * @return  
+     * @property integer car_id
+     * @return
      */
     public static function consultarIdsModEstudio($CodEmp, $TextAlias) {
         $con = \Yii::$app->db_academico;
-        $sql = "SELECT A.mest_id Ids 
+        $sql = "SELECT A.mest_id Ids
                     FROM " . $con->dbname . ".modulo_estudio A
                             INNER JOIN 	" . $con->dbname . ".modulo_estudio_empresa B
                                     ON A.mest_id=B.mest_id
@@ -258,26 +258,26 @@ class EstudioAcademico extends \app\modules\admision\components\CActiveRecord {
         //return $comando->queryAll();
         $rawData = $comando->queryScalar();
         if ($rawData === false)
-            return 0; //en caso de que existe problema o no retorne nada tiene 1 por defecto 
+            return 0; //en caso de que existe problema o no retorne nada tiene 1 por defecto
         return $rawData;
     }
 
     /**
      * Function obtener consultarCarrera x unidad
      * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
-     * @property       
-     * @return  
+     * @property
+     * @return
      */
     public function consultarCarreraxunidad($unidad) {
         $con = \Yii::$app->db_academico;
         $estado = 1;
-        $sql = "SELECT 
+        $sql = "SELECT
                     eac.eaca_id AS id,
-                    eac.eaca_nombre AS name  
-               FROM " . $con->dbname . ".estudio_academico eac                    
+                    eac.eaca_nombre AS name
+               FROM " . $con->dbname . ".estudio_academico eac
                WHERE  eac.eaca_estado_logico = :estado AND
                       eac.eaca_estado = :estado AND
-                      eac.teac_id = :unidad  
+                      eac.teac_id = :unidad
                ORDER BY 2 ";
         $comando = $con->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
@@ -289,18 +289,18 @@ class EstudioAcademico extends \app\modules\admision\components\CActiveRecord {
     /**
      * Function obtener consultarmodalidadxcarrera
      * @author   Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
-     * @property       
-     * @return  
+     * @property
+     * @return
      */
     public function consultarmodalidadxcarrera($eaca_id) {
-        \app\models\Utilities::putMessageLogFile('carrera modelo 111..: '. $data['eaca_id']);
+        //\app\models\Utilities::putMessageLogFile('carrera modelo 111..: '. $data['eaca_id']);
         $con = \Yii::$app->db_academico;
         $estado = 1;
-        $sql = "SELECT 
+        $sql = "SELECT
                     meu.mod_id AS id,
-                    moda.mod_nombre AS name  
-               FROM " . $con->dbname . ".modalidad_estudio_unidad meu  
-               INNER JOIN " . $con->dbname . ".modalidad moda ON moda.mod_id = meu.mod_id                  
+                    moda.mod_nombre AS name
+               FROM " . $con->dbname . ".modalidad_estudio_unidad meu
+               INNER JOIN " . $con->dbname . ".modalidad moda ON moda.mod_id = meu.mod_id
                WHERE  meu.eaca_id = :eaca_id AND
                       meu.meun_estado_logico = :estado AND
                       meu.meun_estado = :estado";
@@ -314,22 +314,22 @@ class EstudioAcademico extends \app\modules\admision\components\CActiveRecord {
     /**
      * Function obtener carreras segun unidad academica y modalidad
      * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>;
-     * @property       
-     * @return  
+     * @property
+     * @return
      */
     public function consultarCarreraModalidad($unidad, $modalidad) {
         $con = \Yii::$app->db_academico;
         $estado = 1;
         $sql = "
-                SELECT 
+                SELECT
                         eac.eaca_id as id,
                         eac.eaca_nombre as name
                     FROM
                         " . $con->dbname . ".modalidad_estudio_unidad as mcn
                         INNER JOIN " . $con->dbname . ".estudio_academico as eac on eac.eaca_id = mcn.eaca_id
-                    WHERE 
+                    WHERE
                         mcn.uaca_id =:unidad AND
-                        mcn.mod_id =:modalidad AND          
+                        mcn.mod_id =:modalidad AND
                         -- eac.eaca_estado_logico=:estado AND
                         -- eac.eaca_estado=:estado AND
                         mcn.meun_estado_logico = :estado AND
@@ -347,8 +347,8 @@ class EstudioAcademico extends \app\modules\admision\components\CActiveRecord {
       /**
      * Function para consultar el estudio académico por el ID del estudiante
      * @author   Jorge Paladines <analista.desarrollo@uteg.edu.ec>
-     * @property       
-     * @return  
+     * @property
+     * @return
      */
     public function consultarEstudioAcademicoPorEstudiante($est_id){
         $con = Yii::$app->db_academico;
@@ -367,19 +367,19 @@ class EstudioAcademico extends \app\modules\admision\components\CActiveRecord {
 
         return $resultData;
     }
-    
+
     /**
      * Function para consultar si el estudio académico está siendo usado
      * @author   Jorge Paladines <analista.desarrollo@uteg.edu.ec>
-     * @property       
-     * @return  
+     * @property
+     * @return
      */
     public function consultarEstudioAcademicoEnUso($eaca_id){
         $con = Yii::$app->db_academico;
 
-        $sql = "SELECT * FROM db_academico_mbtu.estudio_academico as eaca
-                INNER JOIN db_academico_mbtu.modalidad_estudio_unidad as meun ON meun.eaca_id = eaca.eaca_id
-                INNER JOIN db_academico_mbtu.estudiante_carrera_programa as ecpr ON ecpr.meun_id = meun.meun_id
+        $sql = "SELECT * FROM " . $con->dbname . ".estudio_academico as eaca
+                INNER JOIN " . $con->dbname . ".modalidad_estudio_unidad as meun ON meun.eaca_id = eaca.eaca_id
+                INNER JOIN " . $con->dbname . ".estudiante_carrera_programa as ecpr ON ecpr.meun_id = meun.meun_id
                 WHERE eaca.eaca_estado = 1 AND eaca.eaca_estado_logico = 1
                 AND meun.meun_estado = 1 AND meun.meun_estado_logico = 1
                 AND ecpr.ecpr_estado = 1 AND ecpr.ecpr_estado_logico = 1
@@ -394,14 +394,14 @@ class EstudioAcademico extends \app\modules\admision\components\CActiveRecord {
     public function consultarEstudiosSemestreActual() {
         $con = \Yii::$app->db_academico;
         $estado = 1;
-        $sql = "SELECT 
+        $sql = "SELECT
                     car.car_id AS id,
-                    car.car_nombre AS value  
+                    car.car_nombre AS value
                FROM " . $con->dbname . ".modalidad_carrera_nivel mcn
                     INNER JOIN " . $con->dbname . ".carrera as car on car.car_id = mcn.car_id
                WHERE  car.car_estado_logico = :estado AND
                     car.car_estado = :estado AND
-                    car.car_estado_logico=:estado AND 
+                    car.car_estado_logico=:estado AND
                     mcn.mcni_estado=:estado AND
                     mcn.mcni_estado_logico=:estado AND
                     mcn.mod_id=:nint_id

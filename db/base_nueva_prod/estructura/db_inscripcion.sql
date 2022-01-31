@@ -19,7 +19,10 @@ CREATE TABLE `inscripcion_grado` (
   `mod_id` bigint NOT NULL,
   `paca_id` bigint NOT NULL,
   `igra_cedula` varchar(15) NOT NULL,
+  `igra_financiamiento` bigint NOT NULL, -- 1 credito directo, 2 credito bancario, 3 beca
+  `igra_institucion_beca` varchar(200) DEFAULT NULL,
   `igra_metodo_ingreso` bigint DEFAULT NULL,
+  `igra_ruta_documento` varchar(200) DEFAULT NULL,
   `igra_ruta_doc_titulo` varchar(200) DEFAULT NULL,
   `igra_ruta_doc_dni` varchar(200) DEFAULT NULL,
   `igra_ruta_doc_certvota` varchar(200) DEFAULT NULL,
@@ -37,7 +40,17 @@ CREATE TABLE `inscripcion_grado` (
   `igra_estado_logico` varchar(1) NOT NULL,
   PRIMARY KEY (`igra_id`)
 );
+/*
+ALTER TABLE `db_inscripcion`.`inscripcion_grado`
+ADD COLUMN `igra_financiamiento` BIGINT(20) NOT NULL AFTER `igra_cedula`;
 
+ALTER TABLE `db_inscripcion`.`inscripcion_grado`
+ADD COLUMN `igra_institucion_beca` VARCHAR(200) NULL AFTER `igra_financiamiento`;
+
+ALTER TABLE `db_inscripcion`.`inscripcion_grado`
+ADD COLUMN `igra_ruta_documento` VARCHAR(200) NULL DEFAULT
+NULL AFTER `igra_metodo_ingreso`;
+*/
 CREATE TABLE `inscripcion_posgrado` (
   `ipos_id` bigint NOT NULL AUTO_INCREMENT,
   `per_id` bigint NOT NULL,
@@ -48,6 +61,7 @@ CREATE TABLE `inscripcion_posgrado` (
   `ipos_cedula` varchar(50) DEFAULT NULL,
   `ipos_tipo_financiamiento` varchar(200) DEFAULT NULL,
   `ipos_metodo_ingreso` bigint DEFAULT NULL,
+  `ipos_ruta_documento` varchar(200) DEFAULT NULL,
   `ipos_ruta_doc_foto` varchar(200) DEFAULT NULL,
   `ipos_ruta_doc_dni` varchar(200) DEFAULT NULL,
   `ipos_ruta_doc_certvota` varchar(200) DEFAULT NULL,
@@ -71,13 +85,17 @@ CREATE TABLE `inscripcion_posgrado` (
   `ipos_estado_logico` varchar(1) NOT NULL,
   PRIMARY KEY (`ipos_id`)
 );
-
+/*
+ ALTER TABLE `db_inscripcion`.`inscripcion_posgrado`
+ ADD COLUMN `ipos_ruta_documento` VARCHAR(200) NULL DEFAULT NULL AFTER `ipos_metodo_ingreso`;
+*/
 CREATE TABLE `informacion_laboral` (
   `ilab_id` bigint NOT NULL AUTO_INCREMENT,
   `per_id` bigint DEFAULT NULL,
   `ilab_empresa` varchar(200) DEFAULT NULL,
   `ilab_cargo` varchar(200) DEFAULT NULL,
   `ilab_telefono_emp` varchar(10) DEFAULT NULL,
+  `ilab_pais_emp` bigint DEFAULT NULL,
   `ilab_prov_emp` bigint DEFAULT NULL,
   `ilab_ciu_emp` bigint DEFAULT NULL,
   `ilab_parroquia` varchar(200) DEFAULT NULL,
@@ -91,7 +109,10 @@ CREATE TABLE `informacion_laboral` (
   `ilab_estado_logico` varchar(1) NOT NULL,
   PRIMARY KEY (`ilab_id`)
 );
-
+/*
+ ALTER TABLE `db_inscripcion`.`informacion_laboral`
+ ADD COLUMN `ilab_pais_emp` BIGINT(20) NULL DEFAULT NULL AFTER `ilab_telefono_emp`;
+*/
 CREATE TABLE `info_estudiante_investigacion` (
   `iein_id` bigint NOT NULL AUTO_INCREMENT,
   `per_id` bigint NOT NULL,

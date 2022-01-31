@@ -16,7 +16,22 @@ $(document).ready(function() {
             $('#observacion').css('display', 'none');                       
         }
     });
+
+    $('#btn_buscarDCAB').click(function () {
+       actualizarGrid();
+    });
+
  });
+
+function actualizarGrid() {
+    var arrParams = new Object();
+    arrParams.paca_id = $('#distributivocabecerasearch-paca_id option:selected').val();
+    console.log(arrParams);
+    //Buscar almenos una clase con el nombre para ejecutar
+    $("#grid").yiiGridView("applyFilter", arrParams);
+    
+        
+}
 
 function searchModules() {
     var arrParams = new Object();
@@ -34,7 +49,7 @@ function aprobarDistributivo(){
     console.log('keys: ' + keys);
     //alert('prubea');
     
-     var link = $('#txth_base').val() + "/academico/distributivocabecera/aprobar";
+    var link = $('#txth_base').val() + "/academico/distributivocabecera/aprobar";
     var arrParams = new Object();
     arrParams.id = $('#grid').yiiGridView('getSelectedRows');
     arrParams.resultado = 2;

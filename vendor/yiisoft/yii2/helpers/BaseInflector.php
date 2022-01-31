@@ -219,8 +219,6 @@ class BaseInflector
         'whiting' => 'whiting',
         'wildebeest' => 'wildebeest',
         'Yengeese' => 'Yengeese',
-        'software' => 'software',
-        'hardware' => 'hardware',
     ];
     /**
      * @var array fallback map for transliteration used by [[transliterate()]] when intl isn't available.

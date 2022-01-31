@@ -682,7 +682,7 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
                         d.uaca_nombre as unidad,
                         e.mod_nombre as modalidad,
                         p.per_cedula as identificacion,
-                        concat(p.per_pri_nombre, ' ', p.per_pri_apellido, ' ', ifnull(p.per_seg_apellido,'')) as estudiante,
+                        concat(ifnull(p.per_pri_apellido,''), ' ', ifnull(p.per_seg_apellido,''), ' ', ifnull(p.per_pri_nombre,'')) as estudiante,
                         concat(saca_nombre, '-', baca_nombre,'-',baca_anio) as periodo,
                         /*z.asi_nombre as asignatura,*/
                         ceunid.ceuni_descripcion_unidad,
@@ -732,7 +732,8 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
                     a.daca_estado = :estado
                     and a.daca_estado_logico = :estado
                     and g.daes_estado = :estado
-                    and g.daes_estado_logico = :estado";
+                    and g.daes_estado_logico = :estado
+                    order by estudiante asc";
 
         $comando = $con->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
@@ -1018,8 +1019,8 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
                 INNER JOIN " . $con_academico->dbname . ".curso_educativa_estudiante AS ceest ON ceest.est_id = est.est_id
                 INNER JOIN " . $con_academico->dbname . ".curso_educativa AS cedu ON cedu.cedu_id = ceest.cedu_id
                 INNER JOIN " . $con_academico->dbname . ".curso_educativa_unidad AS ceuni ON ceuni.ceuni_id = ceest.ceuni_id
-                INNER JOIN " . $con_academico->dbname . ".estudiante_carrera_programa AS ecpr ON ecpr.est_id = ceest.est_id
-                INNER JOIN " . $con_academico->dbname . ".modalidad_estudio_unidad AS meun ON meun.meun_id = ecpr.meun_id
+                -- INNER JOIN " . $con_academico->dbname . ".estudiante_carrera_programa AS ecpr ON ecpr.est_id = ceest.est_id
+                INNER JOIN " . $con_academico->dbname . ".modalidad_estudio_unidad AS meun -- ON meun.meun_id = ecpr.meun_id
                 INNER JOIN " . $con_academico->dbname . ".unidad_academica AS uaca ON uaca.uaca_id = meun.uaca_id
                 INNER JOIN " . $con_academico->dbname . ".modalidad AS modalidad ON modalidad.mod_id = meun.mod_id
                 INNER JOIN " . $con_academico->dbname . ".periodo_academico AS paca ON paca.paca_id = cedu.paca_id
@@ -1030,7 +1031,7 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
                 ceest.ceest_estado = 1 AND ceest.ceest_estado_logico = 1 AND
                 cedu.cedu_estado = 1 AND cedu.cedu_estado_logico = 1 AND
                 ceuni.ceuni_estado = 1 AND ceuni.ceuni_estado_logico = 1 AND
-                ecpr.ecpr_estado = 1 AND ecpr.ecpr_estado_logico = 1 AND
+                -- ecpr.ecpr_estado = 1 AND ecpr.ecpr_estado_logico = 1 AND
                 meun.meun_estado = 1 AND meun.meun_estado_logico = 1 AND
                 uaca.uaca_estado = 1 AND uaca.uaca_estado_logico = 1 AND
                 modalidad.mod_estado = 1 AND modalidad.mod_estado_logico = 1 AND

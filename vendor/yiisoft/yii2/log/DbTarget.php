@@ -78,7 +78,7 @@ class DbTarget extends Target
             list($text, $level, $category, $timestamp) = $message;
             if (!is_string($text)) {
                 // exceptions may not be serializable if in the call stack somewhere is a Closure
-                if ($text instanceof \Exception || $text instanceof \Throwable) {
+                if ($text instanceof \Throwable || $text instanceof \Exception) {
                     $text = (string) $text;
                 } else {
                     $text = VarDumper::export($text);

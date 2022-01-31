@@ -9,21 +9,10 @@
  * @Modified by Doston Usmonov <doston1533@gmail.com> 20.09.2019
  * NOTE: this file must be saved in UTF-8 encoding.
  */
-(function (factory) {
-    'use strict';
-    if (typeof define === 'function' && define.amd) {
-        define(['jquery'], factory);
-    } else if (typeof module === 'object' && typeof module.exports === 'object') {
-        factory(require('jquery'));
-    } else {
-        factory(window.jQuery);
-    }
-}(function ($) {
+(function ($) {
     "use strict";
 
     $.fn.fileinputLocales.uz = {
-        sizeUnits: ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'], 
-        bitRateUnits: ['B/s', 'KB/s', 'MB/s', 'GB/s', 'TB/s', 'PB/s', 'EB/s', 'ZB/s', 'YB/s'],
         fileSingle: 'fayl',
         filePlural: 'fayllar',
         browseLabel: 'Tanlash &hellip;',
@@ -78,7 +67,6 @@
         msgLoading: '{Files} dan {index} faylini yuklash &hellip;',
         msgProgress: '{Files} dan {index}{name} faylini yuklashi  - {percent}% tugallandi.',
         msgSelected: '{n} {files} tanlangan',
-        msgProcessing: 'Processing ...',
         msgFoldersNotAllowed: 'Faqat tortib qo‘yiladon fayllar! {n} o‘tirilgan tashlangan papka(lar).',
         msgImageWidthSmall: '"{name}" fayl kengligi {size} px dan kam bo‘lmasligi lozim.',
         msgImageHeightSmall: '"{name}" fayl bo‘yi {size} px dan kam bo‘lmasligi lozim.',
@@ -122,4 +110,4 @@
             close: 'Batafsil ko‘rishni yopish'
         }
     };
-}));
+})(window.jQuery);

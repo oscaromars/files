@@ -75,24 +75,22 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 		$cabeceraCalificacion = new CabeceraCalificacion();
 		$mod_periodos = new PeriodoAcademico();
 		$per_id = Yii::$app->session->get("PB_perid");
+		$emp_id = @Yii::$app->session->get("PB_idempresa");
 		//$user_usermane = 'carlos.carrera@mbtu.us';//Yii::$app->session->get("PB_username");
 		$user_usermane = Yii::$app->session->get("PB_username");
-
+		$mod_periodo = new PlanificacionEstudiante();
+		$busquedalumno = $cabeceraCalificacion->busquedaEstudiantes();
 		$Asignatura_distri = new Asignatura();
-		Utilities::putMessageLogFile('user_usermane: ' . $user_usermane);
+		Utilities::putMessageLogFile('58 $user_usermane: ' . $user_usermane);
 
 		if (Yii::$app->request->isAjax) {
 			$data = Yii::$app->request->post();
-			// \app\models\Utilities::putMessageLogFile('data: ' . print_r($data, true));
-
 			/*if (isset($data["getasignaturas"])) {
 				                $asignatura = $Asignatura_distri->getAsignaturaByProfesorDistributivo($data["paca_id"],$data['pro_id'],$data["uaca_id"],$data["mod_id"]);
 				                $message = array("asignatura" => $asignatura);
 				                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
 			*/
-
 			\app\models\Utilities::putMessageLogFile('Id de profesor: ' . $data['pro_id']);
-
 			if (isset($data["getasignaturas_prof_periodo"])) {
 				$asignatura = $Asignatura_distri->getAsignaturaByProfesorDistributivo($data["paca_id"], $data['pro_id'], $data["uaca_id"], $data["mod_id"]);
 				$profesorup = $mod_profesor->getProfesoresEnAsignaturasByall($data["paca_id"], $data["uaca_id"], $data["mod_id"]);
@@ -100,8 +98,7 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 				$message = array("asignatura" => $asignatura, "profesorup" => $profesorup);
 				return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
 			}
-
-			//Período Academico
+			//Peridood academico
 			if (isset($data["getasignaturas_prof"])) {
 				$asignatura = $Asignatura_distri->getAsignaturaByProfesorDistributivo($data["paca_id"], $data['pro_id'], $data["uaca_id"], $data["mod_id"]);
 				$paralelo_clcf = [];
@@ -118,10 +115,11 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 			}
 
 			if (isset($data["getasignaturas_uaca"])) {
+				$modalidad = $mod_modalidad->consultarModalidad($data["uaca_id"], $emp_id);
 				$asignatura = $Asignatura_distri->getAsignaturaByProfesorDistributivo($data["paca_id"], $data['pro_id'], $data["uaca_id"], $data["mod_id"]);
 				$profesorup = $mod_profesor->getProfesoresEnAsignaturasByall($data["paca_id"], $data["uaca_id"], $data["mod_id"]);
 				$paralelo_clcf = [];
-				$message = array("asignatura" => $asignatura, "profesorup" => $profesorup);
+				$message = array("modalidad" => $modalidad, "asignatura" => $asignatura, "profesorup" => $profesorup);
 				return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
 			}
 		}
@@ -136,14 +134,16 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 			$periodo = (isset($data['periodo']) && $data['periodo'] > 0) ? $data['periodo'] : NULL;
 			$materia = (isset($data['materia']) && $data['materia'] > 0) ? $data['materia'] : NULL;
 			$profesor = (isset($data['profesor']) && $data['profesor'] > 0) ? $data['profesor'] : NULL;
-
+			$estudiante = (isset($data['estudiante']) && $data['estudiante'] > 0) ? $data['estudiante'] : NULL;
+			//$model = $distributivo_model->getListadoDistributivo($search, NULL, $periodo);
 			if ($unidad <= 0) {
 				$unidad = "";
 			}
 
-			$arr_estudiante = $cabeceraCalificacion->consultaCalificacionRegistroDocenteAllSearch($unidad, $periodo, $materia, $profesor, $modalidad);
+			$arr_estudiante = $cabeceraCalificacion->consultaCalificacionRegistroDocenteAllSearch($unidad, $periodo, $materia, $profesor, $modalidad, $estudiante);
 			return $this->render('index-grid', [
 				"model" => $arr_estudiante,
+				'arr_alumno' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']], $busquedalumno), 'id', 'name'),
 			]);
 		}
 
@@ -160,14 +160,12 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 			in_array(['id' => '7'], $arr_grupos) ||
 			in_array(['id' => '8'], $arr_grupos)
 		) {
-			//Es Cordinador
+			//Es Cordinados
 			$arr_profesor_all = $mod_profesor->getProfesoresEnAsignaturas();
 			Utilities::putMessageLogFile("Paso por cordinador");
 			// Utilities::putMessageLogFile(print_r($arr_profesor_all,true));
 			$asignatura = $Asignatura_distri->getAsignaturasBy($arr_profesor_all[0]['pro_id'], $arr_ninteres[0]["id"], $arr_periodos[0]["id"]);
-			// Utilities::putMessageLogFile(print_r($asignatura,true));
 			$arr_estudiante = $cabeceraCalificacion->consultaCalificacionRegistroDocenteSearch($arr_ninteres[0]["id"], $arr_periodos[0]["id"], $asignatura[0]['id'], $arr_profesor_all[0]["pro_id"]);
-			// Utilities::putMessageLogFile(print_r($arr_estudiante,true));
 		} else {
 			Utilities::putMessageLogFile("Paso no Cordinador");
 			//No es Cordinador
@@ -181,12 +179,13 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 		return $this->render('index', [
 			'model' => $arr_estudiante,
 			'arr_asignatura' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Todos")]], $asignatura), "id", "name"),
-			'arr_periodos' => ArrayHelper::map(array_merge($arr_periodos), "id", "nombre"),
+			'arr_periodos' => ArrayHelper::map(array_merge([["id" => "0", "nombre" => Yii::t("formulario", "Todos")]], $arr_periodos), "id", "nombre"),
 			'arr_ninteres' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Todos")]], $arr_ninteres), "id", "name"),
 			'arr_modalidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Todos")]], $arr_modalidad), "id", "name"),
 			// 'arr_carrerra1' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $arr_carrerra1), "id", "name"),
 			'arr_estados' => $this->estados(),
 			'arr_profesor_all' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Todos")]], $arr_profesor_all), "id", "name"),
+			'arr_alumno' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']], $busquedalumno), 'id', 'name'),
 		]); //
 	} //function actionIndex
 
@@ -216,7 +215,7 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 
 	public function actionRegistro() {
 		$per_id = @Yii::$app->session->get("PB_perid");
-
+		$emp_id = @Yii::$app->session->get("PB_idempresa");
 		$user_usermane = Yii::$app->session->get("PB_username");
 
 		$mod_programa = new EstudioAcademico();
@@ -234,7 +233,7 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 		if (Yii::$app->request->isAjax) {
 			$data = Yii::$app->request->post();
 			$periodo = $data['paca_id'];
-
+			Utilities::putMessageLogFile('$periodo' . $periodo);
 			if (isset($data["getparcial"])) {
 				$parcial = $mod_periodo->getParcialUnidad($data["uaca_id"]);
 				$message = array("parcial" => $parcial);
@@ -250,9 +249,10 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 			}
 
 			if (isset($data["getasignaturas_uaca_reg"])) {
+				$modalidad = $mod_modalidad->consultarModalidad($data["uaca_id"], $emp_id);
 				$asignatura = $Asignatura_distri->getAsignaturaByProfesorDistributivo($data["paca_id"], $data['pro_id'], $data["uaca_id"], $data["mod_id"]);
 				$profesorreg = $mod_profesor->getProfesoresEnAsignaturasByall($data["paca_id"], $data["uaca_id"], $data["mod_id"]);
-				$message = array("asignatura" => $asignatura, "profesorreg" => $profesorreg);
+				$message = array("modalidad" => $modalidad, "asignatura" => $asignatura, "profesorreg" => $profesorreg);
 				return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
 			}
 
@@ -271,6 +271,8 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 		}
 
 		$arr_periodos = $mod_periodo->consultarPeriodosActivos();
+		$arr_periodos = $mod_periodo->consultarPeriodosActivosmalla();
+
 		$arr_ninteres = $mod_unidad->consultarUnidadAcademicasEmpresa(1);
 		$arr_modalidad = $mod_modalidad->consultarModalidad($arr_ninteres[0]["id"], 1);
 		$arr_parcialunidad = $mod_periodo->getParcialUnidad($arr_ninteres[0]["id"]);
@@ -299,8 +301,8 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 		}
 
 		return $this->render('register', [
-			'arr_periodos' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $arr_periodos), "id", "name"),
 			//'arr_ninteres'      => ArrayHelper::map(array_merge([["id" => "", "name" => Yii::t("formulario", "All")]], $arr_ninteres), "id", "name"),
+			'arr_periodos' => ArrayHelper::map(array_merge([["id" => "0", "nombre" => Yii::t("formulario", "Todos")]], $arr_periodos), "id", "nombre"),
 			'arr_ninteres' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $arr_ninteres), "id", "name"),
 			'arr_modalidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $arr_modalidad), "id", "name"),
 			'arr_asignatura' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $asignatura), "id", "name"),
@@ -309,8 +311,8 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 			'model' => "",
 			'arr_profesor_all' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $arr_profesor_all), "id", "name"),
 			'arr_grupos' => $arr_grupos[0]['id'],
-			'isreg' => $isreg,
-			//'arr_profesor_all' => ArrayHelper::map($arr_profesor_all, "pro_id", "nombres"),
+			//'isreg'             => "",
+			//'arr_profesor_all'  => ArrayHelper::map($arr_profesor_all, "pro_id", "nombres"),
 			//'componente'        => $componenteuni,
 			//'campos'            => $campos,
 		]);
@@ -334,7 +336,7 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 			        return json_encode($model);
 		*/
 		$per_id = @Yii::$app->session->get("PB_perid");
-		$user_usermane = Yii::$app->session->get("PB_username");
+
 		$mod_calificacion = new CabeceraCalificacion();
 		$data = Yii::$app->request->post();
 
@@ -344,7 +346,7 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 		$arrSearch["materia"] = $data['materia'];
 		$arrSearch["parcial"] = $data['parcial'];
 		$arrSearch["profesor"] = $data['profesor'];
-		// $arrSearch["paralelo"] = $data['paralelo'];
+		// $arrSearch["paralelo"]  = $data['paralelo'];
 		$arrSearch["grupo"] = $data['grupo'];
 		$isreg = $mod_calificacion->getPeriodoCalificaciones($arrSearch["grupo"], $arrSearch["periodo"]);
 		\app\models\Utilities::putMessageLogFile('$isreg: ' . print_r($isreg, true));
@@ -359,6 +361,7 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 		$model['isreg'] = $isreg;
 		$model['componentes'] = $componentes;
 		\app\models\Utilities::putMessageLogFile('$model: ' . print_r($model['isreg'], true));
+		\app\models\Utilities::putMessageLogFile('$model: ' . print_r($model['componentes'], true));
 		return json_encode($model);
 	} //function actionTraerModelo
 
@@ -400,12 +403,12 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 							$valor[$key] = $value;
 							$total = $total + $value;
 							//\app\models\Utilities::putMessageLogFile($value);
-						} // fin if
+						}
 
-					} // fin if
-				} // fin if
-				//if
-			} // fin foreach
+					}
+				}
+//if
+			}
 		} else {
 			$paca_id = $data['data'][$row_id]['paca_id'];
 			$est_id = $data['data'][$row_id]['est_id'];
@@ -433,7 +436,7 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 					$key != 'mod_id' &&
 					$key != 'uaca_id') {
 					$mod_calificacion->crearDetalleCalificacionporcomponente($ccal_id, $key, $value, $uaca_id, $mod_id, $ecal_id);
-					if (!empty($value)) {
+					if ($value != '') {
 						$valida = 1;
 						$insertID = $mod_calificacion->insertarRBNO($ccal_id, $key, $value, $valida);
 					}
@@ -461,7 +464,6 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 			//Utilities::putMessageLogFile('maes_id ' .$maes_id['maes_id']);
 			$promedio = $mod_calificacion->updatepromedio($maes_id['maes_id'], $ccalEst['paca_id']);
 		}
-
 		header('Content-Type: application/json');
 
 		$valor["total"] = $total;

@@ -116,6 +116,7 @@ $(document).ready(function () {
         requestHttpAjax(link, arrParams, function (response) {
             if (response.status == "OK") {
                 data = response.message;
+                 setComboDataselect(data.modalidad, "cmb_modalidad","Todos");
                  setComboDataselect(data.asignatura, "cmb_materiabus","Todos");
                  setComboDataselectpro(data.profesorup, "cmb_profesor_clfc","Todos");
             }
@@ -201,6 +202,7 @@ $(document).ready(function () {
         requestHttpAjax(link, arrParams, function (response) {
             if (response.status == "OK") {
                 data = response.message;
+                 setComboDataselect(data.modalidad, "cmb_modalidad_rc","Todos");
                  setComboDataselect(data.asignatura, "cmb_materia","Todos");
                  setComboDataselectpro(data.profesorreg, "cmb_profesor_rc","Todos");
             }
@@ -729,7 +731,7 @@ function actualizarGridRegistro(dready = 0) {
                 {  extend: 'edit', editor: editor  },
                 /*{  extend: 'remove', editor: editor  },*/
             ],
-            "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+            "lengthMenu": [[ -1,10, 25, 60], ["All",10, 25, 60]],
             orderable  : false,
             //"bDestroy" : true,
             destroy    : true,

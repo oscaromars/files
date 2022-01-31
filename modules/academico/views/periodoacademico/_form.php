@@ -100,7 +100,7 @@ $form->field($model, 'paca_fecha_cierre_fin')->widget(DatePicker::className(), [
 ?>
 
     <?=$form->field($model, 'paca_semanas_periodo')->textInput(['maxlength' => true, 'style' => 'width:300px'])?>
-
+    <?=$form->field($model, 'paca_semanas_inv_vinc_tuto')->textInput(['maxlength' => true, 'style' => 'width:300px'])?>
 
      <?=
 $form->field($model, 'paca_activo')->widget(Select2::classname(), [
@@ -117,9 +117,9 @@ $form->field($model, 'paca_activo')->widget(Select2::classname(), [
 
 
     <div class="form-group">
-        <div class="col-sm-offset-4">
-<?=Html::submitButton('Guardar', ['class' => 'btn btn-success'])?>
-        </div>
+        <!--<div class="col-sm-offset-4">
+			<?=Html::submitButton('Guardar', ['class' => 'btn btn-success'])?>
+        </div>-->
     </div>
 </div>
 <?=$form->field($model, 'paca_usuario_ingreso')->hiddenInput()?>

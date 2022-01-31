@@ -335,7 +335,7 @@ class BaseFormatConverter
             '\\\\' => '\\',
         ]);
 
-        // remove `''` - they're result of consecutive escaped chars (`\A\B` will be `'A''B'`, but should be `'AB'`)
+        // remove `''` - the're result of consecutive escaped chars (`\A\B` will be `'A''B'`, but should be `'AB'`)
         // real `'` are encoded as `''''`
         return strtr($result, [
             "''''" => "''",

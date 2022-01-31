@@ -12,6 +12,7 @@ use Yii;
  * @property string $ilab_empresa
  * @property string $ilab_cargo
  * @property string $ilab_telefono_emp
+ * @property int $ilab_pais_emp
  * @property int $ilab_prov_emp
  * @property int $ilab_ciu_emp
  * @property string $ilab_parroquia
@@ -48,8 +49,8 @@ class InformacionLaboral extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['per_id', 'ilab_empresa', 'ilab_prov_emp', 'ilab_estado', 'ilab_estado_logico'], 'required'],
-            [['per_id', 'ilab_prov_emp', 'ilab_ciu_emp'], 'integer'],
+            [['per_id', 'ilab_pais_emp', 'ilab_prov_emp', 'ilab_ciu_emp'], 'integer'],
+            [['ilab_estado', 'ilab_estado_logico'], 'required'],
             [['ilab_fecha_creacion', 'ilab_fecha_modificacion'], 'safe'],
             [['ilab_empresa', 'ilab_cargo', 'ilab_parroquia', 'ilab_direccion_emp', 'ilab_anioingreso_emp', 'ilab_correo_emp', 'ilab_cat_ocupacional'], 'string', 'max' => 200],
             [['ilab_telefono_emp'], 'string', 'max' => 10],
@@ -68,6 +69,7 @@ class InformacionLaboral extends \yii\db\ActiveRecord
             'ilab_empresa' => 'Ilab Empresa',
             'ilab_cargo' => 'Ilab Cargo',
             'ilab_telefono_emp' => 'Ilab Telefono Emp',
+            'ilab_pais_emp' => 'Ilab Pais Emp',
             'ilab_prov_emp' => 'Ilab Prov Emp',
             'ilab_ciu_emp' => 'Ilab Ciu Emp',
             'ilab_parroquia' => 'Ilab Parroquia',
@@ -81,7 +83,6 @@ class InformacionLaboral extends \yii\db\ActiveRecord
             'ilab_estado_logico' => 'Ilab Estado Logico',
         ];
     }
-
     /**
      * Function consultaEstudianteinstruccion
      * @author  Lisbeth Gonzalez <analista.desarrollo@uteg.edu.ec>
@@ -108,12 +109,12 @@ class InformacionLaboral extends \yii\db\ActiveRecord
         return $resultData;
     }
 
-    public function insertarInfoLaboral($per_id, $empresa, $cargo, $telefono_emp, $prov_emp, $ciu_emp, $parroquia, $direccion_emp, $añoingreso_emp, $correo_emp, $cat_ocupacional) {
+    public function insertarInfoLaboral($per_id, $empresa, $cargo, $telefono_emp, $pais_emp, $prov_emp, $ciu_emp, $parroquia, $direccion_emp, $añoingreso_emp, $correo_emp, $cat_ocupacional) {
         $con = \Yii::$app->db_inscripcion;
 
         $sql = "INSERT INTO " . $con->dbname . ".informacion_laboral
-            (per_id, ilab_empresa, ilab_cargo, ilab_telefono_emp, ilab_prov_emp, ilab_ciu_emp, ilab_parroquia, ilab_direccion_emp, ilab_anioingreso_emp, ilab_correo_emp, ilab_cat_ocupacional, ilab_estado, ilab_fecha_modificacion, ilab_estado_logico) VALUES
-            ($per_id, '$empresa', '$cargo', '$telefono_emp', $prov_emp, $ciu_emp, '$parroquia', '$direccion_emp', '$añoingreso_emp', '$correo_emp', '$cat_ocupacional', 1, CURRENT_TIMESTAMP(), 1)";
+            (per_id, ilab_empresa, ilab_cargo, ilab_telefono_emp, ilab_pais_emp, ilab_prov_emp, ilab_ciu_emp, ilab_parroquia, ilab_direccion_emp, ilab_anioingreso_emp, ilab_correo_emp, ilab_cat_ocupacional, ilab_estado, ilab_fecha_modificacion, ilab_estado_logico) VALUES
+            ($per_id, '$empresa', '$cargo', '$telefono_emp', $pais_emp, $prov_emp, $ciu_emp, '$parroquia', '$direccion_emp', '$añoingreso_emp', '$correo_emp', '$cat_ocupacional', 1, CURRENT_TIMESTAMP(), 1)";
 
 
         $command = $con->createCommand($sql);
@@ -122,7 +123,7 @@ class InformacionLaboral extends \yii\db\ActiveRecord
 
     }
 
-    public function modificarInfoLaboral($per_id, $empresa, $cargo, $telefono_emp, $prov_emp, $ciu_emp, $parroquia, $direccion_emp, $añoingreso_emp, $correo_emp, $cat_ocupacional) {
+    public function modificarInfoLaboral($per_id, $empresa, $cargo, $telefono_emp, $pais_emp, $prov_emp, $ciu_emp, $parroquia, $direccion_emp, $añoingreso_emp, $correo_emp, $cat_ocupacional) {
         $con = \Yii::$app->db_inscripcion;
         $ilab_fecha_modificacion = date("Y-m-d H:i:s");
         $estado='1';
@@ -141,6 +142,7 @@ class InformacionLaboral extends \yii\db\ActiveRecord
                         ilab_empresa =:ilab_empresa,
                         ilab_cargo =:ilab_cargo,
                         ilab_telefono_emp =:ilab_telefono_emp,
+                        ilab_pais_emp =:ilab_pais_emp,
                         ilab_prov_emp =:ilab_prov_emp,
                         ilab_ciu_emp =:ilab_ciu_emp,
                         ilab_parroquia =:ilab_parroquia,
@@ -148,7 +150,7 @@ class InformacionLaboral extends \yii\db\ActiveRecord
                         ilab_anioingreso_emp =:ilab_anioingreso_emp,
                         ilab_correo_emp =:ilab_correo_emp,
                         ilab_cat_ocupacional =:ilab_cat_ocupacional,
-                        ilab_fecha_modificacion =:ilab_fecha_modificacion,
+                        ilab_fecha_modificacion =:ilab_fecha_modificacion
                       WHERE
                         per_id =:per_id AND
                         ilab_estado =:estado AND
@@ -157,6 +159,7 @@ class InformacionLaboral extends \yii\db\ActiveRecord
             $comando->bindParam(":ilab_empresa", $empresa, \PDO::PARAM_STR);
             $comando->bindParam(":ilab_cargo", $cargo, \PDO::PARAM_STR);
             $comando->bindParam(":ilab_telefono_emp", $telefono_emp, \PDO::PARAM_STR);
+            $comando->bindParam(":ilab_pais_emp", $pais_emp, \PDO::PARAM_INT);
             $comando->bindParam(":ilab_prov_emp", $prov_emp, \PDO::PARAM_INT);
             $comando->bindParam(":ilab_ciu_emp", $ciu_emp, \PDO::PARAM_INT);
             $comando->bindParam(":ilab_parroquia", $parroquia, \PDO::PARAM_STR);

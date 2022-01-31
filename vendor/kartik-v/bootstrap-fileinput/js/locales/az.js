@@ -9,21 +9,10 @@
  *
  * NOTE: this file must be saved in UTF-8 encoding.
  */
-(function (factory) {
-    'use strict';
-    if (typeof define === 'function' && define.amd) {
-        define(['jquery'], factory);
-    } else if (typeof module === 'object' && typeof module.exports === 'object') {
-        factory(require('jquery'));
-    } else {
-        factory(window.jQuery);
-    }
-}(function ($) {
+(function ($) {
     "use strict";
 
     $.fn.fileinputLocales['az'] = {
-        sizeUnits: ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'], 
-        bitRateUnits: ['B/s', 'KB/s', 'MB/s', 'GB/s', 'TB/s', 'PB/s', 'EB/s', 'ZB/s', 'YB/s'],
         fileSingle: 'fayl',
         filePlural: 'fayl',
         browseLabel: 'Seç &hellip;',
@@ -78,7 +67,6 @@
         msgLoading: '{files} fayldan {index} yüklənir &hellip;',
         msgProgress: '{files} fayldan {index} - {name} - {percent}% yükləndi.',
         msgSelected: 'Faylların sayı: {n}',
-        msgProcessing: 'Processing ...',
         msgFoldersNotAllowed: 'Ancaq faylların daşınmasına icazə verilir! {n} qovluq yüklənmədi.',
         msgImageWidthSmall: '{name} faylının eni {size} px -dən kiçik olmamalıdır.',
         msgImageHeightSmall: '{name} faylının hündürlüyü {size} px -dən kiçik olmamalıdır.',
@@ -122,4 +110,4 @@
             close: 'Ətraflı baxışı bağla'
         }
     };
-}));
+})(window.jQuery);

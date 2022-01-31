@@ -1,11 +1,11 @@
 <?php
 namespace app\modules\admision\messages;
-/* 
+/*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
- return [        
+ return [
      "Application date" => "Fecha Solicitud",
      "Application number" => "Núm. Solicitud",
      "Applications per enrollee" => "Solicitudes por Inscrito",
@@ -24,12 +24,12 @@ namespace app\modules\admision\messages;
      "General Information" => "Información General",
      "General Information Registered" => "Datos Generales Inscrito",
      "Generate enrollment balance" => "Generar Saldo Matrícula",
-     "Income Method" => "Método Ingreso",        
+     "Income Method" => "Método Ingreso",
      "List Requests" => "Listar Solicitudes",
      "Observations:" => "Observaciones:",
      "Order Registration balance" => "Orden Saldo Matrícula",
      "Request #" => "Solicitud",
-     "Request by Interested" => "Solicitudes por Interesado",   
+     "Request by Interested" => "Solicitudes por Interesado",
      "Result Review" => "Resultado Revisión:",
      "Reviewed" => "Revisado",
      "Scholarship" => "Beca",
@@ -38,12 +38,13 @@ namespace app\modules\admision\messages;
      "Search by Income Method or Names" => "Buscar por Método de Ingreso o Nombres",
      "Search by item" => "Buscar por Item",
      "Search by Students" => "Buscar por Estudiantes",
-     "See Request" => "Ver Solicitud", 
+     "See Request" => "Ver Solicitud",
      "State Request" => "Estado Solicitud",
      "Title" => "Título",
      "Total" => "Total",
      "Transaction date" => "Fecha Transacción",
      "Transaction number" => "Número Transacción",
      "UNE Letter" => "Carta UNE",
-     "Voting Certificate" => "Certificado Votación",     
+     "View Application for Registration" => "Ver Solicitud de Inscripción",
+     "Voting Certificate" => "Certificado Votación",
  ];

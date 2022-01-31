@@ -107,30 +107,26 @@ $('#cmb_periodo').change(function () {
     });
 
     $('#cmb_unidad_dis').change(function () {
-        console.log("entro por change");
         $('#cmb_paralelo').val('0');
         $('#cmb_horario').val('0');
         $('#cmb_jornada').val('0');
         $('#cmb_materia').val('0');
         
-        var link = "";
-        if ($('#txth_tipo').val() == 'new') {
-            link = $('#txth_base').val() + "/academico/distributivoacademico/new";
-        } else {
-            link = $('#txth_base').val() + "/academico/distributivoacademico/editcab";
-        }
-
+        var link = $('#txth_base').val() + "/academico/distributivoacademico/new";
+        
         switch ($('#cmb_unidad_dis').val()) {
             case "1":
                 if ($('#cmb_tipo_asignacion').val() != 2) {
                     $('#bloque6').css('display', 'none');
                     $('#bloque2-1').css('display', 'block');
                     $('#bloque7').css('display', 'none');
+                    $('#bloque8').css('display', 'none');
                 }
                 if ($('#cmb_tipo_asignacion').val() == 7) {
                     $('#bloque6').css('display', 'none');
                     $('#bloque2-1').css('display', 'none');
                     $('#bloque7').css('display', 'none');
+                    $('#bloque8').css('display', 'none');
                 }
                 break;
 
@@ -141,23 +137,26 @@ $('#cmb_periodo').change(function () {
                     $('#bloque2-1').css('display', 'none');
                     $('#bloque6').css('display', 'block');
                     $('#bloque7').css('display', 'block');
+                    $('#bloque8').css('display', 'block');
                 }
                 //console.log('cmb_unidad_dis 2:');
                 break;
 
         }
-        var arrParams = new Object();
-        arrParams.uaca_id = $(this).val();
-        if ($('#cmb_tipo_asignacion').val() != 1) {
-
+        //if ($('#cmb_tipo_asignacion').val() > 0) {
+            var arrParams = new Object();
+            arrParams.uaca_id = $(this).val();
+            arrParams.paca_id = $('#cmb_periodo').val();
             arrParams.getmodalidad = true;
             requestHttpAjax(link, arrParams, function (response) {
-                if (response.status == "OK") {
-                    data = response.message;
-                    setComboDataselect(data.modalidad, "cmb_modalidad", "Todos");
-                    var arrParams = new Object();
+            if (response.status == "OK") {
+                data = response.message;
+                 setComboDataselect(data.modalidad, "cmb_modalidad","Todos");
+                 setComboDataselect(data.periodomensualizado, "cmb_periodo_mensualizado","Todos");
+                    /*var arrParams = new Object();
                     if (data.modalidad.length > 0) {
                         let mod_id = data.modalidad[0].id;
+                        console.log("change");
                         arrParams.uaca_id = $('#cmb_unidad_dis').val();
                         arrParams.mod_id = mod_id;
                         arrParams.getjornada = true;
@@ -180,14 +179,10 @@ $('#cmb_periodo').change(function () {
                         //       }
                         //     }
                         //   }, false);
-                    }//
+                    }//*/
                 }
-            }, false);
-        }
-
-
-
-
+            }, true);
+        //}
 
     });
 
@@ -225,6 +220,8 @@ $('#cmb_periodo').change(function () {
 
 
 
+
+
         switch (unidad_academica)
         {
             case "2":
@@ -255,7 +252,7 @@ $('#cmb_periodo').change(function () {
                 if (data.jornada.length > 0) {
                     arrParams.uaca_id = $('#cmb_unidad_dis').val();
                     arrParams.mod_id = $('#cmb_modalidad').val();
-                    arrParams.meun_id = $('#cmb_programa').val();
+                    arrParams.maca_id = $('#cmb_programa').val();
                     arrParams.jornada_id = data.jornada[0].id;
                     arrParams.gethorario = true;
                     requestHttpAjax(link, arrParams, function (response) {
@@ -267,6 +264,20 @@ $('#cmb_periodo').change(function () {
                 }
             }
         }, false);
+    });
+
+    $('#cmb_unidad_dis_asignacion').change(function () {
+        var link = $('#txth_base').val() + "/academico/distributivoacademico/index";
+        var arrParams = new Object();
+        arrParams.uaca_id = $(this).val();
+        arrParams.getmodalidad = true;
+        requestHttpAjax(link, arrParams, function (response) {
+            if (response.status == "OK") {
+                data = response.message;
+                 setComboDataselect(data.modalidad, "cmb_modalidad","Todos");
+                
+            }
+        }, true);
     });
 
     $('#cmb_jornada').change(function () {
@@ -289,7 +300,7 @@ $('#cmb_periodo').change(function () {
         var arrParams = new Object();
         arrParams.uaca_id = $('#cmb_unidad_dis').val();
         arrParams.mod_id = $('#cmb_modalidad').val();
-        arrParams.meun_id = $('#cmb_programa').val();
+        arrParams.maca_id = $('#cmb_programa').val();
         arrParams.jornada_id = $(this).val();
         arrParams.gethorario = true;
         requestHttpAjax(link, arrParams, function(response) {
@@ -325,7 +336,7 @@ $('#cmb_periodo').change(function () {
         var arrParams = new Object();
         arrParams.uaca_id = $('#cmb_unidad_dis').val();
         arrParams.mpp_id = $('#cmb_paralelo').val();
-        arrParams.meun_id = $('#cmb_programa').val();
+        arrParams.maca_id = $('#cmb_programa').val();
         arrParams.gethorario = true;
         requestHttpAjax(link, arrParams, function (response) {
             if (response.status == "OK") {
@@ -366,7 +377,7 @@ $('#cmb_materia').change(function () {
         arrParams.asig_id = $('#cmb_materia').val();
         arrParams.paca_id = $('#cmb_periodo').val();
         arrParams.mod_id = $('#cmb_modalidad').val();
-        arrParams.meun_id = $('#cmb_programa').val();
+        arrParams.maca_id = $('#cmb_programa').val();
         arrParams.getparaleloposgrado = true;
         requestHttpAjax(link, arrParams, function (response) {
             if (response.status == "OK") {
@@ -430,7 +441,7 @@ function searchModules() {
         $('#Tbg_Distributivo_Acagra').PbGridView('applyFilterData', {'search':search,'unidad': unidad,'periodo': periodo,'modalidad': modalidad,'materia': materia,'jornada': jornada});
         setTimeout(hideLoadingPopup, 2000);
     }
-    
+
 
     /*var arrParams = new Object();
     arrParams.PBgetFilter = true;
@@ -546,6 +557,19 @@ function save() {
     }
 }
 
+function eliminarbloque(id) {
+    var link = $('#txth_base').val() + "/academico/distributivoacademico/delete";
+    var arrParams = new Object();
+    arrParams.id = id;
+    requestHttpAjax(link, arrParams, function(response) {
+        if (response.status == "OK") {
+            window.location.href = $('#txth_base').val() + "/academico/bloqueacademico/index";
+        }
+        setTimeout(function() {
+            showAlert(response.status, response.label, response.message);
+        }, 1000);
+    }, true);
+}
 
 
 function eliminarItems(val, daca_id, TbGtable) {
@@ -586,6 +610,7 @@ function eliminarItems(val, daca_id, TbGtable) {
         }, true);
     }
 }
+
 function test() {
 
     $.post('test', {someData: 'pppp'}, function (response) {
@@ -712,6 +737,7 @@ function addAsignacion(opAccion) {
             } else {
                 //fechas inicio y fecha fin
                 var eaca_id = $("#cmb_programa").val();
+                var pame_id = $("#cmb_periodo_mensualizado").val();
                 var fecha_inicio = $("#txt_fecha_ini").val();
                 var fecha_fin = $("#txt_fecha_fin").val();
             }
@@ -726,9 +752,9 @@ function addAsignacion(opAccion) {
 
 
 
-            console.log('tipo asig: ' + tasi_id + ' asig: ' + asi_id + ' horario: ' + hor_id + ' paral: ' + par_id + ' unidad: ' + uni_id + ' moda: ' + mod_id + ' paca: ' + paca_id + ' jor: ' + jor_id);
+            console.log('tipo asig: ' + tasi_id + ' asig: ' + asi_id + ' horario: ' + hor_id + ' paral: ' + par_id + ' unidad: ' + uni_id + ' moda: ' + mod_id + ' paca: ' + paca_id +' pame_id: '+pame_id+ ' jor: ' + jor_id);
             if (uni_id == 2) {
-                if (uni_id == 0 || mod_id == 0 || eaca_id == 0 || jor_id == 0 || asi_id == 0 || hor_id == 0 || par_id == 0 || fecha_inicio == '' || fecha_fin == '') {
+                if (uni_id == 0 || mod_id == 0 || eaca_id == 0 || pame_id == 0 || jor_id == 0 || asi_id == 0 || hor_id == 0 || par_id == 0 || fecha_inicio == '' || fecha_fin == '') {
                     fillDataAlert();
                     return;
                 }
@@ -760,7 +786,7 @@ function addAsignacion(opAccion) {
         }
         //Recorrer el session storage para verificar validaciones.
         var res = 0;
-        res = validar(tasi_id, asi_id, hor_id, par_id, uni_id, mod_id, paca_id, jor_id, txt_horas_otros);
+        res = validar(tasi_id, asi_id, hor_id, par_id, uni_id, mod_id, paca_id, pame_id, jor_id, txt_horas_otros);
 
         if (res == 10) {
             showAlert('NO_OK', 'error', {"wtmessage": "Ya existe esta asignación, para el paralelo anterior.", "title": 'Información'});
@@ -816,7 +842,7 @@ function addAsignacion(opAccion) {
     }
 }
 
-function validar(tasi_id, asi_id, hor_id, par_id, idUnidadAcademica, idModalidad, idPeriodo, idJornada, txt_horas_otros) {
+function validar(tasi_id, asi_id, hor_id, par_id, idUnidadAcademica, idModalidad, idPeriodo, idPeriodoAcadMen, idJornada, txt_horas_otros) {
     var arr_Grid1 = new Array();
     var estado = 0;
 
@@ -829,13 +855,23 @@ function validar(tasi_id, asi_id, hor_id, par_id, idUnidadAcademica, idModalidad
                 console.log('tasi_id:' + tasi_id);
                 switch (tasi_id) {
                     case "1":
-                        if (arr_Grid1[i]['hor_id'] == hor_id) {
-                            estado = 10;
+                        switch(idUnidadAcademica){
+                            case "1":
+                                if (arr_Grid1[i]['hor_id'] == hor_id) {
+                                    estado = 10;
+                                }
+                                break;
+                            case "2":
+                                if (arr_Grid1[i]['hor_id'] == hor_id && arr_Grid1[i]['pame_id'] == idPeriodoAcadMen) {
+                                    estado = 10;
+                                }
+                                break;
                         }
                         if ((arr_Grid1[i]['tasi_id'] == tasi_id)
                                 && arr_Grid1[i]['uni_id'] == idUnidadAcademica
                                 && arr_Grid1[i]['mod_id'] == idModalidad
                                 && arr_Grid1[i]['paca_id'] == idPeriodo
+                                && arr_Grid1[i]['pame_id'] == idPeriodoAcadMen
                                 && arr_Grid1[i]['jor_id'] == idJornada
                                 && arr_Grid1[i]['asi_id'] == asi_id
                                 && arr_Grid1[i]['hor_id'] == hor_id
@@ -914,6 +950,7 @@ function objDistributivo(indice) {
             rowGrid.par_id = $("#cmb_paralelo").val();
             rowGrid.num_estudiantes = $("#txt_num_estudiantes").val();
             if ($("#cmb_unidad_dis").val() == 2) {
+                rowGrid.pame_id = $("#cmb_periodo_mensualizado").val();
                 rowGrid.fecha_inicio = $("#txt_fecha_ini").val();
                 rowGrid.fecha_fin = $("#txt_fecha_fin").val();
                 rowGrid.programa = $("#cmb_programa").val();
@@ -942,6 +979,7 @@ function objDistributivo(indice) {
             rowGrid.fecha_fin = 'N/A';
             rowGrid.txt_horas_otros = '0';
             rowGrid.programa = null;
+            rowGrid.pame_id = null;
             break;
 
         case "6":
@@ -962,6 +1000,7 @@ function objDistributivo(indice) {
             rowGrid.fecha_fin = 'N/A';
             rowGrid.txt_horas_otros = $("#txt_horas_otros").val();
             rowGrid.programa = null;
+            rowGrid.pame_id = null;
             break;
 
 
@@ -1008,6 +1047,7 @@ function objDistributivo(indice) {
             rowGrid.fecha_fin = 'N/A';
             rowGrid.txt_horas_otros = '0';
             rowGrid.programa = null;
+            rowGrid.pame_id = null;
             break;
     }
 
@@ -1110,6 +1150,7 @@ function NewGuid() {
     return sGuid;
 }
 
+
 function insertarEst(){
     $('#confirmModal').modal('toggle');
 }
@@ -1117,18 +1158,18 @@ function insertarEst(){
 
 function asignararEstudiantesConfirm(){
     // Sólo llama a la función del controlador}
-    var link = $('#txth_base').val() + "/academico/distributivoacademico/savedistestudiantes";
+    var link = $('#txth_base').val() + "/academico/distributivoacademico/saveasignarestudiante";
     var arrParams = new Object();
-    arrParams.paca_id = $('#cmb_periodo option:selected').val();
+    arrParams.paca_id = $('#cmb_periodo1 option:selected').val();
 
-    if (!validateForm()) {
+    
         requestHttpAjax(link, arrParams, function(response) {
-            showAlert(response.status, response.label, response.message);
-            if (response.status == "OK") {
+        showAlert(response.status, response.label, response.message);
+            
                 setTimeout(function() {
                     window.location.href = $('#txth_base').val() + "/academico/distributivoacademico/index";
                 }, 3000);
-            }
+            
         }, true);
-    }
+    
 }

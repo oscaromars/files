@@ -1148,6 +1148,22 @@ function actualizarGridPlanestudiante(perSel) {
 }
 
 
+function load() {
+  var periodo = $('#cmb_per_academico option:selected').val();
+
+  if (periodo == 0) {
+
+showAlert('NO_OK', 'error', {"wtmessage": 'Seleccione el periodo', "title": 'Información'});
+
+
+   } else {
+
+    showLoadingPopup();
+   window.location.href = $('#txth_base').val() + "/academico/planificacion/cargarmaterias?periodo=" + periodo;
+
+}
+
+}
 
 function generate() {
     var haspla = $('#frm_hasplanning').val(); 
@@ -1198,6 +1214,38 @@ showAlert('NO_OK', 'error', {"wtmessage": 'Seleccione una modalidad', "title": '
 
 
 }
+
+
+function regenerate() {
+    var haspla = $('#frm_hasplanning').val(); 
+   var periodo = $('#cmb_per_academico option:selected').val();
+   var modalidad = $('#cmb_modalidad option:selected').val();
+   
+   
+
+   if (haspla == undefined) {
+
+ // showAlert('NO_OK', 'error','wtmessage'); 
+ showAlert('NO_OK', 'error', {"wtmessage": 'Aun no se ha generado planificacion para la modalidad elegida', "title": 'Información'});
+
+ 
+} else {
+
+if (modalidad == 0) {
+
+showAlert('NO_OK', 'error', {"wtmessage": 'Seleccione una modalidad', "title": 'Información'});
+
+
+   } else {
+
+    showLoadingPopup();
+   window.location.href = $('#txth_base').val() + "/academico/planificacion/generator?periodo=" + periodo + '&modalidad=' + modalidad + '&haspla=' + haspla;
+
+}
+
+}
+}
+
 
 
 function closer(pla_id) {

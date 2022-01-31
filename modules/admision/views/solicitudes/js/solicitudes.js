@@ -710,9 +710,21 @@ $(document).ready(function () {
 
     //Control del div de Descuentos.
     $('#opt_declara_Dctosi').change(function () {
+        var link = $('#txth_base').val() + "/admision/solicitudes/new";
         if ($('#opt_declara_Dctosi').val() == 1) {
             $('#divDescuento').css('display', 'block');
             $("#opt_declara_Dctono").prop("checked", "");
+            //Precio con descuento.
+            var arrParams = new Object();
+            arrParams.descuento_id = $('#cmb_descuento').val();
+            arrParams.ite_id = $('#cmb_item').val();
+            arrParams.getpreciodescuento = true;
+            requestHttpAjax(link, arrParams, function (response) {
+                if (response.status == "OK") {
+                    data = response.message;
+                    $('#txt_precio_item2').val(data.preciodescuento);
+                }
+            }, true);
         } else {
             $('#divDescuento').css('display', 'none');
         }
@@ -1440,6 +1452,109 @@ function Approve() {
                 setTimeout(function () {
                     parent.window.location.href = $('#txth_base').val() + "/admision/solicitudes/index";
                 }, 2000);
+            }
+        }, true);
+    }
+}
+
+function editsolicitudadmi() {
+    var id_sol = $('#txth_sins_id').val();
+    var per_id = $('#txth_ids').val();
+    var opag_id = $('#txth_opag_id').val();
+    window.location.href = $('#txth_base').val() + "/admision/solicitudes/editsolicitud?id_sol=" + id_sol + "&per_id=" + per_id+ "&opag_id=" + opag_id;
+}
+
+function updatesolicitudadmi() {
+    var link = $('#txth_base').val() + "/admision/solicitudes/updatesolicitudadmi";
+    var arrParams = new Object();
+    arrParams.sins_id = $('#txth_sins_id').val();
+    arrParams.opag_id = $('#txth_opag_id').val();
+    arrParams.persona_id = $('#txth_ids').val();
+    arrParams.int_id = $('#txth_intId').val();
+    arrParams.ninteres = $('#cmb_ninteres').val();
+    arrParams.modalidad = $('#cmb_modalidad').val();
+    arrParams.metodoing = $('#cmb_metodos').val();
+    arrParams.carrera = $('#cmb_carrera').val();
+    arrParams.arc_doc_titulo = $('#txth_doc_titulo').val();
+    arrParams.arc_doc_dni = $('#txth_doc_dni').val();
+    arrParams.arc_doc_certvota = $('#txth_doc_certvota').val();
+    arrParams.arc_doc_foto = $('#txth_doc_foto').val();
+    arrParams.arc_extranjero = $('#txth_extranjero').val();
+    arrParams.arc_nacional = $('#txth_nac').val();
+    arrParams.arc_doc_beca = $('#txth_doc_beca').val();
+    arrParams.emp_id = $('#cmb_empresa').val();
+    arrParams.nombres_fac = $('#txt_nombres_fac').val();
+    arrParams.apellidos_fac = $('#txt_apellidos_fac').val();
+    arrParams.dir_fac = $('#txt_dir_fac').val();
+    arrParams.tel_fac = $('#txt_tel_fac').val();
+    arrParams.tipo_DNI = $('input[name=opt_tipo_DNI]:radio').val();
+    arrParams.dni_fac = $('#txt_dni_fac').val();
+    arrParams.observacion = $('#txt_observacion').val();
+    arrParams.ite_id = $('#cmb_item').val();
+    arrParams.precio = $('#txt_precio_item').val();
+    arrParams.cemp_id = $('#cmb_convenio').val();
+    arrParams.correo_fac = $('#txt_correo_fac').val();
+    if ($('input[name=opt_declara_Dctosi]:checked').val() == 1) {
+        arrParams.descuento_id = $('#cmb_descuento').val();
+        arrParams.marcadescuento = '1';
+    }
+    if ($('input[name=opt_declara_si]:checked').val() == 1) {
+        arrParams.beca = 1;
+    } else {
+        arrParams.beca = 0;
+    }
+
+    if ($('input[name=opt_subir_si]:checked').val() == 1) {
+        arrParams.subirDocumentos = 1;
+    } else {
+        arrParams.subirDocumentos = 0;
+    }
+
+    if (!validateForm()) {
+        requestHttpAjax(link, arrParams, function (response) {
+            showAlert(response.status, response.label, response.message);
+            setTimeout(function () {
+                if (arrParams.persona_id == '0')
+                {
+                    window.location.href = $('#txth_base').val() + "/admision/interesados/index";
+                } else
+                {
+                    window.location.href = $('#txth_base').val() + "/admision/solicitudes/listarsolicitudxinteresado?id=" + arrParams.int_id;
+                }
+            }, 5000);
+        }, true);
+    }
+}
+
+function anularsolicitud(sins_id, opag_id) {
+    var mensj = "¿Seguro desea anular la solicitud de inscripción?";
+    var messagePB = new Object();
+    messagePB.wtmessage = mensj;
+    messagePB.title = "Anular";
+    var objAccept = new Object();
+    objAccept.id = "btnid2del";
+    objAccept.class = "btn-primary";
+    objAccept.value = "Aceptar";
+    objAccept.callback = 'accionanusol';
+    var params = new Array(sins_id, opag_id);
+    objAccept.paramCallback = params;
+    messagePB.acciones = new Array();
+    messagePB.acciones[0] = objAccept;
+    showAlert("warning", "warning", messagePB);
+}
+
+function accionanusol(sins_id, opag_id) {
+    var link = $('#txth_base').val() + "/admision/solicitudes/anularsolicitud";
+    var arrParams = new Object();
+    arrParams.sins_id = sins_id;
+    arrParams.opag_id = opag_id;
+    if (!validateForm()) {
+        requestHttpAjax(link, arrParams, function (response) {
+            showAlert(response.status, response.label, response.message);
+            if (!response.error) {
+                setTimeout(function () {
+                    window.location.href = $('#txth_base').val() + "/admision/interesados/index";
+                }, 3000);
             }
         }, true);
     }

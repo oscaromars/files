@@ -112,6 +112,16 @@ use yii\helpers\Url;
         </div>
     </div>
     <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+            <div class="form-group">
+                <label for="cmb_pais_emp" class="col-sm-3 control-label"><?= Yii::t("formulario", "País") ?><span class="text-danger">*</span></label>
+                <div class="col-sm-7">
+                    <?= Html::dropDownList("cmb_pais_emp", 0, $arr_pais_emp, ["class" => "form-control", "id" => "cmb_pais_emp"]) ?>
+                </div>
+            </div>
+        </div>
+</div>
+<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
         <div class="form-group">
             <label for="cmb_prov_emp" class="col-sm-3 control-label"><?= Yii::t("formulario", "State") ?> <span class="text-danger">*</span> </label>
             <div class="col-sm-7">
@@ -119,8 +129,6 @@ use yii\helpers\Url;
             </div>
         </div>
     </div>
-</div>
-<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
     <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
         <div class="form-group">
             <label for="cmb_ciu_emp" class="col-sm-3 control-label"><?= Yii::t("formulario", "Cantón") ?> <span class="text-danger">*</span> </label>
@@ -129,6 +137,8 @@ use yii\helpers\Url;
             </div>
         </div>
     </div>
+    </div>
+<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
     <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
         <div class="form-group">
             <label for="txt_parroquia" class="col-sm-3 control-label"><?= Yii::t("formulario", "Parroquia") ?><span class="text-danger">*</span></label>
@@ -137,8 +147,6 @@ use yii\helpers\Url;
             </div>
         </div>
     </div>
-</div>
-<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
     <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
         <div class="form-group">
             <label for="txt_direc_emp" class="col-sm-3 control-label"><?= Yii::t("formulario", "Dirección donde Labora") ?><span class="text-danger">*</span></label>
@@ -147,6 +155,8 @@ use yii\helpers\Url;
             </div>
         </div>
     </div>
+    </div>
+<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
     <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
         <div class="form-group">
             <label for="txt_añoingreso_emp" class="col-sm-3 control-label"><?= Yii::t("formulario", "Año de Ingreso") ?><span class="text-danger">*</span></label>
@@ -155,8 +165,6 @@ use yii\helpers\Url;
             </div>
         </div>
     </div>
-</div>
-<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
     <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
         <div class="form-group">
             <label for="txt_correo_emp" class="col-sm-3 control-label"><?= Yii::t("formulario", "Correo Electrónico") ?><span class="text-danger">*</span></label>
@@ -165,6 +173,8 @@ use yii\helpers\Url;
             </div>
         </div>
     </div>
+</div>
+<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
     <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
         <div class="form-group">
             <label for="txt_cat_ocupacional" class="col-sm-3 control-label"><?= Yii::t("formulario", "Categoría Ocupacional") ?><span class="text-danger">*</span></label>
@@ -199,17 +209,17 @@ use yii\helpers\Url;
 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
     <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
         <div class="form-group">
-            <label for="cmb_idioma2" class="col-sm-3 control-label"><?= Yii::t("formulario", "Idioma 2") ?> <span class="text-danger">*</span> </label>
+            <label for="cmb_idioma2" class="col-sm-3 control-label"><?= Yii::t("formulario", "Idioma 2") ?></label>
             <div class="col-lg-7">
-                <?= Html::dropDownList("cmb_idioma2", 0, $arr_idioma, ["class" => "form-control", "id" => "cmb_idioma2"]) ?>
+                <?= Html::dropDownList("cmb_idioma2", 0, $arr_idioma2, ["class" => "form-control", "id" => "cmb_idioma2"]) ?>
             </div>
         </div>
     </div>
     <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
         <div class="form-group" id="Dividiomas">
-            <label for="cmb_nivelidioma2" class="col-sm-3 control-label"><?= Yii::t("formulario", "Nivel Idioma") ?> <span class="text-danger">*</span> </label>
+            <label for="cmb_nivelidioma2" class="col-sm-3 control-label"><?= Yii::t("formulario", "Nivel Idioma") ?></label>
             <div class="col-lg-7">
-                <?= Html::dropDownList("cmb_nivelidioma2", 0, $arr_nivelidioma, ["class" => "form-control", "id" => "cmb_nivelidioma2"]) ?>
+                <?= Html::dropDownList("cmb_nivelidioma2", 0, $arr_nivelidioma2, ["class" => "form-control", "id" => "cmb_nivelidioma2"]) ?>
             </div>
         </div>
     </div><br><br></br>

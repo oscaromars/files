@@ -392,6 +392,199 @@ class MallaAcademica extends \yii\db\ActiveRecord
         $resultData = $comando->queryOne();
         return $resultData;
     }
+
+
+public function traerActivas($periodo, $modalidad) {
+        $con = \Yii::$app->db_academico;
+        $mactivas = "
+            select mpmo.mpmo_id
+ from db_academico.estudiante e
+ inner join db_academico.estudiante_carrera_programa c on c.est_id = e.est_id
+  inner join db_academico.modalidad_estudio_unidad meu on meu.meun_id = c.meun_id
+  inner join db_academico.malla_unidad_modalidad mumo on mumo.meun_id = meu.meun_id
+   inner join db_academico.malla_academica maca on maca.maca_id = mumo.maca_id
+   inner join db_academico.unidad_academica u on u.uaca_id = meu.uaca_id
+   inner join db_academico.estudio_academico ea on ea.eaca_id = meu.eaca_id
+   inner join db_academico.materias_periodo_modalidad mpmo on mpmo.eaca_id = meu.eaca_id and mpmo.mod_id = meu.mod_id 
+   inner join db_asgard.persona per on per.per_id = e.per_id
+   left join db_academico.malla_academico_estudiante malle on per.per_id = malle.per_id
+     where  malle.maca_id = maca.maca_id  AND
+         meu.mod_id = :modalidad and meu.uaca_id = 1 and mpmo.saca_id = :periodo and mpmo.mpmo_activo = 'A'
+          and mpmo.mpmo_procesado is Null
+    AND  mpmo.mpmo_estado = 1 AND mpmo.mpmo_estado_logico = 1
+    AND  e.est_estado = 1 AND e.est_estado_logico = 1
+    AND  c.ecpr_estado = 1 AND c.ecpr_estado_logico = 1
+    AND  meu.meun_estado = 1 AND meu.meun_estado_logico = 1
+    AND  mumo.mumo_estado = 1 AND mumo.mumo_estado_logico = 1
+    AND  maca.maca_estado = 1 AND maca.maca_estado_logico = 1
+    AND  u.uaca_estado = 1 AND u.uaca_estado_logico = 1
+     AND  ea.eaca_estado = 1
+    AND  per.per_estado = 1 AND per.per_estado_logico = 1
+    AND  malle.maes_estado = 1 AND malle.maes_estado_logico = 1
+     AND
+((e.per_id in (select b.per_id from db_academico.planificacion_estudiante b where
+b.pla_id= ( select max(dap.pla_id) from db_academico.planificacion dap
+ where dap.mod_id = :modalidad ))) or
+((e.per_id in (
+select distinct a.per_id from db_asgard.persona as a
+inner join db_academico.estudiante bas on a.per_id = bas.per_id
+where DATEDIFF(NOW(),bas.est_fecha_creacion) <=180 or
+DATEDIFF(NOW(),a.per_fecha_creacion) <=180 )))
+ )
+order by maca.maca_id DESC , ea.eaca_codigo, e.est_fecha_creacion ASC;
+                ";
+
+        $comando = $con->createCommand($mactivas);
+        $comando->bindParam(":modalidad", $modalidad, \PDO::PARAM_INT);
+        $comando->bindParam(":periodo", $periodo, \PDO::PARAM_INT);
+        $resultActivas = $comando->queryAll();
+
+        return $resultActivas;
+
+    }
+    
+         function marcarAsignaturas($mpmo_id,$procesado) {
+    $con = \Yii::$app->db_academico;
+    $marcasi= "UPDATE db_academico.materias_periodo_modalidad SET mpmo_procesado = $procesado 
+    WHERE mpmo_id = $mpmo_id";
+    $comando = $con->createCommand($marcasi);
+    $result = $comando->execute();  
+     return true;
+
+
+}
+
+         function cargarAsignaturas($rows,$modalidad,$periodo) {
+    $con = \Yii::$app->db_academico;
+     $activo="A";
+
+     $sql = "select distinct  
+a.asi_id, a.made_credito, c.uaca_id,c.mod_id, c.eaca_id, a.maca_id,a.made_asi_requisito
+from db_academico.malla_academica_detalle a
+inner join db_academico.malla_unidad_modalidad b on b.maca_id = a.maca_id 
+inner join db_academico.modalidad_estudio_unidad c on c.meun_id = b.meun_id
+inner join db_academico.asignatura d on d.asi_id = a.asi_id
+inner join db_academico.malla_academico_estudiante maes on maes.asi_id = a.asi_id and maes.per_id = " . $rows["per_id"] . " 
+left join db_academico.promedio_malla_academico pmac on maes.maes_id = pmac.maes_id
+left join db_academico.estado_nota_academico enac on enac.enac_id = pmac.enac_id 
+                       where c.eaca_id =  " . $rows["eaca_id"] . "   
+                      and   c.mod_id =  " . $modalidad . "   
+                      and a.maca_id =  " . $rows["maca_id"] . "  
+                      and c.uaca_id = 1
+                      and pmac.enac_id in (2,3,Null)
+                            and a.made_estado = 1
+                            and a.made_estado_logico = 1
+                            and b.mumo_estado = 1
+                            and b.mumo_estado_logico = 1
+                            and c.meun_estado = 1
+                            and c.meun_estado_logico = 1
+                            and d.asi_estado = 1
+                            and d.asi_estado_logico = 1
+                            and maes.maes_estado = 1
+                            and maes.maes_estado_logico = 1
+                            and pmac.pmac_estado = 1
+                            and pmac.pmac_estado_logico = 1
+                            and enac.enac_estado = 1
+                            and enac.enac_estado_logico = 1
+                     ORDER BY a.made_semestre ASC
+                        ";
+   $comando = $con->createCommand($sql);
+   $rows_asi = $comando->queryAll();
+
+
+
+
+  
+
+    if (count($rows_asi) > 0) {    $cn= 0;
+        
+     for ($im = 0; $im < count($rows_asi); $im++) {  
+
+         $requisito = $rows_asi[$im]["made_asi_requisito"]; 
+         $persona = $rows["per_id"];
+
+            if ($requisito !=Null) {  
+                 $sql = "
+                 select  a.asi_id, c.enac_id, a.maes_id, a.per_id
+ from db_academico.malla_academico_estudiante a
+ left join db_academico.promedio_malla_academico b on a.maes_id = b.maes_id
+   left join db_academico.estado_nota_academico c on c.enac_id = b.enac_id   
+   inner join db_academico.asignatura d on a.asi_id = d.asi_id
+   where a.per_id = :per_id
+   and a.asi_id = :requisito
+                       and a.maes_estado = 1
+                    and a.maes_estado_logico = 1
+                    -- and b.pmac_estado = 1
+                    -- and b.pmac_estado_logico = 1
+                    -- and c.enac_estado = 1
+                    -- and c.enac_estado_logico = 1
+                     
+
+                ";
+                
+                     $comando = $con->createCommand($sql);
+                     $comando->bindParam(":per_id", $persona, \PDO::PARAM_INT);
+                     $comando->bindParam(":requisito", $requisito, \PDO::PARAM_INT);
+                     $statuspre = $comando->queryOne();
+
+                       if ($statuspre["enac_id"]==1 or $statuspre["enac_id"]==4 ){   
+             
+                       $sstatuspre = True; 
+
+                      }    Else {     $sstatuspre = False;     }
+                            
+                     }      Else {     $sstatuspre = True;     }
+
+
+
+         if ($sstatuspre = True) {  $cn++;
+
+           if ($cn < 9) {
+        
+         $asiid = $rows_asi[$im]["asi_id"];
+         $modid = $rows_asi[$im]["mod_id"];
+         $eacaid = $rows_asi[$im]["eaca_id"];
+         $macaid = $rows_asi[$im]["maca_id"];
+
+         $sacaid = $periodo ; $estado = 1;
+
+         $sql = "select mpmo_id, mpmo_nestudiantes from db_academico.materias_periodo_modalidad
+          where asi_id =:asiid  and eaca_id =:eacaid  and saca_id =:sacaid and mod_id = :modid;                 
+                        ";
+
+         $comando = $con->createCommand($sql);
+         $comando->bindParam(":asiid", $asiid, \PDO::PARAM_INT);    
+         $comando->bindParam(":eacaid", $eacaid, \PDO::PARAM_INT);
+         $comando->bindParam(":sacaid", $periodo, \PDO::PARAM_INT);
+         $comando->bindParam(":modid", $modid, \PDO::PARAM_INT);
+               $ismat_in = $comando->queryOne();
+
+          if ($ismat_in['mpmo_id'] == Null) {  
+
+
+           $sqladd = "
+             INSERT INTO db_academico.materias_periodo_modalidad
+             (saca_id, mod_id, asi_id, mpmo_nestudiantes, eaca_id, mpmo_usuario_ingreso, mpmo_estado, mpmo_estado_logico)
+            VALUES ('" . $sacaid . "','" . $modid . "','" . $asiid . "',1,'" . $eacaid . "',1, '" . $estado . "', '" . $estado . "')"
+            ;
+            
+               $comando = $con->createCommand($sqladd); 
+                     $putasig = $comando->execute();
+
+                                                 } else  {   
+                $allst=  $ismat_in['mpmo_nestudiantes'] + 1 ;
+                $mpmo_id=  $ismat_in['mpmo_id'];
+                $updt= "UPDATE db_academico.materias_periodo_modalidad SET mpmo_nestudiantes = $allst 
+                WHERE mpmo_id = $mpmo_id";
+                $comando = $con->createCommand($updt);
+                $result = $comando->execute();  
+                                                  }
+
+           }}}
+        }
+              return true;
+     }
+     
     
     function consultarAsignaturas($rows,$gest,$semestre,$modalidad) {
     $con = \Yii::$app->db_academico;
@@ -453,15 +646,17 @@ AND e.enac_id = 3;
 
         $sql = "select distinct  a.maca_id, a.asi_id, a.made_semestre, a.uest_id, a.nest_id, a.fmac_id, 
 a.made_codigo_asignatura, a.made_asi_requisito, a.made_credito, c.uaca_id,
-c.mod_id, c.eaca_id, d.asi_nombre
+c.mod_id, c.eaca_id, d.asi_nombre,  mpmo.mpmo_bloque
 from db_academico.malla_academica_detalle a
 inner join db_academico.malla_unidad_modalidad b on b.maca_id = a.maca_id 
 inner join db_academico.modalidad_estudio_unidad c on c.meun_id = b.meun_id
- inner join db_academico.asignatura d on d.asi_id = a.asi_id
+inner join db_academico.asignatura d on d.asi_id = a.asi_id
+inner join db_academico.materias_periodo_modalidad mpmo on mpmo.asi_id = a.asi_id
                        where c.eaca_id =  " . $rows["eaca_id"] . "   
                       and   c.mod_id =  " . $modalidad . "   
                       and a.maca_id =  " . $rows["maca_id"] . "  
                       and c.uaca_id = 1
+                      and mpmo_activo = 'A'
                             and a.made_estado = 1
                             and a.made_estado_logico = 1
                             and b.mumo_estado = 1
@@ -470,6 +665,8 @@ inner join db_academico.modalidad_estudio_unidad c on c.meun_id = b.meun_id
                             and c.meun_estado_logico = 1
                             and d.asi_estado = 1
                             and d.asi_estado_logico = 1
+                            and mpmo.mpmo_estado = 1
+                            and mpmo.mpmo_estado_logico = 1
                      ORDER BY a.made_semestre ASC
                         ";
   
@@ -753,42 +950,50 @@ where a.maca_id= :maca_id and asi_id = :asi_id
                    $subjects[1][0] = $rows_in[$i]["made_codigo_asignatura"];
                    $subjects[1][1] = $rows_in[$i]["asi_nombre"];    
                    $subjects[1][2] = $rows_in[$i]["asi_id"]; 
-                    $subjects[1][3] = $rows_in[$i]["made_credito"];    }  
+                   $subjects[1][3] = $rows_in[$i]["made_credito"];   
+                   $subjects[1][4] = $rows_in[$i]["mpmo_bloque"]; }  
                 elseif ($subjects[2][0]== Null)  { 
                     $subjects[2][0] = $rows_in[$i]["made_codigo_asignatura"];
                     $subjects[2][1]  = $rows_in[$i]["asi_nombre"];   
                     $subjects[2][2] = $rows_in[$i]["asi_id"]; 
-                    $subjects[2][3] = $rows_in[$i]["made_credito"];   }      
+                    $subjects[2][3] = $rows_in[$i]["made_credito"];   
+                    $subjects[2][4] = $rows_in[$i]["mpmo_bloque"]; }      
                  elseif ($subjects[3][0]== Null)  { 
                     $subjects[3][0] = $rows_in[$i]["made_codigo_asignatura"];
                     $subjects[3][1]  = $rows_in[$i]["asi_nombre"];   
                     $subjects[3][2] = $rows_in[$i]["asi_id"]; 
-                    $subjects[3][3] = $rows_in[$i]["made_credito"];   }  
+                    $subjects[3][3] = $rows_in[$i]["made_credito"]; 
+                    $subjects[3][4] = $rows_in[$i]["mpmo_bloque"];  }  
                  elseif ($subjects[4][0]== Null)  { 
                     $subjects[4][0] = $rows_in[$i]["made_codigo_asignatura"];
                     $subjects[4][1]  = $rows_in[$i]["asi_nombre"];   
                     $subjects[4][2] = $rows_in[$i]["asi_id"]; 
-                    $subjects[4][3] = $rows_in[$i]["made_credito"];   } 
+                    $subjects[4][3] = $rows_in[$i]["made_credito"];
+                    $subjects[4][4] = $rows_in[$i]["mpmo_bloque"];   } 
                  elseif ($subjects[5][0]== Null)  { 
                     $subjects[5][0] = $rows_in[$i]["made_codigo_asignatura"];
                     $subjects[5][1]  = $rows_in[$i]["asi_nombre"];   
                     $subjects[5][2] = $rows_in[$i]["asi_id"]; 
-                    $subjects[5][3] = $rows_in[$i]["made_credito"];   }  
+                    $subjects[5][3] = $rows_in[$i]["made_credito"];  
+                    $subjects[5][4] = $rows_in[$i]["mpmo_bloque"]; }  
                  elseif ($subjects[6][0]== Null)  { 
                     $subjects[6][0] = $rows_in[$i]["made_codigo_asignatura"];
                     $subjects[6][1]  = $rows_in[$i]["asi_nombre"];   
                     $subjects[6][2] = $rows_in[$i]["asi_id"]; 
-                    $subjects[6][3] = $rows_in[$i]["made_credito"];   } 
+                    $subjects[6][3] = $rows_in[$i]["made_credito"]; 
+                    $subjects[6][4] = $rows_in[$i]["mpmo_bloque"];  } 
                  elseif ($subjects[7][0]== Null)  { 
                     $subjects[7][0] = $rows_in[$i]["made_codigo_asignatura"];
                     $subjects[7][1]  = $rows_in[$i]["asi_nombre"];   
                     $subjects[7][2] = $rows_in[$i]["asi_id"]; 
-                    $subjects[7][3] = $rows_in[$i]["made_credito"];   } 
+                    $subjects[7][3] = $rows_in[$i]["made_credito"];
+                    $subjects[7][4] = $rows_in[$i]["mpmo_bloque"];   } 
                  elseif ($subjects[8][0]== Null)  { 
                     $subjects[8][0] = $rows_in[$i]["made_codigo_asignatura"];
                     $subjects[8][1]  = $rows_in[$i]["asi_nombre"];   
                     $subjects[8][2] = $rows_in[$i]["asi_id"]; 
-                    $subjects[8][3] = $rows_in[$i]["made_credito"];   }  
+                    $subjects[8][3] = $rows_in[$i]["made_credito"];
+                    $subjects[8][4] = $rows_in[$i]["mpmo_bloque"];   }  
 
                                
                     }
@@ -922,6 +1127,7 @@ where a.maca_id= :maca_id and asi_id = :asi_id
                    $nomm = $subjects[$iter][1]; 
                    $iddd = $subjects[$iter][2];
                    $cred = $subjects[$iter][3]; 
+                   $blck = $subjects[$iter][4]; 
 
 
                      $searcher = "
@@ -1010,6 +1216,7 @@ where a.maca_id= :maca_id and asi_id = :asi_id
                    $nomm = $subjects[$iter][1]; 
                    $iddd = $subjects[$iter][2]; 
                    $cred = $subjects[$iter][3]; 
+                   $blck = $subjects[$iter][4]; 
                    $horario= $hid["hose_id"];
                  
                    
@@ -1140,7 +1347,7 @@ where a.maca_id= :maca_id and asi_id = :asi_id
                    $getmpar = $comando->queryOne();
 
 
-                  if ($getifasi["hosd_bloque"] == 1){
+                   if ($subjects[$iter][4] == 1){
                     switch ($getifasi["hosd_hora"]) {
                         case 1:
                         if ($asih1==Null){ 
@@ -1181,7 +1388,7 @@ where a.maca_id= :maca_id and asi_id = :asi_id
 
 
 
-                  if ($getifasi["hosd_bloque"] == 2){
+                   if ($subjects[$iter][4] == 2){
                     switch ($getifasi["hosd_hora"]) {
                         case 1:
                    if ($asih4==Null){ 
@@ -1406,6 +1613,7 @@ where a.maca_id= :maca_id and asi_id = :asi_id
                    $nomm = $subjects[$iter][1]; 
                    $iddd = $subjects[$iter][2]; 
                    $cred = $subjects[$iter][3]; 
+                   $blck = $subjects[$iter][4]; 
 
 
                      $searcher = "
@@ -1496,6 +1704,7 @@ where a.maca_id= :maca_id and asi_id = :asi_id
                    $nomm = $subjects[$iter][1]; 
                    $iddd = $subjects[$iter][2]; 
                    $cred = $subjects[$iter][3]; 
+                   $blck = $subjects[$iter][4]; 
                    $horario= $hid["hose_id"];
                  
                    
@@ -1814,7 +2023,7 @@ where a.maca_id= :maca_id and asi_id = :asi_id
                 // TO ADD TIMESTAMP TO MPP 
 
 
-                  if ($getifasi["hosd_bloque"] == 1){
+                   if ($subjects[$iter][4] == 1){
                     switch ($getifasi["hosd_hora"]) {
                         case 1:
                     if ($asih1==Null){ 
@@ -1915,7 +2124,7 @@ where a.maca_id= :maca_id and asi_id = :asi_id
                     }  
 
 
-                  if ($getifasi["hosd_bloque"] == 2){
+                   if ($subjects[$iter][4] == 2){
                     switch ($getifasi["hosd_hora"]) {
                         case 1:
                     if ($asih5==Null){ 

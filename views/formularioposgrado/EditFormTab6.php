@@ -11,6 +11,13 @@ academico::registerTranslations();
 financiero::registerTranslations();
 //print_r($arr_condcurriculum);
 $per_id = $persona_model->per_id;
+$leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
+          <div class="form-group">
+          <div class="col-sm-10 col-md-10 col-xs-10 col-lg-10">
+          <div style = "width: 540px;" class="alert alert-info"><span style="font-weight: bold"> Nota: </span> Al subir archivo debe ser 800 KB máximo, en formato pdf, excepto foto que es jpg.</div>
+          </div>
+          </div>
+          </div>';
 ?>
 <?= Html::hiddenInput('txth_igra_id', base64_encode($igra_id), ['id' => 'txth_igra_id']); ?>
 <?= Html::hiddenInput('txth_per_id', base64_encode($per_id), ['id' => 'txth_per_id']); ?>
@@ -18,6 +25,77 @@ $per_id = $persona_model->per_id;
 <?= Html::hiddenInput('txth_cemp_id', $personaData["cemp_id"], ['id' => 'txth_cemp_id']); ?>
 
 <form class="form-horizontal" enctype="multipart/form-data" id="formsolicitud">
+<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 ">
+<?php echo $leyenda; ?>
+</div>
+    <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12 doc_documento">
+        <div class="form-group">
+            <label for="txth_doc_documento" class="col-lg-3 col-md-3 col-sm-3 col-xs-3 control-label"><?= Yii::t("formulario", "Documento") ?></label>
+            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                <?= Html::hiddenInput('txth_doc_documento', '', ['id' => 'txth_doc_documento']); ?>
+                <?php
+                echo CFileInputAjax::widget([
+                    'id' => 'txt_doc_documento',
+                    'name' => 'txt_doc_documento',
+                    'pluginLoading' => false,
+                    'showMessage' => false,
+                    'pluginOptions' => [
+                        'showPreview' => false,
+                        'showCaption' => true,
+                        'showRemove' => true,
+                        'showUpload' => false,
+                        'showCancel' => false,
+                        'browseClass' => 'btn btn-primary btn-block',
+                        'browseIcon' => '<i class="fa fa-folder-open"></i> ',
+                        'browseLabel' => "Subir Archivo",
+                        'uploadUrl' => Url::to(['/formularioposgrado/guardarinscripcionposgrado']),
+                        'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
+                        'uploadExtraData' => 'javascript:function (previewId,index) {
+                        return {"upload_file": true, "name_file": "doc_documento' . "_per_" . $per_id . '"};
+        }',
+                    ],
+                    'pluginEvents' => [
+                        "filebatchselected" => "function (event) {
+        $('#txth_doc_documento').val($('#txt_doc_documento').val());
+        $('#txt_doc_documento').fileinput('upload');
+    }",
+                        "fileuploaderror" => "function (event, data, msg) {
+        $(this).parent().parent().children().first().addClass('hide');
+        $('#txth_doc_documento').val('');
+        //showAlert('NO_OK', 'error', {'wtmessage': objLang.Error_to_process_File__Try_again_, 'title': objLang.Error});
+    }",
+                        "filebatchuploadcomplete" => "function (event, files, extra) {
+        $(this).parent().parent().children().first().addClass('hide');
+    }",
+                        "filebatchuploadsuccess" => "function (event, data, previewId, index) {
+        var form = data.form, files = data.files, extra = data.extra,
+        response = data.response, reader = data.reader;
+        $(this).parent().parent().children().first().addClass('hide');
+        var acciones = [{id: 'reloadpage', class: 'btn btn-primary', value: objLang.Accept, callback: 'reloadPage'}];
+        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});
+    }",
+                        "fileuploaded" => "function (event, data, previewId, index) {
+        $(this).parent().parent().children().first().addClass('hide');
+        var acciones = [{id: 'reloadpage', class: 'btn btn-primary', value: objLang.Accept, callback: 'reloadPage'}];
+        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});
+    }",
+                    ],
+                ]);
+                ?>
+            </div>
+            <div class="col-md-3 col-sm-3 col-xs-3 col-lg-3">
+                <div class="form-group">
+                    <?php
+                        if (!empty($arch16)) {
+                            echo "<a href='" . Url::to(['/site/getimage', 'route' => "$arch16"]) . "' download='" . $arch16 . "' ><span class='glyphicon glyphicon-download-alt'></span>Descargar Imagen</a>";
+                        }else {
+                      echo "<a style= 'color:#b08500;'  download='" . $arch16 . "' >Documento no Cargado</a>";
+                }
+                    ?>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 doc_foto">
         <div class="form-group">
             <label for="txth_doc_foto" class="col-lg-3 col-md-3 col-sm-3 col-xs-3 control-label"><?= Yii::t("formulario", "Foto") ?></label>
@@ -38,10 +116,10 @@ $per_id = $persona_model->per_id;
                         'browseClass' => 'btn btn-primary btn-block',
                         'browseIcon' => '<i class="fa fa-folder-open"></i> ',
                         'browseLabel' => "Subir Archivo",
-                        'uploadUrl' => Url::to(['/inscripcionposgrado/guardarinscripcionposgrado']),
+                        'uploadUrl' => Url::to(['/formularioposgrado/guardarinscripcionposgrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
-                        return {"upload_file": true, "name_file": "doc_foto' . "_per_" . $per_id . '"};
+                        return {"upload_foto": true, "name_file": "doc_foto' . "_per_" . $per_id . '"};
         }',
                     ],
                     'pluginEvents' => [
@@ -51,7 +129,7 @@ $per_id = $persona_model->per_id;
     }",
                         "fileuploaderror" => "function (event, data, msg) {
         $(this).parent().parent().children().first().addClass('hide');
-        $('#txth_doc_adj_disi').val('');
+        $('#txth_doc_foto').val('');
         //showAlert('NO_OK', 'error', {'wtmessage': objLang.Error_to_process_File__Try_again_, 'title': objLang.Error});
     }",
                         "filebatchuploadcomplete" => "function (event, files, extra) {
@@ -78,13 +156,15 @@ $per_id = $persona_model->per_id;
                     <?php
                         if (!empty($arch1)) {
                             echo "<a href='" . Url::to(['/site/getimage', 'route' => "$arch1"]) . "' download='" . $arch1 . "' ><span class='glyphicon glyphicon-download-alt'></span>Descargar Imagen</a>";
-                        }
+                        }else {
+                      echo "<a style= 'color:#b08500;'  download='" . $arch1 . "' >Documento no Cargado</a>";
+                }
                     ?>
                 </div>
             </div>
         </div>
     </div>
-    <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12 doc_dni">
+    <!-- <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12 doc_dni">
         <div class="form-group">
             <label for="txth_doc_dni" class="col-sm-3 col-md-3 col-xs-3 col-lg-3 control-label keyupmce"><?= Yii::t("formulario", "Cédula o Pasaporte") ?></label>
             <div class="col-sm-6 col-md-6 col-xs-6 col-lg-6">
@@ -104,7 +184,7 @@ $per_id = $persona_model->per_id;
                         'browseClass' => 'btn btn-primary btn-block',
                         'browseIcon' => '<i class="fa fa-folder-open"></i> ',
                         'browseLabel' => "Subir Archivo",
-                        'uploadUrl' => Url::to(['/inscripcionposgrado/guardarinscripcionposgrado']),
+                        'uploadUrl' => Url::to(['/formularioposgrado/guardarinscripcionposgrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
                         return {"upload_file": true, "name_file": "doc_dni' . "_per_" . $per_id . '"};
@@ -146,13 +226,14 @@ $per_id = $persona_model->per_id;
                 <?php
                 if (!empty($arch2)) {
                     echo "<a href='" . Url::to(['/site/getimage', 'route' => "$arch2"]) . "' download='" . $arch2 . "' ><span class='glyphicon glyphicon-download-alt'></span>Descargar Imagen</a>";
+                }else {
+                      echo "<a style= 'color:#b08500;'  download='" . $arch2 . "' >Documento no Cargado</a>";
                 }
                 ?>
             </div>
         </div>
-    </div>
-
-    <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
+    </div>-->
+    <!-- <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
         <div class="form-group">
             <label for="txth_doc_certvota" class="col-sm-3 col-md-3 col-xs-3 col-lg-3 control-label keyupmce"><?= Yii::t("formulario", "Voting Certificate") ?></label>
             <div class="col-sm-6 col-md-6 col-xs-6 col-lg-6">
@@ -172,7 +253,7 @@ $per_id = $persona_model->per_id;
                         'browseClass' => 'btn btn-primary btn-block',
                         'browseIcon' => '<i class="fa fa-folder-open"></i> ',
                         'browseLabel' => "Subir Archivo",
-                        'uploadUrl' => Url::to(['/inscripcionposgrado/guardarinscripcionposgrado']),
+                        'uploadUrl' => Url::to(['/formularioposgrado/guardarinscripcionposgrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
                         return {"upload_file": true, "name_file": "doc_certvota' . "_per_" . $per_id . '"};
@@ -213,13 +294,14 @@ $per_id = $persona_model->per_id;
                 <?php
                 if (!empty($arch3)) {
                     echo "<a href='" . Url::to(['/site/getimage', 'route' => "$arch3"]) . "' download='" . $arch3 . "' ><span class='glyphicon glyphicon-download-alt'></span>Descargar Imagen</a>";
+                }else {
+                      echo "<a style= 'color:#b08500;'  download='" . $arch3 . "' >Documento no Cargado</a>";
                 }
                 ?>
             </div>
         </div>
-    </div>
-
-    <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12 doc_titulo">
+    </div> -->
+    <!-- <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12 doc_titulo">
         <div class="form-group">
             <label for="txth_doc_titulo" class="col-sm-3 col-lg-3 col-md-3 col-xs-3 control-label keyupmce"><?= Yii::t("formulario", "Título Tercer Nivel o Acta de Grado notarizada") ?></label>
             <div class="col-sm-6 col-md-6 col-xs-6 col-lg-6">
@@ -239,7 +321,7 @@ $per_id = $persona_model->per_id;
                         'browseClass' => 'btn btn-primary btn-block',
                         'browseIcon' => '<i class="fa fa-folder-open"></i> ',
                         'browseLabel' => "Subir Archivo",
-                        'uploadUrl' => Url::to(['/inscripcionposgrado/guardarinscripcionposgrado']),
+                        'uploadUrl' => Url::to(['/formularioposgrado/guardarinscripcionposgrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
                         return {"upload_file": true, "name_file": "doc_titulo' . "_per_" . $per_id . '"};
@@ -280,12 +362,13 @@ $per_id = $persona_model->per_id;
                 <?php
                 if (!empty($arch4)) {
                     echo "<a href='" . Url::to(['/site/getimage', 'route' => "$arch4"]) . "' download='" . $arch4 . "' ><span class='glyphicon glyphicon-download-alt'></span>Descargar Pdf</a>";
+                }else {
+                      echo "<a style= 'color:#b08500;'  download='" . $arch4 . "' >Documento no Cargado</a>";
                 }
                 ?>
             </div>
         </div>
-    </div>
-
+    </div> -->
     <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12 doc_comprobante">
         <div class="form-group">
             <label for="txth_doc_comprobante" class="col-sm-3 col-md-3 col-xs-3 col-lg-3 control-label keyupmce"><?= Yii::t("formulario", "Comprobante de depósito o transferencia de pago de Matrícula") ?></label>
@@ -306,7 +389,7 @@ $per_id = $persona_model->per_id;
                         'browseClass' => 'btn btn-primary btn-block',
                         'browseIcon' => '<i class="fa fa-folder-open"></i> ',
                         'browseLabel' => "Subir Archivo",
-                        'uploadUrl' => Url::to(['/inscripcionposgrado/guardarinscripcionposgrado']),
+                        'uploadUrl' => Url::to(['/formularioposgrado/guardarinscripcionposgrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
                         return {"upload_file": true, "name_file": "doc_comprobante' . "_per_" . $per_id . '"};
@@ -341,19 +424,20 @@ $per_id = $persona_model->per_id;
                 ]);
                 ?>
             </div>
-        </div>
         <div class="col-md-3 col-sm-3 col-xs-3 col-lg-3">
             <div class="form-group">
                 <?php
                 if (!empty($arch5)) {
                     echo "<a href='" . Url::to(['/site/getimage', 'route' => "$arch5"]) . "' download='" . $arch5 . "' ><span class='glyphicon glyphicon-download-alt'></span>Descargar Imagen</a>";
+                }else {
+                      echo "<a style= 'color:#b08500;'  download='" . $arch5 . "' >Documento no Cargado</a>";
                 }
                 ?>
             </div>
         </div>
     </div>
-
-    <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12 doc_record1">
+</div>
+    <!-- <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12 doc_record1">
         <div class="form-group">
             <label for="txth_doc_record1" class="col-sm-3 col-md-3 col-xs-3 col-lg-3 control-label keyupmce"><?= Yii::t("formulario", "Récord Académico Actualizado") ?></label>
             <div class="col-sm-6 col-md-6 col-xs-6 col-lg-6">
@@ -373,7 +457,7 @@ $per_id = $persona_model->per_id;
                         'browseClass' => 'btn btn-primary btn-block',
                         'browseIcon' => '<i class="fa fa-folder-open"></i> ',
                         'browseLabel' => "Subir Archivo",
-                        'uploadUrl' => Url::to(['/inscripcionposgrado/guardarinscripcionposgrado']),
+                        'uploadUrl' => Url::to(['/formularioposgrado/guardarinscripcionposgrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
                         return {"upload_file": true, "name_file": "doc_record' . "_per_" . $per_id . '"};
@@ -414,13 +498,14 @@ $per_id = $persona_model->per_id;
                 <?php
                 if (!empty($arch6)) {
                     echo "<a href='" . Url::to(['/site/getimage', 'route' => "$arch6"]) . "' download='" . $arch6 . "' ><span class='glyphicon glyphicon-download-alt'></span>Descargar Pdf</a>";
+                }else {
+                      echo "<a style= 'color:#b08500;'  download='" . $arch6 . "' >Documento no Cargado</a>";
                 }
                 ?>
             </div>
         </div>
-    </div>
-
-    <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12 doc_senescyt">
+    </div> -->
+    <!-- <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12 doc_senescyt">
         <div class="form-group">
             <label for="txth_doc_senecyt" class="col-sm-3 col-md-3 col-xs-3 col-lg-3 control-label keyupmce"><?= Yii::t("formulario", "Registro de Senescyt") ?></label>
             <div class="col-sm-6 col-md-6 col-xs-6 col-lg-6">
@@ -440,7 +525,7 @@ $per_id = $persona_model->per_id;
                         'browseClass' => 'btn btn-primary btn-block',
                         'browseIcon' => '<i class="fa fa-folder-open"></i> ',
                         'browseLabel' => "Subir Archivo",
-                        'uploadUrl' => Url::to(['/inscripcionposgrado/guardarinscripcionposgrado']),
+                        'uploadUrl' => Url::to(['/formularioposgrado/guardarinscripcionposgrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
                         return {"upload_file": true, "name_file": "doc_senescyt' . "_per_" . $per_id . '"};
@@ -481,13 +566,14 @@ $per_id = $persona_model->per_id;
                 <?php
                 if (!empty($arch7)) {
                     echo "<a href='" . Url::to(['/site/getimage', 'route' => "$arch7"]) . "' download='" . $arch7 . "' ><span class='glyphicon glyphicon-download-alt'></span>Descargar Pdf</a>";
+                }else {
+                      echo "<a style= 'color:#b08500;'  download='" . $arch7 . "' >Documento no Cargado</a>";
                 }
                 ?>
             </div>
         </div>
-    </div>
-
-    <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12 doc_hoja_vida">
+    </div> -->
+    <!-- <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12 doc_hoja_vida">
         <div class="form-group">
             <label for="txth_doc_hojavida" class="col-sm-3 col-md-3 col-xs-3 col-lg-3 control-label keyupmce"><?= Yii::t("formulario", "Hoja de Vida") ?></label>
             <div class="col-sm-6 col-md-6 col-xs-6 col-lg-6">
@@ -507,7 +593,7 @@ $per_id = $persona_model->per_id;
                         'browseClass' => 'btn btn-primary btn-block',
                         'browseIcon' => '<i class="fa fa-folder-open"></i> ',
                         'browseLabel' => "Subir Archivo",
-                        'uploadUrl' => Url::to(['/inscripcionposgrado/guardarinscripcionposgrado']),
+                        'uploadUrl' => Url::to(['/formularioposgrado/guardarinscripcionposgrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
                         return {"upload_file": true, "name_file": "doc_hojavida' . "_per_" . $per_id . '"};
@@ -548,13 +634,14 @@ $per_id = $persona_model->per_id;
                 <?php
                 if (!empty($arch8)) {
                     echo "<a href='" . Url::to(['/site/getimage', 'route' => "$arch8"]) . "' download='" . $arch8 . "' ><span class='glyphicon glyphicon-download-alt'></span>Descargar Pdf</a>";
+                }else {
+                      echo "<a style= 'color:#b08500;'  download='" . $arch8 . "' >Documento no Cargado</a>";
                 }
                 ?>
             </div>
         </div>
-    </div>
-
-    <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12 doc_cartarecomendacion cinteres">
+    </div> -->
+    <!-- <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12 doc_cartarecomendacion cinteres">
         <div class="form-group">
             <label for="txth_doc_cartarecomendacion" class="col-sm-3 col-md-3 col-xs-3 col-lg-3 control-label keyupmce"><?= Yii::t("formulario", "Carta de Recomendación") ?></label>
             <div class="col-sm-6 col-md-6 col-xs-6 col-lg-6">
@@ -574,7 +661,7 @@ $per_id = $persona_model->per_id;
                         'browseClass' => 'btn btn-primary btn-block',
                         'browseIcon' => '<i class="fa fa-folder-open"></i> ',
                         'browseLabel' => "Subir Archivo",
-                        'uploadUrl' => Url::to(['/inscripcionposgrado/guardarinscripcionposgrado']),
+                        'uploadUrl' => Url::to(['/formularioposgrado/guardarinscripcionposgrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
                         return {"upload_file": true, "name_file": "doc_cartarecomendacion' . "_per_" . $per_id . '"};
@@ -615,13 +702,14 @@ $per_id = $persona_model->per_id;
                 <?php
                 if (!empty($arch9)) {
                     echo "<a href='" . Url::to(['/site/getimage', 'route' => "$arch9"]) . "' download='" . $arch9 . "' ><span class='glyphicon glyphicon-download-alt'></span>Descargar Pdf</a>";
+                }else {
+                      echo "<a style= 'color:#b08500;'  download='" . $arch9 . "' >Documento no Cargado</a>";
                 }
                 ?>
             </div>
         </div>
-    </div>
-
-    <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12 doc_certificadolaboral">
+    </div> -->
+    <!-- <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12 doc_certificadolaboral">
         <div class="form-group">
             <label for="txth_doc_certificadolaboral" class="col-sm-3 col-md-3 col-xs-3 col-lg-3 control-label keyupmce"><?= Yii::t("formulario", "Certificado Laboral") ?></label>
             <div class="col-sm-6 col-md-6 col-xs-6 col-lg-6">
@@ -641,7 +729,7 @@ $per_id = $persona_model->per_id;
                         'browseClass' => 'btn btn-primary btn-block',
                         'browseIcon' => '<i class="fa fa-folder-open"></i> ',
                         'browseLabel' => "Subir Archivo",
-                        'uploadUrl' => Url::to(['/inscripcionposgrado/guardarinscripcionposgrado']),
+                        'uploadUrl' => Url::to(['/formularioposgrado/guardarinscripcionposgrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
                         return {"upload_file": true, "name_file": "doc_certlaboral' . "_per_" . $per_id . '"};
@@ -682,13 +770,14 @@ $per_id = $persona_model->per_id;
                 <?php
                 if (!empty($arch10)) {
                     echo "<a href='" . Url::to(['/site/getimage', 'route' => "$arch10"]) . "' download='" . $arch10 . "' ><span class='glyphicon glyphicon-download-alt'></span>Descargar Pdf</a>";
+                }else {
+                      echo "<a style= 'color:#b08500;'  download='" . $arch10 . "' >Documento no Cargado</a>";
                 }
                 ?>
             </div>
         </div>
-    </div>
-
-    <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12 doc_certificadoingles cinteres">
+    </div> -->
+    <!-- <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12 doc_certificadoingles cinteres">
         <div class="form-group">
             <label for="txth_doc_certificadoingles" class="col-sm-3 col-md-3 col-xs-3 col-lg-3 control-label keyupmce"><?= Yii::t("formulario", "Certificado de Suficiencia en Inglés Nivel A2") ?></label>
             <div class="col-sm-6 col-md-6 col-xs-6 col-lg-6">
@@ -708,7 +797,7 @@ $per_id = $persona_model->per_id;
                         'browseClass' => 'btn btn-primary btn-block',
                         'browseIcon' => '<i class="fa fa-folder-open"></i> ',
                         'browseLabel' => "Subir Archivo",
-                        'uploadUrl' => Url::to(['/inscripcionposgrado/guardarinscripcionposgrado']),
+                        'uploadUrl' => Url::to(['/formularioposgrado/guardarinscripcionposgrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
                         return {"upload_file": true, "name_file": "doc_certingles' . "_per_" . $per_id . '"};
@@ -749,12 +838,13 @@ $per_id = $persona_model->per_id;
                 <?php
                 if (!empty($arch11)) {
                     echo "<a href='" . Url::to(['/site/getimage', 'route' => "$arch11"]) . "' download='" . $arch11 . "' ><span class='glyphicon glyphicon-download-alt'></span>Descargar Pdf</a>";
+                }else {
+                      echo "<a style= 'color:#b08500;'  download='" . $arch11 . "' >Documento no Cargado</a>";
                 }
                 ?>
             </div><br><br></br>
         </div>
-    </div>
-
+    </div> -->
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <h3><span id="lbl_Personeria"><?= Yii::t("formulario", "Documentos adicionales por homologación") ?></span></h3><br><br></br>
     </div>
@@ -779,7 +869,7 @@ $per_id = $persona_model->per_id;
                         'browseClass' => 'btn btn-primary btn-block',
                         'browseIcon' => '<i class="fa fa-folder-open"></i> ',
                         'browseLabel' => "Subir Archivo",
-                        'uploadUrl' => Url::to(['/inscripcionposgrado/guardarinscripcionposgrado']),
+                        'uploadUrl' => Url::to(['/formularioposgrado/guardarinscripcionposgrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
                         return {"upload_file": true, "name_file": "doc_record' . "_per_" . $per_id . '"};
@@ -820,6 +910,8 @@ $per_id = $persona_model->per_id;
                 <?php
                 if (!empty($arch12)) {
                     echo "<a href='" . Url::to(['/site/getimage', 'route' => "$arch12"]) . "' download='" . $arch12 . "' ><span class='glyphicon glyphicon-download-alt'></span>Descargar Pdf</a>";
+                }else {
+                      echo "<a style= 'color:#b08500;'  download='" . $arch12 . "' >Documento no Cargado</a>";
                 }
                 ?>
             </div>
@@ -846,7 +938,7 @@ $per_id = $persona_model->per_id;
                         'browseClass' => 'btn btn-primary btn-block',
                         'browseIcon' => '<i class="fa fa-folder-open"></i> ',
                         'browseLabel' => "Subir Archivo",
-                        'uploadUrl' => Url::to(['/inscripcionposgrado/guardarinscripcionposgrado']),
+                        'uploadUrl' => Url::to(['/formularioposgrado/guardarinscripcionposgrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
                         return {"upload_file": true, "name_file": "doc_certificado' . "_per_" . $per_id . '"};
@@ -887,6 +979,8 @@ $per_id = $persona_model->per_id;
                 <?php
                 if (!empty($arch13)) {
                     echo "<a href='" . Url::to(['/site/getimage', 'route' => "$arch13"]) . "' download='" . $arch13 . "' ><span class='glyphicon glyphicon-download-alt'></span>Descargar Pdf</a>";
+                }else {
+                      echo "<a style= 'color:#b08500;'  download='" . $arch13 . "' >Documento no Cargado</a>";
                 }
                 ?>
             </div>
@@ -913,7 +1007,7 @@ $per_id = $persona_model->per_id;
                         'browseClass' => 'btn btn-primary btn-block',
                         'browseIcon' => '<i class="fa fa-folder-open"></i> ',
                         'browseLabel' => "Subir Archivo",
-                        'uploadUrl' => Url::to(['/inscripcionposgrado/guardarinscripcionposgrado']),
+                        'uploadUrl' => Url::to(['/formularioposgrado/guardarinscripcionposgrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
                         return {"upload_file": true, "name_file": "doc_syllabus' . "_per_" . $per_id . '"};
@@ -954,6 +1048,8 @@ $per_id = $persona_model->per_id;
                 <?php
                 if (!empty($arch14)) {
                     echo "<a href='" . Url::to(['/site/getimage', 'route' => "$arch14"]) . "' download='" . $arch14 . "' ><span class='glyphicon glyphicon-download-alt'></span>Descargar Pdf</a>";
+                }else {
+                      echo "<a style= 'color:#b08500;'  download='" . $arch14 . "' >Documento no Cargado</a>";
                 }
                 ?>
             </div>
@@ -980,7 +1076,7 @@ $per_id = $persona_model->per_id;
                         'browseClass' => 'btn btn-primary btn-block',
                         'browseIcon' => '<i class="fa fa-folder-open"></i> ',
                         'browseLabel' => "Subir Archivo",
-                        'uploadUrl' => Url::to(['/inscripcionposgrado/guardarinscripcionposgrado']),
+                        'uploadUrl' => Url::to(['/formularioposgrado/guardarinscripcionposgrado']),
                         'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
                         'uploadExtraData' => 'javascript:function (previewId,index) {
                         return {"upload_file": true, "name_file": "doc_especievalorada' . "_per_" . $per_id . '"};
@@ -1021,6 +1117,8 @@ $per_id = $persona_model->per_id;
                 <?php
                 if (!empty($arch15)) {
                     echo "<a href='" . Url::to(['/site/getimage', 'route' => "$arch15"]) . "' download='" . $arch15 . "' ><span class='glyphicon glyphicon-download-alt'></span>Descargar Pdf</a>";
+                }else {
+                      echo "<a style= 'color:#b08500;'  download='" . $arch15 . "' >Documento no Cargado</a>";
                 }
                 ?>
             </div>

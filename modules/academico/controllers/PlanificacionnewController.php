@@ -402,14 +402,16 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
         $data = Yii::$app->request->get();
         if (isset($data['id'])) {
             $id = $data['id'];
-            $model = RegistroConfiguracion::findOne($id);
-            $arr_pla = ArrayHelper::map(Planificacion::findAll(['pla_estado' => 1, 'pla_estado_logico' => 1]), 'pla_id', 'pla_periodo_academico');
+            $model   = RegistroConfiguracion::findOne($id);
+            $arr_pla = Planificacion::findOne(['pla_id'=>$model['pla_id'],'pla_estado' => 1, 'pla_estado_logico' => 1]);
+            $mod_id  = Modalidad::findOne(['mod_id'=>$arr_pla['mod_id'],'mod_estado'=>1,'mod_estado_logico'=>1]);
             return $this->render('viewreg', [
-                        'model' => $model,
+                        'model'   => $model,
                         'arr_pla' => $arr_pla,
-                        'pla_id' => $model->pla_id,
-                        'rco_id' => $model->rco_id,
-                        'bloque' => ( $model->rco_num_bloques == 1 ) ? 0 : 1,
+                        'pla_id'  => $model->pla_id,
+                        'mod_id'  => $mod_id
+                        'rco_id'  => $model->rco_id,
+                        'bloque'  => ( $model->rco_num_bloques == 1 ) ? 0 : 1,
             ]);
         }
         return $this->redirect('registerprocess');

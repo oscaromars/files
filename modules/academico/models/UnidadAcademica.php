@@ -64,8 +64,8 @@ class UnidadAcademica extends \app\modules\academico\components\CActiveRecord {
     /** Se debe cambiar esta funcion que regrese el codigo de area ***ojo***
      * Function consultarCodigoArea
      * @author  Byron Villacreses <developer@uteg.edu.ec>
-     * @property integer car_id      
-     * @return  
+     * @property integer car_id
+     * @return
      */
     public static function consultarIdsUnid_Academica($TextAlias) {
         $con = \Yii::$app->db_academico;
@@ -80,24 +80,24 @@ class UnidadAcademica extends \app\modules\academico\components\CActiveRecord {
             return 0; //en caso de que existe problema o no retorne nada tiene 1 por defecto 
         return $rawData;
     }
-    
-    
+
+
     /**
      * Function consulta el nombre de unidad academica
      * @author  Kleber Loayza <analistadesarrollo03@uteg.edu.ec>;
-     * @property       
-     * @return  
+     * @property
+     * @return
      */
     public function consultarUnidadAcademicas() {
         $con = \Yii::$app->db_academico;
         $estado = 1;
         $sql = "
-                    SELECT 
+                    SELECT
                         unia.uaca_nombre as name,
                         unia.uaca_id as id
-                    FROM 
+                    FROM
                         " . $con->dbname . ".unidad_academica as unia            
-                    WHERE   
+                    WHERE
                         unia.uaca_estado_logico=:estado AND 
                         unia.uaca_estado=:estado
                     ORDER BY 2 asc
@@ -107,12 +107,12 @@ class UnidadAcademica extends \app\modules\academico\components\CActiveRecord {
         $resultData = $comando->queryAll();
         return $resultData;
     }
-    
+
     /**
      * Function consulta el nombre de unidad academica
      * @author  Kleber Loayza <analistadesarrollo03@uteg.edu.ec>;
-     * @property       
-     * @return  
+     * @property
+     * @return
      */
     public function consultarUnidadAcademicasEmpresa($empresa) {
         $con = \Yii::$app->db_academico;
@@ -120,7 +120,7 @@ class UnidadAcademica extends \app\modules\academico\components\CActiveRecord {
         if ($empresa > 0) {
            $condicion = 'emp_id = :empresa AND '; 
         }
-            
+
         $sql = "
                     SELECT distinct una.uaca_id as id, una.uaca_nombre as name
                         FROM db_academico.modalidad_estudio_unidad meu
@@ -142,19 +142,19 @@ class UnidadAcademica extends \app\modules\academico\components\CActiveRecord {
     /**
      * Function consulta el nombre de unidad academica
      * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>;
-     * @property       
-     * @return  
+     * @property
+     * @return
      */
     public function consultarNombreunidad($unidad) {
         $con = \Yii::$app->db_academico;
         $estado = 1;
-        $sql = "SELECT 
+        $sql = "SELECT
                     unia.uaca_nombre as nombre_unidad
-                FROM 
-                    " . $con->dbname . ".unidad_academica as unia            
-                WHERE   
+                FROM
+                    " . $con->dbname . ".unidad_academica as unia
+                WHERE
                     unia.uaca_id=:unidad AND
-                    unia.uaca_estado_logico=:estado AND 
+                    unia.uaca_estado_logico=:estado AND
                     unia.uaca_estado=:estado";
         $comando = $con->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);

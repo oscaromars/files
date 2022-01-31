@@ -83,7 +83,7 @@ PbGridView::widget([
                 },
                 'cancel' => function ($url, $model) {
                     if ($model['estado'] == 'Pendiente' && $model['estado_pago'] == 'Pagado') { // Aqui si la solicitud esta pendiente  y no ha subido pago
-                        return Html::a('<span class="glyphicon glyphicon-trash"></span>', "#", ['onclick' => "anularsolicitud(" . $model['sins_id'] . ",". $model['per_id'] .",". $model['opag_id'] .");", "data-toggle" => "tooltip", "title" => "Anular Solicitud", "data-pjax" => 0]);
+                        return Html::a('<span class="glyphicon glyphicon-trash"></span>', "#", ['onclick' => "anularsolicitud(" . $model['sins_id'] . ",". $model['opag_id'] .",". $model['per_id'] .");", "data-toggle" => "tooltip", "title" => "Anular Solicitud", "data-pjax" => 0]);
                     } else {
                         return '<span class="glyphicon glyphicon-trash"></span>';
                     }

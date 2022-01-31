@@ -953,8 +953,6 @@ $(document).ready(function () {
         arrParams.descuento_id = $('#cmb_descuento').val();
         arrParams.ite_id = $('#cmb_item').val();
         arrParams.getpreciodescuento = true;
-        /*alert('ite_id 5 ' + arrParams.ite_id);
-        alert('descuento_id 5 ' + arrParams.descuento_id);*/
         requestHttpAjax(link, arrParams, function (response) {
             if (response.status == "OK") {
                 data = response.message;
@@ -1546,8 +1544,6 @@ function anularsolicitud(sins_id, opag_id) {
 }
 
 function accionanusol(sins_id, opag_id) {
-    alert ('sins_id accion' + sins_id);
-    alert ('opag_id accion' + opag_id);
     var link = $('#txth_base').val() + "/admision/solicitudes/anularsolicitud";
     var arrParams = new Object();
     arrParams.sins_id = sins_id;

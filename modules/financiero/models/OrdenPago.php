@@ -2659,7 +2659,7 @@ class OrdenPago extends \app\modules\financiero\components\CActiveRecord {
                 SET dpag_fecha_modificacion = :dpag_fecha_modificacion,
                     dpag_estado = :estado,
                     dpag_estado_logico = :estado,
-                    dpag_usu_modifica = :dpag_usu_modificas
+                    dpag_usu_modifica = :dpag_usu_modifica
                 WHERE opag_id = :opag_id ");
 
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);

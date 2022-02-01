@@ -238,7 +238,8 @@ print_r($arr_docinscripcion);
                 <label for="txth_foto_matricula" class="col-sm-4  control-label keyupmce"><?= Yii::t("formulario", "Photo") ?></label>
                 <div class="col-sm-7 ">
                     <?php
-                    echo "<a href='" . Url::to(['/site/getimage', 'route' => "$arch2"]) . "' download='" . $arch2 . "' ><span class='glyphicon glyphicon-download-alt'></span>Descargar Foto</a>"
+                    $rutafoto = $arr_docinscripcion['igra_ruta_doc_foto'];
+                    echo "<a href='" . Url::to(['/site/getimage', 'route' => "$rutafoto"]) . "' download='" . $rutafoto . "' ><span class='glyphicon glyphicon-download-alt'></span>Descargar Foto</a>"
                     ?>
                 </div>
             </div>
@@ -248,7 +249,8 @@ print_r($arr_docinscripcion);
                 <label for="txth_doc_record_matricula" class="col-sm-4  control-label keyupmce"><?= Yii::t("formulario", "Record Académico") ?></label>
                 <div class="col-sm-7 ">
                     <?php
-                    echo "<a href='" . Url::to(['/site/getimage', 'route' => "$arch4"]) . "' download='" . $arch4 . "' ><span class='glyphicon glyphicon-download-alt'></span>Descargar Record Académico</a>"
+                    $rutamatricula = $arr_docinscripcion['igra_ruta_doc_recordacademico'];
+                    echo "<a href='" . Url::to(['/site/getimage', 'route' => "$rutamatricula"]) . "' download='" . $rutamatricula . "' ><span class='glyphicon glyphicon-download-alt'></span>Descargar Record Académico</a>"
                     ?>
                 </div>
             </div>
@@ -258,7 +260,8 @@ print_r($arr_docinscripcion);
                 <label for="txth_certifacado_matricula" class="col-sm-4 control-label keyupmce"><?= Yii::t("formulario", "Certificado no sanción") ?></label>
                 <div class="col-sm-7 ">
                     <?php
-                    echo "<a href='" . Url::to(['/site/getimage', 'route' => "$arch1"]) . "' download='" . $arch1 . "' ><span class='glyphicon glyphicon-download-alt'></span>Descargar Certificado</a>"
+                    $rutacertificado = $arr_docinscripcion['igra_ruta_doc_certificado'];
+                    echo "<a href='" . Url::to(['/site/getimage', 'route' => "$rutacertificado"]) . "' download='" . $rutacertificado . "' ><span class='glyphicon glyphicon-download-alt'></span>Descargar Certificado</a>"
                     ?>
                 </div>
             </div>
@@ -268,7 +271,8 @@ print_r($arr_docinscripcion);
                 <label for="txth_doc_syllabus_matricula" class="col-sm-4  control-label keyupmce"><?= Yii::t("formulario", "Syllabus") ?></label>
                 <div class="col-sm-7 ">
                     <?php
-                    echo "<a href='" . Url::to(['/site/getimage', 'route' => "$arch2"]) . "' download='" . $arch2 . "' ><span class='glyphicon glyphicon-download-alt'></span>Descargar Syllabus</a>"
+                    $rutasyllabus = $arr_docinscripcion['igra_ruta_doc_syllabus'];
+                    echo "<a href='" . Url::to(['/site/getimage', 'route' => "$rutasyllabus"]) . "' download='" . $rutasyllabus . "' ><span class='glyphicon glyphicon-download-alt'></span>Descargar Syllabus</a>"
                     ?>
                 </div>
             </div>
@@ -279,13 +283,81 @@ print_r($arr_docinscripcion);
                 <label for="txth_doc_especie_matricula" class="col-sm-4  control-label keyupmce"><?= Yii::t("formulario", "Especie Valorada") ?></label>
                 <div class="col-sm-7 ">
                     <?php
-                    echo "<a href='" . Url::to(['/site/getimage', 'route' => "$arch4"]) . "' download='" . $arch4 . "' ><span class='glyphicon glyphicon-download-alt'></span>Descargar Especie</a>"
+                    $rutashomolagacion = $arr_docinscripcion['igra_ruta_doc_homologacion'];
+                    echo "<a href='" . Url::to(['/site/getimage', 'route' => "$rutashomolagacion"]) . "' download='" . $rutashomolagacion . "' ><span class='glyphicon glyphicon-download-alt'></span>Descargar Especie</a>"
                     ?>
                 </div>
             </div>
         </div>
     <?php } else {?>
         <!-- posgrado-->
+        <div class="col-md-6 doc_documentpos">
+            <div class="form-group">
+                <label for="txth_doc_documentpos" class="col-sm-4 control-label keyupmce"><?= Yii::t("formulario", "Documentos") ?></label>
+                <div class="col-sm-7 ">
+                    <?php
+                    $rutadoc = $arr_docinscripcion['ipos_ruta_documento'];
+                    echo "<a href='" . Url::to(['/site/getimage', 'route' => "$rutadoc"]) . "' download='" . $rutadoc . "' ><span class='glyphicon glyphicon-download-alt'></span>Descargar Documentos</a>"
+                    ?>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6  doc_foto_posmatricula">
+            <div class="form-group">
+                <label for="txth_foto_posmatricula" class="col-sm-4  control-label keyupmce"><?= Yii::t("formulario", "Photo") ?></label>
+                <div class="col-sm-7 ">
+                    <?php
+                    $rutafoto = $arr_docinscripcion['ipos_ruta_doc_foto'];
+                    echo "<a href='" . Url::to(['/site/getimage', 'route' => "$rutafoto"]) . "' download='" . $rutafoto . "' ><span class='glyphicon glyphicon-download-alt'></span>Descargar Foto</a>"
+                    ?>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6  doc_record_posmatricula">
+            <div class="form-group">
+                <label for="txth_doc_record_posmatricula" class="col-sm-4  control-label keyupmce"><?= Yii::t("formulario", "Record Académico") ?></label>
+                <div class="col-sm-7 ">
+                    <?php
+                    $rutamatricula = $arr_docinscripcion['ipos_ruta_doc_recordacademico'];
+                    echo "<a href='" . Url::to(['/site/getimage', 'route' => "$rutamatricula"]) . "' download='" . $rutamatricula . "' ><span class='glyphicon glyphicon-download-alt'></span>Descargar Record Académico</a>"
+                    ?>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 doc_certifacado_posmatricula">
+            <div class="form-group">
+                <label for="txth_certifacado_posmatricula" class="col-sm-4 control-label keyupmce"><?= Yii::t("formulario", "Certificado no sanción") ?></label>
+                <div class="col-sm-7 ">
+                    <?php
+                    $rutacertificado = $arr_docinscripcion['ipos_ruta_doc_certificadonosancion'];
+                    echo "<a href='" . Url::to(['/site/getimage', 'route' => "$rutacertificado"]) . "' download='" . $rutacertificado . "' ><span class='glyphicon glyphicon-download-alt'></span>Descargar Certificado</a>"
+                    ?>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6  doc_syllabus_posmatricula">
+            <div class="form-group">
+                <label for="txth_doc_syllabus_posmatricula" class="col-sm-4  control-label keyupmce"><?= Yii::t("formulario", "Syllabus") ?></label>
+                <div class="col-sm-7 ">
+                    <?php
+                    $rutasyllabus = $arr_docinscripcion['ipos_ruta_doc_syllabus'];
+                    echo "<a href='" . Url::to(['/site/getimage', 'route' => "$rutasyllabus"]) . "' download='" . $rutasyllabus . "' ><span class='glyphicon glyphicon-download-alt'></span>Descargar Syllabus</a>"
+                    ?>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6  doc_especie_posmatricula">
+            <div class="form-group">
+                <label for="txth_doc_especie_posmatricula" class="col-sm-4  control-label keyupmce"><?= Yii::t("formulario", "Especie Valorada") ?></label>
+                <div class="col-sm-7 ">
+                    <?php
+                    $rutashomolagacion = $arr_docinscripcion['ipos_ruta_doc_homologacion'];
+                    echo "<a href='" . Url::to(['/site/getimage', 'route' => "$rutashomolagacion"]) . "' download='" . $rutashomolagacion . "' ><span class='glyphicon glyphicon-download-alt'></span>Descargar Especie</a>"
+                    ?>
+                </div>
+            </div>
+        </div>
         <?php } ?>
     <?php } ?>
     <div class="col-md-6 col-sm-6 col-xs-6 col-lg-6  doc_foto cinteres">

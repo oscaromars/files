@@ -30,6 +30,8 @@ use app\modules\financiero\Module as financiero;
 use app\modules\financiero\models\Secuencias;
 use app\modules\admision\models\ConvenioEmpresa;
 use app\models\Usuario;
+use app\models\InscripcionGrado;
+use app\models\InscripcionPosgrado;
 use yii\base\Security;
 use app\models\Empresa;
 use app\models\UsuaGrolEper;
@@ -123,6 +125,8 @@ class SolicitudesController extends \app\components\CController {
         $emp_id = base64_decode($_GET['empid']);
 
         $mod_solins = new SolicitudInscripcion();
+        $mod_matgrado = new InscripcionGrado();
+        $mod_matposgr = new InscripcionPosgrado();
         $personaData = $mod_solins->consultarInteresadoPorSol_id($sins_id);
         $nacionalidad = $personaData["per_nac_ecuatoriano"];
         $fechas = $mod_solins->consultarFechadmitido($int_id, $sins_id);
@@ -155,6 +159,14 @@ class SolicitudesController extends \app\components\CController {
         $resp_condcurriculum = $mod_solins->consultarSolnoaprobada(7, $tiponacext);
         $resp_condcon = $mod_solins->consultarSolnoaprobada(8, $tiponacext);
 
+        // consultar imagenes del fm de matriculacion
+        if ($personaData['uaca_id'] == 1) { //grado
+            //consultar en inscripciongrado
+            $resp_docinscripcion = $mod_matgrado->ObtenerdocumentosInscripcionGrado($per_id);
+        } else { // posgrado
+             //consultar en inscripciongrado
+             $resp_docinscripcion = $mod_matposgr->ObtenerdocumentosInscripcionPosgrado($per_id);
+        }
         return $this->render('view', [
                     "revision" => array("2" => Yii::t("formulario", "APPROVED"), "4" => Yii::t("formulario", "Not approved")),
                     "personaData" => $personaData,
@@ -181,6 +193,7 @@ class SolicitudesController extends \app\components\CController {
                     "arr_condcon" => $resp_condcon,
                     "arr_condfoto" => $resp_condfoto,
                     "arr_condcurriculum" =>$resp_condcurriculum,
+                    "arr_docinscripcion" =>$resp_docinscripcion,
         ]);
     }
 

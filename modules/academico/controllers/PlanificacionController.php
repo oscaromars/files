@@ -261,6 +261,29 @@ $postprocess = $malla->marcarAsignaturas($preprocess[$ix]["mpmo_id"],$periodo);
 		$mensaje = "periodo " . $periodo . " modalidad " . $modalidad;
 		mail('oscaromars@hotmail.com', 'Mi título', $mensaje);
 
+
+          $sql = "
+		SELECT pla_id
+		FROM db_academico.planificacion 
+		WHERE saca_id = :periodo and mod_id= :modalidad";
+          $comando = $con->createCommand($sql);
+		$comando->bindParam(":periodo", $periodo, \PDO::PARAM_INT);
+		$comando->bindParam(":modalidad", $periodo, \PDO::PARAM_INT);
+		$get_pla_id = $comando->queryOne();
+          $oldplan = $get_pla_id["pla_id"];
+
+          $sql = "
+		SELECT pla_id
+		FROM db_academico.planificacion 
+		WHERE saca_id = :periodo and mod_id= :modalidad 
+          AND pla_id <  :oldplan ";
+          $comando = $con->createCommand($sql);
+		$comando->bindParam(":periodo", $periodo, \PDO::PARAM_INT);
+		$comando->bindParam(":modalidad", $periodo, \PDO::PARAM_INT);
+			$comando->bindParam(":oldplan", $oldplan, \PDO::PARAM_INT);
+		$get_pla_id = $comando->queryOne();
+          $oldplan = $get_pla_id["pla_id"];
+
 		$con = \Yii::$app->db_academico;
 
 		$sql = "
@@ -292,15 +315,21 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
     AND  per.per_estado = 1 AND per.per_estado_logico = 1
     AND  malle.maes_estado = 1 AND malle.maes_estado_logico = 1
      AND
-(e.per_id not in (select b.per_id from db_academico.planificacion_estudiante b where
-b.pla_id= ( select max(dap.pla_id) from db_academico.planificacion dap
- where dap.mod_id = :modalidad ))) 
+((e.per_id in (select b.per_id from db_academico.planificacion_estudiante b where
+b.pla_id= :oldplan )) OR
+((e.per_id in (
+select distinct a.per_id from db_asgard.persona as a
+inner join db_academico.estudiante bas on a.per_id = bas.per_id
+where DATEDIFF(NOW(),bas.est_fecha_creacion) <=180 or
+DATEDIFF(NOW(),a.per_fecha_creacion) <=180 )))
+)
 order by maca.maca_id DESC , ea.eaca_codigo, e.est_fecha_creacion ASC;
                 ";
 
 		$comando = $con->createCommand($sql);
 		$comando->bindParam(":modalidad", $modalidad, \PDO::PARAM_STR);
 		$comando->bindParam(":periodo", $periodo, \PDO::PARAM_INT);
+		$comando->bindParam(":oldplan", $oldplan, \PDO::PARAM_INT);
 		$resultData = $comando->queryAll();
 
 		$malla = new MallaAcademica();
@@ -510,7 +539,8 @@ order by maca.maca_id DESC , ea.eaca_codigo, e.est_fecha_creacion ASC;
                  if (count($resultData) > 0) {
            
             for ($i = 0; $i < count($resultData); $i++) {                       
-$centralprocess = $malla->cargarAsignaturas($resultData[$i],$modalidad,$periodo);                  
+$centralprocess = $malla->cargarAsignaturas($resultData[$i],$modalidad,$periodo);  
+
             }
           }        else {          
 

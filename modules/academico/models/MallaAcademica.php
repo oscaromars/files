@@ -651,7 +651,7 @@ from db_academico.malla_academica_detalle a
 inner join db_academico.malla_unidad_modalidad b on b.maca_id = a.maca_id 
 inner join db_academico.modalidad_estudio_unidad c on c.meun_id = b.meun_id
 inner join db_academico.asignatura d on d.asi_id = a.asi_id
-inner join db_academico.materias_periodo_modalidad mpmo on mpmo.asi_id = a.asi_id
+inner join db_academico.materias_periodo_modalidad mpmo on mpmo.asi_id = a.asi_id and mpmo.eaca_id = c.eaca_id and mpmo.mod_id = c.mod_id and mpmo.saca_id = :periodo
                        where c.eaca_id =  " . $rows["eaca_id"] . "   
                       and   c.mod_id =  " . $modalidad . "   
                       and a.maca_id =  " . $rows["maca_id"] . "  
@@ -673,60 +673,10 @@ inner join db_academico.materias_periodo_modalidad mpmo on mpmo.asi_id = a.asi_i
 
    $comando = $con->createCommand($sql);
          // $comando->bindParam(":activo", $activo, \PDO::PARAM_STR);
-         // $comando->bindParam(":paca_id", $gest, \PDO::PARAM_INT);
+          $comando->bindParam(":periodo", $gest, \PDO::PARAM_INT);
          // $comando->bindParam(":semester", $student_semester, \PDO::PARAM_INT);
         //  $comando->bindParam(":lastsemester", $last_semester, \PDO::PARAM_INT);
                $rows_in = $comando->queryAll();
-
-
-        $sql4="
-                        SELECT distinct
- md.maca_id, md.asi_id, md.made_semestre, md.uest_id, md.nest_id, md.fmac_id, 
-md.made_codigo_asignatura, md.made_asi_requisito, md.made_credito,
-me.uaca_id,me.mod_id, me.eaca_id, a.asi_nombre,
-CONCAT(per.per_cedula,' - ',per.per_pri_nombre,' ',per.per_pri_apellido) estudiante,
-ma.maca_nombre as carrera,
-md.made_codigo_asignatura,
-a.asi_nombre,
-mo.mod_nombre,
-CONCAT(md.made_semestre,'°Semestre') semestre,
-n.pmac_nota,
-e.enac_asig_estado,
-CONCAT(s.saca_nombre,' - ', s.saca_anio) periodo,
-b.baca_nombre,
-per.per_id,
-es.est_matricula
-from db_academico.malla_academico_estudiante pa
-inner join db_asgard.persona per on per.per_id=pa.per_id
-inner join db_academico.estudiante es on es.per_id=per.per_id
-inner join db_academico.estudiante_carrera_programa est on es.est_id=est.est_id
-inner join db_academico.modalidad_estudio_unidad me on me.meun_id=est.meun_id
-inner join db_academico.malla_academica_detalle md on md.made_id=pa.made_id
-inner join db_academico.malla_unidad_modalidad mu on mu.maca_id=pa.maca_id
-inner join db_academico.malla_academica ma on ma.maca_id=pa.maca_id
-inner join db_academico.asignatura a on pa.asi_id=a.asi_id
-inner join db_academico.estudio_academico ea on ea.eaca_id=me.eaca_id
--- inner join db_academico.historico_siga_prueba h on h.per_id=pa.per_id
-inner join db_academico.modalidad mo on mo.mod_id=me.mod_id
-inner join db_academico.promedio_malla_academico n on pa.maes_id=n.maes_id
-inner join db_academico.estado_nota_academico e on e.enac_id=n.enac_id
--- left join db_academico.planificar_periodo_academico pp on pp.maes_id=pa.maes_id
-left join db_academico.periodo_academico pe on n.paca_id=pe.paca_id
-left join db_academico.semestre_academico s on s.saca_id=pe.saca_id
-left join db_academico.bloque_academico b on b.baca_id=pe.baca_id
-WHERE
-per.per_id = pa.per_id
- and md.maca_id =  " . $rows["maca_id"] . "  
-AND per.per_id = :per_id
-AND md.made_semestre >= :semester
-ORDER BY semestre;
-
-        ";
-                        
-              /*  $comando = $con->createCommand($sql);
-          $comando->bindParam(":per_id", $per_id, \PDO::PARAM_STR);
-          $comando->bindParam(":semester", $student_semester, \PDO::PARAM_INT);
-               $rows_in = $comando->queryAll(); */
 
              $per_id =   $rows["per_id"];
            //  $est_id =   $rows["est_id"];

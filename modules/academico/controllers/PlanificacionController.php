@@ -171,7 +171,7 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
    inner join db_academico.malla_academica maca on maca.maca_id = mumo.maca_id
    inner join db_academico.unidad_academica u on u.uaca_id = meu.uaca_id
    inner join db_academico.estudio_academico ea on ea.eaca_id = meu.eaca_id
-   inner join db_academico.materias_periodo_modalidad mpmo on mpmo.eaca_id = meu.eaca_id and mpmo.mod_id = meu.mod_id 
+   inner join db_academico.materias_periodo_modalidad mpmo on mpmo.eaca_id = meu.eaca_id and mpmo.mod_id = meu.mod_id and mpmo.saca_id = :periodo
    inner join db_asgard.persona per on per.per_id = e.per_id
    left join db_academico.malla_academico_estudiante malle on per.per_id = malle.per_id
      where  malle.maca_id = maca.maca_id  AND
@@ -213,7 +213,105 @@ order by maca.maca_id DESC , ea.eaca_codigo, e.est_fecha_creacion ASC;
         $preprocess = $malla->traerActivas($periodo,$modalidad); 
         if (count($preprocess) > 0) {  
              for ($ix = 0; $ix < count($resultData); $ix++) {  
-$postprocess = $malla->marcarAsignaturas($preprocess[$ix]["mpmo_id"],1); 
+$postprocess = $malla->marcarAsignaturas($preprocess[$ix]["mpmo_id"],$periodo); 
+
+     }    }     }
+
+		if (count($resultData) > 0) {
+
+			for ($i = 0; $i < count($resultData); $i++) {
+				$centralprocess = $malla->consultarAsignaturas($resultData[$i], $periodo, $saca_nombre["semestre"], $modalidad);if ($centralprocess == 1) {$ok = 1;}
+		
+				\app\models\Utilities::putMessageLogFile("Received " . $centralprocess);
+			}
+
+		} else {
+
+			\Yii::$app->getSession()->setFlash('msg', 'No existen mas estudiantes para la modalidad actual');
+			return $this->redirect(['index']);
+
+		}
+
+		if ($ok != 1) {
+			\Yii::$app->getSession()->setFlash('msg', 'No existen datos suficientes para generar la planificacion seleccionada');
+			// \Yii::$app->getSession()->setFlash('msg') ;
+			return $this->redirect(['index']);
+
+		}
+		//   return $resultData;
+		//  return $this->render('temporal', [
+		//         'resultData' => $centralprocess,
+		//          ]);
+		\Yii::$app->getSession()->setFlash('msgok', 'Se ha generado con exito la planificacion');
+		return $this->redirect(['index']);
+	}
+
+		public function actionRegenerator($periodo, $modalidad) {
+
+		$con = \Yii::$app->db_academico;
+		$sql = "
+                            SELECT
+                            CONCAT(saca_nombre,' ',saca_anio) as semestre
+                            FROM db_academico.semestre_academico where saca_id = :periodo
+                    ";
+		$comando = $con->createCommand($sql);
+		$comando->bindParam(":periodo", $periodo, \PDO::PARAM_STR);
+		$saca_nombre = $comando->queryOne();
+
+		$mensaje = "periodo " . $periodo . " modalidad " . $modalidad;
+		mail('oscaromars@hotmail.com', 'Mi título', $mensaje);
+
+		$con = \Yii::$app->db_academico;
+
+		$sql = "
+            select distinct e.est_id, e.per_id, e.est_matricula, e.est_fecha_creacion, e.est_categoria, meu.uaca_id, meu.mod_id, meu.eaca_id, DATEDIFF(NOW(),e.est_fecha_creacion) as olderi, --
+u.uaca_id, u.uaca_nombre, ea.teac_id, ea.eaca_nombre, ea.eaca_codigo,
+per.per_cedula,  maca.maca_id , maca.maca_codigo, maca.maca_nombre,
+concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_apellido, ' ', ifnull(per.per_seg_apellido,'')) estudiante
+ from db_academico.estudiante e
+ inner join db_academico.estudiante_carrera_programa c on c.est_id = e.est_id
+  inner join db_academico.modalidad_estudio_unidad meu on meu.meun_id = c.meun_id
+  inner join db_academico.malla_unidad_modalidad mumo on mumo.meun_id = meu.meun_id
+   inner join db_academico.malla_academica maca on maca.maca_id = mumo.maca_id
+   inner join db_academico.unidad_academica u on u.uaca_id = meu.uaca_id
+   inner join db_academico.estudio_academico ea on ea.eaca_id = meu.eaca_id
+   inner join db_academico.materias_periodo_modalidad mpmo on mpmo.eaca_id = meu.eaca_id and mpmo.mod_id = meu.mod_id and mpmo.saca_id = :periodo
+   inner join db_asgard.persona per on per.per_id = e.per_id
+   left join db_academico.malla_academico_estudiante malle on per.per_id = malle.per_id
+     where  malle.maca_id = maca.maca_id  AND
+         meu.mod_id = :modalidad and meu.uaca_id = 1 and mpmo.saca_id = :periodo and mpmo.mpmo_activo = 'A'
+          and mpmo.mpmo_procesado is Null
+    AND  mpmo.mpmo_estado = 1 AND mpmo.mpmo_estado_logico = 1
+    AND  e.est_estado = 1 AND e.est_estado_logico = 1
+    AND  c.ecpr_estado = 1 AND c.ecpr_estado_logico = 1
+    AND  meu.meun_estado = 1 AND meu.meun_estado_logico = 1
+    AND  mumo.mumo_estado = 1 AND mumo.mumo_estado_logico = 1
+    AND  maca.maca_estado = 1 AND maca.maca_estado_logico = 1
+    AND  u.uaca_estado = 1 AND u.uaca_estado_logico = 1
+     AND  ea.eaca_estado = 1
+    AND  per.per_estado = 1 AND per.per_estado_logico = 1
+    AND  malle.maes_estado = 1 AND malle.maes_estado_logico = 1
+     AND
+(e.per_id not in (select b.per_id from db_academico.planificacion_estudiante b where
+b.pla_id= ( select max(dap.pla_id) from db_academico.planificacion dap
+ where dap.mod_id = :modalidad ))) 
+order by maca.maca_id DESC , ea.eaca_codigo, e.est_fecha_creacion ASC;
+                ";
+
+		$comando = $con->createCommand($sql);
+		$comando->bindParam(":modalidad", $modalidad, \PDO::PARAM_STR);
+		$comando->bindParam(":periodo", $periodo, \PDO::PARAM_INT);
+		$resultData = $comando->queryAll();
+
+		$malla = new MallaAcademica();
+		$allstudents = count($resultData);
+		\app\models\Utilities::putMessageLogFile("all: " . count($resultData));
+
+		   if (count($resultData) > 0) { 
+        $preprocess = $malla->traerActivas($periodo,$modalidad); 
+        if (count($preprocess) > 0) {  
+             for ($ix = 0; $ix < count($resultData); $ix++) {  
+$postprocess = $malla->marcarAsignaturas($preprocess[$ix]["mpmo_id"],$periodo); 
 
      }    }     }
 
@@ -275,11 +373,12 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
    inner join db_academico.malla_academica maca on maca.maca_id = mumo.maca_id
    inner join db_academico.unidad_academica u on u.uaca_id = meu.uaca_id
    inner join db_academico.estudio_academico ea on ea.eaca_id = meu.eaca_id
-   inner join db_academico.materias_periodo_modalidad mpmo on mpmo.eaca_id = meu.eaca_id and mpmo.mod_id = meu.mod_id
+   inner join db_academico.materias_periodo_modalidad mpmo on mpmo.eaca_id = meu.eaca_id and mpmo.mod_id = meu.mod_id and mpmo.saca_id = :periodo
    inner join db_asgard.persona per on per.per_id = e.per_id
     left join db_academico.malla_academico_estudiante malle on per.per_id = malle.per_id
      where   malle.maca_id = maca.maca_id  AND
-         meu.mod_id = :modalidad and meu.uaca_id = 1 and mpmo.saca_id = :periodo and mpmo.mpmo_activo = 'A
+     meu.mod_id = :modalidad and meu.uaca_id = 1 and mpmo.mpmo_activo = 'A'
+    AND  mpmo.mpmo_procesado is Null
     AND  mpmo.mpmo_estado = 1 AND mpmo.mpmo_estado_logico = 1
     AND  e.est_estado = 1 AND e.est_estado_logico = 1
     AND  c.ecpr_estado = 1 AND c.ecpr_estado_logico = 1
@@ -311,6 +410,14 @@ order by maca.maca_id DESC , ea.eaca_codigo, e.est_fecha_creacion ASC;
 		$malla = new MallaAcademica();
 		$allstudents = count($resultData);
 		\app\models\Utilities::putMessageLogFile("all: " . count($resultData));
+
+			 if (count($resultData) > 0) { 
+        $preprocess = $malla->traerActivas($periodo,$modalidad); 
+        if (count($preprocess) > 0) {  
+             for ($ix = 0; $ix < count($resultData); $ix++) {  
+$postprocess = $malla->marcarAsignaturas($preprocess[$ix]["mpmo_id"],$periodo); 
+
+     }    }     }
 
 		if (count($resultData) > 0) {
 			\app\models\Utilities::putMessageLogFile("Received std " . count($resultData));

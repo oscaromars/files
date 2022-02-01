@@ -1239,7 +1239,7 @@ showAlert('NO_OK', 'error', {"wtmessage": 'Seleccione una modalidad', "title": '
    } else {
 
     showLoadingPopup();
-   window.location.href = $('#txth_base').val() + "/academico/planificacion/generator?periodo=" + periodo + '&modalidad=' + modalidad + '&haspla=' + haspla;
+   window.location.href = $('#txth_base').val() + "/academico/planificacion/regenerator?periodo=" + periodo + '&modalidad=' + modalidad + '&haspla=' + haspla;
 
 }
 

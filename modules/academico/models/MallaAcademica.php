@@ -661,14 +661,14 @@ AND e.enac_id = 3;
 
 
         $sql = "select distinct  a.maca_id, a.asi_id, a.made_semestre, a.uest_id, a.nest_id, a.fmac_id, 
-a.made_codigo_asignatura, a.made_asi_requisito, a.made_credito, c.uaca_id,
+a.made_codigo_asignatura, a.made_credito, c.uaca_id,
 c.mod_id, c.eaca_id, d.asi_nombre,  mpmo.mpmo_bloque
 from db_academico.malla_academica_detalle a
 inner join db_academico.malla_unidad_modalidad b on b.maca_id = a.maca_id 
 inner join db_academico.modalidad_estudio_unidad c on c.meun_id = b.meun_id
 inner join db_academico.asignatura d on d.asi_id = a.asi_id
-inner join db_academico.materias_periodo_modalidad mpmo on mpmo.asi_id = a.asi_id and mpmo.eaca_id = c.eaca_id and mpmo.mod_id = c.mod_id and mpmo.saca_id = :periodo
-inner join db_academico.malla_academico_estudiante maes on maes.asi_id = a.asi_id and maes.per_id = " . $rows["per_id"] . " 
+left join db_academico.materias_periodo_modalidad mpmo on mpmo.asi_id = a.asi_id and mpmo.eaca_id = c.eaca_id and mpmo.mod_id = c.mod_id and mpmo.saca_id = :periodo
+inner join db_academico.malla_academico_estudiante maes on maes.per_id = " . $rows["per_id"] . " 
                        where c.eaca_id =  " . $rows["eaca_id"] . "   
                       and   c.mod_id =  " . $modalidad . "   
                       and a.maca_id =  " . $rows["maca_id"] . "  

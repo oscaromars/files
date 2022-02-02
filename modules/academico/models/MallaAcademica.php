@@ -500,43 +500,59 @@ left join db_academico.estado_nota_academico enac on enac.enac_id = pmac.enac_id
         
      for ($im = 0; $im < count($rows_asi); $im++) {  
 
-         $requisito = $rows_asi[$im]["made_asi_requisito"]; 
-         $persona = $rows["per_id"];
+         $asignatura = $rows_asi[$im]["asi_id"]; 
+         $malla      = $rows["maca_id"];
+         $persona      = $rows["per_id"];
+         
+      $sqlpr = "
+        select a.made_id, a.maca_id, a.asi_id,b.asi_requisito from db_academico.malla_academica_detalle a
+        inner join db_academico.malla_academica_requisito b on a.made_id = b.made_id 
+        where a.maca_id= :maca_id and a.asi_id = :asi_id                
+                ";
+                     $comando = $con->createCommand($sqlpr);
+                     $comando->bindParam(":maca_id", $malla, \PDO::PARAM_INT);
+                     $comando->bindParam(":asi_id", $asignatura, \PDO::PARAM_INT);
+                     $prereq = $comando->queryAll();
 
-            if ($requisito !=Null) {  
-                 $sql = "
+        $valider = -1;
+
+         if (count($prereq) > 0) {   
+                    
+                     for ($kl = 0; $kl < count($prereq); $kl++) {  
+
+                      $requisitos = $prereq[$kl]["asi_requisito"];
+
+                        $sqlloop = "
                  select  a.asi_id, c.enac_id, a.maes_id, a.per_id
  from db_academico.malla_academico_estudiante a
  left join db_academico.promedio_malla_academico b on a.maes_id = b.maes_id
    left join db_academico.estado_nota_academico c on c.enac_id = b.enac_id   
    inner join db_academico.asignatura d on a.asi_id = d.asi_id
    where a.per_id = :per_id
-   and a.asi_id = :requisito
+   and a.asi_id = :requisitos and ( c.enac_id = 1)
                        and a.maes_estado = 1
                     and a.maes_estado_logico = 1
-                    -- and b.pmac_estado = 1
-                    -- and b.pmac_estado_logico = 1
-                    -- and c.enac_estado = 1
-                    -- and c.enac_estado_logico = 1
-                     
-
+                     and b.pmac_estado = 1
+                     and b.pmac_estado_logico = 1
+                     and c.enac_estado = 1
+                     and c.enac_estado_logico = 1
                 ";
-                
-                     $comando = $con->createCommand($sql);
-                     $comando->bindParam(":per_id", $persona, \PDO::PARAM_INT);
-                     $comando->bindParam(":requisito", $requisito, \PDO::PARAM_INT);
-                     $statuspre = $comando->queryOne();
 
-                       if ($statuspre["enac_id"]==1 or $statuspre["enac_id"]==4 ){   
-             
-                       $sstatuspre = True; 
+                $comando = $con->createCommand($sqlloop);
+                $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
+                $comando->bindParam(":requisitos", $requisitos, \PDO::PARAM_INT);
+                $statuspre = $comando->queryOne();
 
-                      }    Else {     $sstatuspre = False;     }
-                            
-                     }      Else {     $sstatuspre = True;     }
+            if ($statuspre["enac_id"]==1 /*or $statuspre["enac_id"]==4*/){ 
 
+                          $valider++;
+                      }
+        } 
 
+     if ($valider == $kl ){ $sstatuspre = True;   } else {  $sstatuspre = False;  }
 
+    } else {  $sstatuspre = True;  }
+         
          if ($sstatuspre = True) {  $cn++;
 
            if ($cn < 7) {

@@ -796,12 +796,12 @@ from db_academico.periodo_academico plac
    inner join db_academico.asignatura d on a.asi_id = d.asi_id
    where a.per_id = :per_id
    and a.asi_id = :asignatura
-                       and a.maes_estado = 1
+                    and a.maes_estado = 1
                     and a.maes_estado_logico = 1
-                    -- and b.pmac_estado = 1
-                    -- and b.pmac_estado_logico = 1
-                    -- and c.enac_estado = 1
-                    -- and c.enac_estado_logico = 1
+                    and b.pmac_estado = 1
+                    and b.pmac_estado_logico = 1
+                    and c.enac_estado = 1
+                    and c.enac_estado_logico = 1
                      
 
                 ";
@@ -860,48 +860,15 @@ where a.maca_id= :maca_id and a.asi_id = :asi_id
                           $valider++;
                       }
                       
-           if ($valider == $k ){ $sstatuspre = True;   } else {  $sstatuspre = False;  }
+          
 
                       }
                      
+                if ($valider == $k ){ $sstatuspre = True;   } else {  $sstatuspre = False;  }
 
-                      }  else {
-                      
-            
-                 
-                 if ($requisito !=Null) {  
-                 $sql = "
-                 select  a.asi_id, c.enac_id, a.maes_id, a.per_id
- from db_academico.malla_academico_estudiante a
- left join db_academico.promedio_malla_academico b on a.maes_id = b.maes_id
-   left join db_academico.estado_nota_academico c on c.enac_id = b.enac_id   
-   inner join db_academico.asignatura d on a.asi_id = d.asi_id
-   where a.per_id = :per_id
-   and a.asi_id = :requisito and ( c.enac_id = 1)
-                    and a.maes_estado = 1
-                    and a.maes_estado_logico = 1
-                    and b.pmac_estado = 1
-                    and b.pmac_estado_logico = 1
-                    and c.enac_estado = 1
-                    and c.enac_estado_logico = 1
-                     
+                      }  else {  $sstatuspre = True;  }
 
-                ";
-                
-                     $comando = $con->createCommand($sql);
-                     $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
-                     $comando->bindParam(":requisito", $requisito, \PDO::PARAM_INT);
-                     $statuspre = $comando->queryOne();
-
-                       if ($statuspre["enac_id"]==1 /*or $statuspre["enac_id"]==4*/ ){   
-             
-                      $sstatuspre = True; 
-
-                      }    Else {     $sstatuspre = False;     }
-                            
-                     }     Else {     $sstatuspre = True;      }
-
-                     } // line 652 - 676  -- GET STATUS REQUIREMENTS
+                       // line 652 - 676  -- GET STATUS REQUIREMENTS
 
 
                    
@@ -1410,7 +1377,7 @@ where a.maca_id= :maca_id and a.asi_id = :asi_id
                   $bloq_api = $getifasi["hosd_bloque"];
                   $mpp_api =  $getmpar["mpp_id"]; 
                   $mpp_num =  $getmpar["mpp_num_paralelo"]; 
-
+/*
                 $searchparsiiga = "
                     SELECT  pasi_id,pasi_cantidad  from db_academico.paralelos_siiga
                     WHERE pla_id = :pla_id 
@@ -1460,7 +1427,7 @@ where a.maca_id= :maca_id and a.asi_id = :asi_id
                 $result = $comando->execute();  
                    
 
-                                                      }
+                                                      } */
 
                  }            
                    
@@ -2204,7 +2171,7 @@ where a.maca_id= :maca_id and a.asi_id = :asi_id
                   $bloq_api = $getifasi["hosd_bloque"];
                   $mpp_api =  $getmpar["mpp_id"]; 
                   $mpp_num =  $getmpar["mpp_num_paralelo"]; 
-
+/*
                 $searchparsiiga = "
                     SELECT  pasi_id,pasi_cantidad  from db_academico.paralelos_siiga
                     WHERE pla_id = :pla_id 
@@ -2254,7 +2221,7 @@ where a.maca_id= :maca_id and a.asi_id = :asi_id
                       
                    
 
-                                                      }
+                                                      }*/
 
                      }   
 

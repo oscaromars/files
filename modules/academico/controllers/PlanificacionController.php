@@ -154,9 +154,6 @@ class PlanificacionController extends \app\components\CController {
 		$comando->bindParam(":periodo", $periodo, \PDO::PARAM_STR);
 		$saca_nombre = $comando->queryOne();
 
-		$mensaje = "periodo " . $periodo . " modalidad " . $modalidad;
-		mail('oscaromars@hotmail.com', 'Mi título', $mensaje);
-
 		$con = \Yii::$app->db_academico;
 
 		$sql = "
@@ -257,9 +254,6 @@ $postprocess = $malla->marcarAsignaturas($preprocess[$ix]["mpmo_id"],$periodo);
 		$comando = $con->createCommand($sql);
 		$comando->bindParam(":periodo", $periodo, \PDO::PARAM_STR);
 		$saca_nombre = $comando->queryOne();
-
-		$mensaje = "periodo " . $periodo . " modalidad " . $modalidad;
-		mail('oscaromars@hotmail.com', 'Mi título', $mensaje);
 
 
           $sql = "
@@ -384,9 +378,6 @@ $postprocess = $malla->marcarAsignaturas($preprocess[$ix]["mpmo_id"],$periodo);
 		$comando = $con->createCommand($sql);
 		$comando->bindParam(":periodo", $periodo, \PDO::PARAM_STR);
 		$saca_nombre = $comando->queryOne();
-
-		$mensaje = "periodo " . $periodo . " modalidad " . $modalidad;
-		mail('oscaromars@hotmail.com', 'Mi título', $mensaje);
 
 		$con = \Yii::$app->db_academico;
 

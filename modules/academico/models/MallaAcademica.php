@@ -459,7 +459,7 @@ order by maca.maca_id DESC , ea.eaca_codigo, e.est_fecha_creacion ASC;
      $activo="A";
 
      $sql = "select distinct  
-a.asi_id, a.made_credito, c.uaca_id,c.mod_id, c.eaca_id, a.maca_id,pmac.enac_id,a.made_semestre
+a.asi_id, a.made_credito, c.uaca_id,c.mod_id, c.eaca_id, a.maca_id,a.made_semestre
 from db_academico.malla_academica_detalle a
 inner join db_academico.malla_unidad_modalidad b on b.maca_id = a.maca_id 
 inner join db_academico.modalidad_estudio_unidad c on c.meun_id = b.meun_id

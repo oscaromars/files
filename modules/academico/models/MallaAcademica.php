@@ -985,9 +985,17 @@ where a.maca_id= :maca_id and a.asi_id = :asi_id
                     
                     
             //   1   .    3    SCHEDULE 
-    
+                         
+                     for ($iter = 1; $iter <= 8; ++$iter){
 
-                     $lasth="
+                    $codd = $subjects[$iter][0]; 
+                   $nomm = $subjects[$iter][1]; 
+                   $iddd = $subjects[$iter][2];
+                   $cred = $subjects[$iter][3]; 
+                   $blck = $subjects[$iter][4]; 
+
+
+                      $lasth="
                     SELECT max(dahd.hosd_grupo) as g 
                     FROM db_academico.horarios_semestre dahs
                     INNER JOIN db_academico.horarios_semestre_detalle dahd
@@ -1003,7 +1011,36 @@ where a.maca_id= :maca_id and a.asi_id = :asi_id
                    $comando->bindParam(":uaca_id", $uaca_id, \PDO::PARAM_INT);
                    $getlastg = $comando->queryOne();
 
-                   
+//===================================================================================>>
+
+            if ($blck != Null) {    
+
+                         $lasthb="
+                    SELECT max(dahd.hosd_grupo) as g 
+                    FROM db_academico.horarios_semestre dahs
+                    INNER JOIN db_academico.horarios_semestre_detalle dahd
+                    ON dahs.hose_id = dahd.hose_id
+                    WHERE dahs.saca_id = :semestre 
+                    and dahs.mod_id = :mod_id
+                    and dahs.uaca_id = :uaca_id
+                    and dahd.hosd_bloque = :bloque
+                     ";
+
+                   $comando = $con->createCommand($lasthb);
+                   $comando->bindParam(":semestre", $gest, \PDO::PARAM_INT);
+                   $comando->bindParam(":mod_id", $mod_id, \PDO::PARAM_INT);
+                   $comando->bindParam(":uaca_id", $uaca_id, \PDO::PARAM_INT);
+                   $comando->bindParam(":bloque", $blck, \PDO::PARAM_INT);
+                   $getlastgb = $comando->queryOne();
+
+                    $gettg = $getlastgb["g"];
+                    $gettb = $blck;
+             }
+
+//===================================================================================>>
+
+                   else {   
+
                     $again="SELECT  max(dahd.hosd_bloque) as b  
                     FROM db_academico.horarios_semestre dahs
                     INNER JOIN db_academico.horarios_semestre_detalle dahd
@@ -1022,6 +1059,14 @@ where a.maca_id= :maca_id and a.asi_id = :asi_id
                    $getlastb = $comando->queryOne();   
 
 
+                    $gettg = $getlastg["g"];
+                    $gettb = $getlastb["b"];
+
+ }
+
+
+                    
+
                      $andagain="SELECT max(dahd.hosd_hora) as h 
                     FROM db_academico.horarios_semestre dahs
                     INNER JOIN db_academico.horarios_semestre_detalle dahd
@@ -1037,31 +1082,23 @@ where a.maca_id= :maca_id and a.asi_id = :asi_id
                    $comando->bindParam(":semestre", $gest, \PDO::PARAM_INT);
                    $comando->bindParam(":mod_id", $mod_id, \PDO::PARAM_INT);
                    $comando->bindParam(":uaca_id", $uaca_id, \PDO::PARAM_INT);
-                   $comando->bindParam(":grupo", $getlastg["g"], \PDO::PARAM_INT);
-                   $comando->bindParam(":bloque", $getlastb["b"], \PDO::PARAM_INT);
+                   $comando->bindParam(":grupo", $gettg, \PDO::PARAM_INT);
+                   $comando->bindParam(":bloque", $gettb, \PDO::PARAM_INT);
                    $getlasth = $comando->queryOne();
+ 
+                     $gactual=  $gettg;
+                     $gmax = $getlastg["g"];
+                     $bactual=  $gettb;   
+                     $hactual= $getlasth["h"];   
 
-
-                    $gactual= $getlastg["g"];   
-                    $bactual= $getlastb["b"];    
-                    $hactual= $getlasth["h"];   
 
                      if ($gactual == Null)   
                         { $gactual = 1 ; }      
                     if ($bactual == Null)   
                         { $bactual = 1 ; }      
                     if ($hactual == Null)   
-                        { $hactual = 0 ; }       
-                    
-                                  
-                    
-                     for ($iter = 1; $iter <= 8; ++$iter){
+                        { $hactual = 0 ; }  
 
-                    $codd = $subjects[$iter][0]; 
-                   $nomm = $subjects[$iter][1]; 
-                   $iddd = $subjects[$iter][2];
-                   $cred = $subjects[$iter][3]; 
-                   $blck = $subjects[$iter][4]; 
 
 
                      $searcher = "
@@ -1088,9 +1125,8 @@ where a.maca_id= :maca_id and a.asi_id = :asi_id
 
 
                     if ($hactual == 3){  
-                         if ($bactual == 2){  $gactual++ ;$bactual = 1; $hactual = 1;}
-                            Else  { $bactual = 2; $hactual = 1;  }
-                     } Else {
+                         if ($bactual == 2){ $gactual = $gmax + 1; $bactual = 2; $hactual = 1;}
+                         if ($bactual == 1){ $gactual = $gmax + 1; $bactual = 1; $hactual = 1;}                     } Else {
                     $hactual++ ;
                      }   
 
@@ -1471,8 +1507,16 @@ where a.maca_id= :maca_id and a.asi_id = :asi_id
 
                                
             //   1   .    3   SCHEDULE     
+                                        
+                     for ($iter = 1; $iter <= 8; ++$iter){
 
-                     $lasth="
+                    $codd = $subjects[$iter][0]; 
+                   $nomm = $subjects[$iter][1]; 
+                   $iddd = $subjects[$iter][2]; 
+                   $cred = $subjects[$iter][3]; 
+                   $blck = $subjects[$iter][4]; 
+
+                      $lasth="
                     SELECT max(dahd.hosd_grupo) as g 
                     FROM db_academico.horarios_semestre dahs
                     INNER JOIN db_academico.horarios_semestre_detalle dahd
@@ -1488,7 +1532,36 @@ where a.maca_id= :maca_id and a.asi_id = :asi_id
                    $comando->bindParam(":uaca_id", $uaca_id, \PDO::PARAM_INT);
                    $getlastg = $comando->queryOne();
 
-                   
+//===================================================================================>>
+
+            if ($blck != Null) {    
+
+                         $lasthb="
+                    SELECT max(dahd.hosd_grupo) as g 
+                    FROM db_academico.horarios_semestre dahs
+                    INNER JOIN db_academico.horarios_semestre_detalle dahd
+                    ON dahs.hose_id = dahd.hose_id
+                    WHERE dahs.saca_id = :semestre 
+                    and dahs.mod_id = :mod_id
+                    and dahs.uaca_id = :uaca_id
+                    and dahd.hosd_bloque = :bloque
+                     ";
+
+                   $comando = $con->createCommand($lasthb);
+                   $comando->bindParam(":semestre", $gest, \PDO::PARAM_INT);
+                   $comando->bindParam(":mod_id", $mod_id, \PDO::PARAM_INT);
+                   $comando->bindParam(":uaca_id", $uaca_id, \PDO::PARAM_INT);
+                   $comando->bindParam(":bloque", $blck, \PDO::PARAM_INT);
+                   $getlastgb = $comando->queryOne();
+
+                    $gettg = $getlastgb["g"];
+                    $gettb = $blck;
+             }
+
+//===================================================================================>>
+
+                   else {   
+
                     $again="SELECT  max(dahd.hosd_bloque) as b  
                     FROM db_academico.horarios_semestre dahs
                     INNER JOIN db_academico.horarios_semestre_detalle dahd
@@ -1507,6 +1580,14 @@ where a.maca_id= :maca_id and a.asi_id = :asi_id
                    $getlastb = $comando->queryOne();   
 
 
+                    $gettg = $getlastg["g"];
+                    $gettb = $getlastb["b"];
+
+ }
+
+
+                    
+
                      $andagain="SELECT max(dahd.hosd_hora) as h 
                     FROM db_academico.horarios_semestre dahs
                     INNER JOIN db_academico.horarios_semestre_detalle dahd
@@ -1522,32 +1603,24 @@ where a.maca_id= :maca_id and a.asi_id = :asi_id
                    $comando->bindParam(":semestre", $gest, \PDO::PARAM_INT);
                    $comando->bindParam(":mod_id", $mod_id, \PDO::PARAM_INT);
                    $comando->bindParam(":uaca_id", $uaca_id, \PDO::PARAM_INT);
-                   $comando->bindParam(":grupo", $getlastg["g"], \PDO::PARAM_INT);
-                   $comando->bindParam(":bloque", $getlastb["b"], \PDO::PARAM_INT);
+                   $comando->bindParam(":grupo", $gettg, \PDO::PARAM_INT);
+                   $comando->bindParam(":bloque", $gettb, \PDO::PARAM_INT);
                    $getlasth = $comando->queryOne();
+ 
+                     $gactual=  $gettg;
+                     $gmax = $getlastg["g"];
+                     $bactual=  $gettb;   
+                     $hactual= $getlasth["h"];   
 
-
-                    $gactual= $getlastg["g"];   
-                    $bactual= $getlastb["b"];    
-                    $hactual= $getlasth["h"];   
 
                      if ($gactual == Null)   
                         { $gactual = 1 ; }      
                     if ($bactual == Null)   
                         { $bactual = 1 ; }      
                     if ($hactual == Null)   
-                        { $hactual = 0 ; }       
-                     
-                    
-                                  
-                    
-                     for ($iter = 1; $iter <= 8; ++$iter){
+                        { $hactual = 0 ; }  
 
-                    $codd = $subjects[$iter][0]; 
-                   $nomm = $subjects[$iter][1]; 
-                   $iddd = $subjects[$iter][2]; 
-                   $cred = $subjects[$iter][3]; 
-                   $blck = $subjects[$iter][4]; 
+
 
 
                      $searcher = "
@@ -1573,12 +1646,11 @@ where a.maca_id= :maca_id and a.asi_id = :asi_id
                             if ($getifasi["hose_id"] == Null){
 
 
-                    if ($hactual == 4){  
-                         if ($bactual == 2){  $gactual++ ;$bactual = 1; $hactual = 1;}
-                            Else  { $bactual = 2; $hactual = 1;  }
-                     } Else {
+                     if ($hactual == 4){  
+                         if ($bactual == 2){ $gactual = $gmax + 1; $bactual = 2; $hactual = 1;}
+                         if ($bactual == 1){ $gactual = $gmax + 1; $bactual = 1; $hactual = 1;}                     } Else {
                     $hactual++ ;
-                     }   
+                     }  
                   
 
                      $addsch = "

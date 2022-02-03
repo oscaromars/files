@@ -514,7 +514,7 @@ left join db_academico.estado_nota_academico enac on enac.enac_id = pmac.enac_id
                      $comando->bindParam(":asi_id", $asignatura, \PDO::PARAM_INT);
                      $prereq = $comando->queryAll();
 
-        $valider = -1;
+        $valider = -1;  $refer = -1;
 
          if (count($prereq) > 0) {   
                     
@@ -546,10 +546,10 @@ left join db_academico.estado_nota_academico enac on enac.enac_id = pmac.enac_id
             if ($statuspre["enac_id"]==1 /*or $statuspre["enac_id"]==4*/){ 
 
                           $valider++;
-                      }
+                      }   $refer++;
         } 
 
-     if ($valider == $kl ){ $sstatuspre = True;   } else {  $sstatuspre = False;  }
+     if ($valider == $refer ){ $sstatuspre = True;   } else {  $sstatuspre = False;  }
 
     } else {  $sstatuspre = True;  }
          
@@ -827,7 +827,7 @@ where a.maca_id= :maca_id and a.asi_id = :asi_id
                      $comando->bindParam(":asi_id", $asignatura, \PDO::PARAM_INT);
                      $prereq = $comando->queryAll();
                     
-                    $valider = -1;
+                    $valider = -1; $refer = -1;
                       if (count($prereq) > 0) {   
                     
                      for ($k = 0; $k < count($prereq); $k++) {    
@@ -858,13 +858,13 @@ where a.maca_id= :maca_id and a.asi_id = :asi_id
                          if ($statuspre["enac_id"]==1 /*or $statuspre["enac_id"]==4*/){ 
 
                           $valider++;
-                      }
+                      }   $refer++;
                       
           
 
                       }
                      
-                if ($valider == $k ){ $sstatuspre = True;   } else {  $sstatuspre = False;  }
+                if ($valider == $refer ){ $sstatuspre = True;   } else {  $sstatuspre = False;  }
 
                       }  else {  $sstatuspre = True;  }
 

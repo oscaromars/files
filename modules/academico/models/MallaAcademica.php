@@ -873,7 +873,7 @@ where a.maca_id= :maca_id and a.asi_id = :asi_id
 
                    
                     
-         if ($statusasi["enac_id"]==3 or $statusasi["enac_id"]==2 or $statusasi["enac_id"]== Null ){ 
+         if ($statusasi["enac_id"]==3 or $statusasi["enac_id"]==2 /*or $statusasi["enac_id"]== Null*/ ){ 
                       
                        
                       

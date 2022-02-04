@@ -344,7 +344,7 @@ class PerfilController extends \app\components\CController {
 
                 if ($persona_model->save()) {
 
-                    /*if( $correo!= $persona_model->per_correo ||
+                    if( $correo!= $persona_model->per_correo ||
                        !empty($password_new) ){
 
 
@@ -356,7 +356,7 @@ class PerfilController extends \app\components\CController {
                                               "[[clave]]"    => $password_new, 
                                               "[[link]]"     => $link), Yii::$app->language);
                         
-                        $tituloMensaje = Yii::t("interesado", "Registro en línea UTEG");*/
+                        $tituloMensaje = Yii::t("interesado", "Registro en línea UTEG");
                         /*
                         \app\models\Utilities::putMessageLogFile('usuario: '. $usuario);
                         \app\models\Utilities::putMessageLogFile('persona_model->per_correo: '. $persona_model->per_correo);
@@ -364,8 +364,8 @@ class PerfilController extends \app\components\CController {
                         \app\models\Utilities::putMessageLogFile('correo: '. $correo);
                         \app\models\Utilities::putMessageLogFile('link: '. $link);
                         */
-                        /*Utilities::sendEmail($tituloMensaje, Yii::$app->params["contactoEmail"], [$correo => "$usuario"], $asunto, $body);
-                    }*/
+                        Utilities::sendEmail($tituloMensaje, Yii::$app->params["contactoEmail"], [$correo => "$usuario"], $asunto, $body);
+                    }
 
                     $message = array(
                         "wtmessage" => Yii::t("notificaciones", "Your information was successfully saved."),

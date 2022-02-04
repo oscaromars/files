@@ -23,6 +23,7 @@ use app\models\Etnia;
 use app\models\TipoSangre;
 use app\models\TipoPassword;
 use app\modules\academico\models\Estudiante;
+use yii\helpers\Url;
 
 /**New */
 use app\modules\academico\models\Perfil;
@@ -338,6 +339,7 @@ class PerfilController extends \app\components\CController {
                 $persona_model->can_id_nacimiento    = $data["can_id"];
                 $persona_model->tsan_id              = $data["tsan_id"];
                 $persona_model->per_domicilio_cpri   = $data["domicilio"];
+               
 
                 if(trim($per_correo)!='')
                     $persona_model->per_correo = $per_correo;             
@@ -362,7 +364,7 @@ class PerfilController extends \app\components\CController {
                         \app\models\Utilities::putMessageLogFile('persona_model->per_correo: '. $persona_model->per_correo);
                         \app\models\Utilities::putMessageLogFile('password_new: '. $password_new);
                         \app\models\Utilities::putMessageLogFile('correo: '. $correo);
-                        \app\models\Utilities::putMessageLogFile('link: '. $link);
+                        //\app\models\Utilities::putMessageLogFile('link: '. $link);
                         */
                         Utilities::sendEmail($tituloMensaje, Yii::$app->params["contactoEmail"], [$correo => "$usuario"], $asunto, $body);
                     }

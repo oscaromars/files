@@ -916,7 +916,7 @@ where a.maca_id= :maca_id and a.asi_id = :asi_id
                     $subjects[6][2] = $rows_in[$i]["asi_id"]; 
                     $subjects[6][3] = $rows_in[$i]["made_credito"]; 
                     $subjects[6][4] = $rows_in[$i]["mpmo_bloque"];  } 
-                 elseif ($subjects[7][0]== Null)  { 
+                /* elseif ($subjects[7][0]== Null)  { 
                     $subjects[7][0] = $rows_in[$i]["made_codigo_asignatura"];
                     $subjects[7][1]  = $rows_in[$i]["asi_nombre"];   
                     $subjects[7][2] = $rows_in[$i]["asi_id"]; 
@@ -927,7 +927,7 @@ where a.maca_id= :maca_id and a.asi_id = :asi_id
                     $subjects[8][1]  = $rows_in[$i]["asi_nombre"];   
                     $subjects[8][2] = $rows_in[$i]["asi_id"]; 
                     $subjects[8][3] = $rows_in[$i]["made_credito"];
-                    $subjects[8][4] = $rows_in[$i]["mpmo_bloque"];   }  
+                    $subjects[8][4] = $rows_in[$i]["mpmo_bloque"];   }  */
 
                                
                     }
@@ -986,7 +986,7 @@ where a.maca_id= :maca_id and a.asi_id = :asi_id
                     
             //   1   .    3    SCHEDULE 
                          
-                     for ($iter = 1; $iter <= 8; ++$iter){
+                     for ($iter = 1; $iter <= 6; ++$iter){
 
                     $codd = $subjects[$iter][0]; 
                    $nomm = $subjects[$iter][1]; 
@@ -1183,7 +1183,7 @@ where a.maca_id= :maca_id and a.asi_id = :asi_id
                  $asih5 = Null; $asih6 = Null; $asih7 = Null; $asih8 = Null;
                  $asih9 = Null; $asih10 = Null; $asih11 = Null; $asih12 = Null;
                 
-              for ($iter = 1;$iter <= 8; ++$iter){
+              for ($iter = 1;$iter <= 6; ++$iter){
 
                    $codd = $subjects[$iter][0]; 
                    $nomm = $subjects[$iter][1]; 
@@ -1511,7 +1511,7 @@ where a.maca_id= :maca_id and a.asi_id = :asi_id
                                
             //   1   .    3   SCHEDULE     
                                         
-                     for ($iter = 1; $iter <= 8; ++$iter){
+                     for ($iter = 1; $iter <= 6; ++$iter){
 
                     $codd = $subjects[$iter][0]; 
                    $nomm = $subjects[$iter][1]; 
@@ -1649,7 +1649,7 @@ where a.maca_id= :maca_id and a.asi_id = :asi_id
                             if ($getifasi["hose_id"] == Null){
 
 
-                     if ($hactual == 4){  
+                     if ($hactual == 3){  
                          if ($bactual == 2){ $gactual = $gmax + 1; $bactual = 2; $hactual = 1;}
                          if ($bactual == 1){ $gactual = $gmax + 1; $bactual = 1; $hactual = 1;}                     } Else {
                     $hactual++ ;
@@ -1710,7 +1710,7 @@ where a.maca_id= :maca_id and a.asi_id = :asi_id
                 $asih5 = Null; $asih6 = Null; $asih7 = Null; $asih8 = Null;
                 $asih9 = Null; $asih10 = Null; $asih11 = Null; $asih12 = Null;
                 
-              for ($iter = 1;$iter <= 8; ++$iter){
+              for ($iter = 1;$iter <= 6; ++$iter){
 
                    $codd = $subjects[$iter][0]; 
                    $nomm = $subjects[$iter][1]; 
@@ -2107,7 +2107,7 @@ where a.maca_id= :maca_id and a.asi_id = :asi_id
                     break; 
 
 
-                        case 4:
+                    /*    case 4:
                     if ($asih4==Null){ 
                          $asih4 = $subjects[$iter][0]; $noasih4 = $subjects[$iter][1];
                          $mpph4 =  $getmpar["mpp_id"];   
@@ -2127,7 +2127,7 @@ where a.maca_id= :maca_id and a.asi_id = :asi_id
 
                      $flagger = 2;
                         }
-                    break;
+                    break;*/
    
 
 
@@ -2206,7 +2206,7 @@ where a.maca_id= :maca_id and a.asi_id = :asi_id
                         }
                     break;
 
-                       case 4:
+                    /*   case 4:
                     if ($asih8==Null){ 
                          $asih8 = $subjects[$iter][0]; $noasih8 = $subjects[$iter][1];
                          $mpph8 =  $getmpar["mpp_id"];   
@@ -2226,7 +2226,7 @@ where a.maca_id= :maca_id and a.asi_id = :asi_id
 
                      $flagger = 2;
                         }
-                    break;                       
+                    break;     */                  
                     }        }    
 
                 // update paal_cantidad

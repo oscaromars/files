@@ -613,7 +613,7 @@ class MatriculacionposgradosController extends \app\components\CController {
                         $resp_estudianteid = $mod_Estudiante->getEstudiantexperid($per_id);
                         if ($resp_estudianteid["est_id"] == "") {
                             // grabar tabla estudiantes
-                            $resp_estudiantes = $mod_Estudiante->insertarEstudiante($per_id, $matricula, null, $usu_id, null, null, $fecha);
+                            $resp_estudiantes = $mod_Estudiante->insertarEstudiante($per_id/*, $matricula*/, null, $usu_id, null, null, $fecha);
                         } else {
                             $resp_estudiantes = $resp_estudianteid["est_id"];
                         }

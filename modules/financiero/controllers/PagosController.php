@@ -592,7 +592,7 @@ class PagosController extends \app\components\CController {
                                                     if ($resp_estudianteid["est_id"] == "") {
                                                         //\app\models\Utilities::putMessageLogFile('entro 5: ');
                                                         //\app\models\Utilities::putMessageLogFile('per_id en 5: ' . $per_id);
-                                                        $resp_estudiante = $mod_Estudiante->insertarEstudiante($per_id, null, null, $usu_autenticado, null, $fecha, null);
+                                                        $resp_estudiante = $mod_Estudiante->insertarEstudiante($per_id, /*null,*/ null, $usu_autenticado, null, $fecha, null);
                                                     } else {
                                                         //\app\models\Utilities::putMessageLogFile('entro 6: ');
                                                         $resp_estudiante = $resp_estudianteid["est_id"];

@@ -103,7 +103,7 @@ class Estudiante extends \yii\db\ActiveRecord {
      * @param
      * @return  $resultData (Retornar el código de estudiante).
      */
-    public function insertarEstudiante($per_id, $est_matricula, $est_categoria, $est_usuario_ingreso, $est_usuario_modifica, $est_fecha_creacion, $est_fecha_modificacion) {
+    public function insertarEstudiante($per_id/*, $est_matricula*/, $est_categoria, $est_usuario_ingreso, $est_usuario_modifica, $est_fecha_creacion, $est_fecha_modificacion) {
 
         $con = \Yii::$app->db_academico;
         $trans = $con->getTransaction(); // se obtiene la transacción actual
@@ -122,10 +122,10 @@ class Estudiante extends \yii\db\ActiveRecord {
             $bsol_sql .= ", :per_id";
         }
 
-        if (isset($est_matricula)) {
+        /*if (isset($est_matricula)) {
             $param_sql .= ", est_matricula";
             $bsol_sql .= ", :est_matricula";
-        }
+        }*/
 
         if (isset($est_categoria)) {
             $param_sql .= ", est_categoria";
@@ -161,9 +161,9 @@ class Estudiante extends \yii\db\ActiveRecord {
                 $comando->bindParam(':per_id', $per_id, \PDO::PARAM_INT);
             }
 
-            if (isset($est_matricula)) {
+            /*if (isset($est_matricula)) {
                 $comando->bindParam(':est_matricula', $est_matricula, \PDO::PARAM_STR);
-            }
+            }*/
 
             if (isset($est_categoria)) {
                 $comando->bindParam(':est_categoria', $est_categoria, \PDO::PARAM_STR);
@@ -674,7 +674,7 @@ class Estudiante extends \yii\db\ActiveRecord {
      * @param
      * @return
      */
-    public function updateEstudiante($est_id, $est_matricula, $est_categoria, $est_usu_modifica, $est_fecha_modificacion) {
+    public function updateEstudiante($est_id, /*$est_matricula,*/ $est_categoria, $est_usu_modifica, $est_fecha_modificacion) {
         $con = \Yii::$app->db_academico;
         $estado = 1;
         if ($trans !== null) {
@@ -686,7 +686,7 @@ class Estudiante extends \yii\db\ActiveRecord {
         try {
             $comando = $con->createCommand
                     ("UPDATE " . $con->dbname . ".estudiante
-                      SET est_matricula = :est_matricula,
+                      SET -- est_matricula = :est_matricula,
                           est_categoria = :est_categoria,
                           est_usuario_modifica = :est_usu_modifica,
                           est_fecha_modificacion = :est_fecha_modificacion
@@ -696,7 +696,7 @@ class Estudiante extends \yii\db\ActiveRecord {
                         est_estado_logico = :estado");
             $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
             $comando->bindParam(":est_id", $est_id, \PDO::PARAM_INT);
-            $comando->bindParam(":est_matricula", $est_matricula, \PDO::PARAM_STR);
+            //$comando->bindParam(":est_matricula", $est_matricula, \PDO::PARAM_STR);
             $comando->bindParam(":est_categoria", $est_categoria, \PDO::PARAM_STR);
             $comando->bindParam(":est_usu_modifica", $est_usu_modifica, \PDO::PARAM_INT);
             $comando->bindParam(":est_fecha_modificacion", $est_fecha_modificacion, \PDO::PARAM_STR);

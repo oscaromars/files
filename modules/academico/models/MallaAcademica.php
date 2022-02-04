@@ -486,7 +486,7 @@ left join db_academico.estado_nota_academico enac on enac.enac_id = pmac.enac_id
                             and pmac.pmac_estado_logico = 1
                             and enac.enac_estado = 1
                             and enac.enac_estado_logico = 1
-                     ORDER BY a.made_semestre ASC
+                     ORDER BY a.made_semestre,a.asi_id ASC
                         ";
    $comando = $con->createCommand($sql);
    $rows_asi = $comando->queryAll();
@@ -685,7 +685,7 @@ inner join db_academico.malla_academico_estudiante maes on maes.per_id = " . $ro
                             and d.asi_estado_logico = 1
                             and mpmo.mpmo_estado = 1
                             and mpmo.mpmo_estado_logico = 1
-                     ORDER BY a.made_semestre ASC
+                     ORDER BY a.made_semestre,a.asi_id  ASC
                         ";
   
 

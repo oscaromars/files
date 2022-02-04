@@ -1497,6 +1497,9 @@ class SolicitudesController extends \app\components\CController {
                                             $resp_sol = $mod_solins->Obtenerdatosolicitud($sins_id);
                                             //Se obtiene el curso para luego registrarlo.
                                             if ($resp_sol) {
+                                                //SE DEBE CONSULTAR SI YA TIENE NUMERO DE MATRICULA
+                                                // NO GENERAR Y NO MODIFICAR
+                                                if (!empty($resp_estudianteid["est_matricula"])) {
                                                 /****************************************************** */
                                                 //SE DEBE GENERAR MATRICULA
                                                 /****************************************************** */
@@ -1504,7 +1507,6 @@ class SolicitudesController extends \app\components\CController {
                                                 $mod_numatricula = new NumeroMatricula();
                                                 $resp_numatricula = $mod_numatricula->consultaNumatricula();
                                                 // comparar año actual con año nmat_anio
-                                                //if ($resp_sol) {
                                                     if ($anioactual == $resp_numatricula["nmat_anio"]) { // si son iguales tomar el secuencia de la consulta
                                                         //se genera el nuevo secuencial
                                                         $generar = ($resp_numatricula["secuencia"] + 1);
@@ -1566,8 +1568,9 @@ class SolicitudesController extends \app\components\CController {
                                                             return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
                                                            }
                                                       }
-                                                //}
-
+                                                } else { // if si tiene ya numero de matricula no generarlo o modificarlo
+                                                        $exitomat = 1;
+                                                    }
                                                 //Modificar y activar clave de usuario con numero de cedula
                                                 //SE COMENTA YA NO SE GENERA ESTUDIANTE DESDE EL APROBAR SOLICITUD
                                                 /*if ($resp_sol["emp_id"] == 1) {
@@ -1664,14 +1667,14 @@ class SolicitudesController extends \app\components\CController {
                                                 $exito = 1;
                                               }else {
                                                 $message = array(
-                                                    "wtmessage" => Yii::t("notificaciones", "Problemas al enviar correo, intente nuevamente"),
+                                                    "wtmessage" => Yii::t("notificaciones", "Problemas al generar número de matricula, intente nuevamente"),
                                                     "title" => Yii::t('jslang', 'Error'),
                                                 );
                                                 return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
                                                }
                                             }else {
                                                 $message = array(
-                                                    "wtmessage" => Yii::t("notificaciones", "Problemas la obtener datos de la solcitud, intente nuevamente"),
+                                                    "wtmessage" => Yii::t("notificaciones", "Problemas al obtener datos de la solcitud, intente nuevamente"),
                                                     "title" => Yii::t('jslang', 'Error'),
                                                 );
                                                 return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);

@@ -245,8 +245,8 @@ class Estudiante extends \yii\db\ActiveRecord {
         $estado = 1;
 
         $sql = "SELECT
-                        est_id
-
+                        est_id,
+                        est_matricula
                 FROM " . $con->dbname . ".estudiante est
                 WHERE   per_id = :per_id
                         AND est_estado = :estado

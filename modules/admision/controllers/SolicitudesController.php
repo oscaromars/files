@@ -29,6 +29,7 @@ use app\modules\academico\Module as academico;
 use app\modules\financiero\Module as financiero;
 use app\modules\financiero\models\Secuencias;
 use app\modules\admision\models\ConvenioEmpresa;
+use app\modules\academico\models\NumeroMatricula;
 use app\models\Usuario;
 use app\models\InscripcionGrado;
 use app\models\InscripcionPosgrado;
@@ -1457,6 +1458,10 @@ class SolicitudesController extends \app\components\CController {
                     } else {
                         $numDocumentos = 1;
                     }
+                    /**************************************************** */
+                    /* verificar tambien por los documentos de frm grado  */
+                    /* y pos matriculacion                                */
+                    /**************************************************** */
                     if ($numDocumentos > 0) {
                         $respusuario = $mod_solins->consultaDatosusuario($per_sistema);
                         if ($banderapreaprueba == 0) {  //etapa de Aprobación.
@@ -1464,6 +1469,11 @@ class SolicitudesController extends \app\components\CController {
                                 //consultar estado del pago.
                                 $resp_pago = $mod_ordenpago->consultaOrdenPago($sins_id);
                                 if ($resp_pago["opag_estado_pago"] == 'S') {
+                                    /****************************************************************** */
+                                    //CONSULTAR SI LA PERSONA ESTA COMO ESTUDIANTE
+                                    $resp_estudianteid = $mod_Estudiante->getEstudiantexperid($per_id);
+                                    if (!empty($resp_estudianteid["est_id"])) {
+                                    // continua el proceso
                                     $respsolins = $mod_solins->apruebaSolicitud($sins_id, $resultado, $observacion, $observarevisa, $banderapreaprueba, $respusuario['usu_id']);
                                     if ($respsolins) {
                                         //Se genera id de aspirante y correo de bienvenida.
@@ -1487,8 +1497,77 @@ class SolicitudesController extends \app\components\CController {
                                             $resp_sol = $mod_solins->Obtenerdatosolicitud($sins_id);
                                             //Se obtiene el curso para luego registrarlo.
                                             if ($resp_sol) {
-                                                $mod_persona = new Persona();
-                                                $resp_persona = $mod_persona->consultaPersonaId($per_id);
+                                                /****************************************************** */
+                                                //SE DEBE GENERAR MATRICULA
+                                                /****************************************************** */
+                                                $anioactual = date("Y");
+                                                $mod_numatricula = new NumeroMatricula();
+                                                $resp_numatricula = $mod_numatricula->consultaNumatricula();
+                                                // comparar año actual con año nmat_anio
+                                                //if ($resp_sol) {
+                                                    if ($anioactual == $resp_numatricula["nmat_anio"]) { // si son iguales tomar el secuencia de la consulta
+                                                        //se genera el nuevo secuencial
+                                                        $generar = ($resp_numatricula["secuencia"] + 1);
+                                                        $secuencial_nuevo = str_pad((int)$generar, 5, "0", STR_PAD_LEFT);
+                                                        $est_matricula = $resp_numatricula["nmat_anio"].$secuencial_nuevo;
+                                                        // se actualiza solo el secuencial en la tabla
+                                                        $resp_actsecuencial = $mod_numatricula->actualizarSecmatricula($resp_numatricula["nmat_id"], $secuencial_nuevo);
+                                                        if ($resp_actsecuencial) {
+                                                            //si esta bien se actualiza campo matricula al estudiante enviando $resp_estudianteid["est_id"]
+                                                            $resp_actestudiante = $mod_Estudiante->modificarMatriculaest($resp_estudianteid["est_id"], $est_matricula, $usu_autenticado);
+                                                            $exitomat = 1;
+                                                        }else {
+                                                            $message = array(
+                                                                "wtmessage" => Yii::t("notificaciones", "Problemas al generar número de matricula, intente nuevamente"),
+                                                                "title" => Yii::t('jslang', 'Error'),
+                                                            );
+                                                            return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+                                                           }
+                                                    } else { //secuencial empieza de 0 y se actualiza, junto al año
+                                                        $generar = 1;
+                                                        $secuencial_nuevo = str_pad((int)$generar, 5, "0", STR_PAD_LEFT);
+                                                        $est_matricula = $anioactual.$secuencial_nuevo;
+                                                        $resp_actsecuencial = $mod_numatricula->actualizarSecmatricula($resp_numatricula["nmat_id"], $secuencial_nuevo);
+                                                        if ($resp_actsecuencial) {
+                                                            //si esta bien se actualiza año
+                                                            if ($resp_actsecuencial) {
+                                                                $resp_actanio = $mod_numatricula->actualizarAniomatricula($resp_numatricula["nmat_id"], $anioactual);
+                                                                if ($resp_actanio) {
+                                                                    //si esta bien se actualiza campo matricula al estudiante enviando $resp_estudianteid["est_id"]
+                                                                    $resp_actestudiante = $mod_Estudiante->modificarMatriculaest($resp_estudianteid["est_id"], $est_matricula, $usu_autenticado);
+                                                                    if ($resp_actestudiante) {
+                                                                    $exitomat = 1;
+                                                                    }else {
+                                                                        $message = array(
+                                                                            "wtmessage" => Yii::t("notificaciones", "Problemas al actualizar la matricula del estudiante, intente nuevamente"),
+                                                                            "title" => Yii::t('jslang', 'Error'),
+                                                                        );
+                                                                        return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+                                                                       }
+                                                               }else {
+                                                                $message = array(
+                                                                    "wtmessage" => Yii::t("notificaciones", "Problemas al actualizar año de matricula, intente nuevamente"),
+                                                                    "title" => Yii::t('jslang', 'Error'),
+                                                                );
+                                                                return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+                                                               }
+                                                            }else {
+                                                                $message = array(
+                                                                    "wtmessage" => Yii::t("notificaciones", "Problemas al generar secuencial de matricula, intente nuevamente"),
+                                                                    "title" => Yii::t('jslang', 'Error'),
+                                                                );
+                                                                return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+                                                               }
+                                                        }else {
+                                                            $message = array(
+                                                                "wtmessage" => Yii::t("notificaciones", "Problemas al generar número de matricula nuevo, intente nuevamente"),
+                                                                "title" => Yii::t('jslang', 'Error'),
+                                                            );
+                                                            return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+                                                           }
+                                                      }
+                                                //}
+
                                                 //Modificar y activar clave de usuario con numero de cedula
                                                 //SE COMENTA YA NO SE GENERA ESTUDIANTE DESDE EL APROBAR SOLICITUD
                                                 /*if ($resp_sol["emp_id"] == 1) {
@@ -1523,6 +1602,10 @@ class SolicitudesController extends \app\components\CController {
                                                         }
                                                     }
                                                 }*/
+                                                //AQUI VER CUANDO TODO ESTE BIEN AL ULTIMO GUARDAR ENVIAR CORREO
+                                               if ($exitomat == 1) {
+                                                $mod_persona = new Persona();
+                                                $resp_persona = $mod_persona->consultaPersonaId($per_id);
                                                 $correo = $resp_persona["usu_user"];
                                                 $apellidos = $resp_persona["per_pri_apellido"];
                                                 $nombres = $resp_persona["per_pri_nombre"];
@@ -1579,9 +1662,30 @@ class SolicitudesController extends \app\components\CController {
                                                     Utilities::sendEmail($tituloMensaje, Yii::$app->params["adminEmail"], [Yii::$app->params["soporteEmail"] => "Soporte"], $asunto, $body);
                                                 }
                                                 $exito = 1;
-                                            }
-                                        }
+                                              }else {
+                                                $message = array(
+                                                    "wtmessage" => Yii::t("notificaciones", "Problemas al enviar correo, intente nuevamente"),
+                                                    "title" => Yii::t('jslang', 'Error'),
+                                                );
+                                                return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+                                               }
+                                            }else {
+                                                $message = array(
+                                                    "wtmessage" => Yii::t("notificaciones", "Problemas la obtener datos de la solcitud, intente nuevamente"),
+                                                    "title" => Yii::t('jslang', 'Error'),
+                                                );
+                                                return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+                                               }
+                                       }
                                     }
+                                } else {
+                                    //CASO CONTRARIO MENSAJE NO ES ESTUDIANTE NO PUEDE APROBAR SOLICITUD
+                                    $message = array(
+                                        "wtmessage" => Yii::t("notificaciones", "La persona no se encuentra como estudiante. No se puede aprobar la solicitud"),
+                                        "title" => Yii::t('jslang', 'Error'),
+                                    );
+                                    return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+                                   }
                                 } else {
                                     $mensaje = 'La solicitud se encuentra pendiente de pago.';
                                 }
@@ -1678,7 +1782,7 @@ class SolicitudesController extends \app\components\CController {
                                                 }
                                             }
                                         }
-                                        // Se bloquea el correo de re probacion de solicitud
+                                          // Se bloquea el correo de re probacion de solicitud
                                           /*$tituloMensaje = Yii::t("interesado", "UTEG - Registration Online");
                                           $asunto = Yii::t("interesado", "UTEG - Registration Online");
                                           $body = Utilities::getMailMessage("Requestapplicantdenied", array("[[observacion]]" => $obs_correo), Yii::$app->language);
@@ -1699,6 +1803,10 @@ class SolicitudesController extends \app\components\CController {
                         } else {  //Pre-Aprobación de la solicitud
                             if ($resultado == 3) {
                                 //Verificar que se hayan subido los documentos.
+                                /**************************************************** */
+                                /* verificar tambien por los documentos de frm grado  */
+                                /* y pos matriculacion                                */
+                                /**************************************************** */
                                 $respConsulta = $mod_solins->consultarDocumxSolic($sins_id);
                                 if ($respConsulta['numDocumentos'] > 0) {
                                     $respsolins = $mod_solins->apruebaSolicitud($sins_id, $resultado, $observacion, $observarevisa, $banderapreaprueba, $respusuario['usu_id']);

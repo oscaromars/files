@@ -1176,9 +1176,12 @@ where a.maca_id= :maca_id and a.asi_id = :asi_id
 
 
                   //   1   .    4     PES
-               $mpph1 = 0; $mpph2 = 0; $mpph3 = 0; $mpph4 = 0;
-                $mpph5 = 0; $mpph6 = 0; $mpph7 = 0; $mpph8 = 0;
-                  $mpph9 = 0; $mpph10 = 0; $mpph11 = 0; $mpph12 = 0;
+                 $mpph1 = 0; $mpph2 = 0; $mpph3 = 0; $mpph4 = 0;
+                 $mpph5 = 0; $mpph6 = 0; $mpph7 = 0; $mpph8 = 0;
+                 $mpph9 = 0; $mpph10 = 0; $mpph11 = 0; $mpph12 = 0;
+                 $asih1 = 0; $asih2 = 0; $asih3 = 0; $asih4 = 0;
+                 $asih5 = 0; $asih6 = 0; $asih7 = 0; $asih8 = 0;
+                 $asih9 = 0; $asih10 = 0; $asih11 = 0; $asih12 = 0;
                 
               for ($iter = 1;$iter <= 8; ++$iter){
 
@@ -1700,9 +1703,12 @@ where a.maca_id= :maca_id and a.asi_id = :asi_id
 
                   //   1   .    4    PES
 
-                 $mpph1 = 0; $mpph2 = 0; $mpph3 = 0; $mpph4 = 0;
+                $mpph1 = 0; $mpph2 = 0; $mpph3 = 0; $mpph4 = 0;
                 $mpph5 = 0; $mpph6 = 0; $mpph7 = 0; $mpph8 = 0;
                 $mpph9 = 0; $mpph10 = 0; $mpph11 = 0; $mpph12 = 0;
+                $asih1 = 0; $asih2 = 0; $asih3 = 0; $asih4 = 0;
+                $asih5 = 0; $asih6 = 0; $asih7 = 0; $asih8 = 0;
+                $asih9 = 0; $asih10 = 0; $asih11 = 0; $asih12 = 0;
                 
               for ($iter = 1;$iter <= 8; ++$iter){
 

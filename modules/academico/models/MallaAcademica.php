@@ -667,11 +667,12 @@ from db_academico.malla_academica_detalle a
 inner join db_academico.malla_unidad_modalidad b on b.maca_id = a.maca_id 
 inner join db_academico.modalidad_estudio_unidad c on c.meun_id = b.meun_id
 inner join db_academico.asignatura d on d.asi_id = a.asi_id
-left join db_academico.materias_periodo_modalidad mpmo on mpmo.asi_id = a.asi_id and mpmo.eaca_id = c.eaca_id and mpmo.mod_id = c.mod_id and mpmo.saca_id = :periodo
+inner join db_academico.materias_periodo_modalidad mpmo on mpmo.eaca_id = c.eaca_id and mpmo.mod_id = c.mod_id and mpmo.saca_id = :periodo
 inner join db_academico.malla_academico_estudiante maes on maes.per_id = " . $rows["per_id"] . " 
                        where c.eaca_id =  " . $rows["eaca_id"] . "   
                       and   c.mod_id =  " . $modalidad . "   
                       and a.maca_id =  " . $rows["maca_id"] . "  
+                      and   a.asi_id = mpmo.asi_id 
                       and c.uaca_id = 1
                       and mpmo_activo = 'A'
                             and a.made_estado = 1

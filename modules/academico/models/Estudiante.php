@@ -986,7 +986,7 @@ class Estudiante extends \yii\db\ActiveRecord {
             return FALSE;
         }
     }
-    
+
     /**
      * Function modifica numero matricula estudiante luego de generarlo en .
      * @author Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>;
@@ -994,7 +994,6 @@ class Estudiante extends \yii\db\ActiveRecord {
      * @return
      */
     public function modificarMatriculaest($est_id, $est_matricula, $est_usuario_modifica) {
-
         $con = \Yii::$app->db_academico;
         $estado = 1;
         $est_fecha_modificacion = date(Yii::$app->params['dateTimeByDefault']);
@@ -1010,7 +1009,9 @@ class Estudiante extends \yii\db\ActiveRecord {
                           est_usuario_modifica = :est_usuario_modifica,
                           est_fecha_modificacion = :est_fecha_modificacion
                       WHERE
-                        est_id = :est_id ");
+                        est_id = :est_id AND
+                        est_estado = :estado AND
+                        est_estado_logico = :estado");
             $comando->bindParam(":est_id", $est_id, \PDO::PARAM_INT);
             $comando->bindParam(":est_matricula", $est_matricula, \PDO::PARAM_STR);
             $comando->bindParam(":est_usuario_modifica", $est_usuario_modifica, \PDO::PARAM_INT);
@@ -1030,8 +1031,8 @@ class Estudiante extends \yii\db\ActiveRecord {
     /**
      * Devuelve el nombre del estudiante con el per_id .
      * @author  Lisbeth González <analistadesarrollo07@uteg.edu.ec>;
-     * @property       
-     * @return  
+     * @property
+     * @return
      */
     public static function getEstudiantes() {
         $con = \Yii::$app->db_academico;
@@ -1041,7 +1042,7 @@ class Estudiante extends \yii\db\ActiveRecord {
                     ifnull(concat(ifnull(per.per_pri_apellido,''), ' ', ifnull(per.per_seg_apellido,''),' ',ifnull(per.per_pri_nombre,''),' ',ifnull(per.per_seg_nombre,'')),'') as nombre
                 FROM db_academico.estudiante est,
                      db_asgard.persona per
-               WHERE est.per_id = per.per_id                        
+               WHERE est.per_id = per.per_id
                  AND est.est_estado = 1
                  AND est.est_estado_logico = 1
                  AND per.per_estado = 1
@@ -1053,5 +1054,5 @@ class Estudiante extends \yii\db\ActiveRecord {
 
         return $resultData;
     }
-    
+
 }

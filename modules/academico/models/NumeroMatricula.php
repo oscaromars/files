@@ -1,6 +1,6 @@
 <?php
 
-namespace app\models\academico\models;
+namespace app\modules\academico\models;
 
 use Yii;
 
@@ -72,7 +72,6 @@ class NumeroMatricula extends \yii\db\ActiveRecord
             'nmat_estado_logico' => 'Nmat Estado Logico',
         ];
     }
-
     /**
      * Function consultaNumatriculacod
      * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
@@ -81,7 +80,7 @@ class NumeroMatricula extends \yii\db\ActiveRecord
      */
     public function consultaNumatriculacod($nmat_codigo) {
         $con = \Yii::$app->db_academico;
-        $numero = 0;
+        //$numero = 0;
         $estado = 1;
                 $sql = "SELECT nmat_id,
                             IFNULL(CAST(nmat_numero AS UNSIGNED),0) secuencia
@@ -142,19 +141,23 @@ class NumeroMatricula extends \yii\db\ActiveRecord
      * @return
      */
     public function consultaNumatricula() {
+        \app\models\Utilities::putMessageLogFile('entro ???...: ');
         $con = \Yii::$app->db_academico;
-        $numero = 0;
+        //$numero = 0;
         $estado = 1;
-                $sql = "SELECT nmat_id, nmat_anio
-                            IFNULL(CAST(nmat_numero AS UNSIGNED),0) secuencia
+                $sql = "SELECT
+                          nmat_id,
+                          nmat_anio,
+                          -- IFNULL(CAST(nmat_numero AS UNSIGNED),0) secuencia
+                          nmat_numero as secuencia
                         FROM " . $con->dbname . ".numero_matricula
                         WHERE nmat_estado = :estado AND
-                            nmat_estado_logico= :estado AND
-                            nmat_anio = :nmat_anio";
-                $sql .= "  ";
+                            nmat_estado_logico= :estado /*AND
+                            nmat_anio = :nmat_anio */";
+                //\app\models\Utilities::putMessageLogFile('sql...: '.$sql);
                 $comando = $con->createCommand($sql);
                 $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
-                $comando->bindParam(":nmat_anio", $nmat_anio, \PDO::PARAM_STR);
+                // $comando->bindParam(":nmat_anio", $nmat_anio, \PDO::PARAM_STR);
                 $resultData = $comando->queryOne();
                 return $resultData;
     }

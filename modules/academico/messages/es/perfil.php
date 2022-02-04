@@ -61,5 +61,6 @@ return [
     'Blood type' => 'Tipo sanguíneo',
     'Nac. Ecuadorian' => 'Nac. Ecuatoriana',
     'Password' => 'Contraseña',
-    'Confirm Password' => 'Confirmar contraseña'
+    'Confirm Password' => 'Confirmar contraseña',
+    'Student' => 'Estudiante',
 ];

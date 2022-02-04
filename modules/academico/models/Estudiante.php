@@ -987,5 +987,32 @@ class Estudiante extends \yii\db\ActiveRecord {
         }
         
     }
+
+    /**
+     * Devuelve el nombre del estudiante con el per_id .
+     * @author  Lisbeth González <analistadesarrollo07@uteg.edu.ec>;
+     * @property       
+     * @return  
+     */
+    public static function getEstudiantes() {
+        $con = \Yii::$app->db_academico;
+        $estado = 1;
+
+        $sql = "SELECT per.per_id as id,
+                    ifnull(concat(ifnull(per.per_pri_apellido,''), ' ', ifnull(per.per_seg_apellido,''),' ',ifnull(per.per_pri_nombre,''),' ',ifnull(per.per_seg_nombre,'')),'') as nombre
+                FROM db_academico.estudiante est,
+                     db_asgard.persona per
+               WHERE est.per_id = per.per_id                        
+                 AND est.est_estado = 1
+                 AND est.est_estado_logico = 1
+                 AND per.per_estado = 1
+                 AND per.per_estado_logico = 1
+                order by 2 asc ";
+
+        $comando = $con->createCommand($sql);
+        $resultData = $comando->queryAll();
+
+        return $resultData;
+    }
     
 }

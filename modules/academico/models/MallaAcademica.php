@@ -552,8 +552,36 @@ left join db_academico.estado_nota_academico enac on enac.enac_id = pmac.enac_id
      if ($valider == $refer ){ $sstatuspre = True;   } else {  $sstatuspre = False;  }
 
     } else {  $sstatuspre = True;  }
+
+     $sqlch = "
+                 select  a.asi_id, c.enac_id, a.maes_id, a.per_id
+ from db_academico.malla_academico_estudiante a
+ left join db_academico.promedio_malla_academico b on a.maes_id = b.maes_id
+   left join db_academico.estado_nota_academico c on c.enac_id = b.enac_id   
+   inner join db_academico.asignatura d on a.asi_id = d.asi_id
+   where a.per_id = :per_id
+   and a.asi_id = :asignatura
+                       and a.maes_estado = 1
+                    and a.maes_estado_logico = 1
+                    and b.pmac_estado = 1
+                    and b.pmac_estado_logico = 1
+                    and c.enac_estado = 1
+                    and c.enac_estado_logico = 1
+                     
+
+                ";
+                     
+                     $comando = $con->createCommand($sqlch);
+                     $comando->bindParam(":per_id", $persona, \PDO::PARAM_INT);
+                     $comando->bindParam(":asignatura", $asignatura, \PDO::PARAM_INT);
+                     $statusasi = $comando->queryOne();
+
+            if ($statusasi["enac_id"] == 2 OR $statusasi["enac_id"] == 3) {
+
+                $sstatusasi= True;
+            } else {  $sstatusasi= False;  }
          
-         if ($sstatuspre = True) {  $cn++;
+       if ($sstatuspre = True AND $sstatusasi = True) {  $cn++;
 
            if ($cn < 7) {
         

@@ -581,7 +581,7 @@ left join db_academico.estado_nota_academico enac on enac.enac_id = pmac.enac_id
                 $sstatusasi= True;
             } else {  $sstatusasi= False;  }
          
-       if ($sstatuspre = True AND $sstatusasi = True) {  $cn++;
+       if ($sstatuspre == True AND $sstatusasi == True) {  $cn++;
 
            if ($cn < 7) {
         

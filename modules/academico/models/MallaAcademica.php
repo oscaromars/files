@@ -675,6 +675,7 @@ inner join db_academico.malla_academico_estudiante maes on maes.per_id = " . $ro
                       and   a.asi_id = mpmo.asi_id 
                       and c.uaca_id = 1
                       and mpmo_activo = 'A'
+                      and mpmo.mpmo_bloque is not null
                             and a.made_estado = 1
                             and a.made_estado_logico = 1
                             and b.mumo_estado = 1

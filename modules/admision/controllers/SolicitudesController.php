@@ -1451,16 +1451,16 @@ class SolicitudesController extends \app\components\CController {
                 $mod_Estudiante = new Estudiante();
                 $mod_Modestuni = new ModuloEstudio();
                 if ($rsin_id != 2) {
-                    \app\models\Utilities::putMessageLogFile('Entro: 1');
+                    //\app\models\Utilities::putMessageLogFile('Entro: 1');
                     $mod_solins = new SolicitudInscripcion();
                     $mod_ordenpago = new OrdenPago();
                     //Verificar que se hayan subido los documentos en Uteg.
                     if ($empresa == 1) {
-                        \app\models\Utilities::putMessageLogFile('Entro: 2');
+                        //\app\models\Utilities::putMessageLogFile('Entro: 2');
                         $respNumDoc = $mod_solins->consultarDocumentostosxSol($sins_id);
                         $numDocumentos = $respNumDoc["numDocumentos"];
                     } else {
-                        \app\models\Utilities::putMessageLogFile('Entro: 3');
+                        //\app\models\Utilities::putMessageLogFile('Entro: 3');
                         $numDocumentos = 1;
                     }
                     /**************************************************** */
@@ -1468,68 +1468,68 @@ class SolicitudesController extends \app\components\CController {
                     /* y pos matriculacion                                */
                     /**************************************************** */
                     if ($numDocumentos > 0) {
-                        \app\models\Utilities::putMessageLogFile('Entro: 4');
+                        //\app\models\Utilities::putMessageLogFile('Entro: 4');
                         $respusuario = $mod_solins->consultaDatosusuario($per_sistema);
                         if ($banderapreaprueba == 0) {  //etapa de Aprobación.
-                            \app\models\Utilities::putMessageLogFile('Entro: 5');
+                            //\app\models\Utilities::putMessageLogFile('Entro: 5');
                             if ($resultado == 2) {
-                                \app\models\Utilities::putMessageLogFile('Entro: 6');
+                                //\app\models\Utilities::putMessageLogFile('Entro: 6');
                                 //consultar estado del pago.
                                 $resp_pago = $mod_ordenpago->consultaOrdenPago($sins_id);
                                 if ($resp_pago["opag_estado_pago"] == 'S') {
-                                    \app\models\Utilities::putMessageLogFile('Entro: 7');
+                                    //\app\models\Utilities::putMessageLogFile('Entro: 7');
                                     /****************************************************************** */
                                     //CONSULTAR SI LA PERSONA ESTA COMO ESTUDIANTE
                                     $resp_estudianteid = $mod_Estudiante->getEstudiantexperid($per_id);
                                     if (!empty($resp_estudianteid["est_id"])) {
-                                        \app\models\Utilities::putMessageLogFile('Entro: 8');
+                                        //\app\models\Utilities::putMessageLogFile('Entro: 8');
                                     // continua el proceso
                                     $respsolins = $mod_solins->apruebaSolicitud($sins_id, $resultado, $observacion, $observarevisa, $banderapreaprueba, $respusuario['usu_id']);
                                     if ($respsolins) {
-                                        \app\models\Utilities::putMessageLogFile('Entro: 9');
+                                        //\app\models\Utilities::putMessageLogFile('Entro: 9');
                                         //Se genera id de aspirante y correo de bienvenida.
                                         $resp_encuentra = $mod_ordenpago->encuentraAdmitido($int_id, $sins_id);
                                         if ($resp_encuentra) {
-                                            \app\models\Utilities::putMessageLogFile('Entro: 10');
+                                            //\app\models\Utilities::putMessageLogFile('Entro: 10');
                                             $asp = $resp_encuentra['adm_id'];
                                             $continua = 1;
                                         } else {
-                                            \app\models\Utilities::putMessageLogFile('Entro: 11');
+                                            //\app\models\Utilities::putMessageLogFile('Entro: 11');
                                             //Se asigna al interesado como aspirante
                                             $resp_asp = $mod_ordenpago->insertarAdmitido($int_id, $sins_id);
                                             if ($resp_asp) {
-                                                \app\models\Utilities::putMessageLogFile('Entro: 12');
+                                                //\app\models\Utilities::putMessageLogFile('Entro: 12');
                                                 $asp = $resp_asp;
                                                 $continua = 1;
                                             }
                                         }
                                     }
                                     if ($continua == 1) {
-                                        \app\models\Utilities::putMessageLogFile('Entro: 13');
+                                        //\app\models\Utilities::putMessageLogFile('Entro: 13');
                                         $resp_inte = $mod_ordenpago->actualizaEstadointeresado($int_id, $respusuario['usu_id']);
                                         if ($resp_inte) {
-                                            \app\models\Utilities::putMessageLogFile('Entro: 14');
+                                            //\app\models\Utilities::putMessageLogFile('Entro: 14');
                                             //Se obtienen el método de ingreso y el nivel de interés según la solicitud.
                                             $resp_sol = $mod_solins->Obtenerdatosolicitud($sins_id);
                                             //Se obtiene el curso para luego registrarlo.
                                             if ($resp_sol) {
-                                                \app\models\Utilities::putMessageLogFile('Entro: 15');
+                                                //\app\models\Utilities::putMessageLogFile('Entro: 15');
                                                 //SE DEBE CONSULTAR SI YA TIENE NUMERO DE MATRICULA
                                                 // NO GENERAR Y NO MODIFICAR
                                                 \app\models\Utilities::putMessageLogFile('matricula: '.$resp_estudianteid["est_matricula"]);
                                                 if (empty($resp_estudianteid["est_matricula"])) {
-                                                \app\models\Utilities::putMessageLogFile('Entro: 16');
+                                                //\app\models\Utilities::putMessageLogFile('Entro: 16');
                                                 $anioactual = date("Y");
-                                                \app\models\Utilities::putMessageLogFile('Entro: 16.1');
+                                                //\app\models\Utilities::putMessageLogFile('Entro: 16.1');
                                                 $mod_numatricula = new NumeroMatricula();
-                                                \app\models\Utilities::putMessageLogFile('Entro: 16.2');
+                                                //\app\models\Utilities::putMessageLogFile('Entro: 16.2');
                                                 $resp_numatricula = $mod_numatricula->consultaNumatricula();
-                                                \app\models\Utilities::putMessageLogFile('Entro: 16.3');
-                                                \app\models\Utilities::putMessageLogFile('anio actual: '.$anioactual);
-                                                \app\models\Utilities::putMessageLogFile('anio consulta: '.$resp_numatricula["nmat_anio"]);
+                                                //\app\models\Utilities::putMessageLogFile('Entro: 16.3');
+                                                //\app\models\Utilities::putMessageLogFile('anio actual: '.$anioactual);
+                                                //\app\models\Utilities::putMessageLogFile('anio consulta: '.$resp_numatricula["nmat_anio"]);
                                                     // comparar año actual con año nmat_anio
                                                     if ($anioactual == $resp_numatricula["nmat_anio"]) { // si son iguales tomar el secuencia de la consulta
-                                                        \app\models\Utilities::putMessageLogFile('Entro: 17');
+                                                        //\app\models\Utilities::putMessageLogFile('Entro: 17');
                                                         //se genera el nuevo secuencial
                                                         $generar = ($resp_numatricula["secuencia"] + 1);
                                                         $secuencial_nuevo = str_pad((int)$generar, 5, "0", STR_PAD_LEFT);
@@ -1537,12 +1537,12 @@ class SolicitudesController extends \app\components\CController {
                                                         // se actualiza solo el secuencial en la tabla
                                                         $resp_actsecuencial = $mod_numatricula->actualizarSecmatricula($resp_numatricula["nmat_id"], $secuencial_nuevo);
                                                         if ($resp_actsecuencial) {
-                                                            \app\models\Utilities::putMessageLogFile('Entro: 18');
+                                                            //\app\models\Utilities::putMessageLogFile('Entro: 18');
                                                             //si esta bien se actualiza campo matricula al estudiante enviando $resp_estudianteid["est_id"]
                                                             $resp_actestudiante = $mod_Estudiante->modificarMatriculaest($resp_estudianteid["est_id"], $est_matricula, $usu_autenticado);
                                                             $exitomat = 1;
                                                         }else {
-                                                            \app\models\Utilities::putMessageLogFile('Entro: 19');
+                                                            //\app\models\Utilities::putMessageLogFile('Entro: 19');
                                                             $message = array(
                                                                 "wtmessage" => Yii::t("notificaciones", "Problemas al generar número de matricula, intente nuevamente"),
                                                                 "title" => Yii::t('jslang', 'Error'),
@@ -1550,26 +1550,26 @@ class SolicitudesController extends \app\components\CController {
                                                             return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
                                                            }
                                                     } else { //secuencial empieza de 0 y se actualiza, junto al año
-                                                        \app\models\Utilities::putMessageLogFile('Entro: 20');
+                                                        //\app\models\Utilities::putMessageLogFile('Entro: 20');
                                                         $generar = 1;
                                                         $secuencial_nuevo = str_pad((int)$generar, 5, "0", STR_PAD_LEFT);
                                                         $est_matricula = $anioactual.$secuencial_nuevo;
                                                         $resp_actsecuencial = $mod_numatricula->actualizarSecmatricula($resp_numatricula["nmat_id"], $secuencial_nuevo);
                                                         if ($resp_actsecuencial) {
-                                                            \app\models\Utilities::putMessageLogFile('Entro: 21');
+                                                            //\app\models\Utilities::putMessageLogFile('Entro: 21');
                                                             //si esta bien se actualiza año
                                                             if ($resp_actsecuencial) {
-                                                                \app\models\Utilities::putMessageLogFile('Entro: 22');
+                                                                //\app\models\Utilities::putMessageLogFile('Entro: 22');
                                                                 $resp_actanio = $mod_numatricula->actualizarAniomatricula($resp_numatricula["nmat_id"], $anioactual);
                                                                 if ($resp_actanio) {
-                                                                    \app\models\Utilities::putMessageLogFile('Entro: 23');
+                                                                    //\app\models\Utilities::putMessageLogFile('Entro: 23');
                                                                     //si esta bien se actualiza campo matricula al estudiante enviando $resp_estudianteid["est_id"]
                                                                     $resp_actestudiante = $mod_Estudiante->modificarMatriculaest($resp_estudianteid["est_id"], $est_matricula, $usu_autenticado);
                                                                     if ($resp_actestudiante) {
-                                                                    \app\models\Utilities::putMessageLogFile('Entro: 24');
+                                                                    //\app\models\Utilities::putMessageLogFile('Entro: 24');
                                                                     $exitomat = 1;
                                                                     }else {
-                                                                        \app\models\Utilities::putMessageLogFile('Entro: 25');
+                                                                        //\app\models\Utilities::putMessageLogFile('Entro: 25');
                                                                         $message = array(
                                                                             "wtmessage" => Yii::t("notificaciones", "Problemas al actualizar la matricula del estudiante, intente nuevamente"),
                                                                             "title" => Yii::t('jslang', 'Error'),
@@ -1577,7 +1577,7 @@ class SolicitudesController extends \app\components\CController {
                                                                         return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
                                                                        }
                                                                }else {
-                                                                \app\models\Utilities::putMessageLogFile('Entro: 26');
+                                                                //\app\models\Utilities::putMessageLogFile('Entro: 26');
                                                                 $message = array(
                                                                     "wtmessage" => Yii::t("notificaciones", "Problemas al actualizar año de matricula, intente nuevamente"),
                                                                     "title" => Yii::t('jslang', 'Error'),
@@ -1585,7 +1585,7 @@ class SolicitudesController extends \app\components\CController {
                                                                 return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
                                                                }
                                                             }else {
-                                                                \app\models\Utilities::putMessageLogFile('Entro: 27');
+                                                                //\app\models\Utilities::putMessageLogFile('Entro: 27');
                                                                 $message = array(
                                                                     "wtmessage" => Yii::t("notificaciones", "Problemas al generar secuencial de matricula, intente nuevamente"),
                                                                     "title" => Yii::t('jslang', 'Error'),
@@ -1593,7 +1593,7 @@ class SolicitudesController extends \app\components\CController {
                                                                 return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
                                                                }
                                                         }else {
-                                                            \app\models\Utilities::putMessageLogFile('Entro: 28');
+                                                            //\app\models\Utilities::putMessageLogFile('Entro: 28');
                                                             $message = array(
                                                                 "wtmessage" => Yii::t("notificaciones", "Problemas al generar número de matricula nuevo, intente nuevamente"),
                                                                 "title" => Yii::t('jslang', 'Error'),
@@ -1602,7 +1602,7 @@ class SolicitudesController extends \app\components\CController {
                                                            }
                                                       }
                                                 } else { // if si tiene ya numero de matricula no generarlo o modificarlo
-                                                    \app\models\Utilities::putMessageLogFile('Entro: 29');
+                                                    //\app\models\Utilities::putMessageLogFile('Entro: 29');
                                                     $exitomat = 1;
                                                     }
                                                 //Modificar y activar clave de usuario con numero de cedula
@@ -1641,7 +1641,7 @@ class SolicitudesController extends \app\components\CController {
                                                 }*/
                                                 //AQUI VER CUANDO TODO ESTE BIEN AL ULTIMO GUARDAR ENVIAR CORREO
                                                if ($exitomat == 1) {
-                                                \app\models\Utilities::putMessageLogFile('Entro: 30');
+                                                //\app\models\Utilities::putMessageLogFile('Entro: 30');
                                                 $mod_persona = new Persona();
                                                 $resp_persona = $mod_persona->consultaPersonaId($per_id);
                                                 $correo = $resp_persona["usu_user"];
@@ -1701,7 +1701,7 @@ class SolicitudesController extends \app\components\CController {
                                                 }
                                                 $exito = 1;
                                               }else {
-                                                \app\models\Utilities::putMessageLogFile('Entro: 31');
+                                                //\app\models\Utilities::putMessageLogFile('Entro: 31');
                                                 $message = array(
                                                     "wtmessage" => Yii::t("notificaciones", "Problemas al generar número de matricula, intente nuevamente"),
                                                     "title" => Yii::t('jslang', 'Error'),
@@ -1709,7 +1709,7 @@ class SolicitudesController extends \app\components\CController {
                                                 return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
                                                }
                                              }else {
-                                                \app\models\Utilities::putMessageLogFile('Entro: 32');
+                                                //\app\models\Utilities::putMessageLogFile('Entro: 32');
                                                 $message = array(
                                                     "wtmessage" => Yii::t("notificaciones", "Problemas al obtener datos de la solcitud, intente nuevamente"),
                                                     "title" => Yii::t('jslang', 'Error'),
@@ -1720,7 +1720,7 @@ class SolicitudesController extends \app\components\CController {
                                     }
                                 } else {
                                     //CASO CONTRARIO MENSAJE NO ES ESTUDIANTE NO PUEDE APROBAR SOLICITUD
-                                    \app\models\Utilities::putMessageLogFile('Entro: 33');
+                                    //\app\models\Utilities::putMessageLogFile('Entro: 33');
                                     $message = array(
                                         "wtmessage" => Yii::t("notificaciones", "La persona no se encuentra como estudiante. Revisar si esta pendiente el pago"),
                                         "title" => Yii::t('jslang', 'Error'),
@@ -1728,11 +1728,11 @@ class SolicitudesController extends \app\components\CController {
                                     return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
                                    }
                                 } else {
-                                    \app\models\Utilities::putMessageLogFile('Entro: 34');
+                                    //\app\models\Utilities::putMessageLogFile('Entro: 34');
                                     $mensaje = 'La solicitud se encuentra pendiente de pago.';
                                 }
                             } else { //No aprueban la solicitud
-                                \app\models\Utilities::putMessageLogFile('Entro: 35');
+                                //\app\models\Utilities::putMessageLogFile('Entro: 35');
                                 $respsolins = $mod_solins->apruebaSolicitud($sins_id, $resultado, $observacion, $observarevisa, $banderapreaprueba, $respusuario['usu_id']);
                                 if ($respsolins) {
                                     $srec_etapa = "A";  //Aprobación

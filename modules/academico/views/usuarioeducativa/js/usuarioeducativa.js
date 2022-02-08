@@ -1102,7 +1102,7 @@ showAlert('NO_OK', 'error', {"wtmessage": 'Seleccione Periodo y Modalidad', "tit
     if (!$(".blockUI").length) {
         showLoadingPopup();
     $('#Tbg_Asignar_Evaluacion').PbGridView('applyFilterData', {'periodo': periodo, 'modalidad': modalidad, 'aula': aula, 'unidadeduc': unidadeduc});
-        setTimeout(hideLoadingPopup, 2000);
+        setTimeout(hideLoadingPopup, 500);
     }
   }
 }

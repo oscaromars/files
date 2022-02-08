@@ -2139,7 +2139,7 @@ class UsuarioeducativaController extends \app\components\CController {
 
 		$mod_unidad = new UnidadAcademica();
 		$mod_modalidad = new Modalidad();
-		$mod_periodo = new PeriodoAcademicoMetIngreso();
+		$mod_periodo = new PeriodoAcademico();
 		$mod_educativa = new CursoEducativa();
 		$model_unideduca = new CursoEducativaUnidad();
 		$mod_cursoeduc_est = new CursoEducativaEstudiante();
@@ -2219,14 +2219,14 @@ class UsuarioeducativaController extends \app\components\CController {
 
 		$arr_unidad = $mod_unidad->consultarUnidadAcademicasEmpresa(1);
 		$arr_modalidad = $mod_modalidad->consultarModalidad($arr_unidad[0]["id"], 1);
-		$arr_periodo = $mod_periodo->consultarPeriodoAcademicotodos();
+		$arr_periodo = $mod_periodo->consultarPeriodosActivos();
 		$arr_aula = $mod_educativa->consultarCursosxpacaid(0);
 		$arr_unidadeduc = $model_unideduca->consultarUnidadesxcursoid(0);
 
 		return $this->render('asignarevaluacion', [
 			'model' => $model,
 			'arr_modalidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Grid")]], $arr_modalidad), "id", "name"),
-			"arr_periodo" => ArrayHelper::map($arr_periodo, "id", "name"),
+			"arr_periodo" => ArrayHelper::map($arr_periodo, "id", "paca_nombre"),
 			'arr_aula' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $arr_aula), "id", "name"),
 			'arr_unidadeduc' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $arr_unidadeduc), "id", "name"),
 			'arr_evaluacion' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], []), "id", "name"),

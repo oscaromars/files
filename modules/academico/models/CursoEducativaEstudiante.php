@@ -1065,6 +1065,8 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
 
         $resultData = $comando->queryAll();
 
+          }
+
         if($onlyData)
         {
             return $resultData;

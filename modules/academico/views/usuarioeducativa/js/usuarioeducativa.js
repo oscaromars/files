@@ -1092,11 +1092,19 @@ function actualizarGridEducativa(){
     var aula       = $('#cmb_aula_educ option:selected').val();
     var unidadeduc = $('#cmb_unidad_educ option:selected').val();
 
+    if (modalidad == 0) {
+
+showAlert('NO_OK', 'error', {"wtmessage": 'Seleccione Periodo y Modalidad', "title": 'Información'});
+
+
+   } else { 
+
     if (!$(".blockUI").length) {
         showLoadingPopup();
     $('#Tbg_Asignar_Evaluacion').PbGridView('applyFilterData', {'periodo': periodo, 'modalidad': modalidad, 'aula': aula, 'unidadeduc': unidadeduc});
         setTimeout(hideLoadingPopup, 2000);
     }
+  }
 }
 
 $('#cmb_periodo_educ').change(function() {

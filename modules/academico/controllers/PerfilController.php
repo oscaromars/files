@@ -358,15 +358,16 @@ class PerfilController extends \app\components\CController {
                                               "[[clave]]"    => $password_new, 
                                               "[[link]]"     => $link), Yii::$app->language);
                         
-                        $tituloMensaje = Yii::t("interesado", "Registro en línea UTEG");
+                        $tituloMensaje = Yii::t("interesado", "UTEG - Registro en Linea");
+                        $asunto = Yii::t("interesado", "UTEG - Registro en Linea");
                         /*
                         \app\models\Utilities::putMessageLogFile('usuario: '. $usuario);
                         \app\models\Utilities::putMessageLogFile('persona_model->per_correo: '. $persona_model->per_correo);
                         \app\models\Utilities::putMessageLogFile('password_new: '. $password_new);
                         \app\models\Utilities::putMessageLogFile('correo: '. $correo);
-                        //\app\models\Utilities::putMessageLogFile('link: '. $link);
+                        \app\models\Utilities::putMessageLogFile('link: '. $link);
                         */
-                        Utilities::sendEmail($tituloMensaje, Yii::$app->params["contactoEmail"], [$correo => "$usuario"], $asunto, $body);
+                        Utilities::sendEmail($tituloMensaje, Yii::$app->params["contactoEmail"], [$persona_model->per_correo => "$usuario"], $asunto, $body);
                     }
 
                     $message = array(

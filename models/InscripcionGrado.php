@@ -604,9 +604,9 @@ mallagen.maca_nombre,
 ifnull(estud.est_categoria,'No definida') as categoria
 FROM db_inscripcion.inscripcion_grado as igra
 Inner Join db_asgard.persona as per on per.per_id = igra.per_id
-Inner Join db_asgard.pais as pais on pais.pai_id = per.per_nacionalidad
-Inner Join db_asgard.estado_civil as esta on esta.eciv_id = per.eciv_id
-Inner join db_academico.estudiante as estud on per.per_id = estud.per_id
+Left Join db_asgard.pais as pais on pais.pai_id = per.per_nacionalidad
+Left Join db_asgard.estado_civil as esta on esta.eciv_id = per.eciv_id
+Left join db_academico.estudiante as estud on per.per_id = estud.per_id
 Inner Join db_academico.unidad_academica as uaca on uaca.uaca_id = igra.uaca_id
 Inner Join db_academico.estudio_academico as eaca on eaca.eaca_id = igra.eaca_id
 Inner Join db_academico.modalidad_estudio_unidad as meun on meun.eaca_id = igra.eaca_id -- 
@@ -616,8 +616,8 @@ Inner Join db_academico.modalidad as moda on moda.mod_id = igra.mod_id
 Inner Join db_academico.periodo_academico as paca on paca.paca_id = igra.paca_id
 Inner Join db_academico.semestre_academico as saca on saca.saca_id = paca.saca_id
 Inner Join db_academico.bloque_academico as baca on baca.baca_id = paca.baca_id
-Inner Join db_asgard.persona_contacto as contac on contac.per_id = igra.per_id
-Inner Join db_asgard.tipo_parentesco as parente on parente.tpar_id = contac.tpar_id
+Left Join db_asgard.persona_contacto as contac on contac.per_id = igra.per_id
+Left Join db_asgard.tipo_parentesco as parente on parente.tpar_id = contac.tpar_id
 Inner Join db_academico.malla_academico_estudiante as mallaes ON mallaes.per_id =  igra.per_id
 Inner Join db_academico.malla_academica as mallagen ON mallagen.maca_id =  mallaes.maca_id
 WHERE 

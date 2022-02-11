@@ -60,7 +60,12 @@ academico::registerTranslations();
                         return Html::a('<span class="' . Utilities::getIcon('view') . '"></span>', Url::to(['/formulariogrado/view', 'id' => $model['per_id']]), ["data-toggle" => "tooltip", "title" => Yii::t("accion", "View")]);
                     },
                     'download' => function ($url, $model) {
-                        return Html::a('<span class="glyphicon glyphicon-download-alt"></span>', Url::to(['/formulariogrado/registerpdf', 'ids' => $model['per_id']]), ["data-toggle" => "tooltip", "title" => "Descargar Inscripcion", "data-pjax" => "0"]);
+                          if ( $model['meun_id'] > 0 AND $model['eaca_id'] > 0  ){  
+                        return Html::a('<span class="glyphicon glyphicon-download-alt"></span>', Url::to(['/formulariogrado/registerpdf', 'ids' => $model['per_id']]), ["data-toggle" => "tooltip", "title" => "Descargar Inscripcion", "data-pjax" => "0"]); }
+                        else {   
+                         return Html::a('<span class="glyphicon glyphicon-glyphicon glyphicon-ban-circle"></span>', ["data-toggle" => "tooltip", "title" => "Datos incompletos", "data-pjax" => "0"]);
+
+                        }
                         //}
                     },
                 ],

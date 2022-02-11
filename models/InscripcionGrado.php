@@ -453,7 +453,10 @@ class InscripcionGrado extends \yii\db\ActiveRecord
             }
         }
 
-        $sql = "SELECT distinct per.per_id as per_id,
+        $sql = "SELECT distinct 
+                mumo.meun_id,
+                meun.eaca_id,
+                per.per_id as per_id,
                 per.per_cedula as Cedula,
                 ifnull(CONCAT(ifnull(per.per_pri_apellido,''), ' ', ifnull(per.per_seg_apellido,''), ' ', ifnull(per.per_pri_nombre,''), ' ', ifnull(per.per_seg_nombre,'')), '') as estudiante,
                 CONCAT(baca.baca_nombre, ' ', saca.saca_nombre, ' ', saca.saca_anio) as periodo,
@@ -467,13 +470,18 @@ class InscripcionGrado extends \yii\db\ActiveRecord
                 Inner Join " . $con_academico->dbname . ".periodo_academico as paca on paca.paca_id = igra.paca_id
                 Inner Join " . $con_academico->dbname . ".semestre_academico as saca on saca.saca_id = paca.saca_id
                 Inner Join " . $con_academico->dbname . ".bloque_academico as baca on baca.baca_id = paca.baca_id
+                Inner Join " . $con_academico->dbname . ".modalidad_estudio_unidad meun on meun.eaca_id = igra.eaca_id AND meun.mod_id = igra.mod_id AND meun.uaca_id = igra.uaca_id
+                Inner Join " . $con_academico->dbname . ".malla_unidad_modalidad mumo on mumo.meun_id = meun.meun_id 
                 WHERE $str_search
                 igra.igra_estado = :estado and igra.igra_estado_logico = :estado and
                 per.per_estado = :estado and per.per_estado_logico = :estado and
                 uaca.uaca_estado = :estado and uaca.uaca_estado_logico = :estado and
                 -- eaca.eaca_estado = :estado and eaca.eaca_estado_logico = :estado and
                 -- moda.mod_estado = :estado and moda.mod_estado_logico = :estado and
-                paca.paca_estado = :estado and paca.paca_estado_logico = :estado";
+                paca.paca_estado = :estado and paca.paca_estado_logico = :estado
+                AND meun.meun_estado = :estado AND meun.meun_estado_logico = :estado 
+                AND mumo.mumo_estado = :estado AND mumo.mumo_estado_logico = :estado
+                ";
         $comando = $con_academico->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
         if (isset($arrFiltro) && count($arrFiltro) > 0) {
@@ -552,7 +560,19 @@ class InscripcionGrado extends \yii\db\ActiveRecord
         $sql = "
        SELECT distinct
 max(maca.maca_id) as mallacorresp, --
-maca.maca_codigo as codigo, --
+(select maca_codigo from db_academico.malla_academica where maca_id =
+(SELECT max(maca.maca_id) FROM db_academico.modalidad_estudio_unidad meun
+inner join  db_academico.malla_unidad_modalidad mumo on meun.meun_id = mumo.meun_id
+inner join db_academico.malla_academica maca on maca.maca_id = mumo.maca_id
+where meun.eaca_id = igra.eaca_id
+and meun.uaca_id = igra.uaca_id
+and meun.mod_id = igra.mod_id
+and meun.meun_estado = 1 
+and meun.meun_estado_logico = 1
+and mumo.mumo_estado = 1 
+and mumo.mumo_estado_logico = 1
+and maca.maca_estado = 1 
+and maca.maca_estado_logico = 1)) as codigo,
 (select maca_nombre from db_academico.malla_academica where maca_id =
 (SELECT max(maca.maca_id) FROM db_academico.modalidad_estudio_unidad meun
 inner join  db_academico.malla_unidad_modalidad mumo on meun.meun_id = mumo.meun_id
@@ -599,8 +619,6 @@ contac.pcon_nombre,
 parente.tpar_nombre, 
 contac.pcon_telefono, 
 contac.pcon_direccion,
-mallagen.maca_id,
-mallagen.maca_nombre,
 ifnull(estud.est_categoria,'No definida') as categoria
 FROM db_inscripcion.inscripcion_grado as igra
 Inner Join db_asgard.persona as per on per.per_id = igra.per_id
@@ -609,7 +627,7 @@ Left Join db_asgard.estado_civil as esta on esta.eciv_id = per.eciv_id
 Left join db_academico.estudiante as estud on per.per_id = estud.per_id
 Inner Join db_academico.unidad_academica as uaca on uaca.uaca_id = igra.uaca_id
 Inner Join db_academico.estudio_academico as eaca on eaca.eaca_id = igra.eaca_id
-Inner Join db_academico.modalidad_estudio_unidad as meun on meun.eaca_id = igra.eaca_id -- 
+Inner Join db_academico.modalidad_estudio_unidad as meun on meun.eaca_id = igra.eaca_id  AND meun.mod_id = igra.mod_id  AND meun.uaca_id = uaca.uaca_id
 inner join  db_academico.malla_unidad_modalidad mumo on meun.meun_id = mumo.meun_id -- 
 inner join db_academico.malla_academica maca on maca.maca_id = mumo.maca_id --
 Inner Join db_academico.modalidad as moda on moda.mod_id = igra.mod_id
@@ -618,8 +636,7 @@ Inner Join db_academico.semestre_academico as saca on saca.saca_id = paca.saca_i
 Inner Join db_academico.bloque_academico as baca on baca.baca_id = paca.baca_id
 Left Join db_asgard.persona_contacto as contac on contac.per_id = igra.per_id
 Left Join db_asgard.tipo_parentesco as parente on parente.tpar_id = contac.tpar_id
-Inner Join db_academico.malla_academico_estudiante as mallaes ON mallaes.per_id =  igra.per_id
-Inner Join db_academico.malla_academica as mallagen ON mallagen.maca_id =  mallaes.maca_id
+Left Join db_academico.malla_academico_estudiante as mallaes ON mallaes.per_id =  igra.per_id
 WHERE 
 igra.uaca_id = meun.uaca_id AND --
 igra.mod_id = meun.mod_id AND

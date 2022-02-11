@@ -82,7 +82,7 @@ class SolicitudInscripcionModificar extends \yii\db\ActiveRecord
      * Function insertarIncripcionModificar
      * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
      * @param
-     * @return  Id del registro insertado.
+     * @return  Id insertado.
      */
     public function insertarIncripcionModificar($sins_id, $sinmo_contador, $sinmo_usuario_ingreso) {
         $con = \Yii::$app->db_captacion;
@@ -138,12 +138,12 @@ class SolicitudInscripcionModificar extends \yii\db\ActiveRecord
     }
 
     /**
-     * Function Desactivarsolicitudinscripcion
+     * Function actualizarIncripcionModificar
      * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
      * @param
      * @return
      */
-    public function actualizarIncripcionModificar($sins_id, $sinmo_contador, $sinmo_usuario_modifica) {
+    public function actualizarIncripcionModificar($sinmo_id, $sins_id, $sinmo_contador, $sinmo_usuario_modifica) {
         $con = \Yii::$app->db_captacion;
         //$estado = 0;
         $fecha_modificacion = date(Yii::$app->params["dateTimeByDefault"]);
@@ -152,9 +152,11 @@ class SolicitudInscripcionModificar extends \yii\db\ActiveRecord
                 SET sinmo_fecha_modificacion = :sinmo_fecha_modificacion,
                     sinmo_contador = :sinmo_contador,
                     sinmo_usuario_modifica = :sinmo_usuario_modifica
-                WHERE sins_id = :sins_id ");
+                WHERE sinmo_id = :sinmo_id AND
+                      sins_id = :sins_id ");
 
         //$comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $comando->bindParam(":sinmo_id", $sinmo_id, \PDO::PARAM_INT);
         $comando->bindParam(":sins_id", $sins_id, \PDO::PARAM_INT);
         $comando->bindParam(":sinmo_contador", $sinmo_contador, \PDO::PARAM_INT);
         $comando->bindParam(":sinmo_usuario_modifica", $sinmo_usuario_modifica, \PDO::PARAM_INT);
@@ -162,5 +164,31 @@ class SolicitudInscripcionModificar extends \yii\db\ActiveRecord
 
         $response = $comando->execute();
         return $response;
+    }
+
+    /**
+     * Function consultaIncripcionModificar
+     * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
+     * @param
+     * @return  $resultData.
+     */
+    public function consultaIncripcionModificar($sins_id) {
+        $con = \Yii::$app->db;
+        $estado = 1;
+
+        $sql = "SELECT  sinmo_id,
+                        sinmo_contador,
+                        sinmo_usuario_ingreso,
+                        sinmo_usuario_modifica
+                FROM " . $con->dbname . ".solicitud_inscripcion_modificar
+                WHERE sins_id = :sins_id
+                      AND sinmo_estado = :estado
+                      AND sinmo_estado_logico = :estado";
+
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $comando->bindParam(":sins_id", $sins_id, \PDO::PARAM_INT);
+        $resultData = $comando->queryOne();
+        return $resultData;
     }
 }

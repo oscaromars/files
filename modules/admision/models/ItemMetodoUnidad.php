@@ -94,6 +94,7 @@ class ItemMetodoUnidad extends \yii\db\ActiveRecord
      *                       modalidad y método de ingreso.)
      */
     public function consultarXitemMetniv($nint_id, $mod_id, $ming_id, $empresa_id, $carrera_id) {
+        \app\models\Utilities::putMessageLogFile('ming_idss:'. $data["ming_id"]);
         $con = \Yii::$app->db_facturacion;
         $estado = 1;
         if ($empresa_id == 1) {

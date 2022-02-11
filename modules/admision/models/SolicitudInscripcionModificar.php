@@ -77,4 +77,90 @@ class SolicitudInscripcionModificar extends \yii\db\ActiveRecord
     {
         return $this->hasOne(SolicitudInscripcion::className(), ['sins_id' => 'sins_id']);
     }
+
+    /**
+     * Function insertarIncripcionModificar
+     * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
+     * @param
+     * @return  Id del registro insertado.
+     */
+    public function insertarIncripcionModificar($sins_id, $sinmo_contador, $sinmo_usuario_ingreso) {
+        $con = \Yii::$app->db_captacion;
+
+        $trans = $con->getTransaction(); // se obtiene la transacción actual.
+        if ($trans !== null) {
+            $trans = null; // si existe la transacción entonces no se crea una.
+        } else {
+            $trans = $con->beginTransaction(); // si no existe la transacción entonces se crea una.
+        }
+
+        $param_sql = "sinmo_estado_logico";
+        $bsrec_sql = "1";
+
+        $param_sql .= ", sinmo_estado";
+        $bsrec_sql .= ", 1";
+
+        if (isset($sins_id)) {
+            $param_sql .= ", sins_id";
+            $bsrec_sql .= ", :sins_id";
+        }
+        if (isset($sinmo_contador)) {
+            $param_sql .= ", sinmo_contador";
+            $bsrec_sql .= ", :sinmo_contador";
+        }
+        if (isset($sinmo_usuario_ingreso)) {
+            $param_sql .= ", sinmo_usuario_ingreso";
+            $bsrec_sql .= ", :sinmo_usuario_ingreso";
+        }
+
+        try {
+            $sql = "INSERT INTO " . $con->dbname . ".solicitud_inscripcion_modificar ($param_sql) VALUES($bsrec_sql)";
+            $comando = $con->createCommand($sql);
+
+            if (isset($sins_id))
+                $comando->bindParam(':sins_id', $sins_id, \PDO::PARAM_INT);
+
+            if (isset($sinmo_contador))
+                $comando->bindParam(':sinmo_contador', $sinmo_contador, \PDO::PARAM_INT);
+
+            if (isset($sinmo_usuario_ingreso))
+                $comando->bindParam(':sinmo_usuario_ingreso', $sinmo_usuario_ingreso, \PDO::PARAM_INT);
+
+            $result = $comando->execute();
+            if ($trans !== null)
+                $trans->commit();
+            return $con->getLastInsertID($con->dbname . '.solicitud_inscripcion_modificar');
+        } catch (Exception $ex) {
+            if ($trans !== null)
+                $trans->rollback();
+            return FALSE;
+        }
+    }
+
+    /**
+     * Function Desactivarsolicitudinscripcion
+     * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
+     * @param
+     * @return
+     */
+    public function actualizarIncripcionModificar($sins_id, $sinmo_contador, $sinmo_usuario_modifica) {
+        $con = \Yii::$app->db_captacion;
+        //$estado = 0;
+        $fecha_modificacion = date(Yii::$app->params["dateTimeByDefault"]);
+        $comando = $con->createCommand
+                ("UPDATE " . $con->dbname . ".solicitud_inscripcion_modificar
+                SET sinmo_fecha_modificacion = :sinmo_fecha_modificacion,
+                    sinmo_contador = :sinmo_contador,
+                    sinmo_usuario_modifica = :sinmo_usuario_modifica
+                WHERE sins_id = :sins_id ");
+
+        //$comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $comando->bindParam(":sins_id", $sins_id, \PDO::PARAM_INT);
+        $comando->bindParam(":sinmo_contador", $sinmo_contador, \PDO::PARAM_INT);
+        $comando->bindParam(":sinmo_usuario_modifica", $sinmo_usuario_modifica, \PDO::PARAM_INT);
+        $comando->bindParam(":sinmo_fecha_modificacion", $fecha_modificacion, \PDO::PARAM_STR);
+
+        $response = $comando->execute();
+        return $response;
+    }
 }

@@ -2183,4 +2183,82 @@ croe.croe_exec,ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca
 		return $resultData;
 	}
 
+ /**
+     * @author  Oscar Sanchez <analistadesarrollo05@uteg.edu.ec>
+     * @param
+     * @return
+     *  Consulta Aulas Educativa
+     */
+    public function consultarAulas($paca_id=Null,$uaca_id=Null,$mod_id=Null,$cedu_id=Null) {      
+        $con = \Yii::$app->db_academico;
+        $estado = 1;
+        
+ $str_search = ""; 
+    if ($paca_id != "" && $paca_id > 0) {
+            $str_search .= " AND daca.paca_id = :paca_id  ";
+        } else  { $str_search .= " AND daca.paca_id = 0  "; }
+    if ($uaca_id != "" && $uaca_id > 0) {
+            $str_search .= " AND daca.uaca_id = :uaca_id ";
+        }
+    if ($mod_id != "" && $mod_id > 0) {
+            $str_search .= " AND daca.mod_id = :mod_id ";
+        }
+    if ($cedu_id != "" && $cedu_id > 0) {
+            $str_search .= " AND ceduct.cedu_asi_id = :cedu_id ";
+        }
+
+ $sql = "
+SELECT distinct ceduct.cedu_asi_id as id ,LEFT(ceduct.cedu_asi_nombre, 80) as name
+,cedist.daca_id,uaca.uaca_nombre, daca.paca_id, moda.mod_nombre, daca.mpp_id, 
+person.per_pri_apellido, daca.asi_id
+FROM db_academico.curso_educativa_distributivo cedist
+INNER JOIN db_academico.curso_educativa as ceduct on cedist.cedu_id = ceduct.cedu_id
+INNER JOIN db_academico.distributivo_academico as daca on cedist.daca_id = daca.daca_id
+INNER JOIN db_academico.distributivo_academico_estudiante as daes on daes.daca_id = daca.daca_id
+INNER JOIN db_academico.usuario_educativa as usuedu on usuedu.est_id = daes.est_id
+INNER JOIN db_academico.estudiante as estu on  estu.est_id = daes.est_id
+INNER JOIN db_academico.unidad_academica as uaca on  uaca.uaca_id = daca.uaca_id
+INNER JOIN db_academico.modalidad as moda on  moda.mod_id = daca.uaca_id
+INNER JOIN db_academico.profesor as profe on  profe.pro_id = daca.pro_id
+INNER JOIN db_asgard.persona as person on  person.per_id = profe.per_id
+LEFT JOIN db_academico.malla_academico_estudiante macaes 
+ON macaes.per_id = usuedu.per_id AND macaes.asi_id = daca.asi_id
+LEFT JOIN db_academico.cabecera_calificacion as cabec on  cabec.est_id = daes.est_id
+AND cabec.asi_id = daca.asi_id
+LEFT JOIN db_academico.temp_estudiantes_noprocesados as tempo on  tempo.est_id = daes.est_id
+AND tempo.asi_id = daca.asi_id
+WHERE  TRUE $str_search
+AND ceduct.cedu_estado = :estado AND ceduct.cedu_estado_logico = :estado
+AND cedist.cedi_estado = :estado AND cedist.cedi_estado_logico = :estado
+AND daca.daca_estado = :estado AND daca.daca_estado_logico = :estado
+AND daes.daes_estado = :estado AND daes.daes_estado_logico = :estado
+AND usuedu.uedu_estado = :estado AND usuedu.uedu_estado_logico = :estado
+AND estu.est_estado = :estado AND estu.est_estado_logico = :estado
+AND uaca.uaca_estado = :estado AND uaca.uaca_estado_logico = :estado
+AND moda.mod_estado = :estado AND moda.mod_estado_logico = :estado
+AND profe.pro_estado = :estado AND profe.pro_estado_logico = :estado
+AND person.per_estado = :estado AND person.per_estado_logico = :estado
+AND macaes.maes_estado = :estado AND macaes.maes_estado_logico = :estado
+AND cabec.ccal_estado = :estado AND cabec.ccal_estado_logico = :estado
+AND tempo.teno_estado = :estado AND tempo.teno_estado_logico = :estado
+     ";
+
+        $comando = $con->createCommand($sql);
+         if ($paca_id != "" && $paca_id > 0) {
+            $comando->bindParam(":paca_id", $paca_id, \PDO::PARAM_INT);
+        }
+    if ($uaca_id != "" && $uaca_id > 0) {
+            $comando->bindParam(":uaca_id", $uaca_id, \PDO::PARAM_INT);
+        }
+    if ($mod_id != "" && $mod_id > 0) {
+            $comando->bindParam(":mod_id", $mod_id, \PDO::PARAM_INT);
+        }
+    if ($cedu_id != "" && $cedu_id > 0) {
+            $comando->bindParam(":cedu_id", $cedu_id, \PDO::PARAM_INT);
+        }
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_INT);
+        $resultAulas = $comando->queryAll();
+        return $resultAulas;
+    }
+
 }

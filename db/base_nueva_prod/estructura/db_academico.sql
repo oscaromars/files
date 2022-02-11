@@ -2596,3 +2596,32 @@ CREATE TABLE `numero_matricula` (
   `nmat_estado_logico` varchar(1) NOT NULL,
   PRIMARY KEY (`nmat_id`)
 );
+
+--
+-- Estructura para la tabla `temp_estudiantes_noprocesados`
+--
+
+create table if not exists `temp_estudiantes_noprocesados` (
+  `teno_id` bigint(20) not null auto_increment primary key,
+  `daca_id` bigint(20) not null,
+  `cedu_asi_id` bigint(20) not null,
+  `uaca_id` bigint(20) not null,
+  `paca_id` bigint(20) not null,
+  `mod_id` bigint(20)  not null,
+  `pro_id` bigint(20)  not null,
+  `asi_id` bigint(20)  not null,
+  `est_id` bigint(20)  not null,
+  `per_id` bigint(20)  not null,
+  `uedu_usuario` varchar(100) not null ,
+  `per_cedula` varchar(20) not null ,
+  `isauth` boolean not null,
+  `isdata` boolean not null,
+  `teno_usuario_ingreso` bigint(20) not null,
+  `teno_usuario_modifica` bigint(20)  null,
+  `teno_estado` varchar(1) not null,
+  `teno_fecha_creacion` timestamp not null default current_timestamp,
+  `teno_fecha_modificacion` timestamp null default null,
+  `teno_estado_logico` varchar(1) not null
+);
+
+

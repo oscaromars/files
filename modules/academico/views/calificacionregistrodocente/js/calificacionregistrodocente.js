@@ -88,6 +88,10 @@ $(document).ready(function () {
         searchEducativa();
     });
 
+     $('#btn_buscarEducativaulas').click(function() {    
+        searchEducativaulas();
+    });
+
      $('#cmb_profesor_clfc').change(function () {
         var link = $('#txth_base').val() + "/academico/calificacionregistrodocente/index";
         var arrParams = new Object();
@@ -373,6 +377,19 @@ window.location.href = $('#txth_base').val() + "/academico/calificacionregistrod
   }
  
 }
+
+function searchEducativaulas() {
+      periodo = $("#cmb_periodo_aul").val();
+    unidad = $("#cmb_unidad_aul").val();
+    modalidad = $("#cmb_modalidad_aul").val();
+    aula = $("#cmb_aulas_aul").val();
+
+window.location.href = $('#txth_base').val() + "/academico/calificacionregistrodocente/transferiraulas?paca="+periodo+"&unidad="+unidad+"&modalidad="+modalidad+"&aula="+aula;
+ 
+ 
+}
+
+
 
 function activateCron(cronid) {
   modalidades = $("#txth_modalidades").val();

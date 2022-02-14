@@ -1699,4 +1699,60 @@ return $this->redirect('index');
 } */
 	}
 
+  public function actionTransferiraulas(){
+
+    $mod_periodos    = new PeriodoAcademico(); 
+    $mod_unidad     = new UnidadAcademica();
+    $mod_modalidad  = new Modalidad();
+    $mod_calificacion  = new CabeceraCalificacion();
+     $arr_parcial = array(0 => '[ Elija Parcial ]',1 => 'Parcial 1',2 => 'Parcial 2',3 => 'Supletorio');
+
+    $arr_periodos = $mod_periodos->consultarPeriodosActivosmalla();
+    $arr_unidad = $mod_unidad->consultarUnidadAcademicasEmpresa(1);
+    $arr_unidades = array(0 => '[ Elija Unidad Académica ]',1 => 'Grado',2 => 'Posgrado');
+    $arr_modalidad = $mod_modalidad->consultarModalidad($arr_unidad[0]["id"], 1);    
+
+
+        if (Yii::$app->request->isAjax) {
+            $data = Yii::$app->request->post();
+
+        }
+
+       $data = Yii::$app->request->get();
+       if ($data = Yii::$app->request->get()){ 
+    
+      $arr_aula = $mod_calificacion->consultarAulas($data['paca'], $data['unidad'], $data['modalidad'], $data['aula']);
+
+       } else {
+
+    $arr_aula = $mod_calificacion->consultarAulas();
+
+       }
+    
+       $dataProvider = new ArrayDataProvider([
+            'key' => 'cedu_id',
+            'allModels' => $arr_aula,
+            'pagination' => [
+                'pageSize' => Yii::$app->params["pageSize"],
+            ],
+            'sort' => [
+                'attributes' => [
+                ],
+            ],
+        ]);
+
+     return $this->render('educativa_aulas', [
+                    'model' => $dataProvider,                    
+                    'arr_periodos' => ArrayHelper::map(array_merge($arr_periodos), "id", "nombre"),
+                    //'arr_unidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Todos")]], $arr_unidad), "id", "name"),
+                     'arr_unidad' => $arr_unidades, 
+                    'arr_modalidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Todos")]], $arr_modalidad), "id", "name"),
+                    'arr_modalidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Todos")]], $arr_modalidad), "id", "name"),
+                    'arr_aula' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Todos")]], $arr_aula), "id", "name"),
+        ]);
+
+
+
+}
+
 }

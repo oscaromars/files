@@ -64,7 +64,7 @@ admision::registerTranslations();
             ],
             [
                 'attribute' => 'agente',
-                'header' => Yii::t("formulario", "User login"),
+                'header' => Yii::t("formulario", "Agente"),
                 'value' => 'agente',
             ],
             [

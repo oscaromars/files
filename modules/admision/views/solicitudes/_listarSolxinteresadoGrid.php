@@ -13,6 +13,8 @@ use app\modules\financiero\models\OrdenPago;
 use app\modules\admision\Module as admision;
 use app\modules\academico\Module as academico;
 use app\modules\financiero\Module as financiero;
+use app\modules\admision\models\SolicitudInscripcionModificar;
+
 academico::registerTranslations();
 financiero::registerTranslations();
 //print_r($model);
@@ -75,7 +77,9 @@ PbGridView::widget([
                 'view' => function ($url, $model) {
                     //$mod_ordpago = new OrdenPago;
                     //$result = $mod_ordpago->consultarImagenpagoexiste($model['opag_id']);
-                    if (/*$result['existe_imagen'] == 0 && */ $model['estado_pago'] != 'Pagado') { // Aqui si la solicitud esta pendiente de aprobar se puede modificar
+                    $mod_solinsmodifica = new SolicitudInscripcionModificar();
+                    $respSolinsmod = $mod_solinsmodifica->consultaIncripcionModificar($model['sins_id']);
+                    if (/*$result['existe_imagen'] == 0 && */ $respSolinsmod['sinmo_contador'] == 0 && $model['estado_pago'] != 'Pagado') { // Aqui si la solicitud esta pendiente de aprobar se puede modificar
                         return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', Url::to(['/admision/solicitudes/viewsolicitud', 'id_sol' => base64_encode($model['sins_id']), 'per_id' => base64_encode($model['per_id']), 'opag_id' => base64_encode($model['opag_id'])]), ["data-toggle" => "tooltip", "title" => "Ver Solicitud", "data-pjax" => 0]);
                     } else {
                         return '<span class="glyphicon glyphicon-eye-open"></span>';

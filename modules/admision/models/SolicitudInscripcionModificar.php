@@ -173,7 +173,7 @@ class SolicitudInscripcionModificar extends \yii\db\ActiveRecord
      * @return  $resultData.
      */
     public function consultaIncripcionModificar($sins_id) {
-        $con = \Yii::$app->db;
+        $con = \Yii::$app->db_captacion;
         $estado = 1;
 
         $sql = "SELECT  sinmo_id,

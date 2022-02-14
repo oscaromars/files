@@ -30,6 +30,7 @@ use app\modules\financiero\Module as financiero;
 use app\modules\financiero\models\Secuencias;
 use app\modules\admision\models\ConvenioEmpresa;
 use app\modules\academico\models\NumeroMatricula;
+use app\modules\admision\models\SolicitudInscripcionModificar;
 use app\models\Usuario;
 use app\models\InscripcionGrado;
 use app\models\InscripcionPosgrado;
@@ -529,7 +530,12 @@ class SolicitudesController extends \app\components\CController {
                     $fecha_ini = date(Yii::$app->params["dateByDefault"]);
                     $resp_dpago = $mod_ordenpago->insertarDesglosepago($resp_opago, $ite_id, $val_total, 0, $val_total, $fecha_ini, null, $estadopago, $usu_id);
                     if ($resp_dpago) {
-                        $exito = 1;
+                        $sinmo_contador = 0;
+                        $mod_solinsmodifica = new SolicitudInscripcionModificar();
+                        $resp_modinscripcion = $mod_solinsmodifica->insertarIncripcionModificar($id_sins, $sinmo_contador, $usu_id);
+                        if ($resp_modinscripcion) {
+                          $exito = 1;
+                        }
                     }
                 }
             }

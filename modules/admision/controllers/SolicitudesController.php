@@ -657,6 +657,7 @@ class SolicitudesController extends \app\components\CController {
         $mod_solins = new SolicitudInscripcion();
         $mod_ordenpago = new OrdenPago();
         $mod_desglose = new DesglosePago();
+        $mod_solinsmodifica = new SolicitudInscripcionModificar();
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
             $usuario = @Yii::$app->user->identity->usu_id;
@@ -676,6 +677,9 @@ class SolicitudesController extends \app\components\CController {
             $transaction1 = $con1->beginTransaction();
             try
             {
+                // consultar si la solicitud se puede modificar contador de la tabla debe ser 0
+                $respSolinsmod = $mod_solinsmodifica->consultaIncripcionModificar($sins_id);
+                if ($respSolinsmod["sinmo_contador"] = 0) {
                 /*beca y descuento*/
                     $beca = $data["beca"];
                     $descuento = $data["descuento_id"];
@@ -804,13 +808,22 @@ class SolicitudesController extends \app\components\CController {
                 }
             }
             /** */
-            else {
+             else {
                 $message = array(
                     "wtmessage" => Yii::t("notificaciones", "Error al modificar solicitud de inscripcion, por precio." . $mensaje),
                     "title" => Yii::t('jslang', 'Bad Request'),
                 );
                 return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Bad Request"), false, $message);
-            }
+              }
+
+            // else de consulta si puede o no midificar la solicitud
+            }else {
+                $message = array(
+                    "wtmessage" => Yii::t("notificaciones", "Solo se puede modificar la solicutd de inscripción."),
+                    "title" => Yii::t('jslang', 'Bad Request'),
+                );
+                return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Bad Request"), false, $message);
+              }
             } catch (Exception $ex) {
                 $transaction->rollback();
                 $message = array(

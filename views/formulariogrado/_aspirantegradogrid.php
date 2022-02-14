@@ -63,7 +63,7 @@ academico::registerTranslations();
                           if ( $model['meun_id'] > 0 AND $model['eaca_id'] > 0  ){  
                         return Html::a('<span class="glyphicon glyphicon-download-alt"></span>', Url::to(['/formulariogrado/registerpdf', 'ids' => $model['per_id']]), ["data-toggle" => "tooltip", "title" => "Descargar Inscripcion", "data-pjax" => "0"]); }
                         else {   
-                         return Html::a('<span class="glyphicon glyphicon-glyphicon glyphicon-ban-circle"></span>', ["data-toggle" => "tooltip", "title" => "Datos incompletos", "data-pjax" => "0"]);
+                         return Html::a('<span class="btn btn-danger glyphicon glyphicon-glyphicon glyphicon-ban-circle"></span>', ["data-toggle" => "tooltip", "title" => "Datos incompletos", "data-pjax" => "0"]);}
 
                         }
                         //}

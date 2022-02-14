@@ -479,8 +479,8 @@ class InscripcionGrado extends \yii\db\ActiveRecord
                 -- eaca.eaca_estado = :estado and eaca.eaca_estado_logico = :estado and
                 -- moda.mod_estado = :estado and moda.mod_estado_logico = :estado and
                 paca.paca_estado = :estado and paca.paca_estado_logico = :estado
-                AND meun.meun_estado = :estado AND meun.meun_estado_logico = :estado 
-                AND mumo.mumo_estado = :estado AND mumo.mumo_estado_logico = :estado
+                -- AND meun.meun_estado = :estado AND meun.meun_estado_logico = :estado 
+                -- AND mumo.mumo_estado = :estado AND mumo.mumo_estado_logico = :estado
                 ";
         $comando = $con_academico->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);

@@ -772,6 +772,10 @@ class SolicitudesController extends \app\components\CController {
                     if ($resporden) { // modifica desglose pago
                      $respdesglose = $mod_desglose->actualizaDesglosepago($opag_id, $ite_id, $val_total, $val_total, $usuario);
                      if ($respdesglose) {
+                        // permite modificar por una vez la solicitud y actualiza el contador
+                        $sinmo_contador = 1;
+                        $respSolinsingreso = $mod_solinsmodifica->actualizarIncripcionModificar($respSolinsmod["sinmo_id"], $sins_id, $sinmo_contador, $usuario);
+                        if ($respdesglose) {
                         $transaction->commit();
                         $transaction1->commit();
                         $message = array(
@@ -780,6 +784,15 @@ class SolicitudesController extends \app\components\CController {
                     );
                      return Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), false, $message);
                      }else {
+                        $transaction->rollback();
+                        $transaction1->rollback();
+                        $message = array(
+                            "wtmessage" => Yii::t("notificaciones", "Error al actualizar contador solicitud de inscripcion." . $mensaje),
+                            "title" => Yii::t('jslang', 'Bad Request'),
+                        );
+                        return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Bad Request"), false, $message);
+                     }
+                    }else {
                         $transaction->rollback();
                         $transaction1->rollback();
                         $message = array(

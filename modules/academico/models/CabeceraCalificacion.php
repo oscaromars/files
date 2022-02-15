@@ -2261,6 +2261,53 @@ AND tempo.teno_estado = :estado AND tempo.teno_estado_logico = :estado
         return $resultAulas;
     }
 
+
+/**
+     * @author  Oscar Sanchez <analistadesarrollo05@uteg.edu.ec>
+     * @param
+     * @return
+     *  Consulta Usuarios por distributivo-aula Educativa
+     */
+    public function consultarUsuarios($uedu_aula) {
+     $con = \Yii::$app->db_academico;$estado = 1;
+
+$deduc= "
+SELECT macaes.maes_id, cabec.ccal_id, cedist.daca_id, ceduct.cedu_asi_id, 
+daca.uaca_id, daca.paca_id, daca.mod_id, daca.mpp_id, 
+daca.pro_id, daca.asi_id, daes.est_id,
+usuedu.uedu_usuario, usuedu.per_id, person.per_cedula
+FROM db_academico.curso_educativa_distributivo cedist
+INNER JOIN db_academico.curso_educativa as ceduct on cedist.cedu_id = ceduct.cedu_id
+INNER JOIN db_academico.distributivo_academico as daca on cedist.daca_id = daca.daca_id
+INNER JOIN db_academico.distributivo_academico_estudiante as daes on daes.daca_id = daca.daca_id
+INNER JOIN db_academico.usuario_educativa as usuedu on usuedu.est_id = daes.est_id
+INNER JOIN db_academico.estudiante as estu on  estu.est_id = daes.est_id
+INNER JOIN db_asgard.persona as person on  estu.per_id = person.per_id
+LEFT JOIN db_academico.malla_academico_estudiante macaes 
+ON macaes.per_id = usuedu.per_id AND macaes.asi_id = daca.asi_id
+LEFT JOIN db_academico.cabecera_calificacion as cabec on  cabec.est_id = daes.est_id
+AND cabec.asi_id = daca.asi_id
+LEFT JOIN db_academico.temp_estudiantes_noprocesados as tempo on  tempo.est_id = daes.est_id
+AND tempo.asi_id = daca.asi_id
+WHERE ceduct.cedu_asi_id = :uedu_aula
+AND ceduct.cedu_estado = :estado AND ceduct.cedu_estado_logico = :estado
+AND daca.daca_estado = :estado AND daca.daca_estado_logico = :estado 
+AND daes.daes_estado = :estado AND daes.daes_estado_logico = :estado 
+AND usuedu.uedu_estado = :estado AND usuedu.uedu_estado_logico = :estado 
+AND estu.est_estado = :estado AND estu.est_estado_logico = :estado 
+AND person.per_estado = :estado AND person.per_estado_logico = :estado 
+"
+;
+
+        $comando = $con->createCommand($deduc);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_INT);
+        $comando->bindParam(":uedu_aula", $uedu_aula, \PDO::PARAM_INT);
+        $resultUsers = $comando->queryAll();
+        return $resultUsers;
+
+}
+
+
  /**
      * @author  Oscar Sanchez <analistadesarrollo05@uteg.edu.ec>
      * @param

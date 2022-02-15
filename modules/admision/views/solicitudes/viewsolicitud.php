@@ -287,9 +287,9 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                                 $checked = "";
                             }
                         ?>
-                        <label><input type="radio" name="opt_tipo_DNI" disabled value="1" <?php echo $checked; ?> >&nbsp;&nbsp;<b><?= Yii::t("formulario", "DNI Document") . '/' . Yii::t("formulario", "DNI 1") ?></b></label><br/>
-                        <label><input type="radio" name="opt_tipo_DNI" disabled value="2" <?php echo $checkeruc; ?>><b>&nbsp;&nbsp;<?= Yii::t("formulario", "RUC") ?></b></label><br/>
-                        <label><input type="radio" name="opt_tipo_DNI" disabled value="3" <?php echo $checkepass; ?> ><b>&nbsp;&nbsp;<?= Yii::t("formulario", "Passport") ?></b></label>
+                        <label><input type="radio" name="opt_tipo_DNI" value="1" <?php echo $checked; ?> >&nbsp;&nbsp;<b><?= Yii::t("formulario", "DNI Document") . '/' . Yii::t("formulario", "DNI 1") ?></b></label><br/>
+                        <label><input type="radio" name="opt_tipo_DNI" value="2" <?php echo $checkeruc; ?>><b>&nbsp;&nbsp;<?= Yii::t("formulario", "RUC") ?></b></label><br/>
+                        <label><input type="radio" name="opt_tipo_DNI" value="3" <?php echo $checkepass; ?> ><b>&nbsp;&nbsp;<?= Yii::t("formulario", "Passport") ?></b></label>
                     </div>
                 </div>
             </div>
@@ -297,7 +297,7 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                 <div class="form-group">
                     <label for="txt_dni_fac" class="col-sm-5 col-md-5 col-xs-5 col-lg-5 control-label" id="lbl_nombre1"><?= Yii::t("formulario", "DNI Document") . '/' . Yii::t("formulario", "DNI 1") ?></label>
                     <div class="col-sm-7 col-md-7 col-xs-7 col-lg-7">
-                        <input type="text" class="form-control PBvalidation " value="<?php echo $arr_solicitudesp['sdfa_dni'] ?>" id="txt_dni_fac" data-type="cedula" disabled data-keydown="true" placeholder="<?= Yii::t("formulario", "DNI Document") ?>">
+                        <input type="text" class="form-control PBvalidation " value="<?php echo $arr_solicitudesp['sdfa_dni'] ?>" id="txt_dni_fac" data-type="cedula" data-keydown="true" placeholder="<?= Yii::t("formulario", "DNI Document") ?>">
                     </div>
                 </div>
             </div>
@@ -305,7 +305,7 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
         <div class='col-md-12 col-sm-12 col-xs-12 col-lg-12'>
             <div class="col-md-6 col-sm-6 col-xs-6 col-lg-6">
                 <div class="form-group">
-                    <label for="txt_correo_fac" class="col-sm-5 col-md-5 col-xs-5 col-lg-5 control-label" id="txt_correo_fac"><?= Yii::t("formulario", "Email") ?><span class="text-danger">*</span></label>
+                    <label for="txt_correo_fac" class="col-sm-5 col-md-5 col-xs-5 col-lg-5 control-label" id="lbl_correo_fac"><?= Yii::t("formulario", "Email") ?><span class="text-danger">*</span></label>
                     <div class="col-sm-7 col-md-7 col-xs-7 col-lg-7">
                         <input type="text" class="form-control PBvalidation" value="<?php echo $arr_solicitudesp['sdfa_correo'] ?>" id="txt_correo_fac" data-type="email" data-keydown="true" disabled placeholder="<?= Yii::t("formulario", "Email") ?>">
                     </div>

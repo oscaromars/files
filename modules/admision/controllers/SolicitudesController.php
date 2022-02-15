@@ -679,7 +679,9 @@ class SolicitudesController extends \app\components\CController {
             {
                 // consultar si la solicitud se puede modificar contador de la tabla debe ser 0
                 $respSolinsmod = $mod_solinsmodifica->consultaIncripcionModificar($sins_id);
-                if ($respSolinsmod["sinmo_contador"] = 0) {
+                //\app\models\Utilities::putMessageLogFile('sins_idssst: ' . $sins_id);
+                //\app\models\Utilities::putMessageLogFile('respSolinsmod["sinmo_contador"]: ' . $respSolinsmod["sinmo_contador"]);
+                if ($respSolinsmod["sinmo_contador"] == 0) {
                 /*beca y descuento*/
                     $beca = $data["beca"];
                     $descuento = $data["descuento_id"];
@@ -832,7 +834,7 @@ class SolicitudesController extends \app\components\CController {
             // else de consulta si puede o no midificar la solicitud
             }else {
                 $message = array(
-                    "wtmessage" => Yii::t("notificaciones", "Solo se puede modificar la solicutd de inscripción."),
+                    "wtmessage" => Yii::t("notificaciones", "Solo se puede modificar 1 vez la solicitud de inscripción."),
                     "title" => Yii::t('jslang', 'Bad Request'),
                 );
                 return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Bad Request"), false, $message);

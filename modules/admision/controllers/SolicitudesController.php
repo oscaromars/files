@@ -680,7 +680,7 @@ class SolicitudesController extends \app\components\CController {
                 // consultar si la solicitud se puede modificar contador de la tabla debe ser 0
                 $respSolinsmod = $mod_solinsmodifica->consultaIncripcionModificar($sins_id);
                 //\app\models\Utilities::putMessageLogFile('sins_idssst: ' . $sins_id);
-                //\app\models\Utilities::putMessageLogFile('respSolinsmod["sinmo_contador"]: ' . $respSolinsmod["sinmo_contador"]);
+                \app\models\Utilities::putMessageLogFile('respSolinsmod["sinmo_contador"]: ' . $respSolinsmod["sinmo_contador"]);
                 if ($respSolinsmod["sinmo_contador"] == 0) {
                 /*beca y descuento*/
                     $beca = $data["beca"];
@@ -774,10 +774,17 @@ class SolicitudesController extends \app\components\CController {
                     if ($resporden) { // modifica desglose pago
                      $respdesglose = $mod_desglose->actualizaDesglosepago($opag_id, $ite_id, $val_total, $val_total, $usuario);
                      if ($respdesglose) {
-                        // permite modificar por una vez la solicitud y actualiza el contador
-                        $sinmo_contador = 1;
-                        $respSolinsingreso = $mod_solinsmodifica->actualizarIncripcionModificar($respSolinsmod["sinmo_id"], $sins_id, $sinmo_contador, $usuario);
-                        if ($respdesglose) {
+                        $sinmo_contador = 1; //sinmo_id
+                        if ($respSolinsmod["sinmo_id"] > 0 && $respSolinsmod["sinmo_contador"] == 0) {
+                            //\app\models\Utilities::putMessageLogFile('rentre1: ' . $respSolinsmod["sinmo_contador"]);
+                            //permite crear un registro en la tabla con contador 1
+                            $respSolinsingreso = $mod_solinsmodifica->actualizarIncripcionModificar($respSolinsmod["sinmo_id"], $sins_id, $sinmo_contador, $usuario);
+                        }else {
+                            //\app\models\Utilities::putMessageLogFile('rentre2: ' . $respSolinsmod["sinmo_contador"]);
+                           // permite modificar por una vez la solicitud y actualiza el contador
+                           $respSolinsingreso = $mod_solinsmodifica->insertarIncripcionModificar($sins_id, $sinmo_contador, $usuario);
+                        }
+                        if ($respSolinsingreso) {
                         $transaction->commit();
                         $transaction1->commit();
                         $message = array(

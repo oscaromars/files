@@ -2351,6 +2351,78 @@ return $alld;
 
 }
 
+ /**
+     * @author  Oscar Sanchez <analistadesarrollo05@uteg.edu.ec>
+     * @param
+     * @return
+     *  Obtener escalas de calificaciones
+     */
+public function getescalas($uaca_id,$mod_id,$ecal_id){
+$con = Yii::$app->db_academico;
+$sql="
+SELECT cuni.cuni_id, cuni.com_id,comp.com_nombre, cuni.cuni_calificacion 
+FROM db_academico.componente_unidad as cuni
+inner join db_academico.componente as comp
+on comp.com_id = cuni.com_id
+where uaca_id = $uaca_id AND mod_id = $mod_id AND ecal_id = $ecal_id 
+AND cuni.cuni_estado = 1 AND cuni.cuni_estado_logico = 1 
+AND comp.com_estado = 1 AND comp.com_estado_logico = 1 
+";
+$comando = $con->createCommand($sql);
+$escalas = $comando->queryOne();
+return $escalas;
 
+}
+
+ /**
+     * @author  Oscar Sanchez <analistadesarrollo05@uteg.edu.ec>
+     * @param
+     * @return
+     *  funciones auxiliares para gestion de Cabeceras de calificaciones
+     */
+public function getcabeceras($est_id,$asi_id,$paca_id,$parciales){
+$con = Yii::$app->db_academico;
+$sql="
+SELECT ccal_id,ccal_calificacion FROM db_academico.cabecera_calificacion 
+where 
+est_id= $est_id AND
+asi_id= $asi_id AND
+paca_id= $paca_id AND 
+ecun_id = $parciales
+AND ccal_estado = 1 AND ccal_estado_logico = 1 
+";
+$comando = $con->createCommand($sql);
+$cabeceras = $comando->queryOne();
+return $cabeceras;
+}
+public function putcabeceras($est_id,$asi_id,$paca_id,$parciales,$pro_id){
+$con = Yii::$app->db_academico;
+$sql="
+INSERT INTO db_academico.cabecera_calificacion 
+(paca_id, est_id, pro_id, asi_id, ecun_id, 
+ccal_estado, ccal_estado_logico) 
+VALUES ( $paca_id, $est_id, $pro_id, $asi_id, $parciales, '1', '1');
+";
+$comando = $con->createCommand($sql);
+$cabeceras = $comando->execute();
+return $cabeceras;
+}
+public function updatecabeceras($ccal_id){
+$con = Yii::$app->db_academico;
+$sql="
+UPDATE db_academico.cabecera_calificacion
+ SET ccal_calificacion = (select sum(dcal_calificacion)
+from db_academico.detalle_calificacion
+where ccal_id = $ccal_id
+AND dcal_estado = 1 AND dcal_estado_logico = 1
+),
+ ccal_fecha_modificacion = now()  
+ WHERE ccal_id = $ccal_id;
+";
+$comando = $con->createCommand($sql);
+$cabeceras = $comando->execute();
+return $cabeceras;
+
+}
 
 }

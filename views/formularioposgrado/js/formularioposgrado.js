@@ -329,6 +329,20 @@ $(document).ready(function () {
 
     // tabs create
     $('#paso1next').click(function () {
+        var programa = $("#cmb_programa option:selected").val();
+        var modalidad = $("#cmb_modalidadpos option:selected").val();
+        var periodo = $("#txt_año").val();
+           if (programa > 0 ){ a = 1;} else { a = 0; }
+                if (modalidad > 0 ){ b = 1;} else { b = 0; }
+                        if (periodo > 0 ){ c = 1;} else { c = 0; }
+        elem= a + b + c ;
+
+        if (elem < 3 ){
+
+               var mensaje = {wtmessage: "Seleccione Carrera, periodo y año!", title: "Información"};
+                showAlert("NO_OK", "error", mensaje);
+   
+        } else { 
         $("a[data-href='#paso1']").attr('data-toggle', 'none');
         $("a[data-href='#paso1']").parent().attr('class', 'disabled');
         $("a[data-href='#paso1']").attr('data-href', $("a[href='#paso1']").attr('href'));
@@ -336,6 +350,7 @@ $(document).ready(function () {
         $("a[data-href='#paso2']").attr('data-toggle', 'tab');
         $("a[data-href='#paso2']").attr('href', $("a[data-href='#paso2']").attr('data-href'));
         $("a[data-href='#paso2']").trigger("click");
+    }
     });
     $('#paso2back').click(function () {
         $("a[data-href='#paso2']").attr('data-toggle', 'none');

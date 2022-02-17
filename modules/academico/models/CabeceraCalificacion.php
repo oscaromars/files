@@ -2425,4 +2425,52 @@ return $cabeceras;
 
 }
 
+ /**
+     * @author  Oscar Sanchez <analistadesarrollo05@uteg.edu.ec>
+     * @param
+     * @return
+     *  funciones auxiliares para gestion de Detalles de calificaciones
+     */
+function getdetalles($ccal_id,$cuni_id){
+ GLOBAL $dsn, $dbuser, $dbpass, $dbname;
+$con = new \PDO($dsn, $dbuser, $dbpass);
+$sql="
+SELECT dcal_id, ccal_id,cuni_id,dcal_calificacion,
+dcal_usuario_creacion,dcal_fecha_modificacion
+FROM db_academico.detalle_calificacion 
+WHERE ccal_id = $ccal_id AND cuni_id = $cuni_id 
+AND dcal_estado = 1 AND dcal_estado_logico = 1
+; 
+";
+ $comando = $con->createCommand($sql);
+$detalles = $comando->queryOne();
+return $detalles;
+}
+function putdetalles($ccal_id,$cuni_id,$dcalificacion){
+GLOBAL $dsn, $dbuser, $dbpass, $dbname;
+$con = new \PDO($dsn, $dbuser, $dbpass);
+$sql="
+INSERT INTO db_academico.detalle_calificacion
+(ccal_id,cuni_id,dcal_calificacion,dcal_usuario_creacion,dcal_estado,dcal_estado_logico)
+VALUES ($ccal_id,$cuni_id,$dcalificacion, '1', '1', '1')
+";
+$comando = $con->createCommand($sql);
+$detalles = $comando->execute();
+return $detalles;
+}
+function updatedetalles($dcal_id,$dcalificacion){
+ GLOBAL $dsn, $dbuser, $dbpass, $dbname;
+$con = new \PDO($dsn, $dbuser, $dbpass);
+$sql="
+UPDATE db_academico.detalle_calificacion
+ SET dcal_calificacion = $dcalificacion,
+ dcal_fecha_modificacion = now()  
+ WHERE dcal_id = $dcal_id;
+";
+$comando = $con->createCommand($sql);
+$detalles = $comando->execute();
+return $detalles;
+
+}
+
 }

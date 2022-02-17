@@ -257,10 +257,9 @@ class SolicitudesController extends \app\components\CController {
             }
             if (isset($data["getdescuento"])) {
                 if (($data["unidada"] == 1) or ($data["unidada"] == 2)) {
-                    $resItems = $modItemMetNivel->consultarXitemMetniv($data["unidada"], $data["moda_id"], $data["metodo"], $data["empresa_id"], $data["carrera_id"]);
-                    //\app\models\Utilities::putMessageLogFile('metodoss:'. $data["metodo"]);
-                    $descuentos = $modDescuento->consultarDesctoxitem($resItems["ite_id"]);
-                    //$descuentos = $modDescuento->consultarDesctoxitem($data["ite_id"]);
+                    //$resItems = $modItemMetNivel->consultarXitemMetniv($data["unidada"], $data["moda_id"], $data["metodo"], $data["empresa_id"], $data["carrera_id"]);
+                    //$descuentos = $modDescuento->consultarDesctoxitem($resItems["ite_id"]);
+                    $descuentos = $modDescuento->consultarDesctoxunidadmodalidadingreso($data["unidada"], $data["moda_id"], $data["metodo"]);
                 } else {
                     //\app\models\Utilities::putMessageLogFile('item:'. $data["ite_id"]);
                     $descuentos = $modDescuento->consultarDescuentoXitemUnidad($data["unidada"], $data["moda_id"], $data["ite_id"]);
@@ -324,7 +323,8 @@ class SolicitudesController extends \app\components\CController {
         $arr_carrera = $modcanal->consultarCarreraModalidad(1, 1);
         //Descuentos y precios.
         $resp_item = $modItemMetNivel->consultarXitemPrecio(1, 1, 1, 2, 1);
-        $arr_descuento = $modDescuento->consultarDesctoxitem($resp_item["ite_id"]);
+        //$arr_descuento = $modDescuento->consultarDesctoxitem($resp_item["ite_id"]);
+        $arr_descuento = $modDescuento->consultarDesctoxunidadmodalidadingreso(0,0,0);
         $arr_convempresa = $mod_conempresa->consultarConvenioEmpresa();
         return $this->render('new', [
                     "arr_unidad" => ArrayHelper::map($arr_unidadac, "id", "name"),
@@ -2198,7 +2198,8 @@ class SolicitudesController extends \app\components\CController {
             if (isset($data["getdescuento"])) {
                 if (($data["unidada"] == 1) or ($data["unidada"] == 2)) {
                     $resItems = $modItemMetNivel->consultarXitemMetniv($data["unidada"], $data["moda_id"], $data["metodo"], $data["empresa_id"], $data["carrera_id"]);
-                    $descuentos = $modDescuento->consultarDesctoxitem($resItems["ite_id"]);
+                    //$descuentos = $modDescuento->consultarDesctoxitem($resItems["ite_id"]);
+                    $descuentos = $modDescuento->consultarDesctoxunidadmodalidadingreso($data["unidada"], $data["moda_id"], $data["metodo"]);
                 } else {
                     //\app\models\Utilities::putMessageLogFile('item:'. $data["ite_id"]);
                     $descuentos = $modDescuento->consultarDescuentoXitemUnidad($data["unidada"], $data["moda_id"], $data["ite_id"]);
@@ -2263,11 +2264,9 @@ class SolicitudesController extends \app\components\CController {
         $arr_metodos = $mod_metodo->consultarMetodoIngNivelInt($resp_solicitudesp['uaca_id']);
         $arr_carrera = $modcanal->consultarCarreraModalidad($resp_solicitudesp['uaca_id'], $resp_solicitudesp['mod_id']);
         //Descuentos y precios.
-        //$resp_item = $modItemMetNivel->consultaritemsol($resp_solicitudesp['uaca_id'], $resp_solicitudesp['mod_id'], $resp_solicitudesp['ite_id']);
-        //$arr_descuento = $modDescuento->consultarDesctoxitem($resp_solicitudesp['ite_id']);
-        //$resp_pago = $mod_ordenpago->consultaOrdenPago($sins_id);
         $resp_item = $modItemMetNivel->consultarXitemPrecio($resp_solicitudesp['uaca_id'], $resp_solicitudesp['mod_id'], $resp_solicitudesp['ming_id'], $resp_solicitudesp['eaca_id']);
-        $arr_descuento = $modDescuento->consultarDesctoxitem($resp_solicitudesp["ite_id"]);
+        //$arr_descuento = $modDescuento->consultarDesctoxitem($resp_solicitudesp["ite_id"]);
+        $arr_descuento = $modDescuento->consultarDesctoxunidadmodalidadingreso(0,0,0);
         $arr_convempresa = $mod_conempresa->consultarConvenioEmpresa();
         $resp_solicitudescuento = $mod_solins->Consultarsolicitudescuento($sins_id);
         if (!empty($resp_solicitudescuento['sdes_id'])) {
@@ -2361,8 +2360,9 @@ class SolicitudesController extends \app\components\CController {
             }
             if (isset($data["getdescuento"])) {
                 if (($data["unidada"] == 1) or ($data["unidada"] == 2)) {
-                    $resItems = $modItemMetNivel->consultarXitemMetniv($data["unidada"], $data["moda_id"], $data["metodo"], $data["empresa_id"], $data["carrera_id"]);
-                    $descuentos = $modDescuento->consultarDesctoxitem($resItems["ite_id"]);
+                    //$resItems = $modItemMetNivel->consultarXitemMetniv($data["unidada"], $data["moda_id"], $data["metodo"], $data["empresa_id"], $data["carrera_id"]);
+                    //$descuentos = $modDescuento->consultarDesctoxitem($resItems["ite_id"]);
+                    $descuentos = $modDescuento->consultarDesctoxunidadmodalidadingreso($data["unidada"], $data["moda_id"], $data["metodo"]);
                 } else {
                     $descuentos = $modDescuento->consultarDescuentoXitemUnidad($data["unidada"], $data["moda_id"], $data["ite_id"]);
                 }
@@ -2427,7 +2427,8 @@ class SolicitudesController extends \app\components\CController {
         $arr_carrera = $modcanal->consultarCarreraModalidad($resp_solicitudesp['uaca_id'], $resp_solicitudesp['mod_id']);
         //Descuentos y precios.
         $resp_item = $modItemMetNivel->consultaritemsol($resp_solicitudesp['uaca_id'], $resp_solicitudesp['mod_id'], $resp_solicitudesp['ite_id']);
-        $arr_descuento = $modDescuento->consultarDesctoxitem($resp_solicitudesp['ite_id']);
+        //$arr_descuento = $modDescuento->consultarDesctoxitem($resp_solicitudesp['ite_id']);
+        $arr_descuento = $modDescuento->consultarDesctoxunidadmodalidadingreso(0,0,0);
         $arr_convempresa = $mod_conempresa->consultarConvenioEmpresa();
         $resp_solicitudescuento = $mod_solins->Consultarsolicitudescuento($sins_id);
         if (!empty($resp_solicitudescuento['sdes_id'])) {

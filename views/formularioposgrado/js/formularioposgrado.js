@@ -339,7 +339,7 @@ $(document).ready(function () {
 
         if (elem < 3 ){
 
-               var mensaje = {wtmessage: "Seleccione Carrera, periodo y año!", title: "Información"};
+               var mensaje = {wtmessage: "Seleccione Programa, Modalidad y año!", title: "Información"};
                 showAlert("NO_OK", "error", mensaje);
    
         } else { 

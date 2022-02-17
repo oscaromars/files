@@ -867,7 +867,11 @@ $(document).ready(function () {
         var arrParams = new Object();
         arrParams.unidada = $('#cmb_ninteres').val();
         arrParams.moda_id = $('#cmb_modalidad').val();
-        arrParams.metodo = $('#cmb_metodos').val();
+        if (arrParams.unidada == '1') {
+        arrParams.metodo = '1';
+        }else{
+          arrParams.metodo = '4';
+        }
         arrParams.empresa_id = $('#cmb_empresa').val();
         arrParams.carrera_id = $('#cmb_carrera').val();
         arrParams.getdescuento = true;

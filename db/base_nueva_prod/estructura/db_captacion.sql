@@ -555,3 +555,24 @@ create table if not exists `solicitud_inscripcion_modificar` (
  `sinmo_estado_logico` varchar(1) not null,
   foreign key (sins_id) references `solicitud_inscripcion`(sins_id)
 );
+
+-- --------------------------------------------------------
+--
+-- Estructura de tabla para la tabla `solicitud_inscripcion_saldos`
+--
+create table if not exists `solicitud_inscripcion_saldos` (
+ `sinsa_id` bigint(20) not null auto_increment primary key,
+ `sins_id` bigint(20) not null,
+ `sinsa_valor_anterior` double not null,
+ `sinsa_valor_actual` double not null,
+ `sinsa_saldo` double not null,
+ `sinsa_estado_saldofavor` varchar(1) null, -- E (Estudiante), U (Uteg)
+ `sinsa_estado_saldoconsumido` varchar(1) null, -- P (Pendiente), C (consumido)
+ `sinsa_usuario_ingreso` bigint(20) not null,
+ `sinsa_usuario_modifica` bigint(20)  null,
+ `sinsa_estado` varchar(1) not null,
+ `sinsa_fecha_creacion` timestamp not null default current_timestamp,
+ `sinsa_fecha_modificacion` timestamp null default null,
+ `sinsa_estado_logico` varchar(1) not null,
+  foreign key (sins_id) references `solicitud_inscripcion`(sins_id)
+);

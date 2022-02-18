@@ -176,4 +176,62 @@ class SolicitudInscripcionSaldos extends \yii\db\ActiveRecord
             return FALSE;
         }
     }
+
+    /**
+     * Function consultaIncripcionSaldos
+     * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
+     * @param
+     * @return  $resultData.
+     */
+    public function consultaIncripcionSaldos($sins_id) {
+        $con = \Yii::$app->db_captacion;
+        $estado = 1;
+
+        $sql = "SELECT  sinsa_id,
+                        sinsa_valor_anterior,
+                        sinsa_valor_actual,
+                        sinsa_saldo,
+                        sinsa_estado_saldofavor,
+                        sinsa_estado_saldoconsumido
+                FROM " . $con->dbname . ".solicitud_inscripcion_saldos
+                WHERE sins_id = :sins_id
+                      AND sinsa_estado = :estado
+                      AND sinsa_estado_logico = :estado";
+
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $comando->bindParam(":sins_id", $sins_id, \PDO::PARAM_INT);
+        $resultData = $comando->queryOne();
+        return $resultData;
+    }
+    /**
+     * Function actualizarEstadosSaldos
+     * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
+     * @param
+     * @return
+     */
+    public function actualizarEstadosSaldos($sinsa_id, $sins_id, $sinsa_estado_saldofavor, $sinsa_estado_saldoconsumido, $sinsa_usuario_modifica) {
+        $con = \Yii::$app->db_captacion;
+        //$estado = 0;
+        $fecha_modificacion = date(Yii::$app->params["dateTimeByDefault"]);
+        $comando = $con->createCommand
+                ("UPDATE " . $con->dbname . ".solicitud_inscripcion_saldos
+                SET sinsa_fecha_modificacion = :sinsa_fecha_modificacion,
+                    sinsa_estado_saldofavor = :sinsa_estado_saldofavor,
+                    sinsa_estado_saldoconsumido = :sinsa_estado_saldoconsumido,
+                    sinsa_usuario_modifica = :sinsa_usuario_modifica
+                WHERE sinsa_id = :sinsa_id AND
+                      sins_id = :sins_id ");
+
+        //$comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $comando->bindParam(":sinsa_id", $sinsa_id, \PDO::PARAM_INT);
+        $comando->bindParam(":sins_id", $sins_id, \PDO::PARAM_INT);
+        $comando->bindParam(":sinsa_estado_saldofavor", $sinsa_estado_saldofavor, \PDO::PARAM_STR);
+        $comando->bindParam(":sinsa_estado_saldoconsumido", $sinsa_estado_saldoconsumido, \PDO::PARAM_STR);
+        $comando->bindParam(":sinsa_usuario_modifica", $sinsa_usuario_modifica, \PDO::PARAM_INT);
+        $comando->bindParam(":sinsa_fecha_modificacion", $fecha_modificacion, \PDO::PARAM_STR);
+
+        $response = $comando->execute();
+        return $response;
+    }
 }

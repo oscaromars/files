@@ -86,4 +86,94 @@ class SolicitudInscripcionSaldos extends \yii\db\ActiveRecord
     {
         return $this->hasOne(SolicitudInscripcion::className(), ['sins_id' => 'sins_id']);
     }
+
+    /**
+     * Function insertarIncripcionSaldos
+     * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
+     * @param
+     * @return  Id insertado.
+     */
+    public function insertarIncripcionSaldos($sins_id, $sinsa_valor_anterior, $sinsa_valor_actual, $sinsa_saldo, $sinsa_estado_saldofavor, $sinsa_estado_saldoconsumido, $sinsa_usuario_ingreso) {
+        $con = \Yii::$app->db_captacion;
+
+        $trans = $con->getTransaction(); // se obtiene la transacción actual.
+        if ($trans !== null) {
+            $trans = null; // si existe la transacción entonces no se crea una.
+        } else {
+            $trans = $con->beginTransaction(); // si no existe la transacción entonces se crea una.
+        }
+
+        $param_sql = "sinsa_estado_logico";
+        $bsrec_sql = "1";
+
+        $param_sql .= ", sinsa_estado";
+        $bsrec_sql .= ", 1";
+
+        if (isset($sins_id)) {
+            $param_sql .= ", sins_id";
+            $bsrec_sql .= ", :sins_id";
+        }
+        if (isset($sinsa_valor_anterior)) {
+            $param_sql .= ", sinsa_valor_anterior";
+            $bsrec_sql .= ", :sinsa_valor_anterior";
+        }
+        if (isset($sinsa_valor_actual)) {
+            $param_sql .= ", sinsa_valor_actual";
+            $bsrec_sql .= ", :sinsa_valor_actual";
+        }
+        if (isset($sinsa_saldo)) {
+            $param_sql .= ", sinsa_saldo";
+            $bsrec_sql .= ", :sinsa_saldo";
+        }
+
+        if (isset($sinsa_estado_saldofavor)) {
+            $param_sql .= ", sinsa_estado_saldofavor";
+            $bsrec_sql .= ", :sinsa_estado_saldofavor";
+        }
+
+        if (isset($sinsa_estado_saldoconsumido)) {
+            $param_sql .= ", sinsa_estado_saldoconsumido";
+            $bsrec_sql .= ", :sinsa_estado_saldoconsumido";
+        }
+
+        if (isset($sinsa_usuario_ingreso)) {
+            $param_sql .= ", sinsa_usuario_ingreso";
+            $bsrec_sql .= ", :sinsa_usuario_ingreso";
+        }
+
+        try {
+            $sql = "INSERT INTO " . $con->dbname . ".solicitud_inscripcion_saldos ($param_sql) VALUES($bsrec_sql)";
+            $comando = $con->createCommand($sql);
+
+            if (isset($sins_id))
+                $comando->bindParam(':sins_id', $sins_id, \PDO::PARAM_INT);
+
+            if (isset($sinsa_valor_anterior))
+                $comando->bindParam(':sinsa_valor_anterior', $sinsa_valor_anterior, \PDO::PARAM_STR);
+
+            if (isset($sinsa_valor_actual))
+                $comando->bindParam(':sinsa_valor_actual', $sinsa_valor_actual, \PDO::PARAM_STR);
+
+            if (isset($sinsa_saldo))
+                $comando->bindParam(':sinsa_saldo', $sinsa_saldo, \PDO::PARAM_STR);
+
+            if (isset($sinsa_estado_saldofavor))
+                $comando->bindParam(':sinsa_estado_saldofavor', $sinsa_estado_saldofavor, \PDO::PARAM_STR);
+
+            if (isset($sinsa_estado_saldoconsumido))
+                $comando->bindParam(':sinsa_estado_saldoconsumido', $sinsa_estado_saldoconsumido, \PDO::PARAM_STR);
+
+            if (isset($sinsa_usuario_ingreso))
+                $comando->bindParam(':sinsa_usuario_ingreso', $sinsa_usuario_ingreso, \PDO::PARAM_INT);
+
+            $result = $comando->execute();
+            if ($trans !== null)
+                $trans->commit();
+            return $con->getLastInsertID($con->dbname . '.solicitud_inscripcion_saldos');
+        } catch (Exception $ex) {
+            if ($trans !== null)
+                $trans->rollback();
+            return FALSE;
+        }
+    }
 }

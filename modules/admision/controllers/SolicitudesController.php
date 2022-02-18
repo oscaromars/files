@@ -775,16 +775,25 @@ class SolicitudesController extends \app\components\CController {
                      $respdesglose = $mod_desglose->actualizaDesglosepago($opag_id, $ite_id, $val_total, $val_total, $usuario);
                      if ($respdesglose) {
                         $sinmo_contador = 1; //sinmo_id
+                        //AQUI ANALIZAR ESE INGRESO DE VALORES E INGRESO SALDO
+                        //CONSULTAR SOLICITUD POR SIN_ID PARA TRAER VALORES DE SOLICITUD ACTUAL
+                        // OBTENER CON LAS CAJAS DE TEXTO LOS VALORES NUEVOS
+                        // SALDO = RESTAR VALOR ANTERIOR - VALOR ACTUAL
+                        //
                         if ($respSolinsmod["sinmo_id"] > 0 && $respSolinsmod["sinmo_contador"] == 0) {
                             //\app\models\Utilities::putMessageLogFile('rentre1: ' . $respSolinsmod["sinmo_contador"]);
                             //permite crear un registro en la tabla con contador 1
                             $respSolinsingreso = $mod_solinsmodifica->actualizarIncripcionModificar($respSolinsmod["sinmo_id"], $sins_id, $sinmo_contador, $usuario);
+                            //SI GUARDA respSolinsingreso ACTUALIZAR TABLAS SALDOS
+                            //ELSE MENSAJE PROBLEMAS AL ACTUALIZAR SALDOS
                         }else {
                             //\app\models\Utilities::putMessageLogFile('rentre2: ' . $respSolinsmod["sinmo_contador"]);
-                           // permite modificar por una vez la solicitud y actualiza el contador
+                           // permite modificar por una vez la solicitud y actualiza el contador aunque no este en la tabla de modificacion
                            $respSolinsingreso = $mod_solinsmodifica->insertarIncripcionModificar($sins_id, $sinmo_contador, $usuario);
+                           //SI GUARDA respSolinsingreso ACTUALIZAR TABLAS SALDOS
+                           //ELSE MENSAJE PROBLEMAS AL ACTUALIZAR SALDOS
                         }
-                        if ($respSolinsingreso) {
+                        if ($respSolinsingreso) {// ESTA VARIABLE REEMPLAZAR CON LA NUEVA DE ARRIBA PARA GUARDARs
                         $transaction->commit();
                         $transaction1->commit();
                         $message = array(
@@ -805,7 +814,7 @@ class SolicitudesController extends \app\components\CController {
                         $transaction->rollback();
                         $transaction1->rollback();
                         $message = array(
-                            "wtmessage" => Yii::t("notificaciones", "Error al modificar desglsoe pago." . $mensaje),
+                            "wtmessage" => Yii::t("notificaciones", "Error al modificar desglose pago." . $mensaje),
                             "title" => Yii::t('jslang', 'Bad Request'),
                         );
                         return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Bad Request"), false, $message);

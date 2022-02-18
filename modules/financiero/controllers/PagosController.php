@@ -518,6 +518,8 @@ class PagosController extends \app\components\CController {
                     // AQUI SE APRUEBA EL PAGO EN ESTE IF, AQUI DEBE YA DESPUES DE GUARDAR
                     // CREAR COMO ESTUDIANTE EN TODAS LAS TABLAS
                     if ($banderacrea == 1) {
+                        //AQUI APRUEBA EL PAGO, REVISAR BIEN DONDE SE DEBE
+                        //CAMBIAR LOS ESTADOS DE SALDOS
                         $creg_total = $valortotal;
                         $creg_resultado = 'OK';
                         $creg_fecha_pago_total = $fechapagtotal;
@@ -736,6 +738,7 @@ class PagosController extends \app\components\CController {
                 $fecha_registro = date(Yii::$app->params["dateTimeByDefault"]);
                 $creadetalle = $modcargapago->insertarCargaprepago($opag_id, $fpag_id, $dcar_valor, $imagen, $dcar_revisado, $dcar_resultado, $dcar_observacion, $dcar_num_transaccion, $dcar_fecha_transaccion, $fecha_registro);
                 if ($creadetalle) {
+                    //REVISAR BIEN, SI EL PAGO SE CARGA, AQUI ACTUALIZAR  ESTAODS SALDOS
                     //Envío de correo a colecturia.
                     \app\models\Utilities::putMessageLogFile('Orden Pago:' . $opag_id);
                     \app\models\Utilities::putMessageLogFile('Empresa:' . $empresa);

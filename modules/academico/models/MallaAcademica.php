@@ -309,7 +309,7 @@ class MallaAcademica extends \yii\db\ActiveRecord
         return $resultData;
     }
 
-    public function consultarasignaturaxmallaaut($per_id) {
+    public function consultarasignaturaxmallaaut($per_id, $op=null) {
         $con = \Yii::$app->db_academico;
         $estado = 1;
         $sql = "SELECT mad.asi_id as 'id', concat(mad.made_codigo_asignatura, ' - ', asi.asi_nombre) as 'name'
@@ -362,6 +362,20 @@ class MallaAcademica extends \yii\db\ActiveRecord
             $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
             //$comando->bindParam(":maca_id", $maca_id, \PDO::PARAM_INT);
             $resultData = $comando->queryAll();
+
+            if ($op==1){
+                    $dataProvider = new ArrayDataProvider([
+                        'key' => 'id',
+                        'allModels' => $resultData,
+                        'pagination' => [
+                            'pageSize' => Yii::$app->params["pageSize"],
+                        ],
+                        'sort' => [
+                            'attributes' => [],
+                        ],
+                    ]);
+                    return $dataProvider;
+            }
         }
         return $resultData;
     }
@@ -2395,15 +2409,18 @@ public function consultaParalelosxMateria($asi_id,$saca_id,$mod_id) {
     $con = \Yii::$app->db_academico;
     $estado = 1;
     $sql = "SELECT mpp.mpp_id as id, concat('Paralelo ',mpp.mpp_num_paralelo) as nombre 
-            from db_academico.materia_paralelo_periodo mpp 
-            inner join db_academico.semestre_academico saca on saca.saca_id = $saca_id
-            inner join db_academico.periodo_academico paca on mpp.paca_id = paca.paca_id 
-            and paca.saca_id = saca.saca_id
-            inner join db_academico.planificacion pla on pla.saca_id = saca.saca_id
-            and pla.mod_id = mpp.mod_id
-            where mpp.asi_id = $asi_id and mpp.mod_id = $mod_id;";
+            FROM db_academico.materia_paralelo_periodo mpp 
+            INNER JOIN db_academico.semestre_academico saca ON saca.saca_id = $saca_id
+            INNER JOIN db_academico.periodo_academico paca ON mpp.paca_id = paca.paca_id AND paca.saca_id = saca.saca_id
+            INNER JOIN db_academico.planificacion pla ON pla.saca_id = saca.saca_id AND pla.mod_id = mpp.mod_id
+            WHERE mpp.daho_id IS NOT NULL AND
+                  mpp.asi_id = $asi_id AND mpp.mod_id = $mod_id AND
+                  mpp.mpp_estado = 1 AND mpp.mpp_estado_logico = 1 AND
+                  saca.saca_estado = 1 AND saca.saca_estado_logico = 1 AND
+                  paca.paca_estado = 1 AND paca.paca_estado_logico = 1 AND
+                  pla.pla_estado = 1 AND pla.pla_estado_logico = 1;";
     $comando = $con->createCommand($sql);
-    \app\models\Utilities::putMessageLogFile('Consultar Paralelos: '.$comando->getRawSql());
+    //\app\models\Utilities::putMessageLogFile('Consultar Paralelos: '.$comando->getRawSql());
     $resultData = $comando->queryAll();
     //\app\modules\academico\controllers\RegistroController::putMessageLogFileCartera('consultarModalidad: '.$comando->getRawSql());
     $dataProvider = new ArrayDataProvider([
@@ -2416,9 +2433,10 @@ public function consultaParalelosxMateria($asi_id,$saca_id,$mod_id) {
             'attributes' => [],
         ],
     ]);
-    \app\models\Utilities::putMessageLogFile('Consultar Paralelos N: '.implode(",", $resultData));
+    //\app\models\Utilities::putMessageLogFile('Consultar Paralelos N: '.implode(",", $resultData));
     return $dataProvider;
 }
+
 public function consultaHorarioxParalelo($mpp_id) {
     $con = \Yii::$app->db_academico;
     $estado = 1;
@@ -2444,5 +2462,75 @@ public function consultaHorarioxParalelo($mpp_id) {
     \app\models\Utilities::putMessageLogFile('Consultar Paralelos N: '.implode(",", $resultData));
     return $dataProvider;
 }
+
+/**
+     * Function Obtiene malla academica para centro de idiomas, segun per_id del estudiante y modalidad 
+     * @author  Julio Lopez <analistadesarrollo03@uteg.edu.ec>
+     * @param   
+     * @return  $resultData (Retornar los datos).
+     */
+    public function selectAsignaturaPorMallaAutCentroIdioma($per_id, $mod_id, $op) {
+        $con = \Yii::$app->db_academico;
+        $estado = 1;
+
+        if (isset($mod_id) && $mod_id!="") {
+            $str_search .= "mu.mod_id = :mod_id AND ";                
+        }
+
+        $sql ="SELECT 
+                   distinct(a.asi_id) as 'id',
+                   concat(made.made_codigo_asignatura,' - ',a.asi_nombre) as 'name',
+                   made.made_asi_requisito as 'materia previa'
+            from 
+            " . $con->dbname . ".malla_academica_detalle as made 
+            inner join " . $con->dbname . ".malla_academica as maca on maca.maca_id = made.maca_id
+            inner join " . $con->dbname . ".asignatura as a on a.asi_id = made.asi_id
+            inner join " . $con->dbname . ".malla_unidad_modalidad mumo on mumo.maca_id = maca.maca_id
+            inner join " . $con->dbname . ".modalidad_estudio_unidad mu on mu.meun_id = mumo.meun_id 
+            where $str_search
+                made.maca_id in (97, 101) and
+                made.made_codigo_asignatura not in
+                                (select mad.made_codigo_asignatura from db_academico.planificacion_estudiante ple,
+                                db_academico.malla_academica_detalle mad
+                                where mad.made_codigo_asignatura in (
+                                ple.pes_mat_b1_h1_cod,ple.pes_mat_b1_h2_cod,ple.pes_mat_b1_h3_cod,ple.pes_mat_b1_h4_cod,ple.pes_mat_b1_h5_cod,ple.pes_mat_b1_h6_cod,
+                                ple.pes_mat_b2_h1_cod,ple.pes_mat_b2_h2_cod,ple.pes_mat_b2_h3_cod,ple.pes_mat_b2_h4_cod,ple.pes_mat_b2_h5_cod,ple.pes_mat_b2_h6_cod)
+                                and per_id = $per_id) and
+                made.made_estado = :estado and made.made_estado_logico = :estado and
+                maca.maca_estado = :estado and maca.maca_estado_logico = :estado and
+                a.asi_estado = :estado and a.asi_estado_logico = :estado and
+                mumo.mumo_estado =:estado and mumo.mumo_estado_logico=:estado and
+                mu.meun_estado = :estado and mu.meun_estado_logico=:estado;";
+
+        $comando = $con->createCommand($sql);
+        if (isset($mod_id) && $mod_id!="") {
+            $comando->bindParam(":mod_id", $mod_id, \PDO::PARAM_STR);
+        }
+
+        if($per_id == null){
+            $resultData = [];
+        }else{
+            $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+            //$comando->bindParam(":maca_id", $maca_id, \PDO::PARAM_INT);
+            $resultData = $comando->queryAll();
+            \app\models\Utilities::putMessageLogFile('selectAsignaturaPorMallaAutCentroIdioma: '.$comando->getRawSql());
+
+            if ($op==1){
+                    $dataProvider = new ArrayDataProvider([
+                        'key' => 'id',
+                        'allModels' => $resultData,
+                        'pagination' => [
+                            'pageSize' => Yii::$app->params["pageSize"],
+                        ],
+                        'sort' => [
+                            'attributes' => [],
+                        ],
+                    ]);
+                    return $dataProvider;
+            }
+
+        }
+        return $resultData;
+    }
 
 }

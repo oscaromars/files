@@ -269,9 +269,107 @@ $(document).ready(function () {
 
    $('#btn_AgregarItemat').click(function () {
        //alert('HOLA');
+       //****************************************************************** validaciom para centro de idiomas ******************************************************************
+      var link = $('#txth_base').val() + "/academico/planificacion/searchasignaturaparalelomodalidad";
+      var arrParams = new Object();      
+      arrParams.periodo     = $('#cmb_periodoest').val();
+      arrParams.modalidad   = $('#cmb_modalidadesth').val();
+      arrParams.asignatura  = $('#cmb_asignaest').val();
+      arrParams.carrera     = $('#txt_eaca_id').val();
+      arrParams.bloque      = $('#cmb_bloqueest').val();
+      arrParams.hora        = $('#cmb_horaest').val();
+      unidad                = $('#cmb_unidadest').val();
+      console.log('Periodo   : ' + arrParams.periodo);
+      console.log('Modalidad : ' + arrParams.modalidad);
+      console.log('Asignatura: ' + arrParams.asignatura);
+      console.log('Carrera   : ' + arrParams.carrera);
+      console.log('Bloque    : ' + arrParams.bloque);
+      console.log('Hora      : ' + arrParams.hora);
+      console.log('Unidad    : ' + unidad);
+      
+      /*if ( unidad != 4 ){
+        arrParams.getasignatura = true;
+        requestHttpAjax(link, arrParams, function (response) {
+            if (response.status == "OK") {
+                data = response.message;
+                carrera = data.asignatura;
+                //console.log('a1 data.asignatura: ' + data.asignatura);
+                if(carrera == 0){
+                    //console.log('a2 data.asignatura: ' + data.asignatura);
+                    showAlert('NO_OK', 'error', {"wtmessage": 'La asignatura no se encuentra generado en apertura de materias, por favor revisar.', "title": 'Información'});
+                    return;
+                }
+            }
+        }, true);
+      }*/
+      //****************************************************************** validaciom para centro de idiomas ******************************************************************
        agregarItems('new')
 
-   });    
+   });
+
+   $('#cmb_buscarest').change(function(){
+        //materiahomologaGrid();
+        var link = $('#txth_base').val() + "/academico/planificacion/newplanificacion";
+        var arrParams = new Object();
+        arrParams.est_id = $('#cmb_buscarest').val();
+        console.log('Est. Id: ' + $('#cmb_buscarest').val());
+        arrParams.getcarrera = true;
+        requestHttpAjax(link, arrParams, function (response) {
+            if (response.status == "OK") {
+                data = response.message;
+                carrera = data.carrera;
+                if(carrera != 0){
+                    document.getElementById("txt_carrera2").value = carrera.eaca_nombre;
+                    document.getElementById("txt_modalidad2").value = carrera.mod_nombre;
+                    document.getElementById("txt_eaca_id").value = carrera.eaca_id;                    
+                    document.getElementById("txt_mod_id").value = carrera.mod_id;
+                    console.log('Modalidad: '+ carrera.mod_id);
+                    if (carrera.mod_id == 3){
+                      /*document.getElementById("opt_Malla_Centro_Idioma_Si").disabled = true;  
+                      document.getElementById("opt_Malla_Centro_Idioma_No").disabled = true;*/
+                      document.getElementById("opt_Malla_Centro_Idioma_Si").checked = true;
+                      document.getElementById("opt_Malla_Centro_Idioma_No").checked = false;    
+                      
+                    }else{
+                      /*document.getElementById("opt_Malla_Centro_Idioma_Si").disabled = false;  
+                      document.getElementById("opt_Malla_Centro_Idioma_No").disabled = false;*/
+                      document.getElementById("opt_Malla_Centro_Idioma_Si").checked = false;
+                      document.getElementById("opt_Malla_Centro_Idioma_No").checked = true; 
+                      
+                    }                    
+                }else{
+                   $('#txt_carrera2').val('');
+                }
+            }
+        }, true);
+        
+    });
+
+    $('#opt_Malla_Centro_Idioma_Si').change(function () {
+        if ($('#opt_Malla_Centro_Idioma_Si').val() == 1) {
+            //$('#divDescuento').css('display', 'block');
+            $("#opt_Malla_Centro_Idioma_No").prop("checked", "");            
+            listarMaterias();
+
+            //15 de febrero 2022            
+            /*var perSel = $('#cmb_periodoest option:selected').val(); 
+            $("#cmb_periodoest")[0].selectedIndex=perSel;
+            actualizarGridPlanestudiante(perSel);*/
+        }
+    });
+
+    $('#opt_Malla_Centro_Idioma_No').change(function () {
+        if ($('#opt_Malla_Centro_Idioma_No').val() == 2) {
+            //$('#divDescuento').css('display', 'none');
+            $("#opt_Malla_Centro_Idioma_Si").prop("checked", "");
+            listarMaterias();
+            
+            //15 de febrero 2022
+            /*var perSel = $('#cmb_periodoest option:selected').val(); 
+            $("#cmb_periodoest")[0].selectedIndex=perSel;
+            actualizarGridPlanestudiante(perSel);*/
+        }
+    });
 });
 
 function searchModules(idbox, idgrid) {
@@ -1125,7 +1223,8 @@ function exportExcelplanificacion() {
 function actualizarGridPlanestudiante(perSel) {
     var estudiante = $('#cmb_buscarest option:selected').val();
     var unidad = $('#cmb_unidadest option:selected').val();
-    var modalidad = $('#cmb_modalidadesth option:selected').val();
+    //var modalidad = $('#cmb_modalidadesth option:selected').val();//09 febrero
+    var modalidad = $('#txt_mod_id').val();
     //var carrera = $('#cmb_carreraest option:selected').text(); //$('#cmb_carreras option:selected').val();//$('#cmb_carreras option:selected').val();
     var carrera = $('#txt_carrera').val();
     //var malla = $('#cmb_mallaest option:selected').val();
@@ -1133,13 +1232,24 @@ function actualizarGridPlanestudiante(perSel) {
     var per_id = estudiante;
     var pla_id = $('#txth_pla_id').val();
     var saca_id = $('#cmb_periodoest option:selected').val();
+    var modalidad_estudiante = $('#txt_mod_id').val();
+    //Consulta metodo para centro de idiomas, para combo asignatura.
+    var malla_academica = "";
+    if ($('input[name=opt_Malla_Centro_Idioma_Si]:checked').val() == 1) {
+        malla_academica = 1;
+    }
+    //Consulta metodo por default para combo asignatura.
+    if ($('input[name=opt_Malla_Centro_Idioma_No]:checked').val() == 2) {
+        malla_academica = 2;
+    }
 
     //Buscar almenos una clase con el nombre para ejecutar
     //alert('OK3 : '+perSel);
     if (!$(".blockUI").length) {
         showLoadingPopup();
         //$('#PbPlanificaestudiante').PbGridView('applyFilterData', { 'per_id': estudiante, 'unidad': unidad, 'modalidad': modalidad, 'carrera': carrera, 'periodo': periodo,'malla':malla });
-        window.location.href = $('#txth_base').val() + "/academico/planificacion/newplanificacion?estudiante=" + estudiante + '&unidad=' + unidad + '&modalidad=' + modalidad +'&malla=' + malla + "&carrera=" + carrera + "&periodo=" + perSel + "&per_id=" + per_id + "&pla_id=" + pla_id;
+        //window.location.href = $('#txth_base').val() + "/academico/planificacion/newplanificacion?estudiante=" + estudiante + '&unidad=' + unidad + '&modalidad=' + modalidad +'&malla=' + malla + "&carrera=" + carrera + "&periodo=" + perSel + "&per_id=" + per_id + "&pla_id=" + pla_id;
+        window.location.href = $('#txth_base').val() + "/academico/planificacion/newplanificacion?estudiante=" + estudiante + '&unidad=' + unidad + '&modalidad=' + modalidad +'&malla=' + malla + "&carrera=" + carrera + "&periodo=" + perSel + "&per_id=" + per_id + "&pla_id=" + pla_id + "&malla_academica=" + malla_academica;//01 febrero 2022.
         /*var perSel = $('#cmb_periodoest option:selected').val(); 
         alert(perSel+'-'+periodo);
         $("#cmb_periodoest")[0].selectedIndex=periodo;*/
@@ -1276,6 +1386,17 @@ function modificarplanificacionaut() {
    arrParams.pla_id = $('#txth_pla_id').val();
    arrParams.per_id = $('#txth_per_id').val();
    arrParams.mpp_id = $('#cmb_paraleloest').val();
+
+  if ($('#opt_Malla_Centro_Idioma_Si').val() == 1) {
+      // Para unidad academica centro de idioma, crear una nueva planificacion.
+      accion = "Create";
+      arrParams.crea_planificacion_centro_idioma = 1;
+      arrParams.modalidadest = $('#txt_mod_id').val();
+      arrParams.periodoest   = $('#cmb_periodoest option:selected').text();
+      arrParams.jornadaest   = $('#cmb_jornadaest option:selected').val();
+      arrParams.carreraest   = $('#txt_carrera2').val();
+  }
+
    //alert($('#txth_base').val()+':1-' + $('#cmb_jornadaest').val()+':2-'+$('#txt_carrera').val()+':3-'+$('#cmb_modalidadest').val()+':4-'+$('#cmb_periodoest').val()+':5-'+$('#cmb_buscarest').val()+':6-'+$('#txth_pla_id').val()+':7-'+$('#txth_per_id').val());
    //if ($('#cmb_jornadaest').val() != '0' && $('#txt_carrera').text() != 'Seleccionar' && $('#cmb_modalidadest').val() != '0' && /*$('#cmb_malladoest').val() != '0' &&*/ $('#cmb_periodoest').val() != '0' && $('#cmb_buscarest').val() > '0') {
    if (sessionStorage.dts_datosItemplan) {
@@ -1419,4 +1540,66 @@ function listarParalelos(){
     });*/
 
    // window.location.href = $('#txth_base').val() + "/academico/planificacion/newplanificacion";
+}
+
+function listarMaterias(){
+    var link = $('#txth_base').val() + "/academico/planificacion/listarmaterias";
+    per_id = $('#txth_per_id').val();
+    mod_id = $('#txt_mod_id').val();    
+
+    if ($('input[name=opt_Malla_Centro_Idioma_Si]:checked').val() == 1) {
+      opt_si = 1;
+    }else{
+      opt_si = "";
+    }
+
+    if ($('input[name=opt_Malla_Centro_Idioma_No]:checked').val() == 2) {
+      opt_no = 2;
+    }else{
+      opt_no = "";
+    }
+
+    data = new FormData();
+    data.append( 'per_id' , per_id);
+    data.append( 'mod_id' , mod_id);
+    data.append( 'opt_si' , opt_si);
+    data.append( 'opt_no' , opt_no);    
+
+    $.ajax({
+        data: data,
+        type: "POST",
+        dataType: "json",
+        cache      : false,
+        contentType: false,
+        processData: false,
+        async: false,
+        url: link,
+        success: function (data) {
+            var datos = JSON.stringify(data);
+            var obj = JSON.parse(datos);
+            var html = '<option value="0" selected="">Seleccionar</option>';
+            var id = 0;
+            var count = 0;
+            //alert(obj);
+            $.each(obj.allModels, function( index, value ) {
+                var data = (value);     
+                $.each(data, function( index2, value2 ) {
+
+                    if(index2 == 'id'){
+                        id = value2;
+                    }
+
+                    if(index2 == 'name'){
+                        html = html + `<option value=${id} >${value2}</option>`;
+                       count++;
+                    }
+
+                });        
+            });
+            
+            if(count>0){
+                $("#cmb_asignaest").html(html);
+            }
+         }
+   });
 }

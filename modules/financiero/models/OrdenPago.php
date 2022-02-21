@@ -927,7 +927,7 @@ class OrdenPago extends \app\modules\financiero\components\CActiveRecord {
     }
 
     /**
-     * Function consulta de orden pago por id (Actualiza el estado a pagado a la orden de pago.
+     * Function consulta de orden pago por id.
      * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
      * @param
      * @return
@@ -2669,5 +2669,31 @@ class OrdenPago extends \app\modules\financiero\components\CActiveRecord {
 
         $response = $comando->execute();
         return $response;
+    }
+
+    /**
+     * Function consultarValorpagoxordenid
+     * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
+     * @param
+     * @return
+     */
+    public function consultarValorpagoxordenid($opag_id) {
+        $con = \Yii::$app->db_facturacion;
+        $estado = 1;
+        //$estado_pago = 'P';
+
+        $sql = "SELECT opag.sins_id as solicitud,
+                opag.opag_total as total
+                FROM " . $con->dbname . ".orden_pago opag
+                WHERE opag.opag_id = :opag_id AND
+                      -- opag.opag_estado_pago = :estado_pago AND
+                      opag.opag_estado = :estado AND
+                      opag.opag_estado_logico = :estado";
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $comando->bindParam(":opag_id", $opag_id, \PDO::PARAM_INT);
+        // $comando->bindParam(":estado_pago", $estado_pago, \PDO::PARAM_STR);
+        $resultData = $comando->queryOne();
+        return $resultData;
     }
 }

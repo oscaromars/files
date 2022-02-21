@@ -563,6 +563,7 @@ create table if not exists `solicitud_inscripcion_modificar` (
 create table if not exists `solicitud_inscripcion_saldos` (
  `sinsa_id` bigint(20) not null auto_increment primary key,
  `sins_id` bigint(20) not null,
+ `opag_id` bigint(20) not null,
  `sinsa_valor_anterior` double not null,
  `sinsa_valor_actual` double not null,
  `sinsa_saldo` double not null,

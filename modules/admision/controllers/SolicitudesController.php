@@ -31,6 +31,7 @@ use app\modules\financiero\models\Secuencias;
 use app\modules\admision\models\ConvenioEmpresa;
 use app\modules\academico\models\NumeroMatricula;
 use app\modules\admision\models\SolicitudInscripcionModificar;
+use app\modules\admision\models\SolicitudInscripcionSaldos;
 use app\models\Usuario;
 use app\models\InscripcionGrado;
 use app\models\InscripcionPosgrado;
@@ -658,6 +659,7 @@ class SolicitudesController extends \app\components\CController {
         $mod_ordenpago = new OrdenPago();
         $mod_desglose = new DesglosePago();
         $mod_solinsmodifica = new SolicitudInscripcionModificar();
+        $mod_solinsaldos = new SolicitudInscripcionSaldos();
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
             $usuario = @Yii::$app->user->identity->usu_id;
@@ -680,7 +682,12 @@ class SolicitudesController extends \app\components\CController {
                 // consultar si la solicitud se puede modificar contador de la tabla debe ser 0
                 $respSolinsmod = $mod_solinsmodifica->consultaIncripcionModificar($sins_id);
                 //\app\models\Utilities::putMessageLogFile('sins_idssst: ' . $sins_id);
-                \app\models\Utilities::putMessageLogFile('respSolinsmod["sinmo_contador"]: ' . $respSolinsmod["sinmo_contador"]);
+                //\app\models\Utilities::putMessageLogFile('respSolinsmod["sinmo_contador"]: ' . $respSolinsmod["sinmo_contador"]);
+                // 1.- AQUI SE CONSULTAR VALOR ANTERIOR ANTES DE MODIFICARLOS
+                // opg_total de la tabla  orden pago (este valor aqui se guarda ya incluso
+                //con descuento)
+                $resp_Valoranteriopago = $mod_ordenpago->consultarValorpagoxordenid($opag_id);
+                \app\models\Utilities::putMessageLogFile('resp_Valoranteriopago["total"]: ' . $resp_Valoranteriopago["total"]);
                 if ($respSolinsmod["sinmo_contador"] == 0) {
                 /*beca y descuento*/
                     $beca = $data["beca"];
@@ -775,25 +782,47 @@ class SolicitudesController extends \app\components\CController {
                      $respdesglose = $mod_desglose->actualizaDesglosepago($opag_id, $ite_id, $val_total, $val_total, $usuario);
                      if ($respdesglose) {
                         $sinmo_contador = 1; //sinmo_id
-                        //AQUI ANALIZAR ESE INGRESO DE VALORES E INGRESO SALDO
-                        //CONSULTAR SOLICITUD POR SIN_ID PARA TRAER VALORES DE SOLICITUD ACTUAL
+                        //2.- AQUI ANALIZAR ESE INGRESO DE VALORES E INGRESO SALDO
                         // OBTENER CON LAS CAJAS DE TEXTO LOS VALORES NUEVOS
                         // SALDO = RESTAR VALOR ANTERIOR - VALOR ACTUAL
-                        //
+                        $saldomodifica = $resp_Valoranteriopago["total"] - $val_total;
+                        \app\models\Utilities::putMessageLogFile('saldo modifica: ' . $saldomodifica);
                         if ($respSolinsmod["sinmo_id"] > 0 && $respSolinsmod["sinmo_contador"] == 0) {
                             //\app\models\Utilities::putMessageLogFile('rentre1: ' . $respSolinsmod["sinmo_contador"]);
                             //permite crear un registro en la tabla con contador 1
                             $respSolinsingreso = $mod_solinsmodifica->actualizarIncripcionModificar($respSolinsmod["sinmo_id"], $sins_id, $sinmo_contador, $usuario);
-                            //SI GUARDA respSolinsingreso ACTUALIZAR TABLAS SALDOS
-                            //ELSE MENSAJE PROBLEMAS AL ACTUALIZAR SALDOS
+                            //3.0.- SI GUARDA respSolinsingreso ACTUALIZAR TABLAS SALDOS //OJO ANALIZAR SI TAMBIEN SE GUARDA EL OPAG_ID, YA QUE ESTA AQUI
+                            if ($respSolinsingreso) {
+                                $respSaldosact = $mod_solinsaldos->insertarIncripcionSaldos($sins_id, $opag_id,$resp_Valoranteriopago["total"], $val_total, $saldomodifica, null, null, $usuario);
+                            }else {//ELSE MENSAJE PROBLEMAS AL ACTUALIZAR SALDOS
+                                    $transaction->rollback();
+                                    $transaction1->rollback();
+                                    $message = array(
+                                        "wtmessage" => Yii::t("notificaciones", "Error al actualizar saldos de solicitud de inscripcion." . $mensaje),
+                                        "title" => Yii::t('jslang', 'Bad Request'),
+                                    );
+                                    return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Bad Request"), false, $message);
+                                 }
                         }else {
                             //\app\models\Utilities::putMessageLogFile('rentre2: ' . $respSolinsmod["sinmo_contador"]);
                            // permite modificar por una vez la solicitud y actualiza el contador aunque no este en la tabla de modificacion
                            $respSolinsingreso = $mod_solinsmodifica->insertarIncripcionModificar($sins_id, $sinmo_contador, $usuario);
-                           //SI GUARDA respSolinsingreso ACTUALIZAR TABLAS SALDOS
-                           //ELSE MENSAJE PROBLEMAS AL ACTUALIZAR SALDOS
+                           //3.1.- SI GUARDA respSolinsingreso ACTUALIZAR TABLAS SALDOS
+                           $respSolinsingreso = $mod_solinsmodifica->actualizarIncripcionModificar($respSolinsmod["sinmo_id"], $sins_id, $sinmo_contador, $usuario);
+                            //3.0.- SI GUARDA respSolinsingreso ACTUALIZAR TABLAS SALDOS //OJO ANALIZAR SI TAMBIEN SE GUARDA EL OPAG_ID, YA QUE ESTA AQUI
+                            if ($respSolinsingreso) {
+                                $respSaldosact = $mod_solinsaldos->insertarIncripcionSaldos($sins_id, $opag_id, $resp_Valoranteriopago["total"], $val_total, $saldomodifica, null, null, $usuario);
+                            }else {//ELSE MENSAJE PROBLEMAS AL ACTUALIZAR SALDOS
+                                    $transaction->rollback();
+                                    $transaction1->rollback();
+                                    $message = array(
+                                        "wtmessage" => Yii::t("notificaciones", "Error al actualizar saldo de solicitud de inscripcion."),
+                                        "title" => Yii::t('jslang', 'Bad Request'),
+                                    );
+                                    return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Bad Request"), false, $message);
+                                 }
                         }
-                        if ($respSolinsingreso) {// ESTA VARIABLE REEMPLAZAR CON LA NUEVA DE ARRIBA PARA GUARDARs
+                        if (respSaldosact/*$respSolinsingreso*/) {// ESTA VARIABLE REEMPLAZAR CON LA NUEVA DE ARRIBA PARA GUARDARs
                         $transaction->commit();
                         $transaction1->commit();
                         $message = array(

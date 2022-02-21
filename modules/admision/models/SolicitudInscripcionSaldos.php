@@ -10,6 +10,7 @@ use Yii;
  *
  * @property int $sinsa_id
  * @property int $sins_id
+ * @property int $opag_id
  * @property double $sinsa_valor_anterior
  * @property double $sinsa_valor_actual
  * @property double $sinsa_saldo
@@ -48,8 +49,8 @@ class SolicitudInscripcionSaldos extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['sins_id', 'sinsa_valor_anterior', 'sinsa_valor_actual', 'sinsa_saldo', 'sinsa_usuario_ingreso', 'sinsa_estado', 'sinsa_estado_logico'], 'required'],
-            [['sins_id', 'sinsa_usuario_ingreso', 'sinsa_usuario_modifica'], 'integer'],
+            [['sins_id', 'opag_id', 'sinsa_valor_anterior', 'sinsa_valor_actual', 'sinsa_saldo', 'sinsa_usuario_ingreso', 'sinsa_estado', 'sinsa_estado_logico'], 'required'],
+            [['sins_id', 'opag_id', 'sinsa_usuario_ingreso', 'sinsa_usuario_modifica'], 'integer'],
             [['sinsa_valor_anterior', 'sinsa_valor_actual', 'sinsa_saldo'], 'number'],
             [['sinsa_fecha_creacion', 'sinsa_fecha_modificacion'], 'safe'],
             [['sinsa_estado_saldofavor', 'sinsa_estado_saldoconsumido', 'sinsa_estado', 'sinsa_estado_logico'], 'string', 'max' => 1],
@@ -65,6 +66,7 @@ class SolicitudInscripcionSaldos extends \yii\db\ActiveRecord
         return [
             'sinsa_id' => 'Sinsa ID',
             'sins_id' => 'Sins ID',
+            'opag_id' => 'Opag ID',
             'sinsa_valor_anterior' => 'Sinsa Valor Anterior',
             'sinsa_valor_actual' => 'Sinsa Valor Actual',
             'sinsa_saldo' => 'Sinsa Saldo',
@@ -93,7 +95,7 @@ class SolicitudInscripcionSaldos extends \yii\db\ActiveRecord
      * @param
      * @return  Id insertado.
      */
-    public function insertarIncripcionSaldos($sins_id, $sinsa_valor_anterior, $sinsa_valor_actual, $sinsa_saldo, $sinsa_estado_saldofavor, $sinsa_estado_saldoconsumido, $sinsa_usuario_ingreso) {
+    public function insertarIncripcionSaldos($sins_id, $opag_id, $sinsa_valor_anterior, $sinsa_valor_actual, $sinsa_saldo, $sinsa_estado_saldofavor, $sinsa_estado_saldoconsumido, $sinsa_usuario_ingreso) {
         $con = \Yii::$app->db_captacion;
 
         $trans = $con->getTransaction(); // se obtiene la transacción actual.
@@ -112,6 +114,10 @@ class SolicitudInscripcionSaldos extends \yii\db\ActiveRecord
         if (isset($sins_id)) {
             $param_sql .= ", sins_id";
             $bsrec_sql .= ", :sins_id";
+        }
+        if (isset($opag_id)) {
+            $param_sql .= ", opag_id";
+            $bsrec_sql .= ", :opag_id";
         }
         if (isset($sinsa_valor_anterior)) {
             $param_sql .= ", sinsa_valor_anterior";
@@ -147,6 +153,9 @@ class SolicitudInscripcionSaldos extends \yii\db\ActiveRecord
 
             if (isset($sins_id))
                 $comando->bindParam(':sins_id', $sins_id, \PDO::PARAM_INT);
+
+            if (isset($opag_id))
+                $comando->bindParam(':opag_id', $opag_id, \PDO::PARAM_INT);
 
             if (isset($sinsa_valor_anterior))
                 $comando->bindParam(':sinsa_valor_anterior', $sinsa_valor_anterior, \PDO::PARAM_STR);

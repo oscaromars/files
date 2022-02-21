@@ -1403,6 +1403,11 @@ $centralprocess = $malla->cargarAsignaturas($resultData[$i],$modalidad,$periodo)
 			// Consultar pla_id y per_id existe
 			$exitealumno = $mod_planifica->consultarAlumnoplan($resulpla_id['pla_id'], $per_id);
 			$accion = isset($data['ACCION']) ? $data['ACCION'] : '';
+			if ($data['crea_planificacion_centro_idioma'] == 1){
+				if ($exitealumno['planexiste'] > 1){
+					$accion = 'Update';
+				}
+			}
 			if ($accion == 'Create') {
 				//existe guardar modalidad y periodo
 				if ($resulpla_id['pla_id']) {
@@ -1438,7 +1443,50 @@ $centralprocess = $malla->cargarAsignaturas($resultData[$i],$modalidad,$periodo)
 							$valores .= "'" . $mat_cod . "', '" . $modalidades . "', '" . $arrplan[$i]['jornada'] . "',";
 						}
 						$resul = $mod_planifica->insertarDataPlanificacionestudiante($resulpla_id['pla_id'], $per_id, $jornada, $carrera, $dni, $nombre, $malla_guarda, $insertar, $valores);
-					} else {
+					}elseif ($exitealumno['planexiste'] == '1' && $data['crea_planificacion_centro_idioma'] == 1 ) { //15 febrero 2022
+						//Nuevo Registro
+						$arrplan = json_decode($data['DATAS'], true);
+						for ($i = 0; $i < sizeof($arrplan); $i++) {
+							// recorrer y crear un arrrglo solo con los campos a ingresar de horario y bloque
+							// crear string del insert
+							$bloque = substr($arrplan[$i]['bloque'], -1);
+							$horario = substr($arrplan[$i]['hora'], -1);
+							switch ($arrplan[$i]['modalidad']) {
+							case "Online":
+								$modalidades = '1';
+								break;
+							case "Presencial":
+								$modalidades = '2';
+								break;
+							case "Semipresencial":
+								$modalidades = '3';
+								break;
+							case "Distancia":
+								$modalidades = '4';
+								break;
+							}
+							
+							if ($arrplan[$i]['jornada'] == 'Matutino'){
+								$jornada = 'M';
+							}elseif ($arrplan[$i]['jornada'] == 'Nocturno'){
+								$jornada = 'N';
+							}elseif ($arrplan[$i]['jornada'] == 'Semipresencial'){
+								$jornada = 'S';
+							}elseif ($arrplan[$i]['jornada'] == 'Distancia'){
+								$jornada = 'D';
+							}
+							$pes_cod_carrera = substr($arrplan[$i]['asignatura'], 0, 8);
+							$insertar .= 'pes_mat_b' . $bloque . '_h' . $horario . '_cod, pes_mod_b' . $bloque . '_h' . $horario . ', pes_jor_b' . $bloque . '_h' . $horario . ', pes_mat_b' . $bloque . '_h' . $horario . '_mpp, pes_cod_carrera,';
+
+							// crear el string de los valores
+							$materia = explode(" - ", $arrplan[$i]['asignatura']);
+							$mat_cod = $materia[0];
+							//$mat_nombre = $materia[1];
+							$valores .= "'" . $mat_cod . "', '" . $modalidades . "', '" . $arrplan[$i]['jornada'] . "', '". $arrplan[$i]['mpp_id'] . "', '". $pes_cod_carrera . "', ";
+						}
+						$resul = $mod_planifica->insertarDataPlanificacionestudiante($resulpla_id['pla_id'], $per_id, $jornada, $carrera, $dni, $nombre, $malla_guarda, $insertar, $valores);
+
+					}else {
 						// no existe mensaje que no permitar guardar
 						$noentra = 'NOS';
 					}
@@ -2218,6 +2266,8 @@ inner join " . $con->dbname . ".malla_academica as b on a.pes_cod_carrera = b.ma
 		$modalidad_data = $modcarrera->consultarmodalidadxcarrera($academic_study_data[0]['id']);
 		$jornada = $mod_jornada->consultarJornadahorario();
 
+		$model_carrera = new EstudioAcademico();
+
 		$malla = $mod_malla->consultarmallasxcarrera($unidad_acad_data[0]['id'], $modalidad_data[0]['id'], $academic_study_data[0]['id']);
 
 		$modalidades = $modalidad_model->consultarModalidad($unidad_acad_data[0]['id'], 1);
@@ -2252,8 +2302,14 @@ inner join " . $con->dbname . ".malla_academica as b on a.pes_cod_carrera = b.ma
 			$model_plan = $mod_periodo->consultarDetalleplanificaaut($arrSearch, false);
 			$carrera_activa = $mod_periodo->consultaracarreraxmallaaut($per_id);
 			//$pla_id = $mod_periodo->consultaPlanificacionEstVigente($per_id);
+			$opt_malla_academica = $data["malla_academica"];//01 febrero 2022.
 			$mode_malla = $mod_periodo->consultaMallaEstudiante($per_id);
-			$materia = $mod_malla->consultarasignaturaxmallaaut($per_id); //$mode_malla[0]['id']);
+			if ($opt_malla_academica==2){
+				//Consulta asignaturas de malla academico, que no son centro de idiomas.
+				$materia = $mod_malla->consultarasignaturaxmallaaut($per_id, null); //$mode_malla[0]['id']);
+			}else{
+				$materia = $mod_malla->selectAsignaturaPorMallaAutCentroIdioma($per_id, $data['modalidad'], null); 
+			}
 			$busquedalumno = $mod_periodo->busquedaEstudianteplanificacionaut($per_id);
 			$arr_initial = $per_id;
 			$id_carrera = $carrera_activa['0']['id'];
@@ -2263,6 +2319,7 @@ inner join " . $con->dbname . ".malla_academica as b on a.pes_cod_carrera = b.ma
 			\app\models\Utilities::putMessageLogFile('---------------------------------------------------------------');
 			\app\models\Utilities::putMessageLogFile('$perSelect: ' . $perSelect);
 			\app\models\Utilities::putMessageLogFile('---------------------------------------------------------------');
+			$resp_carrera = $model_carrera->selectCarreraEst($per_id); //01 febrero 2022.
 			return $this->render('newplanificacion', [
 				'arr_unidad' => ArrayHelper::map($unidad_acad_data, 'id', 'name'),
 				//'arr_modalidad' => $id_modalidad,//ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']], $modalidad_data), 'id', 'name'),
@@ -2286,6 +2343,8 @@ inner join " . $con->dbname . ".malla_academica as b on a.pes_cod_carrera = b.ma
 				'perSelect' => $perSelect ? $perSelect : 0,
 				'arr_paralelo' => $this->Paralelo(),
 				'arr_horario' => $this->Horario(),
+				'arr_carrera' => $resp_carrera,//01 febrero 2022.
+				'opt_malla_academica' => $opt_malla_academica,//01 febrero 2022.
 
 				$this->renderPartial('procesoplanificacion-grid', [
 					'model' => $model_plan,
@@ -2304,7 +2363,7 @@ inner join " . $con->dbname . ".malla_academica as b on a.pes_cod_carrera = b.ma
 			//$model_plan = $mod_periodo->consultarDetalleplanificaaut();
 			$mode_malla = $mod_periodo->consultaMallaEstudiante($data['estudiante']);
 			$model_plan = $mod_periodo->consultarDetalleplanificaaut($arrSearch, false);
-			$materia = $mod_malla->consultarasignaturaxmallaaut($mode_malla[0]['id']);
+			$materia = $mod_malla->consultarasignaturaxmallaaut($mode_malla[0]['id'],null);
 			$busquedalumno = $mod_periodo->busquedaEstudianteplanificacion();
 			$carrera_activa = $mod_periodo->consultaracarreraxmallaaut($per_id);
 			$id_carrera = $carrera_activa['id'];
@@ -2325,6 +2384,13 @@ inner join " . $con->dbname . ".malla_academica as b on a.pes_cod_carrera = b.ma
 			if (isset($data['getmateria'])) {
 				$asignatura = $mod_malla->consultarasignaturaxmalla($data['maca_id']);
 				$message = array('asignatura' => $asignatura);
+				return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+			}
+			if (isset($data['getcarrera'])) {
+				//\app\models\Utilities::putMessageLogFile('AAAA post per_id: ' .$per_id);
+				//\app\models\Utilities::putMessageLogFile('AAAA post $data[est_id]: ' .$data['est_id']);
+				$carrera = $model_carrera->selectCarreraEst($data['est_id']);
+				$message = array('carrera' => $carrera);
 				return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
 			}
 		}
@@ -2377,6 +2443,31 @@ inner join " . $con->dbname . ".malla_academica as b on a.pes_cod_carrera = b.ma
 			$mod_malla = new MallaAcademica();
 			$horario = $mod_malla->consultaHorarioxParalelo($mpp_id);
 			return json_encode($horario);
+		}
+	}
+
+	public function actionListarmaterias() {
+		if (Yii::$app->request->isAjax) {
+			$data = Yii::$app->request->post();
+			$opt_si = $data['opt_si'];
+			$opt_no = $data['opt_no'];
+			$per_id = $data['per_id'];
+			$mod_id = $data['mod_id'];
+
+			if ($opt_si !="" && $opt_si==1){
+				$opt_malla_academica=1;
+			}elseif ($opt_no !="" && $opt_no==2){
+				$opt_malla_academica=2;
+			}
+			
+			$mod_malla = new MallaAcademica();
+			if ($opt_malla_academica==2){
+				//Consulta asignaturas de malla academico, que no son centro de idiomas.
+				$materia = $mod_malla->consultarasignaturaxmallaaut($per_id, 1); //$mode_malla[0]['id']);
+			}else{
+				$materia = $mod_malla->selectAsignaturaPorMallaAutCentroIdioma($per_id, $mod_id, 1); 
+			}
+			return json_encode($materia);
 		}
 	}
 }

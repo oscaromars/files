@@ -192,7 +192,7 @@ class SolicitudInscripcionSaldos extends \yii\db\ActiveRecord
      * @param
      * @return  $resultData.
      */
-    public function consultaIncripcionSaldos($sins_id) {
+    public function consultaIncripcionSaldos($sins_id, $opag_id) {
         $con = \Yii::$app->db_captacion;
         $estado = 1;
 
@@ -204,12 +204,14 @@ class SolicitudInscripcionSaldos extends \yii\db\ActiveRecord
                         sinsa_estado_saldoconsumido
                 FROM " . $con->dbname . ".solicitud_inscripcion_saldos
                 WHERE sins_id = :sins_id
+                      AND opag_id :opag_id
                       AND sinsa_estado = :estado
                       AND sinsa_estado_logico = :estado";
 
         $comando = $con->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
         $comando->bindParam(":sins_id", $sins_id, \PDO::PARAM_INT);
+        $comando->bindParam(":opag_id", $opag_id, \PDO::PARAM_INT);
         $resultData = $comando->queryOne();
         return $resultData;
     }
@@ -219,7 +221,7 @@ class SolicitudInscripcionSaldos extends \yii\db\ActiveRecord
      * @param
      * @return
      */
-    public function actualizarEstadosSaldos($sinsa_id, $sins_id, $sinsa_estado_saldofavor, $sinsa_estado_saldoconsumido, $sinsa_usuario_modifica) {
+    public function actualizarEstadosSaldos($sinsa_id, /* $sins_id,*/ $sinsa_estado_saldofavor, $sinsa_estado_saldoconsumido, $sinsa_usuario_modifica) {
         $con = \Yii::$app->db_captacion;
         //$estado = 0;
         $fecha_modificacion = date(Yii::$app->params["dateTimeByDefault"]);
@@ -229,12 +231,12 @@ class SolicitudInscripcionSaldos extends \yii\db\ActiveRecord
                     sinsa_estado_saldofavor = :sinsa_estado_saldofavor,
                     sinsa_estado_saldoconsumido = :sinsa_estado_saldoconsumido,
                     sinsa_usuario_modifica = :sinsa_usuario_modifica
-                WHERE sinsa_id = :sinsa_id AND
-                      sins_id = :sins_id ");
+                WHERE sinsa_id = :sinsa_id /*AND
+                      sins_id = :sins_id */ ");
 
         //$comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
         $comando->bindParam(":sinsa_id", $sinsa_id, \PDO::PARAM_INT);
-        $comando->bindParam(":sins_id", $sins_id, \PDO::PARAM_INT);
+        // $comando->bindParam(":sins_id", $sins_id, \PDO::PARAM_INT);
         $comando->bindParam(":sinsa_estado_saldofavor", $sinsa_estado_saldofavor, \PDO::PARAM_STR);
         $comando->bindParam(":sinsa_estado_saldoconsumido", $sinsa_estado_saldoconsumido, \PDO::PARAM_STR);
         $comando->bindParam(":sinsa_usuario_modifica", $sinsa_usuario_modifica, \PDO::PARAM_INT);

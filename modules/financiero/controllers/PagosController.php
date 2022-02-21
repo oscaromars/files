@@ -26,6 +26,7 @@ use app\modules\academico\Module as academico;
 use app\models\EmpresaPersona;
 use app\models\UsuaGrolEper;
 use app\modules\admision\models\InteresadoEmpresa;
+use app\modules\admision\models\SolicitudInscripcionSaldos;
 use app\modules\academico\models\ModuloEstudio;
 use app\modules\academico\models\Estudiante;
 admision::registerTranslations();
@@ -688,6 +689,8 @@ class PagosController extends \app\components\CController {
     public function actionSavecarga() {
         //$per_id = Yii::$app->session->get("PB_perid");
         $modcargapago = new OrdenPago();
+        $modsinsaldos = new SolicitudInscripcionSaldos();
+        $usuario = @Yii::$app->user->identity->usu_id;
         if (Yii::$app->request->isAjax) {
             if ($_SESSION['persona_solicita'] != '') {// tomar el de parametro)
                 $per_id = base64_decode($_SESSION['persona_solicita']);
@@ -717,6 +720,7 @@ class PagosController extends \app\components\CController {
             $arrIm = explode(".", basename($data["documento"]));
             $typeFile = strtolower($arrIm[count($arrIm) - 1]);
             $imagen = $arrIm[0] . "." . $typeFile;
+            $idsol = $data["idsol"];
             $opag_id = $_GET["txth_ids"];
             $opag_id = $data["idpago"];
             $ccar_total = $data["totpago"];
@@ -738,10 +742,21 @@ class PagosController extends \app\components\CController {
                 $fecha_registro = date(Yii::$app->params["dateTimeByDefault"]);
                 $creadetalle = $modcargapago->insertarCargaprepago($opag_id, $fpag_id, $dcar_valor, $imagen, $dcar_revisado, $dcar_resultado, $dcar_observacion, $dcar_num_transaccion, $dcar_fecha_transaccion, $fecha_registro);
                 if ($creadetalle) {
-                    //REVISAR BIEN, SI EL PAGO SE CARGA, AQUI ACTUALIZAR  ESTAODS SALDOS
+                    //REVISAR BIEN, SI EL PAGO SE CARGA, AQUI ACTUALIZAR  ESTADOS SALDOS
+                    $respsolinsaldo = $modsinsaldos->consultaIncripcionSaldos($idsol, $opag_id);
+                    if ($respsolinsaldo["sinsa_id"] > 0) {
+                        if ($respsolinsaldo["sinsa_saldo"] > 0) {
+                            $sinsa_estado_saldofavor = 'E';
+                            $sinsa_estado_saldoconsumido = 'P';
+                        }else {
+                            $sinsa_estado_saldofavor = 'U';
+                            $sinsa_estado_saldoconsumido = 'C';
+                        }
+                        $respactsolinsaldo = $modsinsaldos->actualizarEstadosSaldos($respsolinsaldo["sinsa_id"], $sinsa_estado_saldofavor, $sinsa_estado_saldoconsumido, $usuario);
+                    }
                     //Envío de correo a colecturia.
-                    \app\models\Utilities::putMessageLogFile('Orden Pago:' . $opag_id);
-                    \app\models\Utilities::putMessageLogFile('Empresa:' . $empresa);
+                    //\app\models\Utilities::putMessageLogFile('Orden Pago:' . $opag_id);
+                    //\app\models\Utilities::putMessageLogFile('Empresa:' . $empresa);
                     $informacion_interesado = $modcargapago->datosBotonpago($opag_id, $empresa);
                     $pri_nombre = $informacion_interesado["nombres"];
                     $pri_apellido = $informacion_interesado["apellidos"];

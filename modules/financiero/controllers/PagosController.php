@@ -438,6 +438,7 @@ class PagosController extends \app\components\CController {
         $security = new Security();
         $usergrol = new UsuaGrolEper();
         $usu_autenticado = @Yii::$app->session->get("PB_iduser");
+        $modsinsaldos = new SolicitudInscripcionSaldos();
         //online que sube doc capturar asi el id de la persona
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
@@ -627,6 +628,20 @@ class PagosController extends \app\components\CController {
                                                                 if ($maca_id) {
                                                                     $resp_malla_academico_estudiante = $mod_Estudiante->insertMallaAcademicoEst($maca_id['maca_id'],$per_id);
                                                                     $pmac_id=$mod_Estudiante->insertPromedioMallaAcademicoEst($per_id);
+                                                                //AQUI ACTUAIZAR ESTADOS estado_de_uso, solicitud_inscripcion_saldos
+                                                                \app\models\Utilities::putMessageLogFile('solinscr_id: '.$sins_id);
+                                                                \app\models\Utilities::putMessageLogFile('ordenpagoid: '.$opag_id);
+                                                                $respsolinsaldo = $modsinsaldos->consultaIncripcionSaldos($sins_id, $opag_id);
+                                                                if ($respsolinsaldo["sinsa_id"] > 0) {
+                                                                    if ($respsolinsaldo["sinsa_saldo"] > 0) {
+                                                                        $sinsa_estado_saldofavor = 'E';
+                                                                        $sinsa_estado_saldoconsumido = 'P';
+                                                                    }else {
+                                                                        $sinsa_estado_saldofavor = 'U';
+                                                                        $sinsa_estado_saldoconsumido = 'C';
+                                                                    }
+                                                                    $respactsolinsaldo = $modsinsaldos->actualizarEstadosSaldos($respsolinsaldo["sinsa_id"], $sinsa_estado_saldofavor, $sinsa_estado_saldoconsumido, $usuario);
+                                                                }
                                                                 }
                                                             }
                                                          }
@@ -747,10 +762,10 @@ class PagosController extends \app\components\CController {
                     if ($respsolinsaldo["sinsa_id"] > 0) {
                         if ($respsolinsaldo["sinsa_saldo"] > 0) {
                             $sinsa_estado_saldofavor = 'E';
-                            $sinsa_estado_saldoconsumido = 'P';
+                            $sinsa_estado_saldoconsumido = null;
                         }else {
                             $sinsa_estado_saldofavor = 'U';
-                            $sinsa_estado_saldoconsumido = 'C';
+                            $sinsa_estado_saldoconsumido = null;
                         }
                         $respactsolinsaldo = $modsinsaldos->actualizarEstadosSaldos($respsolinsaldo["sinsa_id"], $sinsa_estado_saldofavor, $sinsa_estado_saldoconsumido, $usuario);
                     }

@@ -822,7 +822,7 @@ class SolicitudesController extends \app\components\CController {
                                     return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Bad Request"), false, $message);
                                  }
                         }
-                        if (respSaldosact/*$respSolinsingreso*/) {// ESTA VARIABLE REEMPLAZAR CON LA NUEVA DE ARRIBA PARA GUARDARs
+                        if ($respSaldosact/*$respSolinsingreso*/) {// ESTA VARIABLE REEMPLAZAR CON LA NUEVA DE ARRIBA PARA GUARDARs
                         $transaction->commit();
                         $transaction1->commit();
                         $message = array(

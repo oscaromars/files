@@ -632,16 +632,16 @@ class PagosController extends \app\components\CController {
                                                                 \app\models\Utilities::putMessageLogFile('solinscr_id: '.$sins_id);
                                                                 \app\models\Utilities::putMessageLogFile('ordenpagoid: '.$opag_id);
                                                                 $respsolinsaldo = $modsinsaldos->consultaIncripcionSaldos($sins_id, $opag_id);
-                                                                if ($respsolinsaldo["sinsa_id"] > 0) {
-                                                                    if ($respsolinsaldo["sinsa_saldo"] > 0) {
-                                                                        $sinsa_estado_saldofavor = 'E';
-                                                                        $sinsa_estado_saldoconsumido = 'P';
-                                                                    }else {
-                                                                        $sinsa_estado_saldofavor = 'U';
-                                                                        $sinsa_estado_saldoconsumido = 'C';
+                                                                    if ($respsolinsaldo["sinsa_id"] > 0) {
+                                                                        if ($respsolinsaldo["sinsa_saldo"] > 0) {
+                                                                            $sinsa_estado_saldofavor = 'E';
+                                                                            $sinsa_estado_saldoconsumido = 'P';
+                                                                        }else {
+                                                                            $sinsa_estado_saldofavor = 'U';
+                                                                            $sinsa_estado_saldoconsumido = 'C';
+                                                                        }
+                                                                        $respactsolinsaldo = $modsinsaldos->actualizarEstadosSaldos($respsolinsaldo["sinsa_id"], $sinsa_estado_saldofavor, $sinsa_estado_saldoconsumido, $usuario);
                                                                     }
-                                                                    $respactsolinsaldo = $modsinsaldos->actualizarEstadosSaldos($respsolinsaldo["sinsa_id"], $sinsa_estado_saldofavor, $sinsa_estado_saldoconsumido, $usuario);
-                                                                }
                                                                 }
                                                             }
                                                          }

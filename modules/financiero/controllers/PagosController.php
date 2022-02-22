@@ -758,8 +758,8 @@ class PagosController extends \app\components\CController {
                 $creadetalle = $modcargapago->insertarCargaprepago($opag_id, $fpag_id, $dcar_valor, $imagen, $dcar_revisado, $dcar_resultado, $dcar_observacion, $dcar_num_transaccion, $dcar_fecha_transaccion, $fecha_registro);
                 if ($creadetalle) {
                     //REVISAR BIEN, SI EL PAGO SE CARGA, AQUI ACTUALIZAR  ESTADOS SALDOS
-                    \app\models\Utilities::putMessageLogFile('idsolvvv:' . $idsol);
-                    \app\models\Utilities::putMessageLogFile('opag_idvv:' . $opag_id);
+                    //\app\models\Utilities::putMessageLogFile('idsolvvv:' . $idsol);
+                    //\app\models\Utilities::putMessageLogFile('opag_idvv:' . $opag_id);
                     $respsolinsaldo = $modsinsaldos->consultaIncripcionSaldos($idsol, $opag_id);
                     if ($respsolinsaldo["sinsa_id"] > 0) {
                         if ($respsolinsaldo["sinsa_saldo"] > 0) {

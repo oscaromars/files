@@ -221,9 +221,8 @@ class SolicitudInscripcionSaldos extends \yii\db\ActiveRecord
      * @param
      * @return
      */
-    public function actualizarEstadosSaldos($sinsa_id, /* $sins_id,*/ $sinsa_estado_saldofavor, $sinsa_estado_saldoconsumido, $sinsa_usuario_modifica) {
+    public function actualizarEstadosSaldos($sinsa_id, $sinsa_estado_saldofavor, $sinsa_estado_saldoconsumido, $sinsa_usuario_modifica) {
         $con = \Yii::$app->db_captacion;
-        //$estado = 0;
         $fecha_modificacion = date(Yii::$app->params["dateTimeByDefault"]);
         $comando = $con->createCommand
                 ("UPDATE " . $con->dbname . ".solicitud_inscripcion_saldos
@@ -231,12 +230,9 @@ class SolicitudInscripcionSaldos extends \yii\db\ActiveRecord
                     sinsa_estado_saldofavor = :sinsa_estado_saldofavor,
                     sinsa_estado_saldoconsumido = :sinsa_estado_saldoconsumido,
                     sinsa_usuario_modifica = :sinsa_usuario_modifica
-                WHERE sinsa_id = :sinsa_id /*AND
-                      sins_id = :sins_id */ ");
+                WHERE sinsa_id = :sinsa_id ");
 
-        //$comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
         $comando->bindParam(":sinsa_id", $sinsa_id, \PDO::PARAM_INT);
-        // $comando->bindParam(":sins_id", $sins_id, \PDO::PARAM_INT);
         $comando->bindParam(":sinsa_estado_saldofavor", $sinsa_estado_saldofavor, \PDO::PARAM_STR);
         $comando->bindParam(":sinsa_estado_saldoconsumido", $sinsa_estado_saldoconsumido, \PDO::PARAM_STR);
         $comando->bindParam(":sinsa_usuario_modifica", $sinsa_usuario_modifica, \PDO::PARAM_INT);

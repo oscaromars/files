@@ -628,20 +628,6 @@ class PagosController extends \app\components\CController {
                                                                 if ($maca_id) {
                                                                     $resp_malla_academico_estudiante = $mod_Estudiante->insertMallaAcademicoEst($maca_id['maca_id'],$per_id);
                                                                     $pmac_id=$mod_Estudiante->insertPromedioMallaAcademicoEst($per_id);
-                                                                //AQUI ACTUAIZAR ESTADOS estado_de_uso, solicitud_inscripcion_saldos
-                                                                \app\models\Utilities::putMessageLogFile('solinscr_id: '.$resp_idsol["sins_id"]);
-                                                                \app\models\Utilities::putMessageLogFile('ordenpagoid: '.$opag_id);
-                                                                $respsolinsaldo = $modsinsaldos->consultaIncripcionSaldos($resp_idsol["sins_id"], $opag_id);
-                                                                    if ($respsolinsaldo["sinsa_id"] > 0) {
-                                                                        if ($respsolinsaldo["sinsa_saldo"] > 0) {
-                                                                            $sinsa_estado_saldofavor = 'E';
-                                                                            $sinsa_estado_saldoconsumido = 'P';
-                                                                        }else {
-                                                                            $sinsa_estado_saldofavor = 'U';
-                                                                            $sinsa_estado_saldoconsumido = 'C';
-                                                                        }
-                                                                        $respactsolinsaldo = $modsinsaldos->actualizarEstadosSaldos($respsolinsaldo["sinsa_id"], $sinsa_estado_saldofavor, $sinsa_estado_saldoconsumido, $usuario);
-                                                                    }
                                                                 }
                                                             }
                                                          }
@@ -654,6 +640,24 @@ class PagosController extends \app\components\CController {
                                 }
                             } //fin de actualizar detalle cargo
                         } //fin de obtener registros de desglose
+                        //AQUI ACTUALIZAR ESTADOS estado_de_uso, solicitud_inscripcion_saldos
+                        //\app\models\Utilities::putMessageLogFile('solinscr_id: '.$resp_idsol["sins_id"]);
+                        //\app\models\Utilities::putMessageLogFile('ordenpagoid: '.$opag_id);
+                        $respsolinsaldo = $modsinsaldos->consultaIncripcionSaldos($resp_idsol["sins_id"], $opag_id);
+                        //\app\models\Utilities::putMessageLogFile('$respsolinsaldo["sinsa_id"]: '.$respsolinsaldo["sinsa_id"]);
+                        //\app\models\Utilities::putMessageLogFile('$respsolinsaldo["sinsa_saldo"]: '.$respsolinsaldo["sinsa_saldo"]);
+                        if ($respsolinsaldo["sinsa_id"] > 0) {
+                                if ($respsolinsaldo["sinsa_saldo"] > 0) {
+                                    //\app\models\Utilities::putMessageLogFile('entre ifsss: ');
+                                    $sinsa_estado_saldofavor = 'E';
+                                    $sinsa_estado_saldoconsumido = 'P';
+                                }else {
+                                    //\app\models\Utilities::putMessageLogFile('entre elssess: ');
+                                    $sinsa_estado_saldofavor = 'U';
+                                    $sinsa_estado_saldoconsumido = 'C';
+                                }
+                                $respactsolinsaldo = $modsinsaldos->actualizarEstadosSaldos($respsolinsaldo["sinsa_id"], $sinsa_estado_saldofavor, $sinsa_estado_saldoconsumido, $usuario_aprueba);
+                            }
                     } //fin  $banderacrea
                     else { //En el caso cuando no aprueba el pago.
                         //actualizar en detalle_cargo la gestión realizada.
@@ -684,7 +688,7 @@ class PagosController extends \app\components\CController {
                 $transaction->rollback();
                 $transaction2->rollback();
                 $message = array(
-                    "wtmessage" => Yii::t("notificaciones", "Error al grabar." . $mensaje),
+                    "wtmessage" => Yii::t("notificaciones", "Error al guardar." . $mensaje),
                     "title" => Yii::t('jslang', 'Success'),
                 );
                 echo Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Sucess"), false, $message);

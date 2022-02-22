@@ -10,8 +10,8 @@ use app\modules\academico\Module as aspirante;
 academico::registerTranslations();
 financiero::registerTranslations();
 aspirante::registerTranslations();
-//print_r($arr_solicitudesp);
-//print_r('ree '. $precio_dect["precio"]);
+//print_r($arr_descuento);
+//print_r( $resp_solicitudescuento['ddit_id']);
 if($tiene_desct == '1'){
     $preciofinal = $precio_dect["precio"];
 }else {

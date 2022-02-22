@@ -204,7 +204,7 @@ class SolicitudInscripcionSaldos extends \yii\db\ActiveRecord
                         sinsa_estado_saldoconsumido
                 FROM " . $con->dbname . ".solicitud_inscripcion_saldos
                 WHERE sins_id = :sins_id
-                      AND opag_id :opag_id
+                      AND opag_id = :opag_id
                       AND sinsa_estado = :estado
                       AND sinsa_estado_logico = :estado";
 

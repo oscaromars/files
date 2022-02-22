@@ -432,7 +432,7 @@ class SolicitudesController extends \app\components\CController {
                 if ($resp_precio) {
                     if ($nint_id < 3) { //GViteri: para grado y posgrado los items que corresponden a inscripción, está abierto la caja de texto hasta un valor tope.
                         if ($nint_id == 1) {
-                            $ming_id = null;
+                            $ming_id = null; //AQUI POR QUE SE GUARDA NULO EN GRADO ???
                         }
                         if ($ite_id == 155 or $ite_id == 156 or $ite_id == 157 or $ite_id == 10) {
                             $resp_precios_maximos = $mod_solins->ValidarPrecioXitem($ite_id);

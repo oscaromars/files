@@ -202,7 +202,7 @@ function enviardata() {
     arrParams.vista = $('#txth_vista').val();
     arrParams.empresa = $('#txth_empid').val();
     arrParams.observacion = $('#txt_observa').val();
-
+    arrParams.sinsid = $('#txth_sinsid').val();
     if (parseFloat(arrParams.pago) > parseFloat(arrParams.totpago))
     {
         alert("Está tratando de ingresar un pago mayor al valor de su servicio. $" + parseFloat(arrParams.totpago));

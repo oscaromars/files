@@ -629,9 +629,9 @@ class PagosController extends \app\components\CController {
                                                                     $resp_malla_academico_estudiante = $mod_Estudiante->insertMallaAcademicoEst($maca_id['maca_id'],$per_id);
                                                                     $pmac_id=$mod_Estudiante->insertPromedioMallaAcademicoEst($per_id);
                                                                 //AQUI ACTUAIZAR ESTADOS estado_de_uso, solicitud_inscripcion_saldos
-                                                                \app\models\Utilities::putMessageLogFile('solinscr_id: '.$sins_id);
+                                                                \app\models\Utilities::putMessageLogFile('solinscr_id: '.$resp_idsol["sins_id"]);
                                                                 \app\models\Utilities::putMessageLogFile('ordenpagoid: '.$opag_id);
-                                                                $respsolinsaldo = $modsinsaldos->consultaIncripcionSaldos($sins_id, $opag_id);
+                                                                $respsolinsaldo = $modsinsaldos->consultaIncripcionSaldos($resp_idsol["sins_id"], $opag_id);
                                                                     if ($respsolinsaldo["sinsa_id"] > 0) {
                                                                         if ($respsolinsaldo["sinsa_saldo"] > 0) {
                                                                             $sinsa_estado_saldofavor = 'E';

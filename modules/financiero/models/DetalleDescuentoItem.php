@@ -235,27 +235,35 @@ class DetalleDescuentoItem extends \app\modules\financiero\components\CActiveRec
     public function consultarDesctoxunidadmodalidadingreso($uaca_id, $mod_id, $ming_id) {
         $con = \Yii::$app->db_facturacion;
         $estado = 1;
-        $sql = "SELECT ddi.ddit_id as id, ddi.ddit_descripcion as name
-                FROM " . $con->dbname . ".detalle_descuento_item ddi
-                INNER JOIN " . $con->dbname . ".descuento_item di on di.dite_id = ddi.dite_id
-                INNER JOIN " . $con->dbname . ".item_metodo_unidad i on i.ite_id = di.ite_id
-                WHERE i.uaca_id = :uaca_id
-                    AND i.mod_id = :mod_id
-                    AND i.ming_id = :ming_id
-                    AND i.imni_estado = :estado
-                    AND i.imni_estado_logico = :estado
-                    AND ddi.ddit_estado_descuento = 'A'
-                    AND now() between ddi.ddit_finicio AND ifnull(ddi.ddit_ffin, now())
-                    AND di.dite_estado = :estado
-                    AND di.dite_estado_logico = :estado
-                    AND ddi.ddit_estado = :estado
-                    AND ddi.ddit_estado_logico = :estado
+        if(!empty($ming_id))
+        {
+            $metodo = "AND i.ming_id = :ming_id";
+        }
+        $sql =  "SELECT ddi.ddit_id as id, ddi.ddit_descripcion as name
+                 FROM " . $con->dbname . ".detalle_descuento_item ddi
+                 INNER JOIN " . $con->dbname . ".descuento_item di on di.dite_id = ddi.dite_id
+                 INNER JOIN " . $con->dbname . ".item_metodo_unidad i on i.ite_id = di.ite_id
+                 WHERE i.uaca_id = :uaca_id
+                 AND i.mod_id = :mod_id ";
+                 // AND i.ming_id = :ming_id
+
+        $sql .= " AND i.imni_estado = :estado
+                  AND i.imni_estado_logico = :estado
+                  AND ddi.ddit_estado_descuento = 'A'
+                  AND now() between ddi.ddit_finicio AND ifnull(ddi.ddit_ffin, now())
+                  AND di.dite_estado = :estado
+                  AND di.dite_estado_logico = :estado
+                  AND ddi.ddit_estado = :estado
+                  AND ddi.ddit_estado_logico = :estado
                 ORDER BY name asc";
         $comando = $con->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
         $comando->bindParam(":uaca_id", $uaca_id, \PDO::PARAM_INT);
         $comando->bindParam(":mod_id", $mod_id, \PDO::PARAM_INT);
-        $comando->bindParam(":ming_id", $ming_id, \PDO::PARAM_INT);
+        if(!empty($ming_id))
+        {
+            $comando->bindParam(":ming_id", $ming_id, \PDO::PARAM_INT);
+        }
         $resultData = $comando->queryAll();
         return $resultData;
     }

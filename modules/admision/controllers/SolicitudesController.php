@@ -2464,7 +2464,8 @@ class SolicitudesController extends \app\components\CController {
         $arr_metodos = $mod_metodo->consultarMetodoIngNivelInt($resp_solicitudesp['uaca_id']);
         $arr_carrera = $modcanal->consultarCarreraModalidad($resp_solicitudesp['uaca_id'], $resp_solicitudesp['mod_id']);
         //Descuentos y precios.
-        $resp_item = $modItemMetNivel->consultaritemsol($resp_solicitudesp['uaca_id'], $resp_solicitudesp['mod_id'], $resp_solicitudesp['ite_id']);
+        //$resp_item = $modItemMetNivel->consultaritemsol($resp_solicitudesp['uaca_id'], $resp_solicitudesp['mod_id'], $resp_solicitudesp['ite_id']);
+        $resp_item = $modItemMetNivel->consultarXitemPrecio($resp_solicitudesp['uaca_id'], $resp_solicitudesp['mod_id'], $resp_solicitudesp['ming_id'], $resp_solicitudesp['eaca_id']);
         //$arr_descuento = $modDescuento->consultarDesctoxitem($resp_solicitudesp['ite_id']);
         $arr_descuento = $modDescuento->consultarDesctoxunidadmodalidadingreso($resp_solicitudesp['uaca_id'],$resp_solicitudesp['mod_id'],$resp_solicitudesp['ming_id']);
         $arr_convempresa = $mod_conempresa->consultarConvenioEmpresa();

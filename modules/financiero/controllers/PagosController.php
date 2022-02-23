@@ -888,7 +888,7 @@ class PagosController extends \app\components\CController {
 
     public function actionIndexadm() {
         $per_id = @Yii::$app->session->get("PB_perid"); //@Yii::$app->session->get("PB_iduser");
-        \app\models\Utilities::putMessageLogFile('perId en Indexadm: ' . $per_id);
+        //\app\models\Utilities::putMessageLogFile('perId en Indexadm: ' . $per_id);
         $model_interesado = new Interesado();
         $resp_gruporol = $model_interesado->consultagruporol($per_id);
         $mod_pago = new OrdenPago();
@@ -960,7 +960,7 @@ class PagosController extends \app\components\CController {
         $per_id = Yii::$app->session->get("PB_perid");
         $model_interesado = new Interesado();
         $resp_gruporol = $model_interesado->consultagruporol($per_id);
-        \app\models\Utilities::putMessageLogFile('rol:' . $resp_gruporol[0]);
+        //\app\models\Utilities::putMessageLogFile('rol:' . $resp_gruporol[0]);
 
         $per_ids = base64_decode($_GET['perid']);
         $sol_id = base64_decode($_GET['id_sol']);

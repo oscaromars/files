@@ -466,5 +466,5 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
         <div class="col-md-2">
             <a id="sendInformacionAspirante2" href="javascript:" class="btn btn-primary btn-block"> <?= Yii::t("formulario", "Next") ?> <span class="glyphicon glyphicon-menu-right"></span></a>
         </div>
-    </div>        
+    </div>
 </form>

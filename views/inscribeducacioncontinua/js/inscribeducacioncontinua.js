@@ -9,15 +9,16 @@
  * Created: Kleber Loayza(kloayza@uteg.edu.ec)
  * date: Oct/23/18
  */
-/*function habilitarSecciones() {
-    var pais = $('#cmb_pais_dom').val();
+function habilitarSecciones() {
+    //var pais = $('#cmb_pais_dom').val();
+    var pais = 1;
     var unidad = $('#cmb_unidad_solicitud').val();
     if ((pais == 1) && (unidad == 1)) {
         $('#divCertvota').css('display', 'block');
     } else {
         $('#divCertvota').css('display', 'none');
     }
-}*/
+}
 $(document).ready(function () {
     // para mostrar codigo de area
     $('#btn_pago_i').css('display', 'none');
@@ -49,7 +50,7 @@ $(document).ready(function () {
         }, true);
     });
     $('#sendInformacionAspirante').click(function () {
-        //habilitarSecciones();
+        habilitarSecciones();
         if ($('#txth_twin_id').val() == 0) {
             guardarInscripcion('Create', '1');
         } else {
@@ -60,6 +61,7 @@ $(document).ready(function () {
     $('#sendInformacionAspirante2').click(function () {
         var error = 0;
         //var pais = $('#cmb_pais_dom').val();
+        var pais = 1;
         if ($("#chk_mensaje1").prop("checked") && $("#chk_mensaje2").prop("checked")) {
             error = 0;
         } else {
@@ -284,7 +286,7 @@ $(document).ready(function () {
         $('#txt_ruc_fac').removeClass("PBvalidation");
         $('#txt_correo_fac').removeClass("PBvalidation");
     });
-    /*$('#paso2next').click(function () {
+    $('#paso2next').click(function () {
         $("a[data-href='#paso2']").attr('data-toggle', 'none');
         $("a[data-href='#paso2']").parent().attr('class', 'disabled');
         $("a[data-href='#paso2']").attr('data-href', $("a[href='#paso2']").attr('href'));
@@ -292,8 +294,8 @@ $(document).ready(function () {
         $("a[data-href='#paso3']").attr('data-toggle', 'tab');
         $("a[data-href='#paso3']").attr('href', $("a[data-href='#paso3']").attr('data-href'));
         $("a[data-href='#paso3']").trigger("click");
-    });*/
-    /*$('#paso3back').click(function () {
+    });
+    $('#paso3back').click(function () {
         $("a[data-href='#paso3']").attr('data-toggle', 'none');
         $("a[data-href='#paso3']").parent().attr('class', 'disabled');
         $("a[data-href='#paso3']").attr('data-href', $("a[href='#paso3']").attr('href'));
@@ -309,7 +311,7 @@ $(document).ready(function () {
         $('#txt_pasaporte_fac').removeClass("PBvalidation");
         $('#txt_ruc_fac').removeClass("PBvalidation");
         $('#txt_correo_fac').removeClass("PBvalidation");
-    });*/
+    });
 
     function AparecerDocumento() {
         if ($('#cmb_metodo_solicitud').val() == 4) {
@@ -736,7 +738,8 @@ function dataInscripPart1(ID) {
     }
     objDat.pges_empresa = $('#txt_empresa').val();
     objDat.pges_correo = $('#txt_correo').val();
-    objDat.pais = $('#cmb_pais_dom option:selected').val();
+    //objDat.pais = $('#cmb_pais_dom option:selected').val();
+    objDat.pais = 1;
     objDat.pges_celular = $('#txt_celular').val();
     objDat.unidad_academica = $('#cmb_unidad_solicitud option:selected').val();
     objDat.modalidad = $('#cmb_modalidad_solicitud option:selected').val();

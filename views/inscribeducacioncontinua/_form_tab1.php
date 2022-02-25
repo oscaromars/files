@@ -61,7 +61,7 @@ use app\components\CFileInputAjax;
         <div class="form-group">
             <label for="txt_empresa" class="col-lg-3 col-md-3 col-sm-3 col-xs-3 control-label"><?= Yii::t("formulario", "Company") ?> <span class="text-danger">*</span></label>
             <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9">
-                <input type="text" class="form-control keyupmce" id="txt_empresa" data-type="" data-keydown="true" placeholder="<?= Yii::t("formulario", "Company") ?>">
+                <input type="text" class="form-control PBvalidation keyupmce" id="txt_empresa" data-type="" data-keydown="true" placeholder="<?= Yii::t("formulario", "Company") ?>">
             </div>
         </div>
     </div>-->
@@ -73,14 +73,14 @@ use app\components\CFileInputAjax;
             </div>
         </div>
     </div>
-    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    <!--<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
             <label for="cmb_pais_dom" class="col-lg-3 col-md-3 col-sm-3 col-xs-3 control-label"><?= Yii::t("formulario", "Country") ?> <span class="text-danger">*</span></label>
             <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9">
                 <?= Html::dropDownList("cmb_pais_dom", 1, $arr_pais_dom, ["class" => "form-control", "id" => "cmb_pais_dom"]) ?>
             </div>
         </div>
-    </div>
+    </div>-->
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
             <label for="txt_celular" class="col-lg-3 col-md-3 col-sm-3 col-xs-3 control-label"><?= Yii::t("formulario", "CellPhone") ?> <span class="text-danger">*</span></label>

@@ -278,7 +278,7 @@ class EstudianteController extends \app\components\CController {
                             $usgrol_id = $usergrol->insertarUsuaGrolEper($con2, $parametros, $keys, 'usua_grol_eper');
                             // guardar en tabla estudiante
                             if ($usgrol_id) {
-                                $resp_estudiante = $mod_Estudiante->insertarEstudiante($per_id, $matricula, $categoria, $usu_autenticado, null, $fecha, null);
+                                $resp_estudiante = $mod_Estudiante->insertarEstudiante($per_id/*, $matricula*/, $categoria, $usu_autenticado, null, $fecha, null);
                                 if ($resp_estudiante) {
                                     $resp_estcarreraprograma = $mod_Estudiante->consultarEstcarreraprogrma($resp_estudiante);
                                     if (!empty($resp_estcarreraprograma["ecpr_id"])) {
@@ -315,7 +315,7 @@ class EstudianteController extends \app\components\CController {
                             if ($respUsugrol) {
                                 $respUsugrol = $usergrol->actualizarRolEstudiante($resp_persona["usu_id"]);
                                 // guardar en tabla estudiante
-                                $resp_estudiante = $mod_Estudiante->insertarEstudiante($per_id, $matricula, $categoria, $usu_autenticado, null, $fecha, null);
+                                $resp_estudiante = $mod_Estudiante->insertarEstudiante($per_id, /*$matricula,*/ $categoria, $usu_autenticado, null, $fecha, null);
                                 if ($resp_estudiante) {
                                     $resp_estcarreraprograma = $mod_Estudiante->consultarEstcarreraprogrma($resp_estudiante);
                                     if ($resp_estcarreraprograma["ecpr_id"] == "") {
@@ -452,7 +452,7 @@ class EstudianteController extends \app\components\CController {
                 $resp_mestuni = $mod_Modestuni->consultarModalidadestudiouni($uaca_id, $mod_id, $eaca_id);
                 if ($resp_mestuni["meun_id"] > 0) {
                     // modifica la tabla estudiante
-                    $resp_estudiante = $mod_Estudiante->updateEstudiante($est_id, $matricula, $categoria, $usu_autenticado, $fecha);
+                    $resp_estudiante = $mod_Estudiante->updateEstudiante($est_id, /*$matricula,*/ $categoria, $usu_autenticado, $fecha);
                     if ($resp_estudiante) {
                         // consultar si existe el id de estudiante_carrera_programa no existe insertar, si existe modificar
                         $resp_estucarrera = $mod_Estudiante->consultarEstcarreraprogrma($est_id);

@@ -76,7 +76,7 @@ use yii\bootstrap\Progress;
                     },
                 ],
             ],
-             [
+             /*[
                 'class' => 'yii\grid\ActionColumn',
                 'header' => 'Transferir',
                 'contentOptions' => ['style' => 'text-align: center;'],
@@ -92,7 +92,7 @@ use yii\bootstrap\Progress;
                         }
                     },
                 ],
-            ],
+            ],*/
         ],
     ])
 ?>

@@ -1,6 +1,22 @@
 $(document).ready(function () {
+  showLoadingPopup();
+  if ( $('#cmb_periodo_rc option:selected').val() > 0 ){ 
+  if (  $('#cmb_unidad_rc').val()  > 0 ){ 
+  if ( $('#cmb_modalidad_rc option:selected').val()  > 0 ){ 
+  if ( $('#cmb_materia option:selected').val()   > 0 ){  
+  if ( $('#cmb_parcial').val()  > 0 ){ 
+  if ( $('#cmb_profesor_rc').val()  > 0 ){ 
+   
+actualizarGridRegistro();
+
+  }}}}}}
+   hideLoadingPopup();
+
     $('#btn_guardarcalificacion').click(function() {
         cargarDocumento();
+    });
+    $('#btn_limpiarbuscador').click(function () {
+        limpiarBuscador();
     });
 
     /*
@@ -48,7 +64,8 @@ $(document).ready(function () {
 
         var arrParams = new Object();
         arrParams.paca_id = $('#cmb_periodo option:selected').val();
-        arrParams.per_id = $('#cmb_profesor option:selected').val();
+        arrParams.pro_id = $('#cmb_profesor option:selected').val();
+        arrParams.mod_id = $('#cmb_modalidad_m option:selected').val();
         arrParams.getasignaturas = true;
 
         requestHttpAjax(link, arrParams, function (response) {
@@ -64,7 +81,8 @@ $(document).ready(function () {
 
         var arrParams = new Object();
         arrParams.paca_id = $('#cmb_periodo option:selected').val();
-        arrParams.per_id  = $('#cmb_profesor option:selected').val();
+        arrParams.pro_id  = $('#cmb_profesor option:selected').val();
+        arrParams.mod_id  = $('#cmb_modalidad_m option:selected').val();
 
         arrParams.getasignaturas = true;
         
@@ -86,6 +104,10 @@ $(document).ready(function () {
 
      $('#btn_buscarEducativa').click(function() {    
         searchEducativa();
+    });
+
+     $('#btn_buscarEducativaulas').click(function() {    
+        searchEducativaulas();
     });
 
      $('#cmb_profesor_clfc').change(function () {
@@ -233,6 +255,12 @@ $(document).ready(function () {
     
 });//Document ready
 
+
+function limpiarBuscador(){
+    //alert($('#txth_base').val());
+    window.location.href = $('#txth_base').val() + "/academico/calificacionregistrodocente/index";
+ }
+
 function setComboAsignaturas(arr_data, element_id) {
     var option_arr = "";
     for (var i = 0; i < arr_data.length; i++) {
@@ -279,8 +307,9 @@ function cargarDocumento() {
 
     arrParams.asi_id = $('#cmb_asig option:selected').val();
     arrParams.ecal_id = $('#cmb_parcial option:selected').val();
-    arrParams.per_id = $('#cmb_profesor option:selected').val();
+    arrParams.pro_id = $('#cmb_profesor option:selected').val();
     arrParams.paca_id = $('#cmb_periodo option:selected').val();
+    arrParams.mod_id = $('#cmb_modalidad_m option:selected').val();
     arrParams.archivo = $('#txth_doc_adj_calificacion2').val() + "." + $('#txth_doc_adj_calificacion').val().split('.').pop();
 
     // console.log(arrParams);
@@ -340,6 +369,7 @@ function searchCalificacionEstudiantes() {
     modalidad = $("#cmb_modalidad").val();
     materia = $("#cmb_materiabus").val();
     profesor = $("#cmb_profesor_clfc").val();
+    estudiante = $("#cmb_buscarest").val();
 
     if(profesor == null ||  profesor == -1){
         var mensaje = {wtmessage: "No hay un profesor o no ha sido asignado", title: "Exito"};
@@ -351,7 +381,7 @@ function searchCalificacionEstudiantes() {
         //showLoadingPopup();
         // ver esa funcion PbGridView, se adapte a GridView
         $('#Tbg_Calificaciones').PbGridView('applyFilterData', { 'profesor': profesor,'periodo': periodo,
-         'materia': materia, 'unidad': unidad, 'modalidad': modalidad,'PBgetFilter': true});
+         'materia': materia, 'unidad': unidad, 'modalidad': modalidad,'estudiante': estudiante,'PBgetFilter': true});
         //setTimeout(hideLoadingPopup, 2000);
     }
 }
@@ -361,10 +391,11 @@ function searchEducativa() {
     unidad = $("#cmb_unidad_all").val();
     modalidad = $("#cmb_modalidad_all").val();
     parcial = $("#cmb_parcial_all").val();
+    nparcial ="cmb_parcial_all";
 
  if (parcial == 0) {
-
- showAlert('FALSE', 'success', {"wtmessage": 'Elija Parcial', "title": 'Información'});
+document.getElementById(nparcial).style.borderColor = '#aa0000';
+ //showAlert('FALSE', 'success', {"wtmessage": 'Elija Parcial', "title": 'Información'});
 
  } else {
 
@@ -372,6 +403,25 @@ window.location.href = $('#txth_base').val() + "/academico/calificacionregistrod
  
   }
  
+}
+
+function searchEducativaulas() {
+    periodo = $("#cmb_periodo_aul").val();
+    unidad = $("#cmb_unidad_aul").val();
+    modalidad = $("#cmb_modalidad_aul").val();
+    aula = $("#cmb_aulas_aul").val();
+    parcial = $("#cmb_parcial_aul").val();
+
+window.location.href = $('#txth_base').val() + "/academico/calificacionregistrodocente/transferiraulas?paca="+periodo+"&unidad="+unidad+"&modalidad="+modalidad+"&aula="+aula+"&parcial="+parcial;
+ 
+
+}
+
+
+function transferAula(id,ecal_id) {
+  showLoadingPopup();
+window.location.href = $('#txth_base').val() + "/academico/calificacionregistrodocente/transferer?eduasid="+id+"&parcial="+ecal_id;
+  //hideLoadingPopup();
 }
 
 function activateCron(cronid) {
@@ -383,12 +433,13 @@ function activateCron(cronid) {
  //alert( element );
   currente = $("#F2").val();
   idf= "#F"+cronid;
-  currente=$(idf).val();
+  id= "F"+cronid;
+  currente=$(idf).val();;
 
  if (currente == undefined  ||  currente == '') {
+document.getElementById(id).style.borderColor = '#aa0000';
 
-
- showAlert('FALSE', 'success', {"wtmessage": 'Seleccione la fecha a ejecutarse!', "title": 'Información'});
+ //showAlert('FALSE', 'success', {"wtmessage": 'Seleccione la fecha a ejecutarse!', "title": 'Información'});
 
  
 }else { 
@@ -428,13 +479,13 @@ var table = '';
 function actualizarGridRegistro(dready = 0) {
     //Listado de parametros para ser enviados al servidor para desplegar la inforacion del grid
     var arrParams       = new Object();
-    arrParams.periodo   = $('#cmb_periodo option:selected').val();
-    arrParams.uaca_id   = $('#cmb_unidad').val();
-    arrParams.mod_id    = $('#cmb_modalidad option:selected').val();  
+    arrParams.periodo   = $('#cmb_periodo_rc option:selected').val();
+    arrParams.uaca_id   = $('#cmb_unidad_rc').val();
+    arrParams.mod_id    = $('#cmb_modalidad_rc option:selected').val();  
     arrParams.materia   = $('#cmb_materia option:selected').val();  
     arrParams.parcial   = $('#cmb_parcial').val();
     arrParams.profesor  = $('#cmb_profesor_rc').val();
-    arrParams.grupo     = $('#frm_arr_grupos').val();
+    arrParams.grupo     = $('#frm_arr_grupo').val();
 
     //URL para actualizar el grid
     var link = $('#txth_base').val() + "/academico/calificacionregistrodocente/traermodelo";

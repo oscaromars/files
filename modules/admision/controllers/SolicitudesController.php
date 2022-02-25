@@ -29,7 +29,12 @@ use app\modules\academico\Module as academico;
 use app\modules\financiero\Module as financiero;
 use app\modules\financiero\models\Secuencias;
 use app\modules\admision\models\ConvenioEmpresa;
+use app\modules\academico\models\NumeroMatricula;
+use app\modules\admision\models\SolicitudInscripcionModificar;
+use app\modules\admision\models\SolicitudInscripcionSaldos;
 use app\models\Usuario;
+use app\models\InscripcionGrado;
+use app\models\InscripcionPosgrado;
 use yii\base\Security;
 use app\models\Empresa;
 use app\models\UsuaGrolEper;
@@ -123,6 +128,8 @@ class SolicitudesController extends \app\components\CController {
         $emp_id = base64_decode($_GET['empid']);
 
         $mod_solins = new SolicitudInscripcion();
+        $mod_matgrado = new InscripcionGrado();
+        $mod_matposgr = new InscripcionPosgrado();
         $personaData = $mod_solins->consultarInteresadoPorSol_id($sins_id);
         $nacionalidad = $personaData["per_nac_ecuatoriano"];
         $fechas = $mod_solins->consultarFechadmitido($int_id, $sins_id);
@@ -155,6 +162,14 @@ class SolicitudesController extends \app\components\CController {
         $resp_condcurriculum = $mod_solins->consultarSolnoaprobada(7, $tiponacext);
         $resp_condcon = $mod_solins->consultarSolnoaprobada(8, $tiponacext);
 
+        // consultar imagenes del fm de matriculacion
+        if ($personaData['uaca_id'] == 1) { //grado
+            //consultar en inscripciongrado
+            $resp_docinscripcion = $mod_matgrado->ObtenerdocumentosInscripcionGrado($per_id);
+        } else { // posgrado
+             //consultar en inscripciongrado
+             $resp_docinscripcion = $mod_matposgr->ObtenerdocumentosInscripcionPosgrado($per_id);
+        }
         return $this->render('view', [
                     "revision" => array("2" => Yii::t("formulario", "APPROVED"), "4" => Yii::t("formulario", "Not approved")),
                     "personaData" => $personaData,
@@ -181,6 +196,7 @@ class SolicitudesController extends \app\components\CController {
                     "arr_condcon" => $resp_condcon,
                     "arr_condfoto" => $resp_condfoto,
                     "arr_condcurriculum" =>$resp_condcurriculum,
+                    "arr_docinscripcion" =>$resp_docinscripcion,
         ]);
     }
 
@@ -242,11 +258,12 @@ class SolicitudesController extends \app\components\CController {
             }
             if (isset($data["getdescuento"])) {
                 if (($data["unidada"] == 1) or ($data["unidada"] == 2)) {
-                    $resItems = $modItemMetNivel->consultarXitemMetniv($data["unidada"], $data["moda_id"], $data["metodo"], $data["empresa_id"], $data["carrera_id"]);
-                    $descuentos = $modDescuento->consultarDesctoxitem($resItems["ite_id"]);
+                    //$resItems = $modItemMetNivel->consultarXitemMetniv($data["unidada"], $data["moda_id"], $data["metodo"], $data["empresa_id"], $data["carrera_id"]);
+                    //$descuentos = $modDescuento->consultarDesctoxitem($resItems["ite_id"]);
+                    $descuentos = $modDescuento->consultarDesctoxunidadmodalidadingreso($data["unidada"], $data["moda_id"], $data["metodo"]);
                 } else {
                     //\app\models\Utilities::putMessageLogFile('item:'. $data["ite_id"]);
-                    $descuentos = $modDescuento->consultarDescuentoXitemUnidad($data["unidada"], $data["moda_id"], $data["ite_id"]);
+                    $descuentos = $modDescuento->consultarDescuentoXitemUnidad($data["unidada"], $data["moda_id"], $data["metodo"]);
                 }
                 $message = array("descuento" => $descuentos);
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
@@ -307,7 +324,8 @@ class SolicitudesController extends \app\components\CController {
         $arr_carrera = $modcanal->consultarCarreraModalidad(1, 1);
         //Descuentos y precios.
         $resp_item = $modItemMetNivel->consultarXitemPrecio(1, 1, 1, 2, 1);
-        $arr_descuento = $modDescuento->consultarDesctoxitem($resp_item["ite_id"]);
+        //$arr_descuento = $modDescuento->consultarDesctoxitem($resp_item["ite_id"]);
+        $arr_descuento = $modDescuento->consultarDesctoxunidadmodalidadingreso(0,0,0);
         $arr_convempresa = $mod_conempresa->consultarConvenioEmpresa();
         return $this->render('new', [
                     "arr_unidad" => ArrayHelper::map($arr_unidadac, "id", "name"),
@@ -414,7 +432,7 @@ class SolicitudesController extends \app\components\CController {
                 if ($resp_precio) {
                     if ($nint_id < 3) { //GViteri: para grado y posgrado los items que corresponden a inscripción, está abierto la caja de texto hasta un valor tope.
                         if ($nint_id == 1) {
-                            $ming_id = null;
+                            $ming_id = null; //AQUI POR QUE SE GUARDA NULO EN GRADO ???
                         }
                         if ($ite_id == 155 or $ite_id == 156 or $ite_id == 157 or $ite_id == 10) {
                             $resp_precios_maximos = $mod_solins->ValidarPrecioXitem($ite_id);
@@ -513,7 +531,12 @@ class SolicitudesController extends \app\components\CController {
                     $fecha_ini = date(Yii::$app->params["dateByDefault"]);
                     $resp_dpago = $mod_ordenpago->insertarDesglosepago($resp_opago, $ite_id, $val_total, 0, $val_total, $fecha_ini, null, $estadopago, $usu_id);
                     if ($resp_dpago) {
-                        $exito = 1;
+                        $sinmo_contador = 0;
+                        $mod_solinsmodifica = new SolicitudInscripcionModificar();
+                        $resp_modinscripcion = $mod_solinsmodifica->insertarIncripcionModificar($id_sins, $sinmo_contador, $usu_id);
+                        if ($resp_modinscripcion) {
+                          $exito = 1;
+                        }
                     }
                 }
             }
@@ -635,6 +658,8 @@ class SolicitudesController extends \app\components\CController {
         $mod_solins = new SolicitudInscripcion();
         $mod_ordenpago = new OrdenPago();
         $mod_desglose = new DesglosePago();
+        $mod_solinsmodifica = new SolicitudInscripcionModificar();
+        $mod_solinsaldos = new SolicitudInscripcionSaldos();
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
             $usuario = @Yii::$app->user->identity->usu_id;
@@ -645,27 +670,159 @@ class SolicitudesController extends \app\components\CController {
             $mest_id = null;
             $eaca_id = $data["carrera"];
             /* Datos Orden pago */
-            // al parecer el precio es un codigo difernete por ahor
-            // lo que tiene la caja de texto se actualiza, luego hay que
-            // revisar esa logica
-            $opag_subtotal = $data["precio"];
-            $opag_total = $data["precio"];
             /* Datos desglose pago $opag_subtotal y $opag_total*/
             $opag_id = base64_decode($data["opag_id"]);
             $ite_id = $data["ite_id"];
-
             $con = \Yii::$app->db_captacion;
             $con1 = \Yii::$app->db_facturacion;
             $transaction = $con->beginTransaction();
             $transaction1 = $con1->beginTransaction();
-            try {
+            try
+            {
+                // consultar si la solicitud se puede modificar contador de la tabla debe ser 0
+                $respSolinsmod = $mod_solinsmodifica->consultaIncripcionModificar($sins_id);
+                //\app\models\Utilities::putMessageLogFile('sins_idssst: ' . $sins_id);
+                //\app\models\Utilities::putMessageLogFile('respSolinsmod["sinmo_contador"]: ' . $respSolinsmod["sinmo_contador"]);
+                // 1.- AQUI SE CONSULTAR VALOR ANTERIOR ANTES DE MODIFICARLOS
+                // opg_total de la tabla  orden pago (este valor aqui se guarda ya incluso
+                //con descuento)
+                $resp_Valoranteriopago = $mod_ordenpago->consultarValorpagoxordenid($opag_id);
+                \app\models\Utilities::putMessageLogFile('resp_Valoranteriopago["total"]: ' . $resp_Valoranteriopago["total"]);
+                if ($respSolinsmod["sinmo_contador"] == 0) {
+                /*beca y descuento*/
+                    $beca = $data["beca"];
+                    $descuento = $data["descuento_id"];
+                    $marca_desc = $data["marcadescuento"];
+                    $convenio = $data["cemp_id"];
+                    // precio
+                    $precioGrado = $data["precio"];
+                    /*if ($marca_desc == '1' && $marca_desc == '0') {
+                        $valida = 1;
+                    }*/
+                    $errorprecio = 1;
+                    if ($beca == "1") {
+                        $precio = 0;
+                    }else {
+                        $beca = null;
+                        $resp_precio = $mod_solins->ObtenerPrecioXitem($ite_id);
+                        if ($resp_precio) {
+                            if ($uaca_id < 3) { //GViteri: para grado y posgrado los items que corresponden a inscripción, está abierto la caja de texto hasta un valor tope.
+                                if ($uaca_id == 1) {
+                                    $ming_id = null;
+                                }
+                                if ($ite_id == 155 or $ite_id == 156 or $ite_id == 157 or $ite_id == 10) {
+                                    $resp_precios_maximos = $mod_solins->ValidarPrecioXitem($ite_id);
+                                    if ($resp_precios_maximos) {
+                                        if ($precioGrado > $resp_precios_maximos["precio_mat"] or $precioGrado < $resp_precios_maximos["precio_ins"]) {
+                                            $mensaje = 'El precio digitado debe estar entre ' . $resp_precios_maximos["precio_ins"] . ' y ' . $resp_precios_maximos["precio_mat"];
+                                            $errorprecio = 0;
+                                        }
+                                    }
+                                    $precio = $precioGrado;
+                                } else {
+                                    $precio = $resp_precio['precio'];
+                                }
+                            } else {
+                                $precio = $resp_precio['precio'];
+                            }
+                        } else {
+                            $mensaje = 'No existe registrado ningún precio para la unidad, modalidad y método de ingreso seleccionada.';
+                            $errorprecio = 0;
+                        }
+                    }
+                /** */
+                if ($errorprecio != 0) {
                 // modifica solicitud
-                $respsolins = $mod_solins->actualizaSolicitudInscripcion($sins_id, $uaca_id, $mod_id, $eaca_id, $usuario);
+                $respsolins = $mod_solins->actualizaSolicitudInscripcion($sins_id, $uaca_id, $mod_id, $eaca_id, $beca, $usuario);
                 if ($respsolins) { // modifica orden
-                    $resporden = $mod_ordenpago->actualizaOrdenpagoadmision($sins_id, $opag_subtotal, $opag_total, $usuario);
+                    //Se verifica si seleccionó descuento.
+                    $val_descuento = 0;
+                    if (!empty($descuento)) {
+                        $modDescuento = new DetalleDescuentoItem();
+                        $respDescuento = $modDescuento->consultarValdctoItem($descuento);
+                        if ($respDescuento) {
+                            if ($precio == 0) {
+                                $val_descuento = 0;
+                            } else {
+                                if ($respDescuento["ddit_tipo_beneficio"] == 'P') {
+                                    $val_descuento = ($precio * ($respDescuento["ddit_porcentaje"])) / 100;
+                                } else {
+                                    $val_descuento = $respDescuento["ddit_valor"];
+                                }
+                                //Insertar solicitud descuento
+                                if ($val_descuento > 0) {
+                                    //consultar solicitud de descuento
+                                    //$resp_solicitudesp['uaca_id']
+                                    $resp_solicitudescuento = $mod_solins->Consultarsolicitudescuento($sins_id);
+                                    if (!empty($resp_solicitudescuento['sdes_id'])) {
+                                    // si existe modificar
+                                    $resp_SolicDcto = $mod_ordenpago->modificarSolicDscto($sins_id, $descuento, $precio, $respDescuento["ddit_porcentaje"], $respDescuento["ddit_valor"]);
+                                    }else {
+                                    // sino existe crear
+                                    $resp_SolicDcto = $mod_ordenpago->insertarSolicDscto($sins_id, $descuento, $precio, $respDescuento["ddit_porcentaje"], $respDescuento["ddit_valor"]);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    // si al modificar solicitud viene sin descuento
+                    if (empty($descuento)) {
+                        // volver a consultar en  solicitud_descuento y si existe inactivar estados 0
+                        $resp_solicitudescuento = $mod_solins->Consultarsolicitudescuento($sins_id);
+                        if (!empty($resp_solicitudescuento['sdes_id'])) {
+                            // si existe modificar inactivar estados
+                            $resp_solicitudesactivar = $mod_solins->Desactivarsolicitudescuento($sins_id);
+                            }
+                    }
+
+                    $val_total = $precio - $val_descuento;
+                    $resporden = $mod_ordenpago->actualizaOrdenpagoadmision($sins_id, $val_total, $val_total, $usuario);
+
                     if ($resporden) { // modifica desglose pago
-                     $respdesglose = $mod_desglose->actualizaDesglosepago($opag_id, $ite_id, $opag_subtotal, $opag_total, $usuario);
+                     $respdesglose = $mod_desglose->actualizaDesglosepago($opag_id, $ite_id, $val_total, $val_total, $usuario);
                      if ($respdesglose) {
+                        $sinmo_contador = 1; //sinmo_id
+                        //2.- AQUI ANALIZAR ESE INGRESO DE VALORES E INGRESO SALDO
+                        // OBTENER CON LAS CAJAS DE TEXTO LOS VALORES NUEVOS
+                        // SALDO = RESTAR VALOR ANTERIOR - VALOR ACTUAL
+                        $saldomodifica = $resp_Valoranteriopago["total"] - $val_total;
+                        \app\models\Utilities::putMessageLogFile('saldo modifica: ' . $saldomodifica);
+                        if ($respSolinsmod["sinmo_id"] > 0 && $respSolinsmod["sinmo_contador"] == 0) {
+                            //\app\models\Utilities::putMessageLogFile('rentre1: ' . $respSolinsmod["sinmo_contador"]);
+                            //permite crear un registro en la tabla con contador 1
+                            $respSolinsingreso = $mod_solinsmodifica->actualizarIncripcionModificar($respSolinsmod["sinmo_id"], $sins_id, $sinmo_contador, $usuario);
+                            //3.0.- SI GUARDA respSolinsingreso ACTUALIZAR TABLAS SALDOS //OJO ANALIZAR SI TAMBIEN SE GUARDA EL OPAG_ID, YA QUE ESTA AQUI
+                            if ($respSolinsingreso) {
+                                $respSaldosact = $mod_solinsaldos->insertarIncripcionSaldos($sins_id, $opag_id,$resp_Valoranteriopago["total"], $val_total, $saldomodifica, null, null, $usuario);
+                            }else {//ELSE MENSAJE PROBLEMAS AL ACTUALIZAR SALDOS
+                                    $transaction->rollback();
+                                    $transaction1->rollback();
+                                    $message = array(
+                                        "wtmessage" => Yii::t("notificaciones", "Error al actualizar saldos de solicitud de inscripcion." . $mensaje),
+                                        "title" => Yii::t('jslang', 'Bad Request'),
+                                    );
+                                    return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Bad Request"), false, $message);
+                                 }
+                        }else {
+                            //\app\models\Utilities::putMessageLogFile('rentre2: ' . $respSolinsmod["sinmo_contador"]);
+                           // permite modificar por una vez la solicitud y actualiza el contador aunque no este en la tabla de modificacion
+                           $respSolinsingreso = $mod_solinsmodifica->insertarIncripcionModificar($sins_id, $sinmo_contador, $usuario);
+                           //3.1.- SI GUARDA respSolinsingreso ACTUALIZAR TABLAS SALDOS
+                           $respSolinsingreso = $mod_solinsmodifica->actualizarIncripcionModificar($respSolinsmod["sinmo_id"], $sins_id, $sinmo_contador, $usuario);
+                            //3.0.- SI GUARDA respSolinsingreso ACTUALIZAR TABLAS SALDOS //OJO ANALIZAR SI TAMBIEN SE GUARDA EL OPAG_ID, YA QUE ESTA AQUI
+                            if ($respSolinsingreso) {
+                                $respSaldosact = $mod_solinsaldos->insertarIncripcionSaldos($sins_id, $opag_id, $resp_Valoranteriopago["total"], $val_total, $saldomodifica, null, null, $usuario);
+                            }else {//ELSE MENSAJE PROBLEMAS AL ACTUALIZAR SALDOS
+                                    $transaction->rollback();
+                                    $transaction1->rollback();
+                                    $message = array(
+                                        "wtmessage" => Yii::t("notificaciones", "Error al actualizar saldo de solicitud de inscripcion."),
+                                        "title" => Yii::t('jslang', 'Bad Request'),
+                                    );
+                                    return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Bad Request"), false, $message);
+                                 }
+                        }
+                        if ($respSaldosact/*$respSolinsingreso*/) {// ESTA VARIABLE REEMPLAZAR CON LA NUEVA DE ARRIBA PARA GUARDARs
                         $transaction->commit();
                         $transaction1->commit();
                         $message = array(
@@ -677,11 +834,20 @@ class SolicitudesController extends \app\components\CController {
                         $transaction->rollback();
                         $transaction1->rollback();
                         $message = array(
-                            "wtmessage" => Yii::t("notificaciones", "Error al modificar desglsoe pago." . $mensaje),
+                            "wtmessage" => Yii::t("notificaciones", "Error al actualizar contador solicitud de inscripcion." . $mensaje),
                             "title" => Yii::t('jslang', 'Bad Request'),
                         );
                         return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Bad Request"), false, $message);
-                    }
+                     }
+                    }else {
+                        $transaction->rollback();
+                        $transaction1->rollback();
+                        $message = array(
+                            "wtmessage" => Yii::t("notificaciones", "Error al modificar desglose pago." . $mensaje),
+                            "title" => Yii::t('jslang', 'Bad Request'),
+                        );
+                        return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Bad Request"), false, $message);
+                     }
                     } else {
                         $transaction->rollback();
                         $transaction1->rollback();
@@ -700,6 +866,24 @@ class SolicitudesController extends \app\components\CController {
                     );
                     return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Bad Request"), false, $message);
                 }
+            }
+            /** */
+             else {
+                $message = array(
+                    "wtmessage" => Yii::t("notificaciones", "Error al modificar solicitud de inscripcion, por precio." . $mensaje),
+                    "title" => Yii::t('jslang', 'Bad Request'),
+                );
+                return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Bad Request"), false, $message);
+              }
+
+            // else de consulta si puede o no midificar la solicitud
+            }else {
+                $message = array(
+                    "wtmessage" => Yii::t("notificaciones", "Solo se puede modificar 1 vez la solicitud de inscripción."),
+                    "title" => Yii::t('jslang', 'Bad Request'),
+                );
+                return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Bad Request"), false, $message);
+              }
             } catch (Exception $ex) {
                 $transaction->rollback();
                 $message = array(
@@ -1309,6 +1493,8 @@ class SolicitudesController extends \app\components\CController {
         $usuario = new Usuario();
         $security = new Security();
         $usergrol = new UsuaGrolEper();
+        //$mod_numatricula = new NumeroMatricula();
+
         $per_sistema = @Yii::$app->session->get("PB_perid");
         $usu_autenticado = @Yii::$app->session->get("PB_iduser");
         if (Yii::$app->request->isAjax) {
@@ -1346,47 +1532,160 @@ class SolicitudesController extends \app\components\CController {
                 $mod_Estudiante = new Estudiante();
                 $mod_Modestuni = new ModuloEstudio();
                 if ($rsin_id != 2) {
+                    //\app\models\Utilities::putMessageLogFile('Entro: 1');
                     $mod_solins = new SolicitudInscripcion();
                     $mod_ordenpago = new OrdenPago();
                     //Verificar que se hayan subido los documentos en Uteg.
                     if ($empresa == 1) {
+                        //\app\models\Utilities::putMessageLogFile('Entro: 2');
                         $respNumDoc = $mod_solins->consultarDocumentostosxSol($sins_id);
                         $numDocumentos = $respNumDoc["numDocumentos"];
                     } else {
+                        //\app\models\Utilities::putMessageLogFile('Entro: 3');
                         $numDocumentos = 1;
                     }
+                    /**************************************************** */
+                    /* verificar tambien por los documentos de frm grado  */
+                    /* y pos matriculacion                                */
+                    /**************************************************** */
                     if ($numDocumentos > 0) {
+                        //\app\models\Utilities::putMessageLogFile('Entro: 4');
                         $respusuario = $mod_solins->consultaDatosusuario($per_sistema);
                         if ($banderapreaprueba == 0) {  //etapa de Aprobación.
+                            //\app\models\Utilities::putMessageLogFile('Entro: 5');
                             if ($resultado == 2) {
+                                //\app\models\Utilities::putMessageLogFile('Entro: 6');
                                 //consultar estado del pago.
                                 $resp_pago = $mod_ordenpago->consultaOrdenPago($sins_id);
                                 if ($resp_pago["opag_estado_pago"] == 'S') {
+                                    //\app\models\Utilities::putMessageLogFile('Entro: 7');
+                                    /****************************************************************** */
+                                    //CONSULTAR SI LA PERSONA ESTA COMO ESTUDIANTE
+                                    $resp_estudianteid = $mod_Estudiante->getEstudiantexperid($per_id);
+                                    if (!empty($resp_estudianteid["est_id"])) {
+                                        //\app\models\Utilities::putMessageLogFile('Entro: 8');
+                                    // continua el proceso
                                     $respsolins = $mod_solins->apruebaSolicitud($sins_id, $resultado, $observacion, $observarevisa, $banderapreaprueba, $respusuario['usu_id']);
                                     if ($respsolins) {
+                                        //\app\models\Utilities::putMessageLogFile('Entro: 9');
                                         //Se genera id de aspirante y correo de bienvenida.
                                         $resp_encuentra = $mod_ordenpago->encuentraAdmitido($int_id, $sins_id);
                                         if ($resp_encuentra) {
+                                            //\app\models\Utilities::putMessageLogFile('Entro: 10');
                                             $asp = $resp_encuentra['adm_id'];
                                             $continua = 1;
                                         } else {
+                                            //\app\models\Utilities::putMessageLogFile('Entro: 11');
                                             //Se asigna al interesado como aspirante
                                             $resp_asp = $mod_ordenpago->insertarAdmitido($int_id, $sins_id);
                                             if ($resp_asp) {
+                                                //\app\models\Utilities::putMessageLogFile('Entro: 12');
                                                 $asp = $resp_asp;
                                                 $continua = 1;
                                             }
                                         }
                                     }
                                     if ($continua == 1) {
+                                        //\app\models\Utilities::putMessageLogFile('Entro: 13');
                                         $resp_inte = $mod_ordenpago->actualizaEstadointeresado($int_id, $respusuario['usu_id']);
                                         if ($resp_inte) {
+                                            //\app\models\Utilities::putMessageLogFile('Entro: 14');
                                             //Se obtienen el método de ingreso y el nivel de interés según la solicitud.
                                             $resp_sol = $mod_solins->Obtenerdatosolicitud($sins_id);
                                             //Se obtiene el curso para luego registrarlo.
                                             if ($resp_sol) {
-                                                $mod_persona = new Persona();
-                                                $resp_persona = $mod_persona->consultaPersonaId($per_id);
+                                                //\app\models\Utilities::putMessageLogFile('Entro: 15');
+                                                //SE DEBE CONSULTAR SI YA TIENE NUMERO DE MATRICULA
+                                                // NO GENERAR Y NO MODIFICAR
+                                                \app\models\Utilities::putMessageLogFile('matricula: '.$resp_estudianteid["est_matricula"]);
+                                                if (empty($resp_estudianteid["est_matricula"])) {
+                                                //\app\models\Utilities::putMessageLogFile('Entro: 16');
+                                                $anioactual = date("Y");
+                                                //\app\models\Utilities::putMessageLogFile('Entro: 16.1');
+                                                $mod_numatricula = new NumeroMatricula();
+                                                //\app\models\Utilities::putMessageLogFile('Entro: 16.2');
+                                                $resp_numatricula = $mod_numatricula->consultaNumatricula();
+                                                //\app\models\Utilities::putMessageLogFile('Entro: 16.3');
+                                                //\app\models\Utilities::putMessageLogFile('anio actual: '.$anioactual);
+                                                //\app\models\Utilities::putMessageLogFile('anio consulta: '.$resp_numatricula["nmat_anio"]);
+                                                    // comparar año actual con año nmat_anio
+                                                    if ($anioactual == $resp_numatricula["nmat_anio"]) { // si son iguales tomar el secuencia de la consulta
+                                                        //\app\models\Utilities::putMessageLogFile('Entro: 17');
+                                                        //se genera el nuevo secuencial
+                                                        $generar = ($resp_numatricula["secuencia"] + 1);
+                                                        $secuencial_nuevo = str_pad((int)$generar, 5, "0", STR_PAD_LEFT);
+                                                        $est_matricula = $resp_numatricula["nmat_anio"].$secuencial_nuevo;
+                                                        // se actualiza solo el secuencial en la tabla
+                                                        $resp_actsecuencial = $mod_numatricula->actualizarSecmatricula($resp_numatricula["nmat_id"], $secuencial_nuevo);
+                                                        if ($resp_actsecuencial) {
+                                                            //\app\models\Utilities::putMessageLogFile('Entro: 18');
+                                                            //si esta bien se actualiza campo matricula al estudiante enviando $resp_estudianteid["est_id"]
+                                                            $resp_actestudiante = $mod_Estudiante->modificarMatriculaest($resp_estudianteid["est_id"], $est_matricula, $usu_autenticado);
+                                                            $exitomat = 1;
+                                                        }else {
+                                                            //\app\models\Utilities::putMessageLogFile('Entro: 19');
+                                                            $message = array(
+                                                                "wtmessage" => Yii::t("notificaciones", "Problemas al generar número de matricula, intente nuevamente"),
+                                                                "title" => Yii::t('jslang', 'Error'),
+                                                            );
+                                                            return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+                                                           }
+                                                    } else { //secuencial empieza de 0 y se actualiza, junto al año
+                                                        //\app\models\Utilities::putMessageLogFile('Entro: 20');
+                                                        $generar = 1;
+                                                        $secuencial_nuevo = str_pad((int)$generar, 5, "0", STR_PAD_LEFT);
+                                                        $est_matricula = $anioactual.$secuencial_nuevo;
+                                                        $resp_actsecuencial = $mod_numatricula->actualizarSecmatricula($resp_numatricula["nmat_id"], $secuencial_nuevo);
+                                                        if ($resp_actsecuencial) {
+                                                            //\app\models\Utilities::putMessageLogFile('Entro: 21');
+                                                            //si esta bien se actualiza año
+                                                            if ($resp_actsecuencial) {
+                                                                //\app\models\Utilities::putMessageLogFile('Entro: 22');
+                                                                $resp_actanio = $mod_numatricula->actualizarAniomatricula($resp_numatricula["nmat_id"], $anioactual);
+                                                                if ($resp_actanio) {
+                                                                    //\app\models\Utilities::putMessageLogFile('Entro: 23');
+                                                                    //si esta bien se actualiza campo matricula al estudiante enviando $resp_estudianteid["est_id"]
+                                                                    $resp_actestudiante = $mod_Estudiante->modificarMatriculaest($resp_estudianteid["est_id"], $est_matricula, $usu_autenticado);
+                                                                    if ($resp_actestudiante) {
+                                                                    //\app\models\Utilities::putMessageLogFile('Entro: 24');
+                                                                    $exitomat = 1;
+                                                                    }else {
+                                                                        //\app\models\Utilities::putMessageLogFile('Entro: 25');
+                                                                        $message = array(
+                                                                            "wtmessage" => Yii::t("notificaciones", "Problemas al actualizar la matricula del estudiante, intente nuevamente"),
+                                                                            "title" => Yii::t('jslang', 'Error'),
+                                                                        );
+                                                                        return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+                                                                       }
+                                                               }else {
+                                                                //\app\models\Utilities::putMessageLogFile('Entro: 26');
+                                                                $message = array(
+                                                                    "wtmessage" => Yii::t("notificaciones", "Problemas al actualizar año de matricula, intente nuevamente"),
+                                                                    "title" => Yii::t('jslang', 'Error'),
+                                                                );
+                                                                return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+                                                               }
+                                                            }else {
+                                                                //\app\models\Utilities::putMessageLogFile('Entro: 27');
+                                                                $message = array(
+                                                                    "wtmessage" => Yii::t("notificaciones", "Problemas al generar secuencial de matricula, intente nuevamente"),
+                                                                    "title" => Yii::t('jslang', 'Error'),
+                                                                );
+                                                                return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+                                                               }
+                                                        }else {
+                                                            //\app\models\Utilities::putMessageLogFile('Entro: 28');
+                                                            $message = array(
+                                                                "wtmessage" => Yii::t("notificaciones", "Problemas al generar número de matricula nuevo, intente nuevamente"),
+                                                                "title" => Yii::t('jslang', 'Error'),
+                                                            );
+                                                            return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+                                                           }
+                                                      }
+                                                } else { // if si tiene ya numero de matricula no generarlo o modificarlo
+                                                    //\app\models\Utilities::putMessageLogFile('Entro: 29');
+                                                    $exitomat = 1;
+                                                    }
                                                 //Modificar y activar clave de usuario con numero de cedula
                                                 //SE COMENTA YA NO SE GENERA ESTUDIANTE DESDE EL APROBAR SOLICITUD
                                                 /*if ($resp_sol["emp_id"] == 1) {
@@ -1421,6 +1720,11 @@ class SolicitudesController extends \app\components\CController {
                                                         }
                                                     }
                                                 }*/
+                                                //AQUI VER CUANDO TODO ESTE BIEN AL ULTIMO GUARDAR ENVIAR CORREO
+                                               if ($exitomat == 1) {
+                                                //\app\models\Utilities::putMessageLogFile('Entro: 30');
+                                                $mod_persona = new Persona();
+                                                $resp_persona = $mod_persona->consultaPersonaId($per_id);
                                                 $correo = $resp_persona["usu_user"];
                                                 $apellidos = $resp_persona["per_pri_apellido"];
                                                 $nombres = $resp_persona["per_pri_nombre"];
@@ -1477,13 +1781,39 @@ class SolicitudesController extends \app\components\CController {
                                                     Utilities::sendEmail($tituloMensaje, Yii::$app->params["adminEmail"], [Yii::$app->params["soporteEmail"] => "Soporte"], $asunto, $body);
                                                 }
                                                 $exito = 1;
-                                            }
-                                        }
+                                              }else {
+                                                //\app\models\Utilities::putMessageLogFile('Entro: 31');
+                                                $message = array(
+                                                    "wtmessage" => Yii::t("notificaciones", "Problemas al generar número de matricula, intente nuevamente"),
+                                                    "title" => Yii::t('jslang', 'Error'),
+                                                );
+                                                return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+                                               }
+                                             }else {
+                                                //\app\models\Utilities::putMessageLogFile('Entro: 32');
+                                                $message = array(
+                                                    "wtmessage" => Yii::t("notificaciones", "Problemas al obtener datos de la solcitud, intente nuevamente"),
+                                                    "title" => Yii::t('jslang', 'Error'),
+                                                );
+                                                return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+                                               }
+                                       }
                                     }
                                 } else {
+                                    //CASO CONTRARIO MENSAJE NO ES ESTUDIANTE NO PUEDE APROBAR SOLICITUD
+                                    //\app\models\Utilities::putMessageLogFile('Entro: 33');
+                                    $message = array(
+                                        "wtmessage" => Yii::t("notificaciones", "La persona no se encuentra como estudiante. Revisar si esta pendiente el pago"),
+                                        "title" => Yii::t('jslang', 'Error'),
+                                    );
+                                    return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+                                   }
+                                } else {
+                                    //\app\models\Utilities::putMessageLogFile('Entro: 34');
                                     $mensaje = 'La solicitud se encuentra pendiente de pago.';
                                 }
                             } else { //No aprueban la solicitud
+                                //\app\models\Utilities::putMessageLogFile('Entro: 35');
                                 $respsolins = $mod_solins->apruebaSolicitud($sins_id, $resultado, $observacion, $observarevisa, $banderapreaprueba, $respusuario['usu_id']);
                                 if ($respsolins) {
                                     $srec_etapa = "A";  //Aprobación
@@ -1576,7 +1906,7 @@ class SolicitudesController extends \app\components\CController {
                                                 }
                                             }
                                         }
-                                        // Se bloquea el correo de re probacion de solicitud
+                                          // Se bloquea el correo de re probacion de solicitud
                                           /*$tituloMensaje = Yii::t("interesado", "UTEG - Registration Online");
                                           $asunto = Yii::t("interesado", "UTEG - Registration Online");
                                           $body = Utilities::getMailMessage("Requestapplicantdenied", array("[[observacion]]" => $obs_correo), Yii::$app->language);
@@ -1597,6 +1927,10 @@ class SolicitudesController extends \app\components\CController {
                         } else {  //Pre-Aprobación de la solicitud
                             if ($resultado == 3) {
                                 //Verificar que se hayan subido los documentos.
+                                /**************************************************** */
+                                /* verificar tambien por los documentos de frm grado  */
+                                /* y pos matriculacion                                */
+                                /**************************************************** */
                                 $respConsulta = $mod_solins->consultarDocumxSolic($sins_id);
                                 if ($respConsulta['numDocumentos'] > 0) {
                                     $respsolins = $mod_solins->apruebaSolicitud($sins_id, $resultado, $observacion, $observarevisa, $banderapreaprueba, $respusuario['usu_id']);
@@ -1715,7 +2049,7 @@ class SolicitudesController extends \app\components\CController {
                 $transaction2->rollback();
                 $transaction3->rollback();
                 $message = array(
-                    "wtmessage" => Yii::t("notificaciones", "Error al grabar." . $mensaje),
+                    "wtmessage" => Yii::t("notificaciones", "Error al aprobar solicitud." . $mensaje),
                     "title" => Yii::t('jslang', 'Success'),
                 );
                 return \app\models\Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Sucess"), false, $message);
@@ -1848,6 +2182,7 @@ class SolicitudesController extends \app\components\CController {
         $emp_id = @Yii::$app->session->get("PB_idempresa");
         $mod_metodo = new MetodoIngreso();
         $empresa_mod = new Empresa();
+        $tiendesct = '0';
         $per_id = base64_decode($_GET['per_id']);
         $sins_id = base64_decode($_GET['id_sol']);
         Yii::$app->session->set('persona_solicita', base64_encode($_GET['ids']));
@@ -1866,6 +2201,7 @@ class SolicitudesController extends \app\components\CController {
         $empresa = $empresa_mod->getAllEmpresa();
         $mod_solins = new SolicitudInscripcion();
         $mod_conempresa = new ConvenioEmpresa();
+        //$mod_ordenpago = new OrdenPago();
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
             if (isset($data["getuacademias"])) {
@@ -1900,10 +2236,11 @@ class SolicitudesController extends \app\components\CController {
             if (isset($data["getdescuento"])) {
                 if (($data["unidada"] == 1) or ($data["unidada"] == 2)) {
                     $resItems = $modItemMetNivel->consultarXitemMetniv($data["unidada"], $data["moda_id"], $data["metodo"], $data["empresa_id"], $data["carrera_id"]);
-                    $descuentos = $modDescuento->consultarDesctoxitem($resItems["ite_id"]);
+                    //$descuentos = $modDescuento->consultarDesctoxitem($resItems["ite_id"]);
+                    $descuentos = $modDescuento->consultarDesctoxunidadmodalidadingreso($data["unidada"], $data["moda_id"], $data["metodo"]);
                 } else {
                     //\app\models\Utilities::putMessageLogFile('item:'. $data["ite_id"]);
-                    $descuentos = $modDescuento->consultarDescuentoXitemUnidad($data["unidada"], $data["moda_id"], $data["ite_id"]);
+                    $descuentos = $modDescuento->consultarDescuentoXitemUnidad($data["unidada"], $data["moda_id"], $data["metodo"]);
                 }
                 $message = array("descuento" => $descuentos);
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
@@ -1965,9 +2302,28 @@ class SolicitudesController extends \app\components\CController {
         $arr_metodos = $mod_metodo->consultarMetodoIngNivelInt($resp_solicitudesp['uaca_id']);
         $arr_carrera = $modcanal->consultarCarreraModalidad($resp_solicitudesp['uaca_id'], $resp_solicitudesp['mod_id']);
         //Descuentos y precios.
-        $resp_item = $modItemMetNivel->consultaritemsol($resp_solicitudesp['uaca_id'], $resp_solicitudesp['mod_id'], $resp_solicitudesp['ite_id']);
-        $arr_descuento = $modDescuento->consultarDesctoxitem($resp_solicitudesp['ite_id']);
+        $resp_item = $modItemMetNivel->consultarXitemPrecio($resp_solicitudesp['uaca_id'], $resp_solicitudesp['mod_id'], $resp_solicitudesp['ming_id'], $resp_solicitudesp['eaca_id']);
+        //$arr_descuento = $modDescuento->consultarDesctoxitem($resp_solicitudesp["ite_id"]);
+        $arr_descuento = $modDescuento->consultarDesctoxunidadmodalidadingreso($resp_solicitudesp['uaca_id'],$resp_solicitudesp['mod_id'],$resp_solicitudesp['ming_id']);
         $arr_convempresa = $mod_conempresa->consultarConvenioEmpresa();
+        $resp_solicitudescuento = $mod_solins->Consultarsolicitudescuento($sins_id);
+        if (!empty($resp_solicitudescuento['sdes_id'])) {
+            // tiene descuento
+            // consultar los item de descuento
+            $resp_solicitudescitem = $mod_solins->Consultarsolicitudescuentoitem($sins_id);
+            if (!empty($resp_solicitudescitem['sdes_id'])) {
+                $tiendesct = '1';
+                $precio_dect = $mod_solins->ObtenerPrecioXitem($resp_solicitudesp["ite_id"]);
+            }else{
+                // no tiene descuento
+                $tiendesct = '0';
+                $precio_dect = $resp_solicitudesp['opag_total'];
+            }
+        }else{
+            // no tiene descuento
+            $tiendesct = '0';
+            $precio_dect = $resp_solicitudesp['opag_total'];
+        }
         return $this->render('viewsolicitud', [
                     "arr_unidad" => ArrayHelper::map($arr_unidadac, "id", "name"),
                     "arr_metodos" => ArrayHelper::map($arr_metodos, "id", "name"),
@@ -1981,12 +2337,16 @@ class SolicitudesController extends \app\components\CController {
                     "arr_empresa" => ArrayHelper::map($empresa, "id", "value"),
                     "arr_convenio_empresa" => ArrayHelper::map($arr_convempresa, "id", "name"),
                     "arr_solicitudesp" => $resp_solicitudesp,
+                    "tiene_desct" => $tiendesct,
+                    "precio_dect" => $precio_dect,
+                    "resp_solicitudescuento" => $resp_solicitudescuento,
         ]);
     }
     public function actionEditsolicitud() {
         $emp_id = @Yii::$app->session->get("PB_idempresa");
         $mod_metodo = new MetodoIngreso();
         $empresa_mod = new Empresa();
+        $tiendesct = '0';
         $per_id = base64_decode($_GET['per_id']);
         $sins_id = base64_decode($_GET['id_sol']);
         Yii::$app->session->set('persona_solicita', base64_encode($_GET['ids']));
@@ -2038,10 +2398,11 @@ class SolicitudesController extends \app\components\CController {
             }
             if (isset($data["getdescuento"])) {
                 if (($data["unidada"] == 1) or ($data["unidada"] == 2)) {
-                    $resItems = $modItemMetNivel->consultarXitemMetniv($data["unidada"], $data["moda_id"], $data["metodo"], $data["empresa_id"], $data["carrera_id"]);
-                    $descuentos = $modDescuento->consultarDesctoxitem($resItems["ite_id"]);
+                    //$resItems = $modItemMetNivel->consultarXitemMetniv($data["unidada"], $data["moda_id"], $data["metodo"], $data["empresa_id"], $data["carrera_id"]);
+                    //$descuentos = $modDescuento->consultarDesctoxitem($resItems["ite_id"]);
+                    $descuentos = $modDescuento->consultarDesctoxunidadmodalidadingreso($data["unidada"], $data["moda_id"], $data["metodo"]);
                 } else {
-                    $descuentos = $modDescuento->consultarDescuentoXitemUnidad($data["unidada"], $data["moda_id"], $data["ite_id"]);
+                    $descuentos = $modDescuento->consultarDescuentoXitemUnidad($data["unidada"], $data["moda_id"], $data["metodo"]);
                 }
                 $message = array("descuento" => $descuentos);
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
@@ -2103,9 +2464,29 @@ class SolicitudesController extends \app\components\CController {
         $arr_metodos = $mod_metodo->consultarMetodoIngNivelInt($resp_solicitudesp['uaca_id']);
         $arr_carrera = $modcanal->consultarCarreraModalidad($resp_solicitudesp['uaca_id'], $resp_solicitudesp['mod_id']);
         //Descuentos y precios.
-        $resp_item = $modItemMetNivel->consultaritemsol($resp_solicitudesp['uaca_id'], $resp_solicitudesp['mod_id'], $resp_solicitudesp['ite_id']);
-        $arr_descuento = $modDescuento->consultarDesctoxitem($resp_solicitudesp['ite_id']);
+        //$resp_item = $modItemMetNivel->consultaritemsol($resp_solicitudesp['uaca_id'], $resp_solicitudesp['mod_id'], $resp_solicitudesp['ite_id']);
+        $resp_item = $modItemMetNivel->consultarXitemPrecio($resp_solicitudesp['uaca_id'], $resp_solicitudesp['mod_id'], $resp_solicitudesp['ming_id'], $resp_solicitudesp['eaca_id']);
+        //$arr_descuento = $modDescuento->consultarDesctoxitem($resp_solicitudesp['ite_id']);
+        $arr_descuento = $modDescuento->consultarDesctoxunidadmodalidadingreso($resp_solicitudesp['uaca_id'],$resp_solicitudesp['mod_id'],$resp_solicitudesp['ming_id']);
         $arr_convempresa = $mod_conempresa->consultarConvenioEmpresa();
+        $resp_solicitudescuento = $mod_solins->Consultarsolicitudescuento($sins_id);
+        if (!empty($resp_solicitudescuento['sdes_id'])) {
+            // tiene descuento
+            // consultar los item de descuento
+            $resp_solicitudescitem = $mod_solins->Consultarsolicitudescuentoitem($sins_id);
+            if (!empty($resp_solicitudescitem['sdes_id'])) {
+                $tiendesct = '1';
+                $precio_dect = $mod_solins->ObtenerPrecioXitem($resp_solicitudesp["ite_id"]);
+            }else{
+                // no tiene descuento
+                $tiendesct = '0';
+                $precio_dect = $resp_solicitudesp['opag_total'];
+            }
+        }else{
+            // no tiene descuento
+            $tiendesct = '0';
+            $precio_dect = $resp_solicitudesp['opag_total'];
+        }
         return $this->render('editsolicitud', [
                     "arr_unidad" => ArrayHelper::map($arr_unidadac, "id", "name"),
                     "arr_metodos" => ArrayHelper::map($arr_metodos, "id", "name"),
@@ -2119,6 +2500,100 @@ class SolicitudesController extends \app\components\CController {
                     "arr_empresa" => ArrayHelper::map($empresa, "id", "value"),
                     "arr_convenio_empresa" => ArrayHelper::map($arr_convempresa, "id", "name"),
                     "arr_solicitudesp" => $resp_solicitudesp,
+                    "tiene_desct" => $tiendesct,
+                    "precio_dect" => $precio_dect,
+                    "resp_solicitudescuento" => $resp_solicitudescuento,
         ]);
     }
+    public function actionAnularsolicitud() {
+        $mod_solins = new Solicitudinscripcion();
+        $mod_ordenpago = new OrdenPago();
+        $nodescuento = '0';
+		$usu_autenticado = @Yii::$app->session->get("PB_iduser");
+		if (Yii::$app->request->isAjax) {
+			$data = Yii::$app->request->post();
+            $sins_id = $data["sins_id"];
+            $opag_id = $data["opag_id"];
+            $con = \Yii::$app->db_captacion;
+            $con1 = \Yii::$app->db_facturacion;
+            $transaction = $con->beginTransaction();
+            $transaction1 = $con->beginTransaction();
+            try {
+                $resp_solicitudesactivar = $mod_solins->Desactivarsolicitudinscripcion($sins_id, $usu_autenticado);
+				if ($resp_solicitudesactivar) {
+                    \app\models\Utilities::putMessageLogFile('entro 1: ');
+                    // 1ero consultar si la solicitud tiene descuento
+                    $cons_solicitudesct = $mod_solins->Consultarsolicitudescuentoitem($sins_id);
+                    if (!empty($cons_solicitudesct['sdes_id'])) {
+                        $resp_solicitudesct = $mod_solins->Desactivarsolicitudescuento($sins_id);
+                        if (resp_solicitudesct) {
+                            $nodescuento = '1';
+                        }else{
+                            // no hay descuento, pase a la otra tabla
+                            $nodescuento = '1';
+                           }
+                    }else{
+                     // no hay descuento, pase a la otra tabla
+                     $nodescuento = '1';
+                    }
+                    if ($nodescuento == '1') {
+                        //Realizar accion
+                        $resp_opago = $mod_ordenpago->Desactivarordenpago($opag_id, $usu_autenticado);
+                        if ($resp_opago) {
+                            //Realizar accion
+                            $resp_despago = $mod_ordenpago->Desactivardesglosepago($opag_id, $usu_autenticado);
+                            if ($resp_despago) {
+                                //Guardar todo
+                                $transaction->commit();
+                                $transaction1->commit();
+					            $message = array(
+                                "wtmessage" => Yii::t("notificaciones", "Se ha anulado la solicitu de inscripcion."),
+                                "title" => Yii::t('jslang', 'Success'),
+                            );
+                            return Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), false, $message);
+                                    } else {
+                                        $transaction->rollback();
+                                        $transaction1->rollback();
+                                        $message = array(
+                                            "wtmessage" => Yii::t("notificaciones", "Error al anular desglose pago. "),
+                                            "title" => Yii::t('jslang', 'Error'),
+                                        );
+                                        return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+                                    }
+                        } else {
+                            $transaction->rollback();
+                            $transaction1->rollback();
+                            $message = array(
+                                "wtmessage" => Yii::t("notificaciones", "Error al anular orden de pago. "),
+                                "title" => Yii::t('jslang', 'Error'),
+                            );
+                            return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+                        }
+                    } else {
+                        $transaction->rollback();
+                        $transaction1->rollback();
+                        $message = array(
+                            "wtmessage" => Yii::t("notificaciones", "Error al anular solicitud de descuento. "),
+                            "title" => Yii::t('jslang', 'Error'),
+                        );
+                        return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+                    }
+				}else {
+					$transaction->rollback();
+					$message = array(
+						"wtmessage" => Yii::t("notificaciones", "Error al anular inscripción. "),
+						"title" => Yii::t('jslang', 'Error'),
+					);
+					return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+				}
+			} catch (Exception $ex) {
+				$transaction->rollback();
+				$message = array(
+					"wtmessage" => Yii::t("notificaciones", "Error al anular solicitud. "),
+					"title" => Yii::t('jslang', 'Success'),
+				);
+				return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+			}
+		}
+	}
 }

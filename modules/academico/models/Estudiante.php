@@ -103,7 +103,7 @@ class Estudiante extends \yii\db\ActiveRecord {
      * @param
      * @return  $resultData (Retornar el código de estudiante).
      */
-    public function insertarEstudiante($per_id, $est_matricula, $est_categoria, $est_usuario_ingreso, $est_usuario_modifica, $est_fecha_creacion, $est_fecha_modificacion) {
+    public function insertarEstudiante($per_id/*, $est_matricula*/, $est_categoria, $est_usuario_ingreso, $est_usuario_modifica, $est_fecha_creacion, $est_fecha_modificacion) {
 
         $con = \Yii::$app->db_academico;
         $trans = $con->getTransaction(); // se obtiene la transacción actual
@@ -122,10 +122,10 @@ class Estudiante extends \yii\db\ActiveRecord {
             $bsol_sql .= ", :per_id";
         }
 
-        if (isset($est_matricula)) {
+        /*if (isset($est_matricula)) {
             $param_sql .= ", est_matricula";
             $bsol_sql .= ", :est_matricula";
-        }
+        }*/
 
         if (isset($est_categoria)) {
             $param_sql .= ", est_categoria";
@@ -161,9 +161,9 @@ class Estudiante extends \yii\db\ActiveRecord {
                 $comando->bindParam(':per_id', $per_id, \PDO::PARAM_INT);
             }
 
-            if (isset($est_matricula)) {
+            /*if (isset($est_matricula)) {
                 $comando->bindParam(':est_matricula', $est_matricula, \PDO::PARAM_STR);
-            }
+            }*/
 
             if (isset($est_categoria)) {
                 $comando->bindParam(':est_categoria', $est_categoria, \PDO::PARAM_STR);
@@ -245,8 +245,8 @@ class Estudiante extends \yii\db\ActiveRecord {
         $estado = 1;
 
         $sql = "SELECT
-                        est_id
-
+                        est_id,
+                        est_matricula
                 FROM " . $con->dbname . ".estudiante est
                 WHERE   per_id = :per_id
                         AND est_estado = :estado
@@ -540,7 +540,7 @@ class Estudiante extends \yii\db\ActiveRecord {
                 LEFT JOIN " . $con->dbname . ".registro_online r ON r.per_id = pers.per_id
                 -- LEFT JOIN " . $con->dbname . ".planificacion_estudiante pes ON pes.pes_id = r.pes_id AND pla_id IN ($inlist)
                 LEFT JOIN " . $con2->dbname . ".interesado inte ON inte.per_id = pers.per_id
-                LEFT JOIN " . $con2->dbname . ".solicitud_inscripcion sins on sins.int_id = inte.int_id 
+                LEFT JOIN " . $con2->dbname . ".solicitud_inscripcion sins on sins.int_id = inte.int_id
                 AND (sins.eaca_id = meun.eaca_id AND sins.uaca_id = meun.uaca_id AND sins.mod_id = meun.mod_id)
                 WHERE
                 $str_search
@@ -674,7 +674,7 @@ class Estudiante extends \yii\db\ActiveRecord {
      * @param
      * @return
      */
-    public function updateEstudiante($est_id, $est_matricula, $est_categoria, $est_usu_modifica, $est_fecha_modificacion) {
+    public function updateEstudiante($est_id, /*$est_matricula,*/ $est_categoria, $est_usu_modifica, $est_fecha_modificacion) {
         $con = \Yii::$app->db_academico;
         $estado = 1;
         if ($trans !== null) {
@@ -686,7 +686,7 @@ class Estudiante extends \yii\db\ActiveRecord {
         try {
             $comando = $con->createCommand
                     ("UPDATE " . $con->dbname . ".estudiante
-                      SET est_matricula = :est_matricula,
+                      SET -- est_matricula = :est_matricula,
                           est_categoria = :est_categoria,
                           est_usuario_modifica = :est_usu_modifica,
                           est_fecha_modificacion = :est_fecha_modificacion
@@ -696,7 +696,7 @@ class Estudiante extends \yii\db\ActiveRecord {
                         est_estado_logico = :estado");
             $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
             $comando->bindParam(":est_id", $est_id, \PDO::PARAM_INT);
-            $comando->bindParam(":est_matricula", $est_matricula, \PDO::PARAM_STR);
+            //$comando->bindParam(":est_matricula", $est_matricula, \PDO::PARAM_STR);
             $comando->bindParam(":est_categoria", $est_categoria, \PDO::PARAM_STR);
             $comando->bindParam(":est_usu_modifica", $est_usu_modifica, \PDO::PARAM_INT);
             $comando->bindParam(":est_fecha_modificacion", $est_fecha_modificacion, \PDO::PARAM_STR);
@@ -864,18 +864,18 @@ class Estudiante extends \yii\db\ActiveRecord {
      /**
      * Function Consultar malla del estudiante por medio de malla unidad modalidad
      * @author  Luis Cajamarca <analistadesarrollo04@uteg.edu.ec>;
-     * @property       
-     * @return  
+     * @property
+     * @return
      */
     public function consultarEstMalla($meun_id) {
         $con = \Yii::$app->db_academico;
         $estado = 1;
 
-        $sql = "SELECT  
-                        MAX(maca_id) as maca_id                       
-                        
-                FROM " . $con->dbname . ".malla_unidad_modalidad                        
-                WHERE   meun_id in (:meun_id)                        
+        $sql = "SELECT
+                        MAX(maca_id) as maca_id
+
+                FROM " . $con->dbname . ".malla_unidad_modalidad
+                WHERE   meun_id in (:meun_id)
                         AND mumo_estado = :estado
                         AND mumo_estado_logico = :estado ";
 
@@ -898,22 +898,22 @@ class Estudiante extends \yii\db\ActiveRecord {
         $transaction=$con->beginTransaction();
         $date = date(Yii::$app->params['dateTimeByDefault']);
         // se obtiene la transacción actual
-                  
+
         try {
-            $sql = "INSERT INTO db_academico.malla_academico_estudiante 
+            $sql = "INSERT INTO db_academico.malla_academico_estudiante
                 (per_id, made_id, maca_id, asi_id, maes_usuario_ingreso, maes_usuario_modifica, maes_fecha_creacion, maes_fecha_modificacion, maes_estado, maes_estado_logico)
-                (SELECT 
-                    e.per_id as per_id, 
-                    made.made_id as made_id, 
-                    made.maca_id as maca_id, 
-                    made.asi_id as asi_id, 
-                    1, 
-                    Null, 
-                    '$date', 
-                    Null, 
-                    1, 
+                (SELECT
+                    e.per_id as per_id,
+                    made.made_id as made_id,
+                    made.maca_id as maca_id,
+                    made.asi_id as asi_id,
+                    1,
+                    Null,
+                    '$date',
+                    Null,
+                    1,
                     1
-                FROM db_academico.estudiante e 
+                FROM db_academico.estudiante e
                 inner join db_academico.estudiante_carrera_programa  est on est.est_id=e.est_id
                 inner join db_academico.malla_unidad_modalidad mumo on mumo.meun_id=est.meun_id
                 inner join db_academico.malla_academica_detalle made on made.maca_id=mumo.maca_id
@@ -937,7 +937,7 @@ class Estudiante extends \yii\db\ActiveRecord {
                 $transaction->rollback();
             return FALSE;
         }
-        
+
     }
 
     /**
@@ -951,21 +951,21 @@ class Estudiante extends \yii\db\ActiveRecord {
         $transaction=$con->beginTransaction();
         $date = date(Yii::$app->params['dateTimeByDefault']);
         // se obtiene la transacción actual
-                  
+
         try {
-            $sql = "INSERT INTO db_academico.promedio_malla_academico 
+            $sql = "INSERT INTO db_academico.promedio_malla_academico
                 (maes_id, enac_id, pmac_nota, paca_id, pmac_usuario_ingreso, pmac_usuario_modifica, pmac_fecha_creacion, pmac_fecha_modificacion, pmac_estado, pmac_estado_logico)
-                (SELECT 
+                (SELECT
                     maes.maes_id,
                     Null,
                     Null,
                     Null,
                     1,
                     Null,
-                    '$date', 
+                    '$date',
                     Null,
                     1,
-                    1 
+                    1
                 FROM db_academico.malla_academico_estudiante maes
                 where maes.per_id=:per_id)";
             $comando = $con->createCommand($sql);
@@ -985,7 +985,74 @@ class Estudiante extends \yii\db\ActiveRecord {
                 $transaction->rollback();
             return FALSE;
         }
-        
     }
-    
+
+    /**
+     * Function modifica numero matricula estudiante luego de generarlo en .
+     * @author Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>;
+     * @param
+     * @return
+     */
+    public function modificarMatriculaest($est_id, $est_matricula, $est_usuario_modifica) {
+        $con = \Yii::$app->db_academico;
+        $estado = 1;
+        $est_fecha_modificacion = date(Yii::$app->params['dateTimeByDefault']);
+        if ($trans !== null) {
+            $trans = null; // si existe la transacción entonces no se crea una
+        } else {
+            $trans = $con->beginTransaction(); // si no existe la transacción entonces se crea una
+        }
+        try {
+            $comando = $con->createCommand
+                    ("UPDATE " . $con->dbname . ".estudiante
+                      SET est_matricula = :est_matricula,
+                          est_usuario_modifica = :est_usuario_modifica,
+                          est_fecha_modificacion = :est_fecha_modificacion
+                      WHERE
+                        est_id = :est_id AND
+                        est_estado = :estado AND
+                        est_estado_logico = :estado");
+            $comando->bindParam(":est_id", $est_id, \PDO::PARAM_INT);
+            $comando->bindParam(":est_matricula", $est_matricula, \PDO::PARAM_STR);
+            $comando->bindParam(":est_usuario_modifica", $est_usuario_modifica, \PDO::PARAM_INT);
+            $comando->bindParam(":est_fecha_modificacion", $est_fecha_modificacion, \PDO::PARAM_STR);
+            $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+            $response = $comando->execute();
+            if ($trans !== null)
+                $trans->commit();
+            return $response;
+        } catch (Exception $ex) {
+            if ($trans !== null)
+                $trans->rollback();
+            return FALSE;
+        }
+    }
+
+    /**
+     * Devuelve el nombre del estudiante con el per_id .
+     * @author  Lisbeth González <analistadesarrollo07@uteg.edu.ec>;
+     * @property
+     * @return
+     */
+    public static function getEstudiantes() {
+        $con = \Yii::$app->db_academico;
+        $estado = 1;
+
+        $sql = "SELECT per.per_id as id,
+                    ifnull(concat(ifnull(per.per_pri_apellido,''), ' ', ifnull(per.per_seg_apellido,''),' ',ifnull(per.per_pri_nombre,''),' ',ifnull(per.per_seg_nombre,'')),'') as nombre
+                FROM db_academico.estudiante est,
+                     db_asgard.persona per
+               WHERE est.per_id = per.per_id
+                 AND est.est_estado = 1
+                 AND est.est_estado_logico = 1
+                 AND per.per_estado = 1
+                 AND per.per_estado_logico = 1
+                order by 2 asc ";
+
+        $comando = $con->createCommand($sql);
+        $resultData = $comando->queryAll();
+
+        return $resultData;
+    }
+
 }

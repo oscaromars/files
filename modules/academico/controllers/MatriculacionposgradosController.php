@@ -228,10 +228,15 @@ class MatriculacionposgradosController extends \app\components\CController {
             $programa = $data["programa"];
             $paralelo = $data["paralelo"];
             $cupo = $data["cupo"];
-            $grupo = strtoupper($data["grupo"]);
+            $grupos = strtoupper($data["grupo"]);
             $modalidadText = $data["modalidadText"];
             if ($mes > 0 && $mes < 10) {
                 $meses = '0' . $mes;
+            }
+            if ($grupos > 'G1') {
+                $grupo = strtoupper($data["grupo"]);
+            }else{
+                $grupo = 'G' . $data["grupo"];
             }
             //$codigo = strtoupper(substr($data["nombreprograma"], 0, 3)) . $anio . $meses;
             $con = \Yii::$app->db_academico;
@@ -241,7 +246,7 @@ class MatriculacionposgradosController extends \app\components\CController {
                 $mod_Matriculacion = new PromocionPrograma();
                 $resp_consPromocion = $mod_Matriculacion->consultarPromocion($anio, $mes, $unidad, $modalidad, $programa);
                 $resp_consCodprograma = $mod_Matriculacion->consultarCodigoestudioaca($programa);
-                $codigo = $resp_consCodprograma["eaca_codigo"] . "-". substr($modalidadText,0,1) . "-". $anio . "-". $grupo;
+                $codigo = $resp_consCodprograma["eaca_codigo"] . "-". substr($modalidadText,0,1) . "-". $anio . $meses . "-". $grupo;
                 \app\models\Utilities::putMessageLogFile('codigo: ' . $codigo);
              
                 if (!$resp_consPromocion) {
@@ -250,7 +255,8 @@ class MatriculacionposgradosController extends \app\components\CController {
                     $resp_promocion = $mod_Matriculacion->insertarPromocion($anio, $mes, $codigo, $unidad, $modalidad, $programa, $paralelo, $cupo, $grupo, $usu_id, $fecha);
                     if ($resp_promocion) {
                         for ($i = 1; $i <= $paralelo; $i++) {
-                            $descripcion = strtoupper(substr($data["nombreprograma"], 0, 3)) . '-Paralelo ' . $i;
+                            //$descripcion = strtoupper(substr($data["nombreprograma"], 0, 3)) . '-Paralelo ' . $i;
+                            $descripcion = 'P' . $i;
                             $resp_paralelo = $mod_Matriculacion->insertarParalelo($resp_promocion, $cupo, $cupo, $descripcion, $usu_id, $fecha);
                         }
                         if ($resp_paralelo) {
@@ -381,10 +387,15 @@ class MatriculacionposgradosController extends \app\components\CController {
             $unidad = $data["unidad"];
             $modalidad = $data["modalidad"];
             $programa = $data["programa"];
-            $grupo = strtoupper($data["grupo"]);
+            $grupos = strtoupper($data["grupo"]);
             $modalidadText = $data["modalidadText"];
             if ($mes > 0 && $mes < 10) {
                 $meses = '0' . $mes;
+            }
+            if ($grupos > 'G1') {
+                $grupo = strtoupper($data["grupo"]);
+            }else{
+                $grupo = 'G' . $data["grupo"];
             }
             $con = \Yii::$app->db_academico;
             $transaction = $con->beginTransaction();
@@ -392,7 +403,7 @@ class MatriculacionposgradosController extends \app\components\CController {
                 $mod_programa = new PromocionPrograma();
                 $resp_consCodprograma = $mod_programa->consultarCodigoestudioaca($programa);
                 //$codigo = $resp_consCodprograma["eaca_codigo"] . $anio . $meses;
-                $codigo = $resp_consCodprograma["eaca_codigo"] . "-". substr($modalidadText,0,1) . "-". $anio . "-". $grupo;
+                $codigo = $resp_consCodprograma["eaca_codigo"] . "-". substr($modalidadText,0,1) . "-". $anio . $meses . "-". $grupo;
                 $keys_act = [
                     'ppro_anio', 'ppro_mes', 'ppro_codigo', 'uaca_id', 'mod_id'
                     , 'eaca_id', 'ppro_grupo', 'ppro_usuario_modifica', 'ppro_fecha_modificacion'
@@ -613,7 +624,7 @@ class MatriculacionposgradosController extends \app\components\CController {
                         $resp_estudianteid = $mod_Estudiante->getEstudiantexperid($per_id);
                         if ($resp_estudianteid["est_id"] == "") {
                             // grabar tabla estudiantes
-                            $resp_estudiantes = $mod_Estudiante->insertarEstudiante($per_id, $matricula, null, $usu_id, null, null, $fecha);
+                            $resp_estudiantes = $mod_Estudiante->insertarEstudiante($per_id/*, $matricula*/, null, $usu_id, null, null, $fecha);
                         } else {
                             $resp_estudiantes = $resp_estudianteid["est_id"];
                         }

@@ -188,6 +188,20 @@ $(document).ready(function () {
       });
     // tabs create
     $('#paso1next').click(function () {
+        var carrera = $("#cmb_carrera option:selected").val();
+        var modalidad = $("#cmb_modalidad option:selected").val();
+        var periodo = $("#cmb_periodo option:selected").val();
+           if (carrera > 0 ){ a = 1;} else { a = 0; }
+                if (modalidad > 0 ){ b = 1;} else { b = 0; }
+                        if (periodo > 0 ){ c = 1;} else { c = 0; }
+        elem= a + b + c ;
+
+        if (elem < 3 ){
+
+               var mensaje = {wtmessage: "Seleccione Carrera, periodo y modalidad!", title: "Información"};
+                showAlert("NO_OK", "error", mensaje);
+   
+        } else { 
         let lcedula = $("#txt_cedula").val();
         localStorage.setItem("cedula", lcedula);
         //window.location.href = '#';
@@ -200,7 +214,7 @@ $(document).ready(function () {
         $("a[data-href='#paso2']").attr('data-toggle', 'tab');
         $("a[data-href='#paso2']").attr('href', $("a[data-href='#paso2']").attr('data-href'));
         $("a[data-href='#paso2']").trigger("click");
-
+         }
     });
     $('#paso2back').click(function () {
         $("a[data-href='#paso2']").attr('data-toggle', 'none');

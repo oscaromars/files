@@ -145,8 +145,8 @@ class Planificacion extends \yii\db\ActiveRecord {
 		$sql = "select distinct
                 a.saca_id as pla_id,
                 concat(b.saca_nombre , ' ' , b.saca_anio ) as pla_periodo_academico
-                from  " . $con->dbname . ".periodo_academico a
-                inner join " . $con->dbname . ".semestre_academico b on a.saca_id = b.saca_id
+                from  " . $con_academico->dbname . ".periodo_academico a
+                inner join " . $con_academico->dbname . ".semestre_academico b on a.saca_id = b.saca_id
                -- left join db_academico.planificacion pl on pl.saca_id = b.saca_id -- R
                 where a.paca_activo = 'A'
               --  AND   -- R

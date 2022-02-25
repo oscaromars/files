@@ -10,7 +10,13 @@ use app\modules\academico\Module as aspirante;
 academico::registerTranslations();
 financiero::registerTranslations();
 aspirante::registerTranslations();
-//print_r($arr_solicitudesp);
+//print_r($arr_descuento);
+//print_r( $resp_solicitudescuento['ddit_id']);
+if($tiene_desct == '1'){
+    $preciofinal = $precio_dect["precio"];
+}else {
+    $preciofinal = $precio_dect;
+}
 $tipodoc = '';
 if (!empty($personalData['per_cedula'])) {
     $tipodoc = "Cédula";
@@ -150,7 +156,7 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
             <div class="form-group">
                 <label for="txt_precio_items" class="col-sm-5 col-md-5 col-xs-5 col-lg-5 control-label" id="lbl_nombre1"><?= financiero::t("Pagos", "Price") ?></label>
                 <div class="col-sm-7 col-md-7 col-xs-7 col-lg-7">
-                    <input type="text" class="form-control keyupmce" value="<?= $arr_solicitudesp['opag_total'] ?>" id="txt_precio_items" data-type="alfa" disabled align="rigth" placeholder="<?= financiero::t("Pagos", "Price") ?>">
+                    <input type="text" class="form-control keyupmce" value="<?= $preciofinal ?>" id="txt_precio_items" data-type="alfa" disabled align="rigth" placeholder="<?= financiero::t("Pagos", "Price") ?>">
                 </div>
             </div>
         </div>
@@ -168,18 +174,27 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
         <div class="form-group">
             <label for="txt_declararDescuento" class="col-sm-5 control-label"><?= financiero::t("Pagos", "Apply Discount") ?></label>
             <div class="col-sm-7">
-                <label><input type="radio" name="opt_declara_Dctosi" disabled id="opt_declara_Dctosi" value="1"><b>Si</b></label>
-                <label><input type="radio" name="opt_declara_Dctono" disabled id="opt_declara_Dctono" value="2" checked><b>No</b></label>
+            <?php
+                if($tiene_desct == '0'){
+                    $checkedestno = "checked";
+                    $displaydes = "none";
+                }else {
+                    $checkedestsi = "checked";
+                    $displaydes = "block";
+                }
+            ?>
+                <label><input type="radio" name="opt_declara_Dctosi" disabled id="opt_declara_Dctosi" value="1" <?php echo $checkedestsi; ?> ><b>Si</b></label>
+                <label><input type="radio" name="opt_declara_Dctono" disabled id="opt_declara_Dctono" value="2" <?php echo $checkedestno; ?> ><b>No</b></label>
             </div>
         </div>
     </div>
 
-    <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12" id="divDescuento" style="display: none">
+    <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12" id="divDescuento" style="display: <?php echo $displaydes; ?> ">
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
             <div class="form-group">
                 <label for="cmb_descuento" class="col-sm-5 col-md-5 col-xs-5 col-lg-5 control-label keyupmce"><?= financiero::t("Pagos", "Discount") ?></label>
                 <div class="col-sm-7 col-md-7 col-xs-7 col-lg-7">
-                    <?= Html::dropDownList("cmb_descuento", 0, array_merge([Yii::t("formulario", "Select")], $arr_descuento), ["class" => "form-control", "id" => "cmb_descuento", "disabled" => "true"]) ?>
+                    <?= Html::dropDownList("cmb_descuento", $resp_solicitudescuento['ddit_id']/*, array_merge([Yii::t("formulario", "Select")]*/, $arr_descuento/*)*/, ["class" => "form-control", "id" => "cmb_descuento", "disabled" => "true"]) ?>
                 </div>
             </div>
         </div>
@@ -187,7 +202,7 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
             <div class="form-group">
                 <label for="txt_precio_item2" class="col-sm-5 col-md-5 col-xs-5 col-lg-5 control-label" id="lbl_nombre1"><?= financiero::t("Pagos", "Price with discount") ?></label>
                 <div class="col-sm-7 col-md-7 col-xs-7 col-lg-7">
-                    <input type="text" class="form-control keyupmce" value="0" id="txt_precio_item2" disabled data-type="alfa" align="rigth" placeholder="<?= financiero::t("Pagos", "Price") ?>">
+                    <input type="text" class="form-control keyupmce" value="<?= $arr_solicitudesp['opag_total'] ?>" id="txt_precio_item2" disabled data-type="alfa" align="rigth" placeholder="<?= financiero::t("Pagos", "Price") ?>">
                 </div>
             </div>
         </div>
@@ -282,7 +297,7 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                 <div class="form-group">
                     <label for="txt_dni_fac" class="col-sm-5 col-md-5 col-xs-5 col-lg-5 control-label" id="lbl_nombre1"><?= Yii::t("formulario", "DNI Document") . '/' . Yii::t("formulario", "DNI 1") ?></label>
                     <div class="col-sm-7 col-md-7 col-xs-7 col-lg-7">
-                        <input type="text" class="form-control PBvalidation " value="<?php echo $arr_solicitudesp['sdfa_dni'] ?>" id="txt_dni_fac" data-type="cedula" disabled data-keydown="true" placeholder="<?= Yii::t("formulario", "DNI Document") ?>">
+                        <input type="text" class="form-control PBvalidation " value="<?php echo $arr_solicitudesp['sdfa_dni'] ?>" id="txt_dni_fac" disabled = "true" data-type="cedula" data-keydown="true" placeholder="<?= Yii::t("formulario", "DNI Document") ?>">
                     </div>
                 </div>
             </div>
@@ -290,7 +305,7 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
         <div class='col-md-12 col-sm-12 col-xs-12 col-lg-12'>
             <div class="col-md-6 col-sm-6 col-xs-6 col-lg-6">
                 <div class="form-group">
-                    <label for="txt_correo_fac" class="col-sm-5 col-md-5 col-xs-5 col-lg-5 control-label" id="txt_correo_fac"><?= Yii::t("formulario", "Email") ?><span class="text-danger">*</span></label>
+                    <label for="txt_correo_fac" class="col-sm-5 col-md-5 col-xs-5 col-lg-5 control-label" id="lbl_correo_fac"><?= Yii::t("formulario", "Email") ?><span class="text-danger">*</span></label>
                     <div class="col-sm-7 col-md-7 col-xs-7 col-lg-7">
                         <input type="text" class="form-control PBvalidation" value="<?php echo $arr_solicitudesp['sdfa_correo'] ?>" id="txt_correo_fac" data-type="email" data-keydown="true" disabled placeholder="<?= Yii::t("formulario", "Email") ?>">
                     </div>

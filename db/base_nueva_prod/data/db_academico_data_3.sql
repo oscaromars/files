@@ -6,8 +6,8 @@ USE `db_academico`;
 -- -- ------------------------ ------------------------------
 --
 -- Volcado de datos para la tabla `tipo_evaluacion`
--- 
-INSERT INTO `tipo_evaluacion` (`teva_id`, `teva_nombre`,  `teva_estado`, `teva_estado_logico`) VALUES 
+--
+INSERT INTO `tipo_evaluacion` (`teva_id`, `teva_nombre`,  `teva_estado`, `teva_estado_logico`) VALUES
 (1, 'Docencia', '1', '1'),
 (2, 'Investigación', '1', '1'),
 (3, 'Dirección y Gestión Académica', '1', '1');
@@ -15,7 +15,7 @@ INSERT INTO `tipo_evaluacion` (`teva_id`, `teva_nombre`,  `teva_estado`, `teva_e
 -- -- ------------------------ ------------------------------
 --
 -- Volcado de datos para la tabla `tipo_distributivo`
--- 
+--
 INSERT INTO `tipo_distributivo` (`tdis_id`, `tdis_nombre`, `tdis_estado`, `tdis_estado_logico`) VALUES
 (1, 'Docencia', '1', '1'),
 (2, 'Tutorías', '1', '1'),
@@ -40,7 +40,7 @@ INSERT INTO `actividad_evaluacion` (`aeva_id`, `aeva_descripcion`, `aeva_nombre`
 (9, 'Otros', 'Otros', '1', '1');
 
 
--- Data de calificaciones 
+-- Data de calificaciones
 INSERT INTO `db_academico`.`componente` (`com_id`, `com_nombre`, `com_descripcion`, `com_estado`, `com_fecha_creacion`, `com_estado_logico`) VALUES ('1', 'Asíncrona', 'Asíncrona', '1', '2021-11-18 14:40:05', '1');
 INSERT INTO `db_academico`.`componente` (`com_id`, `com_nombre`, `com_descripcion`, `com_estado`, `com_fecha_creacion`, `com_estado_logico`) VALUES ('2', 'Síncrona', 'Síncrona', '1', '2021-11-18 14:40:05', '1');
 INSERT INTO `db_academico`.`componente` (`com_id`, `com_nombre`, `com_descripcion`, `com_estado`, `com_fecha_creacion`, `com_estado_logico`) VALUES ('3', 'Evaluación', 'Evaluación', '1', '2021-11-18 14:40:05', '1');
@@ -103,7 +103,7 @@ INSERT INTO `asistencia_esquema_unidad` (`aeun_id`, `ecun_id`, `aeun_cantidad`, 
 (4, 5, 100, '1', '1');
 
 -- Modificación LC
--- Grado Online -- 
+-- Grado Online --
 -- Parcial 1
 INSERT INTO `db_academico`.`componente_unidad` (`cuni_id`, `com_id`, `uaca_id`, `mod_id`, `ecal_id`, `cuni_calificacion`, `cuni_estado`, `cuni_fecha_creacion`, `cuni_estado_logico`) VALUES ('1', '1', '1', '1', '1', '2', '1', '2021-11-18 14:40:24', '1');
 INSERT INTO `db_academico`.`componente_unidad` (`cuni_id`, `com_id`, `uaca_id`, `mod_id`, `ecal_id`, `cuni_calificacion`, `cuni_estado`, `cuni_fecha_creacion`, `cuni_estado_logico`) VALUES ('2', '2', '1', '1', '1', '2', '1', '2021-11-18 14:40:24', '1');
@@ -178,8 +178,8 @@ INSERT INTO `valor_desarrollo` (`vdes_id`, `vdes_descripcion`, `vdes_nombre`, `v
 (9, 'Otros', 'Otros', '1', '1');
 
 
--- Especies Valoradas 
-INSERT INTO `responsable_especie` (`resp_id`, `resp_nombre`, `resp_titulo`, `resp_cargo`, `uaca_id`, `mod_id`, `resp_usuario_ingreso`, `resp_estado`, `resp_estado_logico`) VALUES 
+-- Especies Valoradas
+INSERT INTO `responsable_especie` (`resp_id`, `resp_nombre`, `resp_titulo`, `resp_cargo`, `uaca_id`, `mod_id`, `resp_usuario_ingreso`, `resp_estado`, `resp_estado_logico`) VALUES
 (1,'Diego Aguirre','Msc','',1,1,1,'1','1'),
 (2,'Xavier Mosquera','Phd','',1,2,1,'1','1'),
 (3,'Francisco Cedeño','Msc','',1,3,1,'1','1'),
@@ -189,7 +189,7 @@ INSERT INTO `responsable_especie` (`resp_id`, `resp_nombre`, `resp_titulo`, `res
 (7,'Olmedo Farfán','Phd','',2,3,1,'1','1');
 
 
-INSERT INTO `tramite` (`tra_id`, `uaca_id`, `tra_nombre`, `tra_nomenclatura`, `tra_descripcion`, `tra_usuario_ingreso`, `tra_estado`, `tra_estado_logico`) VALUES 
+INSERT INTO `tramite` (`tra_id`, `uaca_id`, `tra_nombre`, `tra_nomenclatura`, `tra_descripcion`, `tra_usuario_ingreso`, `tra_estado`, `tra_estado_logico`) VALUES
 (1,1,'Académicos','ACA',null,1,'1','1'),
 (2,1,'Graduación','GRA',null,1,'1','1'),
 (3,1,'Secretaría General','SEC',null,1,'1','1'),
@@ -201,7 +201,7 @@ INSERT INTO `tramite` (`tra_id`, `uaca_id`, `tra_nombre`, `tra_nomenclatura`, `t
 (9,2,'Financiero','FIN',null,1,'1','1');
 
 
-INSERT INTO `especies` (`esp_id`,`tra_id`,`esp_codigo`,`esp_rubro`,`esp_valor`,`esp_emision_certificado`,`esp_departamento`,`esp_dia_vigencia`,`esp_numero`,`esp_usuario_ingreso`,`esp_usuario_modifica`,`esp_estado`,`esp_fecha_creacion`,`esp_fecha_modificacion`,`esp_estado_logico`) VALUES 
+INSERT INTO `especies` (`esp_id`,`tra_id`,`esp_codigo`,`esp_rubro`,`esp_valor`,`esp_emision_certificado`,`esp_departamento`,`esp_dia_vigencia`,`esp_numero`,`esp_usuario_ingreso`,`esp_usuario_modifica`,`esp_estado`,`esp_fecha_creacion`,`esp_fecha_modificacion`,`esp_estado_logico`) VALUES
 (1,1,1,'Exámenes supletorios',20.00,'NO','',30,'000000001',NULL,NULL,'1','2020-03-25 02:19:41',NULL,'1'),
 (2,1,2,'Exámenes mejoramiento',20.00,'NO','',30,'000000001',NULL,NULL,'1','2020-03-25 02:24:10',NULL,'1'),
 (3,1,3,'Exámenes atrasado',20.00,'NO','',30,'000000001',NULL,NULL,'1','2020-03-25 02:24:10',NULL,'1'),
@@ -435,11 +435,11 @@ insert into db_academico.`distributivo_horario_det` (dhde_id, daho_id, dia_id, d
 (20, 9, 3, '18:20:00', '21:20:00', 1, 1, 1),
 (21, 10, 5, '18:20:00', '21:20:00', 1, 1, 1),
 (22, 11, 6, '07:15:00', '09:15:00', 1, 1, 1), --
-(23, 12, 6, '07:15:00', '10:15:00', 1, 1, 1), 
-(24, 13, 6, '10:30:00', '13:30:00', 1, 1, 1), 
-(25, 14, 6, '14:30:00', '17:30:00', 1, 1, 1), 
-(26, 15, 6, '08:15:00', '10:15:00', 1, 1, 1), 
-(27, 16, 6, '10:30:00', '12:30:00', 1, 1, 1), 
+(23, 12, 6, '07:15:00', '10:15:00', 1, 1, 1),
+(24, 13, 6, '10:30:00', '13:30:00', 1, 1, 1),
+(25, 14, 6, '14:30:00', '17:30:00', 1, 1, 1),
+(26, 15, 6, '08:15:00', '10:15:00', 1, 1, 1),
+(27, 16, 6, '10:30:00', '12:30:00', 1, 1, 1),
 (28, 17, 6, '13:30:00', '15:30:00', 1, 1, 1),
 (29, 18, 1, '19:00:00', '20:00:00', 1, 1, 1),
 (30, 19, 1, '20:00:00', '21:00:00', 1, 1, 1),
@@ -670,3 +670,10 @@ INSERT INTO db_academico.planificacion_estudiante (`pes_id`,`pla_id`,`per_id`,`p
 INSERT INTO db_academico.planificacion_estudiante (`pes_id`,`pla_id`,`per_id`,`pes_jornada`,`pes_cod_carrera`,`pes_carrera`,`pes_dni`,`pes_nombres`,`pes_egresado`,`pes_tutoria_nombre`,`pes_tutoria_cod`,`pes_cod_malla`,`pes_mat_b1_h1_nombre`,`pes_mat_b1_h1_cod`,`pes_mod_b1_h1`,`pes_jor_b1_h1`,`pes_mat_b1_h2_nombre`,`pes_mat_b1_h2_cod`,`pes_mod_b1_h2`,`pes_jor_b1_h2`,`pes_mat_b1_h3_nombre`,`pes_mat_b1_h3_cod`,`pes_mod_b1_h3`,`pes_jor_b1_h3`,`pes_mat_b1_h4_nombre`,`pes_mat_b1_h4_cod`,`pes_mod_b1_h4`,`pes_jor_b1_h4`,`pes_mat_b1_h5_nombre`,`pes_mat_b1_h5_cod`,`pes_mod_b1_h5`,`pes_jor_b1_h5`,`pes_mat_b1_h6_nombre`,`pes_mat_b1_h6_cod`,`pes_mod_b1_h6`,`pes_jor_b1_h6`,`pes_mat_b2_h1_nombre`,`pes_mat_b2_h1_cod`,`pes_mod_b2_h1`,`pes_jor_b2_h1`,`pes_mat_b2_h2_nombre`,`pes_mat_b2_h2_cod`,`pes_mod_b2_h2`,`pes_jor_b2_h2`,`pes_mat_b2_h3_nombre`,`pes_mat_b2_h3_cod`,`pes_mod_b2_h3`,`pes_jor_b2_h3`,`pes_mat_b2_h4_nombre`,`pes_mat_b2_h4_cod`,`pes_mod_b2_h4`,`pes_jor_b2_h4`,`pes_mat_b2_h5_nombre`,`pes_mat_b2_h5_cod`,`pes_mod_b2_h5`,`pes_jor_b2_h5`,`pes_mat_b2_h6_nombre`,`pes_mat_b2_h6_cod`,`pes_mod_b2_h6`,`pes_jor_b2_h6`,`pes_estado`,`pes_fecha_creacion`,`pes_usuario_modifica`,`pes_fecha_modificacion`,`pes_estado_logico`) VALUES (2,1,2031,'',NULL,'Economía','0928824325','Carolay Baque',NULL,NULL,NULL,NULL,NULL,'GRA-0016-0226-031','1','Nocturno',NULL,'GRA-0016-0212-014','2','Matutino',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,'2020-12-10 14:46:40',NULL,NULL,1);
 INSERT INTO db_academico.planificacion_estudiante (`pes_id`,`pla_id`,`per_id`,`pes_jornada`,`pes_cod_carrera`,`pes_carrera`,`pes_dni`,`pes_nombres`,`pes_egresado`,`pes_tutoria_nombre`,`pes_tutoria_cod`,`pes_cod_malla`,`pes_mat_b1_h1_nombre`,`pes_mat_b1_h1_cod`,`pes_mod_b1_h1`,`pes_jor_b1_h1`,`pes_mat_b1_h2_nombre`,`pes_mat_b1_h2_cod`,`pes_mod_b1_h2`,`pes_jor_b1_h2`,`pes_mat_b1_h3_nombre`,`pes_mat_b1_h3_cod`,`pes_mod_b1_h3`,`pes_jor_b1_h3`,`pes_mat_b1_h4_nombre`,`pes_mat_b1_h4_cod`,`pes_mod_b1_h4`,`pes_jor_b1_h4`,`pes_mat_b1_h5_nombre`,`pes_mat_b1_h5_cod`,`pes_mod_b1_h5`,`pes_jor_b1_h5`,`pes_mat_b1_h6_nombre`,`pes_mat_b1_h6_cod`,`pes_mod_b1_h6`,`pes_jor_b1_h6`,`pes_mat_b2_h1_nombre`,`pes_mat_b2_h1_cod`,`pes_mod_b2_h1`,`pes_jor_b2_h1`,`pes_mat_b2_h2_nombre`,`pes_mat_b2_h2_cod`,`pes_mod_b2_h2`,`pes_jor_b2_h2`,`pes_mat_b2_h3_nombre`,`pes_mat_b2_h3_cod`,`pes_mod_b2_h3`,`pes_jor_b2_h3`,`pes_mat_b2_h4_nombre`,`pes_mat_b2_h4_cod`,`pes_mod_b2_h4`,`pes_jor_b2_h4`,`pes_mat_b2_h5_nombre`,`pes_mat_b2_h5_cod`,`pes_mod_b2_h5`,`pes_jor_b2_h5`,`pes_mat_b2_h6_nombre`,`pes_mat_b2_h6_cod`,`pes_mod_b2_h6`,`pes_jor_b2_h6`,`pes_estado`,`pes_fecha_creacion`,`pes_usuario_modifica`,`pes_fecha_modificacion`,`pes_estado_logico`) VALUES (3,1,4451,'',NULL,'Economía','0929318137','Edwin Arroba',NULL,NULL,NULL,'GRA-0016',NULL,'GRA-0016-0342-015','2','Matutino',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'GRA-0016-0218-001','3','Matutino',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,'2020-12-10 16:46:59',NULL,NULL,1);
 INSERT INTO db_academico.planificacion_estudiante (`pes_id`,`pla_id`,`per_id`,`pes_jornada`,`pes_cod_carrera`,`pes_carrera`,`pes_dni`,`pes_nombres`,`pes_egresado`,`pes_tutoria_nombre`,`pes_tutoria_cod`,`pes_cod_malla`,`pes_mat_b1_h1_nombre`,`pes_mat_b1_h1_cod`,`pes_mod_b1_h1`,`pes_jor_b1_h1`,`pes_mat_b1_h2_nombre`,`pes_mat_b1_h2_cod`,`pes_mod_b1_h2`,`pes_jor_b1_h2`,`pes_mat_b1_h3_nombre`,`pes_mat_b1_h3_cod`,`pes_mod_b1_h3`,`pes_jor_b1_h3`,`pes_mat_b1_h4_nombre`,`pes_mat_b1_h4_cod`,`pes_mod_b1_h4`,`pes_jor_b1_h4`,`pes_mat_b1_h5_nombre`,`pes_mat_b1_h5_cod`,`pes_mod_b1_h5`,`pes_jor_b1_h5`,`pes_mat_b1_h6_nombre`,`pes_mat_b1_h6_cod`,`pes_mod_b1_h6`,`pes_jor_b1_h6`,`pes_mat_b2_h1_nombre`,`pes_mat_b2_h1_cod`,`pes_mod_b2_h1`,`pes_jor_b2_h1`,`pes_mat_b2_h2_nombre`,`pes_mat_b2_h2_cod`,`pes_mod_b2_h2`,`pes_jor_b2_h2`,`pes_mat_b2_h3_nombre`,`pes_mat_b2_h3_cod`,`pes_mod_b2_h3`,`pes_jor_b2_h3`,`pes_mat_b2_h4_nombre`,`pes_mat_b2_h4_cod`,`pes_mod_b2_h4`,`pes_jor_b2_h4`,`pes_mat_b2_h5_nombre`,`pes_mat_b2_h5_cod`,`pes_mod_b2_h5`,`pes_jor_b2_h5`,`pes_mat_b2_h6_nombre`,`pes_mat_b2_h6_cod`,`pes_mod_b2_h6`,`pes_jor_b2_h6`,`pes_estado`,`pes_fecha_creacion`,`pes_usuario_modifica`,`pes_fecha_modificacion`,`pes_estado_logico`) VALUES (4,1,4466,'',NULL,'Turismo','0705778454','Sofia Burneo',NULL,NULL,NULL,'GRA-0018',NULL,NULL,NULL,NULL,NULL,'GRA-0018-0510-022','2','Matutino',NULL,'GRA-0018-0366-014','2','Matutino',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,'2020-12-10 16:49:07',NULL,NULL,1);
+
+-- -- ------------------------ ------------------------------
+--
+-- Volcado de datos para la tabla `numero_matricula`
+--
+INSERT INTO `db_academico`.`numero_matricula` (`nmat_id`, `nmat_codigo`, `nmat_descripcion`, `nmat_anio`, `nmat_numero`, `nmat_usuario_ingreso`, `nmat_usuario_modifica`, `nmat_estado`, `nmat_fecha_creacion`, `nmat_estado_logico`) VALUES
+('1', '1', 'secuencial para matricula', '2022', '00000', '1', NULL, '1', '2022-02-02 16:00:00', '1');

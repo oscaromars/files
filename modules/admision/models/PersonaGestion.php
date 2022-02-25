@@ -1037,7 +1037,9 @@ class PersonaGestion extends \app\modules\admision\components\CActiveRecord {
                 left JOIN " . $con->dbname . ".oportunidad opo on opo.opo_id = max_opor.opo_id                                          
                 left join " . $con1->dbname . ".empresa as emp on emp.emp_id=opo.emp_id
                 left JOIN " . $con2->dbname . ".unidad_academica uaca on uaca.uaca_id = opo.uaca_id
-                left JOIN ". $con1->dbname .".persona pe ON pe.per_id=pg.pges_usuario_ingreso
+                -- left JOIN ". $con1->dbname .".persona pe ON pe.per_id=pg.pges_usuario_ingreso
+                left JOIN ". $con1->dbname .".usuario usu ON usu.usu_id=pg.pges_usuario_ingreso
+                left JOIN ". $con1->dbname .".persona pe ON pe.per_id=usu.per_id
                 WHERE                           
                         pg.pges_estado = :estado
                         and pg.pges_estado_logico = :estado

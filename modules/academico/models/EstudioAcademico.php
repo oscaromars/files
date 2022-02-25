@@ -413,4 +413,46 @@ class EstudioAcademico extends \app\modules\admision\components\CActiveRecord {
         return $resultData;
     }
 
+    /**
+     * Function Obtiene carrera ,modalidad, segun per_id del estudiante.
+     * @author  Julio Lopez <analistadesarrollo03@uteg.edu.ec>
+     * @param   
+     * @return  $resultData (Retornar los datos).
+     */
+    public function selectCarreraEst($per_id) {
+        $con = \Yii::$app->db_academico;
+        $con2 = \Yii::$app->db_asgard;
+        //$estado = 1;
+
+        $sql = "SELECT 
+                    ea.eaca_id AS eaca_id,
+                    ea.eaca_codigo AS eaca_codigo,
+                    ea.eaca_nombre AS eaca_nombre,
+                    moda.mod_id AS mod_id,
+                    moda.mod_nombre AS mod_nombre
+                            
+                FROM " . $con2->dbname . ".persona as p
+                INNER JOIN  " . $con->dbname . ".estudiante AS e on p.per_id = e.per_id
+                INNER JOIN  " . $con->dbname . ".estudiante_carrera_programa AS ec ON e.est_id = ec.est_id
+                INNER JOIN  " . $con->dbname . ".modalidad_estudio_unidad AS me ON ec.meun_id = me.meun_id
+                INNER JOIN  " . $con->dbname . ".modalidad AS moda  ON me.mod_id = moda.mod_id
+                INNER JOIN  " . $con->dbname . ".estudio_academico AS ea ON ea.eaca_id = me.eaca_id
+                INNER JOIN  " . $con->dbname . ".unidad_academica AS ua ON me.uaca_id = ua.uaca_id
+                WHERE p.per_id = :per_id
+                  AND p.per_estado = 1 AND p.per_estado_logico =1
+                  AND e.est_estado = 1 AND e.est_estado_logico = 1
+                  AND ec.ecpr_estado = 1 AND ec.ecpr_estado_logico= 1
+                  AND moda.mod_estado = 1 AND moda.mod_estado_logico = 1
+                  AND ea.eaca_estado = 1 AND ea.eaca_estado_logico = 1
+                  AND ua.uaca_estado = 1 AND ua.uaca_estado_logico = 1;";
+
+
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
+        //$comando->bindParam(":estado", $estado, \PDO::PARAM_STR);        
+        $resultData = $comando->queryOne();
+        //\app\models\Utilities::putMessageLogFile('selectCarreraEst: '. $comando->getRawSql());
+        return $resultData;
+    }
+
 }

@@ -927,7 +927,7 @@ class OrdenPago extends \app\modules\financiero\components\CActiveRecord {
     }
 
     /**
-     * Function consulta de orden pago por id (Actualiza el estado a pagado a la orden de pago.
+     * Function consulta de orden pago por id.
      * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
      * @param
      * @return
@@ -1902,7 +1902,7 @@ class OrdenPago extends \app\modules\financiero\components\CActiveRecord {
         $con = \Yii::$app->db_facturacion;
         $estado = 1;
 
-        $sql = "SELECT opag.opag_id, opag_estado_pago, dpag_id
+        $sql = "SELECT opag.opag_id, opag_estado_pago, dpag_id, ite_id
                 FROM " . $con->dbname . ".orden_pago opag INNER JOIN " . $con->dbname . ".desglose_pago dpag
                     ON dpag.opag_id = opag.opag_id
                 WHERE  opag.sins_id = :sins_id AND
@@ -2582,6 +2582,117 @@ class OrdenPago extends \app\modules\financiero\components\CActiveRecord {
         $comando = $con->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
         $comando->bindParam(":opag_id", $opag_id, \PDO::PARAM_INT);
+        $resultData = $comando->queryOne();
+        return $resultData;
+    }
+
+    /**
+     * Function modificarSolicDscto
+     * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
+     * @param
+     * @return
+     */
+    public function modificarSolicDscto($sins_id, $ddit_id, $sdes_precio, $sdes_porcentaje, $sdes_valor) {
+        $con = \Yii::$app->db_facturacion;
+        $estado = 1;
+        $fecha_modificacion = date(Yii::$app->params["dateTimeByDefault"]);
+        $comando = $con->createCommand
+                ("UPDATE " . $con->dbname . ".solicitud_descuento
+                SET sdes_fecha_modificacion = :sdes_fecha_modificacion,
+                    ddit_id = :ddit_id,
+                    sdes_precio = :sdes_precio,
+                    sdes_porcentaje = :sdes_porcentaje,
+                    sdes_valor = :sdes_valor,
+                    sdes_estado = :estado,
+                    sdes_estado_logico = :estado
+                WHERE sins_id = :sins_id ");
+
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $comando->bindParam(":sins_id", $sins_id, \PDO::PARAM_INT);
+        $comando->bindParam(":ddit_id", $ddit_id, \PDO::PARAM_INT);
+        $comando->bindParam(":sdes_precio", $sdes_precio, \PDO::PARAM_STR);
+        $comando->bindParam(":sdes_porcentaje", $sdes_porcentaje, \PDO::PARAM_STR);
+        $comando->bindParam(":sdes_valor", $sdes_valor, \PDO::PARAM_STR);
+        $comando->bindParam(":sdes_fecha_modificacion", $fecha_modificacion, \PDO::PARAM_STR);
+
+        $response = $comando->execute();
+        return $response;
+    }
+    /**
+     * Function Desactivarordenpago
+     * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
+     * @param
+     * @return
+     */
+    public function Desactivarordenpago($opag_id, $opag_usu_modifica) {
+        $con = \Yii::$app->db_facturacion;
+        $estado = 0;
+        $fecha_modificacion = date(Yii::$app->params["dateTimeByDefault"]);
+        $comando = $con->createCommand
+                ("UPDATE " . $con->dbname . ".orden_pago
+                SET opag_fecha_modificacion = :opag_fecha_modificacion,
+                    opag_estado = :estado,
+                    opag_estado_logico = :estado,
+                    opag_usu_modifica = :opag_usu_modifica
+                WHERE opag_id = :opag_id ");
+
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $comando->bindParam(":opag_id", $opag_id, \PDO::PARAM_INT);
+        $comando->bindParam(":opag_usu_modifica", $opag_usu_modifica, \PDO::PARAM_INT);
+        $comando->bindParam(":opag_fecha_modificacion", $fecha_modificacion, \PDO::PARAM_STR);
+
+        $response = $comando->execute();
+        return $response;
+    }
+    /**
+     * Function Desactivardesglosepago
+     * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
+     * @param
+     * @return
+     */
+    public function Desactivardesglosepago($opag_id, $dpag_usu_modifica) {
+        $con = \Yii::$app->db_facturacion;
+        $estado = 0;
+        $fecha_modificacion = date(Yii::$app->params["dateTimeByDefault"]);
+        $comando = $con->createCommand
+                ("UPDATE " . $con->dbname . ".desglose_pago
+                SET dpag_fecha_modificacion = :dpag_fecha_modificacion,
+                    dpag_estado = :estado,
+                    dpag_estado_logico = :estado,
+                    dpag_usu_modifica = :dpag_usu_modifica
+                WHERE opag_id = :opag_id ");
+
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $comando->bindParam(":opag_id", $opag_id, \PDO::PARAM_INT);
+        $comando->bindParam(":dpag_usu_modifica", $dpag_usu_modifica, \PDO::PARAM_INT);
+        $comando->bindParam(":dpag_fecha_modificacion", $fecha_modificacion, \PDO::PARAM_STR);
+
+        $response = $comando->execute();
+        return $response;
+    }
+
+    /**
+     * Function consultarValorpagoxordenid
+     * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
+     * @param
+     * @return
+     */
+    public function consultarValorpagoxordenid($opag_id) {
+        $con = \Yii::$app->db_facturacion;
+        $estado = 1;
+        //$estado_pago = 'P';
+
+        $sql = "SELECT opag.sins_id as solicitud,
+                opag.opag_total as total
+                FROM " . $con->dbname . ".orden_pago opag
+                WHERE opag.opag_id = :opag_id AND
+                      -- opag.opag_estado_pago = :estado_pago AND
+                      opag.opag_estado = :estado AND
+                      opag.opag_estado_logico = :estado";
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $comando->bindParam(":opag_id", $opag_id, \PDO::PARAM_INT);
+        // $comando->bindParam(":estado_pago", $estado_pago, \PDO::PARAM_STR);
         $resultData = $comando->queryOne();
         return $resultData;
     }

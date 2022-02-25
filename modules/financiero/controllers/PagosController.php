@@ -26,6 +26,7 @@ use app\modules\academico\Module as academico;
 use app\models\EmpresaPersona;
 use app\models\UsuaGrolEper;
 use app\modules\admision\models\InteresadoEmpresa;
+use app\modules\admision\models\SolicitudInscripcionSaldos;
 use app\modules\academico\models\ModuloEstudio;
 use app\modules\academico\models\Estudiante;
 admision::registerTranslations();
@@ -437,6 +438,7 @@ class PagosController extends \app\components\CController {
         $security = new Security();
         $usergrol = new UsuaGrolEper();
         $usu_autenticado = @Yii::$app->session->get("PB_iduser");
+        $modsinsaldos = new SolicitudInscripcionSaldos();
         //online que sube doc capturar asi el id de la persona
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
@@ -518,6 +520,8 @@ class PagosController extends \app\components\CController {
                     // AQUI SE APRUEBA EL PAGO EN ESTE IF, AQUI DEBE YA DESPUES DE GUARDAR
                     // CREAR COMO ESTUDIANTE EN TODAS LAS TABLAS
                     if ($banderacrea == 1) {
+                        //AQUI APRUEBA EL PAGO, REVISAR BIEN DONDE SE DEBE
+                        //CAMBIAR LOS ESTADOS DE SALDOS
                         $creg_total = $valortotal;
                         $creg_resultado = 'OK';
                         $creg_fecha_pago_total = $fechapagtotal;
@@ -592,7 +596,7 @@ class PagosController extends \app\components\CController {
                                                     if ($resp_estudianteid["est_id"] == "") {
                                                         //\app\models\Utilities::putMessageLogFile('entro 5: ');
                                                         //\app\models\Utilities::putMessageLogFile('per_id en 5: ' . $per_id);
-                                                        $resp_estudiante = $mod_Estudiante->insertarEstudiante($per_id, null, null, $usu_autenticado, null, $fecha, null);
+                                                        $resp_estudiante = $mod_Estudiante->insertarEstudiante($per_id, /*null,*/ null, $usu_autenticado, null, $fecha, null);
                                                     } else {
                                                         //\app\models\Utilities::putMessageLogFile('entro 6: ');
                                                         $resp_estudiante = $resp_estudianteid["est_id"];
@@ -636,6 +640,24 @@ class PagosController extends \app\components\CController {
                                 }
                             } //fin de actualizar detalle cargo
                         } //fin de obtener registros de desglose
+                        //AQUI ACTUALIZAR ESTADOS estado_de_uso, solicitud_inscripcion_saldos
+                        //\app\models\Utilities::putMessageLogFile('solinscr_id: '.$resp_idsol["sins_id"]);
+                        //\app\models\Utilities::putMessageLogFile('ordenpagoid: '.$opag_id);
+                        $respsolinsaldo = $modsinsaldos->consultaIncripcionSaldos($resp_idsol["sins_id"], $opag_id);
+                        //\app\models\Utilities::putMessageLogFile('$respsolinsaldo["sinsa_id"]: '.$respsolinsaldo["sinsa_id"]);
+                        //\app\models\Utilities::putMessageLogFile('$respsolinsaldo["sinsa_saldo"]: '.$respsolinsaldo["sinsa_saldo"]);
+                        if ($respsolinsaldo["sinsa_id"] > 0) {
+                                if ($respsolinsaldo["sinsa_saldo"] > 0) {
+                                    //\app\models\Utilities::putMessageLogFile('entre ifsss: ');
+                                    $sinsa_estado_saldofavor = 'E';
+                                    $sinsa_estado_saldoconsumido = 'P';
+                                }else {
+                                    //\app\models\Utilities::putMessageLogFile('entre elssess: ');
+                                    $sinsa_estado_saldofavor = 'U';
+                                    $sinsa_estado_saldoconsumido = 'C';
+                                }
+                                $respactsolinsaldo = $modsinsaldos->actualizarEstadosSaldos($respsolinsaldo["sinsa_id"], $sinsa_estado_saldofavor, $sinsa_estado_saldoconsumido, $usuario_aprueba);
+                            }
                     } //fin  $banderacrea
                     else { //En el caso cuando no aprueba el pago.
                         //actualizar en detalle_cargo la gestión realizada.
@@ -666,7 +688,7 @@ class PagosController extends \app\components\CController {
                 $transaction->rollback();
                 $transaction2->rollback();
                 $message = array(
-                    "wtmessage" => Yii::t("notificaciones", "Error al grabar." . $mensaje),
+                    "wtmessage" => Yii::t("notificaciones", "Error al guardar." . $mensaje),
                     "title" => Yii::t('jslang', 'Success'),
                 );
                 echo Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Sucess"), false, $message);
@@ -686,6 +708,8 @@ class PagosController extends \app\components\CController {
     public function actionSavecarga() {
         //$per_id = Yii::$app->session->get("PB_perid");
         $modcargapago = new OrdenPago();
+        $modsinsaldos = new SolicitudInscripcionSaldos();
+        $usuario = @Yii::$app->user->identity->usu_id;
         if (Yii::$app->request->isAjax) {
             if ($_SESSION['persona_solicita'] != '') {// tomar el de parametro)
                 $per_id = base64_decode($_SESSION['persona_solicita']);
@@ -715,6 +739,7 @@ class PagosController extends \app\components\CController {
             $arrIm = explode(".", basename($data["documento"]));
             $typeFile = strtolower($arrIm[count($arrIm) - 1]);
             $imagen = $arrIm[0] . "." . $typeFile;
+            $idsol = $data["sinsid"];
             $opag_id = $_GET["txth_ids"];
             $opag_id = $data["idpago"];
             $ccar_total = $data["totpago"];
@@ -736,9 +761,23 @@ class PagosController extends \app\components\CController {
                 $fecha_registro = date(Yii::$app->params["dateTimeByDefault"]);
                 $creadetalle = $modcargapago->insertarCargaprepago($opag_id, $fpag_id, $dcar_valor, $imagen, $dcar_revisado, $dcar_resultado, $dcar_observacion, $dcar_num_transaccion, $dcar_fecha_transaccion, $fecha_registro);
                 if ($creadetalle) {
+                    //REVISAR BIEN, SI EL PAGO SE CARGA, AQUI ACTUALIZAR  ESTADOS SALDOS
+                    //\app\models\Utilities::putMessageLogFile('idsolvvv:' . $idsol);
+                    //\app\models\Utilities::putMessageLogFile('opag_idvv:' . $opag_id);
+                    $respsolinsaldo = $modsinsaldos->consultaIncripcionSaldos($idsol, $opag_id);
+                    if ($respsolinsaldo["sinsa_id"] > 0) {
+                        if ($respsolinsaldo["sinsa_saldo"] > 0) {
+                            $sinsa_estado_saldofavor = 'E';
+                            $sinsa_estado_saldoconsumido = null;
+                        }else {
+                            $sinsa_estado_saldofavor = 'U';
+                            $sinsa_estado_saldoconsumido = null;
+                        }
+                        $respactsolinsaldo = $modsinsaldos->actualizarEstadosSaldos($respsolinsaldo["sinsa_id"], $sinsa_estado_saldofavor, $sinsa_estado_saldoconsumido, $usuario);
+                    }
                     //Envío de correo a colecturia.
-                    \app\models\Utilities::putMessageLogFile('Orden Pago:' . $opag_id);
-                    \app\models\Utilities::putMessageLogFile('Empresa:' . $empresa);
+                    //\app\models\Utilities::putMessageLogFile('Orden Pago:' . $opag_id);
+                    //\app\models\Utilities::putMessageLogFile('Empresa:' . $empresa);
                     $informacion_interesado = $modcargapago->datosBotonpago($opag_id, $empresa);
                     $pri_nombre = $informacion_interesado["nombres"];
                     $pri_apellido = $informacion_interesado["apellidos"];
@@ -849,7 +888,7 @@ class PagosController extends \app\components\CController {
 
     public function actionIndexadm() {
         $per_id = @Yii::$app->session->get("PB_perid"); //@Yii::$app->session->get("PB_iduser");
-        \app\models\Utilities::putMessageLogFile('perId en Indexadm: ' . $per_id);
+        //\app\models\Utilities::putMessageLogFile('perId en Indexadm: ' . $per_id);
         $model_interesado = new Interesado();
         $resp_gruporol = $model_interesado->consultagruporol($per_id);
         $mod_pago = new OrdenPago();
@@ -921,7 +960,7 @@ class PagosController extends \app\components\CController {
         $per_id = Yii::$app->session->get("PB_perid");
         $model_interesado = new Interesado();
         $resp_gruporol = $model_interesado->consultagruporol($per_id);
-        \app\models\Utilities::putMessageLogFile('rol:' . $resp_gruporol[0]);
+        //\app\models\Utilities::putMessageLogFile('rol:' . $resp_gruporol[0]);
 
         $per_ids = base64_decode($_GET['perid']);
         $sol_id = base64_decode($_GET['id_sol']);

@@ -32,6 +32,7 @@ use app\modules\admision\models\MetodoIngreso;
 use app\modules\financiero\models\Secuencias;
 use app\models\InscripcionAdmision;
 use app\modules\admision\models\ConvenioEmpresa;
+use app\modules\academico\models\NivelInstruccion;
 
 class InscribeducacioncontinuaController extends \yii\web\Controller {
 
@@ -51,6 +52,7 @@ class InscribeducacioncontinuaController extends \yii\web\Controller {
         $modcanal = new Oportunidad();
         $mod_metodo = new MetodoIngreso();
         $mod_inscripcion = new InscripcionAdmision();
+        $mod_nivelinst = new NivelInstruccion();
 
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
@@ -99,6 +101,7 @@ class InscribeducacioncontinuaController extends \yii\web\Controller {
         $arr_metodos = $mod_metodo->consultarMetodoUnidadAca_2($arr_ninteres[0]["id"]);
         $mod_conempresa = new ConvenioEmpresa();
         $arr_convempresa = $mod_conempresa->consultarConvenioEmpresa();
+        $arr_nivelinst =  $mod_nivelinst->consultarNivelInstruccion();
         $_SESSION['JSLANG']['Your information has not been saved. Please try again.'] = Yii::t('notificaciones', 'Your information has not been saved. Please try again.');
 
         return $this->render('index', [
@@ -116,6 +119,7 @@ class InscribeducacioncontinuaController extends \yii\web\Controller {
                     "arr_metodos" => ArrayHelper::map($arr_metodos, "id", "name"),
                     "arr_convenio_empresa" => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Ninguna")]], $arr_convempresa), "id", "name"),
                     "resp_datos" => $resp_datos,
+                    "arr_nivelinst" =>ArrayHelper::map($arr_nivelinst, "id", "value"),
         ]);
     }
 
@@ -247,6 +251,7 @@ class InscribeducacioncontinuaController extends \yii\web\Controller {
                         'fecha_transaccion' => $data["fecha_transaccion"],
                         'doc_pago' => $data["doc_pago"],
                         'forma_pago' => $data["forma_pago"],
+                        'nivinstrucion' => $data["nivinstrucion"],
                     );
                     $resul = $model->insertaOriginal($Ids,$dataRegistro);
                 } else if ($accion == "UpdateDepTrans") {

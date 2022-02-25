@@ -32,6 +32,7 @@ use yii\helpers\Html;
                                  "arr_conuteg" => $arr_conuteg,
                                  "arr_carrerra1" => $arr_carrerra1,
                                  "arr_metodos" => $arr_metodos,
+                                 "arr_nivelinst" => $arr_nivelinst,
                          ]);
                     ?>
                 </form>

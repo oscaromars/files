@@ -129,6 +129,7 @@ $(document).ready(function () {
         arrParams.dni = $('#txt_dni_fac').val();
         arrParams.empresa = $('#txt_empresa').val();
         arrParams.correo = $('#txt_correo_fac').val();
+        arrParams.nivinstrucion = $('#cmb_instruccion option:selected').val();
         if (!validateForm()) {
             requestHttpAjax(link, arrParams, function (response) {
                 var message = response.message;
@@ -741,6 +742,7 @@ function dataInscripPart1(ID) {
     //objDat.pais = $('#cmb_pais_dom option:selected').val();
     objDat.pais = 1;
     objDat.pges_celular = $('#txt_celular').val();
+    objDat.nivinstrucion = $('#cmb_instruccion option:selected').val();
     objDat.unidad_academica = $('#cmb_unidad_solicitud option:selected').val();
     objDat.modalidad = $('#cmb_modalidad_solicitud option:selected').val();
     if (objDat.unidad_academica == 1) {

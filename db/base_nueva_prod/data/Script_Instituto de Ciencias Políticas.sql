@@ -5,8 +5,12 @@ VALUES ('10', 'Instituto de Ciencias Políticas', 'Instituto de Ciencias Políti
 
 /** Verificar PK produccion*/
 INSERT INTO `db_academico`.`estudio_academico` (`eaca_id`, `teac_id`, `eaca_codigo`, `eaca_nombre`, `eaca_descripcion`, `eaca_alias`, `eaca_alias_resumen`, `eaca_usuario_ingreso`, `eaca_usuario_modifica`, `eaca_estado`, `eaca_fecha_creacion`, `eaca_estado_logico`)
-VALUES ('76', '3', 'DINS', 'Diplomado Institución', 'Diplomado Institución', 'diplomado_institucion', 'diplomado_institucion', '1', NULL, '1', '2022-02-25 11:31:00', '1');
+VALUES ('76', '3', 'DFPP', 'Diplomado en Formación y participación política', 'Diplomado en Formación y participación política', 'diplomado_institucion', 'diplomado_institucion', '1', NULL, '1', '2022-02-25 11:31:00', '1');
 
 /*Verificar PK en produccion tanto el PK como el eaca_id que va en la columna 4*/
 INSERT INTO `db_academico`.`modalidad_estudio_unidad` (`meun_id`, `uaca_id`, `mod_id`, `eaca_id`, `emp_id`, `meun_usuario_ingreso`, `meun_estado`, `meun_fecha_creacion`, `meun_estado_logico`)
 VALUES ('142', '10', '1', '76', '1', '1', '1', '2022-02-25 11:22:00', '1');
+
+/*****Crear campo en tabla temporal para guardar nivel de instruccion****/
+ALTER TABLE `db_captacion`.`temporal_wizard_inscripcion`
+ADD COLUMN `twin_nivel_instruccion` BIGINT(20) NULL AFTER `twin_mensaje2`;

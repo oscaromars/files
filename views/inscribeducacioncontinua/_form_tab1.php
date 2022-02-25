@@ -8,7 +8,7 @@ use kartik\date\DatePicker;
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 use app\components\CFileInputAjax;
-
+//print_r($arr_nivelinst);
 ?>
 <form class="form-horizontal">
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -89,6 +89,14 @@ use app\components\CFileInputAjax;
             </div>-->
             <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9">
                 <input type="text" class="form-control PBvalidation" id="txt_celular" data-type="number" data-keydown="true" placeholder="<?= Yii::t("formulario", "CellPhone") ?>">
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="form-group">
+            <label for="cmb_instruccion" class="col-lg-3 col-md-3 col-sm-3 col-xs-3 control-label"><?= Yii::t("formulario", "Nivel Instrucción") ?> <span class="text-danger">*</span></label>
+            <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9">
+                <?= Html::dropDownList("cmb_instruccion", 0, $arr_nivelinst, ["class" => "form-control", "id" => "cmb_instruccion"]) ?>
             </div>
         </div>
     </div>

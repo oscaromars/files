@@ -752,7 +752,8 @@ function dataInscripPart1(ID) {
     } else if (objDat.unidad_academica == 2) {
         objDat.ming_id = $('#cmb_metodo_solicitud option:selected').val();
     }
-    objDat.conoce = $('#cmb_conuteg option:selected').val();
+    //objDat.conoce = $('#cmb_conuteg option:selected').val();
+    objDat.conoce = 0;
     objDat.carrera = $('#cmb_carrera_solicitud option:selected').val();
     //TABA 2
     objDat.ruta_doc_titulo = ($('#txth_doc_titulo').val() != '') ? $('#txth_doc_titulo').val() : '';

@@ -93,12 +93,7 @@ class SolicitudesController extends \app\components\CController {
         ]);
     }
 
-    /**
-     * Function
-     * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
-     * @param   Ninguno.
-     * @return  Una vista que recibe las solicitudes del usuario logeado.
-     */
+
     public function actionListarsolicitudxinteresado() {
         $per_idsession = @Yii::$app->session->get("PB_perid");
         $per_Ids = base64_decode($_GET['perid']);

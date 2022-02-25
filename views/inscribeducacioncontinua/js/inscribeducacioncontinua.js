@@ -12,7 +12,6 @@
 /*function habilitarSecciones() {
     var pais = $('#cmb_pais_dom').val();
     var unidad = $('#cmb_unidad_solicitud').val();
-    //if (pais == 1) {
     if ((pais == 1) && (unidad == 1)) {
         $('#divCertvota').css('display', 'block');
     } else {
@@ -37,7 +36,7 @@ $(document).ready(function () {
         ;
     });
 
-    /*$('#cmb_pais_dom').change(function () {
+    $('#cmb_pais_dom').change(function () {
         var link = $('#txth_base').val() + "/inscribeducacioncontinua/index";
         var arrParams = new Object();
         arrParams.codarea = $(this).val();
@@ -48,9 +47,9 @@ $(document).ready(function () {
                 $('#txt_codigoarea').val(data.area['name']);
             }
         }, true);
-    });*/
+    });
     $('#sendInformacionAspirante').click(function () {
-        habilitarSecciones();
+        //habilitarSecciones();
         if ($('#txth_twin_id').val() == 0) {
             guardarInscripcion('Create', '1');
         } else {
@@ -126,8 +125,7 @@ $(document).ready(function () {
         }
         arrParams.tipo_dni_fac = tipo_dni_fact;
         arrParams.dni = $('#txt_dni_fac').val();
-        //arrParams.empresa = $('#txt_empresa').val();
-        arrParams.empresa = null;
+        arrParams.empresa = $('#txt_empresa').val();
         arrParams.correo = $('#txt_correo_fac').val();
         if (!validateForm()) {
             requestHttpAjax(link, arrParams, function (response) {
@@ -232,8 +230,8 @@ $(document).ready(function () {
             if (response.status == "OK") {
                 data = response.message;
                 setComboData(data.metodos, "cmb_metodo_solicitud");
-                //AparecerDocumento();
-                //Requisitos();
+                AparecerDocumento();
+                Requisitos();
             }
         }, true);
 
@@ -254,10 +252,10 @@ $(document).ready(function () {
         Requisitos();
     });
 
-    /*$('#cmb_metodo_solicitud').change(function () {
-        //Requisitos();
-        //AparecerDocumento();
-    });*/
+    $('#cmb_metodo_solicitud').change(function () {
+        Requisitos();
+        AparecerDocumento();
+    });
 
     // tabs del index
     $('#paso1next').click(function () {
@@ -313,15 +311,15 @@ $(document).ready(function () {
         $('#txt_correo_fac').removeClass("PBvalidation");
     });*/
 
-    /*function AparecerDocumento() {
+    function AparecerDocumento() {
         if ($('#cmb_metodo_solicitud').val() == 4) {
             $('#divCertificado').css('display', 'block');
         } else {
             $('#divCertificado').css('display', 'none');
         }
-    }*/
+    }
 
-    /*function Requisitos() {
+    function Requisitos() {
         if ($('#cmb_metodo_solicitud').val() != 0) {
             //Grado
             if ($('#cmb_unidad_solicitud').val() == 1) {
@@ -331,6 +329,51 @@ $(document).ready(function () {
                 $('#divRequisitosCANAD').css('display', 'none');
                 $('#divRequisitosEXA').css('display', 'none');
                 $('#divRequisitosPRP').css('display', 'none');
+                //Método: CAN
+//                if ($('#cmb_metodo_solicitud').val() == 1) {
+//                //Online
+//                if ($('#cmb_modalidad_solicitud').val() == 1) {
+//                    $('#divRequisitosCANO').css('display', 'block');
+//                    $('#divRequisitosCANP').css('display', 'none');
+//                    $('#divRequisitosCANSP').css('display', 'none');
+//                    $('#divRequisitosCANAD').css('display', 'none');
+//                    $('#divRequisitosEXA').css('display', 'none');
+//                    $('#divRequisitosPRP').css('display', 'none');
+//                } else {  //Presencial
+//                    if ($('#cmb_modalidad_solicitud').val() == 2) {
+//                        $('#divRequisitosCANP').css('display', 'block');
+//                        $('#divRequisitosCANO').css('display', 'none');
+//                        $('#divRequisitosCANSP').css('display', 'none');
+//                        $('#divRequisitosCANAD').css('display', 'none');
+//                        $('#divRequisitosEXA').css('display', 'none');
+//                        $('#divRequisitosPRP').css('display', 'none');
+//                    } else {   //Semipresencial
+//                        if ($('#cmb_modalidad_solicitud').val() == 3) {
+//                            $('#divRequisitosCANSP').css('display', 'block');
+//                            $('#divRequisitosCANO').css('display', 'none');
+//                            $('#divRequisitosCANP').css('display', 'none');
+//                            $('#divRequisitosCANAD').css('display', 'none');
+//                            $('#divRequisitosEXA').css('display', 'none');
+//                            $('#divRequisitosPRP').css('display', 'none');
+//                        } else {  // distancia
+//                            $('#divRequisitosCANAD').css('display', 'block');
+//                            $('#divRequisitosCANO').css('display', 'none');
+//                            $('#divRequisitosCANP').css('display', 'none');
+//                            $('#divRequisitosCANSP').css('display', 'none');
+//                            $('#divRequisitosEXA').css('display', 'none');
+//                            $('#divRequisitosPRP').css('display', 'none');
+//                        }
+//                    }
+//                }
+//            } else {  //examen
+//                //Online
+//                $('#divRequisitosEXA').css('display', 'block');
+//                $('#divRequisitosCANO').css('display', 'none');
+//                $('#divRequisitosCANP').css('display', 'none');
+//                $('#divRequisitosCANSP').css('display', 'none');
+//                $('#divRequisitosCANAD').css('display', 'none');
+//                $('#divRequisitosPRP').css('display', 'none');
+//            }
             } else {  //Posgrado  Semipresencial
                 if (($('#cmb_modalidad_solicitud').val() == 3) || ($('#cmb_modalidad_solicitud').val() == 2)) {
                     //Taller introductorio
@@ -354,7 +397,7 @@ $(document).ready(function () {
             $('#divRequisitosEXA').css('display', 'none');
             $('#divRequisitosPRP').css('display', 'none');
         }
-    }*/
+    }
 
     //Control del div de beneficiario
     $('#rdo_forma_pago_dinner').change(function () {
@@ -573,22 +616,51 @@ function guardarInscripcion(accion, paso) {
                             // Habilitar los items.
                             $('#id_item_1').css('display', 'block');
                             $('#id_item_2').css('display', 'block');
+//                                $('#lbl_valor_pagar_tx').text(response.data.data.precio);
+//                                $('#lbl_fcur_lb').text("Fecha del curso:");
+//                                $('#lbl_fcur_tx').text("22 de octubre al 14 de diciembre");
+//                                $('#lbl_mcur_lb').text("Examenes a rendir");
+//                                $('#lbl_fcur_lb').text("Fecha de las pruebas:");
+//                                $('#lbl_valor_pagar_tx').text(response.data.data.precio);
+                            //$('#lbl_fcur_tx').text("En quince (15) días a partir del registro (un coordinador te contactará para brindarte mayor información)");
                         } else if (mod_id == 2 || mod_id == 3 || mod_id == 4) {//presencial y semi presencial
                             //if (ming == 1) {// curso
                             var $val_item_1 = "";
                             if (mod_id == 2 || mod_id == 3) {
+                                //$('#lbl_fcur_tx').text("22 de octubre al 30 de noviembre");
                                 $('#val_item_1').text('200');
                                 $val_item_1 = '$200';
                             } else if (mod_id == 4) {
                                 $('#val_item_1').text('$115');
                                 $val_item_1 = '$115';
+                                //$('#lbl_fcur_tx').text("20 de octubre al 8 de diciembre");
                             }
+//                                    $('#lbl_mcur_lb').text("Materias a cursar");
+//                                    $('#lbl_item_1').text("Curso de nivelación: ");
                             $('#val_item_1').text(response.data.data.precio);
                             $('#lbl_item_2').text("Plataforma: ");
                             $('#val_item_2').text('$0');
                             $('#lbl_valor_pagar_tx').text($val_item_1);
                             $('#lbl_item_3').text("Pago Mínimo: ");
                             $('#val_item_3').text('$100');
+                            //var totalvalor = parseInt(response.data.data.precio) - parseInt(response.data.data.ddit_valor);
+                            //$('#lbl_valor_pagar_tx').text(totalvalor);
+//                                    $('#lbl_fcur_lb').text("Fecha del curso:");
+//                                    $('#id_item_1').css('display', 'block');
+//                                    $('#id_item_2').css('display', 'block');
+//                                } else if (ming == 2) { // examen
+//                                    $('#lbl_fcur_tx').text("En quince (15) días a partir del registro (un coordinador te contactará para brindarte mayor información)");
+//                                    $('#lbl_item_1').text("Exámen de Admisión: ");
+//                                    $('#val_item_1').text(response.data.data.precio);
+//                                    $('#lbl_item_2').text("Descuento especial: ");
+//                                    $('#lbl_mcur_lb').text("Examenes a rendir");
+//                                    $('#val_item_2').text(response.data.data.ddit_valor);
+//                                    var totalvalor = parseInt(response.data.data.precio) - parseInt(response.data.data.ddit_valor);
+//                                    $('#lbl_valor_pagar_tx').text(totalvalor);
+//                                    $('#lbl_fcur_lb').text("Fecha de las pruebas:");
+//                                    $('#id_item_1').css('display', 'block');
+//                                    $('#id_item_2').css('display', 'block');
+//                                }
                         }
                     }
 
@@ -627,9 +699,9 @@ function paso2next() {
     $("a[data-href='#paso2']").parent().attr('class', 'disabled');
     $("a[data-href='#paso2']").attr('data-href', $("a[href='#paso2']").attr('href'));
     $("a[data-href='#paso2']").removeAttr('href');
-    /*$("a[data-href='#paso3']").attr('data-toggle', 'tab');
+    $("a[data-href='#paso3']").attr('data-toggle', 'tab');
     $("a[data-href='#paso3']").attr('href', $("a[data-href='#paso3']").attr('data-href'));
-    $("a[data-href='#paso3']").trigger("click");*/
+    $("a[data-href='#paso3']").trigger("click");
     //Adicionar validación de datos obligatorios en datos de factura.
     $('#txt_nombres_fac').addClass("PBvalidation");
     $('#txt_dir_fac').addClass("PBvalidation");
@@ -662,11 +734,9 @@ function dataInscripPart1(ID) {
     } else {
         objDat.pges_cedula = $('#txt_pasaporte').val();
     }
-    //objDat.pges_empresa = $('#txt_empresa').val();
-    objDat.pges_empresa = null;
+    objDat.pges_empresa = $('#txt_empresa').val();
     objDat.pges_correo = $('#txt_correo').val();
-    //objDat.pais = $('#cmb_pais_dom option:selected').val();
-    objDat.pais = null;
+    objDat.pais = $('#cmb_pais_dom option:selected').val();
     objDat.pges_celular = $('#txt_celular').val();
     objDat.unidad_academica = $('#cmb_unidad_solicitud option:selected').val();
     objDat.modalidad = $('#cmb_modalidad_solicitud option:selected').val();

@@ -62,4 +62,31 @@ class BitacoraSeguimiento extends \yii\db\ActiveRecord
             'bseg_estado_logico' => 'Bseg Estado Logico',
         ];
     }
+
+    /**
+	 * Function obtener redes utilizadas en frm de inscribe educacion politica
+	 * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>;
+	 * @property
+	 * @return
+	 */
+	public function consultarRedesusadas() {
+		// \app\models\Utilities::putMessageLogFile('unidad academica modelo '. $uaca_id);
+		$con = \Yii::$app->db_crm;
+		$estado = 1;
+		$sql = "SELECT bseg_id as id,
+                       bseg_nombre as name
+                    FROM " . $con->dbname . ".bitacora_seguimiento
+                    WHERE
+                    (bseg_nombre like '%Facebook%'
+                     or bseg_nombre like '%Instagram%'
+                     or bseg_nombre like '%Twitter%')
+                    and bseg_estado_logico = :estado
+                    and bseg_estado = :estado
+                    ORDER BY 1 asc";
+
+		$comando = $con->createCommand($sql);
+		$comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+		$resultData = $comando->queryAll();
+		return $resultData;
+	}
 }

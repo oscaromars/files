@@ -11,6 +11,15 @@ VALUES ('76', '3', 'DFPP', 'Diplomado en Formación y participación política',
 INSERT INTO `db_academico`.`modalidad_estudio_unidad` (`meun_id`, `uaca_id`, `mod_id`, `eaca_id`, `emp_id`, `meun_usuario_ingreso`, `meun_estado`, `meun_fecha_creacion`, `meun_estado_logico`)
 VALUES ('142', '10', '1', '76', '1', '1', '1', '2022-02-25 11:22:00', '1');
 
-/*****Crear campo en tabla temporal para guardar nivel de instruccion****/
+/*****Crear campo en tabla temporal para guardar nivel de instruccion
+redes sociales ****/
 ALTER TABLE `db_captacion`.`temporal_wizard_inscripcion`
 ADD COLUMN `twin_nivel_instruccion` BIGINT(20) NULL AFTER `twin_mensaje2`;
+
+ALTER TABLE `db_captacion`.`temporal_wizard_inscripcion`
+ADD COLUMN `twin_redes_sociales` BIGINT(20) NULL DEFAULT NULL AFTER `twin_nivel_instruccion`;
+
+
+/**** Verificar PK en produccion Agregar twitter para seguimiento ***/
+INSERT INTO `db_crm`.`bitacora_seguimiento` (`bseg_id`, `bseg_nombre`, `bseg_descripcion`, `bseg_estado`, `bseg_fecha_creacion`, `bseg_estado_logico`)
+VALUES ('7', 'Twitter', 'Twitter', '1', '2022-02-25 16:28:00', '1');

@@ -8,7 +8,7 @@ use kartik\date\DatePicker;
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 use app\components\CFileInputAjax;
-//print_r($arr_nivelinst);
+//print_r($arr_redes);
 ?>
 <form class="form-horizontal">
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -121,6 +121,14 @@ use app\components\CFileInputAjax;
             <label for="cmb_carrera_solicitud" class="col-lg-3 col-md-3 col-sm-3 col-xs-3 control-label"><?= Yii::t("academico", "Programa") ?> <span class="text-danger">*</span></label>
             <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9">
                 <?= Html::dropDownList("cmb_carrera_solicitud", 0, $arr_carrerra1, ["class" => "form-control", "id" => "cmb_carrera_solicitud"]) ?>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="form-group">
+            <label for="cmb_redes_sociales" class="col-lg-3 col-md-3 col-sm-3 col-xs-3 control-label"><?= Yii::t("academico", "Redes Sociales") ?> <span class="text-danger">*</span></label>
+            <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9">
+                <?= Html::dropDownList("cmb_redes_sociales", 0, $arr_redes, ["class" => "form-control", "id" => "cmb_redes_sociales"]) ?>
             </div>
         </div>
     </div>

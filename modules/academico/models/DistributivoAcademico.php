@@ -22,8 +22,11 @@ use yii\data\ArrayDataProvider;
  * @property int $asi_id
  * @property int $pro_id
  * @property int $uaca_id
+ * @property int $acca_id
  * @property int $mod_id
  * @property int $daho_id
+ * @property int $daca_carga_academica
+ * @property int $daca_asi_relacion
  * @property string $daca_jornada
  * @property string $daca_horario
  * @property string $daca_fecha_registro
@@ -69,7 +72,7 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
 	 */
 	public function rules() {
 		return [
-			[['dcab_id', 'paca_id', 'pame_id', 'tdis_id', 'asi_id', 'pro_id', 'uaca_id', 'mod_id', 'daho_id', 'daca_usuario_ingreso', 'daca_usuario_modifica', 'mpp_id', 'daca_num_estudiantes_online', 'daca_horas_otras_actividades', 'meun_id', 'pppr_id'], 'integer'],
+			[['dcab_id', 'paca_id', 'pame_id', 'tdis_id', 'asi_id', 'pro_id', 'uaca_id', 'acca_id', 'mod_id', 'daho_id', 'daca_usuario_ingreso', 'daca_usuario_modifica', 'mpp_id', 'daca_num_estudiantes_online', 'daca_horas_otras_actividades', 'meun_id', 'pppr_id', 'daca_carga_academica'], 'integer'],
 			[['daca_fecha_inicio_post', 'daca_fecha_fin_post', 'daca_fecha_registro', 'daca_fecha_creacion', 'daca_fecha_modificacion'], 'safe'],
 			[['pro_id', 'daca_usuario_ingreso', 'daca_estado', 'daca_estado_logico'], 'required'],
 			[['daca_jornada', 'daca_estado', 'daca_estado_logico'], 'string', 'max' => 1],
@@ -99,8 +102,10 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
 			'asi_id' => 'Asi ID',
 			'pro_id' => 'Pro ID',
 			'uaca_id' => 'Uaca ID',
+			'acca_id' => 'Acca ID',
 			'mod_id' => 'Mod ID',
 			'daho_id' => 'Daho ID',
+			'daca_carga_academica' => 'Daca Carga Academica',
 			'daca_jornada' => 'Daca Jornada',
 			'daca_horario' => 'Daca Horario',
 			'daca_fecha_registro' => 'Daca Fecha Registro',
@@ -1014,6 +1019,7 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
 		$meun_id = "null";
 		$asi_id = "null";
 		$uni_id = "null";
+		$acca_id = "null";
 		$mod_id = "null";
 		$hor_id = "null";
 		$par_id = "null";
@@ -1024,6 +1030,8 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
 		$fecha_inicio = "null";
 		$fecha_fin = "null";
 		$num_estudiantes = "null";
+		$daca_carga_academica = "null";
+		$daca_asi_relacion = "null";
 
 		if ($data[$i]->programa) {
 			//$meun_id = $data[$i]->programa;
@@ -1043,9 +1051,14 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
 		}
 		if ($data[$i]->asi_id) {
 			$asi_id = $data[$i]->asi_id;
+			$daca_asi_relacion = $data[$i]->asi_relacion;
 		}
 		if ($data[$i]->uni_id) {
 			$uni_id = $data[$i]->uni_id;
+		}
+
+		if ($data[$i]->acca_id) {
+			$acca_id = $data[$i]->acca_id;
 		}
 
 		if ($data[$i]->mod_id) {
@@ -1074,9 +1087,14 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
 			$txt_horas_otros = $data[$i]->txt_horas_otros;
 		}
 
+		if ($data[$i]->estado) {
+			$daca_carga_academica = $data[$i]->estado;
+		}
+		\app\models\Utilities::putMessageLogFile('datos ' . $data[$i]->estado);
+
 		$sql = "INSERT INTO " . $con->dbname . ".distributivo_academico
-                        (paca_id,   pame_id,     dcab_id,            tdis_id,             asi_id,          pro_id,       uaca_id,              mod_id,                daho_id,                mpp_id,                   daca_num_estudiantes_online,                   daca_fecha_registro,       daca_usuario_ingreso, daca_estado, daca_estado_logico,daca_jornada,         daca_horario, daca_fecha_inicio_post,daca_fecha_fin_post,daca_horas_otras_actividades,meun_id,pppr_id) VALUES
-                        (" . $paca_id . "," . $pame_id . "," . $id_cab . "," . $data[$i]->tasi_id . " , " . $asi_id . ", " . $pro_id . ", " . $uni_id . ", " . $mod_id . ", " . $hor_id . ", " . $par_id . ",    " . $num_estudiantes . ",                  '" . $fecha_transaccion . "', " . $usu_id . ",          " . $estado . ", " . $estado . ",       " . $jor_id . ",        " . $hor_id . "," . $fecha_inicio . "," . $fecha_fin . "," . $txt_horas_otros . "," . $meun_id . "," . $par_posgrado . ")";
+                        (paca_id,   pame_id,     dcab_id,            tdis_id,             asi_id,   daca_carga_academica, daca_asi_relacion,      pro_id,       uaca_id,    acca_id,          mod_id,                daho_id,                mpp_id,                   daca_num_estudiantes_online,                   daca_fecha_registro,       daca_usuario_ingreso, daca_estado, daca_estado_logico,daca_jornada,         daca_horario, daca_fecha_inicio_post,daca_fecha_fin_post,daca_horas_otras_actividades,meun_id,pppr_id) VALUES
+                        (" . $paca_id . "," . $pame_id . "," . $id_cab . "," . $data[$i]->tasi_id . " , " . $asi_id . "," . $data[$i]->estado . " ," . $daca_asi_relacion . " , " . $pro_id . ", " . $uni_id . "," . $acca_id . ", " . $mod_id . ", " . $hor_id . ", " . $par_id . ",    " . $num_estudiantes . ",                  '" . $fecha_transaccion . "', " . $usu_id . ",          " . $estado . ", " . $estado . ",       " . $jor_id . ",        " . $hor_id . "," . $fecha_inicio . "," . $fecha_fin . "," . $txt_horas_otros . "," . $meun_id . "," . $par_posgrado . ")";
 
 		\app\models\Utilities::putMessageLogFile("insertarDistributivoAcademico: " . $sql);
 		$command = $con->createCommand($sql);
@@ -1200,10 +1218,12 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
                      end)
                      else
                         case
-                        when da.uaca_id=2 and t.tdis_id=1 and m.mod_id>=2 then ifnull(dh.daho_total_horas * ROUND(timestampdiff(day, da.daca_fecha_inicio_post, da.daca_fecha_fin_post)/7),'')
-                        when da.tdis_id=2 then t.tdis_num_semanas * pc.paca_semanas_inv_vinc_tuto
-                        when da.tdis_id=3 then t.tdis_num_semanas * pc.paca_semanas_inv_vinc_tuto
-                        when da.tdis_id=7 then t.tdis_num_semanas else (pc.paca_semanas_periodo * case  when dh.daho_total_horas is null then tdis_num_semanas else dh.daho_total_horas end) end
+                            when da.uaca_id=2 and t.tdis_id=1 and m.mod_id>=2 then ifnull(dh.daho_total_horas * ROUND(timestampdiff(day, da.daca_fecha_inicio_post, da.daca_fecha_fin_post)/7),'')
+                            when da.tdis_id=2 then t.tdis_num_semanas * pc.paca_semanas_inv_vinc_tuto
+                            when da.tdis_id=3 then t.tdis_num_semanas * pc.paca_semanas_inv_vinc_tuto
+                            when da.tdis_id=7 then t.tdis_num_semanas * pc.paca_semanas_periodo
+                        else (pc.paca_semanas_periodo * case  when dh.daho_total_horas is null then tdis_num_semanas else dh.daho_total_horas end)
+                        end
                      end as total_horas, -- AQUI
                      case when m.mod_id=1 and da.tdis_id =1 then
                     (case
@@ -1222,7 +1242,8 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
                         when da.uaca_id=2 and t.tdis_id=1 and m.mod_id>=2 then dh.daho_total_horas
                         when da.tdis_id=2 then t.tdis_num_semanas
                         when da.tdis_id=3 then t.tdis_num_semanas
-                        when da.tdis_id=7 then round(tdis_num_semanas/paca_semanas_periodo) else ( case  when dh.daho_total_horas is null then tdis_num_semanas else dh.daho_total_horas end) end
+                        when da.tdis_id=7 then t.tdis_num_semanas
+                        else ( case  when dh.daho_total_horas is null then tdis_num_semanas else dh.daho_total_horas end) end
                       end as promedio, -- AQUI
 
                       CASE
@@ -1253,7 +1274,7 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
                     da.daca_estado = :estado AND
                     t.tdis_estado = :estado AND
                     t.tdis_estado_logico = :estado
-                   and  da.tdis_id<>6";
+                   and  da.tdis_id<>6 and da.daca_carga_academica =1";
 
 		$comando = $con_academico->createCommand($sql);
 		$comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
@@ -1291,9 +1312,13 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
                     ifnull(ua.uaca_nombre,'') AS UnidadAcademica,
                     ifnull(m.mod_nombre,'') AS Modalidad,
                     ifnull(a.asi_nombre,'') AS Asignatura,
-                    case
-                        when da.uaca_id = 1 then ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca_anio),'')
-                        when da.uaca_id = 2 then CONCAT(ifnull(baca.baca_nombre,''),'-',ifnull(saca.saca_nombre,''),' ',ifnull(saca.saca_anio,''),' (',ifnull(pame.pame_mes,''),')')
+                    case when da.tdis_id != 3 then
+                        case
+                            when da.uaca_id = 1 then ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca_anio),'')
+                            when da.uaca_id = 2 then CONCAT(ifnull(baca.baca_nombre,''),'-',ifnull(saca.saca_nombre,''),' ',ifnull(saca.saca_anio,''),' (',ifnull(pame.pame_mes,''),')')
+                        end
+                    else
+                        ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca_anio),'')
                     end AS periodo_academico,
                     t.tdis_nombre AS tipo_asignacion,
                     ifnull(dh.daho_descripcion,'') as horario,
@@ -1319,10 +1344,12 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
                      end)
                      else
                         case
-                        when da.uaca_id=2 and t.tdis_id=1 and m.mod_id>=2 then ifnull(dh.daho_total_horas * ROUND(timestampdiff(day, da.daca_fecha_inicio_post, da.daca_fecha_fin_post)/7),'')
-                        when da.tdis_id=2 then t.tdis_num_semanas * pc.paca_semanas_inv_vinc_tuto
-                        when da.tdis_id=3 then t.tdis_num_semanas * pc.paca_semanas_inv_vinc_tuto
-                        when da.tdis_id=7 then t.tdis_num_semanas else (pc.paca_semanas_periodo * case  when dh.daho_total_horas is null then tdis_num_semanas else dh.daho_total_horas end) end
+                            when da.uaca_id=2 and t.tdis_id=1 and m.mod_id>=2 then ifnull(dh.daho_total_horas * ROUND(timestampdiff(day, da.daca_fecha_inicio_post, da.daca_fecha_fin_post)/7),'')
+                            when da.tdis_id=2 then t.tdis_num_semanas * pc.paca_semanas_inv_vinc_tuto
+                            when da.tdis_id=3 then t.tdis_num_semanas * pc.paca_semanas_inv_vinc_tuto
+                            when da.tdis_id=7 then t.tdis_num_semanas * pc.paca_semanas_periodo
+                        else (pc.paca_semanas_periodo * case  when dh.daho_total_horas is null then tdis_num_semanas else dh.daho_total_horas end)
+                        end
                      end as total_horas, -- AQUI
                     case when m.mod_id=1 and da.tdis_id =1 then
                     (case
@@ -1338,13 +1365,19 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
                      end)
                      else
                         case
-                        when da.uaca_id=2 and t.tdis_id=1 and m.mod_id>=2 then dh.daho_total_horas
-                        when da.tdis_id=2 then t.tdis_num_semanas
-                        when da.tdis_id=3 then t.tdis_num_semanas
-                        when da.tdis_id=7 then round(tdis_num_semanas/paca_semanas_periodo) else ( case  when dh.daho_total_horas is null then tdis_num_semanas else dh.daho_total_horas end) end
+                            when da.uaca_id=2 and t.tdis_id=1 and m.mod_id>=2 then dh.daho_total_horas
+                            when da.tdis_id=2 then t.tdis_num_semanas
+                            when da.tdis_id=3 then t.tdis_num_semanas
+                            when da.tdis_id=7 then t.tdis_num_semanas
+                        else ( case  when dh.daho_total_horas is null then tdis_num_semanas else dh.daho_total_horas end) end
                       end as promedio, -- AQUI
-                    case when da.uaca_id= 1 then ifnull(mpp.mpp_num_paralelo,'')
-                         when da.uaca_id= 2 then ifnull(pp.ppro_grupo,'')
+                    case when da.tdis_id != 3 then
+                        case
+                            when da.uaca_id= 1 then ifnull(mpp.mpp_num_paralelo,'')
+                            when da.uaca_id= 2 then ifnull(pp.ppro_grupo,'')
+                        end
+                    else
+                        ifnull(mpp.mpp_num_paralelo,'')
                     end as mpp_num_paralelo,
 
                     CASE
@@ -1383,7 +1416,7 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
                     t.tdis_estado_logico = :estado AND
                     da.daca_estado = :estado AND
                     da.daca_estado_logico = :estado AND
-                    da.tdis_id<>6";
+                    da.tdis_id<>6 and da.daca_carga_academica =1";
 
 		$comando = $con_academico->createCommand($sql);
 		$comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
@@ -1396,7 +1429,7 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
 			$valores_promedio = $DistADO->promedio($id);
 			$valores_promedio[0]['preparacion_docencia'] = /*(( $valores_promedio[0]['total_hora_semana_docencia_prese'] + $valores_promedio[0]['total_hora_semana_docencia_online']) **/0.30/*)*/;
 			$total_hora_semana_docenciaposgrado = $valores_promedio[0]['total_hora_semana_docencia_posgrado'];
-			$promedio = $DistADO->Calcularpromedioajustado($id, /*$total_hora_semana_docenciaposgrado,*/ $valores_promedio[0]['total_hora_semana_docencia'], $valores_promedio[0]['total_hora_semana_tutoria'], $valores_promedio[0]['total_hora_semana_investigacion'], $valores_promedio[0]['total_hora_semana_vinculacion'], $valores_promedio[0]['preparacion_docencia'], $valores_promedio[0]['semanas_docencia'], $valores_promedio[0]['semanas_tutoria_vinulacion_investigacion']/*, $valores_promedio[0]['semanas_posgrado']*/);
+			$promedio = $DistADO->Calcularpromedioajustado($id, /*$total_hora_semana_docenciaposgrado,*/ $valores_promedio[0]['total_hora_semana_docencia'], $valores_promedio[0]['total_hora_semana_tutoria'], $valores_promedio[0]['total_hora_semana_investigacion'], $valores_promedio[0]['total_hora_semana_vinculacion'], $valores_promedio[0]['preparacion_docencia'], $valores_promedio[0]['semanas_docencia'], $valores_promedio[0]['semanas_tutoria_vinulacion_investigacion'], $valores_promedio[0]['total_hora_semana_docencia_autor']);
 
 			foreach ($res as $key => $value) {
 				$value['promedioajustado'] = round($promedio);
@@ -1816,6 +1849,60 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
 		$command->execute();
 
 		return $con->getLastInsertID($con->dbname . '.bitacora_aprobacion_distributivo_cabecera');
+	}
+
+	/**
+	 * Function getunidad_rw
+	 * @author  Luis Cajamarca <analistadesarrollo04@uteg.edu.ec>
+	 * @property integer
+	 * @return Unidad Académica por distributivo
+	 */
+	public function consultarUnidadDaca($paca_id) {
+		$con_academico = \Yii::$app->db_academico;
+		$estado = 1;
+		$sql = "SELECT distinct
+                    daca.uaca_id as id,
+                    uaca.uaca_nombre as name
+                FROM " . $con_academico->dbname . ".distributivo_academico daca
+                inner join " . $con_academico->dbname . ".unidad_academica uaca on daca.uaca_id =uaca.uaca_id
+                where daca.paca_id = :paca_id and daca.uaca_id is not null and
+                      daca.daca_estado= :estado and daca.daca_estado_logico= :estado
+                Order by 2";
+		$comando = $con_academico->createCommand($sql);
+		$comando->bindParam(":paca_id", $paca_id, \PDO::PARAM_INT);
+		$comando->bindParam(":estado", $estado, \PDO::PARAM_INT);
+		$res = $comando->queryAll();
+		return $res;
+	}
+
+	/**
+	 * Function getprofesor_rw
+	 * @author  Luis Cajamarca <analistadesarrollo04@uteg.edu.ec>
+	 * @property integer
+	 * @return Periodo Académico por distributivo
+	 */
+	public function consultarDocenteDaca($uaca_id, $paca_id) {
+		$con_academico = \Yii::$app->db_academico;
+		$con_asgard = \Yii::$app->db_asgard;
+		$estado = 1;
+		$sql = "SELECT distinct
+                    pro.pro_id AS id,
+                    CONCAT(ifnull(pe.per_pri_apellido,''), ' ',ifnull(pe.per_seg_apellido,''), ' ', ifnull(pe.per_pri_nombre,''), ' ',ifnull(pe.per_seg_nombre,'')) AS name
+                FROM " . $con_academico->dbname . ".distributivo_academico daca
+                inner join " . $con_academico->dbname . ".distributivo_cabecera dcab on dcab.dcab_id = daca.dcab_id
+                inner join " . $con_academico->dbname . ".profesor pro on daca.pro_id =pro.pro_id
+                inner join " . $con_asgard->dbname . ".persona pe on pro.per_id =pe.per_id
+                where daca.paca_id = :paca_id AND daca.uaca_id = :uaca_id AND dcab_estado_revision = 0 AND
+                      daca.daca_estado=:estado AND daca.daca_estado_logico=:estado AND
+                      pro.pro_estado = :estado AND pro.pro_estado_logico = :estado AND
+                      pe.per_estado  = :estado AND pe.per_estado_logico  = :estado
+                Order by 2";
+		$comando = $con_academico->createCommand($sql);
+		$comando->bindParam(":paca_id", $paca_id, \PDO::PARAM_INT);
+		$comando->bindParam(":uaca_id", $uaca_id, \PDO::PARAM_INT);
+		$comando->bindParam(":estado", $estado, \PDO::PARAM_INT);
+		$res = $comando->queryAll();
+		return $res;
 	}
 
 }

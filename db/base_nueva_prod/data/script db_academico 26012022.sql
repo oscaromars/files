@@ -1,0 +1,1 @@
+UPDATE `db_academico`.`asignatura` SET `asi_estado_logico` = '1' WHERE (`asi_id` = '1023');

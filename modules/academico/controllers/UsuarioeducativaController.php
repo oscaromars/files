@@ -1928,7 +1928,7 @@ class UsuarioeducativaController extends \app\components\CController {
 					//\app\models\Utilities::putMessageLogFile('Modalidad: '. $mod_id);
 					//\app\models\Utilities::putMessageLogFile('Paca: '. $paca_id);
 					//\app\models\Utilities::putMessageLogFile('Graba profesor $pro_id ' . $pro_id);
-					$asiXmpp = $mod_asignatura->consultarAsignaturaxParalelo($asignatura_paralelo, $mod_id, $paca_id); //Consulta con el concat del texto de asignatura vs paralelo; además de la modalidad y el periodo
+					$asiXmpp = $mod_asignatura->consultarAsignaturaxParalelo($asignatura_paralelo, $mod_id, $paca_id, $uaca_id, $pro_id); //Consulta con el concat del texto de asignatura vs paralelo; además de la modalidad y el periodo
 					$asi_id1 = $asiXmpp[0]['asi_id'];
 					$mpp_id = $asiXmpp[0]['mpp_id'];
 					//\app\models\Utilities::putMessageLogFile('asiXmpp '. $asi_id1);

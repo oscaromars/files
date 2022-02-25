@@ -35,13 +35,17 @@ $('#cmb_periodo').change(function () {
             case "1":
                 $('#bloque1').css('display', 'block');
                 $('#bloque2').css('display', 'block');
-                if ($('#cmb_unidad_dis').val() == 2) {
+                /*if ($('#cmb_unidad_dis').val() == 2) {
                     $('#bloque2-1').css('display', 'none');
+                    $('#bloque8').css('display', 'block');
                     $('#bloque6').css('display', 'block');
+                    $('#bloque7').css('display', 'block');
                 } else {
                     $('#bloque2-1').css('display', 'block');
+                    $('#bloque8').css('display', 'none');
                     $('#bloque6').css('display', 'none');
-                }
+                    $('#bloque7').css('display', 'none');
+                }*/
                 $('#bloque3').css('display', 'block');
                 $('#bloque4').css('display', 'block');
                 $('#bloque_p').css('display', 'block');
@@ -50,16 +54,46 @@ $('#cmb_periodo').change(function () {
                     $('#bloque_n').css('display', 'block');
                 }
                 $('#bloque_h_otros').css('display', 'none');
+                $('#bloque9').css('display', 'none');
                 break;
             case "2":
                 $('#bloque1').css('display', 'block');
                 $('#bloque2-1').css('display', 'none');
                 $('#bloque3').css('display', 'none');
+                $('#bloque8').css('display', 'none');
+                $('#bloque9').css('display', 'none');
+                $('#bloque6').css('display', 'none');
                 $('#bloque7').css('display', 'none');
                 $('#bloque4').css('display', 'none');
                 $('#bloque2').css('display', 'block');
                 $('#bloque_n').css('display', 'none');
                 $('#bloque_h_otros').css('display', 'none');
+                break;
+            case "3":
+                $('#bloque1').css('display', 'block');
+                $('#bloque2').css('display', 'none');
+                $('#bloque2-1').css('display', 'none');
+                $('#bloque3').css('display', 'none');
+                $('#bloque4').css('display', 'none');
+                $('#bloque8').css('display', 'none');
+                $('#bloque9').css('display', 'block');
+                $('#bloque6').css('display', 'none');
+                $('#bloque7').css('display', 'none');
+                $('#bloque_h_otros').css('display', 'none');
+                $('#bloque_n').css('display', 'none');
+                break;
+            case "4":
+                $('#bloque1').css('display', 'block');
+                $('#bloque2').css('display', 'none');
+                $('#bloque2-1').css('display', 'none');
+                $('#bloque3').css('display', 'none');
+                $('#bloque4').css('display', 'none');
+                $('#bloque8').css('display', 'none');
+                $('#bloque9').css('display', 'block');
+                $('#bloque6').css('display', 'none');
+                $('#bloque7').css('display', 'none');
+                $('#bloque_h_otros').css('display', 'none');
+                $('#bloque_n').css('display', 'none');
                 break;
             case "6":
                 $('#bloque1').css('display', 'none');
@@ -67,24 +101,36 @@ $('#cmb_periodo').change(function () {
                 $('#bloque2-1').css('display', 'none');
                 $('#bloque3').css('display', 'none');
                 $('#bloque4').css('display', 'none');
+                $('#bloque8').css('display', 'none');
+                $('#bloque6').css('display', 'none');
                 $('#bloque7').css('display', 'none');
+                $('#bloque9').css('display', 'none');
                 $('#bloque_h_otros').css('display', 'block');
                 $('#bloque_n').css('display', 'none');
                 break;
             case "7":
-                $('#bloque1').css('display', 'none');
-                $('#bloque7').css('display', 'none');
-                $('#bloque2').css('display', 'none');
-                $('#bloque2-1').css('display', 'none');
+                
+                $('#bloque1').css('display', 'block');
+                $('#bloque2').css('display', 'block');
                 $('#bloque3').css('display', 'block');
                 $('#bloque4').css('display', 'none');
                 $('#bloque5').css('display', 'none');
-                $('#bloque1').css('display', 'block');
-                $('#bloque2').css('display', 'block');
-                $('#bloque_j').css('display', 'none');
+                /*if ($('#cmb_unidad_dis').val() == 2) {
+                    $('#bloque2-1').css('display', 'none');
+                    $('#bloque8').css('display', 'block');
+                    $('#bloque6').css('display', 'block');
+                    $('#bloque7').css('display', 'block');
+                } else {
+                    $('#bloque2-1').css('display', 'block');
+                    $('#bloque8').css('display', 'none');
+                    $('#bloque6').css('display', 'none');
+                    $('#bloque7').css('display', 'none');
+                }*/
+                $('#bloque_j').css('display', 'block');
                 $('#bloque_p').css('display', 'none');
                 $('#bloque_n').css('display', 'none');
                 $('#bloque_h_otros').css('display', 'none');
+                $('#bloque9').css('display', 'none');
                 break;
 
 
@@ -97,6 +143,9 @@ $('#cmb_periodo').change(function () {
                 $('#bloque4').css('display', 'none');
                 $('#bloque_n').css('display', 'none');
                 $('#bloque6').css('display', 'none');
+                $('#bloque7').css('display', 'none');
+                $('#bloque8').css('display', 'none');
+                $('#bloque9').css('display', 'none');
         }
 
     });
@@ -116,13 +165,14 @@ $('#cmb_periodo').change(function () {
         
         switch ($('#cmb_unidad_dis').val()) {
             case "1":
-                if ($('#cmb_tipo_asignacion').val() != 2) {
+                if ($('#cmb_tipo_asignacion').val() == 1) {
+                    document.getElementById("cmb_materia").setAttribute("multiple","");
                     $('#bloque6').css('display', 'none');
                     $('#bloque2-1').css('display', 'block');
                     $('#bloque7').css('display', 'none');
                     $('#bloque8').css('display', 'none');
-                }
-                if ($('#cmb_tipo_asignacion').val() == 7) {
+                } else if ($('#cmb_tipo_asignacion').val() >= 2 && $('#cmb_tipo_asignacion').val() <= 7){
+                    document.getElementById("cmb_materia").removeAttribute("multiple");
                     $('#bloque6').css('display', 'none');
                     $('#bloque2-1').css('display', 'none');
                     $('#bloque7').css('display', 'none');
@@ -131,13 +181,18 @@ $('#cmb_periodo').change(function () {
                 break;
 
             case "2":
-                if ($('#cmb_tipo_asignacion').val() != 2) {
-
-
+                if ($('#cmb_tipo_asignacion').val() == 1 || $('#cmb_tipo_asignacion').val() == 7) {
+                    document.getElementById("cmb_materia").removeAttribute("multiple");
                     $('#bloque2-1').css('display', 'none');
                     $('#bloque6').css('display', 'block');
                     $('#bloque7').css('display', 'block');
                     $('#bloque8').css('display', 'block');
+                }else if ($('#cmb_tipo_asignacion').val() >= 2 && $('#cmb_tipo_asignacion').val() <= 6){
+                    document.getElementById("cmb_materia").removeAttribute("multiple");
+                    $('#bloque6').css('display', 'none');
+                    $('#bloque2-1').css('display', 'none');
+                    $('#bloque7').css('display', 'none');
+                    $('#bloque8').css('display', 'none');
                 }
                 //console.log('cmb_unidad_dis 2:');
                 break;
@@ -348,11 +403,18 @@ $('#cmb_periodo').change(function () {
 
     new SlimSelect({
       select: '#cmb_materia',
-      closeOnSelect: true,
+      closeOnSelect: false,
       searchFocus: false,
       showContent: 'down'
       //hideSelectedOption: true
-    })
+    });
+
+    /*new SlimSelect({
+      select: '#cmb_objmods',
+      closeOnSelect: false,
+      searchFocus: false,
+      //hideSelectedOption: true
+    })*/
 });
 
 $('#cmb_materia').change(function () {
@@ -600,13 +662,15 @@ function eliminarItems(val, daca_id, TbGtable) {
         requestHttpAjax(link, arrParams, function (response) {
          showAlert(response.status, response.label, response.message);
             if (response.status == "OK") {
-                setTimeout(function () {
-                            var link1 = $('#txth_base').val() + "/academico/distributivoacademico/editcab/" + daca_id;
-                            window.location = link1;
-                        }, 1000);
-
-
+                setTimeout(function() {
+                    window.location = $('#txth_base').val() + "/academico/distributivoacademico/editcab/" + daca_id;
+                }, 2000);
+            }else{
+                setTimeout(function() {
+                    window.location = $('#txth_base').val() + "/academico/distributivoacademico/editcab/" + daca_id;
+                }, 2000);
             }
+            
         }, true);
     }
 }
@@ -711,6 +775,7 @@ function addAsignacion(opAccion) {
         fillDataAlert();
         return;
     }else {
+        // Tipo de asignación tutoría
         if ((tasi_id == 2)) {
             var uni_id = $("#cmb_unidad_dis").val();
             var mod_id = $("#cmb_modalidad").val();
@@ -725,47 +790,78 @@ function addAsignacion(opAccion) {
                 return;
             }
         }
+        // Tipo de asignación investigación & vinculación
+        if ((tasi_id >= 3) && (tasi_id >= 4)) {
+            var uni_id = $("#cmb_unidad_dis").val();
+            var acca_id = $("#cmb_campo_amplio").val();
+            
+            console.log('tipo asig: ' + tasi_id + 'uni_id: ' + uni_id + ' acca_id: ' + acca_id);
+
+            if (uni_id == 0 || acca_id == 0) {
+                fillDataAlert();
+                return;
+            }
+        }
+        // Tipo de asignación Otra asignación
         if ((tasi_id == 6)) {
             var txt_horas_otros = $("#txt_horas_otros").val();
         }
-
+        // Tipo de asignación Docencia
         if ((tasi_id == 1)) {
-            var uni_id = $("#cmb_unidad_dis").val();
-            var mod_id = $("#cmb_modalidad").val();
-            if (uni_id == 1) {
-                var paca_id = $("#cmb_periodo").val();
-            } else {
-                //fechas inicio y fecha fin
-                var eaca_id = $("#cmb_programa").val();
-                var pame_id = $("#cmb_periodo_mensualizado").val();
-                var fecha_inicio = $("#txt_fecha_ini").val();
-                var fecha_fin = $("#txt_fecha_fin").val();
-            }
-            var jor_id = $("#cmb_jornada").val();
             var asi_id = $("#cmb_materia").val();
-            var hor_id = $("#cmb_horario").val();
-            var par_id = $("#cmb_paralelo").val();
-            var hor_onl = $("#txt_num_estudiantes").val();
-            if (hor_onl == "") {
-                hor_onl = "0";
+            var asi_name = $("#cmb_materia :selected").text();
+            for (var i = 0; i < asi_id.length; i++) {
+                console.log('asi array: '+asi_id[i]);                
+                                 
+                var uni_id = $("#cmb_unidad_dis").val();
+                var mod_id = $("#cmb_modalidad").val();
+                if (uni_id == 1) {
+                    var paca_id = $("#cmb_periodo").val();
+                    if(i==0){
+                        asi_id[i];
+                        asi_name[i];
+                        var estado = 1;        
+                    } else{
+                        asi_id[i];
+                        asi_name[i];
+                        var estado = 0;
+                    }
+                } else {
+                    //fechas inicio y fecha fin
+                    var eaca_id = $("#cmb_programa").val();
+                    asi_id;
+                    var estado = 1;
+                    var pame_id = $("#cmb_periodo_mensualizado").val();
+                    var fecha_inicio = $("#txt_fecha_ini").val();
+                    var fecha_fin = $("#txt_fecha_fin").val();
+                }
+                var jor_id = $("#cmb_jornada").val();
+                
+                var hor_id = $("#cmb_horario").val();
+                var par_id = $("#cmb_paralelo").val();
+                var hor_onl = $("#txt_num_estudiantes").val();
+                if (hor_onl == "") {
+                    hor_onl = "0";
+                }
+
             }
 
-
-
-            console.log('tipo asig: ' + tasi_id + ' asig: ' + asi_id + ' horario: ' + hor_id + ' paral: ' + par_id + ' unidad: ' + uni_id + ' moda: ' + mod_id + ' paca: ' + paca_id +' pame_id: '+pame_id+ ' jor: ' + jor_id);
-            if (uni_id == 2) {
-                if (uni_id == 0 || mod_id == 0 || eaca_id == 0 || pame_id == 0 || jor_id == 0 || asi_id == 0 || hor_id == 0 || par_id == 0 || fecha_inicio == '' || fecha_fin == '') {
-                    fillDataAlert();
-                    return;
+                
+                if (uni_id == 2) {
+                    if (uni_id == 0 || mod_id == 0 || eaca_id == 0 || pame_id == 0 || jor_id == 0 || asi_id == 0 || hor_id == 0 || par_id == 0 || fecha_inicio == '' || fecha_fin == '') {
+                        fillDataAlert();
+                        return;
+                    }
+                } else {
+                    if (uni_id == 0 || mod_id == 0 || paca_id == 0 || jor_id == 0 || asi_id == 0 || hor_id == 0 || par_id == 0) {
+                        fillDataAlert();
+                        return;
+                    }
                 }
-            } else {
-                if (uni_id == 0 || mod_id == 0 || paca_id == 0 || jor_id == 0 || asi_id == 0 || hor_id == 0 || par_id == 0) {
-                    fillDataAlert();
-                    return;
-                }
-            }
+    
         }
 
+        // Tipo de asignación Docencia Tutor
         if ((tasi_id == 7)) {
             var uni_id = $("#cmb_unidad_dis").val();
             var mod_id = $("#cmb_modalidad").val();
@@ -785,6 +881,7 @@ function addAsignacion(opAccion) {
             }
         }
         //Recorrer el session storage para verificar validaciones.
+
         var res = 0;
         res = validar(tasi_id, asi_id, hor_id, par_id, uni_id, mod_id, paca_id, pame_id, jor_id, txt_horas_otros);
 
@@ -795,29 +892,56 @@ function addAsignacion(opAccion) {
         } else if (res == 2) {
             showAlert('NO_OK', 'error', {"wtmessage": "Ya existe el registro en el mismo horario para el mismo docente.", "title": 'Información'});
         } else if ($("#cmb_modalidad").val() == 1 && hor_onl == "0") {
-
             showAlert('NO_OK', 'error', {"wtmessage": "Debe ingresar número de estudiantes.", "title": 'Información'});
-
+        } else if ($("#cmb_modalidad").val() == 1 && hor_onl < 0) {
+            showAlert('NO_OK', 'error', {"wtmessage": "Ingreso incorrecto del número de estudiantes. No debe ingresar valores negativos", "title": 'Información'});
+        } else if ($("#cmb_modalidad").val() == 1 && hor_onl > 100) {
+            showAlert('NO_OK', 'error', {"wtmessage": "Ingreso incorrecto del número de estudiantes. No debe ingresar mayor a 100 estudiantes", "title": 'Información'});
         } else if ((tasi_id == 6 && (txt_horas_otros == ""))) {
             showAlert('NO_OK', 'error', {"wtmessage": "Debe ingresar número de horas.", "title": 'Información'});
         } else if (uni_id == 2 && (fecha_inicio == "" || fecha_fin == "")) {
             showAlert('NO_OK', 'error', {"wtmessage": "Debe ingresar fecha inicio y fecha fin.", "title": 'Información'});
         } else {
+
+            
+
             if (opAccion != "edit") {
                 //*********   Agregar materias *********
                 var arr_Grid = new Array();
                 if (sessionStorage.dts_asignacion_list) {
-
-
                     /*Agrego a la Sesion*/
                     arr_Grid = JSON.parse(sessionStorage.dts_asignacion_list);
-                    console.log('cuando se llena' + arr_Grid);
                     var size = arr_Grid.length;
                     if (size > 0) {
-                        arr_Grid[size] = objDistributivo(size);
-                        sessionStorage.dts_asignacion_list = JSON.stringify(arr_Grid);
-                        addVariosItem(tGrid, arr_Grid, -1);
-                        limpiarDetalle();
+                        if(tasi_id==1 && uni_id==1){
+                        console.log('cuando se llena grado' + uni_id);
+                            for (var i = 0; i < asi_id.length; i++) {
+                                if (asi_id.length > 1 ) {
+                                    if (i==0) {
+                                        var asi_name_mssg = $("#cmb_materia :selected").text();
+                                        var asi_nombre_mssg = asi_name_mssg.split('  ');
+                                        showAlert('OK', 'OK', {"wtmessage": "La asignación principal es: " + asi_nombre_mssg[0], "title": 'Información'});
+                                    }
+                                }
+                                arr_Grid.push(objDistributivo(i));
+                                sessionStorage.dts_asignacion_list = JSON.stringify(arr_Grid);
+                                addVariosItem(tGrid, arr_Grid, -1);
+                            }
+                            limpiarDetalle();
+                            
+                        }else if(tasi_id==1 && uni_id==2){
+                            console.log('?????? ' + uni_id);
+                            arr_Grid[size] = objDistributivo(size);
+                            sessionStorage.dts_asignacion_list = JSON.stringify(arr_Grid);
+                            addVariosItem(tGrid, arr_Grid, -1);
+                            limpiarDetalle();
+                        }else{
+                            arr_Grid[size] = objDistributivo(size);
+                            sessionStorage.dts_asignacion_list = JSON.stringify(arr_Grid);
+                            addVariosItem(tGrid, arr_Grid, -1);
+                            limpiarDetalle();
+                            console.log('cuando se llena * 1');
+                        }
                     } else {
                         /*Agrego a la Sesion*/
                         //Primer Items
@@ -825,19 +949,48 @@ function addAsignacion(opAccion) {
                         sessionStorage.dts_asignacion_list = JSON.stringify(arr_Grid);
                         addPrimerItem(tGrid, arr_Grid, 0);
                         limpiarDetalle();
+                        console.log('cuando se llena ** 1');
                     }
                 } else {
                     //No existe la Session
                     //Primer Items
-                    arr_Grid[0] = objDistributivo(0);
-                    sessionStorage.dts_asignacion_list = JSON.stringify(arr_Grid);
-                    addPrimerItem(tGrid, arr_Grid, 0);
-                    limpiarDetalle();
+                    if(tasi_id==1 && uni_id==1){
+                        console.log('cuando se llena grado' + uni_id);
+                        for (var i = 0; i < asi_id.length; i++) {
+                            if (asi_id.length > 1 ) {
+                                    if (i==0) {
+                                        var asi_name_mssg = $("#cmb_materia :selected").text();
+                                        var asi_nombre_mssg = asi_name_mssg.split('  ');
+                                        showAlert('OK', 'OK', {"wtmessage": "La asignación principal es: " + asi_nombre_mssg[0], "title": 'Información'});
+                                        
+                                    }
+                                }
+                            arr_Grid.push(objDistributivo(i));
+                            sessionStorage.dts_asignacion_list = JSON.stringify(arr_Grid);
+                            addPrimerItem(tGrid, arr_Grid, i);
+                        }
+                        limpiarDetalle();
+                        
+                    }else if(tasi_id==1 && uni_id==2){
+                        console.log('?????? ' + uni_id);
+                        arr_Grid[0] = objDistributivo(0);
+                        sessionStorage.dts_asignacion_list = JSON.stringify(arr_Grid);
+                        addPrimerItem(tGrid, arr_Grid, 0);
+                        limpiarDetalle();
+                    }else{
+                        arr_Grid[0] = objDistributivo(0);
+                        sessionStorage.dts_asignacion_list = JSON.stringify(arr_Grid);
+                        addPrimerItem(tGrid, arr_Grid, 0);
+                        limpiarDetalle();
+                        console.log('cuando se llena * 1');
+                    }
+                        
                 }
             } else {
                 //data edicion
             }
         }
+        console.log('cuando se llena: ' + arr_Grid.length);
         console.log('session-add', sessionStorage.dts_asignacion_list);
     }
 }
@@ -936,45 +1089,126 @@ function objDistributivo(indice) {
     rowGrid.tasi_name = $("#cmb_tipo_asignacion :selected").text();
     switch ($("#cmb_tipo_asignacion").val()) {
         case "1":
+            var asi_id = $("#cmb_materia").val();
+            var asi_name = $("#cmb_materia :selected").text();
+            var asi_nombre =asi_name.split('  ');
             rowGrid.uni_id = $("#cmb_unidad_dis").val();
             rowGrid.uni_name = $("#cmb_unidad_dis :selected").text();
+            rowGrid.acca_id = null;
+            rowGrid.acca_name = 'N/A';
             rowGrid.mod_id = $("#cmb_modalidad").val();
             rowGrid.mod_name = $("#cmb_modalidad :selected").text();
             rowGrid.paca_id = $("#cmb_periodo").val();
             rowGrid.jor_id = $("#cmb_jornada").val();
             rowGrid.jor_name = $("#cmb_jornada :selected").text();
-            rowGrid.asi_id = $("#cmb_materia").val();
-            rowGrid.asi_name = $("#cmb_materia :selected").text();
+            rowGrid.asi_id = asi_id[indice];
+            rowGrid.asi_name = asi_nombre[indice];
+            rowGrid.asi_relacion = asi_id[0];
             rowGrid.hor_id = $("#cmb_horario").val();
             rowGrid.hor_name = $("#cmb_horario :selected").text();
             rowGrid.par_id = $("#cmb_paralelo").val();
             rowGrid.num_estudiantes = $("#txt_num_estudiantes").val();
+            if (indice <1) {
+                rowGrid.estado = 1;
+            }else{
+                rowGrid.estado = 0;
+            }
             if ($("#cmb_unidad_dis").val() == 2) {
+                rowGrid.asi_id = $("#cmb_materia").val();
+                rowGrid.asi_name = $("#cmb_materia :selected").text();
+                rowGrid.asi_relacion = $("#cmb_materia").val();
+                rowGrid.estado = 1;
                 rowGrid.pame_id = $("#cmb_periodo_mensualizado").val();
                 rowGrid.fecha_inicio = $("#txt_fecha_ini").val();
                 rowGrid.fecha_fin = $("#txt_fecha_fin").val();
                 rowGrid.programa = $("#cmb_programa").val();
 
+            } else if ($("#cmb_unidad_dis").val() == 1) {
+                rowGrid.asi_id = asi_id[indice];
+                rowGrid.asi_name = asi_nombre[indice];
+                rowGrid.asi_relacion = asi_id[0];
+                if (indice <1) {
+                rowGrid.estado = 1;
+                }else{
+                    rowGrid.estado = 0;
+                }
+                rowGrid.fecha_inicio = 'N/A';
+                rowGrid.fecha_fin = 'N/A';
             } else {
                 rowGrid.fecha_inicio = 'N/A';
                 rowGrid.fecha_fin = 'N/A';
             }
             rowGrid.txt_horas_otros = '0';
             break;
+        
         case "2":
             rowGrid.uni_id = $("#cmb_unidad_dis").val();
             rowGrid.uni_name = $("#cmb_unidad_dis :selected").text();
+            rowGrid.acca_id = null;
+            rowGrid.acca_name = 'N/A';
             rowGrid.mod_id = $("#cmb_modalidad").val();
             rowGrid.mod_name = $("#cmb_modalidad :selected").text();
             rowGrid.paca_id = $("#cmb_periodo").val();
             rowGrid.jor_id = $("#cmb_jornada").val();
             rowGrid.jor_name = 'N/A';
-            rowGrid.asi_id = $("#cmb_materia").val();
+            rowGrid.asi_id = null;
             rowGrid.asi_name = 'N/A';
+            rowGrid.asi_relacion = null;
             rowGrid.hor_id = $("#cmb_horario").val();
             rowGrid.hor_name = 'N/A';
             rowGrid.par_id = $("#cmb_paralelo").val();
             rowGrid.num_estudiantes = '0';
+            rowGrid.estado = 1;
+            rowGrid.fecha_inicio = 'N/A';
+            rowGrid.fecha_fin = 'N/A';
+            rowGrid.txt_horas_otros = '0';
+            rowGrid.programa = null;
+            rowGrid.pame_id = null;
+            break;
+        
+        case "3":
+            rowGrid.uni_id = $("#cmb_unidad_dis").val();
+            rowGrid.uni_name = $("#cmb_unidad_dis :selected").text();
+            rowGrid.acca_id = $("#cmb_campo_amplio").val();
+            rowGrid.acca_name = $("#cmb_campo_amplio :selected").text();
+            rowGrid.mod_id = $("#cmb_modalidad").val();
+            rowGrid.mod_name = 'N/A';
+            rowGrid.paca_id = $("#cmb_periodo").val();
+            rowGrid.jor_id = $("#cmb_jornada").val();
+            rowGrid.jor_name = 'N/A';
+            rowGrid.asi_id = null;
+            rowGrid.asi_name = 'N/A';
+            rowGrid.asi_relacion = null;
+            rowGrid.hor_id = $("#cmb_horario").val();
+            rowGrid.hor_name = 'N/A';
+            rowGrid.par_id = $("#cmb_paralelo").val();
+            rowGrid.num_estudiantes = '0';
+            rowGrid.estado = 1;
+            rowGrid.fecha_inicio = 'N/A';
+            rowGrid.fecha_fin = 'N/A';
+            rowGrid.txt_horas_otros = '0';
+            rowGrid.programa = null;
+            rowGrid.pame_id = null;
+            break;
+
+        case "4":
+            rowGrid.uni_id = $("#cmb_unidad_dis").val();
+            rowGrid.uni_name = $("#cmb_unidad_dis :selected").text();
+            rowGrid.acca_id = $("#cmb_campo_amplio").val();
+            rowGrid.acca_name = $("#cmb_campo_amplio :selected").text();
+            rowGrid.mod_id = $("#cmb_modalidad").val();
+            rowGrid.mod_name = 'N/A';
+            rowGrid.paca_id = $("#cmb_periodo").val();
+            rowGrid.jor_id = $("#cmb_jornada").val();
+            rowGrid.jor_name = 'N/A';
+            rowGrid.asi_id = null;
+            rowGrid.asi_name = 'N/A';
+            rowGrid.asi_relacion = null;
+            rowGrid.hor_id = $("#cmb_horario").val();
+            rowGrid.hor_name = 'N/A';
+            rowGrid.par_id = $("#cmb_paralelo").val();
+            rowGrid.num_estudiantes = '0';
+            rowGrid.estado = 1;
             rowGrid.fecha_inicio = 'N/A';
             rowGrid.fecha_fin = 'N/A';
             rowGrid.txt_horas_otros = '0';
@@ -985,6 +1219,8 @@ function objDistributivo(indice) {
         case "6":
             rowGrid.uni_id = $("#cmb_unidad_dis").val();
             rowGrid.uni_name = 'N/A';
+            rowGrid.acca_id = $("#cmb_campo_amplio").val();
+            rowGrid.acca_name = 'N/A';
             rowGrid.mod_id = $("#cmb_modalidad").val();
             rowGrid.mod_name = 'N/A';
             rowGrid.paca_id = $("#cmb_periodo").val();
@@ -992,10 +1228,12 @@ function objDistributivo(indice) {
             rowGrid.jor_name = 'N/A';
             rowGrid.asi_id = $("#cmb_materia").val();
             rowGrid.asi_name = 'N/A';
+            rowGrid.asi_relacion = 'N/A';
             rowGrid.hor_id = $("#cmb_horario").val();
             rowGrid.hor_name = 'N/A';
             rowGrid.par_id = $("#cmb_paralelo").val();
             rowGrid.num_estudiantes = '0';
+            rowGrid.estado = 1;
             rowGrid.fecha_inicio = 'N/A';
             rowGrid.fecha_fin = 'N/A';
             rowGrid.txt_horas_otros = $("#txt_horas_otros").val();
@@ -1007,6 +1245,8 @@ function objDistributivo(indice) {
         case "7":
             rowGrid.uni_id = $("#cmb_unidad_dis").val();
             rowGrid.uni_name = $("#cmb_unidad_dis :selected").text();
+            rowGrid.acca_id = null;
+            rowGrid.acca_name = 'N/A';
             rowGrid.mod_id = $("#cmb_modalidad").val();
             rowGrid.mod_name = $("#cmb_modalidad :selected").text();
             rowGrid.paca_id = $("#cmb_periodo").val();
@@ -1014,11 +1254,14 @@ function objDistributivo(indice) {
             rowGrid.jor_name = $("#cmb_jornada :selected").text();
             rowGrid.asi_id = $("#cmb_materia").val();
             rowGrid.asi_name = $("#cmb_materia :selected").text();
+            rowGrid.asi_relacion = $("#cmb_materia").val();
             rowGrid.hor_id = $("#cmb_horario").val();
             rowGrid.hor_name = $("#cmb_horario :selected").text();
             rowGrid.par_id = $("#cmb_paralelo").val();
             rowGrid.num_estudiantes = $("#txt_num_estudiantes").val();
+            rowGrid.estado = 1;
             if ($("#cmb_unidad_dis").val() == 2) {
+                rowGrid.pame_id = $("#cmb_periodo_mensualizado").val();
                 rowGrid.fecha_inicio = $("#txt_fecha_ini").val();
                 rowGrid.fecha_fin = $("#txt_fecha_fin").val();
                 rowGrid.programa = $("#cmb_programa").val();
@@ -1032,17 +1275,21 @@ function objDistributivo(indice) {
         default :
             rowGrid.uni_id = $("#cmb_unidad_dis").val();
             rowGrid.uni_name = 'N/A';
+            rowGrid.acca_id = null;
+            rowGrid.acca_name = 'N/A';
             rowGrid.mod_id = $("#cmb_modalidad").val();
             rowGrid.mod_name = 'N/A';
             rowGrid.paca_id = $("#cmb_periodo").val();
             rowGrid.jor_id = $("#cmb_jornada").val();
             rowGrid.jor_name = 'N/A';
-            rowGrid.asi_id = $("#cmb_materia").val();
+            rowGrid.asi_id = null;
             rowGrid.asi_name = 'N/A';
+            rowGrid.asi_relacion = null;
             rowGrid.hor_id = $("#cmb_horario").val();
             rowGrid.hor_name = 'N/A';
             rowGrid.par_id = $("#cmb_paralelo").val();
             rowGrid.num_estudiantes = '0';
+            rowGrid.estado = 1;
             rowGrid.fecha_inicio = 'N/A';
             rowGrid.fecha_fin = 'N/A';
             rowGrid.txt_horas_otros = '0';
@@ -1073,8 +1320,11 @@ function addVariosItem(TbGtable, lista, i) {
 function limpiarDetalle() {
     //$('#cmb_unidad_dis option[value="0"]').attr("selected", true);
     document.getElementById("cmb_unidad_dis").value = 0;
-    document.getElementById("cmb_modalidad").value = 0;
+    document.getElementById("cmb_unidad_dis").value = 0;
+    document.getElementById("cmb_periodo_mensualizado").value = 0;
+    document.getElementById("cmb_campo_amplio").value = 0;
     //document.getElementById("cmb_periodo").value = 0;
+
     document.getElementById("cmb_jornada").value = 0;
     document.getElementById("cmb_materia").value = 0;
     document.getElementById("cmb_horario").value = 0;
@@ -1110,6 +1360,7 @@ function retornaFila(c, Grid, TbGtable, op) {
     strFila += '<td>' + Grid[c]['tasi_name'] + '</td>';
     strFila += '<td>' + Grid[c]['asi_name'] + '</td>';
     strFila += '<td>' + Grid[c]['uni_name'] + '</td>';
+    strFila += '<td>' + Grid[c]['acca_name'] + '</td>';
 
     strFila += '<td style="display:none; border:none;">' + '</td>';
     strFila += '<td>' + Grid[c]['mod_name'] + '</td>';
@@ -1134,7 +1385,7 @@ function retornaFila(c, Grid, TbGtable, op) {
 
 function findAndRemove(array, property, value) {
     for (var i = 0; i < array.length; i++) {
-        if (array[i][property] == value) {
+        if (array[i][property] == value || array[i]['indice'] == value) {
             array.splice(i, 1);
         }
     }

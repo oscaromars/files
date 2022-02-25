@@ -271,7 +271,7 @@ class Profesor extends \yii\db\ActiveRecord {
 
 		$sql = "SELECT
                     pro.pro_id AS Id,
-                    CONCAT(pe.per_pri_apellido, ' ', pe.per_pri_nombre) AS Nombres,
+                    CONCAT(ifnull(pe.per_pri_apellido,''), ' ',ifnull(pe.per_seg_apellido,''), ' ', ifnull(pe.per_pri_nombre,''), ' ',ifnull(pe.per_seg_nombre,'')) AS Nombres,
                     ddoc_id as dedica
                 FROM
                     " . $con_academico->dbname . ".profesor AS pro
@@ -294,7 +294,7 @@ class Profesor extends \yii\db\ActiveRecord {
 
 		$sql = "SELECT
                     pro.pro_id AS Id,
-                    CONCAT(pe.per_pri_apellido, ' ', pe.per_pri_nombre) AS Nombres,
+                    CONCAT(ifnull(pe.per_pri_apellido,''), ' ',ifnull(pe.per_seg_apellido,''), ' ', ifnull(pe.per_pri_nombre,''), ' ',ifnull(pe.per_seg_nombre,'')) AS Nombres,
                     ddoc_id as dedica
                 FROM
                     " . $con_academico->dbname . ".profesor AS pro

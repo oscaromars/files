@@ -23,5 +23,9 @@ INSERT INTO `db_academico`.`periodo_academico_mensualizado` (`pame_id`, `uaca_id
 INSERT INTO `db_academico`.`periodo_academico_mensualizado` (`pame_id`, `uaca_id`, `pame_mes`, `paca_id`, `pame_descripcion`, `pame_usuario_ingreso`, `pame_estado`, `pame_fecha_creacion`, `pame_estado_logico`) VALUES ('2', '2', 'Febrero', '29', 'Febrero', '1', '1', '2022-01-18 00:00:00', '1');
 INSERT INTO `db_academico`.`periodo_academico_mensualizado` (`pame_id`, `uaca_id`, `pame_mes`, `paca_id`, `pame_descripcion`, `pame_usuario_ingreso`, `pame_estado`, `pame_fecha_creacion`, `pame_estado_logico`) VALUES ('3', '2', 'Marzo', '29', 'Marzo', '1', '1', '2022-01-18 00:00:00', '1');
 
-/* Alter en distributivo Academcio */
+/* Alter en distributivo Academcio para el uaca_id 2 del daca_id para agregar el periodo mensualizado*/
 ALTER TABLE `db_academico`.`distributivo_academico` ADD COLUMN `pame_id` BIGINT(20) NULL AFTER `paca_id`;
+
+/* Campo validacion de las asi_id homonima cuando uaca_id es 1 para el daca_id */
+ALTER TABLE `db_academico`.`distributivo_academico` 
+ADD COLUMN `daca_estado_validacion_asi` BIGINT(20) NULL AFTER `tdis_id`;

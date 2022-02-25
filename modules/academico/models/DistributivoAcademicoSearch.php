@@ -19,7 +19,6 @@ class DistributivoAcademicoSearch extends DistributivoAcademico {
 
 	public function rules() {
 		return [
-
 			[['paca_id', 'pame_id', 'tdis_id', 'asi_id', 'uaca_id', 'pro_id', 'mod_id', 'daho_id', 'daca_num_estudiantes_online', 'daca_usuario_ingreso', 'daca_usuario_modifica'], 'integer'],
 		];
 	}
@@ -328,9 +327,7 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
 		//Utilities::putMessageLogFile('sql:' . $sql);
 		$comando = $con_academico->createCommand($sql);
 		$res = $comando->queryAll();
-
 		\app\models\Utilities::putMessageLogFile('DistributivoPosgrado: ' . $comando->getRawSql());
-
 		if ($onlyData) {
 			return $res;
 		}
@@ -350,7 +347,6 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
 	}
 
 	public function getListadoDistributivoPosgradosexcel($arrFiltro = NULL, $onlyData = false) {
-
 		$con_academico = \Yii::$app->db_academico;
 		$con_db = \Yii::$app->db;
 
@@ -534,7 +530,7 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
                 INNER JOIN " . $con_academico->dbname . ".periodo_academico pc on da.paca_id  = pc.paca_id and  pc.paca_activo='A'
                 INNER JOIN " . $con_academico->dbname . ".tipo_distributivo td on td.tdis_id  = da.tdis_id
                 LEFT JOIN " . $con_academico->dbname . ".distributivo_academico_horario dah on dah.daho_id  = da.daho_id
-                where da.daca_estado='1' and daca_estado_logico='1'  and td.tdis_id <> 6 and dc.dcab_estado_revision=2";
+                where da.daca_estado='1' and daca_estado_logico='1'  and td.tdis_id <> 6 and dc.dcab_estado_revision=2 and da.daca_carga_academica =1";
 		if ($tipo == 1) {
 			$this->load($params);
 			if ($this->validate()) {
@@ -675,7 +671,7 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
                 INNER JOIN " . $con_academico->dbname . ".tipo_distributivo td on td.tdis_id  = da.tdis_id
                 LEFT JOIN " . $con_academico->dbname . ".distributivo_academico_horario dah on dah.daho_id  = da.daho_id
                 where " . $str_search . "
-                da.daca_estado='1' and daca_estado_logico='1'  and td.tdis_id <> 6 and dc.dcab_estado_revision=2";
+                da.daca_estado='1' and daca_estado_logico='1'  and td.tdis_id <> 6 and dc.dcab_estado_revision=2 and da.daca_carga_academica =1";
 
 		$comando = $con_academico->createCommand($sql);
 		//$comando->bindParam(":eaca_id", $eaca_id, \PDO::PARAM_INT);
@@ -1411,7 +1407,7 @@ left join db_academico.distributivo_academico  da on da.mpp_id=mpp.mpp_id and da
 			],
 			'sort' => [
 				'attributes' => ['
-                '],
+                ', ],
 			],
 		]);
 

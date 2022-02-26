@@ -257,6 +257,7 @@ class InscribeducacioncontinuaController extends \yii\web\Controller {
                         'forma_pago' => $data["forma_pago"],
                         'nivinstrucion' => $data["nivinstrucion"],
                         'redes' => $data["redes"],
+                        'encontramos' => $data["encontramos"],
                     );
                     $resul = $model->insertaOriginal($Ids,$dataRegistro);
                 } else if ($accion == "UpdateDepTrans") {

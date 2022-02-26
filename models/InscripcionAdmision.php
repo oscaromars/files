@@ -101,10 +101,10 @@ class InscripcionAdmision extends \yii\db\ActiveRecord {
         $sql = "INSERT INTO " . $con->dbname . ".temporal_wizard_inscripcion
             (twin_nombre,twin_apellido,twin_dni,twin_numero,twin_correo,twin_empresa,twin_pais,twin_celular,uaca_id,
              mod_id,car_id,twin_metodo_ingreso,conuteg_id,ruta_doc_titulo, ruta_doc_dni, ruta_doc_certvota,
-             ruta_doc_foto,ruta_doc_certificado, twin_mensaje1,twin_mensaje2,twin_nivel_instruccion,twin_redes_sociales,twin_estado,twin_fecha_creacion,twin_estado_logico)VALUES
+             ruta_doc_foto,ruta_doc_certificado, twin_mensaje1,twin_mensaje2,twin_nivel_instruccion,twin_redes_sociales,twin_encontramos,twin_estado,twin_fecha_creacion,twin_estado_logico)VALUES
             (:twin_nombre,:twin_apellido,:twin_dni,:twin_numero,:twin_correo,:twin_empresa,:twin_pais,:twin_celular,:uaca_id,
              :mod_id,:car_id,:twin_metodo_ingreso,:conuteg_id,:ruta_doc_titulo,:ruta_doc_dni,:ruta_doc_certvota,
-             :ruta_doc_foto,:ruta_doc_certificado,:twin_mensaje1,:twin_mensaje2,:twin_nivel_instruccion,:twin_redes_sociales,1,CURRENT_TIMESTAMP(),1)";
+             :ruta_doc_foto,:ruta_doc_certificado,:twin_mensaje1,:twin_mensaje2,:twin_nivel_instruccion,:twin_redes_sociales,:twin_encontramos,1,CURRENT_TIMESTAMP(),1)";
 
         $met_ing = 0;
         if (empty($data[0]['ming_id'])) {
@@ -136,6 +136,7 @@ class InscripcionAdmision extends \yii\db\ActiveRecord {
         $command->bindParam(":twin_mensaje2", $twin_mensaje2, \PDO::PARAM_STR);
         $command->bindParam(":twin_nivel_instruccion", $data[0]['nivinstrucion'], \PDO::PARAM_INT);
         $command->bindParam(":twin_redes_sociales", $data[0]['redes'], \PDO::PARAM_INT);
+        $command->bindParam(":twin_encontramos", $data[0]['encontramos'], \PDO::PARAM_STR);
         $command->execute();
         return $con->getLastInsertID();
     }
@@ -149,7 +150,8 @@ class InscripcionAdmision extends \yii\db\ActiveRecord {
                     ruta_doc_hojavida=:ruta_doc_hojavida,ruta_doc_certificado=:ruta_doc_certificado,
                     ruta_doc_aceptacion=:ruta_doc_aceptacion, cemp_id=:cemp_id, ruta_doc_pago=:ruta_doc_pago, twin_tipo_pago=:forma_pago,
                     twin_mensaje1=:twin_mensaje1,twin_mensaje2=:twin_mensaje2,
-                    twin_nivel_instruccion=:twin_nivel_instruccion,twin_redes_sociales=:twin_redes_sociales,twin_fecha_modificacion=CURRENT_TIMESTAMP()
+                    twin_nivel_instruccion=:twin_nivel_instruccion,twin_redes_sociales=:twin_redes_sociales,
+                    twin_encontramos=:twin_encontramos,twin_fecha_modificacion=CURRENT_TIMESTAMP()
                  WHERE twin_id =:twin_id ";
         $met_ing = 0;
         if (empty($data[0]['ming_id'])) {
@@ -184,6 +186,7 @@ class InscripcionAdmision extends \yii\db\ActiveRecord {
         $command->bindParam(":twin_mensaje2", $data[0]['twin_mensaje2'], \PDO::PARAM_STR);
         $command->bindParam(":twin_nivel_instruccion", $data[0]['nivinstrucion'], \PDO::PARAM_INT);
         $command->bindParam(":twin_redes_sociales", $data[0]['redes'], \PDO::PARAM_INT);
+        $command->bindParam(":twin_encontramos", $data[0]['encontramos'], \PDO::PARAM_STR);
         $command->bindParam(":ruta_doc_pago", basename($data[0]['ruta_doc_pago']), \PDO::PARAM_STR);
         $command->bindParam(":forma_pago", $data[0]['forma_pago'], \PDO::PARAM_STR);
         $command->execute();

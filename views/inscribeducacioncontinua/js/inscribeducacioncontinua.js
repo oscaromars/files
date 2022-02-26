@@ -131,6 +131,7 @@ $(document).ready(function () {
         arrParams.correo = $('#txt_correo_fac').val();
         arrParams.nivinstrucion = $('#cmb_instruccion option:selected').val();
         arrParams.redes = $('#cmb_redes_sociales option:selected').val();
+        arrParams.encontramos = $('#txt_encontramos').val();
         if (!validateForm()) {
             requestHttpAjax(link, arrParams, function (response) {
                 var message = response.message;
@@ -754,6 +755,7 @@ function dataInscripPart1(ID) {
     }
     //objDat.conoce = $('#cmb_conuteg option:selected').val();
     objDat.conoce = 0;
+    objDat.encontramos = $('#txt_encontramos').val();
     objDat.carrera = $('#cmb_carrera_solicitud option:selected').val();
     //TABA 2
     objDat.ruta_doc_titulo = ($('#txth_doc_titulo').val() != '') ? $('#txth_doc_titulo').val() : '';

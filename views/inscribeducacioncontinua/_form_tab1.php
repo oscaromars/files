@@ -148,6 +148,14 @@ use app\components\CFileInputAjax;
             </div>
         </div>
     </div>-->
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="form-group">
+            <label for="txt_encontramos" class="col-lg-3 col-md-3 col-sm-3 col-xs-3 control-label"><?= Yii::t("formulario", "¿Cómo te encontramos?") ?> <span class="text-danger">*</span></label>
+            <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9">
+                <input type="text" class="form-control PBvalidation" id="txt_encontramos" data-type="all" data-keydown="true" placeholder="<?= Yii::t("formulario", "¿Cómo te encontramos?") ?>">
+            </div>
+        </div>
+    </div>
     <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
         </br>
         </br>

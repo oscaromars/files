@@ -12,12 +12,15 @@ INSERT INTO `db_academico`.`modalidad_estudio_unidad` (`meun_id`, `uaca_id`, `mo
 VALUES ('142', '10', '1', '76', '1', '1', '1', '2022-02-25 11:22:00', '1');
 
 /*****Crear campo en tabla temporal para guardar nivel de instruccion
-redes sociales ****/
+redes sociales, como te encontramos ****/
 ALTER TABLE `db_captacion`.`temporal_wizard_inscripcion`
 ADD COLUMN `twin_nivel_instruccion` BIGINT(20) NULL AFTER `twin_mensaje2`;
 
 ALTER TABLE `db_captacion`.`temporal_wizard_inscripcion`
 ADD COLUMN `twin_redes_sociales` BIGINT(20) NULL DEFAULT NULL AFTER `twin_nivel_instruccion`;
+
+ALTER TABLE `db_captacion`.`temporal_wizard_inscripcion`
+ADD COLUMN `twin_encontramos` VARCHAR(150) NULL DEFAULT NULL AFTER `twin_redes_sociales`;
 
 
 /**** Verificar PK en produccion Agregar twitter para seguimiento ***/

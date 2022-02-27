@@ -57,3 +57,8 @@ VALUES ('188', '210', '10', '1', '1', '1', '2022-02-26 15:22:00', '1');
 
 INSERT INTO `db_facturacion`.`item_precio` (`ipre_id`, `ite_id`, `ipre_precio`, `ipre_fecha_inicio`, `ipre_fecha_fin`, `ipre_estado_precio`, `ipre_usu_ingreso`, `ipre_estado`, `ipre_fecha_creacion`, `ipre_estado_logico`)
 VALUES ('210', '210', '120', '2022-02-26 00:00:00', '2022-12-31 23:59:59', 'A', '1', '1', '2022-02-26 15:08:00', '1');
+
+/************************* insert para secuencial matriucla ICP ********/
+
+INSERT INTO `db_academico`.`numero_matricula` (`nmat_id`, `nmat_codigo`, `nmat_descripcion`, `nmat_anio`, `nmat_numero`, `nmat_usuario_ingreso`, `nmat_usuario_modifica`, `nmat_estado`, `nmat_fecha_creacion`, `nmat_fecha_modificacion`, `nmat_estado_logico`)
+VALUES ('2', '2', 'ICP', '2022', '00000', '1', '1', '1', '2022-02-27 11:00:00', NULL, '1');

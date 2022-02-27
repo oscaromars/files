@@ -1592,14 +1592,14 @@ class SolicitudesController extends \app\components\CController {
                                                 //\app\models\Utilities::putMessageLogFile('Entro: 15');
                                                 //SE DEBE CONSULTAR SI YA TIENE NUMERO DE MATRICULA
                                                 // NO GENERAR Y NO MODIFICAR
-                                                \app\models\Utilities::putMessageLogFile('matricula: '.$resp_estudianteid["est_matricula"]);
+                                                //\app\models\Utilities::putMessageLogFile('matricula: '.$resp_estudianteid["est_matricula"]);
                                                 if (empty($resp_estudianteid["est_matricula"])) {
                                                 //\app\models\Utilities::putMessageLogFile('Entro: 16');
                                                 $anioactual = date("Y");
                                                 //\app\models\Utilities::putMessageLogFile('Entro: 16.1');
                                                 $mod_numatricula = new NumeroMatricula();
                                                 //\app\models\Utilities::putMessageLogFile('Entro: 16.2');
-                                                $resp_numatricula = $mod_numatricula->consultaNumatricula();
+                                                $resp_numatricula = $mod_numatricula->consultaNumatricula($resp_sol["nivel_interes"]);
                                                 //\app\models\Utilities::putMessageLogFile('Entro: 16.3');
                                                 //\app\models\Utilities::putMessageLogFile('anio actual: '.$anioactual);
                                                 //\app\models\Utilities::putMessageLogFile('anio consulta: '.$resp_numatricula["nmat_anio"]);
@@ -1609,7 +1609,11 @@ class SolicitudesController extends \app\components\CController {
                                                         //se genera el nuevo secuencial
                                                         $generar = ($resp_numatricula["secuencia"] + 1);
                                                         $secuencial_nuevo = str_pad((int)$generar, 5, "0", STR_PAD_LEFT);
-                                                        $est_matricula = $resp_numatricula["nmat_anio"].$secuencial_nuevo;
+                                                        if ($resp_sol["nivel_interes"] == 10) {
+                                                            $est_matricula = $resp_numatricula["nmat_descripcion"].$resp_numatricula["nmat_anio"].$secuencial_nuevo;
+                                                        }else{
+                                                            $est_matricula = $resp_numatricula["nmat_anio"].$secuencial_nuevo;
+                                                        }
                                                         // se actualiza solo el secuencial en la tabla
                                                         $resp_actsecuencial = $mod_numatricula->actualizarSecmatricula($resp_numatricula["nmat_id"], $secuencial_nuevo);
                                                         if ($resp_actsecuencial) {
@@ -1629,7 +1633,12 @@ class SolicitudesController extends \app\components\CController {
                                                         //\app\models\Utilities::putMessageLogFile('Entro: 20');
                                                         $generar = 1;
                                                         $secuencial_nuevo = str_pad((int)$generar, 5, "0", STR_PAD_LEFT);
-                                                        $est_matricula = $anioactual.$secuencial_nuevo;
+                                                        if ($resp_sol["nivel_interes"] == 10) {
+                                                            $est_matricula = $resp_numatricula["nmat_descripcion"].$anioactual.$secuencial_nuevo;
+                                                        }else{
+                                                            $est_matricula = $anioactual.$secuencial_nuevo;
+                                                        }
+                                                        //$est_matricula = $anioactual.$secuencial_nuevo;
                                                         $resp_actsecuencial = $mod_numatricula->actualizarSecmatricula($resp_numatricula["nmat_id"], $secuencial_nuevo);
                                                         if ($resp_actsecuencial) {
                                                             //\app\models\Utilities::putMessageLogFile('Entro: 21');

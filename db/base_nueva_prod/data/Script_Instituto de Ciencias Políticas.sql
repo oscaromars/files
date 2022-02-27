@@ -32,10 +32,28 @@ INSERT INTO `db_facturacion`.`sub_categoria` (`scat_id`, `cat_id`, `scat_nombre`
 VALUES ('9', '2', 'Diplomado formación Política', 'Diplomado formación Política', '1', '1', '2022-02-26 14:48:00', '1');
 
 INSERT INTO `db_facturacion`.`item` (`ite_id`, `scat_id`, `ite_nombre`, `ite_descripcion`, `ite_codigo`, `ite_usu_ingreso`, `ite_estado`, `ite_fecha_creacion`, `ite_estado_logico`)
-VALUES ('208', '9', 'Valor Total Dipl. Formación participaciónpolítica', 'Valor Total Dipl. Formación participaciónpolítica', '0208', '1', '1', '2022-02-26 15:05:22', '1');
+VALUES ('208', '9', 'Valor Total Dipl. Formación participación política', 'Valor Total Dipl. Formación participación política', '0208', '1', '1', '2022-02-26 15:05:22', '1');
 
 INSERT INTO `db_facturacion`.`item_precio` (`ipre_id`, `ite_id`, `ipre_precio`, `ipre_fecha_inicio`, `ipre_fecha_fin`, `ipre_estado_precio`, `ipre_usu_ingreso`, `ipre_estado`, `ipre_fecha_creacion`, `ipre_estado_logico`)
 VALUES ('208', '208', '180', '2022-02-26 00:00:00', '2022-12-31 23:59:59', 'A', '1', '1', '2022-02-26 15:08:00', '1');
 
 INSERT INTO `db_facturacion`.`item_metodo_unidad` (`imni_id`, `ite_id`, `uaca_id`, `mod_id`, `mest_id`, `imni_usu_ingreso`, `imni_estado`, `imni_fecha_creacion`, `imni_estado_logico`)
 VALUES ('186', '208', '10', '1', NULL, '1', '1', '2022-02-26 15:22:00', '1');
+
+INSERT INTO `db_facturacion`.`item` (`ite_id`, `scat_id`, `ite_nombre`, `ite_descripcion`, `ite_codigo`, `ite_usu_ingreso`, `ite_estado`, `ite_fecha_creacion`, `ite_estado_logico`)
+VALUES ('209', '9', '1 Módulo Dipl. Formación participación política', '1 Módulo Dipl. Formación participación política', '0209', '1', '1', '2022-02-26 15:05:22', '1');
+
+INSERT INTO `db_facturacion`.`item_metodo_unidad` (`imni_id`, `ite_id`, `uaca_id`, `mod_id`, `imni_usu_ingreso`, `imni_estado`, `imni_fecha_creacion`, `imni_estado_logico`)
+VALUES ('187', '209', '10', '1', '1', '1', '2022-02-26 15:22:00', '1');
+
+INSERT INTO `db_facturacion`.`item_precio` (`ipre_id`, `ite_id`, `ipre_precio`, `ipre_fecha_inicio`, `ipre_fecha_fin`, `ipre_estado_precio`, `ipre_usu_ingreso`, `ipre_estado`, `ipre_fecha_creacion`, `ipre_estado_logico`)
+VALUES ('209', '209', '60', '2022-02-26 00:00:00', '2022-12-31 23:59:59', 'A', '1', '1', '2022-02-26 15:08:00', '1');
+
+INSERT INTO `db_facturacion`.`item` (`ite_id`, `scat_id`, `ite_nombre`, `ite_descripcion`, `ite_codigo`, `ite_usu_ingreso`, `ite_estado`, `ite_fecha_creacion`, `ite_estado_logico`)
+VALUES ('210', '9', '2 Módulo Dipl. Formación participación política', '2 Módulo Dipl. Formación participación política', '0210', '1', '1', '2022-02-26 15:05:22', '1');
+
+INSERT INTO `db_facturacion`.`item_metodo_unidad` (`imni_id`, `ite_id`, `uaca_id`, `mod_id`, `imni_usu_ingreso`, `imni_estado`, `imni_fecha_creacion`, `imni_estado_logico`)
+VALUES ('188', '210', '10', '1', '1', '1', '2022-02-26 15:22:00', '1');
+
+INSERT INTO `db_facturacion`.`item_precio` (`ipre_id`, `ite_id`, `ipre_precio`, `ipre_fecha_inicio`, `ipre_fecha_fin`, `ipre_estado_precio`, `ipre_usu_ingreso`, `ipre_estado`, `ipre_fecha_creacion`, `ipre_estado_logico`)
+VALUES ('210', '210', '120', '2022-02-26 00:00:00', '2022-12-31 23:59:59', 'A', '1', '1', '2022-02-26 15:08:00', '1');

@@ -359,25 +359,18 @@ admision::registerTranslations();
         <div class="col-md-2">
             <a id="paso2back" href="javascript:" class="btn btn-primary btn-block"><span class="glyphicon glyphicon-menu-left"></span><?= Yii::t("formulario", "Back") ?> </a>
         </div>
-    </div>
-    <!-- <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" id="DivBoton">
-        <div class="col-md-2">
-            <a id="paso2back" href="javascript:" class="btn btn-primary btn-block"><span class="glyphicon glyphicon-menu-left"></span><?= Yii::t("formulario", "Back") ?> </a>
-        </div>
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" id="DivBoton">
         <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8"> &nbsp;</div>
         <div class="col-md-2">
             <a id="sendInscripcionsolicitud" href="javascript:" class="btn btn-primary btn-block"> <?php echo "Pagar"; ?> </a>
         </div>
         <a id="btn_pago_i" href="javascript:" class="btn btn-primary btn-block pbpopup"></a>
     </div>
-
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="display:none" id="DivSubirPagoBtn">
-        <div class="col-md-2">
-            <a id="paso2back" href="javascript:" class="btn btn-primary btn-block"><span class="glyphicon glyphicon-menu-left"></span><?= Yii::t("formulario", "Back") ?> </a>
-        </div>
         <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8"> &nbsp;</div>
         <div class="col-md-2">
             <a id="sendInscripcionSubirPago" href="javascript:" class="btn btn-primary btn-block"> <?php echo "Pagar"; ?> </a>
         </div>
-    </div>-->
+    </div>
+    </div>
 </form>

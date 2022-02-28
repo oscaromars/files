@@ -30,11 +30,12 @@ session_start();
 $_SESSION['persona_solicita'] = $_GET['peid'];
 ?>
 
-<div class="col-md-12">    
+<div class="col-md-12">
     <h3><span id="lbl_Personeria"><?= financiero::t("Pagos", "Upload Payments") ?></span>
 </div>
 <?= Html::hiddenInput('txth_idp', $_GET['peid'], ['id' => 'txth_idp']); ?>
 <?= Html::hiddenInput('txth_idsol', ($_GET['sins_id']), ['id' => 'txth_idsol']); ?>
+<?= Html::hiddenInput('txth_sinsid', base64_decode($_GET['sins_id']), ['id' => 'txth_sinsid']); ?>
 <?= Html::hiddenInput('txth_ids', base64_decode($_GET['ids']), ['id' => 'txth_ids']); ?>
 <?= Html::hiddenInput('txth_tot', base64_decode($_GET['tot']), ['id' => 'txth_tot']); ?>
 <?= Html::hiddenInput('txth_vista', $vista, ['id' => 'txth_vista']); ?>
@@ -65,9 +66,9 @@ if (empty($_GET['peid'])) {
                 ?>
             </div>
         </div>
-    </div>     
+    </div>
     <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12">
-        <div class="form-group">            
+        <div class="form-group">
             <label for="txt_pago" class="col-sm-2 col-md-2 col-xs-2 col-lg-2  control-label"><?= financiero::t("Pagos", "Pay Total") ?></label>
             <div class="col-sm-10 col-md-10 col-xs-10 col-lg-10 ">
                 <?php
@@ -85,7 +86,7 @@ if (empty($_GET['peid'])) {
         </div>
     </div>
     <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12">
-        <div class="form-group">            
+        <div class="form-group">
             <label for="txt_numtransaccion" class="col-sm-2 col-md-2 col-xs-2 col-lg-2  control-label"><?= admision::t("Solicitudes", "Transaction number") ?></label>
             <div class="col-sm-10 col-md-10 col-xs-10 col-lg-10 ">
                 <?php
@@ -122,13 +123,13 @@ if (empty($_GET['peid'])) {
             </div>
         </div>
     </div>
-    <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">       
+    <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
         <div class="form-group">
             <label for="txt_observa" class="col-sm-2 col-md-2 col-xs-2 col-lg-2 control-label keyupmce"><?= Yii::t("formulario", "Observation") ?></label>
-            <div class="col-sm-10 col-md-10 col-xs-10 col-lg-10">                
-                <textarea  class="form-control keyupmce" id="txt_observa" rows="3"></textarea>                  
+            <div class="col-sm-10 col-md-10 col-xs-10 col-lg-10">
+                <textarea  class="form-control keyupmce" id="txt_observa" rows="3"></textarea>
             </div>
-        </div>      
+        </div>
     </div>
     <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12 doc_titulo cinteres">
         <div class="form-group">
@@ -160,15 +161,15 @@ if (empty($_GET['peid'])) {
         }',
                     ],
                     'pluginEvents' => [
-                        "filebatchselected" => "function (event) {                        
+                        "filebatchselected" => "function (event) {
                         function d2(n) {
                         if(n<9) return '0'+n;
                         return n;
                         }
                         today = new Date();
                         var name_pago = 'pago_' + $('#txth_per').val() + '-' + today.getFullYear() + '-' + d2(parseInt(today.getMonth()+1)) + '-' + d2(today.getDate()) + ' ' + d2(today.getHours()) + ':' + d2(today.getMinutes()) + ':' + d2(today.getSeconds());
-                        $('#txth_doc_titulo').val(name_pago);    
-        
+                        $('#txth_doc_titulo').val(name_pago);
+
         $('#txt_doc_titulo').fileinput('upload');
         var fileSent = $('#txt_doc_titulo').val();
         var ext = fileSent.split('.');
@@ -177,9 +178,9 @@ if (empty($_GET['peid'])) {
                         "fileuploaderror" => "function (event, data, msg) {
         $(this).parent().parent().children().first().addClass('hide');
         $('#txth_doc_titulo').val('');
-        //showAlert('NO_OK', 'error', {'wtmessage': objLang.Error_to_process_File__Try_again_, 'title': objLang.Error});   
+        //showAlert('NO_OK', 'error', {'wtmessage': objLang.Error_to_process_File__Try_again_, 'title': objLang.Error});
     }",
-                        "filebatchuploadcomplete" => "function (event, files, extra) { 
+                        "filebatchuploadcomplete" => "function (event, files, extra) {
         $(this).parent().parent().children().first().addClass('hide');
     }",
                         "filebatchuploadsuccess" => "function (event, data, previewId, index) {
@@ -187,26 +188,26 @@ if (empty($_GET['peid'])) {
         response = data.response, reader = data.reader;
         $(this).parent().parent().children().first().addClass('hide');
         var acciones = [{id: 'reloadpage', class: 'btn btn-primary', value: objLang.Accept, callback: 'reloadPage'}];
-        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});  
+        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});
     }",
                         "fileuploaded" => "function (event, data, previewId, index) {
-        $(this).parent().parent().children().first().addClass('hide');        
+        $(this).parent().parent().children().first().addClass('hide');
         var acciones = [{id: 'reloadpage', class: 'btn btn-primary', value: objLang.Accept, callback: 'reloadPage'}];
-        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});                              
+        //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});
     }",
                     ],
                 ]);
                 ?>
-            </div>             
+            </div>
         </div>
         <?php
         if (base64_decode($_GET['estado']) == 'Pendiente') {
             echo $leyendarc;
         }
         ?>
-    </div>   
+    </div>
     <?php if (base64_decode($_GET['estado']) == 'Pendiente') { ?>
-        <div></div>                
+        <div></div>
         <?php
     } else {
         $leyenda = '<div class="col-md-12 col-sm-12 col-xs-12 col-lg-12">
@@ -219,7 +220,7 @@ if (empty($_GET['peid'])) {
     }
     echo $leyenda;
     ?>
-</div> 
+</div>
 <div>
     <?=
     PbGridView::widget([
@@ -262,5 +263,5 @@ if (empty($_GET['peid'])) {
         ],
     ])
     ?>
-</div>      
+</div>
 </form>

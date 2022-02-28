@@ -996,14 +996,12 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
             }
             if ($arrFiltro['aula'] != "" && $arrFiltro['aula'] > 0) {
                 $str_search .= "cedu.cedu_id = :aula AND ";
-            }
-        }
-
+            }   
+   
         $sql = "SELECT DISTINCT
                 ceest.ceest_id,
-                paca.paca_id,
-                est.est_id,
-                per.per_id,
+                paca.paca_id, 
+                est.est_id, per.per_id, 
                 modalidad.mod_id,
                 cedu.cedu_id,
                 ceuni.ceuni_id,
@@ -1058,12 +1056,17 @@ class CursoEducativaEstudiante extends \yii\db\ActiveRecord
             if ($arrFiltro['aula'] != "" && $arrFiltro['aula'] > 0) {
                 $search_aula = $arrFiltro["aula"];
                 $comando->bindParam(":aula", $search_aula, \PDO::PARAM_INT);
-            }
+            }            
         }
 
-        Utilities::putMessageLogFile($comando->getRawSql());
+        Utilities::putMessageLogFile("consultarEstudiantesEvaluacion: " . $comando->getRawSql());
 
         $resultData = $comando->queryAll();
+
+        Utilities::putMessageLogFile("consultarEstudiantesEvaluacion resultado: " . print_r($resultData, true));
+
+             }
+
 
         if($onlyData)
         {

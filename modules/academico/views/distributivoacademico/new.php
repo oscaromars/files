@@ -4,6 +4,7 @@
 use app\modules\academico\Module as academico;
 use app\modules\admision\Module as admision;
 use kartik\date\DatePicker;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 
 admision::registerTranslations();
@@ -61,6 +62,15 @@ academico::registerTranslations();
                     </div>
             </div>
         </div>
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" id="bloque9" style="display: none">
+            <div class="form-group">
+                <label for="cmb_campo_amplio" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?=academico::t("Academico", "Campo Amplio")?><span class="text-danger">*</span></label>
+                    <div class="col-sm-3 col-xs-3 col-md-3 col-lg-3">
+                        <?=Html::dropDownList("cmb_campo_amplio", 0, $arr_areaconocimiento, ["class" => "form-control", "id" => "cmb_campo_amplio"])?>
+                    </div>
+            </div>
+        </div>
+
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <div id="bloque_h_otros" style="display: none" class="form-group">
                     <label for="txt_horas_otros" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?=academico::t("distributivoacademico", "Número Horas")?><span class="text-danger">*</span></label>
@@ -87,30 +97,35 @@ academico::registerTranslations();
         </div>
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" id="bloque3" style="display: none">
             <div class="form-group">
-                <div id="bloque_j" style="display: none">
-                    <label for="cmb_jornada" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?=academico::t("Academico", "Working day")?><span class="text-danger">*</span></label>
-                    <div class="col-sm-3 col-xs-3 col-md-3 col-lg-3">
-                        <?=Html::dropDownList("cmb_jornada", 0, $arr_jornada, ["class" => "form-control", "id" => "cmb_jornada"])?>
+                <div class="row">
+                    <div id="bloque_j" style="display: none">
+                        <label for="cmb_jornada" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?=academico::t("Academico", "Working day")?><span class="text-danger">*</span></label>
+                        <div class="col-sm-3 col-xs-3 col-md-3 col-lg-3">
+                            <?=Html::dropDownList("cmb_jornada", 0, $arr_jornada, ["class" => "form-control", "id" => "cmb_jornada"])?>
+                        </div>
                     </div>
-                </div>
-                <label for="cmb_materia" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?=Yii::t("formulario", "Subject")?><span class="text-danger">*</span></label>
-                <div class="col-sm-3 col-xs-3 col-md-3 col-lg-3">
-                    <?=Html::dropDownList("cmb_materia", 0, $arr_materias, ["class" => "form-control", "id" => "cmb_materia"])?>
+                    <label for="cmb_materia" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?=Yii::t("formulario", "Subject")?><span class="text-danger">*</span></label>
+                    <div class="col-sm-4 col-xs-3 col-md-3 col-lg-3">
+                        <?=Html::dropDownList("cmb_materia", empty($arr_materias) ? 0 : $arr_materias, ArrayHelper::map($arr_materias, "id", "name"), ["class" => "form-control", "id" => "cmb_materia", "name" => "cmb_materia[]", "multiple" => ""])?>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12" id="bloque4" style="display: none">
             <div class="form-group">
-                <div id="bloque_p" style="display: none">
-                <label for="cmb_paralelo" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?=Yii::t("formulario", "Paralelo")?><span class="text-danger">*</span></label>
-                    <div class="col-sm-3 col-xs-3 col-md-3 col-lg-3">
-                        <?=Html::dropDownList("cmb_paralelo", 0, $arr_paralelo, ["class" => "form-control", "id" => "cmb_paralelo"])?>
-                    </div>
-                    <label for="cmb_horario" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?=Yii::t("formulario", "Schedule")?><span class="text-danger">*</span></label>
-                    <div class="col-sm-3 col-xs-3 col-md-3 col-lg-3">
-                        <?=Html::dropDownList("cmb_horario", 0, $arr_horario, ["class" => "form-control", "id" => "cmb_horario"])?>
+                <div class="row">
+                    <div id="bloque_p" style="display: none">
+                    <label for="cmb_paralelo" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?=Yii::t("formulario", "Paralelo")?><span class="text-danger">*</span></label>
+                        <div class="col-sm-3 col-xs-3 col-md-3 col-lg-3">
+                            <?=Html::dropDownList("cmb_paralelo", 0, $arr_paralelo, ["class" => "form-control", "id" => "cmb_paralelo"])?>
+                        </div>
+                        <label for="cmb_horario" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?=Yii::t("formulario", "Schedule")?><span class="text-danger">*</span></label>
+                        <div class="col-sm-3 col-xs-3 col-md-3 col-lg-3">
+                            <?=Html::dropDownList("cmb_horario", 0, $arr_horario, ["class" => "form-control", "id" => "cmb_horario"])?>
+                        </div>
                     </div>
                 </div>
+
             </div>
         </div>
         <div id="bloque_n" style="display: none">
@@ -176,6 +191,7 @@ DatePicker::widget([
                             <th><?=academico::t("Academico", "Assignment Type")?></th>
                             <th><?=academico::t("Academico", "Subject")?></th>
                             <th><?=academico::t("Academico", "Academic unit")?></th>
+                            <th><?=academico::t("Academico", "Area Conocimiento")?></th>
                             <th style="display:none; border:none;"></th>
                             <th><?=academico::t("Academico", "Modality")?></th>
                             <th><?=academico::t("distributivoacademico", "Number of students")?></th>

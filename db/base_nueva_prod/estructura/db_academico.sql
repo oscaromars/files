@@ -2350,7 +2350,7 @@ create table if not exists `horarios_semestre` (
   `mod_id` bigint(20) not null,
   `uaca_id` bigint(20) not null,
   `hose_usuario_ingreso` bigint(20) not null,
-  `hose_usuario_modifica` bigint(20)  null,  
+  `hose_usuario_modifica` bigint(20)  null,
   `hose_estado` varchar(1) not null,
   `hose_fecha_creacion` timestamp not null default current_timestamp,
   `hose_fecha_modificacion` timestamp null default null,
@@ -2366,7 +2366,7 @@ create table if not exists `horarios_semestre_detalle` (
   `hosd_hora` bigint(20) not null,
   `hosd_asi_id` bigint(20) not null,
   `hosd_usuario_ingreso` bigint(20) not null,
-  `hosd_usuario_modifica` bigint(20)  null,  
+  `hosd_usuario_modifica` bigint(20)  null,
   `hosd_estado` varchar(1) not null,
   `hosd_fecha_creacion` timestamp not null default current_timestamp,
   `hosd_fecha_modificacion` timestamp null default null,
@@ -2380,7 +2380,7 @@ create table if not exists `paralelos_alumno` (
   -- `mpp_id` bigint(20) not null,  -- getout
   `paal_cantidad` bigint(20) not null,
   `paal_usuario_ingreso` bigint(20) not null,
-  `paal_usuario_modifica` bigint(20)  null,  
+  `paal_usuario_modifica` bigint(20)  null,
   `paal_estado` varchar(1) not null,
   `paal_fecha_creacion` timestamp not null default current_timestamp,
   `paal_fecha_modificacion` timestamp null default null,
@@ -2390,46 +2390,46 @@ create table if not exists `paralelos_alumno` (
 
 -- MODIFICACIONES PARA GENERACION PARALELO
 
-ALTER TABLE db_academico.planificacion_estudiante ADD 
+ALTER TABLE db_academico.planificacion_estudiante ADD
 pes_mat_b1_h1_mpp BIGINT(20) NULL DEFAULT NULL AFTER pes_mat_b1_h1_cod;
 
-ALTER TABLE db_academico.planificacion_estudiante ADD 
+ALTER TABLE db_academico.planificacion_estudiante ADD
 pes_mat_b1_h2_mpp BIGINT(20) NULL DEFAULT NULL AFTER pes_mat_b1_h2_cod;
 
-ALTER TABLE db_academico.planificacion_estudiante ADD 
+ALTER TABLE db_academico.planificacion_estudiante ADD
 pes_mat_b1_h3_mpp BIGINT(20) NULL DEFAULT NULL AFTER pes_mat_b1_h3_cod;
 
-ALTER TABLE db_academico.planificacion_estudiante ADD 
+ALTER TABLE db_academico.planificacion_estudiante ADD
 pes_mat_b1_h4_mpp BIGINT(20) NULL DEFAULT NULL AFTER pes_mat_b1_h4_cod;
 
-ALTER TABLE db_academico.planificacion_estudiante ADD 
+ALTER TABLE db_academico.planificacion_estudiante ADD
 pes_mat_b1_h5_mpp BIGINT(20) NULL DEFAULT NULL AFTER pes_mat_b1_h5_cod;
 
-ALTER TABLE db_academico.planificacion_estudiante ADD 
+ALTER TABLE db_academico.planificacion_estudiante ADD
 pes_mat_b1_h6_mpp BIGINT(20) NULL DEFAULT NULL AFTER pes_mat_b1_h6_cod;
 
-ALTER TABLE db_academico.planificacion_estudiante ADD 
+ALTER TABLE db_academico.planificacion_estudiante ADD
 pes_mat_b2_h1_mpp BIGINT(20) NULL DEFAULT NULL AFTER pes_mat_b2_h1_cod;
 
-ALTER TABLE db_academico.planificacion_estudiante ADD 
+ALTER TABLE db_academico.planificacion_estudiante ADD
 pes_mat_b2_h2_mpp BIGINT(20) NULL DEFAULT NULL AFTER pes_mat_b2_h2_cod;
 
-ALTER TABLE db_academico.planificacion_estudiante ADD 
+ALTER TABLE db_academico.planificacion_estudiante ADD
 pes_mat_b2_h3_mpp BIGINT(20) NULL DEFAULT NULL AFTER pes_mat_b2_h3_cod;
 
-ALTER TABLE db_academico.planificacion_estudiante ADD 
+ALTER TABLE db_academico.planificacion_estudiante ADD
 pes_mat_b2_h4_mpp BIGINT(20) NULL DEFAULT NULL AFTER pes_mat_b2_h4_cod;
 
-ALTER TABLE db_academico.planificacion_estudiante ADD 
+ALTER TABLE db_academico.planificacion_estudiante ADD
 pes_mat_b2_h5_mpp BIGINT(20) NULL DEFAULT NULL AFTER pes_mat_b2_h5_cod;
 
-ALTER TABLE db_academico.planificacion_estudiante ADD 
+ALTER TABLE db_academico.planificacion_estudiante ADD
 pes_mat_b2_h6_mpp BIGINT(20) NULL DEFAULT NULL AFTER pes_mat_b2_h6_cod;
 
-ALTER TABLE db_academico.materia_paralelo_periodo ADD 
+ALTER TABLE db_academico.materia_paralelo_periodo ADD
 daho_id BIGINT(20) NULL DEFAULT NULL AFTER paca_id;
 
-ALTER TABLE db_academico.planificacion_estudiante ADD 
+ALTER TABLE db_academico.planificacion_estudiante ADD
 pes_semestre BIGINT(20) NULL DEFAULT NULL AFTER pes_carrera;
 
 -- --------------------------------------------------------
@@ -2465,9 +2465,9 @@ create table if not exists `paralelos_siiga` (
   `pasi_fecha_modificacion` timestamp null default null,
   `pasi_estado_logico` varchar(1) not null
 );
- 
+
 -- --------------------------------------------------------
--- 
+--
 -- Estructura de tabla para la tabla `datos_facturacion_registro`
 -- --------------------------------------------------------
 create table if not exists `datos_facturacion_registro` (
@@ -2487,25 +2487,25 @@ create table if not exists `datos_facturacion_registro` (
   PRIMARY KEY (`dfr_id`)
 ) ;
 
-ALTER TABLE `db_academico`.`registro_online` 
+ALTER TABLE `db_academico`.`registro_online`
 ADD INDEX `index_per` (`per_id` ASC),
 ADD INDEX `index_pes` (`pes_id` ASC);
 ;
 
-ALTER TABLE `db_academico`.`registro_adicional_materias` 
+ALTER TABLE `db_academico`.`registro_adicional_materias`
 ADD INDEX `index_per` (`per_id` ASC),
 ADD INDEX `index_pla` (`pla_id` ASC),
 ADD INDEX `index_paca` (`paca_id` ASC),
 ADD INDEX `index_rpm` (`rpm_id` ASC);
 ;
 
-ALTER TABLE `db_academico`.`registro_pago_matricula` 
+ALTER TABLE `db_academico`.`registro_pago_matricula`
 ADD INDEX `index_per` (`per_id` ASC),
 ADD INDEX `index_ron` (`ron_id` ASC),
 ADD INDEX `index_fpag` (`fpag_id` ASC);
 ;
 
-ALTER TABLE `db_academico`.`cancelacion_registro_online` 
+ALTER TABLE `db_academico`.`cancelacion_registro_online`
 ADD INDEX `index_per` (`per_id` ASC),
 ADD INDEX `index_pla` (`pla_id` ASC),
 ADD INDEX `index_paca` (`paca_id` ASC),
@@ -2531,7 +2531,7 @@ CREATE TABLE `registro_bitacora_nota` (
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8
 
 -- --------------------------------------------------------
--- 
+--
 -- Estructura de tabla para la tabla `temp_impagos_educativa`
 -- --------------------------------------------------------
 
@@ -2542,15 +2542,15 @@ create table if not exists `temp_impagos_educativa` (
 );
 
 -- --------------------------------------------------------
--- 
+--
 -- Estructura de tabla para la tabla `cron_estudiantes_educativa`
 -- --------------------------------------------------------
 
 create table if not exists `cron_estudiantes_educativa` (
   `croe_id` bigint(20) not null auto_increment primary key,
-  `croe_mod_id` bigint(20)  not null,  
-  `croe_paca_id` bigint(20)  not null, 
-  `croe_uaca_id` bigint(20)  not null, 
+  `croe_mod_id` bigint(20)  not null,
+  `croe_paca_id` bigint(20)  not null,
+  `croe_uaca_id` bigint(20)  not null,
   `croe_fecha_ejecucion` timestamp null default null,
   `croe_exec` varchar(1) not null,
   `croe_usuario_ingreso` bigint(20) not null,
@@ -2562,13 +2562,13 @@ create table if not exists `cron_estudiantes_educativa` (
 );
 
 --
--- Estructura de tabla para la tabla `materias_periodo_modalidad`   
+-- Estructura de tabla para la tabla `materias_periodo_modalidad`
 --
 create table if not exists `materias_periodo_modalidad` (
 `mpmo_id` bigint(20) not null auto_increment primary key,
 `saca_id` bigint(20) not null,
 `mod_id` bigint(20) not null,
-`asi_id` bigint(20) null, 
+`asi_id` bigint(20) null,
 `mpmo_nestudiantes` bigint(20) null default null,
 `eaca_id` bigint(20) not null,
 `mpmo_bloque` integer null default null,
@@ -2581,3 +2581,47 @@ create table if not exists `materias_periodo_modalidad` (
 `mpmo_fecha_modificacion` timestamp null default null,
 `mpmo_estado_logico` varchar(1) not null
 );
+
+CREATE TABLE `numero_matricula` (
+  `nmat_id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `nmat_codigo` int(3) NOT NULL,
+  `nmat_descripcion` varchar(300) NOT NULL,
+  `nmat_anio` char(4) NOT NULL, -- año actual para mascara de numero de matricual
+  `nmat_numero` varchar(10) DEFAULT NULL, -- secuencial de 5 digitos
+  `nmat_usuario_ingreso` bigint(20) DEFAULT NULL,
+  `nmat_usuario_modifica` bigint(20) DEFAULT NULL,
+  `nmat_estado` varchar(1) NOT NULL,
+  `nmat_fecha_creacion` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `nmat_fecha_modificacion` timestamp NULL DEFAULT NULL,
+  `nmat_estado_logico` varchar(1) NOT NULL,
+  PRIMARY KEY (`nmat_id`)
+);
+
+--
+-- Estructura para la tabla `temp_estudiantes_noprocesados`
+--
+
+create table if not exists `temp_estudiantes_noprocesados` (
+  `teno_id` bigint(20) not null auto_increment primary key,
+  `daca_id` bigint(20) not null,
+  `cedu_asi_id` bigint(20) not null,
+  `uaca_id` bigint(20) not null,
+  `paca_id` bigint(20) not null,
+  `mod_id` bigint(20)  not null,
+  `pro_id` bigint(20)  not null,
+  `asi_id` bigint(20)  not null,
+  `est_id` bigint(20)  not null,
+  `per_id` bigint(20)  not null,
+  `uedu_usuario` varchar(100) not null ,
+  `per_cedula` varchar(20) not null ,
+  `isauth` boolean not null,
+  `isdata` boolean not null,
+  `teno_usuario_ingreso` bigint(20) not null,
+  `teno_usuario_modifica` bigint(20)  null,
+  `teno_estado` varchar(1) not null,
+  `teno_fecha_creacion` timestamp not null default current_timestamp,
+  `teno_fecha_modificacion` timestamp null default null,
+  `teno_estado_logico` varchar(1) not null
+);
+
+

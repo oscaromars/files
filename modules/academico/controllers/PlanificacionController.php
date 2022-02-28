@@ -154,9 +154,6 @@ class PlanificacionController extends \app\components\CController {
 		$comando->bindParam(":periodo", $periodo, \PDO::PARAM_STR);
 		$saca_nombre = $comando->queryOne();
 
-		$mensaje = "periodo " . $periodo . " modalidad " . $modalidad;
-		mail('oscaromars@hotmail.com', 'Mi título', $mensaje);
-
 		$con = \Yii::$app->db_academico;
 
 		$sql = "
@@ -171,7 +168,7 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
    inner join db_academico.malla_academica maca on maca.maca_id = mumo.maca_id
    inner join db_academico.unidad_academica u on u.uaca_id = meu.uaca_id
    inner join db_academico.estudio_academico ea on ea.eaca_id = meu.eaca_id
-   inner join db_academico.materias_periodo_modalidad mpmo on mpmo.eaca_id = meu.eaca_id and mpmo.mod_id = meu.mod_id 
+   inner join db_academico.materias_periodo_modalidad mpmo on mpmo.eaca_id = meu.eaca_id and mpmo.mod_id = meu.mod_id and mpmo.saca_id = :periodo
    inner join db_asgard.persona per on per.per_id = e.per_id
    left join db_academico.malla_academico_estudiante malle on per.per_id = malle.per_id
      where  malle.maca_id = maca.maca_id  AND
@@ -213,7 +210,131 @@ order by maca.maca_id DESC , ea.eaca_codigo, e.est_fecha_creacion ASC;
         $preprocess = $malla->traerActivas($periodo,$modalidad); 
         if (count($preprocess) > 0) {  
              for ($ix = 0; $ix < count($resultData); $ix++) {  
-$postprocess = $malla->marcarAsignaturas($preprocess[$ix]["mpmo_id"],1); 
+$postprocess = $malla->marcarAsignaturas($preprocess[$ix]["mpmo_id"],$periodo); 
+
+     }    }     }
+
+		if (count($resultData) > 0) {
+
+			for ($i = 0; $i < count($resultData); $i++) {
+				$centralprocess = $malla->consultarAsignaturas($resultData[$i], $periodo, $saca_nombre["semestre"], $modalidad);if ($centralprocess == 1) {$ok = 1;}
+		
+				\app\models\Utilities::putMessageLogFile("Received " . $centralprocess);
+			}
+
+		} else {
+
+			\Yii::$app->getSession()->setFlash('msg', 'No existen mas estudiantes para la modalidad actual');
+			return $this->redirect(['index']);
+
+		}
+
+		if ($ok != 1) {
+			\Yii::$app->getSession()->setFlash('msg', 'No existen datos suficientes para generar la planificacion seleccionada');
+			// \Yii::$app->getSession()->setFlash('msg') ;
+			return $this->redirect(['index']);
+
+		}
+		//   return $resultData;
+		//  return $this->render('temporal', [
+		//         'resultData' => $centralprocess,
+		//          ]);
+		\Yii::$app->getSession()->setFlash('msgok', 'Se ha generado con exito la planificacion');
+		return $this->redirect(['index']);
+	}
+
+		public function actionRegenerator($periodo, $modalidad) {
+
+		$con = \Yii::$app->db_academico;
+		$sql = "
+                            SELECT
+                            CONCAT(saca_nombre,' ',saca_anio) as semestre
+                            FROM db_academico.semestre_academico where saca_id = :periodo
+                    ";
+		$comando = $con->createCommand($sql);
+		$comando->bindParam(":periodo", $periodo, \PDO::PARAM_STR);
+		$saca_nombre = $comando->queryOne();
+
+
+          $sql = "
+		SELECT pla_id
+		FROM db_academico.planificacion 
+		WHERE saca_id = :periodo and mod_id= :modalidad";
+          $comando = $con->createCommand($sql);
+		$comando->bindParam(":periodo", $periodo, \PDO::PARAM_INT);
+		$comando->bindParam(":modalidad", $periodo, \PDO::PARAM_INT);
+		$get_pla_id = $comando->queryOne();
+          $oldplan = $get_pla_id["pla_id"];
+
+          $sql = "
+		SELECT pla_id
+		FROM db_academico.planificacion 
+		WHERE saca_id = :periodo and mod_id= :modalidad 
+          AND pla_id <  :oldplan ";
+          $comando = $con->createCommand($sql);
+		$comando->bindParam(":periodo", $periodo, \PDO::PARAM_INT);
+		$comando->bindParam(":modalidad", $periodo, \PDO::PARAM_INT);
+			$comando->bindParam(":oldplan", $oldplan, \PDO::PARAM_INT);
+		$get_pla_id = $comando->queryOne();
+          $oldplan = $get_pla_id["pla_id"];
+
+		$con = \Yii::$app->db_academico;
+
+		$sql = "
+            select distinct e.est_id, e.per_id, e.est_matricula, e.est_fecha_creacion, e.est_categoria, meu.uaca_id, meu.mod_id, meu.eaca_id, DATEDIFF(NOW(),e.est_fecha_creacion) as olderi, --
+u.uaca_id, u.uaca_nombre, ea.teac_id, ea.eaca_nombre, ea.eaca_codigo,
+per.per_cedula,  maca.maca_id , maca.maca_codigo, maca.maca_nombre,
+concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_apellido, ' ', ifnull(per.per_seg_apellido,'')) estudiante
+ from db_academico.estudiante e
+ inner join db_academico.estudiante_carrera_programa c on c.est_id = e.est_id
+  inner join db_academico.modalidad_estudio_unidad meu on meu.meun_id = c.meun_id
+  inner join db_academico.malla_unidad_modalidad mumo on mumo.meun_id = meu.meun_id
+   inner join db_academico.malla_academica maca on maca.maca_id = mumo.maca_id
+   inner join db_academico.unidad_academica u on u.uaca_id = meu.uaca_id
+   inner join db_academico.estudio_academico ea on ea.eaca_id = meu.eaca_id
+   inner join db_academico.materias_periodo_modalidad mpmo on mpmo.eaca_id = meu.eaca_id and mpmo.mod_id = meu.mod_id and mpmo.saca_id = :periodo
+   inner join db_asgard.persona per on per.per_id = e.per_id
+   left join db_academico.malla_academico_estudiante malle on per.per_id = malle.per_id
+     where  malle.maca_id = maca.maca_id  AND
+         meu.mod_id = :modalidad and meu.uaca_id = 1 and mpmo.saca_id = :periodo and mpmo.mpmo_activo = 'A'
+          and mpmo.mpmo_procesado is Null
+    AND  mpmo.mpmo_estado = 1 AND mpmo.mpmo_estado_logico = 1
+    AND  e.est_estado = 1 AND e.est_estado_logico = 1
+    AND  c.ecpr_estado = 1 AND c.ecpr_estado_logico = 1
+    AND  meu.meun_estado = 1 AND meu.meun_estado_logico = 1
+    AND  mumo.mumo_estado = 1 AND mumo.mumo_estado_logico = 1
+    AND  maca.maca_estado = 1 AND maca.maca_estado_logico = 1
+    AND  u.uaca_estado = 1 AND u.uaca_estado_logico = 1
+     AND  ea.eaca_estado = 1
+    AND  per.per_estado = 1 AND per.per_estado_logico = 1
+    AND  malle.maes_estado = 1 AND malle.maes_estado_logico = 1
+     AND
+((e.per_id in (select b.per_id from db_academico.planificacion_estudiante b where
+b.pla_id= :oldplan )) OR
+((e.per_id in (
+select distinct a.per_id from db_asgard.persona as a
+inner join db_academico.estudiante bas on a.per_id = bas.per_id
+where DATEDIFF(NOW(),bas.est_fecha_creacion) <=180 or
+DATEDIFF(NOW(),a.per_fecha_creacion) <=180 )))
+)
+order by maca.maca_id DESC , ea.eaca_codigo, e.est_fecha_creacion ASC;
+                ";
+
+		$comando = $con->createCommand($sql);
+		$comando->bindParam(":modalidad", $modalidad, \PDO::PARAM_STR);
+		$comando->bindParam(":periodo", $periodo, \PDO::PARAM_INT);
+		$comando->bindParam(":oldplan", $oldplan, \PDO::PARAM_INT);
+		$resultData = $comando->queryAll();
+
+		$malla = new MallaAcademica();
+		$allstudents = count($resultData);
+		\app\models\Utilities::putMessageLogFile("all: " . count($resultData));
+
+		   if (count($resultData) > 0) { 
+        $preprocess = $malla->traerActivas($periodo,$modalidad); 
+        if (count($preprocess) > 0) {  
+             for ($ix = 0; $ix < count($resultData); $ix++) {  
+$postprocess = $malla->marcarAsignaturas($preprocess[$ix]["mpmo_id"],$periodo); 
 
      }    }     }
 
@@ -258,9 +379,6 @@ $postprocess = $malla->marcarAsignaturas($preprocess[$ix]["mpmo_id"],1);
 		$comando->bindParam(":periodo", $periodo, \PDO::PARAM_STR);
 		$saca_nombre = $comando->queryOne();
 
-		$mensaje = "periodo " . $periodo . " modalidad " . $modalidad;
-		mail('oscaromars@hotmail.com', 'Mi título', $mensaje);
-
 		$con = \Yii::$app->db_academico;
 
 		$sql = "
@@ -275,11 +393,12 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
    inner join db_academico.malla_academica maca on maca.maca_id = mumo.maca_id
    inner join db_academico.unidad_academica u on u.uaca_id = meu.uaca_id
    inner join db_academico.estudio_academico ea on ea.eaca_id = meu.eaca_id
-   inner join db_academico.materias_periodo_modalidad mpmo on mpmo.eaca_id = meu.eaca_id and mpmo.mod_id = meu.mod_id
+   inner join db_academico.materias_periodo_modalidad mpmo on mpmo.eaca_id = meu.eaca_id and mpmo.mod_id = meu.mod_id and mpmo.saca_id = :periodo
    inner join db_asgard.persona per on per.per_id = e.per_id
     left join db_academico.malla_academico_estudiante malle on per.per_id = malle.per_id
      where   malle.maca_id = maca.maca_id  AND
-         meu.mod_id = :modalidad and meu.uaca_id = 1 and mpmo.saca_id = :periodo and mpmo.mpmo_activo = 'A
+     meu.mod_id = :modalidad and meu.uaca_id = 1 and mpmo.mpmo_activo = 'A'
+    AND  mpmo.mpmo_procesado is Null
     AND  mpmo.mpmo_estado = 1 AND mpmo.mpmo_estado_logico = 1
     AND  e.est_estado = 1 AND e.est_estado_logico = 1
     AND  c.ecpr_estado = 1 AND c.ecpr_estado_logico = 1
@@ -312,6 +431,14 @@ order by maca.maca_id DESC , ea.eaca_codigo, e.est_fecha_creacion ASC;
 		$allstudents = count($resultData);
 		\app\models\Utilities::putMessageLogFile("all: " . count($resultData));
 
+			 if (count($resultData) > 0) { 
+        $preprocess = $malla->traerActivas($periodo,$modalidad); 
+        if (count($preprocess) > 0) {  
+             for ($ix = 0; $ix < count($resultData); $ix++) {  
+$postprocess = $malla->marcarAsignaturas($preprocess[$ix]["mpmo_id"],$periodo); 
+
+     }    }     }
+
 		if (count($resultData) > 0) {
 			\app\models\Utilities::putMessageLogFile("Received std " . count($resultData));
 
@@ -332,17 +459,91 @@ order by maca.maca_id DESC , ea.eaca_codigo, e.est_fecha_creacion ASC;
 
 		if ($ok != 1) {
 			\Yii::$app->getSession()->setFlash('msg', 'No existen datos suficientes para generar la planificacion seleccionada');
-			// \Yii::$app->getSession()->setFlash('msg') ;
+			
 			return $this->redirect(['index']);
 
 		}
-		//   return $resultData;
-		//  return $this->render('temporal', [
-		//         'resultData' => $centralprocess,
-		//          ]);
+		
 		\Yii::$app->getSession()->setFlash('msgok', 'Se ha generado con exito la planificacion');
 		return $this->redirect(['index']);
 	}
+
+	      public function actionCargarmaterias($periodo) { 
+
+
+
+         for ($c = 1; $c <= 4; $c++) {  
+ $modalidad = $c;    
+ $con = \Yii::$app->db_academico;
+ 
+$sql = "
+        select distinct e.est_id, e.per_id, e.est_matricula, e.est_fecha_creacion, e.est_categoria, meu.uaca_id, meu.mod_id, meu.eaca_id, DATEDIFF(NOW(),e.est_fecha_creacion) as olderi, -- 
+u.uaca_id, u.uaca_nombre, ea.teac_id, ea.eaca_nombre, ea.eaca_codigo,
+per.per_cedula,  maca.maca_id , maca.maca_codigo, maca.maca_nombre,
+concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_apellido, ' ', ifnull(per.per_seg_apellido,'')) estudiante
+ from db_academico.estudiante e
+ inner join db_academico.estudiante_carrera_programa c on c.est_id = e.est_id
+  inner join db_academico.modalidad_estudio_unidad meu on meu.meun_id = c.meun_id  
+  inner join db_academico.malla_unidad_modalidad mumo on mumo.meun_id = meu.meun_id 
+   inner join db_academico.malla_academica maca on maca.maca_id = mumo.maca_id 
+   inner join db_academico.unidad_academica u on u.uaca_id = meu.uaca_id
+   inner join db_academico.estudio_academico ea on ea.eaca_id = meu.eaca_id 
+    left join db_academico.materias_periodo_modalidad mpmo on mpmo.eaca_id = meu.eaca_id and mpmo.mod_id = meu.mod_id and mpmo.saca_id = :periodo 
+   inner join db_asgard.persona per on per.per_id = e.per_id
+   left join db_academico.malla_academico_estudiante malle on per.per_id = malle.per_id
+     where  malle.maca_id = maca.maca_id  AND
+         meu.mod_id = :modalidad and meu.uaca_id = 1 
+         and mpmo.mpmo_id is Null
+    AND  e.est_estado = 1 AND e.est_estado_logico = 1
+    AND  c.ecpr_estado = 1 AND c.ecpr_estado_logico = 1
+    AND  meu.meun_estado = 1 AND meu.meun_estado_logico = 1
+    AND  mumo.mumo_estado = 1 AND mumo.mumo_estado_logico = 1
+    AND  maca.maca_estado = 1 AND maca.maca_estado_logico = 1
+    AND  u.uaca_estado = 1 AND u.uaca_estado_logico = 1
+     AND  ea.eaca_estado = 1 
+    AND  per.per_estado = 1 AND per.per_estado_logico = 1
+    AND  malle.maes_estado = 1 AND malle.maes_estado_logico = 1
+     AND
+((e.per_id in (select b.per_id from db_academico.planificacion_estudiante b where
+b.pla_id= ( select max(dap.pla_id) from db_academico.planificacion dap 
+ where dap.mod_id = :modalidad ))) or 
+((e.per_id in (
+select distinct a.per_id from db_asgard.persona as a 
+inner join db_academico.estudiante bas on a.per_id = bas.per_id
+where DATEDIFF(NOW(),bas.est_fecha_creacion) <=180 or
+DATEDIFF(NOW(),a.per_fecha_creacion) <=180 )))
+ )  
+order by maca.maca_id DESC , ea.eaca_codigo, e.est_fecha_creacion ASC;
+                ";
+
+
+ $comando = $con->createCommand($sql);
+          $comando->bindParam(":modalidad", $modalidad, \PDO::PARAM_STR);
+          $comando->bindParam(":periodo", $periodo, \PDO::PARAM_INT);
+               $resultData = $comando->queryAll();
+               
+               
+                    
+                               $malla = new MallaAcademica();
+               $allstudents= count($resultData);
+                      
+                 if (count($resultData) > 0) {
+           
+            for ($i = 0; $i < count($resultData); $i++) {                       
+$centralprocess = $malla->cargarAsignaturas($resultData[$i],$modalidad,$periodo);  
+
+            }
+          }        else {          
+
+  \Yii::$app->getSession()->setFlash('msgok', 'Existen materias cargadas, No existen datos adicionales a ser procesados!');
+         return $this->redirect(['index']);
+
+          }
+       }
+
+   \Yii::$app->getSession()->setFlash('msgok', 'Se ha cargado las asignaturas exitosamente!');
+         return $this->redirect(['index']);
+ }
 
 	public function actionCerrarplanaut($pla_id) {
 
@@ -438,7 +639,7 @@ order by maca.maca_id DESC , ea.eaca_codigo, e.est_fecha_creacion ASC;
 		//} else {
 		//   $arrData = $mod_periodo->consultarEstudianteplanifica($arrSearch, true);
 		//}
-		$nameReport = academico::t('Academico', 'Lista de Planificación por Estudiante');
+		$nameReport = academico::t('Academico', 'Lista de PlanificaciÃ³n por Estudiante');
 		Utilities::generarReporteXLS($nombarch, $nameReport, $arrHeader, $arrData, $colPosition);
 		exit;
 
@@ -452,7 +653,7 @@ order by maca.maca_id DESC , ea.eaca_codigo, e.est_fecha_creacion ASC;
 				if (empty($_FILES)) {
 					return json_encode(['error' => Yii::t('notificaciones', 'Error to process File ' . basename($files['name']) . '. Try again.')]);
 				}
-				//Recibe Parámetros
+				//Recibe ParÃ¡metros
 				$files = $_FILES[key($_FILES)];
 				$arrIm = explode('.', basename($files['name']));
 				$namefile = substr_replace($data['name_file'], $data['mod_id'], 14, 0);
@@ -513,7 +714,7 @@ order by maca.maca_id DESC , ea.eaca_codigo, e.est_fecha_creacion ASC;
 							}
 						} else {
 							$message = array(
-								'wtmessage' => Yii::t('notificaciones', 'Se creó la planificación correctamente. ' . $carga_archivo['message']),
+								'wtmessage' => Yii::t('notificaciones', 'Se creÃ³ la planificaciÃ³n correctamente. ' . $carga_archivo['message']),
 								'title' => Yii::t('jslang', 'Success'),
 							);
 							return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), false, $message);
@@ -521,7 +722,7 @@ order by maca.maca_id DESC , ea.eaca_codigo, e.est_fecha_creacion ASC;
 					} else {
 						// si ya existe la modalidad y la planificacion creada no permitir volver a guardar
 						$message = array(
-							'wtmessage' => Yii::t('notificaciones', 'No se puede crear la planificacion ya existe ese período y modalidad. ' . $carga_archivo['message']),
+							'wtmessage' => Yii::t('notificaciones', 'No se puede crear la planificacion ya existe ese perÃ­odo y modalidad. ' . $carga_archivo['message']),
 							'title' => Yii::t('jslang', 'Error'),
 						);
 
@@ -695,13 +896,13 @@ order by maca.maca_id DESC , ea.eaca_codigo, e.est_fecha_creacion ASC;
 				$model = $modelconf->updatePlanAnual($id, $finicio, $ffin, $finicio1, $ffin1, /*$finicio2, $ffin2, */ $finicio3, $ffin3, $finicio4, $ffin4, $finicio5, $ffin5);
 				if ($model) {
 					$message = array(
-						"wtmessage" => Yii::t("notificaciones", "La infomación ha sido grabada. "),
+						"wtmessage" => Yii::t("notificaciones", "La infomaciÃ³n ha sido grabada. "),
 						"title" => Yii::t('jslang', 'Success'),
 					);
 					return Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), false, $message);
 				} else {
 					$message = array(
-						"wtmessage" => Yii::t('notificaciones', 'Su información no ha sido grabada. Por favor intente nuevamente o contacte al área de Desarrollo.'),
+						"wtmessage" => Yii::t('notificaciones', 'Su informaciÃ³n no ha sido grabada. Por favor intente nuevamente o contacte al Ã¡rea de Desarrollo.'),
 						"title" => Yii::t('jslang', 'Error'),
 					);
 					return Utilities::ajaxResponse('NOOK', 'alert', Yii::t('jslang', 'Error'), false, $message);
@@ -766,13 +967,13 @@ order by maca.maca_id DESC , ea.eaca_codigo, e.est_fecha_creacion ASC;
 
 				if ($inserta_planificacionxperiodo) {
 					$message = array(
-						"wtmessage" => Yii::t("notificaciones", "La infomación ha sido grabada. "),
+						"wtmessage" => Yii::t("notificaciones", "La infomaciÃ³n ha sido grabada. "),
 						"title" => Yii::t('jslang', 'Success'),
 					);
 					return Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), false, $message);
 				} else {
 					$message = array(
-						"wtmessage" => Yii::t('notificaciones', 'Su información no ha sido grabada. Por favor intente nuevamente o contacte al área de Desarrollo.'),
+						"wtmessage" => Yii::t('notificaciones', 'Su informaciÃ³n no ha sido grabada. Por favor intente nuevamente o contacte al Ã¡rea de Desarrollo.'),
 						"title" => Yii::t('jslang', 'Error'),
 					);
 					return Utilities::ajaxResponse('NOOK', 'alert', Yii::t('jslang', 'Error'), false, $message);
@@ -899,14 +1100,14 @@ order by maca.maca_id DESC , ea.eaca_codigo, e.est_fecha_creacion ASC;
 		} else {
 			$arrData = $mod_periodo->consultarEstudianteplanifica($arrSearch, true);
 		}
-		$nameReport = academico::t('Academico', 'Lista de Planificación por Estudiante');
+		$nameReport = academico::t('Academico', 'Lista de PlanificaciÃ³n por Estudiante');
 		Utilities::generarReporteXLS($nombarch, $nameReport, $arrHeader, $arrData, $colPosition);
 		exit;
 	}
 
 	public function actionExppdfplanifica() {
 		$report = new ExportFile();
-		$this->view->title = academico::t('Academico', 'Lista de Planificación por Estudiante');
+		$this->view->title = academico::t('Academico', 'Lista de PlanificaciÃ³n por Estudiante');
 		// Titulo del reporte
 		$arrHeader = array(
 			Yii::t('formulario', 'DNI 1'),
@@ -1006,14 +1207,14 @@ order by maca.maca_id DESC , ea.eaca_codigo, e.est_fecha_creacion ASC;
 					//Realizar accion
 					$transaction->commit();
 					$message = array(
-						'wtmessage' => Yii::t('notificaciones', 'Se ha eliminado la planificación del estudiante.'),
+						'wtmessage' => Yii::t('notificaciones', 'Se ha eliminado la planificaciÃ³n del estudiante.'),
 						'title' => Yii::t('jslang', 'Success'),
 					);
 					return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Sucess'), false, $message);
 				} else {
 					$transaction->rollback();
 					$message = array(
-						'wtmessage' => Yii::t('notificaciones', 'Error al eliminar planificación del estudiante. '),
+						'wtmessage' => Yii::t('notificaciones', 'Error al eliminar planificaciÃ³n del estudiante. '),
 						'title' => Yii::t('jslang', 'Error'),
 					);
 					return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t('jslang', 'Error'), false, $message);
@@ -1021,7 +1222,7 @@ order by maca.maca_id DESC , ea.eaca_codigo, e.est_fecha_creacion ASC;
 			} catch (Exception $ex) {
 				$transaction->rollback();
 				$message = array(
-					'wtmessage' => Yii::t('notificaciones', 'Error al realizar la acción. '),
+					'wtmessage' => Yii::t('notificaciones', 'Error al realizar la acciÃ³n. '),
 					'title' => Yii::t('jslang', 'Success'),
 				);
 				return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t('jslang', 'Error'), false, $message);
@@ -1118,7 +1319,7 @@ order by maca.maca_id DESC , ea.eaca_codigo, e.est_fecha_creacion ASC;
 			} catch (Exception $ex) {
 				$transaction->rollback();
 				$message = array(
-					'wtmessage' => Yii::t('notificaciones', 'Error al realizar la acción. '),
+					'wtmessage' => Yii::t('notificaciones', 'Error al realizar la acciÃ³n. '),
 					'title' => Yii::t('jslang', 'Success'),
 				);
 				return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t('jslang', 'Error'), false, $message);
@@ -1202,6 +1403,11 @@ order by maca.maca_id DESC , ea.eaca_codigo, e.est_fecha_creacion ASC;
 			// Consultar pla_id y per_id existe
 			$exitealumno = $mod_planifica->consultarAlumnoplan($resulpla_id['pla_id'], $per_id);
 			$accion = isset($data['ACCION']) ? $data['ACCION'] : '';
+			if ($data['crea_planificacion_centro_idioma'] == 1){
+				if ($exitealumno['planexiste'] > 1){
+					$accion = 'Update';
+				}
+			}
 			if ($accion == 'Create') {
 				//existe guardar modalidad y periodo
 				if ($resulpla_id['pla_id']) {
@@ -1237,7 +1443,50 @@ order by maca.maca_id DESC , ea.eaca_codigo, e.est_fecha_creacion ASC;
 							$valores .= "'" . $mat_cod . "', '" . $modalidades . "', '" . $arrplan[$i]['jornada'] . "',";
 						}
 						$resul = $mod_planifica->insertarDataPlanificacionestudiante($resulpla_id['pla_id'], $per_id, $jornada, $carrera, $dni, $nombre, $malla_guarda, $insertar, $valores);
-					} else {
+					}elseif ($exitealumno['planexiste'] == '1' && $data['crea_planificacion_centro_idioma'] == 1 ) { //15 febrero 2022
+						//Nuevo Registro
+						$arrplan = json_decode($data['DATAS'], true);
+						for ($i = 0; $i < sizeof($arrplan); $i++) {
+							// recorrer y crear un arrrglo solo con los campos a ingresar de horario y bloque
+							// crear string del insert
+							$bloque = substr($arrplan[$i]['bloque'], -1);
+							$horario = substr($arrplan[$i]['hora'], -1);
+							switch ($arrplan[$i]['modalidad']) {
+							case "Online":
+								$modalidades = '1';
+								break;
+							case "Presencial":
+								$modalidades = '2';
+								break;
+							case "Semipresencial":
+								$modalidades = '3';
+								break;
+							case "Distancia":
+								$modalidades = '4';
+								break;
+							}
+							
+							if ($arrplan[$i]['jornada'] == 'Matutino'){
+								$jornada = 'M';
+							}elseif ($arrplan[$i]['jornada'] == 'Nocturno'){
+								$jornada = 'N';
+							}elseif ($arrplan[$i]['jornada'] == 'Semipresencial'){
+								$jornada = 'S';
+							}elseif ($arrplan[$i]['jornada'] == 'Distancia'){
+								$jornada = 'D';
+							}
+							$pes_cod_carrera = substr($arrplan[$i]['asignatura'], 0, 8);
+							$insertar .= 'pes_mat_b' . $bloque . '_h' . $horario . '_cod, pes_mod_b' . $bloque . '_h' . $horario . ', pes_jor_b' . $bloque . '_h' . $horario . ', pes_mat_b' . $bloque . '_h' . $horario . '_mpp, pes_cod_carrera,';
+
+							// crear el string de los valores
+							$materia = explode(" - ", $arrplan[$i]['asignatura']);
+							$mat_cod = $materia[0];
+							//$mat_nombre = $materia[1];
+							$valores .= "'" . $mat_cod . "', '" . $modalidades . "', '" . $arrplan[$i]['jornada'] . "', '". $arrplan[$i]['mpp_id'] . "', '". $pes_cod_carrera . "', ";
+						}
+						$resul = $mod_planifica->insertarDataPlanificacionestudiante($resulpla_id['pla_id'], $per_id, $jornada, $carrera, $dni, $nombre, $malla_guarda, $insertar, $valores);
+
+					}else {
 						// no existe mensaje que no permitar guardar
 						$noentra = 'NOS';
 					}
@@ -1289,7 +1538,7 @@ order by maca.maca_id DESC , ea.eaca_codigo, e.est_fecha_creacion ASC;
 				$message = ['info' => Yii::t('exception', '<strong>Well done!</strong> your information was successfully saved.')];
 				echo Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message, $resul);
 			} elseif ($noentra == 'NO') {
-				$message = ['info' => Yii::t('exception', 'No se puede guardar período académico y modalidad no existe, crearla en cargar planificación.')];
+				$message = ['info' => Yii::t('exception', 'No se puede guardar perÃ­odo acadÃ©mico y modalidad no existe, crearla en cargar planificaciÃ³n.')];
 				echo Utilities::ajaxResponse('NO_OK', 'alert', Yii::t('jslang', 'Error'), 'false', $message);
 			} elseif ($noentra == 'NOS') {
 				$message = ['info' => Yii::t('exception', 'No se puede guardar estudiante ya tiene datos para ese periodo, por favor ir modificar de ser el caso.')];
@@ -1362,7 +1611,7 @@ order by maca.maca_id DESC , ea.eaca_codigo, e.est_fecha_creacion ASC;
 			$bloque = $_GET['bloque'];
 			$filtro = $_GET['PBgetFilter'];
 			//print_r('true '.$periodo.'-'.$modalidad.'-'.$filtro);
-			\app\models\Utilities::putMessageLogFile('Botón Buscar: ' . $data);
+			\app\models\Utilities::putMessageLogFile('BotÃ³n Buscar: ' . $data);
 			try {
 				if (($modalidad != 0 && $periodo != 0)) {
 					$arrSearch['modalidad'] = $modalidad ? $modalidad : 0;
@@ -1567,7 +1816,7 @@ order by maca.maca_id DESC , ea.eaca_codigo, e.est_fecha_creacion ASC;
 	}
 	public function actionExppdfplanificacion() {
 		$report = new ExportFile();
-		$this->view->title = academico::t('Academico', 'Resumen de Planificación');
+		$this->view->title = academico::t('Academico', 'Resumen de PlanificaciÃ³n');
 		// Titulo del reporte
 		$arrHeader = array(
 			Yii::t('formulario', 'ID'),
@@ -1633,7 +1882,7 @@ order by maca.maca_id DESC , ea.eaca_codigo, e.est_fecha_creacion ASC;
 		} else {
 			$arrData = $mod_periodo->consultarEstudiantePeriodo($arrSearch, true);
 		}
-		$nameReport = academico::t('Academico', 'Resumen de Planificación');
+		$nameReport = academico::t('Academico', 'Resumen de PlanificaciÃ³n');
 		Utilities::generarReporteXLS($nombarch, $nameReport, $arrHeader, $arrData, $colPosition);
 		exit;
 	}
@@ -1773,8 +2022,10 @@ inner join " . $con->dbname . ".malla_academica as b on a.pes_cod_carrera = b.ma
 					                     'maca_id' => $maca_id,
 					                     'pes_id' => $pes_id,
 					                              ]);
+
 					               /*
 					                $centralprocess = $distri->getCode($sta,$maca_id);
+
 					                  return $this->render('temporal', [
 					                     'cod_source' => $sta,
 					                     'malla_target' => $maca_id,
@@ -2015,6 +2266,8 @@ inner join " . $con->dbname . ".malla_academica as b on a.pes_cod_carrera = b.ma
 		$modalidad_data = $modcarrera->consultarmodalidadxcarrera($academic_study_data[0]['id']);
 		$jornada = $mod_jornada->consultarJornadahorario();
 
+		$model_carrera = new EstudioAcademico();
+
 		$malla = $mod_malla->consultarmallasxcarrera($unidad_acad_data[0]['id'], $modalidad_data[0]['id'], $academic_study_data[0]['id']);
 
 		$modalidades = $modalidad_model->consultarModalidad($unidad_acad_data[0]['id'], 1);
@@ -2049,8 +2302,14 @@ inner join " . $con->dbname . ".malla_academica as b on a.pes_cod_carrera = b.ma
 			$model_plan = $mod_periodo->consultarDetalleplanificaaut($arrSearch, false);
 			$carrera_activa = $mod_periodo->consultaracarreraxmallaaut($per_id);
 			//$pla_id = $mod_periodo->consultaPlanificacionEstVigente($per_id);
+			$opt_malla_academica = $data["malla_academica"];//01 febrero 2022.
 			$mode_malla = $mod_periodo->consultaMallaEstudiante($per_id);
-			$materia = $mod_malla->consultarasignaturaxmallaaut($per_id); //$mode_malla[0]['id']);
+			if ($opt_malla_academica==2){
+				//Consulta asignaturas de malla academico, que no son centro de idiomas.
+				$materia = $mod_malla->consultarasignaturaxmallaaut($per_id, null); //$mode_malla[0]['id']);
+			}else{
+				$materia = $mod_malla->selectAsignaturaPorMallaAutCentroIdioma($per_id, $data['modalidad'], null); 
+			}
 			$busquedalumno = $mod_periodo->busquedaEstudianteplanificacionaut($per_id);
 			$arr_initial = $per_id;
 			$id_carrera = $carrera_activa['0']['id'];
@@ -2060,6 +2319,7 @@ inner join " . $con->dbname . ".malla_academica as b on a.pes_cod_carrera = b.ma
 			\app\models\Utilities::putMessageLogFile('---------------------------------------------------------------');
 			\app\models\Utilities::putMessageLogFile('$perSelect: ' . $perSelect);
 			\app\models\Utilities::putMessageLogFile('---------------------------------------------------------------');
+			$resp_carrera = $model_carrera->selectCarreraEst($per_id); //01 febrero 2022.
 			return $this->render('newplanificacion', [
 				'arr_unidad' => ArrayHelper::map($unidad_acad_data, 'id', 'name'),
 				//'arr_modalidad' => $id_modalidad,//ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']], $modalidad_data), 'id', 'name'),
@@ -2083,6 +2343,8 @@ inner join " . $con->dbname . ".malla_academica as b on a.pes_cod_carrera = b.ma
 				'perSelect' => $perSelect ? $perSelect : 0,
 				'arr_paralelo' => $this->Paralelo(),
 				'arr_horario' => $this->Horario(),
+				'arr_carrera' => $resp_carrera,//01 febrero 2022.
+				'opt_malla_academica' => $opt_malla_academica,//01 febrero 2022.
 
 				$this->renderPartial('procesoplanificacion-grid', [
 					'model' => $model_plan,
@@ -2101,7 +2363,7 @@ inner join " . $con->dbname . ".malla_academica as b on a.pes_cod_carrera = b.ma
 			//$model_plan = $mod_periodo->consultarDetalleplanificaaut();
 			$mode_malla = $mod_periodo->consultaMallaEstudiante($data['estudiante']);
 			$model_plan = $mod_periodo->consultarDetalleplanificaaut($arrSearch, false);
-			$materia = $mod_malla->consultarasignaturaxmallaaut($mode_malla[0]['id']);
+			$materia = $mod_malla->consultarasignaturaxmallaaut($mode_malla[0]['id'],null);
 			$busquedalumno = $mod_periodo->busquedaEstudianteplanificacion();
 			$carrera_activa = $mod_periodo->consultaracarreraxmallaaut($per_id);
 			$id_carrera = $carrera_activa['id'];
@@ -2122,6 +2384,13 @@ inner join " . $con->dbname . ".malla_academica as b on a.pes_cod_carrera = b.ma
 			if (isset($data['getmateria'])) {
 				$asignatura = $mod_malla->consultarasignaturaxmalla($data['maca_id']);
 				$message = array('asignatura' => $asignatura);
+				return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+			}
+			if (isset($data['getcarrera'])) {
+				//\app\models\Utilities::putMessageLogFile('AAAA post per_id: ' .$per_id);
+				//\app\models\Utilities::putMessageLogFile('AAAA post $data[est_id]: ' .$data['est_id']);
+				$carrera = $model_carrera->selectCarreraEst($data['est_id']);
+				$message = array('carrera' => $carrera);
 				return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
 			}
 		}
@@ -2156,77 +2425,6 @@ inner join " . $con->dbname . ".malla_academica as b on a.pes_cod_carrera = b.ma
 		]);
 	}
 
-	         public function actionCargarmaterias($periodo) { 
- 
- for ($c = 1; $c <= 4; $c++) {  
- $modalidad = $c;   
- $con = \Yii::$app->db_academico;
- 
-$sql = "
-        select distinct e.est_id, e.per_id, e.est_matricula, e.est_fecha_creacion, e.est_categoria, meu.uaca_id, meu.mod_id, meu.eaca_id, DATEDIFF(NOW(),e.est_fecha_creacion) as olderi, -- 
-u.uaca_id, u.uaca_nombre, ea.teac_id, ea.eaca_nombre, ea.eaca_codigo,
-per.per_cedula,  maca.maca_id , maca.maca_codigo, maca.maca_nombre,
-concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_apellido, ' ', ifnull(per.per_seg_apellido,'')) estudiante
- from db_academico.estudiante e
- inner join db_academico.estudiante_carrera_programa c on c.est_id = e.est_id
-  inner join db_academico.modalidad_estudio_unidad meu on meu.meun_id = c.meun_id  
-  inner join db_academico.malla_unidad_modalidad mumo on mumo.meun_id = meu.meun_id 
-   inner join db_academico.malla_academica maca on maca.maca_id = mumo.maca_id 
-   inner join db_academico.unidad_academica u on u.uaca_id = meu.uaca_id
-   inner join db_academico.estudio_academico ea on ea.eaca_id = meu.eaca_id 
-   inner join db_asgard.persona per on per.per_id = e.per_id
-   left join db_academico.malla_academico_estudiante malle on per.per_id = malle.per_id
-     where  malle.maca_id = maca.maca_id  AND
-         meu.mod_id = :modalidad
-    AND  e.est_estado = 1 AND e.est_estado_logico = 1
-    AND  c.ecpr_estado = 1 AND c.ecpr_estado_logico = 1
-    AND  meu.meun_estado = 1 AND meu.meun_estado_logico = 1
-    AND  mumo.mumo_estado = 1 AND mumo.mumo_estado_logico = 1
-    AND  maca.maca_estado = 1 AND maca.maca_estado_logico = 1
-    AND  u.uaca_estado = 1 AND u.uaca_estado_logico = 1
-     AND  ea.eaca_estado = 1 
-    AND  per.per_estado = 1 AND per.per_estado_logico = 1
-    AND  malle.maes_estado = 1 AND malle.maes_estado_logico = 1
-     AND
-((e.per_id in (select b.per_id from db_academico.planificacion_estudiante b where
-b.pla_id= ( select max(dap.pla_id) from db_academico.planificacion dap 
- where dap.mod_id = :modalidad ))) or 
-((e.per_id in (
-select distinct a.per_id from db_asgard.persona as a 
-inner join db_academico.estudiante bas on a.per_id = bas.per_id
-where DATEDIFF(NOW(),bas.est_fecha_creacion) <=180 or
-DATEDIFF(NOW(),a.per_fecha_creacion) <=180 )))
- )  
-order by maca.maca_id DESC , ea.eaca_codigo, e.est_fecha_creacion ASC;
-                ";
-
-
- $comando = $con->createCommand($sql);
-          $comando->bindParam(":modalidad", $modalidad, \PDO::PARAM_STR);
-               $resultData = $comando->queryAll();
-               
-               
-                    
-                               $malla = new MallaAcademica();
-               $allstudents= count($resultData);
-             //   \app\models\Utilities::putMessageLogFile("all: ".count($resultData)); 
-                 
-
-
-                 if (count($resultData) > 0) {
-           
-            for ($i = 0; $i < count($resultData); $i++) {                       
-$centralprocess = $malla->cargarAsignaturas($resultData[$i],$modalidad,$periodo);                  
-            }
-
-        } 
-
-         } 
-
-           \Yii::$app->getSession()->setFlash('msgok', 'Se ha cargado las asignaturas exitosamente!');
-         return $this->redirect(['index']);
-     }
-
 	public function actionListarparalelos() {
 		if (Yii::$app->request->isAjax) {
 			$data = Yii::$app->request->post();
@@ -2245,6 +2443,31 @@ $centralprocess = $malla->cargarAsignaturas($resultData[$i],$modalidad,$periodo)
 			$mod_malla = new MallaAcademica();
 			$horario = $mod_malla->consultaHorarioxParalelo($mpp_id);
 			return json_encode($horario);
+		}
+	}
+
+	public function actionListarmaterias() {
+		if (Yii::$app->request->isAjax) {
+			$data = Yii::$app->request->post();
+			$opt_si = $data['opt_si'];
+			$opt_no = $data['opt_no'];
+			$per_id = $data['per_id'];
+			$mod_id = $data['mod_id'];
+
+			if ($opt_si !="" && $opt_si==1){
+				$opt_malla_academica=1;
+			}elseif ($opt_no !="" && $opt_no==2){
+				$opt_malla_academica=2;
+			}
+			
+			$mod_malla = new MallaAcademica();
+			if ($opt_malla_academica==2){
+				//Consulta asignaturas de malla academico, que no son centro de idiomas.
+				$materia = $mod_malla->consultarasignaturaxmallaaut($per_id, 1); //$mode_malla[0]['id']);
+			}else{
+				$materia = $mod_malla->selectAsignaturaPorMallaAutCentroIdioma($per_id, $mod_id, 1); 
+			}
+			return json_encode($materia);
 		}
 	}
 }

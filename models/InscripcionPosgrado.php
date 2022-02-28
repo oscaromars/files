@@ -681,33 +681,33 @@ labo.ilab_correo_emp,
 labo.ilab_cat_ocupacional,
  langu.idi_nombre,
  nivel.nidi_descripcion,
- (select  langu.idi_nombre 
+ (select  distinct langu.idi_nombre 
 FROM db_inscripcion.estudiante_idiomas  as idiom 
 Left Join db_general.idioma  as langu on langu.idi_id = idiom.idi_id
 where idiom.per_id = ipos.per_id
-and idiom.idi_id = 1) AS idi1_nombre,
-(select  nivel.nidi_descripcion 
+and idiom.idi_id = 1 AND idiom.eidi_estado = 1 AND idiom.eidi_estado_logico = 1 ) AS idi1_nombre,
+(select distinct nivel.nidi_descripcion 
 FROM db_inscripcion.estudiante_idiomas  as idiom 
 Left Join db_general.idioma  as langu on langu.idi_id = idiom.idi_id
 left Join db_general.nivel_idioma as nivel on nivel.nidi_id = idiom.nidi_id
 where idiom.per_id =  ipos.per_id
-and idiom.idi_id = 1) AS nidi1_descripcion,
-(select  langu.idi_nombre 
+and idiom.idi_id = 1 AND idiom.eidi_estado = 1 AND idiom.eidi_estado_logico = 1 ) AS nidi1_descripcion,
+(select distinct langu.idi_nombre 
 FROM db_inscripcion.estudiante_idiomas  as idiom 
 Left Join db_general.idioma  as langu on langu.idi_id = idiom.idi_id
 where idiom.per_id = ipos.per_id
-and idiom.idi_id = 2) AS idi_nombre,
-(select  nivel.nidi_descripcion 
+and idiom.idi_id = 2 AND idiom.eidi_estado = 1 AND idiom.eidi_estado_logico = 1 ) AS idi_nombre,
+(select distinct nivel.nidi_descripcion 
 FROM db_inscripcion.estudiante_idiomas  as idiom 
 Left Join db_general.idioma  as langu on langu.idi_id = idiom.idi_id
 left Join db_general.nivel_idioma as nivel on nivel.nidi_id = idiom.nidi_id
 where idiom.per_id =  ipos.per_id
-and idiom.idi_id = 2) AS nidi_descripcion,
+and idiom.idi_id = 2 AND idiom.eidi_estado = 1 AND idiom.eidi_estado_logico = 1 ) AS nidi_descripcion,
  tdis.tdis_nombre,
- disc.ides_porcentaje,
-expd.ides_anio_docencia, 
+concat (disc.ides_porcentaje ,'%') as ides_porcentaje ,
+concat (expd.ides_anio_docencia,' años') as ides_anio_docencia,
 expd.ides_area_docencia,
-iein.iein_articulos_investigacion, 
+concat (iein.iein_articulos_investigacion,' artículos') as iein_articulos_investigacion,
 iein.iein_area_investigacion,
 ipos.ipos_tipo_financiamiento,
 ipos.ipos_ruta_documento,
@@ -723,8 +723,8 @@ Left Join db_asgard.pais as pais on pais.pai_id = per.per_nacionalidad
 Left Join db_asgard.estado_civil as esta on esta.eciv_id = per.eciv_id
 Left Join db_asgard.provincia as provi on provi.pro_id = per.pro_id_domicilio
 Left Join db_asgard.canton as canton on canton.can_id = per.can_id_domicilio
-Inner Join db_inscripcion.estudiante_instruccion as acad on acad.per_id = ipos.per_id
-Inner Join db_inscripcion.informacion_laboral  as labo on labo.per_id = ipos.per_id
+Left Join db_inscripcion.estudiante_instruccion as acad on acad.per_id = ipos.per_id
+Left Join db_inscripcion.informacion_laboral  as labo on labo.per_id = ipos.per_id
 left Join db_inscripcion.estudiante_idiomas  as idiom on idiom.per_id = ipos.per_id
 left Join db_general.idioma  as langu on langu.idi_id = idiom.idi_id
 left Join db_general.nivel_idioma as nivel on nivel.nidi_id = idiom.nidi_id
@@ -732,12 +732,12 @@ left Join db_inscripcion.info_discapacidad_est as disc on disc.per_id = ipos.per
 left Join db_asgard.tipo_discapacidad as tdis on tdis.tdis_id = disc.tdis_id
  Left Join db_inscripcion.info_docencia_estudiante as expd on expd.per_id = ipos.per_id
  Left Join db_inscripcion.info_estudiante_investigacion as iein on iein.per_id = ipos.per_id
- Inner join db_academico.estudiante as estud on per.per_id = estud.per_id
+ Left join db_academico.estudiante as estud on per.per_id = estud.per_id
  Inner Join db_academico.unidad_academica as uaca on uaca.uaca_id = ipos.uaca_id
  Inner Join db_academico.estudio_academico as eaca on eaca.eaca_id = ipos.eaca_id
 Inner Join db_academico.modalidad as moda on moda.mod_id = ipos.mod_id
-Inner Join db_asgard.persona_contacto as contac on contac.per_id = ipos.per_id
-Inner Join db_asgard.tipo_parentesco as parente on parente.tpar_id = contac.tpar_id
+Left Join db_asgard.persona_contacto as contac on contac.per_id = ipos.per_id
+Left Join db_asgard.tipo_parentesco as parente on parente.tpar_id = contac.tpar_id
 WHERE 
 ipos.per_id = :per_id AND
  ipos.ipos_estado = :estado and ipos.ipos_estado_logico = :estado and

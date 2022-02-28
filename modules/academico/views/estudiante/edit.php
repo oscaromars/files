@@ -29,7 +29,7 @@ if (!empty($personalData['per_cedula'])) {
 <?= Html::hiddenInput('txth_eids', base64_decode($_GET['est_id']), ['id' => 'txth_eids']); ?>
 <?= Html::hiddenInput('txth_perids', $_GET['per_id'], ['id' => 'txth_perids']); ?>
 <?= Html::hiddenInput('txth_estids', $_GET['est_id'], ['id' => 'txth_estids']); ?>
-<form class="form-horizontal" enctype="multipart/form-data" id="formsolicitud">    
+<form class="form-horizontal" enctype="multipart/form-data" id="formsolicitud">
     <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
         <h3><span id="lbl_solicitud"><?= academico::t("estudiantes", "View Students") ?></span></h3>
     </div>
@@ -39,9 +39,9 @@ if (!empty($personalData['per_cedula'])) {
     <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12">
         <div class="col-md-7 col-sm-7 col-xs-7 col-lg-7">
             <div class="form-group">
-                <h4><span id="lbl_general"><?= academico::t("estudiantes", "Data General Students") ?></span></h4> 
+                <h4><span id="lbl_general"><?= academico::t("estudiantes", "Data General Students") ?></span></h4>
             </div>
-        </div>    
+        </div>
         <div class='col-md-12 col-sm-12 col-xs-12 col-lg-12'>
             <div class="col-md-6 col-sm-6 col-xs-6 col-lg-6">
                 <div class="form-group">
@@ -50,7 +50,7 @@ if (!empty($personalData['per_cedula'])) {
                         <input type="text" class="form-control keyupmce" value="<?php echo $arr_persona['per_pri_nombre'] . " " . $arr_persona['per_seg_nombre'] ?>" id="txt_nombres" disabled data-type="alfa" placeholder="<?= Yii::t("formulario", "First Name") ?>">
                     </div>
                 </div>
-            </div> 
+            </div>
             <div class="col-md-6 col-sm-6 col-xs-6 col-lg-6">
                 <div class="form-group">
                     <label for="txt_apellidos" class="col-sm-5 col-md-5 col-xs-5 col-lg-5 control-label" id="lbl_apellido1"><?= Yii::t("formulario", "Last Names") ?></label>
@@ -58,7 +58,7 @@ if (!empty($personalData['per_cedula'])) {
                         <input type="text" class="form-control keyupmce" value="<?php echo $arr_persona['per_pri_apellido'] . " " . $arr_persona['per_seg_apellido'] ?>" id="txt_apellidos" disabled data-type="alfa" placeholder="<?= Yii::t("formulario", "First Name") ?>">
                     </div>
                 </div>
-            </div> 
+            </div>
         </div>
         <div class='col-md-12 col-sm-12 col-xs-12 col-lg-12'>
             <div class="col-md-6 col-sm-6 col-xs-6 col-lg-6">
@@ -68,15 +68,15 @@ if (!empty($personalData['per_cedula'])) {
                         <input type="text" class="form-control keyupmce" value="<?php echo $arr_persona['per_cedula'] ?>" id="txt_cedula" data-type="alfa" disabled placeholder="<?= Yii::t("formulario", "DNI Document") ?>">
                     </div>
                 </div>
-            </div> 
-        </div>          
+            </div>
+        </div>
     </div>
     <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
         <div class="col-md-7 col-sm-7 col-xs-7 col-lg-7">
             <div class="form-group">
-                <h4><span id="lbl_general"><?= academico::t("estudiantes", "Data Career/Program") ?></span></h4> 
+                <h4><span id="lbl_general"><?= academico::t("estudiantes", "Data Career/Program") ?></span></h4>
             </div>
-        </div>  
+        </div>
     </div>
     <div class='col-md-12 col-sm-12 col-xs-12 col-lg-12'>
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
@@ -85,7 +85,7 @@ if (!empty($personalData['per_cedula'])) {
                 <div class="col-sm-7 col-md-7 col-xs-7 col-lg-7">
                     <?= Html::dropDownList("cmb_unidades", $arr_estudiante['unidad'], $arr_ninteres, ["class" => "form-control", "id" => "cmb_unidades"]) ?>
                 </div>
-            </div>  
+            </div>
         </div>
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6" id="divModalidad">
             <div class="form-group">
@@ -103,33 +103,33 @@ if (!empty($personalData['per_cedula'])) {
                 <div class="col-sm-7 col-md-7 col-xs-7 col-lg-7">
                     <?= Html::dropDownList("cmb_carreras", $arr_estudiante['carrera'], $arr_carrera, ["class" => "form-control", "id" => "cmb_carreras"]) ?>
                 </div>
-            </div>     
+            </div>
 
-        </div>    
+        </div>
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
             <div class="form-group">
                 <label for="cmb_categoria" id="lbl_carrera" class="col-sm-5 col-md-5 col-xs-5 col-lg-5 control-label keyupmce"><?= Yii::t("formulario", "Category") ?><span class="text-danger">*</span></label>
                 <div class="col-sm-7 col-md-7 col-xs-7 col-lg-7">
                     <?= Html::dropDownList("cmb_categoria", $arr_estudiante['categoria'], $arr_categorias, ["class" => "form-control", "id" => "cmb_categoria"]) ?>
                 </div>
-            </div>     
+            </div>
 
-        </div> 
-    </div>  
+        </div>
+    </div>
     <div class='col-md-12 col-sm-12 col-xs-12 col-lg-12'>
         <div class="col-md-6 col-sm-6 col-xs-6 col-lg-6">
             <div class="form-group">
                 <label for="txt_matricula" class="col-sm-5 col-md-5 col-xs-5 col-lg-5 control-label" id="lbl_nombre1"><?= academico::t("Academico", 'Enrollment Number') ?><span class="text-danger">*</span></label>
                 <div class="col-sm-7 col-md-7 col-xs-7 col-lg-7">
-                    <input type="text" class="form-control PBvalidation keyupmce" value= "<?php echo $arr_estudiante['matricula'] ?>" id="txt_matricula" data-type="alfanumerico" data-keydown="true" placeholder="<?= academico::t("Academico", 'Enrollment Number') ?>">
+                    <input type="text" class="form-control keyupmce" value= "<?php echo $arr_estudiante['matricula'] ?>" id="txt_matricula" disabled data-type="alfanumerico" data-keydown="true" placeholder="<?= academico::t("Academico", 'Enrollment Number') ?>">
                 </div>
             </div>
-        </div>             
-    </div> 
-    <!-- <div class="row"> 
+        </div>
+    </div>
+    <!-- <div class="row">
         <div class="col-lg-11 col-md-11 col-sm-11 col-xs-11"></div>
-        <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1">&nbsp;&nbsp;  
+        <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1">&nbsp;&nbsp;
             <a id="btn_modificarestudiante" href="javascript:" class="btn btn-primary btn-block"> <? Yii::t("formulario", "Update") ?> </a>
         </div>
-    </div> -->  
+    </div> -->
 </form>

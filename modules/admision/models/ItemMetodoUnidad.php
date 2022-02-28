@@ -94,6 +94,7 @@ class ItemMetodoUnidad extends \yii\db\ActiveRecord
      *                       modalidad y método de ingreso.)
      */
     public function consultarXitemMetniv($nint_id, $mod_id, $ming_id, $empresa_id, $carrera_id) {
+        \app\models\Utilities::putMessageLogFile('ming_idss:'. $data["ming_id"]);
         $con = \Yii::$app->db_facturacion;
         $estado = 1;
         if ($empresa_id == 1) {
@@ -136,7 +137,7 @@ class ItemMetodoUnidad extends \yii\db\ActiveRecord
     public function consultarXitemPrecio($nint_id, $mod_id, $ming_id, $eaca_id) {
         $con = \Yii::$app->db_facturacion;
         $estado = 1;
-        if ($nint_id ==1 or $nint_id ==2) {
+        if ($nint_id ==1 or $nint_id ==2 or $nint_id ==10) {
             $sql = "SELECT i.ite_id id, i.ite_nombre name
                     FROM  " . $con->dbname . ".item_metodo_unidad imu inner "
                             . "join " . $con->dbname . ".item i on imu.ite_id = i.ite_id

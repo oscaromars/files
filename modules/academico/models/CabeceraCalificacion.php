@@ -2183,4 +2183,294 @@ croe.croe_exec,ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca
 		return $resultData;
 	}
 
+ /**
+     * @author  Oscar Sanchez <analistadesarrollo05@uteg.edu.ec>
+     * @param
+     * @return
+     *  Consulta Aulas Educativa
+     */
+    public function consultarAulas($paca_id=Null,$uaca_id=Null,$mod_id=Null,$cedu_id=Null) {      
+        $con = \Yii::$app->db_academico;
+        $estado = 1;
+        
+ $str_search = ""; 
+    if ($paca_id != "" && $paca_id > 0) {
+            $str_search .= " AND daca.paca_id = :paca_id  ";
+        } else  { $str_search .= " AND daca.paca_id = 0  "; }
+    if ($uaca_id != "" && $uaca_id > 0) {
+            $str_search .= " AND daca.uaca_id = :uaca_id ";
+        }
+    if ($mod_id != "" && $mod_id > 0) {
+            $str_search .= " AND daca.mod_id = :mod_id ";
+        }
+    if ($cedu_id != "" && $cedu_id > 0) {
+            $str_search .= " AND ceduct.cedu_asi_id = :cedu_id ";
+        }
+
+ $sql = "
+SELECT distinct ceduct.cedu_asi_id as id ,LEFT(ceduct.cedu_asi_nombre, 80) as name
+,cedist.daca_id,uaca.uaca_nombre, daca.paca_id, moda.mod_nombre, daca.mpp_id, 
+person.per_pri_apellido, daca.asi_id
+FROM db_academico.curso_educativa_distributivo cedist
+INNER JOIN db_academico.curso_educativa as ceduct on cedist.cedu_id = ceduct.cedu_id
+INNER JOIN db_academico.distributivo_academico as daca on cedist.daca_id = daca.daca_id
+INNER JOIN db_academico.distributivo_academico_estudiante as daes on daes.daca_id = daca.daca_id
+INNER JOIN db_academico.usuario_educativa as usuedu on usuedu.est_id = daes.est_id
+INNER JOIN db_academico.estudiante as estu on  estu.est_id = daes.est_id
+INNER JOIN db_academico.unidad_academica as uaca on  uaca.uaca_id = daca.uaca_id
+INNER JOIN db_academico.modalidad as moda on  moda.mod_id = daca.uaca_id
+INNER JOIN db_academico.profesor as profe on  profe.pro_id = daca.pro_id
+INNER JOIN db_asgard.persona as person on  person.per_id = profe.per_id
+LEFT JOIN db_academico.malla_academico_estudiante macaes 
+ON macaes.per_id = usuedu.per_id AND macaes.asi_id = daca.asi_id
+LEFT JOIN db_academico.cabecera_calificacion as cabec on  cabec.est_id = daes.est_id
+AND cabec.asi_id = daca.asi_id
+LEFT JOIN db_academico.temp_estudiantes_noprocesados as tempo on  tempo.est_id = daes.est_id
+AND tempo.asi_id = daca.asi_id
+WHERE  TRUE $str_search
+AND ceduct.cedu_estado = :estado AND ceduct.cedu_estado_logico = :estado
+AND cedist.cedi_estado = :estado AND cedist.cedi_estado_logico = :estado
+AND daca.daca_estado = :estado AND daca.daca_estado_logico = :estado
+AND daes.daes_estado = :estado AND daes.daes_estado_logico = :estado
+AND usuedu.uedu_estado = :estado AND usuedu.uedu_estado_logico = :estado
+AND estu.est_estado = :estado AND estu.est_estado_logico = :estado
+AND uaca.uaca_estado = :estado AND uaca.uaca_estado_logico = :estado
+AND moda.mod_estado = :estado AND moda.mod_estado_logico = :estado
+AND profe.pro_estado = :estado AND profe.pro_estado_logico = :estado
+AND person.per_estado = :estado AND person.per_estado_logico = :estado
+AND macaes.maes_estado = :estado AND macaes.maes_estado_logico = :estado
+AND cabec.ccal_estado = :estado AND cabec.ccal_estado_logico = :estado
+AND tempo.teno_estado = :estado AND tempo.teno_estado_logico = :estado
+     ";
+
+        $comando = $con->createCommand($sql);
+         if ($paca_id != "" && $paca_id > 0) {
+            $comando->bindParam(":paca_id", $paca_id, \PDO::PARAM_INT);
+        }
+    if ($uaca_id != "" && $uaca_id > 0) {
+            $comando->bindParam(":uaca_id", $uaca_id, \PDO::PARAM_INT);
+        }
+    if ($mod_id != "" && $mod_id > 0) {
+            $comando->bindParam(":mod_id", $mod_id, \PDO::PARAM_INT);
+        }
+    if ($cedu_id != "" && $cedu_id > 0) {
+            $comando->bindParam(":cedu_id", $cedu_id, \PDO::PARAM_INT);
+        }
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_INT);
+        $resultAulas = $comando->queryAll();
+        return $resultAulas;
+    }
+
+
+/**
+     * @author  Oscar Sanchez <analistadesarrollo05@uteg.edu.ec>
+     * @param
+     * @return
+     *  Consulta Usuarios por distributivo-aula Educativa
+     */
+    public function consultarUsuarios($uedu_aula) {
+     $con = \Yii::$app->db_academico;$estado = 1;
+
+$deduc= "
+SELECT macaes.maes_id, cabec.ccal_id, cedist.daca_id, ceduct.cedu_asi_id, 
+daca.uaca_id, daca.paca_id, daca.mod_id, daca.mpp_id, 
+daca.pro_id, daca.asi_id, daes.est_id,
+usuedu.uedu_usuario, usuedu.per_id, person.per_cedula
+FROM db_academico.curso_educativa_distributivo cedist
+INNER JOIN db_academico.curso_educativa as ceduct on cedist.cedu_id = ceduct.cedu_id
+INNER JOIN db_academico.distributivo_academico as daca on cedist.daca_id = daca.daca_id
+INNER JOIN db_academico.distributivo_academico_estudiante as daes on daes.daca_id = daca.daca_id
+INNER JOIN db_academico.usuario_educativa as usuedu on usuedu.est_id = daes.est_id
+INNER JOIN db_academico.estudiante as estu on  estu.est_id = daes.est_id
+INNER JOIN db_asgard.persona as person on  estu.per_id = person.per_id
+LEFT JOIN db_academico.malla_academico_estudiante macaes 
+ON macaes.per_id = usuedu.per_id AND macaes.asi_id = daca.asi_id
+LEFT JOIN db_academico.cabecera_calificacion as cabec on  cabec.est_id = daes.est_id
+AND cabec.asi_id = daca.asi_id
+LEFT JOIN db_academico.temp_estudiantes_noprocesados as tempo on  tempo.est_id = daes.est_id
+AND tempo.asi_id = daca.asi_id
+WHERE ceduct.cedu_asi_id = :uedu_aula
+AND ceduct.cedu_estado = :estado AND ceduct.cedu_estado_logico = :estado
+AND daca.daca_estado = :estado AND daca.daca_estado_logico = :estado 
+AND daes.daes_estado = :estado AND daes.daes_estado_logico = :estado 
+AND usuedu.uedu_estado = :estado AND usuedu.uedu_estado_logico = :estado 
+AND estu.est_estado = :estado AND estu.est_estado_logico = :estado 
+AND person.per_estado = :estado AND person.per_estado_logico = :estado 
+"
+;
+
+        $comando = $con->createCommand($deduc);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_INT);
+        $comando->bindParam(":uedu_aula", $uedu_aula, \PDO::PARAM_INT);
+        $resultUsers = $comando->queryAll();
+        return $resultUsers;
+
+}
+
+
+ /**
+     * @author  Oscar Sanchez <analistadesarrollo05@uteg.edu.ec>
+     * @param
+     * @return
+     *  Adaptacion dinamica para obtener calificaciones
+     */
+ public function getallcode($i,$j,$k) {
+
+$b1= '$arraydata'; $b2 = '[$grades]';$b3 = "['id_categoria'] = ";$b4 = '$arraycat';
+
+if ($i == -1) { $v1 = Null; } else { $v1 = '['; $v1 .= $i; $v1 .= ']'; }
+
+$alld  = $b1.'1'.$b2."['id_categoria'] = ".$b4.$v1."['id_categoria']".';';
+$alld .= $b1.'1'.$b2."['nombre'] = ".$b4.$v1."['nombre']".';';
+$alld .= $b1.'1'.$b2."['descripcion'] = ".$b4.$v1."['descripcion']".';';
+$alld .= $b1.'1'.$b2."['estado'] = ".$b4.$v1."['estado']".';';
+$alld .= $b1.'1'.$b2."['id_modulo'] = ".$b4.$v1."['id_modulo']".';';
+$alld .= $b1.'1'.$b2."['id_grupo'] = ".$b4.$v1."['id_grupo']".';';
+
+if ($j == -1) { $v2 = Null; } else { $v2 = '['; $v2 .= $j; $v2 .= ']'; }
+
+        $alld .= $b1.'2'.$b2."['id_calificacion'] = ".$b4.$v1."['calificaciones']".$v2."['id_calificacion']".';';
+        $alld .= $b1.'2'.$b2."['nombre'] = ".$b4.$v1."['calificaciones']".$v2."['nombre']".';';
+                //$b1.'2'.$b2."['descripcion'] = ".$b4.$v1."['calificaciones']".$v2."['descripcion']".';';
+        $alld .= $b1.'2'.$b2."['id_docente'] = ".$b4.$v1."['calificaciones']".$v2."['id_docente']".';';
+        $alld .= $b1.'2'.$b2."['fecha'] = ".$b4.$v1."['calificaciones']".$v2."['fecha']".';';
+        $alld .= $b1.'2'.$b2."['rango_usuarios'] = ".$b4.$v1."['calificaciones']".$v2."['rango_usuarios']".';';
+        $alld .= $b1.'2'.$b2."['tipo_calificacion'] = ".$b4.$v1."['calificaciones']".$v2."['tipo_calificacion']".';';
+               //$b1.'2'.$b2."['id_evaluacion'] = ".$b4.$v1."['calificaciones']".$v2."['id_evaluacion']".';';
+
+if ($k == -1) { $v3 = Null; } else { $v3 = '['; $v3 .= $k; $v3 .= ']'; }
+
+                  $alld .= $b1.'3'.$b2."['id_nota'] = ".$b4.$v1."['calificaciones']".$v2."['notas']".$v3."['id_nota']".';';
+                  $alld .= $b1.'3'.$b2."['id_usuario'] = ".$b4.$v1."['calificaciones']".$v2."['notas']".$v3."['id_usuario']".';';
+                  $alld .= $b1.'3'.$b2."['fecha'] = ".$b4.$v1."['calificaciones']".$v2."['notas']".$v3."['fecha']".';';
+                  $alld .= $b1.'3'.$b2."['nota'] = ".$b4.$v1."['calificaciones']".$v2."['notas']".$v3."['nota']".';';
+                  $alld .= $b1.'3'.$b2."['observaciones'] = ".$b4.$v1."['calificaciones']".$v2."['notas']".$v3."['observaciones']".';';
+                  $alld .= $b1.'3'.$b2."['detalles'] = ".$b4.$v1."['calificaciones']".$v2."['notas']".$v3."['detalles']".';';
+
+return $alld;
+
+}
+
+ /**
+     * @author  Oscar Sanchez <analistadesarrollo05@uteg.edu.ec>
+     * @param
+     * @return
+     *  Obtener escalas de calificaciones
+     */
+public function getescalas($uaca_id,$mod_id,$ecal_id){
+$con = Yii::$app->db_academico;
+$sql="
+SELECT cuni.cuni_id, cuni.com_id,comp.com_nombre, cuni.cuni_calificacion 
+FROM db_academico.componente_unidad as cuni
+inner join db_academico.componente as comp
+on comp.com_id = cuni.com_id
+where uaca_id = $uaca_id AND mod_id = $mod_id AND ecal_id = $ecal_id 
+AND cuni.cuni_estado = 1 AND cuni.cuni_estado_logico = 1 
+AND comp.com_estado = 1 AND comp.com_estado_logico = 1 
+";
+$comando = $con->createCommand($sql);
+$escalas = $comando->queryOne();
+return $escalas;
+
+}
+
+ /**
+     * @author  Oscar Sanchez <analistadesarrollo05@uteg.edu.ec>
+     * @param
+     * @return
+     *  funciones auxiliares para gestion de Cabeceras de calificaciones
+     */
+public function getcabeceras($est_id,$asi_id,$paca_id,$parciales){
+$con = Yii::$app->db_academico;
+$sql="
+SELECT ccal_id,ccal_calificacion FROM db_academico.cabecera_calificacion 
+where 
+est_id= $est_id AND
+asi_id= $asi_id AND
+paca_id= $paca_id AND 
+ecun_id = $parciales
+AND ccal_estado = 1 AND ccal_estado_logico = 1 
+";
+$comando = $con->createCommand($sql);
+$cabeceras = $comando->queryOne();
+return $cabeceras;
+}
+public function putcabeceras($est_id,$asi_id,$paca_id,$parciales,$pro_id){
+$con = Yii::$app->db_academico;
+$sql="
+INSERT INTO db_academico.cabecera_calificacion 
+(paca_id, est_id, pro_id, asi_id, ecun_id, 
+ccal_estado, ccal_estado_logico) 
+VALUES ( $paca_id, $est_id, $pro_id, $asi_id, $parciales, '1', '1');
+";
+$comando = $con->createCommand($sql);
+$cabeceras = $comando->execute();
+return $cabeceras;
+}
+public function updatecabeceras($ccal_id){
+$con = Yii::$app->db_academico;
+$sql="
+UPDATE db_academico.cabecera_calificacion
+ SET ccal_calificacion = (select sum(dcal_calificacion)
+from db_academico.detalle_calificacion
+where ccal_id = $ccal_id
+AND dcal_estado = 1 AND dcal_estado_logico = 1
+),
+ ccal_fecha_modificacion = now()  
+ WHERE ccal_id = $ccal_id;
+";
+$comando = $con->createCommand($sql);
+$cabeceras = $comando->execute();
+return $cabeceras;
+
+}
+
+ /**
+     * @author  Oscar Sanchez <analistadesarrollo05@uteg.edu.ec>
+     * @param
+     * @return
+     *  funciones auxiliares para gestion de Detalles de calificaciones
+     */
+function getdetalles($ccal_id,$cuni_id){
+ GLOBAL $dsn, $dbuser, $dbpass, $dbname;
+$con = new \PDO($dsn, $dbuser, $dbpass);
+$sql="
+SELECT dcal_id, ccal_id,cuni_id,dcal_calificacion,
+dcal_usuario_creacion,dcal_fecha_modificacion
+FROM db_academico.detalle_calificacion 
+WHERE ccal_id = $ccal_id AND cuni_id = $cuni_id 
+AND dcal_estado = 1 AND dcal_estado_logico = 1
+; 
+";
+ $comando = $con->createCommand($sql);
+$detalles = $comando->queryOne();
+return $detalles;
+}
+function putdetalles($ccal_id,$cuni_id,$dcalificacion){
+GLOBAL $dsn, $dbuser, $dbpass, $dbname;
+$con = new \PDO($dsn, $dbuser, $dbpass);
+$sql="
+INSERT INTO db_academico.detalle_calificacion
+(ccal_id,cuni_id,dcal_calificacion,dcal_usuario_creacion,dcal_estado,dcal_estado_logico)
+VALUES ($ccal_id,$cuni_id,$dcalificacion, '1', '1', '1')
+";
+$comando = $con->createCommand($sql);
+$detalles = $comando->execute();
+return $detalles;
+}
+function updatedetalles($dcal_id,$dcalificacion){
+ GLOBAL $dsn, $dbuser, $dbpass, $dbname;
+$con = new \PDO($dsn, $dbuser, $dbpass);
+$sql="
+UPDATE db_academico.detalle_calificacion
+ SET dcal_calificacion = $dcalificacion,
+ dcal_fecha_modificacion = now()  
+ WHERE dcal_id = $dcal_id;
+";
+$comando = $con->createCommand($sql);
+$detalles = $comando->execute();
+return $detalles;
+
+}
+
 }

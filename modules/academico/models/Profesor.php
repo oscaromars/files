@@ -271,7 +271,7 @@ class Profesor extends \yii\db\ActiveRecord {
 
 		$sql = "SELECT
                     pro.pro_id AS Id,
-                    CONCAT(pe.per_pri_apellido, ' ', pe.per_pri_nombre) AS Nombres,
+                    CONCAT(ifnull(pe.per_pri_apellido,''), ' ',ifnull(pe.per_seg_apellido,''), ' ', ifnull(pe.per_pri_nombre,''), ' ',ifnull(pe.per_seg_nombre,'')) AS Nombres,
                     ddoc_id as dedica
                 FROM
                     " . $con_academico->dbname . ".profesor AS pro
@@ -294,7 +294,7 @@ class Profesor extends \yii\db\ActiveRecord {
 
 		$sql = "SELECT
                     pro.pro_id AS Id,
-                    CONCAT(pe.per_pri_apellido, ' ', pe.per_pri_nombre) AS Nombres,
+                    CONCAT(ifnull(pe.per_pri_apellido,''), ' ',ifnull(pe.per_seg_apellido,''), ' ', ifnull(pe.per_pri_nombre,''), ' ',ifnull(pe.per_seg_nombre,'')) AS Nombres,
                     ddoc_id as dedica
                 FROM
                     " . $con_academico->dbname . ".profesor AS pro
@@ -346,6 +346,40 @@ class Profesor extends \yii\db\ActiveRecord {
 
 		return $resultData;
 	}
+
+		   /**
+     * Consulta profesor especifco
+     * @author Oscar Sánchez <analistadesarrollo05@uteg.edu.ec>;
+     * @param
+     * @return pro_id y nombre de un profesor especifico
+     */
+    public function getProfesorEnAsignaturas($onlyData = true,$pro_id) {
+        $con_asgard = Yii::$app->db_asgard;
+        $con_academico = Yii::$app->db_academico;
+
+        $sql = "SELECT DISTINCT per.per_id, pro.pro_id as id, per.per_cedula, per.per_correo, CONCAT(per.per_pri_nombre, ' ', per.per_pri_apellido) AS name
+                FROM " . $con_asgard->dbname . ".persona as per
+                INNER JOIN " . $con_academico->dbname . ".profesor AS pro ON pro.per_id = per.per_id
+                INNER JOIN " . $con_academico->dbname . ".distributivo_academico AS daca ON daca.pro_id = pro.pro_id
+                INNER JOIN " . $con_academico->dbname . ".distributivo_cabecera AS dcab ON dcab.pro_id = pro.pro_id
+                WHERE 1=1 AND pro.pro_id = :pro_id
+                AND dcab.dcab_estado_revision = 2
+                AND per.per_estado = 1 AND per.per_estado_logico = 1
+                AND pro.pro_estado = 1 AND pro.pro_estado_logico = 1
+                AND daca.daca_estado = 1 AND daca.daca_estado_logico = 1
+                AND dcab.dcab_estado = 1 AND dcab.dcab_estado_logico = 1
+                ORDER BY name DESC";
+
+        $comando = $con_academico->createCommand($sql);
+        $comando->bindParam(":pro_id",$pro_id, \PDO::PARAM_INT);
+        $resultData = $comando->queryAll();
+
+        if ($onlyData) {
+            return $resultData;
+        }
+        //print_r($resultData);die();
+        return $resultData;
+    }
 
 	/**
 	 * Consulta los profesores que estén dando alguna asignatura

@@ -372,7 +372,7 @@ class Solicitudinscripcion extends \yii\db\ActiveRecord {
                         ifnull((select min.ming_nombre from " . $con->dbname . ".metodo_ingreso min where min.ming_id = sins.ming_id),'N/A') as metodo_ingreso,
                         sins.eaca_id,
                         (case when (sins.emp_id = 1) then
-                                (case when (sins.uaca_id < 3) then
+                                (case when (sins.uaca_id < 3 or sins.uaca_id = 10) then
                                     (select ea.eaca_descripcion from " . $con1->dbname . ".estudio_academico ea where ea.eaca_id = sins.eaca_id and ea.eaca_estado = '1' and ea.eaca_estado_logico = '1')
                                 else
                                     (select me.mest_descripcion from " . $con1->dbname . ".modulo_estudio me where me.mest_id = sins.mest_id and me.mest_estado = '1' and me.mest_estado_logico = '1')
@@ -1224,6 +1224,7 @@ class Solicitudinscripcion extends \yii\db\ActiveRecord {
                         when 4 then (select mes.mest_nombre from " . $con1->dbname . ".modulo_estudio mes where mes.mest_id = sins.mest_id)
                         when 5 then (select mes.mest_nombre from " . $con1->dbname . ".modulo_estudio mes where mes.mest_id = sins.mest_id)
                         when 6 then (select mes.mest_nombre from " . $con1->dbname . ".modulo_estudio mes where mes.mest_id = sins.mest_id)
+                        when 10 then (select eaca.eaca_nombre from " . $con1->dbname . ".estudio_academico eaca where eaca.eaca_id = sins.eaca_id)
                         else null
                          end as 'carrera',
                     ifnull((select ming.ming_alias

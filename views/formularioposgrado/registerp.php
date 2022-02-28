@@ -353,16 +353,16 @@ completamente firmada y acompañada de todos los documentos solicitados.
         <p>
       <b>DISCAPACIDAD</b> &nbsp;<?php echo $persona_model['ipdi_discapacidad'] ?><br><br>
        <b>TIPO DE DISCAPACIDAD:</b> &nbsp;<?php echo $persona_model['tdis_nombre'] ?><br><br>
-      <b>PORCENTAJE DE DISCAPACIDAD:</b> &nbsp;<?php echo $persona_model['ides_porcentaje'].'%'; ?><br><br>
+      <b>PORCENTAJE DE DISCAPACIDAD:</b> &nbsp;<?php echo $persona_model['ides_porcentaje']; ?><br><br>
         <p class="blue" style='text-align:left'>__________________________________</p>
 <br>
      <b>DOCENCIA</b> &nbsp;<br><br>
-   <b>AÑOS DE DOCENCIA:</b> &nbsp;<?php echo $persona_model['ides_anio_docencia'].' años';  ?><br><br>
+   <b>AÑOS DE DOCENCIA:</b> &nbsp;<?php echo $persona_model['ides_anio_docencia'];  ?><br><br>
     <b>ÁREA DE DOCENCIA:</b> &nbsp;<?php echo $persona_model['ides_area_docencia'] ?><br><br>
       <p class="blue" style='text-align:left'>__________________________________</p>
 <br>
   <b> INVESTIGACIÓN</b> &nbsp;<br><br>
-    <b>NÚMERO DE ÁRTICULOS PUBLICADOS:</b> &nbsp;<?php echo $persona_model['iein_articulos_investigacion'].' artículos';  ?><br><br>
+    <b>NÚMERO DE ÁRTICULOS PUBLICADOS:</b> &nbsp;<?php echo $persona_model['iein_articulos_investigacion'];  ?><br><br>
       <b>ÁREA DE INVESTIGACIÓN:</b> &nbsp;<?php echo $persona_model['iein_area_investigacion'] ?><br><br>
   </p>
     </div>

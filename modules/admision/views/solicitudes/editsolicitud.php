@@ -104,7 +104,7 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
             <div class="form-group">
                 <label for="cmb_ninteres" class="col-sm-5 col-md-5 col-xs-5 col-lg-5 control-label"><?= academico::t("Academico", "Academic unit") ?></label>
                 <div class="col-sm-7 col-md-7 col-xs-7 col-lg-7">
-                    <?= Html::dropDownList("cmb_ninteres", $arr_solicitudesp['uaca_id'], array_merge([Yii::t("formulario", "Select")], $arr_unidad), ["class" => "form-control", "id" => "cmb_ninteres"]) ?>
+                    <?= Html::dropDownList("cmb_ninteres", $arr_solicitudesp['uaca_id'], /*array_merge([Yii::t("formulario", "Select")],*/ $arr_unidad/*)*/, ["class" => "form-control", "id" => "cmb_ninteres"]) ?>
                 </div>
             </div>
         </div>
@@ -296,7 +296,7 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
                 <div class="form-group">
                     <label for="txt_dni_fac" class="col-sm-5 col-md-5 col-xs-5 col-lg-5 control-label" id="lbl_nombre1"><?= Yii::t("formulario", "DNI Document") . '/' . Yii::t("formulario", "DNI 1") ?></label>
                     <div class="col-sm-7 col-md-7 col-xs-7 col-lg-7">
-                        <input type="text" class="form-control PBvalidation " value="<?php echo $arr_solicitudesp['sdfa_dni'] ?>" id="txt_dni_fac" data-type="cedula" disabled data-keydown="true" placeholder="<?= Yii::t("formulario", "DNI Document") ?>">
+                        <input type="text" class="form-control PBvalidation " value="<?php echo $arr_solicitudesp['sdfa_dni'] ?>" id="txt_dni_fac" data-type="all" disabled = "true" data-keydown="true" placeholder="<?= Yii::t("formulario", "DNI Document") ?>">
                     </div>
                 </div>
             </div>

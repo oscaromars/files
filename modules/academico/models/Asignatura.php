@@ -922,18 +922,22 @@ class Asignatura extends \yii\db\ActiveRecord {
 	 * @property
 	 * @return
 	 */
-	public function consultarAsignaturaxParalelo($asignatura_paralelo, $mod_id, $paca_id) {
+	public function consultarAsignaturaxParalelo($asignatura_paralelo, $mod_id, $paca_id, $uaca_id, $pro_id) {
 		$con_academico = \Yii::$app->db_academico;
 		$estado = '1';
 
 		$sql = "SELECT a.asi_id as asi_id,mpp.mpp_id as mpp_id
                 FROM  " . $con_academico->dbname . ".asignatura a
-                INNER JOIN " . $con_academico->dbname . ".materia_paralelo_periodo mpp
-                    on mpp.asi_id=a.asi_id
+                INNER JOIN " . $con_academico->dbname . ".materia_paralelo_periodo mpp on mpp.asi_id=a.asi_id
+                INNER JOIN " . $con_academico->dbname . ".distributivo_academico_horario daho on mpp.daho_id = daho.daho_id
+                LEFT JOIN " . $con_academico->dbname . ".distributivo_academico daca on daca.daho_id= daho.daho_id and daca.asi_id =a.asi_id and daca.mpp_id =mpp.mpp_id
                 WHERE ifnull(CONCAT(a.asi_nombre,' - P',mpp.mpp_num_paralelo ), '')= '" . $asignatura_paralelo . "'
-                AND mpp.mod_id  = " . $mod_id . " AND mpp.paca_id = " . $paca_id . "
+                AND mpp.mod_id  = " . $mod_id . " AND mpp.paca_id = " . $paca_id . " AND a.uaca_id = " . $uaca_id . " and daca.pro_id = " . $pro_id . "
                 AND a.asi_estado =:estado and a.asi_estado_logico=:estado
-                AND mpp.mpp_estado = :estado and mpp.mpp_estado_logico=:estado";
+                AND mpp.mpp_estado = :estado and mpp.mpp_estado_logico=:estado
+                AND daho.daho_estado = :estado and daho.daho_estado_logico= :estado
+                AND daca.daca_estado = :estado and daca.daca_estado_logico= :estado
+                ";
 
 		$comando = $con_academico->createCommand($sql);
 		$comando->bindParam(":estado", $estado, \PDO::PARAM_STR);

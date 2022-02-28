@@ -17,11 +17,52 @@ $(document).ready(function() {
         }
     });
 
+    $('#cmb_periodo_rw').change(function () {
+        var link = $('#txth_base').val() + "/academico/distributivocabecera/review";
+        var arrParams = new Object();
+        arrParams.paca_id = $(this).val();
+        arrParams.getunidad_rw = true;
+        requestHttpAjax(link, arrParams, function (response) {
+            if (response.status == "OK") {
+                data = response.message;
+                 setComboDataselect(data.unidad_rw, "cmb_unidad_rw","Todos");
+                
+            }
+        }, true);
+    });
+
+    $('#cmb_unidad_rw').change(function () {
+        var link = $('#txth_base').val() + "/academico/distributivocabecera/review";
+        var arrParams = new Object();
+        arrParams.uaca_id = $(this).val();
+        arrParams.paca_id = $('#cmb_periodo_rw').val();
+        arrParams.getprofesor_rw = true;
+        requestHttpAjax(link, arrParams, function (response) {
+            if (response.status == "OK") {
+                data = response.message;
+                 setComboDataselect(data.profesor_rw, "cmb_profesor_rw","Todos");
+                
+            }
+        }, true);
+    });
+
     $('#btn_buscarDCAB').click(function () {
        actualizarGrid();
     });
 
  });
+
+function setComboDataselect(arr_data, element_id, texto) {
+    var option_arr = "";
+    option_arr += "<option value= '0'>" + texto + "</option>";
+    for (var i = 0; i < arr_data.length; i++) {
+        var id = arr_data[i].id;
+        var value = arr_data[i].name;
+
+        option_arr += "<option value='" + id + "'>" + value + "</option>";
+    }
+    $("#" + element_id).html(option_arr);
+}
 
 function actualizarGrid() {
     var arrParams = new Object();
@@ -29,8 +70,6 @@ function actualizarGrid() {
     console.log(arrParams);
     //Buscar almenos una clase con el nombre para ejecutar
     $("#grid").yiiGridView("applyFilter", arrParams);
-    
-        
 }
 
 function searchModules() {

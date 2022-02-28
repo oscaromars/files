@@ -6,6 +6,7 @@ use app\models\ExportFile;
 use app\models\Utilities;
 use app\modules\academico\models\DistributivoAcademico;
 use app\modules\academico\models\DistributivoCabecera;
+use app\modules\academico\models\DistributivoCabeceraSearch;
 use app\modules\academico\models\PeriodoAcademicoMetIngreso;
 use app\modules\academico\models\Profesor;
 use app\modules\academico\models\TipoDistributivo;
@@ -57,13 +58,12 @@ class DistributivocabeceraController extends \app\components\CController {
 	public function actionAprobardistributivo() {
 		$searchModel = new DistributivoCabeceraSearch();
 		// $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-		$dataProvider = $searchModel->consultarDistributivoRevision($params = Yii::$app->request->queryParams, false, 1);
+		$dataProvider = $searchModel->consultarDistributivoRevision($params = Yii::$app->request->queryParams, false);
 		return $this->render('aprobardistributivo', [
 			'searchModel' => $searchModel,
 			'dataProvider' => $dataProvider,
 		]);
 	}
-
 	public function actionIndex() {
 		$per_id = @Yii::$app->session->get("PB_perid");
 		$model = NULL;
@@ -76,7 +76,7 @@ class DistributivocabeceraController extends \app\components\CController {
 		if ($data['PBgetFilter']) {
 			$search = $data['search'];
 			$periodo = (isset($data['periodo']) && $data['periodo'] > 0) ? $data['periodo'] : NULL;
-			$estado = (isset($data['estado']) && $data['estado'] > -1) ? $data['estado'] : NULL;
+			$estado = (isset($data['estado']) && $data['estado'] > 0) ? $data['estado'] : NULL;
 			$profesor = (isset($data['profesor']) && $data['profesor'] > 0) ? $data['profesor'] : NULL;
 			$asignacion = (isset($data['asignacion']) && $data['asignacion'] > 0) ? $data['asignacion'] : NULL;
 
@@ -235,19 +235,40 @@ class DistributivocabeceraController extends \app\components\CController {
 		$paca_id = 0;
 		$promajustado = 0;
 		$DistADO = new DistributivoCabecera();
-		$param = Yii::$app->request->queryParams;
-		if ($param) {
-			$pro_id = $param['cmb_profesor'];
-			$paca_id = $param['cmb_periodo'];
+		$daca_model = new DistributivoAcademico();
+		if (Yii::$app->request->isAjax) {
+			$data = Yii::$app->request->post();
+			if (isset($data["getunidad_rw"])) {
+				$unidad_rw = $daca_model->consultarUnidadDaca($data["paca_id"]);
+				$message = array("unidad_rw" => $unidad_rw);
+				return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+			}
+			if (isset($data["getprofesor_rw"])) {
+				$profesor_rw = $daca_model->consultarDocenteDaca($data["uaca_id"], $data["paca_id"]);
+				$message = array("profesor_rw" => $profesor_rw);
+				return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+			}
+
 		}
 
+		$param = Yii::$app->request->queryParams;
+		if ($param) {
+			$paca_id = $param['cmb_periodo_rw'];
+			$pro_id = $param['cmb_profesor_rw'];
+			$uaca_id = $param['cmb_unidad_rw'];
+
+		}
+		\app\models\Utilities::putMessageLogFile('paca_id: ' . $paca_id);
+		\app\models\Utilities::putMessageLogFile('pro_id: ' . $pro_id);
+		\app\models\Utilities::putMessageLogFile('uaca_id: ' . $uaca_id);
 		$distributivo_model = new DistributivoAcademico();
 		$mod_periodo = new PeriodoAcademicoMetIngreso();
 		$arr_periodo = $mod_periodo->consultarPeriodoAcademico();
+		$arr_unidad = $distributivo_model->consultarUnidadDaca($arr_periodo);
 		$distributivo_cab = new DistributivoCabecera();
 		$mod_profesor = new Profesor();
 		$model = new \app\modules\academico\models\DistributivoCabeceraSearch();
-		$arr_profesor = $mod_profesor->getProfesoresDistributivo();
+		$arr_profesor = $distributivo_model->consultarDocenteDaca($arr_unidad, $arr_periodo);
 		$resCab = $distributivo_cab->obtenerDatoCabecera($pro_id, $paca_id);
 		$arr_distributivo = $distributivo_model->getListarReview($resCab['dcab_id']);
 		if (!empty($resCab['dcab_id'])) {
@@ -265,14 +286,16 @@ class DistributivocabeceraController extends \app\components\CController {
 			Utilities::putMessageLogFile('$total_hora_semana_docenciaposgrado ' . $valores_promedio[0]['total_hora_semana_docencia_posgrado']);
 			\app\models\Utilities::putMessageLogFile('preparacion_docencia: ' . $valores_promedio[0]['preparacion_docencia']);
 			\app\models\Utilities::putMessageLogFile('semanas_docencia: ' . $valores_promedio[0]['semanas_docencia']);
-			\app\models\Utilities::putMessageLogFile('semanas_tutoria_vinulacion_investigacion: ' . $valores_promedio[0]['semanas_tutoria_vinulacion_investigacion']);
+			\app\models\Utilities::putMessageLogFile('semanas_docencia: ' . $valores_promedio[0]['semanas_docencia']);
+			\app\models\Utilities::putMessageLogFile('total_hora_semana_docencia_autor: ' . $valores_promedio[0]['total_hora_semana_docencia_autor']);
 			Utilities::putMessageLogFile('$semanas_posgrado ' . $valores_promedio[0]['semanas_posgrado']);
-			$promajustado = $DistADO->Calcularpromedioajustado($resCab['dcab_id'], /*$valores_promedio[0]['total_hora_semana_docencia_posgrado'],*/ $valores_promedio[0]['total_hora_semana_docencia'], $valores_promedio[0]['total_hora_semana_tutoria'], $valores_promedio[0]['total_hora_semana_investigacion'], $valores_promedio[0]['total_hora_semana_vinculacion'], $valores_promedio[0]['preparacion_docencia'], $valores_promedio[0]['semanas_docencia'], $valores_promedio[0]['semanas_tutoria_vinulacion_investigacion']/*, $valores_promedio[0]['semanas_posgrado']*/);
+			$promajustado = $DistADO->Calcularpromedioajustado($resCab['dcab_id'], /*$valores_promedio[0]['total_hora_semana_docencia_posgrado'],*/ $valores_promedio[0]['total_hora_semana_docencia'], $valores_promedio[0]['total_hora_semana_tutoria'], $valores_promedio[0]['total_hora_semana_investigacion'], $valores_promedio[0]['total_hora_semana_vinculacion'], $valores_promedio[0]['preparacion_docencia'], $valores_promedio[0]['semanas_docencia'], $valores_promedio[0]['semanas_tutoria_vinulacion_investigacion'], $valores_promedio[0]['total_hora_semana_docencia_autor']);
 			//$promedio_ajustado = $DistADO->Calcularpromedioaj($resCab['dcab_id']);
 		}
 		return $this->render('review',
 			['model' => $model,
-				'arr_profesor' => ArrayHelper::map(array_merge([["Id" => "0", "Nombres" => Yii::t("formulario", "Select")]], $arr_profesor), "Id", "Nombres"),
+				'arr_profesor' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $arr_profesor), "id", "name"),
+				'arr_unidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $arr_unidad), "id", "name"),
 				'arr_detalle' => $arr_distributivo,
 				'resCab' => $resCab,
 				'mod_periodo' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Grid")]], $arr_periodo), "id", "name"),
@@ -313,6 +336,7 @@ class DistributivocabeceraController extends \app\components\CController {
 						return Utilities::ajaxResponse('NOOK', 'alert', Yii::t('jslang', 'Error'), 'true', $message);
 					}
 					$resultado = $distributivo_cab->aprobarDistributivo($id, $estado, ucfirst(strtolower($observacion)));
+					//$bitacora_revision = $distributivo_cab->insertarBitacoraDCAB($id, $estado);
 					//  \app\models\Utilities::putMessageLogFile('resultadoREV:'.$resultado);
 					if ($resultado) {
 						$transaction->commit();
@@ -530,7 +554,7 @@ class DistributivocabeceraController extends \app\components\CController {
 		Utilities::putMessageLogFile('$horas_carga_docente_bloqueposgrado ' . $horas_carga_docente_bloqueposgrado);
 		$horas_carga_docente_bloque = $horas_carga_docente_bloquegrado + $horas_carga_docente_bloqueposgrado;
 		Utilities::putMessageLogFile('$horas_carga_docente_bloque ' . $horas_carga_docente_bloque);
-		$promedio = $DistADO->Calcularpromedioajustado($ids, /*$valores_promedio[0]['total_hora_semana_docencia_posgrado'],*/ $valores_promedio[0]['total_hora_semana_docencia'], $valores_promedio[0]['total_hora_semana_tutoria'], $valores_promedio[0]['total_hora_semana_investigacion'], $valores_promedio[0]['total_hora_semana_vinculacion'], $valores_promedio[0]['preparacion_docencia'], $valores_promedio[0]['semanas_docencia'], $valores_promedio[0]['semanas_tutoria_vinulacion_investigacion']/*, $valores_promedio[0]['semanas_posgrado']*/);
+		$promedio = $DistADO->Calcularpromedioajustado($resCab['dcab_id'], /*$valores_promedio[0]['total_hora_semana_docencia_posgrado'],*/ $valores_promedio[0]['total_hora_semana_docencia'], $valores_promedio[0]['total_hora_semana_tutoria'], $valores_promedio[0]['total_hora_semana_investigacion'], $valores_promedio[0]['total_hora_semana_vinculacion'], $valores_promedio[0]['preparacion_docencia'], $valores_promedio[0]['semanas_docencia'], $valores_promedio[0]['semanas_tutoria_vinulacion_investigacion'], $valores_promedio[0]['total_hora_semana_docencia_autor']);
 		/*Utilities::putMessageLogFile('$total_hora_semana_docencia ' . $valores_promedio[0]['total_hora_semana_docencia'] );
 			        Utilities::putMessageLogFile('$total_hora_semana_tutoria ' . $valores_promedio[0]['total_hora_semana_tutoria']);
 			        Utilities::putMessageLogFile('$total_hora_semana_investigacion ' . $valores_promedio[0]['total_hora_semana_investigacion'] );

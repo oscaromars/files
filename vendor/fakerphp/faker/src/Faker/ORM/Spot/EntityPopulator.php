@@ -140,9 +140,9 @@ class EntityPopulator
 
                 $locator = $this->locator;
 
-                $formatters[$fieldName] = function ($inserted) use ($required, $entityName, $locator, $generator) {
+                $formatters[$fieldName] = function ($inserted) use ($required, $entityName, $locator) {
                     if (!empty($inserted[$entityName])) {
-                        return $generator->randomElement($inserted[$entityName])->get('id');
+                        return $inserted[$entityName][mt_rand(0, count($inserted[$entityName]) - 1)]->get('id');
                     }
 
                     if ($required && $this->useExistingData) {
@@ -154,7 +154,7 @@ class EntityPopulator
                             return null;
                         }
 
-                        return $generator->randomElement($records)['id'];
+                        return $records[mt_rand(0, count($records) - 1)]['id'];
                     }
 
                     return null;

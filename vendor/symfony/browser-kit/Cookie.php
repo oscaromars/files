@@ -22,7 +22,7 @@ class Cookie
      * Handles dates as defined by RFC 2616 section 3.3.1, and also some other
      * non-standard, but common formats.
      */
-    private const DATE_FORMATS = [
+    private static $dateFormats = [
         'D, d M Y H:i:s T',
         'D, d-M-y H:i:s T',
         'D, d-M-Y H:i:s T',
@@ -92,7 +92,7 @@ class Cookie
 
         if (null !== $this->expires) {
             $dateTime = \DateTime::createFromFormat('U', $this->expires, new \DateTimeZone('GMT'));
-            $cookie .= '; expires='.str_replace('+0000', '', $dateTime->format(self::DATE_FORMATS[0]));
+            $cookie .= '; expires='.str_replace('+0000', '', $dateTime->format(self::$dateFormats[0]));
         }
 
         if ('' !== $this->domain) {
@@ -136,7 +136,7 @@ class Cookie
             throw new \InvalidArgumentException(sprintf('The cookie string "%s" is not valid.', $parts[0]));
         }
 
-        [$name, $value] = explode('=', array_shift($parts), 2);
+        list($name, $value) = explode('=', array_shift($parts), 2);
 
         $values = [
             'name' => trim($name),
@@ -208,7 +208,7 @@ class Cookie
             $dateValue = substr($dateValue, 1, -1);
         }
 
-        foreach (self::DATE_FORMATS as $dateFormat) {
+        foreach (self::$dateFormats as $dateFormat) {
             if (false !== $date = \DateTime::createFromFormat($dateFormat, $dateValue, new \DateTimeZone('GMT'))) {
                 return $date->format('U');
             }

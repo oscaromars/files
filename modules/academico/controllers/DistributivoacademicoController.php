@@ -203,6 +203,7 @@ class DistributivoacademicoController extends \app\components\CController {
 
                 //$paralelos = $paralelo->getParalelosAsignatura($data["paca_id"],$data["mod_id"],$data["asig_id"]);
                 //$paralelos =$mod_horario->consultarParaleloHorario($data["hora_id"]);
+				\app\models\Utilities::putMessageLogFile('maca_id: '.$data["maca_id"]);
                 $paralelos = $mod_paraleloprograma->getParalelosprograma($data["maca_id"]);
                 $message = array("paralelo" =>  $paralelos);
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
@@ -760,7 +761,7 @@ class DistributivoacademicoController extends \app\components\CController {
 				$model->daca_fecha_modificacion = $fecha_transaccion;
 				$model->daca_usuario_modifica = $usu_id;
 				$model->daca_estado = '0';
-				$model->daca_estado_logico = '0';uteg
+				$model->daca_estado_logico = '0';
 				$message = array(
 					"wtmessage" => Yii::t("notificaciones", "Your information was successfully saved."),
 					"title" => Yii::t('jslang', 'Success'),

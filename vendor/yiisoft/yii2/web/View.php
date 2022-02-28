@@ -479,27 +479,20 @@ class View extends \yii\base\View
         $url = Yii::getAlias($url);
         $key = $key ?: $url;
         $depends = ArrayHelper::remove($options, 'depends', []);
-        $originalOptions = $options;
         $position = ArrayHelper::remove($options, 'position', self::POS_END);
 
         try {
-            $assetManagerAppendTimestamp = $this->getAssetManager()->appendTimestamp;
+            $asssetManagerAppendTimestamp = $this->getAssetManager()->appendTimestamp;
         } catch (InvalidConfigException $e) {
             $depends = null; // the AssetManager is not available
-            $assetManagerAppendTimestamp = false;
+            $asssetManagerAppendTimestamp = false;
         }
-        $appendTimestamp = ArrayHelper::remove($options, 'appendTimestamp', $assetManagerAppendTimestamp);
+        $appendTimestamp = ArrayHelper::remove($options, 'appendTimestamp', $asssetManagerAppendTimestamp);
 
         if (empty($depends)) {
             // register directly without AssetManager
-            if ($appendTimestamp && Url::isRelative($url)) {
-                $prefix = Yii::getAlias('@web');
-                $prefixLength = strlen($prefix);
-                $trimmedUrl = ltrim((substr($url, 0, $prefixLength) === $prefix) ? substr($url, $prefixLength) : $url, '/');
-                $timestamp = @filemtime(Yii::getAlias('@webroot/' . $trimmedUrl, false));
-                if ($timestamp > 0) {
-                    $url = $timestamp ? "$url?v=$timestamp" : $url;
-                }
+            if ($appendTimestamp && Url::isRelative($url) && ($timestamp = @filemtime(Yii::getAlias('@webroot/' . ltrim($url, '/'), false))) > 0) {
+                $url = $timestamp ? "$url?v=$timestamp" : $url;
             }
             if ($type === 'js') {
                 $this->jsFiles[$position][$key] = Html::jsFile($url, $options);
@@ -511,7 +504,7 @@ class View extends \yii\base\View
                 'class' => AssetBundle::className(),
                 'baseUrl' => '',
                 'basePath' => '@webroot',
-                (string)$type => [ArrayHelper::merge([!Url::isRelative($url) ? $url : ltrim($url, '/')], $originalOptions)],
+                (string)$type => [!Url::isRelative($url) ? $url : ltrim($url, '/')],
                 "{$type}Options" => $options,
                 'depends' => (array)$depends,
             ]);

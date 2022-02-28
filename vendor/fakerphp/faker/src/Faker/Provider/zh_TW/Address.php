@@ -377,12 +377,12 @@ class Address extends \Faker\Provider\Address
 
     public static function localLatitude()
     {
-        return static::randomFloat(6, 22, 25);
+        return number_format(mt_rand(22000000, 25000000) / 1000000, 6);
     }
 
     public static function localLongitude()
     {
-        return static::randomFloat(6, 120, 122);
+        return number_format(mt_rand(120000000, 122000000) / 1000000, 6);
     }
 
     public function city()

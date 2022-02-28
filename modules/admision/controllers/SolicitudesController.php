@@ -243,6 +243,7 @@ class SolicitudesController extends \app\components\CController {
             if (isset($data["getdescuento"])) {
                 if (($data["unidada"] == 1) or ($data["unidada"] == 2)) {
                     $resItems = $modItemMetNivel->consultarXitemMetniv($data["unidada"], $data["moda_id"], $data["metodo"], $data["empresa_id"], $data["carrera_id"]);
+                    \app\models\Utilities::putMessageLogFile('carrera:'.  $resItems["ite_id"]);
                     $descuentos = $modDescuento->consultarDesctoxitem($resItems["ite_id"]);
                 } else {
                     //\app\models\Utilities::putMessageLogFile('item:'. $data["ite_id"]);

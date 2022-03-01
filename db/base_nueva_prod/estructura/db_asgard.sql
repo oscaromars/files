@@ -762,3 +762,19 @@ CREATE TABLE db_asgard.`log_errores` (
   `loge_estado_logico` varchar(1) NOT NULL,
   PRIMARY KEY (`loge_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+
+create table if not exists db_asgard.`persona_otros_datos` (
+ `poda_id` bigint(20) not null auto_increment primary key,
+ `per_id` bigint(20) not null,
+ `nins_id` bigint(20) not null,
+ `bseg_id` bigint(20) not null,
+ `poda_contacto_red_social` varchar(1) default null,
+ `poda_estado` varchar(1) not null,
+ `poda_usuario_creacion` bigint(20) not null,
+ `poda_fecha_creacion` timestamp not null default current_timestamp,
+ `poda_fecha_modificacion` timestamp null default null,
+ `poda_usuario_modificacion` bigint(20) null,
+ `poda_estado_logico` varchar(1) not null,
+  foreign key (per_id) references `persona`(per_id)
+) ;

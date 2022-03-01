@@ -467,12 +467,16 @@ $(document).ready(function () {
             arrParams.forma_pago = 1;*/
         }
         arrParams.item = $('#cmb_item').val();        
-
+        
         var error = 0;
         if ($('#txth_doc_pago').val() == "") {
             error++;
             var mensaje = {wtmessage: "Debe adjuntar documento de pago realizado.", title: "Información"};
             showAlert("NO_OK", "error", mensaje);
+        } else if ($('#cmb_item').val() == 0){
+            error++;
+            var mensaje = {wtmessage: "Debe seleccionar un item.", title: "Información"};
+            showAlert("NO_OK", "error", mensaje);        
         } else {
             if (!validateForm()) {
                 requestHttpAjax(link, arrParams, function (response) {

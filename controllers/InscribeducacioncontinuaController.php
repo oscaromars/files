@@ -34,6 +34,7 @@ use app\models\InscripcionAdmision;
 use app\modules\admision\models\ConvenioEmpresa;
 use app\modules\academico\models\NivelInstruccion;
 use app\modules\admision\models\BitacoraSeguimiento;
+use app\modules\financiero\models\Item;
 
 class InscribeducacioncontinuaController extends \yii\web\Controller {
 
@@ -55,6 +56,7 @@ class InscribeducacioncontinuaController extends \yii\web\Controller {
         $mod_inscripcion = new InscripcionAdmision();
         $mod_nivelinst = new NivelInstruccion();
         $mod_redes = new BitacoraSeguimiento();
+        $mod_items = new Item();
 
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
@@ -90,6 +92,13 @@ class InscribeducacioncontinuaController extends \yii\web\Controller {
                 $message = array("metodos" => $metodos);
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
             }
+            if (isset($data["getprecio"])) {
+                $con_fact = \Yii::$app->db_facturacion; 
+                $precio_item = $mod_items->getPrecios($con_fact,$data['ite_id']);
+                $message = array("precio" => $precio_item["ipre_precio"]);
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+            }
+
         }
         $arr_pais_dom = Pais::find()->select("pai_id AS id, pai_nombre AS value")->where(["pai_estado_logico" => "1", "pai_estado" => "1"])->asArray()->all();
         $pais_id = 1; //Ecuador
@@ -105,6 +114,7 @@ class InscribeducacioncontinuaController extends \yii\web\Controller {
         $arr_convempresa = $mod_conempresa->consultarConvenioEmpresa();
         $arr_nivelinst =  $mod_nivelinst->consultarNivelInstruccion();
         $arr_redes =  $mod_redes->consultarRedesusadas();
+        $arr_item = $mod_items->getItems(10);
         $_SESSION['JSLANG']['Your information has not been saved. Please try again.'] = Yii::t('notificaciones', 'Your information has not been saved. Please try again.');
 
         return $this->render('index', [
@@ -123,7 +133,8 @@ class InscribeducacioncontinuaController extends \yii\web\Controller {
                     "arr_convenio_empresa" => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Ninguna")]], $arr_convempresa), "id", "name"),
                     "resp_datos" => $resp_datos,
                     "arr_nivelinst" =>ArrayHelper::map($arr_nivelinst, "id", "value"),
-                    "arr_redes" =>ArrayHelper::map($arr_redes, "id", "name"),
+                    "arr_redes" =>ArrayHelper::map($arr_redes, "id", "name"),                    
+                    "arr_item" => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $arr_item), "id", "name"),
         ]);
     }
 
@@ -257,9 +268,9 @@ class InscribeducacioncontinuaController extends \yii\web\Controller {
                         'forma_pago' => $data["forma_pago"],
                         'nivinstrucion' => $data["nivinstrucion"],
                         'redes' => $data["redes"],
-                        'encontramos' => $data["encontramos"],
+                        'encontramos' => $data["encontramos"],                                             
                     );
-                    $resul = $model->insertaOriginal($Ids,$dataRegistro);
+                    $resul = $model->insertaFinInstituto($Ids,$dataRegistro);
                 } else if ($accion == "UpdateDepTrans") {
                     //Modificar Registro
                     $resul = $model->actualizarInscripcion($data);

@@ -22,6 +22,8 @@ ADD COLUMN `twin_redes_sociales` BIGINT(20) NULL DEFAULT NULL AFTER `twin_nivel_
 ALTER TABLE `db_captacion`.`temporal_wizard_inscripcion`
 ADD COLUMN `twin_encontramos` VARCHAR(150) NULL DEFAULT NULL AFTER `twin_redes_sociales`;
 
+ALTER TABLE `db_captacion`.`temporal_wizard_inscripcion`
+ADD COLUMN `twin_item` BIGINT(20) NULL AFTER `twin_encontramos`;
 
 /**** Verificar PK en produccion Agregar twitter para seguimiento ***/
 INSERT INTO `db_crm`.`bitacora_seguimiento` (`bseg_id`, `bseg_nombre`, `bseg_descripcion`, `bseg_estado`, `bseg_fecha_creacion`, `bseg_estado_logico`)
@@ -35,28 +37,28 @@ INSERT INTO `db_facturacion`.`item` (`ite_id`, `scat_id`, `ite_nombre`, `ite_des
 VALUES ('212', '9', 'Valor Total Dipl. Formación participación política', 'Valor Total Dipl. Formación participación política', '0208', '1', '1', '2022-02-26 15:05:22', '1');
 
 INSERT INTO `db_facturacion`.`item_precio` (`ipre_id`, `ite_id`, `ipre_precio`, `ipre_fecha_inicio`, `ipre_fecha_fin`, `ipre_estado_precio`, `ipre_usu_ingreso`, `ipre_estado`, `ipre_fecha_creacion`, `ipre_estado_logico`)
-VALUES ('212', '208', '180', '2022-02-26 00:00:00', '2022-12-31 23:59:59', 'A', '1', '1', '2022-02-26 15:08:00', '1');
+VALUES ('212', '212', '180', '2022-02-26 00:00:00', '2022-12-31 23:59:59', 'A', '1', '1', '2022-02-26 15:08:00', '1');
 
 INSERT INTO `db_facturacion`.`item_metodo_unidad` (`imni_id`, `ite_id`, `uaca_id`, `mod_id`, `mest_id`, `imni_usu_ingreso`, `imni_estado`, `imni_fecha_creacion`, `imni_estado_logico`)
-VALUES ('215', '208', '10', '1', NULL, '1', '1', '2022-02-26 15:22:00', '1');
+VALUES ('215', '212', '10', '1', NULL, '1', '1', '2022-02-26 15:22:00', '1');
 
 INSERT INTO `db_facturacion`.`item` (`ite_id`, `scat_id`, `ite_nombre`, `ite_descripcion`, `ite_codigo`, `ite_usu_ingreso`, `ite_estado`, `ite_fecha_creacion`, `ite_estado_logico`)
 VALUES ('213', '9', 'Un Módulo Dipl. Formación participación política', 'Un Módulo Dipl. Formación participación política', '0209', '1', '1', '2022-02-26 15:05:22', '1');
 
 INSERT INTO `db_facturacion`.`item_metodo_unidad` (`imni_id`, `ite_id`, `uaca_id`, `mod_id`, `imni_usu_ingreso`, `imni_estado`, `imni_fecha_creacion`, `imni_estado_logico`)
-VALUES ('216', '209', '10', '1', '1', '1', '2022-02-26 15:22:00', '1');
+VALUES ('216', '213', '10', '1', '1', '1', '2022-02-26 15:22:00', '1');
 
 INSERT INTO `db_facturacion`.`item_precio` (`ipre_id`, `ite_id`, `ipre_precio`, `ipre_fecha_inicio`, `ipre_fecha_fin`, `ipre_estado_precio`, `ipre_usu_ingreso`, `ipre_estado`, `ipre_fecha_creacion`, `ipre_estado_logico`)
-VALUES ('213', '209', '60', '2022-02-26 00:00:00', '2022-12-31 23:59:59', 'A', '1', '1', '2022-02-26 15:08:00', '1');
+VALUES ('213', '213', '60', '2022-02-26 00:00:00', '2022-12-31 23:59:59', 'A', '1', '1', '2022-02-26 15:08:00', '1');
 
 INSERT INTO `db_facturacion`.`item` (`ite_id`, `scat_id`, `ite_nombre`, `ite_descripcion`, `ite_codigo`, `ite_usu_ingreso`, `ite_estado`, `ite_fecha_creacion`, `ite_estado_logico`)
 VALUES ('214', '9', 'Dos Módulos Dipl. Formación participación política', 'Dos Módulos Dipl. Formación participación política', '0210', '1', '1', '2022-02-26 15:05:22', '1');
 
 INSERT INTO `db_facturacion`.`item_metodo_unidad` (`imni_id`, `ite_id`, `uaca_id`, `mod_id`, `imni_usu_ingreso`, `imni_estado`, `imni_fecha_creacion`, `imni_estado_logico`)
-VALUES ('217', '210', '10', '1', '1', '1', '2022-02-26 15:22:00', '1');
+VALUES ('217', '214', '10', '1', '1', '1', '2022-02-26 15:22:00', '1');
 
 INSERT INTO `db_facturacion`.`item_precio` (`ipre_id`, `ite_id`, `ipre_precio`, `ipre_fecha_inicio`, `ipre_fecha_fin`, `ipre_estado_precio`, `ipre_usu_ingreso`, `ipre_estado`, `ipre_fecha_creacion`, `ipre_estado_logico`)
-VALUES ('214', '210', '120', '2022-02-26 00:00:00', '2022-12-31 23:59:59', 'A', '1', '1', '2022-02-26 15:08:00', '1');
+VALUES ('214', '214', '120', '2022-02-26 00:00:00', '2022-12-31 23:59:59', 'A', '1', '1', '2022-02-26 15:08:00', '1');
 
 INSERT INTO `db_facturacion`.`historial_item_precio` (hipr_id, ite_id, hipr_precio, hipr_fecha_inicio, hipr_fecha_fin, hipr_usu_transaccion, hipr_estado, hipr_estado_logico) VALUES
 (228, 212, 180, '2022-02-26 00:00:00', null, 1, '1', '1'),

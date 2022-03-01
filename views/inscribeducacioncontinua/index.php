@@ -44,6 +44,7 @@ use yii\helpers\Html;
                         $this->render('_form_tab3', [
                             'per_id' => $per_id,
                             "arr_convenio_empresa" => $arr_convenio_empresa,
+                            "arr_item" => $arr_item,
                         ]);
                     ?>
                 </form>

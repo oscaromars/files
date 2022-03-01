@@ -189,4 +189,31 @@ class Item extends \yii\db\ActiveRecord
         $resultData = $comando->queryOne();
         return $resultData;
     }
+
+    /**
+     * Function getItems
+     * @author  Grace Viteri <analistadesarrollo01@uteg.edu.ec>
+     * @param   
+     * @return  $resultData 
+     */
+    public function getItems($uaca_id) {
+        $estado = 1;
+        $con = \Yii::$app->db_facturacion; 
+
+        $sql= "select a.ite_id as id, b.ite_descripcion as name
+               from " . $con->dbname . ".item_metodo_unidad a inner join " . $con->dbname . ".item b on b.ite_id = a.ite_id
+               where a.uaca_id = :uaca_id
+               and a.imni_estado = :estado
+               and a.imni_estado_logico = :estado
+               and b.ite_estado = :estado
+               and b.ite_estado_logico = :estado;";
+
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $comando->bindParam(":uaca_id", $uaca_id, \PDO::PARAM_INT);
+
+        $resultData = $comando->queryAll();
+        return $resultData;
+    }
+    
 }

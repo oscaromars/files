@@ -1736,7 +1736,7 @@ return $this->redirect('index');
     $mod_unidad     = new UnidadAcademica();
     $mod_modalidad  = new Modalidad();
     $mod_calificacion  = new CabeceraCalificacion();
-     $arr_parcial = array(0 => '[ Elija Parcial ]',1 => 'Parcial 1',2 => 'Parcial 2',3 => 'Supletorio');
+     $arr_parcial = array(0 => '[ Elija Parcial ]',1 => 'Parcial 1',2 => 'Parcial 2',3 => 'Supletorio/Mejoramiento',4 => 'Actualizar todo');
 
     $arr_periodos = $mod_periodos->consultarPeriodosActivosmalla();
     $arr_unidad = $mod_unidad->consultarUnidadAcademicasEmpresa(1);
@@ -1777,6 +1777,7 @@ return $this->redirect('index');
                     'arr_periodos' => ArrayHelper::map(array_merge($arr_periodos), "id", "nombre"),
                     //'arr_unidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Todos")]], $arr_unidad), "id", "name"),
                      'arr_unidad' => $arr_unidades, 
+                      'arr_parcial' => $arr_parcial, 
                     'arr_modalidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Todos")]], $arr_modalidad), "id", "name"),
                     'arr_modalidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Todos")]], $arr_modalidad), "id", "name"),
                     'arr_aula' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Todos")]], $arr_aula), "id", "name"),
@@ -1785,5 +1786,233 @@ return $this->redirect('index');
 
 
 }
+
+ public function actionTransferer($eduasid){
+
+     $mod_calificacion  = new CabeceraCalificacion();
+     $arr_usuarios = $mod_calificacion->consultarUsuarios($eduasid);
+     
+     
+ if (count($arr_usuarios) > 0) {  
+    
+               for ($u = 0; $u < count($arr_usuarios); $u++) {  
+
+            $daca_id = $arr_usuarios[$u]['daca_id'];
+            $cedu_asi_id = $arr_usuarios[$u]['cedu_asi_id']; 
+            $uaca_id = $arr_usuarios[$u]['uaca_id'];
+            $paca_id = $arr_usuarios[$u]['paca_id'];
+            $mod_id = $arr_usuarios[$u]['mod_id']; 
+            $mpp_id = $arr_usuarios[$u]['mpp_id'];
+            $pro_id = $arr_usuarios[$u]['pro_id'];
+            $asi_id = $arr_usuarios[$u]['asi_id'];
+            $est_id = $arr_usuarios[$u]['est_id'];
+            $uedu_usuario = $arr_usuarios[$u]['uedu_usuario'];
+            $per_id = $arr_usuarios[$u]['per_id'];
+            $ced_id = $arr_usuarios[$u]['per_cedula'];
+            $maes_id = $arr_usuarios[$u]['maes_id'];
+
+
+    try {
+          $wsdl = 'https://campusvirtual.uteg.edu.ec/soap/?wsdl=true';
+         
+         $client = new \SoapClient($wsdl, [
+         "soap_version" => SOAP_1_1,
+         "login"    => "webservice", 
+         "password" => "WxrrvTt8",
+            "trace"    => 1,
+         "exceptions" => 0,
+         "cache_wsdl" => WSDL_CACHE_NONE,
+         "stream_context" => stream_context_create(
+         [
+         'ssl' => [
+         'verify_peer' => false,
+         'verify_peer_name' => true,
+         'allow_self_signed' => true,
+         ]])]);
+
+         $client->setCredentials("webservice", 
+                          "WxrrvTt8",
+                          "basic");
+
+          }    catch (PDOException $e) {
+           putMessageLogFile('Error conexion Educativa: ' . $e->getMessage());
+           putMessageLogFile('cedu_asi_id: ' .$cedu_asi_id );
+           putMessageLogFile('uedu_usuario: ' .$uedu_usuario );
+              }
+
+          $method = 'obtener_notas_calificaciones'; 
+       
+          $args = Array(
+                 'id_grupo' =>$eduasid, 
+                 'id_usuario' =>$uedu_usuario,
+                );
+
+           
+             try {
+            $response = $client->__call( $method, Array( $args ) );
+
+              }    catch (PDOException $e) {
+           putMessageLogFile('Error Educativa: ' . $e->getMessage());
+           putMessageLogFile('cedu_asi_id: ' .$cedu_asi_id );
+           putMessageLogFile('uedu_usuario: ' .$uedu_usuario );
+              }
+
+     if (isset($response->categorias)) { 
+
+     $valuated = $response->categorias;
+
+       $arraycat = json_decode(json_encode($valuated), true);
+
+
+            $arrayl2 = array_column($arraycat, 'id_categoria');
+            $arraydata1 = array();
+            $arraydata2 = array();
+            $arraydata3 = array();
+            $grades=0;
+
+
+            if (isset($arraycat[0]['id_categoria'])) { 
+for ($i = 0; $i < count($arrayl2); $i++) {
+
+
+   
+    if (isset($arraycat[$i]['calificaciones']['notas'][0]['id_nota'])) { 
+         $arrayl4 = array_column($arraycat[$i]['calificaciones']['notas'], 'id_nota'); 
+              for ($k = 0; $k < count($arrayl4); $k++) {  
+                  $allcode = $mod_calificacion->getallcode($i,-1,$k);
+                    eval ($allcode);
+                    $grades++;
+              }
+    }  else {
+                if (isset($arraycat[$i]['calificaciones']['notas'])) {
+                $allcode = $mod_calificacion->getallcode($i,-1,-1);   
+                eval ($allcode);
+                $grades++;
+                }           
+
+            }
+
+    if (isset($arraycat[$i]['calificaciones'][0]['notas'] )) { 
+    $arrayl3 = array_column($arraycat[$i]['calificaciones'], 'id_calificacion'); // --DEBUG!!!! 
+    for ($j = 0; $j < count($arrayl3); $j++) {
+
+
+            if (isset($arraycat[$i]['calificaciones'][$j]['notas'][0]['id_nota'])) {
+                 $arrayl4 = array_column($arraycat[$i]['calificaciones'][$j]['notas'], 'id_nota'); 
+                     for ($k = 0; $k < count($arrayl4); $k++) {
+                         $allcode = $mod_calificacion->getallcode($i,$j,$k);    
+                         eval ($allcode);
+                          $grades++;
+                     }
+             } else {
+
+                        if (isset($arraycat[$i]['calificaciones'][$j]['notas'])) {
+                        $allcode = $mod_calificacion->getallcode($i,$j,-1);    
+                        eval ($allcode);
+                $grades++;
+                         }
+                    } 
+    }  
+
+    }
+
+} 
+
+}
+
+ if (isset($arraycat['id_categoria'])) { 
+   
+if (isset($arraycat['calificaciones']['notas'][0]['id_nota'])) {
+$arrayl4 = array_column($arraycat['calificaciones']['notas'], 'id_nota'); 
+for ($k = 0; $k < count($arrayl4); $k++) {
+
+
+$allcode = $mod_calificacion->getallcode(-1,-1,$k);    
+eval ($allcode);
+$grades++;
+
+}} else {
+
+if (isset($arraycat['calificaciones']['notas'])) {
+
+$allcode = $mod_calificacion->getallcode(-1,-1,-1);   
+eval ($allcode);
+$grades++;
+
+
+}
+
+
+}
+
+ if (isset($arraycat['calificaciones'][0]['notas'])) { 
+    $arrayl3 = array_column($arraycat['calificaciones'], 'id_calificacion');  
+
+ for ($j = 0; $j < count($arrayl3); $j++) {
+if (isset($arraycat['calificaciones'][$j]['notas'][0]['id_nota'])) {
+$arrayl4 = array_column($arraycat['calificaciones'][$j]['notas'], 'id_nota'); 
+for ($k = 0; $k < count($arrayl4); $k++) {
+  
+$allcode = $mod_calificacion->getallcode(-1,$j,$k);    
+eval ($allcode);
+$grades++;
+
+
+}} else {
+
+if (isset($arraycat['calificaciones'][$j]['notas'])) {
+    
+$allcode = $mod_calificacion->getallcode(-1,$j,-1); 
+eval ($allcode);
+$grades++;
+
+}
+
+
+}
+    } }
+
+ } 
+
+   }
+
+
+
+if (count($arraydata3) > 0) {           
+
+
+$componentes = $mod_calificacion->getescalas($uaca_id,$mod_id,$parciales);
+$cabeceras = $mod_calificacion->getcabeceras($est_id,$asi_id,$paca_id,$parciales);
+if ($cabeceras == Null){ 
+$cabeceras = $mod_calificacion->putcabeceras($est_id,$asi_id,$paca_id,$parciales,$pro_id);
+$cabeceras = $mod_calificacion->getcabeceras($est_id,$asi_id,$paca_id,$parciales);
+}}
+
+
+for ($it = 0; $it < count($arraydata3); $it++) { //-------------------------------------------->
+
+$comp_evaluacion1 = 0.00;
+$comp_autonoma1 = 0.00;
+$comp_examen1 = 0.00;
+$comp_evaluacion2 = 0.00;
+$comp_autonoma2 = 0.00;
+$comp_examen2 = 0.00;
+$comp_examen3 = 0.00;
+$comp_supletorio3 = 0.00;
+
+$data01= $mod_calificacion->getparamcategoria($arraydata1[$it]['nombre']); 
+$data02= $mod_calificacion->getparamitem($arraydata2[$it]['nombre']); 
+$data03= $mod_calificacion->getnota($arraydata3[$it]['nota']);} //---------------------------->
+
+               }}
+
+
+
+    
+
+return true;
+
+}
+
 
 }

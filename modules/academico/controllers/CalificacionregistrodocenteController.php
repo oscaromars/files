@@ -2004,6 +2004,192 @@ $data01= $mod_calificacion->getparamcategoria($arraydata1[$it]['nombre']);
 $data02= $mod_calificacion->getparamitem($arraydata2[$it]['nombre']); 
 $data03= $mod_calificacion->getnota($arraydata3[$it]['nota']);} //---------------------------->
 
+ if (isset($semanaexa1)) {} else {
+
+ if(isset($data02['examen']) ) { 
+$semanaexa1 = $data01['semana'];
+if ($semanaexa1 <= 5 AND $parciales == 1){ 
+
+         $comp_examen1 = (float)$data03; 
+          $comp_cuni_id = 5;
+          print_r("parcial 1 examen ES ");
+           print_r($comp_examen1);
+
+           $dcalificacion = (float)$comp_examen1;
+          $detalles = $mod_calificacion->getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id);
+      if ($detalles == Null) {
+$detalles = $mod_calificacion->putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id ,$dcalificacion); 
+}else {
+if ($detalles[0]['dcal_usuario_creacion'] == '1' AND $detalles[0]['dcal_calificacion'] < $dcalificacion ){
+$detallesup = $mod_calificacion->updatedetalles($detalles[0]['dcal_id'],$dcalificacion); 
+$bt= $mod_calificacion->putbitacora($detalles[0]['dcal_id'],$dcalificacion);
+}
+}
+}
+}   
+}
+
+
+if (isset($semanaexa2)) {} else {
+
+ if(isset($data02['examen']) ) { 
+$semanaexa2 = $data01['semana'];
+if ($semanaexa2 >= 6 AND $parciales == 2){ 
+
+         $comp_examen2 = (float)$data03; 
+          $comp_cuni_id = 10;
+          print_r("parcial 2 examen ES ");
+           print_r($comp_examen2);
+
+           $dcalificacion = (float)$comp_examen2;
+          $detalles = $mod_calificacion->getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id);
+      if ($detalles == Null) {
+$detalles = $mod_calificacion->putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id ,$dcalificacion); 
+}else {
+if ($detalles[0]['dcal_usuario_creacion'] == '1' AND $detalles[0]['dcal_calificacion'] < $dcalificacion ){
+$detallesup = $mod_calificacion->updatedetalles($detalles[0]['dcal_id'],$dcalificacion); 
+$bt= $mod_calificacion->putbitacora($detalles[0]['dcal_id'],$dcalificacion);
+}
+}
+}
+}   
+}
+
+ if(isset($data01['parcial'])) {
+
+
+if ($parciales == 1 AND $data01['parcial']==1) {
+//print_r("======= Inicia proceso parcial 1 ===========");
+//print_r(count($componentes));
+for ($il = 0; $il < count($componentes); $il++) {
+/*print_r("componente: ");
+print_r($componentes[$il]['com_id']);
+print_r("evaluacion: ");
+print_r(isset($data02['evaluacion']));
+    print_r("nota");
+print_r($data03);*/
+
+    if ($componentes[$il]['com_id']== 3 AND isset($data02['evaluacion'])) {    //COMP_EVALUACION ol
+
+    $comp_evaluacion1 = (float)$comp_evaluacion1 + (float)$data03; 
+    $comp_cuni_id = $componentes[$il]['cuni_id'];
+       print_r("comp_evaluacion1 ES  ");
+      print_r($comp_evaluacion1);
+
+    }
+
+     if ($componentes[$il]['com_id']== 4 AND isset($data02['taller'])) {    //COMP_AUTONOMA ol
+        
+     $comp_autonoma1 = (float)$comp_autonoma1+ (float)$data03;print_r("SUMADO:"); 
+     $comp_cuni_id = $componentes[$il]['cuni_id'];
+    print_r("comp_autonoma1 ES ");
+      print_r($comp_autonoma1);
+
+    }
+
+
+
+}
+if ( $comp_evaluacion1 > 0 ){
+$dcalificacion = (float)$comp_evaluacion1;
+$detalles = $mod_calificacion->getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id);
+if ($detalles == Null) {
+$detalles = $mod_calificacion->putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id ,$dcalificacion); 
+}else {
+if ($detalles[0]['dcal_usuario_creacion'] == '1' AND $detalles[0]['dcal_fecha_modificacion'] ==Null){
+$dcalificacion = $dcalificacion + $detalles[0]['dcal_calificacion'];
+$detallesup = $mod_calificacion->updatedetalles($detalles[0]['dcal_id'],$dcalificacion); 
+$bt= $mod_calificacion->putbitacora($detalles[0]['dcal_id'],$dcalificacion);
+}
+}
+} 
+
+if ( $comp_autonoma1 > 0 ){
+$dcalificacion = (float)$comp_autonoma1;
+$detalles = $mod_calificacion->getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id); 
+if ($detalles == Null) {
+$detalles = $mod_calificacion->putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id ,$dcalificacion); 
+}else {
+if ($detalles[0]['dcal_usuario_creacion'] == 1 AND $detalles[0]['dcal_fecha_modificacion'] ==Null){
+$dcalificacion = $dcalificacion + $detalles[0]['dcal_calificacion'];
+$detallesup = $mod_calificacion->updatedetalles($detalles[0]['dcal_id'],$dcalificacion); 
+$bt= $mod_calificacion->putbitacora($detalles[0]['dcal_id'],$dcalificacion);
+}
+}
+} 
+
+//print_r("======= Fin proceso parcial 1 ===========");
+}
+
+
+if ($parciales == 2 AND $data01['parcial']==2) {
+   
+
+for ($il = 0; $il < count($componentes); $il++) {
+
+
+    if ($componentes[$il]['com_id']== 8 AND isset($data02['evaluacion'] )) {    //COMP_EVALUACION ol
+
+     $comp_evaluacion2 = (float)$comp_evaluacion2 + (float)$data03;  
+      $comp_cuni_id = $componentes[$il]['cuni_id'];
+
+    }
+
+     if ($componentes[$il]['com_id']== 9 AND isset($data02['taller'] )) {    //COMP_AUTONOMA ol
+        
+         $comp_autonoma2 = (float)$comp_autonoma2 + (float)$data03; 
+          $comp_cuni_id = $componentes[$il]['cuni_id'];
+
+    }
+
+      if ($componentes[$il]['com_id']== 10 AND isset($data02['examen'] )) {    //COMP_EXAMEN ol
+        
+         if ($data03 > $comp_examen2){
+
+         $comp_examen2 = (float)$data03; 
+          $comp_cuni_id = $componentes[$il]['cuni_id'];
+        
+        }
+
+    }
+
+
+
+}
+if ( $comp_evaluacion2 > 0 ){
+$dcalificacion = (float)$comp_evaluacion2;
+$detalles = $mod_calificacion->getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id);
+if ($detalles == Null) {
+$detalles = $mod_calificacion->putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id ,$dcalificacion); 
+}else {
+if ($detalles[0]['dcal_usuario_creacion'] == 1 AND $detalles[0]['dcal_fecha_modificacion'] ==Null){
+$dcalificacion = $dcalificacion + $detalles[0]['dcal_calificacion'];
+$detallesup = $mod_calificacion->updatedetalles($detalles[0]['dcal_id'],$dcalificacion);  
+$bt= $mod_calificacion->putbitacora($detalles[0]['dcal_id'],$dcalificacion);
+}
+}
+} 
+
+
+if ( $comp_autonoma2 > 0 ){
+$dcalificacion = (float)$comp_autonoma2;
+$detalles = $mod_calificacion->getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id); 
+if ($detalles == Null) {
+$detalles = $mod_calificacion->putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id ,$dcalificacion); 
+}else {
+if ($detalles[0]['dcal_usuario_creacion'] == 1 AND $detalles[0]['dcal_fecha_modificacion'] ==Null){
+$dcalificacion = $dcalificacion + $detalles[0]['dcal_calificacion'];
+$detallesup = $mod_calificacion->updatedetalles($detalles[0]['dcal_id'],$dcalificacion); 
+$bt= $mod_calificacion->putbitacora($detalles[0]['dcal_id'],$dcalificacion);
+}
+}
+} 
+
+}
+
+
+ }
+
                }}
 
 

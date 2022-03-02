@@ -2458,6 +2458,18 @@ $comando = $con->createCommand($sql);
 $detalles = $comando->execute();
 return $detalles;
 }
+function putbitacora($ccal_id,$cuni_id,$dcalificacion){
+GLOBAL $dsn, $dbuser, $dbpass, $dbname;
+$con = new \PDO($dsn, $dbuser, $dbpass);
+$sql="
+INSERT INTO db_academico.registro_bitacora_nota
+(dcal_id, rbno_nota_anterior, rbno_nota_actual, rbno_usuario_creacion, rbno_estado, 
+rbno_estado_logico) VALUES ($dcal_id, '0',$dcalificacion, '1', '1', '1');
+";
+$comando = $con->createCommand($sql);
+$bitacora = $comando->execute();
+return $bitacora;
+}
 function updatedetalles($dcal_id,$dcalificacion){
  GLOBAL $dsn, $dbuser, $dbpass, $dbname;
 $con = new \PDO($dsn, $dbuser, $dbpass);

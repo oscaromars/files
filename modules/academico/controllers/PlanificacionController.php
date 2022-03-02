@@ -413,8 +413,8 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
 ((e.per_id in (
 select distinct a.per_id from db_asgard.persona as a
 inner join db_academico.estudiante bas on a.per_id = bas.per_id
-where DATEDIFF(NOW(),bas.est_fecha_creacion) <=180 or
-DATEDIFF(NOW(),a.per_fecha_creacion) <=180 ))) -- 1108
+where DATEDIFF(NOW(),bas.est_fecha_creacion) <=1800 or
+DATEDIFF(NOW(),a.per_fecha_creacion) <=1800 ))) -- 1108
  AND
 ((e.per_id not in (select b.per_id from db_academico.planificacion_estudiante b where
 b.pla_id= ( select max(dap.pla_id) from db_academico.planificacion dap
@@ -510,8 +510,8 @@ b.pla_id= ( select max(dap.pla_id) from db_academico.planificacion dap
 ((e.per_id in (
 select distinct a.per_id from db_asgard.persona as a 
 inner join db_academico.estudiante bas on a.per_id = bas.per_id
-where DATEDIFF(NOW(),bas.est_fecha_creacion) <=180 or
-DATEDIFF(NOW(),a.per_fecha_creacion) <=180 )))
+where DATEDIFF(NOW(),bas.est_fecha_creacion) <=1800 or
+DATEDIFF(NOW(),a.per_fecha_creacion) <=1800 )))
  )  
 order by maca.maca_id DESC , ea.eaca_codigo, e.est_fecha_creacion ASC;
                 ";

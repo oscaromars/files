@@ -191,8 +191,8 @@ b.pla_id= ( select max(dap.pla_id) from db_academico.planificacion dap
 ((e.per_id in (
 select distinct a.per_id from db_asgard.persona as a
 inner join db_academico.estudiante bas on a.per_id = bas.per_id
-where DATEDIFF(NOW(),bas.est_fecha_creacion) <=180 or
-DATEDIFF(NOW(),a.per_fecha_creacion) <=180 )))
+where DATEDIFF(NOW(),bas.est_fecha_creacion) <=1800 or
+DATEDIFF(NOW(),a.per_fecha_creacion) <=1800 )))
  )
 order by maca.maca_id DESC , ea.eaca_codigo, e.est_fecha_creacion ASC;
                 ";
@@ -314,8 +314,8 @@ b.pla_id= :oldplan )) OR
 ((e.per_id in (
 select distinct a.per_id from db_asgard.persona as a
 inner join db_academico.estudiante bas on a.per_id = bas.per_id
-where DATEDIFF(NOW(),bas.est_fecha_creacion) <=180 or
-DATEDIFF(NOW(),a.per_fecha_creacion) <=180 )))
+where DATEDIFF(NOW(),bas.est_fecha_creacion) <=1800 or
+DATEDIFF(NOW(),a.per_fecha_creacion) <=1800 )))
 )
 order by maca.maca_id DESC , ea.eaca_codigo, e.est_fecha_creacion ASC;
                 ";

@@ -364,10 +364,10 @@ $(document).ready(function () {
             $("#rdo_forma_pago_transferencia").prop("checked", "");
             $('#DivSubirPago').css('display', 'none');
             $('#DivSubirPagoBtn').css('display', 'none');
-            $('#DivBoton').css('display', 'block');
+            $('#pago_tarjeta').css('display', 'block');
         } else {
             $("#rdo_forma_pago_otros").prop("checked", true);
-            $('#DivBoton').css('display', 'none');
+            $('#pago_tarjeta').css('display', 'none');
         }
     });
 
@@ -375,7 +375,7 @@ $(document).ready(function () {
         if ($('#rdo_forma_pago_deposito').val() == 1) {
             $('#DivSubirPago').css('display', 'block');
             $('#DivSubirPagoBtn').css('display', 'block');
-            $('#DivBoton').css('display', 'none');
+            $('#pago_tarjeta').css('display', 'none');
             $("#rdo_forma_pago_dinner").prop("checked", "");
             $("#rdo_forma_pago_otros").prop("checked", "");
             $("#rdo_forma_pago_transferencia").prop("checked", "");
@@ -383,7 +383,7 @@ $(document).ready(function () {
             $('#DivSubirPago').css('display', 'none');
             $('#DivSubirPagoBtn').css('display', 'none');
             $("#rdo_forma_pago_deposito").prop("checked", true);
-            $('#DivBoton').css('display', 'block');
+            $('#pago_tarjeta').css('display', 'block');
         }
     });
 
@@ -391,7 +391,7 @@ $(document).ready(function () {
         if ($('#rdo_forma_pago_transferencia').val() == 2) {
             $('#DivSubirPago').css('display', 'block');
             $('#DivSubirPagoBtn').css('display', 'block');
-            $('#DivBoton').css('display', 'none');
+            $('#pago_tarjeta').css('display', 'none');
             $("#rdo_forma_pago_dinner").prop("checked", "");
             $("#rdo_forma_pago_otros").prop("checked", "");
             $("#rdo_forma_pago_deposito").prop("checked", "");
@@ -399,7 +399,7 @@ $(document).ready(function () {
             $('#DivSubirPago').css('display', 'none');
             $('#DivSubirPagoBtn').css('display', 'none');
             $("#rdo_forma_pago_transferencia").prop("checked", true);
-            $('#DivBoton').css('display', 'block');
+            $('#pago_tarjeta').css('display', 'block');
         }
     });
 
@@ -510,6 +510,98 @@ $(document).ready(function () {
             }
         }, true);
     });
+    
+    $('#payBtn').on('click', function (e) {
+
+        $("#payBtn").prop("disabled",true);        
+        
+        $.LoadingOverlay("show",{
+            imageColor: "#a41b5e", 
+        });
+
+        setTimeout(function () { 
+            try{
+                stripe.createToken(cardElement).then(function(result) {
+                    if (result.error) {
+                        console.log(result);
+                        var mensaje = {wtmessage: '<p>'+result.error.message+'</p>', title: "Error"};
+                        logError("Inscripcion Adminsion","Crear Token",result.error.message,JSON.stringify(cardElement));
+                        showAlert("NO_OK", "error", mensaje);
+                        return false;
+                    } else {
+                        // Send the token to your server
+                        //stripeTokenHandler(result.token);
+                        //console.log(token);
+                        var token = result.token;
+                        // Insert the token ID into the form so it gets submitted to the server
+                        var hiddenInput = document.createElement('input');
+                        hiddenInput.setAttribute('type', 'hidden');
+                        hiddenInput.setAttribute('name', 'stripeToken');
+                        hiddenInput.setAttribute('value', token.id);
+
+                        var link = $('#txth_base').val() + "/inscripcionadmision/stripecheckout2";
+
+                        data = new FormData();
+                        data.append( 'stripeToken', token.id );
+                        data.append( 'email'      , $('#txt_correo_fac').val() );
+                        data.append( 'name'       , $('#txt_nombres_fac').val() + " " + $('#txt_apellidos_fac').val() );
+                        data.append( 'valor'      , $('#val_item_1').text());
+                        $.ajax({
+                            data: data,
+                            type       : "POST",
+                            dataType   : "json",
+                            cache      : false,
+                            contentType: false,
+                            processData: false,
+                            async: false,
+                            url: link,
+                        }).then(function( data ) {;
+                            $("#seccion_pago_online").html('<i class="fas fa-check-circle" style="color: #a31b5c;"> SU PAGO FUE INGRESADO CORRECTAMENTE</i>');
+                            $('input[name=rdo_forma_pago_deposito]:not(:checked)').attr('disabled', true);
+                            $('input[name=rdo_forma_pago_transferencia]:not(:checked)').attr('disabled', true);
+                            $.LoadingOverlay("hide");
+                            sendInscripcionSubirPago3();
+                        }).fail(function() {
+                            logError("Inscripcion Adminsion","Crear Token","Fallo en el ajax donse se envia el token",JSON.stringify(data));
+                            $.LoadingOverlay("hide");
+                        });
+                    }
+                });
+            }catch(err){
+                var mensaje = {wtmessage: err+" ///catch", title: "Error"};
+                showAlert("NO_OK", "error1", mensaje);
+                return false;
+            }
+        }, 1000);
+    });
+
+
+    // Callback to handle the response from stripe
+    function stripeTokenHandler(token) {
+        
+    }//function stripeTokenHandler
+    
+    //$.LoadingOverlay("hide");
+    /************************************************************/
+    /***** FIN STRIPE *******************************************/
+    /************************************************************/
+
+    $('#rdo_forma_pago_otros').change();
+    $('#cmb_pais_dom').change();
+    $('#cmb_provincia_dom').change();
+
+    $('#txt_nombres_fac').attr("readonly","readonly");
+    $('#txt_dir_fac').attr("readonly","readonly");
+    $('#txt_apellidos_fac').attr("readonly","readonly");
+    $('#txt_tel_fac').attr("readonly","readonly");
+    $('#txt_correo_fac').attr("readonly","readonly");
+    $('#txt_dni_fac').attr("readonly","readonly");
+    $('#txt_pasaporte_fac').attr("readonly","readonly");
+
+    //console.log("-----  Log de errores  -------");
+    //Ejemplo de log de errores por javascript
+    //logerror('nombremodulo','tituloerror','mensajerror','datos');
+    //console.log("-------------------------------");
 });
 
 //INSERTAR DATOS
@@ -536,6 +628,9 @@ function guardarInscripcion(accion, paso) {
                     //Datos de facturación.
                     $('#txt_nombres_fac').val(response.data.data.twin_nombre);
                     $('#txt_apellidos_fac').val(response.data.data.twin_apellido);
+                    $('#txt_tel_fac').val(response.data.data.twin_celular);
+                    $('#txt_dir_fac').val(response.data.data.twin_direccion);
+                    $('#txt_correo_fac').val(response.data.data.twin_correo);
                     $('#txt_dni_fac').val(response.data.data.twin_numero);
                 } else {
                     if (paso == "1") {
@@ -552,6 +647,9 @@ function guardarInscripcion(accion, paso) {
                     //Datos de facturación.
                     $('#txt_nombres_fac').val(response.data.data.twin_nombre);
                     $('#txt_apellidos_fac').val(response.data.data.twin_apellido);
+                    $('#txt_tel_fac').val(response.data.data.twin_celular);
+                    $('#txt_dir_fac').val(response.data.data.twin_direccion);
+                    $('#txt_correo_fac').val(response.data.data.twin_correo);
                     $('#txt_dni_fac').val(response.data.data.twin_numero);
 
                     /*if (uaca_id == 1) {

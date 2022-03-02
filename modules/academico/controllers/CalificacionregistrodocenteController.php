@@ -2190,6 +2190,11 @@ $bt= $mod_calificacion->putbitacora($detalles[0]['dcal_id'],$dcalificacion);
 
  }
 
+$ucab = $mod_calificacion->updatecabeceras($cabeceras[0]['ccal_id']); 
+if ($maes_id != null){ 
+$upro = $mod_calificacion->updatepromedio($maes_id, $paca_id);
+}
+
                }}
 
 

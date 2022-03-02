@@ -1,11 +1,7 @@
 {
     "name": "yiisoft/yii2-gii",
     "description": "The Gii extension for the Yii framework",
-    "keywords": [
-        "yii2",
-        "gii",
-        "code generator"
-    ],
+    "keywords": ["yii2", "gii", "code generator"],
     "type": "yii2-extension",
     "license": "BSD-3-Clause",
     "support": {
@@ -24,20 +20,13 @@
     "minimum-stability": "dev",
     "require": {
         "yiisoft/yii2": "~2.0.14",
-        "phpspec/php-diff": "^1.1.0"
-    },
-    "require-dev": {
-        "yiisoft/yii2-coding-standards": "~2.0",
-        "phpunit/phpunit": "<7"
+        "yiisoft/yii2-bootstrap": "~2.0.0",
+        "phpspec/php-diff": ">=1.0.2",
+        "bower-asset/typeahead.js": "0.10.* | ~0.11.0"
     },
     "autoload": {
         "psr-4": {
             "yii\\gii\\": "src"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "yiiunit\\gii\\": "tests"
         }
     },
     "extra": {
@@ -46,9 +35,11 @@
         }
     },
     "config": {
-        "process-timeout": 1800,
         "fxp-asset": {
-            "enabled": false
+            "installer-paths": {
+                "npm-asset-library": "vendor/npm",
+                "bower-asset-library": "vendor/bower"
+            }
         }
     },
     "repositories": [

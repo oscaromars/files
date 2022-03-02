@@ -618,7 +618,7 @@ class FormularioposgradoController extends \app\components\CController {
                     $typeFile = strtolower($arrIm[count($arrIm) - 1]);
                     $documento_archivoOld = Yii::$app->params["documentFolder"] . "inscripcionposgrado/doc_documento_per_" . $per_id . "." . $typeFile;
                     $documento_archivo = InscripcionPosgrado::addLabelTimeDocumentos($inscriposgrado_id, $documento_archivoOld, '' );
-                    $data["ipos_ruta_documento"] = $foto_archivo;
+                    $data["ipos_ruta_documento"] = $documento_archivo;
                     if ($documento_archivo === false)
                         throw new Exception('Error documnet no renombrado.');
                 }

@@ -100,3 +100,5 @@ create table if not exists db_asgard.`persona_otros_datos` (
  `poda_estado_logico` varchar(1) not null,
   foreign key (per_id) references `persona`(per_id)
 ) ;
+
+ALTER TABLE `db_facturacion`.`registro_pago` CHANGE COLUMN `rpag_num_transaccion` `rpag_num_transaccion` VARCHAR(50) NULL ;

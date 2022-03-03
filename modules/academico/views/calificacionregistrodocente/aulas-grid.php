@@ -31,54 +31,36 @@ PbGridView::widget([
         ['class' => 'yii\grid\SerialColumn', 'options' => ['width' => '10']],
         [
             'attribute' => 'Paca',
-            'header' => academico::t("Academico", "Curso"),
-            'options' => ['width' => '240'],
-            'value' => 'name',
-                    ],  
-        [
-            'attribute' => 'Paca',
-            'header' => academico::t("Academico", "Unidad"),
-            'options' => ['width' => '80'],
-            'value' => 'uaca_nombre',
-                    ], 
-        [
-            'attribute' => 'Paca',
             'header' => academico::t("Academico", "Periodo/Bloque"),
             'options' => ['width' => '80'],
-            'value' => 'paca_id',
+            'value' => 'paca_nombre',
                     ], 
-        [
+           [
+            'attribute' => 'Paca',
+            'header' => academico::t("Academico", "Unidad"),
+            'options' => ['width' => '30'],
+            'value' => 'uaca_nombre',
+                    ], 
+            [
             'attribute' => 'Paca',
             'header' => academico::t("Academico", "Modalidad"),
-            'options' => ['width' => '80'],
+            'options' => ['width' => '30'],
             'value' => 'mod_nombre',
                     ], 
         [
             'attribute' => 'Paca',
+            'header' => academico::t("Academico", "Curso"),
+            'options' => ['width' => '300'],
+            'value' => 'name',
+                    ],  
+     
+        [
+            'attribute' => 'Paca',
             'header' => academico::t("Academico", "Profesor"),
-            'options' => ['width' => '160'],
-            'value' => 'per_pri_apellido',
+            'options' => ['width' => '120'],
+            'value' => 'docente',
                     ],  
 
- [
-                'attribute' => 'bloque',
-                'header' => Academico::t("Academico", "Bloque"),
-                'filterInputOptions' => [
-                    'class' => 'form-control',
-                    'prompt' => 'Select'
-                ],
-                'format' => 'raw',
-                'value'  => function ($model) {
-                   /* if($model['uaca_id'] == 1) {
-                        return Html::dropDownList('bloque', empty($model['bloque_campo'])?0:$model['bloque_campo'] , ArrayHelper::map($model['bloque'] , "Id", "Nombres"), ["class" => "form-control", "Id" => "cmb_bloque_".$model['mpmo_id'], "disabled" => false ]);
-                    }elseif($model['uaca_id'] == 2) {
-                        return Html::dropDownList('bloque', empty($model['bloque_campo'])?0:$model['bloque_campo'] , ArrayHelper::map($model['bloque'] , "Id", "Nombres"), ["class" => "form-control", "Id" => "cmb_bloque_".$model['mpmo_id'], "disabled" => false ]);
-                    }else{
-                        return Html::dropDownList('bloque', empty($model['bloque_campo'])?0:$model['bloque_campo'] , ArrayHelper::map($model['bloque'] , "Id", "Nombres"), ["class" => "form-control", "Id" => "cmb_bloque_".$model['mpmo_id'], "disabled" => false ]);
-                    }             */       
-                }
-            ],
-        
        [
                 'class' => 'yii\grid\ActionColumn',
                 'header' => Yii::t("formulario", "Actions"),
@@ -88,17 +70,13 @@ PbGridView::widget([
                 'template' => '{activa}', //
                 'buttons' => [
                     'activa' => function ($url, $model) {
-                        if ($model["uaca_id"] == 1 ) {
 
-                             return "<a href='javascript:activateCron(".$model['croe_id'].")' class='glyphicon glyphicon-plus-sign' ></a>";
-                            return "<a href='javascript:activateCron(".$model['croe_id'].")' class='glyphicon glyphicon-plus-sign' >" . academico::t("registro", "&nbsp;Grabar") . "</a>";
+                         return "<a href='javascript:transferAula(".$model['id'].",".$model['ecal_id'].")' class='glyphicon glyphicon glyphicon-refresh' ></a>";
 
-                            return Html::a('<span class="glyphicon glyphicon-plus"></span>', Url::to(['/academico/calificacionregistrodocente/index', 'sids' => base64_encode($model['sins_id']), 'adm' => base64_encode($model['adm_id'])]), ["data-toggle" => "tooltip", "title" => "Activar", "data-pjax" => 0]);
-                        } else {
-                             if ($model["uaca_id"] == 2)
-                            return '<span class="glyphicon glyphicon-saved"></span>'; 
-                            return '<span class="glyphicon glyphicon-time"></span>';
-                        }
+                        return Html::a('<span class="'.Utilities::getIcon('remove').'"></span>', null, ['href' => 'javascript:confirmDeletea(\'deleteItema\',[\'' . $model['id'] . '\']);', "data-toggle" => "tooltip", "title" => Yii::t("accion","Delete")]);
+
+                            return Html::a('<span class="glyphicon glyphicon-download-alt"></span>', Url::to(['/academico/calificacionregistrodocente/transaulas', 'sids' => base64_encode($model['sins_id']), 'adm' => base64_encode($model['id'])]), ["data-toggle" => "tooltip", "title" => "Activar", "data-pjax" => 0]);
+                    
                     },
                     
                 ],

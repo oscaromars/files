@@ -411,7 +411,7 @@ class InscribeducacioncontinuaController extends \yii\web\Controller {
 				"title" => Yii::t('jslang', 'Error'),
 			);
 			echo Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
-			Utilities::logError("Inscripcion Admision Controller", "actionStripecheckout2", $respuesta->mensaje_error, json_encode($respuesta));
+			//Utilities::logError("Inscripcion Admision Controller","actionStripecheckout2",$respuesta->mensaje_error,json_encode($respuesta));
 			return;
 		} else {
 			echo Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Respuesta"), false, $respuesta);

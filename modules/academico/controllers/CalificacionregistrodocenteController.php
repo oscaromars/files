@@ -2,32 +2,43 @@
 
 namespace app\modules\academico\controllers;
 
+use Yii;
 use app\models\ExportFile;
-use app\models\Grupo;
+use app\modules\academico\models\EstudioAcademico;
+use yii\helpers\ArrayHelper;
+use app\models\Utilities;
+use app\modules\academico\models\Modalidad;
+use app\modules\academico\models\ModuloEstudio;
+use app\modules\academico\models\ModalidadEstudioUnidad;
+use app\modules\academico\models\UnidadAcademica;
+use app\modules\academico\models\Paralelo;
+use app\modules\academico\models\Estudiante;
+use app\modules\academico\models\UsuarioEducativa;
+use app\modules\academico\models\EstudianteCarreraPrograma;
+use app\modules\academico\models\Profesor;
+use app\modules\admision\models\Oportunidad;
+use app\modules\academico\models\DistributivoAcademico;
+use app\modules\academico\models\MallaAcademicoEstudiante;
+use app\modules\academico\models\CabeceraCalificacion;
 use app\models\Persona;
 use app\models\Usuario;
-use app\models\Utilities;
-use app\modules\academico\models\Asignatura;
-use app\modules\academico\models\CabeceraCalificacion;
-use app\modules\academico\models\ComponenteUnidad;
-use app\modules\academico\models\DistributivoAcademico;
-use app\modules\academico\models\Estudiante;
-use app\modules\academico\models\EstudianteCarreraPrograma;
-use app\modules\academico\models\EstudioAcademico;
-use app\modules\academico\models\MallaAcademicoEstudiante;
-use app\modules\academico\models\Modalidad;
-use app\modules\academico\models\ModalidadEstudioUnidad;
-use app\modules\academico\models\PeriodoAcademico;
-use app\modules\academico\models\Profesor;
-use app\modules\academico\models\UnidadAcademica;
-use app\modules\academico\models\UsuarioEducativa;
-use app\modules\academico\Module as academico;
-use app\modules\admision\models\Oportunidad;
-use app\modules\admision\Module as admision;
-use app\modules\financiero\Module as financiero;
-use Yii;
+use yii\base\Security;
 use yii\base\Exception;
-use yii\helpers\ArrayHelper;
+use app\models\EmpresaPersona;
+use app\models\UsuaGrolEper;
+use app\modules\academico\models\NumeroMatricula;
+use app\models\Grupo;
+use app\modules\academico\Module as academico;
+use app\modules\financiero\Module as financiero;
+use app\modules\admision\Module as admision;
+
+use app\modules\academico\models\Asignatura;
+use app\modules\academico\models\AsignaturasPorPeriodo;
+use app\modules\academico\models\PlanificacionEstudiante;
+use app\modules\academico\models\PeriodoAcademico;
+use app\modules\academico\models\PeriodoAcademicoMetIngreso;
+use app\modules\academico\models\ComponenteUnidad;
+use yii\data\ArrayDataProvider;
 
 academico::registerTranslations();
 admision::registerTranslations();
@@ -1736,7 +1747,7 @@ return $this->redirect('index');
     $mod_unidad     = new UnidadAcademica();
     $mod_modalidad  = new Modalidad();
     $mod_calificacion  = new CabeceraCalificacion();
-     $arr_parcial = array(0 => '[ Elija Parcial ]',1 => 'Parcial 1',2 => 'Parcial 2',3 => 'Supletorio');
+     $arr_parcial = array(0 => '[ Elija Parcial ]',1 => 'Parcial 1',2 => 'Parcial 2',3 => 'Supletorio/Mejoramiento',4 => 'Actualizar todo');
 
     $arr_periodos = $mod_periodos->consultarPeriodosActivosmalla();
     $arr_unidad = $mod_unidad->consultarUnidadAcademicasEmpresa(1);
@@ -1777,6 +1788,7 @@ return $this->redirect('index');
                     'arr_periodos' => ArrayHelper::map(array_merge($arr_periodos), "id", "nombre"),
                     //'arr_unidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Todos")]], $arr_unidad), "id", "name"),
                      'arr_unidad' => $arr_unidades, 
+                      'arr_parcial' => $arr_parcial, 
                     'arr_modalidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Todos")]], $arr_modalidad), "id", "name"),
                     'arr_modalidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Todos")]], $arr_modalidad), "id", "name"),
                     'arr_aula' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Todos")]], $arr_aula), "id", "name"),
@@ -1785,5 +1797,424 @@ return $this->redirect('index');
 
 
 }
+
+ public function actionTransferer($eduasid){
+
+     $mod_calificacion  = new CabeceraCalificacion();
+     $arr_usuarios = $mod_calificacion->consultarUsuarios($eduasid);
+     
+     
+ if (count($arr_usuarios) > 0) {  
+    
+               for ($u = 0; $u < count($arr_usuarios); $u++) {  
+
+            $daca_id = $arr_usuarios[$u]['daca_id'];
+            $cedu_asi_id = $arr_usuarios[$u]['cedu_asi_id']; 
+            $uaca_id = $arr_usuarios[$u]['uaca_id'];
+            $paca_id = $arr_usuarios[$u]['paca_id'];
+            $mod_id = $arr_usuarios[$u]['mod_id']; 
+            $mpp_id = $arr_usuarios[$u]['mpp_id'];
+            $pro_id = $arr_usuarios[$u]['pro_id'];
+            $asi_id = $arr_usuarios[$u]['asi_id'];
+            $est_id = $arr_usuarios[$u]['est_id'];
+            $uedu_usuario = $arr_usuarios[$u]['uedu_usuario'];
+            $per_id = $arr_usuarios[$u]['per_id'];
+            $ced_id = $arr_usuarios[$u]['per_cedula'];
+            $maes_id = $arr_usuarios[$u]['maes_id'];
+
+
+    try {
+          $wsdl = 'https://campusvirtual.uteg.edu.ec/soap/?wsdl=true';
+         
+         $client = new \SoapClient($wsdl, [
+         "soap_version" => SOAP_1_1,
+         "login"    => "webservice", 
+         "password" => "WxrrvTt8",
+            "trace"    => 1,
+         "exceptions" => 0,
+         "cache_wsdl" => WSDL_CACHE_NONE,
+         "stream_context" => stream_context_create(
+         [
+         'ssl' => [
+         'verify_peer' => false,
+         'verify_peer_name' => true,
+         'allow_self_signed' => true,
+         ]])]);
+
+         $client->setCredentials("webservice", 
+                          "WxrrvTt8",
+                          "basic");
+
+          }    catch (PDOException $e) {
+           putMessageLogFile('Error conexion Educativa: ' . $e->getMessage());
+           putMessageLogFile('cedu_asi_id: ' .$cedu_asi_id );
+           putMessageLogFile('uedu_usuario: ' .$uedu_usuario );
+              }
+
+          $method = 'obtener_notas_calificaciones'; 
+       
+          $args = Array(
+                 'id_grupo' =>$eduasid, 
+                 'id_usuario' =>$uedu_usuario,
+                );
+
+           
+             try {
+            $response = $client->__call( $method, Array( $args ) );
+
+              }    catch (PDOException $e) {
+           putMessageLogFile('Error Educativa: ' . $e->getMessage());
+           putMessageLogFile('cedu_asi_id: ' .$cedu_asi_id );
+           putMessageLogFile('uedu_usuario: ' .$uedu_usuario );
+              }
+
+     if (isset($response->categorias)) { 
+
+     $valuated = $response->categorias;
+
+       $arraycat = json_decode(json_encode($valuated), true);
+
+
+            $arrayl2 = array_column($arraycat, 'id_categoria');
+            $arraydata1 = array();
+            $arraydata2 = array();
+            $arraydata3 = array();
+            $grades=0;
+
+
+            if (isset($arraycat[0]['id_categoria'])) { 
+for ($i = 0; $i < count($arrayl2); $i++) {
+
+
+   
+    if (isset($arraycat[$i]['calificaciones']['notas'][0]['id_nota'])) { 
+         $arrayl4 = array_column($arraycat[$i]['calificaciones']['notas'], 'id_nota'); 
+              for ($k = 0; $k < count($arrayl4); $k++) {  
+                  $allcode = $mod_calificacion->getallcode($i,-1,$k);
+                    eval ($allcode);
+                    $grades++;
+              }
+    }  else {
+                if (isset($arraycat[$i]['calificaciones']['notas'])) {
+                $allcode = $mod_calificacion->getallcode($i,-1,-1);   
+                eval ($allcode);
+                $grades++;
+                }           
+
+            }
+
+    if (isset($arraycat[$i]['calificaciones'][0]['notas'] )) { 
+    $arrayl3 = array_column($arraycat[$i]['calificaciones'], 'id_calificacion'); // --DEBUG!!!! 
+    for ($j = 0; $j < count($arrayl3); $j++) {
+
+
+            if (isset($arraycat[$i]['calificaciones'][$j]['notas'][0]['id_nota'])) {
+                 $arrayl4 = array_column($arraycat[$i]['calificaciones'][$j]['notas'], 'id_nota'); 
+                     for ($k = 0; $k < count($arrayl4); $k++) {
+                         $allcode = $mod_calificacion->getallcode($i,$j,$k);    
+                         eval ($allcode);
+                          $grades++;
+                     }
+             } else {
+
+                        if (isset($arraycat[$i]['calificaciones'][$j]['notas'])) {
+                        $allcode = $mod_calificacion->getallcode($i,$j,-1);    
+                        eval ($allcode);
+                $grades++;
+                         }
+                    } 
+    }  
+
+    }
+
+} 
+
+}
+
+ if (isset($arraycat['id_categoria'])) { 
+   
+if (isset($arraycat['calificaciones']['notas'][0]['id_nota'])) {
+$arrayl4 = array_column($arraycat['calificaciones']['notas'], 'id_nota'); 
+for ($k = 0; $k < count($arrayl4); $k++) {
+
+
+$allcode = $mod_calificacion->getallcode(-1,-1,$k);    
+eval ($allcode);
+$grades++;
+
+}} else {
+
+if (isset($arraycat['calificaciones']['notas'])) {
+
+$allcode = $mod_calificacion->getallcode(-1,-1,-1);   
+eval ($allcode);
+$grades++;
+
+
+}
+
+
+}
+
+ if (isset($arraycat['calificaciones'][0]['notas'])) { 
+    $arrayl3 = array_column($arraycat['calificaciones'], 'id_calificacion');  
+
+ for ($j = 0; $j < count($arrayl3); $j++) {
+if (isset($arraycat['calificaciones'][$j]['notas'][0]['id_nota'])) {
+$arrayl4 = array_column($arraycat['calificaciones'][$j]['notas'], 'id_nota'); 
+for ($k = 0; $k < count($arrayl4); $k++) {
+  
+$allcode = $mod_calificacion->getallcode(-1,$j,$k);    
+eval ($allcode);
+$grades++;
+
+
+}} else {
+
+if (isset($arraycat['calificaciones'][$j]['notas'])) {
+    
+$allcode = $mod_calificacion->getallcode(-1,$j,-1); 
+eval ($allcode);
+$grades++;
+
+}
+
+
+}
+    } }
+
+ } 
+
+   }
+
+
+
+if (count($arraydata3) > 0) {           
+
+
+$componentes = $mod_calificacion->getescalas($uaca_id,$mod_id,$parciales);
+$cabeceras = $mod_calificacion->getcabeceras($est_id,$asi_id,$paca_id,$parciales);
+if ($cabeceras == Null){ 
+$cabeceras = $mod_calificacion->putcabeceras($est_id,$asi_id,$paca_id,$parciales,$pro_id);
+$cabeceras = $mod_calificacion->getcabeceras($est_id,$asi_id,$paca_id,$parciales);
+}}
+
+
+for ($it = 0; $it < count($arraydata3); $it++) { //-------------------------------------------->
+
+$comp_evaluacion1 = 0.00;
+$comp_autonoma1 = 0.00;
+$comp_examen1 = 0.00;
+$comp_evaluacion2 = 0.00;
+$comp_autonoma2 = 0.00;
+$comp_examen2 = 0.00;
+$comp_examen3 = 0.00;
+$comp_supletorio3 = 0.00;
+
+$data01= $mod_calificacion->getparamcategoria($arraydata1[$it]['nombre']); 
+$data02= $mod_calificacion->getparamitem($arraydata2[$it]['nombre']); 
+$data03= $mod_calificacion->getnota($arraydata3[$it]['nota']);} //---------------------------->
+
+ if (isset($semanaexa1)) {} else {
+
+ if(isset($data02['examen']) ) { 
+$semanaexa1 = $data01['semana'];
+if ($semanaexa1 <= 5 AND $parciales == 1){ 
+
+         $comp_examen1 = (float)$data03; 
+          $comp_cuni_id = 5;
+          print_r("parcial 1 examen ES ");
+           print_r($comp_examen1);
+
+           $dcalificacion = (float)$comp_examen1;
+          $detalles = $mod_calificacion->getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id);
+      if ($detalles == Null) {
+$detalles = $mod_calificacion->putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id ,$dcalificacion); 
+}else {
+if ($detalles[0]['dcal_usuario_creacion'] == '1' AND $detalles[0]['dcal_calificacion'] < $dcalificacion ){
+$detallesup = $mod_calificacion->updatedetalles($detalles[0]['dcal_id'],$dcalificacion); 
+$bt= $mod_calificacion->putbitacora($detalles[0]['dcal_id'],$dcalificacion);
+}
+}
+}
+}   
+}
+
+
+if (isset($semanaexa2)) {} else {
+
+ if(isset($data02['examen']) ) { 
+$semanaexa2 = $data01['semana'];
+if ($semanaexa2 >= 6 AND $parciales == 2){ 
+
+         $comp_examen2 = (float)$data03; 
+          $comp_cuni_id = 10;
+          print_r("parcial 2 examen ES ");
+           print_r($comp_examen2);
+
+           $dcalificacion = (float)$comp_examen2;
+          $detalles = $mod_calificacion->getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id);
+      if ($detalles == Null) {
+$detalles = $mod_calificacion->putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id ,$dcalificacion); 
+}else {
+if ($detalles[0]['dcal_usuario_creacion'] == '1' AND $detalles[0]['dcal_calificacion'] < $dcalificacion ){
+$detallesup = $mod_calificacion->updatedetalles($detalles[0]['dcal_id'],$dcalificacion); 
+$bt= $mod_calificacion->putbitacora($detalles[0]['dcal_id'],$dcalificacion);
+}
+}
+}
+}   
+}
+
+ if(isset($data01['parcial'])) {
+
+
+if ($parciales == 1 AND $data01['parcial']==1) {
+//print_r("======= Inicia proceso parcial 1 ===========");
+//print_r(count($componentes));
+for ($il = 0; $il < count($componentes); $il++) {
+/*print_r("componente: ");
+print_r($componentes[$il]['com_id']);
+print_r("evaluacion: ");
+print_r(isset($data02['evaluacion']));
+    print_r("nota");
+print_r($data03);*/
+
+    if ($componentes[$il]['com_id']== 3 AND isset($data02['evaluacion'])) {    //COMP_EVALUACION ol
+
+    $comp_evaluacion1 = (float)$comp_evaluacion1 + (float)$data03; 
+    $comp_cuni_id = $componentes[$il]['cuni_id'];
+       print_r("comp_evaluacion1 ES  ");
+      print_r($comp_evaluacion1);
+
+    }
+
+     if ($componentes[$il]['com_id']== 4 AND isset($data02['taller'])) {    //COMP_AUTONOMA ol
+        
+     $comp_autonoma1 = (float)$comp_autonoma1+ (float)$data03;print_r("SUMADO:"); 
+     $comp_cuni_id = $componentes[$il]['cuni_id'];
+    print_r("comp_autonoma1 ES ");
+      print_r($comp_autonoma1);
+
+    }
+
+
+
+}
+if ( $comp_evaluacion1 > 0 ){
+$dcalificacion = (float)$comp_evaluacion1;
+$detalles = $mod_calificacion->getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id);
+if ($detalles == Null) {
+$detalles = $mod_calificacion->putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id ,$dcalificacion); 
+}else {
+if ($detalles[0]['dcal_usuario_creacion'] == '1' AND $detalles[0]['dcal_fecha_modificacion'] ==Null){
+$dcalificacion = $dcalificacion + $detalles[0]['dcal_calificacion'];
+$detallesup = $mod_calificacion->updatedetalles($detalles[0]['dcal_id'],$dcalificacion); 
+$bt= $mod_calificacion->putbitacora($detalles[0]['dcal_id'],$dcalificacion);
+}
+}
+} 
+
+if ( $comp_autonoma1 > 0 ){
+$dcalificacion = (float)$comp_autonoma1;
+$detalles = $mod_calificacion->getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id); 
+if ($detalles == Null) {
+$detalles = $mod_calificacion->putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id ,$dcalificacion); 
+}else {
+if ($detalles[0]['dcal_usuario_creacion'] == 1 AND $detalles[0]['dcal_fecha_modificacion'] ==Null){
+$dcalificacion = $dcalificacion + $detalles[0]['dcal_calificacion'];
+$detallesup = $mod_calificacion->updatedetalles($detalles[0]['dcal_id'],$dcalificacion); 
+$bt= $mod_calificacion->putbitacora($detalles[0]['dcal_id'],$dcalificacion);
+}
+}
+} 
+
+//print_r("======= Fin proceso parcial 1 ===========");
+}
+
+
+if ($parciales == 2 AND $data01['parcial']==2) {
+   
+
+for ($il = 0; $il < count($componentes); $il++) {
+
+
+    if ($componentes[$il]['com_id']== 8 AND isset($data02['evaluacion'] )) {    //COMP_EVALUACION ol
+
+     $comp_evaluacion2 = (float)$comp_evaluacion2 + (float)$data03;  
+      $comp_cuni_id = $componentes[$il]['cuni_id'];
+
+    }
+
+     if ($componentes[$il]['com_id']== 9 AND isset($data02['taller'] )) {    //COMP_AUTONOMA ol
+        
+         $comp_autonoma2 = (float)$comp_autonoma2 + (float)$data03; 
+          $comp_cuni_id = $componentes[$il]['cuni_id'];
+
+    }
+
+      if ($componentes[$il]['com_id']== 10 AND isset($data02['examen'] )) {    //COMP_EXAMEN ol
+        
+         if ($data03 > $comp_examen2){
+
+         $comp_examen2 = (float)$data03; 
+          $comp_cuni_id = $componentes[$il]['cuni_id'];
+        
+        }
+
+    }
+
+
+
+}
+if ( $comp_evaluacion2 > 0 ){
+$dcalificacion = (float)$comp_evaluacion2;
+$detalles = $mod_calificacion->getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id);
+if ($detalles == Null) {
+$detalles = $mod_calificacion->putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id ,$dcalificacion); 
+}else {
+if ($detalles[0]['dcal_usuario_creacion'] == 1 AND $detalles[0]['dcal_fecha_modificacion'] ==Null){
+$dcalificacion = $dcalificacion + $detalles[0]['dcal_calificacion'];
+$detallesup = $mod_calificacion->updatedetalles($detalles[0]['dcal_id'],$dcalificacion);  
+$bt= $mod_calificacion->putbitacora($detalles[0]['dcal_id'],$dcalificacion);
+}
+}
+} 
+
+
+if ( $comp_autonoma2 > 0 ){
+$dcalificacion = (float)$comp_autonoma2;
+$detalles = $mod_calificacion->getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id); 
+if ($detalles == Null) {
+$detalles = $mod_calificacion->putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id ,$dcalificacion); 
+}else {
+if ($detalles[0]['dcal_usuario_creacion'] == 1 AND $detalles[0]['dcal_fecha_modificacion'] ==Null){
+$dcalificacion = $dcalificacion + $detalles[0]['dcal_calificacion'];
+$detallesup = $mod_calificacion->updatedetalles($detalles[0]['dcal_id'],$dcalificacion); 
+$bt= $mod_calificacion->putbitacora($detalles[0]['dcal_id'],$dcalificacion);
+}
+}
+} 
+
+}
+
+
+ }
+
+$ucab = $mod_calificacion->updatecabeceras($cabeceras[0]['ccal_id']); 
+if ($maes_id != null){ 
+$upro = $mod_calificacion->updatepromedio($maes_id, $paca_id);
+}
+
+               }}
+
+
+
+    
+
+return true;
+
+}
+
 
 }

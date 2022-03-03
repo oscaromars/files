@@ -2458,6 +2458,18 @@ $comando = $con->createCommand($sql);
 $detalles = $comando->execute();
 return $detalles;
 }
+function putbitacora($ccal_id,$cuni_id,$dcalificacion){
+GLOBAL $dsn, $dbuser, $dbpass, $dbname;
+$con = new \PDO($dsn, $dbuser, $dbpass);
+$sql="
+INSERT INTO db_academico.registro_bitacora_nota
+(dcal_id, rbno_nota_anterior, rbno_nota_actual, rbno_usuario_creacion, rbno_estado, 
+rbno_estado_logico) VALUES ($dcal_id, '0',$dcalificacion, '1', '1', '1');
+";
+$comando = $con->createCommand($sql);
+$bitacora = $comando->execute();
+return $bitacora;
+}
 function updatedetalles($dcal_id,$dcalificacion){
  GLOBAL $dsn, $dbuser, $dbpass, $dbname;
 $con = new \PDO($dsn, $dbuser, $dbpass);
@@ -2472,5 +2484,107 @@ $detalles = $comando->execute();
 return $detalles;
 
 }
+
+ /**
+     * @author  Oscar Sanchez <analistadesarrollo05@uteg.edu.ec>
+     * @param
+     * @return
+     *  funciones auxiliares para obtencion de calificaciones Educativa
+     */
+ function getparamcategoria($elemento) {
+$datacategorias = array();
+$elementos = explode(" ", $elemento);
+ for ($iter = 0; $iter < 21; $iter++) 
+ {
+
+  if (isset($elementos[$iter])) {
+  
+
+   if (isset($elementos[$iter+1])){
+  $nexter = $elementos[$iter+1];    
+   } else {
+$nexter =  0;
+
+   }
+    if ( strtoupper(substr($elementos[$iter],0,1)) == 'S'){
+
+      if (intval(substr($elementos[$iter],1,1)) > 0 ) {           
+             $datacategorias['semana'] = substr($elementos[$iter],1,2);
+          } elseif ( intval($nexter) > 0  AND strtoupper(substr($elementos[$iter],2,1)) == 'M'){ 
+     $datacategorias['semana'] = $nexter; 
+    }
+
+     } 
+
+     elseif ( strtoupper(substr($elementos[$iter],0,1)) == 'P'){
+
+        if (intval(substr($elementos[$iter],1,1)) > 0 ) {           
+             $datacategorias['parcial'] = substr($elementos[$iter],1,2); 
+          } elseif (intval($nexter) > 0){
+             $datacategorias['parcial'] = $nexter;
+          }
+
+   }  elseif ( strtoupper(substr($elementos[$iter],0,1)) == 'U'){
+       if (intval(substr($elementos[$iter],1,1)) > 0){
+          $datacategorias['unidad'] = substr($elementos[$iter],1,2);
+       } elseif (intval($nexter) > 0){
+             $datacategorias['unidad'] = $nexter;
+          }
+
+
+   }  
+
+}
+
+ } 
+
+return $datacategorias;
+ }
+
+ function getnota($elemento) {
+$notas = explode("/", $elemento);
+$withouter = str_replace(chr(44), chr(46), $notas[0]);
+$grade = $withouter*1;  
+return $grade;
+ }
+
+
+function getparamitem($elemento) {                                                   
+ $dataitems = array();
+ $elementos = explode(" ", $elemento);
+ for ($iter = 0; $iter < count($elementos); $iter++) 
+ {
+     if ( strtoupper(substr($elementos[$iter],0,3)) == 'TAL'){
+          if (intval($elementos[$iter+1]) > 0){
+           $dataitems['taller'] = $elementos[$iter+1];
+          }elseif (intval($elementos[$iter+2]) > 0) {
+            $dataitems['taller'] = $elementos[$iter+2];
+          }
+
+
+   }  elseif ( strtoupper(substr($elementos[$iter],0,3)) == 'EVA'){
+      $dataitems['evaluacion'] = 1;
+
+
+   }  elseif ( strtoupper(substr($elementos[$iter],0,3)) == 'EXA'){
+       $dataitems['examen'] = 1;
+
+   }  elseif ( strtoupper(substr($elementos[$iter],0,3)) == 'SUP'){
+       $dataitems['supletorio'] = 1;
+
+   }
+
+    elseif ( strtoupper(substr($elementos[$iter],0,3)) == 'FOR'){
+       $dataitems['foro'] = 1;
+
+   } elseif ( strtoupper(substr($elementos[$iter],0,4)) == 'SINC'){
+       $dataitems['sincrona'] = 1;
+
+   }
+
+ }  
+
+return $dataitems;
+ }
 
 }

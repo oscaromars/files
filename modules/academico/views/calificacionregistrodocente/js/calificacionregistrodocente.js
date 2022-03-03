@@ -411,11 +411,16 @@ function searchEducativaulas() {
     modalidad = $("#cmb_modalidad_aul").val();
     aula = $("#cmb_aulas_aul").val();
     parcial = $("#cmb_parcial_aul").val();
+    
+ if (parcial == 0) {
+document.getElementById('cmb_parcial_aul').style.borderColor = '#aa0000';
+
+ } else {
 
 window.location.href = $('#txth_base').val() + "/academico/calificacionregistrodocente/transferiraulas?paca="+periodo+"&unidad="+unidad+"&modalidad="+modalidad+"&aula="+aula+"&parcial="+parcial;
  
 
-}
+}}
 
 
 function transferAula(id,ecal_id) {

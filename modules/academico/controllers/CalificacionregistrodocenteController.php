@@ -1763,7 +1763,7 @@ return $this->redirect('index');
        $data = Yii::$app->request->get();
        if ($data = Yii::$app->request->get()){ 
     
-      $arr_aula = $mod_calificacion->consultarAulas($data['paca'], $data['unidad'], $data['modalidad'], $data['aula']);
+      $arr_aula = $mod_calificacion->consultarAulas($data['paca'], $data['unidad'], $data['modalidad'], $data['aula'], $data['parcial']);
 
        } else {
 

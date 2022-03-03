@@ -2210,7 +2210,9 @@ croe.croe_exec,ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca
  $sql = "
 SELECT distinct ceduct.cedu_asi_id as id ,LEFT(ceduct.cedu_asi_nombre, 80) as name
 ,cedist.daca_id,uaca.uaca_nombre, daca.paca_id, moda.mod_nombre, daca.mpp_id, 
-person.per_pri_apellido, daca.asi_id
+concat (person.per_pri_nombre, ' ',person.per_pri_apellido, ' Msc.') as docente,
+person.per_pri_apellido, daca.asi_id,
+ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca_anio),'') AS paca_nombre
 FROM db_academico.curso_educativa_distributivo cedist
 INNER JOIN db_academico.curso_educativa as ceduct on cedist.cedu_id = ceduct.cedu_id
 INNER JOIN db_academico.distributivo_academico as daca on cedist.daca_id = daca.daca_id
@@ -2227,6 +2229,9 @@ LEFT JOIN db_academico.cabecera_calificacion as cabec on  cabec.est_id = daes.es
 AND cabec.asi_id = daca.asi_id
 LEFT JOIN db_academico.temp_estudiantes_noprocesados as tempo on  tempo.est_id = daes.est_id
 AND tempo.asi_id = daca.asi_id
+INNER JOIN db_academico.periodo_academico AS paca ON paca.paca_id = daca.paca_id  --
+INNER JOIN db_academico.semestre_academico AS saca ON saca.saca_id = paca.saca_id --
+INNER JOIN db_academico.bloque_academico AS baca ON baca.baca_id = paca.baca_id --
 WHERE  TRUE $str_search
 AND ceduct.cedu_estado = :estado AND ceduct.cedu_estado_logico = :estado
 AND cedist.cedi_estado = :estado AND cedist.cedi_estado_logico = :estado

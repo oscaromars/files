@@ -1798,11 +1798,11 @@ return $this->redirect('index');
 
 }
 
- public function actionTransferer($eduasid){
+ public function actionTransferer($eduasid,$parcial){
 
      $mod_calificacion  = new CabeceraCalificacion();
      $arr_usuarios = $mod_calificacion->consultarUsuarios($eduasid);
-     
+     $parciales=$parcial; if ($parcial > 2){$parcial=2;}
      
  if (count($arr_usuarios) > 0) {  
     

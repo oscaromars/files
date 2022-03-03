@@ -2239,8 +2239,6 @@ AND moda.mod_estado = :estado AND moda.mod_estado_logico = :estado
 AND profe.pro_estado = :estado AND profe.pro_estado_logico = :estado
 AND person.per_estado = :estado AND person.per_estado_logico = :estado
 AND macaes.maes_estado = :estado AND macaes.maes_estado_logico = :estado
-AND cabec.ccal_estado = :estado AND cabec.ccal_estado_logico = :estado
-AND tempo.teno_estado = :estado AND tempo.teno_estado_logico = :estado
      ";
 
         $comando = $con->createCommand($sql);

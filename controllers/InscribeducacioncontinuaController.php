@@ -52,15 +52,15 @@ class InscribeducacioncontinuaController extends \yii\web\Controller {
 		if (Yii::$app->request->isAjax) {
 			$data = Yii::$app->request->post();
 			if (isset($data["getprovincias"])) {
-				$provincias = Provincia::find()->select("pro_id AS id, pro_nombre AS name")->where(["pro_estado_logico" => "1", "pro_estado" => "1", "pai_id" => $data['pai_id']])->asArray()->all();
-				$message = array("provincias" => $provincias);
-				return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
-			}
-			if (isset($data["getcantones"])) {
-				$cantones = Canton::find()->select("can_id AS id, can_nombre AS name")->where(["can_estado_logico" => "1", "can_estado" => "1", "pro_id" => $data['prov_id']])->asArray()->all();
-				$message = array("cantones" => $cantones);
-				return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
-			}
+                $provincias = Provincia::find()->select("pro_id AS id, pro_nombre AS name")->where(["pro_estado_logico" => "1", "pro_estado" => "1", "pai_id" => $data['pai_id']])->asArray()->all();
+                $message = array("provincias" => $provincias);
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+            }
+            if (isset($data["getcantones"])) {
+                $cantones = Canton::find()->select("can_id AS id, can_nombre AS name")->where(["can_estado_logico" => "1", "can_estado" => "1", "pro_id" => $data['prov_id']])->asArray()->all();
+                $message = array("cantones" => $cantones);
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+            }
 			if (isset($data["getarea"])) {
 				//obtener el codigo de area del pais
 				$mod_areapais = new Pais();

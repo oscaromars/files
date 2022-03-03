@@ -223,14 +223,31 @@ GLOBAL $dsn, $dbuser, $dbpass, $dbname;
            putMessageLogFile('uedu_usuario: ' .$uedu_usuario );
               }
 
-          $method = 'obtener_notas_calificaciones'; 
+          $method = 'obtener_avance_usuarios'; 
        
           $args = Array(
                  'id_grupo' =>$cedu_asi_id, 
                  'id_usuario' =>$uedu_usuario,
                 );
 
-           
+             try {
+
+            $advancer = $client->__call( $method, Array( $args ) );
+
+           $arrayadv = json_decode(json_encode($advancer), true);
+
+            $sincro=$arrayadv['usuarios']['avance'];
+            $asiste=$arrayadv['usuarios']['avance'];
+
+              }    catch (PDOException $e) {
+           putMessageLogFile('Error Avance: ' . $e->getMessage());
+           putMessageLogFile('cedu_asi_id: ' .$cedu_asi_id );
+           putMessageLogFile('uedu_usuario: ' .$uedu_usuario );
+              }
+
+
+         $method = 'obtener_notas_calificaciones';   
+
              try {
             $response = $client->__call( $method, Array( $args ) );
 
@@ -593,7 +610,18 @@ $bt= putbitacora($detalles[0]['dcal_id'],$dcalificacion);
 }
 
 
-
+if ( $sincro > 0 ){ 
+if ($componentes[$il]['com_id']== 2) {  
+$dcalificacion = (float)$sincro/50;
+$detalles = $mod_calificacion->getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id);
+if ($detalles == Null) {
+$detalles = $mod_calificacion->putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id ,$dcalificacion); 
+}else {
+if ($detalles[0]['dcal_usuario_creacion'] == 1 AND $detalles[0]['dcal_fecha_modificacion'] ==Null){
+$dcalificacion = $dcalificacion + $detalles[0]['dcal_calificacion'];
+$detallesup = $mod_calificacion->updatedetalles($detalles[0]['dcal_id'],$dcalificacion);  
+$bt= $mod_calificacion->putbitacora($detalles[0]['dcal_id'],$dcalificacion);
+}}}}
 
 
 updatecabeceras($cabeceras[0]['ccal_id']); 

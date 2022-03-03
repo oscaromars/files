@@ -99,6 +99,33 @@ use app\components\CFileInputAjax;
     </div>
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
+            <label for="txt_fecha_nacimiento" class="col-lg-3 col-md-3 col-sm-3 col-xs-3 control-label"><?= Yii::t("formulario", "Fecha Nacimiento") ?> <span class="text-danger">*</span></label>
+            <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9">
+            <?=
+                DatePicker::widget([
+                    'name' => 'txt_fecha_nacimiento',
+                    'value' => '',
+                    'type' => DatePicker::TYPE_INPUT,
+                    'options' => ["class" => "form-control PBvalidation keyupmce", "id" => "txt_fecha_nacimiento", "data-type" => "fecha", "data-keydown" => "true", "placeholder" => Yii::t("formulario", "Birth Date yyyy-mm-dd")],
+                    'pluginOptions' => [
+                        'autoclose' => true,
+                        'format' => Yii::$app->params["dateByDatePicker"],
+                    ]]
+                );
+                ?>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="form-group">
+            <label for="cmb_genero" class="col-lg-3 col-md-3 col-sm-3 col-xs-3 control-label"><?= Yii::t("formulario", "Género") ?> <span class="text-danger">*</span></label>
+            <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9">
+                <?= Html::dropDownList("cmb_genero", 1, $arr_genero, ["class" => "form-control", "id" => "cmb_genero"]) ?>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="form-group">
             <label for="txt_celular" class="col-lg-3 col-md-3 col-sm-3 col-xs-3 control-label"><?= Yii::t("formulario", "CellPhone") ?> <span class="text-danger">*</span></label>
             <!--<div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
                 <input type="text" class="form-control" id="txt_codigoarea" data-type="number" value ="+593" disabled = "true " data-keydown="true">

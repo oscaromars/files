@@ -126,6 +126,7 @@ class InscribeducacioncontinuaController extends \yii\web\Controller {
 			"arr_nivelinst" => ArrayHelper::map($arr_nivelinst, "id", "value"),
 			"arr_redes" => ArrayHelper::map($arr_redes, "id", "name"),
 			"arr_item" => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $arr_item), "id", "name"),
+			'arr_genero' => array("M" => Yii::t("formulario", "Male"), "F" => Yii::t("formulario", "Female")),
 		]);
 	}
 

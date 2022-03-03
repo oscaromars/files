@@ -2189,9 +2189,11 @@ croe.croe_exec,ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca
      * @return
      *  Consulta Aulas Educativa
      */
-    public function consultarAulas($paca_id=Null,$uaca_id=Null,$mod_id=Null,$cedu_id=Null) {      
+     public function consultarAulas($paca_id=Null,$uaca_id=Null,$mod_id=Null,$cedu_id=Null,$ecal_id=Null) {
+      //public function consultarAulas($paca_id=28,$uaca_id=1,$mod_id=1,$cedu_id=3616) {        
         $con = \Yii::$app->db_academico;
         $estado = 1;
+        if ($ecal_id == Null){ $ecal_id = -1; }
         
  $str_search = ""; 
     if ($paca_id != "" && $paca_id > 0) {
@@ -2208,10 +2210,9 @@ croe.croe_exec,ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca
         }
 
  $sql = "
-SELECT distinct ceduct.cedu_asi_id as id ,LEFT(ceduct.cedu_asi_nombre, 80) as name
+SELECT distinct cuni.ecal_id, ceduct.cedu_asi_id as id ,LEFT(ceduct.cedu_asi_nombre, 80) as name
 ,cedist.daca_id,uaca.uaca_nombre, daca.paca_id, moda.mod_nombre, daca.mpp_id, 
-concat (person.per_pri_nombre, ' ',person.per_pri_apellido, ' Msc.') as docente,
-person.per_pri_apellido, daca.asi_id,
+concat (person.per_pri_nombre, ' ',person.per_pri_apellido, ' Msc.') as docente, daca.asi_id,
 ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca_anio),'') AS paca_nombre
 FROM db_academico.curso_educativa_distributivo cedist
 INNER JOIN db_academico.curso_educativa as ceduct on cedist.cedu_id = ceduct.cedu_id
@@ -2223,6 +2224,7 @@ INNER JOIN db_academico.unidad_academica as uaca on  uaca.uaca_id = daca.uaca_id
 INNER JOIN db_academico.modalidad as moda on  moda.mod_id = daca.uaca_id
 INNER JOIN db_academico.profesor as profe on  profe.pro_id = daca.pro_id
 INNER JOIN db_asgard.persona as person on  person.per_id = profe.per_id
+LEFT JOIN db_academico.componente_unidad as cuni on ecal_id = :ecal
 LEFT JOIN db_academico.malla_academico_estudiante macaes 
 ON macaes.per_id = usuedu.per_id AND macaes.asi_id = daca.asi_id
 LEFT JOIN db_academico.cabecera_calificacion as cabec on  cabec.est_id = daes.est_id
@@ -2241,9 +2243,15 @@ AND usuedu.uedu_estado = :estado AND usuedu.uedu_estado_logico = :estado
 AND estu.est_estado = :estado AND estu.est_estado_logico = :estado
 AND uaca.uaca_estado = :estado AND uaca.uaca_estado_logico = :estado
 AND moda.mod_estado = :estado AND moda.mod_estado_logico = :estado
-AND profe.pro_estado = :estado AND profe.pro_estado_logico = :estado
-AND person.per_estado = :estado AND person.per_estado_logico = :estado
-AND macaes.maes_estado = :estado AND macaes.maes_estado_logico = :estado
+AND paca.paca_estado = :estado AND paca.paca_estado_logico = :estado 
+AND saca.saca_estado = :estado AND saca.saca_estado_logico = :estado
+AND baca.baca_estado = :estado AND baca.baca_estado_logico = :estado
+-- AND profe.pro_estado = :estado AND profe.pro_estado_logico = :estado
+-- AND person.per_estado = :estado AND person.per_estado_logico = :estado
+-- AND macaes.maes_estado = :estado AND macaes.maes_estado_logico = :estado
+-- AND cabec.ccal_estado = :estado AND cabec.ccal_estado_logico = :estado
+-- AND tempo.teno_estado = :estado AND tempo.teno_estado_logico = :estado
+ORDER BY name ASC
      ";
 
         $comando = $con->createCommand($sql);
@@ -2260,6 +2268,7 @@ AND macaes.maes_estado = :estado AND macaes.maes_estado_logico = :estado
             $comando->bindParam(":cedu_id", $cedu_id, \PDO::PARAM_INT);
         }
         $comando->bindParam(":estado", $estado, \PDO::PARAM_INT);
+        $comando->bindParam(":ecal", $ecal_id, \PDO::PARAM_INT);
         $resultAulas = $comando->queryAll();
         return $resultAulas;
     }

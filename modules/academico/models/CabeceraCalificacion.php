@@ -2432,8 +2432,7 @@ return $cabeceras;
      *  funciones auxiliares para gestion de Detalles de calificaciones
      */
 function getdetalles($ccal_id,$cuni_id){
- GLOBAL $dsn, $dbuser, $dbpass, $dbname;
-$con = new \PDO($dsn, $dbuser, $dbpass);
+$con = Yii::$app->db_academico;
 $sql="
 SELECT dcal_id, ccal_id,cuni_id,dcal_calificacion,
 dcal_usuario_creacion,dcal_fecha_modificacion
@@ -2447,8 +2446,7 @@ $detalles = $comando->queryOne();
 return $detalles;
 }
 function putdetalles($ccal_id,$cuni_id,$dcalificacion){
-GLOBAL $dsn, $dbuser, $dbpass, $dbname;
-$con = new \PDO($dsn, $dbuser, $dbpass);
+$con = Yii::$app->db_academico;
 $sql="
 INSERT INTO db_academico.detalle_calificacion
 (ccal_id,cuni_id,dcal_calificacion,dcal_usuario_creacion,dcal_estado,dcal_estado_logico)
@@ -2471,8 +2469,7 @@ $bitacora = $comando->execute();
 return $bitacora;
 }
 function updatedetalles($dcal_id,$dcalificacion){
- GLOBAL $dsn, $dbuser, $dbpass, $dbname;
-$con = new \PDO($dsn, $dbuser, $dbpass);
+$con = Yii::$app->db_academico;
 $sql="
 UPDATE db_academico.detalle_calificacion
  SET dcal_calificacion = $dcalificacion,

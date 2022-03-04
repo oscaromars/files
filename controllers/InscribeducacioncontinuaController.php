@@ -36,7 +36,7 @@ class InscribeducacioncontinuaController extends \yii\web\Controller {
 	}
 
 	public function actionIndex() {
-		$this->layout = '@themes/' . \Yii::$app->getView()->theme->themeName . '/layouts/basic.php';
+		$this->layout = '@themes/' . \Yii::$app->getView()->theme->themeName . '/layouts/icp.php';
 		$per_id = Yii::$app->session->get("PB_perid");
 		$mod_persona = Persona::findIdentity($per_id);
 		$mod_modalidad = new Modalidad();
@@ -294,7 +294,7 @@ class InscribeducacioncontinuaController extends \yii\web\Controller {
 	}
 
 	public function actionSavepagodinner() {
-		$this->layout = '@themes/' . \Yii::$app->getView()->theme->themeName . '/layouts/basic.php';
+		$this->layout = '@themes/' . \Yii::$app->getView()->theme->themeName . '/layouts/icp.php';
 		$data = Yii::$app->request->post();
 		$dataGet = Yii::$app->request->get();
 		$con1 = \Yii::$app->db_facturacion;

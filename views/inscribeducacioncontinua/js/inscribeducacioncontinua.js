@@ -1,6 +1,6 @@
 function habilitarSecciones() {
-    //var pais = $('#cmb_pais_dom').val();
-    var pais = 1;
+    var pais = $('#cmb_pais_dom').val();
+    //var pais = 1;
     var unidad = $('#cmb_unidad_solicitud').val();
     if ((pais == 1) && (unidad == 1)) {
         $('#divCertvota').css('display', 'block');
@@ -26,7 +26,7 @@ $(document).ready(function () {
         ;
     });
 
-    $('#cmb_pais_dom').change(function () {
+    /*$('#cmb_pais_dom').change(function () {
         var link = $('#txth_base').val() + "/inscribeducacioncontinua/index";
         var arrParams = new Object();
         arrParams.codarea = $(this).val();
@@ -35,6 +35,46 @@ $(document).ready(function () {
             if (response.status == "OK") {
                 data = response.message;
                 $('#txt_codigoarea').val(data.area['name']);
+            }
+        }, true);
+    });*/
+    $('#cmb_pais_dom').change(function () {
+        var link = $('#txth_base').val() + "/inscribeducacioncontinua/index";
+        var arrParams = new Object();
+        arrParams.pai_id = $(this).val();
+        arrParams.getprovincias = true;
+        arrParams.getarea = true;
+        requestHttpAjax(link, arrParams, function (response) {
+            if (response.status == "OK") {
+                data = response.message;
+                setComboData(data.provincias, "cmb_pro_dom");
+                var arrParams = new Object();
+                if (data.provincias.length > 0) {
+                    arrParams.prov_id = data.provincias[0].id;
+                    arrParams.getcantones = true;
+                    requestHttpAjax(link, arrParams, function (response) {
+                        if (response.status == "OK") {
+                            data = response.message;
+                            setComboData(data.cantones, "cmb_ciudad_dom");
+                        }
+                    }, true);
+                }
+            }
+        }, true);
+        // actualizar codigo pais
+        //$("#lbl_codeCountry").text($("#cmb_pais option:selected").attr("data-code"));
+        //$("#lbl_codeCountrycon").text($("#cmb_pais option:selected").attr("data-code"));
+        //$("#lbl_codeCountrycell").text($("#cmb_pais option:selected").attr("data-code"));
+    });
+    $('#cmb_pro_dom').change(function () {
+        var link = $('#txth_base').val() + "/inscribeducacioncontinua/index";
+        var arrParams = new Object();
+        arrParams.prov_id = $(this).val();
+        arrParams.getcantones = true;
+        requestHttpAjax(link, arrParams, function (response) {
+            if (response.status == "OK") {
+                data = response.message;
+                setComboData(data.cantones, "cmb_ciudad_dom");
             }
         }, true);
     });
@@ -49,8 +89,8 @@ $(document).ready(function () {
 
     $('#sendInformacionAspirante2').click(function () {
         var error = 0;
-        //var pais = $('#cmb_pais_dom').val();
-        var pais = 1;
+        var pais = $('#cmb_pais_dom').val();
+        //var pais = 1;
         if ($("#chk_mensaje1").prop("checked") && $("#chk_mensaje2").prop("checked")) {
             error = 0;
         } else {
@@ -323,7 +363,7 @@ $(document).ready(function () {
                 $('#divRequisitosCANAD').css('display', 'none');
                 $('#divRequisitosEXA').css('display', 'none');
                 $('#divRequisitosPRP').css('display', 'none');
-                
+
             } else {  //Posgrado  Semipresencial
                 if (($('#cmb_modalidad_solicitud').val() == 3) || ($('#cmb_modalidad_solicitud').val() == 2)) {
                     //Taller introductorio
@@ -359,7 +399,7 @@ $(document).ready(function () {
     });
     //Pago por stripe.-
     $('#rdo_forma_pago_otros').change(function () {
-        if ($('#rdo_forma_pago_otros').val() == 3) {            
+        if ($('#rdo_forma_pago_otros').val() == 3) {
             $("#rdo_forma_pago_deposito").prop("checked", "");
             $("#rdo_forma_pago_transferencia").prop("checked", "");
             $('#DivSubirPago').css('display', 'none');
@@ -466,8 +506,7 @@ $(document).ready(function () {
         /*} else {
             arrParams.forma_pago = 1;*/
         }
-        arrParams.item = $('#cmb_item').val();        
-        
+        arrParams.item = $('#cmb_item').val();
         var error = 0;
         if ($('#txth_doc_pago').val() == "") {
             error++;
@@ -476,7 +515,7 @@ $(document).ready(function () {
         } else if ($('#cmb_item').val() == 0){
             error++;
             var mensaje = {wtmessage: "Debe seleccionar un item.", title: "Información"};
-            showAlert("NO_OK", "error", mensaje);        
+            showAlert("NO_OK", "error", mensaje);
         } else {
             if (!validateForm()) {
                 requestHttpAjax(link, arrParams, function (response) {
@@ -501,21 +540,20 @@ $(document).ready(function () {
         requestHttpAjax(link, arrParams, function (response) {
             if (response.status == "OK") {
                 data = response.message;
-                $('#val_item_1').html(data.precio);          
+                $('#val_item_1').html(data.precio);
                 if ($('#cmb_item') != 0) {
                     $('#id_item_1').css('display', 'block');
                 } else {
                     $('#id_item_1').css('display', 'none');
-                }                                
+                }
             }
         }, true);
     });
 
     $('#payBtn').on('click', function (e) {
 
-        $("#payBtn").prop("disabled",true);        
-        
-        setTimeout(function () { 
+        $("#payBtn").prop("disabled",true);
+        setTimeout(function () {
             try{
                 stripe.createToken(cardElement).then(function(result) {
                     if (result.error) {
@@ -576,9 +614,9 @@ $(document).ready(function () {
 
     // Callback to handle the response from stripe
     function stripeTokenHandler(token) {
-        
+
     }//function stripeTokenHandler
-    
+
     //$.LoadingOverlay("hide");
     /************************************************************/
     /***** FIN STRIPE *******************************************/
@@ -714,7 +752,6 @@ function guardarInscripcion(accion, paso) {
                             $('#val_item_3').text('$100');
                         }
                     }
-                    
                     $('#val_item_1').html(leyenda);*/
                     //fin ingreso informacion del tab 3
                     $('#txth_twin_id').val(response.data.ids);//SE AGREGA AL FINAL
@@ -727,13 +764,13 @@ function guardarInscripcion(accion, paso) {
 }
 
 function sendInscripcionSubirPago2(){
-        guardarInscripcionTemp2('UpdateDepTrans');   
+        guardarInscripcionTemp2('UpdateDepTrans');
 }//function sendInscripcionSubirPago3
 
 function guardarInscripcionTemp2(accion) {
     /*
     $.LoadingOverlay("show",{
-        imageColor: "#a41b5e", 
+        imageColor: "#a41b5e",
     });*/
 
     var ID           = (accion == "UpdateDepTrans") ? $('#txth_twin_id').val() : 0;
@@ -742,8 +779,8 @@ function guardarInscripcionTemp2(accion) {
     arrParams.DATA_1 = dataInscripPart12(ID);
     arrParams.ACCION = accion;
     if (!validateForm()) {
-        requestHttpAjax(link, arrParams, function (response) {   
-            //console.log("function guardarInscripcionTemp2");                     
+        requestHttpAjax(link, arrParams, function (response) {
+            //console.log("function guardarInscripcionTemp2");
             if (response.status == "OK") {
                 var link = $('#txth_base').val() + "/inscribeducacioncontinua/saveinscripciontemp";
                 //window.open("https://www.cranea.com.ec/mbtu/online-payments/");
@@ -754,37 +791,34 @@ function guardarInscripcionTemp2(accion) {
                 arrParams.apellidos_fact = $('#txt_apellidos_fac').val();
                 arrParams.direccion_fact = $('#txt_dir_fac').val();
                 arrParams.telefono_fac   = $('#txt_tel_fac').val();
-                
                 var tipo_dni_fact = "";
 
                 if ($('#opt_tipo_DNI option:selected').val() == "1")
                     tipo_dni_fact = "CED";
                 else if ($('#opt_tipo_DNI option:selected').val() == "2")
                     tipo_dni_fact = "PASS";
-                else 
-                    tipo_dni_fact = "RUC";  
-
+                else
+                    tipo_dni_fact = "RUC";
                 arrParams.tipo_dni_fac = tipo_dni_fact;
                 arrParams.dni          = $('#txt_dni_fac').val();
                 arrParams.correo       = $('#txt_correo_fac').val();
                 //Datos del pago.
                // $('#txt_numtransaccion').addClass("PBvalidation");
                 $('#txt_fecha_transaccion').addClass("PBvalidation");
-                
                 arrParams.num_transaccion   = $('#txt_numtransaccion').val();
                 arrParams.observacion       = $('#txt_observacion').val();
                 arrParams.fecha_transaccion = $('#txt_fecha_transaccion').val();
                 arrParams.doc_pago          = $('#txth_doc_pago').val();
 
-                if ($("input[name='rdo_forma_pago_otros']:checked").val() == "3") {    
-                    arrParams.forma_pago = 1; 
-                    $('#txt_fecha_transaccion').removeClass("PBvalidation");       
+                if ($("input[name='rdo_forma_pago_otros']:checked").val() == "3") {
+                    arrParams.forma_pago = 1;
+                    $('#txt_fecha_transaccion').removeClass("PBvalidation");
                 } else if ($("input[name='rdo_forma_pago_deposito']:checked").val() == "1"){ //rdo_forma_pago_deposito
                     arrParams.forma_pago = 5;
                 } else if  ($("input[name='rdo_forma_pago_transferencia']:checked").val() == "2"){
                     arrParams.forma_pago = 4;
                 } else{
-                    arrParams.forma_pago = 1;       
+                    arrParams.forma_pago = 1;
                 }
                 var error = 0;
 
@@ -796,7 +830,7 @@ function guardarInscripcionTemp2(accion) {
                     error++;
                     var mensaje = {wtmessage: "Debe adjuntar el documento o el tipo de documento no es (jpg,png,pdf,jpeg)", title: "Información"};
                     showAlert("NO_OK", "error", mensaje);
-                } else {                        
+                } else {
                     //console.log("per_id saveinscripciontemp3: "+ $("#per_id").val());
                     //console.log("dataext saveinscripciontemp3: "+ $("#dataext").val());
                     requestHttpAjax(link, arrParams, function (response) {
@@ -881,8 +915,8 @@ function dataInscripPart1(ID) {
     }
     objDat.pges_empresa = $('#txt_empresa').val();
     objDat.pges_correo = $('#txt_correo').val();
-    //objDat.pais = $('#cmb_pais_dom option:selected').val();
-    objDat.pais = 1;
+    objDat.pais = $('#cmb_pais_dom option:selected').val();
+    //objDat.pais = 1;
     objDat.pges_celular = $('#txt_celular').val();
     objDat.nivinstrucion = $('#cmb_instruccion option:selected').val();
     objDat.redes = $('#cmb_redes_sociales option:selected').val();
@@ -907,7 +941,7 @@ function dataInscripPart1(ID) {
     objDat.twin_mensaje1 = ($("#chk_mensaje1").prop("checked")) ? '1' : '0';
     objDat.twin_mensaje2 = ($("#chk_mensaje2").prop("checked")) ? '1' : '0';
     objDat.ruta_doc_aceptacion = ($('#txth_doc_aceptacion').val() != '') ? $('#txth_doc_aceptacion').val() : '';    
-    objDat.cemp_id = $('#cmb_convenio_empresa option:selected').val(); 
+    objDat.cemp_id = $('#cmb_convenio_empresa option:selected').val();
     //TAB 3
     objDat.ruta_doc_pago = ($('#txth_doc_pago').val() != '') ? $('#txth_doc_pago').val() : '';
     if ($("input[name='rdo_forma_pago_otros']:checked").val() == "3") {//($('#rdo_forma_pago_otros option:selected').val() == "2") {
@@ -928,7 +962,6 @@ function dataInscripPart1(ID) {
 function dataInscripPart12(ID) {
     var datArray = new Array();
     var objDat   = new Object();
-    
     /*** PASO 1 - REGISTRA TUS DATOS *************************/
 
     /*********************************************************/
@@ -970,8 +1003,7 @@ function dataInscripPart12(ID) {
 
     //objDat.pges_empresa = $('#txt_empresa').val();
     //ini gap - se comento el jquery porq el div de modalidad se oculto de la vista y no se lo necesita por el momento
-    objDat.modalidad = 1;//$('#cmb_modalidad_solicitud option:selected').val();   
-    
+    objDat.modalidad = 1;//$('#cmb_modalidad_solicitud option:selected').val();
     //Este campo ya no se solicita pero base sigue siendo obligatorio por lo que se envia 1.
     objDat.twin_nins_id = 1;//$('#cmb_aca_lvl option:selected').val();
 
@@ -979,12 +1011,11 @@ function dataInscripPart12(ID) {
         //objDat.conoce = $('#cmb_conuteg option:selected').val();
     objDat.ipre_precio_uaca = $('#val_item_1').text();//dizamora
 
-    
     //TAB 3
-    objDat.ruta_doc_pago = ($('#txth_doc_pago').val() != '') ? $('#txth_doc_pago').val() : '';    
+    objDat.ruta_doc_pago = ($('#txth_doc_pago').val() != '') ? $('#txth_doc_pago').val() : '';
     if ($("input[name='rdo_forma_pago_otros']:checked").val() == "3") {//($('#rdo_forma_pago_otros option:selected').val() == "2") {        
-        objDat.forma_pago = 1;   
-        console.log("Forma de pago " + 1 );     
+        objDat.forma_pago = 1;
+        console.log("Forma de pago " + 1 );
     } else if ($("input[name='rdo_forma_pago_deposito']:checked").val() == "1") { //rdo_forma_pago_deposito
         objDat.forma_pago = 5;
     } else if  ($("input[name='rdo_forma_pago_transferencia']:checked").val() == "2") { //rdo_forma_pago_transferencia

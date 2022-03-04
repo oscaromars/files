@@ -34,6 +34,7 @@ use yii\helpers\Html;
                                  "arr_metodos" => $arr_metodos,
                                  "arr_nivelinst" => $arr_nivelinst,
                                  "arr_redes" => $arr_redes,
+                                 "arr_genero" => $arr_genero,
                          ]);
                     ?>
                 </form>

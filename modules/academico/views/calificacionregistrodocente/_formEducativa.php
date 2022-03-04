@@ -20,7 +20,7 @@ Academico::registerTranslations();
             </div>
               <label for="cmb_unidad_all" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= academico::t("Academico", "Academic unit") ?></label>
             <div class="col-sm-3 col-xs-3 col-md-3 col-lg-3">
-                    <?= Html::dropDownList("cmb_unidad_all", 1, $arr_unidad, ["class" => "form-control", "id" => "cmb_unidad_all", "disabled" => "True"]) ?>
+                    <?= Html::dropDownList("cmb_unidad_all", 1, $arr_unidad, ["class" => "form-control", "id" => "cmb_unidad_all"]) ?>
             </div>
         </div>
     </div>

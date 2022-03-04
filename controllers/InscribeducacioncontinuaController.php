@@ -52,15 +52,15 @@ class InscribeducacioncontinuaController extends \yii\web\Controller {
 		if (Yii::$app->request->isAjax) {
 			$data = Yii::$app->request->post();
 			if (isset($data["getprovincias"])) {
-				$provincias = Provincia::find()->select("pro_id AS id, pro_nombre AS name")->where(["pro_estado_logico" => "1", "pro_estado" => "1", "pai_id" => $data['pai_id']])->asArray()->all();
-				$message = array("provincias" => $provincias);
-				return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
-			}
-			if (isset($data["getcantones"])) {
-				$cantones = Canton::find()->select("can_id AS id, can_nombre AS name")->where(["can_estado_logico" => "1", "can_estado" => "1", "pro_id" => $data['prov_id']])->asArray()->all();
-				$message = array("cantones" => $cantones);
-				return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
-			}
+                $provincias = Provincia::find()->select("pro_id AS id, pro_nombre AS name")->where(["pro_estado_logico" => "1", "pro_estado" => "1", "pai_id" => $data['pai_id']])->asArray()->all();
+                $message = array("provincias" => $provincias);
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+            }
+            if (isset($data["getcantones"])) {
+                $cantones = Canton::find()->select("can_id AS id, can_nombre AS name")->where(["can_estado_logico" => "1", "can_estado" => "1", "pro_id" => $data['prov_id']])->asArray()->all();
+                $message = array("cantones" => $cantones);
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+            }
 			if (isset($data["getarea"])) {
 				//obtener el codigo de area del pais
 				$mod_areapais = new Pais();
@@ -126,6 +126,7 @@ class InscribeducacioncontinuaController extends \yii\web\Controller {
 			"arr_nivelinst" => ArrayHelper::map($arr_nivelinst, "id", "value"),
 			"arr_redes" => ArrayHelper::map($arr_redes, "id", "name"),
 			"arr_item" => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $arr_item), "id", "name"),
+			'arr_genero' => array("M" => Yii::t("formulario", "Male"), "F" => Yii::t("formulario", "Female")),
 		]);
 	}
 

@@ -1763,7 +1763,7 @@ return $this->redirect('index');
        $data = Yii::$app->request->get();
        if ($data = Yii::$app->request->get()){ 
     
-      $arr_aula = $mod_calificacion->consultarAulas($data['paca'], $data['unidad'], $data['modalidad'], $data['aula']);
+      $arr_aula = $mod_calificacion->consultarAulas($data['paca'], $data['unidad'], $data['modalidad'], $data['aula'], $data['parcial']);
 
        } else {
 
@@ -1798,11 +1798,11 @@ return $this->redirect('index');
 
 }
 
- public function actionTransferer($eduasid){
+ public function actionTransferer($eduasid,$parcial){
 
      $mod_calificacion  = new CabeceraCalificacion();
      $arr_usuarios = $mod_calificacion->consultarUsuarios($eduasid);
-     
+     $parciales=$parcial; if ($parcial > 2){$parcial=2;}
      
  if (count($arr_usuarios) > 0) {  
     

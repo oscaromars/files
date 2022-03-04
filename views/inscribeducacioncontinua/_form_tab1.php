@@ -73,14 +73,57 @@ use app\components\CFileInputAjax;
             </div>
         </div>
     </div>
-    <!--<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
             <label for="cmb_pais_dom" class="col-lg-3 col-md-3 col-sm-3 col-xs-3 control-label"><?= Yii::t("formulario", "Country") ?> <span class="text-danger">*</span></label>
             <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9">
                 <?= Html::dropDownList("cmb_pais_dom", 1, $arr_pais_dom, ["class" => "form-control", "id" => "cmb_pais_dom"]) ?>
             </div>
         </div>
-    </div>-->
+    </div>
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="form-group">
+            <label for="cmb_pro_dom" class="col-lg-3 col-md-3 col-sm-3 col-xs-3 control-label"><?= Yii::t("formulario", "Provincia") ?> <span class="text-danger">*</span></label>
+            <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9">
+                <?= Html::dropDownList("cmb_pro_dom", 1, $arr_prov_dom, ["class" => "form-control", "id" => "cmb_pro_dom"]) ?>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="form-group">
+            <label for="cmb_ciudad_dom" class="col-lg-3 col-md-3 col-sm-3 col-xs-3 control-label"><?= Yii::t("formulario", "City") ?> <span class="text-danger">*</span></label>
+            <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9">
+                <?= Html::dropDownList("cmb_ciudad_dom", 1, $arr_ciu_dom, ["class" => "form-control", "id" => "cmb_ciudad_dom"]) ?>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="form-group">
+            <label for="txt_fecha_nacimiento" class="col-lg-3 col-md-3 col-sm-3 col-xs-3 control-label"><?= Yii::t("formulario", "Fecha Nacimiento") ?> <span class="text-danger">*</span></label>
+            <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9">
+            <?=
+                DatePicker::widget([
+                    'name' => 'txt_fecha_nacimiento',
+                    'value' => '',
+                    'type' => DatePicker::TYPE_INPUT,
+                    'options' => ["class" => "form-control PBvalidation keyupmce", "id" => "txt_fecha_nacimiento", "data-type" => "fecha", "data-keydown" => "true", "placeholder" => Yii::t("formulario", "Birth Date yyyy-mm-dd")],
+                    'pluginOptions' => [
+                        'autoclose' => true,
+                        'format' => Yii::$app->params["dateByDatePicker"],
+                    ]]
+                );
+                ?>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="form-group">
+            <label for="cmb_genero" class="col-lg-3 col-md-3 col-sm-3 col-xs-3 control-label"><?= Yii::t("formulario", "Género") ?> <span class="text-danger">*</span></label>
+            <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9">
+                <?= Html::dropDownList("cmb_genero", 1, $arr_genero, ["class" => "form-control", "id" => "cmb_genero"]) ?>
+            </div>
+        </div>
+    </div>
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
             <label for="txt_celular" class="col-lg-3 col-md-3 col-sm-3 col-xs-3 control-label"><?= Yii::t("formulario", "CellPhone") ?> <span class="text-danger">*</span></label>

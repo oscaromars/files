@@ -166,21 +166,17 @@ AND tempo.teno_id is null
 
  function getgrades($mod_id, $paca_id, $uaca_id,$parciales) {
 
-  try {
+ try {
 
 GLOBAL $dsn, $dbuser, $dbpass, $dbname;
            $pdo = new \PDO($dsn, $dbuser, $dbpass);
            $groups = getallgroups($mod_id, $paca_id, $uaca_id); 
-         
-
 
  if (count($groups) > 0) {  
     $countar=0;
                for ($m = 0; $m < count($groups); $m++) {  
 
-           
-
-            $daca_id = $groups[$m]['daca_id'];
+    $daca_id = $groups[$m]['daca_id'];
             $cedu_asi_id = $groups[$m]['cedu_asi_id']; 
             $uaca_id = $groups[$m]['uaca_id'];
             $paca_id = $groups[$m]['paca_id'];
@@ -194,8 +190,7 @@ GLOBAL $dsn, $dbuser, $dbpass, $dbname;
             $ced_id = $groups[$m]['per_cedula'];
             $maes_id = $groups[$m]['maes_id'];
 
-
-     try {
+    try {
           $wsdl = 'https://campusvirtual.uteg.edu.ec/soap/?wsdl=true';
          
          $client = new \SoapClient($wsdl, [
@@ -223,14 +218,15 @@ GLOBAL $dsn, $dbuser, $dbpass, $dbname;
            putMessageLogFile('uedu_usuario: ' .$uedu_usuario );
               }
 
+
           $method = 'obtener_avance_usuarios'; 
        
           $args = Array(
-                 'id_grupo' =>$cedu_asi_id, 
+                 'id_grupo' =>$eduasid, 
                  'id_usuario' =>$uedu_usuario,
                 );
 
-             try {
+   try {
 
             $advancer = $client->__call( $method, Array( $args ) );
 
@@ -245,9 +241,8 @@ GLOBAL $dsn, $dbuser, $dbpass, $dbname;
            putMessageLogFile('uedu_usuario: ' .$uedu_usuario );
               }
 
-
-         $method = 'obtener_notas_calificaciones';   
-
+          $method = 'obtener_notas_calificaciones'; 
+           
              try {
             $response = $client->__call( $method, Array( $args ) );
 
@@ -257,8 +252,7 @@ GLOBAL $dsn, $dbuser, $dbpass, $dbname;
            putMessageLogFile('uedu_usuario: ' .$uedu_usuario );
               }
 
-              //$isauth= getPagopend($ced_id); 
-               $isauth = isset($response); 
+  $isauth = isset($response); 
               $isdata = isset($response->categorias); 
               print_r(' isauth:');
               var_dump($isauth);
@@ -272,7 +266,6 @@ GLOBAL $dsn, $dbuser, $dbpass, $dbname;
       
  if (isset($response->categorias)) { 
 
-               
                  var_dump($response);
                  var_dump($isauth);                
 
@@ -285,7 +278,6 @@ GLOBAL $dsn, $dbuser, $dbpass, $dbname;
             $arraydata2 = array();
             $arraydata3 = array();
             $grades=0;
-
 
             if (isset($arraycat[0]['id_categoria'])) { 
 for ($i = 0; $i < count($arrayl2); $i++) {
@@ -390,33 +382,30 @@ $grades++;
 
  } 
 
-/*------------------------------------------------------------------*/
+ }}   // response categorias
 
-if (count($arraydata3) > 0) {           
+ if (count($arraydata3) > 0) {           
 
 
 $componentes = getescalas($uaca_id,$mod_id,$parciales);
 $cabeceras = getcabeceras($est_id,$asi_id,$paca_id,$parciales);
 if ($cabeceras == Null){ 
 $cabeceras = putcabeceras($est_id,$asi_id,$paca_id,$parciales,$pro_id);
-$cabeceras = getcabeceras($est_id,$asi_id,$paca_id,$parciales);
-}}
+$cabeceras = getcabeceras($est_id,$asi_id,$paca_id,$parciales);}
 
 
+if ($mod_id==1 AND $uaca_id ==1){
 for ($it = 0; $it < count($arraydata3); $it++) {
-$comp_evaluacion1 = 0.00;
-    $comp_autonoma1 = 0.00;
-    $comp_examen1 = 0.00;
- $comp_evaluacion2 = 0.00;
- $comp_autonoma2 = 0.00;
- $comp_examen2 = 0.00;
-  $comp_examen3 = 0.00;
- $comp_supletorio3 = 0.00;
+
+$comp_evaluacion1 = 0.00;$comp_autonoma1 = 0.00;$comp_examen1 = 0.00;
+$comp_foro1 = 0.00 ; $comp_sincrona1 = 0.00 ; 
+ $comp_evaluacion2 = 0.00; $comp_autonoma2 = 0.00; $comp_examen2 = 0.00;
+ $comp_foro2 = 0.00 ; $comp_sincrona2 = 0.00 ; 
+$comp_examen3 = 0.00;$comp_supletorio3 = 0.00;$comp_mejoramiento3 = 0.00;
 
  $data01= getparamcategoria($arraydata1[$it]['nombre']); 
  $data02= getparamitem($arraydata2[$it]['nombre']); 
  $data03= getnota($arraydata3[$it]['nota']);
-
 
  if (isset($semanaexa1)) {} else {
 
@@ -532,8 +521,7 @@ $bt= putbitacora($detalles[0]['dcal_id'],$dcalificacion);
 }
 } 
 
-//print_r("======= Fin proceso parcial 1 ===========");
-}
+} //print_r("======= Fin proceso parcial 1 ===========");
 
 
 if ($parciales == 2 AND $data01['parcial']==2) {
@@ -599,68 +587,238 @@ $bt= putbitacora($detalles[0]['dcal_id'],$dcalificacion);
 }
 } 
 
-}
-
-
+} //print_r("======= Fin proceso parcial 2 ===========");
  }
 
 
 
-
-}
-
-
-if ( $sincro > 0 ){ 
-if ($componentes[$il]['com_id']== 2) {  
-$dcalificacion = (float)$sincro/50;
-$detalles = $mod_calificacion->getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id);
-if ($detalles == Null) {
-$detalles = $mod_calificacion->putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id ,$dcalificacion); 
-}else {
-if ($detalles[0]['dcal_usuario_creacion'] == 1 AND $detalles[0]['dcal_fecha_modificacion'] ==Null){
-$dcalificacion = $dcalificacion + $detalles[0]['dcal_calificacion'];
-$detallesup = $mod_calificacion->updatedetalles($detalles[0]['dcal_id'],$dcalificacion);  
-$bt= $mod_calificacion->putbitacora($detalles[0]['dcal_id'],$dcalificacion);
-}}}}
-
-
-updatecabeceras($cabeceras[0]['ccal_id']); 
+ updatecabeceras($cabeceras[0]['ccal_id']); 
 if ($maes_id != null){ 
 updatepromedio($maes_id, $paca_id);
 }
 
-        }  }  // END IS AUTH AND GET CATEGORIES (UNA VEZ POR ITEM)
 
 
-GLOBAL $dsn, $dbuser, $dbpass, $dbname;
-$con = new \PDO($dsn, $dbuser, $dbpass);
-$logg="
-INSERT INTO db_academico.temp_estudiantes_noprocesados 
-(daca_id,cedu_asi_id,uaca_id,paca_id,mod_id,pro_id,asi_id,est_id,per_id,uedu_usuario,per_cedula,isauth,isdata,teno_usuario_ingreso,teno_estado,teno_estado_logico)
-VALUES ($daca_id,$cedu_asi_id,$uaca_id,$paca_id,$mod_id,$pro_id,$asi_id,$est_id,$per_id,$uedu_usuario,$ced_id,$isauthn,$isdatan,'1','1','1');
-";
- $comando = $con->prepare($logg);
- $comando->execute();
- $logsaver = $comando->fetchAll(\PDO::FETCH_ASSOC);
+} //all degrees items  
+} //by moduaca
+
+
+if ($mod_id==1 AND $uaca_id ==2){
+for ($it = 0; $it < count($arraydata3); $it++) {
+
+$comp_evaluacion1 = 0.00;$comp_autonoma1 = 0.00;$comp_examen1 = 0.00;
+$comp_foro1 = 0.00 ; $comp_sincrona1 = 0.00 ; 
+ $comp_evaluacion2 = 0.00; $comp_autonoma2 = 0.00; $comp_examen2 = 0.00;
+ $comp_foro2 = 0.00 ; $comp_sincrona2 = 0.00 ; 
+$comp_examen3 = 0.00;$comp_supletorio3 = 0.00;$comp_mejoramiento3 = 0.00;
+
+ $data01= getparamcategoria($arraydata1[$it]['nombre']); 
+ $data02= getparamitem($arraydata2[$it]['nombre']); 
+ $data03= getnota($arraydata3[$it]['nota']);
+
+ if (isset($semanaexa1)) {} else {
+
+ if(isset($data02['examen']) ) { 
+$semanaexa1 = $data01['semana'];
+if ($semanaexa1 <= 5 AND $parciales == 1){ 
+
+         $comp_examen1 = (float)$data03; 
+          $comp_cuni_id = 5;
+          print_r("parcial 1 examen ES ");
+           print_r($comp_examen1);
+
+           $dcalificacion = (float)$comp_examen1;
+          $detalles = getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id);
+      if ($detalles == Null) {
+$detalles = putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id ,$dcalificacion); 
+}else {
+if ($detalles[0]['dcal_usuario_creacion'] == '1' AND $detalles[0]['dcal_calificacion'] < $dcalificacion ){
+$detallesup = updatedetalles($detalles[0]['dcal_id'],$dcalificacion); 
+$bt= putbitacora($detalles[0]['dcal_id'],$dcalificacion);
+}
+}
+}
+}   
+}
+
+
+if (isset($semanaexa2)) {} else {
+
+ if(isset($data02['examen']) ) { 
+$semanaexa2 = $data01['semana'];
+if ($semanaexa2 >= 6 AND $parciales == 2){ 
+
+         $comp_examen2 = (float)$data03; 
+          $comp_cuni_id = 10;
+          print_r("parcial 2 examen ES ");
+           print_r($comp_examen2);
+
+           $dcalificacion = (float)$comp_examen2;
+          $detalles = getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id);
+      if ($detalles == Null) {
+$detalles = putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id ,$dcalificacion); 
+}else {
+if ($detalles[0]['dcal_usuario_creacion'] == '1' AND $detalles[0]['dcal_calificacion'] < $dcalificacion ){
+$detallesup = updatedetalles($detalles[0]['dcal_id'],$dcalificacion); 
+$bt= putbitacora($detalles[0]['dcal_id'],$dcalificacion);
+}
+}
+}
+}   
+}
+
+ if(isset($data01['parcial'])) {
+
+
+if ($parciales == 1 AND $data01['parcial']==1) {
+//print_r("======= Inicia proceso parcial 1 ===========");
+//print_r(count($componentes));
+for ($il = 0; $il < count($componentes); $il++) {
+/*print_r("componente: ");
+print_r($componentes[$il]['com_id']);
+print_r("evaluacion: ");
+print_r(isset($data02['evaluacion']));
+    print_r("nota");
+print_r($data03);*/
+
+    if ($componentes[$il]['com_id']== 3 AND isset($data02['evaluacion'])) {    //COMP_EVALUACION ol
+
+    $comp_evaluacion1 = (float)$comp_evaluacion1 + (float)$data03; 
+    $comp_cuni_id = $componentes[$il]['cuni_id'];
+       print_r("comp_evaluacion1 ES  ");
+      print_r($comp_evaluacion1);
+
+    }
+
+     if ($componentes[$il]['com_id']== 4 AND isset($data02['taller'])) {    //COMP_AUTONOMA ol
+        
+     $comp_autonoma1 = (float)$comp_autonoma1+ (float)$data03;print_r("SUMADO:"); 
+     $comp_cuni_id = $componentes[$il]['cuni_id'];
+    print_r("comp_autonoma1 ES ");
+      print_r($comp_autonoma1);
+
+    }
 
 
 
-          $countar++; unset($semanaexa1); unset($semanaexa2);
-          print_r('( '.$countar. ' )');
+}
+if ( $comp_evaluacion1 > 0 ){
+$dcalificacion = (float)$comp_evaluacion1;
+$detalles = getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id);
+if ($detalles == Null) {
+$detalles = putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id ,$dcalificacion); 
+}else {
+if ($detalles[0]['dcal_usuario_creacion'] == '1' AND $detalles[0]['dcal_fecha_modificacion'] ==Null){
+$dcalificacion = $dcalificacion + $detalles[0]['dcal_calificacion'];
+$detallesup = updatedetalles($detalles[0]['dcal_id'],$dcalificacion); 
+$bt= putbitacora($detalles[0]['dcal_id'],$dcalificacion);
+}
+}
+} 
+
+if ( $comp_autonoma1 > 0 ){
+$dcalificacion = (float)$comp_autonoma1;
+$detalles = getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id); 
+if ($detalles == Null) {
+$detalles = putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id ,$dcalificacion); 
+}else {
+if ($detalles[0]['dcal_usuario_creacion'] == 1 AND $detalles[0]['dcal_fecha_modificacion'] ==Null){
+$dcalificacion = $dcalificacion + $detalles[0]['dcal_calificacion'];
+$detallesup = updatedetalles($detalles[0]['dcal_id'],$dcalificacion); 
+$bt= putbitacora($detalles[0]['dcal_id'],$dcalificacion);
+}
+}
+} 
+
+} //print_r("======= Fin proceso parcial 1 ===========");
 
 
-               }      }  // END GROUPS
+if ($parciales == 2 AND $data01['parcial']==2) {
+   
 
+for ($il = 0; $il < count($componentes); $il++) {
+
+
+    if ($componentes[$il]['com_id']== 8 AND isset($data02['evaluacion'] )) {    //COMP_EVALUACION ol
+
+     $comp_evaluacion2 = (float)$comp_evaluacion2 + (float)$data03;  
+      $comp_cuni_id = $componentes[$il]['cuni_id'];
+
+    }
+
+     if ($componentes[$il]['com_id']== 9 AND isset($data02['taller'] )) {    //COMP_AUTONOMA ol
+        
+         $comp_autonoma2 = (float)$comp_autonoma2 + (float)$data03; 
+          $comp_cuni_id = $componentes[$il]['cuni_id'];
+
+    }
+
+      if ($componentes[$il]['com_id']== 10 AND isset($data02['examen'] )) {    //COMP_EXAMEN ol
+        
+         if ($data03 > $comp_examen2){
+
+         $comp_examen2 = (float)$data03; 
+          $comp_cuni_id = $componentes[$il]['cuni_id'];
+        
+        }
+
+    }
+
+
+
+}
+if ( $comp_evaluacion2 > 0 ){
+$dcalificacion = (float)$comp_evaluacion2;
+$detalles = getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id);
+if ($detalles == Null) {
+$detalles = putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id ,$dcalificacion); 
+}else {
+if ($detalles[0]['dcal_usuario_creacion'] == 1 AND $detalles[0]['dcal_fecha_modificacion'] ==Null){
+$dcalificacion = $dcalificacion + $detalles[0]['dcal_calificacion'];
+$detallesup = updatedetalles($detalles[0]['dcal_id'],$dcalificacion);  
+$bt= putbitacora($detalles[0]['dcal_id'],$dcalificacion);
+}
+}
+} 
+
+
+if ( $comp_autonoma2 > 0 ){
+$dcalificacion = (float)$comp_autonoma2;
+$detalles = getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id); 
+if ($detalles == Null) {
+$detalles = putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id ,$dcalificacion); 
+}else {
+if ($detalles[0]['dcal_usuario_creacion'] == 1 AND $detalles[0]['dcal_fecha_modificacion'] ==Null){
+$dcalificacion = $dcalificacion + $detalles[0]['dcal_calificacion'];
+$detallesup = updatedetalles($detalles[0]['dcal_id'],$dcalificacion); 
+$bt= putbitacora($detalles[0]['dcal_id'],$dcalificacion);
+}
+}
+} 
+
+} //print_r("======= Fin proceso parcial 2 ===========");
+ }
+
+
+
+ updatecabeceras($cabeceras[0]['ccal_id']); 
+if ($maes_id != null){ 
+updatepromedio($maes_id, $paca_id);
+}
+
+
+
+} //all degrees items  
+} //by moduaca
+
+} // weget grades
+ }} // all students
 
     }  catch (PDOException $e) {
            putMessageLogFile('Error: ' . $e->getMessage());
            exit; }
 
  }
-
-
-           
-          
 
  
  function getparamcategoria($elemento) {

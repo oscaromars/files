@@ -1,6 +1,6 @@
 function habilitarSecciones() {
-    var pais = $('#cmb_pais_dom').val();
-    //var pais = 1;
+    //var pais = $('#cmb_pais_dom').val();
+    var pais = 1;
     var unidad = $('#cmb_unidad_solicitud').val();
     if ((pais == 1) && (unidad == 1)) {
         $('#divCertvota').css('display', 'block');
@@ -38,7 +38,7 @@ $(document).ready(function () {
             }
         }, true);
     });*/
-    $('#cmb_pais_dom').change(function () {
+    /*$('#cmb_pais_dom').change(function () {
         var link = $('#txth_base').val() + "/inscribeducacioncontinua/index";
         var arrParams = new Object();
         arrParams.pai_id = $(this).val();
@@ -77,7 +77,7 @@ $(document).ready(function () {
                 setComboData(data.cantones, "cmb_ciudad_dom");
             }
         }, true);
-    });
+    });*/
     $('#sendInformacionAspirante').click(function () {
         habilitarSecciones();
         if ($('#txth_twin_id').val() == 0) {
@@ -89,8 +89,8 @@ $(document).ready(function () {
 
     $('#sendInformacionAspirante2').click(function () {
         var error = 0;
-        var pais = $('#cmb_pais_dom').val();
-        //var pais = 1;
+        //var pais = $('#cmb_pais_dom').val();
+        var pais = 1;
         if ($("#chk_mensaje1").prop("checked") && $("#chk_mensaje2").prop("checked")) {
             error = 0;
         } else {
@@ -623,7 +623,7 @@ $(document).ready(function () {
     /************************************************************/
 
     $('#rdo_forma_pago_otros').change();
-    $('#cmb_pais_dom').change();
+    //$('#cmb_pais_dom').change();
     $('#cmb_provincia_dom').change();
 
     /*$('#txt_nombres_fac').attr("readonly","readonly");
@@ -907,7 +907,8 @@ function dataInscripPart1(ID) {
     objDat.twin_id = ID;//Genero Automatico
     objDat.pges_pri_nombre = $('#txt_primer_nombre').val();
     objDat.pges_pri_apellido = $('#txt_primer_apellido').val();
-    objDat.tipo_dni = $('#cmb_tipo_dni option:selected').val();
+    //objDat.tipo_dni = $('#cmb_tipo_dni option:selected').val();
+    objDat.tipo_dni = 'CED';
     if (objDat.tipo_dni == 'CED') {
         objDat.pges_cedula = $('#txt_cedula').val();
     } else {
@@ -915,8 +916,8 @@ function dataInscripPart1(ID) {
     }
     objDat.pges_empresa = $('#txt_empresa').val();
     objDat.pges_correo = $('#txt_correo').val();
-    objDat.pais = $('#cmb_pais_dom option:selected').val();
-    //objDat.pais = 1;
+    //objDat.pais = $('#cmb_pais_dom option:selected').val();
+    objDat.pais = 1;
     objDat.pges_celular = $('#txt_celular').val();
     objDat.nivinstrucion = $('#cmb_instruccion option:selected').val();
     objDat.redes = $('#cmb_redes_sociales option:selected').val();
@@ -974,7 +975,8 @@ function dataInscripPart12(ID) {
     objDat.pges_correo       = $('#txt_correo').val(); //CORREO
     //objDat.twin_birthdate    = $('#frm_fecha_ini').val(); //FECHA DE NACIMIENTOS
     objDat.pges_celular      = $('#txt_celular').val(); //CELULAR
-    objDat.tipo_dni          = $('#cmb_tipo_dni option:selected').val(); //TIPO DE IDENTIFICACION
+    //objDat.tipo_dni          = $('#cmb_tipo_dni option:selected').val(); //TIPO DE IDENTIFICACION
+    objDat.tipo_dni          = 'CED';
     if (objDat.tipo_dni == 'CED') {
         objDat.pges_cedula = $('#txt_cedula').val(); //CEDULA
     } else {

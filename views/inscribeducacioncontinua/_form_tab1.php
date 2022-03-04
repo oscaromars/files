@@ -73,15 +73,15 @@ use app\components\CFileInputAjax;
             </div>
         </div>
     </div>
-    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    <!-- <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
             <label for="cmb_pais_dom" class="col-lg-3 col-md-3 col-sm-3 col-xs-3 control-label"><?= Yii::t("formulario", "Country") ?> <span class="text-danger">*</span></label>
             <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9">
                 <?= Html::dropDownList("cmb_pais_dom", 1, $arr_pais_dom, ["class" => "form-control", "id" => "cmb_pais_dom"]) ?>
             </div>
         </div>
-    </div>
-    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    </div>-->
+    <!-- <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
             <label for="cmb_pro_dom" class="col-lg-3 col-md-3 col-sm-3 col-xs-3 control-label"><?= Yii::t("formulario", "Provincia") ?> <span class="text-danger">*</span></label>
             <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9">
@@ -96,8 +96,8 @@ use app\components\CFileInputAjax;
                 <?= Html::dropDownList("cmb_ciudad_dom", 1, $arr_ciu_dom, ["class" => "form-control", "id" => "cmb_ciudad_dom"]) ?>
             </div>
         </div>
-    </div>
-    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    </div>-->
+    <!-- <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
             <label for="txt_fecha_nacimiento" class="col-lg-3 col-md-3 col-sm-3 col-xs-3 control-label"><?= Yii::t("formulario", "Fecha Nacimiento") ?> <span class="text-danger">*</span></label>
             <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9">
@@ -106,7 +106,7 @@ use app\components\CFileInputAjax;
                     'name' => 'txt_fecha_nacimiento',
                     'value' => '',
                     'type' => DatePicker::TYPE_INPUT,
-                    'options' => ["class" => "form-control PBvalidation keyupmce", "id" => "txt_fecha_nacimiento", "data-type" => "fecha", "data-keydown" => "true", "placeholder" => Yii::t("formulario", "Birth Date yyyy-mm-dd")],
+                    'options' => ["class" => "form-control keyupmce", "id" => "txt_fecha_nacimiento", "data-type" => "fecha", "data-keydown" => "true", "placeholder" => Yii::t("formulario", "Birth Date yyyy-mm-dd")],
                     'pluginOptions' => [
                         'autoclose' => true,
                         'format' => Yii::$app->params["dateByDatePicker"],
@@ -115,15 +115,15 @@ use app\components\CFileInputAjax;
                 ?>
             </div>
         </div>
-    </div>
-    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    </div>-->
+    <!-- <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
             <label for="cmb_genero" class="col-lg-3 col-md-3 col-sm-3 col-xs-3 control-label"><?= Yii::t("formulario", "Género") ?> <span class="text-danger">*</span></label>
             <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9">
                 <?= Html::dropDownList("cmb_genero", 1, $arr_genero, ["class" => "form-control", "id" => "cmb_genero"]) ?>
             </div>
         </div>
-    </div>
+    </div> -->
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
             <label for="txt_celular" class="col-lg-3 col-md-3 col-sm-3 col-xs-3 control-label"><?= Yii::t("formulario", "CellPhone") ?> <span class="text-danger">*</span></label>
@@ -135,14 +135,14 @@ use app\components\CFileInputAjax;
             </div>
         </div>
     </div>
-    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    <!-- <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
             <label for="cmb_instruccion" class="col-lg-3 col-md-3 col-sm-3 col-xs-3 control-label"><?= Yii::t("formulario", "Nivel Instrucción") ?> <span class="text-danger">*</span></label>
             <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9">
                 <?= Html::dropDownList("cmb_instruccion", 0, $arr_nivelinst, ["class" => "form-control", "id" => "cmb_instruccion"]) ?>
             </div>
         </div>
-    </div>
+    </div>-->
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
             <label for="cmb_unidad_solicitud" class="col-lg-3 col-md-3 col-sm-3 col-xs-3 control-label"><?= Yii::t("formulario", "Academic unit") ?> <span class="text-danger">*</span></label>
@@ -167,14 +167,14 @@ use app\components\CFileInputAjax;
             </div>
         </div>
     </div>
-    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    <!-- <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
             <label for="cmb_redes_sociales" class="col-lg-3 col-md-3 col-sm-3 col-xs-3 control-label"><?= Yii::t("academico", "Redes Sociales") ?> <span class="text-danger">*</span></label>
             <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9">
                 <?= Html::dropDownList("cmb_redes_sociales", 0, $arr_redes, ["class" => "form-control", "id" => "cmb_redes_sociales"]) ?>
             </div>
         </div>
-    </div>
+    </div>-->
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" id="divmetodocan" style="display: none">
         <div class="form-group">
             <label for="cmb_metodo_solicitud" class="col-sm-3 col-md-3 col-xs-3 col-lg-3 control-label keyupmce"><?= Yii::t("formulario", "Income Method") ?><span class="text-danger">*</span></label>
@@ -191,14 +191,14 @@ use app\components\CFileInputAjax;
             </div>
         </div>
     </div>-->
-    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    <!-- <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="form-group">
             <label for="txt_encontramos" class="col-lg-3 col-md-3 col-sm-3 col-xs-3 control-label"><?= Yii::t("formulario", "¿Cómo te encontramos?") ?> <span class="text-danger">*</span></label>
             <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9">
-                <input type="text" class="form-control PBvalidation" id="txt_encontramos" data-type="all" data-keydown="true" placeholder="<?= Yii::t("formulario", "¿Cómo te encontramos?") ?>">
+                <input type="text" class="form-control" id="txt_encontramos" data-type="all" data-keydown="true" placeholder="<?= Yii::t("formulario", "¿Cómo te encontramos?") ?>">
             </div>
         </div>
-    </div>
+    </div>-->
     <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
         </br>
         </br>

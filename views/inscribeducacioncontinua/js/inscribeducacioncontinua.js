@@ -588,13 +588,13 @@ $(document).ready(function () {
     $('#cmb_pais_dom').change();
     $('#cmb_provincia_dom').change();
 
-    $('#txt_nombres_fac').attr("readonly","readonly");
+    /*$('#txt_nombres_fac').attr("readonly","readonly");
     $('#txt_dir_fac').attr("readonly","readonly");
     $('#txt_apellidos_fac').attr("readonly","readonly");
     $('#txt_tel_fac').attr("readonly","readonly");
     $('#txt_correo_fac').attr("readonly","readonly");
     $('#txt_dni_fac').attr("readonly","readonly");
-    $('#txt_pasaporte_fac').attr("readonly","readonly");
+    $('#txt_pasaporte_fac').attr("readonly","readonly");*/
 
     //console.log("-----  Log de errores  -------");
     //Ejemplo de log de errores por javascript

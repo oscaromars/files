@@ -104,7 +104,7 @@ $directoryAsset = $assetsAdminLTE->baseUrl;
                           <div class="content">
                <?php echo yii\helpers\Html::img(
                                     "/asgard/web/img/users/backicp.png",
-                                    array("class" => "imgl", "alt" => Yii::$app->params["copyright"])); ?>
+                                    array(/*"class" => "imgl"*/"width"=>210, "alt" => Yii::$app->params["copyright"])); ?>
 
         </div>
                         <div class="box-body">

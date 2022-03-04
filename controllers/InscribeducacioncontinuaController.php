@@ -172,7 +172,7 @@ class InscribeducacioncontinuaController extends \yii\web\Controller {
 			}
 			$timeSt = time();
 			try {
-				/*$inscripcion_id = $data["DATA_1"][0]["twin_id"];
+				$inscripcion_id = $data["DATA_1"][0]["twin_id"];
 					                if (isset($data["DATA_1"][0]["ruta_doc_titulo"]) && $data["DATA_1"][0]["ruta_doc_titulo"] != "") {
 					                    $arrIm = explode(".", basename($data["DATA_1"][0]["ruta_doc_titulo"]));
 					                    $typeFile = strtolower($arrIm[count($arrIm) - 1]);
@@ -234,8 +234,8 @@ class InscribeducacioncontinuaController extends \yii\web\Controller {
 					                    $doc_pago = InscripcionAdmision::addLabelFechaDocPagos($inscripcion_id, $doc_pagoOld, $fecha_registro);
 					                    $data["DATA_1"][0]["ruta_doc_pago"] = $doc_pago;
 					                    if ($doc_pagoOld === false)
-					                        throw new Exception('Error al cargar documento de pago.');
-				*/
+											throw new Exception('Error al cargar documento de pago.');
+									}
 				if ($accion == "create" || $accion == "Create") {
 					//Nuevo Registro
 					$resul = $model->insertarInscripcion($data);

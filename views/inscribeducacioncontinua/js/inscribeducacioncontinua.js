@@ -907,7 +907,8 @@ function dataInscripPart1(ID) {
     objDat.twin_id = ID;//Genero Automatico
     objDat.pges_pri_nombre = $('#txt_primer_nombre').val();
     objDat.pges_pri_apellido = $('#txt_primer_apellido').val();
-    objDat.tipo_dni = $('#cmb_tipo_dni option:selected').val();
+    //objDat.tipo_dni = $('#cmb_tipo_dni option:selected').val();
+    objDat.tipo_dni = 'CED';
     if (objDat.tipo_dni == 'CED') {
         objDat.pges_cedula = $('#txt_cedula').val();
     } else {
@@ -974,7 +975,8 @@ function dataInscripPart12(ID) {
     objDat.pges_correo       = $('#txt_correo').val(); //CORREO
     //objDat.twin_birthdate    = $('#frm_fecha_ini').val(); //FECHA DE NACIMIENTOS
     objDat.pges_celular      = $('#txt_celular').val(); //CELULAR
-    objDat.tipo_dni          = $('#cmb_tipo_dni option:selected').val(); //TIPO DE IDENTIFICACION
+    //objDat.tipo_dni          = $('#cmb_tipo_dni option:selected').val(); //TIPO DE IDENTIFICACION
+    objDat.tipo_dni          = 'CED';
     if (objDat.tipo_dni == 'CED') {
         objDat.pges_cedula = $('#txt_cedula').val(); //CEDULA
     } else {

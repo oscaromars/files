@@ -492,6 +492,8 @@ function cargarDocumento() {
             showAlert("NO_OK", "error", mensaje);
             return false;
         }
+
+    if (arrParams.formapago != 10) {        
         if(arrParams.referencia == ''){
             var mensaje = {wtmessage: "Referencia : El campo no debe estar vacío.", title: "Error"};
             showAlert("NO_OK", "error", mensaje);
@@ -502,6 +504,8 @@ function cargarDocumento() {
             showAlert("NO_OK", "error", mensaje);
             return false;
         }
+        }
+
         if( !$('#checkAcepta').is(":checked") ){
             var mensaje = {wtmessage: "Debe aceptar las condiciones y terminos", title: "Error"};
             showAlert("NO_OK", "error", mensaje);

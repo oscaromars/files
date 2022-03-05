@@ -84,14 +84,14 @@ class PersonaOtrosDatos extends \yii\db\ActiveRecord
     }
 
     /**
-     * Function insertarPersonaOtrosDatos
+     * Function insertar
      * @author  Grace Viteri <analistadesarrollo01@uteg.edu.ec>
      * @param
      * @return
      */
     public function insertar($data) {
         $con = \Yii::$app->db_asgard;
-        $estado = 1;
+        $estado = 1;        
         $sql = "INSERT INTO " . $con->dbname . ".persona_otros_datos
             (per_id, nins_id, bseg_id, poda_contacto_red_social, poda_estado, poda_usuario_creacion, poda_estado_logico) VALUES
             (:per_id,:nins_id,:bseg_id,:poda_contacto_red_social,:poda_estado, :poda_usuario_creacion, :poda_estado) ";
@@ -142,5 +142,31 @@ class PersonaOtrosDatos extends \yii\db\ActiveRecord
         $response = $comando->execute();
             
         return $response;        
+    }
+
+    /**
+     * Function consultar
+     * @author  Grace Viteri
+     * @property
+     * @return
+     */
+    public function consultar($per_id) {
+        $con = \Yii::$app->db_asgard;
+        $estado = '1';
+        $sql = "SELECT poda_id
+                    FROM " . $con->dbname . ".persona_otros_datos
+                    WHERE per_id = :per_id AND
+                          poda_estado_logico=:estado AND 
+                          poda_estado=:estado";
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+
+        $resultData = $comando->queryOne();
+        if (empty($resultData))
+            return 0;
+        else {
+            return $resultData;
+        }
     }
 }

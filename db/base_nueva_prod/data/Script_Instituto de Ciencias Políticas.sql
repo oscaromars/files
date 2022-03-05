@@ -91,7 +91,7 @@ create table if not exists db_asgard.`persona_otros_datos` (
  `per_id` bigint(20) not null,
  `nins_id` bigint(20) not null,
  `bseg_id` bigint(20) not null,
- `poda_contacto_red_social` varchar(1) default null,
+ `poda_contacto_red_social` varchar(100) default null,
  `poda_estado` varchar(1) not null,
  `poda_usuario_creacion` bigint(20) not null,
  `poda_fecha_creacion` timestamp not null default current_timestamp,

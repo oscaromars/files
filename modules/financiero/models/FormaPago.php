@@ -129,7 +129,7 @@ class FormaPago extends \app\modules\financiero\components\CActiveRecord
         $sql = "SELECT fp.fpag_id AS id, fp.fpag_nombre AS value  
                 FROM " . $con->dbname . ".forma_pago fp 
                 WHERE  fp.fpag_estado_logico = :estado AND
-                       fp.fpag_estado = :estado and fp.fpag_id in (4,5,1)";                       
+                       fp.fpag_estado = :estado and fp.fpag_id in (4,5,1,10)";                       
         $comando = $con->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
         $resultData = $comando->queryall();

@@ -157,19 +157,34 @@ $(document).ready(function() {
         if(opcion==1){
             $('#txt_fechapago').removeClass('PBvalidation');
             $('#pago_documento').hide(); 
-            $('.pago_documento').hide();           
+            $('.pago_documento').hide();   
+            $('#txt_referencia').hide();
+            $('#cmb_banco').hide();        
 
             $('#pago_stripe').show();
         }else if(opcion==4 || opcion==5){
             $('#txt_fechapago').addClass('PBvalidation');
             $('#pago_documento').show();
             $('.pago_documento').show();
+            $('#txt_referencia').show();
+            $('#cmb_banco').show(); 
+
+
+            $('#pago_stripe').hide();
+         }else if(opcion==10){
+            $('#txt_fechapago').addClass('PBvalidation');
+            $('#pago_documento').show();
+            $('#pago_documento').show();
+            $('#txt_referencia').hide();
+            $('#cmb_banco').hide();
 
             $('#pago_stripe').hide();
         }else{
             $('#txt_fechapago').removeClass('PBvalidation');
             $('#pago_documento').hide(); 
-            $('.pago_documento').hide();           
+            $('.pago_documento').hide();   
+            $('#txt_referencia').hide();
+            $('#cmb_banco').hide();        
 
             $('#pago_stripe').hide();
         }
@@ -477,6 +492,8 @@ function cargarDocumento() {
             showAlert("NO_OK", "error", mensaje);
             return false;
         }
+
+    if (arrParams.formapago != 10) {        
         if(arrParams.referencia == ''){
             var mensaje = {wtmessage: "Referencia : El campo no debe estar vacío.", title: "Error"};
             showAlert("NO_OK", "error", mensaje);
@@ -487,6 +504,8 @@ function cargarDocumento() {
             showAlert("NO_OK", "error", mensaje);
             return false;
         }
+        }
+
         if( !$('#checkAcepta').is(":checked") ){
             var mensaje = {wtmessage: "Debe aceptar las condiciones y terminos", title: "Error"};
             showAlert("NO_OK", "error", mensaje);

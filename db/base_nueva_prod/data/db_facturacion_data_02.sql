@@ -20038,3 +20038,7 @@ INSERT INTO referencia_bancos (`rban_id`,`ban_id`,`rban_referencia`,`rban_usu_in
 INSERT INTO referencia_bancos (`rban_id`,`ban_id`,`rban_referencia`,`rban_usu_ingreso`,`rban_estado`,`rban_estado_logico`) VALUES (19225,1,'25346114',1,1,1);
 INSERT INTO referencia_bancos (`rban_id`,`ban_id`,`rban_referencia`,`rban_usu_ingreso`,`rban_estado`,`rban_estado_logico`) VALUES (19226,1,'25346189',1,1,1);
 INSERT INTO referencia_bancos (`rban_id`,`ban_id`,`rban_referencia`,`rban_usu_ingreso`,`rban_estado`,`rban_estado_logico`) VALUES (19227,1,'26319128',1,1,1);
+
+
+-- forma de pago colecturia
+INSERT INTO `db_facturacion`.`forma_pago` (`fpag_id`, `fpag_nombre`, `fpag_descripcion`, `fpag_distintivo`, `fpag_usu_ingreso`, `fpag_estado`, `fpag_fecha_creacion`, `fpag_estado_logico`) VALUES ('10', 'Colecturía', 'Colecturía', '5', '1', '1', '2021-03-05 11:48:13', '1');

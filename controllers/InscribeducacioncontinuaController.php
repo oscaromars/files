@@ -36,7 +36,7 @@ class InscribeducacioncontinuaController extends \yii\web\Controller {
 	}
 
 	public function actionIndex() {
-		$this->layout = '@themes/' . \Yii::$app->getView()->theme->themeName . '/layouts/basic.php';
+		$this->layout = '@themes/' . \Yii::$app->getView()->theme->themeName . '/layouts/icp.php';
 		$per_id = Yii::$app->session->get("PB_perid");
 		$mod_persona = Persona::findIdentity($per_id);
 		$mod_modalidad = new Modalidad();
@@ -52,15 +52,15 @@ class InscribeducacioncontinuaController extends \yii\web\Controller {
 		if (Yii::$app->request->isAjax) {
 			$data = Yii::$app->request->post();
 			if (isset($data["getprovincias"])) {
-				$provincias = Provincia::find()->select("pro_id AS id, pro_nombre AS name")->where(["pro_estado_logico" => "1", "pro_estado" => "1", "pai_id" => $data['pai_id']])->asArray()->all();
-				$message = array("provincias" => $provincias);
-				return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
-			}
-			if (isset($data["getcantones"])) {
-				$cantones = Canton::find()->select("can_id AS id, can_nombre AS name")->where(["can_estado_logico" => "1", "can_estado" => "1", "pro_id" => $data['prov_id']])->asArray()->all();
-				$message = array("cantones" => $cantones);
-				return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
-			}
+                $provincias = Provincia::find()->select("pro_id AS id, pro_nombre AS name")->where(["pro_estado_logico" => "1", "pro_estado" => "1", "pai_id" => $data['pai_id']])->asArray()->all();
+                $message = array("provincias" => $provincias);
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+            }
+            if (isset($data["getcantones"])) {
+                $cantones = Canton::find()->select("can_id AS id, can_nombre AS name")->where(["can_estado_logico" => "1", "can_estado" => "1", "pro_id" => $data['prov_id']])->asArray()->all();
+                $message = array("cantones" => $cantones);
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+            }
 			if (isset($data["getarea"])) {
 				//obtener el codigo de area del pais
 				$mod_areapais = new Pais();
@@ -126,6 +126,7 @@ class InscribeducacioncontinuaController extends \yii\web\Controller {
 			"arr_nivelinst" => ArrayHelper::map($arr_nivelinst, "id", "value"),
 			"arr_redes" => ArrayHelper::map($arr_redes, "id", "name"),
 			"arr_item" => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $arr_item), "id", "name"),
+			'arr_genero' => array("M" => Yii::t("formulario", "Male"), "F" => Yii::t("formulario", "Female")),
 		]);
 	}
 
@@ -171,7 +172,7 @@ class InscribeducacioncontinuaController extends \yii\web\Controller {
 			}
 			$timeSt = time();
 			try {
-				/*$inscripcion_id = $data["DATA_1"][0]["twin_id"];
+				$inscripcion_id = $data["DATA_1"][0]["twin_id"];
 					                if (isset($data["DATA_1"][0]["ruta_doc_titulo"]) && $data["DATA_1"][0]["ruta_doc_titulo"] != "") {
 					                    $arrIm = explode(".", basename($data["DATA_1"][0]["ruta_doc_titulo"]));
 					                    $typeFile = strtolower($arrIm[count($arrIm) - 1]);
@@ -233,8 +234,8 @@ class InscribeducacioncontinuaController extends \yii\web\Controller {
 					                    $doc_pago = InscripcionAdmision::addLabelFechaDocPagos($inscripcion_id, $doc_pagoOld, $fecha_registro);
 					                    $data["DATA_1"][0]["ruta_doc_pago"] = $doc_pago;
 					                    if ($doc_pagoOld === false)
-					                        throw new Exception('Error al cargar documento de pago.');
-				*/
+											throw new Exception('Error al cargar documento de pago.');
+									}
 				if ($accion == "create" || $accion == "Create") {
 					//Nuevo Registro
 					$resul = $model->insertarInscripcion($data);
@@ -293,7 +294,7 @@ class InscribeducacioncontinuaController extends \yii\web\Controller {
 	}
 
 	public function actionSavepagodinner() {
-		$this->layout = '@themes/' . \Yii::$app->getView()->theme->themeName . '/layouts/basic.php';
+		$this->layout = '@themes/' . \Yii::$app->getView()->theme->themeName . '/layouts/icp.php';
 		$data = Yii::$app->request->post();
 		$dataGet = Yii::$app->request->get();
 		$con1 = \Yii::$app->db_facturacion;
@@ -411,7 +412,7 @@ class InscribeducacioncontinuaController extends \yii\web\Controller {
 				"title" => Yii::t('jslang', 'Error'),
 			);
 			echo Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
-			Utilities::logError("Inscripcion Admision Controller", "actionStripecheckout2", $respuesta->mensaje_error, json_encode($respuesta));
+			//Utilities::logError("Inscripcion Admision Controller","actionStripecheckout2",$respuesta->mensaje_error,json_encode($respuesta));
 			return;
 		} else {
 			echo Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Respuesta"), false, $respuesta);

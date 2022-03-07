@@ -5,7 +5,7 @@ VALUES ('10', 'Instituto de Ciencias Políticas', 'Instituto de Ciencias Políti
 
 /** Verificar PK produccion*/
 INSERT INTO `db_academico`.`estudio_academico` (`eaca_id`, `teac_id`, `eaca_codigo`, `eaca_nombre`, `eaca_descripcion`, `eaca_alias`, `eaca_alias_resumen`, `eaca_usuario_ingreso`, `eaca_usuario_modifica`, `eaca_estado`, `eaca_fecha_creacion`, `eaca_estado_logico`)
-VALUES ('77', '3', 'DFPP', 'Diplomado en Formación y Participación Política', 'Diplomado en Formación y Participación Política', 'diplomado_institucion', 'diplomado_institucion', '1', NULL, '1', '2022-02-25 11:31:00', '1');
+VALUES ('77', '3', 'SPP', 'Seminario de Política, participación electoral y comunicación', 'Seminario de Política, participación electoral y comunicación', 'seminario_institucion', 'seminario_institucion', '1', NULL, '1', '2022-03-03 14:50:00', '1');
 
 /*Verificar PK en produccion tanto el PK como el eaca_id que va en la columna 4*/
 INSERT INTO `db_academico`.`modalidad_estudio_unidad` (`meun_id`, `uaca_id`, `mod_id`, `eaca_id`, `emp_id`, `meun_usuario_ingreso`, `meun_estado`, `meun_fecha_creacion`, `meun_estado_logico`)
@@ -24,6 +24,12 @@ ADD COLUMN `twin_encontramos` VARCHAR(150) NULL DEFAULT NULL AFTER `twin_redes_s
 
 ALTER TABLE `db_captacion`.`temporal_wizard_inscripcion`
 ADD COLUMN `twin_item` BIGINT(20) NULL AFTER `twin_encontramos`;
+
+ALTER TABLE `db_captacion`.`temporal_wizard_inscripcion`
+ADD COLUMN `twin_provincia` BIGINT(20) NULL AFTER `twin_item`,
+ADD COLUMN `twin_canton` BIGINT(20) NULL AFTER `twin_provincia`,
+ADD COLUMN `twin_fecha_nacimiento` DATE NULL AFTER `twin_canton`,
+ADD COLUMN `twin_genero` VARCHAR(1) NULL AFTER `twin_fecha_nacimiento`;
 
 /**** Verificar PK en produccion Agregar twitter para seguimiento ***/
 INSERT INTO `db_crm`.`bitacora_seguimiento` (`bseg_id`, `bseg_nombre`, `bseg_descripcion`, `bseg_estado`, `bseg_fecha_creacion`, `bseg_estado_logico`)
@@ -100,3 +106,5 @@ create table if not exists db_asgard.`persona_otros_datos` (
  `poda_estado_logico` varchar(1) not null,
   foreign key (per_id) references `persona`(per_id)
 ) ;
+
+ALTER TABLE `db_facturacion`.`registro_pago` CHANGE COLUMN `rpag_num_transaccion` `rpag_num_transaccion` VARCHAR(50) NULL ;

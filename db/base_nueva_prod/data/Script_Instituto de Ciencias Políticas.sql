@@ -5,11 +5,11 @@ VALUES ('10', 'Instituto de Ciencias Políticas', 'Instituto de Ciencias Políti
 
 /** Verificar PK produccion*/
 INSERT INTO `db_academico`.`estudio_academico` (`eaca_id`, `teac_id`, `eaca_codigo`, `eaca_nombre`, `eaca_descripcion`, `eaca_alias`, `eaca_alias_resumen`, `eaca_usuario_ingreso`, `eaca_usuario_modifica`, `eaca_estado`, `eaca_fecha_creacion`, `eaca_estado_logico`)
-VALUES ('77', '3', 'SPP', 'Seminario de Política, participación electoral y comunicación', 'Seminario de Política, participación electoral y comunicación', 'seminario_institucion', 'seminario_institucion', '1', NULL, '1', '2022-03-03 14:50:00', '1');
+VALUES ('77', '3', 'SPP', 'Seminario de Política, Participación Electoral y Comunicación', 'Seminario de Política, Participación Electoral y Comunicación', 'seminario_institucion', 'seminario_institucion', '1', NULL, '1', '2022-03-03 14:50:00', '1');
 
 /*Verificar PK en produccion tanto el PK como el eaca_id que va en la columna 4*/
 INSERT INTO `db_academico`.`modalidad_estudio_unidad` (`meun_id`, `uaca_id`, `mod_id`, `eaca_id`, `emp_id`, `meun_usuario_ingreso`, `meun_estado`, `meun_fecha_creacion`, `meun_estado_logico`)
-VALUES ('146', '10', '1', '76', '1', '1', '1', '2022-02-25 11:22:00', '1');
+VALUES ('146', '10', '1', '77', '1', '1', '1', '2022-02-25 11:22:00', '1');
 
 /*****Crear campo en tabla temporal para guardar nivel de instruccion
 redes sociales, como te encontramos ****/
@@ -40,14 +40,14 @@ INSERT INTO `db_facturacion`.`sub_categoria` (`scat_id`, `cat_id`, `scat_nombre`
 VALUES ('9', 1, 'Instituto de Ciencias Políticas', 'Instituto de Ciencias Políticas', '1', '1', '2022-02-26 14:48:00', '1');
 
 INSERT INTO `db_facturacion`.`item` (`ite_id`, `scat_id`, `ite_nombre`, `ite_descripcion`, `ite_codigo`, `ite_usu_ingreso`, `ite_estado`, `ite_fecha_creacion`, `ite_estado_logico`)
-VALUES ('212', '9', 'Valor Total Dipl. Formación participación política', 'Valor Total Dipl. Formación participación política', '0208', '1', '1', '2022-02-26 15:05:22', '1');
+VALUES ('212', '9', 'Valor Total Seminario de Política, Participación Electoral y Comunicación', 'Valor Total Seminario de Política, Participación Electoral y Comunicación', '0208', '1', '1', '2022-02-26 15:05:22', '1');
 
 INSERT INTO `db_facturacion`.`item_precio` (`ipre_id`, `ite_id`, `ipre_precio`, `ipre_fecha_inicio`, `ipre_fecha_fin`, `ipre_estado_precio`, `ipre_usu_ingreso`, `ipre_estado`, `ipre_fecha_creacion`, `ipre_estado_logico`)
-VALUES ('212', '212', '180', '2022-02-26 00:00:00', '2022-12-31 23:59:59', 'A', '1', '1', '2022-02-26 15:08:00', '1');
+VALUES ('212', '212', '60', '2022-02-26 00:00:00', '2022-12-31 23:59:59', 'A', '1', '1', '2022-02-26 15:08:00', '1');
 
 INSERT INTO `db_facturacion`.`item_metodo_unidad` (`imni_id`, `ite_id`, `uaca_id`, `mod_id`, `mest_id`, `imni_usu_ingreso`, `imni_estado`, `imni_fecha_creacion`, `imni_estado_logico`)
 VALUES ('215', '212', '10', '1', NULL, '1', '1', '2022-02-26 15:22:00', '1');
-
+/*
 INSERT INTO `db_facturacion`.`item` (`ite_id`, `scat_id`, `ite_nombre`, `ite_descripcion`, `ite_codigo`, `ite_usu_ingreso`, `ite_estado`, `ite_fecha_creacion`, `ite_estado_logico`)
 VALUES ('213', '9', 'Un Módulo Dipl. Formación participación política', 'Un Módulo Dipl. Formación participación política', '0209', '1', '1', '2022-02-26 15:05:22', '1');
 
@@ -65,11 +65,11 @@ VALUES ('217', '214', '10', '1', '1', '1', '2022-02-26 15:22:00', '1');
 
 INSERT INTO `db_facturacion`.`item_precio` (`ipre_id`, `ite_id`, `ipre_precio`, `ipre_fecha_inicio`, `ipre_fecha_fin`, `ipre_estado_precio`, `ipre_usu_ingreso`, `ipre_estado`, `ipre_fecha_creacion`, `ipre_estado_logico`)
 VALUES ('214', '214', '120', '2022-02-26 00:00:00', '2022-12-31 23:59:59', 'A', '1', '1', '2022-02-26 15:08:00', '1');
-
+*/
 INSERT INTO `db_facturacion`.`historial_item_precio` (hipr_id, ite_id, hipr_precio, hipr_fecha_inicio, hipr_fecha_fin, hipr_usu_transaccion, hipr_estado, hipr_estado_logico) VALUES
-(228, 212, 180, '2022-02-26 00:00:00', null, 1, '1', '1'),
-(229, 213, 60, '2022-02-26 00:00:00', null, 1, '1', '1'),
-(230, 214, 120, '2022-02-26 00:00:00', null, 1, '1', '1');
+(228, 212, 60, '2022-02-26 00:00:00', null, 1, '1', '1');
+/*(229, 213, 60, '2022-02-26 00:00:00', null, 1, '1', '1'),
+(230, 214, 120, '2022-02-26 00:00:00', null, 1, '1', '1');*/
 
 /************************* insert para secuencial matriucla ICP ********/
 CREATE TABLE db_academico.`numero_matricula` (

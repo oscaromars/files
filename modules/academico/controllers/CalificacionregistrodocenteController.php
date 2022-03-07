@@ -1757,6 +1757,11 @@ return $this->redirect('index');
 
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
+             if (isset($data["getteraulas"])) {
+                $arr_aulas =  $mod_calificacion->consultarAulas($data['paca_id'], $data['uaca_id'], $data['mod_id']);
+                $message = array("arr_aulas" => $arr_aulas);
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+            }
 
         }
 

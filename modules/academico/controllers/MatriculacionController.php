@@ -501,18 +501,18 @@ class MatriculacionController extends \app\components\CController {
 							echo Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
 						}
 					} else {
+            if ($data["formapago"] != 10) {
 						$mod_fpago = new FormaPago();
 						$arr_refBancos = $mod_fpago->consultarReferenciaBancos($data["referencia"], $data["banco"]);
 
 						if (!empty($arr_refBancos)) {
 							$message = array(
-								"wtmessage" => Yii::t("notificaciones", "La refrencia ya existe para el banco seleccionado."),
+								"wtmessage" => Yii::t("notificaciones", "La referencia ya existe para el banco seleccionado."),
 								"title" => Yii::t('jslang', 'Error'),
 							);
 							echo Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
 							return;
-						}
-
+						}	}
 						if ($data["upload_file"]) {
 							if (empty($_FILES)) {
 								echo json_encode(['error' => Yii::t("notificaciones", "Error to process File {file}. Try again.", ['{file}' => basename($files['name'])])]);

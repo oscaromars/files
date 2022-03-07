@@ -107,6 +107,22 @@ $(document).ready(function () {
      $('#btn_buscarEducativaulas').click(function() {    
         searchEducativaulas();
     });
+
+
+          $('#cmb_modalidad_aul').change(function () {
+        var link = $('#txth_base').val() + "/academico/calificacionregistrodocente/transferiraulas";
+        var arrParams = new Object();
+        arrParams.paca_id = $("#cmb_periodo_aul").val(); 
+        arrParams.uaca_id = $("#cmb_unidad_aul").val();
+        arrParams.mod_id = $(this).val();
+        arrParams.getteraulas = true;
+        requestHttpAjax(link, arrParams, function (response) {
+            if (response.status == "OK") {
+                data = response.message;
+                setComboDataselect(data.arr_aulas, "cmb_aulas_aul","Todos");
+            }
+        }, true);
+    });
     
     $('#cmb_profesor_clfc').change(function () {
         var link = $('#txth_base').val() + "/academico/calificacionregistrodocente/index";

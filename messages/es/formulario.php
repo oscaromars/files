@@ -447,6 +447,7 @@ return [
     "Opportunity No." => "No. Oportunidades",
     "Organizing institution" => "Institución Organizadora",
     "Other" => "Otra",
+    "Other personal data has not been registered" => "Otros datos de persona no han sido registrados",
     "Outstanding balance" => "Saldo Pendiente",
     "Paid form" => "Forma Pago",
     "Parish" => "Parroquia",

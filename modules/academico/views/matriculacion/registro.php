@@ -132,6 +132,7 @@ $total=$costo['costo']+$costo['gastos']+$costo['asociacion'];
 <input type="hidden" id="frm_num_min" value="<?= $num_min ?>">
 <input type="hidden" id="frm_num_max" value="<?= $num_max ?>">
 <input type="hidden" id="costoadm" value="<?= $gastoAdm ?>">
+<input type="hidden" id="frm_cant_mat_planificada" value="<?= $cant_mat_planificada ?>">
 
 <br>
 <?=

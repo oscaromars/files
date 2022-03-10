@@ -472,6 +472,9 @@ $(document).ready(function () {
         guardarInscripcionTemp('UpdateDepTrans');
         var link = $('#txth_base').val() + "/inscribeducacioncontinua/saveinscripciontemp";
         var arrParams = new Object();
+        var fecha = new Date();
+        var month = (fecha.getMonth() + 1).toString().padStart(2, "0");
+        var formatted_date = fecha.getFullYear() + "-" + month + "-" + fecha.getDate();
         arrParams.codigo = $('#txth_twin_id').val();
         arrParams.ACCION = 'Fin';
         arrParams.nombres_fact = $('#txt_nombres_fac').val();
@@ -517,18 +520,23 @@ $(document).ready(function () {
             var mensaje = {wtmessage: "Debe seleccionar un item.", title: "Información"};
             showAlert("NO_OK", "error", mensaje);
         } else {
-            if (!validateForm()) {
-                requestHttpAjax(link, arrParams, function (response) {
-                    var message = response.message;
-                    //console.log(response);
-                    if (response.status == "OK") {
-                        showAlert(response.status, response.label, response.message);
-                        setTimeout(function () {
-                            parent.window.location.href = $('#txth_base').val() +"/inscribeducacioncontinua/index";
-                        }, 2000);
+            if (arrParams.fecha_transaccion > formatted_date){
+                var mensaje = {wtmessage: "Fecha Transacción: La fecha de transacción no puede ser mayor al día de hoy.", title: "Información"};
+                showAlert("NO_OK", "success", mensaje);
+            }else{
+                    if (!validateForm()) {
+                        requestHttpAjax(link, arrParams, function (response) {
+                            var message = response.message;
+                            //console.log(response);
+                            if (response.status == "OK") {
+                                showAlert(response.status, response.label, response.message);
+                                setTimeout(function () {
+                                    parent.window.location.href = $('#txth_base').val() +"/inscribeducacioncontinua/index";
+                                }, 2000);
+                            }
+                        });
                     }
-                });
-            }
+            }// else hace el !validateForm()
         }
     });
 

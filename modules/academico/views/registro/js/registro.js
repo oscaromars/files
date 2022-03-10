@@ -741,7 +741,7 @@ function confirmarDevolucion(id) {
 
 function guardarCargarCartera(){
     enviarDatosFacturacion();
-    iniciarEnvioSiga();
+    //iniciarEnvioSiga(); //04 marzo 2022, se deshabilita webservices Siga.
     var link = $('#txth_base').val() + "/academico/registro/modificarcargacartera";
     showLoadingPopup();
     var arrParams       = new Object();
@@ -874,7 +874,7 @@ function enviarPdf(){
     }
 }
 
-function iniciarEnvioSiga(){
+/*function iniciarEnvioSiga(){
     var link = $('#txth_base').val() + "/academico/registro/enviosigamatricula";
     var arrParams       = new Object();
     arrParams.rama      = $('#txt_rama').val();
@@ -907,22 +907,22 @@ function iniciarEnvioSiga(){
     arrParams.virtuales     = virtuales;
     arrParams.varios        = varios;
     arrParams.msg           = '';
-/*
-    setTimeout(function() {
-        requestHttpAjax(link, arrParams, function(response) {
-            var message = response.message;
-            if (response.status == "OK") {
-                setTimeout(function() {
-                    showAlert(response.status, response.type, { "wtmessage": message.info, "title": response.label });
-                    }, 1000);
-            } else {
+
+    //setTimeout(function() {
+      //  requestHttpAjax(link, arrParams, function(response) {
+        //    var message = response.message;
+          //  if (response.status == "OK") {
+            //    setTimeout(function() {
+              //      showAlert(response.status, response.type, { "wtmessage": message.info, "title": response.label });
+                //    }, 1000);
+            //} else {
                 //showAlert(response.status, response.type, { "wtmessage": message.info, "title": response.label });
-            }
+            //}
 
-        }, true);
+        //}, true);
 
-     }, 1000);
-*/   
+     //}, 1000);
+   
     data = new FormData();
     data.append( 'accion' , "registro" );
     data.append( 'online' , mod);
@@ -950,7 +950,8 @@ function iniciarEnvioSiga(){
         },
     });
     alert('Envío exitoso');
-}//function iniciarEnvioSiga+
+}*/
+//function iniciarEnvioSiga+
 
 function enviarDatosFacturacion(){
     var link = $('#txth_base').val() + "/academico/registro/datosfacturacion";

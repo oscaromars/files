@@ -709,10 +709,48 @@ $(document).ready(function () {
     });
 
     //Control del div de Descuentos.
+
+    $('#opt_agree_Dctosi').change(function () {
+        var link = $('#txth_base').val() + "/admision/solicitudes/new";
+        if ($('#opt_agree_Dctosi').val() == 1) {
+            $('#divConvenioID').css('display', 'block');
+            $('#divConvenioObs').css('display', 'block');
+            $("#opt_agree_Dctono").prop("checked", "");
+            //Precio con descuento.
+            var arrParams = new Object();
+            arrParams.descuento_id = $('#cmb_descuento').val();
+            arrParams.ite_id = $('#cmb_item').val();
+            arrParams.getpreciodescuento = true;
+            requestHttpAjax(link, arrParams, function (response) {
+                if (response.status == "OK") {
+                    data = response.message;
+                    $('#txt_precio_item2').val(data.preciodescuento);
+                }
+            }, true);
+        } else {
+            $('#divConvenioID').css('display', 'none');
+            $('#divConvenioObs').css('display', 'none');
+        }
+
+    });
+
+    $('#opt_agree_Dctono').change(function () {
+        if ($('#opt_agree_Dctono').val() == 2) {
+            $('#divConvenioID').css('display', 'none');
+            $('#divConvenioObs').css('display', 'none');
+            $("#opt_agree_Dctosi").prop("checked", "");
+        } else {
+            $('#divConvenioID').css('display', 'block');
+            $('#divConvenioObs').css('display', 'block');
+        }
+    });
+
+
     $('#opt_declara_Dctosi').change(function () {
         var link = $('#txth_base').val() + "/admision/solicitudes/new";
         if ($('#opt_declara_Dctosi').val() == 1) {
             $('#divDescuento').css('display', 'block');
+            $('#divObservacion').css('display', 'block');
             $("#opt_declara_Dctono").prop("checked", "");
             //Precio con descuento.
             var arrParams = new Object();
@@ -727,6 +765,7 @@ $(document).ready(function () {
             }, true);
         } else {
             $('#divDescuento').css('display', 'none');
+            $('#divObservacion').css('display', 'none');
         }
 
     });
@@ -734,9 +773,11 @@ $(document).ready(function () {
     $('#opt_declara_Dctono').change(function () {
         if ($('#opt_declara_Dctono').val() == 2) {
             $('#divDescuento').css('display', 'none');
+            $('#divObservacion').css('display', 'none');
             $("#opt_declara_Dctosi").prop("checked", "");
         } else {
             $('#divDescuento').css('display', 'block');
+            $('#divObservacion').css('display', 'block');
         }
     });
 

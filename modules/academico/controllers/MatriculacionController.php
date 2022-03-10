@@ -1533,6 +1533,10 @@ $dataValue[] = ['Id' => $con, 'Pago' => Academico::t('matriculacion',"Payment") 
 					//$scholarship      = $estudiante_model->isScholarship($est_id,$paca_id);
 					//$isscholar        = $scholarship['bec_id'];
 
+					//cantidad materias planificadas
+					$cant_mat_planificada = count($dataPlanificacion);
+					\app\models\Utilities::putMessageLogFile("cantidad materias planificadas: " . $cant_mat_planificada);
+
 					\app\models\Utilities::putMessageLogFile("gastos " . $gastos_administrativos_valor);
 					//per_id pla_id , pes_id
 
@@ -1598,6 +1602,7 @@ $dataValue[] = ['Id' => $con, 'Pago' => Academico::t('matriculacion',"Payment") 
 						"pagado" => $pagado,
 						"num_min" => $num_min,
 						"num_max" => $num_max,
+						"cant_mat_planificada" =>$cant_mat_planificada,
 
 					]);
 				} else {

@@ -259,6 +259,7 @@ function registro() {
     var credits  = new Array();
     var costs    = new Array();
     var contador = 0;
+    var cantidad_mat_planificada = $('#frm_cant_mat_planificada').val();
 
     $('#grid_registro_list input[type=checkbox]').each(function() {
         if (this.checked ) {
@@ -272,7 +273,8 @@ function registro() {
         "title": objLang.Error
     }
 
-    if (contador < 2) {
+    //if (contador < 2) {
+    if (contador < 4 || contador == cantidad_mat_planificada) {
         message.wtmessage = message.wtmessage;
         showAlert("NO_OK", "Error", message);
         return;

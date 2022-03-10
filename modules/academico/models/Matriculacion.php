@@ -572,7 +572,19 @@ class Matriculacion extends \yii\db\ActiveRecord {
             -- em.emp_nombre_comercial AS Empresa,
             me.mod_id as modalidad,
             mad.made_credito AS AsigCreditos,
-            pcc.pccr_costo_credito as CostoCredito,
+            (CASE
+                WHEN  me.uaca_id= 1 and a.asi_id = 493 THEN 
+                (select pcme_costo_materia from db_academico.programa_costo_materia_egresado pc 
+                where pc.mod_id =  me.mod_id and pc.maca_id =ma.maca_id and pc.made_codigo_asignatura=mad.made_codigo_asignatura and pc.pcme_estado =1 and  pc.pcme_estado_logico =1)
+                
+                WHEN me.uaca_id= 1 and a.asi_id = 1154 THEN 
+                    (select pcme_costo_materia from db_academico.programa_costo_materia_egresado pc 
+                where pc.mod_id =  me.mod_id and pc.maca_id =ma.maca_id and pc.made_codigo_asignatura=mad.made_codigo_asignatura and pc.pcme_estado =1 and  pc.pcme_estado_logico =1)
+                
+                ELSE
+                    pcc.pccr_costo_credito
+            END) As CostoCredito,
+            -- pcc.pccr_costo_credito as CostoCredito,
             -- mcc.mcco_code AS ModCode
             max(roi.roi_usuario_ingreso) as usuario,
             max(roi.roi_id) as roi_id,

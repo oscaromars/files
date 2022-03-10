@@ -1133,6 +1133,12 @@ function save() {
         arrParams.descuento_id = $('#cmb_descuento').val();
         arrParams.marcadescuento = '1';
     }
+          if (arrParams.cemp_id > 0 && arrParams.descuento_id > 0) {
+
+ showAlert('NO_OK', 'error', {"wtmessage": 'No puede escoger descuento y convenio para una misma solicitud!', "title": 'Información'});
+ 
+} else { 
+
     if ($('input[name=opt_declara_si]:checked').val() == 1) {
         arrParams.beca = 1;
     } else {
@@ -1159,6 +1165,7 @@ function save() {
             }, 5000);
         }, true);
     }
+  }
 }
 //Guarda Documentos de solicitudes de inscripción.
 function SaveDocumentos() {

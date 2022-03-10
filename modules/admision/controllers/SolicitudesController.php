@@ -803,7 +803,7 @@ class SolicitudesController extends \app\components\CController {
                            // permite modificar por una vez la solicitud y actualiza el contador aunque no este en la tabla de modificacion
                            $respSolinsingreso = $mod_solinsmodifica->insertarIncripcionModificar($sins_id, $sinmo_contador, $usuario);
                            //3.1.- SI GUARDA respSolinsingreso ACTUALIZAR TABLAS SALDOS
-                           $respSolinsingreso = $mod_solinsmodifica->actualizarIncripcionModificar($respSolinsmod["sinmo_id"], $sins_id, $sinmo_contador, $usuario);
+                           //$respSolinsingreso = $mod_solinsmodifica->actualizarIncripcionModificar($respSolinsmod["sinmo_id"], $sins_id, $sinmo_contador, $usuario);
                             //3.0.- SI GUARDA respSolinsingreso ACTUALIZAR TABLAS SALDOS //OJO ANALIZAR SI TAMBIEN SE GUARDA EL OPAG_ID, YA QUE ESTA AQUI
                             if ($respSolinsingreso) {
                                 $respSaldosact = $mod_solinsaldos->insertarIncripcionSaldos($sins_id, $opag_id, $resp_Valoranteriopago["total"], $val_total, $saldomodifica, null, null, $usuario);
@@ -811,7 +811,7 @@ class SolicitudesController extends \app\components\CController {
                                     $transaction->rollback();
                                     $transaction1->rollback();
                                     $message = array(
-                                        "wtmessage" => Yii::t("notificaciones", "Error al actualizar saldo de solicitud de inscripcion."),
+                                        "wtmessage" => Yii::t("notificaciones", "Error al actualizar saldo de solicitud de inscripción."),
                                         "title" => Yii::t('jslang', 'Bad Request'),
                                     );
                                     return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Bad Request"), false, $message);

@@ -1127,11 +1127,13 @@ function save() {
     arrParams.observacion = $('#txt_observacion').val();
     arrParams.ite_id = $('#cmb_item').val();
     arrParams.precio = $('#txt_precio_item').val();
-    arrParams.cemp_id = $('#cmb_convenio').val();
     arrParams.correo_fac = $('#txt_correo_fac').val();
     if ($('input[name=opt_declara_Dctosi]:checked').val() == 1) {
         arrParams.descuento_id = $('#cmb_descuento').val();
         arrParams.marcadescuento = '1';
+    }
+        if ($('input[name=opt_agree_Dctosi]:checked').val() == 1) {
+            arrParams.cemp_id = $('#cmb_convenio').val();
     }
           if (arrParams.cemp_id > 0 && arrParams.descuento_id > 0) {
 

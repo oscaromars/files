@@ -727,6 +727,7 @@ class PagosController extends \app\components\CController {
                 $files = $_FILES[key($_FILES)];
                 $arrIm = explode(".", basename($files['name']));
                 $typeFile = strtolower($arrIm[count($arrIm) - 1]);
+                if ($typeFile == 'jpg' || $typeFile == 'png' || $typeFile == 'pdf' || $typeFile == 'jpeg') {
                 $dirFileEnd = Yii::$app->params["documentFolder"] . "documento/" . $per_id . "/" . $data["name_file"] . "." . $typeFile;
                 $status = Utilities::moveUploadFile($files['tmp_name'], $dirFileEnd);
                 if ($status) {
@@ -735,6 +736,7 @@ class PagosController extends \app\components\CController {
                     echo json_encode(['error' => Yii::t("notificaciones", "Error to process File {file}. Try again.", ['{file}' => basename($files['name'])])]);
                     return;
                 }
+              }
             }
             $arrIm = explode(".", basename($data["documento"]));
             $typeFile = strtolower($arrIm[count($arrIm) - 1]);

@@ -74,7 +74,7 @@ return array(
     'HTTP version unsupported' => 'Versión HTTP no compatible.',
     'Insufficient Storage' => 'Almacenamiento insuficiente.',
     'The server encountered an error processing your request' => 'El servidor encontro un error procesando su petición.',
-    'Invalid phone number.' => 'Número de teléfono no válido.',
+    'Invalid phone number.' => 'Número no válido.',
     'Loaded' => 'Cargado',
     'Loading File' => 'Cargando Archivo',
     'Maximum {sizeMax} characters.' => 'Máximo {sizeMax} caracteres.',

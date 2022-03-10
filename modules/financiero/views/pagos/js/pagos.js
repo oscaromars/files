@@ -192,6 +192,9 @@ function enviardata() {
     var link = $('#txth_base').val() + "/financiero/pagos/savecarga";
     var idsol = $('#txth_idsol').val();
     var pg = $('#txth_pg').val();
+    var fecha = new Date();
+    var month = (fecha.getMonth() + 1).toString().padStart(2, "0");
+    var formatted_date = fecha.getFullYear() + "-" + month + "-" + fecha.getDate();
     arrParams.idpago = $('#txth_ids').val();
     arrParams.totpago = $('#txth_tot').val();
     arrParams.pago = $('#txt_pago').val();
@@ -203,13 +206,24 @@ function enviardata() {
     arrParams.empresa = $('#txth_empid').val();
     arrParams.observacion = $('#txt_observa').val();
     arrParams.sinsid = $('#txth_sinsid').val();
+    //alert ('dssdd'+ formatted_date);
     if (parseFloat(arrParams.pago) > parseFloat(arrParams.totpago))
     {
-        alert("Está tratando de ingresar un pago mayor al valor de su servicio. $" + parseFloat(arrParams.totpago));
+        var mensaje = {wtmessage: "Está tratando de ingresar un pago mayor al valor de su servicio.$" + parseFloat(arrParams.totpago), title: "Información"};
+        showAlert("NO_OK", "success", mensaje);
+        //alert("Está tratando de ingresar un pago mayor al valor de su servicio. $" + parseFloat(arrParams.totpago));
     } else if (parseFloat(arrParams.pago) < parseFloat(arrParams.totpago))
     {
-        alert("Está tratando de ingresar un pago menor al valor de su servicio. $" + parseFloat(arrParams.totpago));
-    } else {
+        var mensaje = {wtmessage: "Está tratando de ingresar un pago menor al valor de su servicio. $"+ parseFloat(arrParams.totpago), title: "Información"};
+        showAlert("NO_OK", "success", mensaje);
+        //alert("Está tratando de ingresar un pago menor al valor de su servicio. $" + parseFloat(arrParams.totpago));
+    } else if ($('#txth_doc_titulo').val().length == 0){
+        var mensaje = {wtmessage: "Adjuntar Documento: El campo no debe estar vacío.", title: "Información"};
+        showAlert("NO_OK", "success", mensaje);
+    }else if (arrParams.fechatransaccion > formatted_date){
+        var mensaje = {wtmessage: "Fecha Transacción: La fecha de transacción no puede ser mayor al día de hoy.", title: "Información"};
+        showAlert("NO_OK", "success", mensaje);
+    }else{
         if (!validateForm()) {
             requestHttpAjax(link, arrParams, function (response) {
                 showAlert(response.status, response.label, response.message);

@@ -22,7 +22,7 @@ admision::registerTranslations();
 $leyendarc = '<div class="col-md-12 col-sm-12 col-xs-12 col-lg-12">
           <div class="form-group">
           <div class="col-sm-10 col-md-10 col-xs-10 col-lg-10">
-          <div style = "width: 433px;" class="alert alert-info"><span style="font-weight: bold"> Nota: </span> Al subir archivo debe ser 800 KB máximo y tipo jpg, png o pdf.</div>
+          <div style = "width: 433px;" class="alert alert-info"><span style="font-weight: bold"> Nota: </span> Archivo debe ser 800 KB máximo y tipo jpg, jpeg,png o pdf.</div>
           </div>
           </div>
           </div>';
@@ -92,11 +92,11 @@ if (empty($_GET['peid'])) {
                 <?php
                 if (base64_decode($_GET['estado']) != 'Pendiente') {
                     ?>
-                    <input type="text" class="form-control PBvalidation keyupmce" id="txt_numtransaccion" data-type="number" readonly = "readonly" data-keydown="true" placeholder="<?= admision::t("Solicitudes", "Transaction number") ?>">
+                    <input type="text" class="form-control PBvalidation keyupmce" id="txt_numtransaccion" data-type="numeracion" readonly = "readonly" data-keydown="true" placeholder="<?= admision::t("Solicitudes", "Transaction number") ?>">
                     <?php
                 } else {
                     ?>
-                    <input type="text" class="form-control PBvalidation keyupmce" id="txt_numtransaccion" data-type="number" data-keydown="true" placeholder="<?= admision::t("Solicitudes", "Transaction number") ?>">
+                    <input type="text" class="form-control PBvalidation keyupmce" id="txt_numtransaccion" data-type="numeracion" data-keydown="true" placeholder="<?= admision::t("Solicitudes", "Transaction number") ?>">
                     <?php
                 }
                 ?>

@@ -133,4 +133,35 @@ class ConvenioEmpresa extends \yii\db\ActiveRecord
         $resultData = $comando->queryAll();
         return $resultData;
     }
+
+     /** 
+     * Function crear Convenio x Persona 
+     * @author  Oscar Sanchez <analistadesarrollo05@uteg.edu.ec>
+     * @property 
+     * @return  
+     */
+    private function crearConvenioxPersona($convenio,$per_id,$usu_id) {
+        $con = \Yii::$app->db_captacion;
+        $estado = 1;  $estado_convenio="A";
+        $sql = "INSERT INTO " . $con->dbname . ".solicitud_convenio_persona
+                    (per_id,
+                     cemp_id,
+                     scpe_fecha_inicio,
+                     scpe_estado_convenio,
+                     scpe_fecha_creacion,
+                     scpe_usuario_creacion,
+                     scpe_estado,
+                     scpe_estado_logico)VALUES
+                    ('" . $per_id . "',
+                    '" . $convenio . "',
+                    CURRENT_TIMESTAMP(),
+                    '" . $estado_convenio . "',
+                    CURRENT_TIMESTAMP()
+                    '" . $usu_id . "',
+                    '" . $estado . "',
+                    '" . $estado . "')";
+                    
+        $command = $con->createCommand($sql);
+        $command->execute();
+    }  
 }

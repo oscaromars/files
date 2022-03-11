@@ -513,6 +513,21 @@ class SolicitudesController extends \app\components\CController {
                         }
                     }
                 }
+                if (!empty($convenio)) {
+                    $modConvenio = new ConvenioEmpresa();
+                    $respPersona = $modConvenio->crearConvenioxPersona($convenio,$per_id,$usu_id);
+                    $respConvenio = $modConvenio->consultarConvenioxMatricula($nint_id,$mod_id,$convenio,$ite_id );
+                     if ($respConvenio) {
+                         if ($precio == 0) {
+                            $val_descuento = 0;
+                        } else {
+            $percento = $respConvenio["cede_porcentaje_descuento"] - $respConvenio["cede_porcentaje_factor"];
+            if $percento > 0 { 
+            $val_descuento = ($precio * $percento) / 100;
+             }
+                    }
+                } 
+            }
                 //Generar la orden de pago con valor correspondiente. Buscar precio para orden de pago.
                 if ($precio == 0) {
                     $estadopago = 'S';

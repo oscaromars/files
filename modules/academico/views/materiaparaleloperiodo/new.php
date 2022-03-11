@@ -7,12 +7,26 @@ use yii\helpers\Html;
 
 
 ?>
-<div class="semestreacademico-create">
-    <h3><?= Html::encode($this->title) ?></h3>
+<h3><?= Html::encode($this->title) ?></h3>
+<div>
+    <form class="form-horizontal">
+        <?php echo $this->render('_searchnew', 
+                  [
+                  'arr_periodo'    => $arr_periodo,
+                  'arr_modalidad'  => $arr_modalidad,
+                  'arr_unidad'     => $arr_unidad,
+              ]); ?>
 
+    </form>
+</div>
+
+<!--<div class="semestreacademico-create">
+-->
+<div>
     <?= $this->render('_form', [
-        'searchModel' => $searchModel,
-        'dataProvider' => $dataProvider,
+        //'searchModel' => $searchModel,
+        //'dataProvider' => $dataProvider,
+        'model' => $model,
     ]) ?>
 
 </div>

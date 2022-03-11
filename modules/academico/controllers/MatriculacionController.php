@@ -1163,6 +1163,7 @@ $dataValue[] = ['Id' => $con, 'Pago' => Academico::t('matriculacion',"Payment") 
 		$_SESSION['JSLANG']['You must choose at least one Subject to Cancel Registration'] = Academico::t('matriculacion', 'You must choose at least one Subject to Cancel Registration');
 		$_SESSION['JSLANG']['You must choose at least a number or subjects '] = Academico::t('matriculacion', 'You must choose at least a number or subjects ');
 		$_SESSION['JSLANG']['You must choose at least two'] = Academico::t('matriculacion', 'You must choose at least two');
+		$_SESSION['JSLANG']['You must choose at least four subjects'] = Academico::t('matriculacion', 'You must choose at least four subjects');//10 marzo 2022
 		$_SESSION['JSLANG']['You must choose at least subject'] = Academico::t('matriculacion', 'You must choose at least subjects');
 		$_SESSION['JSLANG']['The number of subject that you can cancel is '] = Academico::t('matriculacion', 'The number of subject that you can cancel is ');
 		$_SESSION['JSLANG']['You must choose the maximum of six'] = Academico::t('matriculacion', 'You must choose the maximum of six');

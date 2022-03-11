@@ -92,11 +92,11 @@ if (empty($_GET['peid'])) {
                 <?php
                 if (base64_decode($_GET['estado']) != 'Pendiente') {
                     ?>
-                    <input type="text" class="form-control PBvalidation keyupmce" id="txt_numtransaccion" data-type="numeracion" readonly = "readonly" data-keydown="true" placeholder="<?= admision::t("Solicitudes", "Transaction number") ?>">
+                    <input type="text" class="form-control PBvalidation keyupmce" id="txt_numtransaccion" data-type="numero_transaccion" readonly = "readonly" data-keydown="true" placeholder="<?= admision::t("Solicitudes", "Transaction number") ?>">
                     <?php
                 } else {
                     ?>
-                    <input type="text" class="form-control PBvalidation keyupmce" id="txt_numtransaccion" data-type="numeracion" data-keydown="true" placeholder="<?= admision::t("Solicitudes", "Transaction number") ?>">
+                    <input type="text" class="form-control PBvalidation keyupmce" id="txt_numtransaccion" data-type="numero_transaccion" data-keydown="true" placeholder="<?= admision::t("Solicitudes", "Transaction number") ?>">
                     <?php
                 }
                 ?>

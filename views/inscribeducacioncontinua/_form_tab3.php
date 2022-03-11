@@ -263,7 +263,7 @@ admision::registerTranslations();
                 <div class="form-group">
                     <label for="txt_numtransaccion" class="col-xs-12 col-sm-12 col-md-4 col-lg-4 control-label" id="lbl_num_transaccion"><?=admision::t("Solicitudes", "Transaction number")?><span class="text-danger">*</span></label>
                     <div class="col-sm-8 col-md-8 col-xs-8 col-lg-8">
-                        <input type="text" class="form-control keyupmce" value="" id="txt_numtransaccion" data-type="number" placeholder="<?=admision::t("Solicitudes", "Transaction number")?>">
+                        <input type="text" class="form-control keyupmce" value="" id="txt_numtransaccion" data-type="numero_transaccion" placeholder="<?=admision::t("Solicitudes", "Transaction number")?>">
                     </div>
                 </div>
             </div>

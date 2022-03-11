@@ -75,6 +75,7 @@ return array(
     'Insufficient Storage' => 'Almacenamiento insuficiente.',
     'The server encountered an error processing your request' => 'El servidor encontro un error procesando su petición.',
     'Invalid phone number.' => 'Número no válido.',
+    'Invalid transaction number.' => 'Número de transacción no válido.',
     'Loaded' => 'Cargado',
     'Loading File' => 'Cargando Archivo',
     'Maximum {sizeMax} characters.' => 'Máximo {sizeMax} caracteres.',

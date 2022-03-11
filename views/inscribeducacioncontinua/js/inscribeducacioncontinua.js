@@ -524,6 +524,10 @@ $(document).ready(function () {
                 var mensaje = {wtmessage: "Fecha Transacción: La fecha de transacción no puede ser mayor al día de hoy.", title: "Información"};
                 showAlert("NO_OK", "success", mensaje);
             }else{
+                if (arrParams.num_transaccion < '0' || arrParams.num_transaccion.length == 0){
+                    var mensaje = {wtmessage: "Número de Transacción: Número de transacción no puede ser negativo.", title: "Información"};
+                    showAlert("NO_OK", "success", mensaje);
+                }else{
                     if (!validateForm()) {
                         requestHttpAjax(link, arrParams, function (response) {
                             var message = response.message;
@@ -536,6 +540,7 @@ $(document).ready(function () {
                             }
                         });
                     }
+                }
             }// else hace el !validateForm()
         }
     });

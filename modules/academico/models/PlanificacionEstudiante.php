@@ -1757,7 +1757,7 @@ inner join db_academico.materia_paralelo_periodo mpp on mpp.asi_id = made.asi_id
                     inner join  ". $con->dbname . ".malla_academica_detalle mad on mad.made_codigo_asignatura in $filtro
                     inner join  ". $con->dbname . ".asignatura a on mad.asi_id = a.asi_id
                     inner join  ". $con->dbname . ".malla_unidad_modalidad mum on mad.maca_id = mum.maca_id
-                    inner join  ". $con->dbname . ".modalidad_estudio_unidad meu on meu.meun_id = (select s.meun_id from db_academico.malla_unidad_modalidad s where s.maca_id = mum.maca_id limit 0,1)
+                    inner join  ". $con->dbname . ".modalidad_estudio_unidad meu on meu.meun_id /*=*/ IN (select s.meun_id from db_academico.malla_unidad_modalidad s where s.maca_id = mum.maca_id /*limit 0,1*/)
                     inner join  ". $con->dbname . ".planificacion pla on pla.pla_id = pe.pla_id
                     inner join  ". $con->dbname . ".semestre_academico se on se.saca_id = pla.saca_id
                     inner join  ". $con->dbname . ".materia_paralelo_periodo mpp on mpp.mpp_id in (pe.pes_mat_b1_h1_mpp,pe.pes_mat_b1_h2_mpp,pe.pes_mat_b1_h3_mpp,

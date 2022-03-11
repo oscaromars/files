@@ -2551,13 +2551,21 @@ AND pes.pla_id = :pla_id ) as daho12
                 $mod_id = $arrFiltro['modalidad'];
                 $strMod = 'and pl.mod_id = '.$mod_id;
             }
+
+            /* Busqueda por periodo */
+            $paca_id = PeriodoAcademico::find()->select("paca_id")->where(["saca_id" => $saca_id, "paca_estado" => 1,"paca_estado_logico" => 1])->asArray()->all();
+            $paca_1=$paca_id[0]['paca_id'];
+            $paca_2=$paca_id[1]['paca_id'];
+            \app\models\Utilities::putMessageLogFile('paca 1...: '.$paca_1);
+            \app\models\Utilities::putMessageLogFile('paca 1...: '.$paca_2);
+            /* Fin de busqueda*/
             $sql .= 'select distinct x.Ids,x.daho_id,x.saca_id,x.paralelo,x.jor_materia,x.cod_asignatura, x.asignatura,x.pes_jornada,x.bloque,x.modalidad,x.hora,x.horario from (';
             // Bloque 1
             for ($i = 1; $i < 7; $i++) {
                 $sql .= "SELECT pes_id as Ids, mpp.daho_id, pla.saca_id,
                                 concat('Paralelo ',mpp.mpp_num_paralelo) as paralelo,
                                 pes_jor_b1_h" . $i . " as jor_materia, pes_mat_b1_h" . $i . "_cod as cod_asignatura, asig.asi_nombre as asignatura, 
-                                CASE ples.pes_mod_b1_h" . $i . "  
+                                CASE ples.pes_jor_b1_h" . $i . "  
                                     WHEN 'M' THEN 'Matutino'  
                                     WHEN 'N' THEN 'Nocturno'  
                                     WHEN 'S' THEN 'Semipresencial'
@@ -2566,21 +2574,21 @@ AND pes.pla_id = :pla_id ) as daho12
                                     WHEN '2' THEN 'Nocturno'  
                                     WHEN '3' THEN 'Semipresencial'
                                     WHEN '4' THEN 'Distancia'
-                                    else ples.pes_mod_b1_h" . $i . "
+                                    else ples.pes_jor_b1_h" . $i . "
                                 END AS pes_jornada, 
                                 'Bloque 1' as bloque, moda.mod_nombre as modalidad, 'Hora " . $i . "' as hora,
+                                mpp.mpp_id,
                                 case mpp.daho_id
-                                when '0' then ''
-                                when NULL then ''
-                                else ifnull(daho.daho_descripcion ,'') 
+                                    when daho.daho_id then daho.daho_descripcion
+                                    when ifnull(mpp.daho_id,0)=0 then ''
                                 end as horario
                         FROM " . $con->dbname . ".planificacion_estudiante ples
                         INNER JOIN " . $con->dbname . ".planificacion pla on pla.pla_id = ples.pla_id
                         INNER JOIN " . $con->dbname . ".modalidad moda ON  moda.mod_id = ples.pes_mod_b1_h" . $i . "
                         INNER JOIN " . $con->dbname . ".malla_academica_detalle mad ON  mad.made_codigo_asignatura = pes_mat_b1_h" . $i . "_cod
                         INNER JOIN " . $con->dbname . ".asignatura asig ON  asig.asi_id = mad.asi_id
-                        INNER JOIN " . $con->dbname . ".materia_paralelo_periodo mpp on mpp.mpp_id = ples.pes_mat_b1_h".$i."_mpp
-                        INNER JOIN " . $con->dbname . ".distributivo_academico_horario daho on daho.daho_id = mpp.daho_id or ifnull(mpp.daho_id,0) = 0
+                        INNER JOIN " . $con->dbname . ".materia_paralelo_periodo mpp on mpp.mpp_id = ples.pes_mat_b1_h".$i."_mpp and mpp.mod_id =moda.mod_id and mpp.paca_id= $paca_1
+                        LEFT JOIN " . $con->dbname . ".distributivo_academico_horario daho on daho.daho_id = mpp.daho_id or ifnull(mpp.daho_id,0) = 0
                         where ples.per_id =  $per_id and ples.pla_id = (SELECT distinct ples.pla_id from ". $con->dbname . ".periodo_academico pa
                                                                 inner join ". $con->dbname . ".planificacion pl on pl.saca_id = pa.saca_id
                                                                 inner join ". $con->dbname . ".planificacion_estudiante ples on ples.pla_id = pl.pla_id 
@@ -2596,7 +2604,7 @@ AND pes.pla_id = :pla_id ) as daho12
                 $sql .= "SELECT pes_id as Ids, mpp.daho_id,pla.saca_id,
                                 concat('Paralelo ',mpp.mpp_num_paralelo) as paralelo,
                                 pes_jor_b2_h" . $j . " as jor_materia, pes_mat_b2_h" . $j . "_cod as cod_asignatura, asig.asi_nombre as asignatura, 
-                                CASE ples.pes_mod_b2_h" . $j . "  
+                                CASE ples.pes_jor_b2_h" . $j . "  
                                     WHEN 'M' THEN 'Matutino'  
                                     WHEN 'N' THEN 'Nocturno'  
                                     WHEN 'S' THEN 'Semipresencial'
@@ -2605,21 +2613,21 @@ AND pes.pla_id = :pla_id ) as daho12
                                     WHEN '2' THEN 'Nocturno'  
                                     WHEN '3' THEN 'Semipresencial'
                                     WHEN '4' THEN 'Distancia'
-                                    else ples.pes_mod_b2_h" . $j . " 
+                                    else ples.pes_jor_b2_h" . $j . " 
                                 END AS pes_jornada, 
                                 'Bloque 2' as bloque, moda.mod_nombre as modalidad, 'Hora " . $j . "' as hora,
+                                mpp.mpp_id,
                                 case mpp.daho_id
-                                when '0' then ''
-                                when NULL then ''
-                                else ifnull(daho.daho_descripcion ,'') 
+                                    when daho.daho_id then daho.daho_descripcion
+                                    when ifnull(mpp.daho_id,0)=0 then ''
                                 end as horario
                         FROM " . $con->dbname . ".planificacion_estudiante ples
                         INNER JOIN " . $con->dbname . ".planificacion pla on pla.pla_id = ples.pla_id
                         INNER JOIN " . $con->dbname . ".modalidad moda ON  moda.mod_id = ples.pes_mod_b2_h" . $j . "
                         INNER JOIN " . $con->dbname . ".malla_academica_detalle mad ON  mad.made_codigo_asignatura = pes_mat_b2_h" . $j . "_cod
                         INNER JOIN " . $con->dbname . ".asignatura asig ON  asig.asi_id = mad.asi_id
-                        INNER JOIN " . $con->dbname . ".materia_paralelo_periodo mpp on mpp.mpp_id = ples.pes_mat_b2_h".$j."_mpp
-                        INNER JOIN " . $con->dbname . ".distributivo_academico_horario daho on daho.daho_id = mpp.daho_id or ifnull(mpp.daho_id,0) = 0
+                        INNER JOIN " . $con->dbname . ".materia_paralelo_periodo mpp on mpp.mpp_id = ples.pes_mat_b2_h".$j."_mpp and mpp.mod_id =moda.mod_id and mpp.paca_id= $paca_2
+                        LEFT JOIN " . $con->dbname . ".distributivo_academico_horario daho on daho.daho_id = mpp.daho_id or ifnull(mpp.daho_id,0) = 0
                         where ples.per_id =  $per_id and ples.pla_id = (SELECT distinct ples.pla_id from ". $con->dbname . ".periodo_academico pa
                                                                 inner join ". $con->dbname . ".planificacion pl on pl.saca_id = pa.saca_id
                                                                 inner join ". $con->dbname . ".planificacion_estudiante ples on ples.pla_id = pl.pla_id 
@@ -2639,7 +2647,7 @@ AND pes.pla_id = :pla_id ) as daho12
                 $comando = $con->createCommand($sql);
                 $resultData = $comando->queryall();
                 //\app\models\Utilities::putMessageLogFile('query 1...: '.$sql);
-                \app\models\Utilities::putMessageLogFile('consultaPlanificacion: '.$comando->getRawSql());
+                \app\models\Utilities::putMessageLogFile('consultarDetalleplanificaaut: '.$comando->getRawSql());
 
                 /*if ($arrFiltro['pla_id'] > 0) {
                     $modalidad = $arrFiltro["pla_id"];

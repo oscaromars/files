@@ -100,7 +100,7 @@ academico::registerTranslations();
         <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">                
             <a id="btn_buscarPlanest" href="javascript:" class="btn btn-primary btn-block"> <?= Yii::t("formulario", "Search") ?></a>
         </div>
-    </div> 
+    </div>
 
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 form-group">
         <h4><span id="lbl_evaluar"><?= Yii::t("formulario", "Detalle Planificación Estudiante") ?></span></h4>
@@ -237,6 +237,7 @@ academico::registerTranslations();
                     PbGridView::widget([
                         'id' => 'PbPlanificaestudiante',
                         'dataProvider' => $model_detalle,
+                        'formatter' => ['class' => 'yii\i18n\Formatter', 'nullDisplay' => ''],
                         'pajax' => true,
                         'summary' => false,
                         'columns' => [

@@ -269,41 +269,45 @@ $(document).ready(function () {
 
    $('#btn_AgregarItemat').click(function () {
        //alert('HOLA');
-       //****************************************************************** validaciom para centro de idiomas ******************************************************************
-      var link = $('#txth_base').val() + "/academico/planificacion/searchasignaturaparalelomodalidad";
-      var arrParams = new Object();      
-      arrParams.periodo     = $('#cmb_periodoest').val();
-      arrParams.modalidad   = $('#cmb_modalidadesth').val();
-      arrParams.asignatura  = $('#cmb_asignaest').val();
-      arrParams.carrera     = $('#txt_eaca_id').val();
-      arrParams.bloque      = $('#cmb_bloqueest').val();
-      arrParams.hora        = $('#cmb_horaest').val();
-      unidad                = $('#cmb_unidadest').val();
-      console.log('Periodo   : ' + arrParams.periodo);
-      console.log('Modalidad : ' + arrParams.modalidad);
-      console.log('Asignatura: ' + arrParams.asignatura);
-      console.log('Carrera   : ' + arrParams.carrera);
-      console.log('Bloque    : ' + arrParams.bloque);
-      console.log('Hora      : ' + arrParams.hora);
-      console.log('Unidad    : ' + unidad);
+       //****************************************************************** Desarrollo para centro idiomas ******************************************************************
+       /*if ($('input[name=opt_Malla_Centro_Idioma_No]:checked').val() == 2) {
+
+          var link = $('#txth_base').val() + "/academico/planificacion/searchasignaturaparalelomodalidad";
+          var arrParams = new Object();      
+          arrParams.periodo     = $('#cmb_periodoest').val();
+          arrParams.modalidad   = $('#cmb_modalidadesth').val();
+          arrParams.asignatura  = $('#cmb_asignaest').val();
+          arrParams.carrera     = $('#txt_eaca_id').val();
+          arrParams.bloque      = $('#cmb_bloqueest').val();
+          unidad                = $('#cmb_unidadest').val();
+          console.log('Periodo   : ' + arrParams.periodo);
+          console.log('Modalidad : ' + arrParams.modalidad);
+          console.log('Asignatura: ' + arrParams.asignatura);
+          console.log('Carrera   : ' + arrParams.carrera);
+          console.log('Bloque    : ' + arrParams.bloque);
+          console.log('Unidad    : ' + unidad);
       
-      /*if ( unidad != 4 ){
-        arrParams.getasignatura = true;
-        requestHttpAjax(link, arrParams, function (response) {
-            if (response.status == "OK") {
-                data = response.message;
-                carrera = data.asignatura;
-                //console.log('a1 data.asignatura: ' + data.asignatura);
-                if(carrera == 0){
-                    //console.log('a2 data.asignatura: ' + data.asignatura);
-                    showAlert('NO_OK', 'error', {"wtmessage": 'La asignatura no se encuentra generado en apertura de materias, por favor revisar.', "title": 'Información'});
-                    return;
-                }
-            }
-        }, true);
+       
+          // Para unidad academica diferente a centro de idioma, vaidar apertura de materia.
+          if ( unidad != 4 ){
+          arrParams.getasignatura = true;
+          requestHttpAjax(link, arrParams, function (response) {
+              if (response.status == "OK") {
+                  data = response.message;
+                  carrera = data.asignatura;
+                  console.log('a1 data.asignatura: ' + data.asignatura);
+                  if(carrera == 0){
+                    console.log('a2 data.asignatura: ' + data.asignatura);
+                      showAlert('NO_OK', 'error', {"wtmessage": 'La asignatura no se encuentra generado en apertura de materias, por favor revisar.', "title": 'Información'});
+                      return;
+                  }
+              }
+          }, true);
+        }
+
       }*/
-      //****************************************************************** validaciom para centro de idiomas ******************************************************************
-       agregarItems('new')
+      //****************************************************************** Desarrollo para centro idiomas ******************************************************************
+      agregarItems('new')
 
    });
 
@@ -323,7 +327,6 @@ $(document).ready(function () {
                     document.getElementById("txt_modalidad2").value = carrera.mod_nombre;
                     document.getElementById("txt_eaca_id").value = carrera.eaca_id;                    
                     document.getElementById("txt_mod_id").value = carrera.mod_id;
-                    console.log('Modalidad: '+ carrera.mod_id);
                     if (carrera.mod_id == 3){
                       /*document.getElementById("opt_Malla_Centro_Idioma_Si").disabled = true;  
                       document.getElementById("opt_Malla_Centro_Idioma_No").disabled = true;*/
@@ -829,13 +832,17 @@ function accionmataut(plaid, perid, bloque, hora, saca_id) {
    arrParams.bloque = bloque;
    arrParams.hora = hora;
    arrParams.periodo = saca_id;
-   alert('Se va a eliminar :'.saca_id );
+   //Consulta metodo para centro de idiomas, para combo asignatura.
+   var malla_academica = "";
+   malla_academica = 2;
+   //alert('Se va a eliminar :'.saca_id );
    if (!validateForm()) {
        requestHttpAjax(link, arrParams, function (response) {
            showAlert(response.status, response.label, response.message);
            if (!response.error) {
                setTimeout(function () {
-                  window.location.href = $('#txth_base').val() + "/academico/planificacion/newplanificacion?pla_id=" + arrParams.pla_id + "&estudiante=" + arrParams.per_id + "&periodo="+arrParams.periodo;
+                  window.location.href = $('#txth_base').val() + "/academico/planificacion/newplanificacion?pla_id=" + arrParams.pla_id + "&estudiante=" + arrParams.per_id + "&periodo="+arrParams.periodo + "&malla_academica=" + malla_academica;//10 MARZO 2022
+                  //window.location.href = $('#txth_base').val() + "/academico/planificacion/newplanificacion?pla_id=" + arrParams.pla_id + "&estudiante=" + arrParams.per_id + "&periodo="+arrParams.periodo;
                }, 1000);
            }
        }, true);

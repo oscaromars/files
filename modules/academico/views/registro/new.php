@@ -379,6 +379,13 @@ echo CFileInputAjax::widget([
             </div>
         </div>
 
+        <!-- 10 marzo 2022 -->
+        <div class="form-group pago_documento">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="alert alert-info"><span style="font-weight: bold"> Nota: </span> Si desea cambiar datos de facturación, enviar un correo a supervisorcolecturia@uteg.edu.ec.</div>
+            </div>
+        </div>
+
 
         <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 nocredit2" >
 

@@ -328,17 +328,12 @@ $(document).ready(function () {
                     document.getElementById("txt_eaca_id").value = carrera.eaca_id;                    
                     document.getElementById("txt_mod_id").value = carrera.mod_id;
                     if (carrera.mod_id == 3){
-                      /*document.getElementById("opt_Malla_Centro_Idioma_Si").disabled = true;  
-                      document.getElementById("opt_Malla_Centro_Idioma_No").disabled = true;*/
                       document.getElementById("opt_Malla_Centro_Idioma_Si").checked = true;
-                      document.getElementById("opt_Malla_Centro_Idioma_No").checked = false;    
+                      document.getElementById("opt_Malla_Centro_Idioma_No").checked = false;
                       
                     }else{
-                      /*document.getElementById("opt_Malla_Centro_Idioma_Si").disabled = false;  
-                      document.getElementById("opt_Malla_Centro_Idioma_No").disabled = false;*/
                       document.getElementById("opt_Malla_Centro_Idioma_Si").checked = false;
-                      document.getElementById("opt_Malla_Centro_Idioma_No").checked = true; 
-                      
+                      document.getElementById("opt_Malla_Centro_Idioma_No").checked = true;                      
                     }                    
                 }else{
                    $('#txt_carrera2').val('');
@@ -353,11 +348,6 @@ $(document).ready(function () {
             //$('#divDescuento').css('display', 'block');
             $("#opt_Malla_Centro_Idioma_No").prop("checked", "");            
             listarMaterias();
-
-            //15 de febrero 2022            
-            /*var perSel = $('#cmb_periodoest option:selected').val(); 
-            $("#cmb_periodoest")[0].selectedIndex=perSel;
-            actualizarGridPlanestudiante(perSel);*/
         }
     });
 
@@ -366,11 +356,6 @@ $(document).ready(function () {
             //$('#divDescuento').css('display', 'none');
             $("#opt_Malla_Centro_Idioma_Si").prop("checked", "");
             listarMaterias();
-            
-            //15 de febrero 2022
-            /*var perSel = $('#cmb_periodoest option:selected').val(); 
-            $("#cmb_periodoest")[0].selectedIndex=perSel;
-            actualizarGridPlanestudiante(perSel);*/
         }
     });
 });

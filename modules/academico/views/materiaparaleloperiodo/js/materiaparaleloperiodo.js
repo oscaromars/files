@@ -7,12 +7,20 @@ $(document).ready(function () {
     $('#btn_enviar').click(function () {
         updatehorario();
     });
+    $('#btn_buscarDataAsignarMateriaParalelo').click(function(){
+        BuscarGrid();
+    });
+    $('#btn_buscarDataNewAsignarMateriaParalelo').click(function(){
+        BuscarGridNew();
+    });
 });
 
 function save() {
     var link = $('#txth_base').val() + "/academico/materiaparaleloperiodo/save";
-    var cmb_mod_id = $('#materiaparaleloperiodosearch-mod_id').val();
-    var cmb_pac_id = $('#materiaparaleloperiodosearch-paca_id').val();
+    /*var cmb_mod_id = $('#materiaparaleloperiodosearch-mod_id').val();
+    var cmb_pac_id = $('#materiaparaleloperiodosearch-paca_id').val();*/
+    var cmb_mod_id = $('#cmb_modalidad_new').val();//14 febrero 2022
+    var cmb_pac_id = $('#cmb_periodo_new').val();//14 febrero 2022
     var arrParams = new Object();
     var items = [];
     $('tbody tr').each(function () {
@@ -48,7 +56,7 @@ function update() {
      arrParams.asig_id = $("#asi_id").val()
      arrParams.mod_id = $("#mod_id").val()
      arrParams.paca_id = $("#paca_id").val()
-     arrParams.mpp_num_paralelo = $("#mpp_num_paralelo").val()
+     arrParams.mpp_num_paralelo = $("#mpp_num_paralelo").val();
 
    requestHttpAjax(link, arrParams, function (response) {
         showAlert(response.status, response.label, response.message);
@@ -87,4 +95,28 @@ function updatehorario() {
           }
     }, true);
   }
+}
+
+function BuscarGrid() {
+    var periodo     = $('#cmb_periodo option:selected').val();
+    var unidad      = $('#cmb_unidad option:selected').val();
+    var modalidad   = $('#cmb_modalidad option:selected').val();    
+
+    if (!$(".blockUI").length) {
+        showLoadingPopup();
+        $('#tbl_materias').PbGridView('applyFilterData', {'periodo': periodo, 'unidad':unidad, 'modalidad': modalidad});
+        setTimeout(hideLoadingPopup, 2000);
+    }
+}
+
+function BuscarGridNew() {
+    var periodo     = $('#cmb_periodo_new option:selected').val();
+    var unidad      = $('#cmb_unidad_new option:selected').val();
+    var modalidad   = $('#cmb_modalidad_new option:selected').val();    
+
+    if (!$(".blockUI").length) {
+        showLoadingPopup();
+        $('#tbl_materias_new').PbGridView('applyFilterData', {'periodo': periodo, 'unidad':unidad, 'modalidad': modalidad});
+        setTimeout(hideLoadingPopup, 2000);
+    }
 }

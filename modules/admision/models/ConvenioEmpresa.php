@@ -156,7 +156,7 @@ class ConvenioEmpresa extends \yii\db\ActiveRecord
                     '" . $convenio . "',
                     CURRENT_TIMESTAMP(),
                     '" . $estado_convenio . "',
-                    CURRENT_TIMESTAMP()
+                    CURRENT_TIMESTAMP(),
                     '" . $usu_id . "',
                     '" . $estado . "',
                     '" . $estado . "')";

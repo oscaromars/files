@@ -349,21 +349,26 @@ function registerSubject() {
     var credits  = new Array();
     var costs    = new Array();
     var contador = 0;
+    var cantidad_mat_planificada = $('#frm_cant_mat_planificada').val();
 
     $('#grid_registro_list input[type=checkbox]').each(function() {
         if (this.checked ) {
             contador += 1;
         }
     });
+    //"wtmessage": objLang.You_must_choose_at_least_two,
     var message = {
-        "wtmessage": objLang.You_must_choose_at_least_two,
+        "wtmessage": objLang.You_must_choose_at_least_four_subjects,
         "title": objLang.Error
     }
 
-    if (contador < 2) {
-        message.wtmessage = message.wtmessage;
-        showAlert("NO_OK", "Error", message);
-        return;
+    if (contador < 4 ) {
+        if (contador != cantidad_mat_planificada){
+            message.wtmessage = message.wtmessage;
+            showAlert("NO_OK", "Error", message);
+            return;
+        }
+
     }
 
     var contador = 0;

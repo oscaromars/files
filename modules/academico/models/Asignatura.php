@@ -945,4 +945,272 @@ class Asignatura extends \yii\db\ActiveRecord {
 		$res = $comando->queryAll();
 		return $res;
 	}
+
+    /**
+     * Function getAsignatura_x_bloque_x_planif
+     * @author  Julio Lopez <analistadesarrollo03@uteg.edu.ec>
+     * @param
+     * @return  $resultData (Retornar las asignaturas por planificación y modalidad).
+     */
+    public function consultarAsignaturasMateriaparaleloperiodo($paca_id=NULL, $uaca_id=NULL, $mod_id=NULL, $bloque=NULL) {
+        $con = \Yii::$app->db_academico;
+        $estado = 1;
+        $str_query = "";
+        
+        if ($paca_id != "" && $paca_id != "0") {
+            //$str_search .= " and p.paca_id =:paca_id";
+            $str_search_mppd .= " mpm.paca_id =:paca_id AND ";
+        }else{
+            $paca_id = null;
+        }
+
+        if ($uaca_id != "" && $uaca_id != "4" && $uaca_id != "0") {
+            $str_search_uaca .= " and a.uaca_id =:uaca_id";
+        }elseif ($uaca_id == 4){
+           if ($mod_id == 1){
+              $maca_id = 101; //Si la modalidad es Online, Malla PEARSON
+           }else{
+              $maca_id = 97; //Si la modalidad es distinta a Online, Malla CAMBRIDGE
+           }
+           $str_query = "CID";
+        }else{
+            $uaca_id = null;
+        }
+
+        if ($mod_id != "" && $mod_id != "0") {
+            $str_search .= " and p.mod_id =:mod_id";
+            //$str_search_mppd .= " mpm.mod_id =:mod_id AND ";
+
+        }
+
+        /*elseif($mod_id == ""){
+             $str_search .= " and p.mod_id = null";
+        }elseif($mod_id == "0"){
+             $str_search .= " and p.mod_id = null";
+        }*/
+
+        if ($paca_id != "0" || $uaca_id != "0" ) {
+            if ( $mod_id == "0" ){
+                $str_search="";
+                // and p.mod_id = 'NA'";
+            }
+        }
+
+        if ($bloque == "B1" && $str_query == "" ) {
+            $sql = "SELECT id, name from (
+                SELECT distinct a.asi_id id, asi_nombre name
+                FROM    db_academico.planificacion_estudiante pe
+                        inner join  db_academico.planificacion p on p.pla_id = pe.pla_id
+                        inner join db_academico.malla_academica_detalle md     on md.made_codigo_asignatura = pe.pes_mat_b1_h1_cod
+                        inner join db_academico.asignatura a on a.asi_id = md.asi_id
+                        left join  db_academico.materia_paralelo_periodo mpp on mpp.asi_id = a.asi_id and mpp.paca_id=:paca_id and mpp.mod_id=:mod_id
+                     WHERE p.pla_estado='1'
+                       $str_search
+                       $str_search_uaca
+                       and pes_estado = 1
+                       and pes_estado_logico = 1
+                       and mpp.asi_id is null
+
+                UNION
+                SELECT distinct a.asi_id id, asi_nombre name
+                FROM db_academico.planificacion_estudiante pe
+                     inner join db_academico.planificacion p on p.pla_id = pe.pla_id
+                     inner join db_academico.malla_academica_detalle md      on md.made_codigo_asignatura = pe.pes_mat_b1_h2_cod
+                     inner join db_academico.asignatura a on a.asi_id = md.asi_id
+                     left join  db_academico.materia_paralelo_periodo mpp on mpp.asi_id = a.asi_id and mpp.paca_id=:paca_id and mpp.mod_id=:mod_id
+                WHERE p.pla_estado='1'
+                  $str_search
+                  $str_search_uaca
+                  and pes_estado = 1
+                  and pes_estado_logico = 1
+                  and mpp.asi_id is null
+                UNION
+                SELECT distinct a.asi_id id, asi_nombre name
+                FROM db_academico.planificacion_estudiante pe
+                    inner join  db_academico.planificacion p on p.pla_id = pe.pla_id
+                    inner join db_academico.malla_academica_detalle md        on md.made_codigo_asignatura = pe.pes_mat_b1_h3_cod
+                    inner join db_academico.asignatura a on a.asi_id = md.asi_id
+                    left join  db_academico.materia_paralelo_periodo mpp on mpp.asi_id = a.asi_id and mpp.paca_id=:paca_id and mpp.mod_id=:mod_id
+                   WHERE p.pla_estado='1'
+                     $str_search
+                     $str_search_uaca
+                     and pes_estado = 1
+                     and pes_estado_logico = 1
+                     and mpp.asi_id is null
+                UNION
+                SELECT distinct a.asi_id id, asi_nombre name
+                FROM db_academico.planificacion_estudiante pe
+                    inner join  db_academico.planificacion p on p.pla_id = pe.pla_id
+                    inner join db_academico.malla_academica_detalle md          on md.made_codigo_asignatura = pe.pes_mat_b1_h4_cod
+                    inner join db_academico.asignatura a on a.asi_id = md.asi_id
+                    left join  db_academico.materia_paralelo_periodo mpp on mpp.asi_id = a.asi_id and mpp.paca_id=:paca_id and mpp.mod_id=:mod_id
+                    WHERE p.pla_estado='1'
+                      $str_search
+                      $str_search_uaca
+                      and pes_estado = 1
+                      and pes_estado_logico = 1
+                      and mpp.asi_id is null
+                UNION
+                SELECT distinct a.asi_id id, asi_nombre name
+                FROM db_academico.planificacion_estudiante pe
+                    inner join  db_academico.planificacion p on p.pla_id = pe.pla_id
+                    inner join db_academico.malla_academica_detalle md   on md.made_codigo_asignatura = pe.pes_mat_b1_h5_cod
+                    inner join db_academico.asignatura a on a.asi_id = md.asi_id
+                    left join  db_academico.materia_paralelo_periodo mpp on mpp.asi_id = a.asi_id and mpp.paca_id=:paca_id and mpp.mod_id=:mod_id
+                    WHERE p.pla_estado='1'
+                      $str_search
+                      $str_search_uaca
+                      and pes_estado = 1
+                      and pes_estado_logico = 1
+                      and mpp.asi_id is null
+               ) b order by name";
+        } elseif ( $str_query == "" ) {
+            $sql = "SELECT id, name from (
+                SELECT distinct a.asi_id id, asi_nombre name
+                FROM db_academico.planificacion_estudiante pe
+                inner join  db_academico.planificacion p on p.pla_id = pe.pla_id
+                inner join db_academico.malla_academica_detalle md  on md.made_codigo_asignatura = pe.pes_mat_b2_h1_cod
+                inner join db_academico.asignatura a on a.asi_id = md.asi_id
+                left join  db_academico.materia_paralelo_periodo mpp on mpp.asi_id = a.asi_id and mpp.paca_id=:paca_id and mpp.mod_id=:mod_id
+                    WHERE p.pla_estado='1'
+                      $str_search
+                      $str_search_uaca
+                      and pes_estado = 1
+                      and pes_estado_logico = 1
+                      and mpp.asi_id is null
+                UNION
+                SELECT distinct a.asi_id id, asi_nombre name
+                FROM db_academico.planificacion_estudiante pe
+                    inner join  db_academico.planificacion p on p.pla_id = pe.pla_id
+                    inner join db_academico.malla_academica_detalle md         on md.made_codigo_asignatura = pe.pes_mat_b2_h2_cod
+                    inner join db_academico.asignatura a on a.asi_id = md.asi_id
+                    left join  db_academico.materia_paralelo_periodo mpp on mpp.asi_id = a.asi_id and mpp.paca_id=:paca_id and mpp.mod_id=:mod_id
+                WHERE p.pla_estado='1'
+                  $str_search
+                  $str_search_uaca
+                  and pes_estado = 1
+                  and pes_estado_logico = 1
+                  and mpp.asi_id is null
+                UNION
+                SELECT distinct a.asi_id id, asi_nombre name
+                FROM db_academico.planificacion_estudiante pe
+                     inner join  db_academico.planificacion p on p.pla_id = pe.pla_id
+                    inner join db_academico.malla_academica_detalle md     on md.made_codigo_asignatura = pe.pes_mat_b2_h3_cod
+                    inner join db_academico.asignatura a on a.asi_id = md.asi_id
+                    left join  db_academico.materia_paralelo_periodo mpp on mpp.asi_id = a.asi_id and mpp.paca_id=:paca_id and mpp.mod_id=:mod_id
+                WHERE p.pla_estado='1'
+                  $str_search
+                  $str_search_uaca
+                  and pes_estado = 1
+                  and pes_estado_logico = 1
+                  and mpp.asi_id is null
+                UNION
+                SELECT distinct a.asi_id id, asi_nombre name
+                FROM db_academico.planificacion_estudiante pe
+                 inner join  db_academico.planificacion p on p.pla_id = pe.pla_id
+                 inner join db_academico.malla_academica_detalle md    on md.made_codigo_asignatura = pe.pes_mat_b2_h4_cod
+                 inner join db_academico.asignatura a on a.asi_id = md.asi_id
+                left join  db_academico.materia_paralelo_periodo mpp on mpp.asi_id = a.asi_id and mpp.paca_id=:paca_id and mpp.mod_id=:mod_id
+                WHERE p.pla_estado='1'
+                  $str_search
+                  $str_search_uaca
+                  and pes_estado = 1
+                  and pes_estado_logico = 1
+                  and mpp.asi_id is null
+                UNION
+                SELECT distinct a.asi_id id, asi_nombre name
+                FROM db_academico.planificacion_estudiante pe
+                    inner join  db_academico.planificacion p on p.pla_id = pe.pla_id
+                    inner join db_academico.malla_academica_detalle md     on md.made_codigo_asignatura = pe.pes_mat_b2_h5_cod
+                    inner join db_academico.asignatura a on a.asi_id = md.asi_id
+                    left join  db_academico.materia_paralelo_periodo mpp on mpp.asi_id = a.asi_id and mpp.paca_id=:paca_id and mpp.mod_id=:mod_id
+                    WHERE p.pla_estado='1'
+                      $str_search
+                      $str_search_uaca
+                      and pes_estado = 1
+                      and pes_estado_logico = 1
+                      and mpp.asi_id is null
+                ) b order by name";
+        }elseif ($str_query == "CID" ){
+            $sql = "SELECT id, name from (
+                    SELECT asi.asi_id id, asi.asi_nombre name
+                FROM db_academico.malla_academica as maca    
+                INNER JOIN db_academico.malla_academica_detalle as made on maca.maca_id = made.maca_id    
+                INNER JOIN db_academico.asignatura as asi on asi.asi_id = made.asi_id
+                WHERE maca.maca_id = :maca_id and
+                      maca.maca_estado = 1 and maca.maca_estado_logico = 1 and
+                      made.made_estado = 1 and made.made_estado_logico = 1 and
+                      asi.asi_estado = 1 and asi.asi_estado_logico = 1
+                      and (select count(1) from db_academico.materia_paralelo_periodo as a 
+                            where a.asi_id = asi.asi_id and 
+                                  a.paca_id = :paca_id and 
+                                  a.mpp_estado = 1 and a.mpp_estado_logico = 1 ) = 0
+
+            ) b order by name";
+
+        }
+
+        $comando = $con->createCommand($sql);
+        //$comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        //$comando->bindParam(":paca_id", $paca_id, \PDO::PARAM_INT);
+        //$comando->bindParam(":mod_id", $mod_id, \PDO::PARAM_STR);
+
+        if ($uaca_id != "" && $uaca_id == "4") {
+            $comando->bindParam(":maca_id", $maca_id, \PDO::PARAM_STR);
+            $comando->bindParam(":paca_id", $paca_id, \PDO::PARAM_STR);
+        }else{
+            $comando->bindParam(":paca_id", $paca_id, \PDO::PARAM_INT);
+            $comando->bindParam(":mod_id", $mod_id, \PDO::PARAM_STR);
+            $comando->bindParam(":uaca_id", $uaca_id, \PDO::PARAM_STR);
+        }
+
+        $resultData = $comando->queryAll();
+        
+        $arr_paralelo = [
+             ['Id' => '1', 'Nombres' =>'1'],
+             ['Id' => '2', 'Nombres' =>'2'],
+             ['Id' => '3', 'Nombres' =>'3'],
+             ['Id' => '4', 'Nombres' =>'4'],
+             ['Id' => '5', 'Nombres' =>'5'],
+             ['Id' => '6', 'Nombres' =>'6'],
+             ['Id' => '7', 'Nombres' =>'7'],
+             ['Id' => '8', 'Nombres' =>'8'],
+             ['Id' => '9', 'Nombres' =>'9'],
+             ['Id' => '10', 'Nombres' =>'10'],
+             ['Id' => '11', 'Nombres' =>'11'],
+             ['Id' => '12', 'Nombres' =>'12'],
+             ['Id' => '13', 'Nombres' =>'13'],
+             ['Id' => '14', 'Nombres' =>'14'],
+             ['Id' => '15', 'Nombres' =>'15'],
+             ['Id' => '16', 'Nombres' =>'16'],
+             ['Id' => '17', 'Nombres' =>'17'],
+             ['Id' => '18', 'Nombres' =>'18'],
+             ['Id' => '19', 'Nombres' =>'19'],
+             ['Id' => '20', 'Nombres' =>'20'],
+        ];
+ 
+        $arr_paralelo = array_merge([["Id" => "0", "Nombres" => Yii::t("formulario", "Select")]], $arr_paralelo);
+        foreach ($resultData as $key => $value) {
+            $value['orden_paralelo'] = $arr_paralelo;
+            $resultData[$key] =  $value;
+        }
+        
+        $dataProvider = new ArrayDataProvider([
+            'allModels' => $resultData,
+            'pagination' => [
+                'pageSize' => 100,
+            ],
+            'sort' => [
+                'attributes' => ['asi_id', 'paca_id', 'mpp_num_paralelo'],
+            ],
+        ]);
+
+        if ($onlyData) {
+            return $resultData;
+        } else {
+            return $dataProvider;
+        }
+
+        //return $resultData;
+    }
 }

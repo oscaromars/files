@@ -154,4 +154,5 @@ return [
     'You must choose subjetc' => 'Usted deberia seleccionar materias',
     'You reached the maximum number of canceled subjects registered'=>'Usted llegó al máximo de materias canceladas registradas',
     'Consulta de Registro de Matrícula' => 'Consulta de Registro de Matrícula',
+    'You must choose at least four subjects' => 'Usted deberia seleccionar al menos cuatro materias',
 ];

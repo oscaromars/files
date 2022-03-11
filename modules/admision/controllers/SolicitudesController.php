@@ -515,7 +515,7 @@ class SolicitudesController extends \app\components\CController {
                 }
                 if (!empty($convenio)) {
                     $modConvenio = new ConvenioEmpresa();
-                    $respPersona = $modConvenio->crearConvenioxPersona($convenio,$per_id,$usu_id);
+                    $respPersona = $modConvenio->crearConvenioxPersona($convenio,$per_id,$usu_id,$id_sins);
                     $respConvenio = $modConvenio->consultarConvenioxMatricula($nint_id,$mod_id,$convenio,$ite_id );
                      if ($respConvenio) {
                          if ($precio == 0) {

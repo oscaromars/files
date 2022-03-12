@@ -225,12 +225,11 @@
         <p><b>Cláusulas:</b></p><br> 
         <p>    
             <ul style= "list-style-type: disc; padding-left: 5%;">
-                <li>Esta pre-inscripción está sujeta de acuerdo a la disponibilidad de cupos en las materias seleccionadas, en caso de solicitar activación deberá comunicarse con la secretaria de su Facultad.</li>
+                <li>Si presenta inconvenientes con disponibilidad de cupos, por favor contactar a la secretaria de la facultad.</li>
                 <li>Los valores correspondientes a cada mensualidad deberán cancelarse en las fechas establecidas.</li>
-                <li>Todos los pagos deben realizarse directamente en las cuentas institucionales indicadas por la UTEG</li>
-                <li>El comprobante de depósito deberá ser enviado al correo de colecturia@uteg.edu.ec dentro de las 24 horas posteriores para su registro en sistema y emisión de la factura correspondiente.</li>
+                <li>Todos los pagos pueden realizarse mediante Botón de Pagos, transferencias bancarias o depósitos en las cuentas de la universidad.</li>
+                <li>Los pagos realizados deberán ser cargados a través del sistema ASGARD para su registro en el sistema y posterior emisión de factura.</li>
                 <li>El estudiante acepta acoger las disposiciones académicas y reglamentarias de la Universidad Tecnológica Empresarial de Guayaquil.</li>
-                <li>La confirmación mediante correo electrónico por parte del Estudiante constituye la aceptación de la hoja de inscripción.</li>
             </ul>
         </p><br>    
     </div>
@@ -238,13 +237,8 @@
     <div class="blue">
         <p style='text-align:center'><b><i>Compromiso de Pago - Crédito Universitario Directo</i></b></p>
             <p>Yo, alumno(a) <?= strtoupper($data_student['pes_nombres']) ?> con C.I. No. <?= $data_student['pes_dni'] ?>, perteneciente a la facultad de MODALIDAD <?= strtoupper($data_student['mod_nombre']) ?>, carrera de <?= strtoupper($data_student['pes_carrera']) ?>, me comprometo a cancelar
-            <u>puntualmente</u> las cuotas señaladas anteriormente, hasta el día dos de cada mes, durante el periodo de <?= strtoupper($data_student['pla_periodo_academico']) ?>. Por el incumplimiento de lo antes señalado, me sujeto a cumplir las disposiciones que establece la universidad.
+            <u>puntualmente</u> las cuotas señaladas anteriormente, durante el periodo de <?= strtoupper($data_student['pla_periodo_academico']) ?>. Por el incumplimiento de lo antes señalado, me sujeto a cumplir las disposiciones que establece la universidad.
             </p>
     </div>
-    <br><br>
-    <div class="blue">
-        <p style='text-align:center'>__________________________________</p>
-        <p style='text-align:center'>              Firma Alumno (a)    </p>
-    </div>  
 </div>
 

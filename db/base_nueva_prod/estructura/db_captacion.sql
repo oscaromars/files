@@ -577,3 +577,55 @@ create table if not exists `solicitud_inscripcion_saldos` (
  `sinsa_estado_logico` varchar(1) not null,
   foreign key (sins_id) references `solicitud_inscripcion`(sins_id)
 );
+
+-- --------------------------------------------------------
+--
+-- Modificaciones a la tabla convenio_empresa
+--
+
+ALTER TABLE `db_captacion`.`convenio_empresa` 
+      ADD COLUMN `cemp_fecha_inicio` TIMESTAMP NULL DEFAULT NULL AFTER `cemp_estado_empresa`,
+      ADD COLUMN `cemp_fecha_fin` TIMESTAMP NULL DEFAULT NULL AFTER `cemp_fecha_inicio`;
+
+-- --------------------------------------------------------
+--
+-- Estructura de la tabla convenio_empresa_detalle
+--
+
+create table db_captacion.convenio_empresa_detalle (
+`cede_id` bigint(20) not null primary key,  
+`cemp_id`  bigint(20) not null, 
+`uaca_id`  bigint(20) not null,  
+`mod_id` bigint(20) not null,
+`cede_tipo` varchar(2) not null,
+`cede_porcentaje_descuento` bigint(20) not null,
+`cede_porcentaje_factor` bigint(20) not null,
+`cede_fecha_creacion` timestamp not null default current_timestamp,
+`cede_usuario_creacion` bigint(20) not null,
+`cede_estado` varchar(1) not null,
+`cede_fecha_modificacion` timestamp null default null,
+`cede_usuario_modificacion` bigint(20) null,
+`cede_estado_logico` varchar(1) not null 
+);
+
+-- --------------------------------------------------------
+--
+-- Estructura de la tabla solicitud_convenio_persona
+--
+
+create table db_captacion.solicitud_convenio_persona (
+`scpe_id` bigint(20) not null primary key,  
+`per_id` bigint(20) not null,
+`cemp_id` bigint(20) not null,
+`sins_id`  bigint(20) null, 
+`scpe_fecha_inicio` timestamp not null default current_timestamp,
+`scpe_fecha_fin` timestamp null default null,
+`scpe_estado_convenio` varchar(2) not null,
+`scpe_fecha_creacion` timestamp not null default current_timestamp,
+`scpe_usuario_creacion` bigint(20) not null,
+`scpe_estado` varchar(1) not null,
+`scpe_fecha_modificacion` timestamp null default null,
+`scpe_usuario_modificacion` bigint(20) null,
+`scpe_estado_logico` varchar(1) not null 
+);
+

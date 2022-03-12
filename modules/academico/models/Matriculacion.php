@@ -533,7 +533,8 @@ class Matriculacion extends \yii\db\ActiveRecord {
             SELECT pes.per_id,pes_dni, " . $str_bloques . "," . $str_mpp . "
             FROM " . $con_academico->dbname . ".planificacion_estudiantex as pes            
             WHERE pes.per_id =:per_id
-            AND pes.pla_id =:pla_id;
+            AND pes.pla_id =:pla_id
+            AND pes.pes_estado =1 AND pes.pes_estado_logico=1;
         ";
 
 	// \app\models\Utilities::putMessageLogFile('sql: ' . $sql);
@@ -1279,6 +1280,49 @@ class Matriculacion extends \yii\db\ActiveRecord {
         $resultData = $comando->queryOne();
 
         return $resultData;
+    }
+
+     /**
+     * Function Obtener pago matricula por persona
+     * @author Oscar Sánchez
+     * @param 
+     * @return 
+     */
+        public static function getPlanificacionPagoxper($per_id)
+    {
+        $con_academico = \Yii::$app->db_academico;
+        $con_captacion = \Yii::$app->db_captacion;
+        $con_facturacion = \Yii::$app->db_facturacion;
+        $estado = 1; $pendiente= 'P';
+        $sql = "
+            SELECT max(pla.pla_id) as pla_id,pla.pla_periodo_academico, moda.mod_nombre,imu.ite_id,
+            opag.opag_total as valor,dpag.dpag_id, dpag.opag_id, inte.per_id,imu.mod_id,sins.uaca_id,
+            opag.sins_id,opag.opag_estado_pago,opag.opag_valor_pagado
+            FROM " . $con_facturacion->dbname . ".desglose_pago as dpag
+            INNER JOIN " . $con_facturacion->dbname . ".orden_pago as opag ON opag.opag_id = dpag.opag_id
+            INNER JOIN " . $con_facturacion->dbname . ".item_matricula_unidad as imu ON imu.ite_id = dpag.ite_id
+            INNER JOIN " . $con_captacion->dbname . ".solicitud_inscripcion as sins ON  opag.sins_id = sins.sins_id
+            INNER JOIN " . $con_captacion->dbname . ".interesado as inte ON  inte.int_id = sins.int_id
+            INNER JOIN " . $con_academico->dbname . ".planificacion as pla ON  pla.mod_id = imu.mod_id
+            INNER JOIN " . $con_academico->dbname . ".modalidad as moda ON moda.mod_id = imu.mod_id
+            WHERE TRUE
+            AND dpag.dpag_estado_pago = :pendiente  
+            AND sins.emp_id = :estado AND inte.per_id = :per_id
+            AND dpag.dpag_estado = :estado AND dpag.dpag_estado_logico = :estado 
+            AND opag.opag_estado = :estado AND opag.opag_estado_logico = :estado 
+            AND sins.sins_estado = :estado AND sins.sins_estado_logico = :estado
+            AND inte.int_estado = :estado AND inte.int_estado_logico = :estado
+            AND pla.pla_estado = :estado AND pla.pla_estado_logico = :estado
+            AND moda.mod_estado = :estado AND moda.mod_estado_logico = :estado
+        ";
+                
+       $comando = $con_academico->createCommand($sql);
+        $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+         $comando->bindParam(":pendiente", $pendiente, \PDO::PARAM_STR);
+        $resultData = $comando->queryOne();
+        return $resultData;
+
     }
 
     public static function getEstudiantesPagoMatricula($estudiante, $pla_periodo_academico, $mod_id, $aprobacion = -1)

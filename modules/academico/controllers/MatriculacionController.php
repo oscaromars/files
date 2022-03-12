@@ -760,7 +760,8 @@ class MatriculacionController extends \app\components\CController {
 		//$data_planificacion_pago = Matriculacion::getPlanificacionPago($pla_id);
 		/* Se obtiene los datos de planificación del estudiante GVG */
 
-		$data_planificacion_pago = Matriculacion::getPlanificacionPago($mod_id);
+		//$data_planificacion_pago = Matriculacion::getPlanificacionPago($mod_id);
+	  $data_planificacion_pago = Matriculacion::getPlanificacionPagoxper($per_id);
 
 		$mod_fpago = new FormaPago();
 		$arr_forma_pago = $mod_fpago->consultarFormaPagosaldo();

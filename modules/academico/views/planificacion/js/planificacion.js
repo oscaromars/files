@@ -328,17 +328,12 @@ $(document).ready(function () {
                     document.getElementById("txt_eaca_id").value = carrera.eaca_id;                    
                     document.getElementById("txt_mod_id").value = carrera.mod_id;
                     if (carrera.mod_id == 3){
-                      /*document.getElementById("opt_Malla_Centro_Idioma_Si").disabled = true;  
-                      document.getElementById("opt_Malla_Centro_Idioma_No").disabled = true;*/
                       document.getElementById("opt_Malla_Centro_Idioma_Si").checked = true;
-                      document.getElementById("opt_Malla_Centro_Idioma_No").checked = false;    
+                      document.getElementById("opt_Malla_Centro_Idioma_No").checked = false;
                       
                     }else{
-                      /*document.getElementById("opt_Malla_Centro_Idioma_Si").disabled = false;  
-                      document.getElementById("opt_Malla_Centro_Idioma_No").disabled = false;*/
                       document.getElementById("opt_Malla_Centro_Idioma_Si").checked = false;
-                      document.getElementById("opt_Malla_Centro_Idioma_No").checked = true; 
-                      
+                      document.getElementById("opt_Malla_Centro_Idioma_No").checked = true;                      
                     }                    
                 }else{
                    $('#txt_carrera2').val('');
@@ -353,11 +348,6 @@ $(document).ready(function () {
             //$('#divDescuento').css('display', 'block');
             $("#opt_Malla_Centro_Idioma_No").prop("checked", "");            
             listarMaterias();
-
-            //15 de febrero 2022            
-            /*var perSel = $('#cmb_periodoest option:selected').val(); 
-            $("#cmb_periodoest")[0].selectedIndex=perSel;
-            actualizarGridPlanestudiante(perSel);*/
         }
     });
 
@@ -366,11 +356,6 @@ $(document).ready(function () {
             //$('#divDescuento').css('display', 'none');
             $("#opt_Malla_Centro_Idioma_Si").prop("checked", "");
             listarMaterias();
-            
-            //15 de febrero 2022
-            /*var perSel = $('#cmb_periodoest option:selected').val(); 
-            $("#cmb_periodoest")[0].selectedIndex=perSel;
-            actualizarGridPlanestudiante(perSel);*/
         }
     });
 });
@@ -1394,7 +1379,8 @@ function modificarplanificacionaut() {
    arrParams.per_id = $('#txth_per_id').val();
    arrParams.mpp_id = $('#cmb_paraleloest').val();
 
-  if ($('#opt_Malla_Centro_Idioma_Si').val() == 1) {
+  //if ($('#opt_Malla_Centro_Idioma_Si').val() == 1) {
+  if ($('input[name=opt_Malla_Centro_Idioma_Si]:checked').val() == 1) {
       // Para unidad academica centro de idioma, crear una nueva planificacion.
       accion = "Create";
       arrParams.crea_planificacion_centro_idioma = 1;
@@ -1416,10 +1402,11 @@ function modificarplanificacionaut() {
            if (response.status == "OK") {
                showAlert(response.status, response.type, { "wtmessage": message.info, "title": response.label });
                limpiarDetalle();
-               sessionStorage.removeItem('dts_datosItemplan')
-               
+               sessionStorage.removeItem('dts_datosItemplan')               
+               var malla_academica = 2;
                setTimeout(function () {
-                window.location.href = $('#txth_base').val() + "/academico/planificacion/newplanificacion?estudiante=" +$('#cmb_buscarest').val()+"&periodo="+$('#txth_pla_id').val();
+                window.location.href = $('#txth_base').val() + "/academico/planificacion/newplanificacion?estudiante=" +$('#cmb_buscarest').val()+"&periodo="+$('#txth_pla_id').val()+ "&malla_academica=" + malla_academica;//10 MARZO 2022;
+                //window.location.href = $('#txth_base').val() + "/academico/planificacion/newplanificacion?estudiante=" +$('#cmb_buscarest').val()+"&periodo="+$('#txth_pla_id').val();
                 //    window.location.href = $('#txth_base').val() + "/academico/planificacion/newplanificacion";
                }, 2000);
                

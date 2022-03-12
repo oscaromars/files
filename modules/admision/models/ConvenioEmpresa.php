@@ -140,12 +140,13 @@ class ConvenioEmpresa extends \yii\db\ActiveRecord
      * @property 
      * @return  
      */
-    private function crearConvenioxPersona($convenio,$per_id,$usu_id) {
+    private function crearConvenioxPersona($convenio,$per_id,$usu_id,$id_sins) {
         $con = \Yii::$app->db_captacion;
         $estado = 1;  $estado_convenio="A";
         $sql = "INSERT INTO " . $con->dbname . ".solicitud_convenio_persona
                     (per_id,
                      cemp_id,
+                     sins_id,
                      scpe_fecha_inicio,
                      scpe_estado_convenio,
                      scpe_fecha_creacion,
@@ -154,6 +155,7 @@ class ConvenioEmpresa extends \yii\db\ActiveRecord
                      scpe_estado_logico)VALUES
                     ('" . $per_id . "',
                     '" . $convenio . "',
+                    '" . $id_sins . "',    
                     CURRENT_TIMESTAMP(),
                     '" . $estado_convenio . "',
                     CURRENT_TIMESTAMP(),

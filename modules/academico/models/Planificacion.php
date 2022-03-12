@@ -422,4 +422,28 @@ WHERE paca_activo = 'A'
 		return $resultData;
 	}
 
+ /**
+ * Function Obtiene periodos academico activos, parea asignar materias a paralelos.
+ * @author  Julio Lopez <analistadesarrollo03@uteg.edu.ec>
+ * @param   
+ * @return  $resultData (Retornar los datos).
+ */
+	public static function getPeriodosAcademicoActivos() {
+		$con_academico = \Yii::$app->db_academico;
+		$sql = " SELECT paca.paca_id as id,
+				        CONCAT (baca.baca_nombre , '-' , saca.saca_nombre , '-' ,  saca.saca_anio) as name
+				FROM db_academico.periodo_academico as paca
+				INNER JOIN db_academico.semestre_academico as saca on paca.saca_id = saca.saca_id
+				INNER JOIN db_academico.bloque_academico as baca on paca.baca_id = baca.baca_id
+				WHERE paca.paca_activo = 'A' AND
+					paca.paca_estado = 1 AND paca.paca_estado_logico =1 AND
+				    saca.saca_estado = 1 AND saca.saca_estado_logico =1 AND
+				    baca.baca_estado = 1 AND baca.baca_estado_logico = 1;";
+
+		$comando = $con_academico->createCommand($sql);
+		$resultData = $comando->queryAll();
+
+		return $resultData;
+	}
+
 }

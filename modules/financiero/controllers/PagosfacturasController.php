@@ -363,8 +363,8 @@ class PagosfacturasController extends \app\components\CController {
                             }
 
                             // actualizar estados y data en registro_pago_matricula
-                            $mod_pagosmat = new RegistroPagoMatricula();                          
-                            $data_planificacion_pago = Matriculacion::getPlanificacionPago($datos['per_id']);                            
+                            $mod_pagosmat = new RegistroPagoMatricula();
+                            $data_planificacion_pago = Matriculacion::getPlanificacionPago($datos['per_id']);
                             /*//\app\models\Utilities::putMessageLogFile('pfes_concepto: ' . $datos['pfes_concepto']);
                             //\app\models\Utilities::putMessageLogFile('per_id: ' . $datos['per_id']);
                             //\app\models\Utilities::putMessageLogFile('pla_id: ' . $data_planificacion_pago['pla_id']);*/

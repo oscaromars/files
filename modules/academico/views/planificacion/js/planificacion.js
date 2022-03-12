@@ -1402,10 +1402,11 @@ function modificarplanificacionaut() {
            if (response.status == "OK") {
                showAlert(response.status, response.type, { "wtmessage": message.info, "title": response.label });
                limpiarDetalle();
-               sessionStorage.removeItem('dts_datosItemplan')
-               
+               sessionStorage.removeItem('dts_datosItemplan')               
+               var malla_academica = 2;
                setTimeout(function () {
-                window.location.href = $('#txth_base').val() + "/academico/planificacion/newplanificacion?estudiante=" +$('#cmb_buscarest').val()+"&periodo="+$('#txth_pla_id').val();
+                window.location.href = $('#txth_base').val() + "/academico/planificacion/newplanificacion?estudiante=" +$('#cmb_buscarest').val()+"&periodo="+$('#txth_pla_id').val()+ "&malla_academica=" + malla_academica;//10 MARZO 2022;
+                //window.location.href = $('#txth_base').val() + "/academico/planificacion/newplanificacion?estudiante=" +$('#cmb_buscarest').val()+"&periodo="+$('#txth_pla_id').val();
                 //    window.location.href = $('#txth_base').val() + "/academico/planificacion/newplanificacion";
                }, 2000);
                

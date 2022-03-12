@@ -1379,7 +1379,8 @@ function modificarplanificacionaut() {
    arrParams.per_id = $('#txth_per_id').val();
    arrParams.mpp_id = $('#cmb_paraleloest').val();
 
-  if ($('#opt_Malla_Centro_Idioma_Si').val() == 1) {
+  //if ($('#opt_Malla_Centro_Idioma_Si').val() == 1) {
+  if ($('input[name=opt_Malla_Centro_Idioma_Si]:checked').val() == 1) {
       // Para unidad academica centro de idioma, crear una nueva planificacion.
       accion = "Create";
       arrParams.crea_planificacion_centro_idioma = 1;

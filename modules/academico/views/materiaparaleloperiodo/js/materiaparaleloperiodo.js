@@ -19,8 +19,8 @@ function save() {
     var link = $('#txth_base').val() + "/academico/materiaparaleloperiodo/save";
     /*var cmb_mod_id = $('#materiaparaleloperiodosearch-mod_id').val();
     var cmb_pac_id = $('#materiaparaleloperiodosearch-paca_id').val();*/
-    var cmb_mod_id = $('#cmb_modalidad_new').val();//14 febrero 2022
-    var cmb_pac_id = $('#cmb_periodo_new').val();//14 febrero 2022
+    var cmb_mod_id = $('#cmb_modalidad_new :selected').val();//14 febrero 2022
+    var cmb_pac_id = $('#cmb_periodo_new :selected').val();//14 febrero 2022
     var arrParams = new Object();
     var items = [];
     $('tbody tr').each(function () {
@@ -37,15 +37,20 @@ function save() {
 
     });
     arrParams.data = items;
-    requestHttpAjax(link, arrParams, function (response) {
+    
+    if ( $('#cmb_modalidad_new option:selected').val() != 0 && $('#cmb_periodo_new option:selected').val() != 0  ) {
+        requestHttpAjax(link, arrParams, function (response) {
         showAlert(response.status, response.label, response.message);
-          if (response.status == "OK") {
-                         setTimeout(function () {
-                        window.location.href = $('#txth_base').val() + "/academico/materiaparaleloperiodo/index";
-                    }, 300);
+        if (response.status == "OK") {
+                 setTimeout(function () {
+                window.location.href = $('#txth_base').val() + "/academico/materiaparaleloperiodo/index";
+            }, 300);
 
           }
-    }, true);
+        }, true);
+    }else{
+       showAlert('NO_OK', 'error', {"wtmessage": 'Para crear nuevos paralelos, debe seleccionar periodo y modalidad.', "title": 'Información'});
+    }
 }
 
 function update() {

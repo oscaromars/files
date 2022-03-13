@@ -2587,7 +2587,7 @@ AND pes.pla_id = :pla_id ) as daho12
                         INNER JOIN " . $con->dbname . ".modalidad moda ON  moda.mod_id = ples.pes_mod_b1_h" . $i . "
                         INNER JOIN " . $con->dbname . ".malla_academica_detalle mad ON  mad.made_codigo_asignatura = pes_mat_b1_h" . $i . "_cod
                         INNER JOIN " . $con->dbname . ".asignatura asig ON  asig.asi_id = mad.asi_id
-                        INNER JOIN " . $con->dbname . ".materia_paralelo_periodo mpp on mpp.mpp_id = ples.pes_mat_b1_h".$i."_mpp and mpp.mod_id =moda.mod_id and mpp.paca_id= $paca_1
+                        LEFT JOIN " . $con->dbname . ".materia_paralelo_periodo mpp on mpp.mpp_id = ples.pes_mat_b1_h".$i."_mpp and mpp.mod_id =moda.mod_id and mpp.paca_id= $paca_1
                         LEFT JOIN " . $con->dbname . ".distributivo_academico_horario daho on daho.daho_id = mpp.daho_id or ifnull(mpp.daho_id,0) = 0
                         where ples.per_id =  $per_id and ples.pla_id = (SELECT distinct ples.pla_id from ". $con->dbname . ".periodo_academico pa
                                                                 inner join ". $con->dbname . ".planificacion pl on pl.saca_id = pa.saca_id
@@ -2626,7 +2626,7 @@ AND pes.pla_id = :pla_id ) as daho12
                         INNER JOIN " . $con->dbname . ".modalidad moda ON  moda.mod_id = ples.pes_mod_b2_h" . $j . "
                         INNER JOIN " . $con->dbname . ".malla_academica_detalle mad ON  mad.made_codigo_asignatura = pes_mat_b2_h" . $j . "_cod
                         INNER JOIN " . $con->dbname . ".asignatura asig ON  asig.asi_id = mad.asi_id
-                        INNER JOIN " . $con->dbname . ".materia_paralelo_periodo mpp on mpp.mpp_id = ples.pes_mat_b2_h".$j."_mpp and mpp.mod_id =moda.mod_id and mpp.paca_id= $paca_2
+                        LEFT JOIN " . $con->dbname . ".materia_paralelo_periodo mpp on mpp.mpp_id = ples.pes_mat_b2_h".$j."_mpp and mpp.mod_id =moda.mod_id and mpp.paca_id= $paca_2
                         LEFT JOIN " . $con->dbname . ".distributivo_academico_horario daho on daho.daho_id = mpp.daho_id or ifnull(mpp.daho_id,0) = 0
                         where ples.per_id =  $per_id and ples.pla_id = (SELECT distinct ples.pla_id from ". $con->dbname . ".periodo_academico pa
                                                                 inner join ". $con->dbname . ".planificacion pl on pl.saca_id = pa.saca_id

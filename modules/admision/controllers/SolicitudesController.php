@@ -522,7 +522,7 @@ class SolicitudesController extends \app\components\CController {
                             $val_descuento = 0;
                         } else {
             $percento = $respConvenio["cede_porcentaje_descuento"] - $respConvenio["cede_porcentaje_factor"];
-            if $percento > 0 { 
+            if ($percento > 0) { 
             $val_descuento = ($precio * $percento) / 100;
              }
                     }

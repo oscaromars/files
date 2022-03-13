@@ -1135,7 +1135,15 @@ function save() {
         if ($('input[name=opt_agree_Dctosi]:checked').val() == 1) {
             arrParams.cemp_id = $('#cmb_convenio').val();
     }
-          if (arrParams.cemp_id > 0 && arrParams.descuento_id > 0) {
+
+   if ($('input[name=opt_declara_Dctosi]:checked').val() == 1) {
+                if ($('input[name=opt_agree_Dctosi]:checked').val() == 1) {
+
+var hasvalidate = 1;
+ 
+    }  
+} 
+          if (hasvalidate == 1) {
 
  showAlert('NO_OK', 'error', {"wtmessage": 'No puede escoger descuento y convenio para una misma solicitud!', "title": 'Información'});
  

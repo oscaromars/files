@@ -42,24 +42,60 @@ class MateriaparaleloperiodoController extends \app\components\CController {
         $arr_modalidad  = Modalidad::findAll(['mod_estado' => 1, 'mod_estado_logico' => 1]);
         $arr_unidad = $mod_unidadAcademica->consultarUnidadAcademicas();
 
+         if (Yii::$app->request->isAjax) {
+    $data = Yii::$app->request->post();
+            
+        if (isset($data["haschangeperiod"])) {
+            $arrSearch["periodo"]    = $data['paca_id'];
+            $arrSearch["unidad"]     = $data['uaca_id'];
+            $arrSearch["modalidad"]  = $data['mod_id'];
+         $arr_asignaturascb = $mod->consultarMateriaparaleloperiodo($arrSearch,1);
+        $message = array("asignaturascb" => $arr_asignaturascb);
+        return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+            }
+
+        if (isset($data["haschangeunit"])) {
+            $arrSearch["periodo"]    = $data['paca_id'];
+            $arrSearch["unidad"]     = $data['uaca_id'];
+            $arrSearch["modalidad"]  = $data['mod_id'];
+         $arr_asignaturascb = $mod->consultarMateriaparaleloperiodo($arrSearch,1);
+        $message = array("asignaturascb" => $arr_asignaturascb);
+        return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+            }
+        if (isset($data["haschangemod"])) {
+            $arrSearch["periodo"]    = $data['paca_id'];
+            $arrSearch["unidad"]     = $data['uaca_id'];
+            $arrSearch["modalidad"]  = $data['mod_id'];
+         $arr_asignaturascb = $mod->consultarMateriaparaleloperiodo($arrSearch,1);
+        $message = array("asignaturascb" => $arr_asignaturascb);
+        return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+            }
+
+       
+    }
+
         $data = Yii::$app->request->get();
         if ($data['PBgetFilter']) {
             $arrSearch["periodo"]    = $data['periodo'];
             $arrSearch["unidad"]     = $data['unidad'];
             $arrSearch["modalidad"]  = $data['modalidad'];
+            $arrSearch["asignaturas"]  = $data['asignaturas'];
 
             $model = $mod->consultarMateriaparaleloperiodo($arrSearch);
+            $arr_asignaturas = $mod->consultarMateriaparaleloperiodo($arrSearch,1);
             return $this->renderPartial('index-grid', [
                         "model" => $model,
             ]);
         } else {
             $model = $mod->consultarMateriaparaleloperiodo($arrSearch);
+            $arr_asignaturas = $mod->consultarMateriaparaleloperiodo($arrSearch,1);
         }
 
         return $this->render('index', [
             //'searchModel' => $searchModel,
             //'dataProvider' => $dataProvider,
             'model'          => $model,
+            'arr_asignaturas' => ArrayHelper::map(array_merge([["asi_id" => "0", "asi_nombre" => Yii::t("formulario", "Select")]], $arr_asignaturas), "asi_id", "asi_nombre"),
             'arr_periodo'     => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $arr_periodo), "id", "name"),
             'arr_unidad'     => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $arr_unidad), "id", "name"),
             'arr_modalidad'  => ArrayHelper::map(array_merge([["mod_id" => "0", "mod_nombre" => Yii::t("formulario", "Select")]], $arr_modalidad), "mod_id", "mod_nombre"),

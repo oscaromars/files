@@ -29,6 +29,10 @@
                 <label for="lbl_modalidad" class="col-lg-2 col-md-2 col-sm-2 col-xs-2 control-label"><?= Yii::t("formulario", "Mode"); ?></label>
                 <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
                     <?= Html::dropDownList("cmb_modalidad", 0, $arr_modalidad, ["class" => "form-control", "id" => "cmb_modalidad"]) ?>
+                </div>  
+                 <label for="lbl_asignaturas" class="col-lg-2 col-md-2 col-sm-2 col-xs-2 control-label"><?= Yii::t("formulario", "Subjects"); ?></label>
+                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+                    <?= Html::dropDownList("cmb_asignaturas", 0, $arr_asignaturas, ["class" => "form-control", "id" => "cmb_asignaturas"]) ?>
                 </div>            
             </div>
         </div>

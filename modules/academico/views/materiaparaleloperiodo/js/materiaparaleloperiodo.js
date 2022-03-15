@@ -13,7 +13,64 @@ $(document).ready(function () {
     $('#btn_buscarDataNewAsignarMateriaParalelo').click(function(){
         BuscarGridNew();
     });
+
+           $('#cmb_periodo').change(function () {
+        var link = $('#txth_base').val() + "/academico/materiaparaleloperiodo/index";
+        var arrParams = new Object();
+        arrParams.paca_id = $(this).val();
+        arrParams.uaca_id = $("#cmb_unidad").val();
+        arrParams.mod_id =  $("#cmb_modalidad").val();
+        arrParams.haschangeunit = true;
+        requestHttpAjax(link, arrParams, function (response) {
+            if (response.status == "OK") {
+                data = response.message;
+                setComboDataselect(data.asignaturascb, "cmb_asignaturas","Seleccionar");
+            }
+        }, true);
+    });
+    
+       $('#cmb_unidad').change(function () {
+        var link = $('#txth_base').val() + "/academico/materiaparaleloperiodo/index";
+        var arrParams = new Object();
+        arrParams.paca_id = $("#cmb_periodo").val();
+        arrParams.uaca_id = $(this).val();
+        arrParams.mod_id =  $("#cmb_modalidad").val();
+        arrParams.haschangeunit = true;
+        requestHttpAjax(link, arrParams, function (response) {
+            if (response.status == "OK") {
+                data = response.message;
+                setComboDataselect(data.asignaturascb, "cmb_asignaturas","Seleccionar");
+            }
+        }, true);
+    });
+
+       $('#cmb_modalidad').change(function () {
+        var link = $('#txth_base').val() + "/academico/materiaparaleloperiodo/index";
+        var arrParams = new Object();
+        arrParams.paca_id = $("#cmb_periodo").val();
+        arrParams.uaca_id = $("#cmb_unidad").val();
+        arrParams.mod_id = $(this).val();
+        arrParams.haschangeunit = true;
+        requestHttpAjax(link, arrParams, function (response) {
+            if (response.status == "OK") {
+                data = response.message;
+                setComboDataselect(data.asignaturascb, "cmb_asignaturas","Seleccionar");
+            }
+        }, true);
+    });
 });
+
+function setComboDataselect(arr_data, element_id, texto) {
+    var option_arr = "";
+    option_arr += "<option value= '0'>" + texto + "</option>";
+    for (var i = 0; i < arr_data.length; i++) {
+        var id = arr_data[i].asi_id;
+        var value = arr_data[i].asi_nombre;
+
+        option_arr += "<option value='" + id + "'>" + value + "</option>";
+    }
+    $("#" + element_id).html(option_arr);
+}
 
 function save() {
     var link = $('#txth_base').val() + "/academico/materiaparaleloperiodo/save";
@@ -105,11 +162,12 @@ function updatehorario() {
 function BuscarGrid() {
     var periodo     = $('#cmb_periodo option:selected').val();
     var unidad      = $('#cmb_unidad option:selected').val();
-    var modalidad   = $('#cmb_modalidad option:selected').val();    
+    var modalidad   = $('#cmb_modalidad option:selected').val(); 
+    var asignaturas   = $('#cmb_asignaturas option:selected').val();    
 
     if (!$(".blockUI").length) {
         showLoadingPopup();
-        $('#tbl_materias').PbGridView('applyFilterData', {'periodo': periodo, 'unidad':unidad, 'modalidad': modalidad});
+        $('#tbl_materias').PbGridView('applyFilterData', {'periodo': periodo, 'unidad':unidad, 'modalidad': modalidad,'asignaturas': asignaturas});
         setTimeout(hideLoadingPopup, 2000);
     }
 }

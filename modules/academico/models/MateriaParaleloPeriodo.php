@@ -301,7 +301,7 @@ public static function getNumparalelo(){
              if ($arrFiltro['asignaturas'] != "" && $arrFiltro['asignaturas'] != "0") {
                 $str_search .= " mpp.asi_id = :asignaturas AND";
             }           
-        }
+        } else { $str_search .= " mpp.asi_id = '0' AND"; }
 
         $sql = "SELECT mpp.asi_id, a.asi_nombre, mpp.mod_id, a.uaca_id, moda.mod_nombre, paca_id,max(mpp_num_paralelo) as mpp_num_paralelo
                 from db_academico.materia_paralelo_periodo as mpp 

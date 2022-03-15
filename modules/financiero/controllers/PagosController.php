@@ -596,7 +596,30 @@ class PagosController extends \app\components\CController {
                                                     if ($resp_estudianteid["est_id"] == "") {
                                                         //\app\models\Utilities::putMessageLogFile('entro 5: ');
                                                         //\app\models\Utilities::putMessageLogFile('per_id en 5: ' . $per_id);
-                                                        $resp_estudiante = $mod_Estudiante->insertarEstudiante($per_id, /*null,*/ null, $usu_autenticado, null, $fecha, null);
+                                                        // Se ingresa la categoria segun la modalidad solo para unidad academica Grado
+                                                        $categoria = null;
+                                                        //$resp_sol["nivel_interes"], $resp_sol["mod_id"], $resp_sol["eaca_id"]
+                                                        if ($resp_sol["nivel_interes"] == 1) {
+                                                            switch ($resp_sol["mod_id"]) {
+                                                                case 1:
+                                                                    $categoria = 'A';
+                                                                    break;
+                                                                case 2:
+                                                                    $categoria = 'R';
+                                                                    break;
+                                                                case 3:
+                                                                    $categoria = 'R';
+                                                                    break;
+                                                                case 4:
+                                                                    $categoria = 'H';
+                                                                    break;
+                                                                default:
+                                                                    $categoria = null;
+                                                            }
+                                                        } else {
+                                                            $categoria = null;
+                                                        }
+                                                        $resp_estudiante = $mod_Estudiante->insertarEstudiante($per_id, /*null,*/ $categoria, $usu_autenticado, null, $fecha, null);
                                                     } else {
                                                         //\app\models\Utilities::putMessageLogFile('entro 6: ');
                                                         $resp_estudiante = $resp_estudianteid["est_id"];

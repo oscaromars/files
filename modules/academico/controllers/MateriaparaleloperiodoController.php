@@ -83,9 +83,9 @@ class MateriaparaleloperiodoController extends \app\components\CController {
 
             $model = $mod->consultarMateriaparaleloperiodo($arrSearch);
             $arr_asignaturas = $mod->consultarMateriaparaleloperiodo($arrSearch,1);
-            return $this->renderPartial('index-grid', [
+           /* return $this->renderPartial('index-grid', [
                         "model" => $model,
-            ]);
+            ]);*/
         } else {
             $model = $mod->consultarMateriaparaleloperiodo($arrSearch);
             $arr_asignaturas = $mod->consultarMateriaparaleloperiodo($arrSearch,1);

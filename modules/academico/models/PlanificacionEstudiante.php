@@ -1149,6 +1149,7 @@ inner join db_academico.materia_paralelo_periodo mpp on mpp.asi_id = made.asi_id
                     (pla_id,
                      per_id,
                      pes_jornada,
+                     pes_cod_carrera,
                      pes_carrera,
                      pes_dni,
                      pes_nombres, 
@@ -1156,7 +1157,7 @@ inner join db_academico.materia_paralelo_periodo mpp on mpp.asi_id = made.asi_id
                      $insertar . "
                      pes_estado,                   
                      pes_estado_logico)VALUES
-                    (" . $pla_id . "," . $per_id . ",'" . $pes_jornada . "','" . $pes_carrera . "','" . $pes_dni . "','"
+                    (" . $pla_id . "," . $per_id . ",'" . $pes_jornada . "','" . $pes_cod_malla . "','" . $pes_carrera . "','" . $pes_dni . "','"
                 . $pes_nombres . "'," . $pes_cod_malla . ", " . $valores . " '" . $estado . "','" . $estado . "')";
         $command = $con->createCommand($sql);
         $command->execute();

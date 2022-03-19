@@ -1442,7 +1442,10 @@ $centralprocess = $malla->cargarAsignaturas($resultData[$i],$modalidad,$periodo)
 							//$mat_nombre = $materia[1];
 							$valores .= "'" . $mat_cod . "', '" . $modalidades . "', '" . $arrplan[$i]['jornada'] . "',";
 						}
-						$resul = $mod_planifica->insertarDataPlanificacionestudiante($resulpla_id['pla_id'], $per_id, $jornada, $carrera, $dni, $nombre, $malla_guarda, $insertar, $valores);
+
+                              $mod_mallastudent = new MallaAcademica();
+						$resultmaca_id = $mod_mallastudent->consultarMallaEstudiante($per_id);
+						$resul = $mod_planifica->insertarDataPlanificacionestudiante($resulpla_id['pla_id'], $per_id, $jornada, $carrera, $dni, $nombre, $malla_guarda, $insertar, $valores,$resultmaca_id['codmalla']);
 					}elseif ($exitealumno['planexiste'] == '1' && $data['crea_planificacion_centro_idioma'] == 1 ) { //15 febrero 2022
 						//Nuevo Registro
 						$arrplan = json_decode($data['DATAS'], true);
@@ -1484,7 +1487,10 @@ $centralprocess = $malla->cargarAsignaturas($resultData[$i],$modalidad,$periodo)
 							//$mat_nombre = $materia[1];
 							$valores .= "'" . $mat_cod . "', '" . $modalidades . "', '" . $arrplan[$i]['jornada'] . "', '". $arrplan[$i]['mpp_id'] . "', '". $pes_cod_carrera . "', ";
 						}
-						$resul = $mod_planifica->insertarDataPlanificacionestudiante($resulpla_id['pla_id'], $per_id, $jornada, $carrera, $dni, $nombre, $malla_guarda, $insertar, $valores);
+
+						$mod_mallastudent = new MallaAcademica();
+						$resultmaca_id = $mod_mallastudent->consultarMallaEstudiante($per_id);
+						$resul = $mod_planifica->insertarDataPlanificacionestudiante($resulpla_id['pla_id'], $per_id, $jornada, $carrera, $dni, $nombre, $malla_guarda, $insertar, $valores,$resultmaca_id['codmalla']);
 
 					}else {
 						// no existe mensaje que no permitar guardar

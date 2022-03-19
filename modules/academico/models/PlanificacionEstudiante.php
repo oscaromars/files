@@ -1115,13 +1115,13 @@ inner join db_academico.materia_paralelo_periodo mpp on mpp.asi_id = made.asi_id
      * @return  
      */
     /* INSERTAR DATOS */
-    public function insertarDataPlanificacionestudiante($pla_id, $per_id, $pes_jornada, $pes_carrera, $pes_dni, $pes_nombres, $pes_cod_malla, $insertar, $valores) {
+    public function insertarDataPlanificacionestudiante($pla_id, $per_id, $pes_jornada, $pes_carrera, $pes_dni, $pes_nombres, $pes_cod_malla, $insertar, $valores, $codmalla = Null) {
         $arroout = array();
         $con = \Yii::$app->db_academico;
         $trans = $con->beginTransaction();
         try {            
             $data = isset($data['DATA']) ? $data['DATAS'] : array();
-            $this->insertarPlanificacionestudiante($con, $pla_id, $per_id, $pes_jornada, $pes_carrera, $pes_dni, $pes_nombres, $pes_cod_malla, $insertar, $valores);
+            $this->insertarPlanificacionestudiante($con, $pla_id, $per_id, $pes_jornada, $pes_carrera, $pes_dni, $pes_nombres, $pes_cod_malla, $insertar, $valores,$codmalla);
             $trans->commit();
             $con->close();
             //RETORNA DATOS             
@@ -1143,8 +1143,9 @@ inner join db_academico.materia_paralelo_periodo mpp on mpp.asi_id = made.asi_id
      * @property integer $userid
      * @return  
      */
-    private function insertarPlanificacionestudiante($con, $pla_id, $per_id, $pes_jornada, $pes_carrera, $pes_dni, $pes_nombres, $pes_cod_malla, $insertar, $valores) {
+    private function insertarPlanificacionestudiante($con, $pla_id, $per_id, $pes_jornada, $pes_carrera, $pes_dni, $pes_nombres, $pes_cod_malla, $insertar, $valores,$codmalla) {
         $estado = 1;
+        if ($codmalla is Null){ $codmalla = $pes_cod_malla; }
         $sql = "INSERT INTO " . $con->dbname . ".planificacion_estudiante
                     (pla_id,
                      per_id,
@@ -1157,8 +1158,8 @@ inner join db_academico.materia_paralelo_periodo mpp on mpp.asi_id = made.asi_id
                      $insertar . "
                      pes_estado,                   
                      pes_estado_logico)VALUES
-                    (" . $pla_id . "," . $per_id . ",'" . $pes_jornada . "','" . $pes_cod_malla . "','" . $pes_carrera . "','" . $pes_dni . "','"
-                . $pes_nombres . "'," . $pes_cod_malla . ", " . $valores . " '" . $estado . "','" . $estado . "')";
+                    (" . $pla_id . "," . $per_id . ",'" . $pes_jornada . "','" . $codmalla . "','" . $pes_carrera . "','" . $pes_dni . "','"
+                . $pes_nombres . "'," . $codmalla . ", " . $valores . " '" . $estado . "','" . $estado . "')";
         $command = $con->createCommand($sql);
         $command->execute();
     }

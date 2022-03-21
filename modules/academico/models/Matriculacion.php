@@ -385,7 +385,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
         $resultData = $comando->queryAll();
 
-        \app\models\Utilities::putMessageLogFile('checkToday: '.$comando->getRawSql());
+        //\app\models\Utilities::putMessageLogFile('checkToday: '.$comando->getRawSql());
         return $resultData;
     }
 
@@ -543,7 +543,8 @@ class Matriculacion extends \yii\db\ActiveRecord {
         $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
         $comando->bindParam(":pla_id", $pla_id, \PDO::PARAM_INT);
 	// \app\models\Utilities::putMessageLogFile('raw: ' . $comando->getRawSql());
-        $resultData = $comando->queryOne();
+        //$resultData = $comando->queryOne();//comentado el 23 febrero 2022 por analistadesarrollo03
+        $resultData = $comando->queryAll();
         $dataCredits = $this->getInfoMallaEstudiante($per_id);
 	// \app\models\Utilities::putMessageLogFile('resultData: ' . $resultData);
         $dataPlanificacion = $this->parseDataSubject($resultData, $dataCredits);
@@ -664,14 +665,20 @@ class Matriculacion extends \yii\db\ActiveRecord {
         from db_academico.planificacion_estudiante pes
         inner join db_academico.planificacion pla on pla.pla_id=pes.pla_id
         inner join db_academico.estudiante e on e.per_id =pes.per_id
-        inner join db_academico.malla_academica maca on maca.maca_id=97
+        inner join db_academico.malla_academica maca on maca.maca_id =(CASE
+                                                                        WHEN pla.mod_id = 1 THEN 101
+                                                                        WHEN pla.mod_id != 1 THEN 97
+                                                                      END)
         inner join db_academico.malla_academica_detalle made on made.maca_id=maca.maca_id
         inner join db_academico.asignatura asi on asi.asi_id=made.asi_id
         LEFT JOIN db_academico.programa_costo_credito AS pcc 
                     ON  pla.mod_id = pcc.mod_id 
                     and e.est_categoria=pcc.pccr_categoria
                     AND made.made_credito = pcc.pccr_creditos
-                    and pcc.eaca_id = 74
+                    and pcc.eaca_id = (CASE
+                            WHEN pla.mod_id = 1 THEN 76
+                            WHEN pla.mod_id != 1 THEN 74
+                        END)
                     and maca.maca_id = pcc.maca_id 
         LEFT JOIN db_academico.registro_online as ron 
                 ON ron.per_id = pes.per_id
@@ -685,7 +692,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
             ON rama.ron_id=roi.ron_id
             AND rama.rama_estado=1 and rama.rama_estado_logico=1
             
-        where pla.mod_id in (2,3,4) and pes.per_id=:per_id AND
+        where pla.mod_id in (1,2,3,4) and pes.per_id=:per_id AND
             pes.pes_estado=1 and pes.pes_estado_logico=1 and
             pla.pla_estado=1 and pla.pla_estado_logico=1
             group by 1,2,3,4
@@ -757,92 +764,98 @@ class Matriculacion extends \yii\db\ActiveRecord {
      */
     public function parseDataSubject($dict, $dataCredits = array()){
         $arrData = array();
-        for ($j=1; $j <=2 ; $j++) { 
-            for ($i=1; $i <=6; $i++) { 
-                // bloque + hora 
-                //$bloque='B'.$j.'-H'.$i;
-                $bloque = 'B'.$j;
-                $hora = $i.'H';
-                
-
-                if (!is_null($dict['pes_mat_b'.$j.'_h'.$i.'_cod']) && trim($dict['pes_mat_b'.$j.'_h'.$i.'_cod']) != "") {
+        for ($ind=0; $ind<sizeof($dict); $ind++){//inicio for nuevo
+            for ($j=1; $j <=2 ; $j++) { 
+                for ($i=1; $i <=6; $i++) { 
+                    // bloque + hora 
+                    //$bloque='B'.$j.'-H'.$i;
+                    $bloque = 'B'.$j;
+                    $hora = $i.'H';
                     
-
-                    foreach($dataCredits as $key => $value){
-                        if($value['MallaCodAsig'] == trim($dict['pes_mat_b'.$j.'_h'.$i.'_cod'])){
-                            $modalidad      = $value['modalidad'];
-                            $costoCredito   = $value['CostoCredito'];
-                            $roi_id         = $value['roi_id'];
-                            $rama_id        = $value['rama_id'];
-                            $admin          = $value['admin'];
-                            $usuario        = $value['usuario'];
-                        }
-                    }
-                    $mod_est =Estudiante::findOne(['per_id'=> trim($dict['per_id']),'est_estado'=>'1','est_estado_logico'=>'1']);
-                    //MallaAcademicaDetalle
-                    if ($i <= 5) {
-                        $modMade = MallaAcademicaDetalle::findOne(['made_codigo_asignatura' => trim($dict['pes_mat_b' . $j . '_h' . $i . '_cod']), 'made_estado_logico' => '1', 'made_estado' => '1']);
-                    } else {
-                        $modCodMalla = substr($dict['pes_mat_b' . $j . '_h6_cod'], 0, 8); // devuelve "Malla de Idioma"
-                        $modMalla = MallaAcademica::findOne(['maca_codigo'=>$modCodMalla,'maca_estado'=>1,'maca_estado_logico'=>1]);
-                        $modMade = MallaAcademicaDetalle::findOne(['maca_id' => $modMalla['maca_id'], 'made_codigo_asignatura' => trim($dict['pes_mat_b' . $j . '_h' . $i . '_cod']), 'made_estado_logico' => '1', 'made_estado' => '1']);
-                        $modProgCost = ProgramaCostoCredito::findOne(['maca_id' => $modMalla,'mod_id'=>$modalidad,'pccr_categoria'=>$mod_est['est_categoria'],'pccr_creditos'=>$modMade['made_credito'],'pccr_estado'=>1,'pccr_estado_logico'=>1]);
-                        $costoCredito = $modProgCost['pccr_costo_credito'];
-                        if($j==1){
-                            if($modMade['made_codigo_asignatura']=='CID-0097-0326-004'){
-                                $hora='1H';
-                            }else if($modMade['made_codigo_asignatura']=='CID-0097-0322-005'){
-                                $hora='3H';
-                            }else if($modMade['made_codigo_asignatura']=='CID-0097-0327-008'){
-                                $hora='2H';
-                            }else if($modMade['made_codigo_asignatura']=='CID-0097-0325-006'){
-                                $hora='5H';
-                            }
-                        }else{
-                            if($modMade['made_codigo_asignatura']=='CID-0097-0322-005'){
-                                $hora='1H';
-                            }else if($modMade['made_codigo_asignatura']=='CID-0097-0325-006'){
-                                $hora='3H';
-                            }else if($modMade['made_codigo_asignatura']=='CID-0097-0337-009'){
-                                $hora='2H';
-                            }else if($modMade['made_codigo_asignatura']=='CID-0097-0324-007'){
-                                $hora='5H';
+                    if (!is_null($dict[$ind]['pes_mat_b'.$j.'_h'.$i.'_cod']) && trim($dict[$ind]['pes_mat_b'.$j.'_h'.$i.'_cod']) != "") {
+                    //if (!is_null($dict['pes_mat_b'.$j.'_h'.$i.'_cod']) && trim($dict['pes_mat_b'.$j.'_h'.$i.'_cod']) != "") {
+                        foreach($dataCredits as $key => $value){
+                            if(trim($value['MallaCodAsig']) == trim($dict[$ind]['pes_mat_b'.$j.'_h'.$i.'_cod'])){
+                            //if(trim($value['MallaCodAsig']) == trim($dict['pes_mat_b'.$j.'_h'.$i.'_cod'])){                                
+                                $modalidad      = $value['modalidad'];
+                                $costoCredito   = $value['CostoCredito'];
+                                $roi_id         = $value['roi_id'];
+                                $rama_id        = $value['rama_id'];
+                                $admin          = $value['admin'];
+                                $usuario        = $value['usuario'];
                             }
                         }
+                        $mod_est =Estudiante::findOne(['per_id'=> trim($dict[$ind]['per_id']),'est_estado'=>'1','est_estado_logico'=>'1']);
+                        //$mod_est =Estudiante::findOne(['per_id'=> trim($dict['per_id']),'est_estado'=>'1','est_estado_logico'=>'1']);
+                        //MallaAcademicaDetalle
+                        if ($i <= 5) {
+                            $modMade = MallaAcademicaDetalle::findOne(['made_codigo_asignatura' => trim($dict[$ind]['pes_mat_b' . $j . '_h' . $i . '_cod']), 'made_estado_logico' => '1', 'made_estado' => '1']);
+                            //$modMade = MallaAcademicaDetalle::findOne(['made_codigo_asignatura' => trim($dict['pes_mat_b' . $j . '_h' . $i . '_cod']), 'made_estado_logico' => '1', 'made_estado' => '1']);
+                        } else {
+                            $modCodMalla = substr($dict[$ind]['pes_mat_b' . $j . '_h6_cod'], 0, 8); // devuelve "Malla de Idioma"
+                            //$modCodMalla = substr($dict['pes_mat_b' . $j . '_h6_cod'], 0, 8); // devuelve "Malla de Idioma"
+                            $modMalla = MallaAcademica::findOne(['maca_codigo'=>$modCodMalla,'maca_estado'=>1,'maca_estado_logico'=>1]);
+                            $modMade = MallaAcademicaDetalle::findOne(['maca_id' => $modMalla['maca_id'], 'made_codigo_asignatura' => trim($dict[$ind]['pes_mat_b' . $j . '_h' . $i . '_cod']), 'made_estado_logico' => '1', 'made_estado' => '1']);
+                            //$modMade = MallaAcademicaDetalle::findOne(['maca_id' => $modMalla['maca_id'], 'made_codigo_asignatura' => trim($dict['pes_mat_b' . $j . '_h' . $i . '_cod']), 'made_estado_logico' => '1', 'made_estado' => '1']);
+                            $modProgCost = ProgramaCostoCredito::findOne(['maca_id' => $modMalla,'mod_id'=>$modalidad,'pccr_categoria'=>$mod_est['est_categoria'],'pccr_creditos'=>$modMade['made_credito'],'pccr_estado'=>1,'pccr_estado_logico'=>1]);
+                            $costoCredito = $modProgCost['pccr_costo_credito'];
+                            /*if($j==1){
+                                if($modMade['made_codigo_asignatura']=='CID-0097-0326-004'){
+                                    $hora='1H';
+                                }else if($modMade['made_codigo_asignatura']=='CID-0097-0322-005'){
+                                    $hora='3H';
+                                }else if($modMade['made_codigo_asignatura']=='CID-0097-0327-008'){
+                                    $hora='2H';
+                                }else if($modMade['made_codigo_asignatura']=='CID-0097-0325-006'){
+                                    $hora='5H';
+                                }
+                            }else{
+                                if($modMade['made_codigo_asignatura']=='CID-0097-0322-005'){
+                                    $hora='1H';
+                                }else if($modMade['made_codigo_asignatura']=='CID-0097-0325-006'){
+                                    $hora='3H';
+                                }else if($modMade['made_codigo_asignatura']=='CID-0097-0337-009'){
+                                    $hora='2H';
+                                }else if($modMade['made_codigo_asignatura']=='CID-0097-0324-007'){
+                                    $hora='5H';
+                                }
+                            }*/
+                            
+                        }
+                        //Asignatura
+                        $modAsig = Asignatura::findOne(['asi_id'=>$modMade['asi_id'],'asi_estado'=>'1','asi_estado_logico'=>'1']);
+                        //MateriaParaleloPeriodo
+                        $modMpp  = MateriaParaleloPeriodo::findOne(['mpp_id' => trim($dict[$ind]['pes_mat_b'.$j.'_h'.$i.'_mpp']), 'mpp_estado' => '1', 'mpp_estado_logico' => '1']);
+                        //$modMpp  = MateriaParaleloPeriodo::findOne(['mpp_id' => trim($dict['pes_mat_b'.$j.'_h'.$i.'_mpp']), 'mpp_estado' => '1', 'mpp_estado_logico' => '1']);
+                        //DistributivHorario
+                        $modDaho = DistributivoAcademicoHorario::findOne(['daho_id' => $modMpp['daho_id'], 'daho_estado' => '1', 'daho_estado_logico' => '1']);
+                        //ProgramaCostoCreduti
                         
+                        
+
+
+                        $arrRow[$j][$i] = array(
+                            "Subject"       => $modAsig['asi_nombre'],//trim($dict['pes_mat_b1_h1_nombre']),
+                            "Code"          => $modMade['made_codigo_asignatura'],
+                            "Block"         => $bloque,
+                            "Hour"          => $modDaho['daho_horario'], //consultar si horario o descripcion //$hora,
+                            "Parallel"      => $modMpp['mpp_num_paralelo'],
+                            "Credit"        => $modMade['made_credito'],
+                            "modalidad"     => $modalidad,
+                            "Cost"          => $costoCredito,
+                            "CostSubject"   => $costoCredito,
+                            "Roi_id"        => $roi_id,
+                            "Rama_id"       => $rama_id,
+                            "Admin"         => $admin,
+                            "Usuario"       => $usuario
+                        );
+                        array_push($arrData, $arrRow[$j][$i]);
                     }
-                    //Asignatura
-                    $modAsig = Asignatura::findOne(['asi_id'=>$modMade['asi_id'],'asi_estado'=>'1','asi_estado_logico'=>'1']);
-                    //MateriaParaleloPeriodo
-                    $modMpp  = MateriaParaleloPeriodo::findOne(['mpp_id' => trim($dict['pes_mat_b'.$j.'_h'.$i.'_mpp']), 'mpp_estado' => '1', 'mpp_estado_logico' => '1']);
-                    //DistributivHorario
-                    $modDaho = DistributivoAcademicoHorario::findOne(['daho_id' => $modMpp['daho_id'], 'daho_estado' => '1', 'daho_estado_logico' => '1']);
-                    //ProgramaCostoCreduti
-                    
-                    
-
-
-                    $arrRow[$j][$i] = array(
-                        "Subject"       => $modAsig['asi_nombre'],//trim($dict['pes_mat_b1_h1_nombre']),
-                        "Code"          => $modMade['made_codigo_asignatura'],
-                        "Block"         => $bloque,
-                        "Hour"          => $hora,
-                        "Parallel"      => $modMpp['mpp_num_paralelo'],
-                        "Credit"        => $modMade['made_credito'],
-                        "modalidad"     => $modalidad,
-                        "Cost"          => $costoCredito,
-                        "CostSubject"   => $costoCredito,
-                        "Roi_id"        => $roi_id,
-                        "Rama_id"       => $rama_id,
-                        "Admin"         => $admin,
-                        "Usuario"       => $usuario
-                    );
-                    array_push($arrData, $arrRow[$j][$i]);
                 }
             }
-        }
+        }//fin for nuevo
 
-    \app\models\Utilities::putMessageLogFile('arrData h1: ' . print_r($arrData,true));
+        //\app\models\Utilities::putMessageLogFile('arrData h1: ' . print_r($arrData,true));
 
         return $arrData;
     }
@@ -875,7 +888,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
         $comando->bindParam(":pla_id", $pla_id, \PDO::PARAM_INT);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
         $resultData = $comando->queryAll();
-        \app\models\Utilities::putMessageLogFile('getIdPlanificacionEstudiante: '.$comando->getRawSql());
+        //\app\models\Utilities::putMessageLogFile('getIdPlanificacionEstudiante: '.$comando->getRawSql());
         return $resultData;
     }
 
@@ -1110,7 +1123,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
         $comando->bindParam(":ron_id", $ron_id, \PDO::PARAM_INT);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
         $resultData = $comando->queryOne();
-        \app\models\Utilities::putMessageLogFile('getCostFromRegistroOnline: '.$comando->getRawSql());
+        //\app\models\Utilities::putMessageLogFile('getCostFromRegistroOnline: '.$comando->getRawSql());
         return $resultData;
     }
     
@@ -1605,6 +1618,10 @@ class Matriculacion extends \yii\db\ActiveRecord {
                 $str_search .= "rpm.pla_id = :pla_id  AND ";
             }
 
+            if ($arrFiltro['estado'] != "" && $arrFiltro['estado'] != -1 ) {
+                $str_search .= "rpm.rpm_estado_generado = :estado_matricula  AND ";
+            }
+
             if ($arrFiltro['admitido'] != "") {
                 $str_search .= " (TRIM(per.per_pri_nombre) like '%" . $arrFiltro['admitido'] . "%' OR ";
                 $str_search .= "TRIM(per.per_seg_nombre) like '%" . $arrFiltro['admitido'] . "%' OR ";
@@ -1626,7 +1643,9 @@ class Matriculacion extends \yii\db\ActiveRecord {
             CONCAT(TRIM(per.per_pri_nombre),' ',TRIM(per.per_pri_apellido)) AS Estudiante,
             per.per_cedula AS DNI,
             planificacion.mod_nombre as modalidad,
-            eaca.eaca_nombre as carrera
+            -- eaca.eaca_nombre as carrera
+            planificacion.pes_carrera as carrera
+            , rpm.rpm_estado_generado
         FROM
             (SELECT distinct
                 pes.per_id,
@@ -1638,7 +1657,8 @@ class Matriculacion extends \yii\db\ActiveRecord {
                 moda.mod_nombre,
                 pla.saca_id,
                 pla.pla_id,
-                pa.paca_id
+                pa.paca_id,
+                pes.pes_carrera
             FROM db_academico.planificacion pla
             INNER JOIN db_academico.planificacion_estudiante pes on pla.pla_id = pes.pla_id
             INNER JOIN db_academico.semestre_academico sa on sa.saca_id=pla.saca_id
@@ -1658,7 +1678,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
         INNER JOIN db_academico.estudio_academico eaca on eaca.eaca_id=meun.eaca_id
         INNER JOIN db_academico.semestre_academico sa on sa.saca_id=planificacion.saca_id
         INNER JOIN db_academico.periodo_academico paca on sa.saca_id=paca.saca_id
-        INNER JOIN db_academico.registro_pago_matricula rpm on planificacion.per_id=rpm.per_id
+        INNER JOIN db_academico.registro_pago_matricula rpm on planificacion.per_id=rpm.per_id and rpm.pla_id = planificacion.pla_id
         LEFT JOIN db_academico.registro_online ron on ron.per_id=per.per_id and ron.pes_id=planificacion.pes_id
         WHERE
                 $str_search
@@ -1669,8 +1689,15 @@ class Matriculacion extends \yii\db\ActiveRecord {
                 paca.paca_estado_logico = :estado  AND
                 per.per_estado_logico = :estado  AND
                 est.est_estado_logico = :estado  AND
-                paca.paca_activo = 'A' AND
-                ron.ron_id IS NULL  
+                paca.paca_activo = 'A' -- AND
+                -- ron.ron_id IS NULL  
+                AND ron.ron_estado = :estado  AND ron.ron_estado_logico = :estado
+                AND rpm.rpm_estado = :estado  AND rpm.rpm_estado_logico = :estado
+                AND ecp.ecpr_estado = :estado AND ecp.ecpr_estado_logico = :estado
+                AND meun.meun_estado= :estado AND meun.meun_estado_logico= :estado
+                AND eaca.eaca_estado = :estado AND eaca.eaca_estado_logico = :estado
+                AND sa.saca_estado = :estado AND sa.saca_estado_logico = :estado
+                AND paca.paca_estado= :estado AND paca.paca_estado_logico= :estado
         ORDER BY planificacion.pla_id ASC, carrera ASC, Estudiante ASC;";
 
         $comando = $con->createCommand($sql);
@@ -1679,6 +1706,11 @@ class Matriculacion extends \yii\db\ActiveRecord {
             if ($arrFiltro['planificacion'] != "" && $arrFiltro['planificacion'] > 0) {
                 $search_per = $arrFiltro["planificacion"];
                 $comando->bindParam(":pla_id", $search_per, \PDO::PARAM_INT);
+            }
+
+            if ($arrFiltro['estado'] != "" && $arrFiltro['estado'] != -1) {
+                $search_estado = $arrFiltro["estado"];
+                $comando->bindParam(":estado_matricula", $search_estado, \PDO::PARAM_INT);
             }
 
             if ($arrFiltro['admitido'] != "") {

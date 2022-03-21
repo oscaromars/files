@@ -65,6 +65,13 @@ class MatriculacionController extends \app\components\CController {
 		'1' => 'Approved',
 	];
 
+	private function estadoMatricula() {
+      return [
+          '-1' => Yii::t("formulario", "All"),
+          '1' => Yii::t("formulario", "Matriculado"),
+          '0' => Yii::t("formulario", "Pendiente"),
+      ];
+  }
 	/***********************************************  funciones nuevas matriculacion  *****************************************/
 
 	private function getCreditoPay() {
@@ -3015,6 +3022,7 @@ $dataValue[] = ['Id' => $con, 'Pago' => Academico::t('matriculacion',"Payment") 
 		if ($data['PBgetFilter']) {
 			$arrSearch["planificacion"] = $data['planificacion'];
 			$arrSearch["admitido"] = $data['admitido'];
+			$arrSearch["estado"] = $data['estado'];
 			$model = $estudiante_model->consultarEstudiantesPlanificados($arrSearch);
 			return $this->renderPartial('newfund-grid', [
 				"model" => $model,
@@ -3026,6 +3034,7 @@ $dataValue[] = ['Id' => $con, 'Pago' => Academico::t('matriculacion',"Payment") 
 		return $this->render('newfund', [
 			'mod_pla' => ArrayHelper::map(array_merge([["id" => "0", "nombre" => Yii::t("formulario", "Todos")]], $arr_pla), "id", "nombre"),
 			'model' => $model,
+			//'arr_estado_matricula' => $this->estadoMatricula(),
 		]);
 
 	} //end function actionRegistroadmin
@@ -3034,6 +3043,8 @@ $dataValue[] = ['Id' => $con, 'Pago' => Academico::t('matriculacion',"Payment") 
 
 		$userperid = Yii::$app->session->get("PB_perid");
 		$usuario = Yii::$app->user->identity->usu_id;
+		$admin = $this->isAdmin($usuario);
+		$_SESSION['JSLANG']['You must choose at least four subjects'] = Academico::t('matriculacion', 'You must choose at least four subjects');//13 marzo 2022
 
 		if (Yii::$app->request->isAjax) {
 			$data = Yii::$app->request->post();
@@ -3315,7 +3326,8 @@ $dataValue[] = ['Id' => $con, 'Pago' => Academico::t('matriculacion',"Payment") 
 				$pla_id = $resultIdPlanificacionEstudiante[0]['pla_id'];
 				$resultRegistroOnline = $matriculacion_model->checkPlanificacionEstudianteRegisterConfiguracion($per_id, $pes_id, $pla_id);
 				if (count($resultRegistroOnline) > 0) {
-					$ron_id = $resultRegistroOnline['ron_id'];
+					//$ron_id = $resultRegistroOnline['ron_id'];
+					$ron_id = $resultRegistroOnline[0]['ron_id'];//15 marzo 2022.
 					if ($ron_id != Null) {
 						return $this->render('findexreg', [
 							//"planificacion" => $dataProvider,
@@ -3365,6 +3377,10 @@ $dataValue[] = ['Id' => $con, 'Pago' => Academico::t('matriculacion',"Payment") 
 					$paca_id = $data_student['paca_id'];
 					//$scholarship = $estudiante_model->isScholarship($est_id,$paca_id);
 					//$isscholar=$scholarship['bec_id'];
+
+					//cantidad materias planificadas
+					$cant_mat_planificada = count($dataPlanificacion);
+					\app\models\Utilities::putMessageLogFile("cantidad materias planificadas: " . $cant_mat_planificada);
 
 					$registro_model = new RegistroOnline();
 					$ronned = $registro_model->getcurrentRon($per_id);
@@ -3417,6 +3433,8 @@ $dataValue[] = ['Id' => $con, 'Pago' => Academico::t('matriculacion',"Payment") 
 						"pagado" => $pagado,
 						"num_min" => $num_min,
 						"num_max" => $num_max,
+						"cant_mat_planificada" =>$cant_mat_planificada,
+						"admin"=>$admin,
 
 					]);
 
@@ -3439,4 +3457,32 @@ $dataValue[] = ['Id' => $con, 'Pago' => Academico::t('matriculacion',"Payment") 
 			return $this->redirect('registro');
 		}
 	}
+
+	/**
+   * Determina si el usuario logueado tiejne privilegios más avanzados
+   * @author  Julio Lopez analista.desarrollo03@uteg.edu.ec
+   * @param   
+   * @return  
+   */
+  private function isAdmin($usu_id){ 
+      $con = Yii::$app->db_academico;
+      $sql ="SELECT COUNT(*) as cant_reg FROM db_asgard.usua_grol_eper u
+						 INNER JOIN db_asgard.grup_rol r
+						 WHERE u.usu_id = $usu_id AND 
+			             u.grol_id = r.grol_id AND
+			             r.grol_id IN(16,20) AND
+			             u.ugep_estado = 1 AND u.ugep_estado_logico = 1 AND
+			             r.grol_estado =1 AND r.grol_estado_logico =1;";
+
+			$comando = $con->createCommand($sql);
+      $resultado = $comando->queryAll();
+      if($resultado[0]['cant_reg'] == 1){
+      	//Coordinador Grado, Coordinador Online
+				return 1;
+      }
+      else{
+      	return 0;
+      }
+  }
+
 }

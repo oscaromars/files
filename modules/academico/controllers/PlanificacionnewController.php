@@ -908,6 +908,7 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
             $malla_guarda = "'". $malla[0] . "'";
             $periodo = $data['periodoest'];
             $per_id = $data['nombreest']; 
+            $perid = $data['per_id']; 
             $data_persona = $mod_persona->consultaPersonaId($per_id);
             $dni = $data_persona['per_cedula'];
             $nombre = $data_persona['per_pri_nombre'] . ' ' . $data_persona['per_pri_apellido'];
@@ -951,8 +952,8 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
                         $valores .= "'" . $mat_cod . "', '" . $modalidades . "', '" . $arrplan[$i]['jornada'] . "',";
                     }
                     $mod_mallastudent = new MallaAcademica();
-                    $resultmaca_id = $mod_mallastudent->consultarMallaEstudiante($per_id);
-                    $resul = $mod_planifica->insertarDataPlanificacionestudiante($resulpla_id['pla_id'], $per_id, $jornada, $carrera, $dni, $nombre, $malla_guarda, $insertar, $valores,$resultmaca_id['codmalla']);
+                    $resultmaca_id = $mod_mallastudent->consultarMallaEstudiante($perid);
+                    $resul = $mod_planifica->insertarDataPlanificacionestudiante($resulpla_id['pla_id'], $perid, $jornada, $carrera, $dni, $nombre, $malla_guarda, $insertar, $valores,$resultmaca_id['codmalla']);
                 } else {
                         // no existe mensaje que no permitar guardar      
                         $noentra = 'NOS';

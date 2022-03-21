@@ -1395,6 +1395,7 @@ $centralprocess = $malla->cargarAsignaturas($resultData[$i],$modalidad,$periodo)
 			$malla_guarda = "'" . $malla[0] . "'";
 			$periodo = $data['periodoest'];
 			$per_id = $data['nombreest'];
+			$perid = $data['per_id']; 
 			$data_persona = $mod_persona->consultaPersonaId($per_id);
 			$dni = $data_persona['per_cedula'];
 			$nombre = $data_persona['per_pri_nombre'] . ' ' . $data_persona['per_pri_apellido'];
@@ -1444,8 +1445,8 @@ $centralprocess = $malla->cargarAsignaturas($resultData[$i],$modalidad,$periodo)
 						}
 
                               $mod_mallastudent = new MallaAcademica();
-						$resultmaca_id = $mod_mallastudent->consultarMallaEstudiante($per_id);
-						$resul = $mod_planifica->insertarDataPlanificacionestudiante($resulpla_id['pla_id'], $per_id, $jornada, $carrera, $dni, $nombre, $malla_guarda, $insertar, $valores,$resultmaca_id['codmalla']);
+						$resultmaca_id = $mod_mallastudent->consultarMallaEstudiante($perid);
+						$resul = $mod_planifica->insertarDataPlanificacionestudiante($resulpla_id['pla_id'], $perid, $jornada, $carrera, $dni, $nombre, $malla_guarda, $insertar, $valores,$resultmaca_id['codmalla']);
 					}elseif ($exitealumno['planexiste'] == '1' && $data['crea_planificacion_centro_idioma'] == 1 ) { //15 febrero 2022
 						//Nuevo Registro
 						$arrplan = json_decode($data['DATAS'], true);
@@ -1489,8 +1490,8 @@ $centralprocess = $malla->cargarAsignaturas($resultData[$i],$modalidad,$periodo)
 						}
 
 						$mod_mallastudent = new MallaAcademica();
-						$resultmaca_id = $mod_mallastudent->consultarMallaEstudiante($per_id);
-						$resul = $mod_planifica->insertarDataPlanificacionestudiante($resulpla_id['pla_id'], $per_id, $jornada, $carrera, $dni, $nombre, $malla_guarda, $insertar, $valores,$resultmaca_id['codmalla']);
+						$resultmaca_id = $mod_mallastudent->consultarMallaEstudiante($perid);
+						$resul = $mod_planifica->insertarDataPlanificacionestudiante($resulpla_id['pla_id'], $perid, $jornada, $carrera, $dni, $nombre, $malla_guarda, $insertar, $valores,$resultmaca_id['codmalla']);
 
 					}else {
 						// no existe mensaje que no permitar guardar

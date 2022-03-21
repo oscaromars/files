@@ -1115,7 +1115,7 @@ inner join db_academico.materia_paralelo_periodo mpp on mpp.asi_id = made.asi_id
      * @return  
      */
     /* INSERTAR DATOS */
-    public function insertarDataPlanificacionestudiante($pla_id, $per_id, $pes_jornada, $pes_carrera, $pes_dni, $pes_nombres, $pes_cod_malla, $insertar, $valores, $codmalla = Null) {
+    public function insertarDataPlanificacionestudiante($pla_id, $per_id, $pes_jornada, $pes_carrera, $pes_dni, $pes_nombres, $pes_cod_malla, $insertar, $valores, $codmalla) {
         $arroout = array();
         $con = \Yii::$app->db_academico;
         $trans = $con->beginTransaction();

@@ -531,7 +531,7 @@ class Matriculacion extends \yii\db\ActiveRecord {
                 
         $sql = "
             SELECT pes.per_id,pes_dni, " . $str_bloques . "," . $str_mpp . "
-            FROM " . $con_academico->dbname . ".planificacion_estudiantex as pes            
+            FROM " . $con_academico->dbname . ".planificacion_estudiante as pes            
             WHERE pes.per_id =:per_id
             AND pes.pla_id =:pla_id
             AND pes.pes_estado =1 AND pes.pes_estado_logico=1;

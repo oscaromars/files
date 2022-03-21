@@ -194,6 +194,17 @@ DatatableAsset::register($this);
                         },
                     ],
                 ],
+                /*[
+                    'header' => Pagos::t("Academico", "Seleccionar"),
+                    'class' => 'yii\grid\CheckboxColumn',
+                    'checkboxOptions' => function($model) {
+                        if($model['abono'] == 0){
+                            return [];
+                        }else{
+                           return ['disabled' => true];
+                        }
+                     },
+                ],*/
 
             ],
         ])

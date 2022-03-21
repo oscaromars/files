@@ -950,7 +950,9 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
                         //$mat_nombre = $materia[1];
                         $valores .= "'" . $mat_cod . "', '" . $modalidades . "', '" . $arrplan[$i]['jornada'] . "',";
                     }
-                    $resul = $mod_planifica->insertarDataPlanificacionestudiante($resulpla_id['pla_id'], $per_id, $jornada, $carrera, $dni, $nombre, $malla_guarda, $insertar, $valores);
+                    $mod_mallastudent = new MallaAcademica();
+                    $resultmaca_id = $mod_mallastudent->consultarMallaEstudiante($per_id);
+                    $resul = $mod_planifica->insertarDataPlanificacionestudiante($resulpla_id['pla_id'], $per_id, $jornada, $carrera, $dni, $nombre, $malla_guarda, $insertar, $valores,$resultmaca_id['codmalla']);
                 } else {
                         // no existe mensaje que no permitar guardar      
                         $noentra = 'NOS';

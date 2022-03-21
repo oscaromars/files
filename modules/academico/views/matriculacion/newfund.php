@@ -9,6 +9,7 @@ use app\modules\academico\Module as academico;
         <?=
         $this->render('newfund-search', [ 
             'arr_pla' => $mod_pla,
+            //'arr_estado_matricula' => $arr_estado_matricula,
             ]);
         ?>
     </form>

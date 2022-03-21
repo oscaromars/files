@@ -1145,7 +1145,9 @@ inner join db_academico.materia_paralelo_periodo mpp on mpp.asi_id = made.asi_id
      */
     private function insertarPlanificacionestudiante($con, $pla_id, $per_id, $pes_jornada, $pes_carrera, $pes_dni, $pes_nombres, $pes_cod_malla, $insertar, $valores,$codmalla) {
         $estado = 1;
-        if ($codmalla is Null){ $codmalla = $pes_cod_malla; }
+        if ($codmalla == Null) {
+            $codmalla = $pes_cod_malla; 
+        }
         $sql = "INSERT INTO " . $con->dbname . ".planificacion_estudiante
                     (pla_id,
                      per_id,

@@ -108,7 +108,7 @@ class DiplomaController extends \app\components\CController {
                 if ($model->dip_id > 4535 && $model->dip_id < 4583) { //NUEVO
                     $title = "La Universidad Tecnológica Empresarial de Guayaquil otorga el presente certificado a:";
                     $body  = '<H6>Por haber participado en el proceso de capacitación del proyecto de servicio comunitario</H6>';
-                    $body .= '<span><H6>'.$model->dip_programa.'</span></H6>';
+                    $body .= '<span><H6>"'.$model->dip_programa.'"</span></H6>';
                     $body .= '<H6>Dado en el marco del desarrollo de las actividades de Vinculación con la Sociedad de UTEG, dictado por los estudiantes de la '. $model->dip_carrera . '. Con una duración de '. $model->dip_horas .' horas.';
                     $dates = '<H6>Dado '.$fecha. '</H6>';
                  }else{ //NUEVO

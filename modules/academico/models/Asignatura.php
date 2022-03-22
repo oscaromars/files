@@ -996,7 +996,7 @@ class Asignatura extends \yii\db\ActiveRecord {
             }
         }
 
-        if ($bloque == "B1" && $str_query == "" ) {
+        if ($bloque == "B1" && empty($str_query) ) {
             $sql = "SELECT id, name from (
                 SELECT distinct a.asi_id id, asi_nombre name
                 FROM    db_academico.planificacion_estudiante pe
@@ -1063,8 +1063,21 @@ class Asignatura extends \yii\db\ActiveRecord {
                       and pes_estado = 1
                       and pes_estado_logico = 1
                       and mpp.asi_id is null
+                UNION
+                SELECT distinct a.asi_id id, asi_nombre name
+                FROM db_academico.planificacion_estudiante pe
+                    inner join  db_academico.planificacion p on p.pla_id = pe.pla_id
+                    inner join db_academico.malla_academica_detalle md   on md.made_codigo_asignatura = pe.pes_mat_b1_h6_cod
+                    inner join db_academico.asignatura a on a.asi_id = md.asi_id
+                    left join  db_academico.materia_paralelo_periodo mpp on mpp.asi_id = a.asi_id and mpp.paca_id=:paca_id and mpp.mod_id=:mod_id
+                    WHERE p.pla_estado='1'
+                      $str_search
+                      $str_search_uaca
+                      and pes_estado = 1
+                      and pes_estado_logico = 1
+                      and mpp.asi_id is null
                ) b order by name";
-        } elseif ( $str_query == "" ) {
+        } elseif (/* $bloque == "B2" &&*/ empty($str_query) ) {
             $sql = "SELECT id, name from (
                 SELECT distinct a.asi_id id, asi_nombre name
                 FROM db_academico.planificacion_estudiante pe
@@ -1122,6 +1135,19 @@ class Asignatura extends \yii\db\ActiveRecord {
                 FROM db_academico.planificacion_estudiante pe
                     inner join  db_academico.planificacion p on p.pla_id = pe.pla_id
                     inner join db_academico.malla_academica_detalle md     on md.made_codigo_asignatura = pe.pes_mat_b2_h5_cod
+                    inner join db_academico.asignatura a on a.asi_id = md.asi_id
+                    left join  db_academico.materia_paralelo_periodo mpp on mpp.asi_id = a.asi_id and mpp.paca_id=:paca_id and mpp.mod_id=:mod_id
+                    WHERE p.pla_estado='1'
+                      $str_search
+                      $str_search_uaca
+                      and pes_estado = 1
+                      and pes_estado_logico = 1
+                      and mpp.asi_id is null
+                UNION
+                SELECT distinct a.asi_id id, asi_nombre name
+                FROM db_academico.planificacion_estudiante pe
+                    inner join  db_academico.planificacion p on p.pla_id = pe.pla_id
+                    inner join db_academico.malla_academica_detalle md     on md.made_codigo_asignatura = pe.pes_mat_b2_h6_cod
                     inner join db_academico.asignatura a on a.asi_id = md.asi_id
                     left join  db_academico.materia_paralelo_periodo mpp on mpp.asi_id = a.asi_id and mpp.paca_id=:paca_id and mpp.mod_id=:mod_id
                     WHERE p.pla_estado='1'

@@ -125,7 +125,14 @@ class MateriaparaleloperiodoController extends \app\components\CController {
             $arrSearch["unidad"]     = $data['unidad'];
             $arrSearch["modalidad"]  = $data['modalidad'];
 
-            $model = $mod->consultarAsignaturasMateriaparaleloperiodo($arrSearch["periodo"], $arrSearch["unidad"], $arrSearch["modalidad"], null );
+            if ($data['periodo']!=""){
+                $arrSearch["bloque"]     = substr($data['bloque'],0,2);
+            }else{
+                 $arrSearch["bloque"] = null;
+            }
+
+            $model = $mod->consultarAsignaturasMateriaparaleloperiodo($arrSearch["periodo"], $arrSearch["unidad"], $arrSearch["modalidad"], $arrSearch["bloque"] );//JLC - 22 marzo 2022
+            //$model = $mod->consultarAsignaturasMateriaparaleloperiodo($arrSearch["periodo"], $arrSearch["unidad"], $arrSearch["modalidad"], null );
             //$model = $mod->getAsignaturaPara_asignar_paralelo($arrSearch["periodo"], $arrSearch["unidad"], $arrSearch["modalidad"], null );
             
             return $this->renderPartial('_form', [

@@ -1455,7 +1455,16 @@ public function confirmarPlanificacionExistente($per_id, $periodo) {
                                         inner join " . $con->dbname . ".malla_academica ma on ma.maca_id = maes.maca_id
                                         inner join " . $con2->dbname . ".persona pe on pe.per_id = e.per_id
                                         inner join " . $con->dbname . ".planificacion pla on pla.saca_id = $periodo and meu.mod_id = pla.mod_id
-                                        where e.per_id = $per_id;");
+                                        where e.per_id = $per_id
+                    AND ecp.ecpr_estado AND ecp.ecpr_estado_logico
+                    AND meu.meun_estado AND meu.meun_estado_logico
+                    AND es.eaca_estado AND es.eaca_estado_logico
+                    AND e.est_estado AND e.est_estado_logico
+                    AND maes.maes_estado AND maes.maes_estado_logico
+                    AND ma.maca_estado AND ma.maca_estado_logico
+                    AND pe.per_estado AND pe.per_estado_logico
+                    AND pla.pla_estado AND pla.pla_estado_logico
+                                        ;");
                     $comando3 = $con->createCommand($sql3);
                     \app\models\Utilities::putMessageLogFile('Insertado');
                 \app\models\Utilities::putMessageLogFile('confirmarPlanificacionExistente: '.$comando3->getRawSql());

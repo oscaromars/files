@@ -175,11 +175,12 @@ function BuscarGrid() {
 function BuscarGridNew() {
     var periodo     = $('#cmb_periodo_new option:selected').val();
     var unidad      = $('#cmb_unidad_new option:selected').val();
-    var modalidad   = $('#cmb_modalidad_new option:selected').val();    
+    var modalidad   = $('#cmb_modalidad_new option:selected').val();
+    var bloque      = $('#cmb_periodo_new option:selected').text();//JLC - 22 marzo 2022
 
     if (!$(".blockUI").length) {
         showLoadingPopup();
-        $('#tbl_materias_new').PbGridView('applyFilterData', {'periodo': periodo, 'unidad':unidad, 'modalidad': modalidad});
+        $('#tbl_materias_new').PbGridView('applyFilterData', {'periodo': periodo, 'unidad':unidad, 'modalidad': modalidad, 'bloque':bloque});
         setTimeout(hideLoadingPopup, 2000);
     }
 }

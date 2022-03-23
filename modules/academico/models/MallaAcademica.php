@@ -349,12 +349,12 @@ class MallaAcademica extends \yii\db\ActiveRecord
         " . $con->dbname . ".planificacion_estudiante ples  
         where maes.per_id = $per_id and pmac.enac_id not in (1,4) and
         made.made_codigo_asignatura not in
-        (select mad.made_codigo_asignatura from " . $con->dbname . ".planificacion_estudiante ple,
+        (select mad.made_codigo_asignatura from " . $con->dbname . ".planificacion as pla, " . $con->dbname . ".planificacion_estudiante ple,
         " . $con->dbname . ".malla_academica_detalle mad
         where mad.made_codigo_asignatura in (
         ple.pes_mat_b1_h1_cod,ple.pes_mat_b1_h2_cod,ple.pes_mat_b1_h3_cod,ple.pes_mat_b1_h4_cod,ple.pes_mat_b1_h5_cod,ple.pes_mat_b1_h6_cod,
         ple.pes_mat_b2_h1_cod,ple.pes_mat_b2_h2_cod,ple.pes_mat_b2_h3_cod,ple.pes_mat_b2_h4_cod,ple.pes_mat_b2_h5_cod,ple.pes_mat_b2_h6_cod)
-        and per_id = $per_id)";    
+        and pla.pla_id = ple.pla_id and ple.per_id = $per_id and pla_estado = 1 and pla_estado_logico =1 and pes_estado = 1 and pes_estado_logico = 1)";
         $comando = $con->createCommand($sql2);
         if($per_id == null){
             $resultData = [];

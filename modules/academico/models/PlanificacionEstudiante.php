@@ -1456,14 +1456,14 @@ public function confirmarPlanificacionExistente($per_id, $periodo) {
                                         inner join " . $con2->dbname . ".persona pe on pe.per_id = e.per_id
                                         inner join " . $con->dbname . ".planificacion pla on pla.saca_id = $periodo and meu.mod_id = pla.mod_id
                                         where e.per_id = $per_id
-                    AND ecp.ecpr_estado AND ecp.ecpr_estado_logico
-                    AND meu.meun_estado AND meu.meun_estado_logico
-                    AND es.eaca_estado AND es.eaca_estado_logico
-                    AND e.est_estado AND e.est_estado_logico
-                    AND maes.maes_estado AND maes.maes_estado_logico
-                    AND ma.maca_estado AND ma.maca_estado_logico
-                    AND pe.per_estado AND pe.per_estado_logico
-                    AND pla.pla_estado AND pla.pla_estado_logico
+                    AND ecp.ecpr_estado = 1 AND ecp.ecpr_estado_logico = 1
+                    AND meu.meun_estado = 1 AND meu.meun_estado_logico = 1
+                    AND es.eaca_estado = 1 AND es.eaca_estado_logico = 1
+                    AND e.est_estado = 1 AND e.est_estado_logico = 1
+                    AND maes.maes_estado = 1 AND maes.maes_estado_logico = 1
+                    AND ma.maca_estado = 1 AND ma.maca_estado_logico = 1
+                    AND pe.per_estado = 1 AND pe.per_estado_logico = 1
+                    AND pla.pla_estado = 1 AND pla.pla_estado_logico = 1
                                         ;");
                     $comando3 = $con->createCommand($sql3);
                     \app\models\Utilities::putMessageLogFile('Insertado');

@@ -28,7 +28,7 @@ echo 'sdfg.. '. $imagen;
                 <label for="txt_solicitud" class="col-sm-4 col-md-4 col-xs-4 col-lg-4 control-label" id="lbl_solicitud"><?= admision::t("Solicitudes", "Document") ?></label>
                 <div class="col-sm-8 col-md-8 col-xs-8 col-lg-8 ">
                     <?php
-                    echo "<a href='" . Url::to(['/site/getimage', 'route' => "/uploads/documento/$per_id/".$imagen]) . "' download='" . $imagen . "' ><span class='glyphicon glyphicon-download-alt'></span>Descargar Imagen</a>"
+                    echo "<a href='" . Url::to(['/site/getimage', 'route' => "/uploads/documento/$per_id/$imagen"]) . "' download='" . $imagen . "' ><span class='glyphicon glyphicon-download-alt'></span>Descargar Imagen</a>"
                     ?>
                 </div>
             </div>

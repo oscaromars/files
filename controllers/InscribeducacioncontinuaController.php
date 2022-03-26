@@ -135,7 +135,7 @@ class InscribeducacioncontinuaController extends \yii\web\Controller {
 			$model = new InscripcionAdmision();
 			$data = Yii::$app->request->post();
 			$accion = isset($data['ACCION']) ? $data['ACCION'] : "";
-			$fecha_registro = date(Yii::$app->params["dateTimeByDefault"]);
+			$fecha_registro = date(Yii::$app->params["dateByDefault"]);
 			if ($data["upload_file"]) {
 				if (empty($_FILES)) {
 					return json_encode(['error' => Yii::t("notificaciones", "Error to process File {file}. Try again.", ['{file}' => basename($files['name'])])]);

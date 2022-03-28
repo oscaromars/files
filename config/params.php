@@ -28,6 +28,7 @@ return [
 	'ventasposgrado1' => /*'ventasposgrado01@uteg.edu.ec',*/'analistadesarrollo02@uteg.edu.ec',
 	'ventasposgrado2' => /*'ventasposgrado03@uteg.edu.ec',*/'analistadesarrollo02@uteg.edu.ec',
 	'ventasposgrado3' => /*'ventasposgrado03@uteg.edu.ec',*/'analistadesarrollo02@uteg.edu.ec',
+	'secretariaicp' => /*'analistadesarrollo02@uteg.edu.ec', */'secretaria.icp@uteg.edu.ec',
 
 	//GRADO PRESENCIAL
 	'decanogradopresencial' => /*'decanogrado@uteg.edu.ec',*/'analistadesarrollo04@uteg.edu.ec',

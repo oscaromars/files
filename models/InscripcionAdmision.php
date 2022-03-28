@@ -1016,7 +1016,7 @@ class InscripcionAdmision extends \yii\db\ActiveRecord {
 				$body1 = Utilities::getMailMessage("register_icp_admisiones", array("[[nombres_completos]]" => $resp_datos['twin_nombre'] . " " . $resp_datos['twin_apellido'], "[[curso]]" => $curso), Yii::$app->language);
 				Utilities::sendEmail($tituloMensaje, Yii::$app->params["adminEmail"], [$resp_datos['twin_correo'] => $resp_datos['twin_apellido'] . " " . $resp_datos['twin_nombre']], $asunto, $body);
 				Utilities::sendEmail($tituloMensaje, Yii::$app->params["adminEmail"], [Yii::$app->params["admisiones"] => "Jefe"], $asunto, $body1);
-				Utilities::sendEmail($tituloMensaje, Yii::$app->params["adminEmail"], [Yii::$app->params["secretariaicp"] => "Soporte"], $asunto, $body);
+				Utilities::sendEmail($tituloMensaje, Yii::$app->params["adminEmail"], [Yii::$app->params["secretariaicp"] => "ICP"], $asunto, $body);
 				//\app\models\Utilities::putMessageLogFile('después del tercer sendMail');
 				$message = array(
 					"wtmessage" => Yii::t("formulario", "The information have been saved and the information has been sent to your email"),

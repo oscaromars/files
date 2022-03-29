@@ -78,7 +78,7 @@ class DiplomaController extends \app\components\CController {
             $fin = strftime("%d de %B %G", strtotime($model->dip_fecha_fin));
             if ($hasta == $fin) {
                 $fecha = '<span>el ' . $hasta . '. </span><br/>';
-            } elseif($model->dip_id > 4583 && $model->dip_id < 4596) {
+            } elseif($model->dip_id > 4582 && $model->dip_id < 4596) {
                 $fecha = '<span> ' . $hasta . ' al ' . $fin .'. </span><br/>';
             }else {
                 $fecha = '<span> desde el ' . $hasta . ' hasta el ' . $fin .'. </span><br/>';

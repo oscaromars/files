@@ -78,7 +78,9 @@ class DiplomaController extends \app\components\CController {
             $fin = strftime("%d de %B %G", strtotime($model->dip_fecha_fin));
             if ($hasta == $fin) {
                 $fecha = '<span>el ' . $hasta . '. </span><br/>';
-            } else {
+            } elseif($model->dip_id > 4582 && $model->dip_id < 4596) {
+                $fecha = '<span> ' . $hasta . ' al ' . $fin .'. </span><br/>';
+            }else {
                 $fecha = '<span> desde el ' . $hasta . ' hasta el ' . $fin .'. </span><br/>';
             }
             if ($model->dip_id < 50) {
@@ -105,7 +107,7 @@ class DiplomaController extends \app\components\CController {
             $dates = '<H6>'.$fecha. '</H6>';
 
             } else{
-                if ($model->dip_id > 4535 && $model->dip_id < 4583) { //NUEVO
+                if ($model->dip_id > 4535 && $model->dip_id < 4596) { //NUEVO
                     $title = "La Universidad Tecnológica Empresarial de Guayaquil otorga el presente certificado a:";
                     $body  = '<H6>Por haber participado en el proceso de capacitación del proyecto de servicio comunitario</H6>';
                     $body .= '<span><H6>"'.$model->dip_programa.'"</span></H6>';

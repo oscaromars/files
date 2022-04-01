@@ -446,6 +446,31 @@ WHERE paca_activo = 'A'
 		return $resultData;
 	}
 
+		public function actionListarmaterias() {
+		if (Yii::$app->request->isAjax) {
+			$data = Yii::$app->request->post();
+			$opt_si = $data['opt_si'];
+			$opt_no = $data['opt_no'];
+			$per_id = $data['per_id'];
+			$mod_id = $data['mod_id'];
+
+			if ($opt_si !="" && $opt_si==1){
+				$opt_malla_academica=1;
+			}elseif ($opt_no !="" && $opt_no==2){
+				$opt_malla_academica=2;
+			}
+			
+			$mod_malla = new MallaAcademica();
+			if ($opt_malla_academica==2){
+				//Consulta asignaturas de malla academico, que no son centro de idiomas.
+				$materia = $mod_malla->consultarasignaturaxmallaaut($per_id, 1); //$mode_malla[0]['id']);
+			}else{
+				$materia = $mod_malla->selectAsignaturaPorMallaAutCentroIdioma($per_id, $mod_id, 1); 
+			}
+			return json_encode($materia);
+		}
+	}
+
 	/**
 	 * Function getStudents
 	 * @author  Oscar Sánchez <analistadesarrollo05@uteg.edu.ec>
@@ -691,6 +716,8 @@ VALUES
  
 
     }
+
+
 
 
 }

@@ -724,7 +724,7 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
         $sql = "SELECT distinct
                     r.ron_id as Id, 
                     ram.rama_id as rama_id,
-                    pe.pes_nombres as Estudiante,
+                    CONCAT(ifnull(TRIM(per.per_pri_nombre),''),' ',ifnull(TRIM(per.per_pri_apellido),''),' ')  as Estudiante,
                     pe.per_id as per_id,
                     pe.pes_dni as Cedula,
                     mo.mod_nombre as Modalidad,
@@ -732,8 +732,8 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
                     p.pla_id as pla_id,
                     tmp.Cant as Cant,
                     roc.roc_costo as Costo,
-                    -- reg.rpm_fecha_transaccion as Fecha,  
-                    date_format(reg.rpm_fecha_transaccion, '%Y-%m-%d')  as Fecha,
+                    reg.rpm_fecha_transaccion as Fecha,  
+                    -- date_format(reg.rpm_fecha_transaccion, '%Y-%m-%d')  as Fecha,
                     ifnull(rf.Refund, '0.00') as Refund,
                     tmp.Creditos as Creditos,
                     '0.00' as Enroll,
@@ -790,7 +790,7 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
                             r.ron_estado = 1 AND r.ron_estado_logico = 1
                         GROUP BY per_id
                     ) AS mi ON mi.ron_id = r.ron_id
-                    LEFT JOIN " . $con_academico->dbname . ".registro_pago_matricula AS reg on reg.per_id = per.per_id 
+                    LEFT JOIN " . $con_academico->dbname . ".registro_pago_matricula AS reg on reg.rpm_id = ram.rpm_id AND reg.per_id = per.per_id 
                         AND r.ron_id = reg.ron_id AND reg.rpm_estado = 1 AND reg.rpm_estado_logico = 1
                     "./*LEFT JOIN " . $con_academico->dbname . ".enrolamiento_agreement AS enr on enr.ron_id = r.ron_id 
                         AND reg.rpm_estado = 1 AND reg.rpm_estado_logico = 1 AND enr.rpm_id = ram.rpm_id AND enr.eagr_estado = 1 AND enr.eagr_estado_logico = 1
@@ -832,7 +832,7 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
                 SELECT distinct
                     r.ron_id as Id, 
                     ram.rama_id as rama_id,
-                    pe.pes_nombres as Estudiante,
+                    CONCAT(ifnull(TRIM(per.per_pri_nombre),''),' ',ifnull(TRIM(per.per_pri_apellido),''),' ')  as Estudiante,
                     pe.per_id as per_id,
                     pe.pes_dni as Cedula,
                     mo.mod_nombre as Modalidad,
@@ -840,8 +840,8 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
                     p.pla_id as pla_id,
                     tmp.Cant as Cant,
                     reg.rpm_total as Costo,
-                    -- reg.rpm_fecha_transaccion as Fecha, 
-                    date_format(reg.rpm_fecha_transaccion, '%Y-%m-%d')  as Fecha,                    
+                    reg.rpm_fecha_transaccion as Fecha, 
+                    -- date_format(reg.rpm_fecha_transaccion, '%Y-%m-%d')  as Fecha,                    
                     ifnull(rf.Refund, '0.00') as Refund,
                     tmp.Creditos as Creditos,
                     '0.00' as Enroll,
@@ -897,7 +897,7 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
                             r.ron_estado = 1 AND r.ron_estado_logico = 1
                         GROUP BY per_id
                     ) AS mi ON mi.ron_id = r.ron_id
-                    LEFT JOIN " . $con_academico->dbname . ".registro_pago_matricula AS reg on reg.per_id = per.per_id 
+                    LEFT JOIN " . $con_academico->dbname . ".registro_pago_matricula AS reg on reg.rpm_id = ram.rpm_id AND reg.per_id = per.per_id 
                         AND r.ron_id = reg.ron_id AND reg.rpm_estado = 1 AND reg.rpm_estado_logico = 1
                     "./*LEFT JOIN " . $con_academico->dbname . ".enrolamiento_agreement AS enr on enr.ron_id = r.ron_id 
                         AND reg.rpm_estado = 1 AND reg.rpm_estado_logico = 1 AND enr.rpm_id = ram.rpm_id AND enr.eagr_estado = 1 AND enr.eagr_estado_logico = 1

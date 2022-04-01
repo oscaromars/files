@@ -2453,28 +2453,53 @@ inner join " . $con->dbname . ".malla_academica as b on a.pes_cod_carrera = b.ma
 		}
 	}
 
-	public function actionListarmaterias() {
-		if (Yii::$app->request->isAjax) {
-			$data = Yii::$app->request->post();
-			$opt_si = $data['opt_si'];
-			$opt_no = $data['opt_no'];
-			$per_id = $data['per_id'];
-			$mod_id = $data['mod_id'];
+			public function actionCargaMaterias() {
 
-			if ($opt_si !="" && $opt_si==1){
-				$opt_malla_academica=1;
-			}elseif ($opt_no !="" && $opt_no==2){
-				$opt_malla_academica=2;
-			}
-			
-			$mod_malla = new MallaAcademica();
-			if ($opt_malla_academica==2){
-				//Consulta asignaturas de malla academico, que no son centro de idiomas.
-				$materia = $mod_malla->consultarasignaturaxmallaaut($per_id, 1); //$mode_malla[0]['id']);
-			}else{
-				$materia = $mod_malla->selectAsignaturaPorMallaAutCentroIdioma($per_id, $mod_id, 1); 
-			}
-			return json_encode($materia);
-		}
+		$squema = new Planificacion();    
+                $referenced = $squema->getStudents();       
+
+    if (count($referenced) >= 1 ) {
+   for ($t = 0; $t < count($referenced); $t++) {
+
+
+$scheme = $squema->getScheme($referenced[$t]['maca_codigo']);
+
+
+        switch ($referenced[$t]['mod_id']) {
+            case '1':
+                $pla_id = 39;$jornada = 'N';
+                break;
+            case '2':
+                $pla_id = 40;$jornada = 'N';
+                break;
+            case '3':
+                $pla_id = 41;$jornada = 'S';
+                break;
+            case '4':
+                $pla_id = 42;$jornada = 'D';
+                break;
+        }
+
+
+$referencerone = $squema->getreference(
+    $jornada,
+    $pla_id,
+    $referenced[$t]['maca_codigo']);
+
+  if (count($referencerone) > 0){
+
+
+$hasgenerated = $squema->doPusher($referencerone,$referenced[$t]['per_id'],$referenced[$t]['maca_nombre'],$referenced[$t]['per_cedula'],$referenced[$t]['estudiante']);
+
+  } else {
+
+
+
+  
+  }
+
+}}
+
+	
 	}
 }

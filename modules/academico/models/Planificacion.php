@@ -446,4 +446,251 @@ WHERE paca_activo = 'A'
 		return $resultData;
 	}
 
+	/**
+	 * Function getStudents
+	 * @author  Oscar Sánchez <analistadesarrollo05@uteg.edu.ec>
+	 * @param
+	 * @return  $resultData (Retornar estudiantes nuevos sin planificacion).
+	 */
+	public function getStudents($evaluator='') {    
+		$con = \Yii::$app->db_academico;  
+$queryStudents = "
+SELECT
+pes.pla_id,
+e.est_id, e.per_id, e.est_matricula, e.est_fecha_creacion, e.est_categoria, meu.uaca_id, meu.mod_id, meu.eaca_id, DATEDIFF(NOW(),e.est_fecha_creacion) as olderi, --
+u.uaca_id, u.uaca_nombre, ea.teac_id, ea.eaca_nombre, ea.eaca_codigo,
+per.per_cedula,  maca.maca_id , maca.maca_codigo, maca.maca_nombre,
+concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_apellido, ' ', ifnull(per.per_seg_apellido,'')) estudiante
+ from db_academico.estudiante e
+ inner join db_academico.estudiante_carrera_programa c on c.est_id = e.est_id
+  inner join db_academico.modalidad_estudio_unidad meu on meu.meun_id = c.meun_id
+  inner join db_academico.malla_unidad_modalidad mumo on mumo.meun_id = meu.meun_id
+   inner join db_academico.malla_academica maca on maca.maca_id = mumo.maca_id
+   inner join db_academico.unidad_academica u on u.uaca_id = meu.uaca_id
+   inner join db_academico.estudio_academico ea on ea.eaca_id = meu.eaca_id
+    inner join db_asgard.persona per on per.per_id = e.per_id
+  left join db_academico.planificacion_estudiante pes on pes.per_id = e.per_id and pes.pla_id in (39,40,41,42)
+   WHERE TRUE
+    AND  e.est_estado = 1 AND e.est_estado_logico = 1
+    AND  c.ecpr_estado = 1 AND c.ecpr_estado_logico = 1
+    AND  meu.meun_estado = 1 AND meu.meun_estado_logico = 1
+    AND  mumo.mumo_estado = 1 AND mumo.mumo_estado_logico = 1
+    AND  maca.maca_estado = 1 AND maca.maca_estado_logico = 1
+    AND  u.uaca_estado = 1 AND u.uaca_estado_logico = 1
+     AND  ea.eaca_estado = 1
+    AND  per.per_estado = 1 AND per.per_estado_logico = 1
+    AND meu.uaca_id = 1
+   AND pes.pla_id is $evaluator Null 
+    AND DATEDIFF(NOW(),e.est_fecha_creacion) <=150
+    AND DATEDIFF(NOW(),per.per_fecha_creacion) <=150;
+";
+    //var_dump($queryStudents);
+ 		$comando = $con_academico->createCommand($queryStudents);
+		$resultData = $comando->queryAll();
+    return $resultData ;
+   }
+
+	/**
+	 * Function getScheme
+	 * @author  Oscar Sánchez <analistadesarrollo05@uteg.edu.ec>
+	 * @param
+	 * @return  $resultData (Retornar la estructura de materias para alumnos nuevos).
+	 */
+    public function getScheme($codesubject) {    
+          		$con = \Yii::$app->db_academico;  
+$queryScheme = "
+SELECT made_codigo_asignatura, made_hora, made_credito
+FROM  db_academico.malla_academica_detalle made  
+INNER JOIN db_academico.malla_academica maca on maca.maca_id = made.maca_id
+WHERE maca.maca_codigo = '".$codesubject."'
+AND made.made_semestre = 1
+AND maca.maca_estado = 1 AND maca.maca_estado_logico = 1
+AND made.made_estado = 1 AND made.made_estado_logico = 1
+";
+//var_dump($queryScheme);
+
+		$comando = $con_academico->createCommand($queryScheme);
+		$resultData = $comando->queryAll();
+    return $resultData ;
+   }
+
+	/**
+	 * Function getreference
+	 * @author  Oscar Sánchez <analistadesarrollo05@uteg.edu.ec>
+	 * @param
+	 * @return  $resultData (Retornar la referencia de planificacion).
+	 */
+    public function getreference($pes_jornada,$pla_id,$maca_codigo, $bxs1=Null, $bxs2=Null, $bxs3=Null, $bxs4=Null, $bxs5=Null, $bxs6=Null,$bxs7=Null) {    
+		$con = \Yii::$app->db_academico;  
+if ($bxs7 == Null){ $bxs7 == $bxs1; }
+$queryScheme = "
+select 
+                pes.pes_id,pes.pla_id,pes.pes_jornada,pes.pes_cod_carrera,pes.pes_cod_malla,
+                pes.pes_mat_b1_h1_cod as b1h1c,pes.pes_mat_b1_h1_mpp as b1h1p, pes.pes_mod_b1_h1 as b1h1m,pes.pes_jor_b1_h1 as b1h1j,
+                pes.pes_mat_b1_h2_cod as b1h2c,pes.pes_mat_b1_h2_mpp as b1h2p, pes.pes_mod_b1_h2 as b1h2m,pes.pes_jor_b1_h2 as b1h2j,
+                pes.pes_mat_b1_h3_cod as b1h3c,pes.pes_mat_b1_h3_mpp as b1h3p, pes.pes_mod_b1_h3 as b1h3m,pes.pes_jor_b1_h3 as b1h3j,
+                pes.pes_mat_b1_h4_cod as b1h4c,pes.pes_mat_b1_h4_mpp as b1h4p, pes.pes_mod_b1_h4 as b1h4m,pes.pes_jor_b1_h4 as b1h4j,
+                pes.pes_mat_b1_h5_cod as b1h5c,pes.pes_mat_b1_h5_mpp as b1h5p, pes.pes_mod_b1_h5 as b1h5m,pes.pes_jor_b1_h5 as b1h5j,
+                pes.pes_mat_b1_h6_cod as b1h6c,pes.pes_mat_b1_h6_mpp as b1h6p, pes.pes_mod_b1_h6 as b1h6m,pes.pes_jor_b1_h6 as b1h6j,
+                pes.pes_mat_b2_h1_cod as b2h1c,pes.pes_mat_b2_h1_mpp as b2h1p, pes.pes_mod_b2_h1 as b2h1m,pes.pes_jor_b2_h1 as b2h1j,
+                pes.pes_mat_b2_h2_cod as b2h2c,pes.pes_mat_b2_h2_mpp as b2h2p, pes.pes_mod_b2_h2 as b2h2m,pes.pes_jor_b2_h2 as b2h2j,
+                pes.pes_mat_b2_h3_cod as b2h3c,pes.pes_mat_b2_h3_mpp as b2h3p, pes.pes_mod_b2_h3 as b2h3m,pes.pes_jor_b2_h3 as b2h3j,
+                pes.pes_mat_b2_h4_cod as b2h4c,pes.pes_mat_b2_h4_mpp as b2h4p, pes.pes_mod_b2_h4 as b2h4m,pes.pes_jor_b2_h4 as b2h4j,
+                pes.pes_mat_b2_h5_cod as b2h5c,pes.pes_mat_b2_h5_mpp as b2h5p, pes.pes_mod_b2_h5 as b2h5m,pes.pes_jor_b2_h5 as b2h5j,
+                pes.pes_mat_b2_h6_cod as b2h6c,pes.pes_mat_b2_h6_mpp as b2h6p, pes.pes_mod_b2_h6 as b2h6m,pes.pes_jor_b2_h6 as b2h6j
+from db_academico.planificacion_estudiante pes
+WHERE TRUE
+AND pes.pla_id = $pla_id
+-- AND pes.pes_jornada = '".$pes_jornada."'
+AND pes.pes_cod_carrera = '".$maca_codigo."'
+-- AND  pes.pes_mat_b1_h1_cod in ('".$bxs1."','".$bxs2."','".$bxs3."','".$bxs4."','".$bxs5."','".$bxs6."','".$bxs7."')
+-- AND  pes.pes_mat_b2_h1_cod in ('".$bxs1."','".$bxs2."','".$bxs3."','".$bxs4."','".$bxs5."','".$bxs6."','".$bxs7."')
+-- AND pes.pes_mat_b1_h1_mpp > 999 
+AND pes_semestre = '77'
+order by pes_id DESC limit 1
+";
+//var_dump($queryScheme);
+ 		$comando = $con_academico->createCommand($queryScheme);
+		$resultData = $comando->queryAll();
+    return $resultData ;
+   }
+
+	/**
+	 * Function doPusher
+	 * @author  Oscar Sánchez <analistadesarrollo05@uteg.edu.ec>
+	 * @param
+	 * @return  $resultData (Retornar la insercion de planificacion).
+	 */
+public function doPusher($schedule,$per_id,$maca_nombre,$per_cedula,$estudiante) {
+
+		$con = \Yii::$app->db_academico;  
+
+ if (isset($schedule[0]['pes_id'])){
+
+
+$replier=
+"
+INSERT INTO db_academico.planificacion_estudiante
+(
+pla_id,
+per_id,
+pes_jornada,
+pes_cod_carrera,
+pes_carrera,
+pes_dni,
+pes_nombres,
+pes_cod_malla,
+pes_mat_b1_h1_cod,
+pes_mod_b1_h1,
+pes_jor_b1_h1,
+pes_mat_b1_h2_cod,
+pes_mod_b1_h2,
+pes_jor_b1_h2,
+pes_mat_b1_h3_cod,
+pes_mod_b1_h3,
+pes_jor_b1_h3,
+pes_mat_b1_h4_cod,
+pes_mod_b1_h4,
+pes_jor_b1_h4,
+pes_mat_b1_h5_cod,
+pes_mod_b1_h5,
+pes_jor_b1_h5,
+pes_mat_b1_h6_cod,
+pes_mod_b1_h6,
+pes_jor_b1_h6,
+pes_mat_b2_h1_cod,
+pes_mod_b2_h1,
+pes_jor_b2_h1,
+pes_mat_b2_h2_cod,
+pes_mod_b2_h2,
+pes_jor_b2_h2,
+pes_mat_b2_h3_cod,
+pes_mod_b2_h3,
+pes_jor_b2_h3,
+pes_mat_b2_h4_cod,
+pes_mod_b2_h4,
+pes_jor_b2_h4,
+pes_mat_b2_h5_cod,
+pes_mod_b2_h5,
+pes_jor_b2_h5,
+pes_mat_b2_h6_cod,
+pes_mod_b2_h6,
+pes_jor_b2_h6,
+pes_estado,
+pes_estado_logico
+)
+VALUES
+(
+'".$schedule[0]['pla_id']."',
+'".$per_id."',
+'".$schedule[0]['pes_jornada']."',
+'".$schedule[0]['pes_cod_carrera']."',
+'".$maca_nombre."',
+'".$per_cedula."',
+'".$estudiante."',
+'".$schedule[0]['pes_cod_malla']."',
+'".$schedule[0]['b1h1c']."',
+'".$schedule[0]['b1h1m']."',
+'".$schedule[0]['b1h1j']."',
+'".$schedule[0]['b1h2c']."',
+'".$schedule[0]['b1h2m']."',
+'".$schedule[0]['b1h2j']."',
+'".$schedule[0]['b1h3c']."',
+'".$schedule[0]['b1h3m']."',
+'".$schedule[0]['b1h3j']."',
+'".$schedule[0]['b1h4c']."',
+'".$schedule[0]['b1h4m']."',
+'".$schedule[0]['b1h4j']."',
+'".$schedule[0]['b1h5c']."',
+'".$schedule[0]['b1h5m']."',
+'".$schedule[0]['b1h5j']."',
+'".$schedule[0]['b1h6c']."',
+'".$schedule[0]['b1h6m']."',
+'".$schedule[0]['b1h6j']."',
+'".$schedule[0]['b2h1c']."',
+'".$schedule[0]['b2h1m']."',
+'".$schedule[0]['b2h1j']."',
+'".$schedule[0]['b2h2c']."',
+'".$schedule[0]['b2h2m']."',
+'".$schedule[0]['b2h2j']."',
+'".$schedule[0]['b2h3c']."',
+'".$schedule[0]['b2h3m']."',
+'".$schedule[0]['b2h3j']."',
+'".$schedule[0]['b2h4c']."',
+'".$schedule[0]['b2h4m']."',
+'".$schedule[0]['b2h4j']."',
+'".$schedule[0]['b2h5c']."',
+'".$schedule[0]['b2h5m']."',
+'".$schedule[0]['b2h5j']."',
+'".$schedule[0]['b2h6c']."',
+'".$schedule[0]['b2h6m']."',
+'".$schedule[0]['b2h6j']."',
+'1',
+'1'
+)"
+;
+
+ //var_dump($replier);
+
+ //$replierer = str_replace('999','0', $replier);
+
+
+  $comando = $con->prepare($replier);
+                 $comando->execute();
+                 $result = $comando->fetchAll(\PDO::FETCH_ASSOC);
+                 
+
+    }
+
+ if (isset($schedule[0]['made_codigo_asignatura'])){
+
+
+
+    }
+
+ 
+
+    }
+
+
 }

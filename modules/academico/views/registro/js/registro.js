@@ -207,7 +207,17 @@ function searchModules() {
     arrParams2.periodo = ($("#cmb_per_acad option:selected").val());
     //arrParams2.estado = $("#cmb_status").val();
     //alert(arrParams2.periodo+'-'+arrParams2.estado);
-    $("#grid_registropay_list").PbGridView("applyFilterData", arrParams2);
+    var mod_id = $("#cmb_mod option:selected").val();
+    var periodo = ($("#cmb_per_acad option:selected").val());
+    var estudiante = $("#txt_buscarData").val();
+    var f_ini = $('#txt_fecha_ini').val();
+    var f_fin = $('#txt_fecha_fin').val();
+    //$("#grid_registropay_list").PbGridView("applyFilterData", arrParams2);
+    if (!$(".blockUI").length) {
+        showLoadingPopup();
+        $("#grid_registropay_list").PbGridView("applyFilterData", {'modalidad': mod_id,'f_ini': f_ini, 'f_fin': f_fin, 'periodo': periodo,'estudiante': estudiante});
+        setTimeout(hideLoadingPopup, 2000);
+    }
 }
 
 function searchModulesList() {

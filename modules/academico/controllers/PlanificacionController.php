@@ -2453,7 +2453,7 @@ inner join " . $con->dbname . ".malla_academica as b on a.pes_cod_carrera = b.ma
 		}
 	}
 
-			public function actionCargaMaterias() {
+			public function actionCargamaterias() {
 
 		$squema = new Planificacion();    
                 $referenced = $squema->getStudents();       

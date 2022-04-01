@@ -510,7 +510,7 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
     AND DATEDIFF(NOW(),per.per_fecha_creacion) <=150;
 ";
     //var_dump($queryStudents);
- 		$comando = $con_academico->createCommand($queryStudents);
+ 		$comando = $con->createCommand($queryStudents);
 		$resultData = $comando->queryAll();
     return $resultData ;
    }
@@ -534,7 +534,7 @@ AND made.made_estado = 1 AND made.made_estado_logico = 1
 ";
 //var_dump($queryScheme);
 
-		$comando = $con_academico->createCommand($queryScheme);
+		$comando = $con->createCommand($queryScheme);
 		$resultData = $comando->queryAll();
     return $resultData ;
    }
@@ -575,7 +575,7 @@ AND pes_semestre = '77'
 order by pes_id DESC limit 1
 ";
 //var_dump($queryScheme);
- 		$comando = $con_academico->createCommand($queryScheme);
+ 		$comando = $con->createCommand($queryScheme);
 		$resultData = $comando->queryAll();
     return $resultData ;
    }
@@ -700,9 +700,8 @@ VALUES
  //$replierer = str_replace('999','0', $replier);
 
 
-  $comando = $con->prepare($replier);
-                 $comando->execute();
-                 $result = $comando->fetchAll(\PDO::FETCH_ASSOC);
+    $comando = $con->createCommand($replier);
+                     $fullrefer = $comando->execute(); 
                  
 
     }

@@ -528,8 +528,8 @@ class Estudiante extends \yii\db\ActiveRecord {
                             WHEN '0' THEN 'Inactivo'
                             WHEN '1' THEN 'Activo'
                             ELSE 'No estudiante'
-                      END as estado,
-                       r.ron_id as registroOnline
+                      END as estado /*,
+                       r.ron_id as registroOnline */
                 FROM  " . $con->dbname . ".estudiante estu
                 RIGHT JOIN " . $con1->dbname . ".persona pers ON pers.per_id = estu.per_id
                 LEFT JOIN " . $con->dbname . ".estudiante_carrera_programa ecpr ON ecpr.est_id = estu.est_id
@@ -537,7 +537,7 @@ class Estudiante extends \yii\db\ActiveRecord {
                 LEFT JOIN " . $con->dbname . ".unidad_academica unid ON unid.uaca_id = meun.uaca_id
                 LEFT JOIN " . $con->dbname . ".modalidad moda ON moda.mod_id = meun.mod_id
                 LEFT JOIN " . $con->dbname . ".estudio_academico esac ON esac.eaca_id = meun.eaca_id
-                LEFT JOIN " . $con->dbname . ".registro_online r ON r.per_id = pers.per_id
+                -- LEFT JOIN " . $con->dbname . ".registro_online r ON r.per_id = pers.per_id
                 -- LEFT JOIN " . $con->dbname . ".planificacion_estudiante pes ON pes.pes_id = r.pes_id AND pla_id IN ($inlist)
                 LEFT JOIN " . $con2->dbname . ".interesado inte ON inte.per_id = pers.per_id
                 LEFT JOIN " . $con2->dbname . ".solicitud_inscripcion sins on sins.int_id = inte.int_id

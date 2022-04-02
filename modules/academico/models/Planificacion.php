@@ -411,8 +411,8 @@ WHERE paca_activo = 'A'
 		$sql = "SELECT distinct
                 a.saca_id as id,
                 concat(b.saca_nombre , ' ' , b.saca_anio ) as name
-                from  " . $con->dbname . ".periodo_academico a
-                inner join " . $con->dbname . ".semestre_academico b on a.saca_id = b.saca_id
+                from  " . $con_academico->dbname . ".periodo_academico a
+                inner join " . $con_academico->dbname . ".semestre_academico b on a.saca_id = b.saca_id
                 where a.paca_activo = 'A'
                 order by a.paca_id asc;";
 

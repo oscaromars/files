@@ -1115,7 +1115,7 @@ inner join db_academico.materia_paralelo_periodo mpp on mpp.asi_id = made.asi_id
      * @return  
      */
     /* INSERTAR DATOS */
-    public function insertarDataPlanificacionestudiante($pla_id, $per_id, $pes_jornada, $pes_carrera, $pes_dni, $pes_nombres, $pes_cod_malla, $insertar, $valores, $codmalla = Null) {
+    public function insertarDataPlanificacionestudiante($pla_id, $per_id, $pes_jornada, $pes_carrera, $pes_dni, $pes_nombres, $pes_cod_malla, $insertar, $valores, $codmalla) {
         $arroout = array();
         $con = \Yii::$app->db_academico;
         $trans = $con->beginTransaction();
@@ -1420,7 +1420,7 @@ inner join db_academico.materia_paralelo_periodo mpp on mpp.asi_id = made.asi_id
         }
     }
 
-    public function confirmarPlanificacionExistente($per_id, $periodo) {
+public function confirmarPlanificacionExistente($per_id, $periodo) {
         $con = \Yii::$app->db_academico;
         $con2 = \Yii::$app->db_asgard;
         $fecha_modificacion= date(Yii::$app->params["dateTimeByDefault"]);
@@ -1429,44 +1429,57 @@ inner join db_academico.materia_paralelo_periodo mpp on mpp.asi_id = made.asi_id
         try {
             if($per_id == null){
                 $resultData = [];
-                \app\models\Utilities::putMessageLogFile('No Enviado');
+               // \app\models\Utilities::putMessageLogFile('No Enviado');
             }else{
                 $sql = ("SELECT * from " . $con->dbname . ".planificacion_estudiante pe
                         inner join " . $con->dbname . ".planificacion pla on pla.saca_id = $periodo and pla.pla_id = pe.pla_id
                         where pe.per_id = $per_id;");
                 $comando = $con->createCommand($sql);
-                $resultData = $comando->queryOne(); 
                 \app\models\Utilities::putMessageLogFile('Encontrado');
+                \app\models\Utilities::putMessageLogFile('confirmarPlanificacionExistente: '.$comando->getRawSql());
+                $resultData = $comando->queryOne(); 
+                \app\models\Utilities::putMessageLogFile($resultData);
             }
             
             if($resultData == null){
                 $sql3 = 
                     ("INSERT INTO " . $con->dbname . ".planificacion_estudiante(pes_cod_malla,pes_cod_carrera,per_id,pes_dni,pes_jornada,pes_nombres,pla_id,pes_estado,pes_estado_logico,pes_fecha_creacion)
-                    select distinct(ma.maca_codigo),ma.maca_nombre,e.per_id, pe.per_cedula, ecpr_jornada as jornada,
+                    select distinct(ma.maca_codigo),ma.maca_codigo,e.per_id, pe.per_cedula, ecpr_jornada as jornada,
                                         concat(pe.per_pri_nombre, ' ', pe.per_seg_nombre,' ', pe.per_pri_apellido, ' ',pe.per_seg_apellido) as nombres, pla.pla_id as pla_id, $estado,$estado,
                                         '$fecha_modificacion'
                                         from " . $con->dbname . ".estudiante_carrera_programa ecp 
                                         inner join " . $con->dbname . ".modalidad_estudio_unidad meu on ecp.meun_id = meu.meun_id
                                         inner join " . $con->dbname . ".estudio_academico es on es.eaca_id = meu.eaca_id 
                                         inner join " . $con->dbname . ".estudiante e on e.est_id = ecp.est_id and  ecp.est_id = e.est_id
-                                        inner join " . $con->dbname . ".malla_academico_estudiante maes on maes.per_id = e.per_id 
+                                        inner join " . $con->dbname . ".malla_academico_estudiante maes on maes.per_id = e.per_id  and maes.maes_estado = 1  and maes.maes_estado_logico = 1
                                         inner join " . $con->dbname . ".malla_academica ma on ma.maca_id = maes.maca_id
                                         inner join " . $con2->dbname . ".persona pe on pe.per_id = e.per_id
                                         inner join " . $con->dbname . ".planificacion pla on pla.saca_id = $periodo and meu.mod_id = pla.mod_id
-                                        where e.per_id = $per_id;");
+                                        where e.per_id = $per_id
+                    AND ecp.ecpr_estado = 1 AND ecp.ecpr_estado_logico = 1
+                    AND meu.meun_estado = 1 AND meu.meun_estado_logico = 1
+                    AND es.eaca_estado = 1 AND es.eaca_estado_logico = 1
+                    AND e.est_estado = 1 AND e.est_estado_logico = 1
+                    AND maes.maes_estado = 1 AND maes.maes_estado_logico = 1
+                    AND ma.maca_estado = 1 AND ma.maca_estado_logico = 1
+                    AND pe.per_estado = 1 AND pe.per_estado_logico = 1
+                    AND pla.pla_estado = 1 AND pla.pla_estado_logico = 1
+                                        ;");
                     $comando3 = $con->createCommand($sql3);
+                    \app\models\Utilities::putMessageLogFile('Insertado');
+                \app\models\Utilities::putMessageLogFile('confirmarPlanificacionExistente: '.$comando3->getRawSql());
                 $result3 = $comando3->execute();
                 $resultData = $resultData  + $result3; 
-                \app\models\Utilities::putMessageLogFile('Insertado');               
+                //\app\models\Utilities::putMessageLogFile('Insertado');               
                 return $resultData;
                 
             }else{
-                \app\models\Utilities::putMessageLogFile('No Insertado');
+                //\app\models\Utilities::putMessageLogFile('No Insertado');
                 return $resultData;
             }
             
         } catch (Exception $ex) {
-            \app\models\Utilities::putMessageLogFile($ex->getMessage());
+           // \app\models\Utilities::putMessageLogFile($ex->getMessage());
             return $ex->getMessage();
         }
     }

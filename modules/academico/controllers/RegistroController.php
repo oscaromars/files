@@ -124,7 +124,7 @@ class RegistroController extends \app\components\CController {
 		$data = Yii::$app->request->get();
 
 		if ($data['PBgetFilter']) {
-			$search = $data['search'];
+			$search = $data['estudiante'];
 			$periodo = $data['periodo'];
 			$modalidad = $data['mod_id'];
 			//$estado = $data['estado'];

@@ -1016,8 +1016,6 @@ $trans2->commit();
 			$condition .= " reg.rpm_fecha_transaccion between :fec_ini AND :fec_fin AND ";
 		}
 		if ($grupo_id == 12) {
-			//\app\models\Utilities::putMessageLogFile('ENTRO getAllListRegistryPaymentGrid' .$isEstud);
-			\app\models\Utilities::putMessageLogFile('getAllListRegistryPaymentGrid' . $isEstud);
 			$condition .= "per.per_id = :per_id AND ";
 		}
 

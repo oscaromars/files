@@ -470,7 +470,8 @@ class Solicitudinscripcion extends \yii\db\ActiveRecord {
                      when 4 then (select mes.mest_nombre from " . $con1->dbname . ".modulo_estudio mes where mes.mest_id = sins.mest_id)
                      when 5 then (select mes.mest_nombre from " . $con1->dbname . ".modulo_estudio mes where mes.mest_id = sins.mest_id)
                      when 6 then (select mes.mest_nombre from " . $con1->dbname . ".modulo_estudio mes where mes.mest_id = sins.mest_id)
-                    else null
+                     when 10 then (select eaca.eaca_nombre from " . $con1->dbname . ".estudio_academico eaca where eaca.eaca_id = sins.eaca_id)
+                     else null
                       end as 'carrera',
                     sins.sins_fecha_reprobacion,
                     sins.sins_observacion,

@@ -579,6 +579,8 @@ class InscripcionAdmision extends \yii\db\ActiveRecord {
 																$fpag_id = 4; //transferencia
 															}
 															$fecha_registro = date(Yii::$app->params["dateTimeByDefault"]);
+															\app\models\Utilities::putMessageLogFile('ruta222: ' . $ruta_doc_pago["ruta_doc_pago"]);
+															\app\models\Utilities::putMessageLogFile('ruta333: ' . $archivo);
 															$creadetalle = $mod_ordenpago->insertarCargaprepago($resp_opago, $fpag_id, $val_total, $archivo, 'PE', '', $dataReg["observacion"], $dataReg["num_transaccion"], $dataReg["fecha_transaccion"], $fecha_registro);
 															if ($creadetalle) {
 																//\app\models\Utilities::putMessageLogFile('despues de insertar Cargar pago');
@@ -853,7 +855,7 @@ class InscripcionAdmision extends \yii\db\ActiveRecord {
 														$timeSt = $arrTime[1];
 														$typeFile = strtolower($arrIm[count($arrIm) - 1]);
 														$fecha = date(Yii::$app->params["dateByDefault"]);
-														$rutaDocPago = Yii::$app->params["documentFolder"] . "documento/" . $id_persona . "/pago_" . $id_persona . "-" . $fecha . " " . $timeSt;
+														$rutaDocPago = Yii::$app->params["documentFolder"] . "documento/" . $id_persona . "/pago_" . $id_persona . "-" . $fecha . "." . $typeFile;
 														$archivo = basename($rutaDocPago);
 													}
 													//Obtener el precio de la solicitud.
@@ -885,7 +887,9 @@ class InscripcionAdmision extends \yii\db\ActiveRecord {
 															//Grabar documento de registro de pago por depósito o transferencia.
 															if (($fpag_id == 5) or ($fpag_id == 4)) {
 																$fecha_registro = date(Yii::$app->params["dateTimeByDefault"]);
-																\app\models\Utilities::putMessageLogFile('infocargaprepago:');
+																\app\models\Utilities::putMessageLogFile('$rutaDocPago: '. $rutaDocPago);
+																\app\models\Utilities::putMessageLogFile('ruta444: ' . $ruta_doc_pago["ruta_doc_pago"]);
+															\app\models\Utilities::putMessageLogFile('ruta555: ' . $archivo);
 																$creadetalle = $mod_ordenpago->insertarCargaprepago($resp_opago, $fpag_id, $val_total, $archivo, 'PE', NULL, $dataReg["observacion"], $dataReg["num_transaccion"], $dataReg["fecha_transaccion"], $fecha_registro);
 																if ($creadetalle) {
 																	$detalle = 'S';
@@ -903,6 +907,8 @@ class InscripcionAdmision extends \yii\db\ActiveRecord {
 																\app\models\Utilities::putMessageLogFile('fecha_transaccion:' . $dataReg["fecha_transaccion"]);
 																\app\models\Utilities::putMessageLogFile('fecha_registro:' . $fecha_registro);
 																$fecha_registro = date(Yii::$app->params["dateTimeByDefault"]);
+																\app\models\Utilities::putMessageLogFile('ruta666: ' . $ruta_doc_pago["ruta_doc_pago"]);
+															\app\models\Utilities::putMessageLogFile('ruta777: ' . $archivo);
 																$creadetalle = $mod_ordenpago->insertarCargaprepago($resp_opago, $fpag_id, $val_total, $rpag_imagen, 'RE', 'AP', $rpag_imagen, 0, $fecha_registro, $fecha_registro);
 																if ($creadetalle) {
 
@@ -1010,7 +1016,7 @@ class InscripcionAdmision extends \yii\db\ActiveRecord {
 				$body1 = Utilities::getMailMessage("register_icp_admisiones", array("[[nombres_completos]]" => $resp_datos['twin_nombre'] . " " . $resp_datos['twin_apellido'], "[[curso]]" => $curso), Yii::$app->language);
 				Utilities::sendEmail($tituloMensaje, Yii::$app->params["adminEmail"], [$resp_datos['twin_correo'] => $resp_datos['twin_apellido'] . " " . $resp_datos['twin_nombre']], $asunto, $body);
 				Utilities::sendEmail($tituloMensaje, Yii::$app->params["adminEmail"], [Yii::$app->params["admisiones"] => "Jefe"], $asunto, $body1);
-				Utilities::sendEmail($tituloMensaje, Yii::$app->params["adminEmail"], [Yii::$app->params["soporteEmail"] => "Soporte"], $asunto, $body);
+				Utilities::sendEmail($tituloMensaje, Yii::$app->params["adminEmail"], [Yii::$app->params["secretariaicp"] => "ICP"], $asunto, $body1);
 				//\app\models\Utilities::putMessageLogFile('después del tercer sendMail');
 				$message = array(
 					"wtmessage" => Yii::t("formulario", "The information have been saved and the information has been sent to your email"),

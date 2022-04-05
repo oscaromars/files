@@ -1604,6 +1604,8 @@ class SolicitudesController extends \app\components\CController {
                                             $resp_sol = $mod_solins->Obtenerdatosolicitud($sins_id);
                                             //Se obtiene el curso para luego registrarlo.
                                             if ($resp_sol) {
+                                                // IF SOLO ENTRAR SI UACA_ID ES 1 (GRADO)O 10 (ICP) // DESCOMENTAR ESTE IF CUANDO SE NECESITE PARA POSGRADO
+                                                if ($resp_sol["nivel_interes"] == 1 || $resp_sol["nivel_interes"] == 10) {
                                                 //\app\models\Utilities::putMessageLogFile('Entro: 15');
                                                 //SE DEBE CONSULTAR SI YA TIENE NUMERO DE MATRICULA
                                                 // NO GENERAR Y NO MODIFICAR
@@ -1705,6 +1707,10 @@ class SolicitudesController extends \app\components\CController {
                                                     //\app\models\Utilities::putMessageLogFile('Entro: 29');
                                                     $exitomat = 1;
                                                     }
+                                                // ELSE SOLO ENTRAR SI UACA_ID ES 1 (GRADO)O 10 (ICP) // DESCOMENTAR ESTE IF CUANDO SE NECESITE PARA POSGRADO    
+                                                 } else { // si no es grado o icp no generarlo
+                                                    $exitomat = 1;
+                                                }
                                                 //Modificar y activar clave de usuario con numero de cedula
                                                 //SE COMENTA YA NO SE GENERA ESTUDIANTE DESDE EL APROBAR SOLICITUD
                                                 /*if ($resp_sol["emp_id"] == 1) {
@@ -1808,7 +1814,7 @@ class SolicitudesController extends \app\components\CController {
                                                 );
                                                 return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
                                                }
-                                             }else {
+                                            }else {
                                                 //\app\models\Utilities::putMessageLogFile('Entro: 32');
                                                 $message = array(
                                                     "wtmessage" => Yii::t("notificaciones", "Problemas al obtener datos de la solcitud, intente nuevamente"),

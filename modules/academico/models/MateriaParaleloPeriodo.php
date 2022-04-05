@@ -297,20 +297,23 @@ public static function getNumparalelo(){
             }
             if ($arrFiltro['modalidad'] != "" && $arrFiltro['modalidad'] != "0") {
                 $str_search .= " mpp.mod_id = :modalidad AND";
-            }            
-        }
+            }    
+             if ($arrFiltro['asignaturas'] != "" && $arrFiltro['asignaturas'] != "0") {
+                $str_search .= " mpp.asi_id = :asignaturas AND";
+            }           
+        } else { $str_search .= " mpp.asi_id = '0' AND"; }
 
-        $sql = "SELECT mpp.asi_id, a.asi_nombre, mpp.mod_id, moda.mod_nombre, paca_id,max(mpp_num_paralelo) as mpp_num_paralelo
+        $sql = "SELECT mpp.asi_id, a.asi_nombre, mpp.mod_id, a.uaca_id, moda.mod_nombre, paca_id,max(mpp_num_paralelo) as mpp_num_paralelo
                 from db_academico.materia_paralelo_periodo as mpp 
                 INNER JOIN db_academico.asignatura as a on a.asi_id=mpp.asi_id
                 INNER JOIN db_academico.modalidad as moda on mpp.mod_id = moda.mod_id
                 where  $str_search
                 1 = 1 AND
                 mpp.mpp_estado = 1 and mpp.mpp_estado_logico=1
-                group by mpp.asi_id, a.asi_nombre, mpp.mod_id, moda.mod_nombre, paca_id";
+                group by a.asi_nombre,mpp.asi_id, mpp.mod_id, moda.mod_nombre, mpp.paca_id,a.uaca_id";
 
         $comando = $con->createCommand($sql);
-        $sql = $sql . " group by mpp.asi_id, mod_id,paca_id";
+          $sql = $sql . "order by a.asi_nombre ASC";
         if (isset($arrFiltro) && count($arrFiltro) > 0) {
             if ($arrFiltro['periodo'] != "" && $arrFiltro['periodo'] != "0") {
                 $comando->bindParam(":periodo", $arrFiltro["periodo"], \PDO::PARAM_STR);
@@ -321,12 +324,15 @@ public static function getNumparalelo(){
             if ($arrFiltro['modalidad'] != "" && $arrFiltro['modalidad'] != "0") {
                 $comando->bindParam(":modalidad", $arrFiltro["modalidad"], \PDO::PARAM_STR);
             }
+             if ($arrFiltro['asignaturas'] != "" && $arrFiltro['asignaturas'] != "0") {
+                $comando->bindParam(":asignaturas", $arrFiltro["asignaturas"], \PDO::PARAM_INT);
+            }
         }
         $resultData = $comando->queryAll();
         $dataProvider = new ArrayDataProvider([
             'allModels' => $resultData,
             'pagination' => [
-                'pageSize' => 10,
+                'pageSize' => 50,
             ],
             'sort' => [
                 'attributes' => ['asi_id', 'paca_id', 'mpp_num_paralelo'],

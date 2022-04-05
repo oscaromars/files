@@ -720,4 +720,43 @@ class CargaCartera extends \yii\db\ActiveRecord
             return FALSE;
         }
     }
+
+    /**
+     * Function modificar valor de 1 cuota en cartera.
+     * @author Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>;
+     * @param
+     * @return
+     */
+    public function modifcarCuotaCartera($ccar_id, $ccar_valor_cuota, $ccar_usu_modifica, $ccar_fecha_modificacion) {
+        //$estado = 0;
+        $con = \Yii::$app->db_facturacion;
+
+        if ($trans !== null) {
+            $trans = null; // si existe la transacción entonces no se crea una
+        } else {
+            $trans = $con->beginTransaction(); // si no existe la transacción entonces se crea una
+        }
+        try {
+            $comando = $con->createCommand
+                    ("UPDATE " . $con->dbname . ".carga_cartera
+                      SET ccar_valor_cuota = :ccar_valor_cuota,
+                          ccar_usu_modifica = :ccar_usu_modifica,
+                          ccar_fecha_modificacion = :ccar_fecha_modificacion,
+                          ccar_estado_logico = :estado
+                      WHERE
+                      ccar_id = :ccar_id ");
+            $comando->bindParam(":ccar_id", $ccar_id, \PDO::PARAM_INT);
+            $comando->bindParam(":ccar_usu_modifica", $ccar_usu_modifica, \PDO::PARAM_INT);
+            $comando->bindParam(":ccar_fecha_modificacion", $ccar_fecha_modificacion, \PDO::PARAM_STR);
+            $comando->bindParam(":ccar_valor_cuota", $ccar_valor_cuota, \PDO::PARAM_STR);
+            $response = $comando->execute();
+            if ($trans !== null)
+                $trans->commit();
+            return $response;
+        } catch (Exception $ex) {
+            if ($trans !== null)
+                $trans->rollback();
+            return FALSE;
+        }
+    }
 }

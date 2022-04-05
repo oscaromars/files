@@ -20,6 +20,7 @@ use app\widgets\PbGridView\PbGridView;
                   'arr_periodo' => $arr_periodo,
                   'arr_modalidad' => $arr_modalidad,
                   'arr_unidad'=>$arr_unidad,
+                  'arr_asignaturas'=>$arr_asignaturas,
                 ]); ?>
 
     </form>

@@ -124,10 +124,12 @@ class RegistroController extends \app\components\CController {
 		$data = Yii::$app->request->get();
 
 		if ($data['PBgetFilter']) {
-			$search = $data['search'];
+			$search = $data['estudiante'];
 			$periodo = $data['periodo'];
 			$modalidad = $data['mod_id'];
-			$estado = $data['estado'];
+			//$estado = $data['estado'];
+			$fecha_ini = $data['f_ini'];
+            $fecha_fin = $data['f_fin'];
 
 			return $this->renderPartial('index-grid', [
 				'model' => $model->getAllListRegistryPaymentGrid($search, $esEstu, $modalidad, $estado, $periodo, true, $per_id, $grupo_id),

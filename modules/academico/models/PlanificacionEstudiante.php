@@ -1083,6 +1083,7 @@ inner join db_academico.materia_paralelo_periodo mpp on mpp.asi_id = made.asi_id
                           pes_fecha_modificacion = :pes_fecha_modificacion
                       WHERE
                         pes_estado= :pes_estado AND pla_id = :pla_id AND per_id = :per_id");
+<<<<<<< HEAD
 			$comando->bindParam(":pla_id", $pla_id, \PDO::PARAM_INT);
 			$comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
 			$comando->bindParam(":pes_usuario_modifica", $pes_usuario_modifica, \PDO::PARAM_INT);
@@ -1142,9 +1143,70 @@ inner join db_academico.materia_paralelo_periodo mpp on mpp.asi_id = made.asi_id
 	private function insertarPlanificacionestudiante($con, $pla_id, $per_id, $pes_jornada, $pes_carrera, $pes_dni, $pes_nombres, $pes_cod_malla, $insertar, $valores) {
 		$estado = 1;
 		$sql = "INSERT INTO " . $con->dbname . ".planificacion_estudiante
+=======
+            $comando->bindParam(":pla_id", $pla_id, \PDO::PARAM_INT);
+            $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
+            $comando->bindParam(":pes_usuario_modifica", $pes_usuario_modifica, \PDO::PARAM_INT);
+            $comando->bindParam(":pes_fecha_modificacion", $pes_fecha_modificacion, \PDO::PARAM_STR);
+            $comando->bindParam(":pes_estado", $pes_estado, \PDO::PARAM_STR);
+            $response = $comando->execute();
+            if ($trans !== null)
+                $trans->commit();
+            return $response;
+        } catch (Exception $ex) {
+            if ($trans !== null)
+                $trans->rollback();
+            return FALSE;
+        }
+    }
+
+    /**
+     * Function insertarDataPlanificacionestudiante 
+     * Guiarse de insertarPersona
+     * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
+     * @property integer $userid
+     * @return  
+     */
+    /* INSERTAR DATOS */
+    public function insertarDataPlanificacionestudiante($pla_id, $per_id, $pes_jornada, $pes_carrera, $pes_dni, $pes_nombres, $pes_cod_malla, $insertar, $valores, $codmalla) {
+        $arroout = array();
+        $con = \Yii::$app->db_academico;
+        $trans = $con->beginTransaction();
+        try {            
+            $data = isset($data['DATA']) ? $data['DATAS'] : array();
+            $this->insertarPlanificacionestudiante($con, $pla_id, $per_id, $pes_jornada, $pes_carrera, $pes_dni, $pes_nombres, $pes_cod_malla, $insertar, $valores,$codmalla);
+            $trans->commit();
+            $con->close();
+            //RETORNA DATOS             
+            $arroout["status"] = true;
+           
+            return $arroout;
+        } catch (\Exception $e) {
+            $trans->rollBack();
+            $con->close();           
+            $arroout["status"] = false;
+            return $arroout;
+        }
+    }
+
+    /** 
+     * Function insertarPlanificacionestudiante 
+     * Guiarse de insertarPersona
+     * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
+     * @property integer $userid
+     * @return  
+     */
+    private function insertarPlanificacionestudiante($con, $pla_id, $per_id, $pes_jornada, $pes_carrera, $pes_dni, $pes_nombres, $pes_cod_malla, $insertar, $valores,$codmalla) {
+        $estado = 1;
+        if ($codmalla == Null) {
+            $codmalla = $pes_cod_malla; 
+        }
+        $sql = "INSERT INTO " . $con->dbname . ".planificacion_estudiante
+>>>>>>> d088436412b13c45c1c1751a4ca851652c521c81
                     (pla_id,
                      per_id,
                      pes_jornada,
+                     pes_cod_carrera,
                      pes_carrera,
                      pes_dni,
                      pes_nombres,
@@ -1152,6 +1214,7 @@ inner join db_academico.materia_paralelo_periodo mpp on mpp.asi_id = made.asi_id
 			$insertar . "
                      pes_estado,
                      pes_estado_logico)VALUES
+<<<<<<< HEAD
                     (" . $pla_id . "," . $per_id . ",'" . $pes_jornada . "','" . $pes_carrera . "','" . $pes_dni . "','"
 			. $pes_nombres . "'," . $pes_cod_malla . ", " . $valores . " '" . $estado . "','" . $estado . "')";
 		$command = $con->createCommand($sql);
@@ -1169,6 +1232,25 @@ inner join db_academico.materia_paralelo_periodo mpp on mpp.asi_id = made.asi_id
 		$estado = 1;
 
 		$sql = "SELECT pla_id
+=======
+                    (" . $pla_id . "," . $per_id . ",'" . $pes_jornada . "','" . $codmalla . "','" . $pes_carrera . "','" . $pes_dni . "','"
+                . $pes_nombres . "'," . $codmalla . ", " . $valores . " '" . $estado . "','" . $estado . "')";
+        $command = $con->createCommand($sql);
+        $command->execute();
+    }
+
+    /**
+     * Function Consultar modalidad y periodo en planificacion.
+     * @author  Giovanni Vergara <analistadesarrollo01@uteg.edu.ec>;
+     * @property       
+     * @return  
+     */
+    public function consultarDatoscabplanifica($mod_id, $pla_periodo_academico) {
+        $con = \Yii::$app->db_academico;
+        $estado = 1;
+
+        $sql = "SELECT pla_id
+>>>>>>> d088436412b13c45c1c1751a4ca851652c521c81
                 FROM " . $con->dbname . ".planificacion plan
                 WHERE plan.mod_id = :mod_id AND
                       plan.pla_periodo_academico = :pla_periodo_academico AND
@@ -1391,6 +1473,7 @@ inner join db_academico.materia_paralelo_periodo mpp on mpp.asi_id = made.asi_id
                         per_id = " . $per_id . " AND
                         pes_estado = :estado AND
                         pes_estado_logico = :estado");
+<<<<<<< HEAD
 					$comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
 					$comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
 					$comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
@@ -1440,12 +1523,63 @@ inner join db_academico.materia_paralelo_periodo mpp on mpp.asi_id = made.asi_id
 				$sql3 =
 					("INSERT INTO " . $con->dbname . ".planificacion_estudiante(pes_cod_malla,pes_cod_carrera,per_id,pes_dni,pes_jornada,pes_nombres,pla_id,pes_estado,pes_estado_logico,pes_fecha_creacion)
                     select distinct(ma.maca_codigo),ma.maca_nombre,e.per_id, pe.per_cedula, ecpr_jornada as jornada,
+=======
+                     $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+                     $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+                     $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+                     $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+                    $result = $comando->execute();
+                    //if ($trans !== null){
+                        $trans->commit();//}
+                }
+            }
+            
+            
+            if ($trans !== null)
+                $trans->commit();
+                $con->close();
+            return TRUE;//$con->getLastInsertID($con->dbname . '.planificacion_estudiante');
+        } catch (Exception $ex) {
+            if ($trans !== null)
+                $trans->rollback();
+                $con->close();
+            return FALSE;
+        }
+    }
+
+public function confirmarPlanificacionExistente($per_id, $periodo) {
+        $con = \Yii::$app->db_academico;
+        $con2 = \Yii::$app->db_asgard;
+        $fecha_modificacion= date(Yii::$app->params["dateTimeByDefault"]);
+        $estado = 1;
+   
+        try {
+            if($per_id == null){
+                $resultData = [];
+               // \app\models\Utilities::putMessageLogFile('No Enviado');
+            }else{
+                $sql = ("SELECT * from " . $con->dbname . ".planificacion_estudiante pe
+                        inner join " . $con->dbname . ".planificacion pla on pla.saca_id = $periodo and pla.pla_id = pe.pla_id
+                        where pe.per_id = $per_id;");
+                $comando = $con->createCommand($sql);
+                \app\models\Utilities::putMessageLogFile('Encontrado');
+                \app\models\Utilities::putMessageLogFile('confirmarPlanificacionExistente: '.$comando->getRawSql());
+                $resultData = $comando->queryOne(); 
+                \app\models\Utilities::putMessageLogFile($resultData);
+            }
+            
+            if($resultData == null){
+                $sql3 = 
+                    ("INSERT INTO " . $con->dbname . ".planificacion_estudiante(pes_cod_malla,pes_cod_carrera,per_id,pes_dni,pes_jornada,pes_nombres,pla_id,pes_estado,pes_estado_logico,pes_fecha_creacion)
+                    select distinct(ma.maca_codigo),ma.maca_codigo,e.per_id, pe.per_cedula, ecpr_jornada as jornada,
+>>>>>>> d088436412b13c45c1c1751a4ca851652c521c81
                                         concat(pe.per_pri_nombre, ' ', pe.per_seg_nombre,' ', pe.per_pri_apellido, ' ',pe.per_seg_apellido) as nombres, pla.pla_id as pla_id, $estado,$estado,
                                         '$fecha_modificacion'
                                         from " . $con->dbname . ".estudiante_carrera_programa ecp
                                         inner join " . $con->dbname . ".modalidad_estudio_unidad meu on ecp.meun_id = meu.meun_id
                                         inner join " . $con->dbname . ".estudio_academico es on es.eaca_id = meu.eaca_id
                                         inner join " . $con->dbname . ".estudiante e on e.est_id = ecp.est_id and  ecp.est_id = e.est_id
+<<<<<<< HEAD
                                         inner join " . $con->dbname . ".malla_academico_estudiante maes on maes.per_id = e.per_id
                                         inner join " . $con->dbname . ".malla_academica ma on ma.maca_id = maes.maca_id
                                         inner join " . $con2->dbname . ".persona pe on pe.per_id = e.per_id
@@ -1482,6 +1616,55 @@ inner join db_academico.materia_paralelo_periodo mpp on mpp.asi_id = made.asi_id
                 FROM " . $con->dbname . ".malla_academica_detalle macad
                     INNER JOIN " . $con->dbname . ".malla_academica maca
                     ON maca.maca_id = macad.maca_id
+=======
+                                        inner join " . $con->dbname . ".malla_academico_estudiante maes on maes.per_id = e.per_id  and maes.maes_estado = 1  and maes.maes_estado_logico = 1
+                                        inner join " . $con->dbname . ".malla_academica ma on ma.maca_id = maes.maca_id
+                                        inner join " . $con2->dbname . ".persona pe on pe.per_id = e.per_id
+                                        inner join " . $con->dbname . ".planificacion pla on pla.saca_id = $periodo and meu.mod_id = pla.mod_id
+                                        where e.per_id = $per_id
+                    AND ecp.ecpr_estado = 1 AND ecp.ecpr_estado_logico = 1
+                    AND meu.meun_estado = 1 AND meu.meun_estado_logico = 1
+                    AND es.eaca_estado = 1 AND es.eaca_estado_logico = 1
+                    AND e.est_estado = 1 AND e.est_estado_logico = 1
+                    AND maes.maes_estado = 1 AND maes.maes_estado_logico = 1
+                    AND ma.maca_estado = 1 AND ma.maca_estado_logico = 1
+                    AND pe.per_estado = 1 AND pe.per_estado_logico = 1
+                    AND pla.pla_estado = 1 AND pla.pla_estado_logico = 1
+                                        ;");
+                    $comando3 = $con->createCommand($sql3);
+                    \app\models\Utilities::putMessageLogFile('Insertado');
+                \app\models\Utilities::putMessageLogFile('confirmarPlanificacionExistente: '.$comando3->getRawSql());
+                $result3 = $comando3->execute();
+                $resultData = $resultData  + $result3; 
+                //\app\models\Utilities::putMessageLogFile('Insertado');               
+                return $resultData;
+                
+            }else{
+                //\app\models\Utilities::putMessageLogFile('No Insertado');
+                return $resultData;
+            }
+            
+        } catch (Exception $ex) {
+           // \app\models\Utilities::putMessageLogFile($ex->getMessage());
+            return $ex->getMessage();
+        }
+    }
+
+      /**
+     * Function Consultar codigo asigantura para archivo de planificacion estudiante.
+     * @author  Giovanni Vergara <analistadesarrollo01@uteg.edu.ec>;
+     * @property       
+     * @return  
+     */
+    public function consultarCodigoAsignatura($maca_codigo, $asi_id) {
+        $con = \Yii::$app->db_academico;
+        $estado = 1;
+
+        $sql = "SELECT made_codigo_asignatura 
+                FROM " . $con->dbname . ".malla_academica_detalle macad 
+                    INNER JOIN " . $con->dbname . ".malla_academica maca 
+                    ON maca.maca_id = macad.maca_id 
+>>>>>>> d088436412b13c45c1c1751a4ca851652c521c81
                     AND maca_codigo = maca_codigo
                 WHERE macad.asi_id = asi_id AND
                       maca.maca_estado = :estado AND

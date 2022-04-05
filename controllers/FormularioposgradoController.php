@@ -279,8 +279,7 @@ class FormularioposgradoController extends \app\components\CController {
             ];
             return $this->render('view', ['items' => $items, 'persona_model' => $persona_model, 'contacto_model' => $contacto_model]);
         }
-        return $this->redirect(['formularioposgrado/aspirantepos
-            grado']);
+        return $this->redirect(['formularioposgrado/aspiranteposgrado']);
     }
 
     public function actionEdit() {

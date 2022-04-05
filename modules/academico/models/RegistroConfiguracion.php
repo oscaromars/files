@@ -1002,13 +1002,14 @@ $trans2->commit();
 		if (isset($mod_id) && $mod_id != "" && $mod_id != 0) {
 			$condition .= "me.mod_id = :mod_id AND ";
 		}
-		if (isset($estado) && $estado != "" && $estado != -1) {
+		/*if (isset($estado) && $estado != "" && $estado != -1) {
 			$condition .= "reg.rpm_estado_generado = :estado AND ";
-		}
+		}*/
 		\app\models\Utilities::putMessageLogFile('A1' . $periodo);
 		if (isset($periodo) && $periodo != "" && $periodo != 0) {
 			//$periodo = "%" . $periodo . "%";
-			$condition .= "p.pla_id = :periodo AND ";
+			$condition .= "p.saca_id = :periodo AND ";
+			//$condition .= "p.pla_id = :periodo AND ";
 			//$condition .= "p.pla_periodo_academico like :periodo AND ";
 		}
 		if ($f_ini != "" && $f_fin != "") {
@@ -1021,7 +1022,8 @@ $trans2->commit();
 		}
 
 		$sql = "SELECT distinct
-                    pe.pes_nombres                      as 'Estudiante',
+                    CONCAT(ifnull(TRIM(per.per_pri_nombre),''),' ',ifnull(TRIM(per.per_pri_apellido),''),' ')  as Estudiante,
+                    per.per_cedula						as 'Cedula',
                     p.pla_periodo_academico             as 'Periodo Academico',
                     date_format(reg.rpm_fecha_transaccion, '%Y-%m-%d')            as 'Fecha transacción',
                     mo.mod_nombre                       as 'Modalidad',
@@ -1083,11 +1085,12 @@ $trans2->commit();
                             r.ron_estado = 1 AND r.ron_estado_logico = 1
                         GROUP BY per_id
                     ) AS mi ON mi.ron_id = r.ron_id
-                    LEFT JOIN " . $con_academico->dbname . ".registro_pago_matricula AS reg on reg.per_id = per.per_id
+                    LEFT JOIN " . $con_academico->dbname . ".registro_pago_matricula AS reg on reg.rpm_id = ram.rpm_id AND reg.per_id = per.per_id
                         AND r.ron_id = reg.ron_id AND reg.rpm_estado = 1 AND reg.rpm_estado_logico = 1
                     " . /*LEFT JOIN " . $con_academico->dbname . ".enrolamiento_agreement AS enr on enr.ron_id = r.ron_id
 	                        AND reg.rpm_estado = 1 AND reg.rpm_estado_logico = 1 AND enr.rpm_id = ram.rpm_id AND enr.eagr_estado = 1 AND enr.eagr_estado_logico = 1
-*/" LEFT JOIN (
+						*/" 
+	                    LEFT JOIN (
                         SELECT
                             ro.ron_id as ron_id,
                             ro.rpm_id as rpm_id,
@@ -1123,7 +1126,8 @@ $trans2->commit();
                 UNION
 
                 SELECT distinct
-                        pe.pes_nombres                      as 'Estudiante',
+                        CONCAT(ifnull(TRIM(per.per_pri_nombre),''),' ',ifnull(TRIM(per.per_pri_apellido),''),' ')  as Estudiante,
+                        per.per_cedula						as 'Cedula',
                         p.pla_periodo_academico             as 'Periodo Academico',
                         date_format(reg.rpm_fecha_transaccion, '%Y-%m-%d')            as 'Fecha transacción',
                         mo.mod_nombre                       as 'Modalidad',
@@ -1181,11 +1185,12 @@ $trans2->commit();
                             r.ron_estado = 1 AND r.ron_estado_logico = 1
                         GROUP BY per_id
                     ) AS mi ON mi.ron_id = r.ron_id
-                    LEFT JOIN " . $con_academico->dbname . ".registro_pago_matricula AS reg on reg.per_id = per.per_id
+                    LEFT JOIN " . $con_academico->dbname . ".registro_pago_matricula AS reg on reg.rpm_id = ram.rpm_id AND reg.per_id = per.per_id
                         AND r.ron_id = reg.ron_id AND reg.rpm_estado = 1 AND reg.rpm_estado_logico = 1
                     " . /*LEFT JOIN " . $con_academico->dbname . ".enrolamiento_agreement AS enr on enr.ron_id = r.ron_id
 	                        AND reg.rpm_estado = 1 AND reg.rpm_estado_logico = 1 AND enr.rpm_id = ram.rpm_id AND enr.eagr_estado = 1 AND enr.eagr_estado_logico = 1
-*/" LEFT JOIN (
+						*/" 
+	                    LEFT JOIN (
                         SELECT
                             ro.ron_id as ron_id,
                             ro.rpm_id as rpm_id,
@@ -1205,7 +1210,8 @@ $trans2->commit();
                     $str_search
                     $condition
                     reg.rpm_id = ram.rpm_id AND
-                    dpfa.dpfa_estado_pago = 2 and dpfa.dpfa_estado_financiero = 'C' AND
+                    -- dpfa.dpfa_estado_pago = 2 and 
+                    dpfa.dpfa_estado_financiero = 'C' AND
                     pe.pes_estado = 1 AND pe.pes_estado_logico = 1 AND
                     p.pla_estado = 1 AND p.pla_estado_logico = 1 AND
                     per.per_estado = 1 AND per.per_estado_logico = 1 AND
@@ -1232,15 +1238,16 @@ $trans2->commit();
 			$comando->bindParam(":mod_id", $mod_id, \PDO::PARAM_INT);
 		}
 
-		if (isset($estado) && $estado != "" && $estado != -1) {
+		/*if (isset($estado) && $estado != "" && $estado != -1) {
 			$comando->bindParam(":estado", $estado, \PDO::PARAM_INT);
-		}
+		}*/
 
 		if (isset($periodo) && $periodo != "" && $periodo != 0) {
 			$comando->bindParam(":periodo", $periodo, \PDO::PARAM_STR);
 		}
 
-		if ($isEstud) {
+		//if ($isEstud) {
+		if ($grupo_id == 12) {
 			$comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
 		}
 

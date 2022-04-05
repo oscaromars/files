@@ -2,7 +2,8 @@ var stripe;
 var cardElement;
 $(document).ready(function() {
     $('#atach_docum_pago').css('display', 'none');
-    $('#btn_buscar').click(function() {
+    //$('#btn_buscar').click(function() {//04 marzo 2022
+    $('#btn_buscar_index').click(function() {//04 marzo 2022
         searchModules();
     });
     $('#btn_buscarLis').click(function() {

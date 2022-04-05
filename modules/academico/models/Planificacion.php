@@ -407,16 +407,19 @@ WHERE paca_activo = 'A'
 	}
 
 	public static function getPeriodosAcademicoMod() {
-		$con_academico = \Yii::$app->db_academico;
+		//$con_academico = \Yii::$app->db_academico;
+		$con = \Yii::$app->db_academico;
 		$sql = "SELECT distinct
                 a.saca_id as id,
                 concat(b.saca_nombre , ' ' , b.saca_anio ) as name
                 from  " . $con->dbname . ".periodo_academico a
                 inner join " . $con->dbname . ".semestre_academico b on a.saca_id = b.saca_id
                 where a.paca_activo = 'A'
-                order by a.paca_id asc;";
+            ORDER BY a.saca_id desc;";
+         //order by a.paca_id asc;"; //comentado 31 enero 2022
 
-		$comando = $con_academico->createCommand($sql);
+		//$comando = $con_academico->createCommand($sql);
+		$comando = $con->createCommand($sql);
 		$resultData = $comando->queryAll();
 
 		return $resultData;

@@ -2462,7 +2462,7 @@ inner join " . $con->dbname . ".malla_academica as b on a.pes_cod_carrera = b.ma
    for ($t = 0; $t < count($referenced); $t++) {
 
 
-
+$scheme = $squema->getScheme($referenced[$t]['maca_codigo']);
 
 
         switch ($referenced[$t]['mod_id']) {
@@ -2480,7 +2480,6 @@ inner join " . $con->dbname . ".malla_academica as b on a.pes_cod_carrera = b.ma
                 break;
         }
 
-$scheme = $squema->getScheme($pla_id,$referenced[$t]['maca_codigo']);
 
 $referencerone = $squema->getreference(
     $jornada,

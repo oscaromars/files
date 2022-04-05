@@ -548,7 +548,7 @@ AND made.made_estado = 1 AND made.made_estado_logico = 1
 	 * @param
 	 * @return  $resultData (Retornar la referencia de planificacion).
 	 */
-    public function getreference($pes_jornada,$pla_id,$maca_codigo, $bxs1=Null, $bxs2=Null, $bxs3=Null, $bxs4=Null, $bxs5=Null, $bxs6=Null,$bxs7=Null) {    
+    public function getreference($pla_id,$maca_codigo, $bxs1=Null, $bxs2=Null, $bxs3=Null, $bxs4=Null, $bxs5=Null, $bxs6=Null,$bxs7=Null) {    
 		$con = \Yii::$app->db_academico;  
 if ($bxs7 == Null){ $bxs7 == $bxs1; }
 $queryScheme = "

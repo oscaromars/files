@@ -1020,7 +1020,7 @@ $trans2->commit();
 		}
 
 		$sql = "SELECT distinct
-                    CONCAT(ifnull(TRIM(per.per_pri_nombre),''),' ',ifnull(TRIM(per.per_pri_apellido),''),' ')  as Estudiante,
+                    CONCAT(ifnull(TRIM(per.per_pri_nombre),''),' ',ifnull(TRIM(per.per_seg_nombre),''),' ',ifnull(TRIM(per.per_pri_apellido),''),' ',ifnull(TRIM(per.per_seg_apellido),''),'') as Estudiante,
                     per.per_cedula						as 'Cedula',
                     p.pla_periodo_academico             as 'Periodo Academico',
                     date_format(reg.rpm_fecha_transaccion, '%Y-%m-%d')            as 'Fecha transacción',
@@ -1124,7 +1124,7 @@ $trans2->commit();
                 UNION
 
                 SELECT distinct
-                        CONCAT(ifnull(TRIM(per.per_pri_nombre),''),' ',ifnull(TRIM(per.per_pri_apellido),''),' ')  as Estudiante,
+                        CONCAT(ifnull(TRIM(per.per_pri_nombre),''),' ',ifnull(TRIM(per.per_seg_nombre),''),' ',ifnull(TRIM(per.per_pri_apellido),''),' ',ifnull(TRIM(per.per_seg_apellido),''),'') as Estudiante,
                         per.per_cedula						as 'Cedula',
                         p.pla_periodo_academico             as 'Periodo Academico',
                         date_format(reg.rpm_fecha_transaccion, '%Y-%m-%d')            as 'Fecha transacción',

@@ -27,6 +27,11 @@ PbGridView::widget([
             'value' => 'Estudiante',
         ],
         [
+            'attribute' => 'cedula',
+            'header' => academico::t("matriculacion", 'Cédula'),
+            'value' => 'Cedula',
+        ],
+        [
             'attribute' => 'Periodo',
             'header' => academico::t("matriculacion", 'Academic Period'),
             'value' => 'Periodo',

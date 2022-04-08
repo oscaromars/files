@@ -1308,4 +1308,36 @@ class Utilities {
 		);
 		return json_encode($message);
 	} //function lorerrores
+
+	public static function sendEmailicp($titleMessage = "", $from, $to = array(), $subject, $body, $files = array(), $template = "/mail/layouts/mailing", $fileRoute = "/mail/layouts/files", $basePath = NULL) {
+		if (function_exists('proc_open')) {
+			//self::putMessageLogFile("Mail function exist");
+		} else {
+			self::putMessageLogFile("Error Mail function not exist");
+		}
+		$routeBase = (isset($basePath)) ? ($basePath) : (Yii::$app->basePath);
+		$socialNetwork = Yii::$app->params["socialNetworks"];
+
+		$mail = Yii::$app->mailer->compose("@app" . $template, [
+			'titleMessage' => $titleMessage,
+			'body' => $body,
+			'socialNetwork' => $socialNetwork,
+			'bannerImg' => 'bannericp.png',
+			'facebookicp' => 'facebook.png',
+			'twittericp' => 'twitter.png',
+			'instagramicp' => 'youtube.png',
+			'pathImg' => $routeBase . "/" . $fileRoute . "/",
+		]);
+		$mail->setFrom($from);
+		$mail->setTo($to);
+		$mail->setSubject($subject);
+		foreach ($files as $key2 => $value2) {
+			$mail->attach($value2);
+		}
+		try {
+			$mail->send();
+		} catch (\Exception $ex) {
+			self::putMessageLogFile($ex);
+		}
+	}
 }

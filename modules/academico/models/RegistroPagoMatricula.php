@@ -916,7 +916,7 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
                     $condition
                     reg.rpm_id = ram.rpm_id AND
                     -- dpfa.dpfa_estado_pago = 2 and 
-                    dpfa.dpfa_estado_financiero = 'C' AND
+                    -- dpfa.dpfa_estado_financiero = 'C' AND
                     pe.pes_estado = 1 AND pe.pes_estado_logico = 1 AND
                     p.pla_estado = 1 AND p.pla_estado_logico = 1 AND
                     per.per_estado = 1 AND per.per_estado_logico = 1 AND 

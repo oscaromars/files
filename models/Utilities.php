@@ -1310,6 +1310,7 @@ class Utilities {
 	} //function lorerrores
 
 	public static function sendEmailicp($titleMessage = "", $from, $to = array(), $subject, $body, $files = array(), $template = "/mail/layouts/mailing", $fileRoute = "/mail/layouts/files", $basePath = NULL) {
+		\app\models\Utilities::putMessageLogFile('sendEmailicp ' );
 		if (function_exists('proc_open')) {
 			//self::putMessageLogFile("Mail function exist");
 		} else {

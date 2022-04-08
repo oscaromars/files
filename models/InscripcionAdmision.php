@@ -1005,6 +1005,7 @@ class InscripcionAdmision extends \yii\db\ActiveRecord {
 				$error++;
 			}
 			if ($exito == 1) {
+				\app\models\Utilities::putMessageLogFile('inscripciones exito ' );
 				//$transaction->commit();
 				//$transaction1->commit();
 				$transaction2->commit();

@@ -252,16 +252,13 @@ class SolicitudesController extends \app\components\CController {
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
             }
             if (isset($data["getdescuento"])) {
-                if (($data["unidada"] == 1) or ($data["unidada"] == 2) ) {
+                if (($data["unidada"] == 1) or ($data["unidada"] == 2) or ($data["unidada"] == 10) ) {
                     //$resItems = $modItemMetNivel->consultarXitemMetniv($data["unidada"], $data["moda_id"], $data["metodo"], $data["empresa_id"], $data["carrera_id"]);
                     //$descuentos = $modDescuento->consultarDesctoxitem($resItems["ite_id"]);
                     $descuentos = $modDescuento->consultarDesctoxunidadmodalidadingreso($data["unidada"], $data["moda_id"], $data["metodo"]);
                 } else {
-                    \app\models\Utilities::putMessageLogFile('unidad:'. $data["unidada"]);
-                    \app\models\Utilities::putMessageLogFile('modalidad:'. $data["moda_id"]);
-                    \app\models\Utilities::putMessageLogFile('metodo:'. $data["metodo"]);
+                    
                     $descuentos = $modDescuento->consultarDescuentoXitemUnidad($data["unidada"], $data["moda_id"], $data["metodo"]);
-                    \app\models\Utilities::putMessageLogFile('descuentos:'. $descuentos["id"]);
                 }
                 $message = array("descuento" => $descuentos);
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);

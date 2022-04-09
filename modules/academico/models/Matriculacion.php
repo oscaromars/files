@@ -788,10 +788,18 @@ class Matriculacion extends \yii\db\ActiveRecord {
                         $mod_est =Estudiante::findOne(['per_id'=> trim($dict[$ind]['per_id']),'est_estado'=>'1','est_estado_logico'=>'1']);
                         //$mod_est =Estudiante::findOne(['per_id'=> trim($dict['per_id']),'est_estado'=>'1','est_estado_logico'=>'1']);
                         //MallaAcademicaDetalle
-                        if ($i <= 5) {
+                        
+                        //JLC: 08 marzo 2022
+                        //if ($i <= 5) {
+                        if ($i <= 6) {
                             $modMade = MallaAcademicaDetalle::findOne(['made_codigo_asignatura' => trim($dict[$ind]['pes_mat_b' . $j . '_h' . $i . '_cod']), 'made_estado_logico' => '1', 'made_estado' => '1']);
                             //$modMade = MallaAcademicaDetalle::findOne(['made_codigo_asignatura' => trim($dict['pes_mat_b' . $j . '_h' . $i . '_cod']), 'made_estado_logico' => '1', 'made_estado' => '1']);
-                        } else {
+                        } 
+
+                        /*
+                        //JLC: 08 marzo 2022
+                        //Se comenta para que recorra las 6 horas por bloque.
+                        else {
                             $modCodMalla = substr($dict[$ind]['pes_mat_b' . $j . '_h6_cod'], 0, 8); // devuelve "Malla de Idioma"
                             //$modCodMalla = substr($dict['pes_mat_b' . $j . '_h6_cod'], 0, 8); // devuelve "Malla de Idioma"
                             $modMalla = MallaAcademica::findOne(['maca_codigo'=>$modCodMalla,'maca_estado'=>1,'maca_estado_logico'=>1]);
@@ -799,29 +807,29 @@ class Matriculacion extends \yii\db\ActiveRecord {
                             //$modMade = MallaAcademicaDetalle::findOne(['maca_id' => $modMalla['maca_id'], 'made_codigo_asignatura' => trim($dict['pes_mat_b' . $j . '_h' . $i . '_cod']), 'made_estado_logico' => '1', 'made_estado' => '1']);
                             $modProgCost = ProgramaCostoCredito::findOne(['maca_id' => $modMalla,'mod_id'=>$modalidad,'pccr_categoria'=>$mod_est['est_categoria'],'pccr_creditos'=>$modMade['made_credito'],'pccr_estado'=>1,'pccr_estado_logico'=>1]);
                             $costoCredito = $modProgCost['pccr_costo_credito'];
-                            /*if($j==1){
-                                if($modMade['made_codigo_asignatura']=='CID-0097-0326-004'){
-                                    $hora='1H';
-                                }else if($modMade['made_codigo_asignatura']=='CID-0097-0322-005'){
-                                    $hora='3H';
-                                }else if($modMade['made_codigo_asignatura']=='CID-0097-0327-008'){
-                                    $hora='2H';
-                                }else if($modMade['made_codigo_asignatura']=='CID-0097-0325-006'){
-                                    $hora='5H';
-                                }
-                            }else{
-                                if($modMade['made_codigo_asignatura']=='CID-0097-0322-005'){
-                                    $hora='1H';
-                                }else if($modMade['made_codigo_asignatura']=='CID-0097-0325-006'){
-                                    $hora='3H';
-                                }else if($modMade['made_codigo_asignatura']=='CID-0097-0337-009'){
-                                    $hora='2H';
-                                }else if($modMade['made_codigo_asignatura']=='CID-0097-0324-007'){
-                                    $hora='5H';
-                                }
-                            }*/
+                            //if($j==1){
+                                //if($modMade['made_codigo_asignatura']=='CID-0097-0326-004'){
+                                //    $hora='1H';
+                                //}else if($modMade['made_codigo_asignatura']=='CID-0097-0322-005'){
+                                //    $hora='3H';
+                                //}else if($modMade['made_codigo_asignatura']=='CID-0097-0327-008'){
+                                //    $hora='2H';
+                                //}else if($modMade['made_codigo_asignatura']=='CID-0097-0325-006'){
+                                //    $hora='5H';
+                                //}
+                            //}else{
+                                //if($modMade['made_codigo_asignatura']=='CID-0097-0322-005'){
+                                //    $hora='1H';
+                                //}else if($modMade['made_codigo_asignatura']=='CID-0097-0325-006'){
+                                    //$hora='3H';
+                                //}else if($modMade['made_codigo_asignatura']=='CID-0097-0337-009'){
+                                    //$hora='2H';
+                                //}else if($modMade['made_codigo_asignatura']=='CID-0097-0324-007'){
+                                    //$hora='5H';
+                                //}
+                            //}
                             
-                        }
+                        }*/
                         //Asignatura
                         $modAsig = Asignatura::findOne(['asi_id'=>$modMade['asi_id'],'asi_estado'=>'1','asi_estado_logico'=>'1']);
                         //MateriaParaleloPeriodo

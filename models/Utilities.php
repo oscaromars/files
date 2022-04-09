@@ -1317,16 +1317,16 @@ class Utilities {
 			self::putMessageLogFile("Error Mail function not exist");
 		}
 		$routeBase = (isset($basePath)) ? ($basePath) : (Yii::$app->basePath);
-		$socialNetwork = Yii::$app->params["socialNetworks"];
+		$socialNetworksicp = Yii::$app->params["socialNetworksicp"];
 
 		$mail = Yii::$app->mailer->compose("@app" . $template, [
 			'titleMessage' => $titleMessage,
 			'body' => $body,
-			'socialNetwork' => $socialNetwork,
+			'socialNetworksicp' => $socialNetworksicp,
 			'bannerImg' => 'bannericp.png',
-			'facebookicp' => 'facebook.png',
-			'twittericp' => 'twitter.png',
-			'instagramicp' => 'youtube.png',
+			'facebookicp' => 'facebookicp.png',
+			'twittericp' => 'facebookicp.png',
+			'instagramicp' => 'instagramicp.png',
 			'pathImg' => $routeBase . "/" . $fileRoute . "/",
 		]);
 		$mail->setFrom($from);

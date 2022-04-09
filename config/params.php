@@ -81,6 +81,8 @@ return [
 		'facebook' => 'https://www.facebook.com/uteg.ec',
 		'twitter' => 'https://twitter.com/uteg_ec',
 		'youtube' => 'https://www.youtube.com/channel/UC8_6Fr2MGrNkr-kM7BZzkdQ',
+	],
+	'socialNetworksicp' => [
 		'facebookicp' => 'https://www.facebook.com/ICPUTEG/',
 		'twittericp' => 'https://twitter.com/ICPUTEG',
 		'instagramicp' => 'https://www.instagram.com/icputeg',

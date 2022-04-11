@@ -498,7 +498,7 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
    inner join db_academico.estudio_academico ea on ea.eaca_id = meu.eaca_id
     inner join db_asgard.persona per on per.per_id = e.per_id
   left join db_academico.planificacion_estudiante pes on pes.per_id = e.per_id and pes.pla_id in (39,40,41,42)
-   WHERE TRUE
+   WHERE TRUE AND maca.maca_id >46 
     AND  e.est_estado = 1 AND e.est_estado_logico = 1
     AND  c.ecpr_estado = 1 AND c.ecpr_estado_logico = 1
     AND  meu.meun_estado = 1 AND meu.meun_estado_logico = 1
@@ -510,7 +510,8 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
     AND meu.uaca_id = 1
    AND pes.pla_id is $evaluator Null 
     AND DATEDIFF(NOW(),e.est_fecha_creacion) <=150
-    AND DATEDIFF(NOW(),per.per_fecha_creacion) <=150;
+    AND DATEDIFF(NOW(),per.per_fecha_creacion) <=150
+    order by maca.maca_id DESC;
 ";
     //var_dump($queryStudents);
  		$comando = $con->createCommand($queryStudents);
@@ -595,6 +596,19 @@ public function doPusher($schedule,$per_id,$maca_nombre,$per_cedula,$estudiante)
 
  if (isset($schedule[0]['pes_id'])){
 
+$ishere = "
+select pes_id 
+FROM db_academico_planificacion_estudiante
+WHERE TRUE
+AND per_id = $per_id
+AND pes_id in (39,40,41,42)
+";
+
+    $comando = $con->prepare($ishere);
+    $comando->execute();
+    $hereis = $comando->fetchAll(\PDO::FETCH_ASSOC);
+
+     if ($hereis[0]['pes_id'] == Null ){
 
 $replier=
 "
@@ -705,13 +719,13 @@ VALUES
 
     $comando = $con->createCommand($replier);
                      $fullrefer = $comando->execute(); 
-                 
+                 return $fullrefer;
 
-    }
+    }}
 
  if (isset($schedule[0]['made_codigo_asignatura'])){
 
-
+return true;
 
     }
 

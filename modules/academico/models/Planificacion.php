@@ -601,7 +601,9 @@ select pes_id
 FROM db_academico.planificacion_estudiante
 WHERE TRUE
 AND per_id = :per_id
-AND pes_id in (39,40,41,42)
+AND pla_id in (39,40,41,42)
+AND pes_estado = 1 
+AND pes_estado_logico = 1
 ";
 
 		$comando = $con->createCommand($ishere);

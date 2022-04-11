@@ -212,7 +212,7 @@ class OportunidadesController extends \app\components\CController {
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
             }
             if (isset($data["getmodalidad"])) {
-                if (($data["nint_id"]==1) or ($data["nint_id"]==2)){
+                if (($data["nint_id"]==1) or ($data["nint_id"]==2) or ($data["nint_id"]== 10)){
                     $modalidad = $modalidad_model->consultarModalidad($data["nint_id"], $data["empresa_id"]);
                 } else {
                     $modalidad = $modestudio->consultarModalidadModestudio();
@@ -236,7 +236,7 @@ class OportunidadesController extends \app\components\CController {
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
             }
             if (isset($data["getcarrera"])) {
-                if (($data["unidada"] ==1) or ($data["unidada"] ==2)) {
+                if (($data["unidada"] ==1) or ($data["unidada"] ==2) or ($data["unidada"]== 10)) {
                     $carrera = $modcanal->consultarCarreraModalidad($data["unidada"], $data["moda_id"]);
                 } else {
                     $carrera = $modestudio->consultarCursoModalidad($data["unidada"], $data["moda_id"] ); // tomar id de impresa

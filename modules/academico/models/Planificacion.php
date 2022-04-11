@@ -600,13 +600,13 @@ $ishere = "
 select pes_id 
 FROM db_academico_planificacion_estudiante
 WHERE TRUE
-AND per_id = $per_id
+AND per_id = :per_id
 AND pes_id in (39,40,41,42)
 ";
 
-    $comando = $con->prepare($ishere);
-    $comando->execute();
-    $hereis = $comando->fetchAll(\PDO::FETCH_ASSOC);
+		$comando = $con->createCommand($ishere);
+				$comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
+				$hereis = $comando->queryAll();
 
      if ($hereis[0]['pes_id'] == Null ){
 

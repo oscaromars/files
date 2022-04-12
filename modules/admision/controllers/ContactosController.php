@@ -418,7 +418,7 @@ class ContactosController extends \app\components\CController {
                             $modalidad = $data["id_modalidad"];
                             $tipo_oportunidad = $data["id_tipo_oportunidad"];
                             $estado_oportunidad = $data["id_estado_oportunidad"];
-                            if ($unidad_academica < 3) {
+                            if ($unidad_academica < 3 || $unidad_academica == 10) {
                                 if (($unidad_academica == 1 || $unidad_academica == 2 ) && $empresa == 2) {
                                     $estudio_academico = 0;
                                     $modulo_estudio = $data["id_estudio_academico"];

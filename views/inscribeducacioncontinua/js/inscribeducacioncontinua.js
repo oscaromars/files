@@ -566,6 +566,7 @@ $(document).ready(function () {
     $('#payBtn').on('click', function (e) {
 
         $("#payBtn").prop("disabled",true);
+        showLoadingPopup();
         setTimeout(function () {
             try{
                 stripe.createToken(cardElement).then(function(result) {
@@ -606,8 +607,7 @@ $(document).ready(function () {
                             $("#seccion_pago_online").html('<i class="fas fa-check-circle" style="color: #a31b5c;"> SU PAGO FUE INGRESADO CORRECTAMENTE</i>');
                             $('input[name=rdo_forma_pago_deposito]:not(:checked)').attr('disabled', true);
                             $('input[name=rdo_forma_pago_transferencia]:not(:checked)').attr('disabled', true);
-                            //$.LoadingOverlay("hide");
-
+                            hideLoadingPopup();
                             console.log("sendInscripcionSubirPago2");
                             sendInscripcionSubirPago2();
                         }).fail(function() {
@@ -785,7 +785,7 @@ function guardarInscripcionTemp2(accion) {
     $.LoadingOverlay("show",{
         imageColor: "#a41b5e",
     });*/
-
+    showLoadingPopup();
     var ID           = (accion == "UpdateDepTrans") ? $('#txth_twin_id').val() : 0;
     var link         = $('#txth_base').val() + "/inscribeducacioncontinua/saveinscripciontemp";
     var arrParams    = new Object();
@@ -850,6 +850,7 @@ function guardarInscripcionTemp2(accion) {
                         var message = response.message;
                         //$.LoadingOverlay("hide");
                         if (response.status == "OK") {
+                            hideLoadingPopup();
                             //$.LoadingOverlay("hide");
                             setTimeout(function () {
                                 var link = $('#txth_base').val() + "/inscribeducacioncontinua/index";
@@ -857,6 +858,7 @@ function guardarInscripcionTemp2(accion) {
                             }, 2500);
                         }else{
                             //$.LoadingOverlay("hide");
+                            hideLoadingPopup();
                             $('#sendInscripcionSubirPago').prop("disabled",false);
                             showAlert("NO_OK", "error", "Mensaje para sistemas: "+message);
                         }

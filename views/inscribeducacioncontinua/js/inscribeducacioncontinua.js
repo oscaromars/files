@@ -511,38 +511,46 @@ $(document).ready(function () {
         }
         arrParams.item = $('#cmb_item').val();
         var error = 0;
-        if ($('#txth_doc_pago').val() == "") {
-            error++;
-            var mensaje = {wtmessage: "Debe adjuntar documento de pago realizado.", title: "Información"};
-            showAlert("NO_OK", "error", mensaje);
-        } else if ($('#cmb_item').val() == 0){
-            error++;
-            var mensaje = {wtmessage: "Debe seleccionar un item.", title: "Información"};
-            showAlert("NO_OK", "error", mensaje);
-        } else {
-            if (arrParams.fecha_transaccion > formatted_date){
-                var mensaje = {wtmessage: "Fecha Transacción: La fecha de transacción no puede ser mayor al día de hoy.", title: "Información"};
-                showAlert("NO_OK", "success", mensaje);
-            }else{
-                if (arrParams.num_transaccion < '0' || arrParams.num_transaccion.length == 0){
-                    var mensaje = {wtmessage: "Número de Transacción: Número de transacción no puede ser negativo.", title: "Información"};
+        showLoadingPopup();
+        setTimeout(function () {
+            if ($('#txth_doc_pago').val() == "") {
+                error++;
+                hideLoadingPopup();
+                var mensaje = {wtmessage: "Debe adjuntar documento de pago realizado.", title: "Información"};
+                showAlert("NO_OK", "error", mensaje);
+            } else if ($('#cmb_item').val() == 0){
+                error++;
+                hideLoadingPopup();
+                var mensaje = {wtmessage: "Debe seleccionar un item.", title: "Información"};
+                showAlert("NO_OK", "error", mensaje);
+            } else {
+                if (arrParams.fecha_transaccion > formatted_date){
+                    hideLoadingPopup();
+                    var mensaje = {wtmessage: "Fecha Transacción: La fecha de transacción no puede ser mayor al día de hoy.", title: "Información"};
                     showAlert("NO_OK", "success", mensaje);
                 }else{
-                    if (!validateForm()) {
-                        requestHttpAjax(link, arrParams, function (response) {
-                            var message = response.message;
-                            //console.log(response);
-                            if (response.status == "OK") {
-                                showAlert(response.status, response.label, response.message);
-                                setTimeout(function () {
-                                    parent.window.location.href = $('#txth_base').val() +"/inscribeducacioncontinua/index";
-                                }, 2000);
-                            }
-                        });
+                    if (arrParams.num_transaccion < '0' || arrParams.num_transaccion.length == 0){
+                        hideLoadingPopup();
+                        var mensaje = {wtmessage: "Número de Transacción: Número de transacción no puede ser negativo.", title: "Información"};
+                        showAlert("NO_OK", "success", mensaje);
+                    }else{
+                        if (!validateForm()) {
+                            requestHttpAjax(link, arrParams, function (response) {
+                                var message = response.message;
+                                //console.log(response);
+                                if (response.status == "OK") {
+                                    hideLoadingPopup();
+                                    showAlert(response.status, response.label, response.message);
+                                    setTimeout(function () {
+                                        parent.window.location.href = $('#txth_base').val() +"/inscribeducacioncontinua/index";
+                                    }, 2000);
+                                }
+                            });
+                        }
                     }
-                }
-            }// else hace el !validateForm()
-        }
+                }// else hace el !validateForm()
+            }
+       }, 2000);
     });
 
     $('#cmb_item').change(function () {
@@ -1070,9 +1078,11 @@ function guardarInscripcionTemp(accion) {
     var arrParams = new Object();
     arrParams.DATA_1 = dataInscripPart1(ID);
     arrParams.ACCION = accion;
+    showLoadingPopup();
     if (!validateForm()) {
         requestHttpAjax(link, arrParams, function (response) {
             if (response.status == "OK") {
+                hideLoadingPopup();
                 return 1;
             }
         });

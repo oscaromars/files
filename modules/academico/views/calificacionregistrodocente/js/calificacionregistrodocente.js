@@ -1,16 +1,14 @@
 $(document).ready(function () {
-  showLoadingPopup();
+
   if ( $('#cmb_periodo_rc option:selected').val() > 0 ){ 
   if (  $('#cmb_unidad_rc').val()  > 0 ){ 
   if ( $('#cmb_modalidad_rc option:selected').val()  > 0 ){ 
   if ( $('#cmb_materia option:selected').val()   > 0 ){  
   if ( $('#cmb_parcial').val()  > 0 ){ 
   if ( $('#cmb_profesor_rc').val()  > 0 ){ 
-   
-actualizarGridRegistro();
-
+ showAlert('OK', 'success', {"wtmessage": 'Espere la carga de estudiantes..', "title": 'Información'});
+    actualizarGridRegistro();
   }}}}}}
-   hideLoadingPopup();
 
     $('#btn_guardarcalificacion').click(function() {
         cargarDocumento();
@@ -102,7 +100,7 @@ actualizarGridRegistro();
         searchCalificacionEstudiantes();
     });
 
-     $('#btn_buscarEducativa').click(function() {    
+    $('#btn_buscarEducativa').click(function() {    
         searchEducativa();
     });
 
@@ -110,7 +108,23 @@ actualizarGridRegistro();
         searchEducativaulas();
     });
 
-     $('#cmb_profesor_clfc').change(function () {
+
+          $('#cmb_modalidad_aul').change(function () {
+        var link = $('#txth_base').val() + "/academico/calificacionregistrodocente/transferiraulas";
+        var arrParams = new Object();
+        arrParams.paca_id = $("#cmb_periodo_aul").val(); 
+        arrParams.uaca_id = $("#cmb_unidad_aul").val();
+        arrParams.mod_id = $(this).val();
+        arrParams.getteraulas = true;
+        requestHttpAjax(link, arrParams, function (response) {
+            if (response.status == "OK") {
+                data = response.message;
+                setComboDataselect(data.arr_aulas, "cmb_aulas_aul","Todos");
+            }
+        }, true);
+    });
+    
+    $('#cmb_profesor_clfc').change(function () {
         var link = $('#txth_base').val() + "/academico/calificacionregistrodocente/index";
         var arrParams = new Object();
         arrParams.paca_id = $('#cmb_periodo_clfc').val();
@@ -145,7 +159,7 @@ actualizarGridRegistro();
         }, true);
     });
 
-    $('#cmb_periodo_clfc').change(function () {
+     $('#cmb_periodo_clfc').change(function () {
         var link = $('#txth_base').val() + "/academico/calificacionregistrodocente/index";
         var arrParams = new Object();
         arrParams.paca_id = $(this).val();
@@ -156,13 +170,13 @@ actualizarGridRegistro();
         requestHttpAjax(link, arrParams, function (response) {
             if (response.status == "OK") {
                 data = response.message;
-                setComboDataselect(data.asignatura, "cmb_materiabus", "Seleccionar");
+                setComboDataselect(data.asignatura, "cmb_materiabus", "Todos");
                 setComboDataselectpro(data.profesorup, "cmb_profesor_clfc","Todos");
             }
         }, true);
-    });
+         });
 
-    $('#cmb_modalidad').change(function () {
+      $('#cmb_modalidad').change(function () {
         var link = $('#txth_base').val() + "/academico/calificacionregistrodocente/index";
         var arrParams = new Object();
         arrParams.paca_id = $('#cmb_periodo_clfc').val();
@@ -387,21 +401,19 @@ function searchCalificacionEstudiantes() {
 }
 
 function searchEducativa() {
-      periodo = $("#cmb_periodo_all").val();
+    periodo = $("#cmb_periodo_all").val();
     unidad = $("#cmb_unidad_all").val();
     modalidad = $("#cmb_modalidad_all").val();
     parcial = $("#cmb_parcial_all").val();
     nparcial ="cmb_parcial_all";
 
- if (parcial == 0) {
-document.getElementById(nparcial).style.borderColor = '#aa0000';
- //showAlert('FALSE', 'success', {"wtmessage": 'Elija Parcial', "title": 'Información'});
+    if (parcial == 0) {
+        document.getElementById(nparcial).style.borderColor = '#aa0000';
+        //showAlert('FALSE', 'success', {"wtmessage": 'Elija Parcial', "title": 'Información'});
 
- } else {
-
-window.location.href = $('#txth_base').val() + "/academico/calificacionregistrodocente/educativa?paca="+periodo+"&unidad="+unidad+"&modalidad="+modalidad+"&parcial="+parcial;
- 
-  }
+    } else {
+        window.location.href = $('#txth_base').val() + "/academico/calificacionregistrodocente/educativa?paca="+periodo+"&unidad="+unidad+"&modalidad="+modalidad+"&parcial="+parcial;
+    }
  
 }
 
@@ -411,11 +423,16 @@ function searchEducativaulas() {
     modalidad = $("#cmb_modalidad_aul").val();
     aula = $("#cmb_aulas_aul").val();
     parcial = $("#cmb_parcial_aul").val();
+    
+ if (parcial == 0) {
+document.getElementById('cmb_parcial_aul').style.borderColor = '#aa0000';
+
+ } else {
 
 window.location.href = $('#txth_base').val() + "/academico/calificacionregistrodocente/transferiraulas?paca="+periodo+"&unidad="+unidad+"&modalidad="+modalidad+"&aula="+aula+"&parcial="+parcial;
  
 
-}
+}}
 
 
 function transferAula(id,ecal_id) {

@@ -183,6 +183,7 @@ class HorarioAsignaturaPeriodoTmp extends \yii\db\ActiveRecord
                         $mensaje = "No se encontró modalidad o se encuentra inactiva.";                                                     
                     }                    
                     //Validación profesor.    
+                    \app\models\Utilities::putMessageLogFile('Profesor Excel:'.$val[3]);
                     $respProfesor = $model->consultarExisteProfesor($val[3]);                    
                     if (!($respProfesor)) {                           
                         $bandera= '0';
@@ -309,7 +310,9 @@ class HorarioAsignaturaPeriodoTmp extends \yii\db\ActiveRecord
                 and pr.pro_estado_logico = :estado";               
         $comando = $con->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
-        $comando->bindParam(":cedula", $cedula, \PDO::PARAM_STR);        
+        $comando->bindParam(":cedula", $cedula, \PDO::PARAM_STR);  
+        \app\models\Utilities::putMessageLogFile('cedula:'.$cedula);     
+        \app\models\Utilities::putMessageLogFile('Validacion Profesor:'.$sql);   
         $resultData = $comando->queryOne();
         return $resultData;
     }        

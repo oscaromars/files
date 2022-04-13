@@ -6,6 +6,10 @@ use Yii;
 use app\modules\academico\models\MateriaParaleloPeriodoSearch;
 use app\modules\academico\models\MateriaParaleloPeriodo;
 use app\modules\academico\models\DistributivoAcademicoHorario;
+use app\modules\academico\models\UnidadAcademica;
+use app\modules\academico\models\Modalidad;
+use app\modules\academico\models\Planificacion;
+use app\modules\academico\models\Asignatura;
 use app\modules\Academico\Module as Academico;
 use yii\helpers\ArrayHelper;
 use yii\data\ArrayDataProvider;
@@ -27,12 +31,75 @@ class MateriaparaleloperiodoController extends \app\components\CController {
      * @return mixed
      */
     public function actionIndex() {
-        $searchModel = new MateriaParaleloPeriodoSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        //$searchModel = new MateriaParaleloPeriodoSearch();
+        //$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        $mod = new MateriaParaleloPeriodo();
+        $mod_unidadAcademica = new UnidadAcademica();
+        $mod_Periodo = new Planificacion();
+
+        $arr_periodo = $mod_Periodo->getPeriodosAcademicoActivos();
+        $arr_modalidad  = Modalidad::findAll(['mod_estado' => 1, 'mod_estado_logico' => 1]);
+        $arr_unidad = $mod_unidadAcademica->consultarUnidadAcademicas();
+
+         if (Yii::$app->request->isAjax) {
+    $data = Yii::$app->request->post();
+            
+        if (isset($data["haschangeperiod"])) {
+            $arrSearch["periodo"]    = $data['paca_id'];
+            $arrSearch["unidad"]     = $data['uaca_id'];
+            $arrSearch["modalidad"]  = $data['mod_id'];
+         $arr_asignaturascb = $mod->consultarMateriaparaleloperiodo($arrSearch,1);
+        $message = array("asignaturascb" => $arr_asignaturascb);
+        return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+            }
+
+        if (isset($data["haschangeunit"])) {
+            $arrSearch["periodo"]    = $data['paca_id'];
+            $arrSearch["unidad"]     = $data['uaca_id'];
+            $arrSearch["modalidad"]  = $data['mod_id'];
+         $arr_asignaturascb = $mod->consultarMateriaparaleloperiodo($arrSearch,1);
+        $message = array("asignaturascb" => $arr_asignaturascb);
+        return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+            }
+        if (isset($data["haschangemod"])) {
+            $arrSearch["periodo"]    = $data['paca_id'];
+            $arrSearch["unidad"]     = $data['uaca_id'];
+            $arrSearch["modalidad"]  = $data['mod_id'];
+         $arr_asignaturascb = $mod->consultarMateriaparaleloperiodo($arrSearch,1);
+        $message = array("asignaturascb" => $arr_asignaturascb);
+        return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+            }
+
+       
+    }
+
+        $data = Yii::$app->request->get();
+        if ($data['PBgetFilter']) {
+            $arrSearch["periodo"]    = $data['periodo'];
+            $arrSearch["unidad"]     = $data['unidad'];
+            $arrSearch["modalidad"]  = $data['modalidad'];
+            $arrSearch["asignaturas"]  = $data['asignaturas'];
+
+            $model = $mod->consultarMateriaparaleloperiodo($arrSearch);
+            $arr_asignaturas = $mod->consultarMateriaparaleloperiodo($arrSearch,1);
+           /* return $this->renderPartial('index-grid', [
+                        "model" => $model,
+            ]);*/
+        } else {
+            $model = $mod->consultarMateriaparaleloperiodo($arrSearch);
+            $arr_asignaturas = $mod->consultarMateriaparaleloperiodo($arrSearch,1);
+        }
 
         return $this->render('index', [
-                    'searchModel' => $searchModel,
-                    'dataProvider' => $dataProvider,
+            //'searchModel' => $searchModel,
+            //'dataProvider' => $dataProvider,
+            'model'          => $model,
+            'arr_asignaturas' => ArrayHelper::map(array_merge([["asi_id" => "0", "asi_nombre" => Yii::t("formulario", "Select")]], $arr_asignaturas), "asi_id", "asi_nombre"),
+            'arr_periodo'     => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $arr_periodo), "id", "name"),
+            'arr_unidad'     => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $arr_unidad), "id", "name"),
+            'arr_modalidad'  => ArrayHelper::map(array_merge([["mod_id" => "0", "mod_nombre" => Yii::t("formulario", "Select")]], $arr_modalidad), "mod_id", "mod_nombre"),
+            
         ]);
     }
 
@@ -41,12 +108,53 @@ class MateriaparaleloperiodoController extends \app\components\CController {
      * @return mixed
      */
     public function actionNew() {
-        $searchModel = new MateriaParaleloPeriodoSearch();
-        $dataProvider = $searchModel->searchAsinaturas(Yii::$app->request->queryParams);
+        //$searchModel = new MateriaParaleloPeriodoSearch();
+        //$dataProvider = $searchModel->searchAsinaturas(Yii::$app->request->queryParams);
+
+        $mod = new Asignatura();
+        $mod_unidadAcademica = new UnidadAcademica();
+        $mod_Periodo = new Planificacion();
+        
+        $arr_periodo = $mod_Periodo->getPeriodosAcademicoActivos();
+        $arr_modalidad  = Modalidad::findAll(['mod_estado' => 1, 'mod_estado_logico' => 1]);
+        $arr_unidad = $mod_unidadAcademica->consultarUnidadAcademicas();
+
+        $data = Yii::$app->request->get();
+        if ($data['PBgetFilter']) {
+            $arrSearch["periodo"]    = $data['periodo'];
+            $arrSearch["unidad"]     = $data['unidad'];
+            $arrSearch["modalidad"]  = $data['modalidad'];
+
+            if ($data['periodo']!=""){
+                $arrSearch["bloque"]     = substr($data['bloque'],0,2);
+            }else{
+                 $arrSearch["bloque"] = null;
+            }
+
+            $model = $mod->consultarAsignaturasMateriaparaleloperiodo($arrSearch["periodo"], $arrSearch["unidad"], $arrSearch["modalidad"], $arrSearch["bloque"] );//JLC - 22 marzo 2022
+            //$model = $mod->consultarAsignaturasMateriaparaleloperiodo($arrSearch["periodo"], $arrSearch["unidad"], $arrSearch["modalidad"], null );
+            //$model = $mod->getAsignaturaPara_asignar_paralelo($arrSearch["periodo"], $arrSearch["unidad"], $arrSearch["modalidad"], null );
+            
+            return $this->renderPartial('_form', [
+                        "model" => $model,
+            ]);
+        } else {
+            $arrSearch["periodo"]    = 'NA';
+            $arrSearch["unidad"]     = 'NA';
+            $arrSearch["modalidad"]  = 'NA';
+
+            $model = $mod->consultarAsignaturasMateriaparaleloperiodo($arrSearch["periodo"], $arrSearch["unidad"], $arrSearch["modalidad"], null );
+            //\app\models\Utilities::putMessageLogFile("98 actionNew: ".$model);
+            //$model = $mod->getAsignaturaPara_asignar_paralelo(null, null, null , null);
+        }
 
         return $this->render('new', [
-                    'searchModel' => $searchModel,
-                    'dataProvider' => $dataProvider,
+            //'searchModel' => $searchModel,
+            //'dataProvider' => $dataProvider,
+            'model'          => $model,
+            'arr_periodo'     => ArrayHelper::map(array_merge([["id"    => "0", "name"       => Yii::t("formulario", "Select")]], $arr_periodo), "id", "name"),
+            'arr_unidad'     => ArrayHelper::map(array_merge([["id"     => "0", "name"       => Yii::t("formulario", "Select")]], $arr_unidad), "id", "name"),
+            'arr_modalidad'  => ArrayHelper::map(array_merge([["mod_id" => "0", "mod_nombre" => Yii::t("formulario", "Select")]], $arr_modalidad), "mod_id", "mod_nombre"),
         ]);
     }
 
@@ -75,12 +183,17 @@ class MateriaparaleloperiodoController extends \app\components\CController {
             $data = Yii::$app->request->post();
             $con = \Yii::$app->db_academico;
 
+
+            \app\models\Utilities::putMessageLogFile("Actualizar MateriaparaleloperiodoController: ".$data['num_paralelos']);
+            \app\models\Utilities::putMessageLogFile("Actualizar MateriaparaleloperiodoController mpp_num_paralelo: ".$data['mpp_num_paralelo']);
+
             $transaction = $con->beginTransaction();
            // $datos = $data["data"];
             // $datos = json_decode($dts);
 
              //   \app\models\Utilities::putMessageLogFile($datos[$i]['asig_id']);
                 for ($j = $data['mpp_num_paralelo']; $j <= $data['num_paralelos']; $j++) {
+                  \app\models\Utilities::putMessageLogFile('1 mes: '.$mes);
                     $model = new MateriaParaleloPeriodo();
                     $model->paca_id = $data['paca_id'];
                     $model->asi_id = $data['asig_id'];
@@ -92,10 +205,11 @@ class MateriaparaleloperiodoController extends \app\components\CController {
                     $model->mpp_estado_logico = '1';
                     if ($model->save()) {
                         $mes++;
+                        \app\models\Utilities::putMessageLogFile('A mes: '.$mes);
                     }
                 }
 
-
+            \app\models\Utilities::putMessageLogFile('B mes: '.$mes);
             if ($mes != 0) {
                 $transaction->commit();
                 $message = array(

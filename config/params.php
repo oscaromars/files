@@ -5,11 +5,11 @@ return [
 	'alias' => 'UT',
 	'web' => '/asgard',
 	'version' => '1.0',
-	'adminEmail' => 'analistadesarrollo02@uteg.edu.ec', //'web@uteg.edu.ec',
+	'adminEmail' => 'analistadesarrollo01@uteg.edu.ec', //'web@uteg.edu.ec',
 
-	'soporteEmail' => /*'dlopez@uteg.edu.ec', */'analistadesarrollo02@uteg.edu.ec',
+	'soporteEmail' => /*'dlopez@uteg.edu.ec', */'analistadesarrollo01@uteg.edu.ec',
 	'admisionespri' => /*'admisiones@uteg.edu.ec',*/'analistadesarrollo02@uteg.edu.ec',
-	'admisiones' => /*'admisionesonline@uteg.edu.ec',*/'analistadesarrollo02@uteg.edu.ec',
+	'admisiones' => /*'admisionesonline@uteg.edu.ec',*/'analistadesarrollo01@uteg.edu.ec',
 	'colecturia' => /*'colecturia@uteg.edu.ec',*/'analistadesarrollo02@uteg.edu.ec',
 	'supercolecturia' => /*'supervisorcolecturia@uteg.edu.ec',*/'analistadesarrollo02@uteg.edu.ec',
 	'jefetalento' => /*'directortalento@uteg.edu.ec',*/'analistadesarrollo02@uteg.edu.ec',
@@ -28,6 +28,7 @@ return [
 	'ventasposgrado1' => /*'ventasposgrado01@uteg.edu.ec',*/'analistadesarrollo02@uteg.edu.ec',
 	'ventasposgrado2' => /*'ventasposgrado03@uteg.edu.ec',*/'analistadesarrollo02@uteg.edu.ec',
 	'ventasposgrado3' => /*'ventasposgrado03@uteg.edu.ec',*/'analistadesarrollo02@uteg.edu.ec',
+	'secretariaicp' => 'analistadesarrollo02@uteg.edu.ec', /*'secretaria.icp@uteg.edu.ec',*/
 
 	//GRADO PRESENCIAL
 	'decanogradopresencial' => /*'decanogrado@uteg.edu.ec',*/'analistadesarrollo04@uteg.edu.ec',
@@ -80,6 +81,11 @@ return [
 		'facebook' => 'https://www.facebook.com/uteg.ec',
 		'twitter' => 'https://twitter.com/uteg_ec',
 		'youtube' => 'https://www.youtube.com/channel/UC8_6Fr2MGrNkr-kM7BZzkdQ',
+	],
+	'socialNetworksicp' => [
+		'facebookicp' => 'https://www.facebook.com/ICPUTEG/',
+		'twittericp' => 'https://twitter.com/ICPUTEG',
+		'instagramicp' => 'https://www.instagram.com/icputeg',
 	],
 	'costocreditZero' => '0.00',
 

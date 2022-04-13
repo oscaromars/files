@@ -277,4 +277,72 @@ public static function getNumparalelo(){
             return FALSE;
         }
     }
+
+    /**
+     * Function conmsullta asiganturas para asignar a paralelo.
+     * @author Julio Lopez <analistadesarrollo03@uteg.edu.ec>;
+     * @param
+     * @return
+     */
+    public function consultarMateriaparaleloperiodo($arrFiltro = array(), $onlyData = false) {
+        $con = \Yii::$app->db_academico;
+        $estado = 1;
+        
+        if (isset($arrFiltro) && count($arrFiltro) > 0) {
+            if ($arrFiltro['periodo'] != "" && $arrFiltro['periodo'] != "0") {
+                $str_search .= " mpp.paca_id = :periodo AND";
+            }
+            if ($arrFiltro['unidad'] != "" && $arrFiltro['unidad'] != "0") {
+                $str_search .= " a.uaca_id = :unidad AND";
+            }
+            if ($arrFiltro['modalidad'] != "" && $arrFiltro['modalidad'] != "0") {
+                $str_search .= " mpp.mod_id = :modalidad AND";
+            }    
+             if ($arrFiltro['asignaturas'] != "" && $arrFiltro['asignaturas'] != "0") {
+                $str_search .= " mpp.asi_id = :asignaturas AND";
+            }           
+        } else { $str_search .= " mpp.asi_id = '0' AND"; }
+
+        $sql = "SELECT mpp.asi_id, a.asi_nombre, mpp.mod_id, a.uaca_id, moda.mod_nombre, paca_id,max(mpp_num_paralelo) as mpp_num_paralelo
+                from db_academico.materia_paralelo_periodo as mpp 
+                INNER JOIN db_academico.asignatura as a on a.asi_id=mpp.asi_id
+                INNER JOIN db_academico.modalidad as moda on mpp.mod_id = moda.mod_id
+                where  $str_search
+                1 = 1 AND
+                mpp.mpp_estado = 1 and mpp.mpp_estado_logico=1
+                group by a.asi_nombre,mpp.asi_id, mpp.mod_id, moda.mod_nombre, mpp.paca_id,a.uaca_id";
+
+        $comando = $con->createCommand($sql);
+          $sql = $sql . "order by a.asi_nombre ASC";
+        if (isset($arrFiltro) && count($arrFiltro) > 0) {
+            if ($arrFiltro['periodo'] != "" && $arrFiltro['periodo'] != "0") {
+                $comando->bindParam(":periodo", $arrFiltro["periodo"], \PDO::PARAM_STR);
+            }
+            if ($arrFiltro['unidad'] != "" && $arrFiltro['unidad'] != "0") {
+               $comando->bindParam(":unidad", $arrFiltro["unidad"], \PDO::PARAM_STR);
+            }
+            if ($arrFiltro['modalidad'] != "" && $arrFiltro['modalidad'] != "0") {
+                $comando->bindParam(":modalidad", $arrFiltro["modalidad"], \PDO::PARAM_STR);
+            }
+             if ($arrFiltro['asignaturas'] != "" && $arrFiltro['asignaturas'] != "0") {
+                $comando->bindParam(":asignaturas", $arrFiltro["asignaturas"], \PDO::PARAM_INT);
+            }
+        }
+        $resultData = $comando->queryAll();
+        $dataProvider = new ArrayDataProvider([
+            'allModels' => $resultData,
+            'pagination' => [
+                'pageSize' => 50,
+            ],
+            'sort' => [
+                'attributes' => ['asi_id', 'paca_id', 'mpp_num_paralelo'],
+            ],
+        ]);
+
+        if ($onlyData) {
+            return $resultData;
+        } else {
+            return $dataProvider;
+        }
+    }
 }

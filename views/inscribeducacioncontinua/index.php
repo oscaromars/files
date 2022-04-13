@@ -34,6 +34,7 @@ use yii\helpers\Html;
                                  "arr_metodos" => $arr_metodos,
                                  "arr_nivelinst" => $arr_nivelinst,
                                  "arr_redes" => $arr_redes,
+                                 "arr_genero" => $arr_genero,
                          ]);
                     ?>
                 </form>
@@ -44,6 +45,7 @@ use yii\helpers\Html;
                         $this->render('_form_tab3', [
                             'per_id' => $per_id,
                             "arr_convenio_empresa" => $arr_convenio_empresa,
+                            "arr_item" => $arr_item,
                         ]);
                     ?>
                 </form>

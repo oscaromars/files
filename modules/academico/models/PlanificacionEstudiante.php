@@ -1115,13 +1115,13 @@ inner join db_academico.materia_paralelo_periodo mpp on mpp.asi_id = made.asi_id
      * @return  
      */
     /* INSERTAR DATOS */
-    public function insertarDataPlanificacionestudiante($pla_id, $per_id, $pes_jornada, $pes_carrera, $pes_dni, $pes_nombres, $pes_cod_malla, $insertar, $valores) {
+    public function insertarDataPlanificacionestudiante($pla_id, $per_id, $pes_jornada, $pes_carrera, $pes_dni, $pes_nombres, $pes_cod_malla, $insertar, $valores, $codmalla) {
         $arroout = array();
         $con = \Yii::$app->db_academico;
         $trans = $con->beginTransaction();
         try {            
             $data = isset($data['DATA']) ? $data['DATAS'] : array();
-            $this->insertarPlanificacionestudiante($con, $pla_id, $per_id, $pes_jornada, $pes_carrera, $pes_dni, $pes_nombres, $pes_cod_malla, $insertar, $valores);
+            $this->insertarPlanificacionestudiante($con, $pla_id, $per_id, $pes_jornada, $pes_carrera, $pes_dni, $pes_nombres, $pes_cod_malla, $insertar, $valores,$codmalla);
             $trans->commit();
             $con->close();
             //RETORNA DATOS             
@@ -1143,12 +1143,16 @@ inner join db_academico.materia_paralelo_periodo mpp on mpp.asi_id = made.asi_id
      * @property integer $userid
      * @return  
      */
-    private function insertarPlanificacionestudiante($con, $pla_id, $per_id, $pes_jornada, $pes_carrera, $pes_dni, $pes_nombres, $pes_cod_malla, $insertar, $valores) {
+    private function insertarPlanificacionestudiante($con, $pla_id, $per_id, $pes_jornada, $pes_carrera, $pes_dni, $pes_nombres, $pes_cod_malla, $insertar, $valores,$codmalla) {
         $estado = 1;
+        if ($codmalla == Null) {
+            $codmalla = $pes_cod_malla; 
+        }
         $sql = "INSERT INTO " . $con->dbname . ".planificacion_estudiante
                     (pla_id,
                      per_id,
                      pes_jornada,
+                     pes_cod_carrera,
                      pes_carrera,
                      pes_dni,
                      pes_nombres, 
@@ -1156,8 +1160,8 @@ inner join db_academico.materia_paralelo_periodo mpp on mpp.asi_id = made.asi_id
                      $insertar . "
                      pes_estado,                   
                      pes_estado_logico)VALUES
-                    (" . $pla_id . "," . $per_id . ",'" . $pes_jornada . "','" . $pes_carrera . "','" . $pes_dni . "','"
-                . $pes_nombres . "'," . $pes_cod_malla . ", " . $valores . " '" . $estado . "','" . $estado . "')";
+                    (" . $pla_id . "," . $per_id . ",'" . $pes_jornada . "','" . $codmalla . "','" . $pes_carrera . "','" . $pes_dni . "','"
+                . $pes_nombres . "'," . $codmalla . ", " . $valores . " '" . $estado . "','" . $estado . "')";
         $command = $con->createCommand($sql);
         $command->execute();
     }
@@ -1416,7 +1420,7 @@ inner join db_academico.materia_paralelo_periodo mpp on mpp.asi_id = made.asi_id
         }
     }
 
-    public function confirmarPlanificacionExistente($per_id, $periodo) {
+public function confirmarPlanificacionExistente($per_id, $periodo) {
         $con = \Yii::$app->db_academico;
         $con2 = \Yii::$app->db_asgard;
         $fecha_modificacion= date(Yii::$app->params["dateTimeByDefault"]);
@@ -1425,44 +1429,57 @@ inner join db_academico.materia_paralelo_periodo mpp on mpp.asi_id = made.asi_id
         try {
             if($per_id == null){
                 $resultData = [];
-                \app\models\Utilities::putMessageLogFile('No Enviado');
+               // \app\models\Utilities::putMessageLogFile('No Enviado');
             }else{
                 $sql = ("SELECT * from " . $con->dbname . ".planificacion_estudiante pe
                         inner join " . $con->dbname . ".planificacion pla on pla.saca_id = $periodo and pla.pla_id = pe.pla_id
                         where pe.per_id = $per_id;");
                 $comando = $con->createCommand($sql);
-                $resultData = $comando->queryOne(); 
                 \app\models\Utilities::putMessageLogFile('Encontrado');
+                \app\models\Utilities::putMessageLogFile('confirmarPlanificacionExistente: '.$comando->getRawSql());
+                $resultData = $comando->queryOne(); 
+                \app\models\Utilities::putMessageLogFile($resultData);
             }
             
             if($resultData == null){
                 $sql3 = 
                     ("INSERT INTO " . $con->dbname . ".planificacion_estudiante(pes_cod_malla,pes_cod_carrera,per_id,pes_dni,pes_jornada,pes_nombres,pla_id,pes_estado,pes_estado_logico,pes_fecha_creacion)
-                    select distinct(ma.maca_codigo),ma.maca_nombre,e.per_id, pe.per_cedula, ecpr_jornada as jornada,
+                    select distinct(ma.maca_codigo),ma.maca_codigo,e.per_id, pe.per_cedula, ecpr_jornada as jornada,
                                         concat(pe.per_pri_nombre, ' ', pe.per_seg_nombre,' ', pe.per_pri_apellido, ' ',pe.per_seg_apellido) as nombres, pla.pla_id as pla_id, $estado,$estado,
                                         '$fecha_modificacion'
                                         from " . $con->dbname . ".estudiante_carrera_programa ecp 
                                         inner join " . $con->dbname . ".modalidad_estudio_unidad meu on ecp.meun_id = meu.meun_id
                                         inner join " . $con->dbname . ".estudio_academico es on es.eaca_id = meu.eaca_id 
                                         inner join " . $con->dbname . ".estudiante e on e.est_id = ecp.est_id and  ecp.est_id = e.est_id
-                                        inner join " . $con->dbname . ".malla_academico_estudiante maes on maes.per_id = e.per_id 
+                                        inner join " . $con->dbname . ".malla_academico_estudiante maes on maes.per_id = e.per_id  and maes.maes_estado = 1  and maes.maes_estado_logico = 1
                                         inner join " . $con->dbname . ".malla_academica ma on ma.maca_id = maes.maca_id
                                         inner join " . $con2->dbname . ".persona pe on pe.per_id = e.per_id
                                         inner join " . $con->dbname . ".planificacion pla on pla.saca_id = $periodo and meu.mod_id = pla.mod_id
-                                        where e.per_id = $per_id;");
+                                        where e.per_id = $per_id
+                    AND ecp.ecpr_estado = 1 AND ecp.ecpr_estado_logico = 1
+                    AND meu.meun_estado = 1 AND meu.meun_estado_logico = 1
+                    AND es.eaca_estado = 1 AND es.eaca_estado_logico = 1
+                    AND e.est_estado = 1 AND e.est_estado_logico = 1
+                    AND maes.maes_estado = 1 AND maes.maes_estado_logico = 1
+                    AND ma.maca_estado = 1 AND ma.maca_estado_logico = 1
+                    AND pe.per_estado = 1 AND pe.per_estado_logico = 1
+                    AND pla.pla_estado = 1 AND pla.pla_estado_logico = 1
+                                        ;");
                     $comando3 = $con->createCommand($sql3);
+                    \app\models\Utilities::putMessageLogFile('Insertado');
+                \app\models\Utilities::putMessageLogFile('confirmarPlanificacionExistente: '.$comando3->getRawSql());
                 $result3 = $comando3->execute();
                 $resultData = $resultData  + $result3; 
-                \app\models\Utilities::putMessageLogFile('Insertado');               
+                //\app\models\Utilities::putMessageLogFile('Insertado');               
                 return $resultData;
                 
             }else{
-                \app\models\Utilities::putMessageLogFile('No Insertado');
+                //\app\models\Utilities::putMessageLogFile('No Insertado');
                 return $resultData;
             }
             
         } catch (Exception $ex) {
-            \app\models\Utilities::putMessageLogFile($ex->getMessage());
+           // \app\models\Utilities::putMessageLogFile($ex->getMessage());
             return $ex->getMessage();
         }
     }
@@ -1757,7 +1774,7 @@ inner join db_academico.materia_paralelo_periodo mpp on mpp.asi_id = made.asi_id
                     inner join  ". $con->dbname . ".malla_academica_detalle mad on mad.made_codigo_asignatura in $filtro
                     inner join  ". $con->dbname . ".asignatura a on mad.asi_id = a.asi_id
                     inner join  ". $con->dbname . ".malla_unidad_modalidad mum on mad.maca_id = mum.maca_id
-                    inner join  ". $con->dbname . ".modalidad_estudio_unidad meu on meu.meun_id = (select s.meun_id from db_academico.malla_unidad_modalidad s where s.maca_id = mum.maca_id limit 0,1)
+                    inner join  ". $con->dbname . ".modalidad_estudio_unidad meu on meu.meun_id /*=*/ IN (select s.meun_id from db_academico.malla_unidad_modalidad s where s.maca_id = mum.maca_id /*limit 0,1*/)
                     inner join  ". $con->dbname . ".planificacion pla on pla.pla_id = pe.pla_id
                     inner join  ". $con->dbname . ".semestre_academico se on se.saca_id = pla.saca_id
                     inner join  ". $con->dbname . ".materia_paralelo_periodo mpp on mpp.mpp_id in (pe.pes_mat_b1_h1_mpp,pe.pes_mat_b1_h2_mpp,pe.pes_mat_b1_h3_mpp,
@@ -2551,13 +2568,21 @@ AND pes.pla_id = :pla_id ) as daho12
                 $mod_id = $arrFiltro['modalidad'];
                 $strMod = 'and pl.mod_id = '.$mod_id;
             }
+
+            /* Busqueda por periodo */
+            $paca_id = PeriodoAcademico::find()->select("paca_id")->where(["saca_id" => $saca_id, "paca_estado" => 1,"paca_estado_logico" => 1])->asArray()->all();
+            $paca_1=$paca_id[0]['paca_id'];
+            $paca_2=$paca_id[1]['paca_id'];
+            \app\models\Utilities::putMessageLogFile('paca 1...: '.$paca_1);
+            \app\models\Utilities::putMessageLogFile('paca 1...: '.$paca_2);
+            /* Fin de busqueda*/
             $sql .= 'select distinct x.Ids,x.daho_id,x.saca_id,x.paralelo,x.jor_materia,x.cod_asignatura, x.asignatura,x.pes_jornada,x.bloque,x.modalidad,x.hora,x.horario from (';
             // Bloque 1
             for ($i = 1; $i < 7; $i++) {
                 $sql .= "SELECT pes_id as Ids, mpp.daho_id, pla.saca_id,
                                 concat('Paralelo ',mpp.mpp_num_paralelo) as paralelo,
                                 pes_jor_b1_h" . $i . " as jor_materia, pes_mat_b1_h" . $i . "_cod as cod_asignatura, asig.asi_nombre as asignatura, 
-                                CASE ples.pes_mod_b1_h" . $i . "  
+                                CASE ples.pes_jor_b1_h" . $i . "  
                                     WHEN 'M' THEN 'Matutino'  
                                     WHEN 'N' THEN 'Nocturno'  
                                     WHEN 'S' THEN 'Semipresencial'
@@ -2566,21 +2591,21 @@ AND pes.pla_id = :pla_id ) as daho12
                                     WHEN '2' THEN 'Nocturno'  
                                     WHEN '3' THEN 'Semipresencial'
                                     WHEN '4' THEN 'Distancia'
-                                    else ples.pes_mod_b1_h" . $i . "
+                                    else ples.pes_jor_b1_h" . $i . "
                                 END AS pes_jornada, 
                                 'Bloque 1' as bloque, moda.mod_nombre as modalidad, 'Hora " . $i . "' as hora,
+                                mpp.mpp_id,
                                 case mpp.daho_id
-                                when '0' then ''
-                                when NULL then ''
-                                else ifnull(daho.daho_descripcion ,'') 
+                                    when daho.daho_id then daho.daho_descripcion
+                                    when ifnull(mpp.daho_id,0)=0 then ''
                                 end as horario
                         FROM " . $con->dbname . ".planificacion_estudiante ples
                         INNER JOIN " . $con->dbname . ".planificacion pla on pla.pla_id = ples.pla_id
                         INNER JOIN " . $con->dbname . ".modalidad moda ON  moda.mod_id = ples.pes_mod_b1_h" . $i . "
                         INNER JOIN " . $con->dbname . ".malla_academica_detalle mad ON  mad.made_codigo_asignatura = pes_mat_b1_h" . $i . "_cod
                         INNER JOIN " . $con->dbname . ".asignatura asig ON  asig.asi_id = mad.asi_id
-                        INNER JOIN " . $con->dbname . ".materia_paralelo_periodo mpp on mpp.mpp_id = ples.pes_mat_b1_h".$i."_mpp
-                        INNER JOIN " . $con->dbname . ".distributivo_academico_horario daho on daho.daho_id = mpp.daho_id or ifnull(mpp.daho_id,0) = 0
+                        LEFT JOIN " . $con->dbname . ".materia_paralelo_periodo mpp on mpp.mpp_id = ples.pes_mat_b1_h".$i."_mpp and mpp.mod_id =moda.mod_id and mpp.paca_id= $paca_1
+                        LEFT JOIN " . $con->dbname . ".distributivo_academico_horario daho on daho.daho_id = mpp.daho_id or ifnull(mpp.daho_id,0) = 0
                         where ples.per_id =  $per_id and ples.pla_id = (SELECT distinct ples.pla_id from ". $con->dbname . ".periodo_academico pa
                                                                 inner join ". $con->dbname . ".planificacion pl on pl.saca_id = pa.saca_id
                                                                 inner join ". $con->dbname . ".planificacion_estudiante ples on ples.pla_id = pl.pla_id 
@@ -2596,7 +2621,7 @@ AND pes.pla_id = :pla_id ) as daho12
                 $sql .= "SELECT pes_id as Ids, mpp.daho_id,pla.saca_id,
                                 concat('Paralelo ',mpp.mpp_num_paralelo) as paralelo,
                                 pes_jor_b2_h" . $j . " as jor_materia, pes_mat_b2_h" . $j . "_cod as cod_asignatura, asig.asi_nombre as asignatura, 
-                                CASE ples.pes_mod_b2_h" . $j . "  
+                                CASE ples.pes_jor_b2_h" . $j . "  
                                     WHEN 'M' THEN 'Matutino'  
                                     WHEN 'N' THEN 'Nocturno'  
                                     WHEN 'S' THEN 'Semipresencial'
@@ -2605,21 +2630,21 @@ AND pes.pla_id = :pla_id ) as daho12
                                     WHEN '2' THEN 'Nocturno'  
                                     WHEN '3' THEN 'Semipresencial'
                                     WHEN '4' THEN 'Distancia'
-                                    else ples.pes_mod_b2_h" . $j . " 
+                                    else ples.pes_jor_b2_h" . $j . " 
                                 END AS pes_jornada, 
                                 'Bloque 2' as bloque, moda.mod_nombre as modalidad, 'Hora " . $j . "' as hora,
+                                mpp.mpp_id,
                                 case mpp.daho_id
-                                when '0' then ''
-                                when NULL then ''
-                                else ifnull(daho.daho_descripcion ,'') 
+                                    when daho.daho_id then daho.daho_descripcion
+                                    when ifnull(mpp.daho_id,0)=0 then ''
                                 end as horario
                         FROM " . $con->dbname . ".planificacion_estudiante ples
                         INNER JOIN " . $con->dbname . ".planificacion pla on pla.pla_id = ples.pla_id
                         INNER JOIN " . $con->dbname . ".modalidad moda ON  moda.mod_id = ples.pes_mod_b2_h" . $j . "
                         INNER JOIN " . $con->dbname . ".malla_academica_detalle mad ON  mad.made_codigo_asignatura = pes_mat_b2_h" . $j . "_cod
                         INNER JOIN " . $con->dbname . ".asignatura asig ON  asig.asi_id = mad.asi_id
-                        INNER JOIN " . $con->dbname . ".materia_paralelo_periodo mpp on mpp.mpp_id = ples.pes_mat_b2_h".$j."_mpp
-                        INNER JOIN " . $con->dbname . ".distributivo_academico_horario daho on daho.daho_id = mpp.daho_id or ifnull(mpp.daho_id,0) = 0
+                        LEFT JOIN " . $con->dbname . ".materia_paralelo_periodo mpp on mpp.mpp_id = ples.pes_mat_b2_h".$j."_mpp and mpp.mod_id =moda.mod_id and mpp.paca_id= $paca_2
+                        LEFT JOIN " . $con->dbname . ".distributivo_academico_horario daho on daho.daho_id = mpp.daho_id or ifnull(mpp.daho_id,0) = 0
                         where ples.per_id =  $per_id and ples.pla_id = (SELECT distinct ples.pla_id from ". $con->dbname . ".periodo_academico pa
                                                                 inner join ". $con->dbname . ".planificacion pl on pl.saca_id = pa.saca_id
                                                                 inner join ". $con->dbname . ".planificacion_estudiante ples on ples.pla_id = pl.pla_id 
@@ -2639,7 +2664,7 @@ AND pes.pla_id = :pla_id ) as daho12
                 $comando = $con->createCommand($sql);
                 $resultData = $comando->queryall();
                 //\app\models\Utilities::putMessageLogFile('query 1...: '.$sql);
-                \app\models\Utilities::putMessageLogFile('consultaPlanificacion: '.$comando->getRawSql());
+                \app\models\Utilities::putMessageLogFile('consultarDetalleplanificaaut: '.$comando->getRawSql());
 
                 /*if ($arrFiltro['pla_id'] > 0) {
                     $modalidad = $arrFiltro["pla_id"];

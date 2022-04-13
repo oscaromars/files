@@ -709,10 +709,48 @@ $(document).ready(function () {
     });
 
     //Control del div de Descuentos.
+
+    $('#opt_agree_Dctosi').change(function () {
+        var link = $('#txth_base').val() + "/admision/solicitudes/new";
+        if ($('#opt_agree_Dctosi').val() == 1) {
+            $('#divConvenioID').css('display', 'block');
+            $('#divConvenioObs').css('display', 'block');
+            $("#opt_agree_Dctono").prop("checked", "");
+            //Precio con descuento.
+            var arrParams = new Object();
+            arrParams.descuento_id = $('#cmb_descuento').val();
+            arrParams.ite_id = $('#cmb_item').val();
+            arrParams.getpreciodescuento = true;
+            requestHttpAjax(link, arrParams, function (response) {
+                if (response.status == "OK") {
+                    data = response.message;
+                    $('#txt_precio_item2').val(data.preciodescuento);
+                }
+            }, true);
+        } else {
+            $('#divConvenioID').css('display', 'none');
+            $('#divConvenioObs').css('display', 'none');
+        }
+
+    });
+
+    $('#opt_agree_Dctono').change(function () {
+        if ($('#opt_agree_Dctono').val() == 2) {
+            $('#divConvenioID').css('display', 'none');
+            $('#divConvenioObs').css('display', 'none');
+            $("#opt_agree_Dctosi").prop("checked", "");
+        } else {
+            $('#divConvenioID').css('display', 'block');
+            $('#divConvenioObs').css('display', 'block');
+        }
+    });
+
+
     $('#opt_declara_Dctosi').change(function () {
         var link = $('#txth_base').val() + "/admision/solicitudes/new";
         if ($('#opt_declara_Dctosi').val() == 1) {
             $('#divDescuento').css('display', 'block');
+            $('#divObservacion').css('display', 'block');
             $("#opt_declara_Dctono").prop("checked", "");
             //Precio con descuento.
             var arrParams = new Object();
@@ -727,6 +765,7 @@ $(document).ready(function () {
             }, true);
         } else {
             $('#divDescuento').css('display', 'none');
+            $('#divObservacion').css('display', 'none');
         }
 
     });
@@ -734,9 +773,11 @@ $(document).ready(function () {
     $('#opt_declara_Dctono').change(function () {
         if ($('#opt_declara_Dctono').val() == 2) {
             $('#divDescuento').css('display', 'none');
+            $('#divObservacion').css('display', 'none');
             $("#opt_declara_Dctosi").prop("checked", "");
         } else {
             $('#divDescuento').css('display', 'block');
+            $('#divObservacion').css('display', 'block');
         }
     });
 
@@ -1086,12 +1127,28 @@ function save() {
     arrParams.observacion = $('#txt_observacion').val();
     arrParams.ite_id = $('#cmb_item').val();
     arrParams.precio = $('#txt_precio_item').val();
-    arrParams.cemp_id = $('#cmb_convenio').val();
     arrParams.correo_fac = $('#txt_correo_fac').val();
     if ($('input[name=opt_declara_Dctosi]:checked').val() == 1) {
         arrParams.descuento_id = $('#cmb_descuento').val();
         arrParams.marcadescuento = '1';
     }
+        if ($('input[name=opt_agree_Dctosi]:checked').val() == 1) {
+            arrParams.cemp_id = $('#cmb_convenio').val();
+    }
+
+   if ($('input[name=opt_declara_Dctosi]:checked').val() == 1) {
+                if ($('input[name=opt_agree_Dctosi]:checked').val() == 1) {
+
+var hasvalidate = 1;
+ 
+    }  
+} 
+          if (hasvalidate == 1) {
+
+ showAlert('NO_OK', 'error', {"wtmessage": 'No puede escoger descuento y convenio para una misma solicitud!', "title": 'Información'});
+ 
+} else { 
+
     if ($('input[name=opt_declara_si]:checked').val() == 1) {
         arrParams.beca = 1;
     } else {
@@ -1118,6 +1175,7 @@ function save() {
             }, 5000);
         }, true);
     }
+  }
 }
 //Guarda Documentos de solicitudes de inscripción.
 function SaveDocumentos() {

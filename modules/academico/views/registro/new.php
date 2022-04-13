@@ -76,13 +76,55 @@ echo '  <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12">
 <?php
 $registro = '';
 for ($i = 0; $i < count($datasiga); $i++) {
-	$registro .= $datasiga[$i]['detalle'] . ','; //explode(" ",$datasiga[$i]['detalle'])[0];
+    $registro .= $datasiga[$i]['detalle'] . ','; //explode(" ",$datasiga[$i]['detalle'])[0];
 }
 echo "<input type='hidden' id='data_siga' value='" . substr($registro, 0, -1) . "' />";
 echo "<input type='hidden' id='num_reg' value='" . count($datasiga) . "' />";
-//print_r(substr($registro,0,-1));
+//print_r(substr($registro,0,-1));  
 ?>
+<style>
+    .procesando{
+        left: 50%;
+    top: 50%;
+    font-size: 18px;
+    font-family: serif;
+    font-weight: bold;
+    letter-spacing: 4.4px;
+    text-transform: capitalize;
+    position: absolute;
+    overflow: hidden;
+    transform: translate(-50%, -60%);
+    }
+    .procesando:before {
+        color: #aaa;
+        content: attr(data-loading-text);
+    }
+    
+    .procesando:after {
+        top: 0;
+        left: 0;
+        width: 0;
+        opacity: 1;
+        color: #005991;
+        overflow: hidden;
+        position: absolute;
+        content: attr(data-loading-text);
+        animation: procesando 5s infinite;
+    }
+    
+    @keyframes procesando {
+      0% { 
+        width: 0; 
+      }
+      100% {
+        width: 100%; 
+      }
+    }
+    
+    
+</style>
 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 form-group row">
+    <strong><h5><div class="procesando" id="lbl_registro_online" data-loading-text="Procesando..." hidden></div></h5></strong>
     <h3><span id="lbl_registro_online"><?=academico::t("Academico", "Registro de pago en Línea")?></span></h3>
 </div>
 <form class="form-horizontal" enctype="multipart/form-data">
@@ -230,29 +272,29 @@ echo "<input type='hidden' id='num_reg' value='" . count($datasiga) . "' />";
                             <?=Html::hiddenInput('txth_doc_pago', '', ['id' => 'txth_doc_pago']);?>
                             <?php
 echo CFileInputAjax::widget([
-	'id' => 'txt_doc_pago',
-	'name' => 'txth_doc_pago',
-	'pluginLoading' => false,
-	'showMessage' => false,
-	//'options' => ["class" => "form-control PBvalidation keyupmce", "id" => "txt_doc_pago", "placeholder" => Pagos::t("Pagos", "Payment Date")],
-	'pluginOptions' => [
-		'showPreview' => false,
-		'showCaption' => true,
-		'showRemove' => true,
-		'showUpload' => false,
-		'showCancel' => false,
-		'browseClass' => 'btn btn-primary btn-block',
-		'browseIcon' => '<i class="fa fa-folder-open"></i> ',
-		'browseLabel' => "Subir Archivo",
-		'uploadUrl' => Url::to(['registro/cargarpago']),
-		'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
-		'uploadExtraData' => 'javascript:function (previewId,index) {
+    'id' => 'txt_doc_pago',
+    'name' => 'txth_doc_pago',
+    'pluginLoading' => false,
+    'showMessage' => false,
+    //'options' => ["class" => "form-control PBvalidation keyupmce", "id" => "txt_doc_pago", "placeholder" => Pagos::t("Pagos", "Payment Date")],
+    'pluginOptions' => [
+        'showPreview' => false,
+        'showCaption' => true,
+        'showRemove' => true,
+        'showUpload' => false,
+        'showCancel' => false,
+        'browseClass' => 'btn btn-primary btn-block',
+        'browseIcon' => '<i class="fa fa-folder-open"></i> ',
+        'browseLabel' => "Subir Archivo",
+        'uploadUrl' => Url::to(['registro/cargarpago']),
+        'maxFileSize' => Yii::$app->params["MaxFileSize"], // en Kbytes
+        'uploadExtraData' => 'javascript:function (previewId,index) {
                                             var name_pago= $("#txth_doc_pago").val();
                                             return {"upload_file": true, "name_file": name_pago};
                                         }',
-	],
-	'pluginEvents' => [
-		"filebatchselected" => "function (event) {
+    ],
+    'pluginEvents' => [
+        "filebatchselected" => "function (event) {
                                             function d2(n) {
                                                 if(n<9) return '0'+n;
                                                 return n;
@@ -265,27 +307,27 @@ echo CFileInputAjax::widget([
                                             var ext = fileSent.split('.');
                                             $('#txth_doc_pago').val(name_pago + '.' + ext[ext.length - 1]);
                                         }",
-		"fileuploaderror" => "function (event, data, msg) {
+        "fileuploaderror" => "function (event, data, msg) {
                                             $(this).parent().parent().children().first().addClass('hide');
                                             $('#txth_doc_pago').val('');
                                             //showAlert('NO_OK', 'error', {'wtmessage': objLang.Error_to_process_File__Try_again_, 'title': objLang.Error});
                                         }",
-		"filebatchuploadcomplete" => "function (event, files, extra) {
+        "filebatchuploadcomplete" => "function (event, files, extra) {
                                             $(this).parent().parent().children().first().addClass('hide');
                                         }",
-		"filebatchuploadsuccess" => "function (event, data, previewId, index) {
+        "filebatchuploadsuccess" => "function (event, data, previewId, index) {
                                             var form = data.form, files = data.files, extra = data.extra,
                                             response = data.response, reader = data.reader;
                                             $(this).parent().parent().children().first().addClass('hide');
                                             var acciones = [{id: 'reloadpage', class: 'btn btn-primary', value: objLang.Accept, callback: 'reloadPage'}];
                                             //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});
                                         }",
-		"fileuploaded" => "function (event, data, previewId, index) {
+        "fileuploaded" => "function (event, data, previewId, index) {
                                             $(this).parent().parent().children().first().addClass('hide');
                                             var acciones = [{id: 'reloadpage', class: 'btn btn-primary', value: objLang.Accept, callback: 'reloadPage'}];
                                             //showAlert('OK', 'Success', {'wtmessage': objLang.File_uploaded_successfully__Do_you_refresh_the_web_page_, 'title': objLang.Success, 'acciones': acciones});
                                         }",
-	],
+    ],
 ]);
 ?>
                         </div>
@@ -317,6 +359,12 @@ echo CFileInputAjax::widget([
 
     <div  class= "row"   style="display: block;"  id="paylink2"  class="nocredit" >
         <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+            <!-- 10 marzo 2022 -->
+        <div class="form-group pago_documento">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="alert alert-info"><span style="font-weight: bold"> Nota: </span> Si desea cambiar datos de facturación, enviar un correo a supervisorcolecturia@uteg.edu.ec.</div>
+            </div>
+        </div>
             <div class="form-group">
                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                     <h4><b><span id="lbl_general"><?=financiero::t("Pagos", "Billing Data")?></span></b></h4>
@@ -378,6 +426,8 @@ echo CFileInputAjax::widget([
                 </div>
             </div>
         </div>
+
+        
 
 
         <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 nocredit2" >

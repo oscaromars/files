@@ -211,8 +211,8 @@ class UsuarioController extends CController
     public function actionGeneraclaves() {
         $usuario = new Usuario();     
         $security = new Security();
-        $dataInicial = 4931;
-        $dataFinal = 4931;
+        $dataInicial = 312;
+        $dataFinal = 312;
         $resul = $usuario->consultarDataUsuario($dataInicial, $dataFinal);
         if (count($resul)>0) {            
             for ($i=0; $i<count($resul); $i++) {                

@@ -2,7 +2,8 @@ var stripe;
 var cardElement;
 $(document).ready(function() {
     $('#atach_docum_pago').css('display', 'none');
-    $('#btn_buscar').click(function() {
+    //$('#btn_buscar').click(function() {//04 marzo 2022
+    $('#btn_buscar_index').click(function() {//04 marzo 2022
         searchModules();
     });
     $('#btn_buscarLis').click(function() {
@@ -147,12 +148,12 @@ $(document).ready(function() {
     sessionStorage.setItem('grid_direct_credit', '');
 
 
-        /***********************************************/
+    /***********************************************/
     /* Filtro para busqueda en listado solicitudes */
     /***********************************************/
-    $('#cmb_mod').change(function () {
+    /*$('#cmb_mod').change(function () {
         var link = $('#txth_base').val() + "/academico/registro/index";
-        /*document.getElementById("cmb_carrerabus").options.item(0).selected = 'selected';*/
+        //document.getElementById("cmb_carrerabus").options.item(0).selected = 'selected';
         var arrParams = new Object();
         arrParams.nint_id = $(this).val();
         arrParams.getperiodo = true;
@@ -160,20 +161,24 @@ $(document).ready(function() {
             if (response.status == "OK") {
                 data = response.message;
                 setComboDataselect(data.periodo, "cmb_per_acad", "Todos");
-                /*var arrParams = new Object();
-                if (data.modalidad.length > 0) {
-                    arrParams.unidada = $('#cmb_unidadbus').val();
-                    arrParams.moda_id = data.modalidad[0].id;
-                    arrParams.getcarrera = true;
-                    requestHttpAjax(link, arrParams, function (response) {
-                        if (response.status == "OK") {
-                            data = response.message;
-                            setComboDataselect(data.carrera, "cmb_carrerabus", "Todos");
-                        }
-                    }, true);
-                }*/
+                //var arrParams = new Object();
+                //if (data.modalidad.length > 0) {
+                //    arrParams.unidada = $('#cmb_unidadbus').val();
+                //    arrParams.moda_id = data.modalidad[0].id;
+                //    arrParams.getcarrera = true;
+                //    requestHttpAjax(link, arrParams, function (response) {
+                //        if (response.status == "OK") {
+                //            data = response.message;
+                //            setComboDataselect(data.carrera, "cmb_carrerabus", "Todos");
+                //        }
+                //    }, true);
+                //}
             }
         }, true);
+    });*/
+
+    $('#btn_limpiarbuscador').click(function () {
+       limpiarBuscador();
     });
 
 });
@@ -207,7 +212,17 @@ function searchModules() {
     arrParams2.periodo = ($("#cmb_per_acad option:selected").val());
     //arrParams2.estado = $("#cmb_status").val();
     //alert(arrParams2.periodo+'-'+arrParams2.estado);
-    $("#grid_registropay_list").PbGridView("applyFilterData", arrParams2);
+    var mod_id = $("#cmb_mod option:selected").val();
+    var periodo = ($("#cmb_per_acad option:selected").val());
+    var estudiante = $("#txt_buscarData").val();
+    var f_ini = $('#txt_fecha_ini').val();
+    var f_fin = $('#txt_fecha_fin').val();
+    //$("#grid_registropay_list").PbGridView("applyFilterData", arrParams2);
+    if (!$(".blockUI").length) {
+        showLoadingPopup();
+        $("#grid_registropay_list").PbGridView("applyFilterData", {'modalidad': mod_id,'f_ini': f_ini, 'f_fin': f_fin, 'periodo': periodo,'estudiante': estudiante});
+        setTimeout(hideLoadingPopup, 2000);
+    }
 }
 
 function searchModulesList() {
@@ -741,7 +756,7 @@ function confirmarDevolucion(id) {
 
 function guardarCargarCartera(){
     enviarDatosFacturacion();
-    iniciarEnvioSiga();
+    //iniciarEnvioSiga(); //04 marzo 2022, se deshabilita webservices Siga.
     var link = $('#txth_base').val() + "/academico/registro/modificarcargacartera";
     showLoadingPopup();
     var arrParams       = new Object();
@@ -874,7 +889,7 @@ function enviarPdf(){
     }
 }
 
-function iniciarEnvioSiga(){
+/*function iniciarEnvioSiga(){
     var link = $('#txth_base').val() + "/academico/registro/enviosigamatricula";
     var arrParams       = new Object();
     arrParams.rama      = $('#txt_rama').val();
@@ -907,22 +922,22 @@ function iniciarEnvioSiga(){
     arrParams.virtuales     = virtuales;
     arrParams.varios        = varios;
     arrParams.msg           = '';
-/*
-    setTimeout(function() {
-        requestHttpAjax(link, arrParams, function(response) {
-            var message = response.message;
-            if (response.status == "OK") {
-                setTimeout(function() {
-                    showAlert(response.status, response.type, { "wtmessage": message.info, "title": response.label });
-                    }, 1000);
-            } else {
+
+    //setTimeout(function() {
+      //  requestHttpAjax(link, arrParams, function(response) {
+        //    var message = response.message;
+          //  if (response.status == "OK") {
+            //    setTimeout(function() {
+              //      showAlert(response.status, response.type, { "wtmessage": message.info, "title": response.label });
+                //    }, 1000);
+            //} else {
                 //showAlert(response.status, response.type, { "wtmessage": message.info, "title": response.label });
-            }
+            //}
 
-        }, true);
+        //}, true);
 
-     }, 1000);
-*/   
+     //}, 1000);
+   
     data = new FormData();
     data.append( 'accion' , "registro" );
     data.append( 'online' , mod);
@@ -950,7 +965,8 @@ function iniciarEnvioSiga(){
         },
     });
     alert('Envío exitoso');
-}//function iniciarEnvioSiga+
+}*/
+//function iniciarEnvioSiga
 
 function enviarDatosFacturacion(){
     var link = $('#txth_base').val() + "/academico/registro/datosfacturacion";
@@ -993,3 +1009,8 @@ function exportExcel() {
     var f_fin = $('#txt_fecha_fin').val();
     window.location.href = $('#txth_base').val() + "/academico/registro/exportexcel?estudiante=" + estudiante +  '&modalidad=' + modalidad + "&periodo=" + periodo + '&f_fin=' + f_fin + '&f_ini=' + f_ini;
  }
+
+function limpiarBuscador(){
+   //alert($('#txth_base').val());
+   window.location.href = $('#txth_base').val() + "/academico/registro/index";
+}

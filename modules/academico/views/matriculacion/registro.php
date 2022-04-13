@@ -11,7 +11,7 @@ if(empty($planificacion['Rama_id'])){
     $planificacion['Rama_id']=0;
 }*/
 
-print_r($planificacion); 
+//print_r($planificacion);
 
 if ($isdrop) {
     echo "<div class='col-lg-12 col-md-12 col-sm-12 col-xs-12 form-group'>";
@@ -132,6 +132,7 @@ $total=$costo['costo']+$costo['gastos']+$costo['asociacion'];
 <input type="hidden" id="frm_num_min" value="<?= $num_min ?>">
 <input type="hidden" id="frm_num_max" value="<?= $num_max ?>">
 <input type="hidden" id="costoadm" value="<?= $gastoAdm ?>">
+<input type="hidden" id="frm_cant_mat_planificada" value="<?= $cant_mat_planificada ?>">
 
 <br>
 <?=

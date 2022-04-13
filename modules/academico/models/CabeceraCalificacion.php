@@ -2189,9 +2189,11 @@ croe.croe_exec,ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca
      * @return
      *  Consulta Aulas Educativa
      */
-    public function consultarAulas($paca_id=Null,$uaca_id=Null,$mod_id=Null,$cedu_id=Null) {      
+     public function consultarAulas($paca_id=Null,$uaca_id=Null,$mod_id=Null,$cedu_id=Null,$ecal_id=Null) {
+      //public function consultarAulas($paca_id=28,$uaca_id=1,$mod_id=1,$cedu_id=3616) {        
         $con = \Yii::$app->db_academico;
         $estado = 1;
+        if ($ecal_id == Null){ $ecal_id = -1; }
         
  $str_search = ""; 
     if ($paca_id != "" && $paca_id > 0) {
@@ -2208,9 +2210,10 @@ croe.croe_exec,ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca
         }
 
  $sql = "
-SELECT distinct ceduct.cedu_asi_id as id ,LEFT(ceduct.cedu_asi_nombre, 80) as name
+SELECT distinct cuni.ecal_id, ceduct.cedu_asi_id as id ,LEFT(ceduct.cedu_asi_nombre, 80) as name
 ,cedist.daca_id,uaca.uaca_nombre, daca.paca_id, moda.mod_nombre, daca.mpp_id, 
-person.per_pri_apellido, daca.asi_id
+concat (person.per_pri_nombre, ' ',person.per_pri_apellido, ' Msc.') as docente, daca.asi_id,
+ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca_anio),'') AS paca_nombre
 FROM db_academico.curso_educativa_distributivo cedist
 INNER JOIN db_academico.curso_educativa as ceduct on cedist.cedu_id = ceduct.cedu_id
 INNER JOIN db_academico.distributivo_academico as daca on cedist.daca_id = daca.daca_id
@@ -2221,12 +2224,16 @@ INNER JOIN db_academico.unidad_academica as uaca on  uaca.uaca_id = daca.uaca_id
 INNER JOIN db_academico.modalidad as moda on  moda.mod_id = daca.uaca_id
 INNER JOIN db_academico.profesor as profe on  profe.pro_id = daca.pro_id
 INNER JOIN db_asgard.persona as person on  person.per_id = profe.per_id
+LEFT JOIN db_academico.componente_unidad as cuni on ecal_id = :ecal
 LEFT JOIN db_academico.malla_academico_estudiante macaes 
 ON macaes.per_id = usuedu.per_id AND macaes.asi_id = daca.asi_id
 LEFT JOIN db_academico.cabecera_calificacion as cabec on  cabec.est_id = daes.est_id
 AND cabec.asi_id = daca.asi_id
 LEFT JOIN db_academico.temp_estudiantes_noprocesados as tempo on  tempo.est_id = daes.est_id
 AND tempo.asi_id = daca.asi_id
+INNER JOIN db_academico.periodo_academico AS paca ON paca.paca_id = daca.paca_id  --
+INNER JOIN db_academico.semestre_academico AS saca ON saca.saca_id = paca.saca_id --
+INNER JOIN db_academico.bloque_academico AS baca ON baca.baca_id = paca.baca_id --
 WHERE  TRUE $str_search
 AND ceduct.cedu_estado = :estado AND ceduct.cedu_estado_logico = :estado
 AND cedist.cedi_estado = :estado AND cedist.cedi_estado_logico = :estado
@@ -2236,11 +2243,15 @@ AND usuedu.uedu_estado = :estado AND usuedu.uedu_estado_logico = :estado
 AND estu.est_estado = :estado AND estu.est_estado_logico = :estado
 AND uaca.uaca_estado = :estado AND uaca.uaca_estado_logico = :estado
 AND moda.mod_estado = :estado AND moda.mod_estado_logico = :estado
-AND profe.pro_estado = :estado AND profe.pro_estado_logico = :estado
-AND person.per_estado = :estado AND person.per_estado_logico = :estado
-AND macaes.maes_estado = :estado AND macaes.maes_estado_logico = :estado
-AND cabec.ccal_estado = :estado AND cabec.ccal_estado_logico = :estado
-AND tempo.teno_estado = :estado AND tempo.teno_estado_logico = :estado
+AND paca.paca_estado = :estado AND paca.paca_estado_logico = :estado 
+AND saca.saca_estado = :estado AND saca.saca_estado_logico = :estado
+AND baca.baca_estado = :estado AND baca.baca_estado_logico = :estado
+-- AND profe.pro_estado = :estado AND profe.pro_estado_logico = :estado
+-- AND person.per_estado = :estado AND person.per_estado_logico = :estado
+-- AND macaes.maes_estado = :estado AND macaes.maes_estado_logico = :estado
+-- AND cabec.ccal_estado = :estado AND cabec.ccal_estado_logico = :estado
+-- AND tempo.teno_estado = :estado AND tempo.teno_estado_logico = :estado
+ORDER BY name ASC
      ";
 
         $comando = $con->createCommand($sql);
@@ -2257,6 +2268,7 @@ AND tempo.teno_estado = :estado AND tempo.teno_estado_logico = :estado
             $comando->bindParam(":cedu_id", $cedu_id, \PDO::PARAM_INT);
         }
         $comando->bindParam(":estado", $estado, \PDO::PARAM_INT);
+        $comando->bindParam(":ecal", $ecal_id, \PDO::PARAM_INT);
         $resultAulas = $comando->queryAll();
         return $resultAulas;
     }
@@ -2432,8 +2444,7 @@ return $cabeceras;
      *  funciones auxiliares para gestion de Detalles de calificaciones
      */
 function getdetalles($ccal_id,$cuni_id){
- GLOBAL $dsn, $dbuser, $dbpass, $dbname;
-$con = new \PDO($dsn, $dbuser, $dbpass);
+$con = Yii::$app->db_academico;
 $sql="
 SELECT dcal_id, ccal_id,cuni_id,dcal_calificacion,
 dcal_usuario_creacion,dcal_fecha_modificacion
@@ -2447,8 +2458,7 @@ $detalles = $comando->queryOne();
 return $detalles;
 }
 function putdetalles($ccal_id,$cuni_id,$dcalificacion){
-GLOBAL $dsn, $dbuser, $dbpass, $dbname;
-$con = new \PDO($dsn, $dbuser, $dbpass);
+$con = Yii::$app->db_academico;
 $sql="
 INSERT INTO db_academico.detalle_calificacion
 (ccal_id,cuni_id,dcal_calificacion,dcal_usuario_creacion,dcal_estado,dcal_estado_logico)
@@ -2458,9 +2468,20 @@ $comando = $con->createCommand($sql);
 $detalles = $comando->execute();
 return $detalles;
 }
-function updatedetalles($dcal_id,$dcalificacion){
- GLOBAL $dsn, $dbuser, $dbpass, $dbname;
+function putbitacora($ccal_id,$cuni_id,$dcalificacion){
+GLOBAL $dsn, $dbuser, $dbpass, $dbname;
 $con = new \PDO($dsn, $dbuser, $dbpass);
+$sql="
+INSERT INTO db_academico.registro_bitacora_nota
+(dcal_id, rbno_nota_anterior, rbno_nota_actual, rbno_usuario_creacion, rbno_estado, 
+rbno_estado_logico) VALUES ($dcal_id, '0',$dcalificacion, '1', '1', '1');
+";
+$comando = $con->createCommand($sql);
+$bitacora = $comando->execute();
+return $bitacora;
+}
+function updatedetalles($dcal_id,$dcalificacion){
+$con = Yii::$app->db_academico;
 $sql="
 UPDATE db_academico.detalle_calificacion
  SET dcal_calificacion = $dcalificacion,
@@ -2472,5 +2493,107 @@ $detalles = $comando->execute();
 return $detalles;
 
 }
+
+ /**
+     * @author  Oscar Sanchez <analistadesarrollo05@uteg.edu.ec>
+     * @param
+     * @return
+     *  funciones auxiliares para obtencion de calificaciones Educativa
+     */
+ function getparamcategoria($elemento) {
+$datacategorias = array();
+$elementos = explode(" ", $elemento);
+ for ($iter = 0; $iter < 21; $iter++) 
+ {
+
+  if (isset($elementos[$iter])) {
+  
+
+   if (isset($elementos[$iter+1])){
+  $nexter = $elementos[$iter+1];    
+   } else {
+$nexter =  0;
+
+   }
+    if ( strtoupper(substr($elementos[$iter],0,1)) == 'S'){
+
+      if (intval(substr($elementos[$iter],1,1)) > 0 ) {           
+             $datacategorias['semana'] = substr($elementos[$iter],1,2);
+          } elseif ( intval($nexter) > 0  AND strtoupper(substr($elementos[$iter],2,1)) == 'M'){ 
+     $datacategorias['semana'] = $nexter; 
+    }
+
+     } 
+
+     elseif ( strtoupper(substr($elementos[$iter],0,1)) == 'P'){
+
+        if (intval(substr($elementos[$iter],1,1)) > 0 ) {           
+             $datacategorias['parcial'] = substr($elementos[$iter],1,2); 
+          } elseif (intval($nexter) > 0){
+             $datacategorias['parcial'] = $nexter;
+          }
+
+   }  elseif ( strtoupper(substr($elementos[$iter],0,1)) == 'U'){
+       if (intval(substr($elementos[$iter],1,1)) > 0){
+          $datacategorias['unidad'] = substr($elementos[$iter],1,2);
+       } elseif (intval($nexter) > 0){
+             $datacategorias['unidad'] = $nexter;
+          }
+
+
+   }  
+
+}
+
+ } 
+
+return $datacategorias;
+ }
+
+ function getnota($elemento) {
+$notas = explode("/", $elemento);
+$withouter = str_replace(chr(44), chr(46), $notas[0]);
+$grade = $withouter*1;  
+return $grade;
+ }
+
+
+function getparamitem($elemento) {                                                   
+ $dataitems = array();
+ $elementos = explode(" ", $elemento);
+ for ($iter = 0; $iter < count($elementos); $iter++) 
+ {
+     if ( strtoupper(substr($elementos[$iter],0,3)) == 'TAL'){
+          if (intval($elementos[$iter+1]) > 0){
+           $dataitems['taller'] = $elementos[$iter+1];
+          }elseif (intval($elementos[$iter+2]) > 0) {
+            $dataitems['taller'] = $elementos[$iter+2];
+          }
+
+
+   }  elseif ( strtoupper(substr($elementos[$iter],0,3)) == 'EVA'){
+      $dataitems['evaluacion'] = 1;
+
+
+   }  elseif ( strtoupper(substr($elementos[$iter],0,3)) == 'EXA'){
+       $dataitems['examen'] = 1;
+
+   }  elseif ( strtoupper(substr($elementos[$iter],0,3)) == 'SUP'){
+       $dataitems['supletorio'] = 1;
+
+   }
+
+    elseif ( strtoupper(substr($elementos[$iter],0,3)) == 'FOR'){
+       $dataitems['foro'] = 1;
+
+   } elseif ( strtoupper(substr($elementos[$iter],0,4)) == 'SINC'){
+       $dataitems['sincrona'] = 1;
+
+   }
+
+ }  
+
+return $dataitems;
+ }
 
 }

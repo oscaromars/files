@@ -676,4 +676,4 @@ INSERT INTO db_academico.planificacion_estudiante (`pes_id`,`pla_id`,`per_id`,`p
 -- Volcado de datos para la tabla `numero_matricula`
 --
 INSERT INTO `db_academico`.`numero_matricula` (`nmat_id`, `nmat_codigo`, `nmat_descripcion`, `nmat_anio`, `nmat_numero`, `nmat_usuario_ingreso`, `nmat_usuario_modifica`, `nmat_estado`, `nmat_fecha_creacion`, `nmat_estado_logico`) VALUES
-('1', '1', 'secuencial para matricula', '2022', '00000', '1', NULL, '1', '2022-02-02 16:00:00', '1');
+('1', '1', 'UTEG', '2022', '00000', '1', NULL, '1', '2022-03-16 10:20:00', '1');

@@ -157,19 +157,34 @@ $(document).ready(function() {
         if(opcion==1){
             $('#txt_fechapago').removeClass('PBvalidation');
             $('#pago_documento').hide(); 
-            $('.pago_documento').hide();           
+            $('.pago_documento').hide();   
+            $('#ref_referencia').hide();
+            $('#ref_bancos').hide();        
 
             $('#pago_stripe').show();
         }else if(opcion==4 || opcion==5){
             $('#txt_fechapago').addClass('PBvalidation');
             $('#pago_documento').show();
             $('.pago_documento').show();
+            $('#ref_referencia').show();
+            $('#ref_bancos').show(); 
+
+
+            $('#pago_stripe').hide();
+         }else if(opcion==10){
+            $('#txt_fechapago').addClass('PBvalidation');
+            $('#pago_documento').show();
+            $('.pago_documento').show();
+            $('#ref_referencia').hide();
+            $('#ref_bancos').hide();
 
             $('#pago_stripe').hide();
         }else{
             $('#txt_fechapago').removeClass('PBvalidation');
             $('#pago_documento').hide(); 
-            $('.pago_documento').hide();           
+            $('.pago_documento').hide();   
+            $('#ref_referencia').hide();
+            $('#ref_bancos').hide();        
 
             $('#pago_stripe').hide();
         }
@@ -244,6 +259,8 @@ function registro() {
     var credits  = new Array();
     var costs    = new Array();
     var contador = 0;
+    var cantidad_mat_planificada = $('#frm_cant_mat_planificada_admi').val();
+    var EsCoordinador = $('#frm_admin').val();//13 marzo 2022
 
     $('#grid_registro_list input[type=checkbox]').each(function() {
         if (this.checked ) {
@@ -252,16 +269,21 @@ function registro() {
     });
     
     
-     var message = {
-        "wtmessage": objLang.You_must_choose_at_least_two,
+    var message = {
+        "wtmessage": objLang.You_must_choose_at_least_four_subjects,
         "title": objLang.Error
     }
 
-    if (contador < 2) {
-        message.wtmessage = message.wtmessage;
-        showAlert("NO_OK", "Error", message);
-        return;
-    }
+    //Si el usuario es coordinador pueda registrar menos de 4 materias
+    if ( EsCoordinador != 1){
+        if (contador < 4 ) {
+            if (contador != cantidad_mat_planificada){
+                message.wtmessage = message.wtmessage;
+                showAlert("NO_OK", "Error", message);
+                return;
+            }
+        }    
+    } 
 
     var contador = 0;
     $('#grid_registro_list input[type=checkbox]').each(function() {
@@ -307,15 +329,19 @@ function registro() {
 
     console.log(arrParams);
 
-    requestHttpAjax(link, arrParams, function(response) {
-        showAlert(response.status, response.label, response.message);
-        setTimeout(function() {
-        //   parent.window.location.href = $('#txth_base').val() + "/academico/matriculacion/registro" + $('#frm_per_id').val();
-        parent.window.location.href = $('#txth_base').val() + "/academico/matriculacion/registro" + "?uper_id=" + $("#frm_per_id").val();
-               // parent.window.location.href = $('#txth_base').val() + "/academico/matriculacion/fundacion";
-        }, 2000);
+    if ( contador > 0  ) {
+        requestHttpAjax(link, arrParams, function(response) {
+            showAlert(response.status, response.label, response.message);
+            setTimeout(function() {
+            //   parent.window.location.href = $('#txth_base').val() + "/academico/matriculacion/registro" + $('#frm_per_id').val();
+            parent.window.location.href = $('#txth_base').val() + "/academico/matriculacion/registro" + "?uper_id=" + $("#frm_per_id").val();
+                   // parent.window.location.href = $('#txth_base').val() + "/academico/matriculacion/fundacion";
+            }, 2000);
 
-    }, true);
+        }, true);
+    }else{
+        showAlert('NO_OK', 'error', {"wtmessage": 'Para el Registro en Línea debe seleccionar materia(s).', "title": 'Información'});
+    }
     
     
 }
@@ -332,21 +358,26 @@ function registerSubject() {
     var credits  = new Array();
     var costs    = new Array();
     var contador = 0;
+    var cantidad_mat_planificada = $('#frm_cant_mat_planificada').val();
 
     $('#grid_registro_list input[type=checkbox]').each(function() {
         if (this.checked ) {
             contador += 1;
         }
     });
+    //"wtmessage": objLang.You_must_choose_at_least_two,
     var message = {
-        "wtmessage": objLang.You_must_choose_at_least_two,
+        "wtmessage": objLang.You_must_choose_at_least_four_subjects,
         "title": objLang.Error
     }
 
-    if (contador < 2) {
-        message.wtmessage = message.wtmessage;
-        showAlert("NO_OK", "Error", message);
-        return;
+    if (contador < 4 ) {
+        if (contador != cantidad_mat_planificada){
+            message.wtmessage = message.wtmessage;
+            showAlert("NO_OK", "Error", message);
+            return;
+        }
+
     }
 
     var contador = 0;
@@ -393,14 +424,18 @@ function registerSubject() {
 
     console.log(arrParams);
 
-    requestHttpAjax(link, arrParams, function(response) {
-        showAlert(response.status, response.label, response.message);
-        setTimeout(function() {
-            location.reload();
-            //parent.window.location.href = $('#txth_base').val() + "/academico/matriculacion/index";
-        }, 2000);
+    if ( contador > 0  ) {
+        requestHttpAjax(link, arrParams, function(response) {
+            showAlert(response.status, response.label, response.message);
+            setTimeout(function() {
+                location.reload();
+                //parent.window.location.href = $('#txth_base').val() + "/academico/matriculacion/index";
+            }, 2000);
 
-    }, true);
+        }, true);
+    }else{
+        showAlert('NO_OK', 'error', {"wtmessage": 'Para el Registro en Línea debe seleccionar materia(s).', "title": 'Información'});
+    }
 }
 
 
@@ -477,6 +512,8 @@ function cargarDocumento() {
             showAlert("NO_OK", "error", mensaje);
             return false;
         }
+
+    if (arrParams.formapago != 10) {        
         if(arrParams.referencia == ''){
             var mensaje = {wtmessage: "Referencia : El campo no debe estar vacío.", title: "Error"};
             showAlert("NO_OK", "error", mensaje);
@@ -487,6 +524,8 @@ function cargarDocumento() {
             showAlert("NO_OK", "error", mensaje);
             return false;
         }
+        }
+
         if( !$('#checkAcepta').is(":checked") ){
             var mensaje = {wtmessage: "Debe aceptar las condiciones y terminos", title: "Error"};
             showAlert("NO_OK", "error", mensaje);
@@ -641,9 +680,11 @@ function showRegisterSubject(){
 function actualizarGridAbePeriodoAcademicoCreate() {
         var planificacion = $('#cmb_planificacion option:selected').val();
         var admitido = $('#txt_buscarDataCreate').val();
+        //var estado = $('#cmb_estado_newfund option:selected').val();
          if (!$(".blockUI").length) {
             showLoadingPopup();
             $('#Tbg_Abe_listado_create').PbGridView('applyFilterData', {'planificacion':planificacion,'admitido': admitido});
+            //$('#Tbg_Abe_listado_create').PbGridView('applyFilterData', {'planificacion':planificacion,'admitido': admitido, 'estado': estado});
             setTimeout(hideLoadingPopup, 2000);
          }
 }

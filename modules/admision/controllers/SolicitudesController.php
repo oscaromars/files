@@ -252,12 +252,12 @@ class SolicitudesController extends \app\components\CController {
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
             }
             if (isset($data["getdescuento"])) {
-                if (($data["unidada"] == 1) or ($data["unidada"] == 2)) {
+                if (($data["unidada"] == 1) or ($data["unidada"] == 2) or ($data["unidada"] == 10) ) {
                     //$resItems = $modItemMetNivel->consultarXitemMetniv($data["unidada"], $data["moda_id"], $data["metodo"], $data["empresa_id"], $data["carrera_id"]);
                     //$descuentos = $modDescuento->consultarDesctoxitem($resItems["ite_id"]);
                     $descuentos = $modDescuento->consultarDesctoxunidadmodalidadingreso($data["unidada"], $data["moda_id"], $data["metodo"]);
                 } else {
-                    //\app\models\Utilities::putMessageLogFile('item:'. $data["ite_id"]);
+                    
                     $descuentos = $modDescuento->consultarDescuentoXitemUnidad($data["unidada"], $data["moda_id"], $data["metodo"]);
                 }
                 $message = array("descuento" => $descuentos);
@@ -513,6 +513,21 @@ class SolicitudesController extends \app\components\CController {
                         }
                     }
                 }
+                if (!empty($convenio)) {
+                    $modConvenio = new ConvenioEmpresa();
+                    $respPersona = $modConvenio->crearConvenioxPersona($convenio,$per_id,$usu_id,$id_sins);
+                    $respConvenio = $modConvenio->consultarConvenioxMatricula($nint_id,$mod_id,$convenio,$ite_id );
+                     if ($respConvenio) {
+                         if ($precio == 0) {
+                            $val_descuento = 0;
+                        } else {
+            $percento = $respConvenio["cede_porcentaje_descuento"] - $respConvenio["cede_porcentaje_factor"];
+            if ($percento > 0) { 
+            $val_descuento = ($precio * $percento) / 100;
+             }
+                    }
+                } 
+            }
                 //Generar la orden de pago con valor correspondiente. Buscar precio para orden de pago.
                 if ($precio == 0) {
                     $estadopago = 'S';
@@ -803,7 +818,7 @@ class SolicitudesController extends \app\components\CController {
                            // permite modificar por una vez la solicitud y actualiza el contador aunque no este en la tabla de modificacion
                            $respSolinsingreso = $mod_solinsmodifica->insertarIncripcionModificar($sins_id, $sinmo_contador, $usuario);
                            //3.1.- SI GUARDA respSolinsingreso ACTUALIZAR TABLAS SALDOS
-                           $respSolinsingreso = $mod_solinsmodifica->actualizarIncripcionModificar($respSolinsmod["sinmo_id"], $sins_id, $sinmo_contador, $usuario);
+                           //$respSolinsingreso = $mod_solinsmodifica->actualizarIncripcionModificar($respSolinsmod["sinmo_id"], $sins_id, $sinmo_contador, $usuario);
                             //3.0.- SI GUARDA respSolinsingreso ACTUALIZAR TABLAS SALDOS //OJO ANALIZAR SI TAMBIEN SE GUARDA EL OPAG_ID, YA QUE ESTA AQUI
                             if ($respSolinsingreso) {
                                 $respSaldosact = $mod_solinsaldos->insertarIncripcionSaldos($sins_id, $opag_id, $resp_Valoranteriopago["total"], $val_total, $saldomodifica, null, null, $usuario);
@@ -811,7 +826,7 @@ class SolicitudesController extends \app\components\CController {
                                     $transaction->rollback();
                                     $transaction1->rollback();
                                     $message = array(
-                                        "wtmessage" => Yii::t("notificaciones", "Error al actualizar saldo de solicitud de inscripcion."),
+                                        "wtmessage" => Yii::t("notificaciones", "Error al actualizar saldo de solicitud de inscripción."),
                                         "title" => Yii::t('jslang', 'Bad Request'),
                                     );
                                     return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Bad Request"), false, $message);
@@ -1589,17 +1604,19 @@ class SolicitudesController extends \app\components\CController {
                                             $resp_sol = $mod_solins->Obtenerdatosolicitud($sins_id);
                                             //Se obtiene el curso para luego registrarlo.
                                             if ($resp_sol) {
+                                                // IF SOLO ENTRAR SI UACA_ID ES 1 (GRADO)O 10 (ICP) // DESCOMENTAR ESTE IF CUANDO SE NECESITE PARA POSGRADO
+                                                if ($resp_sol["nivel_interes"] == 1 || $resp_sol["nivel_interes"] == 10) {
                                                 //\app\models\Utilities::putMessageLogFile('Entro: 15');
                                                 //SE DEBE CONSULTAR SI YA TIENE NUMERO DE MATRICULA
                                                 // NO GENERAR Y NO MODIFICAR
-                                                \app\models\Utilities::putMessageLogFile('matricula: '.$resp_estudianteid["est_matricula"]);
+                                                //\app\models\Utilities::putMessageLogFile('matricula: '.$resp_estudianteid["est_matricula"]);
                                                 if (empty($resp_estudianteid["est_matricula"])) {
                                                 //\app\models\Utilities::putMessageLogFile('Entro: 16');
                                                 $anioactual = date("Y");
                                                 //\app\models\Utilities::putMessageLogFile('Entro: 16.1');
                                                 $mod_numatricula = new NumeroMatricula();
                                                 //\app\models\Utilities::putMessageLogFile('Entro: 16.2');
-                                                $resp_numatricula = $mod_numatricula->consultaNumatricula();
+                                                $resp_numatricula = $mod_numatricula->consultaNumatricula($resp_sol["nivel_interes"]);
                                                 //\app\models\Utilities::putMessageLogFile('Entro: 16.3');
                                                 //\app\models\Utilities::putMessageLogFile('anio actual: '.$anioactual);
                                                 //\app\models\Utilities::putMessageLogFile('anio consulta: '.$resp_numatricula["nmat_anio"]);
@@ -1609,7 +1626,11 @@ class SolicitudesController extends \app\components\CController {
                                                         //se genera el nuevo secuencial
                                                         $generar = ($resp_numatricula["secuencia"] + 1);
                                                         $secuencial_nuevo = str_pad((int)$generar, 5, "0", STR_PAD_LEFT);
-                                                        $est_matricula = $resp_numatricula["nmat_anio"].$secuencial_nuevo;
+                                                        if ($resp_sol["nivel_interes"] == 10) {
+                                                            $est_matricula = $resp_numatricula["nmat_descripcion"].$resp_numatricula["nmat_anio"].$secuencial_nuevo;
+                                                        }else{
+                                                            $est_matricula = $resp_numatricula["nmat_anio"].$secuencial_nuevo;
+                                                        }
                                                         // se actualiza solo el secuencial en la tabla
                                                         $resp_actsecuencial = $mod_numatricula->actualizarSecmatricula($resp_numatricula["nmat_id"], $secuencial_nuevo);
                                                         if ($resp_actsecuencial) {
@@ -1629,7 +1650,12 @@ class SolicitudesController extends \app\components\CController {
                                                         //\app\models\Utilities::putMessageLogFile('Entro: 20');
                                                         $generar = 1;
                                                         $secuencial_nuevo = str_pad((int)$generar, 5, "0", STR_PAD_LEFT);
-                                                        $est_matricula = $anioactual.$secuencial_nuevo;
+                                                        if ($resp_sol["nivel_interes"] == 10) {
+                                                            $est_matricula = $resp_numatricula["nmat_descripcion"].$anioactual.$secuencial_nuevo;
+                                                        }else{
+                                                            $est_matricula = $anioactual.$secuencial_nuevo;
+                                                        }
+                                                        //$est_matricula = $anioactual.$secuencial_nuevo;
                                                         $resp_actsecuencial = $mod_numatricula->actualizarSecmatricula($resp_numatricula["nmat_id"], $secuencial_nuevo);
                                                         if ($resp_actsecuencial) {
                                                             //\app\models\Utilities::putMessageLogFile('Entro: 21');
@@ -1681,6 +1707,10 @@ class SolicitudesController extends \app\components\CController {
                                                     //\app\models\Utilities::putMessageLogFile('Entro: 29');
                                                     $exitomat = 1;
                                                     }
+                                                // ELSE SOLO ENTRAR SI UACA_ID ES 1 (GRADO)O 10 (ICP) // DESCOMENTAR ESTE IF CUANDO SE NECESITE PARA POSGRADO    
+                                                 } else { // si no es grado o icp no generarlo
+                                                    $exitomat = 1;
+                                                }
                                                 //Modificar y activar clave de usuario con numero de cedula
                                                 //SE COMENTA YA NO SE GENERA ESTUDIANTE DESDE EL APROBAR SOLICITUD
                                                 /*if ($resp_sol["emp_id"] == 1) {
@@ -1764,17 +1794,28 @@ class SolicitudesController extends \app\components\CController {
                                                         }
                                                     }
                                                 }
+                                                //Aqui preguntar si es ICP, enviar el otro correo
+                                                 if ($resp_sol["nivel_interes"] == 10)
+                                                {
+                                                   // envia correo bienvenida ICP
+                                                   $tituloMensaje = Yii::t("interesado", "Inscripción - ICP - UTEG");
+                                                    $asunto = Yii::t("interesado", "Inscripción - ICP - UTEG");
+                                                    $link = "https://www.uteg.edu.ec/icp/";
+                                                    $body = Utilities::getMailMessage("bienvenida_icp", array("[[nombres_completos]]" => $nombres . " " . $apellidos, "[[curso]]" => $curso), Yii::$app->language);
+                                                    Utilities::sendEmailicp($tituloMensaje, Yii::$app->params["adminEmail"], [$correo => $apellidos . " " . $nombres], $asunto, $body);
+                                                  } else {
                                                 $tituloMensaje = Yii::t("interesado", "UTEG - Registration Online");
                                                 $asunto = Yii::t("interesado", "UTEG - Registration Online");
                                                 $body = Utilities::getMailMessage("Applicantrecord", array("[[nombre]]" => $nombres, "[[apellido]]" => $apellidos, "[[modalidad]]" => $modalidad, "[[link]]" => $link), Yii::$app->language);
                                                 // if (!empty($rutaFile)) {
                                                 //     Utilities::sendEmail($tituloMensaje, Yii::$app->params["adminEmail"], [$correo => $apellidos . " " . $nombres], $asunto, $body, $rutaFile);
                                                 // } else {
-                                                if ($resp_sol["nivel_interes"] != 1) {
+                                                if ($resp_sol["nivel_interes"] != 1 && $resp_sol["nivel_interes"] != 10) {
                                                     Utilities::sendEmail($tituloMensaje, Yii::$app->params["adminEmail"], [$correo => $apellidos . " " . $nombres], $asunto, $body/* , $rutaFile */);
                                                     // }
                                                     Utilities::sendEmail($tituloMensaje, Yii::$app->params["adminEmail"], [Yii::$app->params["soporteEmail"] => "Soporte"], $asunto, $body);
                                                 }
+                                                 }
                                                 $exito = 1;
                                               }else {
                                                 //\app\models\Utilities::putMessageLogFile('Entro: 31');
@@ -1784,7 +1825,7 @@ class SolicitudesController extends \app\components\CController {
                                                 );
                                                 return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
                                                }
-                                             }else {
+                                            }else {
                                                 //\app\models\Utilities::putMessageLogFile('Entro: 32');
                                                 $message = array(
                                                     "wtmessage" => Yii::t("notificaciones", "Problemas al obtener datos de la solcitud, intente nuevamente"),

@@ -136,26 +136,32 @@ class NumeroMatricula extends \yii\db\ActiveRecord
 
      /**
      * Function consultaNumatricula año y secuencial
-     * @author
+     * @author Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>;
      * @property integer
      * @return
      */
-    public function consultaNumatricula() {
-        \app\models\Utilities::putMessageLogFile('entro ???...: ');
+    public function consultaNumatricula($uaca_id) {
+        //\app\models\Utilities::putMessageLogFile('Entro: funcion  mat');
         $con = \Yii::$app->db_academico;
         //$numero = 0;
+        if ($uaca_id == 10) {
+            $icp = " AND nmat_id = 2";
+        }else
+        {
+            $icp = " AND nmat_id = 1";
+        }
         $estado = 1;
                 $sql = "SELECT
                           nmat_id,
                           nmat_anio,
                           -- IFNULL(CAST(nmat_numero AS UNSIGNED),0) secuencia
+                          nmat_descripcion,
                           nmat_numero as secuencia
                         FROM " . $con->dbname . ".numero_matricula
                         WHERE nmat_estado = :estado AND
-                            nmat_estado_logico= :estado /*AND
-                            nmat_anio = :nmat_anio */";
-                //\app\models\Utilities::putMessageLogFile('sql...: '.$sql);
+                            nmat_estado_logico= :estado" . $icp;
                 $comando = $con->createCommand($sql);
+                //\app\models\Utilities::putMessageLogFile('sql' . $sql);
                 $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
                 // $comando->bindParam(":nmat_anio", $nmat_anio, \PDO::PARAM_STR);
                 $resultData = $comando->queryOne();

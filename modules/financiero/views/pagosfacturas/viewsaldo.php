@@ -176,15 +176,35 @@ DatatableAsset::register($this);
                     'class' => 'yii\grid\ActionColumn',
                     'header' => Yii::t("formulario", "Actions"),'contentOptions' => ['style' => 'text-align: center;'],
                     'headerOptions' => ['width' => '60'],
-                    'template' => '{delete}',
+                    'template' => '{delete}{update}',
                     'buttons' => [
                         'delete' => function ($url, $model) {
                             if($model['grupo'] == 'Super Admin' || $model['grupo'] == 'Colecturia'){
                                 return Html::a('<span class="glyphicon glyphicon-trash"></span>', "#", ['onclick' => "eliminarpagcartera(" . $model['ccar_id'] . ");", "data-toggle" => "tooltip", "title" => "Eliminar Registro", "data-pjax" => 0]);
                              }else return " ";
                         },
+                        'update' => function ($url, $model) {
+                            if($model['grupo'] == 'Super Admin' || $model['grupo'] == 'Colecturia'){
+                                if($model['abono'] == 0 ){
+                                    return Html::a('<span class="glyphicon glyphicon-file"></span>', "#", ['onclick' => "modificarcuota(" . $model['ccar_id'] . ");", "data-toggle" => "tooltip", "title" => "Modificar Cuota", "data-pjax" => 0]);
+                                }else{
+                                    return '<span class="glyphicon glyphicon-file"></span>';
+                                }
+                            }else return " ";
+                        },
                     ],
                 ],
+                /*[
+                    'header' => Pagos::t("Academico", "Seleccionar"),
+                    'class' => 'yii\grid\CheckboxColumn',
+                    'checkboxOptions' => function($model) {
+                        if($model['abono'] == 0){
+                            return [];
+                        }else{
+                           return ['disabled' => true];
+                        }
+                     },
+                ],*/
 
             ],
         ])

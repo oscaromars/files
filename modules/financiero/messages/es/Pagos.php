@@ -8,6 +8,7 @@ namespace app\modules\financiero\messages;
  return [
      "Academic Data" => "Datos Académicos",
      "Apply Discount" => "Aplica Descuento",
+     "Apply agreement" => "Aplica Convenio",
      "Amount" => "Cantidad",
      "Amount Fees" => "Cantidad Cuotas",
      "Amount Paid" => "Valor Pagado",

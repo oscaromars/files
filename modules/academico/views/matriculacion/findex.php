@@ -141,6 +141,8 @@ if ($data_student['mod_id'] == 1 ){
 <input type="hidden" id="frm_num_min" value="<?= $num_min ?>">
 <input type="hidden" id="frm_num_max" value="<?= $num_max ?>">
 <input type="hidden" id="costoadm" value="<?= $gastoAdm ?>">
+<input type="hidden" id="frm_cant_mat_planificada_admi" value="<?= $cant_mat_planificada ?>">
+<input type="hidden" id="frm_admin" value="<?= $admin ?>">
 
 <br>
 <?=

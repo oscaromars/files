@@ -699,32 +699,28 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
         if(isset($mod_id) && $mod_id != "" && $mod_id != 0){
             $condition .= "me.mod_id = :mod_id AND ";
         }
-        if(isset($estado) && $estado != "" && $estado != -1){
+        /*if(isset($estado) && $estado != "" && $estado != -1){
             $condition .= "reg.rpm_estado_generado = :estado AND ";
-        }
+        }*/
         if($fecha_ini != "" && $fecha_fin != ""){
             $condition .= "reg.rpm_fecha_transaccion between :fec_ini AND :fec_fin AND ";
         }
-        \app\models\Utilities::putMessageLogFile('A1' .$periodo);
+        \app\models\Utilities::putMessageLogFile('periodo: ' .$periodo);
         if(isset($periodo) && $periodo != "" && $periodo != 0){
-            //$periodo = "%" . $periodo . "%";
-            $condition .= "p.pla_id = :periodo AND ";
-            //$condition .= "p.pla_periodo_academico like :periodo AND ";
+            $condition .= "p.saca_id = :periodo AND ";
+            //$condition .= "p.pla_id = :periodo AND "; // 04 marzo 2022
         }
 
+        //Para perfil estudiante
         if ($grupo_id == 12){
-            \app\models\Utilities::putMessageLogFile('ENTRO getAllListRegistryPaymentGrid' .$isEstud);
-            //if($isEstud) {
-                \app\models\Utilities::putMessageLogFile('getAllListRegistryPaymentGrid' .$isEstud);
-                $condition .= "per.per_id = :per_id AND ";
-            //}    
+            $condition .= "per.per_id = :per_id AND ";
         }
         
         
         $sql = "SELECT distinct
                     r.ron_id as Id, 
                     ram.rama_id as rama_id,
-                    pe.pes_nombres as Estudiante,
+                    CONCAT(ifnull(TRIM(per.per_pri_nombre),''),' ',ifnull(TRIM(per.per_seg_nombre),''),' ',ifnull(TRIM(per.per_pri_apellido),''),' ',ifnull(TRIM(per.per_seg_apellido),''),'') as Estudiante,
                     pe.per_id as per_id,
                     pe.pes_dni as Cedula,
                     mo.mod_nombre as Modalidad,
@@ -732,8 +728,7 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
                     p.pla_id as pla_id,
                     tmp.Cant as Cant,
                     roc.roc_costo as Costo,
-                    -- reg.rpm_fecha_transaccion as Fecha,  
-                    date_format(reg.rpm_fecha_transaccion, '%Y-%m-%d')  as Fecha,
+                    reg.rpm_fecha_transaccion as Fecha,   
                     ifnull(rf.Refund, '0.00') as Refund,
                     tmp.Creditos as Creditos,
                     '0.00' as Enroll,
@@ -790,7 +785,7 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
                             r.ron_estado = 1 AND r.ron_estado_logico = 1
                         GROUP BY per_id
                     ) AS mi ON mi.ron_id = r.ron_id
-                    LEFT JOIN " . $con_academico->dbname . ".registro_pago_matricula AS reg on reg.per_id = per.per_id 
+                    LEFT JOIN " . $con_academico->dbname . ".registro_pago_matricula AS reg on reg.rpm_id = ram.rpm_id AND reg.per_id = per.per_id 
                         AND r.ron_id = reg.ron_id AND reg.rpm_estado = 1 AND reg.rpm_estado_logico = 1
                     "./*LEFT JOIN " . $con_academico->dbname . ".enrolamiento_agreement AS enr on enr.ron_id = r.ron_id 
                         AND reg.rpm_estado = 1 AND reg.rpm_estado_logico = 1 AND enr.rpm_id = ram.rpm_id AND enr.eagr_estado = 1 AND enr.eagr_estado_logico = 1
@@ -832,7 +827,7 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
                 SELECT distinct
                     r.ron_id as Id, 
                     ram.rama_id as rama_id,
-                    pe.pes_nombres as Estudiante,
+                    CONCAT(ifnull(TRIM(per.per_pri_nombre),''),' ',ifnull(TRIM(per.per_seg_nombre),''),' ',ifnull(TRIM(per.per_pri_apellido),''),' ',ifnull(TRIM(per.per_seg_apellido),''),'') as Estudiante,
                     pe.per_id as per_id,
                     pe.pes_dni as Cedula,
                     mo.mod_nombre as Modalidad,
@@ -840,8 +835,7 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
                     p.pla_id as pla_id,
                     tmp.Cant as Cant,
                     reg.rpm_total as Costo,
-                    -- reg.rpm_fecha_transaccion as Fecha, 
-                    date_format(reg.rpm_fecha_transaccion, '%Y-%m-%d')  as Fecha,                    
+                    reg.rpm_fecha_transaccion as Fecha, 
                     ifnull(rf.Refund, '0.00') as Refund,
                     tmp.Creditos as Creditos,
                     '0.00' as Enroll,
@@ -897,7 +891,7 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
                             r.ron_estado = 1 AND r.ron_estado_logico = 1
                         GROUP BY per_id
                     ) AS mi ON mi.ron_id = r.ron_id
-                    LEFT JOIN " . $con_academico->dbname . ".registro_pago_matricula AS reg on reg.per_id = per.per_id 
+                    LEFT JOIN " . $con_academico->dbname . ".registro_pago_matricula AS reg on reg.rpm_id = ram.rpm_id AND reg.per_id = per.per_id 
                         AND r.ron_id = reg.ron_id AND reg.rpm_estado = 1 AND reg.rpm_estado_logico = 1
                     "./*LEFT JOIN " . $con_academico->dbname . ".enrolamiento_agreement AS enr on enr.ron_id = r.ron_id 
                         AND reg.rpm_estado = 1 AND reg.rpm_estado_logico = 1 AND enr.rpm_id = ram.rpm_id AND enr.eagr_estado = 1 AND enr.eagr_estado_logico = 1
@@ -921,7 +915,8 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
                     $str_search 
                     $condition
                     reg.rpm_id = ram.rpm_id AND
-                    dpfa.dpfa_estado_pago = 2 and dpfa.dpfa_estado_financiero = 'C' AND
+                    -- dpfa.dpfa_estado_pago = 2 and 
+                    -- dpfa.dpfa_estado_financiero = 'C' AND
                     pe.pes_estado = 1 AND pe.pes_estado_logico = 1 AND
                     p.pla_estado = 1 AND p.pla_estado_logico = 1 AND
                     per.per_estado = 1 AND per.per_estado_logico = 1 AND 
@@ -943,13 +938,17 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
         
         if(isset($search) && $search != "")  $comando->bindParam(":search",$search_cond, \PDO::PARAM_STR);
         if(isset($mod_id) && $mod_id != "" && $mod_id != 0)  $comando->bindParam(":mod_id",$mod_id, \PDO::PARAM_INT);
-        if(isset($estado) && $estado != "" && $estado != -1)  $comando->bindParam(":estado",$estado, \PDO::PARAM_INT);
+        //if(isset($estado) && $estado != "" && $estado != -1)  $comando->bindParam(":estado",$estado, \PDO::PARAM_INT);
         if(isset($periodo) && $periodo != "" && $periodo != 0) $comando->bindParam(":periodo",$periodo, \PDO::PARAM_STR);
         if ($fecha_ini != "" && $fecha_fin != "") {
             $comando->bindParam(":fec_ini", $fecha_ini, \PDO::PARAM_STR);
             $comando->bindParam(":fec_fin", $fecha_fin, \PDO::PARAM_STR);
         }
-        if($isEstud)    $comando->bindParam(":per_id",$per_id, \PDO::PARAM_INT);
+        
+        //Para perfil estudiante
+        if ($grupo_id == 12){
+            $comando->bindParam(":per_id",$per_id, \PDO::PARAM_INT);
+        }
 
         $res = $comando->queryAll();
         \app\models\Utilities::putMessageLogFile($comando->getRawSql());
@@ -1453,6 +1452,44 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
             return $dataProvider;
         //}
         //return $res;
+    }
+
+    /**
+     * Function Modificarregsitropagomatricula (Actualiza registro_pago_matricula)
+     * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
+     * @param
+     * @return
+     */
+    public function Modificarregsitropagomatricula($per_id, $pla_id, $rpm_estado_aprobacion) {
+        $con = \Yii::$app->db_academico;
+        $estado = 1;
+        $fecha_modifica = date(Yii::$app->params["dateTimeByDefault"]);
+        $usuario_modifica = @Yii::$app->user->identity->usu_id;
+       /* \app\models\Utilities::putMessageLogFile('per_id1: ' . $per_id);
+        \app\models\Utilities::putMessageLogFile('pla_id1: ' . $pla_id);
+        \app\models\Utilities::putMessageLogFile('rpm_estado_aprobacion1: ' . $rpm_estado_aprobacion);
+        \app\models\Utilities::putMessageLogFile('fecha_modifica: ' . $fecha_modifica);
+        \app\models\Utilities::putMessageLogFile('usuario_modifica: ' . $usuario_modifica);*/
+
+        $comando = $con->createCommand
+                ("UPDATE " . $con->dbname . ".registro_pago_matricula
+                SET rpm_estado_aprobacion = :rpm_estado_aprobacion,
+                    rpm_usuario_apruebareprueba = :usuario_modifica,
+                    rpm_fecha_modificacion = :fecha_modifica,
+                    rpm_usuario_modifica = :usuario_modifica
+                WHERE per_id = :per_id AND
+                      pla_id = :pla_id AND
+                      rpm_estado =:estado AND
+                      rpm_estado_logico = :estado");
+
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $comando->bindParam(":per_id", $per_id, \PDO::PARAM_INT);
+        $comando->bindParam(":pla_id", $pla_id, \PDO::PARAM_INT);
+        $comando->bindParam(":rpm_estado_aprobacion", $rpm_estado_aprobacion, \PDO::PARAM_STR);
+        $comando->bindParam(":usuario_modifica", $usuario_modifica, \PDO::PARAM_STR);
+        $comando->bindParam(":fecha_modifica", $fecha_modifica, \PDO::PARAM_STR);
+        $response = $comando->execute();
+        return $response;
     }
 }
 

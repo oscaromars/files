@@ -196,7 +196,7 @@ function validateType(type, valor, ref) {
                 result.errorMessage = objLang.The_dni_is_incorrect;
             }
             break;
-        case 'email': //email        
+        case 'email': //email
             result.response = validarExpresion(/^[\w-\.]{3,}@([\w-]{2,}\.)*([\w-]{2,}\.)[\w-]{2,4}$/, valor); // /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
             if (!result.response) {
                 result.errorMessage = objLang.The_email_field_does_not_have_a_correct_format_;
@@ -261,6 +261,12 @@ function validateType(type, valor, ref) {
             result.response = validarExpresion(/^((\d{1,5}))$/, valor);
             if (!result.response) {
                 result.errorMessage = objLang.Invalid_phone_number_;
+            }
+            break;
+        case 'numero_transaccion':
+            result.response = validarExpresion(/^((\d{1,10}))$/, valor);
+            if (!result.response) {
+                result.errorMessage = objLang.Invalid_transaction_number_;
             }
             break;
         case 'tiempo':

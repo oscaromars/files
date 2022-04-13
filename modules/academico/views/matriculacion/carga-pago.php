@@ -112,13 +112,13 @@ if ($validacion) {
                 <input type="text" class="form-control PBvalidation" id="txt_valor" value="<?= $data_planificacion_pago['valor'] ?>" data-type="all" disabled placeholder="">
             </div>
         </div>
-        <div class="form-group pago_documento">
+        <div class="form-group pago_documento" id="ref_referencia" style="display:none;">
             <label class="col-xs-12 col-sm-12 col-md-4 col-lg-4 control-label" for="txt_referencia" ><?= Pagos::t("Pagos", "Reference") ?><span class="text-danger"> * </span></label>
             <div   class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
                 <input type="number" class="form-control keyupmce" value="" id="txt_referencia" data-type="number" placeholder="<?= Pagos::t("Pagos", "Reference") ?>">
             </div>
         </div>
-        <div class="form-group pago_documento">
+        <div class="form-group pago_documento" id="ref_bancos" style="display:none;">
             <label class="col-xs-12 col-sm-12 col-md-4 col-lg-4 control-label" for="cmb_banco"><?= crm::t("crm", "Institución Bancaria") ?><span class="text-danger"> * </span></label>
             <div   class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
                 <?= Html::dropDownList("cmb_banco", 0, ['0' => Yii::t('formulario', 'Select')] + $arr_bancos, ["class" => "form-control PBvalidation", "id" => "cmb_banco"]) ?>

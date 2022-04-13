@@ -82,101 +82,104 @@ class RegistroController extends \app\components\CController {
 	//public $telefonoUniversidad = "(305) 984-2003 / (305) 984-2294";
 	//public $direccionUniversidad = "7791 NW 46th ST. STE 407. Miami, Florida 33166-5485";
 
-	public function actionIndex($per_id = null, $costoc = null) {
-		$perid = Yii::$app->session->get("PB_perid");
-		if ($per_id == Null) {$per_id = Yii::$app->session->get("PB_perid");}
-		$usu_id = Yii::$app->session->get("PB_iduser");
-		$emp_id = Yii::$app->session->get("PB_idempresa");
-		//  $data = Yii::$app->request->get();
-		$model = new RegistroPagoMatricula();
-		$resp_perfil = new RegistroPagoMatricula();
+	public function actionIndex($per_id=null,$costoc=null){
+        $perid = Yii::$app->session->get("PB_perid"); 
+        if ($per_id==Null) { $per_id = Yii::$app->session->get("PB_perid"); } 
+        $usu_id = Yii::$app->session->get("PB_iduser");
+        $emp_id = Yii::$app->session->get("PB_idempresa");
+      	//  $data = Yii::$app->request->get();
+        $model = new RegistroPagoMatricula();
+        $resp_perfil = new RegistroPagoMatricula();
+        
+        $emp_perMod = EmpresaPersona::findOne(['emp_id' => $emp_id, 'per_id' => $per_id, 'eper_estado' => '1', 'eper_estado_logico' => '1']);
+        $grol_id = 37; //grol_id = 32 es estudiante
+        $usagrolMod = NULL;
+        $esEstu = FALSE;
+        if($emp_perMod){
+            $usagrolMod = UsuaGrolEper::findOne(['eper_id' => $emp_perMod->eper_id, 'usu_id' => $usu_id, 'grol_id' => '37', 'ugep_estado' => '1', 'ugep_estado_logico' => '1']);
+        }
+        if($usagrolMod) $esEstu = TRUE;
+        if ($per_id != $perid) { $esEstu = TRUE; } 
 
-		$emp_perMod = EmpresaPersona::findOne(['emp_id' => $emp_id, 'per_id' => $per_id, 'eper_estado' => '1', 'eper_estado_logico' => '1']);
-		$grol_id = 37; //grol_id = 32 es estudiante
-		$usagrolMod = NULL;
-		$esEstu = FALSE;
-		if ($emp_perMod) {
-			$usagrolMod = UsuaGrolEper::findOne(['eper_id' => $emp_perMod->eper_id, 'usu_id' => $usu_id, 'grol_id' => '37', 'ugep_estado' => '1', 'ugep_estado_logico' => '1']);
-		}
-		if ($usagrolMod) {
-			$esEstu = TRUE;
-		}
+        $resp_grupo_id = $resp_perfil->getPerfilSearchListPago($usu_id);
+        $grupo_id = $resp_grupo_id ['gru_id'];
 
-		if ($per_id != $perid) {$esEstu = TRUE;}
+		\app\models\Utilities::putMessageLogFile('GRUPO: '.$grupo_id);
+		\app\models\Utilities::putMessageLogFile('esEstu: '.$esEstu);
 
-		$resp_grupo_id = $resp_perfil->getPerfilSearchListPago($usu_id);
-		$grupo_id = $resp_grupo_id['gru_id'];
+        Yii::$app->session->set('usugrolMod', $usugrolMod);
+        Yii::$app->session->set('perid', $per_id.'-'.$perid);
 
-		\app\models\Utilities::putMessageLogFile('GRUPO: ' . $grupo_id);
+        /*
+        //comentado 04 de abril 2022.
+        if (Yii::$app->request->isAjax) {
+            $data = Yii::$app->request->post();
+            if (isset($data["getperiodo"])) {
+                $periodo = Planificacion::getPeriodosAcademicoPorModalidad($data["nint_id"]);
+                $message = array("periodo" => $periodo);
+                return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+            }
+        }*/
 
-		Yii::$app->session->set('usugrolMod', $usugrolMod);
-		Yii::$app->session->set('per_id_perid', $per_id . '-' . $perid);
+        $data = Yii::$app->request->get();
+        if ($data['PBgetFilter']) {
+            $search = $data['estudiante'];
+            $periodo = $data['periodo'];
+            $modalidad = $data['modalidad'];
+            $fecha_ini = $data['f_ini'];
+            $fecha_fin = $data['f_fin'];
 
-		if (Yii::$app->request->isAjax) {
-			$data = Yii::$app->request->post();
-			if (isset($data["getperiodo"])) {
-				$periodo = Planificacion::getPeriodosAcademicoPorModalidad($data["nint_id"]);
-				$message = array("periodo" => $periodo);
-				return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
-			}
-		}
+            return $this->renderPartial('index-grid', [
+                'model' => $model->getAllListRegistryPaymentGrid($search, $esEstu, $modalidad, NULL, $periodo, true, $per_id, $grupo_id ,$fecha_ini, $fecha_fin),
+            ]);
+        }
 
-		$data = Yii::$app->request->get();
+        /*
+        $arr_status = [
+            -1 => Academico::t("matriculacion", "-- Select Status --"), 
+            0 => Academico::t("registro", "To Pay"), 
+            1 => Academico::t("registro", "To Check"), 
+            2 => Academico::t("registro", "Paid Out"),
+        ];
+        */
+        //$arr_pla_per = Planificacion::getPeriodosAcademicoPorModalidad();
+        /*$arr_modalidad = Planificacion::find()
+                ->select(['m.mod_id', 'm.mod_nombre'])
+                ->join('inner join', 'modalidad m')
+                ->where('pla_estado_logico = 1 and pla_estado = 1 and m.mod_estado =1 and m.mod_estado_logico = 1')
+                ->asArray()
+                ->all();*/
+        //$registro_pago_matricula = new RegistroPagoMatricula();
+        //$modalidad = $registro_pago_matricula->getModalidadEstudiante($per_id);
 
-		if ($data['PBgetFilter']) {
-			$search = $data['search'];
-			$periodo = $data['periodo'];
-			$modalidad = $data['mod_id'];
-			$estado = $data['estado'];
+        $resp_mod_pago_matricula = new Modalidad();
+        $modalidad = $resp_mod_pago_matricula->getModalidadEstudiantePM($per_id);
 
-			return $this->renderPartial('index-grid', [
-				'model' => $model->getAllListRegistryPaymentGrid($search, $esEstu, $modalidad, $estado, $periodo, true, $per_id, $grupo_id),
-			]);
-		}
+        $mod_modalidad = new Modalidad();
+        $mod_unidad = new UnidadAcademica();             
+        $arr_unidad = $mod_unidad->consultarUnidadAcademicasEmpresa(1);
+        $modalidadT = $mod_modalidad->consultarModalidad($arr_unidad[1]["id"], 1);
 
-		$arr_status = [
-			-1 => Academico::t("matriculacion", "-- Select Status --"),
-			0 => Academico::t("registro", "To Pay"),
-			1 => Academico::t("registro", "To Check"),
-			2 => Academico::t("registro", "Paid Out"),
-		];
-		//$arr_pla_per = Planificacion::getPeriodosAcademicoPorModalidad();
+        /*if ( $grupo_id == 12){
+           $arr_pla_per = Planificacion::getPeriodosAcademicoPorModalidad($modalidad[0]['id']);
+        }else{
+            $arr_pla_per = Planificacion::getPeriodosAcademicoPorModalidad($modalidadT[0]["id"]);
+        }*/
 
-		/*$arr_modalidad = Planificacion::find()
-			                ->select(['m.mod_id', 'm.mod_nombre'])
-			                ->join('inner join', 'modalidad m')
-			                ->where('pla_estado_logico = 1 and pla_estado = 1 and m.mod_estado =1 and m.mod_estado_logico = 1')
-			                ->asArray()
-		*/
-		//$registro_pago_matricula = new RegistroPagoMatricula();
-		//$modalidad = $registro_pago_matricula->getModalidadEstudiante($per_id);
+        $arr_pla = Planificacion::getPeriodosAcademicoMod();
 
-		$resp_mod_pago_matricula = new Modalidad();
-		$modalidad = $resp_mod_pago_matricula->getModalidadEstudiantePM($per_id);
-
-		$mod_modalidad = new Modalidad();
-		$mod_unidad = new UnidadAcademica();
-		$arr_unidad = $mod_unidad->consultarUnidadAcademicasEmpresa(1);
-		$modalidadT = $mod_modalidad->consultarModalidad($arr_unidad[1]["id"], 1);
-
-		if ($grupo_id == 12) {
-			$arr_pla_per = Planificacion::getPeriodosAcademicoPorModalidad($modalidad[0]['id']);
-		} else {
-			$arr_pla_per = Planificacion::getPeriodosAcademicoPorModalidad($modalidadT[0]["id"]);
-		}
-
-		return $this->render('index', [
-			'esEstu' => TRUE,
-			'grupo_id' => $grupo_id,
-			'per_id' => $per_id,
-			'modalidad' => ArrayHelper::map(array_merge($modalidad), "id", "name"),
-			'modalidadT' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $modalidadT), "id", "name"),
-			'periodoAcademico' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $arr_pla_per), "id", "name"),
-			'arr_status' => $arr_status,
-			'costo' => $costoc,
-			'model' => $model->getAllListRegistryPaymentGrid(NULL, TRUE/*$esEstu*/, NULL, NULL, NULL, true, $per_id, $grupo_id),
-		]);
-	}
+        return $this->render('index', [
+            'esEstu' => TRUE,
+            'grupo_id' => $grupo_id,            
+            'per_id' => $per_id,
+            'modalidad' => ArrayHelper::map(array_merge( $modalidad), "id", "name"),
+            'modalidadT' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $modalidadT), "id", "name"),
+            //'periodoAcademico' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $arr_pla_per), "id", "name"),//04 abril 2022
+            'periodoAcademico' => ArrayHelper::map(array_merge([['id' => '0', 'name' => 'Seleccionar']], $arr_pla), 'id', 'name'),//04 abril 2022
+            'costo' => $costoc,
+            'model' => $model->getAllListRegistryPaymentGrid(NULL, TRUE/*$esEstu*/, NULL, NULL, NULL, true, $per_id, $grupo_id, NULL, NULL ),
+        ]);
+    }
 
 	public function actionNew($id, $ron, $cuotas, $idtotal, $idpla, $rama_id, $saca_id, $bloque) {
 		\app\models\Utilities::putMessageLogFile('RegistroOnline::findOne($id);: ' . base64_decode($id));
@@ -3403,9 +3406,10 @@ throw new Exception('Error to Save Payment Registry.');
             header('Content-Type: '.$content_type);
             header('Content-Disposition: attachment;filename=' . $nombarch);
             header('Cache-Control: max-age=0');
-            $colPosition = array('C', 'D', 'E', 'F', 'G', 'H', 'I', 'J');
+            $colPosition = array('C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K');
             $arrHeader = array(
                 Yii::t('formulario', 'Estudiante'),
+                Yii::t('formulario', 'Cédula'),
                 Yii::t('formulario', 'Periodo Academico'),
                 Yii::t('formulario', 'Fecha transacción'),
                 Yii::t('formulario', 'Modalidad'),
@@ -3436,9 +3440,9 @@ throw new Exception('Error to Save Payment Registry.');
                 "wtmessage" => Yii::t("notificaciones", $e->getMessage()),
                 "title" => Yii::t('jslang', 'Error'),
             );
-            \app\models\Utilities::putMessageLogFile('actionExportexcel: error ' . $e->getMessage());
+            /*\app\models\Utilities::putMessageLogFile('actionExportexcel: error ' . $e->getMessage());
             print_r($message);die();
-            exit;
+            exit;*/
         }
     }
 

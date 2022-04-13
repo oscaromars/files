@@ -22,7 +22,7 @@ academico::registerTranslations();
         'dataProvider' => $model,
         //'pajax' => true,
         'columns' =>
-        [   
+        [
             ['class' => 'yii\grid\SerialColumn', 'options' => ['width' => '10']],
             [
                 'attribute' => 'Cedula',
@@ -33,7 +33,7 @@ academico::registerTranslations();
                 'attribute' => 'estudiante',
                 'header' => Yii::t("formulario", "Complete Names"),
                 'value' => 'estudiante',
-            ],     
+            ],
             [
                 'attribute' => 'periodo',
                 'header' => Yii::t("formulario", "Period"),
@@ -48,7 +48,7 @@ academico::registerTranslations();
                 'attribute' => 'modalidad',
                 'header' => Yii::t("formulario", "Mode"),
                 'value' => 'modalidad',
-            ],            
+            ],
             [
                 'class' => 'yii\grid\ActionColumn',
                 'header' => 'Action',
@@ -60,14 +60,13 @@ academico::registerTranslations();
                         return Html::a('<span class="' . Utilities::getIcon('view') . '"></span>', Url::to(['/formulariogrado/view', 'id' => $model['per_id']]), ["data-toggle" => "tooltip", "title" => Yii::t("accion", "View")]);
                     },
                     'download' => function ($url, $model) {
-                          if ( $model['meun_id'] > 0 AND $model['eaca_id'] > 0  ){  
-                        return Html::a('<span class="glyphicon glyphicon-download-alt"></span>', Url::to(['/formulariogrado/registerpdf', 'ids' => $model['per_id']]), ["data-toggle" => "tooltip", "title" => "Descargar Inscripcion", "data-pjax" => "0"]); }
-                        else {   
-                         return Html::a('<span class="btn btn-danger glyphicon glyphicon-glyphicon glyphicon-ban-circle"></span>', ["data-toggle" => "tooltip", "title" => "Datos incompletos", "data-pjax" => "0"]);}
+                        if ( $model['meun_id'] > 0 AND $model['eaca_id'] > 0  ){  
+                         return Html::a('<span class="glyphicon glyphicon-download-alt"></span>', Url::to(['/formulariogrado/registerpdf', 'ids' => $model['per_id']]), ["data-toggle" => "tooltip", "title" => "Descargar Inscripcion", "data-pjax" => "0"]); }
+                         else {
+                          return Html::a('<span class="btn btn-danger glyphicon glyphicon-glyphicon glyphicon-ban-circle"></span>', ["data-toggle" => "tooltip", "title" => "Datos incompletos", "data-pjax" => "0"]);}
 
-                        }
-                        //}
-                    },
+                         //}
+                     },
                 ],
             ],
         ],

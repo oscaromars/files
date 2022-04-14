@@ -162,7 +162,7 @@ $(document).ready(function() {
                 }
             }, true);
         }
-        
+
     });
     $('#cmb_nivelestudio_act').change(function() {
         var link = $('#txth_base').val() + "/admision/oportunidades/edit";
@@ -170,7 +170,7 @@ $(document).ready(function() {
         arrParams.ninter_id = $(this).val();
         arrParams.empresa_id = $('#cmb_empresa').val();
         arrParams.getmodalidad = true;
-        if ($('#cmb_nivelestudio_act').val() > 1 && $('#cmb_nivelestudio').val() != 10) {
+        if ($('#cmb_nivelestudio_act').val() > 1 && $('#cmb_nivelestudio_act').val() != 10) {
             $('#divtiopor').css('display', 'block');
         } else {
             $('#divtiopor').css('display', 'none');

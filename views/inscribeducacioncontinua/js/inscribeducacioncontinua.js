@@ -573,6 +573,9 @@ $(document).ready(function () {
 
     $('#payBtn').on('click', function (e) {
 
+        if ($("#cmb_item").val() == 0) {
+            showAlert('NO_OK', 'error', {"wtmessage": "Debe seleccionar un item.", "title": 'Campo vacío'});     
+        } else{
         $("#payBtn").prop("disabled",true);
         showLoadingPopup();
         setTimeout(function () {
@@ -630,6 +633,7 @@ $(document).ready(function () {
                 return false;
             }
         }, 1000);
+        }
     });
 
 
@@ -779,6 +783,13 @@ function guardarInscripcion(accion, paso) {
                     //paso2next();
                 }
             }
+            if (response.status == "NO_OK") {
+                showAlert(response.status, response.label, response.message);
+                setTimeout(function () {
+                    parent.window.location.href = $('#txth_base').val() +"/inscribeducacioncontinua/index";
+                }, 2000);
+            }
+
         }, true);
     }
 
@@ -858,8 +869,8 @@ function guardarInscripcionTemp2(accion) {
                         var message = response.message;
                         //$.LoadingOverlay("hide");
                         if (response.status == "OK") {
-                            hideLoadingPopup();
-                            //$.LoadingOverlay("hide");
+                            showAlert(response.status, response.label, response.message);
+			    hideLoadingPopup();
                             setTimeout(function () {
                                 var link = $('#txth_base').val() + "/inscribeducacioncontinua/index";
                                 window.location = link;
@@ -922,6 +933,33 @@ function paso2next() {
         $('#txt_pasaporte_fac').removeClass("PBvalidation");
         $('#txt_dni_fac').removeClass("PBvalidation");
     }
+
+
+     //Datos de facturación.
+    $('#txt_nombres_fac').val( $('#txt_primer_nombre').val() );
+    $('#txt_nombres_fac_aux').val($('#txt_primer_nombre').val( ));                    
+
+    $('#txt_apellidos_fac').val( $('#txt_primer_apellido').val() );
+    $('#txt_apellidos_fac_aux').val( $('#txt_primer_apellido').val() );
+
+    $('#txt_dir_fac').val( $('#txt_address').val() );//
+    $('#txt_dir_fac_aux').val( $('#txt_address').val() );
+
+    $('#txt_correo_fac').val( $('#txt_correo').val() );
+    $('#txt_correo_fac_aux').val( $('#txt_correo').val());
+
+    $('#txt_tel_fac').val( $('#txt_celular').val() );
+    $('#txt_tel_fac_aux').val( $('#txt_celular').val() );
+
+    $('#txt_dni_fac').val( $('#txt_cedula').val() );
+    $('#txt_documento_aux').val( $('#txt_cedula').val() );
+
+    $('#txt_pasaporte_fac').val($('#txt_pasaporte').val());//
+    $('#txt_pasaporte_aux').val($('#txt_pasaporte').val());
+
+    $('#lbl_uaca_tx').val(    $('#cmb_unidad_solicitud').text());
+    $('#lbl_carrera_tx').val( $('#cmb_carrera_solicitud').text());
+
 }
 
 function dataInscripPart1(ID) {

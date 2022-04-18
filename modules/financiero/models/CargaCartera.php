@@ -523,7 +523,7 @@ class CargaCartera extends \yii\db\ActiveRecord
         }
         $sql = "SELECT
                         ccar.ccar_documento_identidad,
-                        concat(pers.per_pri_nombre , ' ', per_pri_apellido) as nombres,
+                        concat(pers.per_pri_nombre , ' ', pers.per_seg_nombre, ' ', pers.per_pri_apellido, ' ', pers.per_seg_apellido) as nombres,
                         ccar.ccar_numero_documento,
                         ccar.ccar_num_cuota,
                         date_format(ccar.ccar_fecha_factura, '%Y-%m-%d') as fecha_factura,
@@ -544,11 +544,20 @@ class CargaCartera extends \yii\db\ActiveRecord
                                     WHEN ccar.ccar_forma_pago = 'CR' AND ccar.ccar_estado_cancela = 'N' THEN ccar.ccar_valor_cuota - ccar.ccar_abono
                                     WHEN ccar.ccar_forma_pago = 'CR' AND ccar.ccar_estado_cancela = 'C' THEN ROUND((ccar.ccar_valor_factura - (SUBSTRING(ccar.ccar_num_cuota,1,3)) * ccar.ccar_valor_cuota),2)
                                     -- ELSE (ccar.ccar_valor_factura - (SUBSTRING(ccar.ccar_num_cuota,1,3)) * ccar.ccar_valor_cuota)
-                                    END AS saldo
+                                    END AS saldo,
+				uaca.uaca_nombre  as unidad,
+                moda.mod_nombre as modalidad,
+                eaca.eaca_nombre as eaca_id
                 FROM " . $con2->dbname . ".carga_cartera ccar
                 INNER JOIN " . $con->dbname . ".estudiante est ON est.est_id = ccar.est_id
                 INNER JOIN " . $con1->dbname . ".persona pers ON pers.per_id = est.per_id
-                WHERE $str_search ccar.ccar_estado=:estado AND ccar.ccar_estado_logico=:estado  ORDER BY ccar.ccar_fecha_factura DESC ";
+                INNER JOIN " . $con->dbname . ".estudiante_carrera_programa ecpr ON ecpr.est_id = est.est_id
+                INNER JOIN " . $con->dbname . ".modalidad_estudio_unidad meun ON meun.meun_id = ecpr.meun_id
+                INNER JOIN " . $con->dbname . ".unidad_academica uaca ON uaca.uaca_id = meun.uaca_id
+                INNER JOIN " . $con->dbname . ".modalidad moda ON moda.mod_id = meun.mod_id
+                INNER JOIN " . $con->dbname . ".estudio_academico eaca ON eaca.eaca_id = meun.eaca_id
+                WHERE $str_search ccar.ccar_estado=:estado AND ccar.ccar_estado_logico=:estado
+                ORDER BY ccar.ccar_fecha_factura DESC ";
 
         $comando = $con->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);

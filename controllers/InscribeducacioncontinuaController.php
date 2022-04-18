@@ -237,8 +237,19 @@ class InscribeducacioncontinuaController extends \yii\web\Controller {
 											throw new Exception('Error al cargar documento de pago.');
 									}
 				if ($accion == "create" || $accion == "Create") {
-					//Nuevo Registro
-					$resul = $model->insertarInscripcion($data);
+				//Nuevo Registro
+				/*$valida_inscribe = $model->consultarInscripcion($data["DATA_1"]);
+				\app\models\Utilities::putMessageLogFile('valida_inscribe: ' . $valida_inscribe[0]['twin_id']);
+				if(empty($valida_inscribe[0]['twin_id'])){*/
+				$resul = $model->insertarInscripcion($data);
+				/*} else{
+				\app\models\Utilities::putMessageLogFile('resultado es NOok');
+				$message = array(
+				"wtmessage" => Yii::t("formulario", "El usuario ya ha sido registrado bajo estás especificaciones"),
+				"title" => Yii::t('jslang', 'Success'),
+				);
+				return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t('jslang', 'Error'), 'false', $message);
+				}*/
 				} else if ($accion == "Update") {
 					//Modificar Registro
 					$resul = $model->actualizarInscripcion($data);

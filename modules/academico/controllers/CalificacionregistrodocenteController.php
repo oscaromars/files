@@ -2013,8 +2013,7 @@ $grades++;
 
  }}  //response categorias
 
-if (count($arraydata3) > 0) {           
-
+if (isset($arraydata3[0])) {  
 
 $componentes = $mod_calificacion->getescalas($uaca_id,$mod_id,$parciales);
 $cabeceras = $mod_calificacion->getcabeceras($est_id,$asi_id,$paca_id,$parciales);

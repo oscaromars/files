@@ -1747,7 +1747,7 @@ return $this->redirect('index');
     $mod_unidad     = new UnidadAcademica();
     $mod_modalidad  = new Modalidad();
     $mod_calificacion  = new CabeceraCalificacion();
-     $arr_parcial = array(0 => '[ Elija Parcial ]',1 => 'Parcial 1',2 => 'Parcial 2',3 => 'Supletorio/Mejoramiento',4 => 'Actualizar todo');
+     $arr_parcial = array(0 => '[ Elija Parcial ]',1 => 'Parcial 1',2 => 'Parcial 2',3 => 'Supletorio/Mejoramiento');
 
     $arr_periodos = $mod_periodos->consultarPeriodosActivosmalla();
     $arr_unidad = $mod_unidad->consultarUnidadAcademicasEmpresa(1);

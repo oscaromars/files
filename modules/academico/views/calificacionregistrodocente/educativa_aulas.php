@@ -19,6 +19,11 @@ academico::registerTranslations();
             'arr_modalidad' => $arr_modalidad,
             'arr_aula' => $arr_aula,
             'arr_parcial' => $arr_parcial,
+            'paca' => $paca, 
+            'unidad' => $unidad, 
+            'modalidad' => $modalidad, 
+            'aula' => $aula , 
+            'parcial' => $parcial, 
             
         ]);
         ?>

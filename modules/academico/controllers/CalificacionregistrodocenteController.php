@@ -1797,6 +1797,11 @@ return $this->redirect('index');
                     'arr_modalidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Todos")]], $arr_modalidad), "id", "name"),
                     'arr_modalidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Todos")]], $arr_modalidad), "id", "name"),
                     'arr_aula' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Todos")]], $arr_aula), "id", "name"),
+                    'paca' => $data['paca'], 
+                    'unidad' => $data['unidad'], 
+                    'modalidad' => $data['modalidad'], 
+                    'aula' => $data['aula'], 
+                    'parcial' => $data['parcial'], 
         ]);
 
 

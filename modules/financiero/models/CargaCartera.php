@@ -524,6 +524,9 @@ class CargaCartera extends \yii\db\ActiveRecord
         $sql = "SELECT
                         ccar.ccar_documento_identidad,
                         concat(pers.per_pri_nombre , ' ', pers.per_seg_nombre, ' ', pers.per_pri_apellido, ' ', pers.per_seg_apellido) as nombres,
+                        uaca.uaca_nombre  as unidad,
+                        moda.mod_nombre as modalidad,
+                        eaca.eaca_nombre as eaca_id,
                         ccar.ccar_numero_documento,
                         ccar.ccar_num_cuota,
                         date_format(ccar.ccar_fecha_factura, '%Y-%m-%d') as fecha_factura,
@@ -544,10 +547,7 @@ class CargaCartera extends \yii\db\ActiveRecord
                                     WHEN ccar.ccar_forma_pago = 'CR' AND ccar.ccar_estado_cancela = 'N' THEN ccar.ccar_valor_cuota - ccar.ccar_abono
                                     WHEN ccar.ccar_forma_pago = 'CR' AND ccar.ccar_estado_cancela = 'C' THEN ROUND((ccar.ccar_valor_factura - (SUBSTRING(ccar.ccar_num_cuota,1,3)) * ccar.ccar_valor_cuota),2)
                                     -- ELSE (ccar.ccar_valor_factura - (SUBSTRING(ccar.ccar_num_cuota,1,3)) * ccar.ccar_valor_cuota)
-                                    END AS saldo,
-				uaca.uaca_nombre  as unidad,
-                moda.mod_nombre as modalidad,
-                eaca.eaca_nombre as eaca_id
+                                    END AS saldo
                 FROM " . $con2->dbname . ".carga_cartera ccar
                 INNER JOIN " . $con->dbname . ".estudiante est ON est.est_id = ccar.est_id
                 INNER JOIN " . $con1->dbname . ".persona pers ON pers.per_id = est.per_id

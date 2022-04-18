@@ -2374,7 +2374,7 @@ AND cuni.cuni_estado = 1 AND cuni.cuni_estado_logico = 1
 AND comp.com_estado = 1 AND comp.com_estado_logico = 1 
 ";
 $comando = $con->createCommand($sql);
-$escalas = $comando->queryOne();
+$escalas = $comando->queryAll();
 return $escalas;
 
 }

@@ -2397,7 +2397,7 @@ ecun_id = $parciales
 AND ccal_estado = 1 AND ccal_estado_logico = 1 
 ";
 $comando = $con->createCommand($sql);
-$cabeceras = $comando->queryOne();
+$cabeceras = $comando->queryAll();
 return $cabeceras;
 }
 public function putcabeceras($est_id,$asi_id,$paca_id,$parciales,$pro_id){

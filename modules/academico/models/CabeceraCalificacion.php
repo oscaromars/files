@@ -2210,7 +2210,7 @@ croe.croe_exec,ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca
         }
 
  $sql = "
-SELECT distinct cabec.ccal_id,cuni.ecal_id, ceduct.cedu_asi_id as id ,LEFT(ceduct.cedu_asi_nombre, 80) as name,cedist.daca_id,uaca.uaca_nombre, daca.paca_id, moda.mod_nombre, daca.mpp_id, 
+SELECT distinct  cedist.daca_id, cabec.ccal_id,cuni.ecal_id, ceduct.cedu_asi_id as id ,LEFT(ceduct.cedu_asi_nombre, 80) as name,cedist.daca_id,uaca.uaca_nombre, daca.paca_id, moda.mod_nombre, daca.mpp_id, daca.uaca_id,daca.mod_id,daca.pro_id, daca.asi_id,
 concat (person.per_pri_nombre, ' ',person.per_pri_apellido, ' Msc.') as docente, daca.asi_id,
 ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca_anio),'') AS paca_nombre
 FROM db_academico.curso_educativa_distributivo cedist

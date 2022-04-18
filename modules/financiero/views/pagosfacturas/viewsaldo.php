@@ -186,7 +186,9 @@ DatatableAsset::register($this);
                         'update' => function ($url, $model) {
                             if($model['grupo'] == 'Super Admin' || $model['grupo'] == 'Colecturia'){
                                 if($model['abono'] == 0 ){
-                                    return Html::a('<span class="glyphicon glyphicon-file"></span>', "#", ['onclick' => "modificarcuota(" . $model['ccar_id'] . ");", "data-toggle" => "tooltip", "title" => "Modificar Cuota", "data-pjax" => 0]);
+                                    return Html::a('<span class="glyphicon glyphicon-file"></span>', Url::to(['pagosfacturas/modificarcuota', 'popup' => "true", 'ccar_id' => base64_encode($model['ccar_id']), 'perids' => base64_encode($perids)]), ["class" => "pbpopup", "data-toggle" => "tooltip", "title" => "Modificar Cuota", "data-pjax" => 0]);
+
+                                    /*return Html::a('<span class="glyphicon glyphicon-file"></span>', "#", ['onclick' => "modificarcuota(" . $model['ccar_id'] . ");", "data-toggle" => "tooltip", "title" => "Modificar Cuota", "data-pjax" => 0]);*/
                                 }else{
                                     return '<span class="glyphicon glyphicon-file"></span>';
                                 }

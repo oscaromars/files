@@ -252,12 +252,12 @@ class SolicitudesController extends \app\components\CController {
                 return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
             }
             if (isset($data["getdescuento"])) {
-                if (($data["unidada"] == 1) or ($data["unidada"] == 2)) {
+                if (($data["unidada"] == 1) or ($data["unidada"] == 2) or ($data["unidada"] == 10) ) {
                     //$resItems = $modItemMetNivel->consultarXitemMetniv($data["unidada"], $data["moda_id"], $data["metodo"], $data["empresa_id"], $data["carrera_id"]);
                     //$descuentos = $modDescuento->consultarDesctoxitem($resItems["ite_id"]);
                     $descuentos = $modDescuento->consultarDesctoxunidadmodalidadingreso($data["unidada"], $data["moda_id"], $data["metodo"]);
                 } else {
-                    //\app\models\Utilities::putMessageLogFile('item:'. $data["ite_id"]);
+                    
                     $descuentos = $modDescuento->consultarDescuentoXitemUnidad($data["unidada"], $data["moda_id"], $data["metodo"]);
                 }
                 $message = array("descuento" => $descuentos);
@@ -1794,17 +1794,28 @@ class SolicitudesController extends \app\components\CController {
                                                         }
                                                     }
                                                 }
+                                                //Aqui preguntar si es ICP, enviar el otro correo
+                                                 if ($resp_sol["nivel_interes"] == 10)
+                                                {
+                                                   // envia correo bienvenida ICP
+                                                   $tituloMensaje = Yii::t("interesado", "Inscripción - ICP - UTEG");
+                                                    $asunto = Yii::t("interesado", "Inscripción - ICP - UTEG");
+                                                    $link = "https://www.uteg.edu.ec/icp/";
+                                                    $body = Utilities::getMailMessage("bienvenida_icp", array("[[nombres_completos]]" => $nombres . " " . $apellidos, "[[curso]]" => $curso), Yii::$app->language);
+                                                    Utilities::sendEmailicp($tituloMensaje, Yii::$app->params["adminEmail"], [$correo => $apellidos . " " . $nombres], $asunto, $body);
+                                                  } else {
                                                 $tituloMensaje = Yii::t("interesado", "UTEG - Registration Online");
                                                 $asunto = Yii::t("interesado", "UTEG - Registration Online");
                                                 $body = Utilities::getMailMessage("Applicantrecord", array("[[nombre]]" => $nombres, "[[apellido]]" => $apellidos, "[[modalidad]]" => $modalidad, "[[link]]" => $link), Yii::$app->language);
                                                 // if (!empty($rutaFile)) {
                                                 //     Utilities::sendEmail($tituloMensaje, Yii::$app->params["adminEmail"], [$correo => $apellidos . " " . $nombres], $asunto, $body, $rutaFile);
                                                 // } else {
-                                                if ($resp_sol["nivel_interes"] != 1) {
+                                                if ($resp_sol["nivel_interes"] != 1 && $resp_sol["nivel_interes"] != 10) {
                                                     Utilities::sendEmail($tituloMensaje, Yii::$app->params["adminEmail"], [$correo => $apellidos . " " . $nombres], $asunto, $body/* , $rutaFile */);
                                                     // }
                                                     Utilities::sendEmail($tituloMensaje, Yii::$app->params["adminEmail"], [Yii::$app->params["soporteEmail"] => "Soporte"], $asunto, $body);
                                                 }
+                                                 }
                                                 $exito = 1;
                                               }else {
                                                 //\app\models\Utilities::putMessageLogFile('Entro: 31');

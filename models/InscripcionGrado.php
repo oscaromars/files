@@ -566,11 +566,11 @@ inner join db_academico.malla_academica maca on maca.maca_id = mumo.maca_id
 where meun.eaca_id = igra.eaca_id
 and meun.uaca_id = igra.uaca_id
 and meun.mod_id = igra.mod_id
-and meun.meun_estado = 1 
+and meun.meun_estado = 1
 and meun.meun_estado_logico = 1
-and mumo.mumo_estado = 1 
+and mumo.mumo_estado = 1
 and mumo.mumo_estado_logico = 1
-and maca.maca_estado = 1 
+and maca.maca_estado = 1
 and maca.maca_estado_logico = 1)) as codigo,
 (select maca_nombre from db_academico.malla_academica where maca_id =
 (SELECT max(maca.maca_id) FROM db_academico.modalidad_estudio_unidad meun
@@ -579,11 +579,11 @@ inner join db_academico.malla_academica maca on maca.maca_id = mumo.maca_id
 where meun.eaca_id = igra.eaca_id
 and meun.uaca_id = igra.uaca_id
 and meun.mod_id = igra.mod_id
-and meun.meun_estado = 1 
+and meun.meun_estado = 1
 and meun.meun_estado_logico = 1
-and mumo.mumo_estado = 1 
+and mumo.mumo_estado = 1
 and mumo.mumo_estado_logico = 1
-and maca.maca_estado = 1 
+and maca.maca_estado = 1
 and maca.maca_estado_logico = 1)) as malla,
 igra.igra_fecha_creacion as registro,
 eaca.eaca_nombre as carrera,
@@ -614,9 +614,9 @@ per_celular,
 per_domicilio_telefono,
 per_correo,
 per.per_trabajo_direccion as trabajo,
-contac.pcon_nombre, 
-parente.tpar_nombre, 
-contac.pcon_telefono, 
+contac.pcon_nombre,
+parente.tpar_nombre,
+contac.pcon_telefono,
 contac.pcon_direccion,
 ifnull(estud.est_categoria,'No definida') as categoria
 FROM db_inscripcion.inscripcion_grado as igra
@@ -624,19 +624,22 @@ Inner Join db_asgard.persona as per on per.per_id = igra.per_id
 Left Join db_asgard.pais as pais on pais.pai_id = per.per_nacionalidad
 Left Join db_asgard.estado_civil as esta on esta.eciv_id = per.eciv_id
 Left join db_academico.estudiante as estud on per.per_id = estud.per_id
-Inner Join db_academico.unidad_academica as uaca on uaca.uaca_id = igra.uaca_id
-Inner Join db_academico.estudio_academico as eaca on eaca.eaca_id = igra.eaca_id
-Inner Join db_academico.modalidad_estudio_unidad as meun on meun.eaca_id = igra.eaca_id  AND meun.mod_id = igra.mod_id  AND meun.uaca_id = uaca.uaca_id
-inner join  db_academico.malla_unidad_modalidad mumo on meun.meun_id = mumo.meun_id -- 
+Inner Join db_academico.estudiante_carrera_programa as ecpr on ecpr.est_id = estud.est_id
+/*Inner Join db_academico.modalidad_estudio_unidad as meun on meun.eaca_id = igra.eaca_id
+AND meun.mod_id = igra.mod_id  AND meun.uaca_id = uaca.uaca_id*/
+Inner Join db_academico.modalidad_estudio_unidad as meun on meun.meun_id = ecpr.meun_id
+Inner Join db_academico.unidad_academica as uaca on uaca.uaca_id = meun.uaca_id
+Inner Join db_academico.estudio_academico as eaca on eaca.eaca_id = meun.eaca_id
+inner join  db_academico.malla_unidad_modalidad mumo on meun.meun_id = mumo.meun_id --
 inner join db_academico.malla_academica maca on maca.maca_id = mumo.maca_id --
-Inner Join db_academico.modalidad as moda on moda.mod_id = igra.mod_id
+Inner Join db_academico.modalidad as moda on moda.mod_id = meun.mod_id
 Inner Join db_academico.periodo_academico as paca on paca.paca_id = igra.paca_id
 Inner Join db_academico.semestre_academico as saca on saca.saca_id = paca.saca_id
 Inner Join db_academico.bloque_academico as baca on baca.baca_id = paca.baca_id
 Left Join db_asgard.persona_contacto as contac on contac.per_id = igra.per_id
 Left Join db_asgard.tipo_parentesco as parente on parente.tpar_id = contac.tpar_id
 Left Join db_academico.malla_academico_estudiante as mallaes ON mallaes.per_id =  igra.per_id
-WHERE 
+WHERE
 igra.uaca_id = meun.uaca_id AND --
 igra.mod_id = meun.mod_id AND
 igra.per_id = :per_id AND

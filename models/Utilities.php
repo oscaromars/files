@@ -1308,4 +1308,37 @@ class Utilities {
 		);
 		return json_encode($message);
 	} //function lorerrores
+
+	public static function sendEmailicp($titleMessage = "", $from, $to = array(), $subject, $body, $files = array(), $template = "/mail/layouts/mailing", $fileRoute = "/mail/layouts/files", $basePath = NULL) {
+		\app\models\Utilities::putMessageLogFile('sendEmailicp ' );
+		if (function_exists('proc_open')) {
+			//self::putMessageLogFile("Mail function exist");
+		} else {
+			self::putMessageLogFile("Error Mail function not exist");
+		}
+		$routeBase = (isset($basePath)) ? ($basePath) : (Yii::$app->basePath);
+		$socialNetworksicp = Yii::$app->params["socialNetworksicp"];
+
+		$mail = Yii::$app->mailer->compose("@app" . $template, [
+			'titleMessage' => $titleMessage,
+			'body' => $body,
+			'socialNetworksicp' => $socialNetworksicp,
+			'bannerImg' => 'bannericp.png',
+			'facebookicp' => 'facebookicp.png',
+			'twittericp' => 'facebookicp.png',
+			'instagramicp' => 'instagramicp.png',
+			'pathImg' => $routeBase . "/" . $fileRoute . "/",
+		]);
+		$mail->setFrom($from);
+		$mail->setTo($to);
+		$mail->setSubject($subject);
+		foreach ($files as $key2 => $value2) {
+			$mail->attach($value2);
+		}
+		try {
+			$mail->send();
+		} catch (\Exception $ex) {
+			self::putMessageLogFile($ex);
+		}
+	}
 }

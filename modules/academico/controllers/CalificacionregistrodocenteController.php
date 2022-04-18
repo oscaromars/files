@@ -1797,6 +1797,11 @@ return $this->redirect('index');
                     'arr_modalidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Todos")]], $arr_modalidad), "id", "name"),
                     'arr_modalidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Todos")]], $arr_modalidad), "id", "name"),
                     'arr_aula' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Todos")]], $arr_aula), "id", "name"),
+                    'paca' => $data['paca'], 
+                    'unidad' => $data['unidad'], 
+                    'modalidad' => $data['modalidad'], 
+                    'aula' => $data['aula'], 
+                    'parcial' => $data['parcial'], 
         ]);
 
 
@@ -2008,8 +2013,7 @@ $grades++;
 
  }}  //response categorias
 
-if (count($arraydata3) > 0) {           
-
+if (isset($arraydata3[0])) {  
 
 $componentes = $mod_calificacion->getescalas($uaca_id,$mod_id,$parciales);
 $cabeceras = $mod_calificacion->getcabeceras($est_id,$asi_id,$paca_id,$parciales);

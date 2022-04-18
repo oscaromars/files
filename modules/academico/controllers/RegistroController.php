@@ -3440,9 +3440,9 @@ throw new Exception('Error to Save Payment Registry.');
                 "wtmessage" => Yii::t("notificaciones", $e->getMessage()),
                 "title" => Yii::t('jslang', 'Error'),
             );
-            \app\models\Utilities::putMessageLogFile('actionExportexcel: error ' . $e->getMessage());
+            /*\app\models\Utilities::putMessageLogFile('actionExportexcel: error ' . $e->getMessage());
             print_r($message);die();
-            exit;
+            exit;*/
         }
     }
 

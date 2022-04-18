@@ -159,6 +159,7 @@ class PagosfacturasController extends \app\components\CController {
                     'arr_carrera' => ArrayHelper::map($carrera, "id", "name"),
                     'model' => $pagospendientesea,
                     'nombregrupo' => $nombregrupo,
+                    'perids' => $perids,
         ]);
     }
 
@@ -1727,6 +1728,79 @@ class PagosfacturasController extends \app\components\CController {
                     $transaction->rollback();
                     $message = array(
                         "wtmessage" => Yii::t("notificaciones", "Error al eliminar. "),
+                        "title" => Yii::t('jslang', 'Error'),
+                    );
+                    return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+                }
+            } catch (Exception $ex) {
+                $transaction->rollback();
+                $message = array(
+                    "wtmessage" => Yii::t("notificaciones", "Error al realizar la acción. "),
+                    "title" => Yii::t('jslang', 'Success'),
+                );
+                return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+            }
+        }
+    }
+
+    public function actionModificarcuota() {
+        $mod_cartera = new CargaCartera();
+        $data = Yii::$app->request->get();
+        $ccar_id = base64_decode($_GET["ccar_id"]);
+        $per_id = base64_decode($_GET["perids"]);
+        
+        if (Yii::$app->request->isAjax) {
+            $data = Yii::$app->request->post();
+        }
+        
+        $consultarcuota = $mod_cartera->consultarCuotacargacartera($ccar_id);
+        return $this->render('editarcuota', [
+            //'model' => $model,
+            'cuota' => $consultarcuota,
+            'per_id' => $per_id,
+        ]);
+    }
+
+    public function actionUpdatecuota() {
+        $mod_cartera = new CargaCartera();
+        $usu_autenticado = @Yii::$app->session->get("PB_iduser");
+        if (Yii::$app->request->isAjax) {
+            $data = Yii::$app->request->post();
+            $ccar_id = $data['ccar_id'];
+            $per_id = $data['per_id'];
+            $est_id = $data['est_id'];
+            $num_doc = $data['num_doc'];
+            $estado = $data['estado'];
+            $valor_cuota = $data['valor_cuota'];
+            $fechavencepago = $data['fechavencepago'];
+            $fecha = date(Yii::$app->params["dateTimeByDefault"]);
+            $con = \Yii::$app->db_facturacion;
+            $transaction = $con->beginTransaction();
+            try {
+                \app\models\Utilities::putMessageLogFile('cartera id..: ' . $ccar_id);
+                \app\models\Utilities::putMessageLogFile('per_id..: ' . $per_id);
+                \app\models\Utilities::putMessageLogFile('est_id..: ' . $est_id);
+                $resp_estado = $mod_cartera->modificarCuotaCartera($ccar_id, $valor_cuota, $fechavencepago, $usu_autenticado, $fecha);
+                if ($resp_estado) {
+                    $resultFactura = $mod_cartera->sumaTotalfactura($est_id);
+                    $totalFactura = $resultFactura['total_factura'];
+                    $factura_total = $mod_cartera->modificarTotalfactura($est_id, $totalFactura, $usu_autenticado, $fecha, $num_doc, $estado);
+                    if($totalFactura){
+                        $exito = '1';
+                    }
+                }
+                if ($exito) {
+                    //Realizar accion
+                    $transaction->commit();
+                    $message = array(
+                        "wtmessage" => Yii::t("notificaciones", "Se ha modificado los datos de la cuota correctamente."),
+                        "title" => Yii::t('jslang', 'Success'),
+                    );
+                    return Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), false, $message);
+                } else {
+                    $transaction->rollback();
+                    $message = array(
+                        "wtmessage" => Yii::t("notificaciones", "Error al modificar. "),
                         "title" => Yii::t('jslang', 'Error'),
                     );
                     return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);

@@ -523,7 +523,7 @@ class CargaCartera extends \yii\db\ActiveRecord
         }
         $sql = "SELECT
                         ccar.ccar_documento_identidad,
-                        concat(pers.per_pri_nombre , ' ', per_pri_apellido) as nombres,
+                        concat(pers.per_pri_nombre , ' ', pers.per_seg_nombre, ' ', pers.per_pri_apellido, ' ', pers.per_seg_apellido) as nombres,
                         ccar.ccar_numero_documento,
                         ccar.ccar_num_cuota,
                         date_format(ccar.ccar_fecha_factura, '%Y-%m-%d') as fecha_factura,
@@ -544,11 +544,20 @@ class CargaCartera extends \yii\db\ActiveRecord
                                     WHEN ccar.ccar_forma_pago = 'CR' AND ccar.ccar_estado_cancela = 'N' THEN ccar.ccar_valor_cuota - ccar.ccar_abono
                                     WHEN ccar.ccar_forma_pago = 'CR' AND ccar.ccar_estado_cancela = 'C' THEN ROUND((ccar.ccar_valor_factura - (SUBSTRING(ccar.ccar_num_cuota,1,3)) * ccar.ccar_valor_cuota),2)
                                     -- ELSE (ccar.ccar_valor_factura - (SUBSTRING(ccar.ccar_num_cuota,1,3)) * ccar.ccar_valor_cuota)
-                                    END AS saldo
+                                    END AS saldo,
+				uaca.uaca_nombre  as unidad,
+                moda.mod_nombre as modalidad,
+                eaca.eaca_nombre as eaca_id
                 FROM " . $con2->dbname . ".carga_cartera ccar
                 INNER JOIN " . $con->dbname . ".estudiante est ON est.est_id = ccar.est_id
                 INNER JOIN " . $con1->dbname . ".persona pers ON pers.per_id = est.per_id
-                WHERE $str_search ccar.ccar_estado=:estado AND ccar.ccar_estado_logico=:estado  ORDER BY ccar.ccar_fecha_factura DESC ";
+                INNER JOIN " . $con->dbname . ".estudiante_carrera_programa ecpr ON ecpr.est_id = est.est_id
+                INNER JOIN " . $con->dbname . ".modalidad_estudio_unidad meun ON meun.meun_id = ecpr.meun_id
+                INNER JOIN " . $con->dbname . ".unidad_academica uaca ON uaca.uaca_id = meun.uaca_id
+                INNER JOIN " . $con->dbname . ".modalidad moda ON moda.mod_id = meun.mod_id
+                INNER JOIN " . $con->dbname . ".estudio_academico eaca ON eaca.eaca_id = meun.eaca_id
+                WHERE $str_search ccar.ccar_estado=:estado AND ccar.ccar_estado_logico=:estado
+                ORDER BY ccar.ccar_fecha_factura DESC ";
 
         $comando = $con->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
@@ -727,8 +736,14 @@ class CargaCartera extends \yii\db\ActiveRecord
      * @param
      * @return
      */
-    public function modifcarCuotaCartera($ccar_id, $ccar_valor_cuota, $ccar_usu_modifica, $ccar_fecha_modificacion) {
-        //$estado = 0;
+    public function modificarCuotaCartera($ccar_id, $ccar_valor_cuota, $ccar_fecha_vencepago, $ccar_usu_modifica, $ccar_fecha_modificacion) {
+
+        \app\models\Utilities::putMessageLogFile('ccar_id..: ' . $ccar_id);
+        \app\models\Utilities::putMessageLogFile('ccar_valor_cuota..: ' . $ccar_valor_cuota);
+        \app\models\Utilities::putMessageLogFile('ccar_fecha_vencepago..: ' . $ccar_fecha_vencepago);
+        \app\models\Utilities::putMessageLogFile('ccar_usu_modifica..: ' . $ccar_usu_modifica);
+        \app\models\Utilities::putMessageLogFile('ccar_fecha_modificacion..: ' . $ccar_fecha_modificacion);
+
         $con = \Yii::$app->db_facturacion;
 
         if ($trans !== null) {
@@ -740,16 +755,110 @@ class CargaCartera extends \yii\db\ActiveRecord
             $comando = $con->createCommand
                     ("UPDATE " . $con->dbname . ".carga_cartera
                       SET ccar_valor_cuota = :ccar_valor_cuota,
+                          ccar_fecha_vencepago = :ccar_fecha_vencepago,
                           ccar_usu_modifica = :ccar_usu_modifica,
-                          ccar_fecha_modificacion = :ccar_fecha_modificacion,
-                          ccar_estado_logico = :estado
+                          ccar_fecha_modificacion = :ccar_fecha_modificacion
                       WHERE
                       ccar_id = :ccar_id ");
             $comando->bindParam(":ccar_id", $ccar_id, \PDO::PARAM_INT);
+            $comando->bindParam(":ccar_valor_cuota", $ccar_valor_cuota, \PDO::PARAM_STR);
+            $comando->bindParam(":ccar_fecha_vencepago", $ccar_fecha_vencepago, \PDO::PARAM_STR);
             $comando->bindParam(":ccar_usu_modifica", $ccar_usu_modifica, \PDO::PARAM_INT);
             $comando->bindParam(":ccar_fecha_modificacion", $ccar_fecha_modificacion, \PDO::PARAM_STR);
-            $comando->bindParam(":ccar_valor_cuota", $ccar_valor_cuota, \PDO::PARAM_STR);
             $response = $comando->execute();
+            \app\models\Utilities::putMessageLogFile('updateCargaCartera: ' . $comando->getRawSql());
+            if ($trans !== null)
+                $trans->commit();
+            return $response;
+        } catch (Exception $ex) {
+            if ($trans !== null)
+                $trans->rollback();
+            return FALSE;
+        }
+    }
+    /**
+     * Function consultarDatos de Cuota en Carga Cartera
+     * @author  Lisbeth González <analistadesarrollo07@uteg.edu.ec>
+     * @param   
+     * @return  
+     */
+    public function consultarCuotacargacartera($ccar_id) {
+        $con = \Yii::$app->db_facturacion;
+        $sql = "SELECT ccar_id, 
+                        est_id, 
+                        ccar_numero_documento, 
+                        ccar_valor_cuota, 
+                        ccar_fecha_vencepago, 
+                        ccar_valor_factura, 
+                        ccar_estado_cancela 
+                        FROM " . $con->dbname . ".carga_cartera 
+                        where ccar_id = :ccar_id;";
+
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":ccar_id", $ccar_id, \PDO::PARAM_INT);       
+        $resultData = $comando->queryOne();
+        return $resultData;
+    }
+    /**
+     * Function consultarDatos de Cuota en Carga Cartera
+     * @author  Lisbeth González <analistadesarrollo07@uteg.edu.ec>
+     * @param   
+     * @return  
+     */
+    public function sumaTotalfactura($est_id) {
+        $con = \Yii::$app->db_facturacion;
+        $estado = 1;
+        $sql = "SELECT SUM(ccar.ccar_valor_cuota) as total_factura
+                FROM " . $con->dbname . ".carga_cartera ccar
+                WHERE ccar.est_id = :est_id AND
+                      ccar.ccar_estado_cancela='N' AND
+                      ccar.ccar_tipo_documento='FE' AND
+                      ccar.ccar_estado = :estado AND
+                      ccar.ccar_estado_logico = :estado";
+
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":est_id", $est_id, \PDO::PARAM_INT);  
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);       
+        $resultData = $comando->queryOne();
+        \app\models\Utilities::putMessageLogFile('sumaTotalfactura: ' . $comando->getRawSql());
+        return $resultData;
+    }
+    /**
+     * Function modificar valor de 1 cuota en cartera.
+     * @author Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>;
+     * @param
+     * @return
+     */
+    public function modificarTotalfactura($est_id, $ccar_valor_factura, $ccar_usu_modifica, $ccar_fecha_modificacion, $ccar_numero_documento, $ccar_estado_cancela) {
+
+        \app\models\Utilities::putMessageLogFile('est_id2..: ' . $est_id);
+        \app\models\Utilities::putMessageLogFile('ccar_valor_factura2..: ' . $ccar_valor_factura);
+        \app\models\Utilities::putMessageLogFile('ccar_usu_modifica2..: ' . $ccar_usu_modifica);
+        \app\models\Utilities::putMessageLogFile('ccar_fecha_modificacion2..: ' . $ccar_fecha_modificacion);
+
+        $con = \Yii::$app->db_facturacion;
+
+        if ($trans !== null) {
+            $trans = null; // si existe la transacción entonces no se crea una
+        } else {
+            $trans = $con->beginTransaction(); // si no existe la transacción entonces se crea una
+        }
+        try {
+            $comando = $con->createCommand
+                    ("UPDATE " . $con->dbname . ".carga_cartera
+                      SET ccar_valor_factura = :ccar_valor_factura,
+                          ccar_usu_modifica = :ccar_usu_modifica,
+                          ccar_fecha_modificacion = :ccar_fecha_modificacion
+                      WHERE
+                      est_id = :est_id and ccar_numero_documento = :ccar_numero_documento and ccar_estado_cancela = :ccar_estado_cancela");
+            $comando->bindParam(":est_id", $est_id, \PDO::PARAM_INT);
+            $comando->bindParam(":ccar_numero_documento", $ccar_numero_documento, \PDO::PARAM_STR);
+            $comando->bindParam(":ccar_estado_cancela", $ccar_estado_cancela, \PDO::PARAM_STR);
+            $comando->bindParam(":ccar_valor_factura", $ccar_valor_factura, \PDO::PARAM_STR);
+            $comando->bindParam(":ccar_usu_modifica", $ccar_usu_modifica, \PDO::PARAM_INT);
+            $comando->bindParam(":ccar_fecha_modificacion", $ccar_fecha_modificacion, \PDO::PARAM_STR);
+            $response = $comando->execute();
+            \app\models\Utilities::putMessageLogFile('updateCargaCartera2: ' . $comando->getRawSql());
             if ($trans !== null)
                 $trans->commit();
             return $response;

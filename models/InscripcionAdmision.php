@@ -740,7 +740,7 @@ class InscripcionAdmision extends \yii\db\ActiveRecord {
 						null, null, null,
 						null, null, null, $usuario_ingreso, 1, 1,
 					];
-					$id_persona = $mod_persona->consultarIdPersona($resp_datos['twin_numero'], $resp_datos['twin_numero'], $resp_datos['twin_correo'], $resp_datos['twin_celular']);
+					$id_persona = $mod_persona->consultarIdPersonaICP($resp_datos['twin_numero'], $resp_datos['twin_numero'], $resp_datos['twin_correo'], $resp_datos['twin_celular']);
 					if ($id_persona == 0) {
 						$id_persona = $mod_persona->insertarPersona($con, $parametros_per, $keys_per, 'persona');
 					}
@@ -1005,18 +1005,19 @@ class InscripcionAdmision extends \yii\db\ActiveRecord {
 				$error++;
 			}
 			if ($exito == 1) {
+				\app\models\Utilities::putMessageLogFile('inscripciones exito ' );
 				//$transaction->commit();
 				//$transaction1->commit();
 				$transaction2->commit();
 				//Envío de correo.
-				$tituloMensaje = Yii::t("interesado", "UTEG - Registration Online");
-				$asunto = Yii::t("interesado", "UTEG - Registration Online");
+				$tituloMensaje = Yii::t("interesado", "Inscripción - ICP - UTEG");
+				$asunto = Yii::t("interesado", "Inscripción - ICP - UTEG");
 				$link = "https://www.asgard.uteg.edu.ec/asgard";
 				$body = Utilities::getMailMessage("register_icp", array("[[nombres_completos]]" => $resp_datos['twin_nombre'] . " " . $resp_datos['twin_apellido'], "[[curso]]" => $curso), Yii::$app->language);
 				$body1 = Utilities::getMailMessage("register_icp_admisiones", array("[[nombres_completos]]" => $resp_datos['twin_nombre'] . " " . $resp_datos['twin_apellido'], "[[curso]]" => $curso), Yii::$app->language);
-				Utilities::sendEmail($tituloMensaje, Yii::$app->params["adminEmail"], [$resp_datos['twin_correo'] => $resp_datos['twin_apellido'] . " " . $resp_datos['twin_nombre']], $asunto, $body);
-				Utilities::sendEmail($tituloMensaje, Yii::$app->params["adminEmail"], [Yii::$app->params["admisiones"] => "Jefe"], $asunto, $body1);
-				Utilities::sendEmail($tituloMensaje, Yii::$app->params["adminEmail"], [Yii::$app->params["secretariaicp"] => "ICP"], $asunto, $body1);
+				Utilities::sendEmailicp($tituloMensaje, Yii::$app->params["adminEmail"], [$resp_datos['twin_correo'] => $resp_datos['twin_apellido'] . " " . $resp_datos['twin_nombre']], $asunto, $body);
+				Utilities::sendEmailicp($tituloMensaje, Yii::$app->params["adminEmail"], [Yii::$app->params["admisiones"] => "Jefe"], $asunto, $body1);
+				Utilities::sendEmailicp($tituloMensaje, Yii::$app->params["adminEmail"], [Yii::$app->params["secretariaicp"] => "ICP"], $asunto, $body1);
 				//\app\models\Utilities::putMessageLogFile('después del tercer sendMail');
 				$message = array(
 					"wtmessage" => Yii::t("formulario", "The information have been saved and the information has been sent to your email"),

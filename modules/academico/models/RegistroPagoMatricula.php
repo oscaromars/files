@@ -713,8 +713,6 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
 
         //Para perfil estudiante
         if ($grupo_id == 12){
-            //\app\models\Utilities::putMessageLogFile('ENTRO getAllListRegistryPaymentGrid' .$isEstud);
-            //\app\models\Utilities::putMessageLogFile('getAllListRegistryPaymentGrid' .$isEstud);
             $condition .= "per.per_id = :per_id AND ";
         }
         
@@ -722,7 +720,7 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
         $sql = "SELECT distinct
                     r.ron_id as Id, 
                     ram.rama_id as rama_id,
-                    CONCAT(ifnull(TRIM(per.per_pri_nombre),''),' ',ifnull(TRIM(per.per_pri_apellido),''),' ')  as Estudiante,
+                    CONCAT(ifnull(TRIM(per.per_pri_nombre),''),' ',ifnull(TRIM(per.per_seg_nombre),''),' ',ifnull(TRIM(per.per_pri_apellido),''),' ',ifnull(TRIM(per.per_seg_apellido),''),'') as Estudiante,
                     pe.per_id as per_id,
                     pe.pes_dni as Cedula,
                     mo.mod_nombre as Modalidad,
@@ -829,7 +827,7 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
                 SELECT distinct
                     r.ron_id as Id, 
                     ram.rama_id as rama_id,
-                    CONCAT(ifnull(TRIM(per.per_pri_nombre),''),' ',ifnull(TRIM(per.per_pri_apellido),''),' ')  as Estudiante,
+                    CONCAT(ifnull(TRIM(per.per_pri_nombre),''),' ',ifnull(TRIM(per.per_seg_nombre),''),' ',ifnull(TRIM(per.per_pri_apellido),''),' ',ifnull(TRIM(per.per_seg_apellido),''),'') as Estudiante,
                     pe.per_id as per_id,
                     pe.pes_dni as Cedula,
                     mo.mod_nombre as Modalidad,
@@ -918,7 +916,7 @@ class RegistroPagoMatricula extends \yii\db\ActiveRecord
                     $condition
                     reg.rpm_id = ram.rpm_id AND
                     -- dpfa.dpfa_estado_pago = 2 and 
-                    dpfa.dpfa_estado_financiero = 'C' AND
+                    -- dpfa.dpfa_estado_financiero = 'C' AND
                     pe.pes_estado = 1 AND pe.pes_estado_logico = 1 AND
                     p.pla_estado = 1 AND p.pla_estado_logico = 1 AND
                     per.per_estado = 1 AND per.per_estado_logico = 1 AND 

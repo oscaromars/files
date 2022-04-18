@@ -537,3 +537,37 @@ function accioncart(id, tmp) {
         }, true);
     }
 }
+
+$('#btn_actualizar').click(function () {
+    var arrParams = new Object();
+    var link = $('#txth_base').val() + "/financiero/pagosfacturas/updatecuota";
+    arrParams.valor_cuota = $('#txt_valorCuota').val();
+    arrParams.fechavencepago = $('#txt_fechaVencimiento').val();
+    arrParams.per_id  =   $('#txth_per_ids').val();
+    arrParams.ccar_id  =   $('#txth_ccar_id').val();
+    arrParams.est_id  =   $('#txth_est_id').val();
+    arrParams.num_doc  =   $('#txth_num_doc').val();
+    arrParams.estado  =   $('#txth_estado').val();
+    alert($('#txth_est_id').val());
+    alert($('#txth_ccar_id').val());
+    alert($('#txth_per_ids').val());
+    alert($('#txth_num_doc').val());
+    alert($('#txth_estado').val());
+    if (!validateForm()) {
+        requestHttpAjax(link, arrParams, function (response) {
+            /*$('#cmb_revision').val(0);
+            $('#cmb_observacion').val(0);
+            $('#txth_ids').val("");*/
+            showAlert(response.status, response.label, response.message);
+
+            setTimeout(function () {
+                parent.window.location.href = $('#txth_base').val() + "/financiero/pagosfacturas/viewsaldo?per_ids=" + arrParams.per_id;
+            }, 2000);
+
+        }, true);
+    }
+});
+
+function cerrarpopup() {
+    $('.mfp-close').trigger('click');
+}

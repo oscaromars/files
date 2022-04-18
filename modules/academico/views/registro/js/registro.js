@@ -148,12 +148,12 @@ $(document).ready(function() {
     sessionStorage.setItem('grid_direct_credit', '');
 
 
-        /***********************************************/
+    /***********************************************/
     /* Filtro para busqueda en listado solicitudes */
     /***********************************************/
-    $('#cmb_mod').change(function () {
+    /*$('#cmb_mod').change(function () {
         var link = $('#txth_base').val() + "/academico/registro/index";
-        /*document.getElementById("cmb_carrerabus").options.item(0).selected = 'selected';*/
+        //document.getElementById("cmb_carrerabus").options.item(0).selected = 'selected';
         var arrParams = new Object();
         arrParams.nint_id = $(this).val();
         arrParams.getperiodo = true;
@@ -161,20 +161,24 @@ $(document).ready(function() {
             if (response.status == "OK") {
                 data = response.message;
                 setComboDataselect(data.periodo, "cmb_per_acad", "Todos");
-                /*var arrParams = new Object();
-                if (data.modalidad.length > 0) {
-                    arrParams.unidada = $('#cmb_unidadbus').val();
-                    arrParams.moda_id = data.modalidad[0].id;
-                    arrParams.getcarrera = true;
-                    requestHttpAjax(link, arrParams, function (response) {
-                        if (response.status == "OK") {
-                            data = response.message;
-                            setComboDataselect(data.carrera, "cmb_carrerabus", "Todos");
-                        }
-                    }, true);
-                }*/
+                //var arrParams = new Object();
+                //if (data.modalidad.length > 0) {
+                //    arrParams.unidada = $('#cmb_unidadbus').val();
+                //    arrParams.moda_id = data.modalidad[0].id;
+                //    arrParams.getcarrera = true;
+                //    requestHttpAjax(link, arrParams, function (response) {
+                //        if (response.status == "OK") {
+                //            data = response.message;
+                //            setComboDataselect(data.carrera, "cmb_carrerabus", "Todos");
+                //        }
+                //    }, true);
+                //}
             }
         }, true);
+    });*/
+
+    $('#btn_limpiarbuscador').click(function () {
+       limpiarBuscador();
     });
 
 });
@@ -962,7 +966,7 @@ function enviarPdf(){
     });
     alert('Envío exitoso');
 }*/
-//function iniciarEnvioSiga+
+//function iniciarEnvioSiga
 
 function enviarDatosFacturacion(){
     var link = $('#txth_base').val() + "/academico/registro/datosfacturacion";
@@ -1005,3 +1009,8 @@ function exportExcel() {
     var f_fin = $('#txt_fecha_fin').val();
     window.location.href = $('#txth_base').val() + "/academico/registro/exportexcel?estudiante=" + estudiante +  '&modalidad=' + modalidad + "&periodo=" + periodo + '&f_fin=' + f_fin + '&f_ini=' + f_ini;
  }
+
+function limpiarBuscador(){
+   //alert($('#txth_base').val());
+   window.location.href = $('#txth_base').val() + "/academico/registro/index";
+}

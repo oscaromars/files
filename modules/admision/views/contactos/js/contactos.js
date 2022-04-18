@@ -106,27 +106,46 @@ $(document).ready(function() {
         arrParams.nint_id = $(this).val();
         arrParams.getmodalidad = true;
         arrParams.empresa_id = $('#cmb_empresa').val();
-        if ($('#cmb_nivelestudio').val() > 1) {
+        if ($('#cmb_nivelestudio').val() > 1 && $('#cmb_nivelestudio').val() != 10) {
             $('#divtiopor').css('display', 'block');
+            requestHttpAjax(link, arrParams, function(response) {
+                if (response.status == "OK") {
+                    data = response.message;
+                    setComboData(data.modalidad, "cmb_modalidad");
+                    var arrParams = new Object();
+                    if (data.modalidad.length > 0) {
+                        arrParams.unidada = $('#cmb_nivelestudio').val();
+                        arrParams.moda_id = data.modalidad[0].id;
+                        arrParams.empresa_id = $('#cmb_empresa').val();
+                        arrParams.getoportunidad = true;
+                        requestHttpAjax(link, arrParams, function(response) {
+                            if (response.status == "OK") {
+                                data = response.message;
+                                setComboData(data.oportunidad, "cmb_tipo_oportunidad");
+                            }
+                        }, true);
+                        var arrParams = new Object();
+                        if (data.modalidad.length > 0) {
+                            arrParams.unidada = $('#cmb_nivelestudio').val();
+                            arrParams.moda_id = data.modalidad[0].id;
+                            arrParams.empresa_id = $('#cmb_empresa').val();
+                            arrParams.getcarrera = true;
+                            requestHttpAjax(link, arrParams, function(response) {
+                                if (response.status == "OK") {
+                                    data = response.message;
+                                    setComboData(data.carrera, "cmb_carrera1");
+                                }
+                            }, true);
+                        }
+                    }
+                }
+            }, true);
         } else {
             $('#divtiopor').css('display', 'none');
-        }
-        requestHttpAjax(link, arrParams, function(response) {
-            if (response.status == "OK") {
-                data = response.message;
-                setComboData(data.modalidad, "cmb_modalidad");
-                var arrParams = new Object();
-                if (data.modalidad.length > 0) {
-                    arrParams.unidada = $('#cmb_nivelestudio').val();
-                    arrParams.moda_id = data.modalidad[0].id;
-                    arrParams.empresa_id = $('#cmb_empresa').val();
-                    arrParams.getoportunidad = true;
-                    requestHttpAjax(link, arrParams, function(response) {
-                        if (response.status == "OK") {
-                            data = response.message;
-                            setComboData(data.oportunidad, "cmb_tipo_oportunidad");
-                        }
-                    }, true);
+            requestHttpAjax(link, arrParams, function(response) {
+                if (response.status == "OK") {
+                    data = response.message;
+                    setComboData(data.modalidad, "cmb_modalidad");
                     var arrParams = new Object();
                     if (data.modalidad.length > 0) {
                         arrParams.unidada = $('#cmb_nivelestudio').val();
@@ -141,8 +160,9 @@ $(document).ready(function() {
                         }, true);
                     }
                 }
-            }
-        }, true);
+            }, true);
+        }
+
     });
     $('#cmb_nivelestudio_act').change(function() {
         var link = $('#txth_base').val() + "/admision/oportunidades/edit";
@@ -150,7 +170,7 @@ $(document).ready(function() {
         arrParams.ninter_id = $(this).val();
         arrParams.empresa_id = $('#cmb_empresa').val();
         arrParams.getmodalidad = true;
-        if ($('#cmb_nivelestudio_act').val() > 1) {
+        if ($('#cmb_nivelestudio_act').val() > 1 && $('#cmb_nivelestudio_act').val() != 10) {
             $('#divtiopor').css('display', 'block');
         } else {
             $('#divtiopor').css('display', 'none');
@@ -190,7 +210,7 @@ $(document).ready(function() {
         var arrParams = new Object();
         arrParams.empresa_id = $('#cmb_empresa').val();
         arrParams.getuacademias = true;
-        if ($('#cmb_empresa').val() == 1) {
+        if ($('#cmb_empresa').val() == 1 && $('#cmb_nivelestudio').val() != 10) {
             $('#divtiopor').css('display', 'none');
         } else {
             $('#divtiopor').css('display', 'block');

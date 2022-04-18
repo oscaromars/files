@@ -1016,13 +1016,11 @@ $trans2->commit();
 			$condition .= " reg.rpm_fecha_transaccion between :fec_ini AND :fec_fin AND ";
 		}
 		if ($grupo_id == 12) {
-			//\app\models\Utilities::putMessageLogFile('ENTRO getAllListRegistryPaymentGrid' .$isEstud);
-			\app\models\Utilities::putMessageLogFile('getAllListRegistryPaymentGrid' . $isEstud);
 			$condition .= "per.per_id = :per_id AND ";
 		}
 
 		$sql = "SELECT distinct
-                    CONCAT(ifnull(TRIM(per.per_pri_nombre),''),' ',ifnull(TRIM(per.per_pri_apellido),''),' ')  as Estudiante,
+                    CONCAT(ifnull(TRIM(per.per_pri_nombre),''),' ',ifnull(TRIM(per.per_seg_nombre),''),' ',ifnull(TRIM(per.per_pri_apellido),''),' ',ifnull(TRIM(per.per_seg_apellido),''),'') as Estudiante,
                     per.per_cedula						as 'Cedula',
                     p.pla_periodo_academico             as 'Periodo Academico',
                     date_format(reg.rpm_fecha_transaccion, '%Y-%m-%d')            as 'Fecha transacción',
@@ -1126,7 +1124,7 @@ $trans2->commit();
                 UNION
 
                 SELECT distinct
-                        CONCAT(ifnull(TRIM(per.per_pri_nombre),''),' ',ifnull(TRIM(per.per_pri_apellido),''),' ')  as Estudiante,
+                        CONCAT(ifnull(TRIM(per.per_pri_nombre),''),' ',ifnull(TRIM(per.per_seg_nombre),''),' ',ifnull(TRIM(per.per_pri_apellido),''),' ',ifnull(TRIM(per.per_seg_apellido),''),'') as Estudiante,
                         per.per_cedula						as 'Cedula',
                         p.pla_periodo_academico             as 'Periodo Academico',
                         date_format(reg.rpm_fecha_transaccion, '%Y-%m-%d')            as 'Fecha transacción',

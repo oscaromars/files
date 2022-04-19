@@ -557,7 +557,7 @@ $('#btn_actualizar').click(function () {
 
             setTimeout(function () {
                 parent.window.location.href = $('#txth_base').val() + "/financiero/pagosfacturas/viewsaldo?per_ids=" + arrParams.per_ids;
-            }, 5000);
+            }, 2000);
 
         }, true);
     }

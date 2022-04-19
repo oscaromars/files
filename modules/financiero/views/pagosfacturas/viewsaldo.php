@@ -108,7 +108,7 @@ DatatableAsset::register($this);
                 [
                     'attribute' => 'Cuota_pendiente',
                     'contentOptions' => ['style' => 'text-align: center;'],
-                    'header' => Pagos::t("Pagos", "Pending Fee"),
+                    'header' => Pagos::t("Pagos", "Número Cuota"),
                     'value' => 'cuota',
                 ],
                 [

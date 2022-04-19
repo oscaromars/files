@@ -1783,22 +1783,16 @@ class PagosfacturasController extends \app\components\CController {
             $con = \Yii::$app->db_facturacion;
             $transaction = $con->beginTransaction();
             try {
-                $consult_fechaMin = $mod_cartera->consultarFechaminima();
-                $fecha_minima = $consult_fechaMin['fecha_min'];
-                $consult_fechaMax = $mod_cartera->consultarFechamaxima();
-                $fecha_maxima = $consult_fechaMax['fecha_max'];
-
-                \app\models\Utilities::putMessageLogFile('fecha_minima..: ' . $fecha_minima);
-                \app\models\Utilities::putMessageLogFile('fecha_maxima..: ' . $fecha_maxima);
-                $consultarfecha = $mod_cartera->consultarFechadentrodelsemestre($fechavencepago, $fecha_minima, $fecha_maxima);
+                
+                $consultarfecha = $mod_cartera->consultarFechadentrodelsemestre($fechavencepago);
                 $resulta_fecha = $consultarfecha['fecha'];
-                \app\models\Utilities::putMessageLogFile('resulta_fecha..: ' . $resulta_fecha);
-                if($resulta_fecha == 1){
+                
+                if($resulta_fecha != 0){
                     $resp_estado = $mod_cartera->modificarCuotaCartera($ccar_id, $valor_cuota, $fechavencepago, $usu_autenticado, $fecha);
                     if ($resp_estado) {
-                        $resultFactura = $mod_cartera->sumaTotalfactura($est_id);
+                        $resultFactura = $mod_cartera->sumaTotalfactura($est_id, $num_doc);
                         $totalFactura = $resultFactura['total_factura'];
-                        $factura_total = $mod_cartera->modificarTotalfactura($est_id, $totalFactura, $usu_autenticado, $fecha, $num_doc, $estado);
+                        $factura_total = $mod_cartera->modificarTotalfactura($est_id, $totalFactura, $usu_autenticado, $fecha, $num_doc);
                         if($totalFactura){
                             $exito = '1';
                         }

@@ -2419,7 +2419,7 @@ public function updatecabeceras($ccal_id){
 $con = Yii::$app->db_academico;
 $sql="
 UPDATE db_academico.cabecera_calificacion
- SET ccal_calificacion = (select sum(dcal_calificacion)
+SET ccal_calificacion = (select round(sum(dcal_calificacion),2)
 from db_academico.detalle_calificacion
 where ccal_id = $ccal_id
 AND dcal_estado = 1 AND dcal_estado_logico = 1

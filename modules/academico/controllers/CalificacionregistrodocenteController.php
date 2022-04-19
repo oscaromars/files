@@ -1834,7 +1834,6 @@ return $this->redirect('index');
             $ced_id = $arr_usuarios[$u]['per_cedula'];
             $maes_id = $arr_usuarios[$u]['maes_id'];
 
-    try {
           $wsdl = 'https://campusvirtual.uteg.edu.ec/soap/?wsdl=true';
          
          $client = new \SoapClient($wsdl, [
@@ -1855,12 +1854,6 @@ return $this->redirect('index');
          $client->setCredentials("webservice", 
                           "WxrrvTt8",
                           "basic");
-
-          }    catch (PDOException $e) {
-           putMessageLogFile('Error conexion Educativa: ' . $e->getMessage());
-           putMessageLogFile('cedu_asi_id: ' .$cedu_asi_id );
-           putMessageLogFile('uedu_usuario: ' .$uedu_usuario );
-              }
 
           $method = 'obtener_avance_usuarios'; 
        

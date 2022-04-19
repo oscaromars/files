@@ -132,7 +132,6 @@ class InscribeducacioncontinuaController extends \yii\web\Controller {
 
 	public function actionSaveinscripciontemp() {
 		if (Yii::$app->request->isAjax) {
-			$resp_solicitudexiste['sins_id'] = 0;
 			$model = new InscripcionAdmision();
 			$modelpersona = new Persona();
 			$modelintersado = new Interesado();
@@ -269,7 +268,7 @@ class InscribeducacioncontinuaController extends \yii\web\Controller {
 				\app\models\Utilities::putMessageLogFile('solicitud id 2: ' . $resp_solicitudexiste['sins_id']);
 				// si existe mensaje que ya tiene esa solicitud, caso contrario continuar
 				// empieza
-				if($resp_solicitudexiste['sins_id'] < 1){
+				if(empty($resp_solicitudexiste['sins_id'])){
 					if ($accion == "create" || $accion == "Create") {
 					//Nuevo Registro
 					/*$valida_inscribe = $model->consultarInscripcion($data["DATA_1"]);

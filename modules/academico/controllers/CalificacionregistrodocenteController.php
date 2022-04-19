@@ -2013,6 +2013,40 @@ $cabeceras = $mod_calificacion->putcabeceras($est_id,$asi_id,$paca_id,$parciales
 $cabeceras = $mod_calificacion->getcabeceras($est_id,$asi_id,$paca_id,$parciales);}
 
 if ($mod_id==1 AND $uaca_id ==1){
+
+if (isset($sincro)) {
+$fsincro = (float)$sincro;
+$fsincro = $fsincro/50;
+$comp_cuni_id1 = 2 ;
+$comp_cuni_id2 = 7;
+}
+
+if ( $fsincro > 0 ){
+$dcalificacion = (float)$fsincro;
+$detalles = $mod_calificacion->getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id1);
+if ($detalles == Null) {
+$detalles = $mod_calificacion->putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id1 ,$dcalificacion); 
+}else {
+if ($detalles[0]['dcal_usuario_creacion'] == '1' AND $detalles[0]['dcal_fecha_modificacion'] ==Null){
+$detallesup = $mod_calificacion->updatedetalles($detalles[0]['dcal_id'],$dcalificacion); 
+$bt= $mod_calificacion->putbitacora($detalles[0]['dcal_id'],$dcalificacion);
+}
+}
+} 
+
+if ( $fsincro > 0 ){
+$dcalificacion = (float)$fsincro;
+$detalles = $mod_calificacion->getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id2);
+if ($detalles == Null) {
+$detalles = $mod_calificacion->putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id2 ,$dcalificacion); 
+}else {
+if ($detalles[0]['dcal_usuario_creacion'] == '1' AND $detalles[0]['dcal_fecha_modificacion'] ==Null){
+$detallesup = $mod_calificacion->updatedetalles($detalles[0]['dcal_id'],$dcalificacion); 
+$bt= $mod_calificacion->putbitacora($detalles[0]['dcal_id'],$dcalificacion);
+}
+}
+} 
+
 for ($it = 0; $it < count($arraydata3); $it++) { 
 
 $comp_evaluacion1 = 0.00;$comp_autonoma1 = 0.00;$comp_examen1 = 0.00;

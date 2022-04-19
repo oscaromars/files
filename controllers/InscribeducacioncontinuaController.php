@@ -240,8 +240,12 @@ class InscribeducacioncontinuaController extends \yii\web\Controller {
 											throw new Exception('Error al cargar documento de pago.');
 									}
 				// Aqui consultar el per_id por cedula en tabla persona
-				$resp_cedula = $modelpersona->consultaPeridxdni(trim($data["dni"]));
-				\app\models\Utilities::putMessageLogFile('cedula 1: ' . $resp_cedula);
+				\app\models\Utilities::putMessageLogFile('trim cedula: ' . trim($data["cedula"]));
+				\app\models\Utilities::putMessageLogFile('uaca: ' . $data["unidaca"]);
+				\app\models\Utilities::putMessageLogFile('mod: ' . $data["modal"]);
+				\app\models\Utilities::putMessageLogFile('eaca: ' . $data["estuaca"]);
+				\app\models\Utilities::putMessageLogFile('mail: ' . $data["mail"]);
+				$resp_cedula = $modelpersona->consultarIdPersonaICP(trim($data["cedula"]), trim($data["cedula"]), trim($data["mail"]));
 				\app\models\Utilities::putMessageLogFile('cedula 2: ' . $resp_cedula['per_id']);
 				// sino hay per_id continuar $accion
 				if(!empty($resp_cedula['per_id']))
@@ -249,7 +253,6 @@ class InscribeducacioncontinuaController extends \yii\web\Controller {
 					// per_id consultar el id del interesado
 					$resp_interesado = $modelintersado->consultarIdinteresado($resp_cedula['per_id']);
 					\app\models\Utilities::putMessageLogFile('interesado id 1: ' . $resp_interesado);
-					\app\models\Utilities::putMessageLogFile('interesado id 2: ' . $resp_interesado['int_id']);
 					if(!empty($resp_interesado))
 					{
 						// consultar si ya exite una solicitud de inscripcion en la tabla segun int_id
@@ -257,11 +260,10 @@ class InscribeducacioncontinuaController extends \yii\web\Controller {
 						$resp_solicitudexiste = $modelsolicitud->Consultarsolicitudxcarrera($resp_interesado, $data["unidaca"], $data["modal"], $data["estuaca"]);
 					}
 				}
-				\app\models\Utilities::putMessageLogFile('solicitud id 1: ' . $resp_solicitudexiste);
 				\app\models\Utilities::putMessageLogFile('solicitud id 2: ' . $resp_solicitudexiste['sins_id']);
 				// si existe mensaje que ya tiene esa solicitud, caso contrario continuar
 				// empieza
-				if(!empty($resp_solicitudexiste['sins_id'])){
+				if(empty($resp_solicitudexiste['sins_id'])){
 					if ($accion == "create" || $accion == "Create") {
 					//Nuevo Registro
 					/*$valida_inscribe = $model->consultarInscripcion($data["DATA_1"]);
@@ -321,9 +323,9 @@ class InscribeducacioncontinuaController extends \yii\web\Controller {
 					}
 					return;
 				} // Aqui un else que diga mensaje por si ya existe la inscripcion correspoondiente
-				else {
+				else{
 					$message = array(
-						"wtmessage" => Yii::t("formulario", "Ya tiene una solicitud cread anteriormente en el mismo programa."),
+						"wtmessage" => Yii::t("formulario", "Los datos de cédula o correo ya estan registrados, o ya posee una solicitd creada para este programa."),
 						"title" => Yii::t('jslang', 'Success'),
 					);
 					return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t('jslang', 'Error'), 'false', $message, $resul);

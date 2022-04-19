@@ -477,6 +477,10 @@ $(document).ready(function () {
         var formatted_date = fecha.getFullYear() + "-" + month + "-" + fecha.getDate();
         arrParams.codigo = $('#txth_twin_id').val();
         arrParams.ACCION = 'Fin';
+        arrParams.cedula = $('#txt_cedula').val();
+        arrParams.unidaca = $('#cmb_unidad_solicitud').val();
+        arrParams.modal = $('#cmb_modalidad_solicitud').val();
+        arrParams.estuaca = $('#cmb_carrera_solicitud').val();
         arrParams.nombres_fact = $('#txt_nombres_fac').val();
         arrParams.apellidos_fact = $('#txt_apellidos_fac').val();
         arrParams.direccion_fact = $('#txt_dir_fac').val();
@@ -672,6 +676,11 @@ function guardarInscripcion(accion, paso) {
     var arrParams = new Object();
     arrParams.DATA_1 = dataInscripPart1(ID);
     arrParams.ACCION = accion;
+    arrParams.cedula = $('#txt_cedula').val();
+    arrParams.unidaca = $('#cmb_unidad_solicitud').val();
+    arrParams.modal = $('#cmb_modalidad_solicitud').val();
+    arrParams.estuaca = $('#cmb_carrera_solicitud').val();
+    arrParams.mail = $('#txt_correo').val();
     if (!validateForm()) {
         requestHttpAjax(link, arrParams, function (response) {
             var message = response.message;
@@ -787,7 +796,7 @@ function guardarInscripcion(accion, paso) {
                 showAlert(response.status, response.label, response.message);
                 setTimeout(function () {
                     parent.window.location.href = $('#txth_base').val() +"/inscribeducacioncontinua/index";
-                }, 2000);
+                }, 3000);
             }
 
         }, true);
@@ -817,9 +826,6 @@ function guardarInscripcionTemp2(accion) {
                 var link = $('#txth_base').val() + "/inscribeducacioncontinua/saveinscripciontemp";
                 //window.open("https://www.cranea.com.ec/mbtu/online-payments/");
                 var arrParams            = new Object();
-                arrParams.unidaca = $('#cmb_unidad_solicitud').val();
-                arrParams.modal = $('#cmb_modalidad_solicitud').val();
-                arrParams.estuaca = $('#cmb_carrera_solicitud').val();
                 arrParams.codigo         = $('#txth_twin_id').val();
                 arrParams.ACCION         = 'Fin';
                 arrParams.nombres_fact   = $('#txt_nombres_fac').val();

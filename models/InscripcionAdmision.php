@@ -711,6 +711,7 @@ class InscripcionAdmision extends \yii\db\ActiveRecord {
 			$resp_datos = $mod_inscripcion->consultarDatosInscripcionInstituto($twinIds);
 			$curso = $resp_datos["carrera"];
 			// He colocado al inicio la informacion para que cargue al principio
+			\app\models\Utilities::putMessageLogFile('twin_numero: ' . $resp_datos['twin_numero']);
 			if ($resp_datos) {
 				if (isset($resp_datos['twin_numero']) && strlen($resp_datos['twin_numero']) > 0) {
 					$identificacion = $resp_datos['twin_numero'];
@@ -740,8 +741,10 @@ class InscripcionAdmision extends \yii\db\ActiveRecord {
 						null, null, null,
 						null, null, null, $usuario_ingreso, 1, 1,
 					];
-					$id_persona = $mod_persona->consultarIdPersonaICP($resp_datos['twin_numero'], $resp_datos['twin_numero'], $resp_datos['twin_correo'], $resp_datos['twin_celular']);
-					if ($id_persona == 0) {
+					$id_personaexite = $mod_persona->consultarIdPersonaICP($resp_datos['twin_numero'], $resp_datos['twin_numero'], $resp_datos['twin_correo']);
+					\app\models\Utilities::putMessageLogFile('id_persona xx: ' . $id_persona['per_id']);
+					\app\models\Utilities::putMessageLogFile('id_persona yy: ' . $id_persona);
+					if (empty($id_personaexite)) {
 						$id_persona = $mod_persona->insertarPersona($con, $parametros_per, $keys_per, 'persona');
 					}
 					if ($id_persona > 0) {
@@ -764,7 +767,7 @@ class InscripcionAdmision extends \yii\db\ActiveRecord {
 						\app\models\Utilities::putMessageLogFile('id data:' . print_r($datos, true));
 						$existe = $mod_PersonaOtro->consultar($id_persona);
 						/*if (empty($existe)) {
-							                            $respPerOtros = $mod_PersonaOtro->insertar($id_persona,$resp_datos['nivel'],$resp_datos['red_social'],$resp_datos['twin_encontramos'],$usuario_ingreso);
+						$respPerOtros = $mod_PersonaOtro->insertar($id_persona,$resp_datos['nivel'],$resp_datos['red_social'],$resp_datos['twin_encontramos'],$usuario_ingreso);
 						*/
 						if ($id_persona > 0) {
 							//self::movePersonFiles($twinIds,$id_persona);
@@ -820,7 +823,7 @@ class InscripcionAdmision extends \yii\db\ActiveRecord {
 												$eaca_id = NULL;
 												$mest_id = NULL;
 												if ($emp_id == 1) {
-//Uteg
+													//Uteg
 													$eaca_id = $resp_datos['car_id'];
 												} elseif ($emp_id == 2 || $emp_id == 3) {
 													$mest_id = $resp_datos['car_id'];
@@ -992,9 +995,9 @@ class InscripcionAdmision extends \yii\db\ActiveRecord {
 							$error++;
 							$error_message .= Yii::t("formulario", "Other personal data has not been registered");
 						}
-					} else {
+					} else { //AQUI
 						$error++;
-						$error_message .= Yii::t("formulario", "The person have not been saved");
+						$error_message .= Yii::t("formulario", "Ya existe una persona con la misma cedula o correo");
 					}
 				} else {
 					$error_message .= Yii::t("formulario", "Update DNI to generate interested");

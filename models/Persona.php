@@ -1296,7 +1296,7 @@ class Persona extends \yii\db\ActiveRecord {
                     per_estado_logico=:estado";
         $comando = $con->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
-        $comando->bindParam(":per_cedula", $per_cedula, \PDO::PARAM_INT);
+        $comando->bindParam(":per_cedula", $per_cedula, \PDO::PARAM_STR);
         $resultData = $comando->queryOne();
         return $resultData;
     }
@@ -1307,28 +1307,22 @@ class Persona extends \yii\db\ActiveRecord {
      * @property
      * @return
      */
-    public function consultarIdPersonaICP($cedula = null, $pasaporte = null, $correo = null, $celular = null) {
+    public function consultarIdPersonaICP($cedula = null, $pasaporte = null, $correo = null) {
         $con = \Yii::$app->db_asgard;
         $estado = 1;
         $sql = "
-                SELECT  ifnull(per_id,0) as per_id
+                SELECT  per_id
                 FROM " . $con->dbname . ".persona as per
                  WHERE
                     (
-                        (per_cedula='$cedula' or per_correo='$correo') or
-                        (per_cedula='$cedula' or per_celular='$celular') or
-                        (per_pasaporte='$pasaporte' or per_correo='$correo') or
-                        (per_pasaporte='$pasaporte' or per_celular='$celular')
+                        (trim(per_cedula)='$cedula' or trim(per_correo)='$correo') or
+                        (trim(per_pasaporte)='$pasaporte' or trim(per_correo)='$correo')
                     )
                         AND per.per_estado = $estado
                         AND per.per_estado_logico=$estado
                     ";
         $comando = $con->createCommand($sql);
         $resultData = $comando->queryOne();
-        if (empty($resultData['per_id']))
-            return 0;
-        else {
-            return $resultData['per_id'];
-        }
+        return $resultData;
     }
 }

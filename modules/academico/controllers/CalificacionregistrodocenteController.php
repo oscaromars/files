@@ -1874,7 +1874,7 @@ return $this->redirect('index');
             $sincro=$arrayadv['usuarios']['avance'];
             $asiste=$arrayadv['usuarios']['avance'];
 
-              }   finally {}
+              }   finally { $hasadvance = True; }
 
           $method = 'obtener_notas_calificaciones'; 
            
@@ -1884,7 +1884,7 @@ return $this->redirect('index');
             $response = $client->__call( $method, Array( $args ) );	
             }
 
-              }     finally {}
+              }     finally { $hasresponse = True; }
 
 
      if (isset($response->categorias)) { 

@@ -672,7 +672,6 @@ function guardarInscripcion(accion, paso) {
     var arrParams = new Object();
     arrParams.DATA_1 = dataInscripPart1(ID);
     arrParams.ACCION = accion;
-    xxx
     if (!validateForm()) {
         requestHttpAjax(link, arrParams, function (response) {
             var message = response.message;

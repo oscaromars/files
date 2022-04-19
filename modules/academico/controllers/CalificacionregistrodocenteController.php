@@ -1872,28 +1872,26 @@ return $this->redirect('index');
    try {
 
             $advancer = $client->__call( $method, Array( $args ) );
+              while (openssl_error_string()) {
+            $advancer = $client->__call( $method, Array( $args ) );
+            }
 
            $arrayadv = json_decode(json_encode($advancer), true);
 
             $sincro=$arrayadv['usuarios']['avance'];
             $asiste=$arrayadv['usuarios']['avance'];
 
-              }    catch (PDOException $e) {
-           putMessageLogFile('Error Avance: ' . $e->getMessage());
-           putMessageLogFile('cedu_asi_id: ' .$cedu_asi_id );
-           putMessageLogFile('uedu_usuario: ' .$uedu_usuario );
-              }
+              }   finally {}
 
           $method = 'obtener_notas_calificaciones'; 
            
              try {
             $response = $client->__call( $method, Array( $args ) );
+             while (openssl_error_string()) {
+            $response = $client->__call( $method, Array( $args ) );	
+            }
 
-              }    catch (PDOException $e) {
-           putMessageLogFile('Error Educativa: ' . $e->getMessage());
-           putMessageLogFile('cedu_asi_id: ' .$cedu_asi_id );
-           putMessageLogFile('uedu_usuario: ' .$uedu_usuario );
-              }
+              }     finally {}
 
 
      if (isset($response->categorias)) { 

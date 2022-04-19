@@ -2296,7 +2296,7 @@ LEFT JOIN db_academico.temp_estudiantes_noprocesados as tempo on  tempo.est_id =
 AND tempo.asi_id = daca.asi_id
 WHERE TRUE
 AND ceduct.cedu_asi_id = :uedu_aula
-AND (cabec.ccal_id is Null OR cabec.ccal_id = :parcial ) 
+AND (cabec.ccal_id is Null OR cabec.ecun_id = :parcial ) 
 AND ceduct.cedu_estado = :estado AND ceduct.cedu_estado_logico = :estado
 AND daca.daca_estado = :estado AND daca.daca_estado_logico = :estado 
 AND daes.daes_estado = :estado AND daes.daes_estado_logico = :estado 

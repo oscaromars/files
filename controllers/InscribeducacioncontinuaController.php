@@ -133,6 +133,9 @@ class InscribeducacioncontinuaController extends \yii\web\Controller {
 	public function actionSaveinscripciontemp() {
 		if (Yii::$app->request->isAjax) {
 			$model = new InscripcionAdmision();
+			$modelpersona = new Persona();
+			$modelintersado = new Interesado();
+			$modelsolicitud = new SolicitudInscripcion();
 			$data = Yii::$app->request->post();
 			$accion = isset($data['ACCION']) ? $data['ACCION'] : "";
 			$fecha_registro = date(Yii::$app->params["dateByDefault"]);
@@ -236,64 +239,95 @@ class InscribeducacioncontinuaController extends \yii\web\Controller {
 					                    if ($doc_pagoOld === false)
 											throw new Exception('Error al cargar documento de pago.');
 									}
-				if ($accion == "create" || $accion == "Create") {
-				//Nuevo Registro
-				/*$valida_inscribe = $model->consultarInscripcion($data["DATA_1"]);
-				\app\models\Utilities::putMessageLogFile('valida_inscribe: ' . $valida_inscribe[0]['twin_id']);
-				if(empty($valida_inscribe[0]['twin_id'])){*/
-				$resul = $model->insertarInscripcion($data);
-				/*} else{
-				\app\models\Utilities::putMessageLogFile('resultado es NOok');
-				$message = array(
-				"wtmessage" => Yii::t("formulario", "El usuario ya ha sido registrado bajo estás especificaciones"),
-				"title" => Yii::t('jslang', 'Success'),
-				);
-				return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t('jslang', 'Error'), 'false', $message);
-				}*/
-				} else if ($accion == "Update") {
-					//Modificar Registro
-					$resul = $model->actualizarInscripcion($data);
-				} else if ($accion == "Fin") {
-					$Ids = isset($data['codigo']) ? $data['codigo'] : 0;
-					$dataRegistro = array(
-						'nombres_fact' => ucwords(strtolower($data["nombres_fact"])),
-						'apellidos_fact' => ucwords(strtolower($data["apellidos_fact"])),
-						'direccion_fact' => ucwords(strtolower($data["direccion_fact"])),
-						'telefono_fac' => $data["telefono_fac"],
-						'tipo_dni_fac' => $data["tipo_dni_fac"],
-						'dni' => $data["dni"],
-						'empresa' => ucfirst(mb_strtolower($data["empresa"], 'UTF-8')),
-						'correo' => strtolower($data["correo"]),
-						'num_transaccion' => $data["num_transaccion"],
-						'observacion' => strtolower($data["observacion"]),
-						'fecha_transaccion' => $data["fecha_transaccion"],
-						'doc_pago' => $data["doc_pago"],
-						'forma_pago' => $data["forma_pago"],
-						'nivinstrucion' => $data["nivinstrucion"],
-						'redes' => $data["redes"],
-						'encontramos' => $data["encontramos"],
-					);
-					$resul = $model->insertaFinInstituto($Ids, $dataRegistro);
-				} else if ($accion == "UpdateDepTrans") {
-					//Modificar Registro
-					$resul = $model->actualizarInscripcion($data);
+				// Aqui consultar el per_id por cedula en tabla persona
+				$resp_cedula = $modelpersona->consultaPeridxdni(trim($data["dni"]));
+				\app\models\Utilities::putMessageLogFile('cedula 1: ' . $resp_cedula);
+				\app\models\Utilities::putMessageLogFile('cedula 2: ' . $resp_cedula['per_id']);
+				// sino hay per_id continuar $accion
+				if(!empty($resp_cedula['per_id']))
+				{
+					// per_id consultar el id del interesado
+					$resp_interesado = $modelintersado->consultarIdinteresado($resp_cedula['per_id']);
+					\app\models\Utilities::putMessageLogFile('interesado id 1: ' . $resp_interesado);
+					\app\models\Utilities::putMessageLogFile('interesado id 2: ' . $resp_interesado['int_id']);
+					if(!empty($resp_interesado))
+					{
+						// consultar si ya exite una solicitud de inscripcion en la tabla segun int_id
+						// uaca_id, mod_id, eaca_id ==> $resp_solicitudexiste['sins_id']
+						$resp_solicitudexiste = $modelsolicitud->Consultarsolicitudxcarrera($resp_interesado, $data["unidaca"], $data["modal"], $data["estuaca"]);
+					}
 				}
-				if ($resul['status']) {
-					\app\models\Utilities::putMessageLogFile('resultado es ok');
-					$message = array(
-						"wtmessage" => Yii::t("formulario", "The information have been saved"),
-						"title" => Yii::t('jslang', 'Success'),
-					);
-					return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message, $resul);
-				} else {
+				\app\models\Utilities::putMessageLogFile('solicitud id 1: ' . $resp_solicitudexiste);
+				\app\models\Utilities::putMessageLogFile('solicitud id 2: ' . $resp_solicitudexiste['sins_id']);
+				// si existe mensaje que ya tiene esa solicitud, caso contrario continuar
+				// empieza
+				if(!empty($resp_solicitudexiste['sins_id'])){
+					if ($accion == "create" || $accion == "Create") {
+					//Nuevo Registro
+					/*$valida_inscribe = $model->consultarInscripcion($data["DATA_1"]);
+					\app\models\Utilities::putMessageLogFile('valida_inscribe: ' . $valida_inscribe[0]['twin_id']);
+					if(empty($valida_inscribe[0]['twin_id'])){*/
+					$resul = $model->insertarInscripcion($data);
+					/*} else{
 					\app\models\Utilities::putMessageLogFile('resultado es NOok');
 					$message = array(
-						"wtmessage" => Yii::t("formulario", "The information have not been saved."),
+					"wtmessage" => Yii::t("formulario", "El usuario ya ha sido registrado bajo estás especificaciones"),
+					"title" => Yii::t('jslang', 'Success'),
+					);
+					return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t('jslang', 'Error'), 'false', $message);
+					}*/
+					} else if ($accion == "Update") {
+						//Modificar Registro
+						$resul = $model->actualizarInscripcion($data);
+					} else if ($accion == "Fin") {
+						$Ids = isset($data['codigo']) ? $data['codigo'] : 0;
+						$dataRegistro = array(
+							'nombres_fact' => ucwords(strtolower($data["nombres_fact"])),
+							'apellidos_fact' => ucwords(strtolower($data["apellidos_fact"])),
+							'direccion_fact' => ucwords(strtolower($data["direccion_fact"])),
+							'telefono_fac' => $data["telefono_fac"],
+							'tipo_dni_fac' => $data["tipo_dni_fac"],
+							'dni' => $data["dni"],
+							'empresa' => ucfirst(mb_strtolower($data["empresa"], 'UTF-8')),
+							'correo' => strtolower($data["correo"]),
+							'num_transaccion' => $data["num_transaccion"],
+							'observacion' => strtolower($data["observacion"]),
+							'fecha_transaccion' => $data["fecha_transaccion"],
+							'doc_pago' => $data["doc_pago"],
+							'forma_pago' => $data["forma_pago"],
+							'nivinstrucion' => $data["nivinstrucion"],
+							'redes' => $data["redes"],
+							'encontramos' => $data["encontramos"],
+						);
+						$resul = $model->insertaFinInstituto($Ids, $dataRegistro);
+					} else if ($accion == "UpdateDepTrans") {
+						//Modificar Registro
+						$resul = $model->actualizarInscripcion($data);
+					}
+					if ($resul['status']) {
+						\app\models\Utilities::putMessageLogFile('resultado es ok');
+						$message = array(
+							"wtmessage" => Yii::t("formulario", "The information have been saved"),
+							"title" => Yii::t('jslang', 'Success'),
+						);
+						return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message, $resul);
+					} else {
+						\app\models\Utilities::putMessageLogFile('resultado es NOok');
+						$message = array(
+							"wtmessage" => Yii::t("formulario", "The information have not been saved."),
+							"title" => Yii::t('jslang', 'Success'),
+						);
+						return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t('jslang', 'Error'), 'false', $message, $resul);
+					}
+					return;
+				} // Aqui un else que diga mensaje por si ya existe la inscripcion correspoondiente
+				else {
+					$message = array(
+						"wtmessage" => Yii::t("formulario", "Ya tiene una solicitud cread anteriormente en el mismo programa."),
 						"title" => Yii::t('jslang', 'Success'),
 					);
 					return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t('jslang', 'Error'), 'false', $message, $resul);
 				}
-				return;
 			} catch (Exception $ex) {
 				$message = array(
 					"wtmessage" => $ex->getMessage(),

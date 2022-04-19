@@ -1300,4 +1300,35 @@ class Persona extends \yii\db\ActiveRecord {
         $resultData = $comando->queryOne();
         return $resultData;
     }
+
+    /**
+     * Function consultarIdPersonaICP
+     * @author  Giovanni Vergara
+     * @property
+     * @return
+     */
+    public function consultarIdPersonaICP($cedula = null, $pasaporte = null, $correo = null, $celular = null) {
+        $con = \Yii::$app->db_asgard;
+        $estado = 1;
+        $sql = "
+                SELECT  ifnull(per_id,0) as per_id
+                FROM " . $con->dbname . ".persona as per
+                 WHERE
+                    (
+                        (per_cedula='$cedula' or per_correo='$correo') or
+                        (per_cedula='$cedula' or per_celular='$celular') or
+                        (per_pasaporte='$pasaporte' or per_correo='$correo') or
+                        (per_pasaporte='$pasaporte' or per_celular='$celular')
+                    )
+                        AND per.per_estado = $estado
+                        AND per.per_estado_logico=$estado
+                    ";
+        $comando = $con->createCommand($sql);
+        $resultData = $comando->queryOne();
+        if (empty($resultData['per_id']))
+            return 0;
+        else {
+            return $resultData['per_id'];
+        }
+    }
 }

@@ -740,7 +740,7 @@ class InscripcionAdmision extends \yii\db\ActiveRecord {
 						null, null, null,
 						null, null, null, $usuario_ingreso, 1, 1,
 					];
-					$id_persona = $mod_persona->consultarIdPersona($resp_datos['twin_numero'], $resp_datos['twin_numero'], $resp_datos['twin_correo'], $resp_datos['twin_celular']);
+					$id_persona = $mod_persona->consultarIdPersonaICP($resp_datos['twin_numero'], $resp_datos['twin_numero'], $resp_datos['twin_correo'], $resp_datos['twin_celular']);
 					if ($id_persona == 0) {
 						$id_persona = $mod_persona->insertarPersona($con, $parametros_per, $keys_per, 'persona');
 					}

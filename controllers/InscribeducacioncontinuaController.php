@@ -132,6 +132,7 @@ class InscribeducacioncontinuaController extends \yii\web\Controller {
 
 	public function actionSaveinscripciontemp() {
 		if (Yii::$app->request->isAjax) {
+			$resp_solicitudexiste['sins_id'] = 0;
 			$model = new InscripcionAdmision();
 			$modelpersona = new Persona();
 			$modelintersado = new Interesado();
@@ -245,14 +246,18 @@ class InscribeducacioncontinuaController extends \yii\web\Controller {
 				\app\models\Utilities::putMessageLogFile('mod: ' . $data["modal"]);
 				\app\models\Utilities::putMessageLogFile('eaca: ' . $data["estuaca"]);
 				\app\models\Utilities::putMessageLogFile('mail: ' . $data["mail"]);
+				//***OJO corregir ***/ ESTO ESTA MAL PARA  VALIDAR CON CORREO, DEBE SER 1ero verificar si hay una solicitud y luego el correo existe
 				$resp_cedula = $modelpersona->consultarIdPersonaICP(trim($data["cedula"]), trim($data["cedula"]), trim($data["mail"]));
 				\app\models\Utilities::putMessageLogFile('cedula 2: ' . $resp_cedula['per_id']);
 				// sino hay per_id continuar $accion
 				if(!empty($resp_cedula['per_id']))
 				{
+					\app\models\Utilities::putMessageLogFile('per id 1: ' . $resp_cedula['per_id']);
+					//\app\models\Utilities::putMessageLogFile('per id 2: ' . $resp_cedula);
 					// per_id consultar el id del interesado
 					$resp_interesado = $modelintersado->consultarIdinteresado($resp_cedula['per_id']);
 					\app\models\Utilities::putMessageLogFile('interesado id 1: ' . $resp_interesado);
+					\app\models\Utilities::putMessageLogFile('interesado id 2: ' . $resp_interesado['int_id']);
 					if(!empty($resp_interesado))
 					{
 						// consultar si ya exite una solicitud de inscripcion en la tabla segun int_id
@@ -260,10 +265,11 @@ class InscribeducacioncontinuaController extends \yii\web\Controller {
 						$resp_solicitudexiste = $modelsolicitud->Consultarsolicitudxcarrera($resp_interesado, $data["unidaca"], $data["modal"], $data["estuaca"]);
 					}
 				}
+				\app\models\Utilities::putMessageLogFile('solicitud id 1: ' . $resp_solicitudexiste);
 				\app\models\Utilities::putMessageLogFile('solicitud id 2: ' . $resp_solicitudexiste['sins_id']);
 				// si existe mensaje que ya tiene esa solicitud, caso contrario continuar
 				// empieza
-				if(empty($resp_solicitudexiste['sins_id'])){
+				if($resp_solicitudexiste['sins_id'] < 1){
 					if ($accion == "create" || $accion == "Create") {
 					//Nuevo Registro
 					/*$valida_inscribe = $model->consultarInscripcion($data["DATA_1"]);

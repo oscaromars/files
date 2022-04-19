@@ -25,6 +25,7 @@ use app\modules\academico\models\Matriculacion;
 use app\modules\financiero\models\CargaCartera;
 use app\modules\academico\models\PlanificacionEstudiante;
 use app\modules\financiero\models\Cruce;
+use app\modules\academico\models\Estudiante;
 use app\modules\financiero\Module as financiero;
 use app\modules\admision\Module as admision;
 use app\modules\academico\Module as academico;
@@ -151,6 +152,7 @@ class PagosfacturasController extends \app\components\CController {
         }
         //$pagospendientesea = $mod_pagos->getPagospendientexest($personaData['per_cedula'], false);
         $pagospendientesea = $mod_cartera->getPagospendientexestcar($personaData['per_cedula'], false);
+        \app\models\Utilities::putMessageLogFile('per_idssss..: ' . $perids);
         $nombregrupo = $mod_grupo->consultarGruponame($usuario);
         return $this->render('viewsaldo', [
                     'arr_persona' => $personaData,
@@ -159,7 +161,6 @@ class PagosfacturasController extends \app\components\CController {
                     'arr_carrera' => ArrayHelper::map($carrera, "id", "name"),
                     'model' => $pagospendientesea,
                     'nombregrupo' => $nombregrupo,
-                    'perids' => $perids,
         ]);
     }
 
@@ -1747,17 +1748,22 @@ class PagosfacturasController extends \app\components\CController {
         $mod_cartera = new CargaCartera();
         $data = Yii::$app->request->get();
         $ccar_id = base64_decode($_GET["ccar_id"]);
-        $per_id = base64_decode($_GET["perids"]);
-        
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
         }
         
         $consultarcuota = $mod_cartera->consultarCuotacargacartera($ccar_id);
+        $est_id = $consultarcuota['est_id'];
+        //\app\models\Utilities::putMessageLogFile('est_id 2222222..: ' . $est_id);
+        $mod_estudiante = new Estudiante();
+        $consultar_per_id = $mod_estudiante->consultarDatosPersona($est_id);
+        $perids = $consultar_per_id['per_id'];
+        //\app\models\Utilities::putMessageLogFile('per_id2222222..: ' . $perids);
+
         return $this->render('editarcuota', [
             //'model' => $model,
             'cuota' => $consultarcuota,
-            'per_id' => $per_id,
+            'perids' => $perids,
         ]);
     }
 
@@ -1767,7 +1773,7 @@ class PagosfacturasController extends \app\components\CController {
         if (Yii::$app->request->isAjax) {
             $data = Yii::$app->request->post();
             $ccar_id = $data['ccar_id'];
-            $per_id = $data['per_id'];
+            $per_id = $data['per_ids'];
             $est_id = $data['est_id'];
             $num_doc = $data['num_doc'];
             $estado = $data['estado'];
@@ -1777,34 +1783,51 @@ class PagosfacturasController extends \app\components\CController {
             $con = \Yii::$app->db_facturacion;
             $transaction = $con->beginTransaction();
             try {
-                \app\models\Utilities::putMessageLogFile('cartera id..: ' . $ccar_id);
-                \app\models\Utilities::putMessageLogFile('per_id..: ' . $per_id);
-                \app\models\Utilities::putMessageLogFile('est_id..: ' . $est_id);
-                $resp_estado = $mod_cartera->modificarCuotaCartera($ccar_id, $valor_cuota, $fechavencepago, $usu_autenticado, $fecha);
-                if ($resp_estado) {
-                    $resultFactura = $mod_cartera->sumaTotalfactura($est_id);
-                    $totalFactura = $resultFactura['total_factura'];
-                    $factura_total = $mod_cartera->modificarTotalfactura($est_id, $totalFactura, $usu_autenticado, $fecha, $num_doc, $estado);
-                    if($totalFactura){
-                        $exito = '1';
+                $consult_fechaMin = $mod_cartera->consultarFechaminima();
+                $fecha_minima = $consult_fechaMin['fecha_min'];
+                $consult_fechaMax = $mod_cartera->consultarFechamaxima();
+                $fecha_maxima = $consult_fechaMax['fecha_max'];
+
+                \app\models\Utilities::putMessageLogFile('fecha_minima..: ' . $fecha_minima);
+                \app\models\Utilities::putMessageLogFile('fecha_maxima..: ' . $fecha_maxima);
+                $consultarfecha = $mod_cartera->consultarFechadentrodelsemestre($fechavencepago, $fecha_minima, $fecha_maxima);
+                $resulta_fecha = $consultarfecha['fecha'];
+                \app\models\Utilities::putMessageLogFile('resulta_fecha..: ' . $resulta_fecha);
+                if($resulta_fecha == 1){
+                    $resp_estado = $mod_cartera->modificarCuotaCartera($ccar_id, $valor_cuota, $fechavencepago, $usu_autenticado, $fecha);
+                    if ($resp_estado) {
+                        $resultFactura = $mod_cartera->sumaTotalfactura($est_id);
+                        $totalFactura = $resultFactura['total_factura'];
+                        $factura_total = $mod_cartera->modificarTotalfactura($est_id, $totalFactura, $usu_autenticado, $fecha, $num_doc, $estado);
+                        if($totalFactura){
+                            $exito = '1';
+                        }
                     }
-                }
-                if ($exito) {
-                    //Realizar accion
-                    $transaction->commit();
-                    $message = array(
-                        "wtmessage" => Yii::t("notificaciones", "Se ha modificado los datos de la cuota correctamente."),
-                        "title" => Yii::t('jslang', 'Success'),
-                    );
-                    return Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), false, $message);
-                } else {
+                    if ($exito) {
+                        //Realizar accion
+                        $transaction->commit();
+                        $message = array(
+                            "wtmessage" => Yii::t("notificaciones", "Se ha modificado los datos de la cuota correctamente."),
+                            "title" => Yii::t('jslang', 'Success'),
+                        );
+                        return Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), false, $message);
+                    } else {
+                        $transaction->rollback();
+                        $message = array(
+                            "wtmessage" => Yii::t("notificaciones", "Error al modificar. "),
+                            "title" => Yii::t('jslang', 'Error'),
+                        );
+                        return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+                    }
+                }else{
                     $transaction->rollback();
-                    $message = array(
-                        "wtmessage" => Yii::t("notificaciones", "Error al modificar. "),
-                        "title" => Yii::t('jslang', 'Error'),
-                    );
-                    return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Error"), false, $message);
+                        $message = array(
+                            "wtmessage" => Yii::t("notificaciones", "La fecha no se encuentra dentro del periodo academico asignado. "),
+                            "title" => Yii::t('jslang', 'alert'),
+                        );
+                        return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Alerta"), false, $message);
                 }
+                
             } catch (Exception $ex) {
                 $transaction->rollback();
                 $message = array(

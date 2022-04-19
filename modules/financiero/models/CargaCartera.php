@@ -729,12 +729,6 @@ class CargaCartera extends \yii\db\ActiveRecord
      */
     public function modificarCuotaCartera($ccar_id, $ccar_valor_cuota, $ccar_fecha_vencepago, $ccar_usu_modifica, $ccar_fecha_modificacion) {
 
-        \app\models\Utilities::putMessageLogFile('ccar_id..: ' . $ccar_id);
-        \app\models\Utilities::putMessageLogFile('ccar_valor_cuota..: ' . $ccar_valor_cuota);
-        \app\models\Utilities::putMessageLogFile('ccar_fecha_vencepago..: ' . $ccar_fecha_vencepago);
-        \app\models\Utilities::putMessageLogFile('ccar_usu_modifica..: ' . $ccar_usu_modifica);
-        \app\models\Utilities::putMessageLogFile('ccar_fecha_modificacion..: ' . $ccar_fecha_modificacion);
-
         $con = \Yii::$app->db_facturacion;
 
         if ($trans !== null) {
@@ -757,7 +751,7 @@ class CargaCartera extends \yii\db\ActiveRecord
             $comando->bindParam(":ccar_usu_modifica", $ccar_usu_modifica, \PDO::PARAM_INT);
             $comando->bindParam(":ccar_fecha_modificacion", $ccar_fecha_modificacion, \PDO::PARAM_STR);
             $response = $comando->execute();
-            \app\models\Utilities::putMessageLogFile('updateCargaCartera: ' . $comando->getRawSql());
+            //\app\models\Utilities::putMessageLogFile('updateCargaCartera: ' . $comando->getRawSql());
             if ($trans !== null)
                 $trans->commit();
             return $response;
@@ -796,36 +790,33 @@ class CargaCartera extends \yii\db\ActiveRecord
      * @param   
      * @return  
      */
-    public function sumaTotalfactura($est_id) {
+    public function sumaTotalfactura($est_id, $ccar_numero_documento) {
         $con = \Yii::$app->db_facturacion;
         $estado = 1;
         $sql = "SELECT SUM(ccar.ccar_valor_cuota) as total_factura
                 FROM " . $con->dbname . ".carga_cartera ccar
                 WHERE ccar.est_id = :est_id AND
-                      ccar.ccar_estado_cancela='N' AND
+                      -- ccar.ccar_estado_cancela='N' AND
                       ccar.ccar_tipo_documento='FE' AND
+                      ccar.ccar_numero_documento=:ccar_numero_documento AND
                       ccar.ccar_estado = :estado AND
                       ccar.ccar_estado_logico = :estado";
 
         $comando = $con->createCommand($sql);
-        $comando->bindParam(":est_id", $est_id, \PDO::PARAM_INT);  
+        $comando->bindParam(":est_id", $est_id, \PDO::PARAM_INT);
+        $comando->bindParam(":ccar_numero_documento", $ccar_numero_documento, \PDO::PARAM_STR);   
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);       
         $resultData = $comando->queryOne();
-        \app\models\Utilities::putMessageLogFile('sumaTotalfactura: ' . $comando->getRawSql());
+        //\app\models\Utilities::putMessageLogFile('sumaTotalfactura: ' . $comando->getRawSql());
         return $resultData;
     }
     /**
-     * Function modificar valor de 1 cuota en cartera.
-     * @author Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>;
+     * Function modificar valor total de la factura si se ha modifado el valor de la cuota.
+     * @author Lisbeth González <analistadesarrollo07@uteg.edu.ec>;
      * @param
      * @return
      */
     public function modificarTotalfactura($est_id, $ccar_valor_factura, $ccar_usu_modifica, $ccar_fecha_modificacion, $ccar_numero_documento, $ccar_estado_cancela) {
-
-        \app\models\Utilities::putMessageLogFile('est_id2..: ' . $est_id);
-        \app\models\Utilities::putMessageLogFile('ccar_valor_factura2..: ' . $ccar_valor_factura);
-        \app\models\Utilities::putMessageLogFile('ccar_usu_modifica2..: ' . $ccar_usu_modifica);
-        \app\models\Utilities::putMessageLogFile('ccar_fecha_modificacion2..: ' . $ccar_fecha_modificacion);
 
         $con = \Yii::$app->db_facturacion;
 
@@ -841,7 +832,7 @@ class CargaCartera extends \yii\db\ActiveRecord
                           ccar_usu_modifica = :ccar_usu_modifica,
                           ccar_fecha_modificacion = :ccar_fecha_modificacion
                       WHERE
-                      est_id = :est_id and ccar_numero_documento = :ccar_numero_documento and ccar_estado_cancela = :ccar_estado_cancela");
+                      est_id = :est_id and ccar_numero_documento = :ccar_numero_documento");
             $comando->bindParam(":est_id", $est_id, \PDO::PARAM_INT);
             $comando->bindParam(":ccar_numero_documento", $ccar_numero_documento, \PDO::PARAM_STR);
             $comando->bindParam(":ccar_estado_cancela", $ccar_estado_cancela, \PDO::PARAM_STR);
@@ -849,7 +840,7 @@ class CargaCartera extends \yii\db\ActiveRecord
             $comando->bindParam(":ccar_usu_modifica", $ccar_usu_modifica, \PDO::PARAM_INT);
             $comando->bindParam(":ccar_fecha_modificacion", $ccar_fecha_modificacion, \PDO::PARAM_STR);
             $response = $comando->execute();
-            \app\models\Utilities::putMessageLogFile('updateCargaCartera2: ' . $comando->getRawSql());
+            //\app\models\Utilities::putMessageLogFile('updateCargaCartera2: ' . $comando->getRawSql());
             if ($trans !== null)
                 $trans->commit();
             return $response;
@@ -859,4 +850,69 @@ class CargaCartera extends \yii\db\ActiveRecord
             return FALSE;
         }
     }
+    /**
+     * Function consultar Fecha minima dentro del periodo académico con estado activo
+     * @author  Lisbeth González <analistadesarrollo07@uteg.edu.ec>
+     * @param  
+     * @return  
+     */
+    public function consultarFechaminima() {
+        $con = \Yii::$app->db_academico;
+        $estado = 1;
+        $sql = "SELECT min(paca_fecha_inicio) as fecha_min
+                FROM db_academico.periodo_academico paca
+                INNER JOIN db_academico.semestre_academico saca on saca.saca_id = paca.saca_id
+                where paca.paca_activo = 'A'
+                and paca.paca_estado = :estado and paca.paca_estado_logico = :estado;";
+
+        $comando = $con->createCommand($sql);  
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);       
+        $resultData = $comando->queryOne();
+        //\app\models\Utilities::putMessageLogFile('consultarFechadentrodelsemestre: ' . $comando->getRawSql());
+        return $resultData;
+    }
+    /**
+     * Function consultar Fecha maxima dentro del periodo académico con estado activo
+     * @author  Lisbeth González <analistadesarrollo07@uteg.edu.ec>
+     * @param   
+     * @return  
+     */
+    public function consultarFechamaxima() {
+        $con = \Yii::$app->db_academico;
+        $estado = 1;
+        $sql = "SELECT max(paca_fecha_fin) as fecha_max
+                FROM db_academico.periodo_academico paca
+                INNER JOIN db_academico.semestre_academico saca on saca.saca_id = paca.saca_id
+                where paca.paca_activo = 'A'
+                and paca.paca_estado = :estado and paca.paca_estado_logico = :estado;";
+
+        $comando = $con->createCommand($sql);  
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);       
+        $resultData = $comando->queryOne();
+        //\app\models\Utilities::putMessageLogFile('consultarFechadentrodelsemestre: ' . $comando->getRawSql());
+        return $resultData;
+    }
+    /**
+     * Function consultar Fechas que esten en el rango de fecha inicio y fecha fin con estado activo
+     * @author  Lisbeth González <analistadesarrollo07@uteg.edu.ec>
+     * @param   
+     * @return  
+     */
+    public function consultarFechadentrodelsemestre($fecha, $fecha_min, $fecha_max) {
+        $con = \Yii::$app->db_academico;
+        $estado = 1;
+        $sql = "SELECT count(*) as fecha 
+                FROM " . $con->dbname . ".periodo_academico paca
+                INNER JOIN " . $con->dbname . ".semestre_academico saca on saca.saca_id = paca.saca_id
+                where :fecha between $fecha_min and $fecha_max and paca.paca_activo = 'A'
+                and paca.paca_estado = :estado and paca.paca_estado_logico = :estado;";
+
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":fecha", $fecha, \PDO::PARAM_STR);  
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);       
+        $resultData = $comando->queryOne();
+        //\app\models\Utilities::putMessageLogFile('consultarFechadentrodelsemestre: ' . $comando->getRawSql());
+        return $resultData;
+    }
+
 }

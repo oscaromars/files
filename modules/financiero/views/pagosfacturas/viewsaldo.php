@@ -183,14 +183,14 @@ DatatableAsset::register($this);
                                 return Html::a('<span class="glyphicon glyphicon-trash"></span>', "#", ['onclick' => "eliminarpagcartera(" . $model['ccar_id'] . ");", "data-toggle" => "tooltip", "title" => "Eliminar Registro", "data-pjax" => 0]);
                              }else return " ";
                         },
-                        'update' => function ($url, $model) {
+                        'update' => function ($url, $model, $perids) {
                             if($model['grupo'] == 'Super Admin' || $model['grupo'] == 'Colecturia'){
                                 if($model['abono'] == 0 ){
-                                    return Html::a('<span class="glyphicon glyphicon-file"></span>', Url::to(['pagosfacturas/modificarcuota', 'popup' => "true", 'ccar_id' => base64_encode($model['ccar_id']), 'perids' => base64_encode($perids)]), ["class" => "pbpopup", "data-toggle" => "tooltip", "title" => "Modificar Cuota", "data-pjax" => 0]);
+                                    return Html::a('<span class="glyphicon glyphicon-file"></span>', Url::to(['pagosfacturas/modificarcuota', 'popup' => "true", 'ccar_id' => base64_encode($model['ccar_id'])]), ["class" => "pbpopup", "data-toggle" => "tooltip", "title" => "Modificar Cuota", "data-pjax" => 0]);
 
-                                    /*return Html::a('<span class="glyphicon glyphicon-file"></span>', "#", ['onclick' => "modificarcuota(" . $model['ccar_id'] . ");", "data-toggle" => "tooltip", "title" => "Modificar Cuota", "data-pjax" => 0]);*/
+                                    /*return Html::a('<span class="glyphicon glyphicon-file"></span>', "#", ['onclick' => "editCartera(" . $model['ccar_id'] . ");", "data-toggle" => "tooltip", "title" => "Modificar Cuota", "data-pjax" => 0]);*/
                                 }else{
-                                    return '<span class="glyphicon glyphicon-file"></span>';
+                                    return '<span class="glyphicon glyphicon-file" disabled="true"></span>';
                                 }
                             }else return " ";
                         },

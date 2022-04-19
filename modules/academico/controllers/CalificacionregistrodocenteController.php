@@ -1813,7 +1813,7 @@ return $this->redirect('index');
  try {
 
      $mod_calificacion  = new CabeceraCalificacion();
-     $arr_usuarios = $mod_calificacion->consultarUsuarios($eduasid);
+     $arr_usuarios = $mod_calificacion->consultarUsuarios($eduasid,$parcial);
      $parciales=$parcial; if ($parcial > 2){$parcial=2;}
 
  if (count($arr_usuarios) > 0) {  

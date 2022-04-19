@@ -2106,6 +2106,24 @@ print_r($data03);*/
 
     }
 
+        if ($componentes[$il]['com_id']== 1 AND isset($data02['foro'])) {    //COMP_FORO ol
+        
+     $comp_foro1 = (float)$comp_foro1+ (float)$data03; //print_r("SUMADO:"); 
+     $comp_cuni_id = $componentes[$il]['cuni_id'];
+    print_r("comp_foro1 ES ");
+     print_r($comp_foro1);
+
+    }
+
+        if ($componentes[$il]['com_id']== 2 AND isset($data02['sincrona'])) {    //COMP_SINCRONA ol
+        
+     $comp_sincrona1 = (float)$comp_sincrona1+ (float)$data03; //print_r("SUMADO:"); 
+     $comp_cuni_id = $componentes[$il]['cuni_id'];
+    //print_r("comp_sincrona1 ES ");
+    //  print_r($comp_sincrona1);
+
+    }
+
 
 }
 if ( $comp_evaluacion1 > 0 ){
@@ -2146,19 +2164,34 @@ if ($parciales == 2 AND $data01['parcial']==2) {
 for ($il = 0; $il < count($componentes); $il++) {
 
 
-    if ($componentes[$il]['com_id']== 8 AND isset($data02['evaluacion'] )) {    //COMP_EVALUACION ol
+    if ($componentes[$il]['com_id']== 3 AND isset($data02['evaluacion'] )) {    //COMP_EVALUACION ol
 
      $comp_evaluacion2 = (float)$comp_evaluacion2 + (float)$data03;  
       $comp_cuni_id = $componentes[$il]['cuni_id'];
 
     }
 
-     if ($componentes[$il]['com_id']== 9 AND isset($data02['taller'] )) {    //COMP_AUTONOMA ol
+     if ($componentes[$il]['com_id']== 4 AND isset($data02['taller'] )) {    //COMP_AUTONOMA ol
         
          $comp_autonoma2 = (float)$comp_autonoma2 + (float)$data03; 
           $comp_cuni_id = $componentes[$il]['cuni_id'];
 
     }
+
+         if ($componentes[$il]['com_id']== 1 AND isset($data02['foro'] )) {    //COMP_FORO ol
+        
+         $comp_foro2 = (float)$comp_foro2 + (float)$data03; 
+          $comp_cuni_id = $componentes[$il]['cuni_id'];
+
+    }
+
+             if ($componentes[$il]['com_id']== 2 AND isset($data02['sincrona'] )) { //COMP_SINCRONA ol
+        
+         $comp_sincrona2 = (float)$comp_sincrona2 + (float)$data03; 
+          $comp_cuni_id = $componentes[$il]['cuni_id'];
+
+    }
+
 
       if ($componentes[$il]['com_id']== 10 AND isset($data02['examen'] )) {    //COMP_EXAMEN ol
         

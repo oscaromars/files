@@ -2161,4 +2161,35 @@ class Solicitudinscripcion extends \yii\db\ActiveRecord {
         $response = $comando->execute();
         return $response;
     }
+
+    /**
+     * Function Consultarsolicitudxcarrera
+     * @author  Giovanni Vergara <analistadesarrollo02@uteg.edu.ec>
+     * @param
+     * @return  id de solicitud de inscripcion
+     */
+    public function Consultarsolicitudxcarrera($int_id, $uaca_id, $mod_id, $eaca_id) {
+        $con = \Yii::$app->db_captacion;
+        $estado = 1;
+
+        $sql = "SELECT
+                    sins_id
+                FROM " . $con->dbname . ".solicitud_inscripcion
+                WHERE
+                    int_id = :int_id AND
+                    uaca_id = :uaca_id AND
+                    mod_id = :mod_id AND
+                    eaca_id = :eaca_id AND
+                    sins_estado = :estado AND
+                    sins_estado_logico = :estado";
+
+        $comando = $con->createCommand($sql);
+        $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
+        $comando->bindParam(":int_id", $int_id, \PDO::PARAM_INT);
+        $comando->bindParam(":uaca_id", $uaca_id, \PDO::PARAM_INT);
+        $comando->bindParam(":mod_id", $mod_id, \PDO::PARAM_INT);
+        $comando->bindParam(":eaca_id", $eaca_id, \PDO::PARAM_INT);
+        $resultData = $comando->queryOne();
+        return $resultData;
+    }
 }

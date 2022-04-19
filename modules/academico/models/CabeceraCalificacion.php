@@ -2273,7 +2273,7 @@ ORDER BY name ASC
      * @return
      *  Consulta Usuarios por distributivo-aula Educativa
      */
-    public function consultarUsuarios($uedu_aula) {
+    public function consultarUsuarios($uedu_aula,$parcial) {
      $con = \Yii::$app->db_academico;$estado = 1;
 
 $deduc= "
@@ -2294,7 +2294,9 @@ LEFT JOIN db_academico.cabecera_calificacion as cabec on  cabec.est_id = daes.es
 AND cabec.asi_id = daca.asi_id
 LEFT JOIN db_academico.temp_estudiantes_noprocesados as tempo on  tempo.est_id = daes.est_id
 AND tempo.asi_id = daca.asi_id
-WHERE ceduct.cedu_asi_id = :uedu_aula
+WHERE TRUE
+AND ceduct.cedu_asi_id = :uedu_aula
+AND (cabec.ccal_id is Null OR cabec.ecun_id = :parcial ) 
 AND ceduct.cedu_estado = :estado AND ceduct.cedu_estado_logico = :estado
 AND daca.daca_estado = :estado AND daca.daca_estado_logico = :estado 
 AND daes.daes_estado = :estado AND daes.daes_estado_logico = :estado 
@@ -2307,6 +2309,7 @@ AND person.per_estado = :estado AND person.per_estado_logico = :estado
         $comando = $con->createCommand($deduc);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_INT);
         $comando->bindParam(":uedu_aula", $uedu_aula, \PDO::PARAM_INT);
+        $comando->bindParam(":parcial", $parcial, \PDO::PARAM_INT);
         $resultUsers = $comando->queryAll();
         return $resultUsers;
 
@@ -2374,7 +2377,7 @@ AND cuni.cuni_estado = 1 AND cuni.cuni_estado_logico = 1
 AND comp.com_estado = 1 AND comp.com_estado_logico = 1 
 ";
 $comando = $con->createCommand($sql);
-$escalas = $comando->queryOne();
+$escalas = $comando->queryAll();
 return $escalas;
 
 }
@@ -2397,7 +2400,7 @@ ecun_id = $parciales
 AND ccal_estado = 1 AND ccal_estado_logico = 1 
 ";
 $comando = $con->createCommand($sql);
-$cabeceras = $comando->queryOne();
+$cabeceras = $comando->queryAll();
 return $cabeceras;
 }
 public function putcabeceras($est_id,$asi_id,$paca_id,$parciales,$pro_id){

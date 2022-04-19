@@ -1291,7 +1291,7 @@ class Persona extends \yii\db\ActiveRecord {
                 per_id
                FROM " . $con->dbname . ".persona
                WHERE
-                    (per_cedula = :per_cedula or per_pasaporte = :per_cedula)AND
+                    (trim(per_cedula) = :per_cedula or trim(per_pasaporte) = :per_cedula)AND
                     per_estado = :estado AND
                     per_estado_logico=:estado";
         $comando = $con->createCommand($sql);

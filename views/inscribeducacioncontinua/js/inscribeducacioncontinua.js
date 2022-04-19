@@ -817,6 +817,9 @@ function guardarInscripcionTemp2(accion) {
                 var link = $('#txth_base').val() + "/inscribeducacioncontinua/saveinscripciontemp";
                 //window.open("https://www.cranea.com.ec/mbtu/online-payments/");
                 var arrParams            = new Object();
+                arrParams.unidaca = $('#cmb_unidad_solicitud').val();
+                arrParams.modal = $('#cmb_modalidad_solicitud').val();
+                arrParams.estuaca = $('#cmb_carrera_solicitud').val();
                 arrParams.codigo         = $('#txth_twin_id').val();
                 arrParams.ACCION         = 'Fin';
                 arrParams.nombres_fact   = $('#txt_nombres_fac').val();

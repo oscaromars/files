@@ -1747,7 +1747,7 @@ return $this->redirect('index');
     $mod_unidad     = new UnidadAcademica();
     $mod_modalidad  = new Modalidad();
     $mod_calificacion  = new CabeceraCalificacion();
-     $arr_parcial = array(0 => '[ Elija Parcial ]',1 => 'Parcial 1',2 => 'Parcial 2',3 => 'Supletorio/Mejoramiento',4 => 'Actualizar todo');
+     $arr_parcial = array(0 => '[ Elija Parcial ]',1 => 'Parcial 1',2 => 'Parcial 2',3 => 'Supletorio/Mejoramiento');
 
     $arr_periodos = $mod_periodos->consultarPeriodosActivosmalla();
     $arr_unidad = $mod_unidad->consultarUnidadAcademicasEmpresa(1);
@@ -1813,7 +1813,7 @@ return $this->redirect('index');
  try {
 
      $mod_calificacion  = new CabeceraCalificacion();
-     $arr_usuarios = $mod_calificacion->consultarUsuarios($eduasid);
+     $arr_usuarios = $mod_calificacion->consultarUsuarios($eduasid,$parcial);
      $parciales=$parcial; if ($parcial > 2){$parcial=2;}
 
  if (count($arr_usuarios) > 0) {  
@@ -1834,7 +1834,6 @@ return $this->redirect('index');
             $ced_id = $arr_usuarios[$u]['per_cedula'];
             $maes_id = $arr_usuarios[$u]['maes_id'];
 
-    try {
           $wsdl = 'https://campusvirtual.uteg.edu.ec/soap/?wsdl=true';
          
          $client = new \SoapClient($wsdl, [
@@ -1856,12 +1855,6 @@ return $this->redirect('index');
                           "WxrrvTt8",
                           "basic");
 
-          }    catch (PDOException $e) {
-           putMessageLogFile('Error conexion Educativa: ' . $e->getMessage());
-           putMessageLogFile('cedu_asi_id: ' .$cedu_asi_id );
-           putMessageLogFile('uedu_usuario: ' .$uedu_usuario );
-              }
-
           $method = 'obtener_avance_usuarios'; 
        
           $args = Array(
@@ -1872,28 +1865,26 @@ return $this->redirect('index');
    try {
 
             $advancer = $client->__call( $method, Array( $args ) );
+              while (openssl_error_string()) {
+            $advancer = $client->__call( $method, Array( $args ) );
+            }
 
            $arrayadv = json_decode(json_encode($advancer), true);
 
             $sincro=$arrayadv['usuarios']['avance'];
             $asiste=$arrayadv['usuarios']['avance'];
 
-              }    catch (PDOException $e) {
-           putMessageLogFile('Error Avance: ' . $e->getMessage());
-           putMessageLogFile('cedu_asi_id: ' .$cedu_asi_id );
-           putMessageLogFile('uedu_usuario: ' .$uedu_usuario );
-              }
+              }   finally {}
 
           $method = 'obtener_notas_calificaciones'; 
            
              try {
             $response = $client->__call( $method, Array( $args ) );
+             while (openssl_error_string()) {
+            $response = $client->__call( $method, Array( $args ) );	
+            }
 
-              }    catch (PDOException $e) {
-           putMessageLogFile('Error Educativa: ' . $e->getMessage());
-           putMessageLogFile('cedu_asi_id: ' .$cedu_asi_id );
-           putMessageLogFile('uedu_usuario: ' .$uedu_usuario );
-              }
+              }     finally {}
 
 
      if (isset($response->categorias)) { 

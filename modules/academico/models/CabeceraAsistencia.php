@@ -2349,7 +2349,7 @@ class CabeceraAsistencia extends \yii\db\ActiveRecord
                 ; 
                 ";
                  $comando = $con->createCommand($sql);
-                $dasistencia = $comando->queryOne();
+                $dasistencia = $comando->queryAll();
                 return $dasistencia;
             }
             function putdasistencia($casi_id,$aeun_id,$dasistencia){

@@ -781,7 +781,7 @@ class CargaCartera extends \yii\db\ActiveRecord
         $sql = "SELECT ccar_id, 
                         est_id, 
                         ccar_numero_documento, 
-                        ccar_valor_cuota, 
+                        Round(ccar_valor_cuota,2) as ccar_valor_cuota, 
                         ccar_fecha_vencepago, 
                         ccar_valor_factura, 
                         ccar_estado_cancela 
@@ -802,7 +802,7 @@ class CargaCartera extends \yii\db\ActiveRecord
     public function sumaTotalfactura($est_id, $ccar_numero_documento) {
         $con = \Yii::$app->db_facturacion;
         $estado = 1;
-        $sql = "SELECT SUM(ccar.ccar_valor_cuota) as total_factura
+        $sql = "SELECT Round(SUM(ccar.ccar_valor_cuota),2) as total_factura
                 FROM " . $con->dbname . ".carga_cartera ccar
                 WHERE ccar.est_id = :est_id AND
                       ccar.ccar_estado_cancela = 'N' AND

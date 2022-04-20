@@ -174,21 +174,6 @@ GLOBAL $dsn, $dbuser, $dbpass, $dbname;
 
  if (count($groups) > 0) {  
     $countar=0;
-               for ($m = 0; $m < count($groups); $m++) {  
-
-    $daca_id = $groups[$m]['daca_id'];
-            $cedu_asi_id = $groups[$m]['cedu_asi_id']; 
-            $uaca_id = $groups[$m]['uaca_id'];
-            $paca_id = $groups[$m]['paca_id'];
-            $mod_id = $groups[$m]['mod_id']; 
-            $mpp_id = $groups[$m]['mpp_id'];
-            $pro_id = $groups[$m]['pro_id'];
-            $asi_id = $groups[$m]['asi_id'];
-            $est_id = $groups[$m]['est_id'];
-            $uedu_usuario = $groups[$m]['uedu_usuario'];
-            $per_id = $groups[$m]['per_id'];
-            $ced_id = $groups[$m]['per_cedula'];
-            $maes_id = $groups[$m]['maes_id'];
 
     try {
           $wsdl = 'https://campusvirtual.uteg.edu.ec/soap/?wsdl=true';
@@ -212,12 +197,23 @@ GLOBAL $dsn, $dbuser, $dbpass, $dbname;
                           "WxrrvTt8",
                           "basic");
 
-          }    catch (PDOException $e) {
-           putMessageLogFile('Error conexion Educativa: ' . $e->getMessage());
-           putMessageLogFile('cedu_asi_id: ' .$cedu_asi_id );
-           putMessageLogFile('uedu_usuario: ' .$uedu_usuario );
-              }
+          }    finally { $thishas= True; }
 
+               for ($m = 0; $m < count($groups); $m++) {  
+
+    $daca_id = $groups[$m]['daca_id'];
+            $cedu_asi_id = $groups[$m]['cedu_asi_id']; 
+            $uaca_id = $groups[$m]['uaca_id'];
+            $paca_id = $groups[$m]['paca_id'];
+            $mod_id = $groups[$m]['mod_id']; 
+            $mpp_id = $groups[$m]['mpp_id'];
+            $pro_id = $groups[$m]['pro_id'];
+            $asi_id = $groups[$m]['asi_id'];
+            $est_id = $groups[$m]['est_id'];
+            $uedu_usuario = $groups[$m]['uedu_usuario'];
+            $per_id = $groups[$m]['per_id'];
+            $ced_id = $groups[$m]['per_cedula'];
+            $maes_id = $groups[$m]['maes_id'];
 
           $method = 'obtener_avance_usuarios'; 
        
@@ -235,22 +231,14 @@ GLOBAL $dsn, $dbuser, $dbpass, $dbname;
             $sincro=$arrayadv['usuarios']['avance'];
             $asiste=$arrayadv['usuarios']['avance'];
 
-              }    catch (PDOException $e) {
-           putMessageLogFile('Error Avance: ' . $e->getMessage());
-           putMessageLogFile('cedu_asi_id: ' .$cedu_asi_id );
-           putMessageLogFile('uedu_usuario: ' .$uedu_usuario );
-              }
+              }   finally { $thisadvancer= True; }
 
           $method = 'obtener_notas_calificaciones'; 
            
              try {
             $response = $client->__call( $method, Array( $args ) );
 
-              }    catch (PDOException $e) {
-           putMessageLogFile('Error Educativa: ' . $e->getMessage());
-           putMessageLogFile('cedu_asi_id: ' .$cedu_asi_id );
-           putMessageLogFile('uedu_usuario: ' .$uedu_usuario );
-              }
+              }     finally { $thisresponse= True; }
 
   $isauth = isset($response); 
               $isdata = isset($response->categorias); 
@@ -395,6 +383,40 @@ $cabeceras = getcabeceras($est_id,$asi_id,$paca_id,$parciales);}
 
 
 if ($mod_id==1 AND $uaca_id ==1){
+
+if (isset($sincro)) {
+$fsincro = (float)$sincro;
+$fsincro = $fsincro/50;
+$comp_cuni_id1 = 2 ;
+$comp_cuni_id2 = 7;
+}
+
+if ( $fsincro > 0 ){
+$dcalificacion = (float)$fsincro;
+$detalles = $mod_calificacion->getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id1);
+if ($detalles == Null) {
+$detalles = $mod_calificacion->putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id1 ,$dcalificacion); 
+}else {
+if ($detalles[0]['dcal_usuario_creacion'] == '1' AND $detalles[0]['dcal_fecha_modificacion'] ==Null){
+$detallesup = $mod_calificacion->updatedetalles($detalles[0]['dcal_id'],$dcalificacion); 
+$bt= $mod_calificacion->putbitacora($detalles[0]['dcal_id'],$dcalificacion);
+}
+}
+} 
+
+if ( $fsincro > 0 ){
+$dcalificacion = (float)$fsincro;
+$detalles = $mod_calificacion->getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id2);
+if ($detalles == Null) {
+$detalles = $mod_calificacion->putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id2 ,$dcalificacion); 
+}else {
+if ($detalles[0]['dcal_usuario_creacion'] == '1' AND $detalles[0]['dcal_fecha_modificacion'] ==Null){
+$detallesup = $mod_calificacion->updatedetalles($detalles[0]['dcal_id'],$dcalificacion); 
+$bt= $mod_calificacion->putbitacora($detalles[0]['dcal_id'],$dcalificacion);
+}
+}
+} 
+
 for ($it = 0; $it < count($arraydata3); $it++) {
 
 $comp_evaluacion1 = 0.00;$comp_autonoma1 = 0.00;$comp_examen1 = 0.00;
@@ -490,6 +512,24 @@ print_r($data03);*/
 
     }
 
+            if ($componentes[$il]['com_id']== 1 AND isset($data02['foro'])) {    //COMP_FORO ol
+        
+     $comp_foro1 = (float)$comp_foro1+ (float)$data03; //print_r("SUMADO:"); 
+     $comp_cuni_id = $componentes[$il]['cuni_id'];
+    print_r("comp_foro1 ES ");
+     print_r($comp_foro1);
+
+    }
+
+        if ($componentes[$il]['com_id']== 2 AND isset($data02['sincrona'])) {    //COMP_SINCRONA ol
+        
+     $comp_sincrona1 = (float)$comp_sincrona1+ (float)$data03; //print_r("SUMADO:"); 
+     $comp_cuni_id = $componentes[$il]['cuni_id'];
+    //print_r("comp_sincrona1 ES ");
+    //  print_r($comp_sincrona1);
+
+    }
+
 
 
 }
@@ -530,16 +570,31 @@ if ($parciales == 2 AND $data01['parcial']==2) {
 for ($il = 0; $il < count($componentes); $il++) {
 
 
-    if ($componentes[$il]['com_id']== 8 AND isset($data02['evaluacion'] )) {    //COMP_EVALUACION ol
+    if ($componentes[$il]['com_id']== 3 AND isset($data02['evaluacion'] )) {    //COMP_EVALUACION ol
 
      $comp_evaluacion2 = (float)$comp_evaluacion2 + (float)$data03;  
       $comp_cuni_id = $componentes[$il]['cuni_id'];
 
     }
 
-     if ($componentes[$il]['com_id']== 9 AND isset($data02['taller'] )) {    //COMP_AUTONOMA ol
+     if ($componentes[$il]['com_id']== 4 AND isset($data02['taller'] )) {    //COMP_AUTONOMA ol
         
          $comp_autonoma2 = (float)$comp_autonoma2 + (float)$data03; 
+          $comp_cuni_id = $componentes[$il]['cuni_id'];
+
+    }
+
+
+         if ($componentes[$il]['com_id']== 1 AND isset($data02['foro'] )) {    //COMP_FORO ol
+        
+         $comp_foro2 = (float)$comp_foro2 + (float)$data03; 
+          $comp_cuni_id = $componentes[$il]['cuni_id'];
+
+    }
+
+             if ($componentes[$il]['com_id']== 2 AND isset($data02['sincrona'] )) { //COMP_SINCRONA ol
+        
+         $comp_sincrona2 = (float)$comp_sincrona2 + (float)$data03; 
           $comp_cuni_id = $componentes[$il]['cuni_id'];
 
     }
@@ -886,7 +941,7 @@ return $datacategorias;
  function getnota($elemento) {
 $notas = explode("/", $elemento);
 $withouter = str_replace(chr(44), chr(46), $notas[0]);
-$grade = $withouter*1;  
+$grade = floatval($withouter);
 return $grade;
  }
 

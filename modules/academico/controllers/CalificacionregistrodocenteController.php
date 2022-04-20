@@ -1817,24 +1817,8 @@ return $this->redirect('index');
      $parciales=$parcial; if ($parcial > 2){$parcial=2;}
 
  if (count($arr_usuarios) > 0) {  
-    
-               for ($u = 0; $u < count($arr_usuarios); $u++) {  
 
-  $daca_id = $arr_usuarios[$u]['daca_id'];
-            $cedu_asi_id = $arr_usuarios[$u]['cedu_asi_id']; 
-            $uaca_id = $arr_usuarios[$u]['uaca_id'];
-            $paca_id = $arr_usuarios[$u]['paca_id'];
-            $mod_id = $arr_usuarios[$u]['mod_id']; 
-            $mpp_id = $arr_usuarios[$u]['mpp_id'];
-            $pro_id = $arr_usuarios[$u]['pro_id'];
-            $asi_id = $arr_usuarios[$u]['asi_id'];
-            $est_id = $arr_usuarios[$u]['est_id'];
-            $uedu_usuario = $arr_usuarios[$u]['uedu_usuario'];
-            $per_id = $arr_usuarios[$u]['per_id'];
-            $ced_id = $arr_usuarios[$u]['per_cedula'];
-            $maes_id = $arr_usuarios[$u]['maes_id'];
-
-          $wsdl = 'https://campusvirtual.uteg.edu.ec/soap/?wsdl=true';
+ 	          $wsdl = 'https://campusvirtual.uteg.edu.ec/soap/?wsdl=true';
          
          $client = new \SoapClient($wsdl, [
          "soap_version" => SOAP_1_1,
@@ -1854,6 +1838,22 @@ return $this->redirect('index');
          $client->setCredentials("webservice", 
                           "WxrrvTt8",
                           "basic");
+    
+               for ($u = 0; $u < count($arr_usuarios); $u++) {  
+
+  $daca_id = $arr_usuarios[$u]['daca_id'];
+            $cedu_asi_id = $arr_usuarios[$u]['cedu_asi_id']; 
+            $uaca_id = $arr_usuarios[$u]['uaca_id'];
+            $paca_id = $arr_usuarios[$u]['paca_id'];
+            $mod_id = $arr_usuarios[$u]['mod_id']; 
+            $mpp_id = $arr_usuarios[$u]['mpp_id'];
+            $pro_id = $arr_usuarios[$u]['pro_id'];
+            $asi_id = $arr_usuarios[$u]['asi_id'];
+            $est_id = $arr_usuarios[$u]['est_id'];
+            $uedu_usuario = $arr_usuarios[$u]['uedu_usuario'];
+            $per_id = $arr_usuarios[$u]['per_id'];
+            $ced_id = $arr_usuarios[$u]['per_cedula'];
+            $maes_id = $arr_usuarios[$u]['maes_id'];
 
           $method = 'obtener_avance_usuarios'; 
        
@@ -1874,7 +1874,7 @@ return $this->redirect('index');
             $sincro=$arrayadv['usuarios']['avance'];
             $asiste=$arrayadv['usuarios']['avance'];
 
-              }   finally {}
+              }   finally { $hasadvance = True; }
 
           $method = 'obtener_notas_calificaciones'; 
            
@@ -1884,7 +1884,7 @@ return $this->redirect('index');
             $response = $client->__call( $method, Array( $args ) );	
             }
 
-              }     finally {}
+              }     finally { $hasresponse = True; }
 
 
      if (isset($response->categorias)) { 
@@ -2013,6 +2013,40 @@ $cabeceras = $mod_calificacion->putcabeceras($est_id,$asi_id,$paca_id,$parciales
 $cabeceras = $mod_calificacion->getcabeceras($est_id,$asi_id,$paca_id,$parciales);}
 
 if ($mod_id==1 AND $uaca_id ==1){
+
+if (isset($sincro)) {
+$fsincro = (float)$sincro;
+$fsincro = $fsincro/50;
+$comp_cuni_id1 = 2 ;
+$comp_cuni_id2 = 7;
+}
+
+if ( $fsincro > 0 ){
+$dcalificacion = (float)$fsincro;
+$detalles = $mod_calificacion->getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id1);
+if ($detalles == Null) {
+$detalles = $mod_calificacion->putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id1 ,$dcalificacion); 
+}else {
+if ($detalles[0]['dcal_usuario_creacion'] == '1' AND $detalles[0]['dcal_fecha_modificacion'] ==Null){
+$detallesup = $mod_calificacion->updatedetalles($detalles[0]['dcal_id'],$dcalificacion); 
+$bt= $mod_calificacion->putbitacora($detalles[0]['dcal_id'],$dcalificacion);
+}
+}
+} 
+
+if ( $fsincro > 0 ){
+$dcalificacion = (float)$fsincro;
+$detalles = $mod_calificacion->getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id2);
+if ($detalles == Null) {
+$detalles = $mod_calificacion->putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id2 ,$dcalificacion); 
+}else {
+if ($detalles[0]['dcal_usuario_creacion'] == '1' AND $detalles[0]['dcal_fecha_modificacion'] ==Null){
+$detallesup = $mod_calificacion->updatedetalles($detalles[0]['dcal_id'],$dcalificacion); 
+$bt= $mod_calificacion->putbitacora($detalles[0]['dcal_id'],$dcalificacion);
+}
+}
+} 
+
 for ($it = 0; $it < count($arraydata3); $it++) { 
 
 $comp_evaluacion1 = 0.00;$comp_autonoma1 = 0.00;$comp_examen1 = 0.00;
@@ -2106,6 +2140,24 @@ print_r($data03);*/
 
     }
 
+        if ($componentes[$il]['com_id']== 1 AND isset($data02['foro'])) {    //COMP_FORO ol
+        
+     $comp_foro1 = (float)$comp_foro1+ (float)$data03; //print_r("SUMADO:"); 
+     $comp_cuni_id = $componentes[$il]['cuni_id'];
+    print_r("comp_foro1 ES ");
+     print_r($comp_foro1);
+
+    }
+
+        if ($componentes[$il]['com_id']== 2 AND isset($data02['sincrona'])) {    //COMP_SINCRONA ol
+        
+     $comp_sincrona1 = (float)$comp_sincrona1+ (float)$data03; //print_r("SUMADO:"); 
+     $comp_cuni_id = $componentes[$il]['cuni_id'];
+    //print_r("comp_sincrona1 ES ");
+    //  print_r($comp_sincrona1);
+
+    }
+
 
 }
 if ( $comp_evaluacion1 > 0 ){
@@ -2146,19 +2198,34 @@ if ($parciales == 2 AND $data01['parcial']==2) {
 for ($il = 0; $il < count($componentes); $il++) {
 
 
-    if ($componentes[$il]['com_id']== 8 AND isset($data02['evaluacion'] )) {    //COMP_EVALUACION ol
+    if ($componentes[$il]['com_id']== 3 AND isset($data02['evaluacion'] )) {    //COMP_EVALUACION ol
 
      $comp_evaluacion2 = (float)$comp_evaluacion2 + (float)$data03;  
       $comp_cuni_id = $componentes[$il]['cuni_id'];
 
     }
 
-     if ($componentes[$il]['com_id']== 9 AND isset($data02['taller'] )) {    //COMP_AUTONOMA ol
+     if ($componentes[$il]['com_id']== 4 AND isset($data02['taller'] )) {    //COMP_AUTONOMA ol
         
          $comp_autonoma2 = (float)$comp_autonoma2 + (float)$data03; 
           $comp_cuni_id = $componentes[$il]['cuni_id'];
 
     }
+
+         if ($componentes[$il]['com_id']== 1 AND isset($data02['foro'] )) {    //COMP_FORO ol
+        
+         $comp_foro2 = (float)$comp_foro2 + (float)$data03; 
+          $comp_cuni_id = $componentes[$il]['cuni_id'];
+
+    }
+
+             if ($componentes[$il]['com_id']== 2 AND isset($data02['sincrona'] )) { //COMP_SINCRONA ol
+        
+         $comp_sincrona2 = (float)$comp_sincrona2 + (float)$data03; 
+          $comp_cuni_id = $componentes[$il]['cuni_id'];
+
+    }
+
 
       if ($componentes[$il]['com_id']== 10 AND isset($data02['examen'] )) {    //COMP_EXAMEN ol
         

@@ -2549,7 +2549,7 @@ return $datacategorias;
  function getnota($elemento) {
 $notas = explode("/", $elemento);
 $withouter = str_replace(chr(44), chr(46), $notas[0]);
-$grade = $withouter*1;  
+$grade = floatval($withouter);
 return $grade;
  }
 

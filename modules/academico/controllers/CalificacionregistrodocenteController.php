@@ -1817,24 +1817,8 @@ return $this->redirect('index');
      $parciales=$parcial; if ($parcial > 2){$parcial=2;}
 
  if (count($arr_usuarios) > 0) {  
-    
-               for ($u = 0; $u < count($arr_usuarios); $u++) {  
 
-  $daca_id = $arr_usuarios[$u]['daca_id'];
-            $cedu_asi_id = $arr_usuarios[$u]['cedu_asi_id']; 
-            $uaca_id = $arr_usuarios[$u]['uaca_id'];
-            $paca_id = $arr_usuarios[$u]['paca_id'];
-            $mod_id = $arr_usuarios[$u]['mod_id']; 
-            $mpp_id = $arr_usuarios[$u]['mpp_id'];
-            $pro_id = $arr_usuarios[$u]['pro_id'];
-            $asi_id = $arr_usuarios[$u]['asi_id'];
-            $est_id = $arr_usuarios[$u]['est_id'];
-            $uedu_usuario = $arr_usuarios[$u]['uedu_usuario'];
-            $per_id = $arr_usuarios[$u]['per_id'];
-            $ced_id = $arr_usuarios[$u]['per_cedula'];
-            $maes_id = $arr_usuarios[$u]['maes_id'];
-
-          $wsdl = 'https://campusvirtual.uteg.edu.ec/soap/?wsdl=true';
+ 	          $wsdl = 'https://campusvirtual.uteg.edu.ec/soap/?wsdl=true';
          
          $client = new \SoapClient($wsdl, [
          "soap_version" => SOAP_1_1,
@@ -1854,6 +1838,22 @@ return $this->redirect('index');
          $client->setCredentials("webservice", 
                           "WxrrvTt8",
                           "basic");
+    
+               for ($u = 0; $u < count($arr_usuarios); $u++) {  
+
+  $daca_id = $arr_usuarios[$u]['daca_id'];
+            $cedu_asi_id = $arr_usuarios[$u]['cedu_asi_id']; 
+            $uaca_id = $arr_usuarios[$u]['uaca_id'];
+            $paca_id = $arr_usuarios[$u]['paca_id'];
+            $mod_id = $arr_usuarios[$u]['mod_id']; 
+            $mpp_id = $arr_usuarios[$u]['mpp_id'];
+            $pro_id = $arr_usuarios[$u]['pro_id'];
+            $asi_id = $arr_usuarios[$u]['asi_id'];
+            $est_id = $arr_usuarios[$u]['est_id'];
+            $uedu_usuario = $arr_usuarios[$u]['uedu_usuario'];
+            $per_id = $arr_usuarios[$u]['per_id'];
+            $ced_id = $arr_usuarios[$u]['per_cedula'];
+            $maes_id = $arr_usuarios[$u]['maes_id'];
 
           $method = 'obtener_avance_usuarios'; 
        

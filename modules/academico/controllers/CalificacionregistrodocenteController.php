@@ -20,6 +20,7 @@ use app\modules\admision\models\Oportunidad;
 use app\modules\academico\models\DistributivoAcademico;
 use app\modules\academico\models\MallaAcademicoEstudiante;
 use app\modules\academico\models\CabeceraCalificacion;
+use app\modules\academico\models\CabeceraAsistencia;
 use app\models\Persona;
 use app\models\Usuario;
 use yii\base\Security;
@@ -1813,6 +1814,7 @@ return $this->redirect('index');
  try {
 
      $mod_calificacion  = new CabeceraCalificacion();
+     $mod_asistencia  = new CabeceraAsistencia();
      $arr_usuarios = $mod_calificacion->consultarUsuarios($eduasid,$parcial);
      $parciales=$parcial; if ($parcial > 2){$parcial=2;}
 
@@ -2046,6 +2048,25 @@ $bt= $mod_calificacion->putbitacora($detalles[0]['dcal_id'],$dcalificacion);
 }
 }
 } 
+
+$cabecerasasi = $mod_asistencia->getcasistencia($est_id,$asi_id,$paca_id,$parciales);
+if ($cabecerasasi == Null){ 
+$cabecerasasi = $mod_asistencia->putcasistencia($est_id,$asi_id,$paca_id,$parciales,$pro_id);
+$cabecerasasi = $mod_asistencia->getcasistencia($est_id,$asi_id,$paca_id,$parciales);}
+
+if ( $asiste > 0 ){
+$dasistencia = $asiste;
+$detallesasi = $mod_asistencia->getdasistencia($cabecerasasi[0]['casi_id'],$parciales);
+if ($detallesasi == Null) {
+$detalles = $mod_asistencia->putdasistencia($cabecerasasi[0]['casi_id'],$parciales,$dasistencia); 
+}else {
+if ($detallesasi[0]['dasi_usuario_creacion'] == '1' AND $detallesasi[0]['dasi_fecha_modificacion'] ==Null){
+$detallesup = $mod_asistencia->updatedasitencia($detallesasi[0]['dasi_id'],$dasistencia); 
+}
+}
+} 
+
+$ucasi = $mod_asistencia->updatecasistencia($cabecerasasi[0]['casi_id']); 
 
 for ($it = 0; $it < count($arraydata3); $it++) { 
 

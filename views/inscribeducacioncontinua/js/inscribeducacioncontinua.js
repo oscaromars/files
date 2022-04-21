@@ -154,6 +154,11 @@ $(document).ready(function () {
         } else {
             tipo_dni_fact = "RUC";
         }
+        arrParams.cedula = $('#txt_cedula').val();
+        arrParams.unidaca = $('#cmb_unidad_solicitud').val();
+        arrParams.modal = $('#cmb_modalidad_solicitud').val();
+        arrParams.estuaca = $('#cmb_carrera_solicitud').val();
+        arrParams.mail = $('#txt_correo').val();
         arrParams.tipo_dni_fac = tipo_dni_fact;
         arrParams.dni = $('#txt_dni_fac').val();
         arrParams.empresa = $('#txt_empresa').val();
@@ -477,6 +482,7 @@ $(document).ready(function () {
         var formatted_date = fecha.getFullYear() + "-" + month + "-" + fecha.getDate();
         arrParams.codigo = $('#txth_twin_id').val();
         arrParams.ACCION = 'Fin';
+        arrParams.mail = $('#txt_correo').val();
         arrParams.cedula = $('#txt_cedula').val();
         arrParams.unidaca = $('#cmb_unidad_solicitud').val();
         arrParams.modal = $('#cmb_modalidad_solicitud').val();
@@ -792,11 +798,28 @@ function guardarInscripcion(accion, paso) {
                     //paso2next();
                 }
             }
+            //AQUI OJO
             if (response.status == "NO_OK") {
-                showAlert(response.status, response.label, response.message);
+                /*showAlert(response.status, response.label, response.message);
                 setTimeout(function () {
                     parent.window.location.href = $('#txth_base').val() +"/inscribeducacioncontinua/index";
-                }, 3000);
+                }, 3000);*/
+                var ruta = [$('#txth_base').val() + "/inscribeducacioncontinua/index"];
+                //acciones son las variables que debemos enviar para dibujar el o los botones en el modal
+                var acciones = [{ id      : 'reloadpage',     //id que tendra el boton
+                                class   : 'btn btn-primary',//La clase para poderle dar un estilo al boton
+                                value   : 'Regresar', //Este es el texto que tendra el boton//objLang.Accept,
+                                callback: 'gotoPage', //funcion que debe ejecutar el boton
+                                paramCallback : ruta, //variable a ser llamada por la funcion anterior ej gotoPage(ruta)
+                            }];
+                var cancelar = [{ callback: 'reloadPage', //funcion que debe ejecutar el boton
+                                //paramCallback : ruta, //variable a ser llamada por la funcion anterior ej gotoPage(ruta)
+                            }];
+                //Agregamos a nuestra variables message nuestras acciones
+                response.message.acciones    = acciones;
+                response.message.closeaction = cancelar;
+                //Dejamos que la funcion showAlert dibuje el modal
+                showAlert(response.status, response.label, response.message);
             }
 
         }, true);
@@ -819,6 +842,11 @@ function guardarInscripcionTemp2(accion) {
     var arrParams    = new Object();
     arrParams.DATA_1 = dataInscripPart12(ID);
     arrParams.ACCION = accion;
+    arrParams.cedula = $('#txt_cedula').val();
+    arrParams.unidaca = $('#cmb_unidad_solicitud').val();
+    arrParams.modal = $('#cmb_modalidad_solicitud').val();
+    arrParams.estuaca = $('#cmb_carrera_solicitud').val();
+    arrParams.mail = $('#txt_correo').val();
     if (!validateForm()) {
         requestHttpAjax(link, arrParams, function (response) {
             //console.log("function guardarInscripcionTemp2");
@@ -945,8 +973,14 @@ function paso2next() {
 
 
      //Datos de facturación.
+    /*arrParams.cedula = $('#txt_cedula').val();
+    arrParams.unidaca = $('#cmb_unidad_solicitud').val();
+    arrParams.modal = $('#cmb_modalidad_solicitud').val();
+    arrParams.estuaca = $('#cmb_carrera_solicitud').val();
+    arrParams.mail = $('#txt_correo').val();*/
+
     $('#txt_nombres_fac').val( $('#txt_primer_nombre').val() );
-    $('#txt_nombres_fac_aux').val($('#txt_primer_nombre').val( ));                    
+    $('#txt_nombres_fac_aux').val($('#txt_primer_nombre').val( ));
 
     $('#txt_apellidos_fac').val( $('#txt_primer_apellido').val() );
     $('#txt_apellidos_fac_aux').val( $('#txt_primer_apellido').val() );

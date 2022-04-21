@@ -327,9 +327,10 @@ class InscribeducacioncontinuaController extends \yii\web\Controller {
 						\app\models\Utilities::putMessageLogFile('resultado es NOok');
 						$message = array(
 							"wtmessage" => Yii::t("formulario", "The information have not been saved."),
-							"title" => Yii::t('jslang', 'Success'),
+							//"wtmessage" => $resul['error_message'],
+							"title" => Yii::t('jslang', 'Error'),
 						);
-						return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t('jslang', 'Error'), 'false', $message, $resul);
+						return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
 					}
 					return;
 				  //} //Aqui un else que diga mensaje por si ya existe la cedula o correo

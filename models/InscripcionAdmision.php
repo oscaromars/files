@@ -973,38 +973,47 @@ class InscripcionAdmision extends \yii\db\ActiveRecord {
 													}
 												}
 											} else {
+												\app\models\Utilities::putMessageLogFile('msg1:');
 												$error_message .= Yii::t("formulario", "The enterprise interested hasn't been saved");
 												$error++;
 											}
 										} else {
+											\app\models\Utilities::putMessageLogFile('msg2:');
 											$error_message .= Yii::t("formulario", "The interested person hasn't been saved");
 											$error++;
 										}
 									} else {
+										\app\models\Utilities::putMessageLogFile('msg3:');
 										$error_message .= Yii::t("formulario", "The rol user have not been saved");
 										$error++;
 									}
 								} else {
+									\app\models\Utilities::putMessageLogFile('msg4:');
 									$error_message .= Yii::t("formulario", "The user have not been saved");
 									$error++;
 								}
 							} else {
+								\app\models\Utilities::putMessageLogFile('msg5:');
 								$error_message .= Yii::t("formulario", "The enterprise interested hasn't been saved");
 								$error++;
 							}
 						} else {
+							\app\models\Utilities::putMessageLogFile('msg5.1:');
 							$error++;
 							$error_message .= Yii::t("formulario", "Other personal data has not been registered");
 						}
 					} else { //AQUI
+						\app\models\Utilities::putMessageLogFile('msg6:');
 						$error++;
 						$error_message .= Yii::t("formulario", "Ya existe una persona con la misma cedula o correo");
 					}
 				} else {
+					\app\models\Utilities::putMessageLogFile('msg7:');
 					$error_message .= Yii::t("formulario", "Update DNI to generate interested");
 					$error++;
 				}
 			} else {
+				\app\models\Utilities::putMessageLogFile('msg8:');
 				$error_message .= Yii::t("formulario", "No existen datos para registrar.");
 				$error++;
 			}
@@ -1037,11 +1046,12 @@ class InscripcionAdmision extends \yii\db\ActiveRecord {
 				//return Utilities::ajaxResponse('OK', 'alert', Yii::t("jslang", "Sucess"), false, $message);
 				$arroout["status"] = TRUE;
 				$arroout["error"] = null;
-				$arroout["message"] = $message;
+				$arroout["message"] = $error_message;
 				$arroout["data"] = $resp_datos; //$rawData;
 				$arroout["dataext"] = $sins_id;
 				return $arroout;
 			} else {
+				\app\models\Utilities::putMessageLogFile('entre else '. $error_message);
 				//$transaction->rollback();
 				//$transaction1->rollback();
 				$transaction2->rollback();
@@ -1051,18 +1061,19 @@ class InscripcionAdmision extends \yii\db\ActiveRecord {
 				);
 				$arroout["status"] = FALSE;
 				$arroout["error"] = null;
-				$arroout["message"] = $message;
+				$arroout["message"] = $error_message;
 				$arroout["data"] = null;
 				$arroout["dataext"] = null;
 				return $arroout;
 				//return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Bad Request"), false, $message);
 			}
 		} catch (Exception $ex) {
+			\app\models\Utilities::putMessageLogFile('entre else '. $error_message);
 			//$transaction->rollback();
 			//$transaction1->rollback();
 			$transaction2->rollback();
 			$message = array(
-				"wtmessage" => Yii::t("formulario", "Mensaje2: " . $mensaje), //$error_message
+				"wtmessage" => Yii::t("formulario", "Mensaje2: " . $error_message), //$error_message
 				"title" => Yii::t('jslang', 'Bad Request'),
 			);
 			$arroout["status"] = FALSE;

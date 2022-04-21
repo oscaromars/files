@@ -1,4 +1,4 @@
- <?php
+<?php
 
 namespace app\modules\academico\models; 
 
@@ -2274,102 +2274,107 @@ class CabeceraAsistencia extends \yii\db\ActiveRecord
     }
 
 
- /**
-     * @author  Oscar Sanchez <analistadesarrollo05@uteg.edu.ec>
-     * @param
-     * @return
-     *  funciones auxiliares para gestion de Cabeceras de Asistencias
-     */
-    public function getcasistencia($est_id,$asi_id,$paca_id,$parciales){
-        $con = Yii::$app->db_academico;
-        $sql="
-        SELECT ccal_id,ccal_calificacion FROM db_academico.cabecera_asistencia 
-        where 
-        est_id= $est_id AND
-        asi_id= $asi_id AND
-        paca_id= $paca_id AND 
-        aeun_id = $parciales
-        AND ccal_estado = 1 AND ccal_estado_logico = 1 
-        ";
-        $comando = $con->createCommand($sql);
-        $casistencia = $comando->queryOne();
-        return $casistencia;
-    }
+/**
+         * @author  Oscar Sanchez <analistadesarrollo05@uteg.edu.ec>
+         * @param
+         * @return
+         *  funciones auxiliares para gestion de Cabeceras de Asistencias
+         */
+        public function getcasistencia($est_id,$asi_id,$paca_id,$parciales){
+            $con = Yii::$app->db_academico;
+            $sql="
+            SELECT casi_id,casi_cant_total FROM db_academico.cabecera_asistencia 
+            where 
+            est_id= $est_id AND
+            asi_id= $asi_id AND
+            paca_id= $paca_id AND 
+            aeun_id = $parciales
+            AND casi_estado = 1 AND casi_estado_logico = 1 
+            ";
+            $comando = $con->createCommand($sql);
+            $casistencia = $comando->queryAll();
+            return $casistencia;
+        }
 
-    public function putcasistencia($est_id,$asi_id,$paca_id,$parciales,$pro_id){
-        $con = Yii::$app->db_academico;
-        $sql="
-        INSERT INTO db_academico.cabecera_asistencia 
-        (paca_id, est_id, pro_id, asi_id, aeun_id, 
-        ccal_estado, ccal_estado_logico) 
-        VALUES ( $paca_id, $est_id, $pro_id, $asi_id, $parciales, '1', '1');
-        ";
-        $comando = $con->createCommand($sql);
-        $casistencia = $comando->execute();
-        return $casistencia;
-    }
+        public function putcasistencia($est_id,$asi_id,$paca_id,$parciales,$pro_id){
+            $con = Yii::$app->db_academico;
+            $sql="
+            INSERT INTO db_academico.cabecera_asistencia 
+            (paca_id, est_id, pro_id, asi_id, aeun_id, 
+            casi_estado, casi_estado_logico) 
+            VALUES ( $paca_id, $est_id, $pro_id, $asi_id, $parciales, '1', '1');
+            ";
+            $comando = $con->createCommand($sql);
+            $casistencia = $comando->execute();
+            return $casistencia;
+        }
 
-    public function updatecasistencia($casi_id){
-        $con = Yii::$app->db_academico;
-        $sql="
-        UPDATE db_academico.cabecera_asistencia
-         SET casi_cant_total = (select sum(dasi_cantidad)
-        from db_academico.detalle_asistencia
-        where casi_id = $casi_id
-        AND dasi_estado = 1 AND dasi_estado_logico = 1
-        ),
-         ccal_fecha_modificacion = now()  
-         WHERE casi_id = $casi_id;
-        ";
-        $comando = $con->createCommand($sql);
-        $casistencia = $comando->execute();
-        return $casistencia;
+        public function updatecasistencia($casi_id){
+            $con = Yii::$app->db_academico;
+            $sql="
+            UPDATE db_academico.cabecera_asistencia
+             SET casi_cant_total = (select sum(dasi_cantidad)
+            from db_academico.detalle_asistencia
+            where casi_id = $casi_id
+            AND dasi_estado = 1 AND dasi_estado_logico = 1
+            ),
+            casi_porc_total = (select ((sum(dasi_cantidad))/2)
+            from db_academico.detalle_asistencia
+            where casi_id = $casi_id
+            AND dasi_estado = 1 AND dasi_estado_logico = 1
+            ),
+             casi_fecha_modificacion = now()  
+             WHERE casi_id = $casi_id;
+            ";
+            $comando = $con->createCommand($sql);
+            $casistencia = $comando->execute();
+            return $casistencia;
 
-    }
+        }
 
-     /**
-     * @author  Oscar Sanchez <analistadesarrollo05@uteg.edu.ec>
-     * @param
-     * @return
-     *  funciones auxiliares para gestion de Detalles de Asistencias
-     */
-    function getdasistencia($casi_id,$aeun_id){
-        $con = Yii::$app->db_academico;
-        $sql="
-        SELECT dasi_id, casi_id,ecal_id,dasi_cantidad,
-        dasi_usuario_creacion,dasi_fecha_modificacion
-        FROM db_academico.detalle_asistencia 
-        WHERE casi_id = $casi_id AND aeun_id = $aeun_id 
-        AND dasi_estado = 1 AND dasi_estado_logico = 1
-        ; 
-        ";
-         $comando = $con->createCommand($sql);
-        $dasistencia = $comando->queryOne();
-        return $dasistencia;
-    }
-    function putdasistencia($casi_id,$aeun_id,$dasistencia){
-        $con = Yii::$app->db_academico;
-        $sql="
-        INSERT INTO db_academico.detalle_asistencia
-        (casi_id,aeun_id,dasi_cantidad,dasi_usuario_creacion,dasi_estado,dasi_estado_logico)
-        VALUES ($casi_id,$aeun_id,$dasistencia, '1', '1', '1')
-        ";
-        $comando = $con->createCommand($sql);
-        $dasistencia = $comando->execute();
-        return $dasistencia;
-    }
+             /**
+             * @author  Oscar Sanchez <analistadesarrollo05@uteg.edu.ec>
+             * @param
+             * @return
+             *  funciones auxiliares para gestion de Detalles de Asistencias
+             */
+            function getdasistencia($casi_id,$aeun_id){
+                $con = Yii::$app->db_academico;
+                $sql="
+                SELECT dasi_id, casi_id,ecal_id,dasi_cantidad,
+                dasi_usuario_creacion,dasi_fecha_modificacion
+                FROM db_academico.detalle_asistencia 
+                WHERE casi_id = $casi_id AND ecal_id = $aeun_id 
+                AND dasi_estado = 1 AND dasi_estado_logico = 1
+                ; 
+                ";
+                 $comando = $con->createCommand($sql);
+                $dasistencia = $comando->queryAll();
+                return $dasistencia;
+            }
+            function putdasistencia($casi_id,$aeun_id,$dasistencia){
+                $con = Yii::$app->db_academico;
+                $sql="
+                INSERT INTO db_academico.detalle_asistencia
+                (casi_id,ecal_id,dasi_tipo,dasi_cantidad,dasi_usuario_creacion,dasi_estado,dasi_estado_logico)
+                VALUES ($casi_id,$aeun_id,$aeun_id,$dasistencia, '1', '1', '1')
+                ";
+                $comando = $con->createCommand($sql);
+                $dasistencia = $comando->execute();
+                return $dasistencia;
+            }
 
-    function updatedasitencia($dasi_id,$dasistencia){
-        $con = Yii::$app->db_academico;
-        $sql="
-        UPDATE db_academico.detalle_asistencia
-         SET dasi_cantidad = $dasistencia,
-         dasi_fecha_modificacion = now()  
-         WHERE dasi_id = $dasi_id;
-        ";
-        $comando = $con->createCommand($sql);
-        $dasistencia = $comando->execute();
-        return $dasistencia;
+            function updatedasitencia($dasi_id,$dasistencia){
+                $con = Yii::$app->db_academico;
+                $sql="
+                UPDATE db_academico.detalle_asistencia
+                 SET dasi_cantidad = $dasistencia,
+                 dasi_fecha_modificacion = now()  
+                 WHERE dasi_id = $dasi_id;
+                ";
+                $comando = $con->createCommand($sql);
+                $dasistencia = $comando->execute();
+                return $dasistencia;
 
-    }
+            }
 }

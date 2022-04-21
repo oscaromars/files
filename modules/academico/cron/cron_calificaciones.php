@@ -393,29 +393,48 @@ $comp_cuni_id2 = 7;
 
 if ( $fsincro > 0 ){
 $dcalificacion = (float)$fsincro;
-$detalles = $mod_calificacion->getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id1);
+$detalles = getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id1);
 if ($detalles == Null) {
-$detalles = $mod_calificacion->putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id1 ,$dcalificacion); 
+$detalles = putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id1 ,$dcalificacion); 
 }else {
 if ($detalles[0]['dcal_usuario_creacion'] == '1' AND $detalles[0]['dcal_fecha_modificacion'] ==Null){
-$detallesup = $mod_calificacion->updatedetalles($detalles[0]['dcal_id'],$dcalificacion); 
-$bt= $mod_calificacion->putbitacora($detalles[0]['dcal_id'],$dcalificacion);
+$detallesup = updatedetalles($detalles[0]['dcal_id'],$dcalificacion); 
+$bt= putbitacora($detalles[0]['dcal_id'],$dcalificacion);
 }
 }
 } 
 
 if ( $fsincro > 0 ){
 $dcalificacion = (float)$fsincro;
-$detalles = $mod_calificacion->getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id2);
+$detalles = getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id2);
 if ($detalles == Null) {
-$detalles = $mod_calificacion->putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id2 ,$dcalificacion); 
+$detalles = putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id2 ,$dcalificacion); 
 }else {
 if ($detalles[0]['dcal_usuario_creacion'] == '1' AND $detalles[0]['dcal_fecha_modificacion'] ==Null){
-$detallesup = $mod_calificacion->updatedetalles($detalles[0]['dcal_id'],$dcalificacion); 
-$bt= $mod_calificacion->putbitacora($detalles[0]['dcal_id'],$dcalificacion);
+$detallesup = updatedetalles($detalles[0]['dcal_id'],$dcalificacion); 
+$bt= putbitacora($detalles[0]['dcal_id'],$dcalificacion);
 }
 }
 } 
+
+$cabecerasasi = getcasistencia($est_id,$asi_id,$paca_id,$parciales);
+if ($cabecerasasi == Null){ 
+$cabecerasasi = putcasistencia($est_id,$asi_id,$paca_id,$parciales,$pro_id);
+$cabecerasasi = getcasistencia($est_id,$asi_id,$paca_id,$parciales);}
+
+if ( $asiste > 0 ){
+$dasistencia = $asiste;
+$detallesasi = getdasistencia($cabecerasasi[0]['casi_id'],$parciales);
+if ($detallesasi == Null) {
+$detalles = putdasistencia($cabecerasasi[0]['casi_id'],$parciales,$dasistencia); 
+}else {
+if ($detallesasi[0]['dasi_usuario_creacion'] == '1' AND $detallesasi[0]['dasi_fecha_modificacion'] ==Null){
+$detallesup = updatedasitencia($detallesasi[0]['dasi_id'],$dasistencia); 
+}
+}
+} 
+
+$ucasi = updatecasistencia($cabecerasasi[0]['casi_id']); 
 
 for ($it = 0; $it < count($arraydata3); $it++) {
 
@@ -1104,6 +1123,26 @@ return $cabeceras;
 
 }
 
+    function getcasistencia($est_id,$asi_id,$paca_id,$parciales){
+     GLOBAL $dsn, $dbuser, $dbpass, $dbname;
+    $con = new \PDO($dsn, $dbuser, $dbpass);
+    $sql="
+    SELECT casi_id,casi_cant_total FROM db_academico.cabecera_asistencia 
+                where 
+                est_id= $est_id AND
+                asi_id= $asi_id AND
+                paca_id= $paca_id AND 
+                aeun_id = $parciales
+                AND casi_estado = 1 AND casi_estado_logico = 1 
+    ";
+     $comando = $con->prepare($sql);
+     $comando->execute();
+     $cabeceras = $comando->fetchAll(\PDO::FETCH_ASSOC);
+    return $cabeceras;
+
+    }
+
+
 function putcabeceras($est_id,$asi_id,$paca_id,$parciales,$pro_id){
 GLOBAL $dsn, $dbuser, $dbpass, $dbname;
 $con = new \PDO($dsn, $dbuser, $dbpass);
@@ -1119,6 +1158,22 @@ VALUES ( $paca_id, $est_id, $pro_id, $asi_id, $parciales, '1', '1');
 return $cabeceras;
 
 }
+
+    function putcasistencia($est_id,$asi_id,$paca_id,$parciales,$pro_id){
+    GLOBAL $dsn, $dbuser, $dbpass, $dbname;
+    $con = new \PDO($dsn, $dbuser, $dbpass);
+    $sql="
+    INSERT INTO db_academico.cabecera_asistencia 
+                (paca_id, est_id, pro_id, asi_id, aeun_id, 
+                casi_estado, casi_estado_logico) 
+                VALUES ( $paca_id, $est_id, $pro_id, $asi_id, $parciales, '1', '1');
+    ";
+     $comando = $con->prepare($sql);
+     $comando->execute();
+     $cabeceras = $comando->fetchAll(\PDO::FETCH_ASSOC);
+    return $cabeceras;
+
+    }
 
 function updatecabeceras($ccal_id){
  GLOBAL $dsn, $dbuser, $dbpass, $dbname;
@@ -1140,6 +1195,31 @@ return $cabeceras;
 
 }
 
+    function updatecasistencia($casi_id){
+     GLOBAL $dsn, $dbuser, $dbpass, $dbname;
+    $con = new \PDO($dsn, $dbuser, $dbpass);
+    $sql="
+    UPDATE db_academico.cabecera_asistencia
+                 SET casi_cant_total = (select sum(dasi_cantidad)
+                from db_academico.detalle_asistencia
+                where casi_id = $casi_id
+                AND dasi_estado = 1 AND dasi_estado_logico = 1
+                ),
+                casi_porc_total = (select ((sum(dasi_cantidad))/2)
+                from db_academico.detalle_asistencia
+                where casi_id = $casi_id
+                AND dasi_estado = 1 AND dasi_estado_logico = 1
+                ),
+                 casi_fecha_modificacion = now()  
+                 WHERE casi_id = $casi_id;
+    ";
+     $comando = $con->prepare($sql);
+     $comando->execute();
+     $cabeceras = $comando->fetchAll(\PDO::FETCH_ASSOC);
+    return $cabeceras;
+
+    }
+
 function getdetalles($ccal_id,$cuni_id){
  GLOBAL $dsn, $dbuser, $dbpass, $dbname;
 $con = new \PDO($dsn, $dbuser, $dbpass);
@@ -1155,6 +1235,23 @@ WHERE ccal_id = $ccal_id AND cuni_id = $cuni_id ;
 return $detalles;
 
 }
+
+    function getdasistencia($casi_id,$aeun_id){
+     GLOBAL $dsn, $dbuser, $dbpass, $dbname;
+    $con = new \PDO($dsn, $dbuser, $dbpass);
+    $sql="
+    SELECT dasi_id, casi_id,ecal_id,dasi_cantidad,
+                    dasi_usuario_creacion,dasi_fecha_modificacion
+                    FROM db_academico.detalle_asistencia 
+                    WHERE casi_id = $casi_id AND ecal_id = $aeun_id 
+                    AND dasi_estado = 1 AND dasi_estado_logico = 1
+    ";
+     $comando = $con->prepare($sql);
+     $comando->execute();
+     $detalles = $comando->fetchAll(\PDO::FETCH_ASSOC);
+    return $detalles;
+
+    }
 
 function putdetalles($ccal_id,$cuni_id,$dcalificacion){
 GLOBAL $dsn, $dbuser, $dbpass, $dbname;
@@ -1172,6 +1269,22 @@ return $detalles;
 
 }
 
+    function putdasistencia($casi_id,$aeun_id,$dasistencia){
+    GLOBAL $dsn, $dbuser, $dbpass, $dbname;
+    $con = new \PDO($dsn, $dbuser, $dbpass);
+    $sql="
+    INSERT INTO db_academico.detalle_asistencia
+                    (casi_id,ecal_id,dasi_tipo,dasi_cantidad,dasi_usuario_creacion,dasi_estado,dasi_estado_logico)
+                    VALUES ($casi_id,$aeun_id,$aeun_id,$dasistencia, '1', '1', '1')
+    ";
+     $comando = $con->prepare($sql);
+     $comando->execute();
+     $detalles = $comando->fetchAll(\PDO::FETCH_ASSOC);
+    return $detalles;
+
+
+    }
+
 function updatedetalles($dcal_id,$dcalificacion){
  GLOBAL $dsn, $dbuser, $dbpass, $dbname;
 $con = new \PDO($dsn, $dbuser, $dbpass);
@@ -1187,6 +1300,23 @@ UPDATE db_academico.detalle_calificacion
 return $detalles;
 
 }
+
+    function updatedasitencia($dasi_id,$dasistencia){
+     GLOBAL $dsn, $dbuser, $dbpass, $dbname;
+    $con = new \PDO($dsn, $dbuser, $dbpass);
+    $sql="
+    UPDATE db_academico.detalle_asistencia
+                     SET dasi_cantidad = $dasistencia,
+                     dasi_fecha_modificacion = now()  
+                     WHERE dasi_id = $dasi_id;
+    ";
+     $comando = $con->prepare($sql);
+     $comando->execute();
+     $detalles = $comando->fetchAll(\PDO::FETCH_ASSOC);
+    return $detalles;
+
+    }
+
 
 function putbitacora($dcal_id,$dcalificacion){
 GLOBAL $dsn, $dbuser, $dbpass, $dbname;

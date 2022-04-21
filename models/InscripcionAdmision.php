@@ -705,6 +705,7 @@ class InscripcionAdmision extends \yii\db\ActiveRecord {
 		$transaction = $con->beginTransaction();
 		$transaction1 = $con1->beginTransaction();
 		$transaction2 = $con2->beginTransaction();
+		$id_persona = 0;
 		try {
 			//Se consulta la información grabada en la tabla temporal.
 			$mod_inscripcion = new InscripcionAdmision();

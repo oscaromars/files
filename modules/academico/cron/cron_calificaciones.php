@@ -393,48 +393,48 @@ $comp_cuni_id2 = 7;
 
 if ( $fsincro > 0 ){
 $dcalificacion = (float)$fsincro;
-$detalles = $mod_calificacion->getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id1);
+$detalles = getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id1);
 if ($detalles == Null) {
-$detalles = $mod_calificacion->putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id1 ,$dcalificacion); 
+$detalles = putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id1 ,$dcalificacion); 
 }else {
 if ($detalles[0]['dcal_usuario_creacion'] == '1' AND $detalles[0]['dcal_fecha_modificacion'] ==Null){
-$detallesup = $mod_calificacion->updatedetalles($detalles[0]['dcal_id'],$dcalificacion); 
-$bt= $mod_calificacion->putbitacora($detalles[0]['dcal_id'],$dcalificacion);
+$detallesup = updatedetalles($detalles[0]['dcal_id'],$dcalificacion); 
+$bt= putbitacora($detalles[0]['dcal_id'],$dcalificacion);
 }
 }
 } 
 
 if ( $fsincro > 0 ){
 $dcalificacion = (float)$fsincro;
-$detalles = $mod_calificacion->getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id2);
+$detalles = getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id2);
 if ($detalles == Null) {
-$detalles = $mod_calificacion->putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id2 ,$dcalificacion); 
+$detalles = putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id2 ,$dcalificacion); 
 }else {
 if ($detalles[0]['dcal_usuario_creacion'] == '1' AND $detalles[0]['dcal_fecha_modificacion'] ==Null){
-$detallesup = $mod_calificacion->updatedetalles($detalles[0]['dcal_id'],$dcalificacion); 
-$bt= $mod_calificacion->putbitacora($detalles[0]['dcal_id'],$dcalificacion);
+$detallesup = updatedetalles($detalles[0]['dcal_id'],$dcalificacion); 
+$bt= putbitacora($detalles[0]['dcal_id'],$dcalificacion);
 }
 }
 } 
 
-$cabecerasasi = $mod_asistencia->getcasistencia($est_id,$asi_id,$paca_id,$parciales);
+$cabecerasasi = getcasistencia($est_id,$asi_id,$paca_id,$parciales);
 if ($cabecerasasi == Null){ 
-$cabecerasasi = $mod_asistencia->putcasistencia($est_id,$asi_id,$paca_id,$parciales,$pro_id);
-$cabecerasasi = $mod_asistencia->getcasistencia($est_id,$asi_id,$paca_id,$parciales);}
+$cabecerasasi = putcasistencia($est_id,$asi_id,$paca_id,$parciales,$pro_id);
+$cabecerasasi = getcasistencia($est_id,$asi_id,$paca_id,$parciales);}
 
 if ( $asiste > 0 ){
 $dasistencia = $asiste;
-$detallesasi = $mod_asistencia->getdasistencia($cabecerasasi[0]['casi_id'],$parciales);
+$detallesasi = getdasistencia($cabecerasasi[0]['casi_id'],$parciales);
 if ($detallesasi == Null) {
-$detalles = $mod_asistencia->putdasistencia($cabecerasasi[0]['casi_id'],$parciales,$dasistencia); 
+$detalles = putdasistencia($cabecerasasi[0]['casi_id'],$parciales,$dasistencia); 
 }else {
 if ($detallesasi[0]['dasi_usuario_creacion'] == '1' AND $detallesasi[0]['dasi_fecha_modificacion'] ==Null){
-$detallesup = $mod_asistencia->updatedasitencia($detallesasi[0]['dasi_id'],$dasistencia); 
+$detallesup = updatedasitencia($detallesasi[0]['dasi_id'],$dasistencia); 
 }
 }
 } 
 
-$ucasi = $mod_asistencia->updatecasistencia($cabecerasasi[0]['casi_id']); 
+$ucasi = updatecasistencia($cabecerasasi[0]['casi_id']); 
 
 for ($it = 0; $it < count($arraydata3); $it++) {
 

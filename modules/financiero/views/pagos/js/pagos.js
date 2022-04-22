@@ -179,12 +179,13 @@ function actualizar_pago(doc_id) {
         }, true);
     }
 }
-function exportExcel() {
+function exportExcel() { //ESTE
     var search = $('#txt_buscarDataPago').val();
     var f_ini = $('#txt_fecha_ini').val();
     var f_fin = $('#txt_fecha_fin').val();
     var f_estado = $('#cmb_estado').val();
-    window.location.href = $('#txth_base').val() + "/financiero/pagos/expexcel?search=" + search + "&f_ini=" + f_ini + "&f_fin=" + f_fin + "&f_estado=" + f_estado;
+    var f_unidad = $('#cmb_unidad').val();
+    window.location.href = $('#txth_base').val() + "/financiero/pagos/expexcel?search=" + search + "&f_ini=" + f_ini + "&f_fin=" + f_fin + "&f_estado=" + f_estado + "&f_unidad=" + f_unidad;
 }
 
 function enviardata() {
@@ -254,7 +255,7 @@ function actualizarGridPagoadm() {
     var f_ini = $('#txt_fecha_ini').val();
     var f_fin = $('#txt_fecha_fin').val();
     var f_estado = $('#cmb_estado').val();
-    var f_unidad = $('#cmb_unidad').val()
+    var f_unidad = $('#cmb_unidad').val();
     //Buscar almenos una clase con el nombre para ejecutar
     if (!$(".blockUI").length) {
         showLoadingPopup();
@@ -279,10 +280,11 @@ function actualizarGridPagosCargados() {
     var f_ini = $('#txt_fecha_ini').val();
     var f_fin = $('#txt_fecha_fin').val();
     var f_estado = $('#cmb_estado').val();
+    var f_unidad = $('#cmb_unidad').val();
     //Buscar al menos una clase con el nombre para ejecutar
     if (!$(".blockUI").length) {
         showLoadingPopup();
-        $('#TbG_Solicitudes').PbGridView('applyFilterData', {'f_ini': f_ini, 'f_fin': f_fin, 'f_estado': f_estado, 'search': search});
+        $('#TbG_Solicitudes').PbGridView('applyFilterData', {'f_ini': f_ini, 'f_fin': f_fin, 'f_estado': f_estado, 'search': search, 'f_unidad': f_unidad});
         setTimeout(hideLoadingPopup, 2000);
     }
 }
@@ -484,12 +486,13 @@ function generarSolicitud(doc_id) {
         }, true);
     }
 }
-function exportPdf() {
+function exportPdf() { //ESTE
     var search = $('#txt_buscarDataPago').val();
     var f_ini = $('#txt_fecha_ini').val();
     var f_fin = $('#txt_fecha_fin').val();
     var f_estado = $('#cmb_estado').val();
-    window.location.href = $('#txth_base').val() + "/financiero/pagos/exppdfpagosestud?pdf=1&search=" + search + "&f_ini=" + f_ini + "&f_fin=" + f_fin + "&f_estado=" + f_estado;
+    var f_unidad = $('#cmb_unidad').val();
+    window.location.href = $('#txth_base').val() + "/financiero/pagos/exppdfpagosestud?pdf=1&search=" + search + "&f_ini=" + f_ini + "&f_fin=" + f_fin + "&f_estado=" + f_estado + "&f_unidad=" + f_unidad;
 }
 function exportPdfpagos() {
     var search = $('#txt_buscarDataPago').val();

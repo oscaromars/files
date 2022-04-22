@@ -853,13 +853,15 @@ class PagosController extends \app\components\CController {
 
     public function actionListarpagoscargados() {
         $mod_pago = new OrdenPago();
-
+        $model_academico = new UnidadAcademica();
+        $resp_unidad = $model_academico->consultarUnidadAcademicas();
         $data = null;
         $data = Yii::$app->request->get();
         if ($data['PBgetFilter']) {
             $arrSearch["f_ini"] = $data['f_ini'];
             $arrSearch["f_fin"] = $data['f_fin'];
             $arrSearch["f_estado"] = $data['f_estado'];
+            $arrSearch["f_unidad"] = $data['f_unidad'];
             $arrSearch["search"] = $data['search'];
             $resp_pago = $mod_pago->listarPagoscargados($arrSearch);
             return $this->renderPartial('_listarpagoscargados_grid', [
@@ -877,7 +879,8 @@ class PagosController extends \app\components\CController {
         $arrEstados = ArrayHelper::map([["id" => "T", "value" => "Todos"], ["id" => "S", "value" => "Pagada"], ["id" => "P", "value" => "Pendiente"]/* , ["id" => "NA", "value" => "No Disponible"] */], "id", "value");
         return $this->render('listarpagoscargados', [
                     'model' => $resp_pago,
-                    'arrEstados' => $arrEstados
+                    'arrEstados' => $arrEstados,
+                    'arrUnidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $resp_unidad), "id", "name"),
         ]);
     }
 
@@ -905,6 +908,7 @@ class PagosController extends \app\components\CController {
         $arrSearch["f_ini"] = $data["f_ini"];
         $arrSearch["f_fin"] = $data["f_fin"];
         $arrSearch["f_estado"] = $data["f_estado"];
+        $arrSearch["f_unidad"] = $data["f_unidad"];
         //$arrData = array();
         $model_pag = new OrdenPago();
         if (empty($arrSearch)) {
@@ -1277,7 +1281,7 @@ class PagosController extends \app\components\CController {
         $arrSearch["f_ini"] = $data["f_ini"];
         $arrSearch["f_fin"] = $data["f_fin"];
         $arrSearch["f_estado"] = $data["f_estado"];
-
+        $arrSearch["f_unidad"] = $data["f_unidad"];
         $arr_head = array(
             Yii::t("formulario", "Request #"),
             admision::t("Solicitudes", "Application date"),

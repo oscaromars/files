@@ -16,22 +16,22 @@ admision::registerTranslations();
 
 <div>
     <?=
-    PbGridView::widget([  
+    PbGridView::widget([
         'id' => 'TbG_Solicitudes',
         'showExport' => true,
         'fnExportEXCEL' => "exportExcel",
         'fnExportPDF' => "exportPdf",
-        'dataProvider' => $model,   
+        'dataProvider' => $model,
         'columns' =>
-        [        
+        [
             [
                 'attribute' => 'solicitud',
-                'header' => Yii::t("formulario", "Request #"),            
+                'header' => Yii::t("formulario", "Request #"),
                 'value' => 'solicitud',
             ],
             [
                 'attribute' => 'fecha',
-                'header' => admision::t("Solicitudes", "Application date"),             
+                'header' => admision::t("Solicitudes", "Application date"),
                 'value' => 'sins_fecha_solicitud',
             ],
             [
@@ -66,8 +66,8 @@ admision::registerTranslations();
             ],
             [
                 'class' => 'yii\grid\ActionColumn',
-                'header' => Yii::t("formulario", "Actions"),         
-                'template' => '{view}',           
+                'header' => Yii::t("formulario", "Actions"),
+                'template' => '{view}',
                 'buttons' => [
                     'view' => function ($url, $model) {
                         if ($model['estado'] == 'P') {
@@ -75,7 +75,7 @@ admision::registerTranslations();
                         } else {
                             return Html::a('<span class="glyphicon glyphicon-thumbs-up"></span>', Url::to(['pagos/validarpagocarga', 'ido' => $model['orden']]), ["data-toggle" => "tooltip", "title" => "Ver Pagos", "data-pjax" => 0]);
                         }
-                    },                   
+                    },
                 ],
             ],
         ],

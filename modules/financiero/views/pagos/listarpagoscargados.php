@@ -18,8 +18,9 @@ use app\modules\financiero\Module as financiero;
 <div>
     <form class="form-horizontal">
         <?=
-        $this->render('_form_BuscarPagoscargados', [   
-            'arrEstados' => $arrEstados
+        $this->render('_form_BuscarPagoscargados', [
+            'arrEstados' => $arrEstados,
+            'arrUnidad' => $arrUnidad
             ]);
         ?>
     </form>

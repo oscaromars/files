@@ -1059,7 +1059,7 @@ class Interesado extends \app\modules\admision\components\CActiveRecord {
                     concat(ifnull(per.per_pri_nombre,''),' ',ifnull(per.per_seg_nombre,'')) as nombres,
                     concat(ifnull(per.per_pri_apellido,''),' ',ifnull(per.per_seg_apellido,'')) as apellidos,
                     ifnull(per.per_cedula,per.per_pasaporte) as DNI,
-                    emp.emp_nombre_comercial as empresa,                 
+                    emp.emp_nombre_comercial as empresa,
                     DATE(inte.int_fecha_creacion) as fecha_interes,
                     per.per_id,
                     ifnull((SELECT uaca.uaca_nombre
@@ -1085,12 +1085,12 @@ class Interesado extends \app\modules\admision\components\CActiveRecord {
                     left join " . $con1->dbname . ".persona as pges on pges.per_id=uges.per_id
                 where $str_search
                     inte.int_estado_logico=:estado AND
-                    inte.int_estado=:estado AND                    
-                    per.per_estado_logico=:estado AND						
+                    inte.int_estado=:estado AND
+                    per.per_estado_logico=:estado AND
                     per.per_estado=:estado AND
-                    iemp.iemp_estado_logico=:estado AND						
+                    iemp.iemp_estado_logico=:estado AND
                     iemp.iemp_estado=:estado AND
-                    emp.emp_estado_logico=:estado AND						
+                    emp.emp_estado_logico=:estado AND
                     emp.emp_estado=:estado
                     order by inte.int_fecha_creacion desc
                 ";

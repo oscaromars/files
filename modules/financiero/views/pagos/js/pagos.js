@@ -254,10 +254,11 @@ function actualizarGridPagoadm() {
     var f_ini = $('#txt_fecha_ini').val();
     var f_fin = $('#txt_fecha_fin').val();
     var f_estado = $('#cmb_estado').val();
+    var f_unidad = $('#cmb_unidad').val()
     //Buscar almenos una clase con el nombre para ejecutar
     if (!$(".blockUI").length) {
         showLoadingPopup();
-        $('#TbG_Solicitudes').PbGridView('applyFilterData', {'f_ini': f_ini, 'f_fin': f_fin, 'f_estado': f_estado, 'search': search});
+        $('#TbG_Solicitudes').PbGridView('applyFilterData', {'f_ini': f_ini, 'f_fin': f_fin, 'f_estado': f_estado, 'search': search, 'f_unidad': f_unidad});
         setTimeout(hideLoadingPopup, 2000);
     }
 }
@@ -460,7 +461,8 @@ function exportExcelPagos() {
     var f_ini = $('#txt_fecha_ini').val();
     var f_fin = $('#txt_fecha_fin').val();
     var f_estado = $('#cmb_estado').val();
-    window.location.href = $('#txth_base').val() + "/financiero/pagos/expexcelpagos?search=" + search + "&f_ini=" + f_ini + "&f_fin=" + f_fin + "&f_estado=" + f_estado;
+    var f_unidad = $('#cmb_unidad').val();
+    window.location.href = $('#txth_base').val() + "/financiero/pagos/expexcelpagos?search=" + search + "&f_ini=" + f_ini + "&f_fin=" + f_fin + "&f_estado=" + f_estado + "&f_unidad=" + f_unidad;
 }
 function exportExcelColec() {
     var search = $('#txt_buscarDataReg').val();
@@ -494,7 +496,8 @@ function exportPdfpagos() {
     var f_ini = $('#txt_fecha_ini').val();
     var f_fin = $('#txt_fecha_fin').val();
     var f_estado = $('#cmb_estado').val();
-    window.location.href = $('#txth_base').val() + "/financiero/pagos/exppdfpagos?pdf=1&search=" + search + "&f_ini=" + f_ini + "&f_fin=" + f_fin + "&f_estado=" + f_estado;
+    var f_unidad = $('#cmb_unidad').val();
+    window.location.href = $('#txth_base').val() + "/financiero/pagos/exppdfpagos?pdf=1&search=" + search + "&f_ini=" + f_ini + "&f_fin=" + f_fin + "&f_estado=" + f_estado + "&f_unidad=" + f_unidad;
 }
 function exportPdfColec() {
     var search = $('#txt_buscarDataReg').val();

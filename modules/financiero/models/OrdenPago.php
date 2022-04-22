@@ -1809,6 +1809,9 @@ class OrdenPago extends \app\modules\financiero\components\CActiveRecord {
             if ($arrFiltro['f_estado'] != "T") {
                 $str_search .= "opag.opag_estado_pago = :f_estado AND ";
             }
+            if ($arrFiltro['f_unidad'] > '0') {
+                $str_search .= "sins.uaca_id = :f_unidad AND ";
+            }
         } else {
             $columnsAdd = "sins.sins_id as solicitud_id,
           per.per_id as persona,
@@ -1865,6 +1868,7 @@ class OrdenPago extends \app\modules\financiero\components\CActiveRecord {
             $fecha_ini = $arrFiltro["f_ini"];
             $fecha_fin = $arrFiltro["f_fin"];
             $f_estado = $arrFiltro["f_estado"];
+            $f_unidad = $arrFiltro["f_unidad"];
             $comando->bindParam(":search", $search_cond, \PDO::PARAM_STR);
             if ($arrFiltro['f_ini'] != "" && $arrFiltro['f_fin'] != "") {
                 $comando->bindParam(":fec_ini", $fecha_ini, \PDO::PARAM_STR);
@@ -1872,6 +1876,9 @@ class OrdenPago extends \app\modules\financiero\components\CActiveRecord {
             }
             if ($arrFiltro['f_estado'] != "T") {
                 $comando->bindParam(":f_estado", $f_estado, \PDO::PARAM_STR);
+            }
+            if ($arrFiltro['f_unidad'] > '0') {
+                $comando->bindParam(":f_unidad", $f_unidad, \PDO::PARAM_INT);
             }
         }
         $resultData = $comando->queryall();
@@ -2282,6 +2289,9 @@ class OrdenPago extends \app\modules\financiero\components\CActiveRecord {
             if ($arrFiltro['f_estado'] != "T") {
                 $str_search .= "opag.opag_estado_pago = :f_estado AND ";
             }
+            if ($arrFiltro['f_unidad'] > '0') {
+                $str_search .= "sins.uaca_id = :f_unidad AND ";
+            }
         }
         $sql = "SELECT  lpad(sins.sins_id,4,'0') as solicitud,
                         sins.sins_fecha_solicitud,
@@ -2326,6 +2336,7 @@ class OrdenPago extends \app\modules\financiero\components\CActiveRecord {
             $fecha_ini = $arrFiltro["f_ini"];
             $fecha_fin = $arrFiltro["f_fin"];
             $f_estado = $arrFiltro["f_estado"];
+            $f_unidad = $arrFiltro["f_unidad"];
             $comando->bindParam(":search", $search_cond, \PDO::PARAM_STR);
             if ($arrFiltro['f_ini'] != "" && $arrFiltro['f_fin'] != "") {
                 $comando->bindParam(":fec_ini", $fecha_ini, \PDO::PARAM_STR);
@@ -2333,6 +2344,9 @@ class OrdenPago extends \app\modules\financiero\components\CActiveRecord {
             }
             if ($arrFiltro['f_estado'] != "T") {
                 $comando->bindParam(":f_estado", $f_estado, \PDO::PARAM_STR);
+            }
+            if ($arrFiltro['f_unidad'] > '0') {
+                $comando->bindParam(":f_unidad", $f_unidad, \PDO::PARAM_INT);
             }
         }
         $resultData = $comando->queryall();

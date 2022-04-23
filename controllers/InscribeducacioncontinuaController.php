@@ -326,8 +326,8 @@ class InscribeducacioncontinuaController extends \yii\web\Controller {
 					} else {
 						\app\models\Utilities::putMessageLogFile('resultado es NOok');
 						$message = array(
-							"wtmessage" => Yii::t("formulario", "The information have not been saved."),
-							//"wtmessage" => $resul['error_message'],
+							//"wtmessage" => Yii::t("formulario", "The information have not been saved."),
+							"wtmessage" => $resul['message'],
 							"title" => Yii::t('jslang', 'Error'),
 						);
 						return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
@@ -344,8 +344,9 @@ class InscribeducacioncontinuaController extends \yii\web\Controller {
 				} // Aqui un else que diga mensaje por si ya existe la inscripcion correspondiente
 				else{
 					$message = array(
+						//"wtmessage" => Yii::t("formulario", "You already have an application created for this program."),
 						"wtmessage" => Yii::t("formulario", "Ya posee una solicitud creada para este programa."),
-						"title" => Yii::t('jslang', 'Success'),
+						"title" => Yii::t('jslang', 'Error'),
 					);
 					return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t('jslang', 'Error'), 'false', $message, $resul);
 				}

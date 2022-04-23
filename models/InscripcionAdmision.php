@@ -1005,7 +1005,7 @@ class InscripcionAdmision extends \yii\db\ActiveRecord {
 					} else { //AQUI
 						\app\models\Utilities::putMessageLogFile('msg6:');
 						$error++;
-						$error_message .= Yii::t("formulario", "Ya existe una persona con la misma cedula o correo");
+						$error_message .= Yii::t("formulario", "There is already a person with the same ID or email, it cannot be created");
 					}
 				} else {
 					\app\models\Utilities::putMessageLogFile('msg7:');

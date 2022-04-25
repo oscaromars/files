@@ -497,7 +497,7 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
    inner join db_academico.unidad_academica u on u.uaca_id = meu.uaca_id
    inner join db_academico.estudio_academico ea on ea.eaca_id = meu.eaca_id
     inner join db_asgard.persona per on per.per_id = e.per_id
-  left join db_academico.planificacion_estudiante pes on pes.per_id = e.per_id and pes.pla_id in (39,40,41,42)
+  left join db_academico.planificacion_estudiante pes on pes.per_id = e.per_id and pes.pla_id in (39,40,41,42,44,45) AND pes.pes_estado = 1 AND pes.pes_estado_logico = 1
    WHERE TRUE AND maca.maca_id >46 
     AND  e.est_estado = 1 AND e.est_estado_logico = 1
     AND  c.ecpr_estado = 1 AND c.ecpr_estado_logico = 1
@@ -507,7 +507,7 @@ concat(per.per_pri_nombre, ' ', ifnull(per.per_seg_nombre,''), ' ', per.per_pri_
     AND  u.uaca_estado = 1 AND u.uaca_estado_logico = 1
      AND  ea.eaca_estado = 1
     AND  per.per_estado = 1 AND per.per_estado_logico = 1
-    AND meu.uaca_id = 1
+    AND meu.uaca_id = 1 AND meu.mod_id in (1,2)
    AND pes.pla_id is $evaluator Null 
     AND DATEDIFF(NOW(),e.est_fecha_creacion) <=150
     AND DATEDIFF(NOW(),per.per_fecha_creacion) <=150

@@ -2467,16 +2467,10 @@ $scheme = $squema->getScheme($referenced[$t]['maca_codigo']);
 
         switch ($referenced[$t]['mod_id']) {
             case '1':
-                $pla_id = 39;$jornada = 'N';
+                $pla_id = 44;$jornada = 'N';
                 break;
             case '2':
-                $pla_id = 40;$jornada = 'N';
-                break;
-            case '3':
-                $pla_id = 41;$jornada = 'S';
-                break;
-            case '4':
-                $pla_id = 42;$jornada = 'D';
+                $pla_id = 45;$jornada = 'N';
                 break;
         }
 

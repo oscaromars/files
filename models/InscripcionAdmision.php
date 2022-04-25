@@ -768,7 +768,7 @@ class InscripcionAdmision extends \yii\db\ActiveRecord {
 						\app\models\Utilities::putMessageLogFile('id data:' . print_r($datos, true));
 						$existe = $mod_PersonaOtro->consultar($id_persona);
 						/*if (empty($existe)) {
-						$respPerOtros = $mod_PersonaOtro->insertar($id_persona,$resp_datos['nivel'],$resp_datos['red_social'],$resp_datos['twin_encontramos'],$usuario_ingreso);
+							$respPerOtros = $mod_PersonaOtro->insertar($id_persona,$resp_datos['nivel'],$resp_datos['red_social'],$resp_datos['twin_encontramos'],$usuario_ingreso);
 						*/
 						if ($id_persona > 0) {
 							//self::movePersonFiles($twinIds,$id_persona);
@@ -891,9 +891,9 @@ class InscripcionAdmision extends \yii\db\ActiveRecord {
 															//Grabar documento de registro de pago por depósito o transferencia.
 															if (($fpag_id == 5) or ($fpag_id == 4)) {
 																$fecha_registro = date(Yii::$app->params["dateTimeByDefault"]);
-																\app\models\Utilities::putMessageLogFile('$rutaDocPago: '. $rutaDocPago);
+																\app\models\Utilities::putMessageLogFile('$rutaDocPago: ' . $rutaDocPago);
 																\app\models\Utilities::putMessageLogFile('ruta444: ' . $ruta_doc_pago["ruta_doc_pago"]);
-															\app\models\Utilities::putMessageLogFile('ruta555: ' . $archivo);
+																\app\models\Utilities::putMessageLogFile('ruta555: ' . $archivo);
 																$creadetalle = $mod_ordenpago->insertarCargaprepago($resp_opago, $fpag_id, $val_total, $archivo, 'PE', NULL, $dataReg["observacion"], $dataReg["num_transaccion"], $dataReg["fecha_transaccion"], $fecha_registro);
 																if ($creadetalle) {
 																	$detalle = 'S';
@@ -912,7 +912,7 @@ class InscripcionAdmision extends \yii\db\ActiveRecord {
 																\app\models\Utilities::putMessageLogFile('fecha_registro:' . $fecha_registro);
 																$fecha_registro = date(Yii::$app->params["dateTimeByDefault"]);
 																\app\models\Utilities::putMessageLogFile('ruta666: ' . $ruta_doc_pago["ruta_doc_pago"]);
-															\app\models\Utilities::putMessageLogFile('ruta777: ' . $archivo);
+																\app\models\Utilities::putMessageLogFile('ruta777: ' . $archivo);
 																$creadetalle = $mod_ordenpago->insertarCargaprepago($resp_opago, $fpag_id, $val_total, $rpag_imagen, 'RE', 'AP', $rpag_imagen, 0, $fecha_registro, $fecha_registro);
 																if ($creadetalle) {
 
@@ -996,7 +996,8 @@ class InscripcionAdmision extends \yii\db\ActiveRecord {
 							$error++;
 							$error_message .= Yii::t("formulario", "Other personal data has not been registered");
 						}
-					} else { //AQUI
+					} else {
+						//AQUI
 						$error++;
 						$error_message .= Yii::t("formulario", "Ya existe una persona con la misma cedula o correo");
 					}
@@ -1009,7 +1010,7 @@ class InscripcionAdmision extends \yii\db\ActiveRecord {
 				$error++;
 			}
 			if ($exito == 1) {
-				\app\models\Utilities::putMessageLogFile('inscripciones exito ' );
+				\app\models\Utilities::putMessageLogFile('inscripciones exito ');
 				//$transaction->commit();
 				//$transaction1->commit();
 				$transaction2->commit();

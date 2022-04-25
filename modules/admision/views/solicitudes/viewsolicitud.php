@@ -10,7 +10,7 @@ use app\modules\academico\Module as aspirante;
 academico::registerTranslations();
 financiero::registerTranslations();
 aspirante::registerTranslations();
-//print_r($arr_descuento);
+//print_r($arr_solicitudesp);
 //print_r( $resp_solicitudescuento['ddit_id']);
 if($tiene_desct == '1'){
     $preciofinal = $precio_dect["precio"];
@@ -105,7 +105,7 @@ $leyenda = '<div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
             <div class="form-group">
                 <label for="cmb_ninteres" class="col-sm-5 col-md-5 col-xs-5 col-lg-5 control-label"><?= academico::t("Academico", "Academic unit") ?></label>
                 <div class="col-sm-7 col-md-7 col-xs-7 col-lg-7">
-                    <?= Html::dropDownList("cmb_ninteres", $arr_solicitudesp['uaca_id'], array_merge([Yii::t("formulario", "Select")], $arr_unidad), ["class" => "form-control", "id" => "cmb_ninteres", "disabled" => "true"]) ?>
+                    <?= Html::dropDownList("cmb_ninteres", $arr_solicitudesp['uaca_id'], /*array_merge([Yii::t("formulario", "Select")],*/ $arr_unidad/*)*/, ["class" => "form-control", "id" => "cmb_ninteres", "disabled" => "true"]) ?>
                 </div>
             </div>
         </div>

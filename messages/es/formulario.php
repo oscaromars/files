@@ -36,17 +36,17 @@
  *
  * PenBlu is based on code by
  * Yii Software LLC (http://www.yiisoft.com) Copyright Â© 2008
- * 
+ *
  * Este Archivo contiene lenguajes para ser utilizados en Javascript por defecto
  * @author Eduardo Cueva
  * @email  ecueva@penblu.com edu19432@gmail.com
  * @copyright Copyright &copy; Penblu 2012=>
- * @license GPLv2 http://www.opensource.org/licenses/gpl-license.php 
- * 
+ * @license GPLv2 http://www.opensource.org/licenses/gpl-license.php
+ *
  * Authors:
  *
  * Eduardo Cueva <edu19432@gmail.com>
- * 
+ *
  * Update:
  * Diana Lopez <dianalopez784@gmail.com>
  */
@@ -81,8 +81,8 @@ return [
     "Another language" => "Otro lenguaje",
     "Another Master" => "Otra maestría",
     "Applicant Data" => "Datos del Solicitante:",
-    "Application for Admission Process" => "Proceso Solicitud de Admisión",    
-    "Record your data" => "Registra tus datos",  
+    "Application for Admission Process" => "Proceso Solicitud de Admisión",
+    "Record your data" => "Registra tus datos",
     "Application Approved" => "Solicitud Aprobada",
     "Application Rejected" => "Solicitud Rechazada",
     "Application Reports" => "Reporte de Solicitud",
@@ -159,7 +159,7 @@ return [
     "Complete Names" => "Nombres Completos",
     "Comprehension" => "Compresión",
     "Conferences, Presentations and Exhibitor" => "Conferencias, Ponencias y Exposiciones",
-    "Consult Type of Sale Opportunity" => "Listar Oportunidad de Venta",    
+    "Consult Type of Sale Opportunity" => "Listar Oportunidad de Venta",
     "Contact Information" => "Información de Contacto",
     "Continue" => "Continuar",
     "Control Payments" => "Control de Pagos",
@@ -183,10 +183,10 @@ return [
     "Data Address" => "Datos Domicilio",
     "Data Beneficiary" => "Datos Beneficiario",
     "Data General Contact" => "Datos Generales Contacto",
-    "Data General Interested" => "Datos Generales Interesado",    
+    "Data General Interested" => "Datos Generales Interesado",
     "Data Contact" => "Datos Contacto",
     "Data Invoices" => "Datos Facturas",
-    "Data Family" => "Datos Familiares",   
+    "Data Family" => "Datos Familiares",
     "Data Management" => "Datos Gestión",
     "Data of Origin and Interest" => "Datos de Origen e Interés",
     "Data Oportunity" => "Datos Oportunidad",
@@ -202,7 +202,7 @@ return [
     "Date Entry" => "Fecha Ingreso",
     "Date Next attention" => "Fecha Próxima Atención",
     "Date Next attention End" => "Fecha Próx. Atención Fin",
-    "Date Next attention Start" => "Fecha Próx. Atención Inicio",    
+    "Date Next attention Start" => "Fecha Próx. Atención Inicio",
     "Date Send" => "Fecha Envio",
     "Day" => "Día",
     "Dedication time" => "Tiempo Dedicación",
@@ -271,7 +271,7 @@ return [
     "Executive" => "Agente",
     "Executive Assigned" => "Agente Asignado",
     "Executive Assignment" => "Asignación de Agente",
-    "Executive-Code" => "Agente-Código",    
+    "Executive-Code" => "Agente-Código",
     "Executive Reassignment" => "Reasignación Agente",
     "Executive Summary" => "Resumen Ejecutivo",
     "Expected impacts" => "Impactos esperados",
@@ -325,7 +325,7 @@ return [
     "I accept the responsibility that the information is true" => "Veracidad de la información.",
     "Identification document" => "Documento Identidad",
     "IN DEVELOPMENT" => "En Elaboración",
-    "Income Method" => "Método Ingreso", 
+    "Income Method" => "Método Ingreso",
     "Indigenous" => "Indígena",
     "Indexed Magazine" => "Revista Indexada",
     "Information" => "Información",
@@ -405,7 +405,7 @@ return [
     "Monday" => "Lunes",
     "Montubio" => "Montubio",
     "Month" => "Mes",
-    "Name" => "Nombre",    
+    "Name" => "Nombre",
     "Names" => "Nombres",
     "Name Language" => "Nombre Lenguaje",
     "National identity document" => "Documento Nacional de Identidad",
@@ -466,7 +466,7 @@ return [
     "Payments made" => "Pagos Realizados",
     "Pay order" => "Orden Pago",
     "Pay Total" => "Pago Total",
-    "Payment Total" => "Total a pagar",    
+    "Payment Total" => "Total a pagar",
     "Peer Reviews" => "Revisiones Pares",
     "Pending Approval" => "Pendiente de Aprobación",
     "Percentage" => "Porcentaje",
@@ -495,7 +495,7 @@ return [
     "Process State" => "Estado Proceso",
     "Processing" => "Procesando",
     "Profession" => "Profesión",
-    "Product Selection" => "Seleccionar Producto",   
+    "Product Selection" => "Seleccionar Producto",
     "Project Content" => "Contenido Proyecto",
     "Project Data" => "Datos Proyecto",
     "Project Description" => "Descripción Proyecto",
@@ -531,8 +531,8 @@ return [
     "Relationship" => "Relación",
     "Report of Respondents" => "Reporte de Encuestados",
     "Request #" => "Solicitud",
-    "Request by Interested" => "Solicitudes por Interesado",    
-    "Request Data" => "Datos Solicitud",    
+    "Request by Interested" => "Solicitudes por Interesado",
+    "Request Data" => "Datos Solicitud",
     "Respondent" => "Encuestado",
     "Research Projects" => "Proyectos de Investigaciones",
     "Responsable" => "Responsable",
@@ -545,7 +545,7 @@ return [
     "RUC" => "RUC",
     "Sale Opportunity" => "Oportunidad de Venta",
     "Sale Opportunity Type" => "Tipo Oportunidad",
-    "Saturday" => "Sábado",    
+    "Saturday" => "Sábado",
     "Save" => "Grabar",
     "Save Profile" => "Guardar Perfil",
     "Save in Mangage Contact" => "Guardar en contacto gestion",
@@ -625,6 +625,7 @@ return [
     "The information have been saved" => "La informacion ha sido guardada",
     "The information have been saved and the information has been sent to your email" => "La informacion ha sido guardada, y se ha enviado la informacion a su correo.",
     "The information have not been saved" => "La informacion no ha sido guardada",
+    "There is already a person with the same ID or email, it cannot be created" => "Ya existe una persona con la misma cedula o correo, no se puede crear",
     "Thursday" => "Jueves",
     "Title" => "Título",
     "Title/Degree Certificate" => 'Título/Acta Grado',
@@ -647,7 +648,7 @@ return [
     "Type Management" => "Tipo Gestión",
     "Type of financing" => "Tipo Financiamiento",
     "Type Opportunity" => "Tipo Oportunidad",
-    "Opportunity Type" => "Tipo Oportunidad",    
+    "Opportunity Type" => "Tipo Oportunidad",
     "Type Participation" => "Tipo Participación",
     "Type person" => "Tipo Persona",
     "Type publication" => "Tipo Publicación",
@@ -689,6 +690,7 @@ return [
     "Year Approval" => "Año Aprobación",
     "Years Dedicated to Teaching" => "Años Dedicados a la Docencia",
     "Yes" => "Si",
+    "You already have an application created for this program" => "Ya posee una solicitud creada para este programa",
     "Your relative has some disability" => "Familiar con discapacidad",
     "You want to check with other data?" => "¿Desea facturar con otros datos?",
     "Other Studies" => "Otros estudios",

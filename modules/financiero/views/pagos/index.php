@@ -18,8 +18,9 @@ use app\modules\financiero\Module as financiero;
 <div>
     <form class="form-horizontal">
         <?=
-        $this->render('index-search', [           
-            'arrEstados' => $arrEstados
+        $this->render('index-search', [
+            'arrEstados' => $arrEstados,
+            'arrUnidad' => $arrUnidad
             ]);
         ?>
     </form>

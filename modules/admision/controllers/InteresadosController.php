@@ -36,15 +36,15 @@ class InteresadosController extends \app\components\CController
             $arrSearch["f_ini"] = $data['f_ini'];
             $arrSearch["f_fin"] = $data['f_fin'];
             $arrSearch["company"] = $data['company'];
-            //$arrSearch["unidad"] = $data['unidad'];
+            $arrSearch["unidad"] = $data['unidad'];
             $model = $interesado_model->consultarInteresados($arrSearch);
         } else {
             $model = $interesado_model->consultarInteresados();
         }
         $empresa_model = new Empresa();
-        $arr_unidad = $mod_unidad->consultarUnidadAcademicasEmpresa(0);
+        $arr_unidad = $mod_unidad->consultarUnidadAcademicas();
         $arr_empresas = $empresa_model->getAllEmpresa();
-        $arrEmpresa = ArrayHelper::map($arr_empresas, "id", "value");        
+        $arrEmpresa = ArrayHelper::map($arr_empresas, "id", "value");
         return $this->render('index', [
             'model' => $model,
             'arr_empresa' => $arrEmpresa,
@@ -137,7 +137,7 @@ class InteresadosController extends \app\components\CController
                                         }
                                         if ($iemp_id > 0) {
                                             $usuarioNew = Usuario::findIdentity($usuario_id);
-                                            $link = $usuarioNew->generarLinkActivacion();                                                                 
+                                            $link = $usuarioNew->generarLinkActivacion();
                                             $email_info = array(
                                                 "nombres" => $pgest['pges_pri_nombre'] . " " . $pgest['pges_seg_nombre'],
                                                 "apellidos" => $pgest['pges_pri_apellido'] . " " . $pgest['pges_seg_apellido'],
@@ -240,71 +240,71 @@ class InteresadosController extends \app\components\CController
         header("Content-Disposition: attachment;filename=" . $nombarch);
         header('Cache-Control: max-age=0');
         $colPosition = array("C", "D", "E", "F", "G", "H", "I", "J", "K", "L");
-        
+
         $arrHeader = array(
             Yii::t("formulario", "DNI"),
             Yii::t("formulario", "Date"),
-            Yii::t("formulario", "Name"),                        
+            Yii::t("formulario", "Name"),
             Yii::t("formulario", "Last Names"),
             Yii::t("formulario", "User login"),
             Yii::t("formulario", "Company"),
             Yii::t("formulario", "Academic unit"),
-            academico::t("Academico", "Career/Program/Course"));            
-        
+            academico::t("Academico", "Career/Program/Course"));
+
         $interesado_model = new Interesado();
         $data = Yii::$app->request->get();
         $arrSearch["search"] = $data['search'];
         $arrSearch["f_ini"] = $data['f_ini'];
         $arrSearch["f_fin"] = $data['f_fin'];
         $arrSearch["company"] = $data['company'];
-        //$arrSearch["unidad"] = $data['unidad'];
+        $arrSearch["unidad"] = $data['unidad'];
         $arrData = array();
         if (empty($arrSearch)) {
             $arrData = $interesado_model->consultarReportAspirantes(array(), true);
         } else {
-            $arrData = $interesado_model->consultarReportAspirantes($arrSearch, true);                   
-        }                                      
-                         
+            $arrData = $interesado_model->consultarReportAspirantes($arrSearch, true);
+        }
+
         $nameReport = academico::t("Aspirante", "Aspirants");
         Utilities::generarReporteXLS($nombarch, $nameReport, $arrHeader, $arrData, $colPosition);
-        exit;              
+        exit;
     }
-    
+
     public function actionExppdfaspirantes() {
         $report = new ExportFile();
         $this->view->title = academico::t("Aspirante", "Aspirants"); // Titulo del reporte
-                      
+
         $arrHeader = array(
             Yii::t("formulario", "DNI"),
             Yii::t("formulario", "Date"),
-            Yii::t("formulario", "Name"),                        
+            Yii::t("formulario", "Name"),
             Yii::t("formulario", "Last Names"),
             Yii::t("formulario", "User login"),
             Yii::t("formulario", "Company"),
             Yii::t("formulario", "Academic unit"),
-            academico::t("Academico", "Career/Program/Course"));            
-        
+            academico::t("Academico", "Career/Program/Course"));
+
         $interesado_model = new Interesado();
         $data = Yii::$app->request->get();
         $arrSearch["search"] = $data['search'];
         $arrSearch["f_ini"] = $data['f_ini'];
         $arrSearch["f_fin"] = $data['f_fin'];
         $arrSearch["company"] = $data['company'];
-        //$arrSearch["unidad"] = $data['unidad'];
+        $arrSearch["unidad"] = $data['unidad'];
         $arrData = array();
         if (empty($arrSearch)) {
             $arrData = $interesado_model->consultarReportAspirantes(array(), true);
         } else {
-            $arrData = $interesado_model->consultarReportAspirantes($arrSearch, true);                   
+            $arrData = $interesado_model->consultarReportAspirantes($arrSearch, true);
         }
-        
-        $report->orientation = "P"; // tipo de orientacion L => Horizontal, P => Vertical    
+
+        $report->orientation = "P"; // tipo de orientacion L => Horizontal, P => Vertical
         $report->createReportPdf(
             $this->render('exportpdf', [
                     'arr_head' => $arrHeader,
                     'arr_body' => $arrData
             ])
         );
-        $report->mpdf->Output('Reporte_' . date("Ymdhis") . ".pdf", ExportFile::OUTPUT_TO_DOWNLOAD);           
+        $report->mpdf->Output('Reporte_' . date("Ymdhis") . ".pdf", ExportFile::OUTPUT_TO_DOWNLOAD);
     }
 }

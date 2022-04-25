@@ -67,7 +67,6 @@ class PagosController extends \app\components\CController {
         return $this->render('index', [
                     'model' => $resp_pago,
                     'arrEstados' => $arrEstados,
-                    //'arrUnidad' => $resp_unidad
                     'arrUnidad' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "All")]], $resp_unidad), "id", "name"),
         ]);
     }

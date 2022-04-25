@@ -211,7 +211,7 @@ select pes_id
 FROM db_academico.planificacion_estudiante
 WHERE TRUE
 AND per_id = $per_id
-AND pla_id in (39,40,41,42)
+AND pla_id in (39,40,41,42,44,45)
 AND pes_estado = 1 
 AND pes_estado_logico = 1
 ";

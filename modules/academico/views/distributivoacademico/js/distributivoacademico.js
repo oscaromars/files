@@ -20,12 +20,18 @@ $(document).ready(function () {
         }, false);
 
     });
-$('#cmb_periodo').change(function () {
-    if($('#cmb_periodo').val()!=0){
-        document.getElementById("cmb_periodo").disabled = true;
-    }
+    $('#cmb_periodo').change(function () {
+        if($('#cmb_periodo').val()!=0){
+            document.getElementById("cmb_periodo").disabled = true;
+        }
 
-});
+    });
+
+    //JLC: 22 ABRIL 2022
+    $('#btn_limpiarbuscador').click(function () {
+        limpiarBuscador();
+    });
+    //JLC: 22 ABRIL 2022
 
     $('#cmb_tipo_asignacion').change(function () {
         document.getElementById("cmb_profesor").disabled = true;
@@ -1411,7 +1417,7 @@ function asignararEstudiantesConfirm(){
     // Sólo llama a la función del controlador}
     var link = $('#txth_base').val() + "/academico/distributivoacademico/saveasignarestudiante";
     var arrParams = new Object();
-    arrParams.paca_id = $('#cmb_periodo1 option:selected').val();
+    arrParams.paca_id = $('#cmb_periodo_modal option:selected').val();//JLC: 22 ABRIL 2022
 
     
         requestHttpAjax(link, arrParams, function(response) {
@@ -1424,3 +1430,9 @@ function asignararEstudiantesConfirm(){
         }, true);
     
 }
+
+//JLC: 22 ABRIL 2022
+function limpiarBuscador(){
+    window.location.href = $('#txth_base').val() + "/academico/distributivoacademico/index";
+}
+//JLC: 22 ABRIL 2022

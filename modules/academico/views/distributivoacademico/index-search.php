@@ -60,10 +60,12 @@ use yii\helpers\Html;
     </div>
 </div>
 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-    <div class="form-group" style="display: flex;justify-content: center;">
-        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4" style="margin: 0 auto;">
-            <a id="btn_buscarData_dist" href="javascript:" class="btn btn-primary btn-block"> <?=Yii::t("formulario", "Search")?></a>
-        </div>
+    <div class="col-sm-6"></div>
+    <div class="col-sm-2">                
+        <a id="btn_limpiarbuscador" href="javascript:" class="btn btn-secundary btn-block"> <?= Yii::t("formulario", "Limpiar Búsqueda") ?></a>
+    </div>
+    <div class="col-sm-2 col-md-2 col-xs-4 col-lg-2">
+        <a id="btn_buscarData_dist" href="javascript:" class="btn btn-primary btn-block"> <?=Yii::t("formulario", "Search")?></a>
     </div>
 </div>
 

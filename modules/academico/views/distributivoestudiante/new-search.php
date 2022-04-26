@@ -45,7 +45,7 @@ use app\modules\academico\Module as academico;
             <div class="col-sm-3 col-xs-3 col-md-3 col-lg-3">
                     <?= Html::input("text", "txt_profesor", $distributivo_model->pro->per->per_pri_nombre.' '.$distributivo_model->pro->per->per_seg_nombre.' '.$distributivo_model->pro->per->per_pri_apellido.' '.$distributivo_model->pro->per->per_seg_apellido, ["class" => "form-control", "id" => "txt_profesor", "disabled" => "disabled"]) ?>
             </div>
-             <label for="txt_paralelo" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= academico::t("Academico", "Paralelo") ?></label>
+            <label for="txt_paralelo" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= academico::t("Academico", "Paralelo") ?></label>
             <div class="col-sm-3 col-xs-3 col-md-3 col-lg-3">
                     <?=
                         Html::input("text", "txt_paralelo", $distributivo_model->uaca_id == 1?$distributivo_model->mpp->mpp_num_paralelo:$distributivo_model->dhpa->dhpa_paralelo, ["class" => "form-control", "id" => "txt_paralelo", "disabled" => "disabled"]);
@@ -58,7 +58,22 @@ use app\modules\academico\Module as academico;
                     ?>
             </div>
         </div>
+    </div>
     </div> 
-    
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="form-group">
+
+            <label for="txt_materia" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= Yii::t("formulario", "Seleccionar Todos") ?></label>
+            <div class="col-sm-3 col-xs-3 col-md-3 col-lg-3">
+                <input class = "col-xs-2 col-sm-2 col-md-2 col-lg-2 form-check-input checkAcceptAll" type="checkbox" value="1" id="chk_all">
+            </div> 
+
+            <label id="id_txt_paralelo" for="txt_paralelo" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label" style="display: none"><?=academico::t("Academico", "Paralelo")?></label>
+            <div id="id_cmb_paralelo" class="col-sm-3 col-xs-3 col-md-3 col-lg-3" style="display: none">
+
+                  <?=Html::dropDownList("cmb_paralelo_new", 0, $paralelos, ["class" => "form-control", "id" => "cmb_paralelo_new"])?>
+            </div>
+        </div>
+    </div> 
 </div>
 

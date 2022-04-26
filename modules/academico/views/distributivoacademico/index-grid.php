@@ -88,11 +88,14 @@ academico::registerTranslations();
             [
                 'attribute' => 'total_est',
                 'header' => academico::t("Academico", "Total Estudiantes"),
+                //'header' => academico::t("Academico", "Estudiantes por asignar"),
                 'value' => 'total_est',
+                'headerOptions' => ['class' => 'text-center'],
+                'contentOptions' => ['class' => 'text-center'],
             ],
             [
                 'class' => 'yii\grid\ActionColumn',
-                'header' => '',
+                'header' => 'Acción',
                 'template' => '{add}',
                 'contentOptions' => ['class' => 'text-center'],
                 'buttons' => [

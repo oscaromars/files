@@ -264,8 +264,8 @@ class DistributivoAcademicoEstudiante extends \yii\db\ActiveRecord {
 
 		try {
 			$sql = "INSERT INTO db_academico.distributivo_academico_estudiante
-                (daca_id, est_id, daes_fecha_registro, daes_estado, daes_fecha_creacion, daes_fecha_modificacion, daes_estado_logico)
-                (SELECT distinct daca.daca_id, est.est_id,'$date', 1,'$date', Null, 1
+                (daca_id, est_id, daes_fecha_registro, daes_estado, daes_usuario_ingreso,daes_fecha_creacion, daes_fecha_modificacion, daes_estado_logico)
+                (SELECT distinct daca.daca_id, est.est_id,'$date', 1, 1,'$date', Null, 1
                 FROM
                     (SELECT  pera.paca_id as id, ifnull(CONCAT(blq.baca_nombre,'-',sem.saca_nombre,' ',sem.saca_anio),'') as nombre, blq.baca_nombre as bloque
                         FROM db_academico.periodo_academico pera

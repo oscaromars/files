@@ -79,9 +79,12 @@ class DistributivoacademicoController extends \app\components\CController {
 			*/
 			// enviar el array de la busqueda
 			$model = $distributivo_model->getListadoDistributivoGrado($arrSearch);
-			return $this->renderPartial('index-grid', [
+			
+			//JLC: 19 ABRIL 2022
+			/*return $this->renderPartial('index-grid', [
 				"model" => $model,
-			]);
+			]);*/
+			//JLC: 19 ABRIL 2022
 		} else {
 			$model = $distributivo_model->getListadoDistributivoGrado();
 			//$model_posgrado = $distributivo_model->getListadoDistributivoPosgrado();

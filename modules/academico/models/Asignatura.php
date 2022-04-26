@@ -948,9 +948,9 @@ class Asignatura extends \yii\db\ActiveRecord {
 
     /**
      * Function getAsignatura_x_bloque_x_planif
-     * @author  Julio Lopez <analistadesarrollo03@uteg.edu.ec>
-     * @param
-     * @return  $resultData (Retornar las asignaturas por planificación y modalidad).
+     * @author  
+     * @author modification Julio Lopez <analistadesarrollo03@uteg.edu.ec>
+     * @return $resultData (Retornar las asignaturas por planificación y modalidad).
      */
     public function consultarAsignaturasMateriaparaleloperiodo($paca_id=NULL, $uaca_id=NULL, $mod_id=NULL, $bloque=NULL) {
         $con = \Yii::$app->db_academico;

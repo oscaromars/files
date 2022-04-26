@@ -974,42 +974,42 @@ class InscripcionAdmision extends \yii\db\ActiveRecord {
 												}
 											} else {
 												\app\models\Utilities::putMessageLogFile('msg1:');
-												$error_message .= Yii::t("formulario", "The enterprise interested hasn't been saved");
+												$error_message .= Yii::t("formulario", "El interesado que pertence a la empresa en cuestion no ha sido guardado");
 												$error++;
 											}
 										} else {
 											\app\models\Utilities::putMessageLogFile('msg2:');
-											$error_message .= Yii::t("formulario", "The interested person hasn't been saved");
+											$error_message .= Yii::t("formulario", "La persona interesada no ha sido guardada");
 											$error++;
 										}
 									} else {
 										\app\models\Utilities::putMessageLogFile('msg3:');
-										$error_message .= Yii::t("formulario", "The rol user have not been saved");
+										$error_message .= Yii::t("formulario", "El rol usuario no ha sido guardado");
 										$error++;
 									}
 								} else {
 									\app\models\Utilities::putMessageLogFile('msg4:');
-									$error_message .= Yii::t("formulario", "The user have not been saved");
+									$error_message .= Yii::t("formulario", "El usuario no ha sido guardado");
 									$error++;
 								}
 							} else {
 								\app\models\Utilities::putMessageLogFile('msg5:');
-								$error_message .= Yii::t("formulario", "The enterprise interested hasn't been saved");
+								$error_message .= Yii::t("formulario", "El interesado que pertence a la empresa en cuestion no ha sido guardado");
 								$error++;
 							}
 						} else {
 							\app\models\Utilities::putMessageLogFile('msg5.1:');
 							$error++;
-							$error_message .= Yii::t("formulario", "Other personal data has not been registered");
+							$error_message .= Yii::t("formulario", "Otros datos de persona no han sido registrados");
 						}
 					} else { //AQUI
 						\app\models\Utilities::putMessageLogFile('msg6:');
 						$error++;
-						$error_message .= Yii::t("formulario", "There is already a person with the same ID or email, it cannot be created");
+						$error_message .= Yii::t("formulario", "Ya existe una persona con la misma cedula o correo, no se puede crear");
 					}
 				} else {
 					\app\models\Utilities::putMessageLogFile('msg7:');
-					$error_message .= Yii::t("formulario", "Update DNI to generate interested");
+					$error_message .= Yii::t("formulario", "Actualizar cedula para generar interesado");
 					$error++;
 				}
 			} else {

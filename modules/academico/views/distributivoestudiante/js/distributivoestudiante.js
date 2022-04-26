@@ -119,7 +119,7 @@ function save() {
     var keys = $('#grid').yiiGridView('getSelectedRows');
     // alert(keys);
     var arrParams = new Object();
-    arrParams.daca_id = $("#txth_ids").val();
+    //arrParams.daca_id = $("#txth_ids").val();
     //arrParams.est_id = keys;
 
     //JLC: 19 ABRIL 2022. inicio.
@@ -133,7 +133,6 @@ function save() {
                 var itemOrden ={};
                 var tds = $(this).find("td");
                 itemOrden.daes_id = tds.filter(":eq(4)").text();
-                itemOrden.daca_id = tds.filter(":eq(6)").find("select").val();
                 itemOrden.est_id  = tds.filter(":eq(7)").text();
                 items.push(itemOrden);                
             });
@@ -145,35 +144,31 @@ function save() {
             return;
         }
     }else{
+        var items = [];
         //Recorre por item seleccionado
         $('#grid input.byregister[type=checkbox]').each(function() {
             if (this.checked) {
                 var itemOrden ={};
                 itemOrden.daes_id = $(this).parent().parent().find('td').eq(4).text();
-                itemOrden.daca_id = $(this).parent().parent().find('td').eq(6).find("select").val();
+                itemOrden.daca_id = $(this).parent().parent().find('td').eq(5).find("select").val();
                 itemOrden.est_id = $(this).parent().parent().find('td').eq(7).text();
                 console.log('itemOrden.daes_id: '+ itemOrden.daes_id + ' itemOrden.daca_id: '+ itemOrden.daca_id);
                 items.push(itemOrden);
             }
-
-            
         });
         arrParams.lista_daes_id = items;
+        arrParams.paralelo = 0;
     }
     //JLC: 19 ABRIL 2022. fin.
 
     requestHttpAjax(link, arrParams, function(response) {
-        if (response.status == "OK") {
-            //searchModules();
-          //  clearDataSearch();
-          showAlert(response.status, response.label, response.message);
-          
-           setTimeout(function() {
-                var link = $('#txth_base').val() + "/academico/distributivoacademico/index";
-                window.location = link;
-            }, 1000);
-        } else {
-            showAlert(response.status, response.label, response.message);
+        showAlert(response.status, response.label, response.message);
+
+        if(response.status == 'OK'){
+            setTimeout(function () {
+                 var link = $('#txth_base').val() + "/academico/distributivoacademico/index";
+                 window.location = link;
+            }, 2000);
         }
     }, true);
 }

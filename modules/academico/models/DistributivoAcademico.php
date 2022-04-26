@@ -395,7 +395,7 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
 	             AND  made.made_estado = 1 AND  made.made_estado_logico = 1
 	            INNER  JOIN  db_academico.materia_paralelo_periodo as mpp  on daca.mpp_id = mpp.mpp_id
 	             AND  mpp.mpp_estado = 1 AND  daca.daca_estado_logico = 1		
-				LEFT  JOIN  db_academico.distributivo_academico_estudiante as daes on daca.daca_id = daes.daca_id AND  daes.est_id = est.est_id AND  daes.daes_id is null
+				LEFT  JOIN  db_academico.distributivo_academico_estudiante as daes on daca.daca_id = daes.daca_id AND  daes.est_id = est.est_id -- AND  daes.daes_id is null
 	            AND  daes.daes_estado = 1 AND  daes.daes_estado_logico = 1
 				WHERE ron.ron_id = roi.ron_id 
 				AND made.asi_id = daca.asi_id
@@ -403,7 +403,8 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
 				AND daca.daca_id = $daca_id
                 and periodo.id=daca.paca_id and periodo.id = $paca_id
                 and roi.roi_bloque = periodo.bloque
-                AND  pla.saca_id=periodo.saca_id";
+                AND  pla.saca_id=periodo.saca_id
+                AND daes.daes_id is null";
 
 		$comando = $con_academico->createCommand($sql);
 		$res = $comando->queryAll();

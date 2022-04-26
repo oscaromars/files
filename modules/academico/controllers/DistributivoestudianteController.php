@@ -351,94 +351,78 @@ class DistributivoestudianteController extends \app\components\CController {
 				Utilities::putMessageLogFile('paralelo :'. $paralelo);
 				Utilities::putMessageLogFile('lista_daes_id :'. $lista_daes_id);
 
-				/*if ( $paralelo == 0 ){
-					//return;
-					Utilities::putMessageLogFile('INSERTA');
-					for ($i = 0; $i < sizeof($est_id); $i++) {
-						$distributivoEst_model = new DistributivoAcademicoEstudiante();
-						$distributivoEst_model->daca_id = $daca_id;
-						$distributivoEst_model->est_id = $est_id[$i];
-						$distributivoEst_model->daes_fecha_registro = $fecha_transaccion;
-						$distributivoEst_model->daes_estado = '1';
-						$distributivoEst_model->daes_estado_logico = '1';
-						if ($distributivoEst_model->save()) {
-							$verifica++;
-						}
-					}
-				}else{*/
-					//Actualiza paralelo
-					//Utilities::putMessageLogFile('1 ACTUALIZA');
-					if (!empty($lista_daes_id)) {
-	                    $cont = 0;
-	                    if ($paralelo !='0'){
-	                    	Utilities::putMessageLogFile('********** ACTUALIZA: Todos los paralelos ********** : '.$paralelo);
-	                    	foreach ($lista_daes_id as $key => $value) {
-		                        $daes_id = $value['daes_id'];
+				//Actualiza paralelo
+				//Utilities::putMessageLogFile('**** ACTUALIZA paralelo:'.$paralelo);
+				if (!empty($lista_daes_id)) {
+                    $cont = 0;
+                    if ($paralelo != '0' ){
+                    	Utilities::putMessageLogFile('********** ACTUALIZA: Todos los paralelos ********** : '.$paralelo);
+                    	foreach ($lista_daes_id as $key => $value) {
+	                        $daes_id = $value['daes_id'];
 
-								if ($daes_id !=""){
-									Utilities::putMessageLogFile('OP1 ACTUALIZA todos: estan asignados:'.$cont);
-									Utilities::putMessageLogFile('OP1 Indice:'.$cont.' - daes_id:'. $daes_id);
-									$estudiante_model = DistributivoAcademicoEstudiante::findOne($daes_id);
-									$estudiante_model->daca_id = $paralelo;
-									$estudiante_model->daes_usuario_modifica = $user;
-									$estudiante_model->daes_fecha_modificacion = $fecha_transaccion;
-									if ($estudiante_model->save()) {
-										$verifica++;
-									}
-								}else{
-									Utilities::putMessageLogFile('OP2 INSERTA: están pendientes por asignar:'.$cont);
-									Utilities::putMessageLogFile('OP2 Están pendientes por asignar $value[daca_id]: '.$value['daca_id'] .' $value[est_id]: '. $value['est_id']);
-									$distributivoEst_model = new DistributivoAcademicoEstudiante();
-									$distributivoEst_model->daca_id = $paralelo;
-									$distributivoEst_model->est_id = $value['est_id'];
-									$distributivoEst_model->daes_fecha_registro = $fecha_transaccion;
-									$distributivoEst_model->daes_usuario_ingreso = $user;
-									$distributivoEst_model->daes_estado = '1';
-									$distributivoEst_model->daes_estado_logico = '1';
-									if ($distributivoEst_model->save()) {
-										$verifica++;
-									}
+							if ($daes_id !=""){
+								//Utilities::putMessageLogFile('OP1 ACTUALIZA todos: estan asignados:'.$cont);
+								//Utilities::putMessageLogFile('OP1 Indice:'.$cont.' - daes_id:'. $daes_id);
+								$estudiante_model = DistributivoAcademicoEstudiante::findOne($daes_id);
+								$estudiante_model->daca_id = $paralelo;
+								$estudiante_model->daes_usuario_modifica = $user;
+								$estudiante_model->daes_fecha_modificacion = $fecha_transaccion;
+								if ($estudiante_model->save()) {
+									$verifica++;
 								}
-
-								$cont++;
-		                    }	
-	                    }elseif ($paralelo =='0'){
-	                    	Utilities::putMessageLogFile('********** ACTUALIZA cuando selecciona por item **********:'.$cont);
-	                    	foreach ($lista_daes_id as $key => $value) {
-		                        
-		                        $daes_id = $value['daes_id'];
-
-		                        if ($daes_id !=""){
-		                        	Utilities::putMessageLogFile('OP3 ACTUALIZA todos: estan asignados:'.$cont);
-			                        Utilities::putMessageLogFile('OP3 Indice:'.$cont.' - daes_id:'. $daes_id);
-									$estudiante_model = DistributivoAcademicoEstudiante::findOne($daes_id);
-									$estudiante_model->daca_id = $value['daca_id'];
-									$estudiante_model->daes_usuario_modifica = $user;
-									$estudiante_model->daes_fecha_modificacion = $fecha_transaccion;
-									if ($estudiante_model->save()) {
-										$verifica++;
-									}
-								}else{
-									Utilities::putMessageLogFile('OP4 INSERTA: están pendientes por asignar:'.$cont);
-									Utilities::putMessageLogFile('OP4 Están pendientes por asignar $value[daca_id]: '.$value['daca_id'] .' $value[est_id]: '. $value['est_id']);
-									$distributivoEst_model = new DistributivoAcademicoEstudiante();
-									$distributivoEst_model->daca_id = $value['daca_id'];
-									$distributivoEst_model->est_id = $value['est_id'];
-									$distributivoEst_model->daes_usuario_ingreso = $user;
-									$distributivoEst_model->daes_fecha_registro = $fecha_transaccion;
-									$distributivoEst_model->daes_estado = '1';
-									$distributivoEst_model->daes_estado_logico = '1';
-									if ($distributivoEst_model->save()) {
-										$verifica++;
-									}
+							}else{
+								//Utilities::putMessageLogFile('OP2 INSERTA: están pendientes por asignar:'.$cont);
+								//Utilities::putMessageLogFile('OP2 Están pendientes por asignar $value[daca_id]: '.$value['daca_id'] .' $value[est_id]: '. $value['est_id']);
+								$distributivoEst_model = new DistributivoAcademicoEstudiante();
+								$distributivoEst_model->daca_id = $paralelo;
+								$distributivoEst_model->est_id = $value['est_id'];
+								$distributivoEst_model->daes_fecha_registro = $fecha_transaccion;
+								$distributivoEst_model->daes_usuario_ingreso = $user;
+								$distributivoEst_model->daes_estado = '1';
+								$distributivoEst_model->daes_estado_logico = '1';
+								if ($distributivoEst_model->save()) {
+									$verifica++;
 								}
-								$cont++;
+							}
 
-		                    }	
-	                    }                    
-	                }
-				//}
+							$cont++;
+	                    }	
+                    }elseif ($paralelo =='0'){
+                    	Utilities::putMessageLogFile('********** ACTUALIZA cuando selecciona por item **********:'.$cont);
+                    	foreach ($lista_daes_id as $key => $value) {
+	                        
+	                        $daes_id = $value['daes_id'];
 
+	                        if ($daes_id !=""){
+	                        	//Utilities::putMessageLogFile('OP3 ACTUALIZA todos: estan asignados:'.$cont);
+		                        //Utilities::putMessageLogFile('OP3 Indice:'.$cont.' - daes_id:'. $daes_id);
+								$estudiante_model = DistributivoAcademicoEstudiante::findOne($daes_id);
+								$estudiante_model->daca_id = $value['daca_id'];
+								$estudiante_model->daes_usuario_modifica = $user;
+								$estudiante_model->daes_fecha_modificacion = $fecha_transaccion;
+								if ($estudiante_model->save()) {
+									$verifica++;
+								}
+							}else{
+								//Utilities::putMessageLogFile('OP4 INSERTA: están pendientes por asignar:'.$cont);
+								//Utilities::putMessageLogFile('OP4 Están pendientes por asignar $value[daca_id]: '.$value['daca_id'] .' $value[est_id]: '. $value['est_id']);
+								$distributivoEst_model = new DistributivoAcademicoEstudiante();
+								$distributivoEst_model->daca_id = $value['daca_id'];
+								$distributivoEst_model->est_id = $value['est_id'];
+								$distributivoEst_model->daes_usuario_ingreso = $user;
+								$distributivoEst_model->daes_fecha_registro = $fecha_transaccion;
+								$distributivoEst_model->daes_estado = '1';
+								$distributivoEst_model->daes_estado_logico = '1';
+								if ($distributivoEst_model->save()) {
+									$verifica++;
+								}
+							}
+							$cont++;
+
+	                    }	
+                    }                    
+                }
+				
 				/*  $dataExists = DistributivoAcademicoEstudiante::findOne(['daca_id' => $daca_id, 'est_id' => $est_id, 'daes_estado' => '1', 'daes_estado_logico' => '1']);
 					                  if(isset($dataExists) && $dataExists != ""){
 					                  $message = array(

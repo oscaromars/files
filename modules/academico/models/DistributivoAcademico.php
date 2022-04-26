@@ -289,13 +289,16 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
 
 	/**
 	 * Function de busquedad de los estudiante en distributivoAcademicoEstudiante (Daes_id)
+	 * Mostrar todas las materias que están pendientes por asignar profesor.
 	 * @author ?
 	 * @modify Luis Cajamarca <analista04>
+	 * @modify Julio Lopez <analista03>
+	 * @date: 21 abril 2022.
 	 * @param
 	 * @return  $res (Retornar los datos).
 	 */
 
-	public function buscarEstudiantesAsignados($id/*, $num_paralelo*/, $daca_id) {
+	public function buscarEstudiantesAsignados($id/*, $num_paralelo*/, $daca_id, $paca_id) {
 		$con_academico = \Yii::$app->db_academico;
 		$con_db = \Yii::$app->db;
 		/*
@@ -322,6 +325,11 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
                        ,mpp.mpp_num_paralelo
                        ,daes.daca_id
                        ,made.asi_id
+                       ,CONCAT(ifnull(TRIM(per.per_pri_nombre),''),' ',ifnull(TRIM(per.per_seg_nombre),''),' ',ifnull(TRIM(per.per_pri_apellido),''),' ',ifnull(TRIM(per.per_seg_apellido),''),'') as Estudiante
+                       ,per_cedula as Cedula
+                       ,est.est_matricula as matricula
+                       ,daes.daes_estado
+                       ,'ASIGNADOS' as marca
                   FROM db_academico.distributivo_academico_estudiante daes
             Inner join db_academico.distributivo_academico as daca
                     on daca.daca_id = daes.daca_id
@@ -350,11 +358,69 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
 
                  where daca.daca_id = $daca_id
                    and made.asi_id = $id
-                   and daes.daes_estado = 1 and daes.daes_estado_logico = 1";
+                   and daes.daes_estado = 1 and daes.daes_estado_logico = 1
+
+                UNION ALL
+
+
+            	SELECT distinct
+					ifnull(daes.daes_id,'') as daes_id,
+					est.est_id as est_id,
+					daca.paca_id,
+					mpp.mpp_num_paralelo,
+					ifnull(daes.daca_id,'') as daca_id,
+					made.asi_id,
+					CONCAT(ifnull(TRIM(per.per_pri_nombre),''),' ',ifnull(TRIM(per.per_seg_nombre),''),' ',ifnull(TRIM(per.per_pri_apellido),''),' ',ifnull(TRIM(per.per_seg_apellido),''),'') as Estudiante,
+					per_cedula as Cedula,
+					ifnull(est.est_matricula,'') as matricula,
+					daes.daes_estado,
+                    'PENDIENTES' as marca
+                    -- , roi.roi_fecha_creacion
+				FROM 
+                (SELECT  pera.paca_id as id, sem.saca_id, ifnull(CONCAT(blq.baca_nombre,'-',sem.saca_nombre,' ',sem.saca_anio),'') as nombre, blq.baca_nombre as bloque,
+                pera.paca_fecha_inicio,pera.paca_fecha_fin
+                        FROM db_academico.periodo_academico pera
+                        inner join db_academico.semestre_academico sem  ON sem.saca_id = pera.saca_id
+                        inner join db_academico.bloque_academico blq ON blq.baca_id = pera.baca_id
+                        WHERE pera.paca_activo = 'A'  AND
+                        pera.paca_estado = 1 AND pera.paca_estado_logico = 1) as periodo,
+	            db_asgard.persona as per
+	            INNER JOIN db_academico.estudiante as est on per.per_id = est.per_id AND  est.est_estado = 1 AND  est.est_estado_logico = 1   
+	            INNER JOIN db_academico.registro_online as ron on per.per_id = ron.per_id  AND  ron.ron_estado = 1 AND  ron.ron_estado_logico = 1
+                INNER JOIN db_academico.planificacion_estudiante as pes on pes.pes_id =ron.pes_id
+                INNER JOIN db_academico.planificacion as pla on pla.pla_id = pes.pla_id
+				INNER JOIN db_academico.registro_online_item as roi   on ron.ron_id = roi.ron_id AND  roi.roi_estado = 1 AND  roi.roi_estado_logico = 1
+				INNER JOIN db_academico.distributivo_academico as daca 
+				INNER JOIN db_academico.malla_academica_detalle as made  on daca.asi_id = made.asi_id  AND  made.made_codigo_asignatura = roi.roi_materia_cod
+	             AND  made.made_estado = 1 AND  made.made_estado_logico = 1
+	            INNER  JOIN  db_academico.materia_paralelo_periodo as mpp  on daca.mpp_id = mpp.mpp_id
+	             AND  mpp.mpp_estado = 1 AND  daca.daca_estado_logico = 1		
+				LEFT  JOIN  db_academico.distributivo_academico_estudiante as daes on daca.daca_id = daes.daca_id AND  daes.est_id = est.est_id AND  daes.daes_id is null
+	            AND  daes.daes_estado = 1 AND  daes.daes_estado_logico = 1
+				WHERE ron.ron_id = roi.ron_id 
+				AND made.asi_id = daca.asi_id
+				AND daca.asi_id= $id
+				AND daca.daca_id = $daca_id
+                and periodo.id=daca.paca_id and periodo.id = $paca_id
+                and roi.roi_bloque = periodo.bloque
+                AND  pla.saca_id=periodo.saca_id";
 
 		$comando = $con_academico->createCommand($sql);
 		$res = $comando->queryAll();
-		\app\models\Utilities::putMessageLogFile($comando->getRawSql());
+		\app\models\Utilities::putMessageLogFile('buscarEstudiantesAsignados: '.$comando->getRawSql());
+
+		//JLC - 18 ABRIL 2022
+        $asi_id_gr  = $res[0]["asi_id"];
+        $paca_id_gr = $res[0]["paca_id"];
+        $distributivo_model = new DistributivoAcademico();
+        $resultado2 = $distributivo_model->getParaleloxPeriodo($asi_id_gr, $paca_id_gr);
+        $arr_paralelo_grid = array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $resultado2);
+        foreach ($res as $key => $value) {
+            $value['paralelo_grid'] = $arr_paralelo_grid;
+            $res[$key] =  $value;
+        }
+        //JLC - 18 ABRIL 2022
+
 		return $res;
 	} // buscarEstudiantesAsignados
 
@@ -580,7 +646,7 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
                         WHEN daho.daho_jornada = 4 THEN '(D) Distancia'
                         ELSE ''
                     END AS Jornada,
-                    mpp.mpp_num_paralelo as mpp_num_paralelo,
+                    ifnull(mpp.mpp_num_paralelo,0) as mpp_num_paralelo,
                     -- dhpa.dhpa_paralelo as dhpa_paralelo,
                     (select count(dae.daca_id) FROM db_academico.distributivo_academico_estudiante  as dae where dae.daca_id =daca.daca_id ) as total_est
                FROM db_academico.distributivo_academico AS daca

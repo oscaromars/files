@@ -7,11 +7,11 @@ use yii\helpers\Html;
     <form class="form-horizontal">
         <?=
 $this->render('index-search', [
-	'arr_unidad' => $mod_unidad,
-	'arr_modalidad' => $mod_modalidad,
-	'arr_periodo' => $mod_periodo,
-	'arr_materias' => $mod_materias,
-	'arr_jornada' => $mod_jornada,
+  'arr_unidad' => $mod_unidad,
+  'arr_modalidad' => $mod_modalidad,
+  'arr_periodo' => $mod_periodo,
+  'arr_materias' => $mod_materias,
+  'arr_jornada' => $mod_jornada,
 ]);
 ?>
     </form>
@@ -31,9 +31,9 @@ $this->render('index-search', [
           <p> <?=academico::t("distributivoacademico", "Escoger el periodo antes de asignar.")?> </p>
           <br>
           <div class="form-group">
-              <label for="cmb_periodo" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?=Yii::t("formulario", "Period")?></label>
+              <label for="cmb_periodo_modal" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?=Yii::t("formulario", "Period")?></label>
               <div class="col-sm-5 col-xs-5 col-md-5 col-lg-5">
-                    <?=Html::dropDownList("cmb_periodo", 0, $periodo, ["class" => "form-control", "id" => "cmb_periodo"])?>
+                    <?=Html::dropDownList("cmb_periodo_modal", 0, $periodo, ["class" => "form-control", "id" => "cmb_periodo_modal"])?>
               </div>
           </div>
       </div>
@@ -49,8 +49,8 @@ $this->render('index-search', [
 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
     <?=
 $this->render('index-grid', [
-	'model' => $model,
-	//'model_posgrado' => $model_posgrado,
+  'model' => $model,
+  //'model_posgrado' => $model_posgrado,
 
 ]);
 ?>

@@ -334,6 +334,7 @@ class CargaCartera extends \yii\db\ActiveRecord
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
 
         $resultData = $comando->queryAll();
+        \app\models\Utilities::putMessageLogFile('getPagospendientexestcar:'.$comando->getRawSql());
         $mod_grupo = new UsuaGrolEper();
         $nombregrupo = $mod_grupo->consultarGruponame($usuario);
 

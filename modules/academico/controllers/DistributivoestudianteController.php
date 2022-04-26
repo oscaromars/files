@@ -37,8 +37,65 @@ class DistributivoestudianteController extends \app\components\CController {
 		$num_paralelo = $distributivo_model->mpp->mpp_num_paralelo;
 		$uaca_id = $distributivo_model->uaca_id;
 
+		$paca_id = $distributivo_model->paca_id;
+
+		Utilities::putMessageLogFile('$uaca_id ' . $uaca_id);
+		Utilities::putMessageLogFile('$paca_id ' . $paca_id);
 		if ($uaca_id == 1) {
-			$estuden = $distributivo_model->buscarEstudiantesAsignados($asi_id, /*$num_paralelo,*/ $daca_id);
+			$estuden = $distributivo_model->buscarEstudiantesAsignados($asi_id, /*$num_paralelo,*/ $daca_id, $paca_id);
+			$model = $estuden;
+		} //if($uaca_id == 1)
+
+		if ($uaca_id == 2) {
+			$estuden = $distributivo_model->buscarEstudiantesPosgrados($daca_id);
+
+			for ($i = 0; $i < sizeof($estuden); $i++) {
+				$model = new DistributivoAcademicoEstudiante();
+				$model->daca_id = $daca_id;
+
+				$model->est_id = $estuden[$i]['est_id'];
+				$model->daes_estado = 0;
+				$data[] = $model;
+			} //for
+
+			//print_r($data);die;
+		} //if($uaca_id == 2)
+
+		//$paca_id = $distributivo_model['paca_id'];
+		$paralelos = $distributivo_model->getParaleloxPeriodo($distributivo_model->asi_id, $paca_id);
+
+		$dataProvider = new ArrayDataProvider([
+			'allModels' => $model,
+			'key' => 'est_id',
+			'pagination' => [
+				'pageSize' => 40,
+			],
+			'sort' => [
+				'attributes' => ['daes_id', 'daca_id', 'est_id'],
+			],
+		]);
+
+		return $this->render('new',
+			['dataProvider' => $dataProvider,
+				'distributivo_model' => $distributivo_model,
+				'paralelos' => ArrayHelper::map(array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $paralelos), "id", "name"),
+			]
+		);
+	} //function actionNew
+
+	/*public function actionNew($id) {
+		$daca_id = $id;
+
+		$distributivo_model = DistributivoAcademico::findOne($daca_id);
+		$data = array();
+		///sizeof($estuden);
+		//print_r($distributivo_model->mpp->mpp_num_paralelo);die();
+		$asi_id = $distributivo_model->asi_id;
+		$num_paralelo = $distributivo_model->mpp->mpp_num_paralelo;
+		$uaca_id = $distributivo_model->uaca_id;
+
+		if ($uaca_id == 1) {
+			$estuden = $distributivo_model->buscarEstudiantesAsignados($asi_id, /$num_paralelo,/ $daca_id);
 
 			for ($i = 0; $i < sizeof($estuden); $i++) {
 				$model = new DistributivoAcademicoEstudiante();
@@ -96,7 +153,7 @@ class DistributivoestudianteController extends \app\components\CController {
 			['dataProvider' => $dataProvider,
 				'distributivo_model' => $distributivo_model]
 		);
-	} //function actionNew
+	}*/ //function actionNew
 
 	public function actionNewposgrado($id) {
 		$distributivo_model = DistributivoAcademico::findOne($id);
@@ -278,24 +335,110 @@ class DistributivoestudianteController extends \app\components\CController {
 	public function actionSave() {
 		$emp_id = @Yii::$app->session->get("PB_idempresa");
 		$fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
+		$user = Yii::$app->session->get("PB_iduser");
 
 		try {
 			if (Yii::$app->request->isAjax) {
 				$data = Yii::$app->request->post();
 				$daca_id = $data['daca_id'];
 				$est_id = $data['est_id'];
+				$paralelo = $data['paralelo'];
+				$lista_daes_id = $data['lista_daes_id']; 
+
 				$verifica = 0;
-				for ($i = 0; $i < sizeof($est_id); $i++) {
-					$distributivoEst_model = new DistributivoAcademicoEstudiante();
-					$distributivoEst_model->daca_id = $daca_id;
-					$distributivoEst_model->est_id = $est_id[$i];
-					$distributivoEst_model->daes_fecha_registro = $fecha_transaccion;
-					$distributivoEst_model->daes_estado = '1';
-					$distributivoEst_model->daes_estado_logico = '1';
-					if ($distributivoEst_model->save()) {
-						$verifica++;
+				Utilities::putMessageLogFile('daca_id:'. $daca_id);
+				Utilities::putMessageLogFile('est_id :'. $est_id);
+				Utilities::putMessageLogFile('paralelo :'. $paralelo);
+				Utilities::putMessageLogFile('lista_daes_id :'. $lista_daes_id);
+
+				/*if ( $paralelo == 0 ){
+					//return;
+					Utilities::putMessageLogFile('INSERTA');
+					for ($i = 0; $i < sizeof($est_id); $i++) {
+						$distributivoEst_model = new DistributivoAcademicoEstudiante();
+						$distributivoEst_model->daca_id = $daca_id;
+						$distributivoEst_model->est_id = $est_id[$i];
+						$distributivoEst_model->daes_fecha_registro = $fecha_transaccion;
+						$distributivoEst_model->daes_estado = '1';
+						$distributivoEst_model->daes_estado_logico = '1';
+						if ($distributivoEst_model->save()) {
+							$verifica++;
+						}
 					}
-				}
+				}else{*/
+					//Actualiza paralelo
+					//Utilities::putMessageLogFile('1 ACTUALIZA');
+					if (!empty($lista_daes_id)) {
+	                    $cont = 0;
+	                    if ($paralelo !='0'){
+	                    	Utilities::putMessageLogFile('********** ACTUALIZA: Todos los paralelos ********** : '.$paralelo);
+	                    	foreach ($lista_daes_id as $key => $value) {
+		                        $daes_id = $value['daes_id'];
+
+								if ($daes_id !=""){
+									Utilities::putMessageLogFile('OP1 ACTUALIZA todos: estan asignados:'.$cont);
+									Utilities::putMessageLogFile('OP1 Indice:'.$cont.' - daes_id:'. $daes_id);
+									$estudiante_model = DistributivoAcademicoEstudiante::findOne($daes_id);
+									$estudiante_model->daca_id = $paralelo;
+									$estudiante_model->daes_usuario_modifica = $user;
+									$estudiante_model->daes_fecha_modificacion = $fecha_transaccion;
+									if ($estudiante_model->save()) {
+										$verifica++;
+									}
+								}else{
+									Utilities::putMessageLogFile('OP2 INSERTA: están pendientes por asignar:'.$cont);
+									Utilities::putMessageLogFile('OP2 Están pendientes por asignar $value[daca_id]: '.$value['daca_id'] .' $value[est_id]: '. $value['est_id']);
+									$distributivoEst_model = new DistributivoAcademicoEstudiante();
+									$distributivoEst_model->daca_id = $paralelo;
+									$distributivoEst_model->est_id = $value['est_id'];
+									$distributivoEst_model->daes_fecha_registro = $fecha_transaccion;
+									$distributivoEst_model->daes_usuario_ingreso = $user;
+									$distributivoEst_model->daes_estado = '1';
+									$distributivoEst_model->daes_estado_logico = '1';
+									if ($distributivoEst_model->save()) {
+										$verifica++;
+									}
+								}
+
+								$cont++;
+		                    }	
+	                    }elseif ($paralelo =='0'){
+	                    	Utilities::putMessageLogFile('********** ACTUALIZA cuando selecciona por item **********:'.$cont);
+	                    	foreach ($lista_daes_id as $key => $value) {
+		                        
+		                        $daes_id = $value['daes_id'];
+
+		                        if ($daes_id !=""){
+		                        	Utilities::putMessageLogFile('OP3 ACTUALIZA todos: estan asignados:'.$cont);
+			                        Utilities::putMessageLogFile('OP3 Indice:'.$cont.' - daes_id:'. $daes_id);
+									$estudiante_model = DistributivoAcademicoEstudiante::findOne($daes_id);
+									$estudiante_model->daca_id = $value['daca_id'];
+									$estudiante_model->daes_usuario_modifica = $user;
+									$estudiante_model->daes_fecha_modificacion = $fecha_transaccion;
+									if ($estudiante_model->save()) {
+										$verifica++;
+									}
+								}else{
+									Utilities::putMessageLogFile('OP4 INSERTA: están pendientes por asignar:'.$cont);
+									Utilities::putMessageLogFile('OP4 Están pendientes por asignar $value[daca_id]: '.$value['daca_id'] .' $value[est_id]: '. $value['est_id']);
+									$distributivoEst_model = new DistributivoAcademicoEstudiante();
+									$distributivoEst_model->daca_id = $value['daca_id'];
+									$distributivoEst_model->est_id = $value['est_id'];
+									$distributivoEst_model->daes_usuario_ingreso = $user;
+									$distributivoEst_model->daes_fecha_registro = $fecha_transaccion;
+									$distributivoEst_model->daes_estado = '1';
+									$distributivoEst_model->daes_estado_logico = '1';
+									if ($distributivoEst_model->save()) {
+										$verifica++;
+									}
+								}
+								$cont++;
+
+		                    }	
+	                    }                    
+	                }
+				//}
+
 				/*  $dataExists = DistributivoAcademicoEstudiante::findOne(['daca_id' => $daca_id, 'est_id' => $est_id, 'daes_estado' => '1', 'daes_estado_logico' => '1']);
 					                  if(isset($dataExists) && $dataExists != ""){
 					                  $message = array(
@@ -316,6 +459,7 @@ class DistributivoestudianteController extends \app\components\CController {
 				}
 			}
 		} catch (Exception $e) {
+			Utilities::putMessageLogFile('excepecion e: ' . $e);
 			$message = array(
 				"wtmessage" => Yii::t('notificaciones', 'Your information has not been saved. Please try again.'),
 				"title" => Yii::t('jslang', 'Error'),

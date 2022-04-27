@@ -121,7 +121,7 @@ GridView::widget([
 				},
 				'edit' => function ($url, $model) {
                     if($model['daes_id'] != null && $model['daca_id'] != null) {
-                        return Html::checkbox($model['daes_id'], true, ["value" => $model['daes_id'], "class" => "byregister",   "Id" => "cmb_check_estudiante_".$model['daes_id']    ]);
+                        return Html::checkbox($model['daes_id'], true, ["value" => $model['daes_id'], "class" => "byregister", "disabled" => true, "Id" => "cmb_check_estudiante_".$model['daes_id']    ]);
                     }else {
                     	return Html::checkbox($model['daes_id'], false, ["value" => $model['daes_id'], "class" => "byregister",   "Id" => "cmb_check_estudiante_".$model['est_id']    ]);
                     }

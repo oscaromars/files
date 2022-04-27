@@ -204,6 +204,7 @@ class DistributivoestudianteController extends \app\components\CController {
 	public function actionSavechangeparalelo() {
 		$emp_id = @Yii::$app->session->get("PB_idempresa");
 		$fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
+		$user = Yii::$app->session->get("PB_iduser");
 
 		if (Yii::$app->request->isAjax) {
 			$data = Yii::$app->request->post();
@@ -213,6 +214,8 @@ class DistributivoestudianteController extends \app\components\CController {
 			$estudiante_model = DistributivoAcademicoEstudiante::findOne($daes_id);
 			//print_r($daes_id);die();
 			$estudiante_model->daca_id = $daca_id;
+			$estudiante_model->daes_usuario_modifica = $user;//JLC: 27 ABRIL 2022
+			$estudiante_model->daes_fecha_modificacion = $fecha_transaccion;//JLC: 27 ABRIL 2022
 			if ($estudiante_model->save()) {
 				$message = array(
 					"wtmessage" => Yii::t("notificaciones", "Your information was successfully saved."),

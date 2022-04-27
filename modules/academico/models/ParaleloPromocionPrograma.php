@@ -416,7 +416,7 @@ class ParaleloPromocionPrograma extends \yii\db\ActiveRecord {
 	public function getParalelosprograma($maca_id) {
 		$con = \Yii::$app->db_academico;
 		$estado = 1;
-		$sql = "SELECT pppr.pppr_id as id,
+		$sql = "SELECT distinct pppr.pppr_id as id,
                 CONCAT(ppro.ppro_codigo, ' / ', pppr.pppr_descripcion) as name
                 FROM " . $con->dbname . ".promocion_programa ppro
                 INNER JOIN " . $con->dbname . ".paralelo_promocion_programa pppr on pppr.ppro_id = ppro.ppro_id

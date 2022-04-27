@@ -140,6 +140,7 @@ class InscripcionAdmision extends \yii\db\ActiveRecord {
 	}
 
 	private function updateDataInscripcion($con, $data) {
+		\app\models\Utilities::putMessageLogFile('data al funcion:' . print_r($data["DATA_1"], true));
 		$sql = "UPDATE " . $con->dbname . ".temporal_wizard_inscripcion
                 SET twin_nombre=:twin_nombre,twin_apellido=:twin_apellido,twin_dni=:twin_dni,twin_numero=:twin_numero,
                     twin_correo=:twin_correo,twin_empresa=:twin_empresa,twin_pais=:twin_pais,twin_celular=:twin_celular,uaca_id=:uaca_id,
@@ -748,7 +749,11 @@ class InscripcionAdmision extends \yii\db\ActiveRecord {
 					if (empty($id_personaexite)) {
 						$id_persona = $mod_persona->insertarPersona($con, $parametros_per, $keys_per, 'persona');
 					}
-					if ($id_persona > 0) {
+					if ($id_persona > 0  || $id_personaexite['per_id'] > 0 ) {
+						if ($id_personaexite['per_id'] > 0)
+						{
+							$id_persona = $id_personaexite['per_id'];
+						}
 						\app\models\Utilities::putMessageLogFile('se crea persona.');
 						//Se registran otros datos de persona
 						$mod_PersonaOtro = new PersonaOtrosDatos();
@@ -813,7 +818,7 @@ class InscripcionAdmision extends \yii\db\ActiveRecord {
 										$parametros = [$id_persona, 1, $usuario_id, 1, 1];
 										if ($interesado_id == 0) {
 											$interesado_id = $mod_interesado->insertarInteresado($concap, $parametros, $keys, 'interesado');
-										}
+										} //OJO NO GUARDO INTERESADO
 										if ($interesado_id > 0) {
 											$mod_inte_emp = new InteresadoEmpresa(); // se guarda con estado_interesado 1
 											$iemp_id = $mod_inte_emp->consultaInteresadoEmpresaById($interesado_id, $emp_id);

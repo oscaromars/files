@@ -1,5 +1,4 @@
 <?php
-
 namespace app\modules\academico\models;
 use app\models\Utilities;
 use Yii;

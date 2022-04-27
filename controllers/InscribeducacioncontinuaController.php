@@ -273,22 +273,29 @@ class InscribeducacioncontinuaController extends \yii\web\Controller {
 					$resp_dataexiste = $modelpersona->consultarIdPersonaICP(trim($data["cedula"]), trim($data["cedula"]), trim($data["mail"]));
 					\app\models\Utilities::putMessageLogFile('data existe: ' . $resp_dataexiste['per_id']);
 					// porq la tabla persona o usuario
-				   //if(empty($resp_dataexiste['per_id'])){
+					if ($accion == "UpdateDepTrans") {
+						//Modificar Registro
+						\app\models\Utilities::putMessageLogFile('entro UpdateDepTrans:');
+						$resul = $model->actualizarInscripcion($data);
+					}
+					// if(empty($resp_dataexiste['per_id'])){
 					if ($accion == "create" || $accion == "Create") {
-					//Nuevo Registro
-					/*$valida_inscribe = $model->consultarInscripcion($data["DATA_1"]);
-					\app\models\Utilities::putMessageLogFile('valida_inscribe: ' . $valida_inscribe[0]['twin_id']);
-					if(empty($valida_inscribe[0]['twin_id'])){*/
-					$resul = $model->insertarInscripcion($data);
-					/*} else{
-					\app\models\Utilities::putMessageLogFile('resultado es NOok');
-					$message = array(
-					"wtmessage" => Yii::t("formulario", "El usuario ya ha sido registrado bajo estás especificaciones"),
-					"title" => Yii::t('jslang', 'Success'),
-					);
-					return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t('jslang', 'Error'), 'false', $message);
-					}*/
+						\app\models\Utilities::putMessageLogFile('entro Create:');
+						//Nuevo Registro
+						/*$valida_inscribe = $model->consultarInscripcion($data["DATA_1"]);
+						\app\models\Utilities::putMessageLogFile('valida_inscribe: ' . $valida_inscribe[0]['twin_id']);
+						if(empty($valida_inscribe[0]['twin_id'])){*/
+						$resul = $model->insertarInscripcion($data);
+						/*} else{
+						\app\models\Utilities::putMessageLogFile('resultado es NOok');
+						$message = array(
+						"wtmessage" => Yii::t("formulario", "El usuario ya ha sido registrado bajo estás especificaciones"),
+						"title" => Yii::t('jslang', 'Success'),
+						);
+						return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t('jslang', 'Error'), 'false', $message);
+						}*/
 					} else if ($accion == "Update") {
+						\app\models\Utilities::putMessageLogFile('entro Update:');
 						//Modificar Registro
 						$resul = $model->actualizarInscripcion($data);
 					} else if ($accion == "Fin") {
@@ -311,11 +318,14 @@ class InscribeducacioncontinuaController extends \yii\web\Controller {
 							'redes' => $data["redes"],
 							'encontramos' => $data["encontramos"],
 						);
+						\app\models\Utilities::putMessageLogFile('data al actualizar:' . print_r($data, true));
+						$resulado = $model->actualizarInscripcion($data);
 						$resul = $model->insertaFinInstituto($Ids, $dataRegistro);
-					} else if ($accion == "UpdateDepTrans") {
+					} /*else if ($accion == "UpdateDepTrans") {
 						//Modificar Registro
+						\app\models\Utilities::putMessageLogFile('entro UpdateDepTrans:');
 						$resul = $model->actualizarInscripcion($data);
-					}
+					}*/
 					if ($resul['status']) {
 						\app\models\Utilities::putMessageLogFile('resultado es ok');
 						$message = array(

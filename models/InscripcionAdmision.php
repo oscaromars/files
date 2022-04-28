@@ -706,6 +706,7 @@ class InscripcionAdmision extends \yii\db\ActiveRecord {
 		$transaction = $con->beginTransaction();
 		$transaction1 = $con1->beginTransaction();
 		$transaction2 = $con2->beginTransaction();
+		$variable_commit = '0';
 		$id_persona = 0;
 		try {
 			//Se consulta la información grabada en la tabla temporal.
@@ -713,6 +714,7 @@ class InscripcionAdmision extends \yii\db\ActiveRecord {
 			$resp_datos = $mod_inscripcion->consultarDatosInscripcionInstituto($twinIds);
 			$curso = $resp_datos["carrera"];
 			// He colocado al inicio la informacion para que cargue al principio
+			\app\models\Utilities::putMessageLogFile('*************INICIA*************');
 			\app\models\Utilities::putMessageLogFile('twin_numero: ' . $resp_datos['twin_numero']);
 			if ($resp_datos) {
 				if (isset($resp_datos['twin_numero']) && strlen($resp_datos['twin_numero']) > 0) {
@@ -744,17 +746,21 @@ class InscripcionAdmision extends \yii\db\ActiveRecord {
 						null, null, null, $usuario_ingreso, 1, 1,
 					];
 					$id_personaexite = $mod_persona->consultarIdPersonaICP($resp_datos['twin_numero'], $resp_datos['twin_numero'], $resp_datos['twin_correo']);
-					\app\models\Utilities::putMessageLogFile('id_persona xx: ' . $id_persona['per_id']);
-					\app\models\Utilities::putMessageLogFile('id_persona yy: ' . $id_persona);
+					//\app\models\Utilities::putMessageLogFile('id_persona xx: ' . $id_persona['per_id']);
+					//\app\models\Utilities::putMessageLogFile('id_persona yy: ' . $id_persona);
 					if (empty($id_personaexite)) {
+						$variable_commit = '1';
 						$id_persona = $mod_persona->insertarPersona($con, $parametros_per, $keys_per, 'persona');
 					}
 					if ($id_persona > 0  || $id_personaexite['per_id'] > 0 ) {
+						\app\models\Utilities::putMessageLogFile('id_persona dentro if: ' . $id_persona);
+						//\app\models\Utilities::putMessageLogFile('id_persona existe dentro if: ' . $id_persona['per_id']);
 						if ($id_personaexite['per_id'] > 0)
 						{
 							$id_persona = $id_personaexite['per_id'];
 						}
 						\app\models\Utilities::putMessageLogFile('se crea persona.');
+						\app\models\Utilities::putMessageLogFile('id persona fuera if.'. $id_persona);
 						//Se registran otros datos de persona
 						$mod_PersonaOtro = new PersonaOtrosDatos();
 						\app\models\Utilities::putMessageLogFile('id persona:' . $id_persona);
@@ -787,12 +793,15 @@ class InscripcionAdmision extends \yii\db\ActiveRecord {
 							$keys = ['emp_id', 'per_id', 'eper_estado', 'eper_estado_logico'];
 							$parametros = [$emp_id, $id_persona, 1, 1];
 							$emp_per_id = $mod_emp_persona->consultarIdEmpresaPersona($id_persona, $emp_id);
+							\app\models\Utilities::putMessageLogFile('emp_per_id.'. $emp_per_id);
 							if ($emp_per_id == 0) {
 								$emp_per_id = $mod_emp_persona->insertarEmpresaPersona($con, $parametros, $keys, 'empresa_persona');
 							}
 							if ($emp_per_id > 0) {
 								$usuario = new Usuario();
-								$usuario_id = $usuario->consultarIdUsuario($id_persona, $resp_datos['twin_correo']);
+								//$usuario_id = $usuario->consultarIdUsuario($id_persona, $resp_datos['twin_correo']);
+								$usuario_id = $usuario->consultarIdUsuarioICP($id_persona);
+								\app\models\Utilities::putMessageLogFile('usuario_id.'. $usuario_id);
 								if ($usuario_id == 0) {
 									$security = new Security();
 									$hash = $security->generateRandomString();
@@ -807,6 +816,7 @@ class InscripcionAdmision extends \yii\db\ActiveRecord {
 									$keys = ['eper_id', 'usu_id', 'grol_id', 'ugep_estado', 'ugep_estado_logico'];
 									$parametros = [$emp_per_id, $usuario_id, $grol_id, 1, 1];
 									$us_gr_ep_id = $mod_us_gr_ep->consultarIdUsuaGrolEper($emp_per_id, $usuario_id, $grol_id);
+									\app\models\Utilities::putMessageLogFile('us_gr_ep_id.'. $us_gr_ep_id);
 									if ($us_gr_ep_id == 0) {
 										$us_gr_ep_id = $mod_us_gr_ep->insertarUsuaGrolEper($con, $parametros, $keys, 'usua_grol_eper');
 									}
@@ -816,12 +826,14 @@ class InscripcionAdmision extends \yii\db\ActiveRecord {
 										$interesado_id = $mod_interesado->consultaInteresadoById($id_persona);
 										$keys = ['per_id', 'int_estado_interesado', 'int_usuario_ingreso', 'int_estado', 'int_estado_logico'];
 										$parametros = [$id_persona, 1, $usuario_id, 1, 1];
+										\app\models\Utilities::putMessageLogFile('interesado_id.'. $interesado_id);
 										if ($interesado_id == 0) {
 											$interesado_id = $mod_interesado->insertarInteresado($concap, $parametros, $keys, 'interesado');
-										} //OJO NO GUARDO INTERESADO
+										}
 										if ($interesado_id > 0) {
 											$mod_inte_emp = new InteresadoEmpresa(); // se guarda con estado_interesado 1
 											$iemp_id = $mod_inte_emp->consultaInteresadoEmpresaById($interesado_id, $emp_id);
+											\app\models\Utilities::putMessageLogFile('iemp_id.'. $iemp_id);
 											if ($iemp_id == 0) {
 												$iemp_id = $mod_inte_emp->crearInteresadoEmpresa($interesado_id, $emp_id, $usuario_id);
 											}
@@ -853,10 +865,14 @@ class InscripcionAdmision extends \yii\db\ActiveRecord {
 													$cemp = null;
 												} else {
 													$cemp = $resp_datos['cemp_id'];
-												}
+												} ////OJO NO GUARDO SOLICTUD
+												\app\models\Utilities::putMessageLogFile('interesado_id antes solicitidud.'. $interesado_id);
+												\app\models\Utilities::putMessageLogFile('num_secuencia.'. $num_secuencia);
 												$sins_id = $solins_model->insertarSolicitud($interesado_id, $resp_datos['uaca_id'], $resp_datos['mod_id'], $resp_datos['twin_metodo_ingreso'], $eaca_id, $mest_id, $emp_id, $num_secuencia, $rsin_id, $sins_fechasol, $usuario_id, $cemp);
 												//grabar los documentos
+												\app\models\Utilities::putMessageLogFile('sins_id antes if.'. $sins_id);
 												if ($sins_id) {
+													\app\models\Utilities::putMessageLogFile('sins_id dentro if.'. $sins_id);
 													$subidaDocumentos = 0;
 													if ($resp_datos['ruta_doc_pago'] != "") {
 														$arrIm = explode(".", basename($resp_datos['ruta_doc_pago']));
@@ -887,11 +903,13 @@ class InscripcionAdmision extends \yii\db\ActiveRecord {
 														$fecha_pago = date(Yii::$app->params["dateByDefault"]);
 														$resp_opago = $mod_ordenpago->insertarOrdenpago($sins_id, null, $val_total, 0, $val_total, $estadopago, $usuario_id, $fecha_pago, $val_total);
 													}
-													if ($resp_opago) {
+													\app\models\Utilities::putMessageLogFile('resp_opago.'. $resp_opago);
+												    if ($resp_opago) {
 														//insertar desglose del pago
 														$fecha_ini = date(Yii::$app->params["dateByDefault"]);
-														\app\models\Utilities::putMessageLogFile('OrdenPago:');
+														//\app\models\Utilities::putMessageLogFile('OrdenPago:');
 														$resp_dpago = $mod_ordenpago->insertarDesglosepago($resp_opago, $ite_id, $val_total, 0, $val_total, $fecha_ini, null, $estadopago, $usuario_id);
+														\app\models\Utilities::putMessageLogFile('resp_dpago.'. $resp_dpago);
 														if ($resp_dpago) {
 															//Grabar documento de registro de pago por depósito o transferencia.
 															if (($fpag_id == 5) or ($fpag_id == 4)) {
@@ -900,13 +918,14 @@ class InscripcionAdmision extends \yii\db\ActiveRecord {
 																\app\models\Utilities::putMessageLogFile('ruta444: ' . $ruta_doc_pago["ruta_doc_pago"]);
 																\app\models\Utilities::putMessageLogFile('ruta555: ' . $archivo);
 																$creadetalle = $mod_ordenpago->insertarCargaprepago($resp_opago, $fpag_id, $val_total, $archivo, 'PE', NULL, $dataReg["observacion"], $dataReg["num_transaccion"], $dataReg["fecha_transaccion"], $fecha_registro);
+																\app\models\Utilities::putMessageLogFile('creadetalle.'. $creadetalle);
 																if ($creadetalle) {
 																	$detalle = 'S';
 																}
 															} else if (($fpag_id == 1)) {
 																// se crea en registro_pago con estado de aprobado porque el pago es tarjeta.
 																$rpag_imagen = null;
-																\app\models\Utilities::putMessageLogFile('infocargaprepago:');
+																/*\app\models\Utilities::putMessageLogFile('infocargaprepago:');
 																\app\models\Utilities::putMessageLogFile('resp_opago:' . $resp_opago);
 																\app\models\Utilities::putMessageLogFile('fpag_id:' . $fpag_id);
 																\app\models\Utilities::putMessageLogFile('val_total:' . $val_total);
@@ -917,12 +936,14 @@ class InscripcionAdmision extends \yii\db\ActiveRecord {
 																\app\models\Utilities::putMessageLogFile('fecha_registro:' . $fecha_registro);
 																$fecha_registro = date(Yii::$app->params["dateTimeByDefault"]);
 																\app\models\Utilities::putMessageLogFile('ruta666: ' . $ruta_doc_pago["ruta_doc_pago"]);
-																\app\models\Utilities::putMessageLogFile('ruta777: ' . $archivo);
+																\app\models\Utilities::putMessageLogFile('ruta777: ' . $archivo);*/
 																$creadetalle = $mod_ordenpago->insertarCargaprepago($resp_opago, $fpag_id, $val_total, $rpag_imagen, 'RE', 'AP', $rpag_imagen, 0, $fecha_registro, $fecha_registro);
+																\app\models\Utilities::putMessageLogFile('creadetalle 2.'. $creadetalle);
 																if ($creadetalle) {
 
 																	$resp_rpagos = $mod_ordenpago->insertarRegistropago($resp_dpago, $fpag_id, $val_total, $fecha_ini, $rpag_imagen, 0, $fecha_ini, 0, "AP", $usuario_id, "RE");
 																}
+																\app\models\Utilities::putMessageLogFile('resp_rpagos.'. $resp_rpagos);
 																if ($resp_rpagos) {
 																	$detalle = 'S';
 																	$mod_Estudiante = new Estudiante();
@@ -968,14 +989,23 @@ class InscripcionAdmision extends \yii\db\ActiveRecord {
 
 															}
 															//Grabar datos de factura
+															\app\models\Utilities::putMessageLogFile('detalle factura.'. $detalle);
+															\app\models\Utilities::putMessageLogFile('solicitud de inscripcion antes detalla.'. $sins_id);
 															if ($detalle == 'S') {
 																$resdatosFact = $solins_model->crearDatosFacturaSolicitud($sins_id, $dataReg["nombres_fact"], $dataReg["apellidos_fact"], $dataReg["tipo_dni_fac"], $dataReg["dni"], $dataReg["direccion_fact"], $dataReg["telefono_fac"], $dataReg["correo"]);
+																\app\models\Utilities::putMessageLogFile('resdatosFact.'. $resdatosFact);
+																\app\models\Utilities::putMessageLogFile('*************FIN*************');
 																if ($resdatosFact) {
 																	$exito = 1;
 																}
 															}
 														}
 													}
+												}
+												else {
+													\app\models\Utilities::putMessageLogFile('msg0:');
+													$error_message .= Yii::t("formulario", "no guarda solicitud");
+													$error++;
 												}
 											} else {
 												\app\models\Utilities::putMessageLogFile('msg1:');
@@ -1026,8 +1056,11 @@ class InscripcionAdmision extends \yii\db\ActiveRecord {
 			}
 			if ($exito == 1) {
 				\app\models\Utilities::putMessageLogFile('inscripciones exito ');
+				\app\models\Utilities::putMessageLogFile('variable_commit '. $variable_commit);
+				if ($variable_commit == '0'){
 				//$transaction->commit();
-				//$transaction1->commit();
+				$transaction1->commit();
+			   }
 				$transaction2->commit();
 				//Envío de correo.
 				$tituloMensaje = Yii::t("interesado", "Inscripción - ICP - UTEG");
@@ -1059,8 +1092,10 @@ class InscripcionAdmision extends \yii\db\ActiveRecord {
 				return $arroout;
 			} else {
 				\app\models\Utilities::putMessageLogFile('entre else ' . $error_message);
-				//$transaction->rollback();
-				//$transaction1->rollback();
+				if ($variable_commit == '0'){
+					//$transaction->rollback();
+					$transaction1->rollback();
+				   }
 				$transaction2->rollback();
 				$message = array(
 					"wtmessage" => Yii::t("formulario", "Mensaje1: " . $mensaje), //$error_message
@@ -1076,8 +1111,10 @@ class InscripcionAdmision extends \yii\db\ActiveRecord {
 			}
 		} catch (Exception $ex) {
 			\app\models\Utilities::putMessageLogFile('entre else ' . $error_message);
-			//$transaction->rollback();
-			//$transaction1->rollback();
+			if ($variable_commit == '0'){
+				//$transaction->rollback();
+				$transaction1->rollback();
+			   }
 			$transaction2->rollback();
 			$message = array(
 				"wtmessage" => Yii::t("formulario", "Mensaje2: " . $error_message), //$error_message

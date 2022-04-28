@@ -963,4 +963,33 @@ class Usuario extends \yii\db\ActiveRecord implements IdentityInterface {
         
         return $dataProvider;
     }
+    /**
+     * Function consultarIdPersonaICP
+     * @author  Kleber Loayza
+     * @property
+     * @return
+     */
+    public function consultarIdUsuarioICP($per_id=null) {
+        $con = \Yii::$app->db_asgard;
+        $estado = 1;
+        $qryPer = "";
+        if(isset($per_id)){
+            $qryPer = "per_id=$per_id and ";
+        }
+        $sql = "
+                SELECT ifnull(usu_id,0) as usu_id
+                FROM usuario
+                WHERE
+                    $qryPer
+                    usu_estado = $estado AND
+                    usu_estado_logico=$estado
+              ";
+        $comando = $con->createCommand($sql);
+        $resultData = $comando->queryOne();
+        if(empty($resultData['usu_id']))
+            return 0;
+        else {
+            return $resultData['usu_id'];
+        }
+    }
 }

@@ -12,6 +12,8 @@ use yii\data\ArrayDataProvider;
  * @property int $daca_id
  * @property int $est_id
  * @property string $daes_fecha_registro
+ * @property int $daes_usuario_ingreso
+ * @property int $daes_usuario_modifica
  * @property string $daes_estado
  * @property string $daes_fecha_creacion
  * @property string $daes_fecha_modificacion
@@ -42,13 +44,33 @@ class DistributivoAcademicoEstudiante extends \yii\db\ActiveRecord {
 	public function rules() {
 		return [
 			[['daca_id', 'est_id', 'daes_estado', 'daes_estado_logico'], 'required'],
-			[['daca_id', 'est_id'], 'integer'],
+			[['daca_id', 'est_id', 'daes_usuario_ingreso', 'daes_usuario_modifica'], 'integer'],
 			[['daes_fecha_creacion', 'daes_fecha_modificacion', 'daes_fecha_registro'], 'safe'],
 			[['daes_estado', 'daes_estado_logico'], 'string', 'max' => 1],
 			[['daca_id'], 'exist', 'skipOnError' => true, 'targetClass' => DistributivoAcademico::className(), 'targetAttribute' => ['daca_id' => 'daca_id']],
 			[['est_id'], 'exist', 'skipOnError' => true, 'targetClass' => Estudiante::className(), 'targetAttribute' => ['est_id' => 'est_id']],
 		];
 	}
+
+	/**
+     * {@inheritdoc}
+     //JLC: 28 ABRIL 2022
+     */
+    public function attributeLabels()
+    {
+        return [
+            'daes_id' => 'Daes ID',
+            'daca_id' => 'Daca ID',
+            'est_id' => 'Est ID',
+            'daes_fecha_registro' => 'Daes Fecha Registro',
+            'daes_usuario_ingreso' => 'Daes Usuario Ingreso',
+            'daes_usuario_modifica' => 'Daes Usuario Modifica',
+            'daes_estado' => 'Daes Estado',
+            'daes_fecha_creacion' => 'Daes Fecha Creacion',
+            'daes_fecha_modificacion' => 'Daes Fecha Modificacion',
+            'daes_estado_logico' => 'Daes Estado Logico',
+        ];
+    }//JLC: 28 ABRIL 2022
 
 	/**
 	 * @return \yii\db\ActiveQuery

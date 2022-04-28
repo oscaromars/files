@@ -556,4 +556,42 @@ class DistributivoestudianteController extends \app\components\CController {
 		]);
 	}
 
+	/**
+     * Function controller to actionDeletedaesid
+     * @author Julio Lopez
+     * @param
+     * @return
+     */
+    public function actionDeletedaesid() {
+        
+    	if (Yii::$app->request->isAjax) {
+			$usu_id = @Yii::$app->session->get("PB_iduser");
+			$data = Yii::$app->request->post();
+			$fecha_transaccion = date(Yii::$app->params["dateTimeByDefault"]);
+			try {
+				$daes_id = $data["daes_id"];
+				Utilities::putMessageLogFile('daes_id:'.$daes_id);
+				$model = DistributivoAcademicoEstudiante::findOne($daes_id);
+				$model->daes_usuario_modifica = $user;
+				$model->daes_fecha_modificacion = $fecha_transaccion;
+				$model->daes_estado = '0';
+				$model->daes_estado_logico = '0';
+				
+				if ($model->save()) {
+					$message = array(
+					"wtmessage" => Yii::t("notificaciones", "Your information was successfully saved."),
+					"title" => Yii::t('jslang', 'Success'),
+					);
+					return Utilities::ajaxResponse('OK', 'alert', Yii::t('jslang', 'Success'), 'false', $message);
+				}
+			} catch (Exception $ex) {
+				$message = array(
+					"wtmessage" => Yii::t('notificaciones', 'Your information has not been saved. Please try again.'),
+					"title" => Yii::t('jslang', 'Error'),
+				);
+				return Utilities::ajaxResponse('NOOK', 'alert', Yii::t('jslang', 'Error'), 'true', $message);
+			}
+		}
+    }
+
 }

@@ -392,18 +392,32 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
 				INNER JOIN db_academico.registro_online_item as roi   on ron.ron_id = roi.ron_id AND  roi.roi_estado = 1 AND  roi.roi_estado_logico = 1
 				INNER JOIN db_academico.distributivo_academico as daca 
 				INNER JOIN db_academico.malla_academica_detalle as made  on daca.asi_id = made.asi_id  AND  made.made_codigo_asignatura = roi.roi_materia_cod
-	             AND  made.made_estado = 1 AND  made.made_estado_logico = 1
-	            INNER  JOIN  db_academico.materia_paralelo_periodo as mpp  on daca.mpp_id = mpp.mpp_id
-	             AND  mpp.mpp_estado = 1 AND  daca.daca_estado_logico = 1		
-				LEFT  JOIN  db_academico.distributivo_academico_estudiante as daes on daca.daca_id = daes.daca_id AND  daes.est_id = est.est_id -- AND  daes.daes_id is null
-	            AND  daes.daes_estado = 1 AND  daes.daes_estado_logico = 1
+				 AND(
+					( pes.pes_mat_b1_h1_cod = roi.roi_materia_cod AND pes.pes_mod_b1_h1 = daca.mod_id ) OR
+                    ( pes.pes_mat_b1_h2_cod = roi.roi_materia_cod AND pes.pes_mod_b1_h2 = daca.mod_id ) OR
+                    ( pes.pes_mat_b1_h3_cod = roi.roi_materia_cod AND pes.pes_mod_b1_h3 = daca.mod_id ) OR
+                    ( pes.pes_mat_b1_h4_cod = roi.roi_materia_cod AND pes.pes_mod_b1_h4 = daca.mod_id ) OR
+                    ( pes.pes_mat_b1_h5_cod = roi.roi_materia_cod AND pes.pes_mod_b1_h5 = daca.mod_id ) OR
+                    ( pes.pes_mat_b1_h6_cod = roi.roi_materia_cod AND pes.pes_mod_b1_h6 = daca.mod_id ) OR
+                    ( pes.pes_mat_b2_h1_cod = roi.roi_materia_cod AND pes.pes_mod_b2_h1 = daca.mod_id ) OR
+                    ( pes.pes_mat_b2_h2_cod = roi.roi_materia_cod AND pes.pes_mod_b2_h2 = daca.mod_id ) OR
+                    ( pes.pes_mat_b2_h3_cod = roi.roi_materia_cod AND pes.pes_mod_b2_h3 = daca.mod_id ) OR
+                    ( pes.pes_mat_b2_h4_cod = roi.roi_materia_cod AND pes.pes_mod_b2_h4 = daca.mod_id ) OR
+                    ( pes.pes_mat_b2_h5_cod = roi.roi_materia_cod AND pes.pes_mod_b2_h5 = daca.mod_id ) OR
+                    ( pes.pes_mat_b2_h6_cod = roi.roi_materia_cod AND pes.pes_mod_b2_h6 = daca.mod_id )
+                 )
+	             AND made.made_estado = 1 AND  made.made_estado_logico = 1
+	            INNER JOIN  db_academico.materia_paralelo_periodo as mpp  on daca.mpp_id = mpp.mpp_id
+	             AND mpp.mpp_estado = 1 AND  daca.daca_estado_logico = 1		
+				LEFT JOIN  db_academico.distributivo_academico_estudiante as daes on daca.daca_id = daes.daca_id AND  daes.est_id = est.est_id -- AND  daes.daes_id is null
+	            AND daes.daes_estado = 1 AND  daes.daes_estado_logico = 1
 				WHERE ron.ron_id = roi.ron_id 
 				AND made.asi_id = daca.asi_id
 				AND daca.asi_id= $id
 				AND daca.daca_id = $daca_id
                 and periodo.id=daca.paca_id and periodo.id = $paca_id
                 and roi.roi_bloque = periodo.bloque
-                AND  pla.saca_id=periodo.saca_id
+                AND pla.saca_id=periodo.saca_id
                 AND daes.daes_id is null";
 
 		$comando = $con_academico->createCommand($sql);

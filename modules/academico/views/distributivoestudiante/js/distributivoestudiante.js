@@ -313,4 +313,21 @@ function verifica_seleccion_grid(){
 
 }
 
+function deleteDaesId(daes_id){
+    var link = $('#txth_base').val() + "/academico/distributivoestudiante/deletedaesid";
+    var arrParams = new Object();
+    arrParams.daes_id = daes_id;
+    var daca_id = $('#txth_ids').val();
+    
+
+    requestHttpAjax(link, arrParams, function(response) {
+        showAlert(response.status, response.label, response.message);
+        if (response.status == "OK") {
+            setTimeout(function() {
+                window.location.href = $('#txth_base').val() + "/academico/distributivoestudiante/new/"+ daca_id;
+            }, 1000);
+        }
+    }, true);
+}
+
 //JLC: 19 ABRIL 2022

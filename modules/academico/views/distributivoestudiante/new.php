@@ -107,13 +107,13 @@ GridView::widget([
 		[
 			'class' => 'yii\grid\ActionColumn',
 			'header' => 'Acciones',
-			'template' => '{update} {edit}',
+			'template' => '{update} {edit} {delete}',
 			'headerOptions' => ['class' => 'text-center'],
 			'contentOptions' => ['class' => 'text-center'],
 			'buttons' => [
 				'update' => function ($url, $model) {
 					//if ($model['daes_estado']) {//JLC: 26 ABRIL 2022
-					if ($model['daes_id']) { //JLC: 26 ABRIL 2022
+					if ($model['daes_id']) { //JLC: 262 ABRIL 2022
 						return Html::a('<span class="fa fa-pencil fa-fw"></span>', null, ['href' => 'javascript:cambiarparalelo(' . $model['daca_id'] . ',' . $model['daes_id'] . ');', "data-toggle" => "tooltip", "title" => academico::t("distributivoacademico", "Cambiar paralelo")]);
 					} /*else {
 
@@ -121,9 +121,14 @@ GridView::widget([
 				},
 				'edit' => function ($url, $model) {
                     if($model['daes_id'] != null && $model['daca_id'] != null) {
-                        return Html::checkbox($model['daes_id'], true, ["value" => $model['daes_id'], "class" => "byregister", "disabled" => true, "Id" => "cmb_check_estudiante_".$model['daes_id']    ]);
+                        return Html::checkbox($model['daes_id'], true, ["value" => $model['daes_id'], "class" => "byregister", "disabled" => true,  "Id" => "cmb_check_estudiante_".$model['daes_id']    ]);
                     }else {
                     	return Html::checkbox($model['daes_id'], false, ["value" => $model['daes_id'], "class" => "byregister",   "Id" => "cmb_check_estudiante_".$model['est_id']    ]);
+                    }
+                },
+                'delete' => function ($url, $model) {
+                    if($model['daes_id'] != null && $model['daca_id'] != null) {
+                        return Html::a('<span class="glyphicon glyphicon-trash"></span>', null, ['href' => 'javascript:confirmDelete(\'deleteDaesId\',[\'' . $model['daes_id'] . '\' ] );', "data-toggle" => "tooltip", "title" => academico::t("Academico", 'Borrar asignación')]);
                     }
                 },
 			],

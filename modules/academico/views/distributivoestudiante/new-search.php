@@ -30,7 +30,7 @@ use app\modules\academico\Module as academico;
         <div class="form-group">            
             <label for="txt_periodo" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= Yii::t("formulario", "Period") ?></label>
             <div class="col-sm-3 col-xs-3 col-md-3 col-lg-3">
-                <?= Html::input("text", "txt_periodo",  $distributivo_model->paca->sem->saca_nombre, ["class" => "form-control", "id" => "txt_periodo", "disabled" => "disabled"]) ?>
+                <?= Html::input("text", "txt_periodo", $distributivo_model->paca->baca->baca_anio.' ('. $distributivo_model->paca->baca->baca_nombre .'-'. $distributivo_model->paca->sem->saca_nombre.')' , ["class" => "form-control", "id" => "txt_periodo", "disabled" => "disabled"]) ?>
             </div>       
             <label for="txt_materia" class="col-sm-2 col-sm-2 col-lg-2 col-md-2 col-xs-2 control-label"><?= Yii::t("formulario", "Subject") ?></label>
             <div class="col-sm-3 col-xs-3 col-md-3 col-lg-3">
@@ -76,4 +76,3 @@ use app\modules\academico\Module as academico;
         </div>
     </div> 
 </div>
-

@@ -140,6 +140,7 @@ class InscripcionAdmision extends \yii\db\ActiveRecord {
 	}
 
 	private function updateDataInscripcion($con, $data) {
+		\app\models\Utilities::putMessageLogFile('data al funcion:' . print_r($data["DATA_1"], true));
 		$sql = "UPDATE " . $con->dbname . ".temporal_wizard_inscripcion
                 SET twin_nombre=:twin_nombre,twin_apellido=:twin_apellido,twin_dni=:twin_dni,twin_numero=:twin_numero,
                     twin_correo=:twin_correo,twin_empresa=:twin_empresa,twin_pais=:twin_pais,twin_celular=:twin_celular,uaca_id=:uaca_id,
@@ -748,7 +749,11 @@ class InscripcionAdmision extends \yii\db\ActiveRecord {
 					if (empty($id_personaexite)) {
 						$id_persona = $mod_persona->insertarPersona($con, $parametros_per, $keys_per, 'persona');
 					}
-					if ($id_persona > 0) {
+					if ($id_persona > 0  || $id_personaexite['per_id'] > 0 ) {
+						if ($id_personaexite['per_id'] > 0)
+						{
+							$id_persona = $id_personaexite['per_id'];
+						}
 						\app\models\Utilities::putMessageLogFile('se crea persona.');
 						//Se registran otros datos de persona
 						$mod_PersonaOtro = new PersonaOtrosDatos();
@@ -768,7 +773,7 @@ class InscripcionAdmision extends \yii\db\ActiveRecord {
 						\app\models\Utilities::putMessageLogFile('id data:' . print_r($datos, true));
 						$existe = $mod_PersonaOtro->consultar($id_persona);
 						/*if (empty($existe)) {
-						$respPerOtros = $mod_PersonaOtro->insertar($id_persona,$resp_datos['nivel'],$resp_datos['red_social'],$resp_datos['twin_encontramos'],$usuario_ingreso);
+							$respPerOtros = $mod_PersonaOtro->insertar($id_persona,$resp_datos['nivel'],$resp_datos['red_social'],$resp_datos['twin_encontramos'],$usuario_ingreso);
 						*/
 						if ($id_persona > 0) {
 							//self::movePersonFiles($twinIds,$id_persona);
@@ -813,7 +818,7 @@ class InscripcionAdmision extends \yii\db\ActiveRecord {
 										$parametros = [$id_persona, 1, $usuario_id, 1, 1];
 										if ($interesado_id == 0) {
 											$interesado_id = $mod_interesado->insertarInteresado($concap, $parametros, $keys, 'interesado');
-										}
+										} //OJO NO GUARDO INTERESADO
 										if ($interesado_id > 0) {
 											$mod_inte_emp = new InteresadoEmpresa(); // se guarda con estado_interesado 1
 											$iemp_id = $mod_inte_emp->consultaInteresadoEmpresaById($interesado_id, $emp_id);
@@ -891,9 +896,9 @@ class InscripcionAdmision extends \yii\db\ActiveRecord {
 															//Grabar documento de registro de pago por depósito o transferencia.
 															if (($fpag_id == 5) or ($fpag_id == 4)) {
 																$fecha_registro = date(Yii::$app->params["dateTimeByDefault"]);
-																\app\models\Utilities::putMessageLogFile('$rutaDocPago: '. $rutaDocPago);
+																\app\models\Utilities::putMessageLogFile('$rutaDocPago: ' . $rutaDocPago);
 																\app\models\Utilities::putMessageLogFile('ruta444: ' . $ruta_doc_pago["ruta_doc_pago"]);
-															\app\models\Utilities::putMessageLogFile('ruta555: ' . $archivo);
+																\app\models\Utilities::putMessageLogFile('ruta555: ' . $archivo);
 																$creadetalle = $mod_ordenpago->insertarCargaprepago($resp_opago, $fpag_id, $val_total, $archivo, 'PE', NULL, $dataReg["observacion"], $dataReg["num_transaccion"], $dataReg["fecha_transaccion"], $fecha_registro);
 																if ($creadetalle) {
 																	$detalle = 'S';
@@ -912,7 +917,7 @@ class InscripcionAdmision extends \yii\db\ActiveRecord {
 																\app\models\Utilities::putMessageLogFile('fecha_registro:' . $fecha_registro);
 																$fecha_registro = date(Yii::$app->params["dateTimeByDefault"]);
 																\app\models\Utilities::putMessageLogFile('ruta666: ' . $ruta_doc_pago["ruta_doc_pago"]);
-															\app\models\Utilities::putMessageLogFile('ruta777: ' . $archivo);
+																\app\models\Utilities::putMessageLogFile('ruta777: ' . $archivo);
 																$creadetalle = $mod_ordenpago->insertarCargaprepago($resp_opago, $fpag_id, $val_total, $rpag_imagen, 'RE', 'AP', $rpag_imagen, 0, $fecha_registro, $fecha_registro);
 																if ($creadetalle) {
 
@@ -1002,7 +1007,9 @@ class InscripcionAdmision extends \yii\db\ActiveRecord {
 							$error++;
 							$error_message .= Yii::t("formulario", "Otros datos de persona no han sido registrados");
 						}
-					} else { //AQUI
+
+					} else {
+						//AQUI
 						\app\models\Utilities::putMessageLogFile('msg6:');
 						$error++;
 						$error_message .= Yii::t("formulario", "Ya existe una persona con la misma cedula o correo, no se puede crear");
@@ -1018,7 +1025,7 @@ class InscripcionAdmision extends \yii\db\ActiveRecord {
 				$error++;
 			}
 			if ($exito == 1) {
-				\app\models\Utilities::putMessageLogFile('inscripciones exito ' );
+				\app\models\Utilities::putMessageLogFile('inscripciones exito ');
 				//$transaction->commit();
 				//$transaction1->commit();
 				$transaction2->commit();
@@ -1051,7 +1058,7 @@ class InscripcionAdmision extends \yii\db\ActiveRecord {
 				$arroout["dataext"] = $sins_id;
 				return $arroout;
 			} else {
-				\app\models\Utilities::putMessageLogFile('entre else '. $error_message);
+				\app\models\Utilities::putMessageLogFile('entre else ' . $error_message);
 				//$transaction->rollback();
 				//$transaction1->rollback();
 				$transaction2->rollback();
@@ -1068,7 +1075,7 @@ class InscripcionAdmision extends \yii\db\ActiveRecord {
 				//return Utilities::ajaxResponse('NO_OK', 'alert', Yii::t("jslang", "Bad Request"), false, $message);
 			}
 		} catch (Exception $ex) {
-			\app\models\Utilities::putMessageLogFile('entre else '. $error_message);
+			\app\models\Utilities::putMessageLogFile('entre else ' . $error_message);
 			//$transaction->rollback();
 			//$transaction1->rollback();
 			$transaction2->rollback();

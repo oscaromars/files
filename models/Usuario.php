@@ -965,7 +965,7 @@ class Usuario extends \yii\db\ActiveRecord implements IdentityInterface {
     }
     /**
      * Function consultarIdPersonaICP
-     * @author  Kleber Loayza
+     * @author  Giovanni Vergara
      * @property
      * @return
      */

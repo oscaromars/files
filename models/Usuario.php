@@ -978,7 +978,7 @@ class Usuario extends \yii\db\ActiveRecord implements IdentityInterface {
         }
         $sql = "
                 SELECT ifnull(usu_id,0) as usu_id
-                FROM usuario
+                FROM " . $con->dbname . "usuario
                 WHERE
                     $qryPer
                     usu_estado = $estado AND

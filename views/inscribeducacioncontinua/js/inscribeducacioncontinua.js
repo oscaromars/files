@@ -479,7 +479,11 @@ $(document).ready(function () {
         var arrParams = new Object();
         var fecha = new Date();
         var month = (fecha.getMonth() + 1).toString().padStart(2, "0");
-        var formatted_date = fecha.getFullYear() + "-" + month + "-" + fecha.getDate();
+        var days = (fecha.getDate() + 1).toString().padStart(2, "0");
+        var formatted_date = fecha.getFullYear() + "-" + month + "-" + days;
+        //alert('fecha' + fecha);
+        //alert('month' + month);
+        //alert('fomato' + formatted_date);
         arrParams.codigo = $('#txth_twin_id').val();
         arrParams.ACCION = 'Fin';
         arrParams.mail = $('#txt_correo').val();
@@ -534,6 +538,8 @@ $(document).ready(function () {
                 var mensaje = {wtmessage: "Debe seleccionar un item.", title: "Información"};
                 showAlert("NO_OK", "error", mensaje);
             } else {
+                //alert ('antes if fecha' + arrParams.fecha_transaccion);
+                //alert ('antes if formato' + formatted_date);
                 if (arrParams.fecha_transaccion > formatted_date){
                     hideLoadingPopup();
                     var mensaje = {wtmessage: "Fecha Transacción: La fecha de transacción no puede ser mayor al día de hoy.", title: "Información"};

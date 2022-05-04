@@ -148,12 +148,17 @@ class InscribeducacioncontinuaController extends \yii\web\Controller {
 				$files = $_FILES[key($_FILES)];
 				$arrIm = explode(".", basename($files['name']));
 				$typeFile = strtolower($arrIm[count($arrIm) - 1]);
-				$dirFileEnd = Yii::$app->params["documentFolder"] . "solicitudadmision/" . $inscripcion_id . "/" . $data["name_file"] . "_per_" . $inscripcion_id . "." . $typeFile;
-				$status = Utilities::moveUploadFile($files['tmp_name'], $dirFileEnd);
-				if ($status) {
-					return true;
-				} else {
-					return json_encode(['error' => Yii::t("notificaciones", "Error to process File {file}. Try again.", ['{file}' => basename($files['name'])])]);
+				if ($typeFile == 'pdf' || $typeFile == 'png' || $typeFile == 'jpg' || $typeFile == 'jpeg')
+				{
+					$dirFileEnd = Yii::$app->params["documentFolder"] . "solicitudadmision/" . $inscripcion_id . "/" . $data["name_file"] . "_per_" . $inscripcion_id . "." . $typeFile;
+					$status = Utilities::moveUploadFile($files['tmp_name'], $dirFileEnd);
+					if ($status) {
+						return true;
+					} else {
+						return json_encode(['error' => Yii::t("notificaciones", "Error to process File {file}. Try again.", ['{file}' => basename($files['name'])])]);
+					}
+			    }else {
+					return json_encode(['error' => Yii::t("notificaciones", "Error to process File " . basename($files['name']) . ". Try again.")]);
 				}
 			}
 			if ($data["upload_filepago"]) {
@@ -165,12 +170,17 @@ class InscribeducacioncontinuaController extends \yii\web\Controller {
 				$files = $_FILES[key($_FILES)];
 				$arrIm = explode(".", basename($files['name']));
 				$typeFile = strtolower($arrIm[count($arrIm) - 1]);
+			 if ($typeFile == 'pdf' || $typeFile == 'png' || $typeFile == 'jpg' || $typeFile == 'jpeg')
+			  {
 				$dirFilePagoEnd = Yii::$app->params["documentFolder"] . "documentoadmision/" . $inscripcion_id . "/" . $data["name_file"] . "_" . $inscripcion_id . "." . $typeFile;
 				$status = Utilities::moveUploadFile($files['tmp_name'], $dirFilePagoEnd);
 				if ($status) {
 					return true;
 				} else {
 					return json_encode(['error' => Yii::t("notificaciones", "Error to process File {file}. Try again.", ['{file}' => basename($files['name'])])]);
+				}
+			  }else {
+					return json_encode(['error' => Yii::t("notificaciones", "Error to process File " . basename($files['name']) . ". Try again.")]);
 				}
 			}
 			$timeSt = time();
@@ -232,12 +242,18 @@ class InscribeducacioncontinuaController extends \yii\web\Controller {
 					                }
 					                if (isset($data["DATA_1"][0]["ruta_doc_pago"]) && $data["DATA_1"][0]["ruta_doc_pago"] != "") {
 					                    $arrIm = explode(".", basename($data["DATA_1"][0]["ruta_doc_pago"]));
-					                    $typeFile = strtolower($arrIm[count($arrIm) - 1]);
-					                    $doc_pagoOld = Yii::$app->params["documentFolder"] . "documentoadmision/" . $inscripcion_id . "/pago_". $inscripcion_id . "." . $typeFile;
-					                    $doc_pago = InscripcionAdmision::addLabelFechaDocPagos($inscripcion_id, $doc_pagoOld, $fecha_registro);
-					                    $data["DATA_1"][0]["ruta_doc_pago"] = $doc_pago;
-					                    if ($doc_pagoOld === false)
-											throw new Exception('Error al cargar documento de pago.');
+										$typeFile = strtolower($arrIm[count($arrIm) - 1]);
+										if ($typeFile == 'pdf' || $typeFile == 'png' || $typeFile == 'jpg' || $typeFile == 'jpeg')
+										{
+											$doc_pagoOld = Yii::$app->params["documentFolder"] . "documentoadmision/" . $inscripcion_id . "/pago_". $inscripcion_id . "." . $typeFile;
+											$doc_pago = InscripcionAdmision::addLabelFechaDocPagos($inscripcion_id, $doc_pagoOld, $fecha_registro);
+											$data["DATA_1"][0]["ruta_doc_pago"] = $doc_pago;
+											if ($doc_pagoOld === false)
+												throw new Exception('Error al cargar documento de pago.');
+										}
+										else {
+											return json_encode(['error' => Yii::t("notificaciones", "Error to process File " . basename($data["DATA_1"][0]["ruta_doc_pago"]) . ". Try again.")]);
+										}
 									}
 				// Aqui consultar el per_id por cedula en tabla persona
 				\app\models\Utilities::putMessageLogFile('trim cedula: ' . trim($data["cedula"]));

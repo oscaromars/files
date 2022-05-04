@@ -1586,18 +1586,6 @@ class Solicitudinscripcion extends \yii\db\ActiveRecord {
      */
     public function insertarSolicitud($int_id, $uaca_id, $mod_id, $ming_id, $eaca_id, $mest_id, $emp_id, $num_solicitud, $rsin_id, $sins_fecha_solicitud, $sins_usuario_ingreso, $cemp_id = null) {
         $con = \Yii::$app->db_captacion;
-        \app\models\Utilities::putMessageLogFile('int_id ' . $int_id);
-        \app\models\Utilities::putMessageLogFile('uaca_id ' . $uaca_id);
-        \app\models\Utilities::putMessageLogFile('mod_id ' . $mod_id);
-        \app\models\Utilities::putMessageLogFile('ming_id ' . $ming_id);
-        \app\models\Utilities::putMessageLogFile('eaca_id ' . $eaca_id);
-        \app\models\Utilities::putMessageLogFile('mest_id ' . $mest_id);
-        \app\models\Utilities::putMessageLogFile('emp_id ' . $emp_id);
-        \app\models\Utilities::putMessageLogFile('num_solicitud ' . $num_solicitud);
-        \app\models\Utilities::putMessageLogFile('rsin_id ' . $rsin_id);
-        \app\models\Utilities::putMessageLogFile('sins_fecha_solicitud ' . $sins_fecha_solicitud);
-        \app\models\Utilities::putMessageLogFile('sins_usuario_ingreso ' . $sins_usuario_ingreso);
-        \app\models\Utilities::putMessageLogFile('cemp_id ' . $cemp_id);
         $trans = $con->getTransaction(); // se obtiene la transacción actual.
         if ($trans !== null) {
             $trans = null; // si existe la transacción entonces no se crea una.
@@ -1662,10 +1650,6 @@ class Solicitudinscripcion extends \yii\db\ActiveRecord {
         try {
             $sql = "INSERT INTO " . $con->dbname . ".solicitud_inscripcion ($param_sql) VALUES($bsrec_sql)";
             $comando = $con->createCommand($sql);
-            \app\models\Utilities::putMessageLogFile('insert solicitud' . $comando->getRawSql());
-            //\app\models\Utilities::putMessageLogFile('param' . $param_sql);
-            //\app\models\Utilities::putMessageLogFile('bsrec_sql' . $bsrec_sql);
-            //\app\models\Utilities::putMessageLogFile("INSERT INTO db_captacion.solicitud_inscripcion (sins_estado_logico, sins_estado, int_id, uaca_id, mod_id, ming_id, eaca_id, emp_id, num_solicitud, rsin_id, sins_fecha_solicitud, sins_usuario_ingreso) VALUES ( 1, 1, ' .$int_id . ',' . $uaca_id . ', '. $mod_id . ',' . $ming_id . ','. $eaca_id ', ' . $emp_id . ',' . $num_solicitud. ',' . $rsin_id. ',' . $sins_fecha_solicitud. ',' . $sins_usuario_ingreso)");
             if (isset($int_id))
                 $comando->bindParam(':int_id', $int_id, \PDO::PARAM_INT);
 

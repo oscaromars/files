@@ -53,24 +53,23 @@ class DistributivoAcademicoEstudiante extends \yii\db\ActiveRecord {
 	}
 
 	/**
-     * {@inheritdoc}
-     //JLC: 28 ABRIL 2022
-     */
-    public function attributeLabels()
-    {
-        return [
-            'daes_id' => 'Daes ID',
-            'daca_id' => 'Daca ID',
-            'est_id' => 'Est ID',
-            'daes_fecha_registro' => 'Daes Fecha Registro',
-            'daes_usuario_ingreso' => 'Daes Usuario Ingreso',
-            'daes_usuario_modifica' => 'Daes Usuario Modifica',
-            'daes_estado' => 'Daes Estado',
-            'daes_fecha_creacion' => 'Daes Fecha Creacion',
-            'daes_fecha_modificacion' => 'Daes Fecha Modificacion',
-            'daes_estado_logico' => 'Daes Estado Logico',
-        ];
-    }//JLC: 28 ABRIL 2022
+	 * {@inheritdoc}
+	//JLC: 28 ABRIL 2022
+	 */
+	public function attributeLabels() {
+		return [
+			'daes_id' => 'Daes ID',
+			'daca_id' => 'Daca ID',
+			'est_id' => 'Est ID',
+			'daes_fecha_registro' => 'Daes Fecha Registro',
+			'daes_usuario_ingreso' => 'Daes Usuario Ingreso',
+			'daes_usuario_modifica' => 'Daes Usuario Modifica',
+			'daes_estado' => 'Daes Estado',
+			'daes_fecha_creacion' => 'Daes Fecha Creacion',
+			'daes_fecha_modificacion' => 'Daes Fecha Modificacion',
+			'daes_estado_logico' => 'Daes Estado Logico',
+		];
+	} //JLC: 28 ABRIL 2022
 
 	/**
 	 * @return \yii\db\ActiveQuery
@@ -297,18 +296,21 @@ class DistributivoAcademicoEstudiante extends \yii\db\ActiveRecord {
                         pera.paca_estado = 1 AND pera.paca_estado_logico = 1) as periodo,
                 db_academico.estudiante est
                 inner join db_academico.estudiante_carrera_programa ecp ON est.est_id=ecp.est_id
-                inner join db_academico.modalidad_estudio_unidad meun ON meun.meun_id=ecp.meun_id
+                -- inner join db_academico.modalidad_estudio_unidad meun ON meun.meun_id=ecp.meun_id
                 inner join db_academico.registro_online ron ON ron.per_id=est.per_id
+                inner join db_academico.planificacion_estudiante pes ON pes.pes_id =ron.pes_id
+                inner join db_academico.planificacion pla on pla.pla_id =pes.pla_id
                 inner join db_academico.registro_online_item roi ON roi.ron_id=ron.ron_id
                 inner join db_academico.malla_academica_detalle made ON made.made_codigo_asignatura=roi.roi_materia_cod
                 inner join db_academico.asignatura asi ON asi.asi_id=made.asi_id
-                inner join db_academico.materia_paralelo_periodo mpp ON mpp.asi_id=asi.asi_id AND mpp.mod_id=meun.mod_id AND mpp.mpp_num_paralelo=roi.roi_paralelo
-                inner join db_academico.distributivo_academico daca ON daca.asi_id=asi.asi_id AND daca.mod_id=meun.mod_id AND daca.mpp_id=mpp.mpp_id
+                inner join db_academico.materia_paralelo_periodo mpp ON mpp.asi_id=asi.asi_id AND mpp.mod_id=pla.mod_id AND mpp.mpp_num_paralelo=roi.roi_paralelo
+                inner join db_academico.distributivo_academico daca ON daca.asi_id=asi.asi_id AND daca.mod_id=pla.mod_id AND daca.mpp_id=mpp.mpp_id
                 left join db_academico.distributivo_academico_estudiante daes on daca.daca_id = daes.daca_id
                 where roi.roi_bloque = periodo.bloque and daes.daes_id IS NULL and periodo.id = :paca_id
                 AND est.est_estado = 1   AND est.est_estado_logico = 1
-                AND meun.meun_estado = 1 AND meun.meun_estado_logico = 1
+                -- AND meun.meun_estado = 1 AND meun.meun_estado_logico = 1
                 AND ron.ron_estado = 1   AND ron.ron_estado_logico = 1
+                AND pes.pes_estado = 1 AND pes.pes_estado_logico = 1
                 AND roi.roi_estado = 1   AND roi.roi_estado_logico = 1
                 AND mpp.mpp_estado = 1   AND mpp.mpp_estado_logico = 1
                 AND daca.daca_estado = 1 AND daca.daca_estado_logico = 1
@@ -337,7 +339,7 @@ class DistributivoAcademicoEstudiante extends \yii\db\ActiveRecord {
 	}
 
 	/**
-	 * Function consultar Daes_id por medio del select del daca_id
+	 * Function consultar Daes_id por medio del insert select del daca_id
 	 * @author  Luis Cajamarca  <analistadesarrollo04@uteg.edu.ec>
 	 * @property integer $daes_id
 	 * @return
@@ -361,31 +363,35 @@ class DistributivoAcademicoEstudiante extends \yii\db\ActiveRecord {
                 inner join db_academico.estudiante_carrera_programa ecp
                    ON est.est_id=ecp.est_id
                   AND est.est_estado=1 AND est.est_estado_logico=1
-                inner join db_academico.modalidad_estudio_unidad meun
+                /* inner join db_academico.modalidad_estudio_unidad meun
                    ON meun.meun_id=ecp.meun_id
-                  AND meun.meun_estado=1 AND meun.meun_estado_logico=1
+                  AND meun.meun_estado=1 AND meun.meun_estado_logico=1 */
                 inner join db_academico.registro_online ron
                    ON ron.per_id=est.per_id
                   AND ron.ron_estado=1 AND ron.ron_estado_logico=1
+                inner join db_academico.planificacion_estudiante pes
+                   ON pes.pes_id =ron.pes_id
+                  AND pes.pes_estado = 1 AND pes.pes_estado_logico = 1
+                inner join db_academico.planificacion pla on pla.pla_id =pes.pla_id
                 inner join db_academico.registro_online_item roi
                    ON roi.ron_id=ron.ron_id
                   AND roi.roi_estado=1 AND roi.roi_estado_logico=1
                 inner join db_academico.malla_academica_detalle made
                    ON made.made_codigo_asignatura=roi.roi_materia_cod
                 inner join db_academico.asignatura asi
-                   ON asi.asi_id=made.asi_id
+                   ON asi.asi_id = made.asi_id
                 inner join db_academico.materia_paralelo_periodo mpp
-                   ON mpp.asi_id=asi.asi_id
-                  AND mpp.mod_id=meun.mod_id
-                  AND mpp.mpp_num_paralelo=roi.roi_paralelo
-                  AND mpp.mpp_estado=1 AND mpp.mpp_estado_logico=1
+                   ON mpp.asi_id = asi.asi_id
+                  AND mpp.mod_id = pla.mod_id
+                  AND mpp.mpp_num_paralelo = roi.roi_paralelo
+                  AND mpp.mpp_estado = 1 AND mpp.mpp_estado_logico = 1
                 inner join db_academico.distributivo_academico daca
-                   ON daca.asi_id=asi.asi_id
-                  AND daca.mod_id=meun.mod_id
-                  AND daca.mpp_id=mpp.mpp_id
+                   ON daca.asi_id = asi.asi_id
+                  AND daca.mod_id = pla.mod_id
+                  AND daca.mpp_id = mpp.mpp_id
                   AND daca.daca_estado=1 AND daca.daca_estado_logico=1
                 left join db_academico.distributivo_academico_estudiante daes on daca.daca_id=daes.daca_id
-                where roi.roi_bloque=periodo.bloque and daes.daes_id IS NULL and periodo.id=:paca_id";
+                where roi.roi_bloque=periodo.bloque and daes.daes_id IS NULL AND daca.paca_id = periodo.id and periodo.id=:paca_id";
 
 		$comando = $con->createCommand($sql);
 		$comando->bindParam(":paca_id", $paca_id, \PDO::PARAM_INT);

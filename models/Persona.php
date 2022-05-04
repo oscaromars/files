@@ -1315,8 +1315,9 @@ class Persona extends \yii\db\ActiveRecord {
                 FROM " . $con->dbname . ".persona as per
                  WHERE
                     (
-                        (trim(per_cedula)='$cedula' or trim(per_correo)='$correo') or
-                        (trim(per_pasaporte)='$pasaporte' or trim(per_correo)='$correo')
+                        trim(per_cedula)='$cedula' or trim(per_pasaporte)='$pasaporte'
+                        -- (trim(per_cedula)='$cedula' or trim(per_correo)='$correo') or
+                        -- (trim(per_pasaporte)='$pasaporte' or trim(per_correo)='$correo')
                         -- (trim(per_cedula)='$cedula' or trim(per_pasaporte)='$pasaporte')
                     )
                         AND per.per_estado = $estado

@@ -318,107 +318,133 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
 			                " where  mad.asi_id=".$id;
 		*/
 
-		$sql = "SELECT distinct daes.daes_id as daes_id
-                       ,est.est_id as est_id
-                       ,daca.paca_id
-                      -- ,pes.pla_id
-                       ,mpp.mpp_num_paralelo
-                       ,daes.daca_id
-                       ,made.asi_id
-                       ,CONCAT(ifnull(TRIM(per.per_pri_nombre),''),' ',ifnull(TRIM(per.per_seg_nombre),''),' ',ifnull(TRIM(per.per_pri_apellido),''),' ',ifnull(TRIM(per.per_seg_apellido),''),'') as Estudiante
-                       ,per_cedula as Cedula
-                       ,est.est_matricula as matricula
-                       ,daes.daes_estado
-                       ,'ASIGNADOS' as marca
-                  FROM db_academico.distributivo_academico_estudiante daes
-            Inner join db_academico.distributivo_academico as daca
-                    on daca.daca_id = daes.daca_id
-            inner join db_academico.estudiante as est
-                    on est.est_id = daes.est_id
-                   /*and est.est_id = $est_id*/
-                   and est.est_estado = 1 and est.est_estado_logico = 1
-            inner join db_asgard.persona as per
-                    on per.per_id = est.per_id
-                   and per.per_estado = 1 and per.per_estado_logico = 1
-            inner join db_academico.malla_academica_detalle as made
-                    on daca.asi_id = made.asi_id
-                  -- and made.made_codigo_asignatura = roi.roi_materia_cod
-                   and made.made_estado = 1 and made.made_estado_logico = 1
-            inner join db_academico.materia_paralelo_periodo as mpp
-                    on daca.mpp_id = mpp.mpp_id
-                  -- and mpp.mpp_num_paralelo = $num_paralelo
-                   and mpp.mpp_estado = 1 and daca.daca_estado_logico = 1
-             left join db_academico.registro_online as ron
-                    on per.per_id = ron.per_id
-                   and ron.ron_estado = 1 and ron.ron_estado_logico = 1
-             left join db_academico.registro_online_item as roi
-                    on ron.ron_id = roi.ron_id
-                   and made.made_codigo_asignatura = roi.roi_materia_cod
-                   and roi.roi_estado = 1 and roi.roi_estado_logico = 1
+		$sql = "SELECT 
+					daes_id,
+					est_id,
+					paca_id,
+					mpp_num_paralelo,
+					daca_id,
+					asi_id,
+					Estudiante,
+					Cedula,
+					matricula,
+					daes_estado,
+					marca
+				                       
+				FROM(
+						SELECT distinct 
+							   daes.daes_id as daes_id,
+		                       est.est_id as est_id,
+		                       daca.paca_id,
+		                       mpp.mpp_num_paralelo,
+		                       daes.daca_id,
+		                       made.asi_id,
+		                       CONCAT(  ifnull(TRIM(per.per_pri_apellido),''),' ',ifnull(TRIM(per.per_seg_apellido),''),' ',ifnull(TRIM(per.per_pri_nombre),''),' ',ifnull(TRIM(per.per_seg_nombre),''),'') as Estudiante,
+		                       per_cedula as Cedula,
+		                       est.est_matricula as matricula,
+		                       daes.daes_estado,
+		                       'ASIGNADOS' as marca
+			            FROM db_academico.distributivo_academico_estudiante daes
+			            Inner join db_academico.distributivo_academico as daca
+			                  on daca.daca_id = daes.daca_id
+			            inner join db_academico.estudiante as est
+			                  on est.est_id = daes.est_id
+			                   /*and est.est_id = $est_id*/
+			                   and est.est_estado = 1 and est.est_estado_logico = 1
+			            inner join db_asgard.persona as per
+			                  on per.per_id = est.per_id
+			                   and per.per_estado = 1 and per.per_estado_logico = 1
+			            inner join db_academico.malla_academica_detalle as made
+			                  on daca.asi_id = made.asi_id
+			                  -- and made.made_codigo_asignatura = roi.roi_materia_cod
+			                   and made.made_estado = 1 and made.made_estado_logico = 1
+			            inner join db_academico.materia_paralelo_periodo as mpp
+			                  on daca.mpp_id = mpp.mpp_id
+			                  -- and mpp.mpp_num_paralelo = $num_paralelo
+			                   and mpp.mpp_estado = 1 and daca.daca_estado_logico = 1
+			            left join db_academico.registro_online as ron
+			                 on per.per_id = ron.per_id
+			                 and ron.ron_estado = 1 and ron.ron_estado_logico = 1
+			            left join db_academico.registro_online_item as roi
+			                 on ron.ron_id = roi.ron_id
+			                 and made.made_codigo_asignatura = roi.roi_materia_cod
+			                 and roi.roi_estado = 1 and roi.roi_estado_logico = 1
 
-                 where daca.daca_id = $daca_id
-                   and made.asi_id = $id
-                   and daes.daes_estado = 1 and daes.daes_estado_logico = 1
+			            where daca.daca_id = $daca_id
+			              and made.asi_id = $id
+			              and daes.daes_estado = 1 and daes.daes_estado_logico = 1
 
-                UNION ALL
+		                UNION ALL
 
 
-            	SELECT distinct
-					ifnull(daes.daes_id,'') as daes_id,
-					est.est_id as est_id,
-					daca.paca_id,
-					mpp.mpp_num_paralelo,
-					ifnull(daes.daca_id,'') as daca_id,
-					made.asi_id,
-					CONCAT(ifnull(TRIM(per.per_pri_nombre),''),' ',ifnull(TRIM(per.per_seg_nombre),''),' ',ifnull(TRIM(per.per_pri_apellido),''),' ',ifnull(TRIM(per.per_seg_apellido),''),'') as Estudiante,
-					per_cedula as Cedula,
-					ifnull(est.est_matricula,'') as matricula,
-					daes.daes_estado,
-                    'PENDIENTES' as marca
-                    -- , roi.roi_fecha_creacion
-				FROM
-                (SELECT  pera.paca_id as id, sem.saca_id, ifnull(CONCAT(blq.baca_nombre,'-',sem.saca_nombre,' ',sem.saca_anio),'') as nombre, blq.baca_nombre as bloque,
-                pera.paca_fecha_inicio,pera.paca_fecha_fin
-                        FROM db_academico.periodo_academico pera
-                        inner join db_academico.semestre_academico sem  ON sem.saca_id = pera.saca_id
-                        inner join db_academico.bloque_academico blq ON blq.baca_id = pera.baca_id
-                        WHERE pera.paca_activo = 'A'  AND
-                        pera.paca_estado = 1 AND pera.paca_estado_logico = 1) as periodo,
-	            db_asgard.persona as per
-	            INNER JOIN db_academico.estudiante as est on per.per_id = est.per_id AND  est.est_estado = 1 AND  est.est_estado_logico = 1
-	            INNER JOIN db_academico.registro_online as ron on per.per_id = ron.per_id  AND  ron.ron_estado = 1 AND  ron.ron_estado_logico = 1
-                INNER JOIN db_academico.planificacion_estudiante as pes on pes.pes_id =ron.pes_id
-                INNER JOIN db_academico.planificacion as pla on pla.pla_id = pes.pla_id
-				INNER JOIN db_academico.registro_online_item as roi   on ron.ron_id = roi.ron_id AND  roi.roi_estado = 1 AND  roi.roi_estado_logico = 1
-				INNER JOIN db_academico.distributivo_academico as daca
-				INNER JOIN db_academico.malla_academica_detalle as made  on daca.asi_id = made.asi_id  AND  made.made_codigo_asignatura = roi.roi_materia_cod
-				 AND(
-					( pes.pes_mat_b1_h1_cod = roi.roi_materia_cod AND pes.pes_mod_b1_h1 = daca.mod_id ) OR
-                    ( pes.pes_mat_b1_h2_cod = roi.roi_materia_cod AND pes.pes_mod_b1_h2 = daca.mod_id ) OR
-                    ( pes.pes_mat_b1_h3_cod = roi.roi_materia_cod AND pes.pes_mod_b1_h3 = daca.mod_id ) OR
-                    ( pes.pes_mat_b1_h4_cod = roi.roi_materia_cod AND pes.pes_mod_b1_h4 = daca.mod_id ) OR
-                    ( pes.pes_mat_b1_h5_cod = roi.roi_materia_cod AND pes.pes_mod_b1_h5 = daca.mod_id ) OR
-                    ( pes.pes_mat_b1_h6_cod = roi.roi_materia_cod AND pes.pes_mod_b1_h6 = daca.mod_id ) OR
-                    ( pes.pes_mat_b2_h1_cod = roi.roi_materia_cod AND pes.pes_mod_b2_h1 = daca.mod_id ) OR
-                    ( pes.pes_mat_b2_h2_cod = roi.roi_materia_cod AND pes.pes_mod_b2_h2 = daca.mod_id ) OR
-                    ( pes.pes_mat_b2_h3_cod = roi.roi_materia_cod AND pes.pes_mod_b2_h3 = daca.mod_id ) OR
-                    ( pes.pes_mat_b2_h4_cod = roi.roi_materia_cod AND pes.pes_mod_b2_h4 = daca.mod_id ) OR
-                    ( pes.pes_mat_b2_h5_cod = roi.roi_materia_cod AND pes.pes_mod_b2_h5 = daca.mod_id ) OR
-                    ( pes.pes_mat_b2_h6_cod = roi.roi_materia_cod AND pes.pes_mod_b2_h6 = daca.mod_id )
-                 )
-	             AND made.made_estado = 1 AND  made.made_estado_logico = 1
-	            INNER JOIN  db_academico.materia_paralelo_periodo as mpp  on daca.mpp_id = mpp.mpp_id
-	             AND mpp.mpp_estado = 1 AND  daca.daca_estado_logico = 1		
-				LEFT JOIN  db_academico.distributivo_academico_estudiante as daes on daca.daca_id = daes.daca_id AND  daes.est_id = est.est_id -- AND  daes.daes_id is null
-	            AND daes.daes_estado = 1 AND  daes.daes_estado_logico = 1
-				WHERE ron.ron_id = roi.ron_id 
-				AND made.asi_id = daca.asi_id
-				AND daca.asi_id= $id
-				AND daca.daca_id = $daca_id
-                and periodo.id=daca.paca_id and periodo.id = $paca_id
-                and roi.roi_bloque = periodo.bloque
-                AND pla.saca_id=periodo.saca_id
-                AND daes.daes_id is null";
+		            	SELECT distinct
+							ifnull(daes.daes_id,'') as daes_id,
+							est.est_id as est_id,
+							daca.paca_id,
+							mpp.mpp_num_paralelo,
+							ifnull(daes.daca_id,'') as daca_id,
+							made.asi_id,
+							CONCAT(  ifnull(TRIM(per.per_pri_apellido),''),' ',ifnull(TRIM(per.per_seg_apellido),''),' ',ifnull(TRIM(per.per_pri_nombre),''),' ',ifnull(TRIM(per.per_seg_nombre),''),'') as Estudiante,
+							per_cedula as Cedula,
+							ifnull(est.est_matricula,'') as matricula,
+							daes.daes_estado,
+		                    'PENDIENTES' as marca
+						FROM
+		                (SELECT  pera.paca_id as id, sem.saca_id, ifnull(CONCAT(blq.baca_nombre,'-',sem.saca_nombre,' ',sem.saca_anio),'') as nombre, blq.baca_nombre as bloque,
+		                pera.paca_fecha_inicio,pera.paca_fecha_fin
+		                        FROM db_academico.periodo_academico pera
+		                        inner join db_academico.semestre_academico sem  ON sem.saca_id = pera.saca_id
+		                        inner join db_academico.bloque_academico blq ON blq.baca_id = pera.baca_id
+		                        WHERE pera.paca_activo = 'A'  AND
+		                        pera.paca_estado = 1 AND pera.paca_estado_logico = 1) as periodo,
+			            db_asgard.persona as per
+			            INNER JOIN db_academico.estudiante as est on per.per_id = est.per_id AND  est.est_estado = 1 AND  est.est_estado_logico = 1
+			            INNER JOIN db_academico.registro_online as ron on per.per_id = ron.per_id  AND  ron.ron_estado = 1 AND  ron.ron_estado_logico = 1
+		                INNER JOIN db_academico.planificacion_estudiante as pes on pes.pes_id =ron.pes_id
+		                INNER JOIN db_academico.planificacion as pla on pla.pla_id = pes.pla_id
+						INNER JOIN db_academico.registro_online_item as roi   on ron.ron_id = roi.ron_id AND  roi.roi_estado = 1 AND  roi.roi_estado_logico = 1
+						INNER JOIN db_academico.distributivo_academico as daca
+						INNER JOIN db_academico.malla_academica_detalle as made  on daca.asi_id = made.asi_id  AND  made.made_codigo_asignatura = roi.roi_materia_cod
+						 AND(
+							( pes.pes_mat_b1_h1_cod = roi.roi_materia_cod AND pes.pes_mod_b1_h1 = daca.mod_id ) OR
+		                    ( pes.pes_mat_b1_h2_cod = roi.roi_materia_cod AND pes.pes_mod_b1_h2 = daca.mod_id ) OR
+		                    ( pes.pes_mat_b1_h3_cod = roi.roi_materia_cod AND pes.pes_mod_b1_h3 = daca.mod_id ) OR
+		                    ( pes.pes_mat_b1_h4_cod = roi.roi_materia_cod AND pes.pes_mod_b1_h4 = daca.mod_id ) OR
+		                    ( pes.pes_mat_b1_h5_cod = roi.roi_materia_cod AND pes.pes_mod_b1_h5 = daca.mod_id ) OR
+		                    ( pes.pes_mat_b1_h6_cod = roi.roi_materia_cod AND pes.pes_mod_b1_h6 = daca.mod_id ) OR
+		                    ( pes.pes_mat_b2_h1_cod = roi.roi_materia_cod AND pes.pes_mod_b2_h1 = daca.mod_id ) OR
+		                    ( pes.pes_mat_b2_h2_cod = roi.roi_materia_cod AND pes.pes_mod_b2_h2 = daca.mod_id ) OR
+		                    ( pes.pes_mat_b2_h3_cod = roi.roi_materia_cod AND pes.pes_mod_b2_h3 = daca.mod_id ) OR
+		                    ( pes.pes_mat_b2_h4_cod = roi.roi_materia_cod AND pes.pes_mod_b2_h4 = daca.mod_id ) OR
+		                    ( pes.pes_mat_b2_h5_cod = roi.roi_materia_cod AND pes.pes_mod_b2_h5 = daca.mod_id ) OR
+		                    ( pes.pes_mat_b2_h6_cod = roi.roi_materia_cod AND pes.pes_mod_b2_h6 = daca.mod_id )
+		                 )
+			             AND made.made_estado = 1 AND  made.made_estado_logico = 1
+			            INNER JOIN  db_academico.materia_paralelo_periodo as mpp  on daca.mpp_id = mpp.mpp_id
+			             AND mpp.mpp_estado = 1 AND  daca.daca_estado_logico = 1		
+						LEFT JOIN  db_academico.distributivo_academico_estudiante as daes on daca.daca_id = daes.daca_id AND  daes.est_id = est.est_id -- AND  daes.daes_id is null
+			            AND daes.daes_estado = 1 AND  daes.daes_estado_logico = 1
+						WHERE ron.ron_id = roi.ron_id 
+						AND made.asi_id = daca.asi_id
+						AND daca.asi_id= $id
+						AND daca.daca_id = $daca_id
+		                and periodo.id=daca.paca_id and periodo.id = $paca_id
+		                and roi.roi_bloque = periodo.bloque
+		                AND pla.saca_id=periodo.saca_id
+		                AND daes.daes_id is null
+						AND (
+								SELECT count(*)
+								FROM db_academico.distributivo_academico_estudiante AS daesComp,
+								 	 db_academico.distributivo_academico AS dacaComp
+								WHERE daesComp.daca_id = dacaComp.daca_id
+								AND dacaComp.paca_id = periodo.id			
+								AND daesComp.est_id = est.est_id
+								AND daesComp.daes_estado = 1 AND daesComp.daes_estado_logico = 1
+								AND dacaComp.daca_estado = 1 AND dacaComp.daca_estado_logico = 1
+							)=0
+                            
+		                ) as X
+				ORDER BY X.Estudiante";
 
 		$comando = $con_academico->createCommand($sql);
 		$res = $comando->queryAll();

@@ -572,7 +572,7 @@ class DistributivoestudianteController extends \app\components\CController {
 				$daes_id = $data["daes_id"];
 				Utilities::putMessageLogFile('daes_id:'.$daes_id);
 				$model = DistributivoAcademicoEstudiante::findOne($daes_id);
-				$model->daes_usuario_modifica = $user;
+				$model->daes_usuario_modifica = $usu_id;
 				$model->daes_fecha_modificacion = $fecha_transaccion;
 				$model->daes_estado = '0';
 				$model->daes_estado_logico = '0';

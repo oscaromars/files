@@ -613,29 +613,29 @@ class Distributivo extends \yii\db\ActiveRecord {
         $estado = 1;
 
         if (isset($arrFiltro) && count($arrFiltro) > 0) {
-            $str_search .= "(p.per_pri_nombre like :search OR ";
-            $str_search .= "p.per_seg_nombre like :search OR ";
-            $str_search .= "p.per_pri_apellido like :search OR ";
-            $str_search .= "p.per_seg_apellido like :search OR ";
-            $str_search .= "p.per_cedula like :search) AND ";
+            $str_search .= "(per.per_pri_nombre like :search OR ";
+            $str_search .= "per.per_seg_nombre like :search OR ";
+            $str_search .= "per.per_pri_apellido like :search OR ";
+            $str_search .= "per.per_seg_apellido like :search OR ";
+            $str_search .= "per.per_cedula like :search) AND ";
 
             if (!empty($arrFiltro['profesor'])) {
-                $str_search .= "(pe.per_pri_nombre like :profesor OR ";
-                $str_search .= "pe.per_seg_nombre like :profesor OR ";
-                $str_search .= "pe.per_pri_apellido like :profesor OR ";
-                $str_search .= "pe.per_seg_apellido like :profesor) AND ";
+                $str_search .= "(per.per_pri_nombre like :profesor OR ";
+                $str_search .= "per.per_seg_nombre like :profesor OR ";
+                $str_search .= "per.per_pri_apellido like :profesor OR ";
+                $str_search .= "per.per_seg_apellido like :profesor) AND ";
             }
             if ($arrFiltro['unidad'] != "" && $arrFiltro['unidad'] > 0) {
-                $str_search .= "a.uaca_id = :unidad AND ";
+                $str_search .= "daca.uaca_id = :unidad AND ";
             }
             if ($arrFiltro['modalidad'] != "" && $arrFiltro['modalidad'] > 0) {
-                $str_search .= "a.mod_id = :modalidad AND ";
+                $str_search .= "daca.mod_id = :modalidad AND ";
             }
             if ($arrFiltro['periodo'] != "" && $arrFiltro['periodo'] > 0) {
-                $str_search .= "a.paca_id = :periodo AND ";
+                $str_search .= "daca.paca_id = :periodo AND ";
             }
             if ($arrFiltro['asignatura'] != "" && $arrFiltro['asignatura'] > 0) {
-                $str_search .= "a.asi_id = :asignatura AND ";
+                $str_search .= "daca.asi_id = :asignatura AND ";
             }
             /*********** comentar y cambiar tomando el estado de tabla anterior */
            /* if ($arrFiltro['estado_pago'] != '-1') {
@@ -645,78 +645,165 @@ class Distributivo extends \yii\db\ActiveRecord {
                     $str_search .= " m.eppa_estado_pago = :estado_pago AND ";
                 }
             }*/
-            if ($arrFiltro['estado_pago'] == "0" or $arrFiltro['estado_pago'] == "1") {            
-                if ($arrFiltro['estado_pago'] == "0") {            
-                $str_search .= " ((m.ccar_estado_cancela is null OR m.ccar_estado_cancela = :estado_pago) AND NOW() > m.ccar_fecha_vencepago ) AND ";
+            if ($arrFiltro['estado_pago'] == "0" or $arrFiltro['estado_pago'] == "1") {
+                if ($arrFiltro['estado_pago'] == "0") {
+                $str_search .= " ((ccar.ccar_estado_cancela is null OR ccar.ccar_estado_cancela = :estado_pago) AND NOW() > ccar.ccar_fecha_vencepago ) AND ";
             }else{
-                $str_search .= " (m.ccar_estado_cancela = :estado_pago OR NOW() < m.ccar_fecha_vencepago) AND ";
-            } 
-        } 
-            /**************************************************************  **/ 
+                $str_search .= " (ccar.ccar_estado_cancela = :estado_pago OR NOW() < ccar.ccar_fecha_vencepago) AND ";
+            }
+        }
+            /**************************************************************  **/
             if ($arrFiltro['jornada'] != "" && $arrFiltro['jornada'] > 0) {
-                $str_search .= "a.daca_jornada = :jornada AND ";
+                $str_search .= "daca.daca_jornada = :jornada AND ";
             }
         }else{
-          $mod_paca        = new PeriodoAcademico(); 
+          $mod_paca        = new PeriodoAcademico();
           $paca_actual_id  = $mod_paca->getPeriodoAcademicoActual();
-          $str_search      = "a.paca_id = ".$paca_actual_id[0]['id']." AND a.mod_id = 0 AND ";
+          $str_search      = "daca.paca_id = ".$paca_actual_id[0]['id']." AND /*a.mod_id = 0 AND*/ ";
         }
-
-
-        
-
-        $sql = "SELECT  distinct h.est_id, 
-                        d.uaca_nombre as unidad, 
+    // VERSION ORIGINAL
+    /* $sql =  "SELECT  distinct h.est_id,
+                        d.uaca_nombre as unidad,
                         e.mod_nombre as modalidad,
-                        p.per_cedula as identificacion, 
+                        p.per_cedula as identificacion,
                         concat(p.per_pri_nombre, ' ', p.per_pri_apellido, ' ', ifnull(p.per_seg_apellido,'')) as estudiante,
                         concat(saca_nombre, '-', baca_nombre,'-',baca_anio) as periodo,
                         z.asi_nombre as asignatura,
-                        -- case 
-                          --   when m.eppa_estado_pago = '0' then 'No Autorizado' 
-                          --   when m.eppa_estado_pago = '1' then 'Autorizado'
-                          --   else 'No Autorizado'
-                          --   end as 'pago',                           
-                          case 
+                        case
                                 when m.ccar_fecha_vencepago <= NOW() then  ifnull((SELECT
-                                            CASE WHEN mi.ccar_estado_cancela = 'C'
+                                            CASE WHEN mi.ccar_estado_cancela =  'C'
                                             THEN 'Autorizado'
                                             ELSE 'No Autorizado' END AS pago
                                             FROM db_facturacion.carga_cartera mi
-                                            WHERE mi.est_id = g.est_id and mi.ccar_fecha_vencepago <= NOW()
+                                            WHERE mi.est_id =  g.est_id and mi.ccar_fecha_vencepago <= NOW()
                                             ORDER BY mi.ccar_fecha_vencepago desc
                                             LIMIT 1),'No Autorizado')
                                 when m.ccar_fecha_vencepago >= NOW() then ifnull((SELECT
-                                            CASE WHEN mi.ccar_estado_cancela = 'N' or mi.ccar_estado_cancela = 'C'
+                                            CASE WHEN mi.ccar_estado_cancela =  'N' or mi.ccar_estado_cancela =  'C'
                                             THEN 'Autorizado'
                                             ELSE 'No Autorizado' END AS pago
                                             FROM db_facturacion.carga_cartera mi
-                                            WHERE mi.est_id = g.est_id and mi.ccar_fecha_vencepago >= NOW()
+                                            WHERE mi.est_id =  g.est_id and mi.ccar_fecha_vencepago >= NOW()
                                             ORDER BY mi.ccar_fecha_vencepago asc
-                                            LIMIT 1),'No Autorizado')                        
+                                            LIMIT 1),'No Autorizado')
                                 else 'No Autorizado'
-                                end as pago  
-                        -- ifnull(DATE_FORMAT(m.eppa_fecha_registro, '%Y-%m-%d'), ' ') as fecha_pago 
+                                end as pago
                 FROM " . $con->dbname . ".distributivo_academico a inner join " . $con->dbname . ".profesor b
-                    on b.pro_id = a.pro_id 
-                    inner join " . $con1->dbname . ".persona c on c.per_id = b.per_id
-                    inner join " . $con1->dbname . ".persona pe on pe.per_id = b.per_id
-                    inner join " . $con->dbname . ".unidad_academica d on d.uaca_id = a.uaca_id
-                    inner join " . $con->dbname . ".modalidad e on e.mod_id = a.mod_id
-                    inner join " . $con->dbname . ".periodo_academico f on f.paca_id = a.paca_id
-                    inner join " . $con->dbname . ".distributivo_academico_estudiante g on g.daca_id = a.daca_id
-                    inner join " . $con->dbname . ".estudiante h on h.est_id = g.est_id
-                    inner join " . $con1->dbname . ".persona p on p.per_id = h.per_id
-                    inner join " . $con->dbname . ".semestre_academico s on s.saca_id = f.saca_id
-                    inner join " . $con->dbname . ".bloque_academico t on t.baca_id = f.baca_id
-                    inner join " . $con->dbname . ".asignatura z on a.asi_id = z.asi_id
-                    -- left join " . $con->dbname . ".estudiante_periodo_pago m on (m.est_id = g.est_id and m.paca_id = f.paca_id)
-                    left join " . $con2->dbname . ".carga_cartera m on (m.est_id = g.est_id /* and m.paca_id = f.paca_id */)
-                    WHERE $str_search /* f.paca_activo = 'A'
-                    and*/ a.daca_estado = :estado
-                    and a.daca_estado_logico = :estado
-                    and g.daes_estado = :estado
-                    and g.daes_estado_logico = :estado";
+                    on b.pro_id =  a.pro_id
+                    inner join " . $con1->dbname . ".persona c on c.per_id =  b.per_id
+                    inner join " . $con1->dbname . ".persona pe on pe.per_id =  b.per_id
+                    inner join " . $con->dbname . ".unidad_academica d on d.uaca_id =  a.uaca_id
+                    inner join " . $con->dbname . ".modalidad e on e.mod_id =  a.mod_id
+                    inner join " . $con->dbname . ".periodo_academico f on f.paca_id =  a.paca_id
+                    inner join " . $con->dbname . ".distributivo_academico_estudiante g on g.daca_id =  a.daca_id
+                    inner join " . $con->dbname . ".estudiante h on h.est_id =  g.est_id
+                    inner join " . $con1->dbname . ".persona p on p.per_id =  h.per_id
+                    inner join " . $con->dbname . ".semestre_academico s on s.saca_id =  f.saca_id
+                    inner join " . $con->dbname . ".bloque_academico t on t.baca_id =  f.baca_id
+                    inner join " . $con->dbname . ".asignatura z on a.asi_id =  z.asi_id
+                    left join " . $con2->dbname . ".carga_cartera m on (m.est_id =  g.est_id)
+                    WHERE $str_search a.daca_estado =  :estado
+                    and a.daca_estado_logico =  :estado
+                    and g.daes_estado =  :estado
+                    and g.daes_estado_logico =  :estado";*/
+
+        // VERSION 1 MODIFICADA
+                    /*$sql =  "SELECT DISTINCT
+                    est.est_id,
+                    uaca.uaca_nombre as unidad,
+                    moda.mod_nombre as modalidad,
+                    per.per_cedula as identificacion,
+                    concat(per.per_pri_nombre, ' ', per.per_pri_apellido, ' ', IFNULL(per.per_seg_apellido,'')) as estudiante,
+                    concat(saca.saca_nombre, '-',baca.baca_nombre,'-',baca.baca_anio) as periodo,
+                    asi.asi_nombre as asignatura,
+                    CASE
+                        WHEN rpm.rpm_tipo_pago = 2 THEN 'Autorizado'
+                        WHEN rpm.rpm_tipo_pago = 3 THEN
+                        CASE WHEN
+                            (SELECT count(ccar_estado_cancela) FROM " . $con2->dbname . ".carga_cartera ccar1
+                             WHERE ccar1.ccar_estado_cancela='N' AND ccar1.ccar_id=ccar.ccar_id ) =  0
+                             THEN 'Autorizado'
+                        ELSE 'No Autorizado'
+                        END
+                    END pagos
+                    FROM " . $con->dbname . ".distributivo_academico_estudiante daes
+                    INNER JOIN " . $con->dbname . ".distributivo_academico daca ON daca.daca_id =  daes.daca_id
+                    INNER JOIN " . $con->dbname . ".distributivo_cabecera dcab ON dcab.dcab_id = daca.dcab_id
+                    INNER JOIN " . $con->dbname . ".asignatura asi ON asi.asi_id = daca.asi_id
+                    INNER JOIN " . $con->dbname . ".materia_paralelo_periodo mpp ON mpp.mpp_id = daca.mpp_id
+                    INNER JOIN " . $con->dbname . ".estudiante est ON daes.est_id = est.est_id
+                    INNER JOIN " . $con1->dbname . ".persona per ON per.per_id = est.per_id
+                    INNER JOIN " . $con->dbname . ".planificacion_estudiante pes ON pes.per_id=est.per_id
+                    INNER JOIN " . $con->dbname . ".planificacion pla ON pla.pla_id = pes.pla_id
+                    INNER JOIN " . $con->dbname . ".semestre_academico saca ON saca.saca_id =  pla.saca_id
+                    INNER JOIN " . $con->dbname . ".periodo_academico paca ON  paca.saca_id=saca.saca_id
+                    INNER JOIN " . $con->dbname . ".bloque_academico baca ON baca.baca_id = paca.baca_id
+                    INNER JOIN " . $con->dbname . ".modalidad moda ON moda.mod_id = pla.mod_id
+                    INNER JOIN " . $con->dbname . ".registro_online ron ON ron.per_id=est.per_id AND
+                    ron.pes_id = pes.pes_id
+                    INNER JOIN " . $con->dbname . ".registro_pago_matricula rpm ON rpm.ron_id=ron.ron_id
+                    INNER JOIN " . $con->dbname . ".registro_online_cuota roc ON roc.ron_id =  ron.ron_id
+                    INNER JOIN " . $con2->dbname . ".carga_cartera ccar ON ccar.ccar_fecha_vencepago=roc.roc_vencimiento
+                    AND est.est_id = ccar.est_id
+                    INNER JOIN " . $con->dbname . ".unidad_academica uaca on uaca.uaca_id =  daca.uaca_id
+                    WHERE  $str_search
+                           ccar.ccar_fecha_vencepago<=now() AND
+                           dcab.dcab_estado_revision = 2 AND
+                           daca.daca_estado =  :estado and
+                           daca.daca_estado_logico =  :estado and
+                           daes.daes_estado =  :estado AND
+                           daes.daes_estado_logico =  :estado ";*/
+        // VERSION 2 MODIFICADA
+                    $sql =  "SELECT DISTINCT
+                        est.est_id,
+                        uaca.uaca_nombre as unidad,
+                        moda.mod_nombre as modalidad,
+                        per.per_cedula as identificacion,
+                        concat(per.per_pri_nombre, ' ', per.per_pri_apellido, ' ', ifnull(per.per_seg_apellido,'')) as estudiante,
+                        concat(saca.saca_nombre, '-',baca.baca_nombre,'-',baca.baca_anio) as periodo,
+                        asi.asi_nombre as asignatura,
+
+                        CASE
+                            WHEN rpm.rpm_tipo_pago=2 THEN 'Autorizado'
+                            WHEN rpm.rpm_tipo_pago=3 THEN
+                            CASE WHEN
+                                (SELECT count(ccar_estado_cancela) FROM " . $con2->dbname . ".carga_cartera ccar1
+                                WHERE ccar1.ccar_estado_cancela='N' AND ccar1.ccar_id=ccar.ccar_id ) =  0
+                                THEN 'Autorizado'
+                            ELSE 'No Autorizado'
+                            END
+                        END pagos
+                        FROM " . $con->dbname . ".distributivo_academico_estudiante daes
+                        INNER JOIN " . $con->dbname . ".estudiante est on daes.est_id = est.est_id
+                        INNER JOIN " . $con1->dbname . ".persona per on per.per_id = est.per_id
+                        INNER JOIN " . $con->dbname . ".planificacion_estudiante pes on pes.per_id = est.per_id
+                        INNER JOIN " . $con->dbname . ".planificacion pla on pla.pla_id = pes.pla_id
+                        INNER JOIN " . $con->dbname . ".semestre_academico saca on saca.saca_id =  pla.saca_id
+                        INNER JOIN " . $con->dbname . ".periodo_academico paca on  paca.saca_id = saca.saca_id
+                        INNER JOIN " . $con->dbname . ".bloque_academico baca on baca.baca_id = paca.baca_id
+                        INNER JOIN " . $con->dbname . ".modalidad moda on moda.mod_id = pla.mod_id
+                        INNER JOIN " . $con->dbname . ".registro_online ron on ron.per_id = est.per_id AND
+                        ron.pes_id = pes.pes_id
+                        INNER JOIN " . $con->dbname . ".registro_online_item roi on roi.ron_id = ron.ron_id
+                        INNER JOIN " . $con->dbname . ".malla_academica_detalle made on made.made_codigo_asignatura = roi.roi_materia_cod
+                        INNER JOIN " . $con->dbname . ".asignatura asi on asi.asi_id = made.asi_id
+                        INNER JOIN " . $con->dbname . ".registro_pago_matricula rpm on rpm.ron_id = ron.ron_id
+                        INNER JOIN " . $con->dbname . ".registro_online_cuota roc on roc.ron_id = ron.ron_id
+                        INNER JOIN " . $con->dbname . ".distributivo_academico daca on daca.daca_id =  daes.daca_id
+                        AND daca.paca_id = paca.paca_id AND asi.asi_id = daca.asi_id
+                        INNER JOIN " . $con->dbname . ".distributivo_cabecera dcab on dcab.dcab_id = daca.dcab_id
+                        INNER JOIN " . $con->dbname . ".materia_paralelo_periodo mpp on mpp.mpp_id = daca.mpp_id
+                        INNER JOIN " . $con2->dbname . ".carga_cartera ccar on ccar.ccar_fecha_vencepago=roc.roc_vencimiento
+                        AND est.est_id = ccar.est_id
+                        INNER JOIN " . $con->dbname . ".unidad_academica uaca on uaca.uaca_id =  daca.uaca_id
+                        WHERE
+                        $str_search
+                        ccar.ccar_fecha_vencepago<=now() AND
+                        dcab.dcab_estado_revision = 2 AND
+                        daca.daca_estado =  :estado AND
+                        daca.daca_estado_logico =  :estado AND
+                        daes.daes_estado =  :estado AND
+                        daes.daes_estado_logico =  :estado ";
 
         $comando = $con->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
@@ -753,7 +840,7 @@ class Distributivo extends \yii\db\ActiveRecord {
                     $filestado = 'N';
                 } else {
                     $filestado = 'C';
-              } 
+              }
                 $comando->bindParam(":estado_pago", $filestado, \PDO::PARAM_STR);
             }
             /***************************************************************** */

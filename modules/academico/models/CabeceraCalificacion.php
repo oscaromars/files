@@ -2588,7 +2588,7 @@ UPDATE db_academico.detalle_calificacion
 				}
 
 			} elseif (strtoupper(substr($elementos[$iter], 0, 3)) == 'EVA') {
-				$dataitems['evaluacion'] = 1;
+				$dataitems['examen'] = 1;
 
 			} elseif (strtoupper(substr($elementos[$iter], 0, 3)) == 'MEJ') {
 				$dataitems['mejoramiento'] = 1;
@@ -2602,7 +2602,11 @@ UPDATE db_academico.detalle_calificacion
 			} elseif (strtoupper(substr($elementos[$iter], 2, 4)) == 'NCRO') {
 				$dataitems['sincrona'] = 1;
 
+			} elseif (strtoupper(substr($elementos[$iter], 0, 5)) == 'CUEST') {
+				$dataitems['evaluacion'] = 1;
+
 			}
+
 
 		}
 

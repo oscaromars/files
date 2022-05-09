@@ -405,9 +405,9 @@ $ucasi = updatecasistencia($cabecerasasi[0]['casi_id']);
 
 for ($it = 0; $it < count($arraydata3); $it++) {
 
-$comp_evaluacion1 = 0.00;$comp_autonoma1 = 0.00;$comp_examen1 = 0.00;
+$comp_evaluacion1 = 0.00;$comp_examen1 = 0.00;$comp_autonoma1 = 0.00;
 $comp_foro1 = 0.00 ; $comp_sincrona1 = 0.00 ; 
- $comp_evaluacion2 = 0.00; $comp_autonoma2 = 0.00; $comp_examen2 = 0.00;
+ $comp_evaluacion2 = 0.00; $comp_examen2 = 0.00; $comp_autonoma2 = 0.00;
  $comp_foro2 = 0.00 ; $comp_sincrona2 = 0.00 ; 
 $comp_examen3 = 0.00;$comp_supletorio3 = 0.00;$comp_mejoramiento3 = 0.00;
 
@@ -470,7 +470,7 @@ print_r($data03);*/
 
             if ($componentes[$il]['com_id']== 5 AND isset($data02['evaluacion'])) {    //COMP_EVALUACION
         
-     $comp_evaluacion1 = (float)$comp_evaluacion1+ (float)$data03; //print_r("SUMADO:"); 
+     $comp_examen1 = (float)$comp_examen1+ (float)$data03; //print_r("SUMADO:"); 
      $comp_cuni_id = $componentes[$il]['cuni_id'];
     //print_r("comp_sincrona1 ES ");
     //  print_r($comp_sincrona1);
@@ -536,8 +536,8 @@ $bt= putbitacora($detalles[0]['dcal_id'],$dcalificacion);
 }
 } 
 
-if ( $comp_evaluacion1 > 0 ){
-$dcalificacion = (float)$comp_evaluacion1;
+if ( $comp_examen1 > 0 ){
+$dcalificacion = (float)$comp_examen1;
 $detalles = getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id); 
 if ($detalles == Null) {
 $detalles = putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id ,$dcalificacion); 
@@ -588,9 +588,9 @@ for ($il = 0; $il < count($componentes); $il++) {
 
     }
 
-    if ($componentes[$il]['com_id']== 10 AND isset($data02['evaluacion'] )) { //COMP_EVALUACION ol
+    if ($componentes[$il]['com_id']== 10 AND isset($data02['examen'] )) { //COMP_EVALUACION ol
         
-         $comp_evaluacion2 = (float)$comp_evaluacion2 + (float)$data03; 
+         $comp_examen2 = (float)$comp_examen2 + (float)$data03; 
           $comp_cuni_id = $componentes[$il]['cuni_id'];
 
     }
@@ -654,8 +654,8 @@ $bt= putbitacora($detalles[0]['dcal_id'],$dcalificacion);
 }
 } 
 
-if ( $comp_evaluacion2 > 0 ){
-$dcalificacion = (float)$comp_evaluacion2;
+if ( $comp_examen2 > 0 ){
+$dcalificacion = (float)$comp_examen2;
 $detalles = getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id); 
 if ($detalles == Null) {
 $detalles = putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id ,$dcalificacion); 
@@ -1011,7 +1011,7 @@ function getparamitem($elemento) {
 
 
    }  elseif ( strtoupper(substr($elementos[$iter],0,3)) == 'EVA'){
-      $dataitems['evaluacion'] = 1;
+      $dataitems['examen'] = 1;
 
 
    }  elseif ( strtoupper(substr($elementos[$iter],0,3)) == 'MEJ'){
@@ -1027,6 +1027,9 @@ function getparamitem($elemento) {
 
    } elseif ( strtoupper(substr($elementos[$iter],2,4)) == 'NCRO'){ 
        $dataitems['sincrona'] = 1;
+
+   }  elseif ( strtoupper(substr($elementos[$iter],0,5)) == 'CUEST'){ 
+       $dataitems['evaluacion'] = 1;
 
    }
 

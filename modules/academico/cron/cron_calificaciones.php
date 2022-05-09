@@ -1011,8 +1011,9 @@ function getparamitem($elemento) {
 
 
    }  elseif ( strtoupper(substr($elementos[$iter],0,3)) == 'EVA'){
-      $dataitems['examen'] = 1;
-
+       if  ($dataitems['evaluacion'] != 1) { 
+        $dataitems['examen'] = 1;
+       }
 
    }  elseif ( strtoupper(substr($elementos[$iter],0,3)) == 'MEJ'){
        $dataitems['mejoramiento'] = 1;
@@ -1029,7 +1030,7 @@ function getparamitem($elemento) {
        $dataitems['sincrona'] = 1;
 
    }  elseif ( strtoupper(substr($elementos[$iter],0,5)) == 'CUEST'){ 
-       $dataitems['evaluacion'] = 1;
+       $dataitems['evaluacion'] = 1; 
 
    }
 

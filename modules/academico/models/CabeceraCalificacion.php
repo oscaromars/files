@@ -2588,7 +2588,10 @@ UPDATE db_academico.detalle_calificacion
 				}
 
 			} elseif (strtoupper(substr($elementos[$iter], 0, 3)) == 'EVA') {
+
+				if  ($dataitems['evaluacion'] != 1) { 
 				$dataitems['examen'] = 1;
+			}
 
 			} elseif (strtoupper(substr($elementos[$iter], 0, 3)) == 'MEJ') {
 				$dataitems['mejoramiento'] = 1;

@@ -1990,39 +1990,6 @@ return $this->redirect('index');
 
 						if ($mod_id == 1 AND $uaca_id == 1) {
 
-							if (isset($sincro)) {
-								$fsincro = (float) $sincro;
-								$fsincro = $fsincro / 50;
-								$comp_cuni_id1 = 2;
-								$comp_cuni_id2 = 7;
-							}
-
-							if ($fsincro > 0) {
-								$dcalificacion = (float) $fsincro;
-								$detalles = $mod_calificacion->getdetalles($cabeceras[0]['ccal_id'], $comp_cuni_id1);
-								if ($detalles == Null) {
-									$detalles = $mod_calificacion->putdetalles($cabeceras[0]['ccal_id'], $comp_cuni_id1, $dcalificacion);
-								} else {
-									if ($detalles[0]['dcal_usuario_creacion'] == '1' AND $detalles[0]['dcal_fecha_modificacion'] == Null) {
-										$detallesup = $mod_calificacion->updatedetalles($detalles[0]['dcal_id'], $dcalificacion);
-										$bt = $mod_calificacion->putbitacora($detalles[0]['dcal_id'], $dcalificacion);
-									}
-								}
-							}
-
-							if ($fsincro > 0) {
-								$dcalificacion = (float) $fsincro;
-								$detalles = $mod_calificacion->getdetalles($cabeceras[0]['ccal_id'], $comp_cuni_id2);
-								if ($detalles == Null) {
-									$detalles = $mod_calificacion->putdetalles($cabeceras[0]['ccal_id'], $comp_cuni_id2, $dcalificacion);
-								} else {
-									if ($detalles[0]['dcal_usuario_creacion'] == '1' AND $detalles[0]['dcal_fecha_modificacion'] == Null) {
-										$detallesup = $mod_calificacion->updatedetalles($detalles[0]['dcal_id'], $dcalificacion);
-										$bt = $mod_calificacion->putbitacora($detalles[0]['dcal_id'], $dcalificacion);
-									}
-								}
-							}
-
 							$cabecerasasi = $mod_asistencia->getcasistencia($est_id, $asi_id, $paca_id, $parciales);
 							if ($cabecerasasi == Null) {
 								$cabecerasasi = $mod_asistencia->putcasistencia($est_id, $asi_id, $paca_id, $parciales, $pro_id);
@@ -2034,7 +2001,7 @@ return $this->redirect('index');
 								if ($detallesasi == Null) {
 									$detalles = $mod_asistencia->putdasistencia($cabecerasasi[0]['casi_id'], $parciales, $dasistencia);
 								} else {
-									if ($detallesasi[0]['dasi_usuario_creacion'] == '1' AND $detallesasi[0]['dasi_fecha_modificacion'] == Null) {
+									if ($detallesasi[0]['dasi_usuario_creacion'] == '1') {
 										$detallesup = $mod_asistencia->updatedasitencia($detallesasi[0]['dasi_id'], $dasistencia);
 									}
 								}
@@ -2171,7 +2138,7 @@ print_r($data03);*/
 											if ($detalles == Null) {
 												$detalles = $mod_calificacion->putdetalles($cabeceras[0]['ccal_id'], $comp_cuni_id, $dcalificacion);
 											} else {
-												if ($detalles[0]['dcal_usuario_creacion'] == '1' AND $detalles[0]['dcal_fecha_modificacion'] == Null) {
+												if ($detalles[0]['dcal_usuario_creacion'] == '1') {
 													$dcalificacion = $dcalificacion + $detalles[0]['dcal_calificacion'];
 													$detallesup = $mod_calificacion->updatedetalles($detalles[0]['dcal_id'], $dcalificacion);
 													$bt = $mod_calificacion->putbitacora($detalles[0]['dcal_id'], $dcalificacion);
@@ -2185,7 +2152,7 @@ print_r($data03);*/
 											if ($detalles == Null) {
 												$detalles = $mod_calificacion->putdetalles($cabeceras[0]['ccal_id'], $comp_cuni_id, $dcalificacion);
 											} else {
-												if ($detalles[0]['dcal_usuario_creacion'] == 1 AND $detalles[0]['dcal_fecha_modificacion'] == Null) {
+												if ($detalles[0]['dcal_usuario_creacion'] == 1 ) {
 													$dcalificacion = $dcalificacion + $detalles[0]['dcal_calificacion'];
 													$detallesup = $mod_calificacion->updatedetalles($detalles[0]['dcal_id'], $dcalificacion);
 													$bt = $mod_calificacion->putbitacora($detalles[0]['dcal_id'], $dcalificacion);
@@ -2250,7 +2217,7 @@ print_r($data03);*/
 											if ($detalles == Null) {
 												$detalles = $mod_calificacion->putdetalles($cabeceras[0]['ccal_id'], $comp_cuni_id, $dcalificacion);
 											} else {
-												if ($detalles[0]['dcal_usuario_creacion'] == 1 AND $detalles[0]['dcal_fecha_modificacion'] == Null) {
+												if ($detalles[0]['dcal_usuario_creacion'] == 1) {
 													$dcalificacion = $dcalificacion + $detalles[0]['dcal_calificacion'];
 													$detallesup = $mod_calificacion->updatedetalles($detalles[0]['dcal_id'], $dcalificacion);
 													$bt = $mod_calificacion->putbitacora($detalles[0]['dcal_id'], $dcalificacion);
@@ -2264,7 +2231,7 @@ print_r($data03);*/
 											if ($detalles == Null) {
 												$detalles = $mod_calificacion->putdetalles($cabeceras[0]['ccal_id'], $comp_cuni_id, $dcalificacion);
 											} else {
-												if ($detalles[0]['dcal_usuario_creacion'] == 1 AND $detalles[0]['dcal_fecha_modificacion'] == Null) {
+												if ($detalles[0]['dcal_usuario_creacion'] == 1) {
 													$dcalificacion = $dcalificacion + $detalles[0]['dcal_calificacion'];
 													$detallesup = $mod_calificacion->updatedetalles($detalles[0]['dcal_id'], $dcalificacion);
 													$bt = $mod_calificacion->putbitacora($detalles[0]['dcal_id'], $dcalificacion);
@@ -2393,7 +2360,7 @@ print_r($data03);*/
 											if ($detalles == Null) {
 												$detalles = $mod_calificacion->putdetalles($cabeceras[0]['ccal_id'], $comp_cuni_id, $dcalificacion);
 											} else {
-												if ($detalles[0]['dcal_usuario_creacion'] == '1' AND $detalles[0]['dcal_fecha_modificacion'] == Null) {
+												if ($detalles[0]['dcal_usuario_creacion'] == '1') {
 													$dcalificacion = $dcalificacion + $detalles[0]['dcal_calificacion'];
 													$detallesup = $mod_calificacion->updatedetalles($detalles[0]['dcal_id'], $dcalificacion);
 													$bt = $mod_calificacion->putbitacora($detalles[0]['dcal_id'], $dcalificacion);
@@ -2407,7 +2374,7 @@ print_r($data03);*/
 											if ($detalles == Null) {
 												$detalles = $mod_calificacion->putdetalles($cabeceras[0]['ccal_id'], $comp_cuni_id, $dcalificacion);
 											} else {
-												if ($detalles[0]['dcal_usuario_creacion'] == 1 AND $detalles[0]['dcal_fecha_modificacion'] == Null) {
+												if ($detalles[0]['dcal_usuario_creacion'] == 1) {
 													$dcalificacion = $dcalificacion + $detalles[0]['dcal_calificacion'];
 													$detallesup = $mod_calificacion->updatedetalles($detalles[0]['dcal_id'], $dcalificacion);
 													$bt = $mod_calificacion->putbitacora($detalles[0]['dcal_id'], $dcalificacion);
@@ -2456,7 +2423,7 @@ print_r($data03);*/
 											if ($detalles == Null) {
 												$detalles = $mod_calificacion->putdetalles($cabeceras[0]['ccal_id'], $comp_cuni_id, $dcalificacion);
 											} else {
-												if ($detalles[0]['dcal_usuario_creacion'] == 1 AND $detalles[0]['dcal_fecha_modificacion'] == Null) {
+												if ($detalles[0]['dcal_usuario_creacion'] == 1 ) {
 													$dcalificacion = $dcalificacion + $detalles[0]['dcal_calificacion'];
 													$detallesup = $mod_calificacion->updatedetalles($detalles[0]['dcal_id'], $dcalificacion);
 													$bt = $mod_calificacion->putbitacora($detalles[0]['dcal_id'], $dcalificacion);
@@ -2470,7 +2437,7 @@ print_r($data03);*/
 											if ($detalles == Null) {
 												$detalles = $mod_calificacion->putdetalles($cabeceras[0]['ccal_id'], $comp_cuni_id, $dcalificacion);
 											} else {
-												if ($detalles[0]['dcal_usuario_creacion'] == 1 AND $detalles[0]['dcal_fecha_modificacion'] == Null) {
+												if ($detalles[0]['dcal_usuario_creacion'] == 1 ) {
 													$dcalificacion = $dcalificacion + $detalles[0]['dcal_calificacion'];
 													$detallesup = $mod_calificacion->updatedetalles($detalles[0]['dcal_id'], $dcalificacion);
 													$bt = $mod_calificacion->putbitacora($detalles[0]['dcal_id'], $dcalificacion);

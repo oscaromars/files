@@ -384,39 +384,6 @@ $cabeceras = getcabeceras($est_id,$asi_id,$paca_id,$parciales);}
 
 if ($mod_id==1 AND $uaca_id ==1){
 
-if (isset($sincro)) {
-$fsincro = (float)$sincro;
-$fsincro = $fsincro/50;
-$comp_cuni_id1 = 2 ;
-$comp_cuni_id2 = 7;
-}
-
-if ( $fsincro > 0 ){
-$dcalificacion = (float)$fsincro;
-$detalles = getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id1);
-if ($detalles == Null) {
-$detalles = putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id1 ,$dcalificacion); 
-}else {
-if ($detalles[0]['dcal_usuario_creacion'] == '1' AND $detalles[0]['dcal_fecha_modificacion'] ==Null){
-$detallesup = updatedetalles($detalles[0]['dcal_id'],$dcalificacion); 
-$bt= putbitacora($detalles[0]['dcal_id'],$dcalificacion);
-}
-}
-} 
-
-if ( $fsincro > 0 ){
-$dcalificacion = (float)$fsincro;
-$detalles = getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id2);
-if ($detalles == Null) {
-$detalles = putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id2 ,$dcalificacion); 
-}else {
-if ($detalles[0]['dcal_usuario_creacion'] == '1' AND $detalles[0]['dcal_fecha_modificacion'] ==Null){
-$detallesup = updatedetalles($detalles[0]['dcal_id'],$dcalificacion); 
-$bt= putbitacora($detalles[0]['dcal_id'],$dcalificacion);
-}
-}
-} 
-
 $cabecerasasi = getcasistencia($est_id,$asi_id,$paca_id,$parciales);
 if ($cabecerasasi == Null){ 
 $cabecerasasi = putcasistencia($est_id,$asi_id,$paca_id,$parciales,$pro_id);
@@ -428,7 +395,7 @@ $detallesasi = getdasistencia($cabecerasasi[0]['casi_id'],$parciales);
 if ($detallesasi == Null) {
 $detalles = putdasistencia($cabecerasasi[0]['casi_id'],$parciales,$dasistencia); 
 }else {
-if ($detallesasi[0]['dasi_usuario_creacion'] == '1' AND $detallesasi[0]['dasi_fecha_modificacion'] ==Null){
+if ($detallesasi[0]['dasi_usuario_creacion'] == '1'){
 $detallesup = updatedasitencia($detallesasi[0]['dasi_id'],$dasistencia); 
 }
 }
@@ -558,7 +525,7 @@ $detalles = getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id);
 if ($detalles == Null) {
 $detalles = putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id ,$dcalificacion); 
 }else {
-if ($detalles[0]['dcal_usuario_creacion'] == '1' AND $detalles[0]['dcal_fecha_modificacion'] ==Null){
+if ($detalles[0]['dcal_usuario_creacion'] == '1'){
 $dcalificacion = $dcalificacion + $detalles[0]['dcal_calificacion'];
 $detallesup = updatedetalles($detalles[0]['dcal_id'],$dcalificacion); 
 $bt= putbitacora($detalles[0]['dcal_id'],$dcalificacion);
@@ -572,7 +539,7 @@ $detalles = getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id);
 if ($detalles == Null) {
 $detalles = putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id ,$dcalificacion); 
 }else {
-if ($detalles[0]['dcal_usuario_creacion'] == 1 AND $detalles[0]['dcal_fecha_modificacion'] ==Null){
+if ($detalles[0]['dcal_usuario_creacion'] == 1 ){
 $dcalificacion = $dcalificacion + $detalles[0]['dcal_calificacion'];
 $detallesup = updatedetalles($detalles[0]['dcal_id'],$dcalificacion); 
 $bt= putbitacora($detalles[0]['dcal_id'],$dcalificacion);
@@ -638,7 +605,7 @@ $detalles = getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id);
 if ($detalles == Null) {
 $detalles = putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id ,$dcalificacion); 
 }else {
-if ($detalles[0]['dcal_usuario_creacion'] == 1 AND $detalles[0]['dcal_fecha_modificacion'] ==Null){
+if ($detalles[0]['dcal_usuario_creacion'] == 1 ){
 $dcalificacion = $dcalificacion + $detalles[0]['dcal_calificacion'];
 $detallesup = updatedetalles($detalles[0]['dcal_id'],$dcalificacion);  
 $bt= putbitacora($detalles[0]['dcal_id'],$dcalificacion);
@@ -653,7 +620,7 @@ $detalles = getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id);
 if ($detalles == Null) {
 $detalles = putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id ,$dcalificacion); 
 }else {
-if ($detalles[0]['dcal_usuario_creacion'] == 1 AND $detalles[0]['dcal_fecha_modificacion'] ==Null){
+if ($detalles[0]['dcal_usuario_creacion'] == 1 ){
 $dcalificacion = $dcalificacion + $detalles[0]['dcal_calificacion'];
 $detallesup = updatedetalles($detalles[0]['dcal_id'],$dcalificacion); 
 $bt= putbitacora($detalles[0]['dcal_id'],$dcalificacion);
@@ -782,7 +749,7 @@ $detalles = getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id);
 if ($detalles == Null) {
 $detalles = putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id ,$dcalificacion); 
 }else {
-if ($detalles[0]['dcal_usuario_creacion'] == '1' AND $detalles[0]['dcal_fecha_modificacion'] ==Null){
+if ($detalles[0]['dcal_usuario_creacion'] == '1'){
 $dcalificacion = $dcalificacion + $detalles[0]['dcal_calificacion'];
 $detallesup = updatedetalles($detalles[0]['dcal_id'],$dcalificacion); 
 $bt= putbitacora($detalles[0]['dcal_id'],$dcalificacion);
@@ -796,7 +763,7 @@ $detalles = getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id);
 if ($detalles == Null) {
 $detalles = putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id ,$dcalificacion); 
 }else {
-if ($detalles[0]['dcal_usuario_creacion'] == 1 AND $detalles[0]['dcal_fecha_modificacion'] ==Null){
+if ($detalles[0]['dcal_usuario_creacion'] == 1 ){
 $dcalificacion = $dcalificacion + $detalles[0]['dcal_calificacion'];
 $detallesup = updatedetalles($detalles[0]['dcal_id'],$dcalificacion); 
 $bt= putbitacora($detalles[0]['dcal_id'],$dcalificacion);
@@ -847,7 +814,7 @@ $detalles = getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id);
 if ($detalles == Null) {
 $detalles = putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id ,$dcalificacion); 
 }else {
-if ($detalles[0]['dcal_usuario_creacion'] == 1 AND $detalles[0]['dcal_fecha_modificacion'] ==Null){
+if ($detalles[0]['dcal_usuario_creacion'] == 1 ){
 $dcalificacion = $dcalificacion + $detalles[0]['dcal_calificacion'];
 $detallesup = updatedetalles($detalles[0]['dcal_id'],$dcalificacion);  
 $bt= putbitacora($detalles[0]['dcal_id'],$dcalificacion);
@@ -862,7 +829,7 @@ $detalles = getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id);
 if ($detalles == Null) {
 $detalles = putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id ,$dcalificacion); 
 }else {
-if ($detalles[0]['dcal_usuario_creacion'] == 1 AND $detalles[0]['dcal_fecha_modificacion'] ==Null){
+if ($detalles[0]['dcal_usuario_creacion'] == 1 ){
 $dcalificacion = $dcalificacion + $detalles[0]['dcal_calificacion'];
 $detallesup = updatedetalles($detalles[0]['dcal_id'],$dcalificacion); 
 $bt= putbitacora($detalles[0]['dcal_id'],$dcalificacion);

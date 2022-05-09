@@ -708,7 +708,7 @@ class Distributivo extends \yii\db\ActiveRecord {
                     and g.daes_estado_logico =  :estado";*/
 
         // VERSION 1 MODIFICADA
-                    /*$sql =  "SELECT DISTINCT
+                    $sql =  "SELECT DISTINCT
                     est.est_id,
                     uaca.uaca_nombre as unidad,
                     moda.mod_nombre as modalidad,
@@ -725,7 +725,7 @@ class Distributivo extends \yii\db\ActiveRecord {
                              THEN 'Autorizado'
                         ELSE 'No Autorizado'
                         END
-                    END pagos
+                    END pago
                     FROM " . $con->dbname . ".distributivo_academico_estudiante daes
                     INNER JOIN " . $con->dbname . ".distributivo_academico daca ON daca.daca_id =  daes.daca_id
                     INNER JOIN " . $con->dbname . ".distributivo_cabecera dcab ON dcab.dcab_id = daca.dcab_id
@@ -752,9 +752,9 @@ class Distributivo extends \yii\db\ActiveRecord {
                            daca.daca_estado =  :estado and
                            daca.daca_estado_logico =  :estado and
                            daes.daes_estado =  :estado AND
-                           daes.daes_estado_logico =  :estado ";*/
+                           daes.daes_estado_logico =  :estado ";
         // VERSION 2 MODIFICADA
-                    $sql =  "SELECT DISTINCT
+                    /*$sql =  "SELECT DISTINCT
                         est.est_id,
                         uaca.uaca_nombre as unidad,
                         moda.mod_nombre as modalidad,
@@ -766,13 +766,17 @@ class Distributivo extends \yii\db\ActiveRecord {
                         CASE
                             WHEN rpm.rpm_tipo_pago=2 THEN 'Autorizado'
                             WHEN rpm.rpm_tipo_pago=3 THEN
-                            CASE WHEN
-                                (SELECT count(ccar_estado_cancela) FROM " . $con2->dbname . ".carga_cartera ccar1
-                                WHERE ccar1.ccar_estado_cancela='N' AND ccar1.ccar_id=ccar.ccar_id ) =  0
-                                THEN 'Autorizado'
-                            ELSE 'No Autorizado'
+                            CASE 
+                                WHEN
+                                    (SELECT count(ccar_estado_cancela) FROM " . $con2->dbname . ".carga_cartera ccar1
+                                    WHERE ccar1.ccar_estado_cancela='N' AND ccar1.ccar_id=ccar.ccar_id ) =  0
+                                    THEN 'Autorizado'
+                                WHEN
+                                    (SELECT count(ccar_estado_cancela) FROM " . $con2->dbname . ".carga_cartera ccar1
+                                    WHERE ccar1.ccar_estado_cancela='N' AND ccar1.ccar_id=ccar.ccar_id ) >  0
+                                    THEN 'No Autorizado'
                             END
-                        END pagos
+                        END pago
                         FROM " . $con->dbname . ".distributivo_academico_estudiante daes
                         INNER JOIN " . $con->dbname . ".estudiante est on daes.est_id = est.est_id
                         INNER JOIN " . $con1->dbname . ".persona per on per.per_id = est.per_id
@@ -803,7 +807,7 @@ class Distributivo extends \yii\db\ActiveRecord {
                         daca.daca_estado =  :estado AND
                         daca.daca_estado_logico =  :estado AND
                         daes.daes_estado =  :estado AND
-                        daes.daes_estado_logico =  :estado ";
+                        daes.daes_estado_logico =  :estado ";*/
 
         $comando = $con->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
@@ -852,7 +856,7 @@ class Distributivo extends \yii\db\ActiveRecord {
         }
         $resultData = $comando->queryAll();
 
-        $resultData2 = array();
+        /*$resultData2 = array();
 
         foreach ($resultData as $key => $value) {
             $band = 1;
@@ -871,13 +875,13 @@ class Distributivo extends \yii\db\ActiveRecord {
 
             if($band == 1)
                 $resultData2[] = $value;
-        }//foreach
+        }*///foreach
         //\app\models\Utilities::putMessageLogFile(print_r($resultData2,true));
 
 
         $dataProvider = new ArrayDataProvider([
             'key' => 'id',
-            'allModels' => $resultData2,
+            'allModels' => $resultData,
             'pagination' => [
                 'pageSize' => Yii::$app->params["pageSize"],
             ],
@@ -888,7 +892,7 @@ class Distributivo extends \yii\db\ActiveRecord {
         if ($reporte == 1) {
             return $dataProvider;
         } else {
-            return $resultData2;
+            return $resultData;
         }
     }
 

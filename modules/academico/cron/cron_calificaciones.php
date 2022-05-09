@@ -419,6 +419,14 @@ $comp_examen3 = 0.00;$comp_supletorio3 = 0.00;$comp_mejoramiento3 = 0.00;
 
 
  if(isset($data00['parcial'])) {
+    
+
+    if ($parciales == 3 AND $data00['parcial'] == 3) {
+
+
+
+
+            }
 
 
 if ($parciales == 1 AND $data00['parcial']==1) {
@@ -989,6 +997,9 @@ function getitemparcial($elemento) {
 
             } elseif (strtoupper(substr($elementos[$iter], 0, 4)) == 'SEGU') {
                 $dataparcial['parcial'] = 2;
+
+            }  elseif (strtoupper(substr($elementos[$iter], 0, 4)) == 'SUPL') {
+                $dataparcial['parcial'] = 3;
 
             }  
 

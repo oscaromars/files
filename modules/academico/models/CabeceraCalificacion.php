@@ -2568,6 +2568,9 @@ UPDATE db_academico.detalle_calificacion
 			} elseif (strtoupper(substr($elementos[$iter], 0, 4)) == 'SEGU') {
 				$dataparcial['parcial'] = 2;
 
+			}  elseif (strtoupper(substr($elementos[$iter], 0, 4)) == 'SUPL') {
+				$dataparcial['parcial'] = 3;
+
 			}  
 
 		}

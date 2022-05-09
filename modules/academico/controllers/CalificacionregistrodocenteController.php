@@ -2034,6 +2034,15 @@ return $this->redirect('index');
 
 								if (isset($data00['parcial'])) {
 
+
+		 	if ($parciales == 3 AND $data00['parcial'] == 3) {
+
+
+
+
+
+		 	}
+
 									if ($parciales == 1 AND $data00['parcial'] == 1) {
 //print_r("======= Inicia proceso parcial 1 ===========");
 										//print_r(count($componentes));

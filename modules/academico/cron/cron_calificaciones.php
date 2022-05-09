@@ -422,11 +422,53 @@ $comp_examen3 = 0.00;$comp_supletorio3 = 0.00;$comp_mejoramiento3 = 0.00;
     
 
     if ($parciales == 3 AND $data00['parcial'] == 3) {
+   for ($il = 0; $il < count($componentes); $il++) {
+    if ($componentes[$il]['com_id']== 6 AND isset($data02['supletorio'])) {   
+    $comp_supletorio3 = (float)$comp_supletorio3 + (float)$data03; 
+    $comp_cuni_id = $componentes[$il]['cuni_id'];
+    }
+
+    if ( $comp_supletorio3 > 0 ){
+$dcalificacion = (float)$comp_supletorio3;
+$detalles = getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id);
+if ($detalles == Null) {
+$detalles = putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id ,$dcalificacion); 
+}else {
+if ($detalles[0]['dcal_usuario_creacion'] == '1'){
+$dcalificacion = $dcalificacion + $detalles[0]['dcal_calificacion'];
+$detallesup = updatedetalles($detalles[0]['dcal_id'],$dcalificacion); 
+$bt= putbitacora($detalles[0]['dcal_id'],$dcalificacion);
+}
+}
+}
 
 
+            }}
+
+        if ($parciales == 4 AND $data00['parcial'] == 3) {
+   for ($il = 0; $il < count($componentes); $il++) {
+    if ($componentes[$il]['com_id']== 6 AND isset($data02['mejoramiento'])) {     
+    $comp_mejoramiento3 = (float)$comp_mejoramiento3 + (float)$data03; 
+    $comp_cuni_id = $componentes[$il]['cuni_id'];
+
+    }
+
+    if ( $comp_mejoramiento3 > 0 ){
+$dcalificacion = (float)$comp_mejoramiento3;
+$detalles = getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id);
+if ($detalles == Null) {
+$detalles = putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id ,$dcalificacion); 
+}else {
+if ($detalles[0]['dcal_usuario_creacion'] == '1'){
+$dcalificacion = $dcalificacion + $detalles[0]['dcal_calificacion'];
+$detallesup = updatedetalles($detalles[0]['dcal_id'],$dcalificacion); 
+$bt= putbitacora($detalles[0]['dcal_id'],$dcalificacion);
+}
+}
+}
 
 
-            }
+            }}
 
 
 if ($parciales == 1 AND $data00['parcial']==1) {
@@ -476,7 +518,7 @@ print_r($data03);*/
 
     }
 
-            if ($componentes[$il]['com_id']== 5 AND isset($data02['evaluacion'])) {    //COMP_EVALUACION
+            if ($componentes[$il]['com_id']== 6 AND isset($data02['evaluacion'])) {    //COMP_EVALUACION
         
      $comp_examen1 = (float)$comp_examen1+ (float)$data03; //print_r("SUMADO:"); 
      $comp_cuni_id = $componentes[$il]['cuni_id'];
@@ -567,14 +609,14 @@ if ($parciales == 2 AND $data00['parcial']==2) {
 for ($il = 0; $il < count($componentes); $il++) {
 
 
-    if ($componentes[$il]['com_id']== 8 AND isset($data02['evaluacion'] )) {    //COMP_EVALUACION ol
+    if ($componentes[$il]['com_id']== 3 AND isset($data02['evaluacion'] )) {    //COMP_EVALUACION ol
 
      $comp_evaluacion2 = (float)$comp_evaluacion2 + (float)$data03;  
       $comp_cuni_id = $componentes[$il]['cuni_id'];
 
     }
 
-     if ($componentes[$il]['com_id']== 9 AND isset($data02['taller'] )) {    //COMP_AUTONOMA ol
+     if ($componentes[$il]['com_id']== 4 AND isset($data02['taller'] )) {    //COMP_AUTONOMA ol
         
          $comp_autonoma2 = (float)$comp_autonoma2 + (float)$data03; 
           $comp_cuni_id = $componentes[$il]['cuni_id'];
@@ -582,21 +624,21 @@ for ($il = 0; $il < count($componentes); $il++) {
     }
 
 
-         if ($componentes[$il]['com_id']== 6 AND isset($data02['foro'] )) {    //COMP_FORO ol
+         if ($componentes[$il]['com_id']== 1 AND isset($data02['foro'] )) {    //COMP_FORO ol
         
          $comp_foro2 = (float)$comp_foro2 + (float)$data03; 
           $comp_cuni_id = $componentes[$il]['cuni_id'];
 
     }
 
-             if ($componentes[$il]['com_id']== 7 AND isset($data02['sincrona'] )) { //COMP_SINCRONA ol
+             if ($componentes[$il]['com_id']== 2 AND isset($data02['sincrona'] )) { //COMP_SINCRONA ol
         
          $comp_sincrona2 = (float)$comp_sincrona2 + (float)$data03; 
           $comp_cuni_id = $componentes[$il]['cuni_id'];
 
     }
 
-    if ($componentes[$il]['com_id']== 10 AND isset($data02['examen'] )) { //COMP_EVALUACION ol
+    if ($componentes[$il]['com_id']== 6 AND isset($data02['examen'] )) { //COMP_EVALUACION ol
         
          $comp_examen2 = (float)$comp_examen2 + (float)$data03; 
           $comp_cuni_id = $componentes[$il]['cuni_id'];
@@ -809,21 +851,21 @@ if ($parciales == 2 AND $data01['parcial']==2) {
 for ($il = 0; $il < count($componentes); $il++) {
 
 
-    if ($componentes[$il]['com_id']== 8 AND isset($data02['evaluacion'] )) {    //COMP_EVALUACION ol
+    if ($componentes[$il]['com_id']== 3 AND isset($data02['evaluacion'] )) {    //COMP_EVALUACION ol
 
      $comp_evaluacion2 = (float)$comp_evaluacion2 + (float)$data03;  
       $comp_cuni_id = $componentes[$il]['cuni_id'];
 
     }
 
-     if ($componentes[$il]['com_id']== 9 AND isset($data02['taller'] )) {    //COMP_AUTONOMA ol
+     if ($componentes[$il]['com_id']== 4 AND isset($data02['taller'] )) {    //COMP_AUTONOMA ol
         
          $comp_autonoma2 = (float)$comp_autonoma2 + (float)$data03; 
           $comp_cuni_id = $componentes[$il]['cuni_id'];
 
     }
 
-      if ($componentes[$il]['com_id']== 10 AND isset($data02['examen'] )) {    //COMP_EXAMEN ol
+      if ($componentes[$il]['com_id']== 6 AND isset($data02['examen'] )) {    //COMP_EXAMEN ol
         
          if ($data03 > $comp_examen2){
 

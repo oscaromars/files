@@ -2558,6 +2558,24 @@ UPDATE db_academico.detalle_calificacion
 		return $grade;
 	}
 
+		function getitemparcial($elemento) {
+		$dataparcial = array();
+		$elementos = explode(" ", $elemento);
+		for ($iter = 0; $iter < count($elementos); $iter++) {
+			if (strtoupper(substr($elementos[$iter], 0, 4)) == 'PRIM') {
+				 
+
+			} elseif (strtoupper(substr($elementos[$iter], 0, 4)) == 'SEGU') {
+				$dataparcial['parcial'] = 2;
+
+			}  
+
+		}
+
+		return $dataparcial;
+	}
+
+
 	function getparamitem($elemento) {
 		$dataitems = array();
 		$elementos = explode(" ", $elemento);
@@ -2572,8 +2590,8 @@ UPDATE db_academico.detalle_calificacion
 			} elseif (strtoupper(substr($elementos[$iter], 0, 3)) == 'EVA') {
 				$dataitems['evaluacion'] = 1;
 
-			} elseif (strtoupper(substr($elementos[$iter], 0, 3)) == 'EXA') {
-				$dataitems['examen'] = 1;
+			} elseif (strtoupper(substr($elementos[$iter], 0, 3)) == 'MEJ') {
+				$dataitems['mejoramiento'] = 1;
 
 			} elseif (strtoupper(substr($elementos[$iter], 0, 3)) == 'SUP') {
 				$dataitems['supletorio'] = 1;
@@ -2581,7 +2599,7 @@ UPDATE db_academico.detalle_calificacion
 			} elseif (strtoupper(substr($elementos[$iter], 0, 3)) == 'FOR') {
 				$dataitems['foro'] = 1;
 
-			} elseif (strtoupper(substr($elementos[$iter], 0, 4)) == 'SINC') {
+			} elseif (strtoupper(substr($elementos[$iter], 2, 4)) == 'NCRO') {
 				$dataitems['sincrona'] = 1;
 
 			}

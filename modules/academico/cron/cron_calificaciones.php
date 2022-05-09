@@ -1044,6 +1044,22 @@ $grade = floatval($withouter);
 return $grade;
  }
 
+function getitemparcial($elemento) {
+        $dataparcial = array();
+        $elementos = explode(" ", $elemento);
+        for ($iter = 0; $iter < count($elementos); $iter++) {
+            if (strtoupper(substr($elementos[$iter], 0, 4)) == 'PRIM') {
+                 
+
+            } elseif (strtoupper(substr($elementos[$iter], 0, 4)) == 'SEGU') {
+                $dataparcial['parcial'] = 2;
+
+            }  
+
+        }
+
+        return $dataparcial;
+    }
 
 function getparamitem($elemento) {                                                   
  $dataitems = array();
@@ -1062,8 +1078,8 @@ function getparamitem($elemento) {
       $dataitems['evaluacion'] = 1;
 
 
-   }  elseif ( strtoupper(substr($elementos[$iter],0,3)) == 'EXA'){
-       $dataitems['examen'] = 1;
+   }  elseif ( strtoupper(substr($elementos[$iter],0,3)) == 'MEJ'){
+       $dataitems['mejoramiento'] = 1;
 
    }  elseif ( strtoupper(substr($elementos[$iter],0,3)) == 'SUP'){
        $dataitems['supletorio'] = 1;
@@ -1073,7 +1089,7 @@ function getparamitem($elemento) {
     elseif ( strtoupper(substr($elementos[$iter],0,3)) == 'FOR'){
        $dataitems['foro'] = 1;
 
-   } elseif ( strtoupper(substr($elementos[$iter],0,4)) == 'SINC'){
+   } elseif ( strtoupper(substr($elementos[$iter],2,4)) == 'NCRO'){ 
        $dataitems['sincrona'] = 1;
 
    }

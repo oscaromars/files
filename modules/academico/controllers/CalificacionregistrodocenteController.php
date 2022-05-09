@@ -2030,54 +2030,6 @@ return $this->redirect('index');
 								$data03 = $mod_calificacion->getnota($arraydata3[$it]['nota']);
                                 $data00 = $mod_calificacion->getitemparcial($arraydata2[$it]['nombre']);
 
-								if (isset($semanaexa1)) {} else {
-
-									if (isset($data02['examen'])) {
-										$semanaexa1 = $data01['semana'];
-										if ($semanaexa1 <= 5 AND $parciales == 1) {
-
-											$comp_examen1 = (float) $data03;
-											$comp_cuni_id = 5;
-
-											$dcalificacion = (float) $comp_examen1;
-											$detalles = $mod_calificacion->getdetalles($cabeceras[0]['ccal_id'], $comp_cuni_id);
-											if ($detalles == Null) {
-												$detalles = $mod_calificacion->putdetalles($cabeceras[0]['ccal_id'], $comp_cuni_id, $dcalificacion);
-											} else {
-												if ($detalles[0]['dcal_usuario_creacion'] == '1' AND $detalles[0]['dcal_calificacion'] < $dcalificacion) {
-													$detallesup = $mod_calificacion->updatedetalles($detalles[0]['dcal_id'], $dcalificacion);
-													$bt = $mod_calificacion->putbitacora($detalles[0]['dcal_id'], $dcalificacion);
-												}
-											}
-										}
-									}
-								}
-
-								if (isset($semanaexa2)) {} else {
-
-									if (isset($data02['examen'])) {
-										$semanaexa2 = $data01['semana'];
-										if ($semanaexa2 >= 6 AND $parciales == 2) {
-
-											$comp_examen2 = (float) $data03;
-											$comp_cuni_id = 10;
-											print_r("parcial 2 examen ES ");
-											print_r($comp_examen2);
-
-											$dcalificacion = (float) $comp_examen2;
-											$detalles = $mod_calificacion->getdetalles($cabeceras[0]['ccal_id'], $comp_cuni_id);
-											if ($detalles == Null) {
-												$detalles = $mod_calificacion->putdetalles($cabeceras[0]['ccal_id'], $comp_cuni_id, $dcalificacion);
-											} else {
-												if ($detalles[0]['dcal_usuario_creacion'] == '1' AND $detalles[0]['dcal_calificacion'] < $dcalificacion) {
-													$detallesup = $mod_calificacion->updatedetalles($detalles[0]['dcal_id'], $dcalificacion);
-													$bt = $mod_calificacion->putbitacora($detalles[0]['dcal_id'], $dcalificacion);
-												}
-											}
-										}
-									}
-								}
-
 								if (isset($data00['parcial'])) {
 
 									if ($parciales == 1 AND $data00['parcial'] == 1) {

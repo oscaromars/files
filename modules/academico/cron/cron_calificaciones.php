@@ -416,56 +416,7 @@ $comp_examen3 = 0.00;$comp_supletorio3 = 0.00;$comp_mejoramiento3 = 0.00;
  $data03= getnota($arraydata3[$it]['nota']);
  $data00= getitemparcial($arraydata2[$it]['nombre']); 
 
- if (isset($semanaexa1)) {} else {
 
- if(isset($data02['examen']) ) { 
-$semanaexa1 = $data01['semana'];
-if ($semanaexa1 <= 5 AND $parciales == 1){ 
-
-         $comp_examen1 = (float)$data03; 
-          $comp_cuni_id = 5;
-          print_r("parcial 1 examen ES ");
-           print_r($comp_examen1);
-
-           $dcalificacion = (float)$comp_examen1;
-          $detalles = getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id);
-      if ($detalles == Null) {
-$detalles = putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id ,$dcalificacion); 
-}else {
-if ($detalles[0]['dcal_usuario_creacion'] == '1' AND $detalles[0]['dcal_calificacion'] < $dcalificacion ){
-$detallesup = updatedetalles($detalles[0]['dcal_id'],$dcalificacion); 
-$bt= putbitacora($detalles[0]['dcal_id'],$dcalificacion);
-}
-}
-}
-}   
-}
-
-
-if (isset($semanaexa2)) {} else {
-
- if(isset($data02['examen']) ) { 
-$semanaexa2 = $data01['semana'];
-if ($semanaexa2 >= 6 AND $parciales == 2){ 
-
-         $comp_examen2 = (float)$data03; 
-          $comp_cuni_id = 10;
-          print_r("parcial 2 examen ES ");
-           print_r($comp_examen2);
-
-           $dcalificacion = (float)$comp_examen2;
-          $detalles = getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id);
-      if ($detalles == Null) {
-$detalles = putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id ,$dcalificacion); 
-}else {
-if ($detalles[0]['dcal_usuario_creacion'] == '1' AND $detalles[0]['dcal_calificacion'] < $dcalificacion ){
-$detallesup = updatedetalles($detalles[0]['dcal_id'],$dcalificacion); 
-$bt= putbitacora($detalles[0]['dcal_id'],$dcalificacion);
-}
-}
-}
-}   
-}
 
  if(isset($data00['parcial'])) {
 
@@ -748,56 +699,6 @@ $comp_examen3 = 0.00;$comp_supletorio3 = 0.00;$comp_mejoramiento3 = 0.00;
  $data02= getparamitem($arraydata2[$it]['nombre']); 
  $data03= getnota($arraydata3[$it]['nota']);
 
- if (isset($semanaexa1)) {} else {
-
- if(isset($data02['examen']) ) { 
-$semanaexa1 = $data01['semana'];
-if ($semanaexa1 <= 5 AND $parciales == 1){ 
-
-         $comp_examen1 = (float)$data03; 
-          $comp_cuni_id = 5;
-          print_r("parcial 1 examen ES ");
-           print_r($comp_examen1);
-
-           $dcalificacion = (float)$comp_examen1;
-          $detalles = getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id);
-      if ($detalles == Null) {
-$detalles = putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id ,$dcalificacion); 
-}else {
-if ($detalles[0]['dcal_usuario_creacion'] == '1' AND $detalles[0]['dcal_calificacion'] < $dcalificacion ){
-$detallesup = updatedetalles($detalles[0]['dcal_id'],$dcalificacion); 
-$bt= putbitacora($detalles[0]['dcal_id'],$dcalificacion);
-}
-}
-}
-}   
-}
-
-
-if (isset($semanaexa2)) {} else {
-
- if(isset($data02['examen']) ) { 
-$semanaexa2 = $data01['semana'];
-if ($semanaexa2 >= 6 AND $parciales == 2){ 
-
-         $comp_examen2 = (float)$data03; 
-          $comp_cuni_id = 10;
-          print_r("parcial 2 examen ES ");
-           print_r($comp_examen2);
-
-           $dcalificacion = (float)$comp_examen2;
-          $detalles = getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id);
-      if ($detalles == Null) {
-$detalles = putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id ,$dcalificacion); 
-}else {
-if ($detalles[0]['dcal_usuario_creacion'] == '1' AND $detalles[0]['dcal_calificacion'] < $dcalificacion ){
-$detallesup = updatedetalles($detalles[0]['dcal_id'],$dcalificacion); 
-$bt= putbitacora($detalles[0]['dcal_id'],$dcalificacion);
-}
-}
-}
-}   
-}
 
  if(isset($data01['parcial'])) {
 

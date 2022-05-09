@@ -414,6 +414,7 @@ $comp_examen3 = 0.00;$comp_supletorio3 = 0.00;$comp_mejoramiento3 = 0.00;
  $data01= getparamcategoria($arraydata1[$it]['nombre']); 
  $data02= getparamitem($arraydata2[$it]['nombre']); 
  $data03= getnota($arraydata3[$it]['nota']);
+ $data00= getitemparcial($arraydata2[$it]['nombre']); 
 
  if (isset($semanaexa1)) {} else {
 
@@ -466,10 +467,10 @@ $bt= putbitacora($detalles[0]['dcal_id'],$dcalificacion);
 }   
 }
 
- if(isset($data01['parcial'])) {
+ if(isset($data00['parcial'])) {
 
 
-if ($parciales == 1 AND $data01['parcial']==1) {
+if ($parciales == 1 AND $data00['parcial']==1) {
 //print_r("======= Inicia proceso parcial 1 ===========");
 //print_r(count($componentes));
 for ($il = 0; $il < count($componentes); $il++) {
@@ -510,6 +511,15 @@ print_r($data03);*/
         if ($componentes[$il]['com_id']== 2 AND isset($data02['sincrona'])) {    //COMP_SINCRONA ol
         
      $comp_sincrona1 = (float)$comp_sincrona1+ (float)$data03; //print_r("SUMADO:"); 
+     $comp_cuni_id = $componentes[$il]['cuni_id'];
+    //print_r("comp_sincrona1 ES ");
+    //  print_r($comp_sincrona1);
+
+    }
+
+            if ($componentes[$il]['com_id']== 5 AND isset($data02['evaluacion'])) {    //COMP_EVALUACION
+        
+     $comp_evaluacion1 = (float)$comp_evaluacion1+ (float)$data03; //print_r("SUMADO:"); 
      $comp_cuni_id = $componentes[$il]['cuni_id'];
     //print_r("comp_sincrona1 ES ");
     //  print_r($comp_sincrona1);
@@ -575,10 +585,24 @@ $bt= putbitacora($detalles[0]['dcal_id'],$dcalificacion);
 }
 } 
 
+if ( $comp_evaluacion1 > 0 ){
+$dcalificacion = (float)$comp_evaluacion1;
+$detalles = getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id); 
+if ($detalles == Null) {
+$detalles = putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id ,$dcalificacion); 
+}else {
+if ($detalles[0]['dcal_usuario_creacion'] == 1 ){
+$dcalificacion = $dcalificacion + $detalles[0]['dcal_calificacion'];
+$detallesup = updatedetalles($detalles[0]['dcal_id'],$dcalificacion); 
+$bt= putbitacora($detalles[0]['dcal_id'],$dcalificacion);
+}
+}
+} 
+
 } //print_r("======= Fin proceso parcial 1 ===========");
 
 
-if ($parciales == 2 AND $data01['parcial']==2) {
+if ($parciales == 2 AND $data00['parcial']==2) {
    
 
 for ($il = 0; $il < count($componentes); $il++) {
@@ -613,17 +637,12 @@ for ($il = 0; $il < count($componentes); $il++) {
 
     }
 
-      if ($componentes[$il]['com_id']== 10 AND isset($data02['examen'] )) {    //COMP_EXAMEN ol
+    if ($componentes[$il]['com_id']== 10 AND isset($data02['evaluacion'] )) { //COMP_EVALUACION ol
         
-         if ($data03 > $comp_examen2){
-
-         $comp_examen2 = (float)$data03; 
+         $comp_evaluacion2 = (float)$comp_evaluacion2 + (float)$data03; 
           $comp_cuni_id = $componentes[$il]['cuni_id'];
-        
-        }
 
     }
-
 
 
 }
@@ -683,6 +702,22 @@ $bt= putbitacora($detalles[0]['dcal_id'],$dcalificacion);
 }
 }
 } 
+
+if ( $comp_evaluacion2 > 0 ){
+$dcalificacion = (float)$comp_evaluacion2;
+$detalles = getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id); 
+if ($detalles == Null) {
+$detalles = putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id ,$dcalificacion); 
+}else {
+if ($detalles[0]['dcal_usuario_creacion'] == 1 ){
+$dcalificacion = $dcalificacion + $detalles[0]['dcal_calificacion'];
+$detallesup = updatedetalles($detalles[0]['dcal_id'],$dcalificacion); 
+$bt= putbitacora($detalles[0]['dcal_id'],$dcalificacion);
+}
+}
+} 
+
+
 
 } //print_r("======= Fin proceso parcial 2 ===========");
  }
@@ -1049,7 +1084,7 @@ function getitemparcial($elemento) {
         $elementos = explode(" ", $elemento);
         for ($iter = 0; $iter < count($elementos); $iter++) {
             if (strtoupper(substr($elementos[$iter], 0, 4)) == 'PRIM') {
-                 
+                $dataparcial['parcial'] = 1;
 
             } elseif (strtoupper(substr($elementos[$iter], 0, 4)) == 'SEGU') {
                 $dataparcial['parcial'] = 2;

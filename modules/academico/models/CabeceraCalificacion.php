@@ -2563,7 +2563,7 @@ UPDATE db_academico.detalle_calificacion
 		$elementos = explode(" ", $elemento);
 		for ($iter = 0; $iter < count($elementos); $iter++) {
 			if (strtoupper(substr($elementos[$iter], 0, 4)) == 'PRIM') {
-				 
+				$dataparcial['parcial'] = 1;
 
 			} elseif (strtoupper(substr($elementos[$iter], 0, 4)) == 'SEGU') {
 				$dataparcial['parcial'] = 2;

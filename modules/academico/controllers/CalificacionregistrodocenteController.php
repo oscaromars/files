@@ -2196,7 +2196,7 @@ print_r($data03);*/
 
 										for ($il = 0; $il < count($componentes); $il++) {
 
-											if ($componentes[$il]['com_id'] == 3 AND isset($data02['evaluacion'])) {
+											if ($componentes[$il]['com_id'] == 8 AND isset($data02['evaluacion'])) {
 												//COMP_EVALUACION ol
 
 												$comp_evaluacion2 = (float) $comp_evaluacion2 + (float) $data03;
@@ -2204,7 +2204,7 @@ print_r($data03);*/
 
 											}
 
-											if ($componentes[$il]['com_id'] == 4 AND isset($data02['taller'])) {
+											if ($componentes[$il]['com_id'] == 9 AND isset($data02['taller'])) {
 												//COMP_AUTONOMA ol
 
 												$comp_autonoma2 = (float) $comp_autonoma2 + (float) $data03;
@@ -2212,7 +2212,7 @@ print_r($data03);*/
 
 											}
 
-											if ($componentes[$il]['com_id'] == 1 AND isset($data02['foro'])) {
+											if ($componentes[$il]['com_id'] == 6 AND isset($data02['foro'])) {
 												//COMP_FORO ol
 
 												$comp_foro2 = (float) $comp_foro2 + (float) $data03;
@@ -2220,7 +2220,7 @@ print_r($data03);*/
 
 											}
 
-											if ($componentes[$il]['com_id'] == 2 AND isset($data02['sincrona'])) {
+											if ($componentes[$il]['com_id'] == 7 AND isset($data02['sincrona'])) {
 												//COMP_SINCRONA ol
 
 												$comp_sincrona2 = (float) $comp_sincrona2 + (float) $data03;

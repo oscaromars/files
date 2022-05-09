@@ -1801,7 +1801,7 @@ return $this->redirect('index');
 			$mod_calificacion = new CabeceraCalificacion();
 			$mod_asistencia = new CabeceraAsistencia();
 			$arr_usuarios = $mod_calificacion->consultarUsuarios($eduasid, $parcial);
-			$parciales = $parcial;if ($parcial > 2) {$parcial = 2;}
+			$parciales = $parcial; 
 
 			if (count($arr_usuarios) > 0) {
 
@@ -2037,9 +2037,47 @@ return $this->redirect('index');
 
 		 	if ($parciales == 3 AND $data00['parcial'] == 3) {
 
+               if ($componentes[$il]['com_id'] == 6 AND isset($data02['supletorio'])) {
+		 			$comp_supletorio3 = (float) $comp_supletorio3 + (float) $data03;
+		 			$comp_cuni_id = $componentes[$il]['cuni_id'];
+		 		}
 
+		 		if ($comp_supletorio3 > 0) {
+		 			$dcalificacion = (float) $comp_supletorio3;
+		 			$detalles = $mod_calificacion->getdetalles($cabeceras[0]['ccal_id'], $comp_cuni_id);
+		 			if ($detalles == Null) {
+		 				$detalles = $mod_calificacion->putdetalles($cabeceras[0]['ccal_id'], $comp_cuni_id, $dcalificacion);
+		 			} else {
+		 				if ($detalles[0]['dcal_usuario_creacion'] == '1') {
+		 					$dcalificacion = $dcalificacion + $detalles[0]['dcal_calificacion'];
+		 					$detallesup = $mod_calificacion->updatedetalles($detalles[0]['dcal_id'], $dcalificacion);
+		 					$bt = $mod_calificacion->putbitacora($detalles[0]['dcal_id'], $dcalificacion);
+		 				}
+		 			}
+		 		}
 
+		 	}
 
+				 	if ($parciales == 4 AND $data00['parcial'] == 3) {
+
+               if ($componentes[$il]['com_id'] == 6 AND isset($data02['mejoramiento'])) {
+		 			$comp_mejoramiento3 = (float) $comp_mejoramiento3 + (float) $data03;
+		 			$comp_cuni_id = $componentes[$il]['cuni_id'];
+		 		}
+
+		 		if ($comp_mejoramiento3 > 0) {
+		 			$dcalificacion = (float) $comp_mejoramiento3;
+		 			$detalles = $mod_calificacion->getdetalles($cabeceras[0]['ccal_id'], $comp_cuni_id);
+		 			if ($detalles == Null) {
+		 				$detalles = $mod_calificacion->putdetalles($cabeceras[0]['ccal_id'], $comp_cuni_id, $dcalificacion);
+		 			} else {
+		 				if ($detalles[0]['dcal_usuario_creacion'] == '1') {
+		 					$dcalificacion = $dcalificacion + $detalles[0]['dcal_calificacion'];
+		 					$detallesup = $mod_calificacion->updatedetalles($detalles[0]['dcal_id'], $dcalificacion);
+		 					$bt = $mod_calificacion->putbitacora($detalles[0]['dcal_id'], $dcalificacion);
+		 				}
+		 			}
+		 		}
 
 		 	}
 

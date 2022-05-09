@@ -531,7 +531,35 @@ $detallesup = updatedetalles($detalles[0]['dcal_id'],$dcalificacion);
 $bt= putbitacora($detalles[0]['dcal_id'],$dcalificacion);
 }
 }
+}
+
+if ( $comp_foro1 > 0 ){
+$dcalificacion = (float)$comp_foro1;
+$detalles = getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id);
+if ($detalles == Null) {
+$detalles = putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id ,$dcalificacion); 
+}else {
+if ($detalles[0]['dcal_usuario_creacion'] == '1'){
+$dcalificacion = $dcalificacion + $detalles[0]['dcal_calificacion'];
+$detallesup = updatedetalles($detalles[0]['dcal_id'],$dcalificacion); 
+$bt= putbitacora($detalles[0]['dcal_id'],$dcalificacion);
+}
+}
 } 
+
+if ( $comp_sincrona1 > 0 ){
+$dcalificacion = (float)$comp_sincrona1;
+$detalles = getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id);
+if ($detalles == Null) {
+$detalles = putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id ,$dcalificacion); 
+}else {
+if ($detalles[0]['dcal_usuario_creacion'] == '1'){
+$dcalificacion = $dcalificacion + $detalles[0]['dcal_calificacion'];
+$detallesup = updatedetalles($detalles[0]['dcal_id'],$dcalificacion); 
+$bt= putbitacora($detalles[0]['dcal_id'],$dcalificacion);
+}
+}
+}  
 
 if ( $comp_autonoma1 > 0 ){
 $dcalificacion = (float)$comp_autonoma1;
@@ -601,6 +629,34 @@ for ($il = 0; $il < count($componentes); $il++) {
 }
 if ( $comp_evaluacion2 > 0 ){
 $dcalificacion = (float)$comp_evaluacion2;
+$detalles = getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id);
+if ($detalles == Null) {
+$detalles = putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id ,$dcalificacion); 
+}else {
+if ($detalles[0]['dcal_usuario_creacion'] == 1 ){
+$dcalificacion = $dcalificacion + $detalles[0]['dcal_calificacion'];
+$detallesup = updatedetalles($detalles[0]['dcal_id'],$dcalificacion);  
+$bt= putbitacora($detalles[0]['dcal_id'],$dcalificacion);
+}
+}
+} 
+
+if ( $comp_foro2 > 0 ){
+$dcalificacion = (float)$comp_foro2;
+$detalles = getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id);
+if ($detalles == Null) {
+$detalles = putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id ,$dcalificacion); 
+}else {
+if ($detalles[0]['dcal_usuario_creacion'] == 1 ){
+$dcalificacion = $dcalificacion + $detalles[0]['dcal_calificacion'];
+$detallesup = updatedetalles($detalles[0]['dcal_id'],$dcalificacion);  
+$bt= putbitacora($detalles[0]['dcal_id'],$dcalificacion);
+}
+}
+} 
+
+if ( $comp_sincrona2 > 0 ){
+$dcalificacion = (float)$comp_sincrona2;
 $detalles = getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id);
 if ($detalles == Null) {
 $detalles = putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id ,$dcalificacion); 
@@ -757,6 +813,35 @@ $bt= putbitacora($detalles[0]['dcal_id'],$dcalificacion);
 }
 } 
 
+}
+if ( $comp_foro1 > 0 ){
+$dcalificacion = (float)$comp_foro1;
+$detalles = getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id);
+if ($detalles == Null) {
+$detalles = putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id ,$dcalificacion); 
+}else {
+if ($detalles[0]['dcal_usuario_creacion'] == '1'){
+$dcalificacion = $dcalificacion + $detalles[0]['dcal_calificacion'];
+$detallesup = updatedetalles($detalles[0]['dcal_id'],$dcalificacion); 
+$bt= putbitacora($detalles[0]['dcal_id'],$dcalificacion);
+}
+}
+} 
+
+if ( $comp_sincrona1 > 0 ){
+$dcalificacion = (float)$comp_sincrona1;
+$detalles = getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id);
+if ($detalles == Null) {
+$detalles = putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id ,$dcalificacion); 
+}else {
+if ($detalles[0]['dcal_usuario_creacion'] == '1'){
+$dcalificacion = $dcalificacion + $detalles[0]['dcal_calificacion'];
+$detallesup = updatedetalles($detalles[0]['dcal_id'],$dcalificacion); 
+$bt= putbitacora($detalles[0]['dcal_id'],$dcalificacion);
+}
+}
+} 
+
 if ( $comp_autonoma1 > 0 ){
 $dcalificacion = (float)$comp_autonoma1;
 $detalles = getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id); 
@@ -810,6 +895,34 @@ for ($il = 0; $il < count($componentes); $il++) {
 }
 if ( $comp_evaluacion2 > 0 ){
 $dcalificacion = (float)$comp_evaluacion2;
+$detalles = getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id);
+if ($detalles == Null) {
+$detalles = putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id ,$dcalificacion); 
+}else {
+if ($detalles[0]['dcal_usuario_creacion'] == 1 ){
+$dcalificacion = $dcalificacion + $detalles[0]['dcal_calificacion'];
+$detallesup = updatedetalles($detalles[0]['dcal_id'],$dcalificacion);  
+$bt= putbitacora($detalles[0]['dcal_id'],$dcalificacion);
+}
+}
+} 
+
+if ( $comp_foro2 > 0 ){
+$dcalificacion = (float)$comp_foro2;
+$detalles = getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id);
+if ($detalles == Null) {
+$detalles = putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id ,$dcalificacion); 
+}else {
+if ($detalles[0]['dcal_usuario_creacion'] == 1 ){
+$dcalificacion = $dcalificacion + $detalles[0]['dcal_calificacion'];
+$detallesup = updatedetalles($detalles[0]['dcal_id'],$dcalificacion);  
+$bt= putbitacora($detalles[0]['dcal_id'],$dcalificacion);
+}
+}
+} 
+
+if ( $comp_sincrona2 > 0 ){
+$dcalificacion = (float)$comp_sincrona2;
 $detalles = getdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id);
 if ($detalles == Null) {
 $detalles = putdetalles($cabeceras[0]['ccal_id'],$comp_cuni_id ,$dcalificacion); 

@@ -2146,6 +2146,36 @@ print_r($data03);*/
 											}
 										}
 
+
+										if ($comp_foro1 > 0) {
+											$dcalificacion = (float) $comp_foro1;
+											$detalles = $mod_calificacion->getdetalles($cabeceras[0]['ccal_id'], $comp_cuni_id);
+											if ($detalles == Null) {
+												$detalles = $mod_calificacion->putdetalles($cabeceras[0]['ccal_id'], $comp_cuni_id, $dcalificacion);
+											} else {
+												if ($detalles[0]['dcal_usuario_creacion'] == '1') {
+													$dcalificacion = $dcalificacion + $detalles[0]['dcal_calificacion'];
+													$detallesup = $mod_calificacion->updatedetalles($detalles[0]['dcal_id'], $dcalificacion);
+													$bt = $mod_calificacion->putbitacora($detalles[0]['dcal_id'], $dcalificacion);
+												}
+											}
+										}
+
+										if ($comp_sincrona1 > 0) {
+											$dcalificacion = (float) $comp_sincrona1;
+											$detalles = $mod_calificacion->getdetalles($cabeceras[0]['ccal_id'], $comp_cuni_id);
+											if ($detalles == Null) {
+												$detalles = $mod_calificacion->putdetalles($cabeceras[0]['ccal_id'], $comp_cuni_id, $dcalificacion);
+											} else {
+												if ($detalles[0]['dcal_usuario_creacion'] == '1') {
+													$dcalificacion = $dcalificacion + $detalles[0]['dcal_calificacion'];
+													$detallesup = $mod_calificacion->updatedetalles($detalles[0]['dcal_id'], $dcalificacion);
+													$bt = $mod_calificacion->putbitacora($detalles[0]['dcal_id'], $dcalificacion);
+												}
+											}
+										}
+
+
 										if ($comp_autonoma1 > 0) {
 											$dcalificacion = (float) $comp_autonoma1;
 											$detalles = $mod_calificacion->getdetalles($cabeceras[0]['ccal_id'], $comp_cuni_id);
@@ -2224,6 +2254,35 @@ print_r($data03);*/
 												}
 											}
 										}
+
+										if ($comp_foro2 > 0) {
+											$dcalificacion = (float) $comp_foro2;
+											$detalles = $mod_calificacion->getdetalles($cabeceras[0]['ccal_id'], $comp_cuni_id);
+											if ($detalles == Null) {
+												$detalles = $mod_calificacion->putdetalles($cabeceras[0]['ccal_id'], $comp_cuni_id, $dcalificacion);
+											} else {
+												if ($detalles[0]['dcal_usuario_creacion'] == 1) {
+													$dcalificacion = $dcalificacion + $detalles[0]['dcal_calificacion'];
+													$detallesup = $mod_calificacion->updatedetalles($detalles[0]['dcal_id'], $dcalificacion);
+													$bt = $mod_calificacion->putbitacora($detalles[0]['dcal_id'], $dcalificacion);
+												}
+											}
+										}
+
+										if ($comp_sincrona2 > 0) {
+											$dcalificacion = (float) $comp_sincrona2;
+											$detalles = $mod_calificacion->getdetalles($cabeceras[0]['ccal_id'], $comp_cuni_id);
+											if ($detalles == Null) {
+												$detalles = $mod_calificacion->putdetalles($cabeceras[0]['ccal_id'], $comp_cuni_id, $dcalificacion);
+											} else {
+												if ($detalles[0]['dcal_usuario_creacion'] == 1) {
+													$dcalificacion = $dcalificacion + $detalles[0]['dcal_calificacion'];
+													$detallesup = $mod_calificacion->updatedetalles($detalles[0]['dcal_id'], $dcalificacion);
+													$bt = $mod_calificacion->putbitacora($detalles[0]['dcal_id'], $dcalificacion);
+												}
+											}
+										}
+
 
 										if ($comp_autonoma2 > 0) {
 											$dcalificacion = (float) $comp_autonoma2;
@@ -2368,6 +2427,37 @@ print_r($data03);*/
 											}
 										}
 
+										if ($comp_foro1 > 0) {
+											$dcalificacion = (float) $comp_foro1;
+											$detalles = $mod_calificacion->getdetalles($cabeceras[0]['ccal_id'], $comp_cuni_id);
+											if ($detalles == Null) {
+												$detalles = $mod_calificacion->putdetalles($cabeceras[0]['ccal_id'], $comp_cuni_id, $dcalificacion);
+											} else {
+												if ($detalles[0]['dcal_usuario_creacion'] == '1') {
+													$dcalificacion = $dcalificacion + $detalles[0]['dcal_calificacion'];
+													$detallesup = $mod_calificacion->updatedetalles($detalles[0]['dcal_id'], $dcalificacion);
+													$bt = $mod_calificacion->putbitacora($detalles[0]['dcal_id'], $dcalificacion);
+												}
+											}
+										}
+
+
+										if ($comp_sincrona1 > 0) {
+											$dcalificacion = (float) $comp_sincrona1;
+											$detalles = $mod_calificacion->getdetalles($cabeceras[0]['ccal_id'], $comp_cuni_id);
+											if ($detalles == Null) {
+												$detalles = $mod_calificacion->putdetalles($cabeceras[0]['ccal_id'], $comp_cuni_id, $dcalificacion);
+											} else {
+												if ($detalles[0]['dcal_usuario_creacion'] == '1') {
+													$dcalificacion = $dcalificacion + $detalles[0]['dcal_calificacion'];
+													$detallesup = $mod_calificacion->updatedetalles($detalles[0]['dcal_id'], $dcalificacion);
+													$bt = $mod_calificacion->putbitacora($detalles[0]['dcal_id'], $dcalificacion);
+												}
+											}
+										}
+
+
+
 										if ($comp_autonoma1 > 0) {
 											$dcalificacion = (float) $comp_autonoma1;
 											$detalles = $mod_calificacion->getdetalles($cabeceras[0]['ccal_id'], $comp_cuni_id);
@@ -2430,6 +2520,35 @@ print_r($data03);*/
 												}
 											}
 										}
+
+										if ($comp_foro2 > 0) {
+											$dcalificacion = (float) $comp_foro2;
+											$detalles = $mod_calificacion->getdetalles($cabeceras[0]['ccal_id'], $comp_cuni_id);
+											if ($detalles == Null) {
+												$detalles = $mod_calificacion->putdetalles($cabeceras[0]['ccal_id'], $comp_cuni_id, $dcalificacion);
+											} else {
+												if ($detalles[0]['dcal_usuario_creacion'] == 1 ) {
+													$dcalificacion = $dcalificacion + $detalles[0]['dcal_calificacion'];
+													$detallesup = $mod_calificacion->updatedetalles($detalles[0]['dcal_id'], $dcalificacion);
+													$bt = $mod_calificacion->putbitacora($detalles[0]['dcal_id'], $dcalificacion);
+												}
+											}
+										}
+
+										if ($comp_sincrona2 > 0) {
+											$dcalificacion = (float) $comp_sincrona2;
+											$detalles = $mod_calificacion->getdetalles($cabeceras[0]['ccal_id'], $comp_cuni_id);
+											if ($detalles == Null) {
+												$detalles = $mod_calificacion->putdetalles($cabeceras[0]['ccal_id'], $comp_cuni_id, $dcalificacion);
+											} else {
+												if ($detalles[0]['dcal_usuario_creacion'] == 1 ) {
+													$dcalificacion = $dcalificacion + $detalles[0]['dcal_calificacion'];
+													$detallesup = $mod_calificacion->updatedetalles($detalles[0]['dcal_id'], $dcalificacion);
+													$bt = $mod_calificacion->putbitacora($detalles[0]['dcal_id'], $dcalificacion);
+												}
+											}
+										}
+
 
 										if ($comp_autonoma2 > 0) {
 											$dcalificacion = (float) $comp_autonoma2;

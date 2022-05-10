@@ -389,6 +389,7 @@ if ($cabecerasasi == Null){
 $cabecerasasi = putcasistencia($est_id,$asi_id,$paca_id,$parciales,$pro_id);
 $cabecerasasi = getcasistencia($est_id,$asi_id,$paca_id,$parciales);}
 
+/*
 if ( $asiste > 0 ){
 $dasistencia = $asiste;
 $detallesasi = getdasistencia($cabecerasasi[0]['casi_id'],$parciales);
@@ -401,7 +402,7 @@ $detallesup = updatedasitencia($detallesasi[0]['dasi_id'],$dasistencia);
 }
 } 
 
-$ucasi = updatecasistencia($cabecerasasi[0]['casi_id']); 
+$ucasi = updatecasistencia($cabecerasasi[0]['casi_id']); */
 
 for ($it = 0; $it < count($arraydata3); $it++) {
 
@@ -488,6 +489,8 @@ $bt= putbitacora($detalles[0]['dcal_id'],$dcalificacion);
                     $detallesup = updatedasitencia($detallesasi[0]['dasi_id'], $dasistencia);
                                     }
                                 }
+
+        $ucasi = updatecasistencia($cabecerasasi[0]['casi_id']);
                             }
 
          }

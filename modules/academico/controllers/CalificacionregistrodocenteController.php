@@ -2005,9 +2005,10 @@ return $this->redirect('index');
 										$detallesup = $mod_asistencia->updatedasitencia($detallesasi[0]['dasi_id'], $dasistencia);
 									}
 								}
-							} */
+							} 
 
-							$ucasi = $mod_asistencia->updatecasistencia($cabecerasasi[0]['casi_id']);
+					
+                            */
 
 							for ($it = 0; $it < count($arraydata3); $it++) {
 
@@ -2101,6 +2102,7 @@ return $this->redirect('index');
 					$detallesup = $mod_asistencia->updatedasitencia($detallesasi[0]['dasi_id'], $dasistencia);
 									}
 								}
+		$ucasi = $mod_asistencia->updatecasistencia($cabecerasasi[0]['casi_id']);
 							}
 
          }

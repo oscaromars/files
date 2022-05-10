@@ -2038,7 +2038,7 @@ return $this->redirect('index');
 								if (isset($data00['parcial'])) {
 
 
-		 	if ($parciales == 3 AND $data00['parcial'] == 3) {
+		 	if ($parciales == 3) {
                for ($il = 0; $il < count($componentes); $il++) {
                if ($componentes[$il]['com_id'] == 6 AND isset($data02['supletorio'])) {
 		 			$comp_supletorio3 = (float) $comp_supletorio3 + (float) $data03;
@@ -2061,7 +2061,7 @@ return $this->redirect('index');
 
 		 	}}
 
-				 	if ($parciales == 4 AND $data00['parcial'] == 3) {
+				 	if ($parciales == 4) {
                 	for ($il = 0; $il < count($componentes); $il++) {
                if ($componentes[$il]['com_id'] == 6 AND isset($data02['mejoramiento'])) {
 		 			$comp_mejoramiento3 = (float) $comp_mejoramiento3 + (float) $data03;
@@ -2085,7 +2085,7 @@ return $this->redirect('index');
 		 	}}
 
 
-		if ($parciales == 2 /*AND $data00['parcial'] == 2*/) {
+		if ($parciales == 2) {
         
         if (isset($data02['asistencia'])) {
         $comp_asistencia2 =  (float) $data03;

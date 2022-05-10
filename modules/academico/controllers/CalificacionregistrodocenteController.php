@@ -2087,7 +2087,7 @@ return $this->redirect('index');
 
 		if ($parciales == 2 AND $data00['parcial'] == 2) {
         
-        if (isset($data02['asistencia']) {
+        if (isset($data02['asistencia'])) {
         $comp_asistencia2 =  (float) $data03;
 
         }

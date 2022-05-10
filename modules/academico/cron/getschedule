@@ -1,0 +1,1 @@
+*/5 * * * * root /usr/bin/php /var/www/html/asgard/modules/academico/cron/schedule.php

@@ -1995,7 +1995,7 @@ return $this->redirect('index');
 								$cabecerasasi = $mod_asistencia->putcasistencia($est_id, $asi_id, $paca_id, $parciales, $pro_id);
 								$cabecerasasi = $mod_asistencia->getcasistencia($est_id, $asi_id, $paca_id, $parciales);}
 
-							if ($asiste > 0) {
+							/*if ($asiste > 0) {
 								$dasistencia = $asiste;
 								$detallesasi = $mod_asistencia->getdasistencia($cabecerasasi[0]['casi_id'], $parciales);
 								if ($detallesasi == Null) {
@@ -2005,7 +2005,7 @@ return $this->redirect('index');
 										$detallesup = $mod_asistencia->updatedasitencia($detallesasi[0]['dasi_id'], $dasistencia);
 									}
 								}
-							}
+							} */
 
 							$ucasi = $mod_asistencia->updatecasistencia($cabecerasasi[0]['casi_id']);
 
@@ -2026,6 +2026,8 @@ return $this->redirect('index');
 								$comp_examen3 = 0.00;
 								$comp_supletorio3 = 0.00;
 								$comp_mejoramiento3 = 0.00;
+
+								$comp_asistencia2 = 0.00;
 
 								$data01 = $mod_calificacion->getparamcategoria($arraydata1[$it]['nombre']);
 								$data02 = $mod_calificacion->getparamitem($arraydata2[$it]['nombre']);
@@ -2080,6 +2082,28 @@ return $this->redirect('index');
 		 		}
 
 		 	}}
+
+
+		if ($parciales == 2 AND $data00['parcial'] == 2) {
+        
+        if (isset($data02['asistencia']) {
+        $comp_asistencia2 =  (float) $data03;
+
+        }
+
+		if ($comp_asistencia2 > 0) {
+			$dasistencia = $comp_asistencia2;
+			$detallesasi = $mod_asistencia->getdasistencia($cabecerasasi[0]['casi_id'], $parciales);
+			if ($detallesasi == Null) {
+			$detalles = $mod_asistencia->putdasistencia($cabecerasasi[0]['casi_id'], $parciales, $dasistencia);
+			} else {
+			if ($detallesasi[0]['dasi_usuario_creacion'] == '1') {
+					$detallesup = $mod_asistencia->updatedasitencia($detallesasi[0]['dasi_id'], $dasistencia);
+									}
+								}
+							}
+
+         }
 
 									if ($parciales == 1 AND $data00['parcial'] == 1) {
 //print_r("======= Inicia proceso parcial 1 ===========");

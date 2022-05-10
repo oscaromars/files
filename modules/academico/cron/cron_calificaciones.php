@@ -410,6 +410,7 @@ $comp_foro1 = 0.00 ; $comp_sincrona1 = 0.00 ;
  $comp_evaluacion2 = 0.00; $comp_examen2 = 0.00; $comp_autonoma2 = 0.00;
  $comp_foro2 = 0.00 ; $comp_sincrona2 = 0.00 ; 
 $comp_examen3 = 0.00;$comp_supletorio3 = 0.00;$comp_mejoramiento3 = 0.00;
+$comp_asistencia2 = 0.00;
 
  $data01= getparamcategoria($arraydata1[$it]['nombre']); 
  $data02= getparamitem($arraydata2[$it]['nombre']); 
@@ -470,6 +471,26 @@ $bt= putbitacora($detalles[0]['dcal_id'],$dcalificacion);
 
             }}
 
+        if ($parciales == 2 AND $data00['parcial'] == 2) {
+        
+        if (isset($data02['asistencia']) {
+        $comp_asistencia2 =  (float) $data03;
+
+        }
+
+        if ($comp_asistencia2 > 0) {
+            $dasistencia = $comp_asistencia2;
+            $detallesasi = getdasistencia($cabecerasasi[0]['casi_id'], $parciales);
+            if ($detallesasi == Null) {
+            $detalles = putdasistencia($cabecerasasi[0]['casi_id'], $parciales, $dasistencia);
+            } else {
+            if ($detallesasi[0]['dasi_usuario_creacion'] == '1') {
+                    $detallesup = updatedasitencia($detallesasi[0]['dasi_id'], $dasistencia);
+                                    }
+                                }
+                            }
+
+         }
 
 if ($parciales == 1 AND $data00['parcial']==1) {
 //print_r("======= Inicia proceso parcial 1 ===========");
@@ -1084,6 +1105,9 @@ function getparamitem($elemento) {
 
    }  elseif ( strtoupper(substr($elementos[$iter],0,5)) == 'CUEST'){ 
        $dataitems['evaluacion'] = 1; 
+
+   }   elseif ( strtoupper(substr($elementos[$iter],0,4)) == 'ASIS'){ 
+       $dataitems['asistencia'] = 1; 
 
    }
 

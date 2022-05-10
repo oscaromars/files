@@ -2611,7 +2611,10 @@ UPDATE db_academico.detalle_calificacion
 			} elseif (strtoupper(substr($elementos[$iter], 0, 5)) == 'CUEST') {
 				$dataitems['evaluacion'] = 1;
 
-			}
+			}   elseif (strtoupper(substr($elementos[$iter], 0, 4)) == 'ASIS') {
+				$dataitems['asistencia'] = 1;
+
+			}  
 
 
 		}

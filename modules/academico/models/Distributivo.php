@@ -856,7 +856,7 @@ class Distributivo extends \yii\db\ActiveRecord {
         }
         $resultData = $comando->queryAll();
 
-        /*$resultData2 = array();
+        $resultData2 = array();
 
         foreach ($resultData as $key => $value) {
             $band = 1;
@@ -875,13 +875,13 @@ class Distributivo extends \yii\db\ActiveRecord {
 
             if($band == 1)
                 $resultData2[] = $value;
-        }*///foreach
+        }//foreach
         //\app\models\Utilities::putMessageLogFile(print_r($resultData2,true));
 
 
         $dataProvider = new ArrayDataProvider([
             'key' => 'id',
-            'allModels' => $resultData,
+            'allModels' => $resultData2,
             'pagination' => [
                 'pageSize' => Yii::$app->params["pageSize"],
             ],
@@ -892,7 +892,7 @@ class Distributivo extends \yii\db\ActiveRecord {
         if ($reporte == 1) {
             return $dataProvider;
         } else {
-            return $resultData;
+            return $resultData2;
         }
     }
 

@@ -2590,7 +2590,7 @@ UPDATE db_academico.detalle_calificacion
 					$dataitems['taller'] = $elementos[$iter + 2];
 				}
 
-			} elseif (strtoupper(substr($elementos[$iter], 0, 3)) == 'EVA') {
+			} elseif (strtoupper(substr($elementos[$iter], 0, 3)) == 'EXA') {
 
 				if  ($dataitems['evaluacion'] != 1) { 
 				$dataitems['examen'] = 1;
@@ -2605,7 +2605,7 @@ UPDATE db_academico.detalle_calificacion
 			} elseif (strtoupper(substr($elementos[$iter], 0, 3)) == 'FOR') {
 				$dataitems['foro'] = 1;
 
-			} elseif (strtoupper(substr($elementos[$iter], 2, 4)) == 'NCRO') {
+			} elseif (strtoupper(substr($elementos[$iter], 0, 3)) == 'VIV') {
 				$dataitems['sincrona'] = 1;
 
 			} elseif (strtoupper(substr($elementos[$iter], 0, 5)) == 'CUEST') {

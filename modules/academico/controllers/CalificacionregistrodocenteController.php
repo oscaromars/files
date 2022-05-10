@@ -2103,7 +2103,27 @@ return $this->redirect('index');
 									}
 								}
 		$ucasi = $mod_asistencia->updatecasistencia($cabecerasasi[0]['casi_id']);
-							}
+						
+
+	$cabecerasasi = $mod_asistencia->getcasistencia($est_id, $asi_id, $paca_id, 1);
+	if ($cabecerasasi == Null) {
+			$cabecerasasi = $mod_asistencia->putcasistencia($est_id, $asi_id, $paca_id, 1, $pro_id);
+	$cabecerasasi = $mod_asistencia->getcasistencia($est_id, $asi_id, $paca_id, 1);
+                               }
+
+			$dasistencia = $comp_asistencia2;
+			$detallesasi = $mod_asistencia->getdasistencia($cabecerasasi[0]['casi_id'], 1);
+			if ($detallesasi == Null) {
+			$detalles = $mod_asistencia->putdasistencia($cabecerasasi[0]['casi_id'], 1, $dasistencia);
+			} else {
+			if ($detallesasi[0]['dasi_usuario_creacion'] == '1') {
+					$detallesup = $mod_asistencia->updatedasitencia($detallesasi[0]['dasi_id'], $dasistencia);
+									}
+								}
+		$ucasi = $mod_asistencia->updatecasistencia($cabecerasasi[0]['casi_id']);
+			}
+
+
 
          }
 

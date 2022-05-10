@@ -491,6 +491,26 @@ $bt= putbitacora($detalles[0]['dcal_id'],$dcalificacion);
                                 }
 
         $ucasi = updatecasistencia($cabecerasasi[0]['casi_id']);
+                        
+
+    $cabecerasasi = getcasistencia($est_id, $asi_id, $paca_id, 1);
+    if ($cabecerasasi == Null) {
+            $cabecerasasi = putcasistencia($est_id, $asi_id, $paca_id, 1, $pro_id);
+    $cabecerasasi = getcasistencia($est_id, $asi_id, $paca_id, 1);
+                               }
+
+            $dasistencia = $comp_asistencia2;
+            $detallesasi = getdasistencia($cabecerasasi[0]['casi_id'], 1);
+            if ($detallesasi == Null) {
+            $detalles = putdasistencia($cabecerasasi[0]['casi_id'], 1, $dasistencia);
+            } else {
+            if ($detallesasi[0]['dasi_usuario_creacion'] == '1') {
+                    $detallesup = updatedasitencia($detallesasi[0]['dasi_id'], $dasistencia);
+                                    }
+                                }
+        $ucasi = updatecasistencia($cabecerasasi[0]['casi_id']);
+
+
                             }
 
          }

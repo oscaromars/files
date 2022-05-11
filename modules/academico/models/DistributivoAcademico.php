@@ -437,7 +437,8 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
 								FROM db_academico.distributivo_academico_estudiante AS daesComp,
 								 	 db_academico.distributivo_academico AS dacaComp
 								WHERE daesComp.daca_id = dacaComp.daca_id
-								AND dacaComp.paca_id = periodo.id			
+								AND dacaComp.paca_id = periodo.id
+								AND dacaComp.daca_id= daca.daca_id
 								AND daesComp.est_id = est.est_id
 								AND daesComp.daes_estado = 1 AND daesComp.daes_estado_logico = 1
 								AND dacaComp.daca_estado = 1 AND dacaComp.daca_estado_logico = 1
@@ -451,10 +452,11 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
 		\app\models\Utilities::putMessageLogFile('buscarEstudiantesAsignados: ' . $comando->getRawSql());
 
 		//JLC - 18 ABRIL 2022
-		$asi_id_gr = $res[0]["asi_id"];
-		$paca_id_gr = $res[0]["paca_id"];
+		//$asi_id_gr = $res[0]["asi_id"];
+		//$paca_id_gr = $res[0]["paca_id"];
 		$distributivo_model = new DistributivoAcademico();
-		$resultado2 = $distributivo_model->getParaleloxPeriodo($asi_id_gr, $paca_id_gr);
+		$resultado2 = $distributivo_model->getParaleloxPeriodo($id, $paca_id);
+		//$resultado2 = $distributivo_model->getParaleloxPeriodo($asi_id_gr, $paca_id_gr);
 		$arr_paralelo_grid = array_merge([["id" => "0", "name" => Yii::t("formulario", "Select")]], $resultado2);
 		foreach ($res as $key => $value) {
 			$value['paralelo_grid'] = $arr_paralelo_grid;

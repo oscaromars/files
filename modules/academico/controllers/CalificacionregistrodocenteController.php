@@ -2179,7 +2179,7 @@ print_r($data03);*/
 
 											}
 
-											if ($componentes[$il]['com_id'] == 6 AND isset($data02['evaluacion'])) {
+											if ($componentes[$il]['com_id'] == 6 AND isset($data02['examen'])) {
 												//COMP_SINCRONA ol
 
 												$comp_examen1 = (float) $comp_examen1 + (float) $data03; //print_r("SUMADO:");
@@ -2369,7 +2369,7 @@ print_r($data03);*/
 										}
 
 										if ($comp_examen2 > 0) {
-											$dcalificacion = (float) $examen2;
+											$dcalificacion = (float) $comp_examen2;
 											$detalles = $mod_calificacion->getdetalles($cabeceras[0]['ccal_id'], $comp_cuni_id);
 											if ($detalles == Null) {
 												$detalles = $mod_calificacion->putdetalles($cabeceras[0]['ccal_id'], $comp_cuni_id, $dcalificacion);

@@ -2296,7 +2296,6 @@ croe.croe_exec,ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca
 			AND tempo.asi_id = daca.asi_id
 			WHERE TRUE
 			AND ceduct.cedu_asi_id = :uedu_aula
-			AND (cabec.ccal_id is Null OR cabec.ecun_id = :parcial )
 			AND ceduct.cedu_estado = :estado AND ceduct.cedu_estado_logico = :estado
 			AND daca.daca_estado = :estado AND daca.daca_estado_logico = :estado
 			AND daes.daes_estado = :estado AND daes.daes_estado_logico = :estado
@@ -2308,7 +2307,6 @@ croe.croe_exec,ifnull(CONCAT(baca.baca_nombre,'-',saca.saca_nombre,' ',saca.saca
 		$comando = $con->createCommand($deduc);
 		$comando->bindParam(":estado", $estado, \PDO::PARAM_INT);
 		$comando->bindParam(":uedu_aula", $uedu_aula, \PDO::PARAM_INT);
-		$comando->bindParam(":parcial", $parcial, \PDO::PARAM_INT);
 		$resultUsers = $comando->queryAll();
 		return $resultUsers;
 
@@ -2573,7 +2571,7 @@ UPDATE db_academico.detalle_calificacion
 
 			}  
 
-		}
+		} if (!isset($dataparcial['parcial'])) { $dataparcial['parcial'] = 4; }
 
 		return $dataparcial;
 	}
@@ -2592,7 +2590,7 @@ UPDATE db_academico.detalle_calificacion
 
 			} elseif (strtoupper(substr($elementos[$iter], 0, 3)) == 'EXA') {
 
-				if  ($dataitems['evaluacion'] != 1) { 
+				if  (isset($dataitems['evaluacion']) != 1) { 
 				$dataitems['examen'] = 1;
 			}
 

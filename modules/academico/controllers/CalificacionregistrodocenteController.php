@@ -2093,7 +2093,7 @@ return $this->redirect('index');
         }
 
 		if ($comp_asistencia2 > 0) {
-			$dasistencia = $comp_asistencia2;
+			$dasistencia = ($comp_asistencia2/50);
 			$detallesasi = $mod_asistencia->getdasistencia($cabecerasasi[0]['casi_id'], $parciales);
 			if ($detallesasi == Null) {
 			$detalles = $mod_asistencia->putdasistencia($cabecerasasi[0]['casi_id'], $parciales, $dasistencia);
@@ -2111,7 +2111,7 @@ return $this->redirect('index');
 	$cabecerasasi = $mod_asistencia->getcasistencia($est_id, $asi_id, $paca_id, 1);
                                }
 
-			$dasistencia = $comp_asistencia2;
+			$dasistencia = ($comp_asistencia2/50);
 			$detallesasi = $mod_asistencia->getdasistencia($cabecerasasi[0]['casi_id'], 1);
 			if ($detallesasi == Null) {
 			$detalles = $mod_asistencia->putdasistencia($cabecerasasi[0]['casi_id'], 1, $dasistencia);

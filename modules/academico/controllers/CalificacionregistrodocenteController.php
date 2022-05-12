@@ -2489,7 +2489,7 @@ print_r($data03);*/
 
 		 	}}
 
-
+/*
 		if ($parciales == 2) {
         
         if (isset($data02['asistencia'])) {
@@ -2530,7 +2530,7 @@ print_r($data03);*/
 
 
 
-         }
+         } */
 
 									if ($parciales == 1 AND $data00['parcial'] == 1) {
 //print_r("======= Inicia proceso parcial 1 ===========");
@@ -2543,20 +2543,20 @@ print_r(isset($data02['evaluacion']));
 print_r("nota");
 print_r($data03);*/
 
-											if ($componentes[$il]['com_id'] == 3 AND isset($data02['evaluacion'])) {
+											if ($componentes[$il]['com_id'] == 1 AND isset($data02['psasincrona'])) {
 												//COMP_EVALUACION ol
 
-												$comp_evaluacion1 = (float) $comp_evaluacion1 + (float) $data03;
+												$psasincrona1 = (float) $psasincrona1 + (float) $data03;
 												$comp_cuni_id = $componentes[$il]['cuni_id'];
 												print_r("comp_evaluacion1 ES  ");
 												print_r($comp_evaluacion1);
 
 											}
 
-											if ($componentes[$il]['com_id'] == 4 AND isset($data02['taller'])) {
+											if ($componentes[$il]['com_id'] == 2 AND isset($data02['pssincrona'])) {
 												//COMP_AUTONOMA ol
 
-												$comp_autonoma1 = (float) $comp_autonoma1 + (float) $data03;
+												$psasincrona1 = (float) $psasincrona1 + (float) $data03;
 												print_r("SUMADO:");
 												$comp_cuni_id = $componentes[$il]['cuni_id'];
 												print_r("comp_autonoma1 ES ");
@@ -2564,30 +2564,20 @@ print_r($data03);*/
 
 											}
 
-											if ($componentes[$il]['com_id'] == 1 AND isset($data02['foro'])) {
+											if ($componentes[$il]['com_id'] == 5 AND isset($data02['psevaluacion'])) {
 												//COMP_FORO ol
 
-												$comp_foro1 = (float) $comp_foro1 + (float) $data03; //print_r("SUMADO:");
+												$psevaluacion1 = (float) $psevaluacion1 + (float) $data03; //print_r("SUMADO:");
 												$comp_cuni_id = $componentes[$il]['cuni_id'];
 												print_r("comp_foro1 ES ");
 												print_r($comp_foro1);
 
 											}
 
-											if ($componentes[$il]['com_id'] == 2 AND isset($data02['sincrona'])) {
+											if ($componentes[$il]['com_id'] == 6 AND isset($data02['psexamen'])) {
 												//COMP_SINCRONA ol
 
-												$comp_sincrona1 = (float) $comp_sincrona1 + (float) $data03; //print_r("SUMADO:");
-												$comp_cuni_id = $componentes[$il]['cuni_id'];
-												//print_r("comp_sincrona1 ES ");
-												//  print_r($comp_sincrona1);
-
-											}
-
-											if ($componentes[$il]['com_id'] == 6 AND isset($data02['examen'])) {
-												//COMP_SINCRONA ol
-
-												$comp_examen1 = (float) $comp_examen1 + (float) $data03; //print_r("SUMADO:");
+												$psexamen1 = (float) $psexamen1 + (float) $data03; //print_r("SUMADO:");
 												$comp_cuni_id = $componentes[$il]['cuni_id'];
 												//print_r("comp_sincrona1 ES ");
 												//  print_r($comp_sincrona1);
@@ -2595,9 +2585,30 @@ print_r($data03);*/
 											}
 
 
+											if ($componentes[$il]['com_id'] == 7 AND isset($data02['psactividades'])) {
+												//COMP_SINCRONA ol
+
+												$psactividades1 = (float) $psactividades1 + (float) $data03; //print_r("SUMADO:");
+												$comp_cuni_id = $componentes[$il]['cuni_id'];
+												//print_r("comp_sincrona1 ES ");
+												//  print_r($comp_sincrona1);
+
+											}
+
+											if ($componentes[$il]['com_id'] == 9 AND isset($data02['psleccion'])) {
+												//COMP_SINCRONA ol
+
+												$psleccion1 = (float) $psleccion1 + (float) $data03; //print_r("SUMADO:");
+												$comp_cuni_id = $componentes[$il]['cuni_id'];
+												//print_r("comp_sincrona1 ES ");
+												//  print_r($comp_sincrona1);
+
+											}
+
+
 										}
-										if ($comp_evaluacion1 > 0) {
-											$dcalificacion = (float) $comp_evaluacion1;
+										if ($psasincrona1 > 0) {
+											$dcalificacion = (float) $psasincrona1;
 											$detalles = $mod_calificacion->getdetalles($cabeceras[0]['ccal_id'], $comp_cuni_id);
 											if ($detalles == Null) {
 												$detalles = $mod_calificacion->putdetalles($cabeceras[0]['ccal_id'], $comp_cuni_id, $dcalificacion);
@@ -2611,8 +2622,8 @@ print_r($data03);*/
 										}
 
 
-										if ($comp_foro1 > 0) {
-											$dcalificacion = (float) $comp_foro1;
+										if ($pssincrona1 > 0) {
+											$dcalificacion = (float) $pssincrona1;
 											$detalles = $mod_calificacion->getdetalles($cabeceras[0]['ccal_id'], $comp_cuni_id);
 											if ($detalles == Null) {
 												$detalles = $mod_calificacion->putdetalles($cabeceras[0]['ccal_id'], $comp_cuni_id, $dcalificacion);
@@ -2625,8 +2636,8 @@ print_r($data03);*/
 											}
 										}
 
-										if ($comp_sincrona1 > 0) {
-											$dcalificacion = (float) $comp_sincrona1;
+										if ($psevaluacion1 > 0) {
+											$dcalificacion = (float) $psevaluacion1;
 											$detalles = $mod_calificacion->getdetalles($cabeceras[0]['ccal_id'], $comp_cuni_id);
 											if ($detalles == Null) {
 												$detalles = $mod_calificacion->putdetalles($cabeceras[0]['ccal_id'], $comp_cuni_id, $dcalificacion);
@@ -2640,8 +2651,8 @@ print_r($data03);*/
 										}
 
 
-										if ($comp_autonoma1 > 0) {
-											$dcalificacion = (float) $comp_autonoma1;
+										if ($psexamen1 > 0) {
+											$dcalificacion = (float) $psexamen1;
 											$detalles = $mod_calificacion->getdetalles($cabeceras[0]['ccal_id'], $comp_cuni_id);
 											if ($detalles == Null) {
 												$detalles = $mod_calificacion->putdetalles($cabeceras[0]['ccal_id'], $comp_cuni_id, $dcalificacion);
@@ -2654,8 +2665,23 @@ print_r($data03);*/
 											}
 										}
 
-										if ($comp_examen1 > 0) {
-											$dcalificacion = (float) $comp_examen1;
+
+										if ($psactividades1 > 0) {
+											$dcalificacion = (float) $psactividades1;
+											$detalles = $mod_calificacion->getdetalles($cabeceras[0]['ccal_id'], $comp_cuni_id);
+											if ($detalles == Null) {
+												$detalles = $mod_calificacion->putdetalles($cabeceras[0]['ccal_id'], $comp_cuni_id, $dcalificacion);
+											} else {
+												if ($detalles[0]['dcal_usuario_creacion'] == 1 ) {
+													$dcalificacion = $dcalificacion + $detalles[0]['dcal_calificacion'];
+													$detallesup = $mod_calificacion->updatedetalles($detalles[0]['dcal_id'], $dcalificacion);
+													$bt = $mod_calificacion->putbitacora($detalles[0]['dcal_id'], $dcalificacion);
+												}
+											}
+										}
+
+										if ($psleccion1 > 0) {
+											$dcalificacion = (float) $psleccion1;
 											$detalles = $mod_calificacion->getdetalles($cabeceras[0]['ccal_id'], $comp_cuni_id);
 											if ($detalles == Null) {
 												$detalles = $mod_calificacion->putdetalles($cabeceras[0]['ccal_id'], $comp_cuni_id, $dcalificacion);

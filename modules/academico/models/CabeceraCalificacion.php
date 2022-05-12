@@ -2591,7 +2591,7 @@ UPDATE db_academico.detalle_calificacion
 			} elseif (strtoupper(substr($elementos[$iter], 0, 3)) == 'EXA') {
 
 				if  (isset($dataitems['evaluacion']) != 1) { 
-				$dataitems['examen'] = 1;
+				$dataitems['examen'] = 1; $dataitems['psexamen'] = 1;
 			}
 
 			} elseif (strtoupper(substr($elementos[$iter], 0, 3)) == 'MEJ') {
@@ -2611,6 +2611,27 @@ UPDATE db_academico.detalle_calificacion
 
 			}   elseif (strtoupper(substr($elementos[$iter], 0, 4)) == 'ASIS') {
 				$dataitems['asistencia'] = 1;
+
+			}   elseif (strtoupper(substr($elementos[$iter], 0, 3)) == 'ACT') {
+				$dataitems['psactividades'] = 1;
+
+			}   elseif (strtoupper(substr($elementos[$iter], 0, 4)) == 'LECC') {
+				$dataitems['psleccion'] = 1;
+
+			}   elseif (strtoupper(substr($elementos[$iter], 0, 3)) == 'EVA') {
+				$dataitems['psevaluacion'] = 1;
+
+			}   elseif (strtoupper(substr($elementos[$iter], 3, 3)) == 'NCR' AND strtoupper(substr($elementos[$iter], 0, 1)) == 'A') {
+				$dataitems['psasincrona'] = 1;
+
+			}   elseif (strtoupper(substr($elementos[$iter], 4, 3)) == 'NCR' AND strtoupper(substr($elementos[$iter], 0, 1)) == 'A') {
+				$dataitems['psasincrona'] = 1;
+
+			}   elseif (strtoupper(substr($elementos[$iter], 3, 3)) == 'NCR' AND strtoupper(substr($elementos[$iter], 0, 1)) == 'S') {
+				$dataitems['psssincrona'] = 1;
+
+			}   elseif (strtoupper(substr($elementos[$iter], 2, 3)) == 'NCR' AND strtoupper(substr($elementos[$iter], 0, 1)) == 'S') {
+				$dataitems['psssincrona'] = 1;
 
 			}  
 

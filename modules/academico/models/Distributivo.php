@@ -429,7 +429,10 @@ class Distributivo extends \yii\db\ActiveRecord {
 
     /**
      * Function Obtiene información de distributivo por profesor.
+     * Consultar por tipo de pago: pago total
      * @author Grace Viteri <analistadesarrollo01@uteg.edu.ec>;
+     * @modifier Julio Lopez <analistadesarrollo03@uteg.edu.ec>;
+     * Date of modification: 11 mayo 2022
      * @param
      * @return
      */
@@ -525,6 +528,7 @@ class Distributivo extends \yii\db\ActiveRecord {
                     and g.daes_estado_logico = :estado 
                 order by p.per_pri_apellido, p.per_seg_apellido";*/
 
+
         if (isset($arrFiltro) && count($arrFiltro) > 0) {
             $str_search .= "(per.per_pri_nombre like :search OR ";
             $str_search .= "per.per_seg_nombre like :search OR ";
@@ -554,9 +558,27 @@ class Distributivo extends \yii\db\ActiveRecord {
             }*/
             if ($arrFiltro['estado_pago'] == "0" or $arrFiltro['estado_pago'] == "1") {
                 if ($arrFiltro['estado_pago'] == "0") {
-                $str_search .= " ( ( rpm.rpm_tipo_pago=3 AND (ccar.ccar_estado_cancela is null OR ccar.ccar_estado_cancela = :estado_pago) AND NOW() > ccar.ccar_fecha_vencepago ) OR rpm.rpm_tipo_pago=2) AND ";
+                //$str_search .= " ( ( (ccar.ccar_estado_cancela is null OR ccar.ccar_estado_cancela = :estado_pago) AND NOW() > ccar.ccar_fecha_vencepago ) ) AND ";
+                $str_search_CD = " ( ( (ccar.ccar_estado_cancela is null OR ccar.ccar_estado_cancela = :estado_pago) AND NOW() > ccar.ccar_fecha_vencepago ) ) AND ";
+
+                $str_search_PT = "(SELECT COUNT(pfes_comp.pfes_concepto)
+                                 FROM db_facturacion.pagos_factura_estudiante as pfes_comp, db_facturacion.detalle_pagos_factura as dpfa2 
+                                 WHERE pfes_comp.est_id = est.est_id AND
+                                 pfes_comp.pfes_id = dpfa2.pfes_id AND
+                                 pfes_comp.pfes_concepto = 'PT' AND
+                                 date(pfes_comp.pfes_fecha_creacion) = date(rpm.rpm_fecha_creacion)) = 0 AND ";
+
             }else{
-                $str_search .= " ( ( rpm.rpm_tipo_pago=3 AND ccar.ccar_estado_cancela = :estado_pago OR NOW() < ccar.ccar_fecha_vencepago) OR rpm.rpm_tipo_pago = 2) AND ";
+                //$str_search .= " ( ( ccar.ccar_estado_cancela = :estado_pago OR NOW() < ccar.ccar_fecha_vencepago) ) AND ";
+
+                $str_search_CD = " ( ( ccar.ccar_estado_cancela = :estado_pago OR NOW() < ccar.ccar_fecha_vencepago) ) AND "; 
+
+                $str_search_PT = "(SELECT COUNT(pfes_comp.pfes_concepto)
+                                 FROM db_facturacion.pagos_factura_estudiante as pfes_comp, db_facturacion.detalle_pagos_factura as dpfa2 
+                                 WHERE pfes_comp.est_id = est.est_id AND
+                                 pfes_comp.pfes_id = dpfa2.pfes_id AND
+                                 pfes_comp.pfes_concepto = 'PT' AND
+                                 date(pfes_comp.pfes_fecha_creacion) = date(rpm.rpm_fecha_creacion)) = 1 AND ";
             }
         }
             /**************************************************************  **/
@@ -570,63 +592,152 @@ class Distributivo extends \yii\db\ActiveRecord {
         }       
 
         // VERSION 2 MODIFICADA
-        $sql =  "SELECT DISTINCT
-            est.est_id,
-            uaca.uaca_nombre as unidad,
-            moda.mod_nombre as modalidad,
-            per.per_cedula as identificacion,
-            concat(per.per_pri_nombre, ' ', per.per_pri_apellido, ' ', ifnull(per.per_seg_apellido,'')) as estudiante,
-            concat(saca.saca_nombre, '-',baca.baca_nombre,'-',baca.baca_anio) as periodo,
-            asi.asi_nombre as asignatura,
+                    $sql ="
+                        SELECT DISTINCT
+                        est.est_id,
+                        uaca.uaca_nombre as unidad,
+                        moda.mod_nombre as modalidad,
+                        per.per_cedula as identificacion,
+                        concat(per.per_pri_nombre, ' ', per.per_pri_apellido, ' ', ifnull(per.per_seg_apellido,'')) as estudiante,
+                        concat(saca.saca_nombre, '-',baca.baca_nombre,'-',baca.baca_anio) as periodo,
+                        asi.asi_nombre as asignatura,
 
-            CASE
-                WHEN rpm.rpm_tipo_pago=2 THEN 'Autorizado'
-                WHEN rpm.rpm_tipo_pago=3 THEN
-                CASE 
-                    WHEN
-                        (SELECT count(ccar_estado_cancela) FROM " . $con2->dbname . ".carga_cartera ccar1
-                        WHERE ccar1.ccar_estado_cancela='N' AND ccar1.ccar_id=ccar.ccar_id ) =  0
-                        THEN 'Autorizado'
-                    WHEN
-                        (SELECT count(ccar_estado_cancela) FROM " . $con2->dbname . ".carga_cartera ccar1
-                        WHERE ccar1.ccar_estado_cancela='N' AND ccar1.ccar_id=ccar.ccar_id ) >  0
-                        THEN 'No Autorizado'
-                END
-            END pago
-            FROM " . $con->dbname . ".distributivo_academico_estudiante daes
-            INNER JOIN " . $con->dbname . ".estudiante est on daes.est_id = est.est_id
-            INNER JOIN " . $con1->dbname . ".persona per on per.per_id = est.per_id
-            INNER JOIN " . $con->dbname . ".planificacion_estudiante pes on pes.per_id = est.per_id
-            INNER JOIN " . $con->dbname . ".planificacion pla on pla.pla_id = pes.pla_id
-            INNER JOIN " . $con->dbname . ".semestre_academico saca on saca.saca_id =  pla.saca_id
-            INNER JOIN " . $con->dbname . ".periodo_academico paca on  paca.saca_id = saca.saca_id
-            INNER JOIN " . $con->dbname . ".bloque_academico baca on baca.baca_id = paca.baca_id
-            INNER JOIN " . $con->dbname . ".modalidad moda on moda.mod_id = pla.mod_id
-            INNER JOIN " . $con->dbname . ".registro_online ron on ron.per_id = est.per_id AND
-            ron.pes_id = pes.pes_id
-            INNER JOIN " . $con->dbname . ".registro_online_item roi on roi.ron_id = ron.ron_id
-            INNER JOIN " . $con->dbname . ".malla_academica_detalle made on made.made_codigo_asignatura = roi.roi_materia_cod
-            INNER JOIN " . $con->dbname . ".asignatura asi on asi.asi_id = made.asi_id
-            INNER JOIN " . $con->dbname . ".registro_pago_matricula rpm on rpm.ron_id = ron.ron_id
-            INNER JOIN " . $con->dbname . ".registro_online_cuota roc on roc.ron_id = ron.ron_id
-            INNER JOIN " . $con->dbname . ".distributivo_academico daca on daca.daca_id =  daes.daca_id
-            AND daca.paca_id = paca.paca_id AND asi.asi_id = daca.asi_id
-            INNER JOIN " . $con->dbname . ".profesor b on b.pro_id = daca.pro_id
-            INNER JOIN " . $con1->dbname . ".persona as t on b.per_id = t.per_id
-            INNER JOIN " . $con->dbname . ".distributivo_cabecera dcab on dcab.dcab_id = daca.dcab_id
-            INNER JOIN " . $con->dbname . ".materia_paralelo_periodo mpp on mpp.mpp_id = daca.mpp_id
-            INNER JOIN " . $con2->dbname . ".carga_cartera ccar on ccar.ccar_fecha_vencepago=roc.roc_vencimiento
-            AND est.est_id = ccar.est_id
-            INNER JOIN " . $con->dbname . ".unidad_academica uaca on uaca.uaca_id =  daca.uaca_id
-            WHERE
-            $str_search
-            t.per_id = :profesor AND
-            ccar.ccar_fecha_vencepago<=now() AND
-            dcab.dcab_estado_revision = 2 AND
-            daca.daca_estado =  :estado AND
-            daca.daca_estado_logico =  :estado AND
-            daes.daes_estado =  :estado AND
-            daes.daes_estado_logico =  :estado ";
+                        CASE
+                            -- WHEN rpm.rpm_tipo_pago=2 THEN 'Autorizado'
+                            WHEN rpm.rpm_tipo_pago=3 THEN
+                            CASE 
+                                WHEN
+                                    (SELECT count(ccar_estado_cancela) FROM " . $con2->dbname . ".carga_cartera ccar1
+                                    WHERE ccar1.ccar_estado_cancela='N' AND ccar1.ccar_id=ccar.ccar_id ) =  0
+                                    THEN 'Autorizado'
+                                WHEN
+                                    (SELECT count(ccar_estado_cancela) FROM " . $con2->dbname . ".carga_cartera ccar1
+                                    WHERE ccar1.ccar_estado_cancela='N' AND ccar1.ccar_id=ccar.ccar_id ) >  0
+                                    THEN 'No Autorizado'
+                            END
+                        END pago
+                        FROM " . $con->dbname . ".distributivo_academico_estudiante daes
+                        INNER JOIN " . $con->dbname . ".estudiante est on daes.est_id = est.est_id
+                        INNER JOIN " . $con1->dbname . ".persona per on per.per_id = est.per_id
+                        INNER JOIN " . $con->dbname . ".planificacion_estudiante pes on pes.per_id = est.per_id
+                        INNER JOIN " . $con->dbname . ".planificacion pla on pla.pla_id = pes.pla_id
+                        INNER JOIN " . $con->dbname . ".semestre_academico saca on saca.saca_id =  pla.saca_id
+                        INNER JOIN " . $con->dbname . ".periodo_academico paca on  paca.saca_id = saca.saca_id
+                        INNER JOIN " . $con->dbname . ".bloque_academico baca on baca.baca_id = paca.baca_id
+                        -- INNER JOIN " . $con->dbname . ".modalidad moda on moda.mod_id = pla.mod_id
+                        INNER JOIN " . $con->dbname . ".registro_online ron on ron.per_id = est.per_id AND
+                        ron.pes_id = pes.pes_id
+                        INNER JOIN " . $con->dbname . ".registro_online_item roi on roi.ron_id = ron.ron_id AND baca.baca_nombre = roi.roi_bloque
+                        INNER JOIN " . $con->dbname . ".malla_academica_detalle made on made.made_codigo_asignatura = roi.roi_materia_cod
+                        INNER JOIN " . $con->dbname . ".asignatura asi on asi.asi_id = made.asi_id
+                        INNER JOIN " . $con->dbname . ".registro_pago_matricula rpm on rpm.ron_id = ron.ron_id
+                        INNER JOIN " . $con->dbname . ".registro_online_cuota roc on roc.ron_id = ron.ron_id
+                        INNER JOIN " . $con->dbname . ".registro_adicional_materias as rama on rpm.rpm_id = rama.rpm_id  
+                        and ( roi.roi_id = rama.roi_id_1 or roi.roi_id = rama.roi_id_2 or roi.roi_id = rama.roi_id_3 or roi.roi_id = rama.roi_id_4
+                        or roi.roi_id = rama.roi_id_5 or roi.roi_id = rama.roi_id_6 or roi.roi_id = rama.roi_id_7 or roi.roi_id = rama.roi_id_8
+                        )
+                        INNER JOIN " . $con->dbname . ".distributivo_academico daca on daca.daca_id =  daes.daca_id
+                        AND daca.paca_id = paca.paca_id AND asi.asi_id = daca.asi_id
+                        INNER JOIN " . $con->dbname . ".modalidad moda on moda.mod_id = daca.mod_id
+                        INNER JOIN " . $con->dbname . ".profesor b on b.pro_id = daca.pro_id
+                        INNER JOIN " . $con1->dbname . ".persona as t on b.per_id = t.per_id
+                        INNER JOIN " . $con->dbname . ".distributivo_cabecera dcab on dcab.dcab_id = daca.dcab_id
+                        INNER JOIN " . $con->dbname . ".materia_paralelo_periodo mpp on mpp.mpp_id = daca.mpp_id
+                        INNER JOIN " . $con2->dbname . ".carga_cartera ccar on ccar.ccar_fecha_vencepago=roc.roc_vencimiento
+                        AND est.est_id = ccar.est_id
+                        INNER JOIN " . $con->dbname . ".unidad_academica uaca on uaca.uaca_id =  daca.uaca_id
+                        WHERE
+                        $str_search
+                        t.per_id = :profesor AND
+                        rpm.rpm_tipo_pago = 3 AND
+                        ccar.ccar_fecha_vencepago<=now() AND
+                        dcab.dcab_estado_revision = 2 AND
+                        daca.daca_estado = :estado AND
+                        daca.daca_estado_logico =  :estado AND
+                        daes.daes_estado =  :estado AND
+                        daes.daes_estado_logico =  :estado 
+
+                        UNION
+
+
+                        SELECT DISTINCT
+                        est.est_id,
+                        uaca.uaca_nombre as unidad,
+                        moda.mod_nombre as modalidad,
+                        per.per_cedula as identificacion,
+                        concat(per.per_pri_nombre, ' ', per.per_pri_apellido, ' ', ifnull(per.per_seg_apellido,'')) as estudiante,
+                        concat(saca.saca_nombre, '-',baca.baca_nombre,'-',baca.baca_anio) as periodo,
+                        asi.asi_nombre as asignatura,
+                        CASE
+                            WHEN
+                                (SELECT COUNT(pfes_comp.pfes_concepto)
+                                 FROM db_facturacion.pagos_factura_estudiante as pfes_comp, db_facturacion.detalle_pagos_factura as dpfa2 
+                                 WHERE pfes_comp.est_id = est.est_id AND
+                                 pfes_comp.pfes_id = dpfa2.pfes_id AND
+                                 pfes_comp.pfes_concepto = 'PT' AND
+                                 date(pfes_comp.pfes_fecha_creacion) = date(rpm.rpm_fecha_creacion)) > 0
+                            THEN 'Autorizado'
+                            WHEN
+                                (SELECT COUNT(pfes_comp.pfes_concepto)
+                                 FROM db_facturacion.pagos_factura_estudiante as pfes_comp, db_facturacion.detalle_pagos_factura as dpfa2 
+                                 WHERE pfes_comp.est_id = est.est_id AND
+                                 pfes_comp.pfes_id = dpfa2.pfes_id AND
+                                 pfes_comp.pfes_concepto = 'PT' AND
+                                 date(pfes_comp.pfes_fecha_creacion) = date(rpm.rpm_fecha_creacion)) = 0
+                            THEN 'No Autorizado'
+                        END as pago
+
+
+                        FROM " . $con->dbname . ".distributivo_academico_estudiante daes
+                        INNER JOIN " . $con->dbname . ".estudiante est on daes.est_id = est.est_id
+                        INNER JOIN " . $con1->dbname . ".persona per on per.per_id = est.per_id
+                        INNER JOIN " . $con->dbname . ".planificacion_estudiante pes on pes.per_id = est.per_id
+                        INNER JOIN " . $con->dbname . ".planificacion pla on pla.pla_id = pes.pla_id
+                        INNER JOIN " . $con->dbname . ".semestre_academico saca on saca.saca_id =  pla.saca_id
+                        INNER JOIN " . $con->dbname . ".periodo_academico paca on  paca.saca_id = saca.saca_id
+                        INNER JOIN " . $con->dbname . ".bloque_academico baca on baca.baca_id = paca.baca_id
+                        -- INNER JOIN " . $con->dbname . ".modalidad moda on moda.mod_id = pla.mod_id
+                        INNER JOIN " . $con->dbname . ".registro_online ron on ron.per_id = est.per_id AND
+                        ron.pes_id = pes.pes_id
+                        INNER JOIN " . $con->dbname . ".registro_online_item roi on roi.ron_id = ron.ron_id AND baca.baca_nombre = roi.roi_bloque
+                        INNER JOIN " . $con->dbname . ".malla_academica_detalle made on made.made_codigo_asignatura = roi.roi_materia_cod
+                        INNER JOIN " . $con->dbname . ".asignatura asi on asi.asi_id = made.asi_id
+                        INNER JOIN " . $con->dbname . ".registro_pago_matricula rpm on rpm.ron_id = ron.ron_id
+                        INNER JOIN " . $con->dbname . ".registro_online_cuota roc on roc.ron_id = ron.ron_id
+                        INNER JOIN " . $con->dbname . ".registro_adicional_materias as rama on rpm.rpm_id = rama.rpm_id  
+                        and ( roi.roi_id = rama.roi_id_1 or roi.roi_id = rama.roi_id_2 or roi.roi_id = rama.roi_id_3 or roi.roi_id = rama.roi_id_4
+                        or roi.roi_id = rama.roi_id_5 or roi.roi_id = rama.roi_id_6 or roi.roi_id = rama.roi_id_7 or roi.roi_id = rama.roi_id_8
+                        )
+                        INNER JOIN " . $con->dbname . ".distributivo_academico daca on daca.daca_id =  daes.daca_id
+                        AND daca.paca_id = paca.paca_id AND asi.asi_id = daca.asi_id
+                        INNER JOIN " . $con->dbname . ".modalidad moda on moda.mod_id = daca.mod_id
+                        INNER JOIN " . $con->dbname . ".profesor b on b.pro_id = daca.pro_id
+                        INNER JOIN " . $con1->dbname . ".persona as t on b.per_id = t.per_id
+                        INNER JOIN " . $con->dbname . ".distributivo_cabecera dcab on dcab.dcab_id = daca.dcab_id
+                        INNER JOIN " . $con->dbname . ".materia_paralelo_periodo mpp on mpp.mpp_id = daca.mpp_id
+                        -- INNER JOIN " . $con2->dbname . ".carga_cartera ccar on ccar.ccar_fecha_vencepago=roc.roc_vencimiento
+                        -- AND est.est_id = ccar.est_id
+                        INNER JOIN " . $con->dbname . ".unidad_academica uaca on uaca.uaca_id =  daca.uaca_id
+
+                        INNER JOIN " . $con2->dbname . ".pagos_factura_estudiante as pfes on est.est_id = pfes.est_id
+                        INNER JOIN " . $con2->dbname . ".detalle_pagos_factura as dpfa on pfes.pfes_id = dpfa.pfes_id
+                        and pfes_concepto in('MA','PT')
+                            and date(pfes.pfes_fecha_creacion) = date(rpm.rpm_fecha_creacion)
+
+                        WHERE
+                        $str_search
+                        $str_search_PT
+                        t.per_id = :profesor AND
+                        rpm.rpm_tipo_pago = 2 AND
+                        -- ccar.ccar_fecha_vencepago<=now() AND
+                        dcab.dcab_estado_revision = 2 AND
+                        daca.daca_estado = :estado AND
+                        daca.daca_estado_logico =  :estado AND
+                        daes.daes_estado =  :estado AND
+                        daes.daes_estado_logico =  :estado 
+
+
+                        ";
 
         $comando = $con->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
@@ -672,7 +783,7 @@ class Distributivo extends \yii\db\ActiveRecord {
         $resultData2 = array();
 
         foreach ($resultData as $key => $value) {
-            $band = 1;
+            /*$band = 1;
 
             if(empty($resultData2))
               $resultData2[] = $value;
@@ -686,9 +797,10 @@ class Distributivo extends \yii\db\ActiveRecord {
                 }
             }
 
-            if($band == 1)
+            if($band == 1)*/
                 $resultData2[] = $value;
         }//foreach
+        \app\models\Utilities::putMessageLogFile( 'consultarDistributivoxProfesor: '.$comando->getRawSql());
 
         $dataProvider = new ArrayDataProvider([
             'key' => 'id',
@@ -757,9 +869,28 @@ class Distributivo extends \yii\db\ActiveRecord {
             }*/
             if ($arrFiltro['estado_pago'] == "0" or $arrFiltro['estado_pago'] == "1") {
                 if ($arrFiltro['estado_pago'] == "0") {
-                $str_search .= " ( ( rpm.rpm_tipo_pago=3 AND (ccar.ccar_estado_cancela is null OR ccar.ccar_estado_cancela = :estado_pago) AND NOW() > ccar.ccar_fecha_vencepago ) OR rpm.rpm_tipo_pago=2) AND ";
+                //$str_search .= " ( (  (ccar.ccar_estado_cancela is null OR ccar.ccar_estado_cancela = :estado_pago) AND NOW() > ccar.ccar_fecha_vencepago) ) AND ";
+                $str_search_CD = " ( ( (ccar.ccar_estado_cancela is null OR ccar.ccar_estado_cancela = :estado_pago) AND NOW() > ccar.ccar_fecha_vencepago) ) AND ";
+
+                $str_search_PT = "(SELECT COUNT(pfes_comp.pfes_concepto)
+                                 FROM db_facturacion.pagos_factura_estudiante as pfes_comp, db_facturacion.detalle_pagos_factura as dpfa2 
+                                 WHERE pfes_comp.est_id = est.est_id AND
+                                 pfes_comp.pfes_id = dpfa2.pfes_id AND
+                                 pfes_comp.pfes_concepto = 'PT' AND
+                                 date(pfes_comp.pfes_fecha_creacion) = date(rpm.rpm_fecha_creacion)) = 0 AND ";
+                
             }else{
-                $str_search .= " ( ( rpm.rpm_tipo_pago=3 AND ccar.ccar_estado_cancela = :estado_pago OR NOW() < ccar.ccar_fecha_vencepago) OR rpm.rpm_tipo_pago = 2) AND ";
+                // $str_search .= " ( ( ccar.ccar_estado_cancela = :estado_pago OR NOW() < ccar.ccar_fecha_vencepago) ) AND ";
+                $str_search_CD = " ( ( ccar.ccar_estado_cancela = :estado_pago OR NOW() < ccar.ccar_fecha_vencepago) ) AND ";  
+
+
+                $str_search_PT = "(SELECT COUNT(pfes_comp.pfes_concepto)
+                                 FROM db_facturacion.pagos_factura_estudiante as pfes_comp, db_facturacion.detalle_pagos_factura as dpfa2 
+                                 WHERE pfes_comp.est_id = est.est_id AND
+                                 pfes_comp.pfes_id = dpfa2.pfes_id AND
+                                 pfes_comp.pfes_concepto = 'PT' AND
+                                 date(pfes_comp.pfes_fecha_creacion) = date(rpm.rpm_fecha_creacion)) = 1 AND ";
+
             }
         }
             /**************************************************************  **/
@@ -874,7 +1005,7 @@ class Distributivo extends \yii\db\ActiveRecord {
                         asi.asi_nombre as asignatura,
 
                         CASE
-                            WHEN rpm.rpm_tipo_pago=2 THEN 'Autorizado'
+                           -- WHEN rpm.rpm_tipo_pago=2 THEN 'Autorizado'
                             WHEN rpm.rpm_tipo_pago=3 THEN
                             CASE 
                                 WHEN
@@ -895,16 +1026,21 @@ class Distributivo extends \yii\db\ActiveRecord {
                         INNER JOIN " . $con->dbname . ".semestre_academico saca on saca.saca_id =  pla.saca_id
                         INNER JOIN " . $con->dbname . ".periodo_academico paca on  paca.saca_id = saca.saca_id
                         INNER JOIN " . $con->dbname . ".bloque_academico baca on baca.baca_id = paca.baca_id
-                        INNER JOIN " . $con->dbname . ".modalidad moda on moda.mod_id = pla.mod_id
+                        -- INNER JOIN " . $con->dbname . ".modalidad moda on moda.mod_id = pla.mod_id
                         INNER JOIN " . $con->dbname . ".registro_online ron on ron.per_id = est.per_id AND
                         ron.pes_id = pes.pes_id
-                        INNER JOIN " . $con->dbname . ".registro_online_item roi on roi.ron_id = ron.ron_id
+                        INNER JOIN " . $con->dbname . ".registro_online_item roi on roi.ron_id = ron.ron_id AND baca.baca_nombre = roi.roi_bloque
                         INNER JOIN " . $con->dbname . ".malla_academica_detalle made on made.made_codigo_asignatura = roi.roi_materia_cod
                         INNER JOIN " . $con->dbname . ".asignatura asi on asi.asi_id = made.asi_id
                         INNER JOIN " . $con->dbname . ".registro_pago_matricula rpm on rpm.ron_id = ron.ron_id
                         INNER JOIN " . $con->dbname . ".registro_online_cuota roc on roc.ron_id = ron.ron_id
+                        INNER JOIN " . $con->dbname . ".registro_adicional_materias as rama on rpm.rpm_id = rama.rpm_id  
+                        AND ( roi.roi_id = rama.roi_id_1 or roi.roi_id = rama.roi_id_2 or roi.roi_id = rama.roi_id_3 or roi.roi_id = rama.roi_id_4
+                        or roi.roi_id = rama.roi_id_5 or roi.roi_id = rama.roi_id_6 or roi.roi_id = rama.roi_id_7 or roi.roi_id = rama.roi_id_8
+                        )
                         INNER JOIN " . $con->dbname . ".distributivo_academico daca on daca.daca_id =  daes.daca_id
                         AND daca.paca_id = paca.paca_id AND asi.asi_id = daca.asi_id
+                        INNER JOIN " . $con->dbname . ".modalidad moda on moda.mod_id = daca.mod_id
                         INNER JOIN " . $con->dbname . ".distributivo_cabecera dcab on dcab.dcab_id = daca.dcab_id
                         INNER JOIN " . $con->dbname . ".materia_paralelo_periodo mpp on mpp.mpp_id = daca.mpp_id
                         INNER JOIN " . $con2->dbname . ".carga_cartera ccar on ccar.ccar_fecha_vencepago=roc.roc_vencimiento
@@ -912,12 +1048,82 @@ class Distributivo extends \yii\db\ActiveRecord {
                         INNER JOIN " . $con->dbname . ".unidad_academica uaca on uaca.uaca_id =  daca.uaca_id
                         WHERE
                         $str_search
+                        $str_search_CD
+                        rpm.rpm_tipo_pago=3 and
                         ccar.ccar_fecha_vencepago<=now() AND
                         dcab.dcab_estado_revision = 2 AND
                         daca.daca_estado =  :estado AND
                         daca.daca_estado_logico =  :estado AND
                         daes.daes_estado =  :estado AND
-                        daes.daes_estado_logico =  :estado ";
+                        daes.daes_estado_logico =  :estado
+
+                        UNION
+
+                        SELECT DISTINCT
+                        est.est_id,
+                        uaca.uaca_nombre as unidad,
+                        moda.mod_nombre as modalidad,
+                        per.per_cedula as identificacion,
+                        concat(per.per_pri_nombre, ' ', per.per_pri_apellido, ' ', ifnull(per.per_seg_apellido,'')) as estudiante,
+                        concat(saca.saca_nombre, '-',baca.baca_nombre,'-',baca.baca_anio) as periodo,
+                        asi.asi_nombre as asignatura,
+                        CASE
+                            WHEN
+                                (SELECT COUNT(pfes_comp.pfes_concepto)
+                                 FROM db_facturacion.pagos_factura_estudiante as pfes_comp, db_facturacion.detalle_pagos_factura as dpfa2 
+                                 WHERE pfes_comp.est_id = est.est_id AND
+                                 pfes_comp.pfes_id = dpfa2.pfes_id AND
+                                 pfes_comp.pfes_concepto = 'PT' AND
+                                 date(pfes_comp.pfes_fecha_creacion) = date(rpm.rpm_fecha_creacion)) > 0
+                            THEN 'Autorizado'
+                            WHEN
+                                (SELECT COUNT(pfes_comp.pfes_concepto)
+                                 FROM db_facturacion.pagos_factura_estudiante as pfes_comp, db_facturacion.detalle_pagos_factura as dpfa2 
+                                 WHERE pfes_comp.est_id = est.est_id AND
+                                 pfes_comp.pfes_id = dpfa2.pfes_id AND
+                                 pfes_comp.pfes_concepto = 'PT' AND
+                                 date(pfes_comp.pfes_fecha_creacion) = date(rpm.rpm_fecha_creacion)) = 0
+                            THEN 'No Autorizado'
+                        END as pago
+                        FROM " . $con->dbname . ".distributivo_academico_estudiante daes
+                        INNER JOIN " . $con->dbname . ".estudiante est on daes.est_id = est.est_id
+                        INNER JOIN " . $con1->dbname . ".persona per on per.per_id = est.per_id
+                        INNER JOIN " . $con->dbname . ".planificacion_estudiante pes on pes.per_id = est.per_id
+                        INNER JOIN " . $con->dbname . ".planificacion pla on pla.pla_id = pes.pla_id
+                        INNER JOIN " . $con->dbname . ".semestre_academico saca on saca.saca_id =  pla.saca_id
+                        INNER JOIN " . $con->dbname . ".periodo_academico paca on  paca.saca_id = saca.saca_id
+                        INNER JOIN " . $con->dbname . ".bloque_academico baca on baca.baca_id = paca.baca_id
+                        -- INNER JOIN " . $con->dbname . ".modalidad moda on moda.mod_id = pla.mod_id
+                        INNER JOIN " . $con->dbname . ".registro_online ron on ron.per_id = est.per_id AND
+                        ron.pes_id = pes.pes_id
+                        INNER JOIN " . $con->dbname . ".registro_online_item roi on roi.ron_id = ron.ron_id AND baca.baca_nombre = roi.roi_bloque
+                        INNER JOIN " . $con->dbname . ".malla_academica_detalle made on made.made_codigo_asignatura = roi.roi_materia_cod
+                        INNER JOIN " . $con->dbname . ".asignatura asi on asi.asi_id = made.asi_id
+                        INNER JOIN " . $con->dbname . ".registro_pago_matricula rpm on rpm.ron_id = ron.ron_id
+                        INNER JOIN " . $con->dbname . ".registro_online_cuota roc on roc.ron_id = ron.ron_id
+                        INNER JOIN " . $con->dbname . ".registro_adicional_materias as rama on rpm.rpm_id = rama.rpm_id  
+                        AND ( roi.roi_id = rama.roi_id_1 or roi.roi_id = rama.roi_id_2 or roi.roi_id = rama.roi_id_3 or roi.roi_id = rama.roi_id_4
+                        or roi.roi_id = rama.roi_id_5 or roi.roi_id = rama.roi_id_6 or roi.roi_id = rama.roi_id_7 or roi.roi_id = rama.roi_id_8
+                        )
+                        INNER JOIN " . $con->dbname . ".distributivo_academico daca on daca.daca_id =  daes.daca_id
+                        AND daca.paca_id = paca.paca_id AND asi.asi_id = daca.asi_id
+                        INNER JOIN " . $con->dbname . ".modalidad moda on moda.mod_id = daca.mod_id
+                        INNER JOIN " . $con->dbname . ".distributivo_cabecera dcab on dcab.dcab_id = daca.dcab_id
+                        INNER JOIN " . $con->dbname . ".materia_paralelo_periodo mpp on mpp.mpp_id = daca.mpp_id
+                        INNER JOIN " . $con->dbname . ".unidad_academica uaca on uaca.uaca_id =  daca.uaca_id
+                        INNER JOIN " . $con2->dbname . ".pagos_factura_estudiante as pfes on est.est_id = pfes.est_id
+                        INNER JOIN " . $con2->dbname . ".detalle_pagos_factura as dpfa on pfes.pfes_id = dpfa.pfes_id
+                        and pfes_concepto in('MA','PT')
+                            and date(pfes.pfes_fecha_creacion) = date(rpm.rpm_fecha_creacion)
+                        WHERE
+                        $str_search
+                        $str_search_PT
+                        rpm.rpm_tipo_pago=2 AND
+                        dcab.dcab_estado_revision = 2 AND
+                        daca.daca_estado =  :estado AND
+                        daca.daca_estado_logico =  :estado AND
+                        daes.daes_estado =  :estado AND
+                        daes.daes_estado_logico =  :estado";
 
         $comando = $con->createCommand($sql);
         $comando->bindParam(":estado", $estado, \PDO::PARAM_STR);
@@ -969,24 +1175,25 @@ class Distributivo extends \yii\db\ActiveRecord {
         $resultData2 = array();
 
         foreach ($resultData as $key => $value) {
-            $band = 1;
+            //$band = 1;
 
-            if(empty($resultData2))
-              $resultData2[] = $value;
+            //if(empty($resultData2))
+              //$resultData2[] = $value;
 
-            foreach ($resultData2 as $key2 => $value2) {
+            /*foreach ($resultData2 as $key2 => $value2) {
 
                 if ($resultData2[$key2]['est_id'] == $value['est_id']) {
                     if($resultData2[$key2]['asignatura'] == $value['asignatura']){
                         $band = 0;
                     }
                 }
-            }
+            }*/
 
-            if($band == 1)
+           // if($band == 1)
                 $resultData2[] = $value;
         }//foreach
         //\app\models\Utilities::putMessageLogFile(print_r($resultData2,true));
+        \app\models\Utilities::putMessageLogFile( 'consultarDistributivoxEstudiante: '.$comando->getRawSql());
 
 
         $dataProvider = new ArrayDataProvider([

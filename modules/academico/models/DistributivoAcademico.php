@@ -493,7 +493,9 @@ class DistributivoAcademico extends \yii\db\ActiveRecord {
 		$con_db = \Yii::$app->db;
 		$sql = "SELECT da.daca_id as id,
                 CONCAT('P',mpp_num_paralelo, ' - ',upper(ifnull(trim(per.per_pri_nombre),'')),' ',upper(ifnull(trim(per.per_pri_apellido),''))) as name
-                      from db_academico.distributivo_academico as da
+                from db_academico.distributivo_cabecera as ca
+                inner join db_academico.distributivo_academico as da on ca.dcab_id = da.dcab_id
+                 		and ca.dcab_estado_revision = 2      
                 inner join db_academico.materia_paralelo_periodo as mpp
                         on mpp.mpp_id = da.mpp_id
                        and mpp.mpp_estado = 1 and mpp.mpp_estado_logico = 1

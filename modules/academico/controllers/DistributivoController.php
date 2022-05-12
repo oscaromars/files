@@ -190,7 +190,8 @@ class DistributivoController extends \app\components\CController {
             $arrSearch["unidad"] = $data['unidad'];
             $arrSearch["modalidad"] = $data['modalidad'];
             $arrSearch["periodo"] = $data['periodo'];
-            if($data['estado'] == '1')
+            //JLC: 11 MAYO 2022
+            /*if($data['estado'] == '1')
             {
                 $estadopago = 'C';
             }
@@ -198,7 +199,8 @@ class DistributivoController extends \app\components\CController {
             {
                 $estadopago = 'N';
             }
-            $arrSearch["estado"] = $estadopago;
+            $arrSearch["estado"] = $estadopago;*/
+            $arrSearch["estado_pago"] = $data['estado'];
             $arrSearch["jornada"] = $data['jornada'];
             $model = $distributivo_model->consultarDistributivoxProfesor($arrSearch, $per_id, 1);
             return $this->render('listar_distributivo-grid', [

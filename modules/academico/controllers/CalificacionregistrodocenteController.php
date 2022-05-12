@@ -1669,7 +1669,8 @@ class CalificacionregistrodocenteController extends \app\components\CController 
 		$mod_unidad = new UnidadAcademica();
 		$mod_modalidad = new Modalidad();
 		//$mod_crones  = new CronEducativa();
-		$arr_periodos = $mod_periodos->consultarPeriodosActivosmalla();
+		//$arr_periodos = $mod_periodos->consultarPeriodosActivosmalla();
+		$arr_periodos = $mod_periodos->consultarPeriodosActivos();
 		$arr_ninteres = $mod_unidad->consultarUnidadAcademicasEmpresa(1);
 		$arr_modalidad = $mod_modalidad->consultarModalidad($arr_ninteres[0]["id"], 1);
 
@@ -1738,7 +1739,8 @@ return $this->redirect('index');
 		$mod_calificacion = new CabeceraCalificacion();
 		$arr_parcial = array(0 => '[ Elija Parcial ]', 1 => 'Parcial 1', 2 => 'Parcial 2', 3 => 'Supletorio', 4 => 'Mejoramiento');
 
-		$arr_periodos = $mod_periodos->consultarPeriodosActivosmalla();
+		//$arr_periodos = $mod_periodos->consultarPeriodosActivosmalla();
+		$arr_periodos = $mod_periodos->consultarPeriodosActivos();
 		$arr_unidad = $mod_unidad->consultarUnidadAcademicasEmpresa(1);
 		$arr_unidades = array(0 => '[ Elija Unidad Académica ]', 1 => 'Grado', 2 => 'Posgrado');
 		$arr_modalidad = $mod_modalidad->consultarModalidad($arr_unidad[0]["id"], 1);

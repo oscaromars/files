@@ -333,7 +333,7 @@ function validateType(type, valor, ref) {
             if (!result.response) {
                 result.errorMessage = objLang.The_end_date_can_not_be_before_the_start_date;
             }
-            break;    
+            break;
         default: // all
             result.response = validarExpresion(/^(.|\n)+$/, valor);
             if (!result.response) {

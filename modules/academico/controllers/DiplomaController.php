@@ -114,11 +114,22 @@ class DiplomaController extends \app\components\CController {
                     $body .= '<H6>Dado en el marco del desarrollo de las actividades de Vinculación con la Sociedad de UTEG, dictado por los estudiantes de la '. $model->dip_carrera . '. Con una duración de '. $model->dip_horas .' horas.';
                     $dates = '<H6>Dado '.$fecha. '</H6>';
                  }else{ //NUEVO
-                    $title = "El Departamento de Vinculación con la Sociedad confiere el presente certificado a:";
-                    $body  = '<H6>Por haber asistido al seminario:</H6>';
-                    $body .= '<span><H6>'.$model->dip_programa.'</span></H6>';
-                    $body .= '<H6>Dado en el marco del desarrollo de las actividades de Vinculación con la sociedad de UTEG-POSGRADO, dictado por las y los maestrantes de la '. $model->dip_carrera . '. Con una duración de '. $model->dip_horas .' horas técnico pedagógicas.';
-                    $dates = '<H6>Dado '.$fecha. '</H6>';
+                    if ($model->dip_id > 4595 && $model->dip_id < 4651) {
+                        $title = "La Universidad Tecnológica Empresarial de Guayaquil otorga el presente certificado a:";
+                        $body  = '<H6>Por haber participado en el proceso de capacitación del proyecto de servicio comunitario:</H6>';
+                        $body .= '<span><H6>'.$model->dip_programa.'</span></H6>';
+                        $body .= '<H6>Dado en el marco del desarrollo de las actividades de Vinculación con la sociedad de UTEG, dictado por los estudiantes de la Maestría en Educación. Con una duración de '. $model->dip_horas .' horas.';
+                        $hasta = strftime("%d de %B de %G", strtotime($model->dip_fecha_inicio));
+                        $fin = strftime("%d de %B de %G", strtotime($model->dip_fecha_fin));
+                        $fecha = '<span>' . $hasta . ' al ' . $fin .'. </span><br/>';
+                        $dates = '<H6>'.$fecha. '</H6>';
+                   } else{
+                        $title = "El Departamento de Vinculación con la Sociedad confiere el presente certificado a:";
+                        $body  = '<H6>Por haber asistido al seminario:</H6>';
+                        $body .= '<span><H6>'.$model->dip_programa.'</span></H6>';
+                        $body .= '<H6>Dado en el marco del desarrollo de las actividades de Vinculación con la sociedad de UTEG-POSGRADO, dictado por las y los maestrantes de la '. $model->dip_carrera . '. Con una duración de '. $model->dip_horas .' horas técnico pedagógicas.';
+                        $dates = '<H6>Dado '.$fecha. '</H6>';
+                     }
                  }
             }
 
